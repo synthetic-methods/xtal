@@ -1,0 +1,35 @@
+#pragma once
+#include "./any.hpp"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::message
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename U=iota_t>
+struct reindex
+{
+	using subkind = defer<U>;
+
+	template <any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	public:
+		using co::co;
+
+		XTAL_RE4_(XTAL_FN2 index(), co::head())
+
+	};
+};
+template <typename U=iota_t>
+using reindex_t = confined_t<reindex<U>>;
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
