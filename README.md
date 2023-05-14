@@ -28,12 +28,31 @@ For now, further details may respectively be gleaned from the `*.cxx` or `*.hpp`
 The fundamental mechanism for defining stream-based operators is range-lifting,
 whereby both pure and stateful `process`es are converted to `processor`s in order to `transform` buffer-based data.
 
+	struct mix_t
+	:	process::confine_t<mix_t
+		>
+	{
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF... xs)
+		{
+			return (XTAL_REF_(xs) + ... + 0.0);
+		}
+	};
+
 The implementation of a `process` is defined by the `template`d function `method`.
-When the `template` parameter list is empty, this `method` is aliased as the invocation `operator()`.
+When the `template` parameter list is undefined `<auto...>`,
+this `method` is aliased as the invocation `operator()`.
+
+	mix_t mix;
+	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
 Range-lifting is achieved using functors like `processor::vectorize` or `processor::virtualize`,
 allowing `method` and `operator` to `zip` the underlying function across `ranges`.
 (In future, the (im)purity of a function will determine the `std::execution_policy`, once supported by the relevant `ranges` library.)
+
+	using mixer_t = processor::let_t<mix_t>;
+	mixer_t mixer;
+	auto sixer = mixer(one, two, three);// mixes the ranges/processors `one`, `two`, `three`
 
 In either case, dependencies are defined by functional application of `process(?:or)?`s,
 with the inner-most nodes (plural) representing inputs, and the outer-most node (singular) representing the output.
@@ -44,14 +63,37 @@ Attributes are bound to a `process(?:or)?` using the `message` decorators `attac
 The value of an attribute is type-indexed on `this`,
 and can be read either by explicit conversion or by using the method `this->template get<...>`.
 
+	using active_t = message::ordinal_t<struct active>;
+
+	struct mix_t
+	:	process::confine_t<mix_t
+		,	active_t::template attach
+		>
+	{
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF... xs)
+		{
+			return (XTAL_REF_(xs) + ... + 0.0)*active_t(*this);
+		//	return (XTAL_REF_(xs) + ... + 0.0)*this->template get<active_t>();
+		}
+	};
+
 Templated parameters can use `dispatch` to build the function table required for dynamic resolution.
 For `process`es the function is resolved once per sample,
 while for `processor`s the function is resolved only once per buffer,
 providing coarse-grained choice without branching.
 
-When sample-accurate scheduling is required,
-`suspend` can be applied at the `processor` stage to create the `priority_queue` for delayed update.
-(In future, this may be automated on lift).
+	struct mix_t
+	:	process::confine_t<mix_t
+		,	active_t::template dispatch<2>
+		>
+	{
+		template <auto active>
+		XTAL_FN2 method(XTAL_DEF... xs)
+		{
+			return (XTAL_REF_(xs) + ... + 0.0)*active;
+		}
+	};
 
 Update is managed by the `influx` and `efflux` operators and methods.
 The `influx` method and operator `<<=` updates the dependency graph from the outside-in,
@@ -59,7 +101,44 @@ using caching to limit unnecessary propagation.
 The `efflux` method and operator `>>=` updates the dependency graph from the inside-out,
 following the functional flow of data.
 
+	mixer <<= active_t(0);// off
+
+When sample-accurate scheduling is required,
+`suspend` can be applied at the `processor` stage to create the `priority_queue` for delayed update.
+(In future, this may be automated on lift).
+
+	mixer.influx(123, active_t(0));// off @ offset 123
+
 They are often used in tandem, e.g. the global buffer size may be updated by `influx` before using `efflux` to `render` the outcome.
+
+	auto resize = resize_t(1024);
+	auto serial = serial_t(1024);
+
+	using mixer_t = processor::vectorize_t<mix_t>;
+	auto sixer = mixer_t::bind_f(one, two, three);
+
+	//	initialization
+	{
+		// allocate all `vectorize`d `processor`s reachable from `sixer`
+		sixer <<= resize;
+	}
+	
+	// 1st iteration
+	{
+		// activate the `sixer` for the entirety of the first block
+		sixer <<= active_t(1);
+
+		// render the current graph, and advance the `serial` cursor
+		sixer >>= serial++;
+	}
+	// 2nd iteration
+	{
+		// deactivate the `sixer` at an offset of `123` into the current buffer
+		sixer <<= sixer <<= std::make_tuple(123, active_t(0));
+
+		// render the current graph, and advance the `serial` cursor
+		sixer >>= serial++;
+	}
 
 # Development
 
