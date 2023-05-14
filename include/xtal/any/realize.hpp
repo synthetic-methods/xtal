@@ -134,7 +134,7 @@ public:
 	struct     sign: word<    sign_n, positive_n> {};
 	static_assert(~sign::mask == positive::mask);
 
-	XTAL_LET IEC_559 = XTAL_TRY__IEC_559 and _std::numeric_limits<alpha_t>::is_iec559;
+	XTAL_LET IEC_559 = XTAL_IEC_559 and _std::numeric_limits<alpha_t>::is_iec559;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -538,7 +538,7 @@ public:
 	XTAL_FZ1_(alpha_t) resign_z(alpha_t &target, alpha_t const &source=alpha_1)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)// both branches okay
+		if constexpr (IEC_559*0)
 		{
 			alpha_t result; delta_t m, n, o = unit::mask;
 			n   =     _std::bit_cast<delta_t> (_std::move(source));
@@ -566,7 +566,7 @@ public:
 	XTAL_FZ1_(alpha_t) design_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)// both branches okay
+		if constexpr (IEC_559*0)
 		{
 			alpha_t e; delta_t m, o = unit::mask;
 			m  = _std::bit_cast<delta_t> (target);
@@ -678,7 +678,9 @@ public:
 		}
 		else
 		{
-		//	FIXME: Recreate `expunge_z` exactly without bit-operations. \
+		//	TODO: Recreate `expunge_z` exactly without bit-operations. \
+
+		//	TODO: Assess performance of both branches for `truncate` and `puncture`. \
 
 			static_assert(IEC_559);//TODO: Implement `expunge_z` without bit-operations.
 		}
@@ -692,10 +694,10 @@ public:
 	A.K.A. `truncate`.
 
 	template <delta_t N_epsilon=0, delta_t N_rho=0>
-	XTAL_FZ1_(alpha_t) expurge_z(alpha_t &target)
+	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)// both branches okay
+		if constexpr (IEC_559*0)
 		{
 			auto constexpr M = (N_rho << exponent::shift) + unit::mask - (flag_f(N_epsilon) >> 1);
 			delta_t m, n, i, j;
@@ -727,72 +729,77 @@ public:
 	Mutator definition: modifies the `target` in-place, \
 	clamping the design to the region above `std::numeric_limits<alpha_t>::min()*diplo_y(N_depth)`. \
 	\returns `sign(target)` if the original value overflows, `0` otherwise. \
-	\note\
-	A.K.A. `puncture`.
 
 	template <delta_t N_depth=0>
-	XTAL_FZ1_(alpha_t) impurge_z(alpha_t &target)
+	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (0 == N_depth) return 0.0; // `target` unchanged
+		if constexpr (0 <= N_depth)
 		{
-			auto constexpr N = N_depth << exponent::shift;
-			auto constexpr M = N - positive::mask;
-			delta_t m, n, i, j;
-			m  =       _std::bit_cast<delta_t> (_std::move(target));// TODO: Re`move`?
-			n  =  m  &  sign::mask;
-			j  =  m  ^  n;
-			j  =  M  -  j;
-			i  =  j >>  positive::depth;
-			i &=        unit::mask;
-			n |=  i;
-			m +=  i  &  j;
-			target = _std::bit_cast<alpha_t> (_std::move(m));
-			return   _std::bit_cast<alpha_t> (n);
+			if constexpr (IEC_559)
+			{
+				auto constexpr N = N_depth << exponent::shift;
+				auto constexpr M = N - sign::mask;
+				delta_t x, m, n, o;
+				m   =  o  = _std::bit_cast<delta_t>(target);
+				n   =  o  &  sign::mask;
+				m  &=        exponent::mask;
+				m  |=        fraction::mask;
+				x   =  M  -  m;
+				x >>=        positive::depth;
+				x  &=        positive::mask;
+				o  &=       ~x;// using `^= x` results in `NaN` when `target == 0`
+				o  |=  M  &  x;
+				n  |=  x  &  unit::mask;
+				target = _std::bit_cast<alpha_t>(_std::move(o));
+				return   _std::bit_cast<alpha_t>(_std::move(n));
+			}
+			else
+			{
+				auto const t = minimal_y(N_depth);
+				auto const s = design_z(target);
+				auto const a = positive_y(t - target);
+				target += a;
+				target *= s;
+				return s*(a != alpha_0);
+			}
 		}
-		else
+		if constexpr (N_depth < 0)
 		{
-		//	FIXME: Recreate `impurge_z` exactly without bit-operations. \
+		//	TODO: Implement the opposite (lowering the ceiling from infinity)? \
 
-		//	auto const r = minimal_y(N_depth)*upsilon_y(1);
-		//	auto const r = minimal_y(N_depth + 1);
-			auto const r = minimal_y(N_depth);
-			auto const t = target, s = design_z(target);
-			target += positive_y(r - target);
-			target *= s;
-			return s*(t != target);
 		}
 	}
 	///\
 	Function definition. \
 	\returns the `target` clamped the design to the region above `std::numeric_limits<alpha_t>::min()*diplo_y(N_depth)`. \
-	\note\
-	A.K.A. `puncture`.
 
 	template <delta_t N_depth=0>
-	XTAL_FZ1_(alpha_t) impurge_y(alpha_t target)
+	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (IEC_559*0)
 		{
 			auto constexpr N = N_depth << exponent::shift;
-			auto constexpr M = N  - positive::mask;
-			delta_t m, n, i, j;
-			m   =      _std::bit_cast<delta_t> (target);
-			n   = m  &  sign::mask;
-			j   = m  ^  n;
-			j   = M  -  j;
-			i   = j >>  positive::depth;
-			m  += i  &  j & unit::mask;
-			return _std::bit_cast<alpha_t> (_std::move(m));
+			auto constexpr M = N - sign::mask;
+			delta_t x, m, n, o;
+			o   =     _std::bit_cast<delta_t>(target);
+			m   =  o & exponent::mask;
+			m  +=  1;// precomputing `M - 1` instead fails in some cases
+			x   =  M - m;
+			x >>=      positive::depth;
+			x  &=      positive::mask;
+			o  &= ~x;// using `^= x` results in `NaN` when `target == 0`
+			o  |=  x & M;
+			return _std::bit_cast<alpha_t>(_std::move(o));
 		}
 		else
 		{
-		//	FIXME: Recreate `impurge_y` exactly without bit-operations. \
-
-			auto const r = minimal_y(N_depth);
+			auto const t = minimal_y(N_depth);
 			auto const s = design_z(target);
-			target += positive_y(r - target);
+			auto const a = positive_y(t - target);
+			target += a;
 			target *= s;
 			return target;
 		}

@@ -7,17 +7,13 @@
 //\
 TODO: Allow command-line/[c]?make configuration?
 
-/*/
 #ifdef  NDEBUG
-#define XTAL_TRY__DEBUG 0
+#define XTAL_LOG 1//release
 #else
-#define XTAL_TRY__DEBUG 1
+#define XTAL_LOG 1//debug
 #endif
-/*/
-#define XTAL_TRY__DEBUG 1
-/***/
 
-#define XTAL_TRY__IEC_559 1
+#define XTAL_IEC_559 1
 
 ////////////////////////////////////////////////////////////////////////////////
 

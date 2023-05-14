@@ -57,27 +57,43 @@ namespace views  = ::ranges::views;
 
 #include "../_.hpp"
 
-#if XTAL_TRY__DEBUG// TODO: Use `fmt` or something for logging?
+#if XTAL_LOG
 #include <iostream>
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 struct
 {
-	decltype(auto) operator>> (auto&& w)
+	template <typename X>
+	void put(X&& x)
 	{
-		std::cout << '\n' << static_cast<decltype(w)&&>(w);
+		std::cout << static_cast<X&&>(x);
+	}
+	template <typename X> requires requires {std::is_arithmetic_v<X>;}
+	void put(X&& x)
+	{
+		std::cout.precision(17);
+		if (std::copysign(1.0, x) == 1.0) std::cout << ' ';
+		std::cout << static_cast<X&&>(x);
+	}
+	template <typename... Xs>
+	void put(Xs&&...xs)
+	{
+		(put(static_cast<Xs &&>(xs)), ...);
+	}
+
+	template <typename X>
+	decltype(auto) operator<< (X&& x)
+	{
+		put(static_cast<X&&>(x));
 		return *this;
 	}
-	decltype(auto) operator<< (auto&& w)
+	template <typename... Xs>
+	decltype(auto) operator() (Xs&&... xs)
 	{
-		std::cout << '\t' << static_cast<decltype(w)&&>(w);
-		return *this;
-	}
-	void operator() (auto&&... ws)
-	{
-		(*this << ... << static_cast<decltype(ws)&&>(ws));
+		(put('\t', static_cast<Xs&&>(xs)), ...);
 		std::cout << '\n';
+		return *this;
 	}
 
 } ouch;
@@ -89,13 +105,13 @@ namespace xtal
 /////////////////////////////////////////////////////////////////////////////////
 struct
 {
-	decltype(auto) operator>> (auto&& w)
+	void operator() (auto&&... etc)
 	{
 	}
-	decltype(auto) operator<< (auto&& w)
+	decltype(auto) operator<< (auto&& etc)
 	{
 	}
-	void operator() (auto&&... ws)
+	decltype(auto) operator<<= (auto&& etc)
 	{
 	}
 

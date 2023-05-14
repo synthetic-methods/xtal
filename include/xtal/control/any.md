@@ -10,7 +10,7 @@ Thus `control` acts as a transparent proxy, and the basis for types like `xtal::
 # Future Scope
 
 The branch `feature/idempotent` explores the type-encoding of signal-conditioning operators like
-`puncture`/`impurge` and `truncate`/`impurge`.
+`puncture` and `truncate`.
 These operators follow a subset relationship such that e.g. `puncture<1 + N>: puncture<N>`,
 and can be mixed in order to desribe the target domain.
 

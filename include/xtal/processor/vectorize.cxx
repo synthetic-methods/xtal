@@ -102,7 +102,7 @@ void render_internal__test()
 	xhs >>=   seq; REQUIRE(_v3::ranges::equal(xhs, _std::vector{00, 11, 22}));// initialize via efflux!
 	xhs >>= ++seq; REQUIRE(_v3::ranges::equal(xhs, _std::vector{33, 44, 55}));// advance then efflux...
 	xhs >>= ++seq; REQUIRE(_v3::ranges::equal(xhs, _std::vector{66, 77, 88}));// advance then efflux...
-//	ouch >> xhs[0] << xhs[1] << xhs[2];
+//	ouch <<= xhs[0] << xhs[1] << xhs[2];
 }
 
 TEST_CASE("xtal/processor/vectorize.hpp: render internal")
@@ -144,7 +144,7 @@ void render_internal_suspension__test()
 	xhs >>=  seq;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{66, 77, 66, 77}));
-//	ouch >> xhs[0] << xhs[1] << xhs[2] << xhs[3];
+//	ouch <<= xhs[0] << xhs[1] << xhs[2] << xhs[3];
 }
 
 TEST_CASE("xtal/processor/vectorize.hpp: render internal suspension")
