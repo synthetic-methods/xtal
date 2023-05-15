@@ -2,7 +2,7 @@
 #include "./any.hpp"
 #include "./collate.hpp"// next
 
-
+#include <complex>
 
 
 
@@ -46,14 +46,14 @@ struct buffer
 			-	defining a non-summing companion to `dot` e.g. `zot` \
 			-	supplying real and imaginary projections with a range interface \
 
-		//	TODO: Define FFT operations. \
+		//	TODO: Define orbital and FFT operations. \
 
 		public:
 			template <arrayed_q _S>
 			class subtype;
 
 			template <arrayed_q _S>
-			XTAL_IF1 is_q<iteratee_t<_S>, U> and alpha_q<U>
+			XTAL_IF1 is_q<iteratee_t<_S>, U>// and alpha_q<U>
 			class subtype<_S>: public _S
 			{
 				using co = _S; using T = subtype<_S>;
@@ -104,11 +104,89 @@ struct buffer
 				XTAL_0FX
 				XTAL_IF1 (N == 2)
 				{
-					const auto x = get(0) + get(1);
-					const auto y = get(0) - get(1);
+					auto const x = get(0) + get(1);
+					auto const y = get(0) - get(1);
 					return T{x, y};//*realize<U>::SQRT_HALF;
 				}
 				
+				XTAL_FN1_(T&) series_geometric(U const &base)
+				XTAL_0EX
+				XTAL_IF1 even_q<N>
+				{
+					auto const &u =  base;
+					auto       &s = *this;
+					s[0] = 1;
+					s[1] = u;
+					for (sigma_t i = 1; i < N >> 1; ++i)
+					{
+					//	NOTE: Squaring is more precise/efficient for complex numbers. \
+						but may need to compute explicitly. \
+
+						U w = s[i]; sigma_t const j = i << 1;
+						w *= w; s[j + 0] = w;
+						w *= u; s[j + 1] = w;
+					}
+					return s;
+				}
+				XTAL_FN1_(T&) series_fourier()
+				XTAL_0EX
+				XTAL_IF2 (U u)
+				{
+					requires even_q<N>;
+					u.real();
+					u.imag();
+				}
+				{
+					auto const u = _std::exp(U(-0.0, realized::patio_y<-1> (N)));
+					return series_geometric(u);
+				}
+				XTAL_FN1_(T&) transform_fourier()
+				XTAL_0EX
+				XTAL_IF2 (U u)
+				{
+					requires even_q<N>;
+					u.real();
+					u.imag();
+				}
+				{
+					T basis; basis.series_fourier();
+					return this->transform_fourier(basis);
+				}
+				XTAL_FN1_(T&) transform_fourier(T const &basis)
+				XTAL_0EX
+				XTAL_IF2 (U u)
+				{
+					requires even_q<N>;
+					u.real();
+					u.imag();
+				}
+				{
+					sigma_t constexpr H = N >> 1;
+					sigma_t constexpr O = realized::bit_ceiling_y(N);
+					static_assert(1 << O == N);
+
+					auto& s = *this;
+					for (sigma_t h = 0; h < H; ++h)
+					{
+						_std::swap(s[h], s[realized::bit_reverse_y<O>(h)]);
+					}
+					for (sigma_t o = 0; o < O; ++o)
+					{
+						sigma_t const u = 1 << o;
+						sigma_t const w = u << 1;
+						
+						for (sigma_t i = 0; i < u; i += 1)
+						for (sigma_t j = i; j < N; j += w)
+						{
+							U const su = s[j + u]*basis[i*(N >> o)];
+							U const s0 = s[j + 0];
+							s[j + u] = s0 - su;
+							s[j + 0] = s0 + su;
+						}
+					}
+					return s;
+				}
+
 			};
 			template <arrayed_q _S>
 			XTAL_IF1 is_q<iteratee_t<_S>, U> and iota_q<U>
@@ -168,6 +246,9 @@ struct buffer
 			using type = subtype<_std::array<U, N>>;
 
 		};
+		template <typename U>
+		using scalar_t = typename scalar<U>::type;
+
 		template <typename U>
 		struct vector
 		{
@@ -622,6 +703,9 @@ using buffer_still_t = typename buffer_t<N>::template still_t<U>;
 
 template <iota_t N=-1, typename U=alpha_t>
 using buffer_vector_t = typename buffer_t<N>::template vector_t<U>;
+
+template <iota_t N=-1, typename U=alpha_t>
+using buffer_scalar_t = typename buffer_t<N>::template scalar_t<U>;
 
 template <iota_t N=-1, typename U=alpha_t>
 using buffer_allocator_t = typename buffer_t<N>::template allocator_t<U>;

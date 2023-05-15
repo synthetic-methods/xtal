@@ -11,8 +11,33 @@ namespace xtal::any::_realize
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+unsigned int bitReverse(unsigned int x, int O)
+{
+	int n = 0;
+	int mask = 0x1;
+	for (int i = 0; i < O; i++)
+	{
+		n <<= 1;
+		n |= (x & 1);
+		x >>= 1;
+	}
+	return n;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("xtal/any/realize.hpp: reverse 32:03")
+{
+	using realized = realize<uint32_t>;
+	using sigma_t = typename realized::sigma_t;
+
+	sigma_t question = 0b011;
+	sigma_t answer   = 0b110;
+
+//	REQUIRE(answer == bitReverse(question, 3));
+	REQUIRE(answer == realized::bit_reverse_x<3>(question));
+
+}
 TEST_CASE("xtal/any/realize.hpp: reverse 16:16")
 {
 	using realized = realize<uint16_t>;
@@ -21,7 +46,7 @@ TEST_CASE("xtal/any/realize.hpp: reverse 16:16")
 	sigma_t question = 0b0100100011100101;
 	sigma_t answer   = 0b1010011100010010;
 
-	REQUIRE(answer == realized::reverse_x<16>(question));
+	REQUIRE(answer == realized::bit_reverse_x<16>(question));
 
 }
 TEST_CASE("xtal/any/realize.hpp: reverse 16:12")
@@ -32,7 +57,7 @@ TEST_CASE("xtal/any/realize.hpp: reverse 16:12")
 	sigma_t question = 0b010010001110;
 	sigma_t answer   = 0b011100010010;
 
-	REQUIRE(answer == realized::reverse_x<12>(question));
+	REQUIRE(answer == realized::bit_reverse_x<12>(question));
 
 }
 TEST_CASE("xtal/any/realize.hpp: reverse 8:8")
@@ -43,7 +68,7 @@ TEST_CASE("xtal/any/realize.hpp: reverse 8:8")
 	sigma_t question = 0b01001101;
 	sigma_t answer   = 0b10110010;
 
-	REQUIRE(answer == realized::reverse_x<8>(question));
+	REQUIRE(answer == realized::bit_reverse_x<8>(question));
 
 }
 TEST_CASE("xtal/any/realize.hpp: reverse 8:6")
@@ -54,7 +79,7 @@ TEST_CASE("xtal/any/realize.hpp: reverse 8:6")
 	sigma_t question = 0b010011;
 	sigma_t answer   = 0b110010;
 
-	REQUIRE(answer == realized::reverse_x<6>(question));
+	REQUIRE(answer == realized::bit_reverse_x<6>(question));
 
 }
 

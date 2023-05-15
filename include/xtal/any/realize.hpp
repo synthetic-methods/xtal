@@ -18,9 +18,11 @@ template <auto...     Ns>       concept     true_q =     (bool(Ns)  or...);///< 
 template <auto...     Ns>       concept    false_q = not (bool(Ns) and...);///< Matches if any `Ns... == 0`.
 template <auto...     Ns>       concept   untrue_q = not (bool(Ns)  or...);///< Matches if all `Ns... == 0`.
 template <auto...     Ns>       concept  unfalse_q =     (bool(Ns) and...);///< Matches if all `Ns... == 1`.
-template <auto        N=0>      concept positive_q = 0 < N;///< Matches `0 < N`.
-template <auto        N=0>      concept negative_q = N < 0;///< Matches `N < 0`.
-template <typename T, auto N>   concept  breadth_q = N == sizeof(T);
+template <auto        N=0>      concept positive_q = (0 < N);
+template <auto        N=0>      concept negative_q = (N < 0);
+template <auto        N=0>      concept     even_q = (N & 1) == 0;
+template <auto        N=0>      concept      odd_q = (N & 1) == 1;
+template <typename T, auto N>   concept  breadth_q = (N == sizeof(T));
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,11 +123,26 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-//	NOTE: These functions are only currently available for 8- and 16-bit integers. \
-
-//	TODO: Incorporate separate floating-point and integral traits, e.g. `realizer`. \
+//	TODO: Reduce duplication by incorporating separate floating-point and integral traits, e.g. `realizer`. \
 
 //	TODO: Define `reverse` as a `process` so that it can be dynamically controlled. \
+
+	XTAL_FZ2 bit_floor_y(sigma_t n)
+	XTAL_0EX
+	{
+		sigma_t m = 0;
+		for (; n >>= 1; ++m);
+		return m;
+	}
+
+	XTAL_FZ2 bit_ceiling_y(sigma_t const &n)
+	XTAL_0EX
+	{
+		sigma_t m = bit_floor_y(n);
+		m += 1 << m != n;
+		return m;
+	}
+
 
 	///\
 	Mutator definition: reverses the bits in `n`. \
@@ -134,7 +151,8 @@ public:
 	Requires `log2(depth)` iterations.
 
 	template <sigma_t N_subdepth=0>
-	XTAL_FZ1_(void) reverse_z(sigma_t &n)
+	XTAL_FZ1_(void) bit_reverse_z(sigma_t &n)
+	XTAL_0EX
 	{
 		static_assert(0 <= N_subdepth && N_subdepth <= depth);
 		if constexpr (0 == N_subdepth || N_subdepth == depth)
@@ -147,36 +165,34 @@ public:
 		}
 		else
 		{
-			constexpr sigma_t shift = (depth - N_subdepth) >> 1;
-			n <<= shift;
-			reverse_z<0>(n);
-			n >>= shift;
+			bit_reverse_z<0>(n);
+			n >>= depth - N_subdepth;
 		}
 	}
 	///\
-	Function definition of `reverse_z`. \
+	Function definition of `bit_reverse_z`. \
 	\returns the bitwise-reversal of the given value `n`. \
 
 	template <sigma_t N_subdepth=0>
-	XTAL_FZ2 reverse_y(sigma_t n)
+	XTAL_FZ2 bit_reverse_y(sigma_t n)
 	{
-		reverse_z<N_subdepth>(n); return n;
+		bit_reverse_z<N_subdepth>(n); return n;
 	}
 	///\
-	Function type of `reverse_y`. \
+	Function type of `bit_reverse_y`. \
 
-	using reverse_t = sigma_t (*const) (sigma_t const &);
+	using bit_reverse_t = sigma_t (*const) (sigma_t const &);
 	///\
-	Function expression of `reverse_y`. \
+	Function expression of `bit_reverse_y`. \
 
 	template <sigma_t N_subdepth=0>
-	XTAL_LET_(reverse_t) reverse_x = [] (sigma_t const & n)
-	XTAL_0FN_(reverse_y<N_subdepth> (n));
+	XTAL_LET_(bit_reverse_t) bit_reverse_x = [] (sigma_t const & n)
+	XTAL_0FN_(bit_reverse_y<N_subdepth> (n));
 
 //	NOTE: Supplying the function type avoids the segmentation fault raised \
 	when applying the templated lambda to dynamic data. \
 
-	static_assert(reverse_x<0> (sigma_1 << (depth - 1)) == 1);
+	static_assert(bit_reverse_x<0> (sigma_1 << (depth - 1)) == 1);
 
 };
 template <typename Q>
@@ -247,6 +263,76 @@ public:
 	static_assert(~sign::mask == positive::mask);
 
 	XTAL_LET IEC_559 = XTAL_IEC_559 and _std::numeric_limits<alpha_t>::is_iec559;
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_FZ2 bit_floor_y(sigma_t n)
+	XTAL_0EX
+	{
+		sigma_t m = 0;
+		for (; n >>= 1; ++m);
+		return m;
+	}
+
+	XTAL_FZ2 bit_ceiling_y(sigma_t const &n)
+	XTAL_0EX
+	{
+		sigma_t m = bit_floor_y(n);
+		m += 1 << m != n;
+		return m;
+	}
+
+	///\
+	Mutator definition: reverses the bits in `n`. \
+	When `0 < N_subdepth < depth`, reversal is only applied to the lowest `N_subdepth` bits. \
+	\note\
+	Requires `log2(depth)` iterations.
+
+	template <sigma_t N_subdepth=0>
+	XTAL_FZ1_(void) bit_reverse_z(sigma_t &n)
+	XTAL_0EX
+	{
+		static_assert(0 <= N_subdepth && N_subdepth <= depth);
+		if constexpr (0 == N_subdepth || N_subdepth == depth)
+		{
+			for (sigma_t m = -1, i = depth; i >>= 1;)
+			{
+				m ^= m<<i;
+				n = (n&m)<<i | (n&~m)>>i;
+			}
+		}
+		else
+		{
+			bit_reverse_z<0>(n);
+			n >>= depth - N_subdepth;
+		}
+	}
+	///\
+	Function definition of `bit_reverse_z`. \
+	\returns the bitwise-reversal of the given value `n`. \
+
+	template <sigma_t N_subdepth=0>
+	XTAL_FZ2 bit_reverse_y(sigma_t n)
+	{
+		bit_reverse_z<N_subdepth>(n); return n;
+	}
+	///\
+	Function type of `bit_reverse_y`. \
+
+	using bit_reverse_t = sigma_t (*const) (sigma_t const &);
+	///\
+	Function expression of `bit_reverse_y`. \
+
+	template <sigma_t N_subdepth=0>
+	XTAL_LET_(bit_reverse_t) bit_reverse_x = [] (sigma_t const & n)
+	XTAL_0FN_(bit_reverse_y<N_subdepth> (n));
+
+//	NOTE: Supplying the function type avoids the segmentation fault raised \
+	when applying the templated lambda to dynamic data. \
+
+	static_assert(bit_reverse_x<0> (sigma_1 << (depth - 1)) == 1);
 
 
 ////////////////////////////////////////////////////////////////////////////////

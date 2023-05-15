@@ -67,13 +67,11 @@ struct
 	template <typename X>
 	void put(X&& x)
 	{
-		std::cout << static_cast<X&&>(x);
-	}
-	template <typename X> requires requires {std::is_arithmetic_v<X>;}
-	void put(X&& x)
-	{
-		std::cout.precision(17);
-		if (std::copysign(1.0, x) == 1.0) std::cout << ' ';
+		if constexpr (std::is_floating_point_v<X>)
+		{
+			std::cout.precision(17);
+			if (std::copysign(1.0, x) == 1.0) std::cout << ' ';
+		}
 		std::cout << static_cast<X&&>(x);
 	}
 	template <typename... Xs>

@@ -1,7 +1,7 @@
 #pragma once
 #include "./buffer.hpp"
 #include "../message/numinal.hpp"
-
+#include <complex>
 
 
 #include <catch2/catch_all.hpp>
@@ -12,6 +12,45 @@ namespace xtal::any::_test::buffer
 /////////////////////////////////////////////////////////////////////////////////
 
 using bias_t = message::numinal_t<alpha_t, struct bias>;
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/any/buffer.hpp: scalar series_geometric")
+{
+	using window_t = buffer_scalar_t<(1<<3), realized::alpha_t>;
+
+	window_t orbital; orbital.series_geometric(2);
+
+	REQUIRE(_v3::ranges::equal(orbital, _std::vector {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7}));
+
+}
+
+TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
+{
+	sigma_t const O =      3;
+	sigma_t const N = 1 << O;
+	sigma_t const M = N  - 1;
+
+	using Cx = _std::complex<realized::alpha_t>;
+	using window_t = buffer_scalar_t<N, Cx>;
+
+	window_t data;
+	data[0] = data[M - 0] = Cx(0.0, 0.0);
+	data[1] = data[M - 1] = Cx(1.0, 1.0);
+	data[2] = data[M - 2] = Cx(3.0, 3.0);
+	data[3] = data[M - 3] = Cx(4.0, 4.0);
+
+	data.transform_fourier();
+
+	REQUIRE(data[0] == Cx( 0.16000000000000000e+2, 0.16000000000000000e+2));
+	REQUIRE(data[1] == Cx(-0.48284271247461916e+1,-0.11656854249492380e+2));
+	REQUIRE(data[2] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
+	REQUIRE(data[3] == Cx(-0.34314575050762031e+0, 0.82842712474618851e+0));
+	REQUIRE(data[4] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
+	REQUIRE(data[5] == Cx( 0.82842712474619118e+0,-0.34314575050762031e+0));
+	REQUIRE(data[6] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
+	REQUIRE(data[7] == Cx(-0.11656854249492380e+2,-0.48284271247461881e+1));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
