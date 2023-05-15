@@ -7,9 +7,67 @@
 #include <catch2/catch_all.hpp>
 
 XTAL_ENV_(push)
-namespace xtal::any::_test::realize
+namespace xtal::any::_realize
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/any/realize.hpp: reverse 16:16")
+{
+	using realized = realize<uint16_t>;
+	using sigma_t = typename realized::sigma_t;
+
+	sigma_t question = 0b0100100011100101;
+	sigma_t answer   = 0b1010011100010010;
+
+	REQUIRE(answer == realized::reverse_x<16>(question));
+
+}
+TEST_CASE("xtal/any/realize.hpp: reverse 16:12")
+{
+	using realized = realize<uint16_t>;
+	using sigma_t = typename realized::sigma_t;
+
+	sigma_t question = 0b010010001110;
+	sigma_t answer   = 0b011100010010;
+
+	REQUIRE(answer == realized::reverse_x<12>(question));
+
+}
+TEST_CASE("xtal/any/realize.hpp: reverse 8:8")
+{
+	using realized = realize<uint8_t>;
+	using sigma_t = typename realized::sigma_t;
+
+	sigma_t question = 0b01001101;
+	sigma_t answer   = 0b10110010;
+
+	REQUIRE(answer == realized::reverse_x<8>(question));
+
+}
+TEST_CASE("xtal/any/realize.hpp: reverse 8:6")
+{
+	using realized = realize<uint8_t>;
+	using sigma_t = typename realized::sigma_t;
+
+	sigma_t question = 0b010011;
+	sigma_t answer   = 0b110010;
+
+	REQUIRE(answer == realized::reverse_x<6>(question));
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/any/realize.hpp: ratio")
+{
+	REQUIRE(realized::ratio_x<1>(4) == 0.25);
+	REQUIRE(realized::ratio_x<2>(4) == 0.50);
+	REQUIRE(realized::ratio_x<3>(4) == 0.75);
+	REQUIRE(realized::ratio_x<4>(4) == 1.00);
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

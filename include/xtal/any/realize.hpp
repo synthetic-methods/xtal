@@ -38,12 +38,33 @@ The constants labelled `carmack_v` are provided for `Q_rsqrt` (in lieu of `const
 template <typename>
 struct realization;
 
+template <breadth_q<1> Q>
+struct realization<Q>
+{
+//	using     alpha_t  =     _std::float4_t;
+//	using      iota_t  =       _std::int4_t;
+	using     delta_t  =   signed      char;
+	using     sigma_t  = unsigned      char;
+	XTAL_LET_(sigma_t)      fraction_n = 10;
+	XTAL_LET_(sigma_t)      exponent_n =  5;
+
+};
+template <breadth_q<2> Q>
+struct realization<Q>
+{
+//	using     alpha_t  =     _std::float8_t;
+	using      iota_t  =       _std::int8_t;
+	using     delta_t  =   signed short int;
+	using     sigma_t  = unsigned short int;
+	XTAL_LET_(sigma_t)      fraction_n = 10;
+	XTAL_LET_(sigma_t)      exponent_n =  5;
+
+};
 template <breadth_q<4> Q>
 struct realization<Q>
 {
 	using     alpha_t  =              float;
 	using      iota_t  =      _std::int16_t;
-//	using      iota_t  =   signed short int;
 	using     delta_t  =   signed       int;
 	using     sigma_t  = unsigned       int;
 	XTAL_LET_(sigma_t)      fraction_n = 23;
@@ -57,7 +78,6 @@ struct realization<Q>
 {
 	using     alpha_t  =             double;
 	using      iota_t  =      _std::int32_t;
-//	using      iota_t  =   signed       int;
 	using     delta_t  =   signed long  int;
 	using     sigma_t  = unsigned long  int;
 	XTAL_LET_(sigma_t)      fraction_n = 52;
@@ -82,6 +102,96 @@ private:
 	using co = realization<Q>;
 
 public:
+	using typename co::delta_t;
+	using typename co::sigma_t;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_LET sigma_x = [] (XTAL_DEF w) XTAL_0FN_(sigma_t(XTAL_REF_(w)));
+	XTAL_LET delta_x = [] (XTAL_DEF w) XTAL_0FN_(delta_t(XTAL_REF_(w)));
+
+	XTAL_LET delta_0 = delta_t(0), delta_1 = delta_t(1);
+	XTAL_LET sigma_0 = sigma_t(0), sigma_1 = sigma_t(1);
+
+	XTAL_LET breadth = sizeof(Q) >> 2;
+	XTAL_LET   width = sizeof(Q);
+	XTAL_LET   depth = sizeof(Q) << 3;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+//	NOTE: These functions are only currently available for 8- and 16-bit integers. \
+
+//	TODO: Incorporate separate floating-point and integral traits, e.g. `realizer`. \
+
+//	TODO: Define `reverse` as a `process` so that it can be dynamically controlled. \
+
+	///\
+	Mutator definition: reverses the bits in `n`. \
+	When `0 < N_subdepth < depth`, reversal is only applied to the lowest `N_subdepth` bits. \
+	\note\
+	Requires `log2(depth)` iterations.
+
+	template <sigma_t N_subdepth=0>
+	XTAL_FZ1_(void) reverse_z(sigma_t &n)
+	{
+		static_assert(0 <= N_subdepth && N_subdepth <= depth);
+		if constexpr (0 == N_subdepth || N_subdepth == depth)
+		{
+			for (sigma_t m = -1, i = depth; i >>= 1;)
+			{
+				m ^= m<<i;
+				n = (n&m)<<i | (n&~m)>>i;
+			}
+		}
+		else
+		{
+			constexpr sigma_t shift = (depth - N_subdepth) >> 1;
+			n <<= shift;
+			reverse_z<0>(n);
+			n >>= shift;
+		}
+	}
+	///\
+	Function definition of `reverse_z`. \
+	\returns the bitwise-reversal of the given value `n`. \
+
+	template <sigma_t N_subdepth=0>
+	XTAL_FZ2 reverse_y(sigma_t n)
+	{
+		reverse_z<N_subdepth>(n); return n;
+	}
+	///\
+	Function type of `reverse_y`. \
+
+	using reverse_t = sigma_t (*const) (sigma_t const &);
+	///\
+	Function expression of `reverse_y`. \
+
+	template <sigma_t N_subdepth=0>
+	XTAL_LET_(reverse_t) reverse_x = [] (sigma_t const & n)
+	XTAL_0FN_(reverse_y<N_subdepth> (n));
+
+//	NOTE: Supplying the function type avoids the segmentation fault raised \
+	when applying the templated lambda to dynamic data. \
+
+	static_assert(reverse_x<0> (sigma_1 << (depth - 1)) == 1);
+
+};
+template <typename Q>
+XTAL_IF2
+{
+	typename realization<Q>::alpha_t;
+	requires std::is_floating_point_v<typename realization<Q>::alpha_t>;
+}
+struct realize<Q>
+:	realization<Q>
+{
+private:
+	using co = realization<Q>;
+
+public:
 	using typename co::alpha_t;
 	using typename co:: iota_t;
 	using typename co::delta_t;
@@ -89,6 +199,8 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+//	using alphaplex_t = _std::complex<alpha_t>;
 
 	XTAL_LET alpha_x = [] (XTAL_DEF w) XTAL_0FN_(alpha_t(XTAL_REF_(w)));
 	XTAL_LET  iota_x = [] (XTAL_DEF w) XTAL_0FN_( iota_t(XTAL_REF_(w)));
@@ -241,11 +353,15 @@ public:
 		return explo_y(N_depth, XTAL_REF_(based));
 	}
 	///\
+	Function type of `explo_y`. \
+
+	using explo_t = alpha_t (*const) (alpha_t const &);
+	///\
 	Function expression of `explo_y`. \
 
 	template <sigma_t N_depth>
-	XTAL_LET  explo_x = [] (XTAL_DEF based)
-	XTAL_0FN_(explo_y<N_depth> (XTAL_REF_(based)));
+	XTAL_LET_(explo_t) explo_x = [] (alpha_t const &based)
+	XTAL_0FN_(explo_y<N_depth> (based));
 
 	static_assert(explo_y<0> (alpha_t(2.0)) == 1.00);
 	static_assert(explo_y<1> (alpha_t(2.0)) == 2.00);
@@ -266,11 +382,15 @@ public:
 		return alpha_t(N_num)/XTAL_REF_(nom);
 	}
 	///\
+	Function type of `ratio_y`. \
+
+	using ratio_t = alpha_t (*const) (alpha_t const &);
+	///\
 	Function expression of `ratio_y`. \
 
 	template <auto N_num=1>
-	XTAL_LET  ratio_x = [] (XTAL_DEF nom)
-	XTAL_0FN_(ratio_y<N_num> (XTAL_REF_(nom)));
+	XTAL_LET_(ratio_t) ratio_x = [] (alpha_t const& nom)
+	XTAL_0FN_(ratio_y<N_num> (nom));
 
 	static_assert(ratio_y<1> (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<4> (alpha_t(2.0)) == 2.0);
@@ -287,14 +407,18 @@ public:
 		return ratio_y<N_num> (XTAL_REF_(u))*3.14159265358979323846264338327950288419717;
 	}
 	///\
+	Function type of `patio_y`. \
+
+	using patio_t = alpha_t (*const) (alpha_t const &);
+	///\
 	Function expression of `patio_y`. \
 
 	template <auto N_num=1>
-	XTAL_LET  patio_x = [] (XTAL_DEF u)
-	XTAL_0FN_(patio_y<N_num> (XTAL_REF_(u)));
+	XTAL_LET_(patio_t) patio_x = [] (alpha_t const& nom)
+	XTAL_0FN_(patio_y<N_num> (nom));
 
-	static_assert(patio_y<1> (alpha_t(2.0)) == 1.57079632679489661923132169163975144209858);
-	static_assert(patio_y<4> (alpha_t(2.0)) == 6.28318530717958647692528676655900576839434);
+	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
+	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.28318530717958647692528676655900576839434));
 
 
 ////////////////////////////////////////////////////////////////////////////////

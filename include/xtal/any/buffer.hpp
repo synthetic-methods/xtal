@@ -34,11 +34,19 @@ struct buffer
 
 		//	TODO: Specialize the appropriate types so that e.g. `std::apply` works. \
 
-		//	TODO: Define the operators using SIMD, when available/applicable? \
+		//	TODO: Specialize the appropriate types to allow `alpha_q` to match `scalar<alpha_q>`. \
 		
-		//	TODO: Reify `buffer_scalar_t<2, U>` as its own type to represent twin or even/odd representations, \
-			e.g. stereo or mid-side signals, and results like `{exp(+x), exp(-x)}` or `{cosh(x), sinh(x)}`, \
+		//	TODO: Reify `buffer_scalar_t<2, U>` with even/odd semantics, \
+			e.g. stereo or mid-side signals, and results like `exp(+x), exp(-x)` or `cosh(x), sinh(x)`, \
 			and define the operations to interconvert them. \
+
+		//	TODO: Reify `buffer_scalar_t<2, U>` with `std::complex` semantics, \
+			and define componentwise multiplication either by: \
+			-	using `std::bit_cast<scalar_t<U>>` \
+			-	defining a non-summing companion to `dot` e.g. `zot` \
+			-	supplying real and imaginary projections with a range interface \
+
+		//	TODO: Define FFT operations. \
 
 		public:
 			template <arrayed_q _S>
@@ -102,7 +110,6 @@ struct buffer
 				}
 				
 			};
-			//
 			template <arrayed_q _S>
 			XTAL_IF1 is_q<iteratee_t<_S>, U> and iota_q<U>
 			class subtype<_S>: public _S
@@ -158,7 +165,6 @@ struct buffer
 				XTAL_OP2_(T   ) -                     () XTAL_0FX {return _std::apply([] (XTAL_DEF... xs) XTAL_0FN_(T{(-xs, ...)}), get());}
 
 			};
-			/***/
 			using type = subtype<_std::array<U, N>>;
 
 		};
