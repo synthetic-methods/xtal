@@ -119,12 +119,12 @@ struct buffer
 					s[1] = u;
 					for (sigma_t i = 1; i < N >> 1; ++i)
 					{
-					//	NOTE: Squaring is more precise/efficient for complex numbers. \
-						but may need to compute explicitly. \
-
-						U w = s[i]; sigma_t const j = i << 1;
-						w *= w; s[j + 0] = w;
-						w *= u; s[j + 1] = w;
+						auto w = square_y(s[i]);// NOTE: Squaring is more precise/efficient for complex numbers.
+						auto j = i << 1;
+						s[j] = w;
+						j   += 1;
+						w   *= u;
+						s[j] = w;
 					}
 					return s;
 				}
@@ -162,13 +162,13 @@ struct buffer
 				}
 				{
 					sigma_t constexpr H = N >> 1;
-					sigma_t constexpr O = realized::bit_ceiling_y(N);
+					sigma_t constexpr O = bit_ceiling_y(N);
 					static_assert(1 << O == N);
 
 					auto& s = *this;
 					for (sigma_t h = 0; h < H; ++h)
 					{
-						_std::swap(s[h], s[realized::bit_reverse_y<O>(h)]);
+						_std::swap(s[h], s[bit_reverse_y<O>(h)]);
 					}
 					for (sigma_t o = 0; o < O; ++o)
 					{

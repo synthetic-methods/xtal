@@ -120,80 +120,6 @@ public:
 	XTAL_LET   width = sizeof(Q);
 	XTAL_LET   depth = sizeof(Q) << 3;
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-//	TODO: Reduce duplication by incorporating separate floating-point and integral traits, e.g. `realizer`. \
-
-//	TODO: Define `reverse` as a `process` so that it can be dynamically controlled. \
-
-	XTAL_FZ2 bit_floor_y(sigma_t n)
-	XTAL_0EX
-	{
-		sigma_t m = 0;
-		for (; n >>= 1; ++m);
-		return m;
-	}
-
-	XTAL_FZ2 bit_ceiling_y(sigma_t const &n)
-	XTAL_0EX
-	{
-		sigma_t m = bit_floor_y(n);
-		m += 1 << m != n;
-		return m;
-	}
-
-
-	///\
-	Mutator definition: reverses the bits in `n`. \
-	When `0 < N_subdepth < depth`, reversal is only applied to the lowest `N_subdepth` bits. \
-	\note\
-	Requires `log2(depth)` iterations.
-
-	template <sigma_t N_subdepth=0>
-	XTAL_FZ1_(void) bit_reverse_z(sigma_t &n)
-	XTAL_0EX
-	{
-		static_assert(0 <= N_subdepth && N_subdepth <= depth);
-		if constexpr (0 == N_subdepth || N_subdepth == depth)
-		{
-			for (sigma_t m = -1, i = depth; i >>= 1;)
-			{
-				m ^= m<<i;
-				n = (n&m)<<i | (n&~m)>>i;
-			}
-		}
-		else
-		{
-			bit_reverse_z<0>(n);
-			n >>= depth - N_subdepth;
-		}
-	}
-	///\
-	Function definition of `bit_reverse_z`. \
-	\returns the bitwise-reversal of the given value `n`. \
-
-	template <sigma_t N_subdepth=0>
-	XTAL_FZ2 bit_reverse_y(sigma_t n)
-	{
-		bit_reverse_z<N_subdepth>(n); return n;
-	}
-	///\
-	Function type of `bit_reverse_y`. \
-
-	using bit_reverse_t = sigma_t (*const) (sigma_t const &);
-	///\
-	Function expression of `bit_reverse_y`. \
-
-	template <sigma_t N_subdepth=0>
-	XTAL_LET_(bit_reverse_t) bit_reverse_x = [] (sigma_t const & n)
-	XTAL_0FN_(bit_reverse_y<N_subdepth> (n));
-
-//	NOTE: Supplying the function type avoids the segmentation fault raised \
-	when applying the templated lambda to dynamic data. \
-
-	static_assert(bit_reverse_x<0> (sigma_1 << (depth - 1)) == 1);
-
 };
 template <typename Q>
 XTAL_IF2
@@ -268,106 +194,34 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_FZ2 bit_floor_y(sigma_t n)
-	XTAL_0EX
-	{
-		sigma_t m = 0;
-		for (; n >>= 1; ++m);
-		return m;
-	}
-
-	XTAL_FZ2 bit_ceiling_y(sigma_t const &n)
-	XTAL_0EX
-	{
-		sigma_t m = bit_floor_y(n);
-		m += 1 << m != n;
-		return m;
-	}
-
 	///\
-	Mutator definition: reverses the bits in `n`. \
-	When `0 < N_subdepth < depth`, reversal is only applied to the lowest `N_subdepth` bits. \
-	\note\
-	Requires `log2(depth)` iterations.
+	\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
 
-	template <sigma_t N_subdepth=0>
-	XTAL_FZ1_(void) bit_reverse_z(sigma_t &n)
-	XTAL_0EX
-	{
-		static_assert(0 <= N_subdepth && N_subdepth <= depth);
-		if constexpr (0 == N_subdepth || N_subdepth == depth)
-		{
-			for (sigma_t m = -1, i = depth; i >>= 1;)
-			{
-				m ^= m<<i;
-				n = (n&m)<<i | (n&~m)>>i;
-			}
-		}
-		else
-		{
-			bit_reverse_z<0>(n);
-			n >>= depth - N_subdepth;
-		}
-	}
-	///\
-	Function definition of `bit_reverse_z`. \
-	\returns the bitwise-reversal of the given value `n`. \
-
-	template <sigma_t N_subdepth=0>
-	XTAL_FZ2 bit_reverse_y(sigma_t n)
-	{
-		bit_reverse_z<N_subdepth>(n); return n;
-	}
-	///\
-	Function type of `bit_reverse_y`. \
-
-	using bit_reverse_t = sigma_t (*const) (sigma_t const &);
-	///\
-	Function expression of `bit_reverse_y`. \
-
-	template <sigma_t N_subdepth=0>
-	XTAL_LET_(bit_reverse_t) bit_reverse_x = [] (sigma_t const & n)
-	XTAL_0FN_(bit_reverse_y<N_subdepth> (n));
-
-//	NOTE: Supplying the function type avoids the segmentation fault raised \
-	when applying the templated lambda to dynamic data. \
-
-	static_assert(bit_reverse_x<0> (sigma_1 << (depth - 1)) == 1);
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-	///\
-	Function definition. \
-	\returns the `constexpr` equivalent of `std:pow(2.0, depth)`. \
-
-	XTAL_FZ2 diplo_y(delta_t const &depth)
+	XTAL_FZ2 diplo_y(delta_t const &zoom)
 	XTAL_0EX
 	{
 		if constexpr (IEC_559)
 		{
-			delta_t m = depth << unit::shift; m += unit::mask;
+			delta_t m = zoom << unit::shift; m += unit::mask;
 			return _std::bit_cast<alpha_t> (m);
 		}
 		else
 		{
-			sigma_t const i_sgn =   depth >> positive::depth;
-			sigma_t const i_neg = -(depth &  i_sgn);
-			sigma_t const i_pos =  (depth & ~i_sgn);
+			sigma_t const i_sgn =   zoom >> positive::depth;
+			sigma_t const i_neg = -(zoom &  i_sgn);
+			sigma_t const i_pos =  (zoom & ~i_sgn);
 			return alpha_t(sigma_1 << i_pos)/(sigma_1 << i_neg);
 		}
 	}
-	///\
+	XTAL_LET  diplo_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(diplo_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression of `diplo_y`. \
 
-	XTAL_LET  diplo_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(diplo_y(XTAL_REF_(depth)));
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  diplo_v = diplo_y(N_zoom);
+	///<\
 	Value expression of `diplo_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  diplo_v = diplo_y(N_depth);
 
 	static_assert(diplo_v<+1> == 2.0);
 	static_assert(diplo_v< 0> == 1.0);
@@ -375,34 +229,32 @@ public:
 
 
 	///\
-	Function definition. \
-	\returns the `constexpr` equivalent of `std:pow(0.5, depth)`. \
+	\returns the `constexpr` equivalent of `std:pow(0.5, zoom)`. \
 
-	XTAL_FZ2 haplo_y(delta_t const &depth)
+	XTAL_FZ2 haplo_y(delta_t const &zoom)
 	XTAL_0EX
 	{
 		if constexpr (IEC_559)
 		{
-			return diplo_y(-depth);
+			return diplo_y(-zoom);
 		}
 		else
 		{
-			sigma_t const i_sgn =   depth >> positive::depth;
-			sigma_t const i_neg = -(depth &  i_sgn);
-			sigma_t const i_pos =  (depth & ~i_sgn);
+			sigma_t const i_sgn =   zoom >> positive::depth;
+			sigma_t const i_neg = -(zoom &  i_sgn);
+			sigma_t const i_pos =  (zoom & ~i_sgn);
 			return alpha_t(sigma_1 << i_neg)/(sigma_1 << i_pos);
 		}
 	}
-	///\
+	XTAL_LET  haplo_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(haplo_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression of `haplo_y`. \
 
-	XTAL_LET  haplo_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(haplo_y(XTAL_REF_(depth)));
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  haplo_v = haplo_y(N_zoom);
+	///<\
 	Value expression of `haplo_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  haplo_v = haplo_y(N_depth);
 
 	static_assert(haplo_v<+1> == 0.5);
 	static_assert(haplo_v< 0> == 1.0);
@@ -412,16 +264,17 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\
-	Function definition. \
-	\returns the `constexpr` equivalent of `std:pow(based, depth)` for an `unsigned int depth`. \
-	\note this is provided within `realize` for completeness/convenience, \
-	though it should be available as a generic function at the top level of `xtal` or `xtal-math`. \
+	\returns the `constexpr` equivalent of `std:pow(base, exponent)` for an `unsigned int exponent`. \
+	
+	///\
+	\note This is provided within `realize` for completeness/convenience, \
+	but could/should be defined generically at the top level of `xtal` or `xtal-math`. \
 
-	XTAL_FZ2 explo_y(sigma_t const &depth, alpha_t const &based)
+	XTAL_FZ2 explo_y(sigma_t const &exponent, alpha_t const &base)
 	XTAL_0EX
 	{
-		alpha_t w = 1, u = based;
-		for (sigma_t n = depth; n; n >>= 1)
+		alpha_t w = 1, u = base;
+		for (sigma_t n = exponent; n; n >>= 1)
 		{
 			if (n & 1)
 			{
@@ -432,22 +285,24 @@ public:
 		}
 		return w;
 	}
-	template <sigma_t N_depth>
-	XTAL_FZ2 explo_y(XTAL_DEF based)
+	template <sigma_t N_zoom>
+	XTAL_FZ2 explo_y(XTAL_DEF base)
 	XTAL_0EX
 	{
-		return explo_y(N_depth, XTAL_REF_(based));
+		return explo_y(N_zoom, XTAL_REF_(base));
 	}
-	///\
+	using explo_t = alpha_t (*const) (alpha_t const &);
+	///<\
 	Function type of `explo_y`. \
 
-	using explo_t = alpha_t (*const) (alpha_t const &);
-	///\
+	template <sigma_t N_zoom>
+	XTAL_LET_(explo_t) explo_x = [] (alpha_t const &base)
+	XTAL_0FN_(explo_y<N_zoom> (base));
+	///<\
 	Function expression of `explo_y`. \
 
-	template <sigma_t N_depth>
-	XTAL_LET_(explo_t) explo_x = [] (alpha_t const &based)
-	XTAL_0FN_(explo_y<N_depth> (based));
+	///\note The explicit function-type avoids potential segmentation fault \
+	raised when dynamically resolving the nested templated lambda. \
 
 	static_assert(explo_y<0> (alpha_t(2.0)) == 1.00);
 	static_assert(explo_y<1> (alpha_t(2.0)) == 2.00);
@@ -458,7 +313,6 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\
-	Function definition. \
 	\returns the `N_num`erator divided by the given de`nom`inator.
 
 	template <auto N_num=1>
@@ -467,23 +321,24 @@ public:
 	{
 		return alpha_t(N_num)/XTAL_REF_(nom);
 	}
-	///\
-	Function type of `ratio_y`. \
-
 	using ratio_t = alpha_t (*const) (alpha_t const &);
-	///\
-	Function expression of `ratio_y`. \
+	///<\
+	Function type of `ratio_y`. \
 
 	template <auto N_num=1>
 	XTAL_LET_(ratio_t) ratio_x = [] (alpha_t const& nom)
 	XTAL_0FN_(ratio_y<N_num> (nom));
+	///<\
+	Function expression of `ratio_y`. \
+
+	///\note The explicit function-type avoids potential segmentation fault \
+	raised when dynamically resolving the nested templated lambda. \
 
 	static_assert(ratio_y<1> (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<4> (alpha_t(2.0)) == 2.0);
 
 
 	///\
-	Function definition. \
 	\returns `pi` multiplied by the `ratio_y<N_num> (nom)`.
 
 	template <auto N_num=1>
@@ -492,16 +347,18 @@ public:
 	{
 		return ratio_y<N_num> (XTAL_REF_(u))*3.14159265358979323846264338327950288419717;
 	}
-	///\
-	Function type of `patio_y`. \
-
 	using patio_t = alpha_t (*const) (alpha_t const &);
-	///\
-	Function expression of `patio_y`. \
+	///<\
+	Function type of `patio_y`. \
 
 	template <auto N_num=1>
 	XTAL_LET_(patio_t) patio_x = [] (alpha_t const& nom)
 	XTAL_0FN_(patio_y<N_num> (nom));
+	///<\
+	Function expression of `patio_y`. \
+
+	///\note The explicit function-type avoids potential segmentation fault \
+	raised when dynamically resolving the nested templated lambda. \
 
 	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
 	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.28318530717958647692528676655900576839434));
@@ -510,26 +367,23 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Function definition. \
-	\returns the difference between floating-point values at the scale designated by `depth`. \
+	///\returns the difference between floating-point values at the scale designated by `zoom`. \
 
-	XTAL_FZ2_(alpha_t) epsilon_y(delta_t const &depth=1)
+	XTAL_FZ2_(alpha_t) epsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
 	{
 		auto constexpr N = fraction::depth + 1;
-		return haplo_y(N - depth);
+		return haplo_y(N - zoom);
 	}
-	///\
+	XTAL_LET  epsilon_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(epsilon_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression of `epsilon_y`. \
 
-	XTAL_LET  epsilon_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(epsilon_y(XTAL_REF_(depth)));
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  epsilon_v = epsilon_y(N_zoom);
+	///<\
 	Value expression of `epsilon_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  epsilon_v = epsilon_y(N_depth);
 
 	static_assert(epsilon_v<0> != alpha_0);
 	static_assert(epsilon_v<0> <  epsilon_v<1>);
@@ -537,50 +391,44 @@ public:
 	static_assert(epsilon_v<1> == _std::numeric_limits<alpha_t>::epsilon());
 	
 
-	///\
-	Function definition. \
-	\returns the value `depth` steps above `alpha_1`. \
+	///\returns the value `zoom` steps above `alpha_1`. \
 
-	XTAL_FZ2_(alpha_t) upsilon_y(delta_t const &depth=1)
+	XTAL_FZ2_(alpha_t) upsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
 	{
-		return alpha_1 + epsilon_y(depth - 0);
+		return alpha_1 + epsilon_y(zoom - 0);
 	}
-	///\
+	XTAL_LET  upsilon_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(upsilon_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression of `upsilon_y`. \
 
-	XTAL_LET  upsilon_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(upsilon_y(XTAL_REF_(depth)));
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  upsilon_v = upsilon_y(N_zoom);
+	///<\
 	Value expression of `upsilon_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  upsilon_v = upsilon_y(N_depth);
 	
 	static_assert(upsilon_v<0> == alpha_1);
 	static_assert(upsilon_v<1>  > upsilon_v<0>);
 	static_assert(upsilon_v<2>  > upsilon_v<1>);
 
 
-	///\
-	Function definition. \
-	\returns the value `depth` steps below `alpha_1`. \
+	///\returns the value `zoom` steps below `alpha_1`. \
 
-	XTAL_FZ2_(alpha_t) dnsilon_y(delta_t const &depth=1)
+	XTAL_FZ2_(alpha_t) dnsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
 	{
-		return alpha_1 - epsilon_y(depth - 1);
+		return alpha_1 - epsilon_y(zoom - 1);
 	}
-	///\
+	XTAL_LET  dnsilon_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(dnsilon_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression of `dnsilon_y`. \
 
-	XTAL_LET  dnsilon_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(dnsilon_y(XTAL_REF_(depth)));
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  dnsilon_v = dnsilon_y(N_zoom);
+	///<\
 	Value expression of `dnsilon_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  dnsilon_v = dnsilon_y(N_depth);
 	
 	static_assert(dnsilon_v<0> == alpha_1);
 	static_assert(dnsilon_v<1> <  dnsilon_v<0>);
@@ -590,37 +438,32 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Function definition. \
-	\returns `std::numeric_limits<alpha_t>::min()/(1 << (depth - 1))`, or zero when `depth=0`. \
-	\note\
-	The return value is doubled when `depth` increases by one. \
+	///\returns `std::numeric_limits<alpha_t>::min()/(1 << (zoom - 1))`, or zero when `zoom=0`. \
 
-	XTAL_FZ2_(alpha_t) minimal_y(delta_t const &depth=0)
+	///\note The return value is doubled when `zoom` increases by one. \
+
+	XTAL_FZ2_(alpha_t) minimal_y(delta_t const &zoom=0)
 	XTAL_0EX
 	{
-		auto const num = std::numeric_limits<alpha_t>::min()*(0 < depth);
-		return num*diplo_y(depth - delta_1);
+		auto const num = std::numeric_limits<alpha_t>::min()*(0 < zoom);
+		return num*diplo_y(zoom - delta_1);
 	}
-	///\
+	XTAL_LET  minimal_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(minimal_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression for `minimal_y`. \
 
-	XTAL_LET  minimal_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(minimal_y(XTAL_REF_(depth)));
-
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  minimal_v = minimal_y(N_zoom);
+	///<\
 	Value expression for `minimal_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  minimal_v = minimal_y(N_depth);
 
 	static_assert(minimal_v<0> == alpha_0);
 	static_assert(minimal_v<1> == std::numeric_limits<alpha_t>::min()*(1 << 0));
 	static_assert(minimal_v<2> == std::numeric_limits<alpha_t>::min()*(1 << 1));
 
 
-	///\
-	The minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
+	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
 	XTAL_FZ2_(alpha_t) minimum_y()
 	XTAL_0EX
@@ -638,44 +481,37 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Function definition. \
-	\returns infinity when `depth=0`, \
-	otherwise the value given by `alpha_1/std::numeric_limits<alpha_t>::min()/(1 << (depth - 1))`. \
-	\note\
-	The return value is halved when `depth` increases by one. \
-	\note\
-	Defined as the multiplicative inverse of `minimal_y`, \
-	rather than in relation to `std::numeric_limits<alpha_t>::max()`, \
+	///\returns `1/std::numeric_limits<alpha_t>::min()` magnified by `1 << (zoom - 1)`, or zero if `zoom == 0`. \
+	
+	///\note The return value is halved when `zoom` increases by one. \
+	
+	///\note Defined as the multiplicative inverse of `minimal_y`, \
+	rather than w.r.t. `std::numeric_limits<alpha_t>::max()`, \
 	which is two orders of (binary) magnitude larger. \
 
-	XTAL_FZ2_(alpha_t) maximal_y(delta_t const &depth=0)
+	XTAL_FZ2_(alpha_t) maximal_y(delta_t const &zoom=0)
 	XTAL_0EX
 	{
-		auto const nom = std::numeric_limits<alpha_t>::min()*(0 < depth);
+		auto const nom = std::numeric_limits<alpha_t>::min()*(0 < zoom);
 		auto const num = alpha_1/nom;
-		return num*haplo_y(depth - delta_1);
+		return num*haplo_y(zoom - delta_1);
 	}
-	///\
+	XTAL_LET  maximal_x = [] (XTAL_DEF zoom)
+	XTAL_0FN_(maximal_y(XTAL_REF_(zoom)));
+	///<\
 	Function expression for `maximal_y`. \
 
-	XTAL_LET  maximal_x = [] (XTAL_DEF depth)
-	XTAL_0FN_(maximal_y(XTAL_REF_(depth)));
-
-	///\
+	template <delta_t N_zoom=0>
+	XTAL_LET  maximal_v = maximal_y(N_zoom);
+	///<\
 	Value expression for `maximal_y`. \
-
-	template <delta_t N_depth=0>
-	XTAL_LET  maximal_v = maximal_y(N_depth);
 
 //	static_assert(maximal_y<0> == alpha_oo);
 	static_assert(maximal_v<1> == alpha_1/minimal_v<1>);
 	static_assert(maximal_v<2> == alpha_1/minimal_v<2>);
 
 
-	///\
-	Function definition. \
-	The maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
+	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
 	XTAL_FZ2_(alpha_t) maximum_y()
 	XTAL_0EX
@@ -687,19 +523,16 @@ public:
 	{
 		return _std::max<alpha_t> ({XTAL_REF_(values)...});
 	}
-	///\
-	Function expression for `maximum_y`. \
-
 	XTAL_LET  maximum_x = [] (XTAL_DEF... values)
 	XTAL_0FN_(maximum_y(XTAL_REF_(values)...));
+	///<\
+	Function expression for `maximum_y`. \
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Function definition. \
-	\returns the sign of `value`. \
+	///\returns the sign of `value`. \
 
 	XTAL_FZ2 sign_y(alpha_t const &value)
 	XTAL_0EX
@@ -713,19 +546,16 @@ public:
 			return __builtin_copysign(alpha_1, value);
 		#endif
 	}
-	///\
-	Function expression for `sign_y` \
-
 	XTAL_LET  sign_x = [] (XTAL_DEF value)
 	XTAL_0FN_(sign_y(XTAL_REF_(value)));
+	///<\
+	Function expression for `sign_y` \
 
 	static_assert(sign_y( 0.5) ==  1.0);
 	static_assert(sign_y( 0.0) ==  1.0);
 	static_assert(sign_y(-0.5) == -1.0);
 
-	///\
-	Function definition. \
-	\returns the `target` magnitude with the sign of the `source`. \
+	///\returns the `target` magnitude with the sign of the `source`. \
 
 	XTAL_FZ1_(alpha_t) resign_y(alpha_t target, alpha_t const &source=alpha_1)
 	XTAL_0EX
@@ -741,9 +571,8 @@ public:
 		#endif
 		return _std::copysign(target, source);
 	}
-	///\
-	Mutator definition: modifies the `target` in-place, applying the sign of `source`. \
-	\returns the original sign of `target`. \
+
+	///\returns the original sign of `target`, after applying the sign of `source`.
 
 	XTAL_FZ1_(alpha_t) resign_z(alpha_t &target, alpha_t const &source=alpha_1)
 	XTAL_0EX
@@ -769,9 +598,7 @@ public:
 	}
 
 
-	///\
-	Mutator definition: modifies the `target` in-place, making it `abs`olute. \
-	\returns the original sign of `target`. \
+	///\returns the original sign of `target`, after making it `abs`olute.
 
 	XTAL_FZ1_(alpha_t) design_z(alpha_t &target)
 	XTAL_0EX
@@ -790,9 +617,7 @@ public:
 			target *= u; return u;
 		}
 	}
-	///\
-	Function definition. \
-	\returns the `abs`olute value of `target`. \
+	///\returns the `abs`olute value of `target`. \
 
 	XTAL_FZ1_(alpha_t) design_y(alpha_t target)
 	XTAL_0EX
@@ -805,11 +630,10 @@ public:
 			return __builtin_copysign(target, alpha_1);
 		#endif
 	}
-	///\
-	Function expression for `design_y` \
-
 	XTAL_LET  design_x = [] (XTAL_DEF value)
 	XTAL_0FN_(design_y(XTAL_REF_(value)));
+	///<\
+	Function expression for `design_y` \
 
 	static_assert(design_y( 1.0) ==  1.0);
 	static_assert(design_y(-1.0) ==  1.0);
@@ -818,7 +642,6 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\
-	Function definition. \
 	\returns `value` when positive, zero otherwise. \
 
 	XTAL_FZ2 positive_y(alpha_t value)
@@ -828,18 +651,16 @@ public:
 		value += design_y(value);
 		return value;
 	}
-	///\
-	Function expression for `positive_y` \
-
 	XTAL_LET  positive_x = [] (XTAL_DEF value)
 	XTAL_0FN_(positive_y(XTAL_REF_(value)));
+	///<\
+	Function expression for `positive_y` \
 
 	static_assert(positive_y( 1.0) ==  1.0);
 	static_assert(positive_y( 0.0) ==  0.0);
 	static_assert(positive_y(-1.0) ==  0.0);
 
 	///\
-	Function definition. \
 	\returns `value` when negative, zero otherwise. \
 
 	XTAL_FZ2 negative_y(alpha_t value)
@@ -849,12 +670,11 @@ public:
 		value -= design_y(value);
 		return value;
 	}
-	///\
-	Function expression for `negative_y` \
-	
 	XTAL_LET  negative_x = [] (XTAL_DEF value)
 	XTAL_0FN_(negative_y(XTAL_REF_(value)));
-
+	///<\
+	Function expression for `negative_y` \
+	
 	static_assert(negative_y( 1.0) ==  0.0);
 	static_assert(negative_y( 0.0) ==  0.0);
 	static_assert(negative_y(-1.0) == -1.0);
@@ -862,19 +682,17 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Mutator definition: modifies the `target` in-place, clamping the design to the region above `diplo_y(N_rho)*upsilon_y(N_epsilon)`. \
-	\returns `sign(target)` if the original value overflows, `0` otherwise. \
-	\note\
-	A.K.A. `?`.
+	/// Modifies the `target`, clamping the magnitude _above_ `upsilon_y(N_zoom)*diplo_y(N_zone)`. \
 
-	template <delta_t N_epsilon=0, delta_t N_rho=0>
+	///\returns zero if unchanged, else the sign of the `target` . \
+
+	template <delta_t N_zoom=0, delta_t N_zone=0>
 	XTAL_FZ1_(alpha_t) expunge_z(alpha_t &target)
 	XTAL_0EX
 	{
 		if constexpr (IEC_559)
 		{
-			auto constexpr M = (N_rho << exponent::shift) + unit::mask + (flag_f(N_epsilon) >> 1);
+			auto constexpr M = (N_zone << exponent::shift) + unit::mask + (flag_f(N_zoom) >> 1);
 			delta_t m, n, i, j;
 			m   =      _std::bit_cast<delta_t> (_std::move(target));
 			n   = m  &  sign::mask;
@@ -897,19 +715,17 @@ public:
 	}
 
 
-	///\
-	Mutator definition: modifies the `target` in-place, clamping the design to the region below `diplo_y(N_rho)*dnsilon_y(N_epsilon)`. \
-	\returns `sign(target)` if the original value overflows, `0` otherwise. \
-	\note\
-	A.K.A. `truncate`.
+	/// Modifies the `target`, clamping the magnitude _above_ `dnsilon_y(N_zoom)*diplo_y(N_zone)`. \
 
-	template <delta_t N_epsilon=0, delta_t N_rho=0>
+	///\returns zero if unchanged, else the sign of the `target` . \
+	
+	template <delta_t N_epsilon=0, delta_t N_zone=0>
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target)
 	XTAL_0EX
 	{
 		if constexpr (IEC_559*0)
 		{
-			auto constexpr M = (N_rho << exponent::shift) + unit::mask - (flag_f(N_epsilon) >> 1);
+			auto constexpr M = (N_zone << exponent::shift) + unit::mask - (flag_f(N_epsilon) >> 1);
 			delta_t m, n, i, j;
 			m  =       _std::bit_cast<delta_t> (_std::move(target));
 			n  =  m  &  sign::mask;
@@ -924,7 +740,7 @@ public:
 		}
 		else
 		{
-			auto const r = diplo_y(N_rho)*dnsilon_y(N_epsilon);
+			auto const r = dnsilon_y(N_epsilon)*diplo_y(N_zone);
 			auto const t = target, s = design_z(target);
 			target += negative_y(r - target);
 			target *= s;
@@ -935,21 +751,20 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\
-	Mutator definition: modifies the `target` in-place, \
-	clamping the design to the region above `std::numeric_limits<alpha_t>::min()*diplo_y(N_depth)`. \
-	\returns `sign(target)` if the original value overflows, `0` otherwise. \
+	/// Modifies the `target`, clamping the magnitude _above_ `minimal_y(N_zoom)`. \
 
-	template <delta_t N_depth=0>
+	///\returns zero if unchanged, else the sign of the `target` . \
+
+	template <delta_t N_zoom=0>
 	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_depth) return 0.0; // `target` unchanged
-		if constexpr (0 <= N_depth)
+		if constexpr (0 == N_zoom) return 0.0; // `target` unchanged
+		if constexpr (0 <= N_zoom)
 		{
 			if constexpr (IEC_559)
 			{
-				auto constexpr N = N_depth << exponent::shift;
+				auto constexpr N = N_zoom << exponent::shift;
 				auto constexpr M = N - sign::mask;
 				delta_t x, m, n, o;
 				m   =  o  = _std::bit_cast<delta_t>(target);
@@ -967,7 +782,7 @@ public:
 			}
 			else
 			{
-				auto const t = minimal_y(N_depth);
+				auto const t = minimal_y(N_zoom);
 				auto const s = design_z(target);
 				auto const a = positive_y(t - target);
 				target += a;
@@ -975,23 +790,21 @@ public:
 				return s*(a != alpha_0);
 			}
 		}
-		if constexpr (N_depth < 0)
+		if constexpr (N_zoom < 0)
 		{
 		//	TODO: Implement the opposite (lowering the ceiling from infinity)? \
 
 		}
 	}
-	///\
-	Function definition. \
-	\returns the `target` clamped the design to the region above `std::numeric_limits<alpha_t>::min()*diplo_y(N_depth)`. \
+	///\returns the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
 
-	template <delta_t N_depth=0>
+	template <delta_t N_zoom=0>
 	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target)
 	XTAL_0EX
 	{
 		if constexpr (IEC_559*0)
 		{
-			auto constexpr N = N_depth << exponent::shift;
+			auto constexpr N = N_zoom << exponent::shift;
 			auto constexpr M = N - sign::mask;
 			delta_t x, m, n, o;
 			o   =     _std::bit_cast<delta_t>(target);
@@ -1006,7 +819,7 @@ public:
 		}
 		else
 		{
-			auto const t = minimal_y(N_depth);
+			auto const t = minimal_y(N_zoom);
 			auto const s = design_z(target);
 			auto const a = positive_y(t - target);
 			target += a;
@@ -1149,6 +962,88 @@ template <typename T, typename... Ys>  concept as_q = unfalse_q<as_b<T, Ys>...>;
 
 template <typename T, typename    Y >  concept of_b = _std::is_base_of_v<based_t<Y>, based_t<T>>;
 template <typename T, typename... Ys>  concept of_q = unfalse_q<of_b<T, Ys>...> or numeric_q<T, Ys...>;
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+concept complex_q = requires (T t)
+{
+	{t.real()} -> std::same_as<typename T::value_type>;
+	{t.imag()} -> std::same_as<typename T::value_type>;
+};
+
+template <typename T>
+XTAL_FZ2_(T) square_y(T const &lhs)
+XTAL_0EX
+{
+	return lhs * lhs;
+}
+template <complex_q T>
+XTAL_FZ2_(T) square_y(T const &lhs)
+XTAL_0EX
+{
+	auto const x = lhs.real(), xx = square_y(x);
+	auto const y = lhs.imag(), yy = square_y(y);
+	return T(xx - yy, x*y*2.0);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template <_std::integral T>
+XTAL_FZ2_(T) bit_floor_y(T n)
+XTAL_0EX
+{
+	T m = 0;
+	for (; n >>= 1; ++m);
+	return m;
+}
+
+template <_std::integral T>
+XTAL_FZ2_(T) bit_ceiling_y(T const &n)
+XTAL_0EX
+{
+	T m = bit_floor_y<T>(n);
+	m += 1 << m != n;
+	return m;
+}
+
+///\returns the bitwise-reversal of the given value `n`, \
+restricted to `N_subdepth` iff `0 < N_subdepth < depth`. \
+
+///\note Requires `log2(realized::depth)` iterations. \
+
+///\note Can be reified as a `process` to dynamically control `N_subdepth`. \
+
+template <sigma_t N_subdepth=0>
+XTAL_FZ2 bit_reverse_y(_std::integral auto n)
+XTAL_0EX
+{
+	using realized = realize<decltype(n)>;
+	auto constexpr depth = realized::depth;
+
+	static_assert(0 <= N_subdepth && N_subdepth <= depth);
+	if constexpr (0 == N_subdepth || N_subdepth == depth)
+	{
+		for (sigma_t m = -1, i = depth; i >>= 1;)
+		{
+			m ^= m<<i;
+			n = (n&m)<<i | (n&~m)>>i;
+		}
+		return n;
+	}
+	else
+	{
+		return bit_reverse_y<0>(n) >> (depth - N_subdepth);
+	}
+}
+template <sigma_t N_subdepth=0>
+XTAL_LET  bit_reverse_x = [] (XTAL_DEF n)
+XTAL_0FN_(bit_reverse_y<N_subdepth> (XTAL_REF_(n)));
+///<\
+Function expression of `bit_reverse_y`. \
+
+static_assert(bit_reverse_x<0> (realized::sigma_1 << (realized::depth - 1)) == 1);
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
