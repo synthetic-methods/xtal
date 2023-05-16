@@ -67,7 +67,7 @@ struct
 	template <typename X>
 	void put(X&& x)
 	{
-		if constexpr (std::is_floating_point_v<X>)
+		if constexpr (std::is_floating_point_v<std::decay_t<X>>)
 		{
 			std::cout.precision(17);
 			if (std::copysign(1.0, x) == 1.0) std::cout << ' ';

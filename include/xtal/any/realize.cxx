@@ -106,32 +106,32 @@ void realize_expunge__test()
 
 	realized::alpha_t x, co = N_sgn*_std::pow(2, N_rho);
 	
-	x = co*up3; REQUIRE(realized::expunge_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*up3);
-	x = co*up2; REQUIRE(realized::expunge_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*up2);
-	x = co*up1; REQUIRE(realized::expunge_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*up1);
-	x = co*up0; REQUIRE(realized::expunge_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*up0);
-	x = co*dn0; REQUIRE(realized::expunge_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*up0);
-	x = co*dn1; REQUIRE(realized::expunge_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up0);
-	x = co*dn2; REQUIRE(realized::expunge_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up0);
-	x = co*dn3; REQUIRE(realized::expunge_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up0);
+	x = co*up3; REQUIRE(realized::puncture_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*up3);
+	x = co*up2; REQUIRE(realized::puncture_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*up2);
+	x = co*up1; REQUIRE(realized::puncture_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*up1);
+	x = co*up0; REQUIRE(realized::puncture_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*up0);
+	x = co*dn0; REQUIRE(realized::puncture_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*up0);
+	x = co*dn1; REQUIRE(realized::puncture_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up0);
+	x = co*dn2; REQUIRE(realized::puncture_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up0);
+	x = co*dn3; REQUIRE(realized::puncture_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up0);
 	
-	x = co*up3; REQUIRE(realized::expunge_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*up3);
-	x = co*up2; REQUIRE(realized::expunge_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*up2);
-	x = co*up1; REQUIRE(realized::expunge_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*up1);
-	x = co*up0; REQUIRE(realized::expunge_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up1);
-	x = co*dn0; REQUIRE(realized::expunge_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up1);
-	x = co*dn1; REQUIRE(realized::expunge_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up1);
-	x = co*dn2; REQUIRE(realized::expunge_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up1);
-	x = co*dn3; REQUIRE(realized::expunge_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up1);
+	x = co*up3; REQUIRE(realized::puncture_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*up3);
+	x = co*up2; REQUIRE(realized::puncture_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*up2);
+	x = co*up1; REQUIRE(realized::puncture_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*up1);
+	x = co*up0; REQUIRE(realized::puncture_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up1);
+	x = co*dn0; REQUIRE(realized::puncture_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up1);
+	x = co*dn1; REQUIRE(realized::puncture_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up1);
+	x = co*dn2; REQUIRE(realized::puncture_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up1);
+	x = co*dn3; REQUIRE(realized::puncture_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up1);
 	
-	x = co*up3; REQUIRE(realized::expunge_z<2, N_rho>(x) ==     0); REQUIRE(x ==  co*up3);
-	x = co*up2; REQUIRE(realized::expunge_z<2, N_rho>(x) ==     0); REQUIRE(x ==  co*up2);
-	x = co*up1; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
-	x = co*up0; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
-	x = co*dn0; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
-	x = co*dn1; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
-	x = co*dn2; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
-	x = co*dn3; REQUIRE(realized::expunge_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*up3; REQUIRE(realized::puncture_z<2>(x, N_rho) ==     0); REQUIRE(x ==  co*up3);
+	x = co*up2; REQUIRE(realized::puncture_z<2>(x, N_rho) ==     0); REQUIRE(x ==  co*up2);
+	x = co*up1; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*up0; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*dn0; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*dn1; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*dn2; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
+	x = co*dn3; REQUIRE(realized::puncture_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
 
 }
 TEST_CASE("xtal/any/realize.hpp: expunge")
@@ -155,32 +155,32 @@ void realize_truncate__test()
 	auto const up3 = realized::upsilon_y(3), dn3 = realized::dnsilon_y(3);
 
 	realized::alpha_t x, co = N_sgn*_std::pow(2, N_rho);
-//	x = co*up3; REQUIRE(realized::truncate_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn0);
-//	x = co*up2; REQUIRE(realized::truncate_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn0);
-//	x = co*up1; REQUIRE(realized::truncate_z<0, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn0);
-//	x = co*up0; REQUIRE(realized::truncate_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*dn0);
-//	x = co*dn0; REQUIRE(realized::truncate_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*dn0);
-//	x = co*dn1; REQUIRE(realized::truncate_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*dn1);
-//	x = co*dn2; REQUIRE(realized::truncate_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*dn2);
-//	x = co*dn3; REQUIRE(realized::truncate_z<0, N_rho>(x) ==     0); REQUIRE(x ==  co*dn3);
+//	x = co*up3; REQUIRE(realized::truncate_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn0);
+//	x = co*up2; REQUIRE(realized::truncate_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn0);
+//	x = co*up1; REQUIRE(realized::truncate_z<0>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn0);
+//	x = co*up0; REQUIRE(realized::truncate_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*dn0);
+//	x = co*dn0; REQUIRE(realized::truncate_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*dn0);
+//	x = co*dn1; REQUIRE(realized::truncate_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*dn1);
+//	x = co*dn2; REQUIRE(realized::truncate_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*dn2);
+//	x = co*dn3; REQUIRE(realized::truncate_z<0>(x, N_rho) ==     0); REQUIRE(x ==  co*dn3);
 	
-	x = co*up3; REQUIRE(realized::truncate_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn1);
-	x = co*up2; REQUIRE(realized::truncate_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn1);
-	x = co*up1; REQUIRE(realized::truncate_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn1);
-	x = co*up0; REQUIRE(realized::truncate_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn1);
-	x = co*dn0; REQUIRE(realized::truncate_z<1, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn1);
-	x = co*dn1; REQUIRE(realized::truncate_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*dn1);
-	x = co*dn2; REQUIRE(realized::truncate_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*dn2);
-	x = co*dn3; REQUIRE(realized::truncate_z<1, N_rho>(x) ==     0); REQUIRE(x ==  co*dn3);
+	x = co*up3; REQUIRE(realized::truncate_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn1);
+	x = co*up2; REQUIRE(realized::truncate_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn1);
+	x = co*up1; REQUIRE(realized::truncate_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn1);
+	x = co*up0; REQUIRE(realized::truncate_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn1);
+	x = co*dn0; REQUIRE(realized::truncate_z<1>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn1);
+	x = co*dn1; REQUIRE(realized::truncate_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*dn1);
+	x = co*dn2; REQUIRE(realized::truncate_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*dn2);
+	x = co*dn3; REQUIRE(realized::truncate_z<1>(x, N_rho) ==     0); REQUIRE(x ==  co*dn3);
 	
-	x = co*up3; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*up2; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*up1; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*up0; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*dn0; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*dn1; REQUIRE(realized::truncate_z<2, N_rho>(x) == N_sgn); REQUIRE(x ==  co*dn2);
-	x = co*dn2; REQUIRE(realized::truncate_z<2, N_rho>(x) ==     0); REQUIRE(x ==  co*dn2);
-	x = co*dn3; REQUIRE(realized::truncate_z<2, N_rho>(x) ==     0); REQUIRE(x ==  co*dn3);
+	x = co*up3; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*up2; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*up1; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*up0; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*dn0; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*dn1; REQUIRE(realized::truncate_z<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*dn2);
+	x = co*dn2; REQUIRE(realized::truncate_z<2>(x, N_rho) ==     0); REQUIRE(x ==  co*dn2);
+	x = co*dn3; REQUIRE(realized::truncate_z<2>(x, N_rho) ==     0); REQUIRE(x ==  co*dn3);
 
 }
 TEST_CASE("xtal/any/realize.hpp: truncate")
@@ -190,6 +190,16 @@ TEST_CASE("xtal/any/realize.hpp: truncate")
 	realize_truncate__test< 1,  0>(); realize_truncate__test<-1,  0>();
 	realize_truncate__test< 1, -1>(); realize_truncate__test<-1, -1>();
 	realize_truncate__test< 1, -2>(); realize_truncate__test<-1, -2>();
+
+	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
+	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
+	auto const up2 = realized::upsilon_y(2), dn2 = realized::dnsilon_y(2);
+	auto const up3 = realized::upsilon_y(3), dn3 = realized::dnsilon_y(3);
+
+	realized::alpha_t x;
+
+	x = 3.142; REQUIRE(realized::truncate_z<1>(x, 1) == 1); REQUIRE(x == 2*dn1);
+	x = 3.142; REQUIRE(realized::truncate_z<1>(x, 2) == 0); REQUIRE(x == 3.142);
 
 }
 
@@ -242,6 +252,16 @@ TEST_CASE("xtal/any/realize.hpp: puncture")
 {
 	realize_puncture__test< 1>();
 	realize_puncture__test<-1>();
+
+	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
+	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
+	auto const up2 = realized::upsilon_y(2), dn2 = realized::dnsilon_y(2);
+	auto const up3 = realized::upsilon_y(3), dn3 = realized::dnsilon_y(3);
+
+	realized::alpha_t x;
+
+	x = 3.142; REQUIRE(realized::puncture_z<1>(x, 1) == 0); REQUIRE(x == 3.142);
+	x = 3.142; REQUIRE(realized::puncture_z<1>(x, 2) == 1); REQUIRE(x == 4*up1);
 
 }
 

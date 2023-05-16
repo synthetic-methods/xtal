@@ -169,9 +169,21 @@ public:
 	XTAL_LET          depth = sizeof(Q) << 3;
 	static_assert(negative_n == depth);
 
-	XTAL_FZ2 flag_f(sigma_t const depth=0)                        XTAL_0EX {return sigma_t(negative_n != depth) << depth;};
-	XTAL_FZ2 mark_f(sigma_t const depth=0)                        XTAL_0EX {return flag_f(depth)  - 1;};
-	XTAL_FZ2 mask_f(sigma_t const depth=0, sigma_t const shift=0) XTAL_0EX {return mark_f(depth) << shift;};
+	XTAL_FZ2 flag_f(delta_t const depth=0)
+	XTAL_0EX
+	{
+		return sigma_t(0 <= depth and depth <= negative_n) << depth;
+	};
+	XTAL_FZ2 mark_f(sigma_t const depth=0)
+	XTAL_0EX
+	{
+		return flag_f(depth)  - 1;
+	};
+	XTAL_FZ2 mask_f(sigma_t const depth=0, sigma_t const shift=0)
+	XTAL_0EX
+	{
+		return mark_f(depth) << shift;
+	};
 	template <sigma_t N_depth, sigma_t M_shift>
 	struct word
 	{
@@ -577,7 +589,7 @@ public:
 	XTAL_FZ1_(alpha_t) resign_z(alpha_t &target, alpha_t const &source=alpha_1)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)
+		if constexpr (IEC_559)
 		{
 			alpha_t result; delta_t m, n, o = unit::mask;
 			n   =     _std::bit_cast<delta_t> (_std::move(source));
@@ -603,7 +615,7 @@ public:
 	XTAL_FZ1_(alpha_t) design_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)
+		if constexpr (IEC_559)
 		{
 			alpha_t e; delta_t m, o = unit::mask;
 			m  = _std::bit_cast<delta_t> (target);
@@ -681,119 +693,178 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//	TODO: Assess performance of both branches for `truncate` and `puncture`. \
 
-	/// Modifies the `target`, clamping the magnitude _above_ `upsilon_y(N_zoom)*diplo_y(N_zone)`. \
+	/// Modifies the `target`, clamping the magnitude below `dnsilon_y(N_zoom)*diplo_y(zone)`. \
 
-	///\returns zero if unchanged, else the sign of the `target` . \
-
-	template <delta_t N_zoom=0, delta_t N_zone=0>
-	XTAL_FZ1_(alpha_t) expunge_z(alpha_t &target)
+	///\returns zero if unchanged, else the sign of the `target`. \
+	
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target, delta_t const &zone)
 	XTAL_0EX
 	{
+		auto constexpr N_unit = N_zero ^ 1;
 		if constexpr (IEC_559)
 		{
-			auto constexpr M = (N_zone << exponent::shift) + unit::mask + (flag_f(N_zoom) >> 1);
-			delta_t m, n, i, j;
-			m   =      _std::bit_cast<delta_t> (_std::move(target));
-			n   = m  &  sign::mask;
-			j   = m  ^  n;
-			j   = j  -  M;
-			i   = j >>  positive::depth;
-			m  -= i  &  j;
-			i  &= n  |  unit::mask;
-			target = _std::bit_cast<alpha_t> (_std::move(m));
-			return   _std::bit_cast<alpha_t> (i);
+			auto const Z = unit::mask - flag_f(N_zoom - 1);
+			auto const N = zone << exponent::shift;
+			auto const M = N + Z*N_unit;
+			delta_t m, n, i;
+			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
+			n  =  t  &  sign::mask;
+			m  =  t  ^  n;
+			m  =  M  -  m;
+			i  =  m >>  positive::depth;
+			n |=  i  &  unit::mask;
+			t +=  i  &  m;
+			target   = _std::bit_cast<alpha_t> (_std::move(t));
+			return     _std::bit_cast<alpha_t> (n);
 		}
 		else
 		{
-		//	TODO: Recreate `expunge_z` exactly without bit-operations. \
-
-		//	TODO: Assess performance of both branches for `truncate` and `puncture`. \
-
-			static_assert(IEC_559);//TODO: Implement `expunge_z` without bit-operations.
+			auto const t = N_zero? maximal_y(zone): diplo_y(zone)*dnsilon_y(N_zoom);
+			auto const s = design_z(target);
+			auto const a = negative_y(t - target);
+			target += a;
+			target *= s;
+			return s*(a != alpha_0);
 		}
 	}
+	/// Modifies the `target`, clamping the magnitude below `maximal_y(N_zoom)`. \
 
+	///\returns zero if unchanged, else the sign of the `target`. \
 
-	/// Modifies the `target`, clamping the magnitude _above_ `dnsilon_y(N_zoom)*diplo_y(N_zone)`. \
-
-	///\returns zero if unchanged, else the sign of the `target` . \
-	
-	template <delta_t N_epsilon=0, delta_t N_zone=0>
+	template <delta_t N_zoom=0>
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)
+		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
+		else return truncate_z<0, 1>(target, N_zoom);
+	}
+	
+
+	///\returns the `target` with magnitude clamped to the region below `diplo_y(zone)*dnsilon_y(N_zoom)`. \
+
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ1_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
+	XTAL_0EX
+	{
+		auto constexpr N_unit = N_zero ^ 1;
+		if constexpr (IEC_559)
 		{
-			auto constexpr M = (N_zone << exponent::shift) + unit::mask - (flag_f(N_epsilon) >> 1);
-			delta_t m, n, i, j;
-			m  =       _std::bit_cast<delta_t> (_std::move(target));
-			n  =  m  &  sign::mask;
-			j  =  m  ^  n;
-			j  =  M  -  j;
-			i  =  j >>  positive::depth;
-			n |=        unit::mask;
-			n &=  i;
-			m +=  i  &  j;
-			target = _std::bit_cast<alpha_t> (_std::move(m));
-			return   _std::bit_cast<alpha_t> (n);
+			auto const Z = unit::mask - flag_f(N_zoom - 1);
+			auto const N = zone << exponent::shift;
+			auto const M = N + Z*N_unit;
+			delta_t m, n, i;
+			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
+			m  =  t  & ~sign::mask;
+			m  =  M  -  m;
+			i  =  m >>  positive::depth;
+			t +=  i  &  m;
+			return     _std::bit_cast<alpha_t> (_std::move(t));
 		}
 		else
 		{
-			auto const r = dnsilon_y(N_epsilon)*diplo_y(N_zone);
-			auto const t = target, s = design_z(target);
-			target += negative_y(r - target);
+			auto const t = N_zero? maximal_y(zone): diplo_y(zone)*dnsilon_y(N_zoom);
+			auto const s = design_z(target);
+			auto const a = negative_y(t - target);
+			target += a;
 			target *= s;
-			return s*(t != target);
+			return target;
+
 		}
 	}
+	///\returns the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
+
+	template <delta_t N_zoom=0>
+	XTAL_FZ1_(alpha_t) truncate_y(alpha_t target)
+	XTAL_0EX
+	{
+		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
+		else return truncate_y<0, 1>(target, N_zoom);
+	}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	/// Modifies the `target`, clamping the magnitude _above_ `minimal_y(N_zoom)`. \
+	/// Modifies the `target`, clamping the magnitude above `upsilon_y(N_zoom)*diplo_y(zone)`. \
 
-	///\returns zero if unchanged, else the sign of the `target` . \
+	///\returns zero if unchanged, else the sign of the `target`. \
+
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target, delta_t const &zone)
+	XTAL_0EX
+	{
+		auto constexpr N_unit = N_zero ^ 1;
+		if constexpr (IEC_559)
+		{
+			auto const Z = unit::mask + flag_f(N_zoom - 1);
+			auto const N = zone << exponent::shift;
+			auto const M = N + Z*N_unit;
+			delta_t m, n, i;
+			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
+			n   = t  &  sign::mask;
+			m   = t  ^  n;
+			m  -= M;
+			i   = m >>  positive::depth;
+			n  |= i  &  unit::mask;
+			t  -= i  &  m;
+			target   = _std::bit_cast<alpha_t> (_std::move(t));
+			return     _std::bit_cast<alpha_t> (_std::move(n));
+		}
+		else
+		{
+			auto const t = N_zero? minimal_y(zone): diplo_y(zone)*upsilon_y(N_zoom);
+			auto const s = design_z(target);
+			auto const a = positive_y(t - target);
+			target += a;
+			target *= s;
+			return s*(a != alpha_0);
+		}
+	}
+	/// Modifies the `target`, clamping the magnitude above `minimal_y(N_zoom)`. \
+
+	///\returns zero if unchanged, else the sign of the `target`. \
 
 	template <delta_t N_zoom=0>
 	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_zoom) return 0.0; // `target` unchanged
-		if constexpr (0 <= N_zoom)
-		{
-			if constexpr (IEC_559)
-			{
-				auto constexpr N = N_zoom << exponent::shift;
-				auto constexpr M = N - sign::mask;
-				delta_t x, m, n, o;
-				m   =  o  = _std::bit_cast<delta_t>(target);
-				n   =  o  &  sign::mask;
-				m  &=        exponent::mask;
-				m  |=        fraction::mask;
-				x   =  M  -  m;
-				x >>=        positive::depth;
-				x  &=        positive::mask;
-				o  &=       ~x;// using `^= x` results in `NaN` when `target == 0`
-				o  |=  M  &  x;
-				n  |=  x  &  unit::mask;
-				target = _std::bit_cast<alpha_t>(_std::move(o));
-				return   _std::bit_cast<alpha_t>(_std::move(n));
-			}
-			else
-			{
-				auto const t = minimal_y(N_zoom);
-				auto const s = design_z(target);
-				auto const a = positive_y(t - target);
-				target += a;
-				target *= s;
-				return s*(a != alpha_0);
-			}
-		}
-		if constexpr (N_zoom < 0)
-		{
-		//	TODO: Implement the opposite (lowering the ceiling from infinity)? \
+		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
+		else return puncture_z<0, 1>(target, N_zoom);
+	}
+	
 
+	///\returns the `target` with magnitude clamped to the region above `diplo_y(zone)*upsilon_y(N_zoom)`. \
+
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target, delta_t const &zone)
+	XTAL_0EX
+	{
+		auto constexpr N_unit = N_zero ^ 1;
+		if constexpr (IEC_559)
+		{
+			auto const Z = unit::mask + flag_f(N_zoom - 1);
+			auto const N = zone << exponent::shift;
+			auto const M = N + Z*N_unit;
+			delta_t m, n, i;
+			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
+			m   = t  & ~sign::mask;
+			m  -= M;
+			i   = m >>  positive::depth;
+			t  -= i  &  m;
+			return     _std::bit_cast<alpha_t> (_std::move(t));
+		}
+		else
+		{
+			auto const t = N_zero? minimal_y(zone): diplo_y(zone)*upsilon_y(N_zoom);
+			auto const s = design_z(target);
+			auto const a = positive_y(t - target);
+			target += a;
+			target *= s;
+			return target;
 		}
 	}
 	///\returns the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
@@ -802,30 +873,8 @@ public:
 	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559*0)
-		{
-			auto constexpr N = N_zoom << exponent::shift;
-			auto constexpr M = N - sign::mask;
-			delta_t x, m, n, o;
-			o   =     _std::bit_cast<delta_t>(target);
-			m   =  o & exponent::mask;
-			m  +=  1;// precomputing `M - 1` instead fails in some cases
-			x   =  M - m;
-			x >>=      positive::depth;
-			x  &=      positive::mask;
-			o  &= ~x;// using `^= x` results in `NaN` when `target == 0`
-			o  |=  x & M;
-			return _std::bit_cast<alpha_t>(_std::move(o));
-		}
-		else
-		{
-			auto const t = minimal_y(N_zoom);
-			auto const s = design_z(target);
-			auto const a = positive_y(t - target);
-			target += a;
-			target *= s;
-			return target;
-		}
+		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
+		else return puncture_y<0, 1>(target, N_zoom);
 	}
 
 

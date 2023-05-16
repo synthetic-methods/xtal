@@ -27,11 +27,12 @@ TEST_CASE("xtal/any/buffer.hpp: scalar series_geometric")
 
 TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
 {
-	sigma_t const O =      3;
-	sigma_t const N = 1 << O;
-	sigma_t const M = N  - 1;
+	using Cx = _std::complex<alpha_t>;
 
-	using Cx = _std::complex<realized::alpha_t>;
+	sigma_t constexpr O =      3;
+	sigma_t constexpr N = 1 << O;
+	sigma_t constexpr M = N  - 1;
+
 	using window_t = buffer_scalar_t<N, Cx>;
 
 	window_t data;
@@ -42,14 +43,24 @@ TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
 
 	data.transform_fourier();
 
-	REQUIRE(data[0] == Cx( 0.16000000000000000e+2, 0.16000000000000000e+2));
-	REQUIRE(data[1] == Cx(-0.48284271247461916e+1,-0.11656854249492380e+2));
-	REQUIRE(data[2] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
-	REQUIRE(data[3] == Cx(-0.34314575050762031e+0, 0.82842712474618851e+0));
-	REQUIRE(data[4] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
-	REQUIRE(data[5] == Cx( 0.82842712474619118e+0,-0.34314575050762031e+0));
-	REQUIRE(data[6] == Cx( 0.00000000000000000e+0, 0.00000000000000000e+0));
-	REQUIRE(data[7] == Cx(-0.11656854249492380e+2,-0.48284271247461881e+1));
+	REQUIRE(data[0].real() == Catch::Approx( 0.16000000000000000e+2));
+	REQUIRE(data[1].real() == Catch::Approx(-0.48284271247461916e+1));
+	REQUIRE(data[2].real() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[3].real() == Catch::Approx(-0.34314575050762031e+0));
+	REQUIRE(data[4].real() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[5].real() == Catch::Approx( 0.82842712474619118e+0));
+	REQUIRE(data[6].real() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[7].real() == Catch::Approx(-0.11656854249492380e+2));
+
+	REQUIRE(data[0].imag() == Catch::Approx( 0.16000000000000000e+2));
+	REQUIRE(data[1].imag() == Catch::Approx(-0.11656854249492380e+2));
+	REQUIRE(data[2].imag() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[3].imag() == Catch::Approx( 0.82842712474618851e+0));
+	REQUIRE(data[4].imag() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[5].imag() == Catch::Approx(-0.34314575050762031e+0));
+	REQUIRE(data[6].imag() == Catch::Approx( 0.00000000000000000e+0));
+	REQUIRE(data[7].imag() == Catch::Approx(-0.48284271247461881e+1));
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////

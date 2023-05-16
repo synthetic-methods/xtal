@@ -109,57 +109,89 @@ struct buffer
 					return T{x, y};//*realize<U>::SQRT_HALF;
 				}
 				
-				XTAL_FN1_(T&) series_geometric(U const &base)
+				/// Fills `this` with the geometric series `{1, u, u*u, u*u*u, ...}`. \
+
+				///\returns `*this` for chaining. \
+
+				///\note This algorithm uses squaring, \
+				which is more precise/efficient than multiplication for complex numbers. \
+
+				XTAL_FN1_(T&) series_geometric(U const &u, sigma_t const &i_lim = N)
 				XTAL_0EX
 				XTAL_IF1 even_q<N>
 				{
-					auto const &u =  base;
-					auto       &s = *this;
+					auto &s = *this;
 					s[0] = 1;
 					s[1] = u;
-					for (sigma_t i = 1; i < N >> 1; ++i)
+					for (sigma_t i = 1; i < i_lim >> 1; ++i)
 					{
-						auto w = square_y(s[i]);// NOTE: Squaring is more precise/efficient for complex numbers.
-						auto j = i << 1;
-						s[j] = w;
-						j   += 1;
+						auto w = square_y(s[i]);
+						auto h = i << 1;
+						s[h] = w;
+						h   += 1;
 						w   *= u;
-						s[j] = w;
+						s[h] = w;
 					}
 					return s;
 				}
+				
+				/// Fills `this` with the `basis` used by `transform_fourier`, \
+				comprising `N` values of the half-period complex sinusoid.
+
+				///\returns `*this` for chaining. \
+
 				XTAL_FN1_(T&) series_fourier()
 				XTAL_0EX
-				XTAL_IF2 (U u)
+				XTAL_IF1 even_q<N> and complex_q<U>
 				{
-					requires even_q<N>;
-					u.real();
-					u.imag();
+					auto &s = *this;
+					auto constexpr rho = [] (U const &u) XTAL_0FN_(U(u.imag(), -u.real()));
+					auto const     phi = realized::patio_y<-1> (N);
+					auto const     x = _std::cos(phi);
+					auto const     y = _std::sin(phi);
+					auto const     u = U(x, y);
+					auto const     o = U(1, 0);
+					auto constexpr H = N >> 1;
+					/*/
+					series_geometric(U(x, y), H);
+					auto const _H = s.begin() + H;
+					auto const _0 = s.begin();
+					_std::transform(_0, _H, _H, rho);
+					/*/
+					s[0] = o; s[0 + H] = rho(o);
+					s[1] = u; s[1 + H] = rho(u);
+					for (sigma_t h = 1; h < H >> 1; ++h)
+					{
+						auto w = square_y(s[h]);
+						auto i = h << 1;
+						s[i] = w; s[i + H] = rho(w);
+						i   += 1;
+						w   *= u;
+						s[i] = w; s[i + H] = rho(w);
+					}
+					/***/
+					return s;
 				}
-				{
-					auto const u = _std::exp(U(-0.0, realized::patio_y<-1> (N)));
-					return series_geometric(u);
-				}
+				
+				/// Applies the Fourier transform to `this`. \
+
+				///\returns `*this` for chaining. \
+
 				XTAL_FN1_(T&) transform_fourier()
 				XTAL_0EX
-				XTAL_IF2 (U u)
-				{
-					requires even_q<N>;
-					u.real();
-					u.imag();
-				}
+				XTAL_IF1 even_q<N> and complex_q<U>
 				{
 					T basis; basis.series_fourier();
 					return this->transform_fourier(basis);
 				}
+
+				/// Applies the Fourier transform to `this`, using a precomputed `basis`. \
+
+				///\returns `*this` for chaining. \
+
 				XTAL_FN1_(T&) transform_fourier(T const &basis)
 				XTAL_0EX
-				XTAL_IF2 (U u)
-				{
-					requires even_q<N>;
-					u.real();
-					u.imag();
-				}
+				XTAL_IF1 even_q<N> and complex_q<U>
 				{
 					sigma_t constexpr H = N >> 1;
 					sigma_t constexpr O = bit_ceiling_y(N);
@@ -172,13 +204,13 @@ struct buffer
 					}
 					for (sigma_t o = 0; o < O; ++o)
 					{
+						sigma_t const on = O - o;
 						sigma_t const u = 1 << o;
 						sigma_t const w = u << 1;
-						
-						for (sigma_t i = 0; i < u; i += 1)
-						for (sigma_t j = i; j < N; j += w)
+						for (sigma_t               i = 0; i < u; i += 1)
+						for (sigma_t in = i << on, j = i; j < N; j += w)
 						{
-							U const su = s[j + u]*basis[i*(N >> o)];
+							U const su = s[j + u]*basis[in];
 							U const s0 = s[j + 0];
 							s[j + u] = s0 - su;
 							s[j + 0] = s0 + su;
