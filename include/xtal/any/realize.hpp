@@ -134,7 +134,7 @@ private:
 	using co = realization<Q>;
 
 public:
-	using typename co::alpha_t;
+	using typename co::alpha_t; using aleph_t = _std::complex<alpha_t>;
 	using typename co:: iota_t;
 	using typename co::delta_t;
 	using typename co::sigma_t;
@@ -142,12 +142,11 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-//	using alphaplex_t = _std::complex<alpha_t>;
-
-	XTAL_LET alpha_x = [] (XTAL_DEF w) XTAL_0FN_(alpha_t(XTAL_REF_(w)));
-	XTAL_LET  iota_x = [] (XTAL_DEF w) XTAL_0FN_( iota_t(XTAL_REF_(w)));
-	XTAL_LET sigma_x = [] (XTAL_DEF w) XTAL_0FN_(sigma_t(XTAL_REF_(w)));
-	XTAL_LET delta_x = [] (XTAL_DEF w) XTAL_0FN_(delta_t(XTAL_REF_(w)));
+	XTAL_LET aleph_x = [] (XTAL_DEF... ws) XTAL_0FN_(aleph_t(XTAL_REF_(ws)...));
+	XTAL_LET alpha_x = [] (XTAL_DEF     w) XTAL_0FN_(alpha_t(XTAL_REF_(w)));
+	XTAL_LET  iota_x = [] (XTAL_DEF     w) XTAL_0FN_( iota_t(XTAL_REF_(w)));
+	XTAL_LET sigma_x = [] (XTAL_DEF     w) XTAL_0FN_(sigma_t(XTAL_REF_(w)));
+	XTAL_LET delta_x = [] (XTAL_DEF     w) XTAL_0FN_(delta_t(XTAL_REF_(w)));
 
 //	static_assert(_std::numeric_limits<alpha_t>::has_infinity);
 //	XTAL_LET alpha_oo = _std::numeric_limits<alpha_t>::infinity();
@@ -346,6 +345,7 @@ public:
 	///\note The explicit function-type avoids potential segmentation fault \
 	raised when dynamically resolving the nested templated lambda. \
 
+	static_assert(ratio_y    (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<1> (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<4> (alpha_t(2.0)) == 2.0);
 
@@ -372,6 +372,7 @@ public:
 	///\note The explicit function-type avoids potential segmentation fault \
 	raised when dynamically resolving the nested templated lambda. \
 
+	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
 	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
 	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.28318530717958647692528676655900576839434));
 
@@ -747,7 +748,7 @@ public:
 	///\returns the `target` with magnitude clamped to the region below `diplo_y(zone)*dnsilon_y(N_zoom)`. \
 
 	template <delta_t N_zoom=0, bool N_zero=0>
-	XTAL_FZ1_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
+	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
 		auto constexpr N_unit = N_zero ^ 1;
@@ -778,7 +779,7 @@ public:
 	///\returns the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
 
 	template <delta_t N_zoom=0>
-	XTAL_FZ1_(alpha_t) truncate_y(alpha_t target)
+	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target)
 	XTAL_0EX
 	{
 		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
@@ -840,7 +841,7 @@ public:
 	///\returns the `target` with magnitude clamped to the region above `diplo_y(zone)*upsilon_y(N_zoom)`. \
 
 	template <delta_t N_zoom=0, bool N_zero=0>
-	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target, delta_t const &zone)
+	XTAL_FZ2_(alpha_t) puncture_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
 		auto constexpr N_unit = N_zero ^ 1;
@@ -870,11 +871,34 @@ public:
 	///\returns the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
 
 	template <delta_t N_zoom=0>
-	XTAL_FZ1_(alpha_t) puncture_y(alpha_t target)
+	XTAL_FZ2_(alpha_t) puncture_y(alpha_t target)
 	XTAL_0EX
 	{
 		if constexpr (0 == N_zoom) return resign_y(alpha_0, target); // `target` unchanged
 		else return puncture_y<0, 1>(target, N_zoom);
+	}
+
+
+	///\returns the `target` without the lowest `N_zoom` bits of precision. \
+
+	template <delta_t N_zoom=0>
+	XTAL_FZ2_(alpha_t) approximate_y(alpha_t target)
+	XTAL_0EX
+	{
+		if constexpr (IEC_559|1)
+		{
+			auto constexpr M = -1 << N_zoom;
+			return _std::bit_cast<alpha_t> (_std::bit_cast<delta_t> (_std::move(target)) & M);
+		}
+		else
+		{
+		//	TODO: Fix this, and prevent optimization.
+
+			auto constexpr N = fraction::depth - N_zoom;
+			target *= minimal_y(N);
+			target *= maximal_y(N);
+			return target;
+		}
 	}
 
 
@@ -913,6 +937,7 @@ public:
 //using realized  = realize<unsigned int>;
 using realized  = realize<_std::size_t>;
 
+using aleph_t = typename realized::aleph_t;
 using alpha_t = typename realized::alpha_t;
 using  iota_t = typename realized:: iota_t;
 using delta_t = typename realized::delta_t;//_std::ptrdiff_t;
@@ -1018,8 +1043,8 @@ template <typename T, typename... Ys>  concept of_q = unfalse_q<of_b<T, Ys>...> 
 template <typename T>
 concept complex_q = requires (T t)
 {
-	{t.real()} -> std::same_as<typename T::value_type>;
-	{t.imag()} -> std::same_as<typename T::value_type>;
+	t.real();//{t.real()} -> std::same_as<typename based_t<T>::value_type>;
+	t.imag();//{t.imag()} -> std::same_as<typename based_t<T>::value_type>;
 };
 
 template <typename T>
@@ -1037,6 +1062,17 @@ XTAL_0EX
 	return T(xx - yy, x*y*2.0);
 }
 
+template <complex_q T>
+XTAL_FZ2_(T) dot_y(T const &lhs)
+XTAL_0EX
+{
+	auto const x = lhs.real(), xx = square_y(x);
+	auto const y = lhs.imag(), yy = square_y(y);
+	return xx + yy;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 template <_std::integral T>
@@ -1068,7 +1104,7 @@ template <sigma_t N_subdepth=0>
 XTAL_FZ2 bit_reverse_y(_std::integral auto n)
 XTAL_0EX
 {
-	using realized = realize<decltype(n)>;
+	using realized = realize<XTAL_TYP_(n)>;
 	auto constexpr depth = realized::depth;
 
 	static_assert(0 <= N_subdepth && N_subdepth <= depth);
@@ -1093,6 +1129,83 @@ XTAL_0FN_(bit_reverse_y<N_subdepth> (XTAL_REF_(n)));
 Function expression of `bit_reverse_y`. \
 
 static_assert(bit_reverse_x<0> (realized::sigma_1 << (realized::depth - 1)) == 1);
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+// TODO: Implement `constexpr sqrt`. \
+
+
+///\see `realized::truncate_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 truncate_y(XTAL_DEF_(alpha_q) target, XTAL_DEF... zone)
+XTAL_0EX
+{
+	using realized = realize<XTAL_TYP_(target)>;
+	return realized::template truncate_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
+}
+///\see `realized::truncate_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 truncate_y(XTAL_DEF_(complex_q) target, XTAL_DEF... zone)
+XTAL_0EX
+{
+	auto x = target.real();
+	auto y = target.imag();
+	auto m = 1.0/_std::sqrt(square_y(x) + square_y(x));
+	realize<XTAL_TYP_(m)>::template puncture_z<N_zoom>(m, XTAL_REF_(zone)...);
+	x *= m;
+	y *= m;
+	return XTAL_TYP_(target) {x, y};
+}
+
+
+///\see `realized::puncture_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 puncture_y(XTAL_DEF_(alpha_q) target, XTAL_DEF... zone)
+XTAL_0EX
+{
+	using realized = realize<XTAL_TYP_(target)>;
+	return realized::template puncture_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
+}
+///\see `realized::puncture_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 puncture_y(XTAL_DEF_(complex_q) target, XTAL_DEF... zone)
+XTAL_0EX
+{
+	auto x = target.real();
+	auto y = target.imag();
+	auto m = 1.0/_std::sqrt(square_y(x) + square_y(x));
+	realize<XTAL_TYP_(m)>::template truncate_z<N_zoom>(m, XTAL_REF_(zone)...);
+	x *= m;
+	y *= m;
+	return XTAL_TYP_(target) {x, y};
+}
+
+
+///\see `realized::approximate_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 approximate_y(XTAL_DEF_(alpha_q) target)
+XTAL_0EX
+{
+	using realized = realize<XTAL_TYP_(target)>;
+	return realized::template approximate_y<N_zoom>(XTAL_REF_(target));
+}
+///\see `realized::approximate_y`. \
+
+template <delta_t N_zoom=0>
+XTAL_FZ2 approximate_y(XTAL_DEF_(complex_q) target)
+XTAL_0EX
+{
+	auto const x = approximate_y<N_zoom>(target.real());
+	auto const y = approximate_y<N_zoom>(target.imag());
+	return XTAL_TYP_(target) {x, y};
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -79,8 +79,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_USE                             using
-#define XTAL_TYP                             decltype(auto)
-#define XTAL_TYP_(...)                       decltype(__VA_ARGS__)
+#define XTAL_TYP                std::decay_t<decltype(auto)>
+#define XTAL_TYP_(...)          std::decay_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_FWD_(...)           static_cast<         __VA_ARGS__ &&>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)

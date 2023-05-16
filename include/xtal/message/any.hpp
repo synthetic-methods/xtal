@@ -94,7 +94,7 @@ struct define
 				XTAL_OP2() (XTAL_DEF... xs)
 				XTAL_0EX
 				{
-					auto const &def = deify<XTAL_TYP_(xs)...>();
+					auto const &def = deify<decltype(xs)...>();
 					return (self().*def)(XTAL_REF_(xs)...);
 				}
 

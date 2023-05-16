@@ -89,7 +89,7 @@ struct define
 			template <auto... Ms>
 			struct resolve
 			{
-				using return_t = XTAL_TYP_(XTAL_VAL_(T&).template method<Ms...>(XTAL_VAL_(Xs)...));
+				using return_t = decltype(XTAL_VAL_(T&).template method<Ms...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (argument_t<Xs>...);
 
 			};
@@ -97,7 +97,7 @@ struct define
 			XTAL_IF2 (T const t) {t.template method<Ms...>(XTAL_VAL_(Xs)...);}
 			struct resolve<Ms...>
 			{
-				using return_t = XTAL_TYP_(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
+				using return_t = decltype(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (argument_t<Xs>...) const;
 
 			};

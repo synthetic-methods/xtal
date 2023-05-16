@@ -1,7 +1,7 @@
 #pragma once
 #include "./buffer.hpp"
 #include "../message/numinal.hpp"
-#include <complex>
+
 
 
 #include <catch2/catch_all.hpp>
@@ -27,40 +27,31 @@ TEST_CASE("xtal/any/buffer.hpp: scalar series_geometric")
 
 TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
 {
-	using Cx = _std::complex<alpha_t>;
-
 	sigma_t constexpr O =      3;
 	sigma_t constexpr N = 1 << O;
 	sigma_t constexpr M = N  - 1;
 
-	using window_t = buffer_scalar_t<N, Cx>;
+	using window_t = buffer_scalar_t<N, aleph_t>;
 
 	window_t data;
-	data[0] = data[M - 0] = Cx(0.0, 0.0);
-	data[1] = data[M - 1] = Cx(1.0, 1.0);
-	data[2] = data[M - 2] = Cx(3.0, 3.0);
-	data[3] = data[M - 3] = Cx(4.0, 4.0);
+	data[0] = data[M - 0] = aleph_t(0.0, 0.0);
+	data[1] = data[M - 1] = aleph_t(1.0, 1.0);
+	data[2] = data[M - 2] = aleph_t(3.0, 3.0);
+	data[3] = data[M - 3] = aleph_t(4.0, 4.0);
 
 	data.transform_fourier();
 
-	REQUIRE(data[0].real() == Catch::Approx( 0.16000000000000000e+2));
-	REQUIRE(data[1].real() == Catch::Approx(-0.48284271247461916e+1));
-	REQUIRE(data[2].real() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[3].real() == Catch::Approx(-0.34314575050762031e+0));
-	REQUIRE(data[4].real() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[5].real() == Catch::Approx( 0.82842712474619118e+0));
-	REQUIRE(data[6].real() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[7].real() == Catch::Approx(-0.11656854249492380e+2));
-
-	REQUIRE(data[0].imag() == Catch::Approx( 0.16000000000000000e+2));
-	REQUIRE(data[1].imag() == Catch::Approx(-0.11656854249492380e+2));
-	REQUIRE(data[2].imag() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[3].imag() == Catch::Approx( 0.82842712474618851e+0));
-	REQUIRE(data[4].imag() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[5].imag() == Catch::Approx(-0.34314575050762031e+0));
-	REQUIRE(data[6].imag() == Catch::Approx( 0.00000000000000000e+0));
-	REQUIRE(data[7].imag() == Catch::Approx(-0.48284271247461881e+1));
-
+	auto constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<(realized::fraction::depth >> 1)>(XTAL_REF_(w)));
+	REQUIRE(iffy(data[0]) == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
+	REQUIRE(iffy(data[0]) == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
+	REQUIRE(iffy(data[1]) == iffy(aleph_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
+	REQUIRE(iffy(data[2]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(iffy(data[3]) == iffy(aleph_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
+	REQUIRE(iffy(data[4]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(iffy(data[5]) == iffy(aleph_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
+	REQUIRE(iffy(data[6]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(iffy(data[7]) == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////

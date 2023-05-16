@@ -363,17 +363,17 @@ struct defer<U>
 		//	TODO: It appears that both `category::sized` and `views::take` must be applied \
 			for `size` to be defined by `ranges::view_interface`, but maybe there's a better way? \
 
-			auto f = head().template reify<iteratee_t<XTAL_TYP_(xs)>...>();
+			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			auto z = zap_f(_std::move(f)) (XTAL_REF_(xs)...);
 			auto n = delta_t(z.size());
-			return review_t<XTAL_TYP_(xs)...>(_std::move(z))|_v3::views::take(std::move(n));
+			return review_t<decltype(xs)...>(_std::move(z))|_v3::views::take(std::move(n));
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF... xs)
 		XTAL_0FX
 		XTAL_IF2 (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
 		{
-			auto f = head().template reify<iteratee_t<XTAL_TYP_(xs)>...>();
+			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			return zap_f(std::move(f)) (XTAL_REF_(xs)...);
 		}
 

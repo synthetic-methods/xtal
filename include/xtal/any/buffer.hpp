@@ -2,7 +2,7 @@
 #include "./any.hpp"
 #include "./collate.hpp"// next
 
-#include <complex>
+
 
 
 
@@ -116,14 +116,13 @@ struct buffer
 				///\note This algorithm uses squaring, \
 				which is more precise/efficient than multiplication for complex numbers. \
 
-				XTAL_FN1_(T&) series_geometric(U const &u, sigma_t const &i_lim = N)
+				XTAL_FN1_(T&) series_geometric(U const &u, sigma_t const &n = N)
 				XTAL_0EX
-				XTAL_IF1 even_q<N>
 				{
 					auto &s = *this;
 					s[0] = 1;
 					s[1] = u;
-					for (sigma_t i = 1; i < i_lim >> 1; ++i)
+					for (sigma_t i = 1; i < n >> 1; ++i)
 					{
 						auto w = square_y(s[i]);
 						auto h = i << 1;
@@ -131,6 +130,10 @@ struct buffer
 						h   += 1;
 						w   *= u;
 						s[h] = w;
+					}
+					if (n&1)
+					{
+						s[n - 1] = s[n - 2]*u;
 					}
 					return s;
 				}
@@ -142,34 +145,22 @@ struct buffer
 
 				XTAL_FN1_(T&) series_fourier()
 				XTAL_0EX
-				XTAL_IF1 even_q<N> and complex_q<U>
+				XTAL_IF1 complex_q<U> and (N>>2<<2 == N)
 				{
 					auto &s = *this;
-					auto constexpr rho = [] (U const &u) XTAL_0FN_(U(u.imag(), -u.real()));
-					auto const     phi = realized::patio_y<-1> (N);
-					auto const     x = _std::cos(phi);
-					auto const     y = _std::sin(phi);
-					auto const     u = U(x, y);
-					auto const     o = U(1, 0);
-					auto constexpr H = N >> 1;
-					/*/
-					series_geometric(U(x, y), H);
-					auto const _H = s.begin() + H;
-					auto const _0 = s.begin();
-					_std::transform(_0, _H, _H, rho);
-					/*/
-					s[0] = o; s[0 + H] = rho(o);
-					s[1] = u; s[1 + H] = rho(u);
-					for (sigma_t h = 1; h < H >> 1; ++h)
-					{
-						auto w = square_y(s[h]);
-						auto i = h << 1;
-						s[i] = w; s[i + H] = rho(w);
-						i   += 1;
-						w   *= u;
-						s[i] = w; s[i + H] = rho(w);
-					}
-					/***/
+					auto const x = _std::cos(realized::patio_y<-1> (N));
+					auto const y = _std::sin(realized::patio_y<-1> (N));
+					auto const u = U(x, y);
+					auto const o = U(1, 0);
+					auto constexpr Q = N >> 2;
+					series_geometric(U(x, y), Q + 1);
+					auto const i0 =  s.begin();
+					auto const i1 = _std::next(i0,     1);
+					auto const j0 = _std::next(i0, Q + 0);
+					auto const k1 = _std::next(j0, Q + 1);
+					auto      _k1 = _std::make_reverse_iterator(k1);
+					_std::transform(i0, j0,_k1, [] (U const &u) XTAL_0FN_(U(-u.imag(), -u.real())));
+					_std::transform(i1, k1, k1, [] (U const &u) XTAL_0FN_(U( u.imag(), -u.real())));
 					return s;
 				}
 				
@@ -179,7 +170,7 @@ struct buffer
 
 				XTAL_FN1_(T&) transform_fourier()
 				XTAL_0EX
-				XTAL_IF1 even_q<N> and complex_q<U>
+				XTAL_IF1 complex_q<U> and (N>>2<<2 == N)
 				{
 					T basis; basis.series_fourier();
 					return this->transform_fourier(basis);
@@ -191,7 +182,7 @@ struct buffer
 
 				XTAL_FN1_(T&) transform_fourier(T const &basis)
 				XTAL_0EX
-				XTAL_IF1 even_q<N> and complex_q<U>
+				XTAL_IF1 complex_q<U> and (N>>2<<2 == N)
 				{
 					sigma_t constexpr H = N >> 1;
 					sigma_t constexpr O = bit_ceiling_y(N);

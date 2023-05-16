@@ -52,7 +52,7 @@ void render_external__test()
 	auto  rhs   = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 
 	auto  xhs   = processor::vectorize_t<mix_t, buffer<(1<<5)>>::bind_f(lhs, rhs);
-	using xhs_t = decltype(xhs);
+	using xhs_t = XTAL_TYP_(xhs);
 	
 	auto buffer_m = typename xhs_t::buffer_t {0, 0, 0};
 	auto render_m = typename xhs_t::render_t(buffer_m);
