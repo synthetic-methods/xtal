@@ -145,8 +145,8 @@ public:
 	XTAL_LET aleph_x = [] (XTAL_DEF... ws) XTAL_0FN_(aleph_t(XTAL_REF_(ws)...));
 	XTAL_LET alpha_x = [] (XTAL_DEF     w) XTAL_0FN_(alpha_t(XTAL_REF_(w)));
 	XTAL_LET  iota_x = [] (XTAL_DEF     w) XTAL_0FN_( iota_t(XTAL_REF_(w)));
-	XTAL_LET sigma_x = [] (XTAL_DEF     w) XTAL_0FN_(sigma_t(XTAL_REF_(w)));
 	XTAL_LET delta_x = [] (XTAL_DEF     w) XTAL_0FN_(delta_t(XTAL_REF_(w)));
+	XTAL_LET sigma_x = [] (XTAL_DEF     w) XTAL_0FN_(sigma_t(XTAL_REF_(w)));
 
 //	static_assert(_std::numeric_limits<alpha_t>::has_infinity);
 //	XTAL_LET alpha_oo = _std::numeric_limits<alpha_t>::infinity();
@@ -950,19 +950,30 @@ static_assert(_std::is_same_v<_std::size_t,  sigma_t>);
 
 ///////////////////////////////////////////////////////////////////////////////
 
+template <typename    T >     concept    complex_b   = requires (T t) {{t.real()} -> _std::same_as<decltype(t.imag())>;};
+template <typename    T >     concept    boolean_b   = _std::is_same_v     <bool, _std::remove_reference_t<T>>;
 template <typename    T >     concept       iota_b   = _std::is_integral_v       <_std::remove_reference_t<T>>;
 template <typename    T >     concept      alpha_b   = _std::is_floating_point_v <_std::remove_reference_t<T>>;
-template <typename    T >     concept    boolean_b   = _std::is_same_v     <bool, _std::remove_reference_t<T>>;
+template <typename    T >     concept      aleph_b   = complex_b<T> and requires (T t) {{t.real()} -> alpha_b;};
+template <typename    T >     struct       field     : _std::false_type {};
+template <complex_b   T >     struct       field<T>  : _std:: true_type {};
+template <alpha_b     T >     struct       field<T>  : _std:: true_type {};
+template <typename    T >     concept      field_b   = field<T>::value;
+
+template <typename... Ts>     concept    complex_q   = unfalse_q<complex_b<Ts>...>;
+template <typename... Ts>     concept    boolean_q   = unfalse_q<boolean_b<Ts>...>;
+template <typename... Ts>     concept       iota_q   = unfalse_q<   iota_b<Ts>...>;
+template <typename... Ts>     concept      alpha_q   = unfalse_q<  alpha_b<Ts>...>;
+template <typename... Ts>     concept      aleph_q   = unfalse_q<  aleph_b<Ts>...>;
+template <typename... Ts>     concept      field_q   = unfalse_q<  field_b<Ts>...>;
+
 template <typename    T >     concept    equated_b   = requires (T u, T v) {u  == v;};
 template <typename    T >     concept    ordered_b   = requires (T u, T v) {u <=> v;};
-template <typename    T >     concept    numeric_b   = iota_b<T> or alpha_b<T>;
+template <typename    T >     concept    numeric_b   = iota_b<T> or field_b<T>;
 
-template <typename... Ts>     concept       iota_q   = unfalse_q<   iota_b<Ts>...>;
-template <typename... Ts>     concept      alpha_q   = unfalse_q< alpha_b<Ts>...>;
-template <typename... Ts>     concept    boolean_q   = unfalse_q<boolean_b<Ts>...>;
 template <typename... Ts>     concept    equated_q   = unfalse_q<equated_b<Ts>...>;
 template <typename... Ts>     concept    ordered_q   = unfalse_q<ordered_b<Ts>...>;
-template <typename... Ts>     concept    numeric_q   = iota_q<Ts...> or alpha_q<Ts...>;
+template <typename... Ts>     concept    numeric_q   = iota_q<Ts...> or field_q<Ts...>;
 
 template <typename... Ts>     struct       craft      {using type = _std::variant<Ts...>;};
 template <              >     struct       craft< >   {using type = _std::monostate     ;};
@@ -1041,13 +1052,6 @@ template <typename T, typename... Ys>  concept of_q = unfalse_q<of_b<T, Ys>...> 
 ///////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-concept complex_q = requires (T t)
-{
-	t.real();//{t.real()} -> std::same_as<typename based_t<T>::value_type>;
-	t.imag();//{t.imag()} -> std::same_as<typename based_t<T>::value_type>;
-};
-
-template <typename T>
 XTAL_FZ2_(T) square_y(T const &lhs)
 XTAL_0EX
 {
@@ -1071,6 +1075,15 @@ XTAL_0EX
 	return xx + yy;
 }
 
+template <complex_q T>
+XTAL_FZ2_(T) arc_y(auto const &phi)
+XTAL_0EX
+{
+	auto const x = _std::cos(phi);
+	auto const y = _std::sin(phi);
+	return T(x, y);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1083,6 +1096,9 @@ XTAL_0EX
 	for (; n >>= 1; ++m);
 	return m;
 }
+template <sigma_t N, sigma_t M=0>
+concept bit_floor_q = N == 1 << (bit_floor_y(N >> M) + M);
+
 
 template <_std::integral T>
 XTAL_FZ2_(T) bit_ceiling_y(T const &n)
@@ -1092,6 +1108,9 @@ XTAL_0EX
 	m += 1 << m != n;
 	return m;
 }
+template <sigma_t N, sigma_t M=0>
+concept bit_ceiling_q = N == 1 << (bit_ceiling_y(N >> M) + M);
+
 
 ///\returns the bitwise-reversal of the given value `n`, \
 restricted to `N_subdepth` iff `0 < N_subdepth < depth`. \

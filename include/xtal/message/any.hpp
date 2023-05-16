@@ -185,26 +185,26 @@ struct define
 				using co = compose_s<_S>;
 
 				using event_t = compose_s<T, content::confer<iota_t>>;
-				using still_t = buffer_still_t<N, event_t>;
+				using funnel_t = buffer_funnel_t<N, event_t>;
 
-				still_t still_m;
+				funnel_t funnel_m;
 
 			public:
 
 				XTAL_FN2 next_tail()
 				XTAL_0EX
 				{
-					return still_m.top().tail();
+					return funnel_m.top().tail();
 				}
 				XTAL_FN2 next_head()
 				XTAL_0EX
 				{
-					return still_m.top().head();
+					return funnel_m.top().head();
 				}
 				XTAL_FN2 nearest_head()
 				XTAL_0EX
 				{
-					return still_m.empty()? _std::numeric_limits<iota_t>::max(): next_head();
+					return funnel_m.empty()? _std::numeric_limits<iota_t>::max(): next_head();
 				}
 				XTAL_FN2 nearest_head(iota_t i)
 				XTAL_0EX
@@ -229,7 +229,7 @@ struct define
 					assert(0 <= i);
 					if (0 < i)
 					{
-						still_m.emplace(XTAL_REF_(i), XTAL_REF_(t));
+						funnel_m.emplace(XTAL_REF_(i), XTAL_REF_(t));
 						return -1;
 					}
 					else
@@ -281,9 +281,9 @@ struct define
 					if constexpr (0 < N)
 					{
 						co::relay(i);
-						while (still_m.size() and next_head() <= i)
+						while (funnel_m.size() and next_head() <= i)
 						{
-							auto const _ = co::influx(next_tail()); still_m.pop();
+							auto const _ = co::influx(next_tail()); funnel_m.pop();
 						}
 					}
 					return delay();

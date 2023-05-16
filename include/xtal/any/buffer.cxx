@@ -15,23 +15,30 @@ using bias_t = message::numinal_t<alpha_t, struct bias>;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/any/buffer.hpp: scalar series_geometric")
+TEST_CASE("xtal/any/buffer.hpp: series geometric")
 {
-	using window_t = buffer_scalar_t<(1<<3), realized::alpha_t>;
+	sigma_t constexpr N = 1 << 3;	
+	using scalar_t = buffer_scalar_t<N, alpha_t>;
+	using series_t = buffer_series_t<N, alpha_t>;
 
-	window_t orbital; orbital.series_geometric(2);
-
-	REQUIRE(_v3::ranges::equal(orbital, _std::vector {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7}));
+	series_t baz; baz.basis(2.0);
+	scalar_t bar; bar.refill(baz);
+	scalar_t foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
+	REQUIRE(_v3::ranges::equal(foo, bar));
+	
+	foo += bar;
+	foo -= 1;
+	foo -= {0, 1, 3, 7, 15, 31, 63, 127};
+	REQUIRE(foo == bar);
 
 }
 
-TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
+TEST_CASE("xtal/any/buffer.hpp: spectra transform")
 {
-	sigma_t constexpr O =      3;
-	sigma_t constexpr N = 1 << O;
+	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using window_t = buffer_scalar_t<N, aleph_t>;
+	using window_t = buffer_spectra_t<N, aleph_t>;
 
 	window_t data;
 	data[0] = data[M - 0] = aleph_t(0.0, 0.0);
@@ -39,7 +46,7 @@ TEST_CASE("xtal/any/buffer.hpp: scalar transform_fourier")
 	data[2] = data[M - 2] = aleph_t(3.0, 3.0);
 	data[3] = data[M - 3] = aleph_t(4.0, 4.0);
 
-	data.transform_fourier();
+	data.transform();
 
 	auto constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<(realized::fraction::depth >> 1)>(XTAL_REF_(w)));
 	REQUIRE(iffy(data[0]) == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));

@@ -33,9 +33,9 @@ struct define
 		///\
 		\returns `this` as a subtype of the derived-type `T`. \
 
-		XTAL_FN2_(T const &) self() XTAL_0FX {return static_cast<T const &>(*this);}
-		XTAL_FN2_(T       &) self() XTAL_0EX {return static_cast<T       &>(*this);}
-		XTAL_FN2_(T)         copy() XTAL_0EX {auto s = self(); return s;}
+		XTAL_FN2 self() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
+		XTAL_FN2 self() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
+		XTAL_FN2 copy() XTAL_0EX_(&) {auto s = self(); return s;}
 
 		///\
 		\returns `true`.
