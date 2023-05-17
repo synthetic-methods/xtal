@@ -13,7 +13,7 @@ namespace xtal
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iota_t N=-1>
+template <delta_t N=-1>
 struct buffer
 {
 	template <typename S>
@@ -29,7 +29,7 @@ struct buffer
 		{
 		//	TODO: Specialize the appropriate types so that e.g. `std::apply` works. \
 
-		//	TODO: Specialize `field` to match `scalar<alpha_q>`. \
+		//	TODO: Specialize `field` to match `buffer_scalar_t<alpha_q>`. \
 		
 		//	TODO: Reify `buffer_scalar_t<2, U>` with even/odd semantics, \
 			e.g. stereo or mid-side signals, and results like `exp(+x), exp(-x)` or `cosh(x), sinh(x)`, \
@@ -50,6 +50,8 @@ struct buffer
 
 			public:
 				using co::co;
+				using co::end;
+				using co::begin;
 
 				///\
 				Replace the contents of `this` with the given range. \
@@ -59,14 +61,14 @@ struct buffer
 				XTAL_FN1_(void) refill(I &&in)
 				{
 					assert(N == _std::size(in));
-					refill(in.begin(), in.end());
+					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (in));
 				}
 				template <iterator_q I>
 				XTAL_IF1 is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&i0, I &&iN)
 				{
 					assert(N == _std::distance(i0, iN));
-					_std::copy(XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN), co::begin());
+					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
 				}
 
 				///\
@@ -146,6 +148,20 @@ struct buffer
 				XTAL_FN2 get() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
 				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
+				///\
+				Elementwise transformer. \
+
+				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<U>) f)
+				XTAL_0EX
+				{
+					/*/
+					[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) = f(get(Ns))), ..., U()) (seek_v<N>);
+					/*/
+					move_linear_f(false, begin(), get(), XTAL_REF_(f));
+					/***/
+					return get();
+				}
+				
 				///\
 				Elementwise comparators. \
 
@@ -271,20 +287,50 @@ struct buffer
 				using co::co;
 				using co::get;
 
-				/// Fills `this` with the basis series `{1, u, u*u, u*u*u, ...}`. \
+				///\
+				Initializing constructor. \
 
-				///\returns `this` for chaining. \
+				XTAL_NEW_(explicit) homotype(bool const& basis)
+				:	co()
+				{
+					if (basis) generate();
+				}
+				///\
+				Initializing constructor. \
+
+				XTAL_NEW_(explicit) homotype(U &&u)
+				{
+					generate(_std::move(u));
+				}
+				///\
+				Initializing constructor. \
+
+				XTAL_NEW_(explicit) homotype(U const &u)
+				{
+					generate(u);
+				}
+
+				///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
+					filled by the corresponding powers of `u`. \
 
 				///\note This algorithm uses squaring, \
-				which is more precise/efficient than multiplication for complex numbers. \
+					which is more precise/efficient than multiplication for complex numbers. \
 
-				XTAL_FN1_(T&) basis(U const &u, sigma_t const &n = N)
+				template <sigma_t N_limit=N, sigma_t N_index=0>
+				XTAL_FN1_(T&) generate(U const &u)
 				XTAL_0EX
 				{
 					auto &s = get();
-					s[0] = 1;
-					s[1] = u;
-					for (sigma_t i = 1; i < n >> 1; ++i)
+					auto constexpr H_limit = N_limit >> 1; static_assert(0 < H_limit);
+					auto constexpr _0 = N_index + 0;
+					auto constexpr _1 = N_index + 1;
+					auto constexpr _H = N_index + H_limit;
+					auto constexpr N1 = N_index + N_limit - 1;
+					auto constexpr N2 = N_index + N_limit - 2;
+					auto const      o = realized::explo_y(N_index, u);
+					s[_0] = o;
+					s[_1] = o*u;
+					for (sigma_t i = _1; i < _H; ++i)
 					{
 						auto w = square_y(s[i]);
 						auto h = i << 1;
@@ -293,107 +339,106 @@ struct buffer
 						w   *= u;
 						s[h] = w;
 					}
-					if (n&1)
+					if constexpr (N_limit&1)
 					{
-						s[n - 1] = s[n - 2]*u;
+						s[N1] = s[N2]*u;
 					}
 					return s;
 				}
 
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
-		};
-		template <typename U>
-		XTAL_IF1 positive_q<N>
-		struct spectra
-		{
-			template <typename T>
-			using heterotype = typename series<U>::template homotype<T>;
-
-			template <typename T>
-			class homotype;
-
-			template <typename T>
-			XTAL_IF1 field_q<U>
-			class homotype<T>: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			public:
-				using co::co;
-				using co::get;
-
-				/// Fills `this` with the `basis` used by `transform`, \
+				///\returns `this` as the Fourier basis used by `transform` etc, \
 				comprising `N` values of the half-period complex sinusoid.
 
-				///\returns `this` for chaining. \
+				///\note Only the first eighth-period is computed, \
+				then mirrored to complete the quarter and half respectively. \
 
-				XTAL_FN1_(T&) basis()
+				XTAL_FN1_(T&) generate()
 				XTAL_0EX
 				XTAL_IF1 complex_q<U> and bit_ceiling_q<N, 2>
 				{
 					auto &s = get();
+					auto constexpr x = realized::patio_y<-1> (N);
 					auto constexpr L = N >> 2;
-					auto constexpr A = realized::patio_y<-1> (N);
-					co::basis(arc_y<U>(A), L + 1);
-					auto const i0 =  s.begin();
-					auto const i1 = _std::next(i0,     1);
-					auto const j0 = _std::next(i0, L + 0);
-					auto const k1 = _std::next(j0, L + 1);
-					auto      _k1 = _std::make_reverse_iterator(k1);
-					_std::transform(i0, j0,_k1, [] (U const &v) XTAL_0FN_(U(-v.imag(), -v.real())));
-					_std::transform(i1, k1, k1, [] (U const &v) XTAL_0FN_(U( v.imag(), -v.real())));
+					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
+					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
+					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
+					auto const _k1 = _std::make_reverse_iterator(k1);
+					generate<L + 1> (arc_y<U>(x));
+					copy_linear_f(false, _k1, _std::span(i0, j0), [] (U const &v) XTAL_0FN_(U(-v.imag(), -v.real())));
+					copy_linear_f(false,  k1, _std::span(i1, k1), [] (U const &v) XTAL_0FN_(U( v.imag(), -v.real())));
 					return s;
 				}
 				
-				/// Applies the Fourier transform to `this`. \
+				///\returns `that` transformed by the FFT, \
+				using `this` as the Fourier basis. \
 
-				///\returns `this` for chaining. \
-
-				XTAL_FN1_(T&) transform()
-				XTAL_0EX
-				{
-					T o; o.basis();
-					return this->transform(o);
-				}
-
-				/// Applies the Fourier transform to `this`, using a precomputed `basis`. \
-
-				///\returns `this` for chaining. \
-
-				XTAL_FN1_(T&) transform(T const &basis)
+				template <delta_t N_rotate=0>
+				XTAL_FN1_(T&) transform(T &that)
 				XTAL_0EX
 				XTAL_IF1 bit_ceiling_q<N, 1>
 				{
 					sigma_t constexpr H = N >> 1;
-					sigma_t constexpr O = bit_ceiling_y(N);
+					sigma_t constexpr K = bit_ceiling_y(N);
 
-					auto& s = get();
+					auto const &o = get();
 					for (sigma_t h = 0; h < H; ++h)
 					{
-						_std::swap(s[h], s[bit_reverse_y<O>(h)]);
+						_std::swap(that[h], that[bit_reverse_y<K>(h)]);
 					}
-					for (sigma_t o = 0; o < O; ++o)
+					if constexpr (N_rotate&1)
 					{
-						sigma_t const on = O - o;
-						sigma_t const u = 1 << o;
+						that.transmute([] (U u) XTAL_0FN_(_std::conj(u)));
+					}
+					for (sigma_t k = 0; k < K; ++k)
+					{
+						sigma_t const kn = K - k;
+						sigma_t const u = 1 << k;
 						sigma_t const w = u << 1;
-						for (sigma_t               i = 0; i < u; i += 1)
-						for (sigma_t in = i << on, j = i; j < N; j += w)
+						for (sigma_t                 i = 0; i < u; i += 1)
+						for (sigma_t kn_i = i << kn, j = i; j < N; j += w)
 						{
-							U const su = s[j + u]*basis[in];
-							U const s0 = s[j + 0];
-							s[j + u] = s0 - su;
-							s[j + 0] = s0 + su;
+							U const y = that[j + u]*o[kn_i];
+							U const x = that[j + 0];
+							that[j + u] = x - y;
+							that[j + 0] = x + y;
 						}
 					}
-					return s;
+					if constexpr (N_rotate&1)
+					{
+						that.transmute([] (U u) XTAL_0FN_(_std::conj(u*realized::ratio_y<1>(N))));
+					}
+					return that;
+				}
+				///\returns a new `series` representing the FFT of `lhs`, \
+				using `this` as the Fourier basis. \
+
+				template <delta_t N_rotate=0>
+				XTAL_FN1_(T) transformation(T lhs)
+				XTAL_0EX
+				{
+					return transform(lhs);
+				}
+
+				///\returns `lhs` convolved with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <delta_t N_rotate=0>
+				XTAL_FN1_(T) convolve(T &lhs, T rhs)
+				XTAL_0EX
+				{
+					transform(lhs);
+					transform(rhs);
+					transform<-1>(lhs *= rhs);
+					return lhs;
+				}
+				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <delta_t N_rotate=0>
+				XTAL_FN1_(T) convolution(T lhs, T const &rhs)
+				XTAL_0EX
+				{
+					return convolve(lhs, rhs);
 				}
 
 			};
@@ -856,9 +901,6 @@ struct buffer
 		template <typename U>
 		using series_t = typename series<U>::type;
 
-		template <typename U>
-		using spectra_t = typename spectra<U>::type;
-
 		template <typename V>
 		using vector_t = typename vector<V>::type;
 
@@ -873,25 +915,22 @@ struct buffer
 
 };
 
-template <iota_t N=-1>
+template <delta_t N=-1>
 using buffer_t = typename buffer<N>::type;
 
-template <iota_t N=-1, typename U=alpha_t>
+template <delta_t N=-1, typename U=alpha_t>
 using buffer_scalar_t = typename buffer_t<N>::template scalar_t<U>;
 
-template <iota_t N=-1, typename U=alpha_t>
+template <delta_t N=-1, typename U=alpha_t>
 using buffer_series_t = typename buffer_t<N>::template series_t<U>;
 
-template <iota_t N=-1, typename U=alpha_t>
-using buffer_spectra_t = typename buffer_t<N>::template spectra_t<U>;
-
-template <iota_t N=-1, typename V=alpha_t>
+template <delta_t N=-1, typename V=alpha_t>
 using buffer_vector_t = typename buffer_t<N>::template vector_t<V>;
 
-template <iota_t N=-1, typename V=alpha_t>
+template <delta_t N=-1, typename V=alpha_t>
 using buffer_funnel_t = typename buffer_t<N>::template funnel_t<V>;
 
-template <iota_t N=-1, typename V=alpha_t>
+template <delta_t N=-1, typename V=alpha_t>
 using buffer_allocator_t = typename buffer_t<N>::template allocator_t<V>;
 
 ///////////////////////////////////////////////////////////////////////////////

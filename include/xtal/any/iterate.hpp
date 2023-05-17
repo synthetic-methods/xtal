@@ -89,6 +89,11 @@ struct isomorphic<Ys...>
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN)
+{
+	copy_linear_f(i, j0, jN, craft_f<iteratee_t<I>>);
+}
+template <iterator_q I, iterator_q J>
+XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN)
 XTAL_IF1 isomorphic_q<I, J>
 {
 #ifdef __cpp_lib_execution
@@ -98,32 +103,55 @@ XTAL_IF1 isomorphic_q<I, J>
 	_std::copy(j0, jN, i);
 #endif
 }
-template <iterator_q I, iterator_q J>
-XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN)
+template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN, F &&f)
 {
 #ifdef __cpp_lib_execution
-	if (order) _std::transform(_std::execution::seq, j0, jN, i, craft_f<iteratee_t<I>>);
-	else     _std::transform(_std::execution::unseq, j0, jN, i, craft_f<iteratee_t<I>>);
+	if (order) _std::transform(_std::execution::seq, j0, jN, i, XTAL_FWD_(F) (f));
+	else     _std::transform(_std::execution::unseq, j0, jN, i, XTAL_FWD_(F) (f));
 #else
-	_std::transform(j0, jN, i, craft_f<iteratee_t<I>>);
+	_std::transform(j0, jN, i, XTAL_FWD_(F) (f));
 #endif
 }
+
 template <iterator_q I, iterated_q J>
 XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const &j)
 {
 	copy_linear_f(order, i, j.begin(), j.end());
 }
+template <iterator_q I, iterated_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const &j, F &&f)
+{
+	copy_linear_f(order, i, j.begin(), j.end(), XTAL_FWD_(F) (f));
+}
+
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ1_(void) move_linear_f(bool const &order, I i, J j0, J jN)
 {
-	return copy_linear_f(order, i, _std::make_move_iterator(j0), _std::make_move_iterator(jN));
+	auto const _j0 = _std::make_move_iterator(j0);
+	auto const _jN = _std::make_move_iterator(jN);
+	return copy_linear_f(order, i, _j0, _jN);
 }
+template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ1_(void) move_linear_f(bool const &order, I i, J const j0, J const jN, F &&f)
+{
+	auto const _j0 = _std::make_move_iterator(j0);
+	auto const _jN = _std::make_move_iterator(jN);
+	return copy_linear_f(order, i, _j0, _jN, XTAL_FWD_(F) (f));
+}
+
 template <iterator_q I, iterated_q J>
 XTAL_FZ1_(void) move_linear_f(bool const &order, I i, J const &j)
 {
 	move_linear_f(order, i, j.begin(), j.end());
 }
+template <iterator_q I, iterated_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ1_(void) move_linear_f(bool const &order, I i, J const &j, F &&f)
+{
+	move_linear_f(order, i, j.begin(), j.end(), XTAL_FWD_(F) (f));
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -887,8 +887,8 @@ public:
 	{
 		if constexpr (IEC_559|1)
 		{
-			auto constexpr M = -1 << N_zoom;
-			return _std::bit_cast<alpha_t> (_std::bit_cast<delta_t> (_std::move(target)) & M);
+			auto constexpr N = -1 << N_zoom;
+			return _std::bit_cast<alpha_t> (_std::bit_cast<delta_t> (_std::move(target)) & N);
 		}
 		else
 		{
@@ -977,7 +977,7 @@ template <typename... Ts>     concept    numeric_q   = iota_q<Ts...> or field_q<
 
 template <typename... Ts>     struct       craft      {using type = _std::variant<Ts...>;};
 template <              >     struct       craft< >   {using type = _std::monostate     ;};
-template <typename    T >     struct       craft<T>   {using type = T                 ;};
+template <typename    T >     struct       craft<T>   {using type = T                   ;};
 template <typename... Ts>     using        craft_t   = typename craft<Ts...>::type;
 template <typename... Ts>     XTAL_LET     craft_f   = [] (XTAL_DEF... ws) XTAL_0FN_(craft_t<Ts...> (XTAL_REF_(ws)...));
 
