@@ -43,9 +43,9 @@ void render_virtual__test()
 {
 	using serial_o = message::serial_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(realized::alpha_x);
-	auto _10 = _01|_v3::views::transform([] (auto n) {return realized::alpha_x(n*10);});
-	auto _11 = _01|_v3::views::transform([] (auto n) {return realized::alpha_x(n*11);});
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(craft_f<alpha_t>);
+	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
+	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
 
 	auto lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));

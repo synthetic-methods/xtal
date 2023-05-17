@@ -6,3 +6,4 @@
 #include "./compose.cxx"
 #include "./iterate.cxx"
 #include "./realize.cxx"
+#include "./utility.cxx"

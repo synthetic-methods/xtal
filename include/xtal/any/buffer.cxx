@@ -35,7 +35,7 @@ TEST_CASE("xtal/any/buffer.hpp: series initialization")
 
 TEST_CASE("xtal/any/buffer.hpp: series transformation")
 {
-	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<20>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
@@ -48,37 +48,21 @@ TEST_CASE("xtal/any/buffer.hpp: series transformation")
 	source[2] = source[M - 2] = aleph_t(3.0, 3.0);
 	source[3] = source[M - 3] = aleph_t(4.0, 4.0);
 
-	series_t target = basis.transformation(source);
-	REQUIRE(iffy(target[0]) == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
-	REQUIRE(iffy(target[1]) == iffy(aleph_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
-	REQUIRE(iffy(target[2]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(iffy(target[3]) == iffy(aleph_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
-	REQUIRE(iffy(target[4]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(iffy(target[5]) == iffy(aleph_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
-	REQUIRE(iffy(target[6]) == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(iffy(target[7]) == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
-	
-	/*/
-//	NOTE: Close, but `iffy` needs tweaking. \
-
-	basis.transform<-1>(target);
-	target.transmute(iffy);
-	source.transmute(iffy);
-//	REQUIRE(target[0] == source[0]);
-//	REQUIRE(target[1] == source[1]);
-//	REQUIRE(target[2] == source[2]);
-//	REQUIRE(target[3] == source[3]);
-//	REQUIRE(target[4] == source[4]);
-//	REQUIRE(target[5] == source[5]);
-//	REQUIRE(target[6] == source[6]);
-//	REQUIRE(target[7] == source[7]);
-	/***/
+	series_t target = basis.transformation(source).transmute(iffy);
+	REQUIRE(target[0] == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
+	REQUIRE(target[1] == iffy(aleph_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
+	REQUIRE(target[2] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[3] == iffy(aleph_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
+	REQUIRE(target[4] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[5] == iffy(aleph_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
+	REQUIRE(target[6] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[7] == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
 
 }
 
 TEST_CASE("xtal/any/buffer.hpp: series convolution")
 {
-	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<20>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
@@ -89,19 +73,7 @@ TEST_CASE("xtal/any/buffer.hpp: series convolution")
 	series_t rhs = {1, 0, 1, 0, 0, 0, 0, 0};
 	series_t xhs = {0, 1, 2, 1, 2, 0, 0, 0};
 	series_t yhs = basis.convolution(lhs, rhs).transmute(iffy);
-
-	REQUIRE(xhs[0].real() == yhs[0].real());
-	REQUIRE(xhs[1].real() == yhs[1].real());
-	REQUIRE(xhs[2].real() == yhs[2].real());
-	REQUIRE(xhs[3].real() == yhs[3].real());
-	REQUIRE(xhs[4].real() == yhs[4].real());
-	/*/
-//	NOTE: Close, but `iffy` needs tweaking. \
-
-	REQUIRE(xhs[5].real() == yhs[5].real());
-	REQUIRE(xhs[6].real() == yhs[6].real());
-	REQUIRE(xhs[7].real() == yhs[7].real());
-	/***/
+	REQUIRE(xhs == yhs);
 
 }
 
@@ -180,7 +152,7 @@ void buffer_queue_operation__test()
 TEST_CASE("xtal/any/buffer.hpp: queue operation")
 {
 	buffer_queue_operation__test<-1>();
-	buffer_queue_operation__test<16>();
+	buffer_queue_operation__test<4>();
 
 }
 

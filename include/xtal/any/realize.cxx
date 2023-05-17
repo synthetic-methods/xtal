@@ -11,19 +11,6 @@ namespace xtal::any::_realize
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-unsigned int bitReverse(unsigned int x, int O)
-{
-	int n = 0;
-	int mask = 0x1;
-	for (int i = 0; i < O; i++)
-	{
-		n <<= 1;
-		n |= (x & 1);
-		x >>= 1;
-	}
-	return n;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("xtal/any/realize.hpp: reverse 32:03")
@@ -34,7 +21,6 @@ TEST_CASE("xtal/any/realize.hpp: reverse 32:03")
 	sigma_t question = 0b011;
 	sigma_t answer   = 0b110;
 
-//	REQUIRE(answer == bitReverse(question, 3));
 	REQUIRE(answer == bit_reverse_x<3>(question));
 
 }
@@ -208,10 +194,10 @@ TEST_CASE("xtal/any/realize.hpp: truncate")
 template <iota_t N_sgn=1>
 void realize_puncture__test()
 {
-	auto const oo0 = realized::minimal_y(0);
-	auto const oo1 = realized::minimal_y(1);
-	auto const oo2 = realized::minimal_y(2);
-	auto const oo3 = realized::minimal_y(3);
+	alpha_t const oo0 = 0;
+	alpha_t const oo1 = realized::minimal_y(0);
+	alpha_t const oo2 = realized::minimal_y(1);
+	alpha_t const oo3 = realized::minimal_y(2);
 
 	realized::alpha_t w, x, y, co = N_sgn;
 	/**/

@@ -65,7 +65,7 @@ struct define
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
-		template <iota_t N=2>
+		template <delta_t N=2>
 		struct dispatch
 		{
 			static_assert(0 < N);
@@ -81,7 +81,7 @@ struct define
 				using co::self;
 				using co::head;
 
-				XTAL_NEW subtype(XTAL_DEF_(as_q<iota_t>) n)
+				XTAL_NEW subtype(XTAL_DEF_(as_q<delta_t>) n)
 			//	:	co(XTAL_REF_(n))
 				:	co(n)
 				{

@@ -44,9 +44,9 @@ void render_external__test()
 	using resize_o = message::resize_t<>;
 	using serial_o = message::serial_t<>;
 
-	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(realized::iota_x);
-	auto  _10   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*10);});
-	auto  _11   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*11);});
+	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(craft_f<iota_t>);
+	auto  _10   = _01|_v3::views::transform([] (iota_t n) {return n*10;});
+	auto  _11   = _01|_v3::views::transform([] (iota_t n) {return n*11;});
 
 	auto  lhs   = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs   = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
@@ -83,9 +83,9 @@ void render_internal__test()
 	using resize_o = message::resize_t<>;
 	using serial_o = message::serial_t<>;
 
-	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(realized::iota_x);
-	auto  _10   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*10);});
-	auto  _11   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*11);});
+	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(craft_f<iota_t>);
+	auto  _10   = _01|_v3::views::transform([] (iota_t n) {return n*10;});
+	auto  _11   = _01|_v3::views::transform([] (iota_t n) {return n*11;});
 
 	auto  lhs   = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs   = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
@@ -119,9 +119,9 @@ void render_internal_suspension__test()
 	using resize_o = message::resize_t<>;
 	using serial_o = message::serial_t<>;
 
-	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(realized::iota_x);
-	auto  _10   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*10);});
-	auto  _11   = _01|_v3::views::transform([] (auto n) {return realized::iota_x(n*11);});
+	auto  _01   = _v3::views::iota(0, 10)|_v3::views::transform(craft_f<iota_t>);
+	auto  _10   = _01|_v3::views::transform([] (iota_t n) {return n*10;});
+	auto  _11   = _01|_v3::views::transform([] (iota_t n) {return n*11;});
 
 	auto  lhs   = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs   = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));

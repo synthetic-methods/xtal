@@ -41,9 +41,9 @@ struct dynamic_bias_mix_t
 template <typename mix_t>
 void contrivance__test()
 {
-	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(realized::alpha_x);
-	auto const _10 = _01|_v3::views::transform([] (XTAL_DEF n) {return XTAL_REF_(n) * 10;});
-	auto const _11 = _01|_v3::views::transform([] (XTAL_DEF n) {return XTAL_REF_(n) * 11;});
+	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(craft_f<alpha_t>);
+	auto const _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
+	auto const _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
 	using mixer_t = processor::contrive_t<mix_t>;
 	mixer_t mixer_f;
