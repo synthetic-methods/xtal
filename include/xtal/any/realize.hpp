@@ -10,8 +10,6 @@ XTAL_ENV_(push)
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Establishes the base types for the supplied `Q` \
@@ -83,6 +81,11 @@ struct realization<Q>
 .;
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 template <typename Q>
 struct realizing
 :	realization<Q>
@@ -93,8 +96,6 @@ private:
 public:
 	using typename co::delta_t;
 	using typename co::sigma_t;
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 	XTAL_LET_(sigma_t)   width = sizeof(Q);
 	XTAL_LET_(sigma_t)   depth = sizeof(Q) << 3;
@@ -144,8 +145,6 @@ public:
 //	TODO: Fix `0 == breadth` realization.
 
 
-////////////////////////////////////////////////////////////////////////////////
-
 	///\\returns the number of bits set in `o`. \
 
 	XTAL_FZ2 bit_arity_y(sigma_t o)
@@ -188,10 +187,13 @@ public:
 		}
 	}
 
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-};
+////////////////////////////////////////////////////////////////////////////////
+
+
 template <typename Q>
 struct realize: realizing<Q>
 {
@@ -242,6 +244,7 @@ public:
 
 	XTAL_LET IEC_559 = XTAL_IEC_559 and _std::numeric_limits<alpha_t>::is_iec559;
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
@@ -299,8 +302,6 @@ public:
 	static_assert(haplo_v<-1> == 2.0);
 
 
-////////////////////////////////////////////////////////////////////////////////
-
 	///\returns the `constexpr` equivalent of `std:pow(base, zoom)` for an `unsigned int zoom`. \
 	
 	XTAL_FZ2 explo_y(sigma_t const &zoom, XTAL_DEF base)
@@ -343,7 +344,6 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 	///\returns the `N_num`erator divided by the given de`nom`inator.
 
@@ -375,7 +375,7 @@ public:
 	XTAL_FZ2_(alpha_t) patio_y(XTAL_DEF u)
 	XTAL_0EX
 	{
-		return ratio_y<N_num> (XTAL_REF_(u))*3.14159265358979323846264338327950288419717;
+		return ratio_y<N_num> (XTAL_REF_(u))*3.141592653589793238462643383279502884;
 	}
 	using patio_t = alpha_t (*const) (alpha_t const &);
 	///< Function type of `patio_y`. \
@@ -388,9 +388,40 @@ public:
 	///<\note The explicit function-type avoids potential segmentation fault \
 		raised when dynamically resolving the nested templated lambda. \
 
-	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
-	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.57079632679489661923132169163975144209858));
-	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.28318530717958647692528676655900576839434));
+	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
+	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
+	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
+
+
+	template <delta_t N_index> struct codomain {using value_type = alpha_t;};
+	template <delta_t N_index> struct   domain {using value_type = alpha_t;};
+
+	template <> struct codomain< 2> {XTAL_LET value = (alpha_t) 1.442695040888963407359924681001892137;};// Log[2]^1
+	template <> struct codomain< 1> {XTAL_LET value = (alpha_t) 0.159154943091895335768883763372514362;};// (2*Pi)^1
+	template <> struct codomain<-1> {XTAL_LET value = (alpha_t) 0.318309886183790671537767526745028724;};// (1*Pi)^1
+
+	template <> struct   domain< 2> {XTAL_LET value = (alpha_t) 0.693147180559945309417232121458176568;};// Log[2]
+	template <> struct   domain< 1> {XTAL_LET value = (alpha_t) 6.283185307179586476925286766559005768;};// (2*Pi)
+	template <> struct   domain<-1> {XTAL_LET value = (alpha_t) 3.141592653589793238462643383279502884;};// (1*Pi)
+
+	template <delta_t N_base, delta_t N_shift=0>
+	XTAL_LET codomain_v = haplo_v<N_shift>*value_v<codomain<N_base>>;
+///< Value expression representing the multiplicative inverse of the logarithmic `domain_v`.
+
+	template <delta_t N_base, delta_t N_shift=0>
+	XTAL_LET domain_v = diplo_v<N_shift>*value_v<domain<N_base>>;
+///< Value expression representing the logarithmic domain for `N_base`, scaled by `diplo_y<N_shift>`. \
+	Additionally scaled by `1*PI`, `2*PI`, or `LOG2` if `N_base` is `-1`, `1`, or `2` respectively.
+
+///<\note The scaling w.r.t. `PI` reflects the imaginary logarithm where \
+	`std::exp(std::complex(0, 1*PI)) == -1` and `std::exp(std::complex(0, 2*PI)) == 1`.
+
+///<\note To convert between domains, multiply the target `domain_v` and source `codomain_v`. \
+
+	static_assert(domain_v<-1> == patio_y<1>(1));
+	static_assert(domain_v<-1> == domain_v<1, -1>);
+	static_assert(domain_v<1, -0>*codomain_v<1, -0> == 1);
+	static_assert(domain_v<1, -1>*codomain_v<1, -1> == 1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +478,6 @@ public:
 	
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 	///\returns `std::numeric_limits<alpha_t>::min()` magnified by `diplo_y(zoom)`. \
 
@@ -459,7 +489,6 @@ public:
 	template <delta_t N_zoom=0>
 	XTAL_LET minimal_v = minimal_y(N_zoom);
 	///< Value expression for `minimal_y`. \
-
 
 	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
@@ -478,8 +507,6 @@ public:
 	///< Function expression for `minimum_y`. \
 
 
-////////////////////////////////////////////////////////////////////////////////
-
 	///\returns haplo_y(zoom)/std::numeric_limits<alpha_t>::min()`. \
 	
 	///\note Defined as the multiplicative inverse of `minimal_y`, \
@@ -494,7 +521,6 @@ public:
 	template <delta_t N_zoom=0>
 	XTAL_LET maximal_v = maximal_y(N_zoom);
 	///< Value expression for `maximal_y`. \
-
 
 	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
@@ -608,40 +634,54 @@ public:
 
 	///\returns `value` when positive, zero otherwise. \
 
+	template <delta_t N_proximity=0>
 	XTAL_FZ2 positive_y(alpha_t value)
 	XTAL_0EX
 	{
-		value *= haplo_y(1);
+		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity>;
 		value += design_y(value);
+		if constexpr (0 < N_proximity) value += minimal_v<N_proximity>;
+		value *= haplo_y(1);
 		return value;
 	}
 	XTAL_LET  positive_x = [] (XTAL_DEF value)
 	XTAL_0FN_(positive_y(XTAL_REF_(value)));
 	///< Function expression for `positive_y` \
 
-	static_assert(positive_y( 1.0) ==  1.0);
-	static_assert(positive_y( 0.0) ==  0.0);
-	static_assert(positive_y(-1.0) ==  0.0);
+	static_assert(positive_y<0>( 1.0) ==  1.0);
+	static_assert(positive_y<0>( 0.0) ==  0.0);
+	static_assert(positive_y<0>(-1.0) ==  0.0);
+
+	static_assert(positive_y<1>( 1.0) ==  1.0);
+	static_assert(positive_y<1>( 0.0) ==  minimal_y());
+	static_assert(positive_y<1>(-1.0) ==  minimal_y());
+
 
 	///\returns `value` when negative, zero otherwise. \
 
+	template <delta_t N_proximity=0>
 	XTAL_FZ2 negative_y(alpha_t value)
 	XTAL_0EX
 	{
-		value *= haplo_y(1);
+		if constexpr (0 < N_proximity) value += minimal_v<N_proximity>;
 		value -= design_y(value);
+		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity>;
+		value *= haplo_y(1);
 		return value;
 	}
 	XTAL_LET  negative_x = [] (XTAL_DEF value)
 	XTAL_0FN_(negative_y(XTAL_REF_(value)));
 	///< Function expression for `negative_y` \
 	
-	static_assert(negative_y( 1.0) ==  0.0);
-	static_assert(negative_y( 0.0) ==  0.0);
-	static_assert(negative_y(-1.0) == -1.0);
+	static_assert(negative_y<0>( 1.0) ==  0.0);
+	static_assert(negative_y<0>( 0.0) ==  0.0);
+	static_assert(negative_y<0>(-1.0) == -1.0);
+
+	static_assert(negative_y<1>( 1.0) == -minimal_y());
+	static_assert(negative_y<1>( 0.0) == -minimal_y());
+	static_assert(negative_y<1>(-1.0) == -1.0);
 
 
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //	TODO: Assess performance of both branches for `truncate` and `puncture`. \
 
@@ -733,7 +773,6 @@ public:
 		if constexpr (0 == N_zoom) return resign_y(0, target); // `target` unchanged
 		else return truncate_y<0, 1>(target, N_zoom);
 	}
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -846,27 +885,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-	XTAL_LET_(alpha_t) domain_v[] = {1.
-	,	6.2831853071795864769252867665590057683943387987502116419498891846//  1: 2*Pi
-	,	0.6931471805599453094172321214581765680755001343602552541206800094//  2: Log[2]
-	,	3.1415926535897932384626433832795028841971693993751058209749445923// -1: 1*Pi
-	};
-
-	template <delta_t N_base=0>
-	XTAL_FZ2_(alpha_t) domain_y(delta_t n_base)
-	XTAL_0EX
-	{
-		return domain_v[n_base&0b11]/domain_v[N_base&0b11];
-	}
-	template <delta_t N_base=0>
-	XTAL_FZ2_(alpha_t) codomain_y(delta_t n_base)
-	XTAL_0EX
-	{
-		return domain_v[N_base&0b11]/domain_v[n_base&0b11];
-	}
-
 };
+
+
 
 using realized = realize<_std::size_t>;
 

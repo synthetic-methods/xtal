@@ -23,9 +23,6 @@ class XTALTestPackageConan(ConanFile):
 		includes = path.join(self.source_folder, "..", "include")
 		excludes = path.join(self.source_folder, "src")
 
-	#	The choice between copying "*" or only `*.c*` depends on the style of `#imports`,
-	#	(and may impact `INTELLISENSE`?):
-	#
 	#	copy(self, "*.c*", includes, excludes) #import <this>
 		copy(self,    "*", includes, excludes) #import "this"
 
