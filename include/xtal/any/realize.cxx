@@ -267,6 +267,22 @@ TEST_CASE("xtal/any/realize.hpp: injured complex")
 	REQUIRE(trim_y(truncate_y<N_zoom>(square_2, 0)) == trim_y(circle_1*realized::dnsilon_y(N_zoom)));
 	REQUIRE(trim_y(puncture_y<N_zoom>(square_H, 0)) == trim_y(circle_1*realized::upsilon_y(N_zoom)));
 
+	auto mt19937_m = typename realized::mt19937_t();
+	mt19937_m.seed(Catch::rngSeed());
+
+	BENCHMARK("fracture")
+	{
+		alpha_t constexpr two = 2;
+		aleph_t z {};
+		for (sigma_t i = 192000/100; ~--i;)
+		{
+			auto x = realized::unit_y(mt19937_m); x = _std::pow(two, x);
+			auto y = realized::unit_y(mt19937_m); y = _std::pow(two, y);
+			z *= truncate_y<0>(puncture_y<0>(aleph_t {x, y}), 0);
+		}
+		return z;
+	};
+
 }
 
 

@@ -59,6 +59,14 @@ struct realization<Q>
 //	XTAL_LET_(sigma_t)       carmack_m = 0x5f3759df;
 	XTAL_LET_(alpha_t)       carmack_v = 13211836172961054720.;
 
+	using mt19937_t = _std::mersenne_twister_engine<sigma_t, 32, 624, 397, 31
+	,	0x9908b0df, 11
+	,	0xffffffff,  7
+	,	0x9d2c5680, 15
+	,	0xefc60000, 18
+	,	1812433253
+	>;
+
 };
 template <breadth_q<8> Q>
 struct realization<Q>
@@ -79,6 +87,15 @@ struct realization<Q>
 5938084899034689508292\
 4854912593744361422848\
 .;
+
+	using mt19937_t = _std::mersenne_twister_engine<sigma_t, 64, 312, 156, 31
+	,	0xb5026f5aa96619e9, 29
+	,	0x5555555555555555, 17
+	,	0x71d67fffeda60000, 37
+	,	0xfff7eee000000000, 43
+	,	6364136223846793005
+	>;
+
 };
 
 
@@ -215,17 +232,18 @@ private:
 	using co = realizing<Q>;
 
 public:
-	using typename co::negative;
-	using typename co::positive;
-	using typename co::fraction;
-	using typename co::exponent;
-	using typename co::    unit;
-	using typename co::    sign;
+	using typename co:: negative;
+	using typename co:: positive;
+	using typename co:: fraction;
+	using typename co:: exponent;
+	using typename co::     unit;
+	using typename co::     sign;
 
-	using typename co::  iota_t;
-	using typename co:: delta_t;
-	using typename co:: sigma_t;
-	using typename co:: alpha_t; using aleph_t = _std::complex<alpha_t>;
+	using typename co::   iota_t;
+	using typename co::  delta_t;
+	using typename co::  sigma_t;
+	using typename co::  alpha_t; using aleph_t = _std::complex<alpha_t>;
+	using typename co::mt19937_t;
 
 	using co::breadth;
 	using co::  width;
@@ -243,17 +261,33 @@ public:
 
 	static_assert(bit_arity_y(0b10110100) == 4);
 
-	XTAL_LET IEC_559 = XTAL_IEC_559 and _std::numeric_limits<alpha_t>::is_iec559;
+	#if XTAL_BITWIZE
+		XTAL_LET bit_cast_v = _std::numeric_limits<alpha_t>::is_iec559;
+	#else
+		XTAL_LET bit_cast_v = 0;
+	#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_FZ2 unit_y(sigma_t n)
+	XTAL_0EX
+	{
+		return std::bit_cast<alpha_t>(n & ~unit::mask);
+	}
+	XTAL_FZ2 unit_y(mt19937_t &m)
+	XTAL_0EX
+	{
+		return unit_y(m());
+	}
 
 	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
 
 	XTAL_FZ2 diplo_y(delta_t const &zoom)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			delta_t m = zoom << unit::shift;
 			m += unit::mask;
@@ -282,7 +316,7 @@ public:
 	XTAL_FZ2 haplo_y(delta_t const &zoom)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			return diplo_y(-zoom);
 		}
@@ -569,19 +603,16 @@ public:
 	XTAL_FZ1_(alpha_t) resign_y(alpha_t target, alpha_t const &source=1)
 	XTAL_0EX
 	{
-		if constexpr (XTAL_V00_MSVC)
-		{
-			static_assert(IEC_559);
+		#if XTAL_V00_MSVC
+			static_assert(bit_cast_v);
 			delta_t n = _std::bit_cast<delta_t> (source);
 			delta_t m = _std::bit_cast<delta_t> (target);
 			m &=    ~sign::mask;
 			m |= n & sign::mask;
 			return _std::bit_cast<alpha_t> (_std::move(m));
-		}
-		else
-		{
+		#else
 			return __builtin_copysign(target, source);// constexpr
-		}
+		#endif
 	}
 
 	///\returns the original sign of `target`, after applying the sign of `source`.
@@ -609,17 +640,14 @@ public:
 	XTAL_FZ1_(alpha_t) design_y(alpha_t target)
 	XTAL_0EX
 	{
-		if constexpr (XTAL_V00_MSVC)
-		{
-			static_assert(IEC_559);
+		#if XTAL_V00_MSVC
+			static_assert(bit_cast_v);
 			delta_t u = _std::bit_cast<delta_t> (target);
 			u &= positive::mask;
 			return _std::bit_cast<alpha_t> (_std::move(u));
-		}
-		else
-		{
+		#else
 			return __builtin_copysign(target, (alpha_t) 1);// constexpr
-		}
+		#endif
 	}
 	XTAL_LET  design_x = [] (XTAL_DEF value)
 	XTAL_0FN_(design_y(XTAL_REF_(value)));
@@ -692,7 +720,7 @@ public:
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target, delta_t const &zone)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
@@ -737,7 +765,7 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
@@ -783,7 +811,7 @@ public:
 	XTAL_0EX
 	{
 		auto constexpr N_unit = N_zero ^ 1;
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			auto const Z = unit::mask + bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
@@ -828,7 +856,7 @@ public:
 	XTAL_0EX
 	{
 		auto constexpr N_unit = N_zero ^ 1;
-		if constexpr (IEC_559)
+		if constexpr (bit_cast_v)
 		{
 			auto const Z = unit::mask + bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;

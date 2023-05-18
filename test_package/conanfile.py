@@ -31,5 +31,6 @@ class XTALTestPackageConan(ConanFile):
 		cmake.build()
 
 	def test(self):
-		cmd = path.join(self.cpp.build.bindir, "test")
-		self.run(cmd, env="conanrun")
+		bin = path.join(self.cpp.build.bindir, "test")
+	#	bin += " --durations yes"
+		self.run(bin, env="conanrun")
