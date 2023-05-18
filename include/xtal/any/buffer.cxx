@@ -35,7 +35,7 @@ TEST_CASE("xtal/any/buffer.hpp: series initialization")
 
 TEST_CASE("xtal/any/buffer.hpp: series transformation")
 {
-	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<16>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
@@ -62,7 +62,7 @@ TEST_CASE("xtal/any/buffer.hpp: series transformation")
 
 TEST_CASE("xtal/any/buffer.hpp: series convolution")
 {
-	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(approximate_y<16>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 

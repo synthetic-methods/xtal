@@ -80,13 +80,13 @@ template <typename... Ts> concept complex_q = unfalse_q<complex_b<Ts>...>;
 template <typename... Ts> concept boolean_q = unfalse_q<boolean_b<Ts>...>;
 
 template <typename T>
-XTAL_FZ2_(T) square_y(T const &lhs)
+XTAL_FZ2 square_y(T const &lhs)
 XTAL_0EX
 {
-	return lhs * lhs;
+	return lhs*lhs;
 }
 template <complex_q T>
-XTAL_FZ2_(T) square_y(T const &lhs)
+XTAL_FZ2 square_y(T const &lhs)
 XTAL_0EX
 {
 	auto const x = lhs.real(), xx = square_y(x);
@@ -95,7 +95,7 @@ XTAL_0EX
 }
 
 template <complex_q T>
-XTAL_FZ2_(T) dot_y(T const &lhs)
+XTAL_FZ2 dot_y(T const &lhs)
 XTAL_0EX
 {
 	auto const x = lhs.real(), xx = square_y(x);
@@ -104,7 +104,7 @@ XTAL_0EX
 }
 
 template <complex_q T>
-XTAL_FZ2_(T) arc_y(auto const &phi)
+XTAL_FZ2 arc_y(auto const &phi)
 XTAL_0EX
 {
 	auto const x = _std::cos(phi);

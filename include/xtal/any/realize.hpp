@@ -199,12 +199,13 @@ struct realize: realizing<Q>
 {
 };
 template <complex_q Q>
-struct realize<Q>: realizing<value_t<Q>>
+struct realize<Q>: realize<value_t<Q>>
 {
 };
 template <typename Q>
 XTAL_IF2
 {
+	requires not complex_q<Q>;
 	typename realizing<Q>::alpha_t;
 	requires std::is_floating_point_v<typename realizing<Q>::alpha_t>;
 }
@@ -264,7 +265,7 @@ public:
 			sigma_t const i_sgn =   zoom >> positive::depth;
 			sigma_t const i_neg = -(zoom &  i_sgn);
 			sigma_t const i_pos =  (zoom & ~i_sgn);
-			return alpha_t(1 << i_pos)/(1 << i_neg);
+			return alpha_t((sigma_t) 1 << i_pos)/((sigma_t) 1 << i_neg);
 		}
 	}
 	template <delta_t N_zoom=0>
@@ -290,7 +291,7 @@ public:
 			sigma_t const i_sgn =   zoom >> positive::depth;
 			sigma_t const i_neg = -(zoom &  i_sgn);
 			sigma_t const i_pos =  (zoom & ~i_sgn);
-			return alpha_t(1 << i_neg)/(1 << i_pos);
+			return alpha_t((sigma_t) 1 << i_neg)/((sigma_t) 1 << i_pos);
 		}
 	}
 	template <delta_t N_zoom=0>
@@ -450,13 +451,12 @@ public:
 	XTAL_FZ2_(alpha_t) upsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
 	{
-		return 1 + epsilon_y(zoom - 0);
+		return 1 + epsilon_y(zoom + 1);
 	}
 	template <delta_t N_zoom=0>
 	XTAL_LET upsilon_v = upsilon_y(N_zoom);
 	///< Value expression of `upsilon_y`. \
 	
-	static_assert(upsilon_v<0> == 1);
 	static_assert(upsilon_v<1> > upsilon_v<0>);
 	static_assert(upsilon_v<2> > upsilon_v<1>);
 
@@ -466,13 +466,12 @@ public:
 	XTAL_FZ2_(alpha_t) dnsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
 	{
-		return 1 - epsilon_y(zoom - 1);
+		return 1 - epsilon_y(zoom + 0);
 	}
 	template <delta_t N_zoom=0>
 	XTAL_LET dnsilon_v = dnsilon_y(N_zoom);
 	///< Value expression of `dnsilon_y`. \
 	
-	static_assert(dnsilon_v<0> == 1);
 	static_assert(dnsilon_v<1> < dnsilon_v<0>);
 	static_assert(dnsilon_v<2> < dnsilon_v<1>);
 	
@@ -638,10 +637,10 @@ public:
 	XTAL_FZ2 positive_y(alpha_t value)
 	XTAL_0EX
 	{
-		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity>;
-		value += design_y(value);
-		if constexpr (0 < N_proximity) value += minimal_v<N_proximity>;
 		value *= haplo_y(1);
+		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity - 1>;
+		value += design_y(value);
+		if constexpr (0 < N_proximity) value += minimal_v<N_proximity - 1>;
 		return value;
 	}
 	XTAL_LET  positive_x = [] (XTAL_DEF value)
@@ -663,10 +662,10 @@ public:
 	XTAL_FZ2 negative_y(alpha_t value)
 	XTAL_0EX
 	{
-		if constexpr (0 < N_proximity) value += minimal_v<N_proximity>;
-		value -= design_y(value);
-		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity>;
 		value *= haplo_y(1);
+		if constexpr (0 < N_proximity) value += minimal_v<N_proximity - 1>;
+		value -= design_y(value);
+		if constexpr (0 < N_proximity) value -= minimal_v<N_proximity - 1>;
 		return value;
 	}
 	XTAL_LET  negative_x = [] (XTAL_DEF value)
@@ -689,16 +688,15 @@ public:
 
 	///\returns zero if unchanged, else the sign of the `target`. \
 	
-	template <delta_t N_zoom=0, bool N_zero=0>
+	template <delta_t N_zoom=0, bool N_infinity=0>
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target, delta_t const &zone)
 	XTAL_0EX
 	{
-		auto constexpr N_unit = N_zero ^ 1;
 		if constexpr (IEC_559)
 		{
-			auto const Z = unit::mask - bit_flag_y(N_zoom - 1);
+			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
-			auto const M = N + Z*N_unit;
+			auto const M = N + Y;
 			delta_t m, n, i;
 			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
 			n  =  t  &  sign::mask;
@@ -712,7 +710,7 @@ public:
 		}
 		else
 		{
-			auto const t = N_zero? maximal_y(zone): diplo_y(zone)*dnsilon_y(N_zoom);
+			auto const t = N_infinity? maximal_y(zone << 1): diplo_y(zone)*dnsilon_y(N_zoom);
 			auto const s = design_z(target);
 			auto const a = negative_y(t - target);
 			target += a;
@@ -728,23 +726,22 @@ public:
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_zoom) return resign_y(0, target); // `target` unchanged
-		else return truncate_z<0, 1>(target, N_zoom);
+		auto constexpr N_offset = ((delta_t) 1 << unit::depth) - 2;
+		return truncate_z<0, 1>(target, N_offset - N_zoom);
 	}
 	
 
 	///\returns the `target` with magnitude clamped to the region below `diplo_y(zone)*dnsilon_y(N_zoom)`. \
 
-	template <delta_t N_zoom=0, bool N_zero=0>
+	template <delta_t N_zoom=0, bool N_infinity=0>
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		auto constexpr N_unit = N_zero ^ 1;
 		if constexpr (IEC_559)
 		{
-			auto const Z = unit::mask - bit_flag_y(N_zoom - 1);
+			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
-			auto const M = N + Z*N_unit;
+			auto const M = N + Y;
 			delta_t m, n, i;
 			auto  t  = _std::bit_cast<delta_t> (_std::move(target));
 			m  =  t  & ~sign::mask;
@@ -755,7 +752,7 @@ public:
 		}
 		else
 		{
-			auto const t = N_zero? maximal_y(zone): diplo_y(zone)*dnsilon_y(N_zoom);
+			auto const t = N_infinity? maximal_y(zone << 1): diplo_y(zone)*dnsilon_y(N_zoom);
 			auto const s = design_z(target);
 			auto const a = negative_y(t - target);
 			target += a;
@@ -770,8 +767,8 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_zoom) return resign_y(0, target); // `target` unchanged
-		else return truncate_y<0, 1>(target, N_zoom);
+		auto constexpr N_offset = ((delta_t) 1 << unit::depth) - 2;
+		return truncate_y<0, 1>(target, N_offset - N_zoom);
 	}
 
 
@@ -788,7 +785,7 @@ public:
 		auto constexpr N_unit = N_zero ^ 1;
 		if constexpr (IEC_559)
 		{
-			auto const Z = unit::mask + bit_flag_y(N_zoom - 1);
+			auto const Z = unit::mask + bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
 			auto const M = N + Z*N_unit;
 			delta_t m, n, i;
@@ -804,7 +801,7 @@ public:
 		}
 		else
 		{
-			auto const t = N_zero? minimal_y(zone): diplo_y(zone)*upsilon_y(N_zoom);
+			auto const t = N_zero? minimal_y(zone - 1): diplo_y(zone)*upsilon_y(N_zoom);
 			auto const s = design_z(target);
 			auto const a = positive_y(t - target);
 			target += a;
@@ -820,8 +817,7 @@ public:
 	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_zoom) return resign_y(0, target); // `target` unchanged
-		else return puncture_z<0, 1>(target, N_zoom);
+		return puncture_z<0, 1>(target, N_zoom + 1);
 	}
 	
 
@@ -834,7 +830,7 @@ public:
 		auto constexpr N_unit = N_zero ^ 1;
 		if constexpr (IEC_559)
 		{
-			auto const Z = unit::mask + bit_flag_y(N_zoom - 1);
+			auto const Z = unit::mask + bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
 			auto const M = N + Z*N_unit;
 			delta_t m, n, i;
@@ -847,7 +843,7 @@ public:
 		}
 		else
 		{
-			auto const t = N_zero? minimal_y(zone): diplo_y(zone)*upsilon_y(N_zoom);
+			auto const t = N_zero? minimal_y(zone - 1): diplo_y(zone)*upsilon_y(N_zoom);
 			auto const s = design_z(target);
 			auto const a = positive_y(t - target);
 			target += a;
@@ -861,26 +857,76 @@ public:
 	XTAL_FZ2_(alpha_t) puncture_y(alpha_t target)
 	XTAL_0EX
 	{
-		if constexpr (0 == N_zoom) return resign_y(0, target); // `target` unchanged
-		else return puncture_y<0, 1>(target, N_zoom);
+		return puncture_y<0, 1>(target, N_zoom + 1);
 	}
 
 
-	///\returns the `target` to `N_zoom` bits of precision. \
+	///\returns the `target` to `N_zoom` bits of precision after the decimal. \
 
 	template <delta_t N_zoom=0>
-	XTAL_FZ2_(alpha_t) approximate_y(alpha_t target)
+	XTAL_FZ2_(alpha_t) trim_y(alpha_t target)
 	XTAL_0EX
 	{
-		alpha_t constexpr y = minimal_y(N_zoom - fraction::depth);
+		delta_t constexpr M_zoom = N_zoom? N_zoom - fraction::depth: 1;
+		alpha_t constexpr y = minimal_y(M_zoom);
 		target *= y;
 		target /= y;
 	//	target *= 1/y;// prevent optimization...
 		return target;
 	}
-	static_assert(approximate_y<2>(patio_y<2>(1)) == 6.25);
-	static_assert(approximate_y<3>(patio_y<1>(1)) == 3.125);
-	static_assert(approximate_y<4>(patio_y<1>(2)) == 1.5625);
+	static_assert(trim_y<2>(patio_y<2>(1)) == 6.25);
+	static_assert(trim_y<3>(patio_y<1>(1)) == 3.125);
+	static_assert(trim_y<4>(patio_y<1>(2)) == 1.5625);
+
+
+////////////////////////////////////////////////////////////////////////////////
+//	TODO: Make `constexpr sqrt`. \
+
+	template <delta_t N_zoom=0>
+	XTAL_FZ2 truncate_y(complex_q auto const &target)
+	XTAL_0EX
+	{
+		auto const x = truncate_y<N_zoom>(target.real());
+		auto const y = truncate_y<N_zoom>(target.imag());
+		return XTAL_TYP_(target) {x, y};
+	}
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ2 truncate_y(complex_q auto target, delta_t const &zone)
+	XTAL_0EX
+	{
+		target = truncate_y<16>(_std::move(target));// TODO: Handle infinity before `std::abs`.
+		auto w = _std::sqrt(dot_y(target)), m = 1/w;
+		target *= m; truncate_z<N_zoom, N_zero>(w, zone);
+		target *= w;
+		return target;
+	}
+	
+	template <delta_t N_zoom=0>
+	XTAL_FZ2 puncture_y(complex_q auto target)
+	XTAL_0EX
+	{
+		auto const x = puncture_y<N_zoom>(target.real());
+		auto const y = puncture_y<N_zoom>(target.imag());
+		return XTAL_TYP_(target) {x, y};
+	}
+	template <delta_t N_zoom=0, bool N_zero=0>
+	XTAL_FZ2 puncture_y(complex_q auto target, delta_t const &zone)
+	XTAL_0EX
+	{
+		auto w = _std::sqrt(dot_y(target)), m = 1/w;
+		target *= m; puncture_z<N_zoom, N_zero>(w, zone);
+		target *= w;
+		return target;
+	}
+	
+	template <delta_t N_zoom=fraction::depth - 1>
+	XTAL_FZ2 trim_y(XTAL_DEF_(complex_q) target)
+	XTAL_0EX
+	{
+		auto const x = trim_y<N_zoom>(target.real());
+		auto const y = trim_y<N_zoom>(target.imag());
+		return XTAL_TYP_(target) {x, y};
+	}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1028,77 +1074,35 @@ static_assert(bit_reverse_x<0> ((sigma_t) 1 << realized::positive::depth) == 1);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// TODO: Implement `constexpr sqrt`. \
-
 
 ///\see `realized::truncate_y`. \
 
 template <delta_t N_zoom=0>
-XTAL_FZ2 truncate_y(XTAL_DEF_(alpha_q) target, XTAL_DEF... zone)
+XTAL_FZ2 truncate_y(XTAL_DEF target, XTAL_DEF... zone)
 XTAL_0EX
 {
 	using realized = realize<XTAL_TYP_(target)>;
 	return realized::template truncate_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
 }
-///\see `realized::truncate_y`. \
-
-template <delta_t N_zoom=0>
-XTAL_FZ2 truncate_y(XTAL_DEF_(complex_q) target, XTAL_DEF... zone)
-XTAL_0EX
-{
-	auto x = target.real();
-	auto y = target.imag();
-	auto m = 1.0/_std::sqrt(square_y(x) + square_y(x));
-	realize<XTAL_TYP_(m)>::template puncture_z<N_zoom>(m, XTAL_REF_(zone)...);
-	x *= m;
-	y *= m;
-	return XTAL_TYP_(target) {x, y};
-}
-
 
 ///\see `realized::puncture_y`. \
 
 template <delta_t N_zoom=0>
-XTAL_FZ2 puncture_y(XTAL_DEF_(alpha_q) target, XTAL_DEF... zone)
+XTAL_FZ2 puncture_y(XTAL_DEF target, XTAL_DEF... zone)
 XTAL_0EX
 {
 	using realized = realize<XTAL_TYP_(target)>;
 	return realized::template puncture_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
 }
-///\see `realized::puncture_y`. \
+
+///\see `realized::trim_y`. \
 
 template <delta_t N_zoom=0>
-XTAL_FZ2 puncture_y(XTAL_DEF_(complex_q) target, XTAL_DEF... zone)
-XTAL_0EX
-{
-	auto x = target.real();
-	auto y = target.imag();
-	auto m = 1.0/_std::sqrt(square_y(x) + square_y(x));
-	realize<XTAL_TYP_(m)>::template truncate_z<N_zoom>(m, XTAL_REF_(zone)...);
-	x *= m;
-	y *= m;
-	return XTAL_TYP_(target) {x, y};
-}
-
-
-///\see `realized::approximate_y`. \
-
-template <delta_t N_zoom=0>
-XTAL_FZ2 approximate_y(XTAL_DEF_(alpha_q) target)
+XTAL_FZ2 trim_y(XTAL_DEF target)
 XTAL_0EX
 {
 	using realized = realize<XTAL_TYP_(target)>;
-	return realized::template approximate_y<N_zoom>(XTAL_REF_(target));
-}
-///\see `realized::approximate_y`. \
-
-template <delta_t N_zoom=0>
-XTAL_FZ2 approximate_y(XTAL_DEF_(complex_q) target)
-XTAL_0EX
-{
-	auto const x = approximate_y<N_zoom>(target.real());
-	auto const y = approximate_y<N_zoom>(target.imag());
-	return XTAL_TYP_(target) {x, y};
+	return realized::template trim_y<N_zoom? N_zoom: realized::fraction::depth - 1>(XTAL_REF_(target));
 }
 
 
