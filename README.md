@@ -104,7 +104,7 @@ following the functional flow of data.
 	mixer <<= active_t(0);// off
 
 When sample-accurate scheduling is required,
-`suspend` can be applied at the `processor` stage to create the `priority_queue` for delayed update.
+`interrupt` can be applied at the `processor` stage to create the `priority_queue` for delayed update.
 (In future, this may be automated on lift).
 
 	mixer.influx(123, active_t(0));// off @ offset 123

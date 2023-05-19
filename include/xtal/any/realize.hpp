@@ -396,7 +396,7 @@ public:
 	XTAL_0FN_(ratio_y<N_num> (nom));
 	///< Function expression of `ratio_y`. \
 
-	///<\note The explicit function-type avoids potential segmentation fault \
+	///<\note The explicit function-type avoids potential interruptation fault \
 	raised when dynamically resolving the nested templated lambda. \
 
 	static_assert(ratio_y    (alpha_t(2.0)) == 0.5);
@@ -420,7 +420,7 @@ public:
 	XTAL_0FN_(patio_y<N_num> (nom));
 	///< Function expression of `patio_y`. \
 
-	///<\note The explicit function-type avoids potential segmentation fault \
+	///<\note The explicit function-type avoids potential interruptation fault \
 		raised when dynamically resolving the nested templated lambda. \
 
 	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));

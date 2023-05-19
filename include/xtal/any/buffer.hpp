@@ -821,6 +821,16 @@ struct buffer
 					_std::uninitialized_fill_n(i, sN, _std::move(v));
 					return iterator(i);
 				}
+				XTAL_FN1_(iterator) insert(const_iterator i, V &&v)
+				XTAL_IF1 (not is_q<size_type, value_type>)
+				{
+					return insert(i, (size_type) 1, XTAL_FWD_(V) (v));
+				}
+				XTAL_FN1_(iterator) insert(const_reverse_iterator i, V &&v)
+				XTAL_IF1 (not is_q<size_type, value_type>)
+				{
+					return insert(_std::make_reverse_iterator(i), (size_type) 1, XTAL_FWD_(V) (v));
+				}
 
 				///\
 				Initialises `sN` values beginning at `i`. \

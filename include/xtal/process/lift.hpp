@@ -17,8 +17,8 @@ Produces a decorator incorporating `As...` that defines \
 template <typename Y, typename... As>
 struct lift
 {
-   template <typename T>
-   using subkind = confine<T, As...>;
+	template <typename T>
+	using subkind = confine<T, As...>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind<subtype<S>>>
@@ -27,13 +27,13 @@ struct lift
 	public:
 		using co::co;
 
-      template <auto...>
-      XTAL_FN2 method(XTAL_DEF... xs)
-      {
-         return Y(XTAL_REF_(xs)...);
-      }
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF... xs)
+		{
+			return Y(XTAL_REF_(xs)...);
+		}
 
-   };
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -126,7 +126,7 @@ void render_internal_suspension__test()
 	auto  lhs   = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs   = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 	
-	using xhs_t = processor::vectorize_t<mix_t, typename bias_t::template suspend<(1 << 4)>>;
+	using xhs_t = processor::vectorize_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
 	auto  xhs   = xhs_t::bind_f(lhs, rhs);
 	auto  seq   = serial_o(4);
 

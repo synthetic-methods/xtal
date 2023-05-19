@@ -14,9 +14,9 @@ namespace xtal::processor
 template <typename U, typename... As>
 struct vectorize
 {
-	using suspend = typename message::contrived_t<>::suspend<0>;
+	using interrupt = typename message::contrived_t<>::interrupt<0>;
 	using subkind = confer<U, buffer<-1>>;
-//	using subkind = confer<U, As..., suspend, buffer<-1>>;
+//	using subkind = confer<U, As..., interrupt, buffer<-1>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -28,7 +28,7 @@ struct vectorize
 		template <typename... Xs>
 		struct bind
 		{
-			using subkind = compose<As..., suspend, typename co::template bind<Xs...>>;
+			using subkind = compose<As..., interrupt, typename co::template bind<Xs...>>;
 
 			template <any_q _S>
 			class subtype: public compose_s<_S, subkind>
@@ -149,7 +149,7 @@ struct vectorize
 				XTAL_FN1_(void) render()
 				XTAL_0EX
 				{
-				//	TODO: Create an alternative to segmented event handling for contiguous dynamic controls: \
+				//	TODO: Create an alternative to interrupted event handling for contiguous dynamic controls: \
 					-	Store the differences in a (possibly sparse) array. \
 					-	Apply the differences on access. \
 					-	Zero the array element after access. \

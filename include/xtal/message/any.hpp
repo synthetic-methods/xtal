@@ -38,10 +38,10 @@ struct define
 		{
 			using subkind = context::defer<T>;
 
-			template <context::any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <context::any_q R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
+				using co = compose_s<R, subkind>;
 			public:
 			//	using co::co;
 
@@ -58,24 +58,24 @@ struct define
 				{
 				}
 
-			//	TODO: Specialize a `process`'s `suspender` to `suspend` `T` automatically when lifted to a `processor`. \
+			//	TODO: Specialize a `process`'s `interrupter` to `interrupt` `T` automatically when lifted to a `processor`. \
 
 			};
 		};
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
-		template <delta_t N=2>
+		template <delta_t N_arity=2>
 		struct dispatch
 		{
-			static_assert(0 < N);
+			static_assert(0 < N_arity);
 
 			using subkind = attach;
 
-			template <context::any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <context::any_q R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
+				using co = compose_s<R, subkind>;
 			public:
 				using co::co;
 				using co::self;
@@ -85,7 +85,7 @@ struct define
 			//	:	co(XTAL_REF_(n))
 				:	co(n)
 				{
-					assert(0 <= n and n < N);
+					assert(0 <= n and n < N_arity);
 				}
 
 				///\
@@ -131,7 +131,7 @@ struct define
 
 				///\
 				Defines the subtype-indexed function-pointer table, \
-				dynamically indexed by message-value/subtype `T` and statically-generated with `N` entries. \
+				dynamically indexed by message-value/subtype `T` and statically-generated with `N_arity` entries. \
 
 				template <typename... Xs>
 				struct being
@@ -146,7 +146,7 @@ struct define
 							using doing = typename co::template being<Xs...>;
 							return _std::array{(doing::template method<Ms..., Ns>)...};
 						}
-						XTAL_LET method_m = method_f(seek_v<N>);
+						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
 					};
 
@@ -157,14 +157,158 @@ struct define
 
 			};
 		};
+		template <delta_t N_future=-1>
+		struct hold
+		{
+			template <context::any_q R>
+			class subtype: public compose_s<R>
+			{
+				using co = compose_s<R>;
 
+				using index_t = iota_t;
+				using event_t = compose_s<T, content::confer<index_t>>;
+				using stack_t = buffer_vector_t<N_future, event_t>;
+				using point_t = typename stack_t::iterator;
+				using count_t = typename stack_t::difference_type;
+
+				stack_t stack_m;
+				point_t point_m;
+				index_t index_m;
+
+			public:
+				using co::co;
+				using co::self;
+
+				XTAL_NEW subtype()
+				:	co()
+				,	stack_m {event_t(_std::numeric_limits<index_t>::max())}
+				,	point_m {stack_m.begin()}
+				,	index_m {0}
+				{
+				}
+
+			protected:
+				XTAL_FN2_(point_t) ending()
+				XTAL_0EX
+				{
+					return _std::next(stack_m.begin(), stack_m.size() - 1);
+				}
+				XTAL_FN2_(point_t) beginning()
+				XTAL_0EX
+				{
+					return stack_m.begin();
+				}
+
+				XTAL_FN2_(count_t) suspended()
+				XTAL_0EX
+				{
+					return ending() - point_m;
+				}
+				XTAL_FN2_(count_t) completed()
+				XTAL_0EX
+				{
+					return point_m - beginning();
+				}
+
+				XTAL_FN2_(event_t const &) peek(index_t idx)
+				XTAL_0EX
+				{
+					return *(point_m + idx);
+				}
+				XTAL_FN2_(event_t const &) next()
+				XTAL_0EX
+				{
+					return peek(1);
+				}
+				XTAL_FN2 next_tail()
+				XTAL_0EX
+				{
+					return next().tail();
+				}
+				XTAL_FN2 next_head()
+				XTAL_0EX
+				{
+					return next().head();
+				}
+
+				XTAL_FN1_(event_t const &) advance(bool proceed=true)
+				XTAL_0EX
+				{
+					point_m += proceed;
+					return *point_m;
+				}
+				XTAL_FN1_(event_t const &) abandon(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{
+						stack_m.erase(beginning(), ending());
+						point_m = beginning();
+						index_m = 0;
+					}
+					return *point_m;
+				}
+				
+				///\
+				Delays `msg` with the supplied `idx`. \
+				\
+				NOTE: Duplicate indicies are overwritten (only `event_t::head`s are compared by `==` etc). \
+
+				XTAL_FN1_(void) poke(index_t idx, XTAL_DEF_(is_q<T>) msg)
+				XTAL_0EX
+				{
+					auto const ex = event_t(idx, XTAL_REF_(msg));
+					auto e_ = _std::lower_bound(beginning(), ending(), ex);
+					if (*e_ == ex) *e_ = ex; else stack_m.insert(e_, {ex});
+				}
+
+			public:
+				///\
+				Invokes `influx` on the super-instance. \
+
+				XTAL_FN2_(iota_t) influx(XTAL_DEF... etc)
+				XTAL_0EX
+				{
+					abandon(0 < completed() and 0 == suspended());
+					return co::influx(XTAL_REF_(etc)...);
+				}
+
+				///\
+				Delays `msg, etc...` with the supplied `idx`. \
+				\
+				\returns the `influx` result if the `idx == 0`, `-1` otherwise. \
+
+				XTAL_FN2_(iota_t) influx(index_t idx, XTAL_DEF_(is_q<T>) msg, XTAL_DEF... etc)
+				XTAL_0EX
+				{
+					poke(idx, XTAL_REF_(msg));
+					return influx(idx, XTAL_REF_(etc)...);
+				}
+				XTAL_FN2_(iota_t) influx(index_t idx)
+				XTAL_0EX
+				{
+					return -1;
+				}
+
+			public:
+				template <auto...>
+				XTAL_FN1_(T) method()
+				XTAL_0EX
+				{
+					return advance(index_m++ == next_head()).tail();
+				}
+			//	TODO: Once the phasor-type is settled, \
+				define `method` that updates only on reset. \
+
+			};
+		};
 		///\
 		Provides a queue for this message-type `T` on the target object. \
 		Messages `influx`ed with an integer prefix will be delayed by the given amount. \
 		\
-		NOTE: Only currently supported when supplied as a decorator to `processor::vectorize`. \
+		NOTE: Only supports decorating `processor::vectorize`. \
 		\
-		NOTE: Use deep introspection to automatically `suspend` viable sources/targets.. \
+		TODO: Use deep introspection to automatically `interrupt` viable sources/targets. \
 		\
 		TODO: Use `message::serial` to convert absolute delays to relative delays? \
 		\
@@ -174,44 +318,83 @@ struct define
 		managing collections of `messages` (e.g. presets). \
 		\
 		TODO: Define a `message::bundle` that `std::tuple`s the provided types. \
-		The implementation of `suspend` in that case might be able to use `std::variant`. \
+		The implementation of `interrupt` in that case might be able to use `std::variant`. \
 
-		template <iota_t N=-1>
-		struct suspend
+		template <delta_t N_future=-1>
+		struct interrupt
 		{
-			template <context::any_q _S>
-			class subtype: public compose_s<_S>
+			template <context::any_q R>
+			class subtype: public compose_s<R>
 			{
-				using co = compose_s<_S>;
+				using co = compose_s<R>;
 
-				using event_t = compose_s<T, content::confer<iota_t>>;
-				using funnel_t = buffer_funnel_t<N, event_t>;
+				using index_t = iota_t;
+				using event_t = compose_s<T, content::confer<index_t>>;
+				using queue_t = buffer_funnel_t<N_future, event_t>;
+				using count_t = typename queue_t::size_type;
 
-				funnel_t funnel_m;
+				queue_t queue_m;
 
-			public:
+				XTAL_FN2_(count_t) suspended()
+				XTAL_0EX
+				{
+					return queue_m.size();
+				}
+				XTAL_FN2_(count_t) completed()
+				XTAL_0EX
+				{
+					return 0;
+				}
 
+				XTAL_FN2 next()
+				XTAL_0EX
+				{
+					return queue_m.top();
+				}
 				XTAL_FN2 next_tail()
 				XTAL_0EX
 				{
-					return funnel_m.top().tail();
+					return next().tail();
 				}
 				XTAL_FN2 next_head()
 				XTAL_0EX
 				{
-					return funnel_m.top().head();
+					return next().head();
 				}
 				XTAL_FN2 nearest_head()
 				XTAL_0EX
 				{
-					return funnel_m.empty()? _std::numeric_limits<iota_t>::max(): next_head();
+					return 0 < suspended()? next_head(): _std::numeric_limits<index_t>::max();
 				}
-				XTAL_FN2 nearest_head(iota_t i)
+				XTAL_FN2 nearest_head(index_t idx)
 				XTAL_0EX
 				{
-				//	NOTE: The curly braces here mitigate reference weirdness for `release` builds. \
+					return _std::min<index_t>({nearest_head(), idx});
+				//	return _std::min<index_t>(nearest_head(), idx);// NOTE: `min` weirds out in `RELEASE` (known issue).
+				}
 
-					return _std::min<iota_t>({nearest_head(), i});
+				XTAL_FN1_(void) advance(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{
+						queue_m.pop();
+					}
+				}
+				XTAL_FN1_(void) abandon(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{
+						redux();
+					}
+				}
+				XTAL_FN1_(void) poke(index_t idx, XTAL_DEF_(is_q<T>) msg)
+				XTAL_0EX
+				{
+				//	TODO: Handle duplicates? \
+
+					queue_m.emplace(idx, XTAL_REF_(msg));
 				}
 
 			public:
@@ -223,42 +406,47 @@ struct define
 				\
 				\returns the `influx` result if the `delay == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(iota_t) influx(iota_t i, XTAL_DEF_(is_q<T>) t)
+				XTAL_FN2_(iota_t) influx(index_t idx, XTAL_DEF_(is_q<T>) msg, XTAL_DEF... etc)
 				XTAL_0EX
 				{
-					assert(0 <= i);
-					if (0 < i)
+					if (0 == idx)
 					{
-						funnel_m.emplace(XTAL_REF_(i), XTAL_REF_(t));
-						return -1;
+						iota_t const _ = co::influx(XTAL_REF_(msg));
+						return !_?0: _ & influx(idx, XTAL_REF_(etc)...);
 					}
 					else
 					{
-						return co::influx(XTAL_REF_(t));
+						assert(0 < idx);
+						poke(XTAL_REF_(idx), XTAL_REF_(msg));
+						return -1;
 					}
+				}
+				XTAL_FN2_(iota_t) influx(index_t idx)
+				XTAL_0EX
+				{
+					return -1;
 				}
 				///\
 				Invokes `influx` on the super-instance. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(XTAL_DEF... etc)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(ws)...);
+					return co::influx(XTAL_REF_(etc)...);
 				}
 
-		//	protected:
-
+			protected:
 				///\
 				Relays all queued events while invoking the supplied callback for each intermediate section. \
 
-				XTAL_FN1_(void) redux(auto const &f)
+				XTAL_FN1_(void) redux(auto const &dux)
 				XTAL_0EX
-				XTAL_IF2 (iota_t i, iota_t j) {f(i, j);}
+				XTAL_IF2 (index_t i, index_t j) {dux(i, j);}
 				{
-					iota_t i = 0, j = delay();
+					index_t i = 0, j = delay();
 					for (; i != j; j = relay(i = j))
 					{
-						f(i, j);
+						dux(i, j);
 					}
 					assert(i == self().size());
 				}
@@ -267,23 +455,24 @@ struct define
 
 				XTAL_FN1_(void) redux()
 				{
-					redux([] (iota_t m, iota_t n) XTAL_0FN_(void()));
+					redux([] (index_t m, index_t n) XTAL_0FN_(void()));
 				}
 
 				///\
 				Invokes `influx` for all events up-to the supplied `delay`. \
 				\returns the `delay()` until the next event. \
 
-				XTAL_FN1_(iota_t) relay(iota_t i)
+				XTAL_FN1_(index_t) relay(index_t idx)
 				XTAL_0EX
 				{
 				//	if constexpr (requires {{co::relay()} -> iota_q;})
-					if constexpr (0 < N)
+					if constexpr (0 < N_future)
 					{
-						co::relay(i);
-						while (funnel_m.size() and next_head() <= i)
+						co::relay(idx);
+						while (0 < suspended() and next_head() <= idx)
 						{
-							auto const _ = co::influx(next_tail()); funnel_m.pop();
+							auto const flx = co::influx(next_tail());
+							advance();
 						}
 					}
 					return delay();
@@ -292,11 +481,11 @@ struct define
 				///\
 				\returns the minimum delay across all queues bound to `this`. \
 
-				XTAL_FN2_(iota_t) delay()
+				XTAL_FN2_(index_t) delay()
 				XTAL_0EX
 				{
 				//	if constexpr (requires {{co::delay()} -> iota_q;})
-					if constexpr (0 < N)
+					if constexpr (0 < N_future)
 					{
 						return nearest_head(co::delay());
 					}
@@ -308,7 +497,7 @@ struct define
 
 			};
 		};
-		
+
 	};	
 };
 ////////////////////////////////////////////////////////////////////////////////

@@ -284,6 +284,7 @@ struct refer
 		using co::body_m;
 
 	//	XTAL_OP2        <=>       (T const &t) XTAL_0FX {return   head() <=> t.head();}
+		XTAL_OP2_(bool) ==        (T const &t) XTAL_0FX {return   head() ==  t.head();}
 		XTAL_OP2_(bool) <=        (T const &t) XTAL_0FX {return   head() <=  t.head();}
 		XTAL_OP2_(bool) >=        (T const &t) XTAL_0FX {return   head() >=  t.head();}
 		XTAL_OP2_(bool) <         (T const &t) XTAL_0FX {return   head() <   t.head();}
@@ -314,6 +315,7 @@ struct refer
 		using co::body_m;
 
 	//	XTAL_OP2        <=>  (T const &t) XTAL_0FX {return   head() <=> t.head();}
+		XTAL_OP2_(bool) ==   (T const &t) XTAL_0FX {return   head() ==  t.head();}
 		XTAL_OP2_(bool) <=   (T const &t) XTAL_0FX {return   head() <=  t.head();}
 		XTAL_OP2_(bool) >=   (T const &t) XTAL_0FX {return   head() >=  t.head();}
 		XTAL_OP2_(bool) <    (T const &t) XTAL_0FX {return   head() <   t.head();}
