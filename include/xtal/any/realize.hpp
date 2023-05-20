@@ -740,10 +740,16 @@ public:
 		{
 			auto const t = N_infinity? maximal_y(zone << 1): diplo_y(zone)*dnsilon_y(N_zoom);
 			auto const s = design_z(target);
-			auto const a = negative_y(t - target);
-			target += a;
-			target *= s;
-			return s*(a != 0);
+			bool const r = t < target;
+			if constexpr (N_infinity)
+			{
+				target = minimum_y(t, target);
+			}
+			else
+			{
+				target += negative_y(t - target);
+			}
+			target *= s; return r*s;
 		}
 	}
 	/// Modifies the `target`, clamping the magnitude below `maximal_y(N_zoom)`. \
@@ -765,8 +771,8 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		if constexpr (N_infinity and _std::numeric_limits<alpha_t>::is_iec559)
-	//	if constexpr (bit_cast_v)
+	//	if constexpr (N_infinity and _std::numeric_limits<alpha_t>::is_iec559)
+		if constexpr (bit_cast_v)
 		{
 			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;
@@ -783,11 +789,15 @@ public:
 		{
 			auto const t = N_infinity? maximal_y(zone << 1): diplo_y(zone)*dnsilon_y(N_zoom);
 			auto const s = design_z(target);
-			auto const a = negative_y(t - target);
-			target += a;
-			target *= s;
-			return target;
-
+			if constexpr (N_infinity)
+			{
+				target = minimum_y(t, target);
+			}
+			else
+			{
+				target += negative_y(t - target);
+			}
+			target *= s; return target;
 		}
 	}
 	///\returns the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
