@@ -91,8 +91,8 @@ struct define
 				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
 				XTAL_0EX
 				{
-					auto const &_ = co::influx(ws...);
-					return !_?0:_ & _std::apply([&] (XTAL_DEF... xs)
+					iota_t const _ = co::influx(ws...);
+					return !_?0: _ & _std::apply([&] (XTAL_DEF... xs)
 						XTAL_0FN_(XTAL_REF_(xs).influx(ws...) | ...)
 					,	arguments()
 					);
@@ -104,11 +104,11 @@ struct define
 				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
 				XTAL_0EX
 				{
-					auto const &_ = _std::apply([&] (XTAL_DEF... xs)
+					iota_t const _ = _std::apply([&] (XTAL_DEF... xs)
 						XTAL_0FN_(XTAL_REF_(xs).efflux(ws...) | ...)
 					,	arguments()
 					);
-					return !_?0:_ & co::efflux(XTAL_REF_(ws)...);
+					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
 				}
 
 			protected:
@@ -164,10 +164,10 @@ struct define
 				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
 				XTAL_0EX
 				{
-					auto const &_ = [=, this] ()
+					iota_t const _ = [=, this] ()
 						XTAL_0FN_(co::influx(_std::move(ws)...))
 					();
-					return !_?0:_ & processor::let_f(argument()).influx(XTAL_REF_(ws)...);
+					return !_?0: _ & processor::let_f(argument()).influx(XTAL_REF_(ws)...);
 				}
 
 				///\
@@ -176,10 +176,10 @@ struct define
 				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
 				XTAL_0EX
 				{
-					auto const &_ = [=, this] ()
+					iota_t const _ = [=, this] ()
 						XTAL_0FN_(processor::let_f(argument()).efflux(_std::move(ws)...))
 					();
-					return !_?0:_ & co::efflux(XTAL_REF_(ws)...);
+					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
 				}
 
 			protected:
@@ -329,7 +329,7 @@ struct defer<U>
 			};
 		};
 		template <typename F>
-		using  zap_t = typename zap<F>::type;
+		using     zap_t = typename zap<F>::type;
 		XTAL_LET  zap_f = [] <typename F>(F&&f)
 		XTAL_0FN_(zap_t<F>(XTAL_FWD_(F) (f)));
 

@@ -171,6 +171,8 @@ struct define
 				using point_t = typename stack_t::iterator;
 				using count_t = typename stack_t::difference_type;
 
+				using current_t = event_t const &;
+
 				stack_t stack_m;
 				point_t point_m;
 				index_t index_m;
@@ -210,12 +212,7 @@ struct define
 					return point_m - beginning();
 				}
 
-				XTAL_FN2_(event_t const &) peek(index_t idx)
-				XTAL_0EX
-				{
-					return *(point_m + idx);
-				}
-				XTAL_FN2_(event_t const &) next()
+				XTAL_FN2 next()
 				XTAL_0EX
 				{
 					return peek(1);
@@ -231,13 +228,18 @@ struct define
 					return next().head();
 				}
 
-				XTAL_FN1_(event_t const &) advance(bool proceed=true)
+				XTAL_FN2_(current_t) peek(index_t idx)
+				XTAL_0EX
+				{
+					return *(point_m + idx);
+				}
+				XTAL_FN1_(current_t) advance(bool proceed=true)
 				XTAL_0EX
 				{
 					point_m += proceed;
 					return *point_m;
 				}
-				XTAL_FN1_(event_t const &) abandon(bool proceed=true)
+				XTAL_FN1_(current_t) abandon(bool proceed=true)
 				XTAL_0EX
 				{
 					if (proceed)
@@ -333,6 +335,8 @@ struct define
 				using queue_t = buffer_funnel_t<N_future, event_t>;
 				using count_t = typename queue_t::size_type;
 
+				using current_t = void;
+
 				queue_t queue_m;
 
 				XTAL_FN2_(count_t) suspended()
@@ -373,7 +377,7 @@ struct define
 				//	return _std::min<index_t>(nearest_head(), idx);// NOTE: `min` weirds out in `RELEASE` (known issue).
 				}
 
-				XTAL_FN1_(void) advance(bool proceed=true)
+				XTAL_FN1_(current_t) advance(bool proceed=true)
 				XTAL_0EX
 				{
 					if (proceed)
@@ -381,7 +385,7 @@ struct define
 						queue_m.pop();
 					}
 				}
-				XTAL_FN1_(void) abandon(bool proceed=true)
+				XTAL_FN1_(current_t) abandon(bool proceed=true)
 				XTAL_0EX
 				{
 					if (proceed)
@@ -412,7 +416,7 @@ struct define
 					if (0 == idx)
 					{
 						iota_t const _ = co::influx(XTAL_REF_(msg));
-						return !_?0: _ & influx(idx, XTAL_REF_(etc)...);
+						return !_?0:_ & influx(idx, XTAL_REF_(etc)...);
 					}
 					else
 					{

@@ -42,7 +42,7 @@ struct define
 		XTAL_OP1 <<=(XTAL_DEF_(collated_q) w)
 		XTAL_0EX
 		{
-			auto const &_ = _std::apply([this] (XTAL_DEF... vs)
+			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)
 				XTAL_0FN_(self().influx(XTAL_REF_(vs)...))
 			,	XTAL_REF_(w)
 			);
@@ -61,7 +61,7 @@ struct define
 		XTAL_OP1 >>=(XTAL_DEF_(collated_q) w)
 		XTAL_0EX
 		{
-			auto const &_ = _std::apply([this] (XTAL_DEF... vs)
+			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)
 				XTAL_0FN_(self().efflux(XTAL_REF_(vs)...))
 			,	XTAL_REF_(w)
 			);
@@ -95,8 +95,8 @@ struct define
 		XTAL_FN2_(iota_t) efflux(XTAL_DEF w, XTAL_DEF... ws)
 		XTAL_0EX
 		{
-			auto const &_ = self().deflux(XTAL_REF_(w));
-			return !_?0:_ & self().efflux(XTAL_REF_(ws)...);
+			iota_t const _ = self().deflux(XTAL_REF_(w));
+			return !_?0: _ & self().efflux(XTAL_REF_(ws)...);
 		}
 
 		///\
@@ -112,8 +112,8 @@ struct define
 		XTAL_FN2_(iota_t) influx(XTAL_DEF w, XTAL_DEF... ws)
 		XTAL_0EX
 		{
-			auto const &_ = self().deflux(XTAL_REF_(w));
-			return !_?0:_ & self().influx(XTAL_REF_(ws)...);
+			iota_t const _ = self().deflux(XTAL_REF_(w));
+			return !_?0: _ & self().influx(XTAL_REF_(ws)...);
 		}
 
 	};
@@ -182,8 +182,8 @@ struct defer
 		XTAL_0EX
 		XTAL_IF1 any_q<U>
 		{
-			auto const &_ = head().efflux(ws...);
-			return !_?0:_ & co::efflux(XTAL_REF_(ws)...);
+			iota_t const _ = head().efflux(ws...);
+			return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
 		}
 
 		///\
@@ -198,8 +198,8 @@ struct defer
 		XTAL_0EX
 		XTAL_IF1 any_q<U>
 		{
-			auto const &_ = co::influx(ws...);
-			return !_?0:_ & head().influx(XTAL_REF_(ws)...);
+			iota_t const _ = co::influx(ws...);
+			return !_?0: _ & head().influx(XTAL_REF_(ws)...);
 		}
 
 	};

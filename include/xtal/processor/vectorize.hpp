@@ -84,7 +84,7 @@ struct vectorize
 				XTAL_FN2_(iota_t) deflux(W &&w)
 				XTAL_0EX
 				{
-					auto const _ = co::deflux(w);
+					iota_t const _ = co::deflux(w);
 					if constexpr (is_q<resize_t, W>)
 					{
 						//\
@@ -123,7 +123,7 @@ struct vectorize
 				XTAL_0EX
 				{
 					target_m = target_t(render_w);
-					auto const _ = co::efflux(_std::move(render_w));
+					iota_t const _ = co::efflux(_std::move(render_w));
 					self().render();
 					return _;
 				}
@@ -131,7 +131,7 @@ struct vectorize
 				XTAL_0EX
 				{
 					target_m = target_t(buffer_m);
-					auto const _ = co::efflux(render_w);
+					iota_t const _ = co::efflux(render_w);
 					self().render(render_w);
 					return _;
 				}
