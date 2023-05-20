@@ -37,9 +37,9 @@ struct define
 		XTAL_OP1 <<=(XTAL_DEF w)
 		XTAL_0EX
 		{
-			return operator<<=(collected_f(XTAL_REF_(w)));
+			return operator<<=(bundle_fwd(XTAL_REF_(w)));
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(collated_q) w)
+		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) w)
 		XTAL_0EX
 		{
 			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)
@@ -56,9 +56,9 @@ struct define
 		XTAL_OP1 >>=(XTAL_DEF w)
 		XTAL_0EX
 		{
-			return operator>>=(collected_f(XTAL_REF_(w)));
+			return operator>>=(bundle_fwd(XTAL_REF_(w)));
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(collated_q) w)
+		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) w)
 		XTAL_0EX
 		{
 			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)

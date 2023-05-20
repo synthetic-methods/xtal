@@ -41,8 +41,8 @@ struct define
 			using resize_u = message::resize_t<>;
 			using serial_u = message::serial_t<>;
 
-			using signature_t = collect_t<processor::let_t<Xs>...>;
-			using signature   = collect<Xs...>;
+			using signature_t = bundle_t<processor::let_t<Xs>...>;
+			using signature   = bundle<Xs...>;
 
 			using subkind = compose<context::defer<signature_t>
 			,	resize_u::attach
@@ -56,7 +56,7 @@ struct define
 				using co = compose_s<_S, subkind>;
 
 			protected:
-				using result_t = typename signature::template result_t<T>;
+				using result_t = typename signature::template invoke_t<T>;
 
 				XTAL_RE4_(XTAL_FN2 arguments(), co::head())
 
@@ -68,7 +68,7 @@ struct define
 
 				XTAL_NEW_(explicit) subtype(Xs&&... xs)
 				XTAL_0EX
-				:	co(collect_f(processor::let_f(XTAL_FWD_(Xs) (xs))...))
+				:	co(bundle_fwd(processor::let_f(XTAL_FWD_(Xs) (xs))...))
 				{
 				}
 
@@ -123,7 +123,7 @@ struct define
 		signalling to the upstream `processor` that the data can be shared. \
 
 		template <typename X>
-		XTAL_IF1 isomorphic_q<typename collect<X>::template result_t<T>, X>
+		XTAL_IF1 isomorphic_q<typename bundle<X>::template invoke_t<T>, X>
 		struct bind<X>
 		{
 			using serial_u = message::serial_t<>;
@@ -141,7 +141,7 @@ struct define
 				using co = compose_s<_S, subkind>;
 
 			protected:
-				using result_t = typename collect<X>::template result_t<T>;
+				using result_t = typename bundle<X>::template invoke_t<T>;
 
 				XTAL_RE4_(XTAL_FN2 argument(), co::head())
 

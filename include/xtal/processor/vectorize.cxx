@@ -35,12 +35,12 @@ void render_external__test()
 
 	REQUIRE(0 == xhs.size());
 
-	xhs <<= _std::make_tuple(  serial_m, render_m);                                                                 // initialize via influx?
-	xhs >>= _std::make_tuple(  serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= _std::make_tuple(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= _std::make_tuple(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs <<= bundle_f(  serial_m, render_m);                                                                 // initialize via influx?
+	xhs >>= bundle_f(  serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= bundle_f(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= bundle_f(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= bias_t((alpha_t) (11 + 1));
-	xhs >>= _std::make_tuple(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= bundle_f(++serial_m, render_m); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 
@@ -108,14 +108,14 @@ void render_internal_interrupt__test()
 	xhs <<= resize_o(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `serial`?
 
-	xhs <<= _std::make_tuple(0, (bias_t) (alpha_t) (00));
-	xhs <<= _std::make_tuple(1, (bias_t) (alpha_t) (11));
-	xhs <<= _std::make_tuple(2, (bias_t) (alpha_t) (22));
+	xhs <<= bundle_f(0, (bias_t) (alpha_t) (00));
+	xhs <<= bundle_f(1, (bias_t) (alpha_t) (11));
+	xhs <<= bundle_f(2, (bias_t) (alpha_t) (22));
 	xhs >>=  seq;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{00, 22, 44, 55}));
 
-	xhs <<= _std::make_tuple(2, (bias_t) (alpha_t) (00));
+	xhs <<= bundle_f(2, (bias_t) (alpha_t) (00));
 	xhs >>=  seq;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{66, 77, 66, 77}));
