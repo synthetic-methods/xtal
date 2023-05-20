@@ -4,6 +4,6 @@ project(test_package)
 find_package(xtal CONFIG REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
 
-add_executable(test src/xtal.cxx) # copied from `../includes/**` by `conanfile.py`
+add_executable(test ../include/xtal.cxx)
 
 target_link_libraries(test xtal::xtal Catch2::Catch2WithMain)

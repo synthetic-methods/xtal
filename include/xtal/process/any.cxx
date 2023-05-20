@@ -4,37 +4,12 @@
 #include "../message/start.hpp"
 
 
-#include <catch2/catch_all.hpp>
+#include "../any.cxx"
 
 XTAL_ENV_(push)
-namespace xtal::process::_test::any
+namespace xtal::process::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-using bias_t = message::numinal_t<alpha_t, struct bias>;
-
-struct static_bias_mix_t
-:	process::confine_t<static_bias_mix_t
-	,	bias_t::template dispatch<4>
-	>
-{
-	template <auto bias>
-	XTAL_FN2 method(XTAL_DEF... xs)
-	{
-		return (XTAL_REF_(xs) + ... + bias);
-	}
-};
-struct dynamic_bias_mix_t
-:	process::confine_t<dynamic_bias_mix_t
-	,	bias_t::attach
-	>
-{
-	template <auto...>
-	XTAL_FN2 method(XTAL_DEF... xs)
-	{
-		return (XTAL_REF_(xs) + ... + this->template get<bias_t>());
-	}
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 

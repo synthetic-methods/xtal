@@ -765,7 +765,8 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		if constexpr (bit_cast_v)
+		if constexpr (N_infinity and _std::numeric_limits<alpha_t>::is_iec559)
+	//	if constexpr (bit_cast_v)
 		{
 			auto const Y = N_infinity + unit::mask - bit_flag_y(N_zoom);
 			auto const N = zone << exponent::shift;

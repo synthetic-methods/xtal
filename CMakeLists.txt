@@ -6,10 +6,8 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 
-
 find_package(range-v3)
 target_link_libraries(${PROJECT_NAME} INTERFACE range-v3::range-v3)
-
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

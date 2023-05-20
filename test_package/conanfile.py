@@ -4,7 +4,7 @@ from conan             import ConanFile
 from conan.tools.files import copy
 from conan.tools.cmake import CMake, cmake_layout
 
-class XTALTestPackageConan(ConanFile):
+class XtalTestPackageConan(ConanFile):
 	settings = "os", "compiler", "build_type", "arch"
 	generators = "CMakeToolchain", "CMakeDeps"
 
@@ -16,21 +16,11 @@ class XTALTestPackageConan(ConanFile):
 		cmake_layout(self)
 
 	def build(self):
-	#	Instead of mirroring the directory structure of `../include` within `./src`,
-	#	the tests for each header-file live in the same directory,
-	#	and are copied over prior to `build`:
-	#
-		includes = path.join(self.source_folder, "..", "include")
-		excludes = path.join(self.source_folder, "src")
-
-	#	copy(self, "*.c*", includes, excludes) #import <this>
-		copy(self,    "*", includes, excludes) #import "this"
-
 		cmake = CMake(self)
 		cmake.configure()
 		cmake.build()
 
 	def test(self):
 		bin = path.join(self.cpp.build.bindir, "test")
-	#	bin += " --durations yes"
+		bin += " --skip-benchmarks"
 		self.run(bin, env="conanrun")
