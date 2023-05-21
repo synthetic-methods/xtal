@@ -14,7 +14,7 @@ namespace xtal::processor
 template <typename U, typename... As>
 struct vectorize
 {
-	using interrupt = typename message::contrived_t<>::interrupt<-1>;
+	using interrupt = typename message::contrived_t<>::interrupt<0>;
 //	using subkind = confer<U, As..., interrupt, buffer<-1>>;
 	using subkind = confer<U, buffer<-1>>;
 

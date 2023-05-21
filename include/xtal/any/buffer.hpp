@@ -540,11 +540,14 @@ struct buffer
 				Span constructor. \
 				Initializes `this` with the values between `i0` and `iN`. \
 
-				template <iterator_q I>
-				XTAL_IF1 as_q<iteratee_t<I>, V>
-				XTAL_NEW_(explicit) homotype(I &&i0, I &&iN)
+				template <iterator_q I0, iterator_q IN>
+				XTAL_IF1 is_q<iteratee_t<I0>, iteratee_t<IN>, V>// and as_q<iteratee_t<IN>, V>
+				XTAL_NEW_(explicit) homotype(I0 i0, IN iN)
 				{
-					insert_back(XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
+					using I = _std::common_type_t<I0, IN>;
+					I i0_ = i0;
+					I iN_ = iN;
+					insert_back(i0_, iN_);
 				}
 
 				///\
@@ -630,7 +633,8 @@ struct buffer
 				///\
 				Deletes the elements from `i0` to `end()`. \
 
-				XTAL_FN1_(void) deallocate(const_iterator i0)
+				template <is_q<iterator> I0>
+				XTAL_FN1_(void) deallocate(I0 i0)
 				XTAL_0EX
 				{
 					erase(i0, end());
@@ -648,7 +652,8 @@ struct buffer
 				///\
 				Deletes the element at `i0`. \
 
-				XTAL_FN1_(void) erase(const_iterator i0)
+				template <is_q<iterator> I0>
+				XTAL_FN1_(void) erase(I0 i0)
 				XTAL_0EX
 				{
 					erase(i0, size_type(1));
@@ -656,7 +661,8 @@ struct buffer
 				///\
 				Deletes `sN` elements starting from `i0`. \
 
-				XTAL_FN1_(void) erase(const_iterator i0, size_type sN)
+				template <is_q<iterator> I0>
+				XTAL_FN1_(void) erase(I0 i0, size_type sN)
 				XTAL_0EX
 				{
 					erase(i0, _v3::ranges::next(i0, sN), sN);
@@ -664,18 +670,26 @@ struct buffer
 				///\
 				Deletes the elements between `i0` and `iN`. \
 
-				XTAL_FN1_(void) erase(const_iterator i0, const_iterator iN)
+				template <is_q<iterator> I0, is_q<iterator> IN>
+				XTAL_FN1_(void) erase(I0 i0, IN iN)
 				XTAL_0EX
 				{
-					erase(i0, iN, _std::distance(i0, iN));
+					using I = _std::common_type_t<I0, IN>;
+					I i0_ = i0;
+					I iN_ = iN;
+					erase(i0_, iN_, _std::distance(i0_, iN_));
 				}
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
-				XTAL_FN1_(void) erase(const_iterator i0, const_iterator iN, size_type sN)
+				template <is_q<iterator> I0, is_q<iterator> IN>
+				XTAL_FN1_(void) erase(I0 i0, IN iN, size_type sN)
 				XTAL_0EX
 				{
-					erode(const_cast<iterator>(i0), const_cast<iterator>(iN), sN);
+					using I = _std::common_type_t<I0, IN>;
+					I i0_ = i0;
+					I iN_ = iN;
+					erode(i0_, iN_, sN);
 				}
 
 				///\
@@ -782,25 +796,22 @@ struct buffer
 				///\
 				Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-				template <iterator_q J>
-			//	XTAL_IF1 as_q<iteratee_t<J>, V>
-				XTAL_FN1_(iterator) insert(const_iterator i, J j0, J jN)
+				template <is_q<iterator> I, iterator_q J0, iterator_q JN>
+				XTAL_FN1_(iterator) insert(I i, J0 j0, JN jN)
 				{
-					inject(i, _std::distance(j0, jN));
-					copy_linear_f(false, iterator(i), j0, jN);
-					return iterator(i);
-				}
-				XTAL_FN1_(iterator) insert(const_iterator i, const_iterator j0, const_iterator jN)
-				{
-					inject(i, _std::distance(j0, jN));
-					copy_linear_f(false, iterator(i), j0, jN);
-					return iterator(i);
+					using J = _std::common_type_t<J0, JN>;
+					J j0_ = j0;
+					J jN_ = jN;
+					inject(i, _std::distance(j0_, jN_));
+					copy_linear_f(false, i, j0_, jN_);
+					return i;
 				}
 
 				///\
 				Inserts the values `etc` beginning at `i`. \
 
-				XTAL_FN1_(iterator) insert(const_iterator i, bracket_t<V> etc)
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, bracket_t<V> etc)
 				{
 					return insert(i, etc.begin(), etc.end());
 				}
@@ -808,44 +819,38 @@ struct buffer
 				///\
 				Initialises `sN` values with `v` beginning at `i`. \
 
-				XTAL_FN1_(iterator) insert(const_iterator i, size_type sN, V const &v)
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, size_type sN, V const &v)
 				{
 					inject(i, sN);
 					_std::uninitialized_fill_n(i, sN, v);
-					return iterator(i);
+					return i;
 				}
-				XTAL_FN1_(iterator) insert(const_iterator i, size_type sN, V &&v)
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, size_type sN, V &&v)
 				{
 					inject(i, sN);
 					_std::uninitialized_fill_n(i, sN, _std::move(v));
-					return iterator(i);
-				}
-				XTAL_FN1_(iterator) insert(const_iterator i, V &&v)
-				XTAL_IF1 (not is_q<size_type, value_type>)
-				{
-					return insert(i, (size_type) 1, XTAL_FWD_(V) (v));
-				}
-				XTAL_FN1_(iterator) insert(const_reverse_iterator i, V &&v)
-				XTAL_IF1 (not is_q<size_type, value_type>)
-				{
-					return insert(_std::make_reverse_iterator(i), (size_type) 1, XTAL_FWD_(V) (v));
+					return i;
 				}
 
 				///\
 				Initialises `sN` values beginning at `i`. \
 
-				XTAL_FN1_(iterator) insert(const_iterator i, size_type sN)
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, size_type sN)
 				{
 					inject(i, sN);
 					_std::uninitialized_value_construct_n(i, sN);
-					return iterator(i);
+					return i;
 				}
 				
 			protected:
 				///\
 				Allocates `sN` elements beginning at `i`. \
 
-				XTAL_FN1_(iterator) inject(const_iterator i, size_type sN)
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) inject(I i, size_type sN)
 				{
 					reserve(sN + size());
 					if (i < end())// and _std::move_constructible<V>)
@@ -858,30 +863,34 @@ struct buffer
 						assert(i == end());
 					}
 					index_m += sN;
-					return iterator(i);
+					return i;
 				}
 
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
-				XTAL_FN1_(void) erode(iterator i0, iterator iN, size_type sN)
+				template <is_q<iterator> I0, is_q<iterator> IN>
+				XTAL_FN1_(void) erode(I0 i0, IN iN, size_type sN)
 				XTAL_0EX
 				{
-					iterator begin_m = begin(), end_m = end();
-					assert(begin_m <= i0 and iN <= end_m and _std::distance(i0, iN) == sN);
+					using I = _std::common_type_t<I0, IN>;
+					I i0_ = i0;
+					I iN_ = iN;
+					I begin_m = begin(), end_m = end();
+					assert(begin_m <= i0_ and iN_ <= end_m and _std::distance(i0_, iN_) == sN);
 					if constexpr (_std::destructible<V>)
 					{
-						_std::destroy(i0, iN);
+						_std::destroy(i0_, iN_);
 					}
-					if (iN < end_m)// and _std::move_constructible<V>)
+					if (iN_ < end_m)// and _std::move_constructible<V>)
 					{
-						auto jN = appointee_f(iN);
-						auto j0 = appointee_f(i0);
+						auto jN = appointee_f(iN_);
+						auto j0 = appointee_f(i0_);
 						move_linear_f(sN <= _std::distance(jN, index_m), j0, jN, index_m);
 					}
 					else
 					{
-						assert(end_m == iN);
+						assert(end_m == iN_);
 					}
 					index_m -= sN;
 				}

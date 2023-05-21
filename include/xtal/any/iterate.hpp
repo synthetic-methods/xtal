@@ -17,7 +17,7 @@ template <typename    T >        using     iterate_t     = _v3::ranges::view_int
 
 template <typename    T >        concept   iterable_b    = requires (T t) {t.begin();} and not requires (T t) {t.front();};
 template <typename    T >        concept   iterated_b    = _v3::ranges::forward_range<based_t<T>>;
-template <typename    T >        concept   iterator_b    = requires {typename _std::iterator_traits<T>::iterator_category;};//_v3::ranges::forward_iterator<based_t<T>>;
+template <typename    T >        concept   iterator_b    =  pointer_b<T> or requires {typename _std::iterator_traits<T>::iterator_category;};//_v3::ranges::forward_iterator<based_t<T>>;
 template <typename    T >        concept   iteratee_b    = iterated_b<T> or iterator_b<T>;
 
 template <typename    T >        struct    iterated                     {using type = void;};
