@@ -29,7 +29,7 @@ struct render
 		template <iterated_q W>
 		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF... ws)
 		XTAL_0EX
-		:	co(rendered_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
+		:	co(reified_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
 		{
 		}
 

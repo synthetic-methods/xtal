@@ -68,7 +68,11 @@ template <typename    T=iota_t>  using      countor_t    = typename countor<T>::
 template <typename    T=iota_t>  using      countee_t    = typename countee<T>::type;
 
 template <typename    V >        using      repeated_t   = _v3::ranges::repeat_view<V>;
-template <typename    T >        using      rendered_t   = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+
+template <typename T>
+using     reified_t = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+XTAL_LET  reified_f = [] (XTAL_DEF x)
+XTAL_0FN_(reified_t<decltype(x)>(XTAL_REF_(x)));
 
 //\
 TODO: Shim `std::views::repeat` by e.g. \

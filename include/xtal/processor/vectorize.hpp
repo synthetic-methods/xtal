@@ -31,21 +31,15 @@ struct vectorize
 		//	using subkind = typename co::template bind<Xs...>;
 			using subkind = compose<As..., interrupt, typename co::template bind<Xs...>>;
 
-			template <any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <any_q R>
+			class subtype: public compose_s<R, subkind>//, public iterate_t<subtype<R>>
 			{
-				using co = compose_s<_S, subkind>;
-
-				XTAL_FN2 source()
-				XTAL_0EX
-				{
-					return co::template method<>();
-				}
+				using co = compose_s<R, subkind>;
 
 			public:
 				using result_t = typename co::result_t;
 				using buffer_t = typename co::template vector_t<iteratee_t<result_t>>;
-				using target_t = rendered_t<buffer_t>;
+				using target_t = reified_t<buffer_t>;
 
 				using render_t = message::render_t<target_t>;
 				using resize_t = message::resize_t<>;
@@ -59,6 +53,7 @@ struct vectorize
 				XTAL_0EX
 				XTAL_IF1 unimorphic_q<result_t, Xs...>
 				{
+					buffer_m.resize(XTAL_REF_(w));// TODO: Delete line, since `&&` should reuse the provided buffer.
 				}
 				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<resize_t>) w) &
 				XTAL_0EX
@@ -70,7 +65,7 @@ struct vectorize
 				{
 					target_m = XTAL_REF_(w);
 					co::redux([this] (iota_t i, iota_t j)
-						XTAL_0FN_(_v3::ranges::copy(source()|_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i)))
+						XTAL_0FN_(_v3::ranges::copy(co::template method<>()|_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i)))
 					);
 				}
 
@@ -78,6 +73,8 @@ struct vectorize
 				using co::co;
 				using co::self;
 
+			//	XTAL_CO2_(subtype);
+				XTAL_CO4_(subtype);
 				XTAL_RE2_(XTAL_FN2 buffer(), buffer_m)
 
 				template <auto...>
@@ -136,14 +133,12 @@ struct vectorize
 				XTAL_0EX
 				XTAL_IF1 unimorphic_q<result_t, Xs...>
 				{
-				//	ouch("*rvalue*");
 					iota_t const _ = co::efflux(XTAL_REF_(serial_w), render_w);   // render `co`   to `render_w`
 					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
 				}
 				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w, XTAL_DEF_(is_q<render_t>) render_w) &
 				XTAL_0EX
 				{
-				//	ouch("*lvalue*");
 					iota_t const _ = co::efflux(XTAL_REF_(serial_w));             // render `co`
 					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
 				}
@@ -154,11 +149,9 @@ struct vectorize
 	};
 };
 template <typename U, typename... As>
-using vectorize_t = confined_t<vectorize<U, As...>>;
-
-template <typename... As>
-XTAL_LET  vectorize_f = [] <typename U>(U &&u)
-XTAL_0FN_(vectorize_t<U, As...>(XTAL_FWD_(U) (u)));
+using     vectorize_t = confined_t<vectorize<U, As...>>;
+XTAL_LET  vectorize_f = [] (XTAL_DEF u)
+XTAL_0FN_(vectorize_t<decltype(u)>(XTAL_REF_(u)));
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

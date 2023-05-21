@@ -13,10 +13,10 @@ namespace xtal
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto...          Ns >   concept       true_q  =     (bool(Ns)  or...);///< Matches if any `Ns... == 1`.
-template <auto...          Ns >   concept      false_q  = not (bool(Ns) and...);///< Matches if any `Ns... == 0`.
-template <auto...          Ns >   concept     untrue_q  = not (bool(Ns)  or...);///< Matches if all `Ns... == 0`.
-template <auto...          Ns >   concept    unfalse_q  =     (bool(Ns) and...);///< Matches if all `Ns... == 1`.
+template <auto...          Ns >   concept       true_q  =     (bool(Ns)  or... or false);///< Matches if any `Ns... == 1`.
+template <auto...          Ns >   concept      false_q  = not (bool(Ns) and... and true);///< Matches if any `Ns... == 0`.
+template <auto...          Ns >   concept     untrue_q  = not (bool(Ns)  or... or false);///< Matches if all `Ns... == 0`.
+template <auto...          Ns >   concept    unfalse_q  =     (bool(Ns) and... and true);///< Matches if all `Ns... == 1`.
 template <auto             N=0>   concept   positive_q  = (0 < N);
 template <auto             N=0>   concept   negative_q  = (N < 0);
 template <typename T, auto N  >   concept    breadth_q  = (N == sizeof(T));
@@ -39,6 +39,12 @@ template <typename...      Ts >   concept      cased_q  = unfalse_q<cased_b<Ts>.
 template <typename         T  >   using        based_t  = _std::decay_t<T>;
 template <typename         T  >   concept      based_b  = _std::is_same_v<T, based_t<T>> and _std::is_trivially_copy_constructible_v<T>;
 template <typename         T  >   concept    unbased_b  = not based_b<T>;
+
+template <typename         T  >   struct     rebased            : cased<false> {using type =         T ;};
+template <typename         T  >   struct     rebased<T const &&>: cased<true>  {using type = based_t<T>;};
+template <unbased_b        T  >   struct     rebased<T       &&>: cased<true>  {using type = based_t<T>;};
+template <typename         T  >   using      rebased_t  = typename rebased<T>::type;
+template <typename         T  >   concept    rebased_b  =          rebased<T>::value;
 
 template <typename         T  >   struct     debased           : cased<false> {using type = based_t<T>;};
 template <typename         T  >   struct     debased<T const &>: cased<false> {using type = based_t<T>;};

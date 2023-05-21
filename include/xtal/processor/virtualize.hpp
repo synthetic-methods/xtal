@@ -28,10 +28,10 @@ struct virtualize
 		{
 			using subkind = typename co::template bind<Xs...>;
 
-			template <any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <typename R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
+				using co = compose_s<R, subkind>;
 
 				XTAL_FN2 source()
 				XTAL_0EX
@@ -86,11 +86,9 @@ struct virtualize
 	};
 };
 template <typename U, typename... As>
-using virtualize_t = confined_t<virtualize<U, As...>>;
-
-template <typename... As>
-XTAL_LET  virtualize_f = [] <typename U>(U &&u)
-XTAL_0FN_(virtualize_t<U, As...>(XTAL_FWD_(U) (u)));
+using     virtualize_t = confined_t<virtualize<U, As...>>;
+XTAL_LET  virtualize_f = [] (XTAL_DEF u)
+XTAL_0FN_(virtualize_t<decltype(u)>(XTAL_REF_(u)));
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

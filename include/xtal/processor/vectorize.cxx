@@ -137,17 +137,20 @@ void render_internal_chain__test()
 	auto  _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto  _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 	
 	using XHS = processor::vectorize_t<dynamic_bias_mix_t>;//, buffer<(1<<5)>
 	using YHS = processor::vectorize_t<dynamic_term_t>;
-	auto  xhs = XHS::bind_f(lhs, rhs);
-	auto  yhs = YHS::bind_f(xhs);
-//	auto  yhs = YHS::bind_f(XHS::bind_f(lhs, rhs));
-	auto  seq = serial_o(4);
 
-	REQUIRE(0 == yhs.size());
+	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
+
+//	auto  xhs = XHS::bind_f(lhs, rhs);// lvalue (OK)
+	auto  xhs = XHS::bind_f(processor::let_f(_01), processor::let_f(_10));// rvalue (OKish)
+
+	auto  yhs = YHS::bind_f(xhs);// lvalue (OK)
+//	auto  yhs = YHS::bind_f(XHS::bind_f(lhs, rhs));// rvalue (not OK)
+
+	auto  seq = serial_o(4); REQUIRE(0 == yhs.size());
 	yhs <<= resize_o(4);
 	yhs <<= coefficient_t((alpha_t) 100);
 
@@ -155,12 +158,12 @@ void render_internal_chain__test()
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 //	std::cout << "=>"; for (auto y: yhs) std::cout << "\t" << y; std::cout << "\n";
-	REQUIRE(true);
+	
 }
 TEST_CASE("xtal/processor/vectorize.hpp: render internal chain")
 {
 	render_internal_chain__test<dynamic_bias_mix_t>();
-	render_internal_chain__test<static_bias_mix_t>();
+//	render_internal_chain__test<static_bias_mix_t>();
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

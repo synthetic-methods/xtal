@@ -77,9 +77,9 @@ struct define
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
-					return _std::apply([this] (XTAL_DEF... ws)
-						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(ws)...))
-					//	XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(ws))...))
+					return _std::apply([this] (XTAL_DEF... xs)
+						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...))
+					//	XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(xs))...))
 					,	arguments()
 					);
 				}
@@ -110,8 +110,12 @@ struct define
 					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
 				}
 
+				XTAL_FZ1_(void) damb()
+				{
+				}
+
 			protected:
-				XTAL_LET disorder_v = requires (subtype const &t) {t.template method<>();};
+			//	XTAL_LET disorder_v = requires (subtype const &t) {t.template method<>();};
 
 			};
 		};
@@ -133,16 +137,27 @@ struct refine
 		using co::co;
 
 		template <typename... Xs>
-		struct combined
+		struct bind
 		{
-			using kind = _detail::confined<typename T::template bind<Xs...>>;
-			using type = compose_s<S, kind>;
-
+			using subkind = _detail::confined<typename co::template bind<Xs...>>;
+			
+			template <any_q R>
+			using subtype = compose_s<R, subkind>;
+			
 		};
 		template <typename... Xs>
-		using     bind_t = typename combined<Xs...>::type;
-		XTAL_LET  bind_f = [] <typename... Xs>(Xs&&... xs)
-		XTAL_0FN_(bind_t<Xs...>(XTAL_FWD_(Xs) (xs)...));
+		struct bond
+		{
+			using kind = _detail::confined<typename T::template bind<Xs...>>;
+			using type = typename kind::template subtype<S>;
+			
+		};
+		template <typename... Xs>
+		using     bind_t = typename bind<Xs...>::template subtype<S>;
+	//	using     bind_t = typename bond<Xs...>::type;
+		XTAL_LET  bind_f = [] (XTAL_DEF... xs)
+		XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
+		/***/
 
 	};
 };
@@ -248,7 +263,7 @@ struct defer<U>
 				{
 					return _v3::views::transform(XTAL_REF_(x), _std::move(function_m));
 				}
-				XTAL_OP2() (XTAL_DEF... xs) &&
+				XTAL_OP2() (XTAL_DEF ...xs) &&
 				XTAL_0EX
 				{
 					return _v3::views::zip_with(_std::move(function_m), XTAL_REF_(xs)...);
@@ -258,8 +273,8 @@ struct defer<U>
 		};
 		template <typename F>
 		using     zap_t = typename zap<F>::type;
-		XTAL_LET  zap_f = [] <typename F>(F&&f)
-		XTAL_0FN_(zap_t<F>(XTAL_FWD_(F) (f)));
+		XTAL_LET  zap_f = [] (XTAL_DEF f)
+		XTAL_0FN_(zap_t<decltype(f)>(XTAL_REF_(f)));
 
 		template <typename... Xs>
 		struct review
@@ -271,6 +286,9 @@ struct defer<U>
 		};
 		template <typename... Xs>
 		using review_t = typename review<Xs...>::type;
+
+	//	TODO: It appears that both `category::sized` and `views::take` must be applied \
+		for `size` to be defined by `ranges::view_interface`, but maybe there's a better way? \
 
 	public:
 		using co::co;
@@ -288,9 +306,7 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF... xs)
 		XTAL_0EX
 		{
-		//	TODO: It appears that both `category::sized` and `views::take` must be applied \
-			for `size` to be defined by `ranges::view_interface`, but maybe there's a better way? \
-
+			static_assert(unfalse_q<iterated_q<XTAL_TYP_(xs)>...>);
 			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			auto z = zap_f(_std::move(f)) (XTAL_REF_(xs)...);
 			auto n = delta_t(z.size());
@@ -301,6 +317,7 @@ struct defer<U>
 		XTAL_0FX
 		XTAL_IF2 (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
 		{
+			static_assert(unfalse_q<iterated_q<XTAL_TYP_(xs)>...>);
 			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			return zap_f(std::move(f)) (XTAL_REF_(xs)...);
 		}
