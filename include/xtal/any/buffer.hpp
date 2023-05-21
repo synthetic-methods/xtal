@@ -56,19 +56,18 @@ struct buffer
 				///\
 				Replace the contents of `this` with the given range. \
 
-				template <iterated_q I>
-				XTAL_IF1 is_q<iteratee_t<I>, U>
-				XTAL_FN1_(void) refill(I &&in)
-				{
-					assert(N == _std::size(in));
-					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (in));
-				}
 				template <iterator_q I>
 				XTAL_IF1 is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&i0, I &&iN)
 				{
 					assert(N == _std::distance(i0, iN));
 					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
+				}
+				template <iterated_q I>
+				XTAL_IF1 is_q<iteratee_t<I>, U>
+				XTAL_FN1_(void) refill(I &&in)
+				{
+					refill(in.begin(), in.end());
 				}
 
 				///\
@@ -851,7 +850,7 @@ struct buffer
 					reserve(sN + size());
 					if (i < end())// and _std::move_constructible<V>)
 					{
-						auto j = _std::make_reverse_iterator(index_m);
+						auto j = reappointer_f(index_m);
 						move_linear_f(true, _v3::ranges::prev(j, sN), j, _v3::ranges::next(j, sN));
 					}
 					else

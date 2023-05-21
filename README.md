@@ -144,10 +144,10 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 
 ## Platform
 
-Using `C++20` and `ranges-v3@12.0`, the following compilers are supported:
--	`gcc`: 11.1
--	`clang`: 13.0
--	`msvc`: 19.32
+Using `C++20` and `ranges-v3@0.12.0`, the following compilers have been successfully tested:
+-	`clang`: 14
+-	`msvc`: 19.33
+-	`gcc`: 12
 
 The transition to `C++23` ranges is limited by the lack of general support for the following `views`:
 -	`zip_transform` cf. `range/v3/views/zip_with.hpp`

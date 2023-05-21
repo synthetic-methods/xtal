@@ -155,16 +155,6 @@ struct defer
 		XTAL_CO4_(subtype);
 		XTAL_CO2_(subtype);
 
-		XTAL_NEW subtype()
-		XTAL_0EX
-		XTAL_IF2
-		{
-			body_t{};
-		}
-		:	body_m{}
-		{
-		}
-		
 		///\
 		Deferred constructor: initializes `head` \
 		then forwards the remaining arguments to the super-constructor. \
@@ -172,7 +162,6 @@ struct defer
 		XTAL_NEW subtype(XTAL_DEF... ws)
 		XTAL_0EX
 		:	co(XTAL_REF_(ws)...)
-		,	subtype()
 		{
 		}
 		///\
@@ -189,6 +178,16 @@ struct defer
 		{
 		}
 
+		XTAL_NEW subtype()
+		XTAL_0EX
+		XTAL_IF2
+		{
+			body_t{};
+		}
+		:	subtype(body_t{})
+		{
+		}
+		
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
 		\returns the previous value.

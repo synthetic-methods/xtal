@@ -118,8 +118,8 @@ public:
 	XTAL_LET_(sigma_t)   depth = sizeof(Q) << 3;
 	XTAL_LET_(sigma_t) breadth = sizeof(Q) >> 2;
 
-	using co::fraction_n;
-	using co::exponent_n;
+	XTAL_LET           fraction_n =          co::fraction_n;
+	XTAL_LET           exponent_n =          co::exponent_n;
 	XTAL_LET_(sigma_t) positive_n = fraction_n + exponent_n;
 	XTAL_LET_(sigma_t) negative_n = positive_n + 1;
 	XTAL_LET_(sigma_t)     unit_n = exponent_n - 1;
@@ -428,23 +428,22 @@ public:
 	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
 
 
-	template <delta_t N_index> struct codomain {using value_type = alpha_t;};
-	template <delta_t N_index> struct   domain {using value_type = alpha_t;};
-
-	template <> struct codomain< 2> {XTAL_LET value = (alpha_t) 1.442695040888963407359924681001892137;};// Log[2]^1
-	template <> struct codomain< 1> {XTAL_LET value = (alpha_t) 0.159154943091895335768883763372514362;};// (2*Pi)^1
-	template <> struct codomain<-1> {XTAL_LET value = (alpha_t) 0.318309886183790671537767526745028724;};// (1*Pi)^1
-
-	template <> struct   domain< 2> {XTAL_LET value = (alpha_t) 0.693147180559945309417232121458176568;};// Log[2]
-	template <> struct   domain< 1> {XTAL_LET value = (alpha_t) 6.283185307179586476925286766559005768;};// (2*Pi)
-	template <> struct   domain<-1> {XTAL_LET value = (alpha_t) 3.141592653589793238462643383279502884;};// (1*Pi)
-
+	XTAL_LET_(_std::array<alpha_t, 4>) codomain_vs {1.0
+	,	0.159154943091895335768883763372514362//  1 => (Pi*2)^-1
+	,	1.442695040888963407359924681001892137//  2 => Log[2]^-1
+	,	0.318309886183790671537767526745028724// -1 => (Pi*1)^-1
+	};
+	XTAL_LET_(_std::array<alpha_t, 4>)   domain_vs {1.0
+	,	6.283185307179586476925286766559005768//  1 => (Pi*2)
+	,	0.693147180559945309417232121458176568//  2 => Log[2]
+	,	3.141592653589793238462643383279502884// -1 => (Pi*1)
+	};
 	template <delta_t N_base, delta_t N_shift=0>
-	XTAL_LET codomain_v = haplo_v<N_shift>*value_v<codomain<N_base>>;
+	XTAL_LET codomain_v = codomain_vs[N_base&0b11]*haplo_v<N_shift>;
 ///< Value expression representing the multiplicative inverse of the logarithmic `domain_v`.
 
 	template <delta_t N_base, delta_t N_shift=0>
-	XTAL_LET domain_v = diplo_v<N_shift>*value_v<domain<N_base>>;
+	XTAL_LET   domain_v =   domain_vs[N_base&0b11]*diplo_v<N_shift>;
 ///< Value expression representing the logarithmic domain for `N_base`, scaled by `diplo_y<N_shift>`. \
 	Additionally scaled by `1*PI`, `2*PI`, or `LOG2` if `N_base` is `-1`, `1`, or `2` respectively.
 
@@ -581,6 +580,7 @@ public:
 	XTAL_0EX
 	{
 		#ifdef XTAL_V00_MSVC
+			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 			delta_t u = _std::bit_cast<delta_t> (value);
 			u &= sign::mask;
 			u |= unit::mask;
@@ -604,7 +604,7 @@ public:
 	XTAL_0EX
 	{
 		#if XTAL_V00_MSVC
-			static_assert(bit_cast_v);
+			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 			delta_t n = _std::bit_cast<delta_t> (source);
 			delta_t m = _std::bit_cast<delta_t> (target);
 			m &=    ~sign::mask;
@@ -641,7 +641,7 @@ public:
 	XTAL_0EX
 	{
 		#if XTAL_V00_MSVC
-			static_assert(bit_cast_v);
+			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 			delta_t u = _std::bit_cast<delta_t> (target);
 			u &= positive::mask;
 			return _std::bit_cast<alpha_t> (_std::move(u));
