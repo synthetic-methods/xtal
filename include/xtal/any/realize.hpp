@@ -1038,6 +1038,7 @@ struct isomorphic
 template <typename... Ys>              concept id_q = identical <Ys...>::value;
 template <typename... Ys>              concept is_q = isomeric  <Ys...>::value;
 template <typename... Ys>      concept isomorphic_q = isomorphic<Ys...>::value;
+template <typename... Ys>      concept unimorphic_q = isomorphic<Ys...>::value and 2 == sizeof...(Ys);
 
 template <typename T, typename    Y >  concept as_b = requires (T t) {based_t<Y> (t);};//TODO: Remove `based_t`?
 template <typename T, typename... Ys>  concept as_q = unfalse_q<as_b<T, Ys>...>;

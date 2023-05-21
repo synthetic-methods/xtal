@@ -469,7 +469,7 @@ struct define
 				XTAL_FN1_(index_t) relay(index_t idx)
 				XTAL_0EX
 				{
-				//	if constexpr (requires {{co::relay()} -> iota_q;})
+				//	if constexpr (requires {{co::relay()} -> index_q;})
 					if constexpr (0 < N_future)
 					{
 						co::relay(idx);
@@ -488,7 +488,7 @@ struct define
 				XTAL_FN2_(index_t) delay()
 				XTAL_0EX
 				{
-				//	if constexpr (requires {{co::delay()} -> iota_q;})
+				//	if constexpr (requires {{co::delay()} -> index_q;})
 					if constexpr (0 < N_future)
 					{
 						return nearest_head(co::delay());

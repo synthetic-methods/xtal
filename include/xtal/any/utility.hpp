@@ -20,8 +20,7 @@ template <auto...          Ns >   concept    unfalse_q  =     (bool(Ns) and...);
 template <auto             N=0>   concept   positive_q  = (0 < N);
 template <auto             N=0>   concept   negative_q  = (N < 0);
 template <typename T, auto N  >   concept    breadth_q  = (N == sizeof(T));
-
-template <typename         V  >   using      bracket_t  = _std::initializer_list<V>;
+template <typename         X  >   using      bracket_t  = _std::initializer_list<X>;
 template <typename         T  >   using        value_t  = typename _std::decay_t<T>::value_type;
 template <typename         T  >   XTAL_LET     value_v  =          _std::decay_t<T>::value;
 

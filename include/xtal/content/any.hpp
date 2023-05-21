@@ -114,7 +114,8 @@ struct defer
 
 		using head_t = U;
 		using body_t = V;
-		body_t body_m {};
+		body_t body_m;
+	//	body_t body_m {};
 
 	public:
 //	using co::co;
@@ -151,20 +152,27 @@ struct defer
 		///\
 		Default construction/destruction. \
 
-		XTAL_CO2_(subtype);
 		XTAL_CO4_(subtype);
+		XTAL_CO2_(subtype);
 
+		XTAL_NEW subtype()
+		XTAL_0EX
+		XTAL_IF2
+		{
+			body_t{};
+		}
+		:	body_m{}
+		{
+		}
+		
 		///\
 		Deferred constructor: initializes `head` \
 		then forwards the remaining arguments to the super-constructor. \
-		\
-		NOTE: Only supported for non-referenced value-types.
 
 		XTAL_NEW subtype(XTAL_DEF... ws)
 		XTAL_0EX
-		XTAL_IF1 is_q<head_t, body_t>
-		:	body_m{}
-		,	co(XTAL_REF_(ws)...)
+		:	co(XTAL_REF_(ws)...)
+		,	subtype()
 		{
 		}
 		///\
@@ -176,8 +184,8 @@ struct defer
 
 		XTAL_NEW subtype(XTAL_DEF_(of_q<U>) head_w, XTAL_DEF... ws)
 		XTAL_0EX
-		:	body_m(member_f(XTAL_REF_(head_w)))
-		,	co(XTAL_REF_(ws)...)
+		:	co(XTAL_REF_(ws)...)
+		,	body_m(member_f(XTAL_REF_(head_w)))
 		{
 		}
 

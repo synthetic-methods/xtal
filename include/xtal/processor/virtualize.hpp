@@ -76,11 +76,7 @@ struct virtualize
 				XTAL_FN2_(iota_t) efflux(W &&serial_w, XTAL_DEF... ws)
 				XTAL_0EX
 				{
-					iota_t const _ = co::efflux(XTAL_FWD_(W) (serial_w), XTAL_REF_(ws)...);
-					if (1 == _)
-					{
-						result_m = source();
-					}
+					iota_t _ = co::efflux(XTAL_FWD_(W) (serial_w), XTAL_REF_(ws)...); if (_) result_m = source();
 					return _;
 				}
 

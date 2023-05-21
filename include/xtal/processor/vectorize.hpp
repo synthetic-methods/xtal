@@ -14,9 +14,9 @@ namespace xtal::processor
 template <typename U, typename... As>
 struct vectorize
 {
-	using interrupt = typename message::contrived_t<>::interrupt<0>;
-	using subkind = confer<U, buffer<-1>>;
+	using interrupt = typename message::contrived_t<>::interrupt<-1>;
 //	using subkind = confer<U, As..., interrupt, buffer<-1>>;
+	using subkind = confer<U, buffer<-1>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -28,6 +28,7 @@ struct vectorize
 		template <typename... Xs>
 		struct bind
 		{
+		//	using subkind = typename co::template bind<Xs...>;
 			using subkind = compose<As..., interrupt, typename co::template bind<Xs...>>;
 
 			template <any_q _S>
@@ -54,9 +55,30 @@ struct vectorize
 				buffer_t buffer_m;
 				target_t target_m;
 
+				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<resize_t>) w) &&
+				XTAL_0EX
+				XTAL_IF1 unimorphic_q<result_t, Xs...>
+				{
+				}
+				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<resize_t>) w) &
+				XTAL_0EX
+				{
+					buffer_m.resize(XTAL_REF_(w));
+				}
+				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<render_t>) w)
+				XTAL_0EX
+				{
+					target_m = XTAL_REF_(w);
+					co::redux([this] (iota_t i, iota_t j)
+						XTAL_0FN_(_v3::ranges::copy(source()|_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i)))
+					);
+				}
+
 			public:
 				using co::co;
 				using co::self;
+
+				XTAL_RE2_(XTAL_FN2 buffer(), buffer_m)
 
 				template <auto...>
 				XTAL_FN2 method()
@@ -80,21 +102,13 @@ struct vectorize
 				///\
 				Message `deflux` handler: responds to the matched head `w`. \
 
-				template <typename W>
-				XTAL_FN2_(iota_t) deflux(W &&w)
+				XTAL_FN2_(iota_t) deflux(XTAL_DEF w)
 				XTAL_0EX
 				{
 					iota_t const _ = co::deflux(w);
-					if constexpr (is_q<resize_t, W>)
+					if constexpr (requires {handle(XTAL_REF_(w));})
 					{
-						//\
-						TODO: Proceed iff `this` is an `lvalue`, \
-						which should be enough to ensure that `target_m` can be shared. \
-
-						if (1 == _)
-						{
-							self().resize(XTAL_FWD_(W) (w));
-						}
+						if (_) handle(XTAL_REF_(w));
 					}
 					return _;
 				}
@@ -111,60 +125,27 @@ struct vectorize
 				{
 					return co::efflux(XTAL_REF_(ws)...);
 				}
-				template <is_q<serial_t> W>
-				XTAL_FN2_(iota_t) efflux(W &&serial_w)
+
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w)
 				XTAL_0EX
 				{
-					target_m = target_t(buffer_m);
-					return efflux(XTAL_FWD_(W) (serial_w), render_t(target_m));
+					return efflux(XTAL_REF_(serial_w), render_t(buffer_m));
 				}
 
-				XTAL_FN2_(iota_t) efflux(render_t &&render_w)
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w, XTAL_DEF_(is_q<render_t>) render_w) &&
 				XTAL_0EX
+				XTAL_IF1 unimorphic_q<result_t, Xs...>
 				{
-					target_m = target_t(render_w);
-					iota_t const _ = co::efflux(_std::move(render_w));
-					self().render();
-					return _;
+				//	ouch("*rvalue*");
+					iota_t const _ = co::efflux(XTAL_REF_(serial_w), render_w);   // render `co`   to `render_w`
+					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
 				}
-				XTAL_FN2_(iota_t) efflux(render_t const &render_w)
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w, XTAL_DEF_(is_q<render_t>) render_w) &
 				XTAL_0EX
 				{
-					target_m = target_t(buffer_m);
-					iota_t const _ = co::efflux(render_w);
-					self().render(render_w);
-					return _;
-				}
-
-				XTAL_FN1_(void) resize()
-				XTAL_0EX
-				{
-				}
-				XTAL_FN1_(void) resize(resize_t const &resize_w)
-				XTAL_0EX
-				{
-					buffer_m.resize(resize_w);
-				}
-
-				XTAL_FN1_(void) render()
-				XTAL_0EX
-				{
-				//	TODO: Create an alternative to interrupted event handling for contiguous dynamic controls: \
-					-	Store the differences in a (possibly sparse) array. \
-					-	Apply the differences on access. \
-					-	Zero the array element after access. \
-
-				//	TODO: Incorporate `std::execution_policy` based on `co::disorder_v`. \
-
-					co::redux([this] (iota_t i, iota_t j)
-						XTAL_0FN_(_v3::ranges::copy(source()|_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i)))
-					);
-				}
-				XTAL_FN1_(void) render(render_t const &render_w)
-				XTAL_0EX
-				{
-					self().render();
-					_v3::ranges::copy(target_m, render_w.begin());
+				//	ouch("*lvalue*");
+					iota_t const _ = co::efflux(XTAL_REF_(serial_w));             // render `co`
+					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
 				}
 
 			};

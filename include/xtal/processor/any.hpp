@@ -41,10 +41,8 @@ struct define
 			using resize_u = message::resize_t<>;
 			using serial_u = message::serial_t<>;
 
-			using signature_t = bundle_t<processor::let_t<Xs>...>;
-			using signature   = bundle<Xs...>;
-
-			using subkind = compose<context::defer<signature_t>
+			using signature = bundle<processor::let_t<Xs>...>;
+			using subkind = compose<context::defer<typename signature::type>
 			,	resize_u::attach
 			,	serial_u::attach
 			,	_detail::defer<T>
@@ -56,10 +54,10 @@ struct define
 				using co = compose_s<_S, subkind>;
 
 			protected:
-				using result_t = typename signature::template invoke_t<T>;
 
 				XTAL_RE4_(XTAL_FN2 arguments(), co::head())
 
+				using result_t = typename signature::template invoke_t<T>;
 			public:
 				using co::co;
 
@@ -80,7 +78,8 @@ struct define
 				XTAL_0EX
 				{
 					return _std::apply([this] (XTAL_DEF... ws)
-						XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(ws))...))
+						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(ws)...))
+					//	XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(ws))...))
 					,	arguments()
 					);
 				}
@@ -108,77 +107,6 @@ struct define
 						XTAL_0FN_(XTAL_REF_(xs).efflux(ws...) | ...)
 					,	arguments()
 					);
-					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
-				}
-
-			protected:
-				XTAL_LET disorder_v = requires (subtype const &t) {t.template method<>();};
-
-			};
-		};
-		///\
-		An isomorphic binding, representing a `1:1` mapping. \
-		\
-		NOTE: Messages are propagated using `std::move`, \
-		signalling to the upstream `processor` that the data can be shared. \
-
-		template <typename X>
-		XTAL_IF1 isomorphic_q<typename bundle<X>::template invoke_t<T>, X>
-		struct bind<X>
-		{
-			using serial_u = message::serial_t<>;
-			using resize_u = message::resize_t<>;
-
-			using subkind = compose<context::defer<X>
-			,	serial_u::attach
-			,	resize_u::attach
-			,	_detail::defer<T>
-			>;
-
-			template <any_q _S>
-			class subtype: public compose_s<_S, subkind>
-			{
-				using co = compose_s<_S, subkind>;
-
-			protected:
-				using result_t = typename bundle<X>::template invoke_t<T>;
-
-				XTAL_RE4_(XTAL_FN2 argument(), co::head())
-
-			public:
-				using co::co;
-
-				///\
-				Evaluates `T::value` using the bound argument. \
-
-				template <auto... Ms>
-				XTAL_FN2 method()
-				XTAL_0EX
-				{
-					return co::template method<Ms...>(argument());
-				}
-
-				///\
-				Forwards the message to `this` then the bound argument. \
-
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
-				XTAL_0EX
-				{
-					iota_t const _ = [=, this] ()
-						XTAL_0FN_(co::influx(_std::move(ws)...))
-					();
-					return !_?0: _ & processor::let_f(argument()).influx(XTAL_REF_(ws)...);
-				}
-
-				///\
-				Forwards the message to the bound argument then `this`. \
-
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
-				XTAL_0EX
-				{
-					iota_t const _ = [=, this] ()
-						XTAL_0FN_(processor::let_f(argument()).efflux(_std::move(ws)...))
-					();
 					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
 				}
 
