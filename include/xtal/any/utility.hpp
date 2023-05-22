@@ -40,9 +40,9 @@ template <typename         T  >   using        based_t  = _std::decay_t<T>;
 template <typename         T  >   concept      based_b  = _std::is_same_v<T, based_t<T>> and _std::is_trivially_copy_constructible_v<T>;
 template <typename         T  >   concept    unbased_b  = not based_b<T>;
 
-template <typename         T  >   struct     rebased            : cased<false> {using type =         T ;};
-template <typename         T  >   struct     rebased<T const &&>: cased<true>  {using type = based_t<T>;};
-template <unbased_b        T  >   struct     rebased<T       &&>: cased<true>  {using type = based_t<T>;};
+template <typename         T  >   struct     rebased            : cased<false> {using type = T;};
+template <typename         T  >   struct     rebased<T const &&>: cased<true>  {using type = T;};
+template <typename         T  >   struct     rebased<T       &&>: cased<true>  {using type = T;};
 template <typename         T  >   using      rebased_t  = typename rebased<T>::type;
 template <typename         T  >   concept    rebased_b  =          rebased<T>::value;
 

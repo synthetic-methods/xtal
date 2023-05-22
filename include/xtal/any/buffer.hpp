@@ -98,9 +98,9 @@ struct buffer
 				List assignment. \
 				Replaces the contents of `this` with the given values. \
 
-				XTAL_OP1 = (bracket_t<U> etc)
+				XTAL_OP1 = (bracket_t<U> w)
 				{
-					refill(etc.begin(), etc.end());
+					refill(w.begin(), w.end());
 					return *this;
 				}
 

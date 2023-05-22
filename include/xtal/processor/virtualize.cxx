@@ -16,7 +16,7 @@ namespace xtal::processor::__virtualize
 template <typename mix_t>
 void render_virtual__test()
 {
-	using serial_o = message::serial_t<>;
+	using serial_n = message::serial_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(craft_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
@@ -28,7 +28,7 @@ void render_virtual__test()
 	using xhs_t = processor::virtualize_t<mix_t>;
 	auto  xhs = xhs_t::bind_f(lhs, rhs);
 
-	auto walk = serial_o(3); REQUIRE(0 == xhs.size());//                               // uninitialized...
+	auto walk = serial_n(3); REQUIRE(0 == xhs.size());//                               // uninitialized...
 	xhs <<=   walk;          REQUIRE(0 == xhs.size());//                               // initialize via influx?
 	xhs >>=   walk;          REQUIRE(3 == xhs.size());// REQUIRE(33*0 == xhs.front()); // initialize via efflux!
 	xhs >>= ++walk;          REQUIRE(3 == xhs.size());// REQUIRE(33*1 == xhs.front()); // advance then efflux...

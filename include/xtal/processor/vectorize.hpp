@@ -49,23 +49,25 @@ struct vectorize
 				buffer_t buffer_m;
 				target_t target_m;
 
-				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<resize_t>) w) &&
+			//	XTAL_FN1_(void) handle(resize_t w)// &&
+			//	XTAL_0EX
+			//	XTAL_IF1 unimorphic_q<result_t, Xs...>
+			//	{
+			//		buffer_m.resize(XTAL_REF_(w));// TODO: Delete line, since `&&` should reuse the provided buffer.
+			//	}
+				XTAL_FN1_(void) handle(resize_t resize_o)// &
 				XTAL_0EX
-				XTAL_IF1 unimorphic_q<result_t, Xs...>
 				{
-					buffer_m.resize(XTAL_REF_(w));// TODO: Delete line, since `&&` should reuse the provided buffer.
+					buffer_m.resize(XTAL_REF_(resize_o));
 				}
-				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<resize_t>) w) &
+				XTAL_FN1_(void) handle(render_t render_o)
 				XTAL_0EX
 				{
-					buffer_m.resize(XTAL_REF_(w));
-				}
-				XTAL_FN1_(void) handle(XTAL_DEF_(is_q<render_t>) w)
-				XTAL_0EX
-				{
-					target_m = XTAL_REF_(w);
+					target_m = render_o;
 					co::redux([this] (iota_t i, iota_t j)
-						XTAL_0FN_(_v3::ranges::copy(co::template method<>()|_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i)))
+						XTAL_0FN_(_v3::ranges::copy(co::template method<>()|
+							_v3::views::slice(i, j), _v3::ranges::next(target_m.begin(), i))
+						)
 					);
 				}
 
@@ -99,13 +101,13 @@ struct vectorize
 				///\
 				Message `deflux` handler: responds to the matched head `w`. \
 
-				XTAL_FN2_(iota_t) deflux(XTAL_DEF w)
+				XTAL_FN2_(iota_t) deflux(auto o)
 				XTAL_0EX
 				{
-					iota_t const _ = co::deflux(w);
-					if constexpr (requires {handle(XTAL_REF_(w));})
+					iota_t const _ = co::deflux(o);
+					if constexpr (requires {handle(o);})
 					{
-						if (_) handle(XTAL_REF_(w));
+						if (_) handle(o);
 					}
 					return _;
 				}
@@ -117,30 +119,30 @@ struct vectorize
 				If no `message::render` is supplied, the `span` for the current `vector` is used instead. \
 				If identical `serial` prefixes are received in succession, only the first will `render`. \
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF... oo)
 				XTAL_0EX
 				{
-					return co::efflux(XTAL_REF_(ws)...);
+					return co::efflux(XTAL_REF_(oo)...);
 				}
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w)
+				XTAL_FN2_(iota_t) efflux(serial_t serial_o)
 				XTAL_0EX
 				{
-					return efflux(XTAL_REF_(serial_w), render_t(buffer_m));
+					return efflux(serial_o, render_t(buffer_m));
 				}
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w, XTAL_DEF_(is_q<render_t>) render_w) &&
+			//	XTAL_FN2_(iota_t) efflux(serial_t serial_o, render_t render_o)// &&
+			//	XTAL_0EX
+			//	XTAL_IF1 unimorphic_q<result_t, Xs...>
+			//	{
+			//		iota_t const _ = co::efflux(serial_o, render_o);   // render `co`   to `render_o`
+			//		return !_?0: _ & efflux(render_o);                 // render `this` to `render_o`
+			//	}
+				XTAL_FN2_(iota_t) efflux(serial_t serial_o, render_t render_o)// &
 				XTAL_0EX
-				XTAL_IF1 unimorphic_q<result_t, Xs...>
 				{
-					iota_t const _ = co::efflux(XTAL_REF_(serial_w), render_w);   // render `co`   to `render_w`
-					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
-				}
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF_(is_q<serial_t>) serial_w, XTAL_DEF_(is_q<render_t>) render_w) &
-				XTAL_0EX
-				{
-					iota_t const _ = co::efflux(XTAL_REF_(serial_w));             // render `co`
-					return !_?0: _ & efflux(XTAL_REF_(render_w));                 // render `this` to `render_w`
+					iota_t const _ = co::efflux(serial_o);             // render `co`
+					return !_?0: _ & efflux(render_o);                 // render `this` to `render_o`
 				}
 
 			};

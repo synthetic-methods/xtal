@@ -34,18 +34,18 @@ struct define
 		Message `influx` operator: resolves the message for `this` before any dependencies, \
 		used for e.g. `message::resize`. \
 
-		XTAL_OP1 <<=(XTAL_DEF w)
+		XTAL_OP1 <<=(XTAL_DEF o)
 		XTAL_0EX
 		{
-			return operator<<=(bundle_fwd(XTAL_REF_(w)));
+			(void) self().influx(XTAL_REF_(o));
+			return self();
+
+			return operator<<=(bundle_fwd(XTAL_REF_(o)));
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) w)
+		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)
-				XTAL_0FN_(self().influx(XTAL_REF_(vs)...))
-			,	XTAL_REF_(w)
-			);
+			(void) _std::apply([this] (XTAL_DEF... oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
 			return self();
 		}
 
@@ -53,18 +53,16 @@ struct define
 		Message `efflux` operator: resolves the message for any dependencies before `this`, \
 		used for e.g. `message::render` and `message::serial`. \
 
-		XTAL_OP1 >>=(XTAL_DEF w)
+		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX
 		{
-			return operator>>=(bundle_fwd(XTAL_REF_(w)));
+			(void) self().efflux(XTAL_REF_(o));
+			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) w)
+		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			iota_t const _ = _std::apply([this] (XTAL_DEF... vs)
-				XTAL_0FN_(self().efflux(XTAL_REF_(vs)...))
-			,	XTAL_REF_(w)
-			);
+			(void) _std::apply([this] (XTAL_DEF... oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
 			return self();
 		}
 
@@ -76,7 +74,7 @@ struct define
 		NOTE: The values returned by `deflux` are aggregated by `efflux` and `influx`, \
 		and are used to truncate propagation.
 
-		XTAL_FN2_(iota_t) deflux(XTAL_DEF w)
+		XTAL_FN2_(iota_t) deflux(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return -1;
@@ -92,11 +90,11 @@ struct define
 		{
 			return -1;
 		}
-		XTAL_FN2_(iota_t) efflux(XTAL_DEF w, XTAL_DEF... ws)
+		XTAL_FN2_(iota_t) efflux(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			iota_t const _ = self().deflux(XTAL_REF_(w));
-			return !_?0: _ & self().efflux(XTAL_REF_(ws)...);
+			iota_t const _ = self().deflux(XTAL_REF_(o));
+			return !_?0: _ & self().efflux(XTAL_REF_(oo)...);
 		}
 
 		///\
@@ -109,11 +107,11 @@ struct define
 		{
 			return -1;
 		}
-		XTAL_FN2_(iota_t) influx(XTAL_DEF w, XTAL_DEF... ws)
+		XTAL_FN2_(iota_t) influx(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			iota_t const _ = self().deflux(XTAL_REF_(w));
-			return !_?0: _ & self().influx(XTAL_REF_(ws)...);
+			iota_t const _ = self().deflux(XTAL_REF_(o));
+			return !_?0: _ & self().influx(XTAL_REF_(oo)...);
 		}
 
 	};

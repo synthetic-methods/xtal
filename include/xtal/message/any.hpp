@@ -36,6 +36,7 @@ struct define
 
 		struct attach
 		{
+			using message_t = T;
 			using subkind = context::defer<T>;
 
 			template <context::any_q R>
@@ -66,10 +67,10 @@ struct define
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
 		template <delta_t N_arity=2>
+		requires positive_q<N_arity>
 		struct dispatch
 		{
-			static_assert(0 < N_arity);
-
+			using message_t = T;
 			using subkind = attach;
 
 			template <context::any_q R>
@@ -165,6 +166,7 @@ struct define
 			{
 				using co = compose_s<R>;
 
+				using message_t = T;
 				using index_t = iota_t;
 				using event_t = compose_s<T, content::confer<index_t>>;
 				using stack_t = buffer_vector_t<N_future, event_t>;
@@ -254,12 +256,12 @@ struct define
 				///\
 				Delays `msg` with the supplied `idx`. \
 				\
-				NOTE: Duplicate indicies are overwritten (only `event_t::head`s are compared by `==` etc). \
+				NOTE: Duplicate indicies are overwritten (only `event_t::head`s are compared by e.g. `==`). \
 
-				XTAL_FN1_(void) poke(index_t idx, XTAL_DEF_(is_q<T>) msg)
+				XTAL_FN1_(void) poke(index_t idx, message_t msg)
 				XTAL_0EX
 				{
-					auto const ex = event_t(idx, XTAL_REF_(msg));
+					auto const ex = event_t(idx, msg);
 					auto e_ = _std::lower_bound(beginning(), ending(), ex);
 					if (*e_ == ex) *e_ = ex; else stack_m.insert(e_, {ex});
 				}
@@ -268,23 +270,23 @@ struct define
 				///\
 				Invokes `influx` on the super-instance. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... etc)
+				XTAL_FN2_(iota_t) influx(XTAL_DEF... oo)
 				XTAL_0EX
 				{
 					abandon(0 < completed() and 0 == suspended());
-					return co::influx(XTAL_REF_(etc)...);
+					return co::influx(XTAL_REF_(oo)...);
 				}
 
 				///\
-				Delays `msg, etc...` with the supplied `idx`. \
+				Delays `msg, oo...` with the supplied `idx`. \
 				\
 				\returns the `influx` result if the `idx == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(iota_t) influx(index_t idx, XTAL_DEF_(is_q<T>) msg, XTAL_DEF... etc)
+				XTAL_FN2_(iota_t) influx(index_t idx, message_t msg, XTAL_DEF... oo)
 				XTAL_0EX
 				{
-					poke(idx, XTAL_REF_(msg));
-					return influx(idx, XTAL_REF_(etc)...);
+					poke(idx, msg);
+					return influx(idx, XTAL_REF_(oo)...);
 				}
 				XTAL_FN2_(iota_t) influx(index_t idx)
 				XTAL_0EX
@@ -325,6 +327,8 @@ struct define
 		template <delta_t N_future=-1>
 		struct interrupt
 		{
+			using message_t = T;
+
 			template <context::any_q R>
 			class subtype: public compose_s<R>
 			{
@@ -393,12 +397,12 @@ struct define
 						redux();
 					}
 				}
-				XTAL_FN1_(void) poke(index_t idx, XTAL_DEF_(is_q<T>) msg)
+				XTAL_FN1_(void) poke(index_t idx, message_t msg)
 				XTAL_0EX
 				{
 				//	TODO: Handle duplicates? \
 
-					queue_m.emplace(idx, XTAL_REF_(msg));
+					queue_m.emplace(idx, msg);
 				}
 
 			public:
@@ -410,18 +414,18 @@ struct define
 				\
 				\returns the `influx` result if the `delay == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(iota_t) influx(index_t idx, XTAL_DEF_(is_q<T>) msg, XTAL_DEF... etc)
+				XTAL_FN2_(iota_t) influx(index_t idx, message_t msg, XTAL_DEF... oo)
 				XTAL_0EX
 				{
 					if (0 == idx)
 					{
-						iota_t const _ = co::influx(XTAL_REF_(msg));
-						return !_?0:_ & influx(idx, XTAL_REF_(etc)...);
+						iota_t const _ = co::influx(msg);
+						return !_?0: _ & influx(idx, XTAL_REF_(oo)...);
 					}
 					else
 					{
 						assert(0 < idx);
-						poke(XTAL_REF_(idx), XTAL_REF_(msg));
+						poke(XTAL_REF_(idx), msg);
 						return -1;
 					}
 				}
@@ -433,10 +437,10 @@ struct define
 				///\
 				Invokes `influx` on the super-instance. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... etc)
+				XTAL_FN2_(iota_t) influx(XTAL_DEF... oo)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(etc)...);
+					return co::influx(XTAL_REF_(oo)...);
 				}
 
 			protected:

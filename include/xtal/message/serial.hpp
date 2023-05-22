@@ -153,31 +153,29 @@ struct serial<V>
 				NOTE: Influxing `serial_u = serial<counter_u>` move to the position specified, \
 				while setting `size = 0` to allow future `efflux`. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(ws)...);
+					return co::influx(XTAL_REF_(oo)...);
 				}
-				template <is_q<serial_n> W>
-				XTAL_FN2_(iota_t) influx(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(serial_n w, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto i = XTAL_REF_(w).step();
-					return co::influx(serial_n(0, i), XTAL_REF_(ws)...);
+					auto i = w.step();
+					return co::influx(serial_n(0, i), XTAL_REF_(oo)...);
 				}
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return co::efflux(XTAL_REF_(ws)...);
+					return co::efflux(XTAL_REF_(oo)...);
 				}
-				template <is_q<serial_n> W>
-				XTAL_FN2_(iota_t) efflux(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(serial_n serial_w, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const &m = co::head();
-					assert(m <= w);
-					return co::efflux(XTAL_REF_(w), XTAL_REF_(ws)...);
+					assert(m <= serial_w);
+					return co::efflux(serial_w, XTAL_REF_(oo)...);
 				}
 
 			};
@@ -320,57 +318,53 @@ struct serial<U>
 				NOTE: Influxing `serial_u = serial<counter_u>` move to the position specified, \
 				while setting `size = 0` to allow future `efflux`. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(auto ...ws)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(ws)...);
+					return co::influx(ws...);
 				}
-				template <is_q<serial_u> W>
-				XTAL_FN2_(iota_t) influx(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(serial_u w, auto ...ws)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(w).null(), XTAL_REF_(ws)...);
+					return co::influx(w.null(), ws...);
 				}
-				template <is_q<serial_n> W>
-				XTAL_FN2_(iota_t) influx(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(serial_n w, auto ...ws)
 				XTAL_0EX
 				{
 					auto i = w.step();
 					assert(i == 0);
-					return co::influx(XTAL_REF_(w).null(), XTAL_REF_(ws)...);
+					return co::influx(w.null(), ws...);
 				}
 
 				///\
 				NOTE: Effluxing `serial_n = serial<countee_t<>>` will always update the current state, \
 				so consistency must be guaranteed downstream. \
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(auto ...ws)
 				XTAL_0EX
 				{
-					return co::efflux(XTAL_REF_(ws)...);
+					return co::efflux(ws...);
 				}
 				///\
 				NOTE: Effluxing `serial_u = serial<counter_u>` will `assert` that the `serial`s are received in sequence. \
 
-				template <is_q<serial_u> W>
-				XTAL_FN2_(iota_t) efflux(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(serial_u w, auto ...ws)
 				XTAL_0EX
 				{
 					auto &m = co::head();
 					assert(m <= w);
-					return co::efflux(XTAL_REF_(w), XTAL_REF_(ws)...);
+					return co::efflux(w, ws...);
 				}
 				///\
 				NOTE: Effluxing `serial_n = serial<countee_t<>>` will update without sequence-checking, \
 				so consistency must be guaranteed elsewhere by `serial_n::efflux`. \
 
-				template <is_q<serial_n> W>
-				XTAL_FN2_(iota_t) efflux(W &&w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(serial_n w, auto ...ws)
 				XTAL_0EX
 				{
 					auto &m = co::head();
 					m += w.size();
-					return co::efflux(XTAL_REF_(w), XTAL_REF_(ws)...);
+					return co::efflux(w, ws...);
 				}
 
 			};

@@ -43,7 +43,7 @@ struct virtualize
 				typename co::result_t result_m = source();
 
 			private:
-				using serial_u = message::serial_t<>;
+				using serial_u = message::serial_t<>;// TODO: Should be `counted_t<>`.
 
 			public:
 				using co::co;
@@ -67,16 +67,15 @@ struct virtualize
 					return result_m.end();
 				}
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(XTAL_DEF... oo)
 				XTAL_0EX
 				{
-					return co::efflux(XTAL_REF_(ws)...);
+					return co::efflux(XTAL_REF_(oo)...);
 				}
-				template <is_q<serial_u> W>
-				XTAL_FN2_(iota_t) efflux(W &&serial_w, XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(serial_u serial_o, XTAL_DEF... oo)
 				XTAL_0EX
 				{
-					iota_t _ = co::efflux(XTAL_FWD_(W) (serial_w), XTAL_REF_(ws)...); if (_) result_m = source();
+					iota_t _ = co::efflux(serial_o, XTAL_REF_(oo)...); if (_) result_m = source();
 					return _;
 				}
 

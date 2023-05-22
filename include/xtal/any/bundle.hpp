@@ -40,10 +40,10 @@ static_assert(bundle_part_p<_std::array<void, 0>>);
 template <typename... Xs>
 struct bundle
 {
-	using type = _std::tuple<Xs...>;
+	using type = _std::remove_reference_t<_std::tuple<rebased_t<Xs>...>>;
 
-	template <typename F> using invoke   = _std::invoke_result  <F, Xs...>;
-	template <typename F> using invoke_t = _std::invoke_result_t<F, Xs...>;
+	template <typename F> using invoke   = _std::invoke_result  <F, rebased_t<Xs>...>;
+	template <typename F> using invoke_t = _std::invoke_result_t<F, rebased_t<Xs>...>;
 
 };
 template <typename... Xs>

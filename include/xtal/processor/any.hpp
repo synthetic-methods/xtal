@@ -41,23 +41,24 @@ struct define
 			using resize_u = message::resize_t<>;
 			using serial_u = message::serial_t<>;
 
-			using signature = bundle<processor::let_t<Xs>...>;
+			using signature = bundle<Xs...>;
 			using subkind = compose<context::defer<typename signature::type>
 			,	resize_u::attach
 			,	serial_u::attach
 			,	_detail::defer<T>
 			>;
 
-			template <any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <any_q R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
+				using co = compose_s<R, subkind>;
 
 			protected:
 
-				XTAL_RE4_(XTAL_FN2 arguments(), co::head())
+				XTAL_RE2_(XTAL_FN2 arguments(), co::head())
 
-				using result_t = typename signature::template invoke_t<T>;
+				using result_t    = typename signature::template invoke_t<T>;
+				using arguments_t = typename signature::type;
 			public:
 				using co::co;
 
@@ -66,20 +67,31 @@ struct define
 
 				XTAL_NEW_(explicit) subtype(Xs&&... xs)
 				XTAL_0EX
-				:	co(bundle_fwd(processor::let_f(XTAL_FWD_(Xs) (xs))...))
+				:	co(arguments_t(XTAL_REF_(xs)...))
+			//	:	co(bundle_fwd(XTAL_FWD_(rebased_t<Xs>)(xs)...))
+			//	:	co(_std::forward_as_tuple<processor::let_t<Xs>...>(((XTAL_FWD_(Xs) (xs)))...))
 				{
 				}
 
 				///\
 				Evaluates `T::value` using the bound arguments. \
 
+			//	template <auto... Ms>
+			//	XTAL_FN2 method() &&
+			//	XTAL_0EX
+			//	{
+			//		return _std::apply([this] (XTAL_DEF... xs)
+			//			XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...))
+			//		//	XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(xs))...))
+			//		,	arguments()
+			//		);
+			//	}
 				template <auto... Ms>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
 					return _std::apply([this] (XTAL_DEF... xs)
 						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...))
-					//	XTAL_0FN_(co::template method<Ms...>(Xs(XTAL_REF_(xs))...))
 					,	arguments()
 					);
 				}
@@ -87,12 +99,12 @@ struct define
 				///\
 				Forwards the message to `this` then the bound arguments. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) influx(auto... o)
 				XTAL_0EX
 				{
-					iota_t const _ = co::influx(ws...);
-					return !_?0: _ & _std::apply([&] (XTAL_DEF... xs)
-						XTAL_0FN_(XTAL_REF_(xs).influx(ws...) | ...)
+					iota_t const _ = co::influx(o...);
+					return !_?0: _ & _std::apply([=] (XTAL_DEF... xs)
+						XTAL_0FN_(XTAL_REF_(xs).influx(o...) | ...)
 					,	arguments()
 					);
 				}
@@ -100,18 +112,14 @@ struct define
 				///\
 				Forwards the message to the bound arguments then `this`. \
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
+				XTAL_FN2_(iota_t) efflux(auto... o)
 				XTAL_0EX
 				{
-					iota_t const _ = _std::apply([&] (XTAL_DEF... xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(ws...) | ...)
+					iota_t const _ = _std::apply([=] (XTAL_DEF... xs)
+						XTAL_0FN_(XTAL_REF_(xs).efflux(o...) | ...)
 					,	arguments()
 					);
-					return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
-				}
-
-				XTAL_FZ1_(void) damb()
-				{
+					return !_?0: _ & co::efflux(o...);
 				}
 
 			protected:
@@ -146,18 +154,9 @@ struct refine
 			
 		};
 		template <typename... Xs>
-		struct bond
-		{
-			using kind = _detail::confined<typename T::template bind<Xs...>>;
-			using type = typename kind::template subtype<S>;
-			
-		};
-		template <typename... Xs>
 		using     bind_t = typename bind<Xs...>::template subtype<S>;
-	//	using     bind_t = typename bond<Xs...>::type;
 		XTAL_LET  bind_f = [] (XTAL_DEF... xs)
 		XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
-		/***/
 
 	};
 };
@@ -189,7 +188,7 @@ struct defer
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
-			auto const &v = co::template method<>(); 
+			auto const &v = co::template method<>();
 			auto const &m = co::template get<serial_u>();
 			auto const &i = iota_t(m.front());
 			auto const &j = iota_t(m.size()) + i;
