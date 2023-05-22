@@ -31,7 +31,7 @@ struct define
 		using co::self;
 
 		///\
-		Message `influx` operator: resolves the message for `this` before any dependencies, \
+		Influx operator: resolves the message for `this` before any dependencies, \
 		used for e.g. `message::resize`. \
 
 		XTAL_OP1 <<=(XTAL_DEF o)
@@ -45,13 +45,38 @@ struct define
 		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			(void) _std::apply([this] (XTAL_DEF... oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
+			(void) _std::apply([this] (XTAL_DEF ...oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
 			return self();
 		}
+		///\
+		Influx handler: resolves the message for `this` before any dependencies. \
+		
+		///\
+		\returns the result of `infuse` applied to the first argument \
+		`&` `influx` applied to the remaining arguments. \
+
+		XTAL_FN2_(flux_t) influx(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_0EX
+		{
+			flux_t const _ = self().infuse(XTAL_REF_(o));
+			return !_?0: _ & self().influx(XTAL_REF_(oo)...);
+		}
+		XTAL_FN2_(flux_t) influx(nothing_t, XTAL_DEF ...oo)
+		XTAL_0EX
+		{
+		//	return self().influx(XTAL_REF_(oo)...);
+			return influx();
+		}
+		XTAL_FN2_(flux_t) influx()
+		XTAL_0EX
+		{
+			return -1;
+		}
+
 
 		///\
-		Message `efflux` operator: resolves the message for any dependencies before `this`, \
-		used for e.g. `message::render` and `message::serial`. \
+		Efflux operator: resolves the message for any dependencies before `this`, \
+		used for e.g. `message::respan` and `message::serial`. \
 
 		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX
@@ -62,57 +87,58 @@ struct define
 		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			(void) _std::apply([this] (XTAL_DEF... oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
+			(void) _std::apply([this] (XTAL_DEF ...oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
 			return self();
 		}
-
 		///\
-		Message `deflux` handler: resolves the individual components of the message. \
-		\returns `1` if the state has changed, `0` if the state remains unchanged, \
-		or `-1` if the message wasn't handled. \
-		\
-		NOTE: The values returned by `deflux` are aggregated by `efflux` and `influx`, \
-		and are used to truncate propagation.
-
-		XTAL_FN2_(iota_t) deflux(XTAL_DEF o)
-		XTAL_0EX
-		{
-			return -1;
-		}
-
+		Efflux handler: resolves the message for any dependencies before `this`. \
+		
 		///\
-		Message `efflux` handler: resolves the message for any dependencies before `this`. \
-		\returns the result of `deflux` applied to the first argument `and` \
-		`efflux` applied to the remaining arguments. \
+		\returns the result of `effuse` applied to the first argument \
+		`&` `efflux` applied to the remaining arguments. \
 
-		XTAL_FN2_(iota_t) efflux()
+		XTAL_FN2_(flux_t) efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return -1;
-		}
-		XTAL_FN2_(iota_t) efflux(XTAL_DEF o, XTAL_DEF... oo)
-		XTAL_0EX
-		{
-			iota_t const _ = self().deflux(XTAL_REF_(o));
+			flux_t const _ = self().effuse(XTAL_REF_(o));
 			return !_?0: _ & self().efflux(XTAL_REF_(oo)...);
 		}
-
-		///\
-		Message `influx` handler: resolves the message for `this` before any dependencies. \
-		\returns the result of `deflux` applied to the first argument `and` \
-		`influx` applied to the remaining arguments. \
-
-		XTAL_FN2_(iota_t) influx()
+		XTAL_FN2_(flux_t) efflux(nothing_t, XTAL_DEF ...oo)
+		XTAL_0EX
+		{
+		//	return self().efflux(XTAL_REF_(oo)...);
+			return efflux();
+		}
+		XTAL_FN2_(flux_t) efflux()
 		XTAL_0EX
 		{
 			return -1;
 		}
-		XTAL_FN2_(iota_t) influx(XTAL_DEF o, XTAL_DEF... oo)
+
+
+		///\
+		Defuse handler: resolves the individual components of the message. \
+		
+		///\
+		\returns a ternary integer indicating the change in state (`1` or `0`), \
+		or that the message was unrecognized (`-1`). \
+		
+		///\
+		\note The return value controls conditional execution using binary `&`, \
+		truncating propagation when the aggregated result is zero (`0`).
+
+		XTAL_FN2_(flux_t) defuse(XTAL_DEF o)
 		XTAL_0EX
 		{
-			iota_t const _ = self().deflux(XTAL_REF_(o));
-			return !_?0: _ & self().influx(XTAL_REF_(oo)...);
+			return -1;
 		}
+
+		XTAL_FN2_(flux_t) effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		///\< \see `defuse`. \
+
+		XTAL_FN2_(flux_t) infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		///\< \see `defuse`. \
+		
 
 	};
 };
@@ -147,57 +173,49 @@ struct defer
 		using co::head;
 
 		///\
-		Attempts assignment: returns `1` if the value has changed, `0` otherwise. \
+		\note Propagates to the proxied value if it has the required `context`.
 
-		XTAL_FN2_(iota_t) deflux(XTAL_DEF w)
+		XTAL_FN2_(flux_t) influx(XTAL_DEF ...ws)
 		XTAL_0EX
+		requires any_q<U>
 		{
-			return co::deflux(XTAL_REF_(w));
+			flux_t const _ = co::influx(ws...);
+			return !_?0: _ & head().influx(XTAL_REF_(ws)...);
 		}
-		XTAL_FN2_(iota_t) deflux(XTAL_DEF_(is_q<U>) w)
-		XTAL_0EX
-		{
-			if (co::has(w))
-			{
-				return 0;
-			}
-			else
-			{
-				co::template set<U>(w);
-				return 1;
-			}
-		}
-
-		///\
-		Message `efflux` handler: resolves the arguments via `head` before `this`. \
-
-		XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
-		XTAL_0EX
-		{
-			return co::efflux(XTAL_REF_(ws)...);
-		}
-		XTAL_FN2_(iota_t) efflux(XTAL_DEF... ws)
-		XTAL_0EX
-		XTAL_IF1 any_q<U>
-		{
-			iota_t const _ = head().efflux(ws...);
-			return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
-		}
-
-		///\
-		Message `influx` handler: resolves the arguments via `this` before `head`. \
-
-		XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+		XTAL_FN2_(flux_t) influx(XTAL_DEF ...ws)
 		XTAL_0EX
 		{
 			return co::influx(XTAL_REF_(ws)...);
 		}
-		XTAL_FN2_(iota_t) influx(XTAL_DEF... ws)
+
+		///\
+		\note Propagates to the proxied value if it has the required `context`.
+
+		XTAL_FN2_(flux_t) efflux(XTAL_DEF ...ws)
 		XTAL_0EX
-		XTAL_IF1 any_q<U>
+		requires any_q<U>
 		{
-			iota_t const _ = co::influx(ws...);
-			return !_?0: _ & head().influx(XTAL_REF_(ws)...);
+			flux_t const _ = head().efflux(ws...);
+			return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
+		}
+		XTAL_FN2_(flux_t) efflux(XTAL_DEF ...ws)
+		XTAL_0EX
+		{
+			return co::efflux(XTAL_REF_(ws)...);
+		}
+
+		///\
+		\note Assigns the given value `u` if it matches the proxied type `U`. \
+
+		XTAL_FN2_(flux_t) defuse(U u)
+		XTAL_0EX
+		{
+			return not co::has(u) and (co::head(u), 1);
+		}
+		XTAL_FN2_(flux_t) defuse(XTAL_DEF w)
+		XTAL_0EX
+		{
+			return co::defuse(XTAL_REF_(w));
 		}
 
 	};

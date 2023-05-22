@@ -22,7 +22,7 @@ struct static_bias_mix_t
 	>
 {
 	template <auto bias>
-	XTAL_FN2 method(XTAL_DEF... xs)
+	XTAL_FN2 method(XTAL_DEF ...xs)
 	{
 		return (XTAL_REF_(xs) + ... + bias);
 	}
@@ -33,7 +33,7 @@ struct dynamic_bias_mix_t
 	>
 {
 	template <auto...>
-	XTAL_FN2 method(XTAL_DEF... xs)
+	XTAL_FN2 method(XTAL_DEF ...xs)
 	{
 		return (XTAL_REF_(xs) + ... + this->template get<bias_t>());
 	}

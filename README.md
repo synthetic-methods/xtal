@@ -33,7 +33,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 		>
 	{
 		template <auto...>
-		XTAL_FN2 method(XTAL_DEF... xs)
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
 			return (XTAL_REF_(xs) + ... + 0.0);
 		}
@@ -46,7 +46,7 @@ this `method` is aliased as the invocation `operator()`.
 	mix_t mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::vectorize` or `processor::virtualize`,
+Range-lifting is achieved using functors like `processor::targeted` or `processor::sourced`,
 allowing `method` and `operator` to `zip` the underlying function across `ranges`.
 (In future, the (im)purity of a function will determine the `std::execution_policy`, once supported by the relevant `ranges` library.)
 
@@ -71,7 +71,7 @@ and can be read either by explicit conversion or by using the method `this->temp
 		>
 	{
 		template <auto...>
-		XTAL_FN2 method(XTAL_DEF... xs)
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
 			return (XTAL_REF_(xs) + ... + 0.0)*active_t(*this);
 		//	return (XTAL_REF_(xs) + ... + 0.0)*this->template get<active_t>();
@@ -89,7 +89,7 @@ providing coarse-grained choice without branching.
 		>
 	{
 		template <auto active>
-		XTAL_FN2 method(XTAL_DEF... xs)
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
 			return (XTAL_REF_(xs) + ... + 0.0)*active;
 		}
@@ -109,17 +109,17 @@ When sample-accurate scheduling is required,
 
 	mixer.influx(123, active_t(0));// off @ offset 123
 
-They are often used in tandem, e.g. the global buffer size may be updated by `influx` before using `efflux` to `render` the outcome.
+They are often used in tandem, e.g. the global buffer size may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
 	auto serial = serial_t(1024);
 
-	using mixer_t = processor::vectorize_t<mix_t>;
+	using mixer_t = processor::targeted_t<mix_t>;
 	auto sixer = mixer_t::bind_f(one, two, three);
 
 	//	initialization
 	{
-		// allocate all `vectorize`d `processor`s reachable from `sixer`
+		// allocate all `targeted`d `processor`s reachable from `sixer`
 		sixer <<= resize;
 	}
 	
@@ -128,7 +128,7 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 		// activate the `sixer` for the entirety of the first block
 		sixer <<= active_t(1);
 
-		// render the current graph, and advance the `serial` cursor
+		// respan the current graph, and advance the `serial` cursor
 		sixer >>= serial++;
 	}
 	// 2nd iteration
@@ -136,7 +136,7 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 		// deactivate the `sixer` at an offset of `123` into the current buffer
 		sixer <<= sixer <<= std::make_tuple(123, active_t(0));
 
-		// render the current graph, and advance the `serial` cursor
+		// respan the current graph, and advance the `serial` cursor
 		sixer >>= serial++;
 	}
 
@@ -159,7 +159,7 @@ The transition to `C++23` ranges is limited by the lack of general support for t
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
 The files `**/all.hpp` export all definitions at a given level.
-At the leaves, this includes fundamental types like `any` and specializations like `vectorize`, `virtualize`, etc.
+At the leaves, this includes fundamental types like `any` and specializations like `targeted`, `sourced`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types.
 At the leaves, this includes decorators like `define`, `defer`, etc.
@@ -258,7 +258,7 @@ and forwarding (e.g. operators):
 	template <typename U> struct defer;
 	template <typename U> struct refer;
 
-	template <typename U, typename... As>
+	template <typename U, typename ...As>
 	struct confer
 	:	compose<refer<U>, As..., defer<U>>
 	{};
@@ -270,7 +270,7 @@ and finalization (e.g. applying `ranges::view_interface`).
 	template <typename U> struct define;
 	template <typename U> struct refine;
 
-	template <typename U, typename... As>
+	template <typename U, typename ...As>
 	struct confine
 	:	compose<refine<U>, As..., define<U>>
 	{};
@@ -291,5 +291,5 @@ Currently supported but not yet implemented:
 
 ## Contribution
 
-If you would like to get involved or get in touch, don't hesitate to reach out to @goomtrex wherever you find me.
+If you would like to get involved or get in techo, don't hesitate to reach out to @goomtrex wherever you find me.
 Otherwise, feel free to submit an issue or pull-request if that's more your style.

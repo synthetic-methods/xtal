@@ -53,7 +53,7 @@ struct define
 				Constructs the `attach`ed `message` using its default, \
 				before `forward`ing the arguments to `this`. \
 
-				XTAL_NEW_(explicit) subtype(XTAL_DEF... xs)
+				XTAL_NEW_(explicit) subtype(XTAL_DEF ...xs)
 				XTAL_0EX
 				:	co(T(), XTAL_REF_(xs)...)
 				{
@@ -67,7 +67,7 @@ struct define
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
 		template <delta_t N_arity=2>
-		requires positive_q<N_arity>
+		requires (0 < N_arity)
 		struct dispatch
 		{
 			using message_t = T;
@@ -82,7 +82,7 @@ struct define
 				using co::self;
 				using co::head;
 
-				XTAL_NEW subtype(XTAL_DEF_(as_q<delta_t>) n)
+				XTAL_NEW subtype(XTAL_DEF_(to_q<delta_t>) n)
 			//	:	co(XTAL_REF_(n))
 				:	co(n)
 				{
@@ -92,7 +92,7 @@ struct define
 				///\
 				Alias of `method` that resolves the template-parameters using member-variables. \
 
-				XTAL_OP2() (XTAL_DEF... xs)
+				XTAL_OP2() (XTAL_DEF ...xs)
 				XTAL_0EX
 				{
 					auto const &def = deify<decltype(xs)...>();
@@ -103,12 +103,12 @@ struct define
 				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
 				resolving the template-parameters using member-variables. \
 
-				template <typename... Xs>
+				template <typename ...Xs>
 				XTAL_FN2 reify()
 				XTAL_0EX
 				{
 					auto const &def = deify<Xs...>();
-					return [this, def] (XTAL_DEF... xs)
+					return [this, def] (XTAL_DEF ...xs)
 						XTAL_0FN_((self().*def)(XTAL_REF_(xs)...))
 					;
 				}
@@ -117,7 +117,7 @@ struct define
 				Resolves the overloaded function-pointer for the given types, \
 				indexing the _detail template-parameter with the corresponding message-value/subtype `T`. \
 
-				template <typename... Xs>
+				template <typename ...Xs>
 				XTAL_FN2 deify()
 				XTAL_0FX
 				{
@@ -134,13 +134,13 @@ struct define
 				Defines the subtype-indexed function-pointer table, \
 				dynamically indexed by message-value/subtype `T` and statically-generated with `N_arity` entries. \
 
-				template <typename... Xs>
+				template <typename ...Xs>
 				struct being
 				{
-					template <auto... Ms>
+					template <auto ...Ms>
 					struct resolve
 					{
-						template <sigma_t... Ns>
+						template <sigma_t ...Ns>
 						XTAL_FZ2 method_f(seek_t<Ns...>)
 						XTAL_0EX
 						{
@@ -151,7 +151,7 @@ struct define
 					
 					};
 
-					template <auto... Ms>
+					template <auto ...Ms>
 					XTAL_LET method = resolve<Ms...>::method_m;
 				
 				};
@@ -254,23 +254,24 @@ struct define
 				}
 				
 				///\
-				Delays `msg` with the supplied `idx`. \
-				\
-				NOTE: Duplicate indicies are overwritten (only `event_t::head`s are compared by e.g. `==`). \
+				Delays the message `o` by the given delay `i`. \
+				
+				///\
+				\note Conflicting entries are overwritten (only `event_t::head`s are compared by e.g. `==`). \
 
-				XTAL_FN1_(void) poke(index_t idx, message_t msg)
+				XTAL_FN1_(void) poke(index_t i, message_t o)
 				XTAL_0EX
 				{
-					auto const ex = event_t(idx, msg);
+					auto const ex = event_t(i, o);
 					auto e_ = _std::lower_bound(beginning(), ending(), ex);
 					if (*e_ == ex) *e_ = ex; else stack_m.insert(e_, {ex});
 				}
 
 			public:
 				///\
-				Invokes `influx` on the super-instance. \
+				Invokes `influx` on the super-instance after clearing the schedule iff completed. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... oo)
+				XTAL_FN2_(flux_t) influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					abandon(0 < completed() and 0 == suspended());
@@ -278,17 +279,17 @@ struct define
 				}
 
 				///\
-				Delays `msg, oo...` with the supplied `idx`. \
+				Enqueues the events `o, o...` with the given delay `i`. \
 				\
-				\returns the `influx` result if the `idx == 0`, `-1` otherwise. \
+				\returns the `influx` result if the `i == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(iota_t) influx(index_t idx, message_t msg, XTAL_DEF... oo)
+				XTAL_FN2_(flux_t) influx(index_t i, message_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					poke(idx, msg);
-					return influx(idx, XTAL_REF_(oo)...);
+					poke(i, o);
+					return influx(i, XTAL_REF_(oo)...);
 				}
-				XTAL_FN2_(iota_t) influx(index_t idx)
+				XTAL_FN2_(flux_t) influx(index_t i)
 				XTAL_0EX
 				{
 					return -1;
@@ -310,7 +311,7 @@ struct define
 		Provides a queue for this message-type `T` on the target object. \
 		Messages `influx`ed with an integer prefix will be delayed by the given amount. \
 		\
-		NOTE: Only supports decorating `processor::vectorize`. \
+		NOTE: Only supports decorating `processor::targeted`. \
 		\
 		TODO: Use deep introspection to automatically `interrupt` viable sources/targets. \
 		\
@@ -397,64 +398,57 @@ struct define
 						redux();
 					}
 				}
-				XTAL_FN1_(void) poke(index_t idx, message_t msg)
+				XTAL_FN1_(void) poke(index_t idx, message_t o)
 				XTAL_0EX
 				{
 				//	TODO: Handle duplicates? \
 
-					queue_m.emplace(idx, msg);
+					queue_m.emplace(idx, o);
 				}
 
 			public:
 				using co::co;
 				using co::self;
 
+				using co::influx;
 				///\
-				Enqueues the given event (2nd argument) at the supplied `delay` (1st argument). \
+				Invokes `influx` if the given delay `i == 0`, \
+				otherwise enqueues the events `o, o...` at the specified index. \
 				\
-				\returns the `influx` result if the `delay == 0`, `-1` otherwise. \
+				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(iota_t) influx(index_t idx, message_t msg, XTAL_DEF... oo)
+				XTAL_FN2_(flux_t) influx(index_t i, message_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (0 == idx)
+					if (0 == i)
 					{
-						iota_t const _ = co::influx(msg);
-						return !_?0: _ & influx(idx, XTAL_REF_(oo)...);
+						flux_t const _ = co::influx(o);
+						return !_?0: _ & influx(i, XTAL_REF_(oo)...);
 					}
 					else
 					{
-						assert(0 < idx);
-						poke(XTAL_REF_(idx), msg);
+						assert(0 < i);
+						poke(XTAL_REF_(i), o);
 						return -1;
 					}
 				}
-				XTAL_FN2_(iota_t) influx(index_t idx)
+				XTAL_FN2_(flux_t) influx(index_t i)
 				XTAL_0EX
 				{
 					return -1;
-				}
-				///\
-				Invokes `influx` on the super-instance. \
-
-				XTAL_FN2_(iota_t) influx(XTAL_DEF... oo)
-				XTAL_0EX
-				{
-					return co::influx(XTAL_REF_(oo)...);
 				}
 
 			protected:
 				///\
 				Relays all queued events while invoking the supplied callback for each intermediate section. \
 
-				XTAL_FN1_(void) redux(auto const &dux)
+				XTAL_FN1_(void) redux(auto const &f)
 				XTAL_0EX
-				XTAL_IF2 (index_t i, index_t j) {dux(i, j);}
 				{
 					index_t i = 0, j = delay();
 					for (; i != j; j = relay(i = j))
 					{
-						dux(i, j);
+						f(i, j);
 					}
 					assert(i == self().size());
 				}
@@ -467,19 +461,21 @@ struct define
 				}
 
 				///\
-				Invokes `influx` for all events up-to the supplied `delay`. \
+				Invokes `influx` for all events up-to the given delay `i`. \
+				
+				///\
 				\returns the `delay()` until the next event. \
 
-				XTAL_FN1_(index_t) relay(index_t idx)
+				XTAL_FN1_(index_t) relay(index_t i)
 				XTAL_0EX
 				{
 				//	if constexpr (requires {{co::relay()} -> index_q;})
 					if constexpr (0 < N_future)
 					{
-						co::relay(idx);
-						while (0 < suspended() and next_head() <= idx)
+						co::relay(i);
+						while (0 < suspended() and next_head() <= i)
 						{
-							auto const flx = co::influx(next_tail());
+							(void) co::influx(next_tail());
 							advance();
 						}
 					}
@@ -506,7 +502,7 @@ struct define
 			};
 		};
 
-	};	
+	};
 };
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -533,7 +529,7 @@ struct defer
 	using subtype = compose_s<S, subkind>;
 
 };
-template <cased_q W>
+template <constant_q W>
 struct defer<W>
 {
 	using subkind = defer<typename W::value_type>;

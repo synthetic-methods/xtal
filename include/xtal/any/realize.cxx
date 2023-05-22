@@ -253,7 +253,7 @@ TEST_CASE("xtal/any/realize.hpp: injured complex")
 	auto const square_2 = aleph_t {2, 2};
 	auto const square_F = aleph_t {F, F};
 	auto const square_E = aleph_t {E, E};
-	auto const circle_1 = aleph_t {1, 1}*_std::sqrt(0.5); 
+	auto const circle_1 = aleph_t {1, 1}*_std::sqrt(0.5);
 
 	REQUIRE(truncate_y<N_zoom>(square_2) == square_2);
 	REQUIRE(puncture_y<N_zoom>(square_2) == square_2);

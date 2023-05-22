@@ -67,36 +67,36 @@ namespace xtal
 struct
 {
 	template <typename X>
-	void put(X&& x)
+	void put(X &&x)
 	{
 		if constexpr (std::is_floating_point_v<std::decay_t<X>>)
 		{
 			std::cout.precision(17);
 			if (std::copysign(1.0, x) == 1.0) std::cout << ' ';
 		}
-		std::cout << static_cast<X&&>(x);
+		std::cout << static_cast<X &&>(x);
 	}
-	template <typename... Xs>
-	void put(Xs&&...xs)
+	template <typename ...Xs>
+	void put(Xs &&...xs)
 	{
 		(put(static_cast<Xs &&>(xs)), ...);
 	}
 
 	template <typename X>
-	decltype(auto) operator<< (X&& x)
+	decltype(auto) operator<< (X &&x)
 	{
-		put(static_cast<X&&>(x));
+		put(static_cast<X &&>(x));
 		return *this;
 	}
-	template <typename... Xs>
-	decltype(auto) operator() (Xs&&... xs)
+	template <typename ...Xs>
+	decltype(auto) operator() (Xs &&...xs)
 	{
 		(put('\t', static_cast<Xs&&>(xs)), ...);
 		std::cout << '\n';
 		return *this;
 	}
 
-} ouch;
+} echo;
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 #else
@@ -105,7 +105,7 @@ namespace xtal
 /////////////////////////////////////////////////////////////////////////////////
 struct
 {
-	void operator() (auto&&... etc)
+	void operator() (auto&& ...etc)
 	{
 	}
 	decltype(auto) operator<< (auto&& etc)
@@ -115,7 +115,7 @@ struct
 	{
 	}
 
-} ouch;
+} echo;
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 #endif

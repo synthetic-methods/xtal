@@ -23,7 +23,7 @@ struct resize
 	public:
 		using co::co;
 
-		XTAL_RE4_(XTAL_FN2 size(), co::head())
+		XTAL_RE4_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };

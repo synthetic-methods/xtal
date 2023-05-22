@@ -15,7 +15,7 @@ namespace xtal::any::__buffer
 
 TEST_CASE("xtal/any/buffer.hpp: series initialization")
 {
-	sigma_t constexpr N = 1 << 3;	
+	sigma_t constexpr N = 1 << 3;
 	using scalar_t = buffer_scalar_t<N, alpha_t>;
 	using series_t = buffer_series_t<N, alpha_t>;
 
@@ -137,14 +137,14 @@ void buffer_queue_operation__test()
 	REQUIRE(0 == q.size());
 	q.push(e1); REQUIRE(1 == q.size());
 	q.push(e2); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().tail().head()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().tail().head()); q.pop(); REQUIRE(0 == q.size());
+	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
 
 	REQUIRE(0 == q.size());
 	q.push(e2); REQUIRE(1 == q.size());
 	q.push(e1); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().tail().head()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().tail().head()); q.pop(); REQUIRE(0 == q.size());
+	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
 
 }
 TEST_CASE("xtal/any/buffer.hpp: queue operation")

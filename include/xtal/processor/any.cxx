@@ -16,7 +16,7 @@ namespace xtal::processor::__any
 template <typename mix_t>
 void contrivance__test()
 {
-	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(craft_f<alpha_t>);
+	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(construct_f<alpha_t>);
 	auto const _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto const _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
@@ -36,7 +36,7 @@ void contrivance__test()
 
 		REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {00.0, 11.0, 22.0}));
 	}
-	if constexpr (is_q<mix_t, dynamic_bias_mix_t>) 
+	if constexpr (is_q<mix_t, dynamic_bias_mix_t>)
 	{
 	//	NOTE: Parameters take effect when the underlying `process` is invoked, \
 		so the function is resolved for each sample. \

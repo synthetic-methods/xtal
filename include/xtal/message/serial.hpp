@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
-
-
-
+#include "./rescan.hpp"
+#include "./resize.hpp"
+#include "./restep.hpp"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-The `serial` cursors represent the temporal state of block-based `processor`s by \
+The `serial` objects are temporal cursors that govern block-based `processor`s, \
 defining the `size` and position of the current block. \
 They are designed to preserve contiguity by maintaining sequential ordering on `efflux`. \
 \
@@ -30,83 +30,94 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 template <typename>
 struct serial;
 
+template <typename W=counted_t<>>
+using serial_t = compose_s<any_t<tag<serial>>, confined<serial<W>>>;
+
+template <typename T>
+concept serial_q = of_q<T, any_t<tag<serial>>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <countee_q V>
 struct serial<V>
 {
-
-	template <typename T>
-	using subkind = compose<resize<>, restep<>, define<T>>;
+	using subkind = compose<defer<construct_t<>>, resize<>, restep<>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind<subtype<S>>>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind<subtype<S>>>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 		using co::self;
-		
-		///\
-		\returns the empty block at this position. \
-
-		XTAL_FN2 null()
-		XTAL_0FX
-		{
-			return subtype(0, co::step());
-		}
+		using co::twin;
 
 		///\
-		\returns the following contiguous block. \
-
-		XTAL_FN2 next()
-		XTAL_0FX
-		{
-			auto r = self(); ++r; return r;
-		}
+		Moves to the following block with the given size. \
 
 		///\
-		Moves to the following contiguous block. \
+		\returns `self()`.
 
-		XTAL_OP1 ++(int)
+		XTAL_OP1_(T &) +=(iota_t n)
 		XTAL_0EX
 		{
-			auto r = self(); ++co::step(); return r;
-		}
-		XTAL_OP1 ++()
-		XTAL_0EX
-		{
-			auto&s = self(); ++co::step(); return s;
+			co::step() += co::size() != 0;
+			co::size(n);
+			return self();
 		}
 
 		///\
-		Moves to the following contiguous block with the given size. \
+		Moves to the following block with the same size. \
 
-		XTAL_OP1 +=(XTAL_DEF_(as_q<iota_t>) n)
+		XTAL_OP1_(T &) ++()
 		XTAL_0EX
 		{
-			co::size() = iota_t(XTAL_REF_(n));
-			return operator++();
+			return operator+=(co::size());
+		}
+		XTAL_OP1_(T) ++(int)
+		XTAL_0EX
+		{
+			auto copy = self(); operator++(); return copy;
 		}
 
 		///\
-		\returns the following contiguous block with the given size. \
+		\returns the following block with the given size. \
 
-		XTAL_OP2 + (XTAL_DEF_(as_q<iota_t>) n)
+		XTAL_OP2_(T) + (iota_t n)
 		XTAL_0FX
 		{
-			auto const s = next();
-			return subtype(XTAL_REF_(n), s.step());
+			return twin().operator+=(n);
 		}
+
+		///\
+		\returns the following block with the same size. \
+
+		XTAL_FN2_(T) next()
+		XTAL_0FX
+		{
+			return twin().operator++();
+		}
+		///\
+		\returns the following empty block. \
+
+		XTAL_FN2_(T) null()
+		XTAL_0FX
+		{
+			return twin().operator+=(0);
+		}
+
 
 		///\
 		\returns `true` iff the left-hand argument immediately precedes the right. \
 
-		XTAL_OP2_(bool) < (T const &t)
+		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX
 		{
 			auto const s = next();
 			return s.step() == t.step() - 1;
 		}
-		XTAL_OP2_(bool) <=(T const &t)
+		XTAL_OP2_(bool) <=(subtype const &t)
 		XTAL_0FX
 		{
 			auto const &s =   self();
@@ -115,67 +126,55 @@ struct serial<V>
 			auto const &i = s.step();
 			auto const &j = t.step();
 			return (1 + i == j) or (i == j) and (0 == m or m == n or n == 0);
-		//	return operator<(t) or (i == j) and (0 == m or m == n or n == 0);
 		}
 
 		///\
 		\returns `true` iff the left-hand argument immediately follows the right. \
 
-		XTAL_OP2_(bool) >(T const &t)
+		XTAL_OP2_(bool) > (subtype const &t)
 		XTAL_0FX
 		{
-			return operator< (t, self());
+			return t.operator< (self());
 		}
-		XTAL_OP2_(bool) >=(T const &t)
+		XTAL_OP2_(bool) >=(subtype const &t)
 		XTAL_0FX
 		{
-			return operator<=(t, self());
+			return t.operator<=(self());
 		}
 
 		struct attach
 		{
 			using subkind = typename co::attach;
 
-			template <context::any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <context::any_q R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
-
-				using serial_n = T;
-			//	using serial_u = compose_s<S, serial<counted_t<V>>>;
+				using co = compose_s<R, subkind>;
 
 			public:
 				using co::co;
 
-			//	XTAL_RE4_(XTAL_FN2 serial(), co::head())
-
+				using co::influx;
 				///\
-				NOTE: Influxing `serial_u = serial<counter_u>` move to the position specified, \
-				while setting `size = 0` to allow future `efflux`. \
+				Intercepts `T` and moves to the position specified, \
+				setting the `size = 0` to finesse future `efflux`. \
 
-				XTAL_FN2_(iota_t) influx(XTAL_DEF ...oo)
+				XTAL_FN2_(flux_t) influx(T t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return co::influx(XTAL_REF_(oo)...);
-				}
-				XTAL_FN2_(iota_t) influx(serial_n w, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto i = w.step();
-					return co::influx(serial_n(0, i), XTAL_REF_(oo)...);
+					return co::influx(t.null(), XTAL_REF_(oo)...);
 				}
 
-				XTAL_FN2_(iota_t) efflux(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return co::efflux(XTAL_REF_(oo)...);
-				}
-				XTAL_FN2_(iota_t) efflux(serial_n serial_w, XTAL_DEF ...oo)
+				using co::efflux;
+				///\
+				Asserts that the incoming serials arrive in order. \
+
+				XTAL_FN2_(flux_t) efflux(T t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const &m = co::head();
-					assert(m <= serial_w);
-					return co::efflux(serial_w, XTAL_REF_(oo)...);
+					assert(m <= t);
+					return co::efflux(t, XTAL_REF_(oo)...);
 				}
 
 			};
@@ -183,101 +182,119 @@ struct serial<V>
 
 	};
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <counted_q U>
 struct serial<U>
 {
-	template <typename T>
-	using subkind = typename contrive<U>::template subkind<T>;
+private:
+	using iteratee_u = iteratee_t<U>;
+	using iterator_u = iterator_t<U>;
+	using distance_u = typename iterator_ts<iterator_u>::difference_type;
+public:
+
+	using subkind = compose<refer<U>, rescan<U>, restep<iteratee_u>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind<subtype<S>>>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind<subtype<S>>>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 		using co::self;
+		using co::twin;
 		
 		XTAL_NEW subtype()
 		XTAL_0EX
 		:	subtype(0)
 		{
 		}
+		template <to_q<distance_u> N>
+		XTAL_NEW subtype(N n)
+		XTAL_0EX
+		:	subtype(n, 0)
+		{
+		}
+		template <to_q<distance_u> N>
+		XTAL_NEW subtype(N n, iterator_u i)
+		XTAL_0EX
+		:	subtype(n, *i)
+		{
+		}
+		template <to_q<distance_u> N>
+		XTAL_NEW subtype(N n, iteratee_u i)
+		XTAL_0EX
+		:	co(U(i, i + n), 0 == n or 0 != i%n? 0: i/n)
+		{
+			assert(0 == i%n);// or something...?
+		}
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(as_q<iota_t>) n)
-		XTAL_0EX
-		:	co(U(0, n))
-		{
-		}
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(as_q<iota_t>) n, XTAL_DEF_(countee_q) i)
-		XTAL_0EX
-		:	co(U(i, i + XTAL_REF_(n)))
-		{
-		}
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(as_q<iota_t>) n, XTAL_DEF_(countor_q) i)
-		XTAL_0EX
-		:	co(U(*(i), *(i + XTAL_REF_(n))))
-		{
-		}
 
 		///\
-		\returns the empty block at this position. \
+		Moves to the following block with the given size. \
 
-		XTAL_FN2 null()
-		XTAL_0FX
-		{
-			return subtype(0, co::begin());
-		}
-
-		///\
-		\returns the following contiguous block. \
-
-		XTAL_FN2 next()
-		XTAL_0FX
-		{
-			auto r = self(); ++r; return r;
-		}
-
-		///\
-		Moves to the following contiguous block with the same size. \
-
-		XTAL_OP1 ++(int)
+		XTAL_OP1 +=(iota_t n)
 		XTAL_0EX
 		{
-			auto r = self(); operator+=(r.size()); return r;
+			auto &s = self();
+			auto const i0 = co::begin(), iM = co::end();
+			auto const j0 = iM, jN = j0 + n;
+			co::step() += i0 != iM;
+			co::scan(*j0, *jN);
+			return self();
 		}
+		///\
+		Moves to the following block with the same size. \
+
 		XTAL_OP1 ++()
 		XTAL_0EX
 		{
-			auto&s = self(); operator+=(s.size()); return s;
+			return operator+=(_std::distance(co::begin(), co::end()));
 		}
-
-		///\
-		Moves to the following contiguous block with the given size. \
-
-		XTAL_OP1 +=(XTAL_DEF_(as_q<iota_t>) n)
+		XTAL_OP1_(T) ++(int)
 		XTAL_0EX
 		{
-			auto&s = self(); return s = s + XTAL_REF_(n);
+			auto copy = self(); operator++(); return copy;
 		}
 
 		///\
-		\returns the following contiguous block with the given size. \
+		\returns the following block with the given size. \
 
-		XTAL_OP2 + (XTAL_DEF_(as_q<iota_t>) n)
+		XTAL_OP2_(T) + (iota_t n)
 		XTAL_0FX
 		{
-			return subtype(XTAL_REF_(n), co::end());
+			return twin().operator+=(n);
 		}
+		///\
+		\returns the following block with the same size. \
+
+		XTAL_FN2_(T) next()
+		XTAL_0FX
+		{
+			return twin().operator++();
+		}
+		///\
+		\returns the following empty block. \
+
+		XTAL_FN2_(T) null()
+		XTAL_0FX
+		{
+			return twin().operator+=(0);
+		}
+
 
 		///\
 		\returns `true` iff the left-hand argument immediately precedes the right. \
 
-		XTAL_OP2_(bool) < (T const &t)
+		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX
 		{
-			return co::end() == t.begin();
+			auto const &s = self();
+			return s.end() == t.begin();
 		}
-		XTAL_OP2_(bool) <=(T const &t)
+		XTAL_OP2_(bool) <=(subtype const &t)
 		XTAL_0FX
 		{
 			return operator<(t) or co::operator==(t);
@@ -286,85 +303,73 @@ struct serial<U>
 		///\
 		\returns `true` iff the left-hand argument immediately follows the right. \
 
-		XTAL_OP2_(bool) >(T const &t)
+		XTAL_OP2_(bool) > (subtype const &t)
 		XTAL_0FX
 		{
-			return operator< (t, self());
+			auto const &s = self();
+			return t.operator< (s);
 		}
-		XTAL_OP2_(bool) >=(T const &t)
+		XTAL_OP2_(bool) >=(subtype const &t)
 		XTAL_0FX
 		{
-			return operator<=(t, self());
+			auto const &s = self();
+			return t.operator<=(s);
 		}
 
 		struct attach
 		{
 			using subkind = typename co::attach;
 
-			template <context::any_q _S>
-			class subtype: public compose_s<_S, subkind>
+			template <context::any_q R>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<_S, subkind>;
-
-				using serial_n = compose_s<S, serial<countee_t<U>>>;
-				using serial_u = T;
+				using co = compose_s<R, subkind>;
 
 			public:
 				using co::co;
 
-			//	XTAL_RE4_(XTAL_FN2 serial(), co::head())
-
+				using co::influx;
 				///\
-				NOTE: Influxing `serial_u = serial<counter_u>` move to the position specified, \
-				while setting `size = 0` to allow future `efflux`. \
+				Updates to the incoming position, \
+				while setting `size = 0` to finesse future `efflux`. \
 
-				XTAL_FN2_(iota_t) influx(auto ...ws)
+				XTAL_FN2_(flux_t) influx(T t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return co::influx(ws...);
-				}
-				XTAL_FN2_(iota_t) influx(serial_u w, auto ...ws)
-				XTAL_0EX
-				{
-					return co::influx(w.null(), ws...);
-				}
-				XTAL_FN2_(iota_t) influx(serial_n w, auto ...ws)
-				XTAL_0EX
-				{
-					auto i = w.step();
-					assert(i == 0);
-					return co::influx(w.null(), ws...);
-				}
-
-				///\
-				NOTE: Effluxing `serial_n = serial<countee_t<>>` will always update the current state, \
-				so consistency must be guaranteed downstream. \
-
-				XTAL_FN2_(iota_t) efflux(auto ...ws)
-				XTAL_0EX
-				{
-					return co::efflux(ws...);
+					return co::influx(t.null(), XTAL_REF_(oo)...);
 				}
 				///\
-				NOTE: Effluxing `serial_u = serial<counter_u>` will `assert` that the `serial`s are received in sequence. \
+				\note Unrecognized `serial_q` are enforced by `assert`ion to `influx` at the initial `step == 0`. \
 
-				XTAL_FN2_(iota_t) efflux(serial_u w, auto ...ws)
+				XTAL_FN2_(flux_t) influx(XTAL_DEF_(serial_q) t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto &m = co::head();
-					assert(m <= w);
-					return co::efflux(w, ws...);
+					auto &s = co::head();
+					assert(0 == t.step());
+					return co::influx(s.null(), XTAL_REF_(oo)...);
+				}
+
+				using co::efflux;
+				///\
+				Enforces ordering on the incoming serials by `assert`ion. \
+
+				XTAL_FN2_(flux_t) efflux(T t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto &s = co::head();
+					assert(s <= t);// FIXME
+					return co::efflux(t, XTAL_REF_(oo)...);
 				}
 				///\
-				NOTE: Effluxing `serial_n = serial<countee_t<>>` will update without sequence-checking, \
-				so consistency must be guaranteed elsewhere by `serial_n::efflux`. \
+				\note Unrecognized `serial_q` are incrementally incorporated, \
+				updating the size and step only if they align. \
 
-				XTAL_FN2_(iota_t) efflux(serial_n w, auto ...ws)
+				XTAL_FN2_(flux_t) efflux(XTAL_DEF_(serial_q) t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto &m = co::head();
-					m += w.size();
-					return co::efflux(w, ws...);
+					auto &s = co::head();
+					s += t.size()*(t.step() == s.next().step());
+					return co::efflux(t, XTAL_REF_(oo)...);
 				}
 
 			};
@@ -372,8 +377,6 @@ struct serial<U>
 
 	};
 };
-template <typename W=countee_t<>>
-using serial_t = compose_s<any_t<>, serial<W>>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

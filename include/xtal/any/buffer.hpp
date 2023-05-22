@@ -24,7 +24,7 @@ struct buffer
 		using co::co;
 
 		template <typename U>
-		XTAL_IF1 positive_q<N>
+		requires (0 < N)
 		struct scalar
 		{
 		//	TODO: Specialize the appropriate types so that e.g. `std::apply` works. \
@@ -57,14 +57,14 @@ struct buffer
 				Replace the contents of `this` with the given range. \
 
 				template <iterator_q I>
-				XTAL_IF1 is_q<iteratee_t<I>, U>
+				requires is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&i0, I &&iN)
 				{
 					assert(N == _std::distance(i0, iN));
 					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
 				}
 				template <iterated_q I>
-				XTAL_IF1 is_q<iteratee_t<I>, U>
+				requires is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&in)
 				{
 					refill(in.begin(), in.end());
@@ -154,7 +154,7 @@ struct buffer
 				XTAL_0EX
 				{
 					/*/
-					[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) = f(get(Ns))), ..., U()) (seek_v<N>);
+					[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) = f(get(Ns))), ..., U()) (seek_v<N>);
 					/*/
 					move_linear_f(false, begin(), get(), XTAL_REF_(f));
 					/***/
@@ -164,19 +164,19 @@ struct buffer
 				///\
 				Elementwise comparators. \
 
-			//	XTAL_OP2        <=> (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<N>);}
-				XTAL_OP2_(bool) ==  (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and... and true) (seek_v<N>);}
-				XTAL_OP2_(bool) <=  (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and... and true) (seek_v<N>);}
-				XTAL_OP2_(bool) >=  (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and... and true) (seek_v<N>);}
-				XTAL_OP2_(bool) <   (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and... and true) (seek_v<N>);}
-				XTAL_OP2_(bool) >   (heterotype const &t) XTAL_0FX {return [&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and... and true) (seek_v<N>);}
+			//	XTAL_OP2        <=> (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<N>);}
+				XTAL_OP2_(bool) ==  (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<N>);}
+				XTAL_OP2_(bool) <=  (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<N>);}
+				XTAL_OP2_(bool) >=  (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<N>);}
+				XTAL_OP2_(bool) <   (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<N>);}
+				XTAL_OP2_(bool) >   (heterotype const &t) XTAL_0FX {return [&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<N>);}
 
 			};				
 			template <typename T>
 			class homotype;
 
 			template <typename T>
-			XTAL_IF1 iota_q<U>
+			requires iota_q<U>
 			class homotype<T>: public heterotype<T>
 			{
 				using co = heterotype<T>;
@@ -197,24 +197,24 @@ struct buffer
 				XTAL_OP1_(T&) +=       (bracket_t<U> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
 				XTAL_OP1_(T&) -=       (bracket_t<U> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T&) &=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) &= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) |=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) |= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) ^=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ^= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) +=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) -=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) &=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) &= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) |=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) |= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) ^=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ^= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) +=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) -=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
 				
-				XTAL_OP1_(T&) &= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) &= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) |= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) |= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) ^= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ^= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) += (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) -= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) &= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) &= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) |= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) |= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) ^= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ^= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) += (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) -= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
 
-				XTAL_OP1_(T&) ++                     () XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_(++get(Ns), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) --                     () XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_(--get(Ns), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) ++                     () XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_(++get(Ns), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) --                     () XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_(--get(Ns), ..., get()) (seek_v<N>); return get();}
 
 			};
 			template <typename T>
-			XTAL_IF1 field_q<U>
+			requires field_q<U>
 			class homotype<T>: public heterotype<T>
 			{
 				using co = heterotype<T>;
@@ -235,21 +235,21 @@ struct buffer
 				XTAL_OP1_(T&) +=       (bracket_t<U> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
 				XTAL_OP1_(T&) -=       (bracket_t<U> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T&) *=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) *= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) /=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) /= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) %=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) %= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) +=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) -=           (T const &t) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) *=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) *= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) /=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) /= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) %=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) %= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) +=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) -=           (T const &t) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= t.get(Ns)),       ..., get()) (seek_v<N>); return get();}
 				
-				XTAL_OP1_(T&) *= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) *= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) /= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) /= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) %= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) %= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) += (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
-				XTAL_OP1_(T&) -= (XTAL_DEF_(as_q<U>) w) XTAL_0EX {[&] <auto... Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) *= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) /= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) %= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) %= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) += (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) += U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
+				XTAL_OP1_(T&) -= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {[&] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) -= U(XTAL_REF_(w))), ..., get()) (seek_v<N>); return get();}
 
 			//	XTAL_OP2_(T) ~ ()
 			//	XTAL_0FX
-			//	XTAL_IF1 (N == 2)
+			//	requires (N == 2)
 			//	{
 			//		auto const x = get(0) + get(1);
 			//		auto const y = get(0) - get(1);
@@ -268,7 +268,7 @@ struct buffer
 
 		};
 		template <typename U>
-		XTAL_IF1 positive_q<N>
+		requires (0 < N)
 		struct series
 		{
 			template <typename T>
@@ -278,7 +278,7 @@ struct buffer
 			class homotype;
 
 			template <typename T>
-			XTAL_IF1 field_q<U>
+			requires field_q<U>
 			class homotype<T>: public heterotype<T>
 			{
 				using co = heterotype<T>;
@@ -353,7 +353,7 @@ struct buffer
 
 				XTAL_FN1_(T&) generate()
 				XTAL_0EX
-				XTAL_IF1 complex_q<U> and bit_ceiling_q<N, 2>
+				requires complex_q<U> and bit_ceiling_q<N, 2>
 				{
 					auto &s = get();
 					auto constexpr x = realized::patio_y<-1> (N);
@@ -374,7 +374,7 @@ struct buffer
 				template <delta_t N_rotate=0>
 				XTAL_FN1_(T&) transform(T &that)
 				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<N, 1>
+				requires bit_ceiling_q<N, 1>
 				{
 					sigma_t constexpr H = N >> 1;
 					sigma_t constexpr K = bit_ceiling_y(N);
@@ -531,7 +531,7 @@ struct buffer
 				Insert constructor. \
 				Initializes `this` with `sN` values determined by the given arguments. \
 
-				XTAL_NEW_(explicit) homotype(size_type sN, XTAL_DEF... ws)
+				XTAL_NEW_(explicit) homotype(size_type sN, XTAL_DEF ...ws)
 				{
 					insert_back(sN, XTAL_REF_(ws)...);
 				}
@@ -541,7 +541,7 @@ struct buffer
 				Initializes `this` with the values between `i0` and `iN`. \
 
 				template <iterator_q I0, iterator_q IN>
-				XTAL_IF1 is_q<iteratee_t<I0>, iteratee_t<IN>, V>// and as_q<iteratee_t<IN>, V>
+				requires is_q<iteratee_t<I0>, iteratee_t<IN>, V>// and to_q<iteratee_t<IN>, V>
 				XTAL_NEW_(explicit) homotype(I0 i0, IN iN)
 				{
 					using I = _std::common_type_t<I0, IN>;
@@ -608,7 +608,7 @@ struct buffer
 				Swaps the contents of `this` with the given vector. \
 
 				XTAL_FN1_(void) swap(T &t)
-			//	XTAL_IF1 _std::swappable<V>
+			//	requires _std::swappable<V>
 				{
 					_std::swap_ranges(begin(), end(), t.begin());
 				}
@@ -715,7 +715,7 @@ struct buffer
 				Resizes `this` to `sN` elements. \
 				Invokes `insert_back` with the given arguments to extend the vector if required. \
 
-				XTAL_FN1_(void) resize(size_type sN, XTAL_DEF... ws)
+				XTAL_FN1_(void) resize(size_type sN, XTAL_DEF ...ws)
 				{
 					size_type const sM = size();
 					if (sN < sM)
@@ -731,7 +731,7 @@ struct buffer
 				///\
 				Clears `this` and invokes `insert_back` with the given arguments. \
 
-				XTAL_FN1_(void) refill(XTAL_DEF... ws)
+				XTAL_FN1_(void) refill(XTAL_DEF ...ws)
 				{
 					clear();
 					insert_back(XTAL_REF_(ws)...);
@@ -762,7 +762,7 @@ struct buffer
 				///\
 				Inserts the values `etc...` beginning at `i0`. \
 
-				XTAL_FN1_(void) push_back(XTAL_DEF_(as_q<V>)... etc)
+				XTAL_FN1_(void) push_back(XTAL_DEF_(to_q<V>) ...etc)
 				{
 					push_back(bracket_t<V>{V(XTAL_REF_(etc))...});
 				}
@@ -771,7 +771,7 @@ struct buffer
 				Constructs an element at the end of `this` using the given arguments. \
 				\returns a reference to the element.
 
-				XTAL_FN1_(reference) emplace_back(XTAL_DEF... ws) 
+				XTAL_FN1_(reference) emplace_back(XTAL_DEF ...ws)
 				{
 					return *inplace_back(XTAL_REF_(ws)...);
 				}
@@ -779,7 +779,7 @@ struct buffer
 				Constructs an element at the end of `this` using the given arguments. \
 				\returns a pointer to the element.
 
-				XTAL_FN1_(iterator) inplace_back(XTAL_DEF... ws) 
+				XTAL_FN1_(iterator) inplace_back(XTAL_DEF ...ws)
 				{
 					reserve(size_type(1) + size());
 					return ::new (index_m++) V(XTAL_REF_(ws)...);
@@ -788,7 +788,7 @@ struct buffer
 				///\
 				Invokes `insert` at `this->end()` with the given arguments. \
 
-				XTAL_FN1_(iterator) insert_back(XTAL_DEF... ws)
+				XTAL_FN1_(iterator) insert_back(XTAL_DEF ...ws)
 				{
 					return insert(end(), XTAL_REF_(ws)...);
 				}
@@ -906,7 +906,7 @@ struct buffer
 			};
 		};
 		template <typename V>
-		XTAL_IF1 negative_q<N>
+		requires (N < 0)
 		struct vector<V>
 		{
 			using type = _std::vector<V>;
@@ -929,7 +929,7 @@ struct buffer
 		using allocator_t = typename vector_t<V>::allocator_type;
 
 	};
-	using type = subtype<_std::monostate>;
+	using type = subtype<construct_t<>>;
 
 };
 

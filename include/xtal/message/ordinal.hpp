@@ -11,18 +11,18 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename... As>
+template <typename ...As>
 using ordinal = numinal<iota_t, As...>;
 
-template <typename... As>
+template <typename ...As>
 using ordinal_t = compose_s<any_t<>, ordinal<As...>>;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iota_t N, typename... As>
-using ordinal_constant = numinal<cased<N>, As...>;
+template <iota_t N, typename ...As>
+using ordinal_constant = numinal<constant<N>, As...>;
 
-template <iota_t N, typename... As>
+template <iota_t N, typename ...As>
 using ordinal_constant_t = compose_s<any_t<>, ordinal_constant<N, As...>>;
 
 ///////////////////////////////////////////////////////////////////////////////

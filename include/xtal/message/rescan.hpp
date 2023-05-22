@@ -11,11 +11,24 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U, typename ...As>
-using numinal = contrive<U, any<As>...>;
+template <counted_q U=counted_t<>>
+struct rescan
+{
+	using subkind = defer<U>;
 
-template <typename U, typename ...As>
-using numinal_t = compose_s<any_t<>, numinal<U, As...>>;
+	template <any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	public:
+		using co::co;
+		
+		XTAL_RE4_(XTAL_FN1 scan(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+
+	};
+};
+template <typename U=counted_t<>>
+using rescan_t = confined_t<rescan<U>>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

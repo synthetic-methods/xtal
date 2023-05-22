@@ -18,7 +18,7 @@ namespace _detail
 Creates a unique `subtype<S>` identified by the given `As...`, \
 e.g. `any<struct thing>`. \
 
-template <typename... As>
+template <typename ...As>
 struct any
 {
 	using subkind = compose<any<As>...>;

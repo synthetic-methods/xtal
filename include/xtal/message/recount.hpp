@@ -23,7 +23,7 @@ struct recount
 	public:
 		using co::co;
 		
-		XTAL_RE4_(XTAL_FN2 count(), co::head())
+		XTAL_RE4_(XTAL_FN1 count(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };

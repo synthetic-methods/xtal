@@ -23,7 +23,7 @@ struct reindex
 	public:
 		using co::co;
 
-		XTAL_RE4_(XTAL_FN2 index(), co::head())
+		XTAL_RE4_(XTAL_FN1 index(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };

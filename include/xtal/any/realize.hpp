@@ -15,19 +15,24 @@ namespace xtal
 Establishes the base types for the supplied `Q` \
 (which should be representative of the desired `std::size_t`): \
 \
--	The `alpha_t` represents floating-point real numbers. \
--	The `sigma_t` represents full-width `unsigned int`s like `std::size`. \
--	The `delta_t` represents full-width   `signed int`s used for binary and integer arithmetic. \
--	The `iota_t`  represents half-width   `signed int`s required for `ranges::difference_type`. \
+-	`aleph_t` represents floating-point complex numbers. \
+-	`alpha_t` represents floating-point real numbers. \
+-	`sigma_t` represents full-width `unsigned int`s like `std::size`. \
+-	`delta_t` represents full-width   `signed int`s used for binary and integer arithmetic. \
+-	`iota_t`  represents half-width   `signed int`s required for `ranges::difference_type`. \
+-	`flux_t`  represents the ternary return value for `/(de|ef|in)(?:flux|fuse)/`, \
+	indicating either that the state has changed (`+1`), the state remains unchanged (`0`), \
+	or that the message wasn't handled (`-1`). \
 \
 The constants labelled `carmack_v` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
 template <typename>
 struct realization;
 
-template <breadth_q<1> Q>
+template <typename Q> requires (sizeof(Q) == 1)
 struct realization<Q>
 {
+//	using      flux_t  =       _std::int_fast8_t;
 //	using      iota_t  =       _std::int4_t;
 	using     delta_t  =   signed      char;
 	using     sigma_t  = unsigned      char;
@@ -36,9 +41,10 @@ struct realization<Q>
 	XTAL_LET_(sigma_t)      exponent_n =  3;
 
 };
-template <breadth_q<2> Q>
+template <typename Q> requires (sizeof(Q) == 2)
 struct realization<Q>
 {
+	using      flux_t  =       _std::int_fast16_t;
 	using      iota_t  =       _std::int8_t;
 	using     delta_t  =   signed short int;
 	using     sigma_t  = unsigned short int;
@@ -47,9 +53,10 @@ struct realization<Q>
 	XTAL_LET_(sigma_t)      exponent_n =  5;
 
 };
-template <breadth_q<4> Q>
+template <typename Q> requires (sizeof(Q) == 4)
 struct realization<Q>
 {
+	using      flux_t  =      _std::int_fast32_t;
 	using      iota_t  =      _std::int16_t;
 	using     delta_t  =   signed       int;
 	using     sigma_t  = unsigned       int;
@@ -68,9 +75,10 @@ struct realization<Q>
 	>;
 
 };
-template <breadth_q<8> Q>
+template <typename Q> requires (sizeof(Q) == 8)
 struct realization<Q>
 {
+	using      flux_t  =      _std::int_fast64_t;
 	using      iota_t  =      _std::int32_t;
 	using     delta_t  =   signed long  int;
 	using     sigma_t  = unsigned long  int;
@@ -182,7 +190,7 @@ public:
 
 	///\note Requires `log2(realized::depth)` iterations. \
 
-	///\note Can be reified as a `process` to dynamically control `N_subdepth`. \
+	///\note Can be spanned as a `process` to dynamically control `N_subdepth`. \
 
 	template <sigma_t N_subdepth=0>
 	XTAL_FZ2 bit_reverse_y(sigma_t o)
@@ -220,7 +228,8 @@ struct realize<Q>: realize<value_t<Q>>
 {
 };
 template <typename Q>
-XTAL_IF2
+requires
+requires
 {
 	requires not complex_q<Q>;
 	typename realizing<Q>::alpha_t;
@@ -529,12 +538,12 @@ public:
 	{
 		return minimal_y();
 	}
-	XTAL_FZ2 minimum_y(XTAL_DEF... values)
+	XTAL_FZ2 minimum_y(XTAL_DEF ...values)
 	XTAL_0EX
 	{
 		return _std::min<alpha_t> ({XTAL_REF_(values)...});
 	}
-	XTAL_LET  minimum_x = [] (XTAL_DEF... values)
+	XTAL_LET  minimum_x = [] (XTAL_DEF ...values)
 	XTAL_0FN_(minimum_y(XTAL_REF_(values)...));
 	///< Function expression for `minimum_y`. \
 
@@ -561,12 +570,12 @@ public:
 	{
 		return maximal_y();
 	}
-	XTAL_FZ2 maximum_y(XTAL_DEF... values)
+	XTAL_FZ2 maximum_y(XTAL_DEF ...values)
 	XTAL_0EX
 	{
 		return _std::max<alpha_t> ({XTAL_REF_(values)...});
 	}
-	XTAL_LET  maximum_x = [] (XTAL_DEF... values)
+	XTAL_LET  maximum_x = [] (XTAL_DEF ...values)
 	XTAL_0FN_(maximum_y(XTAL_REF_(values)...));
 	///< Function expression for `maximum_y`. \
 
@@ -976,6 +985,7 @@ public:
 
 using realized = realize<_std::size_t>;
 
+using  flux_t = typename realized:: flux_t;
 using  iota_t = typename realized:: iota_t;
 using delta_t = typename realized::delta_t;//_std::ptrdiff_t;
 using sigma_t = typename realized::sigma_t;//_std::size_t;
@@ -987,32 +997,31 @@ static_assert(sizeof(_std::size_t) == sizeof(sigma_t));
 static_assert(sizeof(_std::size_t) == sizeof(delta_t));
 static_assert(sizeof(_std::size_t) == sizeof(alpha_t));
 
-///////////////////////////////////////////////////////////////////////////////
-
-template <typename    T >     concept       iota_b   = _std::is_integral_v       <_std::remove_reference_t<T>>;
-template <typename    T >     concept      alpha_b   = _std::is_floating_point_v <_std::remove_reference_t<T>>;
-template <typename    T >     concept      aleph_b   = complex_b<T> and requires (T t) {{t.real()} -> alpha_b;};
-template <typename    T >     struct       field     : _std::false_type {};
-template <complex_b   T >     struct       field<T>  : _std:: true_type {};
-template <alpha_b     T >     struct       field<T>  : _std:: true_type {};
-template <typename    T >     concept      field_b   = field<T>::value;
-
-template <typename... Ts>     concept       iota_q   = unfalse_q<   iota_b<Ts>...>;
-template <typename... Ts>     concept      alpha_q   = unfalse_q<  alpha_b<Ts>...>;
-template <typename... Ts>     concept      aleph_q   = unfalse_q<  aleph_b<Ts>...>;
-template <typename... Ts>     concept      field_q   = unfalse_q<  field_b<Ts>...>;
-
-template <typename    T >     concept    numeric_b   = iota_b<T> or field_b<T>;
-template <typename    T >     concept    ordered_b   = requires (T u, T v) {u <=> v;};
-template <typename    T >     concept    equated_b   = requires (T u, T v) {u  == v;};
-
-template <typename... Ts>     concept    numeric_q   = iota_q<Ts...> or field_q<Ts...>;
-template <typename... Ts>     concept    ordered_q   = unfalse_q<ordered_b<Ts>...>;
-template <typename... Ts>     concept    equated_q   = unfalse_q<equated_b<Ts>...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename... Ys>
+template <typename    T  > concept    iota_b = _std::is_integral_v       <_std::remove_reference_t<T>>;
+template <typename    T  > concept   alpha_b = _std::is_floating_point_v <_std::remove_reference_t<T>>;
+template <typename    T  > concept   aleph_b = complex_b<T> and requires (T t) {{t.real()} -> alpha_b;};
+template <typename    T  > struct    field   : _std::false_type {};
+template <complex_b   T  > struct    field<T>: _std:: true_type {};
+template <alpha_b     T  > struct    field<T>: _std:: true_type {};
+template <typename    T  > concept   field_b = field<T>::value;
+
+template <typename ...Ts > concept    iota_q = unfalse_p<   iota_b<Ts>...>;
+template <typename ...Ts > concept   alpha_q = unfalse_p<  alpha_b<Ts>...>;
+template <typename ...Ts > concept   aleph_q = unfalse_p<  aleph_b<Ts>...>;
+template <typename ...Ts > concept   field_q = unfalse_p<  field_b<Ts>...>;
+
+template <typename    T  > concept numeric_b = iota_b<T    > or field_b<T    >;
+template <typename ...Ts > concept numeric_q = iota_q<Ts...> or field_q<Ts...>;
+//\
+TODO: Define `field_q` based on supported operations instead of matching types. \
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+template <typename ...Ys>
 struct identical
 :	_std::false_type
 {};
@@ -1023,28 +1032,28 @@ XTAL_0EX
 	return _std::addressof(XTAL_REF_(s)) == _std::addressof(XTAL_REF_(t));
 }
 
-template <typename T, typename... Ys>
+template <typename T, typename ...Ys>
 struct identical<T, Ys...>
 :	_std::disjunction<_std::is_same<T, Ys>...>
 {};
-template <typename... Ys>
+template <typename ...Ys>
 struct isomeric
-:	identical<based_t<Ys>...> 
+:	identical<based_t<Ys>...>
 {};
-template <typename... Ys>
+template <typename ...Ys>
 struct isomorphic
 :	isomeric<Ys...>
 {};
-template <typename... Ys>              concept id_q = identical <Ys...>::value;
-template <typename... Ys>              concept is_q = isomeric  <Ys...>::value;
-template <typename... Ys>      concept isomorphic_q = isomorphic<Ys...>::value;
-template <typename... Ys>      concept unimorphic_q = isomorphic<Ys...>::value and 2 == sizeof...(Ys);
+template <typename ...Ys>              concept id_q = identical <Ys...>::value;
+template <typename ...Ys>              concept is_q = isomeric  <Ys...>::value;
+template <typename ...Ys>      concept isomorphic_q = isomorphic<Ys...>::value;
+template <typename ...Ys>      concept unimorphic_q = isomorphic<Ys...>::value and 2 == sizeof...(Ys);
 
-template <typename T, typename    Y >  concept as_b = requires (T t) {based_t<Y> (t);};//TODO: Remove `based_t`?
-template <typename T, typename... Ys>  concept as_q = unfalse_q<as_b<T, Ys>...>;
+template <typename T, typename    Y >  concept to_b = requires (T t) {based_t<Y> (t);};//TODO: Remove `based_t`?
+template <typename T, typename ...Ys>  concept to_q = unfalse_p<to_b<T, Ys>...>;
 
 template <typename T, typename    Y >  concept of_b = _std::is_base_of_v<based_t<Y>, based_t<T>>;
-template <typename T, typename... Ys>  concept of_q = unfalse_q<of_b<T, Ys>...> or numeric_q<T, Ys...>;
+template <typename T, typename ...Ys>  concept of_q = unfalse_p<of_b<T, Ys>...> or numeric_q<T, Ys...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1118,7 +1127,7 @@ static_assert(bit_reverse_x<0> ((sigma_t) 1 << realized::positive::depth) == 1);
 ///\see `realized::truncate_y`. \
 
 template <delta_t N_zoom=0>
-XTAL_FZ2 truncate_y(XTAL_DEF target, XTAL_DEF... zone)
+XTAL_FZ2 truncate_y(XTAL_DEF target, XTAL_DEF ...zone)
 XTAL_0EX
 {
 	using realized = realize<XTAL_TYP_(target)>;
@@ -1128,7 +1137,7 @@ XTAL_0EX
 ///\see `realized::puncture_y`. \
 
 template <delta_t N_zoom=0>
-XTAL_FZ2 puncture_y(XTAL_DEF target, XTAL_DEF... zone)
+XTAL_FZ2 puncture_y(XTAL_DEF target, XTAL_DEF ...zone)
 XTAL_0EX
 {
 	using realized = realize<XTAL_TYP_(target)>;

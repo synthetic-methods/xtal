@@ -32,14 +32,14 @@ struct per
 		XTAL_CO2_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF n, XTAL_DEF... ws)
+		XTAL_NEW_(explicit) subtype(XTAL_DEF n, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	co(n, invert_f(XTAL_REF_(n)), XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RE4_(XTAL_FN2   rate(), co::head())
-		XTAL_RE4_(XTAL_FN2 period(), co::neck())
+		XTAL_RE4_(XTAL_FN2   rate(), co::template head<0>())
+		XTAL_RE4_(XTAL_FN2 period(), co::template head<1>())
 
 	};
 };

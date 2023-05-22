@@ -80,35 +80,32 @@ static_assert(1101 <= XTAL_V00_GNUC);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_USE                             using
 #define XTAL_TYP                std::decay_t<decltype(auto)>
 #define XTAL_TYP_(...)          std::decay_t<decltype(__VA_ARGS__)>
-#define XTAL_EGG_(...)                ::std::declval <__VA_ARGS__>()
+#define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_FWD_(...)           static_cast<         __VA_ARGS__ &&>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 #define XTAL_DEF                                                  auto &&
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 
 #define XTAL_NEW                            constexpr            
-#define XTAL_LET                     static constexpr             auto
 #define XTAL_OP1                            constexpr    decltype(auto) operator
 #define XTAL_OP2       [[nodiscard]]        constexpr    decltype(auto) operator
 #define XTAL_FN1                            constexpr    decltype(auto)
 #define XTAL_FN2       [[nodiscard]]        constexpr    decltype(auto)
 #define XTAL_FZ1                     static constexpr    decltype(auto)
 #define XTAL_FZ2       [[nodiscard]] static constexpr    decltype(auto)
+#define XTAL_LET                     static constexpr             auto
 
-#define XTAL_NEW_(...)          __VA_ARGS__ constexpr            
-#define XTAL_LET_(...)               static constexpr __VA_ARGS__
+#define XTAL_NEW_(...)                      constexpr __VA_ARGS__
 #define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
 #define XTAL_OP2_(...) [[nodiscard]]        constexpr __VA_ARGS__       operator
 #define XTAL_FN1_(...)                      constexpr __VA_ARGS__
 #define XTAL_FN2_(...) [[nodiscard]]        constexpr __VA_ARGS__
 #define XTAL_FZ1_(...)               static constexpr __VA_ARGS__
 #define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
+#define XTAL_LET_(...)               static constexpr __VA_ARGS__
 
-#define XTAL_IF1                             requires
-#define XTAL_IF2                    requires requires
 #define XTAL_0EX                                      noexcept
 #define XTAL_0EX_(REF)                            REF noexcept
 #define XTAL_0FX                            const     noexcept

@@ -23,7 +23,7 @@ struct restep
 	public:
 		using co::co;
 		
-		XTAL_RE4_(XTAL_FN2 step(), co::head())
+		XTAL_RE4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
