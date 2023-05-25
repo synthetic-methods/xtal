@@ -49,6 +49,11 @@ struct define
 		{
 			return self().template method<>(XTAL_REF_(xs)...);
 		}
+		XTAL_OP2() (XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return self().template method<>(XTAL_REF_(xs)...);
+		}
 		///\
 		\returns the `lambda` abstraction of `method`, \
 			with template parameters resolved by `message::dispatch`. \
@@ -56,6 +61,12 @@ struct define
 		template <typename ...Xs>
 		XTAL_FN2 reify()
 		XTAL_0EX
+		{
+			return [this] (XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
+		}
+		template <typename ...Xs>
+		XTAL_FN2 reify()
+		XTAL_0FX
 		{
 			return [this] (XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
 		}
@@ -153,8 +164,28 @@ struct defer
 		}
 
 	};
-};
+	template <any_q S>
+	requires invocable_q<U>
+	class subtype<S>: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	public:
+		using co::co;
+		using co::self;
+		using co::head;
 
+		///\
+		Deferred implementation of `T::value`. \
+
+		template <auto ...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return head() (XTAL_REF_(xs)...);
+		}
+
+	};
+};
 template <any_q U>
 struct defer<U>
 {
@@ -187,6 +218,7 @@ struct defer<U>
 
 	};
 };
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \

@@ -13,6 +13,23 @@ namespace xtal::processor::__any
 
 ////////////////////////////////////////////////////////////////////////////////
 
+TEST_CASE("xtal/processor/any.hpp: lambda lifting")
+{
+	auto g = processor::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto       w = _std::vector { 0,  0,  0,  0,  0};
+	auto const x = _std::vector { 0,  1,  2,  3,  4};
+	auto const y = _std::vector {00, 10, 20, 30, 40};
+	auto       z = g(x, y);
+	_v3::ranges::copy(z, w.begin());
+	REQUIRE(w[0] == 00);
+	REQUIRE(w[1] == 11);
+	REQUIRE(w[2] == 22);
+	REQUIRE(w[3] == 33);
+	REQUIRE(w[4] == 44);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <typename mix_t>
 void contrivance__test()
 {

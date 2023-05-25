@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "../message/numinal.hpp"
+#include "../message/serial.hpp"
 #include "../message/start.hpp"
-
 
 #include "../any.cxx"
 
@@ -10,6 +10,16 @@ XTAL_ENV_(push)
 namespace xtal::process::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/process/any.hpp: lambda lifting")
+{
+	auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	REQUIRE(10 == f.template method<>(1, 2, 3, 4));
+	REQUIRE(10 == f(1, 2, 3, 4));
+	REQUIRE(10 == f.reify()(1, 2, 3, 4));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

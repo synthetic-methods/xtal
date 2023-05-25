@@ -14,6 +14,15 @@ namespace xtal::processor
 namespace _detail = xtal::process;
 #include "../common/any.ipp"
 
+template <_std::invocable F>
+XTAL_FN2 let_f(F &&f)
+XTAL_0EX
+requires (not any_q<F>)
+{
+	return contrive_t<F>(_detail::let_f(XTAL_FWD_(F) (f)));
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that defines `T`. \
@@ -275,67 +284,8 @@ Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
+:	defer<_detail::contrive_t<U>>
 {
-	using serial_n = message::serial_t<counted_t<>>;
-//	using serial_n = message::serial_t<countee_t<>>;
-
-	using subkind = compose<_detail::defer<U>, serial_n::attach>;
-//	using subkind = compose<serial_n::attach, _detail::defer<U>>;
-
-	template <any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	public:
-		using co::co;
-
-		///\
-		Deferred implementation of `T::value`. \
-
-		template <auto...>
-		XTAL_FN2 method()
-		XTAL_0FX
-		{
-			auto const &v = co::template method<>();
-			auto const &m = co::template get<serial_n>();
-			auto const &i = iota_t(m.front());
-			auto const &j = iota_t(m.size()) + i;
-			return -1 == v.size()? v:v|_v3::views::slice(i, j);
-		}
-
-		XTAL_FN2 begin()
-		XTAL_0FX
-		{
-			return method<>().begin();
-		}
-
-		XTAL_FN2 end()
-		XTAL_0FX
-		{
-			return method<>().end();
-		}
-
-	};
-};
-template <numeric_q V>
-struct defer<V>
-{
-	using subkind = _detail::defer<repeated_t<V>>;
-
-	template <any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	public:
-		using co::co;
-
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(of_q<V>) v)
-		XTAL_0EX
-		:	co(repeated_t<V>(XTAL_REF_(v)))
-		{
-		}
-
-	};
 };
 template <_detail::any_q U>
 struct defer<U>
@@ -422,12 +372,76 @@ struct defer<U>
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
-		requires
-		requires (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
+	//	requires
+	//	requires (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
 		{
 			static_assert(unfalse_p<iterated_q<XTAL_TYP_(xs)>...>);
 			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			return zap_f(std::move(f)) (XTAL_REF_(xs)...);
+		}
+
+	};
+};
+template <iterated_q U>
+struct defer<U>
+{
+	using serial_n = message::serial_t<counted_t<>>;
+//	using serial_n = message::serial_t<countee_t<>>;
+
+	using subkind = compose<_detail::defer<U>, serial_n::attach>;
+//	using subkind = compose<serial_n::attach, _detail::defer<U>>;
+
+	template <any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	public:
+		using co::co;
+
+		///\
+		Deferred implementation of `T::value`. \
+
+		template <auto...>
+		XTAL_FN2 method()
+		XTAL_0FX
+		{
+			auto const &v = co::template method<>();
+			auto const &m = co::template get<serial_n>();
+			auto const &i = iota_t(m.front());
+			auto const &j = iota_t(m.size()) + i;
+			return -1 == v.size()? v:v|_v3::views::slice(i, j);
+		}
+
+		XTAL_FN2 begin()
+		XTAL_0FX
+		{
+			return method<>().begin();
+		}
+
+		XTAL_FN2 end()
+		XTAL_0FX
+		{
+			return method<>().end();
+		}
+
+	};
+};
+template <numeric_q V>
+struct defer<V>
+{
+	using subkind = _detail::defer<repeated_t<V>>;
+
+	template <any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	public:
+		using co::co;
+
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(of_q<V>) v)
+		XTAL_0EX
+		:	co(repeated_t<V>(XTAL_REF_(v)))
+		{
 		}
 
 	};
