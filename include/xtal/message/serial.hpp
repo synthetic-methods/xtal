@@ -42,33 +42,29 @@ concept serial_q = of_q<T, any_t<tag<serial>>>;
 template <countee_q V>
 struct serial<V>
 {
-	using subkind = compose<defer<construct_t<>>, resize<>, restep<>>;
+	using subkind = compose<defer<construct_t<>>, resize<iota_t>, restep<iota_t>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>; using T = typename co::self_t;
+
 	public:
 		using co::co;
 		using co::self;
 		using co::twin;
 
 		///\
-		Moves to the following block with the given size. \
+		Advance `i` steps while retaining `size`. \
 
-		///\
-		\returns `self()`.
-
-		XTAL_OP1_(T &) +=(iota_t n)
+		XTAL_OP1 *=(iota_t i)
 		XTAL_0EX
 		{
-			co::step() += co::size() != 0;
-			co::size(n);
+			co::step() += i;
 			return self();
 		}
-
 		///\
-		Moves to the following block with the same size. \
+		Advance `1` step while retaining `size`. \
 
 		XTAL_OP1_(T &) ++()
 		XTAL_0EX
@@ -80,18 +76,27 @@ struct serial<V>
 		{
 			auto copy = self(); operator++(); return copy;
 		}
-
 		///\
-		\returns the following block with the given size. \
+		Advance `1` step of size `n`. \
 
-		XTAL_OP2_(T) + (iota_t n)
-		XTAL_0FX
+		XTAL_OP1_(T &) +=(iota_t n)
+		XTAL_0EX
 		{
-			return twin().operator+=(n);
+			co::step() += co::size() != 0;
+			co::size(n);
+			return self();
 		}
 
 		///\
-		\returns the following block with the same size. \
+		\returns the block at distance `n` steps with the same `size`. \
+
+		XTAL_OP2_(T) * (iota_t n)
+		XTAL_0FX
+		{
+			return twin().operator*=(n);
+		}
+		///\
+		\returns the adjacent block with the same `size`. \
 
 		XTAL_FN2_(T) next()
 		XTAL_0FX
@@ -99,7 +104,15 @@ struct serial<V>
 			return twin().operator++();
 		}
 		///\
-		\returns the following empty block. \
+		\returns the adjacent block of size `n`. \
+
+		XTAL_OP2_(T) + (iota_t n)
+		XTAL_0FX
+		{
+			return twin().operator+=(n);
+		}
+		///\
+		\returns the adjacent block of size `0`. \
 
 		XTAL_FN2_(T) null()
 		XTAL_0FX
@@ -208,67 +221,69 @@ public:
 		
 		XTAL_NEW subtype()
 		XTAL_0EX
-		:	subtype(0)
+		:	co(U(0, 0), 0)
 		{
 		}
 		template <to_q<distance_u> N>
 		XTAL_NEW subtype(N n)
 		XTAL_0EX
-		:	subtype(n, 0)
+		:	co(U(0, n), 0)
 		{
 		}
-		template <to_q<distance_u> N>
-		XTAL_NEW subtype(N n, iterator_u i)
-		XTAL_0EX
-		:	subtype(n, *i)
-		{
-		}
-		template <to_q<distance_u> N>
-		XTAL_NEW subtype(N n, iteratee_u i)
-		XTAL_0EX
-		:	co(U(i, i + n), 0 == n or 0 != i%n? 0: i/n)
-		{
-			assert(0 == i%n);// or something...?
-		}
-
 
 		///\
-		Moves to the following block with the given size. \
+		Advance `n` steps while retaining `size`. \
 
-		XTAL_OP1 +=(iota_t n)
+		XTAL_OP1 *=(iota_t n)
 		XTAL_0EX
 		{
 			auto &s = self();
-			auto const i0 = co::begin(), iM = co::end();
-			auto const j0 = iM, jN = j0 + n;
-			co::step() += i0 != iM;
-			co::scan(*j0, *jN);
+			auto i0 = co::begin(), iM = co::end();
+			auto  o = n*_v3::ranges::distance(i0, iM);
+			i0 += o;
+			iM += o;
+			co::step() += n;
+			co::scan(*i0, *iM);
 			return self();
 		}
 		///\
-		Moves to the following block with the same size. \
+		Advance `1` step while retaining `size`. \
 
 		XTAL_OP1 ++()
 		XTAL_0EX
 		{
-			return operator+=(_std::distance(co::begin(), co::end()));
+			return operator+=(_v3::ranges::distance(co::begin(), co::end()));
 		}
 		XTAL_OP1_(T) ++(int)
 		XTAL_0EX
 		{
 			auto copy = self(); operator++(); return copy;
 		}
+		///\
+		Advance `1` step of size `n`. \
+
+		XTAL_OP1 +=(iota_t n)
+		XTAL_0EX
+		{
+			auto &s = self();
+			auto const i0 = co::begin(), iM = co::end();
+			auto const j0 = iM, jN = _v3::ranges::next(j0, n);
+			co::step() += i0 != iM;
+			co::scan(*j0, *jN);
+			return self();
+		}
+
 
 		///\
-		\returns the following block with the given size. \
+		\returns the block at distance `n` steps with the same `size`. \
 
-		XTAL_OP2_(T) + (iota_t n)
+		XTAL_OP2_(T) * (iota_t n)
 		XTAL_0FX
 		{
-			return twin().operator+=(n);
+			return twin().operator*=(n);
 		}
 		///\
-		\returns the following block with the same size. \
+		\returns the adjacent block with the same `size`. \
 
 		XTAL_FN2_(T) next()
 		XTAL_0FX
@@ -276,7 +291,15 @@ public:
 			return twin().operator++();
 		}
 		///\
-		\returns the following empty block. \
+		\returns the adjacent block of size `n`. \
+
+		XTAL_OP2_(T) + (iota_t n)
+		XTAL_0FX
+		{
+			return twin().operator+=(n);
+		}
+		///\
+		\returns the adjacent block of size `0`. \
 
 		XTAL_FN2_(T) null()
 		XTAL_0FX

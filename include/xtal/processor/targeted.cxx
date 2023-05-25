@@ -159,7 +159,7 @@ void respan_internal_chain_rvalue__test()
 	yhs <<= coefficient_t((alpha_t) 100);
 	xhs <<= bias_t((alpha_t) 0);
 
-	if constexpr (is_q<message::serial_t<counted_t<>>, serial_t>)
+//	if constexpr (is_q<message::serial_t<counted_t<>>, serial_t>)
 	yhs >>= seq; // idempotent!
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));

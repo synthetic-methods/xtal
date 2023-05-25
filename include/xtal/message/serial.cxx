@@ -67,8 +67,11 @@ TEST_CASE("xtal/message/serial.hpp: synchronization")
 	REQUIRE(cereal_u.null() == serial_u(counted_t<>(14, 14), 4));
 	REQUIRE(cereal_u.next() == serial_u(counted_t<>(14, 19), 4));
 	
-	cereal_u = serial_u(33, 33);
-	REQUIRE(cereal_u == serial_u(counted_t<>(33, 66), 1));
+	cereal_u = serial_u(11) *= (7);
+	REQUIRE(cereal_u == serial_u(counted_t<>(77, 88), 7));
+
+	cereal_n = serial_n(11) *= (7);
+	REQUIRE(cereal_n == serial_n(11, 7));
 
 }
 

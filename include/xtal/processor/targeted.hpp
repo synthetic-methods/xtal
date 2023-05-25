@@ -129,7 +129,7 @@ struct targeted
 				Responds to `message::serial` by resolving the internal `buffer()`. \
 				A match for the following cycle will initiate the `respan` (returning `1`), \
 				while a match for the current cycle will terminate (returning `0`). \
-				(Deviant behaviour is enforced by `assert`ion.) \
+				(Deviant behaviour is enforced by `assert`ion on `serial`.) \
 
 				XTAL_FN2_(flux_t) efflux(XTAL_DEF_(message::serial_q) serial_o)
 				XTAL_0EX
