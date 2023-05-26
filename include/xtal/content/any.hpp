@@ -87,9 +87,16 @@ struct refine
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
 
+template <typename T>
+concept defer_q = requires (T t)
+{
+	t.head();
+};
 template <typename U>
 struct defer
 {
+//	using tag = tag_t<defer>;
+
 	template <any_q S>
 	class subtype: public compose_s<S>
 	{
@@ -117,10 +124,10 @@ struct defer
 		///\
 		Resolves `this` as the super-type. \
 
-		XTAL_FN2 tail() XTAL_0FX_( &) {return static_cast<co const  &>(*this);}
-		XTAL_FN2 tail() XTAL_0EX_( &) {return static_cast<co        &>(*this);}
-		XTAL_FN2 tail() XTAL_0FX_(&&) {return static_cast<co const &&>(*this);}
-		XTAL_FN2 tail() XTAL_0EX_(&&) {return static_cast<co       &&>(*this);}
+		XTAL_FN2 tail() XTAL_0FX_( &) requires defer_q<co> {return static_cast<co const  &>(*this);}
+		XTAL_FN2 tail() XTAL_0EX_( &) requires defer_q<co> {return static_cast<co        &>(*this);}
+		XTAL_FN2 tail() XTAL_0FX_(&&) requires defer_q<co> {return static_cast<co const &&>(*this);}
+		XTAL_FN2 tail() XTAL_0EX_(&&) requires defer_q<co> {return static_cast<co       &&>(*this);}
 
 		///\
 		\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
@@ -155,29 +162,6 @@ struct defer
 		XTAL_CO4_(subtype);
 		XTAL_CO2_(subtype);
 
-		///\
-		Deferred constructor: initializes `head` \
-		then forwards the remaining arguments to the super-constructor. \
-
-		XTAL_NEW subtype(XTAL_DEF ...ws)
-		XTAL_0EX
-		:	co(XTAL_REF_(ws)...)
-		{
-		}
-		///\
-		Deferred constructor: constructs `head` using the first argument \
-		then forwards the remaining arguments to the super-constructor. \
-		\
-		NOTE: If the kernel-type is a reference, \
-		the `head` is stored as the `std::addressof` the argument. \
-
-		XTAL_NEW subtype(XTAL_DEF_(of_q<U>) head_w, XTAL_DEF ...ws)
-		XTAL_0EX
-		:	co(XTAL_REF_(ws)...)
-		,	body_m(member_f(XTAL_REF_(head_w)))
-		{
-		}
-
 		XTAL_NEW subtype()
 		XTAL_0EX
 		requires
@@ -189,6 +173,17 @@ struct defer
 		{
 		}
 		
+		///\
+		Deferred constructor: initializes `head` \
+		then forwards the remaining arguments to the super-constructor. \
+
+		XTAL_NEW_(explicit) subtype(XTAL_DEF w, XTAL_DEF ...ws)
+		XTAL_0EX
+		:	co(XTAL_REF_(ws)...)
+		,	body_m(member_f(XTAL_REF_(w)))
+		{
+		}
+
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
 		\returns the previous value.

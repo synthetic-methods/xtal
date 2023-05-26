@@ -165,7 +165,7 @@ struct defer
 
 	};
 	template <any_q S>
-	requires invocable_q<U>
+	requires _std::invocable<U>
 	class subtype<S>: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;

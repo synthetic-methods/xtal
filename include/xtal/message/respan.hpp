@@ -21,7 +21,7 @@ struct respan
 	{
 		using co = compose_s<S, subkind>;
 	public:
-		using co::co;
+	//	using co::co;
 
 		XTAL_CO2_(subtype);
 		XTAL_CO4_(subtype);

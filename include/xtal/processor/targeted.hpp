@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.hpp"
+#include "../content/render.hpp"
 #include "../message/any.hpp"
 #include "../message/serial.hpp"
 #include "../message/resize.hpp"
 #include "../message/respan.hpp"
-
 
 XTAL_ENV_(push)
 namespace xtal::processor
@@ -21,8 +21,7 @@ template <typename U, typename ...As>
 struct targeted
 {
 	using interrupt = typename message::contrived_t<>::interrupt<0>;
-//	using subkind = confer<U, As..., interrupt, buffer<-1>>;
-	using subkind = confer<U, buffer<-1>>;
+	using subkind = confer<U, As..., buffer<-1>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -43,7 +42,7 @@ struct targeted
 			using target_u = spanned_t<buffer_u>;
 			using respan_u = message::respan_t<target_u>;
 			using resize_u = message::resize_t<>;
-			using subkind  = compose<content::confer<target_u>, content::defer<buffer_u>, As..., interrupt, superkind>;
+			using subkind  = compose<content::render<buffer_u>, As..., interrupt, superkind>;
 
 			XTAL_LET_(sigma_t) N_arity = sizeof...(Xs), N_parity = truth_index_v<retargetable_q<Xs, target_u>...>;
 
@@ -53,15 +52,15 @@ struct targeted
 				using co = compose_s<R, subkind>; using T = typename co::self_t;
 
 			public:
-				using co::co;
-				using co::self;
-
 				using buffer_t = buffer_u;
 				using target_t = target_u;
 				using respan_t = respan_u;
 
-				XTAL_RE4_(XTAL_FN1 target(XTAL_DEF... oo), co::template head<0>(XTAL_REF_(oo)...))
-				XTAL_RE4_(XTAL_FN1 buffer(XTAL_DEF... oo), co::template head<1>(XTAL_REF_(oo)...))
+			public:
+				using co::co;
+				using co::self;
+				using co::target;
+				using co::buffer;
 
 				template <auto...>
 				XTAL_FN2 method()
@@ -69,7 +68,6 @@ struct targeted
 				{
 					return target();
 				}
-
 
 			public:
 				using co::infuse;

@@ -24,11 +24,11 @@ template <typename    T > concept  iteratee_b  = iterated_b<T> or iterator_b<T>;
 template <typename    T > struct   iterated                   {using type = void;};
 template <typename    T > struct   iterator                   {using type = void;};
 template <typename    T > struct   iteratee                   {using type = void;};
-template <iterated_b  T > struct   iterated<T> : constant<true>  {using type = based_t<T>;};
-template <iterator_b  T > struct   iterator<T> : constant<true>  {using type = based_t<T>;};
-template <iterated_b  T > struct   iteratee<T> : constant<true>  {using type = _v3::ranges::range_reference_t<T>;};
-template <iterator_b  T > struct   iteratee<T> : constant<true>  {using type = _v3::ranges:: iter_reference_t<T>;};
-template <iterated_b  T > struct   iterator<T> : constant<false> {using type = _v3::ranges::       iterator_t<T>;};
+template <iterated_b  T > struct   iterated<T> : _std:: true_type {using type = based_t<T>;};
+template <iterator_b  T > struct   iterator<T> : _std:: true_type {using type = based_t<T>;};
+template <iterated_b  T > struct   iteratee<T> : _std:: true_type {using type = _v3::ranges::range_reference_t<T>;};
+template <iterator_b  T > struct   iteratee<T> : _std:: true_type {using type = _v3::ranges:: iter_reference_t<T>;};
+template <iterated_b  T > struct   iterator<T> : _std::false_type {using type = _v3::ranges::       iterator_t<T>;};
 
 
 template <typename ...Ts> concept uniterable_q =   false_p<iterable_b<Ts>...>;
@@ -51,15 +51,15 @@ template <typename    T > struct    counted                   {using type = void
 template <typename    T > struct    countor                   {using type = void;};
 template <typename    T > struct    countee                   {using type = void;};
 
-template <ioted_b     T > struct    counted<T> : constant<true>  {using type =    based_t<T>;};
-template <ioted_b     T > struct    countee<T> : constant<false> {using type = iteratee_t<T>;};
+template <ioted_b     T > struct    counted<T> : _std:: true_type {using type =    based_t<T>;};
+template <ioted_b     T > struct    countee<T> : _std::false_type {using type = iteratee_t<T>;};
 
-template <iotor_b     T > struct    countor<T> : constant<true>  {using type =    based_t<T>;};
-template <iotor_b     T > struct    countee<T> : constant<false> {using type = iteratee_t<T>;};
+template <iotor_b     T > struct    countor<T> : _std:: true_type {using type =    based_t<T>;};
+template <iotor_b     T > struct    countee<T> : _std::false_type {using type = iteratee_t<T>;};
 
-template <iota_q      T > struct    countee<T> : constant<true>  {using type = based_t<T>;};
-template <iota_q      T > struct    counted<T> : constant<false> {using type = ioted_t<T>;};
-template <iota_q      T > struct    countor<T> : constant<false> {using type = iotor_t<T>;};
+template <iota_q      T > struct    countee<T> : _std:: true_type {using type = based_t<T>;};
+template <iota_q      T > struct    counted<T> : _std::false_type {using type = ioted_t<T>;};
+template <iota_q      T > struct    countor<T> : _std::false_type {using type = iotor_t<T>;};
 
 template <typename ...Ts> concept   counted_q  = unfalse_p<counted<Ts>::value...>;
 template <typename ...Ts> concept   countor_q  = unfalse_p<countor<Ts>::value...>;
@@ -99,7 +99,7 @@ XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN)
 }
 template <iterator_q I, iterator_q J>
 XTAL_FZ1_(void) copy_linear_f(bool const &order, I i, J const j0, J const jN)
-requires isomorphic_q<I, J>
+requires iso_q<I, J>
 {
 #ifdef __cpp_lib_execution
 	if (order) _std::copy(_std::execution::seq, j0, jN, i);

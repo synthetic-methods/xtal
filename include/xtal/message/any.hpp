@@ -78,11 +78,14 @@ struct define
 			{
 				using co = compose_s<R, subkind>;
 			public:
-				using co::co;
+			//	using co::co;
 				using co::self;
 				using co::head;
 
-				XTAL_NEW subtype(XTAL_DEF_(to_q<delta_t>) n)
+				XTAL_CO2_(subtype);
+				XTAL_CO4_(subtype);
+
+				XTAL_NEW_(explicit) subtype(XTAL_DEF_(to_q<delta_t>) n)
 			//	:	co(XTAL_REF_(n))
 				:	co(n)
 				{

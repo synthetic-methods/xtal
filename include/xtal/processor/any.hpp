@@ -14,15 +14,6 @@ namespace xtal::processor
 namespace _detail = xtal::process;
 #include "../common/any.ipp"
 
-template <_std::invocable F>
-XTAL_FN2 let_f(F &&f)
-XTAL_0EX
-requires (not any_q<F>)
-{
-	return contrive_t<F>(_detail::let_f(XTAL_FWD_(F) (f)));
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that defines `T`. \
@@ -85,9 +76,9 @@ struct define
 				///\
 				Constructs `arguments` using those supplied. \
 
-				XTAL_NEW_(explicit) subtype(Xs &&...xs)
+				XTAL_NEW subtype(Xs &&...xs)
 				XTAL_0EX
-				:	co(signature::make(XTAL_REF_(xs)...))
+				:	co(signature::make(XTAL_FWD_(Xs) (xs)...))
 				{
 				}
 
@@ -118,6 +109,12 @@ struct define
 				{
 					return apply([this] (XTAL_DEF ...xs)
 						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...)));
+				}
+				template <auto ...Ms>
+				XTAL_FN2 method(XTAL_DEF... xs)
+				XTAL_0EX
+				{
+					return co::template method<Ms...>(XTAL_REF_(xs)...);
 				}
 
 			protected:
@@ -284,7 +281,7 @@ Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
-:	defer<_detail::contrive_t<U>>
+:	defer<_detail::let_t<U>>
 {
 };
 template <_detail::any_q U>
@@ -363,7 +360,6 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			static_assert(unfalse_p<iterated_q<XTAL_TYP_(xs)>...>);
 			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			auto z = zap_f(_std::move(f)) (XTAL_REF_(xs)...);
 			auto n = delta_t(z.size());
@@ -375,7 +371,6 @@ struct defer<U>
 	//	requires
 	//	requires (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
 		{
-			static_assert(unfalse_p<iterated_q<XTAL_TYP_(xs)>...>);
 			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
 			return zap_f(std::move(f)) (XTAL_REF_(xs)...);
 		}
@@ -436,9 +431,12 @@ struct defer<V>
 	{
 		using co = compose_s<S, subkind>;
 	public:
-		using co::co;
+	//	using co::co;
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(of_q<V>) v)
+		XTAL_CO4_(subtype);
+		XTAL_CO2_(subtype);
+
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(as_q<V>) v)
 		XTAL_0EX
 		:	co(repeated_t<V>(XTAL_REF_(v)))
 		{

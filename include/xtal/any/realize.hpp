@@ -1018,42 +1018,7 @@ template <typename ...Ts > concept numeric_q = iota_q<Ts...> or field_q<Ts...>;
 //\
 TODO: Define `field_q` based on supported operations instead of matching types. \
 
-
-///////////////////////////////////////////////////////////////////////////////
-
-template <typename ...Ys>
-struct identical
-:	_std::false_type
-{};
-
-XTAL_FZ2_(bool) id_y(XTAL_DEF s, XTAL_DEF t)
-XTAL_0EX
-{
-	return _std::addressof(XTAL_REF_(s)) == _std::addressof(XTAL_REF_(t));
-}
-
-template <typename T, typename ...Ys>
-struct identical<T, Ys...>
-:	_std::disjunction<_std::is_same<T, Ys>...>
-{};
-template <typename ...Ys>
-struct isomeric
-:	identical<based_t<Ys>...>
-{};
-template <typename ...Ys>
-struct isomorphic
-:	isomeric<Ys...>
-{};
-template <typename ...Ys>              concept id_q = identical <Ys...>::value;
-template <typename ...Ys>              concept is_q = isomeric  <Ys...>::value;
-template <typename ...Ys>      concept isomorphic_q = isomorphic<Ys...>::value;
-template <typename ...Ys>      concept unimorphic_q = isomorphic<Ys...>::value and 2 == sizeof...(Ys);
-
-template <typename T, typename    Y >  concept to_b = requires (T t) {based_t<Y> (t);};//TODO: Remove `based_t`?
-template <typename T, typename ...Ys>  concept to_q = unfalse_p<to_b<T, Ys>...>;
-
-template <typename T, typename    Y >  concept of_b = _std::is_base_of_v<based_t<Y>, based_t<T>>;
-template <typename T, typename ...Ys>  concept of_q = unfalse_p<of_b<T, Ys>...> or numeric_q<T, Ys...>;
+template <typename T, typename ...Ys> concept  as_q = of_q<T, Ys...> or numeric_q<T, Ys...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

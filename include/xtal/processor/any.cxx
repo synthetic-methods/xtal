@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
+#include "./sourced.hpp"
 #include "../message/numinal.hpp"
 #include "../message/start.hpp"
-
 
 #include "../any.cxx"
 
@@ -15,7 +15,9 @@ namespace xtal::processor::__any
 
 TEST_CASE("xtal/processor/any.hpp: lambda lifting")
 {
-	auto g = processor::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto f = process::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto g = processor::sourced_f(f);
+//	auto g = processor::sourced_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
 	auto       w = _std::vector { 0,  0,  0,  0,  0};
 	auto const x = _std::vector { 0,  1,  2,  3,  4};
 	auto const y = _std::vector {00, 10, 20, 30, 40};

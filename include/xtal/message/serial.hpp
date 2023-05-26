@@ -31,10 +31,10 @@ template <typename>
 struct serial;
 
 template <typename W=counted_t<>>
-using serial_t = compose_s<any_t<tag<serial>>, confined<serial<W>>>;
+using serial_t = compose_s<any_t<tag_t<serial>>, confined<serial<W>>>;
 
 template <typename T>
-concept serial_q = of_q<T, any_t<tag<serial>>>;
+concept serial_q = of_q<T, any_t<tag_t<serial>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,9 +50,18 @@ struct serial<V>
 		using co = compose_s<S, subkind>; using T = typename co::self_t;
 
 	public:
-		using co::co;
+	//	using co::co;
 		using co::self;
 		using co::twin;
+
+		XTAL_CO4_(subtype);
+		XTAL_CO2_(subtype);
+
+		XTAL_NEW_(explicit) subtype(XTAL_DEF ...ws)
+		XTAL_0EX
+		:	co(construct_t<>(), XTAL_REF_(ws)...)
+		{
+		}
 
 		///\
 		Advance `i` steps while retaining `size`. \
@@ -225,7 +234,7 @@ public:
 		{
 		}
 		template <to_q<distance_u> N>
-		XTAL_NEW subtype(N n)
+		XTAL_NEW_(explicit) subtype(N n)
 		XTAL_0EX
 		:	co(U(0, n), 0)
 		{
@@ -237,13 +246,10 @@ public:
 		XTAL_OP1 *=(iota_t n)
 		XTAL_0EX
 		{
-			auto &s = self();
-			auto i0 = co::begin(), iM = co::end();
-			auto  o = n*_v3::ranges::distance(i0, iM);
-			i0 += o;
-			iM += o;
+			auto const i0 = co::begin(), iM = co::end();
+			auto const nm = n*_v3::ranges::distance(i0, iM);
+			co::scan(*(nm + i0), *(nm + iM));
 			co::step() += n;
-			co::scan(*i0, *iM);
 			return self();
 		}
 		///\
@@ -380,7 +386,7 @@ public:
 				XTAL_0EX
 				{
 					auto &s = co::head();
-					assert(s <= t);// FIXME
+					assert(s <= t);
 					return co::efflux(t, XTAL_REF_(oo)...);
 				}
 				///\

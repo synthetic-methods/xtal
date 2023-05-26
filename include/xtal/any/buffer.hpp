@@ -59,6 +59,7 @@ struct buffer
 				template <iterator_q I>
 				requires is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&i0, I &&iN)
+				XTAL_0EX
 				{
 					assert(N == _std::distance(i0, iN));
 					copy_linear_f(false, co::begin(), XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
@@ -66,6 +67,7 @@ struct buffer
 				template <iterated_q I>
 				requires is_q<iteratee_t<I>, U>
 				XTAL_FN1_(void) refill(I &&in)
+				XTAL_0EX
 				{
 					refill(in.begin(), in.end());
 				}
@@ -76,6 +78,7 @@ struct buffer
 
 				template <iterator_q I>
 				XTAL_NEW heterotype(I &&i0, I &&iN)
+				XTAL_0EX
 				{
 					refill(XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
 				}
@@ -86,10 +89,12 @@ struct buffer
 
 				template <iterated_q I>
 				XTAL_NEW heterotype(I &&in)
+				XTAL_0EX
 				{
 					refill(XTAL_FWD_(I) (in));
 				}
 				XTAL_NEW heterotype(bracket_t<U> in)
+				XTAL_0EX
 				:	heterotype(in.begin(), in.end())
 				{
 				}
@@ -99,6 +104,7 @@ struct buffer
 				Replaces the contents of `this` with the given values. \
 
 				XTAL_OP1 = (bracket_t<U> w)
+				XTAL_0EX
 				{
 					refill(w.begin(), w.end());
 					return *this;
@@ -109,6 +115,7 @@ struct buffer
 				Initializes `this` with the given vector. \
 
 				XTAL_NEW heterotype(heterotype const &t)
+				XTAL_0EX
 				:	heterotype(t.begin(), t.end())
 				{
 				}
@@ -117,6 +124,7 @@ struct buffer
 				Replaces the contents of `this` with the given vector. \
 
 				XTAL_OP1 = (heterotype const &t)
+				XTAL_0EX
 				{
 					refill(t.begin(), t.end());
 					return *this;
@@ -127,6 +135,7 @@ struct buffer
 				Initializes `this` with the given vector. \
 
 				XTAL_NEW heterotype(heterotype &&t)
+				XTAL_0EX
 				:	heterotype(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
 				{
 				}
@@ -135,6 +144,7 @@ struct buffer
 				Replaces the contents of `this` with the given vector. \
 
 				XTAL_OP1 = (heterotype &&t)
+				XTAL_0EX
 				{
 					refill(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
 					return *this;
