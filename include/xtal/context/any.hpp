@@ -12,7 +12,7 @@ namespace xtal::context
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail = xtal::content;
-#include "../common/any.ipp"
+#include "../common/any.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,10 +22,10 @@ struct define
 	using subkind = _detail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 		using co::self;
@@ -39,10 +39,8 @@ struct define
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
-
-			return operator<<=(bundle_fwd(XTAL_REF_(o)));
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
+		XTAL_OP1 <<=(XTAL_DEF_(common::bundle_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] (XTAL_DEF ...oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
@@ -61,7 +59,7 @@ struct define
 			flux_t const _ = self().infuse(XTAL_REF_(o));
 			return !_?0: _ & self().influx(XTAL_REF_(oo)...);
 		}
-		XTAL_FN2_(flux_t) influx(nothing_t, XTAL_DEF ...oo)
+		XTAL_FN2_(flux_t) influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 		//	return self().influx(XTAL_REF_(oo)...);
@@ -84,7 +82,7 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
+		XTAL_OP1 >>=(XTAL_DEF_(common::bundle_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] (XTAL_DEF ...oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
@@ -103,7 +101,7 @@ struct define
 			flux_t const _ = self().effuse(XTAL_REF_(o));
 			return !_?0: _ & self().efflux(XTAL_REF_(oo)...);
 		}
-		XTAL_FN2_(flux_t) efflux(nothing_t, XTAL_DEF ...oo)
+		XTAL_FN2_(flux_t) efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 		//	return self().efflux(XTAL_REF_(oo)...);
@@ -150,7 +148,7 @@ struct refine
 	using subkind = _detail::refine<T>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 
@@ -164,9 +162,9 @@ struct defer
 	using subkind = _detail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 		using co::self;
@@ -230,7 +228,7 @@ struct refer
 	using subkind = _detail::refer<U>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 

@@ -12,7 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail = xtal::common;
-#include "../common/any.ipp"
+#include "../common/any.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -98,9 +98,9 @@ struct defer
 //	using tag = tag_t<defer>;
 
 	template <any_q S>
-	class subtype: public compose_s<S>
+	class subtype: public common::compose_s<S>
 	{
-		using co = compose_s<S>; using T = typename co::self_t;
+		using co = common::compose_s<S>; using T = typename co::self_t;
 		using V  = debased_t<U>;
 
 	protected:
@@ -274,7 +274,7 @@ struct refer
 
 	};
 	template <any_q S>
-	requires alpha_q<U>
+	requires field_operators_q<U>
 	class subtype<S>: public S
 	{
 		using co = S; using T = subtype<S>;//typename co::self_t;
@@ -305,7 +305,7 @@ struct refer
 		
 	};
 	template <any_q S>
-	requires iota_q<U>
+	requires bit_operators_q<U>
 	class subtype<S>: public S
 	{
 		using co = S; using T = subtype<S>;//typename co::self_t;

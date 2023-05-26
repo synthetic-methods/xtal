@@ -12,7 +12,7 @@ namespace xtal::message
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail = xtal::control;
-#include "../common/any.ipp"
+#include "../common/any.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,10 +24,10 @@ struct define
 	using subkind = _detail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -40,9 +40,9 @@ struct define
 			using subkind = context::defer<T>;
 
 			template <context::any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 			public:
 			//	using co::co;
 
@@ -74,9 +74,9 @@ struct define
 			using subkind = attach;
 
 			template <context::any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 			public:
 			//	using co::co;
 				using co::self;
@@ -165,14 +165,14 @@ struct define
 		struct hold
 		{
 			template <context::any_q R>
-			class subtype: public compose_s<R>
+			class subtype: public common::compose_s<R>
 			{
-				using co = compose_s<R>;
+				using co = common::compose_s<R>;
 
 				using message_t = T;
 				using index_t = iota_t;
-				using event_t = compose_s<T, content::confer<index_t>>;
-				using stack_t = buffer_vector_t<N_future, event_t>;
+				using event_t = common::compose_s<T, content::confer<index_t>>;
+				using stack_t = common::buffer_vector_t<N_future, event_t>;
 				using point_t = typename stack_t::iterator;
 				using count_t = typename stack_t::difference_type;
 
@@ -334,13 +334,13 @@ struct define
 			using message_t = T;
 
 			template <context::any_q R>
-			class subtype: public compose_s<R>
+			class subtype: public common::compose_s<R>
 			{
-				using co = compose_s<R>;
+				using co = common::compose_s<R>;
 
 				using index_t = iota_t;
-				using event_t = compose_s<T, content::confer<index_t>>;
-				using queue_t = buffer_funnel_t<N_future, event_t>;
+				using event_t = common::compose_s<T, content::confer<index_t>>;
+				using queue_t = common::buffer_funnel_t<N_future, event_t>;
 				using count_t = typename queue_t::size_type;
 
 				using current_t = void;
@@ -515,7 +515,7 @@ struct refine
 	using subkind = _detail::refine<T>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 
@@ -529,7 +529,7 @@ struct defer
 	using subkind = _detail::defer<U>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 template <constant_q W>
@@ -538,9 +538,9 @@ struct defer<W>
 	using subkind = defer<typename W::value_type>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -558,7 +558,7 @@ struct refer
 	using subkind = _detail::refer<U>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 

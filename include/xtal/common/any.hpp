@@ -1,8 +1,8 @@
 #pragma once
 #include "../any.hpp"
-
-
-
+#include "./buffer.hpp"
+#include "./bundle.hpp"
+#include "./compose.hpp"
 
 
 
@@ -41,7 +41,7 @@ struct any<A>
 };
 
 }
-#include "./any.ipp"
+#include "./any.hxx"
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

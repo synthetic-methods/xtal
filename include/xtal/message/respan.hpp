@@ -17,9 +17,9 @@ struct respan
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 	//	using co::co;
 
@@ -29,7 +29,7 @@ struct respan
 		template <iterated_q W>
 		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(spanned_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
+		:	co(spanner_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
 		{
 		}
 

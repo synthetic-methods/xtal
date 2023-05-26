@@ -17,9 +17,9 @@ struct reindex
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 

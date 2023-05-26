@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail = xtal::process;
-#include "../common/any.ipp"
+#include "../common/any.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,10 +24,10 @@ struct define
 	using subkind = _detail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -38,36 +38,26 @@ struct define
 		template <typename ...Xs>
 		struct bind
 		{
-		//	TODO: Define `lift_t` to handle the `rvalue`/`lvalue` distinction, \
-			e.g. respectively ignoring `resize`/`respan` messages. \
-
-			/*/
-			template <typename X> using lift_t = let_t<X>;
-			using signature = bundle<lift_t<Xs>...>;
-			/*/
-			using signature = bundle<Xs...>;
-			/***/
-			
-			using result_t = typename signature::template invoke_t<T>;
-			using return_t = iteratee_t<result_t>;
+			using signature = common::bundle<Xs...>;
+			using result_t  = typename signature::template invoke_t<T>;
+			using return_t  = iteratee_t<result_t>;
 
 			using serial_n = message::serial_t<countee_t<>>;
 			using serial_u = message::serial_t<counted_t<>>;
 			using resize_u = message::resize_t<>;
-
-			XTAL_LET_(sigma_t) N_arity = sizeof...(Xs);
-
-			using subkind = compose<context::defer<typename signature::type>
+			using subkind  = common::compose<context::defer<typename signature::type>
 			,	serial_n::attach
 			,	serial_u::attach
 			,	resize_u::attach
 			,	_detail::defer<T>
 			>;
 
+			XTAL_LET_(sigma_t) N_arity = sizeof...(Xs);
+
 			template <any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 
 			public:
 				using co::co;
@@ -133,10 +123,10 @@ struct define
 					return !_?0: _ & self().influx_push(XTAL_REF_(oo)...);
 				}
 				///\
-				\note When prefixed by `nothing_t()`, \
+				\note When prefixed by `null_t()`, \
 				`self` is skipped and the message is forwarded directly to `arguments`. \
 
-				XTAL_FN2_(flux_t) influx(nothing_t, XTAL_DEF ...oo)
+				XTAL_FN2_(flux_t) influx(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx_push(XTAL_REF_(oo)...);
@@ -192,10 +182,10 @@ struct define
 					return !_?0: _ & self().efflux_node(XTAL_REF_(oo)...);
 				}
 				///\
-				\note When prefixed by `nothing_t()`, \
+				\note When prefixed by `null_t()`, \
 				`self` is skipped and the message is forwarded directly to `arguments`. \
 
-				XTAL_FN2_(flux_t) efflux(nothing_t, XTAL_DEF ...oo)
+				XTAL_FN2_(flux_t) efflux(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().efflux_pull(XTAL_REF_(oo)...);
@@ -252,9 +242,9 @@ struct refine
 	using subkind = _detail::refine<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -264,7 +254,7 @@ struct refine
 			using subkind = _detail::confined<typename co::template bind<Xs...>>;
 			
 			template <any_q R>
-			using subtype = compose_s<R, subkind>;
+			using subtype = common::compose_s<R, subkind>;
 			
 		};
 		template <typename ...Xs>
@@ -290,59 +280,9 @@ struct defer<U>
 	using subkind = _detail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
-
-		template <typename F>
-		struct zap
-		{
-			class type
-			{
-				F function_m;
-
-			public:
-				XTAL_NEW_(explicit) type(F&&f)
-				XTAL_0EX
-				:	function_m(XTAL_FWD_(F) (f))
-				{
-				}
-				XTAL_OP2() () &&
-				XTAL_0EX
-				{
-					return _v3::views::generate(_std::move(function_m));
-				}
-				XTAL_OP2() (XTAL_DEF x) &&
-				XTAL_0EX
-				{
-					return _v3::views::transform(XTAL_REF_(x), _std::move(function_m));
-				}
-				XTAL_OP2() (XTAL_DEF ...xs) &&
-				XTAL_0EX
-				{
-					return _v3::views::zip_with(_std::move(function_m), XTAL_REF_(xs)...);
-				}
-
-			};
-		};
-		template <typename F>
-		using     zap_t = typename zap<F>::type;
-		XTAL_LET  zap_f = [] (XTAL_DEF f)
-		XTAL_0FN_(zap_t<decltype(f)>(XTAL_REF_(f)));
-
-		template <typename ...Xs>
-		struct review
-		{
-			using Ref = _std::invoke_result_t<U, iteratee_t<Xs>...>;
-			using cat = _v3::ranges::category;
-			XTAL_LET Cat = cat::forward|cat::sized;
-			using type = _v3::ranges::any_view<Ref, Cat>;
-		};
-		template <typename ...Xs>
-		using review_t = typename review<Xs...>::type;
-
-	//	TODO: It appears that both `category::sized` and `views::take` must be applied \
-		for `size` to be defined by `ranges::view_interface`, but maybe there's a better way? \
+		using co = common::compose_s<S, subkind>;
 
 	public:
 		using co::co;
@@ -360,19 +300,24 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
-			auto z = zap_f(_std::move(f)) (XTAL_REF_(xs)...);
-			auto n = delta_t(z.size());
-			return review_t<decltype(xs)...>(_std::move(z))|_v3::views::take(std::move(n));
+			return sequential_f(zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...));
+		}
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0EX
+		requires
+		requires
+		{
+			head().template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
+		}
+		{
+			return zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
-	//	requires
-	//	requires (U const &u) {u.template method<>(XTAL_REF_(xs)...);}
 		{
-			auto f = head().template reify<iteratee_t<decltype(xs)>...>();
-			return zap_f(std::move(f)) (XTAL_REF_(xs)...);
+			return zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -383,13 +328,13 @@ struct defer<U>
 	using serial_n = message::serial_t<counted_t<>>;
 //	using serial_n = message::serial_t<countee_t<>>;
 
-	using subkind = compose<_detail::defer<U>, serial_n::attach>;
-//	using subkind = compose<serial_n::attach, _detail::defer<U>>;
+	using subkind = common::compose<_detail::defer<U>, serial_n::attach>;
+//	using subkind = common::compose<serial_n::attach, _detail::defer<U>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -421,22 +366,22 @@ struct defer<U>
 
 	};
 };
-template <numeric_q V>
+template <bit_or_field_operators_q V>
 struct defer<V>
 {
 	using subkind = _detail::defer<repeated_t<V>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 	//	using co::co;
 
 		XTAL_CO4_(subtype);
 		XTAL_CO2_(subtype);
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(as_q<V>) v)
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(to_q<V>) v)
 		XTAL_0EX
 		:	co(repeated_t<V>(XTAL_REF_(v)))
 		{
@@ -454,16 +399,16 @@ struct refer
 	using subkind = _detail::refer<U>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
-template <numeric_q V>
+template <bit_or_field_operators_q V>
 struct refer<V>
 {
 	using subkind = _detail::refer<repeated_t<V>>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 

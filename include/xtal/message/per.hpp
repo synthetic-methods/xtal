@@ -14,16 +14,16 @@ namespace xtal::message
 template <typename U, typename V=alpha_t>
 struct per
 {
-	using subkind = compose<defer<U>, defer<V>>;
+	using subkind = common::compose<defer<U>, defer<V>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 
 		XTAL_FZ2 invert_f(XTAL_DEF o)
 		{
-			return alpha_t(1)/alpha_t(XTAL_REF_(o));
+			return V(1)/V(XTAL_REF_(o));
 		}
 
 	public:

@@ -12,7 +12,7 @@ namespace xtal::control
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail = xtal::context;
-#include "../common/any.ipp"
+#include "../common/any.hxx"
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,7 +24,7 @@ struct define
 	using subkind = _detail::define<T>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 
@@ -36,7 +36,7 @@ struct refine
 	using subkind = _detail::refine<T>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 
@@ -50,9 +50,9 @@ struct defer
 	using subkind = _detail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 		using co::self;
@@ -76,7 +76,7 @@ struct refer
 	using subkind = _detail::refer<U>;
 
 	template <any_q S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 
 };
 

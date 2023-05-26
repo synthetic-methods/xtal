@@ -17,26 +17,30 @@ struct sourced
 	using subkind = confer<U, As...>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
 
 		template <typename ...Xs>
 		struct bind
 		{
-			using superkind = typename co::template bind<Xs...>;
-			using signature = typename superkind::signature;
-			using result_t = typename superkind::result_t;
-			using return_t = typename superkind::return_t;
-			
-			using subkind = compose<content::confer<result_t>, As..., superkind>;
+			using superbind = typename co::template bind<Xs...>;
+			using signature = typename superbind::signature;
+			using result_t  = typename superbind::result_t;
+			using return_t  = typename superbind::return_t;
+
+			using subkind = common::compose<any<>
+			,	content::confer<result_t>
+			,	As...
+			,	superbind
+			>;
 
 			template <typename R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 
 			public:
 				XTAL_CO4_(subtype);

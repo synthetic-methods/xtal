@@ -31,7 +31,7 @@ template <typename>
 struct serial;
 
 template <typename W=counted_t<>>
-using serial_t = compose_s<any_t<tag_t<serial>>, confined<serial<W>>>;
+using serial_t = common::compose_s<any_t<tag_t<serial>>, confined<serial<W>>>;
 
 template <typename T>
 concept serial_q = of_q<T, any_t<tag_t<serial>>>;
@@ -42,12 +42,12 @@ concept serial_q = of_q<T, any_t<tag_t<serial>>>;
 template <countee_q V>
 struct serial<V>
 {
-	using subkind = compose<defer<construct_t<>>, resize<iota_t>, restep<iota_t>>;
+	using subkind = common::compose<defer<construct_t<>>, resize<V>, restep<V>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>; using T = typename co::self_t;
+		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
 
 	public:
 	//	using co::co;
@@ -66,7 +66,7 @@ struct serial<V>
 		///\
 		Advance `i` steps while retaining `size`. \
 
-		XTAL_OP1 *=(iota_t i)
+		XTAL_OP1 *=(V i)
 		XTAL_0EX
 		{
 			co::step() += i;
@@ -88,7 +88,7 @@ struct serial<V>
 		///\
 		Advance `1` step of size `n`. \
 
-		XTAL_OP1_(T &) +=(iota_t n)
+		XTAL_OP1_(T &) +=(V n)
 		XTAL_0EX
 		{
 			co::step() += co::size() != 0;
@@ -99,7 +99,7 @@ struct serial<V>
 		///\
 		\returns the block at distance `n` steps with the same `size`. \
 
-		XTAL_OP2_(T) * (iota_t n)
+		XTAL_OP2_(T) * (V n)
 		XTAL_0FX
 		{
 			return twin().operator*=(n);
@@ -115,7 +115,7 @@ struct serial<V>
 		///\
 		\returns the adjacent block of size `n`. \
 
-		XTAL_OP2_(T) + (iota_t n)
+		XTAL_OP2_(T) + (V n)
 		XTAL_0FX
 		{
 			return twin().operator+=(n);
@@ -169,9 +169,9 @@ struct serial<V>
 			using subkind = typename co::attach;
 
 			template <context::any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 
 			public:
 				using co::co;
@@ -212,17 +212,15 @@ template <counted_q U>
 struct serial<U>
 {
 private:
-	using iteratee_u = iteratee_t<U>;
-	using iterator_u = iterator_t<U>;
-	using distance_u = typename iterator_ts<iterator_u>::difference_type;
-public:
+	using V = iteratee_t<U>;
 
-	using subkind = compose<refer<U>, rescan<U>, restep<iteratee_u>>;
+public:
+	using subkind = common::compose<refer<U>, rescan<U>, restep<V>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>; using T = typename co::self_t;
+		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 		using co::self;
@@ -233,7 +231,7 @@ public:
 		:	co(U(0, 0), 0)
 		{
 		}
-		template <to_q<distance_u> N>
+		template <to_q<V> N>
 		XTAL_NEW_(explicit) subtype(N n)
 		XTAL_0EX
 		:	co(U(0, n), 0)
@@ -243,11 +241,11 @@ public:
 		///\
 		Advance `n` steps while retaining `size`. \
 
-		XTAL_OP1 *=(iota_t n)
+		XTAL_OP1 *=(V n)
 		XTAL_0EX
 		{
 			auto const i0 = co::begin(), iM = co::end();
-			auto const nm = n*_v3::ranges::distance(i0, iM);
+			auto const nm = n*(iM - i0);
 			co::scan(*(nm + i0), *(nm + iM));
 			co::step() += n;
 			return self();
@@ -258,7 +256,7 @@ public:
 		XTAL_OP1 ++()
 		XTAL_0EX
 		{
-			return operator+=(_v3::ranges::distance(co::begin(), co::end()));
+			return operator+=(co::end() - co::begin());
 		}
 		XTAL_OP1_(T) ++(int)
 		XTAL_0EX
@@ -268,12 +266,12 @@ public:
 		///\
 		Advance `1` step of size `n`. \
 
-		XTAL_OP1 +=(iota_t n)
+		XTAL_OP1 +=(V n)
 		XTAL_0EX
 		{
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const j0 = iM, jN = _v3::ranges::next(j0, n);
+			auto const j0 = iM, jN =j0 + n;
 			co::step() += i0 != iM;
 			co::scan(*j0, *jN);
 			return self();
@@ -283,7 +281,7 @@ public:
 		///\
 		\returns the block at distance `n` steps with the same `size`. \
 
-		XTAL_OP2_(T) * (iota_t n)
+		XTAL_OP2_(T) * (V n)
 		XTAL_0FX
 		{
 			return twin().operator*=(n);
@@ -299,7 +297,7 @@ public:
 		///\
 		\returns the adjacent block of size `n`. \
 
-		XTAL_OP2_(T) + (iota_t n)
+		XTAL_OP2_(T) + (V n)
 		XTAL_0FX
 		{
 			return twin().operator+=(n);
@@ -350,9 +348,9 @@ public:
 			using subkind = typename co::attach;
 
 			template <context::any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using co = common::compose_s<R, subkind>;
 
 			public:
 				using co::co;

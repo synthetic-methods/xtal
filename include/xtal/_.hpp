@@ -7,14 +7,15 @@
 //\
 TODO: Allow command-line/[c]?make configuration.
 
-#define XTAL_REALIZE std::size_t
-#define XTAL_BITWIZE 0
+#define XTAL_STD_SIZE ::std::size_t
+#define XTAL_STD_IEEE 0//754
 
 #ifdef  NDEBUG
 #define XTAL_LOG 1//release
 #else
 #define XTAL_LOG 1//debug
 #endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -42,8 +43,6 @@ TODO: Allow command-line/[c]?make configuration.
 
 #endif
 
-////////////////////////////////////////////////////////////////////////////////
-
 #ifndef NDEBUG
 #if     XTAL_V00_MSVC
 static_assert(1932 <= XTAL_V00_MSVC);
@@ -56,6 +55,7 @@ static_assert(1101 <= XTAL_V00_GNUC);
 
 #endif
 #endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -80,8 +80,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TYP                std::decay_t<decltype(auto)>
-#define XTAL_TYP_(...)          std::decay_t<decltype(__VA_ARGS__)>
+#define XTAL_TYP                             decltype(auto)
+#define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_FWD_(...)           static_cast<         __VA_ARGS__ &&>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
@@ -124,6 +124,7 @@ static_assert(1101 <= XTAL_V00_GNUC);
                                             constexpr TYP                   (TYP &&) noexcept = default;;
 #define XTAL_CO2_(TYP)                                TYP()                          noexcept = default;\
                                                      ~TYP()                          noexcept = default;;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
