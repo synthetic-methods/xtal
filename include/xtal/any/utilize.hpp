@@ -33,7 +33,7 @@ template <auto        N  > using     constant   = _std::integral_constant<XTAL_T
 template <typename    T  > concept   constant_b = _std::is_base_of_v<_std::integral_constant<value_t<T>, value_v<T>>, T>;
 template <typename ...Ts > concept   constant_q = unfalse_p<constant_b<Ts>...>;
 
-template <typename ...Ts > struct   construct    {using type = _std::variant<Ts...>;};
+template <typename ...Ts > struct   construct   : _std::common_type<Ts...> {};
 template <               > struct   construct< > {using type = _std::monostate     ;};
 template <typename    T  > struct   construct<T> {using type = T                   ;};
 template <typename ...Ts > using    construct_t = type_t<construct<Ts...>>;

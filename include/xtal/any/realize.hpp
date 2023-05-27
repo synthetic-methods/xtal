@@ -944,8 +944,8 @@ public:
 	XTAL_FZ2_(alpha_t) trim_y(alpha_t target)
 	XTAL_0EX
 	{
-		delta_t constexpr M_zoom = N_zoom? N_zoom - fraction::depth: 1;
-		alpha_t constexpr y = minimal_y(M_zoom);
+		delta_t constexpr N_unzoom = N_zoom? N_zoom - fraction::depth: -1;
+		alpha_t constexpr y = minimal_y(N_unzoom);
 		target *= y;
 		target /= y;
 	//	target *= 1/y;// prevent optimization by not doing this...
@@ -968,8 +968,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 };
-template <typename T> struct realize   : realization<sizeof        (T) > {};
-template <value_q  T> struct realize<T>: realization<sizeof(value_t<T>)> {};
+template <typename ...Ts > struct realize       : realization<sizeof(construct_t<Ts...>)> {};
+template <value_q  ...Ts > struct realize<Ts...>: realize<value_t<Ts>...> {};
 
 using realized = realize<XTAL_STD_SIZE>;
 using   flux_t = typename realized:: flux_t;
@@ -998,12 +998,11 @@ template <typename ...Ts > concept alpha_q = unfalse_p<sigma_b<Ts>...>;
 
 ///\see `realized::trim_y`. \
 
-template <delta_t N_zoom=0>
-XTAL_FZ2 trim_y(XTAL_DEF target)
+template <auto ...N_etc>
+XTAL_FZ2 trim_y(XTAL_DEF... etc)
 XTAL_0EX
 {
-	using realized = realize<XTAL_TYP_(target)>;
-	return realized::template trim_y<N_zoom? N_zoom: realized::fraction::depth - 1>(XTAL_REF_(target));
+	return realize<decltype(etc)...>::template trim_y<N_etc...>(XTAL_REF_(etc)...);
 }
 
 
