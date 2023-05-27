@@ -300,24 +300,21 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return sequential_f(zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...));
+			return iterate_forward_f(iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...));
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		requires
-		requires
+		requires (U const &u) {u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);}
 		{
-			head().template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
-		}
-		{
-			return zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
+			return iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return zap_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
+			return iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
 		}
 
 	};

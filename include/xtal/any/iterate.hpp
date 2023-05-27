@@ -94,7 +94,7 @@ struct isomorphic<Ys...>
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_FZ2 sequential_f(XTAL_DEF z)
+XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
 XTAL_0EX
 {
 //	TODO: Apparently both `category::sized` and `views::take` must be applied \
@@ -107,7 +107,7 @@ XTAL_0EX
 }
 
 template <typename F>
-struct zap
+struct iterate_map
 {
 	class type
 	{
@@ -138,9 +138,9 @@ struct zap
 	};
 };
 template <typename F>
-using     zap_t = typename zap<F>::type;
-XTAL_LET  zap_f = [] (XTAL_DEF f)
-XTAL_0FN_(zap_t<decltype(f)>(XTAL_REF_(f)));
+using     iterate_map_t = typename iterate_map<F>::type;
+XTAL_LET  iterate_map_f = [] (XTAL_DEF f)
+XTAL_0FN_(iterate_map_t<decltype(f)>(XTAL_REF_(f)));
 
 
 ///////////////////////////////////////////////////////////////////////////////
