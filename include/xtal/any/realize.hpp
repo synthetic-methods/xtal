@@ -217,25 +217,77 @@ public:
 		return xx + yy;
 	}
 
-	XTAL_FZ2_(aleph_t) circle_y(alpha_t const &arc)
+	template <delta_t M_iso=1>
+	XTAL_FZ2 circle_y(auto const &u)
 	XTAL_0EX
 	{
-		alpha_t const x = _std::cos(arc);
-		alpha_t const y = _std::sin(arc);
-		return aleph_t(x, y);
+		if constexpr (M_iso == +1)
+		{
+			return aleph_t(_std::cos(u), _std::sin(u));
+		}
+		else
+		if constexpr (M_iso == -1)
+		{
+			return alpha_t(_std::atan2(u));
+		}
 	}
 
+	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_ord=-1>
 	XTAL_FZ2_(alpha_t) square_y(alpha_t const &u)
 	XTAL_0EX
 	{
-		return u*u;
+		if constexpr (M_iso == +1 and M_pow == +1)
+		{
+			return (u*u);
+		}
+		else
+		if constexpr (M_iso == +1 and M_pow == -1)
+		{
+			return square_y<M_iso, -M_pow, N_ord>(1/u);
+		}
+		else
+		if constexpr (M_iso == -1 and M_pow == +1)
+		{
+			if (not _std::is_constant_evaluated()) return _std::sqrt(u);
+			return square_y<M_iso, -M_pow, N_ord>(u)*(u);
+		}
+		else
+		if constexpr (M_iso == -1 and M_pow == -1)
+		{
+			if (not _std::is_constant_evaluated()) return 1/_std::sqrt(u);
+			delta_t o = _std::bit_cast<delta_t>(co::carmack_v); o -= _std::bit_cast<delta_t>(u) >> 1;
+			alpha_t n = _std::bit_cast<alpha_t>(o);
+			alpha_t const k = u*0.5;
+			if constexpr (0 < N_ord)
+			{
+				seek_f<N_ord>([&] (auto) XTAL_0FN_(n *= alpha_t(1.5) - k*n*n));
+			}
+			else
+			{
+				alpha_t _n; o = 0x20;
+				do    {_n  = n; n *= 1.5 - k*n*n;}
+				while (_n != n and ~--o);
+				n /= alpha_t(0.5) + k*n*n;
+			}
+			return n;
+		}
 	}
+	static_assert(square_y<-1,  1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
+	static_assert(square_y<-1, -1>((alpha_t) 2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
+
 	XTAL_FZ2_(aleph_t) square_y(aleph_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
 		return aleph_t(xx - yy, x*y*2.0);
+	}
+
+	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_ord=-1>
+	XTAL_FZ2_(alpha_t) square_dot_y(XTAL_DEF_(is_q<aleph_t>) u)
+	XTAL_0EX
+	{
+		return square_y<M_iso, M_pow, N_ord>(dot_y(XTAL_REF_(u)));
 	}
 
 
@@ -776,7 +828,7 @@ public:
 	XTAL_0EX
 	{
 		target = truncate_y<16>(_std::move(target));// TODO: Handle infinity before `std::abs`.
-		alpha_t w = _std::sqrt(dot_y(target)), m = 1/w;
+		alpha_t w = square_dot_y<-1>(target), m = 1/w;
 		target *= m; truncate_z<N_zoom, N_zero>(w, zone);
 		target *= w;
 		return target;
@@ -877,13 +929,12 @@ public:
 	XTAL_FZ2 puncture_y(aleph_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		alpha_t w = _std::sqrt(dot_y(target)), m = 1/w;
+		alpha_t w = square_dot_y<-1>(target), m = 1/w;
 		target *= m; puncture_z<N_zoom, N_zero>(w, zone);
 		target *= w;
 		return target;
 	}
 	
-//	TODO: Make `constexpr sqrt`. \
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -920,7 +971,7 @@ public:
 template <typename T> struct realize   : realization<sizeof        (T) > {};
 template <value_q  T> struct realize<T>: realization<sizeof(value_t<T>)> {};
 
-using realized = realize <XTAL_STD_SIZE>;
+using realized = realize<XTAL_STD_SIZE>;
 using   flux_t = typename realized:: flux_t;
 using   iota_t = typename realized:: iota_t;
 using  delta_t = typename realized::delta_t;//_std::ptrdiff_t;
@@ -944,27 +995,6 @@ template <typename ...Ts > concept alpha_q = unfalse_p<sigma_b<Ts>...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-///\see `realized::truncate_y`. \
-
-template <delta_t N_zoom=0>
-XTAL_FZ2 truncate_y(XTAL_DEF target, XTAL_DEF ...zone)
-XTAL_0EX
-{
-	using realized = realize<XTAL_TYP_(target)>;
-	return realized::template truncate_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
-}
-
-///\see `realized::puncture_y`. \
-
-template <delta_t N_zoom=0>
-XTAL_FZ2 puncture_y(XTAL_DEF target, XTAL_DEF ...zone)
-XTAL_0EX
-{
-	using realized = realize<XTAL_TYP_(target)>;
-	return realized::template puncture_y<N_zoom>(XTAL_REF_(target), XTAL_REF_(zone)...);
-}
 
 ///\see `realized::trim_y`. \
 
