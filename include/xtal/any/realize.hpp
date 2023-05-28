@@ -152,6 +152,8 @@ public:
 	struct     sign: word<    sign_n, positive_n> {};
 	static_assert((sigma_t) ~sign::mask == positive::mask);
 
+	XTAL_LET_(sigma_t) sigma_1 = 1;
+	XTAL_LET_(delta_t) delta_1 = 1;
 
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -183,31 +185,54 @@ public:
 	using typename co::  alpha_t; using aleph_t = _std::complex<alpha_t>;
 	using typename co::mt19937_t;
 
+	using co::bit_flag_y;
+	using co::bit_mark_y;
+	using co::bit_mask_y;
+
 	using co::breadth;
 	using co::  width;
 	using co::  depth;
 
-	#if XTAL_STD_IEEE == 754
-		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-	#endif
+	using co::delta_1;
+	using co::sigma_1;
+	XTAL_LET_(alpha_t) alpha_1 = 1;
+
+#if XTAL_STD_IEEE == 754
+	static_assert(_std::numeric_limits<alpha_t>::is_iec559);
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_FZ2 unit_y(sigma_t n)
+	XTAL_FZ2 mantissa_y(sigma_t n)
 	XTAL_0EX
 	{
 		return std::bit_cast<alpha_t>(n & ~unit::mask);
 	}
-	XTAL_FZ2 unit_y(mt19937_t &m)
+	XTAL_FZ2 mantissa_y(mt19937_t &m)
 	XTAL_0EX
 	{
-		return unit_y(m());
+		return mantissa_y(m());
 	}
 
 
 ///////////////////////////////////////////////////////////////////////////////
+
+	template <delta_t M_pow=1>
+	XTAL_FZ2_(alpha_t) unity_y(XTAL_DEF u)
+	XTAL_0EX
+	{
+		if constexpr (M_pow == +1)
+		{
+			return XTAL_REF_(u);
+		}
+		else
+		if constexpr (M_pow == -1)
+		{
+			return alpha_1/XTAL_REF_(u);
+		}
+	}
 
 	XTAL_FZ2_(alpha_t) dot_y(aleph_t const &u)
 	XTAL_0EX
@@ -232,43 +257,35 @@ public:
 		}
 	}
 
-	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_ord=-1>
-	XTAL_FZ2_(alpha_t) square_y(alpha_t const &u)
+	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_lim=-1>
+	XTAL_FZ2_(alpha_t) square_y(alpha_t const &w)
 	XTAL_0EX
 	{
-		if constexpr (M_iso == +1 and M_pow == +1)
+		if constexpr (M_iso == +1)
 		{
-			return (u*u);
+			return unity_y<M_pow>(w*w);
 		}
 		else
-		if constexpr (M_iso == +1 and M_pow == -1)
+		if constexpr (M_iso == -1)
 		{
-			return square_y<M_iso, -M_pow, N_ord>(1/u);
-		}
-		else
-		if constexpr (M_iso == -1 and M_pow == +1)
-		{
-			if (not _std::is_constant_evaluated()) return _std::sqrt(u);
-			return square_y<M_iso, -M_pow, N_ord>(u)*(u);
-		}
-		else
-		if constexpr (M_iso == -1 and M_pow == -1)
-		{
-			if (not _std::is_constant_evaluated()) return 1/_std::sqrt(u);
-			delta_t o = _std::bit_cast<delta_t>(co::carmack_v); o -= _std::bit_cast<delta_t>(u) >> 1;
+			if (not _std::is_constant_evaluated()) return unity_y<M_pow>(_std::sqrt(w));
+			delta_t o = _std::bit_cast<delta_t>(co::carmack_v); o -= _std::bit_cast<delta_t>(w) >> 1;
 			alpha_t n = _std::bit_cast<alpha_t>(o);
-			alpha_t const k = u*0.5;
-			if constexpr (0 < N_ord)
+			alpha_t const k = w*0.5;
+			if constexpr (N_lim < 0)
 			{
-				seek_f<N_ord>([&] (auto) XTAL_0FN_(n *= alpha_t(1.5) - k*n*n));
+				alpha_t m = k*n*n;
+				for (sigma_t i = 0; m != 0.5 and i < 0x10; ++i)
+				{
+					n *= 1.5 - m; m = k*n*n;
+				}
+				n /= m + 0.5;
 			}
 			else
 			{
-				alpha_t _n; o = 0x20;
-				do    {_n  = n; n *= 1.5 - k*n*n;}
-				while (_n != n and ~--o);
-				n /= alpha_t(0.5) + k*n*n;
+				seek_f<N_lim>([&] (auto) XTAL_0FN_(n *= 1.5 - k*n*n));
 			}
+			if constexpr (M_pow == 1) n *= w; else static_assert(M_pow == -1);
 			return n;
 		}
 	}
@@ -283,64 +300,26 @@ public:
 		return aleph_t(xx - yy, x*y*2.0);
 	}
 
-	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_ord=-1>
-	XTAL_FZ2_(alpha_t) square_dot_y(XTAL_DEF_(is_q<aleph_t>) u)
+	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_lim=-1>
+	XTAL_FZ2_(alpha_t) square_dot_y(aleph_t const &u)
 	XTAL_0EX
 	{
-		return square_y<M_iso, M_pow, N_ord>(dot_y(XTAL_REF_(u)));
+		if (_std::is_constant_evaluated())
+		{
+			if (M_iso == -1 and M_pow == +1)
+			{
+				return _std::hypot(u.real(), u.imag());
+			}
+			else
+			if (M_iso == -1 and M_pow == -1)
+			{
+				return 1/_std::hypot(u.real(), u.imag());
+			}
+		}
+		return square_y<M_iso, M_pow, N_lim>(dot_y(u));
 	}
-
 
 ////////////////////////////////////////////////////////////////////////////////
-
-	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
-
-	XTAL_FZ2 diplo_y(delta_t const &zoom)
-	XTAL_0EX
-	{
-	#if XTAL_STD_IEEE == 754
-		delta_t m = zoom << unit::shift;
-		m += unit::mask;
-		m &= exponent::mask;
-		return _std::bit_cast<alpha_t> (m);
-	#else
-		sigma_t const i_sgn =   zoom >> positive::depth;
-		sigma_t const i_neg = -(zoom &  i_sgn);
-		sigma_t const i_pos =  (zoom & ~i_sgn);
-		return alpha_t((sigma_t) 1 << i_pos)/((sigma_t) 1 << i_neg);
-	#endif
-	}
-	template <delta_t N_zoom=0>
-	XTAL_LET diplo_v = diplo_y(N_zoom);
-	///< Value expression of `diplo_y`. \
-
-	static_assert(diplo_v<+1> == 2.0);
-	static_assert(diplo_v< 0> == 1.0);
-	static_assert(diplo_v<-1> == 0.5);
-
-
-	///\returns the `constexpr` equivalent of `std:pow(0.5, zoom)`. \
-
-	XTAL_FZ2 haplo_y(delta_t const &zoom)
-	XTAL_0EX
-	{
-	#if XTAL_STD_IEEE == 754
-		return diplo_y(-zoom);
-	#else
-		sigma_t const i_sgn =   zoom >> positive::depth;
-		sigma_t const i_neg = -(zoom &  i_sgn);
-		sigma_t const i_pos =  (zoom & ~i_sgn);
-		return alpha_t((sigma_t) 1 << i_neg)/((sigma_t) 1 << i_pos);
-	#endif
-	}
-	template <delta_t N_zoom=0>
-	XTAL_LET haplo_v = haplo_y(N_zoom);
-	///< Value expression of `haplo_y`. \
-
-	static_assert(haplo_v<+1> == 0.5);
-	static_assert(haplo_v< 0> == 1.0);
-	static_assert(haplo_v<-1> == 2.0);
-
 
 	///\returns the `constexpr` equivalent of `std:pow(base, zoom)` for an `unsigned int zoom`. \
 	
@@ -381,6 +360,44 @@ public:
 	static_assert(explo_y<0> (alpha_t(2.0)) == 1.00);
 	static_assert(explo_y<1> (alpha_t(2.0)) == 2.00);
 	static_assert(explo_y<2> (alpha_t(2.0)) == 4.00);
+
+	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
+
+	XTAL_FZ2 diplo_y(delta_t const &zoom)
+	XTAL_0EX
+	{
+	#if 1//XTAL_STD_IEEE == 754
+		delta_t m = zoom << unit::shift;
+		m += unit::mask;
+		m &= exponent::mask;
+		return _std::bit_cast<alpha_t> (m);
+	#else
+		return _std::ldexp(alpha_1, zoom);// not `constexpr` until `C++23`!
+	#endif
+	}
+	template <delta_t N_zoom=0>
+	XTAL_LET diplo_v = diplo_y(N_zoom);
+	///< Value expression of `diplo_y`. \
+
+	static_assert(diplo_v<+1> == 2.0);
+	static_assert(diplo_v< 0> == 1.0);
+	static_assert(diplo_v<-1> == 0.5);
+
+
+	///\returns the `constexpr` equivalent of `std:pow(0.5, zoom)`. \
+
+	XTAL_FZ2 haplo_y(delta_t const &zoom)
+	XTAL_0EX
+	{
+		return diplo_y(-zoom);
+	}
+	template <delta_t N_zoom=0>
+	XTAL_LET haplo_v = haplo_y(N_zoom);
+	///< Value expression of `haplo_y`. \
+
+	static_assert(haplo_v<+1> == 0.5);
+	static_assert(haplo_v< 0> == 1.0);
+	static_assert(haplo_v<-1> == 2.0);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -584,15 +601,15 @@ public:
 	XTAL_FZ2 sign_y(alpha_t const &value)
 	XTAL_0EX
 	{
-		#ifdef XTAL_V00_MSVC
-			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-			delta_t u = _std::bit_cast<delta_t> (value);
-			u &= sign::mask;
-			u |= unit::mask;
-			return _std::bit_cast<alpha_t> (_std::move(u));
-		#else
-			return __builtin_copysign((alpha_t) 1, value);
-		#endif
+	#ifdef XTAL_V00_MSVC
+		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
+		delta_t u = _std::bit_cast<delta_t> (value);
+		u &= sign::mask;
+		u |= unit::mask;
+		return _std::bit_cast<alpha_t> (_std::move(u));
+	#else
+		return __builtin_copysign((alpha_t) 1, value);
+	#endif
 	}
 	XTAL_LET  sign_x = [] (XTAL_DEF value)
 	XTAL_0FN_(sign_y(XTAL_REF_(value)));
@@ -608,16 +625,16 @@ public:
 	XTAL_FZ1_(alpha_t) resign_y(alpha_t target, alpha_t const &source=1)
 	XTAL_0EX
 	{
-		#if XTAL_V00_MSVC
-			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-			delta_t n = _std::bit_cast<delta_t> (source);
-			delta_t m = _std::bit_cast<delta_t> (target);
-			m &=    ~sign::mask;
-			m |= n & sign::mask;
-			return _std::bit_cast<alpha_t> (_std::move(m));
-		#else
-			return __builtin_copysign(target, source);// constexpr
-		#endif
+	#if XTAL_V00_MSVC
+		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
+		delta_t n = _std::bit_cast<delta_t> (source);
+		delta_t m = _std::bit_cast<delta_t> (target);
+		m &=    ~sign::mask;
+		m |= n & sign::mask;
+		return _std::bit_cast<alpha_t> (_std::move(m));
+	#else
+		return __builtin_copysign(target, source);// constexpr
+	#endif
 	}
 
 	///\returns the original sign of `target`, after applying the sign of `source`.
@@ -645,14 +662,14 @@ public:
 	XTAL_FZ1_(alpha_t) design_y(alpha_t target)
 	XTAL_0EX
 	{
-		#if XTAL_V00_MSVC
-			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-			delta_t u = _std::bit_cast<delta_t> (target);
-			u &= positive::mask;
-			return _std::bit_cast<alpha_t> (_std::move(u));
-		#else
-			return __builtin_copysign(target, (alpha_t) 1);// constexpr
-		#endif
+	#if XTAL_V00_MSVC
+		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
+		delta_t u = _std::bit_cast<delta_t> (target);
+		u &= positive::mask;
+		return _std::bit_cast<alpha_t> (_std::move(u));
+	#else
+		return __builtin_copysign(target, (alpha_t) 1);// constexpr
+	#endif
 	}
 	XTAL_LET  design_x = [] (XTAL_DEF value)
 	XTAL_0FN_(design_y(XTAL_REF_(value)));
@@ -724,33 +741,27 @@ public:
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target, delta_t const &zone)
 	XTAL_0EX
 	{
+		bool constexpr N_unit = not N_infinity;
 	#if XTAL_STD_IEEE == 754
-		auto const Y = N_infinity + unit::mask - (1 << N_zoom);
-		auto const N = zone << exponent::shift;
-		auto const M = N + Y;
-		delta_t m, n, i;
-		auto  t  = _std::bit_cast<delta_t> (_std::move(target));
-		n  =  t  &  sign::mask;
-		m  =  t  ^  n;
-		m  =  M  -  m;
-		i  =  m >>  positive::depth;
-		n |=  i  &  unit::mask;
-		t +=  i  &  m;
-		target   = _std::bit_cast<alpha_t> (_std::move(t));
-		return     _std::bit_cast<alpha_t> (n);
+		delta_t constexpr M_zone = unit::mask + (delta_1);
+		delta_t constexpr M_zoom = unit::mask - (sigma_1 << N_zoom);
+		delta_t const     dezone = zone << exponent::shift;
+		delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
+		delta_t const M = rezone + M_zoom;
+		delta_t _, n, m;
+		auto &t  = reinterpret_cast<delta_t &> (target);
+		n  =  t  & sign::mask;
+		m  =  t  ^ n;
+		m  =  M  - m;
+		_  =  m >> positive::depth;
+		n |=  _  & unit::mask;
+		t +=  _  & m;
+		return    _std::bit_cast<alpha_t> (n);
 	#else
-		alpha_t const t = N_infinity? maximal_y(zone): dnsilon_y(N_zoom, zone);
-		alpha_t const s = design_z(target);
-		bool const r = t < target;
-		if constexpr (N_infinity)
-		{
-			target = minimum_y(t, target);
-		}
-		else
-		{
-			target += negative_y(t - target);
-		}
-		target *= s; return r*s;
+		alpha_t const t = N_infinity? maximal_y(zone - 1): dnsilon_y(N_zoom, zone);
+		alpha_t const s = design_z(target), _ = t < target;
+		target = s*minimum_y(t, target);
+		return _*s;
 	#endif
 	}
 	/// Modifies the `target`, clamping the magnitude below `maximal_y(N_zoom)`. \
@@ -761,14 +772,17 @@ public:
 	XTAL_FZ1_(alpha_t) truncate_z(alpha_t &target)
 	XTAL_0EX
 	{
-	#if XTAL_STD_IEEE == 754
-		auto constexpr zone = (((delta_t) 1 << unit::depth) - 2) - (N_zoom);
-	#else
-		auto constexpr zone = N_zoom;
-	#endif
-		return truncate_z<0, 1>(target, zone);
+		return truncate_z<0, 1>(target, N_zoom + 1);
 	}
-	
+	template <delta_t N_zoom=0>
+	XTAL_FZ1_(aleph_t) truncate_z(aleph_t &target)
+	XTAL_0EX
+	{
+		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
+		alpha_t const x = truncate_z<N_zoom>(z[0]);
+		alpha_t const y = truncate_z<N_zoom>(z[1]);
+		return aleph_t {x, y};
+	}
 
 	///\returns the `target` with magnitude clamped to the region below `dnsilon_y(N_zoom, zone)`. \
 
@@ -776,30 +790,7 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-	#if XTAL_STD_IEEE == 754
-		auto const Y = N_infinity + unit::mask - (1 << N_zoom);
-		auto const N = zone << exponent::shift;
-		auto const M = N + Y;
-		delta_t m, n, i;
-		auto  t  = _std::bit_cast<delta_t> (_std::move(target));
-		m  =  t  & ~sign::mask;
-		m  =  M  -  m;
-		i  =  m >>  positive::depth;
-		t +=  i  &  m;
-		return     _std::bit_cast<alpha_t> (_std::move(t));
-	#else
-		alpha_t const t = N_infinity? maximal_y(zone): dnsilon_y(N_zoom, zone);
-		alpha_t const s = design_z(target);
-		if constexpr (N_infinity)
-		{
-			target = minimum_y(t, target);
-		}
-		else
-		{
-			target += negative_y(t - target);
-		}
-		target *= s; return target;
-	#endif
+		(void) truncate_z<N_zoom, N_infinity>(target, zone); return target;
 	}
 	///\returns the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
 
@@ -807,13 +798,8 @@ public:
 	XTAL_FZ2_(alpha_t) truncate_y(alpha_t const &target)
 	XTAL_0EX
 	{
-	#if XTAL_STD_IEEE == 754
-		auto constexpr zone = (((delta_t) 1 << unit::depth) - 2) - (N_zoom);
-	#else
-		auto constexpr zone = N_zoom;
-	#endif
-		return truncate_y<0, 1>(target, zone);
-	}
+		return truncate_y<0, 1>(target, N_zoom + 1);
+	}	
 
 	template <delta_t N_zoom=0>
 	XTAL_FZ2 truncate_y(aleph_t const &target)
@@ -827,7 +813,7 @@ public:
 	XTAL_FZ2 truncate_y(aleph_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		target = truncate_y<16>(_std::move(target));// TODO: Handle infinity before `std::abs`.
+		truncate_z<(sigma_1 << (exponent::depth - 2))>(target);
 		alpha_t w = square_dot_y<-1>(target), m = 1/w;
 		target *= m; truncate_z<N_zoom, N_zero>(w, zone);
 		target *= w;
@@ -845,28 +831,27 @@ public:
 	XTAL_FZ1_(alpha_t) puncture_z(alpha_t &target, delta_t const &zone)
 	XTAL_0EX
 	{
-		auto constexpr N_unit = N_zero^1;
+		bool constexpr N_unit = not N_zero;
 	#if XTAL_STD_IEEE == 754
-		auto const Z = unit::mask + (1 << N_zoom);
-		auto const N = zone << exponent::shift;
-		auto const M = N + Z*N_unit;
-		delta_t m, n, i;
-		auto  t  = _std::bit_cast<delta_t> (_std::move(target));
-		n   = t  &  sign::mask;
-		m   = t  ^  n;
+		delta_t constexpr M_zoom = unit::mask + (sigma_1 << N_zoom);
+		delta_t const     dezone = zone << exponent::shift;
+		delta_t const M = dezone + M_zoom*N_unit;
+		delta_t _, n, m;
+		auto &t  = reinterpret_cast<delta_t &> (target);
+		n   = t  & sign::mask;
+		m   = t  ^ n;
 		m  -= M;
-		i   = m >>  positive::depth;
-		n  |= i  &  unit::mask;
-		t  -= i  &  m;
-		target   = _std::bit_cast<alpha_t> (_std::move(t));
-		return     _std::bit_cast<alpha_t> (_std::move(n));
+		_   = m >> positive::depth;
+		n  |= _  & unit::mask;
+		t  -= _  & m;
+		return    _std::bit_cast<alpha_t> (_std::move(n));
 	#else
-		auto const t = N_zero? minimal_y(zone - 1): upsilon_y(N_zoom, zone);
-		auto const s = design_z(target);
-		auto const a = positive_y(t - target);
+		alpha_t const t = N_zero? minimal_y(zone - 1): upsilon_y(N_zoom, zone);
+		alpha_t const s = design_z(target);
+		alpha_t const a = positive_y(t - target), _ = a != 0;
 		target += a;
 		target *= s;
-		return s*(a != 0);
+		return  _*s;
 	#endif
 	}
 	/// Modifies the `target`, clamping the magnitude above `minimal_y(N_zoom)`. \
@@ -879,7 +864,15 @@ public:
 	{
 		return puncture_z<0, 1>(target, N_zoom + 1);
 	}
-	
+	template <delta_t N_zoom=0>
+	XTAL_FZ1_(aleph_t) puncture_z(aleph_t &target)
+	XTAL_0EX
+	{
+		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
+		alpha_t const x = puncture_z<N_zoom>(z[0]);
+		alpha_t const y = puncture_z<N_zoom>(z[1]);
+		return aleph_t {x, y};
+	}
 
 	///\returns the `target` with magnitude clamped to the region above `upsilon_y(N_zoom, zone)`. \
 
@@ -887,26 +880,7 @@ public:
 	XTAL_FZ2_(alpha_t) puncture_y(alpha_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		auto constexpr N_unit = N_zero^1;
-	#if XTAL_STD_IEEE == 754
-		auto const Z = unit::mask + (1 << N_zoom);
-		auto const N = zone << exponent::shift;
-		auto const M = N + Z*N_unit;
-		delta_t m, n, i;
-		auto  t  = _std::bit_cast<delta_t> (_std::move(target));
-		m   = t  & ~sign::mask;
-		m  -= M;
-		i   = m >>  positive::depth;
-		t  -= i  &  m;
-		return     _std::bit_cast<alpha_t> (_std::move(t));
-	#else
-		auto const t = N_zero? minimal_y(zone - 1): upsilon_y(N_zoom, zone);
-		auto const s = design_z(target);
-		auto const a = positive_y(t - target);
-		target += a;
-		target *= s;
-		return target;
-	#endif
+		(void) puncture_z<N_zoom, N_zero>(target, zone); return target;
 	}
 	///\returns the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
 
@@ -978,6 +952,10 @@ using  delta_t = typename realized::delta_t;//_std::ptrdiff_t;
 using  sigma_t = typename realized::sigma_t;//_std::size_t;
 using  alpha_t = typename realized::alpha_t;
 using  aleph_t = typename realized::aleph_t;
+
+XTAL_LET delta_1 = realized::delta_1;
+XTAL_LET sigma_1 = realized::sigma_1;
+XTAL_LET alpha_1 = realized::alpha_1;
 
 static_assert(is_q<XTAL_STD_SIZE, sigma_t>);
 static_assert(sizeof(XTAL_STD_SIZE) == sizeof(sigma_t));

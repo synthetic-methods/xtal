@@ -182,6 +182,7 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_F)) == trim_y(square_1*realized::maximal_y(N_zoom)));
 	REQUIRE(trim_y(realized::puncture_y<N_zoom>(square_0)) == trim_y(square_1*realized::minimal_y(N_zoom)));
 
+	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_F, 0)) == trim_y(circle_1*realized::dnsilon_y(N_zoom)));
 	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_2, 0)) == trim_y(circle_1*realized::dnsilon_y(N_zoom)));
 	REQUIRE(trim_y(realized::puncture_y<N_zoom>(square_H, 0)) == trim_y(circle_1*realized::upsilon_y(N_zoom)));
 
@@ -194,8 +195,8 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 		aleph_t z {};
 		for (sigma_t i = 192000/100; ~--i;)
 		{
-			auto x = realized::unit_y(mt19937_m); x = _std::pow(two, x);
-			auto y = realized::unit_y(mt19937_m); y = _std::pow(two, y);
+			auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
+			auto y = realized::mantissa_y(mt19937_m); y = _std::pow(two, y);
 			z *= realized::truncate_y<0>(realized::puncture_y<0>(aleph_t {x, y}), 0);
 		}
 		return z;
