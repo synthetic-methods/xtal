@@ -30,9 +30,6 @@ template <iterated_b  T > struct   iteratee<T> : _std:: true_type {using type = 
 template <iterator_b  T > struct   iteratee<T> : _std:: true_type {using type = _v3::ranges:: iter_reference_t<T>;};
 template <iterated_b  T > struct   iterator<T> : _std::false_type {using type = _v3::ranges::       iterator_t<T>;};
 
-
-template <typename ...Ts> concept uniterable_q =   false_p<iterable_b<Ts>...>;
-template <typename ...Ts> concept uniterated_q =   false_p<iterated_b<Ts>...>;
 template <typename ...Ts> concept   iterable_q = unfalse_p<iterable_b<Ts>...>;
 template <typename ...Ts> concept   iterated_q = unfalse_p<iterated_b<Ts>...>;
 template <typename ...Ts> concept   iterator_q = unfalse_p<iterator_b<Ts>...>;
@@ -97,13 +94,18 @@ struct isomorphic<Ys...>
 XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
 XTAL_0EX
 {
-//	TODO: Apparently both `category::sized` and `views::take` must be applied \
-	for `size` to be defined by `ranges::view_interface`, but maybe there's a better way? \
-
-	auto const z_size = z.size();
+	using namespace _v3::ranges;
+	using  Z = any_view<range_value_t<XTAL_TYP_(z)>, category::forward>;
+	return Z(XTAL_REF_(z));
+}
+XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
+XTAL_0EX
+requires
+requires {z.size();}
+{
 	using namespace _v3::ranges;
 	using  Z = any_view<range_value_t<XTAL_TYP_(z)>, category::forward|category::sized>;
-	return Z(XTAL_REF_(z))|_v3::views::take(z_size);
+	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
 }
 
 template <typename F>
@@ -122,7 +124,8 @@ struct iterate_map
 		XTAL_OP2() () &&
 		XTAL_0EX
 		{
-			return _v3::views::generate(_std::move(function_m));
+			return _v3::views::iota(0)|_v3::views::transform([g = _std::move(function_m)] (auto &&) XTAL_0FN_(g()));
+		//	return _v3::views::generate(_std::move(function_m));
 		}
 		XTAL_OP2() (XTAL_DEF x) &&
 		XTAL_0EX

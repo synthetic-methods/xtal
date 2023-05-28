@@ -13,7 +13,7 @@ namespace xtal::process::__any
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/process/any.hpp: lambda lifting")
+TEST_CASE("xtal/process/any.hpp: lifting")
 {
 	auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
 	REQUIRE(10 == f.template method<>(1, 2, 3, 4));

@@ -141,7 +141,7 @@ struct define
 				struct being
 				{
 					template <auto ...Ms>
-					struct resolve
+					struct reserve
 					{
 						template <sigma_t ...Ns>
 						XTAL_FZ2 method_f(seek_t<Ns...>)
@@ -155,7 +155,7 @@ struct define
 					};
 
 					template <auto ...Ms>
-					XTAL_LET method = resolve<Ms...>::method_m;
+					XTAL_LET method = reserve<Ms...>::method_m;
 				
 				};
 
@@ -314,7 +314,7 @@ struct define
 		Provides a queue for this message-type `T` on the target object. \
 		Messages `influx`ed with an integer prefix will be delayed by the given amount. \
 		\
-		NOTE: Only supports decorating `processor::targeted`. \
+		NOTE: Only supports decorating `processor::reserve`. \
 		\
 		TODO: Use deep introspection to automatically `interrupt` viable sources/targets. \
 		\

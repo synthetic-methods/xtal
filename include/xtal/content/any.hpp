@@ -33,11 +33,11 @@ struct define
 		///\
 		\returns `this` as a subtype of the derived-type `T`. \
 
-		XTAL_FN2 self() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
-		XTAL_FN2 self() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
+		XTAL_FN2_(T const &) self() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
+		XTAL_FN2_(T       &) self() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
 		
-		XTAL_FN2 twin() XTAL_0FX_(&) {auto t = self(); return t;}
-		XTAL_FN2 twin() XTAL_0EX_(&) {auto t = self(); return t;}
+		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
+		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
 
 		///\
 		\returns `true`. \
@@ -146,8 +146,9 @@ struct defer
 		requires (0 == N_index)
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
+		requires (not debased_q<U>)
 		{
-			U u = head(); body_m = member_f(XTAL_REF_(o), XTAL_REF_(oo)...);
+			U u(XTAL_REF_(o), XTAL_REF_(oo)...); _std::swap(body_m, u);
 			return u;
 		}
 
@@ -259,110 +260,207 @@ struct defer
 	};
 };
 ////////////////////////////////////////////////////////////////////////////////
+namespace _retail
+{
+	template <typename U>
+	struct comparators
+	:	common::compose<>
+	{
+	};
+	template <typename U>
+	requires comparators_b<U>
+	struct comparators<U>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+		//	XTAL_OP2        <=>  (subtype const &t) XTAL_0FX {return   head() <=> t.head();}
+			XTAL_OP2_(bool) ==   (subtype const &t) XTAL_0FX {return   head() ==  t.head();}
+			XTAL_OP2_(bool) <=   (subtype const &t) XTAL_0FX {return   head() <=  t.head();}
+			XTAL_OP2_(bool) >=   (subtype const &t) XTAL_0FX {return   head() >=  t.head();}
+			XTAL_OP2_(bool) <    (subtype const &t) XTAL_0FX {return   head() <   t.head();}
+			XTAL_OP2_(bool) >    (subtype const &t) XTAL_0FX {return   head() >   t.head();}
+
+		};
+	};
+
+	template <typename U, iota_t N_arity=0>
+	struct bit_operators
+	:	common::compose<>
+	{
+	};
+	template <typename U>
+	struct bit_operators<U, 0>
+	:	common::compose<bit_operators<U, 1>, bit_operators<U, 2>>
+	{
+	};
+	template <typename U>
+	requires bit_operators_b<U, 1>
+	struct bit_operators  <U, 1>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+			XTAL_OP1>>=(XTAL_DEF           i) XTAL_0EX {return   body_m>>= (XTAL_REF_(i)), self();}
+			XTAL_OP1<<=(XTAL_DEF           i) XTAL_0EX {return   body_m<<= (XTAL_REF_(i)), self();}
+			XTAL_OP1 %=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m %=U(XTAL_REF_(w)), self();}
+			XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m &=U(XTAL_REF_(w)), self();}
+			XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m |=U(XTAL_REF_(w)), self();}
+			XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m ^=U(XTAL_REF_(w)), self();}
+			XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m +=U(XTAL_REF_(w)), self();}
+			XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m -=U(XTAL_REF_(w)), self();}
+
+			XTAL_OP1 ++(int)                  XTAL_0EX {auto r = self(); ++body_m; return r;}
+			XTAL_OP1 --(int)                  XTAL_0EX {auto r = self(); --body_m; return r;}
+			XTAL_OP1 ++()                     XTAL_0EX {auto&s = self(); ++body_m; return s;}
+			XTAL_OP1 --()                     XTAL_0EX {auto&s = self(); --body_m; return s;}
+
+		};
+	};
+	template <typename U>
+	requires bit_operators_b<U, 2>
+	struct bit_operators  <U, 2>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+			XTAL_OP2>> (XTAL_DEF           i) XTAL_0FX {return T(body_m>>  (XTAL_REF_(i)));}
+			XTAL_OP2<< (XTAL_DEF           i) XTAL_0FX {return T(body_m<<  (XTAL_REF_(i)));}
+			XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m % U(XTAL_REF_(w)));}
+			XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m & U(XTAL_REF_(w)));}
+			XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m | U(XTAL_REF_(w)));}
+			XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m ^ U(XTAL_REF_(w)));}
+			XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m + U(XTAL_REF_(w)));}
+			XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m - U(XTAL_REF_(w)));}
+
+			XTAL_OP2 ~ ()                     XTAL_0FX {return T(~body_m);}
+			XTAL_OP2 - ()                     XTAL_0FX {return T(-body_m);}
+
+		};
+	};
+
+	template <typename U, iota_t N_arity=0>
+	struct field_operators
+	:	common::compose<>
+	{
+	};
+	template <typename U>
+	struct field_operators<U, 0>
+	:	common::compose<field_operators<U, 1>, field_operators<U, 2>>
+	{
+	};
+	template <typename U>
+	requires field_operators_b<U, 1>
+	struct field_operators  <U, 1>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+			XTAL_OP1_(T&) *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m *=U(XTAL_REF_(w)), self();}
+			XTAL_OP1_(T&) /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m /=U(XTAL_REF_(w)), self();}
+			XTAL_OP1_(T&) +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m +=U(XTAL_REF_(w)), self();}
+			XTAL_OP1_(T&) -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m -=U(XTAL_REF_(w)), self();}
+
+		};
+	};
+	template <typename U>
+	requires field_operators_b<U, 2>
+	struct field_operators  <U, 2>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+			XTAL_OP2_(T ) * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m * U(XTAL_REF_(w)));}
+			XTAL_OP2_(T ) / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m / U(XTAL_REF_(w)));}
+			XTAL_OP2_(T ) + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m + U(XTAL_REF_(w)));}
+			XTAL_OP2_(T ) - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m - U(XTAL_REF_(w)));}
+
+		};
+	};
+
+	template <typename U>
+	struct range_operators
+	:	common::compose<>
+	{
+	};
+	template <typename U>
+	requires iterated_q<U>
+	struct range_operators<U>
+	{
+		template <any_q S>
+		class subtype: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+			using co::self;
+			using co::head;
+			using co::body_m;
+
+			XTAL_FN2 begin() XTAL_0EX requires requires (U       &u) {u.begin();} {return head().begin();}
+			XTAL_FN2 begin() XTAL_0FX requires requires (U const &u) {u.begin();} {return head().begin();}
+			XTAL_FN2   end() XTAL_0EX requires requires (U       &u) {u.  end();} {return head().  end();}
+			XTAL_FN2   end() XTAL_0FX requires requires (U const &u) {u.  end();} {return head().  end();}
+
+		};
+		template <any_q S>
+		requires iterated_q<S> or iterable_q<S>
+		class subtype<S>: public S
+		{
+			using co = S; using T = subtype<S>;//typename co::self_t;
+		public:
+			using co::co;
+
+		};
+	};
+}
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
 struct refer
+:	common::compose<any<>
+	,	_retail::     comparators<U>
+	,	_retail::   bit_operators<U>
+	,	_retail:: field_operators<U>
+	,	_retail:: range_operators<U>
+	>
 {
-	template <any_q S>
-	class subtype: public S
-	{
-		using co = S; using T = subtype<S>;//typename co::self_t;
-	public:
-		using co::co;
-
-	};
-	template <any_q S>
-	requires field_operators_q<U>
-	class subtype<S>: public S
-	{
-		using co = S; using T = subtype<S>;//typename co::self_t;
-	public:
-		using co::co;
-		using co::self;
-		using co::head;
-		using co::body_m;
-
-	//	XTAL_OP2        <=>       (subtype const &t) XTAL_0FX {return   head() <=> t.head();}
-		XTAL_OP2_(bool) ==        (subtype const &t) XTAL_0FX {return   head() ==  t.head();}
-		XTAL_OP2_(bool) <=        (subtype const &t) XTAL_0FX {return   head() <=  t.head();}
-		XTAL_OP2_(bool) >=        (subtype const &t) XTAL_0FX {return   head() >=  t.head();}
-		XTAL_OP2_(bool) <         (subtype const &t) XTAL_0FX {return   head() <   t.head();}
-		XTAL_OP2_(bool) >         (subtype const &t) XTAL_0FX {return   head() >   t.head();}
-
-		XTAL_OP2_(T ) * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m * U(XTAL_REF_(w)));}
-		XTAL_OP2_(T ) / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m / U(XTAL_REF_(w)));}
-		XTAL_OP2_(T ) % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m % U(XTAL_REF_(w)));}
-		XTAL_OP2_(T ) + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m + U(XTAL_REF_(w)));}
-		XTAL_OP2_(T ) - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m - U(XTAL_REF_(w)));}
-
-		XTAL_OP1_(T&) *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m *=U(XTAL_REF_(w)), self();}
-		XTAL_OP1_(T&) /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m /=U(XTAL_REF_(w)), self();}
-		XTAL_OP1_(T&) %=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m %=U(XTAL_REF_(w)), self();}
-		XTAL_OP1_(T&) +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1_(T&) -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m -=U(XTAL_REF_(w)), self();}
-		
-	};
-	template <any_q S>
-	requires bit_operators_q<U>
-	class subtype<S>: public S
-	{
-		using co = S; using T = subtype<S>;//typename co::self_t;
-	public:
-		using co::co;
-		using co::self;
-		using co::head;
-		using co::body_m;
-
-	//	XTAL_OP2        <=>  (subtype const &t) XTAL_0FX {return   head() <=> t.head();}
-		XTAL_OP2_(bool) ==   (subtype const &t) XTAL_0FX {return   head() ==  t.head();}
-		XTAL_OP2_(bool) <=   (subtype const &t) XTAL_0FX {return   head() <=  t.head();}
-		XTAL_OP2_(bool) >=   (subtype const &t) XTAL_0FX {return   head() >=  t.head();}
-		XTAL_OP2_(bool) <    (subtype const &t) XTAL_0FX {return   head() <   t.head();}
-		XTAL_OP2_(bool) >    (subtype const &t) XTAL_0FX {return   head() >   t.head();}
-
-		XTAL_OP2>> (XTAL_DEF           i) XTAL_0FX {return T(body_m>>  (XTAL_REF_(i)));}
-		XTAL_OP2<< (XTAL_DEF           i) XTAL_0FX {return T(body_m<<  (XTAL_REF_(i)));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m & U(XTAL_REF_(w)));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m | U(XTAL_REF_(w)));}
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m ^ U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(body_m - U(XTAL_REF_(w)));}
-
-		XTAL_OP1>>=(XTAL_DEF           i) XTAL_0EX {return   body_m>>= (XTAL_REF_(i)), self();}
-		XTAL_OP1<<=(XTAL_DEF           i) XTAL_0EX {return   body_m<<= (XTAL_REF_(i)), self();}
-		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m &=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m |=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m ^=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return   body_m -=U(XTAL_REF_(w)), self();}
-		
-		XTAL_OP1 ++(int)                  XTAL_0EX {auto r = self(); ++body_m; return r;}
-		XTAL_OP1 --(int)                  XTAL_0EX {auto r = self(); --body_m; return r;}
-		XTAL_OP1 ++()                     XTAL_0EX {auto&s = self(); ++body_m; return s;}
-		XTAL_OP1 --()                     XTAL_0EX {auto&s = self(); --body_m; return s;}
-
-		XTAL_OP2 ~ ()                     XTAL_0FX {return T(~body_m);}
-		XTAL_OP2 - ()                     XTAL_0FX {return T(-body_m);}
-
-	};
-	template <any_q S>
-	requires (iterated_q<U> and uniterated_q<S> and uniterable_q<S>)
-	class subtype<S>: public S
-	{
-		using co = S; using T = subtype<S>;//typename co::self_t;
-	public:
-		using co::co;
-		using co::self;
-		using co::head;
-
-		XTAL_FN2 begin() XTAL_0EX requires requires (U       &u) {u.begin();} {return head().begin();}
-		XTAL_FN2 begin() XTAL_0FX requires requires (U const &u) {u.begin();} {return head().begin();}
-		XTAL_FN2   end() XTAL_0EX requires requires (U       &u) {u.  end();} {return head().  end();}
-		XTAL_FN2   end() XTAL_0FX requires requires (U const &u) {u.  end();} {return head().  end();}
-
-	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

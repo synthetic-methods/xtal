@@ -1,16 +1,36 @@
 #pragma once
-#include "./targeted.hpp"
-#include "../message/numinal.hpp"
+#include "./all.hpp"
+#include "../message/all.hpp"
 
 
 
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::processor::__targeted
+namespace xtal::processor::__reserve
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TEST_CASE("xtal/processor/reserve.hpp: lifting")
+{
+	sigma_t constexpr N_size = 5;
+	using scalar_t = common::buffer_scalar_t<N_size, alpha_t>;
+	auto f = process::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto g = processor::reserve_f(f);
+//	auto g = processor::reserve_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto const x = scalar_t { 0,  1,  2,  3,  4};
+	auto const y = scalar_t {00, 10, 20, 30, 40};
+	auto       z = scalar_t {00, 11, 22, 33, 44};
+	auto       a = scalar_t {00, 00, 00, 00, 00};
+	auto       b = g.bond(x, y);
+	g <<= message::resize_t<>(N_size);
+	g >>= message::serial_t<>(N_size);
+	_v3::ranges::copy(b, a.begin());
+	REQUIRE(a == z);
+}
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename mix_t>
@@ -30,7 +50,7 @@ void respan_external__test()
 
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
-	auto  xhs = processor::targeted_t<mix_t, buffer>::bind_f(lhs, rhs);
+	auto  xhs = processor::reserve_t<mix_t, buffer>::bind_f(lhs, rhs);
 
 	auto vector_m = vector_t {0, 0, 0};
 	auto respan_m = respan_t(vector_m);
@@ -47,7 +67,7 @@ void respan_external__test()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/processor/targeted.hpp: respan external")
+TEST_CASE("xtal/processor/reserve.hpp: respan external")
 {
 	respan_external__test<dynamic_bias_mix_t>();
 	respan_external__test<static_bias_mix_t>();
@@ -68,7 +88,7 @@ void respan_internal__test()
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 	
-	using XHS = processor::targeted_t<mix_t>;
+	using XHS = processor::reserve_t<mix_t>;
 	auto  xhs = XHS::bind_f(lhs, rhs);
 	auto  seq = serial_n(3);
 
@@ -84,7 +104,7 @@ void respan_internal__test()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/processor/targeted.hpp: respan internal")
+TEST_CASE("xtal/processor/reserve.hpp: respan internal")
 {
 	respan_internal__test<dynamic_bias_mix_t>();
 	respan_internal__test<static_bias_mix_t>();
@@ -105,7 +125,7 @@ void respan_internal_interrupt__test()
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 	
-	using XHS = processor::targeted_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
+	using XHS = processor::reserve_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
 	auto  xhs = XHS::bind_f(lhs, rhs);
 	auto  seq = serial_n(4);
 
@@ -126,7 +146,7 @@ void respan_internal_interrupt__test()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/processor/targeted.hpp: respan internal interrupt")
+TEST_CASE("xtal/processor/reserve.hpp: respan internal interrupt")
 {
 	respan_internal_interrupt__test<dynamic_bias_mix_t>();
 	respan_internal_interrupt__test<static_bias_mix_t>();
@@ -144,8 +164,8 @@ void respan_internal_chain_rvalue__test()
 	auto  _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto  _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using XHS = processor::targeted_t<mix_t>;//, common::buffer<(1<<5)>
-	using YHS = processor::targeted_t<dynamic_term_t>;
+	using XHS = processor::reserve_t<mix_t>;//, common::buffer<(1<<5)>
+	using YHS = processor::reserve_t<dynamic_term_t>;
 
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
@@ -169,7 +189,7 @@ void respan_internal_chain_rvalue__test()
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/processor/targeted.hpp: respan internal chain rvalue")
+TEST_CASE("xtal/processor/reserve.hpp: respan internal chain rvalue")
 {
 	respan_internal_chain_rvalue__test<dynamic_bias_mix_t>();
 	respan_internal_chain_rvalue__test<static_bias_mix_t>();
@@ -187,8 +207,8 @@ void respan_internal_chain_lvalue__test()
 	auto  _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto  _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using XHS = processor::targeted_t<mix_t>;//, common::buffer<(1<<5)>
-	using YHS = processor::targeted_t<dynamic_term_t>;
+	using XHS = processor::reserve_t<mix_t>;//, common::buffer<(1<<5)>
+	using YHS = processor::reserve_t<dynamic_term_t>;
 
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
@@ -206,16 +226,47 @@ void respan_internal_chain_lvalue__test()
 	xhs <<= bias_t((alpha_t) 0);
 
 //	if constexpr (is_q<message::serial_t<counted_t<>>, serial_t>)
-	yhs >>= seq  ;// idempotent (at least in RELEASE)!
+	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >>= seq++;// REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/processor/targeted.hpp: respan internal chain lvalue")
+TEST_CASE("xtal/processor/reserve.hpp: respan internal chain lvalue")
 {
 	respan_internal_chain_lvalue__test<dynamic_bias_mix_t>();
 	respan_internal_chain_lvalue__test<static_bias_mix_t>();
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+TEST_CASE("xtal/processor/reserve.hpp: respan internal chain lvalue shared")
+{
+	using restep_u = message::restep_t<>;
+	using resize_t = message::resize_t<>;
+	using serial_t = message::serial_t<>;
+
+	using counter_y = processor:: resolve_t<dynamic_count_t>;
+	using mixer_y   = processor:: resolve_t<dynamic_bias_mix_t>;
+	using mixer_x   = processor::reserve_t<dynamic_bias_mix_t>;
+	
+	auto  _xx = counter_y::bind_f();
+	auto  _01 = _v3::views::iota(0, 10)|_v3::views::transform(construct_f<alpha_t>);
+	auto  _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
+	auto  _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
+
+	auto xhs = mixer_x::bind_f(_xx);
+	auto lhs = mixer_y::bind_f(xhs, _01);
+	auto rhs = mixer_y::bind_f(xhs, _10);
+	auto yhs = mixer_y::bind_f(lhs, rhs);
+
+	yhs <<= restep_u(50);
+	yhs <<= resize_t(4);
+
+	yhs >>= serial_t(4)*0; REQUIRE(_v3::ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= serial_t(4)*1; REQUIRE(_v3::ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
+
+//	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

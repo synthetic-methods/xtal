@@ -38,7 +38,7 @@ struct define
 		template <typename ...Xs>
 		struct bind
 		{
-			using signature = common::bundle<Xs...>;
+			using signature = common::bundle<let_t<Xs>...>;
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 
@@ -68,7 +68,12 @@ struct define
 
 				XTAL_NEW subtype(Xs &&...xs)
 				XTAL_0EX
-				:	co(signature::make(XTAL_FWD_(Xs) (xs)...))
+				:	co(signature::make(XTAL_FWD_(Xs) (xs)...), T())
+				{
+				}
+				XTAL_NEW subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
+				XTAL_0EX
+				:	co(signature::make(XTAL_FWD_(Xs) (xs)...), XTAL_REF_(t))
 				{
 				}
 
@@ -147,7 +152,7 @@ struct define
 				XTAL_0EX
 				{
 					return apply([&] (XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) |...));
+						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) |...| -1));
 				}
 				///\
 				Forwards the message *tail* to `arguments`, bypassing `self`. \
@@ -172,14 +177,14 @@ struct define
 			
 			public:
 				///\
-				\returns the aggregated result of `efflux_pull` and `efflux_node`, \
+				\returns the aggregated result of `efflux_pull` and `efflux_this`, \
 				evaluating the latter only if the former `!= 0`. \
 
 				XTAL_FN2_(flux_t) efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					flux_t const _ = self().efflux_pull(oo...);
-					return !_?0: _ & self().efflux_node(XTAL_REF_(oo)...);
+					return !_?0: _ & self().efflux_this(XTAL_REF_(oo)...);
 				}
 				///\
 				\note When prefixed by `null_t()`, \
@@ -194,7 +199,7 @@ struct define
 				///\
 				Forwards the message to `self`, bypassing `arguments`. \
 
-				XTAL_FN2_(flux_t) efflux_node(XTAL_DEF ...oo)
+				XTAL_FN2_(flux_t) efflux_this(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return co::efflux(XTAL_REF_(oo)...);
@@ -206,7 +211,7 @@ struct define
 				XTAL_0EX
 				{
 					return apply([&] (XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) |...));
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) |...| -1));
 				}
 				///\
 				Forwards the message *head* to `arguments`, bypassing `self`. \
@@ -247,6 +252,7 @@ struct refine
 		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
+		using co::self;
 
 		template <typename ...Xs>
 		struct bind
@@ -261,6 +267,11 @@ struct refine
 		using     bind_t = typename bind<Xs...>::template subtype<S>;
 		XTAL_LET  bind_f = [] (XTAL_DEF ...xs)
 		XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
+
+		XTAL_FN2 bond(XTAL_DEF ...xs)
+		{
+			return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);
+		}
 
 	};
 };
@@ -320,6 +331,7 @@ struct defer<U>
 	};
 };
 template <iterated_q U>
+requires (not any_q<U>)
 struct defer<U>
 {
 	using serial_n = message::serial_t<counted_t<>>;
@@ -344,9 +356,17 @@ struct defer<U>
 		{
 			auto const &v = co::template method<>();
 			auto const &m = co::template get<serial_n>();
-			auto const &i = iota_t(m.front());
-			auto const &j = iota_t(m.size()) + i;
-			return -1 == v.size()? v:v|_v3::views::slice(i, j);
+			iota_t const m_front = m.front();
+			iota_t const m_size  = m.size();
+			iota_t const v_size  = v.size();
+			bool   const v_sized = v.size() != -1;
+			bool   const o_sized = v.size() == -1;
+			iota_t i = m_front;
+			iota_t j = m_size + i;
+			i *= v_sized;
+			j *= v_sized;
+			j += o_sized*v_size;
+			return v|_v3::views::slice(i, j);
 		}
 
 		XTAL_FN2 begin()
@@ -363,29 +383,6 @@ struct defer<U>
 
 	};
 };
-template <bit_or_field_operators_q V>
-struct defer<V>
-{
-	using subkind = _detail::defer<repeated_t<V>>;
-
-	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
-	{
-		using co = common::compose_s<S, subkind>;
-	public:
-	//	using co::co;
-
-		XTAL_CO4_(subtype);
-		XTAL_CO2_(subtype);
-
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(to_q<V>) v)
-		XTAL_0EX
-		:	co(repeated_t<V>(XTAL_REF_(v)))
-		{
-		}
-
-	};
-};
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
@@ -394,15 +391,6 @@ template <typename U>
 struct refer
 {
 	using subkind = _detail::refer<U>;
-
-	template <any_q S>
-	using subtype = common::compose_s<S, subkind>;
-
-};
-template <bit_or_field_operators_q V>
-struct refer<V>
-{
-	using subkind = _detail::refer<repeated_t<V>>;
 
 	template <any_q S>
 	using subtype = common::compose_s<S, subkind>;

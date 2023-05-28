@@ -46,7 +46,7 @@ this `method` is aliased as the invocation `operator()`.
 	mix_t mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::targeted` or `processor::sourced`,
+Range-lifting is achieved using functors like `processor::reserve` or `processor::resolve`,
 allowing `method` and `operator` to `zip` the underlying function across `ranges`.
 (In future, the (im)purity of a function will determine the `std::execution_policy`, once supported by the relevant `ranges` library.)
 
@@ -114,12 +114,12 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 	auto resize = resize_t(1024);
 	auto serial = serial_t(1024);
 
-	using mixer_t = processor::targeted_t<mix_t>;
+	using mixer_t = processor::resolve_t<mix_t>;
 	auto sixer = mixer_t::bind_f(one, two, three);
 
 	//	initialization
 	{
-		// allocate all `targeted`d `processor`s reachable from `sixer`
+		// allocate all `reserve`d `processor`s reachable from `sixer`
 		sixer <<= resize;
 	}
 	
@@ -159,7 +159,7 @@ The transition to `C++23` ranges is limited by the lack of general support for t
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
 The files `**/all.hpp` export all definitions at a given level.
-At the leaves, this includes fundamental types like `any` and specializations like `targeted`, `sourced`, etc.
+At the leaves, this includes fundamental types like `any` and specializations like `reserve`, `resolve`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types.
 At the leaves, this includes decorators like `define`, `defer`, etc.

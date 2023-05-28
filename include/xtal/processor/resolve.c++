@@ -1,18 +1,38 @@
 #pragma once
-#include "./sourced.hpp"
-#include "../message/numinal.hpp"
+#include "./all.hpp"
+#include "../message/all.hpp"
 
 
 
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::processor::__sourced
+namespace xtal::processor::__resolve
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
+TEST_CASE("xtal/processor/resolve.hpp: lifting")
+{
+	sigma_t constexpr N_size = 5;
+	using scalar_t = common::buffer_scalar_t<N_size, alpha_t>;
+	auto f = process::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto g = processor::resolve_f(f);
+//	auto g = processor::resolve_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto const x = scalar_t { 0,  1,  2,  3,  4};
+	auto const y = scalar_t {00, 10, 20, 30, 40};
+	auto       z = scalar_t {00, 11, 22, 33, 44};
+	auto       a = scalar_t {00, 00, 00, 00, 00};
+	auto       b = g.bond(x, y);
+	g <<= message::resize_t<>(N_size);
+	g >>= message::serial_t<>(N_size);
+	_v3::ranges::copy(b, a.begin());
+	REQUIRE(a == z);
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 template <typename mix_t>
 void respan_virtual__test()
 {
@@ -25,7 +45,7 @@ void respan_virtual__test()
 	auto  lhs = processor::let_f(_01); REQUIRE(id_y(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(id_y(rhs.head(), processor::let_f(rhs).head()));
 	
-	using XHS = processor::sourced_t<mix_t>;
+	using XHS = processor::resolve_t<mix_t>;
 	auto  xhs = XHS::bind_f(lhs, rhs);
 
 	auto walk = serial_n(3); REQUIRE(0 == xhs.size());//                               // uninitialized...
@@ -51,15 +71,15 @@ void respan_virtual__test()
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	REQUIRE(_v3::ranges::equal(xhs, yhs));
-	REQUIRE(true);
+	
 }
 
-TEST_CASE("xtal/processor/sourced.hpp: respan virtual")
+TEST_CASE("xtal/processor/resolve.hpp: respan virtual")
 {
 	respan_virtual__test<dynamic_bias_mix_t>();
 	respan_virtual__test<static_bias_mix_t>();
 }
-
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

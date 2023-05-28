@@ -12,7 +12,7 @@ namespace xtal::common::__buffer
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
 TEST_CASE("xtal/common/buffer.hpp: series initialization")
 {
 	sigma_t constexpr N = 1 << 3;
@@ -30,7 +30,7 @@ TEST_CASE("xtal/common/buffer.hpp: series initialization")
 	REQUIRE(foo == bar);
 
 }
-
+/***/
 TEST_CASE("xtal/common/buffer.hpp: series transformation")
 {
 	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));

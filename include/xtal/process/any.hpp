@@ -97,7 +97,7 @@ struct define
 			using argument_t = typename argument<X>::type;
 
 			template <auto ...Ms>
-			struct resolve
+			struct solve
 			{
 				using return_t = decltype(XTAL_VAL_(T&).template method<Ms...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (argument_t<Xs>...);
@@ -106,7 +106,7 @@ struct define
 			template <auto ...Ms>
 			requires
 			requires (T const t) {t.template method<Ms...>(XTAL_VAL_(Xs)...);}
-			struct resolve<Ms...>
+			struct solve<Ms...>
 			{
 				using return_t = decltype(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (argument_t<Xs>...) const;
@@ -114,7 +114,7 @@ struct define
 			};
 			
 			template <auto ...Ms>
-			using method_t = typename resolve<Ms...>::method_t;
+			using method_t = typename solve<Ms...>::method_t;
 
 			template <auto ...Ms>
 			XTAL_FZ1_(method_t<Ms...>) method = &T::template method<Ms...>;

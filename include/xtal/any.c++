@@ -2,7 +2,7 @@
 #include "./any.hpp"
 #include "./process/any.hpp"
 #include "./message/numinal.hpp"
-
+#include "./message/restep.hpp"
 
 #include <catch2/catch_all.hpp>
 
@@ -49,6 +49,33 @@ struct dynamic_term_t
 		return XTAL_REF_(x)*this->template get<coefficient_t>();
 	}
 };
+struct dynamic_count
+{
+	using restep_u = message::restep_t<iota_t>;
+
+	template <typename T>
+	using homotype = process::confine_t<T
+	,	restep_u::attach
+	>;
+
+	struct type: public homotype<type>
+	{
+		iota_t count = 0;
+
+		using co = homotype<type>;
+	public:
+		using co::co;
+
+		template <auto...>
+		XTAL_FN2 method()
+		{
+			iota_t o = count; count += this->template get<restep_u>();
+			return o;
+		}
+
+	};
+};
+using dynamic_count_t = type_t<dynamic_count>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

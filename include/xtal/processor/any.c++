@@ -1,7 +1,8 @@
 #pragma once
 #include "./any.hpp"
-#include "./sourced.hpp"
-#include "../message/numinal.hpp"
+#include "./reserve.hpp"
+#include "./resolve.hpp"
+//#include "../message/all.hpp"
 
 
 #include "../any.c++"
@@ -12,24 +13,34 @@ namespace xtal::processor::__any
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("xtal/processor/any.hpp: lambda lifting")
+/**/
+TEST_CASE("xtal/processor/any.hpp: letting")
 {
-	auto f = process::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
-	auto g = processor::sourced_f(f);
-//	auto g = processor::sourced_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
-	auto       w = _std::vector { 0,  0,  0,  0,  0};
-	auto const x = _std::vector { 0,  1,  2,  3,  4};
-	auto const y = _std::vector {00, 10, 20, 30, 40};
-	auto       z = g(x, y);
-	_v3::ranges::copy(z, w.begin());
-	REQUIRE(w[0] == 00);
-	REQUIRE(w[1] == 11);
-	REQUIRE(w[2] == 22);
-	REQUIRE(w[3] == 33);
-	REQUIRE(w[4] == 44);
+	sigma_t constexpr N_size = 5;
+	using scalar_t = common::buffer_scalar_t<N_size, int>;
+	auto z = scalar_t {00, 11, 22, 33, 44};
+	auto a = processor::let_f(z);
+	REQUIRE(true);
 }
-
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+TEST_CASE("xtal/processor/any.hpp: lifting")
+{
+	sigma_t constexpr N_size = 5;
+	using scalar_t = common::buffer_scalar_t<N_size, alpha_t>;
+	auto f = process::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto g = processor::resolve_f(f);
+//	auto g = processor::resolve_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+	auto const x = scalar_t { 0,  1,  2,  3,  4};
+	auto const y = scalar_t {00, 10, 20, 30, 40};
+	auto       z = scalar_t {00, 11, 22, 33, 44};
+	auto       a = scalar_t {00, 00, 00, 00, 00};
+	auto       b = g(x, y);
+	_v3::ranges::copy(b, a.begin());
+	REQUIRE(a == z);
+}
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename mix_t>
