@@ -13,6 +13,9 @@ namespace xtal
 
 ////////////////////////////////////////////////////////////////////////////////
 
+using null_t = XTAL_STD_NULL;
+using size_t = XTAL_STD_SIZE;
+
 template <auto     ...Ns > concept       true_p =     (bool(Ns)  or...);///< Any `Ns... == 1`.
 template <auto     ...Ns > concept      false_p = not (bool(Ns) and...);///< Any `Ns... == 0`.
 template <auto     ...Ns > concept     untrue_p = not (bool(Ns)  or...);///< All `Ns... == 0`.
@@ -22,9 +25,8 @@ template <typename    T  > using         type_t = typename _std::remove_referenc
 template <typename    T  > using        value_t = typename _std::remove_reference_t<T>::value_type;
 template <typename    T  > concept      value_b = requires {typename value_t<T>;};
 template <typename ...Ts > concept      value_q = unfalse_p<value_b<Ts>...>;
-template <typename    T  > XTAL_LET     value_v =          _std::remove_reference_t<T>::value;
+template <typename    T  > XTAL_LET     value_v = _std::remove_reference_t<T>::value;
 
-                           using         null_t = _std::nullptr_t;
 template <typename    X  > using      bracket_t = _std::initializer_list<X>;
 template <typename    T  > concept    pointer_b = _std::is_pointer_v<_std::decay_t<T>>;
 template <typename ...Ts > concept    pointer_q = unfalse_p<pointer_b<Ts>...>;
@@ -60,6 +62,14 @@ template <unbased_b   T  > struct     debased<T       &>: _std:: true_type {usin
 template <typename    T  > using      debased_t =    type_t<debased<T>>;
 template <typename    T  > concept    debased_b =   value_v<debased<T>>;
 template <typename ...Ts > concept    debased_q = unfalse_p<debased_b<Ts>...>;
+
+template <typename T, auto N=0>
+concept integral_q = requires
+{
+	requires (0 == N) or _std::         integral<based_t<T>>;
+	requires (0 <= N) or _std::  signed_integral<based_t<T>>;
+	requires (N <= 0) or _std::unsigned_integral<based_t<T>>;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -108,8 +118,8 @@ template <typename T, template <typename...> typename T_>
 concept tag_q = of_q<T, tag_t<T_>>;
 
 
-template <XTAL_STD_SIZE ...Ns > using    seek_t  = _std::     index_sequence<Ns...>;
-template <XTAL_STD_SIZE    N  > XTAL_LET seek_v  = _std::make_index_sequence<N>{};
+template <size_t ...Ns > using    seek_t  = _std::     index_sequence<Ns...>;
+template <size_t    N  > XTAL_LET seek_v  = _std::make_index_sequence<N>{};
 template <auto N=0>
 XTAL_FZ1 seek_f(auto f)
 XTAL_0EX
@@ -125,17 +135,17 @@ XTAL_0EX
 		XTAL_0FN_(XTAL_REF_(w), ..., f(Ns)) (seek_v<N>);
 }
 
-template <XTAL_STD_SIZE I, bool ...Ns> struct   truth_seeker;
-template <XTAL_STD_SIZE I, bool ...Ns> struct   truth_seeker<I,  true, Ns...>: constant<I> {};
-template <XTAL_STD_SIZE I, bool ...Ns> struct   truth_seeker<I, false, Ns...>: truth_seeker<I + 1, Ns...> {};
-template <                 bool ...Ns> using    truth_index_t  = truth_seeker<0, Ns..., true>;
-template <                 bool ...Ns> XTAL_LET truth_index_v  = value_v<truth_index_t<Ns...>>;
+template <size_t I, bool ...Ns> struct   truth_seeker;
+template <size_t I, bool ...Ns> struct   truth_seeker<I,  true, Ns...>: constant<I> {};
+template <size_t I, bool ...Ns> struct   truth_seeker<I, false, Ns...>: truth_seeker<I + 1, Ns...> {};
+template <          bool ...Ns> using    truth_index_t  = truth_seeker<0, Ns..., true>;
+template <          bool ...Ns> XTAL_LET truth_index_v  = value_v<truth_index_t<Ns...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename T, XTAL_STD_SIZE N_arity=0>
+template <typename T, size_t N_arity=0>
 concept bit_operators_b = _std::integral<T> or requires (T t, T u)
 {
 	requires N_arity == 1 or
@@ -164,7 +174,7 @@ concept bit_operators_b = _std::integral<T> or requires (T t, T u)
 	};
 };
 
-template <typename T, XTAL_STD_SIZE N_arity=0>
+template <typename T, size_t N_arity=0>
 concept field_operators_b = _std::floating_point<T> or not bit_operators_b<T, N_arity> and requires (T t, T u)
 {
 	requires N_arity == 1 or
@@ -204,9 +214,30 @@ concept complex_q = unfalse_p<complex_b<Ts>...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-///\\returns the number of bits set in `o`. \
+template <typename T>
+XTAL_LET byte_depth_v = sizeof(based_t<T>);
 
-template <_std::unsigned_integral U>
+template <typename T>
+XTAL_FZ2 byte_depth_y(T &&t)
+XTAL_0EX
+{
+	return byte_depth_v<T>;
+}
+
+template <typename T>
+XTAL_LET bit_depth_v = byte_depth_v<T> << 3;
+
+template <typename T>
+XTAL_FZ2 bit_depth_y(T &&t)
+XTAL_0EX
+{
+	return bit_depth_v<T>;
+}
+
+
+///\\returns the number of bits set in `uo`. \
+
+template <integral_q<+1> U>
 XTAL_FZ2 bit_count_y(U u)
 XTAL_0EX
 {
@@ -218,7 +249,7 @@ XTAL_0EX
 	}
 	return n;
 }
-template <_std::signed_integral V>
+template <integral_q<-1> V>
 XTAL_FZ2 bit_count_y(V const &v)
 XTAL_0EX
 {
@@ -235,7 +266,7 @@ XTAL_LET bit_count_v = bit_count_y(N_value);
 static_assert(bit_count_y(0b10110100) == 4);
 
 
-template <_std::unsigned_integral U>
+template <integral_q<+1> U>
 XTAL_FZ2_(U) bit_floor_y(U u)
 XTAL_0EX
 {
@@ -246,7 +277,7 @@ XTAL_0EX
 	}
 	return n;
 }
-template <_std::signed_integral V>
+template <integral_q<-1> V>
 XTAL_FZ2_(V) bit_floor_y(V v)
 XTAL_0EX
 {
@@ -256,11 +287,11 @@ XTAL_0EX
 	V const y_abs = bit_floor_y((U) v_abs);
 	return  y_abs*v_sgn;
 }
-template <XTAL_STD_SIZE N, XTAL_STD_SIZE M=0>
+template <size_t N, size_t M=0>
 concept bit_floor_q = N == 1 << (bit_floor_y(N >> M) + M);
 
 
-template <_std::unsigned_integral U>
+template <integral_q<+1> U>
 XTAL_FZ2_(U) bit_ceiling_y(U const &u)
 XTAL_0EX
 {
@@ -268,7 +299,7 @@ XTAL_0EX
 	n += 1 << n != u;
 	return n;
 }
-template <_std::signed_integral V>
+template <integral_q<-1> V>
 XTAL_FZ2_(V) bit_ceiling_y(V v)
 XTAL_0EX
 {
@@ -276,36 +307,43 @@ XTAL_0EX
 	U const u = bit_ceiling_y<U>(v);
 	return 0 < v? V(u): -V(u);
 }
-template <XTAL_STD_SIZE N, XTAL_STD_SIZE M=0>
+template <size_t N, size_t M=0>
 concept bit_ceiling_q = N == 1 << (bit_ceiling_y(N >> M) + M);
 
 
-///\returns the bitwise-reversal of the given value `o`, \
-	restricted to `N_subdepth` iff `0 < N_subdepth < sizeof(o) << 3`. \
+///\returns the bitwise-reversal of `that`, \
+	restricted to `N_subdepth` when `0 < N_subdepth < sizeof(that) << 3`. \
 
-///\note Requires `log2(realized::depth)` iterations. \
+///\note Requires `log2(sizeof(that) << 3)` iterations. \
 
-///\note Can be spanned as a `process` to dynamically control `N_subdepth`. \
-
-template <XTAL_STD_SIZE N_subdepth=0>
-XTAL_FZ2 bit_reverse_y(_std::unsigned_integral auto o)
+template <integral_q T>
+XTAL_FZ2 bit_reverse_y(T that, T const &subdepth)
 XTAL_0EX
 {
-	XTAL_STD_SIZE constexpr N_depth = sizeof(o) << 3;
-	for (XTAL_STD_SIZE m = -1, i = N_depth; i >>= 1;)
+	using U = _std::make_unsigned_t<T>;
+	U constexpr depth = bit_depth_v<U>;
+	U u = that;
+	for (U m = -1, i = depth; i >>= 1;)
 	{
 		m ^= m<<i;
-		o = (o&m)<<i | (o&~m)>>i;
+		u = (u&m)<<i | (u&~m)>>i;
 	}
-	if constexpr (0 < N_subdepth && N_subdepth < N_depth)
-	{
-		o >>= N_depth - N_subdepth;
-	}
-	return o;
+	u >>= depth - subdepth; assert(0 < subdepth and subdepth <= depth);
+	return u;
 }
-template <XTAL_STD_SIZE N_subdepth=0>
-XTAL_LET  bit_reverse_x = [] (XTAL_DEF n)
-XTAL_0FN_(bit_reverse_y<N_subdepth> (XTAL_REF_(n)));
+template <size_t N_subdepth=0>
+XTAL_FZ2 bit_reverse_y(XTAL_DEF_(integral_q) that)
+XTAL_0EX
+{
+	using T = XTAL_TYP_(that);
+	using U = _std::make_unsigned_t<T>;
+	U constexpr depth = bit_depth_v<U>;
+	U constexpr subdepth = 0 < N_subdepth? N_subdepth: depth;
+	return bit_reverse_y(XTAL_REF_(that), subdepth);
+}
+template <size_t N_subdepth=0>
+XTAL_LET  bit_reverse_x = [] (XTAL_DEF that)
+XTAL_0FN_(bit_reverse_y<N_subdepth> (XTAL_REF_(that)));
 ///<\
 Function expression of `bit_reverse_y`. \
 

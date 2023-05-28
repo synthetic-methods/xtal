@@ -7,8 +7,9 @@
 //\
 TODO: Allow command-line/[c]?make configuration.
 
-#define XTAL_STD_SIZE ::std::size_t
 #define XTAL_STD_IEEE 0//754
+#define XTAL_STD_SIZE ::std::size_t
+#define XTAL_STD_NULL ::std::nullptr_t;
 
 #ifdef  NDEBUG
 #define XTAL_LOG 1//release

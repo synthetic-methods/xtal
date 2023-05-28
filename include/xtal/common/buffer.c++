@@ -34,11 +34,13 @@ TEST_CASE("xtal/common/buffer.hpp: series initialization")
 TEST_CASE("xtal/common/buffer.hpp: series transformation")
 {
 	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
+	sigma_t constexpr O = 1 << 5;
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
+	using series_s = buffer_series_t<O, aleph_t>;
 	using series_t = buffer_series_t<N, aleph_t>;
-	series_t basis(true);
+	series_s basis(true);
 
 	series_t source;
 	source[0] = source[M - 0] = aleph_t(0.0, 0.0);
@@ -55,7 +57,7 @@ TEST_CASE("xtal/common/buffer.hpp: series transformation")
 	REQUIRE(target[5] == iffy(aleph_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
 	REQUIRE(target[6] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
 	REQUIRE(target[7] == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
-
+	REQUIRE(true);
 }
 
 TEST_CASE("xtal/common/buffer.hpp: series convolution")
