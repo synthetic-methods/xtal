@@ -542,15 +542,19 @@ public:
 			class homotype: public heterotype<T>
 			{
 				using co = heterotype<T>;
-
+				
 				template <typename I>
 				XTAL_FZ2_(I) appointed_f(XTAL_DEF i) XTAL_0EX {return _std::launder(reinterpret_cast<I>(XTAL_REF_(i)));}
-				XTAL_FZ2     appointee_f(V       *i) XTAL_0EX {return appointed_f<A       *>(i);}
-				XTAL_FZ2     appointee_f(V const *i) XTAL_0EX {return appointed_f<A const *>(i);}
-				XTAL_FZ2     appointer_f(A       *i) XTAL_0EX {return appointed_f<V       *>(i);}
-				XTAL_FZ2     appointer_f(A const *i) XTAL_0EX {return appointed_f<V const *>(i);}
-				XTAL_FZ2   reappointer_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointer_f(XTAL_REF_(i)));}
+				
+				XTAL_FZ2_(A       *) appointee_f(V       *i) XTAL_0EX {return appointed_f<A       *>(i);}
+				XTAL_FZ2_(A const *) appointee_f(V const *i) XTAL_0EX {return appointed_f<A const *>(i);}
+				XTAL_FZ2_(V       *) appointer_f(A       *i) XTAL_0EX {return appointed_f<V       *>(i);}
+				XTAL_FZ2_(V const *) appointer_f(A const *i) XTAL_0EX {return appointed_f<V const *>(i);}
+				
+				XTAL_FZ2 reverse_appointee_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointee_f(XTAL_REF_(i)));}
+				XTAL_FZ2 reverse_appointer_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointer_f(XTAL_REF_(i)));}
 
+			//	alignas(V) _std::byte block_m[sizeof(V)*(N)];
 				A  block_m[N];
 				A* index_m = block_m;
 
@@ -583,9 +587,9 @@ public:
 				XTAL_RE4_(XTAL_OP2[] (size_type i), *appointer_f(block_m + i));
 				XTAL_RE4_(XTAL_OP2() (size_type i),  appointer_f(block_m + i));
 
-				XTAL_RE4_(XTAL_FN2 rbegin(), reappointer_f(index_m));
+				XTAL_RE4_(XTAL_FN2 rbegin(), reverse_appointer_f(index_m));
 				XTAL_RE4_(XTAL_FN2  begin(),   appointer_f(block_m));
-				XTAL_RE4_(XTAL_FN2   rend(), reappointer_f(block_m));
+				XTAL_RE4_(XTAL_FN2   rend(), reverse_appointer_f(block_m));
 				XTAL_RE4_(XTAL_FN2    end(),   appointer_f(index_m));
 				
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
@@ -935,7 +939,7 @@ public:
 					reserve(sN + size());
 					if (i < end())// and _std::move_constructible<V>)
 					{
-						auto j = reappointer_f(index_m);
+						auto j = reverse_appointer_f(index_m);
 						move_linear_f(true, _std::prev(j, sN), j, _std::next(j, sN));
 					}
 					else

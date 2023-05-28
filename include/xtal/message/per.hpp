@@ -11,20 +11,16 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U, typename V=alpha_t>
+template <typename U>
 struct per
 {
+	using realized = realize<U>; using V = typename realized::alpha_t;
 	using subkind = common::compose<defer<U>, defer<V>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
-
-		XTAL_FZ2 invert_f(XTAL_DEF o)
-		{
-			return V(1)/V(XTAL_REF_(o));
-		}
 
 	public:
 //	using co::co;
@@ -34,7 +30,7 @@ struct per
 
 		XTAL_NEW_(explicit) subtype(XTAL_DEF n, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(n, invert_f(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		:	co(n, V(1)/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
 		{
 		}
 
@@ -43,8 +39,8 @@ struct per
 
 	};
 };
-template <typename U, typename V=alpha_t>
-using per_t = confined_t<per<U, V>>;
+template <typename U>
+using per_t = confined_t<per<U>>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
