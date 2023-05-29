@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./process/any.hpp"
-#include "./message/numinal.hpp"
-#include "./message/restep.hpp"
+#include "./control/numinal.hpp"
+#include "./control/restep.hpp"
 
 #include <catch2/catch_all.hpp>
 
@@ -13,8 +13,8 @@ namespace xtal
 
 ////////////////////////////////////////////////////////////////////////////////
 
-using bias_t = message::numinal_t<alpha_t, struct bias>;
-using coefficient_t = message::numinal_t<alpha_t, struct coefficient>;
+using bias_t = control::numinal_t<alpha_t, struct bias>;
+using coefficient_t = control::numinal_t<alpha_t, struct coefficient>;
 
 struct static_bias_mix_t
 :	process::confine_t<static_bias_mix_t
@@ -35,7 +35,8 @@ struct dynamic_bias_mix_t
 	template <auto...>
 	XTAL_FN2 method(XTAL_DEF ...xs)
 	{
-		return (XTAL_REF_(xs) + ... + this->template get<bias_t>());
+		auto &o = this->template node<bias_t>();
+		return (XTAL_REF_(xs) + ... + o.head());
 	}
 };
 struct dynamic_term_t
@@ -46,12 +47,13 @@ struct dynamic_term_t
 	template <auto...>
 	XTAL_FN2 method(XTAL_DEF x)
 	{
-		return XTAL_REF_(x)*this->template get<coefficient_t>();
+		auto &o = this->template node<coefficient_t>();
+		return XTAL_REF_(x)*o.head();
 	}
 };
 struct dynamic_count
 {
-	using restep_u = message::restep_t<iota_t>;
+	using restep_u = control::restep_t<iota_t>;
 
 	template <typename T>
 	using homotype = process::confine_t<T
@@ -69,13 +71,14 @@ struct dynamic_count
 		template <auto...>
 		XTAL_FN2 method()
 		{
-			iota_t o = count; count += this->template get<restep_u>();
-			return o;
+			auto  &o = this->template node<restep_u>();
+			iota_t i = count; count += o.head();
+			return i;
 		}
 
 	};
 };
-using dynamic_count_t = boxed_t<dynamic_count>;
+using dynamic_count_t = typename dynamic_count::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

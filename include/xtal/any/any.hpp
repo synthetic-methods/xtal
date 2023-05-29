@@ -1,15 +1,14 @@
 #pragma once
 #include <concepts>
 #include <cassert>
-#include <cstdint>
 #include <complex>
 #include <numbers>
-#include <variant>
 #include <cstring>
 #include <cmath>
 #include <tuple>
 #include <array>
 #include <queue>
+
 
 
 
@@ -59,64 +58,73 @@ namespace views  = ::ranges::views;
 
 #include "../_.hpp"
 
-#if XTAL_LOG
-#include <iostream>
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-struct
+#if XTAL_LOG
+#include <iostream>
+class
 {
 	template <typename X>
-	void put(X &&x)
+	void put_list(X &&x)
 	{
-		if constexpr (std::is_floating_point_v<std::decay_t<X>>)
-		{
-			std::cout.precision(17);
-			if (std::copysign(1.0, x) == 1.0) std::cout << ' ';
-		}
-		std::cout << static_cast<X &&>(x);
+		for (auto &&_: x) ::std::cout << static_cast<decltype(_) &&>(_) << '\t';
 	}
-	template <typename ...Xs>
-	void put(Xs &&...xs)
+	template <typename X>
+	void put_item(X &&x)
 	{
-		(put(static_cast<Xs &&>(xs)), ...);
+		using W = ::std::decay_t<X>;
+		if constexpr (::std::is_floating_point_v<W>)
+		{
+			::std::cout.precision(17);
+		}
+		if constexpr (::std::is_arithmetic_v<W>)
+		{
+			if (::std::copysign(1.0, x) == 1.0) ::std::cout << ' ';
+		}
+		::std::cout << x;
 	}
 
+public:
 	template <typename X>
-	decltype(auto) operator<< (X &&x)
+	decltype(auto) put(X &&x)
 	{
-		put(static_cast<X &&>(x));
-		return *this;
+		using W = ::std::remove_reference_t<X>;
+		if constexpr (_v3::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;})
+		{
+			put_list(static_cast<X &&>(x));
+		}
+		else
+		{
+			put_item(static_cast<X &&>(x));
+		}
+		return static_cast<X &&>(x);
 	}
 	template <typename ...Xs>
 	decltype(auto) operator() (Xs &&...xs)
 	{
-		(put('\t', static_cast<Xs&&>(xs)), ...);
-		std::cout << '\n';
-		return *this;
+		::std::cout << '\t';
+		auto const x = (put(static_cast<Xs &&>(xs)), ...);
+		::std::cout << '\n';
+		return x;
 	}
 
 } echo;
-///////////////////////////////////////////////////////////////////////////////
-}/////////////////////////////////////////////////////////////////////////////
 #else
-namespace xtal
-{/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-struct
+class
 {
-	void operator() (auto&& ...etc)
+public:
+	template <typename ...Xs>
+	decltype(auto) put(Xs &&...xs)
 	{
 	}
-	decltype(auto) operator<< (auto&& etc)
-	{
-	}
-	decltype(auto) operator<<= (auto&& etc)
+	template <typename ...Xs>
+	decltype(auto) operator() (Xs &&...xs)
 	{
 	}
 
 } echo;
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-#endif
 

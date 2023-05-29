@@ -1,5 +1,5 @@
 #pragma once
-#include "../context/any.hpp"//_detail
+#include "../context/any.hpp"//_retail
 
 
 
@@ -11,8 +11,195 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _detail = xtal::context;
+namespace _retail = xtal::context;
 #include "../common/any.hxx"
+
+////////////////////////////////////////////////////////////////////////////////
+template <typename ...As>
+struct link
+{
+	using subkind = common::compose<As...>;
+
+	template <any_q S>
+	class subtype: of_t<link>, public common::compose_s<S, subkind>
+	{
+		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+	public:
+		using co::co;
+
+		XTAL_LET_(bool) linked = true;
+
+		///\
+		Thunkifies `T` by binding `Xs...`. \
+
+		template <typename ...Xs>
+		struct bind
+		{
+			using signature = common::pack<Xs...>;
+			using result_t  = typename signature::template invoke_t<T>;
+			using return_t  = iteratee_t<result_t>;
+			
+			using subkind = common::compose<content::defer<typename signature::type>, As..., defer<T>>;
+
+			template <any_q R>
+			class subtype: public common::compose_s<R, subkind>
+			{
+				using co = common::compose_s<R, subkind>;
+
+			public:
+				using co::co;
+				using co::self;
+
+				///\
+				Constructs `arguments` using those supplied. \
+
+				XTAL_NEW subtype(Xs &&...xs)
+				XTAL_0EX
+				:	co(signature::make(XTAL_FWD_(Xs) (xs)...), T())
+				{
+				}
+				XTAL_NEW subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
+				XTAL_0EX
+				:	co(signature::make(XTAL_FWD_(Xs) (xs)...), XTAL_REF_(t))
+				{
+				}
+
+				XTAL_RE4_(XTAL_FN2 arguments(), co::head())
+				
+				template <size_t I>
+				XTAL_FN2 argument()
+				XTAL_0EX
+				{
+					return _std::get<I>(arguments());
+				}
+				
+				XTAL_FN2 apply(XTAL_DEF fx)
+				XTAL_0EX
+				{
+					return _std::apply([&](XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(fx) (XTAL_REF_(xs)...))
+					,	arguments()
+					);
+				}
+
+				///\
+				Evaluates `T::value` using the bound arguments. \
+
+				template <auto ...Ms>
+				XTAL_FN2 method()
+				XTAL_0EX
+				{
+					return apply([this](XTAL_DEF ...xs)
+						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...)));
+				}
+				template <auto ...Ms>
+				XTAL_FN2 method(XTAL_DEF... xs)
+				XTAL_0EX
+				{
+					return co::template method<Ms...>(XTAL_REF_(xs)...);
+				}
+
+			protected:
+				XTAL_LET disorder_v = requires (subtype const &t) {t.template method<>();};
+			
+			public:
+				///\
+				\returns the result of `influx`ing `self` then  (if `& 1`) `arguments`. \
+
+				XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					sign_t const _ = co::influx(oo...);
+					return !_?0: _ & self().influx_request(XTAL_REF_(oo)...);
+				}
+				///\
+				\returns the result of `efflux`ing `arguments` then (if `& 1`) `self`. \
+
+				XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					sign_t const _ = self().efflux_request(oo...);
+					return !_?0: _ & co::efflux(XTAL_REF_(oo)...);
+				}
+
+				///\
+				\note If prefixed by `null_t()`, the control is forwarded directly to `arguments`. \
+
+				XTAL_FN2_(sign_t) influx(null_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx_request(XTAL_REF_(oo)...);
+				}
+				XTAL_FN2_(sign_t) efflux(null_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().efflux_request(XTAL_REF_(oo)...);
+				}
+
+
+				///\
+				Forwards the control to `arguments`, bypassing `self`. \
+
+				XTAL_FN2_(sign_t) influx_request(auto ...oo)
+				XTAL_0EX
+				{
+					return apply([&](XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) |...| -1));
+				}
+				XTAL_FN2_(sign_t) efflux_request(auto ...oo)
+				XTAL_0EX
+				{
+					return apply([&](XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) |...| -1));
+				}
+
+
+				///\
+				Forwards the control *tail* to `arguments`, bypassing `self`. \
+				If `~N_parity`, the argument at `N_parity` receives the full control. \
+
+				template <int N_parity=-1>
+				XTAL_FN2_(sign_t) influx_request_tail(auto o, auto ...oo)
+				XTAL_0EX
+				{
+					if constexpr (N_parity == -1)
+					{
+						return influx_request(_std::move(oo)...);
+					}
+					else
+					{
+						static_assert(0 <= N_parity);
+						return [&] <auto ...Ns> (common::seek_t<Ns...>)
+							XTAL_0FN_(argument<N_parity>().influx(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().influx(oo...))
+						(common::seek_v<sizeof...(Xs) - 1>);
+					}
+				}
+				///\
+				Forwards the control *head* to `arguments`, bypassing `self`. \
+				If `~N_parity`, the argument at `N_parity` receives the full control. \
+
+				template <int N_parity=-1>
+				XTAL_FN2_(sign_t) efflux_request_head(auto o, auto ...oo)
+				XTAL_0EX
+				{
+					if constexpr (N_parity == -1)
+					{
+						return efflux_request(_std::move(o));
+					}
+					else
+					{
+						static_assert(0 <= N_parity);
+						return [&] <auto ...Ns> (common::seek_t<Ns...>)
+							XTAL_0FN_(argument<N_parity>().efflux(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().efflux(o))
+						(common::seek_v<sizeof...(Xs) - 1>);
+					}
+				}
+
+			};
+		};
+
+	};
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -21,7 +208,7 @@ Produces a decorator `subtype<S>` that defines `T` with `As...::subtype` applied
 template <typename T>
 struct define
 {
-	using subkind = _detail::define<T>;
+	using subkind = _retail::define<T>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -56,19 +243,19 @@ struct define
 		}
 		///\
 		\returns the `lambda` abstraction of `method`, \
-			with template parameters resolved by `message::dispatch`. \
+			with template parameters resolved by `control::dispatch`. \
 
 		template <typename ...Xs>
 		XTAL_FN2 reify()
 		XTAL_0EX
 		{
-			return [this] (XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
+			return [this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
 		}
 		template <typename ...Xs>
 		XTAL_FN2 reify()
 		XTAL_0FX
 		{
-			return [this] (XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
+			return [this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
 		}
 		
 		///\
@@ -123,17 +310,48 @@ struct define
 
 	};
 };
-////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct refine
 {
-	using subkind = _detail::refine<T>;
+	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	using subtype = common::compose_s<S, subkind>;
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using co = common::compose_s<S, subkind>;
+	public:
+		using co::co;
+		using co::self;
 
+	};
+	template <any_q S>
+	requires of_q<link, S>
+	class subtype<S>: public common::compose_s<S, subkind>
+	{
+		using co = common::compose_s<S, subkind>;
+	public:
+		using co::co;
+		using co::self;
+
+		template <typename ...Xs>
+		struct combined
+		{
+			using kind = typename T::template bind<Xs...>;
+			using type = typename _retail::confined<kind>::template subtype<S>;
+
+		};
+		template <typename ...Xs>
+		using     bind_t = typename combined<Xs...>::type;
+		XTAL_LET  bind_f = [](XTAL_DEF ...xs)             XTAL_0FN_(bind_t<decltype(xs)...>        (XTAL_REF_(xs)...));
+		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0EX_( &) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
+		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0FX_( &) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
+		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0EX_(&&) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
+		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0FX_(&&) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
+
+	};
 };
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -142,7 +360,7 @@ Produces a decorator `subtype<S>` that proxies `U`. \
 template <typename U>
 struct defer
 {
-	using subkind = _detail::defer<U>;
+	using subkind = _retail::defer<U>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -189,7 +407,7 @@ struct defer
 template <any_q U>
 struct defer<U>
 {
-	using subkind = _detail::defer<U>;
+	using subkind = _retail::defer<U>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -219,18 +437,12 @@ struct defer<U>
 	};
 };
 
-////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
-struct refer
+struct refer: _retail::refer<U>
 {
-	using subkind = _detail::refer<U>;
-
-	template <any_q S>
-	using subtype = common::compose_s<S, subkind>;
-
 };
 
 ///////////////////////////////////////////////////////////////////////////////

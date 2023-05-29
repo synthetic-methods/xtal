@@ -10,7 +10,7 @@ The decorators themselves are spanned templates of the form \
 #ifdef __INTELLISENSE__ // stub...
 #include "../any.hpp"
 using namespace xtal;
-namespace _detail
+namespace _retail
 {
 	template <typename ...As>
 	struct any
@@ -29,20 +29,26 @@ namespace _detail
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct any: _detail::any<As..., any<>> {};
+struct any: _retail::any<As..., any<>> {};
 ///<\
 Defines the decorator for the target with decorators `...As`. \
 
 template <typename ...As>
-using any_t = typename any<As...>::template subtype<construct_t<>>;
+using any_t = typename any<As...>::template subtype<unit_t>;
 ///<\
 Defines the class for the target with decorators `...As`, \
-inheriting from the base `construct_t<>` a.k.a. `std::monostate`. \
+inheriting from the base `unit_t`. \
 
 template <typename T, typename ...As>
-concept any_q = of_q<T, any_t<As...>>;
+concept any_q = if_q<any_t<As...>, T>;
 ///<\
 Identifies any instance of the target with decorators `...As`. \
+
+template <template <typename...> typename T_>
+using any_of_t = any_t<xtal::of_t<T_>>;
+
+template <template <typename...> typename T_, typename ...Ts>
+concept any_of_q = if_q<any_of_t<T_>, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -15,16 +15,16 @@ namespace xtal::any::__realize
 
 TEST_CASE("xtal/any/realize.hpp: ratio")
 {
-	REQUIRE(realized::ratio_x<1>(4) == 0.25);
-	REQUIRE(realized::ratio_x<2>(4) == 0.50);
-	REQUIRE(realized::ratio_x<3>(4) == 0.75);
-	REQUIRE(realized::ratio_x<4>(4) == 1.00);
+	REQUIRE(realized::ratio_y<1>(4) == 0.25);
+	REQUIRE(realized::ratio_y<2>(4) == 0.50);
+	REQUIRE(realized::ratio_y<3>(4) == 0.75);
+	REQUIRE(realized::ratio_y<4>(4) == 1.00);
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iota_t N_sgn=1, iota_t N_rho=0>
+template <int N_sgn=1, int N_rho=0>
 void realize_truncate__test()
 {
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
@@ -77,7 +77,7 @@ TEST_CASE("xtal/any/realize.hpp: truncate")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iota_t N_sgn=1>
+template <int N_sgn=1>
 void realize_puncture_real__test()
 {
 	alpha_t const oo0 = realized::minimal_y(0);
@@ -120,7 +120,7 @@ TEST_CASE("xtal/any/realize.hpp: puncture real")
 
 }
 
-template <iota_t N_sgn=1, iota_t N_rho=0>
+template <int N_sgn=1, int N_rho=0>
 void realize_puncture_real_zone__test()
 {
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
@@ -179,12 +179,12 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 	REQUIRE(realized::truncate_y<N_zoom>(square_2) == square_2);
 	REQUIRE(realized::puncture_y<N_zoom>(square_2) == square_2);
 
-	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_F)) == trim_y(square_1*realized::maximal_y(N_zoom)));
-	REQUIRE(trim_y(realized::puncture_y<N_zoom>(square_0)) == trim_y(square_1*realized::minimal_y(N_zoom)));
+	REQUIRE(trim_y<0>(realized::truncate_y<N_zoom>(square_F)) == trim_y<0>(square_1*realized::maximal_y(N_zoom)));
+	REQUIRE(trim_y<0>(realized::puncture_y<N_zoom>(square_0)) == trim_y<0>(square_1*realized::minimal_y(N_zoom)));
 
-	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_F, 0)) == trim_y(circle_1*realized::dnsilon_y(N_zoom)));
-	REQUIRE(trim_y(realized::truncate_y<N_zoom>(square_2, 0)) == trim_y(circle_1*realized::dnsilon_y(N_zoom)));
-	REQUIRE(trim_y(realized::puncture_y<N_zoom>(square_H, 0)) == trim_y(circle_1*realized::upsilon_y(N_zoom)));
+	REQUIRE(trim_y<0>(realized::truncate_y<N_zoom>(square_F, 0)) == trim_y<0>(circle_1*realized::dnsilon_y(N_zoom)));
+	REQUIRE(trim_y<0>(realized::truncate_y<N_zoom>(square_2, 0)) == trim_y<0>(circle_1*realized::dnsilon_y(N_zoom)));
+	REQUIRE(trim_y<0>(realized::puncture_y<N_zoom>(square_H, 0)) == trim_y<0>(circle_1*realized::upsilon_y(N_zoom)));
 
 	auto mt19937_m = typename realized::mt19937_t();
 	mt19937_m.seed(Catch::rngSeed());

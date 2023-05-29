@@ -11,10 +11,16 @@ namespace xtal::content::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using foo_t = confined_t<defer<int>, defer<int>, defer<int>, defer<int>>;
+
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/content/any.hpp: true")
+TEST_CASE("xtal/content/any.hpp: tuple mania")
 {
+	auto const foo = foo_t(1, 2, 3, 4);
+	auto const bar = _std::get<0>(foo);
+	auto const qux = _std::apply([](XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo);
+
 	REQUIRE(true);
 }
 /***/

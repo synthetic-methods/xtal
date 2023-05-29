@@ -1,5 +1,5 @@
 #pragma once
-#include "../common/any.hpp"//_detail
+#include "../common/any.hpp"//_retail
 
 
 
@@ -11,10 +11,38 @@ namespace xtal::content
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _detail = xtal::common;
+namespace _retail = xtal::common;
 #include "../common/any.hxx"
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <any_q S>
+class morphotype: public S
+{
+	using co = S;
+public:
+	using co::co;
+
+};
+template <any_q S> requires (S::cardinal::value == 1)
+class morphotype<S>: public S
+{
+	using co = S;
+public:
+	using co::co;
+	using co::head;
+	using typename co::head_t;
+
+	///\
+	Implicit conversion to the singleton kernel-type. \
+
+	XTAL_RE4_(XTAL_NEW operator head_t(), head())
+	
+};
+
+}/////////////////////////////////////////////////////////////////////////////
+
 
 template <typename T>
 struct define
@@ -24,15 +52,15 @@ struct define
 	{
 		using co = S;
 
-	protected:
-		using self_t = T;
-
 	public:
 		using co::co;
 		
 		///\
 		\returns `this` as a subtype of the derived-type `T`. \
-
+&
+		XTAL_FN2_(T const &&) self() XTAL_0FX_(&&) {return static_cast<T const &&>(*this);}
+		XTAL_FN2_(T       &&) self() XTAL_0EX_(&&) {return static_cast<T       &&>(*this);}
+		
 		XTAL_FN2_(T const &) self() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
 		XTAL_FN2_(T       &) self() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
 		
@@ -56,27 +84,30 @@ struct define
 			return false;
 		}
 
+		using cardinal = constant<(size_t) 0>;
+
+	protected:
+		using self_t = T;
+
 	};
 };
-////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct refine
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype: public _detail::morphotype<S>
 	{
-		using co = S;
+		using co = _detail::morphotype<S>;
 	public:
 		using co::co;
 
 	};
 
-	template <any_q S>
-	requires iterable_q<S>
-	class subtype<S>: public S, public iterate_t<T>
+	template <any_q S> requires iterable_q<S>
+	class subtype<S>: public _detail::morphotype<S>, public iterate_t<T>
 	{
-		using co = S;
+		using co = _detail::morphotype<S>;
 	public:
 		using co::co;
 
@@ -95,8 +126,6 @@ concept defer_q = requires (T t)
 template <typename U>
 struct defer
 {
-//	using tag = tag_t<defer>;
-
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
@@ -104,14 +133,14 @@ struct defer
 		using V  = debased_t<U>;
 
 	protected:
-		XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX                       {return V(XTAL_REF_(ws)...);}
-		XTAL_FZ2 member_f(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return _std::addressof(XTAL_REF_(w));}
+		XTAL_FZ2 lvalue(XTAL_DEF    w ) XTAL_0EX                       {return  XTAL_REF_(w);}
+		XTAL_FZ2 lvalue(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return *XTAL_REF_(w);}
 
-		XTAL_FZ2 member_x(XTAL_DEF    w ) XTAL_0EX                       {return  XTAL_REF_(w);}
-		XTAL_FZ2 member_x(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return *XTAL_REF_(w);}
+		XTAL_FZ2 rvalue(XTAL_DEF    w ) XTAL_0EX                       {return  _std::move(XTAL_REF_(w));}
+		XTAL_FZ2 rvalue(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return *_std::move(XTAL_REF_(w));}
 
-		XTAL_FZ2 member_y(XTAL_DEF    w ) XTAL_0EX                       {return  _std::move(XTAL_REF_(w));}
-		XTAL_FZ2 member_y(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return *_std::move(XTAL_REF_(w));}
+		XTAL_FZ2 mvalue(XTAL_DEF ...ws) XTAL_0EX                       {return V(XTAL_REF_(ws)...);}
+		XTAL_FZ2 mvalue(XTAL_DEF    w ) XTAL_0EX requires debased_q<U> {return _std::addressof(XTAL_REF_(w));}
 
 		using head_t = U;
 		using body_t = V;
@@ -120,6 +149,62 @@ struct defer
 
 	public:
 //	using co::co;
+
+		template <typename W=void>
+		XTAL_FN2 node()
+		XTAL_0EX_(&)
+		{
+			if constexpr (is_q<W, void>)
+			{	return co::self();
+			}
+			else
+			if constexpr (is_q<W, U>)
+			{	return *this;
+			}
+			else
+			{	return co::template node<W>();
+			}
+		}
+		template <typename W=void>
+		XTAL_FN2 node()
+		XTAL_0FX_(&)
+		{
+			if constexpr (is_q<W, void>)
+			{	return co::self();
+			}
+			else
+			if constexpr (is_q<W, U>)
+			{	return *this;
+			}
+			else
+			{	return co::template node<W>();
+			}
+		}
+
+		template <size_t N_index=0>
+		XTAL_FN2 seek()
+		XTAL_0EX_(&)
+		{
+			if constexpr (0 == N_index)
+			{	return *this;
+			}
+			else
+			if constexpr (1 <= N_index)
+			{	return co::template seek<N_index - 1>();
+			}
+		}
+		template <size_t N_index=0>
+		XTAL_FN2 seek()
+		XTAL_0FX_(&)
+		{
+			if constexpr (0 == N_index)
+			{	return *this;
+			}
+			else
+			if constexpr (1 <= N_index)
+			{	return co::template seek<N_index - 1>();
+			}
+		}
 
 		///\
 		Resolves `this` as the super-type. \
@@ -132,24 +217,20 @@ struct defer
 		///\
 		\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
-		template <sigma_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0EX_(&&) {return co::template head<N_index - 1>(XTAL_REF_(oo)...);}
-		template <sigma_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0FX_(&&) {return co::template head<N_index - 1>(XTAL_REF_(oo)...);}
-		template <sigma_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0EX_( &) {return co::template head<N_index - 1>(XTAL_REF_(oo)...);}
-		template <sigma_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0FX_( &) {return co::template head<N_index - 1>(XTAL_REF_(oo)...);}
+		template <size_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0EX_(&&) {return seek<N_index>().head(XTAL_REF_(oo)...);}
+		template <size_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0FX_(&&) {return seek<N_index>().head(XTAL_REF_(oo)...);}
+		template <size_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0EX_( &) {return seek<N_index>().head(XTAL_REF_(oo)...);}
+		template <size_t N_index=0> XTAL_FN1 head(XTAL_DEF... oo) XTAL_0FX_( &) {return seek<N_index>().head(XTAL_REF_(oo)...);}
 		
-		template <sigma_t N_index=0> requires (0 == N_index) XTAL_FN2 head() XTAL_0EX_(&&) {return member_y(body_m);}
-		template <sigma_t N_index=0> requires (0 == N_index) XTAL_FN2 head() XTAL_0FX_(&&) {return member_y(body_m);}
-		template <sigma_t N_index=0> requires (0 == N_index) XTAL_FN2 head() XTAL_0EX_( &) {return member_x(body_m);}
-		template <sigma_t N_index=0> requires (0 == N_index) XTAL_FN2 head() XTAL_0FX_( &) {return member_x(body_m);}
-		
-		template <sigma_t N_index=0>
-		requires (0 == N_index)
+		XTAL_FN2 head() XTAL_0EX_(&&) {return rvalue(body_m);}
+		XTAL_FN2 head() XTAL_0FX_(&&) {return rvalue(body_m);}
+		XTAL_FN2 head() XTAL_0EX_( &) {return lvalue(body_m);}
+		XTAL_FN2 head() XTAL_0FX_( &) {return lvalue(body_m);}
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
-		requires (not debased_q<U>)
 		{
-			U u(XTAL_REF_(o), XTAL_REF_(oo)...); _std::swap(body_m, u);
-			return u;
+			auto m = mvalue(XTAL_REF_(o), XTAL_REF_(oo)...); _std::swap(body_m, m);
+			return rvalue(_std::move(m));
 		}
 
 		///\
@@ -181,7 +262,7 @@ struct defer
 		XTAL_NEW_(explicit) subtype(XTAL_DEF w, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	co(XTAL_REF_(ws)...)
-		,	body_m(member_f(XTAL_REF_(w)))
+		,	body_m(mvalue(XTAL_REF_(w)))
 		{
 		}
 
@@ -190,20 +271,10 @@ struct defer
 		\returns the previous value.
 
 		template <typename W=U>
-		XTAL_FN1 set(XTAL_DEF ...ws)
-		XTAL_0EX
-		requires is_q<head_t, body_t>
+		XTAL_FN2 set(XTAL_DEF... ws)
+		XTAL_0FX
 		{
-			if constexpr (is_q<W, U>)
-			{
-				auto const head_m = head();
-				body_m = member_f(XTAL_REF_(ws)...);
-				return head_m;
-			}
-			else
-			{
-				return co::template set<W>(XTAL_REF_(ws)...);
-			}
+			return node<based_t<W>>().head(XTAL_REF_(ws)...);
 		}
 		///\
 		Getter: applied when the template parameter matches the kernel-type. \
@@ -213,14 +284,7 @@ struct defer
 		XTAL_FN2 get()
 		XTAL_0FX
 		{
-			if constexpr (is_q<W, U>)
-			{
-				return head();
-			}
-			else
-			{
-				return co::template get<W>();
-			}
+			return node<based_t<W>>().head();
 		}
 
 		///\
@@ -257,10 +321,13 @@ struct defer
 			return has(t.head()) and co::operator==(static_cast<co const &>(t));
 		}
 		
+
+		using cardinal = constant<co::cardinal::value + 1>;
+
 	};
 };
 ////////////////////////////////////////////////////////////////////////////////
-namespace _retail
+namespace _detail
 {
 	template <typename U>
 	struct comparators
@@ -268,7 +335,7 @@ namespace _retail
 	{
 	};
 	template <typename U>
-	requires comparators_b<U>
+	requires comparators_p<U>
 	struct comparators<U>
 	{
 		template <any_q S>
@@ -291,7 +358,7 @@ namespace _retail
 		};
 	};
 
-	template <typename U, iota_t N_arity=0>
+	template <typename U, int N_arity=0>
 	struct bit_operators
 	:	common::compose<>
 	{
@@ -302,7 +369,7 @@ namespace _retail
 	{
 	};
 	template <typename U>
-	requires bit_operators_b<U, 1>
+	requires bit_operators_p<U, 1>
 	struct bit_operators  <U, 1>
 	{
 		template <any_q S>
@@ -332,7 +399,7 @@ namespace _retail
 		};
 	};
 	template <typename U>
-	requires bit_operators_b<U, 2>
+	requires bit_operators_p<U, 2>
 	struct bit_operators  <U, 2>
 	{
 		template <any_q S>
@@ -360,7 +427,7 @@ namespace _retail
 		};
 	};
 
-	template <typename U, iota_t N_arity=0>
+	template <typename U, int N_arity=0>
 	struct field_operators
 	:	common::compose<>
 	{
@@ -371,7 +438,7 @@ namespace _retail
 	{
 	};
 	template <typename U>
-	requires field_operators_b<U, 1>
+	requires field_operators_p<U, 1>
 	struct field_operators  <U, 1>
 	{
 		template <any_q S>
@@ -392,7 +459,7 @@ namespace _retail
 		};
 	};
 	template <typename U>
-	requires field_operators_b<U, 2>
+	requires field_operators_p<U, 2>
 	struct field_operators  <U, 2>
 	{
 		template <any_q S>
@@ -432,9 +499,9 @@ namespace _retail
 			using co::head;
 			using co::body_m;
 
-			XTAL_FN2 begin() XTAL_0EX requires requires (U       &u) {u.begin();} {return head().begin();}
+			XTAL_FN2 begin() XTAL_0EX                                             {return head().begin();}
+			XTAL_FN2   end() XTAL_0EX                                             {return head().  end();}
 			XTAL_FN2 begin() XTAL_0FX requires requires (U const &u) {u.begin();} {return head().begin();}
-			XTAL_FN2   end() XTAL_0EX requires requires (U       &u) {u.  end();} {return head().  end();}
 			XTAL_FN2   end() XTAL_0FX requires requires (U const &u) {u.  end();} {return head().  end();}
 
 		};
@@ -449,20 +516,45 @@ namespace _retail
 		};
 	};
 }
+
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
 struct refer
 :	common::compose<any<>
-	,	_retail::     comparators<U>
-	,	_retail::   bit_operators<U>
-	,	_retail:: field_operators<U>
-	,	_retail:: range_operators<U>
+	,	_detail::     comparators<U>
+	,	_detail::   bit_operators<U>
+	,	_detail:: field_operators<U>
+	,	_detail:: range_operators<U>
 	>
 {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+/*/
+namespace std
+{///////////////////////////////////////////////////////////////////////////////
+
+template <xtal::content::any_q T> requires (0 < T::cardinal::value)
+struct tuple_size<T>: xtal::constant<(size_t) T::cardinal::value> {};
+
+template <size_t N, xtal::content::any_q T> requires (0 < T::cardinal::value)
+struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).head());};
+
+template <size_t N, xtal::content::any_q T> requires (0 < T::cardinal::value)
+XTAL_FN1 get(T const &&t) {return move(t).template head<N>();};
+
+template <size_t N, xtal::content::any_q T> requires (0 < T::cardinal::value)
+XTAL_FN1 get(T       &&t) {return move(t).template head<N>();};
+
+template <size_t N, xtal::content::any_q T> requires (0 < T::cardinal::value)
+XTAL_FN1 get(T const  &t) {return t.template head<N>();};
+
+template <size_t N, xtal::content::any_q T> requires (0 < T::cardinal::value)
+XTAL_FN1 get(T        &t) {return t.template head<N>();};
+
+}/////////////////////////////////////////////////////////////////////////////
+/***/
 XTAL_ENV_(pop)

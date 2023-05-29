@@ -46,7 +46,7 @@ this `method` is aliased as the invocation `operator()`.
 	mix_t mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::reserve` or `processor::resolve`,
+Range-lifting is achieved using functors like `processor::atom` or `processor::bond`,
 allowing `method` and `operator` to `zip` the underlying function across `ranges`.
 (In future, the (im)purity of a function will determine the `std::execution_policy`, once supported by the relevant `ranges` library.)
 
@@ -59,11 +59,11 @@ with the inner-most nodes (plural) representing inputs, and the outer-most node 
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`,
 and can be read either by explicit conversion or by using the method `this->template get<...>`.
 
-	using active_t = message::ordinal_t<struct active>;
+	using active_t = control::ordinal_t<struct active>;
 
 	struct mix_t
 	:	process::confine_t<mix_t
@@ -112,14 +112,14 @@ When sample-accurate scheduling is required,
 They are often used in tandem, e.g. the global buffer size may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
-	auto serial = serial_t(1024);
+	auto sequel = sequel_t(1024);
 
-	using mixer_t = processor::resolve_t<mix_t>;
+	using mixer_t = processor::bond_t<mix_t>;
 	auto sixer = mixer_t::bind_f(one, two, three);
 
 	//	initialization
 	{
-		// allocate all `reserve`d `processor`s reachable from `sixer`
+		// allocate all `atom`d `processor`s reachable from `sixer`
 		sixer <<= resize;
 	}
 	
@@ -128,16 +128,16 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 		// activate the `sixer` for the entirety of the first block
 		sixer <<= active_t(1);
 
-		// respan the current graph, and advance the `serial` cursor
-		sixer >>= serial++;
+		// respan the current graph, and advance the `sequel` sequel
+		sixer >>= sequel++;
 	}
 	// 2nd iteration
 	{
 		// deactivate the `sixer` at an offset of `123` into the current buffer
 		sixer <<= sixer <<= std::make_tuple(123, active_t(0));
 
-		// respan the current graph, and advance the `serial` cursor
-		sixer >>= serial++;
+		// respan the current graph, and advance the `sequel` sequel
+		sixer >>= sequel++;
 	}
 
 # Development
@@ -159,7 +159,7 @@ The transition to `C++23` ranges is limited by the lack of general support for t
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
 The files `**/all.hpp` export all definitions at a given level.
-At the leaves, this includes fundamental types like `any` and specializations like `reserve`, `resolve`, etc.
+At the leaves, this includes fundamental types like `any` and specializations like `atom`, `bond`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types.
 At the leaves, this includes decorators like `define`, `defer`, etc.
@@ -238,17 +238,16 @@ For example, The following definitions are equivalent (noting that `A1, ..., A4`
 
 ## Namespaces
 
-The primary namespaces within `xtal` comprise a hierarchy linked by the namespace `_detail` designating the parent:
+The primary namespaces within `xtal` comprise a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace content {namespace _detail = common;}
-	namespace context {namespace _detail = content;}
-	namespace control {namespace _detail = context;}
-	namespace message {namespace _detail = control;}
-	namespace process {namespace _detail = control;}
-	namespace processor {namespace _detail = process;}
+	namespace content   {namespace _retail = common;}
+	namespace context   {namespace _retail = content;}
+	namespace control   {namespace _retail = context;}
+	namespace process   {namespace _retail = context;}
+	namespace processor {namespace _retail = process;}
 
 The `any.hpp` for each namespace establishes the core definitions (specializing only `[dr]efine` and `[dr]efer`),
-using the supplied `_detail` to refer to the parent definitions.
+using the supplied `_retail` to refer to the parent definitions.
 The inclusion of `xtal/common/any.ipp` within each namespace then scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`,
@@ -287,7 +286,7 @@ Currently supported but not yet implemented:
 	-	Modulation matricies.
 	-	Temporary parameter crossfades.
 -	Note on/off handling by:
-	-	Detecting the response to `.influx(message::stop()) == 0`.
+	-	Detecting the response to `.influx(control::stop()) == 0`.
 
 ## Contribution
 

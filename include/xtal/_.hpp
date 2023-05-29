@@ -1,21 +1,33 @@
 #pragma once
 
-#ifndef XTAL_V00
+#ifdef  NDEBUG
+#define XTAL_LOG 1//release
+#else
+#define XTAL_LOG 1//debug
+#endif
+
+#if XTAL_LOG
+#include <iostream>
+#endif
+
+#include <cstdint>
+#include <variant>
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //\
 TODO: Allow command-line/[c]?make configuration.
 
-#define XTAL_STD_IEEE 0//754
-#define XTAL_STD_SIZE ::std::size_t
-#define XTAL_STD_NULL ::std::nullptr_t;
+#define XTAL_STD_(NYM) XTAL_STD_##NYM
 
-#ifdef  NDEBUG
-#define XTAL_LOG 1//release
-#else
-#define XTAL_LOG 1//debug
-#endif
+#define XTAL_STD_IEEE 0//754
+
+#define XTAL_STD_size_t ::std::size_t
+#define XTAL_STD_sign_t ::std::int_fast8_t
+#define XTAL_STD_null_t ::std::nullptr_t;
+#define XTAL_STD_unit_t ::std::monostate;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -89,13 +101,16 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_DEF                                                  auto &&
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 
+
 #define XTAL_NEW                            constexpr            
-#define XTAL_OP1                            constexpr    decltype(auto) operator
 #define XTAL_OP2       [[nodiscard]]        constexpr    decltype(auto) operator
-#define XTAL_FN1                            constexpr    decltype(auto)
+#define XTAL_OP1                            constexpr    decltype(auto) operator
 #define XTAL_FN2       [[nodiscard]]        constexpr    decltype(auto)
-#define XTAL_FZ1                     static constexpr    decltype(auto)
+#define XTAL_FN1                            constexpr    decltype(auto)
+#define XTAL_FN0                            constexpr             void
 #define XTAL_FZ2       [[nodiscard]] static constexpr    decltype(auto)
+#define XTAL_FZ1                     static constexpr    decltype(auto)
+#define XTAL_FZ0                     static constexpr             void
 #define XTAL_LET                     static constexpr             auto
 
 #define XTAL_NEW_(...)                      constexpr __VA_ARGS__
@@ -130,4 +145,3 @@ static_assert(1101 <= XTAL_V00_GNUC);
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-#endif
