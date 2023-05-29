@@ -21,11 +21,12 @@ template <auto     ...Ns > concept      false_p = not (bool(Ns) and...);///< Any
 template <auto     ...Ns > concept     untrue_p = not (bool(Ns)  or...);///< All `Ns... == 0`.
 template <auto     ...Ns > concept    unfalse_p =     (bool(Ns) and...);///< All `Ns... == 1`.
 
-template <typename    T  > using         type_t = typename _std::remove_reference_t<T>::type;
 template <typename    T  > using        value_t = typename _std::remove_reference_t<T>::value_type;
 template <typename    T  > concept      value_b = requires {typename value_t<T>;};
 template <typename ...Ts > concept      value_q = unfalse_p<value_b<Ts>...>;
 template <typename    T  > XTAL_LET     value_v = _std::remove_reference_t<T>::value;
+template <typename    T  > using        boxed_t = typename _std::remove_reference_t<T>::type;
+template <typename    T  > concept      boxed_q = requires {typename  boxed_t<T>;};
 
 template <typename    X  > using      bracket_t = _std::initializer_list<X>;
 template <typename    T  > concept    pointer_b = _std::is_pointer_v<_std::decay_t<T>>;
@@ -38,9 +39,8 @@ template <typename ...Ts > concept   constant_q = unfalse_p<constant_b<Ts>...>;
 template <typename ...Ts > struct   construct   : _std::common_type<Ts...> {};
 template <               > struct   construct< > {using type = _std::monostate     ;};
 template <typename    T  > struct   construct<T> {using type = T                   ;};
-template <typename ...Ts > using    construct_t = type_t<construct<Ts...>>;
+template <typename ...Ts > using    construct_t = boxed_t<construct<Ts...>>;
 template <typename ...Ts > XTAL_LET construct_f = [] (XTAL_DEF ...oo) XTAL_0FN_(construct_t<Ts...> (XTAL_REF_(oo)...));
-
 
 template <typename    T  > using        based_t = _std::remove_cvref_t<T>;
 template <typename    T  > concept      based_b = _std::is_trivially_copy_constructible_v<based_t<T>>;
@@ -54,7 +54,7 @@ template <unbased_b   T  > struct     rebased<T        &>: _std::false_type {usi
 template <  based_b   T  > struct     rebased<T const  &>: _std:: true_type {using type =         T ;};
 template <typename    T  > struct     rebased<T       &&>: _std:: true_type {using type =         T ;};
 template <typename    T  > struct     rebased<T const &&>: _std:: true_type {using type =         T ;};
-template <typename    T  > using      rebased_t =    type_t<rebased<T>>;
+template <typename    T  > using      rebased_t =    boxed_t<rebased<T>>;
 template <typename    T  > concept    rebased_b =   value_v<rebased<T>>;
 template <typename ...Ts > concept    rebased_q = unfalse_p<rebased_b<Ts>...>;
 
@@ -63,7 +63,7 @@ template <unbased_b   T  > struct     debased<T        &>: _std:: true_type {usi
 template <  based_b   T  > struct     debased<T const  &>: _std::false_type {using type =         T ;};
 template <typename    T  > struct     debased<T       &&>: _std::false_type {using type =         T ;};
 template <typename    T  > struct     debased<T const &&>: _std::false_type {using type =         T ;};
-template <typename    T  > using      debased_t =    type_t<debased<T>>;
+template <typename    T  > using      debased_t =    boxed_t<debased<T>>;
 template <typename    T  > concept    debased_b =   value_v<debased<T>>;
 template <typename ...Ts > concept    debased_q = unfalse_p<debased_b<Ts>...>;
 
@@ -80,7 +80,7 @@ template <integer_q T> struct integer<T, +1> {using type = _std::make_unsigned_t
 template <integer_q T> struct integer<T, -1> {using type = _std::  make_signed_t<T>;};
 
 template <typename T, auto Z=0>
-using integer_t = type_t<integer<T, Z>>;
+using integer_t = boxed_t<integer<T, Z>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,6 @@ template <typename T, typename ...Ys> concept  to_q = unfalse_p<to_b<T, Ys>...>;
 
 template <typename T, typename    Y > concept  of_b = _std::is_base_of_v<based_t<Y>, based_t<T>>;
 template <typename T, typename ...Ys> concept  of_q = unfalse_p<of_b<T, Ys>...>;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

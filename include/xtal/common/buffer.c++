@@ -12,7 +12,53 @@ namespace xtal::common::__buffer
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+
+template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_lim=-1>
+XTAL_FZ2 squing_y(auto const &w)
+XTAL_0EX
+{
+	using W = XTAL_TYP_(w);
+	using realized = realize<W>;
+	if constexpr (M_iso == -1 and M_pow == 0 and _std::floating_point<W>)
+	{
+		auto const n = realized::template square_y<-1, -1, N_lim>(w);
+		auto const u = n*w;
+		return buffer_multiplicative_t<2, W>{u, n};
+	}
+	else
+	{
+		return realized::template square_y<M_iso, M_pow, N_lim>(w);	
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/common/buffer.hpp: multiplicative construction")
+{
+	auto foo = buffer_multiplicative_t<2, alpha_t>{2.0, 0.5};
+	auto bar = squing_y<-1,  0>((alpha_t) 2);
+	bar.transmute([&] (XTAL_DEF u) XTAL_0FN_(trim_y<1>(squing_y(XTAL_REF_(u)))));
+//	bar.transmute(trim_y<1>);
+	REQUIRE(foo == bar);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("xtal/common/buffer.hpp: converse")
+{
+	auto bar = buffer_converse_t<1, alpha_t>{2.0, 0.5};
+	auto foo = ~bar;
+	auto baz = ~foo;
+	REQUIRE(foo[0] == 1.25);
+	REQUIRE(foo[1] == 0.75);
+	REQUIRE(bar[0] == bar[0]);
+	REQUIRE(bar[1] == bar[1]);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 TEST_CASE("xtal/common/buffer.hpp: series initialization")
 {
 	sigma_t constexpr N = 1 << 3;
@@ -24,13 +70,13 @@ TEST_CASE("xtal/common/buffer.hpp: series initialization")
 	scalar_t foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 	REQUIRE(_v3::ranges::equal(foo, bar));
 	
-	foo += bar;
-	foo -= 1;
-	foo -= {0, 1, 3, 7, 15, 31, 63, 127};
-	REQUIRE(foo == bar);
+//	foo += bar;
+//	foo -= 1;
+//	foo -= {0, 1, 3, 7, 15, 31, 63, 127};
+//	REQUIRE(foo == bar);
 
 }
-/***/
+
 TEST_CASE("xtal/common/buffer.hpp: series transformation")
 {
 	auto    constexpr iffy = [] (XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
@@ -48,7 +94,7 @@ TEST_CASE("xtal/common/buffer.hpp: series transformation")
 	source[2] = source[M - 2] = aleph_t(3.0, 3.0);
 	source[3] = source[M - 3] = aleph_t(4.0, 4.0);
 
-	series_t target = basis.transformation(source).transmute(iffy);
+	auto target = basis.transformation(source).transmute(iffy);
 	REQUIRE(target[0] == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
 	REQUIRE(target[1] == iffy(aleph_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
 	REQUIRE(target[2] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));

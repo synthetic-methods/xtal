@@ -11,6 +11,7 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
 ///\
 Establishes the base types for the supplied `N_size` \
 (which should be representative of the desired `std::size_t`): \
@@ -223,6 +224,11 @@ public:
 	XTAL_FZ2_(alpha_t) unity_y(XTAL_DEF u)
 	XTAL_0EX
 	{
+	//	if constexpr (M_pow ==  0)
+	//	{
+	//		return common::buffer_parallel_t<2, XTAL_TYP_(u)>(u, 1/XTAL_REF_(u));
+	//	}
+	//	else
 		if constexpr (M_pow == +1)
 		{
 			return XTAL_REF_(u);
@@ -285,13 +291,22 @@ public:
 			{
 				seek_f<N_lim>([&] (auto) XTAL_0FN_(n *= 1.5 - k*n*n));
 			}
-			if constexpr (M_pow == 1) n *= w; else static_assert(M_pow == -1);
-			return n;
+		//	if constexpr (M_pow ==  0)
+		//	{
+		//		return common::buffer_parallel_t<2, alpha_t>(w*n, n);
+		//	}
+		//	else
+			if constexpr (M_pow == +1)
+			{
+				return n*w;
+			}
+			else
+			if constexpr (M_pow == -1)
+			{
+				return n;
+			}
 		}
 	}
-	static_assert(square_y<-1,  1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
-	static_assert(square_y<-1, -1>((alpha_t) 2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
-
 	XTAL_FZ2_(aleph_t) square_y(aleph_t const &u)
 	XTAL_0EX
 	{
@@ -299,6 +314,15 @@ public:
 		alpha_t const y = u.imag(), yy = square_y(y);
 		return aleph_t(xx - yy, x*y*2.0);
 	}
+	XTAL_FZ2 square_y(auto u)
+	XTAL_0EX
+	{
+		u *= u; return u;
+	}
+
+	static_assert(square_y<-1,  1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
+	static_assert(square_y<-1, -1>((alpha_t) 2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
+
 
 	template <delta_t M_iso=1, delta_t M_pow=1, delta_t N_lim=-1>
 	XTAL_FZ2_(alpha_t) square_dot_y(aleph_t const &u)
