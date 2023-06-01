@@ -66,8 +66,7 @@ struct define
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
-		template <int N_arity=2>
-		requires (0 < N_arity)
+		template <int N_arity=2> requires (0 < N_arity)
 		struct dispatch
 		{
 			using control_t = T;
@@ -248,8 +247,7 @@ struct define
 				XTAL_0EX
 				{
 					if (proceed)
-					{
-						stack_m.erase(beginning(), ending());
+					{	stack_m.erase(beginning(), ending());
 						point_m = beginning();
 						index_m = 0;
 					}
@@ -303,6 +301,7 @@ struct define
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{
+				//	return advance(index_m++ == next_head()).template seek<1>();
 					return advance(index_m++ == next_head()).tail();
 				}
 			//	TODO: Once the phasor-type is settled, \
@@ -322,7 +321,7 @@ struct define
 		\
 		TODO: Allow for scheduling beyond the current window by offsetting all future events? \
 		\
-		TODO: Investigate whether recursively `influx`ing the `tail` is a viable approach to \
+		TODO: Investigate whether recursively `influx`ing the tail is a viable approach to \
 		managing collections of `control`s (e.g. presets). \
 		\
 		TODO: Define a `control::pack` that `std::tuple`s the provided types. \
@@ -366,12 +365,12 @@ struct define
 				XTAL_FN2 next_tail()
 				XTAL_0EX
 				{
-					return next().tail();
+					return next().template head<1>();
 				}
 				XTAL_FN2 next_head()
 				XTAL_0EX
 				{
-					return next().head();
+					return next().template head<0>();
 				}
 				XTAL_FN2 nearest_head()
 				XTAL_0EX
@@ -389,16 +388,14 @@ struct define
 				XTAL_0EX
 				{
 					if (proceed)
-					{
-						queue_m.pop();
+					{	queue_m.pop();
 					}
 				}
 				XTAL_FN1_(current_t) abandon(bool proceed=true)
 				XTAL_0EX
 				{
 					if (proceed)
-					{
-						redux();
+					{	redux();
 					}
 				}
 				XTAL_FN0 poke(index_t idx, control_t o)
@@ -424,12 +421,10 @@ struct define
 				XTAL_0EX
 				{
 					if (0 == i)
-					{
-						return influx(XTAL_REF_(o), XTAL_REF_(oo)...);
+					{	return influx(XTAL_REF_(o), XTAL_REF_(oo)...);
 					}
 					else
-					{
-						assert(0 < i);
+					{	assert(0 < i);
 						poke(XTAL_REF_(i), o);
 						return -1;
 					}
@@ -449,8 +444,7 @@ struct define
 				{
 					index_t i = 0, j = delay();
 					for (; i != j; j = relay(i = j))
-					{
-						f(i, j);
+					{	f(i, j);
 					}
 					assert(i == self().size());
 				}
@@ -473,11 +467,9 @@ struct define
 				{
 				//	if constexpr (requires {{co::relay()} -> index_q;})
 					if constexpr (0 < N_future)
-					{
-						co::relay(i);
+					{	co::relay(i);
 						while (0 < suspended() and next_head() <= i)
-						{
-							(void) co::influx(next_tail());
+						{	(void) co::influx(next_tail());
 							advance();
 						}
 					}
@@ -492,12 +484,10 @@ struct define
 				{
 				//	if constexpr (requires {{co::delay()} -> index_q;})
 					if constexpr (0 < N_future)
-					{
-						return nearest_head(co::delay());
+					{	return nearest_head(co::delay());
 					}
 					else
-					{
-						return nearest_head(self().size());
+					{	return nearest_head(self().size());
 					}
 				}
 

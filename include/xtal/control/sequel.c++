@@ -73,13 +73,16 @@ TEST_CASE("xtal/control/sequel.hpp: synchronization")
 	seq_n = sequel_n(11) *= (7);
 	REQUIRE(seq_n == sequel_n(11, 7));
 
-	REQUIRE(seq_n.episode(0, 0, 11) == sequel_n(11, 7));
-	REQUIRE(seq_n.episode(0, 0, 01) == sequel_n(01, 7));
-	REQUIRE(seq_n.episode(1, 1, 11) == sequel_n(10, 8));
+	REQUIRE(seq_n.trip(0, 0, 11) == sequel_n(11, 7));
+	REQUIRE(seq_n.trip(0, 0, 01) == sequel_n(01, 7));
+	REQUIRE(seq_n.trip(1, 1, 11) == sequel_n(10, 8));
 
-	REQUIRE(seq_u.episode(0, 0, 11) == sequel_u(counted_t<>(77, 88), 7));
-	REQUIRE(seq_u.episode(0, 0, 01) == sequel_u(counted_t<>(77, 78), 7));
-	REQUIRE(seq_u.episode(1, 1, 11) == sequel_u(counted_t<>(78, 88), 8));
+	REQUIRE(seq_u.trip(0, 0, 11) == sequel_u(counted_t<>(77, 88), 7));
+	REQUIRE(seq_u.trip(0, 0, 01) == sequel_u(counted_t<>(77, 78), 7));
+	REQUIRE(seq_u.trip(1, 1, 11) == sequel_u(counted_t<>(78, 88), 8));
+
+	seq_n = sequel_n(4, 1);
+	seq_n = seq_n.null(); REQUIRE(seq_n == sequel_n(0, 2));
 
 }
 

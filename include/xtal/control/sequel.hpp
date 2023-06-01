@@ -42,6 +42,11 @@ XTAL_FZ2 sequel_f(XTAL_DEF w)
 	return sequel_t<decltype(w), As...>(XTAL_REF_(w));
 }
 
+XTAL_OP2_(bool) == (sequel_q auto const &s, sequel_q auto const &t)
+XTAL_0EX
+{
+	return s.step() == t.step() and s.size() == t.size();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -71,18 +76,17 @@ struct sequel<V>
 		{
 		}
 
-		XTAL_FN2 episode(V skip)
+		XTAL_FN2 trip(V step_n)
 		XTAL_0FX
 		{
-			return T(co::size(), co::step() + skip);
+			return T(co::size(), co::step() + step_n);
 		}
-		XTAL_FN2 episode(V skip, V i, V j)
+		XTAL_FN2 trip(V step_n, V i, V j)
 		XTAL_0FX
 		{
-			V const  size_n = j - i;
-			V const &size_m = co::size();
 			V const &step_m = co::step();
-			return size_n == size_m? self(): T(size_n, skip + step_m);
+			V const  size_n = j - i;
+			return T(size_n, step_n + step_m);
 		}
 
 		///\
@@ -186,6 +190,18 @@ struct sequel<V>
 			return t.operator<=(self());
 		}
 
+
+		XTAL_OP2_(bool) ==(subtype const &t)
+		XTAL_0FX
+		{
+			auto const &s =   self();
+			auto const &m = s.size();
+			auto const &n = t.size();
+			auto const &i = s.step();
+			auto const &j = t.step();
+			return (i == j) and (m == n);
+		}
+
 		struct attach
 		{
 			using subkind = typename co::attach;
@@ -201,7 +217,7 @@ struct sequel<V>
 				using co::influx;
 				///\
 				Intercepts `T` and moves to the position specified, \
-				setting the `size = 0` to finesse future `efflux`. \
+				setting the `size = 0` for future `efflux`. \
 
 				XTAL_FN2_(sign_t) influx(T t, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -217,16 +233,21 @@ struct sequel<V>
 				XTAL_0EX
 				{
 					auto const &m = co::head();
-					assert(m <= t);
+					assert(m <= t);// FIXME
 					return co::efflux(t, XTAL_REF_(oo)...);
 				}
-				XTAL_FN2_(sign_t) efflux(XTAL_DEF_(sequel_q) t, XTAL_DEF ...oo)
+				XTAL_FN2_(sign_t) efflux(sequel_q auto t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto &s = co::head();
-					if    (t.step() == s.next().step()) s += t.size();
-					assert(t.step() == s.step());
-					return co::efflux(t, XTAL_REF_(oo)...);
+					if (s == t)
+					{	return 0;
+					}
+					else
+					{	s += t.size(); assert(s.step() == t.step());
+						(void) co::efflux(XTAL_REF_(oo)...);
+						return 1;
+					}
 				}
 
 			};
@@ -275,18 +296,18 @@ public:
 		{
 		}
 
-		XTAL_FN2 episode(V skip)
+		XTAL_FN2 trip(V step_n)
 		XTAL_0FX
 		{
-			return T(co::scan(), co::step() + skip);
+			return T(co::scan(), co::step() + step_n);
 		}
-		XTAL_FN2 episode(V skip, V i, V j)
+		XTAL_FN2 trip(V step_n, V i, V j)
 		XTAL_0FX
 		{
 			V const &front_n = *co::begin();
 			V const   size_n = j - i;
 			V const   size_m = co::end() - co::begin();
-			return size_n == size_m? self(): T(U(front_n + i, front_n + j), co::step() + skip);
+			return size_n == size_m? self(): T(U(front_n + i, front_n + j), co::step() + step_n);
 		}
 
 		///\
@@ -394,6 +415,7 @@ public:
 			return t.operator<=(s);
 		}
 
+
 		struct attach
 		{
 			using subkind = typename co::attach;
@@ -409,7 +431,7 @@ public:
 				using co::influx;
 				///\
 				Updates to the incoming position, \
-				while setting `size = 0` to finesse future `efflux`. \
+				while setting `size = 0` for future `efflux`. \
 
 				XTAL_FN2_(sign_t) influx(T t, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -419,11 +441,16 @@ public:
 				///\
 				\note Unrecognized `sequel_q` are enforced by `assert`ion to `influx` at the initial `step == 0`. \
 
-				XTAL_FN2_(sign_t) influx(XTAL_DEF_(sequel_q) t, XTAL_DEF ...oo)
+				XTAL_FN2_(sign_t) influx(sequel_q auto t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
+					/*/
 					auto o = co::head(); o.step(t.step());// or something...
 					return co::influx(o.null(), XTAL_REF_(oo)...);
+					/*/
+					auto o = co::head().null(); o.step(t.step());// or something...
+					return co::influx(o, XTAL_REF_(oo)...);
+					/***/
 				}
 
 				using co::efflux;
@@ -441,13 +468,18 @@ public:
 				\note Unrecognized `sequel_q` are incrementally incorporated, \
 				updating the size and step only if they align. \
 
-				XTAL_FN2_(sign_t) efflux(XTAL_DEF_(sequel_q) t, XTAL_DEF ...oo)
+				XTAL_FN2_(sign_t) efflux(sequel_q auto t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto &s = co::head();
-					if    (t.step() == s.next().step()) s += t.size();
-					assert(t.step() == s.step());
-					return co::efflux(t, XTAL_REF_(oo)...);
+					if (s == t)
+					{	return 0;
+					}
+					else
+					{	s += t.size(); assert(s.step() == t.step());
+						(void) co::efflux(XTAL_REF_(oo)...);
+						return 1;
+					}
 				}
 
 			};

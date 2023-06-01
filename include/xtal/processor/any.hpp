@@ -81,9 +81,7 @@ struct defer<U>
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0EX
-		requires
-		requires (U const &u) {u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);}
+		XTAL_0EQ requires (U const &u) {u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);}
 		{
 			return iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
 		}
@@ -96,8 +94,7 @@ struct defer<U>
 
 	};
 };
-template <iterated_q U>
-requires (not any_q<U>)
+template <iterated_q U> requires (not any_q<U>)
 struct defer<U>
 {
 	using sequel_n = control::sequel_t<counted_t<>>;

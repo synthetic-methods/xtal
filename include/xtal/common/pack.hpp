@@ -26,11 +26,11 @@ template <typename T          > concept  pack_part_ps = [] <size_t ...Ns>
 	(seek_v<pack_size_v<T>>)
 ;
 
-static_assert(pack_size_v<_std::tuple<       >> == 0);
-static_assert(pack_size_v<_std::array<void, 0>> == 0);
+static_assert(pack_size_v<_std::tuple<         >> == 0);
+static_assert(pack_size_v<_std::array<null_t, 0>> == 0);
 
-static_assert(pack_size_p<_std::tuple<       >>);
-static_assert(pack_size_p<_std::array<void, 0>>);
+static_assert(pack_size_p<_std::tuple<         >>);
+static_assert(pack_size_p<_std::array<null_t, 0>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

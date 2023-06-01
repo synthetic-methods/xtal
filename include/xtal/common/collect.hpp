@@ -16,7 +16,7 @@ namespace _detail
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
-requires iso_q<I, J>
+XTAL_0EQ iso_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
@@ -30,11 +30,13 @@ requires iso_q<I, J>
 }
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
+XTAL_0EX
 {
 	copy_to(i, j0, jN, to_f<iteratee_t<I>>, ord);
 }
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
+XTAL_0EX
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
@@ -49,11 +51,13 @@ XTAL_FZ0 copy_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
 
 template <iterator_q I, iterated_q J>
 XTAL_FZ0 copy_to(I i, J const &j, bool const &ord=false)
+XTAL_0EX
 {
 	copy_to(i, j.begin(), j.end(), ord);
 }
 template <iterator_q I, iterated_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FZ0 copy_to(I i, J const &j, F &&f, bool const &ord=false)
+XTAL_0EX
 {
 	copy_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), ord);
 }
@@ -61,6 +65,7 @@ XTAL_FZ0 copy_to(I i, J const &j, F &&f, bool const &ord=false)
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 move_to(I i, J j0, J jN, bool const &ord=false)
+XTAL_0EX
 {
 	auto const _j0 = _std::make_move_iterator(j0);
 	auto const _jN = _std::make_move_iterator(jN);
@@ -68,6 +73,7 @@ XTAL_FZ0 move_to(I i, J j0, J jN, bool const &ord=false)
 }
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FZ0 move_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
+XTAL_0EX
 {
 	auto const _j0 = _std::make_move_iterator(j0);
 	auto const _jN = _std::make_move_iterator(jN);
@@ -76,17 +82,20 @@ XTAL_FZ0 move_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
 
 template <iterator_q I, iterated_q J>
 XTAL_FZ0 move_to(I i, J const &j, bool const &ord=false)
+XTAL_0EX
 {
 	move_to(i, j.begin(), j.end(), ord);
 }
 template <iterator_q I, iterated_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FZ0 move_to(I i, J const &j, F &&f, bool const &ord=false)
+XTAL_0EX
 {
 	move_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), ord);
 }
 
 template <iterated_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FZ0 apply_to(J &j, F &&f, bool const &ord=false)
+XTAL_0EX
 {
 	move_to(j.begin(), j, XTAL_FWD_(F) (f), ord);
 }
@@ -145,8 +154,7 @@ struct collect
 		template <typename V>
 		using  siphon_t = typename siphon<V>::type;
 		
-		template <typename V>
-		requires (0 < N_size)
+		template <typename V> requires (0 < N_size)
 		struct scalar<V>
 		{
 			using realized = realize<V>;
@@ -275,25 +283,31 @@ struct collect
 				XTAL_FN2 got() XTAL_0EX_(&)
 				{
 					if constexpr (is_q<Y, T>)
-						return static_cast<T>(*this);
+					{	return static_cast<T>(*this);
+					}
 					else
-						return reinterpret_cast<Y>(*this);
+					{	return reinterpret_cast<Y>(*this);
+					}
 				}
 				template <typename Y=T>
 				XTAL_FN2 get() XTAL_0EX_(&)
 				{
 					if constexpr (is_q<Y, T>)
-						return static_cast<T &>(*this);
+					{	return static_cast<T &>(*this);
+					}
 					else
-						return reinterpret_cast<Y>(*this);
+					{	return reinterpret_cast<Y>(*this);
+					}
 				}
 				template <typename Y=T>
 				XTAL_FN2 get() XTAL_0FX_(&)
 				{
 					if constexpr (is_q<Y, T>)
-						return static_cast<T const &>(*this);
+					{	return static_cast<T const &>(*this);
+					}
 					else
-						return reinterpret_cast<_std::add_const_t<Y>>(*this);
+					{	return reinterpret_cast<_std::add_const_t<Y>>(*this);
+					}
 				}
 				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
@@ -313,8 +327,7 @@ struct collect
 					return get();
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
-				XTAL_0EX
-				requires (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
+				XTAL_0EQ (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
 				{
 					seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
 					return get();
@@ -334,8 +347,7 @@ struct collect
 			template <typename T>
 			class homotype;
 
-			template <typename T>
-			requires bit_operators_q<V>
+			template <typename T> requires bit_operators_q<V>
 			class homotype<T>: public heterotype<T>
 			{
 				using co = heterotype<T>;
@@ -378,8 +390,7 @@ struct collect
 				XTAL_OP1_(T&) --           () XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(--get(i))), get();}
 
 			};
-			template <typename T>
-			requires field_operators_q<V>
+			template <typename T> requires field_operators_q<V>
 			class homotype<T>: public heterotype<T>
 			{
 				using co = heterotype<T>;
@@ -445,8 +456,7 @@ struct collect
 		A mutually inverse couple that can be mapped to their dual via `lhs +/- rhs >> N_shift`, \
 		and used to represent e.g. cosine/sine or mid/side pairs.
 		
-		template <typename V, int N_shift>
-		requires (N_size == 2)
+		template <typename V, int N_shift> requires (N_size == 2)
 		struct converse<V, N_shift>
 		{
 			using realized = realize<V>;
@@ -587,8 +597,7 @@ struct collect
 					s[_0] = o;
 					s[_1] = o*u;
 					for (size_type i = _1; i < _H; ++i)
-					{
-						auto w = realized::square_y(s[i]);
+					{	auto w = realized::square_y(s[i]);
 						auto h = i << 1;
 						s[h] = w;
 						h   += 1;
@@ -596,8 +605,7 @@ struct collect
 						s[h] = w;
 					}
 					if constexpr (N_limit&1)
-					{
-						s[N1] = s[N2]*u;
+					{	s[N1] = s[N2]*u;
 					}
 					return s;
 				}
@@ -609,8 +617,7 @@ struct collect
 				then mirrored to complete the quarter and half respectively. \
 
 				XTAL_FN1_(T &) generate()
-				XTAL_0EX
-				requires complex_q<V> and bit_ceiling_q<N_size, 2>
+				XTAL_0EQ bit_ceiling_q<N_size, 2> and complex_q<V>
 				{
 					auto &s = get();
 					auto constexpr x = realized::template patio_y<-1> (N_size);
@@ -630,8 +637,7 @@ struct collect
 
 				template <iterated_q Y>
 				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
-				XTAL_0EX
-				requires bit_ceiling_q<N_size, 1>
+				XTAL_0EQ bit_ceiling_q<N_size, 1>
 				{
 					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
 
@@ -641,30 +647,25 @@ struct collect
 					size_type const K_size = bit_ceiling_y(N_size); assert(k_size <= K_size);
 
 					for (size_type h = 0; h < h_size; ++h)
-					{
-						_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
+					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
 					}
 					if constexpr (if_q<parallel_t<V>, Y>)
-					{
-						_detail::apply_to(that, [](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u))));
+					{	_detail::apply_to(that, [](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u))));
 					}
 					for (size_type k = 0; k < k_size; ++k)
-					{
-						size_type const kn = K_size - k;
+					{	size_type const kn = K_size - k;
 						size_type const u = 1 << k;
 						size_type const w = u << 1;
 						for (size_type                 i = 0; i < u; i += 1)
 						for (size_type kn_i = i << kn, j = i; j < n_size; j += w)
-						{
-							V const y = that[j + u]*get(kn_i);
+						{	V const y = that[j + u]*get(kn_i);
 							V const x = that[j + 0];
 							that[j + u] = x - y;
 							that[j + 0] = x + y;
 						}
 					}
 					if constexpr (if_q<parallel_t<V>, Y>)
-					{
-						auto const u_size = realized::template ratio_y<1>(n_size);
+					{	auto const u_size = realized::template ratio_y<1>(n_size);
 						_detail::apply_to(that, [=](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u)*u_size)));
 					}
 					return that.template get<typename Y::transformed_t &>();
@@ -969,8 +970,7 @@ struct collect
 				XTAL_FN0 reserve(size_type sN)
 				{
 					if (N_size < sN)
-					{
-						throw _std::bad_alloc {};
+					{	throw _std::bad_alloc {};
 					}
 				}
 
@@ -981,12 +981,10 @@ struct collect
 				{
 					size_type const sM = size();
 					if (sN < sM)
-					{
-						pop_back(sM - sN);
+					{	pop_back(sM - sN);
 					}
 					else
-					{
-						insert_back(sN - sM, XTAL_REF_(ws)...);
+					{	insert_back(sN - sM, XTAL_REF_(ws)...);
 					}
 				}
 
@@ -1116,13 +1114,11 @@ struct collect
 				{
 					reserve(sN + size());
 					if (i < end())// and _std::move_constructible<V>)
-					{
-						auto j = reverse_appointer_f(limit_m);
+					{	auto j = reverse_appointer_f(limit_m);
 						_detail::move_to(_std::prev(j, sN), j, _std::next(j, sN), true);
 					}
 					else
-					{
-						assert(i == end());
+					{	assert(i == end());
 					}
 					limit_m += sN;
 					return i;
@@ -1141,18 +1137,15 @@ struct collect
 					I begin_m = begin(), end_m = end();
 					assert(begin_m <= i0_ and iN_ <= end_m and _std::distance(i0_, iN_) == sN);
 					if constexpr (_std::destructible<V>)
-					{
-						_std::destroy(i0_, iN_);
+					{	_std::destroy(i0_, iN_);
 					}
 					if (iN_ < end_m)// and _std::move_constructible<V>)
-					{
-						auto jN = appointee_f(iN_);
+					{	auto jN = appointee_f(iN_);
 						auto j0 = appointee_f(i0_);
 						_detail::move_to(j0, jN, limit_m, sN <= _std::distance(jN, limit_m));
 					}
 					else
-					{
-						assert(end_m == iN_);
+					{	assert(end_m == iN_);
 					}
 					limit_m -= sN;
 				}
@@ -1166,8 +1159,7 @@ struct collect
 
 			};
 		};
-		template <typename V>
-		requires (N_size < 0)
+		template <typename V> requires (N_size < 0)
 		struct buffer<V>
 		{
 			using type = _std::vector<V>;

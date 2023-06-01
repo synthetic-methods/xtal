@@ -122,6 +122,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
 #define XTAL_LET_(...)               static constexpr __VA_ARGS__
 
+#define XTAL_0EQ                                      noexcept requires
+#define XTAL_0EQ_(REF)                            REF noexcept requires
 #define XTAL_0EX                                      noexcept
 #define XTAL_0EX_(REF)                            REF noexcept
 #define XTAL_0FX                            const     noexcept
@@ -140,7 +142,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
                                             constexpr TYP                   (TYP &&) noexcept = default;;
 #define XTAL_CO2_(TYP)                                TYP()                          noexcept = default;\
                                                      ~TYP()                          noexcept = default;;
-
+#define XTAL_FLX_(...) [=, this](auto HEAD) constexpr noexcept\
+{if (0 == HEAD) {return HEAD;} else {auto TAIL = (__VA_ARGS__); return 1 == TAIL? TAIL: HEAD;};}
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

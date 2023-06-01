@@ -20,23 +20,20 @@ XTAL_0EX
 	using W = XTAL_TYP_(w);
 	using realized = realize<W>;
 	if constexpr (M_pow == 0 and _std::floating_point<W>)
-	{
-		if (_std::is_constant_evaluated())
+	{	if (_std::is_constant_evaluated())
 		{
 			auto const n = realized::template unsquare_y<-1, N_lim>(w);
 			auto const u = n*w;
 			return collect_parallel_t<2, W>{u, n};
 		}
 		else
-		{
-			auto const u = realized::template unsquare_y< 1, N_lim>(w);
+		{	auto const u = realized::template unsquare_y< 1, N_lim>(w);
 			auto const n = u/w;
 			return collect_parallel_t<2, W>{u, n};
 		}
 	}
 	else
-	{
-		return realized::template unsquare_y<M_pow, N_lim>(w);	
+	{	return realized::template unsquare_y<M_pow, N_lim>(w);	
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////

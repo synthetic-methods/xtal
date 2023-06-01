@@ -109,8 +109,7 @@ struct link
 				XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					sign_t const _ = co::influx(oo...);
-					return !_?0: _ & self().influx_request(XTAL_REF_(oo)...);
+					return XTAL_FLX_(self().influx_request(oo...)) (co::influx(XTAL_REF_(oo)...));
 				}
 				///\
 				\returns the result of `efflux`ing `arguments` then (if `& 1`) `self`. \
@@ -118,8 +117,7 @@ struct link
 				XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					sign_t const _ = self().efflux_request(oo...);
-					return !_?0: _ & co::efflux(XTAL_REF_(oo)...);
+					return XTAL_FLX_(co::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
 				}
 
 				///\
@@ -163,12 +161,10 @@ struct link
 				XTAL_0EX
 				{
 					if constexpr (N_parity == -1)
-					{
-						return influx_request(_std::move(oo)...);
+					{	return influx_request(_std::move(oo)...);
 					}
 					else
-					{
-						static_assert(0 <= N_parity);
+					{	static_assert(0 <= N_parity);
 						return [&] <auto ...Ns> (common::seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().influx(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().influx(oo...))
 						(common::seek_v<sizeof...(Xs) - 1>);
@@ -183,12 +179,10 @@ struct link
 				XTAL_0EX
 				{
 					if constexpr (N_parity == -1)
-					{
-						return efflux_request(_std::move(o));
+					{	return efflux_request(_std::move(o));
 					}
 					else
-					{
-						static_assert(0 <= N_parity);
+					{	static_assert(0 <= N_parity);
 						return [&] <auto ...Ns> (common::seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().efflux(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().efflux(o))
 						(common::seek_v<sizeof...(Xs) - 1>);
@@ -290,9 +284,7 @@ struct define
 				using method_t = return_t (T::*) (argument_t<Xs>...);
 
 			};
-			template <auto ...Ms>
-			requires
-			requires (T const t) {t.template method<Ms...>(XTAL_VAL_(Xs)...);}
+			template <auto ...Ms> requires requires (T const t) {t.template method<Ms...>(XTAL_VAL_(Xs)...);}
 			struct solve<Ms...>
 			{
 				using return_t = decltype(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
@@ -325,8 +317,7 @@ struct refine
 		using co::self;
 
 	};
-	template <any_q S>
-	requires of_q<link, S>
+	template <any_q S> requires of_q<link, S>
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
@@ -382,8 +373,7 @@ struct defer
 		}
 
 	};
-	template <any_q S>
-	requires _std::invocable<U>
+	template <any_q S> requires _std::invocable<U>
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;

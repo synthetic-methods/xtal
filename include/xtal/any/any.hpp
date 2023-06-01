@@ -75,12 +75,13 @@ class
 	{
 		using W = ::std::decay_t<X>;
 		if constexpr (::std::is_floating_point_v<W>)
-		{
-			::std::cout.precision(17);
+		{	::std::cout.precision(17);
 		}
 		if constexpr (::std::is_arithmetic_v<W>)
-		{
-			if (::std::copysign(1.0, x) == 1.0) ::std::cout << ' ';
+		{	if (::std::copysign(1.0, x) == 1.0)
+			{	 ::std::cout << ' ';
+
+			}
 		}
 		::std::cout << x;
 	}
@@ -91,12 +92,10 @@ public:
 	{
 		using W = ::std::remove_reference_t<X>;
 		if constexpr (_v3::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;})
-		{
-			put_list(static_cast<X &&>(x));
+		{	put_list(static_cast<X &&>(x));
 		}
 		else
-		{
-			put_item(static_cast<X &&>(x));
+		{	put_item(static_cast<X &&>(x));
 		}
 		return static_cast<X &&>(x);
 	}

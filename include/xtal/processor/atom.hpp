@@ -113,8 +113,7 @@ struct atom
 				continuing to propagate beyond. \
 
 				XTAL_FN2_(sign_t) influx_request(resize_u resize_o, XTAL_DEF ...oo)
-				XTAL_0EX
-				requires (0 <= N_parity)
+				XTAL_0EQ (0 <= N_parity)
 				{
 					return co::template influx_request_tail<N_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
@@ -129,7 +128,7 @@ struct atom
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FN2_(sign_t) efflux(XTAL_DEF_(control::sequel_q) sequel_o)
+				XTAL_FN2_(sign_t) efflux(control::sequel_q auto sequel_o)
 				XTAL_0EX
 				{
 					return efflux(sequel_o, respan_u(store()));
@@ -139,7 +138,7 @@ struct atom
 				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FN2_(sign_t) efflux(XTAL_DEF_(control::sequel_q) sequel_o, respan_u respan_o)
+				XTAL_FN2_(sign_t) efflux(control::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
 					using _v3::ranges::copy;
@@ -148,21 +147,18 @@ struct atom
 					using _v3::views::take;
 					serve(respan_o);
 
-					auto const sequel_m = this->template get<decltype(sequel_o)>();
-					if (sequel_m == sequel_o)
-					{
-						return 0;
+				//	if (sequel_o == co::head_valve(sequel_o))
+					if (sequel_o == this->template get<decltype(sequel_o)>())
+					{	return 0;
 					}
 					else
-					{
-						(void) co::infuse(sequel_o);
-						iota_t step_n = 0;
-						co::redux([&, this](iota_t i, iota_t j)
+					{	iota_t step_n = 0;
+						(void) co::defuse(sequel_o);
+						(void) co::redux([&, this](iota_t i, iota_t j)
 						XTAL_0FN
-						{
-							++step_n;// maintain `step()` sequence
-							auto const sequel_x = sequel_o.episode(step_n, i, j);
-							auto const respan_x = respan_o.episode(step_n, i, j);
+						{	++step_n;// maintain `step()` order
+							auto const sequel_x = sequel_o.trip(step_n, i, j);
+							auto const respan_x = respan_o.trip(step_n, i, j);
 							(void) co::template efflux_request_head<N_parity>(sequel_x, respan_x);
 							copy(co::template method<>()|take(j - i), next(serve().begin(), i));
 						});

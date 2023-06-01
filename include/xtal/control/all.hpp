@@ -1,6 +1,5 @@
 #pragma once
 #include "./any.hpp"
-#include "./sequel.hpp"
 #include "./done.hpp"
 #include "./nominal.hpp"
 #include "./numinal.hpp"
@@ -11,5 +10,6 @@
 #include "./rescan.hpp"
 #include "./restep.hpp"
 #include "./sample.hpp"
+#include "./sequel.hpp"
 #include "./start.hpp"
 #include "./stop.hpp"

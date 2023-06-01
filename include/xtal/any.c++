@@ -24,7 +24,7 @@ struct static_bias_mix_t
 	template <auto bias>
 	XTAL_FN2 method(XTAL_DEF ...xs)
 	{
-		return (XTAL_REF_(xs) + ... + bias);
+		return (XTAL_REF_(xs) +...+ bias);
 	}
 };
 struct dynamic_bias_mix_t
@@ -35,8 +35,8 @@ struct dynamic_bias_mix_t
 	template <auto...>
 	XTAL_FN2 method(XTAL_DEF ...xs)
 	{
-		auto &o = this->template node<bias_t>();
-		return (XTAL_REF_(xs) + ... + o.head());
+		auto &o = this->template self<bias_t>();
+		return (XTAL_REF_(xs) +...+ o.head());
 	}
 };
 struct dynamic_term_t
@@ -47,7 +47,7 @@ struct dynamic_term_t
 	template <auto...>
 	XTAL_FN2 method(XTAL_DEF x)
 	{
-		auto &o = this->template node<coefficient_t>();
+		auto &o = this->template self<coefficient_t>();
 		return XTAL_REF_(x)*o.head();
 	}
 };
@@ -71,7 +71,7 @@ struct dynamic_count
 		template <auto...>
 		XTAL_FN2 method()
 		{
-			auto  &o = this->template node<restep_u>();
+			auto  &o = this->template self<restep_u>();
 			iota_t i = count; count += o.head();
 			return i;
 		}

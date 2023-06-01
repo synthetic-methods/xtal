@@ -157,8 +157,7 @@ template <size_t N_size>
 struct realization: rationalization<N_size>
 {
 };
-template <size_t N_size>
-requires _std::floating_point<typename rationalization<N_size>::alpha_t>
+template <size_t N_size> requires _std::floating_point<typename rationalization<N_size>::alpha_t>
 struct realization<N_size>: rationalization<N_size>
 {
 private:
@@ -213,13 +212,11 @@ public:
 	XTAL_0EX
 	{
 		if constexpr (M_pow == +1)
-		{
-			return XTAL_REF_(u);
+		{	return XTAL_REF_(u);
 		}
 		else
 		if constexpr (M_pow == -1)
-		{
-			return alpha_1/XTAL_REF_(u);
+		{	return alpha_1/XTAL_REF_(u);
 		}
 	}
 
@@ -263,41 +260,33 @@ public:
 	XTAL_0EX
 	{
 		if (_std::is_constant_evaluated())
-		{
-			delta_t o = _std::bit_cast<delta_t>(co::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
+		{	delta_t o = _std::bit_cast<delta_t>(co::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
 			alpha_t n = _std::bit_cast<alpha_t>(o);
 			alpha_t const k = w*0.5;
 			if constexpr (N_lim < 0)
-			{
-				alpha_t m = k*n*n;
+			{	alpha_t m = k*n*n;
 				for (sigma_t i = 0; m != 0.5 and i < 0x10; ++i)
-				{
-					n *= 1.5 - m; m = k*n*n;
+				{	n *= 1.5 - m; m = k*n*n;
 				}
 				n /= m + 0.5;
 			}
 			else
-			{
-			//	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= 1.5 - k*n*n));
-				for (sigma_t i = 0; i < N_lim; ++i)
-				{
-					n *= 1.5 - k*n*n;
+			{	for (sigma_t i = 0; i < N_lim; ++i)
+				{	n *= 1.5 - k*n*n;
 				}
+			//	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= 1.5 - k*n*n));
 				return n;
 			}
 			if constexpr (M_pow == +1)
-			{
-				return n*w;
+			{	return n*w;
 			}
 			else
 			if constexpr (M_pow == -1)
-			{
-				return n;
+			{	return n;
 			}
 		}
 		else
-		{
-			return it_y<M_pow>(_std::sqrt(w));
+		{	return it_y<M_pow>(_std::sqrt(w));
 		}
 	}
 	static_assert(unsquare_y< 1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
@@ -308,12 +297,10 @@ public:
 	XTAL_0EX
 	{
 		if (_std::is_constant_evaluated())
-		{
-			return unsquare_y<M_pow, N_lim>(dot_y(u));
+		{	return unsquare_y<M_pow, N_lim>(dot_y(u));
 		}
 		else
-		{
-			return it_y<M_pow>(_std::hypot(u.real(), u.imag()));
+		{	return it_y<M_pow>(_std::hypot(u.real(), u.imag()));
 		}
 	}
 
@@ -327,10 +314,8 @@ public:
 	{
 		XTAL_TYP_(base) u = XTAL_REF_(base), w = 1;
 		for (sigma_t n = zoom; n; n >>= 1)
-		{
-			if (n & 1)
-			{
-				n ^= 1;
+		{	if (n & 1)
+			{	n ^= 1;
 				w *= u;
 			}
 			u = square_y(u);

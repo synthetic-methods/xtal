@@ -20,13 +20,13 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
-//	auto f = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0));
+//	auto f = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_t { 0,  1,  2,  3,  4};
 	auto y = scalar_t {00, 10, 20, 30, 40};
 	auto z = scalar_t {00, 11, 22, 33, 44};
 	auto a = scalar_t {99, 99, 99, 99, 99};
 //	auto b = f.bind_(x, y);
-	auto b = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) + ... + 0)).bind_to(processor::let_f(x), processor::let_f(y));
+	auto b = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind_to(processor::let_f(x), processor::let_f(y));
 
 	b <<= resize_u(N_size);
 	b >>= sequel_n(N_size);

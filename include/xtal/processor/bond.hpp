@@ -84,7 +84,7 @@ struct bond
 				XTAL_FN2_(sign_t) efflux(XTAL_DEF_(control::sequel_q) sequel_o)
 				XTAL_0EX
 				{
-					return co::efflux(sequel_o) and ((void) solve(co::method()), 1);
+					return XTAL_FLX_((void) solve(co::method()), (sign_t) 1) (co::efflux(XTAL_REF_(sequel_o)));
 				}
 
 			};

@@ -56,8 +56,7 @@ struct define
 		XTAL_FN2_(sign_t) influx(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			sign_t const _ = self().infuse(XTAL_REF_(o));
-			return !_?0: _ & self().influx(XTAL_REF_(oo)...);
+			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 		XTAL_FN2_(sign_t) influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
@@ -98,8 +97,7 @@ struct define
 		XTAL_FN2_(sign_t) efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			sign_t const _ = self().effuse(XTAL_REF_(o));
-			return !_?0: _ & self().efflux(XTAL_REF_(oo)...);
+			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 		XTAL_FN2_(sign_t) efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
@@ -167,33 +165,29 @@ struct defer
 		///\
 		\note Propagates to the proxied value if it has the required `context`.
 
-		XTAL_FN2_(sign_t) influx(XTAL_DEF ...ws)
-		XTAL_0EX
-		requires any_q<U>
+		XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
+		XTAL_0EQ any_q<U>
 		{
-			sign_t const _ = co::influx(ws...);
-			return !_?0: _ & head().influx(XTAL_REF_(ws)...);
+			return XTAL_FLX_(head().influx(oo...)) (co::influx(XTAL_REF_(oo)...));
 		}
-		XTAL_FN2_(sign_t) influx(XTAL_DEF ...ws)
+		XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return co::influx(XTAL_REF_(ws)...);
+			return co::influx(XTAL_REF_(oo)...);
 		}
 
 		///\
 		\note Propagates to the proxied value if it has the required `context`.
 
-		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...ws)
-		XTAL_0EX
-		requires any_q<U>
+		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
+		XTAL_0EQ any_q<U>
 		{
-			sign_t const _ = head().efflux(ws...);
-			return !_?0: _ & co::efflux(XTAL_REF_(ws)...);
+			return XTAL_FLX_(head().efflux(oo...)) (co::efflux(XTAL_REF_(oo)...));
 		}
-		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...ws)
+		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return co::efflux(XTAL_REF_(ws)...);
+			return co::efflux(XTAL_REF_(oo)...);
 		}
 
 		///\

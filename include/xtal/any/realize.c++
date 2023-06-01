@@ -194,8 +194,7 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 		alpha_t constexpr two = 2;
 		aleph_t z {};
 		for (sigma_t i = 192000/100; ~--i;)
-		{
-			auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
+		{	auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
 			auto y = realized::mantissa_y(mt19937_m); y = _std::pow(two, y);
 			z *= realized::truncate_y<0>(realized::puncture_y<0>(aleph_t {x, y}), 0);
 		}

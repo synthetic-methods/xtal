@@ -136,8 +136,7 @@ XTAL_0EX
 {
 	U n = 0;
 	while (u)
-	{
-		n  += 1&u;
+	{	n  += 1&u;
 		u >>= 1;
 	}
 	return n;
@@ -165,8 +164,7 @@ XTAL_0EX
 {
 	U n = 0;
 	while (u >>= 1)
-	{
-		++n;
+	{	++n;
 	}
 	return n;
 }
@@ -217,8 +215,7 @@ XTAL_0EX
 	U constexpr depth = bit_depth_v<U>;
 	U u = that;
 	for (U m = -1, i = depth; i >>= 1;)
-	{
-		m ^= m<<i;
+	{	m ^= m<<i;
 		u = (u&m)<<i | (u&~m)>>i;
 	}
 	u >>= depth - subdepth; assert(0 < subdepth and subdepth <= depth);
