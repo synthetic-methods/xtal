@@ -148,8 +148,8 @@ struct defer
 		XTAL_FZ2 rvalue_(XTAL_DEF    w ) XTAL_0EX              {return  _std::move(XTAL_REF_(w));}
 		XTAL_FZ2 rvalue_(XTAL_DEF    w ) XTAL_0EQ debased_q<U> {return *_std::move(XTAL_REF_(w));}
 
-		XTAL_FZ2 mvalue_(XTAL_DEF ...ws) XTAL_0EX              {return V(XTAL_REF_(ws)...);}
-		XTAL_FZ2 mvalue_(XTAL_DEF    w ) XTAL_0EQ debased_q<U> {return _std::addressof(XTAL_REF_(w));}
+		XTAL_FZ2 member_(XTAL_DEF ...ws) XTAL_0EX              {return V(XTAL_REF_(ws)...);}
+		XTAL_FZ2 member_(XTAL_DEF    w ) XTAL_0EQ debased_q<U> {return _std::addressof(XTAL_REF_(w));}
 
 		using head_t = U;
 		using body_t = V;
@@ -172,7 +172,7 @@ struct defer
 		XTAL_NEW_(explicit) subtype(XTAL_DEF w, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	co(XTAL_REF_(ws)...)
-		,	body_m(mvalue_(XTAL_REF_(w)))
+		,	body_m(member_(XTAL_REF_(w)))
 		{
 		}
 	//	using co::co;
@@ -197,17 +197,17 @@ struct defer
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX_(&)
 		{
-			return head_valve(mvalue_(XTAL_REF_(o), XTAL_REF_(oo)...));
+			return head_valve(member_(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
 		XTAL_FN1 head_valve(V v)
 		XTAL_0EX
 		{
 			_std::swap(body_m, v); return rvalue_(v);
 		}
-		XTAL_FN1 head_valve(XTAL_DEF o)
+		XTAL_FN1 head_valve(XTAL_DEF w)
 		XTAL_0EX
 		{
-			return co::head_valve(XTAL_REF_(o));
+			return co::head_valve(XTAL_REF_(w));
 		}
 
 		///\

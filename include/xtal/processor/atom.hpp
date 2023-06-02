@@ -98,10 +98,14 @@ struct atom
 				}
 
 			public:
-				using co::infuse;
 				///\
 				Responds to `control::resize` by resizing the internal `store()`. \
 
+				XTAL_FN2_(sign_t) infuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					return co::infuse(XTAL_REF_(o));
+				}
 				XTAL_FN2_(sign_t) infuse(resize_u resize_o)
 				XTAL_0EX
 				{
@@ -120,7 +124,6 @@ struct atom
 
 
 			public:
-				using co::effuse;
 				using co::efflux;
 				///\
 				Responds to `control::sequel` by rendering the internal `store()`. \
@@ -152,17 +155,17 @@ struct atom
 					{	return 0;
 					}
 					else
-					{	iota_t step_n = 0;
-						(void) co::defuse(sequel_o);
+					{	iota_t n = 0;
+						(void) co::infuse(sequel_o);
 						(void) co::redux([&, this](iota_t i, iota_t j)
 						XTAL_0FN
-						{	++step_n;// maintain `step()` order
-							auto const sequel_x = sequel_o.trip(step_n, i, j);
-							auto const respan_x = respan_o.trip(step_n, i, j);
+						{
+							auto sequel_x = sequel_o.slice(i, j).skip(n++);// maintain `step()` order
+							auto respan_x = respan_o.slice(i, j);
 							(void) co::template efflux_request_head<N_parity>(sequel_x, respan_x);
 							copy(co::template method<>()|take(j - i), next(serve().begin(), i));
 						});
-						(void) co::influx_request(sequel_o);// set current `step()` and set `size() = 0`
+						(void) co::influx_request(sequel_o.null());// set current `step()` and set `size() = 0`
 						return 1;
 					}
 				}

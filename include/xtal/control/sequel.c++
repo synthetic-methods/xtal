@@ -36,11 +36,9 @@ TEST_CASE("xtal/control/sequel.hpp: interconversion")
 
 TEST_CASE("xtal/control/sequel.hpp: synchronization")
 {
-	using sequel_n = sequel_t<countee_t<>>;
-	using sequel_u = sequel_t<counted_t<>>;
+	using sequel_n = sequel_t<countee_t<>>; auto seq_n = sequel_n(3);
+	using sequel_u = sequel_t<counted_t<>>; auto seq_u = sequel_u(3);
 
-	auto seq_n = sequel_n(3);
-	auto seq_u = sequel_u(3);
 	REQUIRE(seq_u.size() == seq_n.size());
 	REQUIRE(seq_u.step() == seq_n.step());
 	REQUIRE(seq_u == sequel_u(counted_t<>(0, 3), 0));
@@ -73,19 +71,127 @@ TEST_CASE("xtal/control/sequel.hpp: synchronization")
 	seq_n = sequel_n(11) *= (7);
 	REQUIRE(seq_n == sequel_n(11, 7));
 
-	REQUIRE(seq_n.trip(0, 0, 11) == sequel_n(11, 7));
-	REQUIRE(seq_n.trip(0, 0, 01) == sequel_n(01, 7));
-	REQUIRE(seq_n.trip(1, 1, 11) == sequel_n(10, 8));
+	REQUIRE(seq_n.skip(0).slice(0, 11) == sequel_n(11, 7));
+	REQUIRE(seq_n.skip(0).slice(0, 01) == sequel_n(01, 7));
+	REQUIRE(seq_n.skip(1).slice(1, 11) == sequel_n(10, 8));
 
-	REQUIRE(seq_u.trip(0, 0, 11) == sequel_u(counted_t<>(77, 88), 7));
-	REQUIRE(seq_u.trip(0, 0, 01) == sequel_u(counted_t<>(77, 78), 7));
-	REQUIRE(seq_u.trip(1, 1, 11) == sequel_u(counted_t<>(78, 88), 8));
+	REQUIRE(seq_u.skip(0).slice(0, 11) == sequel_u(counted_t<>(77, 88), 7));
+	REQUIRE(seq_u.skip(0).slice(0, 01) == sequel_u(counted_t<>(77, 78), 7));
+	REQUIRE(seq_u.skip(1).slice(1, 11) == sequel_u(counted_t<>(78, 88), 8));
 
 	seq_n = sequel_n(4, 1);
 	seq_n = seq_n.null(); REQUIRE(seq_n == sequel_n(0, 2));
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename Y, typename X>
+void initialization__test(iota_t n)
+{
+	X x; Y y;
+	x = X(n); y = Y(0); REQUIRE(y.efflux(x) == 1); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
+	x = X(n); y = Y(n); REQUIRE(y.efflux(x) == 0); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
+
+}
+TEST_CASE("xtal/control/sequel.hpp: initialization")
+{
+	using sequel_n = sequel_t<countee_t<>>;
+	using sequel_u = sequel_t<counted_t<>>;
+	
+	initialization__test<sequel_u, sequel_u>(3);
+	initialization__test<sequel_u, sequel_n>(3);
+	initialization__test<sequel_n, sequel_u>(3);
+	initialization__test<sequel_n, sequel_n>(3);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename Y, typename X>
+void finalization__test(iota_t n)
+{
+	X x; Y y;
+	x = X(n); y = Y(n)       ; REQUIRE(y.influx(x) == 1); REQUIRE(y.step() == 1); REQUIRE(y.size() == 0);
+//	x = X(n); y = Y(n).null(); REQUIRE(y.influx(x) == 0); REQUIRE(y.step() == 2); REQUIRE(y.size() == 0);
+
+}
+TEST_CASE("xtal/control/sequel.hpp: finalization")
+{
+	using sequel_n = sequel_t<countee_t<>>;
+	using sequel_u = sequel_t<counted_t<>>;
+	
+	initialization__test<sequel_u, sequel_u>(3);
+	initialization__test<sequel_u, sequel_n>(3);
+	initialization__test<sequel_n, sequel_u>(3);
+	initialization__test<sequel_n, sequel_n>(3);
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/**/
+TEST_CASE("xtal/control/sequel.hpp: intrepidation")
+{
+	using V = countee_t<>;
+	using U = counted_t<>;
+	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
+	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = seq_u;
+
+	REQUIRE(seq_w.efflux(seq_u) == 0); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
+	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
+	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
+
+}
+TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
+{
+	using V = countee_t<>;
+	using U = counted_t<>;
+	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
+	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = sequel_u(0);
+
+	REQUIRE(seq_w.efflux(seq_u) == 1); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
+	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
+	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+template <typename Y, typename X>
+void interference__test(iota_t i)
+{
+	using V = countee_t<>;
+	using U = counted_t<>;
+
+	auto seq_n = X(4);
+	auto seq_u = Y(4), seq_w = Y(4*i);
+
+	seq_w >>= seq_n++; REQUIRE(seq_w == Y(U(0, 4), 0));
+	
+	seq_w >>= seq_n.skip(0).slice(0, 2); REQUIRE(seq_w == Y(U(4, 6), 1));
+	seq_w >>= seq_n.skip(1).slice(2, 4); REQUIRE(seq_w == Y(U(6, 8), 2));
+	seq_w <<= seq_n++;                // REQUIRE(seq_w == Y(U(4, 8), 1));
+	
+	seq_w >>= seq_n.skip(0).slice(0, 2); REQUIRE(seq_w == Y(U( 8, 10), 2));
+	seq_w >>= seq_n.skip(1).slice(2, 4); REQUIRE(seq_w == Y(U(10, 12), 3));
+	seq_w <<= seq_n++;                // REQUIRE(seq_w == Y(U( 8, 12), 2));
+
+}
+TEST_CASE("xtal/control/sequel.hpp: interruption")
+{
+	using V = countee_t<>; using sequel_n = sequel_t<V>;
+	using U = counted_t<>; using sequel_u = sequel_t<U>;
+
+	for (iota_t i = 0; i <= 1; ++i)
+	{
+		interference__test<sequel_u, sequel_u>(i);
+		interference__test<sequel_u, sequel_n>(i);
+		interference__test<sequel_n, sequel_u>(i);
+		interference__test<sequel_n, sequel_n>(i);
+	}
+
+}
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

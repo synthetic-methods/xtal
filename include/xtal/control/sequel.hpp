@@ -42,51 +42,192 @@ XTAL_FZ2 sequel_f(XTAL_DEF w)
 	return sequel_t<decltype(w), As...>(XTAL_REF_(w));
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+
 XTAL_OP2_(bool) == (sequel_q auto const &s, sequel_q auto const &t)
 XTAL_0EX
 {
 	return s.step() == t.step() and s.size() == t.size();
 }
 
+template <>
+struct sequel<void>
+{
+	template <any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using co = common::compose_s<S>;
+	protected:
+		using typename co::self_t;
+	public:
+		using co::co;
+		using co::self;
+		using co::twin;
+
+		XTAL_FN2 skip(iota_q auto n)
+		XTAL_0FX
+		{
+			auto t = self(); t.step(t.step() + n);
+			return t;
+		}
+
+		///\
+		\returns the block at distance `n` steps with the same `size`. \
+
+		XTAL_OP2_(self_t) * (iota_q auto n)
+		XTAL_0FX
+		{
+			return twin().operator*=(n);
+		}
+		///\
+		Advance `1` step while retaining `size`. \
+
+		XTAL_OP1_(self_t &) ++()
+		XTAL_0EX
+		{
+			return self().operator+=(self().size());
+		}
+		XTAL_OP1_(self_t) ++(int)
+		XTAL_0EX
+		{
+			auto t = self(); operator++(); return t;
+		}
+		///\
+		\returns the adjacent block with the same `size`. \
+
+		XTAL_FN2_(self_t) next(iota_q auto n)
+		XTAL_0FX
+		{
+			return self().operator*(n);
+		}
+		XTAL_FN2_(self_t) next()
+		XTAL_0FX
+		{
+			return twin().operator++();
+		}
+		///\
+		\returns the adjacent block of size `n`. \
+
+		XTAL_OP2_(self_t) + (iota_q auto n)
+		XTAL_0FX
+		{
+			return twin().operator+=(n);
+		}
+		///\
+		\returns the adjacent block of size `0`. \
+
+		XTAL_FN2_(self_t) null()
+		XTAL_0FX
+		{
+			return twin().operator+=(0);
+		}
+		XTAL_FN2_(self_t) null(iota_q auto n)
+		XTAL_0FX
+		{
+			auto s = null(); s.step(n); return s;
+		}
+
+		///\
+		\returns `true` iff the left-hand argument immediately follows the right. \
+
+		XTAL_OP2_(bool) >=(subtype const &t)
+		XTAL_0FX
+		{
+			return co::operator>(t) or co::operator==(t);
+		}
+
+		XTAL_OP2_(bool) <=(subtype const &t)
+		XTAL_0FX
+		{
+			return co::operator<(t) or co::operator==(t);
+		}
+
+		///\
+		Updates to the incoming position, \
+		while setting `size = 0` for future `efflux`. \
+		
+		XTAL_FN2_(sign_t) infuse(XTAL_DEF o)
+		XTAL_0EX
+		{
+			return co::infuse(XTAL_REF_(o));
+		}
+		XTAL_FN2_(sign_t) infuse(self_t t)
+		XTAL_0EX
+		{
+			auto &s = self();
+			return s == t? (0): ((s = t), 1);
+		}
+		/*/
+		XTAL_FN2_(sign_t) infuse(XTAL_DEF_(sequel_q) t)
+		XTAL_0EX
+		{
+			auto &s = self();
+			return s == t? (0): ((s = s.null(t.step())), 1);
+		}
+		/***/
+
+		///\
+		Enforces ordering on the incoming sequels by `assert`ion. \
+
+		///\
+		\note Unrecognized `sequel_q` are incrementally incorporated, \
+		updating the size and step only if they align. \
+
+		XTAL_FN2_(sign_t) effuse(XTAL_DEF o)
+		XTAL_0EX
+		{
+			return co::effuse(XTAL_REF_(o));
+		}
+		XTAL_FN2_(sign_t) effuse(XTAL_DEF_(sequel_q) t)
+		XTAL_0EX
+		{
+			auto &s = self();
+		//	assert(s.next(s != t).step() == t.step());// FIXME: Check `interrupt` using `countee`.
+			return s == t? (0): ((s += t.size()), 1);
+		}
+
+	};
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 template <countee_q V>
 struct sequel<V>
 {
-	using subkind = common::compose<defer<unit_t>, resize<V>, restep<V>>;
+	using subkind = common::compose<defer<unit_t>, sequel<void>, resize<V>, restep<V>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
-
+		using co = common::compose_s<S, subkind>;
+	protected:
+		using typename co::self_t;
 	public:
 	//	using co::co;
 		using co::self;
 		using co::twin;
 
-		using value_type = V;
-
 		XTAL_CO4_(subtype);
 		XTAL_CO2_(subtype);
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF ...ws)
+		XTAL_NEW_(explicit) subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	co(unit_t(), XTAL_REF_(ws)...)
+		:	co(unit_t(), XTAL_REF_(oo)...)
+		{
+		}
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	co(unit_t(), XTAL_REF_(o).size(), XTAL_REF_(oo)...)
 		{
 		}
 
-		XTAL_FN2 trip(V step_n)
+		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
 		{
-			return T(co::size(), co::step() + step_n);
-		}
-		XTAL_FN2 trip(V step_n, V i, V j)
-		XTAL_0FX
-		{
-			V const &step_m = co::step();
-			V const  size_n = j - i;
-			return T(size_n, step_n + step_m);
+			auto t = self(); t.size(j - i);
+			return t;
 		}
 
 		///\
@@ -99,22 +240,9 @@ struct sequel<V>
 			return self();
 		}
 		///\
-		Advance `1` step while retaining `size`. \
-
-		XTAL_OP1_(T &) ++()
-		XTAL_0EX
-		{
-			return operator+=(co::size());
-		}
-		XTAL_OP1_(T) ++(int)
-		XTAL_0EX
-		{
-			auto copy = self(); operator++(); return copy;
-		}
-		///\
 		Advance `1` step of size `n`. \
 
-		XTAL_OP1_(T &) +=(V n)
+		XTAL_OP1_(self_t &) +=(V n)
 		XTAL_0EX
 		{
 			co::step() += co::size() != 0;
@@ -123,135 +251,18 @@ struct sequel<V>
 		}
 
 		///\
-		\returns the block at distance `n` steps with the same `size`. \
-
-		XTAL_OP2_(T) * (V n)
-		XTAL_0FX
-		{
-			return twin().operator*=(n);
-		}
-		///\
-		\returns the adjacent block with the same `size`. \
-
-		XTAL_FN2_(T) next()
-		XTAL_0FX
-		{
-			return twin().operator++();
-		}
-		///\
-		\returns the adjacent block of size `n`. \
-
-		XTAL_OP2_(T) + (V n)
-		XTAL_0FX
-		{
-			return twin().operator+=(n);
-		}
-		///\
-		\returns the adjacent block of size `0`. \
-
-		XTAL_FN2_(T) null()
-		XTAL_0FX
-		{
-			return twin().operator+=(0);
-		}
-
-
-		///\
 		\returns `true` iff the left-hand argument immediately precedes the right. \
 
 		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX
 		{
-			auto const s = next();
-			return s.step() == t.step() - 1;
+			return co::next().step() == t.step();
 		}
-		XTAL_OP2_(bool) <=(subtype const &t)
-		XTAL_0FX
-		{
-			auto const &s =   self();
-			auto const &m = s.size();
-			auto const &n = t.size();
-			auto const &i = s.step();
-			auto const &j = t.step();
-			return (1 + i == j) or (i == j) and (0 == m or m == n or n == 0);
-		}
-
-		///\
-		\returns `true` iff the left-hand argument immediately follows the right. \
-
 		XTAL_OP2_(bool) > (subtype const &t)
 		XTAL_0FX
 		{
-			return t.operator< (self());
+			return co::step() == t.next().step();
 		}
-		XTAL_OP2_(bool) >=(subtype const &t)
-		XTAL_0FX
-		{
-			return t.operator<=(self());
-		}
-
-
-		XTAL_OP2_(bool) ==(subtype const &t)
-		XTAL_0FX
-		{
-			auto const &s =   self();
-			auto const &m = s.size();
-			auto const &n = t.size();
-			auto const &i = s.step();
-			auto const &j = t.step();
-			return (i == j) and (m == n);
-		}
-
-		struct attach
-		{
-			using subkind = typename co::attach;
-
-			template <context::any_q R>
-			class subtype: public common::compose_s<R, subkind>
-			{
-				using co = common::compose_s<R, subkind>;
-
-			public:
-				using co::co;
-
-				using co::influx;
-				///\
-				Intercepts `T` and moves to the position specified, \
-				setting the `size = 0` for future `efflux`. \
-
-				XTAL_FN2_(sign_t) influx(T t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return co::influx(t.null(), XTAL_REF_(oo)...);
-				}
-
-				using co::efflux;
-				///\
-				Asserts that the incoming sequels arrive in order. \
-
-				XTAL_FN2_(sign_t) efflux(T t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto const &m = co::head();
-					assert(m <= t);// FIXME
-					return co::efflux(t, XTAL_REF_(oo)...);
-				}
-				XTAL_FN2_(sign_t) efflux(sequel_q auto t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto &s = co::head();
-					if (s == t)
-					{	return 0;
-					}
-					else
-					{	s += t.size(); assert(s.step() == t.step());
-						(void) co::efflux(XTAL_REF_(oo)...);
-						return 1;
-					}
-				}
-
-			};
-		};
 
 	};
 };
@@ -266,19 +277,19 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = common::compose<refer<U>, rescan<U>, restep<V>>;
+	using subkind = common::compose<sequel<void>, refer<U>, rescan<U>, restep<V>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+		using co = common::compose_s<S, subkind>;
+	protected:
+		using typename co::self_t;
 	public:
 		using co::co;
 		using co::self;
 		using co::twin;
 		
-		using value_type = U;
-
 		XTAL_NEW_(explicit) subtype(U u, V v)
 		XTAL_0EX
 		:	co(u, v)
@@ -296,18 +307,11 @@ public:
 		{
 		}
 
-		XTAL_FN2 trip(V step_n)
-		XTAL_0FX
-		{
-			return T(co::scan(), co::step() + step_n);
-		}
-		XTAL_FN2 trip(V step_n, V i, V j)
+		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
 		{
 			V const &front_n = *co::begin();
-			V const   size_n = j - i;
-			V const   size_m = co::end() - co::begin();
-			return size_n == size_m? self(): T(U(front_n + i, front_n + j), co::step() + step_n);
+			return self_t(U(front_n + i, front_n + j), co::step());
 		}
 
 		///\
@@ -317,23 +321,10 @@ public:
 		XTAL_0EX
 		{
 			auto const i0 = co::begin(), iM = co::end();
-			auto const nm = n*(iM - i0);
-			co::scan(*(nm + i0), *(nm + iM));
+			auto const nm = n*_std::distance(i0, iM);
+			co::scan(*_std::next(i0, nm), *_std::next(iM, nm));
 			co::step() += n;
 			return self();
-		}
-		///\
-		Advance `1` step while retaining `size`. \
-
-		XTAL_OP1 ++()
-		XTAL_0EX
-		{
-			return operator+=(co::end() - co::begin());
-		}
-		XTAL_OP1_(T) ++(int)
-		XTAL_0EX
-		{
-			auto copy = self(); operator++(); return copy;
 		}
 		///\
 		Advance `1` step of size `n`. \
@@ -343,46 +334,11 @@ public:
 		{
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const j0 = iM, jN =j0 + n;
+			auto const j0 = iM, jN = _std::next(j0, n);
 			co::step() += i0 != iM;
 			co::scan(*j0, *jN);
 			return self();
 		}
-
-
-		///\
-		\returns the block at distance `n` steps with the same `size`. \
-
-		XTAL_OP2_(T) * (V n)
-		XTAL_0FX
-		{
-			return twin().operator*=(n);
-		}
-		///\
-		\returns the adjacent block with the same `size`. \
-
-		XTAL_FN2_(T) next()
-		XTAL_0FX
-		{
-			return twin().operator++();
-		}
-		///\
-		\returns the adjacent block of size `n`. \
-
-		XTAL_OP2_(T) + (V n)
-		XTAL_0FX
-		{
-			return twin().operator+=(n);
-		}
-		///\
-		\returns the adjacent block of size `0`. \
-
-		XTAL_FN2_(T) null()
-		XTAL_0FX
-		{
-			return twin().operator+=(0);
-		}
-
 
 		///\
 		\returns `true` iff the left-hand argument immediately precedes the right. \
@@ -390,100 +346,13 @@ public:
 		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX
 		{
-			auto const &s = self();
-			return s.end() == t.begin();
+			return co::end() == t.begin();
 		}
-		XTAL_OP2_(bool) <=(subtype const &t)
-		XTAL_0FX
-		{
-			return operator<(t) or co::operator==(t);
-		}
-
-		///\
-		\returns `true` iff the left-hand argument immediately follows the right. \
-
 		XTAL_OP2_(bool) > (subtype const &t)
 		XTAL_0FX
 		{
-			auto const &s = self();
-			return t.operator< (s);
+			return co::begin() == t.end();
 		}
-		XTAL_OP2_(bool) >=(subtype const &t)
-		XTAL_0FX
-		{
-			auto const &s = self();
-			return t.operator<=(s);
-		}
-
-
-		struct attach
-		{
-			using subkind = typename co::attach;
-
-			template <context::any_q R>
-			class subtype: public common::compose_s<R, subkind>
-			{
-				using co = common::compose_s<R, subkind>;
-
-			public:
-				using co::co;
-
-				using co::influx;
-				///\
-				Updates to the incoming position, \
-				while setting `size = 0` for future `efflux`. \
-
-				XTAL_FN2_(sign_t) influx(T t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return co::influx(t.null(), XTAL_REF_(oo)...);
-				}
-				///\
-				\note Unrecognized `sequel_q` are enforced by `assert`ion to `influx` at the initial `step == 0`. \
-
-				XTAL_FN2_(sign_t) influx(sequel_q auto t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					/*/
-					auto o = co::head(); o.step(t.step());// or something...
-					return co::influx(o.null(), XTAL_REF_(oo)...);
-					/*/
-					auto o = co::head().null(); o.step(t.step());// or something...
-					return co::influx(o, XTAL_REF_(oo)...);
-					/***/
-				}
-
-				using co::efflux;
-				///\
-				Enforces ordering on the incoming sequels by `assert`ion. \
-
-				XTAL_FN2_(sign_t) efflux(T t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto &s = co::head();
-					assert(s <= t);
-					return co::efflux(t, XTAL_REF_(oo)...);
-				}
-				///\
-				\note Unrecognized `sequel_q` are incrementally incorporated, \
-				updating the size and step only if they align. \
-
-				XTAL_FN2_(sign_t) efflux(sequel_q auto t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto &s = co::head();
-					if (s == t)
-					{	return 0;
-					}
-					else
-					{	s += t.size(); assert(s.step() == t.step());
-						(void) co::efflux(XTAL_REF_(oo)...);
-						return 1;
-					}
-				}
-
-			};
-		};
 
 	};
 };

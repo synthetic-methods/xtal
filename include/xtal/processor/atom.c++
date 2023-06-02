@@ -132,19 +132,19 @@ void respan_internal_interrupt__test()
 	xhs <<= resize_u(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs <<= common::pack_f(0, (bias_t) (alpha_t) (00));
-	xhs <<= common::pack_f(1, (bias_t) (alpha_t) (11));
-	xhs <<= common::pack_f(2, (bias_t) (alpha_t) (22));
+	xhs <<= common::pack_f(0, (bias_t) (alpha_t) (100));
+	xhs <<= common::pack_f(1, (bias_t) (alpha_t) (200));
+	xhs <<= common::pack_f(2, (bias_t) (alpha_t) (300));
 	xhs >>= seq++;
 //	REQUIRE(4 == xhs.size());
-	REQUIRE(_v3::ranges::equal(xhs, _std::vector{00, 22, 44, 55}));
+	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= common::pack_f(2, (bias_t) (alpha_t) (00));
+	xhs <<= common::pack_f(2, (bias_t) (alpha_t) (400));
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
-	REQUIRE(_v3::ranges::equal(xhs, _std::vector{66, 77, 66, 77}));
-
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
+	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
+
 }
 TEST_CASE("xtal/processor/atom.hpp: respan internal interrupt")
 {

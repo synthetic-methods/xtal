@@ -37,15 +37,10 @@ struct respan
 		XTAL_RE4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 		XTAL_RE4_(XTAL_FN2 size(), co::head().size())
 
-		XTAL_FN2 trip(iota_t step_n)
+		XTAL_FN2 slice(iota_t i, iota_t j)
 		XTAL_0EX
 		{
-			return self();
-		}
-		XTAL_FN2 trip(iota_t step_n, iota_t i, iota_t j)
-		XTAL_0EX
-		{
-			auto r = self(); r.span(span()|_v3::views::slice(i, j)); return r;
+			auto t = self(); t.span(t.span()|_v3::views::slice(i, j)); return t;
 		}
 
 	};
