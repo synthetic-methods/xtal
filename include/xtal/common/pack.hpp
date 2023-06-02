@@ -55,10 +55,10 @@ struct pack
 };
 template <typename ...Xs>
 using    pack_t = typename pack<Xs...>::type;
-XTAL_LET pack_f = [] <typename ...Xs> (Xs &&...xs)
+XTAL_LET pack_f = [] <typename ...Xs>(Xs &&...xs)
 XTAL_0FN_(_std::make_tuple(XTAL_FWD_(Xs) (xs)...));
 
-XTAL_LET pack_fwd = [] <typename ...Xs> (Xs &&...xs)
+XTAL_LET pack_fwd = [] <typename ...Xs>(Xs &&...xs)
 XTAL_0FN_(_std::forward_as_tuple<Xs...>(XTAL_FWD_(Xs) (xs)...));
 
 template <typename    T > concept pack_p = pack_size_p<T> and pack_part_ps<T>;

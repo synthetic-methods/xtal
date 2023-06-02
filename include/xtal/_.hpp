@@ -17,12 +17,15 @@
 ///////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//\
-TODO: Allow command-line/[c]?make configuration.
+
+#define XTAL_(NYM) XTAL_##NYM
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 
-#define XTAL_STD_IEEE 0//754
+#define XTAL_STD_IEEE 0//754// TODO: Allow command-line/[c]?make configuration.
 
 #define XTAL_STD_size_t ::std::size_t
 #define XTAL_STD_sign_t ::std::int_fast8_t
@@ -122,8 +125,10 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
 #define XTAL_LET_(...)               static constexpr __VA_ARGS__
 
-#define XTAL_0EQ                                      noexcept requires
-#define XTAL_0EQ_(REF)                            REF noexcept requires
+#define XTAL_QEX                                      noexcept requires
+#define XTAL_QEX_(REF)                            REF noexcept requires
+#define XTAL_QFX                            const     noexcept requires
+#define XTAL_QFX_(REF)                      const REF noexcept requires
 #define XTAL_0EX                                      noexcept
 #define XTAL_0EX_(REF)                            REF noexcept
 #define XTAL_0FX                            const     noexcept
@@ -142,8 +147,12 @@ static_assert(1101 <= XTAL_V00_GNUC);
                                             constexpr TYP                   (TYP &&) noexcept = default;;
 #define XTAL_CO2_(TYP)                                TYP()                          noexcept = default;\
                                                      ~TYP()                          noexcept = default;;
-#define XTAL_FLX_(...) [=, this](auto HEAD) constexpr noexcept\
-{if (0 == HEAD) {return HEAD;} else {auto TAIL = (__VA_ARGS__); return 1 == TAIL? TAIL: HEAD;};}
+
+#define     XTAL_FNX XTAL_FN2_(sign_t)
+#define     XTAL_FLX XTAL_STD_(sign_t)
+#define     XTAL_FLX_(...) [=, this](XTAL_FLX lhs)\
+XTAL_0FN -> XTAL_FLX    {if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}\
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

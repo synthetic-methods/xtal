@@ -57,9 +57,8 @@ struct sequel<void>
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
-		using co = common::compose_s<S>;
-	protected:
-		using typename co::self_t;
+		using co = common::compose_s<S>; using T = typename co::self_t;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -75,7 +74,7 @@ struct sequel<void>
 		///\
 		\returns the block at distance `n` steps with the same `size`. \
 
-		XTAL_OP2_(self_t) * (iota_q auto n)
+		XTAL_OP2_(T) * (iota_q auto n)
 		XTAL_0FX
 		{
 			return twin().operator*=(n);
@@ -83,12 +82,12 @@ struct sequel<void>
 		///\
 		Advance `1` step while retaining `size`. \
 
-		XTAL_OP1_(self_t &) ++()
+		XTAL_OP1_(T &) ++()
 		XTAL_0EX
 		{
 			return self().operator+=(self().size());
 		}
-		XTAL_OP1_(self_t) ++(int)
+		XTAL_OP1_(T) ++(int)
 		XTAL_0EX
 		{
 			auto t = self(); operator++(); return t;
@@ -96,12 +95,12 @@ struct sequel<void>
 		///\
 		\returns the adjacent block with the same `size`. \
 
-		XTAL_FN2_(self_t) next(iota_q auto n)
+		XTAL_FN2_(T) next(iota_q auto n)
 		XTAL_0FX
 		{
 			return self().operator*(n);
 		}
-		XTAL_FN2_(self_t) next()
+		XTAL_FN2_(T) next()
 		XTAL_0FX
 		{
 			return twin().operator++();
@@ -109,7 +108,7 @@ struct sequel<void>
 		///\
 		\returns the adjacent block of size `n`. \
 
-		XTAL_OP2_(self_t) + (iota_q auto n)
+		XTAL_OP2_(T) + (iota_q auto n)
 		XTAL_0FX
 		{
 			return twin().operator+=(n);
@@ -117,12 +116,12 @@ struct sequel<void>
 		///\
 		\returns the adjacent block of size `0`. \
 
-		XTAL_FN2_(self_t) null()
+		XTAL_FN2_(T) null()
 		XTAL_0FX
 		{
 			return twin().operator+=(0);
 		}
-		XTAL_FN2_(self_t) null(iota_q auto n)
+		XTAL_FN2_(T) null(iota_q auto n)
 		XTAL_0FX
 		{
 			auto s = null(); s.step(n); return s;
@@ -147,19 +146,19 @@ struct sequel<void>
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_FN2_(sign_t) infuse(XTAL_DEF o)
+		XTAL_FNX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return co::infuse(XTAL_REF_(o));
 		}
-		XTAL_FN2_(sign_t) infuse(self_t t)
+		XTAL_FNX infuse(T t)
 		XTAL_0EX
 		{
 			auto &s = self();
 			return s == t? (0): ((s = t), 1);
 		}
 		/*/
-		XTAL_FN2_(sign_t) infuse(XTAL_DEF_(sequel_q) t)
+		XTAL_FNX infuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -174,12 +173,12 @@ struct sequel<void>
 		\note Unrecognized `sequel_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
-		XTAL_FN2_(sign_t) effuse(XTAL_DEF o)
+		XTAL_FNX effuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return co::effuse(XTAL_REF_(o));
 		}
-		XTAL_FN2_(sign_t) effuse(XTAL_DEF_(sequel_q) t)
+		XTAL_FNX effuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -201,9 +200,8 @@ struct sequel<V>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
-	protected:
-		using typename co::self_t;
+		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+
 	public:
 	//	using co::co;
 		using co::self;
@@ -242,7 +240,7 @@ struct sequel<V>
 		///\
 		Advance `1` step of size `n`. \
 
-		XTAL_OP1_(self_t &) +=(V n)
+		XTAL_OP1_(T &) +=(V n)
 		XTAL_0EX
 		{
 			co::step() += co::size() != 0;
@@ -282,9 +280,8 @@ public:
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
-	protected:
-		using typename co::self_t;
+		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+
 	public:
 		using co::co;
 		using co::self;
@@ -311,7 +308,7 @@ public:
 		XTAL_0FX
 		{
 			V const &front_n = *co::begin();
-			return self_t(U(front_n + i, front_n + j), co::step());
+			return T(U(front_n + i, front_n + j), co::step());
 		}
 
 		///\

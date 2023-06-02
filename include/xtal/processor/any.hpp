@@ -73,23 +73,33 @@ struct defer<U>
 		NOTE: Unless the underlying `process` is invocable as `const`, \
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
+		template <typename ...Xs>
+		XTAL_FN2 re_()
+		XTAL_0EX
+		{
+			return head().template reify<iteratee_t<Xs>...>();
+		}
+
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return iterate_forward_f(iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...));
+			return iterate_forward_f(iterate_map_f(re_<decltype(xs)...>()) (XTAL_REF_(xs)...));
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0EQ requires (U const &u) {u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);}
+		XTAL_QEX requires (U const &u)
 		{
-			return iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
+			u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
+		}
+		{
+			return iterate_map_f(re_<decltype(xs)...>()) (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return iterate_map_f(head().template reify<iteratee_t<decltype(xs)>...>()) (XTAL_REF_(xs)...);
+			return iterate_map_f(re_<decltype(xs)...>()) (XTAL_REF_(xs)...);
 		}
 
 	};

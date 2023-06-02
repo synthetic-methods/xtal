@@ -26,6 +26,7 @@ struct define
 	{
 		friend T;
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -53,18 +54,18 @@ struct define
 		\returns the result of `infuse` applied to the first argument \
 		`&` `influx` applied to the remaining arguments. \
 
-		XTAL_FN2_(sign_t) influx(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_FNX influx(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
-		XTAL_FN2_(sign_t) influx(null_t, XTAL_DEF ...oo)
+		XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 		//	return self().influx(XTAL_REF_(oo)...);
 			return influx();
 		}
-		XTAL_FN2_(sign_t) influx()
+		XTAL_FNX influx()
 		XTAL_0EX
 		{
 			return -1;
@@ -94,18 +95,18 @@ struct define
 		\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments. \
 
-		XTAL_FN2_(sign_t) efflux(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_FNX efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
-		XTAL_FN2_(sign_t) efflux(null_t, XTAL_DEF ...oo)
+		XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 		//	return self().efflux(XTAL_REF_(oo)...);
 			return efflux();
 		}
-		XTAL_FN2_(sign_t) efflux()
+		XTAL_FNX efflux()
 		XTAL_0EX
 		{
 			return -1;
@@ -123,16 +124,16 @@ struct define
 		\note The return value controls conditional execution using binary `&`, \
 		truncating propagation when the aggregated result is zero (`0`).
 
-		XTAL_FN2_(sign_t) defuse(XTAL_DEF o)
+		XTAL_FNX defuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return -1;
 		}
 
-		XTAL_FN2_(sign_t) effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		XTAL_FNX effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
-		XTAL_FN2_(sign_t) infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		XTAL_FNX infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 		
 
@@ -157,6 +158,7 @@ struct defer
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -165,12 +167,12 @@ struct defer
 		///\
 		\note Propagates to the proxied value if it has the required `context`.
 
-		XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
-		XTAL_0EQ any_q<U>
+		XTAL_FNX influx(XTAL_DEF ...oo)
+		XTAL_QEX any_q<U>
 		{
 			return XTAL_FLX_(head().influx(oo...)) (co::influx(XTAL_REF_(oo)...));
 		}
-		XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
+		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return co::influx(XTAL_REF_(oo)...);
@@ -179,12 +181,12 @@ struct defer
 		///\
 		\note Propagates to the proxied value if it has the required `context`.
 
-		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
-		XTAL_0EQ any_q<U>
+		XTAL_FNX efflux(XTAL_DEF ...oo)
+		XTAL_QEX any_q<U>
 		{
-			return XTAL_FLX_(head().efflux(oo...)) (co::efflux(XTAL_REF_(oo)...));
+			return XTAL_FLX_(co::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
 		}
-		XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
+		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return co::efflux(XTAL_REF_(oo)...);
@@ -193,12 +195,12 @@ struct defer
 		///\
 		\note Assigns the given value `u` if it matches the proxied type `U`. \
 
-		XTAL_FN2_(sign_t) defuse(U u)
+		XTAL_FNX defuse(U u)
 		XTAL_0EX
 		{
-			return not co::has(u) and (co::head(u), 1);
+			return co::has(u)? (0): (co::head(u), 1);
 		}
-		XTAL_FN2_(sign_t) defuse(XTAL_DEF w)
+		XTAL_FNX defuse(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return co::defuse(XTAL_REF_(w));

@@ -16,7 +16,7 @@ namespace _detail
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
-XTAL_0EQ iso_q<I, J>
+XTAL_QEX iso_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
@@ -327,7 +327,7 @@ struct collect
 					return get();
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
-				XTAL_0EQ (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
+				XTAL_QEX (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
 				{
 					seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
 					return get();
@@ -555,7 +555,7 @@ struct collect
 				///\
 				Initializing constructor. \
 
-				XTAL_NEW_(explicit) homotype(bool const& basis)
+				XTAL_NEW_(explicit) homotype(bool const &basis)
 				:	co()
 				{
 					if (basis) generate();
@@ -617,16 +617,16 @@ struct collect
 				then mirrored to complete the quarter and half respectively. \
 
 				XTAL_FN1_(T &) generate()
-				XTAL_0EQ bit_ceiling_q<N_size, 2> and complex_q<V>
+				XTAL_QEX bit_ceiling_q<N_size, 2> and complex_q<V>
 				{
 					auto &s = get();
-					auto constexpr x = realized::template patio_y<-1> (N_size);
+					auto constexpr x = realized::template patio_y<-1>(N_size);
 					auto constexpr L = N_size >> 2;
 					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
 					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
 					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
 					auto const _k1 = _std::make_reverse_iterator(k1);
-					generate<L + 1> (realized::circle_y(x));
+					generate<L + 1>(realized::circle_y(x));
 					_detail::copy_to(_k1, _std::span(i0, j0), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
 					_detail::copy_to( k1, _std::span(i1, k1), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
 					return s;
@@ -637,7 +637,7 @@ struct collect
 
 				template <iterated_q Y>
 				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
-				XTAL_0EQ bit_ceiling_q<N_size, 1>
+				XTAL_QEX bit_ceiling_q<N_size, 1>
 				{
 					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
 

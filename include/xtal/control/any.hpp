@@ -76,6 +76,7 @@ struct define
 			class subtype: public common::compose_s<R, subkind>
 			{
 				using co = common::compose_s<R, subkind>;
+			
 			public:
 			//	using co::co;
 				using co::self;
@@ -98,7 +99,7 @@ struct define
 				XTAL_0EX
 				{
 					auto const &def = deify<decltype(xs)...>();
-					return (self().*def)(XTAL_REF_(xs)...);
+					return (self().*def) (XTAL_REF_(xs)...);
 				}
 
 				///\
@@ -111,7 +112,7 @@ struct define
 				{
 					auto const &def = deify<Xs...>();
 					return [this, def](XTAL_DEF ...xs)
-						XTAL_0FN_((self().*def)(XTAL_REF_(xs)...))
+						XTAL_0FN_((self().*def) (XTAL_REF_(xs)...))
 					;
 				}
 
@@ -272,7 +273,7 @@ struct define
 				///\
 				Invokes `influx` on the super-instance after clearing the schedule iff completed. \
 
-				XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
+				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					abandon(0 < completed() and 0 == suspended());
@@ -284,13 +285,13 @@ struct define
 				\
 				\returns the `influx` result if the `i == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(sign_t) influx(index_t i, control_t o, XTAL_DEF ...oo)
+				XTAL_FNX influx(index_t i, control_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					poke(i, o);
 					return influx(i, XTAL_REF_(oo)...);
 				}
-				XTAL_FN2_(sign_t) influx(index_t i)
+				XTAL_FNX influx(index_t i)
 				XTAL_0EX
 				{
 					return -1;
@@ -417,7 +418,7 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FN2_(sign_t) influx(index_t i, control_t o, XTAL_DEF ...oo)
+				XTAL_FNX influx(index_t i, control_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (0 == i)
@@ -429,7 +430,7 @@ struct define
 						return -1;
 					}
 				}
-				XTAL_FN2_(sign_t) influx(index_t i)
+				XTAL_FNX influx(index_t i)
 				XTAL_0EX
 				{
 					return -1;

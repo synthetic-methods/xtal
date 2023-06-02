@@ -108,7 +108,7 @@ XTAL_0EX
 	return Z(XTAL_REF_(z));
 }
 XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
-XTAL_0EQ requires {z.size();}
+XTAL_QEX requires {z.size();}
 {
 	using namespace _v3::ranges;
 	using  Z = any_view<range_value_t<XTAL_TYP_(z)>, category::forward|category::sized>;

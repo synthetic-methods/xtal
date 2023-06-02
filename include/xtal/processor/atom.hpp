@@ -101,12 +101,12 @@ struct atom
 				///\
 				Responds to `control::resize` by resizing the internal `store()`. \
 
-				XTAL_FN2_(sign_t) infuse(XTAL_DEF o)
+				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					return co::infuse(XTAL_REF_(o));
 				}
-				XTAL_FN2_(sign_t) infuse(resize_u resize_o)
+				XTAL_FNX infuse(resize_u resize_o)
 				XTAL_0EX
 				{
 					return co::infuse(resize_o) and (store().resize(XTAL_REF_(resize_o)), 1);
@@ -116,8 +116,8 @@ struct atom
 				\note Resizing skips intermediate `covalent_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_FN2_(sign_t) influx_request(resize_u resize_o, XTAL_DEF ...oo)
-				XTAL_0EQ (0 <= N_parity)
+				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
+				XTAL_QEX (0 <= N_parity)
 				{
 					return co::template influx_request_tail<N_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
@@ -131,7 +131,7 @@ struct atom
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FN2_(sign_t) efflux(control::sequel_q auto sequel_o)
+				XTAL_FNX efflux(control::sequel_q auto sequel_o)
 				XTAL_0EX
 				{
 					return efflux(sequel_o, respan_u(store()));
@@ -141,7 +141,7 @@ struct atom
 				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FN2_(sign_t) efflux(control::sequel_q auto sequel_o, respan_u respan_o)
+				XTAL_FNX efflux(control::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
 					using _v3::ranges::copy;
@@ -150,7 +150,6 @@ struct atom
 					using _v3::views::take;
 					serve(respan_o);
 
-				//	if (sequel_o == co::head_valve(sequel_o))
 					if (sequel_o == this->template get<decltype(sequel_o)>())
 					{	return 0;
 					}

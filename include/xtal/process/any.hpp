@@ -106,7 +106,7 @@ struct link
 				///\
 				\returns the result of `influx`ing `self` then  (if `& 1`) `arguments`. \
 
-				XTAL_FN2_(sign_t) influx(XTAL_DEF ...oo)
+				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(self().influx_request(oo...)) (co::influx(XTAL_REF_(oo)...));
@@ -114,7 +114,7 @@ struct link
 				///\
 				\returns the result of `efflux`ing `arguments` then (if `& 1`) `self`. \
 
-				XTAL_FN2_(sign_t) efflux(XTAL_DEF ...oo)
+				XTAL_FNX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(co::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
@@ -123,12 +123,12 @@ struct link
 				///\
 				\note If prefixed by `null_t()`, the control is forwarded directly to `arguments`. \
 
-				XTAL_FN2_(sign_t) influx(null_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx_request(XTAL_REF_(oo)...);
 				}
-				XTAL_FN2_(sign_t) efflux(null_t, XTAL_DEF ...oo)
+				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().efflux_request(XTAL_REF_(oo)...);
@@ -138,13 +138,13 @@ struct link
 				///\
 				Forwards the control to `arguments`, bypassing `self`. \
 
-				XTAL_FN2_(sign_t) influx_request(auto ...oo)
+				XTAL_FNX influx_request(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
 						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) |...| -1));
 				}
-				XTAL_FN2_(sign_t) efflux_request(auto ...oo)
+				XTAL_FNX efflux_request(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
@@ -157,7 +157,7 @@ struct link
 				If `~N_parity`, the argument at `N_parity` receives the full control. \
 
 				template <int N_parity=-1>
-				XTAL_FN2_(sign_t) influx_request_tail(auto o, auto ...oo)
+				XTAL_FNX influx_request_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_parity == -1)
@@ -165,7 +165,7 @@ struct link
 					}
 					else
 					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns> (common::seek_t<Ns...>)
+						return [&] <auto ...Ns>(common::seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().influx(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().influx(oo...))
 						(common::seek_v<sizeof...(Xs) - 1>);
 					}
@@ -175,7 +175,7 @@ struct link
 				If `~N_parity`, the argument at `N_parity` receives the full control. \
 
 				template <int N_parity=-1>
-				XTAL_FN2_(sign_t) efflux_request_head(auto o, auto ...oo)
+				XTAL_FNX efflux_request_head(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_parity == -1)
@@ -183,7 +183,7 @@ struct link
 					}
 					else
 					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns> (common::seek_t<Ns...>)
+						return [&] <auto ...Ns>(common::seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().efflux(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().efflux(o))
 						(common::seek_v<sizeof...(Xs) - 1>);
 					}
@@ -209,6 +209,7 @@ struct define
 	{
 		friend T;
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -225,6 +226,11 @@ struct define
 		///\
 		\returns the application of `reify()` to the supplied arguments. \
 
+		/*/
+		XTAL_RE2_(XTAL_OP2() (XTAL_DEF ...xs)
+		,	self().template method<>(XTAL_REF_(xs)...)
+		)
+		/*/
 		XTAL_OP2() (XTAL_DEF ...xs)
 		XTAL_0EX
 		{
@@ -235,22 +241,14 @@ struct define
 		{
 			return self().template method<>(XTAL_REF_(xs)...);
 		}
+		/***/
 		///\
 		\returns the `lambda` abstraction of `method`, \
 			with template parameters resolved by `control::dispatch`. \
 
-		template <typename ...Xs>
-		XTAL_FN2 reify()
-		XTAL_0EX
-		{
-			return [this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
-		}
-		template <typename ...Xs>
-		XTAL_FN2 reify()
-		XTAL_0FX
-		{
-			return [this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...));
-		}
+		XTAL_RE2_(template <typename ...Xs> XTAL_FN2 reify()
+		,	[this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...))
+		)
 		
 		///\
 		\returns the function corresponding to the currently resolved parameters. \
@@ -312,6 +310,7 @@ struct refine
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -321,6 +320,7 @@ struct refine
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -334,11 +334,11 @@ struct refine
 		};
 		template <typename ...Xs>
 		using     bind_t = typename combined<Xs...>::type;
-		XTAL_LET  bind_f = [](XTAL_DEF ...xs)             XTAL_0FN_(bind_t<decltype(xs)...>        (XTAL_REF_(xs)...));
-		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0EX_( &) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
-		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0FX_( &) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
-		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0EX_(&&) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
-		XTAL_FN2  bind_to    (XTAL_DEF ...xs) XTAL_0FX_(&&) {return bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...);}
+		XTAL_LET  bind_f = [](XTAL_DEF ...xs) XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
+		
+		XTAL_RE4_(XTAL_FN2 bind_to(XTAL_DEF ...xs)
+		,	bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...)
+		)
 
 	};
 };
@@ -357,6 +357,7 @@ struct defer
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -377,6 +378,7 @@ struct defer
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -403,6 +405,7 @@ struct defer<U>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using co::self;
@@ -411,18 +414,9 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		template <auto ...Ms>
-		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0EX
-		{
-			return head().template method<Ms...>(XTAL_REF_(xs)...);
-		}
-		template <auto ...Ms>
-		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0FX
-		{
-			return head().template method<Ms...>(XTAL_REF_(xs)...);
-		}
+		XTAL_RE2_(template <auto ...Ms> XTAL_FN2 method(XTAL_DEF ...xs)
+		,	head().template method<Ms...>(XTAL_REF_(xs)...)
+		)
 
 	};
 };

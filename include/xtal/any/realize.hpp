@@ -328,9 +328,9 @@ public:
 	{
 		return explo_y(N_zoom, XTAL_REF_(base));
 	}
-	static_assert(explo_y<0> (alpha_t(2.0)) == 1.00);
-	static_assert(explo_y<1> (alpha_t(2.0)) == 2.00);
-	static_assert(explo_y<2> (alpha_t(2.0)) == 4.00);
+	static_assert(explo_y<0>(alpha_t(2.0)) == 1.00);
+	static_assert(explo_y<1>(alpha_t(2.0)) == 2.00);
+	static_assert(explo_y<2>(alpha_t(2.0)) == 4.00);
 
 	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
 
@@ -341,7 +341,7 @@ public:
 		delta_t m = zoom << unit::shift;
 		m += unit::mask;
 		m &= exponent::mask;
-		return _std::bit_cast<alpha_t> (m);
+		return _std::bit_cast<alpha_t>(m);
 	#else
 		return _std::ldexp(alpha_1, zoom);// not `constexpr` until `C++23`!
 	#endif
@@ -382,21 +382,21 @@ public:
 		return alpha_t(N_num)/XTAL_REF_(nom);
 	}
 	static_assert(ratio_y    (alpha_t(2.0)) == 0.5);
-	static_assert(ratio_y<1> (alpha_t(2.0)) == 0.5);
-	static_assert(ratio_y<4> (alpha_t(2.0)) == 2.0);
+	static_assert(ratio_y<1>(alpha_t(2.0)) == 0.5);
+	static_assert(ratio_y<4>(alpha_t(2.0)) == 2.0);
 
 
-	///\returns `pi` times `ratio_y<N_num> (nom)`.
+	///\returns `pi` times `ratio_y<N_num>(nom)`.
 
 	template <int N_num=1>
 	XTAL_FZ2_(alpha_t) patio_y(XTAL_DEF u)
 	XTAL_0EX
 	{
-		return ratio_y<N_num> (XTAL_REF_(u))*3.141592653589793238462643383279502884;
+		return ratio_y<N_num>(XTAL_REF_(u))*3.141592653589793238462643383279502884;
 	}
 	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
-	static_assert(patio_y<1> (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
-	static_assert(patio_y<4> (alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
+	static_assert(patio_y<1>(alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
+	static_assert(patio_y<4>(alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
 
 
 	XTAL_LET_(_std::array<alpha_t, 4>) codomain_vs {1.0
@@ -503,7 +503,7 @@ public:
 	XTAL_FZ2 minimum_y(XTAL_DEF ...values)
 	XTAL_0EX
 	{
-		return _std::min<alpha_t> ({XTAL_REF_(values)...});
+		return _std::min<alpha_t>({XTAL_REF_(values)...});
 	}
 
 
@@ -532,7 +532,7 @@ public:
 	XTAL_FZ2 maximum_y(XTAL_DEF ...values)
 	XTAL_0EX
 	{
-		return _std::max<alpha_t> ({XTAL_REF_(values)...});
+		return _std::max<alpha_t>({XTAL_REF_(values)...});
 	}
 
 
@@ -546,10 +546,10 @@ public:
 	{
 	#ifdef XTAL_V00_MSVC
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-		delta_t u = _std::bit_cast<delta_t> (value);
+		delta_t u = _std::bit_cast<delta_t>(value);
 		u &= sign::mask;
 		u |= unit::mask;
-		return _std::bit_cast<alpha_t> (_std::move(u));
+		return _std::bit_cast<alpha_t>(_std::move(u));
 	#else
 		return __builtin_copysign((alpha_t) 1, value);
 	#endif
@@ -566,11 +566,11 @@ public:
 	{
 	#if XTAL_V00_MSVC
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-		delta_t n = _std::bit_cast<delta_t> (source);
-		delta_t m = _std::bit_cast<delta_t> (target);
+		delta_t n = _std::bit_cast<delta_t>(source);
+		delta_t m = _std::bit_cast<delta_t>(target);
 		m &=    ~sign::mask;
 		m |= n & sign::mask;
-		return _std::bit_cast<alpha_t> (_std::move(m));
+		return _std::bit_cast<alpha_t>(_std::move(m));
 	#else
 		return __builtin_copysign(target, source);// constexpr
 	#endif
@@ -603,9 +603,9 @@ public:
 	{
 	#if XTAL_V00_MSVC
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-		delta_t u = _std::bit_cast<delta_t> (target);
+		delta_t u = _std::bit_cast<delta_t>(target);
 		u &= positive::mask;
-		return _std::bit_cast<alpha_t> (_std::move(u));
+		return _std::bit_cast<alpha_t>(_std::move(u));
 	#else
 		return __builtin_copysign(target, (alpha_t) 1);// constexpr
 	#endif
@@ -676,14 +676,14 @@ public:
 		delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
 		delta_t const M = rezone + M_zoom;
 		delta_t _, n, m;
-		auto &t  = reinterpret_cast<delta_t &> (target);
+		auto &t  = reinterpret_cast<delta_t &>(target);
 		n  =  t  & sign::mask;
 		m  =  t  ^ n;
 		m  =  M  - m;
 		_  =  m >> positive::depth;
 		n |=  _  & unit::mask;
 		t +=  _  & m;
-		return    _std::bit_cast<alpha_t> (n);
+		return    _std::bit_cast<alpha_t>(n);
 	#else
 		alpha_t const t = N_infinity? maximal_y(zone - 1): dnsilon_y(N_zoom, zone);
 		alpha_t const s = design_z(target), _ = t < target;
@@ -764,14 +764,14 @@ public:
 		delta_t const     dezone = zone << exponent::shift;
 		delta_t const M = dezone + M_zoom*N_unit;
 		delta_t _, n, m;
-		auto &t  = reinterpret_cast<delta_t &> (target);
+		auto &t  = reinterpret_cast<delta_t &>(target);
 		n   = t  & sign::mask;
 		m   = t  ^ n;
 		m  -= M;
 		_   = m >> positive::depth;
 		n  |= _  & unit::mask;
 		t  -= _  & m;
-		return    _std::bit_cast<alpha_t> (_std::move(n));
+		return    _std::bit_cast<alpha_t>(_std::move(n));
 	#else
 		alpha_t const t = N_zero? minimal_y(zone - 1): upsilon_y(N_zoom, zone);
 		alpha_t const s = design_z(target);

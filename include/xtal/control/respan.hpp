@@ -20,6 +20,7 @@ struct respan
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
+	
 	public:
 	//	using co::co;
 		using co::self;

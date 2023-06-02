@@ -19,14 +19,14 @@ template <size_t    N=0>
 XTAL_FZ1 seek_f(auto const &f)
 XTAL_0EX
 {
-	return [&] <auto ...Ns> (seek_t<Ns...>)
+	return [&] <auto ...Ns>(seek_t<Ns...>)
 		XTAL_0FN_(..., f(Ns)) (seek_v<N>);
 }
 template <size_t N=0>
 XTAL_FZ1 seek_f(auto const &f, XTAL_DEF w)
 XTAL_0EX
 {
-	return [&] <auto ...Ns> (seek_t<Ns...>)
+	return [&] <auto ...Ns>(seek_t<Ns...>)
 		XTAL_0FN_(f(Ns), ..., XTAL_REF_(w)) (seek_v<N>);
 }
 

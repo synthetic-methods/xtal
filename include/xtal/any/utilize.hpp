@@ -33,20 +33,16 @@ template <typename    T  > XTAL_LET    value_v = based_t<T>::value;
 template <typename    T  > concept   unbased_p = not based_p<T>;
 template <typename ...Ts > concept   unbased_q = every_q<unbased_p<Ts>...>;
 
-template <typename    T  > struct    debased            : _std::false_type {using type = based_t<T>;};
-template <unbased_p   T  > struct    debased<T        &>: _std:: true_type {using type =         T*;};
-template <  based_p   T  > struct    debased<T const  &>: _std::false_type {using type = based_t<T>;};
-template <typename    T  > struct    debased<T       &&>: _std::false_type {using type = based_t<T>;};
-template <typename    T  > struct    debased<T const &&>: _std::false_type {using type = based_t<T>;};
+template <typename    T  > struct    debased           : _std::false_type {using type = based_t<T>;};
+template <unbased_p   T  > struct    debased<T       &>: _std:: true_type {using type =         T*;};
+template <unbased_p   T  > struct    debased<T const &>: _std:: true_type {using type =   const T*;};
 template <typename    T  > using     debased_t =  typename debased<T>::type;
 template <typename    T  > concept   debased_p =           debased<T>::value;
 template <typename ...Ts > concept   debased_q = every_q<debased_p<Ts>...>;
 
-template <typename    T  > struct    rebased            : _std:: true_type {using type = based_t<T>;};
-template <unbased_p   T  > struct    rebased<T        &>: _std::false_type {using type =         T&;};
-template <  based_p   T  > struct    rebased<T const  &>: _std:: true_type {using type = based_t<T>;};
-template <typename    T  > struct    rebased<T       &&>: _std:: true_type {using type = based_t<T>;};
-template <typename    T  > struct    rebased<T const &&>: _std:: true_type {using type = based_t<T>;};
+template <typename    T  > struct    rebased           : _std:: true_type {using type = based_t<T>;};
+template <unbased_p   T  > struct    rebased<T       &>: _std::false_type {using type =         T&;};
+template <unbased_p   T  > struct    rebased<T const &>: _std::false_type {using type =   const T&;};
 template <typename    T  > using     rebased_t =  typename rebased<T>::type;
 template <typename    T  > concept   rebased_p =           rebased<T>::value;
 template <typename ...Ts > concept   rebased_q = every_q<rebased_p<Ts>...>;
@@ -81,14 +77,29 @@ template <typename ...Ys>             concept iso_q = isomorphic<Ys...>::value;
 template <typename Y, typename    T > concept  if_p = _std::is_base_of_v<based_t<Y>, based_t<T>>;
 template <typename Y, typename ...Ts> concept  if_q = every_q<if_p<Y, Ts>...>;
 
-template <typename T, typename    Y > concept  to_p = requires (T t) {based_t<Y> (t);};// remove `based_t`?
+template <typename T, typename    Y > concept  to_p = requires (T t) {based_t<Y>(t);};// remove `based_t`?
 template <typename T, typename ...Ys> concept  to_q = every_q<to_p<T, Ys>...>;
 
-template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T> (XTAL_REF_(oo)...));
+template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
 
 template <template <typename...> typename T_>                 struct  of_t {};
 template <template <typename...> typename T_, typename ...Ts> concept of_q = if_q<of_t<T_>, Ts...>;
 
+
+template <typename T> concept dismember_p = debased_p<T>;// determine whether `T` should be dereferenced
+template <typename T> using      member_t = debased_t<T>;// convert references to pointers
+
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF w) XTAL_QEX dismember_p<T> {return &XTAL_REF_(w);}// obtain address
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF w) XTAL_0EX                {return to_f<T>(XTAL_REF_(w));}
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX            {return to_f<T>(XTAL_REF_(ws)...);}
+
+XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_QEX requires {*w;} {return *XTAL_REF_(w);}// dereference address
+XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX                {return  XTAL_REF_(w);}
+
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_QEX requires {*w;} {return *_std::move(XTAL_REF_(w));}// dereference address
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX                {return  _std::move(XTAL_REF_(w));}
+
+template <typename T> concept remember_p = not dismember_p<T>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
