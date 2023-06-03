@@ -25,7 +25,7 @@
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 
-#define XTAL_STD_IEEE 0//754// TODO: Allow command-line/[c]?make configuration.
+#define XTAL_STD_IEC 60559// TODO: Allow command-line/[c]?make configuration.
 
 #define XTAL_STD_size_t ::std::size_t
 #define XTAL_STD_sign_t ::std::int_fast8_t

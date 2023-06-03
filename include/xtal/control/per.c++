@@ -13,12 +13,19 @@ namespace xtal::control::__per
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/control/per.hpp: true")
+TEST_CASE("xtal/control/per.hpp: construction")
 {
-	auto p = per_t<iota_t>(44100);
+	sigma_t b = realized::diplo_y(16);
+	alpha_t p = realized::haplo_y(16);
 
-	REQUIRE(44100 == p.rate());
-	REQUIRE(44100 == trim_y<0>(1/p.period()));
+	auto d = per_t(b);
+	auto q = per_t(p);
+
+	REQUIRE(b == d.rate());
+	REQUIRE(b == q.rate());
+
+	REQUIRE(p == d.period());
+	REQUIRE(p == q.period());
 
 }
 /**/

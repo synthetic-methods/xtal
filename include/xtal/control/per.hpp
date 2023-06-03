@@ -11,10 +11,13 @@ namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
 struct per
 {
-	using realized = realize<U>; using V = typename realized::alpha_t;
+private:
+	using U = iota_t;
+	using V = alpha_t;
+
+public:
 	using subkind = common::compose<defer<U>, defer<V>>;
 
 	template <any_q S>
@@ -28,9 +31,14 @@ struct per
 		XTAL_CO2_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF n, XTAL_DEF ...ws)
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(n, V(1)/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		:	co(n, (V) 1./V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		{
+		}
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
+		XTAL_0EX
+		:	co((U) 1./V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
 		{
 		}
 
@@ -39,8 +47,7 @@ struct per
 
 	};
 };
-template <typename U>
-using per_t = confined_t<per<U>>;
+using per_t = confined_t<per>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
