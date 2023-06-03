@@ -117,7 +117,8 @@ struct atom
 				continuing to propagate beyond. \
 
 				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
-				XTAL_QEX (0 <= N_parity)
+				XTAL_0EX
+				XTAL_IF1 (0 <= N_parity)
 				{
 					return co::template influx_request_tail<N_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
@@ -144,30 +145,28 @@ struct atom
 				XTAL_FNX efflux(control::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
-					using _v3::ranges::copy;
-					using _v3::ranges::next;
-					using _v3::views::slice;
-					using _v3::views::take;
+					if (sequel_o == co::template get<decltype(sequel_o)>()) return 0;
+				//	else...
+				//	delta_t n = 0;
 					serve(respan_o);
-
-					if (sequel_o == this->template get<decltype(sequel_o)>())
-					{	return 0;
-					}
-					else
-					{	iota_t n = 0;
-						(void) co::infuse(sequel_o);
-						(void) co::redux([&, this](iota_t i, iota_t j)
-						XTAL_0FN
-						{
-							auto sequel_x = sequel_o.slice(i, j).skip(n++);// maintain `step()` order
-							auto respan_x = respan_o.slice(i, j);
-							(void) co::template efflux_request_head<N_parity>(sequel_x, respan_x);
-							copy(co::template method<>()|take(j - i), next(serve().begin(), i));
-						});
-						(void) co::influx_request(sequel_o.null());// set current `step()` and set `size() = 0`
-						return 1;
-					}
+					(void) co::effuse(sequel_o);
+					(void) co::redux([&, this](auto i, auto j, auto n)
+					XTAL_0FN
+					{	using namespace _v3;
+						auto sequel_x = sequel_o.slice(i, j).skip(n);//++
+						auto respan_x = respan_o.slice(i, j);
+						(void) co::template efflux_request_head<N_parity>(sequel_x, respan_x);
+						ranges::copy(co::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
+					}, skip_n);
+				//	(void) co::template influx_request(sequel_o);
+					return 1;
 				}
+		//	NOTE: The definition of `infuse` invoked on `sequel` above assumes sequential update. \
+		//	If this is changed (e.g. to allow absolute redressing), \
+		//	they can instead be realigned by replacing `n` with `skip_n`: \
+
+			private:
+				delta_t skip_n = 0;
 
 			};
 		};

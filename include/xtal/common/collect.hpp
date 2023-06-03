@@ -16,7 +16,8 @@ namespace _detail
 
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
-XTAL_QEX iso_q<I, J>
+XTAL_0EX
+XTAL_IF1 iso_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
@@ -327,7 +328,8 @@ struct collect
 					return get();
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
-				XTAL_QEX (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
+				XTAL_0EX
+				XTAL_IF1 (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
 				{
 					seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
 					return get();
@@ -617,7 +619,8 @@ struct collect
 				then mirrored to complete the quarter and half respectively. \
 
 				XTAL_FN1_(T &) generate()
-				XTAL_QEX bit_ceiling_q<N_size, 2> and complex_q<V>
+				XTAL_0EX
+				XTAL_IF1 bit_ceiling_q<N_size, 2> and complex_q<V>
 				{
 					auto &s = get();
 					auto constexpr x = realized::template patio_y<-1>(N_size);
@@ -637,7 +640,8 @@ struct collect
 
 				template <iterated_q Y>
 				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
-				XTAL_QEX bit_ceiling_q<N_size, 1>
+				XTAL_0EX
+				XTAL_IF1 bit_ceiling_q<N_size, 1>
 				{
 					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
 

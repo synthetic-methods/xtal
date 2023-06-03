@@ -39,8 +39,9 @@ template <typename ...Ts> concept   iteratee_q = every_q<iteratee_p<Ts>...>;
 template <typename    T > using     iterated_t = typename iterated<T>::type;
 template <typename    T > using     iterator_t = typename iterator<T>::type;
 template <typename    T > using     iteratee_t = typename iteratee<T>::type;
-template <typename    T > using     sentinel_t = _v3::ranges::sentinel_t<T>;
 template <typename    V > using     repeated_t = _v3::ranges::repeat_view<V>;
+template <typename    T > using     sentinel_t = _v3::ranges::sentinel_t<T>;
+template <typename    T > using     distance_t = XTAL_TYP_(_std::distance(XTAL_VAL_(iterator_t<T>), XTAL_VAL_(iterator_t<T>)));
 
 template <typename    V > using     ioted_t    = _v3::ranges::iota_view<V, V>;
 template <typename    V > using     iotor_t    = iterator_t<ioted_t<V>>;
@@ -108,7 +109,8 @@ XTAL_0EX
 	return Z(XTAL_REF_(z));
 }
 XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
-XTAL_QEX requires {z.size();}
+XTAL_0EX
+XTAL_IF2 {z.size();}
 {
 	using namespace _v3::ranges;
 	using  Z = any_view<range_value_t<XTAL_TYP_(z)>, category::forward|category::sized>;

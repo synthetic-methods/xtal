@@ -1,6 +1,6 @@
 #pragma once
-#include "../control/any.hpp"//_retail
-
+#include "../context/any.hpp"//_retail
+#include "../content/suspend.hpp"
 
 
 
@@ -170,7 +170,8 @@ struct define
 				using co = common::compose_s<R>;
 
 				using control_t = T;
-				using index_t = iota_t;
+				using suspend_t = content::suspend_t<>;
+				using index_t = typename suspend_t::delay_t;
 				using event_t = common::compose_s<T, content::confer<index_t>>;
 				using stack_t = common::collect_buffer_t<N_future, event_t>;
 				using point_t = typename stack_t::iterator;
@@ -285,13 +286,13 @@ struct define
 				\
 				\returns the `influx` result if the `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(index_t i, control_t o, XTAL_DEF ...oo)
+				XTAL_FNX influx(suspend_t u, control_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					poke(i, o);
-					return influx(i, XTAL_REF_(oo)...);
+					poke(u, o);
+					return influx(u, XTAL_REF_(oo)...);
 				}
-				XTAL_FNX influx(index_t i)
+				XTAL_FNX influx(suspend_t)
 				XTAL_0EX
 				{
 					return -1;
@@ -337,8 +338,10 @@ struct define
 			class subtype: public common::compose_s<R>
 			{
 				using co = common::compose_s<R>;
+			
 			protected:
-				using index_t = iota_t;
+				using suspend_t = content::suspend_t<>;
+				using index_t = typename suspend_t::delay_t;
 				using event_t = common::compose_s<T, content::confer<index_t>>;
 				using queue_t = common::collect_siphon_t<N_future, event_t>;
 				using count_t = typename queue_t::size_type;
@@ -410,7 +413,6 @@ struct define
 			public:
 				using co::co;
 				using co::self;
-
 				using co::influx;
 				///\
 				Invokes `influx` if the given delay `i == 0`, \
@@ -418,9 +420,10 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(index_t i, control_t o, XTAL_DEF ...oo)
+				XTAL_FNX influx(suspend_t u, control_t o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
+					index_t const i = u;
 					if (0 == i)
 					{	return influx(XTAL_REF_(o), XTAL_REF_(oo)...);
 					}
@@ -430,7 +433,7 @@ struct define
 						return -1;
 					}
 				}
-				XTAL_FNX influx(index_t i)
+				XTAL_FNX influx(suspend_t)
 				XTAL_0EX
 				{
 					return -1;
@@ -443,18 +446,17 @@ struct define
 				XTAL_FN0 redux(auto const &f)
 				XTAL_0EX
 				{
-					index_t i = 0, j = delay();
-					for (; i != j; j = relay(i = j))
+					for (index_t i = 0, j = delay(); i != j; j = relay(i = j))
 					{	f(i, j);
 					}
-					assert(i == self().size());
 				}
-				///\
-				Relays all queued events without processing. \
-
-				XTAL_FN0 redux()
+				XTAL_FN0 redux(auto const &f, auto &n)
+				XTAL_0EX
 				{
-					redux([](index_t m, index_t n) XTAL_0FN_(void()));
+					for (index_t i = 0, j = delay(); i != j; j = relay(i = j))
+					{	f(i, j, n++);
+					}
+					--n;
 				}
 
 				///\

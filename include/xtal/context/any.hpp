@@ -165,10 +165,11 @@ struct defer
 		using co::head;
 
 		///\
-		\note Propagates to the proxied value if it has the required `context`.
+		\note Influxes `this`, then the proxied value if it has the required `context`.
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
-		XTAL_QEX any_q<U>
+		XTAL_0EX
+		XTAL_IF1 any_q<U>
 		{
 			return XTAL_FLX_(head().influx(oo...)) (co::influx(XTAL_REF_(oo)...));
 		}
@@ -179,10 +180,11 @@ struct defer
 		}
 
 		///\
-		\note Propagates to the proxied value if it has the required `context`.
+		\note Effluxes the proxied value if it has the required `context`, then `this`.
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
-		XTAL_QEX any_q<U>
+		XTAL_0EX
+		XTAL_IF1 any_q<U>
 		{
 			return XTAL_FLX_(co::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
 		}

@@ -177,7 +177,7 @@ TEST_CASE("xtal/common/collect.hpp: buffer mutation")
 template <int N>
 void collect_queue_operation__test()
 {
-	using event_t = compose_s<bias_t, content::confer<iota_t>>;
+	using event_t = compose_s<bias_t, content::confer<int>>;
 	using queue_t = collect_siphon_t<N, event_t>;
 	queue_t q;
 

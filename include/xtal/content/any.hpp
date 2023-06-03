@@ -159,7 +159,8 @@ struct defer
 		}
 
 		XTAL_NEW subtype()
-		XTAL_QEX requires {body_t{};}
+		XTAL_0EX
+		XTAL_IF2  {body_t{};}
 		:	subtype(body_t{})
 		{
 		}
@@ -224,10 +225,10 @@ struct defer
 		\returns the previous value.
 
 		template <typename W=U>
-		XTAL_FN2 set(XTAL_DEF... ws)
-		XTAL_0FX
+		XTAL_FN1 set(XTAL_DEF... ws)
+		XTAL_0EX
 		{
-			return self<W>().valve(XTAL_REF_(ws)...);
+			return self<W>().head(XTAL_REF_(ws)...);
 		}
 		///\
 		Getter: applied when the template parameter matches the kernel-type. \
@@ -440,8 +441,8 @@ struct range_operators<U>
 
 		XTAL_FN2 begin() XTAL_0EX                                    {return head().begin();}
 		XTAL_FN2   end() XTAL_0EX                                    {return head().  end();}
-		XTAL_FN2 begin() XTAL_QFX requires (U const &u) {u.begin();} {return head().begin();}
-		XTAL_FN2   end() XTAL_QFX requires (U const &u) {u.  end();} {return head().  end();}
+		XTAL_FN2 begin() XTAL_0FX XTAL_IF2 (U const &u) {u.begin();} {return head().begin();}
+		XTAL_FN2   end() XTAL_0FX XTAL_IF2 (U const &u) {u.  end();} {return head().  end();}
 
 	};
 	template <any_q S> requires iterated_q<S> or iterable_q<S>
@@ -481,10 +482,10 @@ template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
 template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
-XTAL_FN1 get(T const &&t) {return move(t).template head<N>();};
+XTAL_FN1 get(T const &&t) {return ::std::move(t).template head<N>();};
 
 template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
-XTAL_FN1 get(T       &&t) {return move(t).template head<N>();};
+XTAL_FN1 get(T       &&t) {return ::std::move(t).template head<N>();};
 
 template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};

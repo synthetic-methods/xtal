@@ -22,7 +22,8 @@ struct restep
 		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
-		
+		using step_t = U;
+
 		XTAL_RE4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};

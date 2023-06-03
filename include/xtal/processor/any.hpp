@@ -19,9 +19,8 @@ template <typename ...As>
 struct link
 {
 	using resize_u  = control::resize_t<>;
-	using sequel_n  = control::sequel_t<countee_t<>>;
-	using sequel_u  = control::sequel_t<counted_t<>>;
-	using subkind = _retail::link<As..., sequel_n::attach, sequel_u::attach, resize_u::attach>;
+	using sequel_u  = control::sequel_t<>;
+	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
 
 	template <any_q S>
 	using subtype = common::compose_s<S, subkind>;
@@ -88,7 +87,8 @@ struct defer<U>
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_QEX requires (U const &u)
+		XTAL_0EX
+		XTAL_IF2 (U const &u)
 		{
 			u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
 		}
@@ -107,11 +107,8 @@ struct defer<U>
 template <iterated_q U> requires (not any_q<U>)
 struct defer<U>
 {
-	using sequel_n = control::sequel_t<counted_t<>>;
-//	using sequel_n = control::sequel_t<countee_t<>>;
-
-	using subkind = common::compose<_retail::defer<U>, sequel_n::attach>;
-//	using subkind = common::compose<sequel_n::attach, _retail::defer<U>>;
+	using sequel_u = control::sequel_t<counted_t<>>;
+	using subkind  = common::compose<_retail::defer<U>, sequel_u::attach>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -127,9 +124,9 @@ struct defer<U>
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
-			using H = iota_t; using realized = realize<H>;
+			using H = distance_t<U>; using realized = realize<H>;
 			auto const &v = co::template method<>();
-			auto const &m = co::template get<sequel_n>();
+			auto const &m = co::template get<sequel_u>();
 			H const m_size = m.size();
 			H const v_size = v.size();
 			H const v_mask = v_size >> realized::positive::depth;

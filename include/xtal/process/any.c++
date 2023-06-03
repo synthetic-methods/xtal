@@ -113,12 +113,12 @@ TEST_CASE("xtal/process/any.hpp: state")
   auto step = sequel_t(1 << 3);
 	
 	biased <<= step;
-	biased <<= common::pack_f(0, (bias_t) (alpha_t)  7);
-	biased <<= common::pack_f(1, (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(3, (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(4, (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(5, (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(7, (bias_t) (alpha_t)  7);
+	biased <<= common::pack_f(content::suspend_t<>(0), (bias_t) (alpha_t)  7);
+	biased <<= common::pack_f(content::suspend_t<>(1), (bias_t) (alpha_t)  1);
+	biased <<= common::pack_f(content::suspend_t<>(3), (bias_t) (alpha_t) -1);
+	biased <<= common::pack_f(content::suspend_t<>(4), (bias_t) (alpha_t)  1);
+	biased <<= common::pack_f(content::suspend_t<>(5), (bias_t) (alpha_t) -1);
+	biased <<= common::pack_f(content::suspend_t<>(7), (bias_t) (alpha_t)  7);
 	
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);

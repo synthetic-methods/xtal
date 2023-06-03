@@ -117,18 +117,16 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_LET                     static constexpr             auto
 
 #define XTAL_NEW_(...)                      constexpr __VA_ARGS__
-#define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
 #define XTAL_OP2_(...) [[nodiscard]]        constexpr __VA_ARGS__       operator
-#define XTAL_FN1_(...)                      constexpr __VA_ARGS__
+#define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
 #define XTAL_FN2_(...) [[nodiscard]]        constexpr __VA_ARGS__
-#define XTAL_FZ1_(...)               static constexpr __VA_ARGS__
+#define XTAL_FN1_(...)                      constexpr __VA_ARGS__
 #define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
+#define XTAL_FZ1_(...)               static constexpr __VA_ARGS__
 #define XTAL_LET_(...)               static constexpr __VA_ARGS__
 
-#define XTAL_QEX                                      noexcept requires
-#define XTAL_QEX_(REF)                            REF noexcept requires
-#define XTAL_QFX                            const     noexcept requires
-#define XTAL_QFX_(REF)                      const REF noexcept requires
+#define XTAL_IF2                             requires requires
+#define XTAL_IF1                                      requires
 #define XTAL_0EX                                      noexcept
 #define XTAL_0EX_(REF)                            REF noexcept
 #define XTAL_0FX                            const     noexcept
@@ -151,9 +149,11 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define     XTAL_FNX XTAL_FN2_(sign_t)
 #define     XTAL_FLX XTAL_STD_(sign_t)
 #define     XTAL_FLX_(...) [=, this](XTAL_FLX lhs)\
-XTAL_0FN -> XTAL_FLX    {if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}\
+XTAL_0FN -> XTAL_FLX    {if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
+

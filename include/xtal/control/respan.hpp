@@ -14,6 +14,10 @@ namespace xtal::control
 template <iterated_q U>
 struct respan
 {
+private:
+	using V = distance_t<U>;
+
+public:
 	using subkind = defer<U>;
 
 	template <any_q S>
@@ -24,6 +28,7 @@ struct respan
 	public:
 	//	using co::co;
 		using co::self;
+		using span_t = U;
 
 		XTAL_CO2_(subtype);
 		XTAL_CO4_(subtype);
@@ -38,7 +43,7 @@ struct respan
 		XTAL_RE4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 		XTAL_RE4_(XTAL_FN2 size(), co::head().size())
 
-		XTAL_FN2 slice(iota_t i, iota_t j)
+		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX
 		{
 			auto t = self(); t.span(t.span()|_v3::views::slice(i, j)); return t;

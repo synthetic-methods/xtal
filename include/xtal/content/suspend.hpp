@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::content
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=size_t>
-struct resize
+template <typename U=iota_t>
+struct suspend
 {
 	using subkind = defer<U>;
 
@@ -20,21 +20,16 @@ struct resize
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
-	
 	public:
 		using co::co;
-		using size_t = U;
+		using delay_t = U;
 
-		XTAL_RE4_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RE4_(XTAL_FN1 delay(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
-template <iterated_q U>
-struct resize<U>
-:	resize<_v3::ranges::size_type_t<U>>
-{};
-template <typename U=size_t>
-using resize_t = confined_t<resize<U>>;
+template <typename U=iota_t>
+using suspend_t = confined_t<suspend<U>>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

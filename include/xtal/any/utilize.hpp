@@ -89,14 +89,14 @@ template <template <typename...> typename T_, typename ...Ts> concept of_q = if_
 template <typename T> concept dismember_p = debased_p<T>;// determine whether `T` should be dereferenced
 template <typename T> using      member_t = debased_t<T>;// convert references to pointers
 
-template <typename T> XTAL_FZ2 member_f(XTAL_DEF w) XTAL_QEX dismember_p<T> {return &XTAL_REF_(w);}// obtain address
-template <typename T> XTAL_FZ2 member_f(XTAL_DEF w) XTAL_0EX                {return to_f<T>(XTAL_REF_(w));}
-template <typename T> XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX            {return to_f<T>(XTAL_REF_(ws)...);}
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_IF1 dismember_p<T> {return &XTAL_REF_(w);}// obtain address
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX                  {return to_f<T>(XTAL_REF_(w));}
+template <typename T> XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX                  {return to_f<T>(XTAL_REF_(ws)...);}
 
-XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_QEX requires {*w;} {return *XTAL_REF_(w);}// dereference address
+XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *XTAL_REF_(w);}// dereference address
 XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX                {return  XTAL_REF_(w);}
 
-XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_QEX requires {*w;} {return *_std::move(XTAL_REF_(w));}// dereference address
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *_std::move(XTAL_REF_(w));}// dereference address
 XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX                {return  _std::move(XTAL_REF_(w));}
 
 template <typename T> concept remember_p = not dismember_p<T>;
