@@ -17,9 +17,9 @@ struct rescan
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -31,6 +31,7 @@ struct rescan
 };
 template <typename U=counted_t<>>
 using rescan_t = confined_t<rescan<U>>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

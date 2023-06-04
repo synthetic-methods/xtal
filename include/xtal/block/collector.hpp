@@ -12,6 +12,13 @@ namespace xtal::block
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+A decorator that defines the base-types for block-based data storage, \
+namely `fixed` (sharing the same interface as `std::array`), \
+and `fluid` (sharing the same interface as `std::vector`). \
+These types are made available to any class with which it is `compose`d, \
+and can be further transformed using `collected` to provide differentiated types. \
+
 template <int N_size=-1>
 struct collector
 {

@@ -15,7 +15,8 @@ template <typename U, typename ...As>
 using numinal = contrive<U, any<As>...>;
 
 template <typename U, typename ...As>
-using numinal_t = common::compose_s<any_t<>, numinal<U, As...>>;
+using numinal_t = compose_s<any_t<>, numinal<U, As...>>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

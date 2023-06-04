@@ -23,12 +23,12 @@ TEST_CASE("xtal/control/any.hpp: hold")
   auto step = sequel_t(1 << 3);
 	
 	biased <<= step;
-	biased <<= common::pack_f(content::delay_s<>(0), (bias_t) (alpha_t)  7);
-	biased <<= common::pack_f(content::delay_s<>(1), (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(content::delay_s<>(3), (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(content::delay_s<>(4), (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(content::delay_s<>(5), (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(content::delay_s<>(7), (bias_t) (alpha_t)  7);
+	biased <<= pack_f(content::delay_s<>(0), (bias_t) (alpha_t)  7);
+	biased <<= pack_f(content::delay_s<>(1), (bias_t) (alpha_t)  1);
+	biased <<= pack_f(content::delay_s<>(3), (bias_t) (alpha_t) -1);
+	biased <<= pack_f(content::delay_s<>(4), (bias_t) (alpha_t)  1);
+	biased <<= pack_f(content::delay_s<>(5), (bias_t) (alpha_t) -1);
+	biased <<= pack_f(content::delay_s<>(7), (bias_t) (alpha_t)  7);
 	
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);

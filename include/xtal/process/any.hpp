@@ -12,18 +12,20 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::context;
+#include "../common/all.hxx"
 #include "../common/any.hxx"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 template <typename ...As>
 struct link
 {
-	using subkind = common::compose<As...>;
+	using subkind = compose<As...>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 
@@ -35,16 +37,16 @@ struct link
 		template <typename ...Xs>
 		struct bind
 		{
-			using signature = common::pack<Xs...>;
+			using signature = pack<Xs...>;
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 			
-			using subkind = common::compose<content::defer<typename signature::type>, As..., defer<T>>;
+			using subkind = compose<content::defer<typename signature::type>, As..., defer<T>>;
 
 			template <any_q R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = common::compose_s<R, subkind>;
+				using co = compose_s<R, subkind>;
 
 			public:
 				using co::co;
@@ -165,9 +167,9 @@ struct link
 					}
 					else
 					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns>(common::seek_t<Ns...>)
+						return [&] <auto ...Ns>(seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().influx(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().influx(oo...))
-						(common::seek_v<sizeof...(Xs) - 1>);
+						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
 				///\
@@ -183,9 +185,9 @@ struct link
 					}
 					else
 					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns>(common::seek_t<Ns...>)
+						return [&] <auto ...Ns>(seek_t<Ns...>)
 							XTAL_0FN_(argument<N_parity>().efflux(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().efflux(o))
-						(common::seek_v<sizeof...(Xs) - 1>);
+						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
 
@@ -194,6 +196,7 @@ struct link
 
 	};
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -205,10 +208,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -300,26 +303,25 @@ struct define
 
 	};
 };
-
 template <typename T>
 struct refine
 {
 	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
 		using co::self;
 
 	};
-	template <any_q S> requires constant_q<typename common::compose_s<S, subkind>::linked>
-	class subtype<S>: public common::compose_s<S, subkind>
+	template <any_q S> requires constant_q<typename compose_s<S, subkind>::linked>
+	class subtype<S>: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -341,7 +343,7 @@ struct refine
 
 	};
 };
-/***/
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -353,9 +355,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -374,9 +376,9 @@ struct defer
 
 	};
 	template <any_q S> requires _std::invocable<U>
-	class subtype<S>: public common::compose_s<S, subkind>
+	class subtype<S>: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -401,9 +403,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -419,7 +421,6 @@ struct defer<U>
 
 	};
 };
-
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 

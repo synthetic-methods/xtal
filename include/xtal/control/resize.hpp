@@ -17,9 +17,9 @@ struct resize
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -30,11 +30,12 @@ struct resize
 	};
 };
 template <iterated_q U>
-struct resize<U>
-:	resize<_v3::ranges::size_type_t<U>>
-{};
+struct resize<U>: resize<_v3::ranges::size_type_t<U>>
+{
+};
 template <typename U=size_t>
 using resize_t = confined_t<resize<U>>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

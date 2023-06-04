@@ -12,7 +12,9 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::process;
+#include "../common/all.hxx"
 #include "../common/any.hxx"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 template <typename ...As>
@@ -23,9 +25,10 @@ struct link
 	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
 
 	template <any_q S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = compose_s<S, subkind>;
 
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -35,11 +38,11 @@ template <typename T>
 struct define: _retail::define<T>
 {
 };
-
 template <typename T>
 struct refine: _retail::refine<T>
 {
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -56,9 +59,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 
 	public:
 		using co::co;
@@ -108,12 +111,12 @@ template <iterated_q U> requires (not any_q<U>)
 struct defer<U>
 {
 	using sequel_u = control::sequel_t<counted_t<>>;
-	using subkind  = common::compose<_retail::defer<U>, sequel_u::attach>;
+	using subkind  = compose<_retail::defer<U>, sequel_u::attach>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -152,7 +155,6 @@ struct defer<U>
 
 	};
 };
-
 ///\
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
@@ -160,6 +162,7 @@ template <typename U>
 struct refer: _retail::refer<U>
 {
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -1,30 +1,19 @@
+#ifdef __INTELLISENSE__// stub...
+#include "../any.hpp"
+using namespace xtal;
+namespace _retail
+{	template <typename ...As> struct any {template <typename S> class subtype {};};
+}
+#endif
+
+
+//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 //\
 This *internal* header creates higher-level decorators based on `[dr]efine` and/or `[dr]efer`, \
 and is intended to be `#include`d within a namespace in which these decorators are provided \
 (see `xtal/processor/any.hpp` for example). \
-\
-The decorators themselves are spanned templates of the form \
-`struct {template <class supertype> class subtype;}` \
-(see `xtal/any/common::compose.hpp` for details). \
 
-#ifdef __INTELLISENSE__ // stub...
-#include "../any.hpp"
-using namespace xtal;
-namespace _retail
-{
-	template <typename ...As>
-	struct any
-	{
-		template <typename S>
-		class subtype
-		{};
-
-	};
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 

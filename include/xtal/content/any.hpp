@@ -12,6 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::common;
+#include "../common/all.hxx"
 #include "../common/any.hxx"
 
 
@@ -48,7 +49,7 @@ struct define
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
-			return common::pack_f();
+			return pack_f();
 		}
 		using tuple_size = constant<(size_t) 0>;
 
@@ -124,6 +125,7 @@ struct refine
 	};
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
@@ -132,9 +134,9 @@ template <typename U>
 struct defer
 {
 	template <any_q S>
-	class subtype: public common::compose_s<S>
+	class subtype: public compose_s<S>
 	{
-		using co = common::compose_s<S>; using T = typename co::self_t;
+		using co = compose_s<S>; using T = typename co::self_t;
 
 	public:
 		using head_t = U;
@@ -210,14 +212,14 @@ struct defer
 		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
 		XTAL_0FX
 		{
-			return [f_ = XTAL_REF_(f), this] <size_t ...Ns>(common::seek_t<Ns...>)
-				XTAL_0FN_(f_(head<Ns>()...)) (common::seek_v<tuple_size::value>);
+			return [f_ = XTAL_REF_(f), this] <size_t ...Ns>(seek_t<Ns...>)
+				XTAL_0FN_(f_(head<Ns>()...)) (seek_v<tuple_size::value>);
 		}
 		
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
-			return apply(common::pack_f);
+			return apply(pack_f);
 		}
 		using tuple_size = constant<co::tuple_size::value + 1>;
 
@@ -280,7 +282,7 @@ namespace _detail
 {
 template <typename U>
 struct comparators
-:	common::compose<>
+:	compose<>
 {
 };
 template <typename U> requires comparators_p<U>
@@ -305,12 +307,12 @@ struct comparators<U>
 };
 template <typename U, int N_arity=0>
 struct bit_operators
-:	common::compose<>
+:	compose<>
 {
 };
 template <typename U>
 struct bit_operators<U, 0>
-:	common::compose<bit_operators<U, 1>, bit_operators<U, 2>>
+:	compose<bit_operators<U, 1>, bit_operators<U, 2>>
 {
 };
 template <typename U> requires bit_operators_p<U, 1> and remember_p<U>
@@ -373,12 +375,12 @@ struct bit_operators<U, 2>
 };
 template <typename U, int N_arity=0>
 struct field_operators
-:	common::compose<>
+:	compose<>
 {
 };
 template <typename U>
 struct field_operators<U, 0>
-:	common::compose<field_operators<U, 1>, field_operators<U, 2>>
+:	compose<field_operators<U, 1>, field_operators<U, 2>>
 {
 };
 template <typename U> requires field_operators_p<U, 1> and remember_p<U>
@@ -425,7 +427,7 @@ struct field_operators<U, 2>
 };
 template <typename U>
 struct range_operators
-:	common::compose<>
+:	compose<>
 {
 };
 template <typename U> requires iterated_q<U>
@@ -461,7 +463,7 @@ Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
 struct refer
-:	common::compose<any<>
+:	compose<any<>
 	,	_detail::     comparators<U>
 	,	_detail::   bit_operators<U>
 	,	_detail:: field_operators<U>

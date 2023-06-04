@@ -12,7 +12,9 @@ namespace xtal::control
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::context;
+#include "../common/all.hxx"
 #include "../common/any.hxx"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,10 +26,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -40,9 +42,9 @@ struct define
 			using subkind = context::defer<T>;
 
 			template <context::any_q R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = common::compose_s<R, subkind>;
+				using co = compose_s<R, subkind>;
 			public:
 			//	using co::co;
 
@@ -73,9 +75,9 @@ struct define
 			using subkind = attach;
 
 			template <context::any_q R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = common::compose_s<R, subkind>;
+				using co = compose_s<R, subkind>;
 			
 			public:
 			//	using co::co;
@@ -144,13 +146,13 @@ struct define
 					struct atom
 					{
 						template <size_t ...Ns>
-						XTAL_FZ2 method_f(common::seek_t<Ns...>)
+						XTAL_FZ2 method_f(seek_t<Ns...>)
 						XTAL_0EX
 						{
 							using doing = typename co::template being<Xs...>;
 							return _std::array{(doing::template method<Ms..., Ns>)...};
 						}
-						XTAL_LET method_m = method_f(common::seek_v<N_arity>);
+						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
 					};
 
@@ -165,9 +167,9 @@ struct define
 		struct hold
 		{
 			template <context::any_q R>
-			class subtype: public common::compose_s<R>
+			class subtype: public compose_s<R>
 			{
-				using co = common::compose_s<R>;
+				using co = compose_s<R>;
 
 				using delay_t = content::delay_t;
 				using event_t = content::delay_s<T>;
@@ -240,9 +242,9 @@ struct define
 		struct interrupt
 		{
 			template <context::any_q R>
-			class subtype: public common::compose_s<R>
+			class subtype: public compose_s<R>
 			{
-				using co = common::compose_s<R>;
+				using co = compose_s<R>;
 			
 			protected:
 				using delay_t = content::delay_t;
@@ -378,6 +380,7 @@ struct refine: _retail::refine<T>
 {
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
@@ -388,7 +391,7 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = compose_s<S, subkind>;
 
 };
 template <constant_q W>
@@ -397,9 +400,9 @@ struct defer<W>
 	using subkind = defer<typename W::value_type>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -415,6 +418,7 @@ template <typename U>
 struct refer: _retail::refer<U>
 {
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

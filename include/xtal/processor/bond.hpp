@@ -28,6 +28,7 @@ XTAL_FZ2 bond_f(XTAL_DEF u)
 	return bond_t<decltype(u), As...>(XTAL_REF_(u));
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
@@ -36,9 +37,9 @@ struct bond
 	using subkind = confer<U, link<As...>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 		using co::self;
@@ -47,12 +48,12 @@ struct bond
 		struct bind
 		{
 			using rebound = typename co::template bind<Xs...>;
-			using subkind = common::compose<content::confer<typename rebound::result_t>, rebound>;
+			using subkind = compose<content::confer<typename rebound::result_t>, rebound>;
 
 			template <typename R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = common::compose_s<R, subkind>;
+				using co = compose_s<R, subkind>;
 
 			public:
 				XTAL_CO4_(subtype);
@@ -94,7 +95,7 @@ struct bond
 		XTAL_OP2() (XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  bind_t = common::compose_s<S, _retail::confined<bind<decltype(xs)...>>>;
+			using  bind_t = compose_s<S, _retail::confined<bind<decltype(xs)...>>>;
 			return bind_t(self(), XTAL_REF_(xs)...);
 		}
 		/***/

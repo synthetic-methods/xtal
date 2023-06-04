@@ -41,7 +41,7 @@ void respan_external__test()
 {
 	using collector  = block::collector<(1<<5)>;
 	using collected  = block::collected<alpha_t>;
-	using collection = common::compose_s<unit_t, collector, collected>;
+	using collection = compose_s<unit_t, collector, collected>;
 
 	using buffer_u = typename collection::buffer::type;
 	using debuff_u = deranged_t<buffer_u>;
@@ -63,11 +63,11 @@ void respan_external__test()
 
 	REQUIRE(0 == xhs.size());
 
-	xhs >>= common::pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= common::pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= common::pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= bias_t((alpha_t) (11 + 1));
-	xhs >>= common::pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }

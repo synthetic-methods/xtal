@@ -10,7 +10,7 @@ XTAL_ENV_(push)
 namespace xtal::block
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-template <int N,   typename V> using collection = common::compose_s<unit_t, collector<N>, collected<V>>;
+template <int N,   typename V> using collection = compose_s<unit_t, collector<N>, collected<V>>;
 template <int N,   typename V> using   buffer_t = typename collection<N, V>::   buffer::type;
 template <int N,   typename V> using   scalar_t = typename collection<N, V>::   scalar::type;
 template <int N,   typename V> using   serial_t = typename collection<N, V>::   serial::type;

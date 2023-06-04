@@ -15,7 +15,8 @@ template <typename ...As>
 using nominal = confined<any<As>...>;
 
 template <typename ...As>
-using nominal_t = common::compose_s<any_t<>, nominal<As...>>;
+using nominal_t = compose_s<any_t<>, nominal<As...>>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

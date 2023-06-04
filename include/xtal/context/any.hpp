@@ -12,7 +12,9 @@ namespace xtal::context
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::content;
+#include "../common/all.hxx"
 #include "../common/any.hxx"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,10 +24,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -41,7 +43,7 @@ struct define
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(common::pack_q) o)
+		XTAL_OP1 <<=(XTAL_DEF_(pack_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
@@ -82,7 +84,7 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(common::pack_q) o)
+		XTAL_OP1 >>=(XTAL_DEF_(pack_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
@@ -145,6 +147,7 @@ struct refine: _retail::refine<T>
 {
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
@@ -155,9 +158,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	
 	public:
 		using co::co;
@@ -218,6 +221,7 @@ template <typename U>
 struct refer: _retail::refer<U>
 {
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

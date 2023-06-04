@@ -15,7 +15,8 @@ template <typename ...As>
 using ordinal = numinal<iota_t, As...>;
 
 template <typename ...As>
-using ordinal_t = common::compose_s<any_t<>, ordinal<As...>>;
+using ordinal_t = compose_s<any_t<>, ordinal<As...>>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +24,8 @@ template <int N, typename ...As>
 using ordinal_constant = numinal<constant<N>, As...>;
 
 template <int N, typename ...As>
-using ordinal_constant_t = common::compose_s<any_t<>, ordinal_constant<N, As...>>;
+using ordinal_constant_t = compose_s<any_t<>, ordinal_constant<N, As...>>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,7 @@ using covalent_t = XTAL_TYP_(XTAL_VAL_(based_t<T>).template method<>());
 template <typename Y, typename ...Ts>
 concept covalent_q = is_q<Y, covalent_t<Ts>...> and every_q<_std::is_rvalue_reference_v<Ts>...>;
 
+
 }///////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
@@ -44,9 +45,9 @@ struct atom
 	using subkind = confer<U, link<As..., interrupt, block::collector<-1>>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -56,21 +57,21 @@ struct atom
 			using rebound = typename co::template bind<Xs...>;
 
 			using collected  = block::collected<typename rebound::return_t>;
-			using collection = common::compose_s<co, collected>;
+			using collection = compose_s<co, collected>;
 			
 			using buffer_u = typename collection::buffer_t;
 			using debuff_u = deranged_t<buffer_u>;
 			using respan_u = control::respan_t<debuff_u>;
 			using resize_u = control::resize_t<>;
 			
-			using subkind = common::compose<content::confer<debuff_u>, content::defer<buffer_u>, rebound>;
+			using subkind = compose<content::confer<debuff_u>, content::defer<buffer_u>, rebound>;
 
 			XTAL_LET_(int) N_parity = common::seek_true_v<_detail::covalent_q<debuff_u, Xs>...>;
 
 			template <any_q R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public compose_s<R, subkind>
 			{
-				using co = common::compose_s<R, subkind>;
+				using co = compose_s<R, subkind>;
 
 				XTAL_NEW_(explicit) subtype(buffer_u &&buffer_o, XTAL_DEF ...etc)
 				XTAL_0EX
@@ -176,6 +177,7 @@ struct atom
 
 	};
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

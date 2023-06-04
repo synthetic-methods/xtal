@@ -14,7 +14,7 @@ namespace xtal::content
 struct delay;
 
 template <typename S=contrived_t<>>
-using delay_s = common::compose_s<S, delay>;
+using delay_s = compose_s<S, delay>;
 using delay_t = iota_t;
 
 struct delay
@@ -22,15 +22,14 @@ struct delay
 	using subkind = confer<delay_t>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
 	};
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

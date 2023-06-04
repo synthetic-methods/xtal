@@ -39,7 +39,6 @@ template <typename ...Ts> concept   iteratee_q = every_q<iteratee_p<Ts>...>;
 template <typename    T > using     iterated_t = typename iterated<T>::type;
 template <typename    T > using     iterator_t = typename iterator<T>::type;
 template <typename    T > using     iteratee_t = typename iteratee<T>::type;
-template <typename    V > using     repeated_t = _v3::ranges::repeat_view<V>;
 template <typename    T > using     sentinel_t = _v3::ranges::sentinel_t<T>;
 template <typename    T > using     distance_t = XTAL_TYP_(_std::distance(XTAL_VAL_(iterator_t<T>), XTAL_VAL_(iterator_t<T>)));
 

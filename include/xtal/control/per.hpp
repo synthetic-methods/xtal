@@ -18,12 +18,12 @@ private:
 	using V = alpha_t;
 
 public:
-	using subkind = common::compose<defer<U>, defer<V>>;
+	using subkind = compose<defer<U>, defer<V>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>;
+		using co = compose_s<S, subkind>;
 
 	public:
 //	using co::co;
@@ -48,6 +48,7 @@ public:
 	};
 };
 using per_t = confined_t<per>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

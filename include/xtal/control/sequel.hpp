@@ -55,9 +55,9 @@ template <>
 struct sequel<void>
 {
 	template <any_q S>
-	class subtype: public common::compose_s<S>
+	class subtype: public compose_s<S>
 	{
-		using co = common::compose_s<S>;
+		using co = compose_s<S>;
 		using T = typename co::self_t;
 		using U = typename co::head_t;
 		using V = countee_t<U>;
@@ -208,12 +208,12 @@ struct sequel<void>
 template <countee_q V>
 struct sequel<V>
 {
-	using subkind = common::compose<sequel<void>, resize<V>, restep<V>>;
+	using subkind = compose<sequel<void>, resize<V>, restep<V>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 
 	public:
 	//	using co::co;
@@ -306,12 +306,12 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = common::compose<sequel<void>, refer<U>, rescan<U>, restep<V>>;
+	using subkind = compose<sequel<void>, refer<U>, rescan<U>, restep<V>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>; using T = typename co::self_t;
 
 	public:
 		using co::co;
@@ -403,6 +403,7 @@ public:
 
 	};
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
