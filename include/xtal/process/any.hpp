@@ -29,7 +29,7 @@ struct link
 	public:
 		using co::co;
 
-		using linked = constant<true>;
+		using linked = constant_t<true>;
 
 		///\
 		Thunkifies `T` by binding `Xs...`. \

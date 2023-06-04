@@ -21,7 +21,7 @@ using ordinal_t = compose_s<any_t<>, ordinal<As...>>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N, typename ...As>
-using ordinal_constant = numinal<constant<N>, As...>;
+using ordinal_constant = numinal<constant_t<N>, As...>;
 
 template <int N, typename ...As>
 using ordinal_constant_t = compose_s<any_t<>, ordinal_constant<N, As...>>;

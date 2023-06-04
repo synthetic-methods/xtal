@@ -59,7 +59,7 @@ struct atom
 			using collected  = block::collected<typename rebound::return_t>;
 			using collection = compose_s<co, collected>;
 			
-			using buffer_u = typename collection::buffer_t;
+			using buffer_u = typename collection::buffer::type;
 			using debuff_u = deranged_t<buffer_u>;
 			using respan_u = control::respan_t<debuff_u>;
 			using resize_u = control::resize_t<>;

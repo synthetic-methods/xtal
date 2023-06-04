@@ -5,6 +5,7 @@
 
 
 
+#include "../common/all.hpp"
 
 XTAL_ENV_(push)
 namespace xtal::block

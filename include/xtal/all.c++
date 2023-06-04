@@ -1,5 +1,6 @@
 #pragma once
 #include "./any/all.c++"
+#include "./block/all.c++"
 #include "./common/all.c++"
 #include "./content/all.c++"
 #include "./context/all.c++"

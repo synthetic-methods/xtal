@@ -33,12 +33,12 @@ public:
 
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(n, (V) 1./V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		:	co(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
 		{
 		}
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co((U) 1./V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
+		:	co((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
 		{
 		}
 

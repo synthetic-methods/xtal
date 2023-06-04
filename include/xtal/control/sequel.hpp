@@ -21,7 +21,7 @@ while the logic operators facilitate contiguous comparison. \
 The range-based `sequel<counted_q>` uses `iota_view` to represent the sample-window corresponding to a block, \
 and may be used to parameterize `view`s of unbounded streams. \
 \
-The integer-based `sequel<countee_q>` provides a lossy counterpart that mitigates the potential for overflow, \
+The integer-based `sequel<counter_q>` provides a lossy counterpart that mitigates the potential for overflow, \
 preserving only the `step` order and `size` of the object to which it's attached. \
 (A sample-accurate counter running at 96 kilohertz would otherwise overflow within 12 hours.) \
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
@@ -30,7 +30,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 template <typename, typename ...>
 struct sequel;
 
-template <typename W=countee_t<>, typename ...As>
+template <typename W=counter_t<>, typename ...As>
 using sequel_t = typename confined<sequel<W, As...>>::template subtype<any_of_t<sequel>>;
 
 template <typename... Ts>
@@ -60,7 +60,7 @@ struct sequel<void>
 		using co = compose_s<S>;
 		using T = typename co::self_t;
 		using U = typename co::head_t;
-		using V = countee_t<U>;
+		using V = counter_t<U>;
 	
 	public:
 		using co::co;
@@ -169,14 +169,21 @@ struct sequel<void>
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t? (0): ((s = t), 1);
+			return s == t? 0: true_f(s = t);
 		}
 		/**/
 		XTAL_FNX infuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t? (0): (s.operator+=(0), s.operator-=(t.size()), s.step(t.step()), 1);
+			if (s == t)
+			{	return 0;
+			}
+			else
+			{	s.operator+=(0);
+				s.operator-=(t.size()); s.step(t.step());
+				return 1;
+			}
 		}
 		/***/
 
@@ -196,7 +203,14 @@ struct sequel<void>
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t? (0): (s.operator+=(t.size()), assert(s.step() == t.step()), 1);
+			if (s == t)
+			{	return 0;
+			}
+			else
+			{	s.operator+=(t.size());
+				assert(s.step() == t.step());
+				return 1;
+			}
 		}
 
 	};
@@ -205,7 +219,7 @@ struct sequel<void>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <countee_q V>
+template <counter_q V>
 struct sequel<V>
 {
 	using subkind = compose<sequel<void>, resize<V>, restep<V>>;

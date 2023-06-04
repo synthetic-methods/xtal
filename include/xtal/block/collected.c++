@@ -62,7 +62,6 @@ TEST_CASE("xtal/block/collected.hpp: converse")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
 TEST_CASE("xtal/block/collected.hpp: series initialization")
 {
 	sigma_t constexpr N = 1 << 3;
@@ -70,7 +69,7 @@ TEST_CASE("xtal/block/collected.hpp: series initialization")
 	using series_u = series_t<N, alpha_t>;
 
 	series_u baz(2.0);
-	scalar_u bar; bar.refill(baz);
+	scalar_u bar = reinterpret_cast<scalar_u &>(baz);
 	scalar_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 	REQUIRE(_v3::ranges::equal(foo, bar));
 	
@@ -80,7 +79,6 @@ TEST_CASE("xtal/block/collected.hpp: series initialization")
 //	REQUIRE(foo == bar);
 
 }
-
 TEST_CASE("xtal/block/collected.hpp: series transformation")
 {
 	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
@@ -109,7 +107,7 @@ TEST_CASE("xtal/block/collected.hpp: series transformation")
 	REQUIRE(target[7] == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
 	REQUIRE(true);
 }
-
+/**/
 TEST_CASE("xtal/block/collected.hpp: series convolution")
 {
 	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
@@ -126,7 +124,7 @@ TEST_CASE("xtal/block/collected.hpp: series convolution")
 	REQUIRE(xhs == yhs);
 
 }
-
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("xtal/block/collected.hpp: buffer assigment")
@@ -188,14 +186,8 @@ void siphon_operation__test()
 	REQUIRE(0 == q.size());
 	q.push(e1); REQUIRE(1 == q.size());
 	q.push(e2); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
-
-	REQUIRE(0 == q.size());
-	q.push(e2); REQUIRE(1 == q.size());
-	q.push(e1); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
+	REQUIRE(-1.0 == q.top().tail()); q.pop(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().tail()); q.pop(); REQUIRE(0 == q.size());
 
 }
 TEST_CASE("xtal/block/collected.hpp: siphon operation")
@@ -206,29 +198,25 @@ TEST_CASE("xtal/block/collected.hpp: siphon operation")
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 template <int N>
 void sluice_operation__test()
 {
 	using event_u = compose_s<bias_t, content::confer<int>>;
-	using queue_u = sluice_t<N, event_u, 1>;
+	using queue_u = sluice_t<N, event_u>;
 	queue_u q;
 
 	auto e1 = event_u(1, bias_t(-1.0));
 	auto e2 = event_u(2, bias_t(-2.0));
 	REQUIRE(e1 < e2);
+	REQUIRE(2 == e2.head());
+	REQUIRE(1 == e1.head());
 	
-	REQUIRE(0 == q.size());
-	q.push(e1); REQUIRE(1 == q.size());
-	q.push(e2); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
-
-	REQUIRE(0 == q.size());
-	q.push(e2); REQUIRE(1 == q.size());
-	q.push(e1); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
+	REQUIRE(0 == q.remaining());
+	q.push(e1); REQUIRE(1 == q.remaining());
+	q.push(e2); REQUIRE(2 == q.remaining());
+	REQUIRE(-1.0 == q.next(0).tail()); q.advance(); REQUIRE(1 == q.remaining());
+	REQUIRE(-2.0 == q.next(0).tail()); q.advance(); REQUIRE(0 == q.remaining());
 
 }
 TEST_CASE("xtal/block/collected.hpp: sluice operation")

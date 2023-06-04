@@ -173,14 +173,10 @@ struct define
 
 				using delay_t = content::delay_t;
 				using event_t = content::delay_s<T>;
-				using queue_t = block::sluice_t<N_future, event_t, 1>;
+				using queue_t = block::sluice_t<N_future, event_t>;
 
+				delay_t d_{0};
 				queue_t q_;
-				delay_t delay_m {0};
-
-				XTAL_FN2 next     () XTAL_0EX {return q_.peek(1);}
-				XTAL_FN2 next_tail() XTAL_0EX {return next().tail();}
-				XTAL_FN2 next_head() XTAL_0EX {return next().head();}
 
 			public:
 				using co::co;
@@ -192,7 +188,7 @@ struct define
 				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and true_f(delay_m = 0));
+					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and true_f(d_ = 0));
 					return co::influx(XTAL_REF_(oo)...);
 				}
 
@@ -207,14 +203,14 @@ struct define
 				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.poke(dot.head(), dot.tail()));
+					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
 				}
 
 				template <auto...>
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{
-					return q_.advance(delay_m++ == next_head()).tail();
+					return q_.advance(d_++ == q_.next().head()).tail();
 				}
 			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
 
@@ -246,16 +242,14 @@ struct define
 			{
 				using co = compose_s<R>;
 			
-			protected:
 				using delay_t = content::delay_t;
 				using event_t = content::delay_s<T>;
-				using queue_t = block::siphon_t<N_future, event_t, 1>;
+				using queue_t = block::siphon_t<N_future, event_t>;
 
 				queue_t q_;
 
-				XTAL_FN2 next     () XTAL_0EX {return q_.top();}
-				XTAL_FN2 next_tail() XTAL_0EX {return next().template head<1>();}
-				XTAL_FN2 next_head() XTAL_0EX {return next().template head<0>();}
+				XTAL_FN2 next_tail() XTAL_0EX {return q_.next().template head<1>();}
+				XTAL_FN2 next_head() XTAL_0EX {return q_.next().template head<0>();}
 				
 				XTAL_FN2 nearest_head()
 				XTAL_0EX
@@ -278,7 +272,6 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				/*/
 				XTAL_FNX influx(content::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
@@ -287,34 +280,9 @@ struct define
 				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return 0 == dot.head()? influx(XTAL_REF_(oo)...):
-						XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.poke(dot.head(), dot.tail()));
+					return 0 == dot.head()? influx(dot.tail(), XTAL_REF_(oo)...):
+						XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
 				}
-				/*/
-				XTAL_FNX infuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					return co::infuse(XTAL_REF_(o));
-				}
-				XTAL_FNX infuse(content::delay_s<T> dot)
-				XTAL_0EX
-				{
-					auto const i = dot.head();
-					auto const t = dot.tail();
-					return 0 == i? co::infuse(t): (q_.poke(i, t), -1);
-				}
-				XTAL_FNX influx(content::delay_s<> d_t, T t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto const i = d_t.head();
-					return 0 == i? influx(t, XTAL_REF_(oo)...): infuse(content::delay_s<T>(i, t));
-				}
-				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (influx(content::delay_s<>(dot.head()), dot.tail()));
-				}
-				/***/
 
 			protected:
 				///\
@@ -340,7 +308,7 @@ struct define
 				Invokes `influx` for all events up-to the given delay `i`. \
 				
 				///\
-				\returns the `delay()` until the next event. \
+				\returns the `delay()` until q_.next event. \
 
 				XTAL_FN1_(delay_t) relay(delay_t i)
 				XTAL_0EX

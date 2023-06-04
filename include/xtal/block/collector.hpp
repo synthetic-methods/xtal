@@ -29,199 +29,61 @@ struct collector
 		
 		template <typename W> using etc_t = _std::initializer_list<W>;
 
-	protected:
-		XTAL_LET size_v = N_size;
-
 	public:
 		using co::co;
+		using arity = constant_t<N_size>;
 
 		template <typename V> struct fixed;
-		template <typename V> using  fixed_t = typename fixed<V>::type;
-		
 		template <typename V> struct fluid;
-		template <typename V> using  fluid_t = typename fluid<V>::type;
 		
+
 		template <typename V> requires (0 < N_size)
 		struct fixed<V>
 		{
-		//	TODO: Alleviate the dependency on `std::array`, \
-			but specialize the appropriate types so that e.g. `std::apply` works. \
-
-			using archetype = _std::array<V, N_size>;// Hmmm...
-
-			template <typename T>
-			class homotype: public archetype
+			using kind = _std::array<V, N_size>;// FIXME: Just an easy way to access `std::apply` etc for now...
+			class type: public kind
 			{
-				using co = archetype;
+				using co = kind;
 
 			public:
+				XTAL_NEW type(etc_t<V> in)
+				XTAL_0EX
+				{
+					_detail::copy_to(co::begin(), in.begin(), in.end());
+				}
 				using co::co;
-				using co::end;
-				using co::begin;
-				using it = typename co::iterator;
-
-				XTAL_NEW homotype()
-				XTAL_0EX
-				:	co()
-				{
-				}
-
-				///\
-				Replace the contents of `this` with the given range. \
-
-				template <iso_q<it> I>
-				XTAL_FN0 refill(I &&i0, I &&iN)
-				XTAL_0EX
-				{
-					assert(N_size == _std::distance(i0, iN));
-					_detail::copy_to(co::begin(), XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
-				}
-				template <iso_q<co> I>
-				XTAL_FN0 refill(I &&in)
-				XTAL_0EX
-				{
-					refill(in.begin(), in.end());
-				}
-
-				///\
-				Span constructor. \
-				Initializes `this` with the values between `i0` and `iN`. \
-
-				template <iso_q<it> I>
-				XTAL_NEW homotype(I &&i0, I &&iN)
-				XTAL_0EX
-				{
-					refill(XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
-				}
-
-				///\
-				List constructor. \
-				Initializes `this` with the given values. \
-
-				template <iso_q<co> I>
-				XTAL_NEW homotype(I &&in)
-				XTAL_0EX
-				{
-					refill(XTAL_FWD_(I) (in));
-				}
-				XTAL_NEW homotype(etc_t<V> in)
-				XTAL_0EX
-				:	homotype(in.begin(), in.end())
-				{
-				}
-
-				///\
-				List assignment. \
-				Replaces the contents of `this` with the given values. \
-
-				XTAL_OP1 = (etc_t<V> w)
-				XTAL_0EX
-				{
-					refill(w.begin(), w.end());
-					return *this;
-				}
-
-				///\
-				Copy constructor. \
-				Initializes `this` with the given data. \
-
-				XTAL_NEW homotype(homotype const &t)
-				XTAL_0EX
-				:	homotype(t.begin(), t.end())
-				{
-				}
-				///\
-				Copy assigment. \
-				Replaces the contents of `this` with the given data. \
-
-				XTAL_OP1 = (homotype const &t)
-				XTAL_0EX
-				{
-					refill(t.begin(), t.end());
-					return *this;
-				}
-
-				///\
-				Move constructor. \
-				Initializes `this` with the given data. \
-
-				XTAL_NEW homotype(homotype &&t)
-				XTAL_0EX
-				:	homotype(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
-				{
-				}
-				///\
-				Move assigment. \
-				Replaces the contents of `this` with the given data. \
-
-				XTAL_OP1 = (homotype &&t)
-				XTAL_0EX
-				{
-					refill(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
-					return *this;
-				}
-
-				///\
-				Read accessor. \
-
-				template <typename Y=T>
-				XTAL_FN2 got() XTAL_0EX_(&)
-				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T>(*this);
-					}
-					else
-					{	return reinterpret_cast<Y>(*this);
-					}
-				}
-				template <typename Y=T>
-				XTAL_FN2 get() XTAL_0EX_(&)
-				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T &>(*this);
-					}
-					else
-					{	return reinterpret_cast<Y>(*this);
-					}
-				}
-				template <typename Y=T>
-				XTAL_FN2 get() XTAL_0FX_(&)
-				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T const &>(*this);
-					}
-					else
-					{	return reinterpret_cast<_std::add_const_t<Y>>(*this);
-					}
-				}
-				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
 			};
+		};
+		template <typename V> requires (N_size < 0)
+		struct fluid<V>
+		{
+			using type = _std::vector<V>;
+
 		};
 		template <typename V>
 		struct fluid
 		{
+		private:
 			using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
 
-			template <typename T>
-			using heterotype = iterate_t<T>;
+			template <typename I>
+			XTAL_FZ2_(I) appointed_f(XTAL_DEF i) XTAL_0EX {return _std::launder(reinterpret_cast<I>(XTAL_REF_(i)));}
+			
+			XTAL_FZ2_(A       *) appointee_f(V       *i) XTAL_0EX {return appointed_f<A       *>(i);}
+			XTAL_FZ2_(A const *) appointee_f(V const *i) XTAL_0EX {return appointed_f<A const *>(i);}
+			XTAL_FZ2_(V       *) appointer_f(A       *i) XTAL_0EX {return appointed_f<V       *>(i);}
+			XTAL_FZ2_(V const *) appointer_f(A const *i) XTAL_0EX {return appointed_f<V const *>(i);}
+			
+			XTAL_FZ2 reverse_appointee_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointee_f(XTAL_REF_(i)));}
+			XTAL_FZ2 reverse_appointer_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointer_f(XTAL_REF_(i)));}
 
+		public:
 			template <typename T>
-			class homotype: public heterotype<T>
+			class homotype: public iterate_t<T>
 			{
-				using co = heterotype<T>;
+				using co = iterate_t<T>;
 				
-				template <typename I>
-				XTAL_FZ2_(I) appointed_f(XTAL_DEF i) XTAL_0EX {return _std::launder(reinterpret_cast<I>(XTAL_REF_(i)));}
-				
-				XTAL_FZ2_(A       *) appointee_f(V       *i) XTAL_0EX {return appointed_f<A       *>(i);}
-				XTAL_FZ2_(A const *) appointee_f(V const *i) XTAL_0EX {return appointed_f<A const *>(i);}
-				XTAL_FZ2_(V       *) appointer_f(A       *i) XTAL_0EX {return appointed_f<V       *>(i);}
-				XTAL_FZ2_(V const *) appointer_f(A const *i) XTAL_0EX {return appointed_f<V const *>(i);}
-				
-				XTAL_FZ2 reverse_appointee_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointee_f(XTAL_REF_(i)));}
-				XTAL_FZ2 reverse_appointer_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointer_f(XTAL_REF_(i)));}
-
 			//	alignas(V) _std::byte block_m[sizeof(V)*(N_size)];
 				A  block_m[N_size];
 				A* limit_m = block_m;
@@ -234,8 +96,8 @@ struct collector
 			//	using co;
 				using co::size;
 
-				using             value_type = V;
 				using         allocator_type = T;
+				using             value_type = V;
 
 				using              size_type = _std::size_t;
 				using        difference_type = _std::ptrdiff_t;
@@ -253,12 +115,12 @@ struct collector
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
 				XTAL_RE4_(XTAL_OP2[](size_type i), *appointer_f(block_m + i));
-				XTAL_RE4_(XTAL_OP2() (size_type i),  appointer_f(block_m + i));
+				XTAL_RE4_(XTAL_OP2()(size_type i),  appointer_f(block_m + i));
 
 				XTAL_RE4_(XTAL_FN2 rbegin(), reverse_appointer_f(limit_m));
-				XTAL_RE4_(XTAL_FN2  begin(),   appointer_f(block_m));
+				XTAL_RE4_(XTAL_FN2  begin(),         appointer_f(block_m));
 				XTAL_RE4_(XTAL_FN2   rend(), reverse_appointer_f(block_m));
-				XTAL_RE4_(XTAL_FN2    end(),   appointer_f(limit_m));
+				XTAL_RE4_(XTAL_FN2    end(),         appointer_f(limit_m));
 				
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
 				XTAL_FN2  cbegin() XTAL_0FX {return  begin();}
@@ -358,7 +220,7 @@ struct collector
 				///\
 				Swaps the contents of `this` with the given data. \
 
-				XTAL_FN0 swap(T &t)
+				XTAL_FN0 swap(homotype &t)
 				requires _std::swappable<value_type>
 				{
 					_std::swap_ranges(begin(), end(), t.begin());
@@ -622,7 +484,9 @@ struct collector
 					I i0_ = i0;
 					I iN_ = iN;
 					I begin_m = begin(), end_m = end();
+					
 					assert(begin_m <= i0_ and iN_ <= end_m and _std::distance(i0_, iN_) == sN);
+					
 					if constexpr (_std::destructible<V>)
 					{	_std::destroy(i0_, iN_);
 					}
@@ -646,38 +510,8 @@ struct collector
 
 			};
 		};
-		template <typename V> requires (N_size < 0)
-		struct fluid<V>
-		{
-			using type = _std::vector<V>;
 
-			template <typename T>
-			class homotype: public type
-			{
-				using co = type;
-
-			public:
-				using co::co;
-
-			};
-		};
-		template <typename V>
-		struct squid
-		{
-			using type = _std::priority_queue<V, typename fluid<V>::type, _std::greater<V>>;
-		
-			template <typename T>
-			class homotype: public type
-			{
-				using co = type;
-
-			public:
-				using co::co;
-
-			};
-		};
 	};
-	using type = subtype<unit_t>;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -203,7 +203,7 @@ struct defer
 		XTAL_FNX defuse(U u)
 		XTAL_0EX
 		{
-			return co::has(u)? (0): (co::head(u), 1);
+			return co::has(u)? 0: (co::head(u), 1);
 		}
 		XTAL_FNX defuse(XTAL_DEF w)
 		XTAL_0EX

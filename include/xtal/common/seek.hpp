@@ -34,8 +34,8 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int I, bool ...Ns> struct seek_true_from;
-template <int I            > struct seek_true_from<I              >: constant<-1> {};
-template <int I, bool ...Ns> struct seek_true_from<I,  true, Ns...>: constant< I> {};
+template <int I            > struct seek_true_from<I              >: constant_t<-1> {};
+template <int I, bool ...Ns> struct seek_true_from<I,  true, Ns...>: constant_t< I> {};
 template <int I, bool ...Ns> struct seek_true_from<I, false, Ns...>: seek_true_from<I + 1, Ns...> {};
 
 template <bool ...Ns> XTAL_LET_(int) seek_true_v = seek_true_from<0, Ns...>::value;

@@ -15,7 +15,7 @@ namespace xtal::control::__any
 /**/
 TEST_CASE("xtal/control/any.hpp: hold")
 {
-	using sequel_t = control::sequel_t<countee_t<>>;
+	using sequel_t = control::sequel_t<counter_t<>>;
    using biased_t = process::confined_t<bias_t::template hold<(1 << 7)>>;
 
   biased_t biased;

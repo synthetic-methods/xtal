@@ -15,7 +15,7 @@ namespace xtal::control::__sequel
 
 TEST_CASE("xtal/control/sequel.hpp: interconversion")
 {
-	using sequel_n = sequel_t<countee_t<>>;
+	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
 
 	auto seq_n = sequel_n(3);
@@ -36,7 +36,7 @@ TEST_CASE("xtal/control/sequel.hpp: interconversion")
 
 TEST_CASE("xtal/control/sequel.hpp: synchronization")
 {
-	using sequel_n = sequel_t<countee_t<>>; auto seq_n = sequel_n(3);
+	using sequel_n = sequel_t<counter_t<>>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<counted_t<>>; auto seq_u = sequel_u(3);
 
 	REQUIRE(seq_u.size() == seq_n.size());
@@ -96,7 +96,7 @@ void initialization__test(auto n)
 }
 TEST_CASE("xtal/control/sequel.hpp: initialization")
 {
-	using sequel_n = sequel_t<countee_t<>>;
+	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
 	using I = typename sequel_u::step_t;
 
@@ -119,7 +119,7 @@ void finalization__test(auto n)
 }
 TEST_CASE("xtal/control/sequel.hpp: finalization")
 {
-	using sequel_n = sequel_t<countee_t<>>;
+	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
 	using I = typename sequel_u::step_t;
 	
@@ -134,7 +134,7 @@ TEST_CASE("xtal/control/sequel.hpp: finalization")
 /**/
 TEST_CASE("xtal/control/sequel.hpp: intrepidation")
 {
-	using V = countee_t<>;
+	using V = counter_t<>;
 	using U = counted_t<>;
 	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = seq_u;
@@ -146,7 +146,7 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation")
 }
 TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
 {
-	using V = countee_t<>;
+	using V = counter_t<>;
 	using U = counted_t<>;
 	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = sequel_u(0);
@@ -162,7 +162,7 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
 template <typename Y, typename X>
 void interference__test(auto i)
 {
-	using V = countee_t<>;
+	using V = counter_t<>;
 	using U = counted_t<>;
 
 	auto seq_n = X(4);
@@ -181,7 +181,7 @@ void interference__test(auto i)
 }
 TEST_CASE("xtal/control/sequel.hpp: interruption")
 {
-	using V = countee_t<>; using sequel_n = sequel_t<V>;
+	using V = counter_t<>; using sequel_n = sequel_t<V>;
 	using U = counted_t<>; using sequel_u = sequel_t<U>;
 	using I = typename sequel_u::step_t;
 
@@ -199,7 +199,7 @@ TEST_CASE("xtal/control/sequel.hpp: interruption")
 /**/
 TEST_CASE("xtal/control/sequel.hpp: cycle")
 {
-	using V = countee_t<size_t>; using sequel_n = sequel_t<V>;
+	using V = counter_t<size_t>; using sequel_n = sequel_t<V>;
 	using U = counted_t<size_t>; using sequel_u = sequel_t<U>;
 	sigma_t constexpr N = 5;
 

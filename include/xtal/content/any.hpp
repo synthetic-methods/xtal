@@ -51,7 +51,7 @@ struct define
 		{
 			return pack_f();
 		}
-		using tuple_size = constant<(size_t) 0>;
+		using tuple_size = constant_t<(size_t) 0>;
 
 	protected:
 		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(*this);}
@@ -221,7 +221,7 @@ struct defer
 		{
 			return apply(pack_f);
 		}
-		using tuple_size = constant<co::tuple_size::value + 1>;
+		using tuple_size = constant_t<co::tuple_size::value + 1>;
 
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
@@ -479,7 +479,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::content::any_q T> requires (0 < T::tuple_size::value)
-struct tuple_size<T>: xtal::constant<(size_t) T::tuple_size::value> {};
+struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
 
 template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};

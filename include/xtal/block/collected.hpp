@@ -20,12 +20,14 @@ struct collected
 	template <typename S>
 	class subtype: public S
 	{
-		using co = S;
-		XTAL_LET size_v = co::size_v;
+		using co = S; template <typename W> using etc_t = _std::initializer_list<W>;
 
-		template <typename W> using etc_t = _std::initializer_list<W>;
 	public:
 		using co::co;
+		using typename co::arity;
+
+		using fixed = typename co::template fixed<V>;
+		using fluid = typename co::template fluid<V>;
 
 		struct buffer;
 		struct scalar;
@@ -36,164 +38,73 @@ struct collected
 		
 		struct buffer
 		{
-			template <typename T>
-			using heterotype = typename co::template fluid<V>::template homotype<T>;
+			using type = typename fluid::type;
 
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-
-			public:
-				using co::co;
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
 		};
-		template <size_t N_reserve=0>
 		struct siphon
 		{
-			template <typename T>
-			using heterotype = typename co::template squid<V>::template homotype<T>;
+			using archetype = _std::priority_queue<V, typename fluid::type, _std::greater<V>>;
 
 			template <typename T>
-			class homotype: public heterotype<T>
+			class homotype: public archetype
 			{
-				using co = heterotype<T>;
+				using co = archetype;
 				using count_t = typename co:: size_type;
 				using event_t = typename co::value_type;
 
+				using next_t = event_t const &;
+
 			public:
 				using co::co;
 
-				XTAL_FN2_(count_t) completed() XTAL_0EX {return          0;}
-				XTAL_FN2_(count_t) remaining() XTAL_0EX {return co::size();}
-
-				XTAL_FN1_(void) advance(bool proceed=true) XTAL_0EX {if (proceed) co::  pop();}
-				XTAL_FN1_(void) abandon(bool proceed=true) XTAL_0EX {if (proceed) co::clear();}
-				
-				XTAL_FN1_(sign_t) poke(XTAL_DEF... oo)
-				XTAL_0EX
-				{
-					co::emplace(XTAL_REF_(oo)...);
-					return 1;
-				}
-				XTAL_FN1_(sign_t) push(XTAL_DEF_(is_q<event_t>) eo)
-				XTAL_0EX
-				{
-					co::push(XTAL_REF_(eo));
-					return 1;
-				}
+				XTAL_FN2_(count_t) completed()           XTAL_0EX {return            0;}
+				XTAL_FN2_(count_t) remaining()           XTAL_0EX {return co::  size();}
+				XTAL_FN1_(void)      advance(bool i=1)   XTAL_0EX {if (i) co::   pop();}
+				XTAL_FN1_(void)      abandon(bool i=1)   XTAL_0EX {if (i) co:: clear();}
+				XTAL_FN2_(next_t)       next()           XTAL_0EX {return co::   top();}
+				XTAL_FN1_(sign_t)       push(XTAL_DEF o) XTAL_0EX {return co::  push(XTAL_REF_(o)), 1;}
 
 			};
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
 			};
 		};
-		template <size_t N_reserve=0>// e.g. `content::confer<iota_t>`
 		struct sluice
 		{
-			template <typename T>
-			using heterotype = typename co::template fluid<V>::template homotype<T>;
+			using archetype = typename fluid::type;
 
 			template <typename T>
-			class homotype: public heterotype<T>
+			class homotype: archetype
 			{
-				using co = heterotype<T>;
+				using co = archetype;
 
+				using  size_t = typename co::      size_type;
+				using event_t = typename co::     value_type;
 				using count_t = typename co::difference_type;
-				using event_t = typename co::value_type;
 				using point_t = typename co::iterator;
 
-				point_t point_m;
-			public:
+				using next_t = event_t const &;
 
+				point_t point_m;
+
+			public:
 				using co::co;
 
 				XTAL_NEW homotype()
 				XTAL_0EX
-				XTAL_IF1 (N_reserve == 0)
-				:	co {}
-				,	point_m {co::begin()}
-				{
-				}
-				XTAL_NEW homotype()
-				XTAL_0EX
-				XTAL_IF1 (N_reserve == 1)
 				:	co {event_t(_std::numeric_limits<typename event_t::head_t>::max())}
 				,	point_m {co::begin()}
 				{
 				}
-
-				XTAL_FN2_(point_t) ending()
-				XTAL_0EX
-				{
-					return _std::next(co::begin(), co::size() - N_reserve);
-				}
-				XTAL_FN2_(point_t) beginning()
-				XTAL_0EX
-				{
-					return co::begin();
-				}
-
-				XTAL_FN2_(count_t) completed()
-				XTAL_0EX
-				{
-					return point_m - beginning();
-				}
-				XTAL_FN2_(count_t) remaining()
-				XTAL_0EX
-				{
-					return ending() - point_m;
-				}
-				XTAL_FN2 size()
-				XTAL_0EX
-				{
-					return remaining();
-				}
-				
-				XTAL_FN0 pop()
-				XTAL_0EX
-				{
-					++point_m;
-				}
-				XTAL_FN2 top()
-				XTAL_0EX
-				{
-					return peek(0);
-				}
-				XTAL_FN2_(event_t const &) peek(count_t i)
-				XTAL_0EX
-				{
-					return *(point_m + i);
-				}
-				
-				XTAL_FN1_(event_t const &) advance(bool proceed=true)
-				XTAL_0EX
-				{
-					point_m += proceed;
-					return *(point_m);
-				}
-				XTAL_FN1_(event_t const &) abandon(bool proceed=true)
-				XTAL_0EX
-				{
-					if (proceed)
-					{	co::erase(beginning(), ending());
-						point_m = beginning();
-					}
-					return *point_m;
-				}
-				
+				XTAL_FN2_(point_t)     begin() XTAL_0EX {return  point_m;}
+				XTAL_FN2_(count_t) completed() XTAL_0EX {return _std::distance(co::begin(), begin());}
+				XTAL_FN2_(count_t) remaining() XTAL_0EX {return _std::distance(    begin(),   end());}
+				XTAL_FN2_(point_t)       end() XTAL_0EX {return                _std::prev(co::end());}
 				///\
 				\returns the result of queuing the given message, \
 				with zero indicating that the message was already scheduled. \
@@ -201,24 +112,36 @@ struct collected
 				///\
 				\note Conflicting entries are overwritten (only `event_t::head`s are compared by e.g. `==`). \
 
-				XTAL_FN1_(sign_t) poke(XTAL_DEF... oo)
+				XTAL_FN1_(sign_t) push(event_t e)
 				XTAL_0EX
 				{
-					return push(event_t(XTAL_REF_(oo)...));
+					auto e_ = _std::lower_bound(co::begin(), end(), e);
+					if (*e_ == e)
+					{	_std::swap(*e_, e);
+						return e_->tail() != e.tail();
+					}
+					else
+					{	co::insert(e_, {e});
+						return sign_f<1>(point_m - e_);
+					}
 				}
-				XTAL_FN1_(sign_t) push(event_t eo)
+				XTAL_FN2_(next_t)    next(bool i=1) XTAL_0EX {return *(point_m +  i);}
+				XTAL_FN1_(next_t) advance(bool i=1) XTAL_0EX {return *(point_m += i);}
+				XTAL_FN1_(next_t) abandon(bool i=1)
 				XTAL_0EX
 				{
-					auto const size_n = size();
-					auto e_ = _std::lower_bound(beginning(), ending(), eo);
-					if (*e_ == eo) _std::swap(*e_, eo); else co::insert(e_, {eo});
-					return size_n != size() or e_->tail() != eo.tail();
+					if (i)
+					{	co::erase(co::begin(), end());
+						point_m = co::begin();
+					}
+					return *point_m;
 				}
 
 			};
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
@@ -226,13 +149,12 @@ struct collected
 		};
 		struct scalar
 		{
-			template <typename T>
-			using heterotype = typename co::template fixed<V>::template homotype<T>;
+			using archetype = typename fixed::type;
 
 			template <typename T>// requires field_operators_q<V>
-			class homotype: public heterotype<T>
+			class homotype: public archetype
 			{
-				using co = heterotype<T>;
+				using co = archetype;
 
 			public:
 				using co::co;
@@ -289,34 +211,35 @@ struct collected
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
 				XTAL_0EX
-				XTAL_IF1 (0x00 < size_v) and (size_v <= 0x10)// TODO: Limit by cache line size?
+				XTAL_IF1 (0x00 < arity::value) and (arity::value <= 0x10)// TODO: Limit by cache line size?
 				{
-					seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
+					seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
 					return get();
 				}
 				
 				///\
 				Elementwise comparators. \
 
-			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<size_v>);}
-				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<size_v>);}
-				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<size_v>);}
-				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<size_v>);}
-				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<size_v>);}
-				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<size_v>);}
+			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<arity::value>);}
+				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
+				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
+				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
+				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<arity::value>);}
+				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<arity::value>);}
 
-				XTAL_OP2_(T)  *  (XTAL_DEF w) XTAL_0FX {return got() *= XTAL_REF_(w);}
-				XTAL_OP2_(T)  /  (XTAL_DEF w) XTAL_0FX {return got() /= XTAL_REF_(w);}
-				XTAL_OP2_(T)  +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
-				XTAL_OP2_(T)  -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
+				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return got() *= XTAL_REF_(w);}
+				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return got() /= XTAL_REF_(w);}
+				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
+				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
 
-				XTAL_OP1_(T&) *= (V const &v) XTAL_0EX {return seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) *= v)), get();}
-				XTAL_OP1_(T&) /= (V const &v) XTAL_0EX {return seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) /= v)), get();}
+				XTAL_OP1_(T &)  *= (V const &v) XTAL_0EX {return seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) *= v)), get();}
+				XTAL_OP1_(T &)  /= (V const &v) XTAL_0EX {return seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) /= v)), get();}
 
 			};
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
@@ -333,6 +256,7 @@ struct collected
 			//	TODO: Subclass to define serial pairs like `complex`. \
 
 				using co = heterotype<T>;
+			
 			public:
 				using co::co;
 				using co::get;
@@ -341,16 +265,17 @@ struct collected
 
 			//	Elementwise addition/subtraction:
 				
-				XTAL_OP1_(T&) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
-				XTAL_OP1_(T&) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
+				XTAL_OP1_(T &) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
+				XTAL_OP1_(T &) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T&) += (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) += t.get(i))), get();}
-				XTAL_OP1_(T&) -= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) -= t.get(i))), get();}
+				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) += t.get(i))), get();}
+				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) -= t.get(i))), get();}
 
 			};
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
@@ -365,6 +290,7 @@ struct collected
 			class homotype: public heterotype<T>
 			{
 				using co = heterotype<T>;
+			
 			public:
 				using co::co;
 				using co::get;
@@ -398,8 +324,8 @@ struct collected
 				///\note This algorithm uses squaring, \
 					which is more precise/efficient than multiplication for complex numbers. \
 
-				template <size_t N_limit=size_v, size_t N_index=0>
-				XTAL_FN1_(T&) generate(V const &u)
+				template <size_t N_limit=arity::value, size_t N_index=0>
+				XTAL_FN1_(T &) generate(V const &u)
 				XTAL_0EX
 				{
 					using size_type = typename co::size_type; static_assert(_std::integral<size_type>);
@@ -428,18 +354,18 @@ struct collected
 				}
 
 				///\returns `this` as the Fourier basis used by `transform` etc, \
-				comprising `size_v` values of the half-period complex sinusoid.
+				comprising `arity::value` values of the half-period complex sinusoid.
 
 				///\note Only the first eighth-period is computed, \
 				then mirrored to complete the quarter and half respectively. \
 
 				XTAL_FN1_(T &) generate()
 				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<size_v, 2> and complex_q<V>
+				XTAL_IF1 bit_ceiling_q<arity::value, 2> and complex_q<V>
 				{
 					auto &s = get();
-					auto constexpr x = realized::template patio_y<-1>(size_v);
-					auto constexpr L = size_v >> 2;
+					auto constexpr x = realized::template patio_y<-1>(arity::value);
+					auto constexpr L = arity::value >> 2;
 					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
 					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
 					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
@@ -456,14 +382,14 @@ struct collected
 				template <iterated_q Y>
 				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
 				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<size_v, 1>
+				XTAL_IF1 bit_ceiling_q<arity::value, 1>
 				{
 					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
 
 					size_type const n_size = that.size();
 					size_type const h_size = n_size >> 1;
 					size_type const k_size = bit_ceiling_y(n_size); assert(n_size == 1 << k_size);
-					size_type const K_size = bit_ceiling_y(size_v); assert(k_size <= K_size);
+					size_type const K_size = bit_ceiling_y(arity::value); assert(k_size <= K_size);
 
 					for (size_type h = 0; h < h_size; ++h)
 					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
@@ -522,6 +448,7 @@ struct collected
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
@@ -536,24 +463,27 @@ struct collected
 			class homotype: public heterotype<T>
 			{
 				using co = heterotype<T>;
+			
 			public:
 				using co::co;
 				using co::get;
 
-				using transformed_t = typename serial::type;
+			//	using transformed_t = typename serial::type;
+				using transformed_t = typename series::type;
 
 			//	Elementwise multiplication/division:
 
-				XTAL_OP1_(T&) *= (etc_t<V> w) XTAL_0EX {return get() *= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) /= (etc_t<V> w) XTAL_0EX {return get() /= T(w.begin(), w.end());}				
+				XTAL_OP1_(T &) *= (etc_t<V> w) XTAL_0EX {return get() *= T(w.begin(), w.end());}
+				XTAL_OP1_(T &) /= (etc_t<V> w) XTAL_0EX {return get() /= T(w.begin(), w.end());}				
 				
-				XTAL_OP1_(T&) *= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) *= t.get(i))), get();}
-				XTAL_OP1_(T&) /= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) /= t.get(i))), get();}
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) *= t.get(i))), get();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) /= t.get(i))), get();}
 
 			};
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
@@ -563,7 +493,7 @@ struct collected
 		A mutually inverse couple that can be mapped to their dual via `lhs +/- rhs >> N_shift`, \
 		and used to represent e.g. cosine/sine or mid/side pairs.
 		
-		template <int N_shift> requires (size_v == 2)
+		template <int N_shift> requires (arity::value == 2)
 		struct converse<N_shift>
 		{
 			template <typename T>
@@ -573,6 +503,7 @@ struct collected
 			class homotype: public heterotype<T>
 			{
 				using co = heterotype<T>;
+			
 			public:
 				using co::co;
 				using co::get;
@@ -599,19 +530,12 @@ struct collected
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
+
 			public:
 				using co::co;
 
 			};
 		};
-
-		using   buffer_t = typename   buffer::type;
-//		using   scalar_t = typename   scalar::type;
-//		using   serial_t = typename   serial::type;
-//		using   series_t = typename   series::type;
-//		using parallel_t = typename parallel::type;
-//		template <int N_shift=0>
-//		using converse_t = typename converse<N_shift>::type;
 
 	};
 };
