@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
+#include "../block/all.hpp"
 #include "../control/sequel.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
-
 
 
 XTAL_ENV_(push)
@@ -41,7 +41,7 @@ template <typename U, typename ...As>
 struct atom
 {
 	using interrupt = typename control::contrived_t<>::interrupt<0>;
-	using subkind = confer<U, link<As..., interrupt, common::collector<-1>>>;
+	using subkind = confer<U, link<As..., interrupt, block::collector<-1>>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -55,7 +55,7 @@ struct atom
 		{
 			using rebound = typename co::template bind<Xs...>;
 
-			using collected  = common::collected<typename rebound::return_t>;
+			using collected  = block::collected<typename rebound::return_t>;
 			using collection = common::compose_s<co, collected>;
 			
 			using buffer_u = typename collection::buffer_t;

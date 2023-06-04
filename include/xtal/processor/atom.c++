@@ -16,7 +16,7 @@ namespace xtal::processor::__atom
 TEST_CASE("xtal/processor/atom.hpp: lifting")
 {
 	sigma_t constexpr N_size = 5;
-	using scalar_t = common::collection_scalar_t<N_size, alpha_t>;
+	using scalar_t = block::scalar_t<N_size, alpha_t>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -39,8 +39,8 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 template <typename mix_t>
 void respan_external__test()
 {
-	using collector  = common::collector<(1<<5)>;
-	using collected  = common::collected<alpha_t>;
+	using collector  = block::collector<(1<<5)>;
+	using collected  = block::collected<alpha_t>;
 	using collection = common::compose_s<unit_t, collector, collected>;
 
 	using buffer_u = typename collection::buffer::type;

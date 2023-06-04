@@ -17,7 +17,7 @@ namespace xtal::processor::__any
 TEST_CASE("xtal/processor/any.hpp: letting")
 {
 	sigma_t constexpr N_size = 5;
-	using scalar_t = common::collection_scalar_t<N_size, int>;
+	using scalar_t = block::scalar_t<N_size, int>;
 	auto z = scalar_t {00, 11, 22, 33, 44};
 	auto a = processor::let_f(z);
 	REQUIRE(true);
@@ -28,7 +28,7 @@ TEST_CASE("xtal/processor/any.hpp: letting")
 TEST_CASE("xtal/processor/any.hpp: lifting")
 {
 	sigma_t constexpr N_size = 5;
-	using scalar_t = common::collection_scalar_t<N_size, alpha_t>;
+	using scalar_t = block::scalar_t<N_size, alpha_t>;
 	
 	auto f = processor::let_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_t { 0,  1,  2,  3,  4};

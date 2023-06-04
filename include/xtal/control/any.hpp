@@ -4,7 +4,7 @@
 
 
 
-
+#include "../block/all.hpp"
 
 XTAL_ENV_(push)
 namespace xtal::control
@@ -171,7 +171,7 @@ struct define
 
 				using delay_t = content::delay_t;
 				using event_t = content::delay_s<T>;
-				using queue_t = common::collection_sluice_t<N_future, event_t, 1>;
+				using queue_t = block::sluice_t<N_future, event_t, 1>;
 
 				queue_t q_;
 				delay_t delay_m {0};
@@ -247,7 +247,7 @@ struct define
 			protected:
 				using delay_t = content::delay_t;
 				using event_t = content::delay_s<T>;
-				using queue_t = common::collection_siphon_t<N_future, event_t, 1>;
+				using queue_t = block::siphon_t<N_future, event_t, 1>;
 
 				queue_t q_;
 

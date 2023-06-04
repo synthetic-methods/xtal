@@ -16,7 +16,7 @@ namespace xtal::processor::__bond
 TEST_CASE("xtal/processor/bond.hpp: lifting")
 {
 	sigma_t constexpr N_size = 5;
-	using scalar_t = common::collection_scalar_t<N_size, alpha_t>;
+	using scalar_t = block::scalar_t<N_size, alpha_t>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
