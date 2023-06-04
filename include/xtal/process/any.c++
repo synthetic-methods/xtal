@@ -101,43 +101,6 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux method")
 	attribute_efflux_method__test(static_bias_mix_t());
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("xtal/process/any.hpp: state")
-{
-	using sequel_t = control::sequel_t<countee_t<>>;
-   using biased_t = process::confined_t<bias_t::template hold<(1 << 7)>>;
-
-  biased_t biased;
-
-  auto step = sequel_t(1 << 3);
-	
-	biased <<= step;
-	biased <<= common::pack_f(content::suspend_t<>(0), (bias_t) (alpha_t)  7);
-	biased <<= common::pack_f(content::suspend_t<>(1), (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(content::suspend_t<>(3), (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(content::suspend_t<>(4), (bias_t) (alpha_t)  1);
-	biased <<= common::pack_f(content::suspend_t<>(5), (bias_t) (alpha_t) -1);
-	biased <<= common::pack_f(content::suspend_t<>(7), (bias_t) (alpha_t)  7);
-	
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-//	...
-	biased <<= step;
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

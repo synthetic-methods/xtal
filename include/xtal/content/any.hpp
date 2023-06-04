@@ -136,13 +136,14 @@ struct defer
 	{
 		using co = common::compose_s<S>; using T = typename co::self_t;
 
+	public:
+		using head_t = U;
+		using body_t = debased_t<U>;
+
 	protected:
 		template <typename Y=T> using self_s = _std::conditional_t<is_q<Y, U>, subtype, typename co::template self_s<Y>>;
 		template <size_t   N=0> using seek_s = _std::conditional_t<N == 0,     subtype, typename co::template seek_s<N - 1>>;
 		
-		using head_t = U;
-		using body_t = debased_t<U>;
-
 		body_t body_m;
 	//	body_t body_m {};
 

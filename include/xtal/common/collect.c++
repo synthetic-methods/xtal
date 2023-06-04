@@ -173,9 +173,9 @@ TEST_CASE("xtal/common/collect.hpp: buffer mutation")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
 template <int N>
-void collection_queue_operation__test()
+void collection_siphon_operation__test()
 {
 	using event_t = compose_s<bias_t, content::confer<int>>;
 	using queue_t = collection_siphon_t<N, event_t>;
@@ -198,13 +198,46 @@ void collection_queue_operation__test()
 	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
 
 }
-TEST_CASE("xtal/common/collect.hpp: queue operation")
+TEST_CASE("xtal/common/collect.hpp: siphon operation")
 {
-	collection_queue_operation__test<-1>();
-	collection_queue_operation__test<4>();
+	collection_siphon_operation__test<-1>();
+	collection_siphon_operation__test< 4>();
 
 }
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/*/
+template <int N>
+void collection_sluice_operation__test()
+{
+	using event_t = compose_s<bias_t, content::confer<int>>;
+	using queue_t = collection_sluice_t<N, event_t, 1>;
+	queue_t q;
 
+	auto e1 = event_t(1, bias_t(-1.0));
+	auto e2 = event_t(2, bias_t(-2.0));
+	REQUIRE(e1 < e2);
+	
+	REQUIRE(0 == q.size());
+	q.push(e1); REQUIRE(1 == q.size());
+	q.push(e2); REQUIRE(2 == q.size());
+	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
+
+	REQUIRE(0 == q.size());
+	q.push(e2); REQUIRE(1 == q.size());
+	q.push(e1); REQUIRE(2 == q.size());
+	REQUIRE(-1.0 == q.top().template head<1>()); q.pop(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().template head<1>()); q.pop(); REQUIRE(0 == q.size());
+
+}
+TEST_CASE("xtal/common/collect.hpp: sluice operation")
+{
+//	collection_sluice_operation__test<-1>();
+	collection_sluice_operation__test<64>();
+
+}
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

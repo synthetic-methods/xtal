@@ -18,6 +18,10 @@ using sign_t = XTAL_STD_(sign_t);
 using null_t = XTAL_STD_(null_t);
 using unit_t = XTAL_STD_(unit_t);
 
+XTAL_FZ1_(void) void_f(void) XTAL_0EX {}
+XTAL_FZ2_(bool) true_f(void) XTAL_0EX {return true;}
+XTAL_FZ2_(bool) true_f(XTAL_DEF...) XTAL_0EX {return true;}
+
 template <auto        N  > concept      sign_q = _std::integral<decltype(N)> and -1 <= N and N <= 1;
 template <auto     ...Ns > concept     every_q = (bool(Ns) and...);
 

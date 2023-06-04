@@ -11,10 +11,15 @@ namespace xtal::content
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=iota_t>
-struct suspend
+struct delay;
+
+template <typename S=contrived_t<>>
+using delay_s = common::compose_s<S, delay>;
+using delay_t = iota_t;
+
+struct delay
 {
-	using subkind = defer<U>;
+	using subkind = confer<delay_t>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -22,14 +27,11 @@ struct suspend
 		using co = common::compose_s<S, subkind>;
 	public:
 		using co::co;
-		using delay_t = U;
-
-		XTAL_RE4_(XTAL_FN1 delay(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
-template <typename U=iota_t>
-using suspend_t = confined_t<suspend<U>>;
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #pragma once
 #include "../context/any.hpp"//_retail
-#include "../content/suspend.hpp"
+#include "../content/delay.hpp"
 
 
 
@@ -169,151 +169,58 @@ struct define
 			{
 				using co = common::compose_s<R>;
 
-				using control_t = T;
-				using suspend_t = content::suspend_t<>;
-				using index_t = typename suspend_t::delay_t;
-				using event_t = common::compose_s<T, content::confer<index_t>>;
-				using stack_t = common::collection_buffer_t<N_future, event_t>;
-				using point_t = typename stack_t::iterator;
-				using count_t = typename stack_t::difference_type;
+				using delay_t = content::delay_t;
+				using event_t = content::delay_s<T>;
+				using queue_t = common::collection_sluice_t<N_future, event_t, 1>;
 
-				using current_t = event_t const &;
+				queue_t q_;
+				delay_t delay_m {0};
 
-				stack_t stack_m;
-				point_t point_m;
-				index_t index_m;
+				XTAL_FN2 next     () XTAL_0EX {return q_.peek(1);}
+				XTAL_FN2 next_tail() XTAL_0EX {return next().tail();}
+				XTAL_FN2 next_head() XTAL_0EX {return next().head();}
 
 			public:
 				using co::co;
 				using co::self;
 
-				XTAL_NEW subtype()
-				:	co()
-				,	stack_m {event_t(_std::numeric_limits<index_t>::max())}
-				,	point_m {stack_m.begin()}
-				,	index_m {0}
-				{
-				}
-
-			protected:
-				XTAL_FN2_(point_t) ending()
-				XTAL_0EX
-				{
-					return _std::next(stack_m.begin(), stack_m.size() - 1);
-				}
-				XTAL_FN2_(point_t) beginning()
-				XTAL_0EX
-				{
-					return stack_m.begin();
-				}
-
-				XTAL_FN2_(count_t) suspended()
-				XTAL_0EX
-				{
-					return ending() - point_m;
-				}
-				XTAL_FN2_(count_t) completed()
-				XTAL_0EX
-				{
-					return point_m - beginning();
-				}
-
-				XTAL_FN2 next()
-				XTAL_0EX
-				{
-					return peek(1);
-				}
-				XTAL_FN2 next_tail()
-				XTAL_0EX
-				{
-					return next().tail();
-				}
-				XTAL_FN2 next_head()
-				XTAL_0EX
-				{
-					return next().head();
-				}
-
-				XTAL_FN2_(current_t) peek(index_t idx)
-				XTAL_0EX
-				{
-					return *(point_m + idx);
-				}
-				XTAL_FN1_(current_t) advance(bool proceed=true)
-				XTAL_0EX
-				{
-					point_m += proceed;
-					return *point_m;
-				}
-				XTAL_FN1_(current_t) abandon(bool proceed=true)
-				XTAL_0EX
-				{
-					if (proceed)
-					{	stack_m.erase(beginning(), ending());
-						point_m = beginning();
-						index_m = 0;
-					}
-					return *point_m;
-				}
-				
-				///\
-				Delays the control `o` by the given delay `i`. \
-				
-				///\
-				\note Conflicting entries are overwritten (only `event_t::head`s are compared by e.g. `==`). \
-
-				XTAL_FN0 poke(index_t i, control_t o)
-				XTAL_0EX
-				{
-					auto const ex = event_t(i, o);
-					auto e_ = _std::lower_bound(beginning(), ending(), ex);
-					if (*e_ == ex) *e_ = ex; else stack_m.insert(e_, {ex});
-				}
-
-			public:
 				///\
 				Invokes `influx` on the super-instance after clearing the schedule iff completed. \
 
 				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					abandon(0 < completed() and 0 == suspended());
+					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and true_f(delay_m = 0));
 					return co::influx(XTAL_REF_(oo)...);
 				}
 
 				///\
-				Enqueues the events `o, o...` with the given delay `i`. \
-				\
-				\returns the `influx` result if the `i == 0`, `-1` otherwise. \
+				\returns the aggregate `flux` of queuing the messages with the given delay.. \
 
-				XTAL_FNX influx(suspend_t u, control_t o, XTAL_DEF ...oo)
+				XTAL_FNX influx(content::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					poke(u, o);
-					return influx(u, XTAL_REF_(oo)...);
+					return influx(content::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(suspend_t)
+				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return -1;
+					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.poke(dot.head(), dot.tail()));
 				}
 
-			public:
 				template <auto...>
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{
-				//	return advance(index_m++ == next_head()).template seek<1>();
-					return advance(index_m++ == next_head()).tail();
+					return q_.advance(delay_m++ == next_head()).tail();
 				}
-			//	TODO: Once the phasor-type is settled, \
-				define `method` that updates only on reset. \
+			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
 
 			};
 		};
 		///\
 		Provides a queue for this control-type `T` on the target object. \
-		Messages `influx`ed with an integer prefix will be delayed by the given amount. \
+		Messages `influx`ed with an integer prefix will be delay by the given amount. \
 		\
 		NOTE: Only supports decorating `processor::atom`. \
 		\
@@ -332,82 +239,31 @@ struct define
 		template <int N_future=-1>
 		struct interrupt
 		{
-			using control_t = T;
-
 			template <context::any_q R>
 			class subtype: public common::compose_s<R>
 			{
 				using co = common::compose_s<R>;
 			
 			protected:
-				using suspend_t = content::suspend_t<>;
-				using index_t = typename suspend_t::delay_t;
-				using event_t = common::compose_s<T, content::confer<index_t>>;
-				using queue_t = common::collection_siphon_t<N_future, event_t>;
-				using count_t = typename queue_t::size_type;
+				using delay_t = content::delay_t;
+				using event_t = content::delay_s<T>;
+				using queue_t = common::collection_siphon_t<N_future, event_t, 1>;
 
-				using current_t = void;
+				queue_t q_;
 
-				queue_t queue_m;
-
-				XTAL_FN2_(count_t) suspended()
-				XTAL_0EX
-				{
-					return queue_m.size();
-				}
-				XTAL_FN2_(count_t) completed()
-				XTAL_0EX
-				{
-					return 0;
-				}
-
-				XTAL_FN2 next()
-				XTAL_0EX
-				{
-					return queue_m.top();
-				}
-				XTAL_FN2 next_tail()
-				XTAL_0EX
-				{
-					return next().template head<1>();
-				}
-				XTAL_FN2 next_head()
-				XTAL_0EX
-				{
-					return next().template head<0>();
-				}
+				XTAL_FN2 next     () XTAL_0EX {return q_.top();}
+				XTAL_FN2 next_tail() XTAL_0EX {return next().template head<1>();}
+				XTAL_FN2 next_head() XTAL_0EX {return next().template head<0>();}
+				
 				XTAL_FN2 nearest_head()
 				XTAL_0EX
 				{
-					return 0 < suspended()? next_head(): _std::numeric_limits<index_t>::max();
+					return 0 < q_.remaining()? next_head(): _std::numeric_limits<delay_t>::max();
 				}
-				XTAL_FN2 nearest_head(index_t idx)
+				XTAL_FN2 nearest_head(delay_t i)
 				XTAL_0EX
 				{
-					return _std::min<index_t>({nearest_head(), idx});
-				//	return _std::min<index_t>(nearest_head(), idx);// NOTE: `min` weirds out in `RELEASE` (known issue).
-				}
-
-				XTAL_FN1_(current_t) advance(bool proceed=true)
-				XTAL_0EX
-				{
-					if (proceed)
-					{	queue_m.pop();
-					}
-				}
-				XTAL_FN1_(current_t) abandon(bool proceed=true)
-				XTAL_0EX
-				{
-					if (proceed)
-					{	redux();
-					}
-				}
-				XTAL_FN0 poke(index_t idx, control_t o)
-				XTAL_0EX
-				{
-				//	TODO: Handle duplicates? \
-
-					queue_m.emplace(idx, o);
+					return _std::min<delay_t>({nearest_head(), i});// NOTE: `initializer_list` required for `RELEASE`.
 				}
 
 			public:
@@ -420,24 +276,43 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(suspend_t u, control_t o, XTAL_DEF ...oo)
+				/*/
+				XTAL_FNX influx(content::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					index_t const i = u;
-					if (0 == i)
-					{	return influx(XTAL_REF_(o), XTAL_REF_(oo)...);
-					}
-					else
-					{	assert(0 < i);
-						poke(XTAL_REF_(i), o);
-						return -1;
-					}
+					return influx(content::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(suspend_t)
+				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return -1;
+					return 0 == dot.head()? influx(XTAL_REF_(oo)...):
+						XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.poke(dot.head(), dot.tail()));
 				}
+				/*/
+				XTAL_FNX infuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					return co::infuse(XTAL_REF_(o));
+				}
+				XTAL_FNX infuse(content::delay_s<T> dot)
+				XTAL_0EX
+				{
+					auto const i = dot.head();
+					auto const t = dot.tail();
+					return 0 == i? co::infuse(t): (q_.poke(i, t), -1);
+				}
+				XTAL_FNX influx(content::delay_s<> d_t, T t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto const i = d_t.head();
+					return 0 == i? influx(t, XTAL_REF_(oo)...): infuse(content::delay_s<T>(i, t));
+				}
+				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (influx(content::delay_s<>(dot.head()), dot.tail()));
+				}
+				/***/
 
 			protected:
 				///\
@@ -446,14 +321,14 @@ struct define
 				XTAL_FN0 redux(auto const &f)
 				XTAL_0EX
 				{
-					for (index_t i = 0, j = delay(); i != j; j = relay(i = j))
+					for (delay_t i = 0, j = delay(); i != j; j = relay(i = j))
 					{	f(i, j);
 					}
 				}
 				XTAL_FN0 redux(auto const &f, auto &n)
 				XTAL_0EX
 				{
-					for (index_t i = 0, j = delay(); i != j; j = relay(i = j))
+					for (delay_t i = 0, j = delay(); i != j; j = relay(i = j))
 					{	f(i, j, n++);
 					}
 					--n;
@@ -465,15 +340,14 @@ struct define
 				///\
 				\returns the `delay()` until the next event. \
 
-				XTAL_FN1_(index_t) relay(index_t i)
+				XTAL_FN1_(delay_t) relay(delay_t i)
 				XTAL_0EX
 				{
-				//	if constexpr (requires {{co::relay()} -> index_q;})
 					if constexpr (0 < N_future)
 					{	co::relay(i);
-						while (0 < suspended() and next_head() <= i)
+						while (0 < q_.remaining() and next_head() <= i)
 						{	(void) co::influx(next_tail());
-							advance();
+							q_.advance();
 						}
 					}
 					return delay();
@@ -482,10 +356,9 @@ struct define
 				///\
 				\returns the minimum delay across all queues bound to `this`. \
 
-				XTAL_FN2_(index_t) delay()
+				XTAL_FN2_(delay_t) delay()
 				XTAL_0EX
 				{
-				//	if constexpr (requires {{co::delay()} -> index_q;})
 					if constexpr (0 < N_future)
 					{	return nearest_head(co::delay());
 					}

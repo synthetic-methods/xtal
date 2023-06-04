@@ -3,7 +3,7 @@
 #include "./seek.hpp"
 #include "./compact.hpp"
 #include "./compose.hpp"
-
+#include "../content/any.hpp"// cheeky!
 
 
 XTAL_ENV_(push)
@@ -121,14 +121,14 @@ struct collector
 	public:
 		using co::co;
 
-		template <typename V> struct array;
-		template <typename V> using  array_t  = typename array<V>::type;
+		template <typename V> struct fixed;
+		template <typename V> using  fixed_t = typename fixed<V>::type;
 		
-		template <typename V> struct vector;
-		template <typename V> using  vector_t = typename vector<V>::type;
+		template <typename V> struct fluid;
+		template <typename V> using  fluid_t = typename fluid<V>::type;
 		
 		template <typename V> requires (0 < N_size)
-		struct array<V>
+		struct fixed<V>
 		{
 		//	TODO: Alleviate the dependency on `std::array`, \
 			but specialize the appropriate types so that e.g. `std::apply` works. \
@@ -285,7 +285,7 @@ struct collector
 			};
 		};
 		template <typename V>
-		struct vector
+		struct fluid
 		{
 			using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
 
@@ -460,7 +460,7 @@ struct collector
 				}
 
 				///\
-				Allocates and initializes `sN` elements at the end of the vector. \
+				Allocates and initializes `sN` elements at the end of the fluid. \
 
 				XTAL_FN2_(iterator) allocate(size_type sN)
 				{
@@ -734,10 +734,25 @@ struct collector
 			};
 		};
 		template <typename V> requires (N_size < 0)
-		struct vector<V>
+		struct fluid<V>
 		{
 			using type = _std::vector<V>;
 
+			template <typename T>
+			class homotype: public type
+			{
+				using co = type;
+
+			public:
+				using co::co;
+
+			};
+		};
+		template <typename V>
+		struct queue
+		{
+			using type = _std::priority_queue<V, typename fluid<V>::type, _std::greater<V>>;
+		
 			template <typename T>
 			class homotype: public type
 			{
@@ -770,8 +785,6 @@ struct collected
 		using co::co;
 
 		struct buffer;
-		struct debuff;
-		struct siphon;
 		struct scalar;
 		struct serial;
 		struct series;
@@ -781,7 +794,7 @@ struct collected
 		struct buffer
 		{
 			template <typename T>
-			using heterotype = typename co::template vector<V>::template homotype<T>;
+			using heterotype = typename co::template fluid<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public heterotype<T>
@@ -801,20 +814,200 @@ struct collected
 
 			};
 		};
-		struct debuff
-		{
-			using type = deranged_t<typename buffer::type>;
-		
-		};
+		template <size_t N_reserve=0>
 		struct siphon
 		{
-			using type = _std::priority_queue<V, typename buffer::type, _std::greater<V>>;
-		
+			template <typename T>
+			using heterotype = typename co::template queue<V>::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+				using count_t = typename co:: size_type;
+				using event_t = typename co::value_type;
+
+			public:
+				using co::co;
+
+				XTAL_FN2_(count_t) completed()
+				XTAL_0EX
+				{
+					return 0;
+				}
+				XTAL_FN2_(count_t) remaining()
+				XTAL_0EX
+				{
+					return co::size();
+				}
+
+				XTAL_FN1_(void) advance(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{	co::pop();
+					}
+				}
+				XTAL_FN1_(void) abandon(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{	co::clear();
+					}
+				}
+				
+				XTAL_FN1_(sign_t) poke(XTAL_DEF... oo)
+				XTAL_0EX
+				{
+					co::emplace(XTAL_REF_(oo)...);
+					return 1;
+				}
+				XTAL_FN1_(sign_t) push(XTAL_DEF_(is_q<event_t>) eo)
+				XTAL_0EX
+				{
+					co::push(XTAL_REF_(eo));
+					return 1;
+				}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		template <size_t N_reserve=0>// e.g. `content::confer<iota_t>`
+		struct sluice
+		{
+			template <typename T>
+			using heterotype = typename co::template fluid<V>::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+
+				using count_t = typename co::difference_type;
+				using event_t = typename co::value_type;
+				using point_t = typename co::iterator;
+
+				point_t point_m;
+			public:
+
+				using co::co;
+
+				XTAL_NEW homotype()
+				XTAL_0EX
+				XTAL_IF1 (N_reserve == 0)
+				:	co {}
+				,	point_m {co::begin()}
+				{
+				}
+				XTAL_NEW homotype()
+				XTAL_0EX
+				XTAL_IF1 (N_reserve == 1)
+				:	co {event_t(_std::numeric_limits<typename event_t::head_t>::max())}
+				,	point_m {co::begin()}
+				{
+				}
+
+				XTAL_FN2_(point_t) ending()
+				XTAL_0EX
+				{
+					return _std::next(co::begin(), co::size() - N_reserve);
+				}
+				XTAL_FN2_(point_t) beginning()
+				XTAL_0EX
+				{
+					return co::begin();
+				}
+
+				XTAL_FN2_(count_t) completed()
+				XTAL_0EX
+				{
+					return point_m - beginning();
+				}
+				XTAL_FN2_(count_t) remaining()
+				XTAL_0EX
+				{
+					return ending() - point_m;
+				}
+				XTAL_FN2 size()
+				XTAL_0EX
+				{
+					return remaining();
+				}
+				
+				XTAL_FN0 pop()
+				XTAL_0EX
+				{
+					++point_m;
+				}
+				XTAL_FN2 top()
+				XTAL_0EX
+				{
+					return peek(0);
+				}
+				XTAL_FN2_(event_t const &) peek(count_t i)
+				XTAL_0EX
+				{
+					return *(point_m + i);
+				}
+				
+				XTAL_FN1_(event_t const &) advance(bool proceed=true)
+				XTAL_0EX
+				{
+					point_m += proceed;
+					return *(point_m);
+				}
+				XTAL_FN1_(event_t const &) abandon(bool proceed=true)
+				XTAL_0EX
+				{
+					if (proceed)
+					{	co::erase(beginning(), ending());
+						point_m = beginning();
+					}
+					return *point_m;
+				}
+				
+				///\
+				\returns the result of queuing the given message, \
+				with zero indicating that the message was already scheduled. \
+				
+				///\
+				\note Conflicting entries are overwritten (only `event_t::head`s are compared by e.g. `==`). \
+
+				XTAL_FN1_(sign_t) poke(XTAL_DEF... oo)
+				XTAL_0EX
+				{
+					return push(event_t(XTAL_REF_(oo)...));
+				}
+				XTAL_FN1_(sign_t) push(event_t eo)
+				XTAL_0EX
+				{
+					auto const size_n = size();
+					auto e_ = _std::lower_bound(beginning(), ending(), eo);
+					if (*e_ == eo) _std::swap(*e_, eo); else co::insert(e_, {eo});
+					return size_n != size() or e_->tail() != eo.tail();
+				}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
 		};
 		struct scalar
 		{
 			template <typename T>
-			using heterotype = typename co::template array<V>::template homotype<T>;
+			using heterotype = typename co::template fixed<V>::template homotype<T>;
 
 			template <typename T>// requires field_operators_q<V>
 			class homotype: public heterotype<T>
@@ -1198,8 +1391,6 @@ struct collected
 		};
 
 		using   buffer_t = typename   buffer::type;
-		using   debuff_t = typename   debuff::type;
-		using   siphon_t = typename   siphon::type;
 //		using   scalar_t = typename   scalar::type;
 //		using   serial_t = typename   serial::type;
 //		using   series_t = typename   series::type;
@@ -1214,13 +1405,14 @@ struct collected
 
 template <int N,   typename V> using   collection = compose_s<unit_t, collector<N>, collected<V>>;
 template <int N,   typename V> using   collection_buffer_t = typename collection<N, V>::   buffer::type;
-template <int N,   typename V> using   collection_debuff_t = typename collection<N, V>::   debuff::type;
-template <int N,   typename V> using   collection_siphon_t = typename collection<N, V>::   siphon::type;
 template <int N,   typename V> using   collection_scalar_t = typename collection<N, V>::   scalar::type;
 template <int N,   typename V> using   collection_serial_t = typename collection<N, V>::   serial::type;
 template <int N,   typename V> using   collection_series_t = typename collection<N, V>::   series::type;
 template <int N,   typename V> using collection_parallel_t = typename collection<N, V>:: parallel::type;
 template <typename V, int M=0> using collection_converse_t = typename collection<2, V>::template converse<M>::type;
+
+template <int N, typename V, size_t M=0> using collection_siphon_t = typename collection<N, V>::template siphon<M>::type;
+template <int N, typename V, size_t M=0> using collection_sluice_t = typename collection<N, V>::template sluice<M>::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

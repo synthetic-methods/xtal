@@ -43,9 +43,9 @@ void respan_external__test()
 	using collected  = common::collected<alpha_t>;
 	using collection = common::compose_s<unit_t, collector, collected>;
 
-	using buffer_t = typename collection::buffer::type;
-	using debuff_t = typename collection::debuff::type;
-	using respan_u = control::respan_t<debuff_t>;
+	using buffer_u = typename collection::buffer::type;
+	using debuff_u = deranged_t<buffer_u>;
+	using respan_u = control::respan_t<debuff_u>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -57,7 +57,7 @@ void respan_external__test()
 	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = processor::atom_t<mix_t, collector>::bind_f(lhs, rhs);
 
-	auto vector_m = buffer_t {0, 0, 0};
+	auto vector_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(vector_m);
 	auto sequel_m = sequel_n(3);
 
@@ -111,48 +111,6 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal")
 {
 	respan_internal__test<dynamic_bias_mix_t>();
 	respan_internal__test<static_bias_mix_t>();
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
-template <typename mix_t>
-void respan_internal_interrupt__test()
-{
-	using    mix_z = processor::atom_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
-
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
-
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
-	
-	auto xhs = mix_z::bind_f(lhs, rhs);
-	auto seq = sequel_n(4);
-
-	xhs <<= resize_u(4);
-	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
-
-	xhs <<= common::pack_f(content::suspend_t<>(0), (bias_t) (alpha_t) (100));
-	xhs <<= common::pack_f(content::suspend_t<>(1), (bias_t) (alpha_t) (200));
-	xhs <<= common::pack_f(content::suspend_t<>(2), (bias_t) (alpha_t) (300));
-	xhs >>= seq++;
-	REQUIRE(4 == xhs.size());
-	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
-
-	xhs <<= common::pack_f(content::suspend_t<>(2), (bias_t) (alpha_t) (400));
-	xhs >>= seq++;
-	REQUIRE(4 == xhs.size());
-	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
-
-//	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
-}
-TEST_CASE("xtal/processor/atom.hpp: respan internal interrupt")
-{
-	respan_internal_interrupt__test<dynamic_bias_mix_t>();
-//	respan_internal_interrupt__test<static_bias_mix_t>();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
