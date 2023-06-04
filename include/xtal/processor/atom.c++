@@ -16,7 +16,7 @@ namespace xtal::processor::__atom
 TEST_CASE("xtal/processor/atom.hpp: lifting")
 {
 	sigma_t constexpr N_size = 5;
-	using scalar_t = common::collect_scalar_t<N_size, alpha_t>;
+	using scalar_t = common::collection_scalar_t<N_size, alpha_t>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -39,9 +39,12 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 template <typename mix_t>
 void respan_external__test()
 {
-	using collect  = common::collect<(1<<5)>;
-	using buffer_t = typename collect::type::template buffer_t<alpha_t>;
-	using debuff_t = typename collect::type::template debuff_t<alpha_t>;
+	using collector  = common::collector<(1<<5)>;
+	using collected  = common::collected<alpha_t>;
+	using collection = common::compose_s<unit_t, collector, collected>;
+
+	using buffer_t = typename collection::buffer::type;
+	using debuff_t = typename collection::debuff::type;
 	using respan_u = control::respan_t<debuff_t>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
@@ -52,7 +55,7 @@ void respan_external__test()
 
 	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = processor::atom_t<mix_t, collect>::bind_f(lhs, rhs);
+	auto xhs = processor::atom_t<mix_t, collector>::bind_f(lhs, rhs);
 
 	auto vector_m = buffer_t {0, 0, 0};
 	auto respan_m = respan_u(vector_m);

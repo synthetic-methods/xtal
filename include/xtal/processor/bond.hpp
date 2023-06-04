@@ -41,6 +41,7 @@ struct bond
 		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
+		using co::self;
 
 		template <typename ...Xs>
 		struct bind
@@ -89,6 +90,14 @@ struct bond
 
 			};
 		};
+		/*/
+		XTAL_OP2() (XTAL_DEF ...xs)
+		XTAL_0EX
+		{
+			using  bind_t = common::compose_s<S, _retail::confined<bind<decltype(xs)...>>>;
+			return bind_t(self(), XTAL_REF_(xs)...);
+		}
+		/***/
 
 	};
 };

@@ -173,7 +173,7 @@ struct define
 				using suspend_t = content::suspend_t<>;
 				using index_t = typename suspend_t::delay_t;
 				using event_t = common::compose_s<T, content::confer<index_t>>;
-				using stack_t = common::collect_buffer_t<N_future, event_t>;
+				using stack_t = common::collection_buffer_t<N_future, event_t>;
 				using point_t = typename stack_t::iterator;
 				using count_t = typename stack_t::difference_type;
 
@@ -343,7 +343,7 @@ struct define
 				using suspend_t = content::suspend_t<>;
 				using index_t = typename suspend_t::delay_t;
 				using event_t = common::compose_s<T, content::confer<index_t>>;
-				using queue_t = common::collect_siphon_t<N_future, event_t>;
+				using queue_t = common::collection_siphon_t<N_future, event_t>;
 				using count_t = typename queue_t::size_type;
 
 				using current_t = void;

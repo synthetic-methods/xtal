@@ -21,13 +21,13 @@ struct link
 	using subkind = common::compose<As...>;
 
 	template <any_q S>
-	class subtype: of_t<link>, public common::compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>; using T = typename co::self_t;
 	public:
 		using co::co;
 
-		XTAL_LET_(bool) linked = true;
+		using linked = constant<true>;
 
 		///\
 		Thunkifies `T` by binding `Xs...`. \
@@ -316,7 +316,7 @@ struct refine
 		using co::self;
 
 	};
-	template <any_q S> requires of_q<link, S>
+	template <any_q S> requires constant_q<typename common::compose_s<S, subkind>::linked>
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
 		using co = common::compose_s<S, subkind>;
@@ -335,7 +335,6 @@ struct refine
 		template <typename ...Xs>
 		using     bind_t = typename combined<Xs...>::type;
 		XTAL_LET  bind_f = [](XTAL_DEF ...xs) XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
-		
 		XTAL_RE4_(XTAL_FN2 bind_to(XTAL_DEF ...xs)
 		,	bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...)
 		)

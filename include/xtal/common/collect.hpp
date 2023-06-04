@@ -1,8 +1,8 @@
 #pragma once
 #include "../any.hpp"
 #include "./seek.hpp"
-
-
+#include "./compact.hpp"
+#include "./compose.hpp"
 
 
 
@@ -103,8 +103,10 @@ XTAL_0EX
 
 }///////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 template <int N_size=-1>
-struct collect
+struct collector
 {
 	template <typename S>
 	class subtype: public S
@@ -112,61 +114,29 @@ struct collect
 		using co = S;
 		
 		template <typename W> using etc_t = _std::initializer_list<W>;
+
+	protected:
+		XTAL_LET size_v = N_size;
+
 	public:
 		using co::co;
 
-		template <typename V>
-		struct scalar;
-		template <typename V>
-		using  scalar_t = typename scalar<V>::type;
+		template <typename V> struct array;
+		template <typename V> using  array_t  = typename array<V>::type;
 		
-		template <typename V>
-		struct parallel;
-		template <typename V>
-		using  parallel_t = typename parallel<V>::type;
-		
-		template <typename V, int N_shift=0>
-		struct converse;
-		template <typename V, int N_shift=0>
-		using  converse_t = typename converse<V, N_shift>::type;
-		
-		template <typename V>
-		struct serial;
-		template <typename V>
-		using  serial_t = typename serial<V>::type;
-		
-		template <typename V>
-		struct series;
-		template <typename V>
-		using  series_t = typename series<V>::type;
-		
-		template <typename V>
-		struct buffer;
-		template <typename V>
-		using  buffer_t = typename buffer<V>::type;
-		
-		template <typename V>
-		struct debuff;
-		template <typename V>
-		using  debuff_t = typename debuff<V>::type;
-		
-		template <typename V>
-		struct siphon;
-		template <typename V>
-		using  siphon_t = typename siphon<V>::type;
+		template <typename V> struct vector;
+		template <typename V> using  vector_t = typename vector<V>::type;
 		
 		template <typename V> requires (0 < N_size)
-		struct scalar<V>
+		struct array<V>
 		{
-			using realized = realize<V>;
-
 		//	TODO: Alleviate the dependency on `std::array`, \
 			but specialize the appropriate types so that e.g. `std::apply` works. \
 
 			using archetype = _std::array<V, N_size>;// Hmmm...
 
 			template <typename T>
-			class heterotype: public archetype
+			class homotype: public archetype
 			{
 				using co = archetype;
 
@@ -176,7 +146,7 @@ struct collect
 				using co::begin;
 				using it = typename co::iterator;
 
-				XTAL_NEW heterotype()
+				XTAL_NEW homotype()
 				XTAL_0EX
 				:	co()
 				{
@@ -204,7 +174,7 @@ struct collect
 				Initializes `this` with the values between `i0` and `iN`. \
 
 				template <iso_q<it> I>
-				XTAL_NEW heterotype(I &&i0, I &&iN)
+				XTAL_NEW homotype(I &&i0, I &&iN)
 				XTAL_0EX
 				{
 					refill(XTAL_FWD_(I) (i0), XTAL_FWD_(I) (iN));
@@ -215,14 +185,14 @@ struct collect
 				Initializes `this` with the given values. \
 
 				template <iso_q<co> I>
-				XTAL_NEW heterotype(I &&in)
+				XTAL_NEW homotype(I &&in)
 				XTAL_0EX
 				{
 					refill(XTAL_FWD_(I) (in));
 				}
-				XTAL_NEW heterotype(etc_t<V> in)
+				XTAL_NEW homotype(etc_t<V> in)
 				XTAL_0EX
-				:	heterotype(in.begin(), in.end())
+				:	homotype(in.begin(), in.end())
 				{
 				}
 
@@ -241,16 +211,16 @@ struct collect
 				Copy constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW heterotype(heterotype const &t)
+				XTAL_NEW homotype(homotype const &t)
 				XTAL_0EX
-				:	heterotype(t.begin(), t.end())
+				:	homotype(t.begin(), t.end())
 				{
 				}
 				///\
 				Copy assigment. \
 				Replaces the contents of `this` with the given data. \
 
-				XTAL_OP1 = (heterotype const &t)
+				XTAL_OP1 = (homotype const &t)
 				XTAL_0EX
 				{
 					refill(t.begin(), t.end());
@@ -261,16 +231,16 @@ struct collect
 				Move constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW heterotype(heterotype &&t)
+				XTAL_NEW homotype(homotype &&t)
 				XTAL_0EX
-				:	heterotype(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
+				:	homotype(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
 				{
 				}
 				///\
 				Move assigment. \
 				Replaces the contents of `this` with the given data. \
 
-				XTAL_OP1 = (heterotype &&t)
+				XTAL_OP1 = (homotype &&t)
 				XTAL_0EX
 				{
 					refill(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
@@ -312,411 +282,10 @@ struct collect
 				}
 				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
-				///\
-				Elementwise transformer. \
-
-				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<V>) ...fs)
-				XTAL_0EX
-				{
-					(transmute(XTAL_REF_(fs)), ...);
-					return get();
-				}
-				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<V>) f)
-				XTAL_0EX
-				{
-					_detail::apply_to(get(), XTAL_REF_(f));
-					return get();
-				}
-				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
-				XTAL_0EX
-				XTAL_IF1 (0x00 < N_size) and (N_size <= 0x10)// TODO: Limit by cache line size?
-				{
-					seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
-					return get();
-				}
-				
-				///\
-				Elementwise comparators. \
-
-			//	XTAL_OP2        <=> (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<N_size>);}
-				XTAL_OP2_(bool) ==  (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <=  (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >=  (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <   (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >   (heterotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<N_size>);}
-
-			};				
-			template <typename T>
-			class homotype;
-
-			template <typename T> requires bit_operators_q<V>
-			class homotype<T>: public heterotype<T>
-			{
-				using co = heterotype<T>;
-
-			public:
-				using co::co;
-				using co::get;
-				using co::got;
-
-			//	Elementwise:
-				XTAL_OP2_(T)  &  (XTAL_DEF w) XTAL_0FX {return got() &= XTAL_REF_(w);}
-				XTAL_OP2_(T)  |  (XTAL_DEF w) XTAL_0FX {return got() |= XTAL_REF_(w);}
-				XTAL_OP2_(T)  ^  (XTAL_DEF w) XTAL_0FX {return got() ^= XTAL_REF_(w);}
-				XTAL_OP2_(T)  +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
-				XTAL_OP2_(T)  -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
-
-				XTAL_OP1_(T&) %= (etc_t<V> w) XTAL_0EX {return get() %= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) &= (etc_t<V> w) XTAL_0EX {return get() &= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) |= (etc_t<V> w) XTAL_0EX {return get() |= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) ^= (etc_t<V> w) XTAL_0EX {return get() ^= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
-				XTAL_OP1_(T&) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
-				
-				XTAL_OP1_(T&) %= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) %= t.get(i))), get();}
-				XTAL_OP1_(T&) &= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) &= t.get(i))), get();}
-				XTAL_OP1_(T&) |= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) |= t.get(i))), get();}
-				XTAL_OP1_(T&) ^= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) ^= t.get(i))), get();}
-				XTAL_OP1_(T&) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) += t.get(i))), get();}
-				XTAL_OP1_(T&) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) -= t.get(i))), get();}
-
-			//	Elementwise:
-				XTAL_OP1_(T&) %= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) %= v)), get();}
-				XTAL_OP1_(T&) &= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) &= v)), get();}
-				XTAL_OP1_(T&) |= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) |= v)), get();}
-				XTAL_OP1_(T&) ^= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) ^= v)), get();}
-				XTAL_OP1_(T&) += (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) += v)), get();}
-				XTAL_OP1_(T&) -= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) -= v)), get();}
-
-				XTAL_OP1_(T&) ++           () XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(++get(i))), get();}
-				XTAL_OP1_(T&) --           () XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(--get(i))), get();}
-
-			};
-			template <typename T> requires field_operators_q<V>
-			class homotype<T>: public heterotype<T>
-			{
-				using co = heterotype<T>;
-
-			public:
-				using co::co;
-				using co::get;
-				using co::got;
-
-				XTAL_OP2_(T)  *  (XTAL_DEF w) XTAL_0FX {return got() *= XTAL_REF_(w);}
-				XTAL_OP2_(T)  /  (XTAL_DEF w) XTAL_0FX {return got() /= XTAL_REF_(w);}
-				XTAL_OP2_(T)  +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
-				XTAL_OP2_(T)  -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
-
-				XTAL_OP1_(T&) *= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) *= v)), get();}
-				XTAL_OP1_(T&) /= (V const &v) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(get(i) /= v)), get();}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
 			};
 		};
 		template <typename V>
-		struct parallel
-		{
-			using realized = realize<V>;
-
-			template <typename T>
-			using heterotype = typename scalar<V>::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			public:
-				using co::co;
-				using co::get;
-
-				using transformed_t = serial_t<V>;
-
-			//	Elementwise multiplication/division:
-
-				XTAL_OP1_(T&) *= (etc_t<V> w) XTAL_0EX {return get() *= T(w.begin(), w.end());}
-				XTAL_OP1_(T&) /= (etc_t<V> w) XTAL_0EX {return get() /= T(w.begin(), w.end());}				
-				
-				XTAL_OP1_(T&) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) *= t.get(i))), get();}
-				XTAL_OP1_(T&) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) /= t.get(i))), get();}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
-		};
-		///\
-		A mutually inverse couple that can be mapped to their dual via `lhs +/- rhs >> N_shift`, \
-		and used to represent e.g. cosine/sine or mid/side pairs.
-		
-		template <typename V, int N_shift> requires (N_size == 2)
-		struct converse<V, N_shift>
-		{
-			using realized = realize<V>;
-
-			template <typename T>
-			using heterotype = typename parallel<V>::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			public:
-				using co::co;
-				using co::get;
-
-				using reflected_t = converse_t<V, N_shift^1>;
-
-				XTAL_FN2 even()
-				XTAL_0FX
-				{
-					return (get(0) + get(1))*(realized::template haplo_v<N_shift>);
-				}
-				XTAL_FN2 odd()
-				XTAL_0FX
-				{
-					return (get(0) - get(1))*(realized::template haplo_v<N_shift>);
-				}
-				XTAL_OP2 ~ ()
-				XTAL_0FX
-				{
-					return reflected_t{even(), odd()};
-				}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
-		};
-		template <typename V>
-		struct serial
-		{
-			using realized = realize<V>;
-
-			template <typename T>
-			using heterotype = typename scalar<V>::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-			//	TODO: Subclass to define serial pairs like `complex`. \
-
-				using co = heterotype<T>;
-			public:
-				using co::co;
-				using co::get;
-
-				using transformed_t = parallel_t<V>;
-
-			//	Elementwise addition/subtraction:
-				
-				XTAL_OP1_(T&) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
-				XTAL_OP1_(T&) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
-				
-				XTAL_OP1_(T&) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) += t.get(i))), get();}
-				XTAL_OP1_(T&) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) -= t.get(i))), get();}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
-		};
-		template <typename V>
-		struct series
-		{
-			using realized = realize<V>;
-
-			template <typename T>
-			using heterotype = typename serial<V>::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			public:
-				using co::co;
-				using co::get;
-
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(bool const &basis)
-				:	co()
-				{
-					if (basis) generate();
-				}
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(V &&u)
-				{
-					generate(_std::move(u));
-				}
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(V const &u)
-				{
-					generate(u);
-				}
-
-				///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
-					filled by the corresponding powers of `u`. \
-
-				///\note This algorithm uses squaring, \
-					which is more precise/efficient than multiplication for complex numbers. \
-
-				template <size_t N_limit=N_size, size_t N_index=0>
-				XTAL_FN1_(T&) generate(V const &u)
-				XTAL_0EX
-				{
-					using size_type = typename co::size_type; static_assert(_std::integral<size_type>);
-					auto &s = get();
-					auto constexpr H_limit = N_limit >> 1; static_assert(0 < H_limit);
-					auto constexpr _0 = N_index + 0;
-					auto constexpr _1 = N_index + 1;
-					auto constexpr _H = N_index + H_limit;
-					auto constexpr N1 = N_index + N_limit - 1;
-					auto constexpr N2 = N_index + N_limit - 2;
-					auto const      o = realized::template explo_y(N_index, u);
-					s[_0] = o;
-					s[_1] = o*u;
-					for (size_type i = _1; i < _H; ++i)
-					{	auto w = realized::square_y(s[i]);
-						auto h = i << 1;
-						s[h] = w;
-						h   += 1;
-						w   *= u;
-						s[h] = w;
-					}
-					if constexpr (N_limit&1)
-					{	s[N1] = s[N2]*u;
-					}
-					return s;
-				}
-
-				///\returns `this` as the Fourier basis used by `transform` etc, \
-				comprising `N_size` values of the half-period complex sinusoid.
-
-				///\note Only the first eighth-period is computed, \
-				then mirrored to complete the quarter and half respectively. \
-
-				XTAL_FN1_(T &) generate()
-				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<N_size, 2> and complex_q<V>
-				{
-					auto &s = get();
-					auto constexpr x = realized::template patio_y<-1>(N_size);
-					auto constexpr L = N_size >> 2;
-					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
-					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
-					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
-					auto const _k1 = _std::make_reverse_iterator(k1);
-					generate<L + 1>(realized::circle_y(x));
-					_detail::copy_to(_k1, _std::span(i0, j0), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
-					_detail::copy_to( k1, _std::span(i1, k1), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
-					return s;
-				}
-				
-				///\returns `that` transformed by the FFT, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
-				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<N_size, 1>
-				{
-					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
-
-					size_type const n_size = that.size();
-					size_type const h_size = n_size >> 1;
-					size_type const k_size = bit_ceiling_y(n_size); assert(n_size == 1 << k_size);
-					size_type const K_size = bit_ceiling_y(N_size); assert(k_size <= K_size);
-
-					for (size_type h = 0; h < h_size; ++h)
-					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
-					}
-					if constexpr (if_q<parallel_t<V>, Y>)
-					{	_detail::apply_to(that, [](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u))));
-					}
-					for (size_type k = 0; k < k_size; ++k)
-					{	size_type const kn = K_size - k;
-						size_type const u = 1 << k;
-						size_type const w = u << 1;
-						for (size_type                 i = 0; i < u; i += 1)
-						for (size_type kn_i = i << kn, j = i; j < n_size; j += w)
-						{	V const y = that[j + u]*get(kn_i);
-							V const x = that[j + 0];
-							that[j + u] = x - y;
-							that[j + 0] = x + y;
-						}
-					}
-					if constexpr (if_q<parallel_t<V>, Y>)
-					{	auto const u_size = realized::template ratio_y<1>(n_size);
-						_detail::apply_to(that, [=](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u)*u_size)));
-					}
-					return that.template get<typename Y::transformed_t &>();
-				}
-				///\returns a new `series` representing the FFT of `lhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN2_(typename Y::transformed_t) transformation(Y that)
-				XTAL_0EX
-				{
-					return transform(that);
-				}
-
-				///\returns `lhs` convolved with `rhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN1 convolve(Y &lhs, Y rhs)
-				XTAL_0EX
-				{
-					return transform(transform(lhs) *= transform(rhs));
-				}
-				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN2_(Y) convolution(Y lhs, Y const &rhs)
-				XTAL_0EX
-				{
-					return convolve(lhs, rhs);
-				}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
-		};
-		
-		
-		
-		template <typename V>
-		struct buffer
+		struct vector
 		{
 			using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
 
@@ -891,7 +460,7 @@ struct collect
 				}
 
 				///\
-				Allocates and initializes `sN` elements at the end of the buffer. \
+				Allocates and initializes `sN` elements at the end of the vector. \
 
 				XTAL_FN2_(iterator) allocate(size_type sN)
 				{
@@ -1155,6 +724,7 @@ struct collect
 				}
 
 			};
+		//	using type = compact_t<homotype>;
 			class type: public homotype<type>
 			{
 				using co = homotype<type>;
@@ -1164,34 +734,493 @@ struct collect
 			};
 		};
 		template <typename V> requires (N_size < 0)
-		struct buffer<V>
+		struct vector<V>
 		{
 			using type = _std::vector<V>;
 
-		};
-		template <typename V>
-		struct debuff
-		{
-			using type = deranged_t<buffer_t<V>>;
-		};
-		template <typename V>
-		struct siphon
-		{
-			using type = _std::priority_queue<V, buffer_t<V>, _std::greater<V>>;
+			template <typename T>
+			class homotype: public type
+			{
+				using co = type;
+
+			public:
+				using co::co;
+
+			};
 		};
 	};
 	using type = subtype<unit_t>;
 };
 
-template <int N_size               > using collect_t           = typename collect  <N_size>::type;
-template <int N_size,    typename V> using collect_scalar_t    = typename collect_t<N_size>::template scalar_t<V>;
-template <int N_size,    typename V> using collect_parallel_t  = typename collect_t<N_size>::template parallel_t<V>;
-template <typename V, int N_shift=0> using collect_converse_t  = typename collect_t<2>::template converse_t<V, N_shift>;
-template <int N_size,    typename V> using collect_serial_t    = typename collect_t<N_size>::template serial_t<V>;
-template <int N_size,    typename V> using collect_series_t    = typename collect_t<N_size>::template series_t<V>;
-template <int N_size,    typename V> using collect_siphon_t    = typename collect_t<N_size>::template siphon_t<V>;
-template <int N_size,    typename V> using collect_buffer_t    = typename collect_t<N_size>::template buffer_t<V>;
-template <int N_size,    typename V> using collect_debuff_t    = typename collect_t<N_size>::template debuff_t<V>;
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+template <typename V>
+struct collected
+{
+	using realized = realize<V>;
+
+	template <typename S>
+	class subtype: public S
+	{
+		using co = S;
+		XTAL_LET size_v = co::size_v;
+
+		template <typename W> using etc_t = _std::initializer_list<W>;
+	public:
+		using co::co;
+
+		struct buffer;
+		struct debuff;
+		struct siphon;
+		struct scalar;
+		struct serial;
+		struct series;
+		struct parallel;
+		template <int N_shift=0> struct converse;
+		
+		struct buffer
+		{
+			template <typename T>
+			using heterotype = typename co::template vector<V>::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+
+			public:
+				using co::co;
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		struct debuff
+		{
+			using type = deranged_t<typename buffer::type>;
+		
+		};
+		struct siphon
+		{
+			using type = _std::priority_queue<V, typename buffer::type, _std::greater<V>>;
+		
+		};
+		struct scalar
+		{
+			template <typename T>
+			using heterotype = typename co::template array<V>::template homotype<T>;
+
+			template <typename T>// requires field_operators_q<V>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+
+			public:
+				using co::co;
+
+				///\
+				Read accessor. \
+
+				template <typename Y=T>
+				XTAL_FN2 got() XTAL_0EX_(&)
+				{
+					if constexpr (is_q<Y, T>)
+					{	return static_cast<T>(*this);
+					}
+					else
+					{	return reinterpret_cast<Y>(*this);
+					}
+				}
+				template <typename Y=T>
+				XTAL_FN2 get() XTAL_0EX_(&)
+				{
+					if constexpr (is_q<Y, T>)
+					{	return static_cast<T &>(*this);
+					}
+					else
+					{	return reinterpret_cast<Y>(*this);
+					}
+				}
+				template <typename Y=T>
+				XTAL_FN2 get() XTAL_0FX_(&)
+				{
+					if constexpr (is_q<Y, T>)
+					{	return static_cast<T const &>(*this);
+					}
+					else
+					{	return reinterpret_cast<_std::add_const_t<Y>>(*this);
+					}
+				}
+				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
+
+				///\
+				Elementwise transformer. \
+
+				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<V>) ...fs)
+				XTAL_0EX
+				{
+					(transmute(XTAL_REF_(fs)), ...);
+					return get();
+				}
+				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<V>) f)
+				XTAL_0EX
+				{
+					_detail::apply_to(get(), XTAL_REF_(f));
+					return get();
+				}
+				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
+				XTAL_0EX
+				XTAL_IF1 (0x00 < size_v) and (size_v <= 0x10)// TODO: Limit by cache line size?
+				{
+					seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
+					return get();
+				}
+				
+				///\
+				Elementwise comparators. \
+
+			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<size_v>);}
+				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<size_v>);}
+				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<size_v>);}
+				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<size_v>);}
+				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<size_v>);}
+				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<size_v>);}
+
+				XTAL_OP2_(T)  *  (XTAL_DEF w) XTAL_0FX {return got() *= XTAL_REF_(w);}
+				XTAL_OP2_(T)  /  (XTAL_DEF w) XTAL_0FX {return got() /= XTAL_REF_(w);}
+				XTAL_OP2_(T)  +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
+				XTAL_OP2_(T)  -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
+
+				XTAL_OP1_(T&) *= (V const &v) XTAL_0EX {return seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) *= v)), get();}
+				XTAL_OP1_(T&) /= (V const &v) XTAL_0EX {return seek_f<size_v>([&, this](auto i) XTAL_0FN_(get(i) /= v)), get();}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		struct serial
+		{
+			template <typename T>
+			using heterotype = typename scalar::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+			//	TODO: Subclass to define serial pairs like `complex`. \
+
+				using co = heterotype<T>;
+			public:
+				using co::co;
+				using co::get;
+
+				using transformed_t = typename parallel::type;
+
+			//	Elementwise addition/subtraction:
+				
+				XTAL_OP1_(T&) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
+				XTAL_OP1_(T&) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
+				
+				XTAL_OP1_(T&) += (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) += t.get(i))), get();}
+				XTAL_OP1_(T&) -= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) -= t.get(i))), get();}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		struct series
+		{
+			template <typename T>
+			using heterotype = typename serial::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+			public:
+				using co::co;
+				using co::get;
+
+				///\
+				Initializing constructor. \
+
+				XTAL_NEW_(explicit) homotype(bool const &basis)
+				:	co()
+				{
+					if (basis) generate();
+				}
+				///\
+				Initializing constructor. \
+
+				XTAL_NEW_(explicit) homotype(V &&u)
+				{
+					generate(_std::move(u));
+				}
+				///\
+				Initializing constructor. \
+
+				XTAL_NEW_(explicit) homotype(V const &u)
+				{
+					generate(u);
+				}
+
+				///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
+					filled by the corresponding powers of `u`. \
+
+				///\note This algorithm uses squaring, \
+					which is more precise/efficient than multiplication for complex numbers. \
+
+				template <size_t N_limit=size_v, size_t N_index=0>
+				XTAL_FN1_(T&) generate(V const &u)
+				XTAL_0EX
+				{
+					using size_type = typename co::size_type; static_assert(_std::integral<size_type>);
+					auto &s = get();
+					auto constexpr H_limit = N_limit >> 1; static_assert(0 < H_limit);
+					auto constexpr _0 = N_index + 0;
+					auto constexpr _1 = N_index + 1;
+					auto constexpr _H = N_index + H_limit;
+					auto constexpr N1 = N_index + N_limit - 1;
+					auto constexpr N2 = N_index + N_limit - 2;
+					auto const      o = realized::template explo_y(N_index, u);
+					s[_0] = o;
+					s[_1] = o*u;
+					for (size_type i = _1; i < _H; ++i)
+					{	auto w = realized::square_y(s[i]);
+						auto h = i << 1;
+						s[h] = w;
+						h   += 1;
+						w   *= u;
+						s[h] = w;
+					}
+					if constexpr (N_limit&1)
+					{	s[N1] = s[N2]*u;
+					}
+					return s;
+				}
+
+				///\returns `this` as the Fourier basis used by `transform` etc, \
+				comprising `size_v` values of the half-period complex sinusoid.
+
+				///\note Only the first eighth-period is computed, \
+				then mirrored to complete the quarter and half respectively. \
+
+				XTAL_FN1_(T &) generate()
+				XTAL_0EX
+				XTAL_IF1 bit_ceiling_q<size_v, 2> and complex_q<V>
+				{
+					auto &s = get();
+					auto constexpr x = realized::template patio_y<-1>(size_v);
+					auto constexpr L = size_v >> 2;
+					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
+					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
+					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
+					auto const _k1 = _std::make_reverse_iterator(k1);
+					generate<L + 1>(realized::circle_y(x));
+					_detail::copy_to(_k1, _std::span(i0, j0), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
+					_detail::copy_to( k1, _std::span(i1, k1), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
+					return s;
+				}
+				
+				///\returns `that` transformed by the FFT, \
+				using `this` as the Fourier basis. \
+
+				template <iterated_q Y>
+				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
+				XTAL_0EX
+				XTAL_IF1 bit_ceiling_q<size_v, 1>
+				{
+					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
+
+					size_type const n_size = that.size();
+					size_type const h_size = n_size >> 1;
+					size_type const k_size = bit_ceiling_y(n_size); assert(n_size == 1 << k_size);
+					size_type const K_size = bit_ceiling_y(size_v); assert(k_size <= K_size);
+
+					for (size_type h = 0; h < h_size; ++h)
+					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
+					}
+					if constexpr (if_q<typename parallel::type, Y>)
+					{	_detail::apply_to(that, [](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u))));
+					}
+					for (size_type k = 0; k < k_size; ++k)
+					{	size_type const kn = K_size - k;
+						size_type const u = 1 << k;
+						size_type const w = u << 1;
+						for (size_type                 i = 0; i < u; i += 1)
+						for (size_type kn_i = i << kn, j = i; j < n_size; j += w)
+						{	V const y = that[j + u]*get(kn_i);
+							V const x = that[j + 0];
+							that[j + u] = x - y;
+							that[j + 0] = x + y;
+						}
+					}
+					if constexpr (if_q<typename parallel::type, Y>)
+					{	auto const u_size = realized::template ratio_y<1>(n_size);
+						_detail::apply_to(that, [=](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u)*u_size)));
+					}
+					return that.template get<typename Y::transformed_t &>();
+				}
+				///\returns a new `series` representing the FFT of `lhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iterated_q Y>
+				XTAL_FN2_(typename Y::transformed_t) transformation(Y that)
+				XTAL_0EX
+				{
+					return transform(that);
+				}
+
+				///\returns `lhs` convolved with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iterated_q Y>
+				XTAL_FN1 convolve(Y &lhs, Y rhs)
+				XTAL_0EX
+				{
+					return transform(transform(lhs) *= transform(rhs));
+				}
+				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iterated_q Y>
+				XTAL_FN2_(Y) convolution(Y lhs, Y const &rhs)
+				XTAL_0EX
+				{
+					return convolve(lhs, rhs);
+				}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		struct parallel
+		{
+			template <typename T>
+			using heterotype = typename scalar::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+			public:
+				using co::co;
+				using co::get;
+
+				using transformed_t = typename serial::type;
+
+			//	Elementwise multiplication/division:
+
+				XTAL_OP1_(T&) *= (etc_t<V> w) XTAL_0EX {return get() *= T(w.begin(), w.end());}
+				XTAL_OP1_(T&) /= (etc_t<V> w) XTAL_0EX {return get() /= T(w.begin(), w.end());}				
+				
+				XTAL_OP1_(T&) *= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) *= t.get(i))), get();}
+				XTAL_OP1_(T&) /= (T const &t) XTAL_0EX {return seek_f<size_v>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) /= t.get(i))), get();}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+		///\
+		A mutually inverse couple that can be mapped to their dual via `lhs +/- rhs >> N_shift`, \
+		and used to represent e.g. cosine/sine or mid/side pairs.
+		
+		template <int N_shift> requires (size_v == 2)
+		struct converse<N_shift>
+		{
+			template <typename T>
+			using heterotype = typename parallel::template homotype<T>;
+
+			template <typename T>
+			class homotype: public heterotype<T>
+			{
+				using co = heterotype<T>;
+			public:
+				using co::co;
+				using co::get;
+
+				using reflected_t = typename converse<N_shift^1>::type;
+
+				XTAL_FN2 even()
+				XTAL_0FX
+				{
+					return (get(0) + get(1))*(realized::template haplo_v<N_shift>);
+				}
+				XTAL_FN2 odd()
+				XTAL_0FX
+				{
+					return (get(0) - get(1))*(realized::template haplo_v<N_shift>);
+				}
+				XTAL_OP2 ~ ()
+				XTAL_0FX
+				{
+					return reflected_t{even(), odd()};
+				}
+
+			};
+		//	using type = compact_t<homotype>;
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+			public:
+				using co::co;
+
+			};
+		};
+
+		using   buffer_t = typename   buffer::type;
+		using   debuff_t = typename   debuff::type;
+		using   siphon_t = typename   siphon::type;
+//		using   scalar_t = typename   scalar::type;
+//		using   serial_t = typename   serial::type;
+//		using   series_t = typename   series::type;
+//		using parallel_t = typename parallel::type;
+//		template <int N_shift=0>
+//		using converse_t = typename converse<N_shift>::type;
+
+	};
+};
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <int N,   typename V> using   collection = compose_s<unit_t, collector<N>, collected<V>>;
+template <int N,   typename V> using   collection_buffer_t = typename collection<N, V>::   buffer::type;
+template <int N,   typename V> using   collection_debuff_t = typename collection<N, V>::   debuff::type;
+template <int N,   typename V> using   collection_siphon_t = typename collection<N, V>::   siphon::type;
+template <int N,   typename V> using   collection_scalar_t = typename collection<N, V>::   scalar::type;
+template <int N,   typename V> using   collection_serial_t = typename collection<N, V>::   serial::type;
+template <int N,   typename V> using   collection_series_t = typename collection<N, V>::   series::type;
+template <int N,   typename V> using collection_parallel_t = typename collection<N, V>:: parallel::type;
+template <typename V, int M=0> using collection_converse_t = typename collection<2, V>::template converse<M>::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

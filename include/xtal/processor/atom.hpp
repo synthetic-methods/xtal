@@ -41,7 +41,7 @@ template <typename U, typename ...As>
 struct atom
 {
 	using interrupt = typename control::contrived_t<>::interrupt<0>;
-	using subkind = confer<U, link<As..., interrupt, common::collect<-1>>>;
+	using subkind = confer<U, link<As..., interrupt, common::collector<-1>>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -55,8 +55,11 @@ struct atom
 		{
 			using rebound = typename co::template bind<Xs...>;
 
-			using buffer_u = typename co::template buffer_t<typename rebound::return_t>;
-			using debuff_u = typename co::template debuff_t<typename rebound::return_t>;
+			using collected  = common::collected<typename rebound::return_t>;
+			using collection = common::compose_s<co, collected>;
+			
+			using buffer_u = typename collection::buffer_t;
+			using debuff_u = typename collection::debuff_t;
 			using respan_u = control::respan_t<debuff_u>;
 			using resize_u = control::resize_t<>;
 			

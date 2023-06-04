@@ -24,12 +24,12 @@ XTAL_0EX
 		{
 			auto const n = realized::template unsquare_y<-1, N_lim>(w);
 			auto const u = n*w;
-			return collect_parallel_t<2, W>{u, n};
+			return collection_parallel_t<2, W>{u, n};
 		}
 		else
 		{	auto const u = realized::template unsquare_y< 1, N_lim>(w);
 			auto const n = u/w;
-			return collect_parallel_t<2, W>{u, n};
+			return collection_parallel_t<2, W>{u, n};
 		}
 	}
 	else
@@ -40,7 +40,7 @@ XTAL_0EX
 
 TEST_CASE("xtal/common/collect.hpp: multiplicative construction")
 {
-	auto foo = collect_parallel_t<2, alpha_t>{2.0, 0.5};
+	auto foo = collection_parallel_t<2, alpha_t>{2.0, 0.5};
 	auto bar = unsquing_y<0>((alpha_t) 2);
 	bar.transmute([&](XTAL_DEF u) XTAL_0FN_(realized::square_y(XTAL_REF_(u))), trim_y<1>);
 	REQUIRE(foo == bar);
@@ -51,7 +51,7 @@ TEST_CASE("xtal/common/collect.hpp: multiplicative construction")
 
 TEST_CASE("xtal/common/collect.hpp: converse")
 {
-	auto bar = collect_converse_t<alpha_t, 1>{2.0, 0.5};
+	auto bar = collection_converse_t<alpha_t, 1>{2.0, 0.5};
 	auto foo = ~bar;
 	auto baz = ~foo;
 	REQUIRE(foo[0] == 1.25);
@@ -66,8 +66,8 @@ TEST_CASE("xtal/common/collect.hpp: converse")
 TEST_CASE("xtal/common/collect.hpp: series initialization")
 {
 	sigma_t constexpr N = 1 << 3;
-	using scalar_t = collect_scalar_t<N, alpha_t>;
-	using series_t = collect_series_t<N, alpha_t>;
+	using scalar_t = collection_scalar_t<N, alpha_t>;
+	using series_t = collection_series_t<N, alpha_t>;
 
 	series_t baz(2.0);
 	scalar_t bar; bar.refill(baz);
@@ -88,8 +88,8 @@ TEST_CASE("xtal/common/collect.hpp: series transformation")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_s = collect_series_t<O, aleph_t>;
-	using series_t = collect_series_t<N, aleph_t>;
+	using series_s = collection_series_t<O, aleph_t>;
+	using series_t = collection_series_t<N, aleph_t>;
 	series_s basis(true);
 
 	series_t source;
@@ -116,7 +116,7 @@ TEST_CASE("xtal/common/collect.hpp: series convolution")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_t = collect_series_t<N, aleph_t>;
+	using series_t = collection_series_t<N, aleph_t>;
 	series_t basis(true);
 
 	series_t lhs = {0, 1, 2, 0, 0, 0, 0, 0};
@@ -131,7 +131,7 @@ TEST_CASE("xtal/common/collect.hpp: series convolution")
 
 TEST_CASE("xtal/common/collect.hpp: buffer assigment")
 {
-	using buffer_t = collect_buffer_t<(1<<7), realized::alpha_t>;
+	using buffer_t = collection_buffer_t<(1<<7), realized::alpha_t>;
 	using vector_t = _std::vector<realized::alpha_t>;
 
 	auto const zhs = buffer_t {7, 8, 9};
@@ -153,7 +153,7 @@ TEST_CASE("xtal/common/collect.hpp: buffer assigment")
 
 TEST_CASE("xtal/common/collect.hpp: buffer mutation")
 {
-	using buffer_t = collect_buffer_t<(1<<7), realized::alpha_t>;
+	using buffer_t = collection_buffer_t<(1<<7), realized::alpha_t>;
 	using vector_t = _std::vector<realized::alpha_t>;
 
 	auto xs = buffer_t {0, 1, 2, 3, 4};
@@ -175,10 +175,10 @@ TEST_CASE("xtal/common/collect.hpp: buffer mutation")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N>
-void collect_queue_operation__test()
+void collection_queue_operation__test()
 {
 	using event_t = compose_s<bias_t, content::confer<int>>;
-	using queue_t = collect_siphon_t<N, event_t>;
+	using queue_t = collection_siphon_t<N, event_t>;
 	queue_t q;
 
 	auto e1 = event_t(1, bias_t(-1.0));
@@ -200,8 +200,8 @@ void collect_queue_operation__test()
 }
 TEST_CASE("xtal/common/collect.hpp: queue operation")
 {
-	collect_queue_operation__test<-1>();
-	collect_queue_operation__test<4>();
+	collection_queue_operation__test<-1>();
+	collection_queue_operation__test<4>();
 
 }
 
