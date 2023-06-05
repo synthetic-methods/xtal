@@ -14,7 +14,7 @@ namespace xtal
 ////////////////////////////////////////////////////////////////////////////////
 
 using bias_t = control::numinal_t<alpha_t, struct bias>;
-using coefficient_t = control::numinal_t<alpha_t, struct coefficient>;
+using coef_t = control::numinal_t<alpha_t, struct coefficient>;
 
 struct static_bias_mix_t
 :	process::confine_t<static_bias_mix_t
@@ -41,13 +41,13 @@ struct dynamic_bias_mix_t
 };
 struct dynamic_term_t
 :	process::confine_t<dynamic_term_t
-	,	coefficient_t::attach
+	,	coef_t::attach
 	>
 {
 	template <auto...>
 	XTAL_FN2 method(XTAL_DEF x)
 	{
-		auto &o = this->template self<coefficient_t>();
+		auto &o = this->template self<coef_t>();
 		return XTAL_REF_(x)*o.head();
 	}
 };

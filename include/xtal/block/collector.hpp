@@ -91,7 +91,7 @@ struct collector
 			public:
 				XTAL_FN2 get() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
 				XTAL_FN2 get() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
-				XTAL_RE4_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
+				XTAL_RN4_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
 			//	using co;
 				using co::size;
@@ -114,20 +114,20 @@ struct collector
 				using       reverse_iterator = _std::reverse_iterator<      iterator>;
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
-				XTAL_RE4_(XTAL_OP2[](size_type i), *appointer_f(block_m + i));
-				XTAL_RE4_(XTAL_OP2()(size_type i),  appointer_f(block_m + i));
+				XTAL_RN4_(XTAL_OP2[](size_type i), *appointer_f(block_m + i));
+				XTAL_RN4_(XTAL_OP2()(size_type i),  appointer_f(block_m + i));
 
-				XTAL_RE4_(XTAL_FN2 rbegin(), reverse_appointer_f(limit_m));
-				XTAL_RE4_(XTAL_FN2  begin(),         appointer_f(block_m));
-				XTAL_RE4_(XTAL_FN2   rend(), reverse_appointer_f(block_m));
-				XTAL_RE4_(XTAL_FN2    end(),         appointer_f(limit_m));
+				XTAL_RN4_(XTAL_FN2 rbegin(), reverse_appointer_f(limit_m));
+				XTAL_RN4_(XTAL_FN2  begin(),         appointer_f(block_m));
+				XTAL_RN4_(XTAL_FN2   rend(), reverse_appointer_f(block_m));
+				XTAL_RN4_(XTAL_FN2    end(),         appointer_f(limit_m));
 				
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
 				XTAL_FN2  cbegin() XTAL_0FX {return  begin();}
 				XTAL_FN2   crend() XTAL_0FX {return   rend();}
 				XTAL_FN2    cend() XTAL_0FX {return    end();}
 
-				XTAL_RE4_(XTAL_FN2 data(), begin());
+				XTAL_RN4_(XTAL_FN2 data(), begin());
 
 				///\
 				Clear destructor. \

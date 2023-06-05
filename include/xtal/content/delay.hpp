@@ -13,9 +13,9 @@ namespace xtal::content
 
 struct delay;
 
-template <typename S=contrived_t<>>
+template <typename S=confined_t<>>
 using delay_s = compose_s<S, delay>;
-using delay_t = iota_t;
+using delay_t = size_t;
 
 struct delay
 {

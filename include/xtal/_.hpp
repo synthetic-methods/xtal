@@ -104,7 +104,6 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_DEF                                                  auto &&
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 
-
 #define XTAL_NEW                            constexpr            
 #define XTAL_OP2       [[nodiscard]]        constexpr    decltype(auto) operator
 #define XTAL_OP1                            constexpr    decltype(auto) operator
@@ -133,17 +132,18 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)                      const REF noexcept
 #define XTAL_0FN                            constexpr noexcept
 #define XTAL_0FN_(...)                      constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_RE2_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
-                                        SIG const   & noexcept {return (__VA_ARGS__);};
-#define XTAL_RE4_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
+#define XTAL_0RN_(...)                                noexcept {return (__VA_ARGS__);}
+#define XTAL_RN4_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
                                         SIG        && noexcept {return (__VA_ARGS__);};\
                                         SIG const   & noexcept {return (__VA_ARGS__);};\
                                         SIG const  && noexcept {return (__VA_ARGS__);};;
-#define XTAL_CO4_(TYP)                      constexpr TYP &operator = (TYP const  &) noexcept = default;\
+#define XTAL_RN2_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
+                                        SIG const   & noexcept {return (__VA_ARGS__);};;
+#define XTAL_CN4_(TYP)                      constexpr TYP &operator = (TYP const  &) noexcept = default;\
                                             constexpr TYP             (TYP const  &) noexcept = default;\
                                             constexpr TYP &operator =       (TYP &&) noexcept = default;\
                                             constexpr TYP                   (TYP &&) noexcept = default;;
-#define XTAL_CO2_(TYP)                                TYP()                          noexcept = default;\
+#define XTAL_CN2_(TYP)                                TYP()                          noexcept = default;\
                                                      ~TYP()                          noexcept = default;;
 
 #define     XTAL_FNX XTAL_FN2_(sign_t)

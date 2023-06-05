@@ -50,7 +50,7 @@ void contrivance__test()
 	auto const _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto const _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 
-	using mixer_t = processor::contrive_t<mix_t>;
+	using mixer_t = processor::lift_t<mix_t>;
 	mixer_t mixer_f;
 	auto mixed_y = mixer_f(_01, _10);
 

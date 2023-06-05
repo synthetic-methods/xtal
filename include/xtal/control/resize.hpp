@@ -25,7 +25,8 @@ struct resize
 		using co::co;
 		using size_t = U;
 
-		XTAL_RE4_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN2_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN2_(XTAL_FN2 empty(), 0 == size())
 
 	};
 };
@@ -35,6 +36,12 @@ struct resize<U>: resize<_v3::ranges::size_type_t<U>>
 };
 template <typename U=size_t>
 using resize_t = confined_t<resize<U>>;
+
+XTAL_FZ2 resize_f(XTAL_DEF w)
+{
+	using realized = realize<XTAL_TYP_(w)>;
+	return resize_t<typename realized::sigma_t>(XTAL_REF_(w));
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

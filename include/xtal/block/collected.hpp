@@ -192,7 +192,7 @@ struct collected
 					{	return reinterpret_cast<_std::add_const_t<Y>>(*this);
 					}
 				}
-				XTAL_RE2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
+				XTAL_RN2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
 
 				///\
 				Elementwise transformer. \

@@ -25,7 +25,7 @@ struct rescan
 		using co::co;
 		using scan_t = U;
 			
-		XTAL_RE4_(XTAL_FN1 scan(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN4_(XTAL_FN1 scan(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };

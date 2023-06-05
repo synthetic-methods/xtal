@@ -30,8 +30,8 @@ public:
 		using co::self;
 		using span_t = U;
 
-		XTAL_CO2_(subtype);
-		XTAL_CO4_(subtype);
+		XTAL_CN2_(subtype);
+		XTAL_CN4_(subtype);
 
 		template <iterated_q W>
 		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF ...ws)
@@ -40,8 +40,8 @@ public:
 		{
 		}
 
-		XTAL_RE4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
-		XTAL_RE4_(XTAL_FN2 size(), co::head().size())
+		XTAL_RN4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN4_(XTAL_FN2 size(), co::head().size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX

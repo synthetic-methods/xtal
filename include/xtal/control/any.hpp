@@ -12,7 +12,6 @@ namespace xtal::control
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::context;
-#include "../common/all.hxx"
 #include "../common/any.hxx"
 
 
@@ -48,8 +47,8 @@ struct define
 			public:
 			//	using co::co;
 
-				XTAL_CO2_(subtype);
-				XTAL_CO4_(subtype);
+				XTAL_CN2_(subtype);
+				XTAL_CN4_(subtype);
 
 				///\
 				Constructs the `attach`ed `control` using its default, \
@@ -84,8 +83,8 @@ struct define
 				using co::self;
 				using co::head;
 
-				XTAL_CO2_(subtype);
-				XTAL_CO4_(subtype);
+				XTAL_CN2_(subtype);
+				XTAL_CN4_(subtype);
 
 				XTAL_NEW_(explicit) subtype(int const &n)
 			//	:	co(XTAL_REF_(n))

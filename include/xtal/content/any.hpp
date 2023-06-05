@@ -12,7 +12,6 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::common;
-#include "../common/all.hxx"
 #include "../common/any.hxx"
 
 
@@ -62,7 +61,7 @@ struct define
 		///\
 		\returns `this` as a subtype of the derived-type `T`. \
 
-		XTAL_RE4_(XTAL_FN2 self(), cast<T>())
+		XTAL_RN4_(XTAL_FN2 self(), cast<T>())
 
 		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
 		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
@@ -99,7 +98,7 @@ public:
 	///\
 	Implicit conversion to the singleton kernel-type. \
 
-	XTAL_RE4_(XTAL_NEW operator U(), head())
+	XTAL_RN4_(XTAL_NEW operator U(), head())
 	
 };
 }
@@ -167,20 +166,20 @@ struct defer
 		:	subtype(body_t{})
 		{
 		}
-		XTAL_CO4_(subtype);
-		XTAL_CO2_(subtype);
+		XTAL_CN4_(subtype);
+		XTAL_CN2_(subtype);
 	//	using co::co;
 
 
-		XTAL_RE4_(template <typename W=T> XTAL_FN2 self(), co::template cast<self_s<W>>())
-		XTAL_RE4_(template <size_t   N=0> XTAL_FN2 seek(), co::template cast<seek_s<N>>())
+		XTAL_RN4_(template <typename W=T> XTAL_FN2 self(), co::template cast<self_s<W>>())
+		XTAL_RN4_(template <size_t   N=0> XTAL_FN2 seek(), co::template cast<seek_s<N>>())
 
-		XTAL_RE4_(XTAL_FN2 tail(), co::template cast<co>())
+		XTAL_RN4_(XTAL_FN2 tail(), co::template cast<co>())
 
 		///\
 		\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_RE4_(template <size_t N_index=0>
+		XTAL_RN4_(template <size_t N_index=0>
 		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...))
 		
 		XTAL_FN2 head() XTAL_0FX_(&&) {return remember_x(body_m);}
@@ -207,7 +206,7 @@ struct defer
 		///\
 		Converts `this` to the kernel-type (explicit). \
 
-		XTAL_RE4_(XTAL_NEW explicit operator U(), head())
+		XTAL_RN4_(XTAL_NEW explicit operator U(), head())
 
 		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
 		XTAL_0FX
@@ -261,7 +260,7 @@ struct defer
 			}
 			else
 			if constexpr (iterated_q<U>)
-			{	return u.begin() == w.begin() and u.end() == w.end();
+			{	return arranged_eq(u, w);
 			}
 		}
 		

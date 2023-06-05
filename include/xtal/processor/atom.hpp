@@ -32,8 +32,8 @@ namespace _detail
 template <atom_q T>
 using covalent_t = XTAL_TYP_(XTAL_VAL_(based_t<T>).template method<>());
 
-template <typename Y, typename ...Ts>
-concept covalent_q = is_q<Y, covalent_t<Ts>...> and every_q<_std::is_rvalue_reference_v<Ts>...>;
+template <typename Y, typename T>
+concept covalent_p = is_q<Y, covalent_t<T>> and _std::is_rvalue_reference_v<T>;
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ concept covalent_q = is_q<Y, covalent_t<Ts>...> and every_q<_std::is_rvalue_refe
 template <typename U, typename ...As>
 struct atom
 {
-	using interrupt = typename control::contrived_t<>::interrupt<0>;
+	using interrupt = typename control::confined_t<>::interrupt<0>;
 	using subkind = confer<U, link<As..., interrupt, block::collector<-1>>>;
 
 	template <any_q S>
@@ -66,7 +66,7 @@ struct atom
 			
 			using subkind = compose<content::confer<debuff_u>, content::defer<buffer_u>, rebound>;
 
-			XTAL_LET_(int) N_parity = common::seek_true_v<_detail::covalent_q<debuff_u, Xs>...>;
+			XTAL_LET_(int) N_parity = common::seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>
@@ -86,13 +86,13 @@ struct atom
 				{
 				}
 
-				XTAL_CO2_(subtype);
-				XTAL_CO4_(subtype);
+				XTAL_CN2_(subtype);
+				XTAL_CN4_(subtype);
 			//	using co::co;
 				using co::self;
 
-				XTAL_RE4_(XTAL_FN1 store(XTAL_DEF... oo), co::template head<1>(XTAL_REF_(oo)...))
-				XTAL_RE4_(XTAL_FN1 serve(XTAL_DEF... oo), co::template head<0>(XTAL_REF_(oo)...))
+				XTAL_RN4_(XTAL_FN1 store(XTAL_DEF... oo), co::template head<1>(XTAL_REF_(oo)...))
+				XTAL_RN4_(XTAL_FN1 serve(XTAL_DEF... oo), co::template head<0>(XTAL_REF_(oo)...))
 
 				template <auto...>
 				XTAL_FN2 method()
@@ -149,11 +149,10 @@ struct atom
 				XTAL_FNX efflux(control::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
-					if (sequel_o == co::template get<decltype(sequel_o)>()) return 0;
+					if (co::effuse(sequel_o) == 0) return 0;
 				//	else...
 				//	delta_t n = 0;
-					serve(respan_o);
-					(void) co::effuse(sequel_o);
+					(void) serve(respan_o);
 					(void) co::redux([&, this](auto i, auto j, auto n)
 					XTAL_0FN
 					{	using namespace _v3;

@@ -12,7 +12,6 @@ namespace xtal::context
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::content;
-#include "../common/all.hxx"
 #include "../common/any.hxx"
 
 

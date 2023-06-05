@@ -55,30 +55,31 @@ template <typename ...Ts >  concept value_q    = every_q<value_p<Ts>...>;
 template <typename    T  > XTAL_LET value_v    = based_t<T>::value;
 
 template <auto        N  >    using constant_t = _std::integral_constant<XTAL_TYP_(N), N>;
-template <typename    T  >  concept constant_p = _std::is_base_of_v<_std::integral_constant<typename T::value_type, T::value>, T>;
+template <typename    T  >  concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
 template <typename ...Ts >  concept constant_q = every_q<constant_p<Ts>...>;
 
 template <typename    T  >  concept unbased_p  = not based_p<T>;
 template <typename ...Ts >  concept unbased_q  = every_q<unbased_p<Ts>...>;
 
-template <typename    T  >   struct debased            : constant_t<false> {using type = based_t<T>;};
-template <unbased_p   T  >   struct debased<T        &>: constant_t< true> {using type =         T*;};
-template <unbased_p   T  >   struct debased<T  const &>: constant_t< true> {using type =   const T*;};
-template <typename    T  >    using debased_t  =  typename debased<T>::type;
-template <typename    T  >  concept debased_p  =           debased<T>::value;
-template <typename ...Ts >  concept debased_q  = every_q<debased_p<Ts>...>;
+template <typename    T  >   struct debased            : constant_t<0> {using type = based_t<T>;};
+template <unbased_p   T  >   struct debased<T        &>: constant_t<1> {using type =         T*;};
+template <unbased_p   T  >   struct debased<T  const &>: constant_t<1> {using type =   const T*;};
+template <typename    T  >    using debased_t  =   typename debased<T>::type;
+template <typename    T  >  concept debased_p  =     (bool) debased<T>::value;
+template <typename ...Ts >  concept debased_q  =  every_q<debased_p<Ts>...>;
 
-template <typename    T  >   struct rebased            : constant_t< true> {using type = based_t<T>;};
-template <unbased_p   T  >   struct rebased<T        &>: constant_t<false> {using type =         T&;};
-template <unbased_p   T  >   struct rebased<T  const &>: constant_t<false> {using type =   const T&;};
-template <typename    T  >    using rebased_t  =  typename rebased<T>::type;
-template <typename    T  >  concept rebased_p  =           rebased<T>::value;
-template <typename ...Ts >  concept rebased_q  = every_q<rebased_p<Ts>...>;
+template <typename    T  >   struct rebased            : constant_t<1> {using type = based_t<T>;};
+template <unbased_p   T  >   struct rebased<T        &>: constant_t<0> {using type =         T&;};
+template <unbased_p   T  >   struct rebased<T  const &>: constant_t<0> {using type =   const T&;};
+template <typename    T  >    using rebased_t  =   typename rebased<T>::type;
+template <typename    T  >  concept rebased_p  =     (bool) rebased<T>::value;
+template <typename ...Ts >  concept rebased_q  =  every_q<rebased_p<Ts>...>;
 
 template <typename    T  >   struct revalue     {using value_type = based_t<T>;};
 template <value_p     T  >   struct revalue<T> : based_t<T> {};
 template <typename    T  >    using revalue_t  = value_t<revalue<T>>;
 
+template <typename    T  >    using pointed_t  = XTAL_TYP_(* XTAL_VAL_(T));
 template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
 template <typename ...Ts >  concept pointer_q  = every_q<pointer_p<Ts>...>;
 
@@ -94,11 +95,11 @@ template <typename T, typename ...Ys> struct  identical<T, Ys...>: _std::disjunc
 template <typename             ...Ys> struct  isomeric           : identical<based_t<Ys>...> {};
 template <typename             ...Ys> struct  isomorphic         : isomeric<Ys...> {};
 
-template <typename ...Ys>             concept id_q  = identical <Ys...>::value;
-template <typename ...Ys>             concept is_q  = isomeric  <Ys...>::value;
 template <typename ...Ys>             concept iso_q = isomorphic<Ys...>::value;
+template <typename ...Ys>             concept is_q  = isomeric  <Ys...>::value;
+template <typename ...Ys>             concept id_q  = identical <Ys...>::value;
 
-template <typename Y, typename    T > concept if_p  = _std::is_base_of_v<based_t<Y>, based_t<T>>;
+template <typename Y, typename    T > concept if_p  = _std::derived_from<based_t<T>, based_t<Y>>;
 template <typename Y, typename ...Ts> concept if_q  = every_q<if_p<Y, Ts>...>;
 
 template <typename T, typename    Y > concept to_p  = requires (T t) {Y(t);};

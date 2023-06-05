@@ -56,8 +56,8 @@ struct bond
 				using co = compose_s<R, subkind>;
 
 			public:
-				XTAL_CO4_(subtype);
-				XTAL_CO2_(subtype);
+				XTAL_CN4_(subtype);
+				XTAL_CN2_(subtype);
 			//	using co::co;
 
 				XTAL_NEW_(explicit) subtype(XTAL_DEF ...xs)
@@ -71,7 +71,7 @@ struct bond
 				{
 				}
 
-				XTAL_RE2_(XTAL_FN1 solve(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+				XTAL_RN2_(XTAL_FN1 solve(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 				template <auto...>
 				XTAL_FN2 method()

@@ -24,12 +24,18 @@ struct restep
 		using co::co;
 		using step_t = U;
 
-		XTAL_RE4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
 template <typename U=iota_t>
 using restep_t = confined_t<restep<U>>;
+
+XTAL_FZ2 restep_f(XTAL_DEF w)
+{
+	using realized = realize<XTAL_TYP_(w)>;
+	return restep_t<typename realized::iota_t>(XTAL_REF_(w));
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

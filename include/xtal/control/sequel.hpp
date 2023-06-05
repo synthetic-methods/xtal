@@ -39,7 +39,8 @@ concept sequel_q = any_of_q<sequel, Ts...>;
 template <typename ...As>
 XTAL_FZ2 sequel_f(XTAL_DEF w)
 {
-	return sequel_t<decltype(w), As...>(XTAL_REF_(w));
+	using realized = realize<XTAL_TYP_(w)>;
+	return sequel_t<counter_t<>, As...>(XTAL_REF_(w));
 }
 
 
@@ -234,8 +235,8 @@ struct sequel<V>
 		using co::self;
 		using co::twin;
 
-		XTAL_CO4_(subtype);
-	//	XTAL_CO2_(subtype);
+		XTAL_CN4_(subtype);
+	//	XTAL_CN2_(subtype);
 
 		XTAL_NEW subtype()
 		XTAL_0EX

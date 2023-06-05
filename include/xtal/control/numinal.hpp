@@ -12,7 +12,7 @@ namespace xtal::control
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
-using numinal = contrive<U, any<As>...>;
+using numinal = lift<U, any<As>...>;
 
 template <typename U, typename ...As>
 using numinal_t = compose_s<any_t<>, numinal<U, As...>>;

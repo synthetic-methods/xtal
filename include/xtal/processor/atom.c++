@@ -15,28 +15,26 @@ namespace xtal::processor::__atom
 /**/
 TEST_CASE("xtal/processor/atom.hpp: lifting")
 {
-	sigma_t constexpr N_size = 5;
-	using scalar_t = block::scalar_t<N_size, alpha_t>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	sigma_t constexpr N = 5;
+	using scalar_t = block::scalar_t<N, alpha_t>;
 
-//	auto f = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_t { 0,  1,  2,  3,  4};
 	auto y = scalar_t {00, 10, 20, 30, 40};
 	auto z = scalar_t {00, 11, 22, 33, 44};
 	auto a = scalar_t {99, 99, 99, 99, 99};
+//	auto f = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind_(x, y);
 	auto b = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind_to(processor::let_f(x), processor::let_f(y));
 
-	b <<= resize_u(N_size);
-	b >>= sequel_n(N_size);
+	b <<= control::resize_f(N);
+	b >>= control::sequel_f(N);
 	_v3::ranges::copy(b, a.begin());
 	REQUIRE(a == z);
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t>
+template <typename add_t>
 void respan_external__test()
 {
 	using collector  = block::collector<(1<<5)>;
@@ -53,9 +51,9 @@ void respan_external__test()
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = processor::atom_t<mix_t, collector>::bind_f(lhs, rhs);
+	auto lhs = let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto xhs = atom_t<add_t, collector>::bind_f(lhs, rhs);
 
 	auto vector_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(vector_m);
@@ -79,31 +77,30 @@ TEST_CASE("xtal/processor/atom.hpp: respan external")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t>
+template <typename add_t>
 void respan_internal__test()
 {
-	using    mix_z = processor::atom_t<mix_t>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	size_t constexpr N = 3;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
+	using namespace _v3;
+	auto _01 =  views::iota(0, 10)|views::transform(to_f<alpha_t>);
+	auto _10 = _01|views::transform([](auto n) {return n*10;});
+	auto _11 = _01|views::transform([](auto n) {return n*11;});
 
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
-	
-	auto xhs = mix_z::bind_f(lhs, rhs);
-	auto seq = sequel_n(3);
+	using mix_op = atom_t<add_t>;
+	auto  lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto  xhs = mix_op::bind_f(lhs, rhs);
 
+	xhs <<= control::resize_f(N);
+	xhs <<= control::resize_f(N);// idempotent!
 	REQUIRE(0 == xhs.size());
-	xhs <<= resize_u(3);
-	xhs <<= resize_u(3);// idempotent!
-//	REQUIRE(3 == xhs.size());
 
-	xhs >>= seq++; REQUIRE(_v3::ranges::equal(xhs, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= seq++; REQUIRE(_v3::ranges::equal(xhs, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= seq++; REQUIRE(_v3::ranges::equal(xhs, _std::vector{66, 77, 88}));// advance then efflux...
+	auto seq = control::sequel_f(N);
+	xhs >>= seq  ; REQUIRE(N == xhs.size());// idempotent!
+	xhs >>= seq++; REQUIRE(ranges::equal(xhs, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= seq++; REQUIRE(ranges::equal(xhs, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= seq++; REQUIRE(ranges::equal(xhs, _std::vector{66, 77, 88}));// advance then efflux...
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
@@ -115,37 +112,31 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t, typename term_t=dynamic_term_t>
+template <typename add_t, typename mul_t=dynamic_term_t>
 void respan_internal_chain_rvalue__test()
 {
-	using    mix_z = processor::atom_t< mix_t>;
-	using   term_z = processor::atom_t<term_t>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
-
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
+	size_t constexpr N = 4;
 	
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	using namespace _v3;
+	auto _01 =  views::iota(0, 10)|views::transform(to_f<alpha_t>);
+	auto _10 = _01|views::transform([](auto n) {return n*10;});
+	auto _11 = _01|views::transform([](auto n) {return n*11;});
+	
+	using mix_op = atom_t<add_t>;
+	using mul_op = atom_t<mul_t>;
+	auto yhs = mul_op::bind_f(mix_op::bind_f(lift_f(_01), lift_f(_10)));
 
-//	auto xhs = mix_z::bind_f(_01, _10);
-//	auto xhs = mix_z::bind_f(lhs, rhs);
-	auto xhs = mix_z::bind_f(processor::let_f(_01), processor::let_f(_10));
+	yhs <<= control::resize_f(N);
+	yhs <<= coef_t((alpha_t) 100);
+	yhs <<= bias_t((alpha_t) 000);
+	REQUIRE(0 == yhs.size());
 
-//	auto yhs = term_z::bind_f(xhs);
-	auto yhs = term_z::bind_f(mix_z::bind_f(lhs, rhs));
+	auto seq = control::sequel_f(N);
+	yhs >>= seq  ; REQUIRE(N == yhs.size());// idempotent!
+	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	auto seq = sequel_n(4); REQUIRE(0 == yhs.size());
-	yhs <<= resize_u(4);
-	yhs <<= coefficient_t((alpha_t) 100);
-	xhs <<= bias_t((alpha_t) 0);
-
-//	if constexpr (is_q<control::sequel_t<counted_t<>>, sequel_t>)
-	yhs >>= seq; // idempotent!
-	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	REQUIRE(yhs.template argument<0>().store().empty());
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
@@ -157,37 +148,33 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal chain rvalue")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t, typename term_t=dynamic_term_t>
+template <typename add_t, typename mul_t=dynamic_term_t>
 void respan_internal_chain_lvalue__test()
 {
-	using    mix_z = processor::atom_t< mix_t>;
-	using   term_z = processor::atom_t<term_t>;
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	size_t constexpr N = 4;
 
+	using namespace _v3;
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 	
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	using mix_op = atom_t<add_t>;
+	using mul_op = atom_t<mul_t>;
+	auto  lhs = let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto  xhs = mix_op::bind_f(lhs, rhs);
+	auto  yhs = mul_op::bind_f(xhs);
 
-//	auto xhs = mix_z::bind_f(_01, _10);
-	auto xhs = mix_z::bind_f(lhs, rhs);
-//	auto xhs = mix_z::bind_f(processor::let_f(_01), processor::let_f(_10));
+	yhs <<= control::resize_f(N);
+	yhs <<= coef_t((alpha_t) 100);
+	xhs <<= bias_t((alpha_t) 000);
 
-	auto yhs = term_z::bind_f(xhs);
-//	auto yhs = term_z::bind_f(mix_z::bind_f(lhs, rhs));
-
-	auto seq = sequel_u(4); REQUIRE(0 == yhs.size());
-	yhs <<= resize_u(4);
-	yhs <<= coefficient_t((alpha_t) 100);
-	xhs <<= bias_t((alpha_t) 0);
-
-//	if constexpr (is_q<control::sequel_u<counted_t<>>, sequel_u>)
+	auto seq = control::sequel_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+
+	REQUIRE(yhs.template argument<0>().store().size() == 4);
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
@@ -201,28 +188,28 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal chain lvalue")
 /**/
 TEST_CASE("xtal/processor/atom.hpp: respan internal chain lvalue shared")
 {
-	using mixer_z  = processor::atom_t<dynamic_bias_mix_t>;
-	using mixer_y  = processor::bond_t<dynamic_bias_mix_t>;
-	using count_y  = processor::bond_t<dynamic_count_t>;
-	using restep_u = control::restep_t<>;
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	size_t constexpr N = 4;
 
-	auto _xx = count_y::bind_f();
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
+	using namespace _v3;
+	auto _01 =  views::iota(0, 10)|views::transform(to_f<alpha_t>);
+	auto _10 = _01|views::transform([](auto n) {return n*10;});
+	auto _11 = _01|views::transform([](auto n) {return n*11;});
 
-	auto xhs = mixer_z::bind_f(_xx);
-	auto lhs = mixer_y::bind_f(xhs, processor::let_f(_01));
-	auto rhs = mixer_y::bind_f(xhs, processor::let_f(_10));
-	auto yhs = mixer_y::bind_f(lhs, rhs);
+	using mix_op = atom_t<dynamic_bias_mix_t>;
+	using mix_fn = bond_t<dynamic_bias_mix_t>;
+	using nat_fn = bond_t<dynamic_count_t>;
 
-	yhs <<= restep_u(50);
-	yhs <<= resize_u(4);
+	auto _xx = nat_fn::bind_f();
+	auto xhs = mix_op::bind_f(_xx);
+	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
+	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
+	auto yhs = mix_fn::bind_f(lhs, rhs);
 
-	yhs >>= sequel_u(4)*0; REQUIRE(_v3::ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= sequel_u(4)*1; REQUIRE(_v3::ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
+	yhs <<= control::restep_f((size_t) 50);
+	yhs <<= control::resize_f(N);
+
+	yhs >>= control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }

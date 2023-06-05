@@ -14,7 +14,7 @@ namespace xtal::control
 struct per
 {
 private:
-	using U = iota_t;
+	using U = _std::make_unsigned_t<iota_t>;
 	using V = alpha_t;
 
 public:
@@ -28,8 +28,8 @@ public:
 	public:
 //	using co::co;
 		
-		XTAL_CO2_(subtype);
-		XTAL_CO4_(subtype);
+		XTAL_CN2_(subtype);
+		XTAL_CN4_(subtype);
 
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
@@ -42,8 +42,8 @@ public:
 		{
 		}
 
-		XTAL_RE4_(XTAL_FN2   rate(), co::template head<0>())
-		XTAL_RE4_(XTAL_FN2 period(), co::template head<1>())
+		XTAL_RN4_(XTAL_FN2   rate(), co::template head<0>())
+		XTAL_RN4_(XTAL_FN2 period(), co::template head<1>())
 
 	};
 };

@@ -12,7 +12,6 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::context;
-#include "../common/all.hxx"
 #include "../common/any.hxx"
 
 
@@ -66,13 +65,18 @@ struct link
 				{
 				}
 
-				XTAL_RE4_(XTAL_FN2 arguments(), co::head())
+				XTAL_RN4_(XTAL_FN2 arguments(), co::head())
 				
-				template <size_t I>
+				template <size_t N, size_t ...Ns>
 				XTAL_FN2 argument()
 				XTAL_0EX
 				{
-					return _std::get<I>(arguments());
+					if constexpr (0 == sizeof...(Ns))
+					{	return _std::get<N>(arguments());
+					}
+					else
+					{	return _std::get<N>(arguments()).template argument<Ns...>();
+					}
 				}
 				
 				XTAL_FN2 apply(XTAL_DEF fx)
@@ -230,7 +234,7 @@ struct define
 		\returns the application of `reify()` to the supplied arguments. \
 
 		/*/
-		XTAL_RE2_(XTAL_OP2() (XTAL_DEF ...xs)
+		XTAL_RN2_(XTAL_OP2() (XTAL_DEF ...xs)
 		,	self().template method<>(XTAL_REF_(xs)...)
 		)
 		/*/
@@ -249,7 +253,7 @@ struct define
 		\returns the `lambda` abstraction of `method`, \
 			with template parameters resolved by `control::dispatch`. \
 
-		XTAL_RE2_(template <typename ...Xs> XTAL_FN2 reify()
+		XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
 		,	[this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...))
 		)
 		
@@ -337,7 +341,7 @@ struct refine
 		template <typename ...Xs>
 		using     bind_t = typename combined<Xs...>::type;
 		XTAL_LET  bind_f = [](XTAL_DEF ...xs) XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
-		XTAL_RE4_(XTAL_FN2 bind_to(XTAL_DEF ...xs)
+		XTAL_RN4_(XTAL_FN2 bind_to(XTAL_DEF ...xs)
 		,	bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...)
 		)
 
@@ -415,7 +419,7 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_RE2_(template <auto ...Ms> XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_RN2_(template <auto ...Ms> XTAL_FN2 method(XTAL_DEF ...xs)
 		,	head().template method<Ms...>(XTAL_REF_(xs)...)
 		)
 
