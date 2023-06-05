@@ -171,8 +171,10 @@ public:
 	using typename co::   iota_t;
 	using typename co::  delta_t;
 	using typename co::  sigma_t;
-	using typename co::  alpha_t; using aleph_t = _std::complex<alpha_t>;
+	using typename co::  alpha_t;
 	using typename co::mt19937_t;
+
+	using aleph_t = _std::complex<alpha_t>;
 
 	using co::width;
 	using co::depth;
@@ -200,15 +202,19 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 	template <auto M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) it_y(XTAL_DEF u)
+	XTAL_FZ2 it_y(XTAL_DEF u)
 	XTAL_0EX
 	{
+		using U = XTAL_TYP_(u);
 		if constexpr (M_pow == +1)
-		{	return XTAL_REF_(u);
+		{	return U(XTAL_REF_(u));
 		}
 		else
 		if constexpr (M_pow == -1)
-		{	return 1./XTAL_REF_(u);
+		{	return U(1/XTAL_REF_(u));
+		}
+		else
+		{	return _std::array<U, 2> {u, 1/XTAL_REF_(u)};
 		}
 	}
 
@@ -222,77 +228,75 @@ public:
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2 circle_y(auto const &u)
+	XTAL_FZ2_(aleph_t) circle_y(auto const &u)
 	XTAL_0EX
 	{
-		return aleph_t(_std::cos(u), _std::sin(u)*M_pow);
+		return {_std::cos(u), _std::sin(u)*M_pow};
 	}
 
-	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) square_y(alpha_t const &w)
+	template <int M_pow=1> requires sign_q<M_pow>
+	XTAL_FZ2 square_y(auto w)
 	XTAL_0EX
 	{
 		return it_y<M_pow>(w*w);
 	}
+	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FZ2_(aleph_t) square_y(aleph_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
-		return aleph_t(xx - yy, x*y*2.0);
+		return it_y<M_pow>(aleph_t(xx - yy, x*y*2));
 	}
-	XTAL_FZ2 square_y(auto u)
-	XTAL_0EX
-	{
-		u *= u; return u;
-	}
-
+	
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) unsquare_y(alpha_t const &w)
+	XTAL_FZ2 unsquare_y(alpha_t const &w)
 	XTAL_0EX
 	{
-		if (_std::is_constant_evaluated())
-		{	delta_t o = _std::bit_cast<delta_t>(co::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
-			alpha_t n = _std::bit_cast<alpha_t>(o);
-			alpha_t const k = w*0.5;
-			if constexpr (N_lim < 0)
-			{	alpha_t m = k*n*n;
-				for (sigma_t i = 0; m != 0.5 and i < 0x10; ++i)
-				{	n *= 1.5 - m; m = k*n*n;
-				}
-				n /= m + 0.5;
+		if (not _std::is_constant_evaluated()) return it_y<M_pow>(_std::sqrt(w));
+	//	else...
+		alpha_t constexpr _0_5 = 0.5;
+		alpha_t constexpr _1_5 = 1.5;
+		delta_t o = _std::bit_cast<delta_t>(co::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
+		alpha_t n = _std::bit_cast<alpha_t>(o);
+		alpha_t const k = w*_0_5;
+		if constexpr (N_lim < 0)
+		{	alpha_t m = k*n*n;
+			for (sigma_t i = 0; m != _0_5 and i < 0x10; ++i)
+			{	n *= _1_5 - m; m = k*n*n;
 			}
-			else
-			{	for (sigma_t i = 0; i < N_lim; ++i)
-				{	n *= 1.5 - k*n*n;
-				}
-			//	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= 1.5 - k*n*n));
-				return n;
-			}
-			if constexpr (M_pow == +1)
-			{	return n*w;
-			}
-			else
-			if constexpr (M_pow == -1)
-			{	return n;
-			}
+			n /= m + _0_5;
 		}
 		else
-		{	return it_y<M_pow>(_std::sqrt(w));
+		if constexpr (0 < N_lim)
+		{	for (sigma_t i = 0; i < N_lim; ++i)
+			{	n *= _1_5 - k*n*n;
+			}
+		//	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= _1_5 - k*n*n));
+		}
+		if constexpr (M_pow == -1)
+		{	return n;
+		}
+		else
+		if constexpr (M_pow == +1)
+		{	return n*w;
+		}
+		else
+		{	return _std::array<alpha_t, 2> {w*n, n};
 		}
 	}
 	static_assert(unsquare_y< 1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
 	static_assert(unsquare_y<-1>((alpha_t) 2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
 
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) unsquare_dot_y(aleph_t const &u)
+	XTAL_FZ2 unsquare_dot_y(XTAL_DEF u)
 	XTAL_0EX
 	{
 		if (_std::is_constant_evaluated())
-		{	return unsquare_y<M_pow, N_lim>(dot_y(u));
+		{	return unsquare_y<M_pow, N_lim>(dot_y(XTAL_REF_(u)));
 		}
 		else
-		{	return it_y<M_pow>(_std::hypot(u.real(), u.imag()));
+		{	return it_y<M_pow>(_std::abs(XTAL_REF_(u)));
 		}
 	}
 
@@ -373,7 +377,7 @@ public:
 	{
 		return alpha_t(N_num)/XTAL_REF_(nom);
 	}
-	static_assert(ratio_y    (alpha_t(2.0)) == 0.5);
+	static_assert(ratio_y   (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<1>(alpha_t(2.0)) == 0.5);
 	static_assert(ratio_y<4>(alpha_t(2.0)) == 2.0);
 
@@ -386,7 +390,7 @@ public:
 	{
 		return ratio_y<N_num>(XTAL_REF_(u))*3.141592653589793238462643383279502884;
 	}
-	static_assert(patio_y    (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
+	static_assert(patio_y   (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
 	static_assert(patio_y<1>(alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
 	static_assert(patio_y<4>(alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
 
@@ -549,6 +553,12 @@ public:
 	static_assert(signed_y( 0.5) ==  1.0);
 	static_assert(signed_y( 0.0) ==  1.0);
 	static_assert(signed_y(-0.5) == -1.0);
+
+	XTAL_FZ2 signed_y(aleph_t const &value)
+	XTAL_0EX
+	{
+		return unsquare_dot_y<-1>(value)*(value);
+	}
 
 
 	///\returns the original sign of `target`, after applying the sign of `source`.
@@ -733,7 +743,7 @@ public:
 	XTAL_0EX
 	{
 		truncate_y<(1u << (exponent::depth - 2))>(target);
-		alpha_t w = unsquare_dot_y(target), m = 1./w;
+		auto [w, m] = unsquare_dot_y<0>(target);
 		target *= m; truncate_y<N_zoom, N_zero>(w, zone);
 		target *= w;
 		return target;
@@ -823,7 +833,7 @@ public:
 	XTAL_FZ2 punctured_y(aleph_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		alpha_t w = unsquare_dot_y(target), m = 1./w;
+		auto [w, m] = unsquare_dot_y<0>(target);
 		target *= m; puncture_y<N_zoom, N_zero>(w, zone);
 		target *= w;
 		return target;
@@ -842,7 +852,7 @@ public:
 		alpha_t constexpr y = minimal_y(N_unzoom);
 		target *= y;
 		target /= y;
-	//	target *= 1./y;// prevent optimization by not doing this...
+	//	target *= 1/y;// prevent optimization by not doing this...
 		return target;
 	}
 	static_assert(trim_y<2>(patio_y<2>(1)) == 6.25);

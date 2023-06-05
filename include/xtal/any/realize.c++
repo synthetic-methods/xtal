@@ -90,17 +90,17 @@ void realize_puncture_real__test()
 	w = x = co*oo2; y = realized::puncture_y<0>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo2);
 	w = x = co*oo1; y = realized::puncture_y<0>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo1);
 	w = x = co*oo0; y = realized::puncture_y<0>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo0);
-//	w = x =    0.0; y = realized::puncture_y<0>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo0);
+//	w = x =      0; y = realized::puncture_y<0>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo0);
 
 	w = x = co*oo2; y = realized::puncture_y<1>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo2);
 	w = x = co*oo1; y = realized::puncture_y<1>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo1);
 	w = x = co*oo0; y = realized::puncture_y<1>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo1);
-//	w = x =    0.0; y = realized::puncture_y<1>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo1);
+//	w = x =      0; y = realized::puncture_y<1>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo1);
 
 	w = x = co*oo2; y = realized::puncture_y<2>(x); REQUIRE(y ==     0); REQUIRE(x == co*oo2);
 	w = x = co*oo1; y = realized::puncture_y<2>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo2);
 	w = x = co*oo0; y = realized::puncture_y<2>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo2);
-//	w = x =    0.0; y = realized::puncture_y<2>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo2);
+//	w = x =      0; y = realized::puncture_y<2>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo2);
 
 }
 TEST_CASE("xtal/any/realize.hpp: puncture real")

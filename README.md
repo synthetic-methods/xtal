@@ -35,7 +35,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
-			return (XTAL_REF_(xs) + ... + 0.0);
+			return (XTAL_REF_(xs) + ... + 0);
 		}
 	};
 
@@ -73,8 +73,8 @@ and can be read either by explicit conversion or by using the method `this->temp
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
-			return (XTAL_REF_(xs) + ... + 0.0)*active_t(*this);
-		//	return (XTAL_REF_(xs) + ... + 0.0)*this->template get<active_t>();
+			return (XTAL_REF_(xs) + ... + 0)*active_t(*this);
+		//	return (XTAL_REF_(xs) + ... + 0)*this->template get<active_t>();
 		}
 	};
 
@@ -91,7 +91,7 @@ providing coarse-grained choice without branching.
 		template <auto active>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		{
-			return (XTAL_REF_(xs) + ... + 0.0)*active;
+			return (XTAL_REF_(xs) + ... + 0)*active;
 		}
 	};
 
