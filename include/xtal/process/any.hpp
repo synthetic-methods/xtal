@@ -253,55 +253,64 @@ struct define
 		\returns the `lambda` abstraction of `method`, \
 			with template parameters resolved by `control::dispatch`. \
 
+		/*/
+		template <typename ...Xs>
+		XTAL_FN2 reify()
+		XTAL_0FX
+		{
+			return [this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...));
+		}
+		template <typename ...Xs>
+		XTAL_FN2 reify()
+		XTAL_0EX
+		{
+			return [this](XTAL_DEF ...xs) XTAL_0FM_(operator() (XTAL_REF_(xs)...));
+		}
+		/*/
 		XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
-		,	[this](XTAL_DEF ...xs) XTAL_0FN_(self().template method<>(XTAL_REF_(xs)...))
+		,	[this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
 		)
-		
+		/***/
+
 		///\
 		\returns the function corresponding to the currently resolved parameters. \
 
-		XTAL_FN2 deify(auto const &f)
+		template <typename ...Xs>
+		XTAL_FN2 deify()
 		XTAL_0FX
 		{
-			return f;
+			return deify(being<Xs...>::template method<>);
+		}
+		XTAL_FN2 deify(auto const &f0)
+		XTAL_0FX
+		{
+			return f0;
 		}
 
 		template <typename ...Xs>
 		struct being
 		{
-			template <typename X>
-			struct argument
-			{
-				using type = X&&;
-			};
-			template <based_q X>
-			struct argument<X>
-			{
-				using type = based_t<X> const &;
-			};
-			template <typename X>
-			using argument_t = typename argument<X>::type;
-
 			template <auto ...Ms>
-			struct solve
+			struct resolve
 			{
-				using return_t = decltype(XTAL_VAL_(T&).template method<Ms...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (argument_t<Xs>...);
+				using return_t = decltype(XTAL_VAL_(T &).template method<Ms...>(XTAL_VAL_(Xs)...));
+				using method_t = return_t (T::*) (Xs const &&...);
 
 			};
-			template <auto ...Ms> requires requires (T const t) {t.template method<Ms...>(XTAL_VAL_(Xs)...);}
-			struct solve<Ms...>
+			template <auto ...Ms>
+			requires
+			requires (T const t)
+			{
+				t.template method<Ms...>(XTAL_VAL_(Xs)...);
+			}
+			struct resolve<Ms...>
 			{
 				using return_t = decltype(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (argument_t<Xs>...) const;
+				using method_t = return_t (T::*) (Xs const &&...) const;
 
 			};
-			
 			template <auto ...Ms>
-			using method_t = typename solve<Ms...>::method_t;
-
-			template <auto ...Ms>
-			XTAL_FZ1_(method_t<Ms...>) method = &T::template method<Ms...>;
+			XTAL_FZ1_(typename resolve<Ms...>::method_t) method = &T::template method<Ms...>;
 		
 		};
 
@@ -392,12 +401,9 @@ struct defer
 		///\
 		Deferred implementation of `T::value`. \
 
-		template <auto ...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0FX
-		{
-			return head() (XTAL_REF_(xs)...);
-		}
+		XTAL_RN2_(template <auto ...> XTAL_FN2 method(XTAL_DEF ...xs)
+		,	head() (XTAL_REF_(xs)...)
+		)
 
 	};
 };

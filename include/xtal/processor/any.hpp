@@ -63,11 +63,8 @@ struct defer<U>
 		using co = compose_s<S, subkind>;
 
 		template <typename ...Xs>
-		XTAL_FN2 re_()
-		XTAL_0EX
-		{
-			return iterate_function_f(head().template reify<iteratee_t<Xs>...>());
-		}
+		XTAL_FN2 reified_()
+		XTAL_0RN_(iterate_function_f(head().template reify<iteratee_t<Xs>...>()))
 
 	public:
 		using co::co;
@@ -85,23 +82,23 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return iterate_forward_f(re_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return iterate_forward_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+		}
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		XTAL_IF2 (U const &u)
 		{
-			u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
+			(void) u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
 		}
 		{
-			return re_<decltype(xs)...>() (XTAL_REF_(xs)...);
-		}
-		template <auto...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0FX
-		{
-			return re_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 
 	};

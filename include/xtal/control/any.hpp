@@ -87,7 +87,6 @@ struct define
 				XTAL_CN4_(subtype);
 
 				XTAL_NEW_(explicit) subtype(int const &n)
-			//	:	co(XTAL_REF_(n))
 				:	co(n)
 				{
 					assert(0 <= n and n < N_arity);
@@ -99,23 +98,22 @@ struct define
 				XTAL_OP2() (XTAL_DEF ...xs)
 				XTAL_0EX
 				{
-					auto const &def = deify<decltype(xs)...>();
-					return (self().*def) (XTAL_REF_(xs)...);
+					return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);
 				}
 
 				///\
 				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
 				resolving the template-parameters using member-variables. \
 
-				template <typename ...Xs>
-				XTAL_FN2 reify()
-				XTAL_0EX
-				{
-					auto const &def = deify<Xs...>();
-					return [this, def](XTAL_DEF ...xs)
-						XTAL_0FN_((self().*def) (XTAL_REF_(xs)...))
-					;
-				}
+				/*/
+				XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
+				,	_std::bind_front(deify<Xs...>(), self())
+				)
+				/*/
+				XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
+				,	[this, _f = deify<Xs...>()](XTAL_DEF ...xs) XTAL_0FN_((self().*_f) (XTAL_REF_(xs)...))
+				)
+				/***/
 
 				///\
 				Resolves the overloaded function-pointer for the given types, \
@@ -127,7 +125,6 @@ struct define
 				{
 					return deify(being<Xs...>::template method<>);
 				}
-				
 				XTAL_FN2 deify(auto const &fs)
 				XTAL_0FX
 				{
@@ -142,7 +139,7 @@ struct define
 				struct being
 				{
 					template <auto ...Ms>
-					struct atom
+					struct resolve
 					{
 						template <size_t ...Ns>
 						XTAL_FZ2 method_f(seek_t<Ns...>)
@@ -154,9 +151,8 @@ struct define
 						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
 					};
-
 					template <auto ...Ms>
-					XTAL_LET method = atom<Ms...>::method_m;
+					XTAL_LET method = resolve<Ms...>::method_m;
 				
 				};
 

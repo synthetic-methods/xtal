@@ -97,7 +97,7 @@ static_assert(1101 <= XTAL_V00_GNUC);
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_TYP                             decltype(auto)
-#define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
+#define XTAL_TYP_(...)        ::std::decay_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_FWD_(...)           static_cast<         __VA_ARGS__ &&>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
@@ -132,6 +132,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)                      const REF noexcept
 #define XTAL_0FN                            constexpr noexcept
 #define XTAL_0FN_(...)                      constexpr noexcept {return (__VA_ARGS__);}
+#define XTAL_0FM                    mutable constexpr noexcept
+#define XTAL_0FM_(...)              mutable constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0RN_(...)                                noexcept {return (__VA_ARGS__);}
 #define XTAL_RN4_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
                                         SIG        && noexcept {return (__VA_ARGS__);};\
