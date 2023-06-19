@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "../control/sequel.hpp"
+#include "../message/sequel.hpp"
 
 
 
@@ -83,7 +83,7 @@ struct bond
 			public:
 				using co::efflux;
 
-				XTAL_FNX efflux(XTAL_DEF_(control::sequel_q) sequel_o)
+				XTAL_FNX efflux(XTAL_DEF_(message::sequel_q) sequel_o)
 				XTAL_0EX
 				{
 					return XTAL_FLX_((void) solve(co::method()), (sign_t) 1) (co::efflux(XTAL_REF_(sequel_o)));

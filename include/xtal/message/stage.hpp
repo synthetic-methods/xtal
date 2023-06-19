@@ -1,34 +1,25 @@
 #pragma once
-#include "./per.hpp"
+#include "./numinal.hpp"
 
 
 
 
-#include "../any.c++"
+
 
 XTAL_ENV_(push)
-namespace xtal::control::__per
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
-TEST_CASE("xtal/control/per.hpp: construction")
-{
-	sigma_t b = realized::diplo_y(16);
-	alpha_t p = realized::haplo_y(16);
 
-	auto d = per_t(b);
-	auto q = per_t(p);
+template <int N, typename ...As>
+using stage = numinal<constant_t<N>, As...>;
 
-	REQUIRE(b == d.rate());
-	REQUIRE(b == q.rate());
+template <int N, typename ...As>
+using stage_t = compose_s<any_t<>, stage<N, As...>>;
 
-	REQUIRE(p == d.period());
-	REQUIRE(p == q.period());
 
-}
-/**/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

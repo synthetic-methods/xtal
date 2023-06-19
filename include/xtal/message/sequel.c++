@@ -7,13 +7,13 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::control::__sequel
+namespace xtal::message::__sequel
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/control/sequel.hpp: interconversion")
+TEST_CASE("xtal/message/sequel.hpp: interconversion")
 {
 	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
@@ -34,7 +34,7 @@ TEST_CASE("xtal/control/sequel.hpp: interconversion")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/control/sequel.hpp: synchronization")
+TEST_CASE("xtal/message/sequel.hpp: synchronization")
 {
 	using sequel_n = sequel_t<counter_t<>>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<counted_t<>>; auto seq_u = sequel_u(3);
@@ -94,7 +94,7 @@ void initialization__test(auto n)
 	x = X(n); y = Y(n); REQUIRE(y.efflux(x) == 0); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
 
 }
-TEST_CASE("xtal/control/sequel.hpp: initialization")
+TEST_CASE("xtal/message/sequel.hpp: initialization")
 {
 	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
@@ -117,7 +117,7 @@ void finalization__test(auto n)
 //	x = X(n); y = Y(n).null(); REQUIRE(y.influx(x) == 0); REQUIRE(y.step() == 2); REQUIRE(y.size() == 0);
 
 }
-TEST_CASE("xtal/control/sequel.hpp: finalization")
+TEST_CASE("xtal/message/sequel.hpp: finalization")
 {
 	using sequel_n = sequel_t<counter_t<>>;
 	using sequel_u = sequel_t<counted_t<>>;
@@ -132,7 +132,7 @@ TEST_CASE("xtal/control/sequel.hpp: finalization")
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/control/sequel.hpp: intrepidation")
+TEST_CASE("xtal/message/sequel.hpp: intrepidation")
 {
 	using V = counter_t<>;
 	using U = counted_t<>;
@@ -144,7 +144,7 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation")
 	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
 
 }
-TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
+TEST_CASE("xtal/message/sequel.hpp: intrepidation from zero")
 {
 	using V = counter_t<>;
 	using U = counted_t<>;
@@ -179,7 +179,7 @@ void interference__test(auto i)
 	seq_w <<= seq_n++;                   REQUIRE(seq_w == Y(U( 8, 12), 2));
 
 }
-TEST_CASE("xtal/control/sequel.hpp: interruption")
+TEST_CASE("xtal/message/sequel.hpp: interruption")
 {
 	using V = counter_t<>; using sequel_n = sequel_t<V>;
 	using U = counted_t<>; using sequel_u = sequel_t<U>;
@@ -197,7 +197,7 @@ TEST_CASE("xtal/control/sequel.hpp: interruption")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/control/sequel.hpp: cycle")
+TEST_CASE("xtal/message/sequel.hpp: cycle")
 {
 	using V = counter_t<size_t>; using sequel_n = sequel_t<V>;
 	using U = counted_t<size_t>; using sequel_u = sequel_t<U>;

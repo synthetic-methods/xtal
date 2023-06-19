@@ -7,52 +7,47 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <iterated_q U>
-struct respan
+struct per
 {
 private:
-	using V = distance_t<U>;
+	using U = _std::make_unsigned_t<iota_t>;
+	using V = alpha_t;
 
 public:
-	using subkind = defer<U>;
+	using subkind = compose<defer<U>, defer<V>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
-	
-	public:
-	//	using co::co;
-		using co::self;
-		using span_t = U;
 
+	public:
+//	using co::co;
+		
 		XTAL_CN2_(subtype);
 		XTAL_CN4_(subtype);
 
-		template <iterated_q W>
-		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF ...ws)
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(deranged_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
+		:	co(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		{
+		}
+		XTAL_NEW_(explicit) subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
+		XTAL_0EX
+		:	co((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RN4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
-		XTAL_RN4_(XTAL_FN2 size(), co::head().size())
-
-		XTAL_FN2 slice(V i, V j)
-		XTAL_0EX
-		{
-			auto t = self(); t.span(t.span()|_v3::views::slice(i, j)); return t;
-		}
+		XTAL_RN4_(XTAL_FN2   rate(), co::template head<0>())
+		XTAL_RN4_(XTAL_FN2 period(), co::template head<1>())
 
 	};
 };
-template <iterated_q U>
-using respan_t = confined_t<respan<U>>;
+using per_t = confined_t<per>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

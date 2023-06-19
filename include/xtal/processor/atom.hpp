@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
 #include "../block/all.hpp"
-#include "../control/sequel.hpp"
-#include "../control/resize.hpp"
-#include "../control/respan.hpp"
+#include "../message/sequel.hpp"
+#include "../message/resize.hpp"
+#include "../message/respan.hpp"
 
 
 XTAL_ENV_(push)
@@ -41,7 +41,7 @@ concept covalent_p = is_q<Y, covalent_t<T>> and _std::is_rvalue_reference_v<T>;
 template <typename U, typename ...As>
 struct atom
 {
-	using interrupt = typename control::confined_t<>::interrupt<0>;
+	using interrupt = typename message::confined_t<>::interrupt<0>;
 	using subkind = confer<U, link<As..., interrupt, block::collector<-1>>>;
 
 	template <any_q S>
@@ -61,8 +61,8 @@ struct atom
 			
 			using buffer_u = typename collection::buffer::type;
 			using debuff_u = deranged_t<buffer_u>;
-			using respan_u = control::respan_t<debuff_u>;
-			using resize_u = control::resize_t<>;
+			using respan_u = message::respan_t<debuff_u>;
+			using resize_u = message::resize_t<>;
 			
 			using subkind = compose<content::confer<debuff_u>, content::defer<buffer_u>, rebound>;
 
@@ -103,7 +103,7 @@ struct atom
 
 			public:
 				///\
-				Responds to `control::resize` by resizing the internal `store()`. \
+				Responds to `message::resize` by resizing the internal `store()`. \
 
 				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
@@ -131,22 +131,22 @@ struct atom
 			public:
 				using co::efflux;
 				///\
-				Responds to `control::sequel` by rendering the internal `store()`. \
+				Responds to `message::sequel` by rendering the internal `store()`. \
 				A match for the following sequel will initiate the `respan` (returning `1`), \
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FNX efflux(control::sequel_q auto sequel_o)
+				XTAL_FNX efflux(message::sequel_q auto sequel_o)
 				XTAL_0EX
 				{
 					return efflux(sequel_o, respan_u(store()));
 				}
 				///\
-				\note When accompanied by `control::respan`, the supplied visor will be used instead. \
+				\note When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FNX efflux(control::sequel_q auto sequel_o, respan_u respan_o)
+				XTAL_FNX efflux(message::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
 					if (co::effuse(sequel_o) == 0) return 0;

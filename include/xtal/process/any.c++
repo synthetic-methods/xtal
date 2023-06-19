@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "../control/all.hpp"
+#include "../message/all.hpp"
 
 
 
@@ -70,8 +70,12 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 
 void attribute_influx_method__test(auto z)
 {
+	using start_t = message::stage_t<0, struct start>;
+
+	REQUIRE(true);
+
 	auto &o = z.template self<bias_t>();
-	REQUIRE(-1 == (int) z.influx(control::start_t()));                           // unrecognized
+	REQUIRE(-1 == (int) z.influx(start_t()));                                    // unrecognized
 	REQUIRE( 0 == (int) z.influx(bias_t(0.0))); REQUIRE(0.0 == (float) o.head());// unchanged
 	REQUIRE( 1 == (int) z.influx(bias_t(1.0))); REQUIRE(1.0 == (float) o.head());// changed
 	REQUIRE( 1 == (int) z.influx(bias_t(2.0))); REQUIRE(2.0 == (float) o.head());// changed
@@ -87,8 +91,10 @@ TEST_CASE("xtal/process/any.hpp: attribute influx method")
 
 void attribute_efflux_method__test(auto z)
 {
+	using start_t = message::stage_t<0, struct start>;
+
 	auto &o = z.template self<bias_t>();
-	REQUIRE(-1 == (int) z.efflux(control::start_t()));                           // unrecognized
+	REQUIRE(-1 == (int) z.efflux(start_t()));                                    // unrecognized
 	REQUIRE( 0 == (int) z.efflux(bias_t(0.0))); REQUIRE(0.0 == (float) o.head());// unchanged
 	REQUIRE( 1 == (int) z.efflux(bias_t(1.0))); REQUIRE(1.0 == (float) o.head());// changed
 	REQUIRE( 1 == (int) z.efflux(bias_t(2.0))); REQUIRE(2.0 == (float) o.head());// changed

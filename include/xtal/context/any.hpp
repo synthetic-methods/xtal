@@ -33,8 +33,8 @@ struct define
 		using co::self;
 
 		///\
-		Influx operator: resolves the control for `this` before any dependencies, \
-		used for e.g. `control::resize`. \
+		Influx operator: resolves the message for `this` before any dependencies, \
+		used for e.g. `message::resize`. \
 
 		XTAL_OP1 <<=(XTAL_DEF o)
 		XTAL_0EX
@@ -49,7 +49,7 @@ struct define
 			return self();
 		}
 		///\
-		Influx handler: resolves the control for `this` before any dependencies. \
+		Influx handler: resolves the message for `this` before any dependencies. \
 		
 		///\
 		\returns the result of `infuse` applied to the first argument \
@@ -74,8 +74,8 @@ struct define
 
 
 		///\
-		Efflux operator: resolves the control for any dependencies before `this`, \
-		used for e.g. `control::respan` and `control::sequel`. \
+		Efflux operator: resolves the message for any dependencies before `this`, \
+		used for e.g. `message::respan` and `message::sequel`. \
 
 		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX
@@ -90,7 +90,7 @@ struct define
 			return self();
 		}
 		///\
-		Efflux handler: resolves the control for any dependencies before `this`. \
+		Efflux handler: resolves the message for any dependencies before `this`. \
 		
 		///\
 		\returns the result of `effuse` applied to the first argument \
@@ -115,11 +115,11 @@ struct define
 
 
 		///\
-		Defuse handler: resolves the individual components of the control. \
+		Defuse handler: resolves the individual components of the message. \
 		
 		///\
 		\returns a ternary integer indicating the change in state (`1` or `0`), \
-		or that the control was unrecognized (`-1`). \
+		or that the message was unrecognized (`-1`). \
 		
 		///\
 		\note The return value controls conditional execution using binary `&`, \

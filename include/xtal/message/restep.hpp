@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <counted_q U=counted_t<>>
-struct rescan
+template <typename U=iota_t>
+struct restep
 {
 	using subkind = defer<U>;
 
@@ -20,17 +20,22 @@ struct rescan
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
-	
 	public:
 		using co::co;
-		using scan_t = U;
-			
-		XTAL_RN4_(XTAL_FN1 scan(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		using step_t = U;
+
+		XTAL_RN4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
-template <typename U=counted_t<>>
-using rescan_t = confined_t<rescan<U>>;
+template <typename U=iota_t>
+using restep_t = confined_t<restep<U>>;
+
+XTAL_FZ2 restep_f(XTAL_DEF w)
+{
+	using realized = realize<XTAL_TYP_(w)>;
+	return restep_t<typename realized::iota_t>(XTAL_REF_(w));
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

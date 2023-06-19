@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Temporal cursors that govern block-based `processor`s, \
-defined by the `size`, `step`, and position of the current block. \
+Tracks the progress of block-based `processor`s, \
+defined by the `step`, `size`, and position of the current block. \
 They are designed to prestore contiguity by maintaining sequential ordering on `efflux`. \
 \
 The arithmetic operators are used to jump and/or resize to adjacent blocks, \

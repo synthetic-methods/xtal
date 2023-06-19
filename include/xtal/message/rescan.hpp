@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=size_t>
-struct resize
+template <counted_q U=counted_t<>>
+struct rescan
 {
 	using subkind = defer<U>;
 
@@ -23,25 +23,14 @@ struct resize
 	
 	public:
 		using co::co;
-		using size_t = U;
-
-		XTAL_RN2_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
-		XTAL_RN2_(XTAL_FN2 empty(), 0 == size())
+		using scan_t = U;
+			
+		XTAL_RN4_(XTAL_FN1 scan(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 	};
 };
-template <iterated_q U>
-struct resize<U>: resize<_v3::ranges::size_type_t<U>>
-{
-};
-template <typename U=size_t>
-using resize_t = confined_t<resize<U>>;
-
-XTAL_FZ2 resize_f(XTAL_DEF w)
-{
-	using realized = realize<XTAL_TYP_(w)>;
-	return resize_t<typename realized::sigma_t>(XTAL_REF_(w));
-}
+template <typename U=counted_t<>>
+using rescan_t = confined_t<rescan<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -38,9 +38,14 @@ Identifies `any` class `T`. \
 
 
 template <template <typename...> typename ...As_>
+using any_of = any<xtal::of_t<As_>...>;
+///<\
+Uses the supplied templates `As_` to tag `any` decorator. \
+
+template <template <typename...> typename ...As_>
 using any_of_t = any_t<xtal::of_t<As_>...>;
 ///<\
-Uses the supplied templates `As_` to tag `any` class. \
+Uses the supplied templates `As_` to tag `any_t` class. \
 
 template <template <typename...> typename A_, typename ...Ts>
 concept any_of_q = xtal::if_q<any_of_t<A_>, Ts...>;

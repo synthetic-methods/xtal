@@ -7,7 +7,7 @@ XTAL is a range-based header-only template-combinator library for musical Digita
 It provides an extensible and performant framework for rapid prototyping and development,
 aimed at building real-time instruments and effects for both hardware and software.
 
-The emphasis of the library is on composability and performance, accommodating dynamic control within a static framework. Static mechanisms like CRTP and structures like `static_vector` provide the foundation for messaging and scheduling, while dynamically-resolved function templates provide the mechanism for block-level switching between instrument architectures.
+The emphasis of the library is on composability and performance, accommodating dynamic message within a static framework. Static mechanisms like CRTP and structures like `static_vector` provide the foundation for messaging and scheduling, while dynamically-resolved function templates provide the mechanism for block-level switching between instrument architectures.
 
 The framework resembles the `SynthDef` subsystem of SuperCollider's, fulfilling the buffer read/write cycle required by C++ frameworks like CoreAudio, JUCE, and Max/Min, while abstracting the nested iteration, state-management, and event handling used by these systems.
 
@@ -59,11 +59,11 @@ with the inner-most nodes (plural) representing inputs, and the outer-most node 
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`,
 and can be read either by explicit conversion or by using the method `this->template get<...>`.
 
-	using active_t = control::ordinal_t<struct active>;
+	using active_t = message::ordinal_t<struct active>;
 
 	struct mix_t
 	:	process::confine_t<mix_t
@@ -242,7 +242,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 
 	namespace content   {namespace _retail = common;}
 	namespace context   {namespace _retail = content;}
-	namespace control   {namespace _retail = context;}
+	namespace message   {namespace _retail = context;}
 	namespace process   {namespace _retail = context;}
 	namespace processor {namespace _retail = process;}
 
@@ -286,7 +286,7 @@ Currently supported but not yet implemented:
 	-	Modulation matricies.
 	-	Temporary parameter crossfades.
 -	Note on/off handling by:
-	-	Detecting the response to `.influx(control::stop()) == 0`.
+	-	Detecting the response to `.influx(message::stop()) == 0`.
 
 ## Contribution
 

@@ -1,21 +1,21 @@
 #pragma once
 #include "./any.hpp"
-#include "../control/all.hpp"
+#include "../message/all.hpp"
 #include "../process/any.hpp"
 #include "../processor/atom.hpp"
 
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::control::__any
+namespace xtal::message::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/control/any.hpp: hold")
+TEST_CASE("xtal/message/any.hpp: hold")
 {
-	using sequel_t = control::sequel_t<counter_t<>>;
+	using sequel_t = message::sequel_t<counter_t<>>;
    using biased_t = process::confined_t<bias_t::template hold<(1 << 7)>>;
 
   biased_t biased;
@@ -53,8 +53,8 @@ template <typename mix_t>
 void respan_internal_interrupt__test()
 {
 	using    mix_z = processor::atom_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_n = message::sequel_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});

@@ -1,6 +1,6 @@
 #pragma once
 #include "./all.hpp"
-#include "../control/all.hpp"
+#include "../message/all.hpp"
 
 
 
@@ -17,8 +17,8 @@ TEST_CASE("xtal/processor/bond.hpp: lifting")
 {
 	sigma_t constexpr N_size = 5;
 	using scalar_t = block::scalar_t<N_size, alpha_t>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_n = message::sequel_t<>;
 
 //	auto f = processor::bond_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_t { 0,  1,  2,  3,  4};
@@ -39,7 +39,7 @@ TEST_CASE("xtal/processor/bond.hpp: lifting")
 template <typename mix_t>
 void respan_virtual__test()
 {
-	using sequel_n = control::sequel_t<>;
+	using sequel_n = message::sequel_t<>;
 	using mixer_t = processor::bond_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);

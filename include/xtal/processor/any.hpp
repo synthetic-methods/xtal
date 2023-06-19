@@ -1,7 +1,7 @@
 #pragma once
 #include "../process/any.hpp"//_retail
-#include "../control/sequel.hpp"
-#include "../control/resize.hpp"
+#include "../message/sequel.hpp"
+#include "../message/resize.hpp"
 
 
 
@@ -19,8 +19,8 @@ namespace _retail = xtal::process;
 template <typename ...As>
 struct link
 {
-	using resize_u  = control::resize_t<>;
-	using sequel_u  = control::sequel_t<>;
+	using resize_u  = message::resize_t<>;
+	using sequel_u  = message::sequel_t<>;
 	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
 
 	template <any_q S>
@@ -106,7 +106,7 @@ struct defer<U>
 template <iterated_q U> requires (not any_q<U>)
 struct defer<U>
 {
-	using sequel_u = control::sequel_t<counted_t<>>;
+	using sequel_u = message::sequel_t<counted_t<>>;
 	using subkind  = compose<_retail::defer<U>, sequel_u::attach>;
 
 	template <any_q S>

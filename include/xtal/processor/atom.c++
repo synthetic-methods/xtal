@@ -1,6 +1,6 @@
 #pragma once
 #include "./all.hpp"
-#include "../control/all.hpp"
+#include "../message/all.hpp"
 
 
 
@@ -26,8 +26,8 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 //	auto b = f.bind_(x, y);
 	auto b = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind_to(processor::let_f(x), processor::let_f(y));
 
-	b <<= control::resize_f(N);
-	b >>= control::sequel_f(N);
+	b <<= message::resize_f(N);
+	b >>= message::sequel_f(N);
 	_v3::ranges::copy(b, a.begin());
 	REQUIRE(a == z);
 }
@@ -43,9 +43,9 @@ void respan_external__test()
 
 	using buffer_u = typename collection::buffer::type;
 	using debuff_u = deranged_t<buffer_u>;
-	using respan_u = control::respan_t<debuff_u>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	using respan_u = message::respan_t<debuff_u>;
+	using resize_u = message::resize_t<>;
+	using sequel_n = message::sequel_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
@@ -92,11 +92,11 @@ void respan_internal__test()
 	auto  rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 
-	xhs <<= control::resize_f(N);
-	xhs <<= control::resize_f(N);// idempotent!
+	xhs <<= message::resize_f(N);
+	xhs <<= message::resize_f(N);// idempotent!
 	REQUIRE(0 == xhs.size());
 
-	auto seq = control::sequel_f(N);
+	auto seq = message::sequel_f(N);
 	xhs >>= seq  ; REQUIRE(N == xhs.size());// idempotent!
 	xhs >>= seq++; REQUIRE(ranges::equal(xhs, _std::vector{00, 11, 22}));// initialize via efflux!
 	xhs >>= seq++; REQUIRE(ranges::equal(xhs, _std::vector{33, 44, 55}));// advance then efflux...
@@ -126,12 +126,12 @@ void respan_internal_chain_rvalue__test()
 	using mul_op = atom_t<mul_t>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(lift_f(_01), lift_f(_10)));
 
-	yhs <<= control::resize_f(N);
+	yhs <<= message::resize_f(N);
 	yhs <<= coef_t((alpha_t) 100);
 	yhs <<= bias_t((alpha_t) 000);
 	REQUIRE(0 == yhs.size());
 
-	auto seq = control::sequel_f(N);
+	auto seq = message::sequel_f(N);
 	yhs >>= seq  ; REQUIRE(N == yhs.size());// idempotent!
 	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -165,11 +165,11 @@ void respan_internal_chain_lvalue__test()
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 	auto  yhs = mul_op::bind_f(xhs);
 
-	yhs <<= control::resize_f(N);
+	yhs <<= message::resize_f(N);
 	yhs <<= coef_t((alpha_t) 100);
 	xhs <<= bias_t((alpha_t) 000);
 
-	auto seq = control::sequel_f(N);
+	auto seq = message::sequel_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -205,11 +205,11 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal chain lvalue shared")
 	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
-	yhs <<= control::restep_f((size_t) 50);
-	yhs <<= control::resize_f(N);
+	yhs <<= message::restep_f((size_t) 50);
+	yhs <<= message::resize_f(N);
 
-	yhs >>= control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= message::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= message::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }

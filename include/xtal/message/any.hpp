@@ -7,7 +7,7 @@
 #include "../block/all.hpp"
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@ struct define
 
 		struct attach
 		{
-			using control_t = T;
+			using message_t = T;
 			using subkind = context::defer<T>;
 
 			template <context::any_q R>
@@ -51,7 +51,7 @@ struct define
 				XTAL_CN4_(subtype);
 
 				///\
-				Constructs the `attach`ed `control` using its default, \
+				Constructs the `attach`ed `message` using its default, \
 				before `forward`ing the arguments to `this`. \
 
 				XTAL_NEW_(explicit) subtype(XTAL_DEF ...xs)
@@ -67,10 +67,10 @@ struct define
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
 
-		template <int N_arity=2> requires (0 < N_arity)
+		template <size_t N_arity=2>
 		struct dispatch
 		{
-			using control_t = T;
+			using message_t = T;
 			using subkind = attach;
 
 			template <context::any_q R>
@@ -86,7 +86,7 @@ struct define
 				XTAL_CN2_(subtype);
 				XTAL_CN4_(subtype);
 
-				XTAL_NEW_(explicit) subtype(int const &n)
+				XTAL_NEW_(explicit) subtype(size_t const &n)
 				:	co(n)
 				{
 					assert(0 <= n and n < N_arity);
@@ -117,7 +117,7 @@ struct define
 
 				///\
 				Resolves the overloaded function-pointer for the given types, \
-				indexing the _retail template-parameter with the corresponding control-value/subtype `T`. \
+				indexing the _retail template-parameter with the corresponding message-value/subtype `T`. \
 
 				template <typename ...Xs>
 				XTAL_FN2 deify()
@@ -133,7 +133,7 @@ struct define
 
 				///\
 				Defines the subtype-indexed function-pointer table, \
-				dynamically indexed by control-value/subtype `T` and statically-generated with `N_arity` entries. \
+				dynamically indexed by message-value/subtype `T` and statically-generated with `N_arity` entries. \
 
 				template <typename ...Xs>
 				struct being
@@ -212,21 +212,21 @@ struct define
 			};
 		};
 		///\
-		Provides a queue for this control-type `T` on the target object. \
+		Provides a queue for this message-type `T` on the target object. \
 		Messages `influx`ed with an integer prefix will be delay by the given amount. \
 		\
 		NOTE: Only supports decorating `processor::atom`. \
 		\
 		TODO: Use deep introspection to automatically `interrupt` viable sources/targets. \
 		\
-		TODO: Use `control::sequel` to convert absolute delays to relative delays? \
+		TODO: Use `message::sequel` to convert absolute delays to relative delays? \
 		\
 		TODO: Allow for scheduling beyond the current window by offsetting all future events? \
 		\
 		TODO: Investigate whether recursively `influx`ing the tail is a viable approach to \
-		managing collections of `control`s (e.g. presets). \
+		managing collections of `message`s (e.g. presets). \
 		\
-		TODO: Define a `control::pack` that `std::tuple`s the provided types. \
+		TODO: Define a `message::pack` that `std::tuple`s the provided types. \
 		The implementation of `interrupt` in that case might be able to use `std::variant`. \
 
 		template <int N_future=-1>
@@ -357,10 +357,10 @@ struct defer
 	using subtype = compose_s<S, subkind>;
 
 };
-template <constant_q W>
+template <constant_q W> requires sigma_q<value_t<W>>
 struct defer<W>
 {
-	using subkind = defer<typename W::value_type>;
+	using subkind = defer<value_t<W>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -369,7 +369,7 @@ struct defer<W>
 	public:
 		using co::co;
 
-		using dispatch = typename co::template dispatch<W::value>;
+		using dispatch = typename co::template dispatch<value_v<W>>;
 
 	};
 };

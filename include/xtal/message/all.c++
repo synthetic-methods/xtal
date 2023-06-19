@@ -1,6 +1,5 @@
 #pragma once
 #include "./any.c++"
-#include "./done.c++"
 #include "./nominal.c++"
 #include "./numinal.c++"
 #include "./ordinal.c++"
@@ -9,7 +8,5 @@
 #include "./respan.c++"
 #include "./rescan.c++"
 #include "./restep.c++"
-#include "./sample.c++"
 #include "./sequel.c++"
-#include "./start.c++"
-#include "./stop.c++"
+#include "./stage.c++"

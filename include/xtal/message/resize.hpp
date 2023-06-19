@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=iota_t>
-struct restep
+template <typename U=size_t>
+struct resize
 {
 	using subkind = defer<U>;
 
@@ -20,21 +20,27 @@ struct restep
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
-		using step_t = U;
+		using size_t = U;
 
-		XTAL_RN4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN2_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN2_(XTAL_FN2 empty(), 0 == size())
 
 	};
 };
-template <typename U=iota_t>
-using restep_t = confined_t<restep<U>>;
+template <iterated_q U>
+struct resize<U>: resize<_v3::ranges::size_type_t<U>>
+{
+};
+template <typename U=size_t>
+using resize_t = confined_t<resize<U>>;
 
-XTAL_FZ2 restep_f(XTAL_DEF w)
+XTAL_FZ2 resize_f(XTAL_DEF w)
 {
 	using realized = realize<XTAL_TYP_(w)>;
-	return restep_t<typename realized::iota_t>(XTAL_REF_(w));
+	return resize_t<typename realized::sigma_t>(XTAL_REF_(w));
 }
 
 

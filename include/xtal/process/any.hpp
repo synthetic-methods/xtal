@@ -127,7 +127,7 @@ struct link
 				}
 
 				///\
-				\note If prefixed by `null_t()`, the control is forwarded directly to `arguments`. \
+				\note If prefixed by `null_t()`, the message is forwarded directly to `arguments`. \
 
 				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -142,7 +142,7 @@ struct link
 
 
 				///\
-				Forwards the control to `arguments`, bypassing `self`. \
+				Forwards the message to `arguments`, bypassing `self`. \
 
 				XTAL_FNX influx_request(auto ...oo)
 				XTAL_0EX
@@ -159,8 +159,8 @@ struct link
 
 
 				///\
-				Forwards the control *tail* to `arguments`, bypassing `self`. \
-				If `~N_parity`, the argument at `N_parity` receives the full control. \
+				Forwards the message *tail* to `arguments`, bypassing `self`. \
+				If `~N_parity`, the argument at `N_parity` receives the full message. \
 
 				template <int N_parity=-1>
 				XTAL_FNX influx_request_tail(auto o, auto ...oo)
@@ -177,8 +177,8 @@ struct link
 					}
 				}
 				///\
-				Forwards the control *head* to `arguments`, bypassing `self`. \
-				If `~N_parity`, the argument at `N_parity` receives the full control. \
+				Forwards the message *head* to `arguments`, bypassing `self`. \
+				If `~N_parity`, the argument at `N_parity` receives the full message. \
 
 				template <int N_parity=-1>
 				XTAL_FNX efflux_request_head(auto o, auto ...oo)
@@ -251,7 +251,7 @@ struct define
 		/***/
 		///\
 		\returns the `lambda` abstraction of `method`, \
-			with template parameters resolved by `control::dispatch`. \
+			with template parameters resolved by `message::dispatch`. \
 
 		/*/
 		template <typename ...Xs>

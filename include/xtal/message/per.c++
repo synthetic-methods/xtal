@@ -1,5 +1,5 @@
 #pragma once
-#include "./restep.hpp"
+#include "./per.hpp"
 
 
 
@@ -7,15 +7,26 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::control::__restep
+namespace xtal::message::__per
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TEST_CASE("xtal/control/restep.hpp: true")
+/**/
+TEST_CASE("xtal/message/per.hpp: construction")
 {
-	REQUIRE(true);
+	sigma_t b = realized::diplo_y(16);
+	alpha_t p = realized::haplo_y(16);
+
+	auto d = per_t(b);
+	auto q = per_t(p);
+
+	REQUIRE(b == d.rate());
+	REQUIRE(b == q.rate());
+
+	REQUIRE(p == d.period());
+	REQUIRE(p == q.period());
+
 }
 /**/
 ///////////////////////////////////////////////////////////////////////////////
