@@ -168,13 +168,13 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 	alpha_t constexpr F = _std::numeric_limits<alpha_t>::infinity();
 	alpha_t constexpr E = _std::numeric_limits<alpha_t>::max();
 
-	auto const square_0 = aleph_t {0, 0};
-	auto const square_H = aleph_t {1, 1}*(0.5);
-	auto const square_1 = aleph_t {1, 1};
-	auto const square_2 = aleph_t {2, 2};
-	auto const square_F = aleph_t {F, F};
-	auto const square_E = aleph_t {E, E};
-	auto const circle_1 = aleph_t {1, 1}*_std::sqrt(0.5);
+	auto const square_0 = alphaplex_t {0, 0};
+	auto const square_H = alphaplex_t {1, 1}*(0.5);
+	auto const square_1 = alphaplex_t {1, 1};
+	auto const square_2 = alphaplex_t {2, 2};
+	auto const square_F = alphaplex_t {F, F};
+	auto const square_E = alphaplex_t {E, E};
+	auto const circle_1 = alphaplex_t {1, 1}*_std::sqrt(0.5);
 
 	REQUIRE(realized::truncated_y<N_zoom>(square_2) == square_2);
 	REQUIRE(realized::punctured_y<N_zoom>(square_2) == square_2);
@@ -192,11 +192,11 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 	BENCHMARK("fracture")
 	{
 		alpha_t constexpr two = 2;
-		aleph_t z {};
+		alphaplex_t z {};
 		for (sigma_t i = 192000/100; ~--i;)
 		{	auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
 			auto y = realized::mantissa_y(mt19937_m); y = _std::pow(two, y);
-			z *= realized::truncated_y<0>(realized::punctured_y<0>(aleph_t {x, y}), 0);
+			z *= realized::truncated_y<0>(realized::punctured_y<0>(alphaplex_t {x, y}), 0);
 		}
 		return z;
 	};

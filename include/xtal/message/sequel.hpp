@@ -13,7 +13,7 @@ namespace xtal::message
 ///\
 Tracks the progress of block-based `processor`s, \
 defined by the `step`, `size`, and position of the current block. \
-They are designed to prestore contiguity by maintaining sequential ordering on `efflux`. \
+They are designed to prestore contiguity by maintaining monotonic ordering on `efflux`. \
 \
 The arithmetic operators are used to jump and/or resize to adjacent blocks, \
 while the logic operators facilitate contiguous comparison. \
@@ -39,7 +39,7 @@ concept sequel_q = any_of_q<sequel, Ts...>;
 template <typename ...As>
 XTAL_FZ2 sequel_f(XTAL_DEF w)
 {
-	using realized = realize<XTAL_TYP_(w)>;
+	using _realized = realize<XTAL_TYP_(w)>;
 	return sequel_t<counter_t<>, As...>(XTAL_REF_(w));
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../content/any.hpp"//_retail
+#include "../confect/any.hpp"//_retail
 
 
 
@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::conflux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::content;
+namespace _retail = xtal::confect;
 #include "../common/any.hxx"
 
 
@@ -167,7 +167,7 @@ struct defer
 		using co::head;
 
 		///\
-		\note Influxes `this`, then the proxied value if it has the required `context`.
+		\note Influxes `this`, then the proxied value if supported.
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -182,7 +182,7 @@ struct defer
 		}
 
 		///\
-		\note Effluxes the proxied value if it has the required `context`, then `this`.
+		\note Effluxes the proxied value if supported, then `this`.
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX

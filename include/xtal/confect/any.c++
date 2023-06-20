@@ -7,13 +7,13 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::content::__any
+namespace xtal::confect::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/content/any.hpp: tuple mania")
+TEST_CASE("xtal/confect/any.hpp: tuple mania")
 {
 	using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
 	auto const foo = foo_t(1, 2, 3);
@@ -24,7 +24,7 @@ TEST_CASE("xtal/content/any.hpp: tuple mania")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/content/any.hpp: tuple mania")
+TEST_CASE("xtal/confect/any.hpp: tuple mania")
 {
 	using namespace common;
 
@@ -33,6 +33,10 @@ TEST_CASE("xtal/content/any.hpp: tuple mania")
 	auto const bar = foo.tuple();
 	using bar_t = XTAL_TYP_(bar);
 
+	bar_t baz = foo;
+	REQUIRE(_std::get<0>(baz) == _std::get<0>(bar));
+	REQUIRE(_std::get<1>(baz) == _std::get<1>(bar));
+	REQUIRE(_std::get<2>(baz) == _std::get<2>(bar));
 
 //	REQUIRE(6 == _std::apply([](XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
 	REQUIRE(6 ==   foo.apply([](XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));

@@ -1,5 +1,5 @@
 #pragma once
-#include "../context/any.hpp"//_retail
+#include "../conflux/any.hpp"//_retail
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::context;
+namespace _retail = xtal::conflux;
 #include "../common/any.hxx"
 
 
@@ -40,7 +40,7 @@ struct link
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 			
-			using subkind = compose<content::defer<typename signature::type>, As..., defer<T>>;
+			using subkind = compose<confect::defer<typename signature::type>, As..., defer<T>>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>
@@ -160,37 +160,37 @@ struct link
 
 				///\
 				Forwards the message *tail* to `arguments`, bypassing `self`. \
-				If `~N_parity`, the argument at `N_parity` receives the full message. \
+				If `~I_parity`, the argument at `I_parity` receives the full message. \
 
-				template <int N_parity=-1>
+				template <int I_parity=-1>
 				XTAL_FNX influx_request_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
-					if constexpr (N_parity == -1)
+					if constexpr (I_parity == -1)
 					{	return influx_request(_std::move(oo)...);
 					}
 					else
-					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns>(seek_t<Ns...>)
-							XTAL_0FN_(argument<N_parity>().influx(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().influx(oo...))
+					{	static_assert(0 <= I_parity);
+						return [&] <auto ...I>(seek_t<I...>)
+							XTAL_0FN_(argument<I_parity>().influx(o, oo...) |...| argument<(I_parity <= I) + I>().influx(oo...))
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
 				///\
 				Forwards the message *head* to `arguments`, bypassing `self`. \
-				If `~N_parity`, the argument at `N_parity` receives the full message. \
+				If `~I_parity`, the argument at `I_parity` receives the full message. \
 
-				template <int N_parity=-1>
+				template <int I_parity=-1>
 				XTAL_FNX efflux_request_head(auto o, auto ...oo)
 				XTAL_0EX
 				{
-					if constexpr (N_parity == -1)
+					if constexpr (I_parity == -1)
 					{	return efflux_request(_std::move(o));
 					}
 					else
-					{	static_assert(0 <= N_parity);
-						return [&] <auto ...Ns>(seek_t<Ns...>)
-							XTAL_0FN_(argument<N_parity>().efflux(o, oo...) |...| argument<(N_parity <= Ns) + Ns>().efflux(o))
+					{	static_assert(0 <= I_parity);
+						return [&] <auto ...I>(seek_t<I...>)
+							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) |...| argument<(I_parity <= I) + I>().efflux(o))
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
@@ -233,44 +233,16 @@ struct define
 		///\
 		\returns the application of `reify()` to the supplied arguments. \
 
-		/*/
-		XTAL_RN2_(XTAL_OP2() (XTAL_DEF ...xs)
-		,	self().template method<>(XTAL_REF_(xs)...)
-		)
-		/*/
-		XTAL_OP2() (XTAL_DEF ...xs)
-		XTAL_0EX
-		{
-			return self().template method<>(XTAL_REF_(xs)...);
-		}
-		XTAL_OP2() (XTAL_DEF ...xs)
-		XTAL_0FX
-		{
-			return self().template method<>(XTAL_REF_(xs)...);
-		}
-		/***/
+		XTAL_OP2() (XTAL_DEF ...xs) XTAL_0EX {return self().template method<>(XTAL_REF_(xs)...);}
+		XTAL_OP2() (XTAL_DEF ...xs) XTAL_0FX {return self().template method<>(XTAL_REF_(xs)...);}
+
 		///\
 		\returns the `lambda` abstraction of `method`, \
 			with template parameters resolved by `message::dispatch`. \
 
-		/*/
-		template <typename ...Xs>
-		XTAL_FN2 reify()
-		XTAL_0FX
-		{
-			return [this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...));
-		}
-		template <typename ...Xs>
-		XTAL_FN2 reify()
-		XTAL_0EX
-		{
-			return [this](XTAL_DEF ...xs) XTAL_0FM_(operator() (XTAL_REF_(xs)...));
-		}
-		/*/
 		XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
 		,	[this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
 		)
-		/***/
 
 		///\
 		\returns the function corresponding to the currently resolved parameters. \

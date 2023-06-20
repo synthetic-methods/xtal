@@ -15,40 +15,51 @@ namespace xtal::block
 template <typename V>
 struct collected
 {
-	using realized = realize<V>;
+	using _realized = realize<V>;
 
 	template <typename S>
 	class subtype: public S
 	{
-		using co = S; template <typename W> using etc_t = _std::initializer_list<W>;
+		using co = S;
+
+		XTAL_LET N_size = co::volume::value;
 
 	public:
 		using co::co;
-		using typename co::arity;
 
-		using fixed = typename co::template fixed<V>;
 		using fluid = typename co::template fluid<V>;
+		using solid = typename co::template solid<V>;
+
+		template <typename U>
+		using recollected_t = typename collected<U>::template subtype<S>;
 
 		struct buffer;
+		struct sluice;
+		struct siphon;
 		struct scalar;
 		struct serial;
 		struct series;
-		struct parallel;
-		template <int N_shift=0> struct converse;
+		struct couple;
 		
 		struct buffer
 		{
 			using type = typename fluid::type;
 
 		};
-		struct siphon
+
+		///\
+		Event spool based on an inverted `std::priority_queue`, \
+		presenting a similar interface to `siphon`. \
+
+		struct sluice
 		{
-			using archetype = _std::priority_queue<V, typename fluid::type, _std::greater<V>>;
+			using demitype = _std::priority_queue<V, typename fluid::type, _std::greater<V>>;
 
 			template <typename T>
-			class homotype: public archetype
+			class homotype: public demitype
 			{
-				using co = archetype;
+				friend T;
+				using co = demitype;
 				using count_t = typename co:: size_type;
 				using event_t = typename co::value_type;
 
@@ -74,14 +85,19 @@ struct collected
 
 			};
 		};
-		struct sluice
+		///\
+		Event spool based on a insertion-sorted `std::array`, \
+		presenting a similar interface to `sluice`. \
+
+		struct siphon
 		{
-			using archetype = typename fluid::type;
+			using demitype = typename fluid::type;
 
 			template <typename T>
-			class homotype: archetype
+			class homotype: demitype
 			{
-				using co = archetype;
+				friend T;
+				using co = demitype;
 
 				using  size_t = typename co::      size_type;
 				using event_t = typename co::     value_type;
@@ -149,50 +165,59 @@ struct collected
 		};
 		struct scalar
 		{
-			using archetype = typename fixed::type;
+			using demitype = typename co::template solid<V>::type;
 
 			template <typename T>// requires field_operators_q<V>
-			class homotype: public archetype
+			class homotype: public demitype
 			{
-				using co = archetype;
+				friend T;
+				using co = demitype;
 
 			public:
 				using co::co;
+
+				template <iterate_q U> requires (not is_q<U, V>)
+				XTAL_NEW_(explicit) homotype(U &&u)
+				:	co()
+				{
+					_detail::move_to(co::begin(), u);
+				}
+				template <iterate_q U> requires (not is_q<U, V>)
+				XTAL_NEW_(explicit) homotype(U const &u)
+				:	co()
+				{
+					_detail::copy_to(co::begin(), u);
+				}
+				XTAL_NEW homotype(bracket_t<V> etc)
+				XTAL_0EX
+				{
+					_detail::copy_to(co::begin(), etc);
+				}
 
 				///\
 				Read accessor. \
 
 				template <typename Y=T>
-				XTAL_FN2 got() XTAL_0EX_(&)
+				XTAL_FN2_(Y) twin()
+				XTAL_0FX_(&)
 				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T>(*this);
-					}
-					else
-					{	return reinterpret_cast<Y>(*this);
-					}
+					return self<Y>();
 				}
 				template <typename Y=T>
-				XTAL_FN2 get() XTAL_0EX_(&)
+				XTAL_FN2 self()
+				XTAL_0FX_(&)
 				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T &>(*this);
-					}
-					else
-					{	return reinterpret_cast<Y>(*this);
-					}
+					if constexpr (is_q<Y, T>) return static_cast<T const &>(*this);
+					else                 return reinterpret_cast<Y const &>(*this);
 				}
 				template <typename Y=T>
-				XTAL_FN2 get() XTAL_0FX_(&)
+				XTAL_FN2 self()
+				XTAL_0EX_(&)
 				{
-					if constexpr (is_q<Y, T>)
-					{	return static_cast<T const &>(*this);
-					}
-					else
-					{	return reinterpret_cast<_std::add_const_t<Y>>(*this);
-					}
+					if constexpr (is_q<Y, T>) return static_cast<T &>(*this);
+					else                 return reinterpret_cast<Y &>(*this);
 				}
-				XTAL_RN2_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
+				XTAL_RN2_(XTAL_FN2 at(XTAL_DEF i), self()[XTAL_REF_(i)]);
 
 				///\
 				Elementwise transformer. \
@@ -201,283 +226,43 @@ struct collected
 				XTAL_0EX
 				{
 					(transmute(XTAL_REF_(fs)), ...);
-					return get();
+					return self();
 				}
 				XTAL_FN1 transmute(XTAL_DEF_(_std::invocable<V>) f)
 				XTAL_0EX
 				{
-					_detail::apply_to(get(), XTAL_REF_(f));
-					return get();
+					_detail::apply_to(self(), XTAL_REF_(f));
+					return self();
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
 				XTAL_0EX
-				XTAL_IF1 (0x00 < arity::value) and (arity::value <= 0x10)// TODO: Limit by cache line size?
+				XTAL_IF1 (0 < N_size) and (N_size <= _realized::destructive_alignment_v)
 				{
-					seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) = f(get(i))));
-					return get();
+					seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) = f(at(i))));
+					return self();
 				}
 				
+
 				///\
 				Elementwise comparators. \
 
-			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=> t.get(Ns)) <=>...         ) (seek_v<arity::value>);}
-				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) ==  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
-				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <=  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
-				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >=  t.get(Ns)) and ...and true) (seek_v<arity::value>);}
-				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) <   t.get(Ns)) and ...and true) (seek_v<arity::value>);}
-				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this] <auto ...Ns>(seek_t<Ns...>) XTAL_0FN_((get(Ns) >   t.get(Ns)) and ...and true) (seek_v<arity::value>);}
+			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <=> t.at(N)) <=>...         ) (seek_v<N_size>);}
+				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) ==  t.at(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <=  t.at(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) >=  t.at(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <   t.at(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) >   t.at(N)) and ...and true) (seek_v<N_size>);}
 
-				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return got() *= XTAL_REF_(w);}
-				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return got() /= XTAL_REF_(w);}
-				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return got() += XTAL_REF_(w);}
-				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return got() -= XTAL_REF_(w);}
+				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
+				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
+				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
+				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-				XTAL_OP1_(T &)  *= (V const &v) XTAL_0EX {return seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) *= v)), get();}
-				XTAL_OP1_(T &)  /= (V const &v) XTAL_0EX {return seek_f<arity::value>([&, this](auto i) XTAL_0FN_(get(i) /= v)), get();}
+				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= XTAL_REF_(w))), self();}
 
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
-		};
-		struct serial
-		{
-			template <typename T>
-			using heterotype = typename scalar::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-			//	TODO: Subclass to define serial pairs like `complex`. \
-
-				using co = heterotype<T>;
-			
-			public:
-				using co::co;
-				using co::get;
-
-				using transformed_t = typename parallel::type;
-
-			//	Elementwise addition/subtraction:
-				
-				XTAL_OP1_(T &) += (etc_t<V> w) XTAL_0EX {return get() += T(w.begin(), w.end());}
-				XTAL_OP1_(T &) -= (etc_t<V> w) XTAL_0EX {return get() -= T(w.begin(), w.end());}
-				
-				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) += t.get(i))), get();}
-				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) -= t.get(i))), get();}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
-		};
-		struct series
-		{
-			template <typename T>
-			using heterotype = typename serial::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			
-			public:
-				using co::co;
-				using co::get;
-
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(bool const &basis)
-				:	co()
-				{
-					if (basis) generate();
-				}
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(V &&u)
-				{
-					generate(_std::move(u));
-				}
-				///\
-				Initializing constructor. \
-
-				XTAL_NEW_(explicit) homotype(V const &u)
-				{
-					generate(u);
-				}
-
-				///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
-					filled by the corresponding powers of `u`. \
-
-				///\note This algorithm uses squaring, \
-					which is more precise/efficient than multiplication for complex numbers. \
-
-				template <size_t N_limit=arity::value, size_t N_index=0>
-				XTAL_FN1_(T &) generate(V const &u)
-				XTAL_0EX
-				{
-					using size_type = typename co::size_type; static_assert(_std::integral<size_type>);
-					auto &s = get();
-					auto constexpr H_limit = N_limit >> 1; static_assert(0 < H_limit);
-					auto constexpr _0 = N_index + 0;
-					auto constexpr _1 = N_index + 1;
-					auto constexpr _H = N_index + H_limit;
-					auto constexpr N1 = N_index + N_limit - 1;
-					auto constexpr N2 = N_index + N_limit - 2;
-					auto const      o = realized::template explo_y(N_index, u);
-					s[_0] = o;
-					s[_1] = o*u;
-					for (size_type i = _1; i < _H; ++i)
-					{	auto w = realized::square_y(s[i]);
-						auto h = i << 1;
-						s[h] = w;
-						h   += 1;
-						w   *= u;
-						s[h] = w;
-					}
-					if constexpr (N_limit&1)
-					{	s[N1] = s[N2]*u;
-					}
-					return s;
-				}
-
-				///\returns `this` as the Fourier basis used by `transform` etc, \
-				comprising `arity::value` values of the half-period complex sinusoid.
-
-				///\note Only the first eighth-period is computed, \
-				then mirrored to complete the quarter and half respectively. \
-
-				XTAL_FN1_(T &) generate()
-				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<arity::value, 2> and complex_q<V>
-				{
-					auto &s = get();
-					auto constexpr x = realized::template patio_y<-1>(arity::value);
-					auto constexpr L = arity::value >> 2;
-					auto const  i0 =         s.begin(), i1 = _std::next(i0, 1);
-					auto const  j0 = _std::next(i0, L), j1 = _std::next(j0, 1);
-					auto const  k0 = _std::next(j0, L), k1 = _std::next(k0, 1);
-					auto const _k1 = _std::make_reverse_iterator(k1);
-					generate<L + 1>(realized::circle_y(x));
-					_detail::copy_to(_k1, _std::span(i0, j0), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
-					_detail::copy_to( k1, _std::span(i1, k1), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
-					return s;
-				}
-				
-				///\returns `that` transformed by the FFT, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
-				XTAL_0EX
-				XTAL_IF1 bit_ceiling_q<arity::value, 1>
-				{
-					using size_type = typename Y::size_type; static_assert(_std::integral<size_type>);
-
-					size_type const n_size = that.size();
-					size_type const h_size = n_size >> 1;
-					size_type const k_size = bit_ceiling_y(n_size); assert(n_size == 1 << k_size);
-					size_type const K_size = bit_ceiling_y(arity::value); assert(k_size <= K_size);
-
-					for (size_type h = 0; h < h_size; ++h)
-					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
-					}
-					if constexpr (if_q<typename parallel::type, Y>)
-					{	_detail::apply_to(that, [](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u))));
-					}
-					for (size_type k = 0; k < k_size; ++k)
-					{	size_type const kn = K_size - k;
-						size_type const u = 1 << k;
-						size_type const w = u << 1;
-						for (size_type                 i = 0; i < u; i += 1)
-						for (size_type kn_i = i << kn, j = i; j < n_size; j += w)
-						{	V const y = that[j + u]*get(kn_i);
-							V const x = that[j + 0];
-							that[j + u] = x - y;
-							that[j + 0] = x + y;
-						}
-					}
-					if constexpr (if_q<typename parallel::type, Y>)
-					{	auto const u_size = realized::template ratio_y<1>(n_size);
-						_detail::apply_to(that, [=](XTAL_DEF u) XTAL_0FN_(_std::conj(XTAL_REF_(u)*u_size)));
-					}
-					return that.template get<typename Y::transformed_t &>();
-				}
-				///\returns a new `series` representing the FFT of `lhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN2_(typename Y::transformed_t) transformation(Y that)
-				XTAL_0EX
-				{
-					return transform(that);
-				}
-
-				///\returns `lhs` convolved with `rhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN1 convolve(Y &lhs, Y rhs)
-				XTAL_0EX
-				{
-					return transform(transform(lhs) *= transform(rhs));
-				}
-				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
-				using `this` as the Fourier basis. \
-
-				template <iterated_q Y>
-				XTAL_FN2_(Y) convolution(Y lhs, Y const &rhs)
-				XTAL_0EX
-				{
-					return convolve(lhs, rhs);
-				}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
-		};
-		struct parallel
-		{
-			template <typename T>
-			using heterotype = typename scalar::template homotype<T>;
-
-			template <typename T>
-			class homotype: public heterotype<T>
-			{
-				using co = heterotype<T>;
-			
-			public:
-				using co::co;
-				using co::get;
-
-			//	using transformed_t = typename serial::type;
-				using transformed_t = typename series::type;
-
-			//	Elementwise multiplication/division:
-
-				XTAL_OP1_(T &) *= (etc_t<V> w) XTAL_0EX {return get() *= T(w.begin(), w.end());}
-				XTAL_OP1_(T &) /= (etc_t<V> w) XTAL_0EX {return get() /= T(w.begin(), w.end());}				
-				
-				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) *= t.get(i))), get();}
-				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<arity::value>([&, this](XTAL_DEF i) XTAL_0FN_(get(i) /= t.get(i))), get();}
+				XTAL_OP2        -> () XTAL_0FX {return static_cast<const pointed_t<T>*>(this);}
+				XTAL_OP2        -> () XTAL_0EX {return static_cast<      pointed_t<T>*>(this);}
 
 			};
 			class type: public homotype<type>
@@ -490,40 +275,428 @@ struct collected
 			};
 		};
 		///\
-		A mutually inverse couple that can be mapped to their dual via `lhs +/- rhs >> N_shift`, \
-		and used to represent e.g. cosine/sine or mid/side pairs.
-		
-		template <int N_shift> requires (arity::value == 2)
-		struct converse<N_shift>
+		Represents a sequence that supports elementwise addition/subtracion, \
+		where multiplication is performed by linear convolution. \
+
+		///\
+		The increment/decrement operators provide forward/backward iteration \
+		based on finite differences/derivatives. \
+
+	//	TODO: Reify `{phase, frequency}` with sample-rate to define `control::phasor`. \
+	
+	//	TODO: Combine `control::phasor` with the aperiodic counterpart `{counter, trigger}`, \
+		allowing event-to-signal integration `{{delta}, {omega}} -> {{sigma, delta}, {phi, omega}}`. \
+
+		struct serial
 		{
 			template <typename T>
-			using heterotype = typename parallel::template homotype<T>;
+			using hemitype = typename scalar::template homotype<T>;
 
 			template <typename T>
-			class homotype: public heterotype<T>
+			class homotype: public hemitype<T>
 			{
-				using co = heterotype<T>;
+			//	TODO: Subclass to define serial pairs like `complex`. \
+
+				friend T;
+				using co = hemitype<T>;
 			
 			public:
 				using co::co;
-				using co::get;
+				using co::at;
+				using co::self;
+				using co::twin;
 
-				using reflected_t = typename converse<N_shift^1>::type;
+				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
+				XTAL_OP1_(T &) -= (bracket_t<V> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
+				
+				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) += t.at(i))), self();}
+				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) -= t.at(i))), self();}
 
-				XTAL_FN2 even()
-				XTAL_0FX
+				///\
+				Multiplication by linear convolution, truncated by `N_size`. \
+
+				XTAL_OP1_(T &) *=(T const &t)
+				XTAL_0EX
 				{
-					return (get(0) + get(1))*(realized::template haplo_v<N_shift>);
+				//	NOTE: Accuracy is better when looped from back-to-front, \
+					but `MSVC` doesn't inline for some reason (even when the following is rephrased...). \
+
+				//	for (iota_t i = N_size;  ~--i;) {s[i] *= t[0];
+				//	for (iota_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];
+				//	}}
+
+					auto &s = self();
+					auto _s = self();
+					auto constexpr h = N_size - 1;
+
+					seek_f<N_size>([&, this](auto n)
+					XTAL_0FN
+					{	size_t constexpr i = h - n; s[i] *= t[0];
+						seek_f<i>([&, this](auto m)
+						XTAL_0FN
+						{	size_t constexpr j = i - m; s[i] += _s[i - j]*t[j];
+						});
+					});
+					return s;
 				}
-				XTAL_FN2 odd()
+				XTAL_OP2_(T) * (T const &t)
 				XTAL_0FX
-				{
-					return (get(0) - get(1))*(realized::template haplo_v<N_shift>);
+				{	return twin() *= t;
 				}
-				XTAL_OP2 ~ ()
+				
+				///\
+				Produces the successor by pairwise addition starting from `begin()`, \
+				assuming the entries of `this` are finite differences/derivatives. \
+
+				XTAL_OP1 ++ (int)
+				XTAL_0EX
+				{
+					auto o = self(); operator++(); return o;
+				}
+				XTAL_OP1 ++ ()
+				XTAL_0EX
+				{
+					auto constexpr N = N_size - 0;
+					auto constexpr M = N_size - 1;
+					seek_f<M>([&, this](auto i) XTAL_0FN_(at(0 + i) += at(1 + i)));
+					return self().wrap();
+				}
+
+				///\
+				Produces the predecessor by pairwise subtraction starting from `end()`, \
+				assuming the entries of `this` are finite differences/derivatives. \
+
+				XTAL_OP1 -- (int)
+				XTAL_0EX
+				{
+					auto o = self(); operator--(); return o;
+				}
+				XTAL_OP1 -- ()
+				XTAL_0EX
+				{
+					auto constexpr N = N_size - 0;
+					auto constexpr M = N_size - 1;
+					seek_f<M>([&, this](auto i) XTAL_0FN_(at(M - i) -= at(N - i)));
+					return self().wrap();
+				}
+
+				XTAL_FN1_(T &) wrap()
+				XTAL_0EX
+				{
+					auto &s = self();
+					if constexpr (alpha_q<V>)
+					{	s[0] -= _std::round(s[0]);
+					}
+					return s;
+				}
+
+			};
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+
+			public:
+				using co::co;
+
+			};
+		};
+		///\
+		Represents a sequence that supports elementwise addition/subtracion, \
+		where multiplication is performed by circular convolution. \
+
+		struct series
+		{
+			template <typename T>
+			using hemitype = typename serial::template homotype<T>;
+
+			template <typename T>
+			class homotype: public hemitype<T>
+			{
+				friend T;
+				using co = hemitype<T>;
+			
+			public:
+				using co::co;
+				using co::at;
+				using co::self;
+				using co::twin;
+
+				///\
+				The transformed domain of the FFT (\see `transform`), \
+				in which multiplication is performed elementwise (\see `convolve`). \
+
+				using transformed_t = typename couple::type;
+
+				///\
+				Generates part of the complex sinusoid determined by `std::pow(2, shift_o::value)`. \
+
+				XTAL_NEW_(explicit) homotype(constant_q auto const shift_o)
+				{
+					generate<shift_o>();
+				}
+				///\
+				Generates the power series with the given seed. \
+
+				XTAL_NEW_(explicit) homotype(XTAL_DEF_(is_q<V>) v)
+				{
+					generate(XTAL_REF_(v));
+				}
+
+				///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
+					filled by the corresponding powers of `u`. \
+
+				template <size_t N_limit=N_size, size_t N_index=0>
+				XTAL_FN1_(T &) generate(V const &u)
+				XTAL_0EX
+				{
+					auto &s = self();
+					using I = typename co::difference_type;
+
+				//	Compute the start- and end-points for the required segment:
+					I constexpr H_limit = N_limit >> 1;
+					I constexpr _0 = N_index + 0;
+					I constexpr _1 = N_index + 1;
+					I constexpr _H = N_index + H_limit;
+					I constexpr N1 = N_index + N_limit - 1;
+					I constexpr N2 = N_index + N_limit - 2;
+
+				//	Compute and populate the 0th and 1st powers:
+					auto const o = _realized::template explo_y(N_index, u);
+					s[_0] = o;
+					s[_1] = o*u;
+
+					for (I i = _1; i < _H; ++i)
+					{	auto w = _realized::square_y(s[i]);
+					
+					//	Use the square of the previous value to populate the value at `i << 1`:
+						I ii = i << 1;
+						s[ii + 0] = w;
+						s[ii + 1] = w*u;
+
+					}
+				//	Compute the final value if `N_limit` is odd:
+					if constexpr (N_limit&1)
+					{	s[N1] = s[N2]*u;
+					}
+					return s;
+				}
+
+				///\returns\
+				`this` as the section of the complex sinusoid with length `2*PI*std::pow(2, N_shift)`, \
+				where `-3 <= N_shift`. \
+				
+				///\note\
+				To generate the FFT basis used by `transform` etc, use `N_shift == -1`. \
+
+				template <int N_shift=0>
+				XTAL_FN1_(T &) generate()
+				XTAL_0EX
+				XTAL_IF1 bit_ceiling_q<N_size, 2> and complex_q<V>
+				{
+				//	Compute the segment indicies for `1/8`, `1/4`, and `1/2`:
+					typename co::difference_type constexpr H = N_size >> 2;
+					auto const i = co::begin();
+					auto const i0_8 = i + 0*H;
+					auto const i1_8 = i + 1*H;
+					auto const i2_8 = i + 2*H;
+					auto const i4_8 = i + 4*H;
+					auto const j2_8 = _std::make_reverse_iterator(i2_8 + 1);
+					
+				//	Compute the fractional sinusoid for the given `N_size`:
+					auto constexpr x = _realized::template patio_y<-1>(N_size);
+					auto const     y = _realized::circle_y(x);// TODO: Make `constexpr`.
+					
+				//	Compute the initial `1/8`th then mirror the remaining segments:
+					static_assert(-4 <  N_shift);// NOTE: Minimum period is 1/8th.
+					generate<H + (-3 <  N_shift)>(y);
+					if constexpr (-2 <= N_shift) _detail::copy_to(j2_8, _std::span(i0_8, i1_8), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
+					if constexpr (-1 <= N_shift) _detail::copy_to(i2_8, _std::span(i0_8, i2_8), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
+					if constexpr (-0 <= N_shift) _detail::copy_to(i4_8, _std::span(i0_8, i4_8), [](V const &v) XTAL_0FN_(V(-v.real(), -v.imag())));
+					static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `seek`.
+					
+					return self();
+				}
+				
+				///\returns\
+				`that` transformed by the FFT, using `this` as the Fourier basis. \
+				
+				///\note\
+				The size of both `this` and `that` must be expressible as an integral power of two, \
+				and `1 < that.size() <= this->size()`. \
+
+				template <iso_q<T> Y>
+				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
+				XTAL_0FX
+				XTAL_IF1 bit_ceiling_q<N_size, 1> and complex_q<V>
+				{
+					using I = typename Y::difference_type;
+
+				//	Determine whether the input corresponds to the codomain (possibly with a smaller `N_size`):
+				//	bool constexpr degenerate = if_q<transformed_t, Y>;
+					bool constexpr degenerate = not requires (Y y) {y.generate();};
+
+				//	Ensure the size of both domain and codomain are powers of two:
+					I const n_size = that.size(); assert(2 <= n_size);
+					I const h_size = n_size >> 1; assert(1 <= h_size);
+					I const k_size = bit_ceiling_y(n_size); assert(n_size == 1 << k_size);
+					I const K_size = bit_ceiling_y(N_size); assert(k_size <= K_size);
+
+				//	Move all entries to their bit-reversed locations:
+					for (I h = 0; h < h_size; ++h)
+					{	_std::swap(that[h], that[bit_reverse_y(h, k_size)]);
+					}
+				
+				//	Conjugate the input if computing the inverse transform of the codomain:
+					if constexpr (degenerate)
+					{	_detail::apply_to(that, XTAL_1FN_(_std::conj));
+					}
+				//	Compute the transform of `that` using the precomputed sinusoid via `self`:
+					for (I k = 0; k < k_size; ++k)
+					{	I const kn = K_size - k;
+						I const u = 1 << k;
+						I const w = u << 1;
+						I const n = n_size;
+						for (I                  i = 0; i < u; i += 1)
+						for (I knife = i << kn, j = i; j < n; j += w)
+						{	V const y = that[j + u]*at(knife);
+							V const x = that[j + 0];
+							that[j + u] = x - y;
+							that[j + 0] = x + y;
+						}
+					}
+				//	Conjugate and scale the output if computing the inverse transform of the codomain:
+					if constexpr (degenerate)
+					{	auto const u_size = _realized::template ratio_y<1>(n_size);
+						_detail::apply_to(that, XTAL_1FN_(u_size*_std::conj));
+					}
+				
+				//	Cast the output to the transformed domain:
+					return that.template self<typename Y::transformed_t &>();
+				}
+				///\returns a new `series` representing the FFT of `lhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iso_q<T> Y>
+				XTAL_FN2_(typename Y::transformed_t) transformation(Y that)
 				XTAL_0FX
 				{
-					return reflected_t{even(), odd()};
+					return transform(that);
+				}
+
+				///\returns `lhs` convolved with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iso_q<T> Y>
+				XTAL_FN1_(Y &) convolve(Y &lhs, Y rhs)
+				XTAL_0FX
+				{
+					return transform(transform(lhs) *= transform(rhs));
+				}
+				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
+				using `this` as the Fourier basis. \
+
+				template <iso_q<T> Y>
+				XTAL_FN2_(Y) convolution(Y lhs, Y const &rhs)
+				XTAL_0FX
+				{
+					return convolve(lhs, rhs);
+				}
+
+				///\
+				Multiplication by circular convolution. \
+
+				XTAL_OP1_(T &) *=(T const &t)
+				XTAL_0EX
+				{
+					T &s = self();
+					if constexpr (complex_q<V>)
+					{	T(constant_o<-1>).convolve(s, t);
+					}
+					else
+					{	using W = typename _realized::alphaplex_t;
+						using Y = typename recollected_t<W>::series::type;
+						Y s_(s);
+						Y t_(t);
+						Y(constant_o<-1>).convolve(s_, t_);
+						_detail::move_to(s.begin(), s_, XTAL_1FN_(_std::real));
+					}
+					return s;
+				}
+				XTAL_OP2_(T) * (T const &t)
+				XTAL_0FX
+				{
+					return twin() *= t;
+				}
+
+			};
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+
+			public:
+				using co::co;
+
+			};
+		};
+		///\
+		Represents a sequence that supports elementwise multiplication/division. \
+
+		struct couple
+		{
+			template <typename T>
+			using hemitype = typename scalar::template homotype<T>;
+
+			template <typename T>
+			class homotype: public hemitype<T>
+			{
+				friend T;
+				using co = hemitype<T>;
+			
+			public:
+				using co::co;
+				using co::at;
+				using co::self;
+				using co::twin;
+
+				///\
+				The transformed domain of the inverse FFT, \
+				in which multiplication is performed via convolution. \
+				
+				using transformed_t = typename series::type;
+
+			//	Elementwise multiplication/division:
+
+				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
+				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
+				
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= t.at(i))), self();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= t.at(i))), self();}
+
+				///\returns\
+				the mutually inverse couple `(lhs +/- rhs)*reflector()`, \
+				e.g. for exponential or mid/side pairs. \
+
+				template <int N_bias=0>
+				XTAL_FN2 reflected()
+				XTAL_0FX
+				XTAL_IF1 (N_size == 2)
+				{
+					auto const &lhs = at(0)*reflector<N_bias>();
+					auto const &rhs = at(1)*reflector<N_bias>();
+					return T {lhs + rhs, lhs - rhs};
+				}
+				template <int N_bias=0>
+				XTAL_FZ2 reflector()
+				XTAL_IF1 (N_size == 2)
+				{
+					using alpha_t = typename _realized::alpha_t;
+					switch (N_bias)
+					{
+						case +1: return (alpha_t) 1.0000000000000000000000000000000000000;
+						case  0: return (alpha_t) 0.7071067811865475244008443621048490393;
+						case -1: return (alpha_t) 0.5000000000000000000000000000000000000;
+					}
+				//	return _realized::explo_y(1 - N_bias, _realized::template unsquare_y<-1>((alpha_t) 2));
 				}
 
 			};

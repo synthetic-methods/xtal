@@ -14,7 +14,7 @@ namespace xtal::block
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 A decorator that defines the base-types for block-based data storage, \
-namely `fixed` (sharing the same interface as `std::array`), \
+namely `solid` (sharing the same interface as `std::array`), \
 and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
 and can be further transformed using `collected` to provide differentiated types. \
@@ -27,33 +27,23 @@ struct collector
 	{
 		using co = S;
 		
-		template <typename W> using etc_t = _std::initializer_list<W>;
-
 	public:
 		using co::co;
-		using arity = constant_t<N_size>;
 
-		template <typename V> struct fixed;
-		template <typename V> struct fluid;
+		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
 		
+		template <typename V> struct solid;///< Mimics `std::array`.
+		template <typename V> struct fluid;///< Mimics `std::vector`.
+		///\note\
+		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
+		Otherwise, only `fluid` is defined as `std::vector`. \
+
 
 		template <typename V> requires (0 < N_size)
-		struct fixed<V>
+		struct solid<V>
 		{
-			using kind = _std::array<V, N_size>;// FIXME: Just an easy way to access `std::apply` etc for now...
-			class type: public kind
-			{
-				using co = kind;
+			using type = _std::array<V, N_size>;
 
-			public:
-				XTAL_NEW type(etc_t<V> in)
-				XTAL_0EX
-				{
-					_detail::copy_to(co::begin(), in.begin(), in.end());
-				}
-				using co::co;
-
-			};
 		};
 		template <typename V> requires (N_size < 0)
 		struct fluid<V>
@@ -64,64 +54,54 @@ struct collector
 		template <typename V>
 		struct fluid
 		{
-		private:
-			using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
-
-			template <typename I>
-			XTAL_FZ2_(I) appointed_f(XTAL_DEF i) XTAL_0EX {return _std::launder(reinterpret_cast<I>(XTAL_REF_(i)));}
-			
-			XTAL_FZ2_(A       *) appointee_f(V       *i) XTAL_0EX {return appointed_f<A       *>(i);}
-			XTAL_FZ2_(A const *) appointee_f(V const *i) XTAL_0EX {return appointed_f<A const *>(i);}
-			XTAL_FZ2_(V       *) appointer_f(A       *i) XTAL_0EX {return appointed_f<V       *>(i);}
-			XTAL_FZ2_(V const *) appointer_f(A const *i) XTAL_0EX {return appointed_f<V const *>(i);}
-			
-			XTAL_FZ2 reverse_appointee_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointee_f(XTAL_REF_(i)));}
-			XTAL_FZ2 reverse_appointer_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(appointer_f(XTAL_REF_(i)));}
-
-		public:
-			template <typename T>
-			class homotype: public iterate_t<T>
+			class type: public iterate_t<type>
 			{
-				using co = iterate_t<T>;
+				using co = iterate_t<type>;
+
+				using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
+
+				XTAL_FZ2 _ptr_f(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
+				XTAL_FZ2 _ptr_f(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
+				XTAL_FZ2 _ptr_f(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
+				XTAL_FZ2 _ptr_f(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
+				
+				XTAL_FZ2 _rev_ptr_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(_ptr_f(XTAL_REF_(i)));}
 				
 			//	alignas(V) _std::byte block_m[sizeof(V)*(N_size)];
 				A  block_m[N_size];
 				A* limit_m = block_m;
 
 			public:
-				XTAL_FN2 get() XTAL_0FX_(&) {return static_cast<T const &>(*this);}
-				XTAL_FN2 get() XTAL_0EX_(&) {return static_cast<T       &>(*this);}
-				XTAL_RN4_(XTAL_FN2 get(XTAL_DEF i), get()[XTAL_REF_(i)]);
-
 			//	using co;
 				using co::size;
 
-				using         allocator_type = T;
 				using             value_type = V;
+				using         allocator_type = type;
 
 				using              size_type = _std::size_t;
 				using        difference_type = _std::ptrdiff_t;
 
-				using              reference = value_type       &;
-				using        const_reference = value_type const &;
+				using              reference =       value_type &;
+				using        const_reference = const value_type &;
 				
-				using                pointer = value_type       *;
-				using          const_pointer = value_type const *;
+				using                pointer =       value_type *;
+				using          const_pointer = const value_type *;
 
-				using               iterator = value_type       *;
-				using         const_iterator = value_type const *;
+				using               iterator =       value_type *;
+				using         const_iterator = const value_type *;
 				
 				using       reverse_iterator = _std::reverse_iterator<      iterator>;
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
-				XTAL_RN4_(XTAL_OP2[](size_type i), *appointer_f(block_m + i));
-				XTAL_RN4_(XTAL_OP2()(size_type i),  appointer_f(block_m + i));
 
-				XTAL_RN4_(XTAL_FN2 rbegin(), reverse_appointer_f(limit_m));
-				XTAL_RN4_(XTAL_FN2  begin(),         appointer_f(block_m));
-				XTAL_RN4_(XTAL_FN2   rend(), reverse_appointer_f(block_m));
-				XTAL_RN4_(XTAL_FN2    end(),         appointer_f(limit_m));
-				
+				XTAL_RN4_(XTAL_OP2[](size_type i), *_ptr_f(block_m + i));
+				XTAL_RN4_(XTAL_OP2()(size_type i),  _ptr_f(block_m + i));
+
+				XTAL_RN4_(XTAL_FN2 rbegin(), _rev_ptr_f(limit_m));
+				XTAL_RN4_(XTAL_FN2  begin(),     _ptr_f(block_m));
+				XTAL_RN4_(XTAL_FN2   rend(), _rev_ptr_f(block_m));
+				XTAL_RN4_(XTAL_FN2    end(),     _ptr_f(limit_m));
+
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
 				XTAL_FN2  cbegin() XTAL_0FX {return  begin();}
 				XTAL_FN2   crend() XTAL_0FX {return   rend();}
@@ -132,20 +112,20 @@ struct collector
 				///\
 				Clear destructor. \
 
-				~homotype()
+				~type()
 				{
 					clear();
 				}
 				///\
 				Default constructor. \
 
-				homotype() noexcept = default;
+				type() noexcept = default;
 
 				///\
 				Insert constructor. \
 				Initializes `this` with `sN` values determined by the given arguments. \
 
-				XTAL_NEW_(explicit) homotype(size_type sN, XTAL_DEF ...ws)
+				XTAL_NEW_(explicit) type(size_type sN, XTAL_DEF ...ws)
 				{
 					insert_back(sN, XTAL_REF_(ws)...);
 				}
@@ -155,7 +135,7 @@ struct collector
 				Initializes `this` with the values between `i0` and `iN`. \
 
 				template <iso_q<iterator> I0, iso_q<iterator> IN>
-				XTAL_NEW_(explicit) homotype(I0 i0, IN iN)
+				XTAL_NEW_(explicit) type(I0 i0, IN iN)
 				{
 					using I = _std::common_type_t<I0, IN>;
 					I i0_ = i0;
@@ -167,67 +147,67 @@ struct collector
 				List constructor. \
 				Initializes `this` with the given values. \
 
-				XTAL_NEW_(explicit) homotype(etc_t<V> etc)
-				:	homotype(etc.begin(), etc.end())
+				XTAL_NEW_(explicit) type(bracket_t<V> w)
+				:	type(w.begin(), w.end())
 				{
 				}
 				///\
 				List assignment. \
 				Replaces the contents of `this` with the given values. \
 
-				XTAL_OP1 = (etc_t<V> etc)
+				XTAL_OP1 = (bracket_t<V> w)
 				{
-					refill(etc.begin(), etc.end());
-					return get();
+					refill(w.begin(), w.end());
+					return *this;
 				}
 
 				///\
 				Copy constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW homotype(homotype const &t)
-				:	homotype(t.begin(), t.end())
+				XTAL_NEW type(type const &t)
+				:	type(t.begin(), t.end())
 				{
 				}
 				///\
 				Copy assigment. \
 				Replaces the contents of `this` with the given data. \
 
-				XTAL_OP1 = (homotype const &t)
+				XTAL_OP1 = (type const &t)
 				{
 					refill(t.begin(), t.end());
-					return get();
+					return *this;
 				}
 
 				///\
 				Move constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW homotype(homotype &&t)
-				:	homotype(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
+				XTAL_NEW type(type &&t)
+				:	type(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
 				{
 				}
 				///\
 				Move assigment. \
 				Replaces the contents of `this` with the given data. \
 
-				XTAL_OP1 = (homotype &&t)
+				XTAL_OP1 = (type &&t)
 				{
 					refill(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
-					return get();
+					return *this;
 				}
 
 				///\
 				Swaps the contents of `this` with the given data. \
 
-				XTAL_FN0 swap(homotype &t)
+				XTAL_FN0 swap(type &t)
 				requires _std::swappable<value_type>
 				{
 					_std::swap_ranges(begin(), end(), t.begin());
 				}
 
 				///\
-				\returns the fixed capacity `N_size`. \
+				\returns the constant `N_size`. \
 
 				XTAL_FN2_(size_type) capacity()
 				XTAL_0EX
@@ -326,24 +306,24 @@ struct collector
 				///\
 				Resizes `this` to `sN` elements. \
 
-				XTAL_FN0 resize(size_type sN, XTAL_DEF ...ws)
+				XTAL_FN0 resize(size_type sN, XTAL_DEF ...etc)
 				{
 					size_type const sM = size();
 					if (sN < sM)
 					{	pop_back(sM - sN);
 					}
 					else
-					{	insert_back(sN - sM, XTAL_REF_(ws)...);
+					{	insert_back(sN - sM, XTAL_REF_(etc)...);
 					}
 				}
 
 				///\
 				Clears `this` and invokes `insert_back` with the given arguments. \
 
-				XTAL_FN0 refill(XTAL_DEF ...ws)
+				XTAL_FN0 refill(XTAL_DEF ...etc)
 				{
 					clear();
-					insert_back(XTAL_REF_(ws)...);
+					insert_back(XTAL_REF_(etc)...);
 				}
 
 				///\
@@ -364,7 +344,7 @@ struct collector
 				///\
 				Inserts the values `etc` beginning at `i0`. \
 
-				XTAL_FN0 push_back(etc_t<V> etc)
+				XTAL_FN0 push_back(bracket_t<V> etc)
 				{
 					insert_back(etc.begin(), etc.end());
 				}
@@ -373,33 +353,33 @@ struct collector
 
 				XTAL_FN0 push_back(XTAL_DEF_(to_q<V>) ...etc)
 				{
-					push_back(etc_t<V>{V(XTAL_REF_(etc))...});
+					push_back(bracket_t<V>{V(XTAL_REF_(etc))...});
 				}
 
 				///\
 				Constructs an element at the end of `this` using the given arguments. \
 				\returns a reference to the element.
 
-				XTAL_FN1_(reference) emplace_back(XTAL_DEF ...ws)
+				XTAL_FN1_(reference) emplace_back(XTAL_DEF ...etc)
 				{
-					return *inplace_back(XTAL_REF_(ws)...);
+					return *inplace_back(XTAL_REF_(etc)...);
 				}
 				///\
 				Constructs an element at the end of `this` using the given arguments. \
 				\returns a pointer to the element.
 
-				XTAL_FN1_(iterator) inplace_back(XTAL_DEF ...ws)
+				XTAL_FN1_(iterator) inplace_back(XTAL_DEF ...etc)
 				{
 					reserve(size_type(1) + size());
-					return ::new (limit_m++) V(XTAL_REF_(ws)...);
+					return ::new (limit_m++) V(XTAL_REF_(etc)...);
 				}
 
 				///\
 				Invokes `insert` at `this->end()` with the given arguments. \
 
-				XTAL_FN1_(iterator) insert_back(XTAL_DEF ...ws)
+				XTAL_FN1_(iterator) insert_back(XTAL_DEF ...etc)
 				{
-					return insert(end(), XTAL_REF_(ws)...);
+					return insert(end(), XTAL_REF_(etc)...);
 				}
 
 				///\
@@ -417,12 +397,12 @@ struct collector
 				}
 
 				///\
-				Inserts the values `etc` beginning at `i`. \
+				Inserts the values `w` beginning at `i`. \
 
 				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, etc_t<V> etc)
+				XTAL_FN1_(iterator) insert(I i, bracket_t<V> w)
 				{
-					return insert(i, etc.begin(), etc.end());
+					return insert(i, w.begin(), w.end());
 				}
 
 				///\
@@ -462,9 +442,9 @@ struct collector
 				XTAL_FN1_(iterator) inject(I i, size_type sN)
 				{
 					reserve(sN + size());
-					if (i < end())// and _std::move_constructible<V>)
-					{	auto j = reverse_appointer_f(limit_m);
-						_detail::move_to(_std::prev(j, sN), j, _std::next(j, sN), true);
+					if (i < end() and _std::move_constructible<V>)
+					{	reverse_iterator iN = rbegin();
+						_detail::move_to(_std::prev(iN, sN), iN, _std::next(iN, sN), true);
 					}
 					else
 					{	assert(i == end());
@@ -490,10 +470,10 @@ struct collector
 					if constexpr (_std::destructible<V>)
 					{	_std::destroy(i0_, iN_);
 					}
-					if (iN_ < end_m)// and _std::move_constructible<V>)
-					{	auto jN = appointee_f(iN_);
-						auto j0 = appointee_f(i0_);
-						_detail::move_to(j0, jN, limit_m, sN <= _std::distance(jN, limit_m));
+					if (iN_ < end_m and _std::move_constructible<V>)
+					{	A* hN = _ptr_f(iN_);
+						A* h0 = _ptr_f(i0_);
+						_detail::move_to(h0, hN, limit_m, sN <= _std::distance(hN, limit_m));
 					}
 					else
 					{	assert(end_m == iN_);
@@ -502,16 +482,10 @@ struct collector
 				}
 
 			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-			public:
-				using co::co;
-
-			};
 		};
 
 	};
+	using type = subtype<unit_t>;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

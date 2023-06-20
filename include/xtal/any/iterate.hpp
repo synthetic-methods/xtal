@@ -11,16 +11,20 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-
-template <typename    T  >    using iterate_t  = _v3::ranges::view_interface<T>;
-
-
 template <typename    T  >    using front_t    = XTAL_TYP_(*XTAL_VAL_(T).begin());
 template <typename    T  >    using begin_t    = XTAL_TYP_( XTAL_VAL_(T).begin());
 
 template <typename    T  >  concept front_p    = requires (T t) {t.front();};
 template <typename    T  >  concept begin_p    = requires (T t) {t.begin();};
+
+template <typename ...Ts >  concept front_q    = every_q<front_p<Ts>...>;
+template <typename ...Ts >  concept begin_q    = every_q<begin_p<Ts>...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename    T  >    using iterate_t  = _v3::ranges::view_interface<T>;
+template <typename ...Ts >  concept iterate_q  = bracket_q<Ts...>;
 
 
 template <typename    T  >  concept iterable_p = begin_p<T> and not front_p<T>;
@@ -73,8 +77,53 @@ template <counter_p   T  >   struct counted<T> : constant_t<0> {using type = ite
 template <counted_p   T  >   struct counter<T> : constant_t<0> {using type = iteratee_t<T>;};
 template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    based_t<T>;};
 
-template <typename T=iota_t> using  counted_t  = typename counted<T>::type;
-template <typename T=iota_t> using  counter_t  = typename counter<T>::type;
+template <typename T=iota_t>  using counted_t  = typename counted<T>::type;
+template <typename T=iota_t>  using counter_t  = typename counter<T>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename   ...Ts> struct    isomorphic;
+template <iterated_q ...Ts> struct    isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts> struct    isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
+template <typename   ...Ts> concept   isomorphic_q =     isomorphic<Ts...>::value;
+template <typename   ...Ts> concept   iso_q = isomorphic_q<Ts...>;
+template <typename   ...Ts> concept aniso_q = isomorphic_q<Ts...> and not is_q<Ts...>;
+
+template <typename T, typename ...Ts>
+struct isomorphic<T, Ts...>:
+_std::disjunction<
+	constant_t<to_p<Ts, T>>...,
+	constant_t<to_p<T, Ts>>...,
+	_std::false_type
+>	{};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterated_q X, iterated_q Y>
+XTAL_FN2_(bool) arranged_e(X const &x, Y const &y)
+XTAL_0EX
+{
+	if constexpr (iso_q<X, Y>)
+	{	return x.begin() == y.begin() and x.end() == y.end();
+	}
+	else
+	{	return false;
+	}
+}
+
+template <typename T>
+using     deranged_t = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+XTAL_LET  deranged_f = [](XTAL_DEF x)
+XTAL_0FN_(deranged_t<decltype(x)>(XTAL_REF_(x)));
+
+template <iterated_q X, iterated_q Y>
+XTAL_FN2_(bool) deranged_e(X const &x, Y const &y)
+XTAL_0EX
+{
+	return arranged_e(deranged_f(x), deranged_f(y));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,37 +160,6 @@ XTAL_0FN
 	{	return zip_with(g, XTAL_REF_(xs)...);
 	}
 });
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <iterated_q ...Ys> struct isomorphic<Ys...>: isomeric<iterated_t<Ys>...> {};
-template <iterator_q ...Ys> struct isomorphic<Ys...>: isomeric<iterated_t<Ys>...> {};
-
-
-template <iterated_q X, iterated_q Y>
-XTAL_FN2_(bool) arranged_eq(X const &x, Y const &y)
-XTAL_0EX
-{
-	if constexpr (iso_q<X, Y>)
-	{	return x.begin() == y.begin() and x.end() == y.end();
-	}
-	else
-	{	return false;
-	}
-}
-
-template <typename T>
-using     deranged_t = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
-XTAL_LET  deranged_f = [](XTAL_DEF x)
-XTAL_0FN_(deranged_t<decltype(x)>(XTAL_REF_(x)));
-
-template <iterated_q X, iterated_q Y>
-XTAL_FN2_(bool) deranged_eq(X const &x, Y const &y)
-XTAL_0EX
-{
-	return arranged_eq(deranged_f(x), deranged_f(y));
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////

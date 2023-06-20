@@ -10,16 +10,18 @@ XTAL_ENV_(push)
 namespace xtal::block
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-template <int N,   typename V> using collection = compose_s<unit_t, collector<N>, collected<V>>;
-template <int N,   typename V> using   buffer_t = typename collection<N, V>::   buffer::type;
-template <int N,   typename V> using   siphon_t = typename collection<N, V>::   siphon::type;
-template <int N,   typename V> using   sluice_t = typename collection<N, V>::   sluice::type;
-template <int N,   typename V> using   scalar_t = typename collection<N, V>::   scalar::type;
-template <int N,   typename V> using   serial_t = typename collection<N, V>::   serial::type;
-template <int N,   typename V> using   series_t = typename collection<N, V>::   series::type;
-template <int N,   typename V> using parallel_t = typename collection<N, V>:: parallel::type;
-template <typename V, int M=0> using converse_t = typename collection<2, V>::template converse<M>::type;
-
+template <typename V, int N> using collection = compose_s<unit_t, collector<N>, collected<V>>;
+template <typename V, int N> using solid_t  = typename collection<V, N>::solid::type;
+template <typename V, int N> using fluid_t  = typename collection<V, N>::fluid::type;
+template <typename V, int N> using buffer_t = typename collection<V, N>::buffer::type;
+template <typename V, int N> using sluice_t = typename collection<V, N>::sluice::type;
+template <typename V, int N> using siphon_t = typename collection<V, N>::siphon::type;
+template <typename V, int N> using scalar_t = typename collection<V, N>::scalar::type;
+template <typename V, int N> using serial_t = typename collection<V, N>::serial::type;
+template <typename V, int N> using series_t = typename collection<V, N>::series::type;
+template <typename V, int N> using couple_t = typename collection<V, N>::couple::type;
+//\
+TODO: Split these into separate modules. \
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::content
+namespace xtal::confect
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +45,8 @@ struct define
 			return false;
 		}
 
+		XTAL_RN4_(XTAL_NEW operator _std::tuple<>(), tuple())
+
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
@@ -53,11 +55,11 @@ struct define
 		using tuple_size = constant_t<(size_t) 0>;
 
 	protected:
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(*this);}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(*this);}
+		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(_std::move(*this));}
+		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(_std::move(*this));}
 		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
 		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
-
+		
 		///\
 		\returns `this` as a subtype of the derived-type `T`. \
 
@@ -211,8 +213,8 @@ struct defer
 		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
 		XTAL_0FX
 		{
-			return [f_ = XTAL_REF_(f), this] <size_t ...Ns>(seek_t<Ns...>)
-				XTAL_0FN_(f_(head<Ns>()...)) (seek_v<tuple_size::value>);
+			return [f_ = XTAL_REF_(f), this] <size_t ...I>(seek_t<I...>)
+				XTAL_0FN_(f_(head<I>()...)) (seek_v<tuple_size::value>);
 		}
 		
 		XTAL_FN2 tuple()
@@ -221,6 +223,12 @@ struct defer
 			return apply(pack_f);
 		}
 		using tuple_size = constant_t<co::tuple_size::value + 1>;
+		using tuple_type = XTAL_TYP_([]
+			<size_t ...I>(seek_t<I...>)
+				XTAL_0FN_(XTAL_VAL_(_std::tuple<typename seek_s<I>::head_t...>))
+			(seek_v<tuple_size::value>))
+		;
+		XTAL_RN4_(XTAL_NEW operator tuple_type(), tuple())
 
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
@@ -295,12 +303,12 @@ struct comparators<U>
 		using co::co;
 		using co::head;
 
-	//	XTAL_OP2        <=>  (subtype const &t) XTAL_0FX {return head() <=> t.head();}
-		XTAL_OP2_(bool) ==   (subtype const &t) XTAL_0FX {return head() ==  t.head();}
-		XTAL_OP2_(bool) <=   (subtype const &t) XTAL_0FX {return head() <=  t.head();}
-		XTAL_OP2_(bool) >=   (subtype const &t) XTAL_0FX {return head() >=  t.head();}
-		XTAL_OP2_(bool) <    (subtype const &t) XTAL_0FX {return head() <   t.head();}
-		XTAL_OP2_(bool) >    (subtype const &t) XTAL_0FX {return head() >   t.head();}
+	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return head() <=> t.head();}
+		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return head() ==  t.head();}
+		XTAL_OP2_(bool) <=  (subtype const &t) XTAL_0FX {return head() <=  t.head();}
+		XTAL_OP2_(bool) >=  (subtype const &t) XTAL_0FX {return head() >=  t.head();}
+		XTAL_OP2_(bool) <   (subtype const &t) XTAL_0FX {return head() <   t.head();}
+		XTAL_OP2_(bool) >   (subtype const &t) XTAL_0FX {return head() >   t.head();}
 
 	};
 };
@@ -477,22 +485,22 @@ struct refer
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
 
-template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const &&t) {return ::std::move(t).template head<N>();};
 
-template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T       &&t) {return ::std::move(t).template head<N>();};
 
-template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};
 
-template <size_t N, xtal::content::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////

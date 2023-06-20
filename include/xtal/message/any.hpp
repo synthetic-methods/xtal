@@ -1,6 +1,6 @@
 #pragma once
-#include "../context/any.hpp"//_retail
-#include "../content/delay.hpp"
+#include "../conflux/any.hpp"//_retail
+#include "../confect/delay.hpp"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::context;
+namespace _retail = xtal::conflux;
 #include "../common/any.hxx"
 
 
@@ -37,10 +37,9 @@ struct define
 
 		struct attach
 		{
-			using message_t = T;
-			using subkind = context::defer<T>;
+			using subkind = conflux::defer<T>;
 
-			template <context::any_q R>
+			template <conflux::any_q R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -70,10 +69,9 @@ struct define
 		template <size_t N_arity=2>
 		struct dispatch
 		{
-			using message_t = T;
 			using subkind = attach;
 
-			template <context::any_q R>
+			template <conflux::any_q R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -81,7 +79,6 @@ struct define
 			public:
 			//	using co::co;
 				using co::self;
-				using co::head;
 
 				XTAL_CN2_(subtype);
 				XTAL_CN4_(subtype);
@@ -105,15 +102,9 @@ struct define
 				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
 				resolving the template-parameters using member-variables. \
 
-				/*/
 				XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
-				,	_std::bind_front(deify<Xs...>(), self())
+				,	_std::bind_front(deify<Xs...>(), &self())
 				)
-				/*/
-				XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
-				,	[this, _f = deify<Xs...>()](XTAL_DEF ...xs) XTAL_0FN_((self().*_f) (XTAL_REF_(xs)...))
-				)
-				/***/
 
 				///\
 				Resolves the overloaded function-pointer for the given types, \
@@ -128,7 +119,7 @@ struct define
 				XTAL_FN2 deify(auto const &fs)
 				XTAL_0FX
 				{
-					return co::deify(fs[head()]);
+					return co::deify(fs[co::head()]);
 				}
 
 				///\
@@ -141,12 +132,12 @@ struct define
 					template <auto ...Ms>
 					struct resolve
 					{
-						template <size_t ...Ns>
-						XTAL_FZ2 method_f(seek_t<Ns...>)
+						template <size_t ...I>
+						XTAL_FZ2 method_f(seek_t<I...>)
 						XTAL_0EX
 						{
 							using doing = typename co::template being<Xs...>;
-							return _std::array{(doing::template method<Ms..., Ns>)...};
+							return _std::array{(doing::template method<Ms..., I>)...};
 						}
 						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
@@ -158,17 +149,40 @@ struct define
 
 			};
 		};
+		///\
+		Attaches `T` as a namespace recognized by `this`. \
+
+		struct guard
+		{
+			using subkind = attach;
+
+			template <conflux::any_q R> requires (T::tuple_size::value == 0)
+			class subtype: public compose_s<R, subkind>
+			{
+				using co = compose_s<R, subkind>;
+			public:
+				using co::co;
+				using co::defuse;
+
+				XTAL_FNX defuse(XTAL_DEF_(is_q<T>) t)
+				XTAL_0EX
+				{
+					return 1;
+				}
+
+			};
+		};
 		template <int N_future=-1>
 		struct hold
 		{
-			template <context::any_q R>
+			template <conflux::any_q R>
 			class subtype: public compose_s<R>
 			{
 				using co = compose_s<R>;
 
-				using delay_t = content::delay_t;
-				using event_t = content::delay_s<T>;
-				using queue_t = block::sluice_t<N_future, event_t>;
+				using delay_t = confect::delay_t;
+				using event_t = confect::delay_s<T>;
+				using queue_t = block::siphon_t<event_t, N_future>;
 
 				delay_t d_{0};
 				queue_t q_;
@@ -190,12 +204,12 @@ struct define
 				///\
 				\returns the aggregate `flux` of queuing the messages with the given delay.. \
 
-				XTAL_FNX influx(content::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(confect::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(content::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(confect::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(confect::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
@@ -232,14 +246,14 @@ struct define
 		template <int N_future=-1>
 		struct interrupt
 		{
-			template <context::any_q R>
+			template <conflux::any_q R>
 			class subtype: public compose_s<R>
 			{
 				using co = compose_s<R>;
 			
-				using delay_t = content::delay_t;
-				using event_t = content::delay_s<T>;
-				using queue_t = block::siphon_t<N_future, event_t>;
+				using delay_t = confect::delay_t;
+				using event_t = confect::delay_s<T>;
+				using queue_t = block::sluice_t<event_t, N_future>;
 
 				queue_t q_;
 
@@ -267,12 +281,12 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(content::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(confect::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(content::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(confect::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(content::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(confect::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return 0 == dot.head()? influx(dot.tail(), XTAL_REF_(oo)...):

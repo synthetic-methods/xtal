@@ -16,7 +16,7 @@ namespace xtal
 Establishes the base types for the supplied `N_size` \
 (which should be representative of the desired `std::size_t`): \
 \
--	`aleph_t` represents floating-point complex numbers. \
+-	`alphaplex_t` represents floating-point complex numbers. \
 -	`alpha_t` represents floating-point real numbers. \
 -	`sigma_t` represents full-width `unsigned int`s like `std::size`. \
 -	`delta_t` represents full-width   `signed int`s used for binary and integer arithmetic. \
@@ -174,15 +174,38 @@ public:
 	using typename co::  alpha_t;
 	using typename co::mt19937_t;
 
-	using aleph_t = _std::complex<alpha_t>;
+	using alphaplex_t = _std::complex<alpha_t>;
 
 	using co::width;
 	using co::depth;
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
-//	TODO: Define hardware cache line size w.r.t. `N_size`? \
+#if   defined(L1_CACHE_BYTES)
+	using default_alignment = constant_t<(sigma_t) L1_CACHE_BYTES/width>;
+#elif defined(L1_CACHE_SHIFT)
+	using default_alignment = constant_t<(sigma_t) L1_CACHE_SHIFT/width>;
+#elif defined(__cacheline_aligned)
+	using default_alignment = constant_t<(sigma_t) __cacheline_aligned/width>;
+#else
+	using default_alignment = constant_t<(sigma_t) 0x40/width>;
+#endif
 
+#if   defined(__cpp_lib_hardware_interference_size)
+	using constructive_alignment = constant_t<(sigma_t) _std::hardware_constructive_interference_size/width>;
+	using  destructive_alignment = constant_t<(sigma_t) _std:: hardware_destructive_interference_size/width>;
+#else
+	using constructive_alignment = default_alignment;
+	using  destructive_alignment = default_alignment;
+#endif
+
+	XTAL_LET constructive_alignment_v = value_v<constructive_alignment>;
+	XTAL_LET  destructive_alignment_v = value_v< destructive_alignment>;
+	XTAL_LET      default_alignment_v = value_v<     default_alignment>;
+	
+	static_assert(0 <  constructive_alignment_v);
+	static_assert(0 <   destructive_alignment_v);
+	static_assert(0 <       default_alignment_v);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +242,7 @@ public:
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) dot_y(aleph_t const &u)
+	XTAL_FZ2_(alpha_t) dot_y(alphaplex_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
@@ -228,7 +251,7 @@ public:
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(aleph_t) circle_y(auto const &u)
+	XTAL_FZ2_(alphaplex_t) circle_y(auto const &u)
 	XTAL_0EX
 	{
 		return {_std::cos(u), _std::sin(u)*M_pow};
@@ -241,12 +264,12 @@ public:
 		return it_y<M_pow>(w*w);
 	}
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(aleph_t) square_y(aleph_t const &u)
+	XTAL_FZ2_(alphaplex_t) square_y(alphaplex_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
-		return it_y<M_pow>(aleph_t(xx - yy, x*y*2));
+		return it_y<M_pow>(alphaplex_t(xx - yy, x*y*2));
 	}
 	
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
@@ -554,7 +577,7 @@ public:
 	static_assert(signed_y( 0.0) ==  1.0);
 	static_assert(signed_y(-0.5) == -1.0);
 
-	XTAL_FZ2 signed_y(aleph_t const &value)
+	XTAL_FZ2 signed_y(alphaplex_t const &value)
 	XTAL_0EX
 	{
 		return unsquare_dot_y<-1>(value)*(value);
@@ -704,13 +727,13 @@ public:
 		return truncate_y<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_FZ1_(aleph_t) truncate_y(aleph_t &target)
+	XTAL_FZ1_(alphaplex_t) truncate_y(alphaplex_t &target)
 	XTAL_0EX
 	{
 		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
 		alpha_t const x = truncate_y<N_zoom>(z[0]);
 		alpha_t const y = truncate_y<N_zoom>(z[1]);
-		return aleph_t {x, y};
+		return alphaplex_t {x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region below `dnsilon_y(N_zoom, zone)`. \
@@ -731,15 +754,15 @@ public:
 	}	
 
 	template <int N_zoom=0>
-	XTAL_FZ2 truncated_y(aleph_t const &target)
+	XTAL_FZ2 truncated_y(alphaplex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = truncated_y<N_zoom>(target.real());
 		alpha_t const y = truncated_y<N_zoom>(target.imag());
-		return aleph_t {x, y};
+		return alphaplex_t {x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
-	XTAL_FZ2 truncated_y(aleph_t target, delta_t const &zone)
+	XTAL_FZ2 truncated_y(alphaplex_t target, delta_t const &zone)
 	XTAL_0EX
 	{
 		truncate_y<(1u << (exponent::depth - 2))>(target);
@@ -795,13 +818,13 @@ public:
 		return puncture_y<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_FZ1_(aleph_t) puncture_y(aleph_t &target)
+	XTAL_FZ1_(alphaplex_t) puncture_y(alphaplex_t &target)
 	XTAL_0EX
 	{
 		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
 		alpha_t const x = puncture_y<N_zoom>(z[0]);
 		alpha_t const y = puncture_y<N_zoom>(z[1]);
-		return aleph_t {x, y};
+		return alphaplex_t {x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region above `upsilon_y(N_zoom, zone)`. \
@@ -822,15 +845,15 @@ public:
 	}
 
 	template <int N_zoom=0>
-	XTAL_FZ2 punctured_y(aleph_t const &target)
+	XTAL_FZ2 punctured_y(alphaplex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = punctured_y<N_zoom>(target.real());
 		alpha_t const y = punctured_y<N_zoom>(target.imag());
-		return aleph_t {x, y};
+		return alphaplex_t {x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
-	XTAL_FZ2 punctured_y(aleph_t target, delta_t const &zone)
+	XTAL_FZ2 punctured_y(alphaplex_t target, delta_t const &zone)
 	XTAL_0EX
 	{
 		auto [w, m] = unsquare_dot_y<0>(target);
@@ -860,12 +883,12 @@ public:
 	static_assert(trim_y<4>(patio_y<1>(2)) == 1.5625);
 
 	template <int N_zoom=fraction::depth - 1>
-	XTAL_FZ2 trim_y(aleph_t const &target)
+	XTAL_FZ2 trim_y(alphaplex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = trim_y<N_zoom>(target.real());
 		alpha_t const y = trim_y<N_zoom>(target.imag());
-		return aleph_t {x, y};
+		return alphaplex_t {x, y};
 	}
 
 
@@ -879,7 +902,7 @@ using   iota_t = typename realized:: iota_t;
 using  delta_t = typename realized::delta_t;//_std::ptrdiff_t;
 using  sigma_t = typename realized::sigma_t;//_std::size_t;
 using  alpha_t = typename realized::alpha_t;
-using  aleph_t = typename realized::aleph_t;
+using  alphaplex_t = typename realized::alphaplex_t;
 
 static_assert(is_q<size_t, sigma_t>);
 static_assert(sizeof(size_t) == sizeof(sigma_t));

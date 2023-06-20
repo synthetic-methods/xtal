@@ -33,8 +33,8 @@ using restep_t = confined_t<restep<U>>;
 
 XTAL_FZ2 restep_f(XTAL_DEF w)
 {
-	using realized = realize<XTAL_TYP_(w)>;
-	return restep_t<typename realized::iota_t>(XTAL_REF_(w));
+	using _realized = realize<XTAL_TYP_(w)>;
+	return restep_t<typename _realized::iota_t>(XTAL_REF_(w));
 }
 
 

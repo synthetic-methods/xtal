@@ -89,7 +89,8 @@ static_assert(1101 <= XTAL_V00_GNUC);
 
 #elif   XTAL_V00_GNUC
 #define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
-#define XTAL_ENV_push _Pragma("GCC diagnostic push")
+#define XTAL_ENV_push _Pragma("GCC diagnostic push")\
+                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")
 
 #endif
 
@@ -148,14 +149,18 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_CN2_(TYP)                                TYP()                          noexcept = default;\
                                                      ~TYP()                          noexcept = default;;
 
-#define     XTAL_FNX XTAL_FN2_(sign_t)
-#define     XTAL_FLX XTAL_STD_(sign_t)
-#define     XTAL_FLX_(...) [=, this](XTAL_FLX lhs)\
-XTAL_0FN -> XTAL_FLX    {if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}
 
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_1FN_(...) [=](XTAL_DEF ...etc) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(etc)...))
+#define XTAL_1FM_(...) [=](XTAL_DEF ...etc) XTAL_0FM_(__VA_ARGS__(XTAL_REF_(etc)...))
+
+#define XTAL_FNX XTAL_FN2_(sign_t)
+#define XTAL_FLX XTAL_STD_(sign_t)
+#define XTAL_FLX_(...) [=, this](XTAL_FLX lhs) XTAL_0FN -> XTAL_FLX\
+{if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-

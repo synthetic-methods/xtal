@@ -123,12 +123,12 @@ struct defer<U>
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
-			using H = distance_t<U>; using realized = realize<H>;
+			using H = distance_t<U>; using _realized = realize<H>;
 			auto const &v = co::template method<>();
 			auto const &m = co::template get<sequel_u>();
 			H const m_size = m.size();
 			H const v_size = v.size();
-			H const v_mask = v_size >> realized::positive::depth;
+			H const v_mask = v_size >> _realized::positive::depth;
 			H i = m.front();
 			H j = m_size + i;
 			i &= ~v_mask;

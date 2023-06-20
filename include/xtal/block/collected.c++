@@ -18,29 +18,29 @@ XTAL_FZ2 unsquing_y(auto const &w)
 XTAL_0EX
 {
 	using W = XTAL_TYP_(w);
-	using realized = realize<W>;
+	using _realized = realize<W>;
 	if constexpr (M_pow == 0 and _std::floating_point<W>)
 	{	if (_std::is_constant_evaluated())
 		{
-			auto const n = realized::template unsquare_y<-1, N_lim>(w);
+			auto const n = _realized::template unsquare_y<-1, N_lim>(w);
 			auto const u = n*w;
-			return parallel_t<2, W>{u, n};
+			return couple_t<W, 2>{u, n};
 		}
 		else
-		{	auto const u = realized::template unsquare_y< 1, N_lim>(w);
+		{	auto const u = _realized::template unsquare_y< 1, N_lim>(w);
 			auto const n = u/w;
-			return parallel_t<2, W>{u, n};
+			return couple_t<W, 2>{u, n};
 		}
 	}
 	else
-	{	return realized::template unsquare_y<M_pow, N_lim>(w);	
+	{	return _realized::template unsquare_y<M_pow, N_lim>(w);	
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
 {
-	auto foo = parallel_t<2, alpha_t>{2.0, 0.5};
+	auto foo = couple_t<alpha_t, 2>{2.0, 0.5};
 	auto bar = unsquing_y<0>((alpha_t) 2);
 	bar.transmute([&](XTAL_DEF u) XTAL_0FN_(realized::square_y(XTAL_REF_(u))), trim_y<1>);
 	REQUIRE(foo == bar);
@@ -49,11 +49,11 @@ TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/block/collected.hpp: converse")
+TEST_CASE("xtal/block/collected.hpp: couple")
 {
-	auto bar = converse_t<alpha_t, 1>{2.0, 0.5};
-	auto foo = ~bar;
-	auto baz = ~foo;
+	auto bar = couple_t<alpha_t, 2>{2.0, 0.5};
+	auto foo = bar.reflected<-1>();
+	auto baz = foo.reflected<+1>();
 	REQUIRE(foo[0] == 1.25);
 	REQUIRE(foo[1] == 0.75);
 	REQUIRE(bar[0] == bar[0]);
@@ -65,8 +65,8 @@ TEST_CASE("xtal/block/collected.hpp: converse")
 TEST_CASE("xtal/block/collected.hpp: series initialization")
 {
 	sigma_t constexpr N = 1 << 3;
-	using scalar_u = scalar_t<N, alpha_t>;
-	using series_u = series_t<N, alpha_t>;
+	using scalar_u = scalar_t<alpha_t, N>;
+	using series_u = series_t<alpha_t, N>;
 
 	series_u baz(2.0);
 	scalar_u bar = reinterpret_cast<scalar_u &>(baz);
@@ -86,26 +86,26 @@ TEST_CASE("xtal/block/collected.hpp: series transformation")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_s = series_t<O, aleph_t>;
-	using series_u = series_t<N, aleph_t>;
-	series_s basis(true);
+	using series_s = series_t<alphaplex_t, O>;
+	using series_u = series_t<alphaplex_t, N>;
+	series_s basis(constant_o<-1>);
 
 	series_u source;
-	source[0] = source[M - 0] = aleph_t(0.0, 0.0);
-	source[1] = source[M - 1] = aleph_t(1.0, 1.0);
-	source[2] = source[M - 2] = aleph_t(3.0, 3.0);
-	source[3] = source[M - 3] = aleph_t(4.0, 4.0);
+	source[0] = source[M - 0] = alphaplex_t(0.0, 0.0);
+	source[1] = source[M - 1] = alphaplex_t(1.0, 1.0);
+	source[2] = source[M - 2] = alphaplex_t(3.0, 3.0);
+	source[3] = source[M - 3] = alphaplex_t(4.0, 4.0);
 
 	auto target = basis.transformation(source).transmute(iffy);
-	REQUIRE(target[0] == iffy(aleph_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
-	REQUIRE(target[1] == iffy(aleph_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
-	REQUIRE(target[2] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[3] == iffy(aleph_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
-	REQUIRE(target[4] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[5] == iffy(aleph_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
-	REQUIRE(target[6] == iffy(aleph_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[7] == iffy(aleph_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
-	REQUIRE(true);
+	REQUIRE(target[0] == iffy(alphaplex_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
+	REQUIRE(target[1] == iffy(alphaplex_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
+	REQUIRE(target[2] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[3] == iffy(alphaplex_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
+	REQUIRE(target[4] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[5] == iffy(alphaplex_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
+	REQUIRE(target[6] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[7] == iffy(alphaplex_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
+
 }
 /**/
 TEST_CASE("xtal/block/collected.hpp: series convolution")
@@ -114,8 +114,8 @@ TEST_CASE("xtal/block/collected.hpp: series convolution")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_u = series_t<N, aleph_t>;
-	series_u basis(true);
+	using series_u = series_t<alphaplex_t, N>;
+	series_u basis(constant_o<-1>);
 
 	series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 	series_u rhs = {1, 0, 1, 0, 0, 0, 0, 0};
@@ -129,8 +129,8 @@ TEST_CASE("xtal/block/collected.hpp: series convolution")
 
 TEST_CASE("xtal/block/collected.hpp: buffer assigment")
 {
-	using buffer_u = buffer_t<(1<<7), realized::alpha_t>;
-	using vector_u = _std::vector<realized::alpha_t>;
+	using buffer_u = buffer_t<alpha_t, (1<<7)>;
+	using vector_u = _std::vector<alpha_t>;
 
 	auto const zhs = buffer_u {7, 8, 9};
 	auto       yhs = buffer_u {4, 5, 6};
@@ -151,8 +151,8 @@ TEST_CASE("xtal/block/collected.hpp: buffer assigment")
 
 TEST_CASE("xtal/block/collected.hpp: buffer mutation")
 {
-	using buffer_u = buffer_t<(1<<7), realized::alpha_t>;
-	using vector_u = _std::vector<realized::alpha_t>;
+	using buffer_u = buffer_t<alpha_t, (1<<7)>;
+	using vector_u = _std::vector<alpha_t>;
 
 	auto xs = buffer_u {0, 1, 2, 3, 4};
 	auto x_ = xs.begin();
@@ -173,10 +173,10 @@ TEST_CASE("xtal/block/collected.hpp: buffer mutation")
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <int N>
-void siphon_operation__test()
+void sluice_operation__test()
 {
-	using event_u = compose_s<bias_t, content::confer<int>>;
-	using queue_u = siphon_t<N, event_u>;
+	using event_u = compose_s<bias_t, confect::confer<int>>;
+	using queue_u = sluice_t<event_u, N>;
 	queue_u q;
 
 	auto e1 = event_u(1, bias_t(-1.0));
@@ -190,20 +190,20 @@ void siphon_operation__test()
 	REQUIRE(-2.0 == q.top().tail()); q.pop(); REQUIRE(0 == q.size());
 
 }
-TEST_CASE("xtal/block/collected.hpp: siphon operation")
+TEST_CASE("xtal/block/collected.hpp: sluice operation")
 {
-	siphon_operation__test<-1>();
-	siphon_operation__test< 4>();
+	sluice_operation__test<-1>();
+	sluice_operation__test< 4>();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <int N>
-void sluice_operation__test()
+void siphon_operation__test()
 {
-	using event_u = compose_s<bias_t, content::confer<int>>;
-	using queue_u = sluice_t<N, event_u>;
+	using event_u = compose_s<bias_t, confect::confer<int>>;
+	using queue_u = siphon_t<event_u, N>;
 	queue_u q;
 
 	auto e1 = event_u(1, bias_t(-1.0));
@@ -219,10 +219,109 @@ void sluice_operation__test()
 	REQUIRE(-2.0 == q.next(0).tail()); q.advance(); REQUIRE(0 == q.remaining());
 
 }
-TEST_CASE("xtal/block/collected.hpp: sluice operation")
+TEST_CASE("xtal/block/collected.hpp: siphon operation")
 {
-//	sluice_operation__test<-1>();
-	sluice_operation__test<64>();
+//	siphon_operation__test<-1>();
+	siphon_operation__test<64>();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+void serial_operation__test()
+{
+	using D = serial_t<int, 4>;
+
+	D d {1000, 100, 10, 1};
+
+	REQUIRE(++d == D {1100, 110, 11, 1});
+	REQUIRE(++d == D {1210, 121, 12, 1});
+	REQUIRE(++d == D {1331, 133, 13, 1});
+
+}
+TEST_CASE("xtal/block/collected.hpp: serial operation")
+{
+	serial_operation__test();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+void serial_multiplication__test()
+{
+	using D2 = serial_t<int, 2>;
+	using D3 = serial_t<int, 3>;
+	using D4 = serial_t<int, 4>;
+	
+	REQUIRE(D2 {           10, 1} * D2 {           20, 2} == D2 {                   200,   40});
+	REQUIRE(D3 {      100, 10, 1} * D3 {      200, 20, 2} == D3 {          20000,  4000,  600});
+	REQUIRE(D4 {1000, 100, 10, 1} * D4 {2000, 200, 20, 2} == D4 {2000000, 400000, 60000, 8000});
+
+}
+TEST_CASE("xtal/block/collected.hpp: serial multiplication")
+{
+	serial_multiplication__test();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+void series_multiplication__test()
+{
+	using C4 = series_t<alphaplex_t, 4>;
+	using D4 = series_t<alpha_t, 4>;
+	
+	REQUIRE(C4 {1000, 100, 10, 1} * C4 {2000, 200, 20, 2} == C4 {2000600, 400040, 60002, 8000});
+	REQUIRE(D4 {1000, 100, 10, 1} * D4 {2000, 200, 20, 2} == D4 {2000600, 400040, 60002, 8000});
+		
+}
+TEST_CASE("xtal/block/collected.hpp: series multiplication")
+{
+	series_multiplication__test();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+void phasor_operation__test()
+{
+	using P = serial_t<float, 2>;
+	P p {0.125, 0.250};
+
+	REQUIRE(p++ == P {+0.125, 0.250});
+	REQUIRE(p++ == P {+0.375, 0.250});
+	REQUIRE(p++ == P {-0.375, 0.250});
+	REQUIRE(p++ == P {-0.125, 0.250});
+
+}
+TEST_CASE("xtal/block/collected.hpp: phasor operation")
+{
+	phasor_operation__test();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+void phasor_iteration__test()
+{
+	using namespace _v3;
+	using P  = serial_t<float, 2>;
+	using Ps = ranges::iota_view<P>;
+	using Qs = _std::vector<float>;
+
+	Ps ps(P {0.125, 0.250});
+	Qs qs;
+	for (auto p: ps|views::take(4)) qs.push_back(p[0]);
+	
+	REQUIRE(qs == Qs {+0.125, +0.375, -0.375, -0.125});
+
+//	TODO: Is there a way to reset/change the phase/frequency by mutation (or otherwise)? \
+	If not, just need to wrap as a `process`. \
+
+}
+TEST_CASE("xtal/block/collected.hpp: phasor iteration")
+{
+	phasor_iteration__test();
 
 }
 /***/

@@ -133,7 +133,7 @@ They are often used in tandem, e.g. the global buffer size may be updated by `in
 	}
 	// 2nd iteration
 	{
-		// deactivate the `sixer` at an offset of `123` into the current buffer
+		// deactivate the `sixer` at an offset of `123` into the current block
 		sixer <<= sixer <<= std::make_tuple(123, active_t(0));
 
 		// respan the current graph, and advance the `sequel` sequel
@@ -240,10 +240,10 @@ For example, The following definitions are equivalent (noting that `A1, ..., A4`
 
 The primary namespaces within `xtal` comprise a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace content   {namespace _retail = common;}
-	namespace context   {namespace _retail = content;}
-	namespace message   {namespace _retail = context;}
-	namespace process   {namespace _retail = context;}
+	namespace confect   {namespace _retail = common;}
+	namespace conflux   {namespace _retail = confect;}
+	namespace message   {namespace _retail = conflux;}
+	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
 The `any.hpp` for each namespace establishes the core definitions (specializing only `[dr]efine` and `[dr]efer`),

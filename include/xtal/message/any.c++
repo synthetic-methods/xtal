@@ -23,12 +23,12 @@ TEST_CASE("xtal/message/any.hpp: hold")
   auto step = sequel_t(1 << 3);
 	
 	biased <<= step;
-	biased <<= pack_f(content::delay_s<>(0), (bias_t) (alpha_t)  7);
-	biased <<= pack_f(content::delay_s<>(1), (bias_t) (alpha_t)  1);
-	biased <<= pack_f(content::delay_s<>(3), (bias_t) (alpha_t) -1);
-	biased <<= pack_f(content::delay_s<>(4), (bias_t) (alpha_t)  1);
-	biased <<= pack_f(content::delay_s<>(5), (bias_t) (alpha_t) -1);
-	biased <<= pack_f(content::delay_s<>(7), (bias_t) (alpha_t)  7);
+	biased <<= pack_f(confect::delay_s<>(0), (bias_t) (alpha_t)  7);
+	biased <<= pack_f(confect::delay_s<>(1), (bias_t) (alpha_t)  1);
+	biased <<= pack_f(confect::delay_s<>(3), (bias_t) (alpha_t) -1);
+	biased <<= pack_f(confect::delay_s<>(4), (bias_t) (alpha_t)  1);
+	biased <<= pack_f(confect::delay_s<>(5), (bias_t) (alpha_t) -1);
+	biased <<= pack_f(confect::delay_s<>(7), (bias_t) (alpha_t)  7);
 	
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
@@ -60,8 +60,8 @@ void respan_internal_interrupt__test()
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	
 	auto xhs = mix_z::bind_f(lhs, rhs);
 	auto seq = sequel_n(4);
@@ -69,14 +69,14 @@ void respan_internal_interrupt__test()
 	xhs <<= resize_u(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs <<= content::delay_s<bias_t>(0, (alpha_t) 100);
-	xhs <<= content::delay_s<bias_t>(1, (alpha_t) 200);
-	xhs <<= content::delay_s<bias_t>(2, (alpha_t) 300);
+	xhs <<= confect::delay_s<bias_t>(0, (alpha_t) 100);
+	xhs <<= confect::delay_s<bias_t>(1, (alpha_t) 200);
+	xhs <<= confect::delay_s<bias_t>(2, (alpha_t) 300);
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= content::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
+	xhs <<= confect::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));

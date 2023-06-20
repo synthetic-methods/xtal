@@ -16,12 +16,12 @@ namespace xtal::processor::__atom
 TEST_CASE("xtal/processor/atom.hpp: lifting")
 {
 	sigma_t constexpr N = 5;
-	using scalar_t = block::scalar_t<N, alpha_t>;
+	using scalar_u = block::scalar_t<alpha_t, N>;
 
-	auto x = scalar_t { 0,  1,  2,  3,  4};
-	auto y = scalar_t {00, 10, 20, 30, 40};
-	auto z = scalar_t {00, 11, 22, 33, 44};
-	auto a = scalar_t {99, 99, 99, 99, 99};
+	auto x = scalar_u { 0,  1,  2,  3,  4};
+	auto y = scalar_u {00, 10, 20, 30, 40};
+	auto z = scalar_u {00, 11, 22, 33, 44};
+	auto a = scalar_u {99, 99, 99, 99, 99};
 //	auto f = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind_(x, y);
 	auto b = processor::atom_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind_to(processor::let_f(x), processor::let_f(y));
@@ -37,11 +37,9 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 template <typename add_t>
 void respan_external__test()
 {
-	using collector  = block::collector<(1<<5)>;
-	using collected  = block::collected<alpha_t>;
-	using collection = compose_s<unit_t, collector, collected>;
+	using collector = block::collector<(1<<5)>;
 
-	using buffer_u = typename collection::buffer::type;
+	using buffer_u = typename collector::type::template fluid<alpha_t>::type;
 	using debuff_u = deranged_t<buffer_u>;
 	using respan_u = message::respan_t<debuff_u>;
 	using resize_u = message::resize_t<>;
@@ -51,8 +49,8 @@ void respan_external__test()
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 
-	auto lhs = let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = atom_t<add_t, collector>::bind_f(lhs, rhs);
 
 	auto vector_m = buffer_u {0, 0, 0};
@@ -88,8 +86,8 @@ void respan_internal__test()
 	auto _11 = _01|views::transform([](auto n) {return n*11;});
 
 	using mix_op = atom_t<add_t>;
-	auto  lhs = processor::let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = processor::let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto  lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 
 	xhs <<= message::resize_f(N);
@@ -160,8 +158,8 @@ void respan_internal_chain_lvalue__test()
 	
 	using mix_op = atom_t<add_t>;
 	using mul_op = atom_t<mul_t>;
-	auto  lhs = let_f(_01); REQUIRE(pointer_eq(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = let_f(_10); REQUIRE(pointer_eq(rhs.head(), processor::let_f(rhs).head()));
+	auto  lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 	auto  yhs = mul_op::bind_f(xhs);
 

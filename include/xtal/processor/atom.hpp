@@ -54,19 +54,17 @@ struct atom
 		template <typename ...Xs>
 		struct bind
 		{
-			using rebound = typename co::template bind<Xs...>;
+			using rebound  = typename co::template bind<Xs...>;
+			using return_t = typename rebound::return_t;
 
-			using collected  = block::collected<typename rebound::return_t>;
-			using collection = compose_s<co, collected>;
-			
-			using buffer_u = typename collection::buffer::type;
+			using buffer_u = typename co::template fluid<return_t>::type;
 			using debuff_u = deranged_t<buffer_u>;
 			using respan_u = message::respan_t<debuff_u>;
 			using resize_u = message::resize_t<>;
 			
-			using subkind = compose<content::confer<debuff_u>, content::defer<buffer_u>, rebound>;
+			using subkind = compose<confect::confer<debuff_u>, confect::defer<buffer_u>, rebound>;
 
-			XTAL_LET_(int) N_parity = common::seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
+			XTAL_LET_(int) I_parity = common::seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>
@@ -122,9 +120,9 @@ struct atom
 
 				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
 				XTAL_0EX
-				XTAL_IF1 (0 <= N_parity)
+				XTAL_IF1 (0 <= I_parity)
 				{
-					return co::template influx_request_tail<N_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
+					return co::template influx_request_tail<I_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
 
 
@@ -158,13 +156,13 @@ struct atom
 					{	using namespace _v3;
 						auto sequel_x = sequel_o.slice(i, j).skip(n);//++
 						auto respan_x = respan_o.slice(i, j);
-						(void) co::template efflux_request_head<N_parity>(sequel_x, respan_x);
+						(void) co::template efflux_request_head<I_parity>(sequel_x, respan_x);
 						ranges::copy(co::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
 					}, skip_n);
 				//	(void) co::template influx_request(sequel_o);
 					return 1;
 				}
-		//	NOTE: The definition of `infuse` invoked on `sequel` above assumes sequential update. \
+		//	NOTE: The definition of `infuse` invoked on `sequel` above assumes monotonic update. \
 		//	If this is changed (e.g. to allow absolute redressing), \
 		//	they can instead be realigned by replacing `n` with `skip_n`: \
 

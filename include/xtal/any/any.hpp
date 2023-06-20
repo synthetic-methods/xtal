@@ -1,14 +1,13 @@
 #pragma once
-#include <functional>
 #include <concepts>
 #include <cassert>
 #include <complex>
 #include <numbers>
-#include <cstring>
 #include <cmath>
 #include <tuple>
 #include <array>
 #include <queue>
+#include <new>
 
 
 
@@ -21,9 +20,11 @@
 
 #include <bit>
 #if not __cpp_lib_bit_cast
-namespace std
+namespace ::std
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+static_assert(XTAL_V00_MSVC);
 
 template <typename To, typename Fro>
 requires (sizeof(To) == sizeof(Fro) and is_trivially_copyable_v<To> and is_trivially_copyable_v<Fro>)
@@ -31,7 +32,6 @@ static constexpr To bit_cast(Fro const& fro)
 noexcept
 {
 	return __builtin_bit_cast(To, fro);
-//	To to; memcpy(&to, &fro, sizeof(fro)); return to;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
