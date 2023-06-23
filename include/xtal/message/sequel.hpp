@@ -254,13 +254,12 @@ struct sequel<V>
 		{
 		}
 
-		XTAL_RN2_(XTAL_FN2 count(), co::size())
+		XTAL_RN2_(XTAL_FN2_(V) count(), co::size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
 		{
-			auto t = self(); t.size(j - i);
-			return t;
+			auto t = self(); t.size(j - i); return t;
 		}
 
 		///\
@@ -352,7 +351,7 @@ public:
 		{
 		}
 
-		XTAL_RN2_(XTAL_FN2 count(), count_f(co::scan()))
+		XTAL_RN2_(XTAL_FN2_(V) count(), count_f(co::scan()))
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
@@ -367,18 +366,20 @@ public:
 		XTAL_OP1 *=(V v)
 		XTAL_0EX
 		{
+			using namespace _v3::ranges;
 			auto const i0 = co::begin(), iM = co::end();
-			auto const nm = v*_std::distance(i0, iM);
-			co::scan(*(i0 + nm), *(iM + nm));
+			auto const nm = v*distance(i0, iM);
+			co::scan(*next(i0, nm), *next(iM, nm));
 			co::step() += v;
 			return self();
 		}
 		XTAL_OP1 /=(V v)
 		XTAL_0EX
 		{
+			using namespace _v3::ranges;
 			auto const i0 = co::begin(), iM = co::end();
-			auto const nm = v*_std::distance(i0, iM);
-			co::scan(*(i0 - nm), *(iM - nm));
+			auto const nm = v*distance(i0, iM);
+			co::scan(*prev(i0, nm), *prev(iM, nm));
 			co::step() -= v;
 			return self();
 		}
@@ -388,9 +389,10 @@ public:
 		XTAL_OP1 +=(V v)
 		XTAL_0EX
 		{
+			using namespace _v3::ranges;
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const j0 = iM, jN = (j0 + v);
+			auto const j0 = iM, jN = next(j0, v);
 			co::step() += i0 != iM;
 			co::scan(*j0, *jN);
 			return self();
@@ -398,9 +400,10 @@ public:
 		XTAL_OP1 -=(V v)
 		XTAL_0EX
 		{
+			using namespace _v3::ranges;
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const jN = i0, j0 = (jN - v);
+			auto const jN = i0, j0 = prev(jN, v);
 			co::step() -= v != 0;
 			co::scan(*j0, *jN);
 			return self();

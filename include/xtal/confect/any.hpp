@@ -80,46 +80,67 @@ struct define
 ////////////////////////////////////////////////////////////////////////////////
 namespace _detail
 {
-template <any_q S>
-class refinement: public S
+struct refine_as_head
 {
-	using co = S;
-public:
-	using co::co;
+	template <any_q S>
+	class subtype: public S
+	{
+		using co = S;
+	public:
+		using co::co;
 
+	};
+	template <any_q S> requires (S::tuple_size::value == 1)
+	class subtype<S>: public S
+	{
+		using co = S; using U = typename co::head_t;
+
+	public:
+		using co::co;
+		using co::head;
+
+		///\
+		Implicit conversion to the singleton kernel-type. \
+
+		XTAL_RN4_(XTAL_NEW operator U(), head())
+		
+	};
 };
-template <any_q S> requires (S::tuple_size::value == 1)
-class refinement<S>: public S
+struct refine_as_tuple
 {
-	using co = S; using U = typename co::head_t;
+	template <any_q S>
+	class subtype: public S
+	{
+		using co = S;
+	public:
+		using co::co;
 
-public:
-	using co::co;
-	using co::head;
+		using tuple_type = XTAL_TYP_(XTAL_VAL_(co).tuple());
+		XTAL_RN4_(XTAL_NEW operator tuple_type(), co::tuple())
 
-	///\
-	Implicit conversion to the singleton kernel-type. \
-
-	XTAL_RN4_(XTAL_NEW operator U(), head())
-	
+	};
 };
 }
 template <typename T>
 struct refine
 {
+	using subkind = compose<any<>
+	,	_detail::refine_as_head
+	,	_detail::refine_as_tuple
+	>;
+
 	template <any_q S>
-	class subtype: public _detail::refinement<S>
+	class subtype: public compose_s<S, subkind>
 	{
-		using co = _detail::refinement<S>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
 	};
-
 	template <any_q S> requires iterable_q<S>
-	class subtype<S>: public _detail::refinement<S>, public iterate_t<T>
+	class subtype<S>: public compose_s<S, subkind>, public iterate_t<T>
 	{
-		using co = _detail::refinement<S>;
+		using co = compose_s<S, subkind>;
 	public:
 		using co::co;
 
@@ -192,17 +213,12 @@ struct defer
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			return head_valve(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
+			return heady(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
-		XTAL_FN1 head_valve(body_t v)
+		XTAL_FN1 heady(body_t v)
 		XTAL_0EX
 		{
 			_std::swap(body_m, v); return remember_x(v);
-		}
-		XTAL_FN1 head_valve(XTAL_DEF w)
-		XTAL_0EX
-		{
-			return co::head_valve(XTAL_REF_(w));
 		}
 
 		///\
@@ -223,13 +239,7 @@ struct defer
 			return apply(pack_f);
 		}
 		using tuple_size = constant_t<co::tuple_size::value + 1>;
-	//	using tuple_type = XTAL_TYP_([]
-	//		<size_t ...I>(seek_t<I...>)
-	//			XTAL_0FN_(XTAL_VAL_(_std::tuple<typename seek_s<I>::head_t...>))
-	//		(seek_v<tuple_size::value>))
-	//	;
-	//	XTAL_RN4_(XTAL_NEW operator tuple_type(), tuple())
-
+		
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
 		\returns the previous value.
@@ -288,12 +298,12 @@ struct defer
 namespace _detail
 {
 template <typename U>
-struct comparators
+struct refer_to_comparators
 :	compose<>
 {
 };
 template <typename U> requires comparators_p<U>
-struct comparators<U>
+struct refer_to_comparators<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -313,17 +323,17 @@ struct comparators<U>
 	};
 };
 template <typename U, int N_arity=0>
-struct bit_operators
+struct refer_to_bit_operators
 :	compose<>
 {
 };
 template <typename U>
-struct bit_operators<U, 0>
-:	compose<bit_operators<U, 1>, bit_operators<U, 2>>
+struct refer_to_bit_operators<U, 0>
+:	compose<refer_to_bit_operators<U, 1>, refer_to_bit_operators<U, 2>>
 {
 };
 template <typename U> requires bit_operators_p<U, 1> and remember_p<U>
-struct bit_operators<U, 1>
+struct refer_to_bit_operators<U, 1>
 {
 	template <any_q S>
 	class subtype: public S
@@ -355,7 +365,7 @@ struct bit_operators<U, 1>
 	};
 };
 template <typename U> requires bit_operators_p<U, 2>
-struct bit_operators<U, 2>
+struct refer_to_bit_operators<U, 2>
 {
 	template <any_q S>
 	class subtype: public S
@@ -381,17 +391,17 @@ struct bit_operators<U, 2>
 	};
 };
 template <typename U, int N_arity=0>
-struct field_operators
+struct refer_to_field_operators
 :	compose<>
 {
 };
 template <typename U>
-struct field_operators<U, 0>
-:	compose<field_operators<U, 1>, field_operators<U, 2>>
+struct refer_to_field_operators<U, 0>
+:	compose<refer_to_field_operators<U, 1>, refer_to_field_operators<U, 2>>
 {
 };
 template <typename U> requires field_operators_p<U, 1> and remember_p<U>
-struct field_operators<U, 1>
+struct refer_to_field_operators<U, 1>
 {
 	template <any_q S>
 	class subtype: public S
@@ -414,7 +424,7 @@ struct field_operators<U, 1>
 	};
 };
 template <typename U> requires field_operators_p<U, 2>
-struct field_operators<U, 2>
+struct refer_to_field_operators<U, 2>
 {
 	template <any_q S>
 	class subtype: public S
@@ -433,12 +443,12 @@ struct field_operators<U, 2>
 	};
 };
 template <typename U>
-struct range_operators
+struct refer_to_range_operators
 :	compose<>
 {
 };
 template <typename U> requires iterated_q<U>
-struct range_operators<U>
+struct refer_to_range_operators<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -471,10 +481,10 @@ Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 template <typename U>
 struct refer
 :	compose<any<>
-	,	_detail::     comparators<U>
-	,	_detail::   bit_operators<U>
-	,	_detail:: field_operators<U>
-	,	_detail:: range_operators<U>
+	,	_detail::refer_to_comparators<U>
+	,	_detail::refer_to_bit_operators<U>
+	,	_detail::refer_to_field_operators<U>
+	,	_detail::refer_to_range_operators<U>
 	>
 {
 };
