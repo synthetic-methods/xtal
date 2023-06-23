@@ -312,6 +312,11 @@ struct define
 					}
 					--n;
 				}
+				XTAL_FN0 redux(auto const &f, auto &&n)
+				XTAL_0EX
+				{
+					redux(f, n);
+				}
 
 				///\
 				Invokes `influx` for all events up-to the given delay `i`. \

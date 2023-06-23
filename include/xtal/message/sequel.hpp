@@ -95,7 +95,7 @@ struct sequel<void>
 		XTAL_OP1_(T &) ++()
 		XTAL_0EX
 		{
-			return self().operator+=(self().size());
+			return self().operator+=(self().count());
 		}
 		XTAL_OP1_(T) ++(int)
 		XTAL_0EX
@@ -182,7 +182,7 @@ struct sequel<void>
 			}
 			else
 			{	s.operator+=(0);
-				s.operator-=(t.size()); s.step(t.step());
+				s.operator-=(t.count()); s.step(t.step());
 				return 1;
 			}
 		}
@@ -208,7 +208,7 @@ struct sequel<void>
 			{	return 0;
 			}
 			else
-			{	s.operator+=(t.size());
+			{	s.operator+=(t.count());
 				assert(s.step() == t.step());
 				return 1;
 			}
@@ -250,9 +250,11 @@ struct sequel<V>
 		}
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	co(XTAL_REF_(o).size(), XTAL_REF_(oo)...)
+		:	co(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
 		}
+
+		XTAL_RN2_(XTAL_FN2 count(), co::size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
@@ -350,6 +352,8 @@ public:
 		{
 		}
 
+		XTAL_RN2_(XTAL_FN2 count(), count_f(co::scan()))
+
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
 		{
@@ -365,7 +369,7 @@ public:
 		{
 			auto const i0 = co::begin(), iM = co::end();
 			auto const nm = v*_std::distance(i0, iM);
-			co::scan(*_std::next(i0, nm), *_std::next(iM, nm));
+			co::scan(*(i0 + nm), *(iM + nm));
 			co::step() += v;
 			return self();
 		}
@@ -374,7 +378,7 @@ public:
 		{
 			auto const i0 = co::begin(), iM = co::end();
 			auto const nm = v*_std::distance(i0, iM);
-			co::scan(*_std::prev(i0, nm), *_std::prev(iM, nm));
+			co::scan(*(i0 - nm), *(iM - nm));
 			co::step() -= v;
 			return self();
 		}
@@ -386,7 +390,7 @@ public:
 		{
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const j0 = iM, jN = _std::next(j0, v);
+			auto const j0 = iM, jN = (j0 + v);
 			co::step() += i0 != iM;
 			co::scan(*j0, *jN);
 			return self();
@@ -396,7 +400,7 @@ public:
 		{
 			auto &s = self();
 			auto const i0 = co::begin(), iM = co::end();
-			auto const jN = i0, j0 = _std::prev(jN, v);
+			auto const jN = i0, j0 = (jN - v);
 			co::step() -= v != 0;
 			co::scan(*j0, *jN);
 			return self();

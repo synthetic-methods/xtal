@@ -223,12 +223,12 @@ struct defer
 			return apply(pack_f);
 		}
 		using tuple_size = constant_t<co::tuple_size::value + 1>;
-		using tuple_type = XTAL_TYP_([]
-			<size_t ...I>(seek_t<I...>)
-				XTAL_0FN_(XTAL_VAL_(_std::tuple<typename seek_s<I>::head_t...>))
-			(seek_v<tuple_size::value>))
-		;
-		XTAL_RN4_(XTAL_NEW operator tuple_type(), tuple())
+	//	using tuple_type = XTAL_TYP_([]
+	//		<size_t ...I>(seek_t<I...>)
+	//			XTAL_0FN_(XTAL_VAL_(_std::tuple<typename seek_s<I>::head_t...>))
+	//		(seek_v<tuple_size::value>))
+	//	;
+	//	XTAL_RN4_(XTAL_NEW operator tuple_type(), tuple())
 
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \

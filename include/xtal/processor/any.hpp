@@ -123,14 +123,14 @@ struct defer<U>
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
-			using H = distance_t<U>; using _realized = realize<H>;
+			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
 			auto const &v = co::template method<>();
 			auto const &m = co::template get<sequel_u>();
-			H const m_size = m.size();
-			H const v_size = v.size();
-			H const v_mask = v_size >> _realized::positive::depth;
-			H i = m.front();
-			H j = m_size + i;
+			I const m_size = m.count();// `sizeof(m.size()) == sizeof(m::value_type) << 1`
+			I const v_size = v.size();
+			I const v_mask = v_size >> _realized::positive::depth;
+			I i = m.front();
+			I j = m_size + i;
 			i &= ~v_mask;
 			j &= ~v_mask;
 			j |=  v_mask&v_size;

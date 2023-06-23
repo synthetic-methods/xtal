@@ -77,8 +77,13 @@ template <counter_p   T  >   struct counted<T> : constant_t<0> {using type = ite
 template <counted_p   T  >   struct counter<T> : constant_t<0> {using type = iteratee_t<T>;};
 template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    based_t<T>;};
 
-template <typename T=iota_t>  using counted_t  = typename counted<T>::type;
-template <typename T=iota_t>  using counter_t  = typename counter<T>::type;
+template <typename T=delta_t> using counted_t  = typename counted<T>::type;
+template <typename T=delta_t> using counter_t  = typename counter<T>::type;
+
+template <typename    T  > XTAL_FN2 count_f(T t) {return t.size();}
+template <counted_q   T  > XTAL_FN2 count_f(T t) {return 1 + t.back() - t.front();}
+///<\returns\
+the `size` of `iota_view` as a `value_type` instead of `size_type` which is twice the width. \
 
 
 ////////////////////////////////////////////////////////////////////////////////

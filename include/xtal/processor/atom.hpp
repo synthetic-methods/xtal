@@ -148,26 +148,17 @@ struct atom
 				XTAL_0EX
 				{
 					if (co::effuse(sequel_o) == 0) return 0;
-				//	else...
-				//	delta_t n = 0;
-					(void) serve(respan_o);
-					(void) co::redux([&, this](auto i, auto j, auto n)
+					serve(respan_o);
+					co::redux([&, this](auto i, auto j, auto n)
 					XTAL_0FN
 					{	using namespace _v3;
-						auto sequel_x = sequel_o.slice(i, j).skip(n);//++
+						auto sequel_x = sequel_o.slice(i, j).skip(n);
 						auto respan_x = respan_o.slice(i, j);
 						(void) co::template efflux_request_head<I_parity>(sequel_x, respan_x);
 						ranges::copy(co::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
-					}, skip_n);
-				//	(void) co::template influx_request(sequel_o);
-					return 1;
+					}, 0);
+					return co::template influx_request(sequel_o);
 				}
-		//	NOTE: The definition of `infuse` invoked on `sequel` above assumes monotonic update. \
-		//	If this is changed (e.g. to allow absolute redressing), \
-		//	they can instead be realigned by replacing `n` with `skip_n`: \
-
-			private:
-				delta_t skip_n = 0;
 
 			};
 		};
