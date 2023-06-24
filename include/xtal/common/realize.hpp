@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./seek.hpp"
-
-
+#include "../block/collector.hpp"
+#include "../block/collected.hpp"
 
 
 
@@ -156,7 +156,7 @@ template <size_t N_size>
 struct realization: rationalization<N_size>
 {
 };
-template <size_t N_size> requires _std::floating_point<typename rationalization<N_size>::alpha_t>
+template <size_t N_size> requires alpha_q<typename rationalization<N_size>::alpha_t>
 struct realization<N_size>: rationalization<N_size>
 {
 private:
@@ -183,17 +183,9 @@ public:
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
-#if   defined(L1_CACHE_BYTES)
-	using default_alignment = constant_t<(sigma_t) L1_CACHE_BYTES/width>;
-#elif defined(L1_CACHE_SHIFT)
-	using default_alignment = constant_t<(sigma_t) L1_CACHE_SHIFT/width>;
-#elif defined(__cacheline_aligned)
-	using default_alignment = constant_t<(sigma_t) __cacheline_aligned/width>;
-#else
-	using default_alignment = constant_t<(sigma_t) 0x40/width>;
-#endif
+	using default_alignment = constant_t<(sigma_t) XTAL_STD_(L1)/width>;
 
-#if   defined(__cpp_lib_hardware_interference_size)
+#ifdef __cpp_lib_hardware_interference_size
 	using constructive_alignment = constant_t<(sigma_t) _std::hardware_constructive_interference_size/width>;
 	using  destructive_alignment = constant_t<(sigma_t) _std:: hardware_destructive_interference_size/width>;
 #else
@@ -205,26 +197,19 @@ public:
 	XTAL_LET  destructive_alignment_v = value_v< destructive_alignment>;
 	XTAL_LET      default_alignment_v = value_v<     default_alignment>;
 	
-	static_assert(0 <  constructive_alignment_v);
-	static_assert(0 <   destructive_alignment_v);
-	static_assert(0 <       default_alignment_v);
+	static_assert(0 < constructive_alignment_v);
+	static_assert(0 <  destructive_alignment_v);
+	static_assert(0 <      default_alignment_v);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_FZ2 mantissa_y(sigma_t n)
-	XTAL_0EX
-	{
-		return _std::bit_cast<alpha_t>(n & ~unit::mask);
-	}
-	XTAL_FZ2 mantissa_y(mt19937_t &m)
-	XTAL_0EX
-	{
-		return mantissa_y(m());
-	}
-
-
-///////////////////////////////////////////////////////////////////////////////
+	template <typename V>
+//	using couple_t = _std::array<V, 2>;
+	using couple_t = typename compose_s<unit_t
+	,	block::collector<2>
+	,	block::collected<V>
+	>::couple::type;
 
 	template <auto M_pow=1> requires sign_q<M_pow>
 	XTAL_FZ2 it_y(XTAL_DEF u)
@@ -239,7 +224,7 @@ public:
 		{	return U(1/XTAL_REF_(u));
 		}
 		else
-		{	return _std::array<U, 2> {u, 1/XTAL_REF_(u)};
+		{	return couple_t<U> {u, 1/XTAL_REF_(u)};
 		}
 	}
 
@@ -304,7 +289,7 @@ public:
 		{	return n*w;
 		}
 		else
-		{	return _std::array<alpha_t, 2> {w*n, n};
+		{	return couple_t<alpha_t> {w*n, n};
 		}
 	}
 	static_assert(unsquare_y< 1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
@@ -320,6 +305,18 @@ public:
 		else
 		{	return it_y<M_pow>(_std::abs(XTAL_REF_(u)));
 		}
+	}
+
+
+	XTAL_FZ2 mantissa_y(sigma_t n)
+	XTAL_0EX
+	{
+		return _std::bit_cast<alpha_t>(n & ~unit::mask);
+	}
+	XTAL_FZ2 mantissa_y(mt19937_t &m)
+	XTAL_0EX
+	{
+		return mantissa_y(m());
 	}
 
 
@@ -898,7 +895,8 @@ public:
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename T> struct realize: _detail::realization<sizeof(revalue_t<T>)> {};
+template <typename T>
+struct realize: _detail::realization<sizeof(revalue_t<T>)> {};
 
 using realized = realize<size_t>;
 

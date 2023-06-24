@@ -117,15 +117,15 @@ template <typename T, typename ...Ts> struct  identical<T, Ts...>: _std::disjunc
 template <typename T, typename ...Ts> struct  isotropic<T, Ts...>: _std::disjunction<_std::is_same<based_t<T>, based_t<Ts>>...> {};
 template <typename T, typename ...Ts> struct allotropic<T, Ts...>: _std::conjunction<_std::is_constructible<T, Ts>...> {};
 
-template <typename ...Ts> concept id_q  =  identical<Ts...>::value;
-template <typename ...Ts> concept is_q  =  isotropic<Ts...>::value;
-template <typename ...Ts> concept to_q  = allotropic<Ts...>::value;
+template <typename ...Ts> concept id_q =  identical<Ts...>::value;
+template <typename ...Ts> concept is_q =  isotropic<Ts...>::value;
+template <typename ...Ts> concept to_q = allotropic<Ts...>::value;
 
 template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
 
 
-template <typename Y, typename    T > concept if_p  = _std::derived_from<based_t<T>, based_t<Y>>;
-template <typename Y, typename ...Ts> concept if_q  = every_q<if_p<Y, Ts>...>;
+template <typename Y, typename    T > concept if_p = _std::derived_from<based_t<T>, based_t<Y>>;
+template <typename Y, typename ...Ts> concept if_q = every_q<if_p<Y, Ts>...>;
 
 template <template <typename...> typename T_>                 struct  of_t {};
 template <template <typename...> typename T_, typename ...Ts> concept of_q = if_q<of_t<T_>, Ts...>;

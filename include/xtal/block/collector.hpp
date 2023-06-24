@@ -11,7 +11,17 @@ namespace xtal::block
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <typename V, size_t N>
+struct array: _std::array<V, N> {using _std::array<V, N>::array;};
+
+template <typename T>
+concept array_q = value_q<T> and if_q<array<value_t<T>, sizeof(T)/sizeof(value_t<T>)>, T>;
+
+
+}///////////////////////////////////////////////////////////////////////////////
 ///\
 A decorator that defines the base-types for block-based data storage, \
 namely `solid` (sharing the same interface as `std::array`), \
@@ -32,8 +42,8 @@ struct collector
 
 		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
 		
-		template <typename V> struct solid;///< Mimics `std::array`.
-		template <typename V> struct fluid;///< Mimics `std::vector`.
+		template <typename V> struct solid;///< cf. `std::array`.
+		template <typename V> struct fluid;///< cf. `std::vector`.
 		///\note\
 		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
 		Otherwise, only `fluid` is defined as `std::vector`. \
@@ -42,7 +52,7 @@ struct collector
 		template <typename V> requires (0 < N_size)
 		struct solid<V>
 		{
-			using type = _std::array<V, N_size>;
+			using type = _detail::array<V, N_size>;
 
 		};
 		template <typename V> requires (N_size < 0)
@@ -490,4 +500,17 @@ struct collector
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+/**/
+namespace std
+{///////////////////////////////////////////////////////////////////////////////
+
+template <xtal::block::_detail::array_q T>
+struct tuple_size<T>: xtal::constant_t<sizeof(T)/sizeof(xtal::value_t<T>)> {};
+
+template <size_t N, xtal::block::_detail::array_q T>
+struct tuple_element<N, T> {using type = xtal::value_t<T>;};
+
+
+}/////////////////////////////////////////////////////////////////////////////
+/***/
 XTAL_ENV_(pop)

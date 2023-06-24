@@ -27,11 +27,24 @@
 
 #define XTAL_STD_IEC 60559// TODO: Allow command-line/[c]?make configuration.
 
+#if   defined(L1_CACHE_BYTES)
+#define XTAL_STD_L1 L1_CACHE_BYTES
+
+#elif defined(L1_CACHE_SHIFT)
+#define XTAL_STD_L1 L1_CACHE_SHIFT
+
+#elif defined(__cacheline_aligned)
+#define XTAL_STD_L1 __cacheline_aligned
+
+#else
+#define XTAL_STD_L1 0x40
+
+#endif
+
 #define XTAL_STD_size_t ::std::size_t
 #define XTAL_STD_sign_t ::std::int_fast8_t
-#define XTAL_STD_null_t ::std::nullptr_t;
-#define XTAL_STD_unit_t ::std::monostate;
-
+#define XTAL_STD_null_t ::std::nullptr_t
+#define XTAL_STD_unit_t ::std::monostate
 
 ////////////////////////////////////////////////////////////////////////////////
 

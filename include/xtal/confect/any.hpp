@@ -502,10 +502,10 @@ template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
 template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
-XTAL_FN1 get(T const &&t) {return ::std::move(t).template head<N>();};
+XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
 
 template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
-XTAL_FN1 get(T       &&t) {return ::std::move(t).template head<N>();};
+XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
 
 template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};

@@ -4,7 +4,7 @@
 
 
 
-
+namespace xtal::common {template <typename T> struct realize;}
 
 XTAL_ENV_(push)
 namespace xtal::block
@@ -210,7 +210,7 @@ struct collected
 					if constexpr (is_q<Y, T>) return static_cast<T &>(*this);
 					else                 return reinterpret_cast<Y &>(*this);
 				}
-				XTAL_RN2_(XTAL_FN2 at(XTAL_DEF i), self()[XTAL_REF_(i)]);
+				XTAL_RN2_(XTAL_FN2 peek(XTAL_DEF i), self()[XTAL_REF_(i)]);
 
 				///\
 				Elementwise transformer. \
@@ -231,27 +231,27 @@ struct collected
 				XTAL_0EX
 				XTAL_IF1 (0 < N_size) and (N_size <= _realized::destructive_alignment_v)
 				{
-					seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) = f(at(i))));
+					seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) = f(peek(i))));
 					return self();
 				}
 
 				///\
 				Elementwise comparators. \
 
-			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <=> t.at(N)) <=>...         ) (seek_v<N_size>);}
-				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) ==  t.at(N)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <=  t.at(N)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) >=  t.at(N)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) <   t.at(N)) and ...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((at(N) >   t.at(N)) and ...and true) (seek_v<N_size>);}
+			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) <=> t.peek(N)) <=>...         ) (seek_v<N_size>);}
+				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) ==  t.peek(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) <=  t.peek(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) >=  t.peek(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) <   t.peek(N)) and ...and true) (seek_v<N_size>);}
+				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((peek(N) >   t.peek(N)) and ...and true) (seek_v<N_size>);}
 
 				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
 				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
 				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= XTAL_REF_(w))), self();}
-				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) *= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) /= XTAL_REF_(w))), self();}
 
 			};
 			class type: public homotype<type>
@@ -279,9 +279,9 @@ struct collected
 			
 			public:
 				using co::co;
-				using co::at;
 				using co::self;
 				using co::twin;
+				using co::peek;
 
 				///\
 				The transformed domain of the inverse FFT, \
@@ -292,8 +292,8 @@ struct collected
 				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 				
-				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= t.at(i))), self();}
-				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= t.at(i))), self();}
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) *= t.peek(i))), self();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) /= t.peek(i))), self();}
 
 				///\returns\
 				the mutually inverse couple `lhs +/- rhs`, \
@@ -310,8 +310,8 @@ struct collected
 					using alpha_t = typename _realized::alpha_t;
 					alpha_t constexpr   base = _realized::template unsquare_y<-1>((alpha_t) 2);// `std::sqrt(0.5)`
 					alpha_t constexpr debase = _realized::explo_y(1 - N_bias, base);
-					auto const &lhs = debase*at(0);
-					auto const &rhs = debase*at(1);
+					auto const &lhs = debase*peek(0);
+					auto const &rhs = debase*peek(1);
 					return T {lhs + rhs, lhs - rhs};
 				}
 
@@ -353,15 +353,15 @@ struct collected
 			
 			public:
 				using co::co;
-				using co::at;
 				using co::self;
 				using co::twin;
+				using co::peek;
 
 				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 				XTAL_OP1_(T &) -= (bracket_t<V> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) += t.at(i))), self();}
-				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) -= t.at(i))), self();}
+				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) += t.peek(i))), self();}
+				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(peek(i) -= t.peek(i))), self();}
 
 				///\
 				Multiplication by linear convolution, truncated by `N_size`. \
@@ -409,7 +409,7 @@ struct collected
 				{
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this](auto i) XTAL_0FN_(at(0 + i) += at(1 + i)));
+					seek_f<M>([&, this](auto i) XTAL_0FN_(peek(0 + i) += peek(1 + i)));
 					return self().wrap();
 				}
 
@@ -427,7 +427,7 @@ struct collected
 				{
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this](auto i) XTAL_0FN_(at(M - i) -= at(N - i)));
+					seek_f<M>([&, this](auto i) XTAL_0FN_(peek(M - i) -= peek(N - i)));
 					return self().wrap();
 				}
 
@@ -468,9 +468,9 @@ struct collected
 			
 			public:
 				using co::co;
-				using co::at;
 				using co::self;
 				using co::twin;
+				using co::peek;
 
 				///\
 				The transformed domain of the FFT (\see `transform`), \
@@ -605,7 +605,7 @@ struct collected
 						I const n = n_size;
 						for (I                  i = 0; i < u; i += 1)
 						for (I knife = i << kn, j = i; j < n; j += w)
-						{	V const y = that[j + u]*at(knife);
+						{	V const y = that[j + u]*peek(knife);
 							V const x = that[j + 0];
 							that[j + u] = x - y;
 							that[j + 0] = x + y;
