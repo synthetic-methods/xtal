@@ -1,22 +1,24 @@
 #pragma once
 #include "./any.hpp"
-#include "./utilize.hpp"
+#include "./seek.hpp"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
 ///\
 Establishes the base types for the supplied `N_size` \
 (which should be representative of the desired `std::size_t`): \
 \
--	`alphaplex_t` represents floating-point complex numbers. \
+-	`aphex_t` represents floating-point complex numbers. \
 -	`alpha_t` represents floating-point real numbers. \
 -	`sigma_t` represents full-width `unsigned int`s like `std::size`. \
 -	`delta_t` represents full-width   `signed int`s used for binary and integer arithmetic. \
@@ -174,7 +176,7 @@ public:
 	using typename co::  alpha_t;
 	using typename co::mt19937_t;
 
-	using alphaplex_t = _std::complex<alpha_t>;
+	using aphex_t = _std::complex<alpha_t>;
 
 	using co::width;
 	using co::depth;
@@ -242,7 +244,7 @@ public:
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(alpha_t) dot_y(alphaplex_t const &u)
+	XTAL_FZ2_(alpha_t) dot_y(aphex_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
@@ -251,7 +253,7 @@ public:
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(alphaplex_t) circle_y(auto const &u)
+	XTAL_FZ2_(aphex_t) circle_y(auto const &u)
 	XTAL_0EX
 	{
 		return {_std::cos(u), _std::sin(u)*M_pow};
@@ -264,12 +266,12 @@ public:
 		return it_y<M_pow>(w*w);
 	}
 	template <int M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2_(alphaplex_t) square_y(alphaplex_t const &u)
+	XTAL_FZ2_(aphex_t) square_y(aphex_t const &u)
 	XTAL_0EX
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
-		return it_y<M_pow>(alphaplex_t(xx - yy, x*y*2));
+		return it_y<M_pow>(aphex_t(xx - yy, x*y*2));
 	}
 	
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
@@ -292,10 +294,7 @@ public:
 		}
 		else
 		if constexpr (0 < N_lim)
-		{	for (sigma_t i = 0; i < N_lim; ++i)
-			{	n *= _1_5 - k*n*n;
-			}
-		//	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= _1_5 - k*n*n));
+		{	seek_f<N_lim>([&](auto) XTAL_0FN_(n *= _1_5 - k*n*n));
 		}
 		if constexpr (M_pow == -1)
 		{	return n;
@@ -577,7 +576,7 @@ public:
 	static_assert(signed_y( 0.0) ==  1.0);
 	static_assert(signed_y(-0.5) == -1.0);
 
-	XTAL_FZ2 signed_y(alphaplex_t const &value)
+	XTAL_FZ2 signed_y(aphex_t const &value)
 	XTAL_0EX
 	{
 		return unsquare_dot_y<-1>(value)*(value);
@@ -695,7 +694,7 @@ public:
 		bool constexpr N_unit = not N_infinity;
 		if constexpr (IEC&559)
 		{	delta_t constexpr M_zone = unit::mask + (1);
-			delta_t constexpr M_zoom = unit::mask - (1u << N_zoom);
+			delta_t constexpr M_zoom = unit::mask - (delta_t(1) << N_zoom);
 			delta_t const     dezone = zone << exponent::shift;
 			delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
 			delta_t const M = rezone + M_zoom;
@@ -727,13 +726,13 @@ public:
 		return truncate_y<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_FZ1_(alphaplex_t) truncate_y(alphaplex_t &target)
+	XTAL_FZ1_(aphex_t) truncate_y(aphex_t &target)
 	XTAL_0EX
 	{
 		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
 		alpha_t const x = truncate_y<N_zoom>(z[0]);
 		alpha_t const y = truncate_y<N_zoom>(z[1]);
-		return alphaplex_t {x, y};
+		return aphex_t {x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region below `dnsilon_y(N_zoom, zone)`. \
@@ -754,18 +753,18 @@ public:
 	}	
 
 	template <int N_zoom=0>
-	XTAL_FZ2 truncated_y(alphaplex_t const &target)
+	XTAL_FZ2 truncated_y(aphex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = truncated_y<N_zoom>(target.real());
 		alpha_t const y = truncated_y<N_zoom>(target.imag());
-		return alphaplex_t {x, y};
+		return aphex_t {x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
-	XTAL_FZ2 truncated_y(alphaplex_t target, delta_t const &zone)
+	XTAL_FZ2 truncated_y(aphex_t target, delta_t const &zone)
 	XTAL_0EX
 	{
-		truncate_y<(1u << (exponent::depth - 2))>(target);
+		truncate_y<(delta_t(1) << (exponent::depth - 2))>(target);
 		auto [w, m] = unsquare_dot_y<0>(target);
 		target *= m; truncate_y<N_zoom, N_zero>(w, zone);
 		target *= w;
@@ -785,7 +784,7 @@ public:
 	{
 		bool constexpr N_unit = not N_zero;
 		if constexpr (IEC&559)
-		{	delta_t constexpr M_zoom = unit::mask + (1u << N_zoom);
+		{	delta_t constexpr M_zoom = unit::mask + (delta_t(1) << N_zoom);
 			delta_t const     dezone = zone << exponent::shift;
 			delta_t const M = dezone + M_zoom*N_unit;
 			delta_t _, n, m;
@@ -818,13 +817,12 @@ public:
 		return puncture_y<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_FZ1_(alphaplex_t) puncture_y(alphaplex_t &target)
+	XTAL_FZ1_(aphex_t) puncture_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
-		alpha_t const x = puncture_y<N_zoom>(z[0]);
-		alpha_t const y = puncture_y<N_zoom>(z[1]);
-		return alphaplex_t {x, y};
+		alpha_t const x = puncture_y<N_zoom>(re_f(target));
+		alpha_t const y = puncture_y<N_zoom>(im_f(target));
+		return aphex_t {x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region above `upsilon_y(N_zoom, zone)`. \
@@ -845,15 +843,15 @@ public:
 	}
 
 	template <int N_zoom=0>
-	XTAL_FZ2 punctured_y(alphaplex_t const &target)
+	XTAL_FZ2 punctured_y(aphex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = punctured_y<N_zoom>(target.real());
 		alpha_t const y = punctured_y<N_zoom>(target.imag());
-		return alphaplex_t {x, y};
+		return aphex_t {x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
-	XTAL_FZ2 punctured_y(alphaplex_t target, delta_t const &zone)
+	XTAL_FZ2 punctured_y(aphex_t target, delta_t const &zone)
 	XTAL_0EX
 	{
 		auto [w, m] = unsquare_dot_y<0>(target);
@@ -872,10 +870,11 @@ public:
 	XTAL_0EX
 	{
 		delta_t constexpr N_unzoom = N_zoom? N_zoom - fraction::depth: -1;
-		alpha_t constexpr y = minimal_y(N_unzoom);
-		target *= y;
-		target /= y;
-	//	target *= 1/y;// prevent optimization by not doing this...
+		target *= minimal_y(N_unzoom);
+		target /= minimal_y(N_unzoom);
+	//	NOTE: Alternating `*` and `/` appears to prevent optimization as desired, \
+		but using `volatile` for this purpose violates `constexpr`. \
+
 		return target;
 	}
 	static_assert(trim_y<2>(patio_y<2>(1)) == 6.25);
@@ -883,43 +882,30 @@ public:
 	static_assert(trim_y<4>(patio_y<1>(2)) == 1.5625);
 
 	template <int N_zoom=fraction::depth - 1>
-	XTAL_FZ2 trim_y(alphaplex_t const &target)
+	XTAL_FZ2 trim_y(aphex_t const &target)
 	XTAL_0EX
 	{
 		alpha_t const x = trim_y<N_zoom>(target.real());
 		alpha_t const y = trim_y<N_zoom>(target.imag());
-		return alphaplex_t {x, y};
+		return aphex_t {x, y};
 	}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 };
-template <typename T> struct realize: realization<sizeof(revalue_t<T>)> {};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <typename T> struct realize: _detail::realization<sizeof(revalue_t<T>)> {};
 
 using realized = realize<size_t>;
-using   iota_t = typename realized:: iota_t;
-using  delta_t = typename realized::delta_t;//_std::ptrdiff_t;
-using  sigma_t = typename realized::sigma_t;//_std::size_t;
-using  alpha_t = typename realized::alpha_t;
-using  alphaplex_t = typename realized::alphaplex_t;
 
-static_assert(is_q<size_t, sigma_t>);
-static_assert(sizeof(size_t) == sizeof(sigma_t));
-static_assert(sizeof(size_t) == sizeof(delta_t));
-static_assert(sizeof(size_t) == sizeof(alpha_t));
-
-template <typename    T  > concept  iota_p = _std::integral<based_t<T>>;
-template <typename ...Ts > concept  iota_q = every_q<iota_p<Ts>...>;
-
-template <typename    T  > concept delta_p = _std::signed_integral<based_t<T>>;
-template <typename ...Ts > concept delta_q = every_q<delta_p<Ts>...>;
-
-template <typename    T  > concept sigma_p = _std::unsigned_integral<based_t<T>>;
-template <typename ...Ts > concept sigma_q = every_q<sigma_p<Ts>...>;
-
-template <typename    T  > concept alpha_p = _std::floating_point<based_t<T>>;
-template <typename ...Ts > concept alpha_q = every_q<alpha_p<Ts>...>;
+static_assert(is_q<size_t, typename realized::sigma_t>);
+static_assert(sizeof(size_t) == sizeof(typename realized::sigma_t));
+static_assert(sizeof(size_t) == sizeof(typename realized::delta_t));
+static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -927,8 +913,8 @@ template <typename ...Ts > concept alpha_q = every_q<alpha_p<Ts>...>;
 ///\see `realized::trim_y`. \
 
 template <auto ...N_etc>
-XTAL_LET trim_y = [](XTAL_DEF... etc)
-XTAL_0FN_(realize<decltype(etc)...>::template trim_y<N_etc...>(XTAL_REF_(etc)...));
+XTAL_LET trim_y = [](XTAL_DEF o)
+XTAL_0FN_(realize<decltype(o)>::template trim_y<N_etc...>(XTAL_REF_(o)));
 
 
 ///////////////////////////////////////////////////////////////////////////////

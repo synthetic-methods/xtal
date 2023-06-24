@@ -7,13 +7,13 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::any::__realize
+namespace xtal::common::__realize
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/any/realize.hpp: ratio")
+TEST_CASE("xtal/common/realize.hpp: ratio")
 {
 	REQUIRE(realized::ratio_y<1>(4) == 0.25);
 	REQUIRE(realized::ratio_y<2>(4) == 0.50);
@@ -55,7 +55,7 @@ void realize_truncate__test()
 	x = co*dn2; REQUIRE(realized::truncate_y<2>(x, N_rho) ==     0); REQUIRE(x ==  co*dn2);
 
 }
-TEST_CASE("xtal/any/realize.hpp: truncate")
+TEST_CASE("xtal/common/realize.hpp: truncate")
 {
 	realize_truncate__test< 1,  2>(); realize_truncate__test<-1,  2>();
 	realize_truncate__test< 1,  1>(); realize_truncate__test<-1,  1>();
@@ -80,10 +80,10 @@ TEST_CASE("xtal/any/realize.hpp: truncate")
 template <int N_sgn=1>
 void realize_puncture_real__test()
 {
-	alpha_t const oo0 = realized::minimal_y(0);
-	alpha_t const oo1 = realized::minimal_y(1);
-	alpha_t const oo2 = realized::minimal_y(2);
-	alpha_t const oo3 = realized::minimal_y(3);
+	auto const oo0 = realized::minimal_y(0);
+	auto const oo1 = realized::minimal_y(1);
+	auto const oo2 = realized::minimal_y(2);
+	auto const oo3 = realized::minimal_y(3);
 
 	realized::alpha_t w, x, y, co = N_sgn;
 
@@ -103,7 +103,7 @@ void realize_puncture_real__test()
 //	w = x =      0; y = realized::puncture_y<2>(x); REQUIRE(y == N_sgn); REQUIRE(x == co*oo2);
 
 }
-TEST_CASE("xtal/any/realize.hpp: puncture real")
+TEST_CASE("xtal/common/realize.hpp: puncture real")
 {
 	realize_puncture_real__test< 1>();
 	realize_puncture_real__test<-1>();
@@ -152,7 +152,7 @@ void realize_puncture_real_zone__test()
 	x = co*dn2; REQUIRE(realized::puncture_y<2>(x, N_rho) == N_sgn); REQUIRE(x ==  co*up2);
 
 }
-TEST_CASE("xtal/any/realize.hpp: puncture real zone")
+TEST_CASE("xtal/common/realize.hpp: puncture real zone")
 {
 	realize_puncture_real_zone__test< 1,  2>(); realize_puncture_real_zone__test<-1,  2>();
 	realize_puncture_real_zone__test< 1,  1>(); realize_puncture_real_zone__test<-1,  1>();
@@ -162,19 +162,24 @@ TEST_CASE("xtal/any/realize.hpp: puncture real zone")
 
 }
 
-TEST_CASE("xtal/any/realize.hpp: fracture complex")
+TEST_CASE("xtal/common/realize.hpp: fracture complex")
 {
+	using sigma_t = typename realized::sigma_t;
+	using delta_t = typename realized::delta_t;
+	using alpha_t = typename realized::alpha_t;
+	using aphex_t = typename realized::aphex_t;
+
 	delta_t constexpr N_zoom = 4;
 	alpha_t constexpr F = _std::numeric_limits<alpha_t>::infinity();
 	alpha_t constexpr E = _std::numeric_limits<alpha_t>::max();
 
-	auto const square_0 = alphaplex_t {0, 0};
-	auto const square_H = alphaplex_t {1, 1}*(0.5);
-	auto const square_1 = alphaplex_t {1, 1};
-	auto const square_2 = alphaplex_t {2, 2};
-	auto const square_F = alphaplex_t {F, F};
-	auto const square_E = alphaplex_t {E, E};
-	auto const circle_1 = alphaplex_t {1, 1}*_std::sqrt(0.5);
+	auto const square_0 = aphex_t {0, 0};
+	auto const square_H = aphex_t {1, 1}*(0.5);
+	auto const square_1 = aphex_t {1, 1};
+	auto const square_2 = aphex_t {2, 2};
+	auto const square_F = aphex_t {F, F};
+	auto const square_E = aphex_t {E, E};
+	auto const circle_1 = aphex_t {1, 1}*_std::sqrt(0.5);
 
 	REQUIRE(realized::truncated_y<N_zoom>(square_2) == square_2);
 	REQUIRE(realized::punctured_y<N_zoom>(square_2) == square_2);
@@ -192,11 +197,11 @@ TEST_CASE("xtal/any/realize.hpp: fracture complex")
 	BENCHMARK("fracture")
 	{
 		alpha_t constexpr two = 2;
-		alphaplex_t z {};
+		aphex_t z {};
 		for (sigma_t i = 192000/100; ~--i;)
 		{	auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
 			auto y = realized::mantissa_y(mt19937_m); y = _std::pow(two, y);
-			z *= realized::truncated_y<0>(realized::punctured_y<0>(alphaplex_t {x, y}), 0);
+			z *= realized::truncated_y<0>(realized::punctured_y<0>(aphex_t {x, y}), 0);
 		}
 		return z;
 	};

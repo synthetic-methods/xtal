@@ -15,6 +15,9 @@ namespace xtal::processor::__bond
 /**/
 TEST_CASE("xtal/processor/bond.hpp: lifting")
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	sigma_t constexpr N_size = 5;
 	using scalar_u = block::scalar_t<alpha_t, N_size>;
 	using resize_u = message::resize_t<>;
@@ -39,6 +42,9 @@ TEST_CASE("xtal/processor/bond.hpp: lifting")
 template <typename mix_t>
 void respan_virtual__test()
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	using sequel_n = message::sequel_t<>;
 	using mixer_t = processor::bond_t<mix_t>;
 

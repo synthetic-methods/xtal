@@ -31,7 +31,7 @@ struct resize
 	};
 };
 template <iterated_q U>
-struct resize<U>: resize<_v3::ranges::size_type_t<U>>
+struct resize<U>: resize<XTAL_TYP_(XTAL_VAL_(U).size())>
 {
 };
 template <typename U=size_t>

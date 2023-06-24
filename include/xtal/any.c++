@@ -13,8 +13,8 @@ namespace xtal
 
 ////////////////////////////////////////////////////////////////////////////////
 
-using bias_t = message::numinal_t<alpha_t, struct bias>;
-using coef_t = message::numinal_t<alpha_t, struct coefficient>;
+using bias_t = message::numinal_t<typename common::realized::alpha_t, struct bias>;
+using coef_t = message::numinal_t<typename common::realized::alpha_t, struct coefficient>;
 
 struct static_bias_mix_t
 :	process::confine_t<static_bias_mix_t
@@ -53,7 +53,7 @@ struct dynamic_term_t
 };
 struct dynamic_count
 {
-	using restep_u = message::restep_t<iota_t>;
+	using restep_u = message::restep_t<typename common::realized::iota_t>;
 
 	template <typename T>
 	using homotype = process::confine_t<T
@@ -62,7 +62,7 @@ struct dynamic_count
 
 	struct type: public homotype<type>
 	{
-		iota_t count = 0;
+		typename common::realized::iota_t count = 0;
 
 		using co = homotype<type>;
 	public:
@@ -71,8 +71,8 @@ struct dynamic_count
 		template <auto...>
 		XTAL_FN2 method()
 		{
-			auto  &o = this->template self<restep_u>();
-			iota_t i = count; count += o.head();
+			auto &o = this->template self<restep_u>();
+			auto  i = count; count += o.head();
 			return i;
 		}
 

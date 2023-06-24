@@ -15,6 +15,8 @@ namespace xtal::message::__any
 /**/
 TEST_CASE("xtal/message/any.hpp: hold")
 {
+	using alpha_t = typename common::realized::alpha_t;
+
 	using sequel_t = message::sequel_t<counter_t<>>;
    using biased_t = process::confined_t<bias_t::template hold<(1 << 7)>>;
 
@@ -52,6 +54,8 @@ TEST_CASE("xtal/message/any.hpp: hold")
 template <typename mix_t>
 void respan_internal_interrupt__test()
 {
+	using alpha_t = typename common::realized::alpha_t;
+
 	using    mix_z = processor::atom_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;

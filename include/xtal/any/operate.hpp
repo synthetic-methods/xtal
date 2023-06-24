@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hpp"
 #include "./utilize.hpp"
-#include "./realize.hpp"
+
 
 
 
@@ -88,9 +88,8 @@ concept field_operators_p = _std::floating_point<T> or not bit_operators_p<T, N_
 	};
 };
 
-template <typename ...Ts > concept          bit_operators_q = every_q<  bit_operators_p<based_t<Ts>>...>;
-template <typename ...Ts > concept        field_operators_q = every_q<field_operators_p<based_t<Ts>>...>;
-template <typename ...Ts > concept bit_or_field_operators_q = bit_operators_q<Ts...> or field_operators_q<Ts...>;
+template <typename ...Ts > concept   bit_operators_q = every_q<  bit_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept field_operators_q = every_q<field_operators_p<based_t<Ts>>...>;
 
 static_assert(field_operators_q<_std::complex<float>>);
 
@@ -103,6 +102,25 @@ concept complex_p = requires (T t)
 
 template <typename ...Ts>
 concept complex_q = every_q<complex_p<Ts>...>;
+
+template <complex_q T>
+XTAL_FZ2 simple_f(T &t)
+XTAL_0EX
+{
+	return reinterpret_cast<value_t<T>(&)[2]>(t);
+}
+template <complex_q T>
+XTAL_FZ2 re_f(T &t)
+XTAL_0EX
+{
+	return simple_f(t)[0];
+}
+template <complex_q T>
+XTAL_FZ2 im_f(T &t)
+XTAL_0EX
+{
+	return simple_f(t)[1];
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

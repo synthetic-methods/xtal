@@ -278,7 +278,7 @@ struct defer
 			}
 			else
 			if constexpr (iterated_q<U>)
-			{	return arranged_eq(u, w);
+			{	return arranged_e(u, w);
 			}
 		}
 		

@@ -14,8 +14,8 @@ namespace xtal::message
 struct per
 {
 private:
-	using U = _std::make_unsigned_t<iota_t>;
-	using V = alpha_t;
+	using U = _std::make_unsigned_t<typename realized::iota_t>;
+	using V = typename realized::alpha_t;
 
 public:
 	using subkind = compose<defer<U>, defer<V>>;

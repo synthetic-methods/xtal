@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "../common/seek.hpp"
+
 
 
 
@@ -33,20 +33,13 @@ struct collected
 		template <typename U>
 		using recollected_t = typename collected<U>::template subtype<S>;
 
-		struct buffer;
 		struct sluice;
 		struct siphon;
 		struct scalar;
+		struct couple;
 		struct serial;
 		struct series;
-		struct couple;
 		
-		struct buffer
-		{
-			using type = typename fluid::type;
-
-		};
-
 		///\
 		Event spool based on an inverted `std::priority_queue`, \
 		presenting a similar interface to `siphon`. \
@@ -241,7 +234,6 @@ struct collected
 					seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) = f(at(i))));
 					return self();
 				}
-				
 
 				///\
 				Elementwise comparators. \
@@ -261,8 +253,67 @@ struct collected
 				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= XTAL_REF_(w))), self();}
 				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= XTAL_REF_(w))), self();}
 
-				XTAL_OP2        -> () XTAL_0FX {return static_cast<const pointed_t<T>*>(this);}
-				XTAL_OP2        -> () XTAL_0EX {return static_cast<      pointed_t<T>*>(this);}
+			};
+			class type: public homotype<type>
+			{
+				using co = homotype<type>;
+
+			public:
+				using co::co;
+
+			};
+		};
+		///\
+		Represents a sequence that supports elementwise multiplication/division. \
+
+		struct couple
+		{
+			template <typename T>
+			using hemitype = typename scalar::template homotype<T>;
+
+			template <typename T>
+			class homotype: public hemitype<T>
+			{
+				friend T;
+				using co = hemitype<T>;
+			
+			public:
+				using co::co;
+				using co::at;
+				using co::self;
+				using co::twin;
+
+				///\
+				The transformed domain of the inverse FFT, \
+				in which multiplication is performed via convolution. \
+				
+				using transformed_t = typename series::type;
+
+				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
+				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
+				
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= t.at(i))), self();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= t.at(i))), self();}
+
+				///\returns\
+				the mutually inverse couple `lhs +/- rhs`, \
+				scaled by the value indexed by `N_bias`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
+				
+				///\note\
+				Useful for e.g. exponential or mid/side pairs. \
+
+				template <int N_bias=0>
+				XTAL_FN2 reflected()
+				XTAL_0FX
+				XTAL_IF1 (N_size == 2)
+				{
+					using alpha_t = typename _realized::alpha_t;
+					alpha_t constexpr   base = _realized::template unsquare_y<-1>((alpha_t) 2);// `std::sqrt(0.5)`
+					alpha_t constexpr debase = _realized::explo_y(1 - N_bias, base);
+					auto const &lhs = debase*at(0);
+					auto const &rhs = debase*at(1);
+					return T {lhs + rhs, lhs - rhs};
+				}
 
 			};
 			class type: public homotype<type>
@@ -321,18 +372,18 @@ struct collected
 				//	NOTE: Accuracy is better when looped from back-to-front, \
 					but `MSVC` doesn't inline for some reason (even when the following is rephrased...). \
 
-				//	for (iota_t i = N_size;  ~--i;) {s[i] *= t[0];
-				//	for (iota_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];
+				//	for (count_t i = N_size;  ~--i;) {s[i] *= t[0];
+				//	for (count_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];
 				//	}}
 
 					auto &s = self();
 					auto _s = self();
-					auto constexpr h = N_size - 1;
+					auto constexpr h = N_size - 1; static_assert(1 < N_size);
 
-					seek_f<N_size>([&, this](auto n)
+					seek_f<N_size>([&, this](constant_q auto n)
 					XTAL_0FN
 					{	size_t constexpr i = h - n; s[i] *= t[0];
-						seek_f<i>([&, this](auto m)
+						seek_f<i>([&, this](constant_q auto m)
 						XTAL_0FN
 						{	size_t constexpr j = i - m; s[i] += _s[i - j]*t[j];
 						});
@@ -493,25 +544,21 @@ struct collected
 				XTAL_0EX
 				XTAL_IF1 bit_ceiling_q<N_size, 2> and complex_q<V>
 				{
-				//	Compute the segment indicies for `1/8`, `1/4`, and `1/2`:
-					typename co::difference_type constexpr H = N_size >> 2;
+				//	Define the forwards and backwards iterators:
 					auto const i = co::begin();
-					auto const i0_8 = i + 0*H;
-					auto const i1_8 = i + 1*H;
-					auto const i2_8 = i + 2*H;
-					auto const i4_8 = i + 4*H;
-					auto const j2_8 = _std::make_reverse_iterator(i2_8 + 1);
+					auto const j = co::rend() - 1;
 					
 				//	Compute the fractional sinusoid for the given `N_size`:
 					auto constexpr x = _realized::template patio_y<-1>(N_size);
 					auto const     y = _realized::circle_y(x);// TODO: Make `constexpr`.
 					
 				//	Compute the initial `1/8`th then mirror the remaining segments:
-					static_assert(-4 <  N_shift);// NOTE: Minimum period is 1/8th.
-					generate<H + (-3 <  N_shift)>(y);
-					if constexpr (-2 <= N_shift) _detail::copy_to(j2_8, _std::span(i0_8, i1_8), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
-					if constexpr (-1 <= N_shift) _detail::copy_to(i2_8, _std::span(i0_8, i2_8), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
-					if constexpr (-0 <= N_shift) _detail::copy_to(i4_8, _std::span(i0_8, i4_8), [](V const &v) XTAL_0FN_(V(-v.real(), -v.imag())));
+					typename co::difference_type constexpr N = N_size >> 2;// `1/8`th
+					static_assert(-4 <  N_shift);
+					generate<N + (-3 <  N_shift)>(y);
+					if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*N, _std::span(i, i + 1*N), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
+					if constexpr (-1 <= N_shift) _detail::copy_to(i + 2*N, _std::span(i, i + 2*N), [](V const &v) XTAL_0FN_(V( v.imag(), -v.real())));
+					if constexpr (-0 <= N_shift) _detail::copy_to(i + 4*N, _std::span(i, i + 4*N), [](V const &v) XTAL_0FN_(V(-v.real(), -v.imag())));
 					static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `seek`.
 					
 					return self();
@@ -613,7 +660,7 @@ struct collected
 					{	T(constant_o<-1>).convolve(s, t);
 					}
 					else
-					{	using W = typename _realized::alphaplex_t;
+					{	using W = typename _realized::aphex_t;
 						using Y = typename recollected_t<W>::series::type;
 						Y s_(s);
 						Y t_(t);
@@ -626,77 +673,6 @@ struct collected
 				XTAL_0FX
 				{
 					return twin() *= t;
-				}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
-		};
-		///\
-		Represents a sequence that supports elementwise multiplication/division. \
-
-		struct couple
-		{
-			template <typename T>
-			using hemitype = typename scalar::template homotype<T>;
-
-			template <typename T>
-			class homotype: public hemitype<T>
-			{
-				friend T;
-				using co = hemitype<T>;
-			
-			public:
-				using co::co;
-				using co::at;
-				using co::self;
-				using co::twin;
-
-				///\
-				The transformed domain of the inverse FFT, \
-				in which multiplication is performed via convolution. \
-				
-				using transformed_t = typename series::type;
-
-			//	Elementwise multiplication/division:
-
-				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
-				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
-				
-				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) *= t.at(i))), self();}
-				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(at(i) /= t.at(i))), self();}
-
-				///\returns\
-				the mutually inverse couple `(lhs +/- rhs)*reflector()`, \
-				e.g. for exponential or mid/side pairs. \
-
-				template <int N_bias=0>
-				XTAL_FN2 reflected()
-				XTAL_0FX
-				XTAL_IF1 (N_size == 2)
-				{
-					auto const &lhs = at(0)*reflector<N_bias>();
-					auto const &rhs = at(1)*reflector<N_bias>();
-					return T {lhs + rhs, lhs - rhs};
-				}
-				template <int N_bias=0>
-				XTAL_FZ2 reflector()
-				XTAL_IF1 (N_size == 2)
-				{
-					using alpha_t = typename _realized::alpha_t;
-					switch (N_bias)
-					{
-						case +1: return (alpha_t) 1.0000000000000000000000000000000000000;
-						case  0: return (alpha_t) 0.7071067811865475244008443621048490393;
-						case -1: return (alpha_t) 0.5000000000000000000000000000000000000;
-					}
-				//	return _realized::explo_y(1 - N_bias, _realized::template unsquare_y<-1>((alpha_t) 2));
 				}
 
 			};

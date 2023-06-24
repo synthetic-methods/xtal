@@ -75,6 +75,12 @@ template <typename    T  >  concept rebased_p  =     (bool) rebased<T>::value;
 template <typename ...Ts >  concept rebased_q  =  every_q<rebased_p<Ts>...>;
 
 
+template <typename ...Ts >  concept iota_q     = every_q<_std::         integral<based_t<Ts>>...>;
+template <typename ...Ts >  concept delta_q    = every_q<_std::  signed_integral<based_t<Ts>>...>;
+template <typename ...Ts >  concept sigma_q    = every_q<_std::unsigned_integral<based_t<Ts>>...>;
+template <typename ...Ts >  concept alpha_q    = every_q<_std::   floating_point<based_t<Ts>>...>;
+
+
 template <typename    T  >    using value_t    = typename based_t<T>::value_type;
 template <typename    T  >  concept value_p    = requires {typename value_t<T>;};
 template <typename ...Ts >  concept value_q    = every_q<value_p<Ts>...>;

@@ -201,7 +201,7 @@ TEST_CASE("xtal/message/sequel.hpp: cycle")
 {
 	using V = counter_t<size_t>; using sequel_n = sequel_t<V>;
 	using U = counted_t<size_t>; using sequel_u = sequel_t<U>;
-	sigma_t constexpr N = 5;
+	size_t constexpr N = 5;
 
 	sequel_n seq_n(N); seq_n *= N;
 	sequel_n seq_m = seq_n;

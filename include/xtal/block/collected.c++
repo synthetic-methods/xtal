@@ -19,7 +19,7 @@ XTAL_0EX
 {
 	using W = XTAL_TYP_(w);
 	using _realized = realize<W>;
-	if constexpr (M_pow == 0 and _std::floating_point<W>)
+	if constexpr (M_pow == 0 and alpha_q<W>)
 	{	if (_std::is_constant_evaluated())
 		{
 			auto const n = _realized::template unsquare_y<-1, N_lim>(w);
@@ -40,6 +40,9 @@ XTAL_0EX
 
 TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
 {
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
 	auto foo = couple_t<alpha_t, 2>{2.0, 0.5};
 	auto bar = unsquing_y<0>((alpha_t) 2);
 	bar.transmute([&](XTAL_DEF u) XTAL_0FN_(realized::square_y(XTAL_REF_(u))), trim_y<1>);
@@ -48,22 +51,29 @@ TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
 TEST_CASE("xtal/block/collected.hpp: couple")
 {
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
 	auto bar = couple_t<alpha_t, 2>{2.0, 0.5};
 	auto foo = bar.reflected<-1>();
 	auto baz = foo.reflected<+1>();
-	REQUIRE(foo[0] == 1.25);
-	REQUIRE(foo[1] == 0.75);
-	REQUIRE(bar[0] == bar[0]);
-	REQUIRE(bar[1] == bar[1]);
+	
+	REQUIRE(trim_y<19>(foo[0]) == 1.25);
+	REQUIRE(trim_y<19>(foo[1]) == 0.75);
+	REQUIRE(trim_y<19>(baz[0]) == bar[0]);
+	REQUIRE(trim_y<19>(baz[1]) == bar[1]);
 
 }
-
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 TEST_CASE("xtal/block/collected.hpp: series initialization")
 {
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
 	sigma_t constexpr N = 1 << 3;
 	using scalar_u = scalar_t<alpha_t, N>;
 	using series_u = series_t<alpha_t, N>;
@@ -81,40 +91,48 @@ TEST_CASE("xtal/block/collected.hpp: series initialization")
 }
 TEST_CASE("xtal/block/collected.hpp: series transformation")
 {
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+	using aphex_t = typename realized::aphex_t;
+
 	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr O = 1 << 5;
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_s = series_t<alphaplex_t, O>;
-	using series_u = series_t<alphaplex_t, N>;
+	using series_s = series_t<aphex_t, O>;
+	using series_u = series_t<aphex_t, N>;
 	series_s basis(constant_o<-1>);
 
 	series_u source;
-	source[0] = source[M - 0] = alphaplex_t(0.0, 0.0);
-	source[1] = source[M - 1] = alphaplex_t(1.0, 1.0);
-	source[2] = source[M - 2] = alphaplex_t(3.0, 3.0);
-	source[3] = source[M - 3] = alphaplex_t(4.0, 4.0);
+	source[0] = source[M - 0] = aphex_t(0.0, 0.0);
+	source[1] = source[M - 1] = aphex_t(1.0, 1.0);
+	source[2] = source[M - 2] = aphex_t(3.0, 3.0);
+	source[3] = source[M - 3] = aphex_t(4.0, 4.0);
 
 	auto target = basis.transformation(source).transmute(iffy);
-	REQUIRE(target[0] == iffy(alphaplex_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
-	REQUIRE(target[1] == iffy(alphaplex_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
-	REQUIRE(target[2] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[3] == iffy(alphaplex_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
-	REQUIRE(target[4] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[5] == iffy(alphaplex_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
-	REQUIRE(target[6] == iffy(alphaplex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-	REQUIRE(target[7] == iffy(alphaplex_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
+	REQUIRE(target[0] == iffy(aphex_t( 0.1600000000000000e+2,  0.1600000000000000e+2)));
+	REQUIRE(target[1] == iffy(aphex_t(-0.4828427124746192e+1, -0.1165685424949238e+2)));
+	REQUIRE(target[2] == iffy(aphex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[3] == iffy(aphex_t(-0.3431457505076203e+0,  0.8284271247461885e+0)));
+	REQUIRE(target[4] == iffy(aphex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[5] == iffy(aphex_t( 0.8284271247461912e+0, -0.3431457505076203e+0)));
+	REQUIRE(target[6] == iffy(aphex_t( 0.0000000000000000e+0,  0.0000000000000000e+0)));
+	REQUIRE(target[7] == iffy(aphex_t(-0.1165685424949238e+2, -0.4828427124746188e+1)));
 
 }
 /**/
 TEST_CASE("xtal/block/collected.hpp: series convolution")
 {
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+	using aphex_t = typename realized::aphex_t;
+
 	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_u = series_t<alphaplex_t, N>;
+	using series_u = series_t<aphex_t, N>;
 	series_u basis(constant_o<-1>);
 
 	series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
@@ -129,7 +147,10 @@ TEST_CASE("xtal/block/collected.hpp: series convolution")
 
 TEST_CASE("xtal/block/collected.hpp: buffer assigment")
 {
-	using buffer_u = buffer_t<alpha_t, (1<<7)>;
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
+	using buffer_u = fluid_t<alpha_t, (1<<7)>;
 	using vector_u = _std::vector<alpha_t>;
 
 	auto const zhs = buffer_u {7, 8, 9};
@@ -151,7 +172,10 @@ TEST_CASE("xtal/block/collected.hpp: buffer assigment")
 
 TEST_CASE("xtal/block/collected.hpp: buffer mutation")
 {
-	using buffer_u = buffer_t<alpha_t, (1<<7)>;
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
+	using buffer_u = fluid_t<alpha_t, (1<<7)>;
 	using vector_u = _std::vector<alpha_t>;
 
 	auto xs = buffer_u {0, 1, 2, 3, 4};
@@ -268,7 +292,11 @@ TEST_CASE("xtal/block/collected.hpp: serial multiplication")
 /**/
 void series_multiplication__test()
 {
-	using C4 = series_t<alphaplex_t, 4>;
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+	using aphex_t = typename realized::aphex_t;
+
+	using C4 = series_t<aphex_t, 4>;
 	using D4 = series_t<alpha_t, 4>;
 	
 	REQUIRE(C4 {1000, 100, 10, 1} * C4 {2000, 200, 20, 2} == C4 {2000600, 400040, 60002, 8000});

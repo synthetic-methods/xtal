@@ -15,6 +15,9 @@ namespace xtal::processor::__atom
 /**/
 TEST_CASE("xtal/processor/atom.hpp: lifting")
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	sigma_t constexpr N = 5;
 	using scalar_u = block::scalar_t<alpha_t, N>;
 
@@ -37,6 +40,9 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 template <typename add_t>
 void respan_external__test()
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	using collector = block::collector<(1<<5)>;
 
 	using buffer_u = typename collector::type::template fluid<alpha_t>::type;
@@ -78,6 +84,9 @@ TEST_CASE("xtal/processor/atom.hpp: respan external")
 template <typename add_t>
 void respan_internal__test()
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	size_t constexpr N = 3;
 
 	using namespace _v3;
@@ -113,6 +122,9 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal")
 template <typename add_t, typename mul_t=dynamic_term_t>
 void respan_internal_chain_rvalue__test()
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	size_t constexpr N = 4;
 	
 	using namespace _v3;
@@ -149,6 +161,9 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal chain rvalue")
 template <typename add_t, typename mul_t=dynamic_term_t>
 void respan_internal_chain_lvalue__test()
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	size_t constexpr N = 4;
 
 	using namespace _v3;
@@ -186,6 +201,9 @@ TEST_CASE("xtal/processor/atom.hpp: respan internal chain lvalue")
 /**/
 TEST_CASE("xtal/processor/atom.hpp: respan internal chain lvalue shared")
 {
+	using sigma_t = typename common::realized::sigma_t;
+	using alpha_t = typename common::realized::alpha_t;
+
 	size_t constexpr N = 4;
 
 	using namespace _v3;
