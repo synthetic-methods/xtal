@@ -46,7 +46,7 @@ XTAL_0EX
 template <iterator_q I, iterator_q J>
 XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
 XTAL_0EX
-XTAL_IF1 iso_q<I, J>
+XTAL_IF1 isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution

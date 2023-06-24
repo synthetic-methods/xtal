@@ -85,9 +85,9 @@ template <value_p     T  >   struct revalue<T> : based_t<T> {};
 template <typename    T  >    using revalue_t  = value_t<revalue<T>>;
 
 
-template <typename    T  >  concept bracket_p = requires (T t) {t.begin(); t.end();};
-template <typename ...Ts >  concept bracket_q = every_q<bracket_p<Ts>...>;
-template <typename    W  >    using bracket_t = _std::initializer_list<W>;
+template <typename    T  >  concept bracket_p  = requires (T t) {t.begin(); t.end();};
+template <typename ...Ts >  concept bracket_q  = every_q<bracket_p<Ts>...>;
+template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
 
 template <typename    T  >    using pointed_t  = XTAL_TYP_(* XTAL_VAL_(T));
 template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
@@ -103,20 +103,23 @@ XTAL_LET appointer_f = [](XTAL_DEF i) XTAL_0FN_(_std::launder(reinterpret_cast<I
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename             ...Ys> struct  identical          : constant_t<false> {};
-template <typename T, typename ...Ys> struct  identical<T, Ys...>: _std::disjunction<_std::is_same<T, Ys>...> {};
-template <typename             ...Ys> struct  isotropic          : identical<based_t<Ys>...> {};
+template <typename             ...Ts> struct  identical: _std::false_type {};
+template <typename             ...Ts> struct  isotropic: _std::false_type {};
+template <typename             ...Ts> struct allotropic: _std::true_type  {};
 
-template <typename ...Ys>             concept is_q  = isotropic  <Ys...>::value;
-template <typename ...Ys>             concept id_q  = identical <Ys...>::value;
+template <typename T, typename ...Ts> struct  identical<T, Ts...>: _std::disjunction<_std::is_same<T, Ts>...> {};
+template <typename T, typename ...Ts> struct  isotropic<T, Ts...>: _std::disjunction<_std::is_same<based_t<T>, based_t<Ts>>...> {};
+template <typename T, typename ...Ts> struct allotropic<T, Ts...>: _std::conjunction<_std::is_constructible<T, Ts>...> {};
+
+template <typename ...Ts> concept id_q  =  identical<Ts...>::value;
+template <typename ...Ts> concept is_q  =  isotropic<Ts...>::value;
+template <typename ...Ts> concept to_q  = allotropic<Ts...>::value;
+
+template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
+
 
 template <typename Y, typename    T > concept if_p  = _std::derived_from<based_t<T>, based_t<Y>>;
 template <typename Y, typename ...Ts> concept if_q  = every_q<if_p<Y, Ts>...>;
-
-template <typename T, typename    Y > concept to_p  = requires (T t) {(Y) t;};
-template <typename T, typename ...Ys> concept to_q  = every_q<to_p<T, Ys>...>;
-
-template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
 
 template <template <typename...> typename T_>                 struct  of_t {};
 template <template <typename...> typename T_, typename ...Ts> concept of_q = if_q<of_t<T_>, Ts...>;

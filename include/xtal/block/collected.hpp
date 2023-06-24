@@ -524,7 +524,7 @@ struct collected
 				The size of both `this` and `that` must be expressible as an integral power of two, \
 				and `1 < that.size() <= this->size()`. \
 
-				template <iso_q<T> Y>
+				template <isomorphic_q<T> Y>
 				XTAL_FN1_(typename Y::transformed_t &) transform(Y &that)
 				XTAL_0FX
 				XTAL_IF1 bit_ceiling_q<N_size, 1> and complex_q<V>
@@ -576,7 +576,7 @@ struct collected
 				///\returns a new `series` representing the FFT of `lhs`, \
 				using `this` as the Fourier basis. \
 
-				template <iso_q<T> Y>
+				template <isomorphic_q<T> Y>
 				XTAL_FN2_(typename Y::transformed_t) transformation(Y that)
 				XTAL_0FX
 				{
@@ -586,7 +586,7 @@ struct collected
 				///\returns `lhs` convolved with `rhs`, \
 				using `this` as the Fourier basis. \
 
-				template <iso_q<T> Y>
+				template <isomorphic_q<T> Y>
 				XTAL_FN1_(Y &) convolve(Y &lhs, Y rhs)
 				XTAL_0FX
 				{
@@ -595,7 +595,7 @@ struct collected
 				///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
 				using `this` as the Fourier basis. \
 
-				template <iso_q<T> Y>
+				template <isomorphic_q<T> Y>
 				XTAL_FN2_(Y) convolution(Y lhs, Y const &rhs)
 				XTAL_0FX
 				{

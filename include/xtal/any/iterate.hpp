@@ -62,6 +62,8 @@ template <typename    T  >    using sentinel_t = based_t<_v3::ranges::sentinel_t
 template <typename    T  >    using distance_t = XTAL_TYP_(_std::distance(XTAL_VAL_(iterator_t<T>), XTAL_VAL_(iterator_t<T>)));
 
 
+using count_t = _std::make_unsigned_t<size_t>;
+
 template <typename    T  >  concept counted_p  = is_q<T, iterated_t<iteratee_t<T>>>;
 template <typename    T  >  concept counter_p  = integral_q<T>;
 
@@ -77,8 +79,8 @@ template <counter_p   T  >   struct counted<T> : constant_t<0> {using type = ite
 template <counted_p   T  >   struct counter<T> : constant_t<0> {using type = iteratee_t<T>;};
 template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    based_t<T>;};
 
-template <typename T=delta_t> using counted_t  = typename counted<T>::type;
-template <typename T=delta_t> using counter_t  = typename counter<T>::type;
+template <typename T=count_t> using counted_t  = typename counted<T>::type;
+template <typename T=count_t> using counter_t  = typename counter<T>::type;
 
 template <typename    T  > XTAL_FN2 count_f(T t) {return t.size();}
 template <counted_q   T  > XTAL_FN2 count_f(T t) {return 1 + t.back() - t.front();}
@@ -88,20 +90,15 @@ the `size` of `iota_view` as a `value_type` instead of `size_type` which is twic
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename   ...Ts> struct    isomorphic;
-template <iterated_q ...Ts> struct    isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
-template <iterator_q ...Ts> struct    isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
-template <typename   ...Ts> concept   isomorphic_q =     isomorphic<Ts...>::value;
-template <typename   ...Ts> concept   iso_q = isomorphic_q<Ts...>;
-template <typename   ...Ts> concept aniso_q = isomorphic_q<Ts...> and not is_q<Ts...>;
+template <typename   ...Ts>  struct isomorphic       : isotropic<Ts...> {};
+template <iterated_q ...Ts>  struct isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts>  struct isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
+template <typename   ...Ts> concept isomorphic_q =     isomorphic<Ts...>::value;
 
-template <typename T, typename ...Ts>
-struct isomorphic<T, Ts...>:
-_std::disjunction<
-	constant_t<to_p<Ts, T>>...,
-	constant_t<to_p<T, Ts>>...,
-	_std::false_type
->	{};
+template <typename   ...Ts>  struct allomorphic       : allotropic<Ts...> {};
+template <iterated_q ...Ts>  struct allomorphic<Ts...>: allomorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts>  struct allomorphic<Ts...>: allomorphic<iteratee_t<Ts>...> {};
+template <typename   ...Ts> concept allomorphic_q =     allomorphic<Ts...>::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +107,7 @@ template <iterated_q X, iterated_q Y>
 XTAL_FN2_(bool) arranged_e(X const &x, Y const &y)
 XTAL_0EX
 {
-	if constexpr (iso_q<X, Y>)
+	if constexpr (isomorphic_q<X, Y>)
 	{	return x.begin() == y.begin() and x.end() == y.end();
 	}
 	else

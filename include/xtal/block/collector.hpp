@@ -134,7 +134,7 @@ struct collector
 				Span constructor. \
 				Initializes `this` with the values between `i0` and `iN`. \
 
-				template <iso_q<iterator> I0, iso_q<iterator> IN>
+				template <allomorphic_q<iterator> I0, allomorphic_q<iterator> IN>
 				XTAL_NEW_(explicit) type(I0 i0, IN iN)
 				{
 					using I = _std::common_type_t<I0, IN>;
@@ -385,7 +385,7 @@ struct collector
 				///\
 				Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-				template <is_q<iterator> I, iso_q<iterator> J0, iso_q<iterator> JN>
+				template <is_q<iterator> I, allomorphic_q<iterator> J0, allomorphic_q<iterator> JN>
 				XTAL_FN1_(iterator) insert(I i, J0 j0, JN jN)
 				{
 					using J = _std::common_type_t<J0, JN>;
