@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::confect
+namespace xtal::compound
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +50,7 @@ struct define
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
-			return pack_f();
+			return bundle_f();
 		}
 		using tuple_size = constant_t<(size_t) 0>;
 
@@ -148,7 +148,26 @@ struct refine
 };
 
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{//////////////////////////////////////////////////////////////////////////////
+
+template <typename T> concept dismember_p = debased_p<T>;// determine whether `T` should be dereferenced
+template <typename T> using      member_t = debased_t<T>;// convert references to pointers
+
+template <typename T>   XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_IF1 dismember_p<T> {return &XTAL_REF_(w);}// obtain address
+template <typename T>   XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<T>(XTAL_REF_(w));}
+template <typename T>   XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<T>(XTAL_REF_(ws)...);}
+
+XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *XTAL_REF_(w);}// dereference address
+XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX                {return  XTAL_REF_(w);}
+
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *_std::move(XTAL_REF_(w));}// dereference address
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX                {return  _std::move(XTAL_REF_(w));}
+
+template <typename T> concept remember_p = not dismember_p<T>;
+
+
+}//////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
 
@@ -179,7 +198,7 @@ struct defer
 		XTAL_NEW_(explicit) subtype(XTAL_DEF w, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	co(XTAL_REF_(ws)...)
-		,	body_m(member_f<U>(XTAL_REF_(w)))
+		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
 		{
 		}
 
@@ -205,20 +224,20 @@ struct defer
 		XTAL_RN4_(template <size_t N_index=0>
 		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...))
 		
-		XTAL_FN2 head() XTAL_0FX_(&&) {return remember_x(body_m);}
-		XTAL_FN2 head() XTAL_0EX_(&&) {return remember_x(body_m);}
-		XTAL_FN2 head() XTAL_0FX_( &) {return remember_y(body_m);}
-		XTAL_FN2 head() XTAL_0EX_( &) {return remember_y(body_m);}
+		XTAL_FN2 head() XTAL_0FX_(&&) {return _detail::remember_x(body_m);}
+		XTAL_FN2 head() XTAL_0EX_(&&) {return _detail::remember_x(body_m);}
+		XTAL_FN2 head() XTAL_0FX_( &) {return _detail::remember_y(body_m);}
+		XTAL_FN2 head() XTAL_0EX_( &) {return _detail::remember_y(body_m);}
 		
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			return heady(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
+			return heady(_detail::member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
 		XTAL_FN1 heady(body_t v)
 		XTAL_0EX
 		{
-			_std::swap(body_m, v); return remember_x(v);
+			_std::swap(body_m, v); return _detail::remember_x(v);
 		}
 
 		///\
@@ -236,7 +255,7 @@ struct defer
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
-			return apply(pack_f);
+			return apply(bundle_f);
 		}
 		using tuple_size = constant_t<co::tuple_size::value + 1>;
 		
@@ -278,7 +297,7 @@ struct defer
 			}
 			else
 			if constexpr (iterated_q<U>)
-			{	return arranged_e(u, w);
+			{	return u.begin() == w.begin() and u.end() == w.end();
 			}
 		}
 		
@@ -323,17 +342,17 @@ struct refer_to_comparators<U>
 	};
 };
 template <typename U, int N_arity=0>
-struct refer_to_bit_operators
+struct refer_to_logic_operators
 :	compose<>
 {
 };
 template <typename U>
-struct refer_to_bit_operators<U, 0>
-:	compose<refer_to_bit_operators<U, 1>, refer_to_bit_operators<U, 2>>
+struct refer_to_logic_operators<U, 0>
+:	compose<refer_to_logic_operators<U, 1>, refer_to_logic_operators<U, 2>>
 {
 };
-template <typename U> requires bit_operators_p<U, 1> and remember_p<U>
-struct refer_to_bit_operators<U, 1>
+template <typename U> requires logic_operators_p<U, 1> and _detail::remember_p<U>
+struct refer_to_logic_operators<U, 1>
 {
 	template <any_q S>
 	class subtype: public S
@@ -364,8 +383,8 @@ struct refer_to_bit_operators<U, 1>
 
 	};
 };
-template <typename U> requires bit_operators_p<U, 2>
-struct refer_to_bit_operators<U, 2>
+template <typename U> requires logic_operators_p<U, 2>
+struct refer_to_logic_operators<U, 2>
 {
 	template <any_q S>
 	class subtype: public S
@@ -391,17 +410,17 @@ struct refer_to_bit_operators<U, 2>
 	};
 };
 template <typename U, int N_arity=0>
-struct refer_to_field_operators
+struct refer_to_arithmetic_operators
 :	compose<>
 {
 };
 template <typename U>
-struct refer_to_field_operators<U, 0>
-:	compose<refer_to_field_operators<U, 1>, refer_to_field_operators<U, 2>>
+struct refer_to_arithmetic_operators<U, 0>
+:	compose<refer_to_arithmetic_operators<U, 1>, refer_to_arithmetic_operators<U, 2>>
 {
 };
-template <typename U> requires field_operators_p<U, 1> and remember_p<U>
-struct refer_to_field_operators<U, 1>
+template <typename U> requires arithmetic_operators_p<U, 1> and _detail::remember_p<U>
+struct refer_to_arithmetic_operators<U, 1>
 {
 	template <any_q S>
 	class subtype: public S
@@ -423,8 +442,8 @@ struct refer_to_field_operators<U, 1>
 
 	};
 };
-template <typename U> requires field_operators_p<U, 2>
-struct refer_to_field_operators<U, 2>
+template <typename U> requires arithmetic_operators_p<U, 2>
+struct refer_to_arithmetic_operators<U, 2>
 {
 	template <any_q S>
 	class subtype: public S
@@ -482,8 +501,8 @@ template <typename U>
 struct refer
 :	compose<any<>
 	,	_detail::refer_to_comparators<U>
-	,	_detail::refer_to_bit_operators<U>
-	,	_detail::refer_to_field_operators<U>
+	,	_detail::refer_to_logic_operators<U>
+	,	_detail::refer_to_arithmetic_operators<U>
 	,	_detail::refer_to_range_operators<U>
 	>
 {
@@ -495,22 +514,22 @@ struct refer
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
 
-template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};
 
-template <size_t N, xtal::confect::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////

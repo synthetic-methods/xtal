@@ -1,5 +1,5 @@
 #pragma once
-#include "./collected.hpp"
+#include "./collate.hpp"
 
 
 
@@ -7,7 +7,7 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::block::__collected
+namespace xtal::common::__collate
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +38,7 @@ XTAL_0EX
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
+TEST_CASE("xtal/common/collate.hpp: multiplicative construction")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -52,7 +52,7 @@ TEST_CASE("xtal/block/collected.hpp: multiplicative construction")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/block/collected.hpp: couple")
+TEST_CASE("xtal/common/collate.hpp: couple")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -69,7 +69,7 @@ TEST_CASE("xtal/block/collected.hpp: couple")
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
-TEST_CASE("xtal/block/collected.hpp: series initialization")
+TEST_CASE("xtal/common/collate.hpp: series initialization")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -89,7 +89,7 @@ TEST_CASE("xtal/block/collected.hpp: series initialization")
 //	REQUIRE(foo == bar);
 
 }
-TEST_CASE("xtal/block/collected.hpp: series transformation")
+TEST_CASE("xtal/common/collate.hpp: series transformation")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -122,7 +122,7 @@ TEST_CASE("xtal/block/collected.hpp: series transformation")
 
 }
 /**/
-TEST_CASE("xtal/block/collected.hpp: series convolution")
+TEST_CASE("xtal/common/collate.hpp: series convolution")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -145,7 +145,7 @@ TEST_CASE("xtal/block/collected.hpp: series convolution")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/block/collected.hpp: buffer assigment")
+TEST_CASE("xtal/common/collate.hpp: buffer assigment")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -170,7 +170,7 @@ TEST_CASE("xtal/block/collected.hpp: buffer assigment")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/block/collected.hpp: buffer mutation")
+TEST_CASE("xtal/common/collate.hpp: buffer mutation")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -199,7 +199,7 @@ TEST_CASE("xtal/block/collected.hpp: buffer mutation")
 template <int N>
 void sluice_operation__test()
 {
-	using event_u = compose_s<bias_t, confect::confer<int>>;
+	using event_u = compose_s<bias_t, compound::confer<int>>;
 	using queue_u = sluice_t<event_u, N>;
 	queue_u q;
 
@@ -214,7 +214,7 @@ void sluice_operation__test()
 	REQUIRE(-2.0 == q.top().tail()); q.pop(); REQUIRE(0 == q.size());
 
 }
-TEST_CASE("xtal/block/collected.hpp: sluice operation")
+TEST_CASE("xtal/common/collate.hpp: sluice operation")
 {
 	sluice_operation__test<-1>();
 	sluice_operation__test< 4>();
@@ -226,7 +226,7 @@ TEST_CASE("xtal/block/collected.hpp: sluice operation")
 template <int N>
 void siphon_operation__test()
 {
-	using event_u = compose_s<bias_t, confect::confer<int>>;
+	using event_u = compose_s<bias_t, compound::confer<int>>;
 	using queue_u = siphon_t<event_u, N>;
 	queue_u q;
 
@@ -243,7 +243,7 @@ void siphon_operation__test()
 	REQUIRE(-2.0 == q.next(0).tail()); q.advance(); REQUIRE(0 == q.remaining());
 
 }
-TEST_CASE("xtal/block/collected.hpp: siphon operation")
+TEST_CASE("xtal/common/collate.hpp: siphon operation")
 {
 //	siphon_operation__test<-1>();
 	siphon_operation__test<64>();
@@ -263,7 +263,7 @@ void serial_operation__test()
 	REQUIRE(++d == D {1331, 133, 13, 1});
 
 }
-TEST_CASE("xtal/block/collected.hpp: serial operation")
+TEST_CASE("xtal/common/collate.hpp: serial operation")
 {
 	serial_operation__test();
 
@@ -282,7 +282,7 @@ void serial_multiplication__test()
 	REQUIRE(D4 {1000, 100, 10, 1} * D4 {2000, 200, 20, 2} == D4 {2000000, 400000, 60000, 8000});
 
 }
-TEST_CASE("xtal/block/collected.hpp: serial multiplication")
+TEST_CASE("xtal/common/collate.hpp: serial multiplication")
 {
 	serial_multiplication__test();
 
@@ -303,7 +303,7 @@ void series_multiplication__test()
 	REQUIRE(D4 {1000, 100, 10, 1} * D4 {2000, 200, 20, 2} == D4 {2000600, 400040, 60002, 8000});
 		
 }
-TEST_CASE("xtal/block/collected.hpp: series multiplication")
+TEST_CASE("xtal/common/collate.hpp: series multiplication")
 {
 	series_multiplication__test();
 
@@ -322,7 +322,7 @@ void phasor_operation__test()
 	REQUIRE(p++ == P {-0.125, 0.250});
 
 }
-TEST_CASE("xtal/block/collected.hpp: phasor operation")
+TEST_CASE("xtal/common/collate.hpp: phasor operation")
 {
 	phasor_operation__test();
 
@@ -347,7 +347,7 @@ void phasor_iteration__test()
 	If not, just need to wrap as a `process`. \
 
 }
-TEST_CASE("xtal/block/collected.hpp: phasor iteration")
+TEST_CASE("xtal/common/collate.hpp: phasor iteration")
 {
 	phasor_iteration__test();
 

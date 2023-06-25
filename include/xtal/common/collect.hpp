@@ -7,12 +7,101 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::block
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ0 copy_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
+XTAL_0EX
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	auto constexpr seq = execution::  seq;
+	auto constexpr par = execution::unseq;
+	if (ord) transform(seq, j0, jN, i, XTAL_FWD_(F) (f));
+	else     transform(par, j0, jN, i, XTAL_FWD_(F) (f));
+#else
+	transform(j0, jN, i, XTAL_FWD_(F) (f));
+#endif
+}
+template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ0 copy_to(I i, J const &j, F &&f, bool const &ord=false)
+XTAL_0EX
+{
+	copy_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), ord);
+}
+template <iterator_q I, iterator_q J>
+XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
+XTAL_0EX
+{
+	copy_to(i, j0, jN, to_f<iteratee_t<I>>, ord);
+}
+template <iterator_q I, iterator_q J>
+XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &ord=false)
+XTAL_0EX
+XTAL_IF1 isomorphic_q<I, J>
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	auto constexpr seq = execution::  seq;
+	auto constexpr par = execution::unseq;
+	if (ord) copy(seq, j0, jN, i);
+	else     copy(par, j0, jN, i);
+#else
+	copy(j0, jN, i);
+#endif
+}
+template <iterator_q I, bracket_q J>
+XTAL_FZ0 copy_to(I i, J const &j, bool const &ord=false)
+XTAL_0EX
+{
+	copy_to(i, j.begin(), j.end(), ord);
+}
+
+
+template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ0 move_to(I i, J const j0, J const jN, F &&f, bool const &ord=false)
+XTAL_0EX
+{
+	using namespace _std;
+	auto const _j0 = make_move_iterator(j0);
+	auto const _jN = make_move_iterator(jN);
+	return copy_to(i, _j0, _jN, XTAL_FWD_(F) (f), ord);
+}
+template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ0 move_to(I i, J const &j, F &&f, bool const &ord=false)
+XTAL_0EX
+{
+	move_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), ord);
+}
+template <iterator_q I, iterator_q J>
+XTAL_FZ0 move_to(I i, J j0, J jN, bool const &ord=false)
+XTAL_0EX
+{
+	using namespace _std;
+	auto const _j0 = make_move_iterator(j0);
+	auto const _jN = make_move_iterator(jN);
+	return copy_to(i, _j0, _jN, ord);
+}
+template <iterator_q I, bracket_q J>
+XTAL_FZ0 move_to(I i, J const &j, bool const &ord=false)
+XTAL_0EX
+{
+	move_to(i, j.begin(), j.end(), ord);
+}
+
+
+template <bracket_q J, _std::invocable<iteratee_t<J>> F>
+XTAL_FZ0 apply_to(J &j, F &&f, bool const &ord=false)
+XTAL_0EX
+{
+	move_to(j.begin(), j, XTAL_FWD_(F) (f), ord);
+}
+
 
 template <typename V, size_t N>
 struct array: _std::array<V, N> {using _std::array<V, N>::array;};
@@ -24,13 +113,13 @@ concept array_q = value_q<T> and if_q<array<value_t<T>, sizeof(T)/sizeof(value_t
 }///////////////////////////////////////////////////////////////////////////////
 ///\
 A decorator that defines the base-types for block-based data storage, \
-namely `solid` (sharing the same interface as `std::array`), \
+namely `fixed` (sharing the same interface as `std::array`), \
 and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
-and can be further transformed using `collected` to provide differentiated types. \
+and can be further transformed using `collate` to provide differentiated types. \
 
 template <int N_size=-1>
-struct collector
+struct collect
 {
 	template <typename S>
 	class subtype: public S
@@ -40,17 +129,17 @@ struct collector
 	public:
 		using co::co;
 
-		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
+		using volume = constant_t<N_size>;///< The capacity of `fixed` and `fluid`.
 		
-		template <typename V> struct solid;///< cf. `std::array`.
+		template <typename V> struct fixed;///< cf. `std::array`.
 		template <typename V> struct fluid;///< cf. `std::vector`.
 		///\note\
-		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
+		If `0 < N_size`, both `fixed` and `fluid` are defined and limited by the capacity specified by `N_size`. \
 		Otherwise, only `fluid` is defined as `std::vector`. \
 
 
 		template <typename V> requires (0 < N_size)
-		struct solid<V>
+		struct fixed<V>
 		{
 			using type = _detail::array<V, N_size>;
 
@@ -504,10 +593,10 @@ struct collector
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::block::_detail::array_q T>
+template <xtal::common::_detail::array_q T>
 struct tuple_size<T>: xtal::constant_t<sizeof(T)/sizeof(xtal::value_t<T>)> {};
 
-template <size_t N, xtal::block::_detail::array_q T>
+template <size_t N, xtal::common::_detail::array_q T>
 struct tuple_element<N, T> {using type = xtal::value_t<T>;};
 
 

@@ -36,11 +36,11 @@ struct link
 		template <typename ...Xs>
 		struct bind
 		{
-			using signature = pack<Xs...>;
+			using signature = bundle<Xs...>;
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 			
-			using subkind = compose<confect::defer<typename signature::type>, As..., defer<T>>;
+			using subkind = compose<compound::defer<typename signature::type>, As..., defer<T>>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>

@@ -1,8 +1,7 @@
 #pragma once
-#include "./any/all.c++"
-#include "./block/all.c++"
+#include "./any.c++"
 #include "./common/all.c++"
-#include "./confect/all.c++"
+#include "./compound/all.c++"
 #include "./conflux/all.c++"
 #include "./message/all.c++"
 #include "./process/all.c++"

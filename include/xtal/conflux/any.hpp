@@ -1,5 +1,5 @@
 #pragma once
-#include "../confect/any.hpp"//_retail
+#include "../compound/any.hpp"//_retail
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::conflux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::confect;
+namespace _retail = xtal::compound;
 #include "../common/any.hxx"
 
 
@@ -42,7 +42,7 @@ struct define
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(pack_q) o)
+		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
@@ -83,7 +83,7 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(pack_q) o)
+		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
 			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));

@@ -25,7 +25,7 @@
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 
-#define XTAL_STD_IEC 60559// TODO: Allow command-line/[c]?make configuration.
+#define XTAL_STD_IEC 60559//&0// TODO: Allow command-line/[c]?make configuration.
 
 #if   defined(L1_CACHE_BYTES)
 #define XTAL_STD_L1 L1_CACHE_BYTES
@@ -74,13 +74,13 @@
 
 #ifndef NDEBUG
 #if     XTAL_V00_MSVC
-static_assert(1932 <= XTAL_V00_MSVC);
+static_assert(1933 <= XTAL_V00_MSVC);
 
 #elif   XTAL_V00_LLVM
-static_assert(1300 <= XTAL_V00_LLVM);
+static_assert(1400 <= XTAL_V00_LLVM);
 
 #elif   XTAL_V00_GNUC
-static_assert(1101 <= XTAL_V00_GNUC);
+static_assert(1200 <= XTAL_V00_GNUC);
 
 #endif
 #endif
@@ -146,8 +146,6 @@ static_assert(1101 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)                      const REF noexcept
 #define XTAL_0FN                            constexpr noexcept
 #define XTAL_0FN_(...)                      constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FM                    mutable constexpr noexcept
-#define XTAL_0FM_(...)              mutable constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0RN_(...)                                noexcept {return (__VA_ARGS__);}
 #define XTAL_RN4_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
                                         SIG        && noexcept {return (__VA_ARGS__);};\
@@ -166,7 +164,6 @@ static_assert(1101 <= XTAL_V00_GNUC);
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_1FN_(...) [=](XTAL_DEF ...etc) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(etc)...))
-#define XTAL_1FM_(...) [=](XTAL_DEF ...etc) XTAL_0FM_(__VA_ARGS__(XTAL_REF_(etc)...))
 
 #define XTAL_FNX XTAL_FN2_(sign_t)
 #define XTAL_FLX XTAL_STD_(sign_t)

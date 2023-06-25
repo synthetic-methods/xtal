@@ -29,7 +29,7 @@ struct rescan
 
 	};
 };
-template <typename U=counted_t<>>
+template <counted_q U=counted_t<>>
 using rescan_t = confined_t<rescan<U>>;
 
 

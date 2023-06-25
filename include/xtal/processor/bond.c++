@@ -19,7 +19,7 @@ TEST_CASE("xtal/processor/bond.hpp: lifting")
 	using alpha_t = typename common::realized::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using scalar_u = block::scalar_t<alpha_t, N_size>;
+	using scalar_u = common::scalar_t<alpha_t, N_size>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 

@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./seek.hpp"
-#include "../block/collector.hpp"
-#include "../block/collected.hpp"
+#include "./collect.hpp"
+#include "./collate.hpp"
 
 
 
@@ -147,6 +147,87 @@ public:
 	struct     sign: word<    sign_n, positive_n> {};
 	static_assert((sigma_t) ~sign::mask == positive::mask);
 
+///////////////////////////////////////////////////////////////////////////////
+
+	///\returns\
+	the number of bits set in `u`. \
+
+	XTAL_FZ2_(sigma_t) bit_count_y(sigma_t u)
+	XTAL_0EX
+	{
+		sigma_t n = 0;
+		while (u)
+		{	n  += 1&u;
+			u >>= 1;
+		}
+		return n;
+	}
+	XTAL_FZ2_(delta_t) bit_count_y(delta_t const &v)
+	XTAL_0EX
+	{
+		delta_t const v_sgn = sign_f(v);
+		delta_t const v_abs = v*v_sgn;
+		delta_t const y_abs = bit_count_y((sigma_t) v_abs);
+		return y_abs*v_sgn;
+	}
+//	static_assert(bit_count_y(0b10110100) == 4);
+
+
+	XTAL_FZ2_(sigma_t) bit_floor_y(sigma_t u)
+	XTAL_0EX
+	{
+		sigma_t n = 0;
+		while (u >>= 1)
+		{	++n;
+		}
+		return n;
+	}
+	XTAL_FZ2_(delta_t) bit_floor_y(delta_t const &v)
+	XTAL_0EX
+	{
+		delta_t const v_sgn = sign_f(v);
+		delta_t const v_abs = v*v_sgn;
+		delta_t const y_abs = bit_floor_y((sigma_t) v_abs);
+		return y_abs*v_sgn;
+	}
+
+	XTAL_FZ2_(sigma_t) bit_ceiling_y(sigma_t const &u)
+	XTAL_0EX
+	{
+		sigma_t n = bit_floor_y((sigma_t) u);
+		n += 1 << (n != u);
+		return n;
+	}
+	XTAL_FZ2_(delta_t) bit_ceiling_y(delta_t const &v)
+	XTAL_0EX
+	{
+		return bit_ceiling_y((sigma_t) v)*sign_f(v);
+	}
+
+	///\returns\
+	the bitwise-reversal of `u`, \
+	restricted to `N_subdepth` when `0 < N_subdepth < sizeof(u) << 3`. \
+
+	///\note Requires `log2(sizeof(u) << 3)` iterations. \
+
+	XTAL_FZ2_(sigma_t) bit_reverse_y(sigma_t u, sigma_t const &subdepth)
+	XTAL_0EX
+	{
+		for (sigma_t m = -1, i = depth; i >>= 1;)
+		{	m ^= m<<i;
+			u = (u&m)<<i | (u&~m)>>i;
+		}
+		u >>= depth - subdepth; assert(0 < subdepth and subdepth <= depth);
+		return u;
+	}
+	template <size_t N_subdepth=0>
+	XTAL_FZ2_(sigma_t) bit_reverse_y(sigma_t const &u)
+	XTAL_0EX
+	{
+		sigma_t constexpr subdepth = 0 < N_subdepth? N_subdepth: depth;
+		return bit_reverse_y(u, subdepth);
+	}
+
 };
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,8 +288,8 @@ public:
 	template <typename V>
 //	using couple_t = _std::array<V, 2>;
 	using couple_t = typename compose_s<unit_t
-	,	block::collector<2>
-	,	block::collected<V>
+	,	collect<2>
+	,	collate<V>
 	>::couple::type;
 
 	template <auto M_pow=1> requires sign_q<M_pow>
@@ -308,12 +389,12 @@ public:
 	}
 
 
-	XTAL_FZ2 mantissa_y(sigma_t n)
+	XTAL_FZ2_(alpha_t) mantissa_y(sigma_t n)
 	XTAL_0EX
 	{
 		return _std::bit_cast<alpha_t>(n & ~unit::mask);
 	}
-	XTAL_FZ2 mantissa_y(mt19937_t &m)
+	XTAL_FZ2_(alpha_t) mantissa_y(mt19937_t &m)
 	XTAL_0EX
 	{
 		return mantissa_y(m());
@@ -726,7 +807,7 @@ public:
 	XTAL_FZ1_(aphex_t) truncate_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto z = reinterpret_cast<alpha_t(&)[2]>(target);
+		auto z = simple_f(target);
 		alpha_t const x = truncate_y<N_zoom>(z[0]);
 		alpha_t const y = truncate_y<N_zoom>(z[1]);
 		return aphex_t {x, y};
@@ -817,8 +898,9 @@ public:
 	XTAL_FZ1_(aphex_t) puncture_y(aphex_t &target)
 	XTAL_0EX
 	{
-		alpha_t const x = puncture_y<N_zoom>(re_f(target));
-		alpha_t const y = puncture_y<N_zoom>(im_f(target));
+		auto z = simple_f(target);
+		alpha_t const x = puncture_y<N_zoom>(z[0]);
+		alpha_t const y = puncture_y<N_zoom>(z[1]);
 		return aphex_t {x, y};
 	}
 

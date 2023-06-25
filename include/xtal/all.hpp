@@ -1,8 +1,7 @@
 #pragma once
 #include "./any.hpp"
-#include "./block/all.hpp"
 #include "./common/all.hpp"
-#include "./confect/all.hpp"
+#include "./compound/all.hpp"
 #include "./conflux/all.hpp"
 #include "./message/all.hpp"
 #include "./process/all.hpp"

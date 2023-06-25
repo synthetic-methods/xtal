@@ -48,7 +48,7 @@ struct bond
 		struct bind
 		{
 			using rebound = typename co::template bind<Xs...>;
-			using subkind = compose<confect::confer<typename rebound::result_t>, rebound>;
+			using subkind = compose<compound::confer<typename rebound::result_t>, rebound>;
 
 			template <typename R>
 			class subtype: public compose_s<R, subkind>

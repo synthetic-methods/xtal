@@ -1,10 +1,10 @@
 #pragma once
 #include "../conflux/any.hpp"//_retail
-#include "../confect/delay.hpp"
+#include "../compound/delay.hpp"
 
 
 
-#include "../block/all.hpp"
+#include "../common/all.hpp"
 
 XTAL_ENV_(push)
 namespace xtal::message
@@ -180,9 +180,12 @@ struct define
 			{
 				using co = compose_s<R>;
 
-				using delay_t = confect::delay_t;
-				using event_t = confect::delay_s<T>;
-				using queue_t = block::siphon_t<event_t, N_future>;
+				using delay_t = compound::delay_t;
+				using event_t = compound::delay_s<T>;
+				using queue_t = typename compose_s<unit_t
+				,	collect<N_future>
+				,	collate<event_t>
+				>::siphon::type;
 
 				delay_t d_{0};
 				queue_t q_;
@@ -197,19 +200,19 @@ struct define
 				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and true_f(d_ = 0));
+					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and ((d_ = 0), 1));
 					return co::influx(XTAL_REF_(oo)...);
 				}
 
 				///\
 				\returns the aggregate `flux` of queuing the messages with the given delay.. \
 
-				XTAL_FNX influx(confect::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(compound::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(confect::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(compound::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(confect::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(compound::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
@@ -240,7 +243,7 @@ struct define
 		TODO: Investigate whether recursively `influx`ing the tail is a viable approach to \
 		managing collections of `message`s (e.g. presets). \
 		\
-		TODO: Define a `message::pack` that `std::tuple`s the provided types. \
+		TODO: Define a `message::bundle` that `std::tuple`s the provided types. \
 		The implementation of `interrupt` in that case might be able to use `std::variant`. \
 
 		template <int N_future=-1>
@@ -251,9 +254,12 @@ struct define
 			{
 				using co = compose_s<R>;
 			
-				using delay_t = confect::delay_t;
-				using event_t = confect::delay_s<T>;
-				using queue_t = block::sluice_t<event_t, N_future>;
+				using delay_t = compound::delay_t;
+				using event_t = compound::delay_s<T>;
+				using queue_t = typename compose_s<unit_t
+				,	collect<N_future>
+				,	collate<event_t>
+				>::sluice::type;
 
 				queue_t q_;
 
@@ -281,12 +287,12 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(confect::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(compound::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(confect::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(compound::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(confect::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(compound::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return 0 == dot.head()? influx(dot.tail(), XTAL_REF_(oo)...):

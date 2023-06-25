@@ -170,7 +170,7 @@ struct sequel<void>
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t? 0: true_f(s = t);
+			return s == t? 0: ((s = t), 1);
 		}
 		/**/
 		XTAL_FNX infuse(XTAL_DEF_(sequel_q) t)

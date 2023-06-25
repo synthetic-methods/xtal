@@ -19,7 +19,7 @@ TEST_CASE("xtal/processor/atom.hpp: lifting")
 	using alpha_t = typename common::realized::alpha_t;
 
 	sigma_t constexpr N = 5;
-	using scalar_u = block::scalar_t<alpha_t, N>;
+	using scalar_u = common::scalar_t<alpha_t, N>;
 
 	auto x = scalar_u { 0,  1,  2,  3,  4};
 	auto y = scalar_u {00, 10, 20, 30, 40};
@@ -43,9 +43,9 @@ void respan_external__test()
 	using sigma_t = typename common::realized::sigma_t;
 	using alpha_t = typename common::realized::alpha_t;
 
-	using collector = block::collector<(1<<5)>;
+	using collect = common::collect<(1<<5)>;
 
-	using buffer_u = typename collector::type::template fluid<alpha_t>::type;
+	using buffer_u = typename collect::type::template fluid<alpha_t>::type;
 	using debuff_u = deranged_t<buffer_u>;
 	using respan_u = message::respan_t<debuff_u>;
 	using resize_u = message::resize_t<>;
@@ -57,7 +57,7 @@ void respan_external__test()
 
 	auto lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = atom_t<add_t, collector>::bind_f(lhs, rhs);
+	auto xhs = atom_t<add_t, collect>::bind_f(lhs, rhs);
 
 	auto vector_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(vector_m);
@@ -65,11 +65,11 @@ void respan_external__test()
 
 	REQUIRE(0 == xhs.size());
 
-	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= bundle_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= bundle_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= bundle_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= bias_t((alpha_t) (11 + 1));
-	xhs >>= pack_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= bundle_f(sequel_m++, respan_m); REQUIRE(_v3::ranges::equal(vector_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }

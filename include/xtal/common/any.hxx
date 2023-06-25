@@ -2,7 +2,15 @@
 #include "../any.hpp"
 using namespace xtal;
 namespace _retail
-{	template <typename ...As> struct any {template <typename S> class subtype {};};
+{
+template <typename ...As>
+struct any
+{
+	template <typename S>
+	class subtype
+	{
+	};
+};
 }
 #endif
 
@@ -22,12 +30,8 @@ using namespace common;
 ///<\
 Defines a _decorator_ tagged with the inheritance chain `...As`. \
 
-template <typename ...As>
-struct any: _retail::any<As..., any<>>
-{
-};
-template <typename ...As>
-using any_t = typename any<As...>::template subtype<unit_t>;
+template <typename ...As> struct any   : _retail::any<As..., any<>> {};
+template <typename ...As>  using any_t = typename any<As...>::template subtype<unit_t>;
 ///<\
 Defines `any` class, inheriting from the base `unit_t`. \
 
@@ -55,15 +59,19 @@ Identifies `any` class tagged with the given template. \
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U> struct defer;
-///<\
-Decorates `subtype` with the core implementation to proxy `U`, assuming the `supertype` is `define`d. \
+///\
+Proxies `U` using `::subtype<S>`, assuming `S` is `define`d. \
+
+///\note\
 NOTE: Implemented by the target. \
 
+template <typename U> struct defer;
 template <typename U> struct refer;
 ///<\
-Decorates `subtype` with the default implementation to proxy `U`. \
-NOTE: Implemented by the target. \
+Delegates `U` using `::subtype<S>`, assuming `S` is `define`d. \
+
+///<\note\
+Implemented by the target. \
 
 
 ///\
@@ -77,19 +85,19 @@ struct confer
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T> struct define;
-///<\
-Decorates `subtype` with the core implementation of `T`, \
-using the curiously recurring template pattern (CRTP). \
-\
-NOTE: Implemented by the target. \
+///\
+Initializes `T` using `define<T>::subtype<S>`. \
 
+///\note\
+Implemented by the target. \
+
+template <typename T> struct define;
 template <typename T> struct refine;
 ///<\
-Decorates `subtype` with the default implementation of `T`, \
-using the curiously recurring template pattern (CRTP). \
-\
-NOTE: Implemented by the target. \
+Finalizes `T` using `define<T>::subtype<S>`. \
+
+///<\note\
+Implemented by the target. \
 
 
 ///\

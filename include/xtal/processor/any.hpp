@@ -44,6 +44,45 @@ struct refine: _retail::refine<T>
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
+XTAL_0EX
+{
+	using namespace _v3::ranges;
+	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, category::forward>;
+	return Z(XTAL_REF_(z));
+}
+XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
+XTAL_0EX
+XTAL_IF2 {z.size();}
+{
+	using namespace _v3::ranges;
+	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, category::forward|category::sized>;
+	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
+}
+XTAL_LET iterate_function_f = [](XTAL_DEF f)
+XTAL_0FN_([g = XTAL_REF_(f)](XTAL_DEF ...xs)
+XTAL_0FN
+{
+	using namespace _v3::views;
+	if constexpr (0 == sizeof...(xs))
+	{	return iota(0)|transform([=](auto &&) XTAL_0FN_(g(XTAL_REF_(xs)...)));
+//	{	return generate(_std::move(g));// FIXME?
+	}
+	else
+	if constexpr (1 == sizeof...(xs))
+	{	return transform(XTAL_REF_(xs)..., g);
+	}
+	else
+	{	return zip_with(g, XTAL_REF_(xs)...);
+	}
+});
+
+
+}///////////////////////////////////////////////////////////////////////////////
 ///\
 Produces a decorator `subtype<S>` that proxies `U`. \
 
@@ -64,7 +103,7 @@ struct defer<U>
 
 		template <typename ...Xs>
 		XTAL_FN2 reified_()
-		XTAL_0RN_(iterate_function_f(head().template reify<iteratee_t<Xs>...>()))
+		XTAL_0RN_(_detail::iterate_function_f(head().template reify<iteratee_t<Xs>...>()))
 
 	public:
 		using co::co;
@@ -82,7 +121,7 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return iterate_forward_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return _detail::iterate_forward_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)

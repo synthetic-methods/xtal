@@ -11,7 +11,7 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=typename realized::iota_t>
+template <iota_q U=typename realized::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
@@ -28,7 +28,7 @@ struct restep
 
 	};
 };
-template <typename U=typename realized::iota_t>
+template <iota_q U=typename realized::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_FZ2 restep_f(XTAL_DEF w)

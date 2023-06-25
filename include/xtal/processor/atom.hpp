@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "../block/all.hpp"
+#include "../common/all.hpp"
 #include "../message/sequel.hpp"
 #include "../message/resize.hpp"
 #include "../message/respan.hpp"
@@ -42,7 +42,7 @@ template <typename U, typename ...As>
 struct atom
 {
 	using interrupt = typename message::confined_t<>::interrupt<0>;
-	using subkind = confer<U, link<As..., interrupt, block::collector<-1>>>;
+	using subkind = confer<U, link<As..., interrupt, collect<-1>>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -62,9 +62,9 @@ struct atom
 			using respan_u = message::respan_t<debuff_u>;
 			using resize_u = message::resize_t<>;
 			
-			using subkind = compose<confect::confer<debuff_u>, confect::defer<buffer_u>, rebound>;
+			using subkind = compose<compound::confer<debuff_u>, compound::defer<buffer_u>, rebound>;
 
-			XTAL_LET_(int) I_parity = common::seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
+			XTAL_LET_(int) I_parity = seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>
@@ -148,6 +148,7 @@ struct atom
 				XTAL_0EX
 				{
 					if (co::effuse(sequel_o) == 0) return 0;
+				//	else...
 					serve(respan_o);
 					co::redux([&, this](auto i, auto j, auto n)
 					XTAL_0FN
