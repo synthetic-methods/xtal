@@ -185,7 +185,7 @@ struct define
 				using queue_t = typename compose_s<unit_t
 				,	collect<N_future>
 				,	collate<event_t>
-				>::siphon::type;
+				>::template siphon<1>::type;
 
 				delay_t d_{0};
 				queue_t q_;
@@ -259,22 +259,29 @@ struct define
 				using queue_t = typename compose_s<unit_t
 				,	collect<N_future>
 				,	collate<event_t>
-				>::sluice::type;
+			//	>::sluice::type;
+				>::template siphon<0>::type;
 
 				queue_t q_;
 
 				XTAL_FN2 next_tail() XTAL_0EX {return q_.next().template head<1>();}
 				XTAL_FN2 next_head() XTAL_0EX {return q_.next().template head<0>();}
 				
-				XTAL_FN2 nearest_head()
+				XTAL_FN2_(delay_t) nearest_head(delay_t i)
+				XTAL_0EX
+				{
+					return _std::min<delay_t>({nearest_head(), i});// NOTE: `initializer_list` required for `RELEASE`.
+				}
+				XTAL_FN2_(delay_t) nearest_head()
 				XTAL_0EX
 				{
 					return 0 < q_.remaining()? next_head(): _std::numeric_limits<delay_t>::max();
 				}
-				XTAL_FN2 nearest_head(delay_t i)
+
+				XTAL_FN2_(delay_t) furthest_head()
 				XTAL_0EX
 				{
-					return _std::min<delay_t>({nearest_head(), i});// NOTE: `initializer_list` required for `RELEASE`.
+					return self().size();
 				}
 
 			public:
@@ -306,9 +313,12 @@ struct define
 				XTAL_FN0 redux(auto const &f)
 				XTAL_0EX
 				{
-					for (delay_t i = 0, j = delay(); i != j; j = relay(i = j))
-					{	f(i, j);
-					}
+					redux(f, 0);
+				}
+				XTAL_FN0 redux(auto const &f, auto &&n)
+				XTAL_0EX
+				{
+					redux(f, n);
 				}
 				XTAL_FN0 redux(auto const &f, auto &n)
 				XTAL_0EX
@@ -317,11 +327,6 @@ struct define
 					{	f(i, j, n++);
 					}
 					--n;
-				}
-				XTAL_FN0 redux(auto const &f, auto &&n)
-				XTAL_0EX
-				{
-					redux(f, n);
 				}
 
 				///\
@@ -340,7 +345,8 @@ struct define
 							q_.advance();
 						}
 					}
-					return delay();
+					i = delay(); if (i == furthest_head()) q_.abandon();
+					return i;
 				}
 
 				///\
@@ -353,7 +359,7 @@ struct define
 					{	return nearest_head(co::delay());
 					}
 					else
-					{	return nearest_head(self().size());
+					{	return nearest_head(furthest_head());
 					}
 				}
 

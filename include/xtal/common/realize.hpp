@@ -286,11 +286,11 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <typename V>
-//	using couple_t = _std::array<V, 2>;
-	using couple_t = typename compose_s<unit_t
+//	using product_t = _std::array<V, 2>;
+	using product_t = typename compose_s<unit_t
 	,	collect<2>
 	,	collate<V>
-	>::couple::type;
+	>::product::type;
 
 	template <auto M_pow=1> requires sign_q<M_pow>
 	XTAL_FZ2 it_y(XTAL_DEF u)
@@ -305,7 +305,7 @@ public:
 		{	return U(1/XTAL_REF_(u));
 		}
 		else
-		{	return couple_t<U> {u, 1/XTAL_REF_(u)};
+		{	return product_t<U> {u, 1/XTAL_REF_(u)};
 		}
 	}
 
@@ -370,7 +370,7 @@ public:
 		{	return n*w;
 		}
 		else
-		{	return couple_t<alpha_t> {w*n, n};
+		{	return product_t<alpha_t> {w*n, n};
 		}
 	}
 	static_assert(unsquare_y< 1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
@@ -807,7 +807,7 @@ public:
 	XTAL_FZ1_(aphex_t) truncate_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto z = simple_f(target);
+		auto &z = product_t<alpha_t>::refer(target);
 		alpha_t const x = truncate_y<N_zoom>(z[0]);
 		alpha_t const y = truncate_y<N_zoom>(z[1]);
 		return aphex_t {x, y};
@@ -898,7 +898,7 @@ public:
 	XTAL_FZ1_(aphex_t) puncture_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto z = simple_f(target);
+		auto &z = product_t<alpha_t>::refer(target);
 		alpha_t const x = puncture_y<N_zoom>(z[0]);
 		alpha_t const y = puncture_y<N_zoom>(z[1]);
 		return aphex_t {x, y};

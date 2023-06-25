@@ -157,7 +157,7 @@ struct atom
 						auto respan_x = respan_o.slice(i, j);
 						(void) co::template efflux_request_head<I_parity>(sequel_x, respan_x);
 						ranges::copy(co::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
-					}, 0);
+					});
 					return co::template influx_request(sequel_o);
 				}
 

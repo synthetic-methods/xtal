@@ -221,13 +221,6 @@ concept complex_p = arithmetic_operators_p<T, 2> and requires (T t)
 template <typename ...Ts>
 concept complex_q = conjunct_q<complex_p<Ts>...>;
 
-template <complex_q T>
-XTAL_FZ2 simple_f(T &t)
-XTAL_0EX
-{
-	return reinterpret_cast<value_t<T>(&)[2]>(t);
-}
-
 
 template <auto N>
 concept sign_q = iota_q<decltype(N)> and -1 <= N and N <= 1;

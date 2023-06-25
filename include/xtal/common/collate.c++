@@ -24,12 +24,12 @@ XTAL_0EX
 		{
 			auto const n = _realized::template unsquare_y<-1, N_lim>(w);
 			auto const u = n*w;
-			return couple_t<W, 2>{u, n};
+			return product_t<W, 2>{u, n};
 		}
 		else
 		{	auto const u = _realized::template unsquare_y< 1, N_lim>(w);
 			auto const n = u/w;
-			return couple_t<W, 2>{u, n};
+			return product_t<W, 2>{u, n};
 		}
 	}
 	else
@@ -43,7 +43,7 @@ TEST_CASE("xtal/common/collate.hpp: multiplicative construction")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto foo = couple_t<alpha_t, 2>{2.0, 0.5};
+	auto foo = product_t<alpha_t, 2>{2.0, 0.5};
 	auto bar = unsquing_y<0>((alpha_t) 2);
 	bar.transmute([&](XTAL_DEF u) XTAL_0FN_(realized::square_y(XTAL_REF_(u))), trim_y<1>);
 	REQUIRE(foo == bar);
@@ -52,12 +52,12 @@ TEST_CASE("xtal/common/collate.hpp: multiplicative construction")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/common/collate.hpp: couple")
+TEST_CASE("xtal/common/collate.hpp: product")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto bar = couple_t<alpha_t, 2>{2.0, 0.5};
+	auto bar = product_t<alpha_t, 2>{2.0, 0.5};
 	auto foo = bar.reflected<-1>();
 	auto baz = foo.reflected<+1>();
 	
@@ -227,7 +227,7 @@ template <int N>
 void siphon_operation__test()
 {
 	using event_u = compose_s<bias_t, compound::confer<int>>;
-	using queue_u = siphon_t<event_u, N>;
+	using queue_u = siphon_t<event_u, N, 1>;
 	queue_u q;
 
 	auto e1 = event_u(1, bias_t(-1.0));

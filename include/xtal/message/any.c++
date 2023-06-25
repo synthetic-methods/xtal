@@ -31,6 +31,7 @@ TEST_CASE("xtal/message/any.hpp: hold")
 	biased <<= bundle_f(compound::delay_s<>(4), (bias_t) (alpha_t)  1);
 	biased <<= bundle_f(compound::delay_s<>(5), (bias_t) (alpha_t) -1);
 	biased <<= bundle_f(compound::delay_s<>(7), (bias_t) (alpha_t)  7);
+	biased <<= bundle_f(compound::delay_s<>(7), (bias_t) (alpha_t)  8);
 	
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
@@ -39,14 +40,14 @@ TEST_CASE("xtal/message/any.hpp: hold")
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
 //	...
 	biased <<= step;
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
+	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
