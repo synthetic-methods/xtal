@@ -1,37 +1,26 @@
 #pragma once
-#include "./any.hpp"
-
+#include "../any.c++"
+#include "./any.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::context::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct delay;
+using namespace xtal::__any;
 
-template <typename S=confined_t<>>
-using delay_s = compose_s<S, delay>;
-using delay_t = size_t;
 
-struct delay
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TEST_CASE("xtal/context/any.hpp: true")
 {
-	using subkind = confer<delay_t>;
-
-	template <concord::any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	public:
-		using co::co;
-
-	};
-};
-
-
+	REQUIRE(true);
+}
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

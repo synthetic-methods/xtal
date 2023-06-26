@@ -113,7 +113,7 @@ concept array_q = value_q<T> and if_q<array<value_t<T>, sizeof(T)/sizeof(value_t
 }///////////////////////////////////////////////////////////////////////////////
 ///\
 A decorator that defines the base-types for block-based data storage, \
-namely `fixed` (sharing the same interface as `std::array`), \
+namely `solid` (sharing the same interface as `std::array`), \
 and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
 and can be further transformed using `collate` to provide differentiated types. \
@@ -129,21 +129,29 @@ struct collect
 	public:
 		using co::co;
 
-		using volume = constant_t<N_size>;///< The capacity of `fixed` and `fluid`.
+		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
 		
-		template <typename V> struct fixed;///< cf. `std::array`.
+		template <typename V> struct solid;///< cf. `std::array`.
 		template <typename V> struct fluid;///< cf. `std::vector`.
 		///\note\
-		If `0 < N_size`, both `fixed` and `fluid` are defined and limited by the capacity specified by `N_size`. \
+		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
 		Otherwise, only `fluid` is defined as `std::vector`. \
 
 
-		template <typename V> requires (0 < N_size)
-		struct fixed<V>
+		template <typename V> requires (0 <= N_size)
+		struct solid<V>
 		{
 			using type = _detail::array<V, N_size>;
 
 		};
+		/*/
+		template <typename V>
+		struct fluid
+		{
+			using type = _std::vector<V>;
+
+		};
+		/*/
 		template <typename V> requires (N_size < 0)
 		struct fluid<V>
 		{
@@ -156,17 +164,15 @@ struct collect
 			class type: public iterate_t<type>
 			{
 				using co = iterate_t<type>;
-
-				using A = _std::aligned_storage_t<sizeof(V), alignof(V)>;
+				using A  = aligned_t<V>;
 
 				XTAL_FZ2 _ptr_f(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
 				XTAL_FZ2 _ptr_f(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
 				XTAL_FZ2 _ptr_f(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
 				XTAL_FZ2 _ptr_f(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
 				
-				XTAL_FZ2 _rev_ptr_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(_ptr_f(XTAL_REF_(i)));}
+				XTAL_FZ2 _antiptr_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(_ptr_f(XTAL_REF_(i)));}
 				
-			//	alignas(V) _std::byte block_m[sizeof(V)*(N_size)];
 				A  block_m[N_size];
 				A* limit_m = block_m;
 
@@ -196,9 +202,9 @@ struct collect
 				XTAL_RN4_(XTAL_OP2[](size_type i), *_ptr_f(block_m + i));
 				XTAL_RN4_(XTAL_OP2()(size_type i),  _ptr_f(block_m + i));
 
-				XTAL_RN4_(XTAL_FN2 rbegin(), _rev_ptr_f(limit_m));
+				XTAL_RN4_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
 				XTAL_RN4_(XTAL_FN2  begin(),     _ptr_f(block_m));
-				XTAL_RN4_(XTAL_FN2   rend(), _rev_ptr_f(block_m));
+				XTAL_RN4_(XTAL_FN2   rend(), _antiptr_f(block_m));
 				XTAL_RN4_(XTAL_FN2    end(),     _ptr_f(limit_m));
 
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
@@ -582,10 +588,14 @@ struct collect
 
 			};
 		};
+		/***/
 
 	};
 	using type = subtype<unit_t>;
 };
+template <int N_size=-1>
+using collect_t = typename collect<N_size>::template subtype<unit_t>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

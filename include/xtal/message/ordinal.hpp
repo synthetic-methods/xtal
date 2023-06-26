@@ -1,5 +1,5 @@
 #pragma once
-#include "./numinal.hpp"
+#include "./any.hpp"
 
 
 
@@ -14,7 +14,7 @@ namespace xtal::message
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-using ordinal = numinal<typename realized::iota_t, As...>;
+using ordinal = label<typename realized::iota_t, As...>;
 
 template <typename ...As>
 using ordinal_t = compose_s<any_t<>, ordinal<As...>>;

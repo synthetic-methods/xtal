@@ -1,37 +1,26 @@
 #pragma once
-#include "./any.hpp"
-
+#include "../any.c++"
+#include "./collage.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::common::__collage
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct index;
+using namespace xtal::__any;
 
-template <typename S=confined_t<>>
-using index_s = compose_s<S, index>;
-using index_t = size_t;
 
-struct index
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TEST_CASE("xtal/common/collage.hpp: true")
 {
-	using subkind = confer<index_t>;
-
-	template <concord::any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	public:
-		using co::co;
-
-	};
-};
-
-
+	REQUIRE(true);
+}
+/**/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

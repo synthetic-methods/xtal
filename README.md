@@ -51,7 +51,7 @@ this `method` is aliased as the invocation `operator()`.
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::atom` or `processor::bond`,
+Range-lifting is achieved using functors like `processor::node` or `processor::edge`,
 which `zip` the underlying `method` as a buffer- or range-based operator, respectively.
 
 	using Mixer = processor::lift_t<Mix>;
@@ -98,21 +98,21 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::lift_t<Mix, Active::template interrupt<>>;
 	// ...
-	mixer.influx(control::delay_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(context::delay_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	biased <<= std::make_tuple(control::delay_s<>(123), (Gate) 1);// `biased()[123] == 1`
+	biased <<= std::make_tuple(context::delay_s<>(123), (Gate) 1);// `biased()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
 	auto sequel = sequel_t(1024);
 
-	using Mixer = processor::bond_t<Mix>;
+	using Mixer = processor::edge_t<Mix>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -153,7 +153,7 @@ The transition to `C++23` ranges is limited by the lack of general support for `
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `atom`, `bond`, etc.
+The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `node`, `edge`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
@@ -222,7 +222,8 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 
 	namespace concord   {}
 	namespace conflux   {namespace _retail = concord;}
-	namespace control   {namespace _retail = concord;}
+	namespace context   {namespace _retail = concord;}
+	namespace control   {namespace _retail = conflux;}
 	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
@@ -248,16 +249,25 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 ## Status
 
 Implemented:
--	Stream-based processing.
--	Event messaging and scheduling.
--	TBC...
+-	Parameter  bundling:     `conflux/any.hpp#{<<=,>>=}` using `tuple`s.
+-	Parameter  composition:  `common/compose.hpp` with `concord/any.hpp#defer`.
+-	Parameter  namespacing:  `message/any.hpp#guard`.
+-	Parameter  sampling:     `message/any.hpp#hold`.
+-	Parameter  scheduling:   `message/any.hpp#interrupt` and `processor/node.hpp#efflux`.
+-	Processor  resizing:     `processor/*.hpp` by influxing `message/resize.hpp`.
+-	Processor  rendering:    `processor/*.hpp` by effluxing `message/respan.hpp`.
+-	Processor  streaming:    `processor/{node,edge}.hpp` by effluxing `message/serial.hpp`.
+-	Process    templating:   `process/any.hpp#define`, `message/any.hpp#dispatch`.
+-	Function   lifting:      `{process,processor}/any.hpp#defer`.
+-	Dependency management:   `conflux/any.hpp` and `process/any.hpp#link`.
+-	Buffer     sharing:      `processor/node.hpp#{influx,efflux}`.
+-	Numeric    conditioning: `common/realize.hpp#{truncate,puncture}`
+-	...
 
-Not yet implemented:
--	Integer-indexed and volume-controlled `processor`s for:
-	-	Polymorphism.
-	-	Modulation matricies.
-	-	Temporary parameter crossfades.
--	Note on/off handling (e.g. by detecting the response to `_.influx(message::done()) == 0`).
+Technically supported but not yet implemented:
+-	Polymorphism including dynamic voice activation/deactivation.
+-	Modulation matricies.
+-	Parameter declicking.
 
 ## Contribution
 

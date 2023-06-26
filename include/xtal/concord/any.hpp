@@ -1,5 +1,5 @@
 #pragma once
-#include "../common/all.hpp"
+#include "../common/all.hpp"// referenced in `any.hxx`
 
 
 
@@ -33,6 +33,7 @@ struct any<A>
 	class subtype: public S
 	{
 		using co = S;
+	
 	public:
 		using co::co;
 
@@ -75,7 +76,7 @@ struct define
 			return false;
 		}
 
-		XTAL_RN4_(XTAL_NEW operator _std::tuple<>(), tuple())
+		XTAL_RN4_(XTAL_OPZ _std::tuple<>(), tuple())
 
 		XTAL_FN2 tuple()
 		XTAL_0FX
@@ -116,6 +117,7 @@ struct refine_as_head
 	class subtype: public S
 	{
 		using co = S;
+	
 	public:
 		using co::co;
 
@@ -132,7 +134,7 @@ struct refine_as_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_RN4_(XTAL_NEW operator U(), head())
+		XTAL_RN4_(XTAL_OPZ U(), head())
 		
 	};
 };
@@ -142,11 +144,12 @@ struct refine_as_tuple
 	class subtype: public S
 	{
 		using co = S;
+	
 	public:
 		using co::co;
 
 		using tuple_type = XTAL_TYP_(XTAL_VAL_(co).tuple());
-		XTAL_RN4_(XTAL_NEW operator tuple_type(), co::tuple())
+		XTAL_RN4_(XTAL_OPZ tuple_type(), co::tuple())
 
 	};
 };
@@ -163,6 +166,7 @@ struct refine
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
@@ -171,6 +175,7 @@ struct refine
 	class subtype<S>: public compose_s<S, subkind>, public iterate_t<T>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
@@ -273,7 +278,7 @@ struct defer
 		///\
 		Converts `this` to the kernel-type (explicit). \
 
-		XTAL_RN4_(XTAL_NEW explicit operator U(), head())
+		XTAL_RN4_(XTAL_OPZ_(explicit) U(), head())
 
 		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
 		XTAL_0FX
@@ -358,6 +363,7 @@ struct refer_to_comparators<U>
 	class subtype: public S
 	{
 		using co = S;
+	
 	public:
 		using co::co;
 		using co::head;
@@ -518,6 +524,7 @@ struct refer_to_range_operators<U>
 	class subtype<S>: public S
 	{
 		using co = S;
+	
 	public:
 		using co::co;
 

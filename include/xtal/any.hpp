@@ -94,19 +94,28 @@ template <value_p     T  >   struct revalue<T> : based_t<T> {};
 template <typename    T  >    using revalue_t  = value_t<revalue<T>>;
 
 
-template <typename    T  >  concept bracket_p  = requires (T t) {t.begin(); t.end();};
-template <typename ...Ts >  concept bracket_q  = conjunct_q<bracket_p<Ts>...>;
-template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
+template <typename    T  >
+struct aligned
+{
+	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
+	XTAL_LET value = sizeof(type);
 
-template <typename    T  >    using pointed_t  = XTAL_TYP_(* XTAL_VAL_(T));
-template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
-template <typename ...Ts >  concept pointer_q  = conjunct_q<pointer_p<Ts>...>;
-
+};
+template <typename    T  >    using aligned_t  = typename aligned<T>::type;
+template <typename    T  > XTAL_LET aligned_v  =          aligned<T>::value;
 template <typename    I  >
 XTAL_LET appointer_f = [](XTAL_DEF i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(XTAL_REF_(i))));
 XTAL_LET   pointer_f = [](XTAL_DEF o) XTAL_0FN_(_std::addressof(XTAL_REF_(o)));
 XTAL_LET   pointer_e = [](XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_((pointer_f(XTAL_REF_(o)) == pointer_f(XTAL_REF_(oo))) and ... and true);
+
+template <typename    T  >    using pointed_t  = XTAL_TYP_(* XTAL_VAL_(T));
+template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
+template <typename ...Ts >  concept pointer_q  = conjunct_q<pointer_p<Ts>...>;
+
+template <typename    T  >  concept bracket_p  = requires (T t) {t.begin(); t.end();};
+template <typename ...Ts >  concept bracket_q  = conjunct_q<bracket_p<Ts>...>;
+template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
 
 
 template <typename             ...Ts> struct  identical;
@@ -226,20 +235,40 @@ template <auto N>
 concept sign_q = iota_q<decltype(N)> and -1 <= N and N <= 1;
 
 template <sign_t N_zero=0>
-XTAL_FZ2 sign_f(XTAL_DEF_(iota_q) u)
+XTAL_FZ2 sign_f(XTAL_DEF_(iota_q) n)
 XTAL_0EX
 {
-	using U = XTAL_TYP_(u);
+	using T = XTAL_TYP_(n);
 	if constexpr (N_zero == +1)
-	{  return U((0 <= u) - (u <  0));
+	{  return T((0 <= n) - (n <  0));
 	}
 	if constexpr (N_zero == -1)
-	{  return U((0 <  u) - (u <= 0));
+	{  return T((0 <  n) - (n <= 0));
 	}
 	else
-	{  return U((0 <  u) - (u <  0));
+	{  return T((0 <  n) - (n <  0));
 	}
 }
+
+template <typename T>
+using unsigned_t = _std::make_unsigned_t<T>;
+
+XTAL_FZ2 unsigned_y(delta_q auto n)
+XTAL_0EX
+{
+	using V = XTAL_TYP_(n);
+	using U = unsigned_t<V>;
+	U constexpr N = sizeof(n) << 3;
+	U constexpr M = N - 1;
+	V const m = n >> M;
+	n += m;
+	n ^= m;
+	return (U) n;
+}
+static_assert(1 == unsigned_y(+1));
+static_assert(1 == unsigned_y(-1));
+static_assert(2 == unsigned_y(+2));
+static_assert(2 == unsigned_y(-2));
 
 
 ////////////////////////////////////////////////////////////////////////////////

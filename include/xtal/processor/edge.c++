@@ -1,35 +1,41 @@
 #pragma once
+#include "../any.c++"
+#include "./edge.hpp"// testing...
+
 #include "./all.hpp"
 #include "../message/all.hpp"
 
 
-
-#include "../any.c++"
-
 XTAL_ENV_(push)
-namespace xtal::processor::__bond
+namespace xtal::processor::__edge
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using namespace xtal::__any;
+
+template <typename V, int N>
+using scalar_t = typename collage_t<N, V>::scalar_t;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/bond.hpp: lifting")
+TEST_CASE("xtal/processor/edge.hpp: lifting")
 {
-	using sigma_t = typename common::realized::sigma_t;
-	using alpha_t = typename common::realized::alpha_t;
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using scalar_u = common::scalar_t<alpha_t, N_size>;
+	using scalar_u = scalar_t<alpha_t, N_size>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
-//	auto f = processor::bond_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+//	auto f = processor::edge_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_u { 0,  1,  2,  3,  4};
 	auto y = scalar_u {00, 10, 20, 30, 40};
 	auto z = scalar_u {00, 11, 22, 33, 44};
 	auto a = scalar_u {00, 00, 00, 00, 00};
-//	auto b = f.bind_to(x, y);
-	auto b = processor::bond_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind_to(processor::let_f(x), processor::let_f(y));
+//	auto b = f.bind(x, y);
+	auto b = processor::edge_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= resize_u(N_size);
 	b >>= sequel_n(N_size);
@@ -42,11 +48,11 @@ TEST_CASE("xtal/processor/bond.hpp: lifting")
 template <typename mix_t>
 void respan_virtual__test()
 {
-	using sigma_t = typename common::realized::sigma_t;
-	using alpha_t = typename common::realized::alpha_t;
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
 
 	using sequel_n = message::sequel_t<>;
-	using mixer_t = processor::bond_t<mix_t>;
+	using mixer_t = processor::edge_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([](auto n) {return alpha_t(n*10);});
@@ -84,7 +90,7 @@ void respan_virtual__test()
 	/***/
 }
 
-TEST_CASE("xtal/processor/bond.hpp: respan virtual")
+TEST_CASE("xtal/processor/edge.hpp: respan virtual")
 {
 	respan_virtual__test<dynamic_bias_mix_t>();
 	respan_virtual__test<static_bias_mix_t>();

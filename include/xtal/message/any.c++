@@ -1,63 +1,27 @@
 #pragma once
-#include "./any.hpp"
-#include "../control/all.hpp"
-#include "../message/all.hpp"
-#include "../process/any.hpp"
-#include "../processor/atom.hpp"
 #include "../any.c++"
+#include "./any.hpp"// testing...
+
+#include "../message/all.hpp"
+#include "../processor/node.hpp"
+
 
 XTAL_ENV_(push)
 namespace xtal::message::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-/**/
-TEST_CASE("xtal/message/any.hpp: hold")
-{
-	using alpha_t = typename common::realized::alpha_t;
+using namespace xtal::__any;
 
-	using sequel_t = message::sequel_t<counter_t<>>;
-   using biased_t = process::confined_t<bias_t::template hold<(1 << 7)>>;
 
-  biased_t biased;
-
-  auto step = sequel_t(1 << 3);
-	
-	biased <<= step;
-	biased <<= bundle_f(control::delay_s<>(0), (bias_t) (alpha_t)  7);
-	biased <<= bundle_f(control::delay_s<>(1), (bias_t) (alpha_t)  1);
-	biased <<= bundle_f(control::delay_s<>(3), (bias_t) (alpha_t) -1);
-	biased <<= bundle_f(control::delay_s<>(4), (bias_t) (alpha_t)  1);
-	biased <<= bundle_f(control::delay_s<>(5), (bias_t) (alpha_t) -1);
-	biased <<= bundle_f(control::delay_s<>(7), (bias_t) (alpha_t)  7);
-	biased <<= bundle_f(control::delay_s<>(7), (bias_t) (alpha_t)  8);
-	
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t) -1);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-//	...
-	biased <<= step;
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-	REQUIRE((alpha_t) biased()  ==  (alpha_t)  8);
-}
-/***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename mix_t>
 void respan_internal_interrupt__test()
 {
-	using alpha_t = typename common::realized::alpha_t;
+	using alpha_t = typename realized::alpha_t;
 
-	using    mix_z = processor::atom_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
+	using    mix_z = processor::node_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
@@ -74,21 +38,21 @@ void respan_internal_interrupt__test()
 	xhs <<= resize_u(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs <<= control::delay_s<bias_t>(0, (alpha_t) 100);
-	xhs <<= control::delay_s<bias_t>(1, (alpha_t) 200);
-	xhs <<= control::delay_s<bias_t>(2, (alpha_t) 300);
+	xhs <<= context::delay_s<bias_t>(0, (alpha_t) 100);
+	xhs <<= context::delay_s<bias_t>(1, (alpha_t) 200);
+	xhs <<= context::delay_s<bias_t>(2, (alpha_t) 300);
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= control::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
+	xhs <<= context::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
-TEST_CASE("xtal/processor/atom.hpp: respan internal interrupt")
+TEST_CASE("xtal/message/any.hpp: respan internal interrupt")
 {
 	respan_internal_interrupt__test<dynamic_bias_mix_t>();
 //	respan_internal_interrupt__test<static_bias_mix_t>();

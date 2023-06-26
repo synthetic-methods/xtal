@@ -1,8 +1,8 @@
 #pragma once
-#include "../process/any.hpp"//_retail
+#include "../process/any.hpp"// `_retail`
+
 #include "../message/sequel.hpp"
 #include "../message/resize.hpp"
-
 
 
 
@@ -34,11 +34,13 @@ struct link
 Produces a decorator `subtype<S>` that defines `T`. \
 
 template <typename T>
-struct define: _retail::define<T>
+struct define
+:	_retail::define<T>
 {
 };
 template <typename T>
-struct refine: _retail::refine<T>
+struct refine
+:	_retail::refine<T>
 {
 };
 
@@ -152,6 +154,7 @@ struct defer<U>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
@@ -194,7 +197,8 @@ struct defer<U>
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
-struct refer: _retail::refer<U>
+struct refer
+:	_retail::refer<U>
 {
 };
 

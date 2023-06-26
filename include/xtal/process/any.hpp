@@ -1,5 +1,5 @@
 #pragma once
-#include "../conflux/any.hpp"//_retail
+#include "../conflux/any.hpp"// `_retail`
 
 
 
@@ -25,6 +25,7 @@ struct link
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>; using T = typename co::self_t;
+	
 	public:
 		using co::co;
 
@@ -34,7 +35,7 @@ struct link
 		Thunkifies `T` by binding `Xs...`. \
 
 		template <typename ...Xs>
-		struct bind
+		struct bond
 		{
 			using signature = bundle<Xs...>;
 			using result_t  = typename signature::template invoke_t<T>;
@@ -105,9 +106,6 @@ struct link
 					return co::template method<Ms...>(XTAL_REF_(xs)...);
 				}
 
-			protected:
-				XTAL_LET disorder_v = requires (subtype const &t) {t.template method<>();};
-			
 			public:
 				///\
 				\returns the result of `influx`ing `self` then  (if `& 1`) `arguments`. \
@@ -315,14 +313,14 @@ struct refine
 		template <typename ...Xs>
 		struct combined
 		{
-			using kind = typename T::template bind<Xs...>;
+			using kind = typename T::template bond<Xs...>;
 			using type = typename _retail::confined<kind>::template subtype<S>;
 
 		};
 		template <typename ...Xs>
 		using     bind_t = typename combined<Xs...>::type;
 		XTAL_LET  bind_f = [](XTAL_DEF ...xs) XTAL_0FN_(bind_t<decltype(xs)...>(XTAL_REF_(xs)...));
-		XTAL_RN4_(XTAL_FN2 bind_to(XTAL_DEF ...xs)
+		XTAL_RN4_(XTAL_FN2 bind(XTAL_DEF ...xs)
 		,	bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...)
 		)
 
@@ -407,7 +405,8 @@ struct defer<U>
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
-struct refer: _retail::refer<U>
+struct refer
+:	_retail::refer<U>
 {
 };
 

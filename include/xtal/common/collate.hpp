@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./seek.hpp"
+#include "./compose.hpp"
 #include "./collect.hpp"
-
 
 
 
@@ -11,10 +11,30 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename T> struct realize;
+template <typename T>
+struct realize;
 
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+template <template <typename> typename T_>
+struct create
+{
+	class type: public T_<type>
+	{
+		using co = T_<type>;
+
+	public:
+		using co::co;
+
+	};
+};
+template <template <typename> typename T_>
+using create_t = typename create<T_>::type;
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
 template <typename V>
 struct collate
 {
@@ -36,15 +56,14 @@ struct collate
 		template <typename R>
 		struct graft;
 		struct fluid;
-		struct fixed;
+		struct solid;
 
-		template <size_t N_retain=0>
 		struct siphon;// fluid
 		struct sluice;// fluid
-		struct scalar;// fixed
-		struct product;// fixed
-		struct serial;// fixed
-		struct series;// fixed
+		struct scalar;// solid
+		struct serial;// solid
+		struct series;// solid
+		struct product;// solid
 		
 		template <typename R>
 		struct graft
@@ -59,6 +78,19 @@ struct collate
 				using co::co;
 
 				///\returns\
+				`*this` with type `Y=T`. \
+
+				template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y const &&>(_std::move(*this));}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y       &&>(_std::move(*this));}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  XTAL_IF1 is_q<Y, T> {return static_cast<Y const  &>(*this);}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  XTAL_IF1 is_q<Y, T> {return static_cast<Y        &>(*this);}
+
+				template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return reinterpret_cast<Y const &&>(_std::move(*this));}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return reinterpret_cast<Y       &&>(_std::move(*this));}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return reinterpret_cast<Y const  &>(*this);}
+				template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return reinterpret_cast<Y        &>(*this);}
+
+				///\returns\
 				a copy of `*this` with type `Y=T`. \
 
 				template <typename Y=T>
@@ -67,37 +99,13 @@ struct collate
 				{
 					return self<Y>();
 				}
-				///\returns\
-				`*this` with type `Y=T`. \
-
-				template <typename Y=T>
-				XTAL_FN2 self()
-				XTAL_0FX_(&)
-				{
-					if constexpr (is_q<Y, T>) return static_cast<T const &>(*this);
-					else                 return reinterpret_cast<Y const &>(*this);
-				}
-				template <typename Y=T>
-				XTAL_FN2 self()
-				XTAL_0EX_(&)
-				{
-					if constexpr (is_q<Y, T>) return static_cast<T &>(*this);
-					else                 return reinterpret_cast<Y &>(*this);
-				}
 				///\
 				Alias of `operator[]`. \
 
 				XTAL_RN2_(XTAL_FN2 datum(XTAL_DEF i), self()[XTAL_REF_(i)]);
 
 			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
 		struct fluid
 		{
@@ -106,201 +114,130 @@ struct collate
 			template <typename T>
 			using homotype = typename graft<demitype>::template homotype<T>;
 
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
-		struct fixed
+		struct solid
 		{
-			using demitype = typename co::template fixed<V>::type;
+			using demitype = typename co::template solid<V>::type;
 
 			template <typename T>
 			using homotype = typename graft<demitype>::template homotype<T>;
 
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
 
 		///\
 		Event spool based on a insertion-sorted `std::array`, \
 		presenting a similar interface to `sluice`. \
 		
-		///\
-		If `N_retain == 1`, the _current_ value is available via `next(0)`. \
-
-		template <size_t N_retain>
 		struct siphon
 		{
 			template <typename T>
-			using hemitype = typename fluid::template homotype<T>;
+			using hemitype = iterate_t<T>;
 
-			template <typename T>
-			class homotype: public hemitype<T>
+			class type: public hemitype<type>
 			{
-				friend T;
-				using co = hemitype<T>;
+				using co = hemitype<type>;
 
-				using  size_t = typename co::      size_type;
-				using value_t = typename co::     value_type;
-				using count_t = typename co::difference_type;
-				using point_t = typename co::iterator;
-				using next_t  = typename co::const_reference;
+				using fluid_t = typename fluid::type;
+				using count_t = typename fluid_t::difference_type;
 
-				point_t point_m;
-
-				XTAL_LET N = N_retain;
-				static_assert(N <= 1);
+				fluid_t fluid_m;
+				count_t begin_n = 0;
+				count_t   end_n = 0;
 
 			public:
 				using co::co;
 
-				XTAL_NEW homotype()
-				XTAL_0EX
-				XTAL_IF1 (N == 0)
-				:	co {}
-				,	point_m {co::begin()}
+				XTAL_NEW type(bracket_t<V> w)
+				:	end_n {(count_t) w.size()}
+				,	fluid_m(w)
 				{
 				}
-				XTAL_NEW homotype()
-				XTAL_0EX
-				XTAL_IF1 (N == 1)
-				:	co {value_t(_std::numeric_limits<typename value_t::head_t>::max())}
-				,	point_m {co::begin()}
+				XTAL_OP1 = (bracket_t<V> w)
 				{
+					end_n = (count_t) w.size();
+					fluid_m = w;
+					return *this;
 				}
-				XTAL_FN2_(point_t)     begin() XTAL_0EX {return  point_m;}
-				XTAL_FN2_(count_t) completed() XTAL_0EX {return _std::distance(co::begin(), begin());}
-				XTAL_FN2_(count_t) remaining() XTAL_0EX {return _std::distance(    begin(),   end());}
-				XTAL_FN2_(point_t)       end() XTAL_0EX {return _std::prev(co::end(), N);}
 
-				XTAL_FN2_(next_t)    next(bool i=N) XTAL_0EX {return *(point_m +  i);}
-				XTAL_FN1_(next_t) advance(bool i=1) XTAL_0EX {return *(point_m += i);}
-				XTAL_FN1_(next_t) abandon(bool i=1)
+				XTAL_RN2_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
+				XTAL_RN2_(XTAL_FN2   end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
+				
+				XTAL_FN2    next(bool n=1) XTAL_0EX {return *begin(n);}
+				XTAL_FN1 advance(bool n=1) XTAL_0EX {begin_n += n; return *begin();}
+				XTAL_FN1 abandon(bool n=1)
 				XTAL_0EX
 				{
-					if (i)
-					{	co::erase(co::begin(), end());
-						point_m = co::begin();
+					if (n)
+					{	begin_n = 0;
+						fluid_m.erase(fluid_m.begin(), end());
 					}
-					return *point_m;
+					return *begin();
 				}
-
-				///\returns\
-				the result of queuing the given message, \
-				with zero indicating that the message was already scheduled. \
-				
 				///\note\
-				Conflicting entries are overwritten. \
+				Cost can be amortized by invoking `advance` and `abandon` separately, \
+				allowing for branchless `advance`ment. \
 
-				XTAL_FN1_(sign_t) push(value_t const &e)
+				XTAL_FN0 pop()
 				XTAL_0EX
 				{
-					auto &s = co::self();
-					auto e_ = s.peek(e);
-					return *e_ == e? s.prod(e, e_): s.poke(e, e_);
+					advance(); if (this->empty()) abandon();
 				}
-
-			protected:
-				///\
-				Inserts `e` at `e_`, return `1` if inserted before `end()`, `-1` otherwise. \
-				
-				XTAL_FN1_(sign_t) poke(value_t e, value_t* e_)
-				XTAL_0EX
-				{
-					co::insert(e_, {e}); return sign_f<1>(point_m - e_);
-				}
-				
-				///\
-				Exchanges `e` with `e_`, returning `1` if changed, `0` otherwise. \
-
-				XTAL_FN1_(sign_t) prod(value_t e, value_t* e_)
-				XTAL_0EX
-				{
-					_std::swap(*e_, e); return e_->tail() != e.tail();
-				}
-
 				///\returns\
-				a pointer to the first element `>= e`. \
-
-				XTAL_FN1 peek(value_t e)
+				the top-most element assuming `front()` is minimal \
+				(if initialized with two or more elements). \
+				
+				XTAL_FN2 top()
 				XTAL_0EX
 				{
-					return _std::lower_bound(co::begin(), end(), e);
+					return *begin(2 <= end_n);
 				}
 
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
+				///\note\
+				Conflicting entries w.r.t. `==` are overwritten. \
 
-			public:
-				using co::co;
+				XTAL_FN0 push(V v)
+				XTAL_0EX
+				{
+					auto v_ = _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
+					if (*v_ == v)
+					{	_std::swap(*v_, v);
+					}
+					else
+					{	fluid_m.insert(v_, {_std::move(v)});
+					}
+				}
 
 			};
 		};
 		///\
 		Event spool based on an inverted `std::priority_queue`, \
-		interchangeable with `siphon<0>` as far as the interface aligns. \
+		interchangeable with `siphon` as far as the interface aligns. \
 
 		struct sluice
 		{
 			using demitype = _std::priority_queue<V, typename fluid::type, _std::greater<V>>;
 
-			template <typename T>
-			class homotype: public demitype
+			class type: public demitype
 			{
-				friend T;
 				using co = demitype;
-				using count_t = typename co:: size_type;
-				using value_t = typename co::value_type;
-				using next_t  = typename co::const_reference;
-
-				XTAL_FN0 clear()
-				XTAL_0EX
-				{
-					while (not co::empty())
-					{
-						co::pop();
-					}
-				}
-			public:
-				using co::co;
-
-				XTAL_FN2_(count_t) completed()           XTAL_0EX {return          0;}
-				XTAL_FN2_(count_t) remaining()           XTAL_0EX {return co::size();}
-				XTAL_FN1_(void)      advance(bool i=1)   XTAL_0EX {if (i) co:: pop();}
-				XTAL_FN1_(void)      abandon(bool i=1)   XTAL_0EX {if (i)    clear();}
-				XTAL_FN2_(next_t)       next()           XTAL_0EX {return co:: top();}
-				XTAL_FN1_(sign_t)       push(XTAL_DEF o) XTAL_0EX {return co::push(XTAL_REF_(o)), 1;}
-
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
 
 			public:
 				using co::co;
+
+				XTAL_FN0 advance(bool i=1) XTAL_0EX {if (i) co::pop();}
+				XTAL_FN0 abandon(bool i=1) XTAL_0EX {if (i) while (not co::empty()) co::pop();}
 
 			};
 		};
 		///\
-		Represents a scalable fixed-length vector. \
+		Represents a scalable `static_vector`. \
 
 		struct scalar
 		{
 			template <typename T>
-			using hemitype = typename fixed::template homotype<T>;
+			using hemitype = typename solid::template homotype<T>;
 
 			template <typename T>// requires arithmetic_operators_q<V>
 			class homotype: public hemitype<T>
@@ -357,7 +294,7 @@ struct collate
 				}
 				XTAL_FN1 transmute(_std::invocable<V> auto const &f)
 				XTAL_0EX
-				XTAL_IF1 (0 < N_size) and (N_size <= _realized::destructive_alignment_v)
+				XTAL_IF1 (0 < N_size) and (N_size <= _realized::alignment_v)
 				{
 					seek_f<N_size>([&, this](auto i) XTAL_0FN_(datum(i) = f(datum(i))));
 					return self();
@@ -382,14 +319,7 @@ struct collate
 				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(datum(i) /= XTAL_REF_(w))), self();}
 
 			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
 		///\
 		Represents a sequence that supports elementwise multiplication/division. \
@@ -433,38 +363,38 @@ struct collate
 				///\note\
 				Useful for converting between e.g. exponential/hyperbolic or stereo/mid-side pairs. \
 
-				template <int N_bias=0>
-				XTAL_FN2 reflected()
+				template <int N_side=0>
+				XTAL_FN2 reflected(int const n_bias=0)
 				XTAL_0FX
 				XTAL_IF1 (N_size == 2)
 				{
-					using alpha_t = typename _realized::alpha_t;
-					alpha_t constexpr   base = _realized::template unsquare_y<-1>((alpha_t) 2);// `std::sqrt(0.5)`
-					alpha_t constexpr debase = _realized::explo_y(1 - N_bias, base);
-					auto const &lhs = debase*datum(0);
-					auto const &rhs = debase*datum(1);
-					return T {lhs + rhs, lhs - rhs};
+					auto const scale = _realized::explo_y(_realized::template unsquare_y<-1>(2), 1 - n_bias);
+					auto const lhs = scale*datum(0);
+					auto const rhs = scale*datum(1);
+					if constexpr (N_side ==  0)
+					{	return T {lhs + rhs, lhs - rhs};
+					}
+					else
+					if constexpr (N_side == +1)
+					{	return lhs + rhs;
+					}
+					else
+					if constexpr (N_side == -1)
+					{	return lhs - rhs;
+					}
 				}
 				///\
 				Modifies `this`; \see `reflected()`.
 
-				template <int N_bias=0>
-				XTAL_FN2 reflect()
+				XTAL_FN2 reflect(int const n_bias=0)
 				XTAL_0FX
 				XTAL_IF1 (N_size == 2)
 				{
-					return self() = reflected<N_bias>();
+					return self() = reflected(n_bias);
 				}
 
 			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
 		///\
 		Represents a sequence that supports elementwise addition/subtracion. \
@@ -499,6 +429,7 @@ struct collate
 				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this](auto i) XTAL_0FN_(datum(i) -= t.datum(i))), self();}
 
 			};
+			using type = _detail::create_t<homotype>;
 		};
 		///\
 		Represents a sequence that supports elementwise addition/subtracion, \
@@ -555,7 +486,7 @@ struct collate
 					I constexpr N2 = N_index + N_limit - 2;
 
 				//	Compute and populate the 0th and 1st powers:
-					auto const o = _realized::template explo_y(N_index, u);
+					auto const o = _realized::template explo_y<N_index>(u);
 					s[_0] = o;
 					s[_1] = o*u;
 
@@ -703,7 +634,7 @@ struct collate
 					}
 					else
 					{	using W = typename _realized::aphex_t;
-						using Y = typename recollate_t<W>::series::type;
+						using Y = typename compose_s<S, collate<W>>::series::type;
 						Y s_(s);
 						Y t_(t);
 						Y(constant_o<-1>).convolve(s_, t_);
@@ -718,14 +649,7 @@ struct collate
 				}
 
 			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
-
-			public:
-				using co::co;
-
-			};
+			using type = _detail::create_t<homotype>;
 		};
 		///\
 		Represents a sequence that supports elementwise addition/subtracion, \
@@ -734,8 +658,6 @@ struct collate
 		///\note\
 		The increment/decrement operators provide forward/backward iteration \
 		based on finite differences/derivatives. \
-
-	//	TODO: Generalize as the linear counterpart to `series::transform` using the z-transform. \
 
 		struct serial
 		{
@@ -762,24 +684,17 @@ struct collate
 				XTAL_OP1_(T &) *=(T const &t)
 				XTAL_0EX
 				{
-				//	NOTE: Accuracy is better when looped from back-to-front, \
-					but `MSVC` doesn't inline for some reason (even when the following is rephrased...). \
-
-				//	for (count_t i = N_size;  ~--i;) {s[i] *= t[0];
-				//	for (count_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];}}
-
+					auto constexpr h = N_size;
 					auto &s = self();
 					auto _s = self();
-					auto constexpr h = N_size - 1; static_assert(1 < N_size);
-
-					seek_f<N_size>([&, this](constant_q auto n)
-					XTAL_0FN
-					{	size_t constexpr i = h - n; s[i] *= t[0];
-						seek_f<i>([&, this](constant_q auto m)
-						XTAL_0FN
-						{	size_t constexpr j = i - m; s[i] += _s[i - j]*t[j];
-						});
-					});
+					if constexpr (_realized::alignment_v < N_size)
+					{	for (count_t i = h;   ~--i;) {s[i] *= t[0];
+						for (count_t j = i; j; --j ) {s[i] += t[j]*_s[i - j];}}
+					}
+					else
+					{	antiseek_f<h, 0>([&, this](auto i) XTAL_0FN {s[i] *= t[0];
+						antiseek_f<i, 1>([&, this](auto j) XTAL_0FN {s[i] += t[j]*_s[i - j];});});
+					}
 					return s;
 				}
 				XTAL_OP2_(T) * (T const &t)
@@ -787,6 +702,30 @@ struct collate
 				{	return twin() *= t;
 				}
 				
+			};
+			using type = _detail::create_t<homotype>;
+		};
+		struct pulsar
+		{
+			template <typename T>
+			using hemitype = typename serial::template homotype<T>;
+
+			template <typename T>
+			class homotype: public hemitype<T>
+			{
+			//	TODO: Subclass to define serial pairs like `complex`. \
+
+				friend T;
+				using co = hemitype<T>;
+			
+			public:
+				using co::co;
+				using co::self;
+				using co::twin;
+				using co::datum;
+
+				XTAL_RN2_(XTAL_FN2 datum(), self()[0]);
+
 				///\
 				Produces the successor by pairwise addition starting from `begin()`, \
 				assuming the entries of `this` are finite differences/derivatives. \
@@ -794,15 +733,17 @@ struct collate
 				XTAL_OP1 ++ (int)
 				XTAL_0EX
 				{
-					auto o = self(); operator++(); return o;
+					auto t = twin(); operator++(); return t;
 				}
 				XTAL_OP1 ++ ()
 				XTAL_0EX
 				{
+					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this](auto i) XTAL_0FN_(datum(0 + i) += datum(1 + i)));
-					return self().wrap();
+					seek_f<M>([&, this](auto i) XTAL_0FN_(s[0 + i] += s[1 + i]));
+					s.reduce();
+					return s;
 				}
 
 				///\
@@ -812,36 +753,58 @@ struct collate
 				XTAL_OP1 -- (int)
 				XTAL_0EX
 				{
-					auto o = self(); operator--(); return o;
+					auto t = twin(); operator--(); return t;
 				}
 				XTAL_OP1 -- ()
 				XTAL_0EX
 				{
+					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this](auto i) XTAL_0FN_(datum(M - i) -= datum(N - i)));
-					return self().wrap();
-				}
-
-				XTAL_FN1_(T &) wrap()
-				XTAL_0EX
-				{
-					auto &s = self();
-					if constexpr (alpha_q<V>)
-					{	s[0] -= _std::round(s[0]);
-					}
+					seek_f<M>([&, this](auto i) XTAL_0FN_(s[M - i] -= s[N - i]));
+					s.reduce();
 					return s;
 				}
 
-			};
-			class type: public homotype<type>
-			{
-				using co = homotype<type>;
+				XTAL_FN0 reduce()
+				XTAL_0EX
+				{
+				}
 
+			};
+			using type = _detail::create_t<homotype>;
+		};
+		struct phasor
+		{
+			template <typename T>
+			using hemitype = typename pulsar::template homotype<T>;
+
+			template <typename T>
+			class homotype: public hemitype<T>
+			{
+			//	TODO: Subclass to define serial pairs like `complex`. \
+
+				friend T;
+				using co = hemitype<T>;
+			
 			public:
 				using co::co;
+				using co::self;
+				using co::twin;
+				using co::datum;
+
+				///\
+				Wraps the first argument to the range `+/- 1/2`, assuming `std::is_floating_point_v<V>`. \
+
+				XTAL_FN0 reduce()
+				XTAL_0EX
+				{
+					auto &s = self(); static_assert(alpha_q<V>);
+					s[0] -= _std::round(s[0]);
+				}
 
 			};
+			using type = _detail::create_t<homotype>;
 		};
 
 	};

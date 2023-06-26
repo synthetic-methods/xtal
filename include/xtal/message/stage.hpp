@@ -1,5 +1,5 @@
 #pragma once
-#include "./numinal.hpp"
+#include "./any.hpp"
 
 
 
@@ -14,7 +14,7 @@ namespace xtal::message
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N, typename ...As>
-using stage = numinal<constant_t<N>, As...>;
+using stage = label<constant_t<N>, As...>;
 
 template <int N, typename ...As>
 using stage_t = compose_s<any_t<>, stage<N, As...>>;

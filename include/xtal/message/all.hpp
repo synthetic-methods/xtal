@@ -1,7 +1,6 @@
 #pragma once
 #include "./any.hpp"
 #include "./nominal.hpp"
-#include "./numinal.hpp"
 #include "./ordinal.hpp"
 #include "./per.hpp"
 #include "./resize.hpp"

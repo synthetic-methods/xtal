@@ -62,6 +62,9 @@ struct compose<Head, Heads...>
 template <typename S, typename ...Tails>
 using compose_s = typename compose<>::template subtype<S, Tails...>;
 
+template <typename ...Tails>
+using compose_t = compose_s<unit_t, Tails...>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

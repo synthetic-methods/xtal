@@ -228,6 +228,7 @@ public:
 		return bit_reverse_y(u, subdepth);
 	}
 
+
 };
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -273,27 +274,29 @@ public:
 	using constructive_alignment = default_alignment;
 	using  destructive_alignment = default_alignment;
 #endif
+	using alignment = destructive_alignment;
 
 	XTAL_LET constructive_alignment_v = value_v<constructive_alignment>;
 	XTAL_LET  destructive_alignment_v = value_v< destructive_alignment>;
 	XTAL_LET      default_alignment_v = value_v<     default_alignment>;
+	XTAL_LET              alignment_v = value_v<             alignment>;
 	
-	static_assert(0 < constructive_alignment_v);
-	static_assert(0 <  destructive_alignment_v);
-	static_assert(0 <      default_alignment_v);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	template <typename V>
-//	using product_t = _std::array<V, 2>;
-	using product_t = typename compose_s<unit_t
-	,	collect<2>
-	,	collate<V>
-	>::product::type;
+	template <typename Z, size_t N>
+	using product_t = typename collage_t<N, Z>::product_t;
+
+	template <typename Z>
+	using single_t = product_t<Z, 1>;
+
+	template <typename Z>
+	using couple_t = product_t<Z, 2>;
+
 
 	template <auto M_pow=1> requires sign_q<M_pow>
-	XTAL_FZ2 it_y(XTAL_DEF u)
+	XTAL_FZ2 made_y(XTAL_DEF u)
 	XTAL_0EX
 	{
 		using U = XTAL_TYP_(u);
@@ -305,9 +308,10 @@ public:
 		{	return U(1/XTAL_REF_(u));
 		}
 		else
-		{	return product_t<U> {u, 1/XTAL_REF_(u)};
+		{	return couple_t<U> {u, 1/XTAL_REF_(u)};
 		}
 	}
+
 
 	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FZ2_(alpha_t) dot_y(aphex_t const &u)
@@ -315,7 +319,7 @@ public:
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
-		return it_y<M_pow>(xx + yy);
+		return made_y<M_pow>(xx + yy);
 	}
 
 	template <int M_pow=1> requires sign_q<M_pow>
@@ -329,7 +333,7 @@ public:
 	XTAL_FZ2 square_y(auto w)
 	XTAL_0EX
 	{
-		return it_y<M_pow>(w*w);
+		return made_y<M_pow>(w*w);
 	}
 	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FZ2_(aphex_t) square_y(aphex_t const &u)
@@ -337,14 +341,14 @@ public:
 	{
 		alpha_t const x = u.real(), xx = square_y(x);
 		alpha_t const y = u.imag(), yy = square_y(y);
-		return it_y<M_pow>(aphex_t(xx - yy, x*y*2));
+		return made_y<M_pow>(aphex_t(xx - yy, x*y*2));
 	}
 	
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
 	XTAL_FZ2 unsquare_y(alpha_t const &w)
 	XTAL_0EX
 	{
-		if (not _std::is_constant_evaluated()) return it_y<M_pow>(_std::sqrt(w));
+		if (not _std::is_constant_evaluated()) return made_y<M_pow>(_std::sqrt(w));
 	//	else...
 		alpha_t constexpr _0_5 = 0.5;
 		alpha_t constexpr _1_5 = 1.5;
@@ -370,11 +374,17 @@ public:
 		{	return n*w;
 		}
 		else
-		{	return product_t<alpha_t> {w*n, n};
+		{	return couple_t<alpha_t> {w*n, n};
 		}
 	}
-	static_assert(unsquare_y< 1>((alpha_t) 2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
-	static_assert(unsquare_y<-1>((alpha_t) 2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
+	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
+	XTAL_FZ2 unsquare_y(iota_q auto const &w)
+	XTAL_0EX
+	{
+		return unsquare_y<M_pow, N_lim>((alpha_t) w);
+	}
+	static_assert(unsquare_y< 1>(2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
+	static_assert(unsquare_y<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
 
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
 	XTAL_FZ2 unsquare_dot_y(XTAL_DEF u)
@@ -384,7 +394,7 @@ public:
 		{	return unsquare_y<M_pow, N_lim>(dot_y(XTAL_REF_(u)));
 		}
 		else
-		{	return it_y<M_pow>(_std::abs(XTAL_REF_(u)));
+		{	return made_y<M_pow>(_std::abs(XTAL_REF_(u)));
 		}
 	}
 
@@ -403,32 +413,46 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `constexpr` equivalent of `std:pow(base, zoom)` for an `unsigned int zoom`. \
+	///\returns\
+	the `constexpr` equivalent of `std:pow(base, zoom)` for an `unsigned int zoom`. \
 	
-	XTAL_FZ2 explo_y(sigma_t const &zoom, XTAL_DEF base)
+	XTAL_FZ2 explo_y(XTAL_DEF base, sigma_t const &zoom)
 	XTAL_0EX
 	{
 		XTAL_TYP_(base) u = XTAL_REF_(base), w = 1;
 		for (sigma_t n = zoom; n; n >>= 1)
 		{	if (n & 1)
-			{	n ^= 1;
-				w *= u;
+			{	w *= u;
 			}
 			u = square_y(u);
 		}
 		return w;
 	}
-	template <size_t N_zoom>
-	XTAL_FZ2 explo_y(XTAL_DEF base)
+	template <size_t N_zoom, typename W>
+	XTAL_FZ2 explo_y(W base, W then=1)
 	XTAL_0EX
 	{
-		return explo_y(N_zoom, XTAL_REF_(base));
+		size_t constexpr N = N_zoom >> 1;
+		if constexpr (N_zoom == 0)
+		{	return then;
+		}
+		else
+		if constexpr (N_zoom ^ 1)
+		{	return explo_y<N>(square_y(base), then);
+		}
+		else
+		if constexpr (N_zoom & 1)
+		{	return explo_y<N>(square_y(base), then*base);
+		}
+//		return explo_y(_std::move(base), N_zoom);
 	}
 	static_assert(explo_y<0>(alpha_t(2.0)) == 1.00);
 	static_assert(explo_y<1>(alpha_t(2.0)) == 2.00);
 	static_assert(explo_y<2>(alpha_t(2.0)) == 4.00);
 
-	///\returns the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
+
+	///\returns\
+	the `constexpr` equivalent of `std:pow(2.0, zoom)`. \
 
 	XTAL_FZ2 diplo_y(delta_t const &zoom)
 	XTAL_0EX
@@ -451,7 +475,8 @@ public:
 	static_assert(diplo_v<-1> == 0.5);
 
 
-	///\returns the `constexpr` equivalent of `std:pow(0.5, zoom)`. \
+	///\returns\
+	the `constexpr` equivalent of `std:pow(0.5, zoom)`. \
 
 	XTAL_FZ2 haplo_y(delta_t const &zoom)
 	XTAL_0EX
@@ -469,7 +494,8 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `N_num`erator divided by the given de`nom`inator.
+	///\returns\
+	the `N_num`erator divided by the given de`nom`inator.
 
 	template <int N_num=1>
 	XTAL_FZ2_(alpha_t) ratio_y(XTAL_DEF nom)
@@ -482,7 +508,8 @@ public:
 	static_assert(ratio_y<4>(alpha_t(2.0)) == 2.0);
 
 
-	///\returns `pi` times `ratio_y<N_num>(nom)`.
+	///\returns\
+	`pi` times `ratio_y<N_num>(nom)`.
 
 	template <int N_num=1>
 	XTAL_FZ2_(alpha_t) patio_y(XTAL_DEF u)
@@ -528,7 +555,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the difference between floating-point values at the scale designated by `zoom`. \
+	///\returns\
+	the difference between floating-point values at the scale designated by `zoom`. \
 
 	XTAL_FZ2_(alpha_t) epsilon_y(delta_t const &zoom=1)
 	XTAL_0EX
@@ -546,7 +574,8 @@ public:
 	static_assert(epsilon_v<1> == _std::numeric_limits<alpha_t>::epsilon());
 	
 
-	///\returns the value `zoom` steps above `(alpha_t) 1`. \
+	///\returns\
+	the value `zoom` steps above `(alpha_t) 1`. \
 
 	XTAL_FZ2_(alpha_t) upsilon_y(delta_t const &zoom=1, delta_t const &zone=0)
 	XTAL_0EX
@@ -561,7 +590,8 @@ public:
 	static_assert(upsilon_v<2> > upsilon_v<1>);
 
 
-	///\returns the value `zoom` steps below `(alpha_t) 1`. \
+	///\returns\
+	the value `zoom` steps below `(alpha_t) 1`. \
 
 	XTAL_FZ2_(alpha_t) dnsilon_y(delta_t const &zoom=1, delta_t const &zone=0)
 	XTAL_0EX
@@ -578,7 +608,8 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns `std::numeric_limits<alpha_t>::min()` magnified by `diplo_y(zoom)`. \
+	///\returns\
+	`std::numeric_limits<alpha_t>::min()` magnified by `diplo_y(zoom)`. \
 
 	XTAL_FZ2_(alpha_t) minimal_y(delta_t const &zoom=0)
 	XTAL_0EX
@@ -589,7 +620,8 @@ public:
 	XTAL_LET minimal_v = minimal_y(N_zoom);
 	///< Value expression for `minimal_y`. \
 
-	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
+	///\returns\
+	the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
 	XTAL_FZ2 minimum_y()
 	XTAL_0EX
@@ -603,7 +635,8 @@ public:
 	}
 
 
-	///\returns haplo_y(zoom)/std::numeric_limits<alpha_t>::min()`. \
+	///\returns\
+	haplo_y(zoom)/std::numeric_limits<alpha_t>::min()`. \
 	
 	///\note Defined as the multiplicative inverse of `minimal_y`, \
 		rather than w.r.t. `std::numeric_limits<alpha_t>::max()`, \
@@ -618,7 +651,8 @@ public:
 	XTAL_LET maximal_v = maximal_y(N_zoom);
 	///< Value expression for `maximal_y`. \
 
-	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
+	///\returns\
+	the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
 
 	XTAL_FZ2 maximum_y()
 	XTAL_0EX
@@ -635,7 +669,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the sign of `value`. \
+	///\returns\
+	the sign of `value`. \
 
 	XTAL_FZ2 signed_y(alpha_t const &value)
 	XTAL_0EX
@@ -661,7 +696,8 @@ public:
 	}
 
 
-	///\returns the original sign of `target`, after applying the sign of `source`.
+	///\returns\
+	the original sign of `target`, after applying the sign of `source`.
 
 	XTAL_FZ1_(alpha_t) resign_y(alpha_t &target, alpha_t const &source=1)
 	XTAL_0EX
@@ -670,7 +706,8 @@ public:
 		target = resigned_y(target, source);
 		return signum;
 	}
-	///\returns the `target` magnitude with the sign of the `source`. \
+	///\returns\
+	the `target` magnitude with the sign of the `source`. \
 
 	XTAL_FZ1_(alpha_t) resigned_y(alpha_t target, alpha_t const &source=1)
 	XTAL_0EX
@@ -688,7 +725,8 @@ public:
 	}
 
 
-	///\returns the original sign of `target`, after making it `abs`olute.
+	///\returns\
+	the original sign of `target`, after making it `abs`olute.
 
 	XTAL_FZ1_(alpha_t) design_y(alpha_t &target)
 	XTAL_0EX
@@ -697,7 +735,9 @@ public:
 		target *= signum;
 		return signum;
 	}
-	///\returns the `abs`olute value of `target`. \
+
+	///\returns\
+	the `abs`olute value of `target`. \
 
 	XTAL_FZ1_(alpha_t) designed_y(alpha_t target)
 	XTAL_0EX
@@ -717,7 +757,8 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns `value` when positive, zero otherwise. \
+	///\returns\
+	`value` when positive, zero otherwise. \
 
 	template <int N_proximity=0>
 	XTAL_FZ2 positive_y(alpha_t value)
@@ -738,7 +779,8 @@ public:
 	static_assert(positive_y<1>(-1.0) ==  minimal_y());
 
 
-	///\returns `value` when negative, zero otherwise. \
+	///\returns\
+	`value` when negative, zero otherwise. \
 
 	template <int N_proximity=0>
 	XTAL_FZ2 negative_y(alpha_t value)
@@ -763,7 +805,8 @@ public:
 
 	/// Modifies the `target`, clamping the magnitude below `dnsilon_y(N_zoom, zone)`. \
 
-	///\returns zero if unchanged, else the sign of the `target`. \
+	///\returns\
+	zero if unchanged, else the sign of the `target`. \
 	
 	template <int N_zoom=0, bool N_infinity=0>
 	XTAL_FZ1_(alpha_t) truncate_y(alpha_t &target, delta_t const &zone)
@@ -795,7 +838,8 @@ public:
 	}
 	/// Modifies the `target`, clamping the magnitude below `maximal_y(N_zoom)`. \
 
-	///\returns zero if unchanged, else the sign of the `target`. \
+	///\returns\
+	zero if unchanged, else the sign of the `target`. \
 
 	template <int N_zoom=0>
 	XTAL_FZ1_(alpha_t) truncate_y(alpha_t &target)
@@ -807,13 +851,14 @@ public:
 	XTAL_FZ1_(aphex_t) truncate_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto &z = product_t<alpha_t>::refer(target);
+		auto &z = couple_t<alpha_t>::refer(target);
 		alpha_t const x = truncate_y<N_zoom>(z[0]);
 		alpha_t const y = truncate_y<N_zoom>(z[1]);
 		return aphex_t {x, y};
 	}
 
-	///\returns the `target` with magnitude clamped to the region below `dnsilon_y(N_zoom, zone)`. \
+	///\returns\
+	the `target` with magnitude clamped to the region below `dnsilon_y(N_zoom, zone)`. \
 
 	template <int N_zoom=0, bool N_infinity=0>
 	XTAL_FZ2_(alpha_t) truncated_y(alpha_t target, delta_t const &zone)
@@ -821,7 +866,8 @@ public:
 	{
 		(void) truncate_y<N_zoom, N_infinity>(target, zone); return target;
 	}
-	///\returns the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
+	///\returns\
+	the `target` with magnitude clamped to the region below `maximal_y(N_zoom)`. \
 
 	template <int N_zoom=0>
 	XTAL_FZ2_(alpha_t) truncated_y(alpha_t const &target)
@@ -854,7 +900,8 @@ public:
 
 	/// Modifies the `target`, clamping the magnitude above `upsilon_y(N_zoom, zone)`. \
 
-	///\returns zero if unchanged, else the sign of the `target`. \
+	///\returns\
+	zero if unchanged, else the sign of the `target`. \
 
 	template <int N_zoom=0, bool N_zero=0>
 	XTAL_FZ1_(alpha_t) puncture_y(alpha_t &target, delta_t const &zone)
@@ -886,7 +933,8 @@ public:
 	}
 	/// Modifies the `target`, clamping the magnitude above `minimal_y(N_zoom)`. \
 
-	///\returns zero if unchanged, else the sign of the `target`. \
+	///\returns\
+	zero if unchanged, else the sign of the `target`. \
 
 	template <int N_zoom=0>
 	XTAL_FZ1_(alpha_t) puncture_y(alpha_t &target)
@@ -898,13 +946,14 @@ public:
 	XTAL_FZ1_(aphex_t) puncture_y(aphex_t &target)
 	XTAL_0EX
 	{
-		auto &z = product_t<alpha_t>::refer(target);
+		auto &z = couple_t<alpha_t>::refer(target);
 		alpha_t const x = puncture_y<N_zoom>(z[0]);
 		alpha_t const y = puncture_y<N_zoom>(z[1]);
 		return aphex_t {x, y};
 	}
 
-	///\returns the `target` with magnitude clamped to the region above `upsilon_y(N_zoom, zone)`. \
+	///\returns\
+	the `target` with magnitude clamped to the region above `upsilon_y(N_zoom, zone)`. \
 
 	template <int N_zoom=0, bool N_zero=0>
 	XTAL_FZ2_(alpha_t) punctured_y(alpha_t target, delta_t const &zone)
@@ -912,7 +961,8 @@ public:
 	{
 		(void) puncture_y<N_zoom, N_zero>(target, zone); return target;
 	}
-	///\returns the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
+	///\returns\
+	the `target` with magnitude clamped to the region above `minimal_y(N_zoom)`. \
 
 	template <int N_zoom=0>
 	XTAL_FZ2_(alpha_t) punctured_y(alpha_t const &target)
@@ -942,7 +992,8 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `target` to `N_zoom` bits of precision after the decimal. \
+	///\returns\
+	the `target` to `N_zoom` bits of precision after the decimal. \
 
 	template <int N_zoom=0>
 	XTAL_FZ2_(alpha_t) trim_y(alpha_t target)

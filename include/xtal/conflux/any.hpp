@@ -1,5 +1,5 @@
 #pragma once
-#include "../concord/any.hpp"//_retail
+#include "../concord/any.hpp"// `_retail`
 
 
 
@@ -142,7 +142,8 @@ struct define
 };
 
 template <typename T>
-struct refine: _retail::refine<T>
+struct refine
+:	_retail::refine<T>
 {
 };
 
@@ -217,7 +218,8 @@ struct defer
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
-struct refer: _retail::refer<U>
+struct refer
+:	_retail::refer<U>
 {
 };
 

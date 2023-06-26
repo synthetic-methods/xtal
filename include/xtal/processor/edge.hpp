@@ -12,27 +12,27 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename, typename ...>
-struct bond;
+struct edge;
 
-using bond_s = any_t<of_t<bond>>;
+using edge_s = any_t<of_t<edge>>;
 
 template <typename U, typename ...As>
-using bond_t = typename confined<bond<U, As...>>::template subtype<bond_s>;
+using edge_t = typename confined<edge<U, As...>>::template subtype<edge_s>;
 
 template <typename... Ts>
-concept bond_q = if_q<bond_s, Ts...>;
+concept edge_q = if_q<edge_s, Ts...>;
 
 template <typename ...As>
-XTAL_FZ2 bond_f(XTAL_DEF u)
+XTAL_FZ2 edge_f(XTAL_DEF u)
 {
-	return bond_t<decltype(u), As...>(XTAL_REF_(u));
+	return edge_t<decltype(u), As...>(XTAL_REF_(u));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
-struct bond
+struct edge
 {
 	using subkind = confer<U, link<As...>>;
 
@@ -40,14 +40,15 @@ struct bond
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>; using T = typename co::self_t;
+	
 	public:
 		using co::co;
 		using co::self;
 
 		template <typename ...Xs>
-		struct bind
+		struct bond
 		{
-			using rebound = typename co::template bind<Xs...>;
+			using rebound = typename co::template bond<Xs...>;
 			using subkind = compose<concord::confer<typename rebound::result_t>, rebound>;
 
 			template <typename R>
@@ -91,14 +92,6 @@ struct bond
 
 			};
 		};
-		/*/
-		XTAL_OP2() (XTAL_DEF ...xs)
-		XTAL_0EX
-		{
-			using  bind_t = compose_s<S, _retail::confined<bind<decltype(xs)...>>>;
-			return bind_t(self(), XTAL_REF_(xs)...);
-		}
-		/***/
 
 	};
 };

@@ -1,23 +1,28 @@
 #pragma once
-#include "./any.hpp"
-#include "./atom.hpp"
-#include "./bond.hpp"
-//#include "../message/all.hpp"
-
-
 #include "../any.c++"
+#include "./any.hpp"// testing...
+
+
+
+
 
 XTAL_ENV_(push)
 namespace xtal::processor::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using namespace xtal::__any;
+
+template <typename V, int N>
+using scalar_t = typename collage_t<N, V>::scalar_t;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 TEST_CASE("xtal/processor/any.hpp: letting")
 {
 	size_t constexpr N_size = 5;
-	using scalar_u = common::scalar_t<int, N_size>;
+	using scalar_u = scalar_t<int, N_size>;
 	auto z = scalar_u {00, 11, 22, 33, 44};
 	auto a = processor::let_f(z);
 	REQUIRE(true);
@@ -27,10 +32,10 @@ TEST_CASE("xtal/processor/any.hpp: letting")
 /**/
 TEST_CASE("xtal/processor/any.hpp: lifting")
 {
-	using alpha_t = typename common::realized::alpha_t;
+	using alpha_t = typename realized::alpha_t;
 
 	size_t constexpr N_size = 5;
-	using scalar_u = common::scalar_t<alpha_t, N_size>;
+	using scalar_u = scalar_t<alpha_t, N_size>;
 	
 	auto f = processor::let_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = scalar_u { 0,  1,  2,  3,  4};
@@ -48,7 +53,7 @@ TEST_CASE("xtal/processor/any.hpp: lifting")
 template <typename mix_t>
 void contrivance__test()
 {
-	using alpha_t = typename common::realized::alpha_t;
+	using alpha_t = typename realized::alpha_t;
 
 	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(to_f<alpha_t>);
 	auto const _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});

@@ -7,15 +7,30 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U, typename ...As>
-using numinal = lift<U, any<As>...>;
+struct delay;
 
-template <typename U, typename ...As>
-using numinal_t = compose_s<any_t<>, numinal<U, As...>>;
+template <typename S=confined_t<>>
+using delay_s = compose_s<S, delay>;
+using delay_t = size_t;
+
+struct delay
+{
+	using subkind = confer<delay_t>;
+
+	template <concord::any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	
+	public:
+		using co::co;
+
+	};
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

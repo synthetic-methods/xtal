@@ -119,6 +119,7 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 
 #define XTAL_NEW                            constexpr            
+#define XTAL_OPZ                            constexpr                   operator
 #define XTAL_OP2       [[nodiscard]]        constexpr    decltype(auto) operator
 #define XTAL_OP1                            constexpr    decltype(auto) operator
 #define XTAL_FN2       [[nodiscard]]        constexpr    decltype(auto)
@@ -130,6 +131,7 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_LET                     static constexpr             auto
 
 #define XTAL_NEW_(...)                      constexpr __VA_ARGS__
+#define XTAL_OPZ_(...)                      constexpr __VA_ARGS__       operator
 #define XTAL_OP2_(...) [[nodiscard]]        constexpr __VA_ARGS__       operator
 #define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
 #define XTAL_FN2_(...) [[nodiscard]]        constexpr __VA_ARGS__
@@ -167,8 +169,8 @@ static_assert(1200 <= XTAL_V00_GNUC);
 
 #define XTAL_FNX XTAL_FN2_(sign_t)
 #define XTAL_FLX XTAL_STD_(sign_t)
-#define XTAL_FLX_(...) [=, this](XTAL_FLX lhs) XTAL_0FN -> XTAL_FLX\
-{if (lhs&1) {XTAL_FLX rhs = (__VA_ARGS__); if (lhs>>1) lhs &= rhs;}; return lhs;}
+#define XTAL_FLX_(...) [=, this](XTAL_FLX before) XTAL_0FN -> XTAL_FLX\
+{if (before&1) {XTAL_FLX after = (__VA_ARGS__); if (before>>1) before &= after;}; return before;}
 
 
 ///////////////////////////////////////////////////////////////////////////////

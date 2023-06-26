@@ -1,7 +1,6 @@
 #pragma once
 #include "./any.c++"
 #include "./nominal.c++"
-#include "./numinal.c++"
 #include "./ordinal.c++"
 #include "./per.c++"
 #include "./resize.c++"

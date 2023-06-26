@@ -20,6 +20,7 @@ struct restep
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 		using step_t = U;

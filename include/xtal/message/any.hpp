@@ -1,7 +1,7 @@
 #pragma once
-#include "../conflux/any.hpp"//_retail
-#include "../control/delay.hpp"
+#include "../conflux/any.hpp"// `_retail`
 
+#include "../context/delay.hpp"
 
 
 
@@ -29,6 +29,7 @@ struct define
 	{
 		friend T;
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
@@ -43,6 +44,7 @@ struct define
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
+			
 			public:
 			//	using co::co;
 
@@ -160,6 +162,7 @@ struct define
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
+			
 			public:
 				using co::co;
 				using co::defuse;
@@ -172,81 +175,17 @@ struct define
 
 			};
 		};
-		template <int N_future=-1>
-		struct hold
-		{
-			template <conflux::any_q R>
-			class subtype: public compose_s<R>
-			{
-				using co = compose_s<R>;
-
-				using delay_t = control::delay_t;
-				using event_t = control::delay_s<T>;
-				using queue_t = typename compose_s<unit_t
-				,	collect<N_future>
-				,	collate<event_t>
-				>::template siphon<1>::type;
-
-				delay_t d_{0};
-				queue_t q_;
-
-			public:
-				using co::co;
-				using co::self;
-
-				///\
-				Invokes `influx` on the super-instance after clearing the schedule iff completed. \
-
-				XTAL_FNX influx(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					q_.abandon(0 < q_.completed() and 0 == q_.remaining() and ((d_ = 0), 1));
-					return co::influx(XTAL_REF_(oo)...);
-				}
-
-				///\
-				\returns the aggregate `flux` of queuing the messages with the given delay.. \
-
-				XTAL_FNX influx(control::delay_s<> d_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return influx(control::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
-				}
-				XTAL_FNX influx(control::delay_s<T> dot, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
-				}
-
-				template <auto...>
-				XTAL_FN1_(T) method()
-				XTAL_0EX
-				{
-					return q_.advance(d_++ == q_.next().head()).tail();
-				}
-			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
-
-			};
-		};
 		///\
 		Provides a queue for this message-type `T` on the target object. \
 		Messages `influx`ed with an integer prefix will be delay by the given amount. \
 		\
-		NOTE: Only supports decorating `processor::atom`. \
-		\
-		TODO: Use deep introspection to automatically `interrupt` viable sources/targets. \
+		NOTE: Only supports decorating `processor::node`. \
 		\
 		TODO: Use `message::sequel` to convert absolute delays to relative delays? \
 		\
 		TODO: Allow for scheduling beyond the current window by offsetting all future events? \
-		\
-		TODO: Investigate whether recursively `influx`ing the tail is a viable approach to \
-		managing collections of `message`s (e.g. presets). \
-		\
-		TODO: Define a `message::bundle` that `std::tuple`s the provided types. \
-		The implementation of `interrupt` in that case might be able to use `std::variant`. \
 
-		template <int N_future=-1>
+		template <int N_event=-1>
 		struct interrupt
 		{
 			template <conflux::any_q R>
@@ -254,18 +193,16 @@ struct define
 			{
 				using co = compose_s<R>;
 			
-				using delay_t = control::delay_t;
-				using event_t = control::delay_s<T>;
-				using queue_t = typename compose_s<unit_t
-				,	collect<N_future>
-				,	collate<event_t>
-			//	>::sluice::type;
-				>::template siphon<0>::type;
+				using delay_t = context::delay_t;
+				using event_t = context::delay_s<T>;
+				using queue_t = typename collage_t<N_event, event_t>::siphon_t;
+			//	using queue_t = typename collage_t<N_event, event_t>::sluice_t;
 
-				queue_t q_;
+				queue_t q_{};
+			//	queue_t q_{(event_t) limit_t::max()};
 
-				XTAL_FN2 next_tail() XTAL_0EX {return q_.next().template head<1>();}
-				XTAL_FN2 next_head() XTAL_0EX {return q_.next().template head<0>();}
+				XTAL_FN2 next_tail() XTAL_0EX {return q_.top().template head<1>();}
+				XTAL_FN2 next_head() XTAL_0EX {return q_.top().template head<0>();}
 				
 				XTAL_FN2_(delay_t) nearest_head(delay_t i)
 				XTAL_0EX
@@ -275,7 +212,7 @@ struct define
 				XTAL_FN2_(delay_t) nearest_head()
 				XTAL_0EX
 				{
-					return 0 < q_.remaining()? next_head(): _std::numeric_limits<delay_t>::max();
+					return q_.empty()? _std::numeric_limits<delay_t>::max(): next_head();
 				}
 
 				XTAL_FN2_(delay_t) furthest_head()
@@ -294,16 +231,20 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(control::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(control::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(control::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return 0 == dot.head()? influx(dot.tail(), XTAL_REF_(oo)...):
-						XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
+					if (0 == dot.head())
+					{	return influx(dot.tail(), XTAL_REF_(oo)...);
+					}
+					else
+					{	return XTAL_FLX_(influx(XTAL_REF_(oo)...)) ((q_.push(_std::move(dot)), 1));
+					}
 				}
 
 			protected:
@@ -338,15 +279,14 @@ struct define
 				XTAL_FN1_(delay_t) relay(delay_t i)
 				XTAL_0EX
 				{
-					if constexpr (0 < N_future)
+					if constexpr (0 < N_event)
 					{	co::relay(i);
-						while (0 < q_.remaining() and next_head() <= i)
+						while (0 < q_.size() and next_head() <= i)
 						{	(void) co::influx(next_tail());
-							q_.advance();
+							q_.pop();
 						}
 					}
-					i = delay(); if (i == furthest_head()) q_.abandon();
-					return i;
+					return delay();
 				}
 
 				///\
@@ -355,7 +295,7 @@ struct define
 				XTAL_FN2_(delay_t) delay()
 				XTAL_0EX
 				{
-					if constexpr (0 < N_future)
+					if constexpr (0 < N_event)
 					{	return nearest_head(co::delay());
 					}
 					else
@@ -370,7 +310,8 @@ struct define
 };
 
 template <typename T>
-struct refine: _retail::refine<T>
+struct refine
+:	_retail::refine<T>
 {
 };
 
@@ -381,12 +322,8 @@ Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
+:	_retail::defer<U>
 {
-	using subkind = _retail::defer<U>;
-
-	template <any_q S>
-	using subtype = compose_s<S, subkind>;
-
 };
 template <constant_q W> requires sigma_q<value_t<W>>
 struct defer<W>
@@ -397,6 +334,7 @@ struct defer<W>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
@@ -409,7 +347,8 @@ struct defer<W>
 Produces a decorator `subtype<S>` that lifts the operations of `U`. \
 
 template <typename U>
-struct refer: _retail::refer<U>
+struct refer
+:	_retail::refer<U>
 {
 };
 

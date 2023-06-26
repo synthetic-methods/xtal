@@ -1,19 +1,22 @@
 #pragma once
-#include "./numinal.hpp"
-
-
-
-
 #include "../any.c++"
+#include "./delay.hpp"// testing...
+
+
+
+
 
 XTAL_ENV_(push)
-namespace xtal::message::__numinal
+namespace xtal::context::__delay
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using namespace xtal::__any;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/message/numinal.hpp: true")
+TEST_CASE("xtal/context/delay.hpp: true")
 {
 	REQUIRE(true);
 }

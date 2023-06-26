@@ -12,24 +12,24 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename, typename ...>
-struct atom;
+struct node;
 
 template <typename U, typename ...As>
-using atom_t = typename confined<atom<U, As...>>::template subtype<any_of_t<atom>>;
+using node_t = typename confined<node<U, As...>>::template subtype<any_of_t<node>>;
 
 template <typename... Ts>
-concept atom_q = any_of_q<atom, Ts...>;
+concept node_q = any_of_q<node, Ts...>;
 
 template <typename ...As>
-XTAL_FZ2 atom_f(XTAL_DEF u)
+XTAL_FZ2 node_f(XTAL_DEF u)
 {
-	return atom_t<decltype(u), As...>(XTAL_REF_(u));
+	return node_t<decltype(u), As...>(XTAL_REF_(u));
 }
 
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
-template <atom_q T>
+template <node_q T>
 using covalent_t = XTAL_TYP_(XTAL_VAL_(based_t<T>).template method<>());
 
 template <typename Y, typename T>
@@ -39,7 +39,7 @@ concept covalent_p = is_q<Y, covalent_t<T>> and _std::is_rvalue_reference_v<T>;
 }///////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
-struct atom
+struct node
 {
 	using interrupt = typename message::confined_t<>::interrupt<0>;
 	using subkind = confer<U, link<As..., interrupt, collect<-1>>>;
@@ -48,13 +48,14 @@ struct atom
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
+	
 	public:
 		using co::co;
 
 		template <typename ...Xs>
-		struct bind
+		struct bond
 		{
-			using rebound  = typename co::template bind<Xs...>;
+			using rebound  = typename co::template bond<Xs...>;
 			using return_t = typename rebound::return_t;
 
 			using buffer_u = typename co::template fluid<return_t>::type;

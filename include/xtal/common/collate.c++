@@ -1,15 +1,33 @@
 #pragma once
-#include "./collate.hpp"
-
-
-
-
 #include "../any.c++"
+#include "./collate.hpp"// testing...
+
+
+
+
 
 XTAL_ENV_(push)
 namespace xtal::common::__collate
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+using namespace xtal::__any;
+
+
+template <typename V, int N> using collection = compose_t<collect<N>, collate<V>>;
+
+template <typename V, int N> using fluid_t    = typename collection<V, N>::fluid::type;
+template <typename V, int N> using siphon_t   = typename collection<V, N>::siphon::type;
+template <typename V, int N> using sluice_t   = typename collection<V, N>::sluice::type;
+
+template <typename V, int N> using solid_t    = typename collection<V, N>::solid::type;
+template <typename V, int N> using product_t  = typename collection<V, N>::product::type;
+template <typename V, int N> using scalar_t   = typename collection<V, N>::scalar::type;
+template <typename V, int N> using series_t   = typename collection<V, N>::series::type;
+template <typename V, int N> using serial_t   = typename collection<V, N>::serial::type;
+template <typename V, int N> using pulsar_t   = typename collection<V, N>::pulsar::type;
+template <typename V, int N> using phasor_t   = typename collection<V, N>::phasor::type;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
@@ -58,8 +76,8 @@ TEST_CASE("xtal/common/collate.hpp: product")
 	using alpha_t = typename realized::alpha_t;
 
 	auto bar = product_t<alpha_t, 2>{2.0, 0.5};
-	auto foo = bar.reflected<-1>();
-	auto baz = foo.reflected<+1>();
+	auto foo = bar.reflected(-1);
+	auto baz = foo.reflected(+1);
 	
 	REQUIRE(trim_y<19>(foo[0]) == 1.25);
 	REQUIRE(trim_y<19>(foo[1]) == 0.75);
@@ -227,8 +245,8 @@ template <int N>
 void siphon_operation__test()
 {
 	using event_u = compose_s<bias_t, concord::confer<int>>;
-	using queue_u = siphon_t<event_u, N, 1>;
-	queue_u q;
+	using queue_u = siphon_t<event_u, N>;
+	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
 	auto e1 = event_u(1, bias_t(-1.0));
 	auto e2 = event_u(2, bias_t(-2.0));
@@ -236,36 +254,17 @@ void siphon_operation__test()
 	REQUIRE(2 == e2.head());
 	REQUIRE(1 == e1.head());
 	
-	REQUIRE(0 == q.remaining());
-	q.push(e1); REQUIRE(1 == q.remaining());
-	q.push(e2); REQUIRE(2 == q.remaining());
-	REQUIRE(-1.0 == q.next(0).tail()); q.advance(); REQUIRE(1 == q.remaining());
-	REQUIRE(-2.0 == q.next(0).tail()); q.advance(); REQUIRE(0 == q.remaining());
+	REQUIRE(0 == q.size());
+	q.push(e1); REQUIRE(1 == q.size());
+	q.push(e2); REQUIRE(2 == q.size());
+	REQUIRE(-1.0 == q.top().tail()); q.advance(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().tail()); q.advance(); REQUIRE(0 == q.size());
 
 }
 TEST_CASE("xtal/common/collate.hpp: siphon operation")
 {
 //	siphon_operation__test<-1>();
 	siphon_operation__test<64>();
-
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
-void serial_operation__test()
-{
-	using D = serial_t<int, 4>;
-
-	D d {1000, 100, 10, 1};
-
-	REQUIRE(++d == D {1100, 110, 11, 1});
-	REQUIRE(++d == D {1210, 121, 12, 1});
-	REQUIRE(++d == D {1331, 133, 13, 1});
-
-}
-TEST_CASE("xtal/common/collate.hpp: serial operation")
-{
-	serial_operation__test();
 
 }
 /***/
@@ -311,9 +310,28 @@ TEST_CASE("xtal/common/collate.hpp: series multiplication")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
+void pulsar_operation__test()
+{
+	using D = pulsar_t<int, 4>;
+
+	D d {1000, 100, 10, 1};
+
+	REQUIRE(++d == D {1100, 110, 11, 1});
+	REQUIRE(++d == D {1210, 121, 12, 1});
+	REQUIRE(++d == D {1331, 133, 13, 1});
+
+}
+TEST_CASE("xtal/common/collate.hpp: pulsar operation")
+{
+	pulsar_operation__test();
+
+}
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 void phasor_operation__test()
 {
-	using P = serial_t<float, 2>;
+	using P = phasor_t<float, 2>;
 	P p {0.125, 0.250};
 
 	REQUIRE(p++ == P {+0.125, 0.250});
@@ -333,7 +351,7 @@ TEST_CASE("xtal/common/collate.hpp: phasor operation")
 void phasor_iteration__test()
 {
 	using namespace _v3;
-	using P  = serial_t<float, 2>;
+	using P  = phasor_t<float, 2>;
 	using Ps = ranges::iota_view<P>;
 	using Qs = _std::vector<float>;
 

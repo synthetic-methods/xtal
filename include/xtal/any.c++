@@ -1,20 +1,23 @@
 #pragma once
 #include "./any.hpp"
 #include "./process/any.hpp"
-#include "./message/numinal.hpp"
+#include "./message/any.hpp"
 #include "./message/restep.hpp"
 
 #include <catch2/catch_all.hpp>
 
 XTAL_ENV_(push)
-namespace xtal
+namespace xtal::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using namespace common;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
-using bias_t = message::numinal_t<typename common::realized::alpha_t, struct bias>;
-using coef_t = message::numinal_t<typename common::realized::alpha_t, struct coefficient>;
+using bias_t = message::label_t<typename realized::alpha_t, struct bias>;
+using coef_t = message::label_t<typename realized::alpha_t, struct coef>;
 
 struct static_bias_mix_t
 :	process::confine_t<static_bias_mix_t
@@ -53,28 +56,28 @@ struct dynamic_term_t
 };
 struct dynamic_count
 {
-	using restep_u = message::restep_t<typename common::realized::iota_t>;
+	using count_t  = typename realized::iota_t;
+	using restep_u = message::restep_t<count_t>;
 
 	template <typename T>
-	using homotype = process::confine_t<T
-	,	restep_u::attach
-	>;
+	using homotype = process::confine_t<T, restep_u::attach>;
 
 	struct type: public homotype<type>
 	{
-		typename common::realized::iota_t count = 0;
-
 		using co = homotype<type>;
+	
 	public:
 		using co::co;
 
 		template <auto...>
 		XTAL_FN2 method()
 		{
-			auto &o = this->template self<restep_u>();
-			auto  i = count; count += o.head();
+			auto i = count; count += this->template get<restep_u>();
 			return i;
 		}
+
+	protected:
+		count_t count = 0;
 
 	};
 };

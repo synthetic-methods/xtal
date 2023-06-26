@@ -3,6 +3,7 @@
 #include "./common/all.hpp"
 #include "./concord/all.hpp"
 #include "./conflux/all.hpp"
+#include "./context/all.hpp"
 #include "./control/all.hpp"
 #include "./message/all.hpp"
 #include "./process/all.hpp"

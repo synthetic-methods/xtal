@@ -1,23 +1,38 @@
 #pragma once
-#include "./delay.hpp"
+#include "./any.hpp"
 
 
 
 
-#include "../any.c++"
+
 
 XTAL_ENV_(push)
-namespace xtal::control::__delay
+namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-/*/
-TEST_CASE("xtal/control/delay.hpp: true")
+struct index;
+
+template <typename S=confined_t<>>
+using index_s = compose_s<S, index>;
+using index_t = size_t;
+
+struct index
 {
-	REQUIRE(true);
-}
-/**/
+	using subkind = confer<index_t>;
+
+	template <concord::any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using co = compose_s<S, subkind>;
+	
+	public:
+		using co::co;
+
+	};
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

@@ -17,28 +17,36 @@ struct any
 
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//\
-This *internal* header creates higher-level decorators based on `[dr]efine` and/or `[dr]efer`, \
-and is intended to be `#include`d within a namespace in which these decorators are provided \
-(see `xtal/processor/any.hpp` for example). \
 
 using namespace common;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+//\
+This naked header is intended for inclusion within a `namespace` providing the decorators: \
 
-///<\
-Defines a _decorator_ tagged with the inheritance chain `...As`. \
+template <typename T> struct define;///< Initializes `T`, e.g. defining core functionality.
+template <typename T> struct refine;///<   Finalizes `T`, e.g. applying `ranges::view_interface`.
+
+template <typename U> struct defer;///<   Proxies an instance of `U`, e.g. defining constructors/accessors.
+template <typename U> struct refer;///< Delegates to the proxied `U`, e.g. relaying operators/methods.
+
+//\
+In each case, the member `::template subtype<S>` extends `S` with the functionality required. \
+See `concord/any.hpp` for core implementations, and `*/any.hpp` for extensions. \
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Defines a decorator tagged with the inheritance chain `...As`. \
 
 template <typename ...As> struct any   : _retail::any<As..., any<>> {};
 template <typename ...As>  using any_t = typename any<As...>::template subtype<unit_t>;
-///<\
-Defines `any` class, inheriting from the base `unit_t`. \
 
 template <typename T, typename ...As>
 concept any_q = xtal::if_q<any_t<As...>, T>;
 ///<\
-Identifies `any` class `T`. \
+Matches any class `T` that inherits from this instance of `any<As...>`. \
 
 
 template <template <typename...> typename ...As_>
@@ -54,66 +62,26 @@ Uses the supplied templates `As_` to tag `any_t` class. \
 template <template <typename...> typename A_, typename ...Ts>
 concept any_of_q = xtal::if_q<any_of_t<A_>, Ts...>;
 ///<\
-Identifies `any` class tagged with the given template. \
+Matches any class tagged with the given template. \
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-///\
-Proxies `U` using `::subtype<S>`, assuming `S` is `define`d. \
-
-///\note\
-NOTE: Implemented by the target. \
-
-template <typename U> struct defer;
-template <typename U> struct refer;
-///<\
-Delegates `U` using `::subtype<S>`, assuming `S` is `define`d. \
-
-///<\note\
-Implemented by the target. \
-
-
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `...As`. \
 
 template <typename U, typename ...As>
-struct confer
-:	compose<refer<U>, As..., defer<U>>
-{};
+struct confer: compose<refer<U>, As..., defer<U>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-///\
-Initializes `T` using `define<T>::subtype<S>`. \
-
-///\note\
-Implemented by the target. \
-
-template <typename T> struct define;
-template <typename T> struct refine;
-///<\
-Finalizes `T` using `define<T>::subtype<S>`. \
-
-///<\note\
-Implemented by the target. \
-
-
 ///\
 Combines `define` and `refine` to define `T`, sandwiching the decorators `...As`. \
 
 template <typename T, typename ...As>
-struct confine
-:	compose<refine<T>, As..., define<T>>
-{
-};
+struct confine: compose<refine<T>, As..., define<T>> {};
+
 template <typename T, typename ...As>
 using confine_t = compose_s<any_t<>, confine<T, As...>>;
-///<\
-Defines the `confine`d class `T` with decorators `...As`, \
-inheriting from the base `any_t<>`. \
-
 
 ///\
 Creates the `confine`d _decorator_ with `...As`. \
@@ -128,6 +96,7 @@ struct confined
 	class subtype: public compose_s<S, homotype<subtype<S>>>
 	{
 		using co = compose_s<S, homotype<subtype<S>>>;
+	
 	public:
 		using co::co;
 
@@ -135,9 +104,16 @@ struct confined
 };
 template <typename ...As>
 using confined_t = compose_s<any_t<>, confined<As...>>;
-///<\
-Creates the `confine`d _class_ decorated by `...As`, inheriting from the base `any_t<>`. \
 
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Creates a _decorator_ that proxies `U` with `...any<As>`. \
+
+template <typename U, typename ...As> using label   = confined  <confer<U, any<As>...>>;
+template <typename U, typename ...As> using label_t = confined_t<confer<U, any<As>...>>;
+///<\
+Resolves `label<U, As...>::type`. \
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -146,7 +122,7 @@ Creates a _decorator_ that proxies `U` with `...As`. \
 template <typename U, typename ...As> using lift   = confined  <confer<U, As...>>;
 template <typename U, typename ...As> using lift_t = confined_t<confer<U, As...>>;
 ///<\
-Resolves `lift<U>::type`. \
+Resolves `lift<U, As...>::type`. \
 
 template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0RN_(lift_t<U>(XTAL_FWD_(U) (u)))
 ///<\
@@ -155,7 +131,7 @@ template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0RN_(lift_t<U>(XTAL_FWD_(U) (u
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Defines `type` by `W`, or `lift_t<W>` if `any_q<W>`. \
+Defines `type` by `W` if `any_q<W>`, otherwise `lift_t<W>`. \
 
 template <typename W> struct let    {using type = lift_t<W>;};
 template <any_q    W> struct let<W> {using type =        W ;};
