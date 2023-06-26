@@ -1,37 +1,23 @@
 #pragma once
-#include "./any.hpp"
+#include "./index.hpp"
 
 
 
 
-
+#include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::control::__index
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct delay;
-
-template <typename S=confined_t<>>
-using delay_s = compose_s<S, delay>;
-using delay_t = size_t;
-
-struct delay
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TEST_CASE("xtal/control/index.hpp: true")
 {
-	using subkind = confer<delay_t>;
-
-	template <any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	public:
-		using co::co;
-
-	};
-};
-
-
+	REQUIRE(true);
+}
+/**/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

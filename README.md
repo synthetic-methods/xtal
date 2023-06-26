@@ -54,7 +54,7 @@ this `method` is aliased as the invocation `operator()`.
 Range-lifting is achieved using functors like `processor::atom` or `processor::bond`,
 which `zip` the underlying `method` as a buffer- or range-based operator, respectively.
 
-	using Mixer = processor::let_t<Mix>;
+	using Mixer = processor::lift_t<Mix>;
 	Mixer mixer;
 	auto sixer = mixer(one, two, three);// mixes the ranges/processors `one`, `two`, `three`
 
@@ -96,16 +96,16 @@ Update is managed by the `influx` and `efflux` operators and methods. The `influ
 
 To schedule messages within `processor` blocks, messages may be attached using `interrupt` to splice them at a specific offset.
 
-	using Mixer = processor::let_t<Mix, Active::template interrupt<>>;
+	using Mixer = processor::lift_t<Mix, Active::template interrupt<>>;
 	// ...
-	mixer.influx(compound::delay_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(control::delay_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	biased <<= std::make_tuple(compound::delay_s<>(123), (Gate) 1);// `biased()[123] == 1`
+	biased <<= std::make_tuple(control::delay_s<>(123), (Gate) 1);// `biased()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
@@ -157,7 +157,7 @@ The files `**/all.hpp` export all definitions at a given level. At the leaves, t
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
-Within `xtal/common`, the file `any.hxx` scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
+The file `xtal/concord/any.hxx` scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
@@ -220,13 +220,14 @@ The functions `compose` and `compose_s` (defined in `xtal/any/compose.hpp`) are 
 
 The primary namespaces within `xtal` comprise a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace compound  {namespace _retail = common;}
-	namespace conflux   {namespace _retail = compound;}
+	namespace concord   {}
+	namespace conflux   {namespace _retail = concord;}
+	namespace control   {namespace _retail = concord;}
 	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The `any.hpp` for each namespace supply the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of `xtal/common/any.hxx` within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The `any.hpp` for each namespace supply the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of `xtal/concord/any.hxx` within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -249,6 +250,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 Implemented:
 -	Stream-based processing.
 -	Event messaging and scheduling.
+-	TBC...
 
 Not yet implemented:
 -	Integer-indexed and volume-controlled `processor`s for:

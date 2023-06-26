@@ -1,10 +1,10 @@
 #pragma once
 #include "../conflux/any.hpp"//_retail
-#include "../compound/delay.hpp"
+#include "../control/delay.hpp"
 
 
 
-#include "../common/all.hpp"
+
 
 XTAL_ENV_(push)
 namespace xtal::message
@@ -12,7 +12,7 @@ namespace xtal::message
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::conflux;
-#include "../common/any.hxx"
+#include "../concord/any.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,8 +180,8 @@ struct define
 			{
 				using co = compose_s<R>;
 
-				using delay_t = compound::delay_t;
-				using event_t = compound::delay_s<T>;
+				using delay_t = control::delay_t;
+				using event_t = control::delay_s<T>;
 				using queue_t = typename compose_s<unit_t
 				,	collect<N_future>
 				,	collate<event_t>
@@ -207,12 +207,12 @@ struct define
 				///\
 				\returns the aggregate `flux` of queuing the messages with the given delay.. \
 
-				XTAL_FNX influx(compound::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(control::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(compound::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(control::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(compound::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(control::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(influx(XTAL_REF_(oo)...)) (q_.push(_std::move(dot)));
@@ -254,8 +254,8 @@ struct define
 			{
 				using co = compose_s<R>;
 			
-				using delay_t = compound::delay_t;
-				using event_t = compound::delay_s<T>;
+				using delay_t = control::delay_t;
+				using event_t = control::delay_s<T>;
 				using queue_t = typename compose_s<unit_t
 				,	collect<N_future>
 				,	collate<event_t>
@@ -294,12 +294,12 @@ struct define
 				\
 				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
 
-				XTAL_FNX influx(compound::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(control::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(compound::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return influx(control::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-				XTAL_FNX influx(compound::delay_s<T> dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(control::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return 0 == dot.head()? influx(dot.tail(), XTAL_REF_(oo)...):

@@ -7,24 +7,13 @@
 #include "../any.c++"
 
 XTAL_ENV_(push)
-namespace xtal::compound::__any
+namespace xtal::concord::__any
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TEST_CASE("xtal/compound/any.hpp: tuple mania")
-{
-	using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
-	auto const foo = foo_t(1, 2, 3);
-	auto const bar = _std::get<0>(foo);
-
-	REQUIRE(true);
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/compound/any.hpp: tuple mania")
+TEST_CASE("xtal/concord/any.hpp: tuple mania")
 {
 	using namespace common;
 

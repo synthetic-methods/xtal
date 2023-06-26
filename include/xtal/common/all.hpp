@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
+#include "./bundle.hpp"
 #include "./collate.hpp"
 #include "./collect.hpp"
 #include "./compose.hpp"
-#include "./bundle.hpp"
 #include "./realize.hpp"
 #include "./seek.hpp"
 
@@ -12,7 +12,7 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //\
-TODO: Split these into separate modules. \
+TODO: Split these into separate modules? \
 
 template <typename V, int N> using collection = compose_s<unit_t, collect<N>, collate<V>>;
 

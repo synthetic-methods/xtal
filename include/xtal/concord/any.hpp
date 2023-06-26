@@ -1,5 +1,5 @@
 #pragma once
-#include "../common/all.hpp"//_retail
+#include "../common/all.hpp"
 
 
 
@@ -7,12 +7,42 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::concord
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::common;
-#include "../common/any.hxx"
+namespace _retail
+{///////////////////////////////////////////////////////////////////////////////
+///\
+Creates a unique `subtype<S>` tagged by the given `As...`, \
+such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`. \
+
+template <typename ...As>
+struct any
+{
+	using subkind = common::compose<any<As>...>;
+
+	template <typename S>
+	using subtype = typename subkind::template subtype<S>;
+
+};
+template <typename A>
+struct any<A>
+{
+	template <typename S>
+	class subtype: public S
+	{
+		using co = S;
+	public:
+		using co::co;
+
+	};
+};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+#include "./any.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -514,22 +544,22 @@ struct refer
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
 
-template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};
 
-template <size_t N, xtal::compound::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
-#include "../common/all.hpp"
 #include "../message/sequel.hpp"
 #include "../message/resize.hpp"
 #include "../message/respan.hpp"
+
 
 
 XTAL_ENV_(push)
@@ -62,7 +62,7 @@ struct atom
 			using respan_u = message::respan_t<debuff_u>;
 			using resize_u = message::resize_t<>;
 			
-			using subkind = compose<compound::confer<debuff_u>, compound::defer<buffer_u>, rebound>;
+			using subkind = compose<concord::confer<debuff_u>, concord::defer<buffer_u>, rebound>;
 
 			XTAL_LET_(int) I_parity = seek_true_v<_detail::covalent_p<debuff_u, Xs>...>;
 

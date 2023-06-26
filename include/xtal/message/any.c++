@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
+#include "../control/all.hpp"
 #include "../message/all.hpp"
 #include "../process/any.hpp"
 #include "../processor/atom.hpp"
-
 #include "../any.c++"
 
 XTAL_ENV_(push)
@@ -25,13 +25,13 @@ TEST_CASE("xtal/message/any.hpp: hold")
   auto step = sequel_t(1 << 3);
 	
 	biased <<= step;
-	biased <<= bundle_f(compound::delay_s<>(0), (bias_t) (alpha_t)  7);
-	biased <<= bundle_f(compound::delay_s<>(1), (bias_t) (alpha_t)  1);
-	biased <<= bundle_f(compound::delay_s<>(3), (bias_t) (alpha_t) -1);
-	biased <<= bundle_f(compound::delay_s<>(4), (bias_t) (alpha_t)  1);
-	biased <<= bundle_f(compound::delay_s<>(5), (bias_t) (alpha_t) -1);
-	biased <<= bundle_f(compound::delay_s<>(7), (bias_t) (alpha_t)  7);
-	biased <<= bundle_f(compound::delay_s<>(7), (bias_t) (alpha_t)  8);
+	biased <<= bundle_f(control::delay_s<>(0), (bias_t) (alpha_t)  7);
+	biased <<= bundle_f(control::delay_s<>(1), (bias_t) (alpha_t)  1);
+	biased <<= bundle_f(control::delay_s<>(3), (bias_t) (alpha_t) -1);
+	biased <<= bundle_f(control::delay_s<>(4), (bias_t) (alpha_t)  1);
+	biased <<= bundle_f(control::delay_s<>(5), (bias_t) (alpha_t) -1);
+	biased <<= bundle_f(control::delay_s<>(7), (bias_t) (alpha_t)  7);
+	biased <<= bundle_f(control::delay_s<>(7), (bias_t) (alpha_t)  8);
 	
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  7);
 	REQUIRE((alpha_t) biased()  ==  (alpha_t)  1);
@@ -74,14 +74,14 @@ void respan_internal_interrupt__test()
 	xhs <<= resize_u(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs <<= compound::delay_s<bias_t>(0, (alpha_t) 100);
-	xhs <<= compound::delay_s<bias_t>(1, (alpha_t) 200);
-	xhs <<= compound::delay_s<bias_t>(2, (alpha_t) 300);
+	xhs <<= control::delay_s<bias_t>(0, (alpha_t) 100);
+	xhs <<= control::delay_s<bias_t>(1, (alpha_t) 200);
+	xhs <<= control::delay_s<bias_t>(2, (alpha_t) 300);
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= compound::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
+	xhs <<= control::delay_s<bias_t>(2, (alpha_t) 400);// relative timing!
 	xhs >>= seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));

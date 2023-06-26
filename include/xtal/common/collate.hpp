@@ -5,6 +5,7 @@
 
 
 
+
 XTAL_ENV_(push)
 namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
@@ -765,8 +766,7 @@ struct collate
 					but `MSVC` doesn't inline for some reason (even when the following is rephrased...). \
 
 				//	for (count_t i = N_size;  ~--i;) {s[i] *= t[0];
-				//	for (count_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];
-				//	}}
+				//	for (count_t j = i; 0 < j; --j ) {s[i] += t[j]*_s[i - j];}}
 
 					auto &s = self();
 					auto _s = self();

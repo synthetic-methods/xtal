@@ -199,7 +199,7 @@ TEST_CASE("xtal/common/collate.hpp: buffer mutation")
 template <int N>
 void sluice_operation__test()
 {
-	using event_u = compose_s<bias_t, compound::confer<int>>;
+	using event_u = compose_s<bias_t, concord::confer<int>>;
 	using queue_u = sluice_t<event_u, N>;
 	queue_u q;
 
@@ -226,7 +226,7 @@ TEST_CASE("xtal/common/collate.hpp: sluice operation")
 template <int N>
 void siphon_operation__test()
 {
-	using event_u = compose_s<bias_t, compound::confer<int>>;
+	using event_u = compose_s<bias_t, concord::confer<int>>;
 	using queue_u = siphon_t<event_u, N, 1>;
 	queue_u q;
 

@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::conflux;
-#include "../common/any.hxx"
+#include "../concord/any.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ struct link
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 			
-			using subkind = compose<compound::defer<typename signature::type>, As..., defer<T>>;
+			using subkind = compose<concord::defer<typename signature::type>, As..., defer<T>>;
 
 			template <any_q R>
 			class subtype: public compose_s<R, subkind>
