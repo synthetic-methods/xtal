@@ -12,34 +12,35 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename, typename ...>
-struct edge;
+struct monomer;
 
-using edge_s = any_t<of_t<edge>>;
+using monomer_s = any_t<of_t<monomer>>;
 
 template <typename U, typename ...As>
-using edge_t = typename confined<edge<U, As...>>::template subtype<edge_s>;
+using monomer_t = typename confined<monomer<U, As...>>::template subtype<monomer_s>;
 
 template <typename... Ts>
-concept edge_q = if_q<edge_s, Ts...>;
+concept monomer_q = if_q<monomer_s, Ts...>;
 
 template <typename ...As>
-XTAL_FZ2 edge_f(XTAL_DEF u)
+XTAL_FZ2 monomer_f(XTAL_DEF u)
 {
-	return edge_t<decltype(u), As...>(XTAL_REF_(u));
+	return monomer_t<decltype(u), As...>(XTAL_REF_(u));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
-struct edge
+struct monomer
 {
 	using subkind = confer<U, link<As...>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>;
+		using T = typename co::self_t;
 	
 	public:
 		using co::co;

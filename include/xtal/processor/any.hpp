@@ -16,22 +16,6 @@ namespace _retail = xtal::process;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-template <typename ...As>
-struct link
-{
-	using resize_u  = message::resize_t<>;
-	using sequel_u  = message::sequel_t<>;
-	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
-
-	template <any_q S>
-	using subtype = compose_s<S, subkind>;
-
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-///\
-Produces a decorator `subtype<S>` that defines `T`. \
 
 template <typename T>
 struct define
@@ -44,8 +28,6 @@ struct refine
 {
 };
 
-
-////////////////////////////////////////////////////////////////////////////////
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
@@ -85,8 +67,6 @@ XTAL_0FN
 
 
 }///////////////////////////////////////////////////////////////////////////////
-///\
-Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
@@ -193,13 +173,25 @@ struct defer<U>
 
 	};
 };
-///\
-Produces a decorator `subtype<S>` that lifts the operations of `U`. \
-
 template <typename U>
 struct refer
 :	_retail::refer<U>
 {
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+struct link
+{
+	using resize_u  = message::resize_t<>;
+	using sequel_u  = message::sequel_t<>;
+	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
+
+	template <any_q S>
+	using subtype = compose_s<S, subkind>;
+
 };
 
 

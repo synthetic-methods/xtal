@@ -51,8 +51,7 @@ struct define
 		///\
 		Influx handler: resolves the message for `this` before any dependencies. \
 		
-		///\
-		\returns the result of `infuse` applied to the first argument \
+		///\returns the result of `infuse` applied to the first argument \
 		`&` `influx` applied to the remaining arguments. \
 
 		XTAL_FNX influx(XTAL_DEF o, XTAL_DEF ...oo)
@@ -92,8 +91,7 @@ struct define
 		///\
 		Efflux handler: resolves the message for any dependencies before `this`. \
 		
-		///\
-		\returns the result of `effuse` applied to the first argument \
+		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments. \
 
 		XTAL_FNX efflux(XTAL_DEF o, XTAL_DEF ...oo)
@@ -117,12 +115,11 @@ struct define
 		///\
 		Defuse handler: resolves the individual components of the message. \
 		
-		///\
-		\returns a ternary integer indicating the change in state (`1` or `0`), \
+		///\returns a ternary integer indicating the change in state (`1` or `0`), \
 		or that the message was unrecognized (`-1`). \
 		
-		///\
-		\note The return value controls conditional execution using binary `&`, \
+		///\note\
+		The return value controls conditional execution using binary `&`, \
 		truncating propagation when the aggregated result is zero (`0`).
 
 		XTAL_FNX defuse(XTAL_DEF o)
@@ -140,7 +137,6 @@ struct define
 
 	};
 };
-
 template <typename T>
 struct refine
 :	_retail::refine<T>
@@ -149,8 +145,6 @@ struct refine
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
@@ -167,8 +161,8 @@ struct defer
 		using co::self;
 		using co::head;
 
-		///\
-		\note Influxes `this`, then the proxied value if supported.
+		///\note\
+		Influxes `this`, then the proxied value if supported.
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -182,8 +176,8 @@ struct defer
 			return co::influx(XTAL_REF_(oo)...);
 		}
 
-		///\
-		\note Effluxes the proxied value if supported, then `this`.
+		///\note\
+		Effluxes the proxied value if supported, then `this`.
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -197,8 +191,8 @@ struct defer
 			return co::efflux(XTAL_REF_(oo)...);
 		}
 
-		///\
-		\note Assigns the given value `u` if it matches the proxied type `U`. \
+		///\note\
+		Assigns the given value `u` if it matches the proxied type `U`. \
 
 		XTAL_FNX defuse(U u)
 		XTAL_0EX
@@ -213,10 +207,6 @@ struct defer
 
 	};
 };
-
-///\
-Produces a decorator `subtype<S>` that lifts the operations of `U`. \
-
 template <typename U>
 struct refer
 :	_retail::refer<U>

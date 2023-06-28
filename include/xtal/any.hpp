@@ -109,11 +109,11 @@ XTAL_LET   pointer_f = [](XTAL_DEF o) XTAL_0FN_(_std::addressof(XTAL_REF_(o)));
 XTAL_LET   pointer_e = [](XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_((pointer_f(XTAL_REF_(o)) == pointer_f(XTAL_REF_(oo))) and ... and true);
 
-template <typename    T  >    using pointed_t  = XTAL_TYP_(* XTAL_VAL_(T));
+template <typename    T  >    using pointed_t  = XTAL_TYP_(*XTAL_VAL_(T));
 template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
 template <typename ...Ts >  concept pointer_q  = conjunct_q<pointer_p<Ts>...>;
 
-template <typename    T  >  concept bracket_p  = requires (T t) {t.begin(); t.end();};
+template <typename    T  >  concept bracket_p  = requires (T t) {*t.begin(); *t.end();};
 template <typename ...Ts >  concept bracket_q  = conjunct_q<bracket_p<Ts>...>;
 template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
 
@@ -152,8 +152,7 @@ concept comparators_p = _std::integral<T> or _std::floating_point<T> or requires
 	{t >= u} -> is_q<bool>;
 	{t >  u} -> is_q<bool>;
 };
-///\
-\returns `true` if `T` supports bitwise logical operations, `false` otherwise, \
+///\returns `true` if `T` supports bitwise logical operations, `false` otherwise, \
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
@@ -184,8 +183,7 @@ concept logic_operators_p = _std::integral<T> or requires (T t, T u)
 		{t  -= u} -> is_q<T>;
 	};
 };
-///\
-\returns `true` if `T` supports arithmetic (but not logic) operations, `false` otherwise, \
+///\returns `true` if `T` supports arithmetic (but not logic) operations, `false` otherwise, \
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>

@@ -11,26 +11,10 @@ namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct index;
+using index_t = typename realized::iota_t;
 
-template <typename S=confined_t<>>
-using index_s = compose_s<S, index>;
-using index_t = size_t;
-
-struct index
-{
-	using subkind = confer<index_t>;
-
-	template <concord::any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	
-	public:
-		using co::co;
-
-	};
-};
+template <typename S=confined_t<>, typename T=index_t>
+using index_s = compose_s<S, confer<T, any<struct index>>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

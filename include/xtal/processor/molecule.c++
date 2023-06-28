@@ -1,39 +1,39 @@
 #pragma once
 #include "../any.c++"
-#include "./node.hpp"// testing...
+#include "./molecule.hpp"// testing...
 
 #include "./all.hpp"
 #include "../message/all.hpp"
 
 
 XTAL_ENV_(push)
-namespace xtal::processor::__node
+namespace xtal::processor::__molecule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 using namespace xtal::__any;
 
 template <typename V, int N>
-using scalar_t = typename collage_t<N, V>::scalar_t;
+using sequence_t = typename collage_t<N, V>::sequence_t;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/node.hpp: lifting")
+TEST_CASE("xtal/processor/molecule.hpp: lifting")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N = 5;
-	using scalar_u = scalar_t<alpha_t, N>;
+	using sequence_u = sequence_t<alpha_t, N>;
 
-	auto x = scalar_u { 0,  1,  2,  3,  4};
-	auto y = scalar_u {00, 10, 20, 30, 40};
-	auto z = scalar_u {00, 11, 22, 33, 44};
-	auto a = scalar_u {99, 99, 99, 99, 99};
-//	auto f = processor::node_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+	auto x = sequence_u { 0,  1,  2,  3,  4};
+	auto y = sequence_u {00, 10, 20, 30, 40};
+	auto z = sequence_u {00, 11, 22, 33, 44};
+	auto a = sequence_u {99, 99, 99, 99, 99};
+//	auto f = processor::molecule_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind_(x, y);
-	auto b = processor::node_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
+	auto b = processor::molecule_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= message::resize_f(N);
 	b >>= message::sequel_f(N);
@@ -63,7 +63,7 @@ void respan_external__test()
 
 	auto lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = node_t<add_t, collect>::bind_f(lhs, rhs);
+	auto xhs = molecule_t<add_t, collect>::bind_f(lhs, rhs);
 
 	auto vector_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(vector_m);
@@ -79,7 +79,7 @@ void respan_external__test()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
-TEST_CASE("xtal/processor/node.hpp: respan external")
+TEST_CASE("xtal/processor/molecule.hpp: respan external")
 {
 	respan_external__test<dynamic_bias_mix_t>();
 	respan_external__test<static_bias_mix_t>();
@@ -100,7 +100,7 @@ void respan_internal__test()
 	auto _10 = _01|views::transform([](auto n) {return n*10;});
 	auto _11 = _01|views::transform([](auto n) {return n*11;});
 
-	using mix_op = node_t<add_t>;
+	using mix_op = molecule_t<add_t>;
 	auto  lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bind_f(lhs, rhs);
@@ -117,7 +117,7 @@ void respan_internal__test()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
-TEST_CASE("xtal/processor/node.hpp: respan internal")
+TEST_CASE("xtal/processor/molecule.hpp: respan internal")
 {
 	respan_internal__test<dynamic_bias_mix_t>();
 	respan_internal__test<static_bias_mix_t>();
@@ -138,8 +138,8 @@ void respan_internal_chain_rvalue__test()
 	auto _10 = _01|views::transform([](auto n) {return n*10;});
 	auto _11 = _01|views::transform([](auto n) {return n*11;});
 	
-	using mix_op = node_t<add_t>;
-	using mul_op = node_t<mul_t>;
+	using mix_op = molecule_t<add_t>;
+	using mul_op = molecule_t<mul_t>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(lift_f(_01), lift_f(_10)));
 
 	yhs <<= message::resize_f(N);
@@ -156,7 +156,7 @@ void respan_internal_chain_rvalue__test()
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
-TEST_CASE("xtal/processor/node.hpp: respan internal chain rvalue")
+TEST_CASE("xtal/processor/molecule.hpp: respan internal chain rvalue")
 {
 	respan_internal_chain_rvalue__test<dynamic_bias_mix_t>();
 	respan_internal_chain_rvalue__test<static_bias_mix_t>();
@@ -177,8 +177,8 @@ void respan_internal_chain_lvalue__test()
 	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
 	
-	using mix_op = node_t<add_t>;
-	using mul_op = node_t<mul_t>;
+	using mix_op = molecule_t<add_t>;
+	using mul_op = molecule_t<mul_t>;
 	auto  lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bind_f(lhs, rhs);
@@ -197,7 +197,7 @@ void respan_internal_chain_lvalue__test()
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
 }
-TEST_CASE("xtal/processor/node.hpp: respan internal chain lvalue")
+TEST_CASE("xtal/processor/molecule.hpp: respan internal chain lvalue")
 {
 	respan_internal_chain_lvalue__test<dynamic_bias_mix_t>();
 	respan_internal_chain_lvalue__test<static_bias_mix_t>();
@@ -205,7 +205,7 @@ TEST_CASE("xtal/processor/node.hpp: respan internal chain lvalue")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/node.hpp: respan internal chain lvalue shared")
+TEST_CASE("xtal/processor/molecule.hpp: respan internal chain lvalue shared")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -217,9 +217,9 @@ TEST_CASE("xtal/processor/node.hpp: respan internal chain lvalue shared")
 	auto _10 = _01|views::transform([](auto n) {return n*10;});
 	auto _11 = _01|views::transform([](auto n) {return n*11;});
 
-	using mix_op = node_t<dynamic_bias_mix_t>;
-	using mix_fn = edge_t<dynamic_bias_mix_t>;
-	using nat_fn = edge_t<dynamic_count_t>;
+	using mix_op = molecule_t<dynamic_bias_mix_t>;
+	using mix_fn = monomer_t<dynamic_bias_mix_t>;
+	using nat_fn = monomer_t<dynamic_count_t>;
 
 	auto _xx = nat_fn::bind_f();
 	auto xhs = mix_op::bind_f(_xx);

@@ -1,41 +1,41 @@
 #pragma once
 #include "../any.c++"
-#include "./edge.hpp"// testing...
+#include "./monomer.hpp"// testing...
 
 #include "./all.hpp"
 #include "../message/all.hpp"
 
 
 XTAL_ENV_(push)
-namespace xtal::processor::__edge
+namespace xtal::processor::__monomer
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 using namespace xtal::__any;
 
 template <typename V, int N>
-using scalar_t = typename collage_t<N, V>::scalar_t;
+using sequence_t = typename collage_t<N, V>::sequence_t;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/edge.hpp: lifting")
+TEST_CASE("xtal/processor/monomer.hpp: lifting")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using scalar_u = scalar_t<alpha_t, N_size>;
+	using sequence_u = sequence_t<alpha_t, N_size>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
-//	auto f = processor::edge_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-	auto x = scalar_u { 0,  1,  2,  3,  4};
-	auto y = scalar_u {00, 10, 20, 30, 40};
-	auto z = scalar_u {00, 11, 22, 33, 44};
-	auto a = scalar_u {00, 00, 00, 00, 00};
+//	auto f = processor::monomer_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+	auto x = sequence_u { 0,  1,  2,  3,  4};
+	auto y = sequence_u {00, 10, 20, 30, 40};
+	auto z = sequence_u {00, 11, 22, 33, 44};
+	auto a = sequence_u {00, 00, 00, 00, 00};
 //	auto b = f.bind(x, y);
-	auto b = processor::edge_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
+	auto b = processor::monomer_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= resize_u(N_size);
 	b >>= sequel_n(N_size);
@@ -52,7 +52,7 @@ void respan_virtual__test()
 	using alpha_t = typename realized::alpha_t;
 
 	using sequel_n = message::sequel_t<>;
-	using mixer_t = processor::edge_t<mix_t>;
+	using mixer_t = processor::monomer_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([](auto n) {return alpha_t(n*10);});
@@ -90,7 +90,7 @@ void respan_virtual__test()
 	/***/
 }
 
-TEST_CASE("xtal/processor/edge.hpp: respan virtual")
+TEST_CASE("xtal/processor/monomer.hpp: respan virtual")
 {
 	respan_virtual__test<dynamic_bias_mix_t>();
 	respan_virtual__test<static_bias_mix_t>();

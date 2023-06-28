@@ -76,8 +76,7 @@ struct sequel<void>
 			return t;
 		}
 
-		///\
-		\returns the block at distance `v` steps with the same `size`. \
+		///\returns the block at distance `v` steps with the same `size`. \
 
 		XTAL_OP2_(T) * (V v)
 		XTAL_0FX
@@ -102,8 +101,7 @@ struct sequel<void>
 		{
 			auto t = self(); operator++(); return t;
 		}
-		///\
-		\returns the adjacent block with the same `size`. \
+		///\returns the adjacent block with the same `size`. \
 
 		XTAL_FN2_(T) next(V v)
 		XTAL_0FX
@@ -115,8 +113,7 @@ struct sequel<void>
 		{
 			return twin().operator++();
 		}
-		///\
-		\returns the adjacent block of size `v`. \
+		///\returns the adjacent block of size `v`. \
 
 		XTAL_OP2_(T) + (V v)
 		XTAL_0FX
@@ -128,8 +125,7 @@ struct sequel<void>
 		{
 			return twin().operator-=(v);
 		}
-		///\
-		\returns the adjacent block of size `0`. \
+		///\returns the adjacent block of size `0`. \
 
 		XTAL_FN2_(T) null()
 		XTAL_0FX
@@ -142,8 +138,7 @@ struct sequel<void>
 			auto s = null(); s.step(v); return s;
 		}
 
-		///\
-		\returns `true` iff the left-hand argument immediately follows the right. \
+		///\returns `true` iff the left-hand argument immediately follows the right. \
 
 		XTAL_OP2_(bool) >=(subtype const &t)
 		XTAL_0FX
@@ -191,8 +186,8 @@ struct sequel<void>
 		///\
 		Enforces ordering on the incoming sequels by `assert`ion. \
 
-		///\
-		\note Unrecognized `sequel_q` are incrementally incorporated, \
+		///\note\
+		Unrecognized `sequel_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
 		XTAL_FNX effuse(XTAL_DEF o)
@@ -228,7 +223,8 @@ struct sequel<V>
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>;
+		using T = typename co::self_t;
 
 	public:
 	//	using co::co;
@@ -295,8 +291,7 @@ struct sequel<V>
 			return self();
 		}
 
-		///\
-		\returns `true` iff the left-hand argument immediately precedes the right. \
+		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
 		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX
@@ -327,7 +322,8 @@ public:
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>; using T = typename co::self_t;
+		using co = compose_s<S, subkind>;
+		using T = typename co::self_t;
 
 	public:
 		using co::co;
@@ -409,8 +405,7 @@ public:
 			return self();
 		}
 
-		///\
-		\returns `true` iff the left-hand argument immediately precedes the right. \
+		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
 		XTAL_OP2_(bool) < (subtype const &t)
 		XTAL_0FX

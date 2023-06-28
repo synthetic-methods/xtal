@@ -21,7 +21,7 @@ template <typename V, int N> using siphon_t   = typename collection<V, N>::sipho
 
 template <typename V, int N> using solid_t    = typename collection<V, N>::solid::type;
 template <typename V, int N> using product_t  = typename collection<V, N>::product::type;
-template <typename V, int N> using scalar_t   = typename collection<V, N>::scalar::type;
+template <typename V, int N> using sequence_t   = typename collection<V, N>::sequence::type;
 template <typename V, int N> using series_t   = typename collection<V, N>::series::type;
 template <typename V, int N> using serial_t   = typename collection<V, N>::serial::type;
 template <typename V, int N> using pulsar_t   = typename collection<V, N>::pulsar::type;
@@ -92,12 +92,12 @@ TEST_CASE("xtal/common/collate.hpp: series initialization")
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N = 1 << 3;
-	using scalar_u = scalar_t<alpha_t, N>;
+	using sequence_u = sequence_t<alpha_t, N>;
 	using series_u = series_t<alpha_t, N>;
 
 	series_u baz(2.0);
-	scalar_u bar = reinterpret_cast<scalar_u &>(baz);
-	scalar_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
+	sequence_u bar = reinterpret_cast<sequence_u &>(baz);
+	sequence_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 	REQUIRE(_v3::ranges::equal(foo, bar));
 	
 //	foo += bar;

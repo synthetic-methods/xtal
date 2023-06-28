@@ -12,24 +12,24 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename, typename ...>
-struct node;
+struct molecule;
 
 template <typename U, typename ...As>
-using node_t = typename confined<node<U, As...>>::template subtype<any_of_t<node>>;
+using molecule_t = typename confined<molecule<U, As...>>::template subtype<any_of_t<molecule>>;
 
 template <typename... Ts>
-concept node_q = any_of_q<node, Ts...>;
+concept molecule_q = any_of_q<molecule, Ts...>;
 
 template <typename ...As>
-XTAL_FZ2 node_f(XTAL_DEF u)
+XTAL_FZ2 molecule_f(XTAL_DEF u)
 {
-	return node_t<decltype(u), As...>(XTAL_REF_(u));
+	return molecule_t<decltype(u), As...>(XTAL_REF_(u));
 }
 
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
-template <node_q T>
+template <molecule_q T>
 using covalent_t = XTAL_TYP_(XTAL_VAL_(based_t<T>).template method<>());
 
 template <typename Y, typename T>
@@ -39,9 +39,9 @@ concept covalent_p = is_q<Y, covalent_t<T>> and _std::is_rvalue_reference_v<T>;
 }///////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename ...As>
-struct node
+struct molecule
 {
-	using interrupt = typename message::confined_t<>::interrupt<0>;
+	using interrupt = typename control::confined_t<>::interrupt<0>;
 	using subkind = confer<U, link<As..., interrupt, collect<-1>>>;
 
 	template <any_q S>
@@ -115,8 +115,8 @@ struct node
 					return co::infuse(resize_o) and (store().resize(XTAL_REF_(resize_o)), 1);
 				}
 				using co::influx_request;
-				///\
-				\note Resizing skips intermediate `covalent_p` dependencies, \
+				///\note\
+				Resizing skips intermediate `covalent_p` dependencies, \
 				continuing to propagate beyond. \
 
 				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
@@ -140,8 +140,8 @@ struct node
 				{
 					return efflux(sequel_o, respan_u(store()));
 				}
-				///\
-				\note When accompanied by `message::respan`, the supplied visor will be used instead. \
+				///\note\
+				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 

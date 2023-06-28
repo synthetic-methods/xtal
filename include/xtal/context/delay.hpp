@@ -11,16 +11,10 @@ namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct delay;
+using delay_t = typename realized::iota_t;
 
-template <typename S=confined_t<>>
-using delay_s = compose_s<S, delay>;
-using delay_t = size_t;
-
-struct delay
-:	confer<delay_t>
-{
-};
+template <typename S=confined_t<>, typename T=delay_t>
+using delay_s = compose_s<S, confer<T, any<struct delay>>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

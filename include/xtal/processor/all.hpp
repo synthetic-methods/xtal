@@ -1,5 +1,5 @@
 #pragma once
 #include "./any.hpp"
-#include "./edge.hpp"
-#include "./node.hpp"
+#include "./molecule.hpp"
+#include "./monomer.hpp"
 

@@ -51,7 +51,7 @@ this `method` is aliased as the invocation `operator()`.
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::node` or `processor::edge`,
+Range-lifting is achieved using functors like `processor::molecule` or `processor::monomer`,
 which `zip` the underlying `method` as a buffer- or range-based operator, respectively.
 
 	using Mixer = processor::lift_t<Mix>;
@@ -112,7 +112,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto sequel = sequel_t(1024);
 
-	using Mixer = processor::edge_t<Mix>;
+	using Mixer = processor::monomer_t<Mix>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -153,7 +153,7 @@ The transition to `C++23` ranges is limited by the lack of general support for `
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `node`, `edge`, etc.
+The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `molecule`, `monomer`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
@@ -211,10 +211,9 @@ For example, `define` uses the curiously recursive template pattern (CRTP) to co
 
 The functions `compose` and `compose_s` (defined in `xtal/any/compose.hpp`) are used to linearize the inheritence chain by applying a sequence of decorators to the supertype `S`, similar to the linearization of Scala's traits. For example, the following definitions are equivalent (noting that `A1, ..., A4` are applied in order to `S`)...
 
-	using T = compose<A4, A3, A2, A1>::template subtype<S>;
-	using T = compose<A4, A3>::template subtype<S, A1, A2>;
-	using T = compose<>::template subtype<S, A1, A2, A3, A4>;
-	using T = compose_s<S, A1, A2, A3, A4>;
+	using T = compose<A, B>::template subtype<S>;
+	using T = compose<A>::template subtype<S, B>;
+	using T = compose<>::template subtype<S, B, A>;
 
 ## Namespaces
 
@@ -224,7 +223,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 	namespace conflux   {namespace _retail = concord;}
 	namespace context   {namespace _retail = concord;}
 	namespace control   {namespace _retail = conflux;}
-	namespace message   {namespace _retail = conflux;}
+	namespace message   {namespace _retail = control;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
@@ -249,19 +248,20 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 ## Status
 
 Implemented:
--	Parameter  bundling:     `conflux/any.hpp#{<<=,>>=}` using `tuple`s.
--	Parameter  composition:  `common/compose.hpp` with `concord/any.hpp#defer`.
--	Parameter  namespacing:  `message/any.hpp#guard`.
--	Parameter  sampling:     `message/any.hpp#hold`.
--	Parameter  scheduling:   `message/any.hpp#interrupt` and `processor/node.hpp#efflux`.
--	Processor  resizing:     `processor/*.hpp` by influxing `message/resize.hpp`.
--	Processor  rendering:    `processor/*.hpp` by effluxing `message/respan.hpp`.
--	Processor  streaming:    `processor/{node,edge}.hpp` by effluxing `message/serial.hpp`.
--	Process    templating:   `process/any.hpp#define`, `message/any.hpp#dispatch`.
--	Function   lifting:      `{process,processor}/any.hpp#defer`.
--	Dependency management:   `conflux/any.hpp` and `process/any.hpp#link`.
--	Buffer     sharing:      `processor/node.hpp#{influx,efflux}`.
--	Numeric    conditioning: `common/realize.hpp#{truncate,puncture}`
+-	Parameter  bundling:       `conflux/any.hpp#{<<=,>>=}` using `tuple`s.
+-	Parameter  composition:    `common/compose.hpp` with `concord/any.hpp#defer`.
+-	Parameter  namespacing:    `message/any.hpp#guard`.
+-	Parameter  sampling:       `message/any.hpp#hold`.
+-	Parameter  scheduling:     `message/any.hpp#interrupt` and `processor/molecule.hpp#efflux`.
+-	Processor  resizing:       `processor/*.hpp` by influxing `message/resize.hpp`.
+-	Processor  rendering:      `processor/*.hpp` by effluxing `message/respan.hpp`.
+-	Processor  streaming:      `processor/{molecule,monomer}.hpp` by effluxing `message/serial.hpp`.
+-	Process    templating:     `process/any.hpp#define`, `message/any.hpp#dispatch`.
+-	Function   lifting:        `{process,processor}/any.hpp#defer`.
+-	Dependency management:     `conflux/any.hpp` and `process/any.hpp#link`.
+-	Buffer     sharing:        `processor/molecule.hpp#{influx,efflux}`.
+-	Buffer     convolution:    `common/collate.hpp#{series,serial}` incl. FFT.
+-	Numeric    conditioning:   `common/realize.hpp#{truncate,puncture}`
 -	...
 
 Technically supported but not yet implemented:

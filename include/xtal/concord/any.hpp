@@ -59,16 +59,14 @@ struct define
 	public:
 		using co::co;
 		
-		///\
-		\returns `true`. \
+		///\returns `true`. \
 
 		XTAL_OP2_(bool) ==(subtype const &t)
 		XTAL_0FX
 		{
 			return true;
 		}
-		///\
-		\returns `false`. \
+		///\returns `false`. \
 
 		XTAL_OP2_(bool) !=(subtype const &t)
 		XTAL_0FX
@@ -91,8 +89,7 @@ struct define
 		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
 		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
 		
-		///\
-		\returns `this` as a subtype of the derived-type `T`. \
+		///\returns `this` as a subtype of the derived-type `T`. \
 
 		XTAL_RN4_(XTAL_FN2 self(), cast<T>())
 
@@ -203,8 +200,6 @@ template <typename T> concept remember_p = not dismember_p<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////
-///\
-Produces a decorator `subtype<S>` that proxies `U`. \
 
 template <typename U>
 struct defer
@@ -212,7 +207,8 @@ struct defer
 	template <any_q S>
 	class subtype: public compose_s<S>
 	{
-		using co = compose_s<S>; using T = typename co::self_t;
+		using co = compose_s<S>;
+		using T = typename co::self_t;
 
 	public:
 		using head_t = U;
@@ -253,8 +249,7 @@ struct defer
 
 		XTAL_RN4_(XTAL_FN2 tail(), co::template cast<co>())
 
-		///\
-		\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
+		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_RN4_(template <size_t N_index=0>
 		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...))
@@ -425,7 +420,8 @@ struct refer_to_logic_operators<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-		using co = S; using T = typename co::self_t;
+		using co = S;
+		using T = typename co::self_t;
 
 	public:
 		using co::co;
@@ -484,7 +480,8 @@ struct refer_to_arithmetic_operators<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-		using co = S; using T = typename co::self_t;
+		using co = S;
+		using T = typename co::self_t;
 	
 	public:
 		using co::co;
@@ -531,9 +528,6 @@ struct refer_to_range_operators<U>
 	};
 };
 }
-///\
-Produces a decorator `subtype<S>` that lifts the operations of `U`. \
-
 template <typename U>
 struct refer
 :	compose<any<>
