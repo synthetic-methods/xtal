@@ -59,7 +59,6 @@ struct collate
 		struct solid;
 
 		struct siphon;// fluid
-		struct sluice;// fluid
 		struct scalar;// solid
 		struct serial;// solid
 		struct series;// solid
@@ -127,8 +126,7 @@ struct collate
 		};
 
 		///\
-		Event spool based on a insertion-sorted `std::array`, \
-		presenting a similar interface to `sluice`. \
+		Event spool based on a insertion-sorted `std::array`. \
 		
 		struct siphon
 		{
@@ -149,16 +147,22 @@ struct collate
 			public:
 				using co::co;
 
+				///\note\
+				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead: \
+				- `1 == w.size()`: represents the next value only. \
+				- `2 == w.size()`: represents the current and next values respectively. \
+
 				XTAL_NEW type(bracket_t<V> w)
 				:	end_n {(count_t) w.size()}
 				,	fluid_m(w)
 				{
 				}
-				XTAL_OP1 = (bracket_t<V> w)
+				///\note\
+				Allows instantiation (without operation) when `N_size == 0`.
+
+				XTAL_NEW type(bracket_t<V> w)
+				XTAL_IF1 (N_size == 0)
 				{
-					end_n = (count_t) w.size();
-					fluid_m = w;
-					return *this;
 				}
 
 				XTAL_RN2_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
@@ -182,7 +186,7 @@ struct collate
 				XTAL_FN0 pop()
 				XTAL_0EX
 				{
-					advance(); if (this->empty()) abandon();
+					advance(); if (begin() == end()) abandon();
 				}
 				///\returns\
 				the top-most element assuming `front()` is minimal \
@@ -191,7 +195,7 @@ struct collate
 				XTAL_FN2 top()
 				XTAL_0EX
 				{
-					return *begin(2 <= end_n);
+					return *begin(1 < end_n);
 				}
 
 				///\note\
@@ -201,33 +205,13 @@ struct collate
 				XTAL_0EX
 				{
 					auto v_ = _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
-					if (*v_ == v)
-					{	_std::swap(*v_, v);
-					}
-					else
+					if (fluid_m.empty() or *v_ != v)
 					{	fluid_m.insert(v_, {_std::move(v)});
 					}
+					else
+					{	_std::swap(*v_, v);
+					}
 				}
-
-			};
-		};
-		///\
-		Event spool based on an inverted `std::priority_queue`, \
-		interchangeable with `siphon` as far as the interface aligns. \
-
-		struct sluice
-		{
-			using demitype = _std::priority_queue<V, typename fluid::type, _std::greater<V>>;
-
-			class type: public demitype
-			{
-				using co = demitype;
-
-			public:
-				using co::co;
-
-				XTAL_FN0 advance(bool i=1) XTAL_0EX {if (i) co::pop();}
-				XTAL_FN0 abandon(bool i=1) XTAL_0EX {if (i) while (not co::empty()) co::pop();}
 
 			};
 		};

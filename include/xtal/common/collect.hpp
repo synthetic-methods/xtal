@@ -144,7 +144,7 @@ struct collect
 			using type = _detail::array<V, N_size>;
 
 		};
-		/*/
+		/**/
 		template <typename V>
 		struct fluid
 		{
@@ -152,14 +152,14 @@ struct collect
 
 		};
 		/*/
-		template <typename V> requires (N_size < 0)
+		template <typename V>
+		struct fluid
+		{
+			using type = _std::vector<V>;
+
+		};
+		template <typename V> requires (0 <= N_size)
 		struct fluid<V>
-		{
-			using type = _std::vector<V>;
-
-		};
-		template <typename V>
-		struct fluid
 		{
 			class type: public iterate_t<type>
 			{

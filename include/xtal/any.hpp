@@ -345,8 +345,8 @@ template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    
 template <typename T=count_t> using counted_t  = typename counted<T>::type;
 template <typename T=count_t> using counter_t  = typename counter<T>::type;
 
-template <typename    T  > XTAL_FN2 count_f(T t) {return t.size();}
-template <counted_q   T  > XTAL_FN2 count_f(T t) {return 1 + t.back() - t.front();}
+template <typename    T  > XTAL_FZ2 count_f(T const &t) {return t.size();}
+template <counted_q   T  > XTAL_FZ2 count_f(T const &t) {return 1 + t.back() - t.front();}
 ///<\returns\
 the `size` of `iota_view` as a `value_type` instead of `size_type` which is twice the width. \
 

@@ -18,7 +18,6 @@ template <typename V, int N> using collection = compose_t<collect<N>, collate<V>
 
 template <typename V, int N> using fluid_t    = typename collection<V, N>::fluid::type;
 template <typename V, int N> using siphon_t   = typename collection<V, N>::siphon::type;
-template <typename V, int N> using sluice_t   = typename collection<V, N>::sluice::type;
 
 template <typename V, int N> using solid_t    = typename collection<V, N>::solid::type;
 template <typename V, int N> using product_t  = typename collection<V, N>::product::type;
@@ -212,33 +211,6 @@ TEST_CASE("xtal/common/collate.hpp: buffer mutation")
 	REQUIRE(_v3::ranges::equal(xs, vector_u {0, 1, 2, 3, 1, 2, 3, 4}));
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/**/
-template <int N>
-void sluice_operation__test()
-{
-	using event_u = compose_s<bias_t, concord::confer<int>>;
-	using queue_u = sluice_t<event_u, N>;
-	queue_u q;
-
-	auto e1 = event_u(1, bias_t(-1.0));
-	auto e2 = event_u(2, bias_t(-2.0));
-	REQUIRE(e1 < e2);
-	
-	REQUIRE(0 == q.size());
-	q.push(e1); REQUIRE(1 == q.size());
-	q.push(e2); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().tail()); q.pop(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().tail()); q.pop(); REQUIRE(0 == q.size());
-
-}
-TEST_CASE("xtal/common/collate.hpp: sluice operation")
-{
-	sluice_operation__test<-1>();
-	sluice_operation__test< 4>();
-
-}
-/***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <int N>

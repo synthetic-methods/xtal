@@ -30,7 +30,6 @@ struct collage
 
       using  fluid_t  = typename co:: fluid::type;
       using siphon_t  = typename co::siphon::type;
-      using sluice_t  = typename co::sluice::type;
       
       using  solid_t  = typename co:: solid::type;
       using scalar_t  = typename co::scalar::type;

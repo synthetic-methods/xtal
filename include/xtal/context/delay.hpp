@@ -18,18 +18,8 @@ using delay_s = compose_s<S, delay>;
 using delay_t = size_t;
 
 struct delay
+:	confer<delay_t>
 {
-	using subkind = confer<delay_t>;
-
-	template <concord::any_q S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	
-	public:
-		using co::co;
-
-	};
 };
 
 

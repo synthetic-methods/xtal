@@ -69,7 +69,8 @@ struct define
 					if (dot.head() < d_ and q_.empty())
 					{	q_.abandon().head(d_ = 0);
 					}
-					return XTAL_FLX_(influx(oo...)) ((q_.push(_std::move(dot)), 1));
+					q_.push(_std::move(dot));
+					return co::influx(oo...);
 				}
 
 

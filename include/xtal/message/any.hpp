@@ -176,14 +176,12 @@ struct define
 			};
 		};
 		///\
-		Provides a queue for this message-type `T` on the target object. \
-		Messages `influx`ed with an integer prefix will be delay by the given amount. \
-		\
-		NOTE: Only supports decorating `processor::node`. \
-		\
-		TODO: Use `message::sequel` to convert absolute delays to relative delays? \
-		\
-		TODO: Allow for scheduling beyond the current window by offsetting all future events? \
+		Provides a queue for this message-type `T` on the target object, \
+		scheduled via `influx` and processed in segments via `redux`. \
+
+		///\todo\
+		Allow for scheduling beyond the current window, \
+		possibly using `message::sequel` to convert between absolute and relative delays. \
 
 		template <int N_event=-1>
 		struct interrupt
@@ -192,64 +190,53 @@ struct define
 			class subtype: public compose_s<R>
 			{
 				using co = compose_s<R>;
-			
-				using delay_t = context::delay_t;
+
 				using event_t = context::delay_s<T>;
+				using delay_t = context::delay_t;
+				using limit_t = _std::numeric_limits<delay_t>;
 				using queue_t = typename collage_t<N_event, event_t>::siphon_t;
-			//	using queue_t = typename collage_t<N_event, event_t>::sluice_t;
 
-				queue_t q_{};
-			//	queue_t q_{(event_t) limit_t::max()};
+				queue_t q_{(event_t) limit_t::max()};
 
-				XTAL_FN2 next_tail() XTAL_0EX {return q_.top().template head<1>();}
-				XTAL_FN2 next_head() XTAL_0EX {return q_.top().template head<0>();}
-				
-				XTAL_FN2_(delay_t) nearest_head(delay_t i)
-				XTAL_0EX
+				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().template head<1>())
+				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().template head<0>())
+				XTAL_FN2 last_head()
+				XTAL_0FX
 				{
-					return _std::min<delay_t>({nearest_head(), i});// NOTE: `initializer_list` required for `RELEASE`.
-				}
-				XTAL_FN2_(delay_t) nearest_head()
-				XTAL_0EX
-				{
-					return q_.empty()? _std::numeric_limits<delay_t>::max(): next_head();
-				}
-
-				XTAL_FN2_(delay_t) furthest_head()
-				XTAL_0EX
-				{
-					return self().size();
-				}
-
-			public:
-				using co::co;
-				using co::self;
-				using co::influx;
-				///\
-				Invokes `influx` if the given delay `i == 0`, \
-				otherwise enqueues the events `o, o...` at the specified index. \
-				\
-				\returns the result of `influx` if `i == 0`, `-1` otherwise. \
-
-				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
-				}
-				XTAL_FNX influx(context::delay_s<T> dot, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					if (0 == dot.head())
-					{	return influx(dot.tail(), XTAL_REF_(oo)...);
+					if constexpr (requires {{co::relay()} -> is_q<delay_t>;})
+					{	return co::relay();
 					}
 					else
-					{	return XTAL_FLX_(influx(XTAL_REF_(oo)...)) ((q_.push(_std::move(dot)), 1));
+					{	return delay_t(self().size());
 					}
 				}
 
 			protected:
 				///\
-				Relays all queued events while invoking the supplied callback for each intermediate section. \
+				Invokes `influx` for all events up-to the supplied delay `i`. \
+				
+				///\returns the delay until the next event. \
+
+				XTAL_FN1_(delay_t) relay()
+				XTAL_0EX
+				{
+					return _std::min<delay_t>({next_head(), last_head()});// NOTE: {these} are needed for `RELEASE`.
+				}
+				XTAL_FN1_(delay_t) relay(delay_t i)
+				XTAL_0EX
+				{
+					if constexpr (requires {{co::relay(i)} -> is_q<delay_t>;})
+					{	co::relay(i);
+						for (; 0 < q_.size() and next_head() <= i; q_.pop())
+						{	(void) co::influx(next_tail());
+						}
+					}
+					return relay();
+				}
+
+				///\
+				Relays all queued events while invoking the supplied callback for each intermediate segment. \
+				The callback parameters are the `ranges::slice` indicies and the segment index. \
 
 				XTAL_FN0 redux(auto const &f)
 				XTAL_0EX
@@ -264,44 +251,58 @@ struct define
 				XTAL_FN0 redux(auto const &f, auto &n)
 				XTAL_0EX
 				{
-					for (delay_t i = 0, j = delay(); i != j; j = relay(i = j))
+					for (delay_t i = 0, j = relay(); i != j; j = relay(i = j))
 					{	f(i, j, n++);
 					}
 					--n;
 				}
 
+			public:
+				using co::co;
+				using co::self;
+				using co::influx;
 				///\
-				Invokes `influx` for all events up-to the given delay `i`. \
+				Invokes `influx` if the given delay `i == 0`, \
+				otherwise enqueues the events `o, o...` at the specified index. \
 				
-				///\
-				\returns the `delay()` until q_.next event. \
-
-				XTAL_FN1_(delay_t) relay(delay_t i)
+				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if constexpr (0 < N_event)
-					{	co::relay(i);
-						while (0 < q_.size() and next_head() <= i)
-						{	(void) co::influx(next_tail());
-							q_.pop();
-						}
-					}
-					return delay();
+					return influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
-
-				///\
-				\returns the minimum delay across all queues bound to `this`. \
-
-				XTAL_FN2_(delay_t) delay()
+				XTAL_FNX influx(context::delay_s<T> dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if constexpr (0 < N_event)
-					{	return nearest_head(co::delay());
+					if (0 == dot.head())
+					{	return influx(dot.tail(), XTAL_REF_(oo)...);
 					}
 					else
-					{	return nearest_head(furthest_head());
+					{	q_.push(_std::move(dot));
+						return influx(XTAL_REF_(oo)...);
 					}
 				}
+
+			};
+			///\note\
+			When `N_event == 0`, scheduling is bypassed and `relay` is resolved w.r.t. `self`. \
+
+			template <conflux::any_q R> requires (N_event == 0)
+			class subtype<R>: public compose_s<R>
+			{
+				using co = compose_s<R>;
+
+			protected:
+				using relay_t = context::delay_t;
+				XTAL_FN1_(relay_t) relay()          XTAL_0EX {return self().size();}
+				XTAL_FN1_(relay_t) relay(relay_t i) XTAL_0EX {return self().size();}
+
+				XTAL_FN0 redux(auto const &f)           XTAL_0EX {redux(f, 0);}
+				XTAL_FN0 redux(auto const &f, auto &&n) XTAL_0EX {redux(f, n);}
+				XTAL_FN0 redux(auto const &f, auto  &n) XTAL_0EX {f(0, relay(), n);}
+
+			public:
+				using co::co;
+				using co::self;
 
 			};
 		};
