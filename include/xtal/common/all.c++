@@ -4,6 +4,7 @@
 #include "./collage.c++"
 #include "./collate.c++"
 #include "./collect.c++"
+#include "./comport.c++"
 #include "./compose.c++"
 #include "./realize.c++"
 #include "./seek.c++"

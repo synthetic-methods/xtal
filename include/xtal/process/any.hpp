@@ -1,7 +1,7 @@
 #pragma once
 #include "../conflux/any.hpp"// `_retail`
 
-
+#include "../control/any.hpp"
 
 
 
@@ -22,7 +22,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
@@ -100,7 +100,7 @@ struct refine
 {
 	using subkind = _retail::refine<T>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -110,7 +110,7 @@ struct refine
 		using co::self;
 
 	};
-	template <any_q S> requires constant_q<typename compose_s<S, subkind>::linked>
+	template <any_p S> requires constant_q<typename compose_s<S, subkind>::linked>
 	class subtype<S>: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -142,7 +142,7 @@ struct defer
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -163,7 +163,7 @@ struct defer
 		}
 
 	};
-	template <any_q S> requires _std::invocable<U>
+	template <any_p S> requires _std::invocable<U>
 	class subtype<S>: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -182,12 +182,12 @@ struct defer
 
 	};
 };
-template <any_q U>
+template <any_p U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -218,9 +218,12 @@ struct refer
 template <typename ...As>
 struct link
 {
-	using subkind = compose<As...>;
+	using interrupt = typename control::confined_t<>::interrupt<0>;
+	using interkind = compose<As..., interrupt>;
+	
+	using subkind = interkind;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -228,7 +231,6 @@ struct link
 
 	public:
 		using co::co;
-
 		using linked = constant_t<true>;
 
 		///\
@@ -241,9 +243,9 @@ struct link
 			using result_t  = typename signature::template invoke_t<T>;
 			using return_t  = iteratee_t<result_t>;
 			
-			using subkind = compose<concord::defer<typename signature::type>, As..., defer<T>>;
+			using subkind = compose<concord::defer<typename signature::type>, interkind, defer<T>>;
 
-			template <any_q R>
+			template <any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -251,6 +253,7 @@ struct link
 			public:
 				using co::co;
 				using co::self;
+				using bonded = constant_t<true>;
 
 				///\
 				Constructs `arguments` using those supplied. \

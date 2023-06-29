@@ -302,6 +302,9 @@ struct collate
 				friend T;
 				using co = hemitype<T>;
 			
+				template <typename Y>
+				using duel_t = typename Y::template dual_t<T>;
+
 			public:
 				using co::co;
 				using co::self;
@@ -399,7 +402,7 @@ struct collate
 				and `1 < that.size() <= this->size()`. \
 
 				template <isomorphic_q<T> Y>
-				XTAL_FN1 transform(Y &that)
+				XTAL_FN1_(duel_t<Y> &) transform(Y &that)
 				XTAL_0FX
 				XTAL_IF1 complex_q<V>
 				{
@@ -444,16 +447,16 @@ struct collate
 					}
 				
 				//	Cast the output to the transformed domain:
-					return that.template self<typename Y::template dual_t<T> &>();
+					return that.template self<duel_t<Y> &>();
 				}
 				///\returns a new `series` representing the FFT of `lhs`, \
 				using `this` as the Fourier basis. \
 
 				template <isomorphic_q<T> Y>
-				XTAL_FN2 transformation(Y that)
+				XTAL_FN2_(duel_t<Y>) transformation(Y that)
 				XTAL_0FX
 				{
-					return transform(that);//.template self<typename Y::template dual_t<T> &>();
+					return transform(that);//.template self<duel_t<Y>>();
 				}
 
 				///\returns `lhs` convolved with `rhs`, \

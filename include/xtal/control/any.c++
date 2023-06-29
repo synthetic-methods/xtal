@@ -63,8 +63,8 @@ TEST_CASE("xtal/control/any.hpp: hold process")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <template <typename, typename...> typename P_>
-void hold_processor__test()
+template <typename ...As>
+void test__hold_processor()
 {
 	size_t constexpr N_size = 1<<3;
 
@@ -75,7 +75,7 @@ void hold_processor__test()
 	using resize_u = message::resize_t<>;
 	using sequel_u = message::sequel_t<>;
 
-	auto gated_o = P_<gated_t>::bind_f();
+	auto gated_o = processor::monomer_t<gated_t, As...>::bind_f();
 	auto array_o = array_t();
 	
 	gated_o <<= resize_u(N_size);
@@ -98,18 +98,18 @@ void hold_processor__test()
 }
 TEST_CASE("xtal/control/any.hpp: hold processor")
 {
-	hold_processor__test<processor::molecule_t>();
-//	hold_processor__test<processor::monomer_t>();
+	test__hold_processor<collect<>>();
+//	test__hold_processor();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename mix_t>
-void respan_internal_interrupt__test()
+void test__respan_internal_interrupt()
 {
 	using alpha_t = typename realized::alpha_t;
 
-	using    mix_z = processor::molecule_t<mix_t, typename bias_t::template interrupt<(1 << 4)>>;
+	using    mix_z = processor::monomer_t<mix_t, collect<>, typename bias_t::template interrupt<(1<<4)>>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
@@ -142,8 +142,8 @@ void respan_internal_interrupt__test()
 }
 TEST_CASE("xtal/control/any.hpp: respan internal interrupt")
 {
-	respan_internal_interrupt__test<dynamic_bias_mix_t>();
-//	respan_internal_interrupt__test<static_bias_mix_t>();
+	test__respan_internal_interrupt<dynamic_bias_mix_t>();
+//	test__respan_internal_interrupt<static_bias_mix_t>();
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

@@ -73,15 +73,13 @@ template <typename    T  >   struct debased            : constant_t<0> {using ty
 template <unbased_p   T  >   struct debased<T        &>: constant_t<1> {using type =         T*;};
 template <unbased_p   T  >   struct debased<T  const &>: constant_t<1> {using type =   const T*;};
 template <typename    T  >    using debased_t  =   typename debased<T>::type;
-template <typename    T  >  concept debased_p  =     (bool) debased<T>::value;
-template <typename ...Ts >  concept debased_q  = conjunct_q<debased_p<Ts>...>;
+template <typename ...Ts >  concept debased_q  = conjunct_q<debased<Ts>::value...>;
 
 template <typename    T  >   struct rebased            : constant_t<1> {using type = based_t<T>;};
 template <unbased_p   T  >   struct rebased<T        &>: constant_t<0> {using type =         T&;};
 template <unbased_p   T  >   struct rebased<T  const &>: constant_t<0> {using type =   const T&;};
 template <typename    T  >    using rebased_t  =   typename rebased<T>::type;
-template <typename    T  >  concept rebased_p  =     (bool) rebased<T>::value;
-template <typename ...Ts >  concept rebased_q  = conjunct_q<rebased_p<Ts>...>;
+template <typename ...Ts >  concept rebased_q  = conjunct_q<rebased<Ts>::value...>;
 
 
 template <typename    T  >    using value_t    = typename based_t<T>::value_type;
@@ -126,18 +124,10 @@ template <typename T, typename ...Ts> struct  identical<T, Ts...>: disjunct_t<_s
 template <typename T, typename ...Ts> struct  isotropic<T, Ts...>: disjunct_t<_std::is_same<based_t<T>, based_t<Ts>>...> {};
 template <typename T, typename ...Ts> struct allotropic<T, Ts...>: conjunct_t<_std::is_constructible<T, Ts>...> {};
 
-template <typename ...Ts> concept id_q =  identical<Ts...>::value;
-template <typename ...Ts> concept is_q =  isotropic<Ts...>::value;
-template <typename ...Ts> concept to_q = allotropic<Ts...>::value;
-
-template <typename T> XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
-
-
-template <typename S, typename    T > concept if_p = _std::derived_from<based_t<T>, based_t<S>>;
-template <typename S, typename ...Ts> concept if_q = conjunct_q<if_p<S, Ts>...>;
-
-template <template <typename...> typename T_>                 struct  of_t {};
-template <template <typename...> typename T_, typename ...Ts> concept of_q = if_q<of_t<T_>, Ts...>;
+template <typename ...Ts>  concept id_q =  identical<Ts...>::value;
+template <typename ...Ts>  concept is_q =  isotropic<Ts...>::value;
+template <typename ...Ts>  concept to_q = allotropic<Ts...>::value;
+template <typename    T > XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -51,7 +51,7 @@ struct any<A>
 template <typename T>
 struct define
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -110,7 +110,7 @@ namespace _detail
 {
 struct refine_as_head
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -119,7 +119,7 @@ struct refine_as_head
 		using co::co;
 
 	};
-	template <any_q S> requires (S::tuple_size::value == 1)
+	template <any_p S> requires (S::tuple_size::value == 1)
 	class subtype<S>: public S
 	{
 		using co = S; using U = typename co::head_t;
@@ -137,7 +137,7 @@ struct refine_as_head
 };
 struct refine_as_tuple
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -159,7 +159,7 @@ struct refine
 	,	_detail::refine_as_tuple
 	>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -168,7 +168,7 @@ struct refine
 		using co::co;
 
 	};
-	template <any_q S> requires iterable_q<S>
+	template <any_p S> requires iterable_q<S>
 	class subtype<S>: public compose_s<S, subkind>, public iterate_t<T>
 	{
 		using co = compose_s<S, subkind>;
@@ -183,7 +183,7 @@ struct refine
 namespace _detail
 {//////////////////////////////////////////////////////////////////////////////
 
-template <typename T> concept dismember_p = debased_p<T>;// determine whether `T` should be dereferenced
+template <typename T> concept dismember_p = debased_q<T>;// determine whether `T` should be dereferenced
 template <typename T> using      member_t = debased_t<T>;// convert references to pointers
 
 template <typename T>   XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_IF1 dismember_p<T> {return &XTAL_REF_(w);}// obtain address
@@ -204,7 +204,7 @@ template <typename T> concept remember_p = not dismember_p<T>;
 template <typename U>
 struct defer
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S>
 	{
 		using co = compose_s<S>;
@@ -354,7 +354,7 @@ struct refer_to_comparators
 template <typename U> requires comparators_p<U>
 struct refer_to_comparators<U>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -385,7 +385,7 @@ struct refer_to_logic_operators<U, 0>
 template <typename U> requires logic_operators_p<U, 1> and _detail::remember_p<U>
 struct refer_to_logic_operators<U, 1>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -417,7 +417,7 @@ struct refer_to_logic_operators<U, 1>
 template <typename U> requires logic_operators_p<U, 2>
 struct refer_to_logic_operators<U, 2>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -454,7 +454,7 @@ struct refer_to_arithmetic_operators<U, 0>
 template <typename U> requires arithmetic_operators_p<U, 1> and _detail::remember_p<U>
 struct refer_to_arithmetic_operators<U, 1>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -477,7 +477,7 @@ struct refer_to_arithmetic_operators<U, 1>
 template <typename U> requires arithmetic_operators_p<U, 2>
 struct refer_to_arithmetic_operators<U, 2>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -502,7 +502,7 @@ struct refer_to_range_operators
 template <typename U> requires iterated_q<U>
 struct refer_to_range_operators<U>
 {
-	template <any_q S>
+	template <any_p S>
 	class subtype: public S
 	{
 		using co = S;
@@ -517,7 +517,7 @@ struct refer_to_range_operators<U>
 		XTAL_FN2   end() XTAL_0FX XTAL_IF2 (U const &u) {u.  end();} {return head().  end();}
 
 	};
-	template <any_q S> requires iterated_q<S> or iterable_q<S>
+	template <any_p S> requires iterated_q<S> or iterable_q<S>
 	class subtype<S>: public S
 	{
 		using co = S;
@@ -545,22 +545,22 @@ struct refer
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
 
-template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};
 
-template <size_t N, xtal::concord::any_q T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
 XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////

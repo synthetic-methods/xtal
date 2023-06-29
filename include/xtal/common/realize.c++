@@ -86,7 +86,7 @@ TEST_CASE("xtal/common/realize.hpp: ratio")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N_sgn=1, int N_rho=0>
-void realize_truncate__test()
+void test__realize_truncate()
 {
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
 	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
@@ -118,11 +118,11 @@ void realize_truncate__test()
 }
 TEST_CASE("xtal/common/realize.hpp: truncate")
 {
-	realize_truncate__test< 1,  2>(); realize_truncate__test<-1,  2>();
-	realize_truncate__test< 1,  1>(); realize_truncate__test<-1,  1>();
-	realize_truncate__test< 1,  0>(); realize_truncate__test<-1,  0>();
-	realize_truncate__test< 1, -1>(); realize_truncate__test<-1, -1>();
-	realize_truncate__test< 1, -2>(); realize_truncate__test<-1, -2>();
+	test__realize_truncate< 1,  2>(); test__realize_truncate<-1,  2>();
+	test__realize_truncate< 1,  1>(); test__realize_truncate<-1,  1>();
+	test__realize_truncate< 1,  0>(); test__realize_truncate<-1,  0>();
+	test__realize_truncate< 1, -1>(); test__realize_truncate<-1, -1>();
+	test__realize_truncate< 1, -2>(); test__realize_truncate<-1, -2>();
 
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
 	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
@@ -139,7 +139,7 @@ TEST_CASE("xtal/common/realize.hpp: truncate")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N_sgn=1>
-void realize_puncture_real__test()
+void test__realize_puncture_real()
 {
 	auto const oo0 = realized::minimal_y(0);
 	auto const oo1 = realized::minimal_y(1);
@@ -166,8 +166,8 @@ void realize_puncture_real__test()
 }
 TEST_CASE("xtal/common/realize.hpp: puncture real")
 {
-	realize_puncture_real__test< 1>();
-	realize_puncture_real__test<-1>();
+	test__realize_puncture_real< 1>();
+	test__realize_puncture_real<-1>();
 
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
 	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
@@ -182,7 +182,7 @@ TEST_CASE("xtal/common/realize.hpp: puncture real")
 }
 
 template <int N_sgn=1, int N_rho=0>
-void realize_puncture_real_zone__test()
+void test__realize_puncture_real_zone()
 {
 	auto const up0 = realized::upsilon_y(0), dn0 = realized::dnsilon_y(0);
 	auto const up1 = realized::upsilon_y(1), dn1 = realized::dnsilon_y(1);
@@ -215,11 +215,11 @@ void realize_puncture_real_zone__test()
 }
 TEST_CASE("xtal/common/realize.hpp: puncture real zone")
 {
-	realize_puncture_real_zone__test< 1,  2>(); realize_puncture_real_zone__test<-1,  2>();
-	realize_puncture_real_zone__test< 1,  1>(); realize_puncture_real_zone__test<-1,  1>();
-	realize_puncture_real_zone__test< 1,  0>(); realize_puncture_real_zone__test<-1,  0>();
-	realize_puncture_real_zone__test< 1, -1>(); realize_puncture_real_zone__test<-1, -1>();
-	realize_puncture_real_zone__test< 1, -2>(); realize_puncture_real_zone__test<-1, -2>();
+	test__realize_puncture_real_zone< 1,  2>(); test__realize_puncture_real_zone<-1,  2>();
+	test__realize_puncture_real_zone< 1,  1>(); test__realize_puncture_real_zone<-1,  1>();
+	test__realize_puncture_real_zone< 1,  0>(); test__realize_puncture_real_zone<-1,  0>();
+	test__realize_puncture_real_zone< 1, -1>(); test__realize_puncture_real_zone<-1, -1>();
+	test__realize_puncture_real_zone< 1, -2>(); test__realize_puncture_real_zone<-1, -2>();
 
 }
 

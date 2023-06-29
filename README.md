@@ -51,8 +51,8 @@ this `method` is aliased as the invocation `operator()`.
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::molecule` or `processor::monomer`,
-which `zip` the underlying `method` as a buffer- or range-based operator, respectively.
+Range-lifting is achieved using functors like `processor::{let,lift,monomer}`,
+which `zip` the underlying `method`.
 
 	using Mixer = processor::lift_t<Mix>;
 	Mixer mixer;
@@ -112,7 +112,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto sequel = sequel_t(1024);
 
-	using Mixer = processor::monomer_t<Mix>;
+	using Mixer = processor::monomer_t<Mix, collect<-1>>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -153,7 +153,7 @@ The transition to `C++23` ranges is limited by the lack of general support for `
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `molecule`, `monomer`, etc.
+The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
 
 The files `xtal/*/any.hpp` provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
@@ -252,14 +252,14 @@ Implemented:
 -	Parameter  composition:    `common/compose.hpp` with `concord/any.hpp#defer`.
 -	Parameter  namespacing:    `message/any.hpp#guard`.
 -	Parameter  sampling:       `message/any.hpp#hold`.
--	Parameter  scheduling:     `message/any.hpp#interrupt` and `processor/molecule.hpp#efflux`.
+-	Parameter  scheduling:     `message/any.hpp#interrupt` and `processor/monomer.hpp#efflux`.
 -	Processor  resizing:       `processor/*.hpp` by influxing `message/resize.hpp`.
 -	Processor  rendering:      `processor/*.hpp` by effluxing `message/respan.hpp`.
--	Processor  streaming:      `processor/{molecule,monomer}.hpp` by effluxing `message/serial.hpp`.
+-	Processor  streaming:      `processor/monomer.hpp` by effluxing `message/serial.hpp`.
 -	Process    templating:     `process/any.hpp#define`, `message/any.hpp#dispatch`.
 -	Function   lifting:        `{process,processor}/any.hpp#defer`.
 -	Dependency management:     `conflux/any.hpp` and `process/any.hpp#link`.
--	Buffer     sharing:        `processor/molecule.hpp#{influx,efflux}`.
+-	Buffer     sharing:        `processor/monomer.hpp#{influx,efflux}`.
 -	Buffer     convolution:    `common/collate.hpp#{series,serial}` incl. FFT.
 -	Numeric    conditioning:   `common/realize.hpp#{truncate,puncture}`
 -	...

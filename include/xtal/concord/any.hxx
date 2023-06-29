@@ -41,26 +41,26 @@ See `concord/any.hpp` for core implementations, and `*/any.hpp` for extensions. 
 Defines a decorator tagged with the inheritance chain `...As`. \
 
 template <typename ...As> struct any   : _retail::any<As..., any<>> {};
-template <typename ...As>  using any_t = typename any<As...>::template subtype<unit_t>;
+template <typename ...As> using  any_t = typename any<As...>::template subtype<unit_t>;
 
 template <typename T, typename ...As>
-concept any_q = xtal::if_q<any_t<As...>, T>;
+concept any_p = _std::derived_from<based_t<T>, any_t<As...>>;
 ///<\
 Matches any class `T` that inherits from this instance of `any<As...>`. \
 
 
 template <template <typename...> typename ...As_>
-using any_of = any<xtal::of_t<As_>...>;
+using for_any = any<comport_t<As_>...>;
 ///<\
 Uses the supplied templates `As_` to tag `any` decorator. \
 
 template <template <typename...> typename ...As_>
-using any_of_t = any_t<xtal::of_t<As_>...>;
+using for_any_t = any_t<comport_t<As_>...>;
 ///<\
 Uses the supplied templates `As_` to tag `any_t` class. \
 
-template <template <typename...> typename A_, typename ...Ts>
-concept any_of_q = xtal::if_q<any_of_t<A_>, Ts...>;
+template <typename T, template <typename...> typename A_>
+concept for_any_p = _std::derived_from<based_t<T>, for_any_t<A_>>;
 ///<\
 Matches any class tagged with the given template. \
 
@@ -92,7 +92,7 @@ struct confined
 	template <typename T>
 	using homotype = confine<T, As...>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, homotype<subtype<S>>>
 	{
 		using co = compose_s<S, homotype<subtype<S>>>;
@@ -104,6 +104,9 @@ struct confined
 };
 template <typename ...As>
 using confined_t = compose_s<any_t<>, confined<As...>>;
+
+template <typename S, typename ...As>
+using confined_s = compose_s<S, confined<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,18 +134,18 @@ template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0RN_(lift_t<U>(XTAL_FWD_(U) (u
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Defines `type` by `W` if `any_q<W>`, otherwise `lift_t<W>`. \
+Defines `type` by `W` if `any_p<W>`, otherwise `lift_t<W>`. \
 
 template <typename W> struct let    {using type = lift_t<W>;};
-template <any_q    W> struct let<W> {using type =        W ;};
+template <any_p    W> struct let<W> {using type =        W ;};
 template <typename W> using  let_t = typename let<W>::type;
 ///<\
 Resolves `let<W>::type`. \
 
 template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0RN_(lift_t<W>(XTAL_FWD_(W) (w)))
-template <any_q    W> XTAL_FN2 let_f(W &&w) XTAL_0RN_(         (XTAL_FWD_(W) (w)))
+template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0RN_(         (XTAL_FWD_(W) (w)))
 ///<\
-\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
+\returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
 
 
 ///////////////////////////////////////////////////////////////////////////////

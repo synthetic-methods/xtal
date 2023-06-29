@@ -73,12 +73,12 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-template <_retail::any_q U>
+template <_retail::any_p U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -124,13 +124,13 @@ struct defer<U>
 
 	};
 };
-template <iterated_q U> requires (not any_q<U>)
+template <iterated_q U> requires (not any_p<U>)
 struct defer<U>
 {
 	using sequel_u = message::sequel_t<counted_t<>>;
 	using subkind  = compose<_retail::defer<U>, sequel_u::attach>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -189,7 +189,7 @@ struct link
 	using sequel_u  = message::sequel_t<>;
 	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
 
-	template <any_q S>
+	template <any_p S>
 	using subtype = compose_s<S, subkind>;
 
 };

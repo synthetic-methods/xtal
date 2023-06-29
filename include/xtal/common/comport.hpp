@@ -7,20 +7,33 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//\
-TODO: Maybe revise this to allow `enum`. \
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int N, typename ...As>
-using stage = label<constant_t<N>, As...>;
+template <template <typename...> typename T_>
+struct comport
+{
+	class type
+	{
+	};
+	template <typename S>
+	class subtype: public S, public virtual type
+	{
+		using co = S;
+	
+	public:
+		using co::co;
 
-template <int N, typename ...As>
-using stage_t = compose_s<any_t<>, stage<N, As...>>;
+	};
+};
+template <template <typename...> typename T_>
+using comport_t = typename comport<T_>::type;
+
+template <typename T, template <typename...> typename T_>
+concept comport_p = _std::derived_from<based_t<T>, comport_t<T_>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

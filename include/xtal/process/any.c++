@@ -26,7 +26,7 @@ TEST_CASE("xtal/process/any.hpp: lifting")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void attribute_initialization__test(auto z)
+void test__attribute_initialization(auto z)
 {
 	auto &o = z.template self<bias_t>();
 	REQUIRE(00.0 == (float) o.head());
@@ -34,12 +34,12 @@ void attribute_initialization__test(auto z)
 }
 TEST_CASE("xtal/process/any.hpp: attribute initialization")
 {
-	attribute_initialization__test(dynamic_bias_mix_t());
-	attribute_initialization__test(static_bias_mix_t());
+	test__attribute_initialization(dynamic_bias_mix_t());
+	test__attribute_initialization(static_bias_mix_t());
 }
 
 
-void attribute_influx_operator__test(auto z)
+void test__attribute_influx_operator(auto z)
 {
 	auto &o = z.template self<bias_t>();
 	z <<= bias_t(0.0); REQUIRE(0.0 == (float) o.head());
@@ -50,12 +50,12 @@ void attribute_influx_operator__test(auto z)
 }
 TEST_CASE("xtal/process/any.hpp: attribute influx operator")
 {
-	attribute_influx_operator__test(dynamic_bias_mix_t());
-	attribute_influx_operator__test(static_bias_mix_t());
+	test__attribute_influx_operator(dynamic_bias_mix_t());
+	test__attribute_influx_operator(static_bias_mix_t());
 }
 
 
-void attribute_efflux_operator__test(auto z)
+void test__attribute_efflux_operator(auto z)
 {
 	auto &o = z.template self<bias_t>();
 	z >>= bias_t(0.0); REQUIRE(0.0 == (float) o.head());
@@ -66,12 +66,12 @@ void attribute_efflux_operator__test(auto z)
 }
 TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 {
-	attribute_efflux_operator__test(dynamic_bias_mix_t());
-	attribute_efflux_operator__test(static_bias_mix_t());
+	test__attribute_efflux_operator(dynamic_bias_mix_t());
+	test__attribute_efflux_operator(static_bias_mix_t());
 }
 
 
-void attribute_influx_method__test(auto z)
+void test__attribute_influx_method(auto z)
 {
 	using start_t = message::stage_t<0, struct start>;
 
@@ -87,12 +87,12 @@ void attribute_influx_method__test(auto z)
 }
 TEST_CASE("xtal/process/any.hpp: attribute influx method")
 {
-	attribute_influx_method__test(dynamic_bias_mix_t());
-	attribute_influx_method__test(static_bias_mix_t());
+	test__attribute_influx_method(dynamic_bias_mix_t());
+	test__attribute_influx_method(static_bias_mix_t());
 }
 
 
-void attribute_efflux_method__test(auto z)
+void test__attribute_efflux_method(auto z)
 {
 	using start_t = message::stage_t<0, struct start>;
 
@@ -106,8 +106,8 @@ void attribute_efflux_method__test(auto z)
 }
 TEST_CASE("xtal/process/any.hpp: attribute efflux method")
 {
-	attribute_efflux_method__test(dynamic_bias_mix_t());
-	attribute_efflux_method__test(static_bias_mix_t());
+	test__attribute_efflux_method(dynamic_bias_mix_t());
+	test__attribute_efflux_method(static_bias_mix_t());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

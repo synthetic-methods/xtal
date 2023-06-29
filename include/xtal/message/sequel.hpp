@@ -30,18 +30,14 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 template <typename, typename ...>
 struct sequel;
 
-template <typename W=counter_t<>, typename ...As>
-using sequel_t = typename confined<sequel<W, As...>>::template subtype<any_of_t<sequel>>;
-
 template <typename... Ts>
-concept sequel_q = any_of_q<sequel, Ts...>;
+XTAL_ASK sequel_q = conjunct_q<for_any_p<Ts, sequel>...>;
+
+template <typename W=counter_t<>, typename ...As>
+XTAL_USE sequel_t = confined_s<for_any_t<sequel>, sequel<W, As...>>;
 
 template <typename ...As>
-XTAL_FZ2 sequel_f(XTAL_DEF w)
-{
-	using _realized = realize<XTAL_TYP_(w)>;
-	return sequel_t<counter_t<>, As...>(XTAL_REF_(w));
-}
+XTAL_FZ2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,8 +51,8 @@ XTAL_0EX
 template <>
 struct sequel<void>
 {
-	template <any_q S>
-	class subtype: public compose_s<S>
+	template <any_p S>
+	class subtype: public compose_s<S>//, public virtual comport_t<sequel>
 	{
 		using co = compose_s<S>;
 		using T = typename co::self_t;
@@ -220,7 +216,7 @@ struct sequel<V>
 {
 	using subkind = compose<sequel<void>, resize<V>, restep<V>>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;
@@ -319,7 +315,7 @@ private:
 public:
 	using subkind = compose<sequel<void>, refer<U>, rescan<U>, restep<V>>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;

@@ -118,6 +118,16 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_DEF                                                  auto &&
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 
+#define XTAL_NEW_(...)                      constexpr __VA_ARGS__
+#define XTAL_OPZ_(...)                      constexpr __VA_ARGS__       operator
+#define XTAL_OP2_(...) [[nodiscard]]        constexpr __VA_ARGS__       operator
+#define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
+#define XTAL_FN2_(...) [[nodiscard]]        constexpr __VA_ARGS__
+#define XTAL_FN1_(...)                      constexpr __VA_ARGS__
+#define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
+#define XTAL_FZ1_(...)               static constexpr __VA_ARGS__
+#define XTAL_LET_(...)               static constexpr __VA_ARGS__
+
 #define XTAL_NEW                            constexpr            
 #define XTAL_OPZ                            constexpr                   operator
 #define XTAL_OP2       [[nodiscard]]        constexpr    decltype(auto) operator
@@ -129,16 +139,8 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_FZ1                     static constexpr    decltype(auto)
 #define XTAL_FZ0                     static constexpr             void
 #define XTAL_LET                     static constexpr             auto
-
-#define XTAL_NEW_(...)                      constexpr __VA_ARGS__
-#define XTAL_OPZ_(...)                      constexpr __VA_ARGS__       operator
-#define XTAL_OP2_(...) [[nodiscard]]        constexpr __VA_ARGS__       operator
-#define XTAL_OP1_(...)                      constexpr __VA_ARGS__       operator
-#define XTAL_FN2_(...) [[nodiscard]]        constexpr __VA_ARGS__
-#define XTAL_FN1_(...)                      constexpr __VA_ARGS__
-#define XTAL_FZ2_(...) [[nodiscard]] static constexpr __VA_ARGS__
-#define XTAL_FZ1_(...)               static constexpr __VA_ARGS__
-#define XTAL_LET_(...)               static constexpr __VA_ARGS__
+#define XTAL_USE                     using
+#define XTAL_ASK                     concept
 
 #define XTAL_IF2                             requires requires
 #define XTAL_IF1                                      requires

@@ -214,7 +214,7 @@ TEST_CASE("xtal/common/collate.hpp: buffer mutation")
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <int N>
-void siphon_operation__test()
+void test__siphon_operation()
 {
 	using event_u = compose_s<bias_t, concord::confer<int>>;
 	using queue_u = siphon_t<event_u, N>;
@@ -235,14 +235,14 @@ void siphon_operation__test()
 }
 TEST_CASE("xtal/common/collate.hpp: siphon operation")
 {
-//	siphon_operation__test<-1>();
-	siphon_operation__test<64>();
+//	test__siphon_operation<-1>();
+	test__siphon_operation<64>();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-void serial_multiplication__test()
+void test__serial_multiplication()
 {
 	using D2 = serial_t<int, 2>;
 	using D3 = serial_t<int, 3>;
@@ -255,13 +255,13 @@ void serial_multiplication__test()
 }
 TEST_CASE("xtal/common/collate.hpp: serial multiplication")
 {
-	serial_multiplication__test();
+	test__serial_multiplication();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-void series_multiplication__test()
+void test__series_multiplication()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -276,13 +276,13 @@ void series_multiplication__test()
 }
 TEST_CASE("xtal/common/collate.hpp: series multiplication")
 {
-	series_multiplication__test();
+	test__series_multiplication();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-void pulsar_operation__test()
+void test__pulsar_operation()
 {
 	using D = pulsar_t<int, 4>;
 
@@ -295,13 +295,13 @@ void pulsar_operation__test()
 }
 TEST_CASE("xtal/common/collate.hpp: pulsar operation")
 {
-	pulsar_operation__test();
+	test__pulsar_operation();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-void phasor_operation__test()
+void test__phasor_operation()
 {
 	using P = phasor_t<float, 2>;
 	P p {0.125, 0.250};
@@ -314,13 +314,13 @@ void phasor_operation__test()
 }
 TEST_CASE("xtal/common/collate.hpp: phasor operation")
 {
-	phasor_operation__test();
+	test__phasor_operation();
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-void phasor_iteration__test()
+void test__phasor_iteration()
 {
 	using namespace _v3;
 	using P  = phasor_t<float, 2>;
@@ -339,7 +339,7 @@ void phasor_iteration__test()
 }
 TEST_CASE("xtal/common/collate.hpp: phasor iteration")
 {
-	phasor_iteration__test();
+	test__phasor_iteration();
 
 }
 /***/

@@ -16,7 +16,7 @@ struct rescan
 {
 	using subkind = defer<U>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;

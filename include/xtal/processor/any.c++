@@ -51,7 +51,7 @@ TEST_CASE("xtal/processor/any.hpp: lifting")
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename mix_t>
-void contrivance__test()
+void test__contrivance()
 {
 	using alpha_t = typename realized::alpha_t;
 
@@ -86,8 +86,8 @@ void contrivance__test()
 
 TEST_CASE("xtal/processor/any.hpp: contrivance.")
 {
-	contrivance__test<dynamic_bias_mix_t>();
-	contrivance__test<static_bias_mix_t>();
+	test__contrivance<dynamic_bias_mix_t>();
+	test__contrivance<static_bias_mix_t>();
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

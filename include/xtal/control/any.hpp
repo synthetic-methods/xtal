@@ -22,7 +22,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
@@ -38,7 +38,7 @@ struct define
 		{
 			using subkind = conflux::defer<T>;
 
-			template <conflux::any_q R>
+			template <conflux::any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -71,7 +71,7 @@ struct define
 		{
 			using subkind = attach;
 
-			template <conflux::any_q R>
+			template <conflux::any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -156,7 +156,7 @@ struct define
 		{
 			using subkind = attach;
 
-			template <conflux::any_q R> requires (T::tuple_size::value == 0)
+			template <conflux::any_p R> requires (T::tuple_size::value == 0)
 			class subtype: public compose_s<R, subkind>
 			{
 				using co = compose_s<R, subkind>;
@@ -176,7 +176,7 @@ struct define
 		template <int N_event=-1>
 		struct hold
 		{
-			template <conflux::any_q R>
+			template <conflux::any_p R>
 			class subtype: public compose_s<R>
 			{
 				using co = compose_s<R>;
@@ -234,7 +234,7 @@ struct define
 		template <int N_event=-1>
 		struct interrupt
 		{
-			template <conflux::any_q R>
+			template <conflux::any_p R>
 			class subtype: public compose_s<R>
 			{
 				using co = compose_s<R>;
@@ -336,7 +336,7 @@ struct define
 			///\note\
 			When `N_event == 0`, scheduling is bypassed and `relay` is resolved w.r.t. `self`. \
 
-			template <conflux::any_q R> requires (N_event == 0)
+			template <conflux::any_p R> requires (N_event == 0)
 			class subtype<R>: public compose_s<R>
 			{
 				using co = compose_s<R>;
@@ -378,7 +378,7 @@ struct defer<W>
 {
 	using subkind = defer<value_t<W>>;
 
-	template <any_q S>
+	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using co = compose_s<S, subkind>;

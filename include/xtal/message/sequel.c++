@@ -90,7 +90,7 @@ TEST_CASE("xtal/message/sequel.hpp: synchronization")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename Y, typename X>
-void initialization__test(auto n)
+void test__initialization(auto n)
 {
 	X x; Y y;
 	x = X(n); y = Y(0); REQUIRE(y.efflux(x) == 1); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
@@ -103,17 +103,17 @@ TEST_CASE("xtal/message/sequel.hpp: initialization")
 	using sequel_u = sequel_t<counted_t<>>;
 	using I = typename sequel_u::step_t;
 
-	initialization__test<sequel_u, sequel_u>((I) 3);
-	initialization__test<sequel_u, sequel_n>((I) 3);
-	initialization__test<sequel_n, sequel_u>((I) 3);
-	initialization__test<sequel_n, sequel_n>((I) 3);
+	test__initialization<sequel_u, sequel_u>((I) 3);
+	test__initialization<sequel_u, sequel_n>((I) 3);
+	test__initialization<sequel_n, sequel_u>((I) 3);
+	test__initialization<sequel_n, sequel_n>((I) 3);
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename Y, typename X>
-void finalization__test(auto n)
+void test__finalization(auto n)
 {
 	X x; Y y;
 	x = X(n); y = Y(n)       ; REQUIRE(y.influx(x) == 1); REQUIRE(y.step() == 1); REQUIRE(y.size() == 0);
@@ -126,10 +126,10 @@ TEST_CASE("xtal/message/sequel.hpp: finalization")
 	using sequel_u = sequel_t<counted_t<>>;
 	using I = typename sequel_u::step_t;
 	
-	initialization__test<sequel_u, sequel_u>((I) 3);
-	initialization__test<sequel_u, sequel_n>((I) 3);
-	initialization__test<sequel_n, sequel_u>((I) 3);
-	initialization__test<sequel_n, sequel_n>((I) 3);
+	test__initialization<sequel_u, sequel_u>((I) 3);
+	test__initialization<sequel_u, sequel_n>((I) 3);
+	test__initialization<sequel_n, sequel_u>((I) 3);
+	test__initialization<sequel_n, sequel_n>((I) 3);
 
 }
 
@@ -163,7 +163,7 @@ TEST_CASE("xtal/message/sequel.hpp: intrepidation from zero")
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename Y, typename X>
-void interference__test(auto i)
+void test__interference(auto i)
 {
 	using V = counter_t<>;
 	using U = counted_t<>;
@@ -190,10 +190,10 @@ TEST_CASE("xtal/message/sequel.hpp: interruption")
 
 	for (I i = 0; i <= 1; ++i)
 	{
-		interference__test<sequel_u, sequel_u>(i);
-		interference__test<sequel_u, sequel_n>(i);
-		interference__test<sequel_n, sequel_u>(i);
-		interference__test<sequel_n, sequel_n>(i);
+		test__interference<sequel_u, sequel_u>(i);
+		test__interference<sequel_u, sequel_n>(i);
+		test__interference<sequel_n, sequel_u>(i);
+		test__interference<sequel_n, sequel_n>(i);
 	}
 
 }
