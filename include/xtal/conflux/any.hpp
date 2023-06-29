@@ -115,19 +115,18 @@ struct define
 		///\
 		Defuse handler: resolves the individual components of the message. \
 		
-		///\returns a ternary integer indicating the change in state (`1` or `0`), \
-		or that the message was unrecognized (`-1`). \
+		///\returns a ternary integer indicating that the state has changed (`0`), \
+		remains unchanged (`1`), or that the message was unrecognized (`-1`). \
 		
 		///\note\
-		The return value controls conditional execution using binary `&`, \
-		truncating propagation when the aggregated result is zero (`0`).
+		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
+		and truncating propagation when the aggregated result is `1`. \
 
 		XTAL_FNX defuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return -1;
 		}
-
 		XTAL_FNX effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
@@ -197,7 +196,7 @@ struct defer
 		XTAL_FNX defuse(U u)
 		XTAL_0EX
 		{
-			return co::has(u)? 0: (co::head(u), 1);
+			return co::has(u) or (co::head(u), 0);
 		}
 		XTAL_FNX defuse(XTAL_DEF w)
 		XTAL_0EX

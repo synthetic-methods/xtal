@@ -93,8 +93,8 @@ template <typename Y, typename X>
 void test__initialization(auto n)
 {
 	X x; Y y;
-	x = X(n); y = Y(0); REQUIRE(y.efflux(x) == 1); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
-	x = X(n); y = Y(n); REQUIRE(y.efflux(x) == 0); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
+	x = X(n); y = Y(0); REQUIRE(y.efflux(x) == 0); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
+	x = X(n); y = Y(n); REQUIRE(y.efflux(x) == 1); REQUIRE(y.step() == 0); REQUIRE(y.size() == n);
 
 }
 TEST_CASE("xtal/message/sequel.hpp: initialization")
@@ -116,8 +116,8 @@ template <typename Y, typename X>
 void test__finalization(auto n)
 {
 	X x; Y y;
-	x = X(n); y = Y(n)       ; REQUIRE(y.influx(x) == 1); REQUIRE(y.step() == 1); REQUIRE(y.size() == 0);
-//	x = X(n); y = Y(n).null(); REQUIRE(y.influx(x) == 0); REQUIRE(y.step() == 2); REQUIRE(y.size() == 0);
+	x = X(n); y = Y(n)       ; REQUIRE(y.influx(x) == 0); REQUIRE(y.step() == 1); REQUIRE(y.size() == 0);
+//	x = X(n); y = Y(n).null(); REQUIRE(y.influx(x) == 1); REQUIRE(y.step() == 2); REQUIRE(y.size() == 0);
 
 }
 TEST_CASE("xtal/message/sequel.hpp: finalization")
@@ -142,7 +142,7 @@ TEST_CASE("xtal/message/sequel.hpp: intrepidation")
 	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = seq_u;
 
-	REQUIRE(seq_w.efflux(seq_u) == 0); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
+	REQUIRE(seq_w.efflux(seq_u) == 1); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
 	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
 	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
 
@@ -154,7 +154,7 @@ TEST_CASE("xtal/message/sequel.hpp: intrepidation from zero")
 	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = sequel_u(0);
 
-	REQUIRE(seq_w.efflux(seq_u) == 1); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
+	REQUIRE(seq_w.efflux(seq_u) == 0); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
 	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
 	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
 

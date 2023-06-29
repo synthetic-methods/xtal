@@ -193,7 +193,13 @@ struct link
 	using subtype = compose_s<S, subkind>;
 
 };
-
+template <typename T>
+concept bond_p = any_p<T> and requires (T t)
+{
+	{t()} -> iterated_q;
+};
+template <typename ...Ts>
+concept bond_q = conjunct_q<bond_p<Ts>...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

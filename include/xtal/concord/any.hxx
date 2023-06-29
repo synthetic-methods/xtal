@@ -50,17 +50,17 @@ Matches any class `T` that inherits from this instance of `any<As...>`. \
 
 
 template <template <typename...> typename ...As_>
-using for_any = any<comport_t<As_>...>;
+using only = any<comport_t<As_>...>;
 ///<\
 Uses the supplied templates `As_` to tag `any` decorator. \
 
 template <template <typename...> typename ...As_>
-using for_any_t = any_t<comport_t<As_>...>;
+using only_t = any_t<comport_t<As_>...>;
 ///<\
 Uses the supplied templates `As_` to tag `any_t` class. \
 
 template <typename T, template <typename...> typename A_>
-concept for_any_p = _std::derived_from<based_t<T>, for_any_t<A_>>;
+concept only_p = _std::derived_from<based_t<T>, only_t<A_>>;
 ///<\
 Matches any class tagged with the given template. \
 

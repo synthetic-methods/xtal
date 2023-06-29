@@ -109,16 +109,6 @@ struct refine
 		using co::co;
 		using co::self;
 
-	};
-	template <any_p S> requires constant_q<typename compose_s<S, subkind>::linked>
-	class subtype<S>: public compose_s<S, subkind>
-	{
-		using co = compose_s<S, subkind>;
-	
-	public:
-		using co::co;
-		using co::self;
-
 		template <typename ...Xs>
 		struct combined
 		{
@@ -231,8 +221,6 @@ struct link
 
 	public:
 		using co::co;
-		using linked = constant_t<true>;
-
 		///\
 		Thunkifies `T` by binding `Xs...`. \
 
@@ -253,8 +241,6 @@ struct link
 			public:
 				using co::co;
 				using co::self;
-				using bonded = constant_t<true>;
-
 				///\
 				Constructs `arguments` using those supplied. \
 
@@ -347,13 +333,13 @@ struct link
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) |...| -1));
+						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1));
 				}
 				XTAL_FNX efflux_request(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) |...| -1));
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1));
 				}
 
 
@@ -371,7 +357,7 @@ struct link
 					else
 					{	static_assert(0 <= I_parity);
 						return [&] <auto ...I>(seek_t<I...>)
-							XTAL_0FN_(argument<I_parity>().influx(o, oo...) |...| argument<(I_parity <= I) + I>().influx(oo...))
+							XTAL_0FN_(argument<I_parity>().influx(o, oo...) &...& argument<(I_parity <= I) + I>().influx(oo...))
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
@@ -389,7 +375,7 @@ struct link
 					else
 					{	static_assert(0 <= I_parity);
 						return [&] <auto ...I>(seek_t<I...>)
-							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) |...| argument<(I_parity <= I) + I>().efflux(o))
+							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(o))
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}

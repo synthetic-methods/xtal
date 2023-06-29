@@ -31,10 +31,10 @@ template <typename, typename ...>
 struct sequel;
 
 template <typename... Ts>
-XTAL_ASK sequel_q = conjunct_q<for_any_p<Ts, sequel>...>;
+XTAL_ASK sequel_q = conjunct_q<only_p<Ts, sequel>...>;
 
 template <typename W=counter_t<>, typename ...As>
-XTAL_USE sequel_t = confined_s<for_any_t<sequel>, sequel<W, As...>>;
+XTAL_USE sequel_t = confined_s<only_t<sequel>, sequel<W, As...>>;
 
 template <typename ...As>
 XTAL_FZ2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
@@ -161,7 +161,7 @@ struct sequel<void>
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t? 0: ((s = t), 1);
+			return s == t or ((s = t), 0);
 		}
 		/**/
 		XTAL_FNX infuse(XTAL_DEF_(sequel_q) t)
@@ -169,12 +169,13 @@ struct sequel<void>
 		{
 			auto &s = self();
 			if (s == t)
-			{	return 0;
+			{	return 1;
 			}
 			else
 			{	s.operator+=(0);
-				s.operator-=(t.count()); s.step(t.step());
-				return 1;
+				s.operator-=(t.count());
+				s.step(t.step());
+				return 0;
 			}
 		}
 		/***/
@@ -196,12 +197,12 @@ struct sequel<void>
 		{
 			auto &s = self();
 			if (s == t)
-			{	return 0;
+			{	return 1;
 			}
 			else
 			{	s.operator+=(t.count());
 				assert(s.step() == t.step());
-				return 1;
+				return 0;
 			}
 		}
 

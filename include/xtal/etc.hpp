@@ -167,12 +167,11 @@ static_assert(1200 <= XTAL_V00_GNUC);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_1FN_(...) [=](XTAL_DEF ...etc) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(etc)...))
+#define XTAL_1FN_(...) [=](XTAL_DEF ...oo) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(oo)...))
 
 #define XTAL_FNX XTAL_FN2_(sign_t)
 #define XTAL_FLX XTAL_STD_(sign_t)
-#define XTAL_FLX_(...) [=, this](XTAL_FLX before) XTAL_0FN -> XTAL_FLX\
-{if (before&1) {XTAL_FLX after = (__VA_ARGS__); if (before>>1) before &= after;}; return before;}
+#define XTAL_FLX_(...) [=, this](XTAL_FLX o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
 
 ///////////////////////////////////////////////////////////////////////////////

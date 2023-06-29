@@ -15,10 +15,10 @@ template <typename, typename ...>
 struct monomer;
 
 template <typename... Ts>
-XTAL_ASK monomer_q = conjunct_q<for_any_p<Ts, monomer>...>;
+XTAL_ASK monomer_q = conjunct_q<only_p<Ts, monomer>...>;
 
 template <typename U, typename ...As>
-XTAL_USE monomer_t = confined_s<for_any_t<monomer>, monomer<U, As...>>;
+XTAL_USE monomer_t = confined_s<only_t<monomer>, monomer<U, As...>>;
 
 template <typename ...As>
 XTAL_FZ2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
@@ -27,21 +27,16 @@ XTAL_FZ2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-concept contrived_p = monomer_q<T> and requires (T t)
-{
-	{t()} -> iterated_q;
-};
 template <typename T, typename Y=T>
 concept connected_p = monomer_q<T> and requires (T t)
 {
-	{t.solve()} -> isomorphic_q<Y>;
+	{t.serve()} -> isomorphic_q<Y>;
 };
 template <typename T, typename Y=T>
 concept collected_p = monomer_q<T> and requires (T t)
 {
-	{t.store()} -> isomorphic_q<Y>;
 	{t.serve()} -> isomorphic_q<Y>;
+	{t.store()} -> isomorphic_q<Y>;
 };
 template <typename T, typename Y>
 concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
@@ -91,13 +86,13 @@ struct monomer
 				{
 				}
 
-				XTAL_RN2_(XTAL_FN1 solve(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+				XTAL_RN2_(XTAL_FN1 serve(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
 
 				template <auto...>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
-					return solve();
+					return serve();
 				}
 
 			public:
@@ -106,7 +101,7 @@ struct monomer
 				XTAL_FNX efflux(XTAL_DEF_(message::sequel_q) sequel_o)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) solve(co::method()), 1) (co::efflux(XTAL_REF_(sequel_o)));
+					return XTAL_FLX_((void) serve(co::method()), -1) (co::efflux(XTAL_REF_(sequel_o)));
 				}
 
 			};
@@ -171,7 +166,7 @@ struct monomer
 				XTAL_FNX infuse(resize_u resize_o)
 				XTAL_0EX
 				{
-					return co::infuse(resize_o) and (store().resize(XTAL_REF_(resize_o)), 1);
+					return co::infuse(resize_o) or (store().resize(XTAL_REF_(resize_o)), 0);
 				}
 				using co::influx_request;
 				///\note\
@@ -206,7 +201,7 @@ struct monomer
 				XTAL_FNX efflux(message::sequel_q auto sequel_o, respan_u respan_o)
 				XTAL_0EX
 				{
-					if (co::effuse(sequel_o) == 0) return 0;
+					if (co::effuse(sequel_o) == 1) return 1;
 				//	else...
 					serve(respan_o);
 					co::redux([&, this](auto i, auto j, auto n)
