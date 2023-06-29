@@ -45,7 +45,10 @@ struct define
 		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().influx(XTAL_REF_(oo)...)), XTAL_REF_(o));
+			(void) _std::apply([this](XTAL_DEF ...oo)
+				XTAL_0FN_(self().influx(XTAL_REF_(oo)...)),
+				XTAL_REF_(o)
+			);
 			return self();
 		}
 		///\
@@ -85,7 +88,10 @@ struct define
 		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
 		XTAL_0EX
 		{
-			(void) _std::apply([this](XTAL_DEF ...oo) XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)), XTAL_REF_(o));
+			(void) _std::apply([this](XTAL_DEF ...oo)
+				XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)),
+				XTAL_REF_(o)
+			);
 			return self();
 		}
 		///\

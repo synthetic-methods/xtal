@@ -127,7 +127,7 @@ template <typename U, typename ...As> using lift_t = confined_t<confer<U, As...>
 ///<\
 Resolves `lift<U, As...>::type`. \
 
-template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0RN_(lift_t<U>(XTAL_FWD_(U) (u)))
+template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0EX {return lift_t<U>(XTAL_FWD_(U) (u));}
 ///<\
 \returns a `lift`ed proxy of `u`. \
 
@@ -142,8 +142,8 @@ template <typename W> using  let_t = typename let<W>::type;
 ///<\
 Resolves `let<W>::type`. \
 
-template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0RN_(lift_t<W>(XTAL_FWD_(W) (w)))
-template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0RN_(         (XTAL_FWD_(W) (w)))
+template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_FWD_(W) (w));}
+template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_FWD_(W) (w));}
 ///<\
 \returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
 

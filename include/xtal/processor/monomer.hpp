@@ -154,20 +154,21 @@ struct monomer
 					return serve();
 				}
 
-			public:
+			//	using co::infuse;
 				///\
 				Responds to `message::resize` by resizing the internal `store()`. \
 
-				XTAL_FNX infuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					return co::infuse(XTAL_REF_(o));
-				}
 				XTAL_FNX infuse(resize_u resize_o)
 				XTAL_0EX
 				{
 					return co::infuse(resize_o) or (store().resize(XTAL_REF_(resize_o)), 0);
 				}
+				XTAL_FNX infuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					return co::infuse(XTAL_REF_(o));
+				}
+				
 				using co::influx_request;
 				///\note\
 				Resizing skips intermediate `recollected_p` dependencies, \
@@ -180,7 +181,6 @@ struct monomer
 					return co::template influx_request_tail<I_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
 
-			public:
 				using co::efflux;
 				///\
 				Responds to `message::sequel` by rendering the internal `store()`. \
@@ -188,20 +188,20 @@ struct monomer
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FNX efflux(message::sequel_q auto sequel_o)
+				XTAL_FNX efflux(message::sequel_q auto sequel_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return efflux(sequel_o, respan_u(store()));
+					return efflux(respan_u(store()), sequel_o, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FNX efflux(message::sequel_q auto sequel_o, respan_u respan_o)
+				XTAL_FNX efflux(respan_u respan_o, message::sequel_q auto sequel_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (co::effuse(sequel_o) == 1) return 1;
+					if (co::effuse(sequel_o, oo...) == 1) return 1;
 				//	else...
 					serve(respan_o);
 					co::redux([&, this](auto i, auto j, auto n)
@@ -209,7 +209,7 @@ struct monomer
 					{	using namespace _v3;
 						auto sequel_x = sequel_o.slice(i, j).skip(n);
 						auto respan_x = respan_o.slice(i, j);
-						(void) co::template efflux_request_head<I_parity>(sequel_x, respan_x);
+						(void) co::template efflux_request_tail<I_parity>(respan_x, sequel_x, oo...);
 						ranges::copy(co::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
 					});
 					return co::template influx_request(sequel_o);

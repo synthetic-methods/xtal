@@ -150,7 +150,8 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)                      const REF noexcept
 #define XTAL_0FN                            constexpr noexcept
 #define XTAL_0FN_(...)                      constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0RN_(...)                                noexcept {return (__VA_ARGS__);}
+#define XTAL_0FM                    mutable constexpr noexcept
+#define XTAL_0FM_(...)              mutable constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_RN4_(SIG, ...)             SIG         & noexcept {return (__VA_ARGS__);};\
                                         SIG        && noexcept {return (__VA_ARGS__);};\
                                         SIG const   & noexcept {return (__VA_ARGS__);};\

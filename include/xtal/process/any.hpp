@@ -48,8 +48,8 @@ struct define
 		///\returns the lambda abstraction of `method`, \
 			with template parameters resolved by `message::dispatch`. \
 
-		XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
-		,	[this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
+		XTAL_RN2_(template <typename ...Xs>
+		XTAL_FN2 reify(), [this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
 		)
 
 		///\returns the function corresponding to the currently resolved parameters. \
@@ -166,8 +166,8 @@ struct defer
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_RN2_(template <auto ...> XTAL_FN2 method(XTAL_DEF ...xs)
-		,	head() (XTAL_REF_(xs)...)
+		XTAL_RN2_(template <auto ...>
+		XTAL_FN2 method(XTAL_DEF ...xs), head() (XTAL_REF_(xs)...)
 		)
 
 	};
@@ -190,8 +190,8 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_RN2_(template <auto ...Ms> XTAL_FN2 method(XTAL_DEF ...xs)
-		,	head().template method<Ms...>(XTAL_REF_(xs)...)
+		XTAL_RN2_(template <auto ...Ms>
+		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ms...>(XTAL_REF_(xs)...)
 		)
 
 	};
@@ -273,20 +273,21 @@ struct link
 				XTAL_0EX
 				{
 					return _std::apply([&](XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(fx) (XTAL_REF_(xs)...))
-					,	arguments()
+						XTAL_0FN_(XTAL_REF_(fx) (XTAL_REF_(xs)...)),
+						arguments()
 					);
 				}
 
 				///\
-				Evaluates `T::value` using the bound arguments. \
+				Evaluates the lifted `method` using the bound arguments. \
 
 				template <auto ...Ms>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
 					return apply([this](XTAL_DEF ...xs)
-						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...)));
+						XTAL_0FN_(co::template method<Ms...>(XTAL_REF_(xs)...))
+					);
 				}
 				template <auto ...Ms>
 				XTAL_FN2 method(XTAL_DEF... xs)
@@ -333,13 +334,15 @@ struct link
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1));
+						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
+					);
 				}
 				XTAL_FNX efflux_request(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&](XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1));
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
+					);
 				}
 
 
@@ -361,21 +364,17 @@ struct link
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}
-				///\
-				Forwards the message *head* to `arguments`, bypassing `self`. \
-				If `~I_parity`, the argument at `I_parity` receives the full message. \
-
 				template <int I_parity=-1>
-				XTAL_FNX efflux_request_head(auto o, auto ...oo)
+				XTAL_FNX efflux_request_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (I_parity == -1)
-					{	return efflux_request(_std::move(o));
+					{	return efflux_request(_std::move(oo)...);
 					}
 					else
 					{	static_assert(0 <= I_parity);
 						return [&] <auto ...I>(seek_t<I...>)
-							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(o))
+							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(oo...))
 						(seek_v<sizeof...(Xs) - 1>);
 					}
 				}

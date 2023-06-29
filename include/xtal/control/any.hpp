@@ -102,8 +102,8 @@ struct define
 				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
 				resolving the template-parameters using member-variables. \
 
-				XTAL_RN2_(template <typename ...Xs> XTAL_FN2 reify()
-				,	_std::bind_front(deify<Xs...>(), &self())
+				XTAL_RN2_(template <typename ...Xs>
+				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
 				)
 
 				///\

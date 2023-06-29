@@ -85,7 +85,10 @@ struct defer<U>
 
 		template <typename ...Xs>
 		XTAL_FN2 reified_()
-		XTAL_0RN_(_detail::iterate_function_f(head().template reify<iteratee_t<Xs>...>()))
+		XTAL_0EX
+		{
+			return _detail::iterate_function_f(head().template reify<iteratee_t<Xs>...>());
+		}
 
 	public:
 		using co::co;
