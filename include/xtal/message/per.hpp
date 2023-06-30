@@ -23,27 +23,27 @@ public:
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 
 	public:
-//	using co::co;
+//	using S_::S_;
 		
 		XTAL_CN2_(subtype);
 		XTAL_CN4_(subtype);
 
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		:	S_(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
 		{
 		}
 		XTAL_NEW_(explicit) subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
+		:	S_((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RN4_(XTAL_FN2   rate(), co::template head<0>())
-		XTAL_RN4_(XTAL_FN2 period(), co::template head<1>())
+		XTAL_RN4_(XTAL_FN2   rate(), S_::template head<0>())
+		XTAL_RN4_(XTAL_FN2 period(), S_::template head<1>())
 
 	};
 };

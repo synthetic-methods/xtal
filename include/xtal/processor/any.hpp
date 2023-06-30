@@ -15,7 +15,65 @@ namespace _retail = xtal::process;
 #include "../concord/any.hxx"
 
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <typename T, typename Y=T>
+concept connected_p = any_p<T> and requires (T t)
+{
+	{t.serve()} -> isomorphic_q<Y>;
+};
+template <typename T, typename Y=T>
+concept collected_p = any_p<T> and requires (T t)
+{
+	{t.serve()} -> isomorphic_q<Y>;
+	{t.store()} -> isomorphic_q<Y>;
+};
+template <typename T, typename Y>
+concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
+
+
+template <int code=0>   struct iterate_access;
+template <          >   struct iterate_access<0> {XTAL_LET category = _v3::ranges::category::random_access;};
+template <          >   struct iterate_access<1> {XTAL_LET category = _v3::ranges::category::forward;};
+template <int code=0>
+XTAL_FZ2 iterate_access_f(XTAL_DEF z)
+XTAL_0EX
+{
+	using namespace _v3::ranges;
+	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, iterate_access<code>::category>;
+	return Z(XTAL_REF_(z));
+}
+template <int code=0>
+XTAL_FZ2 iterate_access_f(XTAL_DEF z)
+XTAL_0EX
+XTAL_IF2 {z.size();}
+{
+	using namespace _v3::ranges;
+	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, iterate_access<code>::category|category::sized>;
+	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
+}
+
+XTAL_LET iterate_function_f = [](XTAL_DEF f)
+XTAL_0FN_([g = XTAL_REF_(f)](XTAL_DEF ...xs)
+XTAL_0FN
+{
+	using namespace _v3::views;
+	if constexpr (0 == sizeof...(xs))
+	{	return iota(0)|transform([=](auto &&) XTAL_0FN_(g(XTAL_REF_(xs)...)));
+//	{	return generate(XTAL_MOV_(g));// FIXME?
+	}
+	else
+	if constexpr (1 == sizeof...(xs))
+	{	return transform(XTAL_REF_(xs)..., g);
+	}
+	else
+	{	return zip_with(g, XTAL_REF_(xs)...);
+	}
+});
+
+
+}///////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct define
@@ -29,44 +87,7 @@ struct refine
 };
 
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
-
-XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
-XTAL_0EX
-{
-	using namespace _v3::ranges;
-	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, category::forward>;
-	return Z(XTAL_REF_(z));
-}
-XTAL_FZ2 iterate_forward_f(XTAL_DEF z)
-XTAL_0EX
-XTAL_IF2 {z.size();}
-{
-	using namespace _v3::ranges;
-	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, category::forward|category::sized>;
-	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
-}
-XTAL_LET iterate_function_f = [](XTAL_DEF f)
-XTAL_0FN_([g = XTAL_REF_(f)](XTAL_DEF ...xs)
-XTAL_0FN
-{
-	using namespace _v3::views;
-	if constexpr (0 == sizeof...(xs))
-	{	return iota(0)|transform([=](auto &&) XTAL_0FN_(g(XTAL_REF_(xs)...)));
-//	{	return generate(_std::move(g));// FIXME?
-	}
-	else
-	if constexpr (1 == sizeof...(xs))
-	{	return transform(XTAL_REF_(xs)..., g);
-	}
-	else
-	{	return zip_with(g, XTAL_REF_(xs)...);
-	}
-});
-
-
-}///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename U>
 struct defer
@@ -81,7 +102,7 @@ struct defer<U>
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 
 		template <typename ...Xs>
 		XTAL_FN2 reified_()
@@ -91,9 +112,9 @@ struct defer<U>
 		}
 
 	public:
-		using co::co;
-		using co::self;
-		using co::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		///\
 		Defines the range-lifted form of `head` by `reify`ing the underlying `process`. \
@@ -106,23 +127,22 @@ struct defer<U>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::iterate_forward_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return _detail::iterate_access_f<1>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+		}
+		template <auto...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0EX
+		XTAL_IF2 (U const &u) {u.template method<>(XTAL_VAL_(iteratee_t<decltype(xs)>)...);}
+		{
+			return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+		//	return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
-		}
-		template <auto...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
-		XTAL_0EX
-		XTAL_IF2 (U const &u)
-		{
-			(void) u.template method<iteratee_t<decltype(xs)>...>(XTAL_REF_(xs)...);
-		}
-		{
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+		//	return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -136,10 +156,10 @@ struct defer<U>
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
 		///\
 		Deferred implementation of `T::value`. \
@@ -149,9 +169,11 @@ struct defer<U>
 		XTAL_0FX
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
-			auto const &v = co::template method<>();
-			auto const &m = co::template get<sequel_u>();
-			I const m_size = m.count();// `sizeof(m.size()) == sizeof(m::value_type) << 1`
+			auto const &v = S_::template method<>();
+			auto const &m = S_::template get<sequel_u>();
+		//	NOTE: Using `count_f` because `sizeof(m.size()) == sizeof(m::value_type) << 1`. \
+		
+			I const m_size = count_f(m);
 			I const v_size = v.size();
 			I const v_mask = v_size >> _realized::positive::depth;
 			I i = m.front();
@@ -182,27 +204,6 @@ struct refer
 {
 };
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <typename ...As>
-struct link
-{
-	using resize_u  = message::resize_t<>;
-	using sequel_u  = message::sequel_t<>;
-	using subkind = _retail::link<As..., sequel_u::attach, resize_u::attach>;
-
-	template <any_p S>
-	using subtype = compose_s<S, subkind>;
-
-};
-template <typename T>
-concept bond_p = any_p<T> and requires (T t)
-{
-	{t()} -> iterated_q;
-};
-template <typename ...Ts>
-concept bond_q = conjunct_q<bond_p<Ts>...>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

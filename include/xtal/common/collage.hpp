@@ -15,36 +15,36 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int N, typename V>
+template <typename V, int... Ns>
 struct collage
 {
-	using subkind = compose<collate<V>, collect<N>>;
+	using subkind = compose<collate<V>, collect<Ns...>>;
 
 	template <typename S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
-		using solid_t = typename co::solid::type;
-		using fluid_t = typename co::fluid::type;
+		using solid_t = typename S_::solid::type;
+		using fluid_t = typename S_::fluid::type;
 
-		using sequence_t = typename co::sequence ::type;
-		using product_t  = typename co::product  ::type;
-		using sum_t      = typename co::sum      ::type;
-		using series_t   = typename co::series   ::type;
-		using serial_t   = typename co::serial   ::type;
-		using pulsar_t   = typename co::pulsar   ::type;
-		using phasor_t   = typename co::phasor   ::type;
-		using siphon_t   = typename co::siphon   ::type;
+		using sequence_t = typename S_::sequence ::type;
+		using product_t  = typename S_::product  ::type;
+		using sum_t      = typename S_::sum      ::type;
+		using series_t   = typename S_::series   ::type;
+		using serial_t   = typename S_::serial   ::type;
+		using pulsar_t   = typename S_::pulsar   ::type;
+		using phasor_t   = typename S_::phasor   ::type;
+		using siphon_t   = typename S_::siphon   ::type;
 
 	};
 };
 
-template <int N, typename V>
-using collage_t = compose_t<collage<N, V>>;
+template <typename V, int... Ns>
+using collage_t = compose_s<unit_t, collage<V, Ns...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

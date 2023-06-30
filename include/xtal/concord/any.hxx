@@ -38,31 +38,32 @@ See `concord/any.hpp` for core implementations, and `*/any.hpp` for extensions. 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Defines a decorator tagged with the inheritance chain `...As`. \
+Tags `subtype` with this namespace and the supplied types. \
 
 template <typename ...As> struct any   : _retail::any<As..., any<>> {};
-template <typename ...As> using  any_t = typename any<As...>::template subtype<unit_t>;
+template <typename ...As> using  any_t = compose_s<unit_t, any<As...>>;
+
+///\
+Matches any `T` that inherits from `any_t<As...>`. \
 
 template <typename T, typename ...As>
 concept any_p = _std::derived_from<based_t<T>, any_t<As...>>;
-///<\
-Matches any class `T` that inherits from this instance of `any<As...>`. \
+
+template <typename ...Ts>
+concept any_q = conjunct_q<any_p<Ts>...>;
 
 
-template <template <typename...> typename ...As_>
-using only = any<comport_t<As_>...>;
-///<\
-Uses the supplied templates `As_` to tag `any` decorator. \
+///\
+Tags `subtype` with this namespace and the supplied templates. \
 
-template <template <typename...> typename ...As_>
-using only_t = any_t<comport_t<As_>...>;
-///<\
-Uses the supplied templates `As_` to tag `any_t` class. \
+template <template <typename...> typename ...As> using only   = any  <comport_t<As>...>;
+template <template <typename...> typename ...As> using only_t = any_t<comport_t<As>...>;
 
-template <typename T, template <typename...> typename A_>
-concept only_p = _std::derived_from<based_t<T>, only_t<A_>>;
-///<\
-Matches any class tagged with the given template. \
+///\
+Matches any `T` that inherits from `only_t<As...>`. \
+
+template <typename T, template <typename...> typename A>
+concept only_p = _std::derived_from<based_t<T>, only_t<A>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,28 +96,23 @@ struct confined
 	template <any_p S>
 	class subtype: public compose_s<S, homotype<subtype<S>>>
 	{
-		using co = compose_s<S, homotype<subtype<S>>>;
+		using S_ = compose_s<S, homotype<subtype<S>>>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
 	};
 };
+template <         typename ...As> using confined_t = compose_s<any_t<>, confined<As...>>;
+template <any_p S, typename ...As> using confined_s = compose_s<S,       confined<As...>>;
+
+
 template <typename ...As>
-using confined_t = compose_s<any_t<>, confined<As...>>;
+using confound = compose<confined<>, any<As>...>;
 
-template <typename S, typename ...As>
-using confined_s = compose_s<S, confined<As...>>;
+template <         typename ...As> using confound_t = compose_s<any_t<>, confound<As...>>;
+template <any_p S, typename ...As> using confound_s = compose_s<S,       confound<As...>>;
 
-
-////////////////////////////////////////////////////////////////////////////////
-///\
-Creates a _decorator_ that proxies `U` with `...any<As>`. \
-
-template <typename U, typename ...As> using label   = confined  <confer<U, any<As>...>>;
-template <typename U, typename ...As> using label_t = confined_t<confer<U, any<As>...>>;
-///<\
-Resolves `label<U, As...>::type`. \
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -146,6 +142,16 @@ template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_FWD_
 template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_FWD_(W) (w));}
 ///<\
 \returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Creates a _decorator_ that proxies `U` with `...any<As>`. \
+
+template <typename U, typename ...As> using label   = compose<lift<U>, any<As...>>;
+template <typename U, typename ...As> using label_t = compose_s<unit_t, label<U, As...>>;
+///<\
+Resolves `label<U, As...>::type`. \
 
 
 ///////////////////////////////////////////////////////////////////////////////

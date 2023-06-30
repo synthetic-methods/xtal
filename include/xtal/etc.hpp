@@ -113,10 +113,11 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_TYP                             decltype(auto)
 #define XTAL_TYP_(...)        ::std::decay_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
+#define XTAL_MOV_(...)                    ::std::move(__VA_ARGS__)
 #define XTAL_FWD_(...)           static_cast<         __VA_ARGS__ &&>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
-#define XTAL_DEF                                                  auto &&
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
+#define XTAL_DEF                                                  auto &&
 
 #define XTAL_NEW_(...)                      constexpr __VA_ARGS__
 #define XTAL_OPZ_(...)                      constexpr __VA_ARGS__       operator

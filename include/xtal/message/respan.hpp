@@ -23,11 +23,11 @@ public:
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-	//	using co::co;
-		using co::self;
+	//	using S_::S_;
+		using S_::self;
 		using span_t = U;
 
 		XTAL_CN2_(subtype);
@@ -36,12 +36,12 @@ public:
 		template <iterated_q W>
 		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(deranged_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
+		:	S_(deranged_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RN4_(XTAL_FN1 span(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
-		XTAL_RN4_(XTAL_FN2 size(), co::head().size())
+		XTAL_RN4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_RN4_(XTAL_FN2 size(), S_::head().size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX

@@ -32,10 +32,8 @@ struct any<A>
 	template <typename S>
 	class subtype: public S
 	{
-		using co = S;
-	
 	public:
-		using co::co;
+		using S::S;
 
 	};
 };
@@ -54,10 +52,8 @@ struct define
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-
 	public:
-		using co::co;
+		using S::S;
 		
 		///\returns `true`. \
 
@@ -84,8 +80,8 @@ struct define
 		using tuple_size = constant_t<(size_t) 0>;
 
 	protected:
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(_std::move(*this));}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(_std::move(*this));}
+		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
 		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
 		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
 		
@@ -96,8 +92,8 @@ struct define
 		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
 		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
 
-		template <size_t N>
-		using seek_s = void;
+		template <size_t N=0>
+		using seek_s = _std::conditional_t<N == 0, T, void>;
 
 		template <typename Y=T>
 		using self_s = _std::conditional_t<is_q<Y, T>, T, void>;
@@ -113,20 +109,18 @@ struct refine_as_head
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-	
 	public:
-		using co::co;
+		using S::S;
 
 	};
 	template <any_p S> requires (S::tuple_size::value == 1)
 	class subtype<S>: public S
 	{
-		using co = S; using U = typename co::head_t;
+		using U = typename S::head_t;
 
 	public:
-		using co::co;
-		using co::head;
+		using S::S;
+		using S::head;
 
 		///\
 		Implicit conversion to the singleton kernel-type. \
@@ -140,13 +134,11 @@ struct refine_as_tuple
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-	
 	public:
-		using co::co;
+		using S::S;
 
-		using tuple_type = XTAL_TYP_(XTAL_VAL_(co).tuple());
-		XTAL_RN4_(XTAL_OPZ tuple_type(), co::tuple())
+		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).tuple());
+		XTAL_RN4_(XTAL_OPZ tuple_type(), S::tuple())
 
 	};
 };
@@ -162,19 +154,19 @@ struct refine
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
 	};
 	template <any_p S> requires iterable_q<S>
 	class subtype<S>: public compose_s<S, subkind>, public iterate_t<T>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
 	};
 };
@@ -183,8 +175,9 @@ struct refine
 namespace _detail
 {//////////////////////////////////////////////////////////////////////////////
 
-template <typename T> concept dismember_p = debased_q<T>;// determine whether `T` should be dereferenced
-template <typename T> using      member_t = debased_t<T>;// convert references to pointers
+template <typename T> concept dismember_p =     debased_q<T>;// determine whether `T` should be dereferenced
+template <typename T> concept  remember_p = not debased_q<T>;
+template <typename T> using      member_t =     debased_t<T>;// convert references to pointers
 
 template <typename T>   XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_IF1 dismember_p<T> {return &XTAL_REF_(w);}// obtain address
 template <typename T>   XTAL_FZ2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<T>(XTAL_REF_(w));}
@@ -193,10 +186,9 @@ template <typename T>   XTAL_FZ2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<
 XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *XTAL_REF_(w);}// dereference address
 XTAL_FZ2 remember_y(XTAL_DEF w) XTAL_0EX                {return  XTAL_REF_(w);}
 
-XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *_std::move(XTAL_REF_(w));}// dereference address
-XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX                {return  _std::move(XTAL_REF_(w));}
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_IF2 {*w;} {return *XTAL_MOV_(XTAL_REF_(w));}// dereference address
+XTAL_FZ2 remember_x(XTAL_DEF w) XTAL_0EX                {return  XTAL_MOV_(XTAL_REF_(w));}
 
-template <typename T> concept remember_p = not dismember_p<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////
@@ -207,28 +199,28 @@ struct defer
 	template <any_p S>
 	class subtype: public compose_s<S>
 	{
-		using co = compose_s<S>;
-		using T = typename co::self_t;
-
-	public:
-		using head_t = U;
-		using body_t = debased_t<U>;
+		using S_ = compose_s<S>;
+		using T_ = typename S_::self_t;
+		using V  = debased_t<U>;
 
 	protected:
-		template <typename Y=T> using self_s = _std::conditional_t<is_q<Y, U>, subtype, typename co::template self_s<Y>>;
-		template <size_t   N=0> using seek_s = _std::conditional_t<N == 0,     subtype, typename co::template seek_s<N - 1>>;
+		template <typename Y=T_> using self_s = _std::conditional_t<is_q<Y, U>, subtype<S>, typename S_::template self_s<Y>>;
+		template <size_t   N=0 > using seek_s = _std::conditional_t<N == 0,     subtype<S>, typename S_::template seek_s<N - 1>>;
 		
-		body_t body_m;
-	//	body_t body_m {};
+		V body_m;
+	//	V body_m {};
 
 	public:
+	//	using S_::S_;
+		using head_t = U;
+		using body_t = V;
 		///\
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
 
 		XTAL_NEW_(explicit) subtype(XTAL_DEF w, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	co(XTAL_REF_(ws)...)
+		:	S_(XTAL_REF_(ws)...)
 		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
 		{
 		}
@@ -241,19 +233,21 @@ struct defer
 		}
 		XTAL_CN4_(subtype);
 		XTAL_CN2_(subtype);
-	//	using co::co;
 
 
-		XTAL_RN4_(template <typename W=T> XTAL_FN2 self(), co::template cast<self_s<W>>())
-		XTAL_RN4_(template <size_t   N=0> XTAL_FN2 seek(), co::template cast<seek_s<N>>())
+		XTAL_RN4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
+		XTAL_RN4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
 
-		XTAL_RN4_(XTAL_FN2 tail(), co::template cast<co>())
+		XTAL_RN4_(XTAL_FN2 tail(), S_::template cast<S_>())
+		XTAL_RN4_(template <size_t N_index>
+		XTAL_FN2 tail(), seek<N_index + 1>()
+		)
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_RN4_(template <size_t N_index=0>
-		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...))
-		
+		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...)
+		)
 		XTAL_FN2 head() XTAL_0FX_(&&) {return _detail::remember_x(body_m);}
 		XTAL_FN2 head() XTAL_0EX_(&&) {return _detail::remember_x(body_m);}
 		XTAL_FN2 head() XTAL_0FX_( &) {return _detail::remember_y(body_m);}
@@ -266,6 +260,7 @@ struct defer
 		}
 		XTAL_FN1 heady(body_t v)
 		XTAL_0EX
+		XTAL_IF1 _detail::remember_p<U>
 		{
 			_std::swap(body_m, v); return _detail::remember_x(v);
 		}
@@ -278,8 +273,8 @@ struct defer
 		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
 		XTAL_0FX
 		{
-			return [f_ = XTAL_REF_(f), this] <size_t ...I>(seek_t<I...>)
-				XTAL_0FN_(f_(head<I>()...)) (seek_v<tuple_size::value>);
+			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
+				XTAL_0FN_(g(head<I>()...)) (seek_v<tuple_size::value>);
 		}
 		
 		XTAL_FN2 tuple()
@@ -287,7 +282,7 @@ struct defer
 		{
 			return apply(bundle_f);
 		}
-		using tuple_size = constant_t<co::tuple_size::value + 1>;
+		using tuple_size = constant_t<S_::tuple_size::value + 1>;
 		
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
@@ -338,7 +333,7 @@ struct defer
 		XTAL_OP2_(bool) == (subtype const &t)
 		XTAL_0FX
 		{
-			return has(t.head()) and co::operator==(static_cast<co const &>(t));
+			return has(t.head()) and S_::operator==(static_cast<S_ const &>(t));
 		}
 
 	};
@@ -357,11 +352,9 @@ struct refer_to_comparators<U>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-	
 	public:
-		using co::co;
-		using co::head;
+		using S::S;
+		using S::head;
 
 	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return head() <=> t.head();}
 		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return head() ==  t.head();}
@@ -388,15 +381,13 @@ struct refer_to_logic_operators<U, 1>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-	
 	protected:
-		using co::body_m;
+		using S::body_m;
 
 	public:
-		using co::co;
-		using co::self;
-		using co::head;
+		using S::S;
+		using S::self;
+		using S::head;
 
 		XTAL_OP1>>=(XTAL_DEF           i) XTAL_0EX {return body_m>>= (XTAL_REF_(i)), self();}
 		XTAL_OP1<<=(XTAL_DEF           i) XTAL_0EX {return body_m<<= (XTAL_REF_(i)), self();}
@@ -420,24 +411,23 @@ struct refer_to_logic_operators<U, 2>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-		using T = typename co::self_t;
+		using T_ = typename S::self_t;
 
 	public:
-		using co::co;
-		using co::head;
+		using S::S;
+		using S::head;
 
-		XTAL_OP2>> (XTAL_DEF           i) XTAL_0FX {return T(head() >>  (XTAL_REF_(i)));}
-		XTAL_OP2<< (XTAL_DEF           i) XTAL_0FX {return T(head() <<  (XTAL_REF_(i)));}
-		XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  % U(XTAL_REF_(w)));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  & U(XTAL_REF_(w)));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  | U(XTAL_REF_(w)));}
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  ^ U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head()  - U(XTAL_REF_(w)));}
+		XTAL_OP2>> (XTAL_DEF           i) XTAL_0FX {return T_(head() >>  (XTAL_REF_(i)));}
+		XTAL_OP2<< (XTAL_DEF           i) XTAL_0FX {return T_(head() <<  (XTAL_REF_(i)));}
+		XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  % U(XTAL_REF_(w)));}
+		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  & U(XTAL_REF_(w)));}
+		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  | U(XTAL_REF_(w)));}
+		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  ^ U(XTAL_REF_(w)));}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  + U(XTAL_REF_(w)));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  - U(XTAL_REF_(w)));}
 
-		XTAL_OP2 ~ () XTAL_0FX {return T(~head());}
-		XTAL_OP2 - () XTAL_0FX {return T(-head());}
+		XTAL_OP2 ~ () XTAL_0FX {return T_(~head());}
+		XTAL_OP2 - () XTAL_0FX {return T_(-head());}
 
 	};
 };
@@ -457,15 +447,13 @@ struct refer_to_arithmetic_operators<U, 1>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-
 	protected:
-		using co::body_m;
+		using S::body_m;
 
 	public:
-		using co::co;
-		using co::self;
-		using co::head;
+		using S::S;
+		using S::self;
+		using S::head;
 
 		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m *=U(XTAL_REF_(w)), self();}
 		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m /=U(XTAL_REF_(w)), self();}
@@ -480,17 +468,16 @@ struct refer_to_arithmetic_operators<U, 2>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-		using T = typename co::self_t;
+		using T_ = typename S::self_t;
 	
 	public:
-		using co::co;
-		using co::head;
+		using S::S;
+		using S::head;
 
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head() * U(XTAL_REF_(w)));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head() / U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head() + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T(head() - U(XTAL_REF_(w)));}
+		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() * U(XTAL_REF_(w)));}
+		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() / U(XTAL_REF_(w)));}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() + U(XTAL_REF_(w)));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() - U(XTAL_REF_(w)));}
 
 	};
 };
@@ -505,11 +492,9 @@ struct refer_to_range_operators<U>
 	template <any_p S>
 	class subtype: public S
 	{
-		using co = S;
-
 	public:
-		using co::co;
-		using co::head;
+		using S::S;
+		using S::head;
 
 		XTAL_FN2 begin() XTAL_0EX                                    {return head().begin();}
 		XTAL_FN2   end() XTAL_0EX                                    {return head().  end();}
@@ -520,10 +505,8 @@ struct refer_to_range_operators<U>
 	template <any_p S> requires iterated_q<S> or iterable_q<S>
 	class subtype<S>: public S
 	{
-		using co = S;
-	
 	public:
-		using co::co;
+		using S::S;
 
 	};
 };

@@ -19,13 +19,13 @@ struct resize
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 		using size_t = U;
 
-		XTAL_RN2_(XTAL_FN1 size(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN2_(XTAL_FN1 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_RN2_(XTAL_FN2 empty(), 0 == size())
 
 	};

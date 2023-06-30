@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-
+#include "./ordinal.hpp"
 
 
 
@@ -10,17 +10,14 @@ XTAL_ENV_(push)
 namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//\
-TODO: Maybe revise this to allow `enum`. \
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int N, typename ...As>
-using stage = label<constant_t<N>, As...>;
+template <typename ...As>
+using stage = ordinal<As..., struct __stage__>;
 
-template <int N, typename ...As>
-using stage_t = compose_s<any_t<>, stage<N, As...>>;
+template <typename ...As>
+using stage_t = compose_s<any_t<>, stage<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

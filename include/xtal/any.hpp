@@ -57,7 +57,7 @@ template <typename ...Ts >    using conjunct_t = _std::conjunction<Ts...>;
 template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
 
 template <auto        N  >    using constant_t = _std::integral_constant<XTAL_TYP_(N), N>;
-template <auto        N  > XTAL_LET constant_o = constant_t<N>();
+template <auto        N  > XTAL_FZ2 constant_f() {using T = constant_t<N>; return T();};
 template <typename    T  >  concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
 template <typename ...Ts >  concept constant_q = conjunct_q<constant_p<Ts>...>;
 
@@ -315,7 +315,7 @@ XTAL_0FN_(deranged_t<decltype(x)>(XTAL_REF_(x)));
 
 using count_t = _std::make_unsigned_t<size_t>;
 
-template <typename    T  >  concept counted_p  = is_q<T, iterated_t<iteratee_t<T>>>;
+template <typename    T  >  concept counted_p  = iterated_q<T> and is_q<iterator_t<T>, iterator_t<iteratee_t<T>>>;//is_q<T, iterated_t<iteratee_t<T>>>;
 template <typename    T  >  concept counter_p  = integral_q<T>;
 
 template <typename ...Ts >  concept counted_q  = (counted_p<Ts> and ...);

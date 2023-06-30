@@ -26,11 +26,11 @@ struct define
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
-		using co::self;
+		using S_::S_;
+		using S_::self;
 
 		///\
 		Influx operator: resolves the message for `this` before any dependencies, \
@@ -159,12 +159,12 @@ struct defer
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
-		using co::self;
-		using co::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		///\note\
 		Influxes `this`, then the proxied value if supported.
@@ -173,12 +173,12 @@ struct defer
 		XTAL_0EX
 		XTAL_IF1 any_p<U>
 		{
-			return XTAL_FLX_(head().influx(oo...)) (co::influx(XTAL_REF_(oo)...));
+			return XTAL_FLX_(head().influx(oo...)) (S_::influx(XTAL_REF_(oo)...));
 		}
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return co::influx(XTAL_REF_(oo)...);
+			return S_::influx(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -188,12 +188,12 @@ struct defer
 		XTAL_0EX
 		XTAL_IF1 any_p<U>
 		{
-			return XTAL_FLX_(co::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
+			return XTAL_FLX_(S_::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return co::efflux(XTAL_REF_(oo)...);
+			return S_::efflux(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -202,12 +202,12 @@ struct defer
 		XTAL_FNX defuse(U u)
 		XTAL_0EX
 		{
-			return co::has(u) or (co::head(u), 0);
+			return S_::has(u) or (S_::head(u), 0);
 		}
 		XTAL_FNX defuse(XTAL_DEF w)
 		XTAL_0EX
 		{
-			return co::defuse(XTAL_REF_(w));
+			return S_::defuse(XTAL_REF_(w));
 		}
 
 	};

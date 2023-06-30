@@ -14,7 +14,7 @@ namespace xtal::processor::__any
 using namespace xtal::__any;
 
 template <typename V, int N>
-using sequence_t = typename collage_t<N, V>::sequence_t;
+using sequence_t = typename collage_t<V, N>::sequence_t;
 
 
 ////////////////////////////////////////////////////////////////////////////////

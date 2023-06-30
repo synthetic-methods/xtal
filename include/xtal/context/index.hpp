@@ -11,10 +11,35 @@ namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using index_t = typename realized::iota_t;
+////////////////////////////////////////////////////////////////////////////////
 
-template <typename S=confined_t<>, typename T=index_t>
-using index_s = compose_s<S, confer<T, any<struct index>>>;
+template <typename U=_std::ptrdiff_t>
+struct index
+{
+	using value_type = U;
+	using subkind = confer<value_type, only<index>>;
+
+	template <concord::any_q S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
+
+	public:
+		using S_::S_;
+
+		template <int N_switch=0> requires sign_q<N_switch>
+		XTAL_FZ2 limit(XTAL_DEF... oo)
+		{
+			using L = _std::numeric_limits<U>;
+			if constexpr (N_switch == -1) return subtype(L::min(), XTAL_REF_(oo)...);
+			if constexpr (N_switch ==  0) return subtype(0,        XTAL_REF_(oo)...);
+			if constexpr (N_switch == +1) return subtype(L::max(), XTAL_REF_(oo)...);
+		}
+
+	};
+};
+template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
+using index_s = compose_s<S, index<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -26,10 +26,10 @@ struct define
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
 		///\
 		Attaches `T` as a member of `this`. \
@@ -41,10 +41,10 @@ struct define
 			template <conflux::any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using R_ = compose_s<R, subkind>;
 			
 			public:
-			//	using co::co;
+			//	using R_::R_;
 
 				XTAL_CN2_(subtype);
 				XTAL_CN4_(subtype);
@@ -55,7 +55,7 @@ struct define
 
 				XTAL_NEW_(explicit) subtype(XTAL_DEF ...xs)
 				XTAL_0EX
-				:	co(T(), XTAL_REF_(xs)...)
+				:	R_(T(), XTAL_REF_(xs)...)
 				{
 				}
 
@@ -74,17 +74,17 @@ struct define
 			template <conflux::any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using R_ = compose_s<R, subkind>;
 			
 			public:
-			//	using co::co;
-				using co::self;
+			//	using R_::R_;
+				using R_::self;
 
 				XTAL_CN2_(subtype);
 				XTAL_CN4_(subtype);
 
 				XTAL_NEW_(explicit) subtype(size_t const &n)
-				:	co(n)
+				:	R_(n)
 				{
 					assert(0 <= n and n < N_arity);
 				}
@@ -92,11 +92,8 @@ struct define
 				///\
 				Alias of `method` that resolves the template-parameters using member-variables. \
 
-				XTAL_OP2() (XTAL_DEF ...xs)
-				XTAL_0EX
-				{
-					return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);
-				}
+				XTAL_OP2() (XTAL_DEF ...xs) XTAL_0EX {return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);}
+				XTAL_OP2() (XTAL_DEF ...xs) XTAL_0FX {return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);}
 
 				///\
 				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
@@ -119,7 +116,7 @@ struct define
 				XTAL_FN2 deify(auto const &fs)
 				XTAL_0FX
 				{
-					return co::deify(fs[co::head()]);
+					return R_::deify(fs[R_::head()]);
 				}
 
 				///\
@@ -136,7 +133,7 @@ struct define
 						XTAL_FZ2 method_f(seek_t<I...>)
 						XTAL_0EX
 						{
-							using doing = typename co::template being<Xs...>;
+							using doing = typename R_::template being<Xs...>;
 							return _std::array{(doing::template method<Ms..., I>)...};
 						}
 						XTAL_LET method_m = method_f(seek_v<N_arity>);
@@ -159,11 +156,11 @@ struct define
 			template <conflux::any_p R> requires (T::tuple_size::value == 0)
 			class subtype: public compose_s<R, subkind>
 			{
-				using co = compose_s<R, subkind>;
+				using R_ = compose_s<R, subkind>;
 			
 			public:
-				using co::co;
-				using co::defuse;
+				using R_::R_;
+				using R_::defuse;
 
 				XTAL_FNX defuse(XTAL_DEF_(is_q<T>) t)
 				XTAL_0EX
@@ -179,22 +176,21 @@ struct define
 			template <conflux::any_p R>
 			class subtype: public compose_s<R>
 			{
-				using co = compose_s<R>;
+				using R_ = compose_s<R>;
 
 				using event_t = context::delay_s<T>;
 				using delay_t = typename event_t::head_t;
-				using limit_t = _std::numeric_limits<delay_t>;
-				using queue_t = typename collage_t<N_event, event_t>::siphon_t;
+				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
 
 				delay_t d_{0};
-				queue_t q_{(event_t) limit_t::min(), (event_t) limit_t::max()};
+				queue_t q_{event_t::template limit<-1>(), event_t::template limit<+1>()};
 
 			public:
-				using co::co;
-				using co::self;
+				using R_::R_;
+				using R_::self;
 
 
-				using co::influx;
+				using R_::influx;
 				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
 
 				XTAL_FNX influx(event_t dot, XTAL_DEF ...oo)
@@ -203,8 +199,8 @@ struct define
 					if (dot.head() < d_ and q_.empty())
 					{	q_.abandon().head(d_ = 0);
 					}
-					q_.push(_std::move(dot));
-					return co::influx(oo...);
+					q_.push(XTAL_MOV_(dot));
+					return R_::influx(oo...);
 				}
 				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -237,22 +233,21 @@ struct define
 			template <conflux::any_p R>
 			class subtype: public compose_s<R>
 			{
-				using co = compose_s<R>;
+				using R_ = compose_s<R>;
 
 				using event_t = context::delay_s<T>;
 				using delay_t = typename event_t::head_t;
-				using limit_t = _std::numeric_limits<delay_t>;
-				using queue_t = typename collage_t<N_event, event_t>::siphon_t;
+				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
 
-				queue_t q_{(event_t) limit_t::max()};
+				queue_t q_{event_t::template limit<1>()};
 
 				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().template head<1>())
 				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().template head<0>())
 				XTAL_FN2 last_head()
 				XTAL_0FX
 				{
-					if constexpr (requires {{co::relay()} -> is_q<delay_t>;})
-					{	return co::relay();
+					if constexpr (requires {{R_::relay()} -> is_q<delay_t>;})
+					{	return R_::relay();
 					}
 					else
 					{	return delay_t(self().size());
@@ -268,10 +263,10 @@ struct define
 				XTAL_FN1_(delay_t) relay(delay_t i)
 				XTAL_0EX
 				{
-					if constexpr (requires {{co::relay(i)} -> is_q<delay_t>;})
-					{	co::relay(i);
+					if constexpr (requires {{R_::relay(i)} -> is_q<delay_t>;})
+					{	R_::relay(i);
 						for (; 0 < q_.size() and next_head() <= i; q_.pop())
-						{	(void) co::influx(next_tail());
+						{	(void) R_::influx(next_tail());
 						}
 					}
 					return relay();
@@ -308,9 +303,9 @@ struct define
 				}
 
 			public:
-				using co::co;
-				using co::self;
-				using co::influx;
+				using R_::R_;
+				using R_::self;
+				using R_::influx;
 				///\
 				Invokes `influx` if the given delay `i == 0`, \
 				otherwise enqueues the events `o, o...` at the specified index. \
@@ -322,7 +317,7 @@ struct define
 					{	return influx(dot.tail(), XTAL_REF_(oo)...);
 					}
 					else
-					{	q_.push(_std::move(dot));
+					{	q_.push(XTAL_MOV_(dot));
 						return influx(XTAL_REF_(oo)...);
 					}
 				}
@@ -339,10 +334,10 @@ struct define
 			template <conflux::any_p R> requires (N_event == 0)
 			class subtype<R>: public compose_s<R>
 			{
-				using co = compose_s<R>;
+				using R_ = compose_s<R>;
 
 			protected:
-				using relay_t = context::delay_t;
+				using relay_t = value_t<context::delay<>>;
 				XTAL_FN1_(relay_t) relay()          XTAL_0EX {return self().size();}
 				XTAL_FN1_(relay_t) relay(relay_t i) XTAL_0EX {return self().size();}
 
@@ -351,8 +346,8 @@ struct define
 				XTAL_FN0 redux(auto const &f, auto  &n) XTAL_0EX {f(0, relay(), n);}
 
 			public:
-				using co::co;
-				using co::self;
+				using R_::R_;
+				using R_::self;
 
 			};
 		};
@@ -381,12 +376,12 @@ struct defer<W>
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 
-		using dispatch = typename co::template dispatch<value_v<W>>;
+		using dispatch = typename S_::template dispatch<value_v<W>>;
 
 	};
 };

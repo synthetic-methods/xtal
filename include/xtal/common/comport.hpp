@@ -13,7 +13,7 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename...> typename T_>
+template <template <typename...> typename F>
 struct comport
 {
 	class type
@@ -22,18 +22,16 @@ struct comport
 	template <typename S>
 	class subtype: public S, public virtual type
 	{
-		using co = S;
-	
 	public:
-		using co::co;
+		using S::S;
 
 	};
 };
-template <template <typename...> typename T_>
-using comport_t = typename comport<T_>::type;
+template <template <typename...> typename F>
+using comport_t = typename comport<F>::type;
 
-template <typename T, template <typename...> typename T_>
-concept comport_p = _std::derived_from<based_t<T>, comport_t<T_>>;
+template <typename T, template <typename...> typename F>
+concept comport_p = _std::derived_from<based_t<T>, comport_t<F>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

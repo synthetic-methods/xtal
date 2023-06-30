@@ -17,20 +17,20 @@ struct realize;
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
-template <template <typename> typename T_>
+template <template <typename> typename F>
 struct create
 {
-	class type: public T_<type>
+	class type: public F<type>
 	{
-		using co = T_<type>;
+		using S_ = F<type>;
 
 	public:
-		using co::co;
+		using S_::S_;
 
 	};
 };
-template <template <typename> typename T_>
-using create_t = typename create<T_>::type;
+template <template <typename> typename F>
+using create_t = typename create<F>::type;
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -47,20 +47,19 @@ struct collate
 		class homotype: public S
 		{
 			friend T;
-			using co = S;
 
 		public:
-			using co::co;
+			using S::S;
 
 			///\returns `*this` with type `Y=T`. \
 
-			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y const &&>(_std::move(*this));}
-			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y       &&>(_std::move(*this));}
+			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) XTAL_IF1 is_q<Y, T> {return static_cast<Y       &&>(XTAL_MOV_(*this));}
 			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  XTAL_IF1 is_q<Y, T> {return static_cast<Y const  &>(*this);}
 			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  XTAL_IF1 is_q<Y, T> {return static_cast<Y        &>(*this);}
 
-			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return reinterpret_cast<Y const &&>(_std::move(*this));}
-			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return reinterpret_cast<Y       &&>(_std::move(*this));}
+			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return reinterpret_cast<Y const &&>(XTAL_MOV_(*this));}
+			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return reinterpret_cast<Y       &&>(XTAL_MOV_(*this));}
 			template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return reinterpret_cast<Y const  &>(*this);}
 			template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return reinterpret_cast<Y        &>(*this);}
 
@@ -83,14 +82,12 @@ struct collate
 	template <typename S>
 	class subtype: public S
 	{
-		using co = S;
-
-		XTAL_LET N_size = co::volume::value;
+		XTAL_LET N_size = S::volume::value;
 
 	public:
-		using co::co;
-		using solid = semitype<typename co::template solid<V>::type>;
-		using fluid = semitype<typename co::template fluid<V>::type>;
+		using S::S;
+		using solid = semitype<typename S::template solid<V>::type>;
+		using fluid = semitype<typename S::template fluid<V>::type>;
 		///\
 		Represents a scalable `static_vector`. \
 
@@ -103,30 +100,30 @@ struct collate
 			class homotype: public hemitype<T>
 			{
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				template <bracket_q U> requires (not is_q<U, V>)
 				XTAL_NEW_(explicit) homotype(U &&u)
-				:	co()
+				:	R_()
 				{
-					_detail::move_to(co::begin(), u);
+					_detail::move_to(R_::begin(), u);
 				}
 				template <bracket_q U> requires (not is_q<U, V>)
 				XTAL_NEW_(explicit) homotype(U const &u)
-				:	co()
+				:	R_()
 				{
-					_detail::copy_to(co::begin(), u);
+					_detail::copy_to(R_::begin(), u);
 				}
 				XTAL_NEW homotype(bracket_t<V> etc)
 				XTAL_0EX
 				{
-					_detail::copy_to(co::begin(), etc);
+					_detail::copy_to(R_::begin(), etc);
 				}
 
 				template <typename U>
@@ -192,13 +189,13 @@ struct collate
 			class homotype: public hemitype<T>
 			{
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				///\
 				The counterpart to `this` for which addition is linear, \
@@ -264,13 +261,13 @@ struct collate
 			class homotype: public hemitype<T>
 			{
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				///\
 				The counterpart to `this` for which multiplication is linear. \
@@ -300,16 +297,16 @@ struct collate
 			class homotype: public hemitype<T>
 			{
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 				template <typename Y>
 				using duel_t = typename Y::template dual_t<T>;
 
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				///\
 				Generates part of the complex sinusoid determined by `std::pow(2, shift_o::value)`. \
@@ -334,7 +331,7 @@ struct collate
 				XTAL_0EX
 				{
 					auto &s = self();
-					using I = typename co::difference_type;
+					using I = typename R_::difference_type;
 
 				//	Compute the start- and end-points for the required segment:
 					I constexpr H_limit = N_limit >> 1;
@@ -376,15 +373,15 @@ struct collate
 				XTAL_IF1 complex_q<V>
 				{
 				//	Initialize the forwards and backwards iterators:
-					auto const i = co::begin();
-					auto const j = co::rend() - 1;
+					auto const i = R_::begin();
+					auto const j = R_::rend() - 1;
 					
 				//	Compute the fractional sinusoid for the given `N_size`:
 					auto constexpr x = _realized::template patio_y<-1>(N_size);
 					auto const     y = _realized::circle_y(x);// TODO: Make `constexpr`.
 					
 				//	Compute the initial `1/8`th then mirror the remaining segments:
-					typename co::difference_type constexpr N = N_size >> 2;// `1/8`th
+					typename R_::difference_type constexpr N = N_size >> 2;// `1/8`th
 					static_assert(-4 <  N_shift);
 					generate<N + (-3 <  N_shift)>(y);
 					if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*N, _std::span(i, i + 1*N), [](V const &v) XTAL_0FN_(V(-v.imag(), -v.real())));
@@ -486,14 +483,14 @@ struct collate
 				{
 					T &s = self();
 					if constexpr (complex_q<V>)
-					{	T(constant_o<-1>).convolve(s, t);
+					{	T(constant_f<-1>()).convolve(s, t);
 					}
 					else
 					{	using W = typename _realized::aphex_t;
 						using Y = typename compose_s<S, collate<W>>::series::type;
 						Y s_(s);
 						Y t_(t);
-						Y(constant_o<-1>).convolve(s_, t_);
+						Y(constant_f<-1>()).convolve(s_, t_);
 						_detail::move_to(s.begin(), s_, XTAL_1FN_(_std::real));
 					}
 					return s;
@@ -526,13 +523,13 @@ struct collate
 			//	TODO: Subclass to define serial pairs like `complex`. \
 
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				///\
 				Multiplication by linear convolution, truncated by `N_size`. \
@@ -572,12 +569,12 @@ struct collate
 			//	TODO: Subclass to define serial pairs like `complex`. \
 
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
 
 				///\
 				Produces the successor by pairwise addition starting from `begin()`, \
@@ -638,13 +635,13 @@ struct collate
 			//	TODO: Subclass to define serial pairs like `complex`. \
 
 				friend T;
-				using co = hemitype<T>;
+				using R_ = hemitype<T>;
 			
 			public:
-				using co::co;
-				using co::self;
-				using co::twin;
-				using co::datum;
+				using R_::R_;
+				using R_::self;
+				using R_::twin;
+				using R_::datum;
 
 				///\
 				Wraps the first argument to the range `+/- 1/2`, assuming `std::is_floating_point_v<V>`. \
@@ -669,9 +666,10 @@ struct collate
 
 			class type: public hemitype<type>
 			{
-				using co = hemitype<type>;
+				using R_ = hemitype<type>;
 
 				using fluid_t = typename fluid::type;
+				using point_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
 				fluid_t fluid_m;
@@ -679,7 +677,7 @@ struct collate
 				count_t   end_n = 0;
 
 			public:
-				using co::co;
+				using R_::R_;
 
 				///\note\
 				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead: \
@@ -711,10 +709,18 @@ struct collate
 				Cost can be amortized by invoking `advance` and `abandon` separately, \
 				allowing for branchless `advance`ment. \
 
+				XTAL_FN0 pop(point_t i)
+				XTAL_0EX
+				{
+					begin_n -= i < begin();
+					fluid_m.erase(i, 1);
+					abandon(begin() == end());
+				}
 				XTAL_FN0 pop()
 				XTAL_0EX
 				{
-					advance(); if (begin() == end()) abandon();
+					advance();
+					abandon(begin() == end());
 				}
 				///\returns the top-most element assuming `front()` is minimal \
 				(if initialized with two or more elements). \
@@ -725,19 +731,28 @@ struct collate
 					return *begin(end_n - 1);
 				}
 
+				XTAL_FN2 scan(V const &v)
+				XTAL_0EX
+				{
+					return _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
+				}
 				///\note\
 				Conflicting entries w.r.t. `==` are overwritten. \
 
 				XTAL_FN0 push(V v)
 				XTAL_0EX
 				{
-					auto v_ = _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
-					if (fluid_m.empty() or *v_ != v)
-					{	fluid_m.insert(v_, {_std::move(v)});
-					}
-					else
-					{	_std::swap(*v_, v);
-					}
+					auto v_ = scan(v); *v_ == v? _std::swap(*v_, v): poke(v_, XTAL_MOV_(v));
+				}
+				XTAL_FN0 poke(point_t v_, V v)
+				XTAL_0EX
+				{
+					fluid_m.insert(v_, {XTAL_MOV_(v)});
+				}
+				XTAL_FN0 poke(point_t v_, point_t u_)
+				XTAL_0EX
+				{
+					fluid_m.insert(v_, u_, 1);
 				}
 
 			};

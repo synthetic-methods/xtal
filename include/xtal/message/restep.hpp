@@ -19,13 +19,13 @@ struct restep
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using co = compose_s<S, subkind>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using co::co;
+		using S_::S_;
 		using step_t = U;
 
-		XTAL_RN4_(XTAL_FN1 step(XTAL_DEF... oo), co::head(XTAL_REF_(oo)...))
+		XTAL_RN4_(XTAL_FN1 step(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

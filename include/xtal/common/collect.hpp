@@ -124,10 +124,8 @@ struct collect
 	template <typename S>
 	class subtype: public S
 	{
-		using co = S;
-		
 	public:
-		using co::co;
+		using S::S;
 
 		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
 		
@@ -156,7 +154,7 @@ struct collect
 		{
 			class type: public iterate_t<type>
 			{
-				using co = iterate_t<type>;
+				using R_ = iterate_t<type>;
 				using A  = aligned_t<V>;
 
 				XTAL_FZ2 _ptr_f(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
@@ -170,8 +168,8 @@ struct collect
 				A* limit_m = block_m;
 
 			public:
-			//	using co;
-				using co::size;
+			//	using R_;
+				using R_::size;
 
 				using             value_type = V;
 				using         allocator_type = type;
@@ -517,7 +515,7 @@ struct collect
 				XTAL_FN1_(iterator) insert(I i, size_type sN, V &&v)
 				{
 					inject(i, sN);
-					_std::uninitialized_fill_n(i, sN, _std::move(v));
+					_std::uninitialized_fill_n(i, sN, XTAL_MOV_(v));
 					return i;
 				}
 

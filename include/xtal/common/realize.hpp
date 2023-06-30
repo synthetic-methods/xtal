@@ -110,17 +110,17 @@ struct rationalization
 :	systematization<N_size>
 {
 private:
-	using co = systematization<N_size>;
+	using S_ = systematization<N_size>;
 
 public:
-	using typename co::delta_t;
-	using typename co::sigma_t;
+	using typename S_::delta_t;
+	using typename S_::sigma_t;
 
 	XTAL_LET_(sigma_t) width = N_size;
 	XTAL_LET_(sigma_t) depth = N_size << 3;
 
-	XTAL_LET_(sigma_t) fraction_n =          co::fraction_n;
-	XTAL_LET_(sigma_t) exponent_n =          co::exponent_n;
+	XTAL_LET_(sigma_t) fraction_n =          S_::fraction_n;
+	XTAL_LET_(sigma_t) exponent_n =          S_::exponent_n;
 	XTAL_LET_(sigma_t) positive_n = fraction_n + exponent_n;
 	XTAL_LET_(sigma_t) negative_n = positive_n + 1;
 	XTAL_LET_(sigma_t)     unit_n = exponent_n - 1;
@@ -240,26 +240,26 @@ template <size_t N_size> requires alpha_q<typename rationalization<N_size>::alph
 struct realization<N_size>: rationalization<N_size>
 {
 private:
-	using co = rationalization<N_size>;
+	using S_ = rationalization<N_size>;
 
 public:
-	using typename co:: negative;
-	using typename co:: positive;
-	using typename co:: fraction;
-	using typename co:: exponent;
-	using typename co::     unit;
-	using typename co::     sign;
+	using typename S_:: negative;
+	using typename S_:: positive;
+	using typename S_:: fraction;
+	using typename S_:: exponent;
+	using typename S_::     unit;
+	using typename S_::     sign;
 
-	using typename co::   iota_t;
-	using typename co::  delta_t;
-	using typename co::  sigma_t;
-	using typename co::  alpha_t;
-	using typename co::mt19937_t;
+	using typename S_::   iota_t;
+	using typename S_::  delta_t;
+	using typename S_::  sigma_t;
+	using typename S_::  alpha_t;
+	using typename S_::mt19937_t;
 
 	using aphex_t = _std::complex<alpha_t>;
 
-	using co::width;
-	using co::depth;
+	using S_::width;
+	using S_::depth;
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
@@ -284,7 +284,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <typename Z, size_t N>
-	using product_t = typename collage_t<N, Z>::product_t;
+	using product_t = typename collage_t<Z, N>::product_t;
 
 	template <typename Z>
 	using single_t = product_t<Z, 1>;
@@ -350,7 +350,7 @@ public:
 	//	else...
 		alpha_t constexpr _0_5 = 0.5;
 		alpha_t constexpr _1_5 = 1.5;
-		delta_t o = _std::bit_cast<delta_t>(co::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
+		delta_t o = _std::bit_cast<delta_t>(S_::quake_v); o -= _std::bit_cast<delta_t>(w) >> 1;
 		alpha_t n = _std::bit_cast<alpha_t>(o);
 		alpha_t const k = w*_0_5;
 		if constexpr (N_lim < 0)
@@ -441,7 +441,7 @@ public:
 		if constexpr (N_zoom & 1)
 		{	return explo_y<N>(square_y(base), then*base);
 		}
-//		return explo_y(_std::move(base), N_zoom);
+//		return explo_y(XTAL_MOV_(base), N_zoom);
 	}
 	static_assert(explo_y<0>(alpha_t(2.0)) == 1.00);
 	static_assert(explo_y<1>(alpha_t(2.0)) == 2.00);
@@ -665,7 +665,7 @@ public:
 		delta_t u = _std::bit_cast<delta_t>(value);
 		u &= sign::mask;
 		u |= unit::mask;
-		return _std::bit_cast<alpha_t>(_std::move(u));
+		return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
 	#else
 		return __builtin_copysign((alpha_t) 1, value);
 	#endif
@@ -701,7 +701,7 @@ public:
 		delta_t m = _std::bit_cast<delta_t>(target);
 		m &=    ~sign::mask;
 		m |= n & sign::mask;
-		return _std::bit_cast<alpha_t>(_std::move(m));
+		return _std::bit_cast<alpha_t>(XTAL_MOV_(m));
 	#else
 		return __builtin_copysign(target, source);// constexpr
 	#endif
@@ -727,7 +727,7 @@ public:
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 		delta_t u = _std::bit_cast<delta_t>(target);
 		u &= positive::mask;
-		return _std::bit_cast<alpha_t>(_std::move(u));
+		return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
 	#else
 		return __builtin_copysign(target, (alpha_t) 1);// constexpr
 	#endif
@@ -894,7 +894,7 @@ public:
 			_   = m >> positive::depth;
 			n  |= _  & unit::mask;
 			t  -= _  & m;
-			return    _std::bit_cast<alpha_t>(_std::move(n));
+			return    _std::bit_cast<alpha_t>(XTAL_MOV_(n));
 		}
 		else
 		{	alpha_t const t = N_zero? minimal_y(zone - 1): upsilon_y(N_zoom, zone);

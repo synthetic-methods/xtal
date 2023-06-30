@@ -258,7 +258,7 @@ Implemented:
 -	Processor  streaming:      `processor/monomer.hpp` by effluxing `message/serial.hpp`.
 -	Process    templating:     `process/any.hpp#define`, `message/any.hpp#dispatch`.
 -	Function   lifting:        `{process,processor}/any.hpp#defer`.
--	Dependency management:     `conflux/any.hpp` and `process/any.hpp#link`.
+-	Dependency management:     `conflux/any.hpp` and `process/any.hpp#monomer`.
 -	Buffer     sharing:        `processor/monomer.hpp#{influx,efflux}`.
 -	Buffer     convolution:    `common/collate.hpp#{series,serial}` incl. FFT.
 -	Numeric    conditioning:   `common/realize.hpp#{truncate,puncture}`

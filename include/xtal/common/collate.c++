@@ -14,7 +14,7 @@ namespace xtal::common::__collate
 using namespace xtal::__any;
 
 
-template <typename V, int N> using collection = compose_t<collect<N>, collate<V>>;
+template <typename V, int N> using collection = compose_s<unit_t, collect<N>, collate<V>>;
 
 template <typename V, int N> using fluid_t    = typename collection<V, N>::fluid::type;
 template <typename V, int N> using siphon_t   = typename collection<V, N>::siphon::type;
@@ -119,7 +119,7 @@ TEST_CASE("xtal/common/collate.hpp: series transformation")
 
 	using series_s = series_t<aphex_t, O>;
 	using series_u = series_t<aphex_t, N>;
-	series_s basis(constant_o<-1>);
+	series_s basis(constant_f<-1>());
 
 	series_u source;
 	source[0] = source[M - 0] = aphex_t(0.0, 0.0);
@@ -150,7 +150,7 @@ TEST_CASE("xtal/common/collate.hpp: series convolution")
 	sigma_t constexpr M = N  - 1;
 
 	using series_u = series_t<aphex_t, N>;
-	series_u basis(constant_o<-1>);
+	series_u basis(constant_f<-1>());
 
 	series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 	series_u rhs = {1, 0, 1, 0, 0, 0, 0, 0};
