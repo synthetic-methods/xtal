@@ -89,6 +89,107 @@ struct collate
 		using solid = semitype<typename S::template solid<V>::type>;
 		using fluid = semitype<typename S::template fluid<V>::type>;
 		///\
+		Event spool based on a insertion-sorted `std::array`. \
+		
+		struct spool
+		{
+			template <typename T>
+			using hemitype = typename semitype<iterate_t<T>>::template homotype<T>;
+
+			class type: public hemitype<type>
+			{
+				using R_ = hemitype<type>;
+
+				using fluid_t = typename fluid::type;
+				using point_t = typename fluid_t::iterator;
+				using count_t = typename fluid_t::difference_type;
+
+				fluid_t fluid_m;
+				count_t begin_n = 0;
+				count_t   end_n = 0;
+
+			public:
+				using R_::R_;
+
+				///\note\
+				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead: \
+				- `1 == w.size()`: represents the next value only. \
+				- `2 == w.size()`: represents the current and next values respectively. \
+
+				XTAL_NEW type(bracket_t<V> w)
+				:	end_n {_std::distance(w.begin(), w.end())}
+				,	fluid_m(w)
+				{
+					assert(0 < w.size());
+				}
+
+				XTAL_RN2_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
+				XTAL_RN2_(XTAL_FN2   end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
+				
+				XTAL_FN2    next(bool n=1) XTAL_0EX {return *begin(n);}
+				XTAL_FN1 advance(bool n=1) XTAL_0EX {begin_n += n; return *begin();}
+				XTAL_FN1 abandon(bool n=1)
+				XTAL_0EX
+				{
+					if (n)
+					{	begin_n = 0;
+						fluid_m.erase(fluid_m.begin(), end());
+					}
+					return *begin();
+				}
+				///\note\
+				Cost can be amortized by invoking `advance` and `abandon` separately, \
+				allowing for branchless `advance`ment. \
+
+				XTAL_FN0 pop(point_t i)
+				XTAL_0EX
+				{
+					begin_n -= i < begin();
+					fluid_m.erase(i, 1);
+					abandon(begin() == end());
+				}
+				XTAL_FN0 pop()
+				XTAL_0EX
+				{
+					advance();
+					abandon(begin() == end());
+				}
+				///\returns the top-most element assuming `front()` is minimal \
+				(if initialized with two or more elements). \
+				
+				XTAL_FN2 top()
+				XTAL_0EX
+				{
+					return *begin(end_n - 1);
+				}
+
+				XTAL_FN2 scan(V const &v)
+				XTAL_0EX
+				{
+					return _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
+				}
+				///\note\
+				Conflicting entries w.r.t. `==` are overwritten. \
+
+				XTAL_FN0 push(V v)
+				XTAL_0EX
+				{
+					auto v_ = scan(v); *v_ == v? _std::swap(*v_, v): poke(v_, XTAL_MOV_(v));
+				}
+				XTAL_FN0 poke(point_t v_, V v)
+				XTAL_0EX
+				{
+					fluid_m.insert(v_, {XTAL_MOV_(v)});
+				}
+				XTAL_FN0 poke(point_t v_, point_t u_)
+				XTAL_0EX
+				{
+					fluid_m.insert(v_, u_, 1);
+				}
+
+			};
+		};
+		///\
 		Represents a scalable `static_vector`. \
 
 		struct sequence
@@ -655,107 +756,6 @@ struct collate
 
 			};
 			using type = _detail::create_t<homotype>;
-		};
-		///\
-		Event spool based on a insertion-sorted `std::array`. \
-		
-		struct siphon
-		{
-			template <typename T>
-			using hemitype = typename semitype<iterate_t<T>>::template homotype<T>;
-
-			class type: public hemitype<type>
-			{
-				using R_ = hemitype<type>;
-
-				using fluid_t = typename fluid::type;
-				using point_t = typename fluid_t::iterator;
-				using count_t = typename fluid_t::difference_type;
-
-				fluid_t fluid_m;
-				count_t begin_n = 0;
-				count_t   end_n = 0;
-
-			public:
-				using R_::R_;
-
-				///\note\
-				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead: \
-				- `1 == w.size()`: represents the next value only. \
-				- `2 == w.size()`: represents the current and next values respectively. \
-
-				XTAL_NEW type(bracket_t<V> w)
-				:	end_n {_std::distance(w.begin(), w.end())}
-				,	fluid_m(w)
-				{
-					assert(0 < w.size());
-				}
-
-				XTAL_RN2_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
-				XTAL_RN2_(XTAL_FN2   end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
-				
-				XTAL_FN2    next(bool n=1) XTAL_0EX {return *begin(n);}
-				XTAL_FN1 advance(bool n=1) XTAL_0EX {begin_n += n; return *begin();}
-				XTAL_FN1 abandon(bool n=1)
-				XTAL_0EX
-				{
-					if (n)
-					{	begin_n = 0;
-						fluid_m.erase(fluid_m.begin(), end());
-					}
-					return *begin();
-				}
-				///\note\
-				Cost can be amortized by invoking `advance` and `abandon` separately, \
-				allowing for branchless `advance`ment. \
-
-				XTAL_FN0 pop(point_t i)
-				XTAL_0EX
-				{
-					begin_n -= i < begin();
-					fluid_m.erase(i, 1);
-					abandon(begin() == end());
-				}
-				XTAL_FN0 pop()
-				XTAL_0EX
-				{
-					advance();
-					abandon(begin() == end());
-				}
-				///\returns the top-most element assuming `front()` is minimal \
-				(if initialized with two or more elements). \
-				
-				XTAL_FN2 top()
-				XTAL_0EX
-				{
-					return *begin(end_n - 1);
-				}
-
-				XTAL_FN2 scan(V const &v)
-				XTAL_0EX
-				{
-					return _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
-				}
-				///\note\
-				Conflicting entries w.r.t. `==` are overwritten. \
-
-				XTAL_FN0 push(V v)
-				XTAL_0EX
-				{
-					auto v_ = scan(v); *v_ == v? _std::swap(*v_, v): poke(v_, XTAL_MOV_(v));
-				}
-				XTAL_FN0 poke(point_t v_, V v)
-				XTAL_0EX
-				{
-					fluid_m.insert(v_, {XTAL_MOV_(v)});
-				}
-				XTAL_FN0 poke(point_t v_, point_t u_)
-				XTAL_0EX
-				{
-					fluid_m.insert(v_, u_, 1);
-				}
-
-			};
 		};
 
 	};

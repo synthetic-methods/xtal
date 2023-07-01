@@ -44,16 +44,13 @@ struct polymer
 		template <any_p Y> requires collect_q<S_>
 		struct bond
 		{
-		private:
-			using voice_u = context::voice_s<Y>;
-
-			using siphon_u = typename collage<voice_u, S_::ensemble>::siphon_t;
+			using voice_u  = context::voice_s<Y>;
+			using spool_u  = typename collage<voice_u, S_::ensemble>::spool_t;
 			using buffer_u = typename S_::template fluid<iteratee_t<Y>>::type;
 			using debuff_u = deranged_t<buffer_u>;
 			using respan_u = message::respan_t<debuff_u>;
 			using resize_u = message::resize_t<>;
 
-		public:
 			using subkind = compose<void
 			,	concord::confer<debuff_u>
 			,	concord:: defer<buffer_u>
@@ -70,7 +67,7 @@ struct polymer
 				}
 
 			protected:
-				siphon_u q_{voice_u::template limit<1>()};
+				spool_u q_{voice_u::template limit<1>()};
 
 			public:
 				XTAL_NEW_(explicit) subtype(XTAL_DEF ...etc)

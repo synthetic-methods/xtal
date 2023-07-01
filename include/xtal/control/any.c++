@@ -7,13 +7,11 @@
 #include "../processor/all.hpp"
 
 XTAL_ENV_(push)
-namespace xtal::context::__any
+namespace xtal::context::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__any;
-
-using gate_t = control::label_t<typename realized::alpha_t, struct gate>;
+using namespace xtal::__test;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +20,9 @@ TEST_CASE("xtal/control/any.hpp: hold process")
 {
 	size_t constexpr N_size = 1<<3;
 
-	using gated_t = process::confined_t<gate_t::template hold<(1<<7)>>;
+	using gate_t = control::label_t<typename realized::alpha_t, struct gate>;
+	
+	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using delay_t = context::delay_s<>;
 	using sequel_u   = message::sequel_t<>;
 
@@ -68,7 +68,9 @@ void test__hold_processor()
 {
 	size_t constexpr N_size = 1<<3;
 
-	using gated_t = process::confined_t<gate_t::template hold<(1<<7)>>;
+	using gate_t = control::label_t<typename realized::alpha_t, struct gate>;
+
+	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using array_t = _std::array<typename realized::alpha_t, N_size>;
 	using delay_t = context::delay_s<>;
 

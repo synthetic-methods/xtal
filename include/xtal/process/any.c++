@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::process::__any
+namespace xtal::process::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__any;
+using namespace xtal::__test;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,6 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 void test__attribute_influx_method(auto z)
 {
 	using start_t = message::nominal_t<0, struct start>;
-
-	REQUIRE(true);
 
 	auto &o = z.template self<bias_t>();
 	REQUIRE(-1 == (int) z.influx(start_t()));                                    // unrecognized

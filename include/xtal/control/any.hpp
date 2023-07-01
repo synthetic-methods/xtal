@@ -166,12 +166,12 @@ struct define
 			{
 				using R_ = compose_s<R>;
 
-				using event_t = context::delay_s<T>;
-				using delay_t = typename event_t::head_t;
-				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
+				using event_u = context::delay_s<T>;
+				using delay_u = typename event_u::head_t;
+				using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
-				delay_t d_{0};
-				queue_t q_{event_t::template sentry<-1>(), event_t::template sentry<+1>()};
+				delay_u d_{0};
+				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
 
 			public:
 				using R_::R_;
@@ -181,7 +181,7 @@ struct define
 				using R_::influx;
 				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
 
-				XTAL_FNX influx(event_t dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (dot.head() < d_ and q_.empty())
@@ -223,22 +223,22 @@ struct define
 			{
 				using R_ = compose_s<R>;
 
-				using event_t = context::delay_s<T>;
-				using delay_t = typename event_t::head_t;
-				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
+				using event_u = context::delay_s<T>;
+				using delay_u = typename event_u::head_t;
+				using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
-				queue_t q_{event_t::template sentry<1>()};
+				spool_u q_{event_u::template sentry<1>()};
 
 				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().parent())
 				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().head())
 				XTAL_FN2 last_head()
 				XTAL_0FX
 				{
-					if constexpr (requires {{R_::relay()} -> is_q<delay_t>;})
+					if constexpr (requires {{R_::relay()} -> is_q<delay_u>;})
 					{	return R_::relay();
 					}
 					else
-					{	return delay_t(self().size());
+					{	return delay_u(self().size());
 					}
 				}
 
@@ -248,10 +248,10 @@ struct define
 				
 				///\returns the delay until the next event. \
 
-				XTAL_FN1_(delay_t) relay(delay_t i)
+				XTAL_FN1_(delay_u) relay(delay_u i)
 				XTAL_0EX
 				{
-					if constexpr (requires {{R_::relay(i)} -> is_q<delay_t>;})
+					if constexpr (requires {{R_::relay(i)} -> is_q<delay_u>;})
 					{	R_::relay(i);
 						for (; 0 < q_.size() and next_head() <= i; q_.pop())
 						{	(void) R_::influx(next_tail());
@@ -259,10 +259,10 @@ struct define
 					}
 					return relay();
 				}
-				XTAL_FN1_(delay_t) relay()
+				XTAL_FN1_(delay_u) relay()
 				XTAL_0EX
 				{
-					return _std::min<delay_t>({next_head(), last_head()});
+					return _std::min<delay_u>({next_head(), last_head()});
 				//	NOTE: The initializer syntax voids segfaulting in `RELEASE`. \
 				
 				}
@@ -284,7 +284,7 @@ struct define
 				XTAL_FN0 redux(auto const &f, auto &n)
 				XTAL_0EX
 				{
-					for (delay_t i = 0, j = relay(); i != j; j = relay(i = j))
+					for (delay_u i = 0, j = relay(); i != j; j = relay(i = j))
 					{	f(i, j, n++);
 					}
 					--n;
@@ -298,7 +298,7 @@ struct define
 				Invokes `influx` if the given delay `i == 0`, \
 				otherwise enqueues the events `o, o...` at the specified index. \
 				
-				XTAL_FNX influx(event_t dot, XTAL_DEF ...oo)
+				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (0 == dot.head())

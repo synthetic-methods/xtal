@@ -264,10 +264,12 @@ Implemented:
 -	Numeric    conditioning:   `common/realize.hpp#{truncate,puncture}`
 -	...
 
+Implemented but untested:
+-	Processor polymorphism: `processor/polymer.hpp`.
+
 Technically supported but not yet implemented:
--	Polymorphism including dynamic voice activation/deactivation.
 -	Modulation matricies.
--	Parameter declicking.
+-	Parameter crossfades.
 
 ## Contribution
 

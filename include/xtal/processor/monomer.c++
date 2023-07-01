@@ -1,5 +1,5 @@
 #pragma once
-#include "../any.c++"
+#include "./any.c++"
 #include "./monomer.hpp"// testing...
 
 #include "./all.hpp"
@@ -7,15 +7,9 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::processor::__monomer
+namespace xtal::processor::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-using namespace xtal::__any;
-
-template <typename V, int N>
-using sequence_t = typename collage_t<V, N>::sequence_t;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
@@ -26,7 +20,7 @@ void test__invocable()
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using sequence_u = sequence_t<alpha_t, N_size>;
+	using sequence_u = typename collage_t<alpha_t, N_size>::sequence_t;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 

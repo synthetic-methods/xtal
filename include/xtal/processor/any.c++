@@ -7,14 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::processor::__any
+namespace xtal::processor::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__any;
-
-template <typename V, int N>
-using sequence_t = typename collage_t<V, N>::sequence_t;
+using namespace xtal::__test;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +19,7 @@ using sequence_t = typename collage_t<V, N>::sequence_t;
 TEST_CASE("xtal/processor/any.hpp: letting")
 {
 	size_t constexpr N_size = 5;
-	using sequence_u = sequence_t<int, N_size>;
+	using sequence_u = typename collage_t<int, N_size>::sequence_t;
 	auto z = sequence_u {00, 11, 22, 33, 44};
 	auto a = processor::let_f(z);
 	REQUIRE(true);
@@ -35,7 +32,7 @@ TEST_CASE("xtal/processor/any.hpp: lifting")
 	using alpha_t = typename realized::alpha_t;
 
 	size_t constexpr N_size = 5;
-	using sequence_u = sequence_t<alpha_t, N_size>;
+	using sequence_u = typename collage_t<alpha_t, N_size>::sequence_t;
 	
 	auto f = processor::let_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	auto x = sequence_u { 0,  1,  2,  3,  4};

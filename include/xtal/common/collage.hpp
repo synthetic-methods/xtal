@@ -28,9 +28,9 @@ struct collage
 	public:
 		using S_::S_;
 
-		using solid_t = typename S_::solid::type;
-		using fluid_t = typename S_::fluid::type;
-
+		using solid_t    = typename S_::solid    ::type;
+		using fluid_t    = typename S_::fluid    ::type;
+		using spool_t    = typename S_::spool    ::type;
 		using sequence_t = typename S_::sequence ::type;
 		using product_t  = typename S_::product  ::type;
 		using sum_t      = typename S_::sum      ::type;
@@ -38,7 +38,6 @@ struct collage
 		using serial_t   = typename S_::serial   ::type;
 		using pulsar_t   = typename S_::pulsar   ::type;
 		using phasor_t   = typename S_::phasor   ::type;
-		using siphon_t   = typename S_::siphon   ::type;
 
 	};
 };

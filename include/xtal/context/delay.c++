@@ -1,5 +1,5 @@
 #pragma once
-#include "../any.c++"
+#include "./any.c++"
 #include "./delay.hpp"// testing...
 
 
@@ -7,12 +7,9 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context::__delay
+namespace xtal::context::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-using namespace xtal::__any;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
@@ -31,8 +28,6 @@ TEST_CASE("xtal/context/delay.hpp: true")
 
 	REQUIRE(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_t>);
 	REQUIRE(is_q<XTAL_TYP_(XTAL_VAL_(target_t).parent()), source_t>);
-
-//	REQUIRE(true);
 }
 /**/
 ///////////////////////////////////////////////////////////////////////////////
