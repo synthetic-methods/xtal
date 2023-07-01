@@ -14,11 +14,8 @@ namespace xtal::processor
 template <typename ...>
 struct monomer;
 
-template <typename T>
-XTAL_ASK monomer_p = only_p<T, monomer>;
-
 template <typename ...Ts>
-XTAL_ASK monomer_q = conjunct_q<monomer_p<Ts>...>;
+XTAL_ASK monomer_q = conjunct_q<only_p<Ts, monomer>...>;
 
 template <typename U, typename ...As>
 XTAL_USE monomer_t = compose_s<only_t<monomer>, lift<U, monomer<As...>>>;

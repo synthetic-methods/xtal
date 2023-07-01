@@ -32,7 +32,8 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		///\returns `true` if the pointers are identical, `false` otherwise.
+
+		///\returns `true` if the pointers are identical, `false` otherwise. \
 
 		XTAL_OP2_(bool) == (subtype const &t)
 		XTAL_0FX
@@ -40,19 +41,21 @@ struct define
 			return this == _std::addressof(t);
 		}
 
+
 		///\returns `reify()` applied to the given arguments. \
-
-		XTAL_OP2() (XTAL_DEF ...xs) XTAL_0EX {return self().template method<>(XTAL_REF_(xs)...);}
-		XTAL_OP2() (XTAL_DEF ...xs) XTAL_0FX {return self().template method<>(XTAL_REF_(xs)...);}
-
+		
+		XTAL_RN4_(
+		XTAL_OP2() (XTAL_DEF ...xs), self().template method<>(XTAL_REF_(xs)...)
+		)
+		
 		///\returns the lambda abstraction of `method`, \
-			with template parameters resolved by `message::dispatch`. \
+		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
-		XTAL_RN2_(template <typename ...Xs>
+		XTAL_RN4_(template <typename ...Xs>
 		XTAL_FN2 reify(), [this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
 		)
-
-		///\returns the function corresponding to the currently resolved parameters. \
+		
+		///\returns the overloaded function-pointer for the given types. \
 
 		template <typename ...Xs>
 		XTAL_FN2 deify()
@@ -65,6 +68,12 @@ struct define
 		{
 			return f0;
 		}
+
+	protected:
+		///\
+		Defines the subtype-indexed function-pointer table, \
+		dynamically indexed by control-value/subtype `T`, \
+		and statically-generated from `method<Ms...>` with `sizeof...(Ms)` entries. \
 
 		template <typename ...Xs>
 		struct being

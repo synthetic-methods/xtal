@@ -1,5 +1,6 @@
 #pragma once
 #include "./any.hpp"
+#include "./mute.hpp"
 #include "./nominal.hpp"
 #include "./ordinal.hpp"
 #include "./per.hpp"
@@ -8,4 +9,3 @@
 #include "./rescan.hpp"
 #include "./restep.hpp"
 #include "./sequel.hpp"
-#include "./stage.hpp"

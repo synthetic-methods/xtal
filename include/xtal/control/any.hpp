@@ -89,23 +89,14 @@ struct define
 					assert(0 <= n and n < N_arity);
 				}
 
-				///\
-				Alias of `method` that resolves the template-parameters using member-variables. \
 
-				XTAL_OP2() (XTAL_DEF ...xs) XTAL_0EX {return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);}
-				XTAL_OP2() (XTAL_DEF ...xs) XTAL_0FX {return (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...);}
-
-				///\
-				Reifies `method` as a (potentially stateful) lambda function (e.g. for `_std::transform`), \
-				resolving the template-parameters using member-variables. \
-
-				XTAL_RN2_(template <typename ...Xs>
-				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
+				XTAL_RN4_(
+				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
-				///\
-				Resolves the overloaded function-pointer for the given types, \
-				indexing the _retail template-parameter with the corresponding control-value/subtype `T`. \
+				XTAL_RN4_(template <typename ...Xs>
+				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
+				)
 
 				template <typename ...Xs>
 				XTAL_FN2 deify()
@@ -119,10 +110,7 @@ struct define
 					return R_::deify(fs[R_::head()]);
 				}
 
-				///\
-				Defines the subtype-indexed function-pointer table, \
-				dynamically indexed by control-value/subtype `T` and statically-generated with `N_arity` entries. \
-
+			protected:
 				template <typename ...Xs>
 				struct being
 				{

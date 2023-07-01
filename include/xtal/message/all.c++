@@ -1,5 +1,6 @@
 #pragma once
 #include "./any.c++"
+#include "./mute.c++"
 #include "./nominal.c++"
 #include "./ordinal.c++"
 #include "./per.c++"
@@ -8,4 +9,3 @@
 #include "./rescan.c++"
 #include "./restep.c++"
 #include "./sequel.c++"
-#include "./stage.c++"

@@ -18,6 +18,19 @@ struct voice
 :	lift<U, only<voice>>
 {
 };
+template <constant_q U>
+struct voice<U>
+{
+	template <typename S>
+	class subtype: public S
+	{
+		XTAL_LET_(U) ensemble();
+
+	public:
+		using S::S;
+
+	};
+};
 template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
 using voice_s = compose_s<S, voice<U>>;
 

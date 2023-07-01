@@ -12,12 +12,24 @@ namespace xtal::message
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+//\note\
+Follows the same semantics as the values exchanged by `*flux`, \
+with `note` `on`, `off`, and `cut` corresponding to `mute` values of `0`, `1`, and `-1`,  respectively. \
+
+//\todo\
+Constrain as `sign_q`? \
 
 template <typename ...As>
-using stage = ordinal<As..., struct __stage__>;
+using mute = ordinal<As..., struct __mute__>;
 
 template <typename ...As>
-using stage_t = compose_s<any_t<>, stage<As...>>;
+using mute_t = compose_s<any_t<>, mute<As...>>;
+
+template <typename ...As>
+XTAL_FZ2 mute_f(XTAL_DEF... oo)
+{
+	return mute_t<As...>(XTAL_REF_(oo)...);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

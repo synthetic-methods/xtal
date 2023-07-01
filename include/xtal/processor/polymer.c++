@@ -1,13 +1,13 @@
 #pragma once
 #include "../any.c++"
-#include "./stage.hpp"// testing...
+#include "./polymer.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::message::__stage
+namespace xtal::processor::__polymer
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -15,9 +15,11 @@ using namespace xtal::__any;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TEST_CASE("xtal/message/stage.hpp: true")
+/**/
+TEST_CASE("xtal/processor/polymer.hpp: true")
 {
+	using vox = polymer_t<context::voice<constant_t<(1<<7)>>>;
+
 	REQUIRE(true);
 }
 /**/
