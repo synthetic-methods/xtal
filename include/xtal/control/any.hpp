@@ -183,7 +183,7 @@ struct define
 				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
 
 				delay_t d_{0};
-				queue_t q_{event_t::template limit<-1>(), event_t::template limit<+1>()};
+				queue_t q_{event_t::template sentry<-1>(), event_t::template sentry<+1>()};
 
 			public:
 				using R_::R_;
@@ -213,7 +213,7 @@ struct define
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{
-					return q_.advance(d_++ == q_.top().head()).tail();
+					return q_.advance(d_++ == q_.top().head()).parent();
 				}
 			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
 
@@ -239,10 +239,10 @@ struct define
 				using delay_t = typename event_t::head_t;
 				using queue_t = typename collage_t<event_t, N_event>::siphon_t;
 
-				queue_t q_{event_t::template limit<1>()};
+				queue_t q_{event_t::template sentry<1>()};
 
-				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().template head<1>())
-				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().template head<0>())
+				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().parent())
+				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().head())
 				XTAL_FN2 last_head()
 				XTAL_0FX
 				{
@@ -314,7 +314,7 @@ struct define
 				XTAL_0EX
 				{
 					if (0 == dot.head())
-					{	return influx(dot.tail(), XTAL_REF_(oo)...);
+					{	return influx(dot.parent(), XTAL_REF_(oo)...);
 					}
 					else
 					{	q_.push(XTAL_MOV_(dot));
@@ -337,7 +337,7 @@ struct define
 				using R_ = compose_s<R>;
 
 			protected:
-				using relay_t = value_t<context::delay<>>;
+				using relay_t = typename context::delay_s<>::head_t;
 				XTAL_FN1_(relay_t) relay()          XTAL_0EX {return self().size();}
 				XTAL_FN1_(relay_t) relay(relay_t i) XTAL_0EX {return self().size();}
 

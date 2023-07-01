@@ -1,13 +1,13 @@
 #pragma once
 #include "../any.c++"
-#include "./index.hpp"// testing...
+#include "./voice.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::context::__index
+namespace xtal::context::__voice
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@ using namespace xtal::__any;
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/context/index.hpp: true")
+TEST_CASE("xtal/context/voice.hpp: true")
 {
 	REQUIRE(true);
 }

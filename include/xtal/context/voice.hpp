@@ -14,12 +14,12 @@ namespace xtal::context
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename U=_std::ptrdiff_t>
-struct delay
-:	lift<U, only<delay>>
+struct voice
+:	lift<U, only<voice>>
 {
 };
 template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
-using delay_s = compose_s<S, delay<U>>;
+using voice_s = compose_s<S, voice<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

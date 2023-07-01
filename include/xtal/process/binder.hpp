@@ -158,7 +158,7 @@ struct binder
 
 
 				///\
-				Forwards the message *tail* to `arguments`, bypassing `self`. \
+				Forwards the message tail to `arguments`, bypassing `self`. \
 				If `~I_parity`, the argument at `I_parity` receives the full message. \
 
 				template <int I_parity=-1>

@@ -216,7 +216,7 @@ TEST_CASE("xtal/common/collate.hpp: buffer mutation")
 template <int N>
 void test__siphon_operation()
 {
-	using event_u = compose_s<bias_t, concord::confer<int>>;
+	using event_u = compose_s<bias_t, concord::lift<int>>;
 	using queue_u = siphon_t<event_u, N>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
@@ -229,8 +229,8 @@ void test__siphon_operation()
 	REQUIRE(0 == q.size());
 	q.push(e1); REQUIRE(1 == q.size());
 	q.push(e2); REQUIRE(2 == q.size());
-	REQUIRE(-1.0 == q.top().tail()); q.advance(); REQUIRE(1 == q.size());
-	REQUIRE(-2.0 == q.top().tail()); q.advance(); REQUIRE(0 == q.size());
+	REQUIRE(-1.0 == q.top().parent()); q.advance(); REQUIRE(1 == q.size());
+	REQUIRE(-2.0 == q.top().parent()); q.advance(); REQUIRE(0 == q.size());
 
 }
 TEST_CASE("xtal/common/collate.hpp: siphon operation")

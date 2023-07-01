@@ -93,7 +93,7 @@ struct confined
 	template <typename T>
 	using homotype = confine<T, As...>;
 
-	template <any_p S>
+	template <typename S>
 	class subtype: public compose_s<S, homotype<subtype<S>>>
 	{
 		using S_ = compose_s<S, homotype<subtype<S>>>;
@@ -103,15 +103,15 @@ struct confined
 
 	};
 };
-template <         typename ...As> using confined_t = compose_s<any_t<>, confined<As...>>;
-template <any_p S, typename ...As> using confined_s = compose_s<S,       confined<As...>>;
+template <            typename ...As> using confined_t = compose_s<any_t<>, confined<As...>>;
+template <typename S, typename ...As> using confined_s = compose_s<S,       confined<As...>>;
 
 
 template <typename ...As>
 using confound = compose<confined<>, any<As>...>;
 
-template <         typename ...As> using confound_t = compose_s<any_t<>, confound<As...>>;
-template <any_p S, typename ...As> using confound_s = compose_s<S,       confound<As...>>;
+template <            typename ...As> using confound_t = compose_s<any_t<>, confound<As...>>;
+template <typename S, typename ...As> using confound_s = compose_s<S,       confound<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

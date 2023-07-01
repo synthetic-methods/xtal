@@ -55,36 +55,25 @@ struct define
 	public:
 		using S::S;
 		
-		///\returns `true`. \
-
-		XTAL_OP2_(bool) ==(subtype const &t)
-		XTAL_0FX
+		XTAL_NEW_(explicit) subtype(XTAL_DEF... oo)
+		:	S(XTAL_REF_(oo)...)
 		{
-			return true;
 		}
-		///\returns `false`. \
 
-		XTAL_OP2_(bool) !=(subtype const &t)
-		XTAL_0FX
-		{
-			return false;
-		}
+		XTAL_OP2_(bool) ==(subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
+		XTAL_OP2_(bool) !=(subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
 		XTAL_RN4_(XTAL_OPZ _std::tuple<>(), tuple())
+		
+		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 
-		XTAL_FN2 tuple()
-		XTAL_0FX
-		{
-			return bundle_f();
-		}
 		using tuple_size = constant_t<(size_t) 0>;
 
-	protected:
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
 		
+		///\returns `this` as the `define`d supertype.. \
+
+		XTAL_RN4_(XTAL_FN2 parent(), S::self())
+
 		///\returns `this` as a subtype of the derived-type `T`. \
 
 		XTAL_RN4_(XTAL_FN2 self(), cast<T>())
@@ -92,11 +81,12 @@ struct define
 		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
 		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
 
-		template <size_t N=0>
-		using seek_s = _std::conditional_t<N == 0, T, void>;
-
-		template <typename Y=T>
-		using self_s = _std::conditional_t<is_q<Y, T>, T, void>;
+	protected:
+		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
+		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
+		
 		using self_t = T;
 
 	};
@@ -204,16 +194,25 @@ struct defer
 		using V  = debased_t<U>;
 
 	protected:
-		template <typename Y=T_> using self_s = _std::conditional_t<is_q<Y, U>, subtype<S>, typename S_::template self_s<Y>>;
-		template <size_t   N=0 > using seek_s = _std::conditional_t<N == 0,     subtype<S>, typename S_::template seek_s<N - 1>>;
-		
+	//	NOTE: The redundant parameter `X` allows GCC to handle nested specialization... \
+	
+		template <typename X, typename Y> struct superself        {using type = typename S::template self_s<Y>;};
+		template <typename X            > struct superself<X, T_> {using type = T_ ;};
+		template <typename X            > struct superself<X, U > {using type = X  ;};
+
+		template <typename X, size_t   N> struct superseek        {using type = typename S::template seek_s<N - 1>;};
+		template <typename X            > struct superseek<X, 0 > {using type = X  ;};
+
+		template <typename Y=T_> using self_s = typename superself<subtype<S>, Y>::type;
+		template <size_t   N=0 > using seek_s = typename superseek<subtype<S>, N>::type;
+
 		V body_m;
 	//	V body_m {};
 
 	public:
 	//	using S_::S_;
-		using head_t = U;
 		using body_t = V;
+		using head_t = U;
 		///\
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
@@ -237,11 +236,6 @@ struct defer
 
 		XTAL_RN4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
 		XTAL_RN4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
-
-		XTAL_RN4_(XTAL_FN2 tail(), S_::template cast<S_>())
-		XTAL_RN4_(template <size_t N_index>
-		XTAL_FN2 tail(), seek<N_index + 1>()
-		)
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
