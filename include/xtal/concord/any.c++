@@ -30,8 +30,8 @@ TEST_CASE("xtal/concord/any.hpp: tuple mania")
 	REQUIRE(_std::get<1>(baz) == _std::get<1>(bar));
 	REQUIRE(_std::get<2>(baz) == _std::get<2>(bar));
 
-//	REQUIRE(6 == _std::apply([](XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
-	REQUIRE(6 ==   foo.apply([](XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
+//	REQUIRE(6 == _std::apply([] (XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
+	REQUIRE(6 ==   foo.apply([] (XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
 	REQUIRE(3 == _std::tuple_size_v<foo_t>);
 	REQUIRE(3 == _std::tuple_size_v<bar_t>);
 

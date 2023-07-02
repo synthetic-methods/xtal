@@ -15,35 +15,35 @@ namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FZ0 copy_to(I i, J const j0, J const jN, F &&f, bool const &o=false)
+XTAL_CN0 copy_to(I i, J const j0, J const jN, F &&f, bool const &o=false)
 XTAL_0EX
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
 	auto constexpr seq = execution::  seq;
 	auto constexpr par = execution::unseq;
-	if (o) transform(seq, j0, jN, i, XTAL_FWD_(F) (f));
-	else   transform(par, j0, jN, i, XTAL_FWD_(F) (f));
+	if (o) transform(seq, j0, jN, i, XTAL_REF_(f));
+	else   transform(par, j0, jN, i, XTAL_REF_(f));
 #else
-	transform(j0, jN, i, XTAL_FWD_(F) (f));
+	transform(j0, jN, i, XTAL_REF_(f));
 #endif
 }
 template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FZ0 copy_to(I i, J const &j, F &&f, bool const &o=false)
+XTAL_CN0 copy_to(I i, J const &j, F &&f, bool const &o=false)
 XTAL_0EX
 {
-	copy_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), o);
+	copy_to(i, j.begin(), j.end(), XTAL_REF_(f), o);
 }
 template <iterator_q I, iterator_q J>
-XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &o=false)
+XTAL_CN0 copy_to(I i, J const j0, J const jN, bool const &o=false)
 XTAL_0EX
 {
 	copy_to(i, j0, jN, to_f<iteratee_t<I>>, o);
 }
 template <iterator_q I, iterator_q J>
-XTAL_FZ0 copy_to(I i, J const j0, J const jN, bool const &o=false)
+XTAL_CN0 copy_to(I i, J const j0, J const jN, bool const &o=false)
 XTAL_0EX
-XTAL_IF1 isomorphic_q<I, J>
+XTAL_REQ isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
@@ -56,7 +56,7 @@ XTAL_IF1 isomorphic_q<I, J>
 #endif
 }
 template <iterator_q I, bracket_q J>
-XTAL_FZ0 copy_to(I i, J const &j, bool const &o=false)
+XTAL_CN0 copy_to(I i, J const &j, bool const &o=false)
 XTAL_0EX
 {
 	copy_to(i, j.begin(), j.end(), o);
@@ -64,22 +64,22 @@ XTAL_0EX
 
 
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FZ0 move_to(I i, J const j0, J const jN, F &&f, bool const &o=false)
+XTAL_CN0 move_to(I i, J const j0, J const jN, F &&f, bool const &o=false)
 XTAL_0EX
 {
 	using namespace _std;
 	auto const _j0 = make_move_iterator(j0);
 	auto const _jN = make_move_iterator(jN);
-	return copy_to(i, _j0, _jN, XTAL_FWD_(F) (f), o);
+	return copy_to(i, _j0, _jN, XTAL_REF_(f), o);
 }
 template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FZ0 move_to(I i, J const &j, F &&f, bool const &o=false)
+XTAL_CN0 move_to(I i, J const &j, F &&f, bool const &o=false)
 XTAL_0EX
 {
-	move_to(i, j.begin(), j.end(), XTAL_FWD_(F) (f), o);
+	move_to(i, j.begin(), j.end(), XTAL_REF_(f), o);
 }
 template <iterator_q I, iterator_q J>
-XTAL_FZ0 move_to(I i, J j0, J jN, bool const &o=false)
+XTAL_CN0 move_to(I i, J j0, J jN, bool const &o=false)
 XTAL_0EX
 {
 	using namespace _std;
@@ -88,7 +88,7 @@ XTAL_0EX
 	return copy_to(i, _j0, _jN, o);
 }
 template <iterator_q I, bracket_q J>
-XTAL_FZ0 move_to(I i, J const &j, bool const &o=false)
+XTAL_CN0 move_to(I i, J const &j, bool const &o=false)
 XTAL_0EX
 {
 	move_to(i, j.begin(), j.end(), o);
@@ -96,10 +96,10 @@ XTAL_0EX
 
 
 template <bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FZ0 apply_to(J &j, F &&f, bool const &o=false)
+XTAL_CN0 apply_to(J &j, F &&f, bool const &o=false)
 XTAL_0EX
 {
-	move_to(j.begin(), j, XTAL_FWD_(F) (f), o);
+	move_to(j.begin(), j, XTAL_REF_(f), o);
 }
 
 
@@ -157,12 +157,12 @@ struct collect
 				using R_ = iterate_t<type>;
 				using A  = aligned_t<V>;
 
-				XTAL_FZ2 _ptr_f(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
-				XTAL_FZ2 _ptr_f(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
-				XTAL_FZ2 _ptr_f(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
-				XTAL_FZ2 _ptr_f(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
+				XTAL_CN2 _ptr_f(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
+				XTAL_CN2 _ptr_f(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
+				XTAL_CN2 _ptr_f(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
+				XTAL_CN2 _ptr_f(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
 				
-				XTAL_FZ2 _antiptr_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(_ptr_f(XTAL_REF_(i)));}
+				XTAL_CN2 _antiptr_f(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(_ptr_f(XTAL_REF_(i)));}
 				
 				A  block_m[N_size];
 				A* limit_m = block_m;
@@ -190,20 +190,20 @@ struct collect
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
 
-				XTAL_RN4_(XTAL_OP2[](size_type i), *_ptr_f(block_m + i));
-				XTAL_RN4_(XTAL_OP2()(size_type i),  _ptr_f(block_m + i));
+				XTAL_DO4_(XTAL_OP2[] (size_type i), *_ptr_f(block_m + i));
+				XTAL_DO4_(XTAL_OP2()(size_type i),  _ptr_f(block_m + i));
 
-				XTAL_RN4_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
-				XTAL_RN4_(XTAL_FN2  begin(),     _ptr_f(block_m));
-				XTAL_RN4_(XTAL_FN2   rend(), _antiptr_f(block_m));
-				XTAL_RN4_(XTAL_FN2    end(),     _ptr_f(limit_m));
+				XTAL_DO4_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
+				XTAL_DO4_(XTAL_FN2  begin(),     _ptr_f(block_m));
+				XTAL_DO4_(XTAL_FN2   rend(), _antiptr_f(block_m));
+				XTAL_DO4_(XTAL_FN2    end(),     _ptr_f(limit_m));
 
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
 				XTAL_FN2  cbegin() XTAL_0FX {return  begin();}
 				XTAL_FN2   crend() XTAL_0FX {return   rend();}
 				XTAL_FN2    cend() XTAL_0FX {return    end();}
 
-				XTAL_RN4_(XTAL_FN2 data(), begin());
+				XTAL_DO4_(XTAL_FN2 data(), begin());
 
 				///\
 				Clear destructor. \
@@ -221,7 +221,7 @@ struct collect
 				Insert constructor. \
 				Initializes `this` with `sN` values determined by the given arguments. \
 
-				XTAL_NEW_(explicit) type(size_type sN, XTAL_DEF ...ws)
+				XTAL_CXN type(size_type sN, XTAL_DEF ...ws)
 				{
 					insert_back(sN, XTAL_REF_(ws)...);
 				}
@@ -231,7 +231,7 @@ struct collect
 				Initializes `this` with the values between `i0` and `iN`. \
 
 				template <allomorphic_q<iterator> I0, allomorphic_q<iterator> IN>
-				XTAL_NEW_(explicit) type(I0 i0, IN iN)
+				XTAL_CXN type(I0 i0, IN iN)
 				{
 					using I = _std::common_type_t<I0, IN>;
 					I i0_ = i0;
@@ -243,7 +243,7 @@ struct collect
 				List constructor. \
 				Initializes `this` with the given values. \
 
-				XTAL_NEW_(explicit) type(bracket_t<V> w)
+				XTAL_CON type(bracket_t<V> w)
 				:	type(w.begin(), w.end())
 				{
 				}
@@ -261,7 +261,7 @@ struct collect
 				Copy constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW type(type const &t)
+				XTAL_CON type(type const &t)
 				:	type(t.begin(), t.end())
 				{
 				}
@@ -279,7 +279,7 @@ struct collect
 				Move constructor. \
 				Initializes `this` with the given data. \
 
-				XTAL_NEW type(type &&t)
+				XTAL_CON type(type &&t)
 				:	type(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
 				{
 				}
@@ -394,8 +394,8 @@ struct collect
 
 				XTAL_FN0 reserve(size_type sN)
 				{
-					if (N_size < sN)
-					{	throw _std::bad_alloc {};
+					if (N_size < sN) {
+						throw _std::bad_alloc {};
 					}
 				}
 
@@ -405,11 +405,11 @@ struct collect
 				XTAL_FN0 resize(size_type sN, XTAL_DEF ...etc)
 				{
 					size_type const sM = size();
-					if (sN < sM)
-					{	pop_back(sM - sN);
+					if (sN < sM) {
+						pop_back(sM - sN);
 					}
-					else
-					{	insert_back(sN - sM, XTAL_REF_(etc)...);
+					else {
+						insert_back(sN - sM, XTAL_REF_(etc)...);
 					}
 				}
 
@@ -538,12 +538,12 @@ struct collect
 				XTAL_FN1_(iterator) inject(I i, size_type sN)
 				{
 					reserve(sN + size());
-					if (i < end() and _std::move_constructible<V>)
-					{	reverse_iterator iN = rbegin();
+					if (i < end() and _std::move_constructible<V>) {
+						reverse_iterator iN = rbegin();
 						_detail::move_to(_std::prev(iN, sN), iN, _std::next(iN, sN), true);
 					}
-					else
-					{	assert(i == end());
+					else {
+						assert(i == end());
 					}
 					limit_m += sN;
 					return i;
@@ -563,16 +563,16 @@ struct collect
 					
 					assert(begin_m <= i0_ and iN_ <= end_m and _std::distance(i0_, iN_) == sN);
 					
-					if constexpr (_std::destructible<V>)
-					{	_std::destroy(i0_, iN_);
+					if constexpr (_std::destructible<V>) {
+						_std::destroy(i0_, iN_);
 					}
-					if (iN_ < end_m and _std::move_constructible<V>)
-					{	A* hN = _ptr_f(iN_);
+					if (iN_ < end_m and _std::move_constructible<V>) {
+						A* hN = _ptr_f(iN_);
 						A* h0 = _ptr_f(i0_);
 						_detail::move_to(h0, hN, limit_m, sN <= _std::distance(hN, limit_m));
 					}
-					else
-					{	assert(end_m == iN_);
+					else {
+						assert(end_m == iN_);
 					}
 					limit_m -= sN;
 				}

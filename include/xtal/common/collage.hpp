@@ -13,12 +13,29 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
 
-template <typename V, int... Ns>
-struct collage
+template <typename T>
+using row_t = typename T::sector_t;
+
+template <typename T>
+using column_t = typename T::scalar_t;
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <typename V, int ...Ns>
+struct collage;
+
+template <typename V, int ...Ns>
+using collage_t = compose_s<unit_t, collage<V, Ns...>>;
+
+
+template <typename V, int N>
+struct collage<V, N>
 {
-	using subkind = compose<collate<V>, collect<Ns...>>;
+	using subkind = compose<collate<V>, collect<N>>;
 
 	template <typename S>
 	class subtype: public compose_s<S, subkind>
@@ -28,22 +45,34 @@ struct collage
 	public:
 		using S_::S_;
 
-		using solid_t    = typename S_::solid    ::type;
-		using fluid_t    = typename S_::fluid    ::type;
-		using spool_t    = typename S_::spool    ::type;
-		using sequence_t = typename S_::sequence ::type;
-		using product_t  = typename S_::product  ::type;
-		using sum_t      = typename S_::sum      ::type;
-		using series_t   = typename S_::series   ::type;
-		using serial_t   = typename S_::serial   ::type;
-		using pulsar_t   = typename S_::pulsar   ::type;
-		using phasor_t   = typename S_::phasor   ::type;
+		using fluid_t = typename S_::fluid::type;
+		using spool_t = typename S_::spool::type;
+		using solid_t = typename S_::solid::type;
+		using group_t = typename S_::group::type;
+		using scalar_t = typename S_::scalar::type;
+		using sector_t = typename S_::sector::type;
+		using series_t = typename S_::series::type;
+		using serial_t = typename S_::serial::type;
+		using pulsar_t = typename S_::pulsar::type;
+		using phasor_t = typename S_::phasor::type;
 
 	};
 };
+template <typename V, int N, int M>
+struct collage<V, N, M>
+{
+	using column_u = _detail::column_t<collage_t<V, N>>;
 
-template <typename V, int... Ns>
-using collage_t = compose_s<unit_t, collage<V, Ns...>>;
+	template <typename S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
+
+		using matrix_t = _detail::row_t<collage_t<column_u, M>>;
+
+	};
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

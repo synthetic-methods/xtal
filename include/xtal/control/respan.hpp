@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -30,18 +30,18 @@ public:
 		using S_::self;
 		using span_t = U;
 
-		XTAL_CN2_(subtype);
-		XTAL_CN4_(subtype);
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
 
 		template <iterated_q W>
-		XTAL_NEW_(explicit) subtype(W &&w, XTAL_DEF ...ws)
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...ws)
 		XTAL_0EX
-		:	S_(deranged_t<W>(XTAL_FWD_(W) (w)), XTAL_REF_(ws)...)
+		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RN4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
-		XTAL_RN4_(XTAL_FN2 size(), S_::head().size())
+		XTAL_DO4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_DO4_(XTAL_FN2 size(), S_::head().size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX

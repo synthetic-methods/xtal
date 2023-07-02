@@ -2,7 +2,7 @@
 #include "../any.c++"
 #include "./any.hpp"// testing...
 
-#include "../message/all.hpp"
+#include "../control/all.hpp"
 #include "../process/all.hpp"
 #include "../processor/all.hpp"
 
@@ -24,7 +24,7 @@ TEST_CASE("xtal/control/any.hpp: hold process")
 	
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using delay_t = context::delay_s<>;
-	using sequel_u   = message::sequel_t<>;
+	using sequel_u   = control::sequel_t<>;
 
 	gated_t gated_o;
 	
@@ -74,10 +74,10 @@ void test__hold_processor()
 	using array_t = _std::array<typename realized::alpha_t, N_size>;
 	using delay_t = context::delay_s<>;
 
-	using resize_u = message::resize_t<>;
-	using sequel_u = message::sequel_t<>;
+	using resize_u = control::resize_t<>;
+	using sequel_u = control::sequel_t<>;
 
-	auto gated_o = processor::monomer_t<gated_t, As...>::bind_f();
+	auto gated_o = processor::monomer_t<gated_t, As...>::binding_f();
 	auto array_o = array_t();
 	
 	gated_o <<= resize_u(N_size);
@@ -112,17 +112,17 @@ void test__respan_internal_interrupt()
 	using alpha_t = typename realized::alpha_t;
 
 	using    mix_z = processor::monomer_t<mix_t, collect<>, typename bias_t::template interrupt<(1<<4)>>;
-	using resize_u = message::resize_t<>;
-	using sequel_n = message::sequel_t<>;
+	using resize_u = control::resize_t<>;
+	using sequel_n = control::sequel_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([](alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([](alpha_t n) {return n*11;});
+	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
+	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
 	auto lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
 	
-	auto xhs = mix_z::bind_f(lhs, rhs);
+	auto xhs = mix_z::binding_f(lhs, rhs);
 	auto seq = sequel_n(4);
 
 	xhs <<= resize_u(4);

@@ -41,7 +41,7 @@ struct bundle
 {
 	using type = _std::remove_reference_t<_std::tuple<rebased_t<Xs>...>>;
 
-	XTAL_LET make = [](XTAL_DEF...xs) XTAL_0FN_(type(XTAL_REF_(xs)...));
+	XTAL_LET make = [] XTAL_1FN_(type);
 
 	using    size   = _detail::bundle_size  <type>;
 	using    size_t = _detail::bundle_size_t<type>;
@@ -57,10 +57,10 @@ struct bundle
 template <typename ...Xs>
 using    bundle_t = typename bundle<Xs...>::type;
 XTAL_LET bundle_f = [] <typename ...Xs>(Xs &&...xs)
-XTAL_0FN_(_std::make_tuple(XTAL_FWD_(Xs) (xs)...));
+XTAL_0FN_(_std::make_tuple(XTAL_REF_(xs)...));
 
 XTAL_LET bundle_fwd = [] <typename ...Xs>(Xs &&...xs)
-XTAL_0FN_(_std::forward_as_tuple<Xs...>(XTAL_FWD_(Xs) (xs)...));
+XTAL_0FN_(_std::forward_as_tuple<Xs...>(XTAL_REF_(xs)...));
 
 template <typename    T > concept bundle_p = _detail::bundle_size_p<T> and _detail::bundle_part_ps<T>;
 template <typename ...Ts> concept bundle_q = conjunct_q<bundle_p<Ts>...>;

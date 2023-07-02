@@ -1,8 +1,8 @@
 #pragma once
 #include "../process/any.hpp"// `_retail`
 
-#include "../message/sequel.hpp"
-#include "../message/resize.hpp"
+#include "../control/sequel.hpp"
+#include "../control/resize.hpp"
 
 
 
@@ -37,7 +37,7 @@ template <int code=0>   struct iterate_access;
 template <          >   struct iterate_access<0> {XTAL_LET category = _v3::ranges::category::random_access;};
 template <          >   struct iterate_access<1> {XTAL_LET category = _v3::ranges::category::forward;};
 template <int code=0>
-XTAL_FZ2 iterate_access_f(XTAL_DEF z)
+XTAL_CN2 iterate_access_f(XTAL_DEF z)
 XTAL_0EX
 {
 	using namespace _v3::ranges;
@@ -45,30 +45,29 @@ XTAL_0EX
 	return Z(XTAL_REF_(z));
 }
 template <int code=0>
-XTAL_FZ2 iterate_access_f(XTAL_DEF z)
+XTAL_CN2 iterate_access_f(XTAL_DEF z)
 XTAL_0EX
-XTAL_IF2 {z.size();}
+XTAL_REQ_(z.size())
 {
 	using namespace _v3::ranges;
 	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, iterate_access<code>::category|category::sized>;
 	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
 }
 
-XTAL_LET iterate_function_f = [](XTAL_DEF f)
-XTAL_0FN_([g = XTAL_REF_(f)](XTAL_DEF ...xs)
+XTAL_LET iterate_function_f = [] (XTAL_DEF f)
+XTAL_0FN_([g = XTAL_REF_(f)] (XTAL_DEF ...xs)
 XTAL_0FN
 {
 	using namespace _v3::views;
-	if constexpr (0 == sizeof...(xs))
-	{	return iota(0)|transform([=](auto &&) XTAL_0FN_(g(XTAL_REF_(xs)...)));
-//	{	return generate(XTAL_MOV_(g));// FIXME?
+	if constexpr (0 == sizeof...(xs)) {
+		return iota(0)|transform([=] (XTAL_DEF) XTAL_0FN_(g(XTAL_REF_(xs)...)));
+//		return generate(XTAL_MOV_(g));// FIXME?
 	}
-	else
-	if constexpr (1 == sizeof...(xs))
-	{	return transform(XTAL_REF_(xs)..., g);
+	else if constexpr (1 == sizeof...(xs)) {
+		return transform(XTAL_REF_(xs)..., g);
 	}
-	else
-	{	return zip_with(g, XTAL_REF_(xs)...);
+	else if constexpr (1 <  sizeof...(xs)) {
+		return zip_with(g, XTAL_REF_(xs)...);
 	}
 });
 
@@ -103,6 +102,7 @@ struct defer<U>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
+		using U_ = U const &;
 
 		template <typename ...Xs>
 		XTAL_FN2 reified_()
@@ -132,17 +132,17 @@ struct defer<U>
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
-		XTAL_IF2 (U const &u) {u.template method<>(XTAL_VAL_(iteratee_t<decltype(xs)>)...);}
+		XTAL_REQ_(XTAL_VAL_(U_).template method<>(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
-		//	return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+		//	return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 		template <auto...>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
-		//	return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+		//	return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -150,7 +150,7 @@ struct defer<U>
 template <iterated_q U> requires (not any_p<U>)
 struct defer<U>
 {
-	using sequel_u = message::sequel_t<counted_t<>>;
+	using sequel_u = control::sequel_t<counted_t<>>;
 	using subkind  = compose<_retail::defer<U>, sequel_u::attach>;
 
 	template <any_p S>

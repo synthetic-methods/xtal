@@ -2,7 +2,7 @@
 #include "../any.c++"
 #include "./any.hpp"// testing...
 
-#include "../message/all.hpp"
+#include "../control/all.hpp"
 
 
 
@@ -18,7 +18,7 @@ using namespace xtal::__test;
 
 TEST_CASE("xtal/process/any.hpp: lifting")
 {
-	auto const f = let_f([](XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+	auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	REQUIRE(10 == f.template method<>(1, 2, 3, 4));
 	REQUIRE(10 == f(1, 2, 3, 4));
 	REQUIRE(10 == f.reify() (1, 2, 3, 4));
@@ -73,7 +73,7 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 
 void test__attribute_influx_method(auto z)
 {
-	using start_t = message::nominal_t<0, struct start>;
+	using start_t = control::nominal_t<0, struct start>;
 
 	auto &o = z.template self<bias_t>();
 	REQUIRE(-1 == (int) z.influx(start_t()));                                    // unrecognized
@@ -92,7 +92,7 @@ TEST_CASE("xtal/process/any.hpp: attribute influx method")
 
 void test__attribute_efflux_method(auto z)
 {
-	using start_t = message::nominal_t<0, struct start>;
+	using start_t = control::nominal_t<0, struct start>;
 
 	auto &o = z.template self<bias_t>();
 	REQUIRE(-1 == (int) z.efflux(start_t()));                                    // unrecognized

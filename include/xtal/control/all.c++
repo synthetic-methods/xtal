@@ -1,2 +1,12 @@
 #pragma once
 #include "./any.c++"
+#include "./mute.c++"
+#include "./nominal.c++"
+#include "./ordinal.c++"
+#include "./per.c++"
+#include "./redial.c++"
+#include "./resize.c++"
+#include "./respan.c++"
+#include "./rescan.c++"
+#include "./restep.c++"
+#include "./sequel.c++"

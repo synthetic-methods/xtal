@@ -1,26 +1,37 @@
 #pragma once
-#include "../any.c++"
-#include "./any.hpp"// testing...
+#include "./any.c++"
+#include "./per.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::message::__test
+namespace xtal::control::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__test;
-
-
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TEST_CASE("true")
+/**/
+TEST_CASE("xtal/control/per.hpp: construction")
 {
-	REQUIRE(true);
+	using sigma_t = typename realized::sigma_t;
+	using alpha_t = typename realized::alpha_t;
+
+	sigma_t b = realized::diplo_y(16);
+	alpha_t p = realized::haplo_y(16);
+
+	auto d = per_t(b);
+	auto q = per_t(p);
+
+	REQUIRE(b == d.rate());
+	REQUIRE(b == q.rate());
+
+	REQUIRE(p == d.period());
+	REQUIRE(p == q.period());
+
 }
-/***/
+/**/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

@@ -34,7 +34,7 @@ struct define
 
 		///\
 		Influx operator: resolves the message for `this` before any dependencies, \
-		used for e.g. `message::resize`. \
+		used for e.g. `control::resize`. \
 
 		XTAL_OP1 <<=(XTAL_DEF o)
 		XTAL_0EX
@@ -42,13 +42,10 @@ struct define
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) o)
+		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) oo)
 		XTAL_0EX
 		{
-			(void) _std::apply([this](XTAL_DEF ...oo)
-				XTAL_0FN_(self().influx(XTAL_REF_(oo)...)),
-				XTAL_REF_(o)
-			);
+			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
 			return self();
 		}
 		///\
@@ -77,7 +74,7 @@ struct define
 
 		///\
 		Efflux operator: resolves the message for any dependencies before `this`, \
-		used for e.g. `message::respan` and `message::sequel`. \
+		used for e.g. `control::respan` and `control::sequel`. \
 
 		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX
@@ -85,13 +82,10 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) o)
+		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) oo)
 		XTAL_0EX
 		{
-			(void) _std::apply([this](XTAL_DEF ...oo)
-				XTAL_0FN_(self().efflux(XTAL_REF_(oo)...)),
-				XTAL_REF_(o)
-			);
+			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
 			return self();
 		}
 		///\
@@ -171,7 +165,7 @@ struct defer
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_IF1 any_p<U>
+		XTAL_REQ any_p<U>
 		{
 			return XTAL_FLX_(head().influx(oo...)) (S_::influx(XTAL_REF_(oo)...));
 		}
@@ -186,7 +180,7 @@ struct defer
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_IF1 any_p<U>
+		XTAL_REQ any_p<U>
 		{
 			return XTAL_FLX_(S_::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
 		}

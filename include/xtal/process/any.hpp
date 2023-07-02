@@ -1,7 +1,7 @@
 #pragma once
 #include "../conflux/any.hpp"// `_retail`
 
-
+#include "../control/any.hpp"
 
 
 
@@ -44,15 +44,15 @@ struct define
 
 		///\returns `reify()` applied to the given arguments. \
 		
-		XTAL_RN4_(
+		XTAL_DO4_(
 		XTAL_OP2() (XTAL_DEF ...xs), self().template method<>(XTAL_REF_(xs)...)
 		)
 		
 		///\returns the lambda abstraction of `method`, \
 		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
-		XTAL_RN4_(template <typename ...Xs>
-		XTAL_FN2 reify(), [this](XTAL_DEF ...xs) XTAL_0FN_(operator() (XTAL_REF_(xs)...))
+		XTAL_DO4_(template <typename ...Xs>
+		XTAL_FN2 reify(), [this] XTAL_1FN_(operator())
 		)
 		
 		///\returns the overloaded function-pointer for the given types. \
@@ -102,6 +102,175 @@ struct define
 		
 		};
 
+	public:
+
+		///\
+		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
+
+		template <typename ...Xs>
+		struct binding
+		{
+			using signature = bundle<Xs...>;
+			using result_t = typename signature::template invoke_t<T>;
+			using return_t = iteratee_t<result_t>;
+			
+			using subkind = compose<concord::defer<typename signature::type>, defer<T>>;
+
+			template <any_p R>
+			class subtype: public compose_s<R, subkind>
+			{
+				using R_ = compose_s<R, subkind>;
+
+			public:
+				using R_::R_;
+				using R_::self;
+				///\
+				Constructs `arguments` using those supplied. \
+
+				XTAL_CXN subtype(Xs &&...xs)
+				XTAL_0EX
+				:	R_(signature::make(XTAL_REF_(xs)...), T())
+				{
+				}
+				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
+				XTAL_0EX
+				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
+				{
+				}
+
+				XTAL_DO4_(XTAL_FN2 arguments(), R_::head())
+				
+				template <size_t N, size_t ...Ns>
+				XTAL_FN2 argument()
+				XTAL_0EX
+				{
+					if constexpr (0 == sizeof...(Ns)) {
+						return _std::get<N>(arguments());
+					}
+					else {
+						return _std::get<N>(arguments()).template argument<Ns...>();
+					}
+				}
+				
+				XTAL_FN2 apply(XTAL_DEF f)
+				XTAL_0EX
+				{
+					return _std::apply([g = XTAL_REF_(f)] XTAL_1FN_(g), arguments());
+				}
+
+				using R_::method;
+				///\
+				Evaluates the lifted `method` using the bound arguments. \
+
+				template <auto ...Ms>
+				XTAL_FN2 method()
+				XTAL_0EX
+				{
+					return _std::apply([this] XTAL_1FN_(R_::template method<Ms...>), arguments());
+				}
+
+			//	using R_::efflux;
+			//	using R_::influx;
+
+				///\returns the result of `efflux`ing `arguments` then (if `& 1`) `self`. \
+
+				XTAL_FNX efflux(XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
+				}
+				///\returns the result of `influx`ing `self` then  (if `& 1`) `arguments`. \
+
+				XTAL_FNX influx(XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return XTAL_FLX_(self().influx_request(oo...)) (R_::influx(XTAL_REF_(oo)...));
+				}
+
+				///\note\
+				If prefixed by `null_t()`, the message is forwarded directly to `arguments`. \
+
+				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().efflux_request(XTAL_REF_(oo)...);
+				}
+				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx_request(XTAL_REF_(oo)...);
+				}
+
+				///\note\
+				If prefixed by `constant_q`, the message is forwarded directly to the `argument` specified. \
+
+				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return argument<decltype(i)::value>().efflux(XTAL_REF_(oo)...);
+				}
+				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return argument<decltype(i)::value>().influx(XTAL_REF_(oo)...);
+				}
+
+
+				///\
+				Forwards the message to `arguments`, bypassing `self`. \
+
+				XTAL_FNX efflux_request(auto ...oo)
+				XTAL_0EX
+				{
+					return apply([&] (XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
+					);
+				}
+				XTAL_FNX influx_request(auto ...oo)
+				XTAL_0EX
+				{
+					return apply([&] (XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
+					);
+				}
+
+
+				///\
+				Forwards the message tail to `arguments`, bypassing `self`. \
+				If `~I_parity`, the argument at `I_parity` receives the full message. \
+
+				template <int I_parity=-1>
+				XTAL_FNX efflux_request_tail(auto o, auto ...oo)
+				XTAL_0EX
+				{
+					if constexpr (I_parity == -1) {
+						return efflux_request(XTAL_MOV_(oo)...);
+					}
+					else {
+						static_assert(0 <= I_parity);
+						return [&] <auto ...I>(seek_t<I...>)
+							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(oo...))
+						(seek_v<sizeof...(Xs) - 1>);
+					}
+				}
+				template <int I_parity=-1>
+				XTAL_FNX influx_request_tail(auto o, auto ...oo)
+				XTAL_0EX
+				{
+					if constexpr (I_parity == -1) {
+						return influx_request(XTAL_MOV_(oo)...);
+					}
+					else {
+						static_assert(0 <= I_parity);
+						return [&] <auto ...I>(seek_t<I...>)
+							XTAL_0FN_(argument<I_parity>().influx(o, oo...) &...& argument<(I_parity <= I) + I>().influx(oo...))
+						(seek_v<sizeof...(Xs) - 1>);
+					}
+				}
+
+			};
+		};
+
 	};
 };
 template <typename T>
@@ -119,16 +288,16 @@ struct refine
 		using S_::self;
 
 		template <typename ...Xs>
-		struct bind
+		struct binding
 		{
-			using kind = typename S_::template bind<Xs...>;
+			using kind = typename S_::template binding<Xs...>;
 			using type = typename _retail::confined<kind>::template subtype<S>;
 
 		};
 		template <typename ...Xs>
-		using     bind_t = typename bind<Xs...>::type;
-		XTAL_LET  bind_f =   [](XTAL_DEF ...xs) XTAL_0FN_(bind_t<decltype(xs)...>(        XTAL_REF_(xs)...));
-		XTAL_RN4_(XTAL_FN2 bond(XTAL_DEF ...xs),          bind_t<decltype(xs)...>(self(), XTAL_REF_(xs)...))
+		using    binding_t = typename binding<Xs...>::type;
+		XTAL_LET binding_f = [] (XTAL_DEF ...xs) XTAL_0FN_(binding_t<decltype(xs)...>(        XTAL_REF_(xs)...));
+		XTAL_DO4_(XTAL_FN2 bind(XTAL_DEF ...xs),          binding_t<decltype(xs)...>(self(), XTAL_REF_(xs)...))
 
 	};
 };
@@ -175,7 +344,7 @@ struct defer
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_RN2_(template <auto ...>
+		XTAL_DO4_(template <auto ...>
 		XTAL_FN2 method(XTAL_DEF ...xs), head() (XTAL_REF_(xs)...)
 		)
 
@@ -199,7 +368,7 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_RN2_(template <auto ...Ms>
+		XTAL_DO4_(template <auto ...Ms>
 		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ms...>(XTAL_REF_(xs)...)
 		)
 

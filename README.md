@@ -63,10 +63,10 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`.
 
-	using Active = message::ordinal_t<struct active>;
+	using Active = control::ordinal_t<struct active>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
@@ -113,7 +113,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto sequel = sequel_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, collect<-1>>;
-	auto sixer = Mixer::bind_f(one, two, three);
+	auto sixer = Mixer::binding_f(one, two, three);
 
 	// initialization
 	{
@@ -171,8 +171,8 @@ The most commonly encountered are those used for function definition, for exampl
 	#define XTAL_OP2   [[nodiscard]]        constexpr decltype(auto) operator
 	#define XTAL_FN1                        constexpr decltype(auto)
 	#define XTAL_FN2   [[nodiscard]]        constexpr decltype(auto)
-	#define XTAL_FZ1                 static constexpr decltype(auto)
-	#define XTAL_FZ2   [[nodiscard]] static constexpr decltype(auto)
+	#define XTAL_CN1                 static constexpr decltype(auto)
+	#define XTAL_CN2   [[nodiscard]] static constexpr decltype(auto)
 	
 	#define XTAL_0EX                   noexcept
 	#define XTAL_0EX_(REF)         REF noexcept
@@ -181,8 +181,7 @@ The most commonly encountered are those used for function definition, for exampl
 
 This naming scheme is intended to be automnemonic...
 
-The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2`, while their `static` counterparts `FZ1` and `FZ2` use `Z` as a sideways `N` to indicate orthogonality. Similarly, the codes `0EX` and `0FX` respectively designate mutative and immutative applications of `noexcept`,
-the latter a mnemonic for "no effects".
+The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
 
 ## Templates
 
@@ -250,13 +249,13 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 Implemented:
 -	Parameter  bundling:       `conflux/any.hpp#{<<=,>>=}` using `tuple`s.
 -	Parameter  composition:    `common/compose.hpp` with `concord/any.hpp#defer`.
--	Parameter  namespacing:    `message/any.hpp#guard`.
--	Parameter  sampling:       `message/any.hpp#hold`.
--	Parameter  scheduling:     `message/any.hpp#interrupt` and `processor/monomer.hpp#efflux`.
--	Processor  resizing:       `processor/*.hpp` by influxing `message/resize.hpp`.
--	Processor  rendering:      `processor/*.hpp` by effluxing `message/respan.hpp`.
--	Processor  streaming:      `processor/monomer.hpp` by effluxing `message/serial.hpp`.
--	Process    templating:     `process/any.hpp#define`, `message/any.hpp#dispatch`.
+-	Parameter  namespacing:    `control/any.hpp#prefix`.
+-	Parameter  sampling:       `control/any.hpp#hold`.
+-	Parameter  scheduling:     `control/any.hpp#interrupt` and `processor/monomer.hpp#efflux`.
+-	Processor  resizing:       `processor/*.hpp` by influxing `control/resize.hpp`.
+-	Processor  rendering:      `processor/*.hpp` by effluxing `control/respan.hpp`.
+-	Processor  streaming:      `processor/monomer.hpp` by effluxing `control/serial.hpp`.
+-	Process    templating:     `process/any.hpp#define`, `control/any.hpp#dispatch`.
 -	Function   lifting:        `{process,processor}/any.hpp#defer`.
 -	Dependency management:     `conflux/any.hpp` and `process/any.hpp#monomer`.
 -	Buffer     sharing:        `processor/monomer.hpp#{influx,efflux}`.

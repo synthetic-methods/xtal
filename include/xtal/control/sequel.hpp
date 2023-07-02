@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -34,10 +34,10 @@ template <typename... Ts>
 XTAL_ASK sequel_q = conjunct_q<only_p<Ts, sequel>...>;
 
 template <typename W=counter_t<>, typename ...As>
-XTAL_USE sequel_t = confined_s<only_t<sequel>, sequel<W, As...>>;
+XTAL_USE sequel_t = compose_s<only_t<sequel>, confined<sequel<W>, As...>>;
 
 template <typename ...As>
-XTAL_FZ2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
+XTAL_CN2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -166,11 +166,11 @@ struct prequel
 		XTAL_0EX
 		{
 			auto &s = self();
-			if (s == t)
-			{	return 1;
+			if (s == t) {
+				return 1;
 			}
-			else
-			{	s.operator+=(0);
+			else {
+				s.operator+=(0);
 				s.operator-=(count_f(t));
 				s.step(t.step());
 				return 0;
@@ -199,11 +199,11 @@ struct prequel
 		XTAL_0EX
 		{
 			auto &s = self();
-			if (s == t)
-			{	return 1;
+			if (s == t) {
+				return 1;
 			}
-			else
-			{	s.operator+=(count_f(t));
+			else {
+				s.operator+=(count_f(t));
 				assert(s.step() == t.step());
 				return 0;
 			}
@@ -231,20 +231,20 @@ struct sequel<V>
 		using S_::self;
 		using S_::twin;
 
-		XTAL_CN4_(subtype);
-	//	XTAL_CN2_(subtype);
+	//	XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
 
-		XTAL_NEW subtype()
+		XTAL_CON subtype()
 		XTAL_0EX
 		:	S_(0, 0)
 		{
 		}
-		XTAL_NEW_(explicit) subtype(XTAL_DEF ...oo)
+		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{
 		}
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
+		XTAL_CXN subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
@@ -328,18 +328,18 @@ public:
 		using S_::self;
 		using S_::twin;
 		
-		XTAL_NEW_(explicit) subtype(U u, V v)
+		XTAL_CXN subtype(U u, V v)
 		XTAL_0EX
 		:	S_(u, v)
 		{
 		}
 		template <to_q<V> W>
-		XTAL_NEW_(explicit) subtype(W w)
+		XTAL_CXN subtype(W w)
 		XTAL_0EX
 		:	subtype(U(0, w), 0)
 		{
 		}
-		XTAL_NEW subtype()
+		XTAL_CON subtype()
 		XTAL_0EX
 		:	subtype(U(0, 0), 0)
 		{

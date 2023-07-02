@@ -103,15 +103,15 @@ struct confined
 
 	};
 };
-template <            typename ...As> using confined_t = compose_s<any_t<>, confined<As...>>;
-template <typename S, typename ...As> using confined_s = compose_s<S,       confined<As...>>;
+template <typename ...As>
+using confined_t = compose_s<any_t<>, confined<As...>>;
 
 
 template <typename ...As>
 using confound = compose<confined<>, any<As>...>;
 
-template <            typename ...As> using confound_t = compose_s<any_t<>, confound<As...>>;
-template <typename S, typename ...As> using confound_s = compose_s<S,       confound<As...>>;
+template <typename ...As>
+using confound_t = compose_s<any_t<>, confound<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ template <typename U, typename ...As> using lift_t = confined_t<confer<U, As...>
 ///<\
 Resolves `lift<U, As...>::type`. \
 
-template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0EX {return lift_t<U>(XTAL_FWD_(U) (u));}
+template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0EX {return lift_t<U>(XTAL_REF_(u));}
 ///<\
 \returns a `lift`ed proxy of `u`. \
 
@@ -138,8 +138,8 @@ template <typename W> using  let_t = typename let<W>::type;
 ///<\
 Resolves `let<W>::type`. \
 
-template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_FWD_(W) (w));}
-template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_FWD_(W) (w));}
+template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_REF_(w));}
+template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_REF_(w));}
 ///<\
 \returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
 

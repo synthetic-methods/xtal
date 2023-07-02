@@ -1,5 +1,5 @@
 #pragma once
-#include "../control/any.hpp"// `_retail`
+#include "./any.hpp"
 
 
 
@@ -7,40 +7,17 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::control;
-#include "../concord/any.hxx"
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-struct define
-:	_retail::define<T>
-{
-};
-template <typename T>
-struct refine
-:	_retail::refine<T>
-{
-};
+template <typename ...As>
+using ordinal = label<int, As...>;
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <typename U>
-struct defer
-:	_retail::defer<U>
-{
-};
-template <typename U>
-struct refer
-:	_retail::refer<U>
-{
-};
+template <typename ...As>
+using ordinal_t = compose_s<any_t<>, ordinal<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

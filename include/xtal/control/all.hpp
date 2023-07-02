@@ -1,2 +1,12 @@
 #pragma once
 #include "./any.hpp"
+#include "./mute.hpp"
+#include "./nominal.hpp"
+#include "./ordinal.hpp"
+#include "./per.hpp"
+#include "./redial.hpp"
+#include "./resize.hpp"
+#include "./respan.hpp"
+#include "./rescan.hpp"
+#include "./restep.hpp"
+#include "./sequel.hpp"

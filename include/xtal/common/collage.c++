@@ -15,26 +15,26 @@ namespace xtal::common::__test
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <int M_pow=1, int N_lim=-1>
-XTAL_FZ2 unsquing_y(auto const &w)
+XTAL_CN2 unsquing_y(auto const &w)
 XTAL_0EX
 {
 	using W = XTAL_TYP_(w);
 	using _realized = realize<W>;
-	if constexpr (M_pow == 0 and alpha_q<W>)
-	{	if (_std::is_constant_evaluated())
+	if constexpr (M_pow == 0 and alpha_q<W>) {
+		if (_std::is_constant_evaluated())
 		{
 			auto const n = _realized::template unsquare_y<-1, N_lim>(w);
 			auto const u = n*w;
-			return typename collage_t<W, 2>::product_t {u, n};
+			return typename collage_t<W, 2>::scalar_t {u, n};
 		}
-		else
-		{	auto const u = _realized::template unsquare_y< 1, N_lim>(w);
+		else {
+			auto const u = _realized::template unsquare_y< 1, N_lim>(w);
 			auto const n = u/w;
-			return typename collage_t<W, 2>::product_t {u, n};
+			return typename collage_t<W, 2>::scalar_t {u, n};
 		}
 	}
-	else
-	{	return _realized::template unsquare_y<M_pow, N_lim>(w);	
+	else {
+		return _realized::template unsquare_y<M_pow, N_lim>(w);	
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,21 +44,21 @@ TEST_CASE("xtal/common/collage.hpp: multiplicative construction")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto foo = typename collage_t<alpha_t, 2>::product_t {2.0, 0.5};
+	auto foo = typename collage_t<alpha_t, 2>::scalar_t {2.0, 0.5};
 	auto bar = unsquing_y<0>((alpha_t) 2);
-	bar.transmute([&](XTAL_DEF u) XTAL_0FN_(realized::square_y(XTAL_REF_(u))), trim_y<1>);
+	bar.transmute([] XTAL_1FN_(realized::square_y), trim_y<1>);
 	REQUIRE(foo == bar);
 
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/common/collage.hpp: product")
+TEST_CASE("xtal/common/collage.hpp: scalar")
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto bar = typename collage_t<alpha_t, 2>::product_t {2.0, 0.5};
+	auto bar = typename collage_t<alpha_t, 2>::scalar_t {2.0, 0.5};
 	auto foo = bar.reflected(-1);
 	auto baz = foo.reflected(+1);
 	
@@ -76,12 +76,12 @@ TEST_CASE("xtal/common/collage.hpp: series initialization")
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N = 1 << 3;
-	using sequence_u = typename collage_t<alpha_t, N>::sequence_t;
+	using group_u = typename collage_t<alpha_t, N>::group_t;
 	using series_u = typename collage_t<alpha_t, N>::series_t;
 
 	series_u baz(2.0);
-	sequence_u bar = reinterpret_cast<sequence_u &>(baz);
-	sequence_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
+	group_u bar = reinterpret_cast<group_u &>(baz);
+	group_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 	REQUIRE(_v3::ranges::equal(foo, bar));
 	
 //	foo += bar;
@@ -96,7 +96,7 @@ TEST_CASE("xtal/common/collage.hpp: series transformation")
 	using alpha_t = typename realized::alpha_t;
 	using aphex_t = typename realized::aphex_t;
 
-	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] XTAL_1FN_(trim_y<16>);
 	sigma_t constexpr O = 1 << 5;
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
@@ -129,7 +129,7 @@ TEST_CASE("xtal/common/collage.hpp: series convolution")
 	using alpha_t = typename realized::alpha_t;
 	using aphex_t = typename realized::aphex_t;
 
-	auto    constexpr iffy = [](XTAL_DEF w) XTAL_0FN_(trim_y<16>(XTAL_REF_(w)));
+	auto    constexpr iffy = [] XTAL_1FN_(trim_y<16>);
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 

@@ -57,7 +57,7 @@ template <typename ...Ts >    using conjunct_t = _std::conjunction<Ts...>;
 template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
 
 template <auto        N  >    using constant_t = _std::integral_constant<XTAL_TYP_(N), N>;
-template <auto        N  > XTAL_FZ2 constant_f() {using T = constant_t<N>; return T();};
+template <auto        N  > XTAL_CN2 constant_f() {using T = constant_t<N>; return T();};
 template <typename    T  >  concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
 template <typename ...Ts >  concept constant_q = conjunct_q<constant_p<Ts>...>;
 
@@ -102,9 +102,9 @@ struct aligned
 template <typename    T  >    using aligned_t  = typename aligned<T>::type;
 template <typename    T  > XTAL_LET aligned_v  =          aligned<T>::value;
 template <typename    I  >
-XTAL_LET appointer_f = [](XTAL_DEF i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(XTAL_REF_(i))));
-XTAL_LET   pointer_f = [](XTAL_DEF o) XTAL_0FN_(_std::addressof(XTAL_REF_(o)));
-XTAL_LET   pointer_e = [](XTAL_DEF o, XTAL_DEF ...oo)
+XTAL_LET appointer_f = [] (XTAL_DEF i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(XTAL_REF_(i))));
+XTAL_LET   pointer_f = [] (XTAL_DEF o) XTAL_0FN_(_std::addressof(XTAL_REF_(o)));
+XTAL_LET   pointer_e = [] (XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_((pointer_f(XTAL_REF_(o)) == pointer_f(XTAL_REF_(oo))) and ... and true);
 
 template <typename    T  >    using pointed_t  = XTAL_TYP_(*XTAL_VAL_(T));
@@ -127,7 +127,7 @@ template <typename T, typename ...Ts> struct allotropic<T, Ts...>: conjunct_t<_s
 template <typename ...Ts>  concept id_q =  identical<Ts...>::value;
 template <typename ...Ts>  concept is_q =  isotropic<Ts...>::value;
 template <typename ...Ts>  concept to_q = allotropic<Ts...>::value;
-template <typename    T > XTAL_LET to_f = [](XTAL_DEF ...oo) XTAL_0FN_(based_t<T>(XTAL_REF_(oo)...));
+template <typename    T > XTAL_LET to_f = [] XTAL_1FN_(based_t<T>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,25 +223,25 @@ template <auto N>
 concept sign_q = iota_q<decltype(N)> and -1 <= N and N <= 1;
 
 template <sign_t N_zero=0>
-XTAL_FZ2 sign_f(XTAL_DEF_(iota_q) n)
+XTAL_CN2 sign_f(XTAL_DEF_(iota_q) n)
 XTAL_0EX
 {
 	using T = XTAL_TYP_(n);
-	if constexpr (N_zero == +1)
+	if constexpr (N_zero == 0)
+	{  return T((0 <  n) - (n <  0));
+	}
+	else if constexpr (N_zero == +1)
 	{  return T((0 <= n) - (n <  0));
 	}
-	if constexpr (N_zero == -1)
+	else if constexpr (N_zero == -1)
 	{  return T((0 <  n) - (n <= 0));
-	}
-	else
-	{  return T((0 <  n) - (n <  0));
 	}
 }
 
 template <typename T>
 using unsigned_t = _std::make_unsigned_t<T>;
 
-XTAL_FZ2 unsigned_y(delta_q auto n)
+XTAL_CN2 unsigned_y(delta_q auto n)
 XTAL_0EX
 {
 	using V = XTAL_TYP_(n);
@@ -309,8 +309,8 @@ template <integral_p  T  >   struct iteratee<T>: constant_t<1> {using type =    
 template <typename    T  >    using sentinel_t = based_t<_v3::ranges::sentinel_t<T>>;
 template <typename    T  >    using distance_t = XTAL_TYP_(_std::distance(XTAL_VAL_(iterator_t<T>), XTAL_VAL_(iterator_t<T>)));
 template <typename    T  >    using deranged_t = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
-XTAL_LET  deranged_f = [](XTAL_DEF x)
-XTAL_0FN_(deranged_t<decltype(x)>(XTAL_REF_(x)));
+XTAL_LET  deranged_f = [] (XTAL_DEF t)
+XTAL_0FN_(deranged_t<decltype(t)>(XTAL_REF_(t)));
 
 
 using count_t = _std::make_unsigned_t<size_t>;
@@ -333,8 +333,8 @@ template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    
 template <typename T=count_t> using counted_t  = typename counted<T>::type;
 template <typename T=count_t> using counter_t  = typename counter<T>::type;
 
-template <typename    T  > XTAL_FZ2 count_f(T const &t) {return t.size();}
-template <counted_q   T  > XTAL_FZ2 count_f(T const &t) {return 1 + t.back() - t.front();}
+template <typename    T  > XTAL_CN2 count_f(T const &t) {return t.size();}
+template <counted_q   T  > XTAL_CN2 count_f(T const &t) {return 1 + t.back() - t.front();}
 ///<\returns\
 the `size` of `iota_view` as a `value_type` instead of `size_type` which is twice the width. \
 

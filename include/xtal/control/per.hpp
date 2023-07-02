@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -26,24 +26,24 @@ public:
 		using S_ = compose_s<S, subkind>;
 
 	public:
-//	using S_::S_;
+	//	using S_::S_;
 		
-		XTAL_CN2_(subtype);
-		XTAL_CN4_(subtype);
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
 
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
+		XTAL_CXN subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	S_(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
 		{
 		}
-		XTAL_NEW_(explicit) subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
+		XTAL_CXN subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	S_((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
 		{
 		}
 
-		XTAL_RN4_(XTAL_FN2   rate(), S_::template head<0>())
-		XTAL_RN4_(XTAL_FN2 period(), S_::template head<1>())
+		XTAL_DO4_(XTAL_FN2   rate(), S_::template head<0>())
+		XTAL_DO4_(XTAL_FN2 period(), S_::template head<1>())
 
 	};
 };

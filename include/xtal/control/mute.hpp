@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +26,7 @@ template <typename ...As>
 using mute_t = compose_s<any_t<>, mute<As...>>;
 
 template <typename ...As>
-XTAL_FZ2 mute_f(XTAL_DEF... oo)
+XTAL_CN2 mute_f(XTAL_DEF... oo)
 {
 	return mute_t<As...>(XTAL_REF_(oo)...);
 }

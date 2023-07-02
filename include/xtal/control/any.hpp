@@ -46,14 +46,14 @@ struct define
 			public:
 			//	using R_::R_;
 
-				XTAL_CN2_(subtype);
-				XTAL_CN4_(subtype);
+				XTAL_CO0_(subtype);
+				XTAL_CO4_(subtype);
 
 				///\
 				Constructs the `attach`ed `control` using its default, \
 				before `forward`ing the arguments to `this`. \
 
-				XTAL_NEW_(explicit) subtype(XTAL_DEF ...xs)
+				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
 				:	R_(T(), XTAL_REF_(xs)...)
 				{
@@ -80,21 +80,21 @@ struct define
 			//	using R_::R_;
 				using R_::self;
 
-				XTAL_CN2_(subtype);
-				XTAL_CN4_(subtype);
+				XTAL_CO0_(subtype);
+				XTAL_CO4_(subtype);
 
-				XTAL_NEW_(explicit) subtype(size_t const &n)
+				XTAL_CXN subtype(size_t const &n)
 				:	R_(n)
 				{
 					assert(0 <= n and n < N_arity);
 				}
 
 
-				XTAL_RN4_(
+				XTAL_DO4_(
 				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
-				XTAL_RN4_(template <typename ...Xs>
+				XTAL_DO4_(template <typename ...Xs>
 				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
 				)
 
@@ -118,7 +118,7 @@ struct define
 					struct resolve
 					{
 						template <size_t ...I>
-						XTAL_FZ2 method_f(seek_t<I...>)
+						XTAL_CN2 method_f(seek_t<I...>)
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
@@ -137,7 +137,7 @@ struct define
 		///\
 		Attaches `T` as a namespace recognized by `this`. \
 
-		struct guard
+		struct prefix
 		{
 			using subkind = attach;
 
@@ -158,44 +158,79 @@ struct define
 
 			};
 		};
+		struct emit
+		{
+			using subkind = attach;
+
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, subkind>
+			{
+				using R_ = compose_s<R, subkind>;
+			
+			public:
+				using R_::R_;
+				using R_::self;
+
+				template <auto...>
+				XTAL_FN1_(T) method()
+				XTAL_0EX
+				{
+					return self().template get<T>();
+				}
+
+			};
+		};
+		struct pend
+		{
+			template <conflux::any_p R>
+			class subtype: public R
+			{
+			public:
+				using R::R;
+				using R::self;
+
+				using R::influx;
+				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
+
+				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+				}
+
+			};
+		};
 		template <int N_event=-1>
 		struct hold
 		{
-			template <conflux::any_p R>
-			class subtype: public compose_s<R>
+			using event_u = context::delay_s<T>;
+			using delay_u = typename event_u::head_t;
+			using spool_u = typename collage_t<event_u, N_event>::spool_t;
+
+			using subkind = pend;
+
+			template <conflux::any_p R> requires (2 <= size_t(N_event))
+			class subtype: public compose_s<R, subkind>
 			{
-				using R_ = compose_s<R>;
-
-				using event_u = context::delay_s<T>;
-				using delay_u = typename event_u::head_t;
-				using spool_u = typename collage_t<event_u, N_event>::spool_t;
-
+				using R_ = compose_s<R, subkind>;
+				
 				delay_u d_{0};
 				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
 
 			public:
 				using R_::R_;
 				using R_::self;
-
-
 				using R_::influx;
-				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
 
 				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (dot.head() < d_ and q_.empty())
-					{	q_.abandon().head(d_ = 0);
+					if (dot.head() < d_ and q_.empty()) {
+						q_.abandon().head(d_ = 0);
 					}
 					q_.push(XTAL_MOV_(dot));
 					return R_::influx(oo...);
 				}
-				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
-				}
-
 
 				template <auto...>
 				XTAL_FN1_(T) method()
@@ -209,7 +244,7 @@ struct define
 		};
 		///\
 		Provides a queue for this control-type `T` on the target object, \
-		scheduled via `influx` and processed in segments via `redux`. \
+		scheduled via `influx` and processed in segments via `replay`. \
 
 		///\todo\
 		Allow for scheduling beyond the current window, \
@@ -218,31 +253,32 @@ struct define
 		template <int N_event=-1>
 		struct interrupt
 		{
-			template <conflux::any_p R>
-			class subtype: public compose_s<R>
-			{
-				using R_ = compose_s<R>;
+			using event_u = context::delay_s<T>;
+			using delay_u = typename event_u::head_t;
+			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
-				using event_u = context::delay_s<T>;
-				using delay_u = typename event_u::head_t;
-				using spool_u = typename collage_t<event_u, N_event>::spool_t;
+			using subkind = pend;
+
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, subkind>
+			{
+				using R_ = compose_s<R, subkind>;
 
 				spool_u q_{event_u::template sentry<1>()};
 
-				XTAL_RN2_(XTAL_FN2 next_tail(), q_.top().parent())
-				XTAL_RN2_(XTAL_FN2 next_head(), q_.top().head())
-				XTAL_FN2 last_head()
-				XTAL_0FX
-				{
-					if constexpr (requires {{R_::relay()} -> is_q<delay_u>;})
-					{	return R_::relay();
-					}
-					else
-					{	return delay_u(self().size());
-					}
-				}
+				XTAL_DO4_(XTAL_FN2 next_tail(), q_.top().parent())
+				XTAL_DO4_(XTAL_FN2 next_head(), q_.top().head())
 
 			protected:
+				///\returns The delay until the next event to be processed. \
+
+				XTAL_FN1_(delay_u) delay()
+				XTAL_0EX
+				{
+					return _std::min<delay_u>({R_::delay(), next_head()});
+				//	NOTE: The `std::initializer_list` syntax voids segfaulting in `RELEASE`. \
+				
+				}
 				///\
 				Invokes `influx` for all events up-to the supplied delay `i`. \
 				
@@ -251,41 +287,32 @@ struct define
 				XTAL_FN1_(delay_u) relay(delay_u i)
 				XTAL_0EX
 				{
-					if constexpr (requires {{R_::relay(i)} -> is_q<delay_u>;})
-					{	R_::relay(i);
-						for (; 0 < q_.size() and next_head() <= i; q_.pop())
-						{	(void) R_::influx(next_tail());
-						}
+					R_::relay(i);
+					for (; 0 < q_.size() and next_head() <= i; q_.pop()) {
+						(void) R_::influx(next_tail());
 					}
-					return relay();
-				}
-				XTAL_FN1_(delay_u) relay()
-				XTAL_0EX
-				{
-					return _std::min<delay_u>({next_head(), last_head()});
-				//	NOTE: The initializer syntax voids segfaulting in `RELEASE`. \
-				
+					return delay();
 				}
 
 				///\
 				Relays all queued events while invoking the supplied callback for each intermediate segment. \
 				The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-				XTAL_FN0 redux(auto const &f)
+				XTAL_FN0 replay(auto const &f)
 				XTAL_0EX
 				{
-					redux(f, 0);
+					replay(f, 0);
 				}
-				XTAL_FN0 redux(auto const &f, auto &&n)
+				XTAL_FN0 replay(auto const &f, auto &&n)
 				XTAL_0EX
 				{
-					redux(f, n);
+					replay(f, n);
 				}
-				XTAL_FN0 redux(auto const &f, auto &n)
+				XTAL_FN0 replay(auto const &f, auto &n)
 				XTAL_0EX
 				{
-					for (delay_u i = 0, j = relay(); i != j; j = relay(i = j))
-					{	f(i, j, n++);
+					for (delay_u i = 0, j = delay(); i != j; j = relay(i = j)) {
+						f(i, j, n++);
 					}
 					--n;
 				}
@@ -301,18 +328,13 @@ struct define
 				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (0 == dot.head())
-					{	return influx(dot.parent(), XTAL_REF_(oo)...);
+					if (0 == dot.head()) {
+						return influx(dot.parent(), XTAL_REF_(oo)...);
 					}
-					else
-					{	q_.push(XTAL_MOV_(dot));
+					else {
+						q_.push(XTAL_MOV_(dot));
 						return influx(XTAL_REF_(oo)...);
 					}
-				}
-				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
 
 			};
@@ -320,22 +342,19 @@ struct define
 			When `N_event == 0`, scheduling is bypassed and `relay` is resolved w.r.t. `self`. \
 
 			template <conflux::any_p R> requires (N_event == 0)
-			class subtype<R>: public compose_s<R>
+			class subtype<R>: public R
 			{
-				using R_ = compose_s<R>;
-
 			protected:
-				using relay_t = typename context::delay_s<>::head_t;
-				XTAL_FN1_(relay_t) relay()          XTAL_0EX {return self().size();}
-				XTAL_FN1_(relay_t) relay(relay_t i) XTAL_0EX {return self().size();}
+				XTAL_FN1_(delay_u) delay()          XTAL_0EX {return self().size();}
+				XTAL_FN1_(delay_u) relay(delay_u i) XTAL_0EX {return self().size();}
 
-				XTAL_FN0 redux(auto const &f)           XTAL_0EX {redux(f, 0);}
-				XTAL_FN0 redux(auto const &f, auto &&n) XTAL_0EX {redux(f, n);}
-				XTAL_FN0 redux(auto const &f, auto  &n) XTAL_0EX {f(0, relay(), n);}
+				XTAL_FN0 replay(auto const &f)           XTAL_0EX {replay(f, 0);}
+				XTAL_FN0 replay(auto const &f, auto &&n) XTAL_0EX {replay(f, n);}
+				XTAL_FN0 replay(auto const &f, auto  &n) XTAL_0EX {f(0, delay(), n);}
 
 			public:
-				using R_::R_;
-				using R_::self;
+				using R::R;
+				using R::self;
 
 			};
 		};

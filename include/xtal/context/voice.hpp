@@ -24,7 +24,7 @@ struct voice<U>
 	template <typename S>
 	class subtype: public S
 	{
-		XTAL_LET_(U) ensemble();
+		XTAL_LET_(U) capacity();
 
 	public:
 		using S::S;
