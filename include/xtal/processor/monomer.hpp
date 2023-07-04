@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "../process/metamer.hpp"
+#include "../control/resize.hpp"
 #include "../control/sequel.hpp"
 
 
@@ -18,7 +18,7 @@ template <typename ...Ts>
 XTAL_ASK monomer_q = conjunct_q<only_p<Ts, monomer>...>;
 
 template <typename U, typename ...As>
-XTAL_USE monomer_t = typename lift<U, monomer<As...>>::template subtype<only_t<monomer>>;
+XTAL_USE monomer_t = typename confined<monomer<U, As...>>::template subtype<only_t<monomer>>;
 
 template <typename ...As>
 XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
@@ -26,12 +26,13 @@ XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...As>
-struct monomer
+template <typename U, typename ...As>
+struct monomer<U, As...>
 {
 	using resize_u = control::resize_t<>;
 	using sequel_u = control::sequel_t<>;
-	using subkind = _retail::metamer<As..., sequel_u::attach, resize_u::attach>;
+
+	using subkind = confer<U, As...>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -50,9 +51,11 @@ struct monomer
 		struct binding: B_<Xs...>
 		{
 			using rebound = B_<Xs...>;
-			using subkind = compose<void
+			using subkind = compose<As...
 			,	concord::confer<typename rebound::result_t>
 			,	rebound
+			,	sequel_u::attach
+		//	,	resize_u::attach
 			>;
 			template <typename R>
 			class subtype: public compose_s<R, subkind>
@@ -100,7 +103,6 @@ struct monomer
 		{
 			using rebound = B_<Xs...>;
 		
-		private:
 			using buffer_u = typename S_::template fluid<typename rebound::return_t>::type;
 			using debuff_u = deranged_t<buffer_u>;
 			using respan_u = control::respan_t<debuff_u>;
@@ -108,11 +110,12 @@ struct monomer
 		
 			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, debuff_u>...>;
 
-		public:
-			using subkind = compose<void
+			using subkind = compose<As...
 			,	concord::confer<debuff_u>
 			,	concord::defer <buffer_u>
 			,	rebound
+			,	sequel_u::attach
+			,	resize_u::attach
 			,	typename control::confined_t<>::interrupt<0>
 			>;
 			template <any_p R>

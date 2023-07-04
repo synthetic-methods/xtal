@@ -265,10 +265,7 @@ Implemented:
 
 Implemented but untested:
 -	Processor polymorphism: `processor/polymer.hpp`.
-
-Technically supported but not yet implemented:
--	Modulation matricies.
--	Parameter crossfades.
+-	Modulation matricies: `{process,processor}/dimer.hpp`.
 
 ## Contribution
 

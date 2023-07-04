@@ -73,32 +73,32 @@ struct define
 		///\
 		Defines the subtype-indexed function-pointer table, \
 		dynamically indexed by control-value/subtype `T`, \
-		and statically-generated from `method<Ms...>` with `sizeof...(Ms)` entries. \
+		and statically-generated from `method<Ks...>` with `sizeof...(Ks)` entries. \
 
 		template <typename ...Xs>
 		struct being
 		{
-			template <auto ...Ms>
+			template <auto ...Ks>
 			struct resolve
 			{
-				using return_t = decltype(XTAL_VAL_(T &).template method<Ms...>(XTAL_VAL_(Xs)...));
+				using return_t = decltype(XTAL_VAL_(T &).template method<Ks...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (Xs const &&...);
 
 			};
-			template <auto ...Ms>
+			template <auto ...Ks>
 			requires
 			requires (T const t)
 			{
-				t.template method<Ms...>(XTAL_VAL_(Xs)...);
+				t.template method<Ks...>(XTAL_VAL_(Xs)...);
 			}
-			struct resolve<Ms...>
+			struct resolve<Ks...>
 			{
-				using return_t = decltype(XTAL_VAL_(T const &).template method<Ms...>(XTAL_VAL_(Xs)...));
+				using return_t = decltype(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (Xs const &&...) const;
 
 			};
-			template <auto ...Ms>
-			XTAL_LET_(typename resolve<Ms...>::method_t) method = &T::template method<Ms...>;
+			template <auto ...Ks>
+			XTAL_LET_(typename resolve<Ks...>::method_t) method = &T::template method<Ks...>;
 		
 		};
 
@@ -162,11 +162,11 @@ struct define
 				///\
 				Evaluates the lifted `method` using the bound arguments. \
 
-				template <auto ...Ms>
+				template <auto ...Ks>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
-					return _std::apply([this] XTAL_1FN_(R_::template method<Ms...>), arguments());
+					return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), arguments());
 				}
 
 			//	using R_::efflux;
@@ -297,7 +297,7 @@ struct refine
 		template <typename ...Xs>
 		using    binding_t = typename binding<Xs...>::type;
 		XTAL_LET binding_f = [] (XTAL_DEF ...xs) XTAL_0FN_(binding_t<decltype(xs)...>(        XTAL_REF_(xs)...));
-		XTAL_DO4_(XTAL_FN2 bind(XTAL_DEF ...xs),          binding_t<decltype(xs)...>(self(), XTAL_REF_(xs)...))
+		XTAL_DO4_(XTAL_FN2  bind(XTAL_DEF ...xs),          binding_t<decltype(xs)...>(self(), XTAL_REF_(xs)...))
 
 	};
 };
@@ -368,8 +368,8 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_DO4_(template <auto ...Ms>
-		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ms...>(XTAL_REF_(xs)...)
+		XTAL_DO4_(template <auto ...Ks>
+		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ks...>(XTAL_REF_(xs)...)
 		)
 
 	};

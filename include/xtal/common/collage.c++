@@ -317,7 +317,7 @@ void test__phasor_iteration()
 	
 	REQUIRE(qs == Qs {+0.125, +0.375, -0.375, -0.125});
 
-//	TODO: Is there a way to reset/change the phase/frequency by mutation (or otherwise)? \
+//	TODO: Find a way to reset/change the phase/frequency by mutation (or otherwise)? \
 	If not, just need to wrap as a `process`. \
 
 }

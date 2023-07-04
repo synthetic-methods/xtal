@@ -114,7 +114,7 @@ struct define
 				template <typename ...Xs>
 				struct being
 				{
-					template <auto ...Ms>
+					template <auto ...Ks>
 					struct resolve
 					{
 						template <size_t ...I>
@@ -122,13 +122,13 @@ struct define
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
-							return _std::array{(doing::template method<Ms..., I>)...};
+							return _std::array{(doing::template method<Ks..., I>)...};
 						}
 						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
 					};
-					template <auto ...Ms>
-					XTAL_LET method = resolve<Ms...>::method_m;
+					template <auto ...Ks>
+					XTAL_LET method = resolve<Ks...>::method_m;
 				
 				};
 
