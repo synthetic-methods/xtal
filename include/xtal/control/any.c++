@@ -20,7 +20,7 @@ TEST_CASE("xtal/control/any.hpp: hold process")
 {
 	size_t constexpr N_size = 1<<3;
 
-	using gate_t = control::label_t<typename realized::alpha_t, struct gate>;
+	using gate_t = control::label_t<typename realized::alpha_t, struct T_gate>;
 	
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using delay_t = context::delay_s<>;
@@ -68,7 +68,7 @@ void test__hold_processor()
 {
 	size_t constexpr N_size = 1<<3;
 
-	using gate_t = control::label_t<typename realized::alpha_t, struct gate>;
+	using gate_t = control::label_t<typename realized::alpha_t, struct T_gate>;
 
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using array_t = _std::array<typename realized::alpha_t, N_size>;

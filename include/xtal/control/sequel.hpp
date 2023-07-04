@@ -27,14 +27,14 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <typename, typename ...>
+template <typename ...>
 struct sequel;
 
 template <typename... Ts>
-XTAL_ASK sequel_q = conjunct_q<only_p<Ts, sequel>...>;
+XTAL_ASK sequel_q = tag_q<sequel, Ts...>;
 
 template <typename W=counter_t<>, typename ...As>
-XTAL_USE sequel_t = compose_s<only_t<sequel>, confined<sequel<W>, As...>>;
+XTAL_USE sequel_t = confined_t<sequel<W>, As...>;
 
 template <typename ...As>
 XTAL_CN2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
@@ -55,17 +55,16 @@ namespace _detail
 struct prequel
 {
 	template <any_p S>
-	class subtype: public compose_s<S>//, public virtual comport_t<sequel>
+	class subtype: public S
 	{
-		using S_ = compose_s<S>;
-		using T_ = typename S_::self_t;
-		using U_ = typename S_::head_t;
+		using T_ = typename S::self_t;
+		using U_ = typename S::head_t;
 		using V_ = counter_t<U_>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::twin;
+		using S::S;
+		using S::self;
+		using S::twin;
 		using value_type = V_;
 
 		XTAL_FN2 skip(V_ v)
@@ -142,13 +141,13 @@ struct prequel
 		XTAL_OP2_(bool) >=(subtype const &t)
 		XTAL_0FX
 		{
-			return S_::operator>(t) or S_::operator==(t);
+			return S::operator>(t) or S::operator==(t);
 		}
 
 		XTAL_OP2_(bool) <=(subtype const &t)
 		XTAL_0FX
 		{
-			return S_::operator<(t) or S_::operator==(t);
+			return S::operator<(t) or S::operator==(t);
 		}
 
 		///\
@@ -180,7 +179,7 @@ struct prequel
 		XTAL_FNX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
-			return S_::infuse(XTAL_REF_(o));
+			return S::infuse(XTAL_REF_(o));
 		}
 
 		///\
@@ -193,7 +192,7 @@ struct prequel
 		XTAL_FNX effuse(XTAL_DEF o)
 		XTAL_0EX
 		{
-			return S_::effuse(XTAL_REF_(o));
+			return S::effuse(XTAL_REF_(o));
 		}
 		XTAL_FNX effuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
@@ -218,7 +217,7 @@ struct prequel
 template <counter_q V>
 struct sequel<V>
 {
-	using subkind = compose<_detail::prequel, resize<V>, restep<V>>;
+	using subkind = compose<_detail::prequel, resize<V>, restep<V>, tag<sequel>>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -315,7 +314,7 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = compose<_detail::prequel, refer<U>, rescan<U>, restep<V>>;
+	using subkind = compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, tag<sequel>>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>

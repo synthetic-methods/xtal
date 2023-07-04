@@ -13,23 +13,20 @@ namespace xtal::control
 
 ////////////////////////////////////////////////////////////////////////////////
 //\note\
-Follows the same semantics as the values exchanged by `*flux`, \
+Observes the same semantics as the values exchanged by `*flux`, \
 with `note` `on`, `off`, and `cut` corresponding to `mute` values of `0`, `1`, and `-1`,  respectively. \
 
 //\todo\
 Constrain as `sign_q`? \
 
 template <typename ...As>
-using mute = ordinal<As..., struct __mute__>;
+using mute = ordinal<As..., struct T_mute>;
 
 template <typename ...As>
-using mute_t = compose_s<any_t<>, mute<As...>>;
+using mute_t = typename mute<As...>::type;
 
 template <typename ...As>
-XTAL_CN2 mute_f(XTAL_DEF... oo)
-{
-	return mute_t<As...>(XTAL_REF_(oo)...);
-}
+XTAL_CN2 mute_f(XTAL_DEF... oo) {return mute_t<As...>(XTAL_REF_(oo)...);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

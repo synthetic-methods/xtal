@@ -17,16 +17,16 @@ template <typename ...>
 struct dimer;
 
 template <typename ...Ts>
-XTAL_ASK dimer_q = conjunct_q<only_p<Ts, dimer>...>;
+XTAL_ASK dimer_q = tag_q<dimer, Ts...>;
 
 template <typename U, typename ...As>
-XTAL_USE dimer_t = typename confined<dimer<As...>>::template subtype<only_t<dimer>>;
+XTAL_USE dimer_t = confined_t<dimer<U, As...>>;
 
 
-template <typename... As>
-struct dimer
+template <typename U, typename... As>
+struct dimer<U, As...>
 {
-	using subkind = compose<As...>;
+	using subkind = confer<U, As..., tag<dimer>>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>

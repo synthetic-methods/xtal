@@ -17,7 +17,7 @@ template <typename ...As>
 using ordinal = label<int, As...>;
 
 template <typename ...As>
-using ordinal_t = compose_s<any_t<>, ordinal<As...>>;
+using ordinal_t = typename ordinal<As...>::type;
 
 
 ///////////////////////////////////////////////////////////////////////////////

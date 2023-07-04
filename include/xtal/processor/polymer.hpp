@@ -15,13 +15,10 @@ template <typename ...>
 struct polymer;
 
 template <typename ...Ts>
-XTAL_ASK polymer_q = conjunct_q<only_p<Ts, polymer>...>;
+XTAL_ASK polymer_q = tag_q<polymer, Ts...>;
 
 template <typename ...As>
-XTAL_USE polymer_t = typename polymer<As...>::template subtype<only_t<polymer>>;
-
-template <typename ...As>
-XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
+XTAL_USE polymer_t = confined_t<polymer<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,45 +40,60 @@ struct polymer
 	public:
 		using S_::S_;
 		using S_::self;
+		using S_::capacity;
 
 		template <any_p X> requires collect_q<S_>
 		struct bind
 		{
-			using voice_u  = context::voice_s<X>;
-			using spool_u  = typename collage<voice_u, S_::capacity>::spool_t;
-			using buffer_u = typename S_::template fluid<iteratee_t<X>>::type;
-			using debuff_u = deranged_t<buffer_u>;
-			using respan_u = control::respan_t<debuff_u>;
+			using voice_u = context::voice_s<X>;
+			using spool_u = typename collage<voice_u, capacity>::spool_t;
+			using store_u = typename S_::template fluid<iteratee_t<X>>::type;
+			using serve_u = deranged_t<store_u>;
+			using respan_u = control::respan_t<serve_u>;
 			using resize_u = control::resize_t<>;
 
-			using subkind = compose<void
-			,	concord::confer<debuff_u>
-			,	concord:: defer<buffer_u>
+			using subkind = compose<tag<polymer>
+			,	concord::confer<serve_u>
+			,	concord:: defer<store_u>
 			>;
 			template <typename R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using R_ = compose_s<R, subkind>;
 
-				XTAL_CXN subtype(buffer_u &&buffer_o, XTAL_DEF ...etc)
+			protected:
+				spool_u q_;
+
+				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF ...etc)
 				XTAL_0EX
-				:	R_((debuff_u) buffer_o, XTAL_MOV_(buffer_o), XTAL_REF_(etc)...)
+				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
+				,	q_{voice_u::template limit<1>()}
 				{
 				}
-
-			protected:
-				spool_u q_{voice_u::template limit<1>()};
+				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF_(is_q<X>) x, XTAL_DEF ...etc)
+				XTAL_0EX
+				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
+				,	q_{voice_u::template limit<1>(XTAL_REF_(x))}
+				{
+				}
 
 			public:
 			//	using R_::R_;
 				using R_::self;
 
-				XTAL_CO0_(subtype);
+			//	XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
 
+				~subtype() = default;
+
+				XTAL_CON subtype()
+				XTAL_0EX
+				:	subtype(store_u())
+				{
+				}
 				XTAL_CXN subtype(XTAL_DEF ...etc)
 				XTAL_0EX
-				:	subtype(buffer_u(), XTAL_REF_(etc)...)
+				:	subtype(store_u(), XTAL_REF_(etc)...)
 				{
 				}
 

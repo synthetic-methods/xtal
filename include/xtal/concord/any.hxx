@@ -53,19 +53,6 @@ template <typename ...Ts>
 concept any_q = conjunct_q<any_p<Ts>...>;
 
 
-///\
-Tags `subtype` with this namespace and the supplied templates. \
-
-template <template <typename...> typename ...As> using only   = any  <comport_t<As>...>;
-template <template <typename...> typename ...As> using only_t = any_t<comport_t<As>...>;
-
-///\
-Matches any `T` that inherits from `only_t<As...>`. \
-
-template <typename T, template <typename...> typename A>
-concept only_p = _std::derived_from<based_t<T>, only_t<A>>;
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `...As`. \
@@ -79,10 +66,18 @@ struct confer: compose<refer<U>, As..., defer<U>> {};
 Combines `define` and `refine` to define `T`, sandwiching the decorators `...As`. \
 
 template <typename T, typename ...As>
-struct confine: compose<refine<T>, As..., define<T>> {};
+struct confine//: compose<refine<T>, As..., define<T>> {};
+{
+	using subkind = compose<refine<T>, As..., define<T>>;
 
+	template <typename S>
+	using subtype = compose_s<S, subkind>;
+
+	using type = T;
+	
+};
 template <typename T, typename ...As>
-using confine_t = compose_s<any_t<>, confine<T, As...>>;
+using confine_t = typename confine<T, As...>::template subtype<any_t<>>;
 
 ///\
 Creates the `confine`d _decorator_ with `...As`. \
@@ -91,27 +86,48 @@ template <typename ...As>
 struct confined
 {
 	template <typename T>
-	using homotype = confine<T, As...>;
+	using heterokind = confine<T, As...>;
 
 	template <typename S>
-	class subtype: public compose_s<S, homotype<subtype<S>>>
+	class subtype: public compose_s<S, heterokind<subtype<S>>>
 	{
-		using S_ = compose_s<S, homotype<subtype<S>>>;
+		using S_ = compose_s<S, heterokind<subtype<S>>>;
 	
 	public:
 		using S_::S_;
 
 	};
+	using type = subtype<any_t<>>;
 };
 template <typename ...As>
-using confined_t = compose_s<any_t<>, confined<As...>>;
+using confined_t = typename confined<As...>::type;
 
 
-template <typename ...As>
-using confound = compose<confined<>, any<As>...>;
+////////////////////////////////////////////////////////////////////////////////
+///\
+Creates a _decorator_ that proxies `U`, with `subtype` extending `any<As...>`. \
 
-template <typename ...As>
-using confound_t = compose_s<any_t<>, confound<As...>>;
+template <typename U, typename ...As>
+struct label
+{
+	template <typename T>
+	using heterokind = compose<confine<T, confer<U>>, any<As...>>;
+
+	template <typename S>
+	class subtype: public compose_s<S, heterokind<subtype<S>>>
+	{
+		using S_ = compose_s<S, heterokind<subtype<S>>>;
+	
+	public:
+		using S_::S_;
+
+	};
+	using type = subtype<unit_t>;
+};
+template <typename U, typename ...As>
+using label_t = typename label<U, As...>::type;
+///<\
+Resolves `label<U, As...>::type`. \
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,16 +160,6 @@ template <typename W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_REF_
 template <any_p    W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_REF_(w));}
 ///<\
 \returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
-
-
-////////////////////////////////////////////////////////////////////////////////
-///\
-Creates a _decorator_ that proxies `U` with `...any<As>`. \
-
-template <typename U, typename ...As> using label   = compose<lift<U>, any<As...>>;
-template <typename U, typename ...As> using label_t = compose_s<unit_t, label<U, As...>>;
-///<\
-Resolves `label<U, As...>::type`. \
 
 
 ///////////////////////////////////////////////////////////////////////////////

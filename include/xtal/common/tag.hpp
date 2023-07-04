@@ -14,24 +14,27 @@ namespace xtal::common
 ////////////////////////////////////////////////////////////////////////////////
 
 template <template <typename...> typename F>
-struct comport
+struct tag
 {
 	class type
 	{
 	};
 	template <typename S>
-	class subtype: public S, public virtual type
+	class subtype: public type, public S
 	{
 	public:
 		using S::S;
-
+		
 	};
 };
 template <template <typename...> typename F>
-using comport_t = typename comport<F>::type;
+using tag_t = typename tag<F>::type;
 
 template <typename T, template <typename...> typename F>
-concept comport_p = _std::derived_from<based_t<T>, comport_t<F>>;
+concept tag_p = _std::derived_from<based_t<T>, tag_t<F>>;
+
+template <template <typename...> typename F, typename ...Ts>
+concept tag_q = conjunct_q<tag_p<Ts, F>...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

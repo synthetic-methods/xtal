@@ -73,7 +73,7 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 
 void test__attribute_influx_method(auto z)
 {
-	using start_t = control::nominal_t<0, struct start>;
+	using start_t = control::nominal_t<0, struct T_start>;
 
 	auto &o = z.template self<bias_t>();
 	REQUIRE(-1 == (int) z.influx(start_t()));                                    // unrecognized
@@ -92,7 +92,7 @@ TEST_CASE("xtal/process/any.hpp: attribute influx method")
 
 void test__attribute_efflux_method(auto z)
 {
-	using start_t = control::nominal_t<0, struct start>;
+	using start_t = control::nominal_t<0, struct T_start>;
 
 	auto &o = z.template self<bias_t>();
 	REQUIRE(-1 == (int) z.efflux(start_t()));                                    // unrecognized

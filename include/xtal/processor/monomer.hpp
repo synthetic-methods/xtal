@@ -15,13 +15,14 @@ template <typename ...>
 struct monomer;
 
 template <typename ...Ts>
-XTAL_ASK monomer_q = conjunct_q<only_p<Ts, monomer>...>;
+XTAL_ASK monomer_q = tag_q<monomer, Ts...>;
 
 template <typename U, typename ...As>
-XTAL_USE monomer_t = typename confined<monomer<U, As...>>::template subtype<only_t<monomer>>;
+XTAL_USE monomer_t = confined_t<monomer<U, As...>>;
 
 template <typename ...As>
 XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ struct monomer<U, As...>
 		struct binding: B_<Xs...>
 		{
 			using rebound = B_<Xs...>;
-			using subkind = compose<void
+			using subkind = compose<tag<monomer>
 			,	concord::confer<typename rebound::result_t>
 			,	As...
 		//	,	resize_u::attach
@@ -104,16 +105,16 @@ struct monomer<U, As...>
 		{
 			using rebound = B_<Xs...>;
 		
-			using buffer_u = typename S_::template fluid<typename rebound::return_t>::type;
-			using debuff_u = deranged_t<buffer_u>;
-			using respan_u = control::respan_t<debuff_u>;
+			using store_u = typename S_::template fluid<typename rebound::return_t>::type;
+			using serve_u = deranged_t<store_u>;
+			using respan_u = control::respan_t<serve_u>;
 			using resize_u = control::resize_t<>;
 		
-			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, debuff_u>...>;
+			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, serve_u>...>;
 
-			using subkind = compose<void
-			,	concord::confer<debuff_u>
-			,	concord::defer <buffer_u>
+			using subkind = compose<tag<monomer>
+			,	concord::confer<serve_u>
+			,	concord::defer <store_u>
 			,	As...
 			,	resize_u::attach
 			,	sequel_u::attach
@@ -125,9 +126,9 @@ struct monomer<U, As...>
 			{
 				using R_ = compose_s<R, subkind>;
 
-				XTAL_CXN subtype(buffer_u &&buffer_o, XTAL_DEF ...etc)
+				XTAL_CXN subtype(store_u &&buffer_o, XTAL_DEF ...etc)
 				XTAL_0EX
-				:	R_((debuff_u) buffer_o, XTAL_MOV_(buffer_o), XTAL_REF_(etc)...)
+				:	R_((serve_u) buffer_o, XTAL_MOV_(buffer_o), XTAL_REF_(etc)...)
 				{
 				}
 
@@ -140,7 +141,7 @@ struct monomer<U, As...>
 
 				XTAL_CXN subtype(XTAL_DEF ...etc)
 				XTAL_0EX
-				:	subtype(buffer_u(), XTAL_REF_(etc)...)
+				:	subtype(store_u(), XTAL_REF_(etc)...)
 				{
 				}
 

@@ -13,9 +13,12 @@ namespace xtal::context
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=_std::ptrdiff_t>
-struct voice
-:	lift<U, only<voice>>
+template <typename ...>
+struct voice;
+
+template <typename U>
+struct voice<U>
+:	lift<U, any<tag<voice>>>
 {
 };
 template <constant_q U>

@@ -13,9 +13,12 @@ namespace xtal::context
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=_std::ptrdiff_t>
-struct delay
-:	lift<U, only<delay>>
+template <typename ...>
+struct delay;
+
+template <typename U>
+struct delay<U>
+:	lift<U, any<tag<delay>>>
 {
 };
 template <typename S=confined_t<>, typename U=_std::ptrdiff_t>

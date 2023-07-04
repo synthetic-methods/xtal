@@ -585,11 +585,12 @@ struct collect
 	using type = subtype<unit_t>;
 };
 template <int N_size=-1>
-using collect_t = typename collect<N_size>::template subtype<unit_t>;
+using collect_t = typename collect<N_size>::type;
 
 template <typename T>
 concept collect_p = requires ()
 {
+	typename T::volume; requires constant_q<typename T::volume>;
 	typename T::template solid<unit_t>;
 	typename T::template fluid<unit_t>;
 	requires iterated_q<typename T::template fluid<unit_t>::type>;

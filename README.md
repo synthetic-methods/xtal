@@ -24,8 +24,8 @@ Further insight may be gleaned from the `*.hpp` implementations or `*.c++` tests
 
 The following code examples use the following macros for brevity/clarity:
 
-	#define XTAL_FN2 [[nodiscard]] static constexpr decltype(auto)
-	#define XTAL_FN1               static constexpr decltype(auto)
+	#define XTAL_FN2 [[nodiscard]] constexpr decltype(auto)
+	#define XTAL_FN1               constexpr decltype(auto)
 
 	#define XTAL_DEF       auto &&
 	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
@@ -44,15 +44,15 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	   }
 	};
 
-The implementation of a `process` is defined by the `template`d function `method`\.
+The implementation of a `process` is defined by the `template`d function `method`.
 When the `template` parameter list is undefined `<auto...>`,
-this `method` is aliased as the invocation `operator()`\.
+this `method` is aliased as the invocation `operator()`.
 
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
 Range-lifting is achieved using functors like `processor::{let,lift,monomer}`,
-which `zip` the underlying `method`\.
+which `zip` the underlying `method`.
 
 	using Mixer = processor::lift_t<Mix>;
 	Mixer mixer;
@@ -63,8 +63,8 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`\.
-The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`\.
+Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
+The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`.
 
 	using Active = control::ordinal_t<struct active>;
 
@@ -147,7 +147,7 @@ Using `C++20` and `ranges-v3@0.12.0`, the following compilers have been successf
 -	`msvc`: 19.33
 -	`gcc`: 12
 
-The transition to `C++23` ranges is limited by the lack of general support for `zip_transform` a.k.a. `zip_with`\.
+The transition to `C++23` ranges is limited by the lack of general support for `zip_transform` a.k.a. `zip_with`.
 
 ## Layout
 
@@ -155,33 +155,32 @@ The directories in the project are organised by namespace with the leaves repres
 
 The files [`**/all.hpp`](include/xtal/all.hpp?ts=3) export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
 
-The files [`xtal/*/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
+The files [`*/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
-The file [`xtal/concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
+The file [`concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
 ## Macros
 
-The macros defined in [`xtal/etc.hpp`](include/xtal/etc.hpp?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`\.
+The macros defined in [`etc.hpp`](include/xtal/etc.hpp?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
 The most commonly encountered are those used for function definition, for example:
 
-	#define XTAL_LET                 static constexpr          auto
-	#define XTAL_OP1                        constexpr decltype(auto) operator
-	#define XTAL_OP2   [[nodiscard]]        constexpr decltype(auto) operator
-	#define XTAL_FN1                        constexpr decltype(auto)
-	#define XTAL_FN2   [[nodiscard]]        constexpr decltype(auto)
-	#define XTAL_CN1                 static constexpr decltype(auto)
-	#define XTAL_CN2   [[nodiscard]] static constexpr decltype(auto)
+	#define XTAL_OP1                      constexpr decltype(auto) operator
+	#define XTAL_OP2 [[nodiscard]]        constexpr decltype(auto) operator
+	#define XTAL_FN1                      constexpr decltype(auto)
+	#define XTAL_FN2 [[nodiscard]]        constexpr decltype(auto)
+	#define XTAL_CN1               static constexpr decltype(auto)
+	#define XTAL_CN2 [[nodiscard]] static constexpr decltype(auto)
 	
-	#define XTAL_0EX                   noexcept
-	#define XTAL_0EX_(REF)         REF noexcept
-	#define XTAL_0FX         const     noexcept
-	#define XTAL_0FX_(REF)   const REF noexcept
+	#define XTAL_0EX                 noexcept
+	#define XTAL_0EX_(REF)       REF noexcept
+	#define XTAL_0FX       const     noexcept
+	#define XTAL_0FX_(REF) const REF noexcept
 
 This naming scheme is intended to be automnemonic...
 
-The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`\. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
+The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
 
 ## Templates
 
@@ -191,7 +190,7 @@ These decorators are expressed as a `struct` with `template`d member `subtype`:
 	struct {template <typename S> class subtype;};
 
 Typically, these `struct`ures are themselves `template`d in order to realise a specific facet of the system.
-For example, `define` uses the curiously recursive template pattern (CRTP) to construct the supplied subclass `T`\.
+For example, `define` uses the Curiously Recursive Template Pattern (CRTP) to construct the supplied subclass `T`.
 
 	template <typename T>
 	struct define
@@ -226,7 +225,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.hpp`](include/xtal/process/any.hpp?ts=3) for each namespace supply the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of `xtal/concord/any.hxx` within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.hpp`](include/xtal/process/any.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -246,7 +245,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 ## Status
 
-Implemented:
+### Implemented
 
 |Feature                |Reference|
 |-----------------------|---------|
@@ -266,7 +265,7 @@ Implemented:
 |Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
 
-Implemented but untested:
+### Implemented but Untested
 
 |Feature                |Reference|
 |-----------------------|---------|

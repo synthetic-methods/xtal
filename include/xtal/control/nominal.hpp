@@ -20,7 +20,7 @@ template <int N, typename ...As>
 using nominal = label<constant_t<N>, As...>;
 
 template <int N, typename ...As>
-using nominal_t = compose_s<any_t<>, nominal<N, As...>>;
+using nominal_t = typename nominal<N, As...>::type;
 
 
 ///////////////////////////////////////////////////////////////////////////////

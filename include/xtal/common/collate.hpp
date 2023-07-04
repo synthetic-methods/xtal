@@ -176,6 +176,12 @@ struct collate
 					fluid_m.insert(v_, u_, 1);
 				}
 
+				XTAL_FN0 clear()
+				XTAL_0EX
+				{
+					fluid_m.clear();
+				}
+
 			};
 		};
 		///\
