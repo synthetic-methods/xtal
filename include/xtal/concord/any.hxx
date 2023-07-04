@@ -132,9 +132,11 @@ template <typename U> XTAL_FN2 lift_f(U &&u) XTAL_0EX {return lift_t<U>(XTAL_REF
 ///\
 Defines `type` by `W` if `any_p<W>`, otherwise `lift_t<W>`. \
 
-template <typename W> struct let    {using type = lift_t<W>;};
-template <any_p    W> struct let<W> {using type =        W ;};
-template <typename W> using  let_t = typename let<W>::type;
+template <typename ...Ws> struct let;
+template <typename    W > struct let<W> {using type =     lift_t<W>;};
+template <any_p       W > struct let<W> {using type =            W ;};
+template <              > struct let<>  {using type = confined_t< >;};
+template <typename ...Ws> using  let_t = typename let<Ws...>::type;
 ///<\
 Resolves `let<W>::type`. \
 

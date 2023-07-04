@@ -51,11 +51,12 @@ struct monomer<U, As...>
 		struct binding: B_<Xs...>
 		{
 			using rebound = B_<Xs...>;
-			using subkind = compose<As...
+			using subkind = compose<void
 			,	concord::confer<typename rebound::result_t>
-			,	rebound
-			,	sequel_u::attach
+			,	As...
 		//	,	resize_u::attach
+			,	sequel_u::attach
+			,	rebound
 			>;
 			template <typename R>
 			class subtype: public compose_s<R, subkind>
@@ -110,13 +111,14 @@ struct monomer<U, As...>
 		
 			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, debuff_u>...>;
 
-			using subkind = compose<As...
+			using subkind = compose<void
 			,	concord::confer<debuff_u>
 			,	concord::defer <buffer_u>
-			,	rebound
-			,	sequel_u::attach
+			,	As...
 			,	resize_u::attach
-			,	typename control::confined_t<>::interrupt<0>
+			,	sequel_u::attach
+			,	typename control::let_t<>::interrupt<0>
+			,	rebound
 			>;
 			template <any_p R>
 			class subtype: public compose_s<R, subkind>
