@@ -16,7 +16,7 @@ which are lifted to define `processor`s that operate on blocks of samples. These
 The procession of the network is governed by a static messaging protocol, and includes the capability for scheduling and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
 
 The following sections provide an overview of the usage and development of this library.
-Further insight may be gleaned from the `*.hpp` implementations or `*.c++` tests in `include/xtal/**`.
+Further insight may be gleaned from the `*.hpp` implementations or `*.c++` tests in [`include/xtal/**`](include/xtal/?ts=3).
 
 # Usage
 
@@ -44,15 +44,15 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	   }
 	};
 
-The implementation of a `process` is defined by the `template`d function `method`.
+The implementation of a `process` is defined by the `template`d function `method`\.
 When the `template` parameter list is undefined `<auto...>`,
-this `method` is aliased as the invocation `operator()`.
+this `method` is aliased as the invocation `operator()`\.
 
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
 Range-lifting is achieved using functors like `processor::{let,lift,monomer}`,
-which `zip` the underlying `method`.
+which `zip` the underlying `method`\.
 
 	using Mixer = processor::lift_t<Mix>;
 	Mixer mixer;
@@ -63,8 +63,8 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
-The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`.
+Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`\.
+The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`\.
 
 	using Active = control::ordinal_t<struct active>;
 
@@ -134,7 +134,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	   // deactivate the `sixer` at an offset of `123` into the current block
 	   sixer <<= sixer <<= std::make_tuple(123, Active(0));
 
-	   // render the current graph, and advance the `sequel` sequel
+	   // render the current graph, and advance the `sequel` cursor
 	   sixer >>= sequel++;
 	}
 
@@ -147,23 +147,23 @@ Using `C++20` and `ranges-v3@0.12.0`, the following compilers have been successf
 -	`msvc`: 19.33
 -	`gcc`: 12
 
-The transition to `C++23` ranges is limited by the lack of general support for `zip_transform` a.k.a. `zip_with`.
+The transition to `C++23` ranges is limited by the lack of general support for `zip_transform` a.k.a. `zip_with`\.
 
 ## Layout
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files `**/all.hpp` export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
+The files [`**/all.hpp`](include/xtal/all.hpp?ts=3) export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
 
-The files `xtal/*/any.hpp` provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
+The files [`xtal/*/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
 
-The file `xtal/concord/any.hxx` scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
+The file [`xtal/concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
 ## Macros
 
-The macros defined in `xtal/etc.hpp` are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
+The macros defined in [`xtal/etc.hpp`](include/xtal/etc.hpp?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`\.
 The most commonly encountered are those used for function definition, for example:
 
 	#define XTAL_LET                 static constexpr          auto
@@ -181,7 +181,7 @@ The most commonly encountered are those used for function definition, for exampl
 
 This naming scheme is intended to be automnemonic...
 
-The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
+The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`\. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
 
 ## Templates
 
@@ -191,7 +191,7 @@ These decorators are expressed as a `struct` with `template`d member `subtype`:
 	struct {template <typename S> class subtype;};
 
 Typically, these `struct`ures are themselves `template`d in order to realise a specific facet of the system.
-For example, `define` uses the curiously recursive template pattern (CRTP) to construct the supplied subclass `T`.
+For example, `define` uses the curiously recursive template pattern (CRTP) to construct the supplied subclass `T`\.
 
 	template <typename T>
 	struct define
@@ -208,11 +208,11 @@ For example, `define` uses the curiously recursive template pattern (CRTP) to co
 	   };
 	};
 
-The functions `compose` and `compose_s` (defined in `xtal/any/compose.hpp`) are used to linearize the inheritence chain by applying a sequence of decorators to the supertype `S`, similar to the linearization of Scala's traits. For example, the following definitions are equivalent (noting that `A1, ..., A4` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/common/compose.hpp?ts=3) are used to linearize the inheritence chain by applying a sequence of decorators to the supertype `S`, similar to the linearization of Scala's traits. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
-	using T = compose<A, B>::template subtype<S>;
-	using T = compose<A>::template subtype<S, B>;
-	using T = compose<>::template subtype<S, B, A>;
+	using T = compose<A, Z>::template subtype<S>;
+	using T = compose<A>::template subtype<S, Z>;
+	using T = compose<>::template subtype<S, Z, A>;
 
 ## Namespaces
 
@@ -226,7 +226,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The `any.hpp` for each namespace supply the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of `xtal/concord/any.hxx` within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.hpp`](include/xtal/process/any.hpp?ts=3) for each namespace supply the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of `xtal/concord/any.hxx` within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -247,25 +247,31 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 ## Status
 
 Implemented:
--	Parameter  bundling:       `conflux/any.hpp#{<<=,>>=}` using `tuple`s.
--	Parameter  composition:    `common/compose.hpp` with `concord/any.hpp#defer`.
--	Parameter  namespacing:    `control/any.hpp#prefix`.
--	Parameter  sampling:       `control/any.hpp#hold`.
--	Parameter  scheduling:     `control/any.hpp#interrupt` and `processor/monomer.hpp#efflux`.
--	Processor  resizing:       `processor/*.hpp` by influxing `control/resize.hpp`.
--	Processor  rendering:      `processor/*.hpp` by effluxing `control/respan.hpp`.
--	Processor  streaming:      `processor/monomer.hpp` by effluxing `control/serial.hpp`.
--	Process    templating:     `process/any.hpp#define`, `control/any.hpp#dispatch`.
--	Function   lifting:        `{process,processor}/any.hpp#defer`.
--	Dependency management:     `conflux/any.hpp` and `process/any.hpp#monomer`.
--	Buffer     sharing:        `processor/monomer.hpp#{influx,efflux}`.
--	Buffer     convolution:    `common/collate.hpp#{series,serial}` incl. FFT.
--	Numeric    conditioning:   `common/realize.hpp#{truncate,puncture}`
--	...
+
+|Feature                |Reference|
+|-----------------------|---------|
+|Dependency composition |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
+|Dependency management  |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling     |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter binding      |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter sampling     |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
+|Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::interrupt`|
+|Parameter namespacing  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::prefix`|
+|Process lifting        |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Processor lifting      |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Processor resizing     |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
+|Processor rendering    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
+|Processor streaming    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
+|Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` compatible `&&`arguments|
+|Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
+|Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
 
 Implemented but untested:
--	Processor polymorphism: `processor/polymer.hpp`.
--	Modulation matricies: `{process,processor}/dimer.hpp`.
+
+|Feature                |Reference|
+|-----------------------|---------|
+|Processor polymorphism |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
+|Matrix modulation      |[`process/dimer.hpp`](include/xtal/process/dimer.hpp?ts=3)|
 
 ## Contribution
 
