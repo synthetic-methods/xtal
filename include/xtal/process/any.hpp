@@ -287,17 +287,23 @@ struct refine
 		using S_::S_;
 		using S_::self;
 
-		template <typename ...Xs>
-		struct binding
+		template <typename ...As>
+		XTAL_CN2 binding_f(XTAL_DEF ...xs)
+		XTAL_0EX
 		{
-			using kind = typename S_::template binding<Xs...>;
-			using type = typename _retail::confined<kind>::template subtype<S>;
-
-		};
-		template <typename ...Xs>
-		using    binding_t = typename binding<Xs...>::type;
-		XTAL_LET binding_f = [] (XTAL_DEF ...xs) XTAL_0FN_(binding_t<decltype(xs)...>(        XTAL_REF_(xs)...));
-		XTAL_DO4_(XTAL_FN2  bind(XTAL_DEF ...xs),          binding_t<decltype(xs)...>(self(), XTAL_REF_(xs)...))
+			using kind = typename S_::template binding<decltype(xs)...>;
+			using type = compose_s<S, _retail::confined<As..., kind>>;
+			return type(XTAL_REF_(xs)...);
+		}
+		template <typename ...As>
+		XTAL_CN2 binding_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
+		XTAL_0EX
+		{
+			using kind = typename S_::template binding<decltype(xs)...>;
+			using type = compose_s<S, _retail::confined<As..., kind>>;
+			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
+		}
+		XTAL_DO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), binding_f<As...>(self(), XTAL_REF_(xs)...))
 
 	};
 };
