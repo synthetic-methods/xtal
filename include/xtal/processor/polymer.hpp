@@ -17,36 +17,46 @@ struct polymer;
 template <typename ...Ts>
 XTAL_ASK polymer_q = tag_q<polymer, Ts...>;
 
-template <typename ...As>
-XTAL_USE polymer_t = confined_t<polymer<As...>>;
+template <typename ..._s>
+XTAL_USE polymer_t = confined_t<polymer<_s...>>;
+
+//template <typename ...As>
+//XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<decltype(u), As...>(XTAL_REF_(u));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Polyphonic `voice` allocator with capacity `C::value`. \
+The `processor` supplied to `binding` is used as the underlying `value_type`. \
+If constructed with `binding_f`, the supplied value is used as the sentinel, \
+meaning any upstream references will be preserved. \
 
-template <typename ...As>
-struct polymer
+///\note\
+The use of `binding` as the lifting mechanism is intended both to mirror `monomer`, \
+and to allow `collect<...>, As...` to establish the type of the underlying `store`. \
+
+template <constant_q C, typename ...As>
+struct polymer<C, As...>
 {
-	using subkind = compose<As..., context::voice<constant_t<-1>>>;
+	using subkind = compose<As...>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
-
-	//	template <typename ...Xs>
-	//	using B_ = typename S_::template binding<Xs...>;
+		
+		XTAL_LET N_voice = C::value;
 
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::capacity;
 
-		template <any_p X> requires collect_q<S_>
-		struct bind
+		template <any_p X> requires iterated_q<X> and collect_q<S_>
+		struct binding
 		{
 			using voice_u = context::voice_s<X>;
-			using spool_u = typename collage<voice_u, capacity>::spool_t;
+			using spool_u = typename collage<voice_u, N_voice>::spool_t;
 			using store_u = typename S_::template fluid<iteratee_t<X>>::type;
 			using serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
@@ -55,6 +65,7 @@ struct polymer
 			using subkind = compose<tag<polymer>
 			,	concord::confer<serve_u>
 			,	concord:: defer<store_u>
+		//	,	As...
 			>;
 			template <typename R>
 			class subtype: public compose_s<R, subkind>
@@ -64,16 +75,16 @@ struct polymer
 			protected:
 				spool_u q_;
 
-				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF ...etc)
-				XTAL_0EX
-				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
-				,	q_{voice_u::template limit<1>()}
-				{
-				}
 				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF_(is_q<X>) x, XTAL_DEF ...etc)
 				XTAL_0EX
 				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
 				,	q_{voice_u::template limit<1>(XTAL_REF_(x))}
+				{
+				}
+				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF ...etc)
+				XTAL_0EX
+				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
+				,	q_{voice_u::template limit<1>()}
 				{
 				}
 

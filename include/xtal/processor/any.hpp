@@ -33,9 +33,9 @@ template <typename T, typename Y>
 concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
 
 
-template <int code=0>   struct iterate_access;
-template <          >   struct iterate_access<0> {XTAL_LET category = _v3::ranges::category::random_access;};
-template <          >   struct iterate_access<1> {XTAL_LET category = _v3::ranges::category::forward;};
+template <int code=0> struct iterate_access;
+template <          > struct iterate_access<0> {XTAL_LET category = _v3::ranges::category::random_access;};
+template <          > struct iterate_access<1> {XTAL_LET category = _v3::ranges::category::forward;};
 template <int code=0>
 XTAL_CN2 iterate_access_f(XTAL_DEF z)
 XTAL_0EX

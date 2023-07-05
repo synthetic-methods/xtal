@@ -11,17 +11,20 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-
 template <typename ...>
 struct dimer;
 
 template <typename ...Ts>
 XTAL_ASK dimer_q = tag_q<dimer, Ts...>;
 
-template <typename U, typename ...As>
-XTAL_USE dimer_t = confined_t<dimer<U, As...>>;
+template <typename ..._s>
+XTAL_USE dimer_t = confined_t<dimer<_s...>>;
 
+template <typename ...As>
+XTAL_CN2 dimer_f(XTAL_DEF u) {return dimer_t<decltype(u), As...>(XTAL_REF_(u));}
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename... As>
 struct dimer<U, As...>

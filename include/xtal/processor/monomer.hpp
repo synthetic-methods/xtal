@@ -17,8 +17,8 @@ struct monomer;
 template <typename ...Ts>
 XTAL_ASK monomer_q = tag_q<monomer, Ts...>;
 
-template <typename U, typename ...As>
-XTAL_USE monomer_t = confined_t<monomer<U, As...>>;
+template <typename ..._s>
+XTAL_USE monomer_t = confined_t<monomer<_s...>>;
 
 template <typename ...As>
 XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}

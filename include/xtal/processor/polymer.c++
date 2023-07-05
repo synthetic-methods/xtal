@@ -15,8 +15,7 @@ namespace xtal::processor::__test
 /**/
 TEST_CASE("xtal/processor/polymer.hpp: true")
 {
-	using voices_t = context::voice<constant_t<(1<<7)>>;
-	using vox_t = polymer_t<voices_t>;
+	using vox_t = polymer_t<constant_t<(1<<7)>>;
 
 	REQUIRE(true);
 }
