@@ -149,6 +149,12 @@ Using `C++20` and `ranges-v3@0.12.0`, the following compilers have been successf
 
 The transition to `C++23` ranges is limited by the lack of general support for `zip_transform` a.k.a. `zip_with`.
 
+## Package
+
+With the project in genesis, the only supported package manager is `conan --version` 2. The `test_package` (comprising 1000+ assertions in 50+ test cases) can be resolved/compiled/executed with:
+
+	conan create . --build=missing
+
 ## Layout
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
