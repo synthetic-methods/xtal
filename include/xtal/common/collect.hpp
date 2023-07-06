@@ -190,8 +190,8 @@ struct collect
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
 
+				XTAL_DO4_(XTAL_OP2() (size_type i),  _ptr_f(block_m + i));
 				XTAL_DO4_(XTAL_OP2[] (size_type i), *_ptr_f(block_m + i));
-				XTAL_DO4_(XTAL_OP2()(size_type i),  _ptr_f(block_m + i));
 
 				XTAL_DO4_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
 				XTAL_DO4_(XTAL_FN2  begin(),     _ptr_f(block_m));

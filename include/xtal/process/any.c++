@@ -19,7 +19,7 @@ using namespace xtal::__test;
 TEST_CASE("xtal/process/any.hpp: lifting")
 {
 	auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-	REQUIRE(10 == f.template method<>(1, 2, 3, 4));
+	REQUIRE(10 == f.method(1, 2, 3, 4));
 	REQUIRE(10 == f(1, 2, 3, 4));
 	REQUIRE(10 == f.reify() (1, 2, 3, 4));
 }

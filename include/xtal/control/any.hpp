@@ -102,7 +102,7 @@ struct define
 				XTAL_FN2 deify()
 				XTAL_0FX
 				{
-					return deify(being<Xs...>::template method<>);
+					return deify(being<Xs...>::template method_m<>);
 				}
 				XTAL_FN2 deify(auto const &fs)
 				XTAL_0FX
@@ -122,13 +122,13 @@ struct define
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
-							return _std::array{(doing::template method<Ks..., I>)...};
+							return _std::array{(doing::template method_m<Ks..., I>)...};
 						}
 						XTAL_LET method_m = method_f(seek_v<N_arity>);
 					
 					};
-					template <auto ...Ks>
-					XTAL_LET method = resolve<Ks...>::method_m;
+					template <auto ...Ks> XTAL_LET method_m = resolve<Ks...>::method_m;
+					template <auto ...Ks> XTAL_USE method_t = decltype(method_m<Ks...>);
 				
 				};
 
@@ -171,7 +171,6 @@ struct define
 				using R_::R_;
 				using R_::self;
 
-				template <auto...>
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{
@@ -232,7 +231,6 @@ struct define
 					return R_::influx(oo...);
 				}
 
-				template <auto...>
 				XTAL_FN1_(T) method()
 				XTAL_0EX
 				{

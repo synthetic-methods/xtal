@@ -82,7 +82,6 @@ struct monomer<U, As...>
 
 				XTAL_DO4_(XTAL_FN1 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
 
-				template <auto...>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
@@ -148,7 +147,6 @@ struct monomer<U, As...>
 				XTAL_DO4_(XTAL_FN1 store(XTAL_DEF... oo), R_::template head<1>(XTAL_REF_(oo)...))
 				XTAL_DO4_(XTAL_FN1 serve(XTAL_DEF... oo), R_::template head<0>(XTAL_REF_(oo)...))
 
-				template <auto...>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
@@ -184,7 +182,7 @@ struct monomer<U, As...>
 						auto sequel_x = sequel_o.slice(i, j).skip(n);
 						auto respan_x = respan_o.slice(i, j);
 						(void) R_::template efflux_request_tail<I_parity>(respan_x, sequel_x, oo...);
-						ranges::copy(R_::template method<>()|views::take(j - i), ranges::next(serve().begin(), i));
+						ranges::copy(R_::method()|views::take(j - i), ranges::next(serve().begin(), i));
 					});
 					return R_::template influx_request(sequel_o);
 				}

@@ -354,6 +354,9 @@ XTAL_CN2 count_f(T &&t)
 	else if constexpr (requires {t.size();}) {
 		return XTAL_REF_(t).size();
 	}
+	else {
+		return (distance_t<T>) -1;
+	}
 }
 ///<\returns the `size` of the given range. \
 

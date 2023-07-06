@@ -19,17 +19,15 @@ using namespace common;
 using bias_t = control::label_t<typename realized::alpha_t, struct T_bias>;
 using coef_t = control::label_t<typename realized::alpha_t, struct T_coef>;
 
+
 struct mix
 {
 	class type: public process::confine_t<type>
 	{
-		using S_ = process::confine_t<type>;
-
 	public:
-		using S_::S_;
 
-		template <auto bias>
 		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
 		{
 			return (XTAL_REF_(xs) +...+ 0);
 		}
@@ -38,41 +36,61 @@ struct mix
 };
 using mix_t = typename mix::type;
 
-struct static_bias_mix_t
-:	process::confine_t<static_bias_mix_t
-	,	bias_t::template dispatch<(1 << 7)>
-	>
+
+struct static_bias_mix
 {
-	template <auto bias>
-	XTAL_FN2 method(XTAL_DEF ...xs)
+	class type: public process::confine_t<type, bias_t::template dispatch<(1<<7)>>
 	{
-		return (XTAL_REF_(xs) +...+ bias);
-	}
+	public:
+
+		template <auto bias>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return (XTAL_REF_(xs) +...+ bias);
+		}
+
+	};
 };
-struct dynamic_bias_mix_t
-:	process::confine_t<dynamic_bias_mix_t
-	,	bias_t::attach
-	>
+using static_bias_mix_t = typename static_bias_mix::type;
+
+
+struct dynamic_bias_mix
 {
-	template <auto...>
-	XTAL_FN2 method(XTAL_DEF ...xs)
+	class type: public process::confine_t<type, bias_t::attach>
 	{
-		auto &o = this->template self<bias_t>();
-		return (XTAL_REF_(xs) +...+ o.head());
-	}
+	public:
+
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0EX
+		{
+			auto &o = this->template self<bias_t>();
+			return (XTAL_REF_(xs) +...+ o.head());
+		}
+
+	};
 };
-struct dynamic_term_t
-:	process::confine_t<dynamic_term_t
-	,	coef_t::attach
-	>
+using dynamic_bias_mix_t = typename dynamic_bias_mix::type;
+
+
+struct dynamic_term
 {
-	template <auto...>
-	XTAL_FN2 method(XTAL_DEF x)
+	class type: public process::confine_t<type, coef_t::attach>
 	{
-		auto &o = this->template self<coef_t>();
-		return XTAL_REF_(x)*o.head();
-	}
+	public:
+
+		XTAL_FN2 method(XTAL_DEF x)
+		XTAL_0EX
+		{
+			auto &o = this->template self<coef_t>();
+			return XTAL_REF_(x)*o.head();
+		}
+
+	};
 };
+using dynamic_term_t = typename dynamic_term::type;
+
+
 struct dynamic_count
 {
 	using count_t  = typename realized::iota_t;
@@ -88,8 +106,8 @@ struct dynamic_count
 	public:
 		using co::co;
 
-		template <auto...>
 		XTAL_FN2 method()
+		XTAL_0EX
 		{
 			auto i = count; count += this->template get<restep_u>();
 			return i;
@@ -101,6 +119,7 @@ struct dynamic_count
 	};
 };
 using dynamic_count_t = typename dynamic_count::type;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -45,7 +45,7 @@ struct define
 		///\returns `reify()` applied to the given arguments. \
 		
 		XTAL_DO4_(
-		XTAL_OP2() (XTAL_DEF ...xs), self().template method<>(XTAL_REF_(xs)...)
+		XTAL_OP2() (XTAL_DEF ...xs), self().method(XTAL_REF_(xs)...)
 		)
 		
 		///\returns the lambda abstraction of `method`, \
@@ -61,7 +61,7 @@ struct define
 		XTAL_FN2 deify()
 		XTAL_0FX
 		{
-			return deify(being<Xs...>::template method<>);
+			return deify(being<Xs...>::template method_m<>);
 		}
 		XTAL_FN2 deify(auto const &f0)
 		XTAL_0FX
@@ -97,8 +97,8 @@ struct define
 				using method_t = return_t (T::*) (Xs const &&...) const;
 
 			};
-			template <auto ...Ks>
-			XTAL_LET_(typename resolve<Ks...>::method_t) method = &T::template method<Ks...>;
+			template <auto ...Ks> XTAL_USE method_t = typename resolve<Ks...>::method_t;
+			template <auto ...Ks> XTAL_LET method_m = static_cast<method_t<Ks...>>(&T::template method<Ks...>);
 		
 		};
 
@@ -329,7 +329,6 @@ struct defer
 		///\
 		Constant redirection. \
 
-		template <auto...>
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
@@ -350,7 +349,7 @@ struct defer
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_DO4_(template <auto ...>
+		XTAL_DO4_(
 		XTAL_FN2 method(XTAL_DEF ...xs), head() (XTAL_REF_(xs)...)
 		)
 

@@ -33,28 +33,24 @@ template <typename T, typename Y>
 concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
 
 
-template <int code=0> struct iterate_access;
-template <          > struct iterate_access<0> {XTAL_LET category = _v3::ranges::category::random_access;};
-template <          > struct iterate_access<1> {XTAL_LET category = _v3::ranges::category::forward;};
-template <int code=0>
-XTAL_CN2 iterate_access_f(XTAL_DEF z)
+XTAL_USE scope = _v3::ranges::category;
+
+template <auto N>
+XTAL_CN2 scope_f(XTAL_DEF z)
 XTAL_0EX
 {
-	using namespace _v3::ranges;
-	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, iterate_access<code>::category>;
-	return Z(XTAL_REF_(z));
+	return _v3::ranges::any_view<iteratee_t<XTAL_TYP_(z)>, N>(XTAL_REF_(z));
 }
-template <int code=0>
-XTAL_CN2 iterate_access_f(XTAL_DEF z)
+template <auto N>
+XTAL_CN2 scope_f(XTAL_DEF z)
 XTAL_0EX
-XTAL_REQ_(z.size())
+XTAL_REQ  (N != (N|scope::sized)) and requires {z.size();}
 {
-	using namespace _v3::ranges;
-	using  Z = any_view<iteratee_t<XTAL_TYP_(z)>, iterate_access<code>::category|category::sized>;
-	return Z(XTAL_REF_(z))|_v3::views::take(z.size());
+	using namespace _v3::views;
+	return scope_f<N|scope::sized>(XTAL_REF_(z))|take(z.size());
 }
 
-XTAL_LET iterate_function_f = [] (XTAL_DEF f)
+XTAL_LET zap_f = [] (XTAL_DEF f)
 XTAL_0FN_([g = XTAL_REF_(f)] (XTAL_DEF ...xs)
 XTAL_0FN
 {
@@ -102,13 +98,13 @@ struct defer<U>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
-		using U_ = U const &;
 
 		template <typename ...Xs>
 		XTAL_FN2 reified_()
 		XTAL_0EX
 		{
-			return _detail::iterate_function_f(head().template reify<iteratee_t<Xs>...>());
+			using namespace _detail;
+			return zap_f(head().template reify<iteratee_t<Xs>...>());
 		}
 
 	public:
@@ -123,26 +119,25 @@ struct defer<U>
 		NOTE: Unless the underlying `process` is invocable as `const`, \
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
-		template <auto...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
+		template <typename ...Xs>
+		XTAL_FN2 method(Xs &&...xs)
 		XTAL_0EX
 		{
-			return _detail::iterate_access_f<1>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			using namespace _detail;
+			return scope_f<scope::forward>(reified_<Xs...>() (XTAL_REF_(xs)...));
 		}
-		template <auto...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
+		template <typename ...Xs>
+		XTAL_FN2 method(Xs &&...xs)
 		XTAL_0EX
-		XTAL_REQ_(XTAL_VAL_(U_).template method<>(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
+		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<Xs>)...))
 		{
-		//	return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return reified_<Xs...>() (XTAL_REF_(xs)...);
 		}
-		template <auto...>
-		XTAL_FN2 method(XTAL_DEF ...xs)
+		template <typename ...Xs>
+		XTAL_FN2 method(Xs &&...xs)
 		XTAL_0FX
 		{
-		//	return _detail::iterate_access_f<0>(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return reified_<Xs...>() (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -164,12 +159,11 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		template <auto...>
 		XTAL_FN2 method()
 		XTAL_0FX
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
-			auto const &v = S_::template method<>();
+			auto const &v = S_::method();
 			auto const &m = S_::template get<sequel_u>();
 		//	NOTE: Using `count_f` because `sizeof(m.size()) == sizeof(m::value_type) << 1`. \
 		
@@ -187,13 +181,13 @@ struct defer<U>
 		XTAL_FN2 begin()
 		XTAL_0FX
 		{
-			return method<>().begin();
+			return method().begin();
 		}
 
 		XTAL_FN2 end()
 		XTAL_0FX
 		{
-			return method<>().end();
+			return method().end();
 		}
 
 	};

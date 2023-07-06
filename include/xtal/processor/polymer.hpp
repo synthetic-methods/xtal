@@ -21,7 +21,7 @@ template <int N, typename ...As>
 XTAL_USE polymer_t = confined_t<polymer<constant_t<N>, As...>>;
 
 template <int N, typename ...As>
-XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<N, As...>::binding_f(XTAL_REF_(u));}
+XTAL_CN2 polymer_f(XTAL_DEF... xs) {return polymer_t<N, As...>::binding_f(XTAL_REF_(xs)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,6 @@ struct polymer<C, As...>
 				XTAL_DO4_(XTAL_FN1 store(XTAL_DEF... oo), R_::template head<1>(XTAL_REF_(oo)...))
 				XTAL_DO4_(XTAL_FN1 serve(XTAL_DEF... oo), R_::template head<0>(XTAL_REF_(oo)...))
 
-				template <auto...>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
