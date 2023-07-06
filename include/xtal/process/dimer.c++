@@ -19,10 +19,11 @@ TEST_CASE("xtal/process/dimer.hpp: true")
 	using aphex_t = realized::aphex_t;
 	using matrix_t = typename collage_t<alpha_t, 3, 4>::matrix_t;
 	
-	using mixed_t = process::dimer_t<mix_t, control::redial<matrix_t>>;
-	using mixer_t = processor::monomer_t<mixed_t, collect<-1>>;
+	using remix_t = process::dimer_t<mix_t, control::redial<matrix_t>>;
+	using remixer_t = processor::monomer_t<remix_t, collect<-1>>;
+//	TODO: Implement `matrix` slices somehow: \
 
-//	auto m = dimer_t<mix_t, redial<matrix_t>>::binding_f(1, a, b, c);
+//	auto io = remixer_t::binding_f(1, a, b, c);
 //
 //	io <<= bundle_f(control::matrix_t<2> {1.0, 2.0, 3.0, 4.0});
 //	io <<= bundle_f(control::matrix_t<2, 3> {4.0});
@@ -31,7 +32,6 @@ TEST_CASE("xtal/process/dimer.hpp: true")
 //	io <<= bundle_f(control::dot_f<2>(), 1.0, 2.0, 3.0, 4.0);
 //	io <<= bundle_f(control::dot_f<>(3), 0.5, 0.5, 0.5);
 
-	REQUIRE(true);
 }
 /**/
 ///////////////////////////////////////////////////////////////////////////////

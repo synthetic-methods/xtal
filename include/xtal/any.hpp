@@ -219,29 +219,10 @@ template <typename ...Ts>
 concept complex_q = conjunct_q<complex_p<Ts>...>;
 
 
-template <auto N>
-concept sign_q = iota_q<decltype(N)> and -1 <= N and N <= 1;
-
-template <sign_t N_zero=0>
-XTAL_CN2 sign_f(XTAL_DEF_(iota_q) n)
-XTAL_0EX
-{
-	using T = XTAL_TYP_(n);
-	if constexpr (N_zero == 0)
-	{  return T((0 <  n) - (n <  0));
-	}
-	else if constexpr (N_zero == +1)
-	{  return T((0 <= n) - (n <  0));
-	}
-	else if constexpr (N_zero == -1)
-	{  return T((0 <  n) - (n <= 0));
-	}
-}
-
 template <typename T>
 using unsigned_t = _std::make_unsigned_t<T>;
 
-XTAL_CN2 unsigned_y(delta_q auto n)
+XTAL_CN2 unsigned_f(delta_q auto n)
 XTAL_0EX
 {
 	using V = XTAL_TYP_(n);
@@ -253,10 +234,37 @@ XTAL_0EX
 	n ^= m;
 	return (U) n;
 }
-static_assert(1 == unsigned_y(+1));
-static_assert(1 == unsigned_y(-1));
-static_assert(2 == unsigned_y(+2));
-static_assert(2 == unsigned_y(-2));
+static_assert(0 == unsigned_f( 0));
+static_assert(1 == unsigned_f(+1));
+static_assert(1 == unsigned_f(-1));
+static_assert(2 == unsigned_f(+2));
+static_assert(2 == unsigned_f(-2));
+
+
+template <auto N>
+concept sign_q = iota_q<decltype(N)> and -1 <= N and N <= 1;
+
+template <sign_t N_zero=0>
+XTAL_CN2 sign_f(delta_q auto n)
+XTAL_0EX
+{
+	using V = XTAL_TYP_(n);
+	using U = unsigned_t<V>;
+	U constexpr N = sizeof(n) << 3;
+	U constexpr M = N - 1;
+	if constexpr (N_zero == 0) {
+		return V((0 <  n) - (n <  0));
+	}
+	else if constexpr (N_zero == +1) {
+		n >>= M;
+		n  |= 1;
+		return n;
+	//	return V((0 <= n) - (n <  0));
+	}
+	else if constexpr (N_zero == -1) {
+		return V((0 <  n) - (n <= 0));
+	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -265,8 +273,8 @@ static_assert(2 == unsigned_y(-2));
 template <typename    T  >    using iterate_t  = _v3::ranges::view_interface<T>;
 
 
-template <typename    T  >    using front_t    = XTAL_TYP_(*XTAL_VAL_(T).begin());
-template <typename    T  >    using begin_t    = XTAL_TYP_( XTAL_VAL_(T).begin());
+template <typename    T  >    using front_t    = decltype(*XTAL_VAL_(T).begin());
+template <typename    T  >    using begin_t    = decltype( XTAL_VAL_(T).begin());
 
 template <typename    T  >  concept front_p    = requires (T t) {t.front();};
 template <typename    T  >  concept begin_p    = requires (T t) {t.begin();};
@@ -297,10 +305,12 @@ template <iterated_p  T  >   struct iterated<T>: constant_t<1> {using type =    
 template <iterator_p  T  >   struct iterated<T>: constant_t<0> {using type =                   void      ;};
 template <integral_p  T  >   struct iterated<T>: constant_t<0> {using type = _v3::ranges::iota_view<T, T>;};
 
+template <iterable_p  T  >   struct iterator<T>: constant_t<0> {using type =                  begin_t<T> ;};
 template <iterated_p  T  >   struct iterator<T>: constant_t<0> {using type =                  begin_t<T> ;};
 template <iterator_p  T  >   struct iterator<T>: constant_t<1> {using type =                  based_t<T> ;};
 template <integral_p  T  >   struct iterator<T>: constant_t<0> {using type =    iterator_t<iterated_t<T>>;};
 
+template <iterable_p  T  >   struct iteratee<T>: constant_t<0> {using type =                  front_t<T> ;};
 template <iterated_p  T  >   struct iteratee<T>: constant_t<0> {using type =                  front_t<T> ;};
 template <iterator_p  T  >   struct iteratee<T>: constant_t<0> {using type =                pointed_t<T> ;};
 template <integral_p  T  >   struct iteratee<T>: constant_t<1> {using type =                  based_t<T> ;};
@@ -332,11 +342,24 @@ template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    
 
 template <typename T=count_t> using counted_t  = typename counted<T>::type;
 template <typename T=count_t> using counter_t  = typename counter<T>::type;
+template <typename T>
+XTAL_CN2 count_f(T &&t)
+{
+	if constexpr (counted_q<T>) {
+		return 1 + t.back() - XTAL_REF_(t).front();
+	}
+	else if constexpr (bracket_q<T>) {
+		return      t.end() - XTAL_REF_(t).begin();
+	}
+	else if constexpr (requires {t.size();}) {
+		return XTAL_REF_(t).size();
+	}
+}
+///<\returns the `size` of the given range. \
 
-template <typename    T  > XTAL_CN2 count_f(T const &t) {return t.size();}
-template <counted_q   T  > XTAL_CN2 count_f(T const &t) {return 1 + t.back() - t.front();}
-///<\returns\
-the `size` of `iota_view` as a `value_type` instead of `size_type` which is twice the width. \
+///<\note\
+If provided with an `iota_view`, \
+returns a `value_type` instead of `size_type` which is twice the width. \
 
 
 template <typename   ...Ts>  struct isomorphic       : isotropic<Ts...> {};

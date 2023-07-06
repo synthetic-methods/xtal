@@ -17,11 +17,11 @@ struct polymer;
 template <typename ...Ts>
 XTAL_ASK polymer_q = tag_q<polymer, Ts...>;
 
-template <typename ..._s>
-XTAL_USE polymer_t = confined_t<polymer<_s...>>;
+template <int N, typename ...As>
+XTAL_USE polymer_t = confined_t<polymer<constant_t<N>, As...>>;
 
-//template <typename ...As>
-//XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<decltype(u), As...>(XTAL_REF_(u));}
+template <int N, typename ...As>
+XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<N, As...>::binding_f(XTAL_REF_(u));}
 
 
 ////////////////////////////////////////////////////////////////////////////////

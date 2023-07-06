@@ -479,7 +479,7 @@ struct refer_to_range_operators
 :	compose<>
 {
 };
-template <typename U> requires iterated_q<U>
+template <typename U> requires begin_q<U>
 struct refer_to_range_operators<U>
 {
 	template <any_p S>
@@ -497,7 +497,7 @@ struct refer_to_range_operators<U>
 		XTAL_FN2   end() XTAL_0FX XTAL_REQ_(XTAL_VAL_(U_).  end()) {return head().  end();}
 
 	};
-	template <any_p S> requires iterated_q<S> or iterable_q<S>
+	template <any_p S> requires begin_q<S>
 	class subtype<S>: public S
 	{
 	public:

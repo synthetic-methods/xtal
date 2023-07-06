@@ -58,7 +58,6 @@ TEST_CASE("xtal/control/any.hpp: hold process")
 	REQUIRE(gated_o() == 11);
 	REQUIRE(gated_o() == 11);
 
-//	REQUIRE(true);
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +139,7 @@ void test__respan_internal_interrupt()
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
 
-//	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
+//	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 TEST_CASE("xtal/control/any.hpp: respan internal interrupt")
 {

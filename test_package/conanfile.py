@@ -22,5 +22,6 @@ class XtalTestPackageConan(ConanFile):
 
 	def test(self):
 		bin = path.join(self.cpp.build.bindir, "test")
+		bin += " --allow-running-no-tests"
 		bin += " --skip-benchmarks"
 		self.run(bin, env="conanrun")

@@ -22,7 +22,6 @@ TEST_CASE("xtal/processor/any.hpp: letting")
 	using group_u = typename collage_t<int, N_size>::group_t;
 	auto z = group_u {00, 11, 22, 33, 44};
 	auto a = processor::let_f(z);
-	REQUIRE(true);
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +77,7 @@ void test__contrivance()
 		REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {33.0, 44.0, 55.0}));
 	}
 
-//	_std::cout << '\n'; for (auto _: mixed_y) _std::cout << '\t' << _; _std::cout << '\n'; REQUIRE(true);
+//	_std::cout << '\n'; for (auto _: mixed_y) _std::cout << '\t' << _; _std::cout << '\n';
 }
 
 TEST_CASE("xtal/processor/any.hpp: contrivance.")
