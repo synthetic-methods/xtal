@@ -62,7 +62,7 @@ struct defer
 		template <int N_polarity=0>
 		XTAL_CN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ comparators_p<U> and sign_q<N_polarity>
+		XTAL_REQ comparison_p<U> and sign_q<N_polarity>
 		{
 			using L = _std::numeric_limits<U>;
 			if constexpr (N_polarity == +1) return T_(L::max(), XTAL_REF_(oo)...);

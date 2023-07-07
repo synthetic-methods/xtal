@@ -35,11 +35,14 @@ concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
 
 XTAL_USE scope = _v3::ranges::category;
 
+template <auto N, typename Z>
+using scope_t = _v3::ranges::any_view<iteratee_t<Z>, N>;
+
 template <auto N>
 XTAL_CN2 scope_f(XTAL_DEF z)
 XTAL_0EX
 {
-	return _v3::ranges::any_view<iteratee_t<XTAL_TYP_(z)>, N>(XTAL_REF_(z));
+	return scope_t<N, XTAL_TYP_(z)>(XTAL_REF_(z));
 }
 template <auto N>
 XTAL_CN2 scope_f(XTAL_DEF z)
@@ -50,26 +53,29 @@ XTAL_REQ  (N != (N|scope::sized)) and requires {z.size();}
 	return scope_f<N|scope::sized>(XTAL_REF_(z))|take(z.size());
 }
 
-XTAL_LET zap_f = [] (XTAL_DEF f)
-XTAL_0FN_([g = XTAL_REF_(f)] (XTAL_DEF ...xs)
-XTAL_0FN
+
+XTAL_CN2 zap_f(XTAL_DEF f)
+XTAL_0EX
 {
 	using namespace _v3::views;
-	if constexpr (0 == sizeof...(xs)) {
-		return iota(0)|transform([=] (XTAL_DEF) XTAL_0FN_(g(XTAL_REF_(xs)...)));
-	//	return generate(XTAL_MOV_(g));// FIXME?
-	}
-	else if constexpr (1 == sizeof...(xs)) {
-		return transform(XTAL_REF_(xs)..., g);
-	}
-	else if constexpr (1 <  sizeof...(xs)) {
-		return zip_with(g, XTAL_REF_(xs)...);
-	}
-});
+	return [f = XTAL_REF_(f)] (XTAL_DEF ...xs) XTAL_0FN
+	{
+		if constexpr (0 == sizeof...(xs)) {
+			return repeat(f)|transform([] (XTAL_DEF f) XTAL_0FN_(XTAL_REF_(f) ()));// FIXME: Use `generate(f)`?
+		}
+		else if constexpr (1 == sizeof...(xs)) {
+			return transform(XTAL_REF_(xs)..., f);
+		}
+		else if constexpr (1 <  sizeof...(xs)) {
+			return zip_with(f, XTAL_REF_(xs)...);
+		}
+	};
+};
 
 
 template <typename T> concept      mundane_p = not any_q<T>;
-template <typename T> concept preprocessed_p = mundane_p<T> and iterated_q<T>;
+template <typename T> concept  unprocessed_p = mundane_p<T> and arithmetic_q<T>;
+template <typename T> concept preprocessed_p = mundane_p<T> and   iterated_q<T>;
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -91,6 +97,11 @@ struct refine
 template <typename U>
 struct defer
 :	defer<_retail::let_t<U>>
+{
+};
+template <_detail::unprocessed_p U>
+struct defer<U>
+:	defer<_v3::ranges::repeat_view<U>>
 {
 };
 template <_detail::preprocessed_p U>
@@ -151,7 +162,7 @@ template <typename U>
 struct refer
 {
 	using sequel_u = control::sequel_t<counted_t<>>;
-	using subkind  = _retail::refer<U>;
+	using subkind  = compose<_retail::refer<U>, sequel_u::attach>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -162,16 +173,15 @@ struct refer
 		using S_::S_;
 
 	};
-//	template <any_p S> XTAL_REQ_(XTAL_VAL_(compose_s<S, subkind>).method())
-	template <any_p S> requires _detail::preprocessed_p<U> or numeric_operators_q<U>
-	class subtype<S>: public compose_s<S, subkind, sequel_u::attach>
+	template <any_p S> requires _detail::preprocessed_p<U> or _detail::unprocessed_p<U>
+	class subtype<S>: public compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind, sequel_u::attach>;
+		using S_ = compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
 
-		using S_::method;
+	//	using S_::method;
 		///\
 		Deferred implementation of `T::value`. \
 
@@ -179,7 +189,7 @@ struct refer
 		XTAL_FN2 method(),
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
-			auto const &m = S_::method();
+			auto const &m = S_::method();// NOTE: Must be &?
 			auto const &u = S_::template get<sequel_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		

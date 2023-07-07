@@ -42,9 +42,10 @@ struct define
 		}
 
 
-		///\returns `reify()` applied to the given arguments. \
+		///\
+		Alias of `method(...)`. \
 		
-		XTAL_TO4_(
+		XTAL_TO2_(
 		XTAL_OP2() (XTAL_DEF ...xs), self().method(XTAL_REF_(xs)...)
 		)
 		
@@ -155,7 +156,7 @@ struct define
 				XTAL_FN2 apply(XTAL_DEF f)
 				XTAL_0EX
 				{
-					return _std::apply([g = XTAL_REF_(f)] XTAL_1FN_(g), arguments());
+					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), arguments());
 				}
 
 				using R_::method;

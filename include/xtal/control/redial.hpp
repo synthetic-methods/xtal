@@ -18,16 +18,29 @@ struct redial
 {
 	using subkind = defer<U>;
 
-	template <any_p S>
+	template <typename S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using dial_t = U;
+	//	using S_::S_;
 			
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+
+		///\
+		Constructs the `attach`ed `control` using its default, \
+		before `forward`ing the arguments to `this`. \
+
+		XTAL_CXN subtype(XTAL_DEF ...xs)
+		XTAL_0EX
+		:	S_(U(), XTAL_REF_(xs)...)
+		{
+		}
+
 		XTAL_TO4_(XTAL_FN1 dial(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+
 
 	};
 };

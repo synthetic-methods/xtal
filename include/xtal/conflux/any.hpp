@@ -42,7 +42,7 @@ struct define
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(bundle_q) oo)
+		XTAL_OP1 <<=(XTAL_DEF_(heterogeneous_bundle_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
@@ -82,7 +82,7 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(bundle_q) oo)
+		XTAL_OP1 >>=(XTAL_DEF_(heterogeneous_bundle_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));

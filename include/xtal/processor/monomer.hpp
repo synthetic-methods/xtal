@@ -42,7 +42,7 @@ struct monomer<U, As...>
 		using T_ = typename S_::self_t;
 	
 		template <typename ...Xs>
-		using B_ = typename S_::template binding<Xs...>;
+		using B_ = typename S_::template binding<let_t<Xs>...>;
 
 	public:
 		using S_::S_;

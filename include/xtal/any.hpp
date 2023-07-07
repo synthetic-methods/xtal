@@ -135,7 +135,7 @@ template <typename    T > XTAL_LET to_f = [] XTAL_1FN_(based_t<T>);
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-concept comparators_p = _std::integral<T> or _std::floating_point<T> or requires (T t, T u)
+concept comparison_p = _std::integral<T> or _std::floating_point<T> or requires (T t, T u)
 {
 	{t == u} -> is_q<bool>;
 	{t <= u} -> is_q<bool>;
@@ -147,13 +147,11 @@ concept comparators_p = _std::integral<T> or _std::floating_point<T> or requires
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept logic_operators_p = _std::integral<T> or requires (T t, T u)
+concept group_arithmetic_p = _std::integral<T> or requires (T t, T u)
 {
 	requires N_arity == 1 or
 	requires
 	{
-		{t <<  u} -> is_q<T>;
-		{t >>  u} -> is_q<T>;
 		{t  %  u} -> is_q<T>;
 		{t  &  u} -> is_q<T>;
 		{t  ^  u} -> is_q<T>;
@@ -164,8 +162,6 @@ concept logic_operators_p = _std::integral<T> or requires (T t, T u)
 	requires N_arity == 2 or
 	requires
 	{
-		{t <<= u} -> is_q<T>;
-		{t >>= u} -> is_q<T>;
 		{t  %= u} -> is_q<T>;
 		{t  &= u} -> is_q<T>;
 		{t  ^= u} -> is_q<T>;
@@ -178,7 +174,7 @@ concept logic_operators_p = _std::integral<T> or requires (T t, T u)
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept arithmetic_operators_p = _std::floating_point<T> or not logic_operators_p<T, N_arity> and requires (T t, T u)
+concept field_arithmetic_p = _std::floating_point<T> or not group_arithmetic_p<T, N_arity> and requires (T t, T u)
 {
 	requires N_arity == 1 or
 	requires
@@ -198,20 +194,20 @@ concept arithmetic_operators_p = _std::floating_point<T> or not logic_operators_
 	};
 };
 
-template <typename ...Ts > concept arithmetic_operators_q = conjunct_q<arithmetic_operators_p<based_t<Ts>>...>;
-template <typename ...Ts > concept      logic_operators_q = conjunct_q<  logic_operators_p<based_t<Ts>>...>;
-template <typename ...Ts > concept            numeric_operators_q = arithmetic_operators_q<Ts...> or logic_operators_q<Ts...>;
+template <typename ...Ts > concept field_arithmetic_q = conjunct_q<field_arithmetic_p<based_t<Ts>>...>;
+template <typename ...Ts > concept group_arithmetic_q = conjunct_q<group_arithmetic_p<based_t<Ts>>...>;
+template <typename ...Ts > concept       arithmetic_q = field_arithmetic_q<Ts...> or group_arithmetic_q<Ts...>;
 
-static_assert(arithmetic_operators_q<_std::complex<float>>);
+static_assert(field_arithmetic_q<_std::complex<float>>);
 
 
-template <typename ...Ts >  concept iota_q  = conjunct_q<_std::         integral<based_t<Ts>>...>;
-template <typename ...Ts >  concept delta_q = conjunct_q<_std::  signed_integral<based_t<Ts>>...>;
-template <typename ...Ts >  concept sigma_q = conjunct_q<_std::unsigned_integral<based_t<Ts>>...>;
-template <typename ...Ts >  concept alpha_q = conjunct_q<_std::   floating_point<based_t<Ts>>...>;
+template <typename ...Ts > concept iota_q  = conjunct_q<_std::         integral<based_t<Ts>>...>;
+template <typename ...Ts > concept delta_q = conjunct_q<_std::  signed_integral<based_t<Ts>>...>;
+template <typename ...Ts > concept sigma_q = conjunct_q<_std::unsigned_integral<based_t<Ts>>...>;
+template <typename ...Ts > concept alpha_q = conjunct_q<_std::   floating_point<based_t<Ts>>...>;
 
 template <typename T>
-concept complex_p = arithmetic_operators_p<T, 2> and requires (T t)
+concept complex_p = field_arithmetic_p<T, 2> and requires (T t)
 {
 	{t.real()} -> _std::same_as<value_t<T>>;
 	{t.imag()} -> _std::same_as<value_t<T>>;

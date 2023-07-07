@@ -335,152 +335,12 @@ struct defer
 namespace _detail
 {
 template <typename U>
-struct refer_to_comparators
-:	compose<>
-{
-};
-template <typename U> requires comparators_p<U>
-struct refer_to_comparators<U>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-		using S::head;
-
-	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return head() <=> t.head();}
-		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return head() ==  t.head();}
-		XTAL_OP2_(bool) <=  (subtype const &t) XTAL_0FX {return head() <=  t.head();}
-		XTAL_OP2_(bool) >=  (subtype const &t) XTAL_0FX {return head() >=  t.head();}
-		XTAL_OP2_(bool) <   (subtype const &t) XTAL_0FX {return head() <   t.head();}
-		XTAL_OP2_(bool) >   (subtype const &t) XTAL_0FX {return head() >   t.head();}
-
-	};
-};
-template <typename U, int N_arity=0>
-struct refer_to_logic_operators
-:	compose<>
-{
-};
-template <typename U>
-struct refer_to_logic_operators<U, 0>
-:	compose<refer_to_logic_operators<U, 1>, refer_to_logic_operators<U, 2>>
-{
-};
-template <typename U> requires logic_operators_p<U, 1> and _detail::remember_p<U>
-struct refer_to_logic_operators<U, 1>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	protected:
-		using S::body_m;
-
-	public:
-		using S::S;
-		using S::self;
-		using S::head;
-
-		XTAL_OP1>>=(XTAL_DEF           i) XTAL_0EX {return body_m>>= (XTAL_REF_(i)), self();}
-		XTAL_OP1<<=(XTAL_DEF           i) XTAL_0EX {return body_m<<= (XTAL_REF_(i)), self();}
-		XTAL_OP1 %=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m %=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m &=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m |=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m ^=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
-
-		XTAL_OP1 ++(int) XTAL_0EX {auto  t = self(); ++body_m; return t;}
-		XTAL_OP1 --(int) XTAL_0EX {auto  t = self(); --body_m; return t;}
-		XTAL_OP1 ++()    XTAL_0EX {auto &s = self(); ++body_m; return s;}
-		XTAL_OP1 --()    XTAL_0EX {auto &s = self(); --body_m; return s;}
-
-	};
-};
-template <typename U> requires logic_operators_p<U, 2>
-struct refer_to_logic_operators<U, 2>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-		using T_ = typename S::self_t;
-
-	public:
-		using S::S;
-		using S::head;
-
-		XTAL_OP2>> (XTAL_DEF           i) XTAL_0FX {return T_(head() >>  (XTAL_REF_(i)));}
-		XTAL_OP2<< (XTAL_DEF           i) XTAL_0FX {return T_(head() <<  (XTAL_REF_(i)));}
-		XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  % U(XTAL_REF_(w)));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  & U(XTAL_REF_(w)));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  | U(XTAL_REF_(w)));}
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  ^ U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  - U(XTAL_REF_(w)));}
-
-		XTAL_OP2 ~ () XTAL_0FX {return T_(~head());}
-		XTAL_OP2 - () XTAL_0FX {return T_(-head());}
-
-	};
-};
-template <typename U, int N_arity=0>
-struct refer_to_arithmetic_operators
-:	compose<>
-{
-};
-template <typename U>
-struct refer_to_arithmetic_operators<U, 0>
-:	compose<refer_to_arithmetic_operators<U, 1>, refer_to_arithmetic_operators<U, 2>>
-{
-};
-template <typename U> requires arithmetic_operators_p<U, 1> and _detail::remember_p<U>
-struct refer_to_arithmetic_operators<U, 1>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	protected:
-		using S::body_m;
-
-	public:
-		using S::S;
-		using S::self;
-		using S::head;
-
-		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m *=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m /=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
-
-	};
-};
-template <typename U> requires arithmetic_operators_p<U, 2>
-struct refer_to_arithmetic_operators<U, 2>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-		using T_ = typename S::self_t;
-	
-	public:
-		using S::S;
-		using S::head;
-
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() * U(XTAL_REF_(w)));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() / U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() - U(XTAL_REF_(w)));}
-
-	};
-};
-template <typename U>
-struct refer_to_range_methods
+struct refer_to_iterators
 :	compose<>
 {
 };
 template <typename U> requires begin_q<U>
-struct refer_to_range_methods<U>
+struct refer_to_iterators<U>
 {
 	template <any_p S>
 	class subtype: public S
@@ -505,14 +365,150 @@ struct refer_to_range_methods<U>
 
 	};
 };
+template <typename U>
+struct refer_to_comparators
+:	compose<>
+{
+};
+template <typename U> requires comparison_p<U>
+struct refer_to_comparators<U>
+{
+	template <any_p S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
+		using S::head;
+
+	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return head() <=> t.head();}
+		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return head() ==  t.head();}
+		XTAL_OP2_(bool) <=  (subtype const &t) XTAL_0FX {return head() <=  t.head();}
+		XTAL_OP2_(bool) >=  (subtype const &t) XTAL_0FX {return head() >=  t.head();}
+		XTAL_OP2_(bool) <   (subtype const &t) XTAL_0FX {return head() <   t.head();}
+		XTAL_OP2_(bool) >   (subtype const &t) XTAL_0FX {return head() >   t.head();}
+
+	};
+};
+template <typename U, int N_arity=0>
+struct refer_to_group_arithmetic
+:	compose<>
+{
+};
+template <typename U>
+struct refer_to_group_arithmetic<U, 0>
+:	compose<refer_to_group_arithmetic<U, 1>, refer_to_group_arithmetic<U, 2>>
+{
+};
+template <typename U> requires group_arithmetic_p<U, 1> and _detail::remember_p<U>
+struct refer_to_group_arithmetic<U, 1>
+{
+	template <any_p S>
+	class subtype: public S
+	{
+	protected:
+		using S::body_m;
+
+	public:
+		using S::S;
+		using S::self;
+		using S::head;
+
+		XTAL_OP1 %=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m %=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m &=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m |=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m ^=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
+
+		XTAL_OP1 ++(int) XTAL_0EX {auto  t = self(); ++body_m; return t;}
+		XTAL_OP1 --(int) XTAL_0EX {auto  t = self(); --body_m; return t;}
+		XTAL_OP1 ++()    XTAL_0EX {auto &s = self(); ++body_m; return s;}
+		XTAL_OP1 --()    XTAL_0EX {auto &s = self(); --body_m; return s;}
+
+	};
+};
+template <typename U> requires group_arithmetic_p<U, 2>
+struct refer_to_group_arithmetic<U, 2>
+{
+	template <any_p S>
+	class subtype: public S
+	{
+		using T_ = typename S::self_t;
+
+	public:
+		using S::S;
+		using S::head;
+
+		XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  % U(XTAL_REF_(w)));}
+		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  & U(XTAL_REF_(w)));}
+		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  | U(XTAL_REF_(w)));}
+		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  ^ U(XTAL_REF_(w)));}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  + U(XTAL_REF_(w)));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  - U(XTAL_REF_(w)));}
+
+		XTAL_OP2 ~ () XTAL_0FX {return T_(~head());}
+		XTAL_OP2 - () XTAL_0FX {return T_(-head());}
+
+	};
+};
+template <typename U, int N_arity=0>
+struct refer_to_field_arithmetic
+:	compose<>
+{
+};
+template <typename U>
+struct refer_to_field_arithmetic<U, 0>
+:	compose<refer_to_field_arithmetic<U, 1>, refer_to_field_arithmetic<U, 2>>
+{
+};
+template <typename U> requires field_arithmetic_p<U, 1> and _detail::remember_p<U>
+struct refer_to_field_arithmetic<U, 1>
+{
+	template <any_p S>
+	class subtype: public S
+	{
+	protected:
+		using S::body_m;
+
+	public:
+		using S::S;
+		using S::self;
+		using S::head;
+
+		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m *=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m /=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
+		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
+
+	};
+};
+template <typename U> requires field_arithmetic_p<U, 2>
+struct refer_to_field_arithmetic<U, 2>
+{
+	template <any_p S>
+	class subtype: public S
+	{
+		using T_ = typename S::self_t;
+	
+	public:
+		using S::S;
+		using S::head;
+
+		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() * U(XTAL_REF_(w)));}
+		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() / U(XTAL_REF_(w)));}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() + U(XTAL_REF_(w)));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() - U(XTAL_REF_(w)));}
+
+	};
+};
 }
 template <typename U>
 struct refer
 :	compose<any<>
 	,	_detail::refer_to_comparators<U>
-	,	_detail::refer_to_logic_operators<U>
-	,	_detail::refer_to_arithmetic_operators<U>
-	,	_detail::refer_to_range_methods<U>
+	,	_detail::refer_to_group_arithmetic<U>
+	,	_detail::refer_to_field_arithmetic<U>
+	,	_detail::refer_to_iterators<U>
 	>
 {
 };

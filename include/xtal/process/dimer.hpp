@@ -24,7 +24,22 @@ template <typename ...As>
 XTAL_CN2 dimer_f(XTAL_DEF u) {return dimer_t<decltype(u), As...>(XTAL_REF_(u));}
 
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <size_t N>
+XTAL_CN2 dot(auto const &x, auto const &y)
+{
+	using namespace _std;
+	static_assert(N == bundle_size_v<decltype(x)>);
+	static_assert(N == bundle_size_v<decltype(y)>);
+	return [&]<size_t ...I>(seek_t<I...>)
+		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
+	(seek_v<N - 1>);
+}
+
+
+}///////////////////////////////////////////////////////////////////////////////
 
 template <typename U, typename... As>
 struct dimer<U, As...>
@@ -44,18 +59,18 @@ struct dimer<U, As...>
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF... xs),
 		{
-			using X = _std::common_type_t<XTAL_TYP_(xs)...>;
-			using W = typename collage_t<X, sizeof...(xs)>::scalar_t;
-			using M = typename S_::dial_t;
-			W const w {XTAL_REF_(xs)...};
-			M const m = dial();
-			return [&, this]<auto ...I>(seek_t<I...>)
-				XTAL_0FN_(S_::template method<Ks...>(w.dot(_std::get<I>(m))...))
-			(seek_v<_std::tuple_size_v<M>>);
+			auto constexpr N = sizeof...(xs);
+			auto const     u = bundle_f(XTAL_REF_(xs)...);
+			auto const    &m = dial();
+			auto constexpr M = bundle_size_v<decltype(m)>;
+			return [&, this]<size_t ...I>(seek_t<I...>)
+				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(u, _std::get<I>(m))...))
+			(seek_v<M>);
 		})
 
 	};
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

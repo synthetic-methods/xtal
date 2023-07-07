@@ -192,7 +192,7 @@ struct collate
 			template <typename T>
 			using hemitype = typename solid::template homotype<T>;
 
-			template <typename T>// requires arithmetic_operators_q<V>
+			template <typename T>// requires field_arithmetic_q<V>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -325,7 +325,7 @@ struct collate
 				XTAL_FN2 dot(XTAL_DEF_(iterated_q) that)
 				XTAL_0FX
 				{
-					return (*this*XTAL_REF_(that)).sum();
+					return (twin() *= XTAL_REF_(that)).sum();
 				}
 
 				///\returns the mutually inverse `lhs +/- rhs`, \

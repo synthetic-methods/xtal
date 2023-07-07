@@ -90,7 +90,7 @@ struct define
 				}
 
 
-				XTAL_TO4_(
+				XTAL_TO2_(
 				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 

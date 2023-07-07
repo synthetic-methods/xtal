@@ -95,7 +95,6 @@ void test__hold_processor()
 	gated_o >>= sequel_u(N_size)*1; _v3::ranges::copy(gated_o, array_o.begin());
 	REQUIRE(array_o == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
-//	echo(gated_o); REQUIRE(true);
 }
 TEST_CASE("xtal/control/any.hpp: hold processor")
 {

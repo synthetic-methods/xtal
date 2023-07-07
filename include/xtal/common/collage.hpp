@@ -61,7 +61,7 @@ struct collage<V, N>
 template <typename V, int N, int M>
 struct collage<V, N, M>
 {
-	using column_u = _detail::column_t<collage_t<V, N>>;
+	using U = typename collage_t<V, N>::scalar_t;
 
 	template <typename S>
 	class subtype: public S
@@ -69,7 +69,7 @@ struct collage<V, N, M>
 	public:
 		using S::S;
 
-		using matrix_t = _detail::row_t<collage_t<column_u, M>>;
+		using matrix_t = typename collage_t<U, M>::scalar_t;
 
 	};
 };

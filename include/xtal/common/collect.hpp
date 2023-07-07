@@ -104,10 +104,18 @@ XTAL_0EX
 
 
 template <typename V, size_t N>
-struct array: _std::array<V, N> {using _std::array<V, N>::array;};
-
+struct array: _std::array<V, N>
+{
+	using array_type = _std::array<V, N>;
+	using array_type::array_type;
+	
+};
 template <typename T>
-concept array_q = value_q<T> and _std::derived_from<based_t<T>, array<value_t<T>, sizeof(T)/sizeof(value_t<T>)>>;
+concept array_q = requires
+{
+	typename T::array_type;
+	requires _std::derived_from<based_t<T>, typename T::array_type>;
+};
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -190,7 +198,6 @@ struct collect
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
 
-			//	XTAL_TO4_(XTAL_OP2() (size_type i),  _ptr_f(block_m + i));
 				XTAL_TO4_(XTAL_OP2[] (size_type i), *_ptr_f(block_m + i));
 
 				XTAL_TO2_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
@@ -607,7 +614,8 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::common::_detail::array_q T>
-struct tuple_size<T>: xtal::constant_t<sizeof(T)/sizeof(xtal::value_t<T>)> {};
+struct tuple_size<T>: tuple_size<typename T::array_type> {};
+//struct tuple_size<T>: integral_constant<size_t, sizeof(T)/sizeof(typename T::value_type)> {};
 
 template <size_t N, xtal::common::_detail::array_q T>
 struct tuple_element<N, T> {using type = xtal::value_t<T>;};
