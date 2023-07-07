@@ -27,7 +27,7 @@ struct redial
 		using S_::S_;
 		using dial_t = U;
 			
-		XTAL_DO4_(XTAL_FN1 dial(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN1 dial(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

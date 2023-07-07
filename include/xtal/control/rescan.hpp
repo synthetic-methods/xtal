@@ -25,7 +25,7 @@ struct rescan
 		using S_::S_;
 		using scan_t = U;
 			
-		XTAL_DO4_(XTAL_FN1 scan(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN1 scan(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

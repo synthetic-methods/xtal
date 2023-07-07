@@ -90,11 +90,11 @@ struct define
 				}
 
 
-				XTAL_DO4_(
+				XTAL_TO4_(
 				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
-				XTAL_DO4_(template <typename ...Xs>
+				XTAL_TO4_(template <typename ...Xs>
 				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
 				)
 
@@ -171,8 +171,8 @@ struct define
 				using R_::R_;
 				using R_::self;
 
-				XTAL_FN1_(T) method()
-				XTAL_0EX
+				XTAL_FN2_(T) method()
+				XTAL_0FX
 				{
 					return self().template get<T>();
 				}
@@ -231,7 +231,7 @@ struct define
 					return R_::influx(oo...);
 				}
 
-				XTAL_FN1_(T) method()
+				XTAL_FN2_(T) method()
 				XTAL_0EX
 				{
 					return q_.advance(d_++ == q_.top().head()).parent();
@@ -264,8 +264,8 @@ struct define
 
 				spool_u q_{event_u::template sentry<1>()};
 
-				XTAL_DO4_(XTAL_FN2 next_tail(), q_.top().parent())
-				XTAL_DO4_(XTAL_FN2 next_head(), q_.top().head())
+				XTAL_TO4_(XTAL_FN2 next_tail(), q_.top().parent())
+				XTAL_TO4_(XTAL_FN2 next_head(), q_.top().head())
 
 			protected:
 				///\returns The delay until the next event to be processed. \

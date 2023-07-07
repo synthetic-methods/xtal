@@ -42,8 +42,8 @@ public:
 		{
 		}
 
-		XTAL_DO4_(XTAL_FN2   rate(), S_::template head<0>())
-		XTAL_DO4_(XTAL_FN2 period(), S_::template head<1>())
+		XTAL_TO4_(XTAL_FN2   rate(), S_::template head<0>())
+		XTAL_TO4_(XTAL_FN2 period(), S_::template head<1>())
 
 	};
 };

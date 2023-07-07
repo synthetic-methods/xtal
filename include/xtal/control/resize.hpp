@@ -25,8 +25,8 @@ struct resize
 		using S_::S_;
 		using size_t = U;
 
-		XTAL_DO4_(XTAL_FN1 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
-		XTAL_DO4_(XTAL_FN2 empty(), 0 == size())
+		XTAL_TO4_(XTAL_FN1 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 empty(), 0 == size())
 
 	};
 };

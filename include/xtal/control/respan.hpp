@@ -40,8 +40,8 @@ public:
 		{
 		}
 
-		XTAL_DO4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
-		XTAL_DO4_(XTAL_FN2 size(), S_::head().size())
+		XTAL_TO4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 size(), S_::head().size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX

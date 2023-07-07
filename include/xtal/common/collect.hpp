@@ -190,20 +190,20 @@ struct collect
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 				
 
-				XTAL_DO4_(XTAL_OP2() (size_type i),  _ptr_f(block_m + i));
-				XTAL_DO4_(XTAL_OP2[] (size_type i), *_ptr_f(block_m + i));
+			//	XTAL_TO4_(XTAL_OP2() (size_type i),  _ptr_f(block_m + i));
+				XTAL_TO4_(XTAL_OP2[] (size_type i), *_ptr_f(block_m + i));
 
-				XTAL_DO4_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
-				XTAL_DO4_(XTAL_FN2  begin(),     _ptr_f(block_m));
-				XTAL_DO4_(XTAL_FN2   rend(), _antiptr_f(block_m));
-				XTAL_DO4_(XTAL_FN2    end(),     _ptr_f(limit_m));
+				XTAL_TO2_(XTAL_FN2 rbegin(), _antiptr_f(limit_m));
+				XTAL_TO2_(XTAL_FN2  begin(),     _ptr_f(block_m));
+				XTAL_TO2_(XTAL_FN2   rend(), _antiptr_f(block_m));
+				XTAL_TO2_(XTAL_FN2    end(),     _ptr_f(limit_m));
 
 				XTAL_FN2 crbegin() XTAL_0FX {return rbegin();}
 				XTAL_FN2  cbegin() XTAL_0FX {return  begin();}
 				XTAL_FN2   crend() XTAL_0FX {return   rend();}
 				XTAL_FN2    cend() XTAL_0FX {return    end();}
 
-				XTAL_DO4_(XTAL_FN2 data(), begin());
+				XTAL_TO4_(XTAL_FN2 data(), begin());
 
 				///\
 				Clear destructor. \

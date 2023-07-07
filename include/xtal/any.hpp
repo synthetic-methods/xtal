@@ -62,7 +62,8 @@ template <typename    T  >  concept constant_p = _std::derived_from<T, _std::int
 template <typename ...Ts >  concept constant_q = conjunct_q<constant_p<Ts>...>;
 
 
-template <typename    T  >    using based_t    = _std::decay_t<T>;
+
+template <typename    T  >    using based_t    = _std::remove_cvref_t<T>;
 template <typename    T  >  concept based_p    = _std::is_trivially_copyable_v<T>;
 template <typename ...Ts >  concept based_q    = conjunct_q<based_p<Ts>...>;
 
@@ -197,8 +198,9 @@ concept arithmetic_operators_p = _std::floating_point<T> or not logic_operators_
 	};
 };
 
-template <typename ...Ts > concept      logic_operators_q = conjunct_q<  logic_operators_p<based_t<Ts>>...>;
 template <typename ...Ts > concept arithmetic_operators_q = conjunct_q<arithmetic_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept      logic_operators_q = conjunct_q<  logic_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept            numeric_operators_q = arithmetic_operators_q<Ts...> or logic_operators_q<Ts...>;
 
 static_assert(arithmetic_operators_q<_std::complex<float>>);
 

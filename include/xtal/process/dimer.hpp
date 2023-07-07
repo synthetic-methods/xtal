@@ -41,9 +41,8 @@ struct dimer<U, As...>
 		using S_::self;
 		using S_::dial;
 
-		template <auto ...Ks>
-		XTAL_FN2 method(XTAL_DEF... xs)
-		XTAL_0EX
+		XTAL_DO2_(template <auto ...Ks>
+		XTAL_FN2 method(XTAL_DEF... xs),
 		{
 			using X = _std::common_type_t<XTAL_TYP_(xs)...>;
 			using W = typename collage_t<X, sizeof...(xs)>::scalar_t;
@@ -53,7 +52,7 @@ struct dimer<U, As...>
 			return [&, this]<auto ...I>(seek_t<I...>)
 				XTAL_0FN_(S_::template method<Ks...>(w.dot(_std::get<I>(m))...))
 			(seek_v<_std::tuple_size_v<M>>);
-		}
+		})
 
 	};
 };

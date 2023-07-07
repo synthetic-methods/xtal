@@ -29,7 +29,7 @@ void test__invocable()
 	auto z = group_u {00, 11, 22, 33, 44};
 	auto a = group_u {99, 99, 99, 99, 99};
 //	auto f = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-//	auto b = f.binding_(x, y);
+//	auto b = f.bind(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= resize_u(N_size);

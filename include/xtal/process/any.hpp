@@ -44,14 +44,14 @@ struct define
 
 		///\returns `reify()` applied to the given arguments. \
 		
-		XTAL_DO4_(
+		XTAL_TO4_(
 		XTAL_OP2() (XTAL_DEF ...xs), self().method(XTAL_REF_(xs)...)
 		)
 		
 		///\returns the lambda abstraction of `method`, \
 		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
-		XTAL_DO4_(template <typename ...Xs>
+		XTAL_TO4_(template <typename ...Xs>
 		XTAL_FN2 reify(), [this] XTAL_1FN_(operator())
 		)
 		
@@ -138,7 +138,7 @@ struct define
 				{
 				}
 
-				XTAL_DO4_(XTAL_FN2 arguments(), R_::head())
+				XTAL_TO4_(XTAL_FN2 arguments(), R_::head())
 				
 				template <size_t N, size_t ...Ns>
 				XTAL_FN2 argument()
@@ -303,7 +303,7 @@ struct refine
 			using type = compose_s<S, _retail::confined<As..., kind>>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
-		XTAL_DO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), binding_f<As...>(self(), XTAL_REF_(xs)...))
+		XTAL_TO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), binding_f<As...>(self(), XTAL_REF_(xs)...))
 
 	};
 };
@@ -325,33 +325,22 @@ struct defer
 		using S_::S_;
 		using S_::self;
 		using S_::head;
+		using typename S_::head_t;
 
 		///\
 		Constant redirection. \
 
-		XTAL_FN2 method()
-		XTAL_0FX
+		XTAL_DO2_(
+		XTAL_FN2 method(XTAL_DEF ...xs),
 		{
-			return head();
-		}
-
-	};
-	template <any_p S> requires _std::invocable<U>
-	class subtype<S>: public compose_s<S, subkind>
-	{
-		using S_ = compose_s<S, subkind>;
-	
-	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
-
-		///\
-		Deferred implementation of `T::value`. \
-
-		XTAL_DO4_(
-		XTAL_FN2 method(XTAL_DEF ...xs), head() (XTAL_REF_(xs)...)
-		)
+			if constexpr (_std::invocable<head_t, decltype(xs)...>) {
+				return head() (XTAL_REF_(xs)...);
+			}
+			else {
+				static_assert(0 == sizeof...(xs));
+				return head();
+			}
+		})
 
 	};
 };
@@ -373,7 +362,7 @@ struct defer<U>
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_DO4_(template <auto ...Ks>
+		XTAL_TO2_(template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ks...>(XTAL_REF_(xs)...)
 		)
 

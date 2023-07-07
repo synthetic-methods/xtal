@@ -63,7 +63,7 @@ struct define
 		XTAL_OP2_(bool) ==(subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
 		XTAL_OP2_(bool) !=(subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
-		XTAL_DO4_(XTAL_OP0 _std::tuple<>(), tuple())
+		XTAL_TO4_(XTAL_OP0 _std::tuple<>(), tuple())
 		
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 
@@ -72,11 +72,11 @@ struct define
 		
 		///\returns `this` as the `define`d supertype.. \
 
-		XTAL_DO4_(XTAL_FN2 parent(), S::self())
+		XTAL_TO4_(XTAL_FN2 parent(), S::self())
 
 		///\returns `this` as a subtype of the derived-type `T`. \
 
-		XTAL_DO4_(XTAL_FN2 self(), cast<T>())
+		XTAL_TO4_(XTAL_FN2 self(), cast<T>())
 
 		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
 		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
@@ -115,7 +115,7 @@ struct refine_as_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_OP0 U(), head())
+		XTAL_TO4_(XTAL_OP0 U(), head())
 		
 	};
 };
@@ -128,7 +128,7 @@ struct refine_as_tuple
 		using S::S;
 
 		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).tuple());
-		XTAL_DO4_(XTAL_OP0 tuple_type(), S::tuple())
+		XTAL_TO4_(XTAL_OP0 tuple_type(), S::tuple())
 
 	};
 };
@@ -235,12 +235,12 @@ struct defer
 		{
 		}
 
-		XTAL_DO4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
-		XTAL_DO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
+		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
+		XTAL_TO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DO4_(template <size_t N_index=0>
+		XTAL_TO4_(template <size_t N_index=0>
 		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...)
 		)
 		XTAL_FN2 head() XTAL_0FX_(&&) {return _detail::remember_x(body_m);}
@@ -263,9 +263,9 @@ struct defer
 		///\
 		Converts `this` to the kernel-type (explicit). \
 
-		XTAL_DO4_(XTAL_OP1_(explicit) U(), head())
+		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
 
-		XTAL_FN2 apply(XTAL_DEF_(_std::invocable) f)
+		XTAL_FN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
 		XTAL_0FX
 		{
 			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
@@ -475,12 +475,12 @@ struct refer_to_arithmetic_operators<U, 2>
 	};
 };
 template <typename U>
-struct refer_to_range_operators
+struct refer_to_range_methods
 :	compose<>
 {
 };
 template <typename U> requires begin_q<U>
-struct refer_to_range_operators<U>
+struct refer_to_range_methods<U>
 {
 	template <any_p S>
 	class subtype: public S
@@ -512,7 +512,7 @@ struct refer
 	,	_detail::refer_to_comparators<U>
 	,	_detail::refer_to_logic_operators<U>
 	,	_detail::refer_to_arithmetic_operators<U>
-	,	_detail::refer_to_range_operators<U>
+	,	_detail::refer_to_range_methods<U>
 	>
 {
 };

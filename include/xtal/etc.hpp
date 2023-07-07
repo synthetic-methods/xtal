@@ -110,7 +110,7 @@ static_assert(1200 <= XTAL_V00_GNUC);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TYP_(...)        ::std::decay_t<decltype(__VA_ARGS__)>
+#define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)                    ::std::move(__VA_ARGS__)
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
@@ -141,17 +141,28 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_USE                               using
 #define XTAL_ASK                               concept
 #define XTAL_REQ                               requires
-#define XTAL_REQ_(...)                         requires requires {__VA_ARGS__;}
+#define XTAL_REQ_(...)                         requires requires{__VA_ARGS__;}
 #define XTAL_0EX                               noexcept
 #define XTAL_0EX_(REF)                     REF noexcept
 #define XTAL_0FX                     const     noexcept
 #define XTAL_0FX_(REF)               const REF noexcept
 #define XTAL_0FN                     constexpr noexcept
 #define XTAL_0FN_(...)               constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_DO4_(SIG, ...)      SIG const  && noexcept {return (__VA_ARGS__);}\
+
+#define XTAL_TO4_(SIG, ...)      SIG const  && noexcept {return (__VA_ARGS__);}\
                                  SIG        && noexcept {return (__VA_ARGS__);}\
                                  SIG const   & noexcept {return (__VA_ARGS__);}\
                                  SIG         & noexcept {return (__VA_ARGS__);};
+#define XTAL_TO2_(SIG, ...)      SIG const     noexcept {return (__VA_ARGS__);}\
+                                 SIG           noexcept {return (__VA_ARGS__);};
+
+#define XTAL_DO4_(SIG, ...)      SIG const  && noexcept          __VA_ARGS__   \
+                                 SIG        && noexcept          __VA_ARGS__   \
+                                 SIG const   & noexcept          __VA_ARGS__   \
+                                 SIG         & noexcept          __VA_ARGS__   ;
+#define XTAL_DO2_(SIG, ...)      SIG const     noexcept          __VA_ARGS__   \
+                                 SIG           noexcept          __VA_ARGS__   ;
+
 #define XTAL_CO4_(TYP)               constexpr TYP & operator = (TYP const &) noexcept = default;\
                                      constexpr TYP              (TYP const &) noexcept = default;\
                                      constexpr TYP & operator = (TYP      &&) noexcept = default;\

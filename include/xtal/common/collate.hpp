@@ -56,7 +56,7 @@ struct collate
 			///\
 			Alias of `operator[]`. \
 
-			XTAL_DO4_(XTAL_FN2 datum(XTAL_DEF i), self()[XTAL_REF_(i)]);
+			XTAL_TO4_(XTAL_FN2 datum(XTAL_DEF i), self()[XTAL_REF_(i)]);
 
 		};
 		class type: public homotype<type>
@@ -112,8 +112,8 @@ struct collate
 					assert(0 < w.size());
 				}
 
-				XTAL_DO4_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
-				XTAL_DO4_(XTAL_FN2   end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
+				XTAL_TO2_(XTAL_FN2 begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
+				XTAL_TO2_(XTAL_FN2   end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
 				
 				XTAL_FN2    next(bool n=1) XTAL_0EX {return *begin(n);}
 				XTAL_FN1 advance(bool n=1) XTAL_0EX {begin_n += n; return *begin();}

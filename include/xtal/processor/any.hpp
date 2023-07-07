@@ -57,7 +57,7 @@ XTAL_0FN
 	using namespace _v3::views;
 	if constexpr (0 == sizeof...(xs)) {
 		return iota(0)|transform([=] (XTAL_DEF) XTAL_0FN_(g(XTAL_REF_(xs)...)));
-//		return generate(XTAL_MOV_(g));// FIXME?
+	//	return generate(XTAL_MOV_(g));// FIXME?
 	}
 	else if constexpr (1 == sizeof...(xs)) {
 		return transform(XTAL_REF_(xs)..., g);
@@ -66,6 +66,10 @@ XTAL_0FN
 		return zip_with(g, XTAL_REF_(xs)...);
 	}
 });
+
+
+template <typename T> concept      mundane_p = not any_q<T>;
+template <typename T> concept preprocessed_p = mundane_p<T> and iterated_q<T>;
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -89,6 +93,11 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
+template <_detail::preprocessed_p U>
+struct defer<U>
+:	_retail::defer<U>
+{
+};
 template <_retail::any_p U>
 struct defer<U>
 {
@@ -99,13 +108,9 @@ struct defer<U>
 	{
 		using S_ = compose_s<S, subkind>;
 
-		template <typename ...Xs>
-		XTAL_FN2 reified_()
-		XTAL_0EX
-		{
-			using namespace _detail;
-			return zap_f(head().template reify<iteratee_t<Xs>...>());
-		}
+		XTAL_TO2_(template <typename ...Xs>
+		XTAL_FN2 reified_(), _detail::zap_f(head().template reify<iteratee_t<Xs>...>())
+		)
 
 	public:
 		using S_::S_;
@@ -142,11 +147,11 @@ struct defer<U>
 
 	};
 };
-template <iterated_q U> requires (not any_p<U>)
-struct defer<U>
+template <typename U>
+struct refer
 {
 	using sequel_u = control::sequel_t<counted_t<>>;
-	using subkind  = compose<_retail::defer<U>, sequel_u::attach>;
+	using subkind  = _retail::refer<U>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -156,46 +161,43 @@ struct defer<U>
 	public:
 		using S_::S_;
 
+	};
+//	template <any_p S> XTAL_REQ_(XTAL_VAL_(compose_s<S, subkind>).method())
+	template <any_p S> requires _detail::preprocessed_p<U> or numeric_operators_q<U>
+	class subtype<S>: public compose_s<S, subkind, sequel_u::attach>
+	{
+		using S_ = compose_s<S, subkind, sequel_u::attach>;
+	
+	public:
+		using S_::S_;
+
+		using S_::method;
 		///\
 		Deferred implementation of `T::value`. \
 
-		XTAL_FN2 method()
-		XTAL_0FX
+		XTAL_DO2_(
+		XTAL_FN2 method(),
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
-			auto const &v = S_::method();
-			auto const &m = S_::template get<sequel_u>();
-		//	NOTE: Using `count_f` because `sizeof(m.size()) == sizeof(m::value_type) << 1`. \
+			auto const &m = S_::method();
+			auto const &u = S_::template get<sequel_u>();
+		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
+			I const u_size = count_f(u);
 			I const m_size = count_f(m);
-			I const v_size = v.size();
-			I const v_mask = v_size >> _realized::positive::depth;
-			I i = m.front();
-			I j = m_size + i;
-			i &= ~v_mask;
-			j &= ~v_mask;
-			j |=  v_mask&v_size;
-			return v|_v3::views::slice(i, j);
-		}
+			I const m_mask = m_size >> _realized::positive::depth;
+			I i = u.front();
+			I j = u_size + i;
+			i &= ~m_mask;
+			j &= ~m_mask;
+			j |=  m_mask&m_size;
+			return m|_v3::views::slice(i, j);
+		})
 
-		XTAL_FN2 begin()
-		XTAL_0FX
-		{
-			return method().begin();
-		}
-
-		XTAL_FN2 end()
-		XTAL_0FX
-		{
-			return method().end();
-		}
+		XTAL_TO2_(XTAL_FN2 begin(), method().begin())
+		XTAL_TO2_(XTAL_FN2   end(), method().  end())
 
 	};
-};
-template <typename U>
-struct refer
-:	_retail::refer<U>
-{
 };
 
 
