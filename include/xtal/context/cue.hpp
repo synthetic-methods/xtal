@@ -13,16 +13,12 @@ namespace xtal::context
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct delay;
+template <typename ...   > struct  cue;
+template <typename    U  > struct  cue<U>: lift<U, tag<cue>> {};
+template <typename ...Ts > concept cue_q = tag_q<cue, Ts...>;
 
-template <typename U>
-struct delay<U>
-:	lift<U, any<tag<delay>>>
-{
-};
 template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
-using delay_s = compose_s<S, delay<U>>;
+using cue_s = compose_s<S, cue<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

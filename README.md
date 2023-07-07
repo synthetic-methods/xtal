@@ -98,14 +98,14 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::lift_t<Mix, Active::template interrupt<>>;
 	// ...
-	mixer.influx(context::delay_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(context::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	biased <<= std::make_tuple(context::delay_s<>(123), (Gate) 1);// `biased()[123] == 1`
+	biased <<= std::make_tuple(context::cue_s<>(123), (Gate) 1);// `biased()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
@@ -113,7 +113,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto sequel = sequel_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, collect<-1>>;
-	auto sixer = Mixer::binding_f(one, two, three);
+	auto sixer = Mixer::bond_f(one, two, three);
 
 	// initialization
 	{
@@ -258,16 +258,16 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
 |Dependency management  |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling     |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter binding      |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter bond      |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
 |Parameter sampling     |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
 |Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::interrupt`|
 |Parameter namespacing  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::prefix`|
 |Process lifting        |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Processor lifting      |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Processor resizing     |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
-|Processor rendering    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
-|Processor streaming    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
-|Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::binding` compatible `&&`arguments|
+|Processor resizing     |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
+|Processor rendering    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
+|Processor streaming    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
+|Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
 |Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
 

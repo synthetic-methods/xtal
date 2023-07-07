@@ -21,18 +21,18 @@ template <int N, typename ...As>
 XTAL_USE polymer_t = confined_t<polymer<constant_t<N>, As...>>;
 
 template <int N, typename ...As>
-XTAL_CN2 polymer_f(XTAL_DEF... xs) {return polymer_t<N, As...>::binding_f(XTAL_REF_(xs)...);}
+XTAL_CN2 polymer_f(XTAL_DEF... xs) {return polymer_t<N, As...>::bond_f(XTAL_REF_(xs)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic `voice` allocator with capacity `C::value`. \
-The `processor` supplied to `binding` is used as the underlying `value_type`. \
-If constructed with `binding_f`, the supplied value is used as the sentinel, \
+The `processor` supplied to `bond` is used as the underlying `value_type`. \
+If constructed with `bond_f`, the supplied value is used as the sentinel, \
 meaning any upstream references will be preserved. \
 
 ///\note\
-The use of `binding` as the lifting mechanism is intended both to mirror `monomer`, \
+The use of `bond` as the lifting mechanism is intended both to mirror `monomer`, \
 and to allow `collect<...>, As...` to establish the type of the underlying `store`. \
 
 template <constant_q C, typename ...As>
@@ -53,7 +53,7 @@ struct polymer<C, As...>
 		using S_::self;
 
 		template <any_p X> requires iterated_q<X> and collect_q<S_>
-		struct binding
+		struct bond
 		{
 			using voice_u = context::voice_s<X>;
 			using spool_u = typename collage<voice_u, N_voice>::spool_t;

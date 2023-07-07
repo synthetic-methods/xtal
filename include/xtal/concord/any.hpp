@@ -390,17 +390,17 @@ struct refer_to_comparators<U>
 	};
 };
 template <typename U, int N_arity=0>
-struct refer_to_group_arithmetic
+struct refer_to_ring_arithmetic
 :	compose<>
 {
 };
 template <typename U>
-struct refer_to_group_arithmetic<U, 0>
-:	compose<refer_to_group_arithmetic<U, 1>, refer_to_group_arithmetic<U, 2>>
+struct refer_to_ring_arithmetic<U, 0>
+:	compose<refer_to_ring_arithmetic<U, 1>, refer_to_ring_arithmetic<U, 2>>
 {
 };
-template <typename U> requires group_arithmetic_p<U, 1> and _detail::remember_p<U>
-struct refer_to_group_arithmetic<U, 1>
+template <typename U> requires ring_arithmetic_p<U, 1> and _detail::remember_p<U>
+struct refer_to_ring_arithmetic<U, 1>
 {
 	template <any_p S>
 	class subtype: public S
@@ -427,8 +427,8 @@ struct refer_to_group_arithmetic<U, 1>
 
 	};
 };
-template <typename U> requires group_arithmetic_p<U, 2>
-struct refer_to_group_arithmetic<U, 2>
+template <typename U> requires ring_arithmetic_p<U, 2>
+struct refer_to_ring_arithmetic<U, 2>
 {
 	template <any_p S>
 	class subtype: public S
@@ -504,11 +504,11 @@ struct refer_to_field_arithmetic<U, 2>
 }
 template <typename U>
 struct refer
-:	compose<any<>
-	,	_detail::refer_to_comparators<U>
-	,	_detail::refer_to_group_arithmetic<U>
-	,	_detail::refer_to_field_arithmetic<U>
+:	compose<void
 	,	_detail::refer_to_iterators<U>
+	,	_detail::refer_to_comparators<U>
+	,	_detail::refer_to_ring_arithmetic<U>
+	,	_detail::refer_to_field_arithmetic<U>
 	>
 {
 };

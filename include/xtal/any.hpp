@@ -147,7 +147,7 @@ concept comparison_p = _std::integral<T> or _std::floating_point<T> or requires 
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept group_arithmetic_p = _std::integral<T> or requires (T t, T u)
+concept ring_arithmetic_p = _std::integral<T> or requires (T t, T u)
 {
 	requires N_arity == 1 or
 	requires
@@ -174,7 +174,7 @@ concept group_arithmetic_p = _std::integral<T> or requires (T t, T u)
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept field_arithmetic_p = _std::floating_point<T> or not group_arithmetic_p<T, N_arity> and requires (T t, T u)
+concept field_arithmetic_p = _std::floating_point<T> or not ring_arithmetic_p<T, N_arity> and requires (T t, T u)
 {
 	requires N_arity == 1 or
 	requires
@@ -195,8 +195,8 @@ concept field_arithmetic_p = _std::floating_point<T> or not group_arithmetic_p<T
 };
 
 template <typename ...Ts > concept field_arithmetic_q = conjunct_q<field_arithmetic_p<based_t<Ts>>...>;
-template <typename ...Ts > concept group_arithmetic_q = conjunct_q<group_arithmetic_p<based_t<Ts>>...>;
-template <typename ...Ts > concept       arithmetic_q = field_arithmetic_q<Ts...> or group_arithmetic_q<Ts...>;
+template <typename ...Ts > concept  ring_arithmetic_q = conjunct_q< ring_arithmetic_p<based_t<Ts>>...>;
+template <typename ...Ts > concept       arithmetic_q = field_arithmetic_q<Ts...> or ring_arithmetic_q<Ts...>;
 
 static_assert(field_arithmetic_q<_std::complex<float>>);
 

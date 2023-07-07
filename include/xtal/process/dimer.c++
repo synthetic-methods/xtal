@@ -29,7 +29,7 @@ TEST_CASE("xtal/process/dimer.hpp: interlude")
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
 //
-	auto io = mixer_t::binding_f(_1, _n);
+	auto io = mixer_t::bond_f(_1, _n);
 	io <<= matrix_t {{1, 2}, {3, 4}, {5, 6}};
 	io <<= control::resize_t<>(3);
 	io >>= control::sequel_t<>(3);

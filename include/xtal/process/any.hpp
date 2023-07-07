@@ -109,7 +109,7 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <typename ...Xs>
-		struct binding
+		struct bond
 		{
 			using signature = bundle<Xs...>;
 			using result_t = typename signature::template invoke_t<T>;
@@ -289,22 +289,22 @@ struct refine
 		using S_::self;
 
 		template <typename ...As>
-		XTAL_CN2 binding_f(XTAL_DEF ...xs)
+		XTAL_CN2 bond_f(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using kind = typename S_::template binding<decltype(xs)...>;
+			using kind = typename S_::template bond<decltype(xs)...>;
 			using type = compose_s<S, _retail::confined<As..., kind>>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
-		XTAL_CN2 binding_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
+		XTAL_CN2 bond_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using kind = typename S_::template binding<decltype(xs)...>;
+			using kind = typename S_::template bond<decltype(xs)...>;
 			using type = compose_s<S, _retail::confined<As..., kind>>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
-		XTAL_TO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), binding_f<As...>(self(), XTAL_REF_(xs)...))
+		XTAL_TO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), bond_f<As...>(self(), XTAL_REF_(xs)...))
 
 	};
 };

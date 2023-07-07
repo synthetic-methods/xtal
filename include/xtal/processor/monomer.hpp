@@ -42,14 +42,14 @@ struct monomer<U, As...>
 		using T_ = typename S_::self_t;
 	
 		template <typename ...Xs>
-		using B_ = typename S_::template binding<let_t<Xs>...>;
+		using B_ = typename S_::template bond<let_t<Xs>...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <typename ...Xs>
-		struct binding: B_<Xs...>
+		struct bond: B_<Xs...>
 		{
 			using rebound = B_<Xs...>;
 			using subkind = compose<tag<monomer>
@@ -100,7 +100,7 @@ struct monomer<U, As...>
 			};
 		};
 		template <typename ...Xs> requires collect_q<S_>
-		struct binding<Xs...>: B_<Xs...>
+		struct bond<Xs...>: B_<Xs...>
 		{
 			using rebound = B_<Xs...>;
 		

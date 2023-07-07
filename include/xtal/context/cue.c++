@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./delay.hpp"// testing...
+#include "./cue.hpp"// testing...
 
 
 
@@ -13,11 +13,11 @@ namespace xtal::context::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/context/delay.hpp: true")
+TEST_CASE("xtal/context/cue.hpp: true")
 {
 	using source_t = concord::lift_t<counted_t<>>;
-	using target_t = delay_s<source_t>;
-	using target_u = delay_s<>;
+	using target_t = cue_s<source_t>;
+	using target_u = cue_s<>;
 
 	target_u t0(99);
 	target_t t1(99, source_t(counted_t<>(11, 22)));

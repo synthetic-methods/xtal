@@ -1,7 +1,7 @@
 #pragma once
 #include "../conflux/any.hpp"// `_retail`
 
-#include "../context/delay.hpp"
+#include "../context/cue.hpp"
 
 
 
@@ -191,10 +191,10 @@ struct define
 				using R::influx;
 				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
 
-				XTAL_FNX influx(context::delay_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::cue_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx(context::delay_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return self().influx(context::cue_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
 				}
 
 			};
@@ -202,7 +202,7 @@ struct define
 		template <int N_event=-1>
 		struct hold
 		{
-			using event_u = context::delay_s<T>;
+			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
@@ -251,7 +251,7 @@ struct define
 		template <int N_event=-1>
 		struct interrupt
 		{
-			using event_u = context::delay_s<T>;
+			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 

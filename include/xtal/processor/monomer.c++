@@ -60,7 +60,7 @@ void test__sequel()
 
 	auto lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = mixer_t::binding_f(lhs, rhs);
+	auto xhs = mixer_t::bond_f(lhs, rhs);
 
 	auto seq = sequel_n(3); REQUIRE(0 == xhs.size());// uninitialized...
 	REQUIRE(3 == seq.size());
@@ -116,7 +116,7 @@ void test__respan_provision()
 
 	auto lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
-	auto xhs = monomer_t<add_t, provide>::binding_f(lhs, rhs);
+	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
 	auto buffer_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(buffer_m);
@@ -155,7 +155,7 @@ void test__respan_chain_rvalue()
 	
 	using mix_op = monomer_t<add_t, collect<>>;
 	using mul_op = monomer_t<mul_t, collect<>>;
-	auto yhs = mul_op::binding_f(mix_op::binding_f(lift_f(_01), lift_f(_10)));
+	auto yhs = mul_op::bond_f(mix_op::bond_f(lift_f(_01), lift_f(_10)));
 
 	yhs <<= control::resize_f(N);
 	yhs <<= coef_t((alpha_t) 100);
@@ -196,8 +196,8 @@ void test__respan_chain_lvalue()
 	using mul_op = monomer_t<mul_t, collect<>>;
 	auto  lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
-	auto  xhs = mix_op::binding_f(lhs, rhs);
-	auto  yhs = mul_op::binding_f(xhs);
+	auto  xhs = mix_op::bond_f(lhs, rhs);
+	auto  yhs = mul_op::bond_f(xhs);
 
 	yhs <<= control::resize_f(N);
 	yhs <<= coef_t((alpha_t) 100);
@@ -236,11 +236,11 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	using mix_fn = monomer_t<dynamic_bias_mix_t>;
 	using nat_fn = monomer_t<dynamic_count_t>;
 
-	auto _xx = nat_fn::binding_f();
-	auto xhs = mix_op::binding_f(_xx);
-	auto lhs = mix_fn::binding_f(xhs, let_f(_01));
-	auto rhs = mix_fn::binding_f(xhs, let_f(_10));
-	auto yhs = mix_fn::binding_f(lhs, rhs);
+	auto _xx = nat_fn::bond_f();
+	auto xhs = mix_op::bond_f(_xx);
+	auto lhs = mix_fn::bond_f(xhs, let_f(_01));
+	auto rhs = mix_fn::bond_f(xhs, let_f(_10));
+	auto yhs = mix_fn::bond_f(lhs, rhs);
 
 	yhs <<= control::restep_f((size_t) 50);
 	yhs <<= control::resize_f(N);
