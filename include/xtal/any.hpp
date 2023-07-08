@@ -59,7 +59,9 @@ template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
 template <auto        N  >    using constant_t = _std::integral_constant<XTAL_TYP_(N), N>;
 template <auto        N  > XTAL_CN2 constant_f() {using T = constant_t<N>; return T();};
 template <typename    T  >  concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
-template <typename ...Ts >  concept constant_q = conjunct_q<constant_p<Ts>...>;
+template <typename ...Ts >  concept constant_q =     conjunct_q<constant_p<Ts>...>;
+template <typename ...Ts >  concept variable_q = not disjunct_q<constant_p<Ts>...>;
+template <constant_p  T  > XTAL_LET constant_v = T::value;
 
 
 

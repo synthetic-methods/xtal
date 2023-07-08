@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./mute.hpp"// testing...
+#include "./stasis.hpp"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::control::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/control/mute.hpp: true")
+TEST_CASE("xtal/control/stasis.hpp: true")
 {
 	REQUIRE(true);
 }

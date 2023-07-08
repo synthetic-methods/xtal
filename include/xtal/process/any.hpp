@@ -251,7 +251,7 @@ struct define
 						static_assert(0 <= I_parity);
 						return [&] <auto ...I>(seek_t<I...>)
 							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(oo...))
-						(seek_v<sizeof...(Xs) - 1>);
+						(seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 				template <int I_parity=-1>
@@ -265,7 +265,7 @@ struct define
 						static_assert(0 <= I_parity);
 						return [&] <auto ...I>(seek_t<I...>)
 							XTAL_0FN_(argument<I_parity>().influx(o, oo...) &...& argument<(I_parity <= I) + I>().influx(oo...))
-						(seek_v<sizeof...(Xs) - 1>);
+						(seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 

@@ -104,11 +104,11 @@ TEST_CASE("xtal/control/any.hpp: hold processor")
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <typename mix_t>
-void test__respan_internal_interrupt()
+void test__respan_internal_intermit()
 {
 	using alpha_t = typename realized::alpha_t;
 
-	using    mix_z = processor::monomer_t<mix_t, collect<>, typename bias_t::template interrupt<(1<<4)>>;
+	using    mix_z = processor::monomer_t<mix_t, collect<>, typename bias_t::template intermit<(1<<4)>>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -139,10 +139,10 @@ void test__respan_internal_interrupt()
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/control/any.hpp: respan internal interrupt")
+TEST_CASE("xtal/control/any.hpp: respan internal intermit")
 {
-	test__respan_internal_interrupt<dynamic_bias_mix_t>();
-//	test__respan_internal_interrupt<static_bias_mix_t>();
+	test__respan_internal_intermit<dynamic_bias_mix_t>();
+//	test__respan_internal_intermit<static_bias_mix_t>();
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

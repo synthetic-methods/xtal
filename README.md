@@ -94,9 +94,9 @@ Update is managed by the `influx` and `efflux` operators and methods. The `influ
 	mixer <<= Active(0);// off
 	mixer <<= Active(1);// on
 
-To schedule messages within `processor` blocks, messages may be attached using `interrupt` to splice them at a specific offset.
+To schedule messages within `processor` blocks, messages may be attached using `intermit` to splice them at a specific offset.
 
-	using Mixer = processor::lift_t<Mix, Active::template interrupt<>>;
+	using Mixer = processor::lift_t<Mix, Active::template intermit<>>;
 	// ...
 	mixer.influx(context::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
@@ -260,7 +260,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Parameter bundling     |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter bond      |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
 |Parameter sampling     |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
-|Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::interrupt`|
+|Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::intermit`|
 |Parameter namespacing  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::prefix`|
 |Process lifting        |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Processor lifting      |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
@@ -270,13 +270,13 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
 |Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
+|Matrix modulation      |[`process/dimer.hpp`](include/xtal/process/dimer.hpp?ts=3)|
 
 ### Implemented but Untested
 
 |Feature                |Reference|
 |-----------------------|---------|
 |Processor polymorphism |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
-|Matrix modulation      |[`process/dimer.hpp`](include/xtal/process/dimer.hpp?ts=3)|
 
 ## Contribution
 

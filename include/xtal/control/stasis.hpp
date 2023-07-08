@@ -12,21 +12,19 @@ namespace xtal::control
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-//\note\
-Observes the same semantics as the values exchanged by `*flux`, \
-with `note` `on`, `off`, and `cut` corresponding to `mute` values of `0`, `1`, and `-1`,  respectively. \
-
-//\todo\
-Constrain as `sign_q`? \
+///\
+Tracks the state of e.g. a `context::instance`, \
+observing the same semantics as the values exchanged by `*flux`, \
+with `{begin,on}`, `{end,off}`, and `{kill,cut}` respectively corresponding to `0`, `1`, and `-1`. \
 
 template <typename ...As>
-using mute = ordinal<As..., struct T_mute>;
+using stasis = label<XTAL_FLX, As..., struct T_stasis>;
 
 template <typename ...As>
-using mute_t = typename mute<As...>::type;
+using stasis_t = typename stasis<As...>::type;
 
 template <typename ...As>
-XTAL_CN2 mute_f(XTAL_DEF... oo) {return mute_t<As...>(XTAL_REF_(oo)...);}
+XTAL_CN2 stasis_f(XTAL_DEF... oo) {return stasis_t<As...>(XTAL_REF_(oo)...);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

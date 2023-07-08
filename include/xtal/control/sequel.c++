@@ -179,7 +179,7 @@ void test__interference(auto i)
 	seq_w <<= seq_n++;                   REQUIRE(seq_w == Y(U( 8, 12), 2));
 
 }
-TEST_CASE("xtal/control/sequel.hpp: interruption")
+TEST_CASE("xtal/control/sequel.hpp: intermition")
 {
 	using V = counter_t<>; using sequel_n = sequel_t<V>;
 	using U = counted_t<>; using sequel_u = sequel_t<U>;

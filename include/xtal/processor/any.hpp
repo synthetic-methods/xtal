@@ -73,7 +73,7 @@ XTAL_0EX
 };
 
 
-template <typename T> concept      mundane_p = not any_q<T>;
+template <typename T> concept      mundane_p = not _retail::any_q<T>;
 template <typename T> concept  unprocessed_p = mundane_p<T> and arithmetic_q<T>;
 template <typename T> concept preprocessed_p = mundane_p<T> and   iterated_q<T>;
 

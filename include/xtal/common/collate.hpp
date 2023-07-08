@@ -245,27 +245,27 @@ struct collate
 				XTAL_0EX
 				XTAL_REQ (0 < N_size) and (N_size <= _realized::alignment_v)
 				{
-					seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) = f(datum(i))));
+					seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) = f(datum(i))));
 					return self();
 				}
 
 				///\
 				Elementwise comparators. \
 
-			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <=> t.datum(N)) <=>...         ) (seek_v<N_size>);}
-				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) ==  t.datum(N)) and...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <=  t.datum(N)) and...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) >=  t.datum(N)) and...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <   t.datum(N)) and...and true) (seek_v<N_size>);}
-				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) >   t.datum(N)) and...and true) (seek_v<N_size>);}
+			//	XTAL_OP2        <=> (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <=> t.datum(N)) <=>...        ) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) ==  t.datum(N)) and...and true) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <=  t.datum(N)) and...and true) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) >=  t.datum(N)) and...and true) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) <   t.datum(N)) and...and true) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...N>(seek_t<N...>) XTAL_0FN_((datum(N) >   t.datum(N)) and...and true) (seek_f<N_size> {});}
 
 				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
 				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
 				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) *= XTAL_REF_(w))), self();}
-				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) /= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) *= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) /= XTAL_REF_(w))), self();}
 
 			};
 			class type: public homotype<type>
@@ -307,15 +307,15 @@ struct collate
 				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 				
-				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) *= t.datum(i))), self();}
-				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) /= t.datum(i))), self();}
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) *= t.datum(i))), self();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) /= t.datum(i))), self();}
 
 				XTAL_FN2 sum()
 				XTAL_0FX
 				{
 					return [&, this]<auto ...N>(seek_t<N...>)
 						XTAL_0FN_(datum(N) +...+ V())
-					(seek_v<N_size>);
+					(seek_f<N_size> {});
 				}
 				XTAL_FN2 dot()
 				XTAL_0FX
@@ -401,8 +401,8 @@ struct collate
 				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 				XTAL_OP1_(T &) -= (bracket_t<V> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) += t.datum(i))), self();}
-				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) -= t.datum(i))), self();}
+				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) += t.datum(i))), self();}
+				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(datum(i) -= t.datum(i))), self();}
 
 			};
 			class type: public homotype<type>
@@ -675,8 +675,8 @@ struct collate
 						for (count_t j = i; j; --j ) {s[i] += t[j]*_s[i - j];}}
 					}
 					else {
-						antiseek_f<h, 0>([&, this] (auto i) XTAL_0FN {s[i] *= t[0];
-						antiseek_f<i, 1>([&, this] (auto j) XTAL_0FN {s[i] += t[j]*_s[i - j];});});
+						antiseeker_f<h, 0>([&, this] (auto i) XTAL_0FN {s[i] *= t[0];
+						antiseeker_f<i, 1>([&, this] (auto j) XTAL_0FN {s[i] += t[j]*_s[i - j];});});
 					}
 					return s;
 				}
@@ -731,7 +731,7 @@ struct collate
 					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this] (auto i) XTAL_0FN_(s[0 + i] += s[1 + i]));
+					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[0 + i] += s[1 + i]));
 					s.reduce();
 					return s;
 				}
@@ -751,7 +751,7 @@ struct collate
 					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seek_f<M>([&, this] (auto i) XTAL_0FN_(s[M - i] -= s[N - i]));
+					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[M - i] -= s[N - i]));
 					s.reduce();
 					return s;
 				}

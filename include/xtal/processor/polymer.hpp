@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./monomer.hpp"
-#include "../context/voice.hpp"
-#include "../control/mute.hpp"
+#include "../context/instance.hpp"
+#include "../control/stasis.hpp"
 #include "../control/resize.hpp"
 #include "../control/sequel.hpp"
 
@@ -26,7 +26,7 @@ XTAL_CN2 polymer_f(XTAL_DEF... xs) {return polymer_t<N, As...>::bond_f(XTAL_REF_
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Polyphonic `voice` allocator with capacity `C::value`. \
+Polyphonic `instance` allocator with capacity `N_voice::value`. \
 The `processor` supplied to `bond` is used as the underlying `value_type`. \
 If constructed with `bond_f`, the supplied value is used as the sentinel, \
 meaning any upstream references will be preserved. \
@@ -35,8 +35,8 @@ meaning any upstream references will be preserved. \
 The use of `bond` as the lifting mechanism is intended both to mirror `monomer`, \
 and to allow `collect<...>, As...` to establish the type of the underlying `store`. \
 
-template <constant_q C, typename ...As>
-struct polymer<C, As...>
+template <constant_q N_voice, typename ...As>
+struct polymer<N_voice, As...>
 {
 	using subkind = compose<As...>;
 
@@ -46,8 +46,6 @@ struct polymer<C, As...>
 		using S_ = compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 		
-		XTAL_LET N_voice = C::value;
-
 	public:
 		using S_::S_;
 		using S_::self;
@@ -55,8 +53,9 @@ struct polymer<C, As...>
 		template <any_p X> requires iterated_q<X> and collect_q<S_>
 		struct bond
 		{
-			using voice_u = context::voice_s<X>;
-			using spool_u = typename collage<voice_u, N_voice>::spool_t;
+			using voice_u = context::instance_s<X>;
+			using event_u = context::instance_s<control::stasis_t<>>;
+			using spool_u = typename collage<voice_u, N_voice::value>::spool_t;
 			using store_u = typename S_::template fluid<iteratee_t<X>>::type;
 			using serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
@@ -129,7 +128,7 @@ struct polymer<C, As...>
 					return efflux(respan_u(store()), sequel_o, XTAL_REF_(oo)...);
 				}
 				///\
-				Forwards `sequel`-prefixed messages to all voices, \
+				Forwards `sequel`-prefixed messages to all instances, \
 				then frees any that are `done`. \
 
 				///\note\
@@ -149,14 +148,14 @@ struct polymer<C, As...>
 
 					serve(respan_o);
 					
-				//	Render each voice, and release any that have finished:
+				//	Render each instance, and release any that have finished:
 					for (auto* v_ = q_.end(); q_.begin() <= --v_;) {
 						(void) v_->efflux(sequel_o, oo...);
-						if (v_->influx(control::mute_f(-1)) == 0) {
+						if (v_->influx(control::stasis_f(-1)) == 0) {
 							q_.pop(v_);
 						}
 					}
-				//	Initialize target with first voice, then accumulate remaining:
+				//	Initialize target with first instance, then accumulate remaining:
 					if (q_.size()) {
 						ranges::copy(q_.front(), respan_o);
 					}
@@ -168,11 +167,11 @@ struct polymer<C, As...>
 					return 0;
 				}
 				///\
-				Forwards the event to the associated voice. \
-				If the incoming event is active `(0)`, the top-most associated voice is cut `(-1)`, \
-				before a new voice is allocated from the sentinel.
+				Forwards the event to the associated instance. \
+				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
+				before a new instance is allocated from the sentinel.
 
-				XTAL_FNX influx(context::voice_s<control::mute_t<>> event_o, XTAL_DEF ...oo)
+				XTAL_FNX influx(event_u event_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto *v_ = q_.scan(event_o);
@@ -185,13 +184,13 @@ struct polymer<C, As...>
 					if (m == 0) {
 					//	Cut if it already exists:
 						if (i == i_) {
-							(void) v_->influx(control::mute_f(-1), oo...);
+							(void) v_->influx(control::stasis_f(-1), oo...);
 						}
 					//	Allocate by duplicating sentinel and assigning the correct index:
 						q_.poke(v_, q_.end());
 						v_->head(i_ = i);
 					}
-				//	Forward to detected/allocated voice:
+				//	Forward to detected/allocated instance:
 					assert(i_ == i);
 					return v_->influx(m, XTAL_REF_(oo)...);
 				}
@@ -209,29 +208,29 @@ struct polymer<C, As...>
 				}
 
 				///\
-				Forwards the message to all voices including the sentinel. \
+				Forwards the message to all instances including the sentinel. \
 
 				///\todo\
 				Allow parameter crossfades (if wrapped by e.g. `control::any#fade`) \
-				by duplicating the target voice. \
+				by duplicating the target instance. \
 
 				XTAL_FNX efflux_request(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					XTAL_FLX flux = -1;
+					XTAL_FLX flx = -1;
 					for (auto* v_ = q_.begin(); v_ < q_.end(-1); ++v_) {
-						flux &= v_->efflux(oo...);
+						flx &= v_->efflux(oo...);
 					}
-					return flux;
+					return flx;
 				}
 				XTAL_FNX influx_request(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					XTAL_FLX flux = -1;
+					XTAL_FLX flx = -1;
 					for (auto* v_ = q_.begin(); v_ < q_.end(-1); ++v_) {
-						flux &= v_->influx(oo...);
+						flx &= v_->influx(oo...);
 					}
-					return flux;
+					return flx;
 				}
 
 			};

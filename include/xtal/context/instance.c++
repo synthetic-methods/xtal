@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./voice.hpp"// testing...
+#include "./instance.hpp"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::context::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/context/voice.hpp: true")
+TEST_CASE("xtal/context/instance.hpp: true")
 {
 	REQUIRE(true);
 }

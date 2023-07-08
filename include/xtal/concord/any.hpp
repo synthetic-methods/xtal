@@ -221,17 +221,24 @@ struct defer
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
 
-		XTAL_CXN subtype(XTAL_DEF w, XTAL_DEF ...ws)
-		XTAL_0EX
-		:	S_(XTAL_REF_(ws)...)
-		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
-		{
-		}
-
 		XTAL_CON subtype()
 		XTAL_0EX
 		XTAL_REQ_(body_t{})
 		:	subtype(body_t{})
+		{
+		}
+		XTAL_CXN subtype(XTAL_DEF ...ws)
+		XTAL_0EX
+		XTAL_REQ constant_q<U>
+		:	S_(XTAL_REF_(ws)...)
+	//	,	subtype(body_t{})
+		{
+		}
+		XTAL_CXN subtype(XTAL_DEF w, XTAL_DEF ...ws)
+		XTAL_0EX
+		XTAL_REQ variable_q<U> or is_q<U, XTAL_TYP_(w)>
+		:	S_(XTAL_REF_(ws)...)
+		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
 		{
 		}
 
@@ -269,7 +276,7 @@ struct defer
 		XTAL_0FX
 		{
 			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
-				XTAL_0FN_(g(head<I>()...)) (seek_v<tuple_size::value>);
+				XTAL_0FN_(g(head<I>()...)) (seek_f<tuple_size::value> {});
 		}
 		
 		XTAL_FN2 tuple()

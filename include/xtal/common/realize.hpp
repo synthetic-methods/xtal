@@ -360,7 +360,7 @@ public:
 			n /= m + _0_5;
 		}
 		else {
-			seek_f<N_lim>([&] (auto) XTAL_0FN_(n *= _1_5 - k*n*n));
+			seeker_f<N_lim>([&] (auto) XTAL_0FN_(n *= _1_5 - k*n*n));
 		}
 		
 		if constexpr (M_pow == 0) {

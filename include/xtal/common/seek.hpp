@@ -13,23 +13,24 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t ...I> using    seek_t = _std::     index_sequence<I...>;
 template <size_t    I> XTAL_LET seek_y = [] (XTAL_DEF o) XTAL_0FN_(XTAL_REF_(o));
-template <size_t    N> XTAL_LET seek_v = _std::make_index_sequence<N>{};
-template <size_t    N=0, int I_offset=0>
-XTAL_CN1 seek_f(auto const &f)
+template <size_t ...I>    using seek_t = _std::index_sequence<I...>;
+template <size_t    N>    using seek_f = _std::make_index_sequence<N>;
+
+template <size_t N=0, int I_offset=0>
+XTAL_CN1 seeker_f(auto const &f)
 XTAL_0EX
 {
 	return [&] <auto ...I>(seek_t<I...>)
-		XTAL_0FN_(..., f(constant_t<I + I_offset>())) (seek_v<N>);
+		XTAL_0FN_(..., f(constant_t<I + I_offset>())) (seek_f<N> {});
 }
-template <size_t    N=0, int I_offset=0>
-XTAL_CN1 antiseek_f(auto const &f)
+template <size_t N=0, int I_offset=0>
+XTAL_CN1 antiseeker_f(auto const &f)
 XTAL_0EX
 {
 	size_t constexpr N_offset = N - 1 + I_offset;
 	return [&] <auto ...I>(seek_t<I...>)
-		XTAL_0FN_(..., f(constant_t<N_offset - I>())) (seek_v<N>);
+		XTAL_0FN_(..., f(constant_t<N_offset - I>())) (seek_f<N> {});
 }
 
 

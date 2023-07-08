@@ -25,7 +25,7 @@ TEST_CASE("xtal/process/any.hpp: lifting")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
 void test__attribute_initialization(auto z)
 {
 	auto &o = z.template self<bias_t>();
@@ -37,8 +37,9 @@ TEST_CASE("xtal/process/any.hpp: attribute initialization")
 	test__attribute_initialization(dynamic_bias_mix_t());
 	test__attribute_initialization(static_bias_mix_t());
 }
-
-
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 void test__attribute_influx_operator(auto z)
 {
 	auto &o = z.template self<bias_t>();
@@ -53,8 +54,9 @@ TEST_CASE("xtal/process/any.hpp: attribute influx operator")
 	test__attribute_influx_operator(dynamic_bias_mix_t());
 	test__attribute_influx_operator(static_bias_mix_t());
 }
-
-
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 void test__attribute_efflux_operator(auto z)
 {
 	auto &o = z.template self<bias_t>();
@@ -69,8 +71,9 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
 	test__attribute_efflux_operator(dynamic_bias_mix_t());
 	test__attribute_efflux_operator(static_bias_mix_t());
 }
-
-
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 void test__attribute_influx_method(auto z)
 {
 	using start_t = control::nominal_t<0, struct T_start>;
@@ -88,8 +91,9 @@ TEST_CASE("xtal/process/any.hpp: attribute influx method")
 	test__attribute_influx_method(dynamic_bias_mix_t());
 	test__attribute_influx_method(static_bias_mix_t());
 }
-
-
+/***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
 void test__attribute_efflux_method(auto z)
 {
 	using start_t = control::nominal_t<0, struct T_start>;
@@ -107,7 +111,7 @@ TEST_CASE("xtal/process/any.hpp: attribute efflux method")
 	test__attribute_efflux_method(dynamic_bias_mix_t());
 	test__attribute_efflux_method(static_bias_mix_t());
 }
-
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

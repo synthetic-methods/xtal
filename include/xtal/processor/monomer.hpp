@@ -117,7 +117,7 @@ struct monomer<U, As...>
 			,	As...
 			,	resize_u::attach
 			,	sequel_u::attach
-			,	typename control::let_t<>::interrupt<0>
+			,	typename control::let_t<>::intermit<0>
 			,	rebound
 			>;
 			template <any_p R>

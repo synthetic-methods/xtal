@@ -59,7 +59,7 @@ struct define
 				{
 				}
 
-			//	TODO: Specialize a `process`'s `interrupter` to `interrupt` `T` automatically when lifted to a `processor`. \
+			//	TODO: Specialize a `process`'s `intermiter` to `intermit` `T` automatically when lifted to a `processor`. \
 
 			};
 		};
@@ -124,7 +124,7 @@ struct define
 							using doing = typename R_::template being<Xs...>;
 							return _std::array{(doing::template method_m<Ks..., I>)...};
 						}
-						XTAL_LET method_m = method_f(seek_v<N_arity>);
+						XTAL_LET method_m = method_f(seek_f<N_arity> {});
 					
 					};
 					template <auto ...Ks> XTAL_LET method_m = resolve<Ks...>::method_m;
@@ -249,7 +249,7 @@ struct define
 		possibly using `control::sequel` to convert between absolute and relative delays. \
 
 		template <int N_event=-1>
-		struct interrupt
+		struct intermit
 		{
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;

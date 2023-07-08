@@ -1,4 +1,5 @@
 #pragma once
 #include "./any.hpp"
 #include "./cue.hpp"
-#include "./voice.hpp"
+#include "./instance.hpp"
+#include "./dial.hpp"

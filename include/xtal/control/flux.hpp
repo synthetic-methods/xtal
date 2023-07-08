@@ -7,18 +7,20 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...   > struct  voice;
-template <typename    U  > struct  voice<U>: lift<U, tag<voice>> {};
-template <typename ...Ts > concept voice_q = tag_q<voice, Ts...>;
+template <typename ...As>
+using flux = label<XTAL_FLX, As..., struct T_flux>;
 
-template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
-using voice_s = compose_s<S, voice<U>>;
+template <typename ...As>
+using flux_t = typename flux<As...>::type;
+
+template <typename ...As>
+XTAL_CN2 flux_f(XTAL_DEF... oo) {return flux_t<As...>(XTAL_REF_(oo)...);}
 
 
 ///////////////////////////////////////////////////////////////////////////////
