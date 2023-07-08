@@ -12,16 +12,16 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...>
-struct dimer;
+struct matrix;
 
 template <typename ...Ts>
-XTAL_ASK dimer_q = tag_q<dimer, Ts...>;
+XTAL_ASK matrix_q = tag_q<matrix, Ts...>;
 
 template <typename ..._s>
-XTAL_USE dimer_t = confined_t<dimer<_s...>>;
+XTAL_USE matrix_t = confined_t<matrix<_s...>>;
 
 template <typename ..._s>
-XTAL_CN2 dimer_f(XTAL_DEF w) {return dimer_t<decltype(w), _s...>(XTAL_REF_(w));}
+XTAL_CN2 matrix_f(XTAL_DEF w) {return matrix_t<decltype(w), _s...>(XTAL_REF_(w));}
 
 
 namespace _detail
@@ -42,10 +42,10 @@ XTAL_CN2 dot(auto const &x, auto const &y)
 }///////////////////////////////////////////////////////////////////////////////
 
 template <typename W, typename U, typename... As>
-struct dimer<W, U, As...>
+struct matrix<W, U, As...>
 {
 	static_assert(bundle_q<W>);
-	using subkind = compose<conflux::defer<W>, confer<U>, As..., tag<dimer>>;
+	using subkind = compose<conflux::defer<W>, confer<U>, As..., tag<matrix>>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -58,11 +58,11 @@ struct dimer<W, U, As...>
 		using S_::head;
 		using S_::influx;
 
-		XTAL_FNX influx(context::dial_q auto o, XTAL_DEF ...oo)
+		XTAL_FNX influx(context::shard_q auto shard_o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			auto &w = bundle_part_f(head(), o.tuple());
-			auto &x = decltype(w) (o);
+			auto &w = bundle_part_f(head(), shard_o.tuple());
+			auto &x = decltype(w) (shard_o);
 			_std::swap(w, x);
 			return w == x or S_::influx(XTAL_REF_(oo)...);
 		}
@@ -71,11 +71,11 @@ struct dimer<W, U, As...>
 		XTAL_FN2 method(XTAL_DEF... xs),
 		{
 			auto constexpr N = sizeof...(xs);
-			auto const     u = bundle_f(XTAL_REF_(xs)...);
+			auto const     n = bundle_f(XTAL_REF_(xs)...);
 			auto const    &m = head();
 			auto constexpr M = bundle_size_v<decltype(m)>;
 			return [&, this]<size_t ...I>(seek_t<I...>)
-				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(u, _std::get<I>(m))...))
+				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
 			(seek_f<M> {});
 		})
 

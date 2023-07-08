@@ -17,8 +17,7 @@ template <template <typename...> typename F>
 struct tag
 {
 	class type
-	{
-	};
+	{};
 	template <typename S>
 	class subtype: public type, public S
 	{

@@ -270,7 +270,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
 |Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
-|Matrix modulation      |[`process/dimer.hpp`](include/xtal/process/dimer.hpp?ts=3)|
+|Matrix modulation      |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
 
 ### Implemented but Untested
 

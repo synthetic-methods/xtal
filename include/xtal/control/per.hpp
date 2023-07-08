@@ -34,13 +34,11 @@ public:
 		XTAL_CXN subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	S_(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
-		{
-		}
+		{}
 		XTAL_CXN subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	S_((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
-		{
-		}
+		{}
 
 		XTAL_TO4_(XTAL_FN2   rate(), S_::template head<0>())
 		XTAL_TO4_(XTAL_FN2 period(), S_::template head<1>())

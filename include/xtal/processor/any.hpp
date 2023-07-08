@@ -13,83 +13,19 @@ namespace xtal::processor
 
 namespace _retail = xtal::process;
 #include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
-
-template <typename T, typename Y=T>
-concept connected_p = any_p<T> and requires (T t)
-{
-	{t.serve()} -> isomorphic_q<Y>;
-};
-template <typename T, typename Y=T>
-concept collected_p = any_p<T> and requires (T t)
-{
-	{t.serve()} -> isomorphic_q<Y>;
-	{t.store()} -> isomorphic_q<Y>;
-};
-template <typename T, typename Y>
-concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
-
-
-XTAL_USE scope = _v3::ranges::category;
-
-template <auto N, typename Z>
-using scope_t = _v3::ranges::any_view<iteratee_t<Z>, N>;
-
-template <auto N>
-XTAL_CN2 scope_f(XTAL_DEF z)
-XTAL_0EX
-{
-	return scope_t<N, XTAL_TYP_(z)>(XTAL_REF_(z));
-}
-template <auto N>
-XTAL_CN2 scope_f(XTAL_DEF z)
-XTAL_0EX
-XTAL_REQ  (N != (N|scope::sized)) and requires {z.size();}
-{
-	using namespace _v3::views;
-	return scope_f<N|scope::sized>(XTAL_REF_(z))|take(z.size());
-}
-
-
-XTAL_CN2 zap_f(XTAL_DEF f)
-XTAL_0EX
-{
-	using namespace _v3::views;
-	return [f = XTAL_REF_(f)] (XTAL_DEF ...xs) XTAL_0FN
-	{
-		if constexpr (0 == sizeof...(xs)) {
-			return repeat(f)|transform([] (XTAL_DEF f) XTAL_0FN_(XTAL_REF_(f) ()));// FIXME: Use `generate(f)`?
-		}
-		else if constexpr (1 == sizeof...(xs)) {
-			return transform(XTAL_REF_(xs)..., f);
-		}
-		else if constexpr (1 <  sizeof...(xs)) {
-			return zip_with(f, XTAL_REF_(xs)...);
-		}
-	};
-};
-
-
-template <typename T> concept      mundane_p = not _retail::any_q<T>;
-template <typename T> concept  unprocessed_p = mundane_p<T> and arithmetic_q<T>;
-template <typename T> concept preprocessed_p = mundane_p<T> and   iterated_q<T>;
-
-
-}///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct define
 :	_retail::define<T>
-{
-};
+{};
 template <typename T>
 struct refine
 :	_retail::refine<T>
-{
-};
+{};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,18 +33,15 @@ struct refine
 template <typename U>
 struct defer
 :	defer<_retail::let_t<U>>
-{
-};
+{};
 template <_detail::unprocessed_p U>
 struct defer<U>
 :	defer<_v3::ranges::repeat_view<U>>
-{
-};
+{};
 template <_detail::preprocessed_p U>
 struct defer<U>
 :	_retail::defer<U>
-{
-};
+{};
 template <_retail::any_p U>
 struct defer<U>
 {
@@ -139,8 +72,7 @@ struct defer<U>
 		XTAL_FN2 method(Xs &&...xs)
 		XTAL_0EX
 		{
-			using namespace _detail;
-			return scope_f<scope::forward>(reified_<Xs...>() (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<Xs...>() (XTAL_REF_(xs)...));
 		}
 		template <typename ...Xs>
 		XTAL_FN2 method(Xs &&...xs)
@@ -182,8 +114,6 @@ struct refer
 		using S_::S_;
 
 	//	using S_::method;
-		///\
-		Deferred implementation of `T::value`. \
 
 		XTAL_DO2_(
 		XTAL_FN2 method(),

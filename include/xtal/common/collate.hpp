@@ -152,10 +152,10 @@ struct collate
 					return *begin(end_n - 1);
 				}
 
-				XTAL_FN2 scan(V const &v)
+				XTAL_FN2 scan(XTAL_DEF w)
 				XTAL_0EX
 				{
-					return _std::lower_bound(fluid_m.begin(), fluid_m.end(), v);
+					return _std::lower_bound(fluid_m.begin(), fluid_m.end(), XTAL_REF_(w));
 				}
 				///\note\
 				Conflicting entries w.r.t. `==` are overwritten. \
@@ -173,7 +173,7 @@ struct collate
 				XTAL_FN0 poke(index_t v_, index_t u_)
 				XTAL_0EX
 				{
-					fluid_m.insert(v_, u_, 1);
+					fluid_m.insert(v_, u_, u_ + 1);
 				}
 
 				XTAL_FN0 clear()
@@ -192,7 +192,7 @@ struct collate
 			template <typename T>
 			using hemitype = typename solid::template homotype<T>;
 
-			template <typename T>// requires field_arithmetic_q<V>
+			template <typename T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -681,7 +681,8 @@ struct collate
 					return s;
 				}
 				XTAL_OP2_(T) * (T const &t)
-				XTAL_0FX {
+				XTAL_0FX
+				{
 					return twin() *= t;
 				}
 				
@@ -758,8 +759,7 @@ struct collate
 
 				XTAL_FN0 reduce()
 				XTAL_0EX
-				{
-				}
+				{}
 
 			};
 			class type: public homotype<type>

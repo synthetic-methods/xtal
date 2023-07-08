@@ -11,22 +11,22 @@ namespace xtal::context
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-References content at the supplied integral path.
+References content at the supplied integer address.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename   ...   > struct  dial;
-template <typename   ...Ts > concept dial_q = tag_q<dial, Ts...>;
+template <typename   ...   > struct  shard;
+template <typename   ...Ts > concept shard_q = tag_q<shard, Ts...>;
 template <constant_q ...Ns >
-struct dial<Ns...>
+struct shard<Ns...>
 {
-	using subkind = confined<confer<Ns>..., tag<dial>>;
-	template <bundle_q S> using basetype = bundle_part_t<S, Ns::value...>;
+	using subkind = confined<confer<Ns>..., tag<shard>>;
+	template <bundle_q S> using basetype = bundle_part_t<S, Ns{}...>;
 	template <bundle_q S> using basekind = conflux::lift<basetype<S>>;
-	template <bundle_q S> using semikind = compose<subkind, basekind<S>>;
-	template <bundle_q S> using semitype = compose_s<conflux::base_t, semikind<S>>;
-	template <bundle_q S>
+	template <typename S> using semikind = compose<subkind, basekind<S>>;
+	template <typename S> using semitype = compose_s<conflux::base_t, semikind<S>>;
+	template <typename S>
 	class subtype: public semitype<S>
 	{
 		using S_ = semitype<S>;
@@ -47,13 +47,12 @@ struct dial<Ns...>
 
 		XTAL_CON subtype(bracket_t<V_> w)
 		:	S_{U_(XTAL_MOV_(w))}
-		{
-		}
+		{}
  
 	};
 };
 template <typename S, int ...Ns>
-using dial_s = typename dial<constant_t<Ns>...>::template subtype<S>;
+using shard_s = typename shard<constant_t<Ns>...>::template subtype<S>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

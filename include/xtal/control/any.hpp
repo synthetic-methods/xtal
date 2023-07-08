@@ -56,8 +56,7 @@ struct define
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
 				:	R_(T(), XTAL_REF_(xs)...)
-				{
-				}
+				{}
 
 			//	TODO: Specialize a `process`'s `intermiter` to `intermit` `T` automatically when lifted to a `processor`. \
 
@@ -362,8 +361,7 @@ struct define
 template <typename T>
 struct refine
 :	_retail::refine<T>
-{
-};
+{};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -371,8 +369,7 @@ struct refine
 template <typename U>
 struct defer
 :	_retail::defer<U>
-{
-};
+{};
 template <constant_q W> requires sigma_q<value_t<W>>
 struct defer<W>
 {
@@ -393,8 +390,7 @@ struct defer<W>
 template <typename U>
 struct refer
 :	_retail::refer<U>
-{
-};
+{};
 
 
 ///////////////////////////////////////////////////////////////////////////////

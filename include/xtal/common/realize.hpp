@@ -234,8 +234,7 @@ public:
 
 template <size_t N_size>
 struct realization: rationalization<N_size>
-{
-};
+{};
 template <size_t N_size> requires alpha_q<typename rationalization<N_size>::alpha_t>
 struct realization<N_size>: rationalization<N_size>
 {

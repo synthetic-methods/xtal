@@ -25,7 +25,7 @@ struct restep
 		using S_::S_;
 		using step_t = U;
 
-		XTAL_TO4_(XTAL_FN1 step(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 step(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

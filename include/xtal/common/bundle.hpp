@@ -13,7 +13,7 @@ namespace xtal::common
 
 template <typename    T  >    using bundle_size   = _std::tuple_size<_std::remove_reference_t<T>>;
 template <typename    T  >    using bundle_size_t =   typename bundle_size<T>::type;
-template <typename    T  > XTAL_LET bundle_size_v =            bundle_size<T>::value;
+template <typename    T  > XTAL_LET bundle_size_v =            bundle_size<T>{};
 template <typename    T  >  concept bundle_size_p = constant_p<bundle_size_t<T>>;
 template <typename ...Ts >  concept bundle_size_q = conjunct_q<bundle_size_p<Ts>...>;
 

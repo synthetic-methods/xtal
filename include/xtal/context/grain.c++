@@ -1,26 +1,23 @@
 #pragma once
-#include "./any.hpp"
-
+#include "./any.c++"
+#include "./grain.hpp"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::context::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
-template <typename ...   > struct  instance;
-template <typename    U  > struct  instance<U>: lift<U, tag<instance>> {};
-template <typename ...Ts > concept instance_q = tag_q<instance, Ts...>;
-
-template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
-using instance_s = compose_s<S, instance<U>>;
-
-
+/*/
+TEST_CASE("xtal/context/grain.hpp: true")
+{
+	REQUIRE(true);
+}
+/**/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

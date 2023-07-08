@@ -8,8 +8,7 @@ struct any
 {
 	template <typename S>
 	class subtype
-	{
-	};
+	{};
 };
 }
 #endif

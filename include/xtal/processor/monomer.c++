@@ -34,7 +34,7 @@ void test__invocable()
 
 	b <<= resize_u(N_size);
 	b >>= sequel_n(N_size);
-	_v3::ranges::copy(b, a.begin());
+	_v3::ranges::move(b, a.begin());
 	REQUIRE(a == z);
 }
 TEST_CASE("xtal/processor/monomer.hpp: invocable")

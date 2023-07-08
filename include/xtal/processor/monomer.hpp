@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "../control/resize.hpp"
+#include "../control/respan.hpp"
 #include "../control/sequel.hpp"
-
 
 
 
@@ -42,24 +42,24 @@ struct monomer<U, As...>
 		using T_ = typename S_::self_t;
 	
 		template <typename ...Xs>
-		using B_ = typename S_::template bond<let_t<Xs>...>;
+		using F_ = typename S_::template bond<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <typename ...Xs>
-		struct bond: B_<Xs...>
+		struct bond: F_<Xs...>
 		{
-			using rebound = B_<Xs...>;
+			using rebound = F_<Xs...>;
 			using subkind = compose<tag<monomer>
 			,	concord::confer<typename rebound::result_t>
-			,	As...
+		//	,	As...
 		//	,	resize_u::attach
 			,	sequel_u::attach
 			,	rebound
 			>;
-			template <typename R>
+			template <any_q R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using R_ = compose_s<R, subkind>;
@@ -72,15 +72,13 @@ struct monomer<U, As...>
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
 				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(xs)...)
-				{
-				}
+				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T_>) t, XTAL_DEF ...xs)
 				XTAL_0EX
 				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
-				{
-				}
+				{}
 
-				XTAL_TO4_(XTAL_FN1 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_FN2 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
 
 				XTAL_FN2 method()
 				XTAL_0EX
@@ -100,21 +98,20 @@ struct monomer<U, As...>
 			};
 		};
 		template <typename ...Xs> requires collect_q<S_>
-		struct bond<Xs...>: B_<Xs...>
+		struct bond<Xs...>: F_<Xs...>
 		{
-			using rebound = B_<Xs...>;
+			using rebound = F_<Xs...>;
 		
 			using store_u = typename S_::template fluid<typename rebound::return_t>::type;
 			using serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
-			using resize_u = control::resize_t<>;
 		
 			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, serve_u>...>;
 
 			using subkind = compose<tag<monomer>
 			,	concord::confer<serve_u>
 			,	concord::defer <store_u>
-			,	As...
+			,	As...// NOTE: Required for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach
 			,	typename control::let_t<>::intermit<0>
@@ -128,8 +125,7 @@ struct monomer<U, As...>
 				XTAL_CXN subtype(store_u &&buffer_o, XTAL_DEF ...etc)
 				XTAL_0EX
 				:	R_((serve_u) buffer_o, XTAL_MOV_(buffer_o), XTAL_REF_(etc)...)
-				{
-				}
+				{}
 
 			public:
 			//	using R_::R_;
@@ -141,11 +137,10 @@ struct monomer<U, As...>
 				XTAL_CXN subtype(XTAL_DEF ...etc)
 				XTAL_0EX
 				:	subtype(store_u(), XTAL_REF_(etc)...)
-				{
-				}
+				{}
 
-				XTAL_TO4_(XTAL_FN1 store(XTAL_DEF... oo), R_::template head<1>(XTAL_REF_(oo)...))
-				XTAL_TO4_(XTAL_FN1 serve(XTAL_DEF... oo), R_::template head<0>(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_FN2 store(XTAL_DEF... oo), R_::template head<1>(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_FN2 serve(XTAL_DEF... oo), R_::template head<0>(XTAL_REF_(oo)...))
 
 				XTAL_FN2 method()
 				XTAL_0EX
@@ -173,16 +168,17 @@ struct monomer<U, As...>
 				XTAL_FNX efflux(respan_u respan_o, control::sequel_q auto sequel_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (R_::effuse(sequel_o, oo...) == 1) return 1;
+					if (R_::effuse(sequel_o) == 1) return 1;
 				//	else...
-					serve(respan_o);
+					(void) serve(respan_o);
 					R_::replay([&, this] (auto i, auto j, auto n)
-					XTAL_0FN {
+					XTAL_0FN
+					{
 						using namespace _v3;
 						auto sequel_x = sequel_o.slice(i, j).skip(n);
 						auto respan_x = respan_o.slice(i, j);
 						(void) R_::template efflux_request_tail<I_parity>(respan_x, sequel_x, oo...);
-						ranges::copy(R_::method()|views::take(j - i), ranges::next(serve().begin(), i));
+						ranges::move(R_::method()|views::take(j - i), ranges::next(serve().begin(), i));
 					});
 					return R_::template influx_request(sequel_o);
 				}

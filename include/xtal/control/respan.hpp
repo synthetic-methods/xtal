@@ -37,16 +37,15 @@ public:
 		XTAL_CXN subtype(W &&w, XTAL_DEF ...ws)
 		XTAL_0EX
 		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(ws)...)
-		{
-		}
+		{}
 
-		XTAL_TO4_(XTAL_FN1 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_FN2 size(), S_::head().size())
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0EX
 		{
-			auto t = self(); t.span(t.span()|_v3::views::slice(i, j)); return t;
+			auto t = self(); (void) t.span(t.span()|_v3::views::slice(i, j)); return t;
 		}
 
 	};

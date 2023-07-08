@@ -40,7 +40,7 @@ TEST_CASE("xtal/processor/any.hpp: lifting")
 	auto a = group_u {00, 00, 00, 00, 00};
 	auto b = f(x, y);
 	
-	_v3::ranges::copy(b, a.begin());
+	_v3::ranges::move(b, a.begin());
 	REQUIRE(a == z);
 }
 /***/

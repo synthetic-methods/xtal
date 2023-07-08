@@ -4,8 +4,6 @@
 
 
 
-
-
 XTAL_ENV_(push)
 namespace xtal::concord
 {/////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +39,8 @@ struct any<A>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-#include "./any.hxx"
+#include  "./any.hxx"
+#include "./_detail.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,14 +56,11 @@ struct define
 		
 		XTAL_CXN subtype(XTAL_DEF... oo)
 		:	S(XTAL_REF_(oo)...)
-		{
-		}
+		{}
 
 		XTAL_OP2_(bool) ==(subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
 		XTAL_OP2_(bool) !=(subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
-		XTAL_TO4_(XTAL_OP0 _std::tuple<>(), tuple())
-		
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 
 		using tuple_size = constant_t<(size_t) 0>;
@@ -91,54 +87,16 @@ struct define
 
 	};
 };
+
+
 ////////////////////////////////////////////////////////////////////////////////
-namespace _detail
-{
-struct refine_as_head
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
 
-	};
-	template <any_p S> requires (S::tuple_size::value == 1)
-	class subtype<S>: public S
-	{
-		using U = typename S::head_t;
-
-	public:
-		using S::S;
-		using S::head;
-
-		///\
-		Implicit conversion to the singleton kernel-type. \
-
-		XTAL_TO4_(XTAL_OP0 U(), head())
-		
-	};
-};
-struct refine_as_tuple
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-
-		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).tuple());
-		XTAL_TO4_(XTAL_OP0 tuple_type(), S::tuple())
-
-	};
-};
-}
 template <typename T>
 struct refine
 {
-	using subkind = compose<any<>
-	,	_detail::refine_as_head
-	,	_detail::refine_as_tuple
+	using subkind = compose<void
+	,	_detail::refine_head
+	,	_detail::refine_tuple
 	>;
 
 	template <any_p S>
@@ -162,26 +120,7 @@ struct refine
 };
 
 
-namespace _detail
-{//////////////////////////////////////////////////////////////////////////////
-
-template <typename T> concept dismember_p =     debased_q<T>;// determine whether `T` should be dereferenced
-template <typename T> concept  remember_p = not debased_q<T>;
-template <typename T> using      member_t =     debased_t<T>;// convert references to pointers
-
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ dismember_p<T> {return &XTAL_REF_(w);}// obtain address
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<T>(XTAL_REF_(w));}
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<T>(XTAL_REF_(ws)...);}
-
-XTAL_CN2 remember_y(XTAL_DEF w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}// dereference address
-XTAL_CN2 remember_y(XTAL_DEF w) XTAL_0EX               {return  XTAL_REF_(w);}
-
-XTAL_CN2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_MOV_(XTAL_REF_(w));}// dereference address
-XTAL_CN2 remember_x(XTAL_DEF w) XTAL_0EX               {return  XTAL_MOV_(XTAL_REF_(w));}
-
-
-
-}//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 template <typename U>
 struct defer
@@ -207,7 +146,7 @@ struct defer
 		template <size_t   N=0 > using seek_s = typename superseek<subtype<S>, N>::type;
 
 		V body_m;
-	//	V body_m {};
+	//	V body_m{};
 
 	public:
 	//	using S_::S_;
@@ -225,22 +164,19 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ_(body_t{})
 		:	subtype(body_t{})
-		{
-		}
+		{}
 		XTAL_CXN subtype(XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ constant_q<U>
 		:	S_(XTAL_REF_(ws)...)
 	//	,	subtype(body_t{})
-		{
-		}
+		{}
 		XTAL_CXN subtype(XTAL_DEF w, XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ variable_q<U> or is_q<U, XTAL_TYP_(w)>
 		:	S_(XTAL_REF_(ws)...)
 		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
-		{
-		}
+		{}
 
 		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
 		XTAL_TO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
@@ -338,187 +274,14 @@ struct defer
 
 	};
 };
-////////////////////////////////////////////////////////////////////////////////
-namespace _detail
-{
 template <typename U>
-struct refer_to_iterators
-:	compose<>
-{
-};
-template <typename U> requires begin_q<U>
-struct refer_to_iterators<U>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-		using U_ = U const &;
+struct refer: compose<void
+,	_detail::refer_limits<U>
+,	_detail::refer_quality<U>
+,	_detail::refer_operators<U>
+>
+{};
 
-	public:
-		using S::S;
-		using S::head;
-
-		XTAL_FN2 begin() XTAL_0EX                                  {return head().begin();}
-		XTAL_FN2   end() XTAL_0EX                                  {return head().  end();}
-		XTAL_FN2 begin() XTAL_0FX XTAL_REQ_(XTAL_VAL_(U_).begin()) {return head().begin();}
-		XTAL_FN2   end() XTAL_0FX XTAL_REQ_(XTAL_VAL_(U_).  end()) {return head().  end();}
-
-	};
-	template <any_p S> requires begin_q<S>
-	class subtype<S>: public S
-	{
-	public:
-		using S::S;
-
-	};
-};
-template <typename U>
-struct refer_to_comparators
-:	compose<>
-{
-};
-template <typename U> requires comparison_p<U>
-struct refer_to_comparators<U>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-		using S::head;
-
-	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return head() <=> t.head();}
-		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return head() ==  t.head();}
-		XTAL_OP2_(bool) <=  (subtype const &t) XTAL_0FX {return head() <=  t.head();}
-		XTAL_OP2_(bool) >=  (subtype const &t) XTAL_0FX {return head() >=  t.head();}
-		XTAL_OP2_(bool) <   (subtype const &t) XTAL_0FX {return head() <   t.head();}
-		XTAL_OP2_(bool) >   (subtype const &t) XTAL_0FX {return head() >   t.head();}
-
-	};
-};
-template <typename U, int N_arity=0>
-struct refer_to_ring_arithmetic
-:	compose<>
-{
-};
-template <typename U>
-struct refer_to_ring_arithmetic<U, 0>
-:	compose<refer_to_ring_arithmetic<U, 1>, refer_to_ring_arithmetic<U, 2>>
-{
-};
-template <typename U> requires ring_arithmetic_p<U, 1> and _detail::remember_p<U>
-struct refer_to_ring_arithmetic<U, 1>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	protected:
-		using S::body_m;
-
-	public:
-		using S::S;
-		using S::self;
-		using S::head;
-
-		XTAL_OP1 %=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m %=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m &=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m |=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m ^=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
-
-		XTAL_OP1 ++(int) XTAL_0EX {auto  t = self(); ++body_m; return t;}
-		XTAL_OP1 --(int) XTAL_0EX {auto  t = self(); --body_m; return t;}
-		XTAL_OP1 ++()    XTAL_0EX {auto &s = self(); ++body_m; return s;}
-		XTAL_OP1 --()    XTAL_0EX {auto &s = self(); --body_m; return s;}
-
-	};
-};
-template <typename U> requires ring_arithmetic_p<U, 2>
-struct refer_to_ring_arithmetic<U, 2>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-		using T_ = typename S::self_t;
-
-	public:
-		using S::S;
-		using S::head;
-
-		XTAL_OP2 % (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  % U(XTAL_REF_(w)));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  & U(XTAL_REF_(w)));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  | U(XTAL_REF_(w)));}
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  ^ U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head()  - U(XTAL_REF_(w)));}
-
-		XTAL_OP2 ~ () XTAL_0FX {return T_(~head());}
-		XTAL_OP2 - () XTAL_0FX {return T_(-head());}
-
-	};
-};
-template <typename U, int N_arity=0>
-struct refer_to_field_arithmetic
-:	compose<>
-{
-};
-template <typename U>
-struct refer_to_field_arithmetic<U, 0>
-:	compose<refer_to_field_arithmetic<U, 1>, refer_to_field_arithmetic<U, 2>>
-{
-};
-template <typename U> requires field_arithmetic_p<U, 1> and _detail::remember_p<U>
-struct refer_to_field_arithmetic<U, 1>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-	protected:
-		using S::body_m;
-
-	public:
-		using S::S;
-		using S::self;
-		using S::head;
-
-		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m *=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m /=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m +=U(XTAL_REF_(w)), self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return body_m -=U(XTAL_REF_(w)), self();}
-
-	};
-};
-template <typename U> requires field_arithmetic_p<U, 2>
-struct refer_to_field_arithmetic<U, 2>
-{
-	template <any_p S>
-	class subtype: public S
-	{
-		using T_ = typename S::self_t;
-	
-	public:
-		using S::S;
-		using S::head;
-
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() * U(XTAL_REF_(w)));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() / U(XTAL_REF_(w)));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() + U(XTAL_REF_(w)));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(head() - U(XTAL_REF_(w)));}
-
-	};
-};
-}
-template <typename U>
-struct refer
-:	compose<void
-	,	_detail::refer_to_iterators<U>
-	,	_detail::refer_to_comparators<U>
-	,	_detail::refer_to_ring_arithmetic<U>
-	,	_detail::refer_to_field_arithmetic<U>
-	>
-{
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

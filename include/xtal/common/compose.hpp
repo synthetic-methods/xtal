@@ -38,8 +38,7 @@ struct compose<>
 	template <typename S, typename T, typename ...Ts>
 	struct tail<S, T, Ts...>
 	:	tail<body<S, T>, Ts...>
-	{
-	};
+	{};
 
 	template <typename S, typename ...Tails>
 	using subtype = typename tail<S, Tails...>::type;
@@ -48,8 +47,7 @@ struct compose<>
 template <typename ...Heads>
 struct compose<void, Heads...>
 :	compose<Heads...>
-{
-};
+{};
 template <typename Head, typename ...Heads>
 struct compose<Head, Heads...>
 {

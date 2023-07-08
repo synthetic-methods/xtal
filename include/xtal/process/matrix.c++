@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./dimer.hpp"// testing...
+#include "./matrix.hpp"// testing...
 
 #include "../processor/monomer.hpp"
 
@@ -13,13 +13,13 @@ namespace xtal::process::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/process/dimer.hpp: process matrix")
+TEST_CASE("xtal/process/matrix.hpp: process matrix")
 {
 	using namespace _v3::views;
 
 	using group_t = typename collage_t<int, 2, 3>::group_t;
 
-	using remix_t = process::dimer_t<group_t, mix_t>;
+	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<>>;
 
 	auto io = remix_t();
@@ -31,12 +31,12 @@ TEST_CASE("xtal/process/dimer.hpp: process matrix")
 /**/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/process/dimer.hpp: processor matrix")
+TEST_CASE("xtal/process/matrix.hpp: processor matrix")
 {
 	using namespace _v3::views;
 
 	using group_t = typename collage_t<int, 2, 3>::group_t;
-	using remix_t = process::dimer_t<group_t, mix_t>;
+	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<>>;
 
 	auto _1 = processor::lift_f(1);
@@ -56,19 +56,19 @@ TEST_CASE("xtal/process/dimer.hpp: processor matrix")
 /**/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/process/dimer.hpp: processor dial matrix")
+TEST_CASE("xtal/process/matrix.hpp: processor shard matrix")
 {
 	using namespace _v3::views;
 
 	using group_t = typename collage_t<int, 2, 3>::group_t;
-	using remix_t = process::dimer_t<group_t, mix_t>;
+	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
-	io <<= context::dial_s<group_t>({{1, 2}, {3, 4}, {5, 6}});
+	io <<= context::shard_s<group_t>({{1, 2}, {3, 4}, {5, 6}});
 	io <<= control::resize_t<>(3);
 	io >>= control::sequel_t<>(3);
 
@@ -78,21 +78,21 @@ TEST_CASE("xtal/process/dimer.hpp: processor dial matrix")
 /**/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/process/dimer.hpp: processor dial column")
+TEST_CASE("xtal/process/matrix.hpp: processor shard column")
 {
 	using namespace _v3::views;
 
 	using group_t = typename collage_t<int, 2, 3>::group_t;
-	using remix_t = process::dimer_t<group_t, mix_t>;
+	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
-	io <<= context::dial_s<group_t, 0>({1, 2});
-	io <<= context::dial_s<group_t, 1>({3, 4});
-	io <<= context::dial_s<group_t, 2>({5, 6});
+	io <<= context::shard_s<group_t, 0>({1, 2});
+	io <<= context::shard_s<group_t, 1>({3, 4});
+	io <<= context::shard_s<group_t, 2>({5, 6});
 	io <<= control::resize_t<>(3);
 	io >>= control::sequel_t<>(3);
 
@@ -102,24 +102,24 @@ TEST_CASE("xtal/process/dimer.hpp: processor dial column")
 /**/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/process/dimer.hpp: processor dial cell")
+TEST_CASE("xtal/process/matrix.hpp: processor shard cell")
 {
 	using namespace _v3::views;
 
 	using group_t = typename collage_t<int, 2, 3>::group_t;
-	using remix_t = process::dimer_t<group_t, mix_t>;
+	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
-	io <<= context::dial_s<group_t, 0, 0>(1);
-	io <<= context::dial_s<group_t, 0, 1>(2);
-	io <<= context::dial_s<group_t, 1, 0>(3);
-	io <<= context::dial_s<group_t, 1, 1>(4);
-	io <<= context::dial_s<group_t, 2, 0>(5);
-	io <<= context::dial_s<group_t, 2, 1>(6);
+	io <<= context::shard_s<group_t, 0, 0>(1);
+	io <<= context::shard_s<group_t, 0, 1>(2);
+	io <<= context::shard_s<group_t, 1, 0>(3);
+	io <<= context::shard_s<group_t, 1, 1>(4);
+	io <<= context::shard_s<group_t, 2, 0>(5);
+	io <<= context::shard_s<group_t, 2, 1>(6);
 	io <<= control::resize_t<>(3);
 	io >>= control::sequel_t<>(3);
 

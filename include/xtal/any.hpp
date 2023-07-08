@@ -95,6 +95,22 @@ template <value_p     T  >   struct revalue<T> : based_t<T> {};
 template <typename    T  >    using revalue_t  = value_t<revalue<T>>;
 
 
+template <typename    T  >    using front_t    = decltype(*XTAL_VAL_(T).begin());
+template <typename    T  >    using begin_t    = decltype( XTAL_VAL_(T).begin());
+template <typename    T  >    using  back_t    = decltype(*XTAL_VAL_(T).  end());
+template <typename    T  >    using   end_t    = decltype( XTAL_VAL_(T).  end());
+
+template <typename    T  >  concept front_p    = requires (T t) { t.front();};
+template <typename    T  >  concept begin_p    = requires (T t) {*t.begin();};
+template <typename    T  >  concept  back_p    = requires (T t) { t. back();};
+template <typename    T  >  concept   end_p    = requires (T t) {*t.  end();};
+
+template <typename ...Ts >  concept front_q    = conjunct_q<front_p<Ts>...>;
+template <typename ...Ts >  concept begin_q    = conjunct_q<begin_p<Ts>...>;
+template <typename ...Ts >  concept  back_q    = conjunct_q< back_p<Ts>...>;
+template <typename ...Ts >  concept   end_q    = conjunct_q<  end_p<Ts>...>;
+
+
 template <typename    T  >
 struct aligned
 {
@@ -111,11 +127,8 @@ XTAL_LET   pointer_e = [] (XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_((pointer_f(XTAL_REF_(o)) == pointer_f(XTAL_REF_(oo))) and ... and true);
 
 template <typename    T  >    using pointed_t  = XTAL_TYP_(*XTAL_VAL_(T));
-template <typename    T  >  concept pointer_p  = _std::is_pointer_v<_std::decay_t<T>>;
-template <typename ...Ts >  concept pointer_q  = conjunct_q<pointer_p<Ts>...>;
-
-template <typename    T  >  concept bracket_p  = requires (T t) {*t.begin(); *t.end();};
-template <typename ...Ts >  concept bracket_q  = conjunct_q<bracket_p<Ts>...>;
+template <typename ...Ts >  concept pointer_q  = conjunct_q<_std::is_pointer_v<_std::decay_t<Ts>>...>;
+template <typename ...Ts >  concept bracket_q  = conjunct_q<begin_p<Ts>..., end_p<Ts>...>;
 template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
 
 
@@ -136,87 +149,130 @@ template <typename    T > XTAL_LET to_f = [] XTAL_1FN_(based_t<T>);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-concept comparison_p = _std::integral<T> or _std::floating_point<T> or requires (T t, T u)
-{
-	{t == u} -> is_q<bool>;
-	{t <= u} -> is_q<bool>;
-	{t <  u} -> is_q<bool>;
-	{t >= u} -> is_q<bool>;
-	{t >  u} -> is_q<bool>;
-};
+template <typename    T  > concept    iota_p = _std::         integral<based_t<T>>;
+template <typename    T  > concept   delta_p = _std::  signed_integral<based_t<T>>;
+template <typename    T  > concept   sigma_p = _std::unsigned_integral<based_t<T>>;
+template <typename    T  > concept   alpha_p = _std::   floating_point<based_t<T>>;
+
+template <typename ...Ts > concept    iota_q = conjunct_q< iota_p<Ts>...>;
+template <typename ...Ts > concept   delta_q = conjunct_q<delta_p<Ts>...>;
+template <typename ...Ts > concept   sigma_q = conjunct_q<sigma_p<Ts>...>;
+template <typename ...Ts > concept   alpha_q = conjunct_q<alpha_p<Ts>...>;
+template <typename ...Ts > concept numeric_q = iota_q<Ts...> or alpha_q<Ts...>;
+
+
 ///\returns `true` if `T` supports bitwise logical operations, `false` otherwise, \
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept ring_arithmetic_p = _std::integral<T> or requires (T t, T u)
+concept binary_operators_p = iota_p<T> or requires (T t, T u)
 {
-	requires N_arity == 1 or
-	requires
+	requires N_arity == 2 or requires
 	{
-		{t  %  u} -> is_q<T>;
-		{t  &  u} -> is_q<T>;
-		{t  ^  u} -> is_q<T>;
-		{t  |  u} -> is_q<T>;
-		{t  +  u} -> is_q<T>;
-		{t  -  u} -> is_q<T>;
-	};
-	requires N_arity == 2 or
-	requires
-	{
-		{t  %= u} -> is_q<T>;
-		{t  &= u} -> is_q<T>;
 		{t  ^= u} -> is_q<T>;
 		{t  |= u} -> is_q<T>;
+		{t  &= u} -> is_q<T>;
+	};
+	requires N_arity == 1 or requires
+	{
+		{t  ^  u} -> is_q<T>;
+		{t  |  u} -> is_q<T>;
+		{t  &  u} -> is_q<T>;
+		{   ~  u} -> is_q<T>;
+	};
+};
+///\returns `true` if `T` supports integer addition and subtraction, `false` otherwise. \
+
+template <typename T, size_t N_arity=0>
+concept group_operators_p = iota_p<T> or requires (T t, T u)
+{
+	requires N_arity == 2 or requires
+	{
+		{t  %= u} -> is_q<T>;
 		{t  += u} -> is_q<T>;
+		{t  ++  } -> is_q<T>;
+		{   ++ u} -> is_q<T>;
 		{t  -= u} -> is_q<T>;
+		{t  --  } -> is_q<T>;
+		{   -- u} -> is_q<T>;
+	};
+	requires N_arity == 1 or requires
+	{
+		{t  %  u} -> is_q<T>;
+		{t  +  u} -> is_q<T>;
+		{t  -  u} -> is_q<T>;
+		{   -  u} -> is_q<T>;
 	};
 };
 ///\returns `true` if `T` supports arithmetic (but not logic) operations, `false` otherwise, \
 with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <typename T, size_t N_arity=0>
-concept field_arithmetic_p = _std::floating_point<T> or not ring_arithmetic_p<T, N_arity> and requires (T t, T u)
+concept field_operators_p = alpha_p<T> or requires (T t, T u)
 {
-	requires N_arity == 1 or
-	requires
-	{
-		{t  *  u} -> is_q<T>;
-		{t  /  u} -> is_q<T>;
-		{t  +  u} -> is_q<T>;
-		{t  -  u} -> is_q<T>;
-	};
-	requires N_arity == 2 or
-	requires
+	requires N_arity == 2 or requires
 	{
 		{t  *= u} -> is_q<T>;
-		{t  /= u} -> is_q<T>;
 		{t  += u} -> is_q<T>;
+		{t  /= u} -> is_q<T>;
 		{t  -= u} -> is_q<T>;
 	};
-};
+	requires N_arity == 1 or requires
+	{
+		{t  *  u} -> is_q<T>;
+		{t  +  u} -> is_q<T>;
+		{t  /  u} -> is_q<T>;
+		{t  -  u} -> is_q<T>;
+		{   -  u} -> is_q<T>;
+	};
+} and not binary_operators_p<T, N_arity>;
 
-template <typename ...Ts > concept field_arithmetic_q = conjunct_q<field_arithmetic_p<based_t<Ts>>...>;
-template <typename ...Ts > concept  ring_arithmetic_q = conjunct_q< ring_arithmetic_p<based_t<Ts>>...>;
-template <typename ...Ts > concept       arithmetic_q = field_arithmetic_q<Ts...> or ring_arithmetic_q<Ts...>;
-
-static_assert(field_arithmetic_q<_std::complex<float>>);
-
-
-template <typename ...Ts > concept iota_q  = conjunct_q<_std::         integral<based_t<Ts>>...>;
-template <typename ...Ts > concept delta_q = conjunct_q<_std::  signed_integral<based_t<Ts>>...>;
-template <typename ...Ts > concept sigma_q = conjunct_q<_std::unsigned_integral<based_t<Ts>>...>;
-template <typename ...Ts > concept alpha_q = conjunct_q<_std::   floating_point<based_t<Ts>>...>;
 
 template <typename T>
-concept complex_p = field_arithmetic_p<T, 2> and requires (T t)
+concept inequality_p = requires (T t, T u)
 {
+	{t <= u} -> is_q<bool>;
+	{t <  u} -> is_q<bool>;
+	{t >= u} -> is_q<bool>;
+	{t >  u} -> is_q<bool>;
+};
+template <typename T>
+concept equality_p = requires (T t, T u)
+{
+	{t == u} -> is_q<bool>;
+	{t != u} -> is_q<bool>;
+};
+template <typename T>
+concept quality_p = equality_p<T> or inequality_p<T>;
+
+
+template <typename T>
+concept complex_p = value_p<T> and is_q<_std::complex<value_t<T>>> or requires (T t)
+{
+	requires equality_p<T>;
+	requires field_operators_p<T, 2>;
 	{t.real()} -> _std::same_as<value_t<T>>;
 	{t.imag()} -> _std::same_as<value_t<T>>;
 };
 
-template <typename ...Ts>
-concept complex_q = conjunct_q<complex_p<Ts>...>;
+
+template <typename ...Ts > concept binary_operators_q = conjunct_q<binary_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept  field_operators_q = conjunct_q<field_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept  group_operators_q = conjunct_q<group_operators_p<based_t<Ts>>...>;
+template <typename ...Ts > concept        operators_q = field_operators_q<Ts...> or group_operators_q<Ts...>;
+
+template <typename ...Ts > concept       inequality_q = numeric_q<Ts...> and conjunct_q<inequality_p<based_t<Ts>>...>;
+template <typename ...Ts > concept         equality_q = numeric_q<Ts...> and conjunct_q<  equality_p<based_t<Ts>>...>;
+template <typename ...Ts > concept          quality_q = equality_q<Ts...> or inequality_q<Ts...>;
+
+template <typename ...Ts>  concept          complex_q = conjunct_q<complex_p<Ts>...>;
+
+static_assert(binary_operators_q<int>);
+static_assert(group_operators_q<int>);
+static_assert(field_operators_q<float>);
+static_assert(field_operators_q<_std::complex<float>>);
+
+
 
 
 template <typename T>
@@ -271,16 +327,6 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename    T  >    using iterate_t  = _v3::ranges::view_interface<T>;
-
-
-template <typename    T  >    using front_t    = decltype(*XTAL_VAL_(T).begin());
-template <typename    T  >    using begin_t    = decltype( XTAL_VAL_(T).begin());
-
-template <typename    T  >  concept front_p    = requires (T t) {t.front();};
-template <typename    T  >  concept begin_p    = requires (T t) {t.begin();};
-
-template <typename ...Ts >  concept front_q    = conjunct_q<front_p<Ts>...>;
-template <typename ...Ts >  concept begin_q    = conjunct_q<begin_p<Ts>...>;
 
 
 template <typename    T  >  concept iterable_p = begin_p<T> and not front_p<T>;

@@ -25,15 +25,14 @@ struct resize
 		using S_::S_;
 		using size_t = U;
 
-		XTAL_TO4_(XTAL_FN1 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_FN2 empty(), 0 == size())
 
 	};
 };
 template <iterated_q U>
 struct resize<U>: resize<XTAL_TYP_(XTAL_VAL_(U).size())>
-{
-};
+{};
 template <typename U=size_t>
 using resize_t = confined_t<resize<U>>;
 

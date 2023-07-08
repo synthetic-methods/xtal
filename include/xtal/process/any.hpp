@@ -13,6 +13,7 @@ namespace xtal::process
 
 namespace _retail = xtal::conflux;
 #include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,7 +112,7 @@ struct define
 		template <typename ...Xs>
 		struct bond
 		{
-			using signature = bundle<Xs...>;
+			using signature = bundle<let_t<Xs>...>;
 			using result_t = typename signature::template invoke_t<T>;
 			using return_t = iteratee_t<result_t>;
 			
@@ -131,13 +132,11 @@ struct define
 				XTAL_CXN subtype(Xs &&...xs)
 				XTAL_0EX
 				:	R_(signature::make(XTAL_REF_(xs)...), T())
-				{
-				}
+				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
 				XTAL_0EX
 				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
-				{
-				}
+				{}
 
 				XTAL_TO4_(XTAL_FN2 arguments(), R_::head())
 				
@@ -208,12 +207,12 @@ struct define
 				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return argument<decltype(i)::value>().efflux(XTAL_REF_(oo)...);
+					return argument<decltype(i){}>().efflux(XTAL_REF_(oo)...);
 				}
 				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return argument<decltype(i)::value>().influx(XTAL_REF_(oo)...);
+					return argument<decltype(i){}>().influx(XTAL_REF_(oo)...);
 				}
 
 
@@ -284,27 +283,41 @@ struct refine
 	{
 		using S_ = compose_s<S, subkind>;
 	
+		template <typename ...Xs>
+		using F_ = typename S_::template bond<Xs...>;
+
 	public:
 		using S_::S_;
 		using S_::self;
+
+		template <typename ...Xs>
+		struct bond: F_<Xs...>
+		{
+			using type = compose_s<S_, confined<F_<Xs...>>>;
+		
+		};
+		template <typename ...Xs>
+		using bond_t = typename bond<Xs...>::type;
 
 		template <typename ...As>
 		XTAL_CN2 bond_f(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using kind = typename S_::template bond<decltype(xs)...>;
-			using type = compose_s<S, _retail::confined<As..., kind>>;
+			using  kind = confined<As..., F_<decltype(xs)...>>;
+			using  type = compose_s<S_, kind>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
 		XTAL_CN2 bond_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using kind = typename S_::template bond<decltype(xs)...>;
-			using type = compose_s<S, _retail::confined<As..., kind>>;
+			using  kind = confined<As..., F_<decltype(xs)...>>;
+			using  type = compose_s<S_, kind>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
-		XTAL_TO4_(template <typename ...As> XTAL_FN2 bind(XTAL_DEF ...xs), bond_f<As...>(self(), XTAL_REF_(xs)...))
+		XTAL_TO4_(template <typename ...As>
+		XTAL_FN2 bind(XTAL_DEF ...xs), bond_f<As...>(self(), XTAL_REF_(xs)...)
+		)
 
 	};
 };
@@ -360,9 +373,6 @@ struct defer<U>
 		using S_::self;
 		using S_::head;
 
-		///\
-		Deferred implementation of `T::value`. \
-
 		XTAL_TO2_(template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ks...>(XTAL_REF_(xs)...)
 		)
@@ -372,8 +382,7 @@ struct defer<U>
 template <typename U>
 struct refer
 :	_retail::refer<U>
-{
-};
+{};
 
 
 ///////////////////////////////////////////////////////////////////////////////

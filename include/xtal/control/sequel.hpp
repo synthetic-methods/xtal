@@ -70,7 +70,7 @@ struct prequel
 		XTAL_FN2 skip(V_ v)
 		XTAL_0FX
 		{
-			auto t = self(); t.step(t.step() + v);
+			auto t = self(); (void) t.step(t.step() + v);
 			return t;
 		}
 
@@ -171,7 +171,7 @@ struct prequel
 			else {
 				s.operator+=(0);
 				s.operator-=(count_f(t));
-				s.step(t.step());
+				(void) s.step(t.step());
 				return 0;
 			}
 		}
@@ -236,23 +236,20 @@ struct sequel<V>
 		XTAL_CON subtype()
 		XTAL_0EX
 		:	S_(0, 0)
-		{
-		}
+		{}
 		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
-		{
-		}
+		{}
 		XTAL_CXN subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
-		{
-		}
+		{}
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
 		{
-			auto t = twin(); t.size(j - i); return t;
+			auto t = twin(); (void) t.size(j - i); return t;
 		}
 
 		///\
@@ -276,15 +273,13 @@ struct sequel<V>
 		XTAL_OP1_(T_ &) +=(V v)
 		XTAL_0EX
 		{
-			S_::step() += S_::size() != 0;
-			S_::size(v);
+			S_::step() += S_::size() != 0; (void) S_::size(v);
 			return self();
 		}
 		XTAL_OP1_(T_ &) -=(V v)
 		XTAL_0EX
 		{
-			S_::step() -= v != 0;
-			S_::size(v);
+			S_::step() -= v != 0; (void) S_::size(v);
 			return self();
 		}
 
@@ -330,19 +325,16 @@ public:
 		XTAL_CXN subtype(U u, V v)
 		XTAL_0EX
 		:	S_(u, v)
-		{
-		}
+		{}
 		template <to_q<V> W>
 		XTAL_CXN subtype(W w)
 		XTAL_0EX
 		:	subtype(U(0, w), 0)
-		{
-		}
+		{}
 		XTAL_CON subtype()
 		XTAL_0EX
 		:	subtype(U(0, 0), 0)
-		{
-		}
+		{}
 
 		XTAL_FN2 slice(V i, V j)
 		XTAL_0FX
@@ -360,7 +352,7 @@ public:
 			using namespace _v3::ranges;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
-			S_::scan(*next(i0, nm), *next(iM, nm));
+			(void) S_::scan(*next(i0, nm), *next(iM, nm));
 			S_::step() += v;
 			return self();
 		}
@@ -370,7 +362,7 @@ public:
 			using namespace _v3::ranges;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
-			S_::scan(*prev(i0, nm), *prev(iM, nm));
+			(void) S_::scan(*prev(i0, nm), *prev(iM, nm));
 			S_::step() -= v;
 			return self();
 		}
@@ -385,7 +377,7 @@ public:
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const j0 = iM, jN = next(j0, v);
 			S_::step() += i0 != iM;
-			S_::scan(*j0, *jN);
+			(void) S_::scan(*j0, *jN);
 			return self();
 		}
 		XTAL_OP1 -=(V v)
@@ -396,7 +388,7 @@ public:
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const jN = i0, j0 = prev(jN, v);
 			S_::step() -= v != 0;
-			S_::scan(*j0, *jN);
+			(void) S_::scan(*j0, *jN);
 			return self();
 		}
 

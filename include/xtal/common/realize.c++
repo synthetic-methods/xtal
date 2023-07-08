@@ -255,7 +255,7 @@ TEST_CASE("xtal/common/realize.hpp: fracture complex")
 	BENCHMARK("fracture")
 	{
 		alpha_t constexpr two = 2;
-		aphex_t z {};
+		aphex_t z{};
 		for (sigma_t i = 192000/100; ~--i;) {
 			auto x = realized::mantissa_y(mt19937_m); x = _std::pow(two, x);
 			auto y = realized::mantissa_y(mt19937_m); y = _std::pow(two, y);

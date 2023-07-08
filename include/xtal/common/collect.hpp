@@ -252,8 +252,7 @@ struct collect
 
 				XTAL_CON type(bracket_t<V> w)
 				:	type(w.begin(), w.end())
-				{
-				}
+				{}
 				///\
 				List assignment. \
 				Replaces the contents of `this` with the given values. \
@@ -270,8 +269,7 @@ struct collect
 
 				XTAL_CON type(type const &t)
 				:	type(t.begin(), t.end())
-				{
-				}
+				{}
 				///\
 				Copy assigment. \
 				Replaces the contents of `this` with the given data. \
@@ -288,8 +286,7 @@ struct collect
 
 				XTAL_CON type(type &&t)
 				:	type(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()))
-				{
-				}
+				{}
 				///\
 				Move assigment. \
 				Replaces the contents of `this` with the given data. \
@@ -393,8 +390,7 @@ struct collect
 
 				XTAL_FN0 shrink_to_fit()
 				XTAL_0EX
-				{
-				}
+				{}
 
 				///\
 				Does nothing besides `throw std::bad_alloc` if the required `sN` exceeds the maximum `N_size`. \
@@ -402,7 +398,7 @@ struct collect
 				XTAL_FN0 reserve(size_type sN)
 				{
 					if (N_size < sN) {
-						throw _std::bad_alloc {};
+						throw _std::bad_alloc{};
 					}
 				}
 
@@ -509,20 +505,34 @@ struct collect
 				}
 
 				///\
-				Initialises `sN` values with `v` beginning at `i`. \
+				Inserts the value `v` at `i`. \
 
 				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, size_type sN, V const &v)
+				XTAL_FN1_(iterator) insert(I i, V &&v)
 				{
-					inject(i, sN);
-					_std::uninitialized_fill_n(i, sN, v);
-					return i;
+					return insert(i, (size_type) 1, XTAL_MOV_(v));
 				}
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, V const &v)
+				{
+					return insert(i, (size_type) 1, v);
+				}
+
+				///\
+				Initialises `sN` values with `v` beginning at `i`. \
+
 				template <is_q<iterator> I>
 				XTAL_FN1_(iterator) insert(I i, size_type sN, V &&v)
 				{
 					inject(i, sN);
 					_std::uninitialized_fill_n(i, sN, XTAL_MOV_(v));
+					return i;
+				}
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) insert(I i, size_type sN, V const &v)
+				{
+					inject(i, sN);
+					_std::uninitialized_fill_n(i, sN, v);
 					return i;
 				}
 
