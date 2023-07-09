@@ -157,6 +157,32 @@ struct define
 
 			};
 		};
+		struct gauge
+		{
+			using subkind = attach;
+
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, subkind>
+			{
+				using R_ = compose_s<R, subkind>;
+			
+			public:
+				using R_::R_;
+				using R_::head;
+
+				XTAL_FNX effuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+						return o == head();
+					}
+					else {
+						return R_::effuse(XTAL_REF_(o));
+					}
+				}
+
+			};
+		};
 		struct emit
 		{
 			using subkind = attach;
@@ -168,12 +194,12 @@ struct define
 			
 			public:
 				using R_::R_;
-				using R_::self;
+				using R_::head;
 
 				XTAL_FN2_(T) method()
 				XTAL_0FX
 				{
-					return self().template get<T>();
+					return head();
 				}
 
 			};
@@ -217,7 +243,6 @@ struct define
 
 			public:
 				using R_::R_;
-				using R_::self;
 				using R_::influx;
 
 				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)

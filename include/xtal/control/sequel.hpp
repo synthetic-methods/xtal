@@ -230,6 +230,7 @@ struct sequel<V>
 		using S_::self;
 		using S_::twin;
 
+		~subtype() = default;
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 

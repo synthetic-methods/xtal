@@ -211,7 +211,8 @@ struct collect
 				XTAL_FN2    cend() XTAL_0FX {return    end();}
 
 				XTAL_TO4_(XTAL_FN2 data(), begin());
-
+				
+			public:
 				///\
 				Clear destructor. \
 
@@ -240,10 +241,7 @@ struct collect
 				template <allomorphic_q<iterator> I0, allomorphic_q<iterator> IN>
 				XTAL_CXN type(I0 i0, IN iN)
 				{
-					using I = _std::common_type_t<I0, IN>;
-					I i0_ = i0;
-					I iN_ = iN;
-					insert_back(i0_, iN_);
+					refresh(i0, iN);
 				}
 
 				///\
@@ -253,14 +251,14 @@ struct collect
 				XTAL_CON type(bracket_t<V> w)
 				:	type(w.begin(), w.end())
 				{}
+				
 				///\
 				List assignment. \
 				Replaces the contents of `this` with the given values. \
 
 				XTAL_OP1 = (bracket_t<V> w)
 				{
-					refill(w.begin(), w.end());
-					return *this;
+					return refresh(w.begin(), w.end());
 				}
 
 				///\
@@ -276,8 +274,7 @@ struct collect
 
 				XTAL_OP1 = (type const &t)
 				{
-					refill(t.begin(), t.end());
-					return *this;
+					return refresh(t.begin(), t.end());
 				}
 
 				///\
@@ -293,8 +290,7 @@ struct collect
 
 				XTAL_OP1 = (type &&t)
 				{
-					refill(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
-					return *this;
+					return refresh(_std::make_move_iterator(t.begin()), _std::make_move_iterator(t.end()));
 				}
 
 				///\
@@ -368,9 +364,7 @@ struct collect
 				XTAL_0EX
 				{
 					using I = _std::common_type_t<I0, IN>;
-					I i0_ = i0;
-					I iN_ = iN;
-					erase(i0_, iN_, _std::distance(i0_, iN_));
+					erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
 				}
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
@@ -380,9 +374,7 @@ struct collect
 				XTAL_0EX
 				{
 					using I = _std::common_type_t<I0, IN>;
-					I i0_ = i0;
-					I iN_ = iN;
-					erode(i0_, iN_, sN);
+					erode((I) i0, (I) iN, sN);
 				}
 
 				///\
@@ -417,15 +409,6 @@ struct collect
 				}
 
 				///\
-				Clears `this` and invokes `insert_back` with the given arguments. \
-
-				XTAL_FN0 refill(XTAL_DEF ...etc)
-				{
-					clear();
-					insert_back(XTAL_REF_(etc)...);
-				}
-
-				///\
 				Removes the last element from `this`. \
 
 				XTAL_FN0 pop_back()
@@ -443,16 +426,26 @@ struct collect
 				///\
 				Inserts the values `etc` beginning at `i0`. \
 
-				XTAL_FN0 push_back(bracket_t<V> etc)
+				template <allomorphic_q<iterator> I0, allomorphic_q<iterator> IN>
+				XTAL_FN1 push_back(I0 i0, IN iN)
 				{
-					insert_back(etc.begin(), etc.end());
+					using I = _std::common_type_t<I0, IN>;
+					_std::copy((I) i0, (I) iN, inserter(end()));
+					limit_m = block_m + size();
+				}
+				///\
+				Inserts the values `etc` beginning at `i0`. \
+
+				XTAL_FN0 push_back(bracket_t<V> w)
+				{
+					push_back(w.begin(), w.end());
 				}
 				///\
 				Inserts the values `etc...` beginning at `i0`. \
 
-				XTAL_FN0 push_back(XTAL_DEF_(to_q<V>) ...etc)
+				XTAL_FN0 push_back(XTAL_DEF_(to_q<V>) ...vs)
 				{
-					push_back(bracket_t<V>{V(XTAL_REF_(etc))...});
+					push_back(bracket_t<V>{V(XTAL_REF_(vs))...});
 				}
 
 				///\
@@ -472,7 +465,6 @@ struct collect
 					reserve(size_type(1) + size());
 					return ::new (limit_m++) V(XTAL_REF_(etc)...);
 				}
-
 				///\
 				Invokes `insert` at `this->end()` with the given arguments. \
 
@@ -482,23 +474,46 @@ struct collect
 				}
 
 				///\
+				Constructs an element at `i` using the given arguments. \
+				\returns a reference to the element.
+
+				template <is_q<iterator> I>
+				XTAL_FN1_(reference) emplace(I i, XTAL_DEF ...etc)
+				{
+					return *inplace(i, XTAL_REF_(etc)...);
+				}
+				///\
+				Constructs an element at `i` using the given arguments. \
+				\returns a pointer to the element.
+
+				template <is_q<iterator> I>
+				XTAL_FN1_(iterator) inplace(I i, XTAL_DEF ...etc)
+				{
+					inject(i, (size_type) 1);
+					return ::new (i) V(XTAL_REF_(etc)...);
+				}
+				///\
 				Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-				template <is_q<iterator> I, allomorphic_q<iterator> J0, allomorphic_q<iterator> JN>
+				template <typename I, allomorphic_q<iterator> J0, allomorphic_q<iterator> JN>
 				XTAL_FN1_(iterator) insert(I i, J0 j0, JN jN)
 				{
 					using J = _std::common_type_t<J0, JN>;
-					J j0_ = j0;
-					J jN_ = jN;
-					inject(i, _std::distance(j0_, jN_));
-					_detail::copy_to(i, j0_, jN_);
+					return insert(i, (J) j0, (J) jN);
+				}
+				template <typename I, allomorphic_q<iterator> J>
+				XTAL_FN1_(iterator) insert(I i, J j0, J jN)
+				{
+					inject(i, _std::distance(j0, jN));
+					_std::copy(j0, jN, i);
+					limit_m = block_m + size();
 					return i;
 				}
 
 				///\
 				Inserts the values `w` beginning at `i`. \
 
-				template <is_q<iterator> I>
+				template <typename I>
 				XTAL_FN1_(iterator) insert(I i, bracket_t<V> w)
 				{
 					return insert(i, w.begin(), w.end());
@@ -507,39 +522,27 @@ struct collect
 				///\
 				Inserts the value `v` at `i`. \
 
-				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, V &&v)
+				template <typename I>
+				XTAL_FN1_(iterator) insert(I i, XTAL_DEF_(is_q<V>) v)
 				{
-					return insert(i, (size_type) 1, XTAL_MOV_(v));
-				}
-				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, V const &v)
-				{
-					return insert(i, (size_type) 1, v);
+					return insert(i, (size_type) 1, XTAL_REF_(v));
 				}
 
 				///\
 				Initialises `sN` values with `v` beginning at `i`. \
 
-				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, size_type sN, V &&v)
+				template <typename I>
+				XTAL_FN1_(iterator) insert(I i, size_type sN, XTAL_DEF_(is_q<V>) v)
 				{
 					inject(i, sN);
-					_std::uninitialized_fill_n(i, sN, XTAL_MOV_(v));
-					return i;
-				}
-				template <is_q<iterator> I>
-				XTAL_FN1_(iterator) insert(I i, size_type sN, V const &v)
-				{
-					inject(i, sN);
-					_std::uninitialized_fill_n(i, sN, v);
+					_std::uninitialized_fill_n(i, sN, XTAL_REF_(v));
 					return i;
 				}
 
 				///\
 				Initialises `sN` values beginning at `i`. \
 
-				template <is_q<iterator> I>
+				template <typename I>
 				XTAL_FN1_(iterator) insert(I i, size_type sN)
 				{
 					inject(i, sN);
@@ -551,7 +554,7 @@ struct collect
 				///\
 				Allocates `sN` elements beginning at `i`. \
 
-				template <is_q<iterator> I>
+				template <typename I>
 				XTAL_FN1_(iterator) inject(I i, size_type sN)
 				{
 					reserve(sN + size());
@@ -569,29 +572,49 @@ struct collect
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
-				template <is_q<iterator> I0, is_q<iterator> IN>
-				XTAL_FN0 erode(I0 i0, IN iN, size_type sN)
+				template <is_q<iterator> I>
+				XTAL_FN0 erode(I i0, I iN, size_type sN)
 				XTAL_0EX
 				{
-					using I = _std::common_type_t<I0, IN>;
-					I i0_ = i0;
-					I iN_ = iN;
-					I begin_m = begin(), end_m = end();
+					assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);
+					collapse(i0, iN, sN);
 					
-					assert(begin_m <= i0_ and iN_ <= end_m and _std::distance(i0_, iN_) == sN);
-					
-					if constexpr (_std::destructible<V>) {
-						_std::destroy(i0_, iN_);
-					}
-					if (iN_ < end_m and _std::move_constructible<V>) {
-						A* hN = _ptr_f(iN_);
-						A* h0 = _ptr_f(i0_);
+					if (iN < end() and _std::move_constructible<V>) {
+						A* hN = _ptr_f(iN);
+						A* h0 = _ptr_f(i0);
 						_detail::move_to(h0, hN, limit_m, sN <= _std::distance(hN, limit_m));
 					}
 					else {
-						assert(end_m == iN_);
+						assert(iN == end());
 					}
 					limit_m -= sN;
+				}
+				template <is_q<iterator> I>
+				XTAL_FN0 collapse(I i0, I iN, size_type sN)
+				XTAL_0EX
+				{
+					if constexpr (_std::destructible<V>) {
+					//	NOTE: The built-in `std::destroy` halting on `DEBUG`, \
+					//	possibly due to the `!=` loop-condition conflicting with alignment. \
+						_std::destroy(i0, iN);
+
+						for (auto i = iN; i0 < i--; i->~V());
+					}
+				}
+
+				///\
+				Clears `this` and invokes `insert_back` with the given arguments. \
+
+				XTAL_FN1 refresh(XTAL_DEF... etc)
+				{
+					clear(); push_back(XTAL_REF_(etc)...);
+					return *this;
+				}
+
+				XTAL_FN1 inserter(XTAL_DEF i)
+				XTAL_0EX
+				{
+					return _std::inserter(*this, XTAL_REF_(i));
 				}
 
 			};

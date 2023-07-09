@@ -89,8 +89,9 @@ struct collate
 			{
 				using R_ = hemitype<type>;
 
+				using value_t = V;
 				using fluid_t = typename fluid::type;
-				using index_t = typename fluid_t::iterator;
+				using point_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
 				fluid_t fluid_m;
@@ -122,19 +123,26 @@ struct collate
 				{
 					if (n) {
 						begin_n = 0;
-						fluid_m.erase(fluid_m.begin(), end());
+						clear();
 					}
 					return *begin();
 				}
+				XTAL_FN0 clear()
+				XTAL_0EX
+				{
+					fluid_m.erase(fluid_m.begin(), end());
+				}
+
 				///\note\
 				Cost can be amortized by invoking `advance` and `abandon` separately, \
 				allowing for branchless `advance`ment. \
 
-				XTAL_FN0 pop(index_t i)
+				XTAL_FN0 pop(point_t i)
 				XTAL_0EX
 				{
+					assert(i < end());
 					begin_n -= i < begin();
-					fluid_m.erase(i, 1);
+					fluid_m.erase(i);
 					abandon(begin() == end());
 				}
 				XTAL_FN0 pop()
@@ -163,23 +171,31 @@ struct collate
 				XTAL_FN0 push(V v)
 				XTAL_0EX
 				{
-					auto v_ = scan(v); *v_ == v? _std::swap(*v_, v): poke(v_, XTAL_MOV_(v));
+					auto v_ = scan(v);
+					if (*v_ == v) {
+						_std::swap(*v_, v);
+					}
+					else {
+						poke(v_, XTAL_MOV_(v));
+					}
 				}
-				XTAL_FN0 poke(index_t v_, V v)
+				template <is_q<value_t> W>
+				XTAL_FN1 poke(point_t v_, W &&w)
 				XTAL_0EX
 				{
-					fluid_m.insert(v_, {XTAL_MOV_(v)});
+					return fluid_m.insert(v_, XTAL_REF_(w));
 				}
-				XTAL_FN0 poke(index_t v_, index_t u_)
+				template <is_q<point_t> W>
+				XTAL_FN1 poke(point_t v_, W &&w_)
 				XTAL_0EX
 				{
-					fluid_m.insert(v_, u_, u_ + 1);
+					return fluid_m.insert(v_, w_, _std::next(w_));
 				}
-
-				XTAL_FN0 clear()
+				XTAL_FN1 poke(point_t v_, XTAL_DEF ...ws)
 				XTAL_0EX
 				{
-					fluid_m.clear();
+					fluid_m.insert(v_, V(XTAL_REF_(ws)...));
+					return v_;
 				}
 
 			};

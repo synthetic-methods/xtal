@@ -59,8 +59,9 @@ struct polymer<N_voice, As...>
 			using return_t = iteratee_t<result_t>;
 			XTAL_LET_(return_t) zero = 0;
 
+			using stage_u = control::stasis_t<>;
+			using event_u = context::grain_s<stage_u>;
 			using voice_u = context::grain_s<X>;
-			using event_u = context::grain_s<control::stasis_t<>>;
 			using spool_u = typename collage_t<voice_u, N_voice{}>::spool_t;
 			using store_u = typename S_::template fluid<based_t<return_t>>::type;
 			using serve_u = deranged_t<store_u>;
@@ -78,33 +79,28 @@ struct polymer<N_voice, As...>
 			{
 				using R_ = compose_s<R, subkind>;
 
-			//	spool_u q_;
-				spool_u q_{voice_u::template sentry<0>()};
+				spool_u q_;
+			//	spool_u q_{voice_u::template sentry<0>()};
 
-			//	XTAL_CXN subtype(store_u &&store_o, X const &x, XTAL_DEF ...etc)
-			//	XTAL_0EX
-			//	:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
-			//	,	q_{voice_u::template sentry<0>(x)}
-			//	{}
-			//	XTAL_CXN subtype(store_u &&store_o, X &&x, XTAL_DEF ...etc)
-			//	XTAL_0EX
-			//	:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
-			//	,	q_{voice_u::template sentry<0>(XTAL_MOV_(x))}
-			//	{}
+				XTAL_CXN subtype(store_u &&store_o, X x, XTAL_DEF ...etc)
+				XTAL_0EX
+				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
+				,	q_{voice_u::template sentry<0>(XTAL_MOV_(x))}
+				{}
 				XTAL_CXN subtype(store_u &&store_o, XTAL_DEF ...etc)
 				XTAL_0EX
 				:	R_((serve_u) store_o, XTAL_MOV_(store_o), XTAL_REF_(etc)...)
-			//	,	q_{voice_u::template sentry<0>()}
+				,	q_{voice_u::template sentry<0>()}
 				{}
 
 			public:
 			//	using R_::R_;
 				using R_::self;
 
+				~subtype() = default;
 			//	XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
 
-			//	~subtype() = default;
 
 				XTAL_CON subtype()
 				XTAL_0EX
@@ -160,7 +156,7 @@ struct polymer<N_voice, As...>
 				//	Render each instance, and release any that have finished:
 					for (auto* v_ = q_.end(); q_.begin() <= --v_;) {
 						(void) v_->efflux(sequel_o, oo...);
-						if (v_->efflux(control::stasis_f(-1)) == 0) {
+						if (v_->efflux(control::stasis_f(-1)) == 1) {
 							q_.pop(v_);
 						}
 					}
@@ -185,25 +181,23 @@ struct polymer<N_voice, As...>
 				{
 					auto *v_ = q_.scan(event_o);
 
-					auto m  = event_o.parent();
-					auto i  = event_o.head();
-					auto i_ =     v_->head();
+					auto event_stage = event_o.parent();
+					auto event_index = event_o.head();
+					auto voice_index =     v_->head();
 
 				//	Detect incoming note-on:
-					if (m == 0) {
+					if (event_stage == 0) {
 					//	Cut if it already exists:
-						if (i == i_) {
+						if (event_index == voice_index) {
 							(void) v_->influx(control::stasis_f(-1), oo...);
 						}
 					//	Allocate by duplicating sentinel:
-						q_.poke(v_, q_.end());
-						v_->head(i_ = i);
+						q_.poke(v_, q_.end())->head(voice_index = event_index);
 					}
 				//	Forward to detected/allocated instance:
-					assert(i_ == i);
-					return v_->influx(m, XTAL_REF_(oo)...);
+					assert(voice_index == event_index);
+					return v_->influx(event_stage, XTAL_REF_(oo)...);
 				}
-
 				
 				XTAL_FNX efflux(XTAL_DEF ...oo)
 				XTAL_0EX

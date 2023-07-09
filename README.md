@@ -258,7 +258,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
 |Dependency management  |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling     |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter bond      |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter bond         |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
 |Parameter sampling     |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
 |Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::intermit`|
 |Parameter namespacing  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::prefix`|
@@ -270,12 +270,12 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
 |Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
-|Matrix modulation      |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
 
-### Implemented but Untested
+### Implementation in Progress
 
 |Feature                |Reference|
 |-----------------------|---------|
+|Matrix modulation      |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
 |Processor polymorphism |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
 
 ## Contribution
