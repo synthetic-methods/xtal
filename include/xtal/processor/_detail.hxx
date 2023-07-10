@@ -11,7 +11,7 @@ namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-//using namespace common;
+using namespace _retail::_detail;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,13 +19,13 @@ namespace _detail
 template <typename T, typename Y=T>
 concept connected_p = any_p<T> and requires (T t)
 {
-	{t.serve()} -> isomorphic_q<Y>;
+	{t.serve()} -> isomorphic_p<Y>;
 };
 template <typename T, typename Y=T>
 concept collected_p = any_p<T> and requires (T t)
 {
-	{t.serve()} -> isomorphic_q<Y>;
-	{t.store()} -> isomorphic_q<Y>;
+	{t.serve()} -> isomorphic_p<Y>;
+	{t.store()} -> isomorphic_p<Y>;
 };
 template <typename T, typename Y>
 concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;

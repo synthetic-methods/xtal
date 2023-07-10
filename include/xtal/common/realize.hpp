@@ -235,7 +235,9 @@ public:
 template <size_t N_size>
 struct realization: rationalization<N_size>
 {};
-template <size_t N_size> requires alpha_q<typename rationalization<N_size>::alpha_t>
+template <size_t N_size>
+requires
+requires {typename rationalization<N_size>::alpha_t;}
 struct realization<N_size>: rationalization<N_size>
 {
 private:
@@ -373,7 +375,7 @@ public:
 		}
 	}
 	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
-	XTAL_CN2 unsquare_y(iota_q auto const &w)
+	XTAL_CN2 unsquare_y(_std::integral auto const &w)
 	XTAL_0EX
 	{
 		return unsquare_y<M_pow, N_lim>((alpha_t) w);

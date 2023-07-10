@@ -116,8 +116,8 @@ void test__respan_internal_intermit()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = processor::let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	
 	auto xhs = mix_z::bond_f(lhs, rhs);
 	auto seq = sequel_n(4);

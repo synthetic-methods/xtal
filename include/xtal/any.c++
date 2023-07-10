@@ -64,8 +64,7 @@ struct dynamic_bias_mix
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			auto &o = this->template self<bias_t>();
-			return (XTAL_REF_(xs) +...+ o.head());
+			return (XTAL_REF_(xs) +...+ this->template get<bias_t>());
 		}
 
 	};
@@ -82,8 +81,7 @@ struct dynamic_term
 		XTAL_FN2 method(XTAL_DEF x)
 		XTAL_0EX
 		{
-			auto &o = this->template self<coef_t>();
-			return XTAL_REF_(x)*o.head();
+			return XTAL_REF_(x)*this->template get<coef_t>();
 		}
 
 	};

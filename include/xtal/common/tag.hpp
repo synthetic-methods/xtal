@@ -29,11 +29,11 @@ struct tag
 template <template <typename...> typename F>
 using tag_t = typename tag<F>::type;
 
-template <typename T, template <typename...> typename F>
+template <template <typename...> typename F, typename T>
 concept tag_p = _std::derived_from<based_t<T>, tag_t<F>>;
 
 template <template <typename...> typename F, typename ...Ts>
-concept tag_q = conjunct_q<tag_p<Ts, F>...>;
+concept tag_q = (... and tag_p<F, Ts>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

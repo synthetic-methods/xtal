@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
+#include "../context/scope.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
 #include "../control/sequel.hpp"
-
 
 
 XTAL_ENV_(push)
@@ -71,7 +71,7 @@ struct monomer<U, As...>
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
-				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(xs)...)
+				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T_>) t, XTAL_DEF ...xs)
 				XTAL_0EX
@@ -79,12 +79,7 @@ struct monomer<U, As...>
 				{}
 
 				XTAL_TO4_(XTAL_FN2 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
-
-				XTAL_FN2 method()
-				XTAL_0EX
-				{
-					return serve();
-				}
+				XTAL_TO2_(XTAL_FN2 method(), serve())
 
 			public:
 				using R_::efflux;
@@ -101,16 +96,17 @@ struct monomer<U, As...>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
-		
-			using store_u = typename S_::template fluid<typename rebound::return_t>::type;
-			using serve_u = deranged_t<store_u>;
+			
+			using return_t = typename rebound::return_t;
+			using  store_u = typename S_::template fluid<return_t>::type;
+			using  serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
 		
-			XTAL_LET_(int) I_parity = seek_true_v<_detail::recollected_p<Xs, serve_u>...>;
+			XTAL_LET_(int) N_share = seek_true_v<_detail::recollected_p<Xs, serve_u>...>;
 
 			using subkind = compose<tag<monomer>
-			,	concord::confer<serve_u>
-			,	concord::defer <store_u>
+			,	concord::refer<serve_u>
+			,	context::scope<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach
@@ -121,31 +117,39 @@ struct monomer<U, As...>
 			{
 				using R_ = compose_s<R, subkind>;
 
-				XTAL_CXN subtype(store_u &&buffer_o, XTAL_DEF ...etc)
-				XTAL_0EX
-				:	R_((serve_u) buffer_o, XTAL_MOV_(buffer_o), XTAL_REF_(etc)...)
-				{}
-
 			public:
-			//	using R_::R_;
+				using R_::R_;
 				using R_::self;
+				using R_::serve;
+				using R_::store;
+				XTAL_TO2_(XTAL_FN2 method(), serve())
 
-				XTAL_CO0_(subtype);
-				XTAL_CO4_(subtype);
+			//	using R_::infuse;
+				///\
+				Responds to `control::resize` by resizing the internal `store()`. \
 
-				XTAL_CXN subtype(XTAL_DEF ...etc)
-				XTAL_0EX
-				:	subtype(store_u(), XTAL_REF_(etc)...)
-				{}
-
-				XTAL_TO4_(XTAL_FN2 store(XTAL_DEF... oo), R_::template head<1>(XTAL_REF_(oo)...))
-				XTAL_TO4_(XTAL_FN2 serve(XTAL_DEF... oo), R_::template head<0>(XTAL_REF_(oo)...))
-
-				XTAL_FN2 method()
+				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					return serve();
+					if constexpr (is_q<resize_u, decltype(o)>) {
+						return R_::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
+					}
+					else {
+						return R_::infuse(XTAL_REF_(o));
+					}
 				}
+				using R_::influx_request;
+				///\note\
+				Resizing skips intermediate `recollected_p` dependencies, \
+				continuing to propagate beyond. \
+
+				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
+				XTAL_0EX
+				XTAL_REQ (0 <= N_share)
+				{
+					return R_::template influx_request_tail<N_share>(null_t(), resize_o, XTAL_REF_(oo)...);
+				}
+
 
 				using R_::efflux;
 				///\
@@ -161,7 +165,7 @@ struct monomer<U, As...>
 				}
 				///\note\
 				When accompanied by `control::respan`, the supplied visor will be used instead. \
-				All `arguments` are rendered in-place unless a `visor`-compatible `rvalue` is found, \
+				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
 				XTAL_FNX efflux(respan_u respan_o, control::sequel_q auto sequel_o, XTAL_DEF ...oo)
@@ -176,37 +180,10 @@ struct monomer<U, As...>
 						auto sequel_x = sequel_o.slice(w).skip(n);
 						auto respan_x = respan_o.slice(w);
 						auto i = ranges::next(serve().begin(), w.front());
-						(void) R_::template efflux_request_tail<I_parity>(respan_x, sequel_x, oo...);
+						(void) R_::template efflux_request_tail<N_share>(respan_x, sequel_x, oo...);
 						ranges::move(R_::method()|views::take(count_f(w)), i);
 					});
 					return R_::template influx_request(sequel_o);
-				}
-
-			//	using R_::infuse;
-				///\
-				Responds to `control::resize` by resizing the internal `store()`. \
-
-				XTAL_FNX infuse(resize_u resize_o)
-				XTAL_0EX
-				{
-					return R_::infuse(resize_o) or (store().resize(XTAL_REF_(resize_o)), 0);
-				}
-				XTAL_FNX infuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					return R_::infuse(XTAL_REF_(o));
-				}
-				
-				using R_::influx_request;
-				///\note\
-				Resizing skips intermediate `recollected_p` dependencies, \
-				continuing to propagate beyond. \
-
-				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
-				XTAL_0EX
-				XTAL_REQ (0 <= I_parity)
-				{
-					return R_::template influx_request_tail<I_parity>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
 
 			};

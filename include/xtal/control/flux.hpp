@@ -17,10 +17,11 @@ template <typename ...As>
 struct flux
 {
 	using subkind = compose<void
-	,	concord::_detail::refer_equality<XTAL_FLX>
-	,	concord::_detail::refer_binary_operators<XTAL_FLX>
-	,	defer<XTAL_FLX>
+	,	_detail::refer_equality_comparators<XTAL_FLX>
+	,	_detail::refer_bitwise_operators<XTAL_FLX>
+//	,	refer<XTAL_FLX>
 	,	As...
+	,	defer<XTAL_FLX>
 	>;
 
 	template <any_p S>

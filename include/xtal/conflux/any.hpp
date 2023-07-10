@@ -13,6 +13,7 @@ namespace xtal::conflux
 
 namespace _retail = xtal::concord;
 #include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,18 +95,17 @@ struct define
 		Influx handler: resolves the message for `this` before any dependencies. \
 		
 		///\returns the result of `infuse` applied to the first argument \
-		`&` `influx` applied to the remaining arguments. \
+		`&` `influx` applied to the remaining arguments if successful. \
 
 		XTAL_FNX influx(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
+			return XTAL_FLX_(sizeof...(oo)? self().influx(oo...): -1) (self().infuse(XTAL_REF_(o)));
 		}
 		XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-		//	return self().influx(XTAL_REF_(oo)...);
-			return influx();
+			return -1;
 		}
 		XTAL_FNX influx()
 		XTAL_0EX
@@ -134,18 +134,17 @@ struct define
 		Efflux handler: resolves the message for any dependencies before `this`. \
 		
 		///\returns the result of `effuse` applied to the first argument \
-		`&` `efflux` applied to the remaining arguments. \
+		`&` `efflux` applied to the remaining arguments if successful. \
 
 		XTAL_FNX efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
+			return XTAL_FLX_(sizeof...(oo)? self().efflux(oo...): -1) (self().effuse(XTAL_REF_(o)));
 		}
 		XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-		//	return self().efflux(XTAL_REF_(oo)...);
-			return efflux();
+			return -1;
 		}
 		XTAL_FNX efflux()
 		XTAL_0EX
@@ -202,13 +201,13 @@ struct defer
 		using S_::head;
 
 		///\note\
-		Influxes `this`, then the proxied value if supported.
+		Influxes the proxied value if supported, then `this`.
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ any_p<U>
 		{
-			return XTAL_FLX_(head().influx(oo...)) (S_::influx(XTAL_REF_(oo)...));
+			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -217,13 +216,13 @@ struct defer
 		}
 
 		///\note\
-		Effluxes the proxied value if supported, then `this`.
+		Effluxes `this`, then the proxied value if supported.
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ any_p<U>
 		{
-			return XTAL_FLX_(S_::efflux(oo...)) (head().efflux(XTAL_REF_(oo)...));
+			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX

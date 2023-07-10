@@ -26,13 +26,14 @@
 TODO: Allow command-line/[c]?make configuration?
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
+#define XTAL_STD ((__cplusplus/100)%100)
+#define XTAL_STD_IEC 60559//&0
 
 #define XTAL_STD_size_t ::std::size_t
 #define XTAL_STD_sign_t ::std::int_fast8_t
 #define XTAL_STD_null_t ::std::nullptr_t
 #define XTAL_STD_unit_t ::std::monostate
 
-#define XTAL_STD_IEC 60559//&0
 
 #if     defined(__cacheline_aligned)
 #define XTAL_STD_L1 __cacheline_aligned
@@ -75,7 +76,7 @@ TODO: Allow command-line/[c]?make configuration?
 
 #endif
 
-#ifndef NDEBUG
+
 #if     XTAL_V00_MSVC
 static_assert(1933 <= XTAL_V00_MSVC);
 
@@ -85,7 +86,6 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #elif   XTAL_V00_GNUC
 static_assert(1200 <= XTAL_V00_GNUC);
 
-#endif
 #endif
 
 
@@ -106,7 +106,8 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #elif   XTAL_V00_GNUC
 #define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
 #define XTAL_ENV_push _Pragma("GCC diagnostic push")\
-                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")
+                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
+                      _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")
 
 #endif
 

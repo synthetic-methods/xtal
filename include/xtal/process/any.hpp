@@ -127,105 +127,95 @@ struct define
 				using R_::R_;
 				using R_::self;
 				///\
-				Constructs `arguments` using those supplied. \
+				Initializes `slots` using the arguments supplied. \
 
 				XTAL_CXN subtype(Xs &&...xs)
 				XTAL_0EX
-				:	R_(signature::make(XTAL_REF_(xs)...), T())
+				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
 				XTAL_0EX
 				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
 				{}
 
-				XTAL_TO4_(XTAL_FN2 arguments(), R_::head())
+				XTAL_TO4_(XTAL_FN2 slots(), R_::head())
 				
 				template <size_t N, size_t ...Ns>
-				XTAL_FN2 argument()
+				XTAL_FN2 slot()
 				XTAL_0EX
 				{
 					if constexpr (0 == sizeof...(Ns)) {
-						return _std::get<N>(arguments());
+						return _std::get<N>(slots());
 					}
 					else {
-						return _std::get<N>(arguments()).template argument<Ns...>();
+						return _std::get<N>(slots()).template slot<Ns...>();
 					}
 				}
-				
 				XTAL_FN2 apply(XTAL_DEF f)
 				XTAL_0EX
 				{
-					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), arguments());
+					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
 				}
 
-				using R_::method;
 				///\
-				Evaluates the lifted `method` using the bound arguments. \
+				Evaluates the lifted `method` using the bound slots. \
 
 				template <auto ...Ks>
 				XTAL_FN2 method()
 				XTAL_0EX
 				{
-					return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), arguments());
+					return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), slots());
 				}
-
-			//	using R_::efflux;
+				using R_::method;
 			//	using R_::influx;
+			//	using R_::efflux;
 
-				///\returns the result of `efflux`ing `arguments` then (if `& 1`) `self`. \
-
-				XTAL_FNX efflux(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
-				}
-				///\returns the result of `influx`ing `self` then  (if `& 1`) `arguments`. \
+				///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
 				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(self().influx_request(oo...)) (R_::influx(XTAL_REF_(oo)...));
 				}
+				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
-				///\note\
-				If prefixed by `null_t()`, the message is forwarded directly to `arguments`. \
-
-				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
+				XTAL_FNX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().efflux_request(XTAL_REF_(oo)...);
+					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
 				}
+
+				///\note\
+				If prefixed by `null_t()`, the message is forwarded directly to `slots`. \
+
 				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx_request(XTAL_REF_(oo)...);
 				}
-
-				///\note\
-				If prefixed by `constant_q`, the message is forwarded directly to the `argument` specified. \
-
-				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo)
+				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return argument<decltype(i){}>().efflux(XTAL_REF_(oo)...);
+					return self().efflux_request(XTAL_REF_(oo)...);
 				}
+
+				///\note\
+				If prefixed by `constant_q`, the message is forwarded directly to the `slot` specified. \
+
 				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return argument<decltype(i){}>().influx(XTAL_REF_(oo)...);
+					return slot<i>().influx(XTAL_REF_(oo)...);
 				}
-
-
-				///\
-				Forwards the message to `arguments`, bypassing `self`. \
-
-				XTAL_FNX efflux_request(auto ...oo)
+				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return apply([&] (XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
-					);
+					return slot<i>().efflux(XTAL_REF_(oo)...);
 				}
+
+				///\
+				Forwards the message to `slots`, bypassing `self`. \
+
 				XTAL_FNX influx_request(auto ...oo)
 				XTAL_0EX
 				{
@@ -233,37 +223,42 @@ struct define
 						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
 					);
 				}
-
-
-				///\
-				Forwards the message tail to `arguments`, bypassing `self`. \
-				If `~I_parity`, the argument at `I_parity` receives the full message. \
-
-				template <int I_parity=-1>
-				XTAL_FNX efflux_request_tail(auto o, auto ...oo)
+				XTAL_FNX efflux_request(auto ...oo)
 				XTAL_0EX
 				{
-					if constexpr (I_parity == -1) {
-						return efflux_request(XTAL_MOV_(oo)...);
-					}
-					else {
-						static_assert(0 <= I_parity);
-						return [&] <auto ...I>(seek_t<I...>)
-							XTAL_0FN_(argument<I_parity>().efflux(o, oo...) &...& argument<(I_parity <= I) + I>().efflux(oo...))
-						(seek_f<sizeof...(Xs) - 1> {});
-					}
+					return apply([&] (XTAL_DEF ...xs)
+						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
+					);
 				}
-				template <int I_parity=-1>
+				///\
+				Forwards the message tail to `slots`, bypassing `self`. \
+				If `~N_slot`, the slot at `N_slot` receives the full message. \
+
+				template <int N_slot=-1>
 				XTAL_FNX influx_request_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
-					if constexpr (I_parity == -1) {
+					if constexpr (N_slot == -1) {
 						return influx_request(XTAL_MOV_(oo)...);
 					}
 					else {
-						static_assert(0 <= I_parity);
+						static_assert(0 <= N_slot);
 						return [&] <auto ...I>(seek_t<I...>)
-							XTAL_0FN_(argument<I_parity>().influx(o, oo...) &...& argument<(I_parity <= I) + I>().influx(oo...))
+							XTAL_0FN_(slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...))
+						(seek_f<sizeof...(Xs) - 1> {});
+					}
+				}
+				template <int N_slot=-1>
+				XTAL_FNX efflux_request_tail(auto o, auto ...oo)
+				XTAL_0EX
+				{
+					if constexpr (N_slot == -1) {
+						return efflux_request(XTAL_MOV_(oo)...);
+					}
+					else {
+						static_assert(0 <= N_slot);
+						return [&] <auto ...I>(seek_t<I...>)
+							XTAL_0FN_(slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...))
 						(seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
@@ -293,7 +288,8 @@ struct refine
 		template <typename ...Xs>
 		struct bond: F_<Xs...>
 		{
-			using type = compose_s<S_, confined<F_<Xs...>>>;
+			using kind = confined<F_<Xs...>>;
+			using type = compose_s<S_, kind>;
 		
 		};
 		template <typename ...Xs>

@@ -251,32 +251,27 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 ## Status
 
-### Implemented
+### Overview
 
-|Feature                |Reference|
-|-----------------------|---------|
-|Dependency composition |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
-|Dependency management  |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling     |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter bond         |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
-|Parameter sampling     |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
-|Parameter scheduling   |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::intermit`|
-|Parameter namespacing  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::prefix`|
-|Process lifting        |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Processor lifting      |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Processor resizing     |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
-|Processor rendering    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
-|Processor streaming    |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
-|Buffer sharing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer manipulation    |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
-|Numeric conditioning   |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
-
-### Implementation in Progress
-
-|Feature                |Reference|
-|-----------------------|---------|
-|Matrix modulation      |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
-|Processor polymorphism |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
+|Feature                    |Reference|
+|---------------------------|---------|
+|Dependency composition     |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
+|Dependency management      |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter bond             |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter sampling         |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
+|Parameter scheduling       |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::intermit`|
+|Parameter in(tro)spection  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?gauge\|guard)`|
+|Process lifting            |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Matrix modulation          |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
+|Processor lifting          |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Processor resizing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
+|Processor rendering        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
+|Processor streaming        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
+|Processor polymorphism     |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
+|Buffer sharing             |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
+|Buffer manipulation        |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

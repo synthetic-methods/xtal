@@ -11,7 +11,7 @@ namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace common;
+using namespace _retail::_detail;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,33 +74,12 @@ struct refine_tuple
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename U, int N=0> struct refer_limits           : compose<> {};
-template <typename U, int N=0> struct refer_equality         : compose<> {};
-template <typename U, int N=0> struct refer_inequality       : compose<> {};
-template <typename U, int N=0> struct refer_field_operators  : compose<> {};
-template <typename U, int N=0> struct refer_group_operators  : compose<> {};
-template <typename U, int N=0> struct refer_binary_operators : compose<> {};
-template <typename U, int N=0> struct refer_quality
-:	compose<void
-,	refer_equality<U, N>
-,	refer_inequality<U, N>
->
+template <typename U, int N=0>
+struct refer_iterators
+:	compose<>
 {};
-template <typename U, int N=0> struct refer_operators
-:	compose<void
-,	refer_field_operators <U, N>
-,	refer_group_operators <U, N>
-,	refer_binary_operators<U, N>
->
-{};
-template <typename U> struct refer_binary_operators<U, 0> : compose<refer_binary_operators<U, 1>, refer_binary_operators<U, 2>> {};
-template <typename U> struct refer_field_operators <U, 0> : compose<refer_field_operators <U, 1>, refer_field_operators <U, 2>> {};
-template <typename U> struct refer_group_operators <U, 0> : compose<refer_group_operators <U, 1>, refer_group_operators <U, 2>> {};
-template <typename U> struct refer_operators       <U, 0> : compose<refer_operators       <U, 1>, refer_operators       <U, 2>> {};
-
-
 template <typename U> requires begin_q<U>
-struct refer_limits<U>
+struct refer_iterators<U>
 {
 	template <any_p S>
 	class subtype: public S
@@ -125,72 +104,95 @@ struct refer_limits<U>
 };
 
 
-template <typename U> requires equality_p<U>
-struct refer_equality<U>
+template <typename U, int N=0> struct refer_inequality_comparators: compose<> {};
+template <typename U, int N=0> struct   refer_equality_comparators: compose<> {};
+template <typename U, int N=0> struct            refer_comparators: compose<void
+,	refer_equality_comparators<U, N>
+,	refer_inequality_comparators<U, N>
+>
+{};
+template <typename U> requires equality_comparators_p<U>
+struct refer_equality_comparators<U>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
-		XTAL_OP2_(bool) ==  (subtype const &t) XTAL_0FX {return S::head() ==  t.head();}
-		XTAL_OP2_(bool) !=  (subtype const &t) XTAL_0FX {return S::head() !=  t.head();}
+		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return S::head() == t.head();}
+		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return S::head() != t.head();}
 
 	};
 };
-
-template <typename U> requires inequality_p<U>
-struct refer_inequality<U>
+template <typename U> requires inequality_comparators_p<U>
+struct refer_inequality_comparators<U>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
-	//	XTAL_OP2        <=> (subtype const &t) XTAL_0FX {return S::head() <=> t.head();}
-		XTAL_OP2_(bool) <=  (subtype const &t) XTAL_0FX {return S::head() <=  t.head();}
-		XTAL_OP2_(bool) >=  (subtype const &t) XTAL_0FX {return S::head() >=  t.head();}
-		XTAL_OP2_(bool) <   (subtype const &t) XTAL_0FX {return S::head() <   t.head();}
-		XTAL_OP2_(bool) >   (subtype const &t) XTAL_0FX {return S::head() >   t.head();}
+		XTAL_OP2 <=> (subtype const &t)
+		XTAL_0FX
+		{
+			auto const &u = S::head(), v = t.head();
+			if constexpr (requires {u.operator<=>(v);}) {
+				return u.operator<=>(v);
+			}
+			else {
+				return u <=> v;
+			}
+		}
 
 	};
 };
 
 
-template <typename U> requires field_operators_p<U, 1> and remember_p<U>
-struct refer_field_operators<U, 1>
+template <typename U, int N=0> struct refer_bitwise_operators: compose<> {};
+template <typename U, int N=0> struct   refer_group_operators: compose<> {};
+template <typename U, int N=0> struct   refer_field_operators: compose<> {};
+template <typename U, int N=0> struct         refer_operators: compose<void
+,	refer_field_operators <U, N>
+,	refer_group_operators <U, N>
+,	refer_bitwise_operators<U, N>
+>
+{};
+template <typename U> struct refer_bitwise_operators<U, 0> : compose< refer_bitwise_operators<U, 1>, refer_bitwise_operators<U, 2>> {};
+template <typename U> struct   refer_group_operators<U, 0> : compose<   refer_group_operators<U, 1>,   refer_group_operators<U, 2>> {};
+template <typename U> struct   refer_field_operators<U, 0> : compose<   refer_field_operators<U, 1>,   refer_field_operators<U, 2>> {};
+template <typename U> struct         refer_operators<U, 0> : compose<         refer_operators<U, 1>,         refer_operators<U, 2>> {};
+
+template <typename U> requires bitwise_operators_p<U, 1> and remember_p<U>
+struct refer_bitwise_operators<U, 1>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
-		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m *=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m /=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m +=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m -=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m ^=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m |=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m &=(U) XTAL_REF_(w), S::self();}
 
 	};
 };
-template <typename U> requires field_operators_p<U, 2>
-struct refer_field_operators<U, 2>
+template <typename U> requires bitwise_operators_p<U, 2>
+struct refer_bitwise_operators<U, 2>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;
-	
+
 	public:
 		using S::S;
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() * (U) XTAL_REF_(w));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() / (U) XTAL_REF_(w));}
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() + (U) XTAL_REF_(w));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() - (U) XTAL_REF_(w));}
-		XTAL_OP1 - () XTAL_0FX {return T_(-S::head());}
+		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  ^ (U) XTAL_REF_(w));}
+		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  | (U) XTAL_REF_(w));}
+		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  & (U) XTAL_REF_(w));}
+		XTAL_OP2 ~ () XTAL_0FX {return T_(~S::head());}
 
 	};
 };
-
 
 template <typename U> requires group_operators_p<U, 1> and remember_p<U>
 struct refer_group_operators<U, 1>
@@ -228,35 +230,36 @@ struct refer_group_operators<U, 2>
 	};
 };
 
-
-template <typename U> requires binary_operators_p<U, 1> and remember_p<U>
-struct refer_binary_operators<U, 1>
+template <typename U> requires field_operators_p<U, 1> and remember_p<U>
+struct refer_field_operators<U, 1>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
-		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m ^=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m |=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m &=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m *=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m /=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m +=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::body_m -=(U) XTAL_REF_(w), S::self();}
 
 	};
 };
-template <typename U> requires binary_operators_p<U, 2>
-struct refer_binary_operators<U, 2>
+template <typename U> requires field_operators_p<U, 2>
+struct refer_field_operators<U, 2>
 {
 	template <any_p S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;
-
+	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  ^ (U) XTAL_REF_(w));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  | (U) XTAL_REF_(w));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head()  & (U) XTAL_REF_(w));}
-		XTAL_OP2 ~ () XTAL_0FX {return T_(~S::head());}
+		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() * (U) XTAL_REF_(w));}
+		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() / (U) XTAL_REF_(w));}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() + (U) XTAL_REF_(w));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_(S::head() - (U) XTAL_REF_(w));}
+		XTAL_OP1 - () XTAL_0FX {return T_(-S::head());}
 
 	};
 };

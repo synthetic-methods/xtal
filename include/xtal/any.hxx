@@ -31,7 +31,7 @@ class
 				 ::std::cout << ' ';
 			}
 		}
-		::std::cout << XTAL_REF_(x);
+		::std::cout << XTAL_REF_(x) << '\t';
 	}
 	XTAL_FN1 put(XTAL_DEF x)
 	{

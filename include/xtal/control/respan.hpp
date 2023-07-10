@@ -34,9 +34,9 @@ public:
 		XTAL_CO4_(subtype);
 
 		template <iterated_q W>
-		XTAL_CXN subtype(W &&w, XTAL_DEF ...ws)
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(ws)...)
+		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_FN2 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))

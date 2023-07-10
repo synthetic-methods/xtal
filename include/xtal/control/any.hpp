@@ -13,6 +13,7 @@ namespace xtal::control
 
 namespace _retail = xtal::conflux;
 #include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,9 +31,6 @@ struct define
 	
 	public:
 		using S_::S_;
-
-		///\
-		Attaches `T` as a member of `this`. \
 
 		struct attach
 		{
@@ -55,7 +53,7 @@ struct define
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
-				:	R_(T(), XTAL_REF_(xs)...)
+				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
 
 			//	TODO: Specialize a `process`'s `intermiter` to `intermit` `T` automatically when lifted to a `processor`. \
@@ -68,12 +66,10 @@ struct define
 		template <size_t N_arity=2>
 		struct dispatch
 		{
-			using subkind = attach;
-
 			template <conflux::any_p R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public compose_s<R, attach>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = compose_s<R, attach>;
 			
 			public:
 			//	using R_::R_;
@@ -87,7 +83,6 @@ struct define
 				{
 					assert(0 <= n and n < N_arity);
 				}
-
 
 				XTAL_TO2_(
 				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
@@ -134,72 +129,65 @@ struct define
 			};
 		};
 		///\
-		Attaches `T` as a namespace recognized by `this`. \
-
-		struct prefix
+		Attaches `T`, allowing aggregated inspection via `efflux`. \
+		
+		struct gauge
 		{
-			using subkind = attach;
-
-			template <conflux::any_p R> requires (T::tuple_size::value == 0)
-			class subtype: public compose_s<R, subkind>
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, attach>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
-				using R_::defuse;
-
-				XTAL_FNX defuse(XTAL_DEF_(is_q<T>) t)
+				
+				XTAL_FNX effuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					return 1;
+					return is_q<T, XTAL_TYP_(o)>?
+						R_::head() == XTAL_REF_(o): R_::effuse(XTAL_REF_(o));
 				}
 
 			};
 		};
-		struct gauge
-		{
-			using subkind = attach;
+		///\
+		Attaches `T` as a namespace, \
+		forwarding on `influx` only when prefixed by a matching type/instance. \
 
+		struct guard
+		{
 			template <conflux::any_p R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public compose_s<R, attach>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
-				using R_::head;
 
-				XTAL_FNX effuse(XTAL_DEF o)
+				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return o == head();
-					}
-					else {
-						return R_::effuse(XTAL_REF_(o));
-					}
+					return is_q<T, XTAL_TYP_(o)>?
+						R_::head() == XTAL_REF_(o): R_::infuse(XTAL_REF_(o));
 				}
 
 			};
 		};
 		struct poll
 		{
-			using subkind = attach;
-
 			template <conflux::any_p R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public compose_s<R, attach>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
 				using R_::head;
 
-				XTAL_FN2 method()
+				XTAL_FN2_(T) method()
 				XTAL_0FX
 				{
-					return head().head();
+					return head();
 				}
 
 			};
@@ -212,9 +200,8 @@ struct define
 			public:
 				using R::R;
 				using R::self;
-
 				using R::influx;
-				///\returns the aggregate `flux` of queuing the controls with the given delay.. \
+				///\returns the aggregated result of queuing the controls with the given delay.. \
 
 				XTAL_FNX influx(context::cue_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -231,13 +218,16 @@ struct define
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
+			template <int N>
+			XTAL_LET sentry_v = event_u::template sentry<N>();
+
 			template <conflux::any_p R> requires (2 <= size_t(N_event))
 			class subtype: public compose_s<R, pend>
 			{
 				using R_ = compose_s<R, pend>;
 				
 				delay_u d_{0};
-				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
+				spool_u q_{sentry_v<-1>, sentry_v<1>};
 
 			public:
 				using R_::R_;
@@ -256,7 +246,7 @@ struct define
 				XTAL_FN2_(T) method()
 				XTAL_0EX
 				{
-					return q_.advance(d_++ == q_.top().head()).parent();
+					return q_.advance(d_++ == q_.peek(1).head()).core();
 				}
 			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
 
@@ -277,14 +267,17 @@ struct define
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
+			template <int N>
+			XTAL_LET sentry_v = event_u::template sentry<N>();
+
 			template <typename R>
 			class subtype: public compose_s<R, pend>
 			{
 				using R_ = compose_s<R, pend>;
-				spool_u q_{event_u::template sentry<1>()};
+				spool_u q_{sentry_v<1>};
 
-				XTAL_TO4_(XTAL_FN2 next_tail(), q_.top().parent())
-				XTAL_TO4_(XTAL_FN2 next_head(), q_.top().head())
+				XTAL_TO4_(XTAL_FN2 next_tail(), q_.peek().core())
+				XTAL_TO4_(XTAL_FN2 next_head(), q_.peek().head())
 
 			public:
 				using R_::R_;
@@ -298,7 +291,7 @@ struct define
 				XTAL_0EX
 				{
 					if (0 == dot.head()) {
-						return influx(dot.parent(), XTAL_REF_(oo)...);
+						return influx(dot.core(), XTAL_REF_(oo)...);
 					}
 					else {
 						q_.push(XTAL_MOV_(dot));
@@ -347,7 +340,7 @@ template <typename U>
 struct defer
 :	_retail::defer<U>
 {};
-template <constant_q W> requires sigma_q<value_t<W>>
+template <constant_q W> requires unsigned_q<value_t<W>>
 struct defer<W>
 {
 	using subkind = defer<value_t<W>>;

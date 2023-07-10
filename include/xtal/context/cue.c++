@@ -27,7 +27,8 @@ TEST_CASE("xtal/context/cue.hpp: true")
 	REQUIRE(_v3::ranges::equal(counted_t<>(11, 22), t1.template head<1>()));
 
 	REQUIRE(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_t>);
-	REQUIRE(is_q<XTAL_TYP_(XTAL_VAL_(target_t).parent()), source_t>);
+	REQUIRE(is_q<XTAL_TYP_(XTAL_VAL_(target_t).core()), source_t>);
+
 }
 /**/
 ///////////////////////////////////////////////////////////////////////////////

@@ -55,6 +55,27 @@ TEST_CASE("xtal/concord/any.hpp: tuple mania")
 
 }
 /***/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+TEST_CASE("xtal/concord/any.hpp: partial reinitialization")
+{
+	using namespace common;
+
+	using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
+	auto foo = foo_t(1, 2, 3);
+
+	foo.self(0);
+	REQUIRE(_std::get<0>(foo) == 0);
+	REQUIRE(_std::get<1>(foo) == 2);
+	REQUIRE(_std::get<2>(foo) == 3);
+
+	foo.self(1, 3);
+	REQUIRE(_std::get<0>(foo) == 1);
+	REQUIRE(_std::get<1>(foo) == 3);
+	REQUIRE(_std::get<2>(foo) == 3);
+
+}
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

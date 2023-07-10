@@ -13,17 +13,7 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
-
-template <typename T>
-using row_t = typename T::sector_t;
-
-template <typename T>
-using column_t = typename T::scalar_t;
-
-
-}///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename V, int ...Ns>
 struct collage;
@@ -39,6 +29,18 @@ struct collage<V, N>
 
 	template <typename S>
 	class subtype: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+
+		using  fluid_t = typename S_::fluid ::type;
+		using  spool_t = typename S_::spool ::type;
+
+	};
+	template <typename S> requires (0 < N)
+	class subtype<S>: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
 	

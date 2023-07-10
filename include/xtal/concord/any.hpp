@@ -9,6 +9,7 @@ namespace xtal::concord
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+namespace _retail::_detail {using namespace common::_detail;}
 namespace _retail
 {///////////////////////////////////////////////////////////////////////////////
 ///\
@@ -48,41 +49,43 @@ struct any<A>
 template <typename T>
 struct define
 {
+	using subkind = common::deform<T>;
+	
 	template <any_p S>
-	class subtype: public S
+	class subtype: public compose_s<S, subkind>
 	{
+		using S_ = compose_s<S, subkind>;
+		using Z  = constant_t<(size_t) 0>;
+
 	public:
-		using S::S;
+		using S_::S_;
+		using S_::self;
 		
-		XTAL_CXN subtype(XTAL_DEF... oo)
-		:	S(XTAL_REF_(oo)...)
-		{}
-
-		XTAL_OP2_(bool) ==(subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
-		XTAL_OP2_(bool) !=(subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
-
-		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
-
-		using tuple_size = constant_t<(size_t) 0>;
-
-		
-		///\returns `this` as the `define`d supertype.. \
-
-		XTAL_TO4_(XTAL_FN2 parent(), S::self())
-
 		///\returns `this` as a subtype of the derived-type `T`. \
 
-		XTAL_TO4_(XTAL_FN2 self(), cast<T>())
+		template <typename Y=T>
+		XTAL_FN1 self(XTAL_DEF... oo)
+		XTAL_0EX
+		XTAL_REQ (0 < sizeof...(oo))
+		{
+			auto &s = S_::self(); return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
+		}
+		template <typename _, typename   Y> struct super       {using type = Y;};
+		template <typename _              > struct super<_, T> {using type = T;};
+		template <typename _              > struct super<_, Z> {using type = subtype;};
+		template <typename _, constant_q Y> struct super<_, Y> {using type = typename S_::template super_s<Y{} - 1>;};
 
-		XTAL_FN2_(T) twin() XTAL_0FX_(&) {return self();}
-		XTAL_FN2_(T) twin() XTAL_0EX_(&) {return self();}
+		template <typename Y=T> using super_t = typename super<void,            Y >::type;
+		template <size_t   N=0> using super_s = typename super<void, constant_t<N>>::type;
 
-	protected:
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <typename Y> XTAL_FN2 cast() XTAL_0FX_(&)  {return static_cast<Y const  &>(*this);}
-		template <typename Y> XTAL_FN2 cast() XTAL_0EX_(&)  {return static_cast<Y        &>(*this);}
-		
+		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
+		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
+		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
+
+		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
+		using tuple_size = constant_t<(size_t) 0>;
+
+//	protected:
 		using self_t = T;
 
 	};
@@ -131,25 +134,25 @@ struct defer
 		using S_ = compose_s<S>;
 		using T_ = typename S_::self_t;
 		using V  = debased_t<U>;
+		using Z  = constant_t<(size_t) 0>;
 
 	protected:
 	//	NOTE: The redundant parameter `X` allows GCC to handle nested specialization... \
 	
-		template <typename X, typename Y> struct superself        {using type = typename S::template self_s<Y>;};
-		template <typename X            > struct superself<X, T_> {using type = T_ ;};
-		template <typename X            > struct superself<X, U > {using type = X  ;};
+		template <typename _, typename   Y> struct super: S_::template super<_, Y> {};
+		template <typename _              > struct super<_, U> {using type = subtype;};
+		template <typename _              > struct super<_, Z> {using type = subtype;};
+		template <typename _, constant_q Y> struct super<_, Y> {using type = typename S_::template super_s<Y{} - 1>;};
 
-		template <typename X, size_t   N> struct superseek        {using type = typename S::template seek_s<N - 1>;};
-		template <typename X            > struct superseek<X, 0 > {using type = X  ;};
-
-		template <typename Y=T_> using self_s = typename superself<subtype<S>, Y>::type;
-		template <size_t   N=0 > using seek_s = typename superseek<subtype<S>, N>::type;
+		template <typename Y=T_> using super_t = typename super<void,            Y >::type;
+		template <size_t   N=0 > using super_s = typename super<void, constant_t<N>>::type;
 
 		V body_m;
 	//	V body_m{};
 
 	public:
 	//	using S_::S_;
+		using S_::self;
 		using body_t = V;
 		using head_t = U;
 
@@ -165,21 +168,22 @@ struct defer
 		XTAL_REQ_(body_t{})
 		:	subtype(body_t{})
 		{}
-		XTAL_CXN subtype(XTAL_DEF ...ws)
+		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ constant_q<U>
-		:	S_(XTAL_REF_(ws)...)
+		:	S_(XTAL_REF_(oo)...)
 	//	,	subtype(body_t{})
 		{}
-		XTAL_CXN subtype(XTAL_DEF w, XTAL_DEF ...ws)
+		template <typename W> requires (not fungible_q<W, subtype>)
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_REQ variable_q<U> or is_q<U, XTAL_TYP_(w)>
-		:	S_(XTAL_REF_(ws)...)
+		XTAL_REQ variable_q<U> or is_q<U, W>
+		:	S_(XTAL_REF_(oo)...)
 		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
 		{}
 
-		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template cast<self_s<W>>())
-		XTAL_TO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template cast<seek_s<N>>())
+		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template self<super_t<W>>())
+		XTAL_TO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template self<super_s<N>>())
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
@@ -230,7 +234,7 @@ struct defer
 		XTAL_FN1 set(XTAL_DEF... ws)
 		XTAL_0EX
 		{
-			return self<W>().head(XTAL_REF_(ws)...);
+			return S_::template self<super_t<W>>().head(XTAL_REF_(ws)...);
 		}
 		///\
 		Getter: applied when the template parameter matches the kernel-type. \
@@ -240,7 +244,7 @@ struct defer
 		XTAL_FN2 get()
 		XTAL_0FX
 		{
-			return self<W>().head();
+			return S_::template self<super_t<W>>().head();
 		}
 
 		///\
@@ -276,9 +280,9 @@ struct defer
 };
 template <typename U>
 struct refer: compose<void
-,	_detail::refer_limits<U>
-,	_detail::refer_quality<U>
+,	_detail::refer_comparators<U>
 ,	_detail::refer_operators<U>
+,	_detail::refer_iterators<U>
 >
 {};
 

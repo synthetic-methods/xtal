@@ -14,7 +14,7 @@ namespace xtal::control
 struct per
 {
 private:
-	using U = _std::make_unsigned_t<typename realized::iota_t>;
+	using U = unsigned_t<typename realized::iota_t>;
 	using V = typename realized::alpha_t;
 
 public:
@@ -31,13 +31,13 @@ public:
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_CXN subtype(XTAL_DEF_(iota_q) n, XTAL_DEF ...ws)
+		XTAL_CXN subtype(_std::integral auto n, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(n, (V) 1/V(XTAL_REF_(n)), XTAL_REF_(ws)...)
+		:	S_(n, (V) 1/V(n), XTAL_REF_(oo)...)
 		{}
-		XTAL_CXN subtype(XTAL_DEF_(alpha_q) u, XTAL_DEF ...ws)
+		XTAL_CXN subtype(_std::floating_point auto u, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_((U) 1/V(XTAL_REF_(u)), u, XTAL_REF_(ws)...)
+		:	S_((U) 1/V(u), u, XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_FN2   rate(), S_::template head<0>())

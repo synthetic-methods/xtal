@@ -67,7 +67,7 @@ struct prequel
 		using S::twin;
 		using value_type = V_;
 
-		XTAL_FN2 skip(V_ v)
+		XTAL_FN2_(T_) skip(V_ v)
 		XTAL_0FX
 		{
 			auto t = self(); (void) t.step(t.step() + v);
@@ -89,7 +89,7 @@ struct prequel
 		///\
 		Advance `1` step while retaining `size`. \
 
-		XTAL_OP1_(T_ &) ++()
+		XTAL_OP1_(T_&) ++()
 		XTAL_0EX
 		{
 			return self().operator+=(count_f(self()));
@@ -247,7 +247,7 @@ struct sequel<V>
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_FN2 slice(XTAL_DEF_(counted_q) w)
+		XTAL_FN2_(T_) slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
@@ -256,13 +256,13 @@ struct sequel<V>
 		///\
 		Advance `i` steps while retaining `size`. \
 
-		XTAL_OP1 *=(V v)
+		XTAL_OP1_(T_&) *=(V v)
 		XTAL_0EX
 		{
 			S_::step() += v;
 			return self();
 		}
-		XTAL_OP1 /=(V v)
+		XTAL_OP1_(T_&) /=(V v)
 		XTAL_0EX
 		{
 			S_::step() -= v;
@@ -271,13 +271,13 @@ struct sequel<V>
 		///\
 		Advance `1` step of size `v`. \
 
-		XTAL_OP1_(T_ &) +=(V v)
+		XTAL_OP1_(T_&) +=(V v)
 		XTAL_0EX
 		{
 			S_::step() += S_::size() != 0; (void) S_::size(v);
 			return self();
 		}
-		XTAL_OP1_(T_ &) -=(V v)
+		XTAL_OP1_(T_&) -=(V v)
 		XTAL_0EX
 		{
 			S_::step() -= v != 0; (void) S_::size(v);
@@ -337,7 +337,7 @@ public:
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_FN2 slice(XTAL_DEF_(counted_q) w)
+		XTAL_FN2_(T_) slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX
 		{
 			V const &front_n = *S_::begin();
@@ -349,7 +349,7 @@ public:
 		///\
 		Advance `v` steps while retaining `size`. \
 
-		XTAL_OP1 *=(V v)
+		XTAL_OP1_(T_&) *=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -359,7 +359,7 @@ public:
 			S_::step() += v;
 			return self();
 		}
-		XTAL_OP1 /=(V v)
+		XTAL_OP1_(T_&) /=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -372,7 +372,7 @@ public:
 		///\
 		Advance `1` step of size `v`. \
 
-		XTAL_OP1 +=(V v)
+		XTAL_OP1_(T_&) +=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -383,7 +383,7 @@ public:
 			(void) S_::scan(*j0, *jN);
 			return self();
 		}
-		XTAL_OP1 -=(V v)
+		XTAL_OP1_(T_&) -=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;

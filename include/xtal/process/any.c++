@@ -28,8 +28,8 @@ TEST_CASE("xtal/process/any.hpp: lifting")
 /**/
 void test__attribute_initialization(auto z)
 {
-	auto &o = z.template self<bias_t>();
-	REQUIRE(00.0 == (float) o.head());
+	auto &o = z.template get<bias_t>();
+	REQUIRE(00.0 == (float) o);
 	REQUIRE(10.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TEST_CASE("xtal/process/any.hpp: attribute initialization")
@@ -42,11 +42,11 @@ TEST_CASE("xtal/process/any.hpp: attribute initialization")
 /**/
 void test__attribute_influx_operator(auto z)
 {
-	auto &o = z.template self<bias_t>();
-	z <<= bias_t(0.0); REQUIRE(0.0 == (float) o.head());
-	z <<= bias_t(1.0); REQUIRE(1.0 == (float) o.head());
-	z <<= bias_t(2.0); REQUIRE(2.0 == (float) o.head());
-	z <<= bias_t(3.0); REQUIRE(3.0 == (float) o.head());
+	auto &o = z.template get<bias_t>();
+	z <<= bias_t(0.0); REQUIRE(0.0 == (float) o);
+	z <<= bias_t(1.0); REQUIRE(1.0 == (float) o);
+	z <<= bias_t(2.0); REQUIRE(2.0 == (float) o);
+	z <<= bias_t(3.0); REQUIRE(3.0 == (float) o);
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TEST_CASE("xtal/process/any.hpp: attribute influx operator")
@@ -59,11 +59,11 @@ TEST_CASE("xtal/process/any.hpp: attribute influx operator")
 /**/
 void test__attribute_efflux_operator(auto z)
 {
-	auto &o = z.template self<bias_t>();
-	z >>= bias_t(0.0); REQUIRE(0.0 == (float) o.head());
-	z >>= bias_t(1.0); REQUIRE(1.0 == (float) o.head());
-	z >>= bias_t(2.0); REQUIRE(2.0 == (float) o.head());
-	z >>= bias_t(3.0); REQUIRE(3.0 == (float) o.head());
+	auto &o = z.template get<bias_t>();
+	z >>= bias_t(0.0); REQUIRE(0.0 == (float) o);
+	z >>= bias_t(1.0); REQUIRE(1.0 == (float) o);
+	z >>= bias_t(2.0); REQUIRE(2.0 == (float) o);
+	z >>= bias_t(3.0); REQUIRE(3.0 == (float) o);
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TEST_CASE("xtal/process/any.hpp: attribute efflux operator")
@@ -78,12 +78,12 @@ void test__attribute_influx_method(auto z)
 {
 	using start_t = control::nominal_t<0, struct T_start>;
 
-	auto &o = z.template self<bias_t>();
+	auto &o = z.template get<bias_t>();
 	REQUIRE(-1 == (int) z.influx(start_t()));                                    // unrecognized
-	REQUIRE( 1 == (int) z.influx(bias_t(0.0))); REQUIRE(0.0 == (float) o.head());// unchanged
-	REQUIRE( 0 == (int) z.influx(bias_t(1.0))); REQUIRE(1.0 == (float) o.head());// changed
-	REQUIRE( 0 == (int) z.influx(bias_t(2.0))); REQUIRE(2.0 == (float) o.head());// changed
-	REQUIRE( 0 == (int) z.influx(bias_t(3.0))); REQUIRE(3.0 == (float) o.head());// changed
+	REQUIRE( 1 == (int) z.influx(bias_t(0.0))); REQUIRE(0.0 == (float) o);// unchanged
+	REQUIRE( 0 == (int) z.influx(bias_t(1.0))); REQUIRE(1.0 == (float) o);// changed
+	REQUIRE( 0 == (int) z.influx(bias_t(2.0))); REQUIRE(2.0 == (float) o);// changed
+	REQUIRE( 0 == (int) z.influx(bias_t(3.0))); REQUIRE(3.0 == (float) o);// changed
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TEST_CASE("xtal/process/any.hpp: attribute influx method")
@@ -98,12 +98,12 @@ void test__attribute_efflux_method(auto z)
 {
 	using start_t = control::nominal_t<0, struct T_start>;
 
-	auto &o = z.template self<bias_t>();
+	auto &o = z.template get<bias_t>();
 	REQUIRE(-1 == (int) z.efflux(start_t()));                                    // unrecognized
-	REQUIRE( 1 == (int) z.efflux(bias_t(0.0))); REQUIRE(0.0 == (float) o.head());// unchanged
-	REQUIRE( 0 == (int) z.efflux(bias_t(1.0))); REQUIRE(1.0 == (float) o.head());// changed
-	REQUIRE( 0 == (int) z.efflux(bias_t(2.0))); REQUIRE(2.0 == (float) o.head());// changed
-	REQUIRE( 0 == (int) z.efflux(bias_t(3.0))); REQUIRE(3.0 == (float) o.head());// changed
+	REQUIRE( 1 == (int) z.efflux(bias_t(0.0))); REQUIRE(0.0 == (float) o);// unchanged
+	REQUIRE( 0 == (int) z.efflux(bias_t(1.0))); REQUIRE(1.0 == (float) o);// changed
+	REQUIRE( 0 == (int) z.efflux(bias_t(2.0))); REQUIRE(2.0 == (float) o);// changed
+	REQUIRE( 0 == (int) z.efflux(bias_t(3.0))); REQUIRE(3.0 == (float) o);// changed
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TEST_CASE("xtal/process/any.hpp: attribute efflux method")

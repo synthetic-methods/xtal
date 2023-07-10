@@ -11,7 +11,7 @@ namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <iota_q U=typename realized::iota_t>
+template <_std::integral U=typename realized::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
@@ -29,7 +29,7 @@ struct restep
 
 	};
 };
-template <iota_q U=typename realized::iota_t>
+template <_std::integral U=typename realized::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_CN2 restep_f(XTAL_DEF w)

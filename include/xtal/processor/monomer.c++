@@ -58,8 +58,8 @@ void test__sequel()
 	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
 	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
 
-	auto lhs = processor::let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = processor::let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = mixer_t::bond_f(lhs, rhs);
 
 	auto seq = sequel_n(3); REQUIRE(0 == xhs.size());// uninitialized...
@@ -114,8 +114,8 @@ void test__respan_provision()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
 	auto buffer_m = buffer_u {0, 0, 0};
@@ -167,7 +167,7 @@ void test__respan_chain_rvalue()
 	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	REQUIRE(yhs.template argument<0>().store().empty());
+	REQUIRE(yhs.template slot<0>().store().empty());
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
@@ -194,8 +194,8 @@ void test__respan_chain_lvalue()
 	
 	using mix_op = monomer_t<add_t, collect<>>;
 	using mul_op = monomer_t<mul_t, collect<>>;
-	auto  lhs = let_f(_01); REQUIRE(pointer_e(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = let_f(_10); REQUIRE(pointer_e(rhs.head(), processor::let_f(rhs).head()));
+	auto  lhs = let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
@@ -208,7 +208,7 @@ void test__respan_chain_lvalue()
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	REQUIRE(yhs.template argument<0>().store().size() == 4);
+	REQUIRE(yhs.template slot<0>().store().size() == 4);
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
