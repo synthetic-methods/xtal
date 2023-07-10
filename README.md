@@ -151,7 +151,7 @@ The transition to `C++23` ranges is limited by the lack of general support for `
 
 ## Package
 
-With the project in genesis, the only supported package manager is `conan --version` 2. The `test_package` (comprising 1000+ assertions in 50+ test cases) can be resolved/compiled/executed with:
+With the project in genesis, the only supported package manager is `conan --version` 2. The `test_package` (comprising ~1000 assertions in ~50 test cases) can be resolved/compiled/executed with:
 
 	conan create . --build=missing
 

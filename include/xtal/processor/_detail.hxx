@@ -81,12 +81,13 @@ XTAL_0EX
 {
 	return purify_f(_v3::views::repeat(XTAL_REF_(z)));
 }
+
 XTAL_CN2 zap_f(XTAL_DEF f)
 XTAL_0EX
 {
 	using namespace _v3::views;
-	return [f = XTAL_REF_(f)] (XTAL_DEF ...xs) XTAL_0FN
-	{
+	return [f = XTAL_REF_(f)] (XTAL_DEF ...xs)
+	XTAL_0FN {
 		if constexpr (0 == sizeof...(xs)) {
 			return forever_f(f)|transform([] (XTAL_DEF f) XTAL_0FN_(XTAL_REF_(f) ()));
 		//	return generate(f);// FIXME!

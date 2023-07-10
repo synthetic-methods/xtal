@@ -111,10 +111,9 @@ struct monomer<U, As...>
 			using subkind = compose<tag<monomer>
 			,	concord::confer<serve_u>
 			,	concord::defer <store_u>
-			,	As...// NOTE: Required for `intermit`...
+			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach
-			,	typename control::let_t<>::intermit<0>
 			,	rebound
 			>;
 			template <any_p R>
@@ -171,14 +170,14 @@ struct monomer<U, As...>
 					if (R_::effuse(sequel_o) == 1) return 1;
 				//	else...
 					(void) serve(respan_o);
-					R_::replay([&, this] (auto i, auto j, auto n)
-					XTAL_0FN
-					{
+					self().reflux([&, this] (auto n, counted_q auto w)
+					XTAL_0FN {
 						using namespace _v3;
-						auto sequel_x = sequel_o.slice(i, j).skip(n);
-						auto respan_x = respan_o.slice(i, j);
+						auto sequel_x = sequel_o.slice(w).skip(n);
+						auto respan_x = respan_o.slice(w);
+						auto i = ranges::next(serve().begin(), w.front());
 						(void) R_::template efflux_request_tail<I_parity>(respan_x, sequel_x, oo...);
-						ranges::move(R_::method()|views::take(j - i), ranges::next(serve().begin(), i));
+						ranges::move(R_::method()|views::take(count_f(w)), i);
 					});
 					return R_::template influx_request(sequel_o);
 				}

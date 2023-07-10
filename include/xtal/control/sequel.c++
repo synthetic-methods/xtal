@@ -36,12 +36,15 @@ TEST_CASE("xtal/control/sequel.hpp: interconversion")
 
 TEST_CASE("xtal/control/sequel.hpp: synchronization")
 {
-	using sequel_n = sequel_t<counter_t<>>; auto seq_n = sequel_n(3);
-	using sequel_u = sequel_t<counted_t<>>; auto seq_u = sequel_u(3);
+	using V = counter_t<>;
+	using U = counted_t<>;
+
+	using sequel_n = sequel_t<V>; auto seq_n = sequel_n(3);
+	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3);
 
 	REQUIRE(seq_u.size() == seq_n.size());
 	REQUIRE(seq_u.step() == seq_n.step());
-	REQUIRE(seq_u == sequel_u(counted_t<>(0, 3), 0));
+	REQUIRE(seq_u == sequel_u(U(0, 3), 0));
 	
 	REQUIRE((seq_n.step() == 0 and seq_u.front() == 0 and seq_u.back() == 2));
 
@@ -49,35 +52,35 @@ TEST_CASE("xtal/control/sequel.hpp: synchronization")
 	++seq_u;
 	REQUIRE(seq_u.size() == seq_n.size());
 	REQUIRE(seq_u.step() == seq_n.step());
-	REQUIRE(seq_u == sequel_u(counted_t<>(3, 6), 1));
+	REQUIRE(seq_u == sequel_u(U(3, 6), 1));
 
 	seq_n++;
 	seq_u++;
 	REQUIRE(seq_u.size() == seq_n.size());
 	REQUIRE(seq_u.step() == seq_n.step());
-	REQUIRE(seq_u == sequel_u(counted_t<>(6, 9), 2));
+	REQUIRE(seq_u == sequel_u(U(6, 9), 2));
 
 	seq_n += 5;
 	seq_u += 5;
 	REQUIRE(seq_u.size() == seq_n.size());
 	REQUIRE(seq_u.step() == seq_n.step());
-	REQUIRE(seq_u == sequel_u(counted_t<>(9, 14), 3));
-	REQUIRE(seq_u.null() == sequel_u(counted_t<>(14, 14), 4));
-	REQUIRE(seq_u.next() == sequel_u(counted_t<>(14, 19), 4));
+	REQUIRE(seq_u == sequel_u(U(9, 14), 3));
+	REQUIRE(seq_u.null() == sequel_u(U(14, 14), 4));
+	REQUIRE(seq_u.next() == sequel_u(U(14, 19), 4));
 	
 	seq_u = sequel_u(11) *= (7);
-	REQUIRE(seq_u == sequel_u(counted_t<>(77, 88), 7));
+	REQUIRE(seq_u == sequel_u(U(77, 88), 7));
 
 	seq_n = sequel_n(11) *= (7);
 	REQUIRE(seq_n == sequel_n(11, 7));
 
-	REQUIRE(seq_n.skip(0).slice(0, 11) == sequel_n(11, 7));
-	REQUIRE(seq_n.skip(0).slice(0, 01) == sequel_n(01, 7));
-	REQUIRE(seq_n.skip(1).slice(1, 11) == sequel_n(10, 8));
+	REQUIRE(seq_n.skip(0).slice(U(0, 11)) == sequel_n(11, 7));
+	REQUIRE(seq_n.skip(0).slice(U(0, 01)) == sequel_n(01, 7));
+	REQUIRE(seq_n.skip(1).slice(U(1, 11)) == sequel_n(10, 8));
 
-	REQUIRE(seq_u.skip(0).slice(0, 11) == sequel_u(counted_t<>(77, 88), 7));
-	REQUIRE(seq_u.skip(0).slice(0, 01) == sequel_u(counted_t<>(77, 78), 7));
-	REQUIRE(seq_u.skip(1).slice(1, 11) == sequel_u(counted_t<>(78, 88), 8));
+	REQUIRE(seq_u.skip(0).slice(U(0, 11)) == sequel_u(U(77, 88), 7));
+	REQUIRE(seq_u.skip(0).slice(U(0, 01)) == sequel_u(U(77, 78), 7));
+	REQUIRE(seq_u.skip(1).slice(U(1, 11)) == sequel_u(U(78, 88), 8));
 
 	seq_n = sequel_n(4, 1);
 	seq_n = seq_n.null(); REQUIRE(seq_n == sequel_n(0, 2));
@@ -170,13 +173,13 @@ void test__interference(auto i)
 
 	seq_w >>= seq_n++; REQUIRE(seq_w == Y(U(0, 4), 0));
 	
-	seq_w >>= seq_n.skip(0).slice(0, 2); REQUIRE(seq_w == Y(U(4, 6), 1));
-	seq_w >>= seq_n.skip(1).slice(2, 4); REQUIRE(seq_w == Y(U(6, 8), 2));
-	seq_w <<= seq_n++;                   REQUIRE(seq_w == Y(U(4, 8), 1));
+	seq_w >>= seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U(4, 6), 1));
+	seq_w >>= seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(6, 8), 2));
+	seq_w <<= seq_n++;                      REQUIRE(seq_w == Y(U(4, 8), 1));
 	
-	seq_w >>= seq_n.skip(0).slice(0, 2); REQUIRE(seq_w == Y(U( 8, 10), 2));
-	seq_w >>= seq_n.skip(1).slice(2, 4); REQUIRE(seq_w == Y(U(10, 12), 3));
-	seq_w <<= seq_n++;                   REQUIRE(seq_w == Y(U( 8, 12), 2));
+	seq_w >>= seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U( 8, 10), 2));
+	seq_w >>= seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(10, 12), 3));
+	seq_w <<= seq_n++;                      REQUIRE(seq_w == Y(U( 8, 12), 2));
 
 }
 TEST_CASE("xtal/control/sequel.hpp: intermition")

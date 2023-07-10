@@ -369,8 +369,6 @@ XTAL_LET  deranged_f = [] (XTAL_DEF t)
 XTAL_0FN_(deranged_t<decltype(t)>(XTAL_REF_(t)));
 
 
-using count_t = _std::make_unsigned_t<size_t>;
-
 template <typename    T  >  concept counted_p  = iterated_q<T> and is_q<iterator_t<T>, iterator_t<iteratee_t<T>>>;//is_q<T, iterated_t<iteratee_t<T>>>;
 template <typename    T  >  concept counter_p  = integral_q<T>;
 
@@ -386,8 +384,8 @@ template <counter_p   T  >   struct counted<T> : constant_t<0> {using type = ite
 template <counted_p   T  >   struct counter<T> : constant_t<0> {using type = iteratee_t<T>;};
 template <counter_p   T  >   struct counter<T> : constant_t<1> {using type =    based_t<T>;};
 
-template <typename T=count_t> using counted_t  = typename counted<T>::type;
-template <typename T=count_t> using counter_t  = typename counter<T>::type;
+template <typename T=size_t> using counted_t  = typename counted<T>::type;
+template <typename T=size_t> using counter_t  = typename counter<T>::type;
 template <typename T>
 XTAL_CN2 count_f(T &&t)
 {

@@ -42,9 +42,10 @@ public:
 		XTAL_TO4_(XTAL_FN2 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_FN2 size(), S_::head().size())
 
-		XTAL_FN2 slice(V i, V j)
-		XTAL_0EX
+		XTAL_FN2 slice(XTAL_DEF_(counted_q) w)
+		XTAL_0FX
 		{
+			auto i = w.front(), j = w.back() + 1;
 			auto t = self(); (void) t.span(t.span()|_v3::views::slice(i, j)); return t;
 		}
 

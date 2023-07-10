@@ -183,7 +183,7 @@ struct define
 
 			};
 		};
-		struct emit
+		struct poll
 		{
 			using subkind = attach;
 
@@ -196,10 +196,10 @@ struct define
 				using R_::R_;
 				using R_::head;
 
-				XTAL_FN2_(T) method()
+				XTAL_FN2 method()
 				XTAL_0FX
 				{
-					return head();
+					return head().head();
 				}
 
 			};
@@ -231,12 +231,10 @@ struct define
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
-			using subkind = pend;
-
 			template <conflux::any_p R> requires (2 <= size_t(N_event))
-			class subtype: public compose_s<R, subkind>
+			class subtype: public compose_s<R, pend>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = compose_s<R, pend>;
 				
 				delay_u d_{0};
 				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
@@ -266,7 +264,7 @@ struct define
 		};
 		///\
 		Provides a queue for this control-type `T` on the target object, \
-		scheduled via `influx` and processed in segments via `replay`. \
+		scheduled via `influx` and processed in segments via `reflux`. \
 
 		///\todo\
 		Allow for scheduling beyond the current window, \
@@ -279,19 +277,35 @@ struct define
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collage_t<event_u, N_event>::spool_t;
 
-			using subkind = pend;
-
-			template <conflux::any_p R>
-			class subtype: public compose_s<R, subkind>
+			template <typename R>
+			class subtype: public compose_s<R, pend>
 			{
-				using R_ = compose_s<R, subkind>;
-
+				using R_ = compose_s<R, pend>;
 				spool_u q_{event_u::template sentry<1>()};
 
 				XTAL_TO4_(XTAL_FN2 next_tail(), q_.top().parent())
 				XTAL_TO4_(XTAL_FN2 next_head(), q_.top().head())
 
-			protected:
+			public:
+				using R_::R_;
+				using R_::self;
+				using R_::influx;
+				///\
+				Invokes `influx` if the given delay `i == 0`, \
+				otherwise enqueues the events `o, o...` at the specified index. \
+				
+				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					if (0 == dot.head()) {
+						return influx(dot.parent(), XTAL_REF_(oo)...);
+					}
+					else {
+						q_.push(XTAL_MOV_(dot));
+						return influx(XTAL_REF_(oo)...);
+					}
+				}
+
 				///\returns The delay until the next event to be processed. \
 
 				XTAL_FN1_(delay_u) delay()
@@ -315,68 +329,6 @@ struct define
 					}
 					return delay();
 				}
-
-				///\
-				Relays all queued events while invoking the supplied callback for each intermediate segment. \
-				The callback parameters are the `ranges::slice` indicies and the segment index. \
-
-				XTAL_FN0 replay(auto const &f)
-				XTAL_0EX
-				{
-					replay(f, 0);
-				}
-				XTAL_FN0 replay(auto const &f, auto &&n)
-				XTAL_0EX
-				{
-					replay(f, n);
-				}
-				XTAL_FN0 replay(auto const &f, auto &n)
-				XTAL_0EX
-				{
-					for (delay_u i = 0, j = delay(); i != j; j = relay(i = j)) {
-						f(i, j, n++);
-					}
-					--n;
-				}
-
-			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
-				///\
-				Invokes `influx` if the given delay `i == 0`, \
-				otherwise enqueues the events `o, o...` at the specified index. \
-				
-				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					if (0 == dot.head()) {
-						return influx(dot.parent(), XTAL_REF_(oo)...);
-					}
-					else {
-						q_.push(XTAL_MOV_(dot));
-						return influx(XTAL_REF_(oo)...);
-					}
-				}
-
-			};
-			///\note\
-			When `N_event == 0`, scheduling is bypassed and `relay` is resolved w.r.t. `self`. \
-
-			template <conflux::any_p R> requires (N_event == 0)
-			class subtype<R>: public R
-			{
-			protected:
-				XTAL_FN1_(delay_u) delay()          XTAL_0EX {return self().size();}
-				XTAL_FN1_(delay_u) relay(delay_u i) XTAL_0EX {return self().size();}
-
-				XTAL_FN0 replay(auto const &f)           XTAL_0EX {replay(f, 0);}
-				XTAL_FN0 replay(auto const &f, auto &&n) XTAL_0EX {replay(f, n);}
-				XTAL_FN0 replay(auto const &f, auto  &n) XTAL_0EX {f(0, delay(), n);}
-
-			public:
-				using R::R;
-				using R::self;
 
 			};
 		};

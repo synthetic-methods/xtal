@@ -687,8 +687,8 @@ struct collate
 					auto &s = self();
 					auto _s = self();
 					if constexpr (_realized::alignment_v < N_size) {
-						for (count_t i = h;   ~--i;) {s[i] *= t[0];
-						for (count_t j = i; j; --j ) {s[i] += t[j]*_s[i - j];}}
+						for (_std::ptrdiff_t i = h;   ~--i;) {s[i] *= t[0];
+						for (_std::ptrdiff_t j = i; j; --j ) {s[i] += t[j]*_s[i - j];}}
 					}
 					else {
 						antiseeker_f<h, 0>([&, this] (auto i) XTAL_0FN {s[i] *= t[0];

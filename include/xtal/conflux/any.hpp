@@ -20,6 +20,9 @@ namespace _retail = xtal::concord;
 template <typename T>
 struct define
 {
+	using counter_u = _std::ptrdiff_t;
+	using counted_u = counted_t<counter_u>;
+	
 	using subkind = _retail::define<T>;
 
 	template <any_p S>
@@ -28,9 +31,48 @@ struct define
 		friend T;
 		using S_ = compose_s<S, subkind>;
 	
+	protected:
+		XTAL_FN1_(counter_u) size_()
+		XTAL_0EX
+		{
+			if constexpr (requires (T  t) {t.size();}) {
+				return count_f(self());
+			}
+			else {
+				return 0;
+			}
+		}
+
 	public:
 		using S_::S_;
 		using S_::self;
+
+		XTAL_FN1_(counter_u) delay()            {return size_();}
+		XTAL_FN1_(counter_u) relay(counter_u i) {return size_();}
+		
+		///\
+		Relays all queued events while invoking the supplied callback for each intermediate segment. \
+		The callback parameters are the `ranges::slice` indicies and the segment index. \
+
+		XTAL_FN0 reflux(auto const &f)
+		XTAL_0EX
+		{
+			reflux(f, 0);
+		}
+		XTAL_FN0 reflux(auto const &f, auto &&n)
+		XTAL_0EX
+		{
+			reflux(f, n);
+		}
+		XTAL_FN0 reflux(auto const &f, auto &n)
+		XTAL_0EX
+		{
+			auto &s = self();
+			for (counter_u i = 0, j = s.delay(); i != j; j = s.relay(i = j)) {
+				f(n++, counted_u(i, j));
+			}
+			--n;
+		}
 
 		///\
 		Influx operator: resolves the message for `this` before any dependencies, \
