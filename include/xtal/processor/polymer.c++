@@ -63,15 +63,14 @@ void test_polymer__control_spindle()
 }
 TEST_CASE("xtal/processor/polymer.hpp: control spindle")
 {
-//	test_polymer__control_spindle<-1, -1, -1>();
+	test_polymer__control_spindle<-1, -1, -1>();
 	test_polymer__control_spindle<64, -1, -1>();
-//	test_polymer__control_spindle<-1, 64, -1>();
+	test_polymer__control_spindle<-1, 64, -1>();
 	test_polymer__control_spindle<64, 64, -1>();
-//	test_polymer__control_spindle<-1, -1, 64>();
+	test_polymer__control_spindle<-1, -1, 64>();
 	test_polymer__control_spindle<64, -1, 64>();
-//	test_polymer__control_spindle<-1, 64, 64>();
+	test_polymer__control_spindle<-1, 64, 64>();
 	test_polymer__control_spindle<64, 64, 64>();
-	
 }
 /**/
 ///////////////////////////////////////////////////////////////////////////////

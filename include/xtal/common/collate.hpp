@@ -165,10 +165,11 @@ struct collate
 						return poke(v_, XTAL_MOV_(v));
 					}
 				}
-				XTAL_FN1_(point_t) poke(point_t v_, V v)
+				template <is_q<V> W>
+				XTAL_FN1_(point_t) poke(point_t v_, W &&w)
 				XTAL_0EX
 				{
-					return fluid_m.insert(v_, XTAL_MOV_(v));
+					return fluid_m.insert(v_, XTAL_REF_(w));
 				}
 
 			};

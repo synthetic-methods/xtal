@@ -391,39 +391,40 @@ struct collect
 				Deletes the element at `i0`. \
 
 				template <typename I0> requires common_q<iterator, I0>
-				XTAL_FN0 erase(I0 i0)
+				XTAL_FN1 erase(I0 i0)
 				XTAL_0EX
 				{
-					erase(i0, 1);
+					return erase(i0, 1);
 				}
 				///\
 				Deletes `sN` elements starting from `i0`. \
 
 				template <typename I0> requires common_q<iterator, I0>
-				XTAL_FN0 erase(I0 i0, size_type sN)
+				XTAL_FN1 erase(I0 i0, size_type sN)
 				XTAL_0EX
 				{
-					erase(i0, _std::next(i0, sN), sN);
+					return erase(i0, _std::next(i0, sN), sN);
 				}
 				///\
 				Deletes the elements between `i0` and `iN`. \
 
 				template <typename I0, typename IN> requires common_q<iterator, I0, IN>
-				XTAL_FN0 erase(I0 i0, IN iN)
+				XTAL_FN1 erase(I0 i0, IN iN)
 				XTAL_0EX
 				{
 					using I = _std::common_type_t<I0, IN>;
-					erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
+					return erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
 				}
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
 				template <typename I0, typename IN> requires common_q<iterator, I0, IN>
-				XTAL_FN0 erase(I0 i0, IN iN, size_type sN)
+				XTAL_FN1 erase(I0 i0, IN iN, size_type sN)
 				XTAL_0EX
 				{
 					using I = _std::common_type_t<I0, IN>;
 					erode_((I) i0, (I) iN, sN);
+					return i0;
 				}
 			
 			protected:
