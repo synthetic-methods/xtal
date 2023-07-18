@@ -13,9 +13,8 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t    I> XTAL_LET seek_y = [] (XTAL_DEF o) XTAL_0FN_(XTAL_REF_(o));
-template <size_t ...I>    using seek_t = _std::index_sequence<I...>;
-template <size_t    N>    using seek_f = _std::make_index_sequence<N>;
+template <size_t ...I> using seek_t = _std::index_sequence<I...>;
+template <size_t    N> using seek_f = _std::make_index_sequence<N>;
 
 template <size_t N=0, int I_offset=0>
 XTAL_CN1 seeker_f(auto const &f)

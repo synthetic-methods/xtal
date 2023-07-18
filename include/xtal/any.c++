@@ -16,8 +16,9 @@ using namespace common;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-using bias_t = control::label_t<typename realized::alpha_t, struct T_bias>;
-using coef_t = control::label_t<typename realized::alpha_t, struct T_coef>;
+using level_t = control::label_t<typename realized::alpha_t, struct T_level>;
+using  bias_t = control::label_t<typename realized::alpha_t, struct T_bias >;
+using  coef_t = control::label_t<typename realized::alpha_t, struct T_coef >;
 
 
 struct mix

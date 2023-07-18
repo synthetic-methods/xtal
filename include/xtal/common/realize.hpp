@@ -285,7 +285,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <typename Z, size_t N>
-	using scalar_t = typename collage_t<Z, N>::scalar_t;
+	using scalar_t = typename collate_t<N>::template scalar_t<Z>;
 
 	template <typename Z>
 	using single_t = scalar_t<Z, 1>;

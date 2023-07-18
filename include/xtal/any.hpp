@@ -56,9 +56,9 @@ struct meta
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
-template <typename ...Ts >    using conjunct_t = _std::conjunction<Ts...>;
-template <auto        N  >    using constant_t = _std::integral_constant<XTAL_TYP_(N), N>;
+template <typename    T  >    using constant_0 = _std::integral_constant<T, 0>;
+template <typename    T  >    using constant_1 = _std::integral_constant<T, 1>;
+template <auto        N  >    using constant_t = _std::integral_constant<decltype(N), N>;
 template <typename    T  >  concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
 template <typename ...Ts >  concept constant_q =     (... and constant_p<Ts>);
 template <typename ...Ts >  concept variable_q = not (... or  constant_p<Ts>);
@@ -121,11 +121,18 @@ template <typename    T  >  concept   end_p    = requires (T t) {*t.  end();};
 template <typename ...Ts >  concept begin_q    = (... and begin_p<Ts>);
 template <typename ...Ts >  concept   end_q    = (... and   end_p<Ts>);
 
+XTAL_LET begin_f = [] (XTAL_DEF t) XTAL_0FN_(XTAL_REF_(t).begin());
+XTAL_LET   end_f = [] (XTAL_DEF t) XTAL_0FN_(XTAL_REF_(t).  end());
+
+
 template <typename    T  >    using pointed_t  = XTAL_TYP_(*XTAL_VAL_(T));
 template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
 template <typename    T  >  concept bracket_p  = begin_p<T> and end_p<T>;
 template <typename ...Ts >  concept bracket_q  = (... and bracket_p<Ts>);
 
+
+template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
+template <typename ...Ts >    using conjunct_t = _std::conjunction<Ts...>;
 
 template <typename             ...Ts> struct  identical;
 template <typename             ...Ts> struct  isotropic;
@@ -160,6 +167,25 @@ template <typename    T > XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
 XTAL_LET identical_f = [] (XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_(... and (_std::addressof(XTAL_REF_(o)) == _std::addressof(XTAL_REF_(oo))));
+
+
+template <auto     ...   >   XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
+///<\
+Parameter-agnostic identity `method`. \
+
+template <typename    T  >      using member_t = debased_t<T>;
+template <typename    T  >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<T> {return &XTAL_REF_(w);}// obtain address
+template <typename    T  >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<T>(XTAL_REF_(w));}
+template <typename    T  >   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<T>(XTAL_REF_(ws)...);}
+///<\
+The `member` type/factory converts `unbased` references to pointers. \
+
+template <typename ...Ws >  concept remember_q = not debased_q<Ws...>;
+template <typename    W  > XTAL_CN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
+template <typename    W  > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
+///<\
+The `remember` query/function governs access to the underlying member `T`. \
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +240,15 @@ XTAL_0EX
 		return V((0 <  n) - (n <= 0));
 	}
 }
+XTAL_CN2 sign_f(unsigned_q auto n)
+XTAL_0EX
+{
+	return (signed_t<XTAL_TYP_(n)>) 1;
+}
+
+
+template <constant_q T> using shrink_t = _std::integral_constant<typename T::value_type, T::value - sign_f(T::value)>;
+template <constant_q T> using shrunk_t = _std::integral_constant<typename T::value_type, 0>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -403,8 +438,12 @@ template <typename T=size_t>  using counted_t  = typename counted<T>::type;
 template <typename T=size_t>  using counter_t  = typename counter<T>::type;
 template <typename T>
 XTAL_CN2 count_f(T &&t)
+XTAL_0EX
 {
-	if constexpr (counted_q<T>) {
+	if constexpr (counter_q<T>) {
+		return XTAL_REF_(t);
+	}
+	else if constexpr (counted_q<T>) {
 		return 1 + t.back() - XTAL_REF_(t).front();
 	}
 	else if constexpr (bracket_q<T>) {
@@ -422,6 +461,13 @@ XTAL_CN2 count_f(T &&t)
 ///<\note\
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
+
+template <typename T>
+XTAL_CN2 taker_f(T &&t)
+XTAL_0EX
+{
+	return _v3::views::take(count_f(XTAL_REF_(t)));
+}
 
 
 template <typename   ...Ts>  struct isomorphic       : isotropic<Ts...> {};

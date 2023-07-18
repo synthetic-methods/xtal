@@ -55,7 +55,6 @@ struct define
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
-		using Z  = constant_t<(size_t) 0>;
 
 	public:
 		using S_::S_;
@@ -70,20 +69,19 @@ struct define
 		{
 			auto &s = S_::self(); return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
 		}
-		template <typename _, typename   Y> struct super       {using type = Y;};
-		template <typename _              > struct super<_, T> {using type = T;};
-		template <typename _              > struct super<_, Z> {using type = subtype;};
-		template <typename _, constant_q Y> struct super<_, Y> {using type = typename S_::template super_s<Y{} - 1>;};
-
-		template <typename Y=T> using super_t = typename super<void,            Y >::type;
-		template <size_t   N=0> using super_s = typename super<void, constant_t<N>>::type;
+	
+		template <typename   Y, typename X, constant_q _> struct super          {using type = Y;};
+		template <              typename X, constant_q _> struct super<T, X, _> {using type = T;};
+		template <              typename X, constant_q _> struct super<_, X, _> {using type = X;};
+		template <constant_q Y, typename X, constant_q _> struct super<Y, X, _> {using type = typename S_::template super_t<shrink_t<Y>>;};
+		template <typename Y=T> using super_t = typename super<Y, subtype, constant_0<size_t>>::type;
 
 		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
 		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
 		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
-		using tuple_size = constant_t<(size_t) 0>;
+		using tuple_size = constant_0<size_t>;
 
 //	protected:
 		using self_t = T;
@@ -134,18 +132,13 @@ struct defer
 		using S_ = compose_s<S>;
 		using T_ = typename S_::self_t;
 		using V  = debased_t<U>;
-		using Z  = constant_t<(size_t) 0>;
 
 	protected:
-	//	NOTE: The redundant parameter `X` allows GCC to handle nested specialization... \
-	
-		template <typename _, typename   Y> struct super: S_::template super<_, Y> {};
-		template <typename _              > struct super<_, U> {using type = subtype;};
-		template <typename _              > struct super<_, Z> {using type = subtype;};
-		template <typename _, constant_q Y> struct super<_, Y> {using type = typename S_::template super_s<Y{} - 1>;};
-
-		template <typename Y=T_> using super_t = typename super<void,            Y >::type;
-		template <size_t   N=0 > using super_s = typename super<void, constant_t<N>>::type;
+		template <typename   Y, typename X, constant_q _> struct super         : S_::template super<Y, X, _> {};
+		template <              typename X, constant_q _> struct super<U, X, _>: S_::template super<X, X, _> {};
+		template <              typename X, constant_q _> struct super<_, X, _>: S_::template super<X, X, _> {};
+		template <constant_q Y, typename X, constant_q _> struct super<Y, X, _> {using type = typename S_::template super_t<shrink_t<Y>>;};
+		template <typename Y=U> using super_t = typename super<Y, subtype, constant_0<size_t>>::type;
 
 		V body_m;
 	//	V body_m{};
@@ -179,32 +172,31 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ variable_q<U> or is_q<U, W>
 		:	S_(XTAL_REF_(oo)...)
-		,	body_m(_detail::member_f<U>(XTAL_REF_(w)))
+		,	body_m(member_f<U>(XTAL_REF_(w)))
 		{}
 
 		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template self<super_t<W>>())
-		XTAL_TO4_(template <size_t   N=0 > XTAL_FN2 seek(), S_::template self<super_s<N>>())
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_TO4_(template <size_t N_index=0>
-		XTAL_FN1 head(XTAL_DEF... oo), seek<N_index>().head(XTAL_REF_(oo)...)
+		XTAL_FN1 head(XTAL_DEF... oo), self<constant_t<N_index>>().head(XTAL_REF_(oo)...)
 		)
-		XTAL_FN2 head() XTAL_0FX_(&&) {return _detail::remember_x(body_m);}
-		XTAL_FN2 head() XTAL_0EX_(&&) {return _detail::remember_x(body_m);}
-		XTAL_FN2 head() XTAL_0FX_( &) {return _detail::remember_y(body_m);}
-		XTAL_FN2 head() XTAL_0EX_( &) {return _detail::remember_y(body_m);}
+		XTAL_FN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(body_m));}
+		XTAL_FN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(body_m));}
+		XTAL_FN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
+		XTAL_FN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
 		
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			return heady(_detail::member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
+			return heady(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
 		XTAL_FN1 heady(body_t v)
 		XTAL_0EX
-		XTAL_REQ _detail::remember_p<U>
+		XTAL_REQ remember_q<U>
 		{
-			_std::swap(body_m, v); return _detail::remember_x(v);
+			_std::swap(body_m, v); return remember_f(XTAL_MOV_(v));
 		}
 
 		///\

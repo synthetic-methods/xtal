@@ -79,9 +79,9 @@ struct monomer<U, As...>
 				{}
 
 				XTAL_TO4_(XTAL_FN2 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
-				XTAL_TO2_(XTAL_FN2 method(), serve())
+				XTAL_TO2_(template <auto ...> XTAL_FN2 method(), serve())
 
-			public:
+
 				using R_::efflux;
 
 				XTAL_FNX efflux(XTAL_DEF_(control::sequel_q) sequel_o)
@@ -92,7 +92,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <typename ...Xs> requires collect_q<S_>
+		template <typename ...Xs> requires collected_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
@@ -122,7 +122,7 @@ struct monomer<U, As...>
 				using R_::self;
 				using R_::serve;
 				using R_::store;
-				XTAL_TO2_(XTAL_FN2 method(), serve())
+				XTAL_TO2_(template <auto ...> XTAL_FN2 method(), serve())
 
 			//	using R_::infuse;
 				///\
@@ -138,16 +138,16 @@ struct monomer<U, As...>
 						return R_::infuse(XTAL_REF_(o));
 					}
 				}
-				using R_::influx_request;
+				using R_::influx_push;
 				///\note\
 				Resizing skips intermediate `recollected_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_FNX influx_request(resize_u resize_o, XTAL_DEF ...oo)
+				XTAL_FNX influx_push(resize_u resize_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				XTAL_REQ (0 <= N_share)
 				{
-					return R_::template influx_request_tail<N_share>(null_t(), resize_o, XTAL_REF_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_t(), resize_o, XTAL_REF_(oo)...);
 				}
 
 
@@ -174,16 +174,21 @@ struct monomer<U, As...>
 					if (R_::effuse(sequel_o) == 1) return 1;
 				//	else...
 					(void) serve(respan_o);
-					self().reflux([&, this] (auto n, counted_q auto w)
-					XTAL_0FN {
-						using namespace _v3;
-						auto sequel_x = sequel_o.slice(w).skip(n);
-						auto respan_x = respan_o.slice(w);
-						auto i = ranges::next(serve().begin(), w.front());
-						(void) R_::template efflux_request_tail<N_share>(respan_x, sequel_x, oo...);
-						ranges::move(R_::method()|views::take(count_f(w)), i);
-					});
-					return R_::template influx_request(sequel_o);
+					return self().reflux([&, this] (auto n, counted_q auto w)
+						XTAL_0FN_(self().efflux_pull_slice(respan_o.slice(w), sequel_o.slice(w).skip(n), oo...))
+					) & R_::template influx_push(sequel_o);
+				}
+				///\
+				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
+				
+				XTAL_FNX efflux_pull_slice(respan_u respan_x, control::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					using namespace _v3;
+					auto const  t_ = begin_f(respan_x);
+					auto const _n  = taker_f(respan_x);
+					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, sequel_x, oo...) or
+						(ranges::move(R_::method()|_n, t_), 0);
 				}
 
 			};

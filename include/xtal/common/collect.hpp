@@ -12,6 +12,21 @@ namespace xtal::common
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+concept collected_p = requires ()
+{
+	typename T::collected;
+	requires constant_q<typename T::collected>;
+	requires (T::collected::value != 0);
+	
+	typename T::template fluid<unit_t>;
+	requires iterated_q<typename T::template fluid<unit_t>::type>;
+
+};
+template <typename ...Ts>
+concept collected_q = (... and collected_p<Ts>);
+
 ///\
 A decorator that defines the base-types for block-based data storage, \
 namely `solid` (sharing the same interface as `std::array`), \
@@ -19,20 +34,27 @@ and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
 and can be further transformed using `collate` to provide differentiated types. \
 
-template <int N_size=-1>
-struct collect
+template <int ...Ns>
+struct collect;
+
+template <int ...Ns>
+using collect_t = typename collect<Ns...>::type;
+
+template <int N_size>
+struct collect<N_size>
 {
 	template <typename S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
+		using collected = constant_t<N_size>;
+		
 		///\note\
 		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
 		Otherwise, only `fluid` is defined as `std::vector`. \
-
-		using volume = constant_t<N_size>;///< The capacity of `solid` and `fluid`.
 		
+
 		///\see `std::array`.
 		template <typename V>
 		struct solid;
@@ -457,23 +479,12 @@ struct collect
 		};
 		/***/
 
+		template <typename V> using fluid_t = typename fluid<V>::type;
+		template <typename V> using solid_t = typename solid<V>::type;
+
 	};
 	using type = subtype<unit_t>;
 };
-template <int N_size=-1>
-using collect_t = typename collect<N_size>::type;
-
-template <typename T>
-concept collect_p = requires ()
-{
-//	typename T::volume; requires constant_q<typename T::volume>;
-	typename T::template solid<unit_t>;
-	typename T::template fluid<unit_t>;
-	requires iterated_q<typename T::template fluid<unit_t>::type>;
-
-};
-template <typename ...Ts>
-concept collect_q = (... and collect_p<Ts>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

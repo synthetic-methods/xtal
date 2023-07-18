@@ -175,14 +175,14 @@ struct define
 				XTAL_FNX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(self().influx_request(oo...)) (R_::influx(XTAL_REF_(oo)...));
+					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
 				XTAL_FNX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
+					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 				}
 
 				///\note\
@@ -191,12 +191,12 @@ struct define
 				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx_request(XTAL_REF_(oo)...);
+					return self().influx_push(XTAL_REF_(oo)...);
 				}
 				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().efflux_request(XTAL_REF_(oo)...);
+					return self().efflux_pull(XTAL_REF_(oo)...);
 				}
 
 				///\note\
@@ -216,14 +216,14 @@ struct define
 				///\
 				Forwards the message to `slots`, bypassing `self`. \
 
-				XTAL_FNX influx_request(auto ...oo)
+				XTAL_FNX influx_push(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&] (XTAL_DEF ...xs)
 						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
 					);
 				}
-				XTAL_FNX efflux_request(auto ...oo)
+				XTAL_FNX efflux_pull(auto ...oo)
 				XTAL_0EX
 				{
 					return apply([&] (XTAL_DEF ...xs)
@@ -235,11 +235,11 @@ struct define
 				If `~N_slot`, the slot at `N_slot` receives the full message. \
 
 				template <int N_slot=-1>
-				XTAL_FNX influx_request_tail(auto o, auto ...oo)
+				XTAL_FNX influx_push_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
-						return influx_request(XTAL_MOV_(oo)...);
+						return influx_push(XTAL_MOV_(oo)...);
 					}
 					else {
 						static_assert(0 <= N_slot);
@@ -249,11 +249,11 @@ struct define
 					}
 				}
 				template <int N_slot=-1>
-				XTAL_FNX efflux_request_tail(auto o, auto ...oo)
+				XTAL_FNX efflux_pull_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
-						return efflux_request(XTAL_MOV_(oo)...);
+						return efflux_pull(XTAL_MOV_(oo)...);
 					}
 					else {
 						static_assert(0 <= N_slot);

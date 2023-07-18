@@ -2,7 +2,7 @@
 #include "./any.c++"
 #include "./collate.hpp"// testing...
 
-#include "./collage.hpp"
+
 
 
 
@@ -17,7 +17,7 @@ template <int N>
 void test__spool_operation()
 {
 	using event_u = compose_s<bias_t, concord::lift<int>>;
-	using queue_u = typename collage_t<event_u, N>::spool_t;
+	using queue_u = typename collate_t<N>::template spool_t<event_u>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
 	auto e1 = event_u(1, bias_t(-1.0));
@@ -47,7 +47,7 @@ TEST_CASE("xtal/common/collate.hpp: scalar construction")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto foo = typename collage_t<alpha_t, 2>::scalar_t {2.0, 0.5};
+	auto foo = typename collate_t<2>::template scalar_t<alpha_t> {2.0, 0.5};
 	auto bar = realized::template unsquare_y<0>((alpha_t) 2);
 	bar.transmute([] XTAL_1FN_(realized::square_y), trim_y<1>);
 	REQUIRE(foo == bar);
@@ -61,7 +61,7 @@ TEST_CASE("xtal/common/collate.hpp: scalar transformation")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	auto bar = typename collage_t<alpha_t, 2>::scalar_t {2.0, 0.5};
+	auto bar = typename collate_t<2>::template scalar_t<alpha_t> {2.0, 0.5};
 	auto foo = bar.reflected(-1);
 	auto baz = foo.reflected(+1);
 	
@@ -79,8 +79,8 @@ TEST_CASE("xtal/common/collate.hpp: series initialization")
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N = 1 << 3;
-	using group_u = typename collage_t<alpha_t, N>::group_t;
-	using series_u = typename collage_t<alpha_t, N>::series_t;
+	using group_u = typename collate_t<N>::template group_t<alpha_t>;
+	using series_u = typename collate_t<N>::template series_t<alpha_t>;
 
 	series_u baz(2.0);
 	group_u bar = reinterpret_cast<group_u &>(baz);
@@ -104,8 +104,8 @@ TEST_CASE("xtal/common/collate.hpp: series transformation")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_s = typename collage_t<aphex_t, O>::series_t;
-	using series_u = typename collage_t<aphex_t, N>::series_t;
+	using series_s = typename collate_t<O>::template series_t<aphex_t>;
+	using series_u = typename collate_t<N>::template series_t<aphex_t>;
 	series_s basis(constant_t<-1>{});
 
 	series_u source;
@@ -136,7 +136,7 @@ TEST_CASE("xtal/common/collate.hpp: series convolution")
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 
-	using series_u = typename collage_t<aphex_t, N>::series_t;
+	using series_u = typename collate_t<N>::template series_t<aphex_t>;
 	series_u basis(constant_t<-1>{});
 
 	series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
@@ -151,9 +151,9 @@ TEST_CASE("xtal/common/collate.hpp: series convolution")
 /**/
 void test__serial_multiplication()
 {
-	using D2 = typename collage_t<int, 2>::serial_t;
-	using D3 = typename collage_t<int, 3>::serial_t;
-	using D4 = typename collage_t<int, 4>::serial_t;
+	using D2 = typename collate_t<2>::template serial_t<int>;
+	using D3 = typename collate_t<3>::template serial_t<int>;
+	using D4 = typename collate_t<4>::template serial_t<int>;
 	
 	REQUIRE(D2 {           10, 1} * D2 {           20, 2} == D2 {                   200,   40});
 	REQUIRE(D3 {      100, 10, 1} * D3 {      200, 20, 2} == D3 {          20000,  4000,  600});
@@ -176,8 +176,8 @@ void test__series_multiplication()
 	using alpha_t = typename realized::alpha_t;
 	using aphex_t = typename realized::aphex_t;
 
-	using C4 = typename collage_t<aphex_t, 4>::series_t;
-	using D4 = typename collage_t<aphex_t, 4>::series_t;
+	using C4 = typename collate_t<4>::template series_t<aphex_t>;
+	using D4 = typename collate_t<4>::template series_t<aphex_t>;
 	
 	REQUIRE(C4 {1000, 100, 10, 1} * C4 {2000, 200, 20, 2} == C4 {2000600, 400040, 60002, 8000});
 	REQUIRE(D4 {1000, 100, 10, 1} * D4 {2000, 200, 20, 2} == D4 {2000600, 400040, 60002, 8000});
@@ -193,7 +193,7 @@ TEST_CASE("xtal/common/collate.hpp: series multiplication")
 /**/
 void test__pulsar_operation()
 {
-	using D = typename collage_t<int, 4>::pulsar_t;
+	using D = typename collate_t<4>::template pulsar_t<int>;
 
 	D d {1000, 100, 10, 1};
 
@@ -212,7 +212,7 @@ TEST_CASE("xtal/common/collate.hpp: pulsar operation")
 /**/
 void test__phasor_operation()
 {
-	using P = typename collage_t<float, 2>::phasor_t;
+	using P = typename collate_t<2>::template phasor_t<float>;
 	P p {0.125, 0.250};
 
 	REQUIRE(p++ == P {+0.125, 0.250});
@@ -232,7 +232,7 @@ TEST_CASE("xtal/common/collate.hpp: phasor operation")
 void test__phasor_iteration()
 {
 	using namespace _v3;
-	using P  = typename collage_t<float, 2>::phasor_t;
+	using P  = typename collate_t<2>::template phasor_t<float>;
 	using Ps = ranges::iota_view<P>;
 	using Qs = _std::vector<float>;
 

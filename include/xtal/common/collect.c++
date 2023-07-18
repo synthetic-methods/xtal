@@ -2,7 +2,7 @@
 #include "./any.c++"
 #include "./collect.hpp"// testing...
 
-#include "./collage.hpp"
+
 
 
 
@@ -18,7 +18,7 @@ TEST_CASE("xtal/common/collect.hpp: fluid assigment")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	using buffer_u = typename collage_t<alpha_t, (1<<7)>::fluid_t;
+	using buffer_u = typename collect_t<128>::template fluid_t<alpha_t>;
 	using vector_u = _std::vector<alpha_t>;
 
 	auto const zhs = buffer_u {7, 8, 9};
@@ -43,7 +43,7 @@ TEST_CASE("xtal/common/collect.hpp: fluid mutation")
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
 
-	using buffer_u = typename collage_t<alpha_t, (1<<7)>::fluid_t;
+	using buffer_u = typename collect_t<128>::template fluid_t<alpha_t>;
 	using vector_u = _std::vector<alpha_t>;
 
 	auto xs = buffer_u {0, 1, 2, 3, 4};

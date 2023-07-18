@@ -50,6 +50,9 @@ concept any_p = _std::derived_from<based_t<T>, any_t<As...>>;
 template <typename ...Ts>
 concept any_q = (... and any_p<Ts>);
 
+template <typename ...Ts>
+concept not_any_q = not (... or any_p<Ts>);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\

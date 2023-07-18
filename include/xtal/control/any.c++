@@ -97,7 +97,7 @@ void test__hold_processor()
 }
 TEST_CASE("xtal/control/any.hpp: hold processor")
 {
-	test__hold_processor<collect<>>();
+	test__hold_processor<collect<-1>>();
 //	test__hold_processor();
 }
 /***/
@@ -108,7 +108,7 @@ void test__respan_internal_intermit()
 {
 	using alpha_t = typename realized::alpha_t;
 
-	using    mix_z = processor::monomer_t<mix_t, collect<>, typename bias_t::template intermit<(1<<4)>>;
+	using    mix_z = processor::monomer_t<mix_t, collect<-1>, typename bias_t::template intermit<(1<<4)>>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 

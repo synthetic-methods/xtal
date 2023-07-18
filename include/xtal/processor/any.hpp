@@ -38,11 +38,11 @@ template <_detail::unprocessed_p U>
 struct defer<U>
 :	defer<_v3::ranges::repeat_view<U>>
 {};
-template <_detail::preprocessed_p U>
+template <typename U> requires _detail::preprocessed_p<U> or any_q<U>
 struct defer<U>
 :	_retail::defer<U>
 {};
-template <_retail::any_p U>
+template <typename U> requires _retail::any_q<U> and not_any_q<U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -115,7 +115,7 @@ struct refer
 
 	//	using S_::method;
 
-		XTAL_DO2_(
+		XTAL_DO2_(template <auto ...>
 		XTAL_FN2 method(),
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;

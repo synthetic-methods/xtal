@@ -1,7 +1,6 @@
 #pragma once
 #include "./any.c++"
 #include "./bundle.c++"
-#include "./collage.c++"
 #include "./collate.c++"
 #include "./collect.c++"
 #include "./compose.c++"

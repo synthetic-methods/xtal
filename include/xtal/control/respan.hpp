@@ -28,6 +28,9 @@ public:
 	public:
 	//	using S_::S_;
 		using S_::self;
+		using S_::twin;
+		using S_::head;
+		
 		using span_t = U;
 
 		XTAL_CO0_(subtype);
@@ -39,20 +42,20 @@ public:
 		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_FN2 span(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_FN2 size(), S_::head().size())
+		XTAL_TO4_(XTAL_FN2 span(XTAL_DEF... oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_FN2 size(), head().size())
 
 		XTAL_FN2 slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX
 		{
 			auto i = w.front(), j = w.back() + 1;
-			auto t = self(); (void) t.span(t.span()|_v3::views::slice(i, j)); return t;
+			auto t = twin(); (void) t.span(t.span()|_v3::views::slice(i, j)); return t;
 		}
 
 	};
 };
 template <iterated_q U>
-using respan_t = confined_t<respan<U>>;
+using respan_t = confined_t<refer<U>, respan<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

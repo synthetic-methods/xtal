@@ -58,7 +58,7 @@ XTAL_CN2 access_f(XTAL_DEF z)
 XTAL_0EX
 XTAL_REQ  (N != (N|accessory::finite{})) and requires {z.size();}
 {
-	return access_f<N|accessory::finite{}>(XTAL_REF_(z))|_v3::views::take(z.size());
+	return access_f<N|accessory::finite{}>(XTAL_REF_(z))|taker_f(z);
 }
 
 

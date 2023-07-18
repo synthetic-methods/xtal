@@ -16,23 +16,6 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T> concept dismember_p =     debased_q<T>;// determine whether `T` should be dereferenced
-template <typename T> concept  remember_p = not debased_q<T>;
-template <typename T> using      member_t =     debased_t<T>;// convert references to pointers
-
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ dismember_p<T> {return &XTAL_REF_(w);}// obtain address
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<T>(XTAL_REF_(w));}
-template <typename T>   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<T>(XTAL_REF_(ws)...);}
-
-XTAL_CN2 remember_y(XTAL_DEF w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}// dereference address
-XTAL_CN2 remember_y(XTAL_DEF w) XTAL_0EX               {return  XTAL_REF_(w);}
-
-XTAL_CN2 remember_x(XTAL_DEF w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_MOV_(XTAL_REF_(w));}// dereference address
-XTAL_CN2 remember_x(XTAL_DEF w) XTAL_0EX               {return  XTAL_MOV_(XTAL_REF_(w));}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 struct refine_head
 {
 	template <any_p S>
@@ -162,7 +145,7 @@ template <typename U> struct   refer_group_operators<U, 0> : compose<   refer_gr
 template <typename U> struct   refer_field_operators<U, 0> : compose<   refer_field_operators<U, 1>,   refer_field_operators<U, 2>> {};
 template <typename U> struct         refer_operators<U, 0> : compose<         refer_operators<U, 1>,         refer_operators<U, 2>> {};
 
-template <typename U> requires bitwise_operators_p<U, 1> and remember_p<U>
+template <typename U> requires bitwise_operators_p<U, 1> and remember_q<U>
 struct refer_bitwise_operators<U, 1>
 {
 	template <any_p S>
@@ -194,7 +177,7 @@ struct refer_bitwise_operators<U, 2>
 	};
 };
 
-template <typename U> requires group_operators_p<U, 1> and remember_p<U>
+template <typename U> requires group_operators_p<U, 1> and remember_q<U>
 struct refer_group_operators<U, 1>
 {
 	template <any_p S>
@@ -230,7 +213,7 @@ struct refer_group_operators<U, 2>
 	};
 };
 
-template <typename U> requires field_operators_p<U, 1> and remember_p<U>
+template <typename U> requires field_operators_p<U, 1> and remember_q<U>
 struct refer_field_operators<U, 1>
 {
 	template <any_p S>

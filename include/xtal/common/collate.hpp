@@ -31,42 +31,64 @@ public:
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <int N_size=-1>
-struct collate
+template <typename T>
+concept collated_p = requires ()
 {
-	using collected = collect_t<N_size>;
+	typename T::collated;
+	requires constant_q<typename T::collated>;
+	requires (T::collated::value != 0);
+	
+	typename T::template spool<unit_t>;
+	requires iterated_q<typename T::template spool<unit_t>::type>;
+
+};
+template <typename ...Ts>
+concept collated_q = (... and collated_p<Ts>);
+
+
+template <int ...Ns>
+struct collate;
+
+template <int ...Ns>
+using collate_t = typename collate<Ns...>::type;
+
+template <int N_size>
+struct collate<N_size>
+{
+	using metakind = collect_t<N_size>;
 
 	template <typename S>
 	class subtype: public S
 	{
+		template <typename V>
+		struct solid_
+		{
+			using demikind = typename metakind::template solid<V>;
+			using demitype = typename demikind::type;
+		
+			template <typename T>
+			using homotype = typename deform<T>::template subtype<demitype>;
+
+			using type = _detail::isotype<homotype>;
+
+		};
+		template <typename V>
+		struct fluid_
+		{
+			using demikind = typename metakind::template fluid<V>;
+			using demitype = typename demikind::type;
+		
+			template <typename T>
+			using homotype = typename deform<T>::template subtype<demitype>;
+
+			using type = _detail::isotype<homotype>;
+
+		};
+		
 	public:
 		using S::S;
+		using collated = constant_t<N_size>;
 
-		template <typename V>
-		struct _solid
-		{
-			using demikind = typename collected::template solid<V>;
-			using demitype = typename demikind::type;
-		
-			template <typename T>
-			using homotype = typename deform<T>::template subtype<demitype>;
-
-			using type = _detail::isotype<homotype>;
-
-		};
-		template <typename V>
-		struct _fluid
-		{
-			using demikind = typename collected::template fluid<V>;
-			using demitype = typename demikind::type;
-		
-			template <typename T>
-			using homotype = typename deform<T>::template subtype<demitype>;
-
-			using type = _detail::isotype<homotype>;
-
-		};
-		
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
 		
@@ -83,7 +105,7 @@ struct collate
 				using R_ = hemitype<type>;
 
 				using value_t = V;
-				using fluid_t = typename _fluid<V>::type;
+				using fluid_t = typename fluid_<V>::type;
 				using point_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
@@ -95,7 +117,7 @@ struct collate
 				using R_::R_;
 				
 				///\note\
-				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
+				The `size()` of the `std::initializer_list` determines the collated of lookup/lookahead. \
 
 				XTAL_CON type(bracket_t<V> w)
 				:	end_n {_std::distance(w.begin(), w.end())}
@@ -174,6 +196,17 @@ struct collate
 				{
 					return fluid_m.insert(v_, XTAL_REF_(w));
 				}
+				XTAL_FN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+				XTAL_0EX
+				{
+					return fluid_m.insert(v_, V(XTAL_REF_(ws)...));
+				}
+				XTAL_FN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+				XTAL_0EX
+				XTAL_REQ_(fluid_m.inplace(v_, XTAL_REF_(ws)...))
+				{
+					return fluid_m.inplace(v_, XTAL_REF_(ws)...);
+				}
 
 			};
 		};
@@ -186,7 +219,7 @@ struct collate
 			using _realized = realize<V>;
 			
 			template <typename T>
-			using hemitype = typename _solid<V>::template homotype<T>;
+			using hemitype = typename solid_<V>::template homotype<T>;
 
 			template <typename T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
@@ -788,11 +821,39 @@ struct collate
 			using type = _detail::isotype<homotype>;
 		};
 
+		template <typename V> using  spool_t = typename  spool<V>::type;
+		template <typename V> using  group_t = typename  group<V>::type;
+		template <typename V> using scalar_t = typename scalar<V>::type;
+		template <typename V> using sector_t = typename sector<V>::type;
+		template <typename V> using series_t = typename series<V>::type;
+		template <typename V> using serial_t = typename serial<V>::type;
+		template <typename V> using pulsar_t = typename pulsar<V>::type;
+		template <typename V> using phasor_t = typename phasor<V>::type;
+
 	};
 	using type = subtype<unit_t>;
 };
-template <int N_size=-1>
-using collate_t = typename collate<N_size>::type;
+template <>
+struct collate<>
+:	collate<-1>
+{};
+template <int N, int ...Ns>
+struct collate<N, Ns...>
+{
+	template <typename S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
+
+		template <typename V> using value_t = typename collate_t<N>::template group_t<V>;
+		template <typename V> using group_t = typename collate_t<Ns...>::template group_t<value_t<V>>;
+		template <typename V> using group   = typename collate_t<Ns...>::template group  <value_t<V>>;
+
+	};
+	using type = subtype<unit_t>;
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

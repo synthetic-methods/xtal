@@ -17,10 +17,10 @@ TEST_CASE("xtal/process/matrix.hpp: process matrix")
 {
 	using namespace _v3::views;
 
-	using group_t = typename collage_t<int, 2, 3>::group_t;
+	using group_t = typename collate_t<2, 3>::template group_t<int>;
 
 	using remix_t = process::matrix_t<group_t, mix_t>;
-	using mixer_t = processor::monomer_t<remix_t, collect<>>;
+	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
 	auto io = remix_t();
 	io <<= group_t {{1, 2}, {3, 4}, {5, 6}};
@@ -35,9 +35,9 @@ TEST_CASE("xtal/process/matrix.hpp: processor matrix")
 {
 	using namespace _v3::views;
 
-	using group_t = typename collage_t<int, 2, 3>::group_t;
+	using group_t = typename collate_t<2, 3>::template group_t<int>;
 	using remix_t = process::matrix_t<group_t, mix_t>;
-	using mixer_t = processor::monomer_t<remix_t, collect<>>;
+	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
@@ -60,9 +60,9 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard matrix")
 {
 	using namespace _v3::views;
 
-	using group_t = typename collage_t<int, 2, 3>::group_t;
+	using group_t = typename collate_t<2, 3>::template group_t<int>;
 	using remix_t = process::matrix_t<group_t, mix_t>;
-	using mixer_t = processor::monomer_t<remix_t, collect<>>;
+	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
@@ -82,9 +82,9 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard column")
 {
 	using namespace _v3::views;
 
-	using group_t = typename collage_t<int, 2, 3>::group_t;
+	using group_t = typename collate_t<2, 3>::template group_t<int>;
 	using remix_t = process::matrix_t<group_t, mix_t>;
-	using mixer_t = processor::monomer_t<remix_t, collect<>>;
+	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));
@@ -106,9 +106,9 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard cell")
 {
 	using namespace _v3::views;
 
-	using group_t = typename collage_t<int, 2, 3>::group_t;
+	using group_t = typename collate_t<2, 3>::template group_t<int>;
 	using remix_t = process::matrix_t<group_t, mix_t>;
-	using mixer_t = processor::monomer_t<remix_t, collect<>>;
+	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
 	auto _1 = processor::lift_f(1);
 	auto _n = processor::lift_f(iota(0, 10));

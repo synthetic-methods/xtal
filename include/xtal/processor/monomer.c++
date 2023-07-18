@@ -20,7 +20,7 @@ void test__invocable()
 	using alpha_t = typename realized::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = typename collage_t<alpha_t, N_size>::group_t;
+	using group_u = typename collate_t<N_size>::template group_t<alpha_t>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -39,7 +39,7 @@ void test__invocable()
 }
 TEST_CASE("xtal/processor/monomer.hpp: invocable")
 {
-	test__invocable<collect<>>();
+	test__invocable<collect<-1>>();
 	test__invocable();
 }
 /***/
@@ -153,8 +153,8 @@ void test__respan_chain_rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, collect<>>;
-	using mul_op = monomer_t<mul_t, collect<>>;
+	using mix_op = monomer_t<add_t, collect<-1>>;
+	using mul_op = monomer_t<mul_t, collect<-1>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(lift_f(_01), lift_f(_10)));
 
 	yhs <<= control::resize_f(N);
@@ -192,8 +192,8 @@ void test__respan_chain_lvalue()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, collect<>>;
-	using mul_op = monomer_t<mul_t, collect<>>;
+	using mix_op = monomer_t<add_t, collect<-1>>;
+	using mul_op = monomer_t<mul_t, collect<-1>>;
 	auto  lhs = let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
 	auto  rhs = let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bond_f(lhs, rhs);
@@ -232,7 +232,7 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<dynamic_bias_mix_t, collect<>>;
+	using mix_op = monomer_t<dynamic_bias_mix_t, collect<-1>>;
 	using mix_fn = monomer_t<dynamic_bias_mix_t>;
 	using nat_fn = monomer_t<dynamic_count_t>;
 

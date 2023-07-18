@@ -17,11 +17,11 @@ struct polymer;
 template <typename ...Ts>
 XTAL_ASK polymer_q = tag_q<polymer, Ts...>;
 
-template <int N, typename ...As>
-XTAL_USE polymer_t = confined_t<polymer<constant_t<N>, As...>>;
+template <typename ..._s>
+XTAL_USE polymer_t = confined_t<polymer<_s...>>;
 
-template <int N, typename ...As>
-XTAL_CN2 polymer_f(XTAL_DEF... xs) {return polymer_t<N, As...>::bond_f(XTAL_REF_(xs)...);}
+template <typename ...As>
+XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,18 +35,16 @@ meaning any upstream references will be preserved. \
 The use of `bond` as the lifting mechanism is intended both to mirror `monomer`, \
 and to allow `collect<...>, As...` to establish the type of the underlying `store`. \
 
-template <constant_q N_voice, typename ...As>
-struct polymer<N_voice, As...>
+template <typename U, typename ...As>
+struct polymer<U, As...>
 {
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
-
-	using subkind = compose<As...>;
+	using subkind = monomer<U, As...>;
 
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
+		using Mu = monomer_t<based_t<U>>;
 		
 		template <typename ...Xs>
 		using F_ = typename S_::template bond<Xs...>;
@@ -55,34 +53,27 @@ struct polymer<N_voice, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <any_p X> requires collect_q<S_>
-		struct bond
+		template <typename ...Xs> requires collated_q<S_> and collected_q<S_>
+		struct bond: F_<Xs...>
 		{
-			using argument_t = based_t<X>;
-			using result_t = _std::invoke_result_t<argument_t>;
-			using return_t = based_t<iteratee_t<result_t>>;
+			using rebound = F_<Xs...>;
+			
+			using return_t = typename rebound::return_t;
 
+			using stave_u = typename Mu::template bond_t<Xs...>;
 			using stage_u = control::stasis_t<>;
 			using event_u = context::grain_s<stage_u>;
-			using voice_u = context::grain_s<argument_t>;
-			using spool_u = typename S_::template spool<voice_u>::type;
-			using store_u = typename S_::template fluid<return_t>::type;
-			using serve_u = deranged_t<store_u>;
-			using respan_u = control::respan_t<serve_u>;
+			using voice_u = context::grain_s<stave_u>;
+			using spool_u = typename S_::template spool_t<voice_u>;
 
 			using subkind = compose<tag<polymer>
-			,	concord::defer<voice_u>
-			,	concord::refer<serve_u>
-			,	context::scope<store_u>
-		//	,	As...
-			,	resize_u::attach
-			,	sequel_u::attach
+			,	defer<stave_u>
+			,	rebound
 			>;
 			template <any_p R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using R_ = compose_s<R, subkind>;
-				using Q_ = typename R_::template super_s<1>;
 				
 				spool_u spool_m;
 
@@ -91,47 +82,11 @@ struct polymer<N_voice, As...>
 				using R_::self;
 				using R_::serve;
 				using R_::store;
-				XTAL_TO2_(XTAL_FN2 method(), serve())
 				
 				XTAL_TO2_(XTAL_FN2 spool(), spool_m)
-				XTAL_TO2_(XTAL_FN2 spindle(), R_::head())
-				///<\
-				Used as the prototype for all voices in `spool()`, \
-				and may be initialized by reference to allow external configuration. \
-				
-				XTAL_FNX influx(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return XTAL_FLX_(self().influx_request(oo...)) (Q_::influx(XTAL_REF_(oo)...));
-				}
-				XTAL_FNX efflux(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return XTAL_FLX_(Q_::efflux(oo...)) (self().efflux_request(XTAL_REF_(oo)...));
-				}
-				///\
-				Forwards to all instances including the sentinel. \
+				XTAL_TO2_(XTAL_FN2 spine(), R_::head())
 
-				XTAL_FNX influx_request(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					XTAL_FLX flx = spindle().influx(oo...);
-					for (XTAL_DEF v: spool_m) {
-						flx &= XTAL_REF_(v).influx(oo...);
-					}
-					return flx;
-				}
-				XTAL_FNX efflux_request(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					XTAL_FLX flx = spindle().efflux(oo...);
-					for (XTAL_DEF v: spool_m) {
-						flx &= XTAL_REF_(v).efflux(oo...);
-					}
-					return flx;
-				}
-
-			//	using R_::influx;
+				using R_::influx;
 				///\
 				Forwards the event to the associated instance. \
 				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
@@ -144,54 +99,47 @@ struct polymer<N_voice, As...>
 					auto e_index = event_o.head();
 					auto v_      = spool_m.scan(e_index);
 					
-				//	Detect incoming note-on:
+				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (e_stage == 0) {
-					//	Cut if it already exists:
 						if (spool_m and e_index == v_->head()) {
-							(void) v_->influx(control::stasis_f(-1), oo...);
+							(void) v_->influx(control::stasis_f(-1));//, oo...
 						}
-					//	Allocate by duplicating sentinel:
-						v_ = spool_m.poke(v_, spindle());
-						v_->head(e_index);
+						v_ = spool_m.poke(v_, e_index, spine());
 					}
 				//	Forward to detected/allocated instance:
 					assert(v_->head() == e_index);
 					return v_->influx(e_stage, XTAL_REF_(oo)...);
 				}
-			//	using R_::infuse;
-				///\
-				Responds to `control::resize` by resizing the internal `store()`. \
-
-				XTAL_FNX infuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					if constexpr (is_q<resize_u, decltype(o)>) {
-						return R_::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
-					}
-					else {
-						return R_::infuse(XTAL_REF_(o));
-					}
-				}
-
 
 				///\
-				Render the buffer designated by `sequel_o`. \
-				
-				///\note\
-				If no target `respan_o` is provided, uses the internal `store`. \
-				
-				XTAL_FNX efflux(control::sequel_q auto sequel_o, XTAL_DEF ...oo)
+				Forwards to all instances including the sentinel. \
+
+				XTAL_FNX influx_push(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return efflux(respan_u(store()), sequel_o, XTAL_REF_(oo)...);
+					bool constexpr spooled = false;
+					return _v3::ranges::accumulate(spool_m
+					,	spooled? -1: spine().influx(oo...)
+					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
+					);
 				}
-				XTAL_FNX efflux(respan_u respan_o, control::sequel_q auto sequel_o, XTAL_DEF ...oo)
+				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					XTAL_FLX flx = spool_m.empty() or R_::effuse(sequel_o);
-					if (flx&1) return flx;// else...
-					
-					(void) serve(respan_o);
+					bool constexpr spooled = (... or control::sequel_q<decltype(oo)>);
+					return _v3::ranges::accumulate(spool_m
+					,	spooled? -1: spine().efflux(oo...)
+					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
+					);
+				}
+
+				///\
+				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
+				
+				XTAL_FNX efflux_pull_slice(iterated_q auto respan_x, control::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					XTAL_FLX flx = -1;
 					
 				//	Render each instance, while releasing any that have terminated:
 					for (auto _v = spool_m.end(); spool_m.begin() <= --_v;) {
@@ -199,18 +147,20 @@ struct polymer<N_voice, As...>
 							spool_m.pop(_v);
 						}
 						else {
-							flx &= _v->efflux(sequel_o, oo...);
+							flx &= _v->efflux(sequel_x, oo...);
 						}
 					}
-				//	Initialize `serve` with first instance, then accumulate remaining:
-					using namespace _v3::ranges;
-					auto &t  = serve();
-					auto  t_ = serve().begin();
-					copy(spool_m.front(), t_);
+					if (1 == flx) return flx;// else...
+				
+				//	Initialize buffer with first instance, then mix in the rest:
+					using namespace _v3;
+					auto const  t_ = begin_f(respan_x);
+					auto const _n  = taker_f(respan_x);
+					
+					ranges::copy(spool_m.front()|_n, t_);
 					for (auto v_ = 1 + spool_m.begin(); v_ < spool_m.end(); ++v_) {
-						move(_detail::mix_f(*v_, t), t_);
+						ranges::move(_detail::mix_f(*v_|_n, respan_x), t_);
 					}
-				//	Return the accumulated flux:
 					return flx;
 				}
 				

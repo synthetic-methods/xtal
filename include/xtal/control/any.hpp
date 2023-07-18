@@ -216,7 +216,7 @@ struct define
 		{
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
-			using spool_u = typename collage_t<event_u, N_event>::spool_t;
+			using spool_u = typename collate_t<N_event>::template spool_t<event_u>;
 
 			template <int N>
 			XTAL_LET sentry_v = event_u::template sentry<N>();
@@ -265,7 +265,7 @@ struct define
 		{
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
-			using spool_u = typename collage_t<event_u, N_event>::spool_t;
+			using spool_u = typename collate_t<N_event>::template spool_t<event_u>;
 
 			template <int N>
 			XTAL_LET sentry_v = event_u::template sentry<N>();
