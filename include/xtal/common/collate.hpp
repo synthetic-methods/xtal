@@ -31,22 +31,21 @@ public:
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename V>
+template <int N_size=-1>
 struct collate
 {
-	using _realized = realize<V>;
+	using collected = collect_t<N_size>;
 
 	template <typename S>
 	class subtype: public S
 	{
-		XTAL_LET_(auto) N_size = S::volume::value;
-
 	public:
 		using S::S;
 
-		struct solid
+		template <typename V>
+		struct _solid
 		{
-			using demikind = typename S::template solid<V>;
+			using demikind = typename collected::template solid<V>;
 			using demitype = typename demikind::type;
 		
 			template <typename T>
@@ -55,9 +54,10 @@ struct collate
 			using type = _detail::isotype<homotype>;
 
 		};
-		struct fluid
+		template <typename V>
+		struct _fluid
 		{
-			using demikind = typename S::template fluid<V>;
+			using demikind = typename collected::template fluid<V>;
 			using demitype = typename demikind::type;
 		
 			template <typename T>
@@ -70,8 +70,11 @@ struct collate
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
 		
+		template <typename V>
 		struct spool
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
 			using hemitype = typename deform<T>::template subtype<iterate_t<T>>;
 
@@ -80,7 +83,7 @@ struct collate
 				using R_ = hemitype<type>;
 
 				using value_t = V;
-				using fluid_t = typename fluid::type;
+				using fluid_t = typename _fluid<V>::type;
 				using point_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
@@ -177,10 +180,13 @@ struct collate
 		///\
 		Defines a fixed-width `type` that supports arithmetic operations. \
 
+		template <typename V>
 		struct group
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename solid::template homotype<T>;
+			using hemitype = typename _solid<V>::template homotype<T>;
 
 			template <typename T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
@@ -273,10 +279,13 @@ struct collate
 		///\
 		Extends `group::type` with elementwise multiplication/division. \
 
+		template <typename V>
 		struct scalar
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename group::template homotype<T>;
+			using hemitype = typename group<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -361,10 +370,13 @@ struct collate
 		///\
 		Extends `group::type` with elementwise addition/subtracion. \
 
+		template <typename V>
 		struct sector
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename group::template homotype<T>;
+			using hemitype = typename group<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -382,7 +394,7 @@ struct collate
 				The counterpart to `this` for which multiplication is linear. \
 
 				template <typename Z>
-				using dual_t = typename scalar::type;
+				using dual_t = typename scalar<V>::type;
 
 				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 				XTAL_OP1_(T &) -= (bracket_t<V> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
@@ -396,10 +408,13 @@ struct collate
 		///\
 		Extends `sector::type` with multiplication defined by circular convolution. \
 
+		template <typename V>
 		struct series
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename sector::template homotype<T>;
+			using hemitype = typename sector<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -594,7 +609,7 @@ struct collate
 					}
 					else {
 						using W = typename _realized::aphex_t;
-						using Y = typename compose_s<S, collate<W>>::series::type;
+						using Y = typename series<W>::type;
 						Y s_(s);
 						Y t_(t);
 						Y(constant_t<-1>{}).convolve(s_, t_);
@@ -614,10 +629,13 @@ struct collate
 		///\
 		Extends `sector::type` with multiplication defined by linear convolution. \
 		
+		template <typename V>
 		struct serial
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename sector::template homotype<T>;
+			using hemitype = typename sector<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -664,10 +682,13 @@ struct collate
 		///\
 		Extends `serial::type` with `++/--` defined in terms of finite differences/derivatives. \
 
+		template <typename V>
 		struct pulsar
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename serial::template homotype<T>;
+			using hemitype = typename serial<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -732,10 +753,13 @@ struct collate
 		///\
 		Extends `pulsar::type` with `++/--` wrapping the initial argument to `{-1, 1}/2`. \
 
+		template <typename V>
 		struct phasor
 		{
+			using _realized = realize<V>;
+			
 			template <typename T>
-			using hemitype = typename pulsar::template homotype<T>;
+			using hemitype = typename pulsar<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
@@ -765,7 +789,10 @@ struct collate
 		};
 
 	};
+	using type = subtype<unit_t>;
 };
+template <int N_size=-1>
+using collate_t = typename collate<N_size>::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

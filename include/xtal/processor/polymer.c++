@@ -35,7 +35,7 @@ void test_polymer__control_spindle()
 	using fate_u = typename fate_t::template bond_t<>;
 	auto  fate_o =          fate_t::         bond_f();
 
-	using vox_t = polymer_t<M_polymer, collect<N_polymer>>;
+	using vox_t = polymer_t<M_polymer, collate<M_polymer>, collect<N_polymer>>;
 	using vox_u = typename vox_t::template bond_t<fate_u>;
 	
 //	auto  vox_o = vox_t::bond_f(XTAL_MOV_(fate_o));

@@ -193,7 +193,7 @@ TEST_CASE("xtal/common/collate.hpp: series multiplication")
 /**/
 void test__pulsar_operation()
 {
-	using D = typename collage_t<int, 4>::pulsar::type;
+	using D = typename collage_t<int, 4>::pulsar_t;
 
 	D d {1000, 100, 10, 1};
 

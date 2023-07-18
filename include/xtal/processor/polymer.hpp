@@ -65,7 +65,7 @@ struct polymer<N_voice, As...>
 			using stage_u = control::stasis_t<>;
 			using event_u = context::grain_s<stage_u>;
 			using voice_u = context::grain_s<argument_t>;
-			using spool_u = typename collage_t<voice_u, N_voice{}>::spool_t;
+			using spool_u = typename S_::template spool<voice_u>::type;
 			using store_u = typename S_::template fluid<return_t>::type;
 			using serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;

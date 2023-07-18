@@ -25,38 +25,32 @@ using collage_t = typename collage<V, Ns...>::type;
 template <typename V, int N>
 struct collage<V, N>
 {
-	using subkind = compose<collate<V>, collect<N>>;
-
 	template <typename S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public S
 	{
-		using S_ = compose_s<S, subkind>;
-	
 	public:
-		using S_::S_;
+		using S::S;
 
-		using  fluid_t = typename S_::fluid ::type;
-		using  spool_t = typename S_::spool ::type;
+		using fluid_t = typename collate_t<N>::_fluid<V>::type;
+		using spool_t = typename collate_t<N>:: spool<V>::type;
 
 	};
 	template <typename S> requires (0 < N)
-	class subtype<S>: public compose_s<S, subkind>
+	class subtype<S>: public S
 	{
-		using S_ = compose_s<S, subkind>;
-	
 	public:
-		using S_::S_;
+		using S::S;
 
-		using  fluid_t = typename S_::fluid ::type;
-		using  spool_t = typename S_::spool ::type;
-		using  solid_t = typename S_::solid ::type;
-		using  group_t = typename S_::group ::type;
-		using scalar_t = typename S_::scalar::type;
-		using sector_t = typename S_::sector::type;
-		using series_t = typename S_::series::type;
-		using serial_t = typename S_::serial::type;
-		using pulsar_t = typename S_::pulsar::type;
-		using phasor_t = typename S_::phasor::type;
+		using  fluid_t = typename collate_t<N>::template _fluid<V>::type;
+		using  spool_t = typename collate_t<N>::template  spool<V>::type;
+		using  solid_t = typename collate_t<N>::template _solid<V>::type;
+		using  group_t = typename collate_t<N>::template  group<V>::type;
+		using scalar_t = typename collate_t<N>::template scalar<V>::type;
+		using sector_t = typename collate_t<N>::template sector<V>::type;
+		using series_t = typename collate_t<N>::template series<V>::type;
+		using serial_t = typename collate_t<N>::template serial<V>::type;
+		using pulsar_t = typename collate_t<N>::template pulsar<V>::type;
+		using phasor_t = typename collate_t<N>::template phasor<V>::type;
 
 	};
 	using type = subtype<unit_t>;
