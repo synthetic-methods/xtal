@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.hpp"
+#include "./etc.hpp"
 #include "./seek.hpp"
 #include "./compose.hpp"
 #include "./collect.hpp"
@@ -55,7 +55,7 @@ using collate_t = typename collate<Ns...>::type;
 template <int N_size>
 struct collate<N_size>
 {
-	using metakind = collect_t<N_size>;
+	using metatype = collect_t<N_size>;
 
 	template <typename S>
 	class subtype: public S
@@ -63,7 +63,7 @@ struct collate<N_size>
 		template <typename V>
 		struct solid_
 		{
-			using demikind = typename metakind::template solid<V>;
+			using demikind = typename metatype::template solid<V>;
 			using demitype = typename demikind::type;
 		
 			template <typename T>
@@ -75,7 +75,7 @@ struct collate<N_size>
 		template <typename V>
 		struct fluid_
 		{
-			using demikind = typename metakind::template fluid<V>;
+			using demikind = typename metatype::template fluid<V>;
 			using demitype = typename demikind::type;
 		
 			template <typename T>
@@ -106,7 +106,7 @@ struct collate<N_size>
 
 				using value_t = V;
 				using fluid_t = typename fluid_<V>::type;
-				using point_t = typename fluid_t::iterator;
+				using valve_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
 				fluid_t fluid_m{};
@@ -147,7 +147,7 @@ struct collate<N_size>
 				Cost can be amortized by invoking `advance` and `abandon` separately, \
 				allowing for branchless `advance`ment. \
 
-				XTAL_FN0 pop(point_t i)
+				XTAL_FN0 pop(valve_t i)
 				XTAL_0EX
 				{
 					assert(i < end());
@@ -161,14 +161,14 @@ struct collate<N_size>
 					advance();
 					abandon(begin() == end());
 				}
-				XTAL_FN2_(point_t) scan(XTAL_DEF w)
+				XTAL_FN2_(valve_t) scan(XTAL_DEF w)
 				XTAL_0EX
 				{
 					return _std::lower_bound(fluid_m.begin(), fluid_m.end()
 					,	XTAL_REF_(w)
 					);
 				}
-				XTAL_FN2_(point_t) scan(XTAL_DEF w, XTAL_DEF f)
+				XTAL_FN2_(valve_t) scan(XTAL_DEF w, XTAL_DEF f)
 				XTAL_0EX
 				{
 					return _std::lower_bound(fluid_m.begin(), fluid_m.end()
@@ -179,10 +179,10 @@ struct collate<N_size>
 				///\note\
 				Conflicting entries w.r.t. `==` are overwritten. \
 
-				XTAL_FN1_(point_t) push(V v)
+				XTAL_FN1_(valve_t) push(V v)
 				XTAL_0EX
 				{
-					auto v_ = scan(v);
+					valve_t v_ = scan(v);
 					if (*v_ == v) {
 						_std::swap(*v_, v); return v_;
 					}
@@ -191,17 +191,17 @@ struct collate<N_size>
 					}
 				}
 				template <is_q<V> W>
-				XTAL_FN1_(point_t) poke(point_t v_, W &&w)
+				XTAL_FN1_(valve_t) poke(valve_t v_, W &&w)
 				XTAL_0EX
 				{
 					return fluid_m.insert(v_, XTAL_REF_(w));
 				}
-				XTAL_FN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+				XTAL_FN1_(valve_t) poke(valve_t v_, XTAL_DEF ...ws)
 				XTAL_0EX
 				{
 					return fluid_m.insert(v_, V(XTAL_REF_(ws)...));
 				}
-				XTAL_FN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+				XTAL_FN1_(valve_t) poke(valve_t v_, XTAL_DEF ...ws)
 				XTAL_0EX
 				XTAL_REQ_(fluid_m.inplace(v_, XTAL_REF_(ws)...))
 				{

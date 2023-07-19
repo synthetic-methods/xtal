@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.hpp"
+#include "./etc.hpp"
 
 #include "../conflux/any.hpp"
 
@@ -25,7 +25,7 @@ struct shard<Ns...>
 	template <bundle_q S> using basetype = bundle_part_t<S, Ns{}...>;
 	template <bundle_q S> using basekind = conflux::lift<basetype<S>>;
 	template <typename S> using semikind = compose<subkind, basekind<S>>;
-	template <typename S> using semitype = compose_s<conflux::base_t, semikind<S>>;
+	template <typename S> using semitype = compose_s<conflux::any_t<>, semikind<S>>;
 	template <typename S>
 	class subtype: public semitype<S>
 	{

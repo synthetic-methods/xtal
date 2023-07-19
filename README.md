@@ -98,14 +98,14 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::lift_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(context::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(context::point_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	biased <<= std::make_tuple(context::cue_s<>(123), (Gate) 1);// `biased()[123] == 1`
+	biased <<= std::make_tuple(context::point_s<>(123), (Gate) 1);// `biased()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
@@ -159,13 +159,42 @@ With the project in genesis, the only supported package manager is `conan --vers
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files [`**/all.hpp`](include/xtal/all.hpp?ts=3) export all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
+The files [`**/all.hpp`](include/xtal/all.hpp?ts=3) export all definitions at a given level. At the leaves, this includes fundamental types like `etc` and specializations like `monomer`, etc.
 
-The files [`*/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the core definitions used to construct these types. At the leaves, this includes decorators like `define`, `defer`, etc.
+The files [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the base types and concepts for the respective domain.
 
-The file [`concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) scaffolds higher-level decorators based on `[dr]efine` and/or `[dr]efer`, intended to be `#include`d within a namespace in which these decorators are provided.
+The files [`**/etc.hpp`](include/xtal/concord/etc.hpp?ts=3) provide the core definitions used to extend these types. At the leaves, this includes decorators like `define`, `defer`, etc.
+
+The files [`**/etc.hxx`](include/xtal/concord/etc.hxx?ts=3) scaffold higher-level decorators based on `[dr]efine` and/or `[dr]efer`, and are intended to be `#include`d within a namespace in which these decorators are provided.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
+
+To navigate the essentials, it is useful to toggle the visibility of the `all.*`, `any.*`, and `*.c*` files. For example, the VSCode plug-ins [Toggle](https://marketplace.visualstudio.com/items?itemName=rebornix.toggle) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file) can be used to control access to `files.exclude` via `keybindings.json` as follows:
+
+	[  {  "key": "cmd+shift+enter",
+	      "command": "toggle",
+	      "args": {
+	         "id": "toggle:files.exclude",
+	         "value":
+	         [  {  "files.exclude": {}
+	            }
+	         ,  {  "files.exclude":
+	               {  "**/build/**":true
+	               ,  "**/CMakeUserPresets.json": true
+	               ,  "*.sublime-*": true
+	               ,  ".*": true
+	               ,  "**/*.c*": true
+	               }
+	            }
+	         ]
+	      }
+	   },
+	   {
+	      "key": "cmd+enter",
+	      "command": "openRelatedFiles.open"
+	   }
+	]
+
 
 ## Macros
 
@@ -231,7 +260,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.hpp`](include/xtal/process/any.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/any.hxx`](include/xtal/concord/any.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`etc.hpp`](include/xtal/process/etc.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/etc.hxx`](include/xtal/concord/etc.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -256,15 +285,15 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Feature                    |Reference|
 |---------------------------|---------|
 |Dependency composition     |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
-|Dependency management      |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`conflux/any.hpp`](include/xtal/conflux/any.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter bond             |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?:attach\|dispatch)`|
-|Parameter sampling         |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::hold`|
-|Parameter scheduling       |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::intermit`|
-|Parameter in(tro)spection  |[`control/any.hpp`](include/xtal/control/any.hpp?ts=3) via `::(?gauge\|guard)`|
-|Process lifting            |[`process/any.hpp`](include/xtal/process/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Dependency management      |[`conflux/etc.hpp`](include/xtal/conflux/etc.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`conflux/etc.hpp`](include/xtal/conflux/etc.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter bond             |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter sampling         |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::hold`|
+|Parameter scheduling       |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::intermit`|
+|Parameter in(tro)spection  |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::(?gauge\|guard)`|
+|Process lifting            |[`process/etc.hpp`](include/xtal/process/etc.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
-|Processor lifting          |[`processor/any.hpp`](include/xtal/processor/any.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Processor lifting          |[`processor/etc.hpp`](include/xtal/processor/etc.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Processor resizing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
 |Processor rendering        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
 |Processor streaming        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|

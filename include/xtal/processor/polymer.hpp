@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.hpp"
+#include "./etc.hpp"
 #include "../context/scope.hpp"
 #include "../context/grain.hpp"
 #include "../control/stasis.hpp"
@@ -67,7 +67,9 @@ struct polymer<U, As...>
 			using spool_u = typename S_::template spool_t<voice_u>;
 
 			using subkind = compose<tag<polymer>
+			,	typename control::vacant_t::rend
 			,	defer<stave_u>
+			,	As...
 			,	rebound
 			>;
 			template <any_p R>
@@ -88,43 +90,36 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_FNX influx(context::grain_s<> io, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::grain_q auto o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx_apart(context::grain_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
-				}
-				XTAL_FNX influx(context::grain_q auto grain_o, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto e_state = grain_o.core();
-					auto e_index = grain_o.head();
-					auto v_      = spool_m.scan(e_index);
-					
-					assert(spool_m and e_index == v_->head());
-					return v_->influx(e_state, XTAL_REF_(oo)...);
+					auto o_core = o.core();
+					auto o_head = o.head();
+					auto v_     = spool_m.scan(o_head);
+					assert(spool_m and o_head == v_->head());
+					return v_->influx(o_core, XTAL_REF_(oo)...);
 				}
 				///\
 				Forwards the event to the associated instance. \
 				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
 				before a new instance is allocated from the sentinel.
 
-				XTAL_FNX influx(event_u event_o, XTAL_DEF ...oo)
+				XTAL_FNX influx(event_u o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto e_stage = event_o.core();
-					auto e_index = event_o.head();
-					auto v_      = spool_m.scan(e_index);
-					
+					auto o_core = o.core();
+					auto o_head = o.head();
+					auto v_     = spool_m.scan(o_head);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
-					if (e_stage == 0) {
-						if (spool_m and e_index == v_->head()) {
-							(void) v_->influx(control::stasis_f(-1));//, oo...
+					if (o_core == 0) {
+						if (spool_m and o_head == v_->head()) {
+							(void) v_->influx(control::stasis_f(-1), oo...);
 						}
-						v_ = spool_m.poke(v_, e_index, spine());
+						v_ = spool_m.poke(v_, o_head, spine());
 					}
 				//	Forward to detected/allocated instance:
-					assert(v_->head() == e_index);
-					return v_->influx(e_stage, XTAL_REF_(oo)...);
+					assert(v_->head() == o_head);
+					return v_->influx(o_core, XTAL_REF_(oo)...);
 				}
 
 				///\
@@ -133,18 +128,18 @@ struct polymer<U, As...>
 				XTAL_FNX influx_push(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					bool constexpr spooled = false;
+					bool constexpr impure = false;
 					return _v3::ranges::accumulate(spool_m
-					,	spooled? -1: spine().influx(oo...)
+					,	impure? -1: spine().influx(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					bool constexpr spooled = (... or control::sequel_q<decltype(oo)>);
+					bool constexpr impure = (... or control::sequel_q<decltype(oo)>);
 					return _v3::ranges::accumulate(spool_m
-					,	spooled? -1: spine().efflux(oo...)
+					,	impure? -1: spine().efflux(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
@@ -156,7 +151,6 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					XTAL_FLX flx = -1;
-					
 				//	Render each instance, while releasing any that have terminated:
 					for (auto _v = spool_m.end(); spool_m.begin() <= --_v;) {
 						if (_v->efflux(control::stasis_f(-1)) == 1) {
@@ -167,12 +161,10 @@ struct polymer<U, As...>
 						}
 					}
 					if (1 == flx) return flx;// else...
-				
 				//	Initialize buffer with first instance, then mix in the rest:
 					using namespace _v3;
 					auto const  t_ = begin_f(respan_x);
 					auto const _n  = taker_f(respan_x);
-					
 					ranges::copy(spool_m.front()|_n, t_);
 					for (auto v_ = 1 + spool_m.begin(); v_ < spool_m.end(); ++v_) {
 						ranges::move(_detail::mix_f(*v_|_n, respan_x), t_);

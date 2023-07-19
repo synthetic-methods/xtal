@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.hpp"
+#include "./etc.hpp"
 #include "../control/resize.hpp"
 #include "../control/sequel.hpp"
 
@@ -22,8 +22,6 @@ struct scope
 	using subkind = compose<void
 	,	concord::defer<serve_u>
 	,	concord::defer<store_u>
-//	,	typename resize_u::attach
-//	,	typename serial_u::attach
 	>;
 
 	template <typename S>

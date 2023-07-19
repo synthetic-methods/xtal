@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.hpp"
+#include "./etc.hpp"
 
 
 
@@ -13,12 +13,17 @@ namespace xtal::context
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...   > struct  cue;
-template <typename    U  > struct  cue<U>: lift<U, tag<cue>> {};
-template <typename ...Ts > concept cue_q = tag_q<cue, Ts...>;
+template <typename ...>
+struct point;
+
+template <typename U>
+struct point<U>: lift<U, tag<point>> {};
+
+template <typename ...Ts >
+concept point_q = tag_q<point, Ts...>;
 
 template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
-using cue_s = compose_s<S, cue<U>>;
+using point_s = compose_s<S, point<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,6 +4,7 @@
 #include "./collate.hpp"
 #include "./collect.hpp"
 #include "./compose.hpp"
+#include "./etc.hpp"
 #include "./realize.hpp"
 #include "./seek.hpp"
 #include "./tag.hpp"

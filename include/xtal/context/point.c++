@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./cue.hpp"// testing...
+#include "./point.hpp"// testing...
 
 
 
@@ -13,11 +13,11 @@ namespace xtal::context::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/context/cue.hpp: true")
+TEST_CASE("xtal/context/point.hpp: true")
 {
 	using source_t = concord::lift_t<counted_t<>>;
-	using target_t = cue_s<source_t>;
-	using target_u = cue_s<>;
+	using target_t = point_s<source_t>;
+	using target_u = point_s<>;
 
 	target_u t0(99);
 	target_t t1(99, source_t(counted_t<>(11, 22)));
