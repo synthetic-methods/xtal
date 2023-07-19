@@ -23,13 +23,18 @@ void test_polymer__control_spine()
 
 	using stage_t = control::stasis_t<>;
 	using event_t = context::grain_s<stage_t>;
+	using empty_t = control::confined_t<>;
 
 	using resize_u = control::resize_t<>;
 	using sequel_u = control::sequel_t<>;
 	
 	using gate_t = process::confined_t<typename level_t::poll, typename stage_t::gauge>;
 
-	using vox_t = polymer_t<gate_t, collect<N_collect>, collate<N_collate>>;
+	using vox_t = polymer_t<gate_t
+	,	collect<N_collect>
+	,	collate<N_collate>
+	,	typename empty_t::rend
+	>;
 	auto  vox_o = vox_t::bond_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
@@ -74,13 +79,20 @@ void test_polymer__control_spool()
 
 	using stage_t = control::stasis_t<>;
 	using event_t = context::grain_s<stage_t>;
+	using empty_t = control::confined_t<>;
 
 	using resize_u = control::resize_t<>;
 	using sequel_u = control::sequel_t<>;
 	
-	using gate_t = process::confined_t<typename level_t::poll, typename stage_t::gauge>;
+	using gate_t = process::confined_t<void
+	,	typename stage_t::gauge
+	,	typename level_t::poll
+	>;
 
-	using vox_t = polymer_t<gate_t, collect<N_collect>, collate<N_collate>>;
+	using vox_t = polymer_t<gate_t
+	,	collect<N_collect>
+	,	collate<N_collate>
+	>;
 	auto  vox_o = vox_t::bond_f();
 
 // Set the default `stage: final`:
@@ -108,6 +120,62 @@ TEST_CASE("xtal/processor/polymer.hpp: control spool")
 	test_polymer__control_spool<8, -1, 64>();
 	test_polymer__control_spool<8, 64, -1>();
 	test_polymer__control_spool<8, 64, 64>();
+
+}
+/**/
+////////////////////////////////////////////////////////////////////////////////
+/**/
+template <size_t N_window=8, int N_collect=-1, int N_collate=-1>
+void test_polymer__control_spool_apart()
+{
+	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename realized::sigma_t;
+	using delta_t = typename realized::delta_t;
+	using  iota_t = typename realized:: iota_t;
+
+	using stage_t = control::stasis_t<>;
+	using event_t = context::grain_s<stage_t>;
+	using empty_t = control::confined_t<>;
+
+	using resize_u = control::resize_t<>;
+	using sequel_u = control::sequel_t<>;
+	
+	using gate_t = process::confined_t<void
+	,	typename stage_t::gauge
+	,	typename level_t::poll
+	>;
+
+	using vox_t = polymer_t<gate_t
+	,	collect<N_collect>
+	,	collate<N_collate>
+	>;
+	auto  vox_o = vox_t::bond_f();
+
+// Set the default `stage: final`:
+	vox_o << stage_t(-1);
+	vox_o << bundle_f(context::grain_s<>(62), stage_t(0), level_t(1)); REQUIRE(1 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(2)); REQUIRE(2 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(69), stage_t(0), level_t(3)); REQUIRE(3 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(4)); REQUIRE(4 == vox_o.spool().size());
+
+//	Re(?:size|nder):
+	vox_o << resize_u(N_window) >> sequel_u(N_window);
+	
+	REQUIRE(3 == vox_o.spool().size());
+	REQUIRE(8 == vox_o.front());
+	
+	auto vox_oo_ = vox_o.spool().begin();
+	REQUIRE(62 == vox_oo_++->head());
+	REQUIRE(65 == vox_oo_++->head());
+	REQUIRE(69 == vox_oo_++->head());
+
+}
+TEST_CASE("xtal/processor/polymer.hpp: control spool apart")
+{
+	test_polymer__control_spool_apart<8, -1, -1>();
+	test_polymer__control_spool_apart<8, -1, 64>();
+	test_polymer__control_spool_apart<8, 64, -1>();
+	test_polymer__control_spool_apart<8, 64, 64>();
 
 }
 /**/

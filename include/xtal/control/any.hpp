@@ -2,7 +2,7 @@
 #include "../conflux/any.hpp"// `_retail`
 
 #include "../context/cue.hpp"
-
+#include "../context/grain.hpp"
 
 
 
@@ -55,8 +55,6 @@ struct define
 				XTAL_0EX
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
-
-			//	TODO: Specialize a `process`'s `intermiter` to `intermit` `T` automatically when lifted to a `processor`. \
 
 			};
 		};
@@ -129,28 +127,6 @@ struct define
 			};
 		};
 		///\
-		Attaches `T`, allowing aggregated inspection via `efflux`. \
-		
-		struct gauge
-		{
-			template <conflux::any_p R>
-			class subtype: public compose_s<R, attach>
-			{
-				using R_ = compose_s<R, attach>;
-			
-			public:
-				using R_::R_;
-				
-				XTAL_FNX effuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					return is_q<T, XTAL_TYP_(o)>?
-						R_::head() == XTAL_REF_(o): R_::effuse(XTAL_REF_(o));
-				}
-
-			};
-		};
-		///\
 		Attaches `T` as a namespace, \
 		forwarding on `influx` only when prefixed by a matching type/instance. \
 
@@ -173,6 +149,31 @@ struct define
 
 			};
 		};
+		///\
+		Attaches `T`, allowing aggregated inspection via `efflux`. \
+		
+		struct gauge
+		{
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, attach>
+			{
+				using R_ = compose_s<R, attach>;
+			
+			public:
+				using R_::R_;
+				
+				XTAL_FNX effuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					return is_q<T, XTAL_TYP_(o)>?
+						R_::head() == XTAL_REF_(o): R_::effuse(XTAL_REF_(o));
+				}
+
+			};
+		};
+		///\
+		Uses the current `T` as the return value of `method`. \
+		
 		struct poll
 		{
 			template <conflux::any_p R>
@@ -192,25 +193,64 @@ struct define
 
 			};
 		};
-		struct pend
+		///\
+		Wraps all `influx`ed `control`s prefixed by a context-free `grain`. \
+
+		///\note\
+		Defined independently of `T`!
+
+		struct rend
 		{
 			template <conflux::any_p R>
-			class subtype: public R
+			class subtype: public compose_s<R>
 			{
+				using R_ = compose_s<R>;
+				
 			public:
-				using R::R;
-				using R::self;
-				using R::influx;
-				///\returns the aggregated result of queuing the controls with the given delay.. \
+				using R_::R_;
+				using R_::self;
+				using R_::influx;
+				///\returns the aggregated result of queuing the `control`s with the given delay. \
 
-				XTAL_FNX influx(context::cue_s<> d_t, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::grain_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx(context::cue_s<XTAL_TYP_(oo)>(d_t.head(), XTAL_REF_(oo))...);
+					return self().influx_apart(context::grain_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
 				}
 
 			};
 		};
+		///\
+		Wraps all `influx`ed `control`s prefixed by a context-free `cue`. \
+
+		///\note\
+		Defined independently of `T`!
+
+		struct pend
+		{
+			template <conflux::any_p R>
+			class subtype: public compose_s<R, rend>
+			{
+				using R_ = compose_s<R, rend>;
+				
+			public:
+				using R_::R_;
+				using R_::self;
+				using R_::influx;
+				///\returns the aggregated result of influxing the given `control`s. \
+
+				XTAL_FNX influx(context::cue_s<> io, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx_apart(context::cue_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
+				}
+
+			};
+		};
+		///\
+		Provides a queue for `T` on the target object, \
+		which is converted to a signal by successive calls to `method`. \
+
 		template <int N_event=-1>
 		struct hold
 		{
@@ -253,7 +293,7 @@ struct define
 			};
 		};
 		///\
-		Provides a queue for this control-type `T` on the target object, \
+		Provides a queue for `T` on the target object, \
 		scheduled via `influx` and processed in segments via `reflux`. \
 
 		///\todo\

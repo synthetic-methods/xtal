@@ -87,6 +87,22 @@ struct polymer<U, As...>
 				XTAL_TO2_(XTAL_FN2 spine(), R_::head())
 
 				using R_::influx;
+				
+				XTAL_FNX influx(context::grain_s<> io, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx_apart(context::grain_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
+				}
+				XTAL_FNX influx(context::grain_q auto grain_o, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto e_state = grain_o.core();
+					auto e_index = grain_o.head();
+					auto v_      = spool_m.scan(e_index);
+					
+					assert(spool_m and e_index == v_->head());
+					return v_->influx(e_state, XTAL_REF_(oo)...);
+				}
 				///\
 				Forwards the event to the associated instance. \
 				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
