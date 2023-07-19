@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./any.hpp"
 #include "./seek.hpp"
 #include "./compose.hpp"
 #include "./collect.hpp"
@@ -11,25 +11,7 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
-struct realize;
-
-
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
-
-template <template <typename> typename T_>
-class isotype: public T_<isotype<T_>>
-{
-	using S_ = T_<isotype<T_>>;
-	
-public:
-	using S_::S_;
-
-};
-
-
-}///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 concept collated_p = requires ()
@@ -67,7 +49,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <typename T>
-			using homotype = typename deform<T>::template subtype<demitype>;
+			using homotype = typename _detail::epitype<T>::template subtype<demitype>;
 
 			using type = _detail::isotype<homotype>;
 
@@ -79,7 +61,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <typename T>
-			using homotype = typename deform<T>::template subtype<demitype>;
+			using homotype = typename _detail::epitype<T>::template subtype<demitype>;
 
 			using type = _detail::isotype<homotype>;
 
@@ -98,7 +80,7 @@ struct collate<N_size>
 			using _realized = realize<V>;
 			
 			template <typename T>
-			using hemitype = typename deform<T>::template subtype<iterate_t<T>>;
+			using hemitype = typename _detail::epitype<T>::template subtype<iterate_t<T>>;
 
 			class type: public hemitype<type>
 			{
@@ -661,7 +643,7 @@ struct collate<N_size>
 		};
 		///\
 		Extends `sector::type` with multiplication defined by linear convolution. \
-		
+
 		template <typename V>
 		struct serial
 		{
@@ -708,7 +690,7 @@ struct collate<N_size>
 				{
 					return twin() *= t;
 				}
-				
+
 			};
 			using type = _detail::isotype<homotype>;
 		};
@@ -718,23 +700,40 @@ struct collate<N_size>
 		template <typename V>
 		struct pulsar
 		{
-			using _realized = realize<V>;
-			
 			template <typename T>
 			using hemitype = typename serial<V>::template homotype<T>;
 
 			template <typename T>
 			class homotype: public hemitype<T>
 			{
-			//	TODO: Subclass to define serial pairs like `complex`. \
-
 				friend T;
 				using R_ = hemitype<T>;
+				using I_ = typename R_::iterator;
 			
 			public:
 				using R_::R_;
 				using R_::self;
 				using R_::twin;
+
+				XTAL_CON homotype(bracket_t<V> u)
+				XTAL_0EX
+				:	R_(u)
+				{
+					auto &s =   self();
+					auto  n = u.size();
+					_std::uninitialized_value_construct_n(s.data() + n, s.size() - n);
+				}
+				template <bracketing_q<R_> U> requires array_q<U>
+				XTAL_CXN homotype(U &&u)
+				XTAL_0EX
+				{
+					auto &s = self();
+					auto const n = u.size();
+					auto const o = s.size();
+					auto m = o - n; assert(0 <= m);
+					_detail::move_to(m + s.data(), XTAL_REF_(u));
+					_std::uninitialized_value_construct_n(s.data(), m);
+				}
 
 				///\
 				Produces the successor by pairwise addition starting from `begin()`, \
@@ -752,8 +751,7 @@ struct collate<N_size>
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
 					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[0 + i] += s[1 + i]));
-					s.reduce();
-					return s;
+					return s.reduce();
 				}
 
 				///\
@@ -772,14 +770,15 @@ struct collate<N_size>
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
 					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[M - i] -= s[N - i]));
-					s.reduce();
-					return s;
+					return s.reduce();
 				}
 
-				XTAL_FN0 reduce()
+				XTAL_FN1 reduce()
 				XTAL_0EX
-				{}
-
+				{
+					return self();
+				}
+				
 			};
 			using type = _detail::isotype<homotype>;
 		};
@@ -809,12 +808,13 @@ struct collate<N_size>
 				///\
 				Wraps the first argument to the range `+/- 1/2`, assuming `std::is_floating_point_v<V>`. \
 
-				XTAL_FN0 reduce()
+				XTAL_FN1 reduce()
 				XTAL_0EX
 				{
 					static_assert(_std::floating_point<V> and 0 < N_size);
 					auto &s = self();
 					s[0] -= _std::round(s[0]);
+					return s;
 				}
 
 			};

@@ -20,7 +20,7 @@ namespace xtal::concord
 template <typename T>
 struct define
 {
-	using subkind = common::deform<T>;
+	using subkind = _detail::epitype<T>;
 	
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>

@@ -93,25 +93,6 @@ template <value_p     T  >   struct revalue<T> : based_t<T> {};
 template <typename    T  >    using revalue_t  = value_t<revalue<T>>;
 
 
-template <typename    I  >
-XTAL_LET appointer_f = [] (XTAL_DEF i)
-XTAL_0FN_(_std::launder(reinterpret_cast<I>(XTAL_REF_(i))));
-
-template <typename    T  >
-struct aligned
-{
-	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
-	XTAL_LET value = sizeof(type);
-
-};
-template <typename    T  >    using aligned_t  = typename aligned<T>::type;
-template <typename    T  > XTAL_LET aligned_v  =          aligned<T>::value;
-
-template <value_q     T  > XTAL_LET arity_v    = sizeof(T)/aligned_v<typename T::value_type>;
-template <value_q     T  >    using arity_t    = constant_t<arity_v<T>>;
-template <value_q     T  >    using array_t    = _std::array<value_t<T>, arity_v<T>>;
-template <typename    T  >  concept array_q    = _std::derived_from<T, array_t<T>>;
-
 template <typename    T  >    using begin_t    = decltype(XTAL_VAL_(T).begin());
 template <typename    T  >    using   end_t    = decltype(XTAL_VAL_(T).  end());
 
@@ -125,10 +106,35 @@ XTAL_LET begin_f = [] (XTAL_DEF t) XTAL_0FN_(XTAL_REF_(t).begin());
 XTAL_LET   end_f = [] (XTAL_DEF t) XTAL_0FN_(XTAL_REF_(t).  end());
 
 
-template <typename    T  >    using pointed_t  = XTAL_TYP_(*XTAL_VAL_(T));
-template <typename    W  >    using bracket_t  = _std::initializer_list<W>;
-template <typename    T  >  concept bracket_p  = begin_p<T> and end_p<T>;
-template <typename ...Ts >  concept bracket_q  = (... and bracket_p<Ts>);
+template <typename    I  >
+XTAL_LET appointer_f = [] (XTAL_DEF i)
+XTAL_0FN_(_std::launder(reinterpret_cast<I>(XTAL_REF_(i))));
+
+template <typename    T  >   using pointed_t   = XTAL_TYP_(*XTAL_VAL_(T));
+template <typename    W  >   using bracket_t   = _std::initializer_list<W>;
+template <typename ...Ts > concept bracket_q   = begin_q<Ts...> and end_q<Ts...>;
+
+
+template <typename    T  >
+struct aligned
+{
+	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
+	XTAL_LET value = sizeof(type);
+};
+template <typename    T  >    using aligned_t  = typename aligned<T>::type;
+template <typename    T  > XTAL_LET aligned_v  =          aligned<T>::value;
+
+template <value_q     T  > XTAL_LET arity_v    = sizeof(T)/aligned_v<value_t<T>>;
+template <value_q     T  >    using arity_t    = constant_t<arity_v<T>>;
+template <value_q     T  >    using array_t    = _std::array<value_t<T>, arity_v<T>>;
+template <int N=-1, typename ...Ts>
+concept array_p = requires ()
+{
+	requires (... and _std::derived_from<based_t<Ts>, array_t<Ts>>);
+	requires (N == -1) or (... and (N == arity_v<Ts>));
+};
+template <typename ...Ts >  concept array_q    = array_p<-1, Ts...>;
+
 
 
 template <typename ...Ts >    using disjunct_t = _std::disjunction<Ts...>;
@@ -167,6 +173,9 @@ template <typename    T > XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
 XTAL_LET identical_f = [] (XTAL_DEF o, XTAL_DEF ...oo)
 XTAL_0FN_(... and (_std::addressof(XTAL_REF_(o)) == _std::addressof(XTAL_REF_(oo))));
+
+template <typename ...Ts > concept  beginning_q = begin_q<Ts...> and is_q<begin_t<Ts>...>;
+template <typename ...Ts > concept bracketing_q = beginning_q<Ts...> and end_q<Ts...>;
 
 
 template <auto     ...   >   XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
