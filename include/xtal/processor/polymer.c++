@@ -32,16 +32,17 @@ void test_polymer__control_spine()
 	using vox_t = polymer_t<gate_t, collect<N_collect>, collate<N_collate>>;
 	auto  vox_o = vox_t::bond_f();
 
-	vox_o <<= resize_u(N_window);
-	vox_o <<= stage_t(-1);// Set the protovoice `stage` to `{terminate,cut}`.
-	vox_o <<= level_t(1);// Set the `level` for the protovoice (and therefore all voices).
-	vox_o <<= bundle_f(event_t(62, 0)); REQUIRE(1 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(65, 0)); REQUIRE(2 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(69, 0)); REQUIRE(3 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(65, 0)); REQUIRE(4 == vox_o.spool().size());
-//	vox_o <<= level_t(2);
-//	vox_o <<= resize_u(N_window);
-	vox_o >>= sequel_u(N_window);
+// Resize, and set the default `level: 1` and `stage: final`:
+	vox_o << resize_u(N_window);
+	vox_o << level_t(1) << stage_t(-1);
+	vox_o << bundle_f(event_t(62, 0)); REQUIRE(1 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0)); REQUIRE(2 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(69, 0)); REQUIRE(3 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0)); REQUIRE(4 == vox_o.spool().size());
+
+//	Render:
+//	vox_o << resize_u(N_window);
+	vox_o >> sequel_u(N_window);
 	
 	REQUIRE(3 == vox_o.spool().size());
 	REQUIRE(3 == vox_o.front());
@@ -82,15 +83,15 @@ void test_polymer__control_spool()
 	using vox_t = polymer_t<gate_t, collect<N_collect>, collate<N_collate>>;
 	auto  vox_o = vox_t::bond_f();
 
-	vox_o <<= resize_u(N_window);
-	vox_o <<= stage_t(-1);// Set the protovoice `stage` to `{terminate,cut}`.
-	vox_o <<= bundle_f(event_t(62, 0), level_t(1)); REQUIRE(1 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(65, 0), level_t(2)); REQUIRE(2 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(69, 0), level_t(3)); REQUIRE(3 == vox_o.spool().size());
-	vox_o <<= bundle_f(event_t(65, 0), level_t(4)); REQUIRE(4 == vox_o.spool().size());
-//	vox_o <<= level_t(2);
-//	vox_o <<= resize_u(N_window);
-	vox_o >>= sequel_u(N_window);
+// Set the default `stage: final`:
+	vox_o << stage_t(-1);
+	vox_o << bundle_f(event_t(62, 0), level_t(1)); REQUIRE(1 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0), level_t(2)); REQUIRE(2 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(69, 0), level_t(3)); REQUIRE(3 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0), level_t(4)); REQUIRE(4 == vox_o.spool().size());
+
+//	Re(?:size|nder):
+	vox_o << resize_u(N_window) >> sequel_u(N_window);
 	
 	REQUIRE(3 == vox_o.spool().size());
 	REQUIRE(8 == vox_o.front());

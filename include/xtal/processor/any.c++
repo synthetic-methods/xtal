@@ -62,7 +62,7 @@ void test__contrivance()
 	REQUIRE(_v3::ranges::equal(mixed_y, _11));
 	REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {00.0, 11.0, 22.0}));
 
-	mixer_f <<= bias_t(33.0);
+	mixer_f << bias_t(33.0);
 
 	if constexpr (is_q<mix_t, static_bias_mix_t>) {
 		//	NOTE: Parameters take effect when the `processor` is invoked, \

@@ -81,13 +81,13 @@ struct define
 		Influx operator: resolves the message for `this` before any dependencies, \
 		used for e.g. `control::resize`. \
 
-		XTAL_OP1 <<=(XTAL_DEF o)
+		XTAL_OP1 <<(XTAL_DEF o)
 		XTAL_0EX
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(heterogeneous_bundle_q) oo)
+		XTAL_OP1 <<(XTAL_DEF_(heterogeneous_bundle_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
@@ -120,13 +120,13 @@ struct define
 		Efflux operator: resolves the message for any dependencies before `this`, \
 		used for e.g. `control::respan` and `control::sequel`. \
 
-		XTAL_OP1 >>=(XTAL_DEF o)
+		XTAL_OP1 >>(XTAL_DEF o)
 		XTAL_0EX
 		{
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(heterogeneous_bundle_q) oo)
+		XTAL_OP1 >>(XTAL_DEF_(heterogeneous_bundle_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));

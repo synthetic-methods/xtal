@@ -143,8 +143,8 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation")
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = seq_u;
 
 	REQUIRE(seq_w.efflux(seq_u) == 1); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
-	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
-	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
+	seq_w >> ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
+	seq_w >> ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
 
 }
 TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
@@ -155,8 +155,8 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
 	using sequel_u = sequel_t<U>; auto seq_u = sequel_u(3), seq_w = sequel_u(0);
 
 	REQUIRE(seq_w.efflux(seq_u) == 0); REQUIRE(seq_w == sequel_u(U(0, 3), 0));
-	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
-	seq_w >>= ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
+	seq_w >> ++seq_u;                 REQUIRE(seq_w == sequel_u(U(3, 6), 1));
+	seq_w >> ++seq_u;                 REQUIRE(seq_w == sequel_u(U(6, 9), 2));
 
 }
 /***/
@@ -171,15 +171,15 @@ void test__interference(auto i)
 	auto seq_n = X(4);
 	auto seq_u = Y(4), seq_w = Y(4*i);
 
-	seq_w >>= seq_n++; REQUIRE(seq_w == Y(U(0, 4), 0));
+	seq_w >> seq_n++; REQUIRE(seq_w == Y(U(0, 4), 0));
 	
-	seq_w >>= seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U(4, 6), 1));
-	seq_w >>= seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(6, 8), 2));
-	seq_w <<= seq_n++;                      REQUIRE(seq_w == Y(U(4, 8), 1));
+	seq_w >> seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U(4, 6), 1));
+	seq_w >> seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(6, 8), 2));
+	seq_w << seq_n++;                      REQUIRE(seq_w == Y(U(4, 8), 1));
 	
-	seq_w >>= seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U( 8, 10), 2));
-	seq_w >>= seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(10, 12), 3));
-	seq_w <<= seq_n++;                      REQUIRE(seq_w == Y(U( 8, 12), 2));
+	seq_w >> seq_n.skip(0).slice(U(0, 2)); REQUIRE(seq_w == Y(U( 8, 10), 2));
+	seq_w >> seq_n.skip(1).slice(U(2, 4)); REQUIRE(seq_w == Y(U(10, 12), 3));
+	seq_w << seq_n++;                      REQUIRE(seq_w == Y(U( 8, 12), 2));
 
 }
 TEST_CASE("xtal/control/sequel.hpp: intermition")

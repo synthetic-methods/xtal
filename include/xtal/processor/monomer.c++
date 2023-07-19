@@ -32,8 +32,8 @@ void test__invocable()
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
-	b <<= resize_u(N_size);
-	b >>= sequel_n(N_size);
+	b << resize_u(N_size);
+	b >> sequel_n(N_size);
 	_v3::ranges::move(b, a.begin());
 	REQUIRE(a == z);
 }
@@ -65,21 +65,21 @@ void test__sequel()
 	auto seq = sequel_n(3); REQUIRE(0 == xhs.size());// uninitialized...
 	REQUIRE(3 == seq.size());
 
-//	xhs <<=   seq; REQUIRE(0 == xhs.size());//                               // initialize via influx?
-	xhs >>=   seq; REQUIRE(3 == xhs.size());// REQUIRE(33*0 == xhs.front()); // initialize via efflux!
-	xhs >>= ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*1 == xhs.front()); // advance then efflux...
-	xhs >>= ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*2 == xhs.front()); // advance then efflux...
+//	xhs <<   seq; REQUIRE(0 == xhs.size());//                               // initialize via influx?
+	xhs >>   seq; REQUIRE(3 == xhs.size());// REQUIRE(33*0 == xhs.front()); // initialize via efflux!
+	xhs >> ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*1 == xhs.front()); // advance then efflux...
+	xhs >> ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*2 == xhs.front()); // advance then efflux...
 	/**/
 
-//	xhs >>= ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
+//	xhs >> ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
 
 	seq += 6;      REQUIRE(3 == xhs.size());//                                    // prepare to advance and resize
-	xhs >>= seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*0 == xhs.front()); // efflux then advance
-	xhs >>= seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*1 == xhs.front()); // efflux then advance
+	xhs >> seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*0 == xhs.front()); // efflux then advance
+	xhs >> seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*1 == xhs.front()); // efflux then advance
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs <<= bias_t((realized::alpha_t) - (99 + 66));
+//	xhs << bias_t((realized::alpha_t) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
@@ -124,11 +124,11 @@ void test__respan_provision()
 
 	REQUIRE(0 == xhs.size());
 
-	xhs >>= bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
-	xhs <<= bias_t((alpha_t) (11 + 1));
-	xhs >>= bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs << bias_t((alpha_t) (11 + 1));
+	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 //	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
@@ -157,15 +157,15 @@ void test__respan_chain_rvalue()
 	using mul_op = monomer_t<mul_t, collect<-1>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(lift_f(_01), lift_f(_10)));
 
-	yhs <<= control::resize_f(N);
-	yhs <<= coef_t((alpha_t) 100);
-	yhs <<= bias_t((alpha_t) 000);
+	yhs << control::resize_f(N);
+	yhs << coef_t((alpha_t) 100);
+	yhs << bias_t((alpha_t) 000);
 	REQUIRE(0 == yhs.size());
 
 	auto seq = control::sequel_f(N);
-	yhs >>= seq  ; REQUIRE(N == yhs.size());// idempotent!
-	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >>= seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >> seq  ; REQUIRE(N == yhs.size());// idempotent!
+	yhs >> seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >> seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 	REQUIRE(yhs.template slot<0>().store().empty());
 
@@ -199,14 +199,14 @@ void test__respan_chain_lvalue()
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
-	yhs <<= control::resize_f(N);
-	yhs <<= coef_t((alpha_t) 100);
-	xhs <<= bias_t((alpha_t) 000);
+	yhs << control::resize_f(N);
+	yhs << coef_t((alpha_t) 100);
+	xhs << bias_t((alpha_t) 000);
 
 	auto seq = control::sequel_f(N);
-	yhs >>= seq  ;// idempotent!
-	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >>= seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >> seq  ;// idempotent!
+	yhs >> seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >> seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 	REQUIRE(yhs.template slot<0>().store().size() == 4);
 
@@ -242,11 +242,11 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	auto rhs = mix_fn::bond_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bond_f(lhs, rhs);
 
-	yhs <<= control::restep_f((size_t) 50);
-	yhs <<= control::resize_f(N);
+	yhs << control::restep_f((size_t) 50);
+	yhs << control::resize_f(N);
 
-	yhs >>= control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >> control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >> control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
 
 //	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
