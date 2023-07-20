@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./etc.hpp"// testing...
+#include "./anybody.hpp"// testing...
 
 #include "../control/all.hpp"
 #include "../process/all.hpp"
@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/control/etc.hpp: hold process")
+TEST_CASE("xtal/control/anybody.hpp: hold process")
 {
 	size_t constexpr N_size = 1<<3;
 
@@ -95,7 +95,7 @@ void test__hold_processor()
 	REQUIRE(array_o == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
-TEST_CASE("xtal/control/etc.hpp: hold processor")
+TEST_CASE("xtal/control/anybody.hpp: hold processor")
 {
 	test__hold_processor<collect<-1>>();
 //	test__hold_processor();
@@ -137,9 +137,8 @@ void test__respan_internal_intermit()
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
 
-//	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
-TEST_CASE("xtal/control/etc.hpp: respan internal intermit")
+TEST_CASE("xtal/control/anybody.hpp: respan internal intermit")
 {
 	test__respan_internal_intermit<dynamic_bias_mix_t>();
 //	test__respan_internal_intermit<static_bias_mix_t>();

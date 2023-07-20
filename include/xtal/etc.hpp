@@ -27,12 +27,13 @@ TODO: Allow command-line/[c]?make configuration?
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 #define XTAL_STD ((__cplusplus/100)%100)
-#define XTAL_STD_IEC 60559//&0
+#define XTAL_STD_IEC 60559
 
-#define XTAL_STD_size_t ::std::size_t
-#define XTAL_STD_sign_t ::std::int_fast8_t
 #define XTAL_STD_null_t ::std::nullptr_t
 #define XTAL_STD_unit_t ::std::monostate
+#define XTAL_STD_sign_t ::std::int_fast8_t
+#define XTAL_STD_size_t ::std::size_t
+#define XTAL_STD_size_x ::std::ptrdiff_t
 
 
 #if     defined(__cacheline_aligned)
@@ -96,18 +97,19 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #if     XTAL_V00_MSVC
 #define XTAL_ENV_pop  _Pragma("warning(pop)")
 #define XTAL_ENV_push _Pragma("warning(push)")\
-                      _Pragma("warning(disable:4010)")
+                      _Pragma("warning(disable:4010)")\
 
 #elif   XTAL_V00_LLVM
 #define XTAL_ENV_pop  _Pragma("clang diagnostic pop")
 #define XTAL_ENV_push _Pragma("clang diagnostic push")\
-                      _Pragma("clang diagnostic ignored \"-Wcomment\"")
+                      _Pragma("clang diagnostic ignored \"-Wcomment\"")\
+                      _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
 
 #elif   XTAL_V00_GNUC
 #define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
 #define XTAL_ENV_push _Pragma("GCC diagnostic push")\
+                      _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
                       _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
-                      _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")
 
 #endif
 

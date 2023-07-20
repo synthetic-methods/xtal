@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 #include "./rescan.hpp"
 #include "./resize.hpp"
 #include "./restep.hpp"
@@ -30,8 +30,8 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 template <typename ...>
 struct sequel;
 
-template <typename... Ts>
-XTAL_ASK sequel_q = tag_q<sequel, Ts...>;
+template <typename ...Ts>
+XTAL_ASK sequel_q = tag_p<sequel, Ts...>;
 
 template <typename W=counter_t<>, typename ...As>
 XTAL_USE sequel_t = confined_t<sequel<W>, As...>;

@@ -1,11 +1,4 @@
-#ifdef __INTELLISENSE__// stub...
-#pragma once
-#include "./etc.hpp"
-#endif
-
-
-
-
+#include "../common/_kernel.hxx"
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./etc.hpp"// testing...
+#include "./anybody.hpp"// testing...
 
 #include "../control/all.hpp"
 
@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("xtal/process/etc.hpp: lifting")
+TEST_CASE("xtal/process/anybody.hpp: lifting")
 {
 	auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 	REQUIRE(10 == f.method(1, 2, 3, 4));
@@ -32,7 +32,7 @@ void test__attribute_initialization(auto z)
 	REQUIRE(00.0 == (float) o);
 	REQUIRE(10.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
-TEST_CASE("xtal/process/etc.hpp: attribute initialization")
+TEST_CASE("xtal/process/anybody.hpp: attribute initialization")
 {
 	test__attribute_initialization(dynamic_bias_mix_t());
 	test__attribute_initialization(static_bias_mix_t());
@@ -49,7 +49,7 @@ void test__attribute_influx_operator(auto z)
 	z << bias_t(3.0); REQUIRE(3.0 == (float) o);
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
-TEST_CASE("xtal/process/etc.hpp: attribute influx operator")
+TEST_CASE("xtal/process/anybody.hpp: attribute influx operator")
 {
 	test__attribute_influx_operator(dynamic_bias_mix_t());
 	test__attribute_influx_operator(static_bias_mix_t());
@@ -66,7 +66,7 @@ void test__attribute_efflux_operator(auto z)
 	z >> bias_t(3.0); REQUIRE(3.0 == (float) o);
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
-TEST_CASE("xtal/process/etc.hpp: attribute efflux operator")
+TEST_CASE("xtal/process/anybody.hpp: attribute efflux operator")
 {
 	test__attribute_efflux_operator(dynamic_bias_mix_t());
 	test__attribute_efflux_operator(static_bias_mix_t());
@@ -86,7 +86,7 @@ void test__attribute_influx_method(auto z)
 	REQUIRE( 0 == (int) z.influx(bias_t(3.0))); REQUIRE(3.0 == (float) o);// changed
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
-TEST_CASE("xtal/process/etc.hpp: attribute influx method")
+TEST_CASE("xtal/process/anybody.hpp: attribute influx method")
 {
 	test__attribute_influx_method(dynamic_bias_mix_t());
 	test__attribute_influx_method(static_bias_mix_t());
@@ -106,7 +106,7 @@ void test__attribute_efflux_method(auto z)
 	REQUIRE( 0 == (int) z.efflux(bias_t(3.0))); REQUIRE(3.0 == (float) o);// changed
 	REQUIRE(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
-TEST_CASE("xtal/process/etc.hpp: attribute efflux method")
+TEST_CASE("xtal/process/anybody.hpp: attribute efflux method")
 {
 	test__attribute_efflux_method(dynamic_bias_mix_t());
 	test__attribute_efflux_method(static_bias_mix_t());

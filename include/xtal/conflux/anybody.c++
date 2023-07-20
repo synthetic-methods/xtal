@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./etc.hpp"// testing...
+#include "./anybody.hpp"// testing...
 
 
 
@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TEST_CASE("xtal/conflux/etc.hpp: true")
+TEST_CASE("xtal/conflux/anybody.hpp: true")
 {
 	REQUIRE(true);
 }

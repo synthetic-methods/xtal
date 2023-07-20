@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 #include "../context/scope.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
@@ -15,7 +15,7 @@ template <typename ...>
 struct monomer;
 
 template <typename ...Ts>
-XTAL_ASK monomer_q = tag_q<monomer, Ts...>;
+XTAL_ASK monomer_q = tag_p<monomer, Ts...>;
 
 template <typename ..._s>
 XTAL_USE monomer_t = confined_t<monomer<_s...>>;
@@ -184,11 +184,10 @@ struct monomer<U, As...>
 				XTAL_FNX efflux_pull_slice(respan_u respan_x, control::sequel_q auto sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					using namespace _v3;
-					auto const  t_ = begin_f(respan_x);
-					auto const _n  = taker_f(respan_x);
+					auto const  t_ = respan_x.begin();
+					auto const _n  = recount_f(respan_x);
 					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, sequel_x, oo...) or
-						(ranges::move(R_::method()|_n, t_), 0);
+						(_v3::ranges::move(R_::method()|_n, t_), 0);
 				}
 
 			};

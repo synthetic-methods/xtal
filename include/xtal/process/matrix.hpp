@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 
 #include "../context/shard.hpp"
 
@@ -15,7 +15,7 @@ template <typename ...>
 struct matrix;
 
 template <typename ...Ts>
-XTAL_ASK matrix_q = tag_q<matrix, Ts...>;
+XTAL_ASK matrix_q = tag_p<matrix, Ts...>;
 
 template <typename ..._s>
 XTAL_USE matrix_t = confined_t<matrix<_s...>>;
@@ -41,7 +41,7 @@ XTAL_CN2 dot(auto const &x, auto const &y)
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename W, typename U, typename... As>
+template <typename W, typename U, typename ...As>
 struct matrix<W, U, As...>
 {
 	static_assert(bundle_q<W>);

@@ -10,12 +10,15 @@ XTAL_ENV_(push)
 namespace xtal::concord
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-#include "./etc.hxx"
-#include "./_detail.hxx"
+///\
+The following `subtype` decorators are specialized under each `xtal::*` namespace. \
+They provide instance and proxy initialization/finalization for the generated types in `./anybody.hxx`. \
 
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Expands on the `self`-reflection established by `../common/_detail.hpp#epitype`, \
+providing the mechanism for traversing the trait-lineage of `T`. \
 
 template <typename T>
 struct define
@@ -41,27 +44,27 @@ struct define
 			auto &s = S_::self(); return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
 		}
 	
-		template <typename   Y, typename X, constant_q _> struct super          {using type = Y;};
-		template <              typename X, constant_q _> struct super<T, X, _> {using type = T;};
-		template <              typename X, constant_q _> struct super<_, X, _> {using type = X;};
-		template <constant_q Y, typename X, constant_q _> struct super<Y, X, _> {using type = typename S_::template super_t<shrink_t<Y>>;};
-		template <typename Y=T> using super_t = typename super<Y, subtype, constant_0<size_t>>::type;
+		template <typename   Y, typename X, constant_q W> struct super          {using type = Y;};
+		template <              typename X, constant_q W> struct super<T, X, W> {using type = T;};
+		template <              typename X, constant_q W> struct super<W, X, W> {using type = X;};
+		template <constant_q Y, typename X, constant_q W> struct super<Y, X, W> {using type = typename S_::template super_t<substant_t<Y>>;};
+		template <typename Y=T> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
 
 		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
 		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
 		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
-		using tuple_size = constant_0<size_t>;
+		using tuple_size = constant_t<(size_t) 0>;
 
 //	protected:
 		using self_t = T;
 
 	};
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
+///\
+Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
+binding `subtype` as the default target of `self`. \
 
 template <typename T>
 struct refine
@@ -93,6 +96,13 @@ struct refine
 
 
 ///////////////////////////////////////////////////////////////////////////////
+///\
+Proxies the given `U` via `head`, \
+providing chained/tupled construction/access. \
+
+///\note\
+Mutable `lvalue`s are converted to pointers, \
+providing a similar level of utility to `std::reference_wrapper`. \
 
 template <typename U>
 struct defer
@@ -105,33 +115,38 @@ struct defer
 		using V  = debased_t<U>;
 
 	protected:
-		template <typename   Y, typename X, constant_q _> struct super         : S_::template super<Y, X, _> {};
-		template <              typename X, constant_q _> struct super<U, X, _>: S_::template super<X, X, _> {};
-		template <              typename X, constant_q _> struct super<_, X, _>: S_::template super<X, X, _> {};
-		template <constant_q Y, typename X, constant_q _> struct super<Y, X, _> {using type = typename S_::template super_t<shrink_t<Y>>;};
-		template <typename Y=U> using super_t = typename super<Y, subtype, constant_0<size_t>>::type;
-
-		V body_m;
-	//	V body_m{};
+		template <typename   Y, typename X, constant_q W> struct super         : S_::template super<Y, X, W> {};
+		template <              typename X, constant_q W> struct super<U, X, W>: S_::template super<X, X, W> {};
+		template <              typename X, constant_q W> struct super<W, X, W>: S_::template super<X, X, W> {};
+		template <constant_q Y, typename X, constant_q W> struct super<Y, X, W> {using type = typename S_::template super_t<substant_t<Y>>;};
+		template <typename Y=U> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
 
 	public:
 	//	using S_::S_;
 		using S_::self;
-		using body_t = V;
 		using head_t = U;
+		using body_t = V;
 
-		XTAL_CO0_(subtype);
+// NOTE: Making `body_m` `public` permits structural typing when `std::is_const_v`. \
+		body_t body_m{};
+		body_t body_m;
+
+		///\
+		Default constructor. \
+
 		XTAL_CO4_(subtype);
-
+	//	XTAL_CO0_(subtype);
+		
+		XTAL_CON subtype()
+		XTAL_0EX
+	//	XTAL_REQ_(body_t{})// NOTE: Required for `MSVC`?
+		:	subtype(body_t{})
+		{}
+		
 		///\
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
 
-		XTAL_CON subtype()
-		XTAL_0EX
-		XTAL_REQ_(body_t{})
-		:	subtype(body_t{})
-		{}
 		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ constant_q<U>
@@ -160,6 +175,7 @@ struct defer
 		
 		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
 		XTAL_0EX
+		XTAL_REQ remember_q<U>
 		{
 			return heady(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
 		}
@@ -241,6 +257,9 @@ struct defer
 
 	};
 };
+///\
+Defers selected operations to `U` as required for `refine`ment. \
+
 template <typename U>
 struct refer: compose<void
 ,	_detail::refer_comparators<U>

@@ -11,10 +11,6 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#include "../concord/etc.hxx"
-#include "./_detail.hxx"
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
@@ -37,11 +33,11 @@ template <_detail::unprocessed_p U>
 struct defer<U>
 :	defer<_v3::ranges::repeat_view<U>>
 {};
-template <typename U> requires _detail::preprocessed_p<U> or any_q<U>
+template <typename U> requires iterated_q<U>
 struct defer<U>
 :	_retail::defer<U>
 {};
-template <typename U> requires _retail::any_q<U> and not_any_q<U>
+template <typename U> requires uniterated_q<U> and _retail::any_q<U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -67,24 +63,24 @@ struct defer<U>
 		NOTE: Unless the underlying `process` is invocable as `const`, \
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
-		template <typename ...Xs>
-		XTAL_FN2 method(Xs &&...xs)
+		template <auto ...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<Xs...>() (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
 		}
-		template <typename ...Xs>
-		XTAL_FN2 method(Xs &&...xs)
+		template <auto ...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
-		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<Xs>)...))
+		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<Xs...>() (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
-		template <typename ...Xs>
-		XTAL_FN2 method(Xs &&...xs)
+		template <auto ...>
+		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<Xs...>() (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -104,7 +100,7 @@ struct refer
 		using S_::S_;
 
 	};
-	template <any_p S> requires _detail::preprocessed_p<U> or _detail::unprocessed_p<U>
+	template <any_p S> requires iterated_q<U> or _detail::unprocessed_p<U>
 	class subtype<S>: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

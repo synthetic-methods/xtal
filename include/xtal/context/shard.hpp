@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 
 #include "../conflux/any.hpp"
 
@@ -17,7 +17,7 @@ References content at the supplied integer address.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename   ...   > struct  shard;
-template <typename   ...Ts > concept shard_q = tag_q<shard, Ts...>;
+template <typename   ...Ts > concept shard_q = tag_p<shard, Ts...>;
 template <constant_q ...Ns >
 struct shard<Ns...>
 {

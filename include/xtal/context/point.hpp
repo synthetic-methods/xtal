@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 
 
 
@@ -20,9 +20,9 @@ template <typename U>
 struct point<U>: lift<U, tag<point>> {};
 
 template <typename ...Ts >
-concept point_q = tag_q<point, Ts...>;
+concept point_q = tag_p<point, Ts...>;
 
-template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
+template <typename S=confined_t<>, typename U=size_x>
 using point_s = compose_s<S, point<U>>;
 
 

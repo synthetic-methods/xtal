@@ -1,11 +1,4 @@
-#pragma once
-#ifdef __INTELLISENSE__// stub...
-#include "./any.hpp"
-#endif
-
-
-
-
+#include "./_.hxx"
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
@@ -14,13 +7,12 @@ namespace _detail
 template <template <typename> typename T_>
 class isotype: public T_<isotype<T_>>
 {
-	using S_ = T_<isotype<T_>>;
+	using S_ = T_<isotype<T_>>;// -Wsubobject-linkage?
 	
 public:
 	using S_::S_;
 
 };
-
 
 template <typename T>
 struct epitype
@@ -112,9 +104,8 @@ template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_CN0 move_to(I i, J const j0, J const jN, F &&f, bool const &o=false)
 XTAL_0EX
 {
-	using namespace _std;
-	auto const _j0 = make_move_iterator(j0);
-	auto const _jN = make_move_iterator(jN);
+	auto const _j0 = mover_f(j0);
+	auto const _jN = mover_f(jN);
 	return copy_to(i, _j0, _jN, XTAL_REF_(f), o);
 }
 template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
@@ -127,9 +118,8 @@ template <iterator_q I, iterator_q J>
 XTAL_CN0 move_to(I i, J j0, J jN, bool const &o=false)
 XTAL_0EX
 {
-	using namespace _std;
-	auto const _j0 = make_move_iterator(j0);
-	auto const _jN = make_move_iterator(jN);
+	auto const _j0 = mover_f(j0);
+	auto const _jN = mover_f(jN);
 	return copy_to(i, _j0, _jN, o);
 }
 template <iterator_q I, bracket_q J> requires (not is_q<I, begin_t<J>>)
@@ -145,8 +135,8 @@ XTAL_CN0 move_to(I i, J &&j)
 XTAL_0EX
 {
 	_std::is_lvalue_reference_v<J>?
-		_std::memcpy (i, begin_f(XTAL_REF_(j)), sizeof(j)):
-		_std::memmove(i, begin_f(XTAL_REF_(j)), sizeof(j));
+		_std::memcpy (i, XTAL_REF_(j).begin(), sizeof(j)):
+		_std::memmove(i, XTAL_REF_(j).begin(), sizeof(j));
 }
 
 

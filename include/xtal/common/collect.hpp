@@ -25,10 +25,10 @@ concept collected_p = requires ()
 
 };
 template <typename ...Ts>
-concept collected_q = (... and collected_p<Ts>);
+concept collected_q = (...and collected_p<Ts>);
 
 ///\
-A decorator that defines the base-types for block-based data storage, \
+A decorator that provides different kinds of block-based data storage, \
 namely `solid` (sharing the same interface as `std::array`), \
 and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
@@ -62,7 +62,7 @@ struct collect<N_size>
 		template <typename V> requires (0 <= N_size)
 		struct solid<V>
 		{
-			using type = compose_s<_std::array<V, N_size>, tag<meta>>;
+			using type = compose_s<_std::array<V, N_size>, tag<>>;
 
 		};
 		
@@ -70,10 +70,9 @@ struct collect<N_size>
 		template <typename V>
 		struct fluid
 		{
-			using type = compose_s<_std::vector<V>, tag<meta>>;
+			using type = compose_s<_std::vector<V>, tag<>>;
 
 		};
-		/**/
 		template <typename V> requires (0 <= N_size)
 		struct fluid<V>
 		{
@@ -86,8 +85,8 @@ struct collect<N_size>
 				using             value_type = V;
 				using         allocator_type = type;// TODO: Define!
 
-				using              size_type = _std::size_t;
-				using        difference_type = _std::ptrdiff_t;
+				using              size_type = size_t;
+				using        difference_type = size_x;
 
 				using              reference =       value_type &;
 				using        const_reference = const value_type &;
@@ -100,10 +99,20 @@ struct collect<N_size>
 				
 				using       reverse_iterator = _std::reverse_iterator<      iterator>;
 				using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
-
 			
 			private:
 				A block_m[N_size]; difference_type limit_m = 0;
+
+
+			public:// ACCESS
+				XTAL_TO2_(XTAL_FN2 begin(), injector_(block_m));
+				XTAL_TO2_(XTAL_FN2   end(), injector_(block_m + limit_m));
+
+			private:
+				XTAL_CN2 injector_(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
+				XTAL_CN2 injector_(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
+				XTAL_CN2 injector_(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
+				XTAL_CN2 injector_(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
 
 
 			public:// SIZE
@@ -143,29 +152,6 @@ struct collect<N_size>
 				XTAL_FN0 shrink_to_fit()
 				XTAL_0EX
 				{}
-
-
-			public:// ACCESS
-				XTAL_TO2_(XTAL_FN2 begin(), injector_(block_m));
-				XTAL_TO2_(XTAL_FN2   end(), injector_(block_m + limit_m));
-
-			protected:
-				XTAL_CN2   injector_(      A *i) XTAL_0EX {return appointer_f<      V *>(i);}
-				XTAL_CN2   injector_(const A *i) XTAL_0EX {return appointer_f<const V *>(i);}
-				XTAL_CN2   injector_(      V *i) XTAL_0EX {return appointer_f<      A *>(i);}
-				XTAL_CN2   injector_(const V *i) XTAL_0EX {return appointer_f<const A *>(i);}
-				XTAL_CN1   injector_(XTAL_DEF i) XTAL_0EX {return            injector_(XTAL_REF_(i)) ;}
-				XTAL_CN1 reinjector_(XTAL_DEF i) XTAL_0EX {return reversing_(injector_(XTAL_REF_(i)));}
-				XTAL_CN1  reversing_(XTAL_DEF i) XTAL_0EX {return _std::make_reverse_iterator(XTAL_REF_(i));}				
-				XTAL_CN1     moving_(XTAL_DEF i) XTAL_0EX {return _std::   make_move_iterator(XTAL_REF_(i));}				
-				///\
-				Clears `this` and invokes `insert_back` with the given arguments. \
-
-				XTAL_FN1 refresh_(XTAL_DEF... etc)
-				{
-					clear(); push_back(XTAL_REF_(etc)...);
-					return *this;
-				}
 
 
 			public:// CONSTRUCTION
@@ -228,7 +214,7 @@ struct collect<N_size>
 
 				XTAL_CON type(type &&t)
 				XTAL_REQ _std::move_constructible<V>
-				:	type(moving_(t.begin()), moving_(t.end()))
+				:	type(mover_f(t.begin()), mover_f(t.end()))
 				{}
 				///\
 				Move assigment. \
@@ -237,7 +223,7 @@ struct collect<N_size>
 				XTAL_OP1 = (type &&t)
 				XTAL_REQ _std::move_constructible<V>
 				{
-					return refresh_(moving_(t.begin()), moving_(t.end()));
+					return refresh_(mover_f(t.begin()), mover_f(t.end()));
 				}
 
 				///\
@@ -252,7 +238,17 @@ struct collect<N_size>
 					_std::swap_ranges(injector_(i0), injector_(iN), injector_(j0));
 				}
 
-			
+			private:
+				///\
+				Clears `this` and invokes `insert_back` with the given arguments. \
+
+				XTAL_FN1 refresh_(XTAL_DEF... etc)
+				{
+					clear(); push_back(XTAL_REF_(etc)...);
+					return *this;
+				}
+
+
 			public:// ALLOCATION
 				///\
 				Inserts the values `etc` beginning at `i0`. \
@@ -477,7 +473,6 @@ struct collect<N_size>
 
 			};
 		};
-		/***/
 
 		template <typename V> using fluid_t = typename fluid<V>::type;
 		template <typename V> using solid_t = typename solid<V>::type;
@@ -493,10 +488,10 @@ struct collect<N_size>
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::array_q T> requires xtal::common::tag_p<xtal::meta, T>
+template <xtal::array_q T> requires xtal::common::tag_q<T>
 struct tuple_size<T>: xtal::arity_t<T> {};
 
-template <size_t N, xtal::array_q T> requires xtal::common::tag_p<xtal::meta, T>
+template <size_t N, xtal::array_q T> requires xtal::common::tag_q<T>
 struct tuple_element<N, T> {using type = xtal::value_t<T>;};
 
 

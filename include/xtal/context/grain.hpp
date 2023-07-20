@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 
 
 
@@ -20,9 +20,9 @@ template <typename U>
 struct grain<U>: lift<U, tag<grain>> {};
 
 template <typename ...Ts >
-concept grain_q = tag_q<grain, Ts...>;
+concept grain_q = tag_p<grain, Ts...>;
 
-template <typename S=confined_t<>, typename U=_std::ptrdiff_t>
+template <typename S=confined_t<>, typename U=size_x>
 using grain_s = compose_s<S, grain<U>>;
 
 

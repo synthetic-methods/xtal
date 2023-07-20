@@ -1,14 +1,16 @@
 #ifdef __INTELLISENSE__// stub...
-#include "./etc.hpp"
+#include "./anybody.hpp"
 #endif
 
 #if not XTAL_LOG
 class
 {
 public:
-	XTAL_OP1() (XTAL_DEF x, XTAL_DEF ...xs)
+	XTAL_OP1() (XTAL_DEF ...xs)
 	{
-		return XTAL_REF_(x);
+		if constexpr (0 < sizeof...(xs)) {
+			return (XTAL_REF_(xs), ...);
+		}
 	}
 
 } echo;
@@ -46,19 +48,16 @@ class
 	}
 
 public:
-	XTAL_FN1 operator() (XTAL_DEF ...xs)
+	XTAL_OP1() (XTAL_DEF ...xs)
 	{
-		::std::cout << '\t';
-		auto const x = (put(XTAL_REF_(xs)), ...);
-		::std::cout << '\n';
-		return x;
-	}
-	XTAL_FN1 operator() (XTAL_DEF ...xs)
-	XTAL_REQ (0 == sizeof...(xs)) 
-	{
-		::std::cout << '\t';
-		(put(XTAL_REF_(xs)), ...);
-		::std::cout << '\n';
+		if constexpr (0 < sizeof...(xs)) {
+			::std::cout << '\t'; auto const x = (put(XTAL_REF_(xs)), ...);
+			::std::cout << '\n';
+			return x;
+		}
+		else {
+			::std::cout << '\n';
+		}
 	}
 
 } echo;

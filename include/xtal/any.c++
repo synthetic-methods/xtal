@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hpp"
-#include "./process/etc.hpp"
-#include "./control/etc.hpp"
+#include "./process/anybody.hpp"
+#include "./control/anybody.hpp"
 #include "./control/restep.hpp"
 
 #include <catch2/catch_all.hpp>
@@ -13,13 +13,12 @@ namespace xtal::__test
 
 using namespace common;
 
-
-////////////////////////////////////////////////////////////////////////////////
-
 using level_t = control::label_t<typename realized::alpha_t, struct T_level>;
 using  bias_t = control::label_t<typename realized::alpha_t, struct T_bias >;
 using  coef_t = control::label_t<typename realized::alpha_t, struct T_coef >;
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 struct mix
 {

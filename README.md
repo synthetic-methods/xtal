@@ -159,41 +159,41 @@ With the project in genesis, the only supported package manager is `conan --vers
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The files [`**/all.hpp`](include/xtal/all.hpp?ts=3) export all definitions at a given level. At the leaves, this includes fundamental types like `etc` and specializations like `monomer`, etc.
+The [`**/all.hpp`](include/xtal/all.hpp?ts=3) exports all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
 
-The files [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provide the base types and concepts for the respective domain.
+The [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
-The files [`**/etc.hpp`](include/xtal/concord/etc.hpp?ts=3) provide the core definitions used to extend these types. At the leaves, this includes decorators like `define`, `defer`, etc.
-
-The files [`**/etc.hxx`](include/xtal/concord/etc.hxx?ts=3) scaffold higher-level decorators based on `[dr]efine` and/or `[dr]efer`, and are intended to be `#include`d within a namespace in which these decorators are provided.
+The [`**/anybody.hpp`](include/xtal/concord/anybody.hpp?ts=3) provides the key definitions `[dr]efine` and `[dr]efer` which are scaffolded by [`common/_kernel.hxx`](include/xtal/common/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
-To navigate the essentials, it is useful to toggle the visibility of the `all.*`, `any.*`, and `*.c*` files. For example, the VSCode plug-ins [Toggle](https://marketplace.visualstudio.com/items?itemName=rebornix.toggle) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file) can be used to control access to `files.exclude` via `keybindings.json` as follows:
+To navigate the essentials, it is useful to toggle the visibility of the `all.*`, `any.*`, and `*.c*` files. For example, the VSCode plug-ins [Toggle](https://marketplace.visualstudio.com/items?itemName=rebornix.toggle) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file) can be used to control access via the following `keybindings.json`:
 
-	[  {  "key": "cmd+shift+enter",
-	      "command": "toggle",
-	      "args": {
-	         "id": "toggle:files.exclude",
-	         "value":
-	         [  {  "files.exclude": {}
+	{  "key": "cmd+shift+enter",
+	   "command": "toggle",
+	   "args": {
+	      "id": "toggle:files.exclude",
+	      "value":
+	      [  {  "explorer.excludeGitIgnore": false
+	         ,  "files.exclude":
+	            {  "**/.*"
 	            }
-	         ,  {  "files.exclude":
-	               {  "**/build/**":true
-	               ,  "**/CMakeUserPresets.json": true
-	               ,  "*.sublime-*": true
-	               ,  ".*": true
-	               ,  "**/*.c*": true
-	               }
+	         }
+	      ,  {  "explorer.excludeGitIgnore": true
+	         ,  "files.exclude":
+	            {  "**/.*"
+	            ,  "include/xtal/**/*.c*": true
+	            ,  "include/xtal/*/any.*": true
+	            ,  "include/xtal/*/all.*": true
 	            }
-	         ]
-	      }
-	   },
-	   {
-	      "key": "cmd+enter",
-	      "command": "openRelatedFiles.open"
+	         }
+	      ]
 	   }
-	]
+	},
+	{
+	   "key": "cmd+enter",
+	   "command": "openRelatedFiles.open"
+	}
 
 
 ## Macros
@@ -260,7 +260,7 @@ The primary namespaces within `xtal` comprise a hierarchy linked by the namespac
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`etc.hpp`](include/xtal/process/etc.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/etc.hxx`](include/xtal/concord/etc.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`common/_kernel.hxx`](include/xtal/common/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -285,15 +285,15 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Feature                    |Reference|
 |---------------------------|---------|
 |Dependency composition     |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
-|Dependency management      |[`conflux/etc.hpp`](include/xtal/conflux/etc.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`conflux/etc.hpp`](include/xtal/conflux/etc.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter bond             |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::(?:attach\|dispatch)`|
-|Parameter sampling         |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::hold`|
-|Parameter scheduling       |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::intermit`|
-|Parameter in(tro)spection  |[`control/etc.hpp`](include/xtal/control/etc.hpp?ts=3) via `::(?gauge\|guard)`|
-|Process lifting            |[`process/etc.hpp`](include/xtal/process/etc.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Dependency management      |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter bond             |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?:attach\|dispatch)`|
+|Parameter sampling         |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::hold`|
+|Parameter scheduling       |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::intermit`|
+|Parameter in(tro)spection  |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?gauge\|guard)`|
+|Process lifting            |[`process/anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
-|Processor lifting          |[`processor/etc.hpp`](include/xtal/processor/etc.hpp?ts=3) via `\.(?:de\|re)fer`|
+|Processor lifting          |[`processor/anybody.hpp`](include/xtal/processor/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Processor resizing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
 |Processor rendering        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
 |Processor streaming        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|

@@ -10,6 +10,10 @@ XTAL_ENV_(push)
 namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Specializes the classes defined by `collect`, \
+providing fluid-size queues and fixed-size algebraic coordinates. \
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +29,7 @@ concept collated_p = requires ()
 
 };
 template <typename ...Ts>
-concept collated_q = (... and collated_p<Ts>);
+concept collated_q = (...and collated_p<Ts>);
 
 
 template <int ...Ns>
@@ -43,19 +47,7 @@ struct collate<N_size>
 	class subtype: public S
 	{
 		template <typename V>
-		struct solid_
-		{
-			using demikind = typename metatype::template solid<V>;
-			using demitype = typename demikind::type;
-		
-			template <typename T>
-			using homotype = typename _detail::epitype<T>::template subtype<demitype>;
-
-			using type = _detail::isotype<homotype>;
-
-		};
-		template <typename V>
-		struct fluid_
+		struct spindle
 		{
 			using demikind = typename metatype::template fluid<V>;
 			using demitype = typename demikind::type;
@@ -70,7 +62,7 @@ struct collate<N_size>
 	public:
 		using S::S;
 		using collated = constant_t<N_size>;
-
+		
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
 		
@@ -87,7 +79,7 @@ struct collate<N_size>
 				using R_ = hemitype<type>;
 
 				using value_t = V;
-				using fluid_t = typename fluid_<V>::type;
+				using fluid_t = typename spindle<V>::type;
 				using valve_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
 
@@ -200,21 +192,32 @@ struct collate<N_size>
 		{
 			using _realized = realize<V>;
 			
+			using demikind = typename metatype::template solid<V>;
+			using demitype = typename demikind::type;
+		
 			template <typename T>
-			using hemitype = typename solid_<V>::template homotype<T>;
+			using hemitype = typename _detail::epitype<T>::template subtype<demitype>;
 
 			template <typename T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
 			{
 				friend T;
 				using R_ = hemitype<T>;
+				using I_ = typename R_::size_type;
+
+		//	protected:
+			public:
+				XTAL_DO4_(XTAL_FN0 oh_(I_ i), {assert(0 <= i and i < N_size);})
+				XTAL_FN2 ah_(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(R_::operator[](i));}
+				XTAL_FN2 ah_(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(R_::operator[](i));}
+				XTAL_FN2 ah_(I_ i) XTAL_0EX_(&)  {return           R_::operator[](i) ;}
+				XTAL_FN2 ah_(I_ i) XTAL_0FX_(&)  {return           R_::operator[](i) ;}
+				XTAL_TO4_(XTAL_FN2 at_(I_ i), (oh_(i), ah_(i)))
 
 			public:
 				using R_::R_;
 				using R_::self;
 				using R_::twin;
-				using R_::operator[];
-			//	XTAL_LET v_ = static_cast<V& (R_::*) (size_t) &>(&R_::operator[]);
 
 				template <bracket_q U>
 				XTAL_CXN homotype(U &&u)
@@ -257,7 +260,7 @@ struct collate<N_size>
 				XTAL_0EX
 				XTAL_REQ (0 < N_size) and (N_size <= _realized::alignment_v)
 				{
-					seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) = f(operator[](i))));
+					seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) = f(at_(i))));
 					return self();
 				}
 
@@ -274,19 +277,19 @@ struct collate<N_size>
 					else if (s  > t) return _std::strong_ordering::   greater;
 					else             return _std::strong_ordering::equivalent;
 				}
-				XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(... and (operator[](I) == t[I])) (seek_f<N_size> {});}
-				XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(... and (operator[](I) <= t[I])) (seek_f<N_size> {});}
-				XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(... and (operator[](I) >= t[I])) (seek_f<N_size> {});}
-				XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(... and (operator[](I) <  t[I])) (seek_f<N_size> {});}
-				XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(... and (operator[](I) >  t[I])) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (at_(I) == t.at_(I))) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (at_(I) <= t.at_(I))) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (at_(I) >= t.at_(I))) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (at_(I) <  t.at_(I))) (seek_f<N_size> {});}
+				XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (at_(I) >  t.at_(I))) (seek_f<N_size> {});}
 
 				XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
 				XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
 				XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 				XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) *= XTAL_REF_(w))), self();}
-				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) /= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) *= XTAL_REF_(w))), self();}
+				XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<V>) w) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) /= XTAL_REF_(w))), self();}
 
 			};
 			using type = _detail::isotype<homotype>;
@@ -310,9 +313,9 @@ struct collate<N_size>
 			
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 				using R_::twin;
-				using R_::operator[];
 
 				///\
 				The counterpart to `this` for which addition is linear, \
@@ -324,20 +327,20 @@ struct collate<N_size>
 				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 				XTAL_OP1_(T &) /= (bracket_t<V> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 				
-				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) *= t[i])), self();}
-				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) /= t[i])), self();}
+				XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) *= t.at_(i))), self();}
+				XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) /= t.at_(i))), self();}
 
 				XTAL_FN2 sum()
 				XTAL_0FX
 				{
 					return [&, this]<auto ...N>(seek_t<N...>)
-						XTAL_0FN_(operator[](N) +...+ V())
+						XTAL_0FN_(at_(N) +...+ V())
 					(seek_f<N_size> {});
 				}
 				XTAL_FN2 dot()
 				XTAL_0FX
 				{
-					return _realized::square_y(*this).sum();
+					return _realized::square_f(*this).sum();
 				}
 				XTAL_FN2 dot(XTAL_DEF_(iterated_q) that)
 				XTAL_0FX
@@ -356,9 +359,9 @@ struct collate<N_size>
 				XTAL_0FX
 				XTAL_REQ (N_size == 2)
 				{
-					auto const scale = _realized::explo_y(_realized::template unsquare_y<-1>(2), 1 - n_bias);
-					auto const lhs = scale*operator[](0);
-					auto const rhs = scale*operator[](1);
+					auto const scale = _realized::explo_f(_realized::template unsquare_f<-1>(2), 1 - n_bias);
+					auto const lhs = scale*at_(0);
+					auto const rhs = scale*at_(1);
 					if constexpr (N_par ==  0) {
 						return T {lhs + rhs, lhs - rhs};
 					}
@@ -401,9 +404,9 @@ struct collate<N_size>
 			
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 				using R_::twin;
-				using R_::operator[];
 
 				///\
 				The counterpart to `this` for which multiplication is linear. \
@@ -414,8 +417,8 @@ struct collate<N_size>
 				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 				XTAL_OP1_(T &) -= (bracket_t<V> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
 				
-				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) += t[i])), self();}
-				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seeker_f<N_size>([&, this] (auto i) XTAL_0FN_(operator[](i) -= t[i])), self();}
+				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) += t.at_(i))), self();}
+				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) -= t.at_(i))), self();}
 
 			};
 			using type = _detail::isotype<homotype>;
@@ -442,9 +445,9 @@ struct collate<N_size>
 
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 				using R_::twin;
-				using R_::operator[];
 
 				///\
 				Generates part of the complex sinusoid determined by `std::pow(2, shift_o::value)`. \
@@ -468,7 +471,6 @@ struct collate<N_size>
 				XTAL_FN1_(T &) generate(V const &u)
 				XTAL_0EX
 				{
-					auto &s = self();
 					using I = typename R_::difference_type;
 
 				//	Compute the start- and end-points for the required segment:
@@ -480,23 +482,23 @@ struct collate<N_size>
 					I constexpr N2 = N_index + N_limit - 2;
 
 				//	Compute and populate the 0th and 1st powers:
-					auto const o = _realized::template explo_y<N_index>(u);
-					s[_0] = o;
-					s[_1] = o*u;
+					auto const o = _realized::template explo_f<N_index>(u);
+					at_(_0) = o;
+					at_(_1) = o*u;
 
 					for (I i = _1; i < _H; ++i) {
-						auto w = _realized::square_y(s[i]);
+						auto w = _realized::square_f(at_(i));
 					
 					//	Use the square of the previous value to populate the value at `i << 1`:
 						I ii = i << 1;
-						s[ii + 0] = w;
-						s[ii + 1] = w*u;
+						at_(ii + 0) = w;
+						at_(ii + 1) = w*u;
 					}
 				//	Compute the final value if `N_limit` is odd:
 					if constexpr (N_limit&1) {
-						s[N1] = s[N2]*u;
+						at_(N1) = at_(N2)*u;
 					}
-					return s;
+					return self();
 				}
 
 				///\returns `this` as the complex sinusoid with length `2*PI*std::pow(2, N_shift)`,  `-3 <= N_shift`. \
@@ -514,8 +516,8 @@ struct collate<N_size>
 					auto const j = R_::rend() - 1;
 					
 				//	Compute the fractional sinusoid for the given `N_size`:
-					auto constexpr x = _realized::template patio_y<-1>(N_size);
-					auto const     y = _realized::circle_y(x);// TODO: Make `constexpr`.
+					auto constexpr x = _realized::template patio_f<-1>(N_size);
+					auto const     y = _realized::circle_f(x);// TODO: Make `constexpr`.
 					
 				//	Compute the initial `1/8`th then mirror the remaining segments:
 					typename R_::difference_type constexpr N = N_size >> 2;// `1/8`th
@@ -548,19 +550,19 @@ struct collate<N_size>
 				//	Ensure the size of both domain and codomain are powers of two:
 					I const n_size = that.size(); assert(2 <= n_size);
 					I const h_size = n_size >> 1; assert(1 <= h_size);
-					I const k_size = realize<I>::bit_floor_y((I) n_size); assert(n_size == 1 << k_size);
-					I const K_size = realize<I>::bit_floor_y((I) N_size); assert(k_size <= K_size);
+					I const k_size = realize<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
+					I const K_size = realize<I>::bit_floor_f((I) N_size); assert(k_size <= K_size);
 
 				//	Move all entries to their bit-reversed locations:
 					for (I h = 0; h < h_size; ++h) {
-						_std::swap(that[h], that[realize<I>::bit_reverse_y(h, k_size)]);
+						_std::swap(that[h], that[realize<I>::bit_reverse_f(h, k_size)]);
 					}
 				
 				//	Conjugate the input if computing the inverse transform of the codomain:
 					if constexpr (degenerate) {
 						_detail::apply_to(that, [] XTAL_1FN_(_std::conj));
 					}
-				//	Compute the transform of `that` using the precomputed sinusoid via `operator[]`:
+				//	Compute the transform of `that` using the precomputed sinusoid via `at_`:
 					for (I k = 0; k < k_size; ++k) {
 						I const kn = K_size - k;
 						I const u = 1 << k;
@@ -568,7 +570,7 @@ struct collate<N_size>
 						I const n = n_size;
 						for (I                  i = 0; i < u; i += 1) {
 						for (I knife = i << kn, j = i; j < n; j += w) {
-							V const y = that[j + u]*operator[](knife);
+							V const y = that[j + u]*at_(knife);
 							V const x = that[j + 0];
 							that[j + u] = x - y;
 							that[j + 0] = x + y;
@@ -576,7 +578,7 @@ struct collate<N_size>
 					}
 				//	Conjugate and scale the output if computing the inverse transform of the codomain:
 					if constexpr (degenerate) {
-						auto const u_size = _realized::template ratio_y<1>(n_size);
+						auto const u_size = _realized::template ratio_f<1>(n_size);
 						_detail::apply_to(that, [&]XTAL_1FN_(u_size*_std::conj));
 					}
 				
@@ -618,7 +620,7 @@ struct collate<N_size>
 				XTAL_OP1_(T &) *=(T const &t)
 				XTAL_0EX
 				{
-					T &s = self();
+					auto &s = self();
 					if constexpr (complex_operators_q<V>) {
 						T(constant_t<-1>{}).convolve(s, t);
 					}
@@ -662,9 +664,9 @@ struct collate<N_size>
 			
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 				using R_::twin;
-				using R_::operator[];
 
 				///\
 				Multiplication by linear convolution, truncated by `N_size`. \
@@ -672,18 +674,17 @@ struct collate<N_size>
 				XTAL_OP1_(T &) *=(T const &t)
 				XTAL_0EX
 				{
-					auto constexpr h = N_size;
-					auto &s = self();
+					auto constexpr H = (size_x) N_size;
 					auto _s = self();
-					if constexpr (_realized::alignment_v < N_size) {
-						for (_std::ptrdiff_t i = h;   ~--i;) {s[i] *= t[0];
-						for (_std::ptrdiff_t j = i; j; --j ) {s[i] += t[j]*_s[i - j];}}
+					if constexpr (_realized::alignment_v < H) {
+						for (auto i = H;   ~--i;) {at_(i) *= t.at_(0);
+						for (auto j = i; j; --j ) {at_(i) += t.at_(j)*_s[i - j];}}
 					}
 					else {
-						antiseeker_f<h, 0>([&, this] (auto i) XTAL_0FN {s[i] *= t[0];
-						antiseeker_f<i, 1>([&, this] (auto j) XTAL_0FN {s[i] += t[j]*_s[i - j];});});
+						seek_e<-(size_x) H, 0>([&, this] (auto I) XTAL_0FN {at_(I) *= t.at_(0);
+						seek_e<-(size_x) I, 1>([&, this] (auto J) XTAL_0FN {at_(I) += t.at_(J)*_s[I - J];});});
 					}
-					return s;
+					return self();
 				}
 				XTAL_OP2_(T) * (T const &t)
 				XTAL_0FX
@@ -712,6 +713,7 @@ struct collate<N_size>
 			
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 				using R_::twin;
 
@@ -747,11 +749,10 @@ struct collate<N_size>
 				XTAL_OP1 ++ ()
 				XTAL_0EX
 				{
-					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[0 + i] += s[1 + i]));
-					return s.reduce();
+					seek_e<M>([&, this] (auto i) XTAL_0FN_(at_(0 + i) += at_(1 + i)));
+					return self().reduce();
 				}
 
 				///\
@@ -766,11 +767,10 @@ struct collate<N_size>
 				XTAL_OP1 -- ()
 				XTAL_0EX
 				{
-					auto &s = self();
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
-					seeker_f<M>([&, this] (auto i) XTAL_0FN_(s[M - i] -= s[N - i]));
-					return s.reduce();
+					seek_e<M>([&, this] (auto i) XTAL_0FN_(at_(M - i) -= at_(N - i)));
+					return self().reduce();
 				}
 
 				XTAL_FN1 reduce()
@@ -803,6 +803,7 @@ struct collate<N_size>
 			
 			public:
 				using R_::R_;
+				using R_::at_;
 				using R_::self;
 
 				///\
@@ -812,9 +813,8 @@ struct collate<N_size>
 				XTAL_0EX
 				{
 					static_assert(_std::floating_point<V> and 0 < N_size);
-					auto &s = self();
-					s[0] -= _std::round(s[0]);
-					return s;
+					at_(0) -= _std::round(at_(0));
+					return self();
 				}
 
 			};

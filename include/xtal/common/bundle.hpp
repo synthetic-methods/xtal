@@ -11,11 +11,13 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+
 template <typename    T  >    using bundle_size   = _std::tuple_size<_std::remove_reference_t<T>>;
 template <typename    T  >    using bundle_size_t =   typename bundle_size<T>::type;
 template <typename    T  > XTAL_LET bundle_size_v =            bundle_size<T>{};
 template <typename    T  >  concept bundle_size_p = constant_p<bundle_size_t<T>>;
-template <typename ...Ts >  concept bundle_size_q =   (... and bundle_size_p<Ts>);
+template <typename ...Ts >  concept bundle_size_q =   (...and bundle_size_p<Ts>);
 
 template <typename T, size_t ...Ns >  struct bundle_part;
 template <typename T, size_t... Ns >   using bundle_part_t = typename bundle_part<T, Ns...>::type;
@@ -81,13 +83,13 @@ XTAL_0FN_(_std::forward_as_tuple<Xs...>(XTAL_REF_(xs)...));
 
 
 template <typename    T  > concept bundle_p = bundle_size_p<T> and bundle_parts_p<T>;
-template <typename ...Ts > concept bundle_q = (... and bundle_p<Ts>);
+template <typename ...Ts > concept bundle_q = (...and bundle_p<Ts>);
 
 template <typename    T  > concept heterogeneous_bundle_p = bundle_p<T> and not iterated_q<T>;
 template <typename    T  > concept   homogeneous_bundle_p = bundle_p<T> and     iterated_q<T>;
 
-template <typename ...Ts > concept heterogeneous_bundle_q = (... and heterogeneous_bundle_p<Ts>);
-template <typename ...Ts > concept   homogeneous_bundle_q = (... and   homogeneous_bundle_p<Ts>);
+template <typename ...Ts > concept heterogeneous_bundle_q = (...and heterogeneous_bundle_p<Ts>);
+template <typename ...Ts > concept   homogeneous_bundle_q = (...and   homogeneous_bundle_p<Ts>);
 
 
 XTAL_CN2 bundle_part_f(XTAL_DEF_(bundle_p) t)

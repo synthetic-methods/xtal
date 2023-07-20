@@ -10,32 +10,36 @@ XTAL_ENV_(push)
 namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Remixes the classes defined by `collate`, \
+providing heterogeneous combinations of vectorized values. \
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
-concept chelated_p = requires ()
+concept collaged_p = requires ()
 {
-	typename T::chelated;
-	requires constant_q<typename T::chelated>;
-	requires (T::chelated::value != 0);
+	typename T::collaged;
+	requires constant_q<typename T::collaged>;
+	requires (T::collaged::value != 0);
 	
 	typename T::template spool<unit_t>;
 	requires iterated_q<typename T::template spool<unit_t>::type>;
 
 };
 template <typename ...Ts>
-concept chelated_q = (... and chelated_p<Ts>);
+concept collaged_q = (...and collaged_p<Ts>);
 
 
 template <int ...Ns>
-struct chelate;
+struct collage;
 
 template <int ...Ns>
-using chelate_t = typename chelate<Ns...>::type;
+using collage_t = typename collage<Ns...>::type;
 
 template <int N_size>
-struct chelate<N_size>
+struct collage<N_size>
 {
 	using metatype = collate_t<N_size>;
 
@@ -44,7 +48,7 @@ struct chelate<N_size>
 	{
 	public:
 		using S::S;
-		using chelated = constant_t<N_size>;
+		using collaged = constant_t<N_size>;
 
 		///\
 		Combines both `pulsar` and `phasor` from `collate`, \
@@ -114,16 +118,8 @@ struct chelate<N_size>
 				///\
 				Accessories. \
 
-				XTAL_DO4_(XTAL_FN2 phase(size_t i),
-				{
-					assert(0 <= i and i < N_size);
-					return phase()[i];
-				})
-				XTAL_DO4_(XTAL_FN2 pulse(size_t i),
-				{
-					assert(0 <= i and i < N_size);
-					return pulse()[i];
-				})
+				XTAL_TO4_(XTAL_FN2 phase(size_t i), phase().at_(i))
+				XTAL_TO4_(XTAL_FN2 pulse(size_t i), pulse().at_(i))
 
 				XTAL_FN2 phase() XTAL_0EX_( &) {return          (phase_m);}
 				XTAL_FN2 phase() XTAL_0FX_( &) {return          (phase_m);}
@@ -147,23 +143,14 @@ struct chelate<N_size>
 				///\
 				Synchronized finite differencing. \
 
-				XTAL_OP1 ++ (int)
-				XTAL_0EX
-				{
-					auto t = twin(); operator++(); return t;
-				}
+				XTAL_OP1 ++ (int) XTAL_0EX {auto t = twin(); operator++(); return t;}
+				XTAL_OP1 -- (int) XTAL_0EX {auto t = twin(); operator--(); return t;}
 				XTAL_OP1 ++ ()
 				XTAL_0EX
 				{
 					++pulse_m;
 					++phase_m;
 					return self();
-				}
-
-				XTAL_OP1 -- (int)
-				XTAL_0EX
-				{
-					auto t = twin(); operator--(); return t;
 				}
 				XTAL_OP1 -- ()
 				XTAL_0EX

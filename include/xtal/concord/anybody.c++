@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./etc.hpp"// testing...
+#include "./anybody.hpp"// testing...
 
 
 
@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/concord/etc.hpp: tuple mania")
+TEST_CASE("xtal/concord/anybody.hpp: tuple mania")
 {
 	using namespace common;
 
@@ -57,7 +57,7 @@ TEST_CASE("xtal/concord/etc.hpp: tuple mania")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/concord/etc.hpp: partial reinitialization")
+TEST_CASE("xtal/concord/anybody.hpp: partial reinitialization")
 {
 	using namespace common;
 

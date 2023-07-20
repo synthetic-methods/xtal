@@ -11,10 +11,40 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#include "./_detail.hxx"
+template <typename ...> struct compose;
+template <typename    > struct realize;
 
-template <typename T>
-struct realize;
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Creates a unique `subtype<S>` tagged by the given `As...`, \
+such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`. \
+
+template <typename ...As>
+struct any
+{
+	using subkind = compose<any<As>...>;
+
+	template <typename S>
+	using subtype = typename subkind::template subtype<S>;
+
+};
+template <typename A>
+struct any<A>
+{
+	template <typename S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
+
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+#include "./_detail.hxx"
 
 
 ///////////////////////////////////////////////////////////////////////////////

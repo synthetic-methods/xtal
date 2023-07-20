@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 #include "../context/scope.hpp"
 #include "../context/grain.hpp"
 #include "../control/stasis.hpp"
@@ -15,7 +15,7 @@ template <typename ...>
 struct polymer;
 
 template <typename ...Ts>
-XTAL_ASK polymer_q = tag_q<polymer, Ts...>;
+XTAL_ASK polymer_q = tag_p<polymer, Ts...>;
 
 template <typename ..._s>
 XTAL_USE polymer_t = confined_t<polymer<_s...>>;
@@ -26,14 +26,11 @@ XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Polyphonic `grain` allocator with capacity `N_voice::value`. \
-The `processor` supplied to `bond` is used as the underlying `value_type`. \
-If constructed with `bond_f`, the supplied value is used as the sentinel, \
-meaning any upstream references will be preserved. \
+Polyphonic voice allocator. Functionally similar to `monomer`, \
+but expands/contracts the voice pool according to `control::stasis` requests/responses. \
 
 ///\note\
-The use of `bond` as the lifting mechanism is intended both to mirror `monomer`, \
-and to allow `collect<...>, As...` to establish the type of the underlying `store`. \
+The attached `collect` and `collate` determine the sample buffer and voice spool respectively. \
 
 template <typename U, typename ...As>
 struct polymer<U, As...>
@@ -67,9 +64,9 @@ struct polymer<U, As...>
 			using spool_u = typename S_::template spool_t<voice_u>;
 
 			using subkind = compose<tag<polymer>
-			,	typename control::vacant_t::rend
+			,	typename control::confined_t<>::rend
 			,	defer<stave_u>
-			,	As...
+			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
 			>;
 			template <any_p R>
@@ -138,7 +135,7 @@ struct polymer<U, As...>
 				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = (... or control::sequel_q<decltype(oo)>);
+					bool constexpr impure = (...or control::sequel_q<decltype(oo)>);
 					return _v3::ranges::accumulate(spool_m
 					,	impure? -1: spine().efflux(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
@@ -169,7 +166,7 @@ struct polymer<U, As...>
 					using namespace _detail;
 					auto i = spool_m.begin(), iN = spool_m.end();
 					tunnel_f(respan_x, i++);
-					antiseeker_f<4>([&, this] (auto M)// 3, 2, 1, 0
+					seek_e<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
 						size_t constexpr N = (size_t) 1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {

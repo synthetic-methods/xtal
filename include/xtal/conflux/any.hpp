@@ -1,5 +1,5 @@
 #pragma once
-#include "../concord/etc.hpp"// `_retail`
+#include "../concord/anybody.hpp"// `_retail`
 
 
 
@@ -12,7 +12,7 @@ namespace xtal::conflux
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::concord;
-#include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
 ///////////////////////////////////////////////////////////////////////////////

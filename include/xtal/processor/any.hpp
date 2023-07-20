@@ -1,5 +1,5 @@
 #pragma once
-#include "../process/etc.hpp"// `_retail`
+#include "../process/anybody.hpp"// `_retail`
 
 
 
@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _retail = xtal::process;
-#include "../concord/any.hxx"
+#include "./_detail.hxx"
 
 
 ///////////////////////////////////////////////////////////////////////////////

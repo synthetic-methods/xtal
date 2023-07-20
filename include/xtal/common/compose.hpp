@@ -18,7 +18,7 @@ supplied as the outer- and inner- arguments respectively, \
 are evaluated w.r.t. the corresponding right- or left- fold relative to `S`: \
 `A[0]::subtype<...A[N]::subtype<T[N]::subtype<...T[0]::subtype<S>>>>`. \
 
-template <typename...>
+template <typename ...>
 struct compose;
 
 template <>

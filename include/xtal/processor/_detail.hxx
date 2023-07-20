@@ -1,11 +1,4 @@
-#ifdef __INTELLISENSE__// stub...
-#pragma once
-#include "./etc.hpp"
-#endif
-
-
-
-
+#include "../common/_kernel.hxx"
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +51,7 @@ XTAL_CN2 access_f(XTAL_DEF z)
 XTAL_0EX
 XTAL_REQ  (N != (N|accessory::finite{})) and requires {z.size();}
 {
-	return access_f<N|accessory::finite{}>(XTAL_REF_(z))|taker_f(z);
+	return access_f<N|accessory::finite{}>(XTAL_REF_(z))|recount_f(z);
 }
 
 
@@ -107,7 +100,7 @@ template <iterator_q ...Xs>
 XTAL_CN2 funnel_f(XTAL_DEF y, Xs &&...xs)
 XTAL_0EX
 {
-	auto w_ = taker_f(y);
+	auto w_ = recount_f(y);
 	if constexpr (1 < sizeof...(xs)) {
 		return mix_f(XTAL_REF_(y), mix_f((*XTAL_REF_(xs)|w_)...));
 	}
@@ -122,7 +115,7 @@ template <iterator_q ...Xs>
 XTAL_CN0 tunnel_f(XTAL_DEF y, Xs &&...xs)
 XTAL_0EX
 {
-	auto v_ = begin_f(y);
+	auto v_ = y.begin();
 	if constexpr (0 < sizeof...(xs)) {
 		_v3::ranges::move(funnel_f(XTAL_REF_(y), XTAL_REF_(xs)...), v_);
 	}
@@ -146,9 +139,10 @@ XTAL_0EX
 }
 
 
-template <typename T> concept      mundane_p = not _retail::any_q<T>;
-template <typename T> concept  unprocessed_p = mundane_p<T> and operators_q<T>;
-template <typename T> concept preprocessed_p = mundane_p<T> and   iterated_q<T>;
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename T> concept unprocessed_p = operators_q<T> and not _retail::any_q<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////

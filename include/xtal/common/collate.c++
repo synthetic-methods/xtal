@@ -48,8 +48,8 @@ TEST_CASE("xtal/common/collate.hpp: scalar construction")
 	using alpha_t = typename realized::alpha_t;
 
 	auto foo = typename collate_t<2>::template scalar_t<alpha_t> {2.0, 0.5};
-	auto bar = realized::template unsquare_y<0>((alpha_t) 2);
-	bar.transmute([] XTAL_1FN_(realized::square_y), trim_y<1>);
+	auto bar = realized::template unsquare_f<0>((alpha_t) 2);
+	bar.transmute([] XTAL_1FN_(realized::square_f), trim_f<1>);
 	REQUIRE(foo == bar);
 
 }
@@ -65,10 +65,10 @@ TEST_CASE("xtal/common/collate.hpp: scalar transformation")
 	auto foo = bar.reflected(-1);
 	auto baz = foo.reflected(+1);
 	
-	REQUIRE(trim_y<19>(foo[0]) == 1.25);
-	REQUIRE(trim_y<19>(foo[1]) == 0.75);
-	REQUIRE(trim_y<19>(baz[0]) == bar[0]);
-	REQUIRE(trim_y<19>(baz[1]) == bar[1]);
+	REQUIRE(trim_f<19>(foo[0]) == 1.25);
+	REQUIRE(trim_f<19>(foo[1]) == 0.75);
+	REQUIRE(trim_f<19>(baz[0]) == bar[0]);
+	REQUIRE(trim_f<19>(baz[1]) == bar[1]);
 
 }
 /***/
@@ -99,7 +99,7 @@ TEST_CASE("xtal/common/collate.hpp: series transformation")
 	using alpha_t = typename realized::alpha_t;
 	using aphex_t = typename realized::aphex_t;
 
-	auto    constexpr iffy = [] XTAL_1FN_(trim_y<16>);
+	auto    constexpr iffy = [] XTAL_1FN_(trim_f<16>);
 	sigma_t constexpr O = 1 << 5;
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
@@ -132,7 +132,7 @@ TEST_CASE("xtal/common/collate.hpp: series convolution")
 	using alpha_t = typename realized::alpha_t;
 	using aphex_t = typename realized::aphex_t;
 
-	auto    constexpr iffy = [] XTAL_1FN_(trim_y<16>);
+	auto    constexpr iffy = [] XTAL_1FN_(trim_f<16>);
 	sigma_t constexpr N = 1 << 3;
 	sigma_t constexpr M = N  - 1;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "./etc.hpp"
+#include "./anybody.hpp"
 #include "../control/resize.hpp"
 #include "../control/sequel.hpp"
 

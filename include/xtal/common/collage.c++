@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./chelate.hpp"// testing...
+#include "./collage.hpp"// testing...
 
 
 
@@ -13,13 +13,13 @@ namespace xtal::common::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/common/chelate.hpp: construction supervalue")
+TEST_CASE("xtal/common/collage.hpp: construction supervalue")
 {
 	using alpha_t = typename realized::alpha_t;
 	using delta_t = typename realized::delta_t;
 
-	using quasar_u = typename chelate_t<1>::template quasar_t<alpha_t>;
-	using quasar_t = typename chelate_t<2>::template quasar_t<alpha_t>;
+	using quasar_u = typename collage_t<1>::template quasar_t<alpha_t>;
+	using quasar_t = typename collage_t<2>::template quasar_t<alpha_t>;
 	
 	quasar_t q0(1.125);
 	++q0;
@@ -35,13 +35,13 @@ TEST_CASE("xtal/common/chelate.hpp: construction supervalue")
 /**/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/common/chelate.hpp: construction subsequence")
+TEST_CASE("xtal/common/collage.hpp: construction subsequence")
 {
 	using alpha_t = typename realized::alpha_t;
 	using delta_t = typename realized::delta_t;
 
-	using quasar_u = typename chelate_t<1>::template quasar_t<alpha_t>;
-	using quasar_t = typename chelate_t<2>::template quasar_t<alpha_t>;
+	using quasar_u = typename collage_t<1>::template quasar_t<alpha_t>;
+	using quasar_t = typename collage_t<2>::template quasar_t<alpha_t>;
 	
 	quasar_u q1{0.375};
 	quasar_t q0(q1);

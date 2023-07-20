@@ -130,7 +130,6 @@ void test__respan_provision()
 	xhs << bias_t((alpha_t) (11 + 1));
 	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
 
-//	_std::cout << '\n'; for (auto _: xhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan provision")
 {
@@ -169,7 +168,6 @@ void test__respan_chain_rvalue()
 
 	REQUIRE(yhs.template slot<0>().store().empty());
 
-//	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan internal chain rvalue")
 {
@@ -210,7 +208,6 @@ void test__respan_chain_lvalue()
 
 	REQUIRE(yhs.template slot<0>().store().size() == 4);
 
-//	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue")
 {
@@ -248,7 +245,6 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	yhs >> control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
 	yhs >> control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
 
-//	_std::cout << '\n'; for (auto _: yhs) _std::cout << '\t' << _; _std::cout << '\n';
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

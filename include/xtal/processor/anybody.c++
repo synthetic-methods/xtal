@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./etc.hpp"// testing...
+#include "./anybody.hpp"// testing...
 
 
 
@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/etc.hpp: letting")
+TEST_CASE("xtal/processor/anybody.hpp: letting")
 {
 	size_t constexpr N_size = 5;
 	using group_u = typename collate_t<N_size>::template group_t<int>;
@@ -26,7 +26,7 @@ TEST_CASE("xtal/processor/etc.hpp: letting")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TEST_CASE("xtal/processor/etc.hpp: lifting")
+TEST_CASE("xtal/processor/anybody.hpp: lifting")
 {
 	using alpha_t = typename realized::alpha_t;
 
@@ -57,10 +57,10 @@ void test__contrivance()
 
 	using mixer_t = processor::lift_t<mix_t>;
 	mixer_t mixer_f;
-	auto mixed_y = mixer_f(_01, _10);
+	auto mixed_o = mixer_f(_01, _10);
 
-	REQUIRE(_v3::ranges::equal(mixed_y, _11));
-	REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {00.0, 11.0, 22.0}));
+	REQUIRE(_v3::ranges::equal(mixed_o, _11));
+	REQUIRE(_v3::ranges::equal(mixed_o, _std::vector {00.0, 11.0, 22.0}));
 
 	mixer_f << bias_t(33.0);
 
@@ -68,19 +68,18 @@ void test__contrivance()
 		//	NOTE: Parameters take effect when the `processor` is invoked, \
 		so the function is only resolved once for each collection to which it is applied. \
 
-		REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {00.0, 11.0, 22.0}));
+		REQUIRE(_v3::ranges::equal(mixed_o, _std::vector {00.0, 11.0, 22.0}));
 	}
 	if constexpr (is_q<mix_t, dynamic_bias_mix_t>) {
 		//	NOTE: Parameters take effect when the underlying `process` is invoked, \
 		so the function is resolved for each sample. \
 
-		REQUIRE(_v3::ranges::equal(mixed_y, _std::vector {33.0, 44.0, 55.0}));
+		REQUIRE(_v3::ranges::equal(mixed_o, _std::vector {33.0, 44.0, 55.0}));
 	}
 
-//	_std::cout << '\n'; for (auto _: mixed_y) _std::cout << '\t' << _; _std::cout << '\n';
 }
 
-TEST_CASE("xtal/processor/etc.hpp: contrivance.")
+TEST_CASE("xtal/processor/anybody.hpp: contrivance.")
 {
 	test__contrivance<dynamic_bias_mix_t>();
 	test__contrivance<static_bias_mix_t>();
