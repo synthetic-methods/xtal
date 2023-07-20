@@ -351,7 +351,7 @@ struct collate<N_size>
 				///\note\
 				Useful for converting between e.g. exponential/hyperbolic or stereo/mid-side pairs. \
 
-				template <int N_side=0>
+				template <int N_par=0>
 				XTAL_FN2 reflected(int const n_bias=0)
 				XTAL_0FX
 				XTAL_REQ (N_size == 2)
@@ -359,13 +359,13 @@ struct collate<N_size>
 					auto const scale = _realized::explo_y(_realized::template unsquare_y<-1>(2), 1 - n_bias);
 					auto const lhs = scale*operator[](0);
 					auto const rhs = scale*operator[](1);
-					if constexpr (N_side ==  0) {
+					if constexpr (N_par ==  0) {
 						return T {lhs + rhs, lhs - rhs};
 					}
-					if constexpr (N_side == +1) {
+					if constexpr (N_par == +1) {
 						return lhs + rhs;
 					}
-					if constexpr (N_side == -1) {
+					if constexpr (N_par == -1) {
 						return lhs - rhs;
 					}
 				}

@@ -131,7 +131,8 @@ struct polymer<U, As...>
 					bool constexpr impure = false;
 					return _v3::ranges::accumulate(spool_m
 					,	impure? -1: spine().influx(oo...)
-					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
+					,	[=] (XTAL_FLX flx, XTAL_DEF v)
+							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
@@ -140,14 +141,16 @@ struct polymer<U, As...>
 					bool constexpr impure = (... or control::sequel_q<decltype(oo)>);
 					return _v3::ranges::accumulate(spool_m
 					,	impure? -1: spine().efflux(oo...)
-					,	[=] (XTAL_FLX flx, XTAL_DEF v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
+					,	[=] (XTAL_FLX flx, XTAL_DEF v)
+							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
 
 				///\
 				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
 				
-				XTAL_FNX efflux_pull_slice(iterated_q auto respan_x, control::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				template <iterated_q R_x, control::sequel_q S_x>
+				XTAL_FNX efflux_pull_slice(R_x respan_x, S_x sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					XTAL_FLX flx = -1;
@@ -161,14 +164,18 @@ struct polymer<U, As...>
 						}
 					}
 					if (1 == flx) return flx;// else...
-				//	Initialize buffer with first instance, then mix in the rest:
+				//	Initialize buffer with first instance, then progressively chunk/mix the rest:
 					using namespace _v3;
-					auto const  t_ = begin_f(respan_x);
-					auto const _n  = taker_f(respan_x);
-					ranges::copy(spool_m.front()|_n, t_);
-					for (auto v_ = 1 + spool_m.begin(); v_ < spool_m.end(); ++v_) {
-						ranges::move(_detail::mix_f(*v_|_n, respan_x), t_);
-					}
+					using namespace _detail;
+					auto i = spool_m.begin(), iN = spool_m.end();
+					tunnel_f(respan_x, i++);
+					antiseeker_f<4>([&, this] (auto M)// 3, 2, 1, 0
+					XTAL_0FN {
+						size_t constexpr N = (size_t) 1 << M;// 8, 4, 2, 1
+						for (; N <= _std::distance(i, iN); i += N) {
+							tunnel_f<N>(respan_x, i);
+						}
+					});
 					return flx;
 				}
 				

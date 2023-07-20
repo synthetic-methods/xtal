@@ -101,7 +101,50 @@ XTAL_0EX
 	};
 };
 
-XTAL_LET mix_f = _detail::zap_f([] (XTAL_DEF ...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+XTAL_LET mix_f = zap_f([] (XTAL_DEF ...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+
+template <iterator_q ...Xs>
+XTAL_CN2 funnel_f(XTAL_DEF y, Xs &&...xs)
+XTAL_0EX
+{
+	auto w_ = taker_f(y);
+	if constexpr (1 < sizeof...(xs)) {
+		return mix_f(XTAL_REF_(y), mix_f((*XTAL_REF_(xs)|w_)...));
+	}
+	else if constexpr (1 == sizeof...(xs)) {
+		return mix_f(XTAL_REF_(y), (*XTAL_REF_(xs)|w_)...);
+	}
+	else if constexpr (0 == sizeof...(xs)) {
+		return XTAL_REF_(y);
+	}
+}
+template <iterator_q ...Xs>
+XTAL_CN0 tunnel_f(XTAL_DEF y, Xs &&...xs)
+XTAL_0EX
+{
+	auto v_ = begin_f(y);
+	if constexpr (0 < sizeof...(xs)) {
+		_v3::ranges::move(funnel_f(XTAL_REF_(y), XTAL_REF_(xs)...), v_);
+	}
+}
+
+template <size_t N>
+XTAL_CN2 funnel_f(XTAL_DEF y, iterator_q auto x)
+XTAL_0EX
+{
+	return [&]<auto ...I>(seek_t<I...>)
+		XTAL_0FN_(funnel_f(y, _std::next(x, I)...))
+	(seek_f<N> {});
+}
+template <size_t N>
+XTAL_CN0 tunnel_f(XTAL_DEF y, iterator_q auto x)
+XTAL_0EX
+{
+	return [&]<auto ...I>(seek_t<I...>)
+		XTAL_0FN_(tunnel_f(y, _std::next(x, I)...))
+	(seek_f<N> {});
+}
+
 
 template <typename T> concept      mundane_p = not _retail::any_q<T>;
 template <typename T> concept  unprocessed_p = mundane_p<T> and operators_q<T>;

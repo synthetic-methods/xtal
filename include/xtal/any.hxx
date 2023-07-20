@@ -53,6 +53,13 @@ public:
 		::std::cout << '\n';
 		return x;
 	}
+	XTAL_FN1 operator() (XTAL_DEF ...xs)
+	XTAL_REQ (0 == sizeof...(xs)) 
+	{
+		::std::cout << '\t';
+		(put(XTAL_REF_(xs)), ...);
+		::std::cout << '\n';
+	}
 
 } echo;
 #endif
