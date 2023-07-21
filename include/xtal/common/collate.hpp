@@ -22,7 +22,7 @@ concept collated_p = requires ()
 {
 	typename T::collated;
 	requires constant_q<typename T::collated>;
-	requires (T::collated::value != 0);
+	requires (0 != T::collated::value);
 	
 	typename T::template spool<unit_t>;
 	requires iterated_q<typename T::template spool<unit_t>::type>;
@@ -53,7 +53,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <typename T>
-			using homotype = typename _detail::epitype<T>::template subtype<demitype>;
+			using homotype = typename _detail::epikind<T>::template subtype<demitype>;
 
 			using type = _detail::isotype<homotype>;
 
@@ -72,7 +72,7 @@ struct collate<N_size>
 			using _realized = realize<V>;
 			
 			template <typename T>
-			using hemitype = typename _detail::epitype<T>::template subtype<iterate_t<T>>;
+			using hemitype = typename _detail::epikind<T>::template subtype<iterate_t<T>>;
 
 			class type: public hemitype<type>
 			{
@@ -196,7 +196,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <typename T>
-			using hemitype = typename _detail::epitype<T>::template subtype<demitype>;
+			using hemitype = typename _detail::epikind<T>::template subtype<demitype>;
 
 			template <typename T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
@@ -450,7 +450,7 @@ struct collate<N_size>
 				using R_::twin;
 
 				///\
-				Generates part of the complex sinusoid determined by `std::pow(2, shift_o::value)`. \
+				Generates part of the complex sinusoid determined by `std::pow(2, shift_o{})`. \
 
 				XTAL_CXN homotype(constant_q auto const shift_o)
 				{

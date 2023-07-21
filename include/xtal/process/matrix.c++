@@ -39,8 +39,8 @@ TEST_CASE("xtal/process/matrix.hpp: processor matrix")
 	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
-	auto _1 = processor::lift_f(1);
-	auto _n = processor::lift_f(iota(0, 10));
+	auto _1 = processor::let_f(1);
+	auto _n = processor::let_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
 	io << group_t {{1, 2}, {3, 4}, {5, 6}};
@@ -64,8 +64,8 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard matrix")
 	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
-	auto _1 = processor::lift_f(1);
-	auto _n = processor::lift_f(iota(0, 10));
+	auto _1 = processor::let_f(1);
+	auto _n = processor::let_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
 	io << context::shard_s<group_t>({{1, 2}, {3, 4}, {5, 6}});
@@ -86,8 +86,8 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard column")
 	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
-	auto _1 = processor::lift_f(1);
-	auto _n = processor::lift_f(iota(0, 10));
+	auto _1 = processor::let_f(1);
+	auto _n = processor::let_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
 	io << context::shard_s<group_t, 0>({1, 2});
@@ -110,8 +110,8 @@ TEST_CASE("xtal/process/matrix.hpp: processor shard cell")
 	using remix_t = process::matrix_t<group_t, mix_t>;
 	using mixer_t = processor::monomer_t<remix_t, collect<-1>>;
 
-	auto _1 = processor::lift_f(1);
-	auto _n = processor::lift_f(iota(0, 10));
+	auto _1 = processor::let_f(1);
+	auto _n = processor::let_f(iota(0, 10));
 //
 	auto io = mixer_t::bond_f(_1, _n);
 	io << context::shard_s<group_t, 0, 0>(1);

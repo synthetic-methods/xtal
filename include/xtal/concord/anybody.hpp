@@ -17,13 +17,13 @@ They provide instance and proxy initialization/finalization for the generated ty
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Expands on the `self`-reflection established by `../common/_detail.hpp#epitype`, \
+Expands on the `self`-reflection established by `../common/_detail.hpp#epikind`, \
 providing the mechanism for traversing the trait-lineage of `T`. \
 
 template <typename T>
 struct define
 {
-	using subkind = _detail::epitype<T>;
+	using subkind = _detail::epikind<T>;
 	
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -33,8 +33,10 @@ struct define
 	public:
 		using S_::S_;
 		using S_::self;
+		using self_t = T;
 		
-		///\returns `this` as a subtype of the derived-type `T`. \
+		///\
+		Reassigns and returns the part of `self` that matches `Y`. \
 
 		template <typename Y=T>
 		XTAL_FN1 self(XTAL_DEF... oo)
@@ -43,12 +45,14 @@ struct define
 		{
 			auto &s = S_::self(); return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
 		}
-	
-		template <typename   Y, typename X, constant_q W> struct super          {using type = Y;};
-		template <              typename X, constant_q W> struct super<T, X, W> {using type = T;};
-		template <              typename X, constant_q W> struct super<W, X, W> {using type = X;};
-		template <constant_q Y, typename X, constant_q W> struct super<Y, X, W> {using type = typename S_::template super_t<substant_t<Y>>;};
+		///\
+		Resolves the query/answer `Y` w.r.t. the supplied context. \
+
+		template <typename   Y, typename X, constant_q O> struct super: S_::template super<Y, X, O> {};
+		template <substant_q Y, typename X, constant_q O> struct super<Y, X, O> {using type = typename S_::template super_t<substant_t<Y>>;};
 		template <typename Y=T> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
+
+		//\
 
 		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
 		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
@@ -56,9 +60,6 @@ struct define
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 		using tuple_size = constant_t<(size_t) 0>;
-
-//	protected:
-		using self_t = T;
 
 	};
 };
@@ -114,32 +115,19 @@ struct defer
 		using T_ = typename S_::self_t;
 		using V  = debased_t<U>;
 
-	protected:
-		template <typename   Y, typename X, constant_q W> struct super         : S_::template super<Y, X, W> {};
-		template <              typename X, constant_q W> struct super<U, X, W>: S_::template super<X, X, W> {};
-		template <              typename X, constant_q W> struct super<W, X, W>: S_::template super<X, X, W> {};
-		template <constant_q Y, typename X, constant_q W> struct super<Y, X, W> {using type = typename S_::template super_t<substant_t<Y>>;};
-		template <typename Y=U> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
-
 	public:
 	//	using S_::S_;
 		using S_::self;
 		using head_t = U;
 		using body_t = V;
 
-// NOTE: Making `body_m` `public` permits structural typing when `std::is_const_v`. \
-		body_t body_m{};
-		body_t body_m;
+		body_t body_m;// NOTE: `public` access allows structural typing when `std::is_const_v`.
 
-		///\
-		Default constructor. \
-
-		XTAL_CO4_(subtype);
 	//	XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
 		
 		XTAL_CON subtype()
 		XTAL_0EX
-	//	XTAL_REQ_(body_t{})// NOTE: Required for `MSVC`?
 		:	subtype(body_t{})
 		{}
 		
@@ -161,7 +149,15 @@ struct defer
 		,	body_m(member_f<U>(XTAL_REF_(w)))
 		{}
 
-		XTAL_TO4_(template <typename W=T_> XTAL_FN2 self(), S_::template self<super_t<W>>())
+		template <typename   Y, typename X, constant_q O> struct super: S_::template super<Y, X, O> {};
+		template <              typename X, constant_q O> struct super<U, X, O> {using type = subtype;};
+		template <substant_q Y, typename X, constant_q O> struct super<Y, X, O> {using type = typename S_::template super_t<substant_t<Y>>;};
+		template <typename Y=U> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
+
+	public:
+		XTAL_TO4_(template <typename Y=T_>
+		XTAL_FN2 self(), S_::template self<super_t<Y>>()
+		)
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
@@ -203,7 +199,7 @@ struct defer
 		{
 			return apply(bundle_f);
 		}
-		using tuple_size = constant_t<S_::tuple_size::value + 1>;
+		using tuple_size = constant_t<1 + S_::tuple_size::value>;
 		
 		///\
 		Setter: applied when the template parameter matches the kernel-type. \
@@ -213,7 +209,7 @@ struct defer
 		XTAL_FN1 set(XTAL_DEF... ws)
 		XTAL_0EX
 		{
-			return S_::template self<super_t<W>>().head(XTAL_REF_(ws)...);
+			return self<W>().head(XTAL_REF_(ws)...);
 		}
 		///\
 		Getter: applied when the template parameter matches the kernel-type. \
@@ -223,7 +219,7 @@ struct defer
 		XTAL_FN2 get()
 		XTAL_0FX
 		{
-			return S_::template self<super_t<W>>().head();
+			return self<W>().head();
 		}
 
 		///\

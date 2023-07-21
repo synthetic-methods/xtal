@@ -38,6 +38,10 @@ struct any<A>
 	public:
 		using S::S;
 
+	protected:
+		template <typename Y, typename X, constant_q W> struct super         : S::template super<Y, X, W> {};
+		template <            typename X, constant_q W> struct super<A, X, W>: S::template super<X, X, W> {};
+
 	};
 };
 

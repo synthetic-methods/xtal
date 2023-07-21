@@ -18,7 +18,7 @@ concept collected_p = requires ()
 {
 	typename T::collected;
 	requires constant_q<typename T::collected>;
-	requires (T::collected::value != 0);
+	requires (0 != T::collected::value);
 	
 	typename T::template fluid<unit_t>;
 	requires iterated_q<typename T::template fluid<unit_t>::type>;
@@ -170,7 +170,7 @@ struct collect<N_size>
 				Span constructor. \
 				Initializes `this` with the values between `i0` and `iN`. \
 
-				template <typename I0, typename IN> requires allomorphic_p<iterator, I0, IN>
+				template <typename I0, typename IN> requires epimorphic_p<iterator, I0, IN>
 				XTAL_CXN type(I0 i0, IN iN)
 				{
 					push_back(i0, iN);
@@ -253,7 +253,7 @@ struct collect<N_size>
 				///\
 				Inserts the values `etc` beginning at `i0`. \
 
-				template <typename I0, typename IN> requires allomorphic_p<iterator, I0, IN>
+				template <typename I0, typename IN> requires epimorphic_p<iterator, I0, IN>
 				XTAL_FN0 push_back(I0 i0, IN iN)
 				{
 					insert(end(), i0, iN);
@@ -301,13 +301,13 @@ struct collect<N_size>
 				///\
 				Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-				template <typename I, typename J0, typename JN> requires allomorphic_p<iterator, I, J0, JN>
+				template <typename I, typename J0, typename JN> requires epimorphic_p<iterator, I, J0, JN>
 				XTAL_FN1_(iterator) insert(I i, J0 j0, JN jN)
 				{
 					using J = _std::common_type_t<J0, JN>;
 					return insert(i, (J) j0, (J) jN);
 				}
-				template <typename I, typename J> requires allomorphic_p<iterator, I, J>
+				template <typename I, typename J> requires epimorphic_p<iterator, I, J>
 				XTAL_FN1_(iterator) insert(I i, J j0, J jN)
 				{
 					size_type sN = _std::distance(j0, jN);

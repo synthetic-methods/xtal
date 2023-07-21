@@ -22,7 +22,7 @@ concept collaged_p = requires ()
 {
 	typename T::collaged;
 	requires constant_q<typename T::collaged>;
-	requires (T::collaged::value != 0);
+	requires (0 != T::collaged::value);
 	
 	typename T::template spool<unit_t>;
 	requires iterated_q<typename T::template spool<unit_t>::type>;
@@ -66,7 +66,7 @@ struct collage<N_size>
 			using pulse_t = typename metatype::template pulsar_t<delta_t>;
 			
 			template <typename T>
-			using hemitype = typename _detail::epitype<T>::template subtype<unit_t>;
+			using hemitype = typename _detail::epikind<T>::type;
 
 			template <typename T>
 			class homotype: public hemitype<T>

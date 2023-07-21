@@ -154,7 +154,7 @@ void test__respan_chain_rvalue()
 	
 	using mix_op = monomer_t<add_t, collect<-1>>;
 	using mul_op = monomer_t<mul_t, collect<-1>>;
-	auto yhs = mul_op::bond_f(mix_op::bond_f(lift_f(_01), lift_f(_10)));
+	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs << control::resize_f(N);
 	yhs << coef_t((alpha_t) 100);

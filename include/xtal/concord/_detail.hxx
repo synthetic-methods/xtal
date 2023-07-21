@@ -18,7 +18,7 @@ struct refine_head
 		using S::S;
 
 	};
-	template <any_p S> requires (S::tuple_size::value == 1)
+	template <any_p S> requires (1 == S::tuple_size::value)
 	class subtype<S>: public S
 	{
 		using U = typename S::head_t;

@@ -60,10 +60,12 @@ template <auto M, auto N>  concept moeity_p = M == moeity_v<N>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto        N  >       using constant_t = _std::integral_constant<decltype(N), N>;
-template <typename    T  >       using substant_t = _std::integral_constant<typename T::value_type, T::value - sign_v<T::value>>;
-template <typename    T  >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
+template <typename    T  >       using substant_t = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
+template <typename    T  >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
+template <typename    T  >     concept substant_p = constant_p<T> and T::value != 0;
 template <typename    T  >     concept variable_p =     not constant_p<T>;
 template <typename ...Ts >     concept constant_q = (...and constant_p<Ts>);
+template <typename ...Ts >     concept substant_q = (...and substant_p<Ts>);
 template <typename ...Ts >     concept variable_q = (...and variable_p<Ts>);
 
 
@@ -98,19 +100,19 @@ template <value_p     T  >      struct revalue<T> : based_t<T> {};
 template <typename    T  >       using revalue_t  = value_t<revalue<T>>;
 
 
-template <typename             ...Ts> struct  identical;// `is_same`
-template <typename             ...Ts> struct  isotropic;// `is_same` modulo qualifiers
-template <typename             ...Ts> struct allotropic;// `is_constructible`
+template <typename             ...Ts> struct identical;// `is_same`
+template <typename             ...Ts> struct isotropic;// `is_same` modulo qualifiers
+template <typename             ...Ts> struct epitropic;// `is_constructible`
 
-template <typename T, typename ...Ts> struct  identical<T, Ts...>: _std::conjunction<_std::is_same<Ts, T>...> {};
-template <typename T, typename ...Ts> struct  isotropic<T, Ts...>: _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
-template <typename T, typename ...Ts> struct allotropic<T, Ts...>: _std::conjunction<_std::is_constructible<Ts, T>...> {};
+template <typename T, typename ...Ts> struct identical<T, Ts...>: _std::conjunction<_std::is_same<Ts, T>...> {};
+template <typename T, typename ...Ts> struct isotropic<T, Ts...>: _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
+template <typename T, typename ...Ts> struct epitropic<T, Ts...>: _std::conjunction<_std::is_constructible<Ts, T>...> {};
 
-template <typename ...Ts >         using common_t =  _std::common_type_t<Ts...>;
-template <typename ...Ts >       concept common_q =  requires {typename common_t<Ts...>;};
-template <typename ...Ts >       concept id_q     =  identical<Ts...>::value;
-template <typename ...Ts >       concept is_q     =  isotropic<Ts...>::value;
-template <typename ...Ts >       concept to_q     = allotropic<Ts...>::value;
+template <typename ...Ts >         using common_t = _std::common_type_t<Ts...>;
+template <typename ...Ts >       concept common_q = requires {typename common_t<Ts...>;};
+template <typename ...Ts >       concept id_q     = identical<Ts...>::value;
+template <typename ...Ts >       concept is_q     = isotropic<Ts...>::value;
+template <typename ...Ts >       concept to_q     = epitropic<Ts...>::value;
 template <typename    T  >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
 XTAL_LET identical_f = [] (XTAL_DEF o, XTAL_DEF ...oo)
@@ -432,10 +434,10 @@ template <iterated_q ...Ts>  struct isomorphic<Ts...>: isomorphic<iteratee_t<Ts>
 template <iterator_q ...Ts>  struct isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
 template <typename   ...Ts> concept isomorphic_p =     isomorphic<Ts...>::value;
 
-template <typename   ...Ts>  struct allomorphic       : allotropic<Ts...> {};
-template <iterated_q ...Ts>  struct allomorphic<Ts...>: allomorphic<iteratee_t<Ts>...> {};
-template <iterator_q ...Ts>  struct allomorphic<Ts...>: allomorphic<iteratee_t<Ts>...> {};
-template <typename   ...Ts> concept allomorphic_p =     allomorphic<Ts...>::value;
+template <typename   ...Ts>  struct epimorphic       : epitropic<Ts...> {};
+template <iterated_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
+template <typename   ...Ts> concept epimorphic_p =     epimorphic<Ts...>::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////

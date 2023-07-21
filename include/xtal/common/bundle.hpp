@@ -112,7 +112,7 @@ template <constant_q ...Ts>
 XTAL_CN2 bundle_part_f(XTAL_DEF_(bundle_p) t, _std::tuple<Ts...> const &)
 XTAL_0EX
 {
-	return bundle_part_f<Ts::value...>(XTAL_REF_(t));
+	return bundle_part_f<Ts{}...>(XTAL_REF_(t));
 }
 
 

@@ -10,16 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-//\
-TODO: Maybe revise this to allow `enum`. \
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int N, typename ...As>
+template <auto N, typename ...As>
 using nominal = label<constant_t<N>, As...>;
 
-template <int N, typename ...As>
+template <auto N, typename ...As>
 using nominal_t = typename nominal<N, As...>::type;
 
 

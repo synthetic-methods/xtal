@@ -44,10 +44,6 @@ struct compose<>
 	using subtype = typename tail<S, Tails...>::type;
 
 };
-template <typename ...Heads>
-struct compose<void, Heads...>
-:	compose<Heads...>
-{};
 template <typename Head, typename ...Heads>
 struct compose<Head, Heads...>
 {
@@ -61,9 +57,30 @@ struct compose<Head, Heads...>
 	using subtype = head<Head, tail<S, Ts...>>;
 
 };
+template <typename ...Heads>
+struct compose<void, Heads...>
+:	compose<Heads...>
+{};
 
 template <typename S, typename ...Tails>
 using compose_s = typename compose<>::template subtype<S, Tails...>;
+
+
+///\
+Finalizes `compose` by providing a `type` based on `unit_t`. \
+
+template <typename ...Heads>
+struct composed
+{
+	using subkind = compose<Heads...>;
+	
+	template <typename S, typename ...Tails>
+	using subtype = compose_s<S, Tails..., subkind>;
+	using    type = subtype<unit_t>;
+
+};
+template <typename S, typename ...Tails>
+using composed_s = typename composed<>::template subtype<S, Tails...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,18 +4,25 @@ namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename> typename T_>
-class isotype: public T_<isotype<T_>>
+struct unikind
 {
-	using S_ = T_<isotype<T_>>;// -Wsubobject-linkage?
-	
-public:
-	using S_::S_;
+	template <typename S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
 
+		template <typename Y, typename X, constant_q O> struct super          {using type = Y;};
+		template <            typename X, constant_q O> struct super<O, X, O> {using type = X;};
+
+	};
+	using type = subtype<unit_t>;
+	
 };
+using unitype = typename unikind::type;
 
 template <typename T>
-struct epitype
+struct epikind
 {
 	template <typename S>
 	class subtype: public S
@@ -46,6 +53,20 @@ struct epitype
 		XTAL_TO4_(XTAL_FN2 core(), S::self())
 
 	};
+	using type = subtype<unit_t>;
+
+};
+template <typename T>
+using epitype = typename epikind<T>::type;
+
+template <template <typename> typename T_>
+class isotype: public T_<isotype<T_>>
+{
+	using S_ = T_<isotype<T_>>;// -Wsubobject-linkage?
+	
+public:
+	using S_::S_;
+
 };
 
 

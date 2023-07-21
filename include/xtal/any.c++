@@ -16,7 +16,12 @@ using namespace common;
 using level_t = control::label_t<typename realized::alpha_t, struct T_level>;
 using  bias_t = control::label_t<typename realized::alpha_t, struct T_bias >;
 using  coef_t = control::label_t<typename realized::alpha_t, struct T_coef >;
+using  wang_t = control::label_t<const typename realized::alpha_t, struct T_wang >;
 
+template <wang_t wang_o>
+XTAL_FN0 wanghus()
+{
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
