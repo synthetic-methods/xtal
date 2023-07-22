@@ -11,17 +11,11 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct matrix;
-
-template <class ...Ts>
-XTAL_ASK matrix_q = tag_p<matrix, Ts...>;
-
-template <typename ..._s>
-XTAL_USE matrix_t = confined_t<matrix<_s...>>;
-
-template <typename ..._s>
-XTAL_CN2 matrix_f(XTAL_DEF w) {return matrix_t<decltype(w), _s...>(XTAL_REF_(w));}
+template <typename ..._s> XTAL_NYM matrix;
+template <typename ..._s> XTAL_ASK matrix_q =      tag_p<matrix, _s...>;
+template <typename ..._s> XTAL_USE matrix_t = confined_t<matrix< _s...>>;
+template <typename ...As>
+XTAL_CN2 matrix_f(XTAL_DEF u) {return matrix_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
 
 
 namespace _detail

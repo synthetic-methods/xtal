@@ -11,18 +11,11 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct monomer;
-
-template <class ...Ts>
-XTAL_ASK monomer_q = tag_p<monomer, Ts...>;
-
-template <typename ..._s>
-XTAL_USE monomer_t = confined_t<monomer<_s...>>;
-
+template <typename ..._s> XTAL_NYM monomer;
+template <typename ..._s> XTAL_ASK monomer_q =      tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ...As>
 XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

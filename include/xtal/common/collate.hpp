@@ -239,7 +239,7 @@ struct collate<N_size>
 				XTAL_0EX
 				{
 					static_assert(is_q<value_t<U>, V> and sizeof(U) == sizeof(T));
-					return reinterpret_cast<T &>(u);
+					return force_f<T &>(u);
 				}
 
 				///\

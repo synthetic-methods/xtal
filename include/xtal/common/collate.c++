@@ -83,7 +83,7 @@ TEST_CASE("xtal/common/collate.hpp: series initialization")
 	using series_u = typename collate_t<N>::template series_t<alpha_t>;
 
 	series_u baz(2.0);
-	group_u bar = reinterpret_cast<group_u &>(baz);
+	group_u bar = force_f<group_u &>(baz);
 	group_u foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 	REQUIRE(_v3::ranges::equal(foo, bar));
 	

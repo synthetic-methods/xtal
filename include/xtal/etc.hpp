@@ -122,6 +122,16 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 #define XTAL_DEF                                                  auto &&
+#define XTAL_NYM                        struct
+#define XTAL_USE                         using
+#define XTAL_ASK                       concept
+#define XTAL_REQ                      requires
+#define XTAL_REQ_(...)                requires requires {__VA_ARGS__;}
+#define XTAL_IF2_(...)       else if constexpr(requires {__VA_ARGS__;})
+#define XTAL_IF1_(...)            if constexpr(requires {__VA_ARGS__;})
+#define XTAL_IF2             else if constexpr
+#define XTAL_IF1                  if constexpr
+
 #define XTAL_CON                     constexpr       
 #define XTAL_CXN                     constexpr explicit
 
@@ -144,10 +154,6 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_CN0                               static          void
 #define XTAL_LET                     constexpr static          auto
 
-#define XTAL_USE                               using
-#define XTAL_ASK                               concept
-#define XTAL_REQ                               requires
-#define XTAL_REQ_(...)                         requires requires{__VA_ARGS__;}
 #define XTAL_0EX                               noexcept
 #define XTAL_0EX_(REF)                     REF noexcept
 #define XTAL_0FX                     const     noexcept
@@ -184,6 +190,22 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_FLX_(...) [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
 #define XTAL_1FN_(...) (XTAL_DEF ...oo) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(oo)...))
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_E0 ()
+#define XTAL_F0() XTAL_F2_
+#define XTAL_F1_(F_,     ...)        __VA_OPT__(XTAL_X2_(XTAL_F2_(F_, __VA_ARGS__)))///< Map.
+#define XTAL_F2_(F_, A0, ...) F_(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (F_, __VA_ARGS__))
+
+#define XTAL_X0_(...) __VA_ARGS__
+#define XTAL_X1_(...) XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
+#define XTAL_X2_(...) XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))///< Repeat.
+
+#define XTAL_S0_(SYM) #SYM
+#define XTAL_S1_(SYM) XTAL_S0_(SYM)///< Stringify.
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

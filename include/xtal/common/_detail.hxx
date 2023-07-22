@@ -12,8 +12,9 @@ struct unikind
 	public:
 		using S::S;
 
-		template <typename Y, class X, constant_q O> struct super          {using type = Y;};
-		template <            class X, constant_q O> struct super<O, X, O> {using type = X;};
+	protected:
+		template <class Y, typename ...Is> struct super    {using type = typename super<Is...>::type;};
+		template <class Y                > struct super<Y> {using type = Y;};
 
 	};
 	using type = subtype<unit_t>;
@@ -37,21 +38,23 @@ struct epikind
 		:	S(XTAL_REF_(oo)...)
 		{}
 
-		///\returns `*this` with type `Y=T`. \
+		///\returns `this` as the `define`d supertype. \
 
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return funge_f<Y const &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return funge_f<Y       &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return funge_f<Y const  &>(*this);}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return funge_f<Y        &>(*this);}
+		XTAL_TO4_(XTAL_FN2 core(), S::self())
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		XTAL_TO2_(template <typename Y=T> XTAL_FN2_(based_t<Y>) twin(), self<Y>())
 
-		///\returns `this` as the `define`d supertype. \
+		///\returns `*this` with type `Y=T`. \
 
-		XTAL_TO4_(XTAL_FN2 core(), S::self())
+		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return forge_f<Y const &&>(XTAL_MOV_(*this));}
+		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return forge_f<Y       &&>(XTAL_MOV_(*this));}
+		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
+		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
 
+		using self_t = T;
+		
 	};
 	using type = subtype<unit_t>;
 
@@ -62,10 +65,10 @@ using epitype = typename epikind<T>::type;
 template <template <typename> typename _T>
 class isotype: public _T<isotype<_T>>
 {
-	using S_ = _T<isotype<_T>>;// -Wsubobject-linkage?
+	using S = _T<isotype<_T>>;// -Wsubobject-linkage?
 	
 public:
-	using S_::S_;
+	using S::S;
 
 };
 

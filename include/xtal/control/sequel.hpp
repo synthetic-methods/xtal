@@ -27,16 +27,10 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <typename ...>
-struct sequel;
-
-template <class ...Ts>
-XTAL_ASK sequel_q = tag_p<sequel, Ts...>;
-
-template <class W=counter_t<>, typename ...As>
-XTAL_USE sequel_t = confined_t<sequel<W>, As...>;
-
-template <typename ...As>
+template <                     typename ..._s> XTAL_NYM sequel;
+template <                     typename ..._s> XTAL_ASK sequel_q = tag_p<sequel, _s...>;
+template <class W=counter_t<>, typename ...As> XTAL_USE sequel_t = confined_t<sequel<W>, As...>;
+template <                     typename ...As>
 XTAL_CN2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w));}
 
 

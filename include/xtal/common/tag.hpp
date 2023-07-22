@@ -30,7 +30,7 @@ template <template <typename ...> class _T>
 using tag_t = typename tag<_T>::type;
 
 template <template <typename ...> class _T, class ...Ts>
-concept tag_p = (...and _std::derived_from<based_t<Ts>, tag_t<_T>>);
+concept tag_p = (...and fungible_p<Ts, tag_t<_T>>);
 
 template <class ...Ts>
 concept tag_q = tag_p<class_t, Ts...>;

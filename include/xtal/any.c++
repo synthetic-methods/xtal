@@ -6,6 +6,17 @@
 
 #include <catch2/catch_all.hpp>
 
+#define TAG1_(...) "[" __VA_ARGS__ "]"
+#define TAGS_(...) XTAL_F1_(TAG1_, __VA_ARGS__)
+
+#define TRUE_(...)   REQUIRE((__VA_ARGS__))
+#define TEST_(...)   SECTION(__VA_ARGS__)
+#define TIME_(...) BENCHMARK(__VA_ARGS__)
+
+#define TESTING_(...) TEST_CASE(__FILE__ ":" XTAL_S1_(__LINE__), TAGS_(__VA_ARGS__))
+
+
+
 XTAL_ENV_(push)
 namespace xtal::__test
 {/////////////////////////////////////////////////////////////////////////////////

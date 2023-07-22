@@ -58,14 +58,23 @@ template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and 
 template <        auto N> XTAL_LET moeity_v = N&1;
 template <auto M, auto N>  concept moeity_p = M == moeity_v<N>;
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto     N >    XTAL_LET constant_v = _std::integral_constant<decltype(N), N>{};
+template <class      T > concept   complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
+template <class   ...Ts> concept   complete_q = (...and     complete_p<Ts>);
+template <class   ...Ts> concept incomplete_q = (...and not complete_p<Ts>);
+template <class   ...Ts> concept       void_q = (...and _std::same_as<void, Ts>);
+
+template <class      T > struct complete    {class type  {};};
+template <complete_q T > struct complete<T> {using type = T;};
+template <class      T >  using complete_t = typename complete<T>::type;
+static_assert(complete_q<unit_t> and not complete_q<struct void_t>);
+
+template <auto     N >    XTAL_LET constant_v = _std::integral_constant<decltype(N), N> {};
 template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
 template <class    T >       using substant_t = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
-template <class    T >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
+template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
 template <class    T >     concept substant_p = constant_p<T> and T::value != 0;
 template <class    T >     concept variable_p =     not constant_p<T>;
 template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
@@ -73,7 +82,7 @@ template <class ...Ts>     concept substant_q = (...and substant_p<Ts>);
 template <class ...Ts>     concept variable_q = (...and variable_p<Ts>);
 
 
-template <class    T >       using   based_t  = _std::remove_cvref_t<T>;
+template <class    T >       using   based_t  = complete_t<_std::remove_cvref_t<T>>;
 template <class    T >     concept   based_p  = _std::is_trivially_copyable_v<T>;
 template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
@@ -83,14 +92,14 @@ template <class    T >      struct debased            : constant_t<0> {using typ
 template <unbased_p T>      struct debased<T        &>: constant_t<1> {using type =       T*;};
 template <unbased_p T>      struct debased<T  const &>: constant_t<1> {using type = const T*;};
 template <class    T >       using debased_t  = typename debased<T>::type;
-template <class    T >     concept debased_p  =  (bool)  debased<T>{};
+template <class    T >     concept debased_p  =  (bool)  debased<T> {};
 template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
 
 template <class    T >      struct rebased            : constant_t<1> {using type = _std::remove_reference_t<T>;};
 template <unbased_p T>      struct rebased<T        &>: constant_t<0> {using type =       T&;};
 template <unbased_p T>      struct rebased<T  const &>: constant_t<0> {using type = const T&;};
 template <class    T >       using rebased_t  = typename rebased<T>::type;
-template <class    T >     concept rebased_p  =  (bool)  rebased<T>{};
+template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
 template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
 
 
@@ -120,24 +129,6 @@ template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
-XTAL_LET identical_f = [] (XTAL_DEF o, XTAL_DEF ...oo)
-XTAL_0FN_(...and (_std::addressof(XTAL_REF_(o)) == _std::addressof(XTAL_REF_(oo))));
-
-template <class Y, class T>
-concept fungible_q = _std::derived_from<T, Y> or _std::derived_from<Y, T>;
-
-template <class Y>
-XTAL_CN2 funge_f(XTAL_DEF t)
-XTAL_0EX
-{
-	if constexpr (fungible_q<Y, decltype(t)>) {
-		return      static_cast<Y>(XTAL_REF_(t));
-	}
-	else {
-		return reinterpret_cast<Y>(XTAL_REF_(t));
-	}
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -157,6 +148,9 @@ template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return
 
 template <class    T >      using pointed_t   = XTAL_TYP_(*XTAL_VAL_(T));
 template <class    T >      using pointer_t   = XTAL_TYP_(&XTAL_VAL_(T));
+template <class ...Ts>    concept pointed_q   = (... and requires {&XTAL_VAL_(Ts);});
+template <class ...Ts>    concept pointer_q   = (... and requires {*XTAL_VAL_(Ts);});
+
 template <class    I > XTAL_LET appointer_f   = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
 template <class    T >
 struct aligned
@@ -164,16 +158,52 @@ struct aligned
 	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
 	XTAL_LET value = sizeof(type);
 };
-template <class    T >       using aligned_t  = typename aligned<T>::type;
-template <class    T >    XTAL_LET aligned_v  =          aligned<T>::value;
+template <class    T >    using aligned_t = typename aligned<T>::type;
+template <class    T > XTAL_LET aligned_v =          aligned<T>::value;
 
-template <value_q  T >    XTAL_LET arity_v    = sizeof(T)/aligned_v<value_t<T>>;
-template <value_q  T >       using arity_t    = constant_t<arity_v<T>>;
-template <value_q  T >       using array_t    = _std::array<value_t<T>, arity_v<T>>;
+template <class T, class Y>
+concept fungible_p = _std::derived_from<based_t<T>, based_t<Y>>;
+
+template <class T, class ...Ys>
+concept fungible_q = (...and (fungible_p<T, Ys> or fungible_p<Ys, T>));
+
+template <class T, class ...Ys>
+concept forcible_q = (... and (sizeof(T) == sizeof(Ys)));
+
+template <class Y>
+XTAL_CN2 funge_f(XTAL_DEF t)
+XTAL_0EX
+{
+	static_assert(fungible_q<Y, XTAL_TYP_(t)>);
+	return static_cast<Y>(XTAL_REF_(t));
+}
+template <class Y>
+XTAL_CN2 force_f(XTAL_DEF t)
+XTAL_0EX
+{
+	static_assert(forcible_q<Y, XTAL_TYP_(t)>);
+	return reinterpret_cast<Y>(XTAL_REF_(t));
+}
+
+template <class Y>
+XTAL_CN2 forge_f(XTAL_DEF t)
+XTAL_0EX
+{
+	XTAL_IF1 (fungible_q<Y, decltype(t)>) {
+		return funge_f<Y>(XTAL_REF_(t));
+	}
+	XTAL_IF2 (forcible_q<Y, decltype(t)>) {
+		return force_f<Y>(XTAL_REF_(t));
+	}
+}
+
+template <value_q  T > XTAL_LET arity_v = sizeof(T)/aligned_v<value_t<T>>;
+template <value_q  T >    using arity_t = constant_t<arity_v<T>>;
+template <value_q  T >    using array_t = _std::array<value_t<T>, arity_v<T>>;
 template <int N=-1, class ...Ts>
 concept array_p = requires ()
 {
-	requires (...and _std::derived_from<based_t<Ts>, array_t<Ts>>);
+	requires (...and fungible_p<Ts, array_t<Ts>>);
 	requires (N == -1) or (...and (N == arity_v<Ts>));
 };
 template <class ...Ts>
@@ -313,10 +343,37 @@ static_assert(  field_operators_q<float>);
 static_assert(  field_operators_q<_std::complex<float>>);
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+//\
+template <pointed_q W>
+template <typename W>
+XTAL_CN2 identical_f(W const &x, W const &y)
+XTAL_0EX
+{
+	//\
+	return _std::addressof(x) == _std::addressof(y);
+	return &x == &y;
+}
+template <typename W>
+XTAL_CN2 equal_f(W const &x, W const &y)
+XTAL_0EX
+{
+	if constexpr (requires {x.operator==(y);}) {
+		return x.operator==(y);
+	}
+	else {
+		return x == y;
+	}
+}
+template <typename W>
+XTAL_CN2 equivalent_f(W const &x, W const &y)
+XTAL_0EX
+{
+	return equal_f(x, y);
+}
 
-template <class    T >       using iterate_t  = _v3::ranges::view_interface<T>;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <class    T >       using begin_t    = decltype(XTAL_VAL_(T).begin());
 template <class    T >       using   end_t    = decltype(XTAL_VAL_(T).  end());
@@ -325,9 +382,18 @@ template <class    T >     concept   end_p    = requires (T t) {*t.  end();};
 template <class ...Ts>     concept begin_q    = (...and begin_p<Ts>);
 template <class ...Ts>     concept   end_q    = (...and   end_p<Ts>);
 
-template <class ...Ts>     concept bracket_q  = begin_q<Ts...> and end_q<Ts...>;
 template <class    W >       using bracket_t  = _std::initializer_list<W>;
+template <class ...Ts>     concept bracket_q  = begin_q<Ts...> and end_q<Ts...>;
+template <bracket_q W>
+XTAL_CN2 equivalent_f(W const &x, W const &y)
+XTAL_0EX
+{
+	return x.begin() == y.begin() and x.end() == y.end();
+}
+
+
 template <class    W >       using interval_t = _v3::ranges::iota_view<W, W>;
+template <class    T >       using iterate_t  = _v3::ranges::view_interface<T>;
 
 
 template <class    T >     concept iterable_p = begin_p<T> and not requires (T t) {t.front();};

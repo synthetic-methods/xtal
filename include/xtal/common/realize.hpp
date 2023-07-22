@@ -901,7 +901,7 @@ public:
 			delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
 			delta_t const M = rezone + M_zoom;
 			delta_t o, n, m;
-			auto &t  = reinterpret_cast<delta_t &>(target);
+			auto &t  = force_f<delta_t &>(target);
 			n  =  t  & sign::mask;
 			m  =  t  ^ n;
 			m  =  M  - m;
@@ -990,7 +990,7 @@ public:
 			delta_t const     dezone = n_zone << exponent::shift;
 			delta_t const M = dezone + M_zoom*N_unit;
 			delta_t o, n, m;
-			auto &t  = reinterpret_cast<delta_t &>(target);
+			auto &t  = force_f<delta_t &>(target);
 			n   = t  & sign::mask;
 			m   = t  ^ n;
 			m  -= M;

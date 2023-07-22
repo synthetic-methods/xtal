@@ -30,7 +30,7 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_TO4_(XTAL_OP0 U(), head())
+		XTAL_DO4_(XTAL_OP0 U(), {return head();})
 		
 	};
 };

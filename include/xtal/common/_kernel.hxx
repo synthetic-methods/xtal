@@ -21,12 +21,12 @@ template <class U> struct refer;///< Delegates `U`.
 Tags `subtype` with this namespace and the supplied types. \
 
 template <typename ...As> struct any   : _retail::any<As..., any<>> {};
-template <typename ...As> using  any_t = compose_s<_detail::unitype, any<As...>>;
+template <typename ...As> using  any_t = typename composed<any<As...>>::type;
 ///\
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = _std::derived_from<based_t<T>, any_t<As...>>;
+concept any_p = fungible_p<T, any_t<As...>>;
 
 template <class ...Ts>
 concept any_q = (...and any_p<Ts>);
@@ -83,7 +83,7 @@ using confined_t = typename confined<As...>::type;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...As> using mint   = composed<As..., any<>, typename _detail::unikind>;
+template <typename ...As> using mint   = composed<As..., any<>>;
 template <typename ...As> using mint_t = typename mint<As...>::type;
 
 ///\

@@ -11,15 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct polymer;
-
-template <class ...Ts>
-XTAL_ASK polymer_q = tag_p<polymer, Ts...>;
-
-template <typename ..._s>
-XTAL_USE polymer_t = confined_t<polymer<_s...>>;
-
+template <typename ..._s> XTAL_NYM polymer;
+template <typename ..._s> XTAL_ASK polymer_q =      tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
 XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));}
 

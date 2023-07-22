@@ -29,36 +29,34 @@ struct define
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
-
+		
+	protected:
+		using _ = void;
+		
+		template <class  X, typename ...Is> struct super: S_::template super<_, Is...> {};
+		template <class  X, typename ...Is> struct super<X, _, Is...>: super<X, Is...> {};
+		template <class  X, typename ...Is> struct super<X, T, Is...>: super<T, Is...> {};
+		template <void_q X, typename ...Is> struct super<X,    Is...>: super<T, Is...> {};
+		template <class  X                > struct super<X> {using type = X;};
+		
 	public:
 		using S_::S_;
 		using S_::self;
-		using self_t = T;
-		
 		///\
-		Reassigns and returns the part of `self` that matches `Y`. \
+		Reassigns and returns the part of `self` that matches `X`. \
 
-		template <typename Y=T>
-		XTAL_FN1 self(XTAL_DEF... oo)
+		template <typename ...Is>
+		XTAL_FN2 self(XTAL_DEF... oo)
 		XTAL_0EX
 		XTAL_REQ (0 < sizeof...(oo))
 		{
 			auto &s = S_::self();
+			using Y = typename super<T, Is...>::type;
 			return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
 		}
-		///\
-		Resolves the query/answer `Y` w.r.t. the supplied context. \
-
-		template <typename   Y, class X, constant_q O> struct super: S_::template super<Y, X, O> {};
-		template <substant_q Y, class X, constant_q O> struct super<Y, X, O>
-		{
-			using type = typename S_::template super_t<substant_t<Y>>;
-		};
-		template <typename Y=T>
-		using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
-
 		//\
-
+		Trivial (in)equality. \
+		
 		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
 		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
 		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
@@ -122,7 +120,7 @@ struct defer
 
 	public:
 	//	using S_::S_;
-		using S_::self;
+	//	using S_::self;
 		using head_t = U;
 		using body_t = V;
 
@@ -154,19 +152,10 @@ struct defer
 		,	body_m(member_f<U>(XTAL_REF_(w)))
 		{}
 
-		template <typename   Y, class X, constant_q O> struct super: S_::template super<Y, X, O> {};
-		template <              class X, constant_q O> struct super<U, X, O> {using type = subtype;};
-		template <substant_q Y, class X, constant_q O> struct super<Y, X, O>
-		{
-			using type = typename S_::template super_t<substant_t<Y>>;
-		};
-		template <typename Y=U>
-		using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
+		///\
+		Converts `this` to the base-type (explicit). \
 
-	public:
-		XTAL_TO4_(template <typename Y=T_>
-		XTAL_FN2 self(), S_::template self<super_t<Y>>()
-		)
+		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
@@ -190,47 +179,66 @@ struct defer
 		{
 			_std::swap(body_m, v); return remember_f(XTAL_MOV_(v));
 		}
-
 		///\
-		Converts `this` to the kernel-type (explicit). \
+		Accesses the `head`s as a `std::tuple`. \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
-
+		XTAL_USE tuple_size = constant_t<1 + S_::tuple_size::value>;
+		XTAL_FN2 tuple()
+		XTAL_0FX
+		{
+			return apply(bundle_f);
+		}
 		XTAL_FN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
 		XTAL_0FX
 		{
 			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
 				XTAL_0FN_(g(head<I>()...)) (seek_f<tuple_size::value> {});
 		}
-		
-		XTAL_FN2 tuple()
-		XTAL_0FX
-		{
-			return apply(bundle_f);
-		}
-		using tuple_size = constant_t<1 + S_::tuple_size::value>;
-		
-		///\
-		Setter: applied when the template parameter matches the kernel-type. \
-		\returns the previous value.
 
-		template <class W=U>
-		XTAL_FN1 set(XTAL_DEF... ws)
+	protected:
+		using Y = subtype;
+		using O = constant_t<(size_t) 0>;
+		///\
+		Resolves the query/answer `X` w.r.t. the supplied context. \
+
+		template <class  X, typename ...Is> struct super: S_::template super<X, Is...> {};
+		template <class  X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
+		template <class  X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
+		template <class  X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
+		template <void_q X, typename ...Is> struct super<X,    Is...>: super<Y, Is...> {};
+		template <class  X, substant_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, substant_t<N>, Is...> {};
+
+	public:
+		///\returns `this` as specified by `Is...`. \
+		
+		XTAL_DO4_(template <typename ...Is>
+		XTAL_FN2 self(XTAL_DEF... oo),
+		{
+			using X = typename super<T_, Is...>::type;
+			return S_::template self<X>(XTAL_REF_(oo)...);
+		})
+		///\
+		Setter applied when the template parameter matches the kernel-type. \
+
+		///\returns the value of `head()` prior to `emplace`ment. \
+		
+		template <typename ...Is>
+		XTAL_FN1 set(XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			return self<W>().head(XTAL_REF_(ws)...);
+			return self<Is...>().head(XTAL_REF_(oo)...);
 		}
 		///\
-		Getter: applied when the template parameter matches the kernel-type. \
-		\returns the current value.
-
-		template <class W=U>
+		Getter applied when the template parameter matches the kernel-type. \
+		
+		///\returns the value of `head()`. \
+		
+		template <typename ...Is>
 		XTAL_FN2 get()
 		XTAL_0FX
 		{
-			return self<W>().head();
+			return self<Is...>().head();
 		}
-
 		///\
 		Membership testing. \
 		\returns `true` if the supplied value matches `head`, `false` otherwise. \
@@ -238,18 +246,8 @@ struct defer
 		XTAL_FN2_(bool) has(U const &w)
 		XTAL_0FX
 		{
-			U const &u = head();
-			if constexpr (requires {u.operator==(w);}) {
-				return u.operator==(w);
-			}
-			else if constexpr (requires {u == w;}) {
-				return u == w;
-			}
-			else if constexpr (iterated_q<U>) {
-				return u.begin() == w.begin() and u.end() == w.end();
-			}
+			return equivalent_f(head(), w);
 		}
-		
 		///\
 		Equality testing. \
 		\returns `true` if the supplied value matches `this`, `false` otherwise. \

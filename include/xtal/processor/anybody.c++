@@ -22,6 +22,7 @@ TEST_CASE("xtal/processor/anybody.hpp: letting")
 	using group_u = typename collate_t<N_size>::template group_t<int>;
 	auto z = group_u {00, 11, 22, 33, 44};
 	auto a = processor::let_f(z);
+	
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,7 @@ TEST_CASE("xtal/processor/anybody.hpp: lifting")
 	
 	_v3::ranges::move(b, a.begin());
 	REQUIRE(a == z);
+
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +85,7 @@ TEST_CASE("xtal/processor/anybody.hpp: contrivance.")
 {
 	test__contrivance<dynamic_onset_mix_t>();
 	test__contrivance<static_onset_mix_t>();
+
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////
