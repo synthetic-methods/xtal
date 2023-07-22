@@ -11,18 +11,14 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct tag_ {};
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename ...> typename F=tag_>
+template <template <typename ...> class _T=class_t>
 struct tag
 {
 	class type
 	{};
-	template <typename S>
+	template <class S>
 	class subtype: public type, public S
 	{
 	public:
@@ -30,14 +26,14 @@ struct tag
 		
 	};
 };
-template <template <typename ...> typename F>
-using tag_t = typename tag<F>::type;
+template <template <typename ...> class _T>
+using tag_t = typename tag<_T>::type;
 
-template <template <typename ...> typename F, typename ...Ts>
-concept tag_p = (...and _std::derived_from<based_t<Ts>, tag_t<F>>);
+template <template <typename ...> class _T, class ...Ts>
+concept tag_p = (...and _std::derived_from<based_t<Ts>, tag_t<_T>>);
 
-template <typename ...Ts>
-concept tag_q = tag_p<tag_, Ts...>;
+template <class ...Ts>
+concept tag_q = tag_p<class_t, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

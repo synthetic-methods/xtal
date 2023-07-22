@@ -50,11 +50,11 @@ struct refine_tuple
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename U, int N=0>
+template <class U, int N=0>
 struct refer_iterators
 :	compose<>
 {};
-template <typename U> requires begin_q<U>
+template <class U> requires begin_q<U>
 struct refer_iterators<U>
 {
 	template <any_p S>
@@ -80,14 +80,14 @@ struct refer_iterators<U>
 };
 
 
-template <typename U, int N=0> struct refer_inequality_comparators: compose<> {};
-template <typename U, int N=0> struct   refer_equality_comparators: compose<> {};
-template <typename U, int N=0> struct            refer_comparators: compose<void
+template <class U, int N=0> struct refer_inequality_comparators: compose<> {};
+template <class U, int N=0> struct   refer_equality_comparators: compose<> {};
+template <class U, int N=0> struct            refer_comparators: compose<void
 ,	refer_equality_comparators<U, N>
 ,	refer_inequality_comparators<U, N>
 >
 {};
-template <typename U> requires equality_comparators_p<U>
+template <class U> requires equality_comparators_p<U>
 struct refer_equality_comparators<U>
 {
 	template <any_p S>
@@ -100,7 +100,7 @@ struct refer_equality_comparators<U>
 
 	};
 };
-template <typename U> requires inequality_comparators_p<U>
+template <class U> requires inequality_comparators_p<U>
 struct refer_inequality_comparators<U>
 {
 	template <any_p S>
@@ -124,21 +124,21 @@ struct refer_inequality_comparators<U>
 };
 
 
-template <typename U, int N=0> struct refer_bitwise_operators: compose<> {};
-template <typename U, int N=0> struct   refer_group_operators: compose<> {};
-template <typename U, int N=0> struct   refer_field_operators: compose<> {};
-template <typename U, int N=0> struct         refer_operators: compose<void
+template <class U, int N=0> struct refer_bitwise_operators: compose<> {};
+template <class U, int N=0> struct   refer_group_operators: compose<> {};
+template <class U, int N=0> struct   refer_field_operators: compose<> {};
+template <class U, int N=0> struct         refer_operators: compose<void
 ,	refer_field_operators <U, N>
 ,	refer_group_operators <U, N>
 ,	refer_bitwise_operators<U, N>
 >
 {};
-template <typename U> struct refer_bitwise_operators<U, 0> : compose< refer_bitwise_operators<U, 1>, refer_bitwise_operators<U, 2>> {};
-template <typename U> struct   refer_group_operators<U, 0> : compose<   refer_group_operators<U, 1>,   refer_group_operators<U, 2>> {};
-template <typename U> struct   refer_field_operators<U, 0> : compose<   refer_field_operators<U, 1>,   refer_field_operators<U, 2>> {};
-template <typename U> struct         refer_operators<U, 0> : compose<         refer_operators<U, 1>,         refer_operators<U, 2>> {};
+template <class U> struct refer_bitwise_operators<U, 0> : compose< refer_bitwise_operators<U, 1>, refer_bitwise_operators<U, 2>> {};
+template <class U> struct   refer_group_operators<U, 0> : compose<   refer_group_operators<U, 1>,   refer_group_operators<U, 2>> {};
+template <class U> struct   refer_field_operators<U, 0> : compose<   refer_field_operators<U, 1>,   refer_field_operators<U, 2>> {};
+template <class U> struct         refer_operators<U, 0> : compose<         refer_operators<U, 1>,         refer_operators<U, 2>> {};
 
-template <typename U> requires bitwise_operators_p<U, 1> and remember_q<U>
+template <class U> requires bitwise_operators_p<U, 1> and remember_q<U>
 struct refer_bitwise_operators<U, 1>
 {
 	template <any_p S>
@@ -152,7 +152,7 @@ struct refer_bitwise_operators<U, 1>
 
 	};
 };
-template <typename U> requires bitwise_operators_p<U, 2>
+template <class U> requires bitwise_operators_p<U, 2>
 struct refer_bitwise_operators<U, 2>
 {
 	template <any_p S>
@@ -170,7 +170,7 @@ struct refer_bitwise_operators<U, 2>
 	};
 };
 
-template <typename U> requires group_operators_p<U, 1> and remember_q<U>
+template <class U> requires group_operators_p<U, 1> and remember_q<U>
 struct refer_group_operators<U, 1>
 {
 	template <any_p S>
@@ -188,7 +188,7 @@ struct refer_group_operators<U, 1>
 
 	};
 };
-template <typename U> requires group_operators_p<U, 2>
+template <class U> requires group_operators_p<U, 2>
 struct refer_group_operators<U, 2>
 {
 	template <any_p S>
@@ -206,7 +206,7 @@ struct refer_group_operators<U, 2>
 	};
 };
 
-template <typename U> requires field_operators_p<U, 1> and remember_q<U>
+template <class U> requires field_operators_p<U, 1> and remember_q<U>
 struct refer_field_operators<U, 1>
 {
 	template <any_p S>
@@ -221,7 +221,7 @@ struct refer_field_operators<U, 1>
 
 	};
 };
-template <typename U> requires field_operators_p<U, 2>
+template <class U> requires field_operators_p<U, 2>
 struct refer_field_operators<U, 2>
 {
 	template <any_p S>

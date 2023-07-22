@@ -9,18 +9,18 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T, typename Y=T>
+template <class T, class Y=T>
 concept connected_p = any_p<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 };
-template <typename T, typename Y=T>
+template <class T, class Y=T>
 concept collected_p = any_p<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 	{t.store()} -> isomorphic_p<Y>;
 };
-template <typename T, typename Y>
+template <class T, class Y>
 concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
 
 
@@ -37,7 +37,7 @@ struct accessory
 using accessory_t = typename accessory::type;
 
 
-template <accessory_t N, typename Z>
+template <accessory_t N, class Z>
 using access_t = _v3::ranges::any_view<iteratee_t<Z>, N>;
 
 template <accessory_t N>
@@ -142,7 +142,7 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T> concept unprocessed_p = operators_q<T> and not _retail::any_q<T>;
+template <class T> concept unprocessed_p = operators_q<T> and not _retail::any_q<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////

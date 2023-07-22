@@ -103,7 +103,7 @@ TEST_CASE("xtal/control/anybody.hpp: hold processor")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t>
+template <class mix_t>
 void test__respan_internal_intermit()
 {
 	using alpha_t = typename realized::alpha_t;

@@ -13,7 +13,7 @@ namespace xtal::conflux
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct define
 {
 	using subkind = _retail::define<T>;
@@ -188,7 +188,7 @@ struct define
 
 	};
 };
-template <typename T>
+template <class T>
 struct refine
 :	_retail::refine<T>
 {};
@@ -196,7 +196,7 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
+template <class U>
 struct defer
 {
 	using subkind = _retail::defer<U>;
@@ -257,7 +257,7 @@ struct defer
 
 	};
 };
-template <typename U>
+template <class U>
 struct refer
 :	_retail::refer<U>
 {};

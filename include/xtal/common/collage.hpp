@@ -17,7 +17,7 @@ providing heterogeneous combinations of vectorized values. \
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 concept collaged_p = requires ()
 {
 	typename T::collaged;
@@ -28,7 +28,7 @@ concept collaged_p = requires ()
 	requires iterated_q<typename T::template spool<unit_t>::type>;
 
 };
-template <typename ...Ts>
+template <class ...Ts>
 concept collaged_q = (...and collaged_p<Ts>);
 
 
@@ -43,7 +43,7 @@ struct collage<N_size>
 {
 	using metatype = collate_t<N_size>;
 
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 	public:
@@ -55,7 +55,7 @@ struct collage<N_size>
 		producing a discrete/continuous pair representing trigger/position, \
 		and providing conversions to/from the initial value of `phase`. \
 		
-		template <typename V>
+		template <class V>
 		struct quasar
 		{
 			using _realized = realize<V>;
@@ -65,10 +65,10 @@ struct collage<N_size>
 			using phase_t = typename metatype::template phasor_t<alpha_t>;
 			using pulse_t = typename metatype::template pulsar_t<delta_t>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename _detail::epikind<T>::type;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -163,7 +163,7 @@ struct collage<N_size>
 			};
 			using type = _detail::isotype<homotype>;
 		};
-		template <typename V> using quasar_t = typename quasar<V>::type;
+		template <class V> using quasar_t = typename quasar<V>::type;
 
 	};
 	using type = subtype<unit_t>;

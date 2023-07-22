@@ -14,7 +14,7 @@ namespace xtal::processor
 template <typename ...>
 struct polymer;
 
-template <typename ...Ts>
+template <class ...Ts>
 XTAL_ASK polymer_q = tag_p<polymer, Ts...>;
 
 template <typename ..._s>
@@ -32,7 +32,7 @@ but expands/contracts the voice pool according to `control::stasis` requests/res
 ///\note\
 The attached `collect` and `collate` determine the sample buffer and voice spool respectively. \
 
-template <typename U, typename ...As>
+template <class U, typename ...As>
 struct polymer<U, As...>
 {
 	using subkind = monomer<U, As...>;
@@ -43,14 +43,14 @@ struct polymer<U, As...>
 		using S_ = compose_s<S, subkind>;
 		using Mu = monomer_t<based_t<U>>;
 		
-		template <typename ...Xs>
+		template <class ...Xs>
 		using F_ = typename S_::template bond<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
-		template <typename ...Xs> requires collated_q<S_> and collected_q<S_>
+		template <class ...Xs> requires collated_q<S_> and collected_q<S_>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;

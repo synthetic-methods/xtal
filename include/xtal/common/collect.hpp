@@ -13,7 +13,7 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 concept collected_p = requires ()
 {
 	typename T::collected;
@@ -24,7 +24,7 @@ concept collected_p = requires ()
 	requires iterated_q<typename T::template fluid<unit_t>::type>;
 
 };
-template <typename ...Ts>
+template <class ...Ts>
 concept collected_q = (...and collected_p<Ts>);
 
 ///\
@@ -43,7 +43,7 @@ using collect_t = typename collect<Ns...>::type;
 template <int N_size>
 struct collect<N_size>
 {
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 	public:
@@ -56,10 +56,10 @@ struct collect<N_size>
 		
 
 		///\see `std::array`.
-		template <typename V>
+		template <class V>
 		struct solid;
 
-		template <typename V> requires (0 <= N_size)
+		template <class V> requires (0 <= N_size)
 		struct solid<V>
 		{
 			using type = compose_s<_std::array<V, N_size>, tag<>>;
@@ -67,13 +67,13 @@ struct collect<N_size>
 		};
 		
 		///\see `std::vector`.
-		template <typename V>
+		template <class V>
 		struct fluid
 		{
 			using type = compose_s<_std::vector<V>, tag<>>;
 
 		};
-		template <typename V> requires (0 <= N_size)
+		template <class V> requires (0 <= N_size)
 		struct fluid<V>
 		{
 			class type: public iterate_t<type>
@@ -170,7 +170,7 @@ struct collect<N_size>
 				Span constructor. \
 				Initializes `this` with the values between `i0` and `iN`. \
 
-				template <typename I0, typename IN> requires epimorphic_p<iterator, I0, IN>
+				template <class I0, class IN> requires epimorphic_p<iterator, I0, IN>
 				XTAL_CXN type(I0 i0, IN iN)
 				{
 					push_back(i0, iN);
@@ -253,7 +253,7 @@ struct collect<N_size>
 				///\
 				Inserts the values `etc` beginning at `i0`. \
 
-				template <typename I0, typename IN> requires epimorphic_p<iterator, I0, IN>
+				template <class I0, class IN> requires epimorphic_p<iterator, I0, IN>
 				XTAL_FN0 push_back(I0 i0, IN iN)
 				{
 					insert(end(), i0, iN);
@@ -292,7 +292,7 @@ struct collect<N_size>
 				Constructs an element at `i` using the given arguments. \
 				\returns a reference to the element.
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(reference) emplace(I i, XTAL_DEF ...etc)
 				{
 					return *inplace(i, XTAL_REF_(etc)...);
@@ -301,13 +301,13 @@ struct collect<N_size>
 				///\
 				Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-				template <typename I, typename J0, typename JN> requires epimorphic_p<iterator, I, J0, JN>
+				template <class I, class J0, class JN> requires epimorphic_p<iterator, I, J0, JN>
 				XTAL_FN1_(iterator) insert(I i, J0 j0, JN jN)
 				{
 					using J = _std::common_type_t<J0, JN>;
 					return insert(i, (J) j0, (J) jN);
 				}
-				template <typename I, typename J> requires epimorphic_p<iterator, I, J>
+				template <class I, class J> requires epimorphic_p<iterator, I, J>
 				XTAL_FN1_(iterator) insert(I i, J j0, J jN)
 				{
 					size_type sN = _std::distance(j0, jN);
@@ -318,7 +318,7 @@ struct collect<N_size>
 				///\
 				Inserts the values `w` beginning at `i`. \
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(iterator) insert(I i, bracket_t<V> w)
 				{
 					return insert(i, w.begin(), w.end());
@@ -326,7 +326,7 @@ struct collect<N_size>
 				///\
 				Inserts the value `v` at `i`. \
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(iterator) insert(I i, XTAL_DEF_(common_q<V>) v)
 				{
 					return inplace(i, XTAL_REF_(v));
@@ -334,7 +334,7 @@ struct collect<N_size>
 				///\
 				Initialises `sN` values with `v` beginning at `i`. \
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(iterator) insert(I i, size_type sN, XTAL_DEF_(common_q<V>) v)
 				{
 					inject_(i, sN);
@@ -344,7 +344,7 @@ struct collect<N_size>
 				///\
 				Initialises `sN` values beginning at `i`. \
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(iterator) insert(I i, size_type sN)
 				{
 					inject_(i, sN);
@@ -358,7 +358,7 @@ struct collect<N_size>
 					reserve(1 + size());
 					return ::new (block_m + limit_m++) V(XTAL_REF_(etc)...);
 				}
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN1_(iterator) inplace(I i, XTAL_DEF ...etc)
 				{
 					inject_(i, 1);
@@ -408,7 +408,7 @@ struct collect<N_size>
 				///\
 				Deletes the element at `i0`. \
 
-				template <typename I0> requires common_q<iterator, I0>
+				template <class I0> requires common_q<iterator, I0>
 				XTAL_FN1 erase(I0 i0)
 				XTAL_0EX
 				{
@@ -417,7 +417,7 @@ struct collect<N_size>
 				///\
 				Deletes `sN` elements starting from `i0`. \
 
-				template <typename I0> requires common_q<iterator, I0>
+				template <class I0> requires common_q<iterator, I0>
 				XTAL_FN1 erase(I0 i0, size_type sN)
 				XTAL_0EX
 				{
@@ -426,7 +426,7 @@ struct collect<N_size>
 				///\
 				Deletes the elements between `i0` and `iN`. \
 
-				template <typename I0, typename IN> requires common_q<iterator, I0, IN>
+				template <class I0, class IN> requires common_q<iterator, I0, IN>
 				XTAL_FN1 erase(I0 i0, IN iN)
 				XTAL_0EX
 				{
@@ -436,7 +436,7 @@ struct collect<N_size>
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
-				template <typename I0, typename IN> requires common_q<iterator, I0, IN>
+				template <class I0, class IN> requires common_q<iterator, I0, IN>
 				XTAL_FN1 erase(I0 i0, IN iN, size_type sN)
 				XTAL_0EX
 				{
@@ -449,7 +449,7 @@ struct collect<N_size>
 				///\
 				Deletes `sN` elements between `i0` and `iN`. \
 
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN0 erode_(I i0, I iN, size_type sN)
 				XTAL_0EX
 				{
@@ -462,7 +462,7 @@ struct collect<N_size>
 					}
 					limit_m -= sN;
 				}
-				template <typename I> requires common_q<iterator, I>
+				template <class I> requires common_q<iterator, I>
 				XTAL_FN0 churn_(I i0, I iN, size_type sN)
 				XTAL_0EX
 				{
@@ -474,8 +474,8 @@ struct collect<N_size>
 			};
 		};
 
-		template <typename V> using fluid_t = typename fluid<V>::type;
-		template <typename V> using solid_t = typename solid<V>::type;
+		template <class V> using fluid_t = typename fluid<V>::type;
+		template <class V> using solid_t = typename solid<V>::type;
 
 	};
 	using type = subtype<unit_t>;

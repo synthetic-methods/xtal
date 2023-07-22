@@ -20,7 +20,7 @@ They provide instance and proxy initialization/finalization for the generated ty
 Expands on the `self`-reflection established by `../common/_detail.hpp#epikind`, \
 providing the mechanism for traversing the trait-lineage of `T`. \
 
-template <typename T>
+template <class T>
 struct define
 {
 	using subkind = _detail::epikind<T>;
@@ -43,14 +43,19 @@ struct define
 		XTAL_0EX
 		XTAL_REQ (0 < sizeof...(oo))
 		{
-			auto &s = S_::self(); return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
+			auto &s = S_::self();
+			return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
 		}
 		///\
 		Resolves the query/answer `Y` w.r.t. the supplied context. \
 
-		template <typename   Y, typename X, constant_q O> struct super: S_::template super<Y, X, O> {};
-		template <substant_q Y, typename X, constant_q O> struct super<Y, X, O> {using type = typename S_::template super_t<substant_t<Y>>;};
-		template <typename Y=T> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
+		template <typename   Y, class X, constant_q O> struct super: S_::template super<Y, X, O> {};
+		template <substant_q Y, class X, constant_q O> struct super<Y, X, O>
+		{
+			using type = typename S_::template super_t<substant_t<Y>>;
+		};
+		template <typename Y=T>
+		using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
 
 		//\
 
@@ -67,7 +72,7 @@ struct define
 Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
 binding `subtype` as the default target of `self`. \
 
-template <typename T>
+template <class T>
 struct refine
 {
 	using subkind = compose<void
@@ -105,7 +110,7 @@ providing chained/tupled construction/access. \
 Mutable `lvalue`s are converted to pointers, \
 providing a similar level of utility to `std::reference_wrapper`. \
 
-template <typename U>
+template <class U>
 struct defer
 {
 	template <any_p S>
@@ -141,7 +146,7 @@ struct defer
 		:	S_(XTAL_REF_(oo)...)
 	//	,	subtype(body_t{})
 		{}
-		template <typename W> requires (not fungible_q<W, subtype>)
+		template <class W> requires (not fungible_q<W, subtype>)
 		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ variable_q<U> or is_q<U, W>
@@ -149,10 +154,14 @@ struct defer
 		,	body_m(member_f<U>(XTAL_REF_(w)))
 		{}
 
-		template <typename   Y, typename X, constant_q O> struct super: S_::template super<Y, X, O> {};
-		template <              typename X, constant_q O> struct super<U, X, O> {using type = subtype;};
-		template <substant_q Y, typename X, constant_q O> struct super<Y, X, O> {using type = typename S_::template super_t<substant_t<Y>>;};
-		template <typename Y=U> using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
+		template <typename   Y, class X, constant_q O> struct super: S_::template super<Y, X, O> {};
+		template <              class X, constant_q O> struct super<U, X, O> {using type = subtype;};
+		template <substant_q Y, class X, constant_q O> struct super<Y, X, O>
+		{
+			using type = typename S_::template super_t<substant_t<Y>>;
+		};
+		template <typename Y=U>
+		using super_t = typename super<Y, subtype, constant_t<(size_t) 0>>::type;
 
 	public:
 		XTAL_TO4_(template <typename Y=T_>
@@ -205,7 +214,7 @@ struct defer
 		Setter: applied when the template parameter matches the kernel-type. \
 		\returns the previous value.
 
-		template <typename W=U>
+		template <class W=U>
 		XTAL_FN1 set(XTAL_DEF... ws)
 		XTAL_0EX
 		{
@@ -215,7 +224,7 @@ struct defer
 		Getter: applied when the template parameter matches the kernel-type. \
 		\returns the current value.
 
-		template <typename W=U>
+		template <class W=U>
 		XTAL_FN2 get()
 		XTAL_0FX
 		{
@@ -256,7 +265,7 @@ struct defer
 ///\
 Defers selected operations to `U` as required for `refine`ment. \
 
-template <typename U>
+template <class U>
 struct refer: compose<void
 ,	_detail::refer_comparators<U>
 ,	_detail::refer_operators<U>

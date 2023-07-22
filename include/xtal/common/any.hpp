@@ -25,22 +25,22 @@ struct any
 {
 	using subkind = compose<any<As>...>;
 
-	template <typename S>
+	template <class S>
 	using subtype = typename subkind::template subtype<S>;
 
 };
 template <typename A>
 struct any<A>
 {
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
 
 	protected:
-		template <typename Y, typename X, constant_q W> struct super         : S::template super<Y, X, W> {};
-		template <            typename X, constant_q W> struct super<A, X, W>: S::template super<X, X, W> {};
+		template <typename Y, class X, constant_q W> struct super         : S::template super<Y, X, W> {};
+		template <            class X, constant_q W> struct super<A, X, W>: S::template super<X, X, W> {};
 
 	};
 };

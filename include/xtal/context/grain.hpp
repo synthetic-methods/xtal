@@ -16,13 +16,13 @@ namespace xtal::context
 template <typename ...>
 struct grain;
 
-template <typename U>
+template <class U>
 struct grain<U>: lift<U, tag<grain>> {};
 
-template <typename ...Ts >
+template <class ...Ts >
 concept grain_q = tag_p<grain, Ts...>;
 
-template <typename S=confined_t<>, typename U=size_x>
+template <class S=confined_t<>, class U=size_x>
 using grain_s = compose_s<S, grain<U>>;
 
 

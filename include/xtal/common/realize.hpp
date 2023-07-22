@@ -137,10 +137,10 @@ public:
 	static_assert((sigma_t) ~sign::mask == positive::mask);
 
 
-	template <typename   T> struct internal;
+	template <class      T> struct internal;
 	template <unsigned_q T> struct internal<T> {using type = sigma_t;};
 	template <  signed_q T> struct internal<T> {using type = delta_t;};
-	template <typename   T>  using internal_t = typename internal<T>::type;
+	template <class      T>  using internal_t = typename internal<T>::type;
 
 	template <_std::integral I> requires (sizeof(I) < depth)
 	XTAL_CN2 internal_f(I i)
@@ -388,13 +388,13 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	template <typename Z, size_t N>
+	template <class Z, size_t N>
 	using scalar_t = typename collate_t<N>::template scalar_t<Z>;
 
-	template <typename Z>
+	template <class Z>
 	using single_t = scalar_t<Z, 1>;
 
-	template <typename Z>
+	template <class Z>
 	using couple_t = scalar_t<Z, 2>;
 
 
@@ -529,7 +529,7 @@ public:
 		}
 		return w;
 	}
-	template <size_t N_zoom, typename W>
+	template <size_t N_zoom, class W>
 	XTAL_CN2 explo_f(W base, W then=1)
 	XTAL_0EX
 	{
@@ -1099,7 +1099,7 @@ public:
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct realize: _detail::realization<sizeof(revalue_t<T>)> {};
 
 using realized = realize<size_t>;
@@ -1115,7 +1115,7 @@ static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
 ///\see `realized::trim_f`. \
 
 template <auto ...N_etc>
-XTAL_LET trim_f = []<typename T>(T &&t)
+XTAL_LET trim_f = []<class T>(T &&t)
 XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 
 

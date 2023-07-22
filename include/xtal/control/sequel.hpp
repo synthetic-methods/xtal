@@ -30,10 +30,10 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 template <typename ...>
 struct sequel;
 
-template <typename ...Ts>
+template <class ...Ts>
 XTAL_ASK sequel_q = tag_p<sequel, Ts...>;
 
-template <typename W=counter_t<>, typename ...As>
+template <class W=counter_t<>, typename ...As>
 XTAL_USE sequel_t = confined_t<sequel<W>, As...>;
 
 template <typename ...As>

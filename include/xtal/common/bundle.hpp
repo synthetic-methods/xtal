@@ -13,36 +13,36 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename    T  >    using bundle_size   = _std::tuple_size<_std::remove_reference_t<T>>;
-template <typename    T  >    using bundle_size_t =   typename bundle_size<T>::type;
-template <typename    T  > XTAL_LET bundle_size_v =            bundle_size<T>{};
-template <typename    T  >  concept bundle_size_p = constant_p<bundle_size_t<T>>;
-template <typename ...Ts >  concept bundle_size_q =   (...and bundle_size_p<Ts>);
+template <class    T  >    using bundle_size   = _std::tuple_size<_std::remove_reference_t<T>>;
+template <class    T  >    using bundle_size_t =   typename bundle_size<T>::type;
+template <class    T  > XTAL_LET bundle_size_v =            bundle_size<T>{};
+template <class    T  >  concept bundle_size_p = constant_p<bundle_size_t<T>>;
+template <class ...Ts >  concept bundle_size_q =   (...and bundle_size_p<Ts>);
 
-template <typename T, size_t ...Ns >  struct bundle_part;
-template <typename T, size_t... Ns >   using bundle_part_t = typename bundle_part<T, Ns...>::type;
-template <typename T, size_t    N  > concept bundle_part_p = requires(T a) {{_std::get<N>(a)} -> is_q<bundle_part_t<T, N>>;};
+template <class T, size_t ...Ns >  struct bundle_part;
+template <class T, size_t... Ns >   using bundle_part_t = typename bundle_part<T, Ns...>::type;
+template <class T, size_t    N  > concept bundle_part_p = requires(T a) {{_std::get<N>(a)} -> is_q<bundle_part_t<T, N>>;};
 
-template <typename T, size_t N, size_t ...Ns>
+template <class T, size_t N, size_t ...Ns>
 struct bundle_part<T, N, Ns...>
 :	bundle_part<bundle_part_t<T, N>, Ns...>
 {};
-template <typename T, size_t N>
+template <class T, size_t N>
 struct bundle_part<T, N>
 :	_std::tuple_element<N, _std::remove_reference_t<T>>
 {};
-template <typename T>
+template <class T>
 struct bundle_part<T>
 {
 	using type = T;
 
 };
-template <typename T  >
+template <class T>
 concept bundle_parts_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and bundle_part_p<T, N>)
 	(seek_f<bundle_size_v<T>> {})
 ;
-template <typename ...Ts >
+template <class ...Ts >
 concept bundle_parts_q = (true and ... and bundle_parts_p<Ts>);
 
 
@@ -55,7 +55,7 @@ static_assert(bundle_size_p<_std::array<null_t, 0>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Xs>
+template <class ...Xs>
 struct bundle
 {
 	using type = _std::tuple<rebased_t<Xs>...>;
@@ -73,23 +73,23 @@ struct bundle
 	template <typename F> using invoke_t = _std::invoke_result_t<F, rebased_t<Xs>...>;
 
 };
-template <typename ...Xs>
+template <class ...Xs>
 using    bundle_t = typename bundle<Xs...>::type;
-XTAL_LET bundle_f = [] <typename ...Xs>(Xs &&...xs)
+XTAL_LET bundle_f = [] <class ...Xs>(Xs &&...xs)
 XTAL_0FN_(_std::make_tuple(XTAL_REF_(xs)...));
 
-XTAL_LET bundle_fwd = [] <typename ...Xs>(Xs &&...xs)
+XTAL_LET bundle_fwd = [] <class ...Xs>(Xs &&...xs)
 XTAL_0FN_(_std::forward_as_tuple<Xs...>(XTAL_REF_(xs)...));
 
 
-template <typename    T  > concept bundle_p = bundle_size_p<T> and bundle_parts_p<T>;
-template <typename ...Ts > concept bundle_q = (...and bundle_p<Ts>);
+template <class    T  > concept bundle_p = bundle_size_p<T> and bundle_parts_p<T>;
+template <class ...Ts > concept bundle_q = (...and bundle_p<Ts>);
 
-template <typename    T  > concept heterogeneous_bundle_p = bundle_p<T> and not iterated_q<T>;
-template <typename    T  > concept   homogeneous_bundle_p = bundle_p<T> and     iterated_q<T>;
+template <class    T  > concept heterogeneous_bundle_p = bundle_p<T> and not iterated_q<T>;
+template <class    T  > concept   homogeneous_bundle_p = bundle_p<T> and     iterated_q<T>;
 
-template <typename ...Ts > concept heterogeneous_bundle_q = (...and heterogeneous_bundle_p<Ts>);
-template <typename ...Ts > concept   homogeneous_bundle_q = (...and   homogeneous_bundle_p<Ts>);
+template <class ...Ts > concept heterogeneous_bundle_q = (...and heterogeneous_bundle_p<Ts>);
+template <class ...Ts > concept   homogeneous_bundle_q = (...and   homogeneous_bundle_p<Ts>);
 
 
 XTAL_CN2 bundle_part_f(XTAL_DEF_(bundle_p) t)

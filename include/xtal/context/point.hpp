@@ -16,13 +16,13 @@ namespace xtal::context
 template <typename ...>
 struct point;
 
-template <typename U>
+template <class U>
 struct point<U>: lift<U, tag<point>> {};
 
-template <typename ...Ts >
+template <class ...Ts >
 concept point_q = tag_p<point, Ts...>;
 
-template <typename S=confined_t<>, typename U=size_x>
+template <class S=confined_t<>, class U=size_x>
 using point_s = compose_s<S, point<U>>;
 
 

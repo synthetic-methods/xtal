@@ -219,18 +219,16 @@ The codes `OP1` and `OP2` respectively designate unary and binary operators. Thi
 
 ## Templates
 
-A majority of definitions in this library operate on decorators - type-level functions that map from a superclass `S` to a subclass.
-These decorators are expressed as a `struct` with `template`d member `subtype`:
+The majority of definitions in this library operate on decorators: type-level functions that map from a superclass `S` to a subclass. These decorators are expressed as a `struct` containing `class subtype`:
 
-	struct {template <typename S> class subtype;};
+	template <...> struct {template <class S> class subtype;};
 
-Typically, these `struct`ures are themselves `template`d in order to realise a specific facet of the system.
-For example, `define` uses the Curiously Recursive Template Pattern (CRTP) to construct the supplied subclass `T`.
+Typically, these `struct`ures are themselves `template`d in order to realise a specific trait. For example, `define` uses the Curiously Recursive Template Pattern (CRTP) to construct the supplied subclass `T`.
 
-	template <typename T>
+	template <class T>
 	struct define
 	{
-	   template <typename S>
+	   template <class S>
 	   class subtype
 	   {
 	      XTAL_FN2 self() XTAL_0FX {return static_cast<T const &>(*this);}
@@ -242,7 +240,7 @@ For example, `define` uses the Curiously Recursive Template Pattern (CRTP) to co
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/common/compose.hpp?ts=3) are used to linearize the inheritence chain by applying a sequence of decorators to the supertype `S`, similar to the linearization of Scala's traits. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/common/compose.hpp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -250,7 +248,7 @@ The type-functions [`compose` and `compose_s`](include/xtal/common/compose.hpp?t
 
 ## Namespaces
 
-The primary namespaces within `xtal` comprise a hierarchy linked by the namespace `_retail` designating the parent:
+The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
 	namespace concord   {}
 	namespace conflux   {namespace _retail = concord;}
@@ -264,18 +262,18 @@ The [`anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) for each namespace pr
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
-	template <typename U> struct defer;
-	template <typename U> struct refer;
+	template <class U> struct defer;
+	template <class U> struct refer;
 
-	template <typename U, typename ...As>
+	template <class U, typename ...As>
 	struct confer: compose<refer<U>, As..., defer<U>> {};
 
 The `confine` decorator constructs the supplied type `T` by composing `define` and `refine`, respectively providing initialization (e.g. providing `begin` and `end`) and finalization (e.g. applying `ranges::view_interface`).
 
-	template <typename U> struct define;
-	template <typename U> struct refine;
+	template <class U> struct define;
+	template <class U> struct refine;
 
-	template <typename U, typename ...As>
+	template <class U, typename ...As>
 	struct confine: compose<refine<U>, As..., define<U>> {};
 
 ## Status
@@ -287,17 +285,12 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition     |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
 |Dependency management      |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter bond             |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?:attach\|dispatch)`|
-|Parameter sampling         |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::hold`|
-|Parameter scheduling       |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::intermit`|
-|Parameter in(tro)spection  |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?gauge\|guard)`|
+|Parameter handling         |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
 |Processor lifting          |[`processor/anybody.hpp`](include/xtal/processor/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Processor resizing         |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and influxing [`control/resize.hpp`](include/xtal/control/resize.hpp?ts=3)|
-|Processor rendering        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/respan.hpp`](include/xtal/control/respan.hpp?ts=3)|
-|Processor streaming        |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` and effluxing [`control/sequel.hpp`](include/xtal/control/sequel.hpp?ts=3)|
-|Processor polymorphism     |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3)|
+|Processor scheduling       |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond`|
+|Processor polymorphism     |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3) via `::bond`|
 |Buffer sharing             |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
 |Buffer manipulation        |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|

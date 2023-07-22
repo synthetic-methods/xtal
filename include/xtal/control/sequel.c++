@@ -89,7 +89,7 @@ TEST_CASE("xtal/control/sequel.hpp: synchronization")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename Y, typename X>
+template <class Y, class X>
 void test__initialization(auto n)
 {
 	X x; Y y;
@@ -112,7 +112,7 @@ TEST_CASE("xtal/control/sequel.hpp: initialization")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename Y, typename X>
+template <class Y, class X>
 void test__finalization(auto n)
 {
 	X x; Y y;
@@ -162,7 +162,7 @@ TEST_CASE("xtal/control/sequel.hpp: intrepidation from zero")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename Y, typename X>
+template <class Y, class X>
 void test__interference(auto i)
 {
 	using V = counter_t<>;

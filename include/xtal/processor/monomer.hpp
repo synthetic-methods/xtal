@@ -14,7 +14,7 @@ namespace xtal::processor
 template <typename ...>
 struct monomer;
 
-template <typename ...Ts>
+template <class ...Ts>
 XTAL_ASK monomer_q = tag_p<monomer, Ts...>;
 
 template <typename ..._s>
@@ -27,7 +27,7 @@ XTAL_CN2 monomer_f(XTAL_DEF u) {return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U, typename ...As>
+template <class U, typename ...As>
 struct monomer<U, As...>
 {
 	using resize_u = control::resize_t<>;
@@ -41,14 +41,14 @@ struct monomer<U, As...>
 		using S_ = compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 	
-		template <typename ...Xs>
+		template <class ...Xs>
 		using F_ = typename S_::template bond<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
-		template <typename ...Xs>
+		template <class ...Xs>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
@@ -92,7 +92,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <typename ...Xs> requires collected_q<S_>
+		template <class ...Xs> requires collected_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;

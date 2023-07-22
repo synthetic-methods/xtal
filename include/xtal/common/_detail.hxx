@@ -6,14 +6,14 @@ namespace _detail
 
 struct unikind
 {
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
 
-		template <typename Y, typename X, constant_q O> struct super          {using type = Y;};
-		template <            typename X, constant_q O> struct super<O, X, O> {using type = X;};
+		template <typename Y, class X, constant_q O> struct super          {using type = Y;};
+		template <            class X, constant_q O> struct super<O, X, O> {using type = X;};
 
 	};
 	using type = subtype<unit_t>;
@@ -21,10 +21,10 @@ struct unikind
 };
 using unitype = typename unikind::type;
 
-template <typename T>
+template <class T>
 struct epikind
 {
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 		friend T;
@@ -56,13 +56,13 @@ struct epikind
 	using type = subtype<unit_t>;
 
 };
-template <typename T>
+template <class T>
 using epitype = typename epikind<T>::type;
 
-template <template <typename> typename T_>
-class isotype: public T_<isotype<T_>>
+template <template <typename> typename _T>
+class isotype: public _T<isotype<_T>>
 {
-	using S_ = T_<isotype<T_>>;// -Wsubobject-linkage?
+	using S_ = _T<isotype<_T>>;// -Wsubobject-linkage?
 	
 public:
 	using S_::S_;

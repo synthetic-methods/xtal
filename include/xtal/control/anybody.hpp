@@ -13,7 +13,7 @@ namespace xtal::control
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct define
 {
 	using subkind = _retail::define<T>;
@@ -81,11 +81,11 @@ struct define
 				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
-				XTAL_TO4_(template <typename ...Xs>
+				XTAL_TO4_(template <class ...Xs>
 				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
 				)
 
-				template <typename ...Xs>
+				template <class ...Xs>
 				XTAL_FN2 deify()
 				XTAL_0FX
 				{
@@ -98,7 +98,7 @@ struct define
 				}
 
 			protected:
-				template <typename ...Xs>
+				template <class ...Xs>
 				struct being
 				{
 					template <auto ...Ks>
@@ -363,7 +363,7 @@ struct define
 
 	};
 };
-template <typename T>
+template <class T>
 struct refine
 :	_retail::refine<T>
 {};
@@ -371,7 +371,7 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
+template <class U>
 struct defer
 :	_retail::defer<U>
 {};
@@ -392,7 +392,7 @@ struct defer<W>
 
 	};
 };
-template <typename U>
+template <class U>
 struct refer
 :	_retail::refer<U>
 {};

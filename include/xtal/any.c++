@@ -99,7 +99,7 @@ struct dynamic_count
 	using count_t  = typename realized::iota_t;
 	using restep_u = control::restep_t<count_t>;
 
-	template <typename T>
+	template <class T>
 	using homotype = process::confine_t<T, restep_u::attach>;
 
 	struct type: public homotype<type>

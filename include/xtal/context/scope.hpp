@@ -24,7 +24,7 @@ struct scope
 	,	concord::defer<store_u>
 	>;
 
-	template <typename S>
+	template <class S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

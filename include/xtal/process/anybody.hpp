@@ -13,7 +13,7 @@ namespace xtal::process
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct define
 {
 	using subkind = _retail::define<T>;
@@ -48,13 +48,13 @@ struct define
 		///\returns the lambda abstraction of `method`, \
 		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
-		XTAL_TO4_(template <typename ...Xs>
+		XTAL_TO4_(template <class ...Xs>
 		XTAL_FN2 reify(), [this] XTAL_1FN_(operator())
 		)
 		
 		///\returns the overloaded function-pointer for the given types. \
 
-		template <typename ...Xs>
+		template <class ...Xs>
 		XTAL_FN2 deify()
 		XTAL_0FX
 		{
@@ -72,7 +72,7 @@ struct define
 		dynamically indexed by control-value/subtype `T`, \
 		and statically-generated from `method<Ks...>` with `sizeof...(Ks)` entries. \
 
-		template <typename ...Xs>
+		template <class ...Xs>
 		struct being
 		{
 			template <auto ...Ks>
@@ -104,7 +104,7 @@ struct define
 		///\
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
-		template <typename ...Xs>
+		template <class ...Xs>
 		struct bond
 		{
 			using signature = bundle<let_t<Xs>...>;
@@ -263,7 +263,7 @@ struct define
 
 	};
 };
-template <typename T>
+template <class T>
 struct refine
 {
 	using subkind = _retail::refine<T>;
@@ -273,21 +273,21 @@ struct refine
 	{
 		using S_ = compose_s<S, subkind>;
 	
-		template <typename ...Xs>
+		template <class ...Xs>
 		using F_ = typename S_::template bond<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
-		template <typename ...Xs>
+		template <class ...Xs>
 		struct bond: F_<Xs...>
 		{
 			using kind = confined<F_<Xs...>>;
 			using type = compose_s<S_, kind>;
 		
 		};
-		template <typename ...Xs>
+		template <class ...Xs>
 		using bond_t = typename bond<Xs...>::type;
 
 		template <typename ...As>
@@ -316,7 +316,7 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
+template <class U>
 struct defer
 {
 	using subkind = _retail::defer<U>;
@@ -370,7 +370,7 @@ struct defer<U>
 
 	};
 };
-template <typename U>
+template <class U>
 struct refer
 :	_retail::refer<U>
 {};

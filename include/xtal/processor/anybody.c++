@@ -46,7 +46,7 @@ TEST_CASE("xtal/processor/anybody.hpp: lifting")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t>
+template <class mix_t>
 void test__contrivance()
 {
 	using alpha_t = typename realized::alpha_t;

@@ -45,7 +45,7 @@ TEST_CASE("xtal/processor/monomer.hpp: invocable")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename mix_t>
+template <class mix_t>
 void test__sequel()
 {
 	using sigma_t = typename realized::sigma_t;
@@ -96,7 +96,7 @@ TEST_CASE("xtal/processor/monomer.hpp: sequel")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename add_t>
+template <class add_t>
 void test__respan_provision()
 {
 	using sigma_t = typename realized::sigma_t;
@@ -139,7 +139,7 @@ TEST_CASE("xtal/processor/monomer.hpp: respan provision")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename add_t, typename mul_t=dynamic_term_t>
+template <class add_t, typename mul_t=dynamic_term_t>
 void test__respan_chain_rvalue()
 {
 	using sigma_t = typename realized::sigma_t;
@@ -177,7 +177,7 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain rvalue")
 /***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-template <typename add_t, typename mul_t=dynamic_term_t>
+template <class add_t, typename mul_t=dynamic_term_t>
 void test__respan_chain_lvalue()
 {
 	using sigma_t = typename realized::sigma_t;

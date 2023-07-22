@@ -13,11 +13,11 @@ namespace xtal::processor
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct define
 :	_retail::define<T>
 {};
-template <typename T>
+template <class T>
 struct refine
 :	_retail::refine<T>
 {};
@@ -25,7 +25,7 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
+template <class U>
 struct defer
 :	defer<_retail::let_t<U>>
 {};
@@ -33,11 +33,11 @@ template <_detail::unprocessed_p U>
 struct defer<U>
 :	defer<_v3::ranges::repeat_view<U>>
 {};
-template <typename U> requires iterated_q<U>
+template <class U> requires iterated_q<U>
 struct defer<U>
 :	_retail::defer<U>
 {};
-template <typename U> requires uniterated_q<U> and _retail::any_q<U>
+template <class U> requires uniterated_q<U> and _retail::any_q<U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -47,7 +47,7 @@ struct defer<U>
 	{
 		using S_ = compose_s<S, subkind>;
 
-		XTAL_TO2_(template <typename ...Xs>
+		XTAL_TO2_(template <class ...Xs>
 		XTAL_FN2 reified_(), _detail::zap_f(head().template reify<iteratee_t<Xs>...>())
 		)
 
@@ -85,7 +85,7 @@ struct defer<U>
 
 	};
 };
-template <typename U>
+template <class U>
 struct refer
 {
 	using sequel_u = control::sequel_t<counted_t<>>;

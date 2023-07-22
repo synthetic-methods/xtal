@@ -14,7 +14,7 @@ namespace xtal::process
 template <typename ...>
 struct matrix;
 
-template <typename ...Ts>
+template <class ...Ts>
 XTAL_ASK matrix_q = tag_p<matrix, Ts...>;
 
 template <typename ..._s>
@@ -41,7 +41,7 @@ XTAL_CN2 dot(auto const &x, auto const &y)
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename W, typename U, typename ...As>
+template <class W, class U, typename ...As>
 struct matrix<W, U, As...>
 {
 	static_assert(bundle_q<W>);

@@ -11,7 +11,7 @@ namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename U=size_t>
+template <class U=size_t>
 struct resize
 {
 	using subkind = defer<U>;
@@ -33,7 +33,7 @@ struct resize
 template <iterated_q U>
 struct resize<U>: resize<XTAL_TYP_(XTAL_VAL_(U).size())>
 {};
-template <typename U=size_t>
+template <class U=size_t>
 using resize_t = confined_t<resize<U>>;
 
 XTAL_CN2 resize_f(XTAL_DEF w)

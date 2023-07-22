@@ -17,7 +17,7 @@ providing fluid-size queues and fixed-size algebraic coordinates. \
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 concept collated_p = requires ()
 {
 	typename T::collated;
@@ -28,7 +28,7 @@ concept collated_p = requires ()
 	requires iterated_q<typename T::template spool<unit_t>::type>;
 
 };
-template <typename ...Ts>
+template <class ...Ts>
 concept collated_q = (...and collated_p<Ts>);
 
 
@@ -43,16 +43,16 @@ struct collate<N_size>
 {
 	using metatype = collect_t<N_size>;
 
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
-		template <typename V>
+		template <class V>
 		struct spindle
 		{
 			using demikind = typename metatype::template fluid<V>;
 			using demitype = typename demikind::type;
 		
-			template <typename T>
+			template <class T>
 			using homotype = typename _detail::epikind<T>::template subtype<demitype>;
 
 			using type = _detail::isotype<homotype>;
@@ -66,12 +66,12 @@ struct collate<N_size>
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
 		
-		template <typename V>
+		template <class V>
 		struct spool
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename _detail::epikind<T>::template subtype<iterate_t<T>>;
 
 			class type: public hemitype<type>
@@ -187,7 +187,7 @@ struct collate<N_size>
 		///\
 		Defines a fixed-width `type` that supports arithmetic operations. \
 
-		template <typename V>
+		template <class V>
 		struct group
 		{
 			using _realized = realize<V>;
@@ -195,10 +195,10 @@ struct collate<N_size>
 			using demikind = typename metatype::template solid<V>;
 			using demitype = typename demikind::type;
 		
-			template <typename T>
+			template <class T>
 			using hemitype = typename _detail::epikind<T>::template subtype<demitype>;
 
-			template <typename T>// requires field_operators_q<V>
+			template <class T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -234,7 +234,7 @@ struct collate<N_size>
 					_detail::copy_to(R_::begin(), etc);
 				}
 
-				template <typename U>
+				template <class U>
 				XTAL_CN2_(T &) refer(U &u)
 				XTAL_0EX
 				{
@@ -297,15 +297,15 @@ struct collate<N_size>
 		///\
 		Extends `group::type` with elementwise multiplication/division. \
 
-		template <typename V>
+		template <class V>
 		struct scalar
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename group<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -321,7 +321,7 @@ struct collate<N_size>
 				The counterpart to `this` for which addition is linear, \
 				and multiplication is performed via convolution. \
 				
-				template <typename Z>
+				template <class Z>
 				using dual_t = Z;
 
 				XTAL_OP1_(T &) *= (bracket_t<V> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
@@ -388,15 +388,15 @@ struct collate<N_size>
 		///\
 		Extends `group::type` with elementwise addition/subtracion. \
 
-		template <typename V>
+		template <class V>
 		struct sector
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename group<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -411,7 +411,7 @@ struct collate<N_size>
 				///\
 				The counterpart to `this` for which multiplication is linear. \
 
-				template <typename Z>
+				template <class Z>
 				using dual_t = typename scalar<V>::type;
 
 				XTAL_OP1_(T &) += (bracket_t<V> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
@@ -426,21 +426,21 @@ struct collate<N_size>
 		///\
 		Extends `sector::type` with multiplication defined by circular convolution. \
 
-		template <typename V>
+		template <class V>
 		struct series
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename sector<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 				friend T;
 				using R_ = hemitype<T>;
 			
-				template <typename Y>
+				template <class Y>
 				using duel_t = typename Y::template dual_t<T>;
 
 			public:
@@ -646,15 +646,15 @@ struct collate<N_size>
 		///\
 		Extends `sector::type` with multiplication defined by linear convolution. \
 
-		template <typename V>
+		template <class V>
 		struct serial
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename sector<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 			//	TODO: Subclass to define serial pairs like `complex`. \
@@ -698,13 +698,13 @@ struct collate<N_size>
 		///\
 		Extends `serial::type` with `++/--` defined in terms of finite differences/derivatives. \
 
-		template <typename V>
+		template <class V>
 		struct pulsar
 		{
-			template <typename T>
+			template <class T>
 			using hemitype = typename serial<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -785,15 +785,15 @@ struct collate<N_size>
 		///\
 		Extends `pulsar::type` with `++/--` wrapping the initial argument to `{-1, 1}/2`. \
 
-		template <typename V>
+		template <class V>
 		struct phasor
 		{
 			using _realized = realize<V>;
 			
-			template <typename T>
+			template <class T>
 			using hemitype = typename pulsar<V>::template homotype<T>;
 
-			template <typename T>
+			template <class T>
 			class homotype: public hemitype<T>
 			{
 			//	TODO: Subclass to define serial pairs like `complex`. \
@@ -821,14 +821,14 @@ struct collate<N_size>
 			using type = _detail::isotype<homotype>;
 		};
 
-		template <typename V> using  spool_t = typename  spool<V>::type;
-		template <typename V> using  group_t = typename  group<V>::type;
-		template <typename V> using scalar_t = typename scalar<V>::type;
-		template <typename V> using sector_t = typename sector<V>::type;
-		template <typename V> using series_t = typename series<V>::type;
-		template <typename V> using serial_t = typename serial<V>::type;
-		template <typename V> using pulsar_t = typename pulsar<V>::type;
-		template <typename V> using phasor_t = typename phasor<V>::type;
+		template <class V> using  spool_t = typename  spool<V>::type;
+		template <class V> using  group_t = typename  group<V>::type;
+		template <class V> using scalar_t = typename scalar<V>::type;
+		template <class V> using sector_t = typename sector<V>::type;
+		template <class V> using series_t = typename series<V>::type;
+		template <class V> using serial_t = typename serial<V>::type;
+		template <class V> using pulsar_t = typename pulsar<V>::type;
+		template <class V> using phasor_t = typename phasor<V>::type;
 
 	};
 	using type = subtype<unit_t>;
@@ -840,15 +840,15 @@ struct collate<>
 template <int N, int ...Ns>
 struct collate<N, Ns...>
 {
-	template <typename S>
+	template <class S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
 
-		template <typename V> using value_t = typename collate_t<N>::template group_t<V>;
-		template <typename V> using group_t = typename collate_t<Ns...>::template group_t<value_t<V>>;
-		template <typename V> using group   = typename collate_t<Ns...>::template group  <value_t<V>>;
+		template <class V> using value_t = typename collate_t<N>::template group_t<V>;
+		template <class V> using group_t = typename collate_t<Ns...>::template group_t<value_t<V>>;
+		template <class V> using group   = typename collate_t<Ns...>::template group  <value_t<V>>;
 
 	};
 	using type = subtype<unit_t>;

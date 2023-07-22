@@ -13,12 +13,12 @@ namespace xtal::context
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename T>
+template <class T>
 struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <typename S>
+	template <class S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -28,7 +28,7 @@ struct define
 
 	};
 };
-template <typename T>
+template <class T>
 struct refine
 :  _retail::refine<T>
 {};
@@ -36,12 +36,12 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename U>
+template <class U>
 struct defer
 {
 	using subkind = _retail::defer<U>;
 
-	template <typename S>
+	template <class S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -68,12 +68,12 @@ struct defer
 	};
 };
 /*/
-template <typename U>
+template <class U>
 struct refer
 :  _retail::refer<U>
 {};
 /*/
-template <typename U>
+template <class U>
 struct refer: compose<void
 ,	_detail::refer_comparators<U>
 >
