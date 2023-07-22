@@ -54,7 +54,7 @@ struct define
 			};
 		};
 		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used by `reify`. \
+		Attaches `T` as a member of `this`, appending it to the arguments used to resolve `method<auto ...>`. \
 
 		template <size_t N_arity=2>
 		struct dispatch
@@ -63,10 +63,12 @@ struct define
 			class subtype: public compose_s<R, attach>
 			{
 				using R_ = compose_s<R, attach>;
+				using K_ = typename R_::head_t;
 			
 			public:
 			//	using R_::R_;
 				using R_::self;
+				using R_::head;
 
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
@@ -77,24 +79,36 @@ struct define
 					assert(0 <= n and n < N_arity);
 				}
 
+				/**/
+				///\note\
+				Experimental!
+				
+				XTAL_DO2_(template <auto ...Ks>
+				XTAL_FN2 method(XTAL_DEF ...xs), XTAL_REQ_(XTAL_VAL_(R_).template method<Ks..., K_{}>(XTAL_REF_(xs)...))
+				{
+					return (self().*deify<decltype(xs)...>(constant_v<Ks>...)) (XTAL_REF_(xs)...);
+				})
+				/***/
 				XTAL_TO2_(
-				XTAL_OP2() (XTAL_DEF ...xs), (self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
+				XTAL_OP2() (XTAL_DEF ...xs),
+					(self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_FN2 reify(), _std::bind_front(deify<Xs...>(), &self())
+				XTAL_FN2 reify(constant_q auto const ...ks),
+					_std::bind_front(deify<Xs...>(ks...), &self())
 				)
 
 				template <class ...Xs>
-				XTAL_FN2 deify()
+				XTAL_FN2 deify(constant_q auto const ...ks)
 				XTAL_0FX
 				{
-					return deify(being<Xs...>::template method_m<>);
+					return deify_(being<Xs...>::template method_m<value_f(ks)...>);
 				}
-				XTAL_FN2 deify(auto const &fs)
+				XTAL_FN2 deify_(array_q auto const &fs)
 				XTAL_0FX
 				{
-					return R_::deify(fs[R_::head()]);
+					return R_::deify_(fs[head()]);
 				}
 
 			protected:
@@ -102,7 +116,7 @@ struct define
 				struct being
 				{
 					template <auto ...Ks>
-					struct resolve
+					class resolve
 					{
 						template <size_t ...I>
 						XTAL_CN2 method_f(seek_t<I...>)
@@ -111,6 +125,8 @@ struct define
 							using doing = typename R_::template being<Xs...>;
 							return _std::array{(doing::template method_m<Ks..., I>)...};
 						}
+					
+					public:
 						XTAL_LET method_m = method_f(seek_f<N_arity> {});
 					
 					};

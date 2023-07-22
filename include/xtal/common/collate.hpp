@@ -622,14 +622,14 @@ struct collate<N_size>
 				{
 					auto &s = self();
 					if constexpr (complex_operators_q<V>) {
-						T(constant_t<-1>{}).convolve(s, t);
+						T(constant_v<-1>).convolve(s, t);
 					}
 					else {
 						using W = typename _realized::aphex_t;
 						using Y = typename series<W>::type;
 						Y s_(s);
 						Y t_(t);
-						Y(constant_t<-1>{}).convolve(s_, t_);
+						Y(constant_v<-1>).convolve(s_, t_);
 						_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
 					}
 					return s;

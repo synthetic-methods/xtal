@@ -79,7 +79,7 @@ void test__sequel()
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs << bias_t((realized::alpha_t) - (99 + 66));
+//	xhs << onset_t((realized::alpha_t) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
@@ -90,8 +90,8 @@ void test__sequel()
 
 TEST_CASE("xtal/processor/monomer.hpp: sequel")
 {
-	test__sequel<dynamic_bias_mix_t>();
-	test__sequel<static_bias_mix_t>();
+	test__sequel<dynamic_onset_mix_t>();
+	test__sequel<static_onset_mix_t>();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,14 +127,14 @@ void test__respan_provision()
 	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
 	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
 	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
-	xhs << bias_t((alpha_t) (11 + 1));
+	xhs << onset_t((alpha_t) (11 + 1));
 	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan provision")
 {
-	test__respan_provision<dynamic_bias_mix_t>();
-	test__respan_provision<static_bias_mix_t>();
+	test__respan_provision<dynamic_onset_mix_t>();
+	test__respan_provision<static_onset_mix_t>();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,8 +157,8 @@ void test__respan_chain_rvalue()
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs << control::resize_f(N);
-	yhs << coef_t((alpha_t) 100);
-	yhs << bias_t((alpha_t) 000);
+	yhs << scale_t((alpha_t) 100);
+	yhs << onset_t((alpha_t) 000);
 	REQUIRE(0 == yhs.size());
 
 	auto seq = control::sequel_f(N);
@@ -171,8 +171,8 @@ void test__respan_chain_rvalue()
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan internal chain rvalue")
 {
-	test__respan_chain_rvalue<dynamic_bias_mix_t>();
-	test__respan_chain_rvalue<static_bias_mix_t>();
+	test__respan_chain_rvalue<dynamic_onset_mix_t>();
+	test__respan_chain_rvalue<static_onset_mix_t>();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,8 +198,8 @@ void test__respan_chain_lvalue()
 	auto  yhs = mul_op::bond_f(xhs);
 
 	yhs << control::resize_f(N);
-	yhs << coef_t((alpha_t) 100);
-	xhs << bias_t((alpha_t) 000);
+	yhs << scale_t((alpha_t) 100);
+	xhs << onset_t((alpha_t) 000);
 
 	auto seq = control::sequel_f(N);
 	yhs >> seq  ;// idempotent!
@@ -211,8 +211,8 @@ void test__respan_chain_lvalue()
 }
 TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue")
 {
-	test__respan_chain_lvalue<dynamic_bias_mix_t>();
-	test__respan_chain_lvalue<static_bias_mix_t>();
+	test__respan_chain_lvalue<dynamic_onset_mix_t>();
+	test__respan_chain_lvalue<static_onset_mix_t>();
 }
 /***/
 ////////////////////////////////////////////////////////////////////////////////
@@ -229,8 +229,8 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<dynamic_bias_mix_t, collect<-1>>;
-	using mix_fn = monomer_t<dynamic_bias_mix_t>;
+	using mix_op = monomer_t<dynamic_onset_mix_t, collect<-1>>;
+	using mix_fn = monomer_t<dynamic_onset_mix_t>;
 	using nat_fn = monomer_t<dynamic_count_t>;
 
 	auto _xx = nat_fn::bond_f();

@@ -16,12 +16,12 @@ namespace xtal::common::__test
 template <int N>
 void test__spool_operation()
 {
-	using event_u = compose_s<bias_t, concord::lift<int>>;
+	using event_u = compose_s<onset_t, concord::lift<int>>;
 	using queue_u = typename collate_t<N>::template spool_t<event_u>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
-	auto e1 = event_u(1, bias_t(-1.0));
-	auto e2 = event_u(2, bias_t(-2.0));
+	auto e1 = event_u(1, onset_t(-1.0));
+	auto e2 = event_u(2, onset_t(-2.0));
 	REQUIRE(e1 < e2);
 	REQUIRE(2 == e2.head());
 	REQUIRE(1 == e1.head());
@@ -106,7 +106,7 @@ TEST_CASE("xtal/common/collate.hpp: series transformation")
 
 	using series_s = typename collate_t<O>::template series_t<aphex_t>;
 	using series_u = typename collate_t<N>::template series_t<aphex_t>;
-	series_s basis(constant_t<-1>{});
+	series_s basis(constant_v<-1>);
 
 	series_u source;
 	source[0] = source[M - 0] = aphex_t(0.0, 0.0);
@@ -137,7 +137,7 @@ TEST_CASE("xtal/common/collate.hpp: series convolution")
 	sigma_t constexpr M = N  - 1;
 
 	using series_u = typename collate_t<N>::template series_t<aphex_t>;
-	series_u basis(constant_t<-1>{});
+	series_u basis(constant_v<-1>);
 
 	series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 	series_u rhs = {1, 0, 1, 0, 0, 0, 0, 0};

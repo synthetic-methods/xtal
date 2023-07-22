@@ -42,25 +42,35 @@ struct define
 		Alias of `method(...)`. \
 		
 		XTAL_TO2_(
-		XTAL_OP2() (XTAL_DEF ...xs), self().method(XTAL_REF_(xs)...)
+		XTAL_OP2() (XTAL_DEF ...xs),
+			self().method(XTAL_REF_(xs)...)
 		)
 		
 		///\returns the lambda abstraction of `method`, \
 		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
-		XTAL_TO4_(template <class ...Xs>
-		XTAL_FN2 reify(), [this] XTAL_1FN_(operator())
-		)
+		XTAL_DO4_(template <class ...Xs>
+		XTAL_FN2 reify(value_q auto const ...ks),
+		{
+			if constexpr (0 == sizeof...(ks)) {
+				return [&, this] XTAL_1FN_(self().method);
+			}
+			else {
+				return [&, this] XTAL_1FN_(self().template method<value_f(ks)...>);
+			}
+		})
+		//\
+		XTAL_FN2 reify(auto const ...ks), 
 		
 		///\returns the overloaded function-pointer for the given types. \
 
 		template <class ...Xs>
-		XTAL_FN2 deify()
+		XTAL_FN2 deify(auto const ...ks)
 		XTAL_0FX
 		{
-			return deify(being<Xs...>::template method_m<>);
+			return deify_(being<Xs...>::template method_m<value_f(ks)...>);
 		}
-		XTAL_FN2 deify(auto const &f0)
+		XTAL_FN2 deify_(auto const &f0)
 		XTAL_0FX
 		{
 			return f0;
@@ -76,20 +86,18 @@ struct define
 		struct being
 		{
 			template <auto ...Ks>
-			struct resolve
+			class resolve
 			{
+			public:
 				using return_t = decltype(XTAL_VAL_(T &).template method<Ks...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (Xs const &&...);
 
 			};
 			template <auto ...Ks>
-			requires
-			requires (T const t)
+			XTAL_REQ_(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...))
+			class resolve<Ks...>
 			{
-				t.template method<Ks...>(XTAL_VAL_(Xs)...);
-			}
-			struct resolve<Ks...>
-			{
+			public:
 				using return_t = decltype(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...));
 				using method_t = return_t (T::*) (Xs const &&...) const;
 
@@ -364,9 +372,11 @@ struct defer<U>
 		using S_::self;
 		using S_::head;
 
-		XTAL_TO2_(template <auto ...Ks>
-		XTAL_FN2 method(XTAL_DEF ...xs), head().template method<Ks...>(XTAL_REF_(xs)...)
-		)
+		XTAL_DO2_(template <auto ...Ks>
+		XTAL_FN2 method(XTAL_DEF ...xs),
+		{
+			return head().template method<Ks...>(XTAL_REF_(xs)...);
+		})
 
 	};
 };

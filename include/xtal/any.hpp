@@ -62,6 +62,7 @@ template <auto M, auto N>  concept moeity_p = M == moeity_v<N>;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+template <auto     N >    XTAL_LET constant_v = _std::integral_constant<decltype(N), N>{};
 template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
 template <class    T >       using substant_t = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
 template <class    T >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
@@ -97,6 +98,7 @@ template <class    T >       using value_t    = typename based_t<T>::value_type;
 template <class    T >     concept value_p    = requires {typename value_t<T>;};
 template <class ...Ts>     concept value_q    = (...and value_p<Ts>);
 template <class    T >    XTAL_LET value_v    = based_t<T>::value;
+template <class    V >    XTAL_CN2 value_f(V &&v) {return value_v<V>;}
 
 template <class    T >      struct revalue     {using value_type = based_t<T>;};
 template <value_p  T >      struct revalue<T> : based_t<T> {};

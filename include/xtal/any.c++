@@ -14,14 +14,9 @@ namespace xtal::__test
 using namespace common;
 
 using level_t = control::label_t<typename realized::alpha_t, struct T_level>;
-using  bias_t = control::label_t<typename realized::alpha_t, struct T_bias >;
-using  coef_t = control::label_t<typename realized::alpha_t, struct T_coef >;
-using  wang_t = control::label_t<const typename realized::alpha_t, struct T_wang >;
+using onset_t = control::label_t<typename realized::alpha_t, struct T_onset>;
+using scale_t = control::label_t<typename realized::alpha_t, struct T_scale>;
 
-template <wang_t wang_o>
-XTAL_FN0 wanghus()
-{
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -42,51 +37,53 @@ struct mix
 using mix_t = typename mix::type;
 
 
-struct static_bias_mix
+struct static_onset_mix
 {
-	class type: public process::confine_t<type, bias_t::template dispatch<(1<<7)>>
+	class type: public process::confine_t<type
+	,	onset_t::template dispatch<(1<<7)>
+	>
 	{
 	public:
 
-		template <auto bias>
+		template <auto onset>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return (XTAL_REF_(xs) +...+ bias);
+			return (XTAL_REF_(xs) +...+ onset);
 		}
 
 	};
 };
-using static_bias_mix_t = typename static_bias_mix::type;
+using static_onset_mix_t = typename static_onset_mix::type;
 
 
-struct dynamic_bias_mix
+struct dynamic_onset_mix
 {
-	class type: public process::confine_t<type, bias_t::attach>
+	class type: public process::confine_t<type, onset_t::attach>
 	{
 	public:
 
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return (XTAL_REF_(xs) +...+ this->template get<bias_t>());
+			return (XTAL_REF_(xs) +...+ this->template get<onset_t>());
 		}
 
 	};
 };
-using dynamic_bias_mix_t = typename dynamic_bias_mix::type;
+using dynamic_onset_mix_t = typename dynamic_onset_mix::type;
 
 
 struct dynamic_term
 {
-	class type: public process::confine_t<type, coef_t::attach>
+	class type: public process::confine_t<type, scale_t::attach>
 	{
 	public:
 
 		XTAL_FN2 method(XTAL_DEF x)
 		XTAL_0EX
 		{
-			return XTAL_REF_(x)*this->template get<coef_t>();
+			return XTAL_REF_(x)*this->template get<scale_t>();
 		}
 
 	};

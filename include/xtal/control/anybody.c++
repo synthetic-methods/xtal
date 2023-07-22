@@ -13,7 +13,40 @@ namespace xtal::context::__test
 
 using namespace xtal::__test;
 
+////////////////////////////////////////////////////////////////////////////////
+/*/
+struct __dispatch_partial__mix
+{
+	template <process::any_q S>
+	class subtype: public S
+	{
+		using S_ = S;
+		
+	public:
+		using S_::S_;
 
+		template <auto onset, auto level>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return (XTAL_REF_(xs) +...+ onset)*level;
+		}
+
+	};
+	using type = subtype<process::any_t<>>;
+	
+};
+using __dispatch_partial__mix_t = process::confined_t<level_t::template dispatch<(1<<7)>, __dispatch_partial__mix>;
+
+
+TEST_CASE("xtal/control/anybody.hpp: dispatch partial")
+{
+	__dispatch_partial__mix_t mix_o; mix_o << level_t(5);
+	REQUIRE(mix_o.template method<3>(2, 1) == 30);
+	REQUIRE(true);
+	
+}
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 TEST_CASE("xtal/control/anybody.hpp: hold process")
@@ -108,7 +141,7 @@ void test__respan_internal_intermit()
 {
 	using alpha_t = typename realized::alpha_t;
 
-	using    mix_z = processor::monomer_t<mix_t, collect<-1>, typename bias_t::template intermit<(1<<4)>>;
+	using    mix_z = processor::monomer_t<mix_t, collect<-1>, typename onset_t::template intermit<(1<<4)>>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -125,14 +158,14 @@ void test__respan_internal_intermit()
 	xhs << resize_u(4);
 	REQUIRE(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs << context::point_s<bias_t>(0, (alpha_t) 100);
-	xhs << context::point_s<bias_t>(1, (alpha_t) 200);
-	xhs << context::point_s<bias_t>(2, (alpha_t) 300);
+	xhs << context::point_s<onset_t>(0, (alpha_t) 100);
+	xhs << context::point_s<onset_t>(1, (alpha_t) 200);
+	xhs << context::point_s<onset_t>(2, (alpha_t) 300);
 	xhs >> seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs << context::point_s<bias_t>(2, (alpha_t) 400);// relative timing!
+	xhs << context::point_s<onset_t>(2, (alpha_t) 400);// relative timing!
 	xhs >> seq++;
 	REQUIRE(4 == xhs.size());
 	REQUIRE(_v3::ranges::equal(xhs, _std::vector{344, 355, 466, 477}));
@@ -140,8 +173,8 @@ void test__respan_internal_intermit()
 }
 TEST_CASE("xtal/control/anybody.hpp: respan internal intermit")
 {
-	test__respan_internal_intermit<dynamic_bias_mix_t>();
-//	test__respan_internal_intermit<static_bias_mix_t>();
+	test__respan_internal_intermit<dynamic_onset_mix_t>();
+//	test__respan_internal_intermit<static_onset_mix_t>();
 }
 /***/
 ///////////////////////////////////////////////////////////////////////////////

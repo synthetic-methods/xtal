@@ -48,7 +48,8 @@ struct defer<U>
 		using S_ = compose_s<S, subkind>;
 
 		XTAL_TO2_(template <class ...Xs>
-		XTAL_FN2 reified_(), _detail::zap_f(head().template reify<iteratee_t<Xs>...>())
+		XTAL_FN2 reified_(auto const ...ks),
+			_detail::zap_f(head().template reify<iteratee_t<Xs>...>(ks...))
 		)
 
 	public:
@@ -63,24 +64,24 @@ struct defer<U>
 		NOTE: Unless the underlying `process` is invocable as `const`, \
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
-		template <auto ...>
+		template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<decltype(xs)...>() (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>(constant_v<Ks>...) (XTAL_REF_(xs)...));
 		}
-		template <auto ...>
+		template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(constant_v<Ks>...) (XTAL_REF_(xs)...);
 		}
-		template <auto ...>
+		template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>() (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(constant_v<Ks>...) (XTAL_REF_(xs)...);
 		}
 
 	};

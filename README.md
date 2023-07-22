@@ -70,7 +70,6 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
-	   template <auto...>
 	   XTAL_FN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
@@ -80,12 +79,17 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	struct Mix: process::confine_t<Mix, Active::template dispatch<2>>
+	using Offset = control::ordinal_t<struct offset>;
+	
+	struct Mix: process::confine_t<Mix
+	,  Offset::template dispatch<2>
+	,  Active::template dispatch<2>
+	>
 	{
-	   template <auto active>
+	   template <auto offset, auto active>
 	   XTAL_FN2 method(XTAL_DEF ...xs)
 	   {
-	      return (XTAL_REF_(xs) + ... + 0)*active;
+	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }
 	};
 
@@ -105,7 +109,7 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	biased <<= std::make_tuple(context::point_s<>(123), (Gate) 1);// `biased()[123] == 1`
+	gated <<= std::make_tuple(context::point_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
