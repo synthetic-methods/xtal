@@ -6,15 +6,14 @@
 
 #include <catch2/catch_all.hpp>
 
-#define TAG1_(...) "[" __VA_ARGS__ "]"
-#define TAGS_(...) XTAL_F1_(TAG1_, __VA_ARGS__)
 
-#define TRUE_(...)   REQUIRE((__VA_ARGS__))
-#define TEST_(...)   SECTION(__VA_ARGS__)
-#define TIME_(...) BENCHMARK(__VA_ARGS__)
+#define TRUE_(...)  REQUIRE((__VA_ARGS__))
+#define TRY_(...)   SECTION((__VA_ARGS__))
+#define EST_(...) BENCHMARK((__VA_ARGS__))
 
-#define TESTING_(...) TEST_CASE(__FILE__ ":" XTAL_S1_(__LINE__), TAGS_(__VA_ARGS__))
-
+#define TAG_(...) TEST_CASE(__FILE__ ":" XTAL_S1_(__LINE__), TAG_N_(__VA_ARGS__))
+#define TAG_N_(...)                                 XTAL_F1_(TAG_1_,__VA_ARGS__)
+#define TAG_1_(...)                                             "[" __VA_ARGS__ "]"
 
 
 XTAL_ENV_(push)
@@ -62,6 +61,12 @@ struct static_onset_mix
 		{
 			return (XTAL_REF_(xs) +...+ onset);
 		}
+		template <auto onset>
+		XTAL_FN2 method(XTAL_DEF ...xs)
+		XTAL_0EX
+		{
+			return (XTAL_REF_(xs) +...+ onset);
+		}
 
 	};
 };
@@ -85,6 +90,8 @@ struct dynamic_onset_mix
 using dynamic_onset_mix_t = typename dynamic_onset_mix::type;
 
 
+////////////////////////////////////////////////////////////////////////////////
+
 struct dynamic_term
 {
 	class type: public process::confine_t<type, scale_t::attach>
@@ -101,6 +108,8 @@ struct dynamic_term
 };
 using dynamic_term_t = typename dynamic_term::type;
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 struct dynamic_count
 {

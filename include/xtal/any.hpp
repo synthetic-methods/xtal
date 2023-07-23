@@ -82,7 +82,7 @@ template <class ...Ts>     concept substant_q = (...and substant_p<Ts>);
 template <class ...Ts>     concept variable_q = (...and variable_p<Ts>);
 
 
-template <class    T >       using   based_t  = complete_t<_std::remove_cvref_t<T>>;
+template <class    T >       using   based_t  = _std::remove_cvref_t<T>;
 template <class    T >     concept   based_p  = _std::is_trivially_copyable_v<T>;
 template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
@@ -102,6 +102,9 @@ template <class    T >       using rebased_t  = typename rebased<T>::type;
 template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
 template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
 
+template <typename X>       struct argument    {using type = X      &&;};
+template <based_q  X>       struct argument<X> {using type = X const &;};
+template <typename X>        using argument_t = typename argument<X>::type;
 
 template <class    T >       using value_t    = typename based_t<T>::value_type;
 template <class    T >     concept value_p    = requires {typename value_t<T>;};
@@ -128,6 +131,30 @@ template <class ...Ts>       concept id_q     = identical<Ts...>::value;
 template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
+
+template <typename W>
+XTAL_CN2 identical_f(W const &x, W const &y)
+XTAL_0EX
+{
+	return &x == &y;
+}
+template <typename X, typename Y>
+XTAL_CN2 equal_f(X const &x, Y const &y)
+XTAL_0EX
+{
+	if constexpr (requires {x.operator==(y);}) {
+		return x.operator==(y);
+	}
+	else {
+		return x == y;
+	}
+}
+template <typename X, typename Y>
+XTAL_CN2 equivalent_f(X const &x, Y const &y)
+XTAL_0EX
+{
+	return equal_f(x, y);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -171,17 +198,15 @@ template <class T, class ...Ys>
 concept forcible_q = (... and (sizeof(T) == sizeof(Ys)));
 
 template <class Y>
-XTAL_CN2 funge_f(XTAL_DEF t)
+XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t)
 XTAL_0EX
 {
-	static_assert(fungible_q<Y, XTAL_TYP_(t)>);
 	return static_cast<Y>(XTAL_REF_(t));
 }
 template <class Y>
-XTAL_CN2 force_f(XTAL_DEF t)
+XTAL_CN2 force_f(XTAL_DEF_(forcible_q) t)
 XTAL_0EX
 {
-	static_assert(forcible_q<Y, XTAL_TYP_(t)>);
 	return reinterpret_cast<Y>(XTAL_REF_(t));
 }
 
@@ -343,35 +368,6 @@ static_assert(  field_operators_q<float>);
 static_assert(  field_operators_q<_std::complex<float>>);
 
 
-//\
-template <pointed_q W>
-template <typename W>
-XTAL_CN2 identical_f(W const &x, W const &y)
-XTAL_0EX
-{
-	//\
-	return _std::addressof(x) == _std::addressof(y);
-	return &x == &y;
-}
-template <typename W>
-XTAL_CN2 equal_f(W const &x, W const &y)
-XTAL_0EX
-{
-	if constexpr (requires {x.operator==(y);}) {
-		return x.operator==(y);
-	}
-	else {
-		return x == y;
-	}
-}
-template <typename W>
-XTAL_CN2 equivalent_f(W const &x, W const &y)
-XTAL_0EX
-{
-	return equal_f(x, y);
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -384,13 +380,6 @@ template <class ...Ts>     concept   end_q    = (...and   end_p<Ts>);
 
 template <class    W >       using bracket_t  = _std::initializer_list<W>;
 template <class ...Ts>     concept bracket_q  = begin_q<Ts...> and end_q<Ts...>;
-template <bracket_q W>
-XTAL_CN2 equivalent_f(W const &x, W const &y)
-XTAL_0EX
-{
-	return x.begin() == y.begin() and x.end() == y.end();
-}
-
 
 template <class    W >       using interval_t = _v3::ranges::iota_view<W, W>;
 template <class    T >       using iterate_t  = _v3::ranges::view_interface<T>;
@@ -510,6 +499,19 @@ template <class      ...Ts>  struct epimorphic       : epitropic<Ts...> {};
 template <iterated_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
 template <iterator_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
 template <class      ...Ts> concept epimorphic_p =     epimorphic<Ts...>::value;
+
+template <iterated_q X, iterated_q Y> requires isomorphic_p<X, Y>
+XTAL_CN2 equivalent_f(X const &x, Y const &y)
+XTAL_0EX
+{
+	return x.begin() == y.begin() and x.end() == y.end();
+}
+template <iterated_q X, iterated_q Y> requires epimorphic_p<X, Y>
+XTAL_CN2 equal_f(X &&x, Y &&y)
+XTAL_0EX
+{
+	return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

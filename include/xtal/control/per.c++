@@ -12,26 +12,30 @@ namespace xtal::control::__test
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
-TEST_CASE("xtal/control/per.hpp: construction")
+
+TAG_("per")
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	TRY_("construction")
+	{
+		using sigma_t = typename realized::sigma_t;
+		using alpha_t = typename realized::alpha_t;
 
-	sigma_t b = realized::diplo_f(16);
-	alpha_t p = realized::haplo_f(16);
+		sigma_t b = realized::diplo_f(16);
+		alpha_t p = realized::haplo_f(16);
 
-	auto d = per_t(b);
-	auto q = per_t(p);
+		auto d = per_t(b);
+		auto q = per_t(p);
 
-	REQUIRE(b == d.rate());
-	REQUIRE(b == q.rate());
+		TRUE_(b == d.rate());
+		TRUE_(b == q.rate());
 
-	REQUIRE(p == d.period());
-	REQUIRE(p == q.period());
+		TRUE_(p == d.period());
+		TRUE_(p == q.period());
 
+	}
 }
-/**/
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

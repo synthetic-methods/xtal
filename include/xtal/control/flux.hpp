@@ -19,7 +19,6 @@ struct flux
 	using subkind = compose<void
 	,	_detail::refer_equality_comparators<XTAL_FLX>
 	,	_detail::refer_bitwise_operators<XTAL_FLX>
-//	,	refer<XTAL_FLX>
 	,	As...
 	,	defer<XTAL_FLX>
 	>;
@@ -40,7 +39,6 @@ struct flux<A, As...>
 	using subkind = compose<void
 	,	_detail::refer_equality_comparators<XTAL_FLX>
 	,	_detail::refer_bitwise_operators<XTAL_FLX>
-//	,	refer<XTAL_FLX>
 	,	As...
 	,	defer<XTAL_FLX>
 	>;

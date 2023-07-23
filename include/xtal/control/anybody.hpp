@@ -79,7 +79,7 @@ struct define
 					assert(0 <= n and n < N_arity);
 				}
 
-				/**/
+				/*/
 				///\note\
 				Experimental!
 				

@@ -1,0 +1,7 @@
+# source FIXME
+# ^ populates/destroys the alternative test index 'include/xtal.cxx', which is '.gitignore'd
+
+grep -lR FIXME ./include | grep .c++ |\
+	sed 's|\./|#|' | sed 's|/| "./|' | sed 's|$|"|' > ./include/xtal.cxx
+
+[ -s ./include/xtal.cxx ] || rm ./include/xtal.cxx

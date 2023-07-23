@@ -12,9 +12,9 @@ namespace xtal::processor::__test
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+
 template <typename ...As>
-void test__invocable()
+void monomer_lifting()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -35,18 +35,20 @@ void test__invocable()
 	b << resize_u(N_size);
 	b >> sequel_n(N_size);
 	_v3::ranges::move(b, a.begin());
-	REQUIRE(a == z);
+	TRUE_(a == z);
 }
-TEST_CASE("xtal/processor/monomer.hpp: invocable")
+TAG_("monomer", "lifting")
 {
-	test__invocable<collect<-1>>();
-	test__invocable();
+	TRY_("pure (material)") {monomer_lifting<collect<-1>>();}
+	TRY_("pure (virtual)")  {monomer_lifting();}
+
 }
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
+
+
+///////////////////////////////////////////////////////////////////////////////
+
 template <class mix_t>
-void test__sequel()
+void monomer_control__advancing()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -58,24 +60,24 @@ void test__sequel()
 	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
 	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
 
-	auto lhs = processor::let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = processor::let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = mixer_t::bond_f(lhs, rhs);
 
-	auto seq = sequel_n(3); REQUIRE(0 == xhs.size());// uninitialized...
-	REQUIRE(3 == seq.size());
+	auto seq = sequel_n(3); TRUE_(0 == xhs.size());// uninitialized...
+	TRUE_(3 == seq.size());
 
-//	xhs <<   seq; REQUIRE(0 == xhs.size());//                               // initialize via influx?
-	xhs >>   seq; REQUIRE(3 == xhs.size());// REQUIRE(33*0 == xhs.front()); // initialize via efflux!
-	xhs >> ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*1 == xhs.front()); // advance then efflux...
-	xhs >> ++seq; REQUIRE(3 == xhs.size());// REQUIRE(33*2 == xhs.front()); // advance then efflux...
+//	xhs <<   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
+	xhs >>   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
+	xhs >> ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
+	xhs >> ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
 	/**/
 
 //	xhs >> ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
 
-	seq += 6;      REQUIRE(3 == xhs.size());//                                    // prepare to advance and resize
-	xhs >> seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*0 == xhs.front()); // efflux then advance
-	xhs >> seq++; REQUIRE(6 == xhs.size());// REQUIRE(99 + 66*1 == xhs.front()); // efflux then advance
+	seq += 6;      TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
+	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
+	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
@@ -84,20 +86,11 @@ void test__sequel()
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
 	;
-	REQUIRE(_v3::ranges::equal(xhs, yhs));
+	TRUE_(equal_f(xhs, yhs));
 	/***/
 }
-
-TEST_CASE("xtal/processor/monomer.hpp: sequel")
-{
-	test__sequel<dynamic_onset_mix_t>();
-	test__sequel<static_onset_mix_t>();
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
 template <class add_t>
-void test__respan_provision()
+void monomer_control__provisioning()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -114,33 +107,38 @@ void test__respan_provision()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto rhs = let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
 	auto buffer_m = buffer_u {0, 0, 0};
 	auto respan_m = respan_u(buffer_m);
 	auto sequel_m = sequel_n(3);
 
-	REQUIRE(0 == xhs.size());
+	TRUE_(0 == xhs.size());
 
-	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs << onset_t((alpha_t) (11 + 1));
-	xhs >> bundle_f(respan_m, sequel_m++); REQUIRE(_v3::ranges::equal(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
-TEST_CASE("xtal/processor/monomer.hpp: respan provision")
+TAG_("monomer", "control")
 {
-	test__respan_provision<dynamic_onset_mix_t>();
-	test__respan_provision<static_onset_mix_t>();
+	TRY_("advancing (dynamic)") {monomer_control__advancing<dynamic_onset_mix_t>();}
+	TRY_("advancing (static)")  {monomer_control__advancing< static_onset_mix_t>();}
+
+	TRY_("provisioning (dynamic)") {monomer_control__provisioning<dynamic_onset_mix_t>();}
+	TRY_("provisioning (static)")  {monomer_control__provisioning< static_onset_mix_t>();}
+
 }
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
+
+
+///////////////////////////////////////////////////////////////////////////////
+
 template <class add_t, typename mul_t=dynamic_term_t>
-void test__respan_chain_rvalue()
+void monomer_chaining__rvalue()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -159,26 +157,18 @@ void test__respan_chain_rvalue()
 	yhs << control::resize_f(N);
 	yhs << scale_t((alpha_t) 100);
 	yhs << onset_t((alpha_t) 000);
-	REQUIRE(0 == yhs.size());
+	TRUE_(0 == yhs.size());
 
 	auto seq = control::sequel_f(N);
-	yhs >> seq  ; REQUIRE(N == yhs.size());// idempotent!
-	yhs >> seq++; REQUIRE(ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >> seq++; REQUIRE(ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >> seq  ; TRUE_(N == yhs.size());// idempotent!
+	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	REQUIRE(yhs.template slot<0>().store().empty());
+	TRUE_(yhs.template slot<0>().store().empty());
 
 }
-TEST_CASE("xtal/processor/monomer.hpp: respan internal chain rvalue")
-{
-	test__respan_chain_rvalue<dynamic_onset_mix_t>();
-	test__respan_chain_rvalue<static_onset_mix_t>();
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
 template <class add_t, typename mul_t=dynamic_term_t>
-void test__respan_chain_lvalue()
+void monomer_chaining__lvalue()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -192,8 +182,8 @@ void test__respan_chain_lvalue()
 	
 	using mix_op = monomer_t<add_t, collect<-1>>;
 	using mul_op = monomer_t<mul_t, collect<-1>>;
-	auto  lhs = let_f(_01); REQUIRE(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = let_f(_10); REQUIRE(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto  lhs = let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
+	auto  rhs = let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
@@ -203,21 +193,14 @@ void test__respan_chain_lvalue()
 
 	auto seq = control::sequel_f(N);
 	yhs >> seq  ;// idempotent!
-	yhs >> seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >> seq++; REQUIRE(_v3::ranges::equal(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	REQUIRE(yhs.template slot<0>().store().size() == 4);
+	TRUE_(yhs.template slot<0>().store().size() == 4);
 
 }
-TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue")
-{
-	test__respan_chain_lvalue<dynamic_onset_mix_t>();
-	test__respan_chain_lvalue<static_onset_mix_t>();
-}
-/***/
-////////////////////////////////////////////////////////////////////////////////
-/**/
-TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
+template <class add_t, typename mul_t=dynamic_term_t>
+void monomer_chaining__shared()
 {
 	using sigma_t = typename realized::sigma_t;
 	using alpha_t = typename realized::alpha_t;
@@ -229,8 +212,8 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<dynamic_onset_mix_t, collect<-1>>;
-	using mix_fn = monomer_t<dynamic_onset_mix_t>;
+	using mix_op = monomer_t<add_t, collect<-1>>;
+	using mix_fn = monomer_t<add_t>;
 	using nat_fn = monomer_t<dynamic_count_t>;
 
 	auto _xx = nat_fn::bond_f();
@@ -242,11 +225,24 @@ TEST_CASE("xtal/processor/monomer.hpp: respan internal chain lvalue shared")
 	yhs << control::restep_f((size_t) 50);
 	yhs << control::resize_f(N);
 
-	yhs >> control::sequel_f(N)*0; REQUIRE(ranges::equal(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >> control::sequel_f(N)*1; REQUIRE(ranges::equal(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >> control::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >> control::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
-/***/
+TAG_("monomer", "chaining")
+{
+	TRY_("rvalue (dynamic)") {monomer_chaining__rvalue<dynamic_onset_mix_t>();}
+	TRY_("rvalue (static)")  {monomer_chaining__rvalue< static_onset_mix_t>();}
+
+	TRY_("lvalue (dynamic)") {monomer_chaining__lvalue<dynamic_onset_mix_t>();}
+	TRY_("lvalue (static)")  {monomer_chaining__lvalue< static_onset_mix_t>();}
+
+	TRY_("shared (dynamic)") {monomer_chaining__shared<dynamic_onset_mix_t>();}
+	TRY_("shared (static)")  {monomer_chaining__shared< static_onset_mix_t>();}
+
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

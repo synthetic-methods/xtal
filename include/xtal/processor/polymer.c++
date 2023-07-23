@@ -12,9 +12,9 @@ namespace xtal::processor::__test
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+
 template <size_t N_window=8, int N_collect=-1, int N_collate=-1>
-void test_polymer__control_spine()
+void polymer_control_spine__locamotion()
 {
 	using alpha_t = typename realized::alpha_t;
 	using sigma_t = typename realized::sigma_t;
@@ -40,37 +40,41 @@ void test_polymer__control_spine()
 // Resize, and set the default `level: 1` and `stage: final`:
 	vox_o << resize_u(N_window);
 	vox_o << level_t(1) << stage_t(-1);
-	vox_o << bundle_f(event_t(62, 0)); REQUIRE(1 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(65, 0)); REQUIRE(2 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(69, 0)); REQUIRE(3 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(65, 0)); REQUIRE(4 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(62, 0)); TRUE_(1 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0)); TRUE_(2 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(69, 0)); TRUE_(3 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0)); TRUE_(4 == vox_o.spool().size());
 
 //	Render:
 //	vox_o << resize_u(N_window);
 	vox_o >> sequel_u(N_window);
 	
-	REQUIRE(3 == vox_o.spool().size());
-	REQUIRE(3 == vox_o.front());
+	TRUE_(3 == vox_o.spool().size());
+	TRUE_(3 == vox_o.front());
 	
 	auto vox_oo_ = vox_o.spool().begin();
-	REQUIRE(62 == vox_oo_++->head());
-	REQUIRE(65 == vox_oo_++->head());
-	REQUIRE(69 == vox_oo_++->head());
+	TRUE_(62 == vox_oo_++->head());
+	TRUE_(65 == vox_oo_++->head());
+	TRUE_(69 == vox_oo_++->head());
 
 }
-TEST_CASE("xtal/processor/polymer.hpp: control spine")
+TAG_("polymer", "control", "spine")
 {
-	test_polymer__control_spine<8, -1, -1>();
-	test_polymer__control_spine<8, -1, 64>();
-	test_polymer__control_spine<8, 64, -1>();
-	test_polymer__control_spine<8, 64, 64>();
+	TRY_("voice allocation/deallocation")
+	{
+		polymer_control_spine__locamotion<8, -1, -1>();
+		polymer_control_spine__locamotion<8, -1, 64>();
+		polymer_control_spine__locamotion<8, 64, -1>();
+		polymer_control_spine__locamotion<8, 64, 64>();
 
+	}
 }
-/**/
+
+
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+
 template <size_t N_window=8, int N_collect=-1, int N_collate=-1>
-void test_polymer__control_spool()
+void polymer_control_spool__compound()
 {
 	using alpha_t = typename realized::alpha_t;
 	using sigma_t = typename realized::sigma_t;
@@ -97,36 +101,25 @@ void test_polymer__control_spool()
 
 // Set the default `stage: final`:
 	vox_o << stage_t(-1);
-	vox_o << bundle_f(event_t(62, 0), level_t(1)); REQUIRE(1 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(65, 0), level_t(2)); REQUIRE(2 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(69, 0), level_t(3)); REQUIRE(3 == vox_o.spool().size());
-	vox_o << bundle_f(event_t(65, 0), level_t(4)); REQUIRE(4 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(62, 0), level_t(1)); TRUE_(1 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0), level_t(2)); TRUE_(2 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(69, 0), level_t(3)); TRUE_(3 == vox_o.spool().size());
+	vox_o << bundle_f(event_t(65, 0), level_t(4)); TRUE_(4 == vox_o.spool().size());
 
 //	Re(?:size|nder):
 	vox_o << resize_u(N_window) >> sequel_u(N_window);
 	
-	REQUIRE(3 == vox_o.spool().size());
-	REQUIRE(8 == vox_o.front());
+	TRUE_(3 == vox_o.spool().size());
+	TRUE_(8 == vox_o.front());
 	
 	auto vox_oo_ = vox_o.spool().begin();
-	REQUIRE(62 == vox_oo_++->head());
-	REQUIRE(65 == vox_oo_++->head());
-	REQUIRE(69 == vox_oo_++->head());
+	TRUE_(62 == vox_oo_++->head());
+	TRUE_(65 == vox_oo_++->head());
+	TRUE_(69 == vox_oo_++->head());
 
 }
-TEST_CASE("xtal/processor/polymer.hpp: control spool")
-{
-	test_polymer__control_spool<8, -1, -1>();
-	test_polymer__control_spool<8, -1, 64>();
-	test_polymer__control_spool<8, 64, -1>();
-	test_polymer__control_spool<8, 64, 64>();
-
-}
-/**/
-////////////////////////////////////////////////////////////////////////////////
-/**/
 template <size_t N_window=8, int N_collect=-1, int N_collate=-1>
-void test_polymer__control_spool_apart()
+void polymer_control_spool__composited()
 {
 	using alpha_t = typename realized::alpha_t;
 	using sigma_t = typename realized::sigma_t;
@@ -153,32 +146,44 @@ void test_polymer__control_spool_apart()
 
 // Set the default `stage: final`:
 	vox_o << stage_t(-1);
-	vox_o << bundle_f(context::grain_s<>(62), stage_t(0), level_t(1)); REQUIRE(1 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(2)); REQUIRE(2 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(69), stage_t(0), level_t(3)); REQUIRE(3 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(4)); REQUIRE(4 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(62), stage_t(0), level_t(1)); TRUE_(1 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(2)); TRUE_(2 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(69), stage_t(0), level_t(3)); TRUE_(3 == vox_o.spool().size());
+	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(4)); TRUE_(4 == vox_o.spool().size());
 
 //	Re(?:size|nder):
 	vox_o << resize_u(N_window) >> sequel_u(N_window);
 	
-	REQUIRE(3 == vox_o.spool().size());
-	REQUIRE(8 == vox_o.front());
+	TRUE_(3 == vox_o.spool().size());
+	TRUE_(8 == vox_o.front());
 	
 	auto vox_oo_ = vox_o.spool().begin();
-	REQUIRE(62 == vox_oo_++->head());
-	REQUIRE(65 == vox_oo_++->head());
-	REQUIRE(69 == vox_oo_++->head());
+	TRUE_(62 == vox_oo_++->head());
+	TRUE_(65 == vox_oo_++->head());
+	TRUE_(69 == vox_oo_++->head());
 
 }
-TEST_CASE("xtal/processor/polymer.hpp: control spool apart")
+TAG_("polymer", "control", "spool")
 {
-	test_polymer__control_spool_apart<8, -1, -1>();
-	test_polymer__control_spool_apart<8, -1, 64>();
-	test_polymer__control_spool_apart<8, 64, -1>();
-	test_polymer__control_spool_apart<8, 64, 64>();
+	TRY_("with compound events")
+	{
+		polymer_control_spool__compound<8, -1, -1>();
+		polymer_control_spool__compound<8, -1, 64>();
+		polymer_control_spool__compound<8, 64, -1>();
+		polymer_control_spool__compound<8, 64, 64>();
 
+	}
+	TRY_("with composited events")
+	{
+		polymer_control_spool__composited<8, -1, -1>();
+		polymer_control_spool__composited<8, -1, 64>();
+		polymer_control_spool__composited<8, 64, -1>();
+		polymer_control_spool__composited<8, 64, 64>();
+
+	}
 }
-/**/
+////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

@@ -41,9 +41,12 @@ struct refine_tuple
 	{
 	public:
 		using S::S;
+		using S::tuple;
 
 		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).tuple());
 
+		XTAL_DO4_(XTAL_OP0 tuple_type(), {return tuple();})
+		
 	};
 };
 

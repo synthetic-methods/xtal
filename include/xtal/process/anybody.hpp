@@ -90,7 +90,7 @@ struct define
 			{
 			public:
 				using return_t = decltype(XTAL_VAL_(T &).template method<Ks...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (Xs const &&...);
+				using method_t = return_t (T::*) (argument_t<Xs>...);
 
 			};
 			template <auto ...Ks>
@@ -99,7 +99,7 @@ struct define
 			{
 			public:
 				using return_t = decltype(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (Xs const &&...) const;
+				using method_t = return_t (T::*) (argument_t<Xs>...) const;
 
 			};
 			template <auto ...Ks> XTAL_USE method_t = typename resolve<Ks...>::method_t;

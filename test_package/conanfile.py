@@ -1,7 +1,6 @@
 from os import path
 
 from conan             import ConanFile
-from conan.tools.files import copy
 from conan.tools.cmake import CMake, cmake_layout
 
 class XtalTestPackageConan(ConanFile):
