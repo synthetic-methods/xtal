@@ -63,6 +63,7 @@ template <        auto N>      concept sign_p = _std::integral<decltype(N)> and 
 
 template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class   ...Ts>   concept complete_q = (...and     complete_p<Ts>);
+template <class   ...Ts>   concept   vacant_q = (...and not complete_p<Ts>);
 template <class   ...Ts>   concept     void_q = (...and _std::same_as<void, Ts>);
 
 template <class      T >    struct complete    {class type {};};

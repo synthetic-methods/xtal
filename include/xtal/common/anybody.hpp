@@ -46,8 +46,10 @@ struct define
 
 		using self_t = T;
 		/*/
-		template <class Y, typename ...Is> struct super {using type = void;};
-		template <class Y                > struct super<Y> {using type = Y;};
+		using Y = subtype;
+		template <class X, typename   ...Is> struct super;
+		template <class X, fungible_q<Y> I > struct super<X, I> {using type = I;};
+		template <class X                  > struct super<X   > {using type = X;};
 		/***/
 		
 	};

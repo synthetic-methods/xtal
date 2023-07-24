@@ -14,10 +14,6 @@ struct unikind
 	public:
 		using S::S;
 
-	protected:
-		template <class Y, typename ...Is> struct super    {using type = typename super<Is...>::type;};
-		template <class Y                > struct super<Y> {using type = Y;};
-
 	};
 	using type = subtype<unit_t>;
 	

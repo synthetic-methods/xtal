@@ -30,8 +30,8 @@ struct any
 	using subtype = typename subkind::template subtype<S>;
 
 };
-template <typename A>
-struct any<A>
+template <>
+struct any<>
 {	
 	template <class S>
 	class subtype: public S
@@ -39,11 +39,40 @@ struct any<A>
 	public:
 		using S::S;
 
+	protected:
+		using Y = subtype;
+		//\
+		template <class X, fungible_p<Y> ...Ys> struct super: super<Ys...> {};// GCC!
+		template <class X,      typename ...Ys> struct super: super<Ys...> {};
+		template <class X                     > struct super<X> {using type = X;};
+
 	};
-	template <class S> XTAL_REQ_(typename S::self_t)
+	template <class S> XTAL_REQ_(typename S::template super<S>)
 	class subtype<S>: public S
 	{
-		using S_ = S;
+	public:
+		using S::S;
+
+	};
+};
+template <typename A>
+struct any<A>
+{	
+	using subkind = any<>;
+	
+	template <class S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
+		
+	public:
+		using S_::S_;
+
+	};
+	template <class S> XTAL_REQ_(typename S::self_t)
+	class subtype<S>: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 
 	protected:
