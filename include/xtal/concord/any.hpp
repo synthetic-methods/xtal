@@ -40,11 +40,7 @@ struct any<>
 		using S::S;
 
 	protected:
-		using Y = subtype;
-		//\
-		template <class X, fungible_p<Y> ...Ys> struct super: super<Ys...> {};// GCC!
-		template <class X,      typename ...Ys> struct super: super<Ys...> {};
-		template <class X                     > struct super<X> {using type = X;};
+		template <fungible_q ...Ys> struct super: terminal<Ys...> {};
 
 	};
 	template <class S> XTAL_REQ_(typename S::template super<S>)
@@ -81,33 +77,27 @@ struct any<A>
 		
 		template <class X, typename ...Is> struct super:              S_::template super<X, Is...> {};
 		template <class X, typename ...Is> struct super<X, A, Is...>: S_::template super<Y, Is...> {};
+	
+	private:
+		template <class X, typename ...Is>
+		using super_t = typename super<X, Is...>::type;
 		
 	public:
 		using S_::S_;
-	//	using S_::self;
-	//	using S_::head;
 		
-		XTAL_DO4_(template <typename ...Is>
-		XTAL_FN2 self(XTAL_DEF... oo),
-		{
-			using X = typename super<T_, Is...>::type;
-			return S_::template self<X>(XTAL_REF_(oo)...);
-		})		
-		XTAL_DO4_(template <typename ...Is>
-		XTAL_FN2 head(XTAL_DEF... oo),
-		{
-			using X = typename super<S_, Is...>::type;
-			return S_::template self<X>().head(XTAL_REF_(oo)...);
-		})		
+		XTAL_TO4_(template <size_t I>
+		XTAL_FN2 self(XTAL_DEF... oo), self<sequent_t<I>>(XTAL_REF_(oo)...)
+		)		
+		XTAL_TO4_(template <size_t I>
+		XTAL_FN2 head(XTAL_DEF... oo), head<sequent_t<I>>(XTAL_REF_(oo)...)
+		)		
 
-		XTAL_TO4_(template <size_t I>
-		XTAL_FN2 self(XTAL_DEF... oo),
-			self<sequent_t<I>>(XTAL_REF_(oo)...)
-		)		
-		XTAL_TO4_(template <size_t I>
-		XTAL_FN2 head(XTAL_DEF... oo),
-			head<sequent_t<I>>(XTAL_REF_(oo)...)
-		)		
+		XTAL_TO4_(template <typename ...Is>
+		XTAL_FN2 self(XTAL_DEF... oo), S_::template self<super_t<T_, Is...>>(XTAL_REF_(oo)...)
+		)
+		XTAL_TO4_(template <typename ...Is>
+		XTAL_FN2 head(XTAL_DEF... oo), S_::template self<super_t<S_, Is...>>().head(XTAL_REF_(oo)...)
+		)
 
 	};
 };

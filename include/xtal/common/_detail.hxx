@@ -6,21 +6,16 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-struct unikind
+class unitype: public unit_t
 {
-	template <class S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-
-	};
-	using type = subtype<unit_t>;
+public:
+	using unit_t::unit_t;
 	
 };
-using unitype = typename unikind::type;
-
-
+template <typename ...>
+class exotype
+{
+};
 template <template <typename> typename _T>
 class isotype: public _T<isotype<_T>>
 {

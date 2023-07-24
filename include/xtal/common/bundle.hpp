@@ -26,11 +26,13 @@ template <class T, size_t    N  > concept bundle_part_p = requires(T a) {{_std::
 template <class T, size_t N, size_t ...Ns>
 struct bundle_part<T, N, Ns...>
 :	bundle_part<bundle_part_t<T, N>, Ns...>
-{};
+{
+};
 template <class T, size_t N>
 struct bundle_part<T, N>
 :	_std::tuple_element<N, _std::remove_reference_t<T>>
-{};
+{
+};
 template <class T>
 struct bundle_part<T>
 {

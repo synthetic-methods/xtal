@@ -16,11 +16,13 @@ namespace xtal::processor
 template <class T>
 struct define
 :	_retail::define<T>
-{};
+{
+};
 template <class T>
 struct refine
 :	_retail::refine<T>
-{};
+{
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,15 +30,18 @@ struct refine
 template <class U>
 struct defer
 :	defer<_retail::let_t<U>>
-{};
+{
+};
 template <_detail::unprocessed_p U>
 struct defer<U>
 :	defer<_v3::ranges::repeat_view<U>>
-{};
+{
+};
 template <class U> requires iterated_q<U>
 struct defer<U>
 :	_retail::defer<U>
-{};
+{
+};
 template <class U> requires uniterated_q<U> and _retail::any_q<U>
 struct defer<U>
 {

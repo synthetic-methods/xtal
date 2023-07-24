@@ -338,7 +338,8 @@ public:
 
 template <size_t N_size>
 struct realization: rationalization<N_size>
-{};
+{
+};
 template <size_t N_size>
 requires
 requires {typename rationalization<N_size>::alpha_t;}

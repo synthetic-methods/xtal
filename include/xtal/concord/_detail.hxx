@@ -56,7 +56,8 @@ struct refine_tuple
 template <class U, int N=0>
 struct refer_iterators
 :	compose<>
-{};
+{
+};
 template <class U> requires begin_q<U>
 struct refer_iterators<U>
 {
@@ -89,7 +90,8 @@ template <class U, int N=0> struct            refer_comparators: compose<void
 ,	refer_equality_comparators<U, N>
 ,	refer_inequality_comparators<U, N>
 >
-{};
+{
+};
 template <class U> requires equality_comparators_p<U>
 struct refer_equality_comparators<U>
 {
@@ -135,7 +137,8 @@ template <class U, int N=0> struct         refer_operators: compose<void
 ,	refer_group_operators <U, N>
 ,	refer_bitwise_operators<U, N>
 >
-{};
+{
+};
 template <class U> struct refer_bitwise_operators<U, 0> : compose< refer_bitwise_operators<U, 1>, refer_bitwise_operators<U, 2>> {};
 template <class U> struct   refer_group_operators<U, 0> : compose<   refer_group_operators<U, 1>,   refer_group_operators<U, 2>> {};
 template <class U> struct   refer_field_operators<U, 0> : compose<   refer_field_operators<U, 1>,   refer_field_operators<U, 2>> {};

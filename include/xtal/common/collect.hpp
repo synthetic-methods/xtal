@@ -11,22 +11,11 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <typename ...> XTAL_NYM collected;
+template <class  ...Ts> XTAL_ASK collected_q = tag_p<collected, Ts...>;
+
+
 ////////////////////////////////////////////////////////////////////////////////
-
-template <class T>
-concept collected_p = requires ()
-{
-	typename T::collected;
-	requires constant_q<typename T::collected>;
-	requires (0 != T::collected::value);
-	
-	typename T::template fluid<unit_t>;
-	requires iterated_q<typename T::template fluid<unit_t>::type>;
-
-};
-template <class ...Ts>
-concept collected_q = (...and collected_p<Ts>);
-
 ///\
 A decorator that provides different kinds of block-based data storage, \
 namely `solid` (sharing the same interface as `std::array`), \
@@ -34,20 +23,21 @@ and `fluid` (sharing the same interface as `std::vector`). \
 These types are made available to any class with which it is `compose`d, \
 and can be further transformed using `collate` to provide differentiated types. \
 
-template <int ...Ns>
-struct collect;
-
-template <int ...Ns>
-using collect_t = typename collect<Ns...>::type;
+template <int ...Ns> XTAL_NYM collect;
+template <int ...Ns> XTAL_USE collect_t = typename collect<Ns...>::type;
 
 template <int N_size>
 struct collect<N_size>
 {
+	using subkind = tag<collected>;
+	
 	template <class S>
-	class subtype: public S
+	class subtype: public compose_s<S, subkind>
 	{
+		using S_ = compose_s<S, subkind>;
+		
 	public:
-		using S::S;
+		using S_::S_;
 		using collected = instant_t<N_size>;
 		
 		///\note\

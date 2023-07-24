@@ -372,7 +372,8 @@ struct define
 template <class T>
 struct refine
 :	_retail::refine<T>
-{};
+{
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -380,7 +381,8 @@ struct refine
 template <class U>
 struct defer
 :	_retail::defer<U>
-{};
+{
+};
 template <constant_q W> requires unsigned_q<value_t<W>>
 struct defer<W>
 {
@@ -401,7 +403,8 @@ struct defer<W>
 template <class U>
 struct refer
 :	_retail::refer<U>
-{};
+{
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

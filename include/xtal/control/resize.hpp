@@ -32,7 +32,8 @@ struct resize
 };
 template <iterated_q U>
 struct resize<U>: resize<XTAL_TYP_(XTAL_VAL_(U).size())>
-{};
+{
+};
 template <class U=size_t>
 using resize_t = confined_t<resize<U>>;
 

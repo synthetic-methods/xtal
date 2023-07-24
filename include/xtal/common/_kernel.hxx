@@ -26,7 +26,7 @@ template <typename ...As> using  any_t = typename composed<any<As...>>::type;
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = fungible_p<T, any_t<As...>>;
+concept any_p = of_p<any_t<As...>, T>;
 
 template <class ...Ts>
 concept any_q = (...and any_p<Ts>);

@@ -21,7 +21,7 @@ TAG_("concord", "traversal")
 	,	any<struct baz>, defer<int>
 	>;
 	using qux_t = typename qux::type;
-	TRY_("path access")
+	TRY_("partial access")
 	{
 		qux_t qux_o(0, 1, 2);
 
@@ -36,7 +36,7 @@ TAG_("concord", "traversal")
 		TRUE_(1 == qux_o.template head<struct foo, struct bar>());
 		TRUE_(2 == qux_o.template head<struct foo, struct baz>());
 		TRUE_(2 == qux_o.template head<struct bar, struct baz>());
-	//	FALSE_(2 == qux_o.template head<struct baz, struct bar>());// TODO: Should fail.
+	//	TRUE_(2 != qux_o.template head<struct baz, struct bar>());// TODO: Should fail.
 
 	}
 	TRY_("partial reconstruction")

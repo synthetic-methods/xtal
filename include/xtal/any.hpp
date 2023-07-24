@@ -43,28 +43,35 @@ namespace views  = ::ranges::views;
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Standard types...
+
 using null_t = XTAL_STD_(null_t);
 using unit_t = XTAL_STD_(unit_t);
 using sign_t = XTAL_STD_(sign_t);
 using size_t = XTAL_STD_(size_t);
 using size_x = XTAL_STD_(size_x);
 
-template <typename ...> class struct_t {};
-
-template <        auto N>   XTAL_LET moeity_v = N&1;
-template <auto M, auto N>    concept moeity_p = M == moeity_v<N>;
-
-template <        auto N>     XTAL_LET sign_v = (0 < N) - (N < 0);
-template <        auto N>      concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+//\
+Abstract types...
+
+template <         class ...Ts> struct terminal;
+template <class T, class ...Ts> struct terminal<T, Ts...>: terminal<Ts...> {};
+template <class T             > struct terminal<T> {using type = T;};
+template <         class ...Ts>  using terminal_t = typename terminal<Ts...>::type;
+
 
 template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class   ...Ts>   concept complete_q = (...and     complete_p<Ts>);
 template <class   ...Ts>   concept   vacant_q = (...and not complete_p<Ts>);
-template <class   ...Ts>   concept     void_q = (...and _std::same_as<void, Ts>);
+template <class   ...Ts>   concept     void_q = (...and _std::same_as<void,   Ts>);
+template <class   ...Ts>   concept     null_q = (...and _std::same_as<null_t, Ts>);
+template <class   ...Ts>   concept      nil_q = (...and (null_q<Ts> or void_q<Ts>));
 
 template <class      T >    struct complete    {class type {};};
 template <complete_q T >    struct complete<T> {using type = T;};
@@ -138,6 +145,9 @@ template <class  T, class ...Ts> struct identical<T, Ts...>: _std::conjunction<_
 template <class  T, class ...Ts> struct isotropic<T, Ts...>: _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
 template <class  T, class ...Ts> struct epitropic<T, Ts...>: _std::conjunction<_std::is_constructible<Ts, T>...> {};
 
+template <class  T, class ...Ts> concept of_p = (...and _std::derived_from<based_t<Ts>, based_t<T>>);
+template <class  T, class ...Ts> concept of_q = (...and _std::derived_from<based_t<T>, based_t<Ts>>);
+
 template <class ...Ts>         using common_t = _std::common_type_t<Ts...>;
 template <class ...Ts>       concept common_q = requires {typename common_t<Ts...>;};
 template <class ...Ts>       concept id_q     = identical<Ts...>::value;
@@ -166,7 +176,7 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto   ...  >   XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
+template <auto   ...  >  XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
 ///< Parameter-agnostic identity `method`. \
 
 template <class    M >      using member_t = debased_t<M>;
@@ -195,7 +205,8 @@ XTAL_0EX
 ///< Replaces the body of the underlying member. \
 
 
-////////////////////////////////////////////////////////////////////////////////
+///\
+Equivalent to the soon-to-be deprecated `std::aligned_storage`. \
 
 template <class T>
 struct aligned
@@ -211,8 +222,7 @@ template <class    T >      using pointer_t =             XTAL_TYP_(&XTAL_VAL_(T
 template <class ...Ts>    concept pointed_q = (... and requires {&XTAL_VAL_(Ts);});
 template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);});
 
-template <class T, class    Y > concept fungible_p = _std::derived_from<based_t<T>, based_t<Y>>;
-template <class T, class ...Ys> concept fungible_q = (...and (fungible_p<T, Ys> or fungible_p<Ys, T>));
+template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
 
 template <class Y> XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
@@ -235,7 +245,7 @@ template <value_q  T >    using array_t = _std::array<value_t<T>, arity_v<T>>;
 template <int N=-1, class ...Ts>
 concept array_p = requires ()
 {
-	requires (...and fungible_p<Ts, array_t<Ts>>);
+	requires (...and of_p<array_t<Ts>, Ts>);
 	requires (N == -1) or (...and (N == arity_v<Ts>));
 };
 template <class ...Ts>
@@ -244,6 +254,15 @@ concept array_q = array_p<-1, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+//\
+Arithmetic types...
+
+template <        auto N >  XTAL_LET moeity_v = N&1;
+template <auto M, auto N >   concept moeity_p = M == moeity_v<N>;
+
+template <        auto N >    XTAL_LET sign_v = (0 < N) - (N < 0);
+template <        auto N >     concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+
 
 template <class    T >   using unsigned_t = _std::make_unsigned_t<revalue_t<T>>;
 template <class    T >   using   signed_t = _std::  make_signed_t<revalue_t<T>>;
@@ -377,6 +396,8 @@ static_assert(  field_operators_q<_std::complex<float>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+//\
+Range types...
 
 template <class    T >       using begin_t    = decltype(XTAL_VAL_(T).begin());
 template <class    T >       using   end_t    = decltype(XTAL_VAL_(T).  end());

@@ -13,41 +13,30 @@ namespace xtal::common
 
 template <typename> struct realize;
 
+template <typename ...> XTAL_NYM collated;
+template <class  ...Ts> XTAL_ASK collated_q = tag_p<collated, Ts...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Specializes the classes defined by `collect`, \
 providing fluid-size queues and fixed-size algebraic coordinates. \
 
-template <class T>
-concept collated_p = requires ()
-{
-	typename T::collated;
-	requires constant_q<typename T::collated>;
-	requires (0 != T::collated::value);
-	
-	typename T::template spool<unit_t>;
-	requires iterated_q<typename T::template spool<unit_t>::type>;
-
-};
-template <class ...Ts>
-concept collated_q = (...and collated_p<Ts>);
-
-
-template <int ...Ns>
-struct collate;
-
-template <int ...Ns>
-using collate_t = typename collate<Ns...>::type;
+template <int ...Ns> XTAL_NYM collate;
+template <int ...Ns> XTAL_USE collate_t = typename collate<Ns...>::type;
 
 template <int N_size>
 struct collate<N_size>
 {
 	using metatype = collect_t<N_size>;
 
+	using subkind = tag<collated>;
+
 	template <class S>
-	class subtype: public S
+	class subtype: public compose_s<S, subkind>
 	{
+		using S_ = compose_s<S, subkind>;
+		
 		template <class V>
 		struct spindle
 		{
@@ -62,7 +51,7 @@ struct collate<N_size>
 		};
 		
 	public:
-		using S::S;
+		using S_::S_;
 		using collated = instant_t<N_size>;
 		
 		///\
@@ -839,7 +828,8 @@ struct collate<N_size>
 template <>
 struct collate<>
 :	collate<-1>
-{};
+{
+};
 template <int N, int ...Ns>
 struct collate<N, Ns...>
 {

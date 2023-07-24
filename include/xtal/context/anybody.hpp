@@ -31,7 +31,8 @@ struct define
 template <class T>
 struct refine
 :  _retail::refine<T>
-{};
+{
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,13 +72,15 @@ struct defer
 template <class U>
 struct refer
 :  _retail::refer<U>
-{};
+{
+};
 /*/
 template <class U>
 struct refer: compose<void
 ,	_detail::refer_comparators<U>
 >
-{};
+{
+};
 /***/
 
 

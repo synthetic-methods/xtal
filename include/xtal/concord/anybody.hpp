@@ -29,37 +29,34 @@ struct define
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
-		
-	protected:
-		using _ = void;
-		
-		template <class  X, typename ...Is> struct super: S_::template super<_, Is...> {};
-		template <class  X, typename ...Is> struct super<X, _, Is...>: super<X, Is...> {};
-		template <class  X, typename ...Is> struct super<X, T, Is...>: super<T, Is...> {};
-		template <void_q X, typename ...Is> struct super<X,    Is...>: super<T, Is...> {};
-		template <class  X                > struct super<X> {using type = X;};
-		
+	
+	private:
+		template <class X, typename ...Is>
+		using super_t = typename S_::template super<X, Is...>::type;
+
 	public:
 		using S_::S_;
-		using S_::self;
+	//	using S_::self;
 
-		///\returns `this` as specified by `Is...`. \
+		///\returns `this` as `T`, or `fungible_q<Y>`. \
+
+		XTAL_TO4_(template <fungible_q Y=T>
+		XTAL_FN2 self(), S_::template self<Y>()
+		)
 		
-		XTAL_DO4_(template <typename ...Is>
-		XTAL_FN2 self(),
-		{
-			using X = typename super<T, Is...>::type;
-			return S_::template self<X>();
-		})
-		///\
-		Reassigns and returns the part of `self` that matches `X`. \
+		///\returns `this` indexed by `Is...`, \
+		emplacing the matching part of `self` if arguments are supplied. \
 
-		XTAL_DO1_(template <typename ...Is>
+		XTAL_DO4_(template <typename ...Is>
 		XTAL_FN2 self(XTAL_DEF... oo),
-		XTAL_REQ   (0 < sizeof...(oo))
 		{
-			using X = typename super<T, Is...>::type;
-			return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+			using X = super_t<T, Is...>;
+			if constexpr (0 == sizeof...(oo)) {
+				return S_::template self<X>();
+			}
+			else {
+				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+			}
 		})
 		//\
 		Trivial (in)equality. \
@@ -125,6 +122,22 @@ struct defer
 		using T_ = typename S_::self_t;
 		using V  = debased_t<U>;
 
+	protected:
+		using Y = subtype;
+		using O = sequent_t<0>;
+		///\
+		Resolves the query/answer `X` w.r.t. the supplied context. \
+
+		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
+		template <class X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
+		template <class X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
+		template <class X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
+		template <class X, subsequent_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, subsequent_s<N>, Is...> {};
+
+	private:
+		template <class X, typename ...Is>
+		using super_t = typename super<X, Is...>::type;
+		
 	public:
 	//	using S_::S_;
 	//	using S_::self;
@@ -150,14 +163,19 @@ struct defer
 		:	S_(XTAL_REF_(oo)...)
 	//	,	subtype(body_t{})
 		{}
-		template <class W> requires (not fungible_q<W, subtype>)
+		template <class W> requires is_q<U, W> or (not (fungible_q<Y, W> or constant_q<U>))
 		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_REQ variable_q<U> or is_q<U, W>
 		:	S_(XTAL_REF_(oo)...)
 		,	body_m(member_f<U>(XTAL_REF_(w)))
 		{}
 
+		XTAL_TO4_(template <size_t I>
+		XTAL_FN2 self(XTAL_DEF... oo), self<sequent_t<I>>(XTAL_REF_(oo)...)
+		)		
+		XTAL_TO4_(template <typename ...Is>
+		XTAL_FN2 self(XTAL_DEF... oo), S_::template self<super_t<T_, Is...>>(XTAL_REF_(oo)...)
+		)
 		///\
 		Tuple arity. \
 
@@ -193,12 +211,10 @@ struct defer
 		XTAL_FN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
 		
 		XTAL_TO4_(template <typename ...Is> requires (0 < sizeof...(Is))
-		XTAL_FN1 head(XTAL_DEF... oo),
-			self<Is...>().head(XTAL_REF_(oo)...)
+		XTAL_FN1 head(XTAL_DEF... oo), self<Is...>().head(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t I>
-		XTAL_FN1 head(XTAL_DEF... oo),
-			head<sequent_t<I>>(XTAL_REF_(oo)...)
+		XTAL_FN1 head(XTAL_DEF... oo), head<sequent_t<I>>(XTAL_REF_(oo)...)
 		)
 		XTAL_FN1 head(XTAL_DEF... oo)
 		XTAL_0EX
@@ -214,33 +230,6 @@ struct defer
 		{
 			return equivalent_f(head(), w);
 		}
-
-	protected:
-		using Y = subtype;
-		using O = sequent_t<0>;
-		///\
-		Resolves the query/answer `X` w.r.t. the supplied context. \
-
-		template <class  X, typename ...Is> struct super: S_::template super<X, Is...> {};
-		template <class  X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
-		template <class  X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
-		template <void_q X, typename ...Is> struct super<X,    Is...>: super<Y, Is...> {};
-		template <class  X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
-		template <class  X, subsequent_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, subsequent_s<N>, Is...> {};
-
-	public:
-		///\returns `this` as specified by `Is...`. \
-		
-		XTAL_DO4_(template <typename ...Is>
-		XTAL_FN2 self(XTAL_DEF... oo),
-		{
-			using X = typename super<T_, Is...>::type;
-			return S_::template self<X>(XTAL_REF_(oo)...);
-		})
-		XTAL_TO4_(template <size_t I>
-		XTAL_FN2 self(XTAL_DEF... oo),
-			self<sequent_t<I>>(XTAL_REF_(oo)...)
-		)		
 		///\
 		Equality testing. \
 		\returns `true` if the supplied value matches `this`, `false` otherwise. \
@@ -262,7 +251,8 @@ struct refer: compose<void
 ,	_detail::refer_operators<U>
 ,	_detail::refer_iterators<U>
 >
-{};
+{
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,23 +261,17 @@ struct refer: compose<void
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::concord::any_p T> requires (0 < T::arity::value)
+template <xtal::concord::any_p T>
 struct tuple_size<T>: xtal::sequent_t<T::arity::value> {};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
+template <size_t N, xtal::concord::any_p T>
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
-XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T const  &t) {return t.template head<N>();};
+template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
-XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
-
-template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
-XTAL_FN1 get(T const  &t) {return t.template head<N>();};
-
-template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
-XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////
 /***/

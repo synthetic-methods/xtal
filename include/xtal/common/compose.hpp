@@ -32,8 +32,8 @@ struct compose<>
 	template <class S, typename _, typename ..._s>
 	struct tail<S, _, _s...>
 	:	tail<typename _::template subtype<S>, _s...>
-	{};
-
+	{
+	};
 	template <class S, typename ..._s>
 	using subtype = typename tail<S, _s...>::type;
 
@@ -50,7 +50,8 @@ struct compose<A, As...>
 template <typename ...As>
 struct compose<void, As...>
 :	compose<As...>
-{};
+{
+};
 
 template <class S, typename ..._s>
 using compose_s = typename compose<>::template subtype<S, _s...>;

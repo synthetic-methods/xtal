@@ -10,44 +10,33 @@ XTAL_ENV_(push)
 namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...> XTAL_NYM collaged;
+template <class  ...Ts> XTAL_ASK collaged_q = tag_p<collaged, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
 ///\
 Remixes the classes defined by `collate`, \
 providing heterogeneous combinations of vectorized values. \
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class T>
-concept collaged_p = requires ()
-{
-	typename T::collaged;
-	requires constant_q<typename T::collaged>;
-	requires (0 != T::collaged::value);
-	
-	typename T::template spool<unit_t>;
-	requires iterated_q<typename T::template spool<unit_t>::type>;
-
-};
-template <class ...Ts>
-concept collaged_q = (...and collaged_p<Ts>);
-
-
-template <int ...Ns>
-struct collage;
-
-template <int ...Ns>
-using collage_t = typename collage<Ns...>::type;
+template <int ...Ns> XTAL_NYM collage;
+template <int ...Ns> XTAL_USE collage_t = typename collage<Ns...>::type;
 
 template <int N_size>
 struct collage<N_size>
 {
 	using metatype = collate_t<N_size>;
 
+	using subkind = tag<collaged>;
+
 	template <class S>
-	class subtype: public S
+	class subtype: public compose_s<S, subkind>
 	{
+		using S_ = compose_s<S, subkind>;
+
 	public:
-		using S::S;
+		using S_::S_;
 		using collaged = instant_t<N_size>;
 
 		///\

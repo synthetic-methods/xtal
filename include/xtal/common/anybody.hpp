@@ -35,22 +35,16 @@ struct define
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
-		XTAL_TO2_(template <typename Y=T> XTAL_FN2_(based_t<Y>) twin(), self<Y>())
+		XTAL_TO2_(template <class Y=T> XTAL_FN2_(based_t<Y>) twin(), self<Y>())
 
 		///\returns `*this` with type `Y=T`. \
 
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return forge_f<Y const &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return forge_f<Y       &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
+		template <class Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return forge_f<Y const &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return forge_f<Y       &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
+		template <class Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
 
 		using self_t = T;
-		/*/
-		using Y = subtype;
-		template <class X, typename   ...Is> struct super;
-		template <class X, fungible_q<Y> I > struct super<X, I> {using type = I;};
-		template <class X                  > struct super<X   > {using type = X;};
-		/***/
 		
 	};
 	using type = subtype<unit_t>;

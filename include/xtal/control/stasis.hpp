@@ -20,7 +20,8 @@ with `{initialize,on}`, `{finalize,off}`, and `{terminate,cut}` respectively cor
 template <typename ...As>
 struct stasis
 :	flux<As...>
-{};
+{
+};
 
 template <typename ...As>
 using stasis_t = confined_t<stasis<As..., tag<stasis>>>;
