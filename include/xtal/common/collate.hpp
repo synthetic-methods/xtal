@@ -63,7 +63,7 @@ struct collate<N_size>
 		
 	public:
 		using S::S;
-		using collated = constant_t<N_size>;
+		using collated = instant_t<N_size>;
 		
 		///\
 		Event spool based on a insertion-sorted `std::array`. \

@@ -122,8 +122,8 @@ void control_intermit_processor()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = processor::let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	
 	auto xhs = mix_z::bond_f(lhs, rhs);
 	auto seq = sequel_n(4);

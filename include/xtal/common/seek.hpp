@@ -22,13 +22,13 @@ XTAL_0EX
 	if constexpr (not K) {
 	}
 	else if constexpr (0 < K) {
-		return [&] <auto ...I>(seek_t<I...>)
-			XTAL_0FN_(..., f(constant_t<I_offset + I>())) (seek_f<+K>{});
+		return [&] <size_t ...I>(seek_t<I...>)
+			XTAL_0FN_(..., f(sequent_t<I_offset + I>())) (seek_f<+K>{});
 	}
 	else if constexpr (K < 0) {
 		size_t constexpr N_offset = I_offset - K - 1;
-		return [&] <auto ...I>(seek_t<I...>)
-			XTAL_0FN_(..., f(constant_t<N_offset - I>())) (seek_f<-K>{});
+		return [&] <size_t ...I>(seek_t<I...>)
+			XTAL_0FN_(..., f(sequent_t<N_offset - I>())) (seek_f<-K>{});
 	}
 }
 
@@ -36,8 +36,8 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int I, bool ...Qs> struct seek_true_from;
-template <int I            > struct seek_true_from<I              >: constant_t<-1> {};
-template <int I, bool ...Qs> struct seek_true_from<I,  true, Qs...>: constant_t< I> {};
+template <int I            > struct seek_true_from<I              >: instant_t<-1> {};
+template <int I, bool ...Qs> struct seek_true_from<I,  true, Qs...>: instant_t< I> {};
 template <int I, bool ...Qs> struct seek_true_from<I, false, Qs...>: seek_true_from<I + 1, Qs...> {};
 
 template <bool ...Qs> XTAL_LET_(int) seek_true_v = seek_true_from<0, Qs...>::value;

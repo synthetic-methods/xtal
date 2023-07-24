@@ -49,38 +49,47 @@ using sign_t = XTAL_STD_(sign_t);
 using size_t = XTAL_STD_(size_t);
 using size_x = XTAL_STD_(size_x);
 
-template <typename ...>   class class_t {};
-template <typename ...> concept class_q = true;
+template <typename ...> class struct_t {};
 
-template <auto N> XTAL_LET sign_v = (0 < N) - (N < 0);
-template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+template <        auto N>   XTAL_LET moeity_v = N&1;
+template <auto M, auto N>    concept moeity_p = M == moeity_v<N>;
 
-template <        auto N> XTAL_LET moeity_v = N&1;
-template <auto M, auto N>  concept moeity_p = M == moeity_v<N>;
+template <        auto N>     XTAL_LET sign_v = (0 < N) - (N < 0);
+template <        auto N>      concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class      T > concept   complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
-template <class   ...Ts> concept   complete_q = (...and     complete_p<Ts>);
-template <class   ...Ts> concept incomplete_q = (...and not complete_p<Ts>);
-template <class   ...Ts> concept       void_q = (...and _std::same_as<void, Ts>);
+template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
+template <class   ...Ts>   concept complete_q = (...and     complete_p<Ts>);
+template <class   ...Ts>   concept     void_q = (...and _std::same_as<void, Ts>);
 
-template <class      T > struct complete    {class type  {};};
-template <complete_q T > struct complete<T> {using type = T;};
-template <class      T >  using complete_t = typename complete<T>::type;
+template <class      T >    struct complete    {class type {};};
+template <complete_q T >    struct complete<T> {using type = T;};
+template <class      T >     using complete_t = typename complete<T>::type;
 static_assert(complete_q<unit_t> and not complete_q<struct void_t>);
 
-template <auto     N >    XTAL_LET constant_v = _std::integral_constant<decltype(N), N> {};
-template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
-template <auto     N >       using substant_t = _std::integral_constant<     size_t, N>;
-template <class    T >       using substant_s = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
-template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
-template <class    T >     concept substant_p = constant_p<T> and T::value != 0;
-template <class    T >     concept variable_p =     not constant_p<T>;
-template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
-template <class ...Ts>     concept substant_q = (...and substant_p<Ts>);
-template <class ...Ts>     concept variable_q = (...and variable_p<Ts>);
+template <auto     N >     using   constant_t = _std::integral_constant<decltype(N), N>;
+template <int      N >     using    instant_t = constant_t<N>;
+template <size_t   N >     using    sequent_t = constant_t<N>;
+template <class    T >     using subsequent_s = sequent_t<T{} - 1>;
+
+template <auto     N >  XTAL_LET   constant_v = constant_t<N> {};
+template <int      N >  XTAL_LET    instant_v = constant_t<N> {};
+template <size_t   N >  XTAL_LET    sequent_v = constant_t<N> {};
+template <size_t   N >  XTAL_LET subsequent_v = constant_t<N - 1> {};
+
+template <class    T >   concept   constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
+template <class    T >   concept    instant_p = constant_p<T> and _std::convertible_to<typename T::value_type, int>;
+template <class    T >   concept    sequent_p = constant_p<T> and _std::convertible_to<typename T::value_type, size_t>;
+template <class    T >   concept subsequent_p =  sequent_p<T> and 0 != T::value;
+
+template <class ...Ts>   concept   variable_q = (...and not constant_p<Ts>);
+template <class ...Ts>   concept   constant_q = (...and     constant_p<Ts>);
+template <class ...Ts>   concept    instant_q = (...and      instant_p<Ts>);
+template <class ...Ts>   concept    sequent_q = (...and      sequent_p<Ts>);
+template <class ...Ts>   concept subsequent_q = (...and     subsequent_p<Ts>);
 
 
 template <class    T >       using   based_t  = _std::remove_cvref_t<T>;
@@ -135,12 +144,6 @@ template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
-template <typename W>
-XTAL_CN2 identical_f(W const &x, W const &y)
-XTAL_0EX
-{
-	return &x == &y;
-}
 template <typename X, typename Y>
 XTAL_CN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
@@ -171,7 +174,7 @@ template <class    M >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f
 template <class    M >   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
 ///< Converts `unbased` references to pointers. \
 
-template <class ...Ws>  concept remember_q = not (...or debased_p<Ws>);
+template <class ...Ws>  concept remember_q = (...and not debased_p<Ws>);
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
 ///< Governs access to the underlying member. \
@@ -420,10 +423,10 @@ template <iterated_p T>     struct iteratee<T>: constant_t<0> {using type =     
 template <iterator_p T>     struct iteratee<T>: constant_t<0> {using type =             pointed_t<T> ;};
 template <integral_p T>     struct iteratee<T>: constant_t<1> {using type =               based_t<T> ;};
 
-template <class ...Ts>   concept uniterable_q = not (...or iterable_p<Ts>);
-template <class ...Ts>   concept uniterated_q = not (...or iterated_p<Ts>);
-template <class ...Ts>   concept uniterator_q = not (...or iterator_p<Ts>);
-template <class ...Ts>   concept unintegral_q = not (...or integral_p<Ts>);
+template <class ...Ts>   concept uniterable_q = (...and not iterable_p<Ts>);
+template <class ...Ts>   concept uniterated_q = (...and not iterated_p<Ts>);
+template <class ...Ts>   concept uniterator_q = (...and not iterator_p<Ts>);
+template <class ...Ts>   concept unintegral_q = (...and not integral_p<Ts>);
 
 
 template <class    T >       using sentinel_t = based_t<_v3::ranges::sentinel_t<T>>;

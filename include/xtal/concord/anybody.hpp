@@ -69,7 +69,7 @@ struct define
 		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
-		using arity = substant_t<0>;
+		using arity = sequent_t<0>;
 
 	};
 };
@@ -161,7 +161,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		XTAL_USE arity = substant_t<1 + S_::arity::value>;
+		XTAL_USE arity = sequent_t<1 + S_::arity::value>;
 		///\
 		Tuple application. \
 
@@ -198,7 +198,7 @@ struct defer
 		)
 		XTAL_TO4_(template <size_t I>
 		XTAL_FN1 head(XTAL_DEF... oo),
-			head<substant_t<I>>(XTAL_REF_(oo)...)
+			head<sequent_t<I>>(XTAL_REF_(oo)...)
 		)
 		XTAL_FN1 head(XTAL_DEF... oo)
 		XTAL_0EX
@@ -217,7 +217,7 @@ struct defer
 
 	protected:
 		using Y = subtype;
-		using O = substant_t<0>;
+		using O = sequent_t<0>;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
@@ -226,7 +226,7 @@ struct defer
 		template <class  X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
 		template <void_q X, typename ...Is> struct super<X,    Is...>: super<Y, Is...> {};
 		template <class  X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
-		template <class  X, substant_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, substant_s<N>, Is...> {};
+		template <class  X, subsequent_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, subsequent_s<N>, Is...> {};
 
 	public:
 		///\returns `this` as specified by `Is...`. \
@@ -239,7 +239,7 @@ struct defer
 		})
 		XTAL_TO4_(template <size_t I>
 		XTAL_FN2 self(XTAL_DEF... oo),
-			self<substant_t<I>>(XTAL_REF_(oo)...)
+			self<sequent_t<I>>(XTAL_REF_(oo)...)
 		)		
 		///\
 		Equality testing. \
@@ -272,7 +272,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::concord::any_p T> requires (0 < T::arity::value)
-struct tuple_size<T>: xtal::substant_t<T::arity::value> {};
+struct tuple_size<T>: xtal::sequent_t<T::arity::value> {};
 
 template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};

@@ -60,8 +60,8 @@ void monomer_control__advancing()
 	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
 	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
 
-	auto lhs = processor::let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = processor::let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = mixer_t::bond_f(lhs, rhs);
 
 	auto seq = sequel_n(3); TRUE_(0 == xhs.size());// uninitialized...
@@ -107,8 +107,8 @@ void monomer_control__provisioning()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto rhs = let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
 	auto buffer_m = buffer_u {0, 0, 0};
@@ -182,8 +182,8 @@ void monomer_chaining__lvalue()
 	
 	using mix_op = monomer_t<add_t, collect<-1>>;
 	using mul_op = monomer_t<mul_t, collect<-1>>;
-	auto  lhs = let_f(_01); TRUE_(identical_f(lhs.head(), processor::let_f(lhs).head()));
-	auto  rhs = let_f(_10); TRUE_(identical_f(rhs.head(), processor::let_f(rhs).head()));
+	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 

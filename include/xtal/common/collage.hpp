@@ -48,7 +48,7 @@ struct collage<N_size>
 	{
 	public:
 		using S::S;
-		using collaged = constant_t<N_size>;
+		using collaged = instant_t<N_size>;
 
 		///\
 		Combines both `pulsar` and `phasor` from `collate`, \

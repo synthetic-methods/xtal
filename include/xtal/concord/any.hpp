@@ -73,11 +73,11 @@ struct any<A>
 
 		XTAL_TO4_(template <size_t I>
 		XTAL_FN2 self(XTAL_DEF... oo),
-			self<substant_t<I>>(XTAL_REF_(oo)...)
+			self<sequent_t<I>>(XTAL_REF_(oo)...)
 		)		
 		XTAL_TO4_(template <size_t I>
 		XTAL_FN2 head(XTAL_DEF... oo),
-			head<substant_t<I>>(XTAL_REF_(oo)...)
+			head<sequent_t<I>>(XTAL_REF_(oo)...)
 		)		
 
 	};

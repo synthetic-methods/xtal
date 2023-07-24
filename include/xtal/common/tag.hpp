@@ -13,7 +13,7 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename ...> class _T=class_t>
+template <template <typename ...> class _T=struct_t>
 struct tag
 {
 	class type
@@ -33,7 +33,7 @@ template <template <typename ...> class _T, class ...Ts>
 concept tag_p = (...and fungible_p<Ts, tag_t<_T>>);
 
 template <class ...Ts>
-concept tag_q = tag_p<class_t, Ts...>;
+concept tag_q = tag_p<struct_t, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
