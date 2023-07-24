@@ -64,7 +64,7 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 ## Messaging
 
 Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
-The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template get<...>()`.
+The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
 	using Active = control::ordinal_t<struct active>;
 
@@ -73,7 +73,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 	   XTAL_FN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
-	   // return (XTAL_REF_(xs) + ... + 0)*this->template get<Active>();
+	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
 	   }
 	};
 

@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./seek.hpp"
-#include "./compose.hpp"
 #include "./collect.hpp"
+//#include "./realize.hpp"// EOF
 
 
 
@@ -10,12 +10,14 @@ XTAL_ENV_(push)
 namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Specializes the classes defined by `collect`, \
-providing fluid-size queues and fixed-size algebraic coordinates. \
+
+template <typename> struct realize;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Specializes the classes defined by `collect`, \
+providing fluid-size queues and fixed-size algebraic coordinates. \
 
 template <class T>
 concept collated_p = requires ()
@@ -53,7 +55,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <class T>
-			using homotype = typename _detail::epikind<T>::template subtype<demitype>;
+			using homotype = typename define<T>::template subtype<demitype>;
 
 			using type = _detail::isotype<homotype>;
 
@@ -72,7 +74,7 @@ struct collate<N_size>
 			using _realized = realize<V>;
 			
 			template <class T>
-			using hemitype = typename _detail::epikind<T>::template subtype<iterate_t<T>>;
+			using hemitype = typename define<T>::template subtype<iterate_t<T>>;
 
 			class type: public hemitype<type>
 			{
@@ -196,7 +198,7 @@ struct collate<N_size>
 			using demitype = typename demikind::type;
 		
 			template <class T>
-			using hemitype = typename _detail::epikind<T>::template subtype<demitype>;
+			using hemitype = typename define<T>::template subtype<demitype>;
 
 			template <class T>// requires field_operators_q<V>
 			class homotype: public hemitype<T>
@@ -832,6 +834,7 @@ struct collate<N_size>
 
 	};
 	using type = subtype<unit_t>;
+
 };
 template <>
 struct collate<>
@@ -858,3 +861,5 @@ struct collate<N, Ns...>
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
+
+#include "./realize.hpp"

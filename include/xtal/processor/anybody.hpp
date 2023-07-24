@@ -116,7 +116,7 @@ struct refer
 		{
 			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
-			auto const &u = S_::template get<sequel_u>();
+			auto const &u = S_::template head<sequel_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);

@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hpp"
 #include "./seek.hpp"
-#include "./compose.hpp"
 #include "./collate.hpp"
+#include "./realize.hpp"
 
 
 
@@ -66,7 +66,7 @@ struct collage<N_size>
 			using pulse_t = typename metatype::template pulsar_t<delta_t>;
 			
 			template <class T>
-			using hemitype = typename _detail::epikind<T>::type;
+			using hemitype = typename define<T>::type;
 
 			template <class T>
 			class homotype: public hemitype<T>

@@ -17,13 +17,13 @@ They provide instance and proxy initialization/finalization for the generated ty
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Expands on the `self`-reflection established by `../common/_detail.hpp#epikind`, \
+Expands on the `self`-reflection established by `../common/anybody.hpp#define`, \
 providing the mechanism for traversing the trait-lineage of `T`. \
 
 template <class T>
 struct define
 {
-	using subkind = _detail::epikind<T>;
+	using subkind = _retail::define<T>;
 	
 	template <any_p S>
 	class subtype: public compose_s<S, subkind>
@@ -42,18 +42,25 @@ struct define
 	public:
 		using S_::S_;
 		using S_::self;
+
+		///\returns `this` as specified by `Is...`. \
+		
+		XTAL_DO4_(template <typename ...Is>
+		XTAL_FN2 self(),
+		{
+			using X = typename super<T, Is...>::type;
+			return S_::template self<X>();
+		})
 		///\
 		Reassigns and returns the part of `self` that matches `X`. \
 
-		template <typename ...Is>
-		XTAL_FN2 self(XTAL_DEF... oo)
-		XTAL_0EX
-		XTAL_REQ (0 < sizeof...(oo))
+		XTAL_DO1_(template <typename ...Is>
+		XTAL_FN2 self(XTAL_DEF... oo),
+		XTAL_REQ   (0 < sizeof...(oo))
 		{
-			auto &s = S_::self();
-			using Y = typename super<T, Is...>::type;
-			return s.template self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(s));
-		}
+			using X = typename super<T, Is...>::type;
+			return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+		})
 		//\
 		Trivial (in)equality. \
 		
@@ -62,7 +69,7 @@ struct define
 		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
-		using tuple_size = constant_t<(size_t) 0>;
+		using arity = substant_t<0>;
 
 	};
 };
@@ -133,7 +140,6 @@ struct defer
 		XTAL_0EX
 		:	subtype(body_t{})
 		{}
-		
 		///\
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
@@ -153,60 +159,74 @@ struct defer
 		{}
 
 		///\
+		Tuple arity. \
+
+		XTAL_USE arity = substant_t<1 + S_::arity::value>;
+		///\
+		Tuple application. \
+
+		XTAL_FN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
+		XTAL_0FX
+		{
+			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
+				XTAL_0FN_(g(head<I>()...)) (seek_f<arity::value> {});
+		}
+		///\
+		Tuple conversion. \
+
+		XTAL_FN2 tuple()
+		XTAL_0FX
+		{
+			return apply(bundle_f);
+		}
+
+		///\
 		Converts `this` to the base-type (explicit). \
 
 		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
 
 		///\returns the kernel-value (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TO4_(template <size_t N_index=0>
-		XTAL_FN1 head(XTAL_DEF... oo), self<constant_t<N_index>>().head(XTAL_REF_(oo)...)
-		)
 		XTAL_FN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(body_m));}
 		XTAL_FN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(body_m));}
 		XTAL_FN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
 		XTAL_FN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
 		
-		XTAL_FN1 head(XTAL_DEF o, XTAL_DEF... oo)
+		XTAL_TO4_(template <typename ...Is> requires (0 < sizeof...(Is))
+		XTAL_FN1 head(XTAL_DEF... oo),
+			self<Is...>().head(XTAL_REF_(oo)...)
+		)
+		XTAL_TO4_(template <size_t I>
+		XTAL_FN1 head(XTAL_DEF... oo),
+			head<substant_t<I>>(XTAL_REF_(oo)...)
+		)
+		XTAL_FN1 head(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ remember_q<U>
+		XTAL_REQ remember_q<U> and (0 < sizeof...(oo))
 		{
-			return heady(member_f<U>(XTAL_REF_(o), XTAL_REF_(oo)...));
-		}
-		XTAL_FN1 heady(body_t v)
-		XTAL_0EX
-		XTAL_REQ remember_q<U>
-		{
-			_std::swap(body_m, v); return remember_f(XTAL_MOV_(v));
+			return dismember_f(body_m, XTAL_REF_(oo)...);
 		}
 		///\
-		Accesses the `head`s as a `std::tuple`. \
+		\returns `true` if the supplied value matches `head`, `false` otherwise. \
 
-		XTAL_USE tuple_size = constant_t<1 + S_::tuple_size::value>;
-		XTAL_FN2 tuple()
+		XTAL_FN2_(bool) heading(U const &w)
 		XTAL_0FX
 		{
-			return apply(bundle_f);
-		}
-		XTAL_FN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
-		XTAL_0FX
-		{
-			return [this, g = XTAL_REF_(f)] <size_t ...I>(seek_t<I...>)
-				XTAL_0FN_(g(head<I>()...)) (seek_f<tuple_size::value> {});
+			return equivalent_f(head(), w);
 		}
 
 	protected:
 		using Y = subtype;
-		using O = constant_t<(size_t) 0>;
+		using O = substant_t<0>;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
 		template <class  X, typename ...Is> struct super: S_::template super<X, Is...> {};
 		template <class  X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
 		template <class  X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
-		template <class  X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
 		template <void_q X, typename ...Is> struct super<X,    Is...>: super<Y, Is...> {};
-		template <class  X, substant_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, substant_t<N>, Is...> {};
+		template <class  X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
+		template <class  X, substant_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, substant_s<N>, Is...> {};
 
 	public:
 		///\returns `this` as specified by `Is...`. \
@@ -217,37 +237,10 @@ struct defer
 			using X = typename super<T_, Is...>::type;
 			return S_::template self<X>(XTAL_REF_(oo)...);
 		})
-		///\
-		Setter applied when the template parameter matches the kernel-type. \
-
-		///\returns the value of `head()` prior to `emplace`ment. \
-		
-		template <typename ...Is>
-		XTAL_FN1 set(XTAL_DEF... oo)
-		XTAL_0EX
-		{
-			return self<Is...>().head(XTAL_REF_(oo)...);
-		}
-		///\
-		Getter applied when the template parameter matches the kernel-type. \
-		
-		///\returns the value of `head()`. \
-		
-		template <typename ...Is>
-		XTAL_FN2 get()
-		XTAL_0FX
-		{
-			return self<Is...>().head();
-		}
-		///\
-		Membership testing. \
-		\returns `true` if the supplied value matches `head`, `false` otherwise. \
-
-		XTAL_FN2_(bool) has(U const &w)
-		XTAL_0FX
-		{
-			return equivalent_f(head(), w);
-		}
+		XTAL_TO4_(template <size_t I>
+		XTAL_FN2 self(XTAL_DEF... oo),
+			self<substant_t<I>>(XTAL_REF_(oo)...)
+		)		
 		///\
 		Equality testing. \
 		\returns `true` if the supplied value matches `this`, `false` otherwise. \
@@ -255,7 +248,7 @@ struct defer
 		XTAL_OP2_(bool) == (subtype const &t)
 		XTAL_0FX
 		{
-			return has(t.head()) and S_::operator==(static_cast<S_ const &>(t));
+			return heading(t.head()) and S_::operator==(static_cast<S_ const &>(t));
 		}
 
 	};
@@ -278,22 +271,22 @@ struct refer: compose<void
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::concord::any_p T> requires (0 < T::tuple_size::value)
-struct tuple_size<T>: xtal::constant_t<(size_t) T::tuple_size::value> {};
+template <xtal::concord::any_p T> requires (0 < T::arity::value)
+struct tuple_size<T>: xtal::substant_t<T::arity::value> {};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 XTAL_FN1 get(T const  &t) {return t.template head<N>();};
 
-template <size_t N, xtal::concord::any_p T> requires (0 < T::tuple_size::value)
+template <size_t N, xtal::concord::any_p T> requires (0 < T::arity::value)
 XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 }/////////////////////////////////////////////////////////////////////////////

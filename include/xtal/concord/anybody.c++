@@ -15,43 +15,53 @@ namespace xtal::concord::__test
 
 TAG_("concord", "traversal")
 {
+	using qux = confined<void
+	,	any<struct foo>, defer<int>
+	,	any<struct bar>, defer<int>
+	,	any<struct baz>, defer<int>
+	>;
+	using qux_t = typename qux::type;
 	TRY_("path access")
 	{
-		using qux = confined<void
-		,	any<struct foo>, defer<int>
-		,	any<struct bar>, defer<int>
-		,	any<struct baz>, defer<int>
-		>;
-		using qux_t = typename qux::type;
 		qux_t qux_o(0, 1, 2);
 
 		TRUE_(0 == qux_o.template head<0>());
 		TRUE_(1 == qux_o.template head<1>());
 		TRUE_(2 == qux_o.template head<2>());
 
-		TRUE_(0 == qux_o.template get<struct foo>());
-		TRUE_(1 == qux_o.template get<struct bar>());
-		TRUE_(2 == qux_o.template get<struct baz>());
+		TRUE_(0 == qux_o.template head<struct foo>());
+		TRUE_(1 == qux_o.template head<struct bar>());
+		TRUE_(2 == qux_o.template head<struct baz>());
 
-		TRUE_(1 == qux_o.template get<struct foo, struct bar>());
-		TRUE_(2 == qux_o.template get<struct foo, struct baz>());
-		TRUE_(2 == qux_o.template get<struct bar, struct baz>());
+		TRUE_(1 == qux_o.template head<struct foo, struct bar>());
+		TRUE_(2 == qux_o.template head<struct foo, struct baz>());
+		TRUE_(2 == qux_o.template head<struct bar, struct baz>());
+	//	FALSE_(2 == qux_o.template head<struct baz, struct bar>());// TODO: Should fail.
 
 	}
-	TRY_("path mutation")
+	TRY_("partial reconstruction")
 	{
-		using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
-		auto foo = foo_t(1, 2, 3);
+		auto qux_o = qux_t(1, 2, 3);
 
-		(void) foo.self(0);
-		TRUE_(_std::get<0>(foo) == 0);
-		TRUE_(_std::get<1>(foo) == 2);
-		TRUE_(_std::get<2>(foo) == 3);
+		(void) qux_o.self(11);
+		TRUE_(_std::get<0>(qux_o) == 11);
+		TRUE_(_std::get<1>(qux_o) ==  2);
+		TRUE_(_std::get<2>(qux_o) ==  3);
 
-		(void) foo.self(1, 3);
-		TRUE_(_std::get<0>(foo) == 1);
-		TRUE_(_std::get<1>(foo) == 3);
-		TRUE_(_std::get<2>(foo) == 3);
+		(void) qux_o.self(111, 222);
+		TRUE_(_std::get<0>(qux_o) == 111);
+		TRUE_(_std::get<1>(qux_o) == 222);
+		TRUE_(_std::get<2>(qux_o) ==   3);
+
+		(void) qux_o.template self<1>(2222, 3333);
+		TRUE_(_std::get<0>(qux_o) ==  111);
+		TRUE_(_std::get<1>(qux_o) == 2222);
+		TRUE_(_std::get<2>(qux_o) == 3333);
+
+		(void) qux_o.template self<struct baz>(33333);
+		TRUE_(_std::get<0>(qux_o) ==   111);
+		TRUE_(_std::get<1>(qux_o) ==  2222);
+		TRUE_(_std::get<2>(qux_o) == 33333);
 
 	}
 }

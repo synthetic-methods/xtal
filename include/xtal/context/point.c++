@@ -15,7 +15,7 @@ namespace xtal::context::__test
 
 TAG_("point")
 {
-	TRY_("edit")
+	TRY_("construct")
 	{
 		using source_t = concord::lift_t<counted_t<>>;
 		using target_t = point_s<source_t>;

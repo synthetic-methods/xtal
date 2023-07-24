@@ -73,7 +73,8 @@ static_assert(complete_q<unit_t> and not complete_q<struct void_t>);
 
 template <auto     N >    XTAL_LET constant_v = _std::integral_constant<decltype(N), N> {};
 template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
-template <class    T >       using substant_t = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
+template <auto     N >       using substant_t = _std::integral_constant<     size_t, N>;
+template <class    T >       using substant_s = _std::integral_constant<typename T::value_type, T{} - sign_v<T{}>>;
 template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
 template <class    T >     concept substant_p = constant_p<T> and T::value != 0;
 template <class    T >     concept variable_p =     not constant_p<T>;
@@ -117,6 +118,8 @@ template <value_p  T >      struct revalue<T> : based_t<T> {};
 template <class    T >       using revalue_t  = value_t<revalue<T>>;
 
 
+////////////////////////////////////////////////////////////////////////////////
+
 template <          class ...Ts> struct identical;// `is_same`
 template <          class ...Ts> struct isotropic;// `is_same` modulo qualifiers
 template <          class ...Ts> struct epitropic;// `is_constructible`
@@ -150,10 +153,10 @@ XTAL_0EX
 	}
 }
 template <typename X, typename Y>
-XTAL_CN2 equivalent_f(X const &x, Y const &y)
+XTAL_CN2 equivalent_f(X &&x, Y &&y)
 XTAL_0EX
 {
-	return equal_f(x, y);
+	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 
@@ -171,15 +174,26 @@ template <class    M >   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f
 template <class ...Ws>  concept remember_q = not (...or debased_p<Ws>);
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
-///< Governs access to the underlying member `T`. \
+///< Governs access to the underlying member. \
 
-template <class    T >      using pointed_t   = XTAL_TYP_(*XTAL_VAL_(T));
-template <class    T >      using pointer_t   = XTAL_TYP_(&XTAL_VAL_(T));
-template <class ...Ts>    concept pointed_q   = (... and requires {&XTAL_VAL_(Ts);});
-template <class ...Ts>    concept pointer_q   = (... and requires {*XTAL_VAL_(Ts);});
+template <remember_q V>
+XTAL_CN2 dismember_f(V &v, V w)
+XTAL_0EX
+{
+	_std::swap(w, v); return XTAL_MOV_(v);
+}
+template <remember_q V>
+XTAL_CN2 dismember_f(V &v, XTAL_DEF... w)
+XTAL_0EX
+{
+	return dismember_f<V>(v, member_f<V>(XTAL_REF_(w)...));
+}
+///< Replaces the body of the underlying member. \
 
-template <class    I > XTAL_LET appointer_f   = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
-template <class    T >
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
 struct aligned
 {
 	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
@@ -187,29 +201,18 @@ struct aligned
 };
 template <class    T >    using aligned_t = typename aligned<T>::type;
 template <class    T > XTAL_LET aligned_v =          aligned<T>::value;
+template <class    I > XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
+template <class    T >      using pointed_t =             XTAL_TYP_(*XTAL_VAL_(T));
+template <class    T >      using pointer_t =             XTAL_TYP_(&XTAL_VAL_(T));
+template <class ...Ts>    concept pointed_q = (... and requires {&XTAL_VAL_(Ts);});
+template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);});
 
-template <class T, class Y>
-concept fungible_p = _std::derived_from<based_t<T>, based_t<Y>>;
+template <class T, class    Y > concept fungible_p = _std::derived_from<based_t<T>, based_t<Y>>;
+template <class T, class ...Ys> concept fungible_q = (...and (fungible_p<T, Ys> or fungible_p<Ys, T>));
+template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
 
-template <class T, class ...Ys>
-concept fungible_q = (...and (fungible_p<T, Ys> or fungible_p<Ys, T>));
-
-template <class T, class ...Ys>
-concept forcible_q = (... and (sizeof(T) == sizeof(Ys)));
-
-template <class Y>
-XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t)
-XTAL_0EX
-{
-	return static_cast<Y>(XTAL_REF_(t));
-}
-template <class Y>
-XTAL_CN2 force_f(XTAL_DEF_(forcible_q) t)
-XTAL_0EX
-{
-	return reinterpret_cast<Y>(XTAL_REF_(t));
-}
-
+template <class Y> XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
+template <class Y> XTAL_CN2 force_f(XTAL_DEF_(forcible_q) t) XTAL_0EX {return reinterpret_cast<Y>(XTAL_REF_(t));}
 template <class Y>
 XTAL_CN2 forge_f(XTAL_DEF t)
 XTAL_0EX

@@ -4,6 +4,8 @@ namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+
 struct unikind
 {
 	template <class S>
@@ -22,45 +24,6 @@ struct unikind
 };
 using unitype = typename unikind::type;
 
-template <class T>
-struct epikind
-{
-	template <class S>
-	class subtype: public S
-	{
-		friend T;
-		
-	public:
-		using S::S;
-
-		XTAL_CXN subtype(XTAL_DEF ...oo)
-		XTAL_0EX
-		:	S(XTAL_REF_(oo)...)
-		{}
-
-		///\returns `this` as the `define`d supertype. \
-
-		XTAL_TO4_(XTAL_FN2 core(), S::self())
-
-		///\returns a copy of `*this` with type `Y=T`. \
-
-		XTAL_TO2_(template <typename Y=T> XTAL_FN2_(based_t<Y>) twin(), self<Y>())
-
-		///\returns `*this` with type `Y=T`. \
-
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&&) {return forge_f<Y const &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return forge_f<Y       &&>(XTAL_MOV_(*this));}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
-		template <typename Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
-
-		using self_t = T;
-		
-	};
-	using type = subtype<unit_t>;
-
-};
-template <class T>
-using epitype = typename epikind<T>::type;
 
 template <template <typename> typename _T>
 class isotype: public _T<isotype<_T>>

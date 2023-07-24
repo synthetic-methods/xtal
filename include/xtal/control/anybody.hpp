@@ -79,16 +79,6 @@ struct define
 					assert(0 <= n and n < N_arity);
 				}
 
-				/*/
-				///\note\
-				Experimental!
-				
-				XTAL_DO2_(template <auto ...Ks>
-				XTAL_FN2 method(XTAL_DEF ...xs), XTAL_REQ_(XTAL_VAL_(R_).template method<Ks..., K_{}>(XTAL_REF_(xs)...))
-				{
-					return (self().*deify<decltype(xs)...>(constant_v<Ks>...)) (XTAL_REF_(xs)...);
-				})
-				/***/
 				XTAL_TO2_(
 				XTAL_OP2() (XTAL_DEF ...xs),
 					(self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)

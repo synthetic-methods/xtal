@@ -82,7 +82,7 @@ struct dynamic_onset_mix
 		XTAL_FN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return (XTAL_REF_(xs) +...+ this->template get<onset_t>());
+			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
 		}
 
 	};
@@ -101,7 +101,7 @@ struct dynamic_term
 		XTAL_FN2 method(XTAL_DEF x)
 		XTAL_0EX
 		{
-			return XTAL_REF_(x)*this->template get<scale_t>();
+			return XTAL_REF_(x)*this->template head<scale_t>();
 		}
 
 	};
@@ -129,7 +129,7 @@ struct dynamic_count
 		XTAL_FN2 method()
 		XTAL_0EX
 		{
-			auto i = count; count += this->template get<restep_u>();
+			auto i = count; count += this->template head<restep_u>();
 			return i;
 		}
 

@@ -174,6 +174,8 @@ static_assert(1200 <= XTAL_V00_GNUC);
                                  SIG         & noexcept          __VA_ARGS__   ;
 #define XTAL_DO2_(SIG, ...)      SIG const     noexcept          __VA_ARGS__   \
                                  SIG           noexcept          __VA_ARGS__   ;
+#define XTAL_DO1_(SIG, ...)      SIG        && noexcept          __VA_ARGS__   \
+                                 SIG         & noexcept          __VA_ARGS__   ;
 
 #define XTAL_CO4_(TYP)               constexpr TYP & operator = (TYP const &) noexcept = default;\
                                      constexpr TYP              (TYP const &) noexcept = default;\
