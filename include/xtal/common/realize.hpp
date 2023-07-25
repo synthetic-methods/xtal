@@ -369,11 +369,11 @@ public:
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
-	using default_alignment = constant_t<(sigma_t) XTAL_STD_(L1)/width>;
+	using default_alignment = sequent_t<XTAL_STD_(L1)/width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = constant_t<(sigma_t) _std::hardware_constructive_interference_size/width>;
-	using  destructive_alignment = constant_t<(sigma_t) _std:: hardware_destructive_interference_size/width>;
+	using constructive_alignment = sequent_t<_std::hardware_constructive_interference_size/width>;
+	using  destructive_alignment = sequent_t<_std:: hardware_destructive_interference_size/width>;
 #else
 	using constructive_alignment = default_alignment;
 	using  destructive_alignment = default_alignment;

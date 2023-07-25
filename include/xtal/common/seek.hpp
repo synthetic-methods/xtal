@@ -15,7 +15,7 @@ namespace xtal::common
 
 template <size_t ...I> using seek_t = _std::index_sequence<I...>;
 template <size_t    N> using seek_f = _std::make_index_sequence<N>;
-template <size_x K=0, auto I_offset=0>
+template <size_s K=0, auto I_offset=0>
 XTAL_CN1 seek_e(auto const &f)
 XTAL_0EX
 {
@@ -35,12 +35,23 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int I, bool ...Qs> struct seek_true_from;
-template <int I            > struct seek_true_from<I              >: instant_t<-1> {};
-template <int I, bool ...Qs> struct seek_true_from<I,  true, Qs...>: instant_t< I> {};
-template <int I, bool ...Qs> struct seek_true_from<I, false, Qs...>: seek_true_from<I + 1, Qs...> {};
+template <         class ...Ts>  struct seek_front;
+template <class T, class ...Ts>  struct seek_front<T, Ts...> {using type = T;};
+template <         class ...Ts>   using seek_front_t = typename seek_front<Ts...>::type;
 
-template <bool ...Qs> XTAL_LET_(int) seek_true_v = seek_true_from<0, Qs...>::value;
+template <         class ...Ts>  struct seek_back;
+template <class T, class ...Ts>  struct seek_back<T, Ts...>: seek_back<Ts...> {};
+template <class T             >  struct seek_back<T> {using type = T;};
+template <         class ...Ts>   using seek_back_t = typename seek_back<Ts...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <int I=0, bool ...Ns>         struct seek_true;
+template <int I              >         struct seek_true<I              >: integer_t<-1> {};
+template <int I,   bool ...Ns>         struct seek_true<I,  true, Ns...>: integer_t< I> {};
+template <int I,   bool ...Ns>         struct seek_true<I, false, Ns...>: seek_true<I + 1, Ns...> {};
+template <         bool ...Ns> XTAL_LET_(int) seek_true_v = seek_true<0, Ns...>::value;
 
 static_assert(seek_true_v<                   > == -1);
 static_assert(seek_true_v<               true> ==  0);

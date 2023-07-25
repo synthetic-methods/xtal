@@ -51,10 +51,10 @@ this `method` is aliased as the invocation `operator()`.
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
-Range-lifting is achieved using functors like `processor::{let,lift,monomer}`,
+Range-lifting is achieved using functors like `processor::{conferred,confined}`,
 which `zip` the underlying `method`.
 
-	using Mixer = processor::lift_t<Mix>;
+	using Mixer = processor::conferred_t<Mix>;
 	Mixer mixer;
 	auto sixer = mixer(one, two, three);// mixes the ranges/processors `one`, `two`, `three`
 
@@ -100,7 +100,7 @@ Update is managed by the `influx` and `efflux` operators and methods. The `influ
 
 To schedule messages within `processor` blocks, messages may be attached using `intermit` to splice them at a specific offset.
 
-	using Mixer = processor::lift_t<Mix, Active::template intermit<>>;
+	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
 	mixer.influx(context::point_s<>(123), Active(0));// `active == 0` @ offset 123
 
@@ -167,7 +167,7 @@ The [`**/all.hpp`](include/xtal/all.hpp?ts=3) exports all definitions at a given
 
 The [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
-The [`**/anybody.hpp`](include/xtal/concord/anybody.hpp?ts=3) provides the key definitions `[dr]efine` and `[dr]efer` which are scaffolded by [`common/_kernel.hxx`](include/xtal/common/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/anybody.hpp`](include/xtal/concord/anybody.hpp?ts=3) provides the key definitions `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
@@ -262,7 +262,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`common/_kernel.hxx`](include/xtal/common/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 

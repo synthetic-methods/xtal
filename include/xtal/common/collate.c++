@@ -16,7 +16,7 @@ namespace xtal::common::__test
 template <int N>
 void spool__operation()
 {
-	using event_u = compose_s<onset_t, concord::lift<int>>;
+	using event_u = compose_s<onset_t, concord::conferred<int>>;
 	using queue_u = typename collate_t<N>::template spool_t<event_u>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
@@ -106,7 +106,7 @@ TAG_("collate", "series")
 
 		using series_s = typename collate_t<O>::template series_t<aphex_t>;
 		using series_u = typename collate_t<N>::template series_t<aphex_t>;
-		series_s basis(constant_v<-1>);
+		series_s basis(integer_t<-1>{});
 
 		series_u source;
 		source[0] = source[M - 0] = aphex_t(0.0, 0.0);
@@ -136,7 +136,7 @@ TAG_("collate", "series")
 		sigma_t constexpr M = N  - 1;
 
 		using series_u = typename collate_t<N>::template series_t<aphex_t>;
-		series_u basis(constant_v<-1>);
+		series_u basis(integer_t<-1>{});
 
 		series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 		series_u rhs = {1, 0, 1, 0, 0, 0, 0, 0};

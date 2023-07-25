@@ -1,22 +1,11 @@
-#include "./_.hxx"
+#include "../_.hxx"
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class T> using identity_t = typename T::identity;
-template <class T, class... Ys> concept identity_p = of_p<identity_t<T>, identity_t<Ys>...>;
-template <class T, class... Ys> concept identity_q = of_q<identity_t<T>, identity_t<Ys>...>;
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-class unitype: public unit_t
-{
-public:
-	using unit_t::unit_t;
-	
-};
 template <typename ...>
 class exotype
 {
@@ -29,6 +18,44 @@ class isotype: public _T<isotype<_T>>
 public:
 	using S::S;
 
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T             >   using identity_t = typename T::identity::type;
+template <class T, class... Ys> concept identity_p = of_p<identity_t<T>, identity_t<Ys>...>;
+template <class T, class... Ys> concept identity_q = of_q<identity_t<T>, identity_t<Ys>...>;
+
+template <class T> concept   identified_p =     requires {typename identity_t<T>;};
+template <class T> concept unidentified_p = not requires {typename identity_t<T>;};
+
+template <typename ...As>
+struct identify;
+
+template <>
+struct identify<>//tag<identify>
+{	
+	template <class S>
+	class subtype: public S
+	{
+	public:
+		using S::S; struct identity {class type {};};
+
+	};
+};
+template <typename A>
+struct identify<A>
+{	
+	template <class I> struct indent {class type: public I::type {};};
+
+	template <class S>
+	class subtype: public S
+	{
+	public:
+		using S::S; using identity = indent<typename S::identity>;
+		
+	};
 };
 
 

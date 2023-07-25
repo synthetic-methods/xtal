@@ -93,6 +93,19 @@ struct prequel
 		{
 			auto t = self(); operator++(); return t;
 		}
+		///\
+		Retreat `1` step while retaining `size`. \
+
+		XTAL_OP1_(T_&) --()
+		XTAL_0EX
+		{
+			return self().operator-=(count_f(self()));
+		}
+		XTAL_OP1_(T_) --(int)
+		XTAL_0EX
+		{
+			auto t = self(); operator--(); return t;
+		}
 		///\returns the adjacent block with the same `size`. \
 
 		XTAL_FN2_(T_) next(V_ v)

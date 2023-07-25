@@ -144,8 +144,12 @@ struct define
 				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					return is_q<T, XTAL_TYP_(o)>?
-						R_::head() == XTAL_REF_(o): R_::infuse(XTAL_REF_(o));
+					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+						return R_::heading(XTAL_REF_(o));
+					}
+					else {
+						return R_::infuse(XTAL_REF_(o));
+					}
 				}
 
 			};
@@ -166,8 +170,12 @@ struct define
 				XTAL_FNX effuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					return is_q<T, XTAL_TYP_(o)>?
-						R_::head() == XTAL_REF_(o): R_::effuse(XTAL_REF_(o));
+					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+						return R_::heading(XTAL_REF_(o));
+					}
+					else {
+						return R_::effuse(XTAL_REF_(o));
+					}
 				}
 
 			};

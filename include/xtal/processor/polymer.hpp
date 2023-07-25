@@ -140,7 +140,7 @@ struct polymer<U, As...>
 				///\
 				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
 				
-				template <iterated_q R_x, control::sequel_q S_x>
+				template <control::respan_q R_x, control::sequel_q S_x>
 				XTAL_FNX efflux_pull_slice(R_x respan_x, S_x sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{

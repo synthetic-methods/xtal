@@ -17,12 +17,12 @@ template <typename ...>
 struct point;
 
 template <class U>
-struct point<U>: lift<U, tag<point>> {};
+struct point<U>: conferred<U, tag<point>> {};
 
 template <class ...Ts >
 concept point_q = tag_p<point, Ts...>;
 
-template <class S=confined_t<>, class U=size_x>
+template <class S=confined_t<>, class U=size_s>
 using point_s = compose_s<S, point<U>>;
 
 

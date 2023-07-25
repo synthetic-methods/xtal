@@ -30,23 +30,35 @@ struct define
 	{
 		using S_ = compose_s<S, subkind>;
 	
-	private:
+	protected:
+		using O = sequent_t<0>;
+		using _ = unit_t;
+		///\
+		Resolves the query/answer `X` w.r.t. the supplied context. \
+
+		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
+		template <class X, typename ...Is> struct super<X, T, Is...>: super<T, Is...> {};
+		template <class X, typename ...Is> struct super<X, O, Is...>: super<_, Is...> {};
+	//	template <class X, typename ...Is> struct super<X, O, Is...>;
+		template <class X                > struct super<X> {using type = X;};
+
 		template <class X, typename ...Is>
-		using super_t = typename S_::template super<X, Is...>::type;
+		using super_t = typename super<X, Is...>::type;
+		using duper_t = _;
 
 	public:
 		using S_::S_;
 	//	using S_::self;
 
-		///\returns `this` as `T`, or `fungible_q<Y>`. \
-
-		XTAL_TO4_(template <fungible_q Y=T>
-		XTAL_FN2 self(), S_::template self<Y>()
+		XTAL_TO4_(
+		XTAL_FN2 self(), S_::self()
 		)
+		XTAL_TO4_(template <of_q<subtype> X=T>
+		XTAL_FN2 self(), S_::template self<X>()
+		)
+		///<\returns `this` as `T`, or `of_q<subtype>`. \
 		
-		///\returns `this` indexed by `Is...`, \
-		emplacing the matching part of `self` if arguments are supplied. \
-
+		
 		XTAL_DO4_(template <typename ...Is>
 		XTAL_FN2 self(XTAL_DEF... oo),
 		{
@@ -58,12 +70,15 @@ struct define
 				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
 			}
 		})
+		///<\returns `this` indexed by `Is...`, \
+		emplacing the matching part of `self` if arguments are supplied. \
+
 		//\
 		Trivial (in)equality. \
 		
-		XTAL_OP2       <=> (subtype const &t) XTAL_0FX {return _std::strong_ordering::equivalent;}
-		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return 1;}///<\returns `true`.
-		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return 0;}///<\returns `false`.
+		XTAL_OP2       <=> (subtype t) XTAL_0FX {return _std::strong_ordering::equivalent;}
+	//	XTAL_OP2_(bool) == (subtype t) XTAL_0FX {return 1;}
+	//	XTAL_OP2_(bool) != (subtype t) XTAL_0FX {return 0;}
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 		using arity = sequent_t<0>;
@@ -132,15 +147,16 @@ struct defer
 		template <class X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
 		template <class X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
 		template <class X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
-		template <class X, subsequent_q N, typename ...Is> struct super<X, N, Is...>: S_::template super<S_, subsequent_s<N>, Is...> {};
+		template <class X, subsequent_q N, typename ...Is>
+		struct super<X, N, Is...>: S_::template super<typename S_::duper_t, subsequent_s<N>, Is...> {};
 
-	private:
 		template <class X, typename ...Is>
 		using super_t = typename super<X, Is...>::type;
+		using duper_t = subtype;
 		
 	public:
 	//	using S_::S_;
-	//	using S_::self;
+		using S_::self;
 		using head_t = U;
 		using body_t = V;
 
@@ -174,8 +190,9 @@ struct defer
 		XTAL_FN2 self(XTAL_DEF... oo), self<sequent_t<I>>(XTAL_REF_(oo)...)
 		)		
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_FN2 self(XTAL_DEF... oo), S_::template self<super_t<T_, Is...>>(XTAL_REF_(oo)...)
+		XTAL_FN2 self(XTAL_DEF... oo), S_::template self<super_t<S, Is...>>(XTAL_REF_(oo)...)
 		)
+		
 		///\
 		Tuple arity. \
 
@@ -210,6 +227,9 @@ struct defer
 		XTAL_FN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
 		XTAL_FN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
 		
+		XTAL_TO4_(template <fungible_q<subtype> X>
+		XTAL_FN2 head(XTAL_DEF... oo), S_::template self<X>().head(XTAL_REF_(oo)...)
+		)
 		XTAL_TO4_(template <typename ...Is> requires (0 < sizeof...(Is))
 		XTAL_FN1 head(XTAL_DEF... oo), self<Is...>().head(XTAL_REF_(oo)...)
 		)
@@ -237,7 +257,7 @@ struct defer
 		XTAL_OP2_(bool) == (subtype const &t)
 		XTAL_0FX
 		{
-			return heading(t.head()) and S_::operator==(static_cast<S_ const &>(t));
+			return heading(t.head()) and self<1>() == t;
 		}
 
 	};

@@ -23,7 +23,7 @@ struct shard<Ns...>
 {
 	using subkind = confined<confer<Ns>..., tag<shard>>;
 	template <bundle_q S> using basetype = bundle_part_t<S, Ns{}...>;
-	template <bundle_q S> using basekind = conflux::lift<basetype<S>>;
+	template <bundle_q S> using basekind = conflux::conferred<basetype<S>>;
 	template <class S> using semikind = compose<subkind, basekind<S>>;
 	template <class S> using semitype = compose_s<conflux::any_t<>, semikind<S>>;
 	template <class S>

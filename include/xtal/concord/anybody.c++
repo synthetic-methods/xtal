@@ -12,14 +12,14 @@ namespace xtal::concord::__test
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-using qux = composed<confined<void
-	,	any<struct bar>, defer<int>
-	,	any<struct baz>, defer<int>
+using bar_baz = composed<confined<void
+	,	infer<struct bar, int>
+	,	infer<struct baz, int>
 	>
 ,	any<As...>
 >;
 template <typename ...As>
-using qux_t = typename qux<As...>::type;
+using bar_baz_t = typename bar_baz<As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,26 +34,24 @@ TAG_("concord", "matching")
 	}
 	TRY_("any root")
 	{
-		TRUE_(any_q<qux_t<>>);
-		TRUE_(any_q<qux_t<struct foo>>);
+		TRUE_(any_q<bar_baz_t<>>);
+		TRUE_(any_q<bar_baz_t<struct foo>>);
 
-		TRUE_(any_p<qux_t<struct foo            >                        >);
-		TRUE_(any_p<qux_t<struct foo            >, struct foo            >);
-		TRUE_(any_p<qux_t<struct foo, struct goo>,             struct goo>);
-		TRUE_(any_p<qux_t<struct foo, struct goo>, struct foo, struct goo>);
+		TRUE_(any_p<bar_baz_t<struct foo            >                        >);
+		TRUE_(any_p<bar_baz_t<struct foo            >, struct foo            >);
+		TRUE_(any_p<bar_baz_t<struct foo, struct goo>,             struct goo>);
+		TRUE_(any_p<bar_baz_t<struct foo, struct goo>, struct foo, struct goo>);
 
-		UNTRUE_(any_p<qux_t<struct foo            >,             struct goo>);
-		UNTRUE_(any_p<qux_t<struct foo, struct goo>, struct foo            >);
+		UNTRUE_(any_p<bar_baz_t<struct foo            >,             struct goo>);
+		UNTRUE_(any_p<bar_baz_t<struct foo, struct goo>, struct foo            >);
 
 	}
-	/**/
 	TRY_("any inline")
 	{
-		TRUE_(any_p<qux_t<>,             struct baz>);
-		TRUE_(any_p<qux_t<>, struct bar, struct baz>);
+		TRUE_(any_p<bar_baz_t<>,             struct baz>);
+		TRUE_(any_p<bar_baz_t<>, struct bar, struct baz>);
 
 	}
-	/***/
 }
 
 
@@ -62,11 +60,12 @@ TAG_("concord", "matching")
 TAG_("concord", "traversal")
 {
 	using qux = confined<void
-	,	any<struct foo>, defer<int>
-	,	any<struct bar>, defer<int>
-	,	any<struct baz>, defer<int>
+	,	infer<struct foo, int>
+	,	infer<struct bar, int>
+	,	infer<struct baz, int>
 	>;
 	using qux_t = typename qux::type;
+	
 	TRY_("partial access")
 	{
 		qux_t qux_o(0, 1, 2);
@@ -74,17 +73,22 @@ TAG_("concord", "traversal")
 		TRUE_(0 == qux_o.template head<0>());
 		TRUE_(1 == qux_o.template head<1>());
 		TRUE_(2 == qux_o.template head<2>());
+	//	TRUE_(3 == qux_o.template head<3>());// Fails!
 
 		TRUE_(0 == qux_o.template head<struct foo>());
 		TRUE_(1 == qux_o.template head<struct bar>());
 		TRUE_(2 == qux_o.template head<struct baz>());
 
-		TRUE_(1 == qux_o.template head<struct foo, struct bar>());
-		TRUE_(2 == qux_o.template head<struct foo, struct baz>());
 		TRUE_(2 == qux_o.template head<struct bar, struct baz>());
-	//	TRUE_(2 != qux_o.template head<struct baz, struct bar>());// TODO: Should fail.
+	//	TRUE_(1 != qux_o.template head<struct baz, struct bar>());// Fails!
+		
+	//	TRUE_(    any_p<qux_t, sequent_t<1>>);
+		TRUE_(    any_p<qux_t, struct bar, struct baz>);
+		TRUE_(not any_p<qux_t, struct baz, struct bar>);
+	//	UNTRUE_(requires {qux_o.template head<struct baz, struct bar>();});// Shouldn't fail?
 
 	}
+	/**/
 	TRY_("partial reconstruction")
 	{
 		auto qux_o = qux_t(1, 2, 3);
@@ -100,7 +104,7 @@ TAG_("concord", "traversal")
 		TRUE_(_std::get<2>(qux_o) ==   3);
 
 		(void) qux_o.template self<1>(2222, 3333);
-		TRUE_(_std::get<0>(qux_o) ==  111);
+		TRUE_(_std::get<0>(qux_o) ==  111);//!
 		TRUE_(_std::get<1>(qux_o) == 2222);
 		TRUE_(_std::get<2>(qux_o) == 3333);
 
@@ -110,6 +114,7 @@ TAG_("concord", "traversal")
 		TRUE_(_std::get<2>(qux_o) == 33333);
 
 	}
+	/***/
 }
 
 

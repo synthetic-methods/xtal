@@ -8,4 +8,5 @@
 #include "./compose.c++"
 #include "./realize.c++"
 #include "./seek.c++"
+#include "./tab.c++"
 #include "./tag.c++"

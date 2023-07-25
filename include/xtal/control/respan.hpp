@@ -11,8 +11,12 @@ namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <typename ..._s> XTAL_NYM respan;
+template <typename ..._s> XTAL_ASK respan_q = tag_p<respan, _s...>;
+template <iterated_q   U> XTAL_USE respan_t = confined_t<refer<U>, respan<U>, tag<respan>>;
+
 template <iterated_q U>
-struct respan
+struct respan<U>
 {
 private:
 	using V = distance_t<U>;
@@ -54,8 +58,6 @@ public:
 
 	};
 };
-template <iterated_q U>
-using respan_t = confined_t<refer<U>, respan<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

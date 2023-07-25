@@ -67,7 +67,7 @@ struct composed
 	
 	template <class S, typename ..._s>
 	using subtype = compose_s<S, _s..., subkind>;
-	using    type = subtype<_detail::unitype>;
+	using    type = subtype<unit_t>;
 
 };
 template <class S, typename ...Tails>

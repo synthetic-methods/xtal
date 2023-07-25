@@ -2,8 +2,14 @@
 FIXME
 =====
 
-`FIXME` provisions the alternative test index `./include/xtal.cxx` (which is `.gitignore`d). This is used in place of `include/xtal.c++` when it exists (and is otherwise `.gitignore`d).
+Provisions the alternative test index `./include/FIXME.cxx`,
+used in place of `./include/xtal.c++` if `[ -f ./include/FIXME.cxx ]`.
 
-To test specific `include/**/*.c++` files, add `FIXME` anywhere in the body and run `source FIXME`.
+The following commands index `./include/xtal`:
 
-To restore the original index, either `rm ./include/xtal.cxx`, or run `source FIXME` once again after removing all occurences.
+	sh FIXME        #include `**/*.c++` containing `FIXME`
+	sh FIXME ++     #include `*/*.c++` except `all.c++`
+	sh FIXME +      #include `*/all.c++`
+	sh FIXME .      # `rm ../include/FIXME.cxx`
+	sh FIXME        # `rm ../include/FIXME.cxx` only if the resulting index is empty
+	sh FIXME --help # `echo ./FIXME.md`

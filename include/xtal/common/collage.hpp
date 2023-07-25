@@ -26,7 +26,8 @@ template <int ...Ns> XTAL_USE collage_t = typename collage<Ns...>::type;
 template <int N_size>
 struct collage<N_size>
 {
-	using metatype = collate_t<N_size>;
+	using  metatype = collate_t<N_size>;
+	using orthotype = collate_t<N_size - (0 < N_size)>;
 
 	using subkind = tag<collaged>;
 
@@ -37,22 +38,35 @@ struct collage<N_size>
 
 	public:
 		using S_::S_;
-		using collaged = instant_t<N_size>;
+		using collaged = integer_t<N_size>;
 
 		///\
-		Combines both `pulsar` and `phasor` from `collate`, \
-		producing a discrete/continuous pair representing trigger/position, \
-		and providing conversions to/from the initial value of `phase`. \
+		Combines both `phasor` and `pulsar` from `collate`, \
+		producing a discrete/continuous pair representing e.g. \
+		`{{phi, omega}, {iota, gamma}}` if `N_size == 2`. \
+		
+		///\note\
+		Provides explicit/implicit conversions to/from the head `phase`. \
 		
 		template <class V>
 		struct quasar
 		{
 			using _realized = realize<V>;
-			using alpha_t = typename _realized::alpha_t;
-			using delta_t = typename _realized::delta_t;
+			using phase_u = typename _realized::alpha_t;
+			using pulse_u = typename _realized::delta_t;
 			
-			using phase_t = typename metatype::template phasor_t<alpha_t>;
-			using pulse_t = typename metatype::template pulsar_t<delta_t>;
+			using phase_t = typename  metatype::template phasor_t<phase_u>;
+			using pulse_t = typename  metatype::template pulsar_t<pulse_u>;
+			
+			using phase_s = typename orthotype::template phasor_t<phase_u>;
+			using pulse_s = typename orthotype::template pulsar_t<pulse_u>;
+			
+			template <class T>
+			XTAL_LET ortho_v = requires (T t)
+			{
+				{t.phase()} -> is_q<phase_s>;
+				{t.pulse()} -> is_q<pulse_s>;
+			};
 			
 			template <class T>
 			using hemitype = typename define<T>::type;
@@ -74,23 +88,15 @@ struct collage<N_size>
 				///\
 				Trailing subsequence construction. \
 
-				XTAL_CXN homotype(auto const &o1)
+				template <typename O> requires (ortho_v<O>)
+				XTAL_CXN homotype(O const &o1)
 				XTAL_0EX
-				XTAL_REQ requires ()
-				{
-					phase_t(o1.phase());
-					pulse_t(o1.pulse());
-				}
 				:	phase_m(o1.phase())
 				,	pulse_m(o1.pulse())
 				{}
-				XTAL_CXN homotype(auto &&o1)
+				template <typename O> requires (ortho_v<O>)
+				XTAL_CXN homotype(O &&o1)
 				XTAL_0EX
-				XTAL_REQ requires ()
-				{
-					phase_t(XTAL_MOV_(o1.phase()));
-					pulse_t(XTAL_MOV_(o1.pulse()));
-				}
 				:	phase_m(XTAL_MOV_(o1.phase()))
 				,	pulse_m(XTAL_MOV_(o1.pulse()))
 				{}
@@ -98,11 +104,16 @@ struct collage<N_size>
 				///\
 				Primary value conversion. \
 				
-				XTAL_CON homotype(alpha_t o0)
+				XTAL_CON homotype(phase_u p0, pulse_u q0=0)
 				XTAL_0EX
-				:	phase_m{o0 - _std::round(o0)}
+				:	phase_m{p0 - _std::round(p0)}
+				,	pulse_m{q0}
 				{}
-				XTAL_TO4_(XTAL_OP1_(explicit) alpha_t(), phase(0))
+				XTAL_TO4_(XTAL_OP0_(implicit) phase_t(), phase())
+				XTAL_TO4_(XTAL_OP0_(implicit) pulse_t(), pulse())
+				
+				XTAL_TO4_(XTAL_OP1_(explicit) phase_u(), phase(0))
+				XTAL_TO4_(XTAL_OP1_(explicit) pulse_u(), pulse(0))
 				
 				///\
 				Accessories. \
@@ -128,7 +139,6 @@ struct collage<N_size>
 				{
 					phase_m.reduce(); return self();
 				}
-
 				///\
 				Synchronized finite differencing. \
 

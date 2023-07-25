@@ -1,4 +1,4 @@
-#include "../common/_kernel.hxx"
+#include "../concord/_kernel.hxx"
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_OP0 U(), {return head();})
+		XTAL_DO4_(XTAL_OP0_(implicit) U(), {return head();})
 		
 	};
 };
@@ -45,7 +45,7 @@ struct refine_tuple
 
 		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).tuple());
 
-		XTAL_DO4_(XTAL_OP0 tuple_type(), {return tuple();})
+		XTAL_DO4_(XTAL_OP0_(implicit) tuple_type(), {return tuple();})
 		
 	};
 };

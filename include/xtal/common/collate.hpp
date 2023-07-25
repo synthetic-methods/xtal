@@ -52,7 +52,7 @@ struct collate<N_size>
 		
 	public:
 		using S_::S_;
-		using collated = instant_t<N_size>;
+		using collated = integer_t<N_size>;
 		
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
@@ -613,14 +613,14 @@ struct collate<N_size>
 				{
 					auto &s = self();
 					if constexpr (complex_operators_q<V>) {
-						T(constant_v<-1>).convolve(s, t);
+						T(integer_t<-1>{}).convolve(s, t);
 					}
 					else {
 						using W = typename _realized::aphex_t;
 						using Y = typename series<W>::type;
 						Y s_(s);
 						Y t_(t);
-						Y(constant_v<-1>).convolve(s_, t_);
+						Y(integer_t<-1>{}).convolve(s_, t_);
 						_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
 					}
 					return s;
@@ -665,15 +665,15 @@ struct collate<N_size>
 				XTAL_OP1_(T &) *=(T const &t)
 				XTAL_0EX
 				{
-					auto constexpr H = (size_x) N_size;
+					auto constexpr H = (size_s) N_size;
 					auto _s = self();
 					if constexpr (_realized::alignment_v < H) {
 						for (auto i = H;   ~--i;) {at_(i) *= t.at_(0);
 						for (auto j = i; j; --j ) {at_(i) += t.at_(j)*_s[i - j];}}
 					}
 					else {
-						seek_e<-(size_x) H, 0>([&, this] (auto I) XTAL_0FN {at_(I) *= t.at_(0);
-						seek_e<-(size_x) I, 1>([&, this] (auto J) XTAL_0FN {at_(I) += t.at_(J)*_s[I - J];});});
+						seek_e<-(size_s) H, 0>([&, this] (auto I) XTAL_0FN {at_(I) *= t.at_(0);
+						seek_e<-(size_s) I, 1>([&, this] (auto J) XTAL_0FN {at_(I) += t.at_(J)*_s[I - J];});});
 					}
 					return self();
 				}

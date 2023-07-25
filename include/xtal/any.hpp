@@ -51,53 +51,44 @@ Standard types...
 using null_t = XTAL_STD_(null_t);
 using unit_t = XTAL_STD_(unit_t);
 using sign_t = XTAL_STD_(sign_t);
+using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
-using size_x = XTAL_STD_(size_x);
+using size_s = XTAL_STD_(size_s);
+
+template <auto N> XTAL_LET sign_v = (0 < N) - (N < 0);
+template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
-Abstract types...
-
-template <         class ...Ts> struct terminal;
-template <class T, class ...Ts> struct terminal<T, Ts...>: terminal<Ts...> {};
-template <class T             > struct terminal<T> {using type = T;};
-template <         class ...Ts>  using terminal_t = typename terminal<Ts...>::type;
-
+Structural types...
 
 template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
-template <class   ...Ts>   concept complete_q = (...and     complete_p<Ts>);
-template <class   ...Ts>   concept   vacant_q = (...and not complete_p<Ts>);
-template <class   ...Ts>   concept     void_q = (...and _std::same_as<void,   Ts>);
-template <class   ...Ts>   concept     null_q = (...and _std::same_as<null_t, Ts>);
-template <class   ...Ts>   concept      nil_q = (...and (null_q<Ts> or void_q<Ts>));
-
-template <class      T >    struct complete    {class type {};};
+template <class   ...Ts>   concept complete_q = (...and complete_p<Ts>);
+template <class      T >    struct complete    {class type  {};};
 template <complete_q T >    struct complete<T> {using type = T;};
 template <class      T >     using complete_t = typename complete<T>::type;
-static_assert(complete_q<unit_t> and not complete_q<struct void_t>);
 
-template <auto     N >     using   constant_t = _std::integral_constant<decltype(N), N>;
-template <int      N >     using    instant_t = constant_t<N>;
-template <size_t   N >     using    sequent_t = constant_t<N>;
+
+template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
+template <class    T >     concept  boolean_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
+template <class    T >     concept  integer_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
+template <class    T >     concept  sequent_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
+
+template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
+template <class ...Ts>     concept  boolean_q = (...and  boolean_p<Ts>);
+template <class ...Ts>     concept  integer_q = (...and  integer_p<Ts>);
+template <class ...Ts>     concept  sequent_q = (...and  sequent_p<Ts>);
+
+template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
+template <auto     N >       using  boolean_t = _std::integral_constant<bool,        N>;
+template <auto     N >       using  integer_t = _std::integral_constant<int,         N>;
+template <auto     N >       using  sequent_t = _std::integral_constant<size_t,      N>;
+
 template <class    T >     using subsequent_s = sequent_t<T{} - 1>;
-
-template <auto     N >  XTAL_LET   constant_v = constant_t<N> {};
-template <int      N >  XTAL_LET    instant_v = constant_t<N> {};
-template <size_t   N >  XTAL_LET    sequent_v = constant_t<N> {};
-template <size_t   N >  XTAL_LET subsequent_v = constant_t<N - 1> {};
-
-template <class    T >   concept   constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
-template <class    T >   concept    instant_p = constant_p<T> and _std::convertible_to<typename T::value_type, int>;
-template <class    T >   concept    sequent_p = constant_p<T> and _std::convertible_to<typename T::value_type, size_t>;
-template <class    T >   concept subsequent_p =  sequent_p<T> and 0 != T::value;
-
-template <class ...Ts>   concept   variable_q = (...and not constant_p<Ts>);
-template <class ...Ts>   concept   constant_q = (...and     constant_p<Ts>);
-template <class ...Ts>   concept    instant_q = (...and      instant_p<Ts>);
-template <class ...Ts>   concept    sequent_q = (...and      sequent_p<Ts>);
-template <class ...Ts>   concept subsequent_q = (...and     subsequent_p<Ts>);
+template <class    T >   concept subsequent_p = sequent_p<T> and 0 != T::value;
+template <class ...Ts>   concept subsequent_q = (...and subsequent_p<Ts>);
 
 
 template <class    T >       using   based_t  = _std::remove_cvref_t<T>;
@@ -106,23 +97,19 @@ template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
 template <class ...Ts>     concept unbased_q  = (...and unbased_p<Ts>);
 
-template <class    T >      struct debased            : constant_t<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct debased<T        &>: constant_t<1> {using type =       T*;};
-template <unbased_p T>      struct debased<T  const &>: constant_t<1> {using type = const T*;};
+template <class    T >      struct debased             : boolean_t<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_p T>      struct debased<T        & >: boolean_t<1> {using type =       T*;};
+template <unbased_p T>      struct debased<T  const & >: boolean_t<1> {using type = const T*;};
 template <class    T >       using debased_t  = typename debased<T>::type;
 template <class    T >     concept debased_p  =  (bool)  debased<T> {};
 template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
 
-template <class    T >      struct rebased            : constant_t<1> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct rebased<T        &>: constant_t<0> {using type =       T&;};
-template <unbased_p T>      struct rebased<T  const &>: constant_t<0> {using type = const T&;};
+template <class    T >      struct rebased             : boolean_t<1> {using type = _std::remove_reference_t<T>;};
+template <unbased_p T>      struct rebased<T        & >: boolean_t<0> {using type =       T&;};
+template <unbased_p T>      struct rebased<T  const & >: boolean_t<0> {using type = const T&;};
 template <class    T >       using rebased_t  = typename rebased<T>::type;
 template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
 template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
-
-template <typename X>       struct argument    {using type = X      &&;};
-template <based_q  X>       struct argument<X> {using type = X const &;};
-template <typename X>        using argument_t = typename argument<X>::type;
 
 template <class    T >       using value_t    = typename based_t<T>::value_type;
 template <class    T >     concept value_p    = requires {typename value_t<T>;};
@@ -133,6 +120,14 @@ template <class    V >    XTAL_CN2 value_f(V &&v) {return value_v<V>;}
 template <class    T >      struct revalue     {using value_type = based_t<T>;};
 template <value_p  T >      struct revalue<T> : based_t<T> {};
 template <class    T >       using revalue_t  = value_t<revalue<T>>;
+
+
+template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;
+template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
+
+template <typename X>       struct argument    {using type = X &&;};
+template <based_q  X>       struct argument<X> {using type = X const &;};
+template <typename X>        using argument_t = typename argument<X>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -155,18 +150,14 @@ template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
-template <typename X, typename Y>
+template <class X, class Y>
 XTAL_CN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
-	if constexpr (requires {x.operator==(y);}) {
-		return x.operator==(y);
-	}
-	else {
-		return x == y;
-	}
+	using W = common_t<X, Y>;
+	return (W) x == (W) y;
 }
-template <typename X, typename Y>
+template <class X, class Y>
 XTAL_CN2 equivalent_f(X &&x, Y &&y)
 XTAL_0EX
 {
@@ -211,7 +202,7 @@ Equivalent to the soon-to-be deprecated `std::aligned_storage`. \
 template <class T>
 struct aligned
 {
-	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
+	class type {alignas(alignof(T)) byte_t data[sizeof(T)];};
 	XTAL_LET value = sizeof(type);
 };
 template <class    T >    using aligned_t = typename aligned<T>::type;
@@ -256,13 +247,6 @@ concept array_q = array_p<-1, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Arithmetic types...
-
-template <        auto N >  XTAL_LET moeity_v = N&1;
-template <auto M, auto N >   concept moeity_p = M == moeity_v<N>;
-
-template <        auto N >    XTAL_LET sign_v = (0 < N) - (N < 0);
-template <        auto N >     concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
-
 
 template <class    T >   using unsigned_t = _std::make_unsigned_t<revalue_t<T>>;
 template <class    T >   using   signed_t = _std::  make_signed_t<revalue_t<T>>;
@@ -423,6 +407,11 @@ template <class ...Ts>     concept iterated_q = (...and iterated_p<Ts>);//_v3::r
 template <class ...Ts>     concept iterator_q = (...and iterator_p<Ts>);//_v3::ranges::forward_iterator
 template <class ...Ts>     concept integral_q = (...and integral_p<Ts>);
 
+template <class ...Ts>   concept uniterable_q = (...and not iterable_p<Ts>);
+template <class ...Ts>   concept uniterated_q = (...and not iterated_p<Ts>);
+template <class ...Ts>   concept uniterator_q = (...and not iterator_p<Ts>);
+template <class ...Ts>   concept unintegral_q = (...and not integral_p<Ts>);
+
 template <class    T >      struct iterated;
 template <class    T >      struct iterator;
 template <class    T >      struct iteratee;
@@ -431,24 +420,19 @@ template <class    T >       using iterated_t = typename iterated<T>::type;
 template <class    T >       using iterator_t = typename iterator<T>::type;//_v3::ranges::iterator_t
 template <class    T >       using iteratee_t = typename iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
 
-template <iterated_p T>     struct iterated<T>: constant_t<1> {using type =               based_t<T> ;};
-template <iterator_p T>     struct iterated<T>: constant_t<0> {using type =                     void ;};
-template <integral_p T>     struct iterated<T>: constant_t<0> {using type =            interval_t<T> ;};
+template <iterated_p T>     struct iterated<T>: boolean_t<1> {using type =               based_t<T> ;};
+template <iterator_p T>     struct iterated<T>: boolean_t<0> {using type =                     void ;};
+template <integral_p T>     struct iterated<T>: boolean_t<0> {using type =            interval_t<T> ;};
 
-template <iterable_p T>     struct iterator<T>: constant_t<0> {using type =               begin_t<T> ;};
-template <iterated_p T>     struct iterator<T>: constant_t<0> {using type =               begin_t<T> ;};
-template <iterator_p T>     struct iterator<T>: constant_t<1> {using type =               based_t<T> ;};
-template <integral_p T>     struct iterator<T>: constant_t<0> {using type = iterator_t<interval_t<T>>;};
+template <iterable_p T>     struct iterator<T>: boolean_t<0> {using type =               begin_t<T> ;};
+template <iterated_p T>     struct iterator<T>: boolean_t<0> {using type =               begin_t<T> ;};
+template <iterator_p T>     struct iterator<T>: boolean_t<1> {using type =               based_t<T> ;};
+template <integral_p T>     struct iterator<T>: boolean_t<0> {using type = iterator_t<interval_t<T>>;};
 
-template <iterable_p T>     struct iteratee<T>: constant_t<0> {using type =     pointed_t<begin_t<T>>;};
-template <iterated_p T>     struct iteratee<T>: constant_t<0> {using type =     pointed_t<begin_t<T>>;};
-template <iterator_p T>     struct iteratee<T>: constant_t<0> {using type =             pointed_t<T> ;};
-template <integral_p T>     struct iteratee<T>: constant_t<1> {using type =               based_t<T> ;};
-
-template <class ...Ts>   concept uniterable_q = (...and not iterable_p<Ts>);
-template <class ...Ts>   concept uniterated_q = (...and not iterated_p<Ts>);
-template <class ...Ts>   concept uniterator_q = (...and not iterator_p<Ts>);
-template <class ...Ts>   concept unintegral_q = (...and not integral_p<Ts>);
+template <iterable_p T>     struct iteratee<T>: boolean_t<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterated_p T>     struct iteratee<T>: boolean_t<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterator_p T>     struct iteratee<T>: boolean_t<0> {using type =             pointed_t<T> ;};
+template <integral_p T>     struct iteratee<T>: boolean_t<1> {using type =               based_t<T> ;};
 
 
 template <class    T >       using sentinel_t = based_t<_v3::ranges::sentinel_t<T>>;
@@ -469,14 +453,14 @@ template <class ...Ts>     concept counter_q  = (...and counter_p<Ts>);
 template <class    T >      struct counted;
 template <class    T >      struct counter;
 
-template <counted_p T>      struct counted<T> : constant_t<1> {using type =    based_t<T>;};
-template <counter_p T>      struct counted<T> : constant_t<0> {using type = iterated_t<T>;};
+template <counted_p T>      struct counted<T> : boolean_t<1> {using type =    based_t<T>;};
+template <counter_p T>      struct counted<T> : boolean_t<0> {using type = iterated_t<T>;};
 
-template <counted_p T>      struct counter<T> : constant_t<0> {using type = iteratee_t<T>;};
-template <counter_p T>      struct counter<T> : constant_t<1> {using type =    based_t<T>;};
+template <counted_p T>      struct counter<T> : boolean_t<0> {using type = iteratee_t<T>;};
+template <counter_p T>      struct counter<T> : boolean_t<1> {using type =    based_t<T>;};
 
-template <class T=size_x>    using counted_t  = typename counted<T>::type;
-template <class T=size_x>    using counter_t  = typename counter<T>::type;
+template <class T=size_s>    using counted_t  = typename counted<T>::type;
+template <class T=size_s>    using counter_t  = typename counter<T>::type;
 
 template <counter_p I>     XTAL_CN2 counted_f(I i0, I iN) {return counted_t<I>(i0, iN);}
 template <class    T>      XTAL_CN2 counted_f(T &&t)      {return counted_t<T>(XTAL_REF_(t));}

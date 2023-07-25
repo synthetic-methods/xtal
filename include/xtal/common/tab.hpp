@@ -1,5 +1,5 @@
 #pragma once
-#include "./anybody.hpp"
+#include "./any.hpp"
 
 
 
@@ -7,23 +7,38 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-struct grain;
+template <class _T>
+struct tab
+{
+	class type
+	{
+	};
+	template <class S>
+	class subtype: public type, public S
+	{
+	public:
+		using S::S;
+		
+	};
+	template <of_q<type> S>
+	class subtype<S>: public S
+	{
+	public:
+		using S::S;
+		
+	};
+};
+template <class _T>
+using tab_t = typename tab<_T>::type;
 
-template <class U>
-struct grain<U>: conferred<U, tag<grain>> {};
-
-template <class ...Ts >
-concept grain_q = tag_p<grain, Ts...>;
-
-template <class S=confined_t<>, class U=size_s>
-using grain_s = compose_s<S, grain<U>>;
+template <class _T, class ...Ts>
+concept tab_p = of_p<tab_t<_T>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

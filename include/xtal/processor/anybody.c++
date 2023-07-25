@@ -22,7 +22,7 @@ void processor_control__messaging()
 	auto const _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto const _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	using mixer_t = processor::lift_t<mix_t>;
+	using mixer_t = processor::conferred_t<mix_t>;
 	mixer_t mixer_f;
 	auto mixed_o = mixer_f(_01, _10);
 

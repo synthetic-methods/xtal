@@ -1,5 +1,4 @@
-#include "./_.hxx"
-
+#include "../_.hxx"
 
 using namespace common;
 //////////////////////////////////////////////////////////////////////////////////
@@ -7,11 +6,11 @@ using namespace common;
 //\
 This naked header is intended for inclusion within a `namespace` providing the decorators: \
 
-template <class T> struct define;///< Initializes `T`.
-template <class T> struct refine;///<   Finalizes `T`.
-
 template <class U> struct defer;///<   Proxies `U`.
 template <class U> struct refer;///< Delegates `U`.
+
+template <class T> struct define;///< Initializes `T`.
+template <class T> struct refine;///<   Finalizes `T`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +31,16 @@ concept any_q = of_p<any_t<>, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+///\
+Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
+
+template <class ...Us> struct infer: compose<infer<Us>...> {};
+template <vacant_q U > struct infer<U>:        any<U> {};
+template <class    U > struct infer<U>:      defer<U> {};
+template <class ...Us>  using infer_t = typename infer<Us...>::type;
+
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `...As`. \
 
@@ -79,31 +88,34 @@ template <typename ...As>
 using confined_t = typename confined<As...>::type;
 
 
+///\
+Creates the `confine`d and `confer`red _decorator_ with `...As`. \
+
+template <class U, typename ...As> using conferred   = confined<confer<U, As...>>;
+template <class U, typename ...As> using conferred_t = typename conferred<U, As...>::type;
+
+
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Proxies `U`, with `subtype` extending `As...`. \
-
-template <class U, typename ...As> using lift   = confined<confer<U, As...>>;
-template <class U, typename ...As> using lift_t = typename lift<U, As...>::type;
+////////////////////////////////////////////////////////////////////////////////
 
 ///\
-Proxies `U`, with `subtype` extending `any<As...>`. \
+Proxies and delegegates `U`, with `subtype` extending `any<As...>`. \
 
-template <class U, typename ...As> using label   = lift<U, any<As>...>;
+template <class U, typename ...As> using label   = conferred<U, any<As>...>;
 template <class U, typename ...As> using label_t = typename label<U, As...>::type;
 
 ///\
-Defines `type` by `W` if `any_q<W>`, otherwise `lift_t<W>`. \
+Defines `type` by `W` if `any_q<W>`, otherwise `conferred_t<W>`. \
 
 template <class ...Ws> struct let;
-template <class    W > struct let<W> {using type = lift_t<W>;};
-template <any_q    W > struct let<W> {using type =        W ;};
+template <class    W > struct let<W> {using type = conferred_t<W>;};
+template <any_q    W > struct let<W> {using type =             W ;};
 template <class ...Ws>  using let_t = typename let<Ws...>::type;
 
-template <class W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_REF_(w));}
-template <any_q W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_REF_(w));}
+template <class W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_REF_(w));}
+template <any_q W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return               (XTAL_REF_(w));}
 ///<\
-\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
+\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
 
 
 ///////////////////////////////////////////////////////////////////////////////

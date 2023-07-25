@@ -28,8 +28,8 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_FN1_(size_x) delay()         {return count_f(self());}
-		XTAL_FN1_(size_x) relay(size_x i) {return count_f(self());}
+		XTAL_FN1_(size_s) delay()         {return count_f(self());}
+		XTAL_FN1_(size_s) relay(size_s i) {return count_f(self());}
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
@@ -50,7 +50,7 @@ struct define
 		{
 			auto flx = -1;
 			auto  &s = self();
-			for (size_x i = 0, j = s.delay(); i != j; j = s.relay(i = j)) {
+			for (size_s i = 0, j = s.delay(); i != j; j = s.relay(i = j)) {
 				flx &= f(n++, counted_f(i, j));
 			}
 			--n;

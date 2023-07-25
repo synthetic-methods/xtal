@@ -31,7 +31,7 @@ struct define
 
 		///\returns `this` as the `define`d supertype. \
 
-		XTAL_TO4_(XTAL_FN2 core(), S::self())
+		XTAL_TO4_(XTAL_FN2 core(), self<S>())
 
 		///\returns a copy of `*this` with type `Y=T`. \
 

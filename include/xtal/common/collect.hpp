@@ -38,7 +38,7 @@ struct collect<N_size>
 		
 	public:
 		using S_::S_;
-		using collected = instant_t<N_size>;
+		using collected = integer_t<N_size>;
 		
 		///\note\
 		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \
@@ -76,7 +76,7 @@ struct collect<N_size>
 				using         allocator_type = type;// TODO: Define!
 
 				using              size_type = size_t;
-				using        difference_type = size_x;
+				using        difference_type = size_s;
 
 				using              reference =       value_type &;
 				using        const_reference = const value_type &;

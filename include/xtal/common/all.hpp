@@ -8,4 +8,5 @@
 #include "./compose.hpp"
 #include "./realize.hpp"
 #include "./seek.hpp"
+#include "./tab.hpp"
 #include "./tag.hpp"
