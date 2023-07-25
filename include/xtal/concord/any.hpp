@@ -25,10 +25,11 @@ template <typename ...As>
 struct any
 {
 	using subkind = compose<any<As>...>;
-
+	
 	template <class S>
-	using subtype = typename subkind::template subtype<S>;
-
+	using subtype = compose_s<S, subkind>;
+	using    type = subtype<_detail::unitype>;
+	
 };
 template <>
 struct any<>
@@ -38,24 +39,39 @@ struct any<>
 	{
 	public:
 		using S::S;
+		struct identity: unit_t {};
 
 	protected:
 		template <fungible_q ...Ys> struct super: terminal<Ys...> {};
 
 	};
-	template <class S> XTAL_REQ_(typename S::template super<S>)
+	template <class S> XTAL_REQ_(typename S::identity)
 	class subtype<S>: public S
 	{
 	public:
 		using S::S;
 
 	};
+	using type = subtype<_detail::unitype>;
+
 };
 template <typename A>
 struct any<A>
 {	
-	using subkind = any<>;
-	
+	template <class I> struct endo: I {};
+
+	struct subkind
+	{
+		template <class S>
+		class subtype: public compose_s<S, any<>>
+		{
+			using S_ = compose_s<S, any<>>;
+			
+		public:
+			using S_::S_; using identity = endo<typename S_::identity>;
+
+		};
+	};
 	template <class S>
 	class subtype: public compose_s<S, subkind>
 	{
@@ -77,14 +93,14 @@ struct any<A>
 		
 		template <class X, typename ...Is> struct super:              S_::template super<X, Is...> {};
 		template <class X, typename ...Is> struct super<X, A, Is...>: S_::template super<Y, Is...> {};
-	
+		
 	private:
 		template <class X, typename ...Is>
 		using super_t = typename super<X, Is...>::type;
-		
+
 	public:
 		using S_::S_;
-		
+
 		XTAL_TO4_(template <size_t I>
 		XTAL_FN2 self(XTAL_DEF... oo), self<sequent_t<I>>(XTAL_REF_(oo)...)
 		)		
@@ -100,6 +116,8 @@ struct any<A>
 		)
 
 	};
+	using type = subtype<_detail::unitype>;
+
 };
 
 }///////////////////////////////////////////////////////////////////////////////

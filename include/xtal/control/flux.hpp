@@ -23,7 +23,7 @@ struct flux
 	,	defer<XTAL_FLX>
 	>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct flux<A, As...>
 	,	defer<XTAL_FLX>
 	>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

@@ -47,7 +47,7 @@ struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -97,7 +97,7 @@ struct refer
 	using sequel_u = control::sequel_t<counted_t<>>;
 	using subkind  = compose<_retail::refer<U>, sequel_u::attach>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -106,7 +106,7 @@ struct refer
 		using S_::S_;
 
 	};
-	template <any_p S> requires iterated_q<U> or _detail::unprocessed_p<U>
+	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
 	class subtype<S>: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

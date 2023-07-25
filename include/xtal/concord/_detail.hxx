@@ -11,14 +11,14 @@ using namespace _retail::_detail;
 
 struct refine_head
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
 		using S::S;
 
 	};
-	template <any_p S> requires (1 == S::arity::value)
+	template <any_q S> requires (1 == S::arity::value)
 	class subtype<S>: public S
 	{
 		using U = typename S::head_t;
@@ -36,7 +36,7 @@ struct refine_head
 };
 struct refine_tuple
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -61,7 +61,7 @@ struct refer_iterators
 template <class U> requires begin_q<U>
 struct refer_iterators<U>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -70,7 +70,7 @@ struct refer_iterators<U>
 		XTAL_FN2   end() XTAL_0EX {return S::head().  end();}
 		
 	};
-	template <any_p S> requires begin_q<U const &>
+	template <any_q S> requires begin_q<U const &>
 	class subtype<S>: public S
 	{
 	public:
@@ -95,7 +95,7 @@ template <class U, int N=0> struct            refer_comparators: compose<void
 template <class U> requires equality_comparators_p<U>
 struct refer_equality_comparators<U>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -108,7 +108,7 @@ struct refer_equality_comparators<U>
 template <class U> requires inequality_comparators_p<U>
 struct refer_inequality_comparators<U>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -147,7 +147,7 @@ template <class U> struct         refer_operators<U, 0> : compose<         refer
 template <class U> requires bitwise_operators_p<U, 1> and remember_q<U>
 struct refer_bitwise_operators<U, 1>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -161,7 +161,7 @@ struct refer_bitwise_operators<U, 1>
 template <class U> requires bitwise_operators_p<U, 2>
 struct refer_bitwise_operators<U, 2>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;
@@ -179,7 +179,7 @@ struct refer_bitwise_operators<U, 2>
 template <class U> requires group_operators_p<U, 1> and remember_q<U>
 struct refer_group_operators<U, 1>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -197,7 +197,7 @@ struct refer_group_operators<U, 1>
 template <class U> requires group_operators_p<U, 2>
 struct refer_group_operators<U, 2>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;
@@ -215,7 +215,7 @@ struct refer_group_operators<U, 2>
 template <class U> requires field_operators_p<U, 1> and remember_q<U>
 struct refer_field_operators<U, 1>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 	public:
@@ -230,7 +230,7 @@ struct refer_field_operators<U, 1>
 template <class U> requires field_operators_p<U, 2>
 struct refer_field_operators<U, 2>
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;

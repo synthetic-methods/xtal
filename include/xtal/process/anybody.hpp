@@ -18,7 +18,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
@@ -121,7 +121,7 @@ struct define
 			
 			using subkind = compose<concord::defer<typename signature::type>, defer<T>>;
 
-			template <any_p R>
+			template <any_q R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using R_ = compose_s<R, subkind>;
@@ -276,7 +276,7 @@ struct refine
 {
 	using subkind = _retail::refine<T>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -329,7 +329,7 @@ struct defer
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -357,12 +357,12 @@ struct defer
 
 	};
 };
-template <any_p U>
+template <any_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

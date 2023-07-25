@@ -48,7 +48,7 @@ namespace _detail
 
 struct prequel
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public S
 	{
 		using T_ = typename S::self_t;
@@ -213,7 +213,7 @@ struct sequel<V>
 {
 	using subkind = compose<_detail::prequel, resize<V>, restep<V>, tag<sequel>>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -306,7 +306,7 @@ private:
 public:
 	using subkind = compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, tag<sequel>>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

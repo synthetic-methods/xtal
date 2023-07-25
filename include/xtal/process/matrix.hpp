@@ -41,7 +41,7 @@ struct matrix<W, U, As...>
 	static_assert(bundle_q<W>);
 	using subkind = compose<conflux::defer<W>, confer<U>, As..., tag<matrix>>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;

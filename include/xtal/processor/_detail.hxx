@@ -10,12 +10,12 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T, class Y=T>
-concept connected_p = any_p<T> and requires (T t)
+concept connected_p = any_q<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 };
 template <class T, class Y=T>
-concept collected_p = any_p<T> and requires (T t)
+concept collected_p = any_q<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 	{t.store()} -> isomorphic_p<Y>;

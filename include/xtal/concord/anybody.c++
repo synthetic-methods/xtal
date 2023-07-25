@@ -8,8 +8,54 @@
 
 XTAL_ENV_(push)
 namespace xtal::concord::__test
-{/////////////////////////////////////////////////////////////////////////////////
+{///////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+using qux = composed<confined<void
+	,	any<struct bar>, defer<int>
+	,	any<struct baz>, defer<int>
+	>
+,	any<As...>
+>;
+template <typename ...As>
+using qux_t = typename qux<As...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+TAG_("concord", "matching")
+{
+	TRY_("any")
+	{
+		TRUE_(any_p<any_t<struct foo, struct goo>, struct foo, struct goo>);
+		TRUE_(any_p<any_t<struct foo, struct goo>,             struct goo>);
+
+	}
+	TRY_("any root")
+	{
+		TRUE_(any_q<qux_t<>>);
+		TRUE_(any_q<qux_t<struct foo>>);
+
+		TRUE_(any_p<qux_t<struct foo            >                        >);
+		TRUE_(any_p<qux_t<struct foo            >, struct foo            >);
+		TRUE_(any_p<qux_t<struct foo, struct goo>,             struct goo>);
+		TRUE_(any_p<qux_t<struct foo, struct goo>, struct foo, struct goo>);
+
+		UNTRUE_(any_p<qux_t<struct foo            >,             struct goo>);
+		UNTRUE_(any_p<qux_t<struct foo, struct goo>, struct foo            >);
+
+	}
+	/**/
+	TRY_("any inline")
+	{
+		TRUE_(any_p<qux_t<>,             struct baz>);
+		TRUE_(any_p<qux_t<>, struct bar, struct baz>);
+
+	}
+	/***/
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

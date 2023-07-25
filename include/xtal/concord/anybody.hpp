@@ -25,7 +25,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 	
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -82,7 +82,7 @@ struct refine
 	,	_detail::refine_tuple
 	>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -91,7 +91,7 @@ struct refine
 		using S_::S_;
 
 	};
-	template <any_p S> requires iterable_q<S>
+	template <any_q S> requires iterable_q<S>
 	class subtype<S>: public compose_s<S, subkind>, public iterate_t<T>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -115,7 +115,7 @@ providing a similar level of utility to `std::reference_wrapper`. \
 template <class U>
 struct defer
 {
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S>
 	{
 		using S_ = compose_s<S>;
@@ -261,16 +261,16 @@ struct refer: compose<void
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::concord::any_p T>
+template <xtal::concord::any_q T>
 struct tuple_size<T>: xtal::sequent_t<T::arity::value> {};
 
-template <size_t N, xtal::concord::any_p T>
+template <size_t N, xtal::concord::any_q T>
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T const  &t) {return t.template head<N>();};
-template <size_t N, xtal::concord::any_p T> XTAL_FN1 get(T        &t) {return t.template head<N>();};
+template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T const &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T       &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T const  &t) {return t.template head<N>();};
+template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 
 }/////////////////////////////////////////////////////////////////////////////

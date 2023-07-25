@@ -18,7 +18,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		friend T;
@@ -202,7 +202,7 @@ struct defer
 {
 	using subkind = _retail::defer<U>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -217,7 +217,7 @@ struct defer
 
 		XTAL_FNX influx(XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_REQ any_p<U>
+		XTAL_REQ any_q<U>
 		{
 			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
@@ -232,7 +232,7 @@ struct defer
 
 		XTAL_FNX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_REQ any_p<U>
+		XTAL_REQ any_q<U>
 		{
 			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}

@@ -16,24 +16,22 @@ template <class U> struct refer;///< Delegates `U`.
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
 ///\
 Tags `subtype` with this namespace and the supplied types. \
 
-template <typename ...As> struct any   : _retail::any<As..., any<>> {};
-template <typename ...As> using  any_t = typename composed<any<As...>>::type;
+template <typename ...As> struct any   : _retail::any<As...> {};
+template <typename ...As> using  any_t = typename any<As...>::type;
 ///\
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = of_p<any_t<As...>, T>;
+concept any_p = _detail::identity_p<any_t<As...>, T>;
 
 template <class ...Ts>
-concept any_q = (...and any_p<Ts>);
+concept any_q = of_p<any_t<>, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `...As`. \
 
@@ -82,34 +80,30 @@ using confined_t = typename confined<As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-template <typename ...As> using mint   = composed<As..., any<>>;
-template <typename ...As> using mint_t = typename mint<As...>::type;
-
 ///\
 Proxies `U`, with `subtype` extending `As...`. \
 
-template <class U, typename ...As> using lift   = confined  <confer<U, As...>>;
-template <class U, typename ...As> using lift_t = confined_t<confer<U, As...>>;
+template <class U, typename ...As> using lift   = confined<confer<U, As...>>;
+template <class U, typename ...As> using lift_t = typename lift<U, As...>::type;
 
 ///\
 Proxies `U`, with `subtype` extending `any<As...>`. \
 
-template <class U, typename ...As> using label   = mint  <lift<U>, any<As>...>;
-template <class U, typename ...As> using label_t = mint_t<lift<U>, any<As>...>;
+template <class U, typename ...As> using label   = lift<U, any<As>...>;
+template <class U, typename ...As> using label_t = typename label<U, As...>::type;
 
 ///\
-Defines `type` by `W` if `any_p<W>`, otherwise `lift_t<W>`. \
+Defines `type` by `W` if `any_q<W>`, otherwise `lift_t<W>`. \
 
 template <class ...Ws> struct let;
 template <class    W > struct let<W> {using type = lift_t<W>;};
-template <any_p    W > struct let<W> {using type =        W ;};
+template <any_q    W > struct let<W> {using type =        W ;};
 template <class ...Ws>  using let_t = typename let<Ws...>::type;
 
 template <class W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return lift_t<W>(XTAL_REF_(w));}
-template <any_p W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_REF_(w));}
+template <any_q W> XTAL_FN2 let_f(W &&w) XTAL_0EX {return          (XTAL_REF_(w));}
 ///<\
-\returns `w` if `any_p<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
+\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `lift_t`. \
 
 
 ///////////////////////////////////////////////////////////////////////////////

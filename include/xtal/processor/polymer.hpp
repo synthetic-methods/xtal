@@ -31,7 +31,7 @@ struct polymer<U, As...>
 {
 	using subkind = monomer<U, As...>;
 
-	template <any_p S>
+	template <any_q S>
 	class subtype: public compose_s<S, subkind>
 	{
 		using S_ = compose_s<S, subkind>;
@@ -63,7 +63,7 @@ struct polymer<U, As...>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
 			>;
-			template <any_p R>
+			template <any_q R>
 			class subtype: public compose_s<R, subkind>
 			{
 				using R_ = compose_s<R, subkind>;
