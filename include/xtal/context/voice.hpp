@@ -12,18 +12,17 @@ namespace xtal::context
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Wrapper used to index an existing type. \
 
-template <typename ...>
-struct grain;
+///\see e.g. [../processor/polymer.hpp]. \
 
-template <class U>
-struct grain<U>: conferred<U, tag<grain>> {};
-
-template <class ...Ts >
-concept grain_q = tag_p<grain, Ts...>;
+template <typename ..._s> XTAL_NYM voice;
+template <class       U > XTAL_NYM voice<U>: conferred<U, tag<voice>> {};
+template <class    ...Ts> XTAL_ASK voice_q = tag_p<voice, Ts...>;
 
 template <class S=confined_t<>, class U=size_s>
-using grain_s = compose_s<S, grain<U>>;
+using voice_s = compose_s<S, voice<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

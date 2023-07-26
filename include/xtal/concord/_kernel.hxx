@@ -42,13 +42,13 @@ template <class    U > struct infer<U>:      defer<U> {};
 template <class ...Us>  using infer_t = typename infer<Us...>::type;
 
 ///\
-Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `...As`. \
+Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
 
 template <class U, typename ...As>
 struct confer: compose<refer<U>, As..., defer<U>> {};
 
 ///\
-Combines `define` and `refine` to define `T`, sandwiching the decorators `...As`. \
+Combines `define` and `refine` to define `T`, sandwiching the decorators `As...`. \
 
 template <class T, typename ...As>
 struct confine//: compose<refine<T>, As..., define<T>> {};
@@ -64,7 +64,7 @@ template <class T, typename ...As>
 using confine_t = typename confine<T, As...>::template subtype<any_t<>>;
 
 ///\
-Creates the `confine`d _decorator_ with `...As`. \
+Creates the `confine`d _decorator_ with `As...`. \
 
 template <typename ...As>
 struct confined
@@ -89,10 +89,17 @@ using confined_t = typename confined<As...>::type;
 
 
 ///\
-Creates the `confine`d and `confer`red _decorator_ with `...As`. \
+Creates a lifted form of `U`, _decorated_ with `As...`. \
 
 template <class U, typename ...As> using conferred   = confined<confer<U, As...>>;
 template <class U, typename ...As> using conferred_t = typename conferred<U, As...>::type;
+
+
+///\
+Creates a `contained` member from `infer<As>...`. \
+
+template <typename ...As> using inferred   = confined<infer<As...>>;
+template <typename ...As> using inferred_t = typename inferred<As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

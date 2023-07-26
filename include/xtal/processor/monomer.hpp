@@ -1,6 +1,6 @@
 #pragma once
 #include "./anybody.hpp"
-#include "../context/scope.hpp"
+#include "../content/cache.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
 #include "../control/sequel.hpp"
@@ -99,7 +99,7 @@ struct monomer<U, As...>
 
 			using subkind = compose<tag<monomer>
 			,	concord::refer<serve_u>
-			,	context::scope<store_u>
+			,	content::cache<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach

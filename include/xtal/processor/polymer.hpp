@@ -1,9 +1,9 @@
 #pragma once
 #include "./anybody.hpp"
-#include "../context/scope.hpp"
-#include "../context/grain.hpp"
+#include "../context/voice.hpp"
 #include "../control/stasis.hpp"
 #include "../processor/monomer.hpp"
+
 
 
 XTAL_ENV_(push)
@@ -53,8 +53,8 @@ struct polymer<U, As...>
 
 			using stave_u = typename Mu::template bond_t<Xs...>;
 			using stage_u = control::stasis_t<>;
-			using event_u = context::grain_s<stage_u>;
-			using voice_u = context::grain_s<stave_u>;
+			using event_u = context::voice_s<stage_u>;
+			using voice_u = context::voice_s<stave_u>;
 			using spool_u = typename S_::template spool_t<voice_u>;
 
 			using subkind = compose<tag<polymer>
@@ -81,7 +81,7 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_FNX influx(context::grain_q auto o, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::voice_q auto o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto o_core = o.core();

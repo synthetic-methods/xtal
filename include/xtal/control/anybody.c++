@@ -25,14 +25,14 @@ TAG_("control", "hold", "process")
 
 		gated_t gated_o;
 		
-		using point_t = context::point_s<>;
-		gated_o << bundle_f((point_t) 0, (gate_t)  7);
-		gated_o << bundle_f((point_t) 1, (gate_t)  1);
-		gated_o << bundle_f((point_t) 3, (gate_t) -1);
-		gated_o << bundle_f((point_t) 4, (gate_t)  1);
-		gated_o << bundle_f((point_t) 5, (gate_t) -1);
-		gated_o << bundle_f((point_t) 7, (gate_t)  7);
-		gated_o << bundle_f((point_t) 7, (gate_t) 77);
+		using cue_t = context::cue_s<>;
+		gated_o << bundle_f((cue_t) 0, (gate_t)  7);
+		gated_o << bundle_f((cue_t) 1, (gate_t)  1);
+		gated_o << bundle_f((cue_t) 3, (gate_t) -1);
+		gated_o << bundle_f((cue_t) 4, (gate_t)  1);
+		gated_o << bundle_f((cue_t) 5, (gate_t) -1);
+		gated_o << bundle_f((cue_t) 7, (gate_t)  7);
+		gated_o << bundle_f((cue_t) 7, (gate_t) 77);
 		
 		TRUE_(gated_o() ==  7);
 		TRUE_(gated_o() ==  1);
@@ -46,7 +46,7 @@ TAG_("control", "hold", "process")
 		TRUE_(gated_o() == 77);
 	//	...
 		gated_o >> sequel_u(N_size);
-		gated_o << bundle_f((point_t) 4, (gate_t)  11);
+		gated_o << bundle_f((cue_t) 4, (gate_t)  11);
 		TRUE_(gated_o() == 77);
 		TRUE_(gated_o() == 77);
 		TRUE_(gated_o() == 77);
@@ -71,7 +71,7 @@ void control_hold_processor()
 
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using array_t = _std::array<typename realized::alpha_t, N_size>;
-	using point_t = context::point_s<>;
+	using cue_t = context::cue_s<>;
 
 	using resize_u = control::resize_t<>;
 	using sequel_u = control::sequel_t<>;
@@ -80,18 +80,18 @@ void control_hold_processor()
 	auto array_o = array_t();
 	
 	gated_o << resize_u(N_size);
-	gated_o << bundle_f((point_t) 0, (gate_t)  7);
-	gated_o << bundle_f((point_t) 1, (gate_t)  1);
-	gated_o << bundle_f((point_t) 3, (gate_t) -1);
-	gated_o << bundle_f((point_t) 4, (gate_t)  1);
-	gated_o << bundle_f((point_t) 5, (gate_t) -1);
-	gated_o << bundle_f((point_t) 7, (gate_t)  7);
-	gated_o << bundle_f((point_t) 7, (gate_t) 77);
+	gated_o << bundle_f((cue_t) 0, (gate_t)  7);
+	gated_o << bundle_f((cue_t) 1, (gate_t)  1);
+	gated_o << bundle_f((cue_t) 3, (gate_t) -1);
+	gated_o << bundle_f((cue_t) 4, (gate_t)  1);
+	gated_o << bundle_f((cue_t) 5, (gate_t) -1);
+	gated_o << bundle_f((cue_t) 7, (gate_t)  7);
+	gated_o << bundle_f((cue_t) 7, (gate_t) 77);
 
 	gated_o >> sequel_u(N_size)*0; _v3::ranges::copy(gated_o, array_o.begin());
 	TRUE_(array_o == array_t {  7,  1,  1, -1,  1, -1, -1, 77});
 
-	gated_o << bundle_f((point_t) 4, (gate_t)  11);
+	gated_o << bundle_f((cue_t) 4, (gate_t)  11);
 	gated_o >> sequel_u(N_size)*1; _v3::ranges::copy(gated_o, array_o.begin());
 	TRUE_(array_o == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
@@ -128,14 +128,14 @@ void control_intermit_processor()
 	xhs << resize_u(4);
 	TRUE_(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs << context::point_s<onset_t>(0, (alpha_t) 100);
-	xhs << context::point_s<onset_t>(1, (alpha_t) 200);
-	xhs << context::point_s<onset_t>(2, (alpha_t) 300);
+	xhs << context::cue_s<onset_t>(0, (alpha_t) 100);
+	xhs << context::cue_s<onset_t>(1, (alpha_t) 200);
+	xhs << context::cue_s<onset_t>(2, (alpha_t) 300);
 	xhs >> seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs << context::point_s<onset_t>(2, (alpha_t) 400);// relative timing!
+	xhs << context::cue_s<onset_t>(2, (alpha_t) 400);// relative timing!
 	xhs >> seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));

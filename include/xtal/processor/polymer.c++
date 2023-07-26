@@ -22,7 +22,7 @@ void polymer_control_spine__locamotion()
 	using  iota_t = typename realized:: iota_t;
 
 	using stage_t = control::stasis_t<>;
-	using event_t = context::grain_s<stage_t>;
+	using event_t = context::voice_s<stage_t>;
 	using empty_t = control::confined_t<>;
 
 	using resize_u = control::resize_t<>;
@@ -82,7 +82,7 @@ void polymer_control_spool__compound()
 	using  iota_t = typename realized:: iota_t;
 
 	using stage_t = control::stasis_t<>;
-	using event_t = context::grain_s<stage_t>;
+	using event_t = context::voice_s<stage_t>;
 	using empty_t = control::confined_t<>;
 
 	using resize_u = control::resize_t<>;
@@ -127,7 +127,7 @@ void polymer_control_spool__composited()
 	using  iota_t = typename realized:: iota_t;
 
 	using stage_t = control::stasis_t<>;
-	using event_t = context::grain_s<stage_t>;
+	using event_t = context::voice_s<stage_t>;
 	using empty_t = control::confined_t<>;
 
 	using resize_u = control::resize_t<>;
@@ -146,10 +146,10 @@ void polymer_control_spool__composited()
 
 // Set the default `stage: final`:
 	vox_o << stage_t(-1);
-	vox_o << bundle_f(context::grain_s<>(62), stage_t(0), level_t(1)); TRUE_(1 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(2)); TRUE_(2 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(69), stage_t(0), level_t(3)); TRUE_(3 == vox_o.spool().size());
-	vox_o << bundle_f(context::grain_s<>(65), stage_t(0), level_t(4)); TRUE_(4 == vox_o.spool().size());
+	vox_o << bundle_f(context::voice_s<>(62), stage_t(0), level_t(1)); TRUE_(1 == vox_o.spool().size());
+	vox_o << bundle_f(context::voice_s<>(65), stage_t(0), level_t(2)); TRUE_(2 == vox_o.spool().size());
+	vox_o << bundle_f(context::voice_s<>(69), stage_t(0), level_t(3)); TRUE_(3 == vox_o.spool().size());
+	vox_o << bundle_f(context::voice_s<>(65), stage_t(0), level_t(4)); TRUE_(4 == vox_o.spool().size());
 
 //	Re(?:size|nder):
 	vox_o << resize_u(N_window) >> sequel_u(N_window);

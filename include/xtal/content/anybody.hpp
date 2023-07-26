@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::content
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,18 @@ namespace xtal::context
 
 template <class T>
 struct define
-:	_retail::define<T>
 {
+	using subkind = _retail::define<T>;
+
+	template <class S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
+
+	public:
+		using S_::S_;
+
+	};
 };
 template <class T>
 struct refine
@@ -29,11 +39,6 @@ struct refine
 
 template <class U>
 struct defer
-:  _retail::defer<U>
-{
-};
-template <numeric_q U>
-struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
@@ -63,17 +68,20 @@ struct defer<U>
 
 	};
 };
+/*/
 template <class U>
 struct refer
 :  _retail::refer<U>
 {
 };
-template <numeric_q U>
-struct refer<U>: compose<void
+/*/
+template <class U>
+struct refer: compose<void
 ,	_detail::refer_comparators<U>
 >
 {
 };
+/***/
 
 
 ///////////////////////////////////////////////////////////////////////////////

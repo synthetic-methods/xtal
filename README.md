@@ -102,14 +102,14 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(context::point_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(context::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	gated <<= std::make_tuple(context::point_s<>(123), (Gate) 1);// `gated()[123] == 1`
+	gated <<= std::make_tuple(context::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 

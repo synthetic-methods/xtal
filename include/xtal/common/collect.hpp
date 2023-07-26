@@ -38,7 +38,6 @@ struct collect<N_size>
 		
 	public:
 		using S_::S_;
-		using collected = integer_t<N_size>;
 		
 		///\note\
 		If `0 < N_size`, both `solid` and `fluid` are defined and limited by the capacity specified by `N_size`. \

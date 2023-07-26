@@ -7,17 +7,24 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::context
+namespace xtal::content
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////
+///\
+Represents a local `{store,serve}` pair, \
+used as e.g. a buffer and its abstract/copyable `std::span`. \
+
+template <typename ..._s> XTAL_NYM cache;
+template <typename ..._s> XTAL_USE cache_t = confined_t<cache<_s...>>;
 template <bracket_q U>
-struct scope
+struct cache<U>
 {
 	using resize_u = control::resize_t<>;
 	using sequel_u = control::sequel_t<>;
 
-	using store_u = based_t<U>;
+	using store_u =    based_t<U>;
 	using serve_u = deranged_t<U>;
 	using subkind = compose<void
 	,	concord::defer<serve_u>
@@ -61,8 +68,6 @@ struct scope
 
 	};
 };
-template <bracket_q U>
-using scope_t = confined_t<scope<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

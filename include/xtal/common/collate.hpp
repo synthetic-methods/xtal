@@ -52,7 +52,6 @@ struct collate<N_size>
 		
 	public:
 		using S_::S_;
-		using collated = integer_t<N_size>;
 		
 		///\
 		Event spool based on a insertion-sorted `std::array`. \
@@ -82,7 +81,7 @@ struct collate<N_size>
 				using R_::R_;
 				
 				///\note\
-				The `size()` of the `std::initializer_list` determines the collated of lookup/lookahead. \
+				The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
 				XTAL_CON type(bracket_t<V> w)
 				:	end_n {_std::distance(w.begin(), w.end())}

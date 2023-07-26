@@ -203,7 +203,7 @@ struct define
 			};
 		};
 		///\
-		Wraps all `influx`ed `control`s prefixed by a context-free `grain`. \
+		Wraps all `influx`ed `control`s prefixed by a context-free `voice`. \
 
 		///\note\
 		Defined independently of `T`!
@@ -221,16 +221,16 @@ struct define
 				using R_::influx;
 				///\returns the aggregated result of queuing the `control`s with the given delay. \
 
-				XTAL_FNX influx(context::grain_s<> io, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::voice_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx_apart(context::grain_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
+					return self().influx_apart(context::voice_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
 				}
 
 			};
 		};
 		///\
-		Wraps all `influx`ed `control`s prefixed by a context-free `point`. \
+		Wraps all `influx`ed `control`s prefixed by a context-free `cue`. \
 
 		///\note\
 		Defined independently of `T`!
@@ -248,10 +248,10 @@ struct define
 				using R_::influx;
 				///\returns the aggregated result of influxing the given `control`s. \
 
-				XTAL_FNX influx(context::point_s<> io, XTAL_DEF ...oo)
+				XTAL_FNX influx(context::cue_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx_apart(context::point_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
+					return self().influx_apart(context::cue_s<XTAL_TYP_(oo)>(io.head(), XTAL_REF_(oo))...);
 				}
 
 			};
@@ -263,7 +263,7 @@ struct define
 		template <int N_event=-1>
 		struct hold
 		{
-			using event_u = context::point_s<T>;
+			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collate_t<N_event>::template spool_t<event_u>;
 
@@ -312,7 +312,7 @@ struct define
 		template <int N_event=-1>
 		struct intermit
 		{
-			using event_u = context::point_s<T>;
+			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::head_t;
 			using spool_u = typename collate_t<N_event>::template spool_t<event_u>;
 

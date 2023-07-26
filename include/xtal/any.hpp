@@ -122,7 +122,7 @@ template <value_p  T >      struct revalue<T> : based_t<T> {};
 template <class    T >       using revalue_t  = value_t<revalue<T>>;
 
 
-template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;
+template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
 template <typename X>       struct argument    {using type = X &&;};

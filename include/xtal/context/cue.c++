@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./point.hpp"// testing...
+#include "./cue.hpp"// testing...
 
 
 
@@ -13,13 +13,13 @@ namespace xtal::context::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("point")
+TAG_("cue")
 {
 	TRY_("construct")
 	{
 		using source_t = concord::conferred_t<counted_t<>>;
-		using target_t = point_s<source_t>;
-		using target_u = point_s<>;
+		using target_t = cue_s<source_t>;
+		using target_u = cue_s<>;
 
 		target_u t0(99);
 		target_t t1(99, source_t(counted_t<>(11, 22)));
