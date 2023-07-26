@@ -36,9 +36,12 @@ XTAL_CN2 sequel_f(XTAL_DEF w) {return sequel_t<counter_t<>, As...>(XTAL_REF_(w))
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_OP2_(bool) == (sequel_q auto const &s, sequel_q auto const &t)
+template <sequel_q X, sequel_q Y> requires (not is_q<X, Y>)
+XTAL_OP2_(bool) == (X const &x, Y const &y)
 XTAL_0EX
 {
+	auto &s = x.self();
+	auto &t = y.self();
 	return s.step() == t.step() and s.size() == t.size();
 }
 
@@ -156,6 +159,13 @@ struct prequel
 		{
 			return S::operator<(t) or S::operator==(t);
 		}
+	//	XTAL_OP2_(bool) ==(subtype const &o)
+	//	XTAL_0FX
+	//	{
+	//		auto &s =   self();
+	//		auto &t = o.self();
+	//		return s.step() == t.step() and s.size() == t.size();
+	//	}
 
 		///\
 		Updates to the incoming position, \

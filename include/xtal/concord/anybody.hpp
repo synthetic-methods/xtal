@@ -76,9 +76,17 @@ struct define
 		//\
 		Trivial (in)equality. \
 		
-		XTAL_OP2       <=> (subtype t) XTAL_0FX {return _std::strong_ordering::equivalent;}
-	//	XTAL_OP2_(bool) == (subtype t) XTAL_0FX {return 1;}
-	//	XTAL_OP2_(bool) != (subtype t) XTAL_0FX {return 0;}
+		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return true;}
+		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return not self().operator==(t.self());}
+		XTAL_OP2 <=> (subtype const &t)
+		XTAL_0FX
+		{
+			using is = _std::partial_ordering;
+			return self().operator==(t.self())? is::equivalent: is::unordered;
+		}
+
+		//\
+		Tuple null. \
 
 		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
 		using arity = sequent_t<0>;
@@ -275,11 +283,18 @@ struct refer: compose<void
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+template <any_q W> XTAL_OP2_(bool) == (W const &x, W const &y) XTAL_0EX {return x.self().operator== (y.self());}
+template <any_q W> XTAL_OP2_(bool) != (W const &x, W const &y) XTAL_0EX {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_OP2        <=>(W const &x, W const &y) XTAL_0EX {return x.self().operator<=>(y.self());}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-/**/
+
 namespace std
-{///////////////////////////////////////////////////////////////////////////////
+{////////////////////////////////////////////////////////////////////////////
 
 template <xtal::concord::any_q T>
 struct tuple_size<T>: xtal::sequent_t<T::arity::value> {};
@@ -293,6 +308,5 @@ template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T const  &t) {return t.
 template <size_t N, xtal::concord::any_q T> XTAL_FN1 get(T        &t) {return t.template head<N>();};
 
 
-}/////////////////////////////////////////////////////////////////////////////
-/***/
+}//////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

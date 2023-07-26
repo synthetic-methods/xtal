@@ -32,12 +32,8 @@ struct define
 		///\returns `true` if the pointers are identical, `false` otherwise. \
 
 		XTAL_OP2_(bool) == (subtype const &t)
-		XTAL_0FX
-		{
-			return this == _std::addressof(t);
-		}
-
-
+		XTAL_0FX {return this == _std::addressof(t);}
+		
 		///\
 		Alias of `method(...)`. \
 		
@@ -155,20 +151,15 @@ struct define
 					}
 				}
 				XTAL_FN2 apply(XTAL_DEF f)
-				XTAL_0EX
-				{
-					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
-				}
+				XTAL_0EX {return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());}
 
 				///\
 				Evaluates the lifted `method` using the bound slots. \
 
 				template <auto ...Ks>
 				XTAL_FN2 method()
-				XTAL_0EX
-				{
-					return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), slots());
-				}
+				XTAL_0EX {return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), slots());}
+				
 				using R_::method;
 			//	using R_::influx;
 			//	using R_::efflux;
@@ -191,30 +182,14 @@ struct define
 				///\note\
 				If prefixed by `null_t()`, the message is forwarded directly to `slots`. \
 
-				XTAL_FNX influx(null_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx_push(XTAL_REF_(oo)...);
-				}
-				XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().efflux_pull(XTAL_REF_(oo)...);
-				}
+				XTAL_FNX influx(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
+				XTAL_FNX efflux(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
 				If prefixed by `constant_q`, the message is forwarded directly to the `slot` specified. \
 
-				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return slot<i>().influx(XTAL_REF_(oo)...);
-				}
-				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return slot<i>().efflux(XTAL_REF_(oo)...);
-				}
+				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
+				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
 				Forwards the message to `slots`, bypassing `self`. \

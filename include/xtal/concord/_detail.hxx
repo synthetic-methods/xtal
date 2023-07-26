@@ -116,13 +116,7 @@ struct refer_inequality_comparators<U>
 		XTAL_OP2 <=> (subtype const &t)
 		XTAL_0FX
 		{
-			auto const &u = S::head(), v = t.head();
-			if constexpr (requires {u.operator<=>(v);}) {
-				return u.operator<=>(v);
-			}
-			else {
-				return u <=> v;
-			}
+			return S::head() <=> t.head();
 		}
 
 	};
