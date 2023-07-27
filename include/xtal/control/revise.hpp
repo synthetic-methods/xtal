@@ -1,13 +1,13 @@
 #pragma once
 #include "./anybody.hpp"
-#include "../control/resize.hpp"
-#include "../control/sequel.hpp"
+
+
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::content
+namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -16,14 +16,11 @@ namespace xtal::content
 Represents a local `{store,serve}` pair, \
 used as e.g. a buffer and its abstract/copyable `std::span`. \
 
-template <typename ..._s> XTAL_NYM cache;
-template <typename ..._s> XTAL_USE cache_t = confined_t<cache<_s...>>;
+template <typename ..._s> XTAL_NYM revise;
+template <typename ..._s> XTAL_USE revise_t = confined_t<revise<_s...>>;
 template <bracket_q U>
-struct cache<U>
+struct revise<U>
 {
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
-
 	using store_u =    based_t<U>;
 	using serve_u = deranged_t<U>;
 	using subkind = compose<void

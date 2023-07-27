@@ -1,8 +1,8 @@
 #pragma once
 #include "./anybody.hpp"
-#include "../content/cache.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
+#include "../control/revise.hpp"
 #include "../control/sequel.hpp"
 
 
@@ -85,7 +85,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires collected_q<S_>
+		template <class ...Xs> requires collect_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
@@ -95,11 +95,11 @@ struct monomer<U, As...>
 			using  serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
 		
-			XTAL_LET_(int) N_share = seek_true_v<_detail::recollected_p<Xs, serve_u>...>;
+			XTAL_LET_(int) N_share = seek_true_v<_detail::recollection_p<Xs, serve_u>...>;
 
 			using subkind = compose<tag<monomer>
-			,	concord::refer<serve_u>
-			,	content::cache<store_u>
+			,	concord:: refer<serve_u>
+			,	control::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach
@@ -133,7 +133,7 @@ struct monomer<U, As...>
 				}
 				using R_::influx_push;
 				///\note\
-				Resizing skips intermediate `recollected_p` dependencies, \
+				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
 				XTAL_FNX influx_push(resize_u resize_o, XTAL_DEF ...oo)

@@ -3,6 +3,7 @@
 #include "./common/all.c++"
 #include "./concord/all.c++"
 #include "./conflux/all.c++"
+#include "./content/all.c++"
 #include "./context/all.c++"
 #include "./control/all.c++"
 #include "./process/all.c++"

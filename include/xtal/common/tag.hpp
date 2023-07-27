@@ -13,7 +13,7 @@ namespace xtal::common
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename ...> class _T=_detail::exotype>
+template <template <typename ...> class _T>
 struct tag
 {
 	class type
@@ -39,9 +39,6 @@ using tag_t = typename tag<_T>::type;
 
 template <template <typename ...> class _T, class ...Ts>
 concept tag_p = of_p<tag_t<_T>, Ts...>;
-
-template <class ...Ts>
-concept tag_q = tag_p<_detail::exotype, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

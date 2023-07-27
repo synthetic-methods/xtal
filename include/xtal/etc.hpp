@@ -127,9 +127,10 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_USE                         using
 #define XTAL_ASK                       concept
 #define XTAL_REQ                      requires
-#define XTAL_REQ_(...)                requires requires {__VA_ARGS__;}
-#define XTAL_IF1_(...)            if constexpr(requires {__VA_ARGS__;})
-#define XTAL_IF2_(...)       else if constexpr(requires {__VA_ARGS__;})
+#define XTAL_REQ_(...)                requires requires { __VA_ARGS__ ;}
+#define XTAL_SEQ_(...)                requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}
+#define XTAL_IF1_(...)            if constexpr(requires { __VA_ARGS__ ;})
+#define XTAL_IF2_(...)       else if constexpr(requires { __VA_ARGS__ ;})
 #define XTAL_IF1                  if constexpr
 #define XTAL_IF2             else if constexpr
 
@@ -163,6 +164,15 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)               const REF noexcept
 #define XTAL_0FN                     constexpr noexcept
 #define XTAL_0FN_(...)               constexpr noexcept {return (__VA_ARGS__);}
+#define XTAL_0FM_(...)                         noexcept {return (__VA_ARGS__);}
+#define XTAL_1FM_(...)                         noexcept {return (__VA_ARGS__);}
+
+#define XTAL_XO2_(SIG, ...)      SIG const     noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}\
+                                 SIG           noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);};
+#define XTAL_XO4_(SIG, ...)      SIG const   & noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}\
+                                 SIG         & noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}\
+                                 SIG const  && noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}\
+                                 SIG        && noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);};
 
 #define XTAL_TO2_(SIG, ...)      SIG const     noexcept {return (__VA_ARGS__);}\
                                  SIG           noexcept {return (__VA_ARGS__);};

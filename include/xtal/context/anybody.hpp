@@ -32,7 +32,7 @@ struct defer
 :  _retail::defer<U>
 {
 };
-template <numeric_q U>
+template <field_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -53,7 +53,7 @@ struct defer<U>
 		template <int N_polarity=0>
 		XTAL_CN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ equality_comparators_q<U> and sign_p<N_polarity>
+		XTAL_REQ reflexive_order_q<U> and sign_p<N_polarity>
 		{
 			using L = _std::numeric_limits<U>;
 			if constexpr (N_polarity == +1) return T_(L::max(), XTAL_REF_(oo)...);
@@ -68,9 +68,9 @@ struct refer
 :  _retail::refer<U>
 {
 };
-template <numeric_q U>
+template <field_q U>
 struct refer<U>: compose<void
-,	_detail::refer_comparators<U>
+,	_detail::refer_orders<U>
 >
 {
 };

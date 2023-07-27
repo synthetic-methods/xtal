@@ -8,11 +8,12 @@
 
 XTAL_ENV_(push)
 namespace xtal::concord::__test
-{///////////////////////////////////////////////////////////////////////////////////
+{/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-using bar_baz = composed<confined<void
+using bar_baz = composed<void
+,	confined<void
 	,	infer<struct bar, int>
 	,	infer<struct baz, int>
 	>
@@ -30,6 +31,7 @@ TAG_("concord", "matching")
 	{
 		TRUE_(any_p<any_t<struct foo, struct goo>, struct foo, struct goo>);
 		TRUE_(any_p<any_t<struct foo, struct goo>,             struct goo>);
+		TRUE_(any_p<any_t<struct foo, struct goo>                        >);
 
 	}
 	TRY_("any root")
@@ -48,8 +50,17 @@ TAG_("concord", "matching")
 	}
 	TRY_("any inline")
 	{
+		TRUE_(any_p<bar_baz_t<>                        >);
 		TRUE_(any_p<bar_baz_t<>,             struct baz>);
 		TRUE_(any_p<bar_baz_t<>, struct bar, struct baz>);
+
+	}
+	TRY_("any combined")
+	{
+		TRUE_(any_p<bar_baz_t<struct foo>                                    >);
+		TRUE_(any_p<bar_baz_t<struct foo>,                         struct foo>);
+		TRUE_(any_p<bar_baz_t<struct foo>,             struct baz, struct foo>);
+		TRUE_(any_p<bar_baz_t<struct foo>, struct bar, struct baz, struct foo>);
 
 	}
 }

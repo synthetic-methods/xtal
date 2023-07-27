@@ -93,7 +93,7 @@ struct define
 				XTAL_FN2 deify(constant_q auto const ...ks)
 				XTAL_0FX
 				{
-					return deify_(being<Xs...>::template method_m<value_f(ks)...>);
+					return deify_(being<Xs...>::template method_m<valued_f(ks)...>);
 				}
 				XTAL_FN2 deify_(array_q auto const &fs)
 				XTAL_0FX
@@ -391,10 +391,10 @@ struct defer
 :	_retail::defer<U>
 {
 };
-template <constant_q W> requires unsigned_q<value_t<W>>
+template <constant_q W> requires unsigned_q<valued_t<W>>
 struct defer<W>
 {
-	using subkind = defer<value_t<W>>;
+	using subkind = defer<valued_t<W>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -404,7 +404,7 @@ struct defer<W>
 	public:
 		using S_::S_;
 
-		using dispatch = typename S_::template dispatch<value_v<W>>;
+		using dispatch = typename S_::template dispatch<valued_v<W>>;
 
 	};
 };

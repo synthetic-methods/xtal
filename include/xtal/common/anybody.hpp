@@ -32,10 +32,12 @@ struct define
 		///\returns `this` as the `define`d supertype. \
 
 		XTAL_TO4_(XTAL_FN2 core(), self<S>())
+		using core_t = S;
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		XTAL_TO2_(template <class Y=T> XTAL_FN2_(based_t<Y>) twin(), self<Y>())
+		using twin_t = T;
 
 		///\returns `*this` with type `Y=T`. \
 
@@ -43,7 +45,6 @@ struct define
 		template <class Y=T> XTAL_FN2 self() XTAL_0EX_(&&) {return forge_f<Y       &&>(XTAL_MOV_(*this));}
 		template <class Y=T> XTAL_FN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
 		template <class Y=T> XTAL_FN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
-
 		using self_t = T;
 		
 	};

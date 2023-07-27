@@ -10,18 +10,18 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T, class Y=T>
-concept connected_p = any_q<T> and requires (T t)
+concept connection_p = any_q<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 };
 template <class T, class Y=T>
-concept collected_p = any_q<T> and requires (T t)
+concept collection_p = any_q<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_p<Y>;
 	{t.store()} -> isomorphic_p<Y>;
 };
 template <class T, class Y>
-concept recollected_p = collected_p<T, Y> and _std::is_rvalue_reference_v<T>;
+concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T> concept unprocessed_p = operators_q<T> and not _retail::any_q<T>;
+template <class T> concept unprocessed_p = field_q<T> and not _retail::any_q<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////

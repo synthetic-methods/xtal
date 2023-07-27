@@ -380,10 +380,10 @@ public:
 #endif
 	using alignment = destructive_alignment;
 
-	XTAL_LET_(sigma_t) constructive_alignment_v = value_v<constructive_alignment>;
-	XTAL_LET_(sigma_t)  destructive_alignment_v = value_v< destructive_alignment>;
-	XTAL_LET_(sigma_t)      default_alignment_v = value_v<     default_alignment>;
-	XTAL_LET_(sigma_t)              alignment_v = value_v<             alignment>;
+	XTAL_LET_(sigma_t) constructive_alignment_v = valued_v<constructive_alignment>;
+	XTAL_LET_(sigma_t)  destructive_alignment_v = valued_v< destructive_alignment>;
+	XTAL_LET_(sigma_t)      default_alignment_v = valued_v<     default_alignment>;
+	XTAL_LET_(sigma_t)              alignment_v = valued_v<             alignment>;
 	
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1101,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct realize: _detail::realization<sizeof(revalue_t<T>)> {};
+struct realize: _detail::realization<sizeof(devalued_t<T>)> {};
 
 using realized = realize<size_t>;
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hpp"
-#include "./tag.hpp"
+#include "./tab.hpp"
 #include "./compose.hpp"
 
 
@@ -11,8 +11,13 @@ namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...> XTAL_NYM collected;
-template <class  ...Ts> XTAL_ASK collected_q = tag_p<collected, Ts...>;
+XTAL_NYM T_solid;
+XTAL_NYM T_fluid;
+XTAL_NYM T_collect;
+
+template <class ...Ts> concept   solid_q = tab_p<T_solid,   Ts...>;
+template <class ...Ts> concept   fluid_q = tab_p<T_fluid,   Ts...>;
+template <class ...Ts> concept collect_q = tab_p<T_collect, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +34,7 @@ template <int ...Ns> XTAL_USE collect_t = typename collect<Ns...>::type;
 template <int N_size>
 struct collect<N_size>
 {
-	using subkind = tag<collected>;
+	using subkind = tab<T_collect>;
 	
 	template <class S>
 	class subtype: public compose_s<S, subkind>
@@ -51,7 +56,7 @@ struct collect<N_size>
 		template <class V> requires (0 <= N_size)
 		struct solid<V>
 		{
-			using type = compose_s<_std::array<V, N_size>, tag<>>;
+			using type = compose_s<_std::array<V, N_size>, tab<T_solid>>;
 
 		};
 		
@@ -59,7 +64,7 @@ struct collect<N_size>
 		template <class V>
 		struct fluid
 		{
-			using type = compose_s<_std::vector<V>, tag<>>;
+			using type = compose_s<_std::vector<V>, tab<T_fluid>>;
 
 		};
 		template <class V> requires (0 <= N_size)
@@ -477,11 +482,11 @@ struct collect<N_size>
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::array_q T> requires xtal::common::tag_q<T>
+template <xtal::common::solid_q T>
 struct tuple_size<T>: xtal::arity_t<T> {};
 
-template <size_t N, xtal::array_q T> requires xtal::common::tag_q<T>
-struct tuple_element<N, T> {using type = xtal::value_t<T>;};
+template <size_t N, xtal::common::solid_q T>
+struct tuple_element<N, T> {using type = xtal::valued_t<T>;};
 
 
 }/////////////////////////////////////////////////////////////////////////////

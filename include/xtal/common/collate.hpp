@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hpp"
+#include "./tab.hpp"
 #include "./seek.hpp"
 #include "./collect.hpp"
 //#include "./realize.hpp"// EOF
-
 
 
 XTAL_ENV_(push)
@@ -13,8 +13,9 @@ namespace xtal::common
 
 template <typename> struct realize;
 
-template <typename ...> XTAL_NYM collated;
-template <class  ...Ts> XTAL_ASK collated_q = tag_p<collated, Ts...>;
+XTAL_NYM T_collate;
+
+template <class ...Ts> concept collate_q = tab_p<T_collate, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@ struct collate<N_size>
 {
 	using metatype = collect_t<N_size>;
 
-	using subkind = tag<collated>;
+	using subkind = tab<T_collate>;
 
 	template <class S>
 	class subtype: public compose_s<S, subkind>
@@ -68,7 +69,7 @@ struct collate<N_size>
 			{
 				using R_ = hemitype<type>;
 
-				using value_t = V;
+				using valued_t = V;
 				using fluid_t = typename spindle<V>::type;
 				using valve_t = typename fluid_t::iterator;
 				using count_t = typename fluid_t::difference_type;
@@ -90,9 +91,9 @@ struct collate<N_size>
 
 				XTAL_TO2_(XTAL_FN2     begin(count_t n=0), _std::next(fluid_m.begin(), begin_n + n))
 				XTAL_TO2_(XTAL_FN2       end(count_t n=0), _std::prev(fluid_m.  end(),   end_n + n))
-				XTAL_FN2_(value_t &)    peek(count_t n=0) XTAL_0EX {              return *begin(n);}
-				XTAL_FN1_(value_t &) advance(count_t n=1) XTAL_0EX {begin_n += n; return *begin(0);}
-				XTAL_FN1_(value_t &) abandon(bool    n=1)
+				XTAL_FN2_(valued_t &)    peek(count_t n=0) XTAL_0EX {              return *begin(n);}
+				XTAL_FN1_(valued_t &) advance(count_t n=1) XTAL_0EX {begin_n += n; return *begin(0);}
+				XTAL_FN1_(valued_t &) abandon(bool    n=1)
 				XTAL_0EX
 				{
 					if (n) {
@@ -175,7 +176,7 @@ struct collate<N_size>
 			};
 		};
 		///\
-		Defines a fixed-width `type` that supports arithmetic operations. \
+		Defines a fixed-width `type` that supports arithmetic operators. \
 
 		template <class V>
 		struct group
@@ -188,7 +189,7 @@ struct collate<N_size>
 			template <class T>
 			using hemitype = typename define<T>::template subtype<demitype>;
 
-			template <class T>// requires field_operators_q<V>
+			template <class T>// requires field_q<V>
 			class homotype: public hemitype<T>
 			{
 				friend T;
@@ -220,15 +221,20 @@ struct collate<N_size>
 					_detail::copy_to(R_::begin(), u);
 				}
 				XTAL_CON homotype(bracket_t<V> etc)
+				XTAL_0EX
 				{
+				//	TODO: Test partial construction. \
+				
 					_detail::copy_to(R_::begin(), etc);
+					auto const n = etc.size();
+					_std::uninitialized_value_construct_n(R_::begin() + n, R_::size() - n);
 				}
 
 				template <class U>
 				XTAL_CN2_(T &) refer(U &u)
 				XTAL_0EX
 				{
-					static_assert(is_q<value_t<U>, V> and sizeof(U) == sizeof(T));
+					static_assert(is_q<valued_t<U>, V> and sizeof(U) == sizeof(T));
 					return force_f<T &>(u);
 				}
 
@@ -410,6 +416,9 @@ struct collate<N_size>
 				XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) += t.at_(i))), self();}
 				XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_e<N_size>([&, this] (auto i) XTAL_0FN_(at_(i) -= t.at_(i))), self();}
 
+				template <subarray_q<N_size> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {return seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(at_(i) += w[i])), self();}
+				template <subarray_q<N_size> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {return seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(at_(i) -= w[i])), self();}
+
 			};
 			using type = _detail::isotype<homotype>;
 		};
@@ -499,7 +508,7 @@ struct collate<N_size>
 				template <int N_shift=0>
 				XTAL_FN1_(T &) generate()
 				XTAL_0EX
-				XTAL_REQ complex_operators_q<V>
+				XTAL_REQ complex_field_q<V>
 				{
 				//	Initialize the forwards and backwards iterators:
 					auto const i = R_::begin();
@@ -530,7 +539,7 @@ struct collate<N_size>
 				template <isomorphic_p<T> Y>
 				XTAL_FN1_(duel_t<Y> &) transform(Y &that)
 				XTAL_0FX
-				XTAL_REQ complex_operators_q<V>
+				XTAL_REQ complex_field_q<V>
 				{
 					using I = typename Y::difference_type;
 				
@@ -611,7 +620,7 @@ struct collate<N_size>
 				XTAL_0EX
 				{
 					auto &s = self();
-					if constexpr (complex_operators_q<V>) {
+					if constexpr (complex_field_q<V>) {
 						T(integer_t<-1>{}).convolve(s, t);
 					}
 					else {
@@ -635,6 +644,7 @@ struct collate<N_size>
 		};
 		///\
 		Extends `sector::type` with multiplication defined by linear convolution. \
+		with `++/--` defined via finite differences/derivatives. \
 
 		template <class V>
 		struct serial
@@ -661,6 +671,11 @@ struct collate<N_size>
 				///\
 				Multiplication by linear convolution, truncated by `N_size`. \
 
+				XTAL_OP2_(T) * (T const &t)
+				XTAL_0FX
+				{
+					return twin() *= t;
+				}
 				XTAL_OP1_(T &) *=(T const &t)
 				XTAL_0EX
 				{
@@ -676,57 +691,6 @@ struct collate<N_size>
 					}
 					return self();
 				}
-				XTAL_OP2_(T) * (T const &t)
-				XTAL_0FX
-				{
-					return twin() *= t;
-				}
-
-			};
-			using type = _detail::isotype<homotype>;
-		};
-		///\
-		Extends `serial::type` with `++/--` defined in terms of finite differences/derivatives. \
-
-		template <class V>
-		struct pulsar
-		{
-			template <class T>
-			using hemitype = typename serial<V>::template homotype<T>;
-
-			template <class T>
-			class homotype: public hemitype<T>
-			{
-				friend T;
-				using R_ = hemitype<T>;
-				using I_ = typename R_::iterator;
-			
-			public:
-				using R_::R_;
-				using R_::at_;
-				using R_::self;
-				using R_::twin;
-
-				XTAL_CON homotype(bracket_t<V> u)
-				XTAL_0EX
-				:	R_(u)
-				{
-					auto &s =   self();
-					auto  n = u.size();
-					_std::uninitialized_value_construct_n(s.data() + n, s.size() - n);
-				}
-				template <bracketing_q<R_> U> requires array_q<U>
-				XTAL_CXN homotype(U &&u)
-				XTAL_0EX
-				{
-					auto &s = self();
-					auto const n = u.size();
-					auto const o = s.size();
-					auto m = o - n; assert(0 <= m);
-					_detail::move_to(m + s.data(), XTAL_REF_(u));
-					_std::uninitialized_value_construct_n(s.data(), m);
-				}
-
 				///\
 				Produces the successor by pairwise addition starting from `begin()`, \
 				assuming the entries of `this` are finite differences/derivatives. \
@@ -742,7 +706,7 @@ struct collate<N_size>
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
 					seek_e<M>([&, this] (auto i) XTAL_0FN_(at_(0 + i) += at_(1 + i)));
-					return self().reduce();
+					return self().normalize();
 				}
 
 				///\
@@ -760,65 +724,26 @@ struct collate<N_size>
 					auto constexpr N = N_size - 0;
 					auto constexpr M = N_size - 1;
 					seek_e<M>([&, this] (auto i) XTAL_0FN_(at_(M - i) -= at_(N - i)));
-					return self().reduce();
+					return self().normalize();
 				}
 
-				XTAL_FN1 reduce()
-				XTAL_0EX
-				{
-					return self();
-				}
+				//\
 				
-			};
-			using type = _detail::isotype<homotype>;
-		};
-		///\
-		Extends `pulsar::type` with `++/--` wrapping the initial argument to `{-1, 1}/2`. \
-
-		template <class V>
-		struct phasor
-		{
-			using _realized = realize<V>;
-			
-			template <class T>
-			using hemitype = typename pulsar<V>::template homotype<T>;
-
-			template <class T>
-			class homotype: public hemitype<T>
-			{
-			//	TODO: Subclass to define serial pairs like `complex`. \
-
-				friend T;
-				using R_ = hemitype<T>;
-			
-			public:
-				using R_::R_;
-				using R_::at_;
-				using R_::self;
-
-				///\
-				Wraps the first argument to the range `+/- 1/2`, assuming `std::is_floating_point_v<V>`. \
-
-				XTAL_FN1 reduce()
+				XTAL_FN1 normalize()
 				XTAL_0EX
 				{
-					static_assert(_std::floating_point<V> and 0 < N_size);
-					at_(0) -= _std::round(at_(0));
 					return self();
 				}
 
 			};
 			using type = _detail::isotype<homotype>;
 		};
-
 		template <class V> using  spool_t = typename  spool<V>::type;
 		template <class V> using  group_t = typename  group<V>::type;
 		template <class V> using scalar_t = typename scalar<V>::type;
 		template <class V> using sector_t = typename sector<V>::type;
 		template <class V> using series_t = typename series<V>::type;
 		template <class V> using serial_t = typename serial<V>::type;
-		template <class V> using pulsar_t = typename pulsar<V>::type;
-		template <class V> using phasor_t = typename phasor<V>::type;
 
 	};
 	using type = subtype<unit_t>;
@@ -838,7 +763,7 @@ struct collate<N, Ns...>
 	public:
 		using S::S;
 
-		template <class V> using value_t = typename collate_t<N>::template group_t<V>;
+		template <class V> using value_t = typename collate_t<N    >::template group_t<V>;
 		template <class V> using group_t = typename collate_t<Ns...>::template group_t<value_t<V>>;
 		template <class V> using group   = typename collate_t<Ns...>::template group  <value_t<V>>;
 

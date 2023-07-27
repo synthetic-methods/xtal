@@ -17,43 +17,65 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename   ...   > struct  shard;
-template <typename   ...Ts > concept shard_q = tag_p<shard, Ts...>;
-template <constant_q ...Ns >
+template <typename     ..._s> XTAL_NYM shard;
+template <typename     ...Ts> XTAL_ASK shard_q = tag_p<shard, Ts...>;
+template <class S, int ...Ns> XTAL_USE shard_s = compose_s<S, shard<integer_t<Ns>...>>;
+
+template <constant_q ...Ns>
 struct shard<Ns...>
 {
-	using subkind = confined<confer<Ns>..., tag<shard>>;
-	template <bundle_q S> using basetype = bundle_part_t<S, Ns{}...>;
-	template <bundle_q S> using basekind = conflux::conferred<basetype<S>>;
-	template <class S> using semikind = compose<subkind, basekind<S>>;
-	template <class S> using semitype = compose_s<conflux::any_t<>, semikind<S>>;
-	template <class S>
-	class subtype: public semitype<S>
+	using path = confined<tag<shard>, confer<Ns>...>;
+	
+	template <bundle_q S> using leaf_t = bundle_part_t<S, Ns{}...>;
+	template <bundle_q S> using leaf_s = conflux::conferred_t<leaf_t<S>>;
+	template <bundle_q S> using node_s = compose_s<leaf_s<S>, path>;
+	template <bundle_q S>
+	class subtype: public node_s<S>
 	{
-		using S_ = semitype<S>;
+		using S_ = node_s<S>;
+		using L_ = leaf_t<S>;
 
 	public:
 		using S_::S_;
-
-	};
-	template <bundle_q S> requires iterated_q<basetype<S>>
-	class subtype<S>: public semitype<S>
-	{
-		using S_ = semitype<S>;
-		using U_ = basetype<S>;
-		using V_ = value_t<U_>;
-
-	public:
-		using S_::S_;
-
-		XTAL_CON subtype(bracket_t<V_> w)
-		:	S_{U_(XTAL_MOV_(w))}
+		
+		XTAL_CON subtype(bracket_t<devalued_t<L_>> w)
+		XTAL_REQ bracket_q<L_>
+		:	S_{L_(XTAL_MOV_(w))}
 		{}
  
+		struct refract
+		{
+			using subkind = conflux::defer<L_>;
+
+			template <concord::any_q R> requires (0 == sizeof...(Ns))
+			class subtype: public compose_s<R, subkind>
+			{
+				using R_ = compose_s<R, subkind>;
+				
+			public:
+				using R_::R_;
+				using R_::self;
+				using R_::head;
+				using R_::influx;
+
+				///\todo\
+				Implement `shard_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
+				Requires subsequence ordering for `bundle`s? \
+				
+				XTAL_FNX influx(context::shard_q auto shard_o, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto &w = bundle_part_f(head(), shard_o.tuple());
+					auto &x = decltype(w) (shard_o);
+					_std::swap(w, x);
+					return w == x or R_::influx(XTAL_REF_(oo)...);
+				}
+
+			};
+		};
+	
 	};
 };
-template <class S, int ...Ns>
-using shard_s = typename shard<constant_t<Ns>...>::template subtype<S>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

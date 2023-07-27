@@ -177,6 +177,12 @@ struct defer
 		XTAL_0EX
 		:	subtype(body_t{})
 		{}
+		XTAL_CON subtype(bracket_t<devalued_t<U>> w)
+		XTAL_REQ remember_q<U> and array_q<U>
+		:	body_m(XTAL_MOV_(w))
+		{
+		//	_detail::copy_to(head().begin(), w);
+		}
 		///\
 		Chaining constructor: initializes `this` using the first argument, \
 		and forwards the rest to super. \
@@ -271,12 +277,12 @@ struct defer
 	};
 };
 ///\
-Defers selected operations to `U` as required for `refine`ment. \
+Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
 struct refer: compose<void
-,	_detail::refer_comparators<U>
-,	_detail::refer_operators<U>
+,	_detail::refer_orders<U>
+,	_detail::refer_groups<U>
 ,	_detail::refer_iterators<U>
 >
 {

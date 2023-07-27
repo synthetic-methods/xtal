@@ -44,7 +44,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires collated_q<S_> and collected_q<S_>
+		template <class ...Xs> requires collate_q<S_> and collect_q<S_>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;

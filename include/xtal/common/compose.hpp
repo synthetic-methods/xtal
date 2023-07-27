@@ -73,6 +73,9 @@ struct composed
 template <class S, typename ...Tails>
 using composed_s = typename composed<>::template subtype<S, Tails...>;
 
+template <typename ...Heads>
+using composed_t = typename composed<Heads...>::type;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

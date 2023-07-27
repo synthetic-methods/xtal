@@ -38,8 +38,8 @@ XTAL_CN2 dot(auto const &x, auto const &y)
 template <class W, class U, typename ...As>
 struct matrix<W, U, As...>
 {
-	static_assert(bundle_q<W>);
-	using subkind = compose<conflux::defer<W>, confer<U>, As..., tag<matrix>>;
+	using shard_w = typename context::shard_s<W>::refract;
+	using subkind = compose<shard_w, confer<U>, As..., tag<matrix>>;
 
 	template <any_q S>
 	class subtype: public compose_s<S, subkind>
@@ -50,16 +50,6 @@ struct matrix<W, U, As...>
 		using S_::S_;
 		using S_::self;
 		using S_::head;
-		using S_::influx;
-
-		XTAL_FNX influx(context::shard_q auto shard_o, XTAL_DEF ...oo)
-		XTAL_0EX
-		{
-			auto &w = bundle_part_f(head(), shard_o.tuple());
-			auto &x = decltype(w) (shard_o);
-			_std::swap(w, x);
-			return w == x or S_::influx(XTAL_REF_(oo)...);
-		}
 
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_FN2 method(XTAL_DEF... xs),

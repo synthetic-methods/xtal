@@ -97,13 +97,6 @@ template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
 template <class ...Ts>     concept unbased_q  = (...and unbased_p<Ts>);
 
-template <class    T >      struct debased             : boolean_t<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct debased<T        & >: boolean_t<1> {using type =       T*;};
-template <unbased_p T>      struct debased<T  const & >: boolean_t<1> {using type = const T*;};
-template <class    T >       using debased_t  = typename debased<T>::type;
-template <class    T >     concept debased_p  =  (bool)  debased<T> {};
-template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
-
 template <class    T >      struct rebased             : boolean_t<1> {using type = _std::remove_reference_t<T>;};
 template <unbased_p T>      struct rebased<T        & >: boolean_t<0> {using type =       T&;};
 template <unbased_p T>      struct rebased<T  const & >: boolean_t<0> {using type = const T&;};
@@ -111,15 +104,22 @@ template <class    T >       using rebased_t  = typename rebased<T>::type;
 template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
 template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
 
-template <class    T >       using value_t    = typename based_t<T>::value_type;
-template <class    T >     concept value_p    = requires {typename value_t<T>;};
-template <class ...Ts>     concept value_q    = (...and value_p<Ts>);
-template <class    T >    XTAL_LET value_v    = based_t<T>::value;
-template <class    V >    XTAL_CN2 value_f(V &&v) {return value_v<V>;}
+template <class    T >      struct debased             : boolean_t<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_p T>      struct debased<T        & >: boolean_t<1> {using type =       T*;};
+template <unbased_p T>      struct debased<T  const & >: boolean_t<1> {using type = const T*;};
+template <class    T >       using debased_t  = typename debased<T>::type;
+template <class    T >     concept debased_p  =  (bool)  debased<T> {};
+template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
 
-template <class    T >      struct revalue     {using value_type = based_t<T>;};
-template <value_p  T >      struct revalue<T> : based_t<T> {};
-template <class    T >       using revalue_t  = value_t<revalue<T>>;
+template <class    T >       using valued_t   = typename based_t<T>::value_type;
+template <class    T >     concept valued_p   = requires {typename valued_t<T>;};
+template <class ...Ts>     concept valued_q   = (...and valued_p<Ts>);
+template <class    T >    XTAL_LET valued_v   = based_t<T>::value;
+template <class    V >    XTAL_CN2 valued_f(V &&v) {return valued_v<V>;}
+
+template <class    T >     struct devalued     {using value_type = _std::remove_all_extents_t<based_t<T>>;};
+template <valued_p  T >    struct devalued<T> : based_t<T> {};
+template <class    T >      using devalued_t  = valued_t<devalued<T>>;
 
 
 template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
@@ -213,11 +213,11 @@ template <class    T >      using pointer_t =             XTAL_TYP_(&XTAL_VAL_(T
 template <class ...Ts>    concept pointed_q = (... and requires {&XTAL_VAL_(Ts);});
 template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);});
 
-template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
+template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 
-template <class Y> XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
 template <class Y> XTAL_CN2 force_f(XTAL_DEF_(forcible_q) t) XTAL_0EX {return reinterpret_cast<Y>(XTAL_REF_(t));}
+template <class Y> XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
 template <class Y>
 XTAL_CN2 forge_f(XTAL_DEF t)
 XTAL_0EX
@@ -230,17 +230,21 @@ XTAL_0EX
 	}
 }
 
-template <value_q  T > XTAL_LET arity_v = sizeof(T)/aligned_v<value_t<T>>;
-template <value_q  T >    using arity_t = constant_t<arity_v<T>>;
-template <value_q  T >    using array_t = _std::array<value_t<T>, arity_v<T>>;
-template <int N=-1, class ...Ts>
-concept array_p = requires ()
-{
-	requires (...and of_p<array_t<Ts>, Ts>);
-	requires (N == -1) or (...and (N == arity_v<Ts>));
-};
-template <class ...Ts>
-concept array_q = array_p<-1, Ts...>;
+template <valued_q T >   XTAL_LET arity_v = sizeof(T)/aligned_v<devalued_t<T>>;
+template <valued_q T >      using arity_t = constant_t<arity_v<T>>;
+template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_v<T>>;
+template <class    T >    concept array_r = _std::is_array_v<T> or of_p<array_t<T>, T>;
+
+template <class T, int N=-1> concept    arity_q = (N <  0) or  (arity_v<T> == N);
+template <class T, int N=-1> concept subarity_q = (0 <= N) and (arity_v<T> <= N);
+template <class T, int N=-1> concept    array_q = array_r<T> and    arity_q<T, N>;
+template <class T, int N=-1> concept subarray_q = array_r<T> and subarity_q<T, N>;
+
+template <int N=-1, class ...Ts> concept    arity_p = (...and    arity_q<Ts, N>);
+template <int N=-1, class ...Ts> concept subarity_p = (...and subarity_q<Ts, N>);
+template <int N=-1, class ...Ts> concept    array_p = (...and    array_q<Ts, N>);
+template <int N=-1, class ...Ts> concept subarray_p = (...and subarray_q<Ts, N>);
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,48 +252,36 @@ concept array_q = array_p<-1, Ts...>;
 //\
 Arithmetic types...
 
-template <class    T >   using unsigned_t = _std::make_unsigned_t<revalue_t<T>>;
-template <class    T >   using   signed_t = _std::  make_signed_t<revalue_t<T>>;
+template <class    T >   using unsigned_t = _std::make_unsigned_t<devalued_t<T>>;
+template <class    T >   using   signed_t = _std::  make_signed_t<devalued_t<T>>;
 
-template <class    T > concept unsigned_p = _std::  is_unsigned_v<revalue_t<T>>;
-template <class    T > concept   signed_p = _std::    is_signed_v<revalue_t<T>>;
+template <class    T > concept unsigned_p = _std::  is_unsigned_v<devalued_t<T>>;
+template <class    T > concept   signed_p = _std::    is_signed_v<devalued_t<T>>;
 
 template <class ...Ts> concept unsigned_q = (...and unsigned_p<Ts>);
 template <class ...Ts> concept   signed_q = (...and   signed_p<Ts>);
-
-template <class ...Ts>
-concept numeric_q = false
-	or (...and _std::integral<based_t<Ts>>)
-	or (...and _std::floating_point<based_t<Ts>>)
-	or (...and is_q<Ts, _std::complex<value_t<Ts>>>)
-;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-concept inequality_comparators_p = requires (T t, T u)
+concept reflexive_order_p = requires (T t, T u)
+{
+	{t == u} -> is_q<bool>;
+	{t != u} -> is_q<bool>;
+};
+template <class T>
+concept total_order_p = reflexive_order_p<T> and requires (T t, T u)
 {
 	{t <= u} -> is_q<bool>;
 	{t <  u} -> is_q<bool>;
 	{t >= u} -> is_q<bool>;
 	{t >  u} -> is_q<bool>;
 };
-template <class T>
-concept equality_comparators_p = requires (T t, T u)
-{
-	{t == u} -> is_q<bool>;
-	{t != u} -> is_q<bool>;
-};
-template <class T>
-concept comparators_p = equality_comparators_p<T> or inequality_comparators_p<T>;
 
-
-///\returns `true` if `T` supports bitwise logical operations, `false` otherwise, \
-with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
 
 template <class T, size_t N_arity=0>
-concept bitwise_operators_p = _std::integral<T> or requires (T t, T u)
+concept binary_logic_p = requires (T t, T u)
 {
 	requires N_arity == 2 or requires
 	{
@@ -302,80 +294,106 @@ concept bitwise_operators_p = _std::integral<T> or requires (T t, T u)
 		{t  ^  u} -> is_q<T>;
 		{t  |  u} -> is_q<T>;
 		{t  &  u} -> is_q<T>;
-		{   ~  u} -> is_q<T>;
 	};
 };
-///\returns `true` if `T` supports integer addition and subtraction, `false` otherwise. \
+
 
 template <class T, size_t N_arity=0>
-concept group_operators_p = _std::integral<T> or requires (T t, T u)
-{
-	requires N_arity == 2 or requires
-	{
-		{t  %= u} -> is_q<T>;
-		{t  += u} -> is_q<T>;
-		{t  ++  } -> is_q<T>;
-		{   ++ u} -> is_q<T>;
-		{t  -= u} -> is_q<T>;
-		{t  --  } -> is_q<T>;
-		{   -- u} -> is_q<T>;
-	};
-	requires N_arity == 1 or requires
-	{
-		{t  %  u} -> is_q<T>;
-		{t  +  u} -> is_q<T>;
-		{t  -  u} -> is_q<T>;
-		{   -  u} -> is_q<T>;
-	};
-};
-///\returns `true` if `T` supports arithmetic (but not logic) operations, `false` otherwise, \
-with `0 < N_arity` differentiating between immutable (`2`) and mutable (`1`) operations. \
-
-template <class T, size_t N_arity=0>
-concept field_operators_p = _std::floating_point<T> or requires (T t, T u)
+concept multiplicative_group_p = requires (T t, T u)
 {
 	requires N_arity == 2 or requires
 	{
 		{t  *= u} -> is_q<T>;
-		{t  += u} -> is_q<T>;
 		{t  /= u} -> is_q<T>;
-		{t  -= u} -> is_q<T>;
 	};
 	requires N_arity == 1 or requires
 	{
 		{t  *  u} -> is_q<T>;
-		{t  +  u} -> is_q<T>;
 		{t  /  u} -> is_q<T>;
+	};
+};
+template <class T, size_t N_arity=0>
+concept additive_group_p = requires (T t, T u)
+{
+	requires N_arity == 2 or requires
+	{
+		{t  += u} -> is_q<T>;
+		{t  -= u} -> is_q<T>;
+	};
+	requires N_arity == 1 or requires
+	{
+		{t  +  u} -> is_q<T>;
 		{t  -  u} -> is_q<T>;
 		{   -  u} -> is_q<T>;
 	};
-} and not bitwise_operators_p<T, N_arity>;
+};
+template <class T, size_t N_arity=0>
+concept discrete_group_p = requires (T t, T u)
+{
+	requires N_arity == 2 or requires
+	{
+		{t  ++  } -> is_q<T>;
+		{   ++ u} -> is_q<T>;
+		{t  --  } -> is_q<T>;
+		{   -- u} -> is_q<T>;
+	};
+};
+template <class T, size_t N_arity=0>
+concept quotient_group_p = requires (T t, T u)
+{
+	requires N_arity == 2 or requires
+	{
+		{t  %= u} -> is_q<T>;
+	};
+	requires N_arity == 1 or requires
+	{
+		{t  %  u} -> is_q<T>;
+	};
+};
+template <class T, size_t N_arity=0>
+concept integral_group_p = _std::integral<T> or discrete_group_p<T, N_arity> and quotient_group_p<T, N_arity>;
 
+
+template <class T, size_t N_arity=0>
+concept field_p = multiplicative_group_p<T, N_arity> and additive_group_p<T, N_arity>;
+
+template <class T, size_t N_arity=0>
+concept real_field_p = _std::floating_point<T> or
+requires (T t)
+{
+	requires total_order_p<T> and field_p<T, N_arity>;
+	{_std::abs(t)} -> is_q<T>;
+};
 
 template <class T>
-concept complex_operators_p = value_p<T> and is_q<T, _std::complex<value_t<T>>> or requires (T t)
+concept complex_field_p = of_q<T, _std::complex<devalued_t<T>>> or requires (T t)
 {
-	requires equality_comparators_p<T>;
-	requires field_operators_p<T, 2>;
-	{t.real()} -> _std::same_as<value_t<T>>;
-	{t.imag()} -> _std::same_as<value_t<T>>;
+	requires reflexive_order_p<T> and field_p<T, 2>;
+	{_std::abs(t)} -> is_q<valued_t<T>>;
+	{t.real()}     -> is_q<valued_t<T>>;
+	{t.imag()}     -> is_q<valued_t<T>>;
 };
 
 
-template <class ...Ts> concept bitwise_operators_q = (...and bitwise_operators_p<based_t<Ts>>);
-template <class ...Ts> concept complex_operators_q = (...and complex_operators_p<based_t<Ts>>);
-template <class ...Ts> concept   field_operators_q = (...and   field_operators_p<based_t<Ts>>);
-template <class ...Ts> concept   group_operators_q = (...and   group_operators_p<based_t<Ts>>);
-template <class ...Ts> concept         operators_q = field_operators_q<Ts...> or group_operators_q<Ts...>;
+template <class ...Ts> concept multiplicative_group_q = (...and multiplicative_group_p<based_t<Ts>>);
+template <class ...Ts> concept       additive_group_q = (...and       additive_group_p<based_t<Ts>>);
+template <class ...Ts> concept       discrete_group_q = (...and       discrete_group_p<based_t<Ts>>);
+template <class ...Ts> concept       quotient_group_q = (...and       quotient_group_p<based_t<Ts>>);
+template <class ...Ts> concept       integral_group_q = (...and       integral_group_p<based_t<Ts>>);
 
-template <class ...Ts> concept inequality_comparators_q = numeric_q<Ts...> and (...and inequality_comparators_p<based_t<Ts>>);
-template <class ...Ts> concept   equality_comparators_q = numeric_q<Ts...> and (...and   equality_comparators_p<based_t<Ts>>);
-template <class ...Ts> concept            comparators_q = equality_comparators_q<Ts...> and inequality_comparators_q<Ts...>;
+template <class ...Ts> concept        complex_field_q = (...and        complex_field_p<based_t<Ts>>);
+template <class ...Ts> concept           real_field_q = (...and           real_field_p<based_t<Ts>>);
+template <class ...Ts> concept                field_q = (...and                field_p<based_t<Ts>>);
 
-static_assert(bitwise_operators_q<int>);
-static_assert(  group_operators_q<int>);
-static_assert(  field_operators_q<float>);
-static_assert(  field_operators_q<_std::complex<float>>);
+template <class ...Ts> concept      reflexive_order_q = (...and      reflexive_order_p<based_t<Ts>>);
+template <class ...Ts> concept          total_order_q = (...and          total_order_p<based_t<Ts>>);
+
+
+static_assert(                  real_field_q<float>);
+static_assert(                       field_q<float>);
+static_assert(          not quotient_group_q<float>);
+static_assert(              quotient_group_q<  int>);
+static_assert(complex_field_q<_std::complex<float>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -499,7 +517,7 @@ XTAL_0EX
 }
 
 
-template <class      ...Ts> concept beginning_q      = begin_q<Ts...> and is_q<begin_t<Ts>...>;
+template <class      ...Ts> concept  beginning_q     = begin_q<Ts...> and is_q<begin_t<Ts>...>;
 template <class      ...Ts> concept bracketing_q     = beginning_q<Ts...> and end_q<Ts...>;
 
 template <class      ...Ts>  struct isomorphic       : isotropic<Ts...> {};

@@ -27,7 +27,15 @@ template <class T, typename ...As>
 concept any_p = _detail::identity_p<any_t<As...>, T>;
 
 template <class ...Ts>
+//\
+concept any_q = (...and any_p<Ts>);
 concept any_q = of_p<any_t<>, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As> using mint   = composed  <As..., any<>>;
+template <typename ...As> using mint_t = composed_t<As..., any<>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -14,6 +14,10 @@ namespace xtal::control
 template <typename ..._s> XTAL_NYM respan;
 template <typename ..._s> XTAL_ASK respan_q = tag_p<respan, _s...>;
 template <iterated_q   U> XTAL_USE respan_t = confined_t<refer<U>, respan<U>, tag<respan>>;
+/**/
+template <class S, iterated_q U>
+XTAL_USE respan_s = compose_s<S, confined<tag<respan>, refer<U>, respan<U>>>;
+/***/
 
 template <iterated_q U>
 struct respan<U>

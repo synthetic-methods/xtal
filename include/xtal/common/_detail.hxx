@@ -6,10 +6,6 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...>
-class exotype
-{
-};
 template <template <typename> typename _T>
 class isotype: public _T<isotype<_T>>
 {

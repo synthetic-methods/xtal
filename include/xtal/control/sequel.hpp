@@ -159,13 +159,6 @@ struct prequel
 		{
 			return S::operator<(t) or S::operator==(t);
 		}
-	//	XTAL_OP2_(bool) ==(subtype const &o)
-	//	XTAL_0FX
-	//	{
-	//		auto &s =   self();
-	//		auto &t = o.self();
-	//		return s.step() == t.step() and s.size() == t.size();
-	//	}
 
 		///\
 		Updates to the incoming position, \

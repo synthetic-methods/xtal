@@ -46,13 +46,13 @@ struct define
 		resolved by the `control/any.hpp#dispatch`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
-		XTAL_FN2 reify(value_q auto const ...ks),
+		XTAL_FN2 reify(valued_q auto const ...ks),
 		{
 			if constexpr (0 == sizeof...(ks)) {
 				return [&, this] XTAL_1FN_(self().method);
 			}
 			else {
-				return [&, this] XTAL_1FN_(self().template method<value_f(ks)...>);
+				return [&, this] XTAL_1FN_(self().template method<valued_f(ks)...>);
 			}
 		})
 		//\
@@ -64,7 +64,7 @@ struct define
 		XTAL_FN2 deify(auto const ...ks)
 		XTAL_0FX
 		{
-			return deify_(being<Xs...>::template method_m<value_f(ks)...>);
+			return deify_(being<Xs...>::template method_m<valued_f(ks)...>);
 		}
 		XTAL_FN2 deify_(auto const &f0)
 		XTAL_0FX

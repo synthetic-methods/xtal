@@ -190,11 +190,11 @@ TAG_("collate", "series")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("collate", "pulsar")
+TAG_("collate", "serial")
 {
-	TRY_("operation")
+	TRY_("integration")
 	{
-		using D = typename collate_t<4>::template pulsar_t<int>;
+		using D = typename collate_t<4>::template serial_t<int>;
 
 		D d {1000, 100, 10, 1};
 
@@ -207,7 +207,7 @@ TAG_("collate", "pulsar")
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/*/
 TAG_("collate", "phasor")
 {
 	TRY_("operation")
@@ -240,7 +240,7 @@ TAG_("collate", "phasor")
 	}
 }
 
-
+/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
