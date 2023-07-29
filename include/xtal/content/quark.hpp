@@ -23,9 +23,9 @@ Pairs `pulse` and `phase` to represent e.g. `{phase/frequency, count/trigger}`. 
 template <class U>
 struct quark<U>
 {
-	using _realized = realize<U>;
-	using delta_t = typename _realized::delta_t;
-	using alpha_t = typename _realized::alpha_t;
+	using _computer = compute<U>;
+	using delta_t = typename _computer::delta_t;
+	using alpha_t = typename _computer::alpha_t;
 	
 	using subkind = compose<tag<quark>, pulse<delta_t>, phase<alpha_t>>;
 	

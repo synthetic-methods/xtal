@@ -22,8 +22,8 @@ template <array_q W=size_t[2], typename ...As> XTAL_USE phasor_t = confined_t<ph
 template <array_q W, typename ...As>
 struct phasor<W, As...>
 {
-	XTAL_LET N_ = _std::extent_v<W>;
-	XTAL_USE U_ = _std::remove_all_extents_t<W>;
+	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
 	using scope_u = content::phase_t<U_>[N_];
 	using subkind = compose<tag<phasor>, As..., star<scope_u>>;

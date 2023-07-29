@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./common/all.c++"
+#include "./compound/all.c++"
 #include "./concord/all.c++"
 #include "./conflux/all.c++"
 #include "./content/all.c++"

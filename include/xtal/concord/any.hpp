@@ -1,5 +1,5 @@
 #pragma once
-#include "../common/all.hpp"// `_retail`
+#include "../compound/all.hpp"// `_retail`
 
 
 
@@ -11,12 +11,9 @@ namespace xtal::concord
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+namespace _retail {using namespace xtal::compound;}
 namespace _retail
 {///////////////////////////////////////////////////////////////////////////////
-
-using namespace xtal::common;
-
-
 ///\
 Creates a unique `subtype` tagged by the given `As...`, \
 such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`. \

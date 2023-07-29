@@ -22,10 +22,10 @@ template <array_q W, typename ...As> XTAL_USE star_t = confined_t<star<W, As...>
 template <array_q W, typename ...As>
 struct star<W, As...>
 {
-	XTAL_LET N_ = _std::extent_v<W>;
-	XTAL_USE U_ = _std::remove_all_extents_t<W>;
+	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using array_u = typename collate_t<N_>::template serial_t<U_>;
+	using array_u = solid::serial_t<W>;
 	using shard_u = typename context::shard_s<array_u>;
 	using subkind = compose<tag<star>
 	,	_detail::refer_iterators<array_u>
@@ -46,7 +46,7 @@ struct star<W, As...>
 		///\
 		Access by dynamic index. \
 		
-		XTAL_TO4_(XTAL_FN2 d_(size_t i), head().at_(i))
+		XTAL_TO4_(XTAL_FN2 d(size_t i), head().d(i))
 
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_FN2 method(),

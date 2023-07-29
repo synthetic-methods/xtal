@@ -27,12 +27,12 @@ struct quasar<W, As...>
 	using phasor_u = phasor_t<W, As...>;
 	using pulsar_u = pulsar_t<W, As...>;
 	
-	XTAL_LET N_ = _std::extent_v<W>;
-	XTAL_USE U_ = _std::remove_all_extents_t<W>;
+	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using _realized = realize<U_>;
-	using delta_t = typename _realized::delta_t;
-	using alpha_t = typename _realized::alpha_t;
+	using _computer = compute<U_>;
+	using delta_t = typename _computer::delta_t;
+	using alpha_t = typename _computer::alpha_t;
 
 	using scope_u = content::quark_t<U_>[N_];
 	using subkind = compose<tag<quasar>, As..., star<scope_u>>;
@@ -46,12 +46,13 @@ struct quasar<W, As...>
 		using S_::S_;
 		using S_::self;
 		using S_::head;
+		using S_::d;
 
 		///\
 		Access by name/index (dynamic). \
 		
-		XTAL_TO4_(XTAL_FN2 phase(size_t i), S_::at_(i).phase())
-		XTAL_TO4_(XTAL_FN2 pulse(size_t i), S_::at_(i).pulse())
+		XTAL_TO4_(XTAL_FN2 phase(size_t i), d(i).phase())
+		XTAL_TO4_(XTAL_FN2 pulse(size_t i), d(i).pulse())
 
 		///\
 		Access by name/index (static). \

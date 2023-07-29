@@ -207,9 +207,11 @@ struct aligned
 };
 template <class    T >    using aligned_t = typename aligned<T>::type;
 template <class    T > XTAL_LET aligned_v =          aligned<T>::value;
-template <class    I > XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
-template <class    T >      using pointed_t =             XTAL_TYP_(*XTAL_VAL_(T));
-template <class    T >      using pointer_t =             XTAL_TYP_(&XTAL_VAL_(T));
+template <class    I >
+XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
+
+template <class    T >      using pointed_t =          XTAL_TYP_(*XTAL_VAL_(T));
+template <class    T >      using pointer_t =          XTAL_TYP_(&XTAL_VAL_(T));
 template <class ...Ts>    concept pointed_q = (... and requires {&XTAL_VAL_(Ts);});
 template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);});
 
@@ -265,26 +267,42 @@ template <class ...Ts> concept   signed_q = (...and   signed_p<Ts>);
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-concept reflexive_order_p = requires (T t, T u)
+concept equality_p = requires (T t, T u)
 {
 	{t == u} -> is_q<bool>;
 	{t != u} -> is_q<bool>;
 };
 template <class T>
-concept total_order_p = reflexive_order_p<T> and requires (T t, T u)
+concept inequality_p = equality_p<T> and requires (T t, T u)
 {
 	{t <= u} -> is_q<bool>;
 	{t <  u} -> is_q<bool>;
 	{t >= u} -> is_q<bool>;
 	{t >  u} -> is_q<bool>;
 };
+template <class T>
+concept quality_p = equality_p<T> and inequality_p<T>;
 
 
+template <class T, size_t N_arity=0>
+concept boolean_logic_p = requires (T t, T u)
+{
+	requires N_arity == 2 or requires
+	{
+		{!u} -> is_q<T>;
+	};
+	requires N_arity == 1 or requires
+	{
+		{t || u} -> is_q<T>;
+		{t && u} -> is_q<T>;
+	};
+};
 template <class T, size_t N_arity=0>
 concept binary_logic_p = requires (T t, T u)
 {
 	requires N_arity == 2 or requires
 	{
+		{   ~  u} -> is_q<T>;
 		{t  ^= u} -> is_q<T>;
 		{t  |= u} -> is_q<T>;
 		{t  &= u} -> is_q<T>;
@@ -361,14 +379,14 @@ template <class T, size_t N_arity=0>
 concept real_field_p = _std::floating_point<T> or
 requires (T t)
 {
-	requires total_order_p<T> and field_p<T, N_arity>;
+	requires quality_p<T> and field_p<T, N_arity>;
 	{_std::abs(t)} -> is_q<T>;
 };
 
 template <class T>
 concept complex_field_p = of_q<T, _std::complex<devalued_t<T>>> or requires (T t)
 {
-	requires reflexive_order_p<T> and field_p<T, 2>;
+	requires equality_p<T> and field_p<T, 2>;
 	{_std::abs(t)} -> is_q<valued_t<T>>;
 	{t.real()}     -> is_q<valued_t<T>>;
 	{t.imag()}     -> is_q<valued_t<T>>;
@@ -385,8 +403,12 @@ template <class ...Ts> concept        complex_field_q = (...and        complex_f
 template <class ...Ts> concept           real_field_q = (...and           real_field_p<based_t<Ts>>);
 template <class ...Ts> concept                field_q = (...and                field_p<based_t<Ts>>);
 
-template <class ...Ts> concept      reflexive_order_q = (...and      reflexive_order_p<based_t<Ts>>);
-template <class ...Ts> concept          total_order_q = (...and          total_order_p<based_t<Ts>>);
+template <class ...Ts> concept        boolean_logic_q = (...and        boolean_logic_p<based_t<Ts>>);
+template <class ...Ts> concept         binary_logic_q = (...and         binary_logic_p<based_t<Ts>>);
+
+template <class ...Ts> concept              quality_q = (...and              quality_p<based_t<Ts>>);
+template <class ...Ts> concept             equality_q = (...and             equality_p<based_t<Ts>>);
+template <class ...Ts> concept           inequality_q = (...and           inequality_p<based_t<Ts>>);
 
 
 static_assert(                  real_field_q<float>);
@@ -401,8 +423,8 @@ static_assert(complex_field_q<_std::complex<float>>);
 //\
 Range types...
 
-template <class    T >       using begin_t    = decltype(XTAL_VAL_(T).begin());
-template <class    T >       using   end_t    = decltype(XTAL_VAL_(T).  end());
+template <class    T >       using begin_t    = decltype( XTAL_VAL_(T).begin());
+template <class    T >       using   end_t    = decltype( XTAL_VAL_(T).  end());
 template <class    T >     concept begin_p    = requires (T t) {*t.begin();};
 template <class    T >     concept   end_p    = requires (T t) {*t.  end();};
 template <class ...Ts>     concept begin_q    = (...and begin_p<Ts>);

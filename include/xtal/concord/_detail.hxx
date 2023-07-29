@@ -88,11 +88,11 @@ struct refer_iterators<U>
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct refer_reflexive_order
+struct refer_equality
 :	compose<>
 {};
-template <class U> requires reflexive_order_p<U>
-struct refer_reflexive_order<U>
+template <class U> requires equality_p<U>
+struct refer_equality<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -107,11 +107,11 @@ struct refer_reflexive_order<U>
 
 
 template <class U>
-struct refer_total_order
+struct refer_inequality
 :	compose<>
 {};
-template <class U> requires total_order_p<U>
-struct refer_total_order<U>
+template <class U> requires inequality_p<U>
+struct refer_inequality<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -129,10 +129,10 @@ struct refer_total_order<U>
 
 
 template <class U>
-struct refer_orders
+struct refer_quality
 :	compose<void
-	,	refer_reflexive_order<U>
-	,	refer_total_order<U>
+	,	refer_equality<U>
+	,	refer_inequality<U>
 	>
 {};
 

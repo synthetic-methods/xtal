@@ -1,9 +1,9 @@
 #pragma once
 #include "./anybody.hpp"
+#include "./monomer.hpp"
+#include "./restash.hpp"
 #include "../context/voice.hpp"
 #include "../control/stasis.hpp"
-#include "../processor/monomer.hpp"
-
 
 
 XTAL_ENV_(push)
@@ -21,10 +21,10 @@ XTAL_CN2 polymer_f(XTAL_DEF u) {return polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice pool according to `control::stasis` requests/responses. \
+but expands/contracts the voice sluice according to `control::stasis` requests/responses. \
 
 ///\note\
-The attached `collect` and `collate` determine the sample buffer and voice spool respectively. \
+The attached `restore` and `restash` determine the sample buffer and voice stash respectively. \
 
 template <class U, typename ...As>
 struct polymer<U, As...>
@@ -44,7 +44,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires collate_q<S_> and collect_q<S_>
+		template <class ...Xs> requires restash_q<S_> and restore_q<S_>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
@@ -55,7 +55,7 @@ struct polymer<U, As...>
 			using stage_u = control::stasis_t<>;
 			using event_u = context::voice_s<stage_u>;
 			using voice_u = context::voice_s<stave_u>;
-			using spool_u = typename S_::template spool_t<voice_u>;
+			using stash_u = typename S_::template stash<voice_u>::type;
 
 			using subkind = compose<tag<polymer>
 			,	typename control::confined_t<>::rend
@@ -68,16 +68,16 @@ struct polymer<U, As...>
 			{
 				using R_ = compose_s<R, subkind>;
 				
-				spool_u spool_m;
+				stash_u stash_m;
 
 			public:
 				using R_::R_;
 				using R_::self;
+				using R_::head;
 				using R_::serve;
 				using R_::store;
 				
-				XTAL_TO2_(XTAL_FN2 spool(), spool_m)
-				XTAL_TO2_(XTAL_FN2 spine(), R_::head())
+				XTAL_TO2_(XTAL_FN2 stash(), stash_m)
 
 				using R_::influx;
 				
@@ -86,8 +86,8 @@ struct polymer<U, As...>
 				{
 					auto o_core = o.core();
 					auto o_head = o.head();
-					auto v_     = spool_m.scan(o_head);
-					assert(spool_m and o_head == v_->head());
+					auto v_     = stash_m.scan(o_head);
+					assert(stash_m and o_head == v_->head());
 					return v_->influx(o_core, XTAL_REF_(oo)...);
 				}
 				///\
@@ -100,13 +100,13 @@ struct polymer<U, As...>
 				{
 					auto o_core = o.core();
 					auto o_head = o.head();
-					auto v_     = spool_m.scan(o_head);
+					auto v_     = stash_m.scan(o_head);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (o_core == 0) {
-						if (spool_m and o_head == v_->head()) {
+						if (stash_m and o_head == v_->head()) {
 							(void) v_->influx(control::stasis_f(-1), oo...);
 						}
-						v_ = spool_m.poke(v_, o_head, spine());
+						v_ = stash_m.poke(v_, o_head, head());
 					}
 				//	Forward to detected/allocated instance:
 					assert(v_->head() == o_head);
@@ -120,8 +120,8 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = false;
-					return _v3::ranges::accumulate(spool_m
-					,	impure? -1: spine().influx(oo...)
+					return _v3::ranges::accumulate(stash_m
+					,	impure? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
@@ -130,8 +130,8 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = (...or control::sequel_q<decltype(oo)>);
-					return _v3::ranges::accumulate(spool_m
-					,	impure? -1: spine().efflux(oo...)
+					return _v3::ranges::accumulate(stash_m
+					,	impure? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
@@ -146,9 +146,9 @@ struct polymer<U, As...>
 				{
 					XTAL_FLX flx = -1;
 				//	Render each instance, while releasing any that have terminated:
-					for (auto _v = spool_m.end(); spool_m.begin() <= --_v;) {
+					for (auto _v = stash_m.end(); stash_m.begin() <= --_v;) {
 						if (_v->efflux(control::stasis_f(-1)) == 1) {
-							spool_m.pop(_v);
+							stash_m.pop(_v);
 						}
 						else {
 							flx &= _v->efflux(sequel_x, oo...);
@@ -158,7 +158,7 @@ struct polymer<U, As...>
 				//	Initialize buffer with first instance, then progressively chunk/mix the rest:
 					using namespace _v3;
 					using namespace _detail;
-					auto i = spool_m.begin(), iN = spool_m.end();
+					auto i = stash_m.begin(), iN = stash_m.end();
 					tunnel_f(respan_x, i++);
 					seek_e<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {

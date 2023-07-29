@@ -11,7 +11,7 @@ namespace xtal::control
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <_std::integral U=typename realized::iota_t>
+template <_std::integral U=typename computer::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
@@ -29,13 +29,13 @@ struct restep
 
 	};
 };
-template <_std::integral U=typename realized::iota_t>
+template <_std::integral U=typename computer::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_CN2 restep_f(XTAL_DEF w)
 {
-	using _realized = realize<XTAL_TYP_(w)>;
-	return restep_t<typename _realized::iota_t>(XTAL_REF_(w));
+	using _computer = compute<XTAL_TYP_(w)>;
+	return restep_t<typename _computer::iota_t>(XTAL_REF_(w));
 }
 
 

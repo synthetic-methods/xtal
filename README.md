@@ -116,7 +116,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto sequel = sequel_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, collect<-1>>;
+	using Mixer = processor::monomer_t<Mix, processor::restore<>>;
 	auto sixer = Mixer::bond_f(one, two, three);
 
 	// initialization
@@ -244,7 +244,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/common/compose.hpp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.hpp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -286,18 +286,20 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`common/compose.hpp`](include/xtal/common/compose.hpp?ts=3)|
+|Dependency composition     |[`compound/compose.hpp`](include/xtal/compound/compose.hpp?ts=3)|
 |Dependency management      |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Matrix modulation          |[`process/matrix.hpp`](include/xtal/process/matrix.hpp?ts=3)|
+|Matrix modulation          |[`process/cross.hpp`](include/xtal/process/cross.hpp?ts=3)|
 |Processor lifting          |[`processor/anybody.hpp`](include/xtal/processor/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
 |Processor scheduling       |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond`|
 |Processor polymorphism     |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3) via `::bond`|
 |Buffer sharing             |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer manipulation        |[`common/collate.hpp`](include/xtal/common/collate.hpp?ts=3) via `::(?:series\|serial)`, incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`common/realize.hpp`](include/xtal/common/realize.hpp?ts=3) via `\.(?:truncate\|puncture)`|
+|Buffer allocation          |[`compound/fluid/sluice.hpp`](include/xtal/compound/fluid/sluice.hpp?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`compound/solid/scalar.hpp`](include/xtal/compound/solid/scalar.hpp?ts=3)|
+|Buffer transformation      |[`compound/solid/series.hpp`](include/xtal/compound/solid/series.hpp?ts=3) incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`compound/compute.hpp`](include/xtal/compound/compute.hpp?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

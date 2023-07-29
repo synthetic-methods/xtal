@@ -1,10 +1,10 @@
 #pragma once
 #include "./anybody.hpp"
+#include "./restore.hpp"
 #include "../control/resize.hpp"
 #include "../control/respan.hpp"
 #include "../control/revise.hpp"
 #include "../control/sequel.hpp"
-
 
 XTAL_ENV_(push)
 namespace xtal::processor
@@ -85,13 +85,13 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires collect_q<S_>
+		template <class ...Xs> requires restore_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
 			
 			using return_t = typename rebound::return_t;
-			using  store_u = typename S_::template fluid<return_t>::type;
+			using  store_u = typename S_::template store<return_t>::type;
 			using  serve_u = deranged_t<store_u>;
 			using respan_u = control::respan_t<serve_u>;
 		

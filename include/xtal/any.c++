@@ -22,11 +22,11 @@ namespace xtal::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace common;
+using namespace compound;
 
-using level_t = control::label_t<typename realized::alpha_t, struct T_level>;
-using onset_t = control::label_t<typename realized::alpha_t, struct T_onset>;
-using scale_t = control::label_t<typename realized::alpha_t, struct T_scale>;
+using level_t = control::label_t<typename computer::alpha_t, struct T_level>;
+using onset_t = control::label_t<typename computer::alpha_t, struct T_onset>;
+using scale_t = control::label_t<typename computer::alpha_t, struct T_scale>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using count_t  = typename realized::iota_t;
+	using count_t  = typename computer::iota_t;
 	using restep_u = control::restep_t<count_t>;
 
 	template <class T>

@@ -20,19 +20,19 @@ TAG_("control", "hold", "process")
 		size_t constexpr N_size = 1<<3;
 
 		using sequel_u = control::sequel_t<>;
-		using gate_t   = control::label_t<typename realized::alpha_t, struct T_gate>;
+		using gate_t   = control::label_t<typename computer::alpha_t, struct T_gate>;
 		using gated_t  = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 
 		gated_t gated_o;
 		
 		using cue_t = context::cue_s<>;
-		gated_o << bundle_f((cue_t) 0, (gate_t)  7);
-		gated_o << bundle_f((cue_t) 1, (gate_t)  1);
-		gated_o << bundle_f((cue_t) 3, (gate_t) -1);
-		gated_o << bundle_f((cue_t) 4, (gate_t)  1);
-		gated_o << bundle_f((cue_t) 5, (gate_t) -1);
-		gated_o << bundle_f((cue_t) 7, (gate_t)  7);
-		gated_o << bundle_f((cue_t) 7, (gate_t) 77);
+		gated_o << pack_f((cue_t) 0, (gate_t)  7);
+		gated_o << pack_f((cue_t) 1, (gate_t)  1);
+		gated_o << pack_f((cue_t) 3, (gate_t) -1);
+		gated_o << pack_f((cue_t) 4, (gate_t)  1);
+		gated_o << pack_f((cue_t) 5, (gate_t) -1);
+		gated_o << pack_f((cue_t) 7, (gate_t)  7);
+		gated_o << pack_f((cue_t) 7, (gate_t) 77);
 		
 		TRUE_(gated_o() ==  7);
 		TRUE_(gated_o() ==  1);
@@ -46,7 +46,7 @@ TAG_("control", "hold", "process")
 		TRUE_(gated_o() == 77);
 	//	...
 		gated_o >> sequel_u(N_size);
-		gated_o << bundle_f((cue_t) 4, (gate_t)  11);
+		gated_o << pack_f((cue_t) 4, (gate_t)  11);
 		TRUE_(gated_o() == 77);
 		TRUE_(gated_o() == 77);
 		TRUE_(gated_o() == 77);
@@ -65,12 +65,13 @@ TAG_("control", "hold", "process")
 template <typename ...As>
 void control_hold_processor()
 {
+	using namespace processor;
 	size_t constexpr N_size = 1<<3;
 
-	using gate_t = control::label_t<typename realized::alpha_t, struct T_gate>;
+	using gate_t = control::label_t<typename computer::alpha_t, struct T_gate>;
 
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
-	using array_t = _std::array<typename realized::alpha_t, N_size>;
+	using array_t = _std::array<typename computer::alpha_t, N_size>;
 	using cue_t = context::cue_s<>;
 
 	using resize_u = control::resize_t<>;
@@ -80,25 +81,26 @@ void control_hold_processor()
 	auto array_o = array_t();
 	
 	gated_o << resize_u(N_size);
-	gated_o << bundle_f((cue_t) 0, (gate_t)  7);
-	gated_o << bundle_f((cue_t) 1, (gate_t)  1);
-	gated_o << bundle_f((cue_t) 3, (gate_t) -1);
-	gated_o << bundle_f((cue_t) 4, (gate_t)  1);
-	gated_o << bundle_f((cue_t) 5, (gate_t) -1);
-	gated_o << bundle_f((cue_t) 7, (gate_t)  7);
-	gated_o << bundle_f((cue_t) 7, (gate_t) 77);
+	gated_o << pack_f((cue_t) 0, (gate_t)  7);
+	gated_o << pack_f((cue_t) 1, (gate_t)  1);
+	gated_o << pack_f((cue_t) 3, (gate_t) -1);
+	gated_o << pack_f((cue_t) 4, (gate_t)  1);
+	gated_o << pack_f((cue_t) 5, (gate_t) -1);
+	gated_o << pack_f((cue_t) 7, (gate_t)  7);
+	gated_o << pack_f((cue_t) 7, (gate_t) 77);
 
 	gated_o >> sequel_u(N_size)*0; _v3::ranges::copy(gated_o, array_o.begin());
 	TRUE_(array_o == array_t {  7,  1,  1, -1,  1, -1, -1, 77});
 
-	gated_o << bundle_f((cue_t) 4, (gate_t)  11);
+	gated_o << pack_f((cue_t) 4, (gate_t)  11);
 	gated_o >> sequel_u(N_size)*1; _v3::ranges::copy(gated_o, array_o.begin());
 	TRUE_(array_o == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
 TAG_("control", "hold", "processor")
 {
-	TRY_("drive material") {control_hold_processor<collect<-1>>();}
+	using namespace processor;
+	TRY_("drive material") {control_hold_processor<restore<>>();}
 //	TRY_("drive virtual")  {control_hold_processor<>();}// TODO?
 
 }
@@ -109,9 +111,10 @@ TAG_("control", "hold", "processor")
 template <class mix_t>
 void control_intermit_processor()
 {
-	using alpha_t = typename realized::alpha_t;
+	using namespace processor;
+	using alpha_t = typename computer::alpha_t;
 
-	using    mix_z = processor::monomer_t<mix_t, collect<-1>, typename onset_t::template intermit<(1<<4)>>;
+	using    mix_z = processor::monomer_t<mix_t, restore<>, typename onset_t::template intermit<(1<<4)>>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -143,6 +146,7 @@ void control_intermit_processor()
 }
 TAG_("control", "intermit", "processor")
 {
+	using namespace processor;
 	TRY_("drive dynamic") {control_intermit_processor<dynamic_onset_mix_t>();}
 //	TRY_("drive  static") {control_intermit_processor< static_onset_mix_t>();}// TODO?
 

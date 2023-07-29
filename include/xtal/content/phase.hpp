@@ -24,8 +24,8 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 template <class U>
 struct phase<U>
 {
-	using _realized = realize<U>;
-	using alpha_t = typename _realized::alpha_t;
+	using _computer = compute<U>;
+	using alpha_t = typename _computer::alpha_t;
 	using subkind = compose<tag<phase>, group<alpha_t>>;
 
 	template <class S>

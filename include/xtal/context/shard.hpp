@@ -13,7 +13,7 @@ namespace xtal::context
 ///\
 Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
-///\see [../process/matrix.hpp].
+///\see [../process/cross.hpp].
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +26,10 @@ struct shard<Ns...>
 {
 	using path = confined<tag<shard>, confer<Ns>...>;
 	
-	template <bundle_q S> using leaf_t = bundle_part_t<S, Ns{}...>;
-	template <bundle_q S> using leaf_s = conflux::conferred_t<leaf_t<S>>;
-	template <bundle_q S> using node_s = compose_s<leaf_s<S>, path>;
-	template <bundle_q S>
+	template <pack_q S> using leaf_t = pack_item_t<S, Ns{}...>;
+	template <pack_q S> using leaf_s = conflux::conferred_t<leaf_t<S>>;
+	template <pack_q S> using node_s = compose_s<leaf_s<S>, path>;
+	template <pack_q S>
 	class subtype: public node_s<S>
 	{
 		using S_ = node_s<S>;
@@ -60,12 +60,12 @@ struct shard<Ns...>
 
 				///\todo\
 				Implement `shard_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
-				Requires subsequence ordering for `bundle`s? \
+				Requires subsequence ordering for `pack`s? \
 				
 				XTAL_FNX influx(context::shard_q auto shard_o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto &w = bundle_part_f(head(), shard_o.tuple());
+					auto &w = pack_item_f(head(), shard_o.tuple());
 					auto &x = decltype(w) (shard_o);
 					_std::swap(w, x);
 					return w == x or R_::influx(XTAL_REF_(oo)...);

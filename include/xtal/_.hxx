@@ -1,5 +1,5 @@
 #ifdef __INTELLISENSE__// stub...
 #pragma once
 #include "./any.hpp"
-using namespace common;
+using namespace compound;
 #endif

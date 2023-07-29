@@ -14,8 +14,8 @@ namespace xtal::control
 struct per
 {
 private:
-	using U = unsigned_t<typename realized::iota_t>;
-	using V = typename realized::alpha_t;
+	using U = unsigned_t<typename computer::iota_t>;
+	using V = typename computer::alpha_t;
 
 public:
 	using subkind = compose<defer<U>, defer<V>>;

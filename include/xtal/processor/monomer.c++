@@ -16,11 +16,11 @@ namespace xtal::processor::__test
 template <typename ...As>
 void monomer_lifting()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = typename collate_t<N_size>::template group_t<alpha_t>;
+	using group_u = solid::strata_t<alpha_t[N_size]>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -39,7 +39,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<collect<-1>>();}
+	TRY_("pure (material)") {monomer_lifting<restore<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -50,8 +50,8 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_control__advancing()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
 	using sequel_n = control::sequel_t<>;
 	using mixer_t = processor::monomer_t<mix_t>;
@@ -75,31 +75,31 @@ void monomer_control__advancing()
 
 //	xhs >> ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
 
-	seq += 6;      TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
+	seq += 6;     TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
 	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
 	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs << onset_t((realized::alpha_t) - (99 + 66));
+//	xhs << onset_t((computer::alpha_t) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));
-	/***/
+
 }
 template <class add_t>
 void monomer_control__provisioning()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
-	using provide = collect<(1<<5)>;
+	using provide = restore<(1<<5)>;
 
-	using buffer_u = typename provide::type::template fluid<alpha_t>::type;
-	using debuff_u = deranged_t<buffer_u>;
-	using respan_u = control::respan_t<debuff_u>;
+	using store_u = typename confined_t<provide>::template store<alpha_t>::type;
+	using serve_u = deranged_t<store_u>;
+	using respan_u = control::respan_t<serve_u>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 
@@ -111,17 +111,17 @@ void monomer_control__provisioning()
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
-	auto buffer_m = buffer_u {0, 0, 0};
-	auto respan_m = respan_u(buffer_m);
+	auto slush_m = store_u {0, 0, 0};
+	auto respan_m = respan_u(slush_m);
 	auto sequel_m = sequel_n(3);
 
 	TRUE_(0 == xhs.size());
 
-	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >> pack_f(respan_m, sequel_m++); TRUE_(equal_f(slush_m, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >> pack_f(respan_m, sequel_m++); TRUE_(equal_f(slush_m, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >> pack_f(respan_m, sequel_m++); TRUE_(equal_f(slush_m, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs << onset_t((alpha_t) (11 + 1));
-	xhs >> bundle_f(respan_m, sequel_m++); TRUE_(equal_f(buffer_m, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >> pack_f(respan_m, sequel_m++); TRUE_(equal_f(slush_m, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "control")
@@ -140,8 +140,8 @@ TAG_("monomer", "control")
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
 	size_t constexpr N = 4;
 	
@@ -150,8 +150,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, collect<-1>>;
-	using mul_op = monomer_t<mul_t, collect<-1>>;
+	using mix_op = monomer_t<add_t, restore<>>;
+	using mul_op = monomer_t<mul_t, restore<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs << control::resize_f(N);
@@ -170,8 +170,8 @@ void monomer_chaining__rvalue()
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -180,8 +180,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, collect<-1>>;
-	using mul_op = monomer_t<mul_t, collect<-1>>;
+	using mix_op = monomer_t<add_t, restore<>>;
+	using mul_op = monomer_t<mul_t, restore<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
@@ -202,8 +202,8 @@ void monomer_chaining__lvalue()
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using sigma_t = typename realized::sigma_t;
-	using alpha_t = typename realized::alpha_t;
+	using sigma_t = typename computer::sigma_t;
+	using alpha_t = typename computer::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -212,11 +212,11 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<add_t, collect<-1>>;
+	using mix_op = monomer_t<add_t, restore<>>;
 	using mix_fn = monomer_t<add_t>;
-	using nat_fn = monomer_t<dynamic_count_t>;
+	using ndfn = monomer_t<dynamic_count_t>;
 
-	auto _xx = nat_fn::bond_f();
+	auto _xx = ndfn::bond_f();
 	auto xhs = mix_op::bond_f(_xx);
 	auto lhs = mix_fn::bond_f(xhs, let_f(_01));
 	auto rhs = mix_fn::bond_f(xhs, let_f(_10));

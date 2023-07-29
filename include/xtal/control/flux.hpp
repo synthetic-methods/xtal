@@ -17,8 +17,8 @@ template <typename ...As>
 struct flux
 {
 	using subkind = compose<void
-	,	_detail::refer_reflexive_order<XTAL_FLX>
-	,	_detail::  refer_binary_logic<XTAL_FLX>
+	,	_detail::refer_equality<XTAL_FLX>
+	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
 	,	defer<XTAL_FLX>
 	>;
@@ -37,8 +37,8 @@ template <constant_q A, typename ...As>
 struct flux<A, As...>
 {
 	using subkind = compose<void
-	,	_detail::refer_reflexive_order<XTAL_FLX>
-	,	_detail::  refer_binary_logic<XTAL_FLX>
+	,	_detail::refer_equality<XTAL_FLX>
+	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
 	,	defer<XTAL_FLX>
 	>;

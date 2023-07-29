@@ -119,14 +119,14 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_FN2 method(),
 		{
-			using I = iteratee_t<sequel_u>; using _realized = realize<I>;
+			using I = iteratee_t<sequel_u>; using _computer = compute<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
 			auto const &u = S_::template head<sequel_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);
 			I const m_size = count_f(m);
-			I const m_mask = m_size >> _realized::positive::depth;
+			I const m_mask = m_size >> _computer::positive::depth;
 			I i = u.front();
 			I j = u_size + i;
 			i &= ~m_mask;

@@ -53,7 +53,7 @@ struct defer<U>
 		template <int N_polarity=0>
 		XTAL_CN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ reflexive_order_q<U> and sign_p<N_polarity>
+		XTAL_REQ equality_q<U> and sign_p<N_polarity>
 		{
 			using L = _std::numeric_limits<U>;
 			if constexpr (N_polarity == +1) return T_(L::max(), XTAL_REF_(oo)...);
@@ -70,7 +70,7 @@ struct refer
 };
 template <field_q U>
 struct refer<U>: compose<void
-,	_detail::refer_orders<U>
+,	_detail::refer_quality<U>
 >
 {
 };

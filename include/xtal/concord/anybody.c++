@@ -135,7 +135,7 @@ TAG_("concord", "conversion")
 {
 	TRY_("tuple")
 	{
-		using namespace common;
+		using namespace compound;
 
 		using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
 		auto const foo = foo_t(1, 2, 3);

@@ -39,8 +39,8 @@ using resize_t = confined_t<resize<U>>;
 
 XTAL_CN2 resize_f(XTAL_DEF w)
 {
-	using _realized = realize<XTAL_TYP_(w)>;
-	return resize_t<typename _realized::sigma_t>(XTAL_REF_(w));
+	using _computer = compute<XTAL_TYP_(w)>;
+	return resize_t<typename _computer::sigma_t>(XTAL_REF_(w));
 }
 
 

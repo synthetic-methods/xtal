@@ -17,7 +17,7 @@ They provide instance and proxy initialization/finalization for the generated ty
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Expands on the `self`-reflection established by `../common/anybody.hpp#define`, \
+Expands on the `self`-reflection established by `../compound/anybody.hpp#define`, \
 providing the mechanism for traversing the trait-lineage of `T`. \
 
 template <class T>
@@ -88,7 +88,7 @@ struct define
 		//\
 		Tuple null. \
 
-		XTAL_FN2 tuple() XTAL_0FX {return bundle_f();}
+		XTAL_FN2 tuple() XTAL_0FX {return pack_f();}
 		using arity = sequent_t<0>;
 
 	};
@@ -226,7 +226,7 @@ struct defer
 		XTAL_FN2 tuple()
 		XTAL_0FX
 		{
-			return apply(bundle_f);
+			return apply(pack_f);
 		}
 
 		///\
@@ -281,7 +281,7 @@ Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
 struct refer: compose<void
-,	_detail::refer_orders<U>
+,	_detail::refer_quality<U>
 ,	_detail::refer_groups<U>
 ,	_detail::refer_iterators<U>
 >

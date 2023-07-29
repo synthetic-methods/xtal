@@ -111,7 +111,7 @@ struct define
 		template <class ...Xs>
 		struct bond
 		{
-			using signature = bundle<let_t<Xs>...>;
+			using signature = pack<let_t<Xs>...>;
 			using result_t = typename signature::template invoke_t<T>;
 			using return_t = iteratee_t<result_t>;
 			

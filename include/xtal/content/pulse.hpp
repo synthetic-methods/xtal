@@ -24,8 +24,8 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 template <class U>
 struct pulse<U>
 {
-	using _realized = realize<U>;
-	using delta_t = typename _realized::delta_t;
+	using _computer = compute<U>;
+	using delta_t = typename _computer::delta_t;
 	using subkind = compose<tag<pulse>, group<delta_t>>;
 
 	template <class S>
