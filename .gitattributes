@@ -2,7 +2,7 @@
 *.cxx text
 
 *.hpp text
-*.hxx text
+*.ixx text
 
 *.ipp text
 *.ixx text

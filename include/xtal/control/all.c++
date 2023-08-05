@@ -1,6 +1,4 @@
 #pragma once
-#include "./any.c++"
-#include "./anybody.c++"
 #include "./flux.c++"
 #include "./nominal.c++"
 #include "./ordinal.c++"

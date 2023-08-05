@@ -16,7 +16,7 @@ which are lifted to define `processor`s that operate on blocks of samples. These
 The procession of the network is governed by a static messaging protocol, and includes the capability for scheduling and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
 
 The following sections provide an overview of the usage and development of this library.
-Further insight may be gleaned from the `*.hpp` implementations or `*.c++` tests in [`include/xtal/**`](include/xtal/?ts=3).
+Further insight may be gleaned from the `*.ipp` implementations or `*.c++` tests in [`include/xtal/**`](include/xtal/?ts=3).
 
 # Usage
 
@@ -163,11 +163,11 @@ With the project in genesis, the only supported package manager is `conan --vers
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The [`**/all.hpp`](include/xtal/all.hpp?ts=3) exports all definitions at a given level. At the leaves, this includes fundamental types like `any` and specializations like `monomer`, etc.
+The [`**/all.ipp`](include/xtal/all.ipp?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ipp` and specializations like `monomer`, etc.
+
+The [`**/any.ipp`](include/xtal/concord/any.ipp?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 The [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
-
-The [`**/anybody.hpp`](include/xtal/concord/anybody.hpp?ts=3) provides the key definitions `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
 
@@ -244,7 +244,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.hpp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.ipp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -262,7 +262,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.ipp`](include/xtal/process/any.ipp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -286,20 +286,20 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`compound/compose.hpp`](include/xtal/compound/compose.hpp?ts=3)|
-|Dependency management      |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`conflux/anybody.hpp`](include/xtal/conflux/anybody.hpp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`control/anybody.hpp`](include/xtal/control/anybody.hpp?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
-|Process lifting            |[`process/anybody.hpp`](include/xtal/process/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Matrix modulation          |[`process/cross.hpp`](include/xtal/process/cross.hpp?ts=3)|
-|Processor lifting          |[`processor/anybody.hpp`](include/xtal/processor/anybody.hpp?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond`|
-|Processor polymorphism     |[`processor/polymer.hpp`](include/xtal/processor/polymer.hpp?ts=3) via `::bond`|
-|Buffer sharing             |[`processor/monomer.hpp`](include/xtal/processor/monomer.hpp?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer allocation          |[`compound/fluid/sluice.hpp`](include/xtal/compound/fluid/sluice.hpp?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`compound/solid/scalar.hpp`](include/xtal/compound/solid/scalar.hpp?ts=3)|
-|Buffer transformation      |[`compound/solid/series.hpp`](include/xtal/compound/solid/series.hpp?ts=3) incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`compound/compute.hpp`](include/xtal/compound/compute.hpp?ts=3) via `\.(?:truncate\|puncture)`|
+|Dependency composition     |[`compound/compose.ipp`](include/xtal/compound/compose.ipp?ts=3)|
+|Dependency management      |[`conflux/any.ipp`](include/xtal/conflux/any.ipp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`conflux/any.ipp`](include/xtal/conflux/any.ipp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter handling         |[`control/any.ipp`](include/xtal/control/any.ipp?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
+|Process lifting            |[`process/any.ipp`](include/xtal/process/any.ipp?ts=3) via `\.(?:de\|re)fer`|
+|Matrix modulation          |[`process/cross.ipp`](include/xtal/process/cross.ipp?ts=3)|
+|Processor lifting          |[`processor/any.ipp`](include/xtal/processor/any.ipp?ts=3) via `\.(?:de\|re)fer`|
+|Processor scheduling       |[`processor/monomer.ipp`](include/xtal/processor/monomer.ipp?ts=3) via `::bond`|
+|Processor polymorphism     |[`processor/polymer.ipp`](include/xtal/processor/polymer.ipp?ts=3) via `::bond`|
+|Buffer sharing             |[`processor/monomer.ipp`](include/xtal/processor/monomer.ipp?ts=3) via `::bond` compatible `&&`arguments|
+|Buffer allocation          |[`compound/fluid/sluice.ipp`](include/xtal/compound/fluid/sluice.ipp?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`compound/solid/scalar.ipp`](include/xtal/compound/solid/scalar.ipp?ts=3)|
+|Buffer transformation      |[`compound/solid/series.ipp`](include/xtal/compound/solid/series.ipp?ts=3) incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`compound/compute.ipp`](include/xtal/compound/compute.ipp?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

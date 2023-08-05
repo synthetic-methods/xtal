@@ -1,5 +1,5 @@
 #pragma once
-#include "../compound/all.hpp"// `_retail`
+#include "../compound/all.ipp"// `_retail`
 
 
 

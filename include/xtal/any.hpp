@@ -13,21 +13,8 @@
 #include <queue>
 #include <new>
 #include <bit>
-#if not __cpp_lib_bit_cast
-namespace ::std
-{////////////////////////////////////////////////////////////////////////////////
-template <class  T, class S>
-requires (sizeof(T) == sizeof(S) and is_trivially_copyable_v<T> and is_trivially_copyable_v<S>)
-static constexpr T bit_cast(S const& s)
-noexcept
-{
-	return __builtin_bit_cast(T, s);
-}
-}//////////////////////////////////////////////////////////////////////////////
-#endif
-
-
 #include <range/v3/all.hpp>
+
 #include "./etc.hpp"
 
 XTAL_ENV_(push)
@@ -111,6 +98,7 @@ template <class    T >       using debased_t  = typename debased<T>::type;
 template <class    T >     concept debased_p  =  (bool)  debased<T> {};
 template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
 
+
 template <class    T >       using valued_t   = typename based_t<T>::value_type;
 template <class    T >     concept valued_p   = requires {typename valued_t<T>;};
 template <class ...Ts>     concept valued_q   = (...and valued_p<Ts>);
@@ -150,50 +138,14 @@ template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
 
-template <class X, class Y>
-XTAL_CN2 equal_f(X const &x, Y const &y)
-XTAL_0EX
-{
-	using W = common_t<X, Y>;
-	return (W) x == (W) y;
-}
-template <class X, class Y>
-XTAL_CN2 equivalent_f(X &&x, Y &&y)
-XTAL_0EX
-{
-	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto   ...  >  XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
-///< Parameter-agnostic identity `method`. \
-
 template <class    M >      using member_t = debased_t<M>;
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}// obtain address
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<M>(XTAL_REF_(w));}
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
 ///< Converts `unbased` references to pointers. \
 
 template <class ...Ws>  concept remember_q = (...and not debased_p<Ws>);
-template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
-template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
 ///< Governs access to the underlying member. \
-
-template <remember_q V>
-XTAL_CN2 dismember_f(V &v, V w)
-XTAL_0EX
-{
-	_std::swap(w, v); return XTAL_MOV_(v);
-}
-template <remember_q V>
-XTAL_CN2 dismember_f(V &v, XTAL_DEF... w)
-XTAL_0EX
-{
-	return dismember_f<V>(v, member_f<V>(XTAL_REF_(w)...));
-}
-///< Replaces the body of the underlying member. \
 
 
 ///\
@@ -205,10 +157,8 @@ struct aligned
 	class type {alignas(alignof(T)) byte_t data[sizeof(T)];};
 	XTAL_LET value = sizeof(type);
 };
-template <class    T >    using aligned_t = typename aligned<T>::type;
-template <class    T > XTAL_LET aligned_v =          aligned<T>::value;
-template <class    I >
-XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
+template <class    T >      using aligned_t = typename aligned<T>::type;
+template <class    T >   XTAL_LET aligned_v =          aligned<T>::value;
 
 template <class    T >      using pointed_t =          XTAL_TYP_(*XTAL_VAL_(T));
 template <class    T >      using pointer_t =          XTAL_TYP_(&XTAL_VAL_(T));
@@ -218,19 +168,6 @@ template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);
 template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
 template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 
-template <class Y> XTAL_CN2 force_f(XTAL_DEF_(forcible_q) t) XTAL_0EX {return reinterpret_cast<Y>(XTAL_REF_(t));}
-template <class Y> XTAL_CN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
-template <class Y>
-XTAL_CN2 forge_f(XTAL_DEF t)
-XTAL_0EX
-{
-	XTAL_IF1 (fungible_q<Y, decltype(t)>) {
-		return funge_f<Y>(XTAL_REF_(t));
-	}
-	XTAL_IF2 (forcible_q<Y, decltype(t)>) {
-		return force_f<Y>(XTAL_REF_(t));
-	}
-}
 
 template <valued_q T >   XTAL_LET arity_v = sizeof(T)/aligned_v<devalued_t<T>>;
 template <valued_q T >      using arity_t = constant_t<arity_v<T>>;
@@ -406,9 +343,9 @@ template <class ...Ts> concept                field_q = (...and                f
 template <class ...Ts> concept        boolean_logic_q = (...and        boolean_logic_p<based_t<Ts>>);
 template <class ...Ts> concept         binary_logic_q = (...and         binary_logic_p<based_t<Ts>>);
 
-template <class ...Ts> concept              quality_q = (...and              quality_p<based_t<Ts>>);
-template <class ...Ts> concept             equality_q = (...and             equality_p<based_t<Ts>>);
 template <class ...Ts> concept           inequality_q = (...and           inequality_p<based_t<Ts>>);
+template <class ...Ts> concept             equality_q = (...and             equality_p<based_t<Ts>>);
+template <class ...Ts> concept              quality_q = (...and              quality_p<based_t<Ts>>);
 
 
 static_assert(                  real_field_q<float>);
@@ -478,10 +415,6 @@ template <integral_p T>     struct iteratee<T>: boolean_t<1> {using type =      
 template <class    T >       using sentinel_t = based_t<_v3::ranges::sentinel_t<T>>;
 template <class    T >       using distance_t = XTAL_TYP_(_std::distance(XTAL_VAL_(iterator_t<T>), XTAL_VAL_(iterator_t<T>)));
 template <class    T >       using deranged_t = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
-template <class    T >    XTAL_CN2 deranged_f(T &&t) XTAL_0EX {return deranged_t<T>(XTAL_REF_(t));}
-
-template <iterator_q I>   XTAL_CN2 reverser_f(I   i) XTAL_0EX {return _std::make_reverse_iterator(i);}
-template <iterator_q I>   XTAL_CN2    mover_f(I   i) XTAL_0EX {return _std::   make_move_iterator(i);}
 
 
 template <class    T >     concept counted_p  = iterated_q<T> and to_q<T, interval_t<iteratee_t<T>>>;
@@ -502,42 +435,6 @@ template <counter_p T>      struct counter<T> : boolean_t<1> {using type =    ba
 template <class T=size_s>    using counted_t  = typename counted<T>::type;
 template <class T=size_s>    using counter_t  = typename counter<T>::type;
 
-template <counter_p I>     XTAL_CN2 counted_f(I i0, I iN) {return counted_t<I>(i0, iN);}
-template <class    T>      XTAL_CN2 counted_f(T &&t)      {return counted_t<T>(XTAL_REF_(t));}
-template <class    T>      XTAL_CN2 counter_f(T &&t)      {return counter_t<T>(XTAL_REF_(t));}
-template <class    T>
-XTAL_CN2 count_f(T &&t)
-XTAL_0EX
-{
-	if constexpr (counter_q<T>) {
-		return XTAL_REF_(t);
-	}
-	else if constexpr (counted_q<T>) {
-		return 1 + t.back() - XTAL_REF_(t).front();
-	}
-	else if constexpr (bracket_q<T>) {
-		return      t.end() - XTAL_REF_(t).begin();
-	}
-	else if constexpr (requires {t.size();}) {
-		return XTAL_REF_(t).size();
-	}
-	else {
-		return (sign_t) 0;
-	}
-}
-///<\returns the `size` of the given range. \
-
-///<\note\
-If provided with an `iota_view`, \
-returns a `value_type` instead of `size_type` which is twice the width. \
-
-template <class  T>
-XTAL_CN2 recount_f(T &&t)
-XTAL_0EX
-{
-	return _v3::views::take(count_f(XTAL_REF_(t)));
-}
-
 
 template <class      ...Ts> concept  beginning_q     = begin_q<Ts...> and is_q<begin_t<Ts>...>;
 template <class      ...Ts> concept bracketing_q     = beginning_q<Ts...> and end_q<Ts...>;
@@ -552,26 +449,22 @@ template <iterated_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>
 template <iterator_q ...Ts>  struct epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
 template <class      ...Ts> concept epimorphic_p =     epimorphic<Ts...>::value;
 
-template <iterated_q X, iterated_q Y> requires isomorphic_p<X, Y>
-XTAL_CN2 equivalent_f(X const &x, Y const &y)
-XTAL_0EX
-{
-	return x.begin() == y.begin() and x.end() == y.end();
-}
-template <iterated_q X, iterated_q Y> requires epimorphic_p<X, Y>
-XTAL_CN2 equal_f(X &&x, Y &&y)
-XTAL_0EX
-{
-	return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-#include "./any.hxx"
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+namespace std
+{////////////////////////////////////////////////////////////////////////////////
+
+#if not __cpp_lib_bit_cast
+template <class  T, class S>
+static constexpr T bit_cast(S const& s)
+noexcept
+{
+	static_assert(based_q<T, S> and sizeof(T) == sizeof(S));
+	return __builtin_bit_cast(T, s);
+}
+#endif
+
+
+}//////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

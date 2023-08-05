@@ -1,4 +1,11 @@
-#include "../concord/_kernel.hxx"
+#include "../concord/_kernel.ixx"
+
+
+
+
+
+
+
 
 namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////

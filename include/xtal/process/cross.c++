@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.c++"
-#include "./cross.hpp"// testing...
+#include "./cross.ipp"// testing...
 
-#include "../context/shard.hpp"
-#include "../processor/monomer.hpp"
+#include "../context/shard.ipp"
+#include "../processor/monomer.ipp"
 
 
 XTAL_ENV_(push)

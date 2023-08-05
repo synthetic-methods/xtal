@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.c++"
-#include "./polymer.hpp"// testing...
+#include "./polymer.ipp"// testing...
 
-#include "./monomer.hpp"
+#include "./monomer.ipp"
 
 
 

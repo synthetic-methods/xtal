@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./ordinal.hpp"// testing...
+#include "./ordinal.ipp"// testing...
 
 
 

@@ -1,0 +1,12 @@
+#pragma once
+#include "./flux.ipp"
+#include "./nominal.ipp"
+#include "./ordinal.ipp"
+#include "./per.ipp"
+#include "./rescan.ipp"
+#include "./resize.ipp"
+#include "./respan.ipp"
+#include "./restep.ipp"
+#include "./revise.ipp"
+#include "./sequel.ipp"
+#include "./stasis.ipp"

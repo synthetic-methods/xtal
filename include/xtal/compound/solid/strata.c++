@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.c++"
-#include "./strata.hpp"// testing...
+#include "./strata.ipp"// testing...
 
 
 
