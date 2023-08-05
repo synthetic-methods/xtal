@@ -892,7 +892,7 @@ public:
 	XTAL_CN1_(alpha_t) truncate_f(alpha_t &target, delta_t const &n_zone)
 	XTAL_0EX
 	{
-		bool constexpr N_unit = not N_infinity;
+	//	bool constexpr N_unit = not N_infinity;
 		if constexpr (IEC&559) {
 			delta_t constexpr M_zone = unit::mask + (1);
 			delta_t constexpr M_zoom = unit::mask - (delta_t(1) << N_zoom);

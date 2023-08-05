@@ -4,9 +4,10 @@ from conan.tools.files import copy
 from conan.tools.cmake import cmake_layout
 from conan.tools.build import check_min_cppstd
 
-class XTAL(ConanFile):
+class XTAL__Conan(ConanFile):
 	required_conan_version = ">=2.0.0"
 
+	# Info:
 	name    = "xtal"
 	version = "0.0.0"
 	license = "MIT License"
@@ -14,28 +15,39 @@ class XTAL(ConanFile):
 	url     = "https://github.com/synthetic-methods/xtal"
 	author  = "GoomTrex goomtrex@gmail.com"
 	
-	topics  = ("C++20", "ranges-v3"
-	,	"Streams", "Combinators", "Functional", "Metaprogramming"
-	,	"DSP", "Signal Processing", "Branchless", "Mathematics"
-	,	"Embedded", "PlugIn", "JUCE", "VST", "AudioUnit"
+	topics  = ("C++20"
+	, "Template Metaprogramming", "TMP", "CRTP", "std::ranges", "range-v3"
+	, "Real-Time", "Scheduling", "Stream Processing", "Signal Processing", "DSP", "FFT"
+	, "Embedded", "Audio", "AudioUnit", "AudioKit", "JUCE", "VST", "AU"
+	, "Modular", "Functors", "Combinators"
+	, "VTable", "Branchless", "Control"
 	)
 	description = """
 	XTAL is a range-based header-only combinator library for musical Digital Signal Processing (DSP).
-	It provides an extensible and performant platform for rapid prototyping and development,
-	aimed at building real-time instruments and effects for both hardware and software.
+	It provides an extensible and performant platform for rapid prototyping and
+	development of real-time instruments and effects.
 	"""
 
+	# Build:
 	settings = "os", "arch", "compiler", "build_type"
-	generators = "CMakeToolchain", "CMakeDeps"
-	exports_sources = "include/*"
-	no_copy_source = True
-
+	generators = "CMakeDeps", "CMakeToolchain"
+	
 	def layout(self):
 		cmake_layout(self)
 
+	def validate(self):
+		check_min_cppstd(self, 20)
+
+	def requirements(self):
+		self.requires("range-v3/0.12.0", transitive_headers=True)
+
+	# Package:
+	no_copy_source = True
+	exports_sources = "include*.h??", "include*.i??", "CMakeLists.txt", "LICENSE.*"
+
 	def package(self):
-		copy(self, "*.h*", self.source_folder, self.package_folder)
-		copy(self, "*.i*", self.source_folder, self.package_folder)
+		for glob in self.exports_sources:
+			copy(self, glob, self.source_folder, self.package_folder)
 
 	def package_id(self):
 		self.info.clear()
@@ -43,9 +55,3 @@ class XTAL(ConanFile):
 	def package_info(self):
 		self.cpp_info.bindirs = []
 		self.cpp_info.libdirs = []
-
-	def validate(self):
-		check_min_cppstd(self, 20)
-
-	def requirements(self):
-		self.requires("range-v3/0.12.0")

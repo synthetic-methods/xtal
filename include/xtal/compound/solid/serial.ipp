@@ -80,7 +80,7 @@ struct serial<U[N]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			auto constexpr N0 = N - 0;
+		//	auto constexpr N0 = N - 0;
 			auto constexpr N1 = N - 1;
 			seek_e<N1>([&, this] (auto i) XTAL_0FN_(d(0 + i) += d(1 + i)));
 			return self();

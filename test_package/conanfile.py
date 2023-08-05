@@ -3,7 +3,9 @@ from os import path
 from conan             import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 
-class XTAL_TestPackage(ConanFile):
+class XTAL_TestPackage__Conan(ConanFile):
+	required_conan_version = ">=2.0.0"
+
 	settings = "os", "compiler", "build_type", "arch"
 	generators = "CMakeToolchain", "CMakeDeps"
 
@@ -21,7 +23,7 @@ class XTAL_TestPackage(ConanFile):
 
 	def test(self):
 		cmd = ['test']
-		cmd.append('--allow-running-no-tests')
 		cmd.append('--skip-benchmarks')
+		cmd.append('--allow-running-no-tests')
 		bin = path.join(self.cpp.build.bindir, ' '.join(cmd))
 		self.run(bin, env="conanrun")

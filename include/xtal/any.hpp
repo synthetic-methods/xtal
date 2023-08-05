@@ -13,11 +13,12 @@
 #include <queue>
 #include <new>
 #include <bit>
-#include <range/v3/all.hpp>
 
 #include "./etc.hpp"
 
 XTAL_ENV_(push)
+
+#include <range/v3/all.hpp>
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,7 @@ template <class ...Ts>       concept common_q = requires {typename common_t<Ts..
 template <class ...Ts>       concept id_q     = identical<Ts...>::value;
 template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
-template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(based_t<T>);
+template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(T);
 
 
 ////////////////////////////////////////////////////////////////////////////////

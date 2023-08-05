@@ -104,7 +104,9 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_ENV_pop  _Pragma("clang diagnostic pop")
 #define XTAL_ENV_push _Pragma("clang diagnostic push")\
                       _Pragma("clang diagnostic ignored \"-Wcomment\"")\
+                      _Pragma("clang diagnostic ignored \"-Wdocumentation\"")\
                       _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
+                      _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
 
 #elif   XTAL_V00_GNUC
 #define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
