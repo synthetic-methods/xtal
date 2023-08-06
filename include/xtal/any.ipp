@@ -46,12 +46,14 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
+XTAL_LET assign_f = [] (XTAL_DEF w, XTAL_DEF x) XTAL_0FN_(XTAL_REF_(w) = XTAL_REF_(x));
+
 template <auto   ... >  XTAL_CN2 method_f(XTAL_DEF o) {return XTAL_REF_(o);}
 ///< Parameter-agnostic identity `method`. \
 
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}// obtain address
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<M>(XTAL_REF_(w));}
-template <class    M >   XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
+template <class    M >  XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}// obtain address
+template <class    M >  XTAL_CN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<M>(XTAL_REF_(w));}
+template <class    M >  XTAL_CN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
 
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
 template <class    W > XTAL_CN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
@@ -72,7 +74,7 @@ XTAL_0EX
 ///< Replaces the body of the underlying member. \
 
 
-template <class    I >
+template <class I>
 XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
 
 

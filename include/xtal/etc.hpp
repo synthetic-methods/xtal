@@ -166,8 +166,6 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_0FX_(REF)               const REF noexcept
 #define XTAL_0FN                     constexpr noexcept
 #define XTAL_0FN_(...)               constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FM_(...)                         noexcept {return (__VA_ARGS__);}
-#define XTAL_1FM_(...)                         noexcept {return (__VA_ARGS__);}
 
 #define XTAL_XO2_(SIG, ...)      SIG const     noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);}\
                                  SIG           noexcept requires requires {(__VA_ARGS__);} {return (__VA_ARGS__);};

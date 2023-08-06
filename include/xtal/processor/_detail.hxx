@@ -82,7 +82,7 @@ XTAL_0EX
 	return purify_f(_v3::views::repeat(XTAL_REF_(z)));
 }
 
-XTAL_CN2 zap_f(XTAL_DEF f)
+XTAL_CN2 map_f(XTAL_DEF f)
 XTAL_0EX
 {
 	using namespace _v3::views;
@@ -101,7 +101,10 @@ XTAL_0EX
 	};
 };
 
-XTAL_LET mix_f = zap_f([] (XTAL_DEF ...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+XTAL_LET assault_f = map_f(assign_f);
+XTAL_LET zip_f = [] XTAL_1FN_(_v3::views::zip);
+XTAL_LET zap_f = map_f([] XTAL_1FN_(_std::tie));
+XTAL_LET mix_f = map_f([] (XTAL_DEF ...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 
 template <iterator_q ...Xs>
 XTAL_CN2 funnel_f(XTAL_DEF y, Xs &&...xs)

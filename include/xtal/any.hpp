@@ -175,15 +175,17 @@ template <valued_q T >      using arity_t = constant_t<arity_v<T>>;
 template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_v<T>>;
 template <class    T >    concept array_r = _std::is_array_v<T> or of_p<array_t<T>, T>;
 
-template <class T, int N=-1> concept    arity_q = (N <  0) or  (arity_v<T> == N);
-template <class T, int N=-1> concept subarity_q = (0 <= N) and (arity_v<T> <= N);
-template <class T, int N=-1> concept    array_q = array_r<T> and    arity_q<T, N>;
-template <class T, int N=-1> concept subarray_q = array_r<T> and subarity_q<T, N>;
+template <class    T , int N=-1> concept    arity_q = N <  0      or arity_v<T> == N;
+template <class    T , int N=-1> concept subarity_q = 0 <= N     and arity_v<T> <= N;
+template <class    T , int N=-1> concept    array_q = array_r<T> and    arity_q<T, N>;
+template <class    T , int N=-1> concept subarray_q = array_r<T> and subarity_q<T, N>;
 
 template <int N=-1, class ...Ts> concept    arity_p = (...and    arity_q<Ts, N>);
 template <int N=-1, class ...Ts> concept subarity_p = (...and subarity_q<Ts, N>);
 template <int N=-1, class ...Ts> concept    array_p = (...and    array_q<Ts, N>);
 template <int N=-1, class ...Ts> concept subarray_p = (...and subarray_q<Ts, N>);
+
+template <          class ...Ts> concept disarray_q = (...and not array_r<Ts>);
 
 
 

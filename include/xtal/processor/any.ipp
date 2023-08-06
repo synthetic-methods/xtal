@@ -54,7 +54,7 @@ struct defer<U>
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_FN2 reified_(auto const ...ks),
-			_detail::zap_f(head().template reify<iteratee_t<Xs>...>(ks...))
+			_detail::map_f(head().template reify<iteratee_t<Xs>...>(ks...))
 		)
 
 	public:
