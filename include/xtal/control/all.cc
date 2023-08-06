@@ -1,0 +1,12 @@
+#pragma once
+#include "./flux.cc"
+#include "./nominal.cc"
+#include "./ordinal.cc"
+#include "./per.cc"
+#include "./rescan.cc"
+#include "./resize.cc"
+#include "./respan.cc"
+#include "./restep.cc"
+#include "./revise.cc"
+#include "./sequel.cc"
+#include "./stasis.cc"

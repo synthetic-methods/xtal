@@ -40,10 +40,11 @@ class XTAL__Conan(ConanFile):
 
 	def requirements(self):
 		self.requires("range-v3/0.12.0", transitive_headers=True)
+		self.requires("mdspan/0.6.0", transitive_headers=True)
 
 	# Package:
 	no_copy_source = True
-	exports_sources = "include*.h??", "include*.i??", "CMakeLists.txt", "LICENSE.*"
+	exports_sources = "include*.h*", "include*.i*", "CMakeLists.txt", "LICENSE.*"
 
 	def package(self):
 		for glob in self.exports_sources:

@@ -16,7 +16,7 @@ which are lifted to define `processor`s that operate on blocks of samples. These
 The procession of the network is governed by a static messaging protocol, and includes the capability for scheduling and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
 
 The following sections provide an overview of the usage and development of this library.
-Further insight may be gleaned from the `*.ipp` implementations or `*.c++` tests in [`include/xtal/**`](include/xtal/?ts=3).
+Further insight may be gleaned from the `*.ii` implementations or `*.cc` tests in [`include/xtal/**`](include/xtal/?ts=3).
 
 # Usage
 
@@ -24,8 +24,8 @@ Further insight may be gleaned from the `*.ipp` implementations or `*.c++` tests
 
 The following code examples use the following macros for brevity/clarity:
 
-	#define XTAL_FN2 [[nodiscard]] constexpr decltype(auto)
-	#define XTAL_FN1               constexpr decltype(auto)
+	#define XTAL_TN2 [[nodiscard]] constexpr decltype(auto)
+	#define XTAL_TN1               constexpr decltype(auto)
 
 	#define XTAL_DEF       auto &&
 	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
@@ -38,7 +38,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	struct Mix: process::confine_t<Mix>
 	{
 	   template <auto...>
-	   XTAL_FN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0);
 	   }
@@ -64,16 +64,16 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 ## Messaging
 
 Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
-The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
+The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template valve<...>()`.
 
 	using Active = control::ordinal_t<struct active>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
-	   XTAL_FN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
-	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
+	   // return (XTAL_REF_(xs) + ... + 0)*this->template valve<Active>();
 	   }
 	};
 
@@ -87,7 +87,7 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	>
 	{
 	   template <auto offset, auto active>
-	   XTAL_FN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }
@@ -163,13 +163,13 @@ With the project in genesis, the only supported package manager is `conan --vers
 
 The directories in the project are organised by namespace with the leaves representing distinct type-families.
 
-The [`**/all.ipp`](include/xtal/all.ipp?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ipp` and specializations like `monomer`, etc.
+The [`**/all.ii`](include/xtal/all.ii?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ii` and specializations like `monomer`, etc.
 
-The [`**/any.ipp`](include/xtal/concord/any.ipp?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.ii`](include/xtal/concord/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
-The [`**/any.hpp`](include/xtal/concord/any.hpp?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
+The [`**/any.hh`](include/xtal/concord/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
-As a header-only library, the accompanying `*.c++` are there only for testing and are ommitted from the published package.
+As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
 To navigate the essentials, it is useful to toggle the visibility of the `all.*`, `any.*`, and `*.c*` files. For example, the VSCode plug-ins [Toggle](https://marketplace.visualstudio.com/items?itemName=rebornix.toggle) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file) can be used to control access via the following `keybindings.json`:
 
@@ -202,24 +202,24 @@ To navigate the essentials, it is useful to toggle the visibility of the `all.*`
 
 ## Macros
 
-The macros defined in [`etc.hpp`](include/xtal/etc.hpp?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
+The macros defined in [`etc.hh`](include/xtal/etc.hh?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
 The most commonly encountered are those used for function definition, for example:
 
 	#define XTAL_OP1                      constexpr decltype(auto) operator
 	#define XTAL_OP2 [[nodiscard]]        constexpr decltype(auto) operator
-	#define XTAL_FN1                      constexpr decltype(auto)
-	#define XTAL_FN2 [[nodiscard]]        constexpr decltype(auto)
-	#define XTAL_CN1               static constexpr decltype(auto)
-	#define XTAL_CN2 [[nodiscard]] static constexpr decltype(auto)
+	#define XTAL_TN1                      constexpr decltype(auto)
+	#define XTAL_TN2 [[nodiscard]]        constexpr decltype(auto)
+	#define XTAL_FN1               static constexpr decltype(auto)
+	#define XTAL_FN2 [[nodiscard]] static constexpr decltype(auto)
 	
-	#define XTAL_0EX                 noexcept
-	#define XTAL_0EX_(REF)       REF noexcept
-	#define XTAL_0FX       const     noexcept
-	#define XTAL_0FX_(REF) const REF noexcept
+	#define XTAL_0EX                      noexcept
+	#define XTAL_0EX_(REF)            REF noexcept
+	#define XTAL_0FX            const     noexcept
+	#define XTAL_0FX_(REF)      const REF noexcept
 
 This naming scheme is intended to be automnemonic...
 
-The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their `static` counterparts `CN1` and `CN2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
+The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their counterparts on  `this`, `FM1` and `FM2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
 
 ## Templates
 
@@ -235,8 +235,8 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   template <class S>
 	   class subtype
 	   {
-	      XTAL_FN2 self() XTAL_0FX {return static_cast<T const &>(*this);}
-	      XTAL_FN2 self() XTAL_0EX {return static_cast<T       &>(*this);}
+	      XTAL_TN2 self() XTAL_0FX {return static_cast<T const &>(*this);}
+	      XTAL_TN2 self() XTAL_0EX {return static_cast<T       &>(*this);}
 
 	   // [[nodiscard]] constexpr decltype(auto) self() const noexcept {return static_cast<T const &>(*this);}
 	   // [[nodiscard]] constexpr decltype(auto) self()       noexcept {return static_cast<T       &>(*this);}
@@ -244,7 +244,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.ipp?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -262,7 +262,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.ipp`](include/xtal/process/any.ipp?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -286,20 +286,20 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`compound/compose.ipp`](include/xtal/compound/compose.ipp?ts=3)|
-|Dependency management      |[`conflux/any.ipp`](include/xtal/conflux/any.ipp?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`conflux/any.ipp`](include/xtal/conflux/any.ipp?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`control/any.ipp`](include/xtal/control/any.ipp?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
-|Process lifting            |[`process/any.ipp`](include/xtal/process/any.ipp?ts=3) via `\.(?:de\|re)fer`|
-|Matrix modulation          |[`process/cross.ipp`](include/xtal/process/cross.ipp?ts=3)|
-|Processor lifting          |[`processor/any.ipp`](include/xtal/processor/any.ipp?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.ipp`](include/xtal/processor/monomer.ipp?ts=3) via `::bond`|
-|Processor polymorphism     |[`processor/polymer.ipp`](include/xtal/processor/polymer.ipp?ts=3) via `::bond`|
-|Buffer sharing             |[`processor/monomer.ipp`](include/xtal/processor/monomer.ipp?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer allocation          |[`compound/fluid/sluice.ipp`](include/xtal/compound/fluid/sluice.ipp?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`compound/solid/scalar.ipp`](include/xtal/compound/solid/scalar.ipp?ts=3)|
-|Buffer transformation      |[`compound/solid/series.ipp`](include/xtal/compound/solid/series.ipp?ts=3) incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`compound/compute.ipp`](include/xtal/compound/compute.ipp?ts=3) via `\.(?:truncate\|puncture)`|
+|Dependency composition     |[`compound/compose.ii`](include/xtal/compound/compose.ii?ts=3)|
+|Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Parameter handling         |[`control/any.ii`](include/xtal/control/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
+|Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
+|Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
+|Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|
+|Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond`|
+|Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::bond`|
+|Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond` compatible `&&`arguments|
+|Buffer allocation          |[`compound/fluid/sluice.ii`](include/xtal/compound/fluid/sluice.ii?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`compound/solid/scalar.ii`](include/xtal/compound/solid/scalar.ii?ts=3)|
+|Buffer transformation      |[`compound/solid/series.ii`](include/xtal/compound/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`compound/compute.ii`](include/xtal/compound/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

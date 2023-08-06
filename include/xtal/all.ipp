@@ -1,9 +1,0 @@
-#pragma once
-#include "./compound/all.ipp"
-#include "./concord/all.ipp"
-#include "./conflux/all.ipp"
-#include "./content/all.ipp"
-#include "./context/all.ipp"
-#include "./control/all.ipp"
-#include "./process/all.ipp"
-#include "./processor/all.ipp"

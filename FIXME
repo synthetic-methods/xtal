@@ -3,11 +3,11 @@
 token="FIXME"
 manual="./FIXME.md"
 folder="./include"
-origin="./include/xtal.c++"
-target="./include/FIXME.cxx"
+origin="./include/xtal.cc"
+target="./include/FIXME.c++"
 offset=3
-source="*.c++"
-sourced="all.c++"
+source="*.cc"
+sourced="all.cc"
 
 function help {
 	cat "${manual}"
