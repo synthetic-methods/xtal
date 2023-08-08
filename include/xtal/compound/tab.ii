@@ -37,8 +37,11 @@ struct tab
 template <class T>
 using tab_t = typename tab<T>::type;
 
-template <class T, class ...Ts>
-concept tab_p = of_p<tab_t<T>, Ts...>;
+template <class T, class ...Ys>
+concept tab_p = of_p<tab_t<T>, Ys...>;
+
+template <class T, class Y>
+concept tab_q = tab_p<Y, T>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -107,16 +107,16 @@ template <class    T >    XTAL_LET valued_v   = based_t<T>::value;
 template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_v<V>;}
 
 template <class    T >     struct devalued     {using value_type = _std::remove_all_extents_t<based_t<T>>;};
-template <valued_p  T >    struct devalued<T> : based_t<T> {};
+template <valued_p T >    struct devalued<T> : based_t<T> {};
 template <class    T >      using devalued_t  = valued_t<devalued<T>>;
 
 
 template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
-template <typename X>       struct argument    {using type = X &&;};
-template <based_q  X>       struct argument<X> {using type = X const &;};
-template <typename X>        using argument_t = typename argument<X>::type;
+template <class    X >       struct argument    {using type = X &&;};
+template <based_q  X >       struct argument<X> {using type = X const &;};
+template <class    X >        using argument_t = typename argument<X>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

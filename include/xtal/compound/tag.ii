@@ -13,9 +13,10 @@ namespace xtal::compound
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename ...> class F             > XTAL_NYM tag   : tab   <tag<F>       > {};
-template <template <typename ...> class F             > XTAL_USE tag_t = tab_t <tag<F>       >;
-template <template <typename ...> class F, class ...Ts> XTAL_ASK tag_p = tab_p <tag<F>, Ts...>;
+template <         template <class ...> class L             > XTAL_NYM tag   : tab   <tag<L>       > {};
+template <         template <class ...> class L             > XTAL_USE tag_t = tab_t <tag<L>       >;
+template <         template <class ...> class L, class ...Ts> XTAL_ASK tag_p = tab_p <tag<L>, Ts...>;
+template <class T, template <class ...> class L             > XTAL_ASK tag_q = tag_p <L, T>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
