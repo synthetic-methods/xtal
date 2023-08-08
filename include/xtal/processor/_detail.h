@@ -151,6 +151,26 @@ XTAL_0EX
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+XTAL_FN2 squint_f(XTAL_DEF it, size_t is)
+XTAL_0EX
+{
+	using It = XTAL_TYP_(it);
+	using At = iteratee_t<It>;
+	return _v3::ranges::span<At>(XTAL_REF_(it), is);
+}
+template <size_t N_width>
+XTAL_FN2 squint_f(XTAL_DEF it, size_t is)
+XTAL_0EX
+{
+	return [&] <auto ...I>(seek_t<I...>)
+		XTAL_0FN_(_v3::views::zip(squint_f(it[I], is)...))
+	(seek_f<N_width>{});
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T> concept unprocessed_p = field_q<T> and not _retail::any_q<T>;
 
 

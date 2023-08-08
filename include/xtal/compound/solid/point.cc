@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./strata.ii"// testing...
+#include "./point.ii"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::compound::solid::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("strata")
+TAG_("point")
 {
 	TRY_("task")
 	{

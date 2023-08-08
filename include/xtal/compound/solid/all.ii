@@ -3,4 +3,4 @@
 #include "./sector.ii"
 #include "./serial.ii"
 #include "./series.ii"
-#include "./strata.ii"
+#include "./point.ii"

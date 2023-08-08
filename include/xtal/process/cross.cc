@@ -19,7 +19,7 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using model_u = solid::strata_t<int[2][3]>;
+		using model_u = solid::point_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
 		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
 
@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = solid::strata_t<int[2][3]>;
+		using model_u = solid::point_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
 		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
 
@@ -62,7 +62,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = solid::strata_t<int[2][3]>;
+		using model_u = solid::point_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
 		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
 
@@ -81,7 +81,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = solid::strata_t<int[2][3]>;
+		using model_u = solid::point_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
 		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
 
@@ -102,7 +102,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = solid::strata_t<int[2][3]>;
+		using model_u = solid::point_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
 		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
 

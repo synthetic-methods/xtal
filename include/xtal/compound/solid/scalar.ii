@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "./strata.ii"
+#include "./point.ii"
 
 
 
@@ -18,7 +18,7 @@ template <class ...Ts> XTAL_ASK scalar_q = tag_p<scalar, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `strata::type` with elementwise multiplication/division. \
+Extends `point::type` with elementwise multiplication/division. \
 
 template <class U, size_t N>
 struct scalar<U[N]>
@@ -26,7 +26,7 @@ struct scalar<U[N]>
 	using _computer = compute<U>;
 	
 	template <class T>
-	using demitype = typename strata<U[N]>::template homotype<T>;
+	using demitype = typename point<U[N]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = compose_s<demitype<T>, tag<scalar>>;

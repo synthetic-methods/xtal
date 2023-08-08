@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "./strata.ii"
+#include "./point.ii"
 #include "./scalar.ii"
 
 
@@ -19,7 +19,7 @@ template <class ...Ts> XTAL_ASK sector_q = tag_p<sector, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 A `solid vector`... \
-Extends `strata::type` with elementwise addition/subtracion. \
+Extends `point::type` with elementwise addition/subtracion. \
 
 template <class U, size_t N>
 struct sector<U[N]>
@@ -27,7 +27,7 @@ struct sector<U[N]>
 	using _computer = compute<U>;
 	
 	template <class T>
-	using demitype = typename strata<U[N]>::template homotype<T>;
+	using demitype = typename point<U[N]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = compose_s<demitype<T>, tag<sector>>;

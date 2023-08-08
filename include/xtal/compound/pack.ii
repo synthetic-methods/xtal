@@ -121,6 +121,19 @@ template <class ...Ts > concept heteropack_q = (...and heteropack_p<Ts>);
 template <class ...Ts > concept   homopack_q = (...and   homopack_p<Ts>);
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <size_t N>
+XTAL_FN2 pack_fill_f(XTAL_DEF u)
+XTAL_0EZ_([u = XTAL_REF_(u)] <auto ...I>(seek_t<I...>)
+XTAL_0FN_(pack_f(xtal::return_f<I>(u)...)) (seek_f<N>{}));
+
+template <size_t N>
+XTAL_FN2 pack_fill_f(XTAL_DEF_(_std::invocable) f)
+XTAL_0EZ_([f = XTAL_REF_(f)] () XTAL_0FN_(pack_fill_f<N>(f())));
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

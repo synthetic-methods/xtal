@@ -119,6 +119,7 @@ static_assert(1200 <= XTAL_V00_GNUC);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#define XTAL_TYP                             decltype(auto)
 #define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)                    ::std::move(__VA_ARGS__)

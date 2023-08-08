@@ -20,7 +20,7 @@ void monomer_lifting()
 	using alpha_t = typename computer::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = solid::strata_t<alpha_t[N_size]>;
+	using group_u = solid::point_t<alpha_t[N_size]>;
 	using resize_u = control::resize_t<>;
 	using sequel_n = control::sequel_t<>;
 

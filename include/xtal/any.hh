@@ -18,16 +18,24 @@
 
 XTAL_ENV_(push)
 
+#include <experimental/mdarray>
+#include <experimental/mdspan>
 #include <range/v3/all.hpp>
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 namespace _std = ::std;
+namespace _v0
+{
+	using namespace _std::experimental;
+
+}
 namespace _v3
 {
-namespace ranges = ::ranges;
-namespace views  = ::ranges::views;
+	namespace ranges = ::ranges;
+	namespace views  = ::ranges::views;
+
 }
 
 
@@ -362,6 +370,14 @@ static_assert(complex_field_q<_std::complex<float>>);
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Range types...
+
+template <class T, int N=-1>
+concept prism_p = is_q<T, _v0::mdspan<
+	typename T::element_type, typename T::extents_type, typename T::layout_type, typename T::accessor_type
+>> and (N == -1 or N == T::extents::rank());
+
+template <class ...Ts> concept prism_q = (...and prism_p<Ts>);
+
 
 template <class    T >       using begin_t    = decltype( XTAL_VAL_(T).begin());
 template <class    T >       using   end_t    = decltype( XTAL_VAL_(T).  end());

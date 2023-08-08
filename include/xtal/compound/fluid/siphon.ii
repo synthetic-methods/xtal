@@ -34,7 +34,7 @@ struct siphon<A>
 		using S_ = hemitype<T>;
 
 		using store_t = sluice_t<A>;
-		using point_t = typename store_t::iterator;
+		using visor_t = typename store_t::iterator;
 		using value_t = typename store_t::value_type;
 		using count_t = typename store_t::difference_type;
 
@@ -76,7 +76,7 @@ struct siphon<A>
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-		XTAL_TN0 pop(point_t i)
+		XTAL_TN0 pop(visor_t i)
 		XTAL_0EX
 		{
 			assert(i < end());
@@ -90,14 +90,14 @@ struct siphon<A>
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_TN2_(point_t) scan(XTAL_DEF w)
+		XTAL_TN2_(visor_t) scan(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
 			,	XTAL_REF_(w)
 			);
 		}
-		XTAL_TN2_(point_t) scan(XTAL_DEF w, XTAL_DEF f)
+		XTAL_TN2_(visor_t) scan(XTAL_DEF w, XTAL_DEF f)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
@@ -108,10 +108,10 @@ struct siphon<A>
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(point_t) push(value_t v)
+		XTAL_TN1_(visor_t) push(value_t v)
 		XTAL_0EX
 		{
-			point_t v_ = scan(v);
+			visor_t v_ = scan(v);
 			if (*v_ == v) {
 				_std::swap(*v_, v); return v_;
 			}
@@ -120,17 +120,17 @@ struct siphon<A>
 			}
 		}
 		template <is_q<value_t> W>
-		XTAL_TN1_(point_t) poke(point_t v_, W &&w)
+		XTAL_TN1_(visor_t) poke(visor_t v_, W &&w)
 		XTAL_0EX
 		{
 			return m_store.insert(v_, XTAL_REF_(w));
 		}
-		XTAL_TN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+		XTAL_TN1_(visor_t) poke(visor_t v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		{
 			return m_store.insert(v_, value_t(XTAL_REF_(ws)...));
 		}
-		XTAL_TN1_(point_t) poke(point_t v_, XTAL_DEF ...ws)
+		XTAL_TN1_(visor_t) poke(visor_t v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ_(m_store.inplace(v_, XTAL_REF_(ws)...))
 		{
