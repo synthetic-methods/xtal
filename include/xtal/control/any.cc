@@ -29,13 +29,13 @@ TAG_("control", "hold", "process")
 		gated_t o_gated;
 		
 		using cue_t = context::cue_s<>;
-		o_gated << pack_f((cue_t) 0, (gate_t)  7);
-		o_gated << pack_f((cue_t) 1, (gate_t)  1);
-		o_gated << pack_f((cue_t) 3, (gate_t) -1);
-		o_gated << pack_f((cue_t) 4, (gate_t)  1);
-		o_gated << pack_f((cue_t) 5, (gate_t) -1);
-		o_gated << pack_f((cue_t) 7, (gate_t)  7);
-		o_gated << pack_f((cue_t) 7, (gate_t) 77);
+		o_gated <<= (cue_t) 0 << (gate_t)  7;
+		o_gated <<= (cue_t) 1 << (gate_t)  1;
+		o_gated <<= (cue_t) 3 << (gate_t) -1;
+		o_gated <<= (cue_t) 4 << (gate_t)  1;
+		o_gated <<= (cue_t) 5 << (gate_t) -1;
+		o_gated <<= (cue_t) 7 << (gate_t)  7;
+		o_gated <<= (cue_t) 7 << (gate_t) 77;
 		
 		TRUE_(o_gated() ==  7);
 		TRUE_(o_gated() ==  1);
@@ -48,8 +48,8 @@ TAG_("control", "hold", "process")
 		TRUE_(o_gated() == 77);
 		TRUE_(o_gated() == 77);
 	//	...
-		o_gated >> sequel_u(N_size);
-		o_gated << pack_f((cue_t) 4, (gate_t)  11);
+		o_gated >>= sequel_u(N_size);
+		o_gated <<= (cue_t) 4 << (gate_t) 11;
 		TRUE_(o_gated() == 77);
 		TRUE_(o_gated() == 77);
 		TRUE_(o_gated() == 77);
@@ -83,20 +83,20 @@ void control_hold_processor()
 	auto o_gated = processor::monomer_t<gated_t, As...>::bond_f();
 	auto o_array = array_t();
 	
-	o_gated << resize_u(N_size);
-	o_gated << pack_f((cue_t) 0, (gate_t)  7);
-	o_gated << pack_f((cue_t) 1, (gate_t)  1);
-	o_gated << pack_f((cue_t) 3, (gate_t) -1);
-	o_gated << pack_f((cue_t) 4, (gate_t)  1);
-	o_gated << pack_f((cue_t) 5, (gate_t) -1);
-	o_gated << pack_f((cue_t) 7, (gate_t)  7);
-	o_gated << pack_f((cue_t) 7, (gate_t) 77);
+	o_gated <<= resize_u(N_size);
+	o_gated <<= (cue_t) 0 << (gate_t)  7;
+	o_gated <<= (cue_t) 1 << (gate_t)  1;
+	o_gated <<= (cue_t) 3 << (gate_t) -1;
+	o_gated <<= (cue_t) 4 << (gate_t)  1;
+	o_gated <<= (cue_t) 5 << (gate_t) -1;
+	o_gated <<= (cue_t) 7 << (gate_t)  7;
+	o_gated <<= (cue_t) 7 << (gate_t) 77;
 
-	o_gated >> sequel_u(N_size)*0; _v3::ranges::copy(o_gated, o_array.begin());
+	o_gated >>= sequel_u(N_size)*0; _v3::ranges::copy(o_gated, o_array.begin());
 	TRUE_(o_array == array_t {  7,  1,  1, -1,  1, -1, -1, 77});
 
-	o_gated << pack_f((cue_t) 4, (gate_t)  11);
-	o_gated >> sequel_u(N_size)*1; _v3::ranges::copy(o_gated, o_array.begin());
+	o_gated <<= (cue_t) 4 << (gate_t) 11;
+	o_gated >>= sequel_u(N_size)*1; _v3::ranges::copy(o_gated, o_array.begin());
 	TRUE_(o_array == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
@@ -131,18 +131,18 @@ void control_intermit_processor()
 	auto xhs = mix_z::bond_f(lhs, rhs);
 	auto seq = sequel_n(4);
 
-	xhs << resize_u(4);
+	xhs <<= resize_u(4);
 	TRUE_(0 == xhs.size());//NOTE: Only changes after `sequel`.
 
-	xhs << context::cue_s<onset_t>(0, (alpha_t) 100);
-	xhs << context::cue_s<onset_t>(1, (alpha_t) 200);
-	xhs << context::cue_s<onset_t>(2, (alpha_t) 300);
-	xhs >> seq++;
+	xhs <<= context::cue_s<onset_t>(0, (alpha_t) 100);
+	xhs <<= context::cue_s<onset_t>(1, (alpha_t) 200);
+	xhs <<= context::cue_s<onset_t>(2, (alpha_t) 300);
+	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs << context::cue_s<onset_t>(2, (alpha_t) 400);// relative timing!
-	xhs >> seq++;
+	xhs <<= context::cue_s<onset_t>(2, (alpha_t) 400);// relative timing!
+	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
 

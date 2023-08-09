@@ -50,19 +50,19 @@ TAG_("process", "access")
 void process_control__influx_operator(auto z)
 {
 	auto &o = z.template valve<onset_t>();
-	z << onset_t(0.0); TRUE_(0.0 == (float) o);
-	z << onset_t(1.0); TRUE_(1.0 == (float) o);
-	z << onset_t(2.0); TRUE_(2.0 == (float) o);
-	z << onset_t(3.0); TRUE_(3.0 == (float) o);
+	z <<= onset_t(0.0); TRUE_(0.0 == (float) o);
+	z <<= onset_t(1.0); TRUE_(1.0 == (float) o);
+	z <<= onset_t(2.0); TRUE_(2.0 == (float) o);
+	z <<= onset_t(3.0); TRUE_(3.0 == (float) o);
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_control__efflux_operator(auto z)
 {
 	auto &o = z.template valve<onset_t>();
-	z >> onset_t(0.0); TRUE_(0.0 == (float) o);
-	z >> onset_t(1.0); TRUE_(1.0 == (float) o);
-	z >> onset_t(2.0); TRUE_(2.0 == (float) o);
-	z >> onset_t(3.0); TRUE_(3.0 == (float) o);
+	z >>= onset_t(0.0); TRUE_(0.0 == (float) o);
+	z >>= onset_t(1.0); TRUE_(1.0 == (float) o);
+	z >>= onset_t(2.0); TRUE_(2.0 == (float) o);
+	z >>= onset_t(3.0); TRUE_(3.0 == (float) o);
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_control__influx_method(auto z)

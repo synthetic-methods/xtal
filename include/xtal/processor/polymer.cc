@@ -37,16 +37,16 @@ void polymer_control_spine__locamotion()
 	auto o_vox = vox_t::bond_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
-	o_vox << resize_u(N_window);
-	o_vox << level_t(1) << stage_t(-1);
-	o_vox << pack_f(event_t(62, 0)); TRUE_(1 == o_vox.stash().size());
-	o_vox << pack_f(event_t(65, 0)); TRUE_(2 == o_vox.stash().size());
-	o_vox << pack_f(event_t(69, 0)); TRUE_(3 == o_vox.stash().size());
-	o_vox << pack_f(event_t(65, 0)); TRUE_(4 == o_vox.stash().size());
+	o_vox <<= resize_u(N_window);
+	o_vox <<= level_t(1) <<= stage_t(-1);
+	o_vox <<= event_t(62, 0); TRUE_(1 == o_vox.stash().size());
+	o_vox <<= event_t(65, 0); TRUE_(2 == o_vox.stash().size());
+	o_vox <<= event_t(69, 0); TRUE_(3 == o_vox.stash().size());
+	o_vox <<= event_t(65, 0); TRUE_(4 == o_vox.stash().size());
 
 //	Render:
-//	o_vox << resize_u(N_window);
-	o_vox >> sequel_u(N_window);
+//	o_vox <<= resize_u(N_window);
+	o_vox >>= sequel_u(N_window);
 	
 	TRUE_(3 == o_vox.stash().size());
 	TRUE_(3 == o_vox.front());
@@ -98,14 +98,15 @@ void polymer_control_stash__compound()
 	auto o_vox = vox_t::bond_f();
 
 // Set the default `stage: final`:
-	o_vox << stage_t(-1);
-	o_vox << pack_f(event_t(62, 0), level_t(1)); TRUE_(1 == o_vox.stash().size());
-	o_vox << pack_f(event_t(65, 0), level_t(2)); TRUE_(2 == o_vox.stash().size());
-	o_vox << pack_f(event_t(69, 0), level_t(3)); TRUE_(3 == o_vox.stash().size());
-	o_vox << pack_f(event_t(65, 0), level_t(4)); TRUE_(4 == o_vox.stash().size());
+	o_vox <<= stage_t(-1);
+	o_vox <<= event_t(62, 0) << level_t(1); TRUE_(1 == o_vox.stash().size());
+	o_vox <<= event_t(65, 0) << level_t(2); TRUE_(2 == o_vox.stash().size());
+	o_vox <<= event_t(69, 0) << level_t(3); TRUE_(3 == o_vox.stash().size());
+	o_vox <<= event_t(65, 0) << level_t(4); TRUE_(4 == o_vox.stash().size());
 
 //	Re(?:size|nder):
-	o_vox << resize_u(N_window) >> sequel_u(N_window);
+	o_vox <<= resize_u(N_window);
+	o_vox >>= sequel_u(N_window);
 	
 	TRUE_(3 == o_vox.stash().size());
 	TRUE_(8 == o_vox.front());
@@ -142,14 +143,15 @@ void polymer_control_stash__composited()
 	auto o_vox = vox_t::bond_f();
 
 // Set the default `stage: final`:
-	o_vox << stage_t(-1);
-	o_vox << pack_f(context::voice_s<>(62), stage_t(0), level_t(1)); TRUE_(1 == o_vox.stash().size());
-	o_vox << pack_f(context::voice_s<>(65), stage_t(0), level_t(2)); TRUE_(2 == o_vox.stash().size());
-	o_vox << pack_f(context::voice_s<>(69), stage_t(0), level_t(3)); TRUE_(3 == o_vox.stash().size());
-	o_vox << pack_f(context::voice_s<>(65), stage_t(0), level_t(4)); TRUE_(4 == o_vox.stash().size());
+	o_vox <<= stage_t(-1);
+	o_vox <<= context::voice_s<>(62) << stage_t(0) << level_t(1); TRUE_(1 == o_vox.stash().size());
+	o_vox <<= context::voice_s<>(65) << stage_t(0) << level_t(2); TRUE_(2 == o_vox.stash().size());
+	o_vox <<= context::voice_s<>(69) << stage_t(0) << level_t(3); TRUE_(3 == o_vox.stash().size());
+	o_vox <<= context::voice_s<>(65) << stage_t(0) << level_t(4); TRUE_(4 == o_vox.stash().size());
 
 //	Re(?:size|nder):
-	o_vox << resize_u(N_window) >> sequel_u(N_window);
+	o_vox <<= resize_u(N_window);
+	o_vox >>= sequel_u(N_window);
 	
 	TRUE_(3 == o_vox.stash().size());
 	TRUE_(8 == o_vox.front());

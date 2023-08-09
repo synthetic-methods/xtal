@@ -272,6 +272,9 @@ struct defer
 			return heading(t.valve()) and self<1>() == t;
 		}
 
+	//	XTAL_OP2 << (XTAL_DEF_(any_q) t) XTAL_0FX {return pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
+	//	XTAL_OP2 >> (XTAL_DEF_(any_q) t) XTAL_0FX {return pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
+
 	};
 };
 ///\
@@ -289,9 +292,9 @@ struct refer: compose<void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <any_q W> XTAL_OP2_(bool) == (W const &x, W const &y) XTAL_0EX {return x.self().operator== (y.self());}
-template <any_q W> XTAL_OP2_(bool) != (W const &x, W const &y) XTAL_0EX {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_OP2        <=>(W const &x, W const &y) XTAL_0EX {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_OP2 == (W const &x, W const &y) XTAL_0EX {return x.self().operator== (y.self());}
+template <any_q W> XTAL_OP2 != (W const &x, W const &y) XTAL_0EX {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -32,7 +32,7 @@ void processor_control__messaging()
 	TRUE_(equal_f(o_mixed, _11));
 	TRUE_(equal_f(o_mixed, _std::vector {00.0, 11.0, 22.0}));
 
-	mixer_f << onset_t(33.0);
+	mixer_f <<= onset_t(33.0);
 
 	if constexpr (is_q<mix_t, static_onset_mix_t>) {
 		//	NOTE: Parameters take effect when the `processor` is invoked, \

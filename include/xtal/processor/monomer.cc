@@ -32,8 +32,8 @@ void monomer_lifting()
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
-	b << resize_u(N_size);
-	b >> sequel_n(N_size);
+	b <<= resize_u(N_size);
+	b >>= sequel_n(N_size);
 	_v3::ranges::move(b, a.begin());
 	TRUE_(a == z);
 }
@@ -67,21 +67,21 @@ void monomer_control__advancing()
 	auto seq = sequel_n(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
-//	xhs <<   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
-	xhs >>   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
-	xhs >> ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
-	xhs >> ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
+//	xhs <<=   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
+	xhs >>=   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
+	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
+	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
 	/**/
 
-//	xhs >> ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
+//	xhs >>= ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
 
 	seq += 6;     TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
-	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
-	xhs >> seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
+	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
+	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs << onset_t((computer::alpha_t) - (99 + 66));
+//	xhs <<= onset_t((computer::alpha_t) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
@@ -117,11 +117,11 @@ void monomer_control__provisioning()
 
 	TRUE_(0 == xhs.size());
 
-	xhs >> pack_f(m_respan, m_sequel++); TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >> pack_f(m_respan, m_sequel++); TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >> pack_f(m_respan, m_sequel++); TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
-	xhs << onset_t((alpha_t) (11 + 1));
-	xhs >> pack_f(m_respan, m_sequel++); TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs <<= onset_t((alpha_t) (11 + 1));
+	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "control")
@@ -154,15 +154,15 @@ void monomer_chaining__rvalue()
 	using mul_op = monomer_t<mul_t, restore<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
-	yhs << control::resize_f(N);
-	yhs << scale_t((alpha_t) 100);
-	yhs << onset_t((alpha_t) 000);
+	yhs <<= control::resize_f(N);
+	yhs <<= scale_t((alpha_t) 100);
+	yhs <<= onset_t((alpha_t) 000);
 	TRUE_(0 == yhs.size());
 
 	auto seq = control::sequel_f(N);
-	yhs >> seq  ; TRUE_(N == yhs.size());// idempotent!
-	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
+	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 	TRUE_(yhs.template slot<0>().store().empty());
 
@@ -187,14 +187,14 @@ void monomer_chaining__lvalue()
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
-	yhs << control::resize_f(N);
-	yhs << scale_t((alpha_t) 100);
-	xhs << onset_t((alpha_t) 000);
+	yhs <<= control::resize_f(N);
+	yhs <<= scale_t((alpha_t) 100);
+	xhs <<= onset_t((alpha_t) 000);
 
 	auto seq = control::sequel_f(N);
-	yhs >> seq  ;// idempotent!
-	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
-	yhs >> seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
+	yhs >>= seq  ;// idempotent!
+	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
+	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
 	TRUE_(yhs.template slot<0>().store().size() == 4);
 
@@ -222,11 +222,11 @@ void monomer_chaining__shared()
 	auto rhs = mix_fn::bond_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bond_f(lhs, rhs);
 
-	yhs << control::restep_f((size_t) 50);
-	yhs << control::resize_f(N);
+	yhs <<= control::restep_f((size_t) 50);
+	yhs <<= control::resize_f(N);
 
-	yhs >> control::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >> control::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= control::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= control::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")
