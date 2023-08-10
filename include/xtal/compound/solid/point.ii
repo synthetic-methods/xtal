@@ -52,19 +52,15 @@ struct point<U[N]>
 		XTAL_TO4_(XTAL_TN2 d(I_ i), (accept(i), access(i)))
 
 	public:
-		using S_::S_;
+	//	using S_::S_;
 		using S_::self;
 		using S_::twin;
 
-		template <bracket_q W>
-		XTAL_CXN homotype(W &&w)
+		~homotype() {};
+		XTAL_CO4_(homotype)
+		XTAL_CON  homotype()
 		{
-			_detail::move_to(S_::begin(), w);
-		}
-		template <bracket_q W>
-		XTAL_CXN homotype(W const &w)
-		{
-			_detail::copy_to(S_::begin(), w);
+			_std::uninitialized_value_construct_n(S_::begin(), S_::size());
 		}
 		XTAL_CON homotype(bracket_t<U> etc)
 		XTAL_0EX
@@ -75,7 +71,17 @@ struct point<U[N]>
 			auto const n = etc.size();
 			_std::uninitialized_value_construct_n(S_::begin() + n, S_::size() - n);
 		}
-
+		template <bracket_q W>
+		XTAL_CXN homotype(W const &w)
+		{
+			_detail::copy_to(S_::begin(), w);
+		}
+		template <bracket_q W>
+		XTAL_CXN homotype(W &&w)
+		{
+			_detail::move_to(S_::begin(), w);
+		}
+		
 		template <class W>
 		XTAL_FN2_(T &) refer(W &w)
 		XTAL_0EX

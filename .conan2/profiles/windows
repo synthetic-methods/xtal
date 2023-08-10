@@ -1,0 +1,11 @@
+[settings]
+build_type=Release
+arch=x86_64
+os=Windows
+os.subsystem=wsl
+compiler=msvc
+compiler.cppstd=20
+compiler.version=193
+compiler.update=3
+compiler.runtime=dynamic
+compiler.toolset=v141_xp

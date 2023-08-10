@@ -6,20 +6,24 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  CONAN_HOME: ~/conan
+
 jobs:
   create:
     strategy:
       matrix:
         bt: [Debug, Release]
-        os: [macos-latest]
+        os: [macos, ubuntu]
     
-    runs-on: ${{matrix.os}}
+    runs-on: ${{matrix.os}}-latest
 
     steps:
     - uses: actions/checkout@v3
+    - uses: turtlebrowser/get-conan@main
 
-    - name: Install `conan`
-      uses: turtlebrowser/get-conan@main
+    - name: Run `conan config...`
+      run:  conan config install ${{github.workspace}}/.conan2
 
-    - name: Run `conan create .`
-      run: conan create . --build=missing -s build_type=${{matrix.bt}} -s compiler.cppstd=20
+    - name: Run `conan create...`
+      run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile=${{matrix.os}}

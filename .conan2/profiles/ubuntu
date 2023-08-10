@@ -1,0 +1,8 @@
+[settings]
+build_type=Release
+arch=x86_64
+os=Linux
+compiler=gcc
+compiler.cppstd=gnu20
+compiler.version=12
+compiler.libcxx=libstdc++

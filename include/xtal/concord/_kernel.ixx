@@ -1,4 +1,4 @@
-#include "../_sense.i"
+#include "../_etc.hxx"
 
 
 

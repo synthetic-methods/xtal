@@ -66,7 +66,7 @@ TODO: Allow command-line/[c]?make configuration?
 #define XTAL_V00_GNUC 0
 #define XTAL_V00_MSVC 0
 
-#elif   defined(__GNUC__) or defined(__GNUG__)
+#elif   defined(__GNUC__)
 #define XTAL_V00_GNUC XTAL_V00_(__GNUC__, __GNUC_MINOR__)
 #define XTAL_V00_MSVC 0
 #define XTAL_V00_LLVM 0
@@ -86,7 +86,7 @@ static_assert(1933 <= XTAL_V00_MSVC);
 static_assert(1400 <= XTAL_V00_LLVM);
 
 #elif   XTAL_V00_GNUC
-static_assert(1200 <= XTAL_V00_GNUC);
+//static_assert(1200 <= XTAL_V00_GNUC);  
 
 #endif
 
@@ -112,7 +112,7 @@ static_assert(1200 <= XTAL_V00_GNUC);
 #define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
 #define XTAL_ENV_push _Pragma("GCC diagnostic push")\
                       _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
-                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
+//                    _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
 
 #endif
 

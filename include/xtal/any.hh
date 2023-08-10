@@ -67,7 +67,7 @@ template <complete_q T >    struct complete<T> {using type = T;};
 template <class      T >     using complete_t = typename complete<T>::type;
 
 
-template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename T::value_type, T{}>>;
+template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename complete_t<T>::value_type, complete_t<T>{}>>;
 template <class    T >     concept  boolean_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
 template <class    T >     concept  integer_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
 template <class    T >     concept  sequent_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
@@ -87,7 +87,7 @@ template <class    T >   concept subsequent_p = sequent_p<T> and 0 != T::value;
 template <class ...Ts>   concept subsequent_q = (...and subsequent_p<Ts>);
 
 
-template <class    T >       using   based_t  = _std::remove_cvref_t<T>;
+template <class    T >       using   based_t  = _std::remove_cvref_t<complete_t<T>>;
 template <class    T >     concept   based_p  = _std::is_trivially_copyable_v<T>;
 template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
@@ -115,11 +115,11 @@ template <class    T >    XTAL_LET valued_v   = based_t<T>::value;
 template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_v<V>;}
 
 template <class    T >     struct devalued     {using value_type = _std::remove_all_extents_t<based_t<T>>;};
-template <valued_p T >    struct devalued<T> : based_t<T> {};
+template <valued_p T >     struct devalued<T> : based_t<T> {};
 template <class    T >      using devalued_t  = valued_t<devalued<T>>;
 
 
-template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
+template <class    T >     concept vacant_p   = not complete_p<T> or constant_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
 template <class    X >       struct argument    {using type = X &&;};
@@ -479,7 +479,7 @@ template <class  T, class S>
 static constexpr T bit_cast(S const& s)
 noexcept
 {
-	static_assert(based_q<T, S> and sizeof(T) == sizeof(S));
+	static_assert(xtal::based_q<T, S> and sizeof(T) == sizeof(S));
 	return __builtin_bit_cast(T, s);
 }
 #endif

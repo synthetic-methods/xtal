@@ -1,4 +1,4 @@
-#include "../concord/_kernel.i"
+#include "../concord/_kernel.ixx"
 
 
 
