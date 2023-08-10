@@ -1,0 +1,25 @@
+name: Conan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  create:
+    strategy:
+      matrix:
+        bt: [Debug, Release]
+        os: [macos-latest]
+    
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install `conan`
+      uses: turtlebrowser/get-conan@main
+
+    - name: Run `conan create .`
+      run: conan create . --build=missing -s build_type=${{matrix.bt}} -s compiler.cppstd=20
