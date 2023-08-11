@@ -6,3 +6,7 @@ compiler=gcc
 compiler.cppstd=gnu20
 compiler.version=12
 compiler.libcxx=libstdc++
+
+[buildenv]
+CC=gcc-12
+CXX=g++-12
