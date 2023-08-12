@@ -4,6 +4,6 @@
 #include "./conflux/all.cc"
 #include "./content/all.cc"
 #include "./context/all.cc"
-#include "./control/all.cc"
+#include "./message/all.cc"
 #include "./process/all.cc"
 #include "./processor/all.cc"

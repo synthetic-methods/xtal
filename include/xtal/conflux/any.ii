@@ -59,7 +59,7 @@ struct define
 
 		///\
 		Influx operator: resolves the message for `this` before any dependencies, \
-		used for e.g. `control::resize`. \
+		used for e.g. `message::resize`. \
 
 		XTAL_OP1 <<=(XTAL_DEF o)
 		XTAL_0EX
@@ -98,7 +98,7 @@ struct define
 
 		///\
 		Efflux operator: resolves the message for any dependencies before `this`, \
-		used for e.g. `control::respan` and `control::sequel`. \
+		used for e.g. `message::respan` and `message::sequel`. \
 
 		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX

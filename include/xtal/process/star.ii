@@ -71,7 +71,7 @@ struct star<W, As...>
 	//	using S_::infuse;
 		///\todo\
 		Prevent same-cycle duplicates for non-idempotent handlers... \
-		The `control` itself could handle this with a `bool` modified by `&= 1` on successful update, \
+		The `message` itself could handle this with a `bool` modified by `&= 1` on successful update, \
 		and propagating the result upstream (instead of just forwarding the original message). \
 		(Potentially need a `context::sequel` to express this cleanly?) \
 		
@@ -90,7 +90,7 @@ struct star<W, As...>
 		/***/
 
 		///\todo\
-		Introduce `control::per` etc to manage downsampling \
+		Introduce `message::per` etc to manage downsampling \
 		(by scalar/integer multiplication followed by normalization). \
 
 	};

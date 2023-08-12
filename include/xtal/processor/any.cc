@@ -48,7 +48,7 @@ void processor_control__messaging()
 	}
 
 }
-TAG_("processor", "control")
+TAG_("processor", "message")
 {
 	TRY_("messaging (dynamic)") {processor_control__messaging<dynamic_onset_mix_t>();}
 	TRY_("messaging (static)")  {processor_control__messaging< static_onset_mix_t>();}

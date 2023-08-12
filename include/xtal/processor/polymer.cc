@@ -20,12 +20,12 @@ void polymer_control_spine__locamotion()
 	using sigma_t = typename computer::sigma_t;
 	using delta_t = typename computer::delta_t;
 
-	using stage_t = control::stasis_t<>;
+	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;
-	using empty_t = control::confined_t<>;
+	using empty_t = message::confined_t<>;
 
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_u = message::sequel_t<>;
 	
 	using gate_t = process::confined_t<typename level_t::poll, typename stage_t::gauge>;
 
@@ -57,7 +57,7 @@ void polymer_control_spine__locamotion()
 	TRUE_(69 == vox_oo_++->valve());
 
 }
-TAG_("polymer", "control", "spine")
+TAG_("polymer", "message", "spine")
 {
 	TRY_("voice allocation/deallocation")
 	{
@@ -79,12 +79,12 @@ void polymer_control_stash__compound()
 	using sigma_t = typename computer::sigma_t;
 	using delta_t = typename computer::delta_t;
 
-	using stage_t = control::stasis_t<>;
+	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;
-	using empty_t = control::confined_t<>;
+	using empty_t = message::confined_t<>;
 
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_u = message::sequel_t<>;
 	
 	using gate_t = process::confined_t<void
 	,	typename stage_t::gauge
@@ -124,12 +124,12 @@ void polymer_control_stash__composited()
 	using sigma_t = typename computer::sigma_t;
 	using delta_t = typename computer::delta_t;
 
-	using stage_t = control::stasis_t<>;
+	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;
-	using empty_t = control::confined_t<>;
+	using empty_t = message::confined_t<>;
 
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_u = message::sequel_t<>;
 	
 	using gate_t = process::confined_t<void
 	,	typename stage_t::gauge
@@ -162,7 +162,7 @@ void polymer_control_stash__composited()
 	TRUE_(69 == vox_oo_++->valve());
 
 }
-TAG_("polymer", "control", "stash")
+TAG_("polymer", "message", "stash")
 {
 	TRY_("with compound events")
 	{

@@ -2,7 +2,7 @@
 #include "../any.cc"
 #include "./any.ii"// testing...
 
-#include "../control/all.ii"
+#include "../message/all.ii"
 
 
 
@@ -67,7 +67,7 @@ void process_control__efflux_operator(auto z)
 }
 void process_control__influx_method(auto z)
 {
-	using start_t = control::nominal_t<0, struct T_start>;
+	using start_t = message::nominal_t<0, struct T_start>;
 
 	auto &o = z.template valve<onset_t>();
 	TRUE_(-1 == (int) z.influx(start_t()));                            // unrecognized
@@ -79,7 +79,7 @@ void process_control__influx_method(auto z)
 }
 void process_control__efflux_method(auto z)
 {
-	using start_t = control::nominal_t<0, struct T_start>;
+	using start_t = message::nominal_t<0, struct T_start>;
 
 	auto &o = z.template valve<onset_t>();
 	TRUE_(-1 == (int) z.efflux(start_t()));                            // unrecognized
@@ -90,7 +90,7 @@ void process_control__efflux_method(auto z)
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 
 }
-TAG_("process", "control")
+TAG_("process", "message")
 {
 	TRY_("influx operator (dynamic)") {process_control__influx_operator(dynamic_onset_mix_t());}
 	TRY_("efflux operator (dynamic)") {process_control__efflux_operator(dynamic_onset_mix_t());}

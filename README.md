@@ -63,10 +63,10 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `control` decorators `attach` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template valve<...>()`.
 
-	using Active = control::ordinal_t<struct active>;
+	using Active = message::ordinal_t<struct active>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
@@ -79,7 +79,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = control::ordinal_t<struct offset>;
+	using Offset = message::ordinal_t<struct offset>;
 	
 	struct Mix: process::confine_t<Mix
 	,  Offset::template dispatch<2>
@@ -256,9 +256,9 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 
 	namespace concord   {}
 	namespace conflux   {namespace _retail = concord;}
+	namespace content   {namespace _retail = concord;}
 	namespace context   {namespace _retail = concord;}
-	namespace control   {namespace _retail = conflux;}
-	namespace message   {namespace _retail = control;}
+	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
@@ -289,7 +289,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition     |[`compound/compose.ii`](include/xtal/compound/compose.ii?ts=3)|
 |Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`control/any.ii`](include/xtal/control/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
+|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
 |Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|

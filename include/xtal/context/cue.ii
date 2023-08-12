@@ -15,7 +15,7 @@ namespace xtal::context
 ///\
 Wrapper used to schedule an existing type.\
 
-///\see e.g. [../control/any#hold] or [../control/any#intermit]`. \
+///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 
 template <typename ..._s> XTAL_NYM cue;
 template <class       U > XTAL_NYM cue<U>: conferred<U, tag<cue>> {};

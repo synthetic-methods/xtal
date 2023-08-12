@@ -3,7 +3,7 @@
 #include "./monomer.ii"// testing...
 
 #include "./all.ii"
-#include "../control/all.ii"
+#include "../message/all.ii"
 
 
 XTAL_ENV_(push)
@@ -21,8 +21,8 @@ void monomer_lifting()
 
 	sigma_t constexpr N_size = 5;
 	using group_u = solid::point_t<alpha_t[N_size]>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_n = message::sequel_t<>;
 
 	auto x = group_u { 0,  1,  2,  3,  4};
 	auto y = group_u {00, 10, 20, 30, 40};
@@ -53,7 +53,7 @@ void monomer_control__advancing()
 	using sigma_t = typename computer::sigma_t;
 	using alpha_t = typename computer::alpha_t;
 
-	using sequel_n = control::sequel_t<>;
+	using sequel_n = message::sequel_t<>;
 	using mixer_t = processor::monomer_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
@@ -99,9 +99,9 @@ void monomer_control__provisioning()
 
 	using store_u = typename confined_t<provide>::template store<alpha_t>::type;
 	using serve_u = deranged_t<store_u>;
-	using respan_u = control::respan_t<serve_u>;
-	using resize_u = control::resize_t<>;
-	using sequel_n = control::sequel_t<>;
+	using respan_u = message::respan_t<serve_u>;
+	using resize_u = message::resize_t<>;
+	using sequel_n = message::sequel_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
@@ -124,7 +124,7 @@ void monomer_control__provisioning()
 	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
-TAG_("monomer", "control")
+TAG_("monomer", "message")
 {
 	TRY_("advancing (dynamic)") {monomer_control__advancing<dynamic_onset_mix_t>();}
 	TRY_("advancing (static)")  {monomer_control__advancing< static_onset_mix_t>();}
@@ -154,12 +154,12 @@ void monomer_chaining__rvalue()
 	using mul_op = monomer_t<mul_t, restore<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
-	yhs <<= control::resize_f(N);
+	yhs <<= message::resize_f(N);
 	yhs <<= scale_t((alpha_t) 100);
 	yhs <<= onset_t((alpha_t) 000);
 	TRUE_(0 == yhs.size());
 
-	auto seq = control::sequel_f(N);
+	auto seq = message::sequel_f(N);
 	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -187,11 +187,11 @@ void monomer_chaining__lvalue()
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
-	yhs <<= control::resize_f(N);
+	yhs <<= message::resize_f(N);
 	yhs <<= scale_t((alpha_t) 100);
 	xhs <<= onset_t((alpha_t) 000);
 
-	auto seq = control::sequel_f(N);
+	auto seq = message::sequel_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -222,11 +222,11 @@ void monomer_chaining__shared()
 	auto rhs = mix_fn::bond_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bond_f(lhs, rhs);
 
-	yhs <<= control::restep_f((size_t) 50);
-	yhs <<= control::resize_f(N);
+	yhs <<= message::restep_f((size_t) 50);
+	yhs <<= message::resize_f(N);
 
-	yhs >>= control::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= control::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= message::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= message::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")

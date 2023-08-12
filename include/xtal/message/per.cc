@@ -1,27 +1,40 @@
 #pragma once
 #include "./any.cc"
-#include "./flux.ii"// testing...
+#include "./per.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::control::__test
+namespace xtal::message::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TAG_("flux")
+
+TAG_("per")
 {
-	TRY_("task")
+	TRY_("construction")
 	{
-		TRUE_(true);
+		using sigma_t = typename computer::sigma_t;
+		using alpha_t = typename computer::alpha_t;
+
+		sigma_t b = computer::diplo_f(16);
+		alpha_t p = computer::haplo_f(16);
+
+		auto d = per_t(b);
+		auto q = per_t(p);
+
+		TRUE_(b == d.rate());
+		TRUE_(b == q.rate());
+
+		TRUE_(p == d.period());
+		TRUE_(p == q.period());
 
 	}
 }
-/***/
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

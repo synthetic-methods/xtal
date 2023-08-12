@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
 
-#include "../control/sequel.ii"
-#include "../control/resize.ii"
+#include "../message/sequel.ii"
+#include "../message/resize.ii"
 
 
 
@@ -94,7 +94,7 @@ struct defer<U>
 template <class U>
 struct refer
 {
-	using sequel_u = control::sequel_t<counted_t<>>;
+	using sequel_u = message::sequel_t<counted_t<>>;
 	using subkind  = compose<_retail::refer<U>, sequel_u::attach>;
 
 	template <any_q S>

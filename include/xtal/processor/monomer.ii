@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.ii"
 #include "./restore.ii"
-#include "../control/resize.ii"
-#include "../control/respan.ii"
-#include "../control/revise.ii"
-#include "../control/sequel.ii"
+#include "../message/resize.ii"
+#include "../message/respan.ii"
+#include "../message/revise.ii"
+#include "../message/sequel.ii"
 
 XTAL_ENV_(push)
 namespace xtal::processor
@@ -24,8 +24,8 @@ XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 template <class U, typename ...As>
 struct monomer<U, As...>
 {
-	using resize_u = control::resize_t<>;
-	using sequel_u = control::sequel_t<>;
+	using resize_u = message::resize_t<>;
+	using sequel_u = message::sequel_t<>;
 
 	using subkind = confer<U, As...>;
 
@@ -78,7 +78,7 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 
-				XTAL_FNX efflux(XTAL_DEF_(control::sequel_q) o_sequel)
+				XTAL_FNX efflux(XTAL_DEF_(message::sequel_q) o_sequel)
 				XTAL_0EX
 				{
 					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_sequel)));
@@ -94,13 +94,13 @@ struct monomer<U, As...>
 			using return_t = typename rebound::return_t;
 			using  store_u = typename S_::template store<return_t>::type;
 			using  serve_u = deranged_t<store_u>;
-			using respan_u = control::respan_t<serve_u>;
+			using respan_u = message::respan_t<serve_u>;
 		
 			XTAL_LET_(int) N_share = seek_true_v<_detail::recollection_p<Xs, serve_u>...>;
 
 			using subkind = compose<tag<monomer>
 			,	concord:: refer<serve_u>
-			,	control::revise<store_u>
+			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach
 			,	sequel_u::attach
@@ -120,7 +120,7 @@ struct monomer<U, As...>
 
 			//	using R_::infuse;
 				///\
-				Responds to `control::resize` by resizing the internal `store()`. \
+				Responds to `message::resize` by resizing the internal `store()`. \
 
 				XTAL_FNX infuse(XTAL_DEF o)
 				XTAL_0EX
@@ -147,22 +147,22 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 				///\
-				Responds to `control::sequel` by rendering the internal `store()`. \
+				Responds to `message::sequel` by rendering the internal `store()`. \
 				A match for the following sequel will initiate the `respan` (returning `1`), \
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FNX efflux(control::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_FNX efflux(message::sequel_q auto o_sequel, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return efflux(respan_u(store()), o_sequel, XTAL_REF_(oo)...);
 				}
 				///\note\
-				When accompanied by `control::respan`, the supplied visor will be used instead. \
+				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FNX efflux(respan_u o_respan, control::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_FNX efflux(respan_u o_respan, message::sequel_q auto o_sequel, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(o_sequel) == 1) return 1;
@@ -175,7 +175,7 @@ struct monomer<U, As...>
 				///\
 				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
 				
-				XTAL_FNX efflux_pull_slice(respan_u respan_x, control::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				XTAL_FNX efflux_pull_slice(respan_u respan_x, message::sequel_q auto sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const  t_ = respan_x.begin();

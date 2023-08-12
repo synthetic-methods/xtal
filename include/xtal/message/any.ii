@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::control
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +43,7 @@ struct define
 				XTAL_CO4_(subtype);
 
 				///\
-				Constructs the `attach`ed `control` using its default, \
+				Constructs the `attach`ed `message` using its default, \
 				before `forward`ing the arguments to `this`. \
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)
@@ -203,7 +203,7 @@ struct define
 			};
 		};
 		///\
-		Wraps all `influx`ed `control`s prefixed by a context-free `voice`. \
+		Wraps all `influx`ed `message`s prefixed by a context-free `voice`. \
 
 		///\note\
 		Defined independently of `T`!
@@ -219,7 +219,7 @@ struct define
 				using R_::R_;
 				using R_::self;
 				using R_::influx;
-				///\returns the aggregated result of queuing the `control`s with the given delay. \
+				///\returns the aggregated result of queuing the `message`s with the given delay. \
 
 				XTAL_FNX influx(context::voice_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -230,7 +230,7 @@ struct define
 			};
 		};
 		///\
-		Wraps all `influx`ed `control`s prefixed by a context-free `cue`. \
+		Wraps all `influx`ed `message`s prefixed by a context-free `cue`. \
 
 		///\note\
 		Defined independently of `T`!
@@ -246,7 +246,7 @@ struct define
 				using R_::R_;
 				using R_::self;
 				using R_::influx;
-				///\returns the aggregated result of influxing the given `control`s. \
+				///\returns the aggregated result of influxing the given `message`s. \
 
 				XTAL_FNX influx(context::cue_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -307,7 +307,7 @@ struct define
 
 		///\todo\
 		Allow for scheduling beyond the current window, \
-		possibly using `control::sequel` to convert between absolute and relative delays. \
+		possibly using `message::sequel` to convert between absolute and relative delays. \
 
 		template <int N_event=-1>
 		struct intermit

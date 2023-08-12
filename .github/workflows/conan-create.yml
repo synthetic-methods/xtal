@@ -1,13 +1,10 @@
-name: Conan
+name: Conan Create
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
-env:
-  CONAN_HOME: ~/conan
 
 jobs:
   create:

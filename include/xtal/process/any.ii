@@ -43,7 +43,7 @@ struct define
 		)
 		
 		///\returns the lambda abstraction of `method`, \
-		resolved by the `[../control/any.ipp#dispatch]`ed parameters bound to `this`. \
+		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_TN2 reify(valued_q auto const ...ks),
@@ -75,7 +75,7 @@ struct define
 	protected:
 		///\
 		Defines the subtype-indexed function-pointer table, \
-		dynamically indexed by control-value/subtype `T`, \
+		dynamically indexed by message-value/subtype `T`, \
 		and statically-generated from `method<Ks...>` with `sizeof...(Ks)` entries. \
 
 		template <class ...Xs>
@@ -194,17 +194,17 @@ struct define
 				///\
 				Forwards the message to `slots`, bypassing `self`. \
 
-				XTAL_FNX influx_push(auto ...oo)
+				XTAL_FNX influx_push(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return apply([&] (XTAL_DEF ...xs)
+					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
 						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
 					);
 				}
-				XTAL_FNX efflux_pull(auto ...oo)
+				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return apply([&] (XTAL_DEF ...xs)
+					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
 						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
 					);
 				}

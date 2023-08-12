@@ -1,7 +1,7 @@
 #pragma once
 #include "./process/any.ii"
-#include "./control/any.ii"
-#include "./control/restep.ii"
+#include "./message/any.ii"
+#include "./message/restep.ii"
 
 #include <catch2/catch_all.hpp>
 
@@ -23,9 +23,9 @@ namespace xtal::__test
 
 using namespace compound;
 
-using level_t = control::label_t<typename computer::alpha_t, struct T_level>;
-using onset_t = control::label_t<typename computer::alpha_t, struct T_onset>;
-using scale_t = control::label_t<typename computer::alpha_t, struct T_scale>;
+using level_t = message::label_t<typename computer::alpha_t, struct T_level>;
+using onset_t = message::label_t<typename computer::alpha_t, struct T_onset>;
+using scale_t = message::label_t<typename computer::alpha_t, struct T_scale>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ using dynamic_term_t = typename dynamic_term::type;
 struct dynamic_count
 {
 	using count_t  = typename computer::iota_t;
-	using restep_u = control::restep_t<count_t>;
+	using restep_u = message::restep_t<count_t>;
 
 	template <class T>
 	using homotype = process::confine_t<T, restep_u::attach>;
