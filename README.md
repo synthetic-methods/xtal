@@ -3,7 +3,7 @@ XTAL
 
 # About
 
-XTAL is a range-based header-only template-combinator library for musical Digital Signal Processing (DSP).
+XTAL is a cross-platform header-only zipper/combinator library for musical Digital Signal Processing (DSP).
 It provides an extensible and performant framework for rapid prototyping and development, 
 aimed at building real-time instruments and effects for both hardware and software.
 

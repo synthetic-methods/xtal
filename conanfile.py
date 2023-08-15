@@ -10,7 +10,7 @@ class XTAL__Conan(ConanFile):
 	# Info:
 	name    = "xtal"
 	version = "0.0.0"
-	license = "MIT License"
+	license = "Boost Software License 1.0"
 
 	url     = "https://github.com/synthetic-methods/xtal"
 	author  = "GoomTrex goomtrex@gmail.com"
@@ -23,7 +23,7 @@ class XTAL__Conan(ConanFile):
 	, "VTable", "Branchless", "Control"
 	)
 	description = """
-	XTAL is a range-based header-only combinator library for musical Digital Signal Processing (DSP).
+	XTAL is a cross-platform header-only zipper/combinator library for musical Digital Signal Processing (DSP).
 	It provides an extensible and performant platform for rapid prototyping and
 	development of real-time instruments and effects.
 	"""
@@ -40,7 +40,6 @@ class XTAL__Conan(ConanFile):
 
 	def requirements(self):
 		self.requires("range-v3/0.12.0", transitive_headers=True)
-		self.requires("mdspan/0.6.0", transitive_headers=True)
 
 	# Package:
 	no_copy_source = True
