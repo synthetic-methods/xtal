@@ -171,33 +171,7 @@ The [`**/any.hh`](include/xtal/concord/any.hh?ts=3) provides the key dependencie
 
 As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
-To navigate the essentials, it is useful to toggle the visibility of the `all.*`, `any.*`, and `*.c*` files. For example, the VSCode plug-ins [Toggle](https://marketplace.visualstudio.com/items?itemName=rebornix.toggle) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file) can be used to control access via the following `keybindings.json`:
-
-	{  "key": "cmd+shift+enter",
-	   "command": "toggle",
-	   "args": {
-	      "id": "toggle:files.exclude",
-	      "value":
-	      [  {  "explorer.excludeGitIgnore": false
-	         ,  "files.exclude":
-	            {  "**/.*"
-	            }
-	         }
-	      ,  {  "explorer.excludeGitIgnore": true
-	         ,  "files.exclude":
-	            {  "**/.*"
-	            ,  "include/xtal/**/*.c*": true
-	            ,  "include/xtal/*/any.*": true
-	            ,  "include/xtal/*/all.*": true
-	            }
-	         }
-	      ]
-	   }
-	},
-	{
-	   "key": "cmd+enter",
-	   "command": "openRelatedFiles.open"
-	}
+NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. For example, this can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
 
 
 ## Macros
