@@ -32,15 +32,15 @@ struct defer
 :  _retail::defer<U>
 {
 };
-template <field_q U>
+template <algebraic_field_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 
 	public:
@@ -68,8 +68,8 @@ struct refer
 :  _retail::refer<U>
 {
 };
-template <field_q U>
-struct refer<U>: compose<void
+template <algebraic_field_q U>
+struct refer<U>: common::compose<void
 ,	_detail::refer_quality<U>
 >
 {

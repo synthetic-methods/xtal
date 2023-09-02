@@ -16,11 +16,11 @@ namespace xtal::processor::__test
 template <typename ...As>
 void monomer_lifting()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = solid::point_t<alpha_t[N_size]>;
+	using group_u = compound::solid::point_t<alpha_t[N_size]>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
@@ -50,8 +50,8 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_control__advancing()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	using sequel_n = message::sequel_t<>;
 	using mixer_t = processor::monomer_t<mix_t>;
@@ -81,7 +81,7 @@ void monomer_control__advancing()
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs <<= onset_t((computer::alpha_t) - (99 + 66));
+//	xhs <<= onset_t((common::computer::alpha_t) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
@@ -92,8 +92,8 @@ void monomer_control__advancing()
 template <class add_t>
 void monomer_control__provisioning()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	using provide = restore<(1<<5)>;
 
@@ -140,8 +140,8 @@ TAG_("monomer", "message")
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 	
@@ -170,8 +170,8 @@ void monomer_chaining__rvalue()
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -202,8 +202,8 @@ void monomer_chaining__lvalue()
 template <class add_t, typename mul_t=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using sigma_t = typename computer::sigma_t;
-	using alpha_t = typename computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 

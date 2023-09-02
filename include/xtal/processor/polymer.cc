@@ -16,9 +16,9 @@ namespace xtal::processor::__test
 template <size_t N_window=8, int N_store=-1, int N_stash=-1>
 void polymer_control_spine__locamotion()
 {
-	using alpha_t = typename computer::alpha_t;
-	using sigma_t = typename computer::sigma_t;
-	using delta_t = typename computer::delta_t;
+	using alpha_t = typename common::computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using delta_t = typename common::computer::delta_t;
 
 	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;
@@ -75,9 +75,9 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_stash=0>
 void polymer_control_stash__compound()
 {
-	using alpha_t = typename computer::alpha_t;
-	using sigma_t = typename computer::sigma_t;
-	using delta_t = typename computer::delta_t;
+	using alpha_t = typename common::computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using delta_t = typename common::computer::delta_t;
 
 	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;
@@ -120,9 +120,9 @@ void polymer_control_stash__compound()
 template <size_t N_window=8, int N_store=0, int N_stash=0>
 void polymer_control_stash__composited()
 {
-	using alpha_t = typename computer::alpha_t;
-	using sigma_t = typename computer::sigma_t;
-	using delta_t = typename computer::delta_t;
+	using alpha_t = typename common::computer::alpha_t;
+	using sigma_t = typename common::computer::sigma_t;
+	using delta_t = typename common::computer::delta_t;
 
 	using stage_t = message::stasis_t<>;
 	using event_t = context::voice_s<stage_t>;

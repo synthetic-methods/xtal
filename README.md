@@ -66,7 +66,7 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template valve<...>()`.
 
-	using Active = message::ordinal_t<struct active>;
+	using Active = message::label_t<int, struct active>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
@@ -79,7 +79,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = message::ordinal_t<struct offset>;
+	using Offset = message::label_t<int, struct offset>;
 	
 	struct Mix: process::confine_t<Mix
 	,  Offset::template dispatch<2>
@@ -218,7 +218,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/compound/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/common/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -260,7 +260,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`compound/compose.ii`](include/xtal/compound/compose.ii?ts=3)|
+|Dependency composition     |[`common/compose.ii`](include/xtal/common/compose.ii?ts=3)|
 |Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
@@ -273,7 +273,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Buffer allocation          |[`compound/fluid/sluice.ii`](include/xtal/compound/fluid/sluice.ii?ts=3) impl. static `std::vector`|
 |Buffer arithmetic          |[`compound/solid/scalar.ii`](include/xtal/compound/solid/scalar.ii?ts=3)|
 |Buffer transformation      |[`compound/solid/series.ii`](include/xtal/compound/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`compound/compute.ii`](include/xtal/compound/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
+|Numeric conditioning       |[`common/compute.ii`](include/xtal/common/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

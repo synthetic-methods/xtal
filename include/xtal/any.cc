@@ -21,11 +21,11 @@ namespace xtal::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace compound;
+using namespace common;
 
-using level_t = message::label_t<typename computer::alpha_t, struct T_level>;
-using onset_t = message::label_t<typename computer::alpha_t, struct T_onset>;
-using scale_t = message::label_t<typename computer::alpha_t, struct T_scale>;
+using level_t = message::label_t<typename common::computer::alpha_t, struct T_level>;
+using onset_t = message::label_t<typename common::computer::alpha_t, struct T_onset>;
+using scale_t = message::label_t<typename common::computer::alpha_t, struct T_scale>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using count_t  = typename computer::iota_t;
+	using count_t  = typename common::computer::iota_t;
 	using restep_u = message::restep_t<count_t>;
 
 	template <class T>

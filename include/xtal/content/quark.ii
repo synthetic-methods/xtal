@@ -12,7 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                typename ..._s> XTAL_NYM quark;
-template <                typename ..._s> XTAL_ASK quark_q = tag_p<quark, _s...>;
+template <                typename ..._s> XTAL_ASK quark_q = common::tag_p<quark, _s...>;
 template <class U=size_t, typename ...As> XTAL_USE quark_t = confined_t<quark<U>, As...>;
 
 
@@ -23,16 +23,16 @@ Pairs `pulse` and `phase` to represent e.g. `{phase/frequency, count/trigger}`. 
 template <class U>
 struct quark<U>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	using delta_t = typename _computer::delta_t;
 	using alpha_t = typename _computer::alpha_t;
 	
-	using subkind = compose<tag<quark>, pulse<delta_t>, phase<alpha_t>>;
+	using subkind = common::compose<common::tag<quark>, pulse<delta_t>, phase<alpha_t>>;
 	
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;

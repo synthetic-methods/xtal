@@ -67,7 +67,7 @@ void process_control__efflux_operator(auto z)
 }
 void process_control__influx_method(auto z)
 {
-	using start_t = message::nominal_t<0, struct T_start>;
+	using start_t = message::label_t<ordinal_t<0>, struct T_start>;
 
 	auto &o = z.template valve<onset_t>();
 	TRUE_(-1 == (int) z.influx(start_t()));                            // unrecognized
@@ -79,7 +79,7 @@ void process_control__influx_method(auto z)
 }
 void process_control__efflux_method(auto z)
 {
-	using start_t = message::nominal_t<0, struct T_start>;
+	using start_t = message::label_t<ordinal_t<0>, struct T_start>;
 
 	auto &o = z.template valve<onset_t>();
 	TRUE_(-1 == (int) z.efflux(start_t()));                            // unrecognized

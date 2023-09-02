@@ -12,7 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 template <         typename ..._s> XTAL_NYM group;
-template <         typename ..._s> XTAL_ASK group_q = tag_p<group, _s...>;
+template <         typename ..._s> XTAL_ASK group_q = common::tag_p<group, _s...>;
 template <class U, typename ...As> XTAL_USE group_t = confined_t<group<U>, As...>;
 
 
@@ -24,12 +24,12 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 template <additive_group_q U>
 struct group<U>
 {
-	using subkind = confer<U, tag<group>>;
+	using subkind = confer<U, common::tag<group>>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;

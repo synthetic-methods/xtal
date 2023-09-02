@@ -19,10 +19,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -111,16 +111,16 @@ struct define
 		template <class ...Xs>
 		struct bond
 		{
-			using signature = pack<let_t<Xs>...>;
+			using signature = common::pack<let_t<Xs>...>;
 			using result_t = typename signature::template invoke_t<T>;
 			using return_t = iteratee_t<result_t>;
 			
-			using subkind = compose<concord::defer<typename signature::type>, defer<T>>;
+			using subkind = common::compose<concord::defer<typename signature::type>, defer<T>>;
 
 			template <any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
 				using R_::R_;
@@ -166,14 +166,14 @@ struct define
 
 				///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
-				XTAL_FNX influx(XTAL_DEF ...oo)
+				XTAL_TLX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
-				XTAL_FNX efflux(XTAL_DEF ...oo)
+				XTAL_TLX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
@@ -182,26 +182,26 @@ struct define
 				///\note\
 				If prefixed by `null_t()`, the message is forwarded directly to `slots`. \
 
-				XTAL_FNX influx(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
-				XTAL_FNX efflux(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
+				XTAL_TLX influx(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
+				XTAL_TLX efflux(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
-				If prefixed by `constant_q`, the message is forwarded directly to the `slot` specified. \
+				If prefixed by `nominal_q`, the message is forwarded directly to the `slot` specified. \
 
-				XTAL_FNX influx(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
-				XTAL_FNX efflux(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
+				XTAL_TLX influx(nominal_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
+				XTAL_TLX efflux(nominal_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
 				Forwards the message to `slots`, bypassing `self`. \
 
-				XTAL_FNX influx_push(XTAL_DEF ...oo)
+				XTAL_TLX influx_push(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
 						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
 					);
 				}
-				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
@@ -213,7 +213,7 @@ struct define
 				If `~N_slot`, the slot at `N_slot` receives the full message. \
 
 				template <int N_slot=-1>
-				XTAL_FNX influx_push_tail(auto o, auto ...oo)
+				XTAL_TLX influx_push_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
@@ -221,13 +221,13 @@ struct define
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(seek_t<I...>)
+						return [&] <auto ...I>(common::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...))
-						(seek_f<sizeof...(Xs) - 1> {});
+						(common::seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 				template <int N_slot=-1>
-				XTAL_FNX efflux_pull_tail(auto o, auto ...oo)
+				XTAL_TLX efflux_pull_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
@@ -235,9 +235,9 @@ struct define
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(seek_t<I...>)
+						return [&] <auto ...I>(common::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...))
-						(seek_f<sizeof...(Xs) - 1> {});
+						(common::seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 
@@ -252,9 +252,9 @@ struct refine
 	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
 		using F_ = typename S_::template bond<Xs...>;
@@ -267,7 +267,7 @@ struct refine
 		struct bond: F_<Xs...>
 		{
 			using kind = confined<F_<Xs...>>;
-			using type = compose_s<S_, kind>;
+			using type = common::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>
@@ -278,7 +278,7 @@ struct refine
 		XTAL_0EX
 		{
 			using  kind = confined<As..., F_<decltype(xs)...>>;
-			using  type = compose_s<S_, kind>;
+			using  type = common::compose_s<S_, kind>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
@@ -286,7 +286,7 @@ struct refine
 		XTAL_0EX
 		{
 			using  kind = confined<As..., F_<decltype(xs)...>>;
-			using  type = compose_s<S_, kind>;
+			using  type = common::compose_s<S_, kind>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
@@ -305,9 +305,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -338,9 +338,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;

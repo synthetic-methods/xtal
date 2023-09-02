@@ -23,15 +23,15 @@ struct revise<U>
 {
 	using store_u =    based_t<U>;
 	using serve_u = deranged_t<U>;
-	using subkind = compose<void
+	using subkind = common::compose<void
 	,	concord::defer<serve_u>
 	,	concord::defer<store_u>
 	>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 	//	using S_::S_;

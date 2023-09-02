@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <           typename ..._s> XTAL_NYM star;
-template <           typename ..._s> XTAL_ASK star_q = tag_p<star, _s...>;
+template <           typename ..._s> XTAL_ASK star_q = common::tag_p<star, _s...>;
 template <array_q W, typename ...As> XTAL_USE star_t = confined_t<star<W, As...>>;
 
 
@@ -25,18 +25,18 @@ struct star<W, As...>
 	XTAL_LET N_ = _std::       extent_v<W>;
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using array_u = solid::serial_t<W>;
+	using array_u = compound::solid::serial_t<W>;
 	using shard_u = typename context::shard_s<array_u>;
-	using subkind = compose<tag<star>
+	using subkind = common::compose<common::tag<star>
 	,	_detail::refer_iterators<array_u>
 	,	typename shard_u::refract
 	,	As...
 	>;
 	
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;
@@ -76,13 +76,13 @@ struct star<W, As...>
 		(Potentially need a `context::sequel` to express this cleanly?) \
 		
 		/**/
-		XTAL_FNX infuse(XTAL_DEF_(array_q<(int) N_ - 1>) a)
+		XTAL_TLX infuse(XTAL_DEF_(array_q<(int) N_ - 1>) a)
 		XTAL_0EX
 		{
 			valve() += a;
 			return 0;
 		}
-		XTAL_FNX infuse(XTAL_DEF o)
+		XTAL_TLX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return S_::infuse(XTAL_REF_(o));

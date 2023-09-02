@@ -19,10 +19,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -32,9 +32,9 @@ struct define
 			using subkind = conflux::defer<T>;
 
 			template <conflux::any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 			
 			public:
 			//	using R_::R_;
@@ -60,9 +60,9 @@ struct define
 		struct dispatch
 		{
 			template <process::any_q R>
-			class subtype: public compose_s<R, attach>
+			class subtype: public common::compose_s<R, attach>
 			{
-				using R_ = compose_s<R, attach>;
+				using R_ = common::compose_s<R, attach>;
 				using K_ = typename R_::valve_type;
 			
 			public:
@@ -85,12 +85,12 @@ struct define
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_TN2 reify(constant_q auto const ...ks),
+				XTAL_TN2 reify(nominal_q auto const ...ks),
 					_std::bind_front(deify<Xs...>(ks...), &self())
 				)
 
 				template <class ...Xs>
-				XTAL_TN2 deify(constant_q auto const ...ks)
+				XTAL_TN2 deify(nominal_q auto const ...ks)
 				XTAL_0FX
 				{
 					return deify_(being<Xs...>::template m_method<valued_f(ks)...>);
@@ -109,7 +109,7 @@ struct define
 					class resolve
 					{
 						template <size_t ...I>
-						XTAL_FN2 method_f(seek_t<I...>)
+						XTAL_FN2 method_f(common::seek_t<I...>)
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
@@ -117,7 +117,7 @@ struct define
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(seek_f<N_arity> {});
+						XTAL_LET m_method = method_f(common::seek_f<N_arity> {});
 					
 					};
 					template <auto ...Ks> XTAL_LET m_method = resolve<Ks...>::m_method;
@@ -134,14 +134,14 @@ struct define
 		struct guard
 		{
 			template <conflux::any_q R>
-			class subtype: public compose_s<R, attach>
+			class subtype: public common::compose_s<R, attach>
 			{
-				using R_ = compose_s<R, attach>;
+				using R_ = common::compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
 
-				XTAL_FNX infuse(XTAL_DEF o)
+				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
@@ -160,14 +160,14 @@ struct define
 		struct gauge
 		{
 			template <conflux::any_q R>
-			class subtype: public compose_s<R, attach>
+			class subtype: public common::compose_s<R, attach>
 			{
-				using R_ = compose_s<R, attach>;
+				using R_ = common::compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
 				
-				XTAL_FNX effuse(XTAL_DEF o)
+				XTAL_TLX effuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
@@ -186,9 +186,9 @@ struct define
 		struct poll
 		{
 			template <process::any_q R>
-			class subtype: public compose_s<R, attach>
+			class subtype: public common::compose_s<R, attach>
 			{
-				using R_ = compose_s<R, attach>;
+				using R_ = common::compose_s<R, attach>;
 			
 			public:
 				using R_::R_;
@@ -211,9 +211,9 @@ struct define
 		struct rend
 		{
 			template <conflux::any_q R>
-			class subtype: public compose_s<R>
+			class subtype: public common::compose_s<R>
 			{
-				using R_ = compose_s<R>;
+				using R_ = common::compose_s<R>;
 				
 			public:
 				using R_::R_;
@@ -221,7 +221,7 @@ struct define
 				using R_::influx;
 				///\returns the aggregated result of queuing the `message`s with the given delay. \
 
-				XTAL_FNX influx(context::voice_s<> io, XTAL_DEF ...oo)
+				XTAL_TLX influx(context::voice_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx_apart(context::voice_s<XTAL_TYP_(oo)>(io.valve(), XTAL_REF_(oo))...);
@@ -238,9 +238,9 @@ struct define
 		struct pend
 		{
 			template <conflux::any_q R>
-			class subtype: public compose_s<R, rend>
+			class subtype: public common::compose_s<R, rend>
 			{
-				using R_ = compose_s<R, rend>;
+				using R_ = common::compose_s<R, rend>;
 				
 			public:
 				using R_::R_;
@@ -248,7 +248,7 @@ struct define
 				using R_::influx;
 				///\returns the aggregated result of influxing the given `message`s. \
 
-				XTAL_FNX influx(context::cue_s<> io, XTAL_DEF ...oo)
+				XTAL_TLX influx(context::cue_s<> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx_apart(context::cue_s<XTAL_TYP_(oo)>(io.valve(), XTAL_REF_(oo))...);
@@ -265,15 +265,15 @@ struct define
 		{
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::valve_type;
-			using spool_u = fluid::siphon_t<event_u[N_event]>;
+			using spool_u = compound::fluid::siphon_t<event_u[N_event]>;
 
 			template <int N>
 			XTAL_LET sentry_v = event_u::template sentry<N>();
 
 			template <process::any_q R> requires (2 <= size_t(N_event))
-			class subtype: public compose_s<R, pend>
+			class subtype: public common::compose_s<R, pend>
 			{
-				using R_ = compose_s<R, pend>;
+				using R_ = common::compose_s<R, pend>;
 				
 				delay_u d_{0};
 				spool_u q_{sentry_v<-1>, sentry_v<1>};
@@ -282,7 +282,7 @@ struct define
 				using R_::R_;
 				using R_::influx;
 
-				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
+				XTAL_TLX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (dot.valve() < d_ and q_.empty()) {
@@ -314,15 +314,15 @@ struct define
 		{
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::valve_type;
-			using spool_u = fluid::siphon_t<event_u[N_event]>;
+			using spool_u = compound::fluid::siphon_t<event_u[N_event]>;
 
 			template <int N>
 			XTAL_LET sentry_v = event_u::template sentry<N>();
 
 			template <processor::any_q R>
-			class subtype: public compose_s<R, pend>
+			class subtype: public common::compose_s<R, pend>
 			{
-				using R_ = compose_s<R, pend>;
+				using R_ = common::compose_s<R, pend>;
 				spool_u q_{sentry_v<1>};
 
 				XTAL_TO4_(XTAL_TN2 next_tail(), q_.peek().core())
@@ -336,7 +336,7 @@ struct define
 				Invokes `influx` if the given delay `i == 0`, \
 				otherwise enqueues the events `o, o...` at the specified index. \
 				
-				XTAL_FNX influx(event_u dot, XTAL_DEF ...oo)
+				XTAL_TLX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (0 == dot.valve()) {
@@ -391,15 +391,15 @@ struct defer
 :	_retail::defer<U>
 {
 };
-template <constant_q W> requires unsigned_q<valued_t<W>>
+template <nominal_q W> requires unsigned_q<valued_t<W>>
 struct defer<W>
 {
 	using subkind = defer<valued_t<W>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;

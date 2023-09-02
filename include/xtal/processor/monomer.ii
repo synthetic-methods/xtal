@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM monomer;
-template <typename ..._s> XTAL_ASK monomer_q =      tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_ASK monomer_q =      common::tag_p<monomer, _s...>;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ...As>
 XTAL_FN2  monomer_f(XTAL_DEF  u)
@@ -30,9 +30,9 @@ struct monomer<U, As...>
 	using subkind = confer<U, As...>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 	
 		template <class ...Xs>
@@ -46,7 +46,7 @@ struct monomer<U, As...>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
-			using subkind = compose<tag<monomer>
+			using subkind = common::compose<common::tag<monomer>
 			,	concord::confer<typename rebound::result_t>
 		//	,	As...
 		//	,	resize_u::attach
@@ -54,9 +54,9 @@ struct monomer<U, As...>
 			,	rebound
 			>;
 			template <any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
 			//	using R_::R_;
@@ -78,7 +78,7 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 
-				XTAL_FNX efflux(XTAL_DEF_(message::sequel_q) o_sequel)
+				XTAL_TLX efflux(XTAL_DEF_(message::sequel_q) o_sequel)
 				XTAL_0EX
 				{
 					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_sequel)));
@@ -96,9 +96,9 @@ struct monomer<U, As...>
 			using  serve_u = deranged_t<store_u>;
 			using respan_u = message::respan_t<serve_u>;
 		
-			XTAL_LET_(int) N_share = seek_true_v<_detail::recollection_p<Xs, serve_u>...>;
+			XTAL_LET_(int) N_share = common::seek_true_v<_detail::recollection_p<Xs, serve_u>...>;
 
-			using subkind = compose<tag<monomer>
+			using subkind = common::compose<common::tag<monomer>
 			,	concord:: refer<serve_u>
 			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
@@ -107,9 +107,9 @@ struct monomer<U, As...>
 			,	rebound
 			>;
 			template <any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
 				using R_::R_;
@@ -122,7 +122,7 @@ struct monomer<U, As...>
 				///\
 				Responds to `message::resize` by resizing the internal `store()`. \
 
-				XTAL_FNX infuse(XTAL_DEF o)
+				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<resize_u, decltype(o)>) {
@@ -137,7 +137,7 @@ struct monomer<U, As...>
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_FNX influx_push(resize_u o_resize, XTAL_DEF ...oo)
+				XTAL_TLX influx_push(resize_u o_resize, XTAL_DEF ...oo)
 				XTAL_0EX
 				XTAL_REQ (0 <= N_share)
 				{
@@ -152,7 +152,7 @@ struct monomer<U, As...>
 				while a match for the current sequel will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
 
-				XTAL_FNX efflux(message::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_TLX efflux(message::sequel_q auto o_sequel, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return efflux(respan_u(store()), o_sequel, XTAL_REF_(oo)...);
@@ -162,7 +162,7 @@ struct monomer<U, As...>
 				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_FNX efflux(respan_u o_respan, message::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_TLX efflux(respan_u o_respan, message::sequel_q auto o_sequel, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(o_sequel) == 1) return 1;
@@ -175,7 +175,7 @@ struct monomer<U, As...>
 				///\
 				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
 				
-				XTAL_FNX efflux_pull_slice(respan_u respan_x, message::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull_slice(respan_u respan_x, message::sequel_q auto sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const  t_ = respan_x.begin();

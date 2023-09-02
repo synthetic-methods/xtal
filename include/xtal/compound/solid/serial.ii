@@ -13,7 +13,7 @@ namespace xtal::compound::solid
 
 template <class ..._s> XTAL_NYM serial;
 template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
-template <class ...Ts> XTAL_ASK serial_q = tag_p<serial, Ts...>;
+template <class ...Ts> XTAL_ASK serial_q = common::tag_p<serial, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,13 +23,13 @@ Extends `sector::type` with multiplication defined by linear convolution. \
 template <class U, size_t N>
 struct serial<U[N]>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	
 	template <class T>
 	using demitype = typename sector<U[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<serial>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<serial>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -63,8 +63,8 @@ struct serial<U[N]>
 				for (auto j = i; j; --j ) {d(i) += t.d(j)*_s[i - j];}}
 			}
 			else {
-				seek_e<-(size_s) H, 0>([&, this] (auto I) XTAL_0FN {d(I) *= t.d(0);
-				seek_e<-(size_s) I, 1>([&, this] (auto J) XTAL_0FN {d(I) += t.d(J)*_s[I - J];});});
+				common::seek_e<-(size_s) H, 0>([&, this] (auto I) XTAL_0FN {d(I) *= t.d(0);
+				common::seek_e<-(size_s) I, 1>([&, this] (auto J) XTAL_0FN {d(I) += t.d(J)*_s[I - J];});});
 			}
 			return self();
 		}
@@ -82,7 +82,7 @@ struct serial<U[N]>
 		{
 		//	auto constexpr N0 = N - 0;
 			auto constexpr N1 = N - 1;
-			seek_e<N1>([&, this] (auto i) XTAL_0FN_(d(0 + i) += d(1 + i)));
+			common::seek_e<N1>([&, this] (auto i) XTAL_0FN_(d(0 + i) += d(1 + i)));
 			return self();
 		}
 
@@ -100,7 +100,7 @@ struct serial<U[N]>
 		{
 			auto constexpr N0 = N - 0;
 			auto constexpr N1 = N - 1;
-			seek_e<N1>([&, this] (auto i) XTAL_0FN_(d(N1 - i) -= d(N0 - i)));
+			common::seek_e<N1>([&, this] (auto i) XTAL_0FN_(d(N1 - i) -= d(N0 - i)));
 			return self();
 		}
 

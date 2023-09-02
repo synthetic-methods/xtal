@@ -19,9 +19,9 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;
@@ -43,9 +43,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 
 	public:
@@ -76,7 +76,7 @@ struct refer
 };
 /*/
 template <class U>
-struct refer: compose<void
+struct refer: common::compose<void
 ,	_detail::refer_quality<U>
 >
 {

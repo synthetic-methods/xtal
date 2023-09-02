@@ -16,7 +16,7 @@ namespace xtal::message
 template <typename ...As>
 struct flux
 {
-	using subkind = compose<void
+	using subkind = common::compose<void
 	,	_detail::refer_equality<XTAL_FLX>
 	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
@@ -24,19 +24,19 @@ struct flux
 	>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
 
 	};
 };
-template <constant_q A, typename ...As>
+template <nominal_q A, typename ...As>
 struct flux<A, As...>
 {
-	using subkind = compose<void
+	using subkind = common::compose<void
 	,	_detail::refer_equality<XTAL_FLX>
 	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
@@ -44,9 +44,9 @@ struct flux<A, As...>
 	>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -70,7 +70,7 @@ struct flux<A, As...>
 	};
 };
 template <typename ...As>
-using flux_t = confined_t<flux<As..., tag<flux>>>;
+using flux_t = confined_t<flux<As..., common::tag<flux>>>;
 
 template <typename ...As>
 XTAL_FN2  flux_f(XTAL_DEF... oo)

@@ -12,7 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                typename ..._s> XTAL_NYM phase;
-template <                typename ..._s> XTAL_ASK phase_q = tag_p<phase, _s...>;
+template <                typename ..._s> XTAL_ASK phase_q = common::tag_p<phase, _s...>;
 template <class U=size_t, typename ...As> XTAL_USE phase_t = confined_t<phase<U>, As...>;
 
 
@@ -24,14 +24,14 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 template <class U>
 struct phase<U>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	using alpha_t = typename _computer::alpha_t;
-	using subkind = compose<tag<phase>, group<alpha_t>>;
+	using subkind = common::compose<common::tag<phase>, group<alpha_t>>;
 
 	template <class S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;

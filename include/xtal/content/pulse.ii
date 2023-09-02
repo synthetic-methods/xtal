@@ -12,7 +12,7 @@ namespace xtal::content
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                typename ..._s> XTAL_NYM pulse;
-template <                typename ..._s> XTAL_ASK pulse_q = tag_p<pulse, _s...>;
+template <                typename ..._s> XTAL_ASK pulse_q = common::tag_p<pulse, _s...>;
 template <class U=size_t, typename ...As> XTAL_USE pulse_t = confined_t<pulse<U>, As...>;
 
 
@@ -24,12 +24,12 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 template <class U>
 struct pulse<U>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	using delta_t = typename _computer::delta_t;
-	using subkind = compose<tag<pulse>, group<delta_t>>;
+	using subkind = common::compose<common::tag<pulse>, group<delta_t>>;
 
 	template <class S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 	
 };
 

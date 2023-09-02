@@ -13,7 +13,7 @@ namespace xtal::compound::solid
 
 template <class ..._s> XTAL_NYM point;
 template <class ..._s> XTAL_USE point_t = typename point<_s...>::type;
-template <class ...Ts> XTAL_ASK point_q = tag_p<point, Ts...>;
+template <class ...Ts> XTAL_ASK point_q = common::tag_p<point, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,13 +27,13 @@ struct point<U[N][Ns]>
 template <class U, size_t N>
 struct point<U[N]>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	
 	template <class T>
-	using demitype = compose_s<_std::array<U, N>, define<T>>;
+	using demitype = common::compose_s<_std::array<U, N>, common::define<T>>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<point>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<point>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -42,14 +42,17 @@ struct point<U[N]>
 		using S_ = hemitype<T>;
 		using I_ = typename S_::size_type;
 
-//	protected:
-	public:
+	protected:
 		XTAL_DO4_(XTAL_TN0 accept(I_ i), {assert(0 <= i and i < N);})
 		XTAL_TN2 access(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
 		XTAL_TN2 access(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
 		XTAL_TN2 access(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
 		XTAL_TN2 access(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
+	
+	public:
 		XTAL_TO4_(XTAL_TN2 d(I_ i), (accept(i), access(i)))
+
+		XTAL_FN2_(size_t) size() {return N;}// static override
 
 	public:
 	//	using S_::S_;
@@ -108,7 +111,7 @@ struct point<U[N]>
 		XTAL_0EX
 		XTAL_REQ (0 < N) and (N <= _computer::alignment_v)
 		{
-			seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) = f(d(i))));
+			common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) = f(d(i))));
 			return self();
 		}
 
@@ -125,19 +128,19 @@ struct point<U[N]>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (d(I) == t.d(I))) (seek_f<N> {});}
-		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (d(I) <= t.d(I))) (seek_f<N> {});}
-		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (d(I) >= t.d(I))) (seek_f<N> {});}
-		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (d(I) <  t.d(I))) (seek_f<N> {});}
-		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(seek_t<I...>) XTAL_0FN_(...and (d(I) >  t.d(I))) (seek_f<N> {});}
+		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (d(I) == t.d(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (d(I) <= t.d(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (d(I) >= t.d(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (d(I) <  t.d(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (d(I) >  t.d(I))) (common::seek_f<N> {});}
 
 		XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
 		XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
 		XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 		XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) *= XTAL_REF_(w))), self();}
-		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) /= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) *= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) /= XTAL_REF_(w))), self();}
 
 	};
 	using type = _detail::isotype<homotype>;
@@ -152,7 +155,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::compound::solid::point_q T>
-struct tuple_size<T>: xtal::arity_t<T> {};
+struct tuple_size<T>: xtal::cardinal_t<T::size()> {};
 
 template <size_t N, xtal::compound::solid::point_q T>
 struct tuple_element<N, T> {using type = xtal::valued_t<T>;};

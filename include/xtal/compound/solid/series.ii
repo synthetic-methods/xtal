@@ -13,7 +13,7 @@ namespace xtal::compound::solid
 
 template <class ..._s> XTAL_NYM series;
 template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
-template <class ...Ts> XTAL_ASK series_q = tag_p<series, Ts...>;
+template <class ...Ts> XTAL_ASK series_q = common::tag_p<series, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,13 +23,13 @@ Extends `sector::type` with multiplication defined by circular convolution. \
 template <class U, size_t N>
 struct series<U[N]>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	
 	template <class T>
 	using demitype = typename sector<U[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<series>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<series>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -49,7 +49,7 @@ struct series<U[N]>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(constant_q auto const o_shift)
+		XTAL_CXN homotype(nominal_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
@@ -123,7 +123,7 @@ struct series<U[N]>
 			if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*M, _std::span(i, i + 1*M), [] (U const &v) XTAL_0FN_(U(-v.imag(), -v.real())));
 			if constexpr (-1 <= N_shift) _detail::copy_to(i + 2*M, _std::span(i, i + 2*M), [] (U const &v) XTAL_0FN_(U( v.imag(), -v.real())));
 			if constexpr (-0 <= N_shift) _detail::copy_to(i + 4*M, _std::span(i, i + 4*M), [] (U const &v) XTAL_0FN_(U(-v.real(), -v.imag())));
-			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `seek`.
+			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `common::seek`.
 			
 			return self();
 		}
@@ -147,12 +147,12 @@ struct series<U[N]>
 		//	Ensure the size of both domain and codomain are powers of two:
 			I const n_size = that.size(); assert(2 <= n_size);
 			I const h_size = n_size >> 1; assert(1 <= h_size);
-			I const k_size = compute<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
-			I const K_size = compute<I>::bit_floor_f((I) N); assert(k_size <= K_size);
+			I const k_size = common::compute<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
+			I const K_size = common::compute<I>::bit_floor_f((I) N); assert(k_size <= K_size);
 
 		//	Move all entries to their bit-reversed locations:
 			for (I h = 0; h < h_size; ++h) {
-				_std::swap(that[h], that[compute<I>::bit_reverse_f(h, k_size)]);
+				_std::swap(that[h], that[common::compute<I>::bit_reverse_f(h, k_size)]);
 			}
 		
 		//	Conjugate the input if computing the inverse transform of the codomain:
@@ -219,14 +219,14 @@ struct series<U[N]>
 		{
 			auto &s = self();
 			if constexpr (complex_field_q<U>) {
-				T(integer_t<-1>{}).convolve(s, t);
+				T(ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
 				using X = typename _computer::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);
-				Y(integer_t<-1>{}).convolve(s_, t_);
+				Y(ordinal_t<-1>{}).convolve(s_, t_);
 				_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
 			}
 			return s;

@@ -23,7 +23,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //\
-TODO: Allow command-line/[c]?make configuration?
+TODO: Allow [c]?make configuration?
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 #define XTAL_STD ((__cplusplus/100)%100)
@@ -191,7 +191,7 @@ static_assert(1400 <= XTAL_V00_LLVM);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_FNX    [[nodiscard]] XTAL_STD_(sign_t)
+#define XTAL_TLX    [[nodiscard]] XTAL_STD_(sign_t)
 #define XTAL_FLX                  XTAL_STD_(sign_t)
 #define XTAL_FLX_(...) [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 

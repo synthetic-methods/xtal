@@ -64,7 +64,7 @@ struct refine_tuple
 
 template <class U>
 struct refer_iterators
-:	compose<>
+:	common::compose<>
 {};
 template <class U> requires begin_q<U>
 struct refer_iterators<U>
@@ -96,7 +96,7 @@ struct refer_iterators<U>
 
 template <class U>
 struct refer_equality
-:	compose<>
+:	common::compose<>
 {};
 template <class U> requires equality_p<U>
 struct refer_equality<U>
@@ -115,7 +115,7 @@ struct refer_equality<U>
 
 template <class U>
 struct refer_inequality
-:	compose<>
+:	common::compose<>
 {};
 template <class U> requires inequality_p<U>
 struct refer_inequality<U>
@@ -137,7 +137,7 @@ struct refer_inequality<U>
 
 template <class U>
 struct refer_quality
-:	compose<void
+:	common::compose<void
 	,	refer_equality<U>
 	,	refer_inequality<U>
 	>
@@ -148,11 +148,11 @@ struct refer_quality
 
 template <class U, size_t N=0>
 struct refer_binary_logic
-:	compose<>
+:	common::compose<>
 {};
 template <class U>
 struct refer_binary_logic<U, 0>
-:	compose<void
+:	common::compose<void
 	,	refer_binary_logic<U, 1>
 	,	refer_binary_logic<U, 2>
 	>
@@ -193,11 +193,11 @@ struct refer_binary_logic<U, 2>
 
 template <class U, size_t N=0>
 struct refer_multiplicative_group
-:	compose<>
+:	common::compose<>
 {};
 template <class U>
 struct refer_multiplicative_group<U, 0>
-:	compose<void
+:	common::compose<void
 	,	refer_multiplicative_group<U, 1>
 	,	refer_multiplicative_group<U, 2>
 	>
@@ -234,11 +234,11 @@ struct refer_multiplicative_group<U, 2>
 
 template <class U, size_t N=0>
 struct refer_additive_group
-:	compose<>
+:	common::compose<>
 {};
 template <class U>
 struct refer_additive_group<U, 0>
-:	compose<void
+:	common::compose<void
 	,	refer_additive_group<U, 1>
 	,	refer_additive_group<U, 2>
 	>
@@ -276,11 +276,11 @@ struct refer_additive_group<U, 2>
 
 template <class U, size_t N=0>
 struct refer_discrete_group
-:	compose<>
+:	common::compose<>
 {};
 template <class U>
 struct refer_discrete_group<U, 0>
-:	compose<void
+:	common::compose<void
 	,	refer_discrete_group<U, 1>
 	,	refer_discrete_group<U, 2>
 	>
@@ -304,7 +304,7 @@ struct refer_discrete_group<U, 1>
 
 template <class U, size_t N=0>
 struct refer_groups
-:	compose<void
+:	common::compose<void
 	,	refer_multiplicative_group<U, N>
 	,	refer_additive_group<U, N>
 	,	refer_discrete_group<U, N>

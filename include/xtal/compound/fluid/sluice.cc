@@ -17,8 +17,8 @@ TAG_("sluice")
 {
 	TRY_("assignment")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
 
 		using sluice_u = sluice_t<alpha_t[128]>;
 		using vector_u = _std::vector<alpha_t>;
@@ -40,8 +40,8 @@ TAG_("sluice")
 	}
 	TRY_("mutation")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
 
 		using sluice_u = sluice_t<alpha_t[128]>;
 		using vector_u = _std::vector<alpha_t>;

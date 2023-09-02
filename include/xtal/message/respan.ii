@@ -12,11 +12,11 @@ namespace xtal::message
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM respan;
-template <typename ..._s> XTAL_ASK respan_q = tag_p<respan, _s...>;
-template <iterated_q   U> XTAL_USE respan_t = confined_t<refer<U>, respan<U>, tag<respan>>;
+template <typename ..._s> XTAL_ASK respan_q = common::tag_p<respan, _s...>;
+template <iterated_q   U> XTAL_USE respan_t = confined_t<refer<U>, respan<U>, common::tag<respan>>;
 /**/
 template <class S, iterated_q U>
-XTAL_USE respan_s = compose_s<S, confined<tag<respan>, refer<U>, respan<U>>>;
+XTAL_USE respan_s = common::compose_s<S, confined<common::tag<respan>, refer<U>, respan<U>>>;
 /***/
 
 template <iterated_q U>
@@ -29,9 +29,9 @@ public:
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 	//	using S_::S_;

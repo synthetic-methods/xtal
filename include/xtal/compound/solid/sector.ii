@@ -13,7 +13,7 @@ namespace xtal::compound::solid
 
 template <class ..._s> XTAL_NYM sector;
 template <class ..._s> XTAL_USE sector_t = typename sector<_s...>::type;
-template <class ...Ts> XTAL_ASK sector_q = tag_p<sector, Ts...>;
+template <class ...Ts> XTAL_ASK sector_q = common::tag_p<sector, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,13 +24,13 @@ Extends `point::type` with elementwise addition/subtracion. \
 template <class U, size_t N>
 struct sector<U[N]>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	
 	template <class T>
 	using demitype = typename point<U[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<sector>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<sector>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -53,11 +53,11 @@ struct sector<U[N]>
 		XTAL_OP1_(T &) += (bracket_t<U> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 		XTAL_OP1_(T &) -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
 		
-		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) += t.d(i))), self();}
-		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) -= t.d(i))), self();}
+		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) += t.d(i))), self();}
+		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) -= t.d(i))), self();}
 
-		template <subarray_q<N> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {return seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(d(i) += w[i])), self();}
-		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {return seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(d(i) -= w[i])), self();}
+		template <subarray_q<N> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {return common::seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(d(i) += w[i])), self();}
+		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {return common::seek_e<arity_v<decltype(w)>>([&, this] (auto i) XTAL_0FN_(d(i) -= w[i])), self();}
 
 	};
 	using type = _detail::isotype<homotype>;

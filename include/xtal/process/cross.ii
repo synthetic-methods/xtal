@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM cross;
-template <typename ..._s> XTAL_ASK cross_q =      tag_p<cross, _s...>;
+template <typename ..._s> XTAL_ASK cross_q =      common::tag_p<cross, _s...>;
 template <typename ..._s> XTAL_USE cross_t = confined_t<cross< _s...>>;
 template <typename ...As>
 XTAL_FN2  cross_f(XTAL_DEF  u)
@@ -26,11 +26,11 @@ template <size_t N>
 XTAL_FN2 dot(auto const &x, auto const &y)
 {
 	using namespace _std;
-	static_assert(N == pack_size_v<decltype(x)>);
-	static_assert(N == pack_size_v<decltype(y)>);
-	return [&]<size_t ...I>(seek_t<I...>)
+	static_assert(N == common::pack_size_v<decltype(x)>);
+	static_assert(N == common::pack_size_v<decltype(y)>);
+	return [&]<size_t ...I>(common::seek_t<I...>)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
-	(seek_f<N - 1> {});
+	(common::seek_f<N - 1> {});
 }
 
 
@@ -40,12 +40,12 @@ template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
 	using shard_w = typename context::shard_s<W>::refract;
-	using subkind = compose<shard_w, confer<U>, As..., tag<cross>>;
+	using subkind = common::compose<shard_w, confer<U>, As..., common::tag<cross>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
@@ -56,12 +56,12 @@ struct cross<W, U, As...>
 		XTAL_TN2 method(XTAL_DEF... xs),
 		{
 			auto constexpr N = sizeof...(xs);
-			auto const     n = pack_f(XTAL_REF_(xs)...);
+			auto const     n = common::pack_f(XTAL_REF_(xs)...);
 			auto const    &m = valve();
-			auto constexpr M = pack_size_v<decltype(m)>;
-			return [&, this]<size_t ...I>(seek_t<I...>)
+			auto constexpr M = common::pack_size_v<decltype(m)>;
+			return [&, this]<size_t ...I>(common::seek_t<I...>)
 				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
-			(seek_f<M> {});
+			(common::seek_f<M> {});
 		})
 
 	};

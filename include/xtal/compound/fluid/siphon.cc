@@ -16,7 +16,7 @@ namespace xtal::compound::fluid::__test
 template <int N>
 void siphon__operation()
 {
-	using event_u = compose_s<onset_t, concord::conferred<int>>;
+	using event_u = common::compose_s<onset_t, concord::conferred<int>>;
 	using queue_u = fluid::siphon_t<event_u[N]>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 

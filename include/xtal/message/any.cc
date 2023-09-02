@@ -23,7 +23,7 @@ TAG_("message", "hold", "process")
 		size_t constexpr N_size = 1<<3;
 
 		using sequel_u = message::sequel_t<>;
-		using gate_t   = message::label_t<typename computer::alpha_t, struct T_gate>;
+		using gate_t   = message::label_t<typename common::computer::alpha_t, struct T_gate>;
 		using gated_t  = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 
 		gated_t o_gated;
@@ -71,10 +71,10 @@ void control_hold_processor()
 	using namespace processor;
 	size_t constexpr N_size = 1<<3;
 
-	using gate_t = message::label_t<typename computer::alpha_t, struct T_gate>;
+	using gate_t = message::label_t<typename common::computer::alpha_t, struct T_gate>;
 
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
-	using array_t = _std::array<typename computer::alpha_t, N_size>;
+	using array_t = _std::array<typename common::computer::alpha_t, N_size>;
 	using cue_t = context::cue_s<>;
 
 	using resize_u = message::resize_t<>;
@@ -115,7 +115,7 @@ template <class mix_t>
 void control_intermit_processor()
 {
 	using namespace processor;
-	using alpha_t = typename computer::alpha_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	using    mix_z = processor::monomer_t<mix_t, restore<>, typename onset_t::template intermit<(1<<4)>>;
 	using resize_u = message::resize_t<>;

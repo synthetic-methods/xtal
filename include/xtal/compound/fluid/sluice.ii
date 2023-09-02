@@ -13,7 +13,7 @@ namespace xtal::compound::fluid
 
 template <class ..._s> XTAL_NYM sluice;
 template <class ..._s> XTAL_USE sluice_t = typename sluice<_s...>::type;
-template <class ...Ts> XTAL_ASK sluice_q = tag_p<sluice, Ts...>;
+template <class ...Ts> XTAL_ASK sluice_q = common::tag_p<sluice, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,14 +23,14 @@ template <class ...Ts> XTAL_ASK sluice_q = tag_p<sluice, Ts...>;
 template <class U>
 struct sluice<U[0]>
 {
-	using type = compose_s<_std::vector<U>, tag<sluice>>;
+	using type = common::compose_s<_std::vector<U>, common::tag<sluice>>;
 
 };
 /*/
 template <class U> requires pointer_q<U>
 struct sluice<U>
 {
-	using type = compose_s<_std::vector<pointed_t<U>>, tag<sluice>>;
+	using type = common::compose_s<_std::vector<pointed_t<U>>, common::tag<sluice>>;
 
 };
 /***/
@@ -41,7 +41,7 @@ struct sluice<U[N]>
 	using demitype = iterate_t<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<sluice>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<sluice>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -259,7 +259,7 @@ struct sluice<U[N]>
 		Constructs an element at `i` using the given arguments. \
 		\returns a reference to the element.
 
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN1_(reference) emplace(I i, XTAL_DEF ...etc)
 		{
 			return *inplace(i, XTAL_REF_(etc)...);
@@ -271,7 +271,7 @@ struct sluice<U[N]>
 		template <class I, class J0, class JN> requires epimorphic_p<iterator, I, J0, JN>
 		XTAL_TN1_(iterator) insert(I i, J0 j0, JN jN)
 		{
-			using J = common_t<J0, JN>;
+			using J = shared_t<J0, JN>;
 			return insert(i, (J) j0, (J) jN);
 		}
 		template <class I, class J> requires epimorphic_p<iterator, I, J>
@@ -285,7 +285,7 @@ struct sluice<U[N]>
 		///\
 		Inserts the values `w` beginning at `i`. \
 
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN1_(iterator) insert(I i, bracket_t<U> w)
 		{
 			return insert(i, w.begin(), w.end());
@@ -293,16 +293,16 @@ struct sluice<U[N]>
 		///\
 		Inserts the value `v` at `i`. \
 
-		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, XTAL_DEF_(common_q<U>) v)
+		template <class I> requires shared_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, XTAL_DEF_(shared_q<U>) v)
 		{
 			return inplace(i, XTAL_REF_(v));
 		}
 		///\
 		Initialises `sN` values with `v` beginning at `i`. \
 
-		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, size_type sN, XTAL_DEF_(common_q<U>) v)
+		template <class I> requires shared_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, size_type sN, XTAL_DEF_(shared_q<U>) v)
 		{
 			inject_(i, sN);
 			_std::uninitialized_fill_n(injector_(i), sN, XTAL_REF_(v));
@@ -311,7 +311,7 @@ struct sluice<U[N]>
 		///\
 		Initialises `sN` values beginning at `i`. \
 
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN1_(iterator) insert(I i, size_type sN)
 		{
 			inject_(i, sN);
@@ -325,7 +325,7 @@ struct sluice<U[N]>
 			reserve(1 + size());
 			return ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
 		}
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN1_(iterator) inplace(I i, XTAL_DEF ...etc)
 		{
 			inject_(i, 1);
@@ -375,7 +375,7 @@ struct sluice<U[N]>
 		///\
 		Deletes the element at `i0`. \
 
-		template <class I0> requires common_q<iterator, I0>
+		template <class I0> requires shared_q<iterator, I0>
 		XTAL_TN1 erase(I0 i0)
 		XTAL_0EX
 		{
@@ -384,7 +384,7 @@ struct sluice<U[N]>
 		///\
 		Deletes `sN` elements starting from `i0`. \
 
-		template <class I0> requires common_q<iterator, I0>
+		template <class I0> requires shared_q<iterator, I0>
 		XTAL_TN1 erase(I0 i0, size_type sN)
 		XTAL_0EX
 		{
@@ -393,21 +393,21 @@ struct sluice<U[N]>
 		///\
 		Deletes the elements between `i0` and `iN`. \
 
-		template <class I0, class IN> requires common_q<iterator, I0, IN>
+		template <class I0, class IN> requires shared_q<iterator, I0, IN>
 		XTAL_TN1 erase(I0 i0, IN iN)
 		XTAL_0EX
 		{
-			using I = common_t<I0, IN>;
+			using I = shared_t<I0, IN>;
 			return erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
 		}
 		///\
 		Deletes `sN` elements between `i0` and `iN`. \
 
-		template <class I0, class IN> requires common_q<iterator, I0, IN>
+		template <class I0, class IN> requires shared_q<iterator, I0, IN>
 		XTAL_TN1 erase(I0 i0, IN iN, size_type sN)
 		XTAL_0EX
 		{
-			using I = common_t<I0, IN>;
+			using I = shared_t<I0, IN>;
 			erode_((I) i0, (I) iN, sN);
 			return i0;
 		}
@@ -416,7 +416,7 @@ struct sluice<U[N]>
 		///\
 		Deletes `sN` elements between `i0` and `iN`. \
 
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN0 erode_(I i0, I iN, size_type sN)
 		XTAL_0EX
 		{
@@ -429,7 +429,7 @@ struct sluice<U[N]>
 			}
 			m_limit -= sN;
 		}
-		template <class I> requires common_q<iterator, I>
+		template <class I> requires shared_q<iterator, I>
 		XTAL_TN0 churn_(I i0, I iN, size_type sN)
 		XTAL_0EX
 		{

@@ -96,7 +96,7 @@ TAG_("concord", "traversal")
 		TRUE_(2 == o_qux.template valve<struct bar, struct baz>());
 	//	TRUE_(1 != o_qux.template valve<struct baz, struct bar>());// Fails!
 		
-	//	TRUE_(    any_p<qux_t, sequent_t<1>>);
+	//	TRUE_(    any_p<qux_t, cardinal_t<1>>);
 		TRUE_(    any_p<qux_t, struct bar, struct baz>);
 		TRUE_(not any_p<qux_t, struct baz, struct bar>);
 	//	UNTRUE_(requires {o_qux.template valve<struct baz, struct bar>();});// Shouldn't fail?

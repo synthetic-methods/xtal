@@ -28,7 +28,7 @@ While the exact time-position is unknown, contiguity is guaranteed (by `assert`i
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
 template <                     typename ..._s> XTAL_NYM sequel;
-template <                     typename ..._s> XTAL_ASK sequel_q = tag_p<sequel, _s...>;
+template <                     typename ..._s> XTAL_ASK sequel_q = common::tag_p<sequel, _s...>;
 template <class W=counter_t<>, typename ...As> XTAL_USE sequel_t = confined_t<sequel<W>, As...>;
 template <                     typename ...As>
 XTAL_FN2  sequel_f(XTAL_DEF w)
@@ -165,14 +165,14 @@ struct prequel
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_FNX infuse(T_ t)
+		XTAL_TLX infuse(T_ t)
 		XTAL_0EX
 		{
 			auto &s = self();
 			return s == t or ((s = t), 0);
 		}
 		/**/
-		XTAL_FNX infuse(XTAL_DEF_(sequel_q) t)
+		XTAL_TLX infuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -187,7 +187,7 @@ struct prequel
 			}
 		}
 		/***/
-		XTAL_FNX infuse(XTAL_DEF o)
+		XTAL_TLX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return S::infuse(XTAL_REF_(o));
@@ -200,12 +200,12 @@ struct prequel
 		Unrecognized `sequel_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
-		XTAL_FNX effuse(XTAL_DEF o)
+		XTAL_TLX effuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return S::effuse(XTAL_REF_(o));
 		}
-		XTAL_FNX effuse(XTAL_DEF_(sequel_q) t)
+		XTAL_TLX effuse(XTAL_DEF_(sequel_q) t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -228,12 +228,12 @@ struct prequel
 template <counter_q V>
 struct sequel<V>
 {
-	using subkind = compose<_detail::prequel, resize<V>, restep<V>, tag<sequel>>;
+	using subkind = common::compose<_detail::prequel, resize<V>, restep<V>, common::tag<sequel>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 
 	public:
@@ -321,12 +321,12 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, tag<sequel>>;
+	using subkind = common::compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, common::tag<sequel>>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using T_ = typename S_::self_t;
 
 	public:

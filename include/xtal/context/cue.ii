@@ -18,11 +18,11 @@ Wrapper used to schedule an existing type.\
 ///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 
 template <typename ..._s> XTAL_NYM cue;
-template <class       U > XTAL_NYM cue<U>: conferred<U, tag<cue>> {};
-template <class    ...Ts> XTAL_ASK cue_q = tag_p<cue, Ts...>;
+template <class       U > XTAL_NYM cue<U>: conferred<U, common::tag<cue>> {};
+template <class    ...Ts> XTAL_ASK cue_q = common::tag_p<cue, Ts...>;
 
 template <class S=confined_t<>, class U=size_s>
-using cue_s = compose_s<S, cue<U>>;
+using cue_s = common::compose_s<S, cue<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

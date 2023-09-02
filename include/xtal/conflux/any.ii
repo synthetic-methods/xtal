@@ -19,10 +19,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -35,17 +35,17 @@ struct define
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-		XTAL_FNX reflux(auto const &f)
+		XTAL_TLX reflux(auto const &f)
 		XTAL_0EX
 		{
 			return reflux(f, 0);
 		}
-		XTAL_FNX reflux(auto const &f, auto &&n)
+		XTAL_TLX reflux(auto const &f, auto &&n)
 		XTAL_0EX
 		{
 			return reflux(f, n);
 		}
-		XTAL_FNX reflux(auto const &f, auto &n)
+		XTAL_TLX reflux(auto const &f, auto &n)
 		XTAL_0EX
 		{
 			auto flx = -1;
@@ -67,7 +67,7 @@ struct define
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(XTAL_DEF_(heteropack_q) oo)
+		XTAL_OP1 <<=(XTAL_DEF_(common::heteropack_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
@@ -79,17 +79,17 @@ struct define
 		///\returns the result of `infuse` applied to the first argument \
 		`&` `influx` applied to the remaining arguments if successful. \
 
-		XTAL_FNX influx(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_TLX influx(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return XTAL_FLX_(sizeof...(oo)? self().influx(oo...): -1) (self().infuse(XTAL_REF_(o)));
 		}
-		XTAL_FNX influx(null_t, XTAL_DEF ...oo)
+		XTAL_TLX influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return -1;
 		}
-		XTAL_FNX influx()
+		XTAL_TLX influx()
 		XTAL_0EX
 		{
 			return -1;
@@ -106,7 +106,7 @@ struct define
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(XTAL_DEF_(heteropack_q) oo)
+		XTAL_OP1 >>=(XTAL_DEF_(common::heteropack_q) oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
@@ -118,17 +118,17 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_FNX efflux(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_TLX efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return XTAL_FLX_(sizeof...(oo)? self().efflux(oo...): -1) (self().effuse(XTAL_REF_(o)));
 		}
-		XTAL_FNX efflux(null_t, XTAL_DEF ...oo)
+		XTAL_TLX efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return -1;
 		}
-		XTAL_FNX efflux()
+		XTAL_TLX efflux()
 		XTAL_0EX
 		{
 			return -1;
@@ -145,15 +145,15 @@ struct define
 		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
 		and truncating propagation when the aggregated result is `1`. \
 
-		XTAL_FNX defuse(XTAL_DEF o)
+		XTAL_TLX defuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return -1;
 		}
-		XTAL_FNX effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		XTAL_TLX effuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
-		XTAL_FNX infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
+		XTAL_TLX infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 		
 		
@@ -161,12 +161,12 @@ struct define
 		///\
 		Effluxes each part independently. \
 
-		XTAL_FNX efflux_apart(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_TLX efflux_apart(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return self().efflux(XTAL_REF_(o)) & self().efflux_apart(XTAL_REF_(oo)...);
 		}
-		XTAL_FNX efflux_apart()
+		XTAL_TLX efflux_apart()
 		XTAL_0EX
 		{
 			return -1;
@@ -175,12 +175,12 @@ struct define
 		///\
 		Influxes each part independently. \
 
-		XTAL_FNX influx_apart(XTAL_DEF o, XTAL_DEF ...oo)
+		XTAL_TLX influx_apart(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return self().influx(XTAL_REF_(o)) & self().influx_apart(XTAL_REF_(oo)...);
 		}
-		XTAL_FNX influx_apart()
+		XTAL_TLX influx_apart()
 		XTAL_0EX
 		{
 			return -1;
@@ -203,9 +203,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -215,13 +215,13 @@ struct defer
 		///\note\
 		Influxes the proxied value if supported, then `this`.
 
-		XTAL_FNX influx(XTAL_DEF ...oo)
+		XTAL_TLX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
 			return XTAL_FLX_(S_::influx(oo...)) (valve().influx(XTAL_REF_(oo)...));
 		}
-		XTAL_FNX influx(XTAL_DEF ...oo)
+		XTAL_TLX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return S_::influx(XTAL_REF_(oo)...);
@@ -230,13 +230,13 @@ struct defer
 		///\note\
 		Effluxes `this`, then the proxied value if supported.
 
-		XTAL_FNX efflux(XTAL_DEF ...oo)
+		XTAL_TLX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
 			return XTAL_FLX_(valve().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
-		XTAL_FNX efflux(XTAL_DEF ...oo)
+		XTAL_TLX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
 			return S_::efflux(XTAL_REF_(oo)...);
@@ -245,12 +245,12 @@ struct defer
 		///\note\
 		Assigns the given value `u` if it matches the proxied type `U`. \
 
-		XTAL_FNX defuse(U u)
+		XTAL_TLX defuse(U u)
 		XTAL_0EX
 		{
 			return S_::heading(u) or (S_::valve(u), 0);
 		}
-		XTAL_FNX defuse(XTAL_DEF w)
+		XTAL_TLX defuse(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return S_::defuse(XTAL_REF_(w));
@@ -271,11 +271,10 @@ struct refer
 template <class  X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_REF_(x), XTAL_REF_(y));}
 template <class  X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_REF_(y), XTAL_REF_(x));}
 
-template <pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), _std::make_tuple(XTAL_REF_(y)));}
-template <pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(_std::make_tuple(XTAL_REF_(y)), XTAL_REF_(x));}
+template <common::pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), _std::make_tuple(XTAL_REF_(y)));}
+template <common::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(_std::make_tuple(XTAL_REF_(y)), XTAL_REF_(x));}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-
 XTAL_ENV_(pop)

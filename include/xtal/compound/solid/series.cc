@@ -17,8 +17,8 @@ TAG_("solid", "series")
 {
 	TRY_("initialization")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
 
 		sigma_t constexpr N = 1 << 3;
 		using series_w = solid::series_t<alpha_t[N]>;
@@ -32,18 +32,18 @@ TAG_("solid", "series")
 	}
 	TRY_("transformation")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
-		using aphex_t = typename computer::aphex_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
+		using aphex_t = typename common::computer::aphex_t;
 
-		auto    constexpr iffy = [] XTAL_1FN_(trim_f<16>);
+		auto    constexpr iffy = [] XTAL_1FN_(common::computrim_f<16>);
 		sigma_t constexpr O = 1 << 5;
 		sigma_t constexpr N = 1 << 3;
 		sigma_t constexpr M = N  - 1;
 
 		using series_s = solid::series_t<aphex_t[O]>;
 		using series_u = solid::series_t<aphex_t[N]>;
-		series_s basis(integer_t<-1>{});
+		series_s basis(ordinal_t<-1>{});
 
 		series_u source;
 		source[0] = source[M - 0] = aphex_t(0.0, 0.0);
@@ -64,16 +64,16 @@ TAG_("solid", "series")
 	}
 	TRY_("convolution")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
-		using aphex_t = typename computer::aphex_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
+		using aphex_t = typename common::computer::aphex_t;
 
-		auto    constexpr iffy = [] XTAL_1FN_(trim_f<16>);
+		auto    constexpr iffy = [] XTAL_1FN_(common::computrim_f<16>);
 		sigma_t constexpr N = 1 << 3;
 		sigma_t constexpr M = N  - 1;
 
 		using series_u = solid::series_t<aphex_t[N]>;
-		series_u basis(integer_t<-1>{});
+		series_u basis(ordinal_t<-1>{});
 
 		series_u lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 		series_u rhs = {1, 0, 1, 0, 0, 0, 0, 0};
@@ -84,9 +84,9 @@ TAG_("solid", "series")
 	}
 	TRY_("multiplication")
 	{
-		using sigma_t = typename computer::sigma_t;
-		using alpha_t = typename computer::alpha_t;
-		using aphex_t = typename computer::aphex_t;
+		using sigma_t = typename common::computer::sigma_t;
+		using alpha_t = typename common::computer::alpha_t;
+		using aphex_t = typename common::computer::aphex_t;
 
 		using C4 = solid::series_t<aphex_t[4]>;
 		using D4 = solid::series_t<aphex_t[4]>;

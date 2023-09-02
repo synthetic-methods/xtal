@@ -19,7 +19,7 @@ using namespace xtal::__test;
 template <class mix_t>
 void processor_control__messaging()
 {
-	using alpha_t = typename computer::alpha_t;
+	using alpha_t = typename common::computer::alpha_t;
 
 	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(to_f<alpha_t>);
 	auto const _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
@@ -59,17 +59,17 @@ TAG_("processor", "construct")
 	TRY_("letting")
 	{
 		size_t constexpr N_size = 5;
-		using group_u = solid::point_t<int[N_size]>;
+		using group_u = compound::solid::point_t<int[N_size]>;
 		auto z = group_u {00, 11, 22, 33, 44};
 		auto a = processor::let_f(z);
 		
 	}
 	TRY_("lifting")
 	{
-		using alpha_t = typename computer::alpha_t;
+		using alpha_t = typename common::computer::alpha_t;
 
 		size_t constexpr N_size = 5;
-		using group_u = solid::point_t<alpha_t[N_size]>;
+		using group_u = compound::solid::point_t<alpha_t[N_size]>;
 		
 		auto f = processor::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		auto x = group_u { 0,  1,  2,  3,  4};

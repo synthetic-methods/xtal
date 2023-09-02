@@ -7,7 +7,7 @@
 
 
 
-using namespace compound;
+
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 //\
@@ -31,7 +31,7 @@ template <typename ...As> using  any_t = typename any<As...>::type;
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = _detail::identity_p<any_t<As...>, T>;
+concept any_p = common::identity_p<any_t<As...>, T>;
 
 template <class ...Ts>
 //\
@@ -45,7 +45,7 @@ concept any_q = of_p<any_t<>, Ts...>;
 ///\
 Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 
-template <class ...Us> struct infer: compose<infer<Us>...> {};
+template <class ...Us> struct infer: common::compose<infer<Us>...> {};
 template <vacant_q U > struct infer<U>:        any<U> {};
 template <class    U > struct infer<U>:      defer<U> {};
 template <class ...Us>  using infer_t = typename infer<Us...>::type;
@@ -54,18 +54,18 @@ template <class ...Us>  using infer_t = typename infer<Us...>::type;
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
 
 template <class U, typename ...As>
-struct confer: compose<refer<U>, As..., defer<U>> {};
+struct confer: common::compose<refer<U>, As..., defer<U>> {};
 
 ///\
 Combines `define` and `refine` to define `T`, sandwiching the decorators `As...`. \
 
 template <class T, typename ...As>
-struct confine//: compose<refine<T>, As..., define<T>> {};
+struct confine//: common::compose<refine<T>, As..., define<T>> {};
 {
-	using subkind = compose<refine<T>, As..., define<T>>;
+	using subkind = common::compose<refine<T>, As..., define<T>>;
 
 	template <class S>
-	using subtype = compose_s<S, subkind>;
+	using subtype = common::compose_s<S, subkind>;
 	using    type = T;
 	
 };
@@ -82,9 +82,9 @@ struct confined
 	using homokind = confine<T, As...>;
 
 	template <class S>
-	class subtype: public compose_s<S, homokind<subtype<S>>>
+	class subtype: public common::compose_s<S, homokind<subtype<S>>>
 	{
-		using S_ = compose_s<S, homokind<subtype<S>>>;
+		using S_ = common::compose_s<S, homokind<subtype<S>>>;
 	
 	public:
 		using S_::S_;

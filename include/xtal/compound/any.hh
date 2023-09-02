@@ -1,19 +1,13 @@
 #pragma once
-#include "../any.ii"
+//\
+NOTE: Expanding `../common/all.ii` to finesse circular dependency \
+between `common::compute` and `compound::solid::scalar`. \
 
-
-
-
-
-
-XTAL_ENV_(push)
-namespace xtal::compound
-{/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
-#include "./_detail.hxx"
-
-
-///////////////////////////////////////////////////////////////////////////////
-}/////////////////////////////////////////////////////////////////////////////
-XTAL_ENV_(pop)
+#include "../common/all.ii"
+//#include "../common/compose.ii"
+//#include "../common/compute.ii"
+//#include "../common/identity.ii"
+//#include "../common/pack.ii"
+//#include "../common/seek.ii"
+//#include "../common/tab.ii"
+//#include "../common/tag.ii"

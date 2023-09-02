@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM polymer;
-template <typename ..._s> XTAL_ASK polymer_q =      tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_ASK polymer_q =      common::tag_p<polymer, _s...>;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
 XTAL_FN2  polymer_f(XTAL_DEF  u)
@@ -33,9 +33,9 @@ struct polymer<U, As...>
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		using Mu = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
@@ -58,16 +58,16 @@ struct polymer<U, As...>
 			using voice_u = context::voice_s<stave_u>;
 			using stash_u = typename S_::template stash<voice_u>::type;
 
-			using subkind = compose<tag<polymer>
+			using subkind = common::compose<common::tag<polymer>
 			,	typename message::confined_t<>::rend
 			,	defer<stave_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
 			>;
 			template <any_q R>
-			class subtype: public compose_s<R, subkind>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 				
 				stash_u m_stash;
 
@@ -82,7 +82,7 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_FNX influx(context::voice_q auto o, XTAL_DEF ...oo)
+				XTAL_TLX influx(context::voice_q auto o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto o_core = o.core();
@@ -96,7 +96,7 @@ struct polymer<U, As...>
 				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
 				before a new instance is allocated from the sentinel.
 
-				XTAL_FNX influx(event_u o, XTAL_DEF ...oo)
+				XTAL_TLX influx(event_u o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto o_core = o.core();
@@ -117,7 +117,7 @@ struct polymer<U, As...>
 				///\
 				Forwards to all instances including the sentinel. \
 
-				XTAL_FNX influx_push(XTAL_DEF ...oo)
+				XTAL_TLX influx_push(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					bool constexpr impure = false;
@@ -127,7 +127,7 @@ struct polymer<U, As...>
 							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
-				XTAL_FNX efflux_pull(XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					bool constexpr impure = (...or message::sequel_q<decltype(oo)>);
@@ -142,7 +142,7 @@ struct polymer<U, As...>
 				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
 				
 				template <message::respan_q R_x, message::sequel_q S_x>
-				XTAL_FNX efflux_pull_slice(R_x respan_x, S_x sequel_x, XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull_slice(R_x respan_x, S_x sequel_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					XTAL_FLX flx = -1;
@@ -161,7 +161,7 @@ struct polymer<U, As...>
 					using namespace _detail;
 					auto i = m_stash.begin(), iN = m_stash.end();
 					tunnel_f(respan_x, i++);
-					seek_e<-4>([&, this] (auto M)// 3, 2, 1, 0
+					common::seek_e<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
 						size_t constexpr N = (size_t) 1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {

@@ -1,7 +1,5 @@
 #pragma once
 #include "./flux.ii"
-#include "./nominal.ii"
-#include "./ordinal.ii"
 #include "./per.ii"
 #include "./rescan.ii"
 #include "./resize.ii"

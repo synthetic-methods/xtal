@@ -24,7 +24,7 @@ struct stasis
 };
 
 template <typename ...As>
-using stasis_t = confined_t<stasis<As..., tag<stasis>>>;
+using stasis_t = confined_t<stasis<As..., common::tag<stasis>>>;
 
 template <typename ...As>
 XTAL_FN2  stasis_f(XTAL_DEF ...oo)

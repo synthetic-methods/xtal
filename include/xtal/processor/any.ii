@@ -48,9 +48,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_TN2 reified_(auto const ...ks),
@@ -73,20 +73,20 @@ struct defer<U>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>(nominal_t<Ks>{}...) (XTAL_REF_(xs)...));
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(nominal_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(nominal_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -95,21 +95,21 @@ template <class U>
 struct refer
 {
 	using sequel_u = message::sequel_t<counted_t<>>;
-	using subkind  = compose<_retail::refer<U>, sequel_u::attach>;
+	using subkind  = common::compose<_retail::refer<U>, sequel_u::attach>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
 
 	};
 	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
-	class subtype<S>: public compose_s<S, subkind>
+	class subtype<S>: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -119,7 +119,7 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
-			using I = iteratee_t<sequel_u>; using _computer = compute<I>;
+			using I = iteratee_t<sequel_u>; using _computer = common::compute<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
 			auto const &u = S_::template valve<sequel_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \

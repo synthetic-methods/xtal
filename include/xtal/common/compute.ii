@@ -1,17 +1,22 @@
 #pragma once
 #include "./any.ii"
 #include "./seek.ii"
-//#include "./solid/scalar.ii"// EOF
+//#include "../compound/solid/scalar.ii"// EOF
 
 
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::compound::solid
+{///////////////////////////////////////////////////////////////////////////////
+
+template <class ...> struct scalar;// circular dependency
+
+
+}///////////////////////////////////////////////////////////////////////////////
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-namespace solid {template <class ...> struct scalar;}
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
@@ -182,8 +187,8 @@ public:
 	template <unsigned_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
 	template <  signed_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
 	
-	template <constant_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
-	template <constant_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
+	template <nominal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
+	template <nominal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
 	
 	template <  signed_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (unsigned_t<I>) designed_f(i);}
 	template <unsigned_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (signed_t<I>) (i);}
@@ -370,11 +375,11 @@ public:
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
-	using default_alignment = sequent_t<XTAL_STD_(L1)/width>;
+	using default_alignment = cardinal_t<XTAL_STD_(L1)/width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = sequent_t<_std::hardware_constructive_interference_size/width>;
-	using  destructive_alignment = sequent_t<_std:: hardware_destructive_interference_size/width>;
+	using constructive_alignment = cardinal_t<_std::hardware_constructive_interference_size/width>;
+	using  destructive_alignment = cardinal_t<_std:: hardware_destructive_interference_size/width>;
 #else
 	using constructive_alignment = default_alignment;
 	using  destructive_alignment = default_alignment;
@@ -391,10 +396,10 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <class Z>
-	using single_t = typename solid::scalar<Z[1]>::type;
+	using single_t = typename compound::solid::scalar<Z[1]>::type;
 
 	template <class Z>
-	using couple_t = typename solid::scalar<Z[2]>::type;
+	using couple_t = typename compound::solid::scalar<Z[2]>::type;
 
 
 	template <auto M_pow=1> requires sign_p<M_pow>
@@ -1114,7 +1119,7 @@ static_assert(sizeof(size_t) == sizeof(typename computer::alpha_t));
 ///\see `computer::trim_f`. \
 
 template <auto ...N_etc>
-XTAL_LET trim_f = []<class T>(T &&t)
+XTAL_LET computrim_f = []<class T>(T &&t)
 XTAL_0FN_(compute<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 
 
@@ -1122,4 +1127,4 @@ XTAL_0FN_(compute<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
-#include "./solid/scalar.ii"
+#include "../compound/solid/scalar.ii"

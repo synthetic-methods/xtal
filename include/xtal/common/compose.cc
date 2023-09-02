@@ -1,48 +1,27 @@
 #pragma once
-#include "./any.ii"
-
+#include "./any.cc"
+#include "./compose.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::common::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
-template <class T>
-struct tab
+/*/
+TAG_("compose")
 {
-	class type
+	TRY_("task")
 	{
-	};
-	template <class S>
-	class subtype: public type, public S
-	{
-	public:
-		using S::S;
-		
-	};
-	template <of_q<type> S>
-	class subtype<S>: public S
-	{
-	public:
-		using S::S;
-		
-	};
-};
-template <class T>
-using tab_t = typename tab<T>::type;
+		TRUE_(true);
 
-template <class T, class ...Ys>
-concept tab_p = of_p<tab_t<T>, Ys...>;
-
-template <class T, class Y>
-concept tab_q = tab_p<Y, T>;
-
+	}
+}
+/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

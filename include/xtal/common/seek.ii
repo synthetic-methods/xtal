@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::common
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -21,12 +21,12 @@ XTAL_0EX
 {
 	if constexpr (0 < K) {
 		return [&] <size_t ...I>(seek_t<I...>)
-			XTAL_0FN_(..., f(sequent_t<I_offset + I>{})) (seek_f<+K>{});
+			XTAL_0FN_(..., f(cardinal_t<I_offset + I>{})) (seek_f<+K>{});
 	}	else
 	if constexpr (K < 0) {
 		size_t constexpr N_offset = I_offset - K - 1;
 		return [&] <size_t ...I>(seek_t<I...>)
-			XTAL_0FN_(..., f(sequent_t<N_offset - I>{})) (seek_f<-K>{});
+			XTAL_0FN_(..., f(cardinal_t<N_offset - I>{})) (seek_f<-K>{});
 	}
 }
 
@@ -46,8 +46,8 @@ template <         class ...Ts>   using seek_back_t = typename seek_back<Ts...>:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int I=0, bool ...Ns>         struct seek_true;
-template <int I              >         struct seek_true<I              >: integer_t<-1> {};
-template <int I,   bool ...Ns>         struct seek_true<I,  true, Ns...>: integer_t< I> {};
+template <int I              >         struct seek_true<I              >: ordinal_t<-1> {};
+template <int I,   bool ...Ns>         struct seek_true<I,  true, Ns...>: ordinal_t< I> {};
 template <int I,   bool ...Ns>         struct seek_true<I, false, Ns...>: seek_true<I + 1, Ns...> {};
 template <         bool ...Ns> XTAL_LET_(int) seek_true_v = seek_true<0, Ns...>::value;
 

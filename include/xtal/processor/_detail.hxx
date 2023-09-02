@@ -36,9 +36,9 @@ concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
 struct accessory
 {
 	using   type = _v3::ranges::category;
-	using   pure = constant_t<type::random_access>;
-	using impure = constant_t<type::forward>;
-	using finite = constant_t<type::sized>;
+	using   pure = nominal_t<type::random_access>;
+	using impure = nominal_t<type::forward>;
+	using finite = nominal_t<type::sized>;
 
 };
 using accessory_t = typename accessory::type;
@@ -134,17 +134,17 @@ template <size_t N>
 XTAL_FN2 funnel_f(XTAL_DEF y, iterator_q auto x)
 XTAL_0EX
 {
-	return [&]<auto ...I>(seek_t<I...>)
+	return [&]<auto ...I>(common::seek_t<I...>)
 		XTAL_0FN_(funnel_f(y, _std::next(x, I)...))
-	(seek_f<N> {});
+	(common::seek_f<N> {});
 }
 template <size_t N>
 XTAL_FN0 tunnel_f(XTAL_DEF y, iterator_q auto x)
 XTAL_0EX
 {
-	return [&]<auto ...I>(seek_t<I...>)
+	return [&]<auto ...I>(common::seek_t<I...>)
 		XTAL_0FN_(tunnel_f(y, _std::next(x, I)...))
-	(seek_f<N> {});
+	(common::seek_f<N> {});
 }
 
 
@@ -162,16 +162,16 @@ template <size_t N_width>
 XTAL_FN2 squint_f(XTAL_DEF it, size_t is)
 XTAL_0EX
 {
-	return [&] <auto ...I>(seek_t<I...>)
+	return [&] <auto ...I>(common::seek_t<I...>)
 		XTAL_0FN_(_v3::views::zip(squint_f(it[I], is)...))
-	(seek_f<N_width>{});
+	(common::seek_f<N_width>{});
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T> concept unprocessed_p = field_q<T> and not _retail::any_q<T>;
+template <class T> concept unprocessed_p = algebraic_field_q<T> and not _retail::any_q<T>;
 
 
 }//////////////////////////////////////////////////////////////////////////////

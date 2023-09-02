@@ -13,7 +13,7 @@ namespace xtal::compound::fluid
 
 template <class ..._s> XTAL_NYM siphon;
 template <class ..._s> XTAL_USE siphon_t = typename siphon<_s...>::type;
-template <class ...Ts> XTAL_ASK siphon_q = tag_p<siphon, Ts...>;
+template <class ...Ts> XTAL_ASK siphon_q = common::tag_p<siphon, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ struct siphon<A>
 	using demitype = iterate_t<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<siphon>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<siphon>>;
 
 	template <class T>
 	class homotype: public hemitype<T>

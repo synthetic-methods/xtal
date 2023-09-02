@@ -7,13 +7,20 @@
 
 
 XTAL_ENV_(push)
+namespace xtal::common
+{///////////////////////////////////////////////////////////////////////////////
+
+template <class> struct compute;// circular dependency
+
+
+}///////////////////////////////////////////////////////////////////////////////
 namespace xtal::compound::solid
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template <class ..._s> XTAL_NYM scalar;
 template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class ...Ts> XTAL_ASK scalar_q = tag_p<scalar, Ts...>;
+template <class ...Ts> XTAL_ASK scalar_q = common::tag_p<scalar, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,13 +30,13 @@ Extends `point::type` with elementwise multiplication/division. \
 template <class U, size_t N>
 struct scalar<U[N]>
 {
-	using _computer = compute<U>;
+	using _computer = common::compute<U>;
 	
 	template <class T>
 	using demitype = typename point<U[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = compose_s<demitype<T>, tag<scalar>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<scalar>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -53,15 +60,15 @@ struct scalar<U[N]>
 		XTAL_OP1_(T &) *= (bracket_t<U> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 		XTAL_OP1_(T &) /= (bracket_t<U> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 		
-		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) *= t.d(i))), self();}
-		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) /= t.d(i))), self();}
+		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) *= t.d(i))), self();}
+		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(d(i) /= t.d(i))), self();}
 
 		XTAL_TN2 sum()
 		XTAL_0FX
 		{
-			return [&, this]<auto ...M>(seek_t<M...>)
+			return [&, this]<auto ...M>(common::seek_t<M...>)
 				XTAL_0FN_(d(M) +...+ U())
-			(seek_f<N> {});
+			(common::seek_f<N> {});
 		}
 		XTAL_TN2 dot()
 		XTAL_0FX

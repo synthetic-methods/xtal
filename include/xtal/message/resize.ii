@@ -17,9 +17,9 @@ struct resize
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public compose_s<S, subkind>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -40,7 +40,7 @@ using resize_t = confined_t<resize<U>>;
 XTAL_FN2 resize_f(XTAL_DEF w)
 XTAL_0EX
 {
-	using _computer = compute<XTAL_TYP_(w)>;
+	using _computer = common::compute<XTAL_TYP_(w)>;
 	return resize_t<typename _computer::sigma_t>(XTAL_REF_(w));
 }
 

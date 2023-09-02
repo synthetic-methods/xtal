@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::compound::__test
+namespace xtal::common::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -273,12 +273,12 @@ TAG_("compute", "puncture", "truncate")
 		TRUE_(computer::truncated_f<N_zoom>(square_2) == square_2);
 		TRUE_(computer::punctured_f<N_zoom>(square_2) == square_2);
 
-		TRUE_(trim_f<0>(computer::truncated_f<N_zoom>(square_F)) == trim_f<0>(square_1*computer::maximal_f(N_zoom)));
-		TRUE_(trim_f<0>(computer::punctured_f<N_zoom>(square_0)) == trim_f<0>(square_1*computer::minimal_f(N_zoom)));
+		TRUE_(computrim_f<0>(computer::truncated_f<N_zoom>(square_F)) == computrim_f<0>(square_1*computer::maximal_f(N_zoom)));
+		TRUE_(computrim_f<0>(computer::punctured_f<N_zoom>(square_0)) == computrim_f<0>(square_1*computer::minimal_f(N_zoom)));
 
-		TRUE_(trim_f<0>(computer::truncated_f<N_zoom>(square_F, 0)) == trim_f<0>(circle_1*computer::dnsilon_f(N_zoom)));
-		TRUE_(trim_f<0>(computer::truncated_f<N_zoom>(square_2, 0)) == trim_f<0>(circle_1*computer::dnsilon_f(N_zoom)));
-		TRUE_(trim_f<0>(computer::punctured_f<N_zoom>(square_H, 0)) == trim_f<0>(circle_1*computer::upsilon_f(N_zoom)));
+		TRUE_(computrim_f<0>(computer::truncated_f<N_zoom>(square_F, 0)) == computrim_f<0>(circle_1*computer::dnsilon_f(N_zoom)));
+		TRUE_(computrim_f<0>(computer::truncated_f<N_zoom>(square_2, 0)) == computrim_f<0>(circle_1*computer::dnsilon_f(N_zoom)));
+		TRUE_(computrim_f<0>(computer::punctured_f<N_zoom>(square_H, 0)) == computrim_f<0>(circle_1*computer::upsilon_f(N_zoom)));
 
 	}
 }
