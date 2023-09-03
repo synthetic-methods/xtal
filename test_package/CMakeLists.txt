@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(test_package)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(xtal CONFIG REQUIRED)
 find_package(Catch2 CONFIG REQUIRED)
 
@@ -13,3 +15,5 @@ else()
 endif()
 
 target_link_libraries(test xtal::xtal Catch2::Catch2WithMain)
+
+target_precompile_headers(test INTERFACE xtal::xtal Catch2::Catch2WithMain)

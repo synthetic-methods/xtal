@@ -26,6 +26,19 @@ struct define
 	
 	public:
 		using S_::S_;
+		using cardinality = cardinal_t<0>;
+
+		XTAL_CON subtype(size_t u)
+		XTAL_0EX
+		{
+			assert(0 == u);
+		};
+		template <cardinal_q U>
+		XTAL_CON subtype(U &&u)
+		XTAL_0EX
+		{
+			assert(0 == u);
+		};
 
 		struct attach
 		{
@@ -56,9 +69,12 @@ struct define
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to resolve `method<auto ...>`. \
 
-		template <size_t N_arity=2>
+		template <int N_mask=-1>
 		struct dispatch
 		{
+			static_assert(cardinal_q<typename T::cardinality>);
+			XTAL_LET N_cardinality = T::cardinality::value;
+			
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, attach>
 			{
@@ -76,7 +92,7 @@ struct define
 				XTAL_CXN subtype(size_t const &n)
 				:	R_(n)
 				{
-					assert(0 <= n and n < N_arity);
+					assert(0 <= n and n < N_cardinality);
 				}
 
 				XTAL_TO2_(
@@ -117,7 +133,7 @@ struct define
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(common::seek_f<N_arity> {});
+						XTAL_LET m_method = method_f(common::seek_f<N_cardinality> {});
 					
 					};
 					template <auto ...Ks> XTAL_LET m_method = resolve<Ks...>::m_method;
@@ -415,6 +431,20 @@ struct refer
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+struct opt;
+
+template <cardinal_q U>
+struct infer<U>
+:	defer<confined_t<opt<U>>>
+{
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
+
+#include "./opt.ii"

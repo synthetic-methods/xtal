@@ -290,7 +290,7 @@ public:
 	XTAL_0EX
 	{
 		sigma_t n = bit_floor_f((sigma_t) u);
-		n += 1 << (n != u);
+		n += (1 << n) != u;
 		return n;
 	}
 	XTAL_FN2_(delta_t) bit_ceiling_f(delta_t const &v)

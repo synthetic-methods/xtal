@@ -1,0 +1,135 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::message
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As> struct opt;
+template <typename ...As>
+struct opt
+{
+	class cardinal: public common::seek_cardinal_t<As...> {};
+	
+	struct subkind
+	{
+		template <class S>
+		class subtype: public common::compose_s<S, common::tag<opt>>
+		{
+			using S_ = common::compose_s<S, common::tag<opt>>;
+
+		public:
+		//	using S_::S_;
+			
+			XTAL_CO0_(subtype)
+			XTAL_CO4_(subtype)
+			
+			XTAL_CXN subtype(XTAL_DEF ...oo)
+			XTAL_0EX
+			:	S_(XTAL_REF_(oo)...)
+			{};
+			
+			template <common::tag_q<opt> U>
+			XTAL_CXN subtype(U &&u)
+			XTAL_0EX
+			{};
+
+			template <class T>
+			XTAL_TN2 get()
+			XTAL_0EX
+			{
+				return 0;
+			}
+			
+		};
+		template <common::tag_q<opt> S>
+		class subtype<S>: public common::compose_s<S, common::tab<opt>>
+		{
+			using S_ = common::compose_s<S, common::tab<opt>>;
+
+		public:
+			using S_::S_;
+
+		};
+	};
+	template <any_q S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+	
+	public:
+		XTAL_LET_(size_t) N_depth = common::computer::bit_ceiling_f(cardinal::value);
+		XTAL_LET_(size_t) N_width = size_t(1) << N_depth;
+		XTAL_LET_(size_t) M_width = N_width - 1;
+		
+	public:
+		using S_::S_;
+		using cardinality = cardinal_t<S_::cardinality::value + N_width>;
+
+		using value_type = unsigned int;
+		value_type value:N_width;
+
+		XTAL_CO0_(subtype)
+		XTAL_CO4_(subtype)
+
+		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		{};
+		template <_std::integral U>
+		XTAL_CON subtype(U &&u)
+		XTAL_0EX
+		:	value(size_t(u)&M_width)
+		,	S_(size_t(u) >> N_depth)
+		{};
+		template <cardinal_q U>
+		XTAL_CON subtype(U &&u)
+		XTAL_0EX
+		:	subtype(XTAL_REF_(u))
+		{};
+		template <common::tag_q<opt> U>
+		XTAL_CXN subtype(U &&u)
+		XTAL_0EX
+		:	value(0)
+		,	S_(XTAL_REF_(u))
+		{};
+		template <common::tag_q<opt> U> requires common::tab_p<opt, U>
+		XTAL_CXN subtype(U &&u)
+		XTAL_0EX
+		:	value(u.template get<cardinal>().value)
+		,	S_(XTAL_REF_(u))
+		{};
+		
+		template <cardinal_q T>
+		XTAL_TN2 get()
+		XTAL_0EX
+		{
+			if constexpr (is_q<cardinal, T>) {
+				return value;
+			}
+			else {
+				return S_::template get<T>();
+			}
+		}
+		template <typename A> requires (cardinal_q<typename A::cardinal> and not cardinal_q<A>)
+		XTAL_TN2 get()
+		XTAL_0EX
+		{
+			return get<typename A::cardinal>();
+		}
+		
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

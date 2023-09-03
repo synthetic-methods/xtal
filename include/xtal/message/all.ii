@@ -1,5 +1,6 @@
 #pragma once
 #include "./flux.ii"
+#include "./opt.ii"
 #include "./per.ii"
 #include "./rescan.ii"
 #include "./resize.ii"

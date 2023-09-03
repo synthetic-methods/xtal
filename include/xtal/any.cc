@@ -23,10 +23,28 @@ namespace xtal::__test
 
 using namespace common;
 
-using level_t = message::label_t<typename common::computer::alpha_t, struct T_level>;
-using onset_t = message::label_t<typename common::computer::alpha_t, struct T_onset>;
-using scale_t = message::label_t<typename common::computer::alpha_t, struct T_scale>;
-
+using scale_t = message::label_t<typename common::computer::alpha_t, class T_scale>;
+using level_t = message::label_t<typename common::computer::alpha_t, class T_level>;
+/*/
+using onset_t = message::label_t<typename common::computer::alpha_t, class T_onset>;
+/*/
+struct onset
+{
+	using subkind = message::confer<typename common::computer::alpha_t, message::any<class T_onset>>;
+	template <class S>
+	class subtype: public compose_s<S, subkind>
+	{
+		using S_ = compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+		
+		using cardinality = cardinal_t<(128)>;
+	
+	};
+};
+using onset_t = message::confined_t<onset>;
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -50,7 +68,7 @@ using mix_t = typename mix::type;
 struct static_onset_mix
 {
 	class type: public process::confine_t<type
-	,	onset_t::template dispatch<(1<<7)>
+	,	onset_t::dispatch<>
 	>
 	{
 	public:
