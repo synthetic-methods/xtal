@@ -4,14 +4,8 @@
 #define XTAL_LOG 0//release
 #else
 #define XTAL_LOG 1//debug
-#endif
-
-#if XTAL_LOG
 #include <iostream>
 #endif
-
-#include <cstdint>
-#include <variant>
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +18,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //\
 TODO: Allow [c]?make configuration?
+
+#include <variant>
+#include <cstdint>
 
 #define XTAL_STD_(NYM) XTAL_STD_##NYM
 #define XTAL_STD ((__cplusplus/100)%100)
@@ -123,6 +120,7 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)                    ::std::move(__VA_ARGS__)
+#define XTAL_PT0_(...)           static_cast<         __VA_ARGS__  *>
 #define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 #define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
 #define XTAL_DEF                                                  auto &&

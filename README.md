@@ -165,7 +165,7 @@ The directories in the project are organised by namespace with the leaves repres
 
 The [`**/all.ii`](include/xtal/all.ii?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ii` and specializations like `monomer`, etc.
 
-The [`**/any.ii`](include/xtal/concord/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.ii`](include/xtal/concord/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 The [`**/any.hh`](include/xtal/concord/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
@@ -176,7 +176,7 @@ NOTE: When browsing/editing `include`, it can be useful to toggle the visibility
 
 ## Macros
 
-The macros defined in [`etc.hh`](include/xtal/etc.hh?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
+The macros defined in [`etc.ii`](include/xtal/etc.ii?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
 The most commonly encountered are those used for function definition, for example:
 
 	#define XTAL_OP1                      constexpr decltype(auto) operator
@@ -236,7 +236,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.ixx`](include/xtal/concord/_kernel.ixx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 

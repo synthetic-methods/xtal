@@ -95,7 +95,7 @@ template <class U>
 struct refer
 {
 	using sequel_u = message::sequel_t<counted_t<>>;
-	using subkind  = common::compose<_retail::refer<U>, sequel_u::attach>;
+	using subkind  = common::compose<_retail::refer<U>, sequel_u::attach<>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>

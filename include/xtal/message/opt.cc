@@ -29,6 +29,8 @@ TAG_("opt")
 		TRUE_(0b10 == options.template get<aim  >());
 		TRUE_(0b1  == options.template get<hype >());
 		TRUE_(sizeof(Aim) == sizeof(AimHype));
+		TRUE_(opt_q<AimHype>);
+		TRUE_(opt_q<AimHype, cardinal_t<4>, class T_aim>);
 
 	}
 }

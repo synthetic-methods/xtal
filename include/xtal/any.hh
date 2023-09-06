@@ -14,7 +14,7 @@
 #include <new>
 #include <bit>
 
-#include "./etc.hh"
+#include "./etc.ii"
 
 XTAL_ENV_(push)
 

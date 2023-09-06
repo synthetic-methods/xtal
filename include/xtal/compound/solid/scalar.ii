@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "./point.ii"
+#include "./phalanx.ii"
 
 
 
@@ -25,7 +25,7 @@ template <class ...Ts> XTAL_ASK scalar_q = common::tag_p<scalar, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `point::type` with elementwise multiplication/division. \
+Extends `phalanx::type` with elementwise multiplication/division. \
 
 template <class U, size_t N>
 struct scalar<U[N]>
@@ -33,7 +33,7 @@ struct scalar<U[N]>
 	using _computer = common::compute<U>;
 	
 	template <class T>
-	using demitype = typename point<U[N]>::template homotype<T>;
+	using demitype = typename phalanx<U[N]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = common::compose_s<demitype<T>, common::tag<scalar>>;

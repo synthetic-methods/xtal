@@ -27,7 +27,7 @@ void polymer_control_spine__locamotion()
 	using resize_u = message::resize_t<>;
 	using sequel_u = message::sequel_t<>;
 	
-	using gate_t = process::confined_t<typename level_t::poll, typename stage_t::gauge>;
+	using gate_t = process::confined_t<typename level_t::poll<>, typename stage_t::gauge<>>;
 
 	using vox_t = polymer_t<gate_t
 	,	restore<N_store>
@@ -87,8 +87,8 @@ void polymer_control_stash__compound()
 	using sequel_u = message::sequel_t<>;
 	
 	using gate_t = process::confined_t<void
-	,	typename stage_t::gauge
-	,	typename level_t::poll
+	,	typename stage_t::gauge<>
+	,	typename level_t::poll<>
 	>;
 
 	using vox_t = polymer_t<gate_t
@@ -132,8 +132,8 @@ void polymer_control_stash__composited()
 	using sequel_u = message::sequel_t<>;
 	
 	using gate_t = process::confined_t<void
-	,	typename stage_t::gauge
-	,	typename level_t::poll
+	,	typename stage_t::gauge<>
+	,	typename level_t::poll<>
 	>;
 
 	using vox_t = polymer_t<gate_t

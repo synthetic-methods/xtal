@@ -20,7 +20,7 @@ void monomer_lifting()
 	using alpha_t = typename common::computer::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = compound::solid::point_t<alpha_t[N_size]>;
+	using group_u = compound::solid::phalanx_t<alpha_t[N_size]>;
 	using resize_u = message::resize_t<>;
 	using sequel_n = message::sequel_t<>;
 
@@ -36,6 +36,7 @@ void monomer_lifting()
 	b >>= sequel_n(N_size);
 	_v3::ranges::move(b, a.begin());
 	TRUE_(a == z);
+	
 }
 TAG_("monomer", "lifting")
 {

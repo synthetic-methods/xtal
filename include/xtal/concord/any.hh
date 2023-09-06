@@ -38,7 +38,7 @@ struct any<>
 		using S::S;
 
 	};
-	template <common::unidentified_p S>
+	template <class S> requires (not common::identified_p<S>)
 	class subtype<S>: public common::compose_s<S, common::identify<>>
 	{
 		using S_ = common::compose_s<S, common::identify<>>;

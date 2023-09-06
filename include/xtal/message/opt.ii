@@ -12,6 +12,8 @@ namespace xtal::message
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Taggable `opt`ion set, intended to be `confined` prior to use. \
 
 template <typename ...As> struct opt;
 template <typename ...As>
@@ -127,7 +129,19 @@ struct opt
 		}
 		
 	};
+	template <class S>
+	using is = binal_t<common::tab_q<S, opt>>;
+
 };
+template <>
+struct opt<>
+{
+	template <class S>
+	using is = binal_t<common::tag_q<S, opt>>;
+
+};
+template <class T, typename ...As>
+concept opt_q = opt<As...>::template is<T>::value;
 
 
 ///////////////////////////////////////////////////////////////////////////////

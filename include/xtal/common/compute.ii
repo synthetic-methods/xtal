@@ -935,7 +935,7 @@ public:
 	XTAL_FN1_(aphex_t) truncate_f(aphex_t &target)
 	XTAL_0EX
 	{
-		auto &z = couple_t<alpha_t>::refer(target);
+		auto &z = couple_t<alpha_t>::reinterpret(target);
 		alpha_t const x = truncate_f<N_zoom>(z[0]);
 		alpha_t const y = truncate_f<N_zoom>(z[1]);
 		return aphex_t {x, y};
@@ -1024,7 +1024,7 @@ public:
 	XTAL_FN1_(aphex_t) puncture_f(aphex_t &target)
 	XTAL_0EX
 	{
-		auto &z = couple_t<alpha_t>::refer(target);
+		auto &z = couple_t<alpha_t>::reinterpret(target);
 		alpha_t const x = puncture_f<N_zoom>(z[0]);
 		alpha_t const y = puncture_f<N_zoom>(z[1]);
 		return aphex_t {x, y};

@@ -5,7 +5,7 @@
 
 *.cxx text
 *.hxx text
-*.ixx text
+*.hxx text
 
 *.cpp text
 *.hpp text

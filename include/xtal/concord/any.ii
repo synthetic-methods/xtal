@@ -12,7 +12,7 @@ namespace xtal::concord
 /////////////////////////////////////////////////////////////////////////////////
 ///\
 The following `subtype` decorators are specialized under each `xtal::*` namespace. \
-They provide instance and proxy initialization/finalization for the generated types in `./any.ixx`. \
+They provide instance and proxy initialization/finalization for the generated types in `./any.hxx`. \
 
 
 ////////////////////////////////////////////////////////////////////////////////

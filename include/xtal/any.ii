@@ -156,7 +156,6 @@ public:
 
 } echo;
 #else
-#include <iostream>
 class
 {
 	XTAL_TN0 print_list(XTAL_DEF x)

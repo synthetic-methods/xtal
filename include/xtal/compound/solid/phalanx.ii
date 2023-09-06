@@ -11,9 +11,9 @@ namespace xtal::compound::solid
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM point;
-template <class ..._s> XTAL_USE point_t = typename point<_s...>::type;
-template <class ...Ts> XTAL_ASK point_q = common::tag_p<point, Ts...>;
+template <class ..._s> XTAL_NYM phalanx;
+template <class ..._s> XTAL_USE phalanx_t = typename phalanx<_s...>::type;
+template <class ...Ts> XTAL_ASK phalanx_q = common::tag_p<phalanx, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,11 +21,11 @@ template <class ...Ts> XTAL_ASK point_q = common::tag_p<point, Ts...>;
 Defines a fixed-width `type` that supports arithmetic operators. \
 
 template <class U, size_t N, size_t Ns>
-struct point<U[N][Ns]>
-:	point<point_t<U[N]>[Ns]>
+struct phalanx<U[N][Ns]>
+:	phalanx<phalanx_t<U[N]>[Ns]>
 {};
 template <class U, size_t N>
-struct point<U[N]>
+struct phalanx<U[N]>
 {
 	using _computer = common::compute<U>;
 	
@@ -33,7 +33,7 @@ struct point<U[N]>
 	using demitype = common::compose_s<_std::array<U, N>, common::define<T>>;
 
 	template <class T>
-	using hemitype = common::compose_s<demitype<T>, common::tag<point>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<phalanx>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
@@ -86,7 +86,7 @@ struct point<U[N]>
 		}
 		
 		template <class W>
-		XTAL_FN2_(T &) refer(W &w)
+		XTAL_FN2_(T &) reinterpret(W &w)
 		XTAL_0EX
 		{
 			static_assert(is_q<valued_t<W>, U> and sizeof(W) == sizeof(T));
@@ -154,10 +154,10 @@ struct point<U[N]>
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::compound::solid::point_q T>
+template <xtal::compound::solid::phalanx_q T>
 struct tuple_size<T>: xtal::cardinal_t<T::size()> {};
 
-template <size_t N, xtal::compound::solid::point_q T>
+template <size_t N, xtal::compound::solid::phalanx_q T>
 struct tuple_element<N, T> {using type = xtal::valued_t<T>;};
 
 
