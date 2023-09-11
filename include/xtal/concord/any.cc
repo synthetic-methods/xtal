@@ -84,22 +84,22 @@ TAG_("concord", "traversal")
 	{
 		qux_t o_qux(0, 1, 2);
 
-		TRUE_(0 == o_qux.template valve<0>());
-		TRUE_(1 == o_qux.template valve<1>());
-		TRUE_(2 == o_qux.template valve<2>());
-	//	TRUE_(3 == o_qux.template valve<3>());// Fails!
+		TRUE_(0 == o_qux.template head<0>());
+		TRUE_(1 == o_qux.template head<1>());
+		TRUE_(2 == o_qux.template head<2>());
+	//	TRUE_(3 == o_qux.template head<3>());// Fails!
 
-		TRUE_(0 == o_qux.template valve<struct foo>());
-		TRUE_(1 == o_qux.template valve<struct bar>());
-		TRUE_(2 == o_qux.template valve<struct baz>());
+		TRUE_(0 == o_qux.template head<struct foo>());
+		TRUE_(1 == o_qux.template head<struct bar>());
+		TRUE_(2 == o_qux.template head<struct baz>());
 
-		TRUE_(2 == o_qux.template valve<struct bar, struct baz>());
-	//	TRUE_(1 != o_qux.template valve<struct baz, struct bar>());// Fails!
+		TRUE_(2 == o_qux.template head<struct bar, struct baz>());
+	//	TRUE_(1 != o_qux.template head<struct baz, struct bar>());// Fails!
 		
 	//	TRUE_(    any_p<qux_t, cardinal_t<1>>);
 		TRUE_(    any_p<qux_t, struct bar, struct baz>);
 		TRUE_(not any_p<qux_t, struct baz, struct bar>);
-	//	UNTRUE_(requires {o_qux.template valve<struct baz, struct bar>();});// Shouldn't fail?
+	//	UNTRUE_(requires {o_qux.template head<struct baz, struct bar>();});// Shouldn't fail?
 
 	}
 	/**/
@@ -138,7 +138,7 @@ TAG_("concord", "conversion")
 {
 	TRY_("tuple")
 	{
-		using namespace compound;
+		using namespace common;
 
 		using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
 		auto const foo = foo_t(1, 2, 3);

@@ -17,7 +17,7 @@ template <class ...Ts> concept restash_q = common::tab_p<T_restash, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides the type `stash` as a specialization of `compound::fluid::siphon`. \
+Provides the type `stash` as a specialization of `common::fluid::siphon`. \
 If `N == 0` the `stash` is allocated dynamically. \
 
 template <size_t N=0>
@@ -34,7 +34,7 @@ struct restash
 		using S_::S_;
 		
 		template <class U>
-		using stash = compound::fluid::siphon<U[N]>;
+		using stash = common::fluid::siphon<U[N]>;
 
 	};
 };

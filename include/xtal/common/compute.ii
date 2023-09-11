@@ -1,12 +1,12 @@
 #pragma once
 #include "./any.ii"
 #include "./seek.ii"
-//#include "../compound/solid/scalar.ii"// EOF
+//#include "./solid/scalar.ii"// EOF
 
 
 
 XTAL_ENV_(push)
-namespace xtal::compound::solid
+namespace xtal::common::solid
 {///////////////////////////////////////////////////////////////////////////////
 
 template <class ...> struct scalar;// circular dependency
@@ -396,10 +396,10 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <class Z>
-	using single_t = typename compound::solid::scalar<Z[1]>::type;
+	using single_t = typename common::solid::scalar<Z[1]>::type;
 
 	template <class Z>
-	using couple_t = typename compound::solid::scalar<Z[2]>::type;
+	using couple_t = typename common::solid::scalar<Z[2]>::type;
 
 
 	template <auto M_pow=1> requires sign_p<M_pow>
@@ -1127,4 +1127,4 @@ XTAL_0FN_(compute<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
-#include "../compound/solid/scalar.ii"
+#include "./solid/scalar.ii"

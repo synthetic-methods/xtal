@@ -1,7 +1,11 @@
 #pragma once
+#include "./atom/all.ii"
+#include "./fluid/all.ii"
+#include "./solid/all.ii"
 #include "./compose.ii"
 #include "./compute.ii"
-#include "./ident_.ii"
+#include "./identify.ii"
+#include "./identity.ii"
 #include "./pack.ii"
 #include "./seek.ii"
 #include "./tab.ii"

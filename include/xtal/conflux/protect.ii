@@ -1,0 +1,35 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::conflux
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Wrapper used to schedule an existing type.\
+
+///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
+
+///\todo\
+Implement as 1-bite flip-flop? \
+
+template <typename ..._s> XTAL_NYM protect;
+template <class    ...Ts> XTAL_ASK protect_q = common::tag_p<protect, Ts...>;
+
+template <class U> struct protect<U>: conferred<U, common::tag<protect>> {};
+template <       > struct protect< >: protect<size_t> {};
+
+template <class S=void, typename ...As>
+using protect_s = common::compose_s<devoid_t<S, confined_t<>>, protect<As...>>;
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

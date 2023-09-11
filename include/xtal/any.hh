@@ -107,9 +107,11 @@ template <class ...Ts>     concept valued_q   = (...and valued_p<Ts>);
 template <class    T >    XTAL_LET valued_v   = based_t<T>::value;
 template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_v<V>;}
 
-template <class    T >     struct devalued     {using value_type = _std::remove_all_extents_t<based_t<T>>;};
-template <valued_p T >     struct devalued<T> : based_t<T> {};
-template <class    T >      using devalued_t  = valued_t<devalued<T>>;
+template <class    T >      struct devalued    {using value_type = _std::remove_all_extents_t<based_t<T>>;};
+template <valued_p T >      struct devalued<T>: based_t<T> {};
+template <class    T >       using devalued_t = valued_t<devalued<T>>;
+
+template <class T, class U>  using devoid_t   = _std::conditional_t<not _std::is_void_v<T>, T, U>;
 
 template <class    T >     concept vacant_p   = not complete_p<T> or nominal_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
@@ -352,7 +354,7 @@ template <class ...Ts> concept              quality_q = (...and              qua
 
 
 static_assert(                  real_field_q<float>);
-static_assert(                       algebraic_field_q<float>);
+static_assert(             algebraic_field_q<float>);
 static_assert(          not quotient_group_q<float>);
 static_assert(              quotient_group_q<  int>);
 static_assert(complex_field_q<_std::complex<float>>);

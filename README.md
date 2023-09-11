@@ -63,17 +63,17 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
-The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template valve<...>()`.
+Attributes are bound to a `process(?:or)?` using the `message` decorators `assign` and `dispatch`.
+The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
 	using Active = message::label_t<int, struct active>;
 
-	struct Mix: process::confine_t<Mix, Active::template attach>
+	struct Mix: process::confine_t<Mix, Active::template assign>
 	{
 	   XTAL_TN2 method(XTAL_DEF ...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
-	   // return (XTAL_REF_(xs) + ... + 0)*this->template valve<Active>();
+	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
 	   }
 	};
 
@@ -102,19 +102,19 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(context::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(concord::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	gated <<= std::make_tuple(context::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
+	gated <<= std::make_tuple(concord::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
-	auto sequel = sequel_t(1024);
+	auto scope = scope_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, processor::restore<>>;
 	auto sixer = Mixer::bond_f(one, two, three);
@@ -130,16 +130,16 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	   // activate the `sixer` for the entirety of the first block
 	   sixer <<= Active(1);
 
-	   // render the current graph, and advance the `sequel` cursor
-	   sixer >>= sequel++;
+	   // render the current graph, and advance the `scope` cursor
+	   sixer >>= scope++;
 	}
 	// 2nd iteration
 	{
 	   // deactivate the `sixer` at an offset of `123` into the current block
 	   sixer <<= sixer <<= std::make_tuple(123, Active(0));
 
-	   // render the current graph, and advance the `sequel` cursor
-	   sixer >>= sequel++;
+	   // render the current graph, and advance the `scope` cursor
+	   sixer >>= scope++;
 	}
 
 # Development
@@ -230,8 +230,6 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 
 	namespace concord   {}
 	namespace conflux   {namespace _retail = concord;}
-	namespace content   {namespace _retail = concord;}
-	namespace context   {namespace _retail = concord;}
 	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
@@ -263,16 +261,16 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition     |[`common/compose.ii`](include/xtal/common/compose.ii?ts=3)|
 |Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
+|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:assign\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
 |Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond`|
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::bond`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer allocation          |[`compound/fluid/sluice.ii`](include/xtal/compound/fluid/sluice.ii?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`compound/solid/scalar.ii`](include/xtal/compound/solid/scalar.ii?ts=3)|
-|Buffer transformation      |[`compound/solid/series.ii`](include/xtal/compound/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
+|Buffer allocation          |[`common/fluid/sluice.ii`](include/xtal/common/fluid/sluice.ii?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`common/solid/scalar.ii`](include/xtal/common/solid/scalar.ii?ts=3)|
+|Buffer transformation      |[`common/solid/series.ii`](include/xtal/common/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`common/compute.ii`](include/xtal/common/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution

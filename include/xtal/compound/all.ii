@@ -1,3 +1,0 @@
-#pragma once
-#include "./fluid/all.ii"
-#include "./solid/all.ii"

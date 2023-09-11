@@ -1,7 +1,11 @@
 #pragma once
+#include "./atom/all.cc"
+#include "./fluid/all.cc"
+#include "./solid/all.cc"
 #include "./compose.cc"
 #include "./compute.cc"
-#include "./ident_.cc"
+#include "./identify.cc"
+#include "./identity.cc"
 #include "./pack.cc"
 #include "./seek.cc"
 #include "./tab.cc"

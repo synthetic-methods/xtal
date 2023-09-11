@@ -1,0 +1,82 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::message
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+struct stage
+{
+	using subkind = common::compose<void
+	,	_detail::refer_equality<XTAL_FLX>
+	,	_detail::refer_binary_logic<XTAL_FLX>
+	,	As...
+	,	defer<XTAL_FLX>
+	>;
+
+	template <any_q S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+
+	};
+};
+template <nominal_q A, typename ...As>
+struct stage<A, As...>
+{
+	using subkind = common::compose<void
+	,	_detail::refer_equality<XTAL_FLX>
+	,	_detail::refer_binary_logic<XTAL_FLX>
+	,	As...
+	,	defer<XTAL_FLX>
+	>;
+
+	template <any_q S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+
+	//	XTAL_CO0_(subtype)
+		XTAL_CO4_(subtype)
+		
+		XTAL_CON subtype()
+		XTAL_0EX
+		{
+			S_::head(A{});
+		}
+		XTAL_CON subtype(XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		{
+			S_::head(A{});
+		}
+
+
+	};
+};
+template <typename ...As>
+using stage_t = confined_t<stage<As..., common::tag<stage>>>;
+
+template <typename ...As>
+XTAL_FN2  stage_f(XTAL_DEF... oo)
+XTAL_0EZ_(stage_t<As...>(XTAL_REF_(oo)...))
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

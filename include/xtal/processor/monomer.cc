@@ -20,9 +20,9 @@ void monomer_lifting()
 	using alpha_t = typename common::computer::alpha_t;
 
 	sigma_t constexpr N_size = 5;
-	using group_u = compound::solid::phalanx_t<alpha_t[N_size]>;
+	using group_u = common::solid::linear_t<alpha_t[N_size]>;
 	using resize_u = message::resize_t<>;
-	using sequel_n = message::sequel_t<>;
+	using scope_n = message::scope_t<>;
 
 	auto x = group_u { 0,  1,  2,  3,  4};
 	auto y = group_u {00, 10, 20, 30, 40};
@@ -33,7 +33,7 @@ void monomer_lifting()
 	auto b = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= resize_u(N_size);
-	b >>= sequel_n(N_size);
+	b >>= scope_n(N_size);
 	_v3::ranges::move(b, a.begin());
 	TRUE_(a == z);
 	
@@ -54,18 +54,18 @@ void monomer_control__advancing()
 	using sigma_t = typename common::computer::sigma_t;
 	using alpha_t = typename common::computer::alpha_t;
 
-	using sequel_n = message::sequel_t<>;
+	using scope_n = message::scope_t<>;
 	using mixer_t = processor::monomer_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
 	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
 
-	auto lhs = processor::let_f(_01); TRUE_(&lhs.valve() == &processor::let_f(lhs).valve());
-	auto rhs = processor::let_f(_10); TRUE_(&rhs.valve() == &processor::let_f(rhs).valve());
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = mixer_t::bond_f(lhs, rhs);
 
-	auto seq = sequel_n(3); TRUE_(0 == xhs.size());// uninitialized...
+	auto seq = scope_n(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
 //	xhs <<=   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
@@ -74,7 +74,7 @@ void monomer_control__advancing()
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
 	/**/
 
-//	xhs >>= ++seq; // NOTE: Can't skip ahead (`sequel` assertion fails)!
+//	xhs >>= ++seq; // NOTE: Can't skip ahead (`scope` assertion fails)!
 
 	seq += 6;     TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
@@ -102,27 +102,27 @@ void monomer_control__provisioning()
 	using serve_u = deranged_t<store_u>;
 	using respan_u = message::respan_t<serve_u>;
 	using resize_u = message::resize_t<>;
-	using sequel_n = message::sequel_t<>;
+	using scope_n = message::scope_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 
-	auto lhs = let_f(_01); TRUE_(&lhs.valve() == &processor::let_f(lhs).valve());
-	auto rhs = let_f(_10); TRUE_(&rhs.valve() == &processor::let_f(rhs).valve());
+	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
 
 	auto m_slush = store_u {0, 0, 0};
 	auto m_respan = respan_u(m_slush);
-	auto m_sequel = sequel_n(3);
+	auto m_scope = scope_n(3);
 
 	TRUE_(0 == xhs.size());
 
-	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= onset_t((alpha_t) (11 + 1));
-	xhs >>= m_sequel++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "message")
@@ -160,7 +160,7 @@ void monomer_chaining__rvalue()
 	yhs <<= onset_t((alpha_t) 000);
 	TRUE_(0 == yhs.size());
 
-	auto seq = message::sequel_f(N);
+	auto seq = message::scope_f(N);
 	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -183,8 +183,8 @@ void monomer_chaining__lvalue()
 	
 	using mix_op = monomer_t<add_t, restore<>>;
 	using mul_op = monomer_t<mul_t, restore<>>;
-	auto  lhs = let_f(_01); TRUE_(&lhs.valve() == &processor::let_f(lhs).valve());
-	auto  rhs = let_f(_10); TRUE_(&rhs.valve() == &processor::let_f(rhs).valve());
+	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
@@ -192,7 +192,7 @@ void monomer_chaining__lvalue()
 	yhs <<= scale_t((alpha_t) 100);
 	xhs <<= onset_t((alpha_t) 000);
 
-	auto seq = message::sequel_f(N);
+	auto seq = message::scope_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -226,8 +226,8 @@ void monomer_chaining__shared()
 	yhs <<= message::restep_f((size_t) 50);
 	yhs <<= message::resize_f(N);
 
-	yhs >>= message::sequel_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= message::sequel_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= message::scope_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= message::scope_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")

@@ -59,7 +59,7 @@ TAG_("processor", "construct")
 	TRY_("letting")
 	{
 		size_t constexpr N_size = 5;
-		using group_u = compound::solid::phalanx_t<int[N_size]>;
+		using group_u = common::solid::linear_t<int[N_size]>;
 		auto z = group_u {00, 11, 22, 33, 44};
 		auto a = processor::let_f(z);
 		
@@ -69,7 +69,7 @@ TAG_("processor", "construct")
 		using alpha_t = typename common::computer::alpha_t;
 
 		size_t constexpr N_size = 5;
-		using group_u = compound::solid::phalanx_t<alpha_t[N_size]>;
+		using group_u = common::solid::linear_t<alpha_t[N_size]>;
 		
 		auto f = processor::let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		auto x = group_u { 0,  1,  2,  3,  4};

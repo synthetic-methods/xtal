@@ -137,7 +137,7 @@ struct define
 				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
 				{}
 
-				XTAL_TO4_(XTAL_TN2 slots(), R_::valve())
+				XTAL_TO4_(XTAL_TN2 slots(), R_::head())
 				
 				template <size_t N, size_t ...Ns>
 				XTAL_TN2 slot()
@@ -312,8 +312,8 @@ struct defer
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::valve;
-		using typename S_::valve_type;
+		using S_::head;
+		using typename S_::head_t;
 
 		///\
 		Constant redirection. \
@@ -321,12 +321,12 @@ struct defer
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs),
 		{
-			if constexpr (_std::invocable<valve_type, decltype(xs)...>) {
-				return valve() (XTAL_REF_(xs)...);
+			if constexpr (_std::invocable<head_t, decltype(xs)...>) {
+				return head() (XTAL_REF_(xs)...);
 			}
 			else {
 				static_assert(0 == sizeof...(xs));
-				return valve();
+				return head();
 			}
 		})
 
@@ -345,12 +345,12 @@ struct defer<U>
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::valve;
+		using S_::head;
 
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs),
 		{
-			return valve().template method<Ks...>(XTAL_REF_(xs)...);
+			return head().template method<Ks...>(XTAL_REF_(xs)...);
 		})
 
 	};

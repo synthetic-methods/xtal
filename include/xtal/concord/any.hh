@@ -1,6 +1,6 @@
 #pragma once
 #include "../common/all.ii"// `_retail`
-#include "../compound/all.ii"
+
 
 
 
@@ -32,14 +32,7 @@ template <>
 struct any<>
 {	
 	template <class S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-
-	};
-	template <class S> requires (not common::identified_p<S>)
-	class subtype<S>: public common::compose_s<S, common::identify<>>
+	class subtype: public common::compose_s<S, common::identify<>>
 	{
 		using S_ = common::compose_s<S, common::identify<>>;
 		
@@ -51,6 +44,13 @@ struct any<>
 		Fallback resolver, defaulting to the `back` type/selector. \
 		
 		template <class ...Ys> struct super: common::seek_back<Ys...> {};
+
+	};
+	template <class S> requires common::identity_p<S>
+	class subtype<S>: public S
+	{
+	public:
+		using S::S;
 
 	};
 	using type = subtype<unit_t>;
@@ -95,14 +95,14 @@ struct any<A>
 		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
 		)		
 		XTAL_TO4_(template <size_t I>
-		XTAL_TN2 valve(XTAL_DEF... oo), valve<cardinal_t<I>>(XTAL_REF_(oo)...)
+		XTAL_TN2 head(XTAL_DEF... oo), head<cardinal_t<I>>(XTAL_REF_(oo)...)
 		)		
 
 		XTAL_TO4_(template <typename ...Is>
 		XTAL_TN2 self(XTAL_DEF... oo), S_::template self<super_t<T_, Is...>>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 valve(XTAL_DEF... oo), S_::template self<super_t<S_, Is...>>().valve(XTAL_REF_(oo)...)
+		XTAL_TN2 head(XTAL_DEF... oo), S_::template self<super_t<S_, Is...>>().head(XTAL_REF_(oo)...)
 		)
 		
 	};

@@ -37,7 +37,7 @@ public:
 	//	using S_::S_;
 		using S_::self;
 		using S_::twin;
-		using S_::valve;
+		using S_::head;
 		
 		using span_t = U;
 
@@ -50,8 +50,8 @@ public:
 		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2 span(XTAL_DEF... oo), valve(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_TN2 size(), valve().size())
+		XTAL_TO4_(XTAL_TN2 span(XTAL_DEF... oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 size(), head().size())
 
 		XTAL_TN2 slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX

@@ -60,8 +60,8 @@ struct revise<U>
 		{
 			self(serve_u(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_TN2 store(), S_::template valve<1>())
-		XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), S_::template valve<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 store(), S_::template head<1>())
+		XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

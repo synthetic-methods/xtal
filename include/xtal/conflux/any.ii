@@ -28,6 +28,39 @@ struct define
 		using S_::S_;
 		using S_::self;
 
+		///\
+		Provides a `defer`red instance of `T` on `subtype`, \
+		labelled with the given `As...`. \
+
+		template <typename ...As>
+		struct ascribe
+		{
+			using subkind = common::compose<any<As>..., defer<T>>;
+
+			template <any_q R>
+			class subtype: public common::compose_s<R, subkind>
+			{
+				using R_ = common::compose_s<R, subkind>;
+			
+			public:
+			//	using R_::R_;
+				using R_::self;
+
+				XTAL_CO0_(subtype);
+				XTAL_CO4_(subtype);
+
+				///\
+				Constructs the `assign`ed `message` using its default, \
+				before `forward`ing the arguments to `this`. \
+
+				XTAL_CXN subtype(XTAL_DEF ...xs)
+				XTAL_0EX
+				:	R_(T{}, XTAL_REF_(xs)...)
+				{}
+
+			};
+		};
+
 		XTAL_TN1_(size_s) delay()         {return count_f(self());}
 		XTAL_TN1_(size_s) relay(size_s i) {return count_f(self());}
 		
@@ -82,12 +115,12 @@ struct define
 		XTAL_TLX influx(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(sizeof...(oo)? self().influx(oo...): -1) (self().infuse(XTAL_REF_(o)));
+			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 		XTAL_TLX influx(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return -1;
+			return influx();
 		}
 		XTAL_TLX influx()
 		XTAL_0EX
@@ -98,7 +131,7 @@ struct define
 
 		///\
 		Efflux operator: resolves the message for any dependencies before `this`, \
-		used for e.g. `message::respan` and `message::sequel`. \
+		used for e.g. `message::respan` and `message::scope`. \
 
 		XTAL_OP1 >>=(XTAL_DEF o)
 		XTAL_0EX
@@ -121,12 +154,12 @@ struct define
 		XTAL_TLX efflux(XTAL_DEF o, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(sizeof...(oo)? self().efflux(oo...): -1) (self().effuse(XTAL_REF_(o)));
+			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 		XTAL_TLX efflux(null_t, XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return -1;
+			return efflux();
 		}
 		XTAL_TLX efflux()
 		XTAL_0EX
@@ -210,7 +243,7 @@ struct defer
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::valve;
+		using S_::head;
 
 		///\note\
 		Influxes the proxied value if supported, then `this`.
@@ -219,7 +252,7 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(S_::influx(oo...)) (valve().influx(XTAL_REF_(oo)...));
+			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 		XTAL_TLX influx(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -234,7 +267,7 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(valve().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
+			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_TLX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
@@ -248,7 +281,7 @@ struct defer
 		XTAL_TLX defuse(U u)
 		XTAL_0EX
 		{
-			return S_::heading(u) or (S_::valve(u), 0);
+			return S_::heading(u) or (S_::head(u), 0);
 		}
 		XTAL_TLX defuse(XTAL_DEF w)
 		XTAL_0EX

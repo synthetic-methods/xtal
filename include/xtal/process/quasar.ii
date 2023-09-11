@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.ii"
-#include "./star.ii"
+#include "./fusor.ii"
 #include "./phasor.ii"
 #include "./pulsar.ii"
-#include "../content/quark.ii"
+
 
 
 
@@ -34,8 +34,8 @@ struct quasar<W, As...>
 	using delta_t = typename _computer::delta_t;
 	using alpha_t = typename _computer::alpha_t;
 
-	using scope_u = content::quark_t<U_>[N_];
-	using subkind = common::compose<common::tag<quasar>, As..., star<scope_u>>;
+	using quasi_w = common::atom::quasi_t<U_>[N_];
+	using subkind = common::compose<common::tag<quasar>, As..., fusor<quasi_w>>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
@@ -45,20 +45,20 @@ struct quasar<W, As...>
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::valve;
-		using S_::d;
+		using S_::head;
+		using S_::axis;
 
 		///\
 		Access by name/index (dynamic). \
 		
-		XTAL_TO4_(XTAL_TN2 phase(size_t i), d(i).phase())
-		XTAL_TO4_(XTAL_TN2 pulse(size_t i), d(i).pulse())
+		XTAL_TO4_(XTAL_TN2 phase(size_t i), axis(i).phase)
+		XTAL_TO4_(XTAL_TN2 pulse(size_t i), axis(i).pulse)
 
 		///\
 		Access by name/index (static). \
 		
-		XTAL_TO4_(template <size_t I> XTAL_TN2 phase(XTAL_DEF ...oo), _std::get<I>(valve()).phase(XTAL_REF_(oo)...))
-		XTAL_TO4_(template <size_t I> XTAL_TN2 pulse(XTAL_DEF ...oo), _std::get<I>(valve()).pulse(XTAL_REF_(oo)...))
+		XTAL_TO4_(template <size_t I> XTAL_TN2 phase(), _std::get<I>(head()).phase)
+		XTAL_TO4_(template <size_t I> XTAL_TN2 pulse(), _std::get<I>(head()).pulse)
 
 		///\
 		Projection to components by name. \

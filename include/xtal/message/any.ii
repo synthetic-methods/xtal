@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.hh"
 
-#include "../context/all.ii"
+#include "../conflux/all.ii"
+#include "../concord/all.ii"
 #include "../process/any.hh"
 #include "../processor/any.hh"
-
 
 XTAL_ENV_(push)
 namespace xtal::message
@@ -41,10 +41,10 @@ struct define
 		};
 
 		///\
-		Forwards `T` (or really, any message) if prefixed by a match for `N_mask`. \
+		Forwards any message prefixed with `N_mask`. \
 
 		template <int N_mask=-1>
-		struct forward
+		struct inscribe
 		{
 			XTAL_LET_(size_t) M_mask =  N_mask;
 			XTAL_LET_(size_t) W_mask = ~M_mask;
@@ -59,25 +59,23 @@ struct define
 				using R_::self;
 				using R_::influx;
 
-				XTAL_TLX influx(context::match_s<> i, XTAL_DEF ...oo)
+				XTAL_TLX influx(concord::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					size_t m =  i;
-					size_t w = ~m;
-					if (w & M_mask) {
+					return self().influx(o.head(), o.core(), XTAL_REF_(oo)...);
+				}
+				XTAL_TLX influx(concord::mark_s<> m, XTAL_DEF_(is_q<T>) t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					if (~m & M_mask) {
 						return R_::influx();
 					}
 					else if (m &= W_mask) {
-						return R_::influx(context::match_s<>(m), XTAL_REF_(oo)...);
+						return R_::influx(m, XTAL_REF_(t), XTAL_REF_(oo)...);
 					}
 					else {
-						return R_::influx(XTAL_REF_(oo)...);
+						return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
 					}
-				}
-				XTAL_TLX influx(context::match_s<T> io, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx(io.valve(), io.core(), XTAL_REF_(oo)...);
 				}
 
 			};
@@ -86,9 +84,9 @@ struct define
 		Attaches `T` as a member of `this`. \
 
 		template <int N_mask=-1>
-		struct attach
+		struct assign
 		{
-			using subkind = common::compose<forward<N_mask>, conflux::defer<T>>;
+			using subkind = common::compose<inscribe<N_mask>, typename S_::template ascribe<>>;
 
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
@@ -96,38 +94,17 @@ struct define
 				using R_ = common::compose_s<R, subkind>;
 			
 			public:
-			//	using R_::R_;
+				using R_::R_;
 				using R_::self;
 				using R_::influx;
 
-				XTAL_CO0_(subtype);
-				XTAL_CO4_(subtype);
-
 				///\
-				Constructs the `attach`ed `message` using its default, \
-				before `forward`ing the arguments to `this`. \
+				Processes a scheduled `protect`, assuming idempotentcy. \
 
-				XTAL_CXN subtype(XTAL_DEF ...xs)
-				XTAL_0EX
-				:	R_(T{}, XTAL_REF_(xs)...)
-				{}
-
-				///\
-				Processes a scheduled `occur`rence. \
-				Override the default to prevent overprocessing of non-idempotent events. \
-
-				///\todo\
-				Allow `context`ual `attach`ment that compares `valve`s.
-
-				XTAL_TLX influx(context::occur_s<> o, XTAL_DEF ...oo)
+				XTAL_TLX influx(conflux::protect_s<> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return R_::influx(XTAL_REF_(oo)...);
-				}
-				XTAL_TLX influx(context::occur_s<T> o, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx(XTAL_MOV_(o.valve()), XTAL_MOV_(o.core()), XTAL_REF_(oo)...);
+					return self().influx(XTAL_REF_(oo)...);
 				}
 
 			};
@@ -142,15 +119,15 @@ struct define
 			XTAL_LET N_cardinality = T::cardinality::value;
 			
 			template <process::any_q R>
-			class subtype: public common::compose_s<R, attach<N_mask>>
+			class subtype: public common::compose_s<R, assign<N_mask>>
 			{
-				using R_ = common::compose_s<R, attach<N_mask>>;
-				using K_ = typename R_::valve_type;
+				using R_ = common::compose_s<R, assign<N_mask>>;
+				using K_ = typename R_::head_t;
 			
 			public:
 			//	using R_::R_;
 				using R_::self;
-				using R_::valve;
+				using R_::head;
 
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
@@ -180,7 +157,7 @@ struct define
 				XTAL_TN2 deify_(array_q auto const &fs)
 				XTAL_0FX
 				{
-					return R_::deify_(fs[valve()]);
+					return R_::deify_(fs[head()]);
 				}
 
 			protected:
@@ -210,43 +187,15 @@ struct define
 			};
 		};
 		///\
-		Attaches `T` as a namespace, \
-		forwarding on `influx` only when prefixed by a matching type/instance. \
-
-		template <int N_mask=-1>
-		struct guard
-		{
-			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, attach<N_mask>>
-			{
-				using R_ = common::compose_s<R, attach<N_mask>>;
-			
-			public:
-				using R_::R_;
-
-				XTAL_TLX infuse(XTAL_DEF o)
-				XTAL_0EX
-				{
-					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return R_::heading(XTAL_REF_(o));
-					}
-					else {
-						return R_::infuse(XTAL_REF_(o));
-					}
-				}
-
-			};
-		};
-		///\
-		Attaches `T`, allowing aggregated inspection via `efflux`. \
+		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
 		
 		template <int N_mask=-1>
-		struct gauge
+		struct expect
 		{
 			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, attach<N_mask>>
+			class subtype: public common::compose_s<R, assign<N_mask>>
 			{
-				using R_ = common::compose_s<R, attach<N_mask>>;
+				using R_ = common::compose_s<R, assign<N_mask>>;
 			
 			public:
 				using R_::R_;
@@ -265,78 +214,51 @@ struct define
 			};
 		};
 		///\
+		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
+
+		template <int N_mask=-1>
+		struct inspect
+		{
+			template <conflux::any_q R>
+			class subtype: public common::compose_s<R, assign<N_mask>>
+			{
+				using R_ = common::compose_s<R, assign<N_mask>>;
+			
+			public:
+				using R_::R_;
+
+				XTAL_TLX infuse(XTAL_DEF o)
+				XTAL_0EX
+				{
+					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+						return R_::heading(XTAL_REF_(o));
+					}
+					else {
+						return R_::infuse(XTAL_REF_(o));
+					}
+				}
+
+			};
+		};
+		///\
 		Uses the current `T` as the return value of `method`. \
 		
 		template <int N_mask=-1>
 		struct poll
 		{
 			template <process::any_q R>
-			class subtype: public common::compose_s<R, attach<N_mask>>
+			class subtype: public common::compose_s<R, assign<N_mask>>
 			{
-				using R_ = common::compose_s<R, attach<N_mask>>;
+				using R_ = common::compose_s<R, assign<N_mask>>;
 			
 			public:
 				using R_::R_;
-				using R_::valve;
+				using R_::head;
 
 				XTAL_TN2_(T) method()
 				XTAL_0FX
 				{
-					return valve();
-				}
-
-			};
-		};
-		///\
-		Wraps all `influx`ed `message`s prefixed by a context-free `voice`. \
-
-		///\note\
-		Defined independently of `T`!
-
-		struct rend
-		{
-			template <conflux::any_q R>
-			class subtype: public common::compose_s<R>
-			{
-				using R_ = common::compose_s<R>;
-				
-			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
-				///\returns the aggregated result of queuing the `message`s with the given delay. \
-
-				XTAL_TLX influx(context::voice_s<> io, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx_apart(context::voice_s<XTAL_TYP_(oo)>(io.valve(), XTAL_REF_(oo))...);
-				}
-
-			};
-		};
-		///\
-		Wraps all `influx`ed `message`s prefixed by a context-free `cue`. \
-
-		///\note\
-		Defined independently of `T`!
-
-		struct pend
-		{
-			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, rend>
-			{
-				using R_ = common::compose_s<R, rend>;
-				
-			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
-				///\returns the aggregated result of influxing the given `message`s. \
-
-				XTAL_TLX influx(context::cue_s<> io, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx_apart(context::cue_s<XTAL_TYP_(oo)>(io.valve(), XTAL_REF_(oo))...);
+					return head();
 				}
 
 			};
@@ -345,23 +267,24 @@ struct define
 		Provides a queue for `T` on the target object, \
 		which is converted to a signal by successive calls to `method`. \
 
-		template <int N_event=-1>
+		template <int N_spool=-1>
 		struct hold
 		{
-			using event_u = context::cue_s<T>;
-			using delay_u = typename event_u::valve_type;
-			using spool_u = compound::fluid::siphon_t<event_u[N_event]>;
+			using event_u = concord::cue_s<T>;
+			using delay_u = typename event_u::head_t;
+			using spool_u = common::fluid::siphon_t<event_u[(unsigned) N_spool]>;
 
-			template <int N>
-			XTAL_LET sentry_v = event_u::template sentry<N>();
+			template <int N> XTAL_LET sentry_v = event_u::template sentry<N>();
 
-			template <process::any_q R> requires (2 <= size_t(N_event))
-			class subtype: public common::compose_s<R, pend>
+			using subkind = conflux::inflect<concord::cue_s>;
+
+			template <process::any_q R> requires (2 <= size_t(N_spool))
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, pend>;
+				using R_ = common::compose_s<R, subkind>;
 				
 				delay_u d_{0};
-				spool_u q_{sentry_v<-1>, sentry_v<1>};
+				spool_u q_{sentry_v<-1>, sentry_v<+1>};
 
 			public:
 				using R_::R_;
@@ -370,8 +293,8 @@ struct define
 				XTAL_TLX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (dot.valve() < d_ and q_.empty()) {
-						q_.abandon().valve(d_ = 0);
+					if (dot.head() < d_ and q_.empty()) {
+						(void) q_.abandon().head(d_ = 0);
 					}
 					q_.push(XTAL_MOV_(dot));
 					return R_::influx(oo...);
@@ -380,9 +303,17 @@ struct define
 				XTAL_TN2_(T) method()
 				XTAL_0EX
 				{
-					return q_.advance(d_++ == q_.peek(1).valve()).core();
+					return q_.advance(d_++ == q_.peek(1).head()).core();
 				}
-			//	TODO: Once the phasor-type is settled, define a `method` that updates only on reset. \
+			///\todo\
+			Use `T=serial` to provide an incremental Dual pair, \
+			replacing the first-derivative with the minimum w.r.t. the current difference. \
+			\
+			Should be straightforward to parameterize with e.g. `<K_ramping=0>`, \
+			respectively enabling/disabling if the goal has/hasn't been met. \
+
+			///\todo\
+			Once the phasor-type is settled, define a `method` that updates only on reset. \
 
 			};
 		};
@@ -392,28 +323,29 @@ struct define
 
 		///\todo\
 		Allow for scheduling beyond the current window, \
-		possibly using `message::sequel` to convert between absolute and relative delays. \
+		possibly using `message::scope` to convert between absolute and relative delays. \
 
-		template <int N_event=-1>
+		template <int N_spool=-1>
 		struct intermit
 		{
-			using occurrence_u = context::occur_s<T>;
-			using event_u = context::cue_s<T>;
-			using delay_u = typename event_u::valve_type;
-			using spool_u = compound::fluid::siphon_t<event_u[N_event]>;
+			using protect_u = conflux::protect_s<>;
+			using event_u = concord::cue_s<T>;
+			using delay_u = typename event_u::head_t;
+			using spool_u = common::fluid::siphon_t<event_u[(unsigned) N_spool]>;
 
-			template <int N>
-			XTAL_LET sentry_v = event_u::template sentry<N>();
+			template <int N> XTAL_LET sentry_v = event_u::template sentry<N>();
+
+			using subkind = conflux::inflect<concord::cue_s>;
 
 			template <processor::any_q R>
-			class subtype: public common::compose_s<R, pend>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, pend>;
+				using R_ = common::compose_s<R, subkind>;
 				spool_u q_{sentry_v<1>};
-				typename occurrence_u::valve_type next_m;
+				protect_u protect_m;
 
 				XTAL_TO4_(XTAL_TN2 next_tail(), q_.peek().core())
-				XTAL_TO4_(XTAL_TN2 next_head(), q_.peek().valve())
+				XTAL_TO4_(XTAL_TN2 next_head(), q_.peek().head())
 
 			public:
 				using R_::R_;
@@ -426,7 +358,7 @@ struct define
 				XTAL_TLX influx(event_u dot, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (0 == dot.valve()) {
+					if (0 == dot.head()) {
 						return influx(dot.core(), XTAL_REF_(oo)...);
 					}
 					else {
@@ -455,7 +387,7 @@ struct define
 					R_::relay(i);
 					for (; 0 < q_.size() and next_head() <= i; q_.pop()) {
 					//	(void) R_::influx(next_tail());
-						(void) R_::influx(occurrence_u(next_m ^= 1, next_tail()));
+						(void) R_::influx(protect_m ^= 1, next_tail());
 					}
 					return delay();
 				}

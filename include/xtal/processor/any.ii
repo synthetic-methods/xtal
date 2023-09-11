@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../message/sequel.ii"
+#include "../message/scope.ii"
 #include "../message/resize.ii"
 
 
@@ -54,16 +54,16 @@ struct defer<U>
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_TN2 reified_(auto const ...ks),
-			_detail::map_f(valve().template reify<iteratee_t<Xs>...>(ks...))
+			_detail::map_f(head().template reify<iteratee_t<Xs>...>(ks...))
 		)
 
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::valve;
+		using S_::head;
 
 		///\
-		Defines the range-lifted form of `valve` by `reify`ing the underlying `process`. \
+		Defines the range-lifted form of `head` by `reify`ing the underlying `process`. \
 		This means that parameter resolution is only performed at the beginning of each block. \
 		\
 		NOTE: Unless the underlying `process` is invocable as `const`, \
@@ -94,8 +94,8 @@ struct defer<U>
 template <class U>
 struct refer
 {
-	using sequel_u = message::sequel_t<counted_t<>>;
-	using subkind  = common::compose<_retail::refer<U>, sequel_u::attach<>>;
+	using scope_u = message::scope_t<counted_t<>>;
+	using subkind  = common::compose<_retail::refer<U>, scope_u::assign<>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -119,9 +119,9 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
-			using I = iteratee_t<sequel_u>; using _computer = common::compute<I>;
+			using I = iteratee_t<scope_u>; using _computer = common::compute<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
-			auto const &u = S_::template valve<sequel_u>();
+			auto const &u = S_::template head<scope_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);

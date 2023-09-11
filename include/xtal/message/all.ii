@@ -1,5 +1,4 @@
 #pragma once
-#include "./flux.ii"
 #include "./opt.ii"
 #include "./per.ii"
 #include "./rescan.ii"
@@ -7,5 +6,5 @@
 #include "./respan.ii"
 #include "./restep.ii"
 #include "./revise.ii"
-#include "./sequel.ii"
-#include "./stasis.ii"
+#include "./scope.ii"
+#include "./stage.ii"

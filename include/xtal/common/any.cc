@@ -16,7 +16,7 @@ using namespace xtal::__test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("compound", "any")
+TAG_("common", "any")
 {
 	TRY_("task")
 	{

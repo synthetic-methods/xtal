@@ -67,10 +67,11 @@ struct opt
 	{
 		using S_ = common::compose_s<S, subkind>;
 	
-	public:
 		XTAL_LET_(size_t) N_depth = common::computer::bit_ceiling_f(cardinal::value);
 		XTAL_LET_(size_t) N_width = size_t(1) << N_depth;
 		XTAL_LET_(size_t) M_width = N_width - 1;
+
+		static_assert(N_width == cardinal::value);// for now...
 		
 	public:
 		using S_::S_;

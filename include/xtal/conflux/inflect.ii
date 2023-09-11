@@ -1,0 +1,45 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::conflux
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+///\
+Wraps all `influx`ed `message`s prefixed by a context-free wrapper. \
+
+template <template <class, typename ...> class W>
+struct inflect
+{
+	template <conflux::any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using S_ = common::compose_s<S>;
+		
+	public:
+		using S_::S_;
+		using S_::self;
+		using S_::influx;
+
+		///\returns the aggregated result of wrapping `oo...` with `W`. \
+
+		XTAL_TLX influx(W<void> o, XTAL_DEF ...oo)
+		XTAL_0EX
+		{
+			return self().influx_apart(W<XTAL_TYP_(oo)>(o.head(), XTAL_REF_(oo))...);
+		}
+
+	};
+};
+//template <template <class, typename ...> class W>
+//using inflect_t = confined_t<inflect<W>>;
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

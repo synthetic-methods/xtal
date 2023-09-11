@@ -17,7 +17,7 @@ template <class ...Ts> concept restore_q = common::tab_p<T_restore, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides the type `store` as a specialization of `compound::fluid::sluice`. \
+Provides the type `store` as a specialization of `common::fluid::sluice`. \
 If `N == 0` the `store` is allocated dynamically. \
 
 template <size_t N=0>
@@ -34,7 +34,7 @@ struct restore
 		using S_::S_;
 		
 		template <class U>
-		using store = compound::fluid::sluice<U[N]>;
+		using store = common::fluid::sluice<U[N]>;
 
 	};
 };

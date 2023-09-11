@@ -40,8 +40,8 @@ public:
 		:	S_((U) 1/V(u), u, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2   rate(), S_::template valve<0>())
-		XTAL_TO4_(XTAL_TN2 period(), S_::template valve<1>())
+		XTAL_TO4_(XTAL_TN2   rate(), S_::template head<0>())
+		XTAL_TO4_(XTAL_TN2 period(), S_::template head<1>())
 
 	};
 };

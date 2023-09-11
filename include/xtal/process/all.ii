@@ -3,4 +3,4 @@
 #include "./phasor.ii"
 #include "./pulsar.ii"
 #include "./quasar.ii"
-#include "./star.ii"
+#include "./fusor.ii"

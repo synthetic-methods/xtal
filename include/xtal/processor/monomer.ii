@@ -4,7 +4,7 @@
 #include "../message/resize.ii"
 #include "../message/respan.ii"
 #include "../message/revise.ii"
-#include "../message/sequel.ii"
+#include "../message/scope.ii"
 
 XTAL_ENV_(push)
 namespace xtal::processor
@@ -25,7 +25,7 @@ template <class U, typename ...As>
 struct monomer<U, As...>
 {
 	using resize_u = message::resize_t<>;
-	using sequel_u = message::sequel_t<>;
+	using scope_u = message::scope_t<>;
 
 	using subkind = confer<U, As...>;
 
@@ -49,8 +49,8 @@ struct monomer<U, As...>
 			using subkind = common::compose<common::tag<monomer>
 			,	concord::confer<typename rebound::result_t>
 		//	,	As...
-		//	,	resize_u::attach<>
-			,	sequel_u::attach<>
+		//	,	resize_u::assign<>
+			,	scope_u::assign<>
 			,	rebound
 			>;
 			template <any_q R>
@@ -72,16 +72,16 @@ struct monomer<U, As...>
 				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-				XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), R_::valve(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
 				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
 
 
 				using R_::efflux;
 
-				XTAL_TLX efflux(XTAL_DEF_(message::sequel_q) o_sequel)
+				XTAL_TLX efflux(XTAL_DEF_(message::scope_q) o_scope)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_sequel)));
+					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_scope)));
 				}
 
 			};
@@ -102,8 +102,8 @@ struct monomer<U, As...>
 			,	concord:: refer<serve_u>
 			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
-			,	resize_u::attach<>
-			,	sequel_u::attach<>
+			,	resize_u::assign<>
+			,	scope_u::assign<>
 			,	rebound
 			>;
 			template <any_q R>
@@ -147,40 +147,40 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 				///\
-				Responds to `message::sequel` by rendering the internal `store()`. \
-				A match for the following sequel will initiate the `respan` (returning `1`), \
-				while a match for the current sequel will terminate (returning `0`). \
-				(Deviant behaviour is enforced by `assert`ion on `sequel`.) \
+				Responds to `message::scope` by rendering the internal `store()`. \
+				A match for the following scope will initiate the `respan` (returning `1`), \
+				while a match for the current scope will terminate (returning `0`). \
+				(Deviant behaviour is enforced by `assert`ion on `scope`.) \
 
-				XTAL_TLX efflux(message::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_TLX efflux(message::scope_q auto o_scope, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return efflux(respan_u(store()), o_sequel, XTAL_REF_(oo)...);
+					return efflux(respan_u(store()), o_scope, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_TLX efflux(respan_u o_respan, message::sequel_q auto o_sequel, XTAL_DEF ...oo)
+				XTAL_TLX efflux(respan_u o_respan, message::scope_q auto o_scope, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (R_::effuse(o_sequel) == 1) return 1;
+					if (R_::effuse(o_scope) == 1) return 1;
 				//	else...
 					(void) serve(o_respan);
 					return self().reflux([&, this] (auto n, counted_q auto w)
-						XTAL_0FN_(self().efflux_pull_slice(o_respan.slice(w), o_sequel.slice(w).skip(n), oo...))
-					) & R_::template influx_push(o_sequel);
+						XTAL_0FN_(self().efflux_pull_slice(o_respan.slice(w), o_scope.slice(w).skip(n), oo...))
+					) & R_::template influx_push(o_scope);
 				}
 				///\
-				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
+				Renders the buffer slice designated by `respan_x` and `scope_x`. \
 				
-				XTAL_TLX efflux_pull_slice(respan_u respan_x, message::sequel_q auto sequel_x, XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull_slice(respan_u respan_x, message::scope_q auto scope_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const  t_ = respan_x.begin();
 					auto const _n  = recount_f(respan_x);
-					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, sequel_x, oo...) or
+					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, scope_x, oo...) or
 						(_v3::ranges::move(R_::method()|_n, t_), 0);
 				}
 

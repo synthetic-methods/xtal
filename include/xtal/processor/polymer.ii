@@ -2,8 +2,8 @@
 #include "./any.ii"
 #include "./monomer.ii"
 #include "./restash.ii"
-#include "../context/voice.ii"
-#include "../message/stasis.ii"
+#include "../concord/voice.ii"
+#include "../message/stage.ii"
 
 
 XTAL_ENV_(push)
@@ -22,7 +22,7 @@ XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice sluice according to `message::stasis` requests/responses. \
+but expands/contracts the voice sluice according to `message::stage` requests/responses. \
 
 ///\note\
 The attached `restore` and `restash` determine the sample buffer and voice stash respectively. \
@@ -53,13 +53,13 @@ struct polymer<U, As...>
 			using return_t = typename rebound::return_t;
 
 			using stave_u = typename Mu::template bond_t<Xs...>;
-			using stage_u = message::stasis_t<>;
-			using event_u = context::voice_s<stage_u>;
-			using voice_u = context::voice_s<stave_u>;
+			using stage_u = message::stage_t<>;
+			using event_u = concord::voice_s<stage_u>;
+			using voice_u = concord::voice_s<stave_u>;
 			using stash_u = typename S_::template stash<voice_u>::type;
 
 			using subkind = common::compose<common::tag<polymer>
-			,	typename message::confined_t<>::rend
+			,	conflux::inflect<concord::voice_s>
 			,	defer<stave_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
@@ -74,7 +74,7 @@ struct polymer<U, As...>
 			public:
 				using R_::R_;
 				using R_::self;
-				using R_::valve;
+				using R_::head;
 				using R_::serve;
 				using R_::store;
 				
@@ -82,13 +82,13 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_TLX influx(context::voice_q auto o, XTAL_DEF ...oo)
+				XTAL_TLX influx(concord::voice_q auto o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto o_core = o.core();
-					auto o_valve = o.valve();
-					auto v_     = m_stash.scan(o_valve);
-					assert(m_stash and o_valve == v_->valve());
+					auto o_head = o.head();
+					auto v_     = m_stash.scan(o_head);
+					assert(m_stash and o_head == v_->head());
 					return v_->influx(o_core, XTAL_REF_(oo)...);
 				}
 				///\
@@ -100,17 +100,17 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					auto o_core = o.core();
-					auto o_valve = o.valve();
-					auto v_     = m_stash.scan(o_valve);
+					auto o_head = o.head();
+					auto v_     = m_stash.scan(o_head);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (o_core == 0) {
-						if (m_stash and o_valve == v_->valve()) {
-							(void) v_->influx(message::stasis_f(-1), oo...);
+						if (m_stash and o_head == v_->head()) {
+							(void) v_->influx(message::stage_f(-1), oo...);
 						}
-						v_ = m_stash.poke(v_, o_valve, valve());
+						v_ = m_stash.poke(v_, o_head, head());
 					}
 				//	Forward to detected/allocated instance:
-					assert(v_->valve() == o_valve);
+					assert(v_->head() == o_head);
 					return v_->influx(o_core, XTAL_REF_(oo)...);
 				}
 
@@ -122,7 +122,7 @@ struct polymer<U, As...>
 				{
 					bool constexpr impure = false;
 					return _v3::ranges::accumulate(m_stash
-					,	impure? -1: valve().influx(oo...)
+					,	impure? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
@@ -130,29 +130,29 @@ struct polymer<U, As...>
 				XTAL_TLX efflux_pull(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = (...or message::sequel_q<decltype(oo)>);
+					bool constexpr impure = (...or message::scope_q<decltype(oo)>);
 					return _v3::ranges::accumulate(m_stash
-					,	impure? -1: valve().efflux(oo...)
+					,	impure? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
 
 				///\
-				Renders the buffer slice designated by `respan_x` and `sequel_x`. \
+				Renders the buffer slice designated by `respan_x` and `scope_x`. \
 				
-				template <message::respan_q R_x, message::sequel_q S_x>
-				XTAL_TLX efflux_pull_slice(R_x respan_x, S_x sequel_x, XTAL_DEF ...oo)
+				template <message::respan_q R_x, message::scope_q S_x>
+				XTAL_TLX efflux_pull_slice(R_x respan_x, S_x scope_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					XTAL_FLX flx = -1;
 				//	Render each instance, while releasing any that have terminated:
 					for (auto _v = m_stash.end(); m_stash.begin() <= --_v;) {
-						if (_v->efflux(message::stasis_f(-1)) == 1) {
+						if (_v->efflux(message::stage_f(-1)) == 1) {
 							m_stash.pop(_v);
 						}
 						else {
-							flx &= _v->efflux(sequel_x, oo...);
+							flx &= _v->efflux(scope_x, oo...);
 						}
 					}
 					if (1 == flx) return flx;// else...

@@ -1,5 +1,4 @@
 #pragma once
-#include "./flux.cc"
 #include "./opt.cc"
 #include "./per.cc"
 #include "./rescan.cc"
@@ -7,5 +6,5 @@
 #include "./respan.cc"
 #include "./restep.cc"
 #include "./revise.cc"
-#include "./sequel.cc"
-#include "./stasis.cc"
+#include "./scope.cc"
+#include "./stage.cc"

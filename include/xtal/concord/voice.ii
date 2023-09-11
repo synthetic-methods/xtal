@@ -1,0 +1,32 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::concord
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Wrapper used to index an existing type. \
+
+///\see e.g. [../processor/polymer.ipp]. \
+
+template <typename ..._s> XTAL_NYM voice;
+template <class    ...Ts> XTAL_ASK voice_q = common::tag_p<voice, Ts...>;
+
+template <class U> struct voice<U>: conferred<U, common::tag<voice>> {};
+template <       > struct voice< >: voice<size_t> {};
+
+template <class S=void, typename ...As>
+using voice_s = common::compose_s<devoid_t<S, confined_t<>>, voice<As...>>;
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

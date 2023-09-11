@@ -1,0 +1,56 @@
+#pragma once
+#include "./any.ii"
+#include "./fuse.ii"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::common::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename ..._s> XTAL_NYM pulse;
+template <typename ..._s> XTAL_ASK pulse_q = common::tag_p<pulse, _s...>;
+template <class U=size_t> XTAL_USE pulse_t = typename pulse<U>::type;
+
+template <class ...Ts>
+concept pulse_value_q = integral_group_q<Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Represents a mixable `floating_point` quantity determined by `sizeof(U)`. \
+
+template <class U>
+struct pulse<U>
+{
+	using _computer = common::compute<U>;
+	using delta_t = typename _computer::delta_t;
+
+	template <class T>
+	using demitype = typename fuse<delta_t>::template homotype<T>;
+
+	template <class T>
+	using hemitype = common::compose_s<demitype<T>, common::tag<pulse>>;
+
+	template <class T>
+	class homotype: public hemitype<T>
+	{
+		friend T;
+		using S_ = hemitype<T>;
+	
+	public:
+		using S_::S_;
+		using S_::self;
+
+	};
+	using type = _detail::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

@@ -25,7 +25,7 @@ struct resize
 		using S_::S_;
 		using size_t = U;
 
-		XTAL_TO4_(XTAL_TN2 size(XTAL_DEF... oo), S_::valve(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 size(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_TN2 empty(), 0 == size())
 
 	};

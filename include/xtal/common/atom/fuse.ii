@@ -1,0 +1,73 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::common::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename ..._s> XTAL_NYM fuse;
+template <typename ..._s> XTAL_ASK fuse_q = common::tag_p<fuse, _s...>;
+template <class U=size_t> XTAL_USE fuse_t = typename fuse<U>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Represents a mixable quantity of type `U`. \
+
+template <additive_group_q U>
+struct fuse<U>
+{
+	using _computer = common::compute<U>;
+	
+	template <class T>
+	using hemitype = common::compose_s<unit_t, common::tag<fuse>, common::define<T>>;
+
+	template <class T>
+	class homotype: public hemitype<T>
+	{
+		friend T;
+		using S_ = hemitype<T>;
+
+	public:
+		using S_::S_;
+		using S_::self;
+		using S_::twin;
+
+		using value_type = U;
+		value_type value;
+
+		XTAL_TO4_(XTAL_OP0_(implicit) value_type(), value)
+
+		XTAL_CON homotype(XTAL_DEF_(to_q<U>) w)
+		XTAL_0EX
+		:	value(XTAL_REF_(w))
+		{
+			normalize();
+		}
+		XTAL_TN1 normalize()
+		XTAL_0EX
+		{
+			return self();
+		}
+
+		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
+		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
+				
+		XTAL_OP1 += (homotype const &t) XTAL_0EX {value += t.value; return self().normalize();}
+		XTAL_OP1 -= (homotype const &t) XTAL_0EX {value -= t.value; return self().normalize();}
+	
+	};
+	using type = _detail::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

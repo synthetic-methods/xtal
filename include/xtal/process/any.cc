@@ -33,7 +33,7 @@ TAG_("process", "construct")
 
 void process_access__get(auto z)
 {
-	auto &o = z.template valve<onset_t>();
+	auto &o = z.template head<onset_t>();
 	TRUE_(00.0 == (float) o);
 	TRUE_(10.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
@@ -49,7 +49,7 @@ TAG_("process", "access")
 
 void process_control__influx_operator(auto z)
 {
-	auto &o = z.template valve<onset_t>();
+	auto &o = z.template head<onset_t>();
 	z <<= onset_t(0.0); TRUE_(0.0 == (float) o);
 	z <<= onset_t(1.0); TRUE_(1.0 == (float) o);
 	z <<= onset_t(2.0); TRUE_(2.0 == (float) o);
@@ -58,7 +58,7 @@ void process_control__influx_operator(auto z)
 }
 void process_control__efflux_operator(auto z)
 {
-	auto &o = z.template valve<onset_t>();
+	auto &o = z.template head<onset_t>();
 	z >>= onset_t(0.0); TRUE_(0.0 == (float) o);
 	z >>= onset_t(1.0); TRUE_(1.0 == (float) o);
 	z >>= onset_t(2.0); TRUE_(2.0 == (float) o);
@@ -69,7 +69,7 @@ void process_control__influx_method(auto z)
 {
 	using start_t = message::label_t<ordinal_t<0>, struct T_start>;
 
-	auto &o = z.template valve<onset_t>();
+	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(start_t()));                            // unrecognized
 	TRUE_( 1 == (int) z.influx(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
 	TRUE_( 0 == (int) z.influx(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed
@@ -81,7 +81,7 @@ void process_control__efflux_method(auto z)
 {
 	using start_t = message::label_t<ordinal_t<0>, struct T_start>;
 
-	auto &o = z.template valve<onset_t>();
+	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(start_t()));                            // unrecognized
 	TRUE_( 1 == (int) z.efflux(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
 	TRUE_( 0 == (int) z.efflux(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed

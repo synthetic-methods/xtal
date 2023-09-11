@@ -93,14 +93,14 @@ using static_onset_mix_t = typename static_onset_mix::type;
 
 struct dynamic_onset_mix
 {
-	class type: public process::confine_t<type, onset_t::attach<>>
+	class type: public process::confine_t<type, onset_t::assign<>>
 	{
 	public:
 
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return (XTAL_REF_(xs) +...+ this->template valve<onset_t>());
+			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
 		}
 
 	};
@@ -112,14 +112,14 @@ using dynamic_onset_mix_t = typename dynamic_onset_mix::type;
 
 struct dynamic_term
 {
-	class type: public process::confine_t<type, scale_t::attach<>>
+	class type: public process::confine_t<type, scale_t::assign<>>
 	{
 	public:
 
 		XTAL_TN2 method(XTAL_DEF x)
 		XTAL_0EX
 		{
-			return XTAL_REF_(x)*this->template valve<scale_t>();
+			return XTAL_REF_(x)*this->template head<scale_t>();
 		}
 
 	};
@@ -135,7 +135,7 @@ struct dynamic_count
 	using restep_u = message::restep_t<count_t>;
 
 	template <class T>
-	using homotype = process::confine_t<T, restep_u::attach<>>;
+	using homotype = process::confine_t<T, restep_u::assign<>>;
 
 	struct type: public homotype<type>
 	{
@@ -147,7 +147,7 @@ struct dynamic_count
 		XTAL_TN2 method()
 		XTAL_0EX
 		{
-			auto i = count; count += this->template valve<restep_u>();
+			auto i = count; count += this->template head<restep_u>();
 			return i;
 		}
 
