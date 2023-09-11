@@ -77,7 +77,7 @@ struct define
 				XTAL_TLX influx(context::match_s<T> io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx(io.head(), io.core(), XTAL_REF_(oo)...);
+					return self().influx(io.valve(), io.core(), XTAL_REF_(oo)...);
 				}
 
 			};
@@ -111,6 +111,24 @@ struct define
 				XTAL_0EX
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
+
+				///\
+				Processes a scheduled `occur`rence. \
+				Override the default to prevent overprocessing of non-idempotent events. \
+
+				///\todo\
+				Allow `context`ual `attach`ment that compares `valve`s.
+
+				XTAL_TLX influx(context::occur_s<> o, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return R_::influx(XTAL_REF_(oo)...);
+				}
+				XTAL_TLX influx(context::occur_s<T> o, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return self().influx(XTAL_MOV_(o.valve()), XTAL_MOV_(o.core()), XTAL_REF_(oo)...);
+				}
 
 			};
 		};
@@ -379,6 +397,7 @@ struct define
 		template <int N_event=-1>
 		struct intermit
 		{
+			using occurrence_u = context::occur_s<T>;
 			using event_u = context::cue_s<T>;
 			using delay_u = typename event_u::valve_type;
 			using spool_u = compound::fluid::siphon_t<event_u[N_event]>;
@@ -391,9 +410,10 @@ struct define
 			{
 				using R_ = common::compose_s<R, pend>;
 				spool_u q_{sentry_v<1>};
+				typename occurrence_u::valve_type next_m;
 
 				XTAL_TO4_(XTAL_TN2 next_tail(), q_.peek().core())
-				XTAL_TO4_(XTAL_TN2 next_valve(), q_.peek().valve())
+				XTAL_TO4_(XTAL_TN2 next_head(), q_.peek().valve())
 
 			public:
 				using R_::R_;
@@ -420,7 +440,7 @@ struct define
 				XTAL_TN1_(delay_u) delay()
 				XTAL_0EX
 				{
-					return _std::min<delay_u>({R_::delay(), next_valve()});
+					return _std::min<delay_u>({R_::delay(), next_head()});
 				//	NOTE: The `std::initializer_list` syntax voids segfaulting in `RELEASE`. \
 				
 				}
@@ -433,8 +453,9 @@ struct define
 				XTAL_0EX
 				{
 					R_::relay(i);
-					for (; 0 < q_.size() and next_valve() <= i; q_.pop()) {
-						(void) R_::influx(next_tail());
+					for (; 0 < q_.size() and next_head() <= i; q_.pop()) {
+					//	(void) R_::influx(next_tail());
+						(void) R_::influx(occurrence_u(next_m ^= 1, next_tail()));
 					}
 					return delay();
 				}
@@ -458,23 +479,6 @@ struct defer
 :	_retail::defer<U>
 {
 };
-//template <nominal_q W> requires unsigned_q<valued_t<W>>
-//struct defer<W>
-//{
-//	using subkind = defer<valued_t<W>>;
-//
-//	template <any_q S>
-//	class subtype: public common::compose_s<S, subkind>
-//	{
-//		using S_ = common::compose_s<S, subkind>;
-//	
-//	public:
-//		using S_::S_;
-//
-//		using dispatch = typename S_::template dispatch<valued_v<W>>;
-//
-//	};
-//};
 template <class U>
 struct refer
 :	_retail::refer<U>
