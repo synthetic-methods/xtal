@@ -28,7 +28,7 @@ TAG_("message", "hold", "process")
 
 		gated_t o_gated;
 		
-		using cue_t = concord::cue_s<>;
+		using cue_t = conduct::cue_s<>;
 		o_gated <<= (cue_t) 0 << (gate_t)  7;
 		o_gated <<= (cue_t) 1 << (gate_t)  1;
 		o_gated <<= (cue_t) 3 << (gate_t) -1;
@@ -75,7 +75,7 @@ void control_hold_processor()
 
 	using gated_t = process::confined_t<typename gate_t::template hold<(1<<7)>>;
 	using array_t = _std::array<typename common::computer::alpha_t, N_size>;
-	using cue_t = concord::cue_s<>;
+	using cue_t = conduct::cue_s<>;
 
 	using resize_u = message::resize_t<>;
 	using scope_u = message::scope_t<>;
@@ -119,7 +119,7 @@ void control_intermit_processor()
 
 	using    mix_z = processor::monomer_t<mix_t, restore<>, typename onset_t::template intermit<(1<<4)>>;
 	using resize_u = message::resize_t<>;
-	using scope_n = message::scope_t<>;
+	using scope_n  = message::scope_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
@@ -134,14 +134,14 @@ void control_intermit_processor()
 	xhs <<= resize_u(4);
 	TRUE_(0 == xhs.size());//NOTE: Only changes after `scope`.
 
-	xhs <<= concord::cue_s<onset_t>(0, (alpha_t) 100);
-	xhs <<= concord::cue_s<onset_t>(1, (alpha_t) 200);
-	xhs <<= concord::cue_s<onset_t>(2, (alpha_t) 300);
+	xhs <<= conduct::cue_s<onset_t>(0, (alpha_t) 100);
+	xhs <<= conduct::cue_s<onset_t>(1, (alpha_t) 200);
+	xhs <<= conduct::cue_s<onset_t>(2, (alpha_t) 300);
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= concord::cue_s<onset_t>(2, (alpha_t) 400);// relative timing!
+	xhs <<= conduct::cue_s<onset_t>(2, (alpha_t) 400);// relative timing!
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));

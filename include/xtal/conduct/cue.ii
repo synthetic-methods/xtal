@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::conflux
+namespace xtal::conduct
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,17 +17,14 @@ Wrapper used to schedule an existing type.\
 
 ///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 
-///\todo\
-Implement as 1-bite flip-flop? \
+template <typename ..._s> XTAL_NYM cue;
+template <class    ...Ts> XTAL_ASK cue_q = common::tag_p<cue, Ts...>;
 
-template <typename ..._s> XTAL_NYM protect;
-template <class    ...Ts> XTAL_ASK protect_q = common::tag_p<protect, Ts...>;
-
-template <class U> struct protect<U>: conferred<U, common::tag<protect>> {};
-template <       > struct protect< >: protect<size_t> {};
+template <class U> struct cue<U>: conferred<U, common::tag<cue>> {};
+template <       > struct cue< >: cue<size_s> {};
 
 template <class S=void, typename ...As>
-using protect_s = common::compose_s<devoid_t<S, confined_t<>>, protect<As...>>;
+using cue_s = common::compose_s<devoid_t<S, confined_t<>>, cue<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

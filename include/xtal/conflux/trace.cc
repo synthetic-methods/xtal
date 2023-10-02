@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./protect.ii"// testing...
+#include "./trace.ii"// testing...
 
 
 
@@ -13,13 +13,13 @@ namespace xtal::conflux::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("protect")
+TAG_("trace")
 {
 	TRY_("construct")
 	{
 		using source_t = concord::conferred_t<counted_t<>>;
-		using target_t = protect_s<source_t>;
-		using target_u = protect_s<>;
+		using target_t = trace_s<source_t>;
+		using target_u = trace_s<>;
 
 		target_u t0(99);
 		target_t t1(99, source_t(counted_t<>(11, 22)));

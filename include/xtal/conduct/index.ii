@@ -7,24 +7,24 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::concord
+namespace xtal::conduct
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Controls access to an `inscribe`d `attach`ment.\
+Wrapper used to index an existing type. \
 
-///\see e.g. [../message/any#assign] or [../message/any#dispatch]. \
+///\see e.g. [../processor/polymer.ipp]. \
 
-template <typename ..._s> XTAL_NYM mark;
-template <class    ...Ts> XTAL_ASK mark_q = common::tag_p<mark, Ts...>;
+template <typename ..._s> XTAL_NYM index;
+template <class    ...Ts> XTAL_ASK index_q = common::tag_p<index, Ts...>;
 
-template <class U> struct mark<U>: conferred<U, common::tag<mark>> {};
-template <       > struct mark< >: mark<size_t> {};
+template <class U> struct index<U>: conferred<U, common::tag<index>> {};
+template <       > struct index< >: index<size_t> {};
 
 template <class S=void, typename ...As>
-using mark_s = common::compose_s<devoid_t<S, confined_t<>>, mark<As...>>;
+using index_s = common::compose_s<devoid_t<S, confined_t<>>, index<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 #include "./any.ii"
 #include "./monomer.ii"
 #include "./restash.ii"
-#include "../concord/voice.ii"
+#include "../conduct/index.ii"
 #include "../message/stage.ii"
 
 
@@ -54,12 +54,12 @@ struct polymer<U, As...>
 
 			using stave_u = typename Mu::template bond_t<Xs...>;
 			using stage_u = message::stage_t<>;
-			using event_u = concord::voice_s<stage_u>;
-			using voice_u = concord::voice_s<stave_u>;
+			using event_u = conduct::index_s<stage_u>;
+			using voice_u = conduct::index_s<stave_u>;
 			using stash_u = typename S_::template stash<voice_u>::type;
 
 			using subkind = common::compose<common::tag<polymer>
-			,	conflux::inflect<concord::voice_s>
+			,	conflux::distribute<conduct::index_s>
 			,	defer<stave_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
@@ -82,7 +82,7 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_TLX influx(concord::voice_q auto o, XTAL_DEF ...oo)
+				XTAL_TLX influx(conduct::index_q auto o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto o_core = o.core();

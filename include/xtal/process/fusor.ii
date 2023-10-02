@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.ii"
 
-#include "../conflux/protect.ii"
+#include "../conflux/trace.ii"
 
 
 
@@ -32,7 +32,7 @@ struct fusor<W, As...>
 	,	_detail::refer_iterators<value_w>
 	,	shard_x
 	,	As...
-	,	typename conflux::protect_s<>::template ascribe<>
+	,	typename conflux::trace_s<>::template ascribe<>
 	>;
 	
 	template <class S>

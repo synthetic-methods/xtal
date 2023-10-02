@@ -7,24 +7,27 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::concord
+namespace xtal::conflux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Wrapper used to index an existing type. \
+Wrapper used to schedule non-idempotent events.\
 
-///\see e.g. [../processor/polymer.ipp]. \
+///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 
-template <typename ..._s> XTAL_NYM voice;
-template <class    ...Ts> XTAL_ASK voice_q = common::tag_p<voice, Ts...>;
+///\todo\
+Implement as 1-bite flip-flop? \
 
-template <class U> struct voice<U>: conferred<U, common::tag<voice>> {};
-template <       > struct voice< >: voice<size_t> {};
+template <typename ..._s> XTAL_NYM trace;
+template <class    ...Ts> XTAL_ASK trace_q = common::tag_p<trace, Ts...>;
+
+template <class U> struct trace<U>: conferred<U, common::tag<trace>> {};
+template <       > struct trace< >: trace<size_t> {};
 
 template <class S=void, typename ...As>
-using voice_s = common::compose_s<devoid_t<S, confined_t<>>, voice<As...>>;
+using trace_s = common::compose_s<devoid_t<S, confined_t<>>, trace<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

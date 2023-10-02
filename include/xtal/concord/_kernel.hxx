@@ -46,6 +46,7 @@ concept any_q = of_p<any_t<>, Ts...>;
 Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 
 template <class ...Us> struct infer: common::compose<infer<Us>...> {};
+template <any_q    T > struct infer<T>                {using type = T;};
 template <vacant_q U > struct infer<U>:        any<U> {};
 template <class    U > struct infer<U>:      defer<U> {};
 template <class ...Us>  using infer_t = typename infer<Us...>::type;

@@ -102,14 +102,14 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(concord::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(conduct::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	gated <<= std::make_tuple(concord::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
+	gated <<= std::make_tuple(conduct::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
@@ -229,6 +229,7 @@ The type-functions [`compose` and `compose_s`](include/xtal/common/compose.ii?ts
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
 	namespace concord   {}
+	namespace conduct   {namespace _retail = concord;}
 	namespace conflux   {namespace _retail = concord;}
 	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}

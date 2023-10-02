@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::concord::__test
+namespace xtal::conduct::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ TAG_("cue")
 {
 	TRY_("construct")
 	{
-		using source_t = concord::conferred_t<counted_t<>>;
+		using source_t = conduct::conferred_t<counted_t<>>;
 		using target_t = cue_s<source_t>;
 		using target_u = cue_s<>;
 
