@@ -53,6 +53,11 @@ template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and 
 //\
 Structural types...
 
+template <class ...Ts> struct initial;
+template <class... Ts> using  initial_t = typename initial<Ts...>::type;
+template <class T, class ...Ts> struct initial<T, Ts...> {using type = T;};
+
+
 template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class   ...Ts>   concept complete_q = (...and complete_p<Ts>);
 template <class      T >    struct complete    {class type  {};};

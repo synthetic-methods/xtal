@@ -97,18 +97,32 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Xs>    XTAL_NYM pack_base;
-template <class ...Xs>    XTAL_USE pack_base_t = typename pack_base<Xs...>::type;
-template <class ...Xs>      struct pack_base       {using type = _std::tuple<Xs...>;};
-template <class X, class Y> struct pack_base<X, Y> {using type = _std::pair<X, Y>;};
+//template <class ...Xs>    XTAL_NYM pack_base;
+//template <class ...Xs>    XTAL_USE pack_base_t = typename pack_base<Xs...>::type;
+//template <class ...Xs>      struct pack_base       {using type = _std::tuple<Xs...>;};
+//template <class X, class Y> struct pack_base<X, Y> {using type = _std::pair<X, Y>;};
 
+XTAL_LET pack_f = [] <class ...Xs>(Xs &&...xs)
+XTAL_0FN
+{
+	if constexpr (2 == sizeof...(xs)) {
+		return _std::make_pair(XTAL_REF_(xs)...);
+	}
+	else {
+		return _std::make_tuple(XTAL_REF_(xs)...);
+	}
+};
 
 template <class ...Xs> XTAL_NYM pack;
 template <class ...Xs> XTAL_USE pack_t = typename pack<Xs...>::type;
 template <class ...Xs>
 struct pack
 {
-	using type = pack_base_t<rebased_t<Xs>...>;
+	template <typename F> using invoke   = _std::invoke_result  <F, rebased_t<Xs>...>;
+	template <typename F> using invoke_t = _std::invoke_result_t<F, rebased_t<Xs>...>;
+
+//	using type = pack_base_t<rebased_t<Xs>...>;
+	using type = invoke_t<XTAL_TYP_(pack_f)>;
 
 	XTAL_LET make = [] XTAL_1FN_(type);
 
@@ -119,15 +133,12 @@ struct pack
 	template <size_t N> using part   = pack_item  <type, N>;
 	template <size_t N> using part_t = pack_item_t<type, N>;
 
-	template <typename F> using invoke   = _std::invoke_result  <F, rebased_t<Xs>...>;
-	template <typename F> using invoke_t = _std::invoke_result_t<F, rebased_t<Xs>...>;
-
 };
 template <template <class ...> class L, class ...Xs>// requires pack_p<L<Xs...>>
 struct pack<L<Xs...>>: pack<Xs...> {};
 
-XTAL_LET  pack_f = [] <class ...Xs>(Xs &&...xs)
-XTAL_0FN_(pack_t<Xs...>(XTAL_REF_(xs)...));
+//XTAL_LET  pack_f = [] <class ...Xs>(Xs &&...xs)
+//XTAL_0FN_(pack_t<Xs...>(XTAL_REF_(xs)...));
 
 
 ////////////////////////////////////////////////////////////////////////////////

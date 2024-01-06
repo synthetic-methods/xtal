@@ -65,7 +65,7 @@ struct shard<Ns...>
 				XTAL_TLX influx(conflux::shard_q auto o_shard, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto &w = common::pack_item_f(head(), o_shard.tuple());
+					auto &w = common::pack_item_f(head(), o_shard.apple());
 					auto &x = decltype(w) (o_shard);
 					_std::swap(w, x);
 					return w == x or R_::influx(XTAL_REF_(oo)...);

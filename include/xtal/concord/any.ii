@@ -85,7 +85,7 @@ struct define
 			return self().operator==(t.self())? is::equivalent: is::unordered;
 		}
 
-		XTAL_TN2 tuple() XTAL_0FX {return common::pack_f();}
+		XTAL_TN2 apple() XTAL_0FX {return common::pack_f();}
 		///<\returns a tuple representation of `this`. \
 
 		using arity = cardinal_t<0>;
@@ -199,10 +199,10 @@ struct defer
 		{}
 
 		XTAL_TO4_(template <size_t I>
-		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(XTAL_DEF ...oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
 		)		
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(XTAL_DEF... oo), S_::template self<super_t<S, Is...>>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(XTAL_DEF ...oo), S_::template self<super_t<S, Is...>>(XTAL_REF_(oo)...)
 		)
 		
 		///\
@@ -221,10 +221,11 @@ struct defer
 		///\
 		Tuple conversion. \
 
-		XTAL_TN2 tuple()
+		XTAL_TN2 apple()
 		XTAL_0FX
 		{
-			return apply(common::pack_f);
+		//	return apply(common::pack_f);
+			return apply([] (XTAL_DEF ...oo) XTAL_0FN_(_std::make_tuple(XTAL_REF_(oo)...)));
 		}
 
 		///\

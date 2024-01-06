@@ -142,8 +142,10 @@ TAG_("concord", "conversion")
 
 		using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
 		auto const foo = foo_t(1, 2, 3);
-		auto const bar = foo.tuple();
+		auto const bar = foo.apple();
 		using bar_t = XTAL_TYP_(bar);
+
+		static_assert(_std::same_as<bar_t, _std::tuple<bool, int, float>>);
 
 		auto baz = (bar_t) foo;
 		TRUE_(_std::get<0>(baz) == _std::get<0>(bar));
