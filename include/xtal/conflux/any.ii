@@ -189,36 +189,6 @@ struct define
 		XTAL_TLX infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 		
-		
-	protected:
-		///\
-		Effluxes each part independently. \
-
-		XTAL_TLX efflux_apart(XTAL_DEF o, XTAL_DEF ...oo)
-		XTAL_0EX
-		{
-			return self().efflux(XTAL_REF_(o)) & self().efflux_apart(XTAL_REF_(oo)...);
-		}
-		XTAL_TLX efflux_apart()
-		XTAL_0EX
-		{
-			return -1;
-		}
-
-		///\
-		Influxes each part independently. \
-
-		XTAL_TLX influx_apart(XTAL_DEF o, XTAL_DEF ...oo)
-		XTAL_0EX
-		{
-			return self().influx(XTAL_REF_(o)) & self().influx_apart(XTAL_REF_(oo)...);
-		}
-		XTAL_TLX influx_apart()
-		XTAL_0EX
-		{
-			return -1;
-		}
-
 	};
 };
 template <class T>

@@ -2,7 +2,7 @@
 #include "./any.ii"
 #include "./monomer.ii"
 #include "./restash.ii"
-#include "../conduct/index.ii"
+#include "../conduct/key.ii"
 #include "../message/stage.ii"
 
 
@@ -54,12 +54,11 @@ struct polymer<U, As...>
 
 			using stave_u = typename Mu::template bond_t<Xs...>;
 			using stage_u = message::stage_t<>;
-			using event_u = conduct::index_s<stage_u>;
-			using voice_u = conduct::index_s<stave_u>;
+			using event_u = conduct::key_s<stage_u>;
+			using voice_u = conduct::key_s<stave_u>;
 			using stash_u = typename S_::template stash<voice_u>::type;
 
 			using subkind = common::compose<common::tag<polymer>
-			,	conflux::distribute<conduct::index_s>
 			,	defer<stave_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	rebound
@@ -82,36 +81,46 @@ struct polymer<U, As...>
 
 				using R_::influx;
 				
-				XTAL_TLX influx(conduct::index_q auto o, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					auto o_core = o.core();
-					auto o_head = o.head();
-					auto v_     = m_stash.scan(o_head);
-					assert(m_stash and o_head == v_->head());
-					return v_->influx(o_core, XTAL_REF_(oo)...);
-				}
 				///\
-				Forwards the event to the associated instance. \
-				If the incoming event is active `(0)`, the top-most associated instance is cut `(-1)`, \
-				before a new instance is allocated from the sentinel.
+				Forwards the `conduct::key`ed message to the associated instance. \
+				Messages associated with a `message/stage.ii` designate events, \
+				and govern the allocation/deallocation of keyed instances. \
+				
+				///\note\
+				If an incoming event is active `(0)`, \
+				the top-most associated instance is cut `(-1)` \
+				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TLX influx(event_u o, XTAL_DEF ...oo)
+				XTAL_TLX influx(conduct::key_q auto io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					auto o_core = o.core();
-					auto o_head = o.head();
-					auto v_     = m_stash.scan(o_head);
+					auto const i = io.head();
+					auto const o = io.core();
+					return influx(conduct::key_s<>(i), o, XTAL_REF_(oo)...);
+				}
+				XTAL_TLX influx(conduct::key_s<> i, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto h = i.head();
+					auto w = m_stash.scan(h);
+					assert(m_stash and h == w->head());
+					return w->influx(XTAL_REF_(oo)...);
+				}
+				XTAL_TLX influx(conduct::key_s<> i, stage_u o, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					auto h = i.head();
+					auto w = m_stash.scan(h);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
-					if (o_core == 0) {
-						if (m_stash and o_head == v_->head()) {
-							(void) v_->influx(message::stage_f(-1), oo...);
+					if (0 == o) {
+						if (m_stash and h == w->head()) {
+							(void) w->influx(message::stage_f(-1), oo...);
 						}
-						v_ = m_stash.poke(v_, o_head, head());
+						w = m_stash.poke(w, h, head());
 					}
 				//	Forward to detected/allocated instance:
-					assert(v_->head() == o_head);
-					return v_->influx(o_core, XTAL_REF_(oo)...);
+					assert(w->head() == h);
+					return w->influx(o, XTAL_REF_(oo)...);
 				}
 
 				///\

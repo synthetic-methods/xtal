@@ -21,7 +21,7 @@ void polymer_control_spine__locamotion()
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::index_s<stage_u>;
+	using event_u = conduct::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -79,7 +79,7 @@ void polymer_control_stash__compound()
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::index_s<stage_u>;
+	using event_u = conduct::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -124,7 +124,7 @@ void polymer_control_stash__composited()
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::index_s<stage_u>;
+	using event_u = conduct::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -143,10 +143,10 @@ void polymer_control_stash__composited()
 
 // Set the default `stage: final`:
 	o_vox <<= stage_u(-1);
-	o_vox <<= conduct::index_s<>(62) << stage_u(0) << level_t(1); TRUE_(1 == o_vox.stash().size());
-	o_vox <<= conduct::index_s<>(65) << stage_u(0) << level_t(2); TRUE_(2 == o_vox.stash().size());
-	o_vox <<= conduct::index_s<>(69) << stage_u(0) << level_t(3); TRUE_(3 == o_vox.stash().size());
-	o_vox <<= conduct::index_s<>(65) << stage_u(0) << level_t(4); TRUE_(4 == o_vox.stash().size());
+	o_vox <<= conduct::key_s<>(62) << stage_u(0) << level_t(1); TRUE_(1 == o_vox.stash().size());
+	o_vox <<= conduct::key_s<>(65) << stage_u(0) << level_t(2); TRUE_(2 == o_vox.stash().size());
+	o_vox <<= conduct::key_s<>(69) << stage_u(0) << level_t(3); TRUE_(3 == o_vox.stash().size());
+	o_vox <<= conduct::key_s<>(65) << stage_u(0) << level_t(4); TRUE_(4 == o_vox.stash().size());
 
 //	Re(?:size|nder):
 	o_vox <<= resize_u(N_window);

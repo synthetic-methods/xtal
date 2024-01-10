@@ -19,6 +19,13 @@ template <class ...Ts> XTAL_ASK siphon_q = common::tag_p<siphon, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
+Defines a priority queue based on the vector resolved by `sluice_t<A>`. \
+Currently used for both event queues (\see `context/schedule.ii`) \
+and to implement polymorphism (\see `processor/polymer.ii`). \
+
+///\note\
+May be initialized using `concord/_detail.hxx#sentry` to \
+provide minimum/maximum sentinel values (for lookbehind/lookahead, respectively). \
 
 template <class A>
 struct siphon<A>
