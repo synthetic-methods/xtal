@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.ii"
 
-#include "../conflux/trace.ii"
+
 
 
 
@@ -18,6 +18,8 @@ template <array_q W, typename ...As> XTAL_USE fusor_t = confined_t<fusor<W, As..
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
+Manages a differential value like `phasor`, \
+providing evaluation/update via succession/replacement. \
 
 template <array_q W, typename ...As>
 struct fusor<W, As...>
@@ -25,14 +27,12 @@ struct fusor<W, As...>
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	XTAL_LET N_ = _std::       extent_v<W>;
 	
-	using value_w = common::solid::serial_t<W>;
-	using shard_w = typename conflux::shard_s<value_w>;
-	using shard_x = typename shard_w::refract;
+	using vector_w = common::solid::serial_t<W>;
+	using indent_w = conflux::indent_s<vector_w>;
 	using subkind = common::compose<common::tag<fusor>
-	,	_detail::refer_iterators<value_w>
-	,	shard_x
+	,	_detail::refer_iterators<vector_w>
+	,	typename indent_w::tunnel
 	,	As...
-	,	typename conflux::trace_s<>::template ascribe<>
 	>;
 	
 	template <class S>
@@ -48,39 +48,43 @@ struct fusor<W, As...>
 		///\
 		Access by dynamic index. \
 		
-		XTAL_TO4_(XTAL_TN2 axis(size_t i), head().axis(i))
+		XTAL_TO4_(XTAL_TN2 subscript(size_t i), head().subscript(i))
 
+		///\
+		Evaluation by succession. \
+		
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(),
 		{
 			return ++head();
 		})
+		///\
+		Evaluation by (possibly indented) replacement then succession. \
+		
 		XTAL_DO2_(template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF_(array_q<N_>) a),
+		XTAL_TN2 method(XTAL_DEF_(subarray_q<N_>) a),
 		{
-			S_::influx(XTAL_REF_(a));
-			return method();
-		})
-		XTAL_DO2_(template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF_(subarray_q<(int) N_ - 1>) a),
-		{
-			using A = XTAL_TYP_(a);
-			using U = typename conflux::shard_s<A, N_ - arity_v<A>>;
-			S_::influx(U(XTAL_REF_(a)));
+			(void) S_::influx(XTAL_REF_(a));
 			return method();
 		})
 		
 	//	using S_::infuse;
+		///\
+		Update by replacement. \
+		
 		XTAL_TLX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
 			return S_::infuse(XTAL_REF_(o));
 		}
-		XTAL_TLX infuse(XTAL_DEF_(array_q<(int) N_ - 1>) a)
-		XTAL_0EX
+		///\
+		Update by indented replacement. \
+		
+		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
 		{
-			head() += a;
-			return 0;
+			using A = XTAL_TYP_(a);
+			using B = typename conflux::indent_s<A, N_ - arity_v<A>>;
+			return S_::influx(B(XTAL_REF_(a)));
 		}
 
 		///\todo\

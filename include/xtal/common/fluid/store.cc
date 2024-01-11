@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./sluice.ii"// testing...
+#include "./store.ii"// testing...
 
 
 
@@ -13,19 +13,19 @@ namespace xtal::common::fluid::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("sluice")
+TAG_("store")
 {
 	TRY_("assignment")
 	{
 		using sigma_t = typename common::computer::sigma_t;
 		using alpha_t = typename common::computer::alpha_t;
 
-		using sluice_u = sluice_t<alpha_t[128]>;
+		using store_u = store_t<alpha_t[128]>;
 		using vector_u = _std::vector<alpha_t>;
 
-		auto const zhs = sluice_u {7, 8, 9};
-		auto       yhs = sluice_u {4, 5, 6};
-		auto       xhs = sluice_u {1, 2, 3};
+		auto const zhs = store_u {7, 8, 9};
+		auto       yhs = store_u {4, 5, 6};
+		auto       xhs = store_u {1, 2, 3};
 		TRUE_(equal_f(xhs, vector_u {1, 2, 3}));
 		
 		xhs = yhs;// copy
@@ -34,7 +34,7 @@ TAG_("sluice")
 		xhs = zhs;// copy
 		TRUE_(equal_f(xhs, vector_u {7, 8, 9}));
 
-		xhs = sluice_u {3, 5, 7};// move
+		xhs = store_u {3, 5, 7};// move
 		TRUE_(equal_f(xhs, vector_u {3, 5, 7}));
 
 	}
@@ -43,10 +43,10 @@ TAG_("sluice")
 		using sigma_t = typename common::computer::sigma_t;
 		using alpha_t = typename common::computer::alpha_t;
 
-		using sluice_u = sluice_t<alpha_t[128]>;
+		using store_u = store_t<alpha_t[128]>;
 		using vector_u = _std::vector<alpha_t>;
 
-		auto xs = sluice_u {0, 1, 2, 3, 4};
+		auto xs = store_u {0, 1, 2, 3, 4};
 		auto x_ = xs.begin();
 
 		xs.erase(x_ + 2);

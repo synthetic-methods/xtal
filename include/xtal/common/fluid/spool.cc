@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./siphon.ii"// testing...
+#include "./spool.ii"// testing...
 
 
 
@@ -14,10 +14,10 @@ namespace xtal::common::fluid::__test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N>
-void siphon__operation()
+void spool__operation()
 {
 	using event_u = common::compose_s<onset_t, concord::conferred<int>>;
-	using queue_u = fluid::siphon_t<event_u[N]>;
+	using queue_u = fluid::spool_t<event_u[N]>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 
 	auto e1 = event_u(1, onset_t(-1.0));
@@ -33,10 +33,10 @@ void siphon__operation()
 	TRUE_(-2.0 == q.peek().core()); q.advance(1); TRUE_(0 == q.size());
 
 }
-TAG_("siphon")
+TAG_("spool")
 {
-	TRY_("operation fluid") {siphon__operation<00>();}
-	TRY_("operation fixed") {siphon__operation<64>();}
+	TRY_("operation fluid") {spool__operation<00>();}
+	TRY_("operation fixed") {spool__operation<64>();}
 
 }
 

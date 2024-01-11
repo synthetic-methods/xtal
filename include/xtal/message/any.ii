@@ -59,22 +59,22 @@ struct define
 				using R_::self;
 				using R_::influx;
 
-				XTAL_TLX influx(conduct::match_s<T> o, XTAL_DEF ...oo)
+				XTAL_TLX influx(conduct::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx(o.head(), o.core(), XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(conduct::match_s<> m, XTAL_DEF_(is_q<T>) t, XTAL_DEF ...oo)
+				XTAL_TLX influx(conduct::mark_s<> m, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (~m & M_mask) {
 						return R_::influx();
 					}
 					else if (m &= W_mask) {
-						return R_::influx(m, XTAL_REF_(t), XTAL_REF_(oo)...);
+						return R_::influx(m, XTAL_REF_(oo)...);
 					}
 					else {
-						return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
+						return R_::influx(XTAL_REF_(oo)...);
 					}
 				}
 
@@ -97,15 +97,6 @@ struct define
 				using R_::R_;
 				using R_::self;
 				using R_::influx;
-
-				///\
-				Processes a scheduled `trace`, assuming idempotentcy. \
-
-				XTAL_TLX influx(conflux::trace_s<> o, XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return self().influx(XTAL_REF_(oo)...);
-				}
 
 			};
 		};
@@ -236,37 +227,6 @@ struct define
 					else {
 						return R_::infuse(XTAL_REF_(o));
 					}
-				}
-
-			};
-		};
-		struct inflect
-		{
-			using trace_u = conflux::trace_s<>;
-
-			template <processor::any_q R>
-			class subtype: public common::compose_s<R>
-			{
-				using R_ = common::compose_s<R>;
-				trace_u trace_m{};
-
-			public:
-				using R_::R_;
-				using R_::self;
-			//	using R_::influx;
-				///\
-				Invokes `influx` with an alternating flag, \
-				preventing duplication for non-idempotent events. \
-				
-				XTAL_TLX incept(T t)
-				XTAL_0EX
-				{
-					return R_::influx(trace_m ^= 1, XTAL_MOV_(t));
-				}
-				XTAL_TLX influx(XTAL_DEF ...oo)
-				XTAL_0EX
-				{
-					return R_::influx(oo...);
 				}
 
 			};

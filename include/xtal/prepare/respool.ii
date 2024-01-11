@@ -7,23 +7,23 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::processor
+namespace xtal::prepare
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM T_restash;
-template <class ...Ts> concept restash_q = common::tab_p<T_restash, Ts...>;
+XTAL_NYM T_respool;
+template <class ...Ts> concept respool_q = common::tab_p<T_respool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides the type `stash` as a specialization of `common::fluid::siphon`. \
-If `N == -1` the `stash` is allocated dynamically. \
+Provides a specialization of `common::fluid::spool`. \
+If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
 template <int N=-1>
-struct restash
+struct respool
 {
-	using subkind = common::tab<T_restash>;
+	using subkind = common::tab<T_respool>;
 	
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -34,7 +34,7 @@ struct restash
 		using S_::S_;
 		
 		template <class U>
-		using stash = common::fluid::siphon<U[(unsigned) N]>;
+		using spool_t = common::fluid::spool_t<U[(unsigned) N]>;
 
 	};
 };

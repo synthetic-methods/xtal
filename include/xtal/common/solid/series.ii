@@ -42,7 +42,7 @@ struct series<U[N]>
 
 	public:
 		using S_::S_;
-		using S_::axis;
+		using S_::subscript;
 		using S_::self;
 		using S_::twin;
 
@@ -80,20 +80,20 @@ struct series<U[N]>
 
 		//	Compute and populate the 0th and 1st powers:
 			auto const o = _computer::template explo_f<N_index>(u);
-			axis(_0) = o;
-			axis(_1) = o*u;
+			subscript(_0) = o;
+			subscript(_1) = o*u;
 
 			for (I i = _1; i < _H; ++i) {
-				auto w = _computer::square_f(axis(i));
+				auto w = _computer::square_f(subscript(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
 				I ii = i << 1;
-				axis(ii + 0) = w;
-				axis(ii + 1) = w*u;
+				subscript(ii + 0) = w;
+				subscript(ii + 1) = w*u;
 			}
 		//	Compute the final value if `N_limit` is odd:
 			if constexpr (N_limit&1) {
-				axis(N1) = axis(N2)*u;
+				subscript(N1) = subscript(N2)*u;
 			}
 			return self();
 		}
@@ -167,7 +167,7 @@ struct series<U[N]>
 				I const n = n_size;
 				for (I                  i = 0; i < u; i += 1) {
 				for (I knife = i << kn, j = i; j < n; j += w) {
-					U const y = that[j + u]*axis(knife);
+					U const y = that[j + u]*subscript(knife);
 					U const x = that[j + 0];
 					that[j + u] = x - y;
 					that[j + 0] = x + y;

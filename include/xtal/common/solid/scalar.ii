@@ -46,7 +46,7 @@ struct scalar<U[N]>
 	
 	public:
 		using S_::S_;
-		using S_::axis;
+		using S_::subscript;
 		using S_::self;
 		using S_::twin;
 
@@ -60,14 +60,14 @@ struct scalar<U[N]>
 		XTAL_OP1_(T &) *= (bracket_t<U> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 		XTAL_OP1_(T &) /= (bracket_t<U> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 		
-		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(axis(i) *= t.axis(i))), self();}
-		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(axis(i) /= t.axis(i))), self();}
+		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= t.subscript(i))), self();}
+		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= t.subscript(i))), self();}
 
 		XTAL_TN2 sum()
 		XTAL_0FX
 		{
 			return [&, this]<auto ...M>(common::seek_t<M...>)
-				XTAL_0FN_(axis(M) +...+ U())
+				XTAL_0FN_(subscript(M) +...+ U())
 			(common::seek_f<N> {});
 		}
 		XTAL_TN2 dot()
@@ -93,8 +93,8 @@ struct scalar<U[N]>
 		XTAL_REQ (N == 2)
 		{
 			auto const scale = _computer::explo_f(_computer::template unsquare_f<-1>(2), 1 - n_bias);
-			auto const lhs = scale*axis(0);
-			auto const rhs = scale*axis(1);
+			auto const lhs = scale*subscript(0);
+			auto const rhs = scale*subscript(1);
 			if constexpr (N_par ==  0) {
 				return T {lhs + rhs, lhs - rhs};
 			}

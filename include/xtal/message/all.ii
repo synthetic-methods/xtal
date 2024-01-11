@@ -7,5 +7,6 @@
 #include "./respan.ii"
 #include "./restep.ii"
 #include "./revise.ii"
+#include "./schedule.ii"
 #include "./scope.ii"
 #include "./stage.ii"

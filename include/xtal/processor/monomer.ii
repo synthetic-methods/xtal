@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "./restore.ii"
+#include "../prepare/all.ii"
 #include "../message/resize.ii"
 #include "../message/respan.ii"
 #include "../message/revise.ii"
@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM monomer;
-template <typename ..._s> XTAL_ASK monomer_q =      common::tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_ASK monomer_q = common::tag_p<monomer, _s...>;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ...As>
 XTAL_FN2  monomer_f(XTAL_DEF  u)
@@ -86,20 +86,20 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires restore_q<S_>
+		template <class ...Xs> requires prepare::restore_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;
 			
 			using return_t = typename rebound::return_t;
-			using  store_u = typename S_::template store<return_t>::type;
+			using  store_u = typename S_::template store_t<return_t>;
 			using  serve_u = deranged_t<store_u>;
 			using respan_u = message::respan_t<serve_u>;
 		
 			XTAL_LET_(int) N_share = common::seek_truth_v<_detail::recollection_p<Xs, serve_u>...>;
 
 			using subkind = common::compose<common::tag<monomer>
-			,	concord:: refer<serve_u>
+			,	concord::refer<serve_u>
 			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::assign<>

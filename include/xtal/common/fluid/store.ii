@@ -11,9 +11,9 @@ namespace xtal::common::fluid
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM sluice;
-template <class ..._s> XTAL_USE sluice_t = typename sluice<_s...>::type;
-template <class ...Ts> XTAL_ASK sluice_q = common::tag_p<sluice, Ts...>;
+template <class ..._s> XTAL_NYM store;
+template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
+template <class ...Ts> XTAL_ASK store_q = common::tag_p<store, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,24 +24,24 @@ If `A` is either a pointer or an array of length `(unsigned) -1`, \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <class U> requires pointer_q<U>
-struct sluice<U>
+struct store<U>
 {
-	using type = common::compose_s<_std::vector<pointed_t<U>>, common::tag<sluice>>;
+	using type = common::compose_s<_std::vector<pointed_t<U>>, common::tag<store>>;
 
 };
 template <class U>
-struct sluice<U[(unsigned) -1]>
-:	sluice<U *>
+struct store<U[(unsigned) -1]>
+:	store<U *>
 {
 };
 template <class U, size_t N>
-struct sluice<U[N]>
+struct store<U[N]>
 {
 	template <class T>
 	using demitype = iterate_t<T>;
 
 	template <class T>
-	using hemitype = common::compose_s<demitype<T>, common::tag<sluice>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<store>>;
 
 	template <class T>
 	class homotype: public hemitype<T>

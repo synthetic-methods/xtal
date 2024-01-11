@@ -7,11 +7,11 @@
 #include "../processor/any.hh"
 
 XTAL_ENV_(push)
-namespace xtal::conflux
+namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Us>
+template <class ...Us> requires complete_q<Us...>
 struct schedule
 {
 	XTAL_LET N_arity = sizeof...(Us);
@@ -44,8 +44,8 @@ struct schedule
 		///\
 		Provides dispatch logic for `T_` on the target object. \
 
-		template <class This>
-		struct fold
+		template <class T>
+		struct inqueued
 		{
 			template <process::any_q R>
 			class subtype: public common::compose_s<R>
@@ -74,10 +74,10 @@ struct schedule
 				///\
 				Invokes `inqueue(event_u)` with the given argument. \
 
-				XTAL_TLX influx(event_u dot)
+				XTAL_TLX influx(XTAL_DEF_(conduct::cue_q) dot)
 				XTAL_0EX
 				{
-					(void) static_cast<This*>(this)->inqueue(XTAL_MOV_(dot));
+					(void) static_cast<T*>(this)->inqueue(XTAL_REF_(dot));
 					return R_::influx();
 				}
 
@@ -110,56 +110,6 @@ struct schedule
 		};
 		///\
 		Provides a queue for `T_` on the target object, \
-		which is converted to a signal by successive calls to `method`. \
-
-		template <int N_spool=-1> requires (1 == N_arity and 2 <= size_t(N_spool))
-		struct hold
-		{
-			using spool_u = common::fluid::siphon_t<event_u[(unsigned) N_spool]>;
-
-			template <process::any_q R>
-			class subtype: public common::compose_s<R, fold<subtype<R>>>
-			{
-				using R_ = common::compose_s<R, fold<subtype<R>>>;
-				
-				delay_u d_{0};
-				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
-
-			public:
-				using R_::R_;
-
-				XTAL_TN0 inqueue(event_u dot)
-				XTAL_0EX
-				{
-					if (dot.head() < d_ and q_.empty()) {
-						(void) q_.abandon().head(d_ = 0);
-					}
-					q_.push(XTAL_MOV_(dot));
-				}
-
-				XTAL_TN2 method()
-				XTAL_0EX
-				{
-					return q_.advance(d_++ == q_.peek(1).head()).core().head();
-				}
-
-				///\todo\
-				Use `T_=serial` to provide an incremental Dual pair, \
-				replacing the first-derivative with the minimum w.r.t. the current difference. \
-				\
-				Should be straightforward to parameterize with e.g. `<K_ramping=0>`, \
-				respectively enabling/disabling if the goal has/hasn't been met. \
-
-				///\todo\
-				Once the phasor-type is settled, define a `method` that updates only on reset. \
-
-				///\todo\
-				Override immediate-dispatch `influx` to enqueue the current value? \
-
-			};
-		};
-		///\
-		Provides a queue for `T_` on the target object, \
 		scheduled via `influx` and processed in segments via `reflux`. \
 
 		///\todo\
@@ -169,12 +119,12 @@ struct schedule
 		template <int N_spool=-1>
 		struct intermit
 		{
-			using spool_u = common::fluid::siphon_t<event_u[(unsigned) N_spool]>;
+			using spool_u = common::fluid::spool_t<event_u[(unsigned) N_spool]>;
 
 			template <processor::any_q R>
-			class subtype: public common::compose_s<R, fold<subtype<R>>>
+			class subtype: public common::compose_s<R, inqueued<subtype<R>>>
 			{
-				using R_ = common::compose_s<R, fold<subtype<R>>>;
+				using R_ = common::compose_s<R, inqueued<subtype<R>>>;
 				spool_u q_{event_u::template sentry<1>()};
 
 				XTAL_TO4_(XTAL_TN2 next_tail(), q_.peek().core())
@@ -224,6 +174,56 @@ struct schedule
 					}
 					return delay();
 				}
+
+			};
+		};
+		///\
+		Provides a queue for `T_` on the target object, \
+		which is converted to a signal by successive calls to `method`. \
+
+		template <int N_spool=-1> requires (1 == N_arity and 2 <= size_t(N_spool))
+		struct hold
+		{
+			using spool_u = common::fluid::spool_t<event_u[(unsigned) N_spool]>;
+
+			template <process::any_q R>
+			class subtype: public common::compose_s<R, inqueued<subtype<R>>>
+			{
+				using R_ = common::compose_s<R, inqueued<subtype<R>>>;
+				
+				delay_u d_{0};
+				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<+1>()};
+
+			public:
+				using R_::R_;
+
+				XTAL_TN0 inqueue(event_u dot)
+				XTAL_0EX
+				{
+					if (dot.head() < d_ and q_.empty()) {
+						(void) q_.abandon().head(d_ = 0);
+					}
+					q_.push(XTAL_MOV_(dot));
+				}
+
+				XTAL_TN2 method()
+				XTAL_0EX
+				{
+					return q_.advance(d_++ == q_.peek(1).head()).core().head();
+				}
+
+				///\todo\
+				Use `T_=serial` to provide an incremental Dual pair, \
+				replacing the first-derivative with the minimum w.r.t. the current difference. \
+				\
+				Should be straightforward to parameterize with e.g. `<K_ramping=0>`, \
+				respectively enabling/disabling if the goal has/hasn't been met. \
+
+				///\todo\
+				Once the phasor-type is settled, define a `method` that updates only on reset. \
+
+				///\todo\
+				Override immediate-dispatch `influx` to enqueue the current value? \
 
 			};
 		};

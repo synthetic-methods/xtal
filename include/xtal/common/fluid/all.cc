@@ -1,3 +1,3 @@
 #pragma once
-#include "./siphon.cc"
-#include "./sluice.cc"
+#include "./spool.cc"
+#include "./store.cc"

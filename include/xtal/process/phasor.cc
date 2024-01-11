@@ -31,16 +31,16 @@ TAG_("phasor")
 	TRY_("advance")
 	{
 		phi_t o_phi{0.0, 0.4};
-		TRUE_(o_phi.axis(0) ==  0.0);
-		TRUE_(o_phi.axis(1) ==  0.4);
+		TRUE_(o_phi.subscript(0) ==  0.0);
+		TRUE_(o_phi.subscript(1) ==  0.4);
 
 		(void) o_phi.method();
-		TRUE_(o_phi.axis(0) ==  0.4);
-		TRUE_(o_phi.axis(1) ==  0.4);
+		TRUE_(o_phi.subscript(0) ==  0.4);
+		TRUE_(o_phi.subscript(1) ==  0.4);
 
 		(void) o_phi.method();
-		TRUE_(common::computer::template trim_f<12>((alpha_t) o_phi.axis(0)/-0.2) == 1);
-		TRUE_(common::computer::template trim_f<12>((alpha_t) o_phi.axis(1)/ 0.4) == 1);
+		TRUE_(common::computer::template trim_f<12>((alpha_t) o_phi.subscript(0)/-0.2) == 1);
+		TRUE_(common::computer::template trim_f<12>((alpha_t) o_phi.subscript(1)/ 0.4) == 1);
 
 	}
 }

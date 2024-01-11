@@ -7,5 +7,6 @@
 #include "./respan.cc"
 #include "./restep.cc"
 #include "./revise.cc"
+#include "./schedule.cc"
 #include "./scope.cc"
 #include "./stage.cc"

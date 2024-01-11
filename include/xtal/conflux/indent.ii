@@ -17,23 +17,22 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename     ..._s> XTAL_NYM shard;
-template <typename     ...Ts> XTAL_ASK shard_q = common::tag_p<shard, Ts...>;
-template <class S, int ...Ns> XTAL_USE shard_s = common::compose_s<S, shard<ordinal_t<Ns>...>>;
+template <typename     ..._s> XTAL_NYM indent;
+template <typename     ...Ts> XTAL_ASK indent_q = common::tag_p<indent, Ts...>;
+template <class S, int ...Ns> XTAL_USE indent_s = common::compose_s<S, indent<ordinal_t<Ns>...>>;
 
 template <nominal_q ...Ns>
-struct shard<Ns...>
+struct indent<Ns...>
 {
-	using path = confined<common::tag<shard>, confer<Ns>...>;
+	using path = confined<common::tag<indent>, confer<Ns>...>;
 	
-	template <common::pack_q S> using leaf_t = common::pack_item_t<S, Ns{}...>;
-	template <common::pack_q S> using leaf_s = conferred_t<leaf_t<S>>;
-	template <common::pack_q S> using node_s = common::compose_s<leaf_s<S>, path>;
+	template <common::pack_q S> using leaf_s = common::pack_item_t<S, Ns{}...>;
+	template <common::pack_q S> using node_s = common::compose_s<conferred_t<leaf_s<S>>, path>;
 	template <common::pack_q S>
 	class subtype: public node_s<S>
 	{
 		using S_ = node_s<S>;
-		using L_ = leaf_t<S>;
+		using L_ = leaf_s<S>;
 
 	public:
 		using S_::S_;
@@ -42,8 +41,8 @@ struct shard<Ns...>
 		XTAL_REQ bracket_q<L_>
 		:	S_{L_(XTAL_MOV_(w))}
 		{}
- 
-		struct refract
+
+		struct tunnel
 		{
 			using subkind = defer<L_>;
 
@@ -56,19 +55,24 @@ struct shard<Ns...>
 				using R_::R_;
 				using R_::self;
 				using R_::head;
-				using R_::influx;
+			//	using R_::infuse;
 
 				///\todo\
-				Implement `shard_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
+				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
 				Requires subsequence ordering for `common::pack`s? \
 				
-				XTAL_TLX influx(conflux::shard_q auto o_shard, XTAL_DEF ...oo)
+				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					auto &w = common::pack_item_f(head(), o_shard.apple());
-					auto &x = decltype(w) (o_shard);
+					return R_::infuse(XTAL_REF_(o));
+				}
+				XTAL_TLX infuse(XTAL_DEF_(conflux::indent_q) o)
+				XTAL_0EX
+				{
+					auto &w = common::pack_item_f(head(), o.apple());
+					auto  x = XTAL_TYP_(w) (o);
 					_std::swap(w, x);
-					return w == x or R_::influx(XTAL_REF_(oo)...);
+					return w == x;
 				}
 
 			};

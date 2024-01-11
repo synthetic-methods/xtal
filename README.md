@@ -269,7 +269,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond`|
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::bond`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer allocation          |[`common/fluid/sluice.ii`](include/xtal/common/fluid/sluice.ii?ts=3) impl. static `std::vector`|
+|Buffer allocation          |[`common/fluid/store.ii`](include/xtal/common/fluid/store.ii?ts=3) impl. static `std::vector`|
 |Buffer arithmetic          |[`common/solid/scalar.ii`](include/xtal/common/solid/scalar.ii?ts=3)|
 |Buffer transformation      |[`common/solid/series.ii`](include/xtal/common/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`common/compute.ii`](include/xtal/common/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|

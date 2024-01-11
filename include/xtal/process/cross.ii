@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.ii"
 
-#include "../conflux/shard.ii"
+#include "../conflux/indent.ii"
 
 
 
@@ -39,8 +39,8 @@ XTAL_FN2 dot(auto const &x, auto const &y)
 template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
-	using shard_w = typename conflux::shard_s<W>::refract;
-	using subkind = common::compose<shard_w, confer<U>, As..., common::tag<cross>>;
+	using indent_w = typename conflux::indent_s<W>::tunnel;
+	using subkind = common::compose<indent_w, confer<U>, As..., common::tag<cross>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>

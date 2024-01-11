@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::processor
+namespace xtal::prepare
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,8 +17,8 @@ template <class ...Ts> concept restore_q = common::tab_p<T_restore, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides the type `store` as a specialization of `common::fluid::sluice`. \
-If `N == -1` the `store` is allocated dynamically. \
+Provides a specialization of `common::fluid::store`. \
+If `N == -1`, the member-type `store_t` is dynamically allocated. \
 
 template <int N=-1>
 struct restore
@@ -34,7 +34,7 @@ struct restore
 		using S_::S_;
 		
 		template <class U>
-		using store = common::fluid::sluice<U[(unsigned) N]>;
+		using store_t = common::fluid::store_t<U[(unsigned) N]>;
 
 	};
 };

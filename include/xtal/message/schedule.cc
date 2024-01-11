@@ -2,18 +2,18 @@
 #include "./any.cc"
 #include "./schedule.ii"// testing...
 
+#include "../prepare/all.ii"
 #include "../processor/monomer.ii"
-#include "../processor/restore.ii"
 
 
 XTAL_ENV_(push)
-namespace xtal::conflux::__test
+namespace xtal::message::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("conflux", "schedule", "hold", "process")
+TAG_("message", "schedule", "hold", "process")
 {
 	TRY_("drive")
 	{
@@ -63,7 +63,7 @@ TAG_("conflux", "schedule", "hold", "process")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-void conflux_schedule_hold_processor()
+void message_schedule_hold_processor()
 {
 	using namespace processor;
 	size_t constexpr N_size = 1<<3;
@@ -97,11 +97,11 @@ void conflux_schedule_hold_processor()
 	TRUE_(o_array == array_t { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
-TAG_("conflux", "schedule", "hold", "processor")
+TAG_("message", "schedule", "hold", "processor")
 {
 	using namespace processor;
-	TRY_("drive material") {conflux_schedule_hold_processor<restore<>>();}
-//	TRY_("drive virtual")  {conflux_schedule_hold_processor<>();}// TODO?
+	TRY_("drive material") {message_schedule_hold_processor<prepare::restore<>>();}
+//	TRY_("drive virtual")  {message_schedule_hold_processor<>();}// TODO?
 
 }
 
@@ -109,7 +109,7 @@ TAG_("conflux", "schedule", "hold", "processor")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class mix_t>
-void conflux_schedule_intermit_x1()
+void message_schedule_intermit_x1()
 {
 	using namespace processor;
 	using alpha_t = typename common::computer::alpha_t;
@@ -117,7 +117,7 @@ void conflux_schedule_intermit_x1()
 	using onset_s = schedule_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
-	,	restore<>
+	,	prepare::restore<>
 	,	onset_s::template intermit<(1<<4)>
 	>;
 	using resize_u = message::resize_t<>;
@@ -149,11 +149,11 @@ void conflux_schedule_intermit_x1()
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
 
 }
-TAG_("context", "schedule", "intermit")
+TAG_("message", "schedule", "intermit")
 {
 	using namespace processor;
-	TRY_("drive dynamic") {conflux_schedule_intermit_x1<dynamic_onset_mix_t>();}
-//	TRY_("drive  static") {conflux_schedule_intermit_x1< static_onset_mix_t>();}// TODO?
+	TRY_("drive dynamic") {message_schedule_intermit_x1<dynamic_onset_mix_t>();}
+//	TRY_("drive  static") {message_schedule_intermit_x1< static_onset_mix_t>();}// TODO?
 
 }
 

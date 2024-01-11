@@ -1,25 +1,25 @@
 #pragma once
 #include "./any.cc"
-#include "./trace.ii"// testing...
+#include "./mark.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::conflux::__test
+namespace xtal::conduct::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("trace")
+TAG_("mark")
 {
 	TRY_("construct")
 	{
-		using source_t = concord::conferred_t<counted_t<>>;
-		using target_t = trace_s<source_t>;
-		using target_u = trace_s<>;
+		using source_t = conduct::conferred_t<counted_t<>>;
+		using target_t = mark_s<source_t>;
+		using target_u = mark_s<>;
 
 		target_u t0(99);
 		target_t t1(99, source_t(counted_t<>(11, 22)));
@@ -30,6 +30,23 @@ TAG_("trace")
 
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_t>);
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).core()), source_t>);
+
+	}
+	auto constexpr maybe = [] (mark_s<> g)
+	XTAL_0FN {
+		if (g) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	};
+	
+	TRY_("condition")
+	{
+		  TRUE_(maybe(mark_s<>(1)));
+		UNTRUE_(maybe(mark_s<>(0)));
+		UNTRUE_(maybe(mark_s<>( )));
 
 	}
 }

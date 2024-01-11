@@ -50,7 +50,7 @@ struct linear<U[N]>
 		XTAL_TN2 access(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
 	
 	public:
-		XTAL_TO4_(XTAL_TN2 axis(I_ i), (accept(i), access(i)))
+		XTAL_TO4_(XTAL_TN2 subscript(I_ i), (accept(i), access(i)))
 
 		XTAL_FN2_(size_t) size() {return N;}// static override
 
@@ -111,7 +111,7 @@ struct linear<U[N]>
 		XTAL_0EX
 		XTAL_REQ (0 < N) and (N <= _computer::alignment_v)
 		{
-			common::seek_e<N>([&, this] (auto i) XTAL_0FN_(axis(i) = f(axis(i))));
+			common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
 			return self();
 		}
 
@@ -128,19 +128,19 @@ struct linear<U[N]>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (axis(I) == t.axis(I))) (common::seek_f<N> {});}
-		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (axis(I) <= t.axis(I))) (common::seek_f<N> {});}
-		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (axis(I) >= t.axis(I))) (common::seek_f<N> {});}
-		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (axis(I) <  t.axis(I))) (common::seek_f<N> {});}
-		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (axis(I) >  t.axis(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (subscript(I) == t.subscript(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (subscript(I) <= t.subscript(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (subscript(I) >= t.subscript(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (subscript(I) <  t.subscript(I))) (common::seek_f<N> {});}
+		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(...and (subscript(I) >  t.subscript(I))) (common::seek_f<N> {});}
 
 		XTAL_OP2_(T)    *  (XTAL_DEF w) XTAL_0FX {return twin() *= XTAL_REF_(w);}
 		XTAL_OP2_(T)    /  (XTAL_DEF w) XTAL_0FX {return twin() /= XTAL_REF_(w);}
 		XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 		XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(axis(i) *= XTAL_REF_(w))), self();}
-		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(axis(i) /= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= XTAL_REF_(w))), self();}
 
 	};
 	using type = _detail::isotype<homotype>;

@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./cross.ii"// testing...
 
-#include "../conflux/shard.ii"
+#include "../conflux/indent.ii"
 #include "../processor/monomer.ii"
 
 
@@ -21,7 +21,7 @@ TAG_("cross", "process")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, prepare::restore<>>;
 
 		auto io = remix_u();
 		io <<= model_u {{1, 2}, {3, 4}, {5, 6}};
@@ -42,7 +42,7 @@ TAG_("cross", "processor")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, prepare::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -58,64 +58,64 @@ TAG_("cross", "processor")
 	//	(1*1 + 2*2) + (3*1 + 4*2) + (5*1 + 6*2)
 
 	}
-	TRY_("shape with matrix shard")
+	TRY_("shape with matrix indent")
 	{
 		using namespace _v3::views;
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, prepare::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::shard_s<model_u>({{1, 2}, {3, 4}, {5, 6}});
+		io <<= conflux::indent_s<model_u>({{1, 2}, {3, 4}, {5, 6}});
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
-	TRY_("shape with column shard")
+	TRY_("shape with column indent")
 	{
 		using namespace _v3::views;
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, prepare::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::shard_s<model_u, 0>({1, 2});
-		io <<= conflux::shard_s<model_u, 1>({3, 4});
-		io <<= conflux::shard_s<model_u, 2>({5, 6});
+		io <<= conflux::indent_s<model_u, 0>({1, 2});
+		io <<= conflux::indent_s<model_u, 1>({3, 4});
+		io <<= conflux::indent_s<model_u, 2>({5, 6});
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
-	TRY_("shape with cell shard")
+	TRY_("shape with cell indent")
 	{
 		using namespace _v3::views;
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, processor::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, prepare::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::shard_s<model_u, 0, 0>(1);
-		io <<= conflux::shard_s<model_u, 0, 1>(2);
-		io <<= conflux::shard_s<model_u, 1, 0>(3);
-		io <<= conflux::shard_s<model_u, 1, 1>(4);
-		io <<= conflux::shard_s<model_u, 2, 0>(5);
-		io <<= conflux::shard_s<model_u, 2, 1>(6);
+		io <<= conflux::indent_s<model_u, 0, 0>(1);
+		io <<= conflux::indent_s<model_u, 0, 1>(2);
+		io <<= conflux::indent_s<model_u, 1, 0>(3);
+		io <<= conflux::indent_s<model_u, 1, 1>(4);
+		io <<= conflux::indent_s<model_u, 2, 0>(5);
+		io <<= conflux::indent_s<model_u, 2, 1>(6);
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 

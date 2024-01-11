@@ -7,27 +7,24 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::conflux
+namespace xtal::conduct
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Wrapper used to schedule non-idempotent events.\
+Controls access to an `inscribe`d `attach`ment.\
 
-///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
+///\see e.g. [../message/any#assign] or [../message/any#dispatch]. \
 
-///\todo\
-Implement as 1-bite flip-flop? \
+template <typename ..._s> XTAL_NYM mark;
+template <class    ...Ts> XTAL_ASK mark_q = common::tag_p<mark, Ts...>;
 
-template <typename ..._s> XTAL_NYM trace;
-template <class    ...Ts> XTAL_ASK trace_q = common::tag_p<trace, Ts...>;
-
-template <class U> struct trace<U>: conferred<U, common::tag<trace>> {};
-template <       > struct trace< >: trace<size_t> {};
+template <class U> struct mark<U>: conferred<U, common::tag<mark>> {};
+template <       > struct mark< >: mark<size_t> {};
 
 template <class S=void, typename ...As>
-using trace_s = common::compose_s<devoid_t<S, confined_t<>>, trace<As...>>;
+using mark_s = common::compose_s<devoid_t<S, confined_t<>>, mark<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "./sluice.ii"
+#include "./store.ii"
 
 
 
@@ -12,15 +12,15 @@ namespace xtal::common::fluid
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM siphon;
-template <class ..._s> XTAL_USE siphon_t = typename siphon<_s...>::type;
-template <class ...Ts> XTAL_ASK siphon_q = common::tag_p<siphon, Ts...>;
+template <class ..._s> XTAL_NYM spool;
+template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
+template <class ...Ts> XTAL_ASK spool_q = common::tag_p<spool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Defines a priority queue based on the vector resolved by `sluice_t<A>`. \
-Currently used for both event queues (\see `context/schedule.ii`) \
+Defines a priority-queue based on `store_t<A>`. \
+Currently used for both event queues (\see `message/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 ///\note\
@@ -28,27 +28,27 @@ May be initialized using `concord/_detail.hxx#sentry` to \
 provide minimum/maximum sentinel values (for lookbehind/lookahead, respectively). \
 
 template <class A>
-struct siphon<A>
+struct spool<A>
 {
 	template <class T>
 	using demitype = iterate_t<T>;
 
 	template <class T>
-	using hemitype = common::compose_s<demitype<T>, common::tag<siphon>>;
+	using hemitype = common::compose_s<demitype<T>, common::tag<spool>>;
 
 	template <class T>
 	class homotype: public hemitype<T>
 	{
 		using S_ = hemitype<T>;
 
-		using store_t = sluice_t<A>;
-		using visor_t = typename store_t::iterator;
-		using value_t = typename store_t::value_type;
-		using count_t = typename store_t::difference_type;
+		using store_u = store_t<A>;
+		using visor_u = typename store_u::iterator;
+		using value_u = typename store_u::value_type;
+		using count_u = typename store_u::difference_type;
 
-		store_t m_store{};
-		count_t n_begin = 0;
-		count_t n_end   = 0;
+		store_u m_store{};
+		count_u n_begin = 0;
+		count_u n_end   = 0;
 
 	public:
 		using S_::S_;
@@ -56,16 +56,16 @@ struct siphon<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON homotype(bracket_t<value_t> w)
+		XTAL_CON homotype(bracket_t<value_u> w)
 		:	n_end {_std::distance(w.begin(), w.end())}
 		,	m_store(w)
 		{}
 
-		XTAL_TO2_(XTAL_TN2     begin(count_t n=0), _std::next(m_store.begin(), n + n_begin))
-		XTAL_TO2_(XTAL_TN2       end(count_t n=0), _std::prev(m_store.  end(), n + n_end))
-		XTAL_TN2_(value_t &)    peek(count_t n=0) XTAL_0EX {              return *begin(n);}
-		XTAL_TN1_(value_t &) advance(count_t n=1) XTAL_0EX {n_begin += n; return *begin(0);}
-		XTAL_TN1_(value_t &) abandon(bool    n=1)
+		XTAL_TO2_(XTAL_TN2     begin(count_u n=0), _std::next(m_store.begin(), n + n_begin))
+		XTAL_TO2_(XTAL_TN2       end(count_u n=0), _std::prev(m_store.  end(), n + n_end))
+		XTAL_TN2_(value_u &)    peek(count_u n=0) XTAL_0EX {              return *begin(n);}
+		XTAL_TN1_(value_u &) advance(count_u n=1) XTAL_0EX {n_begin += n; return *begin(0);}
+		XTAL_TN1_(value_u &) abandon(bool    n=1)
 		XTAL_0EX
 		{
 			if (n) {
@@ -84,7 +84,7 @@ struct siphon<A>
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-		XTAL_TN0 pop(visor_t i)
+		XTAL_TN0 pop(visor_u i)
 		XTAL_0EX
 		{
 			assert(i < end());
@@ -98,14 +98,14 @@ struct siphon<A>
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_TN2_(visor_t) scan(XTAL_DEF w)
+		XTAL_TN2_(visor_u) scan(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
 			,	XTAL_REF_(w)
 			);
 		}
-		XTAL_TN2_(visor_t) scan(XTAL_DEF w, XTAL_DEF f)
+		XTAL_TN2_(visor_u) scan(XTAL_DEF w, XTAL_DEF f)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
@@ -116,10 +116,10 @@ struct siphon<A>
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(visor_t) push(value_t v)
+		XTAL_TN1_(visor_u) push(value_u v)
 		XTAL_0EX
 		{
-			visor_t v_ = scan(v);
+			visor_u v_ = scan(v);
 			if (*v_ == v) {
 				_std::swap(*v_, v); return v_;
 			}
@@ -127,18 +127,18 @@ struct siphon<A>
 				return poke(v_, XTAL_MOV_(v));
 			}
 		}
-		template <is_q<value_t> W>
-		XTAL_TN1_(visor_t) poke(visor_t v_, W &&w)
+		template <is_q<value_u> W>
+		XTAL_TN1_(visor_u) poke(visor_u v_, W &&w)
 		XTAL_0EX
 		{
 			return m_store.insert(v_, XTAL_REF_(w));
 		}
-		XTAL_TN1_(visor_t) poke(visor_t v_, XTAL_DEF ...ws)
+		XTAL_TN1_(visor_u) poke(visor_u v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		{
-			return m_store.insert(v_, value_t(XTAL_REF_(ws)...));
+			return m_store.insert(v_, value_u(XTAL_REF_(ws)...));
 		}
-		XTAL_TN1_(visor_t) poke(visor_t v_, XTAL_DEF ...ws)
+		XTAL_TN1_(visor_u) poke(visor_u v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ_(m_store.inplace(v_, XTAL_REF_(ws)...))
 		{
