@@ -7,23 +7,23 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::prepare
+namespace xtal::resourced
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM T_respool;
-template <class ...Ts> concept respool_q = common::tab_p<T_respool, Ts...>;
+XTAL_NYM T_restore;
+template <class ...Ts> concept restore_q = common::tab_p<T_restore, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `common::fluid::spool`. \
-If `N == -1`, the member-type `spool_t` is dynamically allocated. \
+Provides a specialization of `common::fluid::store`. \
+If `N == -1`, the member-type `store_t` is dynamically allocated. \
 
 template <int N=-1>
-struct respool
+struct restore
 {
-	using subkind = common::tab<T_respool>;
+	using subkind = common::tab<T_restore>;
 	
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -34,7 +34,7 @@ struct respool
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = common::fluid::spool_t<U[(unsigned) N]>;
+		using store_t = common::fluid::store_t<U[(unsigned) N]>;
 
 	};
 };

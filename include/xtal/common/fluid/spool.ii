@@ -20,7 +20,7 @@ template <class ...Ts> XTAL_ASK spool_q = common::tag_p<spool, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Defines a priority-queue based on `store_t<A>`. \
-Currently used for both event queues (\see `message/schedule.ii`) \
+Currently used for both event queues (\see `message/scheduled.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 ///\note\

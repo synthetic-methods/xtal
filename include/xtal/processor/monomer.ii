@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "../prepare/all.ii"
+#include "../resourced/all.ii"
 #include "../message/resize.ii"
 #include "../message/respan.ii"
 #include "../message/revise.ii"
@@ -86,7 +86,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires prepare::restore_q<S_>
+		template <class ...Xs> requires resourced::restore_q<S_>
 		struct bond<Xs...>: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;

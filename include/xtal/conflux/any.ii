@@ -28,39 +28,6 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		///\
-		Provides a `defer`red instance of `T` on `subtype`, \
-		labelled with the given `As...`. \
-
-		template <typename ...As>
-		struct ascribe
-		{
-			using subkind = common::compose<any<As>..., defer<T>>;
-
-			template <any_q R>
-			class subtype: public common::compose_s<R, subkind>
-			{
-				using R_ = common::compose_s<R, subkind>;
-			
-			public:
-			//	using R_::R_;
-				using R_::self;
-
-				XTAL_CO0_(subtype);
-				XTAL_CO4_(subtype);
-
-				///\
-				Constructs the `assign`ed `message` using its default, \
-				before `forward`ing the arguments to `this`. \
-
-				XTAL_CXN subtype(XTAL_DEF ...xs)
-				XTAL_0EX
-				:	R_(T{}, XTAL_REF_(xs)...)
-				{}
-
-			};
-		};
-
 		XTAL_TN1_(size_s) delay()         {return count_f(self());}
 		XTAL_TN1_(size_s) relay(size_s i) {return count_f(self());}
 		
@@ -89,6 +56,7 @@ struct define
 			--n;
 			return flx;
 		}
+
 
 		///\
 		Influx operator: resolves the message for `this` before any dependencies, \
@@ -189,6 +157,40 @@ struct define
 		XTAL_TLX infuse(XTAL_DEF o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 		
+
+		///\
+		Provides a `defer`red instance of `T` on `subtype`, \
+		labelled with the given `As...`. \
+
+		template <typename ...As>
+		struct afflux
+		{
+			using subkind = common::compose<any<As>..., defer<T>>;
+
+			template <conflux::any_q R>
+			class subtype: public common::compose_s<R, subkind>
+			{
+				using R_ = common::compose_s<R, subkind>;
+			
+			public:
+			//	using R_::R_;
+				using R_::self;
+
+				XTAL_CO0_(subtype);
+				XTAL_CO4_(subtype);
+
+				///\
+				Constructs the `assign`ed `message` using its default, \
+				before `forward`ing the arguments to `this`. \
+
+				XTAL_CXN subtype(XTAL_DEF ...xs)
+				XTAL_0EX
+				:	R_(T{}, XTAL_REF_(xs)...)
+				{}
+
+			};
+		};
+
 	};
 };
 template <class T>

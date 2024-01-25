@@ -13,7 +13,7 @@ namespace xtal::conduct
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Controls access to an `inscribe`d `attach`ment.\
+Controls access to an `address`d `attach`ment.\
 
 ///\see e.g. [../message/any#assign] or [../message/any#dispatch]. \
 

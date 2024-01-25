@@ -3,7 +3,7 @@
 #include "./polymer.ii"// testing...
 
 #include "./monomer.ii"
-#include "../prepare/all.ii"
+#include "../resourced/all.ii"
 
 
 XTAL_ENV_(push)
@@ -14,7 +14,7 @@ namespace xtal::processor::__test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
-void polymer_prepare_spine__locamotion()
+void polymer_provision_spine__locamotion()
 {
 	using alpha_t = typename common::computer::alpha_t;
 	using sigma_t = typename common::computer::sigma_t;
@@ -30,8 +30,8 @@ void polymer_prepare_spine__locamotion()
 	using gate_t = process::confined_t<typename level_t::poll<>, typename stage_u::expect<>>;
 
 	using vox_t = polymer_t<gate_t
-	,	prepare::restore<N_store>
-	,	prepare::respool<N_spool>
+	,	resourced::restore<N_store>
+	,	resourced::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 
@@ -60,10 +60,10 @@ TAG_("polymer", "message", "spine")
 {
 	TRY_("voice allocation/deallocation")
 	{
-		polymer_prepare_spine__locamotion<8, -1, -1>();
-		polymer_prepare_spine__locamotion<8, -1, 64>();
-		polymer_prepare_spine__locamotion<8, 64, -1>();
-		polymer_prepare_spine__locamotion<8, 64, 64>();
+		polymer_provision_spine__locamotion<8, -1, -1>();
+		polymer_provision_spine__locamotion<8, -1, 64>();
+		polymer_provision_spine__locamotion<8, 64, -1>();
+		polymer_provision_spine__locamotion<8, 64, 64>();
 
 	}
 }
@@ -72,7 +72,7 @@ TAG_("polymer", "message", "spine")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_window=8, int N_store=0, int N_spool=0>
-void polymer_prepare_spool__compound()
+void polymer_provision_spool__compound()
 {
 	using alpha_t = typename common::computer::alpha_t;
 	using sigma_t = typename common::computer::sigma_t;
@@ -91,8 +91,8 @@ void polymer_prepare_spool__compound()
 	>;
 
 	using vox_t = polymer_t<gate_t
-	,	prepare::restore<N_store>
-	,	prepare::respool<N_spool>
+	,	resourced::restore<N_store>
+	,	resourced::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 
@@ -117,7 +117,7 @@ void polymer_prepare_spool__compound()
 
 }
 template <size_t N_window=8, int N_store=0, int N_spool=0>
-void polymer_prepare_spool__composited()
+void polymer_provision_spool__composited()
 {
 	using alpha_t = typename common::computer::alpha_t;
 	using sigma_t = typename common::computer::sigma_t;
@@ -136,8 +136,8 @@ void polymer_prepare_spool__composited()
 	>;
 
 	using vox_t = polymer_t<gate_t
-	,	prepare::restore<N_store>
-	,	prepare::respool<N_spool>
+	,	resourced::restore<N_store>
+	,	resourced::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 
@@ -165,18 +165,18 @@ TAG_("polymer", "message", "ensemble")
 {
 	TRY_("with compound events")
 	{
-		polymer_prepare_spool__compound<8, -1, -1>();
-		polymer_prepare_spool__compound<8, -1, 64>();
-		polymer_prepare_spool__compound<8, 64, -1>();
-		polymer_prepare_spool__compound<8, 64, 64>();
+		polymer_provision_spool__compound<8, -1, -1>();
+		polymer_provision_spool__compound<8, -1, 64>();
+		polymer_provision_spool__compound<8, 64, -1>();
+		polymer_provision_spool__compound<8, 64, 64>();
 
 	}
 	TRY_("with composited events")
 	{
-		polymer_prepare_spool__composited<8, -1, -1>();
-		polymer_prepare_spool__composited<8, -1, 64>();
-		polymer_prepare_spool__composited<8, 64, -1>();
-		polymer_prepare_spool__composited<8, 64, 64>();
+		polymer_provision_spool__composited<8, -1, -1>();
+		polymer_provision_spool__composited<8, -1, 64>();
+		polymer_provision_spool__composited<8, 64, -1>();
+		polymer_provision_spool__composited<8, 64, 64>();
 
 	}
 }

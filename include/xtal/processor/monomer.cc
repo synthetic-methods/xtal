@@ -3,7 +3,7 @@
 #include "./monomer.ii"// testing...
 
 #include "./all.ii"
-#include "../prepare/all.ii"
+#include "../resourced/all.ii"
 #include "../message/all.ii"
 
 XTAL_ENV_(push)
@@ -40,7 +40,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<prepare::restore<>>();}
+	TRY_("pure (material)") {monomer_lifting<resourced::restore<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -49,7 +49,7 @@ TAG_("monomer", "lifting")
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class mix_t>
-void monomer_prepare__advancing()
+void monomer_provision__advancing()
 {
 	using sigma_t = typename common::computer::sigma_t;
 	using alpha_t = typename common::computer::alpha_t;
@@ -91,12 +91,12 @@ void monomer_prepare__advancing()
 
 }
 template <class add_t>
-void monomer_prepare__provisioning()
+void monomer_provision__provisioning()
 {
 	using sigma_t = typename common::computer::sigma_t;
 	using alpha_t = typename common::computer::alpha_t;
 
-	using provide = prepare::restore<(1<<5)>;
+	using provide = resourced::restore<(1<<5)>;
 
 	using store_u = typename confined_t<provide>::template store_t<alpha_t>;
 	using serve_u = deranged_t<store_u>;
@@ -127,11 +127,11 @@ void monomer_prepare__provisioning()
 }
 TAG_("monomer", "message")
 {
-	TRY_("advancing (dynamic)") {monomer_prepare__advancing<dynamic_onset_mix_t>();}
-	TRY_("advancing (static)")  {monomer_prepare__advancing< static_onset_mix_t>();}
+	TRY_("advancing (dynamic)") {monomer_provision__advancing<dynamic_onset_mix_t>();}
+	TRY_("advancing (static)")  {monomer_provision__advancing< static_onset_mix_t>();}
 
-	TRY_("provisioning (dynamic)") {monomer_prepare__provisioning<dynamic_onset_mix_t>();}
-	TRY_("provisioning (static)")  {monomer_prepare__provisioning< static_onset_mix_t>();}
+	TRY_("provisioning (dynamic)") {monomer_provision__provisioning<dynamic_onset_mix_t>();}
+	TRY_("provisioning (static)")  {monomer_provision__provisioning< static_onset_mix_t>();}
 
 }
 
@@ -151,8 +151,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, prepare::restore<>>;
-	using mul_op = monomer_t<mul_t, prepare::restore<>>;
+	using mix_op = monomer_t<add_t, resourced::restore<>>;
+	using mul_op = monomer_t<mul_t, resourced::restore<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs <<= message::resize_f(N);
@@ -181,8 +181,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, prepare::restore<>>;
-	using mul_op = monomer_t<mul_t, prepare::restore<>>;
+	using mix_op = monomer_t<add_t, resourced::restore<>>;
+	using mul_op = monomer_t<mul_t, resourced::restore<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
@@ -213,7 +213,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<add_t, prepare::restore<>>;
+	using mix_op = monomer_t<add_t, resourced::restore<>>;
 	using mix_fn = monomer_t<add_t>;
 	using ndfn = monomer_t<dynamic_count_t>;
 

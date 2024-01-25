@@ -44,7 +44,7 @@ struct define
 		Forwards any message prefixed with `N_mask`. \
 
 		template <int N_mask=-1>
-		struct inscribe
+		struct address
 		{
 			XTAL_LET_(size_t) M_mask =  N_mask;
 			XTAL_LET_(size_t) W_mask = ~M_mask;
@@ -86,7 +86,7 @@ struct define
 		template <int N_mask=-1>
 		struct assign
 		{
-			using subkind = common::compose<inscribe<N_mask>, typename S_::template ascribe<>>;
+			using subkind = common::compose<address<N_mask>, typename S_::template afflux<>>;
 
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
@@ -109,10 +109,12 @@ struct define
 			static_assert(cardinal_q<typename T::cardinality>);
 			XTAL_LET N_cardinality = T::cardinality::value;
 			
+			using subkind = assign<N_mask>;
+			
 			template <process::any_q R>
-			class subtype: public common::compose_s<R, assign<N_mask>>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, assign<N_mask>>;
+				using R_ = common::compose_s<R, subkind>;
 				using K_ = typename R_::head_t;
 			
 			public:
@@ -183,10 +185,12 @@ struct define
 		template <int N_mask=-1>
 		struct expect
 		{
+			using subkind = assign<N_mask>;
+			
 			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, assign<N_mask>>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, assign<N_mask>>;
+				using R_ = common::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;
@@ -210,10 +214,12 @@ struct define
 		template <int N_mask=-1>
 		struct inspect
 		{
+			using subkind = assign<N_mask>;
+			
 			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, assign<N_mask>>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, assign<N_mask>>;
+				using R_ = common::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;
@@ -237,10 +243,12 @@ struct define
 		template <int N_mask=-1>
 		struct poll
 		{
+			using subkind = assign<N_mask>;
+			
 			template <process::any_q R>
-			class subtype: public common::compose_s<R, assign<N_mask>>
+			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, assign<N_mask>>;
+				using R_ = common::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;

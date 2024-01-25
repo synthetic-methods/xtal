@@ -17,7 +17,7 @@ using namespace xtal::__test;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class mix_t>
-void processor_prepare__messaging()
+void processor_provision__messaging()
 {
 	using alpha_t = typename common::computer::alpha_t;
 
@@ -50,8 +50,8 @@ void processor_prepare__messaging()
 }
 TAG_("processor", "message")
 {
-	TRY_("messaging (dynamic)") {processor_prepare__messaging<dynamic_onset_mix_t>();}
-	TRY_("messaging (static)")  {processor_prepare__messaging< static_onset_mix_t>();}
+	TRY_("messaging (dynamic)") {processor_provision__messaging<dynamic_onset_mix_t>();}
+	TRY_("messaging (static)")  {processor_provision__messaging< static_onset_mix_t>();}
 
 }
 TAG_("processor", "construct")

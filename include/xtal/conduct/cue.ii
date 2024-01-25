@@ -13,7 +13,7 @@ namespace xtal::conduct
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Wrapper used to schedule an existing type.\
+Wrapper used to scheduled an existing type.\
 
 ///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 

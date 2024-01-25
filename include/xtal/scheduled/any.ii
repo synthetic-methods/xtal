@@ -1,0 +1,159 @@
+#pragma once
+#include "./any.hh"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::scheduled
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+struct define
+{
+	using subkind = _retail::define<T>;
+
+	template <any_q S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		friend T;
+		using S_ = common::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+		using S_::self;
+
+		///\
+		Provides dispatch logic for `Xs...` on the target object. \
+		
+		///\note\
+		The naming is intended to reflect that only `influx` is queued/`cue`d. \
+
+		template <class ...Xs>
+		struct inqueue
+		{
+			template <process::any_q R>
+			class subtype: public common::compose_s<R>
+			{
+				using R_ = common::compose_s<R>;
+				static_assert(complete_q<Xs...>);
+				
+			protected:
+				using tuple_t = _std::tuple<Xs...>;
+				using tuple_u = message::packet_t<Xs...>;
+				using event_u = conduct::cue_s<tuple_u>;
+				using delay_u = typename conduct::cue_s<>::head_t;
+
+			public:
+				using R_::R_;
+				using R_::self;
+				using R_::influx;
+
+				///\
+				Invokes `influx` immediately, \
+				expanding the provided arguments. \
+				
+				XTAL_TLX influx(tuple_u o)
+				XTAL_0EX
+				{
+					return influx(o.apple());
+				}
+				XTAL_TLX influx(tuple_t o)
+				XTAL_0EX
+				{
+					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(us...)), o);
+				}
+
+				///\
+				Invokes `ingest(event_u)` with the given argument. \
+
+				XTAL_TLX influx(XTAL_DEF_(conduct::cue_q) dot)
+				XTAL_0EX
+				{
+					(void) self().ingest(XTAL_REF_(dot));
+					return R_::influx();
+				}
+
+				///\
+				Invokes `influx(event_u)` with the event constructed from the arguments. \
+
+				XTAL_TLX influx(delay_u d_t, tuple_u o)
+				XTAL_0EX
+				{
+					return influx(event_u(d_t, o));
+				}
+				XTAL_TLX influx(delay_u d_t, tuple_t o)
+				XTAL_0EX
+				{
+					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(d_t, us...)), o);
+				}
+				XTAL_TLX influx(delay_u d_t, Xs ...us)
+				XTAL_0EX
+				{
+					return influx(d_t, tuple_u(us...));
+				}
+
+				XTAL_TLX influx(conduct::cue_s<> d_t, XTAL_DEF ...oo)
+				XTAL_0EX
+				{
+					return influx(d_t.head(), XTAL_REF_(oo)...);
+				}
+
+			};
+		};
+
+	};
+};
+template <class T>
+struct refine
+{
+	using subkind = _retail::refine<T>;
+
+	template <any_q S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+	
+		template <class ...Xs>
+		using F_ = typename S_::template inqueue<Xs...>;
+
+	public:
+		using S_::S_;
+		using S_::self;
+
+		template <class ...Xs>
+		struct inqueue: F_<Xs...>
+		{
+			using kind = confined<F_<Xs...>>;
+			using type = common::compose_s<S_, kind>;
+		
+		};
+		template <class ...Xs>
+		using inqueue_t = typename inqueue<Xs...>::type;
+
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class U>
+struct defer
+:	_retail::defer<U>
+{
+};
+template <class U>
+struct refer
+:	_retail::refer<U>
+{
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
