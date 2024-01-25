@@ -281,11 +281,11 @@ struct refer
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct opt;
+struct option;
 
 template <cardinal_q U>
 struct infer<U>
-:	defer<confined_t<opt<U>>>
+:	defer<confined_t<option<U>>>
 {
 };
 
@@ -294,4 +294,4 @@ struct infer<U>
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
-#include "./opt.ii"
+#include "./option.ii"

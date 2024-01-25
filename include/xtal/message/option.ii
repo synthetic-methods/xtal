@@ -13,20 +13,20 @@ namespace xtal::message
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Taggable `opt`ion set, intended to be `confined` prior to use. \
+Taggable `option` set, intended to be `confined` prior to use. \
 
-template <typename ...As> struct opt;
+template <typename ...As> struct option;
 template <typename ...As>
-struct opt
+struct option
 {
 	class cardinal: public common::seek_cardinal_t<As...> {};
 	
 	struct subkind
 	{
 		template <class S>
-		class subtype: public common::compose_s<S, common::tag<opt>>
+		class subtype: public common::compose_s<S, common::tag<option>>
 		{
-			using S_ = common::compose_s<S, common::tag<opt>>;
+			using S_ = common::compose_s<S, common::tag<option>>;
 
 		public:
 		//	using S_::S_;
@@ -39,7 +39,7 @@ struct opt
 			:	S_(XTAL_REF_(oo)...)
 			{};
 			
-			template <common::tag_q<opt> U>
+			template <common::tag_q<option> U>
 			XTAL_CXN subtype(U &&u)
 			XTAL_0EX
 			{};
@@ -52,10 +52,10 @@ struct opt
 			}
 			
 		};
-		template <common::tag_q<opt> S>
-		class subtype<S>: public common::compose_s<S, common::tab<opt>>
+		template <common::tag_q<option> S>
+		class subtype<S>: public common::compose_s<S, common::tab<option>>
 		{
-			using S_ = common::compose_s<S, common::tab<opt>>;
+			using S_ = common::compose_s<S, common::tab<option>>;
 
 		public:
 			using S_::S_;
@@ -98,13 +98,13 @@ struct opt
 		XTAL_0EX
 		:	subtype(XTAL_REF_(u))
 		{};
-		template <common::tag_q<opt> U>
+		template <common::tag_q<option> U>
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		:	value(0)
 		,	S_(XTAL_REF_(u))
 		{};
-		template <common::tag_q<opt> U> requires common::tab_p<opt, U>
+		template <common::tag_q<option> U> requires common::tab_p<option, U>
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		:	value(u.template get<cardinal>().value)
@@ -131,18 +131,18 @@ struct opt
 		
 	};
 	template <class S>
-	using is = binal_t<common::tab_q<S, opt>>;
+	using is = binal_t<common::tab_q<S, option>>;
 
 };
 template <>
-struct opt<>
+struct option<>
 {
 	template <class S>
-	using is = binal_t<common::tag_q<S, opt>>;
+	using is = binal_t<common::tag_q<S, option>>;
 
 };
 template <class T, typename ...As>
-concept opt_q = opt<As...>::template is<T>::value;
+concept option_q = option<As...>::template is<T>::value;
 
 
 ///////////////////////////////////////////////////////////////////////////////

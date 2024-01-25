@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./opt.ii"// testing...
+#include "./option.ii"// testing...
 
 
 
@@ -13,10 +13,10 @@ namespace xtal::message::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("opt")
+TAG_("option")
 {
-	using aim  = opt<cardinal_t<4>, class T_aim  >;
-	using hype = opt<cardinal_t<2>, class T_hype >;
+	using aim  = option<cardinal_t<4>, class T_aim  >;
+	using hype = option<cardinal_t<2>, class T_hype >;
 	
 	using Aim  = confined_t<aim  >;
 	using Hype = confined_t<hype >;
@@ -29,8 +29,8 @@ TAG_("opt")
 		TRUE_(0b10 == options.template get<aim  >());
 		TRUE_(0b1  == options.template get<hype >());
 		TRUE_(sizeof(Aim) == sizeof(AimHype));
-		TRUE_(opt_q<AimHype>);
-		TRUE_(opt_q<AimHype, cardinal_t<4>, class T_aim>);
+		TRUE_(option_q<AimHype>);
+		TRUE_(option_q<AimHype, cardinal_t<4>, class T_aim>);
 
 	}
 }

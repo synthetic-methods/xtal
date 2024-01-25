@@ -115,7 +115,10 @@ struct define
 			using result_t = typename signature::template invoke_t<T>;
 			using return_t = iteratee_t<result_t>;
 			
-			using subkind = common::compose<concord::defer<typename signature::type>, defer<T>>;
+			using subkind = common::compose<void
+			,	concord::defer<typename signature::type>
+			,	defer<T>
+			>;
 
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
