@@ -180,7 +180,7 @@ struct define
 				XTAL_CO4_(subtype);
 
 				///\
-				Constructs the `assign`ed `message` using its default, \
+				Constructs the `attach`ed `message` using its default, \
 				before `forward`ing the arguments to `this`. \
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)

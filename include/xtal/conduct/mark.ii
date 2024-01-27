@@ -15,7 +15,7 @@ namespace xtal::conduct
 ///\
 Controls access to an `address`d `attach`ment.\
 
-///\see e.g. [../message/any#assign] or [../message/any#dispatch]. \
+///\see e.g. [../message/any#attach] or [../message/any#dispatch]. \
 
 template <typename ..._s> XTAL_NYM mark;
 template <class    ...Ts> XTAL_ASK mark_q = common::tag_p<mark, Ts...>;

@@ -95,7 +95,7 @@ template <class U>
 struct refer
 {
 	using scope_u = message::scope_t<counted_t<>>;
-	using subkind  = common::compose<_retail::refer<U>, scope_u::assign<>>;
+	using subkind  = common::compose<_retail::refer<U>, scope_u::attach<>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>

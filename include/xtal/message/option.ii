@@ -15,7 +15,6 @@ namespace xtal::message
 ///\
 Taggable `option` set, intended to be `confined` prior to use. \
 
-template <typename ...As> struct option;
 template <typename ...As>
 struct option
 {

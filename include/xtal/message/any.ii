@@ -84,21 +84,9 @@ struct define
 		Attaches `T` as a member of `this`. \
 
 		template <int N_mask=-1>
-		struct assign
+		struct attach
+		:	common::compose<address<N_mask>, typename S_::template afflux<>>
 		{
-			using subkind = common::compose<address<N_mask>, typename S_::template afflux<>>;
-
-			template <conflux::any_q R>
-			class subtype: public common::compose_s<R, subkind>
-			{
-				using R_ = common::compose_s<R, subkind>;
-			
-			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
-
-			};
 		};
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to resolve `method<auto ...>`. \
@@ -109,7 +97,7 @@ struct define
 			static_assert(cardinal_q<typename T::cardinality>);
 			XTAL_LET N_cardinality = T::cardinality::value;
 			
-			using subkind = assign<N_mask>;
+			using subkind = attach<N_mask>;
 			
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, subkind>
@@ -185,7 +173,7 @@ struct define
 		template <int N_mask=-1>
 		struct expect
 		{
-			using subkind = assign<N_mask>;
+			using subkind = attach<N_mask>;
 			
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
@@ -214,7 +202,7 @@ struct define
 		template <int N_mask=-1>
 		struct inspect
 		{
-			using subkind = assign<N_mask>;
+			using subkind = attach<N_mask>;
 			
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
@@ -243,7 +231,7 @@ struct define
 		template <int N_mask=-1>
 		struct poll
 		{
-			using subkind = assign<N_mask>;
+			using subkind = attach<N_mask>;
 			
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, subkind>

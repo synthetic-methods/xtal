@@ -49,8 +49,8 @@ struct monomer<U, As...>
 			using subkind = common::compose<common::tag<monomer>
 			,	concord::confer<typename rebound::result_t>
 		//	,	As...
-		//	,	resize_u::assign<>
-			,	scope_u::assign<>
+		//	,	resize_u::attach<>
+			,	scope_u::attach<>
 			,	rebound
 			>;
 			template <any_q R>
@@ -102,8 +102,8 @@ struct monomer<U, As...>
 			,	concord::refer<serve_u>
 			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
-			,	resize_u::assign<>
-			,	scope_u::assign<>
+			,	resize_u::attach<>
+			,	scope_u::attach<>
 			,	rebound
 			>;
 			template <any_q R>

@@ -39,7 +39,7 @@ struct onset
 	public:
 		using S_::S_;
 		
-		using cardinality = cardinal_t<(128)>;
+		using cardinality = cardinal_t<(1<<7)>;
 	
 	};
 };
@@ -93,7 +93,7 @@ using static_onset_mix_t = typename static_onset_mix::type;
 
 struct dynamic_onset_mix
 {
-	class type: public process::confine_t<type, onset_t::assign<>>
+	class type: public process::confine_t<type, onset_t::attach<>>
 	{
 	public:
 
@@ -112,7 +112,7 @@ using dynamic_onset_mix_t = typename dynamic_onset_mix::type;
 
 struct dynamic_term
 {
-	class type: public process::confine_t<type, scale_t::assign<>>
+	class type: public process::confine_t<type, scale_t::attach<>>
 	{
 	public:
 
@@ -135,7 +135,7 @@ struct dynamic_count
 	using restep_u = message::restep_t<count_t>;
 
 	template <class T>
-	using homotype = process::confine_t<T, restep_u::assign<>>;
+	using homotype = process::confine_t<T, restep_u::attach<>>;
 
 	struct type: public homotype<type>
 	{

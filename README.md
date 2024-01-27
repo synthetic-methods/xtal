@@ -63,12 +63,12 @@ with the inner-most nodes representing inputs, and the outer-most node represent
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `message` decorators `assign` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
 	using Active = message::label_t<int, struct active>;
 
-	struct Mix: process::confine_t<Mix, Active::template assign>
+	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
 	   XTAL_TN2 method(XTAL_DEF ...xs)
 	   {
@@ -262,7 +262,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition     |[`common/compose.ii`](include/xtal/common/compose.ii?ts=3)|
 |Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:assign\|dispatch\|hold\|intermit)`|
+|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
 |Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|
