@@ -26,7 +26,6 @@ struct define
 	
 	public:
 		using S_::S_;
-		using cardinality = cardinal_t<0>;
 
 		XTAL_CON subtype(size_t u)
 		XTAL_0EX
@@ -94,9 +93,6 @@ struct define
 		template <int N_mask=-1>
 		struct dispatch
 		{
-			static_assert(cardinal_q<typename T::cardinality>);
-			XTAL_LET N_cardinality = T::cardinality::value;
-			
 			using subkind = attach<N_mask>;
 			
 			template <process::any_q R>
@@ -116,7 +112,7 @@ struct define
 				XTAL_CXN subtype(size_t const &n)
 				:	R_(n)
 				{
-					assert(0 <= n and n < N_cardinality);
+					assert(0 <= n and n < T::limit());
 				}
 
 				XTAL_TO2_(
@@ -157,7 +153,7 @@ struct define
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(common::seek_f<N_cardinality> {});
+						XTAL_LET m_method = method_f(common::seek_f<T::limit()> {});
 					
 					};
 					template <auto ...Ks> XTAL_LET m_method = resolve<Ks...>::m_method;

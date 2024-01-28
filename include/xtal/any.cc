@@ -1,8 +1,8 @@
 #pragma once
 #include "./process/any.ii"
 #include "./message/any.ii"
+#include "./message/delimit.ii"
 #include "./message/restep.ii"
-
 #include <catch2/catch_all.hpp>
 
 
@@ -23,25 +23,17 @@ namespace xtal::__test
 
 using namespace common;
 
-using scale_t = message::label_t<typename common::computer::alpha_t, class T_scale>;
-using level_t = message::label_t<typename common::computer::alpha_t, class T_level>;
+using scale_t = message::label_t<typename common::computer::alpha_t, struct __scale__>;
+using level_t = message::label_t<typename common::computer::alpha_t, struct __level__>;
 /*/
-using onset_t = message::label_t<typename common::computer::alpha_t, class T_onset>;
+using onset_t = message::label_t<typename common::computer::alpha_t, struct __onset__>;
 /*/
 struct onset
+:	message::confer<typename common::computer::alpha_t
+	,	message::any<struct __onset__>
+	,	message::delimit<(1<<7)>
+	>
 {
-	using subkind = message::confer<typename common::computer::alpha_t, message::any<class T_onset>>;
-	template <class S>
-	class subtype: public compose_s<S, subkind>
-	{
-		using S_ = compose_s<S, subkind>;
-	
-	public:
-		using S_::S_;
-		
-		using cardinality = cardinal_t<(1<<7)>;
-	
-	};
 };
 using onset_t = message::confined_t<onset>;
 /***/

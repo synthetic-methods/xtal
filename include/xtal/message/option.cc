@@ -32,9 +32,9 @@ TAG_("option")
 		TRUE_(sizeof(AimHyp) == sizeof(Hyp));
 		TRUE_(option_q<AimHyp>);
 		TRUE_(option_q<AimHyp, cardinal_t<4>, struct __aim__>);
-		TRUE_(6 == AimHyp::cardinality::value);
-		TRUE_(4 == Aim   ::cardinality::value);
-		TRUE_(2 ==    Hyp::cardinality::value);
+		TRUE_(6 == AimHyp::limit());
+		TRUE_(4 == Aim   ::limit());
+		TRUE_(2 ==    Hyp::limit());
 
 	}
 }
