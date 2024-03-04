@@ -1,0 +1,64 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::precess
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename ..._s> XTAL_NYM fuse;
+template <typename ..._s> XTAL_ASK fuse_q = common::tag_p<fuse, _s...>;
+template <class U=size_t> XTAL_USE fuse_t = confined_t<fuse<U>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Represents a mixable quantity of type `U`. \
+
+template <additive_group_q U>
+struct fuse<U>
+{
+	using subkind = confer<U, common::tag<fuse>>;
+
+	template <class S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+
+	public:
+		using S_::S_;
+		using S_::self;
+
+		XTAL_CO0_(subtype)
+		XTAL_CO4_(subtype)
+		XTAL_CON subtype(XTAL_DEF_(to_q<U>) w, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(w), XTAL_REF_(oo)...)
+		{
+			normalize();
+		}
+		
+		XTAL_TN1 normalize()
+		XTAL_0EX
+		{
+			return self();
+		}
+
+		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return S_::twin() += XTAL_REF_(w);}
+		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return S_::twin() -= XTAL_REF_(w);}
+				
+		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::operator+=(t.head()); return self().normalize();}
+		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::operator-=(t.head()); return self().normalize();}
+	
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

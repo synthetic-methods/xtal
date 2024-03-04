@@ -7,13 +7,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::common::atom
+namespace xtal::precess
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM pulse;
 template <typename ..._s> XTAL_ASK pulse_q = common::tag_p<pulse, _s...>;
-template <class U=size_t> XTAL_USE pulse_t = typename pulse<U>::type;
+template <class U=size_t> XTAL_USE pulse_t = confined_t<U>;
 
 template <class ...Ts>
 concept pulse_value_q = integral_group_q<Ts...>;
@@ -21,7 +21,7 @@ concept pulse_value_q = integral_group_q<Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Represents a mixable `floating_point` quantity determined by `sizeof(U)`. \
+Represents a mixable `integral` quantity determined by `sizeof(U)`. \
 
 template <class U>
 struct pulse<U>
@@ -29,25 +29,17 @@ struct pulse<U>
 	using _computer = common::compute<U>;
 	using delta_t = typename _computer::delta_t;
 
-	template <class T>
-	using demitype = typename fuse<delta_t>::template homotype<T>;
+	using subkind = common::compose<fuse<delta_t>, common::tag<pulse>>;
 
-	template <class T>
-	using hemitype = common::compose_s<demitype<T>, common::tag<pulse>>;
-
-	template <class T>
-	class homotype: public hemitype<T>
+	template <class S>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		friend T;
-		using S_ = hemitype<T>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
-		using S_::self;
 
 	};
-	using type = _detail::isotype<homotype>;
-
 };
 
 

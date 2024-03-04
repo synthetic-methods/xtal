@@ -4,6 +4,7 @@
 #include "./conduct/all.ii"
 #include "./conflux/all.ii"
 #include "./message/all.ii"
+#include "./precess/all.ii"
 #include "./process/all.ii"
 #include "./processor/all.ii"
 #include "./resource/all.ii"

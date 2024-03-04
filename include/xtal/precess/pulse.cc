@@ -1,23 +1,23 @@
 #pragma once
 #include "./any.cc"
-#include "./phase.ii"// testing...
+#include "./pulse.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::common::atom::__test
+namespace xtal::precess::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("phase")
+TAG_("pulse")
 {
 	TRY_("task")
 	{
-		using phased = phase_t<int>;
+		using pulsed = pulse_t<int>;
 	
 		TRUE_(true);
 

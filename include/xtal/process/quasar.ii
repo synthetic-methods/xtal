@@ -34,8 +34,8 @@ struct quasar<W, As...>
 	using delta_t = typename _computer::delta_t;
 	using alpha_t = typename _computer::alpha_t;
 
-	using quasi_w = common::atom::quasi_t<U_>[N_];
-	using subkind = common::compose<common::tag<quasar>, As..., fusor<quasi_w>>;
+	using quartz_w = precess::quartz_t<U_>[N_];
+	using subkind = common::compose<common::tag<quasar>, As..., fusor<quartz_w>>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
@@ -51,14 +51,14 @@ struct quasar<W, As...>
 		///\
 		Access by name/index (dynamic). \
 		
-		XTAL_TO4_(XTAL_TN2 phase(size_t i), subscript(i).phase)
-		XTAL_TO4_(XTAL_TN2 pulse(size_t i), subscript(i).pulse)
+		XTAL_TO4_(XTAL_TN2 phase(size_t i), subscript(i).phase())
+		XTAL_TO4_(XTAL_TN2 pulse(size_t i), subscript(i).pulse())
 
 		///\
 		Access by name/index (static). \
 		
-		XTAL_TO4_(template <size_t I> XTAL_TN2 phase(), _std::get<I>(head()).phase)
-		XTAL_TO4_(template <size_t I> XTAL_TN2 pulse(), _std::get<I>(head()).pulse)
+		XTAL_TO4_(template <size_t I> XTAL_TN2 phase(), _std::get<I>(head()).phase())
+		XTAL_TO4_(template <size_t I> XTAL_TN2 pulse(), _std::get<I>(head()).pulse())
 
 		///\
 		Projection to components by name. \

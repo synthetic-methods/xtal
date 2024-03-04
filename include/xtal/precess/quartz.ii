@@ -1,0 +1,63 @@
+#pragma once
+#include "./any.ii"
+#include "./phase.ii"
+#include "./pulse.ii"
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::precess
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename ..._s> XTAL_NYM quartz;
+template <typename ..._s> XTAL_ASK quartz_q = common::tag_p<quartz, _s...>;
+template <class U=size_t> XTAL_USE quartz_t = confined_t<quartz<U>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+A `pulse, phase` used to represent e.g. `{phase/frequency, count/trigger}`. \
+
+template <class U>
+struct quartz<U>
+{
+	using subkind = common::compose<pulse<U>, phase<U>, common::tag<quartz>>;
+
+	template <class S>
+	class subtype: public common::compose_s<S, subkind>
+	{
+		using S_ = common::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+		using S_::self;
+		using S_::twin;
+
+		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), S_::template head<1>(XTAL_REF_(oo)...))
+
+		using pulse_u = XTAL_TYP_(S_::template head<0>());
+		using phase_u = XTAL_TYP_(S_::template head<1>());
+
+		XTAL_TO4_(XTAL_OP0_(implicit) pulse_u(), pulse())
+		XTAL_TO4_(XTAL_OP0_(implicit) phase_u(), phase())
+
+		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: S_(XTAL_REF_(o), phase_u {}) {}
+		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: S_(pulse_u {}, XTAL_REF_(o)) {}
+
+		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
+		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
+				
+		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::pulse() += t.pulse(); S_::phase() += t.phase(); return self();}
+		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::pulse() -= t.pulse(); S_::phase() -= t.phase(); return self();}
+	
+	};
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

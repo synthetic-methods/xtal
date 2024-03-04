@@ -1,5 +1,4 @@
 #pragma once
-#include "./atom/all.cc"
 #include "./fluid/all.cc"
 #include "./solid/all.cc"
 #include "./compose.cc"
