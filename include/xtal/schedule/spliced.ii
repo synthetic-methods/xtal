@@ -4,10 +4,10 @@
 #include "../message/packet.ii"
 #include "../process/any.hh"
 #include "../processor/any.hh"
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 
 XTAL_ENV_(push)
-namespace xtal::scheduled
+namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -19,15 +19,15 @@ Allow for scheduled beyond the current window, \
 possibly using `message::scope` to convert between absolute and relative delays. \
 
 template <typename ...As>
-struct splicer
+struct spliced
 {
-	using subkind = common::compose<As..., resourced::respool<-1>>;
+	using subkind = common::compose<As..., resource::respool<-1>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using S_ = common::compose_s<S, subkind>;
-		static_assert(resourced::respool_q<S_>);
+		static_assert(resource::respool_q<S_>);
 
 	public:
 		using S_::S_;
@@ -105,7 +105,7 @@ struct splicer
 	};
 };
 template <class ...Xs>
-using splicer_t = confined_t<splicer<Xs...>>;
+using spliced_t = confined_t<spliced<Xs...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

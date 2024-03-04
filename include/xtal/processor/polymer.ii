@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.ii"
 #include "./monomer.ii"
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 #include "../conduct/key.ii"
 #include "../message/stage.ii"
 
@@ -45,7 +45,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resourced::respool_q<S_> and resourced::restore_q<S_>
+		template <class ...Xs> requires resource::respool_q<S_> and resource::restore_q<S_>
 		struct bond: F_<Xs...>
 		{
 			using rebound = F_<Xs...>;

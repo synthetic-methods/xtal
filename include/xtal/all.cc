@@ -6,5 +6,5 @@
 #include "./message/all.cc"
 #include "./process/all.cc"
 #include "./processor/all.cc"
-#include "./resourced/all.cc"
-#include "./scheduled/all.cc"
+#include "./resource/all.cc"
+#include "./schedule/all.cc"

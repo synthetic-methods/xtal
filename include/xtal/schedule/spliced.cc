@@ -1,32 +1,32 @@
 #pragma once
 #include "./any.cc"
-#include "./splicer.ii"// testing...
+#include "./spliced.ii"// testing...
 
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 #include "../processor/monomer.ii"
 
 
 XTAL_ENV_(push)
-namespace xtal::scheduled::__test
+namespace xtal::schedule::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class mix_t>
-void splicer_processor_x1()
+void spliced_processor_x1()
 {
-	using namespace resourced;
-//	using namespace scheduled;
+	using namespace resource;
+//	using namespace schedule;
 
-	using splicer_u = splicer_t<respool<(1<<4)>>;
+	using spliced_u = spliced_t<respool<(1<<4)>>;
 
 	using alpha_u = typename common::computer::alpha_t;
 	using event_u = message::packet_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
 	,	restore<>
-	,	splicer_u::template inqueue<onset_t>
+	,	spliced_u::template inqueue<onset_t>
 	>;
 	using resize_u = message::resize_t<>;
 	using scope_n  = message::scope_t<>;
@@ -57,11 +57,11 @@ void splicer_processor_x1()
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
 
 }
-TAG_("splicer", "processor")
+TAG_("spliced", "processor")
 {
 	using namespace processor;
-	TRY_("drive dynamic") {splicer_processor_x1<dynamic_onset_mix_t>();}
-//	TRY_("drive  static") {splicer_processor_x1< static_onset_mix_t>();}// TODO?
+	TRY_("drive dynamic") {spliced_processor_x1<dynamic_onset_mix_t>();}
+//	TRY_("drive  static") {spliced_processor_x1< static_onset_mix_t>();}// TODO?
 
 }
 

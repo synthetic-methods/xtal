@@ -21,7 +21,7 @@ TAG_("cross", "process")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resourced::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
 
 		auto io = remix_u();
 		io <<= model_u {{1, 2}, {3, 4}, {5, 6}};
@@ -42,7 +42,7 @@ TAG_("cross", "processor")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resourced::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -64,7 +64,7 @@ TAG_("cross", "processor")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resourced::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -83,7 +83,7 @@ TAG_("cross", "processor")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resourced::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -104,7 +104,7 @@ TAG_("cross", "processor")
 
 		using model_u = common::solid::linear_t<int[2][3]>;
 		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resourced::restore<>>;
+		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));

@@ -1,19 +1,22 @@
 #pragma once
-#include "./any.cc"
-#include "./respool.ii"// testing...
+#include "../any.cc"
+#include "./any.ii"// testing...
 
-
+#include "../message/all.ii"
 
 
 
 XTAL_ENV_(push)
-namespace xtal::resourced::__test
+namespace xtal::schedule::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+using namespace xtal::__test;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("respool")
+TAG_("any")
 {
 	TRY_("task")
 	{

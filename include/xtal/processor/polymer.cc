@@ -3,7 +3,7 @@
 #include "./polymer.ii"// testing...
 
 #include "./monomer.ii"
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 
 
 XTAL_ENV_(push)
@@ -30,8 +30,8 @@ void polymer_provision_spine__locamotion()
 	using gate_t = process::confined_t<typename level_t::poll<>, typename stage_u::expect<>>;
 
 	using vox_t = polymer_t<gate_t
-	,	resourced::restore<N_store>
-	,	resourced::respool<N_spool>
+	,	resource::restore<N_store>
+	,	resource::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 
@@ -91,8 +91,8 @@ void polymer_provision_spool__compound()
 	>;
 
 	using vox_t = polymer_t<gate_t
-	,	resourced::restore<N_store>
-	,	resourced::respool<N_spool>
+	,	resource::restore<N_store>
+	,	resource::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 
@@ -136,8 +136,8 @@ void polymer_provision_spool__composited()
 	>;
 
 	using vox_t = polymer_t<gate_t
-	,	resourced::restore<N_store>
-	,	resourced::respool<N_spool>
+	,	resource::restore<N_store>
+	,	resource::respool<N_spool>
 	>;
 	auto o_vox = vox_t::bond_f();
 

@@ -3,7 +3,7 @@
 #include "./monomer.ii"// testing...
 
 #include "./all.ii"
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 #include "../message/all.ii"
 
 XTAL_ENV_(push)
@@ -40,7 +40,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<resourced::restore<>>();}
+	TRY_("pure (material)") {monomer_lifting<resource::restore<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -96,7 +96,7 @@ void monomer_provision__provisioning()
 	using sigma_t = typename common::computer::sigma_t;
 	using alpha_t = typename common::computer::alpha_t;
 
-	using provide = resourced::restore<(1<<5)>;
+	using provide = resource::restore<(1<<5)>;
 
 	using store_u = typename confined_t<provide>::template store_t<alpha_t>;
 	using serve_u = deranged_t<store_u>;
@@ -151,8 +151,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, resourced::restore<>>;
-	using mul_op = monomer_t<mul_t, resourced::restore<>>;
+	using mix_op = monomer_t<add_t, resource::restore<>>;
+	using mul_op = monomer_t<mul_t, resource::restore<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs <<= message::resize_f(N);
@@ -181,8 +181,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, resourced::restore<>>;
-	using mul_op = monomer_t<mul_t, resourced::restore<>>;
+	using mix_op = monomer_t<add_t, resource::restore<>>;
+	using mul_op = monomer_t<mul_t, resource::restore<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
@@ -213,7 +213,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<add_t, resourced::restore<>>;
+	using mix_op = monomer_t<add_t, resource::restore<>>;
 	using mix_fn = monomer_t<add_t>;
 	using ndfn = monomer_t<dynamic_count_t>;
 

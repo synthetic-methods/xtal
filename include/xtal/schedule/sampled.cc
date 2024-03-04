@@ -1,34 +1,34 @@
 #pragma once
 #include "./any.cc"
-#include "./sampler.ii"// testing...
+#include "./sampled.ii"// testing...
 
-#include "../resourced/all.ii"
+#include "../resource/all.ii"
 #include "../processor/monomer.ii"
 
 
 XTAL_ENV_(push)
-namespace xtal::scheduled::__test
+namespace xtal::schedule::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("sampler", "process")
+TAG_("sampled", "process")
 {
 	TRY_("drive")
 	{
-		using namespace resourced;
-	//	using namespace scheduled;
+		using namespace resource;
+	//	using namespace schedule;
 
 		size_t constexpr N_store = (1<<3);
 		size_t constexpr N_spool = (1<<7);
 
-		using sampler_u = sampler_t<respool<N_spool>>;
+		using sampled_u = sampled_t<respool<N_spool>>;
 		using scope_u = message::scope_t<>;
 		using cue_t = conduct::cue_s<>;
 		
 		using gate_t = message::label_t<typename common::computer::alpha_t, struct __gate__>;
-		using gate_y = process::confined_t<typename sampler_u::template inqueue<gate_t>>;
+		using gate_y = process::confined_t<typename sampled_u::template inqueue<gate_t>>;
 
 		gate_y o_gate;
 		
@@ -69,15 +69,15 @@ TAG_("sampler", "process")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-void sampler_processor()
+void sampled_processor()
 {
-	using namespace resourced;
-//	using namespace scheduled;
+	using namespace resource;
+//	using namespace schedule;
 
 	size_t constexpr N_store = (1<<3);
 	size_t constexpr N_spool = (1<<7);
 	
-	using sampler_u = sampler_t<respool<N_spool>>;
+	using sampled_u = sampled_t<respool<N_spool>>;
 	using cue_t = conduct::cue_s<>;
 
 	using resize_u = message::resize_t<>;
@@ -86,7 +86,7 @@ void sampler_processor()
 	store_u o_store {};
 
 	using gate_t = message::label_t<typename common::computer::alpha_t, struct __gate__>;
-	using gate_y = process::confined_t<typename sampler_u::template inqueue<gate_t>>;
+	using gate_y = process::confined_t<typename sampled_u::template inqueue<gate_t>>;
 	using gate_z = processor::monomer_t<gate_y, As...>;
 	auto  o_gate = gate_z::bond_f();
 	
@@ -107,11 +107,11 @@ void sampler_processor()
 	TRUE_(o_store == store_u { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
-TAG_("sampler", "processor")
+TAG_("sampled", "processor")
 {
 	using namespace processor;
-	TRY_("drive material") {sampler_processor<resourced::restore<>>();}
-//	TRY_("drive virtual")  {sampler_processor<>();}// TODO?
+	TRY_("drive material") {sampled_processor<resource::restore<>>();}
+//	TRY_("drive virtual")  {sampled_processor<>();}// TODO?
 
 }
 
