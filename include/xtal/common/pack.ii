@@ -15,12 +15,12 @@ namespace xtal::common
 
 template <class    T  >    using pack_size   = _std::tuple_size<_std::remove_reference_t<T>>;
 template <class    T  >    using pack_size_t =   typename pack_size<T>::type;
-template <class    T  > XTAL_LET pack_size_v =            pack_size<T> {};
+template <class    T  > XTAL_LET pack_size_e =            pack_size<T> {};
 template <class    T  >  concept pack_size_p = nominal_p<pack_size_t<T>>;
 template <class ...Ts >  concept pack_size_q =    (...and pack_size_p<Ts>);
 
-static_assert(pack_size_v<_std::tuple<         >> == 0);
-static_assert(pack_size_v<_std::array<null_t, 0>> == 0);
+static_assert(pack_size_e<_std::tuple<         >> == 0);
+static_assert(pack_size_e<_std::array<null_t, 0>> == 0);
 
 static_assert(pack_size_p<_std::tuple<         >>);
 static_assert(pack_size_p<_std::array<null_t, 0>>);
@@ -34,7 +34,7 @@ template <class T, size_t    N  > concept pack_item_p = requires(T a) {{_std::ge
 template <class T>
 concept pack_items_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and pack_item_p<T, N>)
-	(seek_f<pack_size_v<T>> {})
+	(seek_f<pack_size_e<T>> {})
 ;
 template <class ...Ts >
 concept pack_items_q = (true and ... and pack_items_p<Ts>);
@@ -128,7 +128,7 @@ struct pack
 
 	using    size   = pack_size  <type>;
 	using    size_t = pack_size_t<type>;
-	XTAL_LET size_v = pack_size_v<type>;
+	XTAL_LET size_e = pack_size_e<type>;
 	
 	template <size_t N> using part   = pack_item  <type, N>;
 	template <size_t N> using part_t = pack_item_t<type, N>;

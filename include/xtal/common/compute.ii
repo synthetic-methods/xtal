@@ -386,10 +386,10 @@ public:
 #endif
 	using alignment = destructive_alignment;
 
-	XTAL_LET_(sigma_t) constructive_alignment_v = valued_v<constructive_alignment>;
-	XTAL_LET_(sigma_t)  destructive_alignment_v = valued_v< destructive_alignment>;
-	XTAL_LET_(sigma_t)      default_alignment_v = valued_v<     default_alignment>;
-	XTAL_LET_(sigma_t)              alignment_v = valued_v<             alignment>;
+	XTAL_LET_(sigma_t) constructive_alignment_e = valued_e<constructive_alignment>;
+	XTAL_LET_(sigma_t)  destructive_alignment_e = valued_e< destructive_alignment>;
+	XTAL_LET_(sigma_t)      default_alignment_e = valued_e<     default_alignment>;
+	XTAL_LET_(sigma_t)              alignment_e = valued_e<             alignment>;
 	
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -569,12 +569,12 @@ public:
 	#endif
 	}
 	template <int N_zoom=0>
-	XTAL_LET diplo_v = diplo_f(N_zoom);
+	XTAL_LET diplo_e = diplo_f(N_zoom);
 	///< Value expression of `diplo_f`. \
 
-	static_assert(diplo_v<+1> == 2.0);
-	static_assert(diplo_v< 0> == 1.0);
-	static_assert(diplo_v<-1> == 0.5);
+	static_assert(diplo_e<+1> == 2.0);
+	static_assert(diplo_e< 0> == 1.0);
+	static_assert(diplo_e<-1> == 0.5);
 
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
@@ -585,12 +585,12 @@ public:
 		return diplo_f(-n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_LET haplo_v = haplo_f(N_zoom);
+	XTAL_LET haplo_e = haplo_f(N_zoom);
 	///< Value expression of `haplo_f`. \
 
-	static_assert(haplo_v<+1> == 0.5);
-	static_assert(haplo_v< 0> == 1.0);
-	static_assert(haplo_v<-1> == 2.0);
+	static_assert(haplo_e<+1> == 0.5);
+	static_assert(haplo_e< 0> == 1.0);
+	static_assert(haplo_e<-1> == 2.0);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -632,23 +632,23 @@ public:
 	,	3.141592653589793238462643383279502884// -1 => (Pi*1)
 	};
 	template <int N_base, int N_shift=0>
-	XTAL_LET codomain_v = codomain_vs[N_base&0b11]*haplo_v<N_shift>;
-///< Value expression representing the multiplicative inverse of the logarithmic `domain_v`.
+	XTAL_LET codomain_e = codomain_vs[N_base&0b11]*haplo_e<N_shift>;
+///< Value expression representing the multiplicative inverse of the logarithmic `domain_e`.
 
 	template <int N_base, int N_shift=0>
-	XTAL_LET   domain_v =   domain_vs[N_base&0b11]*diplo_v<N_shift>;
+	XTAL_LET   domain_e =   domain_vs[N_base&0b11]*diplo_e<N_shift>;
 ///< Value expression representing the logarithmic domain for `N_base`, scaled by `diplo_f<N_shift>`. \
 	Additionally scaled by `1*PI`, `2*PI`, or `LOG2` if `N_base` is `-1`, `1`, or `2` respectively.
 
 ///<\note The scaling w.r.t. `PI` reflects the imaginary logarithm where \
 	`std::exp(std::complex(0, 1*PI)) == -1` and `std::exp(std::complex(0, 2*PI)) == 1`.
 
-///<\note To convert between domains, multiply the target `domain_v` and source `codomain_v`. \
+///<\note To convert between domains, multiply the target `domain_e` and source `codomain_e`. \
 
-	static_assert(domain_v<-1> == patio_f<1>(1));
-	static_assert(domain_v<-1> == domain_v<1, -1>);
-	static_assert(domain_v<1, -0>*codomain_v<1, -0> == 1);
-	static_assert(domain_v<1, -1>*codomain_v<1, -1> == 1);
+	static_assert(domain_e<-1> == patio_f<1>(1));
+	static_assert(domain_e<-1> == domain_e<1, -1>);
+	static_assert(domain_e<1, -0>*codomain_e<1, -0> == 1);
+	static_assert(domain_e<1, -1>*codomain_e<1, -1> == 1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -663,13 +663,13 @@ public:
 		return haplo_f(N - n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_LET epsilon_v = epsilon_f(N_zoom);
+	XTAL_LET epsilon_e = epsilon_f(N_zoom);
 	///< Value expression of `epsilon_f`. \
 
-	static_assert(epsilon_v<0> != 0);
-	static_assert(epsilon_v<0> <  epsilon_v<1>);
-	static_assert(epsilon_v<1> <  epsilon_v<2>);
-	static_assert(epsilon_v<1> == _std::numeric_limits<alpha_t>::epsilon());
+	static_assert(epsilon_e<0> != 0);
+	static_assert(epsilon_e<0> <  epsilon_e<1>);
+	static_assert(epsilon_e<1> <  epsilon_e<2>);
+	static_assert(epsilon_e<1> == _std::numeric_limits<alpha_t>::epsilon());
 	
 
 	///\returns the value `n_zoom` steps above `(alpha_t) 1`. \
@@ -680,11 +680,11 @@ public:
 		return (1 + epsilon_f(n_zoom + 1))*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
-	XTAL_LET upsilon_v = upsilon_f(N_zoom);
+	XTAL_LET upsilon_e = upsilon_f(N_zoom);
 	///< Value expression of `upsilon_f`. \
 	
-	static_assert(upsilon_v<1> > upsilon_v<0>);
-	static_assert(upsilon_v<2> > upsilon_v<1>);
+	static_assert(upsilon_e<1> > upsilon_e<0>);
+	static_assert(upsilon_e<2> > upsilon_e<1>);
 
 
 	///\returns the value `n_zoom` steps below `(alpha_t) 1`. \
@@ -695,11 +695,11 @@ public:
 		return (1 - epsilon_f(n_zoom + 0))*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
-	XTAL_LET dnsilon_v = dnsilon_f(N_zoom);
+	XTAL_LET dnsilon_e = dnsilon_f(N_zoom);
 	///< Value expression of `dnsilon_f`. \
 	
-	static_assert(dnsilon_v<1> < dnsilon_v<0>);
-	static_assert(dnsilon_v<2> < dnsilon_v<1>);
+	static_assert(dnsilon_e<1> < dnsilon_e<0>);
+	static_assert(dnsilon_e<2> < dnsilon_e<1>);
 	
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -712,7 +712,7 @@ public:
 		return diplo_f(n_zoom)*std::numeric_limits<alpha_t>::min();
 	}
 	template <int N_zoom=0>
-	XTAL_LET minimal_v = minimal_f(N_zoom);
+	XTAL_LET minimal_e = minimal_f(N_zoom);
 	///< Value expression for `minimal_f`. \
 
 	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
@@ -741,7 +741,7 @@ public:
 		return haplo_f(n_zoom)/std::numeric_limits<alpha_t>::min();
 	}
 	template <int N_zoom=0>
-	XTAL_LET maximal_v = maximal_f(N_zoom);
+	XTAL_LET maximal_e = maximal_f(N_zoom);
 	///< Value expression for `maximal_f`. \
 
 	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
@@ -851,8 +851,8 @@ public:
 		else {
 			int constexpr N_sign =     sign_f(N_side);
 			int constexpr M_side = designed_f(N_side);
-			value *= N_sign*haplo_f(1); value -= minimal_v<M_side - 1>;
-			value += designed_f(value); value += minimal_v<M_side - 1>;
+			value *= N_sign*haplo_f(1); value -= minimal_e<M_side - 1>;
+			value += designed_f(value); value += minimal_e<M_side - 1>;
 			return value;
 		}
 	}
@@ -877,7 +877,7 @@ public:
 	XTAL_FN2 clamped_f(alpha_t value)
 	XTAL_0EX
 	{
-		return N_side? sign_v<N_side>*designed_f<N_side>(value): (value);
+		return N_side? sign_e<N_side>*designed_f<N_side>(value): (value);
 	}
 	static_assert(clamped_f<+1>( 1.0) == +1.0);
 	static_assert(clamped_f<+1>( 0.0) == +minimal_f());

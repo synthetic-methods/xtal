@@ -158,12 +158,12 @@ struct polymer<U, As...>
 				{
 					XTAL_FLX flx = -1;
 				//	Render each instance, while releasing any that have terminated:
-					for (auto _v = m_ensemble.end(); m_ensemble.begin() <= --_v;) {
-						if (_v->efflux(message::stage_f(-1)) == 1) {
-							m_ensemble.pop(_v);
+					for (auto _e = m_ensemble.end(); m_ensemble.begin() <= --_e;) {
+						if (_e->efflux(message::stage_f(-1)) == 1) {
+							m_ensemble.pop(_e);
 						}
 						else {
-							flx &= _v->efflux(scope_x, oo...);
+							flx &= _e->efflux(scope_x, oo...);
 						}
 					}
 					if (1 == flx) return flx;// else...

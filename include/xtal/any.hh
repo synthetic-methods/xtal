@@ -44,7 +44,7 @@ using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
 
-template <auto N> XTAL_LET sign_v = (0 < N) - (N < 0);
+template <auto N> XTAL_LET sign_e = (0 < N) - (N < 0);
 template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
 
 
@@ -104,8 +104,8 @@ template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
 template <class    T >       using valued_t   = typename based_t<T>::value_type;
 template <class    T >     concept valued_p   = requires {typename valued_t<T>;};
 template <class ...Ts>     concept valued_q   = (...and valued_p<Ts>);
-template <class    T >    XTAL_LET valued_v   = based_t<T>::value;
-template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_v<V>;}
+template <class    T >    XTAL_LET valued_e   = based_t<T>::value;
+template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_e<V>;}
 
 template <class    T >      struct devalued    {using value_type = _std::remove_all_extents_t<based_t<T>>;};
 template <valued_p T >      struct devalued<T>: based_t<T> {};
@@ -161,7 +161,7 @@ struct aligned
 	XTAL_LET value = sizeof(type);
 };
 template <class    T >      using aligned_t = typename aligned<T>::type;
-template <class    T >   XTAL_LET aligned_v =          aligned<T>::value;
+template <class    T >   XTAL_LET aligned_e =          aligned<T>::value;
 
 template <class    T >      using pointed_t =          XTAL_TYP_(*XTAL_VAL_(T));
 template <class    T >      using pointer_t =          XTAL_TYP_(&XTAL_VAL_(T));
@@ -172,13 +172,13 @@ template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeo
 template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 
 
-template <valued_q T >   XTAL_LET arity_v = sizeof(T)/aligned_v<devalued_t<T>>;
-template <valued_q T >      using arity_t = nominal_t<arity_v<T>>;
-template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_v<T>>;
+template <valued_q T >   XTAL_LET arity_e = sizeof(T)/aligned_e<devalued_t<T>>;
+template <valued_q T >      using arity_t = nominal_t<arity_e<T>>;
+template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_e<T>>;
 template <class    T >    concept array_r = _std::is_array_v<T> or of_p<array_t<T>, T>;
 
-template <class    T , int N=-1> concept    arity_q = N <  0      or arity_v<T> == N;
-template <class    T , int N=-1> concept subarity_q = 0 <= N     and arity_v<T> <= N;
+template <class    T , int N=-1> concept    arity_q = N <  0      or arity_e<T> == N;
+template <class    T , int N=-1> concept subarity_q = 0 <= N     and arity_e<T> <= N;
 template <class    T , int N=-1> concept    array_q = array_r<T> and    arity_q<T, N>;
 template <class    T , int N=-1> concept subarray_q = array_r<T> and subarity_q<T, N>;
 

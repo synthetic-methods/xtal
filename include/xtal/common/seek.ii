@@ -59,13 +59,13 @@ template <int I=0, bool ...Ns>         struct seek_truth;
 template <int I              >         struct seek_truth<I              >: ordinal_t<-1> {};
 template <int I,   bool ...Ns>         struct seek_truth<I,  true, Ns...>: ordinal_t< I> {};
 template <int I,   bool ...Ns>         struct seek_truth<I, false, Ns...>: seek_truth<I + 1, Ns...> {};
-template <         bool ...Ns> XTAL_LET_(int) seek_truth_v = seek_truth<0, Ns...>::value;
+template <         bool ...Ns> XTAL_LET_(int) seek_truth_e = seek_truth<0, Ns...>::value;
 
-static_assert(seek_truth_v<                   > == -1);
-static_assert(seek_truth_v<               true> ==  0);
-static_assert(seek_truth_v<       false,  true> ==  1);
-static_assert(seek_truth_v<false, false,  true> ==  2);
-static_assert(seek_truth_v<false, false, false> == -1);
+static_assert(seek_truth_e<                   > == -1);
+static_assert(seek_truth_e<               true> ==  0);
+static_assert(seek_truth_e<       false,  true> ==  1);
+static_assert(seek_truth_e<false, false,  true> ==  2);
+static_assert(seek_truth_e<false, false, false> == -1);
 
 
 ///////////////////////////////////////////////////////////////////////////////

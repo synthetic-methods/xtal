@@ -58,7 +58,7 @@ struct serial<U[N]>
 		{
 			auto constexpr H = (size_s) N;
 			auto _s = self();
-			if constexpr (_computer::alignment_v < H) {
+			if constexpr (_computer::alignment_e < H) {
 				for (auto i = H;   ~--i;) {subscript(i) *= t.subscript(0);
 				for (auto j = i; j; --j ) {subscript(i) += t.subscript(j)*_s[i - j];}}
 			}

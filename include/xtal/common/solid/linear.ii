@@ -110,7 +110,7 @@ struct linear<U[N]>
 		}
 		XTAL_TN1 transmute(_std::invocable<U> auto const &f)
 		XTAL_0EX
-		XTAL_REQ (0 < N) and (N <= _computer::alignment_v)
+		XTAL_REQ (0 < N) and (N <= _computer::alignment_e)
 		{
 			common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
 			return self();
