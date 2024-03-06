@@ -83,13 +83,13 @@ struct defer_member
 	class subtype: public common::compose_s<S>
 	{
 		using S_ = common::compose_s<S>;
-		using V  = debased_t<U>;
 
 	public:
 	//	using S_::S_;
 		using S_::self;
 		using head_t = U;
-		using body_t = V; V body_m;
+		using body_t = debased_t<U>;
+		body_t body_m;
 
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -101,18 +101,18 @@ struct defer_member
 		XTAL_0EX
 		:	subtype(body_t{})
 		{}
-		XTAL_CON subtype(bracket_t<devalued_t<U>> w)
-		XTAL_REQ array_q<U> and remember_q<U>
-		:	body_m(w)
+		XTAL_CON subtype(bracket_t<devalued_t<head_t>> a)
+		XTAL_REQ array_q<head_t> and rebased_q<head_t>
+		:	body_m(a)
 		{}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to super. \
 
-		template <class W> requires infungible_q<W, subtype>
-		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		template <class A> requires (not fungible_q<A, subtype>)
+		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<U>(XTAL_REF_(w)))
+		,	body_m(member_f<head_t>(XTAL_REF_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -124,7 +124,7 @@ struct defer_member
 		
 		XTAL_TN1 head(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ remember_q<U> and (0 < sizeof...(oo))
+		XTAL_REQ rebased_q<head_t> and (0 < sizeof...(oo))
 		{
 			return dismember_f(body_m, XTAL_REF_(oo)...);
 		}
@@ -134,36 +134,40 @@ struct defer_member
 template <common::wield_q U>
 struct defer_member<U>
 {
+	XTAL_LET N_depth = U::word_size;
+	XTAL_LET N_width = size_t(1) << N_depth;
+	XTAL_LET M_width = N_width - 1;
+
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
 		using S_ = common::compose_s<S>;
-		using V  = typename U::word_type;
 
 	public:
 	//	using S_::S_;
 		using S_::self;
-		using head_t = V;
-		using body_t = V; V body_m: U::word_size;
+		using head_t = size_t;
+		using body_t = typename U::word_type;
+		body_t body_m:N_depth;
 
-	//	XTAL_CO0_(subtype);
+		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 		
 		///\
-		Constructs `this` using the default value. \
-
-		XTAL_CON subtype()
-		XTAL_0EX
-		:	subtype(body_t{})
-		{}
-		///\
 		Constructs `this` using the first argument, forwarding the rest to super. \
 
-		template <class W> requires infungible_q<W, subtype>
-		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		template <_std::integral A>
+		XTAL_CON subtype(A &&a)
 		XTAL_0EX
+		:	S_(head_t(XTAL_REF_(a)) >> N_depth)
+		,	body_m(head_t(a)&M_width)
+		{};
+		template <class A> requires (not fungible_q<A, subtype>)
+		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
+		XTAL_0EX
+		XTAL_REQ (0 < sizeof...(oo))
 		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<V>(XTAL_REF_(w)))
+		,	body_m(member_f<head_t>(XTAL_REF_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -171,13 +175,6 @@ struct defer_member<U>
 		XTAL_TN2 head() XTAL_0FX {return remember_f(body_m);}
 		XTAL_TN2 head() XTAL_0EX {return remember_f(body_m);}
 		
-		XTAL_TN1 head(XTAL_DEF... oo)
-		XTAL_0EX
-		XTAL_REQ remember_q<V> and (0 < sizeof...(oo))
-		{
-			return dismember_f(body_m, XTAL_REF_(oo)...);
-		}
-
 	};
 };
 template <constant_q U>
@@ -187,13 +184,13 @@ struct defer_member<U>
 	class subtype: public common::compose_s<S>
 	{
 		using S_ = common::compose_s<S>;
-		using V  = debased_t<U>;
 
 	public:
 	//	using S_::S_;
 		using S_::self;
 		using head_t = U;
-		using body_t = V; V body_m;
+		using body_t = debased_t<U>;
+		body_t body_m;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -208,8 +205,8 @@ struct defer_member<U>
 		///\
 		Constructs `this` using the first argument, forwarding the rest to super. \
 
-		template <class W> requires is_q<U, W>
-		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		template <is_q<head_t> A>
+		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
@@ -321,7 +318,7 @@ struct refer_binary_logic<U, 0>
 	,	refer_binary_logic<U, 2>
 	>
 {};
-template <class U> requires binary_logic_p<U, 1> and remember_q<U>
+template <class U> requires binary_logic_p<U, 1> and rebased_q<U>
 struct refer_binary_logic<U, 1>
 {
 	template <any_q S>
@@ -374,7 +371,7 @@ struct refer_multiplicative_group<U, 0>
 	,	refer_multiplicative_group<U, 2>
 	>
 {};
-template <class U> requires multiplicative_group_p<U, 1> and remember_q<U>
+template <class U> requires multiplicative_group_p<U, 1> and rebased_q<U>
 struct refer_multiplicative_group<U, 1>
 {
 	template <any_q S>
@@ -415,7 +412,7 @@ struct refer_additive_group<U, 0>
 	,	refer_additive_group<U, 2>
 	>
 {};
-template <class U> requires additive_group_p<U, 1> and remember_q<U>
+template <class U> requires additive_group_p<U, 1> and rebased_q<U>
 struct refer_additive_group<U, 1>
 {
 	template <any_q S>
@@ -457,7 +454,7 @@ struct refer_discrete_group<U, 0>
 	,	refer_discrete_group<U, 2>
 	>
 {};
-template <class U> requires discrete_group_p<U, 1> and remember_q<U>
+template <class U> requires discrete_group_p<U, 1> and rebased_q<U>
 struct refer_discrete_group<U, 1>
 {
 	template <any_q S>

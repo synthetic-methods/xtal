@@ -96,7 +96,7 @@ struct monomer<U, As...>
 			using  serve_u = deranged_t<store_u>;
 			using respan_u = message::respan_t<serve_u>;
 		
-			XTAL_LET_(int) N_share = common::seek_truth_e<_detail::recollection_p<Xs, serve_u>...>;
+			XTAL_LET_(int) N_share = common::seek_truth_n<_detail::recollection_p<Xs, serve_u>...>;
 
 			using subkind = common::compose<common::tag<monomer>
 			,	compound::refer<serve_u>

@@ -26,8 +26,8 @@ template <size_t N>
 XTAL_FN2 dot(auto const &x, auto const &y)
 {
 	using namespace _std;
-	static_assert(N == common::pack_size_e<decltype(x)>);
-	static_assert(N == common::pack_size_e<decltype(y)>);
+	static_assert(N == common::pack_size_n<decltype(x)>);
+	static_assert(N == common::pack_size_n<decltype(y)>);
 	return [&]<size_t ...I>(common::seek_t<I...>)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
 	(common::seek_f<N - 1> {});
@@ -58,7 +58,7 @@ struct cross<W, U, As...>
 			auto constexpr N = sizeof...(xs);
 			auto const     n = common::pack_f(XTAL_REF_(xs)...);
 			auto const    &m = head();
-			auto constexpr M = common::pack_size_e<decltype(m)>;
+			auto constexpr M = common::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(common::seek_t<I...>)
 				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
 			(common::seek_f<M> {});

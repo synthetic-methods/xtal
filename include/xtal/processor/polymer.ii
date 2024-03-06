@@ -172,7 +172,7 @@ struct polymer<U, As...>
 					using namespace _detail;
 					auto i = m_ensemble.begin(), iN = m_ensemble.end();
 					tunnel_f(respan_x, i++);
-					common::seek_e<-4>([&, this] (auto M)// 3, 2, 1, 0
+					common::seek_n<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
 						size_t constexpr N = (size_t) 1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {

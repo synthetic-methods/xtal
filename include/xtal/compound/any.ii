@@ -182,10 +182,10 @@ struct defer
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TO4_(template <class  ...Is> requires (0 < sizeof...(Is))
+		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
 		XTAL_TN1 head(XTAL_DEF... oo), self<Is...>().head(XTAL_REF_(oo)...)
 		)
-		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
+		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_TN1 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		///\
@@ -223,7 +223,7 @@ struct defer
 				XTAL_0FN_(g(head<I>()...)) (common::seek_f<arity::value> {});
 		}
 		///\
-		Tuple conversion. \
+		Tuple conversion (via `apply`). \
 
 		XTAL_TN2 apple()
 		XTAL_0FX

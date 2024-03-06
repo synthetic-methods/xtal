@@ -171,7 +171,7 @@ The [`**/any.hh`](include/xtal/compound/any.hh?ts=3) provides the key dependenci
 
 As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
-NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. For example, this can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
+NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. This can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
 
 
 ## Macros

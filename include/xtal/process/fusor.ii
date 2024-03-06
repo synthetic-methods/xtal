@@ -83,7 +83,7 @@ struct fusor<W, As...>
 		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
 		{
 			using A = XTAL_TYP_(a);
-			using B = typename conflux::indent_s<A, N_ - arity_e<A>>;
+			using B = typename conflux::indent_s<A, N_ - arity_n<A>>;
 			return S_::influx(B(XTAL_REF_(a)));
 		}
 

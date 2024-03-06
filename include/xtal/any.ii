@@ -56,13 +56,13 @@ template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *
 template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
 ///< Governs access to the underlying member. \
 
-template <remember_q V>
+template <rebased_q V>
 XTAL_FN2 dismember_f(V &v, V w)
 XTAL_0EX
 {
 	_std::swap(w, v); return XTAL_MOV_(v);
 }
-template <remember_q V>
+template <rebased_q V>
 XTAL_FN2 dismember_f(V &v, XTAL_DEF... w)
 XTAL_0EX
 {

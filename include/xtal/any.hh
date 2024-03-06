@@ -44,9 +44,11 @@ using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
 
-template <auto    N > XTAL_LET_(sign_t) sign_e = (0 < N) - (N < 0);
-template <auto    N >           concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
-template <auto ...Ns>           concept sign_q = (...and sign_p<Ns>);
+template <auto     N > XTAL_LET_(sign_t) sign_n = (0 < N) - (N < 0);
+template <auto     N >           concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+template <auto  ...Ns>           concept sign_q = (...and sign_p<Ns>);
+template <auto  ...Ns>           concept some_n = (0 < sizeof...(Ns));
+template <class ...Ts>           concept some_q = (0 < sizeof...(Ts));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,8 +58,8 @@ Structural types...
 
 template <class      T >   concept complete_p = requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class   ...Ts>   concept complete_q = (...and complete_p<Ts>);
-template <class      T >    struct complete    {class type  {};};
-template <complete_q T >    struct complete<T> {using type = T;};
+template <class      T >    struct complete     {class type {};};
+template <complete_q T >    struct complete<T>  {using type = T;};
 template <class      T >     using complete_t = typename complete<T>::type;
 
 
@@ -66,7 +68,7 @@ template <auto     N >       using cardinal_t = _std::integral_constant<size_t, 
 template <auto     N >       using  ordinal_t = _std::integral_constant<int,         N>;
 template <auto     N >       using  logical_t = _std::integral_constant<bool,        N>;
 
-template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename complete_t<T>::value_type, complete_t<T>{}>>;
+template <class    T >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
 template <class    T >     concept cardinal_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
 template <class    T >     concept  ordinal_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
 template <class    T >     concept  logical_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
@@ -92,38 +94,38 @@ template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
 template <class ...Ts>     concept unbased_q  = (...and unbased_p<Ts>);
 
-template <class    T >      struct rebased             : logical_t<1> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct rebased<T        & >: logical_t<0> {using type =       T&;};
-template <unbased_p T>      struct rebased<T  const & >: logical_t<0> {using type = const T&;};
+template <class    T >      struct rebased            : logical_t<1> {using type = _std::remove_reference_t<T>;};
+template <unbased_q T>      struct rebased<T       & >: logical_t<0> {using type =       T&;};
+template <unbased_q T>      struct rebased<T const & >: logical_t<0> {using type = const T&;};
 template <class    T >       using rebased_t  = typename rebased<T>::type;
-template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
-template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
+template <class    T >     concept rebased_p  = (bool)  rebased<T> {};
+template <class ...Ts>     concept rebased_q  = (...and rebased_p<Ts>);
 
-template <class    T >      struct debased             : logical_t<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct debased<T        & >: logical_t<1> {using type =       T*;};
-template <unbased_p T>      struct debased<T  const & >: logical_t<1> {using type = const T*;};
+template <class    T >      struct debased            : logical_t<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_q T>      struct debased<T       & >: logical_t<1> {using type =       T*;};
+template <unbased_q T>      struct debased<T const & >: logical_t<1> {using type = const T*;};
 template <class    T >       using debased_t  = typename debased<T>::type;
-template <class    T >     concept debased_p  =  (bool)  debased<T> {};
-template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
+template <class    T >     concept debased_p  = (bool)  debased<T> {};
+template <class ...Ts>     concept debased_q  = (...and debased_p<Ts>);
 
 
 template <class    T >       using valued_t   = typename based_t<T>::value_type;
 template <class    T >     concept valued_p   = requires {typename valued_t<T>;};
 template <class ...Ts>     concept valued_q   = (...and valued_p<Ts>);
-template <class    T >    XTAL_LET valued_e   = based_t<T>::value;
-template <class    V >    XTAL_FN2 valued_f(V &&v) {return valued_e<V>;}
+template <class    T >    XTAL_FN2 valued_f(T &&) {return based_t<T>::value;}
 
-template <class    T >      struct devalued    {using value_type = _std::remove_all_extents_t<based_t<T>>;};
-template <valued_p T >      struct devalued<T>: based_t<T> {};
+template <class    T >      struct devalued     {using value_type = _std::remove_all_extents_t<based_t<T>>;};
+template <valued_q T >      struct devalued<T>: based_t<T> {};
 template <class    T >       using devalued_t = valued_t<devalued<T>>;
+
 
 template <class T, class U>  using devoid_t   = _std::conditional_t<not _std::is_void_v<T>, T, U>;
 
 template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
-template <class    X >    struct argument      {using type = X &&;};
-template <based_q  X >    struct argument<X>   {using type = X const &;};
+template <class    X >    struct argument       {using type = X &&;};
+template <based_q  X >    struct argument<X>    {using type = X const &;};
 template <class    X >     using argument_t   = typename argument<X>::type;
 
 
@@ -137,9 +139,6 @@ template <class  T, class ...Ts> struct identical<T, Ts...>: _std::conjunction<_
 template <class  T, class ...Ts> struct isotropic<T, Ts...>: _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
 template <class  T, class ...Ts> struct epitropic<T, Ts...>: _std::conjunction<_std::is_constructible<Ts, T>...> {};
 
-template <class  T, class ...Ts> concept of_p = (...and _std::derived_from<based_t<Ts>, based_t<T>>);
-template <class  T, class ...Ts> concept of_q = (...and _std::derived_from<based_t<T>, based_t<Ts>>);
-
 template <class ...Ts>         using shared_t = _std::common_type_t<Ts...>;
 template <class ...Ts>       concept shared_q = requires {typename shared_t<Ts...>;};
 template <class ...Ts>       concept id_q     = identical<Ts...>::value;
@@ -147,18 +146,19 @@ template <class ...Ts>       concept is_q     = isotropic<Ts...>::value;
 template <class ...Ts>       concept to_q     = epitropic<Ts...>::value;
 template <class    T >      XTAL_LET to_f     = [] XTAL_1FN_(T);
 
+template <class  T, class ...Ts> concept of_p = (...and _std::derived_from<based_t<Ts>, based_t<T>>);
+template <class  T, class ...Ts> concept of_q = (...and _std::derived_from<based_t<T>, based_t<Ts>>);
+
+template <class T, class ...Ys> concept   forcible_q = (...and (sizeof(T) == sizeof(Ys)));
+template <class T, class ...Ys> concept   fungible_q = (...and (of_p<T, Ys> or of_q<T, Ys>));
+template <class T, class ...Ys> concept unforcible_q = not forcible_q<T, Ys...>;
+template <class T, class ...Ys> concept infungible_q = not fungible_q<T, Ys...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class    M >      using member_t = debased_t<M>;
-///< Converts `unbased` references to pointers. \
-
-template <class ...Ws>  concept remember_q = (...and not debased_p<Ws>);
-///< Governs access to the underlying member. \
-
-
 ///\
-Equivalent to the soon-to-be deprecated `std::aligned_storage`. \
+Equivalent to the soon-to-be-deprecated `std::aligned_storage`. \
 
 template <class T>
 struct aligned
@@ -167,36 +167,28 @@ struct aligned
 	XTAL_LET value = sizeof(type);
 };
 template <class    T >      using aligned_t = typename aligned<T>::type;
-template <class    T >   XTAL_LET aligned_e =          aligned<T>::value;
+template <class    T >   XTAL_LET aligned_n =          aligned<T>::value;
 
 template <class    T >      using pointed_t =          XTAL_TYP_(*XTAL_VAL_(T));
 template <class    T >      using pointer_t =          XTAL_TYP_(&XTAL_VAL_(T));
 template <class ...Ts>    concept pointed_q = (... and requires {&XTAL_VAL_(Ts);});
 template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);});
 
-template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
-template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
 
-template <class T, class ...Ys> concept unforcible_q = not forcible_q<T, Ys...>;
-template <class T, class ...Ys> concept infungible_q = not fungible_q<T, Ys...>;
+template <class    T >   XTAL_LET _parity_n = sizeof(T)%aligned_n<devalued_t<T>>;
+template <class    T >   XTAL_LET  _arity_n = sizeof(T)/aligned_n<devalued_t<T>>;
+template <class    T >      using  _array_t = _std::array<devalued_t<T>, _arity_n<T>>;
+template <class    T >    concept  _arity_q = valued_q<T> and 0 == _parity_n<T>;
+template <class    T >    concept  _array_q = _arity_q<T> and of_p<_array_t<T>, T> or _std::is_array_v<T>;
 
+template <_arity_q T >   XTAL_LET   arity_n = _arity_n<T>;
+template <_arity_q T >      using   array_t = _array_t<T>;
 
-template <valued_q T >   XTAL_LET arity_e = sizeof(T)/aligned_e<devalued_t<T>>;
-template <valued_q T >      using arity_t = constant_t<arity_e<T>>;
-template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_e<T>>;
-template <class    T >    concept array_r = _std::is_array_v<T> or of_p<array_t<T>, T>;
+template <class    T , int N=-1> concept    array_q = _array_q<T> and N <  0   or arity_n<T> == N;
+template <class    T , int N=-1> concept subarray_q = _array_q<T> and 0 <= N  and arity_n<T> <= N;
 
-template <class    T , int N=-1> concept    arity_q = N <  0      or arity_e<T> == N;
-template <class    T , int N=-1> concept subarity_q = 0 <= N     and arity_e<T> <= N;
-template <class    T , int N=-1> concept    array_q = array_r<T> and    arity_q<T, N>;
-template <class    T , int N=-1> concept subarray_q = array_r<T> and subarity_q<T, N>;
-
-template <int N=-1, class ...Ts> concept    arity_p = (...and    arity_q<Ts, N>);
-template <int N=-1, class ...Ts> concept subarity_p = (...and subarity_q<Ts, N>);
 template <int N=-1, class ...Ts> concept    array_p = (...and    array_q<Ts, N>);
 template <int N=-1, class ...Ts> concept subarray_p = (...and subarray_q<Ts, N>);
-
-template <          class ...Ts> concept disarray_q = (...and not array_r<Ts>);
 
 
 

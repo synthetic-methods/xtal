@@ -83,19 +83,21 @@ struct any<A>
 		
 		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
 		template <class X, typename ...Is> struct super<X, A, Is...>: super<Y, Is...> {};
-
-		template <class X, typename ...Is>
-		using super_t = typename super<X, Is...>::type;
+		template <class X, typename ...Is> using super_t = typename super<X, Is...>::type;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
-		XTAL_TO4_(template <size_t I>
-		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
+	//	TODO: If constructing with an in`fungible_q` type that matches `any_p<A>`, \
+		extract the value to initialize `Y` directly, \
+		before passing it on to `Y`'s parent. \
+
+		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)		
-		XTAL_TO4_(template <size_t I>
-		XTAL_TN2 head(XTAL_DEF... oo), head<cardinal_t<I>>(XTAL_REF_(oo)...)
+		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TN2 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)		
 
 		XTAL_TO4_(template <typename ...Is>
