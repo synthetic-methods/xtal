@@ -1,25 +1,25 @@
 #pragma once
 #include "./any.cc"
-#include "./cue.ii"// testing...
+#include "./mark.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::conduct::__test
+namespace xtal::compound::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("cue")
+TAG_("mark")
 {
 	TRY_("construct")
 	{
-		using source_t = conduct::conferred_t<counted_t<>>;
-		using target_t = cue_s<source_t>;
-		using target_u = cue_s<>;
+		using source_t = compound::conferred_t<counted_t<>>;
+		using target_t = mark_s<source_t>;
+		using target_u = mark_s<>;
 
 		target_u t0(99);
 		target_t t1(99, source_t(counted_t<>(11, 22)));
@@ -30,6 +30,23 @@ TAG_("cue")
 
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_t>);
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).core()), source_t>);
+
+	}
+	auto constexpr maybe = [] (mark_s<> g)
+	XTAL_0FN {
+		if (g) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	};
+	
+	TRY_("condition")
+	{
+		  TRUE_(maybe(mark_s<>(1)));
+		UNTRUE_(maybe(mark_s<>(0)));
+		UNTRUE_(maybe(mark_s<>( )));
 
 	}
 }

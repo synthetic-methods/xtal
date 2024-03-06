@@ -102,14 +102,14 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(conduct::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(compound::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	gated <<= std::make_tuple(conduct::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
+	gated <<= std::make_tuple(compound::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
@@ -165,9 +165,9 @@ The directories in the project are organised by namespace with the leaves repres
 
 The [`**/all.ii`](include/xtal/all.ii?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ii` and specializations like `monomer`, etc.
 
-The [`**/any.ii`](include/xtal/concord/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.ii`](include/xtal/compound/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`compound/_kernel.hxx`](include/xtal/compound/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
-The [`**/any.hh`](include/xtal/concord/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
+The [`**/any.hh`](include/xtal/compound/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
 As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
@@ -228,14 +228,13 @@ The type-functions [`compose` and `compose_s`](include/xtal/common/compose.ii?ts
 
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace concord   {}
-	namespace conduct   {namespace _retail = concord;}
-	namespace conflux   {namespace _retail = concord;}
+	namespace compound   {}
+	namespace conflux   {namespace _retail = compound;}
 	namespace message   {namespace _retail = conflux;}
 	namespace process   {namespace _retail = conflux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`concord/_kernel.hxx`](include/xtal/concord/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`compound/_kernel.hxx`](include/xtal/compound/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 

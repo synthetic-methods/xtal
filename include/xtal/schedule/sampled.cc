@@ -25,7 +25,7 @@ TAG_("sampled", "process")
 
 		using sampled_u = sampled_t<respool<N_spool>>;
 		using scope_u = message::scope_t<>;
-		using cue_t = conduct::cue_s<>;
+		using cue_t = compound::cue_s<>;
 		
 		using gate_t = message::label_t<typename common::computer::alpha_t, struct __gate__>;
 		using gate_y = process::confined_t<typename sampled_u::template inqueue<gate_t>>;
@@ -78,7 +78,7 @@ void sampled_processor()
 	size_t constexpr N_spool = (1<<7);
 	
 	using sampled_u = sampled_t<respool<N_spool>>;
-	using cue_t = conduct::cue_s<>;
+	using cue_t = compound::cue_s<>;
 
 	using resize_u = message::resize_t<>;
 	using scope_u  = message::scope_t<>;

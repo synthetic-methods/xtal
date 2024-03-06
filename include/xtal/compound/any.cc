@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::concord::__test
+namespace xtal::compound::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ template <typename ...As>
 using bar_baz_t = typename bar_baz<As...>::type;
 
 
-TAG_("concord", "matching")
+TAG_("compound", "matching")
 {
 	TRY_("any")
 	{
@@ -71,7 +71,7 @@ TAG_("concord", "matching")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("concord", "traversal")
+TAG_("compound", "traversal")
 {
 	using qux = confined<void
 	,	infer<struct foo, int>
@@ -134,7 +134,7 @@ TAG_("concord", "traversal")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("concord", "conversion")
+TAG_("compound", "conversion")
 {
 	TRY_("tuple")
 	{

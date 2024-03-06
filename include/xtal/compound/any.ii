@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::concord
+namespace xtal::compound
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -305,16 +305,16 @@ template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self(
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::concord::any_q T>
+template <xtal::compound::any_q T>
 struct tuple_size<T>: xtal::cardinal_t<T::arity::value> {};
 
-template <size_t N, xtal::concord::any_q T>
+template <size_t N, xtal::compound::any_q T>
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
 
-template <size_t N, xtal::concord::any_q T> XTAL_TN1 get(T const &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::concord::any_q T> XTAL_TN1 get(T       &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::concord::any_q T> XTAL_TN1 get(T const  &t) {return t.template head<N>();};
-template <size_t N, xtal::concord::any_q T> XTAL_TN1 get(T        &t) {return t.template head<N>();};
+template <size_t N, xtal::compound::any_q T> XTAL_TN1 get(T const &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::compound::any_q T> XTAL_TN1 get(T       &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::compound::any_q T> XTAL_TN1 get(T const  &t) {return t.template head<N>();};
+template <size_t N, xtal::compound::any_q T> XTAL_TN1 get(T        &t) {return t.template head<N>();};
 
 
 }//////////////////////////////////////////////////////////////////////////

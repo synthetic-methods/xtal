@@ -46,7 +46,7 @@ struct indent<Ns...>
 		{
 			using subkind = defer<L_>;
 
-			template <concord::any_q R> requires (0 == sizeof...(Ns))
+			template <compound::any_q R> requires (0 == sizeof...(Ns))
 			class subtype: public common::compose_s<R, subkind>
 			{
 				using R_ = common::compose_s<R, subkind>;

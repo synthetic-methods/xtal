@@ -16,7 +16,7 @@ namespace xtal::common::fluid::__test
 template <int N>
 void spool__operation()
 {
-	using event_u = common::compose_s<onset_t, concord::conferred<int>>;
+	using event_u = common::compose_s<onset_t, compound::conferred<int>>;
 	using queue_u = fluid::spool_t<event_u[N]>;
 	queue_u q {(event_u) _std::numeric_limits<int>::max()};
 

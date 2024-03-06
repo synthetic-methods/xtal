@@ -21,7 +21,7 @@ void polymer_provision_spine__locamotion()
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::key_s<stage_u>;
+	using event_u = compound::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -72,14 +72,14 @@ TAG_("polymer", "message", "spine")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_window=8, int N_store=0, int N_spool=0>
-void polymer_provision_spool__compound()
+void polymer_provision_spool__combined()
 {
 	using alpha_t = typename common::computer::alpha_t;
 	using sigma_t = typename common::computer::sigma_t;
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::key_s<stage_u>;
+	using event_u = compound::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -124,7 +124,7 @@ void polymer_provision_spool__composited()
 	using delta_t = typename common::computer::delta_t;
 
 	using stage_u = message::stage_t<>;
-	using event_u = conduct::key_s<stage_u>;
+	using event_u = compound::key_s<stage_u>;
 	using empty_u = message::confined_t<>;
 
 	using resize_u = message::resize_t<>;
@@ -143,10 +143,10 @@ void polymer_provision_spool__composited()
 
 // Set the default `stage: final`:
 	o_vox <<= stage_u(-1);
-	o_vox <<= conduct::key_s<>(62) << stage_u(0) << level_t(1); TRUE_(1 == o_vox.ensemble().size());
-	o_vox <<= conduct::key_s<>(65) << stage_u(0) << level_t(2); TRUE_(2 == o_vox.ensemble().size());
-	o_vox <<= conduct::key_s<>(69) << stage_u(0) << level_t(3); TRUE_(3 == o_vox.ensemble().size());
-	o_vox <<= conduct::key_s<>(65) << stage_u(0) << level_t(4); TRUE_(4 == o_vox.ensemble().size());
+	o_vox <<= compound::key_s<>(62) << stage_u(0) << level_t(1); TRUE_(1 == o_vox.ensemble().size());
+	o_vox <<= compound::key_s<>(65) << stage_u(0) << level_t(2); TRUE_(2 == o_vox.ensemble().size());
+	o_vox <<= compound::key_s<>(69) << stage_u(0) << level_t(3); TRUE_(3 == o_vox.ensemble().size());
+	o_vox <<= compound::key_s<>(65) << stage_u(0) << level_t(4); TRUE_(4 == o_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	o_vox <<= resize_u(N_window);
@@ -163,12 +163,12 @@ void polymer_provision_spool__composited()
 }
 TAG_("polymer", "message", "ensemble")
 {
-	TRY_("with compound events")
+	TRY_("with combined events")
 	{
-		polymer_provision_spool__compound<8, -1, -1>();
-		polymer_provision_spool__compound<8, -1, 64>();
-		polymer_provision_spool__compound<8, 64, -1>();
-		polymer_provision_spool__compound<8, 64, 64>();
+		polymer_provision_spool__combined<8, -1, -1>();
+		polymer_provision_spool__combined<8, -1, 64>();
+		polymer_provision_spool__combined<8, 64, -1>();
+		polymer_provision_spool__combined<8, 64, 64>();
 
 	}
 	TRY_("with composited events")

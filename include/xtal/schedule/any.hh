@@ -1,5 +1,5 @@
 #pragma once
-#include "../concord/any.ii"// `_retail`
+#include "../compound/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::concord;
+namespace _retail = xtal::compound;
 #include "./_detail.hxx"
 
 

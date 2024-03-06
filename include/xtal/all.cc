@@ -1,7 +1,7 @@
 #pragma once
 #include "./common/all.cc"
-#include "./concord/all.cc"
-#include "./conduct/all.cc"
+#include "./compound/all.cc"
+#include "./compound/all.cc"
 #include "./conflux/all.cc"
 #include "./message/all.cc"
 #include "./precess/all.cc"

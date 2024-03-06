@@ -24,8 +24,8 @@ struct revise<U>
 	using store_u =    based_t<U>;
 	using serve_u = deranged_t<U>;
 	using subkind = common::compose<void
-	,	concord::defer<serve_u>
-	,	concord::defer<store_u>
+	,	compound::defer<serve_u>
+	,	compound::defer<store_u>
 	>;
 
 	template <class S>

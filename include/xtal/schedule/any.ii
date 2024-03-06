@@ -46,8 +46,8 @@ struct define
 			protected:
 				using tuple_t = _std::tuple<Xs...>;
 				using tuple_u = message::packet_t<Xs...>;
-				using event_u = conduct::cue_s<tuple_u>;
-				using delay_u = typename conduct::cue_s<>::head_t;
+				using event_u = compound::cue_s<tuple_u>;
+				using delay_u = typename compound::cue_s<>::head_t;
 
 			public:
 				using R_::R_;
@@ -72,7 +72,7 @@ struct define
 				///\
 				Invokes `ingest(event_u)` with the given argument. \
 
-				XTAL_TLX influx(XTAL_DEF_(conduct::cue_q) dot)
+				XTAL_TLX influx(XTAL_DEF_(compound::cue_q) dot)
 				XTAL_0EX
 				{
 					(void) self().ingest(XTAL_REF_(dot));
@@ -98,7 +98,7 @@ struct define
 					return influx(d_t, tuple_u(us...));
 				}
 
-				XTAL_TLX influx(conduct::cue_s<> d_t, XTAL_DEF ...oo)
+				XTAL_TLX influx(compound::cue_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return influx(d_t.head(), XTAL_REF_(oo)...);

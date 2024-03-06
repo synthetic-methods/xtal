@@ -47,7 +47,7 @@ struct monomer<U, As...>
 		{
 			using rebound = F_<Xs...>;
 			using subkind = common::compose<common::tag<monomer>
-			,	concord::confer<typename rebound::result_t>
+			,	compound::confer<typename rebound::result_t>
 		//	,	As...
 		//	,	resize_u::attach<>
 			,	scope_u::attach<>
@@ -99,7 +99,7 @@ struct monomer<U, As...>
 			XTAL_LET_(int) N_share = common::seek_truth_e<_detail::recollection_p<Xs, serve_u>...>;
 
 			using subkind = common::compose<common::tag<monomer>
-			,	concord::refer<serve_u>
+			,	compound::refer<serve_u>
 			,	message::revise<store_u>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	resize_u::attach<>

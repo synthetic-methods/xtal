@@ -44,14 +44,14 @@ void spliced_processor_x1()
 	xhs <<= resize_u(4);
 	TRUE_(0 == xhs.size());//NOTE: Only changes after `scope`.
 
-	xhs <<= conduct::cue_s<event_u>(0, (onset_t) (alpha_u) 100);
-	xhs <<= conduct::cue_s<event_u>(1, (onset_t) (alpha_u) 200);
-	xhs <<= conduct::cue_s<event_u>(2, (onset_t) (alpha_u) 300);
+	xhs <<= compound::cue_s<event_u>(0, (onset_t) (alpha_u) 100);
+	xhs <<= compound::cue_s<event_u>(1, (onset_t) (alpha_u) 200);
+	xhs <<= compound::cue_s<event_u>(2, (onset_t) (alpha_u) 300);
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= conduct::cue_s<event_u>(2, (alpha_u) 400);// relative timing!
+	xhs <<= compound::cue_s<event_u>(2, (alpha_u) 400);// relative timing!
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));

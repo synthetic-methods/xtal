@@ -116,7 +116,7 @@ struct define
 			using return_t = iteratee_t<result_t>;
 			
 			using subkind = common::compose<void
-			,	concord::defer<typename signature::type>
+			,	compound::defer<typename signature::type>
 			,	defer<T>
 			>;
 
