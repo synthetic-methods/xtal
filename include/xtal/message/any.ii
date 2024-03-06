@@ -121,12 +121,12 @@ struct define
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_TN2 reify(nominal_q auto const ...ks),
+				XTAL_TN2 reify(constant_q auto const ...ks),
 					_std::bind_front(deify<Xs...>(ks...), &self())
 				)
 
 				template <class ...Xs>
-				XTAL_TN2 deify(nominal_q auto const ...ks)
+				XTAL_TN2 deify(constant_q auto const ...ks)
 				XTAL_0FX
 				{
 					return deify_(being<Xs...>::template m_method<valued_f(ks)...>);

@@ -184,11 +184,11 @@ public:
 	static_assert(designed_f((delta_t)  0) == (0));
 	static_assert(designed_f((delta_t) -2) == (2));
 
+	template <constant_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
+	template <constant_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
+	
 	template <unsigned_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
 	template <  signed_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
-	
-	template <nominal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
-	template <nominal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
 	
 	template <  signed_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (unsigned_t<I>) designed_f(i);}
 	template <unsigned_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (signed_t<I>) (i);}

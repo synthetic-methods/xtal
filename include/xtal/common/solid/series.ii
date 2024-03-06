@@ -49,7 +49,7 @@ struct series<U[N]>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(nominal_q auto const o_shift)
+		XTAL_CXN homotype(constant_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}

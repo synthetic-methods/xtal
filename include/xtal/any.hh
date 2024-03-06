@@ -60,24 +60,33 @@ template <complete_q T >    struct complete<T> {using type = T;};
 template <class      T >     using complete_t = typename complete<T>::type;
 
 
-template <class    T >     concept  nominal_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename complete_t<T>::value_type, complete_t<T>{}>>;
-template <class    T >     concept  ordinal_p = nominal_p<T> and _std::   is_signed_v<typename T::value_type>;
-template <class    T >     concept cardinal_p = nominal_p<T> and _std:: is_unsigned_v<typename T::value_type>;
-template <class    T >     concept    binal_p = nominal_p<T> and _std::convertible_to<typename T::value_type, bool>;
-
-template <class ...Ts>     concept  nominal_q = (...and  nominal_p<Ts>);
-template <class ...Ts>     concept  ordinal_q = (...and  ordinal_p<Ts>);
-template <class ...Ts>     concept cardinal_q = (...and cardinal_p<Ts>);
-template <class ...Ts>     concept    binal_q = (...and    binal_p<Ts>);
-
-template <auto     N >       using  nominal_t = _std::integral_constant<decltype(N), N>;
-template <auto     N >       using  ordinal_t = _std::integral_constant<int,         N>;
+template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
 template <auto     N >       using cardinal_t = _std::integral_constant<size_t,      N>;
-template <auto     N >       using    binal_t = _std::integral_constant<bool,        N>;
+template <auto     N >       using  ordinal_t = _std::integral_constant<int,         N>;
+template <auto     N >       using  digital_t = _std::integral_constant<byte_t,      N>;
+template <auto     N >       using  logical_t = _std::integral_constant<bool,        N>;
 
-template <class    T >    using subcardinal_s = cardinal_t<T{} - 1>;
-template <class    T >  concept subcardinal_p = cardinal_p<T> and 0 != T::value;
-template <class ...Ts>  concept subcardinal_q = (...and subcardinal_p<Ts>);
+template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename complete_t<T>::value_type, complete_t<T>{}>>;
+template <class    T >     concept cardinal_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
+template <class    T >     concept  ordinal_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
+template <class    T >     concept  digital_p = constant_p<T> and _std::convertible_to<typename T::value_type, byte_t>;
+template <class    T >     concept  logical_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
+
+template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
+template <class ...Ts>     concept cardinal_q = (...and cardinal_p<Ts>);
+template <class ...Ts>     concept  ordinal_q = (...and  ordinal_p<Ts>);
+template <class ...Ts>     concept  digital_q = (...and  digital_p<Ts>);
+template <class ...Ts>     concept  logical_q = (...and  logical_p<Ts>);
+
+template <class    T > concept  subcardinal_p = cardinal_p<T> and 0 < T::value;
+template <class    T > concept semicardinal_p = cardinal_p<T> and 0 < T::value;
+
+template <class ...Ts> concept  subcardinal_q = (...and subcardinal_p<Ts>);
+template <class ...Ts> concept semicardinal_q = (...and subcardinal_p<Ts>);
+
+template < subcardinal_p T >  using subcardinal_s = cardinal_t<(T{}  - 1)>;
+template <semicardinal_p T > using semicardinal_s = cardinal_t<(T{} >> 1)>;
+
 
 
 template <class    T >       using   based_t  = _std::remove_cvref_t<complete_t<T>>;
@@ -86,16 +95,16 @@ template <class    T >     concept unbased_p  =     not   based_p<T>;
 template <class ...Ts>     concept   based_q  = (...and   based_p<Ts>);
 template <class ...Ts>     concept unbased_q  = (...and unbased_p<Ts>);
 
-template <class    T >      struct rebased             : binal_t<1> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct rebased<T        & >: binal_t<0> {using type =       T&;};
-template <unbased_p T>      struct rebased<T  const & >: binal_t<0> {using type = const T&;};
+template <class    T >      struct rebased             : logical_t<1> {using type = _std::remove_reference_t<T>;};
+template <unbased_p T>      struct rebased<T        & >: logical_t<0> {using type =       T&;};
+template <unbased_p T>      struct rebased<T  const & >: logical_t<0> {using type = const T&;};
 template <class    T >       using rebased_t  = typename rebased<T>::type;
 template <class    T >     concept rebased_p  =  (bool)  rebased<T> {};
 template <class ...Ts>     concept rebased_q  =  (...and rebased_p<Ts>);
 
-template <class    T >      struct debased             : binal_t<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_p T>      struct debased<T        & >: binal_t<1> {using type =       T*;};
-template <unbased_p T>      struct debased<T  const & >: binal_t<1> {using type = const T*;};
+template <class    T >      struct debased             : logical_t<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_p T>      struct debased<T        & >: logical_t<1> {using type =       T*;};
+template <unbased_p T>      struct debased<T  const & >: logical_t<1> {using type = const T*;};
 template <class    T >       using debased_t  = typename debased<T>::type;
 template <class    T >     concept debased_p  =  (bool)  debased<T> {};
 template <class ...Ts>     concept debased_q  =  (...and debased_p<Ts>);
@@ -113,7 +122,7 @@ template <class    T >       using devalued_t = valued_t<devalued<T>>;
 
 template <class T, class U>  using devoid_t   = _std::conditional_t<not _std::is_void_v<T>, T, U>;
 
-template <class    T >     concept vacant_p   = not complete_p<T> or nominal_p<T>;//0 == sizeof(T);
+template <class    T >     concept vacant_p   = not complete_p<T> or constant_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
 template <class    X >    struct argument      {using type = X &&;};
@@ -173,7 +182,7 @@ template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_
 
 
 template <valued_q T >   XTAL_LET arity_e = sizeof(T)/aligned_e<devalued_t<T>>;
-template <valued_q T >      using arity_t = nominal_t<arity_e<T>>;
+template <valued_q T >      using arity_t = constant_t<arity_e<T>>;
 template <valued_q T >      using array_t = _std::array<valued_t<T>, arity_e<T>>;
 template <class    T >    concept array_r = _std::is_array_v<T> or of_p<array_t<T>, T>;
 
@@ -227,7 +236,7 @@ concept quality_p = equality_p<T> and inequality_p<T>;
 
 
 template <class T, size_t N_arity=0>
-concept binal_logic_p = requires (T t, T u)
+concept boolean_logic_p = requires (T t, T u)
 {
 	requires N_arity == 2 or requires
 	{
@@ -345,7 +354,7 @@ template <class ...Ts> concept      algebraic_field_q = (...and      algebraic_f
 template <class ...Ts> concept        complex_field_q = (...and        complex_field_p<based_t<Ts>>);
 template <class ...Ts> concept           real_field_q = (...and           real_field_p<based_t<Ts>>);
 
-template <class ...Ts> concept        binal_logic_q = (...and        binal_logic_p<based_t<Ts>>);
+template <class ...Ts> concept        boolean_logic_q = (...and        boolean_logic_p<based_t<Ts>>);
 template <class ...Ts> concept         binary_logic_q = (...and         binary_logic_p<based_t<Ts>>);
 
 template <class ...Ts> concept           inequality_q = (...and           inequality_p<based_t<Ts>>);
@@ -402,19 +411,19 @@ template <class    T >       using iterated_t = typename iterated<T>::type;
 template <class    T >       using iterator_t = typename iterator<T>::type;//_v3::ranges::iterator_t
 template <class    T >       using iteratee_t = typename iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
 
-template <iterated_p T>     struct iterated<T>: binal_t<1> {using type =               based_t<T> ;};
-template <iterator_p T>     struct iterated<T>: binal_t<0> {using type =                     void ;};
-template <integral_p T>     struct iterated<T>: binal_t<0> {using type =            interval_t<T> ;};
+template <iterated_p T>     struct iterated<T>: logical_t<1> {using type =               based_t<T> ;};
+template <iterator_p T>     struct iterated<T>: logical_t<0> {using type =                     void ;};
+template <integral_p T>     struct iterated<T>: logical_t<0> {using type =            interval_t<T> ;};
 
-template <iterable_p T>     struct iterator<T>: binal_t<0> {using type =               begin_t<T> ;};
-template <iterated_p T>     struct iterator<T>: binal_t<0> {using type =               begin_t<T> ;};
-template <iterator_p T>     struct iterator<T>: binal_t<1> {using type =               based_t<T> ;};
-template <integral_p T>     struct iterator<T>: binal_t<0> {using type = iterator_t<interval_t<T>>;};
+template <iterable_p T>     struct iterator<T>: logical_t<0> {using type =               begin_t<T> ;};
+template <iterated_p T>     struct iterator<T>: logical_t<0> {using type =               begin_t<T> ;};
+template <iterator_p T>     struct iterator<T>: logical_t<1> {using type =               based_t<T> ;};
+template <integral_p T>     struct iterator<T>: logical_t<0> {using type = iterator_t<interval_t<T>>;};
 
-template <iterable_p T>     struct iteratee<T>: binal_t<0> {using type =     pointed_t<begin_t<T>>;};
-template <iterated_p T>     struct iteratee<T>: binal_t<0> {using type =     pointed_t<begin_t<T>>;};
-template <iterator_p T>     struct iteratee<T>: binal_t<0> {using type =             pointed_t<T> ;};
-template <integral_p T>     struct iteratee<T>: binal_t<1> {using type =               based_t<T> ;};
+template <iterable_p T>     struct iteratee<T>: logical_t<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterated_p T>     struct iteratee<T>: logical_t<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterator_p T>     struct iteratee<T>: logical_t<0> {using type =             pointed_t<T> ;};
+template <integral_p T>     struct iteratee<T>: logical_t<1> {using type =               based_t<T> ;};
 
 
 template <class    T >       using sentinel_t = based_t<_v3::ranges::sentinel_t<T>>;
@@ -431,11 +440,11 @@ template <class ...Ts>     concept counter_q  = (...and counter_p<Ts>);
 template <class    T >      struct counted;
 template <class    T >      struct counter;
 
-template <counted_p T>      struct counted<T> : binal_t<1> {using type =    based_t<T>;};
-template <counter_p T>      struct counted<T> : binal_t<0> {using type = iterated_t<T>;};
+template <counted_p T>      struct counted<T> : logical_t<1> {using type =    based_t<T>;};
+template <counter_p T>      struct counted<T> : logical_t<0> {using type = iterated_t<T>;};
 
-template <counted_p T>      struct counter<T> : binal_t<0> {using type = iteratee_t<T>;};
-template <counter_p T>      struct counter<T> : binal_t<1> {using type =    based_t<T>;};
+template <counted_p T>      struct counter<T> : logical_t<0> {using type = iteratee_t<T>;};
+template <counter_p T>      struct counter<T> : logical_t<1> {using type =    based_t<T>;};
 
 template <class T=size_s>    using counted_t  = typename counted<T>::type;
 template <class T=size_s>    using counter_t  = typename counter<T>::type;

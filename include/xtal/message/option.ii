@@ -135,14 +135,14 @@ struct option
 		
 	};
 	template <class S>
-	using is = binal_t<common::tab_q<S, option>>;
+	using is = logical_t<common::tab_q<S, option>>;
 
 };
 template <>
 struct option<>
 {
 	template <class S>
-	using is = binal_t<common::tag_q<S, option>>;
+	using is = logical_t<common::tag_q<S, option>>;
 
 };
 template <class T, typename ...As>
