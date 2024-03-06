@@ -2,9 +2,9 @@ name: Conan Create
 
 on:
   push:
-    branches: [main]
+    branches: [main, refactor/main]
   pull_request:
-    branches: [main]
+    branches: [main, refactor/main]
 
 jobs:
   create:

@@ -9,3 +9,4 @@
 #include "./seek.cc"
 #include "./tab.cc"
 #include "./tag.cc"
+#include "./wield.cc"

@@ -44,8 +44,9 @@ using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
 
-template <auto N> XTAL_LET sign_e = (0 < N) - (N < 0);
-template <auto N>  concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+template <auto    N > XTAL_LET_(sign_t) sign_e = (0 < N) - (N < 0);
+template <auto    N >           concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+template <auto ...Ns>           concept sign_q = (...and sign_p<Ns>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,19 +64,16 @@ template <class      T >     using complete_t = typename complete<T>::type;
 template <auto     N >       using constant_t = _std::integral_constant<decltype(N), N>;
 template <auto     N >       using cardinal_t = _std::integral_constant<size_t,      N>;
 template <auto     N >       using  ordinal_t = _std::integral_constant<int,         N>;
-template <auto     N >       using  digital_t = _std::integral_constant<byte_t,      N>;
 template <auto     N >       using  logical_t = _std::integral_constant<bool,        N>;
 
 template <class    T >     concept constant_p = _std::derived_from<complete_t<T>, _std::integral_constant<typename complete_t<T>::value_type, complete_t<T>{}>>;
 template <class    T >     concept cardinal_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
 template <class    T >     concept  ordinal_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
-template <class    T >     concept  digital_p = constant_p<T> and _std::convertible_to<typename T::value_type, byte_t>;
 template <class    T >     concept  logical_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
 
 template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
 template <class ...Ts>     concept cardinal_q = (...and cardinal_p<Ts>);
 template <class ...Ts>     concept  ordinal_q = (...and  ordinal_p<Ts>);
-template <class ...Ts>     concept  digital_q = (...and  digital_p<Ts>);
 template <class ...Ts>     concept  logical_q = (...and  logical_p<Ts>);
 
 template <class    T > concept  subcardinal_p = cardinal_p<T> and 0 < T::value;
@@ -84,9 +82,8 @@ template <class    T > concept semicardinal_p = cardinal_p<T> and 0 < T::value;
 template <class ...Ts> concept  subcardinal_q = (...and subcardinal_p<Ts>);
 template <class ...Ts> concept semicardinal_q = (...and subcardinal_p<Ts>);
 
-template < subcardinal_p T >  using subcardinal_s = cardinal_t<(T{}  - 1)>;
+template < subcardinal_p T > using  subcardinal_s = cardinal_t<(T{}  - 1)>;
 template <semicardinal_p T > using semicardinal_s = cardinal_t<(T{} >> 1)>;
-
 
 
 template <class    T >       using   based_t  = _std::remove_cvref_t<complete_t<T>>;
@@ -122,7 +119,7 @@ template <class    T >       using devalued_t = valued_t<devalued<T>>;
 
 template <class T, class U>  using devoid_t   = _std::conditional_t<not _std::is_void_v<T>, T, U>;
 
-template <class    T >     concept vacant_p   = not complete_p<T> or constant_p<T>;//0 == sizeof(T);
+template <class    T >     concept vacant_p   = constant_p<T> or not complete_p<T>;//0 == sizeof(T);
 template <class ...Ts>     concept vacant_q   = (...and vacant_p<Ts>);
 
 template <class    X >    struct argument      {using type = X &&;};
@@ -179,6 +176,9 @@ template <class ...Ts>    concept pointer_q = (... and requires {*XTAL_VAL_(Ts);
 
 template <class T, class ...Ys> concept forcible_q = (...and (sizeof(T) == sizeof(Ys)));
 template <class T, class ...Ys> concept fungible_q = (...and (of_p<T, Ys> or of_p<Ys, T>));
+
+template <class T, class ...Ys> concept unforcible_q = not forcible_q<T, Ys...>;
+template <class T, class ...Ys> concept infungible_q = not fungible_q<T, Ys...>;
 
 
 template <valued_q T >   XTAL_LET arity_e = sizeof(T)/aligned_e<devalued_t<T>>;

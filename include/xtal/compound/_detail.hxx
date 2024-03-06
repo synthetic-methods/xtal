@@ -46,7 +46,7 @@ struct refine_head
 		template <int N_polarity=0>
 		XTAL_FN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ algebraic_field_q<U_> and equality_q<U_> and sign_p<N_polarity>
+		XTAL_REQ algebraic_field_q<U_> and equality_q<U_> and sign_q<N_polarity>
 		{
 			using L = _std::numeric_limits<U_>;
 			if constexpr (N_polarity == +1) return T_(L::max(), XTAL_REF_(oo)...);
@@ -68,6 +68,156 @@ struct refine_tuple
 		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).apple());
 
 		XTAL_DO4_(XTAL_OP0_(implicit) tuple_type(), {return apple();})
+		
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+template <class U>
+struct defer_member
+{
+	template <any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using S_ = common::compose_s<S>;
+		using V  = debased_t<U>;
+
+	public:
+	//	using S_::S_;
+		using S_::self;
+		using head_t = U;
+		using body_t = V; V body_m;
+
+	//	XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		///\
+		Constructs `this` using the default value. \
+
+		XTAL_CON subtype()
+		XTAL_0EX
+		:	subtype(body_t{})
+		{}
+		XTAL_CON subtype(bracket_t<devalued_t<U>> w)
+		XTAL_REQ array_q<U> and remember_q<U>
+		:	body_m(w)
+		{}
+		///\
+		Constructs `this` using the first argument, forwarding the rest to super. \
+
+		template <class W> requires infungible_q<W, subtype>
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		,	body_m(member_f<U>(XTAL_REF_(w)))
+		{}
+
+		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+
+		XTAL_TN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(body_m));}
+		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(body_m));}
+		
+		XTAL_TN1 head(XTAL_DEF... oo)
+		XTAL_0EX
+		XTAL_REQ remember_q<U> and (0 < sizeof...(oo))
+		{
+			return dismember_f(body_m, XTAL_REF_(oo)...);
+		}
+
+	};
+};
+template <common::wield_q U>
+struct defer_member<U>
+{
+	template <any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using S_ = common::compose_s<S>;
+		using V  = typename U::word_type;
+
+	public:
+	//	using S_::S_;
+		using S_::self;
+		using head_t = V;
+		using body_t = V; V body_m: U::word_size;
+
+	//	XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		///\
+		Constructs `this` using the default value. \
+
+		XTAL_CON subtype()
+		XTAL_0EX
+		:	subtype(body_t{})
+		{}
+		///\
+		Constructs `this` using the first argument, forwarding the rest to super. \
+
+		template <class W> requires infungible_q<W, subtype>
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		,	body_m(member_f<V>(XTAL_REF_(w)))
+		{}
+
+		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+
+		XTAL_TN2 head() XTAL_0FX {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return remember_f(body_m);}
+		
+		XTAL_TN1 head(XTAL_DEF... oo)
+		XTAL_0EX
+		XTAL_REQ remember_q<V> and (0 < sizeof...(oo))
+		{
+			return dismember_f(body_m, XTAL_REF_(oo)...);
+		}
+
+	};
+};
+template <constant_q U>
+struct defer_member<U>
+{
+	template <any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using S_ = common::compose_s<S>;
+		using V  = debased_t<U>;
+
+	public:
+	//	using S_::S_;
+		using S_::self;
+		using head_t = U;
+		using body_t = V; V body_m;
+
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		///\
+		Constructs `this` using the default value. \
+
+		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		{}
+		///\
+		Constructs `this` using the first argument, forwarding the rest to super. \
+
+		template <class W> requires is_q<U, W>
+		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		{}
+
+		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+
+		XTAL_TN2 head() XTAL_0FX {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return remember_f(body_m);}
 		
 	};
 };

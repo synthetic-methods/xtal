@@ -158,13 +158,13 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-	template <int N_side=0> requires sign_p<N_side>
+	template <int N_side=0> requires sign_q<N_side>
 	XTAL_FN2 clamped_f(_std::integral auto i)
 	XTAL_0EX
 	{
 		return N_side == 0? i: N_side*designed_f<N_side>(i);
 	}
-	template <int N_side=0> requires sign_p<N_side>
+	template <int N_side=0> requires sign_q<N_side>
 	XTAL_FN2 designed_f(delta_t i)
 	XTAL_0EX
 	{
@@ -402,7 +402,7 @@ public:
 	using couple_t = typename common::solid::scalar<Z[2]>::type;
 
 
-	template <auto M_pow=1> requires sign_p<M_pow>
+	template <auto M_pow=1> requires sign_q<M_pow>
 	XTAL_FN2 made_f(XTAL_DEF u)
 	XTAL_0EX
 	{
@@ -419,7 +419,7 @@ public:
 	}
 
 
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FN2_(alpha_t) dot_f(aphex_t const &u)
 	XTAL_0EX
 	{
@@ -428,20 +428,20 @@ public:
 		return made_f<M_pow>(xx + yy);
 	}
 
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FN2_(aphex_t) circle_f(auto const &u)
 	XTAL_0EX
 	{
 		return {_std::cos(u), _std::sin(u)*M_pow};
 	}
 
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FN2 square_f(auto w)
 	XTAL_0EX
 	{
 		return made_f<M_pow>(w*w);
 	}
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1> requires sign_q<M_pow>
 	XTAL_FN2_(aphex_t) square_f(aphex_t const &u)
 	XTAL_0EX
 	{
@@ -450,7 +450,7 @@ public:
 		return made_f<M_pow>(aphex_t(xx - yy, x*y*2));
 	}
 	
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
 	XTAL_FN2 unsquare_f(alpha_t const &w)
 	XTAL_0EX
 	{
@@ -483,7 +483,7 @@ public:
 			return n*w;
 		}
 	}
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
 	XTAL_FN2 unsquare_f(_std::integral auto const &w)
 	XTAL_0EX
 	{
@@ -492,7 +492,7 @@ public:
 	static_assert(unsquare_f< 1>(2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
 	static_assert(unsquare_f<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
 
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_q<M_pow>
 	XTAL_FN2 unsquare_dot_f(XTAL_DEF u)
 	XTAL_0EX
 	{
