@@ -28,7 +28,7 @@ TAG_("cue")
 		TRUE_(99 == t1.template head<0>());
 		TRUE_(equal_f(counted_t<>(11, 22), t1.core()));
 
-		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_t>);
+		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).head()), typename target_u::head_u>);
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(target_t).core()), source_t>);
 
 	}

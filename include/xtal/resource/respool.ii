@@ -28,10 +28,10 @@ struct respool
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 		
 	public:
-		using S_::S_;
+		using _S::_S;
 		
 		template <class U>
 		using spool_t = common::fluid::spool_t<U[(unsigned) N]>;

@@ -22,10 +22,10 @@ template <array_q W=size_t[2], typename ...As> XTAL_USE phasor_t = confined_t<ph
 template <array_q W, typename ...As>
 struct phasor<W, As...>
 {
-	XTAL_LET N_ = _std::       extent_v<W>;
-	XTAL_USE U_ = _std::remove_extent_t<W>;
+	XTAL_LET _N = _std::       extent_v<W>;
+	XTAL_USE _U = _std::remove_extent_t<W>;
 	
-	using phase_w = precess::phase_t<U_>[N_];
+	using phase_w = precess::phase_t<_U>[_N];
 	using subkind = common::compose<common::tag<phasor>, As..., fusor<phase_w>>;
 
 	template <class S>

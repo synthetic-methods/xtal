@@ -22,10 +22,10 @@ struct define
 	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 		XTAL_CON subtype(size_t u)
 		XTAL_0EX
@@ -51,12 +51,12 @@ struct define
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R>
 			{
-				using R_ = common::compose_s<R>;
+				using _R = common::compose_s<R>;
 			
 			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
+				using _R::_R;
+				using _R::self;
+				using _R::influx;
 
 				XTAL_TLX influx(compound::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
@@ -67,13 +67,13 @@ struct define
 				XTAL_0EX
 				{
 					if (~m & M_mask) {
-						return R_::influx();
+						return _R::influx();
 					}
 					else if (m &= W_mask) {
-						return R_::influx(m, XTAL_REF_(oo)...);
+						return _R::influx(m, XTAL_REF_(oo)...);
 					}
 					else {
-						return R_::influx(XTAL_REF_(oo)...);
+						return _R::influx(XTAL_REF_(oo)...);
 					}
 				}
 
@@ -84,7 +84,7 @@ struct define
 
 		template <int N_mask=-1>
 		struct attach
-		:	common::compose<address<N_mask>, typename S_::template afflux<>>
+		:	common::compose<address<N_mask>, typename _S::template afflux<>>
 		{
 		};
 		///\
@@ -98,19 +98,19 @@ struct define
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
-				using K_ = typename R_::head_t;
+				using _R = common::compose_s<R, subkind>;
+				using _K = typename _R::head_u;
 			
 			public:
-			//	using R_::R_;
-				using R_::self;
-				using R_::head;
+			//	using _R::_R;
+				using _R::self;
+				using _R::head;
 
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
 
 				XTAL_CXN subtype(size_t const &n)
-				:	R_(n)
+				:	_R(n)
 				{
 					assert(0 <= n and n < T::limit());
 				}
@@ -134,7 +134,7 @@ struct define
 				XTAL_TN2 deify_(array_q auto const &fs)
 				XTAL_0FX
 				{
-					return R_::deify_(fs[head()]);
+					return _R::deify_(fs[head()]);
 				}
 
 			protected:
@@ -148,7 +148,7 @@ struct define
 						XTAL_FN2 method_f(common::seek_t<I...>)
 						XTAL_0EX
 						{
-							using doing = typename R_::template being<Xs...>;
+							using doing = typename _R::template being<Xs...>;
 							return _std::array{(doing::template m_method<Ks..., I>)...};
 						}
 					
@@ -174,19 +174,19 @@ struct define
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 			
 			public:
-				using R_::R_;
+				using _R::_R;
 				
 				XTAL_TLX effuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return R_::heading(XTAL_REF_(o));
+						return _R::heading(XTAL_REF_(o));
 					}
 					else {
-						return R_::effuse(XTAL_REF_(o));
+						return _R::effuse(XTAL_REF_(o));
 					}
 				}
 
@@ -203,19 +203,19 @@ struct define
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 			
 			public:
-				using R_::R_;
+				using _R::_R;
 
 				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return R_::heading(XTAL_REF_(o));
+						return _R::heading(XTAL_REF_(o));
 					}
 					else {
-						return R_::infuse(XTAL_REF_(o));
+						return _R::infuse(XTAL_REF_(o));
 					}
 				}
 
@@ -232,11 +232,11 @@ struct define
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 			
 			public:
-				using R_::R_;
-				using R_::head;
+				using _R::_R;
+				using _R::head;
 
 				XTAL_TN2_(T) method()
 				XTAL_0FX

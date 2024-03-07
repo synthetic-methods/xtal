@@ -35,30 +35,30 @@ struct polymer<U, As...>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
-		using I_ = monomer_t<based_t<U>>;
+		using _S = common::compose_s<S, subkind>;
+		using _I = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
-		using F_ = typename S_::template bond<Xs...>;
+		using _F = typename _S::template bond<Xs...>;
 
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
-		template <class ...Xs> requires resource::respool_q<S_> and resource::restore_q<S_>
-		struct bond: F_<Xs...>
+		template <class ...Xs> requires resource::respool_q<_S> and resource::restore_q<_S>
+		struct bond: _F<Xs...>
 		{
-			using rebound = F_<Xs...>;
+			using rebound = _F<Xs...>;
 			
 			using return_t = typename rebound::return_t;
 
 			using event_t = message::stage_t<>;
 			using event_u = compound::key_s<event_t>;
 			
-			using voice_t = typename I_::template bond_t<Xs...>;
+			using voice_t = typename _I::template bond_t<Xs...>;
 			using voice_u = compound::key_s<voice_t>;
 			
-			using ensemble_u = typename S_::template spool_t<voice_u>;
+			using ensemble_u = typename _S::template spool_t<voice_u>;
 
 			using subkind = common::compose<common::tag<polymer>
 			,	defer<voice_t>
@@ -68,20 +68,20 @@ struct polymer<U, As...>
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 				
 				ensemble_u m_ensemble;
 
 			public:
-				using R_::R_;
-				using R_::self;
-				using R_::head;
-				using R_::serve;
-				using R_::store;
+				using _R::_R;
+				using _R::self;
+				using _R::head;
+				using _R::serve;
+				using _R::store;
 				
 				XTAL_TO2_(XTAL_TN2 ensemble(), m_ensemble)
 
-				using R_::influx;
+				using _R::influx;
 				
 				///\
 				Forwards the `compound::key`ed message to the associated instance. \

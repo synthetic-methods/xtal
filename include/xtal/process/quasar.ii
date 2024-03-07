@@ -27,26 +27,26 @@ struct quasar<W, As...>
 	using phasor_u = phasor_t<W, As...>;
 	using pulsar_u = pulsar_t<W, As...>;
 	
-	XTAL_LET N_ = _std::       extent_v<W>;
-	XTAL_USE U_ = _std::remove_extent_t<W>;
+	XTAL_LET _N = _std::       extent_v<W>;
+	XTAL_USE _U = _std::remove_extent_t<W>;
 	
-	using _computer = common::compute<U_>;
+	using _computer = common::compute<_U>;
 	using delta_t = typename _computer::delta_t;
 	using alpha_t = typename _computer::alpha_t;
 
-	using quartz_w = precess::quartz_t<U_>[N_];
+	using quartz_w = precess::quartz_t<_U>[_N];
 	using subkind = common::compose<common::tag<quasar>, As..., fusor<quartz_w>>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
-		using S_::subscript;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
+		using _S::subscript;
 
 		///\
 		Access by name/index (dynamic). \
@@ -63,8 +63,8 @@ struct quasar<W, As...>
 		///\
 		Projection to components by name. \
 
-		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(phasor_u(phase<I>()...)) (common::seek_f<N_>{});}
-		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(pulsar_u(pulse<I>()...)) (common::seek_f<N_>{});}
+		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(phasor_u(phase<I>()...)) (common::seek_f<_N>{});}
+		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(pulsar_u(pulse<I>()...)) (common::seek_f<_N>{});}
 		
 		///\
 		Projection to initial component by type. \

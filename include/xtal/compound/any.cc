@@ -186,9 +186,11 @@ TAG_("compound", "composition")
 {
 	class __aim__;
 	class __hyp__;
+	class __etc__;
 
 	using aim = common::compose<any<__aim__>, defer<unit_t[2]>>;
 	using hyp = common::compose<any<__hyp__>, defer<unit_t[1]>>;
+	using etc = common::compose<any<__etc__>, defer<unit_t[1]>>;
 	
 	using Aim = confined_t<aim>;
 	using Hyp = confined_t<hyp>;
@@ -203,6 +205,9 @@ TAG_("compound", "composition")
 		TRUE_(sizeof(AimHyp) == sizeof(Hyp));
 	//	TRUE_(any_p<AimHyp, __aim__>);
 		TRUE_(any_p<AimHyp, __hyp__>);
+		TRUE_(complete_q<AimHyp::self_t<__aim__>>);
+		TRUE_(complete_q<AimHyp::self_t<__hyp__>>);
+		UNTRUE_(complete_q<AimHyp::self_t<__etc__>>);
 //	//	TRUE_(6 == AimHyp::limit());
 //	//	TRUE_(4 == Aim   ::limit());
 //	//	TRUE_(2 ==    Hyp::limit());

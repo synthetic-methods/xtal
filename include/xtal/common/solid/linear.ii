@@ -39,51 +39,51 @@ struct linear<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using S_ = hemitype<T>;
-		using I_ = typename S_::size_type;
+		using _S = hemitype<T>;
+		using _I = typename _S::size_type;
 
 	protected:
-		XTAL_DO4_(XTAL_TN0 accept(I_ i), {assert(0 <= i and i < N);})
-		XTAL_TN2 access(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 access(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 access(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
-		XTAL_TN2 access(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
+		XTAL_DO4_(XTAL_TN0 accept(_I i), {assert(0 <= i and i < N);})
+		XTAL_TN2 access(_I i) XTAL_0EX_(&&) {return XTAL_MOV_(_S::operator[](i));}
+		XTAL_TN2 access(_I i) XTAL_0FX_(&&) {return XTAL_MOV_(_S::operator[](i));}
+		XTAL_TN2 access(_I i) XTAL_0EX_(&)  {return           _S::operator[](i) ;}
+		XTAL_TN2 access(_I i) XTAL_0FX_(&)  {return           _S::operator[](i) ;}
 	
 	public:
-		XTAL_TO4_(XTAL_TN2 subscript(I_ i), (accept(i), access(i)))
+		XTAL_TO4_(XTAL_TN2 subscript(_I i), (accept(i), access(i)))
 
 		XTAL_FN2_(size_t) size() {return N;}// static override
 
 	public:
-	//	using S_::S_;
-		using S_::self;
-		using S_::twin;
+	//	using _S::_S;
+		using _S::self;
+		using _S::twin;
 
 		~homotype() {};
 		XTAL_CO4_(homotype)
 		
 		XTAL_CON homotype()
 		{
-			_std::uninitialized_value_construct_n(S_::begin(), S_::size());
+			_std::uninitialized_value_construct_n(_S::begin(), _S::size());
 		}
 		XTAL_CON homotype(bracket_t<U> etc)
 		XTAL_0EX
 		{
 		//	TODO: Test partial construction. \
 		
-			_detail::copy_to(S_::begin(), etc);
+			_detail::copy_to(_S::begin(), etc);
 			auto const n = etc.size();
-			_std::uninitialized_value_construct_n(S_::begin() + n, S_::size() - n);
+			_std::uninitialized_value_construct_n(_S::begin() + n, _S::size() - n);
 		}
 		template <bracket_q W>
 		XTAL_CXN homotype(W const &w)
 		{
-			_detail::copy_to(S_::begin(), w);
+			_detail::copy_to(_S::begin(), w);
 		}
 		template <bracket_q W>
 		XTAL_CXN homotype(W &&w)
 		{
-			_detail::move_to(S_::begin(), w);
+			_detail::move_to(_S::begin(), w);
 		}
 		
 		template <class W>

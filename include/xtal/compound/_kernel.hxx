@@ -85,10 +85,10 @@ struct confined
 	template <class S>
 	class subtype: public common::compose_s<S, homokind<subtype<S>>>
 	{
-		using S_ = common::compose_s<S, homokind<subtype<S>>>;
+		using _S = common::compose_s<S, homokind<subtype<S>>>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 	};
 	using type = subtype<any_t<>>;

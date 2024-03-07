@@ -26,28 +26,28 @@ struct spliced
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
-		static_assert(resource::respool_q<S_>);
+		using _S = common::compose_s<S, subkind>;
+		static_assert(resource::respool_q<_S>);
 
 	public:
-		using S_::S_;
+		using _S::_S;
 		
 		template <class ...Xs>
 		struct inqueue
 		{
-			using subkind = typename S_::template inqueue<Xs...>;
+			using subkind = typename _S::template inqueue<Xs...>;
 			
 			template <processor::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 
 			protected:
-				using typename R_::tuple_t;
-				using typename R_::tuple_u;
-				using typename R_::event_u;
-				using typename R_::delay_u;
-				using spool_u = typename S_::template spool_t<event_u>;
+				using typename _R::tuple_t;
+				using typename _R::tuple_u;
+				using typename _R::event_u;
+				using typename _R::delay_u;
+				using spool_u = typename _S::template spool_t<event_u>;
 
 				spool_u q_{event_u::template sentry<1>()};
 
@@ -55,9 +55,9 @@ struct spliced
 				XTAL_TO4_(XTAL_TN2 next_head(), q_.peek().head())
 
 			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
+				using _R::_R;
+				using _R::self;
+				using _R::influx;
 				
 				///\
 				Invokes `influx` immediately if the given delay `dot == 0`, \
@@ -81,7 +81,7 @@ struct spliced
 				{
 				//	NOTE: The `std::initializer_list` syntax voids segfaulting in `RELEASE`. \
 				
-					return _std::min<delay_u>({R_::delay(), next_head()});
+					return _std::min<delay_u>({_R::delay(), next_head()});
 				}
 				///\
 				Invokes `influx` for all events up-to the supplied delay `i`. \
@@ -91,9 +91,9 @@ struct spliced
 				XTAL_TN1_(delay_u) relay(delay_u i)
 				XTAL_0EX
 				{
-					R_::relay(i);
+					_R::relay(i);
 					for (; 0 < q_.size() and next_head() <= i; q_.pop()) {
-					//	R_::operator<<=(next_tail().apple());
+					//	_R::operator<<=(next_tail().apple());
 						(void) influx(next_tail());
 					}
 					return delay();

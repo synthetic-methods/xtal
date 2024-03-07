@@ -34,17 +34,17 @@ struct phase<U>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
 		XTAL_TN1 normalize()
 		XTAL_0EX
 		{
-			auto &o = S_::head(); o -= _std::round(o);
-			return S_::normalize();
+			auto &o = _S::head(); o -= _std::round(o);
+			return _S::normalize();
 		}
 	
 	};

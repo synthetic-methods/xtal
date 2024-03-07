@@ -22,11 +22,11 @@ struct define
 	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
 
 		///\returns `true` if the pointers are identical, `false` otherwise. \
@@ -123,11 +123,11 @@ struct define
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 
 			public:
-				using R_::R_;
-				using R_::self;
+				using _R::_R;
+				using _R::self;
 				///\
 				Initializes `slots` using the arguments supplied. \
 
@@ -137,10 +137,10 @@ struct define
 				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
 				XTAL_0EX
-				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
+				:	_R(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
 				{}
 
-				XTAL_TO4_(XTAL_TN2 slots(), R_::head())
+				XTAL_TO4_(XTAL_TN2 slots(), _R::head())
 				
 				template <size_t N, size_t ...Ns>
 				XTAL_TN2 slot()
@@ -161,25 +161,25 @@ struct define
 
 				template <auto ...Ks>
 				XTAL_TN2 method()
-				XTAL_0EX {return _std::apply([this] XTAL_1FN_(R_::template method<Ks...>), slots());}
+				XTAL_0EX {return _std::apply([this] XTAL_1FN_(_R::template method<Ks...>), slots());}
 				
-				using R_::method;
-			//	using R_::influx;
-			//	using R_::efflux;
+				using _R::method;
+			//	using _R::influx;
+			//	using _R::efflux;
 
 				///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
 				XTAL_TLX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
+					return XTAL_FLX_(self().influx_push(oo...)) (_R::influx(XTAL_REF_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
 				XTAL_TLX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+					return XTAL_FLX_(_R::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 				}
 
 				///\note\
@@ -257,20 +257,20 @@ struct refine
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using F_ = typename S_::template bond<Xs...>;
+		using _F = typename _S::template bond<Xs...>;
 
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
 		template <class ...Xs>
-		struct bond: F_<Xs...>
+		struct bond: _F<Xs...>
 		{
-			using kind = confined<F_<Xs...>>;
-			using type = common::compose_s<S_, kind>;
+			using kind = confined<_F<Xs...>>;
+			using type = common::compose_s<_S, kind>;
 		
 		};
 		template <class ...Xs>
@@ -280,16 +280,16 @@ struct refine
 		XTAL_FN2 bond_f(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., F_<decltype(xs)...>>;
-			using  type = common::compose_s<S_, kind>;
+			using  kind = confined<As..., _F<decltype(xs)...>>;
+			using  type = common::compose_s<_S, kind>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
 		XTAL_FN2 bond_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., F_<decltype(xs)...>>;
-			using  type = common::compose_s<S_, kind>;
+			using  kind = confined<As..., _F<decltype(xs)...>>;
+			using  type = common::compose_s<_S, kind>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
@@ -310,13 +310,13 @@ struct defer
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
-		using typename S_::head_t;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
+		using typename _S::head_u;
 
 		///\
 		Constant redirection. \
@@ -324,7 +324,7 @@ struct defer
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs),
 		{
-			if constexpr (_std::invocable<head_t, decltype(xs)...>) {
+			if constexpr (_std::invocable<head_u, decltype(xs)...>) {
 				return head() (XTAL_REF_(xs)...);
 			}
 			else {
@@ -343,12 +343,12 @@ struct defer<U>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
 
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs),

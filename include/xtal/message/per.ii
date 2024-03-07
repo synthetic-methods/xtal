@@ -23,25 +23,25 @@ public:
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 
 	public:
-	//	using S_::S_;
+	//	using _S::_S;
 		
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 
 		XTAL_CXN subtype(_std::integral auto n, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(n, (V) 1/V(n), XTAL_REF_(oo)...)
+		:	_S(n, (V) 1/V(n), XTAL_REF_(oo)...)
 		{}
 		XTAL_CXN subtype(_std::floating_point auto u, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_((U) 1/V(u), u, XTAL_REF_(oo)...)
+		:	_S((U) 1/V(u), u, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2   rate(), S_::template head<0>())
-		XTAL_TO4_(XTAL_TN2 period(), S_::template head<1>())
+		XTAL_TO4_(XTAL_TN2   rate(), _S::template head<0>())
+		XTAL_TO4_(XTAL_TN2 period(), _S::template head<1>())
 
 	};
 };

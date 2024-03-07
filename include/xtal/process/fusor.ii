@@ -24,8 +24,8 @@ providing evaluation/update via succession/replacement. \
 template <array_q W, typename ...As>
 struct fusor<W, As...>
 {
-	XTAL_USE U_ = _std::remove_extent_t<W>;
-	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE _U = _std::remove_extent_t<W>;
+	XTAL_LET _N = _std::       extent_v<W>;
 	
 	using vector_w = common::solid::serial_t<W>;
 	using indent_w = conflux::indent_s<vector_w>;
@@ -38,12 +38,12 @@ struct fusor<W, As...>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
 		
 		///\
 		Access by dynamic index. \
@@ -62,29 +62,29 @@ struct fusor<W, As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		XTAL_DO2_(template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF_(subarray_q<N_>) a),
+		XTAL_TN2 method(XTAL_DEF_(subarray_q<_N>) a),
 		{
-			(void) S_::influx(XTAL_REF_(a));
+			(void) _S::influx(XTAL_REF_(a));
 			return method();
 		})
 		
-	//	using S_::infuse;
+	//	using _S::infuse;
 		///\
 		Update by replacement. \
 		
 		XTAL_TLX infuse(XTAL_DEF o)
 		XTAL_0EX
 		{
-			return S_::infuse(XTAL_REF_(o));
+			return _S::infuse(XTAL_REF_(o));
 		}
 		///\
 		Update by indented replacement. \
 		
-		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
+		XTAL_TLX infuse(XTAL_DEF_(subarray_q<_N>) a)
 		{
 			using A = XTAL_TYP_(a);
-			using B = typename conflux::indent_s<A, N_ - arity_n<A>>;
-			return S_::influx(B(XTAL_REF_(a)));
+			using B = typename conflux::indent_s<A, _N - arity_n<A>>;
+			return _S::influx(B(XTAL_REF_(a)));
 		}
 
 		///\todo\

@@ -25,10 +25,10 @@ struct wield
 	template <class S>
 	class subtype: public compose_s<S, subkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using _S = compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 		XTAL_LET bit_field = N_width - 1;
 		XTAL_LET bit_width = N_width;

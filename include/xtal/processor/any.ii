@@ -50,7 +50,7 @@ struct defer<U>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_TN2 reified_(auto const ...ks),
@@ -58,9 +58,9 @@ struct defer<U>
 		)
 
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
 
 		///\
 		Defines the range-lifted form of `head` by `reify`ing the underlying `process`. \
@@ -100,28 +100,28 @@ struct refer
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 	};
 	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
-	//	using S_::method;
+	//	using _S::method;
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
 			using I = iteratee_t<scope_u>; using _computer = common::compute<I>;
-			auto const &m = S_::method();// NOTE: Must be &?
-			auto const &u = S_::template head<scope_u>();
+			auto const &m = _S::method();// NOTE: Must be &?
+			auto const &u = _S::template head<scope_u>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);

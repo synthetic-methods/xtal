@@ -26,34 +26,34 @@ struct sampled
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
-		static_assert(resource::respool_q<S_>);
+		using _S = common::compose_s<S, subkind>;
+		static_assert(resource::respool_q<_S>);
 
 	public:
-		using S_::S_;
+		using _S::_S;
 
 		template <class X>
 		struct inqueue
 		{
-			using subkind = typename S_::template inqueue<X>;
+			using subkind = typename _S::template inqueue<X>;
 
 			template <process::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 			
 			protected:
-				using typename R_::tuple_t;
-				using typename R_::tuple_u;
-				using typename R_::event_u;
-				using typename R_::delay_u;
-				using spool_u = typename S_::template spool_t<event_u>;
+				using typename _R::tuple_t;
+				using typename _R::tuple_u;
+				using typename _R::event_u;
+				using typename _R::delay_u;
+				using spool_u = typename _S::template spool_t<event_u>;
 
 				delay_u d_{0};
 				spool_u q_{event_u::template sentry<-1>(), event_u::template sentry<1>()};
 
 			public:
-				using R_::R_;
+				using _R::_R;
 
 				XTAL_TN0 ingest(event_u dot)
 				XTAL_0EX

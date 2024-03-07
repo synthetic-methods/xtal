@@ -31,31 +31,31 @@ struct indent<Ns...>
 	template <common::pack_q S>
 	class subtype: public node_s<S>
 	{
-		using S_ = node_s<S>;
-		using L_ = leaf_s<S>;
+		using _S = node_s<S>;
+		using _L = leaf_s<S>;
 
 	public:
-		using S_::S_;
+		using _S::_S;
 		
-		XTAL_CON subtype(bracket_t<devalued_t<L_>> w)
-		XTAL_REQ bracket_q<L_>
-		:	S_{L_(XTAL_MOV_(w))}
+		XTAL_CON subtype(bracket_t<devalued_t<_L>> w)
+		XTAL_REQ bracket_q<_L>
+		:	_S{_L(XTAL_MOV_(w))}
 		{}
 
 		struct tunnel
 		{
-			using subkind = defer<L_>;
+			using subkind = defer<_L>;
 
 			template <compound::any_q R> requires (0 == sizeof...(Ns))
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using _R = common::compose_s<R, subkind>;
 				
 			public:
-				using R_::R_;
-				using R_::self;
-				using R_::head;
-			//	using R_::infuse;
+				using _R::_R;
+				using _R::self;
+				using _R::head;
+			//	using _R::infuse;
 
 				///\todo\
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
@@ -64,7 +64,7 @@ struct indent<Ns...>
 				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return _R::infuse(XTAL_REF_(o));
 				}
 				XTAL_TLX infuse(XTAL_DEF_(conflux::indent_q) o)
 				XTAL_0EX

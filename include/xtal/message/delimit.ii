@@ -17,10 +17,10 @@ struct delimit
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
-		using S_ = common::compose_s<S>;
+		using _S = common::compose_s<S>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 		XTAL_FN2_(size_t) limit()
 		XTAL_0EX

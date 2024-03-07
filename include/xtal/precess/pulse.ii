@@ -34,10 +34,10 @@ struct pulse<U>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 	};
 };

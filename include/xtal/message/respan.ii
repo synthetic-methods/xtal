@@ -31,13 +31,13 @@ public:
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-	//	using S_::S_;
-		using S_::self;
-		using S_::twin;
-		using S_::head;
+	//	using _S::_S;
+		using _S::self;
+		using _S::twin;
+		using _S::head;
 		
 		using span_t = U;
 
@@ -47,7 +47,7 @@ public:
 		template <iterated_q W>
 		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
+		:	_S(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2 span(XTAL_DEF... oo), head(XTAL_REF_(oo)...))

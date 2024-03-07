@@ -105,17 +105,17 @@ struct rationalize
 :	systematize<N_size>
 {
 private:
-	using S_ = systematize<N_size>;
+	using _S = systematize<N_size>;
 
 public:
-	using typename S_::delta_t;
-	using typename S_::sigma_t;
+	using typename _S::delta_t;
+	using typename _S::sigma_t;
 
 	XTAL_LET_(sigma_t) width = N_size;
 	XTAL_LET_(sigma_t) depth = N_size << 3;
 
-	XTAL_LET_(sigma_t) n_fraction =          S_::n_fraction;
-	XTAL_LET_(sigma_t) n_exponent =          S_::n_exponent;
+	XTAL_LET_(sigma_t) n_fraction =          _S::n_fraction;
+	XTAL_LET_(sigma_t) n_exponent =          _S::n_exponent;
 	XTAL_LET_(sigma_t) n_positive = n_fraction + n_exponent;
 	XTAL_LET_(sigma_t) n_negative = n_positive + 1;
 	XTAL_LET_(sigma_t) n_unit     = n_exponent - 1;
@@ -352,26 +352,26 @@ requires {typename rationalize<N_size>::alpha_t;}
 struct realize<N_size>: rationalize<N_size>
 {
 private:
-	using S_ = rationalize<N_size>;
+	using _S = rationalize<N_size>;
 
 public:
-	using typename S_:: negative;
-	using typename S_:: positive;
-	using typename S_:: fraction;
-	using typename S_:: exponent;
-	using typename S_::     unit;
-	using typename S_::     sign;
+	using typename _S:: negative;
+	using typename _S:: positive;
+	using typename _S:: fraction;
+	using typename _S:: exponent;
+	using typename _S::     unit;
+	using typename _S::     sign;
 
-	using typename S_::   iota_t;
-	using typename S_::  delta_t;
-	using typename S_::  sigma_t;
-	using typename S_::  alpha_t;
-	using typename S_::mt19937_t;
+	using typename _S::   iota_t;
+	using typename _S::  delta_t;
+	using typename _S::  sigma_t;
+	using typename _S::  alpha_t;
+	using typename _S::mt19937_t;
 
 	using aphex_t = _std::complex<alpha_t>;
 
-	using S_::width;
-	using S_::depth;
+	using _S::width;
+	using _S::depth;
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
@@ -458,7 +458,7 @@ public:
 	//	else...
 		alpha_t constexpr _0_5 = 0.5;
 		alpha_t constexpr _1_5 = 1.5;
-		delta_t constexpr _Q   = S_::n_quake;
+		delta_t constexpr _Q   = _S::n_quake;
 		delta_t o = _Q - (_std::bit_cast<delta_t>(w) >> 1);
 		alpha_t n = _std::bit_cast<alpha_t>(o);
 		alpha_t const k = w*_0_5;
@@ -761,7 +761,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	using S_::sign_f;
+	using _S::sign_f;
 	///\returns the sign of `value`. \
 
 	XTAL_FN2_(alpha_t) sign_f(alpha_t const &value)
@@ -825,14 +825,14 @@ public:
 		return signum;
 	}
 
-//	using S_::designed_f;
+//	using _S::designed_f;
 	///\returns the magnitude of `value` (in the direction of `N_side`, if provided). \
 
 	template <int N_side=0>
 	XTAL_FN2 designed_f(_std::integral auto value)
 	XTAL_0EX
 	{
-		return S_::template designed_f<N_side>(value);
+		return _S::template designed_f<N_side>(value);
 	}
 	template <int N_side=0>
 	XTAL_FN2_(alpha_t) designed_f(alpha_t value)
@@ -864,14 +864,14 @@ public:
 	///\todo\
 	Implement in-place `clamp_f`?
 	
-//	using S_::clamped_f;
+//	using _S::clamped_f;
 	///\returns `value` (restricted to `N_side`, if provided). \
 	
 	template <int N_side=0>
 	XTAL_FN2 clamped_f(_std::integral auto value)
 	XTAL_0EX
 	{
-		return S_::template clamped_f<N_side>(value);
+		return _S::template clamped_f<N_side>(value);
 	}
 	template <int N_side=0>
 	XTAL_FN2 clamped_f(alpha_t value)

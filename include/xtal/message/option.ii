@@ -37,17 +37,17 @@ struct option
 		template <class S>// base-type
 		class subtype: public common::compose_s<S, demikind<S>>
 		{
-			using S_ = common::compose_s<S, demikind<S>>;
+			using _S = common::compose_s<S, demikind<S>>;
 
 		public:
-		//	using S_::S_;
+		//	using _S::_S;
 
 			XTAL_CO0_(subtype)
 			XTAL_CO4_(subtype)
 			
 			XTAL_CXN subtype(XTAL_DEF ...oo)
 			XTAL_0EX
-			:	S_(XTAL_REF_(oo)...)
+			:	_S(XTAL_REF_(oo)...)
 			{};
 			
 			template <common::tag_q<option> U>
@@ -66,20 +66,20 @@ struct option
 		template <common::tag_q<option> S>// derived-type
 		class subtype<S>: public common::compose_s<S, semikind<S>>
 		{
-			using S_ = common::compose_s<S, semikind<S>>;
+			using _S = common::compose_s<S, semikind<S>>;
 
 		public:
-			using S_::S_;
+			using _S::_S;
 
 		};
 	};
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 		using value_type = unsigned int;
 		value_type value:N_width;
@@ -89,13 +89,13 @@ struct option
 
 		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	_S(XTAL_REF_(oo)...)
 		{};
 		template <_std::integral U>
 		XTAL_CON subtype(U &&u)
 		XTAL_0EX
 		:	value(size_t(u)&M_width)
-		,	S_(size_t(u) >> N_depth)
+		,	_S(size_t(u) >> N_depth)
 		{};
 		template <cardinal_q U>
 		XTAL_CON subtype(U &&u)
@@ -106,13 +106,13 @@ struct option
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		:	value(0)
-		,	S_(XTAL_REF_(u))
+		,	_S(XTAL_REF_(u))
 		{};
 		template <common::tag_q<option> U> requires common::tab_p<option, U>
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		:	value(u.template get<cardinal>().value)
-		,	S_(XTAL_REF_(u))
+		,	_S(XTAL_REF_(u))
 		{};
 		
 		template <cardinal_q T>
@@ -123,7 +123,7 @@ struct option
 				return value;
 			}
 			else {
-				return S_::template get<T>();
+				return _S::template get<T>();
 			}
 		}
 		template <typename A> requires (cardinal_q<typename A::cardinal> and not cardinal_q<A>)

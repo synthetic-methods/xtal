@@ -35,16 +35,16 @@ struct series<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using S_ = hemitype<T>;
+		using _S = hemitype<T>;
 	
 		template <class Y>
 		using duel_t = typename Y::template dual_t<T>;
 
 	public:
-		using S_::S_;
-		using S_::subscript;
-		using S_::self;
-		using S_::twin;
+		using _S::_S;
+		using _S::subscript;
+		using _S::self;
+		using _S::twin;
 
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
@@ -68,7 +68,7 @@ struct series<U[N]>
 		XTAL_TN1_(T &) generate(U const &u)
 		XTAL_0EX
 		{
-			using I = typename S_::difference_type;
+			using I = typename _S::difference_type;
 
 		//	Compute the start- and end-points for the required segment:
 			I constexpr H_limit = N_limit >> 1;
@@ -109,15 +109,15 @@ struct series<U[N]>
 		XTAL_REQ complex_field_q<U>
 		{
 		//	Initialize the forwards and backwards iterators:
-			auto const i = S_::begin();
-			auto const j = S_::rend() - 1;
+			auto const i = _S::begin();
+			auto const j = _S::rend() - 1;
 			
 		//	Compute the fractional sinusoid for the given `N`:
 			auto constexpr x = _computer::template patio_f<-1>(N);
 			auto const     y = _computer::circle_f(x);// TODO: Make `constexpr`.
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
-			typename S_::difference_type constexpr M = N >> 2;// `1/8`th
+			typename _S::difference_type constexpr M = N >> 2;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
 			if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*M, _std::span(i, i + 1*M), [] (U const &v) XTAL_0FN_(U(-v.imag(), -v.real())));

@@ -28,33 +28,37 @@ struct define
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
+		using _Y = subkind;
 	
 	protected:
-		using O = cardinal_t<0>;
-		using _ = unit_t;
+		using _0 = cardinal_t<0>;
+		using _O = unit_t;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
-		template <class X, typename ...Is> struct super<X, T, Is...>: super<T, Is...> {};
-		template <class X, typename ...Is> struct super<X, O, Is...>: super<_, Is...> {};
-	//	template <class X, typename ...Is> struct super<X, O, Is...>;
-		template <class X                > struct super<X> {using type = X;};
+		template <class X, typename ...Is> struct node:  _S::template node< X, Is...> {};
+		template <class X, typename ...Is> struct node<X,  T, Is...>: node< T, Is...> {};
+		template <class X, typename ...Is> struct node<X, _0, Is...>: node<_O, Is...> {};
+	//	template <class X, typename ...Is> struct node<X, _0, Is...>;
+		template <class X                > struct node<X> {using type = X;};
 
 		template <class X, typename ...Is>
-		using super_t = typename super<X, Is...>::type;
-		using duper_t = _;
+		using node_t = typename node<X, Is...>::type;
+		using node_u = unit_t;
 
 	public:
-		using S_::S_;
-	//	using S_::self;
+		using _S::_S;
+	//	using _S::self;
+
+		template <typename ...Is> using self_t =          node_t< T, Is...>;
+	//	template <typename ...Is> using head_t = typename node_t<_Y, Is...>::head_u;
 
 		XTAL_TO4_(
-		XTAL_TN2 self(), S_::self()
+		XTAL_TN2 self(), _S::self()
 		)
 		XTAL_TO4_(template <of_q<subtype> X=T>
-		XTAL_TN2 self(), S_::template self<X>()
+		XTAL_TN2 self(), _S::template self<X>()
 		)
 		///<\returns `this` as `T`, or `of_q<subtype>`. \
 		
@@ -62,12 +66,12 @@ struct define
 		XTAL_DO4_(template <typename ...Is>
 		XTAL_TN2 self(XTAL_DEF... oo),
 		{
-			using X = super_t<T, Is...>;
+			using X = node_t<T, Is...>;
 			if constexpr (0 == sizeof...(oo)) {
-				return S_::template self<X>();
+				return _S::template self<X>();
 			}
 			else {
-				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+				return _S::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
 			}
 		})
 		///<\returns `this` indexed by `Is...`, \
@@ -108,19 +112,19 @@ struct refine
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 	};
 	template <any_q S> requires iterable_q<S>
 	class subtype<S>: public common::compose_s<S, subkind>, public iterate_t<T>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
+		using _S::_S;
 
 	};
 };
@@ -143,44 +147,46 @@ struct defer
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
-		using T_ = typename S_::self_t;
+		using _S = common::compose_s<S, subkind>;
+		using _T = typename _S::self_u;
+		using _Y = subtype;
+		using _0 = cardinal_t<0>;
 
 	protected:
-		using Y = subtype;
-		using O = cardinal_t<0>;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
-		template <class X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
-		template <class X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
-		template <class X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
+		template <class X, typename ...Is> struct node:  _S::template node< X, Is...> {};
+		template <class X, typename ...Is> struct node<X, _Y, Is...>: node<_Y, Is...> {};
+		template <class X, typename ...Is> struct node<X,  U, Is...>: node<_Y, Is...> {};
+		template <class X, typename ...Is> struct node<X, _0, Is...>: node<_Y, Is...> {};
 		template <class X, liminal_q N, typename ...Is>
-		struct super<X, N, Is...>: S_::template super<typename S_::duper_t, subliminal_s<N>, Is...> {};
+		struct node<X, N, Is...>: _S::template node<typename _S::node_u, subliminal_s<N>, Is...> {};
 
 		template <class X, typename ...Is>
-		using super_t = typename super<X, Is...>::type;
-		using duper_t = subtype;
+		using node_t = typename node<X, Is...>::type;
+		using node_u = subtype;
 		
 	public:
-		using S_::S_;
-		using S_::self;
-		using S_::head;
-		using head_t = typename S_::head_t;
+		using _S::_S;
+		using _S::self;
+		using _S::head;
+		using head_u = typename _S::head_u;
 
+		template <typename ...Is> using self_t =          node_t<_T, Is...>;
+		template <typename ...Is> using head_t = typename node_t<_Y, Is...>::head_u;
 
 		XTAL_TO4_(template <size_t I>
 		XTAL_TN2 self(XTAL_DEF ...oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
 		)		
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(XTAL_DEF ...oo), S_::template self<super_t<S, Is...>>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(XTAL_DEF ...oo), _S::template self<node_t<S, Is...>>(XTAL_REF_(oo)...)
 		)
 		
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) head_t(), head())
+		XTAL_TO4_(XTAL_OP1_(explicit) head_u(), head())
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
@@ -193,7 +199,7 @@ struct defer
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_TN2_(bool) heading(head_t const &w)
+		XTAL_TN2_(bool) heading(head_u const &w)
 		XTAL_0FX
 		{
 			return equivalent_f(head(), w);
@@ -214,7 +220,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		XTAL_USE arity = cardinal_t<S_::arity::value + 1>;
+		XTAL_USE arity = cardinal_t<_S::arity::value + 1>;
 		///\
 		Tuple application. \
 

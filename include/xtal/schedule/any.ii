@@ -22,11 +22,11 @@ struct define
 	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
 		///\
 		Provides dispatch logic for `Xs...` on the target object. \
@@ -40,19 +40,19 @@ struct define
 			template <process::any_q R>
 			class subtype: public common::compose_s<R>
 			{
-				using R_ = common::compose_s<R>;
+				using _R = common::compose_s<R>;
 				static_assert(complete_q<Xs...>);
 				
 			protected:
 				using tuple_t = _std::tuple<Xs...>;
 				using tuple_u = message::packet_t<Xs...>;
 				using event_u = compound::cue_s<tuple_u>;
-				using delay_u = typename compound::cue_s<>::head_t;
+				using delay_u = typename compound::cue_s<>::head_u;
 
 			public:
-				using R_::R_;
-				using R_::self;
-				using R_::influx;
+				using _R::_R;
+				using _R::self;
+				using _R::influx;
 
 				///\
 				Invokes `influx` immediately, \
@@ -76,7 +76,7 @@ struct define
 				XTAL_0EX
 				{
 					(void) self().ingest(XTAL_REF_(dot));
-					return R_::influx();
+					return _R::influx();
 				}
 
 				///\
@@ -117,20 +117,20 @@ struct refine
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using _S = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using F_ = typename S_::template inqueue<Xs...>;
+		using _F = typename _S::template inqueue<Xs...>;
 
 	public:
-		using S_::S_;
-		using S_::self;
+		using _S::_S;
+		using _S::self;
 
 		template <class ...Xs>
-		struct inqueue: F_<Xs...>
+		struct inqueue: _F<Xs...>
 		{
-			using kind = confined<F_<Xs...>>;
-			using type = common::compose_s<S_, kind>;
+			using kind = confined<_F<Xs...>>;
+			using type = common::compose_s<_S, kind>;
 		
 		};
 		template <class ...Xs>
