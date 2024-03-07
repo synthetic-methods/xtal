@@ -176,7 +176,7 @@ NOTE: When browsing/editing `include`, it can be useful to toggle the visibility
 
 ## Macros
 
-The macros defined in [`etc.ii`](include/xtal/etc.ii?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
+The macros defined in [`xtal.hh`](include/xtal.hh?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
 The most commonly encountered are those used for function definition, for example:
 
 	#define XTAL_OP1                      constexpr decltype(auto) operator

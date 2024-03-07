@@ -86,12 +86,24 @@ struct any<A>
 		template <class X, typename ...Is> using super_t = typename super<X, Is...>::type;
 
 	public:
-		using S_::S_;
+	//	using S_::S_;
 		using S_::self;
 
-	//	TODO: If constructing with an in`fungible_q` type that matches `any_p<A>`, \
-		extract the value to initialize `Y` directly, \
-		before passing it on to `Y`'s parent. \
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		///\
+		Attempts construction from infungible-but-compatible types via inspection. \
+		
+		template <class W> requires infungible_q<subtype, W> and common::identity_p<subtype, W>
+		XTAL_CON subtype(W &&w, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(w.template head <A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
+		{};
+		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		{}
 
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)

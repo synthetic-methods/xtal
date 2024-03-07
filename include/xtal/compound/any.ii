@@ -23,7 +23,7 @@ providing the mechanism for traversing the trait-lineage of `T`. \
 template <class T>
 struct define
 {
-	using subkind = _retail::define<T>;
+	using subkind = common::compose<_detail::define_member, _retail::define<T>>;
 	
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -156,8 +156,8 @@ struct defer
 		template <class X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
 		template <class X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
 		template <class X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
-		template <class X, subcardinal_q N, typename ...Is>
-		struct super<X, N, Is...>: S_::template super<typename S_::duper_t, subcardinal_s<N>, Is...> {};
+		template <class X, liminal_q N, typename ...Is>
+		struct super<X, N, Is...>: S_::template super<typename S_::duper_t, subliminal_s<N>, Is...> {};
 
 		template <class X, typename ...Is>
 		using super_t = typename super<X, Is...>::type;
@@ -167,6 +167,8 @@ struct defer
 		using S_::S_;
 		using S_::self;
 		using S_::head;
+		using head_t = typename S_::head_t;
+
 
 		XTAL_TO4_(template <size_t I>
 		XTAL_TN2 self(XTAL_DEF ...oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
@@ -178,7 +180,7 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
+		XTAL_TO4_(XTAL_OP1_(explicit) head_t(), head())
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
@@ -191,7 +193,7 @@ struct defer
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_TN2_(bool) heading(U const &w)
+		XTAL_TN2_(bool) heading(head_t const &w)
 		XTAL_0FX
 		{
 			return equivalent_f(head(), w);

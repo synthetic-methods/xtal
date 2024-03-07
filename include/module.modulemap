@@ -3,7 +3,6 @@ module xtal {
 	export *
 	exclude header "xtal/any.ii"
 	exclude header "xtal/any.hh"
-	exclude header "xtal/_etc.hxx"
 	exclude header "xtal/common/_detail.hxx"
 	exclude header "xtal/compound/_kernel.hxx"
 	exclude header "xtal/compound/_detail.hxx"

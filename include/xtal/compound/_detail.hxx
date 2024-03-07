@@ -17,6 +17,23 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+struct define_member
+{
+	template <any_q S>
+	class subtype: public S
+	{
+	public:
+		using S::S;
+
+		using bit_field = cardinal_t<0>;
+
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 struct refine_head
 {
 	template <any_q S>
@@ -108,7 +125,7 @@ struct defer_member
 		///\
 		Constructs `this` using the first argument, forwarding the rest to super. \
 
-		template <class A> requires (not fungible_q<A, subtype>)
+		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
@@ -131,12 +148,11 @@ struct defer_member
 
 	};
 };
-template <common::wield_q U>
-struct defer_member<U>
+template <size_t N_depth>
+struct defer_member<unit_t[N_depth]>
 {
-	XTAL_LET N_depth = U::word_size;
-	XTAL_LET N_width = size_t(1) << N_depth;
-	XTAL_LET M_width = N_width - 1;
+	XTAL_LET N_width = size_1 << N_depth;
+	XTAL_LET N_mask  = N_width - size_1;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S>
@@ -146,34 +162,43 @@ struct defer_member<U>
 	public:
 	//	using S_::S_;
 		using S_::self;
+
 		using head_t = size_t;
-		using body_t = typename U::word_type;
+		using body_t = unsigned;
 		body_t body_m:N_depth;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 		
+		using bit_field = cardinal_t<N_width + S_::bit_field::value>;
+
 		///\
 		Constructs `this` using the first argument, forwarding the rest to super. \
 
-		template <_std::integral A>
-		XTAL_CON subtype(A &&a)
-		XTAL_0EX
-		:	S_(head_t(XTAL_REF_(a)) >> N_depth)
-		,	body_m(head_t(a)&M_width)
-		{};
-		template <class A> requires (not fungible_q<A, subtype>)
+		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
-		XTAL_REQ (0 < sizeof...(oo))
 		:	S_(XTAL_REF_(oo)...)
 		,	body_m(member_f<head_t>(XTAL_REF_(a)))
 		{}
+		template <_std::integral A> requires liminal_q<typename S_::bit_field>
+		XTAL_CON subtype(A &&a)
+		XTAL_0EX
+		:	S_(head_t(XTAL_REF_(a)) >> N_depth)
+		,	body_m(head_t(a)&N_mask)
+		{};
+		template <_std::integral A> requires terminal_q<typename S_::bit_field>
+		XTAL_CON subtype(A &&a)
+		XTAL_0EX
+		:	body_m(head_t(a)&N_mask)
+		{
+			assert(0 == a >> N_depth);
+		};
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return remember_f(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0FX {return head_t(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return head_t(body_m);}
 		
 	};
 };
@@ -186,24 +211,11 @@ struct defer_member<U>
 		using S_ = common::compose_s<S>;
 
 	public:
-	//	using S_::S_;
+		using S_::S_;
 		using S_::self;
 		using head_t = U;
 		using body_t = debased_t<U>;
-		body_t body_m;
-
-		XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
-		
-		///\
-		Constructs `this` using the default value. \
-
-		XTAL_CXN subtype(XTAL_DEF ...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		{}
-		///\
-		Constructs `this` using the first argument, forwarding the rest to super. \
+		body_t body_m {};
 
 		template <is_q<head_t> A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)

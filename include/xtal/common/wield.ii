@@ -18,7 +18,6 @@ struct wield
 {
 	XTAL_LET_(size_t) N_depth = computer::bit_ceiling_f(N_count);
 	XTAL_LET_(size_t) N_width = size_t(1) << N_depth;
-	XTAL_LET_(size_t) M_width = N_width - 1;
 	static_assert(N_count == N_width);// for now...
 
 	using subkind = tab<wield<>>;
@@ -31,18 +30,23 @@ struct wield
 	public:
 		using S_::S_;
 
-		XTAL_USE word_type = unsigned;
-		XTAL_LET word_size = N_depth;
-
-		word_type word:word_size;
+		XTAL_LET bit_field = N_width - 1;
+		XTAL_LET bit_width = N_width;
+		XTAL_LET bit_depth = N_depth;
 
 	};
+	using type = subtype<unit_t>;
+
 };
 template <size_t N_count=0>
 using wield_t = typename wield<N_count>::type;
 
-template <class ...Ts>
-concept wield_q = tab_p<wield<>, Ts...>;
+template <class    T >
+concept wieldy_p = unsigned_q<decltype(T::bit_field), decltype(T::bit_width), decltype(T::bit_depth)>;
+
+template <class ...Ts> concept    wield_q = tab_p<wield<>, Ts...>;
+template <class ...Ts> concept   wieldy_q =     (...and wieldy_p<Ts>);
+template <class ...Ts> concept unwieldy_q = not (...and wieldy_p<Ts>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

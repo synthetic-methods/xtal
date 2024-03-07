@@ -34,6 +34,7 @@ TAG_("compound", "matching")
 	{
 		TRUE_(any_p<any_t<struct foo, struct goo>, struct foo, struct goo>);
 		TRUE_(any_p<any_t<struct foo, struct goo>,             struct goo>);
+	//	TRUE_(any_p<any_t<struct foo, struct goo>, struct foo            >);
 		TRUE_(any_p<any_t<struct foo, struct goo>                        >);
 
 	}
@@ -174,6 +175,37 @@ TAG_("compound", "conversion")
 		TRUE_(is_q<_std::tuple_element_t<0, foo_t>, _std::tuple_element_t<0, bar_t>>);
 		TRUE_(is_q<_std::tuple_element_t<1, foo_t>, _std::tuple_element_t<1, bar_t>>);
 		TRUE_(is_q<_std::tuple_element_t<2, foo_t>, _std::tuple_element_t<2, bar_t>>);
+
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+TAG_("compound", "composition")
+{
+	class __aim__;
+	class __hyp__;
+
+	using aim = common::compose<any<__aim__>, defer<unit_t[2]>>;
+	using hyp = common::compose<any<__hyp__>, defer<unit_t[1]>>;
+	
+	using Aim = confined_t<aim>;
+	using Hyp = confined_t<hyp>;
+	using AimHyp = confined_t<aim, hyp>;
+	
+	TRY_("task")
+	{
+		auto _AimHyp = AimHyp(0b1'10u);
+		TRUE_(0b10 == _AimHyp.template head<__aim__>());
+		TRUE_(0b1  == _AimHyp.template head<__hyp__>());
+		TRUE_(sizeof(AimHyp) == sizeof(Aim));
+		TRUE_(sizeof(AimHyp) == sizeof(Hyp));
+	//	TRUE_(any_p<AimHyp, __aim__>);
+		TRUE_(any_p<AimHyp, __hyp__>);
+//	//	TRUE_(6 == AimHyp::limit());
+//	//	TRUE_(4 == Aim   ::limit());
+//	//	TRUE_(2 ==    Hyp::limit());
 
 	}
 }

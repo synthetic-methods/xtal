@@ -14,7 +14,7 @@
 #include <new>
 #include <bit>
 
-#include "./etc.ii"
+#include "../xtal.hh"
 
 XTAL_ENV_(push)
 
@@ -43,6 +43,7 @@ using sign_t = XTAL_STD_(sign_t);
 using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
+XTAL_LET_(size_t) size_1 = 1;
 
 template <auto     N > XTAL_LET_(sign_t) sign_n = (0 < N) - (N < 0);
 template <auto     N >           concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
@@ -68,24 +69,24 @@ template <auto     N >       using cardinal_t = _std::integral_constant<size_t, 
 template <auto     N >       using  ordinal_t = _std::integral_constant<int,         N>;
 template <auto     N >       using  logical_t = _std::integral_constant<bool,        N>;
 
-template <class    T >     concept constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
-template <class    T >     concept cardinal_p = constant_p<T> and _std:: is_unsigned_v<typename T::value_type>;
-template <class    T >     concept  ordinal_p = constant_p<T> and _std::   is_signed_v<typename T::value_type>;
-template <class    T >     concept  logical_p = constant_p<T> and _std::convertible_to<typename T::value_type, bool>;
+template <class    T >    concept  constant_p = _std::derived_from<T, _std::integral_constant<typename T::value_type, T{}>>;
+template <class    T >    concept  cardinal_p =     constant_p<T> and _std::    is_unsigned_v<typename T::value_type>;
+template <class    T >    concept   ordinal_p =     constant_p<T> and _std::      is_signed_v<typename T::value_type>;
+template <class    T >    concept   logical_p =     constant_p<T> and _std::   convertible_to<typename T::value_type, bool>;
 
-template <class ...Ts>     concept constant_q = (...and constant_p<Ts>);
-template <class ...Ts>     concept cardinal_q = (...and cardinal_p<Ts>);
-template <class ...Ts>     concept  ordinal_q = (...and  ordinal_p<Ts>);
-template <class ...Ts>     concept  logical_q = (...and  logical_p<Ts>);
+template <class ...Ts>    concept  constant_q = (...and constant_p<Ts>);
+template <class ...Ts>    concept  cardinal_q = (...and cardinal_p<Ts>);
+template <class ...Ts>    concept   ordinal_q = (...and  ordinal_p<Ts>);
+template <class ...Ts>    concept   logical_q = (...and  logical_p<Ts>);
 
-template <class    T > concept  subcardinal_p = cardinal_p<T> and 0 < T::value;
-template <class    T > concept semicardinal_p = cardinal_p<T> and 0 < T::value;
+template <class    T >    concept  _liminal_q = constant_p<T> and 0 != T::value;
+template <class    T >    concept _terminal_q = constant_p<T> and 0 == T::value;
 
-template <class ...Ts> concept  subcardinal_q = (...and subcardinal_p<Ts>);
-template <class ...Ts> concept semicardinal_q = (...and subcardinal_p<Ts>);
+template <class ...Ts>    concept   liminal_q = (...and  _liminal_q<Ts>);
+template <class ...Ts>    concept  terminal_q = (...and _terminal_q<Ts>);
 
-template < subcardinal_p T > using  subcardinal_s = cardinal_t<(T{}  - 1)>;
-template <semicardinal_p T > using semicardinal_s = cardinal_t<(T{} >> 1)>;
+template <liminal_q T > using  subliminal_s = constant_t<(T{} - sign_n<T{}>)>;
+template <liminal_q T > using semiliminal_s = constant_t<(T{} >> 1)>;
 
 
 template <class    T >       using   based_t  = _std::remove_cvref_t<complete_t<T>>;
