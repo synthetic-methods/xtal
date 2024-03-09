@@ -24,7 +24,7 @@ template <class U> struct cue<U>: conferred<U, common::tag<cue>> {};
 template <       > struct cue< >: cue<size_s> {};
 
 template <class S=void, typename ...As>
-using cue_s = common::compose_s<devoid_t<S, confined_t<>>, cue<As...>>;
+using cue_s = common::compose_s<complete_t<S, confined_t<>>, cue<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

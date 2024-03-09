@@ -22,11 +22,11 @@ struct define
 	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
 		XTAL_TN1_(size_s) delay()         {return count_f(self());}
 		XTAL_TN1_(size_s) relay(size_s i) {return count_f(self());}
@@ -170,11 +170,11 @@ struct define
 			template <conflux::any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using _R = common::compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 			
 			public:
-			//	using _R::_R;
-				using _R::self;
+			//	using R_::R_;
+				using R_::self;
 
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
@@ -185,7 +185,7 @@ struct define
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
-				:	_R(T{}, XTAL_REF_(xs)...)
+				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
 
 			};
@@ -210,12 +210,12 @@ struct defer
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		///\note\
 		Influxes the proxied value if supported, then `this`.
@@ -224,12 +224,12 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(_S::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
+			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 		XTAL_TLX influx(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return _S::influx(XTAL_REF_(oo)...);
+			return S_::influx(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -239,12 +239,12 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(head().efflux(oo...)) (_S::efflux(XTAL_REF_(oo)...));
+			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_TLX efflux(XTAL_DEF ...oo)
 		XTAL_0EX
 		{
-			return _S::efflux(XTAL_REF_(oo)...);
+			return S_::efflux(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -253,12 +253,12 @@ struct defer
 		XTAL_TLX defuse(U u)
 		XTAL_0EX
 		{
-			return _S::heading(u) or (_S::head(u), 0);
+			return S_::heading(u) or (S_::head(u), 0);
 		}
 		XTAL_TLX defuse(XTAL_DEF w)
 		XTAL_0EX
 		{
-			return _S::defuse(XTAL_REF_(w));
+			return S_::defuse(XTAL_REF_(w));
 		}
 
 	};

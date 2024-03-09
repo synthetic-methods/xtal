@@ -24,29 +24,29 @@ template <array_q W=size_t[2], typename ...As> XTAL_USE quasar_t = confined_t<qu
 template <array_q W, typename ...As>
 struct quasar<W, As...>
 {
-	using phasor_u = phasor_t<W, As...>;
-	using pulsar_u = pulsar_t<W, As...>;
+	using U_phasor = phasor_t<W, As...>;
+	using U_pulsar = pulsar_t<W, As...>;
 	
-	XTAL_LET _N = _std::       extent_v<W>;
-	XTAL_USE _U = _std::remove_extent_t<W>;
+	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using _computer = common::compute<_U>;
-	using delta_t = typename _computer::delta_t;
-	using alpha_t = typename _computer::alpha_t;
+	using _computer = common::compute<U_>;
+	using T_delta = typename _computer::delta_t;
+	using T_alpha = typename _computer::alpha_t;
 
-	using quartz_w = precess::quartz_t<_U>[_N];
-	using subkind = common::compose<common::tag<quasar>, As..., fusor<quartz_w>>;
+	using W_quartz = precess::quartz_t<U_>[N_];
+	using subkind = common::compose<common::tag<quasar>, As..., fusor<W_quartz>>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
-		using _S::subscript;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
+		using S_::subscript;
 
 		///\
 		Access by name/index (dynamic). \
@@ -63,14 +63,14 @@ struct quasar<W, As...>
 		///\
 		Projection to components by name. \
 
-		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(phasor_u(phase<I>()...)) (common::seek_f<_N>{});}
-		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(pulsar_u(pulse<I>()...)) (common::seek_f<_N>{});}
+		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(U_phasor(phase<I>()...)) (common::seek_f<N_>{});}
+		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(U_pulsar(pulse<I>()...)) (common::seek_f<N_>{});}
 		
 		///\
 		Projection to initial component by type. \
 
-		XTAL_DO4_(XTAL_OP0_(explicit) delta_t(), {return pulse<0>();})
-		XTAL_DO4_(XTAL_OP0_(explicit) alpha_t(), {return phase<0>();})
+		XTAL_DO4_(XTAL_OP0_(explicit) T_delta(), {return pulse<0>();})
+		XTAL_DO4_(XTAL_OP0_(explicit) T_alpha(), {return phase<0>();})
 
 	};
 };

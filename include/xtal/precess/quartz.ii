@@ -28,30 +28,30 @@ struct quartz<U>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::twin;
+		using S_::S_;
+		using S_::self;
+		using S_::twin;
 
-		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), _S::template head<0>(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), _S::template head<1>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), S_::template head<1>(XTAL_REF_(oo)...))
 
-		using pulse_u = XTAL_TYP_(_S::template head<0>());
-		using phase_u = XTAL_TYP_(_S::template head<1>());
+		using U_pulse = XTAL_TYP_(S_::template head<0>());
+		using U_phase = XTAL_TYP_(S_::template head<1>());
 
-		XTAL_TO4_(XTAL_OP0_(implicit) pulse_u(), pulse())
-		XTAL_TO4_(XTAL_OP0_(implicit) phase_u(), phase())
+		XTAL_TO4_(XTAL_OP0_(implicit) U_pulse(), pulse())
+		XTAL_TO4_(XTAL_OP0_(implicit) U_phase(), phase())
 
-		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: _S(XTAL_REF_(o), phase_u {}) {}
-		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: _S(pulse_u {}, XTAL_REF_(o)) {}
+		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: S_(XTAL_REF_(o), U_phase {}) {}
+		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: S_(U_pulse {}, XTAL_REF_(o)) {}
 
 		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 				
-		XTAL_OP1 += (subtype const &t) XTAL_0EX {_S::pulse() += t.pulse(); _S::phase() += t.phase(); return self();}
-		XTAL_OP1 -= (subtype const &t) XTAL_0EX {_S::pulse() -= t.pulse(); _S::phase() -= t.phase(); return self();}
+		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::pulse() += t.pulse(); S_::phase() += t.phase(); return self();}
+		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::pulse() -= t.pulse(); S_::phase() -= t.phase(); return self();}
 	
 	};
 

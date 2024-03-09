@@ -45,11 +45,11 @@ concept any_q = of_p<any_t<>, Ts...>;
 ///\
 Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 
-template <class ...Us> struct infer: common::compose<infer<Us>...> {};
-template <any_q    T > struct infer<T>                {using type = T;};
-template <vacant_q U > struct infer<U>:        any<U> {};
-template <class    U > struct infer<U>:      defer<U> {};
-template <class ...Us>  using infer_t = typename infer<Us...>::type;
+template <class     ...Us> struct infer: common::compose<infer<Us>...> {};
+template <any_q        T > struct infer<T>                {using type = T;};
+template <incomplete_q U > struct infer<U>:        any<U> {};
+template <class        U > struct infer<U>:      defer<U> {};
+template <class     ...Us>  using infer_t = typename infer<Us...>::type;
 
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
@@ -85,10 +85,10 @@ struct confined
 	template <class S>
 	class subtype: public common::compose_s<S, homokind<subtype<S>>>
 	{
-		using _S = common::compose_s<S, homokind<subtype<S>>>;
+		using S_ = common::compose_s<S, homokind<subtype<S>>>;
 	
 	public:
-		using _S::_S;
+		using S_::S_;
 
 	};
 	using type = subtype<any_t<>>;

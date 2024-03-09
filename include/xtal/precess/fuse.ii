@@ -28,17 +28,17 @@ struct fuse<U>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
 		XTAL_CO0_(subtype)
 		XTAL_CO4_(subtype)
 		XTAL_CON subtype(XTAL_DEF_(to_q<U>) w, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(w), XTAL_REF_(oo)...)
+		:	S_(XTAL_REF_(w), XTAL_REF_(oo)...)
 		{
 			normalize();
 		}
@@ -49,11 +49,11 @@ struct fuse<U>
 			return self();
 		}
 
-		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return _S::twin() += XTAL_REF_(w);}
-		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return _S::twin() -= XTAL_REF_(w);}
+		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return S_::twin() += XTAL_REF_(w);}
+		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return S_::twin() -= XTAL_REF_(w);}
 				
-		XTAL_OP1 += (subtype const &t) XTAL_0EX {_S::operator+=(t.head()); return self().normalize();}
-		XTAL_OP1 -= (subtype const &t) XTAL_0EX {_S::operator-=(t.head()); return self().normalize();}
+		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::operator+=(t.head()); return self().normalize();}
+		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::operator-=(t.head()); return self().normalize();}
 	
 	};
 };

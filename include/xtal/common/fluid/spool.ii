@@ -39,33 +39,33 @@ struct spool<A>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-		using _S = hemitype<T>;
+		using S_ = hemitype<T>;
 
-		using store_u = store_t<A>;
-		using visor_u = typename store_u::iterator;
-		using value_u = typename store_u::value_type;
-		using count_u = typename store_u::difference_type;
+		using U_store = store_t<A>;
+		using U_visor = typename U_store::iterator;
+		using U_value = typename U_store::value_type;
+		using U_count = typename U_store::difference_type;
 
-		store_u m_store{};
-		count_u n_begin = 0;
-		count_u n_end   = 0;
+		U_store m_store {};
+		U_count n_begin = 0;
+		U_count n_end   = 0;
 
 	public:
-		using _S::_S;
+		using S_::S_;
 		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON homotype(bracket_t<value_u> w)
+		XTAL_CON homotype(bracket_t<U_value> w)
 		:	n_end {_std::distance(w.begin(), w.end())}
 		,	m_store(w)
 		{}
 
-		XTAL_TO2_(XTAL_TN2     begin(count_u n=0), _std::next(m_store.begin(), n + n_begin))
-		XTAL_TO2_(XTAL_TN2       end(count_u n=0), _std::prev(m_store.  end(), n + n_end))
-		XTAL_TN2_(value_u &)    peek(count_u n=0) XTAL_0EX {              return *begin(n);}
-		XTAL_TN1_(value_u &) advance(count_u n=1) XTAL_0EX {n_begin += n; return *begin(0);}
-		XTAL_TN1_(value_u &) abandon(bool    n=1)
+		XTAL_TO2_(XTAL_TN2     begin(U_count n=0), _std::next(m_store.begin(), n + n_begin))
+		XTAL_TO2_(XTAL_TN2       end(U_count n=0), _std::prev(m_store.  end(), n + n_end))
+		XTAL_TN2_(U_value &)    peek(U_count n=0) XTAL_0EX {              return *begin(n);}
+		XTAL_TN1_(U_value &) advance(U_count n=1) XTAL_0EX {n_begin += n; return *begin(0);}
+		XTAL_TN1_(U_value &) abandon(bool    n=1)
 		XTAL_0EX
 		{
 			if (n) {
@@ -84,7 +84,7 @@ struct spool<A>
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-		XTAL_TN0 pop(visor_u i)
+		XTAL_TN0 pop(U_visor i)
 		XTAL_0EX
 		{
 			assert(i < end());
@@ -98,14 +98,14 @@ struct spool<A>
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_TN2_(visor_u) scan(XTAL_DEF w)
+		XTAL_TN2_(U_visor) scan(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
 			,	XTAL_REF_(w)
 			);
 		}
-		XTAL_TN2_(visor_u) scan(XTAL_DEF w, XTAL_DEF f)
+		XTAL_TN2_(U_visor) scan(XTAL_DEF w, XTAL_DEF f)
 		XTAL_0EX
 		{
 			return _std::lower_bound(m_store.begin(), m_store.end()
@@ -116,10 +116,10 @@ struct spool<A>
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(visor_u) push(value_u v)
+		XTAL_TN1_(U_visor) push(U_value v)
 		XTAL_0EX
 		{
-			visor_u v_ = scan(v);
+			U_visor v_ = scan(v);
 			if (*v_ == v) {
 				_std::swap(*v_, v); return v_;
 			}
@@ -127,18 +127,18 @@ struct spool<A>
 				return poke(v_, XTAL_MOV_(v));
 			}
 		}
-		template <is_q<value_u> W>
-		XTAL_TN1_(visor_u) poke(visor_u v_, W &&w)
+		template <is_q<U_value> W>
+		XTAL_TN1_(U_visor) poke(U_visor v_, W &&w)
 		XTAL_0EX
 		{
 			return m_store.insert(v_, XTAL_REF_(w));
 		}
-		XTAL_TN1_(visor_u) poke(visor_u v_, XTAL_DEF ...ws)
+		XTAL_TN1_(U_visor) poke(U_visor v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		{
-			return m_store.insert(v_, value_u(XTAL_REF_(ws)...));
+			return m_store.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
-		XTAL_TN1_(visor_u) poke(visor_u v_, XTAL_DEF ...ws)
+		XTAL_TN1_(U_visor) poke(U_visor v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ_(m_store.inplace(v_, XTAL_REF_(ws)...))
 		{

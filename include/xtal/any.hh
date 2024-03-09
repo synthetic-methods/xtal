@@ -200,8 +200,8 @@ static_assert(1400 <= XTAL_V00_LLVM);
 
 #define XTAL_E0 ()
 #define XTAL_F0() XTAL_F2_
-#define XTAL_F1_(_F,     ...)        __VA_OPT__(XTAL_X2_(XTAL_F2_(_F, __VA_ARGS__)))///< Map.
-#define XTAL_F2_(_F, A0, ...) _F(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (_F, __VA_ARGS__))
+#define XTAL_F1_(F_,     ...)        __VA_OPT__(XTAL_X2_(XTAL_F2_(F_, __VA_ARGS__)))///< Map.
+#define XTAL_F2_(F_, A0, ...) F_(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (F_, __VA_ARGS__))
 
 #define XTAL_X0_(...) __VA_ARGS__
 #define XTAL_X1_(...) XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))

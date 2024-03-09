@@ -11,7 +11,7 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <_std::integral U=typename common::computer::iota_t>
+template <integral_p U=typename common::computer::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
@@ -19,17 +19,17 @@ struct restep
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using step_t = U;
+		using S_::S_;
+		using U_step = U;
 
-		XTAL_TO4_(XTAL_TN2 step(XTAL_DEF... oo), _S::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 step(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };
-template <_std::integral U=typename common::computer::iota_t>
+template <integral_p U=typename common::computer::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_FN2 restep_f(XTAL_DEF w)

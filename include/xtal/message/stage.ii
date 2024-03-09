@@ -26,14 +26,14 @@ struct stage
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
+		using S_::S_;
 
 	};
 };
-template <constant_q A, typename ...As>
+template <integral_q A, typename ...As>
 struct stage<A, As...>
 {
 	using subkind = common::compose<void
@@ -46,10 +46,10 @@ struct stage<A, As...>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
+		using S_::S_;
 
 	//	XTAL_CO0_(subtype)
 		XTAL_CO4_(subtype)
@@ -57,13 +57,13 @@ struct stage<A, As...>
 		XTAL_CON subtype()
 		XTAL_0EX
 		{
-			_S::head(A{});
+			S_::head(A{});
 		}
 		XTAL_CON subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{
-			_S::head(A{});
+			S_::head(A{});
 		}
 
 

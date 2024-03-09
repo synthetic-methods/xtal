@@ -24,128 +24,127 @@ XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 template <class U, typename ...As>
 struct monomer<U, As...>
 {
-	using resize_u = message::resize_t<>;
-	using scope_u = message::scope_t<>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 
 	using subkind = confer<U, As...>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
-		using _T = typename _S::self_u;
+		using S_ = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using _F = typename _S::template bond<Xs...>;
+		using S_bond = typename S_::template bond<Xs...>;
+
+	public://protected:
+		using typename S_::T_self;
 
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
 		template <class ...Xs>
-		struct bond: _F<Xs...>
+		struct bond: S_bond<Xs...>
 		{
-			using rebound = _F<Xs...>;
 			using subkind = common::compose<common::tag<monomer>
-			,	compound::confer<typename rebound::result_t>
+			,	compound::confer<typename S_bond<Xs...>::Y_result>
 		//	,	As...
-		//	,	resize_u::attach<>
-			,	scope_u::attach<>
-			,	rebound
+		//	,	U_resize::attach<>
+			,	U_scope::attach<>
+			,	S_bond<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using _R = common::compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
-			//	using _R::_R;
+			//	using R_::R_;
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
 
 				XTAL_CXN subtype(XTAL_DEF ...xs)
 				XTAL_0EX
-				:	subtype(_T{}, XTAL_REF_(xs)...)
+				:	subtype(T_self {}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CXN subtype(XTAL_DEF_(is_q<_T>) t, XTAL_DEF ...xs)
+				XTAL_CXN subtype(XTAL_DEF_(is_q<T_self>) t, XTAL_DEF ...xs)
 				XTAL_0EX
-				:	_R(_R::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-				XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), _R::head(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), R_::head(XTAL_REF_(oo)...))
 				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
 
 
-				using _R::efflux;
+				using R_::efflux;
 
 				XTAL_TLX efflux(XTAL_DEF_(message::scope_q) o_scope)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(_R::method()), -1) (_R::efflux(XTAL_REF_(o_scope)));
+					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_scope)));
 				}
 
 			};
 		};
-		template <class ...Xs> requires resource::restore_q<_S>
-		struct bond<Xs...>: _F<Xs...>
+		template <class ...Xs> requires resource::stored_q<S_>
+		struct bond<Xs...>: S_bond<Xs...>
 		{
-			using rebound = _F<Xs...>;
-			
-			using return_t = typename rebound::return_t;
-			using  store_u = typename _S::template store_t<return_t>;
-			using  serve_u = deranged_t<store_u>;
-			using respan_u = message::respan_t<serve_u>;
+			using Y_return = typename S_bond<Xs...>::Y_return;
+			using U_store  = typename S_::template store_t<Y_return>;
+			using U_serve  = deranged_t<U_store>;
+			using U_respan = message::respan_t<U_serve>;
 		
-			XTAL_LET_(int) N_share = common::seek_truth_n<_detail::recollection_p<Xs, serve_u>...>;
+			XTAL_LET_(int) N_share = common::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 
 			using subkind = common::compose<common::tag<monomer>
-			,	compound::refer<serve_u>
-			,	message::revise<store_u>
+			,	compound::refer<U_serve>
+			,	message::revise<U_store>
 			,	As...// NOTE: Necessary for `intermit`...
-			,	resize_u::attach<>
-			,	scope_u::attach<>
-			,	rebound
+			,	U_resize::attach<>
+			,	U_scope::attach<>
+			,	S_bond<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using _R = common::compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
-				using _R::_R;
-				using _R::self;
-				using _R::serve;
-				using _R::store;
+				using R_::R_;
+				using R_::self;
+				using R_::serve;
+				using R_::store;
 				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
 
-			//	using _R::infuse;
+			//	using R_::infuse;
 				///\
 				Responds to `message::resize` by resizing the internal `store()`. \
 
 				XTAL_TLX infuse(XTAL_DEF o)
 				XTAL_0EX
 				{
-					if constexpr (is_q<resize_u, decltype(o)>) {
-						return _R::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
+					if constexpr (is_q<U_resize, decltype(o)>) {
+						return R_::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
 					}
 					else {
-						return _R::infuse(XTAL_REF_(o));
+						return R_::infuse(XTAL_REF_(o));
 					}
 				}
-				using _R::influx_push;
+				using R_::influx_push;
 				///\note\
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_TLX influx_push(resize_u o_resize, XTAL_DEF ...oo)
+				XTAL_TLX influx_push(U_resize o_resize, XTAL_DEF ...oo)
 				XTAL_0EX
 				XTAL_REQ (0 <= N_share)
 				{
-					return _R::template influx_push_tail<N_share>(null_t(), o_resize, XTAL_REF_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_t(), o_resize, XTAL_REF_(oo)...);
 				}
 
 
-				using _R::efflux;
+				using R_::efflux;
 				///\
 				Responds to `message::scope` by rendering the internal `store()`. \
 				A match for the following scope will initiate the `respan` (returning `1`), \
@@ -155,33 +154,33 @@ struct monomer<U, As...>
 				XTAL_TLX efflux(message::scope_q auto o_scope, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return efflux(respan_u(store()), o_scope, XTAL_REF_(oo)...);
+					return efflux(U_respan(store()), o_scope, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_TLX efflux(respan_u o_respan, message::scope_q auto o_scope, XTAL_DEF ...oo)
+				XTAL_TLX efflux(U_respan o_respan, message::scope_q auto o_scope, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					if (_R::effuse(o_scope) == 1) return 1;
+					if (R_::effuse(o_scope) == 1) return 1;
 				//	else...
 					(void) serve(o_respan);
 					return self().reflux([&, this] (auto n, counted_q auto w)
 						XTAL_0FN_(self().efflux_pull_slice(o_respan.slice(w), o_scope.slice(w).skip(n), oo...))
-					) & _R::template influx_push(o_scope);
+					) & R_::template influx_push(o_scope);
 				}
 				///\
 				Renders the buffer slice designated by `respan_x` and `scope_x`. \
 				
-				XTAL_TLX efflux_pull_slice(respan_u respan_x, message::scope_q auto scope_x, XTAL_DEF ...oo)
+				XTAL_TLX efflux_pull_slice(U_respan respan_x, message::scope_q auto scope_x, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const  t_ = respan_x.begin();
 					auto const _n  = recount_f(respan_x);
-					return 1 == _R::template efflux_pull_tail<N_share>(respan_x, scope_x, oo...) or
-						(_v3::ranges::move(_R::method()|_n, t_), 0);
+					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, scope_x, oo...) or
+						(_v3::ranges::move(R_::method()|_n, t_), 0);
 				}
 
 			};

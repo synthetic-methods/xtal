@@ -1,7 +1,7 @@
 module xtal {
 	umbrella "xtal"
 	export *
-	exclude header "xtal/_echo.hxx"
+	exclude header "xtal/_detail.ixx"
 	exclude header "xtal/common/_detail.hxx"
 	exclude header "xtal/compound/_detail.hxx"
 	exclude header "xtal/compound/_kernel.hxx"

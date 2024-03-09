@@ -25,7 +25,7 @@ Polyphonic voice allocator. Functionally similar to `monomer`, \
 but expands/contracts the voice store according to `message::stage` requests/responses. \
 
 ///\note\
-The attached `restore` and `respool` determine the sample buffer and voice spool respectively. \
+The attached `stored` and `spooled` determine the sample buffer and voice spool respectively. \
 
 template <class U, typename ...As>
 struct polymer<U, As...>
@@ -35,53 +35,49 @@ struct polymer<U, As...>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
-		using _I = monomer_t<based_t<U>>;
+		using S_ = common::compose_s<S, subkind>;
+		using I_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
-		using _F = typename _S::template bond<Xs...>;
+		using S_bond = typename S_::template bond<Xs...>;
 
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
-		template <class ...Xs> requires resource::respool_q<_S> and resource::restore_q<_S>
-		struct bond: _F<Xs...>
+		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
+		struct bond: S_bond<Xs...>
 		{
-			using rebound = _F<Xs...>;
+			using V_event = message::stage_t<>;
+			using U_event = compound::key_s<V_event>;
 			
-			using return_t = typename rebound::return_t;
-
-			using event_t = message::stage_t<>;
-			using event_u = compound::key_s<event_t>;
+			using V_voice = typename I_::template bond_t<Xs...>;
+			using U_voice = compound::key_s<V_voice>;
 			
-			using voice_t = typename _I::template bond_t<Xs...>;
-			using voice_u = compound::key_s<voice_t>;
-			
-			using ensemble_u = typename _S::template spool_t<voice_u>;
+			using U_ensemble = typename S_::template spool_t<U_voice>;
 
 			using subkind = common::compose<common::tag<polymer>
-			,	defer<voice_t>
+			,	defer<V_voice>
 			,	As...// NOTE: Necessary for `intermit`...
-			,	rebound
+			,	S_bond<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using _R = common::compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 				
-				ensemble_u m_ensemble;
+				U_ensemble u_ensemble;
 
 			public:
-				using _R::_R;
-				using _R::self;
-				using _R::head;
-				using _R::serve;
-				using _R::store;
+				using R_::R_;
+				using R_::self;
+				using R_::head;
+				using R_::serve;
+				using R_::store;
 				
-				XTAL_TO2_(XTAL_TN2 ensemble(), m_ensemble)
+				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)
 
-				using _R::influx;
+				using R_::influx;
 				
 				///\
 				Forwards the `compound::key`ed message to the associated instance. \
@@ -104,21 +100,21 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					auto h = i.head();
-					auto w = m_ensemble.scan(h);
-					assert(m_ensemble and h == w->head());
+					auto w = u_ensemble.scan(h);
+					assert(u_ensemble and h == w->head());
 					return w->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(compound::key_s<> i, event_t o, XTAL_DEF ...oo)
+				XTAL_TLX influx(compound::key_s<> i, V_event o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
-					auto w = m_ensemble.scan(h);
+					auto w = u_ensemble.scan(h);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (0 == o) {
-						if (m_ensemble and h == w->head()) {
+						if (u_ensemble and h == w->head()) {
 							(void) w->influx(message::stage_f(-1), oo...);
 						}
-						w = m_ensemble.poke(w, h, head());
+						w = u_ensemble.poke(w, h, head());
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
@@ -132,7 +128,7 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = false;
-					return _v3::ranges::accumulate(m_ensemble
+					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
@@ -142,7 +138,7 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = (...or message::scope_q<decltype(oo)>);
-					return _v3::ranges::accumulate(m_ensemble
+					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, XTAL_DEF v)
 							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
@@ -158,9 +154,9 @@ struct polymer<U, As...>
 				{
 					XTAL_FLX flx = -1;
 				//	Render each instance, while releasing any that have terminated:
-					for (auto _e = m_ensemble.end(); m_ensemble.begin() <= --_e;) {
+					for (auto _e = u_ensemble.end(); u_ensemble.begin() <= --_e;) {
 						if (_e->efflux(message::stage_f(-1)) == 1) {
-							m_ensemble.pop(_e);
+							u_ensemble.pop(_e);
 						}
 						else {
 							flx &= _e->efflux(scope_x, oo...);
@@ -170,7 +166,7 @@ struct polymer<U, As...>
 				//	Initialize buffer with first instance, then progressively chunk/mix the rest:
 					using namespace _v3;
 					using namespace _detail;
-					auto i = m_ensemble.begin(), iN = m_ensemble.end();
+					auto i = u_ensemble.begin(), iN = u_ensemble.end();
 					tunnel_f(respan_x, i++);
 					common::seek_n<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {

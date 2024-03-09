@@ -17,7 +17,8 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-struct define_member
+template <class T>
+struct define_field
 {
 	template <any_q S>
 	class subtype: public S
@@ -25,7 +26,15 @@ struct define_member
 	public:
 		using S::S;
 
-		using bit_field = cardinal_t<0>;
+		using field_depth = cardinal_t<0>;
+		using field_width = cardinal_t<1>;
+
+		XTAL_FN2_(size_t) enumerate()
+		XTAL_0EX
+		{
+		//	return size_1 << T::field_depth::value;
+			return           T::field_width::value;
+		}
 
 	};
 };
@@ -34,6 +43,7 @@ struct define_member
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+template <class T>
 struct refine_head
 {
 	template <any_q S>
@@ -46,8 +56,9 @@ struct refine_head
 	template <any_q S> requires (1 == S::arity::value)
 	class subtype<S>: public S
 	{
-		using _T = typename S::self_u;
-		using _U = typename S::head_u;
+	public://protected:
+		using typename S::T_self;
+		using typename S::U_head;
 
 	public:
 		using S::S;
@@ -56,23 +67,24 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_OP0_(implicit) _U(), {return head();})
+		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
 		
 		///\returns the `sentinel` boundary in the direction of `N_polarity`. \
 
 		template <int N_polarity=0>
 		XTAL_FN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ algebraic_field_q<_U> and equality_q<_U> and sign_q<N_polarity>
+		XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity>
 		{
-			using L = _std::numeric_limits<_U>;
-			if constexpr (N_polarity == +1) return _T(L::max(), XTAL_REF_(oo)...);
-			if constexpr (N_polarity ==  0) return _T(0,        XTAL_REF_(oo)...);
-			if constexpr (N_polarity == -1) return _T(L::min(), XTAL_REF_(oo)...);
+			using L = _std::numeric_limits<U_head>;
+			if constexpr (N_polarity == +1) return T_self(L::max(), XTAL_REF_(oo)...);
+			if constexpr (N_polarity ==  0) return T_self(0,        XTAL_REF_(oo)...);
+			if constexpr (N_polarity == -1) return T_self(L::min(), XTAL_REF_(oo)...);
 		}
 
 	};
 };
+template <class T>
 struct refine_tuple
 {
 	template <any_q S>
@@ -82,9 +94,9 @@ struct refine_tuple
 		using S::S;
 		using S::apple;
 
-		using tuple_type = XTAL_TYP_(XTAL_VAL_(S).apple());
+		using apple_type = XTAL_TYP_(XTAL_VAL_(S).apple());
 
-		XTAL_DO4_(XTAL_OP0_(implicit) tuple_type(), {return apple();})
+		XTAL_DO4_(XTAL_OP0_(implicit) apple_type(), {return apple();})
 		
 	};
 };
@@ -94,19 +106,21 @@ struct refine_tuple
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct defer_member
+struct defer_field
 {
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
-		using _S = common::compose_s<S>;
+		using S_ = common::compose_s<S>;
+
+	public://protected:
+		using U_head = U;
+		using U_body = debased_t<U>;
 
 	public:
-	//	using _S::_S;
-		using _S::self;
-		using head_u = U;
-		using body_t = debased_t<U>;
-		body_t body_m;
+	//	using S_::S_;
+		using S_::self;
+		U_body body_m;
 
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -116,10 +130,10 @@ struct defer_member
 
 		XTAL_CON subtype()
 		XTAL_0EX
-		:	subtype(body_t{})
+		:	subtype(U_body{})
 		{}
-		XTAL_CON subtype(bracket_t<devalued_t<head_u>> a)
-		XTAL_REQ array_q<head_u> and rebased_q<head_u>
+		XTAL_CON subtype(bracket_t<revalued_t<U_head>> a)
+		XTAL_REQ array_q<U_head> and rebased_q<U_head>
 		:	body_m(a)
 		{}
 		///\
@@ -128,8 +142,8 @@ struct defer_member
 		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(oo)...)
-		,	body_m(member_f<head_u>(XTAL_REF_(a)))
+		:	S_(XTAL_REF_(oo)...)
+		,	body_m(member_f<U_head>(XTAL_REF_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -141,92 +155,103 @@ struct defer_member
 		
 		XTAL_TN1 head(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ rebased_q<head_u> and (0 < sizeof...(oo))
+		XTAL_REQ rebased_q<U_head> and (0 < sizeof...(oo))
 		{
 			return dismember_f(body_m, XTAL_REF_(oo)...);
 		}
 
+		using field_width = cardinal_t<0>;
+		static_assert(terminal_q<typename S_::field_depth>);// for now...
+
 	};
 };
 template <size_t N_depth>
-struct defer_member<unit_t[N_depth]>
+struct defer_field<unit_t[N_depth]>
 {
 	XTAL_LET N_width = size_1 << N_depth;
-	XTAL_LET N_mask  = N_width -  size_1;
+	XTAL_LET N_mask = N_width - size_1;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
-		using _S = common::compose_s<S>;
+		using S_ = common::compose_s<S>;
+
+	public://protected:
+		using U_head = size_t;
+		using U_body = unsigned;
 
 	public:
-	//	using _S::_S;
-		using _S::self;
+	//	using S_::S_;
+		using S_::self;
 
-		using head_u = size_t;
-		using body_t = unsigned;
-		body_t body_m:N_depth;
+		U_body body_m:N_depth;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 		
-		using bit_field = cardinal_t<N_depth + _S::bit_field::value>;
-
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(oo)...)
-		,	body_m(member_f<head_u>(XTAL_REF_(a)))
+		:	S_(XTAL_REF_(oo)...)
+		,	body_m(member_f<U_head>(XTAL_REF_(a)))
 		{}
-		template <_std::integral A> requires  liminal_q<typename _S::bit_field>
+		template <integral_p A> requires  liminal_q<typename S_::field_depth>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
-		:	_S(head_u(XTAL_REF_(a)) >> N_depth)
-		,	body_m(head_u(a)&N_mask)
+		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
+		,	body_m(U_head(a)&N_mask)
 		{};
-		template <_std::integral A> requires terminal_q<typename _S::bit_field>
+		template <integral_p A> requires terminal_q<typename S_::field_depth>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
-		:	body_m(head_u(a)&N_mask)
+		:	body_m(U_head(a)&N_mask)
 		{
 			assert(0 == a >> N_depth);
 		};
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return head_u(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return head_u(body_m);}
+		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
 		
+		using field_depth = cardinal_t<N_depth + S_::field_depth::value>;
+		using field_width = cardinal_t<N_width * S_::field_width::value>;
+		static_assert(size_1 << field_depth::value == field_width::value);// for now...
+
 	};
 };
-template <constant_q U>
-struct defer_member<U>
+template <integral_q U>
+struct defer_field<U>
 {
 	template <any_q S>
 	class subtype: public common::compose_s<S>
 	{
-		using _S = common::compose_s<S>;
+		using S_ = common::compose_s<S>;
+
+	public://protected:
+		using U_head = U;
+		using U_body = debased_t<U>;
 
 	public:
-		using _S::_S;
-		using _S::self;
-		using head_u = U;
-		using body_t = debased_t<U>;
-		body_t body_m {};
+		using S_::S_;
+		using S_::self;
+		U_body body_m {};
 
-		template <is_q<head_u> A>
+		template <integral_q A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(oo)...)
-		{}
+		:	S_(XTAL_REF_(oo)...)
+		{
+			static_assert(A::value == U::value);
+		}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return remember_f(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return remember_f(body_m);}
+		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
 		
 	};
 };
@@ -350,13 +375,14 @@ struct refer_binary_logic<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-		using _T = typename S::self_u;
+	public://protected:
+		using typename S::T_self;
 	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() ^ (U) XTAL_REF_(w));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() | (U) XTAL_REF_(w));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() & (U) XTAL_REF_(w));}
+		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_REF_(w));}
+		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() | (U) XTAL_REF_(w));}
+		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() & (U) XTAL_REF_(w));}
 
 	};
 };
@@ -402,12 +428,13 @@ struct refer_multiplicative_group<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-		using _T = typename S::self_u;
+	public://protected:
+		using typename S::T_self;
 	
 	public:
 		using S::S;
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() * (U) XTAL_REF_(w));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() / (U) XTAL_REF_(w));}
+		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() * (U) XTAL_REF_(w));}
+		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() / (U) XTAL_REF_(w));}
 
 	};
 };
@@ -443,13 +470,14 @@ struct refer_additive_group<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-		using _T = typename S::self_u;
+	public://protected:
+		using typename S::T_self;
 	
 	public:
 		using S::S;
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() + (U) XTAL_REF_(w));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return _T(S::head() - (U) XTAL_REF_(w));}
-		XTAL_OP1 - () XTAL_0FX {return _T(-S::head());}
+		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() + (U) XTAL_REF_(w));}
+		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() - (U) XTAL_REF_(w));}
+		XTAL_OP1 - () XTAL_0FX {return T_self(-S::head());}
 
 	};
 };

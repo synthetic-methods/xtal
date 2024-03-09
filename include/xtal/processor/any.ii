@@ -50,7 +50,7 @@ struct defer<U>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_TN2 reified_(auto const ...ks),
@@ -58,9 +58,9 @@ struct defer<U>
 		)
 
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		///\
 		Defines the range-lifted form of `head` by `reify`ing the underlying `process`. \
@@ -73,20 +73,20 @@ struct defer<U>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...));
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -94,34 +94,34 @@ struct defer<U>
 template <class U>
 struct refer
 {
-	using scope_u = message::scope_t<counted_t<>>;
-	using subkind  = common::compose<_retail::refer<U>, scope_u::attach<>>;
+	using U_scope = message::scope_t<counted_t<>>;
+	using subkind  = common::compose<_retail::refer<U>, U_scope::attach<>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
+		using S_::S_;
 
 	};
 	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
+		using S_::S_;
 
-	//	using _S::method;
+	//	using S_::method;
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
-			using I = iteratee_t<scope_u>; using _computer = common::compute<I>;
-			auto const &m = _S::method();// NOTE: Must be &?
-			auto const &u = _S::template head<scope_u>();
+			using I = iteratee_t<U_scope>; using _computer = common::compute<I>;
+			auto const &m = S_::method();// NOTE: Must be &?
+			auto const &u = S_::template head<U_scope>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);

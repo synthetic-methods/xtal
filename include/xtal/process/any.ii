@@ -22,11 +22,11 @@ struct define
 	class subtype: public common::compose_s<S, subkind>
 	{
 		friend T;
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
 
 		///\returns `true` if the pointers are identical, `false` otherwise. \
@@ -46,25 +46,25 @@ struct define
 		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
-		XTAL_TN2 reify(valued_q auto const ...ks),
+		XTAL_TN2 reify(integral_q auto const ...is),
 		{
-			if constexpr (0 == sizeof...(ks)) {
+			if constexpr (0 == sizeof...(is)) {
 				return [&, this] XTAL_1FN_(self().method);
 			}
 			else {
-				return [&, this] XTAL_1FN_(self().template method<valued_f(ks)...>);
+				return [&, this] XTAL_1FN_(self().template method<is...>);
 			}
 		})
 		//\
-		XTAL_TN2 reify(auto const ...ks), 
+		XTAL_TN2 reify(auto const ...is), 
 		
 		///\returns the overloaded function-pointer for the given types. \
 
 		template <class ...Xs>
-		XTAL_TN2 deify(auto const ...ks)
+		XTAL_TN2 deify(auto const ...is)
 		XTAL_0FX
 		{
-			return deify_(being<Xs...>::template m_method<valued_f(ks)...>);
+			return deify_(being<Xs...>::template m_method<is...>);
 		}
 		XTAL_TN2 deify_(auto const &f0)
 		XTAL_0FX
@@ -76,30 +76,30 @@ struct define
 		///\
 		Defines the subtype-indexed function-pointer table, \
 		dynamically indexed by message-value/subtype `T`, \
-		and statically-generated from `method<Ks...>` with `sizeof...(Ks)` entries. \
+		and statically-generated from `method<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
 		struct being
 		{
-			template <auto ...Ks>
+			template <auto ...Is>
 			class resolve
 			{
 			public:
-				using return_t = decltype(XTAL_VAL_(T &).template method<Ks...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (argument_t<Xs>...);
+				using Y_return = decltype(XTAL_VAL_(T &).template method<Is...>(XTAL_VAL_(Xs)...));
+				using Y_method = Y_return (T::*) (argument_t<Xs>...);
 
 			};
-			template <auto ...Ks>
-			XTAL_REQ_(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...))
-			class resolve<Ks...>
+			template <auto ...Is>
+			XTAL_REQ_(XTAL_VAL_(T const &).template method<Is...>(XTAL_VAL_(Xs)...))
+			class resolve<Is...>
 			{
 			public:
-				using return_t = decltype(XTAL_VAL_(T const &).template method<Ks...>(XTAL_VAL_(Xs)...));
-				using method_t = return_t (T::*) (argument_t<Xs>...) const;
+				using Y_return = decltype(XTAL_VAL_(T const &).template method<Is...>(XTAL_VAL_(Xs)...));
+				using Y_method = Y_return (T::*) (argument_t<Xs>...) const;
 
 			};
-			template <auto ...Ks> XTAL_USE method_t = typename resolve<Ks...>::method_t;
-			template <auto ...Ks> XTAL_LET m_method = static_cast<method_t<Ks...>>(&T::template method<Ks...>);
+			template <auto ...Is> XTAL_USE Y_method = typename resolve<Is...>::Y_method;
+			template <auto ...Is> XTAL_LET m_method = static_cast<Y_method<Is...>>(&T::template method<Is...>);
 		
 		};
 
@@ -112,8 +112,8 @@ struct define
 		struct bond
 		{
 			using signature = common::pack<let_t<Xs>...>;
-			using result_t = typename signature::template invoke_t<T>;
-			using return_t = iteratee_t<result_t>;
+			using Y_result = typename signature::template invoke_t<T>;
+			using Y_return = iteratee_t<Y_result>;
 			
 			using subkind = common::compose<void
 			,	compound::defer<typename signature::type>
@@ -123,11 +123,11 @@ struct define
 			template <any_q R>
 			class subtype: public common::compose_s<R, subkind>
 			{
-				using _R = common::compose_s<R, subkind>;
+				using R_ = common::compose_s<R, subkind>;
 
 			public:
-				using _R::_R;
-				using _R::self;
+				using R_::R_;
+				using R_::self;
 				///\
 				Initializes `slots` using the arguments supplied. \
 
@@ -137,10 +137,10 @@ struct define
 				{}
 				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
 				XTAL_0EX
-				:	_R(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
+				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
 				{}
 
-				XTAL_TO4_(XTAL_TN2 slots(), _R::head())
+				XTAL_TO4_(XTAL_TN2 slots(), R_::head())
 				
 				template <size_t N, size_t ...Ns>
 				XTAL_TN2 slot()
@@ -159,27 +159,27 @@ struct define
 				///\
 				Evaluates the lifted `method` using the bound slots. \
 
-				template <auto ...Ks>
+				template <auto ...Is>
 				XTAL_TN2 method()
-				XTAL_0EX {return _std::apply([this] XTAL_1FN_(_R::template method<Ks...>), slots());}
+				XTAL_0EX {return _std::apply([this] XTAL_1FN_(R_::template method<Is...>), slots());}
 				
-				using _R::method;
-			//	using _R::influx;
-			//	using _R::efflux;
+				using R_::method;
+			//	using R_::influx;
+			//	using R_::efflux;
 
 				///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
 				XTAL_TLX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(self().influx_push(oo...)) (_R::influx(XTAL_REF_(oo)...));
+					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
 				XTAL_TLX efflux(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(_R::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 				}
 
 				///\note\
@@ -189,10 +189,10 @@ struct define
 				XTAL_TLX efflux(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
-				If prefixed by `constant_q`, the message is forwarded directly to the `slot` specified. \
+				If prefixed by `integral_q`, the message is forwarded directly to the `slot` specified. \
 
-				XTAL_TLX influx(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
-				XTAL_TLX efflux(constant_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
+				XTAL_TLX influx(integral_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
+				XTAL_TLX efflux(integral_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
 				Forwards the message to `slots`, bypassing `self`. \
@@ -257,20 +257,20 @@ struct refine
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using _F = typename _S::template bond<Xs...>;
+		using O_ = typename S_::template bond<Xs...>;
 
 	public:
-		using _S::_S;
-		using _S::self;
+		using S_::S_;
+		using S_::self;
 
 		template <class ...Xs>
-		struct bond: _F<Xs...>
+		struct bond: O_<Xs...>
 		{
-			using kind = confined<_F<Xs...>>;
-			using type = common::compose_s<_S, kind>;
+			using kind = confined<O_<Xs...>>;
+			using type = common::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>
@@ -280,16 +280,16 @@ struct refine
 		XTAL_FN2 bond_f(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., _F<decltype(xs)...>>;
-			using  type = common::compose_s<_S, kind>;
+			using  kind = confined<As..., O_<decltype(xs)...>>;
+			using  type = common::compose_s<S_, kind>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
 		XTAL_FN2 bond_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., _F<decltype(xs)...>>;
-			using  type = common::compose_s<_S, kind>;
+			using  kind = confined<As..., O_<decltype(xs)...>>;
+			using  type = common::compose_s<S_, kind>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
@@ -310,21 +310,23 @@ struct defer
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
-		using typename _S::head_u;
+		using typename S_::U_head;
+
+	public:
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		///\
 		Constant redirection. \
 
-		XTAL_DO2_(template <auto ...Ks>
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_TN2 method(XTAL_DEF ...xs),
 		{
-			if constexpr (_std::invocable<head_u, decltype(xs)...>) {
+			if constexpr (_std::invocable<U_head, decltype(xs)...>) {
 				return head() (XTAL_REF_(xs)...);
 			}
 			else {
@@ -343,17 +345,17 @@ struct defer<U>
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
-		XTAL_DO2_(template <auto ...Ks>
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_TN2 method(XTAL_DEF ...xs),
 		{
-			return head().template method<Ks...>(XTAL_REF_(xs)...);
+			return head().template method<Is...>(XTAL_REF_(xs)...);
 		})
 
 	};

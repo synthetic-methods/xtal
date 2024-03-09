@@ -13,10 +13,10 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename> typename _T>
-class isotype: public _T<isotype<_T>>
+template <template <typename> typename T_>
+class isotype: public T_<isotype<T_>>
 {
-	using S = _T<isotype<_T>>;// -Wsubobject-linkage?
+	using S = T_<isotype<T_>>;// -Wsubobject-linkage?
 	
 public:
 	using S::S;
@@ -55,7 +55,7 @@ XTAL_0EX
 template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
 XTAL_0EX
-XTAL_REQ isomorphic_p<I, J>
+XTAL_REQ isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution

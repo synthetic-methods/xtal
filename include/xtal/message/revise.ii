@@ -21,21 +21,21 @@ template <typename ..._s> XTAL_USE revise_t = confined_t<revise<_s...>>;
 template <bracket_q U>
 struct revise<U>
 {
-	using store_u =    based_t<U>;
-	using serve_u = deranged_t<U>;
+	using U_store =    based_t<U>;
+	using U_serve = deranged_t<U>;
 	using subkind = common::compose<void
-	,	compound::defer<serve_u>
-	,	compound::defer<store_u>
+	,	compound::defer<U_serve>
+	,	compound::defer<U_store>
 	>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 
 	public:
-	//	using _S::_S;
-		using _S::self;
+	//	using S_::S_;
+		using S_::self;
 		
 		~subtype() = default;
 	
@@ -44,24 +44,24 @@ struct revise<U>
 	
 		XTAL_CON subtype()
 		XTAL_0EX
-		:	subtype(store_u())
+		:	subtype(U_store())
 		{}
 		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	subtype(store_u(), XTAL_REF_(oo)...)
+		:	subtype(U_store(), XTAL_REF_(oo)...)
 		{}
 		
-		XTAL_CXN subtype(store_u o, XTAL_DEF ...oo)
+		XTAL_CXN subtype(U_store o, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(serve_u(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
+		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		XTAL_TN0 store(store_u o, XTAL_DEF... oo)
+		XTAL_TN0 store(U_store o, XTAL_DEF... oo)
 		XTAL_0EX
 		{
-			self(serve_u(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
+			self(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_TN2 store(), _S::template head<1>())
-		XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), _S::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 store(), S_::template head<1>())
+		XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

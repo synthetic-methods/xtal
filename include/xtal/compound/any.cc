@@ -79,54 +79,54 @@ TAG_("compound", "traversal")
 	,	infer<struct bar, int>
 	,	infer<struct baz, int>
 	>;
-	using qux_t = typename qux::type;
+	using U_qux = typename qux::type;
 	
 	TRY_("partial access")
 	{
-		qux_t o_qux(0, 1, 2);
+		U_qux u_qux(0, 1, 2);
 
-		TRUE_(0 == o_qux.template head<0>());
-		TRUE_(1 == o_qux.template head<1>());
-		TRUE_(2 == o_qux.template head<2>());
-	//	TRUE_(3 == o_qux.template head<3>());// Fails!
+		TRUE_(0 == u_qux.template head<0>());
+		TRUE_(1 == u_qux.template head<1>());
+		TRUE_(2 == u_qux.template head<2>());
+	//	TRUE_(3 == u_qux.template head<3>());// Fails!
 
-		TRUE_(0 == o_qux.template head<struct foo>());
-		TRUE_(1 == o_qux.template head<struct bar>());
-		TRUE_(2 == o_qux.template head<struct baz>());
+		TRUE_(0 == u_qux.template head<struct foo>());
+		TRUE_(1 == u_qux.template head<struct bar>());
+		TRUE_(2 == u_qux.template head<struct baz>());
 
-		TRUE_(2 == o_qux.template head<struct bar, struct baz>());
-	//	TRUE_(1 != o_qux.template head<struct baz, struct bar>());// Fails!
+		TRUE_(2 == u_qux.template head<struct bar, struct baz>());
+	//	TRUE_(1 != u_qux.template head<struct baz, struct bar>());// Fails!
 		
-	//	TRUE_(    any_p<qux_t, cardinal_t<1>>);
-		TRUE_(    any_p<qux_t, struct bar, struct baz>);
-		TRUE_(not any_p<qux_t, struct baz, struct bar>);
-	//	UNTRUE_(requires {o_qux.template head<struct baz, struct bar>();});// Shouldn't fail?
+	//	TRUE_(    any_p<U_qux, cardinal_t<1>>);
+		TRUE_(    any_p<U_qux, struct bar, struct baz>);
+		TRUE_(not any_p<U_qux, struct baz, struct bar>);
+	//	UNTRUE_(requires {u_qux.template head<struct baz, struct bar>();});// Shouldn't fail?
 
 	}
 	/**/
 	TRY_("partial reconstruction")
 	{
-		auto o_qux = qux_t(1, 2, 3);
+		auto u_qux = U_qux(1, 2, 3);
 
-		(void) o_qux.self(11);
-		TRUE_(_std::get<0>(o_qux) == 11);
-		TRUE_(_std::get<1>(o_qux) ==  2);
-		TRUE_(_std::get<2>(o_qux) ==  3);
+		(void) u_qux.self(11);
+		TRUE_(_std::get<0>(u_qux) == 11);
+		TRUE_(_std::get<1>(u_qux) ==  2);
+		TRUE_(_std::get<2>(u_qux) ==  3);
 
-		(void) o_qux.self(111, 222);
-		TRUE_(_std::get<0>(o_qux) == 111);
-		TRUE_(_std::get<1>(o_qux) == 222);
-		TRUE_(_std::get<2>(o_qux) ==   3);
+		(void) u_qux.self(111, 222);
+		TRUE_(_std::get<0>(u_qux) == 111);
+		TRUE_(_std::get<1>(u_qux) == 222);
+		TRUE_(_std::get<2>(u_qux) ==   3);
 
-		(void) o_qux.template self<1>(2222, 3333);
-		TRUE_(_std::get<0>(o_qux) ==  111);//!
-		TRUE_(_std::get<1>(o_qux) == 2222);
-		TRUE_(_std::get<2>(o_qux) == 3333);
+		(void) u_qux.template self<1>(2222, 3333);
+		TRUE_(_std::get<0>(u_qux) ==  111);//!
+		TRUE_(_std::get<1>(u_qux) == 2222);
+		TRUE_(_std::get<2>(u_qux) == 3333);
 
-		(void) o_qux.template self<struct baz>(33333);
-		TRUE_(_std::get<0>(o_qux) ==   111);
-		TRUE_(_std::get<1>(o_qux) ==  2222);
-		TRUE_(_std::get<2>(o_qux) == 33333);
+		(void) u_qux.template self<struct baz>(33333);
+		TRUE_(_std::get<0>(u_qux) ==   111);
+		TRUE_(_std::get<1>(u_qux) ==  2222);
+		TRUE_(_std::get<2>(u_qux) == 33333);
 
 	}
 	/***/
@@ -141,22 +141,22 @@ TAG_("compound", "conversion")
 	{
 		using namespace common;
 
-		using foo_t = confined_t<defer<bool>, defer<int>, defer<float>>;
-		auto const foo = foo_t(1, 2, 3);
+		using U_foo = confined_t<defer<bool>, defer<int>, defer<float>>;
+		auto const foo = U_foo(1, 2, 3);
 		auto const bar = foo.apple();
-		using bar_t = XTAL_TYP_(bar);
+		using U_bar = XTAL_TYP_(bar);
 
-		static_assert(_std::same_as<bar_t, _std::tuple<bool, int, float>>);
+		static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
 
-		auto baz = (bar_t) foo;
+		auto baz = (U_bar) foo;
 		TRUE_(_std::get<0>(baz) == _std::get<0>(bar));
 		TRUE_(_std::get<1>(baz) == _std::get<1>(bar));
 		TRUE_(_std::get<2>(baz) == _std::get<2>(bar));
 
 	//	TRUE_(6 == _std::apply([] (XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
 		TRUE_(6 ==   foo.apply([] (XTAL_DEF ...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
-		TRUE_(3 == _std::tuple_size_v<foo_t>);
-		TRUE_(3 == _std::tuple_size_v<bar_t>);
+		TRUE_(3 == _std::tuple_size_v<U_foo>);
+		TRUE_(3 == _std::tuple_size_v<U_bar>);
 
 		auto [_1, _2, _3] = foo;
 		TRUE_(_1 == 1);
@@ -169,12 +169,12 @@ TAG_("compound", "conversion")
 		TRUE_(_std::get<1>(foo) == _std::get<1>(bar));
 		TRUE_(_std::get<2>(foo) == _std::get<2>(bar));
 
-		TRUE_(is_q<_std::tuple_element_t<0, foo_t>,  bool>);
-		TRUE_(is_q<_std::tuple_element_t<1, foo_t>,   int>);
-		TRUE_(is_q<_std::tuple_element_t<2, foo_t>, float>);
-		TRUE_(is_q<_std::tuple_element_t<0, foo_t>, _std::tuple_element_t<0, bar_t>>);
-		TRUE_(is_q<_std::tuple_element_t<1, foo_t>, _std::tuple_element_t<1, bar_t>>);
-		TRUE_(is_q<_std::tuple_element_t<2, foo_t>, _std::tuple_element_t<2, bar_t>>);
+		TRUE_(is_q<_std::tuple_element_t<0, U_foo>,  bool>);
+		TRUE_(is_q<_std::tuple_element_t<1, U_foo>,   int>);
+		TRUE_(is_q<_std::tuple_element_t<2, U_foo>, float>);
+		TRUE_(is_q<_std::tuple_element_t<0, U_foo>, _std::tuple_element_t<0, U_bar>>);
+		TRUE_(is_q<_std::tuple_element_t<1, U_foo>, _std::tuple_element_t<1, U_bar>>);
+		TRUE_(is_q<_std::tuple_element_t<2, U_foo>, _std::tuple_element_t<2, U_bar>>);
 
 	}
 }
@@ -208,9 +208,9 @@ TAG_("compound", "composition")
 		TRUE_(complete_q<AimHyp::self_t<__aim__>>);
 		TRUE_(complete_q<AimHyp::self_t<__hyp__>>);
 		UNTRUE_(complete_q<AimHyp::self_t<__etc__>>);
-//	//	TRUE_(6 == AimHyp::limit());
-//	//	TRUE_(4 == Aim   ::limit());
-//	//	TRUE_(2 ==    Hyp::limit());
+		TRUE_(8 == AimHyp::enumerate());
+		TRUE_(4 == Aim   ::enumerate());
+		TRUE_(2 ==    Hyp::enumerate());
 
 	}
 }

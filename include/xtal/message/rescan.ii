@@ -19,13 +19,13 @@ struct rescan
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 	
 	public:
-		using _S::_S;
-		using scan_t = U;
+		using S_::S_;
+		using U_scan = U;
 			
-		XTAL_TO4_(XTAL_TN2 scan(XTAL_DEF... oo), _S::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 scan(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

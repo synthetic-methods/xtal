@@ -46,7 +46,7 @@ struct store<U[N]>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-		using _R = hemitype<T>;
+		using R_ = hemitype<T>;
 		using A  = aligned_t<U>;
 
 	public:// DEFINITION
@@ -84,7 +84,7 @@ struct store<U[N]>
 
 
 	public:// SIZE
-		using _R::size;
+		using R_::size;
 	
 		///\
 		Reshapes `this` with `sN` elements. \
@@ -137,7 +137,7 @@ struct store<U[N]>
 		Span constructor. \
 		Initializes `this` with the values between `i0` and `iN`. \
 
-		template <class I0, class IN> requires epimorphic_p<iterator, I0, IN>
+		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_CXN homotype(I0 i0, IN iN)
 		{
 			push_back(i0, iN);
@@ -220,7 +220,7 @@ struct store<U[N]>
 		///\
 		Inserts the values `etc` beginning at `i0`. \
 
-		template <class I0, class IN> requires epimorphic_p<iterator, I0, IN>
+		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_TN0 push_back(I0 i0, IN iN)
 		{
 			insert(end(), i0, iN);
@@ -268,13 +268,13 @@ struct store<U[N]>
 		///\
 		Inserts the values delimited by `j0` and `jN` beginning at `i`. \
 
-		template <class I, class J0, class JN> requires epimorphic_p<iterator, I, J0, JN>
+		template <class I, class J0, class JN> requires epimorphic_q<iterator, I, J0, JN>
 		XTAL_TN1_(iterator) insert(I i, J0 j0, JN jN)
 		{
 			using J = shared_t<J0, JN>;
 			return insert(i, (J) j0, (J) jN);
 		}
-		template <class I, class J> requires epimorphic_p<iterator, I, J>
+		template <class I, class J> requires epimorphic_q<iterator, I, J>
 		XTAL_TN1_(iterator) insert(I i, J j0, J jN)
 		{
 			size_type sN = _std::distance(j0, jN);

@@ -19,13 +19,13 @@ using namespace _retail::_detail;
 template <class T, class Y=T>
 concept connection_p = any_q<T> and requires (T t)
 {
-	{t.serve()} -> isomorphic_p<Y>;
+	{t.serve()} -> isomorphic_q<Y>;
 };
 template <class T, class Y=T>
 concept collection_p = any_q<T> and requires (T t)
 {
-	{t.serve()} -> isomorphic_p<Y>;
-	{t.store()} -> isomorphic_p<Y>;
+	{t.serve()} -> isomorphic_q<Y>;
+	{t.store()} -> isomorphic_q<Y>;
 };
 template <class T, class Y>
 concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
@@ -36,9 +36,9 @@ concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
 struct accessory
 {
 	using   type = _v3::ranges::category;
-	using   pure = constant_t<type::random_access>;
-	using impure = constant_t<type::forward>;
-	using finite = constant_t<type::sized>;
+	using   pure = integral_t<type::random_access>;
+	using impure = integral_t<type::forward>;
+	using finite = integral_t<type::sized>;
 
 };
 using accessory_t = typename accessory::type;

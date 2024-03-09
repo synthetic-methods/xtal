@@ -34,16 +34,16 @@ struct any<>
 	template <class S>
 	class subtype: public common::compose_s<S, common::identify<>>
 	{
-		using _S = common::compose_s<S, common::identify<>>;
+		using S_ = common::compose_s<S, common::identify<>>;
 		
 	public:
-		using _S::_S;
+		using S_::S_;
 
 	protected:
 		///\
 		Fallback resolver, defaulting to the `back` type/selector. \
 		
-		template <class ...Ys> struct node: common::seek_back<Ys...> {};
+		template <class ...Ys> struct super: common::seek_back<Ys...> {};
 
 	};
 	template <class S> requires common::identity_p<S>
@@ -66,30 +66,32 @@ struct any<A>
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		
 	public:
-		using _S::_S;
+		using S_::S_;
 		
 	};
-	template <class S> XTAL_REQ_(typename S::self_u)
+	template <class S> XTAL_REQ_(typename S::T_self)
 	class subtype<S>: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
-		using _T = typename _S::self_u;
-		using _Y = typename _S::node_u;
+		using S_ = common::compose_s<S, subkind>;
+
+	public://protected:
+		using typename S::T_self;
+		using typename S::U_self;
 
 	protected:
-		template <class X, typename ...Is> struct node: _S::template node< X, Is...> {};
-		template <class X, typename ...Is> struct node<X, A, Is...>: node<_Y, Is...> {};
-		template <class X, typename ...Is>  using node_t = typename node<X, Is...>::type;
+		template <class A_self, typename ...Is> struct super:      S_::template super<A_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self, A, Is...>: super<U_self, Is...> {};
+		template <class A_self, typename ...Is>  using super_t =       typename super<A_self, Is...>::type;
 
 	public:
-	//	using _S::_S;
-		using _S::self;
+	//	using S_::S_;
+		using S_::self;
 
-		template <typename ...Is> using self_t =          node_t<_T, Is...>;
-		template <typename ...Is> using head_t = typename node_t<_Y, Is...>::head_u;
+		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
+		template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -101,25 +103,25 @@ struct any<A>
 		requires {typename W::template self_t<A>;}
 		XTAL_CON subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
+		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
 		{};
 		XTAL_CXN subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	_S(XTAL_REF_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)		
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN2 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)		
 
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(XTAL_DEF... oo), _S::template self<node_t<_T, Is...>>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(XTAL_DEF... oo), S_::template self<super_t<T_self, Is...>>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 head(XTAL_DEF... oo), _S::template self<node_t<_S, Is...>>().head(XTAL_REF_(oo)...)
+		XTAL_TN2 head(XTAL_DEF... oo), S_::template self<super_t<U_self, Is...>>().head(XTAL_REF_(oo)...)
 		)
 		
 	};

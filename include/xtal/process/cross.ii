@@ -39,18 +39,18 @@ XTAL_FN2 dot(auto const &x, auto const &y)
 template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
-	using indent_w = typename conflux::indent_s<W>::tunnel;
-	using subkind = common::compose<indent_w, confer<U>, As..., common::tag<cross>>;
+	using W_indent = typename conflux::indent_s<W>::tunnel;
+	using subkind = common::compose<W_indent, confer<U>, As..., common::tag<cross>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
-		using _S = common::compose_s<S, subkind>;
+		using S_ = common::compose_s<S, subkind>;
 		
 	public:
-		using _S::_S;
-		using _S::self;
-		using _S::head;
+		using S_::S_;
+		using S_::self;
+		using S_::head;
 
 		XTAL_DO2_(template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF... xs),
@@ -60,7 +60,7 @@ struct cross<W, U, As...>
 			auto const    &m = head();
 			auto constexpr M = common::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(common::seek_t<I...>)
-				XTAL_0FN_(_S::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
+				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
 			(common::seek_f<M> {});
 		})
 

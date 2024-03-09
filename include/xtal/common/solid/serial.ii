@@ -37,13 +37,13 @@ struct serial<U[N]>
 	//	TODO: Subclass to define serial pairs like `complex`. \
 
 		friend T;
-		using _S = hemitype<T>;
+		using S_ = hemitype<T>;
 	
 	public:
-		using _S::_S;
-		using _S::subscript;
-		using _S::self;
-		using _S::twin;
+		using S_::S_;
+		using S_::subscript;
+		using S_::self;
+		using S_::twin;
 
 		///\
 		Multiplication by linear convolution, truncated by `N`. \

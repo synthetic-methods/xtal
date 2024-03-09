@@ -59,7 +59,7 @@ which `zip` the underlying `method`.
 	auto sixer = mixer(one, two, three);// mixes the ranges/processors `one`, `two`, `three`
 
 In either case, dependencies are defined by functional application of `process(?:or)?`s,
-with the inner-most nodes representing inputs, and the outer-most node representing the output.
+with the inner-most components representing inputs, and the outer-most component representing the output.
 
 ## Messaging
 
@@ -116,7 +116,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto scope = scope_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, processor::restore<>>;
+	using Mixer = processor::monomer_t<Mix, resource::stored<>>;
 	auto sixer = Mixer::bond_f(one, two, three);
 
 	// initialization
