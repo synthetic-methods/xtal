@@ -23,32 +23,37 @@ providing the mechanism for traversing the trait-lineage of `T`. \
 template <class T>
 struct define
 {
-	using subkind = _retail::define<T>;
+	using subkind = common::compose<_detail::define_field<T>, _retail::define<T>>;
 	
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using S_ = common::compose_s<S, subkind>;
 	
+	public://protected:
+		using typename S_::T_self;
+		using typename S_::U_self;
+
 	protected:
-		using O = cardinal_t<0>;
-		using _ = unit_t;
+		using _0 = cardinal_t<0>;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
-		template <class X, typename ...Is> struct super<X, T, Is...>: super<T, Is...> {};
-		template <class X, typename ...Is> struct super<X, O, Is...>: super<_, Is...> {};
-	//	template <class X, typename ...Is> struct super<X, O, Is...>;
-		template <class X                > struct super<X> {using type = X;};
+		template <class A_self, typename ...Is> struct super:            S_::template super<A_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self,  T_self, Is...>: super<T_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self,      _0, Is...>: super<U_self, Is...> {};
+	//	template <class A_self, typename ...Is> struct super<A_self,      _0, Is...>;
+		template <class A_self                > struct super<A_self> {using type = A_self;};
 
-		template <class X, typename ...Is>
-		using super_t = typename super<X, Is...>::type;
-		using duper_t = _;
-
+		template <class A_self, typename ...Is>
+		using super_t = typename super<A_self, Is...>::type;
+		
 	public:
 		using S_::S_;
 	//	using S_::self;
+
+		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
+	//	template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
 
 		XTAL_TO4_(
 		XTAL_TN2 self(), S_::self()
@@ -101,8 +106,8 @@ template <class T>
 struct refine
 {
 	using subkind = common::compose<void
-	,	_detail::refine_head
-	,	_detail::refine_tuple
+	,	_detail::refine_head<T>
+	,	_detail::refine_tuple<T>
 	>;
 
 	template <any_q S>
@@ -138,65 +143,40 @@ providing a similar level of utility to `std::reference_wrapper`. \
 template <class U>
 struct defer
 {
+	using subkind = _detail::defer_field<U>;
+
 	template <any_q S>
-	class subtype: public common::compose_s<S>
+	class subtype: public common::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S>;
-		using T_ = typename S_::self_t;
-		using V  = debased_t<U>;
+		using S_ = common::compose_s<S, subkind>;
+
+	public://protected:
+		using typename S_::T_self;
+		using typename S_::U_head;
+		using U_self = subtype;
 
 	protected:
-		using Y = subtype;
-		using O = cardinal_t<0>;
+		using _0 = cardinal_t<0>;
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class X, typename ...Is> struct super: S_::template super<X, Is...> {};
-		template <class X, typename ...Is> struct super<X, Y, Is...>: super<Y, Is...> {};
-		template <class X, typename ...Is> struct super<X, U, Is...>: super<Y, Is...> {};
-		template <class X, typename ...Is> struct super<X, O, Is...>: super<Y, Is...> {};
-		template <class X, subcardinal_q N, typename ...Is>
-		struct super<X, N, Is...>: S_::template super<typename S_::duper_t, subcardinal_s<N>, Is...> {};
+		template <class A_self, typename ...Is> struct super:           S_::template super<A_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self, U_self, Is...>: super<U_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self, U_head, Is...>: super<U_self, Is...> {};
+		template <class A_self, typename ...Is> struct super<A_self,     _0, Is...>: super<U_self, Is...> {};
+		template <class A_self, liminal_q N, typename ...Is>
+		struct super<A_self, N, Is...>: S_::template super<typename S_::U_self, subliminal_s<N>, Is...> {};
 
-		template <class X, typename ...Is>
-		using super_t = typename super<X, Is...>::type;
-		using duper_t = subtype;
+		template <class A_self, typename ...Is>
+		using super_t = typename super<A_self, Is...>::type;
 		
 	public:
-	//	using S_::S_;
+		using S_::S_;
 		using S_::self;
-		using head_t = U;
-		using body_t = V; V body_m;
+		using S_::head;
 
-	//	XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
-		
-		XTAL_CON subtype()
-		XTAL_0EX
-		:	subtype(body_t{})
-		{}
-		XTAL_CON subtype(bracket_t<devalued_t<U>> w)
-		XTAL_REQ remember_q<U> and array_q<U>
-		:	body_m(XTAL_MOV_(w))
-		{
-		//	_detail::copy_to(head().begin(), w);
-		}
-		///\
-		Chaining constructor: initializes `this` using the first argument, \
-		and forwards the rest to super. \
-
-		XTAL_CXN subtype(XTAL_DEF ...oo)
-		XTAL_0EX
-		XTAL_REQ constant_q<U>
-		:	S_(XTAL_REF_(oo)...)
-	//	,	subtype(body_t{})
-		{}
-		template <class W> requires is_q<U, W> or (not (fungible_q<Y, W> or constant_q<U>))
-		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<U>(XTAL_REF_(w)))
-		{}
+		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
+		template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
 
 		XTAL_TO4_(template <size_t I>
 		XTAL_TN2 self(XTAL_DEF ...oo), self<cardinal_t<I>>(XTAL_REF_(oo)...)
@@ -206,59 +186,22 @@ struct defer
 		)
 		
 		///\
-		Tuple arity. \
-
-		XTAL_USE arity = cardinal_t<S_::arity::value + 1>;
-		///\
-		Tuple application. \
-
-		XTAL_TN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
-		XTAL_0FX
-		{
-			return [this, g = XTAL_REF_(f)] <size_t ...I>(common::seek_t<I...>)
-				XTAL_0FN_(g(head<I>()...)) (common::seek_f<arity::value> {});
-		}
-		///\
-		Tuple conversion. \
-
-		XTAL_TN2 apple()
-		XTAL_0FX
-		{
-		//	return apply(common::pack_f);
-			return apply([] (XTAL_DEF ...oo) XTAL_0FN_(_std::make_tuple(XTAL_REF_(oo)...)));
-		}
-
-		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) U(), head())
+		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(body_m));}
-		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(body_m));}
-		XTAL_TN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
-		XTAL_TN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
-		
-		XTAL_TO4_(template <fungible_q<subtype> X>
-		XTAL_TN2 head(XTAL_DEF... oo), S_::template self<X>().head(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <typename ...Is> requires (0 < sizeof...(Is))
+		XTAL_TO4_(template <class  ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN1 head(XTAL_DEF... oo), self<Is...>().head(XTAL_REF_(oo)...)
 		)
-		XTAL_TO4_(template <size_t I>
-		XTAL_TN1 head(XTAL_DEF... oo), head<cardinal_t<I>>(XTAL_REF_(oo)...)
+		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
+		XTAL_TN1 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
-		XTAL_TN1 head(XTAL_DEF... oo)
-		XTAL_0EX
-		XTAL_REQ remember_q<U> and (0 < sizeof...(oo))
-		{
-			return dismember_f(body_m, XTAL_REF_(oo)...);
-		}
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_TN2_(bool) heading(U const &w)
+		XTAL_TN2_(bool) heading(U_head const &w)
 		XTAL_0FX
 		{
 			return equivalent_f(head(), w);
@@ -275,6 +218,29 @@ struct defer
 
 	//	XTAL_OP2 << (XTAL_DEF_(any_q) t) XTAL_0FX {return common::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
 	//	XTAL_OP2 >> (XTAL_DEF_(any_q) t) XTAL_0FX {return common::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
+
+		///\
+		Tuple arity. \
+
+		XTAL_USE arity = cardinal_t<S_::arity::value + 1>;
+		///\
+		Tuple application. \
+
+		XTAL_TN2 apply(XTAL_DEF f)// TODO: Require `std::invocable`.
+		XTAL_0FX
+		{
+			return [this, g = XTAL_REF_(f)] <size_t ...I>(common::seek_t<I...>)
+				XTAL_0FN_(g(head<I>()...)) (common::seek_f<arity::value> {});
+		}
+		///\
+		Tuple conversion (via `apply`). \
+
+		XTAL_TN2 apple()
+		XTAL_0FX
+		{
+		//	return apply(common::pack_f);
+			return apply([] (XTAL_DEF ...oo) XTAL_0FN_(_std::make_tuple(XTAL_REF_(oo)...)));
+		}
 
 	};
 };

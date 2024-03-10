@@ -1,3 +1,4 @@
 #pragma once
-#include "./respool.cc"
-#include "./restore.cc"
+#include "./enumerated.cc"
+#include "./spooled.cc"
+#include "./stored.cc"

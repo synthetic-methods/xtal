@@ -22,7 +22,7 @@ namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 ///\
 The translation-tables for the supplied `N_size` \
-(which should be representative of the desired `std::size_t`): \
+(which should be representative of the desired `sizeof`): \
 \
 -	`alpha_t` represents floating-point real numbers. \
 -	`sigma_t` represents full-width `unsigned int`s like `std::size`. \
@@ -144,11 +144,11 @@ public:
 
 
 	template <class      T> struct internal;
-	template <unsigned_q T> struct internal<T> {using type = sigma_t;};
-	template <  signed_q T> struct internal<T> {using type = delta_t;};
+	template <cardinal_p T> struct internal<T> {using type = sigma_t;};
+	template < ordinal_p T> struct internal<T> {using type = delta_t;};
 	template <class      T>  using internal_t = typename internal<T>::type;
 
-	template <_std::integral I> requires (sizeof(I) < depth)
+	template <integral_p I> requires (sizeof(I) < depth)
 	XTAL_FN2 internal_f(I i)
 	XTAL_0EX
 	{
@@ -159,7 +159,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 	template <int N_side=0> requires sign_p<N_side>
-	XTAL_FN2 clamped_f(_std::integral auto i)
+	XTAL_FN2 clamped_f(integral_p auto i)
 	XTAL_0EX
 	{
 		return N_side == 0? i: N_side*designed_f<N_side>(i);
@@ -184,22 +184,22 @@ public:
 	static_assert(designed_f((delta_t)  0) == (0));
 	static_assert(designed_f((delta_t) -2) == (2));
 
-	template <constant_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
-	template <constant_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
+	template <integral_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
+	template <integral_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
 	
-	template <unsigned_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
-	template <  signed_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
+	template <cardinal_p I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
+	template < ordinal_p I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
 	
-	template <  signed_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (unsigned_t<I>) designed_f(i);}
-	template <unsigned_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (signed_t<I>) (i);}
+	template < ordinal_p I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (_std::make_unsigned_t<I>) designed_f(i);}
+	template <cardinal_p I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (_std::make_signed_t<I>) (i);}
 
 
-	XTAL_FN2_(delta_t) sign_f(unsigned_q auto i)
+	XTAL_FN2_(delta_t) sign_f(cardinal_p auto i)
 	XTAL_0EX
 	{
 		return 1;
 	}
-	XTAL_FN2_(delta_t) sign_f(signed_q auto i)
+	XTAL_FN2_(delta_t) sign_f(ordinal_p auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < sizeof(delta_t))
 	{
@@ -229,7 +229,7 @@ public:
 
 	///\returns the number of bits set in `u`. \
 
-	XTAL_FN2 bit_count_f(_std::integral auto i)
+	XTAL_FN2 bit_count_f(integral_p auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < width)
 	{
@@ -256,7 +256,7 @@ public:
 //	static_assert(bit_count_f(0b10110100) == 4);
 
 
-	XTAL_FN2 bit_floor_f(_std::integral auto i)
+	XTAL_FN2 bit_floor_f(integral_p auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < width)
 	{
@@ -280,7 +280,7 @@ public:
 		return y_abs*v_sgn;
 	}
 
-	XTAL_FN2 bit_ceiling_f(_std::integral auto i)
+	XTAL_FN2 bit_ceiling_f(integral_p auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < width)
 	{
@@ -323,13 +323,13 @@ public:
 	}
 
 	template <size_t N_subdepth=0>
-	XTAL_FN2 bit_reverse_f(_std::integral auto i)
+	XTAL_FN2 bit_reverse_f(integral_p auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < width)
 	{
 		return bit_reverse_f<N_subdepth>(internal_f(i));
 	}
-	XTAL_FN2 bit_reverse_f(_std::integral auto i, sigma_t const &subdepth)
+	XTAL_FN2 bit_reverse_f(integral_p auto i, sigma_t const &subdepth)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < width)
 	{
@@ -386,10 +386,10 @@ public:
 #endif
 	using alignment = destructive_alignment;
 
-	XTAL_LET_(sigma_t) constructive_alignment_e = valued_e<constructive_alignment>;
-	XTAL_LET_(sigma_t)  destructive_alignment_e = valued_e< destructive_alignment>;
-	XTAL_LET_(sigma_t)      default_alignment_e = valued_e<     default_alignment>;
-	XTAL_LET_(sigma_t)              alignment_e = valued_e<             alignment>;
+	XTAL_LET_(sigma_t) constructive_alignment_n = constructive_alignment::value;
+	XTAL_LET_(sigma_t)  destructive_alignment_n =  destructive_alignment::value;
+	XTAL_LET_(sigma_t)      default_alignment_n =      default_alignment::value;
+	XTAL_LET_(sigma_t)              alignment_n =              alignment::value;
 	
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -458,8 +458,8 @@ public:
 	//	else...
 		alpha_t constexpr _0_5 = 0.5;
 		alpha_t constexpr _1_5 = 1.5;
-		delta_t constexpr _Q   = S_::n_quake;
-		delta_t o = _Q - (_std::bit_cast<delta_t>(w) >> 1);
+		delta_t constexpr Q_   = S_::n_quake;
+		delta_t o = Q_ - (_std::bit_cast<delta_t>(w) >> 1);
 		alpha_t n = _std::bit_cast<alpha_t>(o);
 		alpha_t const k = w*_0_5;
 		if constexpr (N_lim < 0) {
@@ -470,7 +470,7 @@ public:
 			n /= m + _0_5;
 		}
 		else {
-			seek_e<N_lim>([&] (auto) XTAL_0FN_(n *= _1_5 - k*n*n));
+			seek_n<N_lim>([&] (auto) XTAL_0FN_(n *= _1_5 - k*n*n));
 		}
 		
 		if constexpr (M_pow == 0) {
@@ -484,7 +484,7 @@ public:
 		}
 	}
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
-	XTAL_FN2 unsquare_f(_std::integral auto const &w)
+	XTAL_FN2 unsquare_f(integral_p auto const &w)
 	XTAL_0EX
 	{
 		return unsquare_f<M_pow, N_lim>((alpha_t) w);
@@ -569,12 +569,12 @@ public:
 	#endif
 	}
 	template <int N_zoom=0>
-	XTAL_LET diplo_e = diplo_f(N_zoom);
+	XTAL_LET diplo_n = diplo_f(N_zoom);
 	///< Value expression of `diplo_f`. \
 
-	static_assert(diplo_e<+1> == 2.0);
-	static_assert(diplo_e< 0> == 1.0);
-	static_assert(diplo_e<-1> == 0.5);
+	static_assert(diplo_n<+1> == 2.0);
+	static_assert(diplo_n< 0> == 1.0);
+	static_assert(diplo_n<-1> == 0.5);
 
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
@@ -585,12 +585,12 @@ public:
 		return diplo_f(-n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_LET haplo_e = haplo_f(N_zoom);
+	XTAL_LET haplo_n = haplo_f(N_zoom);
 	///< Value expression of `haplo_f`. \
 
-	static_assert(haplo_e<+1> == 0.5);
-	static_assert(haplo_e< 0> == 1.0);
-	static_assert(haplo_e<-1> == 2.0);
+	static_assert(haplo_n<+1> == 0.5);
+	static_assert(haplo_n< 0> == 1.0);
+	static_assert(haplo_n<-1> == 2.0);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -632,23 +632,23 @@ public:
 	,	3.141592653589793238462643383279502884// -1 => (Pi*1)
 	};
 	template <int N_base, int N_shift=0>
-	XTAL_LET codomain_e = codomain_vs[N_base&0b11]*haplo_e<N_shift>;
-///< Value expression representing the multiplicative inverse of the logarithmic `domain_e`.
+	XTAL_LET codomain_n = codomain_vs[N_base&0b11]*haplo_n<N_shift>;
+///< Value expression representing the multiplicative inverse of the logarithmic `domain_n`.
 
 	template <int N_base, int N_shift=0>
-	XTAL_LET   domain_e =   domain_vs[N_base&0b11]*diplo_e<N_shift>;
+	XTAL_LET   domain_n =   domain_vs[N_base&0b11]*diplo_n<N_shift>;
 ///< Value expression representing the logarithmic domain for `N_base`, scaled by `diplo_f<N_shift>`. \
 	Additionally scaled by `1*PI`, `2*PI`, or `LOG2` if `N_base` is `-1`, `1`, or `2` respectively.
 
 ///<\note The scaling w.r.t. `PI` reflects the imaginary logarithm where \
 	`std::exp(std::complex(0, 1*PI)) == -1` and `std::exp(std::complex(0, 2*PI)) == 1`.
 
-///<\note To convert between domains, multiply the target `domain_e` and source `codomain_e`. \
+///<\note To convert between domains, multiply the target `domain_n` and source `codomain_n`. \
 
-	static_assert(domain_e<-1> == patio_f<1>(1));
-	static_assert(domain_e<-1> == domain_e<1, -1>);
-	static_assert(domain_e<1, -0>*codomain_e<1, -0> == 1);
-	static_assert(domain_e<1, -1>*codomain_e<1, -1> == 1);
+	static_assert(domain_n<-1> == patio_f<1>(1));
+	static_assert(domain_n<-1> == domain_n<1, -1>);
+	static_assert(domain_n<1, -0>*codomain_n<1, -0> == 1);
+	static_assert(domain_n<1, -1>*codomain_n<1, -1> == 1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -663,13 +663,13 @@ public:
 		return haplo_f(N - n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_LET epsilon_e = epsilon_f(N_zoom);
+	XTAL_LET epsilon_n = epsilon_f(N_zoom);
 	///< Value expression of `epsilon_f`. \
 
-	static_assert(epsilon_e<0> != 0);
-	static_assert(epsilon_e<0> <  epsilon_e<1>);
-	static_assert(epsilon_e<1> <  epsilon_e<2>);
-	static_assert(epsilon_e<1> == _std::numeric_limits<alpha_t>::epsilon());
+	static_assert(epsilon_n<0> != 0);
+	static_assert(epsilon_n<0> <  epsilon_n<1>);
+	static_assert(epsilon_n<1> <  epsilon_n<2>);
+	static_assert(epsilon_n<1> == _std::numeric_limits<alpha_t>::epsilon());
 	
 
 	///\returns the value `n_zoom` steps above `(alpha_t) 1`. \
@@ -680,11 +680,11 @@ public:
 		return (1 + epsilon_f(n_zoom + 1))*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
-	XTAL_LET upsilon_e = upsilon_f(N_zoom);
+	XTAL_LET upsilon_n = upsilon_f(N_zoom);
 	///< Value expression of `upsilon_f`. \
 	
-	static_assert(upsilon_e<1> > upsilon_e<0>);
-	static_assert(upsilon_e<2> > upsilon_e<1>);
+	static_assert(upsilon_n<1> > upsilon_n<0>);
+	static_assert(upsilon_n<2> > upsilon_n<1>);
 
 
 	///\returns the value `n_zoom` steps below `(alpha_t) 1`. \
@@ -695,11 +695,11 @@ public:
 		return (1 - epsilon_f(n_zoom + 0))*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
-	XTAL_LET dnsilon_e = dnsilon_f(N_zoom);
+	XTAL_LET dnsilon_n = dnsilon_f(N_zoom);
 	///< Value expression of `dnsilon_f`. \
 	
-	static_assert(dnsilon_e<1> < dnsilon_e<0>);
-	static_assert(dnsilon_e<2> < dnsilon_e<1>);
+	static_assert(dnsilon_n<1> < dnsilon_n<0>);
+	static_assert(dnsilon_n<2> < dnsilon_n<1>);
 	
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -712,7 +712,7 @@ public:
 		return diplo_f(n_zoom)*std::numeric_limits<alpha_t>::min();
 	}
 	template <int N_zoom=0>
-	XTAL_LET minimal_e = minimal_f(N_zoom);
+	XTAL_LET minimal_n = minimal_f(N_zoom);
 	///< Value expression for `minimal_f`. \
 
 	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
@@ -741,7 +741,7 @@ public:
 		return haplo_f(n_zoom)/std::numeric_limits<alpha_t>::min();
 	}
 	template <int N_zoom=0>
-	XTAL_LET maximal_e = maximal_f(N_zoom);
+	XTAL_LET maximal_n = maximal_f(N_zoom);
 	///< Value expression for `maximal_f`. \
 
 	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_t`. \
@@ -829,7 +829,7 @@ public:
 	///\returns the magnitude of `value` (in the direction of `N_side`, if provided). \
 
 	template <int N_side=0>
-	XTAL_FN2 designed_f(_std::integral auto value)
+	XTAL_FN2 designed_f(integral_p auto value)
 	XTAL_0EX
 	{
 		return S_::template designed_f<N_side>(value);
@@ -851,8 +851,8 @@ public:
 		else {
 			int constexpr N_sign =     sign_f(N_side);
 			int constexpr M_side = designed_f(N_side);
-			value *= N_sign*haplo_f(1); value -= minimal_e<M_side - 1>;
-			value += designed_f(value); value += minimal_e<M_side - 1>;
+			value *= N_sign*haplo_f(1); value -= minimal_n<M_side - 1>;
+			value += designed_f(value); value += minimal_n<M_side - 1>;
 			return value;
 		}
 	}
@@ -868,7 +868,7 @@ public:
 	///\returns `value` (restricted to `N_side`, if provided). \
 	
 	template <int N_side=0>
-	XTAL_FN2 clamped_f(_std::integral auto value)
+	XTAL_FN2 clamped_f(integral_p auto value)
 	XTAL_0EX
 	{
 		return S_::template clamped_f<N_side>(value);
@@ -877,7 +877,7 @@ public:
 	XTAL_FN2 clamped_f(alpha_t value)
 	XTAL_0EX
 	{
-		return N_side? sign_e<N_side>*designed_f<N_side>(value): (value);
+		return N_side? sign_n<N_side>*designed_f<N_side>(value): (value);
 	}
 	static_assert(clamped_f<+1>( 1.0) == +1.0);
 	static_assert(clamped_f<+1>( 0.0) == +minimal_f());
@@ -1104,7 +1104,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct compute: _detail::realize<sizeof(devalued_t<T>)> {};
+struct compute: _detail::realize<sizeof(revalued_t<T>)> {};
 
 using computer = compute<size_t>;
 

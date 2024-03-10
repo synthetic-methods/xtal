@@ -11,30 +11,31 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM __restore__;
-template <class ...Ts> concept restore_q = common::tab_p<__restore__, Ts...>;
+template <class ...Ts>
+concept enumerated_q = (...and _detail::enumerated_q<Ts>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `common::fluid::store`. \
-If `N == -1`, the member-type `store_t` is dynamically allocated. \
+Provides the limit of an enumerated type. \
+If `N == -1`, the type is assumed to be dynamically enumerated. \
 
 template <int N=-1>
-struct restore
+struct enumerated
 {
-	using subkind = common::tab<__restore__>;
-	
-	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	template <compound::any_q S>
+	class subtype: public common::compose_s<S>
 	{
-		using S_ = common::compose_s<S, subkind>;
-		
+		using S_ = common::compose_s<S>;
+	
 	public:
 		using S_::S_;
-		
-		template <class U>
-		using store_t = common::fluid::store_t<U[(unsigned) N]>;
+
+		XTAL_FN2_(size_t) enumerate()
+		XTAL_0EX
+		{
+			return N;
+		}
 
 	};
 };

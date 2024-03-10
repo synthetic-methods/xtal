@@ -16,41 +16,41 @@ namespace xtal::processor::__test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using alpha_t = typename common::computer::alpha_t;
-	using sigma_t = typename common::computer::sigma_t;
-	using delta_t = typename common::computer::delta_t;
+	using T_alpha = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_delta = typename common::computer::delta_t;
 
-	using stage_u = message::stage_t<>;
-	using event_u = compound::key_s<stage_u>;
-	using empty_u = message::confined_t<>;
+	using U_stage = message::stage_t<>;
+	using U_event = compound::key_s<U_stage>;
+	using U_empty = message::confined_t<>;
 
-	using resize_u = message::resize_t<>;
-	using scope_u = message::scope_t<>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 	
-	using gate_t = process::confined_t<typename level_t::poll<>, typename stage_u::expect<>>;
+	using U_gate = process::confined_t<typename level_t::poll<>, typename U_stage::expect<>>;
 
-	using vox_t = polymer_t<gate_t
-	,	resource::restore<N_store>
-	,	resource::respool<N_spool>
+	using U_vox = polymer_t<U_gate
+	,	resource::stored<N_store>
+	,	resource::spooled<N_spool>
 	>;
-	auto o_vox = vox_t::bond_f();
+	auto u_vox = U_vox::bond_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
-	o_vox <<= resize_u(N_window);
-	o_vox <<= level_t(1) <<= stage_u(-1);
-	o_vox <<= event_u(62, 0); TRUE_(1 == o_vox.ensemble().size());
-	o_vox <<= event_u(65, 0); TRUE_(2 == o_vox.ensemble().size());
-	o_vox <<= event_u(69, 0); TRUE_(3 == o_vox.ensemble().size());
-	o_vox <<= event_u(65, 0); TRUE_(4 == o_vox.ensemble().size());
+	u_vox <<= U_resize(N_window);
+	u_vox <<= level_t(1) <<= U_stage(-1);
+	u_vox <<= U_event(62, 0); TRUE_(1 == u_vox.ensemble().size());
+	u_vox <<= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
+	u_vox <<= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
+	u_vox <<= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
 
 //	Render:
-//	o_vox <<= resize_u(N_window);
-	o_vox >>= scope_u(N_window);
+//	u_vox <<= U_resize(N_window);
+	u_vox >>= U_scope(N_window);
 	
-	TRUE_(3 == o_vox.ensemble().size());
-	TRUE_(3 == o_vox.front());
+	TRUE_(3 == u_vox.ensemble().size());
+	TRUE_(3 == u_vox.front());
 	
-	auto vox_oo_ = o_vox.ensemble().begin();
+	auto vox_oo_ = u_vox.ensemble().begin();
 	TRUE_(62 == vox_oo_++->head());
 	TRUE_(65 == vox_oo_++->head());
 	TRUE_(69 == vox_oo_++->head());
@@ -74,43 +74,43 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using alpha_t = typename common::computer::alpha_t;
-	using sigma_t = typename common::computer::sigma_t;
-	using delta_t = typename common::computer::delta_t;
+	using T_alpha = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_delta = typename common::computer::delta_t;
 
-	using stage_u = message::stage_t<>;
-	using event_u = compound::key_s<stage_u>;
-	using empty_u = message::confined_t<>;
+	using U_stage = message::stage_t<>;
+	using U_event = compound::key_s<U_stage>;
+	using U_empty = message::confined_t<>;
 
-	using resize_u = message::resize_t<>;
-	using scope_u = message::scope_t<>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 	
-	using gate_t = process::confined_t<void
-	,	typename stage_u::expect<>
+	using U_gate = process::confined_t<void
+	,	typename U_stage::expect<>
 	,	typename level_t::poll<>
 	>;
 
-	using vox_t = polymer_t<gate_t
-	,	resource::restore<N_store>
-	,	resource::respool<N_spool>
+	using U_vox = polymer_t<U_gate
+	,	resource::stored<N_store>
+	,	resource::spooled<N_spool>
 	>;
-	auto o_vox = vox_t::bond_f();
+	auto u_vox = U_vox::bond_f();
 
 // Set the default `stage: final`:
-	o_vox <<= stage_u(-1);
-	o_vox <<= event_u(62, 0) << level_t(1); TRUE_(1 == o_vox.ensemble().size());
-	o_vox <<= event_u(65, 0) << level_t(2); TRUE_(2 == o_vox.ensemble().size());
-	o_vox <<= event_u(69, 0) << level_t(3); TRUE_(3 == o_vox.ensemble().size());
-	o_vox <<= event_u(65, 0) << level_t(4); TRUE_(4 == o_vox.ensemble().size());
+	u_vox <<= U_stage(-1);
+	u_vox <<= U_event(62, 0) << level_t(1); TRUE_(1 == u_vox.ensemble().size());
+	u_vox <<= U_event(65, 0) << level_t(2); TRUE_(2 == u_vox.ensemble().size());
+	u_vox <<= U_event(69, 0) << level_t(3); TRUE_(3 == u_vox.ensemble().size());
+	u_vox <<= U_event(65, 0) << level_t(4); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
-	o_vox <<= resize_u(N_window);
-	o_vox >>= scope_u(N_window);
+	u_vox <<= U_resize(N_window);
+	u_vox >>= U_scope(N_window);
 	
-	TRUE_(3 == o_vox.ensemble().size());
-	TRUE_(8 == o_vox.front());
+	TRUE_(3 == u_vox.ensemble().size());
+	TRUE_(8 == u_vox.front());
 	
-	auto vox_oo_ = o_vox.ensemble().begin();
+	auto vox_oo_ = u_vox.ensemble().begin();
 	TRUE_(62 == vox_oo_++->head());
 	TRUE_(65 == vox_oo_++->head());
 	TRUE_(69 == vox_oo_++->head());
@@ -119,43 +119,43 @@ void polymer_provision_spool__combined()
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
-	using alpha_t = typename common::computer::alpha_t;
-	using sigma_t = typename common::computer::sigma_t;
-	using delta_t = typename common::computer::delta_t;
+	using T_alpha = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_delta = typename common::computer::delta_t;
 
-	using stage_u = message::stage_t<>;
-	using event_u = compound::key_s<stage_u>;
-	using empty_u = message::confined_t<>;
+	using U_stage = message::stage_t<>;
+	using U_event = compound::key_s<U_stage>;
+	using U_empty = message::confined_t<>;
 
-	using resize_u = message::resize_t<>;
-	using scope_u = message::scope_t<>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 	
-	using gate_t = process::confined_t<void
-	,	typename stage_u::expect<>
+	using U_gate = process::confined_t<void
+	,	typename U_stage::expect<>
 	,	typename level_t::poll<>
 	>;
 
-	using vox_t = polymer_t<gate_t
-	,	resource::restore<N_store>
-	,	resource::respool<N_spool>
+	using U_vox = polymer_t<U_gate
+	,	resource::stored<N_store>
+	,	resource::spooled<N_spool>
 	>;
-	auto o_vox = vox_t::bond_f();
+	auto u_vox = U_vox::bond_f();
 
 // Set the default `stage: final`:
-	o_vox <<= stage_u(-1);
-	o_vox <<= compound::key_s<>(62) << stage_u(0) << level_t(1); TRUE_(1 == o_vox.ensemble().size());
-	o_vox <<= compound::key_s<>(65) << stage_u(0) << level_t(2); TRUE_(2 == o_vox.ensemble().size());
-	o_vox <<= compound::key_s<>(69) << stage_u(0) << level_t(3); TRUE_(3 == o_vox.ensemble().size());
-	o_vox <<= compound::key_s<>(65) << stage_u(0) << level_t(4); TRUE_(4 == o_vox.ensemble().size());
+	u_vox <<= U_stage(-1);
+	u_vox <<= compound::key_s<>(62) << U_stage(0) << level_t(1); TRUE_(1 == u_vox.ensemble().size());
+	u_vox <<= compound::key_s<>(65) << U_stage(0) << level_t(2); TRUE_(2 == u_vox.ensemble().size());
+	u_vox <<= compound::key_s<>(69) << U_stage(0) << level_t(3); TRUE_(3 == u_vox.ensemble().size());
+	u_vox <<= compound::key_s<>(65) << U_stage(0) << level_t(4); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
-	o_vox <<= resize_u(N_window);
-	o_vox >>= scope_u(N_window);
+	u_vox <<= U_resize(N_window);
+	u_vox >>= U_scope(N_window);
 	
-	TRUE_(3 == o_vox.ensemble().size());
-	TRUE_(8 == o_vox.front());
+	TRUE_(3 == u_vox.ensemble().size());
+	TRUE_(8 == u_vox.front());
 	
-	auto vox_oo_ = o_vox.ensemble().begin();
+	auto vox_oo_ = u_vox.ensemble().begin();
 	TRUE_(62 == vox_oo_++->head());
 	TRUE_(65 == vox_oo_++->head());
 	TRUE_(69 == vox_oo_++->head());

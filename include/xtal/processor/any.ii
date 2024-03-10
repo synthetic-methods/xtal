@@ -73,20 +73,20 @@ struct defer<U>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...));
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0EX
 		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 		template <auto ...Ks>
 		XTAL_TN2 method(XTAL_DEF ...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 
 	};
@@ -94,8 +94,8 @@ struct defer<U>
 template <class U>
 struct refer
 {
-	using scope_u = message::scope_t<counted_t<>>;
-	using subkind  = common::compose<_retail::refer<U>, scope_u::attach<>>;
+	using U_scope = message::scope_t<counted_t<>>;
+	using subkind  = common::compose<_retail::refer<U>, U_scope::attach<>>;
 
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>
@@ -119,9 +119,9 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
-			using I = iteratee_t<scope_u>; using _computer = common::compute<I>;
+			using I = iteratee_t<U_scope>; using _computer = common::compute<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
-			auto const &u = S_::template head<scope_u>();
+			auto const &u = S_::template head<U_scope>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);

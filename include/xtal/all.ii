@@ -1,7 +1,6 @@
 #pragma once
 #include "./common/all.ii"
 #include "./compound/all.ii"
-#include "./compound/all.ii"
 #include "./conflux/all.ii"
 #include "./message/all.ii"
 #include "./precess/all.ii"

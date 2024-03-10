@@ -23,7 +23,7 @@ struct rescan
 	
 	public:
 		using S_::S_;
-		using scan_t = U;
+		using U_scan = U;
 			
 		XTAL_TO4_(XTAL_TN2 scan(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
 

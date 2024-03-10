@@ -4,7 +4,8 @@
 #include "../compound/all.ii"
 #include "../conflux/all.ii"
 #include "../process/any.hh"
-#include "../processor/any.hh"
+#include "../resource/enumerated.ii"
+
 
 XTAL_ENV_(push)
 namespace xtal::message
@@ -95,11 +96,11 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <process::any_q R>
+			template <process::any_q R> requires resource::enumerated_q<T>
 			class subtype: public common::compose_s<R, subkind>
 			{
 				using R_ = common::compose_s<R, subkind>;
-				using K_ = typename R_::head_t;
+				using K_ = typename R_::template head_t<>;
 			
 			public:
 			//	using R_::R_;
@@ -112,7 +113,7 @@ struct define
 				XTAL_CXN subtype(size_t const &n)
 				:	R_(n)
 				{
-					assert(0 <= n and n < T::limit());
+					assert(0 <= n and n < T::enumerate());
 				}
 
 				XTAL_TO2_(
@@ -121,15 +122,15 @@ struct define
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_TN2 reify(constant_q auto const ...ks),
+				XTAL_TN2 reify(integral_q auto const ...ks),
 					_std::bind_front(deify<Xs...>(ks...), &self())
 				)
 
 				template <class ...Xs>
-				XTAL_TN2 deify(constant_q auto const ...ks)
+				XTAL_TN2 deify(integral_q auto const ...ks)
 				XTAL_0FX
 				{
-					return deify_(being<Xs...>::template m_method<valued_f(ks)...>);
+					return deify_(being<Xs...>::template m_method<ks...>);
 				}
 				XTAL_TN2 deify_(array_q auto const &fs)
 				XTAL_0FX
@@ -141,7 +142,7 @@ struct define
 				template <class ...Xs>
 				struct being
 				{
-					template <auto ...Ks>
+					template <auto ...Is>
 					class resolve
 					{
 						template <size_t ...I>
@@ -149,15 +150,15 @@ struct define
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
-							return _std::array{(doing::template m_method<Ks..., I>)...};
+							return _std::array{(doing::template m_method<Is..., I>)...};
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(common::seek_f<T::limit()> {});
+						XTAL_LET m_method = method_f(common::seek_f<T::enumerate()> {});
 					
 					};
-					template <auto ...Ks> XTAL_LET m_method = resolve<Ks...>::m_method;
-					template <auto ...Ks> XTAL_USE method_t = decltype(m_method<Ks...>);
+					template <auto ...Is> XTAL_LET m_method = resolve<Is...>::m_method;
+					template <auto ...Is> XTAL_USE Y_method = decltype(m_method<Is...>);
 				
 				};
 
@@ -270,20 +271,6 @@ struct refer
 };
 
 
-////////////////////////////////////////////////////////////////////////////////
-
-template <typename ...As>
-struct option;
-
-template <cardinal_q U>
-struct infer<U>
-:	defer<confined_t<option<U>>>
-{
-};
-
-
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
-
-#include "./option.ii"

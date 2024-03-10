@@ -1,209 +1,261 @@
 #pragma once
+#if __has_include(<execution>)
+#include <execution>
+#endif
+#include <concepts>
+#include <cassert>
+#include <cstring>
+#include <complex>
+#include <numbers>
+#include <cmath>
+#include <tuple>
+#include <array>
+#include <queue>
+#include <new>
+#include <bit>
+
+
 #include "./any.hh"
 
 
-
-
-
-
 XTAL_ENV_(push)
+
+#include <range/v3/all.hpp>
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-//\
-Structural types...
+namespace _std = ::std;
+namespace _v3
+{
+	namespace ranges = ::ranges;
+	namespace views  = ::ranges::views;
 
-template <class X, class Y>
-XTAL_FN2 equal_f(X const &x, Y const &y)
-XTAL_0EX
-{
-	using W = shared_t<X, Y>;
-	return (W) x == (W) y;
-}
-template <iterated_q X, iterated_q Y> requires epimorphic_p<X, Y>
-XTAL_FN2 equal_f(X &&x, Y &&y)
-XTAL_0EX
-{
-	return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
 }
 
-template <class X, class Y>
-XTAL_FN2 equivalent_f(X &&x, Y &&y)
-XTAL_0EX
-{
-	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
-}
-template <iterated_q X, iterated_q Y> requires isomorphic_p<X, Y>
-XTAL_FN2 equivalent_f(X const &x, Y const &y)
-XTAL_0EX
-{
-	return x.begin() == y.begin() and x.end() == y.end();
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <auto ... >   XTAL_LET return_f = [] (XTAL_DEF o) XTAL_0FN_(XTAL_REF_(o));
-
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<M>(XTAL_REF_(w));}
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
-
-template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
-template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
-///< Governs access to the underlying member. \
-
-template <remember_q V>
-XTAL_FN2 dismember_f(V &v, V w)
-XTAL_0EX
-{
-	_std::swap(w, v); return XTAL_MOV_(v);
-}
-template <remember_q V>
-XTAL_FN2 dismember_f(V &v, XTAL_DEF... w)
-XTAL_0EX
-{
-	return dismember_f<V>(v, member_f<V>(XTAL_REF_(w)...));
-}
-///< Replaces the body of the underlying member. \
-
-
-template <class I>
-XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
-
-
-template <class Y> XTAL_FN2 force_f(XTAL_DEF_(forcible_q) t) XTAL_0EX {return reinterpret_cast<Y>(XTAL_REF_(t));}
-template <class Y> XTAL_FN2 funge_f(XTAL_DEF_(fungible_q) t) XTAL_0EX {return      static_cast<Y>(XTAL_REF_(t));}
-template <class Y>
-XTAL_FN2 forge_f(XTAL_DEF t)
-XTAL_0EX
-{
-	if constexpr (fungible_q<Y, decltype(t)>) {
-		return funge_f<Y>(XTAL_REF_(t));
-	}	else
-	if constexpr (forcible_q<Y, decltype(t)>) {
-		return force_f<Y>(XTAL_REF_(t));
-	}
-}
+#include "./_detail.ixx"
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
-Range types...
+Standard...
 
-template <class    T >    XTAL_FN2 deranged_f(T &&t) XTAL_0EX {return deranged_t<T>(XTAL_REF_(t));}
+XTAL_USE null_t = _detail:: null_t;
+XTAL_USE unit_t = _detail:: unit_t;
+XTAL_USE sign_t = _detail:: sign_t;
+XTAL_USE byte_t = _detail:: byte_t;
+XTAL_USE size_t = _detail:: size_t;
+XTAL_USE size_s = _detail:: size_s;
+XTAL_LET size_1 = _detail:: size_1;
 
-template <iterator_q I>   XTAL_FN2 reverser_f(I   i) XTAL_0EX {return _std::make_reverse_iterator(i);}
-template <iterator_q I>   XTAL_FN2    mover_f(I   i) XTAL_0EX {return _std::   make_move_iterator(i);}
-
-
-template <counter_p I>     XTAL_FN2 counted_f(I i0, I iN) {return counted_t<I>(i0, iN);}
-template <class    T>      XTAL_FN2 counted_f(T &&t)      {return counted_t<T>(XTAL_REF_(t));}
-template <class    T>      XTAL_FN2 counter_f(T &&t)      {return counter_t<T>(XTAL_REF_(t));}
-template <class    T>
-XTAL_FN2 count_f(T &&t)
-XTAL_0EX
-{
-	if constexpr (counter_q<T>) {
-		return XTAL_REF_(t);
-	}	else
-	if constexpr (counted_q<T>) {
-		return 1 + t.back() - XTAL_REF_(t).front();
-	}	else
-	if constexpr (bracket_q<T>) {
-		return      t.end() - XTAL_REF_(t).begin();
-	}	else
-	if constexpr (requires {t.size();}) {
-		return XTAL_REF_(t).size();
-	}	else
-	{
-		return (sign_t) 0;
-	}
-}
-///<\returns the `size` of the given range. \
-
-///<\note\
-If provided with an `iota_view`, \
-returns a `value_type` instead of `size_type` which is twice the width. \
-
-template <class  T>
-XTAL_FN2 recount_f(T &&t)
-XTAL_0EX
-{
-	return _v3::views::take(count_f(XTAL_REF_(t)));
-}
+template <auto     N > XTAL_LET sign_n =         _detail:: sign_n<N >;
+template <auto  ...Ns> XTAL_ASK sign_p = (...and _detail:: sign_p<Ns>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
-Debugging...
+Structural...
 
-#if not XTAL_LOG
-class
-{
-public:
-	XTAL_OP1() (XTAL_DEF ...xs)
-	{
-		if constexpr (0 < sizeof...(xs)) {
-			return (XTAL_REF_(xs), ...);
-		}
-	}
+template <class   ...Ts> concept incomplete_q = (...and  _detail:: incomplete_q<Ts>);
+template <class   ...Ts> concept   complete_q = (...and  _detail::   complete_q<Ts>);
+template <class   ...Ts> using     complete_t = typename _detail::   complete_t<Ts...>;
 
-} echo;
-#else
-class
-{
-	XTAL_TN0 print_list(XTAL_DEF x)
-	{
-		for (XTAL_DEF w: XTAL_REF_(x)) ::std::cout << XTAL_REF_(w) << '\t';
-	}
-	XTAL_TN0 print_item(XTAL_DEF x)
-	{
-		using W = XTAL_TYP_(x);
-		if constexpr (::std::is_floating_point_v<W>) {
-			::std::cout.precision(17);
-		}
-		if constexpr (::std::is_arithmetic_v<W>) {
-			if (::std::copysign(1.0, x) == 1.0) {
-				 ::std::cout << ' ';
-			}
-		}
-		::std::cout << XTAL_REF_(x) << '\t';
-	}
-	XTAL_TN1 put(XTAL_DEF x)
-	{
-		using W = XTAL_TYP_(x);
-		if constexpr (_v3::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
-			print_list(XTAL_REF_(x));
-		}
-		else {
-			print_item(XTAL_REF_(x));
-		}
-		return XTAL_REF_(x);
-	}
 
-public:
-	XTAL_OP1() (XTAL_DEF ...xs)
-	{
-		if constexpr (0 < sizeof...(xs)) {
-			::std::cout << '\t'; auto const x = (put(XTAL_REF_(xs)), ...);
-			::std::cout << '\n';
-			return x;
-		}
-		else {
-			::std::cout << '\n';
-		}
-	}
+template <auto       N > using     integral_t = typename _detail:: integral<N>::type;
+template <auto       N > using     cardinal_t = typename _detail:: cardinal<N>::type;
+template <auto       N > using      ordinal_t = typename _detail::  ordinal<N>::type;
+template <auto       N > using      logical_t = typename _detail::  logical<N>::type;
 
-} echo;
-#endif
+template <class  ...Ts> concept    integral_p = (...and  _detail:: integral_p<Ts>);
+template <class  ...Ts> concept    cardinal_p = (...and  _detail:: cardinal_p<Ts>);
+template <class  ...Ts> concept     ordinal_p = (...and  _detail::  ordinal_p<Ts>);
+template <class  ...Ts> concept     logical_p = (...and  _detail::  logical_p<Ts>);
+
+template <class  ...Ts> concept    integral_q = (...and  _detail:: integral_q<Ts>);
+template <class  ...Ts> concept    cardinal_q = (...and  _detail:: cardinal_q<Ts>);
+template <class  ...Ts> concept     ordinal_q = (...and  _detail::  ordinal_q<Ts>);
+template <class  ...Ts> concept     logical_q = (...and  _detail::  logical_q<Ts>);
+
+template <class  ...Ts> concept    terminal_q = (...and  _detail:: terminal_q<Ts>);
+template <class  ...Ts> concept     liminal_q = (...and  _detail::  liminal_q<Ts>);
+template <liminal_q T > using    subliminal_s = typename _detail::  subliminal<T>::type;
+template <liminal_q T > using   semiliminal_s = typename _detail:: semiliminal<T>::type;
+
+
+template <class     T > using        based_t  =          _detail::   based_t<T>;
+template <class  ...Ts> concept      based_q  = (...and  _detail::   based_q<Ts>);
+template <class  ...Ts> concept    unbased_q  = (...and  _detail:: unbased_q<Ts>);
+
+template <class     T > using      rebased_t  = typename _detail:: rebased<T>::type;
+template <class     T > using      debased_t  = typename _detail:: debased<T>::type;
+template <class     T > concept    rebased_p  =   (bool) _detail:: rebased<T>::value;
+template <class     T > concept    debased_p  =   (bool) _detail:: debased<T>::value;
+template <class  ...Ts> concept    rebased_q  = (...and  _detail:: rebased_q<Ts>);
+template <class  ...Ts> concept    debased_q  = (...and  _detail:: debased_q<Ts>);
+
+
+template <class  ...Ts> concept      valued_q = (...and  _detail::   valued_q<Ts>);
+template <class     T > using        valued_t =          _detail::   valued_t<T>;
+template <class     T > using      devalued_t =          _detail:: devalued_t<T>;
+template <class     T > using      revalued_t =          _detail:: revalued_t<T>;
+
+template <class     X > using      argument_t = typename _detail:: argument<X>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class  ...Ts> concept  isomorphic_q = _detail:: isomorphic<Ts...>::value;
+template <class  ...Ts> concept  epimorphic_q = _detail:: epimorphic<Ts...>::value;
+
+template <class  ...Ts> using        shared_t = _detail:: shared_t<Ts...>;
+template <class  ...Ts> concept      shared_q = _detail:: shared_q<Ts...>;        //< `Ts...` share a common type.
+template <class  ...Ts> concept      id_q     = _detail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <class  ...Ts> concept      is_q     = _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <class  ...Ts> concept      to_q     = _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+
+template <class T, class ...Ys> concept  of_p = (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
+template <class T, class ...Ys> concept  of_q = (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
+
+template <class T, class ...Ys> concept   forcible_q = (...and _detail::   forcible_q<T, Ys>);//< `T` and `Ys...` have the same `sizeof`.
+template <class T, class ...Ys> concept   fungible_q = (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
+template <class T, class ...Ys> concept unforcible_q = (...and _detail:: unforcible_q<T, Ys>);
+template <class T, class ...Ys> concept infungible_q = (...and _detail:: infungible_q<T, Ys>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class     T > using       aligned_t = typename _detail:: aligned<T>::type;//< Equivalent to the soon-to-be-deprecated `std::aligned_storage`.
+template <class     T > XTAL_LET    aligned_n =          _detail:: aligned<T>::value;
+
+template <class     T > using       pointed_t = _detail::pointed_t<T>;
+template <class     T > using       pointer_t = _detail::pointer_t<T>;
+template <class  ...Ts> concept     pointed_q = (... and _detail::pointed_q<Ts>);
+template <class  ...Ts> concept     pointer_q = (... and _detail::pointer_q<Ts>);
+
+template <class     T > XTAL_LET     parity_n = _detail:: parity_n<T>;
+template <class     T > XTAL_LET      arity_n = _detail::  arity_n<T>;
+
+template <class T,     int N=-1> concept     array_q = _detail::array_q<T> and N <  0   or arity_n<T> == N;
+template <class T,     int N=-1> concept  subarray_q = _detail::array_q<T> and 0 <= N  and arity_n<T> <= N;
+
+template <int N=-1, class ...Ts> concept     array_p = (...and    array_q<Ts, N>);
+template <int N=-1, class ...Ts> concept  subarray_p = (...and subarray_q<Ts, N>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Ranged...
+
+template <class     W > using      bracket_t  = _detail:: bracket_t<W>;
+template <class     T > using        begin_t  = _detail::   begin_t<T>;
+template <class     T > using          end_t  = _detail::     end_t<T>;
+
+template <class  ...Ts> concept    bracket_q  = (...and  _detail:: bracket_q<Ts>);
+template <class  ...Ts> concept      begin_q  = (...and  _detail::   begin_q<Ts>);
+template <class  ...Ts> concept        end_q  = (...and  _detail::     end_q<Ts>);
+
+template <class     T > using      iterate_t  = _detail::  iterate_t<T>;
+template <class     W > using      interval_t = _detail:: interval_t<W>;
+
+
+template <class  ...Ts> concept    iterable_q = (...and  _detail:: iterable_q<Ts>);
+template <class  ...Ts> concept    iterated_q = (...and  _detail:: iterated_q<Ts>);
+template <class  ...Ts> concept    iterator_q = (...and  _detail:: iterator_q<Ts>);
+
+template <class  ...Ts> concept  uniterable_q = not iterable_q<Ts...>;
+template <class  ...Ts> concept  uniterated_q = not iterated_q<Ts...>;
+template <class  ...Ts> concept  uniterator_q = not iterator_q<Ts...>;
+
+template <class     T > using      iterated_t = typename _detail::iterated<T>::type;
+template <class     T > using      iterator_t = typename _detail::iterator<T>::type;//_v3::ranges::iterator_t
+template <class     T > using      iteratee_t = typename _detail::iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+
+
+template <class     T > using      sentinel_t = _detail:: sentinel_t<T>;
+template <class     T > using      distance_t = _detail:: distance_t<T>;
+template <class     T > using      deranged_t = _detail:: deranged_t<T>;
+
+
+template <class  ...Ts> concept    counted_q  = (...and _detail:: counted_q<Ts>);
+template <class  ...Ts> concept    counter_q  = (...and _detail:: counter_q<Ts>);
+
+template <class T=size_s>    using counted_t  = typename _detail::counted<T>::type;
+template <class T=size_s>    using counter_t  = typename _detail::counter<T>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Arithmetic...
+
+template <class T, size_t N=0> concept multiplicative_group_p = _detail:: multiplicative_group_p<based_t<T>, N>;
+template <class T, size_t N=0> concept       additive_group_p = _detail::       additive_group_p<based_t<T>, N>;
+template <class T, size_t N=0> concept       discrete_group_p = _detail::       discrete_group_p<based_t<T>, N>;
+template <class T, size_t N=0> concept       quotient_group_p = _detail::       quotient_group_p<based_t<T>, N>;
+template <class T, size_t N=0> concept       integral_group_p = _detail::       integral_group_p<based_t<T>, N>;
+
+template <class T, size_t N=0> concept      algebraic_field_p = _detail::      algebraic_field_p<based_t<T>, N>;
+template <class T, size_t N=2> concept        complex_field_p = _detail::        complex_field_p<based_t<T>, N>;
+template <class T, size_t N=0> concept           real_field_p = _detail::           real_field_p<based_t<T>, N>;
+
+template <class T, size_t N=0> concept        boolean_logic_p = _detail::        boolean_logic_p<based_t<T>, N>;
+template <class T, size_t N=0> concept         binary_logic_p = _detail::         binary_logic_p<based_t<T>, N>;
+
+template <class T, size_t N=2> concept           inequality_p = _detail::           inequality_p<based_t<T>, N>;
+template <class T, size_t N=2> concept             equality_p = _detail::             equality_p<based_t<T>, N>;
+template <class T, size_t N=2> concept              quality_p = _detail::              quality_p<based_t<T>, N>;
+
+
+template <class  ...Ts> concept multiplicative_group_q = (...and multiplicative_group_p<Ts>);
+template <class  ...Ts> concept       additive_group_q = (...and       additive_group_p<Ts>);
+template <class  ...Ts> concept       discrete_group_q = (...and       discrete_group_p<Ts>);
+template <class  ...Ts> concept       quotient_group_q = (...and       quotient_group_p<Ts>);
+template <class  ...Ts> concept       integral_group_q = (...and       integral_group_p<Ts>);
+
+template <class  ...Ts> concept      algebraic_field_q = (...and      algebraic_field_p<Ts>);
+template <class  ...Ts> concept        complex_field_q = (...and        complex_field_p<Ts>);
+template <class  ...Ts> concept           real_field_q = (...and           real_field_p<Ts>);
+
+template <class  ...Ts> concept        boolean_logic_q = (...and        boolean_logic_p<Ts>);
+template <class  ...Ts> concept         binary_logic_q = (...and         binary_logic_p<Ts>);
+
+template <class  ...Ts> concept           inequality_q = (...and           inequality_p<Ts>);
+template <class  ...Ts> concept             equality_q = (...and             equality_p<Ts>);
+template <class  ...Ts> concept              quality_q = (...and              quality_p<Ts>);
+
+
+static_assert(                  real_field_q<float>);
+static_assert(             algebraic_field_q<float>);
+static_assert(          not quotient_group_q<float>);
+static_assert(              quotient_group_q<  int>);
+static_assert(complex_field_q<_std::complex<float>>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+#include "./_kernel.ixx"
+#include "./_logger.ixx"
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+namespace std
+{////////////////////////////////////////////////////////////////////////////////
+
+#if not __cpp_lib_bit_cast
+template <class  T, class S>
+static constexpr T bit_cast(S const& s)
+noexcept
+{
+	static_assert(xtal::based_q<T, S> and sizeof(T) == sizeof(S));
+	return __builtin_bit_cast(T, s);
+}
+#endif
+
+
+}//////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

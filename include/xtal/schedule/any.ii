@@ -44,10 +44,10 @@ struct define
 				static_assert(complete_q<Xs...>);
 				
 			protected:
-				using tuple_t = _std::tuple<Xs...>;
-				using tuple_u = message::packet_t<Xs...>;
-				using event_u = compound::cue_s<tuple_u>;
-				using delay_u = typename compound::cue_s<>::head_t;
+				using V_tuple = _std::tuple<Xs...>;
+				using U_tuple = message::packet_t<Xs...>;
+				using U_event = compound::cue_s<U_tuple>;
+				using U_delay = typename compound::cue_s<>::template head_t<>;
 
 			public:
 				using R_::R_;
@@ -58,19 +58,19 @@ struct define
 				Invokes `influx` immediately, \
 				expanding the provided arguments. \
 				
-				XTAL_TLX influx(tuple_u o)
+				XTAL_TLX influx(U_tuple o)
 				XTAL_0EX
 				{
-					return influx(o.apple());
+					return o.apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)));
 				}
-				XTAL_TLX influx(tuple_t o)
+				XTAL_TLX influx(V_tuple o)
 				XTAL_0EX
 				{
-					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(us...)), o);
+					return _std::apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)), o);
 				}
 
 				///\
-				Invokes `ingest(event_u)` with the given argument. \
+				Invokes `ingest(U_event)` with the given argument. \
 
 				XTAL_TLX influx(XTAL_DEF_(compound::cue_q) dot)
 				XTAL_0EX
@@ -80,22 +80,22 @@ struct define
 				}
 
 				///\
-				Invokes `influx(event_u)` with the event constructed from the arguments. \
+				Invokes `influx(U_event)` with the event constructed from the arguments. \
 
-				XTAL_TLX influx(delay_u d_t, tuple_u o)
+				XTAL_TLX influx(U_delay d_t, U_tuple o)
 				XTAL_0EX
 				{
-					return influx(event_u(d_t, o));
+					return influx(U_event(d_t, o));
 				}
-				XTAL_TLX influx(delay_u d_t, tuple_t o)
+				XTAL_TLX influx(U_delay d_t, V_tuple o)
 				XTAL_0EX
 				{
 					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(d_t, us...)), o);
 				}
-				XTAL_TLX influx(delay_u d_t, Xs ...us)
+				XTAL_TLX influx(U_delay d_t, Xs ...us)
 				XTAL_0EX
 				{
-					return influx(d_t, tuple_u(us...));
+					return influx(d_t, U_tuple(us...));
 				}
 
 				XTAL_TLX influx(compound::cue_s<> d_t, XTAL_DEF ...oo)
@@ -120,16 +120,16 @@ struct refine
 		using S_ = common::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using F_ = typename S_::template inqueue<Xs...>;
+		using S_inqueue = typename S_::template inqueue<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs>
-		struct inqueue: F_<Xs...>
+		struct inqueue: S_inqueue<Xs...>
 		{
-			using kind = confined<F_<Xs...>>;
+			using kind = confined<S_inqueue<Xs...>>;
 			using type = common::compose_s<S_, kind>;
 		
 		};

@@ -1,38 +1,27 @@
 #pragma once
-#include "./any.ii"
-
+#include "./any.cc"
+#include "./enumerated.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::message
+namespace xtal::resource::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N>
-struct delimit
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TAG_("enumerated")
 {
-	template <any_q S>
-	class subtype: public common::compose_s<S>
+	TRY_("task")
 	{
-		using S_ = common::compose_s<S>;
-	
-	public:
-		using S_::S_;
+		TRUE_(true);
 
-		XTAL_FN2_(size_t) limit()
-		XTAL_0EX
-		{
-			return N;
-		}
-
-	};
-};
-template <size_t N>
-using delimit_t = confined_t<delimit<N>>;
-
+	}
+}
+/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

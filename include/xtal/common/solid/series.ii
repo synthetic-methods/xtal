@@ -49,7 +49,7 @@ struct series<U[N]>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(constant_q auto const o_shift)
+		XTAL_CXN homotype(integral_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
@@ -74,7 +74,7 @@ struct series<U[N]>
 			I constexpr H_limit = N_limit >> 1;
 			I constexpr _0 = N_index + 0;
 			I constexpr _1 = N_index + 1;
-			I constexpr _H = N_index + H_limit;
+			I constexpr H_ = N_index + H_limit;
 			I constexpr N1 = N_index + N_limit - 1;
 			I constexpr N2 = N_index + N_limit - 2;
 
@@ -83,7 +83,7 @@ struct series<U[N]>
 			subscript(_0) = o;
 			subscript(_1) = o*u;
 
-			for (I i = _1; i < _H; ++i) {
+			for (I i = _1; i < H_; ++i) {
 				auto w = _computer::square_f(subscript(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
@@ -134,7 +134,7 @@ struct series<U[N]>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <isomorphic_p<T> Y>
+		template <isomorphic_q<T> Y>
 		XTAL_TN1_(duel_t<Y> &) transform(Y &that)
 		XTAL_0FX
 		XTAL_REQ complex_field_q<U>
@@ -185,7 +185,7 @@ struct series<U[N]>
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_p<T> Y>
+		template <isomorphic_q<T> Y>
 		XTAL_TN2_(duel_t<Y>) transformation(Y that)
 		XTAL_0FX
 		{
@@ -195,7 +195,7 @@ struct series<U[N]>
 		///\returns `lhs` convolved with `rhs`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_p<T> Y>
+		template <isomorphic_q<T> Y>
 		XTAL_TN1_(Y &) convolve(Y &lhs, Y rhs)
 		XTAL_0FX
 		{
@@ -204,7 +204,7 @@ struct series<U[N]>
 		///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_p<T> Y>
+		template <isomorphic_q<T> Y>
 		XTAL_TN2_(Y) convolution(Y lhs, Y const &rhs)
 		XTAL_0FX
 		{

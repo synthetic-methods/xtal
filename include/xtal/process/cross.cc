@@ -19,12 +19,12 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using model_u = common::solid::linear_t<int[2][3]>;
-		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
+		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
-		auto io = remix_u();
-		io <<= model_u {{1, 2}, {3, 4}, {5, 6}};
+		auto io = U_remix();
+		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
 		TRUE_(io(10, 100) == 1290);
 	//	(1*10 + 2*100) + (3*10 + 4*100) + (5*10 + 6*100)
 
@@ -40,15 +40,15 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = common::solid::linear_t<int[2][3]>;
-		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
+		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
-		auto io = mixer_u::bond_f(_1, _n);
-		io <<= model_u {{1, 2}, {3, 4}, {5, 6}};
+		auto io = U_mixer::bond_f(_1, _n);
+		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
@@ -62,15 +62,15 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = common::solid::linear_t<int[2][3]>;
-		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
+		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
-		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::indent_s<model_u>({{1, 2}, {3, 4}, {5, 6}});
+		auto io = U_mixer::bond_f(_1, _n);
+		io <<= conflux::indent_s<U_model>({{1, 2}, {3, 4}, {5, 6}});
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
@@ -81,17 +81,17 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = common::solid::linear_t<int[2][3]>;
-		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
+		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
-		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::indent_s<model_u, 0>({1, 2});
-		io <<= conflux::indent_s<model_u, 1>({3, 4});
-		io <<= conflux::indent_s<model_u, 2>({5, 6});
+		auto io = U_mixer::bond_f(_1, _n);
+		io <<= conflux::indent_s<U_model, 0>({1, 2});
+		io <<= conflux::indent_s<U_model, 1>({3, 4});
+		io <<= conflux::indent_s<U_model, 2>({5, 6});
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
@@ -102,20 +102,20 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using model_u = common::solid::linear_t<int[2][3]>;
-		using remix_u = process::cross_t<model_u, mix_t>;
-		using mixer_u = processor::monomer_t<remix_u, resource::restore<>>;
+		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
 	//
-		auto io = mixer_u::bond_f(_1, _n);
-		io <<= conflux::indent_s<model_u, 0, 0>(1);
-		io <<= conflux::indent_s<model_u, 0, 1>(2);
-		io <<= conflux::indent_s<model_u, 1, 0>(3);
-		io <<= conflux::indent_s<model_u, 1, 1>(4);
-		io <<= conflux::indent_s<model_u, 2, 0>(5);
-		io <<= conflux::indent_s<model_u, 2, 1>(6);
+		auto io = U_mixer::bond_f(_1, _n);
+		io <<= conflux::indent_s<U_model, 0, 0>(1);
+		io <<= conflux::indent_s<U_model, 0, 1>(2);
+		io <<= conflux::indent_s<U_model, 1, 0>(3);
+		io <<= conflux::indent_s<U_model, 1, 1>(4);
+		io <<= conflux::indent_s<U_model, 2, 0>(5);
+		io <<= conflux::indent_s<U_model, 2, 1>(6);
 		io <<= message::resize_t<>(3);
 		io >>= message::scope_t<>(3);
 
