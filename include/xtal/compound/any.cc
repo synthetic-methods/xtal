@@ -184,33 +184,29 @@ TAG_("compound", "conversion")
 
 TAG_("compound", "composition")
 {
-	class __aim__;
-	class __hyp__;
-	class __etc__;
+	class L_aim;
+	class L_hyp;
+	class L_etc;
 
-	using aim = common::compose<any<__aim__>, defer<unit_t[2]>>;
-	using hyp = common::compose<any<__hyp__>, defer<unit_t[1]>>;
-	using etc = common::compose<any<__etc__>, defer<unit_t[1]>>;
-	
-	using Aim = confined_t<aim>;
-	using Hyp = confined_t<hyp>;
-	using AimHyp = confined_t<aim, hyp>;
+	using T_aim = inferred_t<L_aim[4]>;
+	using T_hyp = inferred_t<L_hyp[2]>;
+	using T_opt = inferred_t<L_aim[4], L_hyp[2]>;
 	
 	TRY_("task")
 	{
-		auto _AimHyp = AimHyp(0b1'10u);
-		TRUE_(0b10 == _AimHyp.template head<__aim__>());
-		TRUE_(0b1  == _AimHyp.template head<__hyp__>());
-		TRUE_(sizeof(AimHyp) == sizeof(Aim));
-		TRUE_(sizeof(AimHyp) == sizeof(Hyp));
-	//	TRUE_(any_p<AimHyp, __aim__>);
-		TRUE_(any_p<AimHyp, __hyp__>);
-		TRUE_(complete_q<AimHyp::self_t<__aim__>>);
-		TRUE_(complete_q<AimHyp::self_t<__hyp__>>);
-		UNTRUE_(complete_q<AimHyp::self_t<__etc__>>);
-		TRUE_(8 == AimHyp::enumerate());
-		TRUE_(4 == Aim   ::enumerate());
-		TRUE_(2 ==    Hyp::enumerate());
+		auto t_opt = T_opt(0b1'10u);
+		TRUE_(0b10 == t_opt.template head<L_aim>());
+		TRUE_(0b1  == t_opt.template head<L_hyp>());
+		TRUE_(sizeof(T_opt) == sizeof(T_aim));
+		TRUE_(sizeof(T_opt) == sizeof(T_hyp));
+	//	TRUE_(any_p<T_opt, L_aim>);
+		TRUE_(any_p<T_opt, L_hyp>);
+		TRUE_(complete_q<T_opt::self_t<L_aim>>);
+		TRUE_(complete_q<T_opt::self_t<L_hyp>>);
+		UNTRUE_(complete_q<T_opt::self_t<L_etc>>);
+		TRUE_(8 == T_opt::enumerate());
+		TRUE_(4 == T_aim::enumerate());
+		TRUE_(2 == T_hyp::enumerate());
 
 	}
 }
