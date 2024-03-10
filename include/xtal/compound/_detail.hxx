@@ -26,14 +26,13 @@ struct define_field
 	public:
 		using S::S;
 
-		using field_depth = cardinal_t<0>;
-		using field_width = cardinal_t<1>;
+		using word_depth = cardinal_t<0>;
+		using word_width = cardinal_t<1>;
 
 		XTAL_FN2_(size_t) enumerate()
 		XTAL_0EX
 		{
-		//	return size_1 << T::field_depth::value;
-			return           T::field_width::value;
+			return T::word_width::value;
 		}
 
 	};
@@ -160,66 +159,8 @@ struct defer_field
 			return dismember_f(body_m, XTAL_REF_(oo)...);
 		}
 
-		using field_width = cardinal_t<0>;
-		static_assert(terminal_q<typename S_::field_depth>);// for now...
-
-	};
-};
-template <size_t N_depth>
-struct defer_field<unit_t[N_depth]>
-{
-	XTAL_LET N_width = size_1 << N_depth;
-	XTAL_LET N_mask = N_width - size_1;
-
-	template <any_q S>
-	class subtype: public common::compose_s<S>
-	{
-		using S_ = common::compose_s<S>;
-
-	public://protected:
-		using U_head = size_t;
-		using U_body = unsigned;
-
-	public:
-	//	using S_::S_;
-		using S_::self;
-
-		U_body body_m:N_depth;
-
-		XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
-		
-		///\
-		Constructs `this` using the first argument, forwarding the rest to the parent. \
-
-		template <infungible_q<subtype> A>
-		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<U_head>(XTAL_REF_(a)))
-		{}
-		template <integral_p A> requires  liminal_q<typename S_::field_depth>
-		XTAL_CON subtype(A &&a)
-		XTAL_0EX
-		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
-		,	body_m(U_head(a)&N_mask)
-		{};
-		template <integral_p A> requires terminal_q<typename S_::field_depth>
-		XTAL_CON subtype(A &&a)
-		XTAL_0EX
-		:	body_m(U_head(a)&N_mask)
-		{
-			assert(0 == a >> N_depth);
-		};
-
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
-		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
-		
-		using field_depth = cardinal_t<N_depth + S_::field_depth::value>;
-		using field_width = cardinal_t<N_width * S_::field_width::value>;
-		static_assert(size_1 << field_depth::value == field_width::value);// for now...
+		using word_width = cardinal_t<0>;
+		static_assert(terminal_q<typename S_::word_depth>);// for now...
 
 	};
 };
@@ -254,6 +195,70 @@ struct defer_field<U>
 		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
 		
 	};
+};
+template <size_t N_width>
+struct defer_field<unit_t[N_width]>
+{
+	XTAL_LET N_mask = N_width - 1;
+	XTAL_LET N_depth = common::computer::bit_ceiling_f(N_width);
+	static_assert(N_width == size_1 << N_depth);
+
+	template <any_q S>
+	class subtype: public common::compose_s<S>
+	{
+		using S_ = common::compose_s<S>;
+
+	public://protected:
+		using U_head = size_t;
+		using U_body = unsigned;
+
+	public:
+	//	using S_::S_;
+		using S_::self;
+
+		U_body body_m:N_depth;
+
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		///\
+		Constructs `this` using the first argument, forwarding the rest to the parent. \
+
+		template <infungible_q<subtype> A>
+		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		,	body_m(member_f<U_head>(XTAL_REF_(a)))
+		{}
+		template <integral_p A> requires  liminal_q<typename S_::word_depth>
+		XTAL_CON subtype(A &&a)
+		XTAL_0EX
+		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
+		,	body_m(U_head(a)&N_mask)
+		{};
+		template <integral_p A> requires terminal_q<typename S_::word_depth>
+		XTAL_CON subtype(A &&a)
+		XTAL_0EX
+		:	body_m(U_head(a)&N_mask)
+		{
+			assert(0 == a >> N_depth);
+		};
+
+		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+
+		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
+		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
+		
+		using word_depth = cardinal_t<N_depth + S_::word_depth::value>;// specified with `null_t[N_depth]`
+		using word_width = cardinal_t<N_width * S_::word_width::value>;// specified with `unit_t[N_width]`
+		static_assert(size_1 << word_depth::value == word_width::value);// for now...
+
+	};
+};
+template <size_t N_depth>
+struct defer_field<null_t[N_depth]>
+:	defer_field<unit_t[(size_1 << N_depth)]>
+{
 };
 
 

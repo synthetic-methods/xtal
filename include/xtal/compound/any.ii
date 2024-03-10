@@ -23,7 +23,10 @@ providing the mechanism for traversing the trait-lineage of `T`. \
 template <class T>
 struct define
 {
-	using subkind = common::compose<_detail::define_field<T>, _retail::define<T>>;
+	using subkind = common::compose<void
+	,	_detail::define_field<T>
+	,	_retail::define<T>
+	>;
 	
 	template <any_q S>
 	class subtype: public common::compose_s<S, subkind>

@@ -170,7 +170,7 @@ struct polymer<U, As...>
 					tunnel_f(respan_x, i++);
 					common::seek_n<-4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
-						size_t constexpr N = (size_t) 1 << M;// 8, 4, 2, 1
+						auto constexpr N = size_1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {
 							tunnel_f<N>(respan_x, i);
 						}

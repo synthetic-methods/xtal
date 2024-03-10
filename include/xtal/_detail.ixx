@@ -35,9 +35,9 @@ Structural...
 
 template <class      T             >	concept  incomplete_q = not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	concept    complete_q = not incomplete_q<T>;
-template <              class ...Ts>	struct     complete              {class type  {};};
-template <class      T, class ...Ts>	struct     complete<T, Ts...> : complete<Ts...> {};
-template <complete_q T, class ...Ts>	struct     complete<T, Ts...>    {using type = T;};
+template <              class ...Ts>	struct     complete              {class type   {};};
+template <class      T, class ...Ts>	struct     complete<T, Ts...>:   complete<Ts...> {};
+template <complete_q T, class ...Ts>	struct     complete<T, Ts...>    {using type =  T;};
 template <              class ...Ts>	using      complete_t = typename complete<Ts...>::type;
 
 
