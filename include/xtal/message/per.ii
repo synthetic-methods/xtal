@@ -14,7 +14,7 @@ namespace xtal::message
 struct per
 {
 private:
-	using U = unsigned_t<typename common::computer::iota_t>;
+	using U = _std::make_unsigned_t<typename common::computer::iota_t>;
 	using V = typename common::computer::alpha_t;
 
 public:
@@ -31,7 +31,7 @@ public:
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_CXN subtype(_std::integral auto n, XTAL_DEF ...oo)
+		XTAL_CXN subtype(integral_p auto n, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(n, (V) 1/V(n), XTAL_REF_(oo)...)
 		{}

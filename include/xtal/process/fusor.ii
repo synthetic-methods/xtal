@@ -27,11 +27,11 @@ struct fusor<W, As...>
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	XTAL_LET N_ = _std::       extent_v<W>;
 	
-	using vector_w = common::solid::serial_t<W>;
-	using indent_w = conflux::indent_s<vector_w>;
+	using W_vector = common::solid::serial_t<W>;
+	using W_indent = conflux::indent_s<W_vector>;
 	using subkind = common::compose<common::tag<fusor>
-	,	_detail::refer_iterators<vector_w>
-	,	typename indent_w::tunnel
+	,	_detail::refer_iterators<W_vector>
+	,	typename W_indent::tunnel
 	,	As...
 	>;
 	
@@ -53,7 +53,7 @@ struct fusor<W, As...>
 		///\
 		Evaluation by succession. \
 		
-		XTAL_DO2_(template <auto ...Ks>
+		XTAL_DO2_(template <auto ...Is> requires (not sizeof...(Is))
 		XTAL_TN2 method(),
 		{
 			return ++head();
@@ -61,7 +61,7 @@ struct fusor<W, As...>
 		///\
 		Evaluation by (possibly indented) replacement then succession. \
 		
-		XTAL_DO2_(template <auto ...Ks>
+		XTAL_DO2_(template <auto ...Is> requires (not sizeof...(Is))
 		XTAL_TN2 method(XTAL_DEF_(subarray_q<N_>) a),
 		{
 			(void) S_::influx(XTAL_REF_(a));
@@ -83,7 +83,7 @@ struct fusor<W, As...>
 		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
 		{
 			using A = XTAL_TYP_(a);
-			using B = typename conflux::indent_s<A, N_ - arity_e<A>>;
+			using B = typename conflux::indent_s<A, N_ - arity_n<A>>;
 			return S_::influx(B(XTAL_REF_(a)));
 		}
 

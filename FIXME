@@ -3,8 +3,7 @@
 token="FIXME"
 manual="./FIXME.md"
 folder="./include"
-origin="./include/xtal.cc"
-target="./include/FIXME.c++"
+target="./include/FIXME.cc"
 offset=3
 source="*.cc"
 sourced="all.cc"

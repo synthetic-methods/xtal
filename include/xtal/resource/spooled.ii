@@ -1,43 +1,40 @@
 #pragma once
 #include "./any.ii"
-#include "./fuse.ii"
+
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::precess
+namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NYM pulse;
-template <typename ..._s> XTAL_ASK pulse_q = common::tag_p<pulse, _s...>;
-template <class U=size_t> XTAL_USE pulse_t = confined_t<U>;
-
-template <class ...Ts>
-concept pulse_value_q = integral_group_q<Ts...>;
+XTAL_NYM __spooled__;
+template <class ...Ts> concept spooled_q = common::tab_p<__spooled__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Represents a mixable `integral` quantity determined by `sizeof(U)`. \
+Provides a specialization of `common::fluid::spool`. \
+If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
-template <class U>
-struct pulse<U>
+template <int N=-1>
+struct spooled
 {
-	using _computer = common::compute<U>;
-	using T_delta = typename _computer::delta_t;
-
-	using subkind = common::compose<fuse<T_delta>, common::tag<pulse>>;
-
-	template <class S>
+	using subkind = common::tab<__spooled__>;
+	
+	template <compound::any_q S>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using S_ = common::compose_s<S, subkind>;
-	
+		
 	public:
 		using S_::S_;
+		
+		template <class U>
+		using spool_t = common::fluid::spool_t<U[(unsigned) N]>;
 
 	};
 };

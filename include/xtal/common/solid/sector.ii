@@ -53,11 +53,11 @@ struct sector<U[N]>
 		XTAL_OP1_(T &) += (bracket_t<U> w) XTAL_0EX {return self() += T(w.begin(), w.end());}
 		XTAL_OP1_(T &) -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w.begin(), w.end());}
 		
-		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) += t.subscript(i))), self();}
-		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return common::seek_e<N>([&, this] (auto i) XTAL_0FN_(subscript(i) -= t.subscript(i))), self();}
+		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) += t.subscript(i))), self();}
+		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) -= t.subscript(i))), self();}
 
-		template <subarray_q<N> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {return common::seek_e<arity_e<decltype(w)>>([&, this] (auto i) XTAL_0FN_(subscript(i) += w[i])), self();}
-		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {return common::seek_e<arity_e<decltype(w)>>([&, this] (auto i) XTAL_0FN_(subscript(i) -= w[i])), self();}
+		template <subarray_q<N> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {return common::seek_n<arity_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN_(subscript(i) += w[i])), self();}
+		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {return common::seek_n<arity_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN_(subscript(i) -= w[i])), self();}
 
 	};
 	using type = _detail::isotype<homotype>;

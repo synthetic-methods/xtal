@@ -24,7 +24,7 @@ template <class U> struct key<U>: conferred<U, common::tag<key>> {};
 template <       > struct key< >: key<size_t> {};
 
 template <class S=void, typename ...As>
-using key_s = common::compose_s<devoid_t<S, confined_t<>>, key<As...>>;
+using key_s = common::compose_s<complete_t<S, confined_t<>>, key<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

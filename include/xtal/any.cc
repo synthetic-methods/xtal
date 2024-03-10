@@ -1,10 +1,8 @@
 #pragma once
+#include "./message/all.ii"
 #include "./process/any.ii"
-#include "./message/any.ii"
-#include "./message/delimit.ii"
-#include "./message/restep.ii"
+#include "./resource/all.ii"
 #include <catch2/catch_all.hpp>
-
 
 #define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))
 #define   TRUE_(...)   REQUIRE(    (__VA_ARGS__))
@@ -31,7 +29,7 @@ using onset_t = message::label_t<typename common::computer::alpha_t, struct __on
 struct onset
 :	message::confer<typename common::computer::alpha_t
 	,	message::any<struct __onset__>
-	,	message::delimit<(1<<7)>
+	,	resource::enumerated<(1<<7)>
 	>
 {
 };
@@ -123,11 +121,11 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using count_t  = typename common::computer::iota_t;
-	using restep_u = message::restep_t<count_t>;
+	using U_count  = typename common::computer::iota_t;
+	using U_restep = message::restep_t<U_count>;
 
 	template <class T>
-	using homotype = process::confine_t<T, restep_u::attach<>>;
+	using homotype = process::confine_t<T, U_restep::attach<>>;
 
 	struct type: public homotype<type>
 	{
@@ -139,12 +137,12 @@ struct dynamic_count
 		XTAL_TN2 method()
 		XTAL_0EX
 		{
-			auto i = count; count += this->template head<restep_u>();
+			auto i = u_count; u_count += this->template head<U_restep>();
 			return i;
 		}
 
 	protected:
-		count_t count = 0;
+		U_count u_count = 0;
 
 	};
 };

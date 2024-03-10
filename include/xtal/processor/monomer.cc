@@ -16,31 +16,31 @@ namespace xtal::processor::__test
 template <typename ...As>
 void monomer_lifting()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
-	sigma_t constexpr N_size = 5;
-	using group_u = common::solid::linear_t<alpha_t[N_size]>;
-	using resize_u = message::resize_t<>;
-	using scope_n = message::scope_t<>;
+	T_sigma constexpr N_size = 5;
+	using U_group = common::solid::linear_t<T_alpha[N_size]>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 
-	auto x = group_u { 0,  1,  2,  3,  4};
-	auto y = group_u {00, 10, 20, 30, 40};
-	auto z = group_u {00, 11, 22, 33, 44};
-	auto a = group_u {99, 99, 99, 99, 99};
+	auto x = U_group { 0,  1,  2,  3,  4};
+	auto y = U_group {00, 10, 20, 30, 40};
+	auto z = U_group {00, 11, 22, 33, 44};
+	auto a = U_group {99, 99, 99, 99, 99};
 //	auto f = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
-	b <<= resize_u(N_size);
-	b >>= scope_n(N_size);
+	b <<= U_resize(N_size);
+	b >>= U_scope(N_size);
 	_v3::ranges::move(b, a.begin());
 	TRUE_(a == z);
 	
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<resource::restore<>>();}
+	TRY_("pure (material)") {monomer_lifting<resource::stored<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -51,21 +51,21 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_provision__advancing()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
-	using scope_n = message::scope_t<>;
-	using mixer_t = processor::monomer_t<mix_t>;
+	using U_scope = message::scope_t<>;
+	using U_mixer = processor::monomer_t<mix_t>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*10);});
-	auto _11 = _01|_v3::views::transform([] (auto n) {return alpha_t(n*11);});
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _10 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*10);});
+	auto _11 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*11);});
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = mixer_t::bond_f(lhs, rhs);
+	auto xhs = U_mixer::bond_f(lhs, rhs);
 
-	auto seq = scope_n(3); TRUE_(0 == xhs.size());// uninitialized...
+	auto seq = U_scope(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
 //	xhs <<=   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
@@ -82,7 +82,7 @@ void monomer_provision__advancing()
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs <<= onset_t((common::computer::alpha_t) - (99 + 66));
+//	xhs <<= onset_t((T_alpha) - (99 + 66));
 	auto const yhs = _11
 	|	_v3::views::take(xhs.size())
 	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
@@ -90,38 +90,38 @@ void monomer_provision__advancing()
 	TRUE_(equal_f(xhs, yhs));
 
 }
-template <class add_t>
+template <class U_add>
 void monomer_provision__provisioning()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
-	using provide = resource::restore<(1<<5)>;
+	using provide = resource::stored<(1<<5)>;
 
-	using store_u = typename confined_t<provide>::template store_t<alpha_t>;
-	using serve_u = deranged_t<store_u>;
-	using respan_u = message::respan_t<serve_u>;
-	using resize_u = message::resize_t<>;
-	using scope_n = message::scope_t<>;
+	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
+	using U_serve = deranged_t<U_store>;
+	using U_respan = message::respan_t<U_serve>;
+	using U_resize = message::resize_t<>;
+	using U_scope = message::scope_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 
 	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = monomer_t<add_t, provide>::bond_f(lhs, rhs);
+	auto xhs = monomer_t<U_add, provide>::bond_f(lhs, rhs);
 
-	auto m_slush = store_u {0, 0, 0};
-	auto m_respan = respan_u(m_slush);
-	auto m_scope = scope_n(3);
+	auto m_slush = U_store {0, 0, 0};
+	auto m_respan = U_respan(m_slush);
+	auto m_scope = U_scope(3);
 
 	TRUE_(0 == xhs.size());
 
 	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
 	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
 	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
-	xhs <<= onset_t((alpha_t) (11 + 1));
+	xhs <<= onset_t((T_alpha) (11 + 1));
 	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
@@ -138,26 +138,26 @@ TAG_("monomer", "message")
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class add_t, typename mul_t=dynamic_term_t>
+template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 	
 	using namespace _v3;
-	auto _01 =  views::iota(0, 10)|views::transform(to_f<alpha_t>);
+	auto _01 =  views::iota(0, 10)|views::transform(to_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, resource::restore<>>;
-	using mul_op = monomer_t<mul_t, resource::restore<>>;
+	using mix_op = monomer_t<U_add, resource::stored<>>;
+	using mul_op = monomer_t<U_mul, resource::stored<>>;
 	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
 
 	yhs <<= message::resize_f(N);
-	yhs <<= scale_t((alpha_t) 100);
-	yhs <<= onset_t((alpha_t) 000);
+	yhs <<= scale_t((T_alpha) 100);
+	yhs <<= onset_t((T_alpha) 000);
 	TRUE_(0 == yhs.size());
 
 	auto seq = message::scope_f(N);
@@ -168,29 +168,29 @@ void monomer_chaining__rvalue()
 	TRUE_(yhs.template slot<0>().store().empty());
 
 }
-template <class add_t, typename mul_t=dynamic_term_t>
+template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 
 	using namespace _v3;
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<alpha_t>);
-	auto _10 = _01|_v3::views::transform([] (alpha_t n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([] (alpha_t n) {return n*11;});
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 	
-	using mix_op = monomer_t<add_t, resource::restore<>>;
-	using mul_op = monomer_t<mul_t, resource::restore<>>;
+	using mix_op = monomer_t<U_add, resource::stored<>>;
+	using mul_op = monomer_t<U_mul, resource::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bond_f(lhs, rhs);
 	auto  yhs = mul_op::bond_f(xhs);
 
 	yhs <<= message::resize_f(N);
-	yhs <<= scale_t((alpha_t) 100);
-	xhs <<= onset_t((alpha_t) 000);
+	yhs <<= scale_t((T_alpha) 100);
+	xhs <<= onset_t((T_alpha) 000);
 
 	auto seq = message::scope_f(N);
 	yhs >>= seq  ;// idempotent!
@@ -200,21 +200,21 @@ void monomer_chaining__lvalue()
 	TRUE_(yhs.template slot<0>().store().size() == 4);
 
 }
-template <class add_t, typename mul_t=dynamic_term_t>
+template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using sigma_t = typename common::computer::sigma_t;
-	using alpha_t = typename common::computer::alpha_t;
+	using T_sigma = typename common::computer::sigma_t;
+	using T_alpha = typename common::computer::alpha_t;
 
 	size_t constexpr N = 4;
 
 	using namespace _v3;
-	auto _01 =  views::iota(0, 10)|views::transform(to_f<alpha_t>);
+	auto _01 =  views::iota(0, 10)|views::transform(to_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<add_t, resource::restore<>>;
-	using mix_fn = monomer_t<add_t>;
+	using mix_op = monomer_t<U_add, resource::stored<>>;
+	using mix_fn = monomer_t<U_add>;
 	using ndfn = monomer_t<dynamic_count_t>;
 
 	auto _xx = ndfn::bond_f();

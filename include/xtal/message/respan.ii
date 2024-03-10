@@ -39,7 +39,7 @@ public:
 		using S_::twin;
 		using S_::head;
 		
-		using span_t = U;
+		using U_span = U;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);

@@ -18,10 +18,10 @@ TAG_("compute", "bit_reverse")
 	TRY_("32:03")
 	{
 		using _computer = compute<uint32_t>;
-		using sigma_t = typename _computer::sigma_t;
+		using T_sigma = typename _computer::sigma_t;
 
-		sigma_t question = 0b011;
-		sigma_t answer   = 0b110;
+		T_sigma question = 0b011;
+		T_sigma answer   = 0b110;
 
 		TRUE_(answer == _computer::bit_reverse_f<3>(question));
 
@@ -29,10 +29,10 @@ TAG_("compute", "bit_reverse")
 	TRY_("16:16")
 	{
 		using _computer = compute<uint16_t>;
-		using sigma_t = typename _computer::sigma_t;
+		using T_sigma = typename _computer::sigma_t;
 
-		sigma_t question = 0b0100100011100101;
-		sigma_t answer   = 0b1010011100010010;
+		T_sigma question = 0b0100100011100101;
+		T_sigma answer   = 0b1010011100010010;
 
 		TRUE_(answer == _computer::bit_reverse_f<16>(question));
 
@@ -40,10 +40,10 @@ TAG_("compute", "bit_reverse")
 	TRY_("16:12")
 	{
 		using _computer = compute<uint16_t>;
-		using sigma_t = typename _computer::sigma_t;
+		using T_sigma = typename _computer::sigma_t;
 
-		sigma_t question = 0b010010001110;
-		sigma_t answer   = 0b011100010010;
+		T_sigma question = 0b010010001110;
+		T_sigma answer   = 0b011100010010;
 
 		TRUE_(answer == _computer::bit_reverse_f<12>(question));
 
@@ -51,10 +51,10 @@ TAG_("compute", "bit_reverse")
 	TRY_("8:8")
 	{
 		using _computer = compute<uint8_t>;
-		using sigma_t = typename _computer::sigma_t;
+		using T_sigma = typename _computer::sigma_t;
 
-		sigma_t question = 0b01001101;
-		sigma_t answer   = 0b10110010;
+		T_sigma question = 0b01001101;
+		T_sigma answer   = 0b10110010;
 
 		TRUE_(answer == _computer::bit_reverse_f<8>(question));
 
@@ -62,10 +62,10 @@ TAG_("compute", "bit_reverse")
 	TRY_("8:6")
 	{
 		using _computer = compute<uint8_t>;
-		using sigma_t = typename _computer::sigma_t;
+		using T_sigma = typename _computer::sigma_t;
 
-		sigma_t question = 0b010011;
-		sigma_t answer   = 0b110010;
+		T_sigma question = 0b010011;
+		T_sigma answer   = 0b110010;
 
 		TRUE_(answer == _computer::bit_reverse_f<6>(question));
 
@@ -237,38 +237,38 @@ TAG_("compute", "puncture")
 
 TAG_("compute", "puncture", "truncate")
 {
-	using sigma_t = typename computer::sigma_t;
-	using delta_t = typename computer::delta_t;
-	using alpha_t = typename computer::alpha_t;
-	using aphex_t = typename computer::aphex_t;
+	using T_sigma = typename computer::sigma_t;
+	using T_delta = typename computer::delta_t;
+	using T_alpha = typename computer::alpha_t;
+	using T_aphex = typename computer::aphex_t;
 
 	auto mt19937_m = typename computer::mt19937_t();
 	mt19937_m.seed(Catch::rngSeed());
 
 	EST_("complex fracture")
 	{
-		alpha_t constexpr two = 2;
-		aphex_t z{};
-		for (sigma_t i = 192000/100; ~--i;) {
+		T_alpha constexpr two = 2;
+		T_aphex z{};
+		for (T_sigma i = 192000/100; ~--i;) {
 			auto x = computer::mantissa_f(mt19937_m); x = _std::pow(two, x);
 			auto y = computer::mantissa_f(mt19937_m); y = _std::pow(two, y);
-			z *= computer::truncated_f<0>(computer::punctured_f<0>(aphex_t {x, y}), 0);
+			z *= computer::truncated_f<0>(computer::punctured_f<0>(T_aphex {x, y}), 0);
 		}
 		return z;
 	};
 	TRY_("complex fracture")
 	{
-		delta_t constexpr N_zoom = 4;
-		alpha_t constexpr F = _std::numeric_limits<alpha_t>::infinity();
-		alpha_t constexpr E = _std::numeric_limits<alpha_t>::max();
+		T_delta constexpr N_zoom = 4;
+		T_alpha constexpr F = _std::numeric_limits<T_alpha>::infinity();
+		T_alpha constexpr E = _std::numeric_limits<T_alpha>::max();
 
-		auto const square_0 = aphex_t {0, 0};
-		auto const square_H = aphex_t {1, 1}*(0.5);
-		auto const square_1 = aphex_t {1, 1};
-		auto const square_2 = aphex_t {2, 2};
-		auto const square_F = aphex_t {F, F};
-		auto const square_E = aphex_t {E, E};
-		auto const circle_1 = aphex_t {1, 1}*_std::sqrt(0.5);
+		auto const square_0 = T_aphex {0, 0};
+		auto const square_H = T_aphex {1, 1}*(0.5);
+		auto const square_1 = T_aphex {1, 1};
+		auto const square_2 = T_aphex {2, 2};
+		auto const square_F = T_aphex {F, F};
+		auto const square_E = T_aphex {E, E};
+		auto const circle_1 = T_aphex {1, 1}*_std::sqrt(0.5);
 
 		TRUE_(computer::truncated_f<N_zoom>(square_2) == square_2);
 		TRUE_(computer::punctured_f<N_zoom>(square_2) == square_2);

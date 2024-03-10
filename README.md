@@ -59,7 +59,7 @@ which `zip` the underlying `method`.
 	auto sixer = mixer(one, two, three);// mixes the ranges/processors `one`, `two`, `three`
 
 In either case, dependencies are defined by functional application of `process(?:or)?`s,
-with the inner-most nodes representing inputs, and the outer-most node representing the output.
+with the inner-most components representing inputs, and the outer-most component representing the output.
 
 ## Messaging
 
@@ -116,7 +116,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto scope = scope_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, processor::restore<>>;
+	using Mixer = processor::monomer_t<Mix, resource::stored<>>;
 	auto sixer = Mixer::bond_f(one, two, three);
 
 	// initialization
@@ -171,12 +171,12 @@ The [`**/any.hh`](include/xtal/compound/any.hh?ts=3) provides the key dependenci
 
 As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
-NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. For example, this can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
+NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. This can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
 
 
 ## Macros
 
-The macros defined in [`etc.ii`](include/xtal/etc.ii?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
+The macros defined in [`xtal.hh`](include/xtal.hh?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
 The most commonly encountered are those used for function definition, for example:
 
 	#define XTAL_OP1                      constexpr decltype(auto) operator

@@ -27,9 +27,9 @@ template <class U>
 struct phase<U>
 {
 	using _computer = common::compute<U>;
-	using alpha_t = typename _computer::alpha_t;
+	using T_alpha = typename _computer::alpha_t;
 
-	using subkind = common::compose<fuse<alpha_t>, common::tag<phase>>;
+	using subkind = common::compose<fuse<T_alpha>, common::tag<phase>>;
 
 	template <class S>
 	class subtype: public common::compose_s<S, subkind>

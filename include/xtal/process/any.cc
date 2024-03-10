@@ -67,10 +67,10 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using start_t = message::label_t<ordinal_t<0>, struct __start__>;
+	using U_start = message::label_t<ordinal_t<0>, struct __start__>;
 
 	auto &o = z.template head<onset_t>();
-	TRUE_(-1 == (int) z.influx(start_t()));                            // unrecognized
+	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
 	TRUE_( 1 == (int) z.influx(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
 	TRUE_( 0 == (int) z.influx(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed
 	TRUE_( 0 == (int) z.influx(onset_t(2.0))); TRUE_(2.0 == (float) o);// changed
@@ -79,10 +79,10 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using start_t = message::label_t<ordinal_t<0>, struct __start__>;
+	using U_start = message::label_t<ordinal_t<0>, struct __start__>;
 
 	auto &o = z.template head<onset_t>();
-	TRUE_(-1 == (int) z.efflux(start_t()));                            // unrecognized
+	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized
 	TRUE_( 1 == (int) z.efflux(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
 	TRUE_( 0 == (int) z.efflux(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed
 	TRUE_( 0 == (int) z.efflux(onset_t(2.0))); TRUE_(2.0 == (float) o);// changed

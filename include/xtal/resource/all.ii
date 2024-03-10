@@ -1,3 +1,4 @@
 #pragma once
-#include "./respool.ii"
-#include "./restore.ii"
+#include "./enumerated.ii"
+#include "./spooled.ii"
+#include "./stored.ii"

@@ -53,50 +53,50 @@ TAG_("serial")
 {
 	TRY_("initialization")
 	{
-		using scope_n = scope_t<counter_t<>>;
-		using scope_u = scope_t<counted_t<>>;
-		using I = typename scope_u::step_t;
+		using V_scope = scope_t<counter_t<>>;
+		using U_scope = scope_t<counted_t<>>;
+		using I = typename U_scope::U_step;
 
-		serial__initialization<scope_u, scope_u>((I) 3);
-		serial__initialization<scope_u, scope_n>((I) 3);
-		serial__initialization<scope_n, scope_u>((I) 3);
-		serial__initialization<scope_n, scope_n>((I) 3);
+		serial__initialization<U_scope, U_scope>((I) 3);
+		serial__initialization<U_scope, V_scope>((I) 3);
+		serial__initialization<V_scope, U_scope>((I) 3);
+		serial__initialization<V_scope, V_scope>((I) 3);
 
 	}
 	TRY_("finalization")
 	{
-		using scope_n = scope_t<counter_t<>>;
-		using scope_u = scope_t<counted_t<>>;
-		using I = typename scope_u::step_t;
+		using V_scope = scope_t<counter_t<>>;
+		using U_scope = scope_t<counted_t<>>;
+		using I = typename U_scope::U_step;
 		
-		serial__initialization<scope_u, scope_u>((I) 3);
-		serial__initialization<scope_u, scope_n>((I) 3);
-		serial__initialization<scope_n, scope_u>((I) 3);
-		serial__initialization<scope_n, scope_n>((I) 3);
+		serial__initialization<U_scope, U_scope>((I) 3);
+		serial__initialization<U_scope, V_scope>((I) 3);
+		serial__initialization<V_scope, U_scope>((I) 3);
+		serial__initialization<V_scope, V_scope>((I) 3);
 
 	}
 	TRY_("interference")
 	{
-		using V = counter_t<>; using scope_n = scope_t<V>;
-		using U = counted_t<>; using scope_u = scope_t<U>;
-		using I = typename scope_u::step_t;
+		using V = counter_t<>; using V_scope = scope_t<V>;
+		using U = counted_t<>; using U_scope = scope_t<U>;
+		using I = typename U_scope::U_step;
 
 		for (I i = 0; i <= 1; ++i)
 		{
-			serial__interference<scope_u, scope_u>(i);
-			serial__interference<scope_u, scope_n>(i);
-			serial__interference<scope_n, scope_u>(i);
-			serial__interference<scope_n, scope_n>(i);
+			serial__interference<U_scope, U_scope>(i);
+			serial__interference<U_scope, V_scope>(i);
+			serial__interference<V_scope, U_scope>(i);
+			serial__interference<V_scope, V_scope>(i);
 		}
 
 	}
 	TRY_("interconversion")
 	{
-		using scope_n = scope_t<counter_t<>>;
-		using scope_u = scope_t<counted_t<>>;
+		using V_scope = scope_t<counter_t<>>;
+		using U_scope = scope_t<counted_t<>>;
 
-		auto n_seq = scope_n(3);
-		auto u_seq = scope_u(3);
+		auto n_seq = V_scope(3);
+		auto u_seq = U_scope(3);
 
 		++n_seq; u_seq += n_seq.size(); TRUE_(3 == u_seq.front()); TRUE_(3 + (3 - 1) == u_seq.back());
 		++n_seq; u_seq += n_seq.size(); TRUE_(6 == u_seq.front()); TRUE_(6 + (3 - 1) == u_seq.back());
@@ -113,12 +113,12 @@ TAG_("serial")
 		using V = counter_t<>;
 		using U = counted_t<>;
 
-		using scope_n = scope_t<V>; auto n_seq = scope_n(3);
-		using scope_u = scope_t<U>; auto u_seq = scope_u(3);
+		using V_scope = scope_t<V>; auto n_seq = V_scope(3);
+		using U_scope = scope_t<U>; auto u_seq = U_scope(3);
 
 		TRUE_(u_seq.size() == n_seq.size());
 		TRUE_(u_seq.step() == n_seq.step());
-		TRUE_(u_seq == scope_u(U(0, 3), 0));
+		TRUE_(u_seq == U_scope(U(0, 3), 0));
 		
 		TRUE_((n_seq.step() == 0 and u_seq.front() == 0 and u_seq.back() == 2));
 
@@ -126,72 +126,72 @@ TAG_("serial")
 		++u_seq;
 		TRUE_(u_seq.size() == n_seq.size());
 		TRUE_(u_seq.step() == n_seq.step());
-		TRUE_(u_seq == scope_u(U(3, 6), 1));
+		TRUE_(u_seq == U_scope(U(3, 6), 1));
 
 		n_seq++;
 		u_seq++;
 		TRUE_(u_seq.size() == n_seq.size());
 		TRUE_(u_seq.step() == n_seq.step());
-		TRUE_(u_seq == scope_u(U(6, 9), 2));
+		TRUE_(u_seq == U_scope(U(6, 9), 2));
 
 		n_seq += 5;
 		u_seq += 5;
 		TRUE_(u_seq.size() == n_seq.size());
 		TRUE_(u_seq.step() == n_seq.step());
-		TRUE_(u_seq == scope_u(U(9, 14), 3));
-		TRUE_(u_seq.null() == scope_u(U(14, 14), 4));
-		TRUE_(u_seq.next() == scope_u(U(14, 19), 4));
+		TRUE_(u_seq == U_scope(U(9, 14), 3));
+		TRUE_(u_seq.null() == U_scope(U(14, 14), 4));
+		TRUE_(u_seq.next() == U_scope(U(14, 19), 4));
 		
-		u_seq = scope_u(11) *= (7);
-		TRUE_(u_seq == scope_u(U(77, 88), 7));
+		u_seq = U_scope(11) *= (7);
+		TRUE_(u_seq == U_scope(U(77, 88), 7));
 
-		n_seq = scope_n(11) *= (7);
-		TRUE_(n_seq == scope_n(11, 7));
+		n_seq = V_scope(11) *= (7);
+		TRUE_(n_seq == V_scope(11, 7));
 
-		TRUE_(n_seq.skip(0).slice(U(0, 11)) == scope_n(11, 7));
-		TRUE_(n_seq.skip(0).slice(U(0, 01)) == scope_n(01, 7));
-		TRUE_(n_seq.skip(1).slice(U(1, 11)) == scope_n(10, 8));
+		TRUE_(n_seq.skip(0).slice(U(0, 11)) == V_scope(11, 7));
+		TRUE_(n_seq.skip(0).slice(U(0, 01)) == V_scope(01, 7));
+		TRUE_(n_seq.skip(1).slice(U(1, 11)) == V_scope(10, 8));
 
-		TRUE_(u_seq.skip(0).slice(U(0, 11)) == scope_u(U(77, 88), 7));
-		TRUE_(u_seq.skip(0).slice(U(0, 01)) == scope_u(U(77, 78), 7));
-		TRUE_(u_seq.skip(1).slice(U(1, 11)) == scope_u(U(78, 88), 8));
+		TRUE_(u_seq.skip(0).slice(U(0, 11)) == U_scope(U(77, 88), 7));
+		TRUE_(u_seq.skip(0).slice(U(0, 01)) == U_scope(U(77, 78), 7));
+		TRUE_(u_seq.skip(1).slice(U(1, 11)) == U_scope(U(78, 88), 8));
 
-		n_seq = scope_n(4, 1);
-		n_seq = n_seq.null(); TRUE_(n_seq == scope_n(0, 2));
+		n_seq = V_scope(4, 1);
+		n_seq = n_seq.null(); TRUE_(n_seq == V_scope(0, 2));
 
 	}
 	TRY_("intrepidation with unit-offset")
 	{
 		using V = counter_t<>;
 		using U = counted_t<>;
-		using scope_n = scope_t<V>; auto n_seq = scope_n(3);
-		using scope_u = scope_t<U>; auto u_seq = scope_u(3), w_seq = u_seq;
+		using V_scope = scope_t<V>; auto n_seq = V_scope(3);
+		using U_scope = scope_t<U>; auto u_seq = U_scope(3), w_seq = u_seq;
 
-		TRUE_(w_seq.efflux(u_seq) == 1); TRUE_(w_seq == scope_u(U(0, 3), 0));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == scope_u(U(3, 6), 1));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == scope_u(U(6, 9), 2));
+		TRUE_(w_seq.efflux(u_seq) == 1); TRUE_(w_seq == U_scope(U(0, 3), 0));
+		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_scope(U(3, 6), 1));
+		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_scope(U(6, 9), 2));
 
 	}
 	TRY_("intrepidation with null-offset")
 	{
 		using V = counter_t<>;
 		using U = counted_t<>;
-		using scope_n = scope_t<V>; auto n_seq = scope_n(3);
-		using scope_u = scope_t<U>; auto u_seq = scope_u(3), w_seq = scope_u(0);
+		using V_scope = scope_t<V>; auto n_seq = V_scope(3);
+		using U_scope = scope_t<U>; auto u_seq = U_scope(3), w_seq = U_scope(0);
 
-		TRUE_(w_seq.efflux(u_seq) == 0); TRUE_(w_seq == scope_u(U(0, 3), 0));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == scope_u(U(3, 6), 1));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == scope_u(U(6, 9), 2));
+		TRUE_(w_seq.efflux(u_seq) == 0); TRUE_(w_seq == U_scope(U(0, 3), 0));
+		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_scope(U(3, 6), 1));
+		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_scope(U(6, 9), 2));
 
 	}
 	TRY_("cycle")
 	{
-		using V = counter_t<size_t>; using scope_n = scope_t<V>;
-		using U = counted_t<size_t>; using scope_u = scope_t<U>;
+		using V = counter_t<size_t>; using V_scope = scope_t<V>;
+		using U = counted_t<size_t>; using U_scope = scope_t<U>;
 		size_t constexpr N = 5;
 
-		scope_n n_seq(N); n_seq *= N;
-		scope_n m_seq = n_seq;
+		V_scope n_seq(N); n_seq *= N;
+		V_scope m_seq = n_seq;
 
 		m_seq += N;
 		m_seq -= N;

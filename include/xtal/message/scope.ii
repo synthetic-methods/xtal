@@ -55,9 +55,12 @@ struct prequel
 	template <any_q S>
 	class subtype: public S
 	{
-		using T_ = typename S::self_t;
-		using U_ = typename S::head_t;
-		using V_ = counter_t<U_>;
+	public://protected:
+		using typename S::T_self;
+		using typename S::U_head;
+
+	private:
+		using V_ = counter_t<U_head>;
 	
 	public:
 		using S::S;
@@ -65,7 +68,7 @@ struct prequel
 		using S::twin;
 		using value_type = V_;
 
-		XTAL_TN2_(T_) skip(V_ v)
+		XTAL_TN2_(T_self) skip(V_ v)
 		XTAL_0FX
 		{
 			auto t = self(); (void) t.step(t.step() + v);
@@ -74,12 +77,12 @@ struct prequel
 
 		///\returns the block at distance `v` steps with the same `size`. \
 
-		XTAL_OP2_(T_) * (V_ v)
+		XTAL_OP2_(T_self) * (V_ v)
 		XTAL_0FX
 		{
 			return twin().operator*=(v);
 		}
-		XTAL_OP2_(T_) / (V_ v)
+		XTAL_OP2_(T_self) / (V_ v)
 		XTAL_0FX
 		{
 			return twin().operator/=(v);
@@ -87,12 +90,12 @@ struct prequel
 		///\
 		Advance `1` step while retaining `size`. \
 
-		XTAL_OP1_(T_&) ++()
+		XTAL_OP1_(T_self &) ++()
 		XTAL_0EX
 		{
 			return self().operator+=(count_f(self()));
 		}
-		XTAL_OP1_(T_) ++(int)
+		XTAL_OP1_(T_self) ++(int)
 		XTAL_0EX
 		{
 			auto t = self(); operator++(); return t;
@@ -100,48 +103,48 @@ struct prequel
 		///\
 		Retreat `1` step while retaining `size`. \
 
-		XTAL_OP1_(T_&) --()
+		XTAL_OP1_(T_self &) --()
 		XTAL_0EX
 		{
 			return self().operator-=(count_f(self()));
 		}
-		XTAL_OP1_(T_) --(int)
+		XTAL_OP1_(T_self) --(int)
 		XTAL_0EX
 		{
 			auto t = self(); operator--(); return t;
 		}
 		///\returns the adjacent block with the same `size`. \
 
-		XTAL_TN2_(T_) next(V_ v)
+		XTAL_TN2_(T_self) next(V_ v)
 		XTAL_0FX
 		{
 			return self().operator*(v);
 		}
-		XTAL_TN2_(T_) next()
+		XTAL_TN2_(T_self) next()
 		XTAL_0FX
 		{
 			return twin().operator++();
 		}
 		///\returns the adjacent block of size `v`. \
 
-		XTAL_OP2_(T_) + (V_ v)
+		XTAL_OP2_(T_self) + (V_ v)
 		XTAL_0FX
 		{
 			return twin().operator+=(v);
 		}
-		XTAL_OP2_(T_) - (V_ v)
+		XTAL_OP2_(T_self) - (V_ v)
 		XTAL_0FX
 		{
 			return twin().operator-=(v);
 		}
 		///\returns the adjacent block of size `0`. \
 
-		XTAL_TN2_(T_) null()
+		XTAL_TN2_(T_self) null()
 		XTAL_0FX
 		{
 			return twin().operator+=(0);
 		}
-		XTAL_TN2_(T_) null(V_ v)
+		XTAL_TN2_(T_self) null(V_ v)
 		XTAL_0FX
 		{
 			auto s = null(); s.step(v); return s;
@@ -165,7 +168,7 @@ struct prequel
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_TLX infuse(T_ t)
+		XTAL_TLX infuse(T_self t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -234,7 +237,9 @@ struct scope<V>
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using S_ = common::compose_s<S, subkind>;
-		using T_ = typename S_::self_t;
+
+	public://protected:
+		using typename S_::T_self;
 
 	public:
 	//	using S_::S_;
@@ -258,7 +263,7 @@ struct scope<V>
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TN2_(T_) slice(XTAL_DEF_(counted_q) w)
+		XTAL_TN2_(T_self) slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
@@ -267,13 +272,13 @@ struct scope<V>
 		///\
 		Advance `i` steps while retaining `size`. \
 
-		XTAL_OP1_(T_&) *=(V v)
+		XTAL_OP1_(T_self &) *=(V v)
 		XTAL_0EX
 		{
 			S_::step() += v;
 			return self();
 		}
-		XTAL_OP1_(T_&) /=(V v)
+		XTAL_OP1_(T_self &) /=(V v)
 		XTAL_0EX
 		{
 			S_::step() -= v;
@@ -282,13 +287,13 @@ struct scope<V>
 		///\
 		Advance `1` step of size `v`. \
 
-		XTAL_OP1_(T_&) +=(V v)
+		XTAL_OP1_(T_self &) +=(V v)
 		XTAL_0EX
 		{
 			S_::step() += S_::size() != 0; (void) S_::size(v);
 			return self();
 		}
-		XTAL_OP1_(T_&) -=(V v)
+		XTAL_OP1_(T_self &) -=(V v)
 		XTAL_0EX
 		{
 			S_::step() -= v != 0; (void) S_::size(v);
@@ -327,7 +332,9 @@ public:
 	class subtype: public common::compose_s<S, subkind>
 	{
 		using S_ = common::compose_s<S, subkind>;
-		using T_ = typename S_::self_t;
+
+	public://protected:
+		using typename S_::T_self;
 
 	public:
 		using S_::S_;
@@ -348,19 +355,19 @@ public:
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_TN2_(T_) slice(XTAL_DEF_(counted_q) w)
+		XTAL_TN2_(T_self) slice(XTAL_DEF_(counted_q) w)
 		XTAL_0FX
 		{
 			V const &n_front = *S_::begin();
 			auto i = n_front + w.front();
 			auto j = n_front + w.back() + 1;
-			return T_(U(i, j), S_::step());
+			return T_self(U(i, j), S_::step());
 		}
 
 		///\
 		Advance `v` steps while retaining `size`. \
 
-		XTAL_OP1_(T_&) *=(V v)
+		XTAL_OP1_(T_self &) *=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -370,7 +377,7 @@ public:
 			S_::step() += v;
 			return self();
 		}
-		XTAL_OP1_(T_&) /=(V v)
+		XTAL_OP1_(T_self &) /=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -383,7 +390,7 @@ public:
 		///\
 		Advance `1` step of size `v`. \
 
-		XTAL_OP1_(T_&) +=(V v)
+		XTAL_OP1_(T_self &) +=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
@@ -394,7 +401,7 @@ public:
 			(void) S_::scan(*j0, *jN);
 			return self();
 		}
-		XTAL_OP1_(T_&) -=(V v)
+		XTAL_OP1_(T_self &) -=(V v)
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;

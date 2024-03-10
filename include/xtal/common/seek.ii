@@ -16,7 +16,7 @@ namespace xtal::common
 template <size_t ...I> using seek_t = _std::index_sequence<I...>;
 template <size_t    N> using seek_f = _std::make_index_sequence<N>;
 template <size_s K=0, auto I_offset=0>
-XTAL_FN1 seek_e(auto const &f)
+XTAL_FN1 seek_n(auto const &f)
 XTAL_0EX
 {
 	if constexpr (0 < K) {
@@ -59,13 +59,13 @@ template <int I=0, bool ...Ns>         struct seek_truth;
 template <int I              >         struct seek_truth<I              >: ordinal_t<-1> {};
 template <int I,   bool ...Ns>         struct seek_truth<I,  true, Ns...>: ordinal_t< I> {};
 template <int I,   bool ...Ns>         struct seek_truth<I, false, Ns...>: seek_truth<I + 1, Ns...> {};
-template <         bool ...Ns> XTAL_LET_(int) seek_truth_e = seek_truth<0, Ns...>::value;
+template <         bool ...Ns> XTAL_LET_(int) seek_truth_n = seek_truth<0, Ns...>::value;
 
-static_assert(seek_truth_e<                   > == -1);
-static_assert(seek_truth_e<               true> ==  0);
-static_assert(seek_truth_e<       false,  true> ==  1);
-static_assert(seek_truth_e<false, false,  true> ==  2);
-static_assert(seek_truth_e<false, false, false> == -1);
+static_assert(seek_truth_n<                   > == -1);
+static_assert(seek_truth_n<               true> ==  0);
+static_assert(seek_truth_n<       false,  true> ==  1);
+static_assert(seek_truth_n<false, false,  true> ==  2);
+static_assert(seek_truth_n<false, false, false> == -1);
 
 
 ///////////////////////////////////////////////////////////////////////////////
