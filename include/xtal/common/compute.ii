@@ -158,13 +158,13 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-	template <int N_side=0> requires sign_p<N_side>
+	template <int N_side=0> requires sign_p<N_side, 0>
 	XTAL_FN2 clamped_f(integral_p auto i)
 	XTAL_0EX
 	{
 		return N_side == 0? i: N_side*designed_f<N_side>(i);
 	}
-	template <int N_side=0> requires sign_p<N_side>
+	template <int N_side=0> requires sign_p<N_side, 0>
 	XTAL_FN2 designed_f(delta_t i)
 	XTAL_0EX
 	{
@@ -402,12 +402,12 @@ public:
 	using couple_t = typename common::solid::scalar<Z[2]>::type;
 
 
-	template <auto M_pow=1> requires sign_p<M_pow>
+	template <auto M_pow=1> requires sign_p<M_pow, 0>
 	XTAL_FN2 made_f(XTAL_DEF u)
 	XTAL_0EX
 	{
 		using U = XTAL_TYP_(u);
-		if constexpr (M_pow == 0) {
+		if constexpr (M_pow ==  0) {
 			return couple_t<U> {u, 1/XTAL_REF_(u)};
 		}	else
 		if constexpr (M_pow == +1) {
@@ -419,7 +419,7 @@ public:
 	}
 
 
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1> requires sign_p<M_pow, 0>
 	XTAL_FN2_(alpha_t) dot_f(aphex_t const &u)
 	XTAL_0EX
 	{
@@ -428,29 +428,45 @@ public:
 		return made_f<M_pow>(xx + yy);
 	}
 
-	template <int M_pow=1> requires sign_p<M_pow>
-	XTAL_FN2_(aphex_t) circle_f(auto const &u)
+	template <int M_pow=1> requires sign_p<M_pow, 0>
+	XTAL_FN2_(aphex_t) circle_f(alpha_t const &u)
 	XTAL_0EX
 	{
-		return {_std::cos(u), _std::sin(u)*M_pow};
+		auto const x = _std::cos(u);
+		auto const y = _std::sin(u);
+		if constexpr (M_pow == 0) {
+			return couple_t<aphex_t> {{x, y}, {x, -y}};
+		}
+		else {
+			return aphex_t {x, y*M_pow};
+		}
 	}
 
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=+1> requires sign_p<M_pow, 0>
 	XTAL_FN2 square_f(auto w)
 	XTAL_0EX
 	{
-		return made_f<M_pow>(w*w);
+		seek_n<N_lim>([&] (auto i)
+			XTAL_0FN_(w *= w)
+		);
+		return made_f<M_pow>(w);
 	}
-	template <int M_pow=1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=+1> requires sign_p<M_pow, 0>
 	XTAL_FN2_(aphex_t) square_f(aphex_t const &u)
 	XTAL_0EX
 	{
-		alpha_t const x = u.real(), xx = square_f(x);
-		alpha_t const y = u.imag(), yy = square_f(y);
-		return made_f<M_pow>(aphex_t(xx - yy, x*y*2));
+		alpha_t x = u.real();
+		alpha_t y = u.imag();
+		for (int i = 0; i < N_lim; ++i) {
+			alpha_t const xx = square_f(x);
+			alpha_t const yy = square_f(y);
+			y = y*x*2;
+			x = xx - yy;
+		}
+		return made_f<M_pow>(aphex_t(x, y));
 	}
 	
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_f(alpha_t const &w)
 	XTAL_0EX
 	{
@@ -483,16 +499,16 @@ public:
 			return n*w;
 		}
 	}
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_f(integral_p auto const &w)
 	XTAL_0EX
 	{
 		return unsquare_f<M_pow, N_lim>((alpha_t) w);
 	}
-	static_assert(unsquare_f< 1>(2) == (alpha_t) 0.1414213562373095048801688724209698079e+1);
-	static_assert(unsquare_f<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393e+0);
+	static_assert(unsquare_f< 1>(2) == (alpha_t) 0.1414213562373095048801688724209698079e+1L);
+	static_assert(unsquare_f<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393e+0L);
 
-	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow>
+	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_dot_f(XTAL_DEF u)
 	XTAL_0EX
 	{
@@ -597,7 +613,7 @@ public:
 
 	///\returns the `N_num`erator divided by the given de`nom`inator.
 
-	template <int N_num=1>
+	template <auto N_num=1>
 	XTAL_FN2_(alpha_t) ratio_f(XTAL_DEF nom)
 	XTAL_0EX
 	{
@@ -610,7 +626,7 @@ public:
 
 	///\returns `pi` times `ratio_f<N_num>(nom)`.
 
-	template <int N_num=1>
+	template <auto N_num=1>
 	XTAL_FN2_(alpha_t) patio_f(XTAL_DEF u)
 	XTAL_0EX
 	{
@@ -1074,7 +1090,7 @@ public:
 	XTAL_FN2_(alpha_t) trim_f(alpha_t target)
 	XTAL_0EX
 	{
-		delta_t constexpr N_unzoom = N_zoom? N_zoom - fraction::depth: -1;
+		delta_t constexpr N_unzoom = 0 < N_zoom? N_zoom - fraction::depth: N_zoom - 1;
 		target *= minimal_f(N_unzoom);
 		target /= minimal_f(N_unzoom);
 	//	NOTE: Alternating `*` and `/` appears to prevent optimize as desired, \
@@ -1093,6 +1109,134 @@ public:
 		alpha_t const x = trim_f<N_zoom>(target.real());
 		alpha_t const y = trim_f<N_zoom>(target.imag());
 		return aphex_t {x, y};
+	}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+	///\
+	Computes the Taylor series for `ArSinh[#/2]*2/#`. \
+
+	template <int N_lim=-1>
+	XTAL_FN2 logarithmetic_f(auto const &w)
+	XTAL_0EX
+	{
+		int constexpr I = (N_lim&0b111) << 1;
+		alpha_t       t = ratio_f(I*2 + 1);
+		if (_std::is_constant_evaluated()) {
+			common::seek_n<-I>([&] (auto i)
+				XTAL_0FN_(t = ratio_f(i*2 + 1) - t*w*ratio_f<i*2 + 1>((i + 1) << 3))
+			);
+		}
+		else {
+			common::seek_n<-I>([&] (auto i)
+				XTAL_0FN_(t = _std::fma(t*w, -ratio_f<i*2 + 1>((i + 1) << 3), ratio_f(i*2 + 1)))
+			);
+		}
+		return t;
+	}
+	///\
+	Computes the `sqrt`-based approximation of `ln` around `1`. \
+
+	template <int N_lim=-1>
+	XTAL_FN2 logarithmic_f(auto const &x)
+	XTAL_0EX
+	{
+		auto const w = unsquare_f<-1>(x)*(x - 1);
+		return logarithmetic_f<N_lim>(square_f(w))*(w);
+	}
+	///\
+	Computes the `sqrt`-based approximation of `ln` after argument truncation. \
+
+	///\todo\
+	Implement `logarithm_f` for complex numbers.
+
+	template <int N_lim=-1>
+	XTAL_FN2 logarithm_f(alpha_t const &x)
+	XTAL_0EX
+	{
+	//	Log[m 2^x]
+	//	Log[m] + Log[2^x]
+	//	Log[m] + Log[2]*x
+	//	Log[m/Sqrt[2]] + Log[2]*(x + 1/2)
+	//	Log[m/Sqrt[2]] + Log[2]*(x*2 + 1)/2
+
+		if constexpr (N_lim < 0) {
+			return _std::is_constant_evaluated()? logarithm_f<5>(x): _std::log(x);
+		}
+		else {
+			auto m = _std::bit_cast<delta_t>(x);
+			auto n = m - unit::mask;
+			m     &= fraction::mask;
+			m     |= unit::mask;
+			n    >>= unit::shift - 1;
+			n     |= 1;
+			auto w = _std::bit_cast<alpha_t>(m)*0.7071067811865475244008443621048490393e+0L;// 1/Sqrt[2]
+			auto u =                alpha_t (n)*0.3465735902799726547086160607290882840e+0L;// Log[2]/2
+			return logarithmic_f<N_lim>(w) + (u);
+		}
+	}
+//	static_assert((0.6931471805599453094172321214581765681e+0L) == (logarithm_f((alpha_t) 2)));// FIXME: 64-bit only...
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+	///\
+	Computes the Taylor series for `Sinh[#/2]*2/#`. \
+
+	template <int I_lim=0>
+	XTAL_FN2 antilogarithmetic_f(auto const &w)
+	XTAL_0EX
+	{
+		alpha_t t = 1;
+		if (_std::is_constant_evaluated()) {
+			common::seek_n<-I_lim>([&] (auto i)
+				XTAL_0FN_(t = 1 + t*w*ratio_f((i*2 + 2)*(i*2 + 3) << 2))
+			);
+		}
+		else {
+			common::seek_n<-I_lim>([&] (auto i)
+				XTAL_0FN_(t = _std::fma(t*w, ratio_f((i*2 + 2)*(i*2 + 3) << 2), 1))
+			);
+		}
+		return t;
+	}
+	///\
+	Computes the `sqrt`-based approximation of `exp` around `0`. \
+
+	template <int I_lim=0, int J_lim=0>
+	XTAL_FN2 antilogarithmic_f(auto x)
+	XTAL_0EX
+	{
+		int constexpr I_ = I_lim << 1;
+		int constexpr J_ = J_lim << 2;
+		using T = XTAL_TYP_(x);
+		T w = x*haplo_n<J_>; w *= antilogarithmetic_f<I_>(square_f(w));
+		T u = w*haplo_n<1 >;
+		T v = 1;
+		v +=       square_f(u);
+		w *= u + unsquare_f(v);
+		w += 1;
+		return square_f<1, J_>(w);
+	}
+	///\
+	Computes the `sqrt`-based approximation of `exp` after argument truncation. \
+
+	///\todo\
+	Implement `antilogarithm_f` for complex numbers.
+
+	template <int I_lim=-1, int J_lim=-1>
+	XTAL_FN2 antilogarithm_f(alpha_t u)
+	XTAL_0EX
+	{
+		int constexpr I_ = I_lim < 0? -4*I_lim: I_lim;
+		int constexpr J_ = J_lim < 0? -4*J_lim: J_lim;
+		u *= 1.4426950408889634073599246810018921374e+0L;// 1/Log[2]
+		auto const n = _std::round(u);
+		u -= n;
+		u *= 0.6931471805599453094172321214581765681e+0L;// Log[2]
+		return _std::ldexp(antilogarithmic_f<I_, J_>(u), n);
 	}
 
 

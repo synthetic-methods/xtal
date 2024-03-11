@@ -73,7 +73,7 @@ struct refine_head
 		template <int N_polarity=0>
 		XTAL_FN2 sentry(XTAL_DEF... oo)
 		XTAL_0EX
-		XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity>
+		XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
 		{
 			using L = _std::numeric_limits<U_head>;
 			if constexpr (N_polarity == +1) return T_self(L::max(), XTAL_REF_(oo)...);
