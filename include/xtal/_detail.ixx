@@ -24,8 +24,8 @@ using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
 XTAL_LET_(size_t) size_1 = 1;
 
-template <auto     N > XTAL_LET_(sign_t) sign_n = (0 < N) - (N < 0);
-template <auto     N >           concept sign_p = _std::integral<decltype(N)> and -1 <= N and N <= 1;
+template <auto N          >	XTAL_LET sign_n = sign_t((0 < N) - (N < 0));
+template <auto N, auto Z=0>	concept  sign_p = _std::integral<decltype(N)> and -1 == N or N == 1 or N == Z;
 
 
 ////////////////////////////////////////////////////////////////////////////////

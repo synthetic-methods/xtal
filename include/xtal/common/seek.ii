@@ -33,16 +33,6 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...As> XTAL_NYM seek_cardinal;
-template <typename ...As> XTAL_USE seek_cardinal_t = typename seek_cardinal<As...>::type;
-
-template <                            > struct seek_cardinal<        >: cardinal_t<0> {};
-template <cardinal_q T, typename ...As> struct seek_cardinal<T, As...>: T {};
-template <  typename A, typename ...As> struct seek_cardinal<A, As...>: seek_cardinal  <As...> {};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 template <         class ...Ts>  struct seek_front;
 template <class T, class ...Ts>  struct seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>   using seek_front_t = typename seek_front<Ts...>::type;

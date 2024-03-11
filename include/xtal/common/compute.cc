@@ -13,6 +13,152 @@ namespace xtal::common::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 
+TAG_("compute", "logarithm")
+{
+	using T_sigma = typename computer::sigma_t;
+	using T_delta = typename computer::delta_t;
+	using T_alpha = typename computer::alpha_t;
+	using T_aphex = typename computer::aphex_t;
+
+	auto mt19937_f = typename computer::mt19937_t();
+	mt19937_f.seed(Catch::rngSeed());
+
+	EST_("real std::log")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w += computer::logarithm_f(x);
+		//	w += log(x);
+		}
+		return w;
+	};
+	EST_("real logarithm_f<+4>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w += computer::logarithm_f<+4>(x);
+		}
+		return w;
+	};
+	EST_("real logarithm_f<+2>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w += computer::logarithm_f<+2>(x);
+		}
+		return w;
+	};
+	EST_("real logarithm_f< 0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w += computer::logarithm_f< 0>(x);
+		}
+		return w;
+	};
+
+	TRY_("real logarithm")
+	{
+		T_alpha const x = 2;
+		T_alpha const y = _std::log(x);
+		TRUE_(computrim_f<52+0>(y) == computrim_f<52+0>(computer::logarithm_f<-1>(x)));
+
+		TRUE_(computrim_f<50+1>(y) == computrim_f<50+1>(computer::logarithm_f<+4>(x)));
+		TRUE_(computrim_f<40+0>(y) == computrim_f<40+0>(computer::logarithm_f<+3>(x)));
+		TRUE_(computrim_f<30+0>(y) == computrim_f<30+0>(computer::logarithm_f<+2>(x)));
+		TRUE_(computrim_f<20+0>(y) == computrim_f<20+0>(computer::logarithm_f<+1>(x)));
+		TRUE_(computrim_f<10-2>(y) == computrim_f<10-2>(computer::logarithm_f<+0>(x)));
+		
+	}
+}
+TAG_("compute", "exponential")
+{
+	using T_sigma = typename computer::sigma_t;
+	using T_delta = typename computer::delta_t;
+	using T_alpha = typename computer::alpha_t;
+	using T_aphex = typename computer::aphex_t;
+
+	auto mt19937_f = typename computer::mt19937_t();
+	mt19937_f.seed(Catch::rngSeed());
+
+	EST_("real std::exp")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w += _std::exp(x);
+		}
+		return w;
+	};
+
+	EST_("real antilogarithm_f<2, 0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= computer::antilogarithm_f<2, 0>(x);
+		}
+		return w;
+	};
+	EST_("real antilogarithm_f<1, 0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= computer::antilogarithm_f<1, 0>(x);
+		}
+		return w;
+	};
+
+	EST_("real antilogarithmic_f<2, 0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= computer::antilogarithmic_f<2, 0>(x);
+		}
+		return w;
+	};
+	EST_("real antilogarithmic_f<1, 0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= computer::antilogarithmic_f<1, 0>(x);
+		}
+		return w;
+	};
+
+	TRY_("real exponential")
+	{
+		T_alpha const x = 5.5;
+		T_alpha const y = _std::exp(x);
+	//	TRUE_(computrim_f<52+0>(y) == computrim_f<52+0>(computer::antilogarithm_f<-1>(x)));
+
+		TRUE_(computrim_f<40+1>(y) == computrim_f<40+1>(computer::antilogarithm_f<+2, 0>(x)));
+		TRUE_(computrim_f<40+1>(y) == computrim_f<40+1>(computer::antilogarithm_f<+1, 1>(x)));
+		TRUE_(computrim_f<40+0>(y) == computrim_f<40+0>(computer::antilogarithm_f<+1, 0>(x)));
+		TRUE_(computrim_f<10+5>(y) == computrim_f<10+5>(computer::antilogarithm_f<+0, 1>(x)));
+
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 TAG_("compute", "bit_reverse")
 {
 	TRY_("32:03")
@@ -242,16 +388,16 @@ TAG_("compute", "puncture", "truncate")
 	using T_alpha = typename computer::alpha_t;
 	using T_aphex = typename computer::aphex_t;
 
-	auto mt19937_m = typename computer::mt19937_t();
-	mt19937_m.seed(Catch::rngSeed());
+	auto mt19937_f = typename computer::mt19937_t();
+	mt19937_f.seed(Catch::rngSeed());
 
 	EST_("complex fracture")
 	{
 		T_alpha constexpr two = 2;
 		T_aphex z{};
-		for (T_sigma i = 192000/100; ~--i;) {
-			auto x = computer::mantissa_f(mt19937_m); x = _std::pow(two, x);
-			auto y = computer::mantissa_f(mt19937_m); y = _std::pow(two, y);
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = computer::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			auto y = computer::mantissa_f(mt19937_f); y = _std::pow(two, y);
 			z *= computer::truncated_f<0>(computer::punctured_f<0>(T_aphex {x, y}), 0);
 		}
 		return z;
