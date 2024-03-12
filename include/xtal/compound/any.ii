@@ -193,7 +193,8 @@ struct defer
 
 		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+		///\
+		\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_TO4_(template <class  ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN1 head(XTAL_DEF... oo), self<Is...>().head(XTAL_REF_(oo)...)
@@ -201,6 +202,7 @@ struct defer
 		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN1 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
+		
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
@@ -209,8 +211,8 @@ struct defer
 		{
 			return equivalent_f(head(), w);
 		}
+		
 		///\
-		Equality testing. \
 		\returns `true` if the supplied body matches `this`, `false` otherwise. \
 
 		XTAL_OP2_(bool) == (subtype const &t)
