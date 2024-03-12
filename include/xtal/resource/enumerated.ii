@@ -24,9 +24,9 @@ template <int N=-1>
 struct enumerated
 {
 	template <compound::any_q S>
-	class subtype: public common::compose_s<S>
+	class subtype: public atom::compose_s<S>
 	{
-		using S_ = common::compose_s<S>;
+		using S_ = atom::compose_s<S>;
 	
 	public:
 		using S_::S_;

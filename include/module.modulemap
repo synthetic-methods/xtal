@@ -2,7 +2,7 @@ module xtal {
 	umbrella "xtal"
 	export *
 	exclude header "xtal/_detail.ixx"
-	exclude header "xtal/common/_detail.hxx"
+	exclude header "xtal/atom/_detail.hxx"
 	exclude header "xtal/compound/_detail.hxx"
 	exclude header "xtal/compound/_kernel.hxx"
 	exclude header "xtal/conflux/_detail.hxx"

@@ -1,5 +1,5 @@
 #pragma once
-#include "./common/all.ii"
+#include "./atom/all.ii"
 #include "./compound/all.ii"
 #include "./conflux/all.ii"
 #include "./message/all.ii"

@@ -13,7 +13,7 @@ namespace xtal::message
 
 template <class ...Us> requires complete_q<Us...>
 struct packet
-:	common::compose<defer<Us>...>
+:	atom::compose<defer<Us>...>
 {
 };
 template <class ...Us>

@@ -21,7 +21,7 @@ void spliced_processor_x1()
 
 	using U_spliced = spliced_t<spooled<(1<<4)>>;
 
-	using U_alpha = typename common::computer::alpha_t;
+	using U_alpha = typename atom::computer::alpha_t;
 	using U_event = message::packet_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t

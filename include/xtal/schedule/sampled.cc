@@ -27,7 +27,7 @@ TAG_("sampled", "process")
 		using U_scope = message::scope_t<>;
 		using U_cue = compound::cue_s<>;
 		
-		using V_gate = message::label_t<typename common::computer::alpha_t, struct __gate__>;
+		using V_gate = message::label_t<typename atom::computer::alpha_t, struct __gate__>;
 		using U_gate = process::confined_t<typename U_sampled::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -82,10 +82,10 @@ void sampled_processor()
 
 	using U_resize = message::resize_t<>;
 	using U_scope  = message::scope_t<>;
-	using U_store  = _std::array<typename common::computer::alpha_t, N_store>;
+	using U_store  = _std::array<typename atom::computer::alpha_t, N_store>;
 	U_store u_store {};
 
-	using V_gate = message::label_t<typename common::computer::alpha_t, struct __gate__>;
+	using V_gate = message::label_t<typename atom::computer::alpha_t, struct __gate__>;
 	using U_gate = process::confined_t<typename U_sampled::template inqueue<V_gate>>;
 	
 	using Z_gate = processor::monomer_t<U_gate, As...>;

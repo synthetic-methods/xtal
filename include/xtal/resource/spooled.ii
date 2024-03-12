@@ -12,29 +12,29 @@ namespace xtal::resource
 /////////////////////////////////////////////////////////////////////////////////
 
 XTAL_NYM __spooled__;
-template <class ...Ts> concept spooled_q = common::tab_p<__spooled__, Ts...>;
+template <class ...Ts> concept spooled_q = atom::tab_p<__spooled__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `common::fluid::spool`. \
+Provides a specialization of `atom::fluid::spool`. \
 If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
 template <int N=-1>
 struct spooled
 {
-	using subkind = common::tab<__spooled__>;
+	using subkind = atom::tab<__spooled__>;
 	
 	template <compound::any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = common::fluid::spool_t<U[(unsigned) N]>;
+		using spool_t = atom::fluid::spool_t<U[(unsigned) N]>;
 
 	};
 };

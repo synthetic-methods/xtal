@@ -12,7 +12,7 @@ namespace xtal::precess
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM phase;
-template <typename ..._s> XTAL_ASK phase_q = common::tag_p<phase, _s...>;
+template <typename ..._s> XTAL_ASK phase_q = atom::tag_p<phase, _s...>;
 template <class U=size_t> XTAL_USE phase_t = confined_t<phase<U>>;
 
 template <class ...Ts>
@@ -26,15 +26,15 @@ Represents a mixable `floating_point` quantity determined by `sizeof(U)`. \
 template <class U>
 struct phase<U>
 {
-	using _computer = common::compute<U>;
+	using _computer = atom::compute<U>;
 	using T_alpha = typename _computer::alpha_t;
 
-	using subkind = common::compose<fuse<T_alpha>, common::tag<phase>>;
+	using subkind = atom::compose<fuse<T_alpha>, atom::tag<phase>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;

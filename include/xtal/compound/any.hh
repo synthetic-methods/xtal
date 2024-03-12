@@ -1,5 +1,5 @@
 #pragma once
-#include "../common/all.ii"// `_retail`
+#include "../atom/all.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::compound
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail {using namespace xtal::common;}
+namespace _retail {using namespace xtal::atom;}
 namespace _retail
 {///////////////////////////////////////////////////////////////////////////////
 ///\
@@ -21,10 +21,10 @@ such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>
 template <typename ...As>
 struct any
 {
-	using subkind = common::compose<any<As>...>;
+	using subkind = atom::compose<any<As>...>;
 	
 	template <class S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 	using    type = subtype<unit_t>;
 	
 };
@@ -41,9 +41,9 @@ template <>
 struct any<>
 {	
 	template <class S>
-	class subtype: public common::compose_s<S, common::identify<>>
+	class subtype: public atom::compose_s<S, atom::identify<>>
 	{
-		using S_ = common::compose_s<S, common::identify<>>;
+		using S_ = atom::compose_s<S, atom::identify<>>;
 		
 	public:
 		using S_::S_;
@@ -52,10 +52,10 @@ struct any<>
 		///\
 		Fallback resolver, defaulting to the `back` type/selector. \
 		
-		template <class ...Ys> struct super: common::seek_back<Ys...> {};
+		template <class ...Ys> struct super: atom::seek_back<Ys...> {};
 
 	};
-	template <class S> requires common::identity_p<S>
+	template <class S> requires atom::identity_p<S>
 	class subtype<S>: public S
 	{
 	public:
@@ -70,21 +70,21 @@ struct any<A>
 {	
 //	NOTE: `identify` records the applied `any`s by _out-of-band_ inheritance. \
 	
-	using subkind = common::compose<common::identify<A>, any<>>;
+	using subkind = atom::compose<atom::identify<A>, any<>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
 		
 	};
 	template <class S> XTAL_REQ_(typename S::T_self)
-	class subtype<S>: public common::compose_s<S, subkind>
+	class subtype<S>: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public://protected:
 		using typename S::T_self;

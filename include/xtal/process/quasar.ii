@@ -14,7 +14,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                     typename ..._s> XTAL_NYM quasar;
-template <                     typename ..._s> XTAL_ASK quasar_q = common::tag_p<quasar, _s...>;
+template <                     typename ..._s> XTAL_ASK quasar_q = atom::tag_p<quasar, _s...>;
 template <array_q W=size_t[2], typename ...As> XTAL_USE quasar_t = confined_t<quasar<W>, As...>;
 
 
@@ -30,17 +30,17 @@ struct quasar<W, As...>
 	XTAL_LET N_ = _std::       extent_v<W>;
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using _computer = common::compute<U_>;
+	using _computer = atom::compute<U_>;
 	using T_delta = typename _computer::delta_t;
 	using T_alpha = typename _computer::alpha_t;
 
 	using W_quartz = precess::quartz_t<U_>[N_];
-	using subkind = common::compose<common::tag<quasar>, As..., fusor<W_quartz>>;
+	using subkind = atom::compose<atom::tag<quasar>, As..., fusor<W_quartz>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -63,8 +63,8 @@ struct quasar<W, As...>
 		///\
 		Projection to components by name. \
 
-		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(U_phasor(phase<I>()...)) (common::seek_f<N_>{});}
-		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(common::seek_t<I...>) XTAL_0FN_(U_pulsar(pulse<I>()...)) (common::seek_f<N_>{});}
+		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(U_phasor(phase<I>()...)) (atom::seek_f<N_>{});}
+		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(U_pulsar(pulse<I>()...)) (atom::seek_f<N_>{});}
 		
 		///\
 		Projection to initial component by type. \

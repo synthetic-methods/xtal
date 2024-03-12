@@ -1,5 +1,5 @@
 //#pragma once
-#include "./common/all.cc"
+#include "./atom/all.cc"
 #include "./compound/all.cc"
 #include "./conflux/all.cc"
 #include "./message/all.cc"

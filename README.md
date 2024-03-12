@@ -218,7 +218,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/common/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/atom/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -258,7 +258,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`common/compose.ii`](include/xtal/common/compose.ii?ts=3)|
+|Dependency composition     |[`atom/compose.ii`](include/xtal/atom/compose.ii?ts=3)|
 |Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
@@ -268,10 +268,10 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond`|
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::bond`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond` compatible `&&`arguments|
-|Buffer allocation          |[`common/fluid/store.ii`](include/xtal/common/fluid/store.ii?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`common/solid/scalar.ii`](include/xtal/common/solid/scalar.ii?ts=3)|
-|Buffer transformation      |[`common/solid/series.ii`](include/xtal/common/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`common/compute.ii`](include/xtal/common/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
+|Buffer allocation          |[`atom/fluid/store.ii`](include/xtal/atom/fluid/store.ii?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`atom/solid/scalar.ii`](include/xtal/atom/solid/scalar.ii?ts=3)|
+|Buffer transformation      |[`atom/solid/series.ii`](include/xtal/atom/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`atom/compute.ii`](include/xtal/atom/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

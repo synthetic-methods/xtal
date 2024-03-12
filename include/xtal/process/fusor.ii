@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <           typename ..._s> XTAL_NYM fusor;
-template <           typename ..._s> XTAL_ASK fusor_q = common::tag_p<fusor, _s...>;
+template <           typename ..._s> XTAL_ASK fusor_q = atom::tag_p<fusor, _s...>;
 template <array_q W, typename ...As> XTAL_USE fusor_t = confined_t<fusor<W, As...>>;
 
 
@@ -27,18 +27,18 @@ struct fusor<W, As...>
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	XTAL_LET N_ = _std::       extent_v<W>;
 	
-	using W_vector = common::solid::serial_t<W>;
+	using W_vector = atom::solid::serial_t<W>;
 	using W_indent = conflux::indent_s<W_vector>;
-	using subkind = common::compose<common::tag<fusor>
+	using subkind = atom::compose<atom::tag<fusor>
 	,	_detail::refer_iterators<W_vector>
 	,	typename W_indent::tunnel
 	,	As...
 	>;
 	
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;

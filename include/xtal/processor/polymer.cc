@@ -16,9 +16,9 @@ namespace xtal::processor::__test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using T_alpha = typename common::computer::alpha_t;
-	using T_sigma = typename common::computer::sigma_t;
-	using T_delta = typename common::computer::delta_t;
+	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename atom::computer::sigma_t;
+	using T_delta = typename atom::computer::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = compound::key_s<U_stage>;
@@ -74,9 +74,9 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename common::computer::alpha_t;
-	using T_sigma = typename common::computer::sigma_t;
-	using T_delta = typename common::computer::delta_t;
+	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename atom::computer::sigma_t;
+	using T_delta = typename atom::computer::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = compound::key_s<U_stage>;
@@ -119,9 +119,9 @@ void polymer_provision_spool__combined()
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
-	using T_alpha = typename common::computer::alpha_t;
-	using T_sigma = typename common::computer::sigma_t;
-	using T_delta = typename common::computer::delta_t;
+	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename atom::computer::sigma_t;
+	using T_delta = typename atom::computer::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = compound::key_s<U_stage>;
