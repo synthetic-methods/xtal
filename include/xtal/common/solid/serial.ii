@@ -53,18 +53,17 @@ struct serial<U[N]>
 		{
 			return twin() *= t;
 		}
-		XTAL_OP1_(T &) *=(T const &t)
+		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{
-			auto constexpr H = (size_s) N;
 			auto _s = self();
-			if constexpr (_computer::alignment_n < H) {
-				for (auto i = H;   ~--i;) {subscript(i) *= t.subscript(0);
-				for (auto j = i; j; --j ) {subscript(i) += t.subscript(j)*_s[i - j];}}
+			if constexpr (_computer::alignment_n < N) {
+				for (auto i = N; ~--i;) {subscript(i) *= t.subscript(0);
+				for (auto j = i; j-- ;) {subscript(i) += t.subscript(j)*_s[i - j];}}
 			}
 			else {
-				common::seek_n<-(size_s) H, 0>([&, this] (auto I) XTAL_0FN {subscript(I) *= t.subscript(0);
-				common::seek_n<-(size_s) I, 1>([&, this] (auto J) XTAL_0FN {subscript(I) += t.subscript(J)*_s[I - J];});});
+				common::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {subscript(I) *= t.subscript(0);
+				common::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {subscript(I) += t.subscript(J)*_s[I - J];});});
 			}
 			return self();
 		}
@@ -82,7 +81,7 @@ struct serial<U[N]>
 		{
 		//	auto constexpr N0 = N - 0;
 			auto constexpr N1 = N - 1;
-			common::seek_n<N1>([&, this] (auto i) XTAL_0FN_(subscript(0 + i) += subscript(1 + i)));
+			common::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(0 + i) += subscript(1 + i)));
 			return self();
 		}
 
@@ -100,7 +99,7 @@ struct serial<U[N]>
 		{
 			auto constexpr N0 = N - 0;
 			auto constexpr N1 = N - 1;
-			common::seek_n<N1>([&, this] (auto i) XTAL_0FN_(subscript(N1 - i) -= subscript(N0 - i)));
+			common::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(N1 - i) -= subscript(N0 - i)));
 			return self();
 		}
 

@@ -6,7 +6,7 @@
 //\
 Structural...
 
-template <class T> XTAL_LET to_f = [] XTAL_1FN_(T);
+template <class T> XTAL_LET make_f = [] XTAL_1FN_(T);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,11 +28,9 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto ... >   XTAL_LET return_f = [] (XTAL_DEF o) XTAL_0FN_(XTAL_REF_(o));
-
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF w)     XTAL_0EX {return to_f<M>(XTAL_REF_(w));}
-template <class  M >   XTAL_FN2 member_f(XTAL_DEF ...ws) XTAL_0EX {return to_f<M>(XTAL_REF_(ws)...);}
+template <class  M > XTAL_FN2   member_f(XTAL_DEF w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}
+template <class  M > XTAL_FN2   member_f(XTAL_DEF w)     XTAL_0EX {return make_f<M>(XTAL_REF_(w));}
+template <class  M > XTAL_FN2   member_f(XTAL_DEF ...ws) XTAL_0EX {return make_f<M>(XTAL_REF_(ws)...);}
 
 template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
 template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}

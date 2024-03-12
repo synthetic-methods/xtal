@@ -21,7 +21,7 @@ void processor_provision__messaging()
 {
 	using T_alpha = typename common::computer::alpha_t;
 
-	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(to_f<T_alpha>);
+	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(make_f<T_alpha>);
 	auto const _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto const _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 

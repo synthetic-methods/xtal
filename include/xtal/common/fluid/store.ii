@@ -117,7 +117,7 @@ struct store<U[N]>
 		///\
 		Does nothing. \
 
-		XTAL_TN0 shrink_to_fit()
+		XTAL_TN0 shrink_make_fit()
 		XTAL_0EX
 		{}
 

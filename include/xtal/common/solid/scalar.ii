@@ -60,8 +60,8 @@ struct scalar<U[N]>
 		XTAL_OP1_(T &) *= (bracket_t<U> w) XTAL_0EX {return self() *= T(w.begin(), w.end());}
 		XTAL_OP1_(T &) /= (bracket_t<U> w) XTAL_0EX {return self() /= T(w.begin(), w.end());}				
 		
-		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= t.subscript(i))), self();}
-		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= t.subscript(i))), self();}
+		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return common::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= t.subscript(i))), self();}
+		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return common::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= t.subscript(i))), self();}
 
 		XTAL_TN2 sum()
 		XTAL_0FX

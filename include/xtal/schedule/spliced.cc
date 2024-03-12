@@ -31,7 +31,7 @@ void spliced_processor_x1()
 	using U_resize = message::resize_t<>;
 	using scope_n  = message::scope_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<U_alpha>);
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<U_alpha>);
 	auto _10 = _01|_v3::views::transform([] (U_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (U_alpha n) {return n*11;});
 
