@@ -116,7 +116,7 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs>
-		struct bond
+		struct binding
 		{
 			using signature = atom::pack<let_t<Xs>...>;
 			using Y_result = typename signature::template invoke_t<T>;
@@ -273,40 +273,40 @@ struct refine
 		using S_ = atom::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using O_ = typename S_::template bond<Xs...>;
+		using S_binding = typename S_::template binding<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs>
-		struct bond: O_<Xs...>
+		struct binding: S_binding<Xs...>
 		{
-			using kind = confined<O_<Xs...>>;
+			using kind = confined<S_binding<Xs...>>;
 			using type = atom::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>
-		using bond_t = typename bond<Xs...>::type;
+		using binding_t = typename binding<Xs...>::type;
 
 		template <typename ...As>
-		XTAL_FN2 bond_f(XTAL_DEF ...xs)
+		XTAL_FN2 bind_f(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., O_<decltype(xs)...>>;
+			using  kind = confined<As..., S_binding<decltype(xs)...>>;
 			using  type = atom::compose_s<S_, kind>;
 			return type(XTAL_REF_(xs)...);
 		}
 		template <typename ...As>
-		XTAL_FN2 bond_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
+		XTAL_FN2 bind_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
 		XTAL_0EX
 		{
-			using  kind = confined<As..., O_<decltype(xs)...>>;
+			using  kind = confined<As..., S_binding<decltype(xs)...>>;
 			using  type = atom::compose_s<S_, kind>;
 			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
-		XTAL_TN2 bind(XTAL_DEF ...xs), bond_f<As...>(self(), XTAL_REF_(xs)...)
+		XTAL_TN2 bind(XTAL_DEF ...xs), bind_f<As...>(self(), XTAL_REF_(xs)...)
 		)
 
 	};

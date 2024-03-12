@@ -117,7 +117,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto scope = scope_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, resource::stored<>>;
-	auto sixer = Mixer::bond_f(one, two, three);
+	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
 	{
@@ -265,9 +265,9 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
 |Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond`|
-|Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::bond`|
-|Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::bond` compatible `&&`arguments|
+|Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding`|
+|Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::binding`|
+|Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding` compatible `&&`arguments|
 |Buffer allocation          |[`atom/fluid/store.ii`](include/xtal/atom/fluid/store.ii?ts=3) impl. static `std::vector`|
 |Buffer arithmetic          |[`atom/solid/scalar.ii`](include/xtal/atom/solid/scalar.ii?ts=3)|
 |Buffer transformation      |[`atom/solid/series.ii`](include/xtal/atom/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|

@@ -33,7 +33,7 @@ void polymer_provision_spine__locamotion()
 	,	resource::stored<N_store>
 	,	resource::spooled<N_spool>
 	>;
-	auto u_vox = U_vox::bond_f();
+	auto u_vox = U_vox::bind_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
 	u_vox <<= U_resize(N_window);
@@ -94,7 +94,7 @@ void polymer_provision_spool__combined()
 	,	resource::stored<N_store>
 	,	resource::spooled<N_spool>
 	>;
-	auto u_vox = U_vox::bond_f();
+	auto u_vox = U_vox::bind_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
@@ -139,7 +139,7 @@ void polymer_provision_spool__composited()
 	,	resource::stored<N_store>
 	,	resource::spooled<N_spool>
 	>;
-	auto u_vox = U_vox::bond_f();
+	auto u_vox = U_vox::bind_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);

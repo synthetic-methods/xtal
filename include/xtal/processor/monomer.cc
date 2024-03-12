@@ -63,7 +63,7 @@ void monomer_provision__advancing()
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = U_mixer::bond_f(lhs, rhs);
+	auto xhs = U_mixer::bind_f(lhs, rhs);
 
 	auto seq = U_scope(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
@@ -110,7 +110,7 @@ void monomer_provision__provisioning()
 
 	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = monomer_t<U_add, provide>::bond_f(lhs, rhs);
+	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
 	auto m_slush = U_store {0, 0, 0};
 	auto m_respan = U_respan(m_slush);
@@ -153,7 +153,7 @@ void monomer_chaining__rvalue()
 	
 	using mix_op = monomer_t<U_add, resource::stored<>>;
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
-	auto yhs = mul_op::bond_f(mix_op::bond_f(let_f(_01), let_f(_10)));
+	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
 	yhs <<= message::resize_f(N);
 	yhs <<= scale_t((T_alpha) 100);
@@ -185,8 +185,8 @@ void monomer_chaining__lvalue()
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto  xhs = mix_op::bond_f(lhs, rhs);
-	auto  yhs = mul_op::bond_f(xhs);
+	auto  xhs = mix_op::bind_f(lhs, rhs);
+	auto  yhs = mul_op::bind_f(xhs);
 
 	yhs <<= message::resize_f(N);
 	yhs <<= scale_t((T_alpha) 100);
@@ -217,11 +217,11 @@ void monomer_chaining__shared()
 	using mix_fn = monomer_t<U_add>;
 	using ndfn = monomer_t<dynamic_count_t>;
 
-	auto _xx = ndfn::bond_f();
-	auto xhs = mix_op::bond_f(_xx);
-	auto lhs = mix_fn::bond_f(xhs, let_f(_01));
-	auto rhs = mix_fn::bond_f(xhs, let_f(_10));
-	auto yhs = mix_fn::bond_f(lhs, rhs);
+	auto _xx = ndfn::bind_f();
+	auto xhs = mix_op::bind_f(_xx);
+	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
+	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
+	auto yhs = mix_fn::bind_f(lhs, rhs);
 
 	yhs <<= message::restep_f((size_t) 50);
 	yhs <<= message::resize_f(N);

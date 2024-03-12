@@ -36,22 +36,22 @@ struct polymer<U, As...>
 	class subtype: public atom::compose_s<S, subkind>
 	{
 		using S_ = atom::compose_s<S, subkind>;
-		using I_ = monomer_t<based_t<U>>;
+		using Y_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
-		using S_bond = typename S_::template bond<Xs...>;
+		using S_binding = typename S_::template binding<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
-		struct bond: S_bond<Xs...>
+		struct binding: S_binding<Xs...>
 		{
 			using V_event = message::stage_t<>;
 			using U_event = compound::key_s<V_event>;
 			
-			using V_voice = typename I_::template bond_t<Xs...>;
+			using V_voice = typename Y_::template binding_t<Xs...>;
 			using U_voice = compound::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
@@ -59,7 +59,7 @@ struct polymer<U, As...>
 			using subkind = atom::compose<atom::tag<polymer>
 			,	defer<V_voice>
 			,	As...// NOTE: Necessary for `intermit`...
-			,	S_bond<Xs...>
+			,	S_binding<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public atom::compose_s<R, subkind>
