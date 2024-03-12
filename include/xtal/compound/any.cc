@@ -139,7 +139,7 @@ TAG_("compound", "conversion")
 {
 	TRY_("tuple")
 	{
-		using namespace common;
+		using namespace atom;
 
 		using U_foo = confined_t<defer<bool>, defer<int>, defer<float>>;
 		auto const foo = U_foo(1, 2, 3);

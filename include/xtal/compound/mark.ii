@@ -18,13 +18,13 @@ Controls access to an `address`d `attach`ment.\
 ///\see e.g. [../message/any#attach] or [../message/any#dispatch]. \
 
 template <typename ..._s> XTAL_NYM mark;
-template <class    ...Ts> XTAL_ASK mark_q = common::tag_p<mark, Ts...>;
+template <class    ...Ts> XTAL_ASK mark_q = atom::tag_p<mark, Ts...>;
 
-template <class U> struct mark<U>: conferred<U, common::tag<mark>> {};
+template <class U> struct mark<U>: conferred<U, atom::tag<mark>> {};
 template <       > struct mark< >: mark<size_t> {};
 
 template <class S=void, typename ...As>
-using mark_s = common::compose_s<complete_t<S, confined_t<>>, mark<As...>>;
+using mark_s = atom::compose_s<complete_t<S, confined_t<>>, mark<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -23,15 +23,15 @@ struct revise<U>
 {
 	using U_store =    based_t<U>;
 	using U_serve = deranged_t<U>;
-	using subkind = common::compose<void
+	using subkind = atom::compose<void
 	,	compound::defer<U_serve>
 	,	compound::defer<U_store>
 	>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 	//	using S_::S_;

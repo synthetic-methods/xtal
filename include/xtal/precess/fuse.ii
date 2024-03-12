@@ -12,7 +12,7 @@ namespace xtal::precess
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM fuse;
-template <typename ..._s> XTAL_ASK fuse_q = common::tag_p<fuse, _s...>;
+template <typename ..._s> XTAL_ASK fuse_q = atom::tag_p<fuse, _s...>;
 template <class U=size_t> XTAL_USE fuse_t = confined_t<fuse<U>>;
 
 
@@ -23,12 +23,12 @@ Represents a mixable quantity of type `U`. \
 template <additive_group_q U>
 struct fuse<U>
 {
-	using subkind = confer<U, common::tag<fuse>>;
+	using subkind = confer<U, atom::tag<fuse>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 		using S_::S_;

@@ -17,11 +17,11 @@ TAG_("per")
 {
 	TRY_("construction")
 	{
-		using T_sigma = typename common::computer::sigma_t;
-		using T_alpha = typename common::computer::alpha_t;
+		using T_sigma = typename atom::computer::sigma_t;
+		using T_alpha = typename atom::computer::alpha_t;
 
-		T_sigma b = common::computer::diplo_f(16);
-		T_alpha p = common::computer::haplo_f(16);
+		T_sigma b = atom::computer::diplo_f(16);
+		T_alpha p = atom::computer::haplo_f(16);
 
 		auto d = per_t(b);
 		auto q = per_t(p);

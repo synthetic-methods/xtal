@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                     typename ..._s> XTAL_NYM phasor;
-template <                     typename ..._s> XTAL_ASK phasor_q = common::tag_p<phasor, _s...>;
+template <                     typename ..._s> XTAL_ASK phasor_q = atom::tag_p<phasor, _s...>;
 template <array_q W=size_t[2], typename ...As> XTAL_USE phasor_t = confined_t<phasor<W, As...>>;
 
 
@@ -26,10 +26,10 @@ struct phasor<W, As...>
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
 	using W_phase = precess::phase_t<U_>[N_];
-	using subkind = common::compose<common::tag<phasor>, As..., fusor<W_phase>>;
+	using subkind = atom::compose<atom::tag<phasor>, As..., fusor<W_phase>>;
 
 	template <class S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 
 };
 

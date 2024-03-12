@@ -110,7 +110,7 @@ template <class   ...Ts>	concept  isomorphic_q = _detail:: isomorphic<Ts...>::va
 template <class   ...Ts>	concept  epimorphic_q = _detail:: epimorphic<Ts...>::value;
 
 template <class   ...Ts>	using        shared_t = _detail:: shared_t<Ts...>;
-template <class   ...Ts>	concept      shared_q = _detail:: shared_q<Ts...>;        //< `Ts...` share a common type.
+template <class   ...Ts>	concept      shared_q = _detail:: shared_q<Ts...>;        //< `Ts...` share a atom type.
 template <class   ...Ts>	concept      id_q     = _detail:: identical<Ts...>::value;//< `Ts...` are identical.
 template <class   ...Ts>	concept      is_q     = _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
 template <class   ...Ts>	concept      to_q     = _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.

@@ -12,7 +12,7 @@ namespace xtal::precess
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM pulse;
-template <typename ..._s> XTAL_ASK pulse_q = common::tag_p<pulse, _s...>;
+template <typename ..._s> XTAL_ASK pulse_q = atom::tag_p<pulse, _s...>;
 template <class U=size_t> XTAL_USE pulse_t = confined_t<U>;
 
 template <class ...Ts>
@@ -26,15 +26,15 @@ Represents a mixable `integral` quantity determined by `sizeof(U)`. \
 template <class U>
 struct pulse<U>
 {
-	using _computer = common::compute<U>;
+	using _computer = atom::compute<U>;
 	using T_delta = typename _computer::delta_t;
 
-	using subkind = common::compose<fuse<T_delta>, common::tag<pulse>>;
+	using subkind = atom::compose<fuse<T_delta>, atom::tag<pulse>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;

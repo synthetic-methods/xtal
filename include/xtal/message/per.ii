@@ -14,16 +14,16 @@ namespace xtal::message
 struct per
 {
 private:
-	using U = _std::make_unsigned_t<typename common::computer::iota_t>;
-	using V = typename common::computer::alpha_t;
+	using U = _std::make_unsigned_t<typename atom::computer::iota_t>;
+	using V = typename atom::computer::alpha_t;
 
 public:
-	using subkind = common::compose<defer<U>, defer<V>>;
+	using subkind = atom::compose<defer<U>, defer<V>>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 	//	using S_::S_;

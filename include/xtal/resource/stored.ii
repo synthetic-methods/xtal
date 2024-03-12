@@ -12,29 +12,29 @@ namespace xtal::resource
 /////////////////////////////////////////////////////////////////////////////////
 
 XTAL_NYM __stored__;
-template <class ...Ts> concept stored_q = common::tab_p<__stored__, Ts...>;
+template <class ...Ts> concept stored_q = atom::tab_p<__stored__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `common::fluid::store`. \
+Provides a specialization of `atom::fluid::store`. \
 If `N == -1`, the member-type `store_t` is dynamically allocated. \
 
 template <int N=-1>
 struct stored
 {
-	using subkind = common::tab<__stored__>;
+	using subkind = atom::tab<__stored__>;
 	
 	template <compound::any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
 		
 		template <class U>
-		using store_t = common::fluid::store_t<U[(unsigned) N]>;
+		using store_t = atom::fluid::store_t<U[(unsigned) N]>;
 
 	};
 };

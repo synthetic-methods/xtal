@@ -31,7 +31,7 @@ template <typename ...As> using  any_t = typename any<As...>::type;
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = common::identity_p<any_t<As...>, T>;
+concept any_p = atom::identity_p<any_t<As...>, T>;
 
 template <class ...Ts>
 //\
@@ -48,31 +48,31 @@ Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 template <class     ...Us> struct infer;
 template <class     ...Us> using  infer_t = typename infer<Us...>::type;
 
-template <class     ...Us> struct infer    : common::compose<infer<Us>...> {};
+template <class     ...Us> struct infer    : atom::compose<infer<Us>...> {};
 template <class        U > struct infer<U> : defer<U> {};
 template <incomplete_q U > struct infer<U> :   any<U> {};
 
 template <incomplete_q U, size_t N_width>
 struct infer<U[N_width]>
-:	common::compose<any<U>, defer<unit_t[N_width]>>
+:	atom::compose<any<U>, defer<unit_t[N_width]>>
 {};
 
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
 
 template <class U, typename ...As>
-struct confer: common::compose<refer<U>, As..., defer<U>> {};
+struct confer: atom::compose<refer<U>, As..., defer<U>> {};
 
 ///\
 Combines `define` and `refine` to define `T`, sandwiching the decorators `As...`. \
 
 template <class T, typename ...As>
-struct confine//: common::compose<refine<T>, As..., define<T>> {};
+struct confine//: atom::compose<refine<T>, As..., define<T>> {};
 {
-	using subkind = common::compose<refine<T>, As..., define<T>>;
+	using subkind = atom::compose<refine<T>, As..., define<T>>;
 
 	template <class S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 	using    type = T;
 	
 };
@@ -89,9 +89,9 @@ struct confined
 	using homokind = confine<T, As...>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, homokind<subtype<S>>>
+	class subtype: public atom::compose_s<S, homokind<subtype<S>>>
 	{
-		using S_ = common::compose_s<S, homokind<subtype<S>>>;
+		using S_ = atom::compose_s<S, homokind<subtype<S>>>;
 	
 	public:
 		using S_::S_;

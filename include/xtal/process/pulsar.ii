@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                     typename ..._s> XTAL_NYM pulsar;
-template <                     typename ..._s> XTAL_ASK pulsar_q = common::tag_p<pulsar, _s...>;
+template <                     typename ..._s> XTAL_ASK pulsar_q = atom::tag_p<pulsar, _s...>;
 template <array_q W=size_t[2], typename ...As> XTAL_USE pulsar_t = confined_t<pulsar<W, As...>>;
 
 
@@ -26,10 +26,10 @@ struct pulsar<W, As...>
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
 	using W_pulse = precess::pulse_t<U_>[N_];
-	using subkind = common::compose<common::tag<pulsar>, As..., fusor<W_pulse>>;
+	using subkind = atom::compose<atom::tag<pulsar>, As..., fusor<W_pulse>>;
 
 	template <class S>
-	using subtype = common::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 
 };
 

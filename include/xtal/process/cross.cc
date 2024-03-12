@@ -19,7 +19,7 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_model = atom::solid::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_model = atom::solid::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -62,7 +62,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_model = atom::solid::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -81,7 +81,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_model = atom::solid::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -102,7 +102,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = common::solid::linear_t<int[2][3]>;
+		using U_model = atom::solid::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 

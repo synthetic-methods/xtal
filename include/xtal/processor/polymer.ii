@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM polymer;
-template <typename ..._s> XTAL_ASK polymer_q = common::tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_ASK polymer_q = atom::tag_p<polymer, _s...>;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
 XTAL_FN2  polymer_f(XTAL_DEF  u)
@@ -33,9 +33,9 @@ struct polymer<U, As...>
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 		using I_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
@@ -56,15 +56,15 @@ struct polymer<U, As...>
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = common::compose<common::tag<polymer>
+			using subkind = atom::compose<atom::tag<polymer>
 			,	defer<V_voice>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	S_bond<Xs...>
 			>;
 			template <any_q R>
-			class subtype: public common::compose_s<R, subkind>
+			class subtype: public atom::compose_s<R, subkind>
 			{
-				using R_ = common::compose_s<R, subkind>;
+				using R_ = atom::compose_s<R, subkind>;
 				
 				U_ensemble u_ensemble;
 
@@ -168,7 +168,7 @@ struct polymer<U, As...>
 					using namespace _detail;
 					auto i = u_ensemble.begin(), iN = u_ensemble.end();
 					tunnel_f(respan_x, i++);
-					common::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
+					atom::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
 						auto constexpr N = size_1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {

@@ -12,7 +12,7 @@ namespace xtal::precess
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM quartz;
-template <typename ..._s> XTAL_ASK quartz_q = common::tag_p<quartz, _s...>;
+template <typename ..._s> XTAL_ASK quartz_q = atom::tag_p<quartz, _s...>;
 template <class U=size_t> XTAL_USE quartz_t = confined_t<quartz<U>>;
 
 
@@ -23,12 +23,12 @@ A `pulse, phase` used to represent e.g. `{phase/frequency, count/trigger}`. \
 template <class U>
 struct quartz<U>
 {
-	using subkind = common::compose<pulse<U>, phase<U>, common::tag<quartz>>;
+	using subkind = atom::compose<pulse<U>, phase<U>, atom::tag<quartz>>;
 
 	template <class S>
-	class subtype: public common::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = common::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
