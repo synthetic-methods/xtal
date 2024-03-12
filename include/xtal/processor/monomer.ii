@@ -35,7 +35,7 @@ struct monomer<U, As...>
 		using S_ = atom::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using S_bond = typename S_::template bond<Xs...>;
+		using S_binding = typename S_::template binding<Xs...>;
 
 	public://protected:
 		using typename S_::T_self;
@@ -45,14 +45,14 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct bond: S_bond<Xs...>
+		struct binding: S_binding<Xs...>
 		{
 			using subkind = atom::compose<atom::tag<monomer>
-			,	compound::confer<typename S_bond<Xs...>::Y_result>
+			,	compound::confer<typename S_binding<Xs...>::Y_result>
 		//	,	As...
 		//	,	U_resize::attach<>
 			,	U_scope::attach<>
-			,	S_bond<Xs...>
+			,	S_binding<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public atom::compose_s<R, subkind>
@@ -88,9 +88,9 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stored_q<S_>
-		struct bond<Xs...>: S_bond<Xs...>
+		struct binding<Xs...>: S_binding<Xs...>
 		{
-			using Y_return = typename S_bond<Xs...>::Y_return;
+			using Y_return = typename S_binding<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_serve  = deranged_t<U_store>;
 			using U_respan = message::respan_t<U_serve>;
@@ -103,7 +103,7 @@ struct monomer<U, As...>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	U_resize::attach<>
 			,	U_scope::attach<>
-			,	S_bond<Xs...>
+			,	S_binding<Xs...>
 			>;
 			template <any_q R>
 			class subtype: public atom::compose_s<R, subkind>

@@ -89,7 +89,7 @@ void sampled_processor()
 	using U_gate = process::confined_t<typename U_sampled::template inqueue<V_gate>>;
 	
 	using Z_gate = processor::monomer_t<U_gate, As...>;
-	auto  z_gate = Z_gate::bond_f();
+	auto  z_gate = Z_gate::bind_f();
 	
 	z_gate <<= U_resize(N_store);
 	z_gate <<= (U_cue) 0 << (V_gate)  7;
