@@ -48,10 +48,9 @@ Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 template <class     ...Us> struct infer;
 template <class     ...Us> using  infer_t = typename infer<Us...>::type;
 
-template <class     ...Us> struct infer: common::compose<infer<Us>...> {};
-template <any_q        T > struct infer<T> {using type = T;};
-template <class        U > struct infer<U>:      defer<U> {};
-template <incomplete_q U > struct infer<U>:        any<U> {};
+template <class     ...Us> struct infer    : common::compose<infer<Us>...> {};
+template <class        U > struct infer<U> : defer<U> {};
+template <incomplete_q U > struct infer<U> :   any<U> {};
 
 template <incomplete_q U, size_t N_width>
 struct infer<U[N_width]>

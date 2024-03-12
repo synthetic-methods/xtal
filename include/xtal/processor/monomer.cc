@@ -57,7 +57,7 @@ void monomer_provision__advancing()
 	using U_scope = message::scope_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
 	auto _10 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*10);});
 	auto _11 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*11);});
 
@@ -104,7 +104,7 @@ void monomer_provision__provisioning()
 	using U_resize = message::resize_t<>;
 	using U_scope = message::scope_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 
@@ -147,7 +147,7 @@ void monomer_chaining__rvalue()
 	size_t constexpr N = 4;
 	
 	using namespace _v3;
-	auto _01 =  views::iota(0, 10)|views::transform(to_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
@@ -177,7 +177,7 @@ void monomer_chaining__lvalue()
 	size_t constexpr N = 4;
 
 	using namespace _v3;
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(to_f<T_alpha>);
+	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 	
@@ -209,7 +209,7 @@ void monomer_chaining__shared()
 	size_t constexpr N = 4;
 
 	using namespace _v3;
-	auto _01 =  views::iota(0, 10)|views::transform(to_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 

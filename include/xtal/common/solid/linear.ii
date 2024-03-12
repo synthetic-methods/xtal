@@ -112,7 +112,7 @@ struct linear<U[N]>
 		XTAL_0EX
 		XTAL_REQ (0 < N) and (N <= _computer::alignment_n)
 		{
-			common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
+			common::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
 			return self();
 		}
 
@@ -140,8 +140,8 @@ struct linear<U[N]>
 		XTAL_OP2_(T)    +  (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 		XTAL_OP2_(T)    -  (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 
-		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= XTAL_REF_(w))), self();}
-		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_n<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  *= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= XTAL_REF_(w))), self();}
+		XTAL_OP1_(T &)  /= (XTAL_DEF_(to_q<U>) w) XTAL_0EX {return common::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= XTAL_REF_(w))), self();}
 
 	};
 	using type = _detail::isotype<homotype>;

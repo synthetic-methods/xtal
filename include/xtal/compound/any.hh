@@ -29,6 +29,15 @@ struct any
 	
 };
 template <>
+struct any<void>
+{	
+	template <class S>
+	using subtype = S;
+	
+	using type = subtype<unit_t>;
+
+};
+template <>
 struct any<>
 {	
 	template <class S>
