@@ -63,14 +63,8 @@ struct static_onset_mix
 	{
 	public:
 
-		template <auto onset>
-		XTAL_TN2 method(XTAL_DEF ...xs)
-		XTAL_0FX
-		{
-			return (XTAL_REF_(xs) +...+ onset);
-		}
-		template <auto onset>
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		template <size_t onset=0>
+		XTAL_FN2 function(XTAL_DEF ...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ onset);

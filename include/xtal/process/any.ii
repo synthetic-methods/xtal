@@ -42,6 +42,13 @@ struct define
 			self().method(XTAL_REF_(xs)...)
 		)
 		
+		template <auto ...Is>
+		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_0FX
+		{
+			return T::template function<Is...>(XTAL_REF_(xs)...);
+		}
+
 		///\returns the lambda abstraction of `method`, \
 		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
 
@@ -154,14 +161,20 @@ struct define
 					}
 				}
 				XTAL_TN2 apply(XTAL_DEF f)
-				XTAL_0EX {return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());}
+				XTAL_0EX
+				{
+					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
+				}
 
 				///\
 				Evaluates the lifted `method` using the bound slots. \
 
 				template <auto ...Is>
 				XTAL_TN2 method()
-				XTAL_0EX {return _std::apply([this] XTAL_1FN_(R_::template method<Is...>), slots());}
+				XTAL_0EX
+				{
+					return _std::apply([this] XTAL_1FN_(R_::template method<Is...>), slots());
+				}
 				
 				using R_::method;
 			//	using R_::influx;

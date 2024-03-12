@@ -61,6 +61,7 @@ struct refine_head
 
 	public:
 		using S::S;
+		using S::self;
 		using S::head;
 
 		///\
@@ -68,7 +69,17 @@ struct refine_head
 
 		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
 		
-		///\returns the `sentinel` boundary in the direction of `N_polarity`. \
+		///\
+		\returns `true` if the supplied body matches `head`, `false` otherwise. \
+
+		template <class  ...Is>
+		XTAL_TN1 with(XTAL_DEF ...oo) XTAL_0FX {(void) head(XTAL_REF_(oo)...); return self();}
+
+		template <size_t ...Is>
+		XTAL_TN1 with(XTAL_DEF ...oo) XTAL_0FX {(void) head(XTAL_REF_(oo)...); return self();}
+
+		///\
+		\returns the `sentinel` boundary in the direction of `N_polarity`. \
 
 		template <int N_polarity=0>
 		XTAL_FN2 sentry(XTAL_DEF... oo)
