@@ -50,7 +50,7 @@ template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
 XTAL_0EX
 {
-	copy_to(i, j0, jN, make_f<based_t<iteratee_t<I>>>, o);
+	copy_to(i, j0, jN, as_f<based_t<iteratee_t<I>>>, o);
 }
 template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)

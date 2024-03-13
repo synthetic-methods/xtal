@@ -47,7 +47,7 @@ public:
 		template <iterated_q W>
 		XTAL_CXN subtype(W &&w, XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(deranged_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
+		:	S_(visor_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2 span(XTAL_DEF... oo), head(XTAL_REF_(oo)...))

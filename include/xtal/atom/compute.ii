@@ -367,8 +367,15 @@ public:
 	using typename S_::  sigma_t;
 	using typename S_::  alpha_t;
 	using typename S_::mt19937_t;
-
 	using aphex_t = _std::complex<alpha_t>;
+
+	XTAL_LET_( iota_t)  iota_1 = 1;
+	XTAL_LET_(delta_t) delta_1 = 1;
+	XTAL_LET_(sigma_t) sigma_1 = 1;
+	XTAL_LET_(alpha_t) alpha_1 = 1;
+	XTAL_LET_(aphex_t) aphex_1 = {1, 0};
+	XTAL_LET_(aphex_t) aphex_i = {0, 1};
+
 
 	using S_::width;
 	using S_::depth;
@@ -391,7 +398,6 @@ public:
 	XTAL_LET_(sigma_t)      default_alignment_n =      default_alignment::value;
 	XTAL_LET_(sigma_t)              alignment_n =              alignment::value;
 	
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -466,37 +472,46 @@ public:
 		return made_f<M_pow>(aphex_t(x, y));
 	}
 	
+	XTAL_FN2 unsquare_1(alpha_t const &w, alpha_t const &n)
+	XTAL_0EX
+	{
+	//	return vrsqrtsd_f64(w, square_f(n));
+		return (0.5)*(3.0 - w*square_f(n));
+	}
+	XTAL_FN2 unsquare_0(alpha_t const &w)
+	XTAL_0EX
+	{
+	//	return vrsqrted_f64(w);
+		return _std::bit_cast<alpha_t>(S_::n_quake - (_std::bit_cast<delta_t>(w) >> size_1));
+	}
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_f(alpha_t const &w)
 	XTAL_0EX
 	{
-		if (not _std::is_constant_evaluated()) return made_f<M_pow>(_std::sqrt(w));
-	//	else...
-		alpha_t constexpr _0_5 = 0.5;
-		alpha_t constexpr _1_5 = 1.5;
-		delta_t constexpr Q_   = S_::n_quake;
-		delta_t o = Q_ - (_std::bit_cast<delta_t>(w) >> 1);
-		alpha_t n = _std::bit_cast<alpha_t>(o);
-		alpha_t const k = w*_0_5;
-		if constexpr (N_lim < 0) {
-			alpha_t m = k*n*n;
-			for (sigma_t i = 0; m != _0_5 and i < 0x10; ++i) {
-			n *= _1_5 - m; m = k*n*n;
+		size_t constexpr M_lim = N_lim&0xF;
+		alpha_t u, n;
+
+		if (_std::is_constant_evaluated()) {
+			n = unsquare_0(w);
+			seek_forward_f<M_lim>([&] (auto) XTAL_0FN_(n *= unsquare_1(w, n)));
+			if constexpr (N_lim < 0) {
+				n /= 1L + square_f(n)*w;
+				n *= 2L;
 			}
-			n /= m + _0_5;
+			u = n*w;
 		}
 		else {
-			seek_forward_f<N_lim>([&] (auto) XTAL_0FN_(n *= _1_5 - k*n*n));
+			n = 1/_std::sqrt(w);
+			u = n*w;
 		}
-		
-		if constexpr (M_pow == 0) {
-			return couple_t<alpha_t> {w*n, n};
+		if constexpr (M_pow ==  0) {
+			return couple_t<alpha_t> {u, n};
+		}	else
+		if constexpr (M_pow ==  1) {
+			return u;
 		}	else
 		if constexpr (M_pow == -1) {
 			return n;
-		}	else
-		if constexpr (M_pow == +1) {
-			return n*w;
 		}
 	}
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
@@ -505,8 +520,10 @@ public:
 	{
 		return unsquare_f<M_pow, N_lim>((alpha_t) w);
 	}
-	static_assert(unsquare_f< 1>(2) == (alpha_t) 0.1414213562373095048801688724209698079e+1L);
-	static_assert(unsquare_f<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393e+0L);
+	static_assert(unsquare_f< 1>(3) == (alpha_t) 1.7320508075688772935274463415058723670);
+	static_assert(unsquare_f< 1>(2) == (alpha_t) 1.4142135623730950488016887242096980786);
+	static_assert(unsquare_f<-1>(2) == (alpha_t) 0.7071067811865475244008443621048490393);
+	static_assert(unsquare_f<-1>(3) == (alpha_t) 0.5773502691896257645091487805019574556);
 
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_dot_f(XTAL_DEF u)
@@ -1143,7 +1160,7 @@ public:
 	XTAL_FN2 logarithmic_f(auto const &x)
 	XTAL_0EX
 	{
-		auto const w = unsquare_f<-1>(x)*(x - 1);
+		auto const w = unsquare_f<-1, N_lim>(x)*(x - 1);
 		return logarithmetic_f<N_lim>(square_f(w))*(w);
 	}
 	///\
@@ -1248,7 +1265,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct compute: _detail::realize<sizeof(revalued_t<T>)> {};
+struct compute: _detail::realize<sizeof(value_t<T>)> {};
 
 using computer = compute<size_t>;
 

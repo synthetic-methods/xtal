@@ -37,7 +37,7 @@ struct indent<Ns...>
 	public:
 		using S_::S_;
 		
-		XTAL_CON subtype(bracket_t<revalued_t<L_>> w)
+		XTAL_CON subtype(bracket_t<value_t<L_>> w)
 		XTAL_REQ bracket_q<L_>
 		:	S_{L_(XTAL_MOV_(w))}
 		{}
