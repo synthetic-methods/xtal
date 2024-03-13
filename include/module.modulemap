@@ -3,8 +3,8 @@ module xtal {
 	export *
 	exclude header "xtal/_detail.ixx"
 	exclude header "xtal/atom/_detail.hxx"
-	exclude header "xtal/compound/_detail.hxx"
-	exclude header "xtal/compound/_kernel.hxx"
+	exclude header "xtal/bond/_detail.hxx"
+	exclude header "xtal/bond/_kernel.hxx"
 	exclude header "xtal/conflux/_detail.hxx"
 	exclude header "xtal/message/_detail.hxx"
 	exclude header "xtal/precess/_detail.hxx"

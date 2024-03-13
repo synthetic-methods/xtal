@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::compound::__test
+namespace xtal::bond::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ TAG_("cue")
 {
 	TRY_("construct")
 	{
-		using U_source = compound::conferred_t<counted_t<>>;
+		using U_source = bond::conferred_t<counted_t<>>;
 		using U_target = cue_s<U_source>;
 		using V_target = cue_s<>;
 

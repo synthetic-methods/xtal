@@ -2,7 +2,7 @@
 #include "./any.ii"
 #include "./monomer.ii"
 #include "../resource/all.ii"
-#include "../compound/key.ii"
+#include "../bond/key.ii"
 #include "../message/stage.ii"
 
 
@@ -49,10 +49,10 @@ struct polymer<U, As...>
 		struct binding: S_binding<Xs...>
 		{
 			using V_event = message::stage_t<>;
-			using U_event = compound::key_s<V_event>;
+			using U_event = bond::key_s<V_event>;
 			
 			using V_voice = typename Y_::template binding_t<Xs...>;
-			using U_voice = compound::key_s<V_voice>;
+			using U_voice = bond::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
@@ -80,7 +80,7 @@ struct polymer<U, As...>
 				using R_::influx;
 				
 				///\
-				Forwards the `compound::key`ed message to the associated instance. \
+				Forwards the `bond::key`ed message to the associated instance. \
 				Messages associated with a `message/stage.ii` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
@@ -89,14 +89,14 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TLX influx(compound::key_q auto io, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::key_q auto io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const i = io.head();
 					auto const o = io.core();
-					return influx(compound::key_s<>(i), o, XTAL_REF_(oo)...);
+					return influx(bond::key_s<>(i), o, XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(compound::key_s<> i, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::key_s<> i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -104,7 +104,7 @@ struct polymer<U, As...>
 					assert(u_ensemble and h == w->head());
 					return w->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(compound::key_s<> i, V_event o, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::key_s<> i, V_event o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();

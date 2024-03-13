@@ -24,7 +24,7 @@ Currently used for both event queues (\see `message/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 ///\note\
-May be initialized using `compound/_detail.hxx#sentry` to \
+May be initialized using `bond/_detail.hxx#sentry` to \
 provide minimum/maximum sentinel values (for lookbehind/lookahead, respectively). \
 
 template <class A>

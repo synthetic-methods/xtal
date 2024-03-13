@@ -16,7 +16,7 @@ namespace xtal::atom::fluid::__test
 template <int N>
 void spool__operation()
 {
-	using U_event = atom::compose_s<onset_t, compound::conferred<int>>;
+	using U_event = atom::compose_s<onset_t, bond::conferred<int>>;
 	using U_queue = fluid::spool_t<U_event[N]>;
 	U_queue q {(U_event) _std::numeric_limits<int>::max()};
 
