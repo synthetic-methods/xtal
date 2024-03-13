@@ -7,7 +7,7 @@ module xtal {
 	exclude header "xtal/bond/_kernel.hxx"
 	exclude header "xtal/conflux/_detail.hxx"
 	exclude header "xtal/message/_detail.hxx"
-	exclude header "xtal/precess/_detail.hxx"
+	exclude header "xtal/quantity/_detail.hxx"
 	exclude header "xtal/process/_detail.hxx"
 	exclude header "xtal/processor/_detail.hxx"
 	exclude header "xtal/resource/_detail.hxx"

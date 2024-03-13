@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::precess
+namespace xtal::quantity
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -20,10 +20,16 @@ template <class U=size_t> XTAL_USE quartz_t = confined_t<quartz<U>>;
 ///\
 A `pulse, phase` used to represent e.g. `{phase/frequency, count/trigger}`. \
 
+///\todo\
+Provide overflow normalization. \
+
 template <class U>
 struct quartz<U>
 {
-	using subkind = atom::compose<pulse<U>, phase<U>, atom::tag<quartz>>;
+	using V_phase = phase_value_t<U>;
+	using V_pulse = pulse_value_t<U>;
+
+	using subkind = atom::compose<phase<U>, pulse<U>, atom::tag<quartz>>;
 
 	template <class S>
 	class subtype: public atom::compose_s<S, subkind>
@@ -35,26 +41,19 @@ struct quartz<U>
 		using S_::self;
 		using S_::twin;
 
-		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), S_::template head<1>(XTAL_REF_(oo)...))
+		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: S_(V_phase {}, XTAL_REF_(o)) {}
+		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: S_(XTAL_REF_(o), V_pulse {}) {}
 
-		using U_pulse = XTAL_TYP_(S_::template head<0>());
-		using U_phase = XTAL_TYP_(S_::template head<1>());
-
-		XTAL_TO4_(XTAL_OP0_(implicit) U_pulse(), pulse())
-		XTAL_TO4_(XTAL_OP0_(implicit) U_phase(), phase())
-
-		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: S_(XTAL_REF_(o), U_phase {}) {}
-		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: S_(U_pulse {}, XTAL_REF_(o)) {}
+		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), S_::template head<1>(XTAL_REF_(oo)...))
 
 		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
 		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
 				
-		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::pulse() += t.pulse(); S_::phase() += t.phase(); return self();}
-		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::pulse() -= t.pulse(); S_::phase() -= t.phase(); return self();}
-	
-	};
+		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::phase() += t.phase(); S_::pulse() += t.pulse(); return self();}
+		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::phase() -= t.phase(); S_::pulse() -= t.pulse(); return self();}
 
+	};
 };
 
 

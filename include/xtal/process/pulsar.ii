@@ -25,7 +25,7 @@ struct pulsar<W, As...>
 	XTAL_LET N_ = _std::       extent_v<W>;
 	XTAL_USE U_ = _std::remove_extent_t<W>;
 	
-	using W_pulse = precess::pulse_t<U_>[N_];
+	using W_pulse = quantity::pulse_t<U_>[N_];
 	using subkind = atom::compose<atom::tag<pulsar>, As..., fusor<W_pulse>>;
 
 	template <class S>
