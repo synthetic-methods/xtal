@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::precess
+namespace xtal::quantity
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +18,9 @@ template <class U=size_t> XTAL_USE phase_t = confined_t<phase<U>>;
 template <class ...Ts>
 concept phase_value_q = real_field_q<Ts...>;
 
+template <class U>
+using phase_value_t = typename atom::compute<U>::alpha_t;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -26,10 +29,8 @@ Represents a mixable `floating_point` quantity determined by `sizeof(U)`. \
 template <class U>
 struct phase<U>
 {
-	using _computer = atom::compute<U>;
-	using T_alpha = typename _computer::alpha_t;
-
-	using subkind = atom::compose<fuse<T_alpha>, atom::tag<phase>>;
+	using V_phase = phase_value_t<U>;
+	using subkind = atom::compose<fuse<V_phase>, atom::tag<phase>>;
 
 	template <class S>
 	class subtype: public atom::compose_s<S, subkind>
@@ -38,13 +39,14 @@ struct phase<U>
 	
 	public:
 		using S_::S_;
-		using S_::self;
 
-		XTAL_TN1 normalize()
+		XTAL_TN1 commute(XTAL_DEF carry)
 		XTAL_0EX
 		{
-			auto &o = S_::head(); o -= _std::round(o);
-			return S_::normalize();
+			auto &u = S_::head(); u += XTAL_REF_(carry);
+			auto const n = _std::round(u);
+			u -= n;
+			return S_::commute(n);
 		}
 	
 	};

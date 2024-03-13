@@ -1,23 +1,23 @@
 #pragma once
 #include "./any.cc"
-#include "./quartz.ii"// testing...
+#include "./pulse.ii"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::precess::__test
+namespace xtal::quantity::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("quartz")
+TAG_("fuse")
 {
 	TRY_("task")
 	{
-		using quartzed = quartz_t<int>;
+		using fused = fuse_t<int>;
 	
 		TRUE_(true);
 
