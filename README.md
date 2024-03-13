@@ -229,9 +229,9 @@ The type-functions [`compose` and `compose_s`](include/xtal/atom/compose.ii?ts=3
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
 	namespace bond   {}
-	namespace conflux   {namespace _retail = bond;}
-	namespace message   {namespace _retail = conflux;}
-	namespace process   {namespace _retail = conflux;}
+	namespace flux   {namespace _retail = bond;}
+	namespace message   {namespace _retail = flux;}
+	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}
 
 The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`bond/_kernel.hxx`](include/xtal/bond/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
@@ -259,8 +259,8 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Feature                    |Reference|
 |---------------------------|---------|
 |Dependency composition     |[`atom/compose.ii`](include/xtal/atom/compose.ii?ts=3)|
-|Dependency management      |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`conflux/any.ii`](include/xtal/conflux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Dependency management      |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
+|Parameter bundling         |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|

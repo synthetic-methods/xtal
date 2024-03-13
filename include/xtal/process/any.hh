@@ -1,5 +1,5 @@
 #pragma once
-#include "../conflux/any.ii"// `_retail`
+#include "../flux/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::conflux;
+namespace _retail = xtal::flux;
 #include "./_detail.hxx"
 
 

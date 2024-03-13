@@ -1,7 +1,7 @@
 //#pragma once
 #include "./atom/all.cc"
 #include "./bond/all.cc"
-#include "./conflux/all.cc"
+#include "./flux/all.cc"
 #include "./message/all.cc"
 #include "./quantity/all.cc"
 #include "./process/all.cc"
