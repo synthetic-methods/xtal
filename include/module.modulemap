@@ -5,7 +5,7 @@ module xtal {
 	exclude header "xtal/atom/_detail.hxx"
 	exclude header "xtal/bond/_detail.hxx"
 	exclude header "xtal/bond/_kernel.hxx"
-	exclude header "xtal/conflux/_detail.hxx"
+	exclude header "xtal/flux/_detail.hxx"
 	exclude header "xtal/message/_detail.hxx"
 	exclude header "xtal/quantity/_detail.hxx"
 	exclude header "xtal/process/_detail.hxx"

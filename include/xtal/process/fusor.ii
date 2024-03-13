@@ -28,7 +28,7 @@ struct fusor<W, As...>
 	XTAL_LET N_ = _std::       extent_v<W>;
 	
 	using W_vector = atom::solid::serial_t<W>;
-	using W_indent = conflux::indent_s<W_vector>;
+	using W_indent = flux::indent_s<W_vector>;
 	using subkind = atom::compose<atom::tag<fusor>
 	,	_detail::refer_iterators<W_vector>
 	,	typename W_indent::tunnel
@@ -83,7 +83,7 @@ struct fusor<W, As...>
 		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
 		{
 			using A = XTAL_TYP_(a);
-			using B = typename conflux::indent_s<A, N_ - arity_n<A>>;
+			using B = typename flux::indent_s<A, N_ - arity_n<A>>;
 			return S_::influx(B(XTAL_REF_(a)));
 		}
 
