@@ -36,9 +36,9 @@ struct fuse<U>
 
 		XTAL_CO0_(subtype)
 		XTAL_CO4_(subtype)
-		XTAL_CON subtype(XTAL_DEF_(to_q<U>) w, XTAL_DEF ...oo)
+		XTAL_CON subtype(XTAL_DEF ...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(w), XTAL_REF_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{
 			normalize();
 		}

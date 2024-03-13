@@ -46,8 +46,8 @@ struct define
 			protected:
 				using V_tuple = _std::tuple<Xs...>;
 				using U_tuple = message::packet_t<Xs...>;
-				using U_event = compound::cue_s<U_tuple>;
-				using U_delay = typename compound::cue_s<>::template head_t<>;
+				using U_event = bond::cue_s<U_tuple>;
+				using U_delay = typename bond::cue_s<>::template head_t<>;
 
 			public:
 				using R_::R_;
@@ -72,7 +72,7 @@ struct define
 				///\
 				Invokes `ingest(U_event)` with the given argument. \
 
-				XTAL_TLX influx(XTAL_DEF_(compound::cue_q) dot)
+				XTAL_TLX influx(XTAL_DEF_(bond::cue_q) dot)
 				XTAL_0EX
 				{
 					(void) self().ingest(XTAL_REF_(dot));
@@ -98,7 +98,7 @@ struct define
 					return influx(d_t, U_tuple(us...));
 				}
 
-				XTAL_TLX influx(compound::cue_s<> d_t, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::cue_s<> d_t, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return influx(d_t.head(), XTAL_REF_(oo)...);

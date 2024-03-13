@@ -1,5 +1,5 @@
 #pragma once
-#include "../compound/any.ii"// `_retail`
+#include "../bond/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::conflux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::compound;
+namespace _retail = xtal::bond;
 #include "./_detail.hxx"
 
 

@@ -48,7 +48,7 @@ struct monomer<U, As...>
 		struct binding: S_binding<Xs...>
 		{
 			using subkind = atom::compose<atom::tag<monomer>
-			,	compound::confer<typename S_binding<Xs...>::Y_result>
+			,	bond::confer<typename S_binding<Xs...>::Y_result>
 		//	,	As...
 		//	,	U_resize::attach<>
 			,	U_scope::attach<>
@@ -98,7 +98,7 @@ struct monomer<U, As...>
 			XTAL_LET_(int) N_share = atom::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 
 			using subkind = atom::compose<atom::tag<monomer>
-			,	compound::refer<U_serve>
+			,	bond::refer<U_serve>
 			,	message::revise<U_store>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	U_resize::attach<>

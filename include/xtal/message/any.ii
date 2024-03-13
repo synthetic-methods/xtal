@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../compound/all.ii"
+#include "../bond/all.ii"
 #include "../conflux/all.ii"
 #include "../process/any.hh"
 #include "../resource/enumerated.ii"
@@ -59,12 +59,12 @@ struct define
 				using R_::self;
 				using R_::influx;
 
-				XTAL_TLX influx(compound::mark_s<T> o, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx(o.head(), o.core(), XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(compound::mark_s<> m, XTAL_DEF ...oo)
+				XTAL_TLX influx(bond::mark_s<> m, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (~m & M_mask) {

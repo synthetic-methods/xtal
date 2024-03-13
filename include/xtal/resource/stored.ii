@@ -25,7 +25,7 @@ struct stored
 {
 	using subkind = atom::tab<__stored__>;
 	
-	template <compound::any_q S>
+	template <bond::any_q S>
 	class subtype: public atom::compose_s<S, subkind>
 	{
 		using S_ = atom::compose_s<S, subkind>;

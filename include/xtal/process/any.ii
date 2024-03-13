@@ -123,7 +123,7 @@ struct define
 			using Y_return = iteratee_t<Y_result>;
 			
 			using subkind = atom::compose<void
-			,	compound::defer<typename signature::type>
+			,	bond::defer<typename signature::type>
 			,	defer<T>
 			>;
 
