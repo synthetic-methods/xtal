@@ -21,8 +21,8 @@ template <typename ..._s> XTAL_USE revise_t = confined_t<revise<_s...>>;
 template <bracket_q U>
 struct revise<U>
 {
-	using U_store =    based_t<U>;
-	using U_serve = deranged_t<U>;
+	using U_store = based_t<U>;
+	using U_serve = visor_t<U>;
 	using subkind = atom::compose<void
 	,	bond::defer<U_serve>
 	,	bond::defer<U_store>

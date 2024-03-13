@@ -142,7 +142,7 @@ struct defer_field
 		XTAL_0EX
 		:	subtype(U_body{})
 		{}
-		XTAL_CON subtype(bracket_t<revalued_t<U_head>> a)
+		XTAL_CON subtype(bracket_t<value_t<U_head>> a)
 		XTAL_REQ array_q<U_head> and rebased_q<U_head>
 		:	body_m(a)
 		{}
@@ -379,9 +379,9 @@ struct refer_binary_logic<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 ^=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() ^=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 |=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() |=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 &=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() &=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 ^=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() ^=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 |=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() |=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 &=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() &=(U) XTAL_REF_(w), S::self();}
 
 	};
 };
@@ -396,9 +396,9 @@ struct refer_binary_logic<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_REF_(w));}
-		XTAL_OP2 | (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() | (U) XTAL_REF_(w));}
-		XTAL_OP2 & (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() & (U) XTAL_REF_(w));}
+		XTAL_OP2 ^ (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_REF_(w));}
+		XTAL_OP2 | (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() | (U) XTAL_REF_(w));}
+		XTAL_OP2 & (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() & (U) XTAL_REF_(w));}
 
 	};
 };
@@ -433,8 +433,8 @@ struct refer_multiplicative_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 *=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() *=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 /=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() /=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 *=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() *=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 /=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() /=(U) XTAL_REF_(w), S::self();}
 
 	};
 };
@@ -449,8 +449,8 @@ struct refer_multiplicative_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 * (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() * (U) XTAL_REF_(w));}
-		XTAL_OP2 / (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() / (U) XTAL_REF_(w));}
+		XTAL_OP2 * (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() * (U) XTAL_REF_(w));}
+		XTAL_OP2 / (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() / (U) XTAL_REF_(w));}
 
 	};
 };
@@ -475,8 +475,8 @@ struct refer_additive_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 +=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() +=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 -=(XTAL_DEF_(to_q<U>) w) XTAL_0EX {return S::head() -=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 +=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() +=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 -=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() -=(U) XTAL_REF_(w), S::self();}
 
 	};
 };
@@ -491,8 +491,8 @@ struct refer_additive_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 + (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() + (U) XTAL_REF_(w));}
-		XTAL_OP2 - (XTAL_DEF_(to_q<U>) w) XTAL_0FX {return T_self(S::head() - (U) XTAL_REF_(w));}
+		XTAL_OP2 + (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() + (U) XTAL_REF_(w));}
+		XTAL_OP2 - (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() - (U) XTAL_REF_(w));}
 		XTAL_OP1 - () XTAL_0FX {return T_self(-S::head());}
 
 	};

@@ -1,26 +1,12 @@
 #pragma once
-#if __has_include(<execution>)
-#include <execution>
-#endif
-#include <concepts>
-#include <cassert>
-#include <cstring>
-#include <complex>
-#include <numbers>
-#include <cmath>
-#include <tuple>
-#include <array>
-#include <queue>
-#include <new>
-#include <bit>
-
-
+#include "./___.hh"
 #include "./any.hh"
 
 
-XTAL_ENV_(push)
 
-#include <range/v3/all.hpp>
+
+
+XTAL_ENV_(push)
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -96,12 +82,14 @@ template <class   ...Ts>	concept    rebased_q  = (...and  _detail:: rebased_q<Ts
 template <class   ...Ts>	concept    debased_q  = (...and  _detail:: debased_q<Ts>);
 
 
-template <class   ...Ts>	concept      valued_q = (...and  _detail::   valued_q<Ts>);
-template <class      T >	using        valued_t =          _detail::   valued_t<T>;
-template <class      T >	using      devalued_t =          _detail:: devalued_t<T>;
-template <class      T >	using      revalued_t =          _detail:: revalued_t<T>;
+template <class   ...Ts>	concept      devalue_q = (...and  _detail::   devalue_q<Ts>);
+template <class   ...Ts>	concept    value_q = (...and  _detail:: value_q<Ts>);
+template <class      T >	using        devalue_t =          _detail::   devalue_t<T>;
+template <class      T >	using      value_t =          _detail:: value_t<T>;
 
 template <class      X >	using      argument_t = typename _detail:: argument<X>::type;
+template <class   ...Ts>	concept        some_q =          _detail:: some_q<Ts...>;
+template <class   ...Ts>	concept        none_q =          _detail:: none_q<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,19 +97,19 @@ template <class      X >	using      argument_t = typename _detail:: argument<X>:
 template <class   ...Ts>	concept  isomorphic_q = _detail:: isomorphic<Ts...>::value;
 template <class   ...Ts>	concept  epimorphic_q = _detail:: epimorphic<Ts...>::value;
 
-template <class   ...Ts>	using        shared_t = _detail:: shared_t<Ts...>;
-template <class   ...Ts>	concept      shared_q = _detail:: shared_q<Ts...>;        //< `Ts...` share a atom type.
-template <class   ...Ts>	concept      id_q     = _detail:: identical<Ts...>::value;//< `Ts...` are identical.
-template <class   ...Ts>	concept      is_q     = _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <class   ...Ts>	concept      to_q     = _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class   ...Ts>	concept          id_q = _detail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <class   ...Ts>	concept          is_q = _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <class   ...Ts>	concept          as_q = _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
 
-template <class T, class   ...Ys>	concept  of_p = (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
-template <class T, class   ...Ys>	concept  of_q = (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
+template <class T, class   ...Ys>	concept of_p = (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
+template <class T, class   ...Ys>	concept of_q = (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
 
-template <class T, class   ...Ys>	concept   forcible_q = (...and _detail::   forcible_q<T, Ys>);//< `T` and `Ys...` have the same `sizeof`.
-template <class T, class   ...Ys>	concept   fungible_q = (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
-template <class T, class   ...Ys>	concept unforcible_q = (...and _detail:: unforcible_q<T, Ys>);
-template <class T, class   ...Ys>	concept infungible_q = (...and _detail:: infungible_q<T, Ys>);
+template <class            ...Ys>	using      related_t =                   _detail:: related_t<Ys...>;
+template <class            ...Ys>	concept    related_q = some_q<Ys...> and _detail:: related_q<Ys...>;        //< `Ys...` share an ancestor.
+template <class T, class   ...Ys>	concept   fungible_q = some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
+template <class T, class   ...Ys>	concept   forcible_q = some_q<Ys...> and (...and _detail::   forcible_q<T, Ys>);//< `T` and `Ys...` have the same `sizeof`.
+template <class T, class   ...Ys>	concept infungible_q = some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
+template <class T, class   ...Ys>	concept unforcible_q = some_q<Ys...> and (...and _detail:: unforcible_q<T, Ys>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +145,7 @@ template <class   ...Ts>	concept    bracket_q  = (...and  _detail:: bracket_q<Ts
 template <class   ...Ts>	concept      begin_q  = (...and  _detail::   begin_q<Ts>);
 template <class   ...Ts>	concept        end_q  = (...and  _detail::     end_q<Ts>);
 
-template <class      T >	using      iterate_t  = _detail::  iterate_t<T>;
+template <class      T >	using       iterate_t = _detail::  iterate_t<T>;
 template <class      W >	using      interval_t = _detail:: interval_t<W>;
 
 
@@ -172,11 +160,7 @@ template <class   ...Ts>	concept  uniterator_q = not iterator_q<Ts...>;
 template <class      T >	using      iterated_t = typename _detail::iterated<T>::type;
 template <class      T >	using      iterator_t = typename _detail::iterator<T>::type;//_v3::ranges::iterator_t
 template <class      T >	using      iteratee_t = typename _detail::iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
-
-
-template <class      T >	using      sentinel_t = _detail:: sentinel_t<T>;
 template <class      T >	using      distance_t = _detail:: distance_t<T>;
-template <class      T >	using      deranged_t = _detail:: deranged_t<T>;
 
 
 template <class   ...Ts>	concept    counted_q  = (...and _detail:: counted_q<Ts>);
@@ -184,6 +168,9 @@ template <class   ...Ts>	concept    counter_q  = (...and _detail:: counter_q<Ts>
 
 template <class   T=size_s>	using   counted_t  = typename _detail::counted<T>::type;
 template <class   T=size_s>	using   counter_t  = typename _detail::counter<T>::type;
+
+
+template <class      T >	using         visor_t = _detail::    visor_t<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -238,24 +225,8 @@ static_assert(complex_field_q<_std::complex<float>>);
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "./_kernel.ixx"
-#include "./_log.ixx"
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-namespace std
-{////////////////////////////////////////////////////////////////////////////////
-
-#if not __cpp_lib_bit_cast
-template <class  T, class S>
-static constexpr T bit_cast(S const& s)
-noexcept
-{
-	static_assert(xtal::based_q<T, S> and sizeof(T) == sizeof(S));
-	return __builtin_bit_cast(T, s);
-}
-#endif
-
-
-}//////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
