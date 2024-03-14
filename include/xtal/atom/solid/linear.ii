@@ -42,22 +42,19 @@ struct linear<U[N]>
 		using S_ = hemitype<T>;
 		using I_ = typename S_::size_type;
 
-	protected:
-		XTAL_DO4_(XTAL_TN0 accept(I_ i), {assert(0 <= i and i < N);})
-		XTAL_TN2 access(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 access(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 access(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
-		XTAL_TN2 access(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
-	
-	public:
-		XTAL_TO4_(XTAL_TN2 subscript(I_ i), (accept(i), access(i)))
-
-		XTAL_FN2_(size_t) size() {return N;}// static override
-
-	public:
-	//	using S_::S_;
+	public:// ALIASING
 		using S_::self;
 		using S_::twin;
+
+		XTAL_FN2_(size_t) size() {return N;}
+
+		XTAL_TN2 subscript(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
+		XTAL_TN2 subscript(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
+		XTAL_TN2 subscript(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
+		XTAL_TN2 subscript(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
+
+	public:// CONSTRUCTION
+	//	using S_::S_;
 
 		~homotype() {};
 		XTAL_CO4_(homotype)
@@ -86,11 +83,14 @@ struct linear<U[N]>
 			_detail::move_to(S_::begin(), w);
 		}
 		
+	public:// CONVERSION
+
 		template <class W>
 		XTAL_FN2_(T &) reinterpret(W &w)
 		XTAL_0EX
 		{
-			static_assert(is_q<devalue_t<W>, U> and sizeof(W) == sizeof(T));
+			static_assert(is_q<value_t<W>, U>);
+			static_assert(sizeof(W) == sizeof(T));
 			return force_f<T &>(w);
 		}
 
@@ -115,6 +115,8 @@ struct linear<U[N]>
 			atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
 			return self();
 		}
+
+	public:// OPERATION
 
 		///\
 		Elementwise comparators. \
