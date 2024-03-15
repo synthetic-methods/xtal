@@ -12,8 +12,8 @@ namespace xtal::schedule
 /////////////////////////////////////////////////////////////////////////////////
 
 ///\
-Provides an (in)queue for `X` on the target object, \
-which is converted to a signal by successive calls to `method`. \
+Provides an `in(flux )queue` for `X` on the target object, \
+which produces a signal by successive calls to `method`. \
 
 ///\todo\
 Adapt to provide polling. \
@@ -49,25 +49,25 @@ struct sampled
 				using typename R_::U_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
-				U_delay d_{0};
-				U_spool q_{U_event::template sentry<-1>(), U_event::template sentry<1>()};
+				U_delay __delay {0};
+				U_spool __queue {U_event::template sentry<-1>(), U_event::template sentry<1>()};
 
 			public:
 				using R_::R_;
 
-				XTAL_TN0 ingest(U_event dot)
+				XTAL_TN0 ingest(U_event u_event)
 				XTAL_0EX
 				{
-					if (dot.head() < d_ and q_.empty()) {
-						(void) q_.abandon().head(d_ = 0);
+					if (u_event.head() < __delay and __queue.empty()) {
+						(void) __queue.abandon().head(__delay = 0);
 					}
-					q_.push(XTAL_MOV_(dot));
+					__queue.push(XTAL_MOV_(u_event));
 				}
 
 				XTAL_TN2 method()
 				XTAL_0EX
 				{
-					return q_.advance(d_++ == q_.peek(1).head()).core().head();
+					return __queue.advance(__delay++ == __queue.peek(1).head()).core().head();
 				}
 
 				///\todo\

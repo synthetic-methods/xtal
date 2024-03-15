@@ -47,7 +47,7 @@ struct define
 				using V_tuple = _std::tuple<Xs...>;
 				using U_tuple = message::packet_t<Xs...>;
 				using U_event = bond::cue_s<U_tuple>;
-				using U_delay = typename bond::cue_s<>::template head_t<>;
+				using U_delay = typename U_event::template head_t<>;
 
 			public:
 				using R_::R_;
@@ -58,44 +58,44 @@ struct define
 				Invokes `influx` immediately, \
 				expanding the provided arguments. \
 				
-				XTAL_TLX influx(U_tuple o)
+				XTAL_TLX influx(U_tuple u_tuple)
 				XTAL_0EX
 				{
-					return o.apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)));
+					return u_tuple.apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)));
 				}
-				XTAL_TLX influx(V_tuple o)
+				XTAL_TLX influx(V_tuple v_tuple)
 				XTAL_0EX
 				{
-					return _std::apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)), o);
+					return _std::apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)), v_tuple);
 				}
 
 				///\
 				Invokes `ingest(U_event)` with the given argument. \
 
-				XTAL_TLX influx(XTAL_DEF_(bond::cue_q) dot)
+				XTAL_TLX influx(XTAL_DEF_(bond::cue_q) u_event)
 				XTAL_0EX
 				{
-					(void) self().ingest(XTAL_REF_(dot));
+					(void) self().ingest(XTAL_REF_(u_event));
 					return R_::influx();
 				}
 
 				///\
 				Invokes `influx(U_event)` with the event constructed from the arguments. \
 
-				XTAL_TLX influx(U_delay d_t, U_tuple o)
+				XTAL_TLX influx(U_delay d_t, U_tuple u_tuple)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, o));
+					return influx(U_event(d_t, u_tuple));
 				}
-				XTAL_TLX influx(U_delay d_t, V_tuple o)
+				XTAL_TLX influx(U_delay d_t, V_tuple v_tuple)
 				XTAL_0EX
 				{
-					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(d_t, us...)), o);
+					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(d_t, us...)), v_tuple);
 				}
-				XTAL_TLX influx(U_delay d_t, Xs ...us)
+				XTAL_TLX influx(U_delay d_t, Xs ...xs)
 				XTAL_0EX
 				{
-					return influx(d_t, U_tuple(us...));
+					return influx(d_t, U_tuple(xs...));
 				}
 
 				XTAL_TLX influx(bond::cue_s<> d_t, XTAL_DEF ...oo)

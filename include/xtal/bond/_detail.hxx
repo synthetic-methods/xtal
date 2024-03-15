@@ -130,7 +130,7 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		using S_::self;
-		U_body body_m;
+		U_body __body;
 
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -144,7 +144,7 @@ struct defer_field
 		{}
 		XTAL_CON subtype(bracket_t<value_t<U_head>> a)
 		XTAL_REQ array_q<U_head> and rebased_q<U_head>
-		:	body_m(a)
+		:	__body(a)
 		{}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
@@ -153,21 +153,21 @@ struct defer_field
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<U_head>(XTAL_REF_(a)))
+		,	__body(member_f<U_head>(XTAL_REF_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX_( &) {return remember_f(body_m);}
-		XTAL_TN2 head() XTAL_0EX_( &) {return remember_f(body_m);}
-		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(body_m));}
-		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(body_m));}
+		XTAL_TN2 head() XTAL_0FX_( &) {return remember_f(__body);}
+		XTAL_TN2 head() XTAL_0EX_( &) {return remember_f(__body);}
+		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(__body));}
+		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(__body));}
 		
 		XTAL_TN1 head(XTAL_DEF... oo)
 		XTAL_0EX
 		XTAL_REQ rebased_q<U_head> and (0 < sizeof...(oo))
 		{
-			return dismember_f(body_m, XTAL_REF_(oo)...);
+			return dismember_f(__body, XTAL_REF_(oo)...);
 		}
 
 		using word_width = cardinal_t<0>;
@@ -190,7 +190,7 @@ struct defer_field<U>
 	public:
 		using S_::S_;
 		using S_::self;
-		U_body body_m {};
+		U_body __body {};
 
 		template <integral_q A>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
@@ -202,8 +202,8 @@ struct defer_field<U>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
+		XTAL_TN2 head() XTAL_0FX {return U_head(__body);}
+		XTAL_TN2 head() XTAL_0EX {return U_head(__body);}
 		
 	};
 };
@@ -227,7 +227,7 @@ struct defer_field<unit_t[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-		U_body body_m:N_depth;
+		U_body __body:N_depth;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -239,26 +239,26 @@ struct defer_field<unit_t[N_width]>
 		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
-		,	body_m(member_f<U_head>(XTAL_REF_(a)))
+		,	__body(member_f<U_head>(XTAL_REF_(a)))
 		{}
 		template <integral_p A> requires  liminal_q<typename S_::word_depth>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
 		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
-		,	body_m(U_head(a)&N_mask)
+		,	__body(U_head(a)&N_mask)
 		{};
 		template <integral_p A> requires terminal_q<typename S_::word_depth>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
-		:	body_m(U_head(a)&N_mask)
+		:	__body(U_head(a)&N_mask)
 		{
 			assert(0 == a >> N_depth);
 		};
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return U_head(body_m);}
-		XTAL_TN2 head() XTAL_0EX {return U_head(body_m);}
+		XTAL_TN2 head() XTAL_0FX {return U_head(__body);}
+		XTAL_TN2 head() XTAL_0EX {return U_head(__body);}
 		
 		using word_depth = cardinal_t<N_depth + S_::word_depth::value>;// specified with `null_t[N_depth]`
 		using word_width = cardinal_t<N_width * S_::word_width::value>;// specified with `unit_t[N_width]`
