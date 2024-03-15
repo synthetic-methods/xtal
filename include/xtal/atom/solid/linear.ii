@@ -85,14 +85,8 @@ struct linear<U[N]>
 		
 	public:// CONVERSION
 
-		template <class W>
-		XTAL_FN2_(T &) reinterpret(W &w)
-		XTAL_0EX
-		{
-			static_assert(is_q<value_t<W>, U>);
-			static_assert(sizeof(W) == sizeof(T));
-			return force_f<T &>(w);
-		}
+		template <class W> XTAL_FN2 fudge_f(W  &w) XTAL_0EX {return forge_f<T  &>(w);}
+		template <class W> XTAL_FN2 fudge_f(W &&w) XTAL_0EX {return forge_f<T &&>(w);}
 
 		///\
 		Elementwise mutating transformer. \
