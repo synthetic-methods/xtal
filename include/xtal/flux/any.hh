@@ -1,5 +1,5 @@
 #pragma once
-#include "../bond/any.ii"// `_retail`
+#include "../cell/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::flux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::bond;
+namespace _retail = xtal::cell;
 #include "./_detail.hxx"
 
 

@@ -1,0 +1,32 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::cell
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Wrapper used to scheduled an existing type.\
+
+///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
+
+template <typename ..._s> XTAL_NYM cue;
+template <class    ...Ts> XTAL_ASK cue_q = bond::tag_p<cue, Ts...>;
+
+template <class U> struct cue<U>: conferred<U, bond::tag<cue>> {};
+template <       > struct cue< >: cue<size_s> {};
+
+template <class S=void, typename ...As>
+using cue_s = bond::compose_s<complete_t<S, confined_t<>>, cue<As...>>;
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

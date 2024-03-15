@@ -1,0 +1,113 @@
+#pragma once
+#include "./any.ii"
+#include "./sector.ii"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s> XTAL_NYM serial;
+template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
+template <class ...Ts> XTAL_ASK serial_q = bond::tag_p<serial, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Extends `sector::type` with multiplication defined by order convolution. \
+
+template <class U, size_t N>
+struct serial<U[N]>
+{
+	using __realized = bond::realize<U>;
+	
+	template <class T>
+	using demitype = typename sector<U[N]>::template homotype<T>;
+
+	template <class T>
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<serial>>;
+
+	template <class T>
+	class homotype: public hemitype<T>
+	{
+	//	TODO: Subclass to define serial pairs like `complex`. \
+
+		friend T;
+		using S_ = hemitype<T>;
+	
+	public:
+		using S_::S_;
+		using S_::subscript;
+		using S_::self;
+		using S_::twin;
+
+		///\
+		Multiplication by order convolution, truncated by `N`. \
+
+		XTAL_OP2_(T) * (T const &t)
+		XTAL_0FX
+		{
+			return twin() *= t;
+		}
+		XTAL_OP1_(T &) *= (T const &t)
+		XTAL_0EX
+		{
+			if constexpr (__realized::alignment_n < N) {
+				for (auto i = N; ~--i;) {subscript(i) *= t.subscript(0);
+				for (auto j = i; j-- ;) {subscript(i) += t.subscript(j)*subscript(i - j);}}
+			}
+			else {
+				bond::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {subscript(I) *= t.subscript(0);
+				bond::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {subscript(I) += t.subscript(J)*subscript(I - J);});});
+			}
+			return self();
+		}
+		///\
+		Produces the successor by pairwise addition from `begin()` to `end()`, \
+		assuming the entries of `this` are finite differences/derivatives. \
+
+		XTAL_OP1 ++ (int)
+		XTAL_0EX
+		{
+			auto t = twin(); operator++(); return t;
+		}
+		XTAL_OP1 ++ ()
+		XTAL_0EX
+		{
+		//	auto constexpr N0 = N - 0;
+			auto constexpr N1 = N - 1;
+			bond::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(0 + i) += subscript(1 + i)));
+			return self();
+		}
+
+		///\
+		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
+		assuming the entries of `this` are finite differences/derivatives. \
+
+		XTAL_OP1 -- (int)
+		XTAL_0EX
+		{
+			auto t = twin(); operator--(); return t;
+		}
+		XTAL_OP1 -- ()
+		XTAL_0EX
+		{
+			auto constexpr N0 = N - 0;
+			auto constexpr N1 = N - 1;
+			bond::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(N1 - i) -= subscript(N0 - i)));
+			return self();
+		}
+
+	};
+	using type = _detail::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

@@ -3,7 +3,7 @@
 #include "./polymer.ii"// testing...
 
 #include "./monomer.ii"
-#include "../resource/all.ii"
+#include "../resourced/all.ii"
 
 
 XTAL_ENV_(push)
@@ -16,12 +16,12 @@ namespace xtal::processor::__test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using T_alpha = typename atom::computer::alpha_t;
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_delta = typename atom::computer::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
-	using U_event = bond::key_s<U_stage>;
+	using U_event = cell::key_s<U_stage>;
 	using U_empty = message::confined_t<>;
 
 	using U_resize = message::resize_t<>;
@@ -30,8 +30,8 @@ void polymer_provision_spine__locamotion()
 	using U_gate = process::confined_t<typename level_t::poll<>, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::stored<N_store>
-	,	resource::spooled<N_spool>
+	,	resourced::stored<N_store>
+	,	resourced::spooled<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -74,12 +74,12 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename atom::computer::alpha_t;
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_delta = typename atom::computer::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
-	using U_event = bond::key_s<U_stage>;
+	using U_event = cell::key_s<U_stage>;
 	using U_empty = message::confined_t<>;
 
 	using U_resize = message::resize_t<>;
@@ -91,8 +91,8 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::stored<N_store>
-	,	resource::spooled<N_spool>
+	,	resourced::stored<N_store>
+	,	resourced::spooled<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -119,12 +119,12 @@ void polymer_provision_spool__combined()
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
-	using T_alpha = typename atom::computer::alpha_t;
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_delta = typename atom::computer::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
-	using U_event = bond::key_s<U_stage>;
+	using U_event = cell::key_s<U_stage>;
 	using U_empty = message::confined_t<>;
 
 	using U_resize = message::resize_t<>;
@@ -136,17 +136,17 @@ void polymer_provision_spool__composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::stored<N_store>
-	,	resource::spooled<N_spool>
+	,	resourced::stored<N_store>
+	,	resourced::spooled<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
-	u_vox <<= bond::key_s<>(62) << U_stage(0) << level_t(1); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= bond::key_s<>(65) << U_stage(0) << level_t(2); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= bond::key_s<>(69) << U_stage(0) << level_t(3); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= bond::key_s<>(65) << U_stage(0) << level_t(4); TRUE_(4 == u_vox.ensemble().size());
+	u_vox <<= cell::key_s<>(62) << U_stage(0) << level_t(1); TRUE_(1 == u_vox.ensemble().size());
+	u_vox <<= cell::key_s<>(65) << U_stage(0) << level_t(2); TRUE_(2 == u_vox.ensemble().size());
+	u_vox <<= cell::key_s<>(69) << U_stage(0) << level_t(3); TRUE_(3 == u_vox.ensemble().size());
+	u_vox <<= cell::key_s<>(65) << U_stage(0) << level_t(4); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);

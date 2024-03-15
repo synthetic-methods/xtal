@@ -1,0 +1,46 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::resourced
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ...Ts>
+concept enumerated_q = (...and _detail::enumerated_q<Ts>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Provides the limit of an enumerated type. \
+If `N == -1`, the type is assumed to be dynamically enumerated. \
+
+template <int N=-1>
+struct enumerated
+{
+	template <cell::any_q S>
+	class subtype: public bond::compose_s<S>
+	{
+		using S_ = bond::compose_s<S>;
+	
+	public:
+		using S_::S_;
+
+		XTAL_FN2_(size_t) enumerate()
+		XTAL_0EX
+		{
+			return N;
+		}
+
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

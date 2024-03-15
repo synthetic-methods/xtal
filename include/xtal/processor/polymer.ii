@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.ii"
 #include "./monomer.ii"
-#include "../resource/all.ii"
-#include "../bond/key.ii"
+#include "../resourced/all.ii"
+#include "../cell/key.ii"
 #include "../message/stage.ii"
 
 
@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM polymer;
-template <typename ..._s> XTAL_ASK polymer_q = atom::tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
 XTAL_FN2  polymer_f(XTAL_DEF  u)
@@ -33,9 +33,9 @@ struct polymer<U, As...>
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 		using Y_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
@@ -45,26 +45,26 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
+		template <class ...Xs> requires resourced::spooled_q<S_> and resourced::stored_q<S_>
 		struct binding: S_binding<Xs...>
 		{
 			using V_event = message::stage_t<>;
-			using U_event = bond::key_s<V_event>;
+			using U_event = cell::key_s<V_event>;
 			
 			using V_voice = typename Y_::template binding_t<Xs...>;
-			using U_voice = bond::key_s<V_voice>;
+			using U_voice = cell::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = atom::compose<atom::tag<polymer>
+			using subkind = bond::compose<bond::tag<polymer>
 			,	defer<V_voice>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 				
 				U_ensemble __ensemble;
 
@@ -80,7 +80,7 @@ struct polymer<U, As...>
 				using R_::influx;
 				
 				///\
-				Forwards the `bond::key`ed message to the associated instance. \
+				Forwards the `cell::key`ed message to the associated instance. \
 				Messages associated with a `message/stage.ii` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
@@ -89,14 +89,14 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TLX influx(bond::key_q auto io, XTAL_DEF ...oo)
+				XTAL_TLX influx(cell::key_q auto io, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto const i = io.head();
 					auto const o = io.core();
-					return influx(bond::key_s<>(i), o, XTAL_REF_(oo)...);
+					return influx(cell::key_s<>(i), o, XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(bond::key_s<> i, XTAL_DEF ...oo)
+				XTAL_TLX influx(cell::key_s<> i, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -104,7 +104,7 @@ struct polymer<U, As...>
 					assert(__ensemble and h == w->head());
 					return w->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(bond::key_s<> i, V_event o, XTAL_DEF ...oo)
+				XTAL_TLX influx(cell::key_s<> i, V_event o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -168,7 +168,7 @@ struct polymer<U, As...>
 					using namespace _detail;
 					auto i = __ensemble.begin(), iN = __ensemble.end();
 					tunnel_f(respan_x, i++);
-					atom::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
+					bond::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {
 						auto constexpr N = size_1 << M;// 8, 4, 2, 1
 						for (; N <= _std::distance(i, iN); i += N) {

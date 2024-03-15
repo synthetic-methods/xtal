@@ -102,21 +102,21 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(bond::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(cell::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
 	using Gated = processor::confined_t<Gate::template hold<>>;
 	Gated gated;
 
-	gated <<= std::make_tuple(bond::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
+	gated <<= std::make_tuple(cell::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
 	auto scope = scope_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, resource::stored<>>;
+	using Mixer = processor::monomer_t<Mix, resourced::stored<>>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -165,9 +165,9 @@ The directories in the project are organised by namespace with the leaves repres
 
 The [`**/all.ii`](include/xtal/all.ii?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.ii` and specializations like `monomer`, etc.
 
-The [`**/any.ii`](include/xtal/bond/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`bond/_kernel.hxx`](include/xtal/bond/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.ii`](include/xtal/cell/any.ii?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`cell/_kernel.hxx`](include/xtal/cell/_kernel.hxx?ts=3) to create higher-level decorators like `confine` and `confer`.
 
-The [`**/any.hh`](include/xtal/bond/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
+The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
 As a header-only library, the accompanying `*.cc` are there only for testing and are ommitted from the published package.
 
@@ -218,7 +218,7 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   };
 	};
 
-The type-functions [`compose` and `compose_s`](include/xtal/atom/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
+The type-functions [`compose` and `compose_s`](include/xtal/bond/compose.ii?ts=3) are used to linearize the inheritance chain, apropos of Scala's trait linearization. For example, the following definitions are equivalent (noting that `A, ..., Z` are applied in order to `S`)...
 
 	using T = compose<A, Z>::template subtype<S>;
 	using T = compose<A>::template subtype<S, Z>;
@@ -228,13 +228,13 @@ The type-functions [`compose` and `compose_s`](include/xtal/atom/compose.ii?ts=3
 
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace bond   {}
-	namespace flux   {namespace _retail = bond;}
+	namespace core   {}
+	namespace flux   {namespace _retail = core;}
 	namespace message   {namespace _retail = flux;}
 	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the core definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`bond/_kernel.hxx`](include/xtal/bond/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.ii`](include/xtal/process/any.ii?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`cell/_kernel.hxx`](include/xtal/cell/_kernel.hxx?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 
@@ -258,7 +258,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 
 |Feature                    |Reference|
 |---------------------------|---------|
-|Dependency composition     |[`atom/compose.ii`](include/xtal/atom/compose.ii?ts=3)|
+|Dependency composition     |[`bond/compose.ii`](include/xtal/bond/compose.ii?ts=3)|
 |Dependency management      |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
@@ -268,10 +268,10 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding`|
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::binding`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding` compatible `&&`arguments|
-|Buffer allocation          |[`atom/fluid/store.ii`](include/xtal/atom/fluid/store.ii?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`atom/solid/scalar.ii`](include/xtal/atom/solid/scalar.ii?ts=3)|
-|Buffer transformation      |[`atom/solid/series.ii`](include/xtal/atom/solid/series.ii?ts=3) incl. convolution and iFFT/FFT|
-|Numeric conditioning       |[`atom/compute.ii`](include/xtal/atom/compute.ii?ts=3) via `\.(?:truncate\|puncture)`|
+|Buffer allocation          |[`atom/store.ii`](include/xtal/atom/store.ii?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`atom/dissector.ii`](include/xtal/atom/dissector.ii?ts=3)|
+|Buffer transformation      |[`atom/series.ii`](include/xtal/atom/series.ii?ts=3) incl. convolution and iFFT/FFT|
+|Numeric conditioning       |[`bond/realize.ii`](include/xtal/bond/realize.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution
 

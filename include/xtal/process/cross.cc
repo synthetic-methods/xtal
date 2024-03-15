@@ -4,7 +4,7 @@
 
 #include "../flux/indent.ii"
 #include "../processor/monomer.ii"
-
+#include "../atom/all.ii"
 
 XTAL_ENV_(push)
 namespace xtal::process::__test
@@ -19,9 +19,9 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::solid::linear_t<int[2][3]>;
+		using U_model = atom::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
+		using U_mixer = processor::monomer_t<U_remix, resourced::stored<>>;
 
 		auto io = U_remix();
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
@@ -40,9 +40,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::solid::linear_t<int[2][3]>;
+		using U_model = atom::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
+		using U_mixer = processor::monomer_t<U_remix, resourced::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -62,9 +62,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::solid::linear_t<int[2][3]>;
+		using U_model = atom::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
+		using U_mixer = processor::monomer_t<U_remix, resourced::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -81,9 +81,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::solid::linear_t<int[2][3]>;
+		using U_model = atom::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
+		using U_mixer = processor::monomer_t<U_remix, resourced::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -98,13 +98,13 @@ TAG_("cross", "processor")
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
-	TRY_("shape with cell indent")
+	TRY_("shape with atom indent")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::solid::linear_t<int[2][3]>;
+		using U_model = atom::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
+		using U_mixer = processor::monomer_t<U_remix, resourced::stored<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
