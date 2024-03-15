@@ -42,7 +42,7 @@ struct spool<A>
 		using S_ = hemitype<T>;
 
 		using U_store = store_t<A>;
-		using U_visor = typename U_store::iterator;
+		using U_point = typename U_store::iterator;
 		using U_value = typename U_store::value_type;
 		using U_count = typename U_store::difference_type;
 
@@ -65,7 +65,7 @@ struct spool<A>
 		XTAL_TO2_(XTAL_TN2       end(U_count n=0), _std::prev(__store.  end(), n + __end))
 		XTAL_TN2_(U_value &)    peek(U_count n=0) XTAL_0EX {              return *begin(n);}
 		XTAL_TN1_(U_value &) advance(U_count n=1) XTAL_0EX {__begin += n; return *begin(0);}
-		XTAL_TN1_(U_value &) abandon(bool    n=1)
+		XTAL_TN1_(U_value &) abandon(U_count n=1)
 		XTAL_0EX
 		{
 			if (n) {
@@ -84,7 +84,7 @@ struct spool<A>
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-		XTAL_TN0 pop(U_visor i)
+		XTAL_TN0 pop(U_point i)
 		XTAL_0EX
 		{
 			assert(i < end());
@@ -98,14 +98,14 @@ struct spool<A>
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_TN2_(U_visor) scan(XTAL_DEF w)
+		XTAL_TN2_(U_point) scan(XTAL_DEF w)
 		XTAL_0EX
 		{
 			return _std::lower_bound(__store.begin(), __store.end()
 			,	XTAL_REF_(w)
 			);
 		}
-		XTAL_TN2_(U_visor) scan(XTAL_DEF w, XTAL_DEF f)
+		XTAL_TN2_(U_point) scan(XTAL_DEF w, XTAL_DEF f)
 		XTAL_0EX
 		{
 			return _std::lower_bound(__store.begin(), __store.end()
@@ -116,10 +116,10 @@ struct spool<A>
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(U_visor) push(U_value v)
+		XTAL_TN1_(U_point) push(U_value v)
 		XTAL_0EX
 		{
-			U_visor v_ = scan(v);
+			U_point v_ = scan(v);
 			if (*v_ == v) {
 				_std::swap(*v_, v); return v_;
 			}
@@ -128,17 +128,17 @@ struct spool<A>
 			}
 		}
 		template <is_q<U_value> W>
-		XTAL_TN1_(U_visor) poke(U_visor v_, W &&w)
+		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
 		XTAL_0EX
 		{
 			return __store.insert(v_, XTAL_REF_(w));
 		}
-		XTAL_TN1_(U_visor) poke(U_visor v_, XTAL_DEF ...ws)
+		XTAL_TN1_(U_point) poke(U_point v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		{
 			return __store.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
-		XTAL_TN1_(U_visor) poke(U_visor v_, XTAL_DEF ...ws)
+		XTAL_TN1_(U_point) poke(U_point v_, XTAL_DEF ...ws)
 		XTAL_0EX
 		XTAL_REQ_(__store.inplace(v_, XTAL_REF_(ws)...))
 		{
