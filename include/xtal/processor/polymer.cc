@@ -4,6 +4,13 @@
 
 #include "./monomer.ii"
 #include "../resourced/all.ii"
+#include "../scheduled/all.ii"
+
+
+
+
+
+
 
 
 XTAL_ENV_(push)
@@ -27,6 +34,13 @@ void polymer_provision_spine__locamotion()
 	using U_resize = message::resize_t<>;
 	using U_scope = message::scope_t<>;
 	
+
+	using U_thunk = scheduled::thunk_t<resourced::spooled<N_spool>>;
+	using U_scope = message::scope_t<>;
+	using U_cue = cell::cue_s<>;
+
+//	Using `thunk` here currently fails if dynamically allocated. \
+	using U_gate = process::confined_t<typename U_thunk::template inqueue<level_t>, typename U_stage::expect<>>;
 	using U_gate = process::confined_t<typename level_t::poll<>, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate

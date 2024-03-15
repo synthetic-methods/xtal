@@ -26,10 +26,10 @@ TAG_("cue")
 
 		TRUE_(99 == t0.template head<0>());
 		TRUE_(99 == t1.template head<0>());
-		TRUE_(equal_f(counted_t<>(11, 22), t1.core()));
+		TRUE_(equal_f(counted_t<>(11, 22), t1.then()));
 
 		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(U_target).head()), typename V_target::template head_t<>>);
-		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(U_target).core()), U_source>);
+		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(U_target).then()), U_source>);
 
 	}
 }

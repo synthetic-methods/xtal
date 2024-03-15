@@ -29,8 +29,8 @@ void spool__operation()
 	TRUE_(0 == q.size());
 	q.push(e1); TRUE_(1 == q.size());
 	q.push(e2); TRUE_(2 == q.size());
-	TRUE_(-1.0 == q.peek().core()); q.advance(1); TRUE_(1 == q.size());
-	TRUE_(-2.0 == q.peek().core()); q.advance(1); TRUE_(0 == q.size());
+	TRUE_(-1.0 == q.peek().then()); q.advance(1); TRUE_(1 == q.size());
+	TRUE_(-2.0 == q.peek().then()); q.advance(1); TRUE_(0 == q.size());
 
 }
 TAG_("spool")

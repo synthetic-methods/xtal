@@ -93,7 +93,7 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					auto const i = io.head();
-					auto const o = io.core();
+					auto const o = io.then();
 					return influx(cell::key_s<>(i), o, XTAL_REF_(oo)...);
 				}
 				XTAL_TLX influx(cell::key_s<> i, XTAL_DEF ...oo)

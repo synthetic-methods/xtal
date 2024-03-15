@@ -1,14 +1,14 @@
 #pragma once
 
 #ifdef  NDEBUG
-#define XTAL_LOG 0//release
+#define XTAL_SIC 0//release
 #else
-#define XTAL_LOG 1//debug
+#define XTAL_SIC 1//debug
 #include <iostream>
 #endif
 
-#define  _LIBCPP_DEBUG XTAL_LOG
-#define _GLIBCXX_DEBUG XTAL_LOG
+#define  _LIBCPP_DEBUG XTAL_SIC
+#define _GLIBCXX_DEBUG XTAL_SIC
 
 
 ///////////////////////////////////////////////////////////////////////////////////

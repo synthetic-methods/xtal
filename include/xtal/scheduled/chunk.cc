@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./spliced.ii"// testing...
+#include "./chunk.ii"// testing...
 
 #include "../resourced/all.ii"
 #include "../processor/monomer.ii"
@@ -14,19 +14,19 @@ namespace xtal::scheduled::__test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class mix_t>
-void spliced_processor_x1()
+void chunk_processor_x1()
 {
 	using namespace resourced;
 //	using namespace scheduled;
 
-	using U_spliced = spliced_t<spooled<(1<<4)>>;
+	using U_chunk = chunk_t<spooled<(1<<4)>>;
 
 	using U_alpha = typename bond::realized::alpha_t;
 	using U_event = message::packet_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
 	,	stored<>
-	,	U_spliced::template inqueue<onset_t>
+	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = message::resize_t<>;
 	using scope_n  = message::scope_t<>;
@@ -57,11 +57,11 @@ void spliced_processor_x1()
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
 
 }
-TAG_("spliced", "processor")
+TAG_("chunk", "processor")
 {
 	using namespace processor;
-	TRY_("drive dynamic") {spliced_processor_x1<dynamic_onset_mix_t>();}
-//	TRY_("drive  static") {spliced_processor_x1< static_onset_mix_t>();}// TODO?
+	TRY_("drive dynamic") {chunk_processor_x1<dynamic_onset_mix_t>();}
+//	TRY_("drive  static") {chunk_processor_x1< static_onset_mix_t>();}// TODO?
 
 }
 

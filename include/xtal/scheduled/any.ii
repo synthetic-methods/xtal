@@ -44,61 +44,61 @@ struct define
 				static_assert(complete_q<Xs...>);
 				
 			protected:
-				using V_tuple = _std::tuple<Xs...>;
+				using W_tuple = _std::tuple<Xs...>;
 				using U_tuple = message::packet_t<Xs...>;
 				using U_event = cell::cue_s<U_tuple>;
-				using U_delay = typename U_event::template head_t<>;
+				using U_delay = cell::cue_s<>;
+				using V_delay = typename U_delay::template head_t<>;
 
 			public:
 				using R_::R_;
 				using R_::self;
-				using R_::influx;
 
-				///\
-				Invokes `influx` immediately, \
-				expanding the provided arguments. \
-				
-				XTAL_TLX influx(U_tuple u_tuple)
+			public:// POLL
+			//	using R_::infuse;
+
+				XTAL_TLX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return u_tuple.apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)));
+					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TLX influx(V_tuple v_tuple)
+				XTAL_TLX infuse(U_tuple u)
 				XTAL_0EX
 				{
-					return _std::apply([=, this] (Xs ...xs) XTAL_0FN_(influx(xs...)), v_tuple);
+					return u.apply([=, this] XTAL_1FN_(self().influx));
 				}
-
-				///\
-				Invokes `ingest(U_event)` with the given argument. \
-
-				XTAL_TLX influx(XTAL_DEF_(cell::cue_q) u_event)
+				XTAL_TLX infuse(W_tuple v)
 				XTAL_0EX
 				{
-					(void) self().ingest(XTAL_REF_(u_event));
-					return R_::influx();
+					return _std::apply([=, this] XTAL_1FN_(self().influx), v);
 				}
 
-				///\
-				Invokes `influx(U_event)` with the event constructed from the arguments. \
+			public:// ENQUEUE
+			//	using R_::influx;
 
-				XTAL_TLX influx(U_delay d_t, U_tuple u_tuple)
+				XTAL_TLX influx(XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, u_tuple));
-				}
-				XTAL_TLX influx(U_delay d_t, V_tuple v_tuple)
-				XTAL_0EX
-				{
-					return _std::apply([=, this] (Xs ...us) XTAL_0FN_(influx(d_t, us...)), v_tuple);
-				}
-				XTAL_TLX influx(U_delay d_t, Xs ...xs)
-				XTAL_0EX
-				{
-					return influx(d_t, U_tuple(xs...));
+					return R_::influx(XTAL_REF_(oo)...);
 				}
 
-				XTAL_TLX influx(cell::cue_s<> d_t, XTAL_DEF ...oo)
+				XTAL_TLX influx(V_delay d_t, U_tuple d_u)
+				XTAL_0EX
+				{
+					return influx(U_event(d_t, d_u));
+				}
+				XTAL_TLX influx(V_delay d_t, W_tuple d_v)
+				XTAL_0EX
+				{
+					return influx(d_t, _std::apply([=, this] XTAL_1FN_(U_tuple)));
+				}
+				XTAL_TLX influx(V_delay d_t, XTAL_DEF_(is_q<Xs>) ...d_xs)
+				XTAL_0EX
+				{
+					return influx(d_t, U_tuple(XTAL_REF_(d_xs)...));
+				}
+
+				XTAL_TLX influx(cell::cue_s<> d_t, auto &&...oo)
 				XTAL_0EX
 				{
 					return influx(d_t.head(), XTAL_REF_(oo)...);

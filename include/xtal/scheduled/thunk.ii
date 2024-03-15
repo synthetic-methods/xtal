@@ -19,7 +19,7 @@ which produces a signal by successive calls to `method`. \
 Adapt to provide polling. \
 
 template <typename ...As>
-struct polled
+struct thunk
 {
 	using subkind = bond::compose<As..., resourced::spooled<-1>>;
 
@@ -43,31 +43,39 @@ struct polled
 				using R_ = bond::compose_s<R, subkind>;
 			
 			protected:
-				using typename R_::V_tuple;
-				using typename R_::U_tuple;
 				using typename R_::U_event;
-				using typename R_::U_delay;
+				using typename R_::V_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
-				U_delay __delay {0};
-				U_spool __queue {U_event::template sentry<-1>(), U_event::template sentry<1>()};
+				V_delay __delay {0};
+				U_spool __spool {U_event::template sentry<-1>(), U_event::template sentry<1>()};
 
 			public:
 				using R_::R_;
 
-				XTAL_TN0 ingest(U_event u_event)
+				XTAL_TLX infuse(auto &&o)
 				XTAL_0EX
 				{
-					if (u_event.head() < __delay and __queue.empty()) {
-						(void) __queue.abandon().head(__delay = 0);
+					return R_::infuse(XTAL_REF_(o));
+				}
+				XTAL_TLX infuse(is_q<X> auto &&x)
+				XTAL_0EX
+				{
+					return __spool.peek(0).then().infuse(XTAL_REF_(x));
+				}
+				XTAL_TLX infuse(is_q<U_event> auto &&u)
+				XTAL_0EX
+				{
+					if (__spool.empty() and u.head() < __delay) {
+						(void) __spool.abandon().head(__delay = 0);
 					}
-					__queue.push(XTAL_MOV_(u_event));
+					return u == *__spool.push(XTAL_REF_(u));
 				}
 
 				XTAL_TN2 method()
 				XTAL_0EX
 				{
-					return __queue.advance(__delay++ == __queue.peek(1).head()).core().head();
+					return __spool.advance(__delay++ == __spool.peek(1).head()).then().head();
 				}
 
 				///\todo\
@@ -80,16 +88,13 @@ struct polled
 				///\todo\
 				Once the phasor-type is settled, define a `method` that updates only on reset. \
 
-				///\todo\
-				Override immediate-dispatch `influx` to enqueue the current value? \
-
 			};
 		};
 
 	};
 };
 template <class X>
-using polled_t = confined_t<polled<X>>;
+using thunk_t = confined_t<thunk<X>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

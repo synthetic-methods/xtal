@@ -228,8 +228,8 @@ The type-functions [`compose` and `compose_s`](include/xtal/bond/compose.ii?ts=3
 
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace core   {}
-	namespace flux   {namespace _retail = core;}
+	namespace cell   {}
+	namespace flux   {namespace _retail = cell;}
 	namespace message   {namespace _retail = flux;}
 	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}

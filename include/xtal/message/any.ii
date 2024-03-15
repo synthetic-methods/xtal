@@ -62,7 +62,7 @@ struct define
 				XTAL_TLX influx(cell::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
-					return self().influx(o.head(), o.core(), XTAL_REF_(oo)...);
+					return self().influx(o.head(), o.then(), XTAL_REF_(oo)...);
 				}
 				XTAL_TLX influx(cell::mark_s<> m, XTAL_DEF ...oo)
 				XTAL_0EX
