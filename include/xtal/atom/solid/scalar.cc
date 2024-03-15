@@ -19,9 +19,10 @@ TAG_("solid", "scalar")
 	{
 		using T_sigma = typename atom::computer::sigma_t;
 		using T_alpha = typename atom::computer::alpha_t;
+		using W_alpha = solid::scalar_t<T_alpha[2]>;
 
-		auto foo = solid::scalar_t<T_alpha[2]> {2.0, 0.5};
-		auto bar = atom::computer::template unsquare_f<0>((T_alpha) 2);
+		auto foo = W_alpha {2.0, 0.5};
+		auto bar = W_alpha::fudge_f(atom::computer::template unsquare_f<0>((T_alpha) 2));
 		bar.transmute([] XTAL_1FN_(atom::computer::square_f), atom::computrim_f<1>);
 		TRUE_(foo == bar);
 
@@ -30,8 +31,9 @@ TAG_("solid", "scalar")
 	{
 		using T_sigma = typename atom::computer::sigma_t;
 		using T_alpha = typename atom::computer::alpha_t;
+		using W_alpha = solid::scalar_t<T_alpha[2]>;
 
-		auto bar = solid::scalar_t<T_alpha[2]> {2.0, 0.5};
+		auto bar = W_alpha {2.0, 0.5};
 		auto foo = bar.reflected(-1);
 		auto baz = foo.reflected(+1);
 		
