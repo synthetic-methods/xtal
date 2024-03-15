@@ -1,0 +1,39 @@
+#pragma once
+#include "./any.ii"
+#include "./fusor.ii"
+#include "../quantum/phase.ii"
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::quanta
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <                     typename ..._s> XTAL_NYM phasor;
+template <                     typename ..._s> XTAL_ASK phasor_q = bond::tag_p<phasor, _s...>;
+template <array_q W=size_t[2], typename ...As> XTAL_USE phasor_t = confined_t<phasor<W, As...>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+
+template <array_q W, typename ...As>
+struct phasor<W, As...>
+{
+	XTAL_LET N_ = _std::       extent_v<W>;
+	XTAL_USE U_ = _std::remove_extent_t<W>;
+	
+	using W_phase = quantum::phase_t<U_>[N_];
+	using subkind = bond::compose<bond::tag<phasor>, As..., fusor<W_phase>>;
+
+	template <class S>
+	using subtype = bond::compose_s<S, subkind>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

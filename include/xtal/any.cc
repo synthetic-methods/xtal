@@ -1,7 +1,7 @@
 #pragma once
 #include "./message/all.ii"
 #include "./process/any.ii"
-#include "./resource/all.ii"
+#include "./resourced/all.ii"
 #include <catch2/catch_all.hpp>
 
 #define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))
@@ -19,17 +19,17 @@ namespace xtal::__test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace atom;
+using namespace bond;
 
-using scale_t = message::label_t<typename atom::computer::alpha_t, struct __scale__>;
-using level_t = message::label_t<typename atom::computer::alpha_t, struct __level__>;
+using scale_t = message::label_t<typename bond::realized::alpha_t, struct __scale__>;
+using level_t = message::label_t<typename bond::realized::alpha_t, struct __level__>;
 /*/
-using onset_t = message::label_t<typename atom::computer::alpha_t, struct __onset__>;
+using onset_t = message::label_t<typename bond::realized::alpha_t, struct __onset__>;
 /*/
 struct onset
-:	message::confer<typename atom::computer::alpha_t
+:	message::confer<typename bond::realized::alpha_t
 	,	message::any<struct __onset__>
-	,	resource::enumerated<(1<<7)>
+	,	resourced::enumerated<(1<<7)>
 	>
 {
 };
@@ -115,7 +115,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename atom::computer::iota_t;
+	using U_count  = typename bond::realized::iota_t;
 	using U_restep = message::restep_t<U_count>;
 
 	template <class T>

@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.hh"
 
-#include "../bond/all.ii"
+#include "../cell/all.ii"
 #include "../flux/all.ii"
 #include "../process/any.hh"
-#include "../resource/enumerated.ii"
+#include "../resourced/enumerated.ii"
 
 
 XTAL_ENV_(push)
@@ -20,10 +20,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -50,21 +50,21 @@ struct define
 			XTAL_LET_(size_t) W_mask = ~M_mask;
 			
 			template <flux::any_q R>
-			class subtype: public atom::compose_s<R>
+			class subtype: public bond::compose_s<R>
 			{
-				using R_ = atom::compose_s<R>;
+				using R_ = bond::compose_s<R>;
 			
 			public:
 				using R_::R_;
 				using R_::self;
 				using R_::influx;
 
-				XTAL_TLX influx(bond::mark_s<T> o, XTAL_DEF ...oo)
+				XTAL_TLX influx(cell::mark_s<T> o, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					return self().influx(o.head(), o.core(), XTAL_REF_(oo)...);
 				}
-				XTAL_TLX influx(bond::mark_s<> m, XTAL_DEF ...oo)
+				XTAL_TLX influx(cell::mark_s<> m, XTAL_DEF ...oo)
 				XTAL_0EX
 				{
 					if (~m & M_mask) {
@@ -85,7 +85,7 @@ struct define
 
 		template <int N_mask=-1>
 		struct attach
-		:	atom::compose<address<N_mask>, typename S_::template afflux<>>
+		:	bond::compose<address<N_mask>, typename S_::template afflux<>>
 		{
 		};
 		///\
@@ -96,10 +96,10 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <process::any_q R> requires resource::enumerated_q<T>
-			class subtype: public atom::compose_s<R, subkind>
+			template <process::any_q R> requires resourced::enumerated_q<T>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 				using K_ = typename R_::template head_t<>;
 			
 			public:
@@ -146,7 +146,7 @@ struct define
 					class resolve
 					{
 						template <size_t ...I>
-						XTAL_FN2 method_f(atom::seek_t<I...>)
+						XTAL_FN2 method_f(bond::seek_t<I...>)
 						XTAL_0EX
 						{
 							using doing = typename R_::template being<Xs...>;
@@ -154,7 +154,7 @@ struct define
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(atom::seek_f<T::enumerate()> {});
+						XTAL_LET m_method = method_f(bond::seek_f<T::enumerate()> {});
 					
 					};
 					template <auto ...Is> XTAL_LET m_method = resolve<Is...>::m_method;
@@ -173,9 +173,9 @@ struct define
 			using subkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;
@@ -202,9 +202,9 @@ struct define
 			using subkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;
@@ -231,9 +231,9 @@ struct define
 			using subkind = attach<N_mask>;
 			
 			template <process::any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 			
 			public:
 				using R_::R_;

@@ -11,15 +11,15 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_p U=typename atom::computer::iota_t>
+template <integral_p U=typename bond::realized::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -29,14 +29,14 @@ struct restep
 
 	};
 };
-template <integral_p U=typename atom::computer::iota_t>
+template <integral_p U=typename bond::realized::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_FN2 restep_f(XTAL_DEF w)
 XTAL_0EX
 {
-	using _computer = atom::compute<XTAL_TYP_(w)>;
-	return restep_t<typename _computer::iota_t>(XTAL_REF_(w));
+	using __realized = bond::realize<XTAL_TYP_(w)>;
+	return restep_t<typename __realized::iota_t>(XTAL_REF_(w));
 }
 
 

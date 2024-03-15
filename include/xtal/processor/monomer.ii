@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "../resource/all.ii"
+#include "../resourced/all.ii"
 #include "../message/resize.ii"
 #include "../message/respan.ii"
 #include "../message/revise.ii"
@@ -12,7 +12,7 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM monomer;
-template <typename ..._s> XTAL_ASK monomer_q = atom::tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ...As>
 XTAL_FN2  monomer_f(XTAL_DEF  u)
@@ -30,9 +30,9 @@ struct monomer<U, As...>
 	using subkind = confer<U, As...>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 		template <class ...Xs>
 		using S_binding = typename S_::template binding<Xs...>;
@@ -47,17 +47,17 @@ struct monomer<U, As...>
 		template <class ...Xs>
 		struct binding: S_binding<Xs...>
 		{
-			using subkind = atom::compose<atom::tag<monomer>
-			,	bond::confer<typename S_binding<Xs...>::Y_result>
+			using subkind = bond::compose<bond::tag<monomer>
+			,	cell::confer<typename S_binding<Xs...>::Y_result>
 		//	,	As...
 		//	,	U_resize::attach<>
 			,	U_scope::attach<>
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 
 			public:
 			//	using R_::R_;
@@ -87,7 +87,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::stored_q<S_>
+		template <class ...Xs> requires resourced::stored_q<S_>
 		struct binding<Xs...>: S_binding<Xs...>
 		{
 			using Y_return = typename S_binding<Xs...>::Y_return;
@@ -95,10 +95,10 @@ struct monomer<U, As...>
 			using U_serve  = visor_t<U_store>;
 			using U_respan = message::respan_t<U_serve>;
 		
-			XTAL_LET_(int) N_share = atom::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
+			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 
-			using subkind = atom::compose<atom::tag<monomer>
-			,	bond::refer<U_serve>
+			using subkind = bond::compose<bond::tag<monomer>
+			,	cell::refer<U_serve>
 			,	message::revise<U_store>
 			,	As...// NOTE: Necessary for `intermit`...
 			,	U_resize::attach<>
@@ -106,9 +106,9 @@ struct monomer<U, As...>
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 
 			public:
 				using R_::R_;

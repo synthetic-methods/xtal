@@ -3,7 +3,7 @@
 #include "./monomer.ii"// testing...
 
 #include "./all.ii"
-#include "../resource/all.ii"
+#include "../resourced/all.ii"
 #include "../message/all.ii"
 
 XTAL_ENV_(push)
@@ -16,11 +16,11 @@ namespace xtal::processor::__test
 template <typename ...As>
 void monomer_lifting()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
 	T_sigma constexpr N_size = 5;
-	using U_group = atom::solid::linear_t<T_alpha[N_size]>;
+	using U_group = atom::linear_t<T_alpha[N_size]>;
 	using U_resize = message::resize_t<>;
 	using U_scope = message::scope_t<>;
 
@@ -40,7 +40,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<resource::stored<>>();}
+	TRY_("pure (material)") {monomer_lifting<resourced::stored<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -51,8 +51,8 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_provision__advancing()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
 	using U_scope = message::scope_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
@@ -93,10 +93,10 @@ void monomer_provision__advancing()
 template <class U_add>
 void monomer_provision__provisioning()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
-	using provide = resource::stored<(1<<5)>;
+	using provide = resourced::stored<(1<<5)>;
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
 	using U_serve = visor_t<U_store>;
@@ -141,8 +141,8 @@ TAG_("monomer", "message")
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
 	size_t constexpr N = 4;
 	
@@ -151,8 +151,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::stored<>>;
-	using mul_op = monomer_t<U_mul, resource::stored<>>;
+	using mix_op = monomer_t<U_add, resourced::stored<>>;
+	using mul_op = monomer_t<U_mul, resourced::stored<>>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
 	yhs <<= message::resize_f(N);
@@ -171,8 +171,8 @@ void monomer_chaining__rvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -181,8 +181,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::stored<>>;
-	using mul_op = monomer_t<U_mul, resource::stored<>>;
+	using mix_op = monomer_t<U_add, resourced::stored<>>;
+	using mul_op = monomer_t<U_mul, resourced::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
@@ -203,8 +203,8 @@ void monomer_chaining__lvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using T_sigma = typename atom::computer::sigma_t;
-	using T_alpha = typename atom::computer::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_alpha = typename bond::realized::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -213,7 +213,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<U_add, resource::stored<>>;
+	using mix_op = monomer_t<U_add, resourced::stored<>>;
 	using mix_fn = monomer_t<U_add>;
 	using ndfn = monomer_t<dynamic_count_t>;
 

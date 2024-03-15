@@ -1,5 +1,9 @@
 #pragma once
-#include "./any.cc"
-#include "./cue.cc"
-#include "./key.cc"
-#include "./mark.cc"
+#include "./compose.cc"
+#include "./identify.cc"
+#include "./identity.cc"
+#include "./pack.cc"
+#include "./realize.cc"
+#include "./seek.cc"
+#include "./tab.cc"
+#include "./tag.cc"

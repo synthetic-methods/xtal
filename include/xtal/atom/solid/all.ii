@@ -1,6 +1,0 @@
-#pragma once
-#include "./linear.ii"
-#include "./scalar.ii"
-#include "./sector.ii"
-#include "./serial.ii"
-#include "./series.ii"

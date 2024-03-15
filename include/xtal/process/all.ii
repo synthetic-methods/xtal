@@ -1,7 +1,3 @@
 #pragma once
 #include "./any.ii"
 #include "./cross.ii"
-#include "./phasor.ii"
-#include "./pulsar.ii"
-#include "./quasar.ii"
-#include "./fusor.ii"

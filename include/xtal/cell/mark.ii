@@ -1,0 +1,32 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::cell
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Controls access to an `address`d `attach`ment.\
+
+///\see e.g. [../message/any#attach] or [../message/any#dispatch]. \
+
+template <typename ..._s> XTAL_NYM mark;
+template <class    ...Ts> XTAL_ASK mark_q = bond::tag_p<mark, Ts...>;
+
+template <class U> struct mark<U>: conferred<U, bond::tag<mark>> {};
+template <       > struct mark< >: mark<size_t> {};
+
+template <class S=void, typename ...As>
+using mark_s = bond::compose_s<complete_t<S, confined_t<>>, mark<As...>>;
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
