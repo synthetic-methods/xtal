@@ -49,10 +49,10 @@ struct spliced
 				using typename R_::U_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
-				U_spool q_{U_event::template sentry<1>()};
+				U_spool __spool {U_event::template sentry<1>()};
 
-				XTAL_TO4_(XTAL_TN2 next_tail(), q_.peek().core())
-				XTAL_TO4_(XTAL_TN2 next_head(), q_.peek().head())
+				XTAL_TO4_(XTAL_TN2 next_core(), __spool.peek().core())
+				XTAL_TO4_(XTAL_TN2 next_head(), __spool.peek().head())
 
 			public:
 				using R_::R_;
@@ -60,17 +60,17 @@ struct spliced
 				using R_::influx;
 				
 				///\
-				Invokes `influx` immediately if the given delay `dot == 0`, \
-				otherwise enqueues the event `dot` at the specified index. \
+				Invokes `influx` immediately if the given delay `u_event == 0`, \
+				otherwise enqueues the event `u_event` at the specified index. \
 
-				XTAL_TN0 ingest(U_event dot)
+				XTAL_TN0 ingest(U_event u_event)
 				XTAL_0EX
 				{
-					if (0 == dot.head()) {
-						(void) influx(dot.core());
+					if (0 == u_event.head()) {
+						(void) influx(u_event.core());
 					}
 					else {
-						q_.push(dot);
+						__spool.push(u_event);
 					}
 				}
 
@@ -92,9 +92,9 @@ struct spliced
 				XTAL_0EX
 				{
 					R_::relay(i);
-					for (; 0 < q_.size() and next_head() <= i; q_.pop()) {
-					//	R_::operator<<=(next_tail().apple());
-						(void) influx(next_tail());
+					for (; 0 < __spool.size() and next_head() <= i; __spool.pop()) {
+					//	R_::operator<<=(next_core().apple());
+						(void) influx(next_core());
 					}
 					return delay();
 				}
