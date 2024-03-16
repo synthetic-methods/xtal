@@ -41,31 +41,55 @@ template <complete_q T, class ...Ts>	struct     complete<T, Ts...>    {using typ
 template <              class ...Ts>	using      complete_t = typename complete<Ts...>::type;
 
 
-template <auto       N >	using    integral   = _std::integral_constant<decltype(N), N>;
+////////////////////////////////////////////////////////////////////////////////
+
+template <class      T >	concept  constant_q = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
+template <class      T >	concept constants_q = constant_q<T> and _std::is_array_v<typename T::value_type>;
+template <auto    ...Ns>   struct _constants
+{
+	using value_type = _std::array<_std::common_type_t<decltype(Ns)...>, sizeof...(Ns)>;
+	using type = _std::integral_constant<value_type, value_type {Ns...}>;
+};
+
+template <auto    ...Ns>   using   constants   = typename _constants<Ns...>::type;
+template <auto    ...Ns>   using   cardinals   = constants<(size_t) Ns...>;
+template <auto    ...Ns>   using    ordinals   = constants<(int)    Ns...>;
+template <auto    ...Ns>   using    logicals   = constants<(bool)   Ns...>;
+
+template <auto       N >	using    constant   = _std::integral_constant<decltype(N), N>;
 template <auto       N >	using    cardinal   = _std::integral_constant<size_t,      N>;
 template <auto       N >	using     ordinal   = _std::integral_constant<int,         N>;
 template <auto       N >	using     logical   = _std::integral_constant<bool,        N>;
 
-template <class      T >	concept  integral_o = _std::     integral  <T>;
-template <class      T >	concept  cardinal_o = _std::  is_unsigned_v<T>;
-template <class      T >	concept   ordinal_o = _std::    is_signed_v<T>;
-template <class      T >	concept   logical_o = _std:: convertible_to<T, bool>;
 
-template <class      T >	concept  integral_q = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
-template <class      T >	concept  cardinal_q = integral_q<T> and cardinal_o<typename T::value>;
-template <class      T >	concept   ordinal_q = integral_q<T> and  ordinal_o<typename T::value>;
-template <class      T >	concept   logical_q = integral_q<T> and  logical_o<typename T::value>;
+template <class      T >	concept _integral_p = _std::     integral  <T>;
+template <class      T >	concept _cardinal_p = _std::  is_unsigned_v<T>;
+template <class      T >	concept  _ordinal_p = _std::    is_signed_v<T>;
+template <class      T >	concept  _logical_p = _std:: convertible_to<T, bool>;
 
-template <class      T >	concept  integral_p = integral_o<T> or integral_q<T>;
-template <class      T >	concept  cardinal_p = cardinal_o<T> or cardinal_q<T>;
-template <class      T >	concept   ordinal_p =  ordinal_o<T> or  ordinal_q<T>;
-template <class      T >	concept   logical_p =  logical_o<T> or  logical_q<T>;
+template <class      T >	concept integrals_q = constants_q<T> and _integral_p<typename T::value_type::value_type>;
+template <class      T >	concept cardinals_q = constants_q<T> and _cardinal_p<typename T::value_type::value_type>;
+template <class      T >	concept  ordinals_q = constants_q<T> and  _ordinal_p<typename T::value_type::value_type>;
+template <class      T >	concept  logicals_q = constants_q<T> and  _logical_p<typename T::value_type::value_type>;
 
-template <class      T >	concept  terminal_q = integral_q<T> and 0 == T::value;
-template <class      T >	concept   liminal_q = integral_q<T> and 0 != T::value;
-template <liminal_q  T >	using  subliminal   = integral<(T{} - sign_n<T{}>)>;
-template <liminal_q  T >	using semiliminal   = integral<(T{} >> 1)>;
+template <class      T >	concept  integral_q =  constant_q<T> and _integral_p<typename T::value_type>;
+template <class      T >	concept  cardinal_q =  constant_q<T> and _cardinal_p<typename T::value_type>;
+template <class      T >	concept   ordinal_q =  constant_q<T> and  _ordinal_p<typename T::value_type>;
+template <class      T >	concept   logical_q =  constant_q<T> and  _logical_p<typename T::value_type>;
 
+template <class      T >	concept  integral_p =  integral_q<T>  or _integral_p<T>;
+template <class      T >	concept  cardinal_p =  cardinal_q<T>  or _cardinal_p<T>;
+template <class      T >	concept   ordinal_p =   ordinal_q<T>  or  _ordinal_p<T>;
+template <class      T >	concept   logical_p =   logical_q<T>  or  _logical_p<T>;
+
+
+template <class      T >	concept   liminal_q =  integral_q<T> and 0 != T::value;
+template <class      T >	concept  terminal_q =  integral_q<T> and 0 == T::value;
+template <liminal_q  T >	using  subliminal   = constant<(T{} - sign_n<T{}>)>;
+template <liminal_q  T >	using semiliminal   = constant<(T{} >> 1)>;
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <class      T >	using       based_t = _std::remove_cvref_t<complete_t<T>>;
 template <class      T >	concept     based_q = _std::is_trivially_copyable_v<T>;
@@ -119,9 +143,9 @@ template <           class ...Ts>	concept          as_q = epitropic<Ts...>::valu
 template <class  T , class    Y >	concept          of_p = _std::derived_from<based_t<Y>, based_t<T>>;
 template <class  T , class    Y >	concept          of_q = _std::derived_from<based_t<T>, based_t<Y>>;
 
-template <           class ...Ts>	using       related   = _std::common_type  <Ts...>;
-template <           class ...Ts>	using       related_t = _std::common_type_t<Ts...>;
-template <           class ...Ts>	concept     related_q = requires {typename related_t<Ts...>;};
+template <           class ...Ts>	using        common   = _std::common_type  <Ts...>;
+template <           class ...Ts>	using        common_t = _std::common_type_t<Ts...>;
+template <           class ...Ts>	concept      common_q = requires {typename common_t<Ts...>;};
 template <class  T , class    Y >	concept    fungible_q = of_p<T, Y> or of_q<T, Y>;
 template <class  T , class    Y >	concept    forcible_q = sizeof(T) == sizeof(Y);
 template <class  T , class    Y >	concept  infungible_q = not fungible_q<T, Y>;

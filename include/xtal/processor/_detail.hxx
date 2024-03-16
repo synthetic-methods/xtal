@@ -36,9 +36,9 @@ concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;
 struct accessory
 {
 	using   type = _v3::ranges::category;
-	using   pure = integral_t<type::random_access>;
-	using impure = integral_t<type::forward>;
-	using finite = integral_t<type::sized>;
+	using   pure = constant_t<type::random_access>;
+	using impure = constant_t<type::forward>;
+	using finite = constant_t<type::sized>;
 
 };
 using accessory_t = typename accessory::type;

@@ -11,13 +11,9 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Us> requires complete_q<Us...>
-struct packet
-:	bond::compose<defer<Us>...>
-{
-};
-template <class ...Us>
-using packet_t = confined_t<packet<Us...>>;
+class packet__;
+template <class ...Us> using packet   = bond::compose<defers<Us...>, any<packet__>>;
+template <class ...Us> using packet_t = confined_t<packet<Us...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
