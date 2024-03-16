@@ -74,10 +74,10 @@ struct dissector<U[N]>
 		{
 			return __realized::square_f(*this).sum();
 		}
-		XTAL_TN2 dot(XTAL_DEF_(iterated_q) that)
+		XTAL_TN2 dot(iterated_q auto &&that)
 		XTAL_0FX
 		{
-			return (twin() *= XTAL_REF_(that)).sum();
+			return (twin() *= XTAL_FWD_(that)).sum();
 		}
 
 		

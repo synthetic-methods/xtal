@@ -70,23 +70,23 @@ struct defer<U>
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
 		template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...));
+			return _detail::impurify_f(reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_FWD_(xs)...));
 		}
 		template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0EX
 		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
-			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_FWD_(xs)...);
 		}
 		template <auto ...Ks>
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0FX
 		{
-			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_REF_(xs)...);
+			return reified_<decltype(xs)...>(integral_t<Ks>{}...) (XTAL_FWD_(xs)...);
 		}
 
 	};

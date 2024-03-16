@@ -73,23 +73,23 @@ struct refine_head
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
 		template <class  ...Is>
-		XTAL_TN1 with(XTAL_DEF ...oo) XTAL_0FX {(void) head(XTAL_REF_(oo)...); return self();}
+		XTAL_TN1 with(auto &&...oo) XTAL_0FX {(void) head(XTAL_FWD_(oo)...); return self();}
 
 		template <size_t ...Is>
-		XTAL_TN1 with(XTAL_DEF ...oo) XTAL_0FX {(void) head(XTAL_REF_(oo)...); return self();}
+		XTAL_TN1 with(auto &&...oo) XTAL_0FX {(void) head(XTAL_FWD_(oo)...); return self();}
 
 		///\
 		\returns the `sentinel` boundary in the direction of `N_polarity`. \
 
 		template <int N_polarity=0>
-		XTAL_FN2 sentry(XTAL_DEF... oo)
+		XTAL_FN2 sentry(auto &&...oo)
 		XTAL_0EX
 		XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
 		{
 			using L = _std::numeric_limits<U_head>;
-			if constexpr (N_polarity == +1) return T_self(L::max(), XTAL_REF_(oo)...);
-			if constexpr (N_polarity ==  0) return T_self(0,        XTAL_REF_(oo)...);
-			if constexpr (N_polarity == -1) return T_self(L::min(), XTAL_REF_(oo)...);
+			if constexpr (N_polarity == +1) return T_self(L::max(), XTAL_FWD_(oo)...);
+			if constexpr (N_polarity ==  0) return T_self(0,        XTAL_FWD_(oo)...);
+			if constexpr (N_polarity == -1) return T_self(L::min(), XTAL_FWD_(oo)...);
 		}
 
 	};
@@ -150,10 +150,10 @@ struct defer_field
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		template <infungible_q<subtype> A>
-		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
+		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		,	__body(member_f<U_head>(XTAL_REF_(a)))
+		:	S_(XTAL_FWD_(oo)...)
+		,	__body(member_f<U_head>(XTAL_FWD_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -163,11 +163,11 @@ struct defer_field
 		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(__body));}
 		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(__body));}
 		
-		XTAL_TN1 head(XTAL_DEF... oo)
+		XTAL_TN1 head(auto &&...oo)
 		XTAL_0EX
 		XTAL_REQ rebased_q<U_head> and (0 < sizeof...(oo))
 		{
-			return dismember_f(__body, XTAL_REF_(oo)...);
+			return dismember_f(__body, XTAL_FWD_(oo)...);
 		}
 
 		using word_width = cardinal_t<0>;
@@ -193,9 +193,9 @@ struct defer_field<U>
 		U_body __body {};
 
 		template <integral_q A>
-		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
+		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{
 			static_assert(A::value == U::value);
 		}
@@ -236,15 +236,15 @@ struct defer_field<unit_t[N_width]>
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		template <infungible_q<subtype> A>
-		XTAL_CXN subtype(A &&a, XTAL_DEF ...oo)
+		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		,	__body(member_f<U_head>(XTAL_REF_(a)))
+		:	S_(XTAL_FWD_(oo)...)
+		,	__body(member_f<U_head>(XTAL_FWD_(a)))
 		{}
 		template <integral_p A> requires  liminal_q<typename S_::word_depth>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
-		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
+		:	S_(U_head(XTAL_FWD_(a)) >> N_depth)
 		,	__body(U_head(a)&N_mask)
 		{};
 		template <integral_p A> requires terminal_q<typename S_::word_depth>
@@ -379,9 +379,9 @@ struct refer_binary_logic<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 ^=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() ^=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 |=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() |=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 &=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() &=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 ^=(as_q<U> auto &&w) XTAL_0EX {return S::head() ^=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 |=(as_q<U> auto &&w) XTAL_0EX {return S::head() |=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 &=(as_q<U> auto &&w) XTAL_0EX {return S::head() &=(U) XTAL_FWD_(w), S::self();}
 
 	};
 };
@@ -396,9 +396,9 @@ struct refer_binary_logic<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_REF_(w));}
-		XTAL_OP2 | (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() | (U) XTAL_REF_(w));}
-		XTAL_OP2 & (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() & (U) XTAL_REF_(w));}
+		XTAL_OP2 ^ (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_FWD_(w));}
+		XTAL_OP2 | (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() | (U) XTAL_FWD_(w));}
+		XTAL_OP2 & (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() & (U) XTAL_FWD_(w));}
 
 	};
 };
@@ -433,8 +433,8 @@ struct refer_multiplicative_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 *=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() *=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 /=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() /=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 *=(as_q<U> auto &&w) XTAL_0EX {return S::head() *=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 /=(as_q<U> auto &&w) XTAL_0EX {return S::head() /=(U) XTAL_FWD_(w), S::self();}
 
 	};
 };
@@ -449,8 +449,8 @@ struct refer_multiplicative_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 * (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() * (U) XTAL_REF_(w));}
-		XTAL_OP2 / (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() / (U) XTAL_REF_(w));}
+		XTAL_OP2 * (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() * (U) XTAL_FWD_(w));}
+		XTAL_OP2 / (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() / (U) XTAL_FWD_(w));}
 
 	};
 };
@@ -475,8 +475,8 @@ struct refer_additive_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 +=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() +=(U) XTAL_REF_(w), S::self();}
-		XTAL_OP1 -=(XTAL_DEF_(as_q<U>) w) XTAL_0EX {return S::head() -=(U) XTAL_REF_(w), S::self();}
+		XTAL_OP1 +=(as_q<U> auto &&w) XTAL_0EX {return S::head() +=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 -=(as_q<U> auto &&w) XTAL_0EX {return S::head() -=(U) XTAL_FWD_(w), S::self();}
 
 	};
 };
@@ -491,8 +491,8 @@ struct refer_additive_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 + (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() + (U) XTAL_REF_(w));}
-		XTAL_OP2 - (XTAL_DEF_(as_q<U>) w) XTAL_0FX {return T_self(S::head() - (U) XTAL_REF_(w));}
+		XTAL_OP2 + (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() + (U) XTAL_FWD_(w));}
+		XTAL_OP2 - (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() - (U) XTAL_FWD_(w));}
 		XTAL_OP1 - () XTAL_0FX {return T_self(-S::head());}
 
 	};

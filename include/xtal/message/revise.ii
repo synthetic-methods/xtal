@@ -46,22 +46,22 @@ struct revise<U>
 		XTAL_0EX
 		:	subtype(U_store())
 		{}
-		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	subtype(U_store(), XTAL_REF_(oo)...)
+		:	subtype(U_store(), XTAL_FWD_(oo)...)
 		{}
 		
-		XTAL_CXN subtype(U_store o, XTAL_DEF ...oo)
+		XTAL_CXN subtype(U_store o, auto &&...oo)
 		XTAL_0EX
-		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
+		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_FWD_(oo)...)
 		{}
-		XTAL_TN0 store(U_store o, XTAL_DEF... oo)
+		XTAL_TN0 store(U_store o, auto &&...oo)
 		XTAL_0EX
 		{
-			self(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
+			self(U_serve(o), XTAL_MOV_(o), XTAL_FWD_(oo)...);
 		}
 		XTAL_TO4_(XTAL_TN2 store(), S_::template head<1>())
-		XTAL_TO4_(XTAL_TN2 serve(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), S_::template head<0>(XTAL_FWD_(oo)...))
 
 	};
 };

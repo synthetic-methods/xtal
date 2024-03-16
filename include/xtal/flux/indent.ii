@@ -61,12 +61,12 @@ struct indent<Ns...>
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
 				Requires subsequence ordering for `bond::pack`s? \
 				
-				XTAL_TLX infuse(XTAL_DEF o)
+				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return R_::infuse(XTAL_FWD_(o));
 				}
-				XTAL_TLX infuse(XTAL_DEF_(flux::indent_q) o)
+				XTAL_TNX infuse(flux::indent_q auto &&o)
 				XTAL_0EX
 				{
 					auto &w = bond::pack_item_f(head(), o.apple());

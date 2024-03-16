@@ -38,15 +38,15 @@ struct define
 		Alias of `method(...)`. \
 		
 		XTAL_TO2_(
-		XTAL_OP2() (XTAL_DEF ...xs),
-			self().method(XTAL_REF_(xs)...)
+		XTAL_OP2() (auto &&...xs),
+			self().method(XTAL_FWD_(xs)...)
 		)
 		
 		template <auto ...Is>
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0FX
 		{
-			return T::template function<Is...>(XTAL_REF_(xs)...);
+			return T::template function<Is...>(XTAL_FWD_(xs)...);
 		}
 
 		///\returns the lambda abstraction of `method`, \
@@ -140,11 +140,11 @@ struct define
 
 				XTAL_CXN subtype(Xs &&...xs)
 				XTAL_0EX
-				:	subtype(T{}, XTAL_REF_(xs)...)
+				:	subtype(T{}, XTAL_FWD_(xs)...)
 				{}
-				XTAL_CXN subtype(XTAL_DEF_(is_q<T>) t, Xs &&...xs)
+				XTAL_CXN subtype(is_q<T> auto &&t, Xs &&...xs)
 				XTAL_0EX
-				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
+				:	R_(signature::make(XTAL_FWD_(xs)...), XTAL_FWD_(t))
 				{}
 
 				XTAL_TO4_(XTAL_TN2 slots(), R_::head())
@@ -160,10 +160,10 @@ struct define
 						return _std::get<N>(slots()).template slot<Ns...>();
 					}
 				}
-				XTAL_TN2 apply(XTAL_DEF f)
+				XTAL_TN2 apply(auto &&f)
 				XTAL_0EX
 				{
-					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
+					return _std::apply([f = XTAL_FWD_(f)] XTAL_1FN_(f), slots());
 				}
 
 				///\
@@ -182,46 +182,46 @@ struct define
 
 				///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
-				XTAL_TLX influx(XTAL_DEF ...oo)
+				XTAL_TNX influx(auto &&...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
+					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_FWD_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
-				XTAL_TLX efflux(XTAL_DEF ...oo)
+				XTAL_TNX efflux(auto &&...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_FWD_(oo)...));
 				}
 
 				///\note\
 				If prefixed by `null_t()`, the message is forwarded directly to `slots`. \
 
-				XTAL_TLX influx(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
-				XTAL_TLX efflux(null_t, XTAL_DEF ...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
+				XTAL_TNX influx(null_t, auto &&...oo) XTAL_0EX {return self().influx_push(XTAL_FWD_(oo)...);}
+				XTAL_TNX efflux(null_t, auto &&...oo) XTAL_0EX {return self().efflux_pull(XTAL_FWD_(oo)...);}
 
 				///\note\
 				If prefixed by `integral_q`, the message is forwarded directly to the `slot` specified. \
 
-				XTAL_TLX influx(integral_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
-				XTAL_TLX efflux(integral_q auto i, XTAL_DEF ...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
+				XTAL_TNX influx(integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_FWD_(oo)...);}
+				XTAL_TNX efflux(integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_FWD_(oo)...);}
 
 				///\
 				Forwards the message to `slots`, bypassing `self`. \
 
-				XTAL_TLX influx_push(XTAL_DEF ...oo)
+				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
-					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
+					return apply([...oo=XTAL_FWD_(oo)] (auto &&...xs)
+						XTAL_0FN_(XTAL_FWD_(xs).influx(oo...) &...& -1)
 					);
 				}
-				XTAL_TLX efflux_pull(XTAL_DEF ...oo)
+				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
-					return apply([...oo=XTAL_REF_(oo)] (XTAL_DEF ...xs)
-						XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
+					return apply([...oo=XTAL_FWD_(oo)] (auto &&...xs)
+						XTAL_0FN_(XTAL_FWD_(xs).efflux(oo...) &...& -1)
 					);
 				}
 				///\
@@ -229,7 +229,7 @@ struct define
 				If `~N_slot`, the slot at `N_slot` receives the full message. \
 
 				template <int N_slot=-1>
-				XTAL_TLX influx_push_tail(auto o, auto ...oo)
+				XTAL_TNX influx_push_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
@@ -243,7 +243,7 @@ struct define
 					}
 				}
 				template <int N_slot=-1>
-				XTAL_TLX efflux_pull_tail(auto o, auto ...oo)
+				XTAL_TNX efflux_pull_tail(auto o, auto ...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
@@ -290,23 +290,23 @@ struct refine
 		using binding_t = typename binding<Xs...>::type;
 
 		template <typename ...As>
-		XTAL_FN2 bind_f(XTAL_DEF ...xs)
+		XTAL_FN2 bind_f(auto &&...xs)
 		XTAL_0EX
 		{
 			using  kind = confined<As..., S_binding<decltype(xs)...>>;
 			using  type = bond::compose_s<S_, kind>;
-			return type(XTAL_REF_(xs)...);
+			return type(XTAL_FWD_(xs)...);
 		}
 		template <typename ...As>
-		XTAL_FN2 bind_f(XTAL_DEF_(is_q<T>) t, XTAL_DEF ...xs)
+		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs)
 		XTAL_0EX
 		{
 			using  kind = confined<As..., S_binding<decltype(xs)...>>;
 			using  type = bond::compose_s<S_, kind>;
-			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
+			return type(XTAL_FWD_(t), XTAL_FWD_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
-		XTAL_TN2 bind(XTAL_DEF ...xs), bind_f<As...>(self(), XTAL_REF_(xs)...)
+		XTAL_TN2 bind(auto &&...xs), bind_f<As...>(self(), XTAL_FWD_(xs)...)
 		)
 
 	};
@@ -337,10 +337,10 @@ struct defer
 		Constant redirection. \
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 method(XTAL_DEF ...xs),
+		XTAL_TN2 method(auto &&...xs),
 		{
 			if constexpr (_std::invocable<U_head, decltype(xs)...>) {
-				return head() (XTAL_REF_(xs)...);
+				return head() (XTAL_FWD_(xs)...);
 			}
 			else {
 				static_assert(0 == sizeof...(xs));
@@ -366,9 +366,9 @@ struct defer<U>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 method(XTAL_DEF ...xs),
+		XTAL_TN2 method(auto &&...xs),
 		{
-			return head().template method<Is...>(XTAL_REF_(xs)...);
+			return head().template method<Is...>(XTAL_FWD_(xs)...);
 		})
 
 	};

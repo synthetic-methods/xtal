@@ -23,7 +23,7 @@ TAG_("thunk", "process")
 		size_t constexpr N_store = (1<<3);
 		size_t constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<N_spool>>;
+		using U_thunk = thunk_t<spool<N_spool>>;
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
@@ -73,7 +73,7 @@ TAG_("thunk", "process")
 		size_t constexpr N_store = (1<<3);
 		size_t constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<N_spool>>;
+		using U_thunk = thunk_t<spool<N_spool>>;
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
@@ -110,7 +110,7 @@ void thunk_processor()
 	size_t constexpr N_store = (1<<3);
 	size_t constexpr N_spool = (1<<7);
 	
-	using U_thunk = thunk_t<spooled<N_spool>>;
+	using U_thunk = thunk_t<spool<N_spool>>;
 	using U_cue = cell::cue_s<>;
 
 	using U_resize = message::resize_t<>;
@@ -144,7 +144,7 @@ void thunk_processor()
 TAG_("thunk", "processor")
 {
 	using namespace processor;
-	TRY_("drive material") {thunk_processor<resourced::stored<>>();}
+	TRY_("drive material") {thunk_processor<resourced::store<>>();}
 //	TRY_("drive virtual")  {thunk_processor<>();}// TODO?
 
 }

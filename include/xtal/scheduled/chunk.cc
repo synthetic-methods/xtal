@@ -19,13 +19,13 @@ void chunk_processor_x1()
 	using namespace resourced;
 //	using namespace scheduled;
 
-	using U_chunk = chunk_t<spooled<(1<<4)>>;
+	using U_chunk = chunk_t<spool<(1<<4)>>;
 
 	using U_alpha = typename bond::realized::alpha_t;
 	using U_event = message::packet_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
-	,	stored<>
+	,	store<>
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = message::resize_t<>;

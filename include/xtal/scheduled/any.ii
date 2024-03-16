@@ -57,17 +57,17 @@ struct define
 			public:// POLL
 			//	using R_::infuse;
 
-				XTAL_TLX infuse(auto &&o)
+				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return R_::infuse(XTAL_FWD_(o));
 				}
-				XTAL_TLX infuse(U_tuple u)
+				XTAL_TNX infuse(U_tuple u)
 				XTAL_0EX
 				{
 					return u.apply([=, this] XTAL_1FN_(self().influx));
 				}
-				XTAL_TLX infuse(W_tuple v)
+				XTAL_TNX infuse(W_tuple v)
 				XTAL_0EX
 				{
 					return _std::apply([=, this] XTAL_1FN_(self().influx), v);
@@ -76,32 +76,32 @@ struct define
 			public:// ENQUEUE
 			//	using R_::influx;
 
-				XTAL_TLX influx(XTAL_DEF ...oo)
+				XTAL_TNX influx(auto &&...oo)
 				XTAL_0EX
 				{
-					return R_::influx(XTAL_REF_(oo)...);
+					return R_::influx(XTAL_FWD_(oo)...);
 				}
 
-				XTAL_TLX influx(V_delay d_t, U_tuple d_u)
+				XTAL_TNX influx(V_delay d_t, U_tuple d_u)
 				XTAL_0EX
 				{
 					return influx(U_event(d_t, d_u));
 				}
-				XTAL_TLX influx(V_delay d_t, W_tuple d_v)
+				XTAL_TNX influx(V_delay d_t, W_tuple d_v)
 				XTAL_0EX
 				{
 					return influx(d_t, _std::apply([=, this] XTAL_1FN_(U_tuple)));
 				}
-				XTAL_TLX influx(V_delay d_t, XTAL_DEF_(is_q<Xs>) ...d_xs)
+				XTAL_TNX influx(V_delay d_t, is_q<Xs> auto &&...d_xs)
 				XTAL_0EX
 				{
-					return influx(d_t, U_tuple(XTAL_REF_(d_xs)...));
+					return influx(d_t, U_tuple(XTAL_FWD_(d_xs)...));
 				}
 
-				XTAL_TLX influx(cell::cue_s<> d_t, auto &&...oo)
+				XTAL_TNX influx(cell::cue_s<> d_t, auto &&...oo)
 				XTAL_0EX
 				{
-					return influx(d_t.head(), XTAL_REF_(oo)...);
+					return influx(d_t.head(), XTAL_FWD_(oo)...);
 				}
 
 			};

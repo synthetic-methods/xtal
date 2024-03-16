@@ -96,14 +96,14 @@ struct store<U[N]>
 		///\
 		Reshapes `this` with `sN` elements. \
 
-		XTAL_TN0 resize(size_type sN, XTAL_DEF ...etc)
+		XTAL_TN0 resize(size_type sN, auto &&...etc)
 		{
 			size_type const sM = size();
 			if (sN < sM) {
 				pop_back(sM - sN);
 			}
 			else {
-				insert_back(sN - sM, XTAL_REF_(etc)...);
+				insert_back(sN - sM, XTAL_FWD_(etc)...);
 			}
 		}
 		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N`. \
@@ -136,9 +136,9 @@ struct store<U[N]>
 		Insert constructor. \
 		Initializes `this` with `sN` values determined by the given arguments. \
 
-		XTAL_CXN homotype(size_type sN, XTAL_DEF ...etc)
+		XTAL_CXN homotype(size_type sN, auto &&...etc)
 		{
-			insert_back(sN, XTAL_REF_(etc)...);
+			insert_back(sN, XTAL_FWD_(etc)...);
 		}
 		///\
 		Span constructor. \
@@ -216,9 +216,9 @@ struct store<U[N]>
 		///\
 		Clears `this` and invokes `insert_back` with the given arguments. \
 
-		XTAL_TN1 refresh_(XTAL_DEF... etc)
+		XTAL_TN1 refresh_(auto &&...etc)
 		{
-			clear(); push_back(XTAL_REF_(etc)...);
+			clear(); push_back(XTAL_FWD_(etc)...);
 			return *this;
 		}
 
@@ -242,24 +242,24 @@ struct store<U[N]>
 		///\
 		Inserts the values `etc...` beginning at `i0`. \
 
-		XTAL_TN0 push_back(XTAL_DEF_(as_q<U>) ...vs)
+		XTAL_TN0 push_back(as_q<U> auto &&...vs)
 		{
-			push_back(bracket_t<U>{U(XTAL_REF_(vs))...});
+			push_back(bracket_t<U>{U(XTAL_FWD_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
 		\returns a reference to the element.
 
-		XTAL_TN1_(reference) emplace_back(XTAL_DEF ...etc)
+		XTAL_TN1_(reference) emplace_back(auto &&...etc)
 		{
-			return *inplace_back(XTAL_REF_(etc)...);
+			return *inplace_back(XTAL_FWD_(etc)...);
 		}
 		///\
 		Invokes `insert` at `this->end()` with the given arguments. \
 
-		XTAL_TN1_(iterator) insert_back(XTAL_DEF ...etc)
+		XTAL_TN1_(iterator) insert_back(auto &&...etc)
 		{
-			return insert(end(), XTAL_REF_(etc)...);
+			return insert(end(), XTAL_FWD_(etc)...);
 		}
 
 		///\
@@ -267,9 +267,9 @@ struct store<U[N]>
 		\returns a reference to the element.
 
 		template <class I> requires related_q<iterator, I>
-		XTAL_TN1_(reference) emplace(I i, XTAL_DEF ...etc)
+		XTAL_TN1_(reference) emplace(I i, auto &&...etc)
 		{
-			return *inplace(i, XTAL_REF_(etc)...);
+			return *inplace(i, XTAL_FWD_(etc)...);
 		}
 
 		///\
@@ -301,18 +301,18 @@ struct store<U[N]>
 		Inserts the value `v` at `i`. \
 
 		template <class I> requires related_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, XTAL_DEF_(related_q<U>) v)
+		XTAL_TN1_(iterator) insert(I i, related_q<U> auto &&v)
 		{
-			return inplace(i, XTAL_REF_(v));
+			return inplace(i, XTAL_FWD_(v));
 		}
 		///\
 		Initialises `sN` values with `v` beginning at `i`. \
 
 		template <class I> requires related_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, size_type sN, XTAL_DEF_(related_q<U>) v)
+		XTAL_TN1_(iterator) insert(I i, size_type sN, related_q<U> auto &&v)
 		{
 			inject_(i, sN);
-			_std::uninitialized_fill_n(injector_(i), sN, XTAL_REF_(v));
+			_std::uninitialized_fill_n(injector_(i), sN, XTAL_FWD_(v));
 			return i;
 		}
 		///\
@@ -327,16 +327,16 @@ struct store<U[N]>
 		}
 		
 	protected:
-		XTAL_TN1_(iterator) inplace_back(XTAL_DEF ...etc)
+		XTAL_TN1_(iterator) inplace_back(auto &&...etc)
 		{
 			reserve(1 + size());
-			return ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
+			return ::new (m_block + m_limit++) U(XTAL_FWD_(etc)...);
 		}
 		template <class I> requires related_q<iterator, I>
-		XTAL_TN1_(iterator) inplace(I i, XTAL_DEF ...etc)
+		XTAL_TN1_(iterator) inplace(I i, auto &&...etc)
 		{
 			inject_(i, 1);
-			return ::new (injector_(i)) U(XTAL_REF_(etc)...);
+			return ::new (injector_(i)) U(XTAL_FWD_(etc)...);
 		}
 		///\
 		Allocates `sN` elements beginning at `i`. \

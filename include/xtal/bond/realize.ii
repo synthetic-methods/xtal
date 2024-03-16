@@ -404,18 +404,18 @@ public:
 
 
 	template <auto M_pow=1> requires sign_p<M_pow, 0>
-	XTAL_FN2 made_f(XTAL_DEF u)
+	XTAL_FN2 made_f(auto &&u)
 	XTAL_0EX
 	{
 		using U = XTAL_TYP_(u);
 		if constexpr (M_pow ==  0) {
-			return couple_t<U> {u, 1/XTAL_REF_(u)};
+			return couple_t<U> {u, 1/XTAL_FWD_(u)};
 		}	else
 		if constexpr (M_pow == +1) {
-			return U(XTAL_REF_(u));
+			return U(XTAL_FWD_(u));
 		}	else
 		if constexpr (M_pow == -1) {
-			return U(1/XTAL_REF_(u));
+			return U(1/XTAL_FWD_(u));
 		}
 	}
 
@@ -521,14 +521,14 @@ public:
 	static_assert(unsquare_f<-1>(3) == (alpha_t) 0.5773502691896257645091487805019574556);
 
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
-	XTAL_FN2 unsquare_dot_f(XTAL_DEF u)
+	XTAL_FN2 unsquare_dot_f(auto &&u)
 	XTAL_0EX
 	{
 		if (_std::is_constant_evaluated()) {
-			return unsquare_f<M_pow, N_lim>(dot_f(XTAL_REF_(u)));
+			return unsquare_f<M_pow, N_lim>(dot_f(XTAL_FWD_(u)));
 		}
 		else {
-			return made_f<M_pow>(_std::abs(XTAL_REF_(u)));
+			return made_f<M_pow>(_std::abs(XTAL_FWD_(u)));
 		}
 	}
 
@@ -549,10 +549,10 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(base, n_zoom)` for an `unsigned int n_zoom`. \
 	
-	XTAL_FN2 explo_f(XTAL_DEF base, sigma_t const &n_zoom)
+	XTAL_FN2 explo_f(auto &&base, sigma_t const &n_zoom)
 	XTAL_0EX
 	{
-		XTAL_TYP_(base) u = XTAL_REF_(base), w = 1;
+		XTAL_TYP_(base) u = XTAL_FWD_(base), w = 1;
 		for (sigma_t n = n_zoom; n; n >>= 1) {
 			if (n & 1) {
 			w *= u;
@@ -626,10 +626,10 @@ public:
 	///\returns the `N_num`erator divided by the given de`nom`inator.
 
 	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) ratio_f(XTAL_DEF nom)
+	XTAL_FN2_(alpha_t) ratio_f(auto &&nom)
 	XTAL_0EX
 	{
-		return alpha_t(N_num)/XTAL_REF_(nom);
+		return alpha_t(N_num)/XTAL_FWD_(nom);
 	}
 	static_assert(ratio_f   (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_f<1>(alpha_t(2.0)) == 0.5);
@@ -639,10 +639,10 @@ public:
 	///\returns `pi` times `ratio_f<N_num>(nom)`.
 
 	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) patio_f(XTAL_DEF u)
+	XTAL_FN2_(alpha_t) patio_f(auto &&u)
 	XTAL_0EX
 	{
-		return ratio_f<N_num>(XTAL_REF_(u))*3.141592653589793238462643383279502884;
+		return ratio_f<N_num>(XTAL_FWD_(u))*3.141592653589793238462643383279502884;
 	}
 	static_assert(patio_f   (alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
 	static_assert(patio_f<1>(alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
@@ -750,10 +750,10 @@ public:
 	{
 		return minimal_f();
 	}
-	XTAL_FN2 minimum_f(XTAL_DEF ...values)
+	XTAL_FN2 minimum_f(auto &&...values)
 	XTAL_0EX
 	{
-		return _std::min<alpha_t>({XTAL_REF_(values)...});
+		return _std::min<alpha_t>({XTAL_FWD_(values)...});
 	}
 
 
@@ -779,10 +779,10 @@ public:
 	{
 		return maximal_f();
 	}
-	XTAL_FN2 maximum_f(XTAL_DEF ...values)
+	XTAL_FN2 maximum_f(auto &&...values)
 	XTAL_0EX
 	{
-		return _std::max<alpha_t>({XTAL_REF_(values)...});
+		return _std::max<alpha_t>({XTAL_FWD_(values)...});
 	}
 
 
@@ -1276,7 +1276,7 @@ static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
 
 template <auto ...N_etc>
 XTAL_LET computrim_f = []<class T>(T &&t)
-XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
+XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_FWD_(t)));
 
 
 ///////////////////////////////////////////////////////////////////////////////

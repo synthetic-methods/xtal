@@ -62,9 +62,9 @@ struct fusor<W, As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		XTAL_DO2_(template <auto ...Is> requires (not sizeof...(Is))
-		XTAL_TN2 method(XTAL_DEF_(subarray_q<N_>) a),
+		XTAL_TN2 method(subarray_q<N_> auto &&a),
 		{
-			(void) S_::influx(XTAL_REF_(a));
+			(void) S_::influx(XTAL_FWD_(a));
 			return method();
 		})
 		
@@ -72,19 +72,19 @@ struct fusor<W, As...>
 		///\
 		Update by replacement. \
 		
-		XTAL_TLX infuse(XTAL_DEF o)
+		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX
 		{
-			return S_::infuse(XTAL_REF_(o));
+			return S_::infuse(XTAL_FWD_(o));
 		}
 		///\
 		Update by indented replacement. \
 		
-		XTAL_TLX infuse(XTAL_DEF_(subarray_q<N_>) a)
+		XTAL_TNX infuse(subarray_q<N_> auto &&a)
 		{
 			using A = XTAL_TYP_(a);
 			using B = typename flux::indent_s<A, N_ - arity_n<A>>;
-			return S_::influx(B(XTAL_REF_(a)));
+			return S_::influx(B(XTAL_FWD_(a)));
 		}
 
 		///\todo\

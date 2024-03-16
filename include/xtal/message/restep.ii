@@ -25,18 +25,18 @@ struct restep
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_TN2 step(XTAL_DEF... oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 step(auto &&...oo), S_::head(XTAL_FWD_(oo)...))
 
 	};
 };
 template <integral_p U=typename bond::realized::iota_t>
 using restep_t = confined_t<restep<U>>;
 
-XTAL_FN2 restep_f(XTAL_DEF w)
+XTAL_FN2 restep_f(auto &&w)
 XTAL_0EX
 {
 	using __realized = bond::realize<XTAL_TYP_(w)>;
-	return restep_t<typename __realized::iota_t>(XTAL_REF_(w));
+	return restep_t<typename __realized::iota_t>(XTAL_FWD_(w));
 }
 
 
