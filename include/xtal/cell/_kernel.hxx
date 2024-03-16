@@ -45,17 +45,19 @@ concept any_q = of_p<any_t<>, Ts...>;
 ///\
 Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
 
-template <class     ...Us> struct infer;
-template <class     ...Us> using  infer_t = typename infer<Us...>::type;
-
-template <class     ...Us> struct infer    : bond::compose<infer<Us>...> {};
-template <class        U > struct infer<U> : defer<U> {};
-template <incomplete_q U > struct infer<U> :   any<U> {};
-
-template <incomplete_q U, size_t N_width>
-struct infer<U[N_width]>
-:	bond::compose<any<U>, defer<unit_t[N_width]>>
+template <class        U> struct infer    : defer<U> {};
+template <incomplete_q U> struct infer<U> :   any<U> {};
+template <incomplete_q U, size_t N>
+struct infer<U[N]>
+:	bond::compose<any<U>, defer<unit_t[N]>>
 {};
+
+template <class ...Us> using defers = bond::compose<defer<Us>...>;
+template <class ...Us> using refers = bond::compose<refer<Us>...>;
+template <class ...Us> using infers = bond::compose<infer<Us>...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 ///\
 Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
@@ -114,7 +116,7 @@ template <class U, typename ...As> using conferred_t = typename conferred<U, As.
 ///\
 Creates a `contained` member from `infer<As>...`. \
 
-template <typename ...As> using inferred   = confined<infer<As...>>;
+template <typename ...As> using inferred   = confined<infers<As...>>;
 template <typename ...As> using inferred_t = typename inferred<As...>::type;
 
 

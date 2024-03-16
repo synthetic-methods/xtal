@@ -131,7 +131,7 @@ template <class X, class Y>
 XTAL_FN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
-	using W = related_t<X, Y>;
+	using W = common_t<X, Y>;
 	return (W) x == (W) y;
 }
 template <iterated_q X, iterated_q Y> requires epimorphic_q<X, Y>

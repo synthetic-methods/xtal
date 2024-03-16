@@ -19,8 +19,8 @@ using namespace xtal::__test;
 template <typename ...As>
 using bar_baz = composed<void
 ,	confined<void
-	,	infer<struct bar, int>
-	,	infer<struct baz, int>
+	,	infers<struct bar, int>
+	,	infers<struct baz, int>
 	>
 ,	any<As...>
 >;
@@ -75,9 +75,9 @@ TAG_("cell", "matching")
 TAG_("cell", "traversal")
 {
 	using qux = confined<void
-	,	infer<struct foo, int>
-	,	infer<struct bar, int>
-	,	infer<struct baz, int>
+	,	infers<struct foo, int>
+	,	infers<struct bar, int>
+	,	infers<struct baz, int>
 	>;
 	using U_qux = typename qux::type;
 	

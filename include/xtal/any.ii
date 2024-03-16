@@ -49,25 +49,42 @@ template <class   ...Ts>	concept   complete_q = (...and  _detail::   complete_q<
 template <class   ...Ts>	using     complete_t = typename _detail::   complete_t<Ts...>;
 
 
-template <auto       N >	using     integral_t = typename _detail:: integral<N>::type;
+template <auto    ...Ns>	using    constants_n =          _detail:: constants<Ns...>::value;
+template <auto    ...Ns>	using    cardinals_n =          _detail:: cardinals<Ns...>::value;
+template <auto    ...Ns>	using     ordinals_n =          _detail::  ordinals<Ns...>::value;
+template <auto    ...Ns>	using     logicals_n =          _detail::  logicals<Ns...>::value;
+
+template <auto    ...Ns>	using    constants_t = typename _detail:: constants<Ns...>::type;
+template <auto    ...Ns>	using    cardinals_t = typename _detail:: cardinals<Ns...>::type;
+template <auto    ...Ns>	using     ordinals_t = typename _detail::  ordinals<Ns...>::type;
+template <auto    ...Ns>	using     logicals_t = typename _detail::  logicals<Ns...>::type;
+
+template <auto       N >	using     constant_t = typename _detail:: constant<N>::type;
 template <auto       N >	using     cardinal_t = typename _detail:: cardinal<N>::type;
 template <auto       N >	using      ordinal_t = typename _detail::  ordinal<N>::type;
 template <auto       N >	using      logical_t = typename _detail::  logical<N>::type;
 
-template <class   ...Ts>	concept    integral_p = (...and  _detail:: integral_p<Ts>);
-template <class   ...Ts>	concept    cardinal_p = (...and  _detail:: cardinal_p<Ts>);
-template <class   ...Ts>	concept     ordinal_p = (...and  _detail::  ordinal_p<Ts>);
-template <class   ...Ts>	concept     logical_p = (...and  _detail::  logical_p<Ts>);
+template <class   ...Ts>	concept  constants_q = (...and  _detail:: constants_q<Ts>);
+template <class   ...Ts>	concept  integrals_q = (...and  _detail:: integrals_q<Ts>);
+template <class   ...Ts>	concept  cardinals_q = (...and  _detail:: cardinals_q<Ts>);
+template <class   ...Ts>	concept   ordinals_q = (...and  _detail::  ordinals_q<Ts>);
+template <class   ...Ts>	concept   logicals_q = (...and  _detail::  logicals_q<Ts>);
 
-template <class   ...Ts>	concept    integral_q = (...and  _detail:: integral_q<Ts>);
-template <class   ...Ts>	concept    cardinal_q = (...and  _detail:: cardinal_q<Ts>);
-template <class   ...Ts>	concept     ordinal_q = (...and  _detail::  ordinal_q<Ts>);
-template <class   ...Ts>	concept     logical_q = (...and  _detail::  logical_q<Ts>);
+template <class   ...Ts>	concept   constant_q = (...and  _detail::  constant_q<Ts>);
+template <class   ...Ts>	concept   integral_q = (...and  _detail::  integral_q<Ts>);
+template <class   ...Ts>	concept   cardinal_q = (...and  _detail::  cardinal_q<Ts>);
+template <class   ...Ts>	concept    ordinal_q = (...and  _detail::   ordinal_q<Ts>);
+template <class   ...Ts>	concept    logical_q = (...and  _detail::   logical_q<Ts>);
 
-template <class   ...Ts>	concept    terminal_q = (...and  _detail:: terminal_q<Ts>);
-template <class   ...Ts>	concept     liminal_q = (...and  _detail::  liminal_q<Ts>);
-template <liminal_q  T >	using    subliminal_s = typename _detail::  subliminal<T>::type;
-template <liminal_q  T >	using   semiliminal_s = typename _detail:: semiliminal<T>::type;
+template <class   ...Ts>	concept   integral_p = (...and  _detail::  integral_p<Ts>);
+template <class   ...Ts>	concept   cardinal_p = (...and  _detail::  cardinal_p<Ts>);
+template <class   ...Ts>	concept    ordinal_p = (...and  _detail::   ordinal_p<Ts>);
+template <class   ...Ts>	concept    logical_p = (...and  _detail::   logical_p<Ts>);
+
+template <class   ...Ts>	concept    liminal_q = (...and  _detail::     liminal_q<Ts>);
+template <class   ...Ts>	concept   terminal_q = (...and  _detail::    terminal_q<Ts>);
+template <liminal_q  T >	using   subliminal_s = typename _detail::  subliminal<T>::type;
+template <liminal_q  T >	using  semiliminal_s = typename _detail:: semiliminal<T>::type;
 
 
 template <class      T >	using        based_t  =          _detail::   based_t<T>;
@@ -82,10 +99,12 @@ template <class   ...Ts>	concept    rebased_q  = (...and  _detail:: rebased_q<Ts
 template <class   ...Ts>	concept    debased_q  = (...and  _detail:: debased_q<Ts>);
 
 
-template <class   ...Ts>	concept      devalue_q = (...and  _detail::   devalue_q<Ts>);
-template <class   ...Ts>	concept    value_q = (...and  _detail:: value_q<Ts>);
-template <class      T >	using        devalue_t =          _detail::   devalue_t<T>;
-template <class      T >	using      value_t =          _detail:: value_t<T>;
+template <class   ...Ts>	concept      devalue_q = (...and  _detail::  devalue_q<Ts>);
+template <class   ...Ts>	concept      revalue_q = (...and  _detail::  revalue_q<Ts>);
+template <class   ...Ts>	concept        value_q = (...and  _detail::    value_q<Ts>);
+template <class      T >	using        devalue_t =          _detail::  devalue_t<T>;
+template <class      T >	using        revalue_t =          _detail::  revalue_t<T>;
+template <class      T >	using          value_t =          _detail::    value_t<T>;
 
 template <class      X >	using      argument_t = typename _detail:: argument<X>::type;
 template <class   ...Ts>	concept        some_q =          _detail:: some_q<Ts...>;
@@ -104,8 +123,8 @@ template <class   ...Ts>	concept          as_q = _detail:: epitropic<Ts...>::val
 template <class T, class   ...Ys>	concept of_p = (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
 template <class T, class   ...Ys>	concept of_q = (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
 
-template <class            ...Ys>	using      related_t =                   _detail:: related_t<Ys...>;
-template <class            ...Ys>	concept    related_q = some_q<Ys...> and _detail:: related_q<Ys...>;        //< `Ys...` share an ancestor.
+template <class            ...Ys>	using       common_t =                   _detail:: common_t<Ys...>;
+template <class            ...Ys>	concept     common_q = some_q<Ys...> and _detail:: common_q<Ys...>;        //< `Ys...` share an ancestor.
 template <class T, class   ...Ys>	concept   fungible_q = some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
 template <class T, class   ...Ys>	concept   forcible_q = some_q<Ys...> and (...and _detail::   forcible_q<T, Ys>);//< `T` and `Ys...` have the same `sizeof`.
 template <class T, class   ...Ys>	concept infungible_q = some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
