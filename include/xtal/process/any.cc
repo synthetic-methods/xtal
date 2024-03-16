@@ -20,7 +20,7 @@ TAG_("process", "construct")
 {
 	TRY_("lifting")
 	{
-		auto const f = let_f([] (XTAL_DEF... xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0));
 		TRUE_(10 == f.method(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
 		TRUE_(10 == f.reify() (1, 2, 3, 4));

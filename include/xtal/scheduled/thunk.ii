@@ -21,13 +21,13 @@ Adapt to provide polling. \
 template <typename ...As>
 struct thunk
 {
-	using subkind = bond::compose<As..., resourced::spooled<-1>>;
+	using subkind = bond::compose<As..., resourced::spool<-1>>;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		static_assert(resourced::spooled_q<S_>);
+		static_assert(resourced::spool_q<S_>);
 
 	public:
 		using S_::S_;
@@ -53,23 +53,23 @@ struct thunk
 			public:
 				using R_::R_;
 
-				XTAL_TLX infuse(auto &&o)
+				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return R_::infuse(XTAL_FWD_(o));
 				}
-				XTAL_TLX infuse(is_q<X> auto &&x)
+				XTAL_TNX infuse(is_q<X> auto &&x)
 				XTAL_0EX
 				{
-					return __spool.peek(0).then().infuse(XTAL_REF_(x));
+					return __spool.peek(0).then().infuse(XTAL_FWD_(x));
 				}
-				XTAL_TLX infuse(is_q<U_event> auto &&u)
+				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
 					if (__spool.empty() and u.head() < __delay) {
 						(void) __spool.abandon().head(__delay = 0);
 					}
-					return u == *__spool.push(XTAL_REF_(u));
+					return u == *__spool.push(XTAL_FWD_(u));
 				}
 
 				XTAL_TN2 method()

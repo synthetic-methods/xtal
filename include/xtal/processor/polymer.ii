@@ -15,8 +15,8 @@ template <typename ..._s> XTAL_NYM polymer;
 template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
-XTAL_FN2  polymer_f(XTAL_DEF  u)
-XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
+XTAL_FN2  polymer_f(auto &&u)
+XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_FWD_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ Polyphonic voice allocator. Functionally similar to `monomer`, \
 but expands/contracts the voice store according to `message::stage` requests/responses. \
 
 ///\note\
-The attached `stored` and `spooled` determine the sample buffer and voice spool respectively. \
+The attached `store` and `spool` determine the sample buffer and voice spool respectively. \
 
 template <class U, typename ...As>
 struct polymer<U, As...>
@@ -45,7 +45,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resourced::spooled_q<S_> and resourced::stored_q<S_>
+		template <class ...Xs> requires resourced::spool_q<S_> and resourced::store_q<S_>
 		struct binding: S_binding<Xs...>
 		{
 			using V_event = message::stage_t<>;
@@ -58,7 +58,7 @@ struct polymer<U, As...>
 
 			using subkind = bond::compose<bond::tag<polymer>
 			,	defer<V_voice>
-			,	As...// NOTE: Necessary for `intermit`...
+		//	,	As...// NOTE: Necessary for `intermit`?
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
@@ -89,22 +89,22 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TLX influx(cell::key_q auto io, XTAL_DEF ...oo)
+				XTAL_TNX influx(cell::key_q auto io, auto &&...oo)
 				XTAL_0EX
 				{
 					auto const i = io.head();
 					auto const o = io.then();
-					return influx(cell::key_s<>(i), o, XTAL_REF_(oo)...);
+					return influx(cell::key_s<>(i), o, XTAL_FWD_(oo)...);
 				}
-				XTAL_TLX influx(cell::key_s<> i, XTAL_DEF ...oo)
+				XTAL_TNX influx(cell::key_s<> i, auto &&...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
 					auto w = __ensemble.scan(h);
 					assert(__ensemble and h == w->head());
-					return w->influx(XTAL_REF_(oo)...);
+					return w->influx(XTAL_FWD_(oo)...);
 				}
-				XTAL_TLX influx(cell::key_s<> i, V_event o, XTAL_DEF ...oo)
+				XTAL_TNX influx(cell::key_s<> i, V_event o, auto &&...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -118,30 +118,30 @@ struct polymer<U, As...>
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
-					return w->influx(o, XTAL_REF_(oo)...);
+					return w->influx(o, XTAL_FWD_(oo)...);
 				}
 
 				///\
 				Forwards to all instances including the sentinel. \
 
-				XTAL_TLX influx_push(XTAL_DEF ...oo)
+				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
 					bool constexpr impure = false;
 					return _v3::ranges::accumulate(__ensemble
 					,	impure? -1: head().influx(oo...)
-					,	[=] (XTAL_FLX flx, XTAL_DEF v)
-							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
+					,	[=] (XTAL_FLX flx, auto &&v)
+							XTAL_0FN_(flx & XTAL_FWD_(v).influx(oo...))
 					);
 				}
-				XTAL_TLX efflux_pull(XTAL_DEF ...oo)
+				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
 					bool constexpr impure = (...or message::scope_q<decltype(oo)>);
 					return _v3::ranges::accumulate(__ensemble
 					,	impure? -1: head().efflux(oo...)
-					,	[=] (XTAL_FLX flx, XTAL_DEF v)
-							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
+					,	[=] (XTAL_FLX flx, auto &&v)
+							XTAL_0FN_(flx & XTAL_FWD_(v).efflux(oo...))
 					);
 				}
 
@@ -149,7 +149,7 @@ struct polymer<U, As...>
 				Renders the buffer slice designated by `respan_x` and `scope_x`. \
 				
 				template <message::respan_q R_x, message::scope_q S_x>
-				XTAL_TLX efflux_pull_slice(R_x respan_x, S_x scope_x, XTAL_DEF ...oo)
+				XTAL_TNX efflux_pull_slice(R_x respan_x, S_x scope_x, auto &&...oo)
 				XTAL_0EX
 				{
 					XTAL_FLX flx = -1;

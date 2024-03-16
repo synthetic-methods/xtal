@@ -40,10 +40,10 @@ struct pulse<U>
 	public:
 		using S_::S_;
 
-		XTAL_TN1 carry(XTAL_DEF overflow)
+		XTAL_TN1 carry(auto &&overflow)
 		XTAL_0EX
 		{
-			auto &u = S_::head(); u += XTAL_REF_(overflow);
+			auto &u = S_::head(); u += XTAL_FWD_(overflow);
 			return S_::carry((V_pulse) 0);
 		}
 

@@ -44,10 +44,10 @@ struct mix
 	{
 	public:
 
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0FX
 		{
-			return (XTAL_REF_(xs) +...+ 0);
+			return (XTAL_FWD_(xs) +...+ 0);
 		}
 
 	};
@@ -64,10 +64,10 @@ struct static_onset_mix
 	public:
 
 		template <size_t onset=0>
-		XTAL_FN2 function(XTAL_DEF ...xs)
+		XTAL_FN2 function(auto &&...xs)
 		XTAL_0EX
 		{
-			return (XTAL_REF_(xs) +...+ onset);
+			return (XTAL_FWD_(xs) +...+ onset);
 		}
 
 	};
@@ -81,10 +81,10 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_TN2 method(XTAL_DEF ...xs)
+		XTAL_TN2 method(auto &&...xs)
 		XTAL_0EX
 		{
-			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
+			return (XTAL_FWD_(xs) +...+ this->template head<onset_t>());
 		}
 
 	};
@@ -100,10 +100,10 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_TN2 method(XTAL_DEF x)
+		XTAL_TN2 method(auto &&x)
 		XTAL_0EX
 		{
-			return XTAL_REF_(x)*this->template head<scale_t>();
+			return XTAL_FWD_(x)*this->template head<scale_t>();
 		}
 
 	};

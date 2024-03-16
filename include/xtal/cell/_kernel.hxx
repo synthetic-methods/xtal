@@ -135,8 +135,8 @@ template <class    W > struct let<W> {using type = conferred_t<W>;};
 template <any_q    W > struct let<W> {using type =             W ;};
 template <class ...Ws>  using let_t = typename let<Ws...>::type;
 
-template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_REF_(w));}
-template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_REF_(w));}
+template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_FWD_(w));}
+template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_FWD_(w));}
 ///<\
 \returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
 

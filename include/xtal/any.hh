@@ -123,11 +123,9 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #define XTAL_TYP                             decltype(auto)
 #define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
-#define XTAL_MOV_(...)                    ::std::move(__VA_ARGS__)
-#define XTAL_PT0_(...)           static_cast<         __VA_ARGS__  *>
-#define XTAL_REF_(...)           static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
-#define XTAL_DEF_(...)                                __VA_ARGS__ auto &&
-#define XTAL_DEF                                                  auto &&
+#define XTAL_MOV_(...)                ::std::move    (__VA_ARGS__)
+#define XTAL_FWD_(...)          static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
+
 #define XTAL_NYM                        struct
 #define XTAL_USE                         using
 #define XTAL_ASK                       concept
@@ -193,11 +191,11 @@ static_assert(1400 <= XTAL_V00_LLVM);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TLX    [[nodiscard]] XTAL_STD_(sign_t)
+#define XTAL_TNX    [[nodiscard]] XTAL_STD_(sign_t)
 #define XTAL_FLX                  XTAL_STD_(sign_t)
 #define XTAL_FLX_(...) [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
-#define XTAL_1FN_(...) (XTAL_DEF ...oo) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(oo)...))
+#define XTAL_1FN_(...) (auto &&...oo) XTAL_0FN_(__VA_ARGS__(XTAL_FWD_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////

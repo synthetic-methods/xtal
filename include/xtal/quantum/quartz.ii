@@ -41,14 +41,14 @@ struct quartz<U>
 		using S_::self;
 		using S_::twin;
 
-		XTAL_CON subtype(XTAL_DEF_(phase_value_q) o) XTAL_0EX: S_(V_phase {}, XTAL_REF_(o)) {}
-		XTAL_CON subtype(XTAL_DEF_(pulse_value_q) o) XTAL_0EX: S_(XTAL_REF_(o), V_pulse {}) {}
+		XTAL_CON subtype(phase_value_q auto &&o) XTAL_0EX: S_(V_phase {}, XTAL_FWD_(o)) {}
+		XTAL_CON subtype(pulse_value_q auto &&o) XTAL_0EX: S_(XTAL_FWD_(o), V_pulse {}) {}
 
-		XTAL_TO4_(XTAL_TN2 phase(XTAL_DEF... oo), S_::template head<0>(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_TN2 pulse(XTAL_DEF... oo), S_::template head<1>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 phase(auto &&...oo), S_::template head<0>(XTAL_FWD_(oo)...))
+		XTAL_TO4_(XTAL_TN2 pulse(auto &&...oo), S_::template head<1>(XTAL_FWD_(oo)...))
 
-		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return twin() += XTAL_REF_(w);}
-		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return twin() -= XTAL_REF_(w);}
+		XTAL_OP2 + (auto &&w) XTAL_0FX {return twin() += XTAL_FWD_(w);}
+		XTAL_OP2 - (auto &&w) XTAL_0FX {return twin() -= XTAL_FWD_(w);}
 				
 		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::phase() += t.phase(); S_::pulse() += t.pulse(); return self();}
 		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::phase() -= t.phase(); S_::pulse() -= t.pulse(); return self();}

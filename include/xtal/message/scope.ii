@@ -31,8 +31,8 @@ template <                     typename ..._s> XTAL_NYM scope;
 template <                     typename ..._s> XTAL_ASK scope_q = bond::tag_p<scope, _s...>;
 template <class W=counter_t<>, typename ...As> XTAL_USE scope_t = confined_t<scope<W>, As...>;
 template <                     typename ...As>
-XTAL_FN2  scope_f(XTAL_DEF w)
-XTAL_0EZ_(scope_t<counter_t<>, As...>(XTAL_REF_(w)))
+XTAL_FN2  scope_f(auto &&w)
+XTAL_0EZ_(scope_t<counter_t<>, As...>(XTAL_FWD_(w)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,14 +168,14 @@ struct prequel
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_TLX infuse(T_self t)
+		XTAL_TNX infuse(T_self t)
 		XTAL_0EX
 		{
 			auto &s = self();
 			return s == t or ((s = t), 0);
 		}
 		/**/
-		XTAL_TLX infuse(XTAL_DEF_(scope_q) t)
+		XTAL_TNX infuse(scope_q auto &&t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -190,10 +190,10 @@ struct prequel
 			}
 		}
 		/***/
-		XTAL_TLX infuse(XTAL_DEF o)
+		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::infuse(XTAL_REF_(o));
+			return S::infuse(XTAL_FWD_(o));
 		}
 
 		///\
@@ -203,12 +203,12 @@ struct prequel
 		Unrecognized `scope_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
-		XTAL_TLX effuse(XTAL_DEF o)
+		XTAL_TNX effuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::effuse(XTAL_REF_(o));
+			return S::effuse(XTAL_FWD_(o));
 		}
-		XTAL_TLX effuse(XTAL_DEF_(scope_q) t)
+		XTAL_TNX effuse(scope_q auto &&t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -254,16 +254,16 @@ struct scope<V>
 		XTAL_0EX
 		:	S_(0, 0)
 		{}
-		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{}
-		XTAL_CXN subtype(XTAL_DEF_(iterated_q) o, XTAL_DEF ...oo)
+		XTAL_CXN subtype(iterated_q auto &&o, auto &&...oo)
 		XTAL_0EX
-		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		:	S_(count_f(XTAL_FWD_(o)), XTAL_FWD_(oo)...)
 		{}
 
-		XTAL_TN2_(T_self) slice(XTAL_DEF_(counted_q) w)
+		XTAL_TN2_(T_self) slice(counted_q auto &&w)
 		XTAL_0FX
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
@@ -355,7 +355,7 @@ public:
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_TN2_(T_self) slice(XTAL_DEF_(counted_q) w)
+		XTAL_TN2_(T_self) slice(counted_q auto &&w)
 		XTAL_0FX
 		{
 			V const &n_front = *S_::begin();

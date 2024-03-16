@@ -59,9 +59,9 @@ struct stage<A, As...>
 		{
 			S_::head(A{});
 		}
-		XTAL_CON subtype(XTAL_DEF ...oo)
+		XTAL_CON subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{
 			S_::head(A{});
 		}
@@ -73,8 +73,8 @@ template <typename ...As>
 using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 
 template <typename ...As>
-XTAL_FN2  stage_f(XTAL_DEF... oo)
-XTAL_0EZ_(stage_t<As...>(XTAL_REF_(oo)...))
+XTAL_FN2  stage_f(auto &&...oo)
+XTAL_0EZ_(stage_t<As...>(XTAL_FWD_(oo)...))
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "../atom/store.ii"
+#include "../atom/spool.ii"
 
 
 
@@ -11,19 +11,19 @@ namespace xtal::resourced
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM __stored__;
-template <class ...Ts> concept stored_q = bond::tab_p<__stored__, Ts...>;
+XTAL_NYM __spool__;
+template <class ...Ts> concept spool_q = bond::tab_p<__spool__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::store`. \
-If `N == -1`, the member-type `store_t` is dynamically allocated. \
+Provides a specialization of `atom::spool`. \
+If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
 template <int N=-1>
-struct stored
+struct spool
 {
-	using subkind = bond::tab<__stored__>;
+	using subkind = bond::tab<__spool__>;
 	
 	template <cell::any_q S>
 	class subtype: public bond::compose_s<S, subkind>
@@ -34,7 +34,7 @@ struct stored
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::store_t<U[(unsigned) N]>;
+		using spool_t = atom::spool_t<U[(unsigned) N]>;
 
 	};
 };

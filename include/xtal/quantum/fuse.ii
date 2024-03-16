@@ -40,21 +40,21 @@ struct fuse<U>
 
 		XTAL_CO0_(subtype)
 		XTAL_CO4_(subtype)
-		XTAL_CON subtype(XTAL_DEF ...oo)
+		XTAL_CON subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{
 		//	self().carry(_0);
 		}
 		
-		XTAL_TN1 carry(XTAL_DEF overflow)
+		XTAL_TN1 carry(auto &&overflow)
 		XTAL_0EX
 		{
 			return self();
 		}
 
-		XTAL_OP2 + (XTAL_DEF w) XTAL_0FX {return S_::twin() += XTAL_REF_(w);}
-		XTAL_OP2 - (XTAL_DEF w) XTAL_0FX {return S_::twin() -= XTAL_REF_(w);}
+		XTAL_OP2 + (auto &&w) XTAL_0FX {return S_::twin() += XTAL_FWD_(w);}
+		XTAL_OP2 - (auto &&w) XTAL_0FX {return S_::twin() -= XTAL_FWD_(w);}
 				
 		XTAL_OP1 += (subtype const &t) XTAL_0EX {S_::operator+=(t.head()); return self().carry(_0);}
 		XTAL_OP1 -= (subtype const &t) XTAL_0EX {S_::operator-=(t.head()); return self().carry(_0);}

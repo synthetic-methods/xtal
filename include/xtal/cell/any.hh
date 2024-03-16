@@ -110,27 +110,27 @@ struct any<A>
 		template <class W>
 		requires infungible_q<subtype, W> and
 		requires {typename W::template self_t<A>;}
-		XTAL_CON subtype(W &&w, XTAL_DEF ...oo)
+		XTAL_CON subtype(W &&w, auto &&...oo)
 		XTAL_0EX
-		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
+		:	S_(w.template head<A>(), XTAL_FWD_(w), XTAL_FWD_(oo)...)
 		{};
-		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{}
 
 		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
-		XTAL_TN2 self(XTAL_DEF... oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
 		)		
 		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
-		XTAL_TN2 head(XTAL_DEF... oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
 		)		
 
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(XTAL_DEF... oo), S_::template self<super_t<T_self, Is...>>(XTAL_REF_(oo)...)
+		XTAL_TN2 self(auto &&...oo), S_::template self<super_t<T_self, Is...>>(XTAL_FWD_(oo)...)
 		)
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 head(XTAL_DEF... oo), S_::template self<super_t<U_self, Is...>>().head(XTAL_REF_(oo)...)
+		XTAL_TN2 head(auto &&...oo), S_::template self<super_t<U_self, Is...>>().head(XTAL_FWD_(oo)...)
 		)
 		
 	};

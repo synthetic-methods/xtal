@@ -21,13 +21,13 @@ possibly using `message::scope` to convert between absolute and relative delays.
 template <typename ...As>
 struct chunk
 {
-	using subkind = bond::compose<As..., resourced::spooled<-1>>;
+	using subkind = bond::compose<As..., resourced::spool<-1>>;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		static_assert(resourced::spooled_q<S_>);
+		static_assert(resourced::spool_q<S_>);
 
 	public:
 		using S_::S_;
@@ -61,18 +61,18 @@ struct chunk
 				Influxes the `U_event` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
-				XTAL_TLX infuse(auto &&o)
+				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return R_::infuse(XTAL_FWD_(o));
 				}
-				XTAL_TLX infuse(is_q<U_event> auto &&u)
+				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
 					return 0 == u.head()?
-						R_::influx(XTAL_REF_(u).then()):
-						(__spool.push(XTAL_REF_(u)), 0);
-					//	u == *__spool.push(XTAL_REF_(u));
+						R_::influx(XTAL_FWD_(u).then()):
+						(__spool.push(XTAL_FWD_(u)), 0);
+					//	u == *__spool.push(XTAL_FWD_(u));
 				}
 
 				///\returns The delay until the next event to be processed. \

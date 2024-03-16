@@ -27,9 +27,9 @@ struct define
 	public:
 		using S::S;
 
-		XTAL_CXN subtype(XTAL_DEF ...oo)
+		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S(XTAL_REF_(oo)...)
+		:	S(XTAL_FWD_(oo)...)
 		{}
 
 		///\returns `this` as the `define`d supertype. \

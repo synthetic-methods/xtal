@@ -35,17 +35,18 @@ void polymer_provision_spine__locamotion()
 	using U_scope = message::scope_t<>;
 	
 
-	using U_thunk = scheduled::thunk_t<resourced::spooled<N_spool>>;
+	using U_thunk = scheduled::thunk_t<resourced::spool<N_spool>>;
 	using U_scope = message::scope_t<>;
 	using U_cue = cell::cue_s<>;
 
 //	Using `thunk` here currently fails if dynamically allocated. \
-	using U_gate = process::confined_t<typename U_thunk::template inqueue<level_t>, typename U_stage::expect<>>;
-	using U_gate = process::confined_t<typename level_t::poll<>, typename U_stage::expect<>>;
+	using W_gate = typename U_thunk::template inqueue<level_t>;
+	using W_gate = typename level_t::poll<>;
+	using U_gate = process::confined_t<W_gate, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::stored<N_store>
-	,	resourced::spooled<N_spool>
+	,	resourced::store<N_store>
+	,	resourced::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -105,8 +106,8 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::stored<N_store>
-	,	resourced::spooled<N_spool>
+	,	resourced::store<N_store>
+	,	resourced::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -150,8 +151,8 @@ void polymer_provision_spool__composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::stored<N_store>
-	,	resourced::spooled<N_spool>
+	,	resourced::store<N_store>
+	,	resourced::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 

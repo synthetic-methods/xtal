@@ -28,7 +28,7 @@ The following code examples use the following macros for brevity/clarity:
 	#define XTAL_TN1               constexpr decltype(auto)
 
 	#define XTAL_DEF       auto &&
-	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
+	#define XTAL_FWD_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 
 ## Processing
 
@@ -38,9 +38,9 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	struct Mix: process::confine_t<Mix>
 	{
 	   template <auto...>
-	   XTAL_TN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_REF_(xs) + ... + 0);
+	      return (XTAL_FWD_(xs) + ... + 0);
 	   }
 	};
 
@@ -70,10 +70,10 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
-	   XTAL_TN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
-	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
+	      return (XTAL_FWD_(xs) + ... + 0)*Active(*this);
+	   // return (XTAL_FWD_(xs) + ... + 0)*this->template head<Active>();
 	   }
 	};
 
@@ -87,9 +87,9 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	>
 	{
 	   template <auto offset, auto active>
-	   XTAL_TN2 method(XTAL_DEF ...xs)
+	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_REF_(xs) + ... + offset)*active;
+	      return (XTAL_FWD_(xs) + ... + offset)*active;
 	   }
 	};
 
@@ -116,7 +116,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto scope = scope_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, resourced::stored<>>;
+	using Mixer = processor::monomer_t<Mix, resourced::store<>>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
