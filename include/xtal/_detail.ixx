@@ -33,6 +33,31 @@ template <auto N, auto Z=0>	concept  sign_p = _std::integral<decltype(N)> and -1
 //\
 Structural...
 
+template <class T>
+struct lateral
+{
+	template <T ...Ms>
+	class joint
+	{
+		XTAL_LET N_width = sizeof(T)/sizeof...(Ms);
+		XTAL_LET N_depth = N_width << 3;
+
+		static_assert(N_width*sizeof...(Ms) == sizeof(T));
+
+		template <            T ...Ns> struct join                : _std::integral_constant<T,  0> {};
+		template <T N0               > struct join<N0           > : _std::integral_constant<T, N0> {};
+		template <T N0, T N1, T ...Ns> struct join<N0, N1, Ns...> : join<(N0<<N_depth)|N1, Ns...> {};
+
+	public:
+		XTAL_LET value = join<Ms...>::value;
+
+	};
+	
+	template <T ...Ms>
+	XTAL_LET value = joint<Ms...>::value;
+
+};
+
 template <class      T             >	concept  incomplete_q = not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	concept    complete_q = not incomplete_q<T>;
 template <              class ...Ts>	struct     complete              {class type   {};};

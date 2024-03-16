@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.ii"
 
-#include "../message/packet.ii"
 #include "../process/any.hh"
 #include "../processor/any.hh"
 #include "../resourced/all.ii"
+
 
 XTAL_ENV_(push)
 namespace xtal::scheduled

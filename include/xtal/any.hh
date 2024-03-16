@@ -25,7 +25,27 @@ TODO: Allow [c]?make configuration?
 #include <variant>
 #include <cstdint>
 
-#define XTAL_STD_(NYM) XTAL_STD_##NYM
+
+//\note\
+sizeof (XTAL_INT_(NUM)) == (1 << NUM)
+#define XTAL_INT_(NUM) XTAL_INT_##NUM
+#define XTAL_INT_0          char
+#define XTAL_INT_1     short int
+#define XTAL_INT_2           int
+#define XTAL_INT_3      long int
+#define XTAL_INT_4 long long int
+
+//\note\
+sizeof (XTAL_FLT_(NUM)) == (1 << NUM)
+#define XTAL_FLT_(NUM) XTAL_FLT_##NUM
+#define XTAL_FLT_0          void
+#define XTAL_FLT_1          void
+#define XTAL_FLT_2         float
+#define XTAL_FLT_3        double
+#define XTAL_FLT_4   long double
+
+
+#define XTAL_STD_(NUM) XTAL_STD_##NUM
 #define XTAL_STD ((__cplusplus/100)%100)
 #define XTAL_STD_IEC 60559
 

@@ -76,7 +76,7 @@ TAG_("realize", "logarithm")
 		TRUE_(computrim_f<30+0>(y) == computrim_f<30+0>(realized::logarithm_f<+2>(x)));
 		TRUE_(computrim_f<20+0>(y) == computrim_f<20+0>(realized::logarithm_f<+1>(x)));
 		TRUE_(computrim_f<10-2>(y) == computrim_f<10-2>(realized::logarithm_f<+0>(x)));
-		
+
 	}
 }
 TAG_("realize", "exponential")

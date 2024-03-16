@@ -15,9 +15,9 @@
 #include <new>
 #include <bit>
 
-#if __has_include(<arm_neon.h>)
-#include <arm_neon.h>
-#endif
+//#if __has_include(<arm_neon.h>)
+//#include <arm_neon.h>
+//#endif
 
 #include <range/v3/all.hpp>
 
@@ -28,13 +28,12 @@ namespace std
 /////////////////////////////////////////////////////////////////////////////////
 
 #if not __cpp_lib_bit_cast
-template <class  T, class S>
-static constexpr T bit_cast(S const& s)
-noexcept
-{
-	static_assert(xtal::based_q<T, S> and sizeof(T) == sizeof(S));
-	return __builtin_bit_cast(T, s);
-}
+template <class T, class S> requires (
+	is_trivially_copyable_v<T> and
+	is_trivially_copyable_v<S> and
+	sizeof(T) == sizeof(S)
+)
+static constexpr T bit_cast(S const& s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
 
