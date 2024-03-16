@@ -44,15 +44,19 @@ template <auto    ...Ns>	XTAL_ASK sign_p = (...and _detail:: sign_p<Ns>);
 //\
 Structural...
 
+template <class      T >	using      lateral   = _detail::lateral<T>;
+template <auto    ...Ns>	XTAL_LET   lateral_n = _detail::lateral<_detail::common_t<decltype(Ns)...>>::template value<Ns...>;
+
+
 template <class   ...Ts>	concept incomplete_q = (...and  _detail:: incomplete_q<Ts>);
 template <class   ...Ts>	concept   complete_q = (...and  _detail::   complete_q<Ts>);
 template <class   ...Ts>	using     complete_t = typename _detail::   complete_t<Ts...>;
 
 
-template <auto    ...Ns>	using    constants_n =          _detail:: constants<Ns...>::value;
-template <auto    ...Ns>	using    cardinals_n =          _detail:: cardinals<Ns...>::value;
-template <auto    ...Ns>	using     ordinals_n =          _detail::  ordinals<Ns...>::value;
-template <auto    ...Ns>	using     logicals_n =          _detail::  logicals<Ns...>::value;
+template <auto    ...Ns>	XTAL_LET constants_n =          _detail:: constants<Ns...>::value;
+template <auto    ...Ns>	XTAL_LET cardinals_n =          _detail:: cardinals<Ns...>::value;
+template <auto    ...Ns>	XTAL_LET  ordinals_n =          _detail::  ordinals<Ns...>::value;
+template <auto    ...Ns>	XTAL_LET  logicals_n =          _detail::  logicals<Ns...>::value;
 
 template <auto    ...Ns>	using    constants_t = typename _detail:: constants<Ns...>::type;
 template <auto    ...Ns>	using    cardinals_t = typename _detail:: cardinals<Ns...>::type;

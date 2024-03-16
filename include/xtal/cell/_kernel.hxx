@@ -114,10 +114,18 @@ template <class U, typename ...As> using conferred_t = typename conferred<U, As.
 
 
 ///\
-Creates a `contained` member from `infer<As>...`. \
+Creates a `contained` type from `infer<As>...`. \
 
-template <typename ...As> using inferred   = confined<infers<As...>>;
-template <typename ...As> using inferred_t = typename inferred<As...>::type;
+template <class ...Us> using inferred   = confined<infers<Us...>>;
+template <class ...Us> using inferred_t = typename inferred<Us...>::type;
+
+
+///\
+Creates a `std::tuple` analogue. \
+
+template <class ...Us> using   tupled   = inferred<Us..., class tupled__>;
+template <class ...Us> using   tupled_t = typename tupled<Us...>::type;
+template <class ...Ts> concept tupled_q = any_p<class tupled__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

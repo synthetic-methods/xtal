@@ -45,7 +45,7 @@ struct define
 				
 			protected:
 				using W_tuple = _std::tuple<Xs...>;
-				using U_tuple = message::packet_t<Xs...>;
+				using U_tuple = message::tupled_t<Xs...>;
 				using U_event = cell::cue_s<U_tuple>;
 				using U_delay = cell::cue_s<>;
 				using V_delay = typename U_delay::template head_t<>;

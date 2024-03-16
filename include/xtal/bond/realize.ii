@@ -19,104 +19,166 @@ The translation-tables for the supplied `N_size` \
 (which should be representative of the desired `sizeof`): \
 \
 -	`alpha_t` represents floating-point real numbers. \
--	`sigma_t` represents full-width `unsigned int`s like `std::size`. \
--	`delta_t` represents full-width   `signed int`s used for binary and integer arithmetic. \
--	`iota_t`  represents half-width   `signed int`s required for `ranges::difference_type`. \
+-	`sigma_t` represents full-N_width `unsigned int`s like `std::size`. \
+-	`delta_t` represents full-N_width   `signed int`s used for binary and integer arithmetic. \
+-	`iota_t`  represents half-N_width   `signed int`s required for `ranges::difference_type`. \
 \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
-template <size_t>
-struct systematize;
-
-template <>
-struct systematize<1>
+template <size_t N_size>
+struct recognize: recognize<(N_size >> 1)>
 {
-//	using      iota_t  =       _std::int4_t;
-	using     delta_t  =   signed      char;
-	using     sigma_t  = unsigned      char;
-//	using     alpha_t  =     _std::float8_t;
-	XTAL_LET_(sigma_t)      n_fraction =  4;
-	XTAL_LET_(sigma_t)      n_exponent =  3;
+	using zed_t = logical_t<0>;
 
 };
 template <>
-struct systematize<2>
+struct recognize<(1<<0)>
 {
-	using      iota_t  =       _std::int8_t;
-	using     delta_t  =   signed short int;
-	using     sigma_t  = unsigned short int;
-//	using     alpha_t  =    _std::float16_t;
-	XTAL_LET_(sigma_t)      n_fraction = 10;
-	XTAL_LET_(sigma_t)      n_exponent =  5;
+	using   zed_t =          logical_t<1>;
+//	using  iota_t =          _std::int4_t;
+	using delta_t =   signed XTAL_INT_(0);
+	using sigma_t = unsigned XTAL_INT_(0);
+//	using alpha_t =          XTAL_FLT_(0);
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	XTAL_LET_(sigma_t) N_exponent = 3;
+	XTAL_LET_(sigma_t) N_fraction = 4;
 
 };
 template <>
-struct systematize<4>
+struct recognize<(1<<1)>
 {
-	using      iota_t  =      _std::int16_t;
-	using     delta_t  =   signed       int;
-	using     sigma_t  = unsigned       int;
-	using     alpha_t  =              float;
-	XTAL_LET_(sigma_t)      n_fraction = 23;
-	XTAL_LET_(sigma_t)      n_exponent =  8;
-	XTAL_LET_(sigma_t)      n_quake    = 0x5F3759DF;
+	using   zed_t =          logical_t<1>;
+	using  iota_t =   signed XTAL_INT_(0);
+	using delta_t =   signed XTAL_INT_(1);
+	using sigma_t = unsigned XTAL_INT_(1);
+//	using alpha_t =          XTAL_FLT_(1);
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	XTAL_LET_(sigma_t) N_exponent =  5;
+	XTAL_LET_(sigma_t) N_fraction = 10;
+
+};
+template <>
+struct recognize<(1<<2)>
+{
+	using   zed_t =          logical_t<1>;
+	using  iota_t =   signed XTAL_INT_(1);
+	using delta_t =   signed XTAL_INT_(2);
+	using sigma_t = unsigned XTAL_INT_(2);
+	using alpha_t =          XTAL_FLT_(2);
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	XTAL_LET_(sigma_t) N_exponent =  8;
+	XTAL_LET_(sigma_t) N_fraction = 23;
+	XTAL_LET_(sigma_t) N_quake    = sigma_n<0x5F375A86>;
 
 	using mt19937_t = _std::mersenne_twister_engine<sigma_t, 32, 624, 397, 31
-	,	0x9908b0df, 11
-	,	0xffffffff,  7
-	,	0x9d2c5680, 15
-	,	0xefc60000, 18
-	,	1812433253
+	,	sigma_n<0x9908B0DF>, 11
+	,	sigma_n<0xFFFFFFFF>,  7
+	,	sigma_n<0x9D2C5680>, 15
+	,	sigma_n<0xEFC60000>, 18
+	,	sigma_n<0x6C078965>
 	>;
 
 };
 template <>
-struct systematize<8>
+struct recognize<(1<<3)>
 {
-	using      iota_t  =      _std::int32_t;
-	using     delta_t  =   signed long  int;
-	using     sigma_t  = unsigned long  int;
-	using     alpha_t  =             double;
-	XTAL_LET_(sigma_t)      n_fraction = 52;
-	XTAL_LET_(sigma_t)      n_exponent = 11;
-	XTAL_LET_(sigma_t)      n_quake    = 0x5FE6EB50C7B537A9;// -Wconstant-conversion?
+	using   zed_t =          logical_t<1>;
+	using  iota_t =   signed XTAL_INT_(2);
+	using delta_t =   signed XTAL_INT_(3);
+	using sigma_t = unsigned XTAL_INT_(3);
+	using alpha_t =          XTAL_FLT_(3);
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	XTAL_LET_(sigma_t) N_exponent = 11;
+	XTAL_LET_(sigma_t) N_fraction = 52;
+	XTAL_LET_(sigma_t) N_quake    = sigma_n<0x5FE6EB50, 0xC7B537A9>;
 
 	using mt19937_t = _std::mersenne_twister_engine<sigma_t, 64, 312, 156, 31
-	,	0xb5026f5aa96619e9, 29
-	,	0x5555555555555555, 17
-	,	0x71d67fffeda60000, 37
-	,	0xfff7eee000000000, 43
-	,	6364136223846793005
+	,	sigma_n<0xB5026F5A, 0xA96619E9>, 29
+	,	sigma_n<0x55555555, 0x55555555>, 17
+	,	sigma_n<0x71D67FFF, 0xEDA60000>, 37
+	,	sigma_n<0xFFF7EEE0, 0x00000000>, 43
+	,	sigma_n<0x5851F42D, 0x4C958000>
 	>;
 
 };
+/*/
+template <>
+struct recognize<(1<<4)>
+{
+	using   zed_t =          logical_t<1>;
+	using  iota_t =   signed XTAL_INT_(3);
+	using delta_t =   signed XTAL_INT_(4);
+	using sigma_t = unsigned XTAL_INT_(4);
+	using alpha_t =          XTAL_FLT_(4);
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	XTAL_LET_(sigma_t) N_exponent =  15;
+	XTAL_LET_(sigma_t) N_fraction = 112;
+	XTAL_LET_(sigma_t) N_quake    = sigma_n<0x5FFE6EC8, 0x5E7DE30D, 0xAABC6027, 0x11840B0F>;
+
+//	FIXME: Define 128-bit parameterization of `std::mersenne_twister_engine`. \
+
+	using mt19937_t = _std::mersenne_twister_engine<sigma_t, 64, 312, 156, 31
+	,	sigma_n<0xB5026F5A, 0xA96619E9>, 29
+	,	sigma_n<0x55555555, 0x55555555>, 17
+	,	sigma_n<0x71D67FFF, 0xEDA60000>, 37
+	,	sigma_n<0xFFF7EEE0, 0x00000000>, 43
+	,	sigma_n<0x5851F42D, 0x4C958000>
+	>;
+
+};
+/***/
+
+template <size_t N_size>
+concept recognized_q = recognize<N_size>::zed_t::value;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_size>
-struct rationalize
-:	systematize<N_size>
+struct rationalize: rationalize<(N_size >> 1)>
+{
+	using zed_t = logical_t<0>;
+
+};
+template <size_t N_size> requires recognized_q<N_size>
+struct rationalize<N_size>: recognize<N_size>
 {
 private:
-	using S_ = systematize<N_size>;
+	using S_ = recognize<N_size>;
 
 public:
 	using typename S_::delta_t;
 	using typename S_::sigma_t;
 
-	XTAL_LET_(sigma_t) width = N_size;
-	XTAL_LET_(sigma_t) depth = N_size << 3;
+	XTAL_LET_(sigma_t) N_width = N_size;
+	XTAL_LET_(sigma_t) N_depth = N_size << 3;
 
-	XTAL_LET_(sigma_t) n_fraction =          S_::n_fraction;
-	XTAL_LET_(sigma_t) n_exponent =          S_::n_exponent;
-	XTAL_LET_(sigma_t) n_positive = n_fraction + n_exponent;
-	XTAL_LET_(sigma_t) n_negative = n_positive + 1;
-	XTAL_LET_(sigma_t) n_unit     = n_exponent - 1;
-	XTAL_LET_(sigma_t) n_sign     =              1;
-	static_assert(n_negative == depth);
+	XTAL_LET_(sigma_t) N_fraction =          S_::N_fraction;
+	XTAL_LET_(sigma_t) N_exponent =          S_::N_exponent;
+	XTAL_LET_(sigma_t) N_positive = N_fraction + N_exponent;
+	XTAL_LET_(sigma_t) N_negative = N_positive + 1;
+	XTAL_LET_(sigma_t) N_unit     = N_exponent - 1;
+	XTAL_LET_(sigma_t) N_sign     =              1;
+	static_assert(N_negative == N_depth);
 
-	XTAL_FN2_(sigma_t) bit_flag_f(sigma_t const m=0)                    XTAL_0EX {return sigma_t(m <= n_negative) << m;};
+	XTAL_FN2_(sigma_t) bit_flag_f(sigma_t const m=0)                    XTAL_0EX {return sigma_t(m <= N_negative) << m;};
 	XTAL_FN2_(sigma_t) bit_mark_f(sigma_t const m=0)                    XTAL_0EX {return bit_flag_f(m)  - 1;};
 	XTAL_FN2_(sigma_t) bit_mask_f(sigma_t const m=0, sigma_t const n=0) XTAL_0EX {return bit_mark_f(m) << n;};
 
@@ -128,12 +190,12 @@ public:
 		XTAL_LET_(sigma_t) mark = bit_mark_f(M_depth);
 		XTAL_LET_(sigma_t) mask = bit_mask_f(M_depth, N_shift);
 	};
-	struct negative: word<n_negative,          0> {};
-	struct positive: word<n_positive,          0> {};
-	struct fraction: word<n_fraction,          0> {};
-	struct exponent: word<n_exponent, n_fraction> {};
-	struct     unit: word<    n_unit, n_fraction> {};
-	struct     sign: word<    n_sign, n_positive> {};
+	struct negative: word<N_negative,          0> {};
+	struct positive: word<N_positive,          0> {};
+	struct fraction: word<N_fraction,          0> {};
+	struct exponent: word<N_exponent, N_fraction> {};
+	struct     unit: word<    N_unit, N_fraction> {};
+	struct     sign: word<    N_sign, N_positive> {};
 	static_assert((sigma_t) ~sign::mask == positive::mask);
 
 
@@ -142,7 +204,7 @@ public:
 	template < ordinal_p T> struct internal<T> {using type = delta_t;};
 	template <class      T>  using internal_t = typename internal<T>::type;
 
-	template <integral_p I> requires (sizeof(I) < depth)
+	template <integral_p I> requires (sizeof(I) < N_depth)
 	XTAL_FN2 internal_f(I i)
 	XTAL_0EX
 	{
@@ -225,7 +287,7 @@ public:
 
 	XTAL_FN2 bit_count_f(integral_p auto i)
 	XTAL_0EX
-	XTAL_REQ (sizeof(i) < width)
+	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_count_f(internal_f(i));
 	}
@@ -252,7 +314,7 @@ public:
 
 	XTAL_FN2 bit_floor_f(integral_p auto i)
 	XTAL_0EX
-	XTAL_REQ (sizeof(i) < width)
+	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_floor_f(internal_f(i));
 	}
@@ -276,7 +338,7 @@ public:
 
 	XTAL_FN2 bit_ceiling_f(integral_p auto i)
 	XTAL_0EX
-	XTAL_REQ (sizeof(i) < width)
+	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_ceiling_f(internal_f(i));
 	}
@@ -301,31 +363,31 @@ public:
 	XTAL_FN2_(sigma_t) bit_reverse_f(sigma_t u, sigma_t const &subdepth)
 	XTAL_0EX
 	{
-		for (sigma_t m = -1, i = depth; i >>= 1;) {
+		for (sigma_t m = -1, i = N_depth; i >>= 1;) {
 			m ^= m<<i;
 			u = (u&m)<<i | (u&~m)>>i;
 		}
-		u >>= depth - subdepth; assert(0 < subdepth and subdepth <= depth);
+		u >>= N_depth - subdepth; assert(0 < subdepth and subdepth <= N_depth);
 		return u;
 	}
 	template <size_t N_subdepth=0>
 	XTAL_FN2_(sigma_t) bit_reverse_f(sigma_t const &u)
 	XTAL_0EX
 	{
-		sigma_t constexpr subdepth = 0 < N_subdepth? N_subdepth: depth;
+		sigma_t constexpr subdepth = 0 < N_subdepth? N_subdepth: N_depth;
 		return bit_reverse_f(u, subdepth);
 	}
 
 	template <size_t N_subdepth=0>
 	XTAL_FN2 bit_reverse_f(integral_p auto i)
 	XTAL_0EX
-	XTAL_REQ (sizeof(i) < width)
+	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_reverse_f<N_subdepth>(internal_f(i));
 	}
 	XTAL_FN2 bit_reverse_f(integral_p auto i, sigma_t const &subdepth)
 	XTAL_0EX
-	XTAL_REQ (sizeof(i) < width)
+	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_reverse_f(internal_f(i), subdepth);
 	}
@@ -337,12 +399,15 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_size>
-struct realize: rationalize<N_size>
+struct realize: realize<(N_size >> 1)>
 {
+	using zed_t = logical_t<0>;
+
 };
-template <size_t N_size>
-requires
-requires {typename rationalize<N_size>::alpha_t;}
+template <size_t N_size> requires recognized_q<N_size>
+struct realize<N_size>: rationalize<N_size>
+{};
+template <size_t N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_t;}
 struct realize<N_size>: rationalize<N_size>
 {
 private:
@@ -371,16 +436,16 @@ public:
 	XTAL_LET_(aphex_t) aphex_i = {0, 1};
 
 
-	using S_::width;
-	using S_::depth;
+	using S_::N_width;
+	using S_::N_depth;
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
 
-	using default_alignment = cardinal_t<XTAL_STD_(L1)/width>;
+	using default_alignment = cardinal_t<XTAL_STD_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = cardinal_t<_std::hardware_constructive_interference_size/width>;
-	using  destructive_alignment = cardinal_t<_std:: hardware_destructive_interference_size/width>;
+	using constructive_alignment = cardinal_t<_std::hardware_constructive_interference_size/N_width>;
+	using  destructive_alignment = cardinal_t<_std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
 	using  destructive_alignment = default_alignment;
@@ -477,7 +542,7 @@ public:
 	XTAL_0EX
 	{
 	//	return vrsqrted_f64(w);
-		return _std::bit_cast<alpha_t>(S_::n_quake - (_std::bit_cast<delta_t>(w) >> size_1));
+		return _std::bit_cast<alpha_t>(S_::N_quake - (_std::bit_cast<delta_t>(w) >> size_1));
 	}
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_f(alpha_t const &w)
@@ -1262,12 +1327,12 @@ public:
 template <class T>
 struct realize: _detail::realize<sizeof(value_t<T>)> {};
 
-using realized = realize<size_t>;
+using realized = realize<size_s>;
 
-static_assert(is_q<size_t, typename realized::sigma_t>);
-static_assert(sizeof(size_t) == sizeof(typename realized::sigma_t));
-static_assert(sizeof(size_t) == sizeof(typename realized::delta_t));
-static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
+//static_assert(is_q<size_t, typename realized::sigma_t>);
+static_assert(sizeof(size_s) == sizeof(typename realized::sigma_t));
+static_assert(sizeof(size_s) == sizeof(typename realized::delta_t));
+static_assert(sizeof(size_s) == sizeof(typename realized::alpha_t));
 
 
 ///////////////////////////////////////////////////////////////////////////////
