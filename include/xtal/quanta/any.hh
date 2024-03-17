@@ -1,5 +1,5 @@
 #pragma once
-#include "../cell/any.ii"// `_retail`
+#include "../process/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::quanta
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::cell;
+namespace _retail = xtal::process;
 #include "./_detail.hxx"
 
 

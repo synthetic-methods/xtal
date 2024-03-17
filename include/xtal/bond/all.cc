@@ -1,7 +1,7 @@
 #pragma once
 #include "./compose.cc"
-#include "./identify.cc"
-#include "./identity.cc"
+#include "./isokind.cc"
+#include "./isotype.cc"
 #include "./pack.cc"
 #include "./realize.cc"
 #include "./seek.cc"

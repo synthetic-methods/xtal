@@ -12,7 +12,7 @@ namespace xtal::quantum
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM fuse;
-template <typename ..._s> XTAL_ASK fuse_q = bond::tag_p<fuse, _s...>;
+template <typename ..._s> XTAL_ASK fuse_q = bond::tagged_p<fuse, _s...>;
 template <class U=size_t> XTAL_USE fuse_t = confined_t<fuse<U>>;
 
 

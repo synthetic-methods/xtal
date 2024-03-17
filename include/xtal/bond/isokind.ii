@@ -13,46 +13,21 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...As>
-struct identify;
-
-template <>
-struct identify<>
-{	
+template <template <typename> typename T_>
+struct isokind
+{
 	template <class S>
-	class subtype: public S
+	class subtype: public T_<subtype<S>>::template subtype<S>
 	{
-	public:
-		using S::S;
-		
-		struct identity
-		{
-			class type {};
-		
-		};
-
-	};
-};
-template <typename A>
-struct identify<A>
-{	
-	template <class I>
-	struct dent
-	{
-		class type: public I::type {};
+		using S_ = typename T_<subtype<S>>::template subtype<S>;
 	
-	};
-	template <class S>
-	class subtype: public S
-	{
 	public:
-		using S::S;
-		
-		using identity = dent<typename S::identity>;
-		
+		using S_::S_;
+
 	};
 };
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

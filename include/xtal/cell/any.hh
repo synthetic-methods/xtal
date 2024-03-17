@@ -33,44 +33,15 @@ struct any<void>
 {	
 	template <class S>
 	using subtype = S;
-	
-	using type = subtype<unit_t>;
-
-};
-template <>
-struct any<>
-{	
-	template <class S>
-	class subtype: public bond::compose_s<S, bond::identify<>>
-	{
-		using S_ = bond::compose_s<S, bond::identify<>>;
-		
-	public:
-		using S_::S_;
-
-	protected:
-		///\
-		Fallback resolver, defaulting to the `back` type/selector. \
-		
-		template <class ...Ys> struct super: bond::seek_back<Ys...> {};
-
-	};
-	template <class S> requires bond::identity_p<S>
-	class subtype<S>: public S
-	{
-	public:
-		using S::S;
-
-	};
-	using type = subtype<unit_t>;
+	using    type = subtype<unit_t>;
 
 };
 template <typename A>
 struct any<A>
 {	
-//	NOTE: `identify` records the applied `any`s by _out-of-band_ inheritance. \
-	
-	using subkind = bond::compose<bond::identify<A>, any<>>;
+	//\
+	using subkind = bond::tab<A>;
+	using subkind = bond::compose<>;
 
 	template <class S>
 	class subtype: public bond::compose_s<S, subkind>
@@ -81,7 +52,10 @@ struct any<A>
 		using S_::S_;
 		
 	};
-	template <class S> XTAL_REQ_(typename S::T_self)
+	template <class S> requires some_q<typename S::T_self>
+	//\
+	and bond::untabbed_p<A, S>
+
 	class subtype<S>: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -93,7 +67,7 @@ struct any<A>
 	protected:
 		template <class A_self, typename ...Is> struct super:      S_::template super<A_self, Is...> {};
 		template <class A_self, typename ...Is> struct super<A_self, A, Is...>: super<U_self, Is...> {};
-		template <class A_self, typename ...Is>  using super_t =       typename super<A_self, Is...>::type;
+		template <class A_self, typename ...Is> using  super_t =       typename super<A_self, Is...>::type;
 
 	public:
 	//	using S_::S_;

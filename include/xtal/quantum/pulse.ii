@@ -12,7 +12,7 @@ namespace xtal::quantum
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM pulse;
-template <typename ..._s> XTAL_ASK pulse_q = bond::tag_p<pulse, _s...>;
+template <typename ..._s> XTAL_ASK pulse_q = bond::tagged_p<pulse, _s...>;
 template <class U=size_t> XTAL_USE pulse_t = confined_t<U>;
 
 template <class ...Ts>

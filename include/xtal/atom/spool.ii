@@ -14,7 +14,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM spool;
 template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_ASK spool_q = bond::tag_p<spool, Ts...>;
+template <class ...Ts> XTAL_ASK spool_q = bond::tagged_p<spool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ struct spool<A>
 		}
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 

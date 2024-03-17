@@ -1,5 +1,5 @@
 #pragma once
-#include "../cell/any.ii"// `_retail`
+#include "../bond/any.ii"// `_retail`
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::cell;
+namespace _retail = xtal::bond;
 #include "./_detail.hxx"
 
 

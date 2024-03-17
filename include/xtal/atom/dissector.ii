@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM dissector;
 template <class ..._s> XTAL_USE dissector_t = typename dissector<_s...>::type;
-template <class ...Ts> XTAL_ASK dissector_q = bond::tag_p<dissector, Ts...>;
+template <class ...Ts> XTAL_ASK dissector_q = bond::tagged_p<dissector, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ struct dissector<U[N]>
 		}
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 

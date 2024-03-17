@@ -13,10 +13,17 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T             >   using identity_t = typename T::identity::type;
-template <class T, class... Ys> concept identity_p = of_p<identity_t<T>, identity_t<Ys>...>;
-template <class T, class... Ys> concept identity_q = of_q<identity_t<T>, identity_t<Ys>...>;
+template <template <typename> typename T_>
+class isotype: public T_<isotype<T_>>
+{
+	using S = T_<isotype<T_>>;// -Wsubobject-linkage?
+	
+public:
+	using S::S;
+
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
