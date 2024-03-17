@@ -52,9 +52,36 @@ struct infer<U[N]>
 :	bond::compose<any<U>, defer<unit_t[N]>>
 {};
 
-template <class ...Us> using defers = bond::compose<defer<Us>...>;
-template <class ...Us> using refers = bond::compose<refer<Us>...>;
+template <class ...Us>
+struct reinfers
+{
+	template <class S>
+	using subtype = S;
+
+};
+template <incomplete_q U, class ...Us>
+struct reinfers<U, Us...>
+:	reinfers<Us...>
+{
+};
+template <complete_q U, class ...Us>
+struct reinfers<U, Us...>
+{
+	using subkind = refer<U>;
+
+	template <class S>
+	class subtype: public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+		
+	};
+};
 template <class ...Us> using infers = bond::compose<infer<Us>...>;
+template <class ...Us> using refers = bond::compose<refer<Us>...>;
+template <class ...Us> using defers = bond::compose<defer<Us>...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,26 +143,20 @@ template <class U, typename ...As> using conferred_t = typename conferred<U, As.
 ///\
 Creates a `contained` type from `infer<As>...`. \
 
-template <class ...Us> using inferred   = confined<infers<Us...>>;
+template <class ...Us> using inferred   = confined<reinfers<Us...>, infers<Us...>>;
 template <class ...Us> using inferred_t = typename inferred<Us...>::type;
 
 
 ///\
 Creates a `std::tuple` analogue. \
 
-template <class ...Us> using   tupled   = inferred<Us..., class tupled__>;
+template <class ...Us> using   tupled   = confined<infers<Us...>, any<class tupled__>>;
 template <class ...Us> using   tupled_t = typename tupled<Us...>::type;
 template <class ...Ts> concept tupled_q = any_p<class tupled__, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-///\
-Proxies and delegegates `U`, with `subtype` extending `any<As...>`. \
-
-template <class U, typename ...As> using label   = conferred<U, any<As>...>;
-template <class U, typename ...As> using label_t = typename label<U, As...>::type;
 
 ///\
 Defines `type` by `W` if `any_q<W>`, otherwise `conferred_t<W>`. \

@@ -67,7 +67,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = message::label_t<ordinal_t<0>, struct __start__>;
+	using U_start = message::inferred_t<class start__, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -79,7 +79,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = message::label_t<ordinal_t<0>, struct __start__>;
+	using U_start = message::inferred_t<class start__, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized
