@@ -66,7 +66,7 @@ with the inner-most components representing inputs, and the outer-most component
 Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
-	using Active = message::label_t<int, struct active>;
+	using Active = message::inferred_t<class active, int>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
@@ -79,7 +79,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = message::label_t<int, struct offset>;
+	using Offset = message::inferred_t<class active, int>;
 	
 	struct Mix: process::confine_t<Mix
 	,  Offset::template dispatch<2>
