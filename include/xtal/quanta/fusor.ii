@@ -12,7 +12,7 @@ namespace xtal::quanta
 /////////////////////////////////////////////////////////////////////////////////
 
 template <           typename ..._s> XTAL_NYM fusor;
-template <           typename ..._s> XTAL_ASK fusor_q = bond::tag_p<fusor, _s...>;
+template <           typename ..._s> XTAL_ASK fusor_q = bond::tagged_p<fusor, _s...>;
 template <array_q W, typename ...As> XTAL_USE fusor_t = confined_t<fusor<W, As...>>;
 
 

@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM series;
 template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
-template <class ...Ts> XTAL_ASK series_q = bond::tag_p<series, Ts...>;
+template <class ...Ts> XTAL_ASK series_q = bond::tagged_p<series, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ struct series<U[N]>
 		}
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 

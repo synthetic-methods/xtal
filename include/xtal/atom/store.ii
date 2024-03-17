@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_ASK store_q = bond::tag_p<store, Ts...>;
+template <class ...Ts> XTAL_ASK store_q = bond::tagged_p<store, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +446,7 @@ struct store<U[N]>
 		}
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 

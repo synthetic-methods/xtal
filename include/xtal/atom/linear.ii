@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM linear;
 template <class ..._s> XTAL_USE linear_t = typename linear<_s...>::type;
-template <class ...Ts> XTAL_ASK linear_q = bond::tag_p<linear, Ts...>;
+template <class ...Ts> XTAL_ASK linear_q = bond::tagged_p<linear, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ struct linear<U[N]>
 
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 

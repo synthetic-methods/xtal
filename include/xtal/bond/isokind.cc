@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./identify.ii"// testing...
+#include "./isokind.ii"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::bond::__test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("identify")
+TAG_("isokind")
 {
 	TRY_("task")
 	{

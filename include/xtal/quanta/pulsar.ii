@@ -12,7 +12,7 @@ namespace xtal::quanta
 /////////////////////////////////////////////////////////////////////////////////
 
 template <                     typename ..._s> XTAL_NYM pulsar;
-template <                     typename ..._s> XTAL_ASK pulsar_q = bond::tag_p<pulsar, _s...>;
+template <                     typename ..._s> XTAL_ASK pulsar_q = bond::tagged_p<pulsar, _s...>;
 template <array_q W=size_t[2], typename ...As> XTAL_USE pulsar_t = confined_t<pulsar<W, As...>>;
 
 

@@ -23,15 +23,20 @@ template <class T> struct refine;///<   Finalizes `T`.
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Tags `subtype` with this namespace and the supplied types. \
+Associates the internal `subtype` with the current namespace, \
+prepending the decorators `As...`. \
 
-template <typename ...As> struct any   : _retail::any<As...> {};
-template <typename ...As> using  any_t = typename any<As...>::type;
+template <typename ...As>
+using any = _retail::any<As..., class any__>;
+
+template <typename ...As>
+using any_t = typename any<As...>::type;
+
 ///\
 Matches any `T` that inherits from `any_t<As...>`. \
 
 template <class T, typename ...As>
-concept any_p = bond::identity_p<any_t<As...>, T>;
+concept any_p = complete_q<typename T::template self_t<As..., any__>>;
 
 template <class ...Ts>
 //\
@@ -43,7 +48,8 @@ concept any_q = of_p<any_t<>, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 
 ///\
-Composes `Us...`, mapping each element with `defer` (or `any`, if incomplete). \
+Lifts `A` with either `defer` or `any`, \
+depending respectively on whether `U` is `complete_q<U>` or `incomplete_q<U>`. \
 
 template <class        U> struct infer    : defer<U> {};
 template <incomplete_q U> struct infer<U> :   any<U> {};
@@ -52,51 +58,33 @@ struct infer<U[N]>
 :	bond::compose<any<U>, defer<unit_t[N]>>
 {};
 
-template <class ...Us>
-struct reinfers
-{
-	template <class S>
-	using subtype = S;
+///\
+Delegates to the first `complete_q` provided, if any. \
 
-};
-template <incomplete_q U, class ...Us>
-struct reinfers<U, Us...>
-:	reinfers<Us...>
-{
-};
-template <complete_q U, class ...Us>
-struct reinfers<U, Us...>
-{
-	using subkind = refer<U>;
+template <                class ...Us> struct reinfers {template <class S> using subtype = S;};
+template <incomplete_q U, class ...Us> struct reinfers<U, Us...>: reinfers<Us...> {};
+template <  complete_q U, class ...Us> struct reinfers<U, Us...>: refer<U> {};
 
-	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-	
-	public:
-		using S_::S_;
-		
-	};
-};
-template <class ...Us> using infers = bond::compose<infer<Us>...>;
-template <class ...Us> using refers = bond::compose<refer<Us>...>;
-template <class ...Us> using defers = bond::compose<defer<Us>...>;
+template <class ...Us> using infers = bond::compose<infer<Us>...>;///< Chained `infer`rals.
+template <class ...Us> using refers = bond::compose<refer<Us>...>;///< Chained `refer`rals.
+template <class ...Us> using defers = bond::compose<defer<Us>...>;///< Chained `defer`rals.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 ///\
-Combines `defer` and `refer` to define a proxy of `U`, sandwiching the decorators `As...`. \
+Combines `defer` and `refer` to lift `U`, \
+sandwiching the decorators `As...`. \
 
 template <class U, typename ...As>
 struct confer: bond::compose<refer<U>, As..., defer<U>> {};
 
 ///\
-Combines `define` and `refine` to define `T`, sandwiching the decorators `As...`. \
+Combines `define` and `refine` to materialize the curiously recursive type `T`, \
+sandwiching the decorators `As...`. \
 
 template <class T, typename ...As>
-struct confine//: bond::compose<refine<T>, As..., define<T>> {};
+struct confine
 {
 	using subkind = bond::compose<refine<T>, As..., define<T>>;
 
@@ -118,15 +106,8 @@ struct confined
 	using homokind = confine<T, As...>;
 
 	template <class S>
-	class subtype: public bond::compose_s<S, homokind<subtype<S>>>
-	{
-		using S_ = bond::compose_s<S, homokind<subtype<S>>>;
-	
-	public:
-		using S_::S_;
-
-	};
-	using type = subtype<any_t<>>;
+	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
+	using    type = subtype<any_t<>>;
 	
 };
 template <typename ...As>

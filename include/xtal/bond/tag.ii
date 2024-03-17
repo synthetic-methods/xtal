@@ -15,8 +15,10 @@ namespace xtal::bond
 
 template <         template <class ...> class L             > XTAL_NYM tag   : tab   <tag<L>       > {};
 template <         template <class ...> class L             > XTAL_USE tag_t = tab_t <tag<L>       >;
-template <         template <class ...> class L, class ...Ts> XTAL_ASK tag_p = tab_p <tag<L>, Ts...>;
-template <class T, template <class ...> class L             > XTAL_ASK tag_q = tag_p <L, T>;
+template <         template <class ...> class L, class ...Ts> XTAL_ASK   tagged_p =   tabbed_p<tag<L>, Ts...>;
+template <         template <class ...> class L, class ...Ts> XTAL_ASK untagged_p = untabbed_p<tag<L>, Ts...>;
+template <class T, template <class ...> class L             > XTAL_ASK   tagged_q =   tagged_p<L, T>;
+template <class T, template <class ...> class L             > XTAL_ASK untagged_q = untagged_p<L, T>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

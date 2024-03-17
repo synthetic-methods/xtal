@@ -12,7 +12,7 @@ namespace xtal::quantum
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM phase;
-template <typename ..._s> XTAL_ASK phase_q = bond::tag_p<phase, _s...>;
+template <typename ..._s> XTAL_ASK phase_q = bond::tagged_p<phase, _s...>;
 template <class U=size_t> XTAL_USE phase_t = confined_t<phase<U>>;
 
 template <class ...Ts>

@@ -1,7 +1,7 @@
 #pragma once
 #include "./compose.ii"
-#include "./identify.ii"
-#include "./identity.ii"
+#include "./isokind.ii"
+#include "./isotype.ii"
 #include "./pack.ii"
 #include "./realize.ii"
 #include "./seek.ii"

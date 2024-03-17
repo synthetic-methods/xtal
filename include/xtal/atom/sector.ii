@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_NYM sector;
 template <class ..._s> XTAL_USE sector_t = typename sector<_s...>::type;
-template <class ...Ts> XTAL_ASK sector_q = bond::tag_p<sector, Ts...>;
+template <class ...Ts> XTAL_ASK sector_q = bond::tagged_p<sector, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ struct sector<U[N]>
 		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {return bond::seek_forward_f<arity_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN_(subscript(i) -= w[i])), self();}
 
 	};
-	using type = _detail::isotype<homotype>;
+	using type = bond::isotype<homotype>;
 
 };
 
