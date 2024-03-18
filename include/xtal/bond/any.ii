@@ -23,22 +23,32 @@ struct define
 	class subtype: public S
 	{
 		friend T;
-	
+		using S_ = S;
+
 	public:
-		using S::S;
+		using S_::S_;
 
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S(XTAL_FWD_(oo)...)
+		:	S_(XTAL_FWD_(oo)...)
 		{}
 
-		///\returns `this` as the `define`d supertype. \
 
-		XTAL_TO4_(XTAL_TN2 then(), self<S>())
+	public://protected:
+		using T_self = T;
+		using U_self = unit_t;
 
-		///\returns a copy of `*this` with type `Y=T`. \
-
-		XTAL_TO2_(template <class Y=T> XTAL_TN2_(based_t<Y>) twin(), self<Y>())
+	protected:
+		template <class Y_self, typename ...Is>
+		struct super: bond::seek_back<Y_self, Is...> {};
+		
+	//	template <class Y_self, typename ...Is>
+	//	XTAL_REQ_(typename S_::template super<Y_self, Is...>)
+	//	struct super<Y_self, Is...>: S_::template super<Y_self, Is...> {};
+		
+	public:
+		template <class ...Is>
+		using self_t = typename super<T_self, Is...>::type;
 
 		///\returns `*this` with type `Y=T`. \
 
@@ -47,13 +57,13 @@ struct define
 		template <class Y=T> XTAL_TN2 self() XTAL_0FX_(&)  {return forge_f<Y const  &>(*this);}
 		template <class Y=T> XTAL_TN2 self() XTAL_0EX_(&)  {return forge_f<Y        &>(*this);}
 		
-		template <class ...Ys> struct super: bond::seek_back<Ys...> {};
+		///\returns `this` as the `define`d supertype. \
 
-		template <class ...Is>
-		using self_t = T;
+		XTAL_TO4_(XTAL_TN2 then(), self<S_>())
 
-		using T_self = T;
-		using U_self = unit_t;
+		///\returns a copy of `*this` with type `Y=T`. \
+
+		XTAL_TO2_(template <class Y=T> XTAL_TN2_(based_t<Y>) twin(), self<Y>())
 
 	};
 	using type = subtype<unit_t>;

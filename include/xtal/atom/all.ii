@@ -1,4 +1,4 @@
-#pragma once
+#include "./any.ii"
 #include "./linear.ii"
 #include "./dissector.ii"
 #include "./sector.ii"

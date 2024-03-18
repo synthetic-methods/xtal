@@ -34,7 +34,7 @@ struct serial<U[N]>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-	//	TODO: Subclass to define serial pairs like `complex`. \
+	//	TODO: Subclass for serial pairs like `complex`. \
 
 		friend T;
 		using S_ = hemitype<T>;

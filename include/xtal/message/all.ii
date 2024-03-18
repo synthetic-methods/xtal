@@ -1,4 +1,3 @@
-#pragma once
 #include "./any.ii"
 #include "./per.ii"
 #include "./rescan.ii"

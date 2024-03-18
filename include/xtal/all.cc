@@ -1,4 +1,3 @@
-//#pragma once
 #include "./atom/all.cc"
 #include "./bond/all.cc"
 #include "./cell/all.cc"

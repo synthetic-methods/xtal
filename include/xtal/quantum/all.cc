@@ -1,4 +1,3 @@
-#pragma once
 #include "./any.cc"
 #include "./fuse.cc"
 #include "./phase.cc"

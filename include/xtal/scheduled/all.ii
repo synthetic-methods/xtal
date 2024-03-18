@@ -1,4 +1,3 @@
-#pragma once
 #include "./any.ii"
 #include "./thunk.ii"
 #include "./chunk.ii"

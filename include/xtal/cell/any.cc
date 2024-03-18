@@ -25,7 +25,7 @@ template <typename ...As>
 using bar_baz = confined<void
 ,	infers<bar__, int>
 ,	infers<baz__, int>
-//,	As...
+,	any<As>...
 >;
 template <typename ...As>
 using bar_baz_t = typename bar_baz<As...>::type;
@@ -33,43 +33,36 @@ using bar_baz_t = typename bar_baz<As...>::type;
 
 TAG_("cell", "matching")
 {
-//	TRY_("any")
-//	{
-//		TRUE_(any_p<any_t<foo__, goo__>, foo__, goo__>);
-//		TRUE_(any_p<any_t<foo__, goo__>,        goo__>);
-//		TRUE_(any_p<any_t<foo__, goo__>              >);
-//
-//	}
-//	TRY_("any root")
-//	{
-//		TRUE_(any_q<bar_baz_t<     >>);
-//		TRUE_(any_q<bar_baz_t<foo__>>);
-//
-//		TRUE_(any_p<bar_baz_t<foo__       >              >);
-//		TRUE_(any_p<bar_baz_t<foo__       >, foo__       >);
-//		TRUE_(any_p<bar_baz_t<foo__, goo__>,        goo__>);
-//		TRUE_(any_p<bar_baz_t<foo__, goo__>, foo__, goo__>);
-//
-//		UNTRUE_(any_p<bar_baz_t<foo__       >,        goo__>);
-//		UNTRUE_(any_p<bar_baz_t<foo__, goo__>, foo__       >);
-//
-//	}
+	TRY_("any root")
+	{
+		TRUE_(any_q<bar_baz_t<     >>);
+		TRUE_(any_q<bar_baz_t<foo__>>);
+
+		TRUE_(any_p<bar_baz_t<foo__       >              >);
+		TRUE_(any_p<bar_baz_t<foo__       >, foo__       >);
+		TRUE_(any_p<bar_baz_t<foo__, goo__>,        goo__>);
+		TRUE_(any_p<bar_baz_t<foo__, goo__>, foo__, goo__>);
+
+		UNTRUE_(any_p<bar_baz_t<foo__       >,        goo__>);
+		UNTRUE_(any_p<bar_baz_t<foo__, goo__>, goo__, foo__>);
+
+	}
 	TRY_("any inline")
 	{
-		TRUE_(any_q<bar_baz_t<>       >);
-		TRUE_(any_p<bar_baz_t<>       >);
+		TRUE_(any_q<bar_baz_t<>              >);
+		TRUE_(any_p<bar_baz_t<>              >);
 		TRUE_(any_p<bar_baz_t<>,        baz__>);
 		TRUE_(any_p<bar_baz_t<>, bar__, baz__>);
 
 	}
-//	TRY_("any combined")
-//	{
-//		TRUE_(any_p<bar_baz_t<foo__>                     >);
-//		TRUE_(any_p<bar_baz_t<foo__>,               foo__>);
-//		TRUE_(any_p<bar_baz_t<foo__>,        baz__, foo__>);
-//		TRUE_(any_p<bar_baz_t<foo__>, bar__, baz__, foo__>);
-//
-//	}
+	TRY_("any combined")
+	{
+		TRUE_(any_p<bar_baz_t<foo__>                     >);
+		TRUE_(any_p<bar_baz_t<foo__>,               foo__>);
+		TRUE_(any_p<bar_baz_t<foo__>,        baz__, foo__>);
+		TRUE_(any_p<bar_baz_t<foo__>, bar__, baz__, foo__>);
+
+	}
 }
 
 
@@ -205,9 +198,9 @@ TAG_("cell", "composition")
 		TRUE_(complete_q<T_opt::self_t<L_aim>>);
 		TRUE_(complete_q<T_opt::self_t<L_hyp>>);
 		UNTRUE_(complete_q<T_opt::self_t<L_etc>>);
-		TRUE_(8 == T_opt::W_field::value.width);
-		TRUE_(4 == T_aim::W_field::value.width);
-		TRUE_(2 == T_hyp::W_field::value.width);
+		TRUE_(8 == T_opt::size());
+		TRUE_(4 == T_aim::size());
+		TRUE_(2 == T_hyp::size());
 
 	}
 }

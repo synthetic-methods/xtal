@@ -27,7 +27,7 @@ struct define
 	,	_retail::define<T>
 	>;
 	
-	template <any_q S>
+	template <class S>
 	class subtype: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -41,21 +41,18 @@ struct define
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class A_self, typename ...Is> struct super:            S_::template super<A_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self,  T_self, Is...>: super<T_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self,      _0, Is...>: super<U_self, Is...> {};
-	//	template <class A_self, typename ...Is> struct super<A_self,      _0, Is...>;
-		template <class A_self                > struct super<A_self> {using type = A_self;};
-
-		template <class A_self, typename ...Is>
-		using super_t = typename super<A_self, Is...>::type;
+		template <class Y_self, typename ...Is> struct super:            S_::template super<Y_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self,  T_self, Is...>: super<T_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self,      _0, Is...>: super<U_self, Is...> {};
+	//	template <class Y_self, typename ...Is> struct super<Y_self,      _0, Is...>;
+		template <class Y_self                > struct super<Y_self> {using type = Y_self;};
 		
 	public:
 		using S_::S_;
 	//	using S_::self;
 
-		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
-	//	template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
+		template <typename ...Is> using self_t = typename super<T_self, Is...>::type;
+	//	template <typename ...Is> using head_t = typename super<U_self, Is...>::type::U_head;
 
 		XTAL_TO4_(
 		XTAL_TN2 self(), S_::self()
@@ -69,7 +66,7 @@ struct define
 		XTAL_DO4_(template <typename ...Is>
 		XTAL_TN2 self(auto &&...oo),
 		{
-			using X = super_t<T, Is...>;
+			using X = typename super<T, Is...>::type;
 			if constexpr (0 == sizeof...(oo)) {
 				return S_::template self<X>();
 			}
@@ -162,29 +159,26 @@ struct defer
 		///\
 		Resolves the query/answer `X` w.r.t. the supplied context. \
 
-		template <class A_self, typename ...Is> struct super:           S_::template super<A_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self, U_self, Is...>: super<U_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self, U_head, Is...>: super<U_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self,     _0, Is...>: super<U_self, Is...> {};
-		template <class A_self, liminal_q N, typename ...Is>
-		struct super<A_self, N, Is...>: S_::template super<typename S_::U_self, subliminal_s<N>, Is...> {};
+		template <class Y_self, typename ...Is> struct super:           S_::template super<Y_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self, U_self, Is...>: super<U_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self, U_head, Is...>: super<U_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self,     _0, Is...>: super<U_self, Is...> {};
+		template <class Y_self, liminal_q N, typename ...Is>
+		struct super<Y_self, N, Is...>: S_::template super<typename S_::U_self, subliminal_s<N>, Is...> {};
 
-		template <class A_self, typename ...Is>
-		using super_t = typename super<A_self, Is...>::type;
-		
 	public:
 		using S_::S_;
 		using S_::self;
 		using S_::head;
 
-		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
-		template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
+		template <typename ...Is> using self_t = typename super<T_self, Is...>::type;
+		template <typename ...Is> using head_t = typename super<U_self, Is...>::type::U_head;
 
 		XTAL_TO4_(template <size_t I>
 		XTAL_TN2 self(auto &&...oo), self<cardinal_t<I>>(XTAL_FWD_(oo)...)
 		)		
 		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(auto &&...oo), S_::template self<super_t<S, Is...>>(XTAL_FWD_(oo)...)
+		XTAL_TN2 self(auto &&...oo), S_::template self<typename super<S, Is...>::type>(XTAL_FWD_(oo)...)
 		)
 		
 		///\
