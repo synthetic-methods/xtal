@@ -7,3 +7,4 @@
 #include "./seek.ii"
 #include "./tab.ii"
 #include "./tag.ii"
+#include "./wield.ii"

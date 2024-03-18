@@ -164,8 +164,13 @@ private:
 	using S_ = recognize<N_size>;
 
 public:
+//	using typename S_:: iota_t;
 	using typename S_::delta_t;
 	using typename S_::sigma_t;
+
+//	XTAL_LET_( iota_t)  iota_0 = 0,  iota_1 = 1;
+	XTAL_LET_(delta_t) delta_0 = 0, delta_1 = 1;
+	XTAL_LET_(sigma_t) sigma_0 = 0, sigma_1 = 1;
 
 	XTAL_LET_(sigma_t) N_width = N_size;
 	XTAL_LET_(sigma_t) N_depth = N_size << 3;
@@ -178,25 +183,35 @@ public:
 	XTAL_LET_(sigma_t) N_sign     =              1;
 	static_assert(N_negative == N_depth);
 
-	XTAL_FN2_(sigma_t) bit_flag_f(sigma_t const m=0)                    XTAL_0EX {return sigma_t(m <= N_negative) << m;};
-	XTAL_FN2_(sigma_t) bit_mark_f(sigma_t const m=0)                    XTAL_0EX {return bit_flag_f(m)  - 1;};
-	XTAL_FN2_(sigma_t) bit_mask_f(sigma_t const m=0, sigma_t const n=0) XTAL_0EX {return bit_mark_f(m) << n;};
-
-	template <size_t M_depth, size_t N_shift>
 	struct word
 	{
-		XTAL_LET_(sigma_t) depth = M_depth;
-		XTAL_LET_(sigma_t) shift = N_shift;
-		XTAL_LET_(sigma_t) mark = bit_mark_f(M_depth);
-		XTAL_LET_(sigma_t) mask = bit_mask_f(M_depth, N_shift);
+		sigma_t width;
+		sigma_t depth;
+		sigma_t shift;
+		sigma_t mark;
+		sigma_t mask;
+
+		XTAL_FN2_(sigma_t) flag_f(sigma_t const m=0)                    XTAL_0EX {return N_negative <= m? sigma_0: sigma_1 << m;};
+		XTAL_FN2_(sigma_t) mark_f(sigma_t const m=0)                    XTAL_0EX {return flag_f(m)  - 1;};
+		XTAL_FN2_(sigma_t) mask_f(sigma_t const m=0, sigma_t const n=0) XTAL_0EX {return mark_f(m) << n;};
+
+		XTAL_CXN word(sigma_t m_depth, sigma_t n_shift=0)
+		XTAL_0EX
+		:	width (flag_f(m_depth))
+		,	depth (m_depth)
+		,	shift (n_shift)
+		,	mark  (mark_f(m_depth))
+		,	mask  (mask_f(m_depth, n_shift))
+		{}
+
 	};
-	struct negative: word<N_negative,          0> {};
-	struct positive: word<N_positive,          0> {};
-	struct fraction: word<N_fraction,          0> {};
-	struct exponent: word<N_exponent, N_fraction> {};
-	struct     unit: word<    N_unit, N_fraction> {};
-	struct     sign: word<    N_sign, N_positive> {};
-	static_assert((sigma_t) ~sign::mask == positive::mask);
+	XTAL_LET negative = word (N_negative);
+	XTAL_LET positive = word (N_positive);
+	XTAL_LET fraction = word (N_fraction);
+	XTAL_LET exponent = word (N_exponent, N_fraction);
+	XTAL_LET     unit = word     (N_unit, N_fraction);
+	XTAL_LET     sign = word     (N_sign, N_positive);
+	static_assert((sigma_t) ~sign.mask == positive.mask);
 
 
 	template <class      T> struct internal;
@@ -225,7 +240,7 @@ public:
 	XTAL_0EX
 	{
 		if constexpr (N_side == 0) {
-			delta_t const m = i >> positive::depth;
+			delta_t const m = i >> positive.depth;
 			i += m;
 			i ^= m;
 			return i;
@@ -270,7 +285,7 @@ public:
 		}	else
 		if constexpr (N_zero == +1) {
 		//	return (0 <= i) - (i <  0);
-			return (i>>positive::depth)|1;
+			return (i>>positive.depth)|1;
 		}	else
 		if constexpr (N_zero == -1) {
 			return (0 <  i) - (i <= 0);
@@ -414,12 +429,19 @@ private:
 	using S_ = rationalize<N_size>;
 
 public:
-	using typename S_:: negative;
-	using typename S_:: positive;
-	using typename S_:: fraction;
-	using typename S_:: exponent;
-	using typename S_::     unit;
-	using typename S_::     sign;
+	using S_:: negative;
+	using S_:: positive;
+	using S_:: fraction;
+	using S_:: exponent;
+	using S_::     unit;
+	using S_::     sign;
+
+//	using S_::   iota_0;
+//	using S_::   iota_1;
+	using S_::  delta_0;
+	using S_::  delta_1;
+	using S_::  sigma_0;
+	using S_::  sigma_1;
 
 	using typename S_::   iota_t;
 	using typename S_::  delta_t;
@@ -428,10 +450,9 @@ public:
 	using typename S_::mt19937_t;
 	using aphex_t = _std::complex<alpha_t>;
 
-	XTAL_LET_( iota_t)  iota_1 = 1;
-	XTAL_LET_(delta_t) delta_1 = 1;
-	XTAL_LET_(sigma_t) sigma_1 = 1;
+	XTAL_LET_(alpha_t) alpha_0 = 0;
 	XTAL_LET_(alpha_t) alpha_1 = 1;
+	XTAL_LET_(aphex_t) aphex_0 = {0, 0};
 	XTAL_LET_(aphex_t) aphex_1 = {1, 0};
 	XTAL_LET_(aphex_t) aphex_i = {0, 1};
 
@@ -601,7 +622,7 @@ public:
 	XTAL_FN2_(alpha_t) mantissa_f(sigma_t n)
 	XTAL_0EX
 	{
-		return _std::bit_cast<alpha_t>(n & ~unit::mask);
+		return _std::bit_cast<alpha_t>(n & ~unit.mask);
 	}
 	XTAL_FN2_(alpha_t) mantissa_f(mt19937_t &m)
 	XTAL_0EX
@@ -653,9 +674,9 @@ public:
 	XTAL_0EX
 	{
 	#if 1//XTAL_STD_IEC&559
-		delta_t m = n_zoom << unit::shift;
-		m += unit::mask;
-		m &= exponent::mask;
+		delta_t m = n_zoom << unit.shift;
+		m += unit.mask;
+		m &= exponent.mask;
 		return _std::bit_cast<alpha_t>(m);
 	#else
 		return _std::ldexp<alpha_t>(1, n_zoom);// not `constexpr` until `C++23`!
@@ -752,7 +773,7 @@ public:
 	XTAL_FN2_(alpha_t) epsilon_f(delta_t const &n_zoom=1)
 	XTAL_0EX
 	{
-		auto constexpr N = fraction::depth + 1;
+		auto constexpr N = fraction.depth + 1;
 		return haplo_f(N - n_zoom);
 	}
 	template <int N_zoom=0>
@@ -863,8 +884,8 @@ public:
 	#ifdef XTAL_V00_MSVC
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 		delta_t u = _std::bit_cast<delta_t>(value);
-		u &= sign::mask;
-		u |= unit::mask;
+		u &= sign.mask;
+		u |= unit.mask;
 		return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
 	#else
 		return __builtin_copysign((alpha_t) 1, value);
@@ -899,8 +920,8 @@ public:
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 		delta_t n = _std::bit_cast<delta_t>(source);
 		delta_t m = _std::bit_cast<delta_t>(target);
-		m &=    ~sign::mask;
-		m |= n & sign::mask;
+		m &=    ~sign.mask;
+		m |= n & sign.mask;
 		return _std::bit_cast<alpha_t>(XTAL_MOV_(m));
 	#else
 		return __builtin_copysign(target, source);// constexpr
@@ -935,7 +956,7 @@ public:
 		#if XTAL_V00_MSVC
 			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 			delta_t u = _std::bit_cast<delta_t>(value);
-			u &= positive::mask;
+			u &= positive.mask;
 			return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
 		#else
 			return __builtin_copysign(value, (alpha_t) 1);// constexpr
@@ -992,18 +1013,18 @@ public:
 	{
 	//	bool constexpr N_unit = not N_infinity;
 		if constexpr (IEC&559) {
-			delta_t constexpr M_zone = unit::mask + (1);
-			delta_t constexpr M_zoom = unit::mask - (delta_t(1) << N_zoom);
-			delta_t const     dezone = n_zone << exponent::shift;
+			delta_t constexpr M_zone = unit.mask + (1);
+			delta_t constexpr M_zoom = unit.mask - (delta_t(1) << N_zoom);
+			delta_t const     dezone = n_zone << exponent.shift;
 			delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
 			delta_t const M = rezone + M_zoom;
 			delta_t o, n, m;
 			auto &t  = force_f<delta_t &>(target);
-			n  =  t  & sign::mask;
+			n  =  t  & sign.mask;
 			m  =  t  ^ n;
 			m  =  M  - m;
-			o  =  m >> positive::depth;
-			n |=  o  & unit::mask;
+			o  =  m >> positive.depth;
+			n |=  o  & unit.mask;
 			t +=  o  & m;
 			return    _std::bit_cast<alpha_t>(n);
 		}
@@ -1063,7 +1084,7 @@ public:
 	XTAL_FN2 truncated_f(aphex_t target, delta_t const &n_zone)
 	XTAL_0EX
 	{
-		truncate_f<(delta_t(1) << (exponent::depth - 2))>(target);
+		truncate_f<(delta_t(1) << (exponent.depth - 2))>(target);
 		auto [w, m] = unsquare_dot_f<0>(target);
 		target *= m; truncate_f<N_zoom, N_zero>(w, n_zone);
 		target *= w;
@@ -1083,16 +1104,16 @@ public:
 	{
 		bool constexpr N_unit = not N_zero;
 		if constexpr (IEC&559) {
-			delta_t constexpr M_zoom = unit::mask + (delta_t(1) << N_zoom);
-			delta_t const     dezone = n_zone << exponent::shift;
+			delta_t constexpr M_zoom = unit.mask + (delta_t(1) << N_zoom);
+			delta_t const     dezone = n_zone << exponent.shift;
 			delta_t const M = dezone + M_zoom*N_unit;
 			delta_t o, n, m;
 			auto &t  = force_f<delta_t &>(target);
-			n   = t  & sign::mask;
+			n   = t  & sign.mask;
 			m   = t  ^ n;
 			m  -= M;
-			o   = m >> positive::depth;
-			n  |= o  & unit::mask;
+			o   = m >> positive.depth;
+			n  |= o  & unit.mask;
 			t  -= o  & m;
 			return    _std::bit_cast<alpha_t>(XTAL_MOV_(n));
 		}
@@ -1167,7 +1188,7 @@ public:
 	XTAL_FN2_(alpha_t) trim_f(alpha_t target)
 	XTAL_0EX
 	{
-		delta_t constexpr N_unzoom = 0 < N_zoom? N_zoom - fraction::depth: N_zoom - 1;
+		delta_t constexpr N_unzoom = 0 < N_zoom? N_zoom - fraction.depth: N_zoom - 1;
 		target *= minimal_f(N_unzoom);
 		target /= minimal_f(N_unzoom);
 	//	NOTE: Alternating `*` and `/` appears to prevent optimize as desired, \
@@ -1179,7 +1200,7 @@ public:
 	static_assert(trim_f<3>(patio_f<1>(1)) == 3.125);
 	static_assert(trim_f<4>(patio_f<1>(2)) == 1.5625);
 
-	template <int N_zoom=fraction::depth - 1>
+	template <int N_zoom=fraction.depth - 1>
 	XTAL_FN2 trim_f(aphex_t const &target)
 	XTAL_0EX
 	{
@@ -1244,10 +1265,10 @@ public:
 		}
 		else {
 			auto m = _std::bit_cast<delta_t>(x);
-			auto n = m - unit::mask;
-			m     &= fraction::mask;
-			m     |= unit::mask;
-			n    >>= unit::shift - 1;
+			auto n = m - unit.mask;
+			m     &= fraction.mask;
+			m     |= unit.mask;
+			n    >>= unit.shift - 1;
 			n     |= 1;
 			auto w = _std::bit_cast<alpha_t>(m)*0.7071067811865475244008443621048490393e+0L;// 1/Sqrt[2]
 			auto u =                alpha_t (n)*0.3465735902799726547086160607290882840e+0L;// Log[2]/2

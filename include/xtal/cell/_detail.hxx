@@ -18,31 +18,6 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct define_field
-{
-	template <any_q S>
-	class subtype: public S
-	{
-	public:
-		using S::S;
-
-		using word_depth = cardinal_t<0>;
-		using word_width = cardinal_t<1>;
-
-		XTAL_FN2_(size_t) enumerate()
-		XTAL_0EX
-		{
-			return T::word_width::value;
-		}
-
-	};
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-template <class T>
 struct refine_head
 {
 	template <any_q S>
@@ -170,9 +145,6 @@ struct defer_field
 			return dismember_f(__body, XTAL_FWD_(oo)...);
 		}
 
-		using word_width = cardinal_t<0>;
-		static_assert(terminal_q<typename S_::word_depth>);// for now...
-
 	};
 };
 template <integral_q U>
@@ -210,24 +182,26 @@ struct defer_field<U>
 template <size_t N_width>
 struct defer_field<unit_t[N_width]>
 {
-	XTAL_LET N_mask = N_width - 1;
 	XTAL_LET N_depth = bond::realized::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
+	using subkind = bond::wield<N_width>;
+
 	template <any_q S>
-	class subtype: public bond::compose_s<S>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S>;
+		using S_ = bond::compose_s<S, subkind>;
 
 	public://protected:
 		using U_head = size_t;
 		using U_body = unsigned;
 
 	public:
+		U_body __body:N_depth;
+
+	public:
 	//	using S_::S_;
 		using S_::self;
-
-		U_body __body:N_depth;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -240,30 +214,21 @@ struct defer_field<unit_t[N_width]>
 		XTAL_0EX
 		:	S_(XTAL_FWD_(oo)...)
 		,	__body(member_f<U_head>(XTAL_FWD_(a)))
-		{}
-		template <integral_p A> requires  liminal_q<typename S_::word_depth>
+		{
+		}
+		template <integral_p A>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
 		:	S_(U_head(XTAL_FWD_(a)) >> N_depth)
-		,	__body(U_head(a)&N_mask)
-		{};
-		template <integral_p A> requires terminal_q<typename S_::word_depth>
-		XTAL_CON subtype(A &&a)
-		XTAL_0EX
-		:	__body(U_head(a)&N_mask)
+		,	__body(U_head(a)&(N_width - 1))
 		{
-			assert(0 == a >> N_depth);
-		};
+		}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_TN2 head() XTAL_0FX {return U_head(__body);}
 		XTAL_TN2 head() XTAL_0EX {return U_head(__body);}
 		
-		using word_depth = cardinal_t<N_depth + S_::word_depth::value>;// specified with `null_t[N_depth]`
-		using word_width = cardinal_t<N_width * S_::word_width::value>;// specified with `unit_t[N_width]`
-		static_assert(size_1 << word_depth::value == word_width::value);// for now...
-
 	};
 };
 template <size_t N_depth>

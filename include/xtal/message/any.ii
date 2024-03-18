@@ -4,7 +4,7 @@
 #include "../cell/all.ii"
 #include "../flux/all.ii"
 #include "../process/any.hh"
-#include "../resourced/enumerated.ii"
+
 
 
 XTAL_ENV_(push)
@@ -96,7 +96,7 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <process::any_q R> requires resourced::enumerated_q<T>
+			template <process::any_q R> requires bond::wield_p<T>
 			class subtype: public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
@@ -113,7 +113,7 @@ struct define
 				XTAL_CXN subtype(size_t const &n)
 				:	R_(n)
 				{
-					assert(0 <= n and n < T::enumerate());
+					assert(0 <= n and n < T::size());
 				}
 
 				XTAL_TO2_(
@@ -154,7 +154,7 @@ struct define
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(bond::seek_f<T::enumerate()> {});
+						XTAL_LET m_method = method_f(bond::seek_f<T::size()> {});
 					
 					};
 					template <auto ...Is> XTAL_LET m_method = resolve<Is...>::m_method;

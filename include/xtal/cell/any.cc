@@ -205,9 +205,9 @@ TAG_("cell", "composition")
 		TRUE_(complete_q<T_opt::self_t<L_aim>>);
 		TRUE_(complete_q<T_opt::self_t<L_hyp>>);
 		UNTRUE_(complete_q<T_opt::self_t<L_etc>>);
-		TRUE_(8 == T_opt::enumerate());
-		TRUE_(4 == T_aim::enumerate());
-		TRUE_(2 == T_hyp::enumerate());
+		TRUE_(8 == T_opt::W_field::value.width);
+		TRUE_(4 == T_aim::W_field::value.width);
+		TRUE_(2 == T_hyp::W_field::value.width);
 
 	}
 }

@@ -1,4 +1,3 @@
 #pragma once
-#include "./enumerated.ii"
 #include "./spool.ii"
 #include "./store.ii"
