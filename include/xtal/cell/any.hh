@@ -40,8 +40,8 @@ template <typename A>
 struct any<A>
 {	
 	//\
-	using subkind = bond::tab<A>;
 	using subkind = bond::compose<>;
+	using subkind = bond::tab<A>;
 
 	template <class S>
 	class subtype: public bond::compose_s<S, subkind>
@@ -53,28 +53,15 @@ struct any<A>
 		
 	};
 	template <class S> requires some_q<typename S::T_self>
-	//\
 	and bond::untabbed_p<A, S>
+	//\
 
 	class subtype<S>: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
-	public://protected:
-		using typename S::T_self;
-		using typename S::U_self;
-
-	protected:
-		template <class A_self, typename ...Is> struct super:      S_::template super<A_self, Is...> {};
-		template <class A_self, typename ...Is> struct super<A_self, A, Is...>: super<U_self, Is...> {};
-		template <class A_self, typename ...Is> using  super_t =       typename super<A_self, Is...>::type;
-
 	public:
 	//	using S_::S_;
-		using S_::self;
-
-		template <typename ...Is> using self_t =          super_t<T_self, Is...>;
-		template <typename ...Is> using head_t = typename super_t<U_self, Is...>::U_head;
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
@@ -93,6 +80,18 @@ struct any<A>
 		:	S_(XTAL_FWD_(oo)...)
 		{}
 
+	public://protected:
+		using typename S::T_self;
+		using typename S::U_self;
+
+	protected:
+		template <class Y_self, typename ...Is> struct super:      S_::template super<Y_self, Is...> {};
+		template <class Y_self, typename ...Is> struct super<Y_self, A, Is...>: super<U_self, Is...> {};
+
+	public:
+		template <typename ...Is> using self_t = typename super<T_self, Is...>::type;
+		template <typename ...Is> using head_t = typename super<U_self, Is...>::type::U_head;
+
 		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
 		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
 		)		
@@ -100,16 +99,14 @@ struct any<A>
 		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
 		)		
 
-		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(auto &&...oo), S_::template self<super_t<T_self, Is...>>(XTAL_FWD_(oo)...)
+		XTAL_TO4_(template <class ...Is>
+		XTAL_TN2 self(auto &&...oo), S_::template self<typename super<T_self, Is...>::type>(XTAL_FWD_(oo)...)
 		)
-		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 head(auto &&...oo), S_::template self<super_t<U_self, Is...>>().head(XTAL_FWD_(oo)...)
+		XTAL_TO4_(template <class ...Is>
+		XTAL_TN2 head(auto &&...oo), S_::template self<typename super<U_self, Is...>::type>().head(XTAL_FWD_(oo)...)
 		)
 		
 	};
-	using type = subtype<unit_t>;
-
 };
 
 }///////////////////////////////////////////////////////////////////////////////

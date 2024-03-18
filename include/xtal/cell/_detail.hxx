@@ -185,7 +185,7 @@ struct defer_field<unit_t[N_width]>
 	XTAL_LET N_depth = bond::realized::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
-	using subkind = bond::wield<N_width>;
+	using subkind = bond::assay<N_width>;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind>

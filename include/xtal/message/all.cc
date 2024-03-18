@@ -1,4 +1,3 @@
-#pragma once
 #include "./any.cc"
 #include "./per.cc"
 #include "./rescan.cc"

@@ -29,7 +29,7 @@ using onset_t = message::inferred_t<class onset__, typename bond::realized::alph
 struct onset
 :	message::confer<typename bond::realized::alpha_t
 	,	message::any<class onset__>
-	,	bond::wield<(1 << 7)>
+	,	bond::assay<(1 << 7)>
 	>
 {
 };

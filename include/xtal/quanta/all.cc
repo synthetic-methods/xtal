@@ -1,4 +1,3 @@
-#pragma once
 #include "./any.cc"
 #include "./fusor.cc"
 #include "./phasor.cc"

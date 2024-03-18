@@ -30,18 +30,17 @@ template <typename ...As>
 using any = _retail::any<As..., class any__>;
 
 template <typename ...As>
-using any_t = typename any<As...>::type;
+using any_t = bond::compose_s<unit_t, any<As...>>;
+using any_u = any_t<>;
 
 ///\
 Matches any `T` that inherits from `any_t<As...>`. \
 
-template <class T, typename ...As>
-concept any_p = complete_q<typename T::template self_t<As..., any__>>;
-
 template <class ...Ts>
-//\
-concept any_q = (...and any_p<Ts>);
-concept any_q = of_p<any_t<>, Ts...>;
+concept any_q = of_p<any_u, Ts...>;
+
+template <class T, typename ...As>
+concept any_p = any_q<T> and complete_q<typename T::template self_t<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +60,7 @@ struct infer<U[N]>
 ///\
 Delegates to the first `complete_q` provided, if any. \
 
-template <                class ...Us> struct reinfers {template <class S> using subtype = S;};
+template <                class ...Us> struct reinfers: bond::compose<> {};
 template <incomplete_q U, class ...Us> struct reinfers<U, Us...>: reinfers<Us...> {};
 template <  complete_q U, class ...Us> struct reinfers<U, Us...>: refer<U> {};
 
@@ -94,7 +93,7 @@ struct confine
 	
 };
 template <class T, typename ...As>
-using confine_t = typename confine<T, As...>::template subtype<any_t<>>;
+using confine_t = typename confine<T, As...>::template subtype<any_u>;
 
 ///\
 Creates the `confine`d _decorator_ with `As...`. \
@@ -107,7 +106,7 @@ struct confined
 
 	template <class S>
 	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
-	using    type = subtype<any_t<>>;
+	using    type = subtype<any_u>;
 	
 };
 template <typename ...As>

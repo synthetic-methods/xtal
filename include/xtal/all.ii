@@ -1,4 +1,3 @@
-#pragma once
 #include "./atom/all.ii"
 #include "./bond/all.ii"
 #include "./cell/all.ii"
