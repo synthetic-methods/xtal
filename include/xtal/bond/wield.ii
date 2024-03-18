@@ -1,0 +1,69 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::bond
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class   ...Ts>	concept wield_p = (...and _detail::wield_p<Ts>);
+template <class   ...Ts>	concept wield_q = (...and _detail::wield_q<Ts>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Defines the limits of a bit-field. \
+
+template <int N_width>
+struct wield
+{
+	using re = bond::realized;
+	XTAL_LET N_depth = re::bit_ceiling_f(N_width);
+
+	using subkind = _detail::wield<N_width>;
+
+	template <class S>
+	class subtype: public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public://protected:
+		using W_field = constant_t<re::word(N_depth)>;
+
+	public:
+		using S_::S_;
+
+		///\
+		Default `integral_q` constructor, expects `0`. \
+
+		template <integral_p A>
+		XTAL_CON subtype(A &&a)
+		XTAL_0EX
+		{
+			assert(0 == a);
+		};
+
+	};
+	template <class S> requires wield_q<S>
+	class subtype<S>: public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public://protected:
+		using W_field = constant_t<re::word(N_depth + S_::W_field::value.depth)>;
+
+	public:
+		using S_::S_;
+
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

@@ -24,7 +24,6 @@ template <class T>
 struct define
 {
 	using subkind = bond::compose<void
-	,	_detail::define_field<T>
 	,	_retail::define<T>
 	>;
 	

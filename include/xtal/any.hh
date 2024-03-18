@@ -140,11 +140,10 @@ static_assert(1400 <= XTAL_V00_LLVM);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TYP                             decltype(auto)
-#define XTAL_TYP_(...) ::std::remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_VAL_(...)                ::std::declval <__VA_ARGS__>()
-#define XTAL_MOV_(...)                ::std::move    (__VA_ARGS__)
-#define XTAL_FWD_(...)          static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
+#define XTAL_TYP_(...) ::std:: remove_cvref_t<decltype(__VA_ARGS__)>
+#define XTAL_VAL_(...) ::std::                declval <__VA_ARGS__>()
+#define XTAL_MOV_(...) ::std::                move    (__VA_ARGS__)
+#define XTAL_FWD_(...)           static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
 #define XTAL_NYM                        struct
 #define XTAL_USE                         using

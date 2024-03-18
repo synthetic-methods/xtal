@@ -126,7 +126,7 @@ struct refer
 		
 			I const u_size = count_f(u);
 			I const m_size = count_f(m);
-			I const m_mask = m_size >> __realized::positive::depth;
+			I const m_mask = m_size >> __realized::positive.depth;
 			I i = u.front();
 			I j = u_size + i;
 			i &= ~m_mask;

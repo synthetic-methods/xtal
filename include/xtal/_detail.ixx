@@ -143,12 +143,11 @@ template <devalue_q  T >	struct    _value<T> {using value_type = devalue_t<T>;};
 template <revalue_q  T >	struct    _value<T> {using value_type = revalue_t<T>;};
 template <class      T >	using      value_t = typename _value<T>::value_type;
 
-
 template <class      X >	struct   argument     {using type = X &&;};
 template <based_q    X >	struct   argument<X>  {using type = X const &;};
 
-template <class   ...Ts>	concept      some_q = 1 <= sizeof...(Ts);
-template <class   ...Ts>	concept      none_q = 0 == sizeof...(Ts);
+template <class   ...Ts>	concept      some_q = 0 < sizeof...(Ts);
+template <class   ...Ts>	concept      none_q = not some_q<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
