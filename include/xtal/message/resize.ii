@@ -40,8 +40,8 @@ using resize_t = confined_t<resize<U>>;
 XTAL_FN2 resize_f(auto &&w)
 XTAL_0EX
 {
-	using __realized = bond::realize<XTAL_TYP_(w)>;
-	return resize_t<typename __realized::sigma_t>(XTAL_FWD_(w));
+	using re = bond::realize<XTAL_TYP_(w)>;
+	return resize_t<typename re::sigma_t>(XTAL_FWD_(w));
 }
 
 

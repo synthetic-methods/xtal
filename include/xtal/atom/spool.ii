@@ -46,9 +46,9 @@ struct spool<A>
 		using U_value = typename U_store::value_type;
 		using U_count = typename U_store::difference_type;
 
-		U_store __store {};
-		U_count __begin = 0;
-		U_count __end   = 0;
+		U_store u_store {};
+		U_count u_begin = 0;
+		U_count u_end   = 0;
 
 	public:
 		using S_::S_;
@@ -57,19 +57,19 @@ struct spool<A>
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
 		XTAL_CON homotype(bracket_t<U_value> w)
-		:	__end {_std::distance(w.begin(), w.end())}
-		,	__store(w)
+		:	u_end {_std::distance(w.begin(), w.end())}
+		,	u_store(w)
 		{}
 
-		XTAL_TO2_(XTAL_TN2     begin(U_count n=0), _std::next(__store.begin(), n + __begin))
-		XTAL_TO2_(XTAL_TN2       end(U_count n=0), _std::prev(__store.  end(), n + __end))
+		XTAL_TO2_(XTAL_TN2     begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		XTAL_TO2_(XTAL_TN2       end(U_count n=0), _std::prev(u_store.  end(), n + u_end))
 		XTAL_TN2_(U_value &)    peek(U_count n=0) XTAL_0EX {              return *begin(n);}
-		XTAL_TN1_(U_value &) advance(U_count n=1) XTAL_0EX {__begin += n; return *begin(0);}
+		XTAL_TN1_(U_value &) advance(U_count n=1) XTAL_0EX {u_begin += n; return *begin(0);}
 		XTAL_TN1_(U_value &) abandon(U_count n=1)
 		XTAL_0EX
 		{
 			if (n) {
-				__begin = 0;
+				u_begin = 0;
 				clear();
 			}
 			return *begin();
@@ -77,7 +77,7 @@ struct spool<A>
 		XTAL_TN0 clear()
 		XTAL_0EX
 		{
-			__store.erase(__store.begin(), end());
+			u_store.erase(u_store.begin(), end());
 		}
 
 		///\note\
@@ -88,8 +88,8 @@ struct spool<A>
 		XTAL_0EX
 		{
 			assert(i < end());
-			__begin -= i < begin();
-			__store.erase(i);
+			u_begin -= i < begin();
+			u_store.erase(i);
 			abandon(begin() == end());
 		}
 		XTAL_TN0 pop()
@@ -101,14 +101,14 @@ struct spool<A>
 		XTAL_TN2_(U_point) scan(auto &&w)
 		XTAL_0EX
 		{
-			return _std::lower_bound(__store.begin(), __store.end()
+			return _std::lower_bound(u_store.begin(), u_store.end()
 			,	XTAL_FWD_(w)
 			);
 		}
 		XTAL_TN2_(U_point) scan(auto &&w, auto &&f)
 		XTAL_0EX
 		{
-			return _std::lower_bound(__store.begin(), __store.end()
+			return _std::lower_bound(u_store.begin(), u_store.end()
 			,	XTAL_FWD_(w)
 			,	[f = XTAL_FWD_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
 			);
@@ -131,18 +131,18 @@ struct spool<A>
 		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
 		XTAL_0EX
 		{
-			return __store.insert(v_, XTAL_FWD_(w));
+			return u_store.insert(v_, XTAL_FWD_(w));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
 		{
-			return __store.insert(v_, U_value(XTAL_FWD_(ws)...));
+			return u_store.insert(v_, U_value(XTAL_FWD_(ws)...));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
-		XTAL_REQ_(__store.inplace(v_, XTAL_FWD_(ws)...))
+		XTAL_REQ_(u_store.inplace(v_, XTAL_FWD_(ws)...))
 		{
-			return __store.inplace(v_, XTAL_FWD_(ws)...);
+			return u_store.inplace(v_, XTAL_FWD_(ws)...);
 		}
 
 	};

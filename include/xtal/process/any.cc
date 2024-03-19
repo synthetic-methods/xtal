@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::process::__test
+namespace xtal::process::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__test;
+using namespace xtal::_test;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = message::inferred_t<class start__, ordinal_t<0>>;
+	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -79,7 +79,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = message::inferred_t<class start__, ordinal_t<0>>;
+	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized

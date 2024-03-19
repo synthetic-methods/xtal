@@ -47,8 +47,8 @@ struct thunk
 				using typename R_::V_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
-				V_delay __delay {0};
-				U_spool __spool {U_event::template sentry<-1>(), U_event::template sentry<1>()};
+				V_delay v_delay {0};
+				U_spool u_spool {U_event::template sentry<-1>(), U_event::template sentry<1>()};
 
 			public:
 				using R_::R_;
@@ -61,21 +61,21 @@ struct thunk
 				XTAL_TNX infuse(is_q<X> auto &&x)
 				XTAL_0EX
 				{
-					return __spool.peek(0).then().infuse(XTAL_FWD_(x));
+					return u_spool.peek(0).then().infuse(XTAL_FWD_(x));
 				}
 				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
-					if (__spool.empty() and u.head() < __delay) {
-						(void) __spool.abandon().head(__delay = 0);
+					if (u_spool.empty() and u.head() < v_delay) {
+						(void) u_spool.abandon().head(v_delay = 0);
 					}
-					return u == *__spool.push(XTAL_FWD_(u));
+					return u == *u_spool.push(XTAL_FWD_(u));
 				}
 
 				XTAL_TN2 method()
 				XTAL_0EX
 				{
-					return __spool.advance(__delay++ == __spool.peek(1).head()).then().head();
+					return u_spool.advance(v_delay++ == u_spool.peek(1).head()).then().head();
 				}
 
 				///\todo\

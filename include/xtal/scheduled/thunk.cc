@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::scheduled::__test
+namespace xtal::scheduled::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,7 @@ TAG_("thunk", "process")
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = message::inferred_t<class gate__, typename bond::realized::alpha_t>;
+		using V_gate = message::inferred_t<class gate_a, typename bond::realized::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -77,7 +77,7 @@ TAG_("thunk", "process")
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = message::inferred_t<class gate__, typename bond::realized::alpha_t>;
+		using V_gate = message::inferred_t<class gate_a, typename bond::realized::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;

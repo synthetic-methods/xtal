@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::bond::__test
+namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -163,57 +163,57 @@ TAG_("realize", "bit_reverse")
 {
 	TRY_("32:03")
 	{
-		using __realized = realize<uint32_t>;
-		using T_sigma = typename __realized::sigma_t;
+		using re = realize<uint32_t>;
+		using T_sigma = typename re::sigma_t;
 
 		T_sigma question = 0b011;
 		T_sigma answer   = 0b110;
 
-		TRUE_(answer == __realized::bit_reverse_f<3>(question));
+		TRUE_(answer == re::bit_reverse_f<3>(question));
 
 	}
 	TRY_("16:16")
 	{
-		using __realized = realize<uint16_t>;
-		using T_sigma = typename __realized::sigma_t;
+		using re = realize<uint16_t>;
+		using T_sigma = typename re::sigma_t;
 
 		T_sigma question = 0b0100100011100101;
 		T_sigma answer   = 0b1010011100010010;
 
-		TRUE_(answer == __realized::bit_reverse_f<16>(question));
+		TRUE_(answer == re::bit_reverse_f<16>(question));
 
 	}
 	TRY_("16:12")
 	{
-		using __realized = realize<uint16_t>;
-		using T_sigma = typename __realized::sigma_t;
+		using re = realize<uint16_t>;
+		using T_sigma = typename re::sigma_t;
 
 		T_sigma question = 0b010010001110;
 		T_sigma answer   = 0b011100010010;
 
-		TRUE_(answer == __realized::bit_reverse_f<12>(question));
+		TRUE_(answer == re::bit_reverse_f<12>(question));
 
 	}
 	TRY_("8:8")
 	{
-		using __realized = realize<uint8_t>;
-		using T_sigma = typename __realized::sigma_t;
+		using re = realize<uint8_t>;
+		using T_sigma = typename re::sigma_t;
 
 		T_sigma question = 0b01001101;
 		T_sigma answer   = 0b10110010;
 
-		TRUE_(answer == __realized::bit_reverse_f<8>(question));
+		TRUE_(answer == re::bit_reverse_f<8>(question));
 
 	}
 	TRY_("8:6")
 	{
-		using __realized = realize<uint8_t>;
-		using T_sigma = typename __realized::sigma_t;
+		using re = realize<uint8_t>;
+		using T_sigma = typename re::sigma_t;
 
 		T_sigma question = 0b010011;
 		T_sigma answer   = 0b110010;
 
-		TRUE_(answer == __realized::bit_reverse_f<6>(question));
+		TRUE_(answer == re::bit_reverse_f<6>(question));
 
 	}
 }

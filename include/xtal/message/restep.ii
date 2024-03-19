@@ -35,8 +35,8 @@ using restep_t = confined_t<restep<U>>;
 XTAL_FN2 restep_f(auto &&w)
 XTAL_0EX
 {
-	using __realized = bond::realize<XTAL_TYP_(w)>;
-	return restep_t<typename __realized::iota_t>(XTAL_FWD_(w));
+	using re = bond::realize<XTAL_TYP_(w)>;
+	return restep_t<typename re::iota_t>(XTAL_FWD_(w));
 }
 
 
