@@ -19,6 +19,7 @@
 //#include <arm_neon.h>
 //#endif
 
+#include <simde/arm/neon.h>
 #include <range/v3/all.hpp>
 
 

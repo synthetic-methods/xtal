@@ -40,6 +40,7 @@ class XTAL__Conan(ConanFile):
 
 	def requirements(self):
 		self.requires("range-v3/0.12.0", transitive_headers=True)
+		self.requires("simde/0.7.6", transitive_headers=True)
 
 	# Package:
 	no_copy_source = True
