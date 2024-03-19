@@ -21,12 +21,10 @@ template <array_q W, typename ...As> XTAL_USE fusor_t = confined_t<fusor<W, As..
 Manages a differential value like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
-template <array_q W, typename ...As>
-struct fusor<W, As...>
+template <size_t N, class U, typename ...As>
+struct fusor<U[N], As...>
 {
-	XTAL_USE U_ = _std::remove_extent_t<W>;
-	XTAL_LET N_ = _std::       extent_v<W>;
-	
+	using W = U[N];
 	using W_vector = atom::serial_t<W>;
 	using W_indent = flux::indent_s<W_vector>;
 	using subkind = bond::compose<bond::tag<fusor>
@@ -62,7 +60,7 @@ struct fusor<W, As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		XTAL_DO2_(template <auto ...Is> requires (not sizeof...(Is))
-		XTAL_TN2 method(subarray_q<N_> auto &&a),
+		XTAL_TN2 method(subarray_q<N> auto &&a),
 		{
 			(void) S_::influx(XTAL_FWD_(a));
 			return method();
@@ -80,10 +78,10 @@ struct fusor<W, As...>
 		///\
 		Update by indented replacement. \
 		
-		XTAL_TNX infuse(subarray_q<N_> auto &&a)
+		XTAL_TNX infuse(subarray_q<N> auto &&a)
 		{
 			using A = XTAL_TYP_(a);
-			using B = typename flux::indent_s<A, N_ - arity_n<A>>;
+			using B = typename flux::indent_s<A, N - arity_n<A>>;
 			return S_::influx(B(XTAL_FWD_(a)));
 		}
 

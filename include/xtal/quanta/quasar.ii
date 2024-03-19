@@ -19,19 +19,18 @@ template <array_q W=size_t[2], typename ...As> XTAL_USE quasar_t = confined_t<qu
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 
-template <array_q W, typename ...As>
-struct quasar<W, As...>
+template <size_t N, class U, typename ...As>
+struct quasar<U[N], As...>
 {
-	XTAL_LET N_ = _std::       extent_v<W>;
-	XTAL_USE U_ = _std::remove_extent_t<W>;
-	
+	using W = U[N];
+
 	using U_phasor = phasor_t<W, As...>;
 	using U_pulsar = pulsar_t<W, As...>;
 	
-	using V_phase = quantum::phase_value_t<U_>;
-	using V_pulse = quantum::pulse_value_t<U_>;
+	using V_phase = quantum::phase_value_t<U>;
+	using V_pulse = quantum::pulse_value_t<U>;
 
-	using W_quartz = quantum::quartz_t<U_>[N_];
+	using W_quartz = quantum::quartz_t<U>[N];
 	using subkind = bond::compose<bond::tag<quasar>, As..., fusor<W_quartz>>;
 
 	template <class S>
@@ -60,8 +59,8 @@ struct quasar<W, As...>
 		///\
 		Projection to components by name. \
 
-		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(U_phasor(phase<I>()...)) (bond::seek_f<N_>{});}
-		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(U_pulsar(pulse<I>()...)) (bond::seek_f<N_>{});}
+		XTAL_TN2 phasor() XTAL_0FX {return [this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(U_phasor(phase<I>()...)) (bond::seek_f<N>{});}
+		XTAL_TN2 pulsar() XTAL_0FX {return [this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(U_pulsar(pulse<I>()...)) (bond::seek_f<N>{});}
 		
 		///\
 		Projection to initial component by type. \
