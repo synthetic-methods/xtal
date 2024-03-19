@@ -34,11 +34,12 @@ struct recognize: recognize<(N_size >> 1)>
 template <>
 struct recognize<(1<<0)>
 {
-	using   zed_t =          logical_t<1>;
-//	using  iota_t =          _std::int4_t;
-	using delta_t =   signed XTAL_INT_(0);
-	using sigma_t = unsigned XTAL_INT_(0);
-//	using alpha_t =          XTAL_FLT_(0);
+	using   zed_t =           logical_t<1>;
+//	using  iota_t =           _std::int4_t;
+	using delta_t =    signed XTAL_INT_(0);
+	using sigma_t =  unsigned XTAL_INT_(0);
+//	using alpha_t =           XTAL_FLT_(0);
+//	using aphex_t = _std::complex<alpha_t>;
 
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
@@ -50,11 +51,12 @@ struct recognize<(1<<0)>
 template <>
 struct recognize<(1<<1)>
 {
-	using   zed_t =          logical_t<1>;
-	using  iota_t =   signed XTAL_INT_(0);
-	using delta_t =   signed XTAL_INT_(1);
-	using sigma_t = unsigned XTAL_INT_(1);
-//	using alpha_t =          XTAL_FLT_(1);
+	using   zed_t =           logical_t<1>;
+	using  iota_t =    signed XTAL_INT_(0);
+	using delta_t =    signed XTAL_INT_(1);
+	using sigma_t =  unsigned XTAL_INT_(1);
+//	using alpha_t =           XTAL_FLT_(1);
+//	using aphex_t = _std::complex<alpha_t>;
 
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
@@ -66,14 +68,26 @@ struct recognize<(1<<1)>
 template <>
 struct recognize<(1<<2)>
 {
-	using   zed_t =          logical_t<1>;
-	using  iota_t =   signed XTAL_INT_(1);
-	using delta_t =   signed XTAL_INT_(2);
-	using sigma_t = unsigned XTAL_INT_(2);
-	using alpha_t =          XTAL_FLT_(2);
+	using   zed_t =           logical_t<1>;
+	using  iota_t =    signed XTAL_INT_(1);
+	using delta_t =    signed XTAL_INT_(2);
+	using sigma_t =  unsigned XTAL_INT_(2);
+	using alpha_t =           XTAL_FLT_(2);
+	using aphex_t = _std::complex<alpha_t>;
 
-	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
-	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
+
+	using aphex_1x1_t = simde_float32x2_t;
+	using alpha_2x1_t = simde_float32x2_t;   // v(?:ld|st)1_f32
+	using alpha_2x2_t = simde_float32x2x2_t; // v(?:ld|st)2_f32
+
+	static alpha_t unsquare_e(alpha_t const &w)                   noexcept {return simde_vrsqrtes_f32(w);}
+	static alpha_t unsquare_e(alpha_t const &w, alpha_t const &n) noexcept {return simde_vrsqrtss_f32(w, n*n);}
+	static alpha_t  inverse_e(alpha_t const &w)                   noexcept {return simde_vrecpes_f32(w);}
+	static alpha_t  inverse_e(alpha_t const &w, alpha_t const &n) noexcept {return simde_vrecpss_f32(w, n);}
+
+
+	template <auto ...Ns> XTAL_LET delta_n = lateral_n<(delta_t) Ns...>;
+	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<(sigma_t) Ns...>;
 
 	XTAL_LET_(sigma_t) N_exponent =  8;
 	XTAL_LET_(sigma_t) N_fraction = 23;
@@ -96,11 +110,22 @@ struct recognize<(1<<2)>
 template <>
 struct recognize<(1<<3)>
 {
-	using   zed_t =          logical_t<1>;
-	using  iota_t =   signed XTAL_INT_(2);
-	using delta_t =   signed XTAL_INT_(3);
-	using sigma_t = unsigned XTAL_INT_(3);
-	using alpha_t =          XTAL_FLT_(3);
+	using   zed_t =           logical_t<1>;
+	using  iota_t =    signed XTAL_INT_(2);
+	using delta_t =    signed XTAL_INT_(3);
+	using sigma_t =  unsigned XTAL_INT_(3);
+	using alpha_t =           XTAL_FLT_(3);
+	using aphex_t = _std::complex<alpha_t>;
+
+	using aphex_1x1_t = simde_float64x2_t;
+	using alpha_2x1_t = simde_float64x2_t;   // v(?:ld|st)1q_f64
+	using alpha_2x2_t = simde_float64x2x2_t; // v(?:ld|st)1q_f64_x2
+
+	static alpha_t unsquare_e(alpha_t const &w)                   noexcept {return simde_vrsqrted_f64(w);}
+	static alpha_t unsquare_e(alpha_t const &w, alpha_t const &n) noexcept {return simde_vrsqrtsd_f64(w, n*n);}
+	static alpha_t  inverse_e(alpha_t const &w)                   noexcept {return simde_vrecped_f64(w);}
+	static alpha_t  inverse_e(alpha_t const &w, alpha_t const &n) noexcept {return simde_vrecpsd_f64(w, n);}
+
 
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
@@ -127,11 +152,12 @@ struct recognize<(1<<3)>
 template <>
 struct recognize<(1<<4)>
 {
-	using   zed_t =          logical_t<1>;
-	using  iota_t =   signed XTAL_INT_(3);
-	using delta_t =   signed XTAL_INT_(4);
-	using sigma_t = unsigned XTAL_INT_(4);
-	using alpha_t =          XTAL_FLT_(4);
+	using   zed_t =           logical_t<1>;
+	using  iota_t =    signed XTAL_INT_(3);
+	using delta_t =    signed XTAL_INT_(4);
+	using sigma_t =  unsigned XTAL_INT_(4);
+	using alpha_t =           XTAL_FLT_(4);
+	using aphex_t = _std::complex<alpha_t>;
 
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<delta_t(Ns)...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<sigma_t(Ns)...>;
@@ -462,8 +488,8 @@ public:
 	using typename S_::  delta_t;
 	using typename S_::  sigma_t;
 	using typename S_::  alpha_t;
+	using typename S_::  aphex_t;
 	using typename S_::mt19937_t;
-	using aphex_t = _std::complex<alpha_t>;
 
 	XTAL_LET_(alpha_t) alpha_0 = 0;
 	XTAL_LET_(alpha_t) alpha_1 = 1;
@@ -509,14 +535,15 @@ public:
 
 
 
-	XTAL_FN2_(alpha_t) term_f(auto &&a, auto &&x, auto &&...xs)
+	template <int N_sign=1> requires sign_p<N_sign, 1>
+	XTAL_FN2_(alpha_t) accumulate_f(auto &&a, auto &&x, auto &&...xs)
 	XTAL_0EX
 	{
 		if (N_fused and not _std::is_constant_evaluated()) {
-			return _std::fma((1 *...* XTAL_FWD_(xs)), XTAL_FWD_(x), XTAL_FWD_(a));
+			return _std::fma((XTAL_FWD_(xs) *...* XTAL_FWD_(x)), N_sign, XTAL_FWD_(a));
 		}
 		else {
-			return XTAL_FWD_(a) + (XTAL_FWD_(x) *...* XTAL_FWD_(xs));
+			return XTAL_FWD_(a) + N_sign*(XTAL_FWD_(x) *...* XTAL_FWD_(xs));
 		}
 	}
 
@@ -586,17 +613,25 @@ public:
 		return made_f<M_pow>(aphex_t(x, y));
 	}
 	
-	XTAL_FN2 unsquare_1(alpha_t const &w, alpha_t const &n)
+	XTAL_FN2_(alpha_t) unsquare_e(alpha_t const &w)
 	XTAL_0EX
 	{
-	//	return vrsqrtsd_f64(w, square_f(n));
-		return (0.5)*(3.0 - w*square_f(n));
+		if (_std::is_constant_evaluated()) {
+			return _std::bit_cast<alpha_t>(N_quake - (_std::bit_cast<delta_t>(w) >> size_1));
+		}
+		else {
+			return S_::unsquare_e(w);
+		}
 	}
-	XTAL_FN2 unsquare_0(alpha_t const &w)
+	XTAL_FN2_(alpha_t) unsquare_e(alpha_t const &w, alpha_t const &n)
 	XTAL_0EX
 	{
-	//	return vrsqrted_f64(w);
-		return _std::bit_cast<alpha_t>(N_quake - (_std::bit_cast<delta_t>(w) >> size_1));
+		if (_std::is_constant_evaluated()) {
+			return (0.5)*(3.0 - w*n*n);
+		}
+		else {
+			return S_::unsquare_e(w, n);
+		}
 	}
 	template <int M_pow=1, int N_lim=-1> requires sign_p<M_pow, 0>
 	XTAL_FN2 unsquare_f(alpha_t const &w)
@@ -605,11 +640,11 @@ public:
 		size_t constexpr M_lim = N_lim&0xF;
 		alpha_t u, n;
 
-		if (_std::is_constant_evaluated()) {
-			n = unsquare_0(w);
-			seek_forward_f<M_lim>([&] (auto) XTAL_0FN_(n *= unsquare_1(w, n)));
+		if (_std::is_constant_evaluated() or 0 <= N_lim) {
+			n = unsquare_e(w);
+			seek_forward_f<M_lim>([&] (auto) XTAL_0FN_(n *= unsquare_e(w, n)));
 			if constexpr (N_lim < 0) {
-				n /= 1L + square_f(n)*w;
+				n /= 1L + n*n*w;
 				n *= 2L;
 			}
 			u = n*w;
@@ -1250,18 +1285,14 @@ public:
 	Computes the Taylor series for `ArSinh[#/2]*2/#`. \
 
 	template <int N_lim=-1>
-	XTAL_FN2 logarithmetic_f(auto const &w)
+	XTAL_FN2 logarithmetic_f(auto const &x)
 	XTAL_0EX
 	{
 		int constexpr I = (N_lim&0b111) << 1;
 		alpha_t       t = ratio_f(I*2 + 1);
 
 		bond::seek_backward_f<I>([&] (auto i)
-			XTAL_0FN_(t = term_f(ratio_f(i*2 + 1)
-			,	-ratio_f<i*2 + 1>(i + 1 << 3)
-			,	w
-			,	t
-			)
+			XTAL_0FN_(t = accumulate_f<-1>(ratio_f(i*2 + 1), ratio_f<i*2 + 1>(i + 1 << 3), x, t)
 		));
 		return t;
 	}
@@ -1272,7 +1303,7 @@ public:
 	XTAL_FN2 logarithmic_f(auto const &x)
 	XTAL_0EX
 	{
-		auto const w = unsquare_f<-1, N_lim>(x)*(x - 1);
+		auto const w = unsquare_f<-1>(x)*(x - 1);
 		return logarithmetic_f<N_lim>(square_f(w))*(w);
 	}
 	///\
@@ -1315,15 +1346,14 @@ public:
 	Computes the Taylor series for `Sinh[#/2]*2/#`. \
 
 	template <int I_lim=0>
-	XTAL_FN2 antilogarithmetic_f(auto const &w)
+	XTAL_FN2 antilogarithmetic_f(auto const &x)
 	XTAL_0EX
 	{
 		alpha_t t = 1;
-
 		bond::seek_backward_f<I_lim>([&] (auto i)
-		XTAL_0FN_(t = term_f(1
+			XTAL_0FN_(t = accumulate_f(ratio_f(1)
 			,	ratio_f((i*2 + 2)*(i*2 + 3) << 2)
-			,	w
+			,	x
 			,	t
 			)
 		));
@@ -1333,19 +1363,15 @@ public:
 	Computes the `sqrt`-based approximation of `exp` around `0`. \
 
 	template <int I_lim=0, int J_lim=0>
-	XTAL_FN2 antilogarithmic_f(auto x)
+	XTAL_FN2 antilogarithmic_f(auto const &x)
 	XTAL_0EX
 	{
+		using X = XTAL_TYP_(x);
 		int constexpr I_ = I_lim << 1;
 		int constexpr J_ = J_lim << 2;
-		using T = XTAL_TYP_(x);
-		T w = x*haplo_n<J_>; w *= antilogarithmetic_f<I_>(square_f(w));
-		T u = w*haplo_n<1 >;
-		T v = 1;
-		v +=       square_f(u);
-		w *= u + unsquare_f(v);
-		w += 1;
-		return square_f<1, J_>(w);
+		X w = x*haplo_n<J_>; w *= antilogarithmetic_f<I_>(square_f(w));
+		X u = w*haplo_n<1 >;
+		return square_f<1, J_>(accumulate_f(1, w, u + unsquare_f(accumulate_f(1, u, u))));
 	}
 	///\
 	Computes the `sqrt`-based approximation of `exp` after argument truncation. \
@@ -1362,7 +1388,7 @@ public:
 		u *= 1.4426950408889634073599246810018921374e+0L;// 1/Log[2]
 		auto const n = _std::round(u);
 		u -= n;
-		u *= 0.6931471805599453094172321214581765681e+0L;// Log[2]
+		u *= 0.6931471805599453094172321214581765681e+0L;// 1*Log[2]
 		return _std::ldexp(antilogarithmic_f<I_, J_>(u), n);
 	}
 
