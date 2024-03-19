@@ -19,13 +19,10 @@ template <array_q W=size_t[2], typename ...As> XTAL_USE pulsar_t = confined_t<pu
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 
-template <array_q W, typename ...As>
-struct pulsar<W, As...>
+template <size_t N, class U, typename ...As>
+struct pulsar<U[N], As...>
 {
-	XTAL_LET N_ = _std::       extent_v<W>;
-	XTAL_USE U_ = _std::remove_extent_t<W>;
-	
-	using W_pulse = quantum::pulse_t<U_>[N_];
+	using W_pulse = quantum::pulse_t<U>[N];
 	using subkind = bond::compose<bond::tag<pulsar>, As..., fusor<W_pulse>>;
 
 	template <class S>
