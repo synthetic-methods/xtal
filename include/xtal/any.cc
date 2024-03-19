@@ -15,20 +15,20 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::__test
+namespace xtal::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 using namespace bond;
 
-using scale_t = message::inferred_t<class scale__, typename bond::realized::alpha_t>;
-using level_t = message::inferred_t<class level__, typename bond::realized::alpha_t>;
+using scale_t = message::inferred_t<class scale_a, typename bond::realized::alpha_t>;
+using level_t = message::inferred_t<class level_a, typename bond::realized::alpha_t>;
 /*/
-using onset_t = message::inferred_t<class onset__, typename bond::realized::alpha_t>;
+using onset_t = message::inferred_t<class onset_a, typename bond::realized::alpha_t>;
 /*/
 struct onset
 :	message::confer<typename bond::realized::alpha_t
-	,	message::any<class onset__>
+	,	message::any<class onset_a>
 	,	bond::assay<(1 << 7)>
 	>
 {

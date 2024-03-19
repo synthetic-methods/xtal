@@ -23,7 +23,7 @@ Extends `sector::type` with multiplication defined by circular convolution. \
 template <class U, size_t N>
 struct series<U[N]>
 {
-	using __realized = bond::realize<U>;
+	using re = bond::realize<U>;
 	
 	template <class T>
 	using demitype = typename sector<U[N]>::template homotype<T>;
@@ -79,12 +79,12 @@ struct series<U[N]>
 			I constexpr N2 = N_index + N_limit - 2;
 
 		//	Compute and populate the 0th and 1st powers:
-			auto const o = __realized::template explo_f<N_index>(u);
+			auto const o = re::template explo_f<N_index>(u);
 			subscript(_0) = o;
 			subscript(_1) = o*u;
 
 			for (I i = _1; i < H_; ++i) {
-				auto w = __realized::square_f(subscript(i));
+				auto w = re::square_f(subscript(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
 				I ii = i << 1;
@@ -113,8 +113,8 @@ struct series<U[N]>
 			auto const j = S_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for the given `N`:
-			auto constexpr x = __realized::template patio_f<-1>(N);
-			auto const     y = __realized::circle_f(x);// TODO: Make `constexpr`.
+			auto constexpr x = re::template patio_f<-1>(N);
+			auto const     y = re::circle_f(x);// TODO: Make `constexpr`.
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
 			typename S_::difference_type constexpr M = N >> 2;// `1/8`th
@@ -175,7 +175,7 @@ struct series<U[N]>
 			}
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (degenerate) {
-				auto const u_size = __realized::template ratio_f<1>(n_size);
+				auto const u_size = re::template ratio_f<1>(n_size);
 				_detail::apply_to(that, [&]XTAL_1FN_(u_size*_std::conj));
 			}
 		
@@ -222,7 +222,7 @@ struct series<U[N]>
 				T(ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
-				using X = typename __realized::aphex_t;
+				using X = typename re::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);

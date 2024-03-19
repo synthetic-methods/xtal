@@ -27,7 +27,7 @@ Associates the internal `subtype` with the current namespace, \
 prepending the decorators `As...`. \
 
 template <typename ...As>
-using any = _retail::any<As..., class any__>;
+using any = _retail::any<As..., class any_a>;
 
 template <typename ...As>
 using any_t = bond::compose_s<unit_t, any<As...>>;
@@ -130,9 +130,9 @@ template <class ...Us> using inferred_t = typename inferred<Us...>::type;
 ///\
 Creates a `std::tuple` analogue. \
 
-template <class ...Us> using   tupled   = confined<infers<Us...>, any<class tupled__>>;
+template <class ...Us> using   tupled   = confined<infers<Us...>, any<class tupled_a>>;
 template <class ...Us> using   tupled_t = typename tupled<Us...>::type;
-template <class ...Ts> concept tupled_q = any_p<class tupled__, Ts...>;
+template <class ...Ts> concept tupled_q = any_p<class tupled_a, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

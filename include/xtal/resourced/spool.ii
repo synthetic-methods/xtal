@@ -11,8 +11,8 @@ namespace xtal::resourced
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM __spool__;
-template <class ...Ts> concept spool_q = bond::tabbed_p<__spool__, Ts...>;
+XTAL_NYM spool_a;
+template <class ...Ts> concept spool_q = bond::tabbed_p<spool_a, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 template <int N=-1>
 struct spool
 {
-	using subkind = bond::tab<__spool__>;
+	using subkind = bond::tab<spool_a>;
 	
 	template <cell::any_q S>
 	class subtype: public bond::compose_s<S, subkind>

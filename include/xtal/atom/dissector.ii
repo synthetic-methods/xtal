@@ -32,7 +32,7 @@ and to provide a basis for manipulating mutual inverses and odd/even pairs. \
 template <class U, size_t N>
 struct dissector<U[N]>
 {
-	using __realized = bond::realize<U>;
+	using re = bond::realize<U>;
 	
 	template <class T>
 	using demitype = typename linear<U[N]>::template homotype<T>;
@@ -72,7 +72,7 @@ struct dissector<U[N]>
 		XTAL_TN2 dot()
 		XTAL_0FX
 		{
-			return __realized::square_f(*this).sum();
+			return re::square_f(*this).sum();
 		}
 		XTAL_TN2 dot(iterated_q auto &&that)
 		XTAL_0FX
@@ -92,7 +92,7 @@ struct dissector<U[N]>
 		XTAL_0FX
 		XTAL_REQ (N == 2)
 		{
-			auto const scale = __realized::explo_f(__realized::template unsquare_f<-1>(2), 1 - n_bias);
+			auto const scale = re::explo_f(re::template unsquare_f<-1>(2), 1 - n_bias);
 			auto const lhs = scale*subscript(0);
 			auto const rhs = scale*subscript(1);
 			if constexpr (N_par ==  0) {

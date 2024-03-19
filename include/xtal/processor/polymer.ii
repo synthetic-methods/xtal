@@ -66,7 +66,7 @@ struct polymer<U, As...>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 				
-				U_ensemble __ensemble;
+				U_ensemble u_ensemble;
 
 			public:
 				using R_::R_;
@@ -75,7 +75,7 @@ struct polymer<U, As...>
 				using R_::serve;
 				using R_::store;
 				
-				XTAL_TO2_(XTAL_TN2 ensemble(), __ensemble)
+				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)
 
 				using R_::influx;
 				
@@ -100,21 +100,21 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					auto h = i.head();
-					auto w = __ensemble.scan(h);
-					assert(__ensemble and h == w->head());
+					auto w = u_ensemble.scan(h);
+					assert(u_ensemble and h == w->head());
 					return w->influx(XTAL_FWD_(oo)...);
 				}
 				XTAL_TNX influx(cell::key_s<> i, V_event o, auto &&...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
-					auto w = __ensemble.scan(h);
+					auto w = u_ensemble.scan(h);
 				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (0 == o) {
-						if (__ensemble and h == w->head()) {
+						if (u_ensemble and h == w->head()) {
 							(void) w->influx(message::stage_f(-1), oo...);
 						}
-						w = __ensemble.poke(w, h, head());
+						w = u_ensemble.poke(w, h, head());
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
@@ -128,7 +128,7 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = false;
-					return _v3::ranges::accumulate(__ensemble
+					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v)
 							XTAL_0FN_(flx & XTAL_FWD_(v).influx(oo...))
@@ -138,7 +138,7 @@ struct polymer<U, As...>
 				XTAL_0EX
 				{
 					bool constexpr impure = (...or message::scope_q<decltype(oo)>);
-					return _v3::ranges::accumulate(__ensemble
+					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v)
 							XTAL_0FN_(flx & XTAL_FWD_(v).efflux(oo...))
@@ -154,9 +154,9 @@ struct polymer<U, As...>
 				{
 					XTAL_FLX flx = -1;
 				//	Render each instance, while releasing any that have terminated:
-					for (auto _e = __ensemble.end(); __ensemble.begin() <= --_e;) {
+					for (auto _e = u_ensemble.end(); u_ensemble.begin() <= --_e;) {
 						if (_e->efflux(message::stage_f(-1)) == 1) {
-							__ensemble.pop(_e);
+							u_ensemble.pop(_e);
 						}
 						else {
 							flx &= _e->efflux(scope_x, oo...);
@@ -166,7 +166,7 @@ struct polymer<U, As...>
 				//	Initialize buffer with first instance, then progressively chunk/mix the rest:
 					using namespace _v3;
 					using namespace _detail;
-					auto i = __ensemble.begin(), iN = __ensemble.end();
+					auto i = u_ensemble.begin(), iN = u_ensemble.end();
 					tunnel_f(respan_x, i++);
 					bond::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
 					XTAL_0FN {

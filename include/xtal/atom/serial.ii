@@ -18,12 +18,12 @@ template <class ...Ts> XTAL_ASK serial_q = bond::tagged_p<serial, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `sector::type` with multiplication defined by order convolution. \
+Extends `sector::type` with multiplication defined by linear convolution. \
 
 template <class U, size_t N>
 struct serial<U[N]>
 {
-	using __realized = bond::realize<U>;
+	using re = bond::realize<U>;
 	
 	template <class T>
 	using demitype = typename sector<U[N]>::template homotype<T>;
@@ -46,7 +46,7 @@ struct serial<U[N]>
 		using S_::twin;
 
 		///\
-		Multiplication by order convolution, truncated by `N`. \
+		Multiplication by linear convolution, truncated by `N`. \
 
 		XTAL_OP2_(T) * (T const &t)
 		XTAL_0FX
@@ -56,7 +56,7 @@ struct serial<U[N]>
 		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{
-			if constexpr (__realized::alignment_n < N) {
+			if constexpr (re::alignment_n < N) {
 				for (auto i = N; ~--i;) {subscript(i) *= t.subscript(0);
 				for (auto j = i; j-- ;) {subscript(i) += t.subscript(j)*subscript(i - j);}}
 			}

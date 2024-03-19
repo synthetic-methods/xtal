@@ -7,24 +7,24 @@
 
 /**/
 XTAL_ENV_(push)
-namespace xtal::cell::__test
+namespace xtal::cell::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace xtal::__test;
+using namespace xtal::_test;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class foo__;
-class goo__;
-class bar__;
-class baz__;
+class foo_a;
+class goo_a;
+class bar_a;
+class baz_a;
 
 template <typename ...As>
 using bar_baz = confined<void
-,	infers<bar__, int>
-,	infers<baz__, int>
+,	infers<bar_a, int>
+,	infers<baz_a, int>
 ,	any<As>...
 >;
 template <typename ...As>
@@ -36,31 +36,31 @@ TAG_("cell", "matching")
 	TRY_("any root")
 	{
 		TRUE_(any_q<bar_baz_t<     >>);
-		TRUE_(any_q<bar_baz_t<foo__>>);
+		TRUE_(any_q<bar_baz_t<foo_a>>);
 
-		TRUE_(any_p<bar_baz_t<foo__       >              >);
-		TRUE_(any_p<bar_baz_t<foo__       >, foo__       >);
-		TRUE_(any_p<bar_baz_t<foo__, goo__>,        goo__>);
-		TRUE_(any_p<bar_baz_t<foo__, goo__>, foo__, goo__>);
+		TRUE_(any_p<bar_baz_t<foo_a       >              >);
+		TRUE_(any_p<bar_baz_t<foo_a       >, foo_a       >);
+		TRUE_(any_p<bar_baz_t<foo_a, goo_a>,        goo_a>);
+		TRUE_(any_p<bar_baz_t<foo_a, goo_a>, foo_a, goo_a>);
 
-		UNTRUE_(any_p<bar_baz_t<foo__       >,        goo__>);
-		UNTRUE_(any_p<bar_baz_t<foo__, goo__>, goo__, foo__>);
+		UNTRUE_(any_p<bar_baz_t<foo_a       >,        goo_a>);
+		UNTRUE_(any_p<bar_baz_t<foo_a, goo_a>, goo_a, foo_a>);
 
 	}
 	TRY_("any inline")
 	{
 		TRUE_(any_q<bar_baz_t<>              >);
 		TRUE_(any_p<bar_baz_t<>              >);
-		TRUE_(any_p<bar_baz_t<>,        baz__>);
-		TRUE_(any_p<bar_baz_t<>, bar__, baz__>);
+		TRUE_(any_p<bar_baz_t<>,        baz_a>);
+		TRUE_(any_p<bar_baz_t<>, bar_a, baz_a>);
 
 	}
 	TRY_("any combined")
 	{
-		TRUE_(any_p<bar_baz_t<foo__>                     >);
-		TRUE_(any_p<bar_baz_t<foo__>,               foo__>);
-		TRUE_(any_p<bar_baz_t<foo__>,        baz__, foo__>);
-		TRUE_(any_p<bar_baz_t<foo__>, bar__, baz__, foo__>);
+		TRUE_(any_p<bar_baz_t<foo_a>                     >);
+		TRUE_(any_p<bar_baz_t<foo_a>,               foo_a>);
+		TRUE_(any_p<bar_baz_t<foo_a>,        baz_a, foo_a>);
+		TRUE_(any_p<bar_baz_t<foo_a>, bar_a, baz_a, foo_a>);
 
 	}
 }
@@ -71,9 +71,9 @@ TAG_("cell", "matching")
 TAG_("cell", "traversal")
 {
 	using qux = confined<void
-	,	infers<foo__, int>
-	,	infers<bar__, int>
-	,	infers<baz__, int>
+	,	infers<foo_a, int>
+	,	infers<bar_a, int>
+	,	infers<baz_a, int>
 	>;
 	using U_qux = typename qux::type;
 	
@@ -86,17 +86,17 @@ TAG_("cell", "traversal")
 		TRUE_(2 == u_qux.template head<2>());
 	//	TRUE_(3 == u_qux.template head<3>());// Fails!
 
-		TRUE_(0 == u_qux.template head<foo__>());
-		TRUE_(1 == u_qux.template head<bar__>());
-		TRUE_(2 == u_qux.template head<baz__>());
+		TRUE_(0 == u_qux.template head<foo_a>());
+		TRUE_(1 == u_qux.template head<bar_a>());
+		TRUE_(2 == u_qux.template head<baz_a>());
 
-		TRUE_(2 == u_qux.template head<bar__, baz__>());
-	//	TRUE_(1 != u_qux.template head<baz__, bar__>());// Fails!
+		TRUE_(2 == u_qux.template head<bar_a, baz_a>());
+	//	TRUE_(1 != u_qux.template head<baz_a, bar_a>());// Fails!
 		
 	//	TRUE_(    any_p<U_qux, cardinal_t<1>>);
-	//	TRUE_(    any_p<U_qux, bar__, baz__>);
-		TRUE_(not any_p<U_qux, baz__, bar__>);
-	//	UNTRUE_(requires {u_qux.template head<baz__, bar__>();});// Shouldn't fail?
+	//	TRUE_(    any_p<U_qux, bar_a, baz_a>);
+		TRUE_(not any_p<U_qux, baz_a, bar_a>);
+	//	UNTRUE_(requires {u_qux.template head<baz_a, bar_a>();});// Shouldn't fail?
 
 	}
 	TRY_("partial reconstruction")
@@ -118,7 +118,7 @@ TAG_("cell", "traversal")
 		TRUE_(_std::get<1>(u_qux) == 2222);
 		TRUE_(_std::get<2>(u_qux) == 3333);
 
-		(void) u_qux.template self<baz__>(33333);
+		(void) u_qux.template self<baz_a>(33333);
 		TRUE_(_std::get<0>(u_qux) ==   111);
 		TRUE_(_std::get<1>(u_qux) ==  2222);
 		TRUE_(_std::get<2>(u_qux) == 33333);
