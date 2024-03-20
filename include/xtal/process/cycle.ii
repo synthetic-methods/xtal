@@ -35,14 +35,21 @@ struct cycle<W[N], As...>
 	>;
 	
 	template <class S>
-	class subtype: public atom::compose_s<S, subkind>
+	using exotype = typename S::U_tail;
+
+	template <class S>
+	using epitype = ectovector_u;
+
+	template <class S>
+	class subtype: public atom::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>;
 
 	public://protected:
+		using typename S_::T_self;
+		using U_self = subtype;
 		using U_head = ectovector_u;
-		///\todo\
-		Add remaining `head`/`self` structure (or find a way to decorate with lenses). \
+		using U_tail = typename S_::U_tail;
 
 	public:
 	//	using S_::S_;
@@ -70,7 +77,6 @@ struct cycle<W[N], As...>
 		{
 			return S_::head(_detail::endoscalar_f(XTAL_FWD_(us))...);
 		}
-
 		///\
 		Update by unindented replacement. \
 		

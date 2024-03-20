@@ -109,8 +109,8 @@ template <class      T >	concept   ordinal_p =   ordinal_q<T>  or  _ordinal_p<T>
 template <class      T >	concept   logical_p =   logical_q<T>  or  _logical_p<T>;
 
 
-template <class      T >	concept   liminal_q =  integral_q<T> and 0 != T::value;
 template <class      T >	concept  terminal_q =  integral_q<T> and 0 == T::value;
+template <class      T >	concept   liminal_q =  integral_q<T> and 0 != T::value;
 template <liminal_q  T >	using  subliminal   = constant<(T{} - sign_n<T{}>)>;
 template <liminal_q  T >	using semiliminal   = constant<(T{} >> 1)>;
 
