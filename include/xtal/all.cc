@@ -6,7 +6,5 @@
 #include "./message/all.cc"
 #include "./process/all.cc"
 #include "./processor/all.cc"
-#include "./quanta/all.cc"
-#include "./quantum/all.cc"
 #include "./resourced/all.cc"
 #include "./scheduled/all.cc"

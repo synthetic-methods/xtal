@@ -34,7 +34,7 @@ using    byte_t = _detail:: byte_t;
 using    size_t = _detail:: size_t;
 using    size_s = _detail:: size_s;
 XTAL_LET size_1 = _detail:: size_1;
-
+XTAL_LET sign_f = _detail:: sign_f;
 template <auto       N >	XTAL_LET sign_n =         _detail:: sign_n<N >;
 template <auto    ...Ns>	XTAL_ASK sign_p = (...and _detail:: sign_p<Ns>);
 
@@ -112,7 +112,9 @@ template <class      T >	using          value_t =          _detail::    value_t<
 
 template <class      X >	using      argument_t = typename _detail:: argument<X>::type;
 template <class   ...Ts>	concept        some_q =          _detail:: some_q<Ts...>;
+template <auto    ...Ns>	concept        some_n =          _detail:: some_n<Ns...>;
 template <class   ...Ts>	concept        none_q =          _detail:: none_q<Ts...>;
+template <auto    ...Ns>	concept        none_n =          _detail:: none_n<Ns...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +149,7 @@ template <class   ...Ts>	concept     pointer_q = (... and _detail::pointer_q<Ts>
 
 template <class      T >	XTAL_LET     parity_n = _detail:: parity_n<T>;
 template <class      T >	XTAL_LET      arity_n = _detail::  arity_n<T>;
+template <class      T >	using         array_t = _detail::  array_t<T>;
 
 template <class T,    int   N=-1>	concept     array_q = _detail::array_q<T> and N <  0   or arity_n<T> == N;
 template <class T,    int   N=-1>	concept  subarray_q = _detail::array_q<T> and 0 <= N  and arity_n<T> <= N;
@@ -160,16 +163,17 @@ template <int N=-1, class  ...Ts>	concept  subarray_p = (...and subarray_q<Ts, N
 //\
 Ranged...
 
-template <class      W >	using      bracket_t  = _detail:: bracket_t<W>;
-template <class      T >	using        begin_t  = _detail::   begin_t<T>;
-template <class      T >	using          end_t  = _detail::     end_t<T>;
+template <class      W >	using       bracket_t = _detail:: bracket_t<W>;
+template <class      T >	using         begin_t = _detail::   begin_t<T>;
+template <class      T >	using           end_t = _detail::     end_t<T>;
 
-template <class   ...Ts>	concept    bracket_q  = (...and  _detail:: bracket_q<Ts>);
-template <class   ...Ts>	concept      begin_q  = (...and  _detail::   begin_q<Ts>);
-template <class   ...Ts>	concept        end_q  = (...and  _detail::     end_q<Ts>);
+template <class   ...Ts>	concept     bracket_q = (...and  _detail::  bracket_q<Ts>);
+template <class   ...Ts>	concept       begin_q = (...and  _detail::    begin_q<Ts>);
+template <class   ...Ts>	concept         end_q = (...and  _detail::      end_q<Ts>);
 
-template <class      T >	using       iterate_t = _detail::  iterate_t<T>;
-template <class      W >	using      interval_t = _detail:: interval_t<W>;
+template <class      T >	using         visor_t =          _detail::    visor_t<T>;
+template <class      T >	using       iterate_t =          _detail::  iterate_t<T>;
+template <class      W >	using      interval_t =          _detail:: interval_t<W>;
 
 
 template <class   ...Ts>	concept    iterable_q = (...and  _detail:: iterable_q<Ts>);
@@ -180,26 +184,28 @@ template <class   ...Ts>	concept  uniterable_q = not iterable_q<Ts...>;
 template <class   ...Ts>	concept  uniterated_q = not iterated_q<Ts...>;
 template <class   ...Ts>	concept  uniterator_q = not iterator_q<Ts...>;
 
-template <class      T >	using      iterated_t = typename _detail::iterated<T>::type;
-template <class      T >	using      iterator_t = typename _detail::iterator<T>::type;//_v3::ranges::iterator_t
-template <class      T >	using      iteratee_t = typename _detail::iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class      T >	using      iterated_t = typename _detail:: iterated<T>::type;
+template <class      T >	using      iterator_t = typename _detail:: iterator<T>::type;//_v3::ranges::iterator_t
+template <class      T >	using      iteratee_t = typename _detail:: iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
 template <class      T >	using      distance_t = _detail:: distance_t<T>;
 
 
-template <class   ...Ts>	concept    counted_q  = (...and _detail:: counted_q<Ts>);
-template <class   ...Ts>	concept    counter_q  = (...and _detail:: counter_q<Ts>);
+template <class   ...Ts>	concept    counted_q  = (...and  _detail:: counted_q<Ts>);
+template <class   ...Ts>	concept    counter_q  = (...and  _detail:: counter_q<Ts>);
 
-template <class   T=size_s>	using   counted_t  = typename _detail::counted<T>::type;
-template <class   T=size_s>	using   counter_t  = typename _detail::counter<T>::type;
+template <class   T=size_s>	using   counted_t  = typename _detail:: counted<T>::type;
+template <class   T=size_s>	using   counter_t  = typename _detail:: counter<T>::type;
 
 
-template <class      T >	using         visor_t = _detail::    visor_t<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Arithmetic...
+
+template <class    T > using   extremum_t =          _detail:: extremum_t<T>;
+template <class ...Ts> concept extremum_q = (...and  _detail:: extremum_q<Ts>);
 
 template <class T, size_t N=0>	concept multiplicative_group_p = _detail:: multiplicative_group_p<based_t<T>, N>;
 template <class T, size_t N=0>	concept       additive_group_p = _detail::       additive_group_p<based_t<T>, N>;

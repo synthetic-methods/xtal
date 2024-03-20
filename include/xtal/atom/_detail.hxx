@@ -96,12 +96,12 @@ XTAL_0EX
 		move_to(i, j.begin(), j.end(), o);
 }
 template <iterator_q I, bracket_q J> requires is_q<I, begin_t<J>>
-XTAL_FN0 move_to(I i, J &&j)
+XTAL_FN0 move_to(I i0, J &&j)
 XTAL_0EX
 {
 	_std::is_lvalue_reference_v<J>?
-		_std::memcpy (i, XTAL_FWD_(j).begin(), sizeof(j)):
-		_std::memmove(i, XTAL_FWD_(j).begin(), sizeof(j));
+		_std::memcpy (i0, XTAL_FWD_(j).begin(), sizeof(j)):
+		_std::memmove(i0, XTAL_FWD_(j).begin(), sizeof(j));
 }
 
 

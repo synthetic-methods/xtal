@@ -36,6 +36,7 @@ struct refine_head
 
 	public:
 		using S::S;
+		using S::twin;
 		using S::self;
 		using S::head;
 
@@ -44,27 +45,28 @@ struct refine_head
 
 		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
 		
+//		///\
+//		\returns a copy of `this` with `head<Is...>(oo...)` applied. \
+//
+//		template <class  ...Is>
+//		XTAL_TN1 differ(auto &&...oo)
+//		XTAL_0FX
+//		{
+//			auto t = twin();
+//			(void) t.template head<Is...>(XTAL_FWD_(oo)...);
+//			return t;
+//		}
+
 		///\
-		\returns `true` if the supplied body matches `head`, `false` otherwise. \
+		\returns the `sentinel` boundary in the direction of `N_polarity`, \
+		provided `std::numeric_limits<...>` exists. \
 
-		template <class  ...Is>
-		XTAL_TN1 with(auto &&...oo) XTAL_0FX {(void) head(XTAL_FWD_(oo)...); return self();}
-
-		template <size_t ...Is>
-		XTAL_TN1 with(auto &&...oo) XTAL_0FX {(void) head(XTAL_FWD_(oo)...); return self();}
-
-		///\
-		\returns the `sentinel` boundary in the direction of `N_polarity`. \
-
-		template <int N_polarity=0>
+		template <int N_polarity=0> requires sign_p<N_polarity, 0> and extremum_q<U_head>
 		XTAL_FN2 sentry(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
+		XTAL_0EX 
+	//	XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
 		{
-			using L = _std::numeric_limits<U_head>;
-			if constexpr (N_polarity == +1) return T_self(L::max(), XTAL_FWD_(oo)...);
-			if constexpr (N_polarity ==  0) return T_self(0,        XTAL_FWD_(oo)...);
-			if constexpr (N_polarity == -1) return T_self(L::min(), XTAL_FWD_(oo)...);
+			return T_self(extremum_f<U_head>(N_polarity), XTAL_FWD_(oo)...);
 		}
 
 	};

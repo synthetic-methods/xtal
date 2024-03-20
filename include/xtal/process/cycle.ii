@@ -1,0 +1,144 @@
+#pragma once
+#include "./any.ii"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::process
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <typename ..._s> XTAL_NYM cycle;
+template <typename ..._s> XTAL_ASK cycle_q = bond::tagged_p<cycle, _s...>;
+template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Manages a truncated fixed-point unit differential like `phasor`, \
+providing evaluation/update via succession/replacement. \
+
+template <size_t N, class W, typename ...As>
+struct cycle<W[N], As...>
+{
+	using W_ = W[N];
+	using ectoscalar_u = _detail::ectoscalar_t<W >; using ectovector_u = _detail::ectovector_t<W_>;
+	using endoscalar_u = _detail::endoscalar_t<W >; using endovector_u = _detail::endovector_t<W_>;
+
+	using subkind = bond::compose<bond::tag<cycle>
+	,	As...
+	,	_detail::refer_iterators<endovector_u>
+	,	typename flux::indent_s<endovector_u>::tunnel
+	>;
+	
+	template <class S>
+	class subtype: public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+
+	public://protected:
+		using U_head = ectovector_u;
+		///\todo\
+		Add remaining `head`/`self` structure (or find a way to decorate with lenses). \
+
+	public:
+	//	using S_::S_;
+
+		XTAL_CO0_(subtype);
+		XTAL_CO4_(subtype);
+		
+		XTAL_CXN subtype(bracket_t<ectoscalar_u> a)
+		XTAL_0EX
+		:	subtype(ectovector_u(XTAL_MOV_(a)))
+		{}
+		XTAL_CXN subtype(array_q auto &&a, auto &&...oo)
+		XTAL_0EX
+		:	S_(_detail::endovector_f(XTAL_FWD_(a)), XTAL_FWD_(oo)...)
+		{}
+
+	public:
+		XTAL_TO4_(XTAL_OP0_(implicit) ectovector_u(), head())
+		XTAL_TO4_(XTAL_OP0_(implicit) ectoscalar_u(), head()[0])
+		
+		XTAL_TO4_(XTAL_TN2 head(), _detail::ectovector_f(S_::head()))
+		
+		XTAL_TN2 head(auto &&...us)
+		XTAL_0EX
+		{
+			return S_::head(_detail::endoscalar_f(XTAL_FWD_(us))...);
+		}
+
+		///\
+		Update by unindented replacement. \
+		
+		template <class ...Is> requires none_q<Is...>
+		XTAL_TN2 head(subarray_q<N> auto &&us)
+		XTAL_0EX
+		{
+			return S_::head(_detail::endovector_f(XTAL_FWD_(us)));
+		}
+
+	public:
+	//	using S_::infuse;
+		///\
+		Update by indented replacement. \
+		
+		XTAL_TNX infuse(subarray_q<N> auto &&us)
+		{
+			using Ipso = decltype(us);
+			using Endo = typename flux::indent_s<_detail::endovector_t<Ipso>, N - arity_n<Ipso>>;
+			return S_::influx(Endo(_detail::endovector_f(XTAL_FWD_(us))));
+		}
+		///\
+		Update by replacement. \
+		
+		XTAL_TNX infuse(auto &&o)
+		XTAL_0EX
+		{
+			return S_::infuse(XTAL_FWD_(o));
+		}
+
+
+	public:
+		///\
+		Access by dynamic index. \
+		
+		///\todo\
+		Replace with accessor-decorator.
+
+		XTAL_TO4_(XTAL_TN2 subscript(size_t i), head().subscript(i))
+
+	public:
+		///\
+		Evaluation by succession. \
+		
+		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
+		XTAL_TN2 method(),
+		{
+			++ S_::head();
+			return head();
+		})
+		///\
+		Evaluation by (possibly indented) replacement then succession. \
+		
+		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
+		XTAL_TN2 method(subarray_q<N> auto &&a),
+		{
+			(void) S_::influx(XTAL_FWD_(a));
+			return method();
+		})
+		
+		///\todo\
+		Introduce `message::per` etc to manage downsampling \
+		(by integer multiplication followed by normalization). \
+
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

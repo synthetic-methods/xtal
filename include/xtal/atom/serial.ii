@@ -45,6 +45,8 @@ struct serial<U[N]>
 		using S_::self;
 		using S_::twin;
 
+		XTAL_TO4_(XTAL_OP0_(explicit) U(), subscript(0))
+
 		///\
 		Multiplication by linear convolution, truncated by `N`. \
 
