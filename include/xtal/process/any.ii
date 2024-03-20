@@ -19,10 +19,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -118,19 +118,19 @@ struct define
 		template <class ...Xs>
 		struct binding
 		{
-			using signature = bond::pack<let_t<Xs>...>;
+			using signature = atom::pack<let_t<Xs>...>;
 			using Y_result = typename signature::template invoke_t<T>;
 			using Y_return = iteratee_t<Y_result>;
 			
-			using subkind = bond::compose<void
+			using subkind = atom::compose<void
 			,	cell::defer<typename signature::type>
 			,	defer<T>
 			>;
 
 			template <any_q R>
-			class subtype: public bond::compose_s<R, subkind>
+			class subtype: public atom::compose_s<R, subkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = atom::compose_s<R, subkind>;
 
 			public:
 				using R_::R_;
@@ -237,9 +237,9 @@ struct define
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(bond::seek_t<I...>)
+						return [&] <auto ...I>(atom::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...))
-						(bond::seek_f<sizeof...(Xs) - 1> {});
+						(atom::seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 				template <int N_slot=-1>
@@ -251,9 +251,9 @@ struct define
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(bond::seek_t<I...>)
+						return [&] <auto ...I>(atom::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...))
-						(bond::seek_f<sizeof...(Xs) - 1> {});
+						(atom::seek_f<sizeof...(Xs) - 1> {});
 					}
 				}
 
@@ -268,9 +268,9 @@ struct refine
 	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 		template <class ...Xs>
 		using S_binding = typename S_::template binding<Xs...>;
@@ -283,7 +283,7 @@ struct refine
 		struct binding: S_binding<Xs...>
 		{
 			using kind = confined<S_binding<Xs...>>;
-			using type = bond::compose_s<S_, kind>;
+			using type = atom::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>
@@ -294,7 +294,7 @@ struct refine
 		XTAL_0EX
 		{
 			using  kind = confined<As..., S_binding<decltype(xs)...>>;
-			using  type = bond::compose_s<S_, kind>;
+			using  type = atom::compose_s<S_, kind>;
 			return type(XTAL_FWD_(xs)...);
 		}
 		template <typename ...As>
@@ -302,7 +302,7 @@ struct refine
 		XTAL_0EX
 		{
 			using  kind = confined<As..., S_binding<decltype(xs)...>>;
-			using  type = bond::compose_s<S_, kind>;
+			using  type = atom::compose_s<S_, kind>;
 			return type(XTAL_FWD_(t), XTAL_FWD_(xs)...);
 		}
 		XTAL_TO4_(template <typename ...As>
@@ -321,9 +321,9 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using typename S_::U_head;
@@ -356,9 +356,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;

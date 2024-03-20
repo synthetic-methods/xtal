@@ -28,7 +28,7 @@ While the exact time-position is unknown, contiguity is guaranteed (by `assert`i
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
 template <                     typename ..._s> XTAL_NYM scope;
-template <                     typename ..._s> XTAL_ASK scope_q = bond::tagged_p<scope, _s...>;
+template <                     typename ..._s> XTAL_ASK scope_q = atom::tagged_p<scope, _s...>;
 template <class W=counter_t<>, typename ...As> XTAL_USE scope_t = confined_t<scope<W>, As...>;
 template <                     typename ...As>
 XTAL_FN2  scope_f(auto &&w)
@@ -231,12 +231,12 @@ struct prequel
 template <counter_q V>
 struct scope<V>
 {
-	using subkind = bond::compose<_detail::prequel, resize<V>, restep<V>, bond::tag<scope>>;
+	using subkind = atom::compose<_detail::prequel, resize<V>, restep<V>, atom::tag<scope>>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public://protected:
 		using typename S_::T_self;
@@ -326,12 +326,12 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = bond::compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, bond::tag<scope>>;
+	using subkind = atom::compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, atom::tag<scope>>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public://protected:
 		using typename S_::T_self;

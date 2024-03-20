@@ -19,7 +19,7 @@ using namespace xtal::_test;
 template <class U_mix>
 void processor_provision__messaging()
 {
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	auto const _01 = _v3::views::iota(0, 3)|_v3::views::transform(as_f<T_alpha>);
 	auto const _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
@@ -59,17 +59,17 @@ TAG_("processor", "construct")
 	TRY_("letting")
 	{
 		size_t constexpr N_size = 5;
-		using U_group = atom::linear_t<int[N_size]>;
+		using U_group = bond::linear_t<int[N_size]>;
 		auto z = U_group {00, 11, 22, 33, 44};
 		auto a = processor::let_f(z);
 		
 	}
 	TRY_("lifting")
 	{
-		using T_alpha = typename bond::realized::alpha_t;
+		using T_alpha = typename atom::realized::alpha_t;
 
 		size_t constexpr N_size = 5;
-		using U_group = atom::linear_t<T_alpha[N_size]>;
+		using U_group = bond::linear_t<T_alpha[N_size]>;
 		
 		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0));
 		auto x = U_group { 0,  1,  2,  3,  4};

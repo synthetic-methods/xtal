@@ -134,17 +134,17 @@ template <size_t N>
 XTAL_FN2 funnel_f(auto &&y, iterator_q auto x)
 XTAL_0EX
 {
-	return [&]<auto ...I>(bond::seek_t<I...>)
+	return [&]<auto ...I>(atom::seek_t<I...>)
 		XTAL_0FN_(funnel_f(y, _std::next(x, I)...))
-	(bond::seek_f<N> {});
+	(atom::seek_f<N> {});
 }
 template <size_t N>
 XTAL_FN0 tunnel_f(auto &&y, iterator_q auto x)
 XTAL_0EX
 {
-	return [&]<auto ...I>(bond::seek_t<I...>)
+	return [&]<auto ...I>(atom::seek_t<I...>)
 		XTAL_0FN_(tunnel_f(y, _std::next(x, I)...))
-	(bond::seek_f<N> {});
+	(atom::seek_f<N> {});
 }
 
 
@@ -162,9 +162,9 @@ template <size_t N_width>
 XTAL_FN2 squint_f(auto &&it, size_t is)
 XTAL_0EX
 {
-	return [&] <auto ...I>(bond::seek_t<I...>)
+	return [&] <auto ...I>(atom::seek_t<I...>)
 		XTAL_0FN_(_v3::views::zip(squint_f(it[I], is)...))
-	(bond::seek_f<N_width>{});
+	(atom::seek_f<N_width>{});
 }
 
 

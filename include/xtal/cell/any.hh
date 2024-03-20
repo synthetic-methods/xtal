@@ -1,6 +1,6 @@
 #pragma once
-#include "../bond/all.ii"// `_retail`
-#include "../atom/all.ii"
+#include "../atom/all.ii"// `_retail`
+#include "../bond/all.ii"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail {using namespace xtal::bond;}
+namespace _retail {using namespace xtal::atom;}
 namespace _retail
 {///////////////////////////////////////////////////////////////////////////////
 ///\
@@ -21,10 +21,10 @@ such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>
 template <typename ...As>
 struct any
 {
-	using subkind = bond::compose<any<As>...>;
+	using subkind = atom::compose<any<As>...>;
 	
 	template <class S>
-	using subtype = bond::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 	using    type = subtype<unit_t>;
 	
 };
@@ -40,25 +40,25 @@ template <typename A>
 struct any<A>
 {	
 	//\
-	using subkind = bond::compose<>;
-	using subkind = bond::tab<A>;
+	using subkind = atom::compose<>;
+	using subkind = atom::tab<A>;
 
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
 		
 	};
 	template <class S> requires some_q<typename S::T_self>
-	and bond::untabbed_p<A, S>
+	and atom::untabbed_p<A, S>
 	//\
 
-	class subtype<S>: public bond::compose_s<S, subkind>
+	class subtype<S>: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 	//	using S_::S_;

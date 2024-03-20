@@ -23,15 +23,15 @@ struct revise<U>
 {
 	using U_store = based_t<U>;
 	using U_serve = visor_t<U>;
-	using subkind = bond::compose<void
+	using subkind = atom::compose<void
 	,	cell::defer<U_serve>
 	,	cell::defer<U_store>
 	>;
 
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public:
 	//	using S_::S_;
