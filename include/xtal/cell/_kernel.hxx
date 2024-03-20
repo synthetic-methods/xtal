@@ -30,7 +30,7 @@ template <typename ...As>
 using any = _retail::any<As..., class any_a>;
 
 template <typename ...As>
-using any_t = bond::compose_s<unit_t, any<As...>>;
+using any_t = atom::compose_s<unit_t, any<As...>>;
 using any_u = any_t<>;
 
 ///\
@@ -54,19 +54,19 @@ template <class        U> struct infer    : defer<U> {};
 template <incomplete_q U> struct infer<U> :   any<U> {};
 template <incomplete_q U, size_t N>
 struct infer<U[N]>
-:	bond::compose<any<U>, defer<unit_t[N]>>
+:	atom::compose<any<U>, defer<unit_t[N]>>
 {};
 
 ///\
 Delegates to the first `complete_q` provided, if any. \
 
-template <                class ...Us> struct reinfers: bond::compose<> {};
+template <                class ...Us> struct reinfers: atom::compose<> {};
 template <incomplete_q U, class ...Us> struct reinfers<U, Us...>: reinfers<Us...> {};
 template <  complete_q U, class ...Us> struct reinfers<U, Us...>: refer<U> {};
 
-template <class ...Us> using infers = bond::compose<infer<Us>...>;///< Chained `infer`rals.
-template <class ...Us> using refers = bond::compose<refer<Us>...>;///< Chained `refer`rals.
-template <class ...Us> using defers = bond::compose<defer<Us>...>;///< Chained `defer`rals.
+template <class ...Us> using infers = atom::compose<infer<Us>...>;///< Chained `infer`rals.
+template <class ...Us> using refers = atom::compose<refer<Us>...>;///< Chained `refer`rals.
+template <class ...Us> using defers = atom::compose<defer<Us>...>;///< Chained `defer`rals.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ Combines `defer` and `refer` to lift `U`, \
 sandwiching the decorators `As...`. \
 
 template <class U, typename ...As>
-struct confer: bond::compose<refer<U>, As..., defer<U>> {};
+struct confer: atom::compose<refer<U>, As..., defer<U>> {};
 
 ///\
 Combines `define` and `refine` to materialize the curiously recursive type `T`, \
@@ -85,10 +85,10 @@ sandwiching the decorators `As...`. \
 template <class T, typename ...As>
 struct confine
 {
-	using subkind = bond::compose<refine<T>, As..., define<T>>;
+	using subkind = atom::compose<refine<T>, As..., define<T>>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, subkind>;
+	using subtype = atom::compose_s<S, subkind>;
 	using    type = T;
 	
 };
@@ -105,7 +105,7 @@ struct confined
 	using homokind = confine<T, As...>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
+	using subtype = atom::compose_s<S, atom::isokind<homokind>>;
 	using    type = subtype<any_u>;
 	
 };

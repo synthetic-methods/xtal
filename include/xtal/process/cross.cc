@@ -4,7 +4,7 @@
 
 #include "../flux/indent.ii"
 #include "../processor/monomer.ii"
-#include "../atom/all.ii"
+#include "../bond/all.ii"
 
 XTAL_ENV_(push)
 namespace xtal::process::_test
@@ -19,7 +19,7 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::linear_t<int[2][3]>;
+		using U_model = bond::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::linear_t<int[2][3]>;
+		using U_model = bond::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -62,7 +62,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::linear_t<int[2][3]>;
+		using U_model = bond::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -81,7 +81,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::linear_t<int[2][3]>;
+		using U_model = bond::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -98,11 +98,11 @@ TAG_("cross", "processor")
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
-	TRY_("shape with atom indent")
+	TRY_("shape with bond indent")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::linear_t<int[2][3]>;
+		using U_model = bond::linear_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 

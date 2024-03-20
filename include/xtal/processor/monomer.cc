@@ -16,11 +16,11 @@ namespace xtal::processor::_test
 template <typename ...As>
 void monomer_lifting()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	T_sigma constexpr N_size = 5;
-	using U_group = atom::linear_t<T_alpha[N_size]>;
+	using U_group = bond::linear_t<T_alpha[N_size]>;
 	using U_resize = message::resize_t<>;
 	using U_scope = message::scope_t<>;
 
@@ -51,8 +51,8 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_provision__advancing()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	using U_scope = message::scope_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
@@ -93,8 +93,8 @@ void monomer_provision__advancing()
 template <class U_add>
 void monomer_provision__provisioning()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	using provide = resourced::store<(1<<5)>;
 
@@ -141,8 +141,8 @@ TAG_("monomer", "message")
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	size_t constexpr N = 4;
 	
@@ -171,8 +171,8 @@ void monomer_chaining__rvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	size_t constexpr N = 4;
 
@@ -203,8 +203,8 @@ void monomer_chaining__lvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename atom::realized::sigma_t;
+	using T_alpha = typename atom::realized::alpha_t;
 
 	size_t constexpr N = 4;
 

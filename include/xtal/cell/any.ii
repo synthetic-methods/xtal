@@ -17,20 +17,20 @@ They provide instance and proxy initialization/finalization for the generated ty
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Expands on the `self`-reflection established by `../bond/any.ipp#define`, \
+Expands on the `self`-reflection established by `../atom/any.ipp#define`, \
 providing the mechanism for traversing the trait-lineage of `T`. \
 
 template <class T>
 struct define
 {
-	using subkind = bond::compose<void
+	using subkind = atom::compose<void
 	,	_retail::define<T>
 	>;
 	
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public://protected:
 		using typename S_::T_self;
@@ -89,7 +89,7 @@ struct define
 			return self().operator==(t.self())? is::equivalent: is::unordered;
 		}
 
-		XTAL_TN2 apple() XTAL_0FX {return bond::pack_f();}
+		XTAL_TN2 apple() XTAL_0FX {return atom::pack_f();}
 		///<\returns a tuple representation of `this`. \
 
 		using arity = cardinal_t<0>;
@@ -104,24 +104,24 @@ binding `subtype` as the default target of `self`. \
 template <class T>
 struct refine
 {
-	using subkind = bond::compose<void
+	using subkind = atom::compose<void
 	,	_detail::refine_head<T>
 	,	_detail::refine_tuple<T>
 	>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
 
 	};
 	template <any_q S> requires iterable_q<S>
-	class subtype<S>: public bond::compose_s<S, subkind>, public iterate_t<T>
+	class subtype<S>: public atom::compose_s<S, subkind>, public iterate_t<T>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -145,9 +145,9 @@ struct defer
 	using subkind = _detail::defer_field<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public://protected:
 		using typename S_::T_self;
@@ -214,8 +214,8 @@ struct defer
 			return heading(t.head()) and self<1>() == t;
 		}
 
-	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
-	//	XTAL_OP2 >> (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
+	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return atom::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
+	//	XTAL_OP2 >> (any_q auto &&t) XTAL_0FX {return atom::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
 
 		///\
 		Tuple arity. \
@@ -227,8 +227,8 @@ struct defer
 		XTAL_TN2 apply(auto &&f)// TODO: Require `std::invocable`.
 		XTAL_0FX
 		{
-			return [this, g = XTAL_FWD_(f)] <size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(g(head<I>()...)) (bond::seek_f<arity::value> {});
+			return [this, g = XTAL_FWD_(f)] <size_t ...I>(atom::seek_t<I...>)
+				XTAL_0FN_(g(head<I>()...)) (atom::seek_f<arity::value> {});
 		}
 		///\
 		Tuple conversion (via `apply`). \
@@ -236,7 +236,7 @@ struct defer
 		XTAL_TN2 apple()
 		XTAL_0FX
 		{
-		//	return apply(bond::pack_f);
+		//	return apply(atom::pack_f);
 			return apply([] (auto &&...oo) XTAL_0FN_(_std::make_tuple(XTAL_FWD_(oo)...)));
 		}
 
@@ -246,7 +246,7 @@ struct defer
 Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
-struct refer: bond::compose<void
+struct refer: atom::compose<void
 ,	_detail::refer_logics<U>
 ,	_detail::refer_groups<U>
 ,	_detail::refer_iterators<U>

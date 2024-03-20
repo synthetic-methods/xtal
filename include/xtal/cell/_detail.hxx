@@ -96,9 +96,9 @@ template <class U>
 struct defer_field
 {
 	template <any_q S>
-	class subtype: public bond::compose_s<S>
+	class subtype: public atom::compose_s<S>
 	{
-		using S_ = bond::compose_s<S>;
+		using S_ = atom::compose_s<S>;
 
 	public://protected:
 		using U_head = U;
@@ -153,9 +153,9 @@ template <integral_q U>
 struct defer_field<U>
 {
 	template <any_q S>
-	class subtype: public bond::compose_s<S>
+	class subtype: public atom::compose_s<S>
 	{
-		using S_ = bond::compose_s<S>;
+		using S_ = atom::compose_s<S>;
 
 	public://protected:
 		using U_head = U;
@@ -184,15 +184,15 @@ struct defer_field<U>
 template <size_t N_width>
 struct defer_field<unit_t[N_width]>
 {
-	XTAL_LET N_depth = bond::realized::bit_ceiling_f(N_width);
+	XTAL_LET N_depth = atom::realized::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
-	using subkind = bond::assay<N_width>;
+	using subkind = atom::assay<N_width>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 
 	public://protected:
 		using U_head = size_t;
@@ -245,7 +245,7 @@ struct defer_field<null_t[N_depth]>
 
 template <class U>
 struct refer_iterators
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U> requires begin_q<U>
 struct refer_iterators<U>
@@ -277,7 +277,7 @@ struct refer_iterators<U>
 
 template <class U>
 struct refer_equality
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U> requires equality_p<U>
 struct refer_equality<U>
@@ -296,7 +296,7 @@ struct refer_equality<U>
 
 template <class U>
 struct refer_inequality
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U> requires inequality_p<U>
 struct refer_inequality<U>
@@ -318,7 +318,7 @@ struct refer_inequality<U>
 
 template <class U>
 struct refer_qualities
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_equality<U>
 	,	refer_inequality<U>
 	>
@@ -329,11 +329,11 @@ struct refer_qualities
 
 template <class U, size_t N=0>
 struct refer_binary_logic
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U>
 struct refer_binary_logic<U, 0>
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_binary_logic<U, 1>
 	,	refer_binary_logic<U, 2>
 	>
@@ -373,7 +373,7 @@ struct refer_binary_logic<U, 2>
 
 template <class U, size_t N=0>
 struct refer_logics
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_binary_logic<U, N>
 	>
 {};
@@ -383,11 +383,11 @@ struct refer_logics
 
 template <class U, size_t N=0>
 struct refer_multiplicative_group
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U>
 struct refer_multiplicative_group<U, 0>
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_multiplicative_group<U, 1>
 	,	refer_multiplicative_group<U, 2>
 	>
@@ -425,11 +425,11 @@ struct refer_multiplicative_group<U, 2>
 
 template <class U, size_t N=0>
 struct refer_additive_group
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U>
 struct refer_additive_group<U, 0>
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_additive_group<U, 1>
 	,	refer_additive_group<U, 2>
 	>
@@ -468,11 +468,11 @@ struct refer_additive_group<U, 2>
 
 template <class U, size_t N=0>
 struct refer_discrete_group
-:	bond::compose<>
+:	atom::compose<>
 {};
 template <class U>
 struct refer_discrete_group<U, 0>
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_discrete_group<U, 1>
 	,	refer_discrete_group<U, 2>
 	>
@@ -496,7 +496,7 @@ struct refer_discrete_group<U, 1>
 
 template <class U, size_t N=0>
 struct refer_groups
-:	bond::compose<void
+:	atom::compose<void
 	,	refer_multiplicative_group<U, N>
 	,	refer_additive_group<U, N>
 	,	refer_discrete_group<U, N>

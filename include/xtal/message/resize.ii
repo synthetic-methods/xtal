@@ -17,9 +17,9 @@ struct resize
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -40,7 +40,7 @@ using resize_t = confined_t<resize<U>>;
 XTAL_FN2 resize_f(auto &&w)
 XTAL_0EX
 {
-	using re = bond::realize<XTAL_TYP_(w)>;
+	using re = atom::realize<XTAL_TYP_(w)>;
 	return resize_t<typename re::sigma_t>(XTAL_FWD_(w));
 }
 

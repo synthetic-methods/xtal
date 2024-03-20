@@ -17,9 +17,9 @@ struct rescan
 	using subkind = defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype: public atom::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
