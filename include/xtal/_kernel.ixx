@@ -12,30 +12,33 @@ XTAL_LET as_f = [] XTAL_1FN_(T);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class Y>
-XTAL_FN2 funge_f(auto &&t)
+template <class T>
+XTAL_FN2 funge_f(auto &&u)
 XTAL_0EX
 {
-	static_assert(fungible_q<Y, decltype(t)>);
-	return      static_cast<Y>(XTAL_FWD_(t));
+	using U = decltype(u);
+	static_assert(fungible_q<T, U>);
+	return      static_cast<qualify_t<T, U>>(XTAL_FWD_(u));
 }
-template <class Y>
-XTAL_FN2 force_f(auto &&t)
+template <class T>
+XTAL_FN2 force_f(auto &&u)
 XTAL_0EX
 {
-	static_assert(forcible_q<Y, decltype(t)>);
-	return reinterpret_cast<Y>(XTAL_FWD_(t));
+	using U = decltype(u);
+	static_assert(forcible_q<T, U>);
+	return reinterpret_cast<qualify_t<T, U>>(XTAL_FWD_(u));
 }
 
-template <class Y>
-XTAL_FN2 forge_f(auto &&t)
+template <class T>
+XTAL_FN2 forge_f(auto &&u)
 XTAL_0EX
 {
-	if constexpr (fungible_q<Y, decltype(t)>) {
-		return funge_f<Y>(XTAL_FWD_(t));
+	using U = decltype(u);
+	if constexpr (fungible_q<T, U>) {
+		return funge_f<T>(XTAL_FWD_(u));
 	}	else
-	if constexpr (forcible_q<Y, decltype(t)>) {
-		return force_f<Y>(XTAL_FWD_(t));
+	if constexpr (forcible_q<T, U>) {
+		return force_f<T>(XTAL_FWD_(u));
 	}
 }
 

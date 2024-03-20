@@ -115,7 +115,7 @@ struct cycle<W[N], As...>
 		///\todo\
 		Replace with accessor-decorator.
 
-		XTAL_TO4_(XTAL_TN2 subscript(size_t i), head().subscript(i))
+		XTAL_TO4_(XTAL_TN2 get(size_t i), head().get(i))
 
 	public:
 		///\

@@ -28,36 +28,17 @@ XTAL_LET sign_f = [] (auto &&n) XTAL_0FN_(sign_t((0 < n) - (n < 0)));
 template <auto N          >	XTAL_LET sign_n = sign_f(N);
 template <auto N, auto Z=0>	concept  sign_p = _std::integral<decltype(N)> and -1 == N or N == 1 or N == Z;
 
+template <class   ...Ts>	concept      some_q = 0 < sizeof...(Ts);
+template <auto    ...Ns>	concept      some_n = 0 < sizeof...(Ns);
+template <class   ...Ts>	concept      none_q = not some_q<Ts...>;
+template <auto    ...Ns>	concept      none_n = not some_n<Ns...>;
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Structural...
-
-template <class T>
-struct lateral
-{
-	template <T ...Ms>
-	class joint
-	{
-		XTAL_LET N_width = sizeof(T)/sizeof...(Ms);
-		XTAL_LET N_depth = N_width << 3;
-
-		static_assert(N_width*sizeof...(Ms) == sizeof(T));
-
-		template <            T ...Ns> struct join                : _std::integral_constant<T,  0> {};
-		template <T N0               > struct join<N0           > : _std::integral_constant<T, N0> {};
-		template <T N0, T N1, T ...Ns> struct join<N0, N1, Ns...> : join<(N0<<N_depth)|N1, Ns...> {};
-
-	public:
-		XTAL_LET value = join<Ms...>::value;
-
-	};
-	
-	template <T ...Ms>
-	XTAL_LET value = joint<Ms...>::value;
-
-};
 
 template <class      T             >	concept  incomplete_q = not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	concept    complete_q = not incomplete_q<T>;
@@ -144,14 +125,6 @@ template <devalue_q  T >	struct    _value<T> {using value_type = devalue_t<T>;};
 template <revalue_q  T >	struct    _value<T> {using value_type = revalue_t<T>;};
 template <class      T >	using      value_t = typename _value<T>::value_type;
 
-template <class      X >	struct   argument     {using type = X &&;};
-template <based_q    X >	struct   argument<X>  {using type = X const &;};
-
-template <class   ...Ts>	concept      some_q = 0 < sizeof...(Ts);
-template <auto    ...Ns>	concept      some_n = 0 < sizeof...(Ns);
-template <class   ...Ts>	concept      none_q = not some_q<Ts...>;
-template <auto    ...Ns>	concept      none_n = not some_n<Ns...>;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -177,6 +150,17 @@ template <class  T , class    Y >	concept    fungible_q = of_p<T, Y> or of_q<T, 
 template <class  T , class    Y >	concept    forcible_q = sizeof(T) == sizeof(Y);
 template <class  T , class    Y >	concept  infungible_q = not fungible_q<T, Y>;
 template <class  T , class    Y >	concept  unforcible_q = not forcible_q<T, Y>;
+
+template <class  T , class    Y >	struct      qualify                {using type = T         ;};
+template <class  T , class    Y >	struct      qualify<T, Y const  &> {using type = T const  &;};
+template <class  T , class    Y >	struct      qualify<T, Y        &> {using type = T        &;};
+template <class  T , class    Y >	struct      qualify<T, Y const &&> {using type = T const &&;};
+template <class  T , class    Y >	struct      qualify<T, Y       &&> {using type = T       &&;};
+template <class  T , class    Y >	using     requalify = qualify<based_t<T>, Y>;
+
+template <class               X >	struct     argument     {using type = X &&;};
+template <based_q             X >	struct     argument<X>  {using type = X const &;};
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -412,11 +396,41 @@ requires (T t)
 template <class T, size_t N_arity=2>
 concept complex_field_p = of_q<T, _std::complex<value_t<T>>> or requires (T t)
 {
-	requires N_arity == 2;
+//	requires N_arity == 2;
 	requires equality_p<T> and algebraic_field_p<T, 2>;
 	{_std::abs(t)} -> is_q<devalue_t<T>>;
 	{t.real()}     -> is_q<devalue_t<T>>;
 	{t.imag()}     -> is_q<devalue_t<T>>;
+};
+template <class T, size_t N_arity=2>
+concept simplex_field_p = algebraic_field_p<T, N_arity> and not complex_field_p<T, N_arity>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+struct lateral
+{
+	template <T ...Ms>
+	class joint
+	{
+		XTAL_LET N_width = sizeof(T)/sizeof...(Ms);
+		XTAL_LET N_depth = N_width << 3;
+
+		static_assert(N_width*sizeof...(Ms) == sizeof(T));
+
+		template <            T ...Ns> struct join                : _std::integral_constant<T,  0> {};
+		template <T N0               > struct join<N0           > : _std::integral_constant<T, N0> {};
+		template <T N0, T N1, T ...Ns> struct join<N0, N1, Ns...> : join<(N0<<N_depth)|N1, Ns...> {};
+
+	public:
+		XTAL_LET value = join<Ms...>::value;
+
+	};
+	
+	template <T ...Ms>
+	XTAL_LET value = joint<Ms...>::value;
+
 };
 
 

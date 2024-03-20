@@ -590,27 +590,27 @@ public:
 	}
 
 	template <int M_pow=1, int N_lim=+1> requires sign_p<M_pow, 0>
-	XTAL_FN2 square_f(auto w)
+	XTAL_FN2 square_f(simplex_field_p auto z)
 	XTAL_0EX
 	{
 		seek_forward_f<N_lim>([&] (auto i)
-			XTAL_0FN_(w *= w)
+			XTAL_0FN_(z *= z)
 		);
-		return made_f<M_pow>(w);
+		return made_f<M_pow>(z);
 	}
 	template <int M_pow=1, int N_lim=+1> requires sign_p<M_pow, 0>
-	XTAL_FN2_(aphex_t) square_f(aphex_t const &u)
+	XTAL_FN2 square_f(complex_field_q auto const &z)
 	XTAL_0EX
 	{
-		alpha_t x = u.real();
-		alpha_t y = u.imag();
-		for (int i = 0; i < N_lim; ++i) {
-			alpha_t const xx = square_f(x);
-			alpha_t const yy = square_f(y);
+		auto x = z.real();
+		auto y = z.imag();
+		seek_forward_f<N_lim>([&] (auto) XTAL_0FN {
+			auto const xx = square_f(x);
+			auto const yy = square_f(y);
 			y = y*x*2;
 			x = xx - yy;
-		}
-		return made_f<M_pow>(aphex_t(x, y));
+		});
+		return made_f<M_pow>(XTAL_TYP_(z) {x, y});
 	}
 	
 	XTAL_FN2_(alpha_t) unsquare_e(alpha_t const &w)

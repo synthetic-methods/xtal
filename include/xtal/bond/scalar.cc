@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./reciprocal.ii"// testing...
+#include "./scalar.ii"// testing...
 
 
 
@@ -13,17 +13,18 @@ namespace xtal::bond::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("solid", "reciprocal")
+TAG_("scalar")
 {
+	using re = atom::realized;
+	using T_sigma = typename re::sigma_t;
+	using T_alpha = typename re::alpha_t;
+	using W_alpha = scalar_t<T_alpha[2]>;
+
 	TRY_("construction")
 	{
-		using T_sigma = typename atom::realized::sigma_t;
-		using T_alpha = typename atom::realized::alpha_t;
-		using W_alpha = reciprocal_t<T_alpha[2]>;
-
 		auto foo = W_alpha {2.0, 0.5};
-		auto bar = W_alpha::fudge_f(atom::realized::template unsquare_f<0>((T_alpha) 2));
-		bar.transmute([] XTAL_1FN_(atom::realized::square_f), atom::computrim_f<1>);
+		auto bar = forge_f<W_alpha>(re::template unsquare_f<0>((T_alpha) 2));
+		bar.transmorph([] XTAL_1FN_(re::square_f), atom::computrim_f<1>);
 		TRUE_(foo == bar);
 
 		foo *= {(T_alpha) 0.0, (T_alpha) 0.0};
@@ -31,10 +32,6 @@ TAG_("solid", "reciprocal")
 	}
 	TRY_("transformation")
 	{
-		using T_sigma = typename atom::realized::sigma_t;
-		using T_alpha = typename atom::realized::alpha_t;
-		using W_alpha = reciprocal_t<T_alpha[2]>;
-
 		auto bar = W_alpha {2.0, 0.5};
 		auto foo = bar.reflected(-1);
 		auto baz = foo.reflected(+1);

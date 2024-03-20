@@ -13,7 +13,7 @@ namespace xtal::bond
 
 template <class ..._s> XTAL_NYM lattice;
 template <class ..._s> XTAL_USE linear_t = typename lattice<_s...>::type;
-template <class ...Ts> XTAL_ASK linear_q = atom::tagged_p<lattice, Ts...>;
+template <class ..._s> XTAL_ASK linear_q = atom::tagged_p<lattice, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,15 @@ template <class ...Ts> XTAL_ASK linear_q = atom::tagged_p<lattice, Ts...>;
 Defines a fixed-width `type` that supports arithmetic operators. \
 Only scalar multiplication is defined by default. \
 
+///\todo\
+Specialize for SIMDe types. \
+
+///\todo\
+Adapt `_detail::apply_to` etc to execute in parallel using SIMDE? \
+
+
 template <class U, size_t N, size_t Ns>
-struct lattice<U[N][Ns]>
-:	lattice<linear_t<U[N]>[Ns]>
+struct lattice<U[N][Ns]>: lattice<linear_t<U[N]>[Ns]>
 {};
 template <class U, size_t N>
 struct lattice<U[N]>
@@ -43,94 +49,46 @@ struct lattice<U[N]>
 		using S_ = hemitype<T>;
 		using I_ = typename S_::size_type;
 
-	public:// ALIASING
+	public:// ACCESS
 		using S_::self;
 		using S_::twin;
-
 		XTAL_FN2_(size_t) size() {return N;}
 
-		XTAL_TN2 subscript(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 subscript(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 subscript(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
-		XTAL_TN2 subscript(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
+		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
+		XTAL_TN2 get(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
+		XTAL_TN2 get(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
+		XTAL_TN2 get(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
 
-	public:// CONSTRUCTION
-	//	using S_::S_;
-
-		~homotype() {};
-		XTAL_CO4_(homotype)
-		
-		XTAL_CON homotype()
-		{
-			_std::uninitialized_value_construct_n(S_::begin(), S_::size());
-		}
-		XTAL_CON homotype(bracket_t<U> etc)
-		XTAL_0EX
-		{
-		//	TODO: Test partial construction. \
-		
-			_detail::copy_to(S_::begin(), etc);
-			auto const n = etc.size();
-			_std::uninitialized_value_construct_n(S_::begin() + n, S_::size() - n);
-		}
-		template <bracket_q W>
-		XTAL_CXN homotype(W const &w)
-		{
-			_detail::copy_to(S_::begin(), w);
-		}
-		template <bracket_q W>
-		XTAL_CXN homotype(W &&w)
-		{
-			_detail::move_to(S_::begin(), w);
-		}
-		
 	public:// CONVERSION
+		template <template <class> class _t> using exomorph_t =       _t<U[N]>;
+		template <                 class  V> using isomorph_t = linear_t<V[N]>;
+		
+		///\
+		Elementwise immutative transformer. \
 
-	//	template <class V>
-	//	using isomorphism = linear_t<V[N]>;
-
-		template <class W> XTAL_FN2 fudge_f(W  &w) XTAL_0EX {return forge_f<T  &>(w);}
-		template <class W> XTAL_FN2 fudge_f(W &&w) XTAL_0EX {return forge_f<T &&>(w);}
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transmorph(), transmorph<W>(as_f<value_t<W>>))
+		template <array_q W> XTAL_TN1 transmorph(_std::invocable<U> auto &&f) XTAL_0EX_(&&) {return transmove<W>(XTAL_FWD_(f));}
+		template <array_q W> XTAL_TN1 transmorph(_std::invocable<U> auto &&f) XTAL_0FX_(&&) {return transmove<W>(XTAL_FWD_(f));}
+		template <array_q W> XTAL_TN1 transmorph(_std::invocable<U> auto &&f) XTAL_0EX_( &) {return transcopy<W>(XTAL_FWD_(f));}
+		template <array_q W> XTAL_TN1 transmorph(_std::invocable<U> auto &&f) XTAL_0FX_( &) {return transcopy<W>(XTAL_FWD_(f));}
+		template <array_q W> XTAL_TN1 transmove (_std::invocable<U> auto &&f) XTAL_0EX {based_t<W> w; _detail::move_to(w.begin(), self(), XTAL_FWD_(f)); return w;}
+		template <array_q W> XTAL_TN1 transcopy (_std::invocable<U> auto &&f) XTAL_0FX {based_t<W> w; _detail::copy_to(w.begin(), self(), XTAL_FWD_(f)); return w;}
 
 		///\
 		Elementwise mutative transformer. \
 
-		XTAL_TN1 transmute(_std::invocable<U> auto &&...fs)
+		XTAL_TN1 transmorph(_std::invocable<U> auto &&...fs)
 		XTAL_0EX
 		{
-			return (transmute(XTAL_FWD_(fs)), ...);
+			return (transmorph(XTAL_FWD_(fs)), ...);
 		}
-		XTAL_TN1 transmute(_std::invocable<U> auto &&f)
+		XTAL_TN1 transmorph(_std::invocable<U> auto &&f)
 		XTAL_0EX
 		{
 			_detail::apply_to(self(), XTAL_FWD_(f));
 			return self();
 		}
-		XTAL_TN1 transmute(_std::invocable<U> auto const &f)
-		XTAL_0EX
-		XTAL_REQ (0 < N) and (N <= re::alignment_n)
-		{
-			atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) = f(subscript(i))));
-			return self();
-		}
-
-		///\
-		Elementwise immutative transformer. \
-
-		template <array_q W> XTAL_TN1 transmute(_std::invocable<U> auto &&f) XTAL_0EX_(&&) {return transmove<W>(XTAL_FWD_(f));}
-		template <array_q W> XTAL_TN1 transmute(_std::invocable<U> auto &&f) XTAL_0FX_(&&) {return transmove<W>(XTAL_FWD_(f));}
-		template <array_q W> XTAL_TN1 transmute(_std::invocable<U> auto &&f) XTAL_0EX_( &) {return transcopy<W>(XTAL_FWD_(f));}
-		template <array_q W> XTAL_TN1 transmute(_std::invocable<U> auto &&f) XTAL_0FX_( &) {return transcopy<W>(XTAL_FWD_(f));}
-		template <array_q W> XTAL_TN1 transmove(_std::invocable<U> auto &&f) XTAL_0EX {based_t<W> w; _detail::move_to(w.begin(), self(), XTAL_FWD_(f)); return w;}
-		template <array_q W> XTAL_TN1 transcopy(_std::invocable<U> auto &&f) XTAL_0FX {based_t<W> w; _detail::copy_to(w.begin(), self(), XTAL_FWD_(f)); return w;}
-
-		template <array_q W> XTAL_TN1 transmute() XTAL_0EX_(&&) {return transmute<W>(as_f<value_t<W>>);}
-		template <array_q W> XTAL_TN1 transmute() XTAL_0FX_(&&) {return transmute<W>(as_f<value_t<W>>);}
-		template <array_q W> XTAL_TN1 transmute() XTAL_0EX_( &) {return transmute<W>(as_f<value_t<W>>);}
-		template <array_q W> XTAL_TN1 transmute() XTAL_0FX_( &) {return transmute<W>(as_f<value_t<W>>);}
-		template <array_q W> XTAL_TN1 transmove() XTAL_0EX      {return transmove<W>(as_f<value_t<W>>);}
-		template <array_q W> XTAL_TN1 transcopy() XTAL_0FX      {return transmove<W>(as_f<value_t<W>>);}
-
+		
 
 	public:// OPERATION
 
@@ -147,11 +105,11 @@ struct lattice<U[N]>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (subscript(I) == t.subscript(I))) (atom::seek_f<N> {});}
-		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (subscript(I) <= t.subscript(I))) (atom::seek_f<N> {});}
-		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (subscript(I) >= t.subscript(I))) (atom::seek_f<N> {});}
-		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (subscript(I) <  t.subscript(I))) (atom::seek_f<N> {});}
-		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (subscript(I) >  t.subscript(I))) (atom::seek_f<N> {});}
+		XTAL_OP2_(bool) == (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (get(I) == t.get(I))) (atom::seek_f<N> {});}
+		XTAL_OP2_(bool) <= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (get(I) <= t.get(I))) (atom::seek_f<N> {});}
+		XTAL_OP2_(bool) >= (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (get(I) >= t.get(I))) (atom::seek_f<N> {});}
+		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (get(I) <  t.get(I))) (atom::seek_f<N> {});}
+		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(atom::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (atom::seek_f<N> {});}
 
 		XTAL_OP2_(T)    *  (auto &&w) XTAL_0FX {return twin() *= XTAL_FWD_(w);}
 		XTAL_OP2_(T)    /  (auto &&w) XTAL_0FX {return twin() /= XTAL_FWD_(w);}
@@ -168,10 +126,38 @@ struct lattice<U[N]>
 		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX {return self() += T(w);}
 		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w);}
 
-		XTAL_OP1_(T &)  *= (as_q<U> auto &&w) XTAL_0EX {return atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) *= XTAL_FWD_(w))), self();}
-		XTAL_OP1_(T &)  /= (as_q<U> auto &&w) XTAL_0EX {return atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(subscript(i) /= XTAL_FWD_(w))), self();}
+		XTAL_OP1_(T &)  *= (as_q<U> auto &&w) XTAL_0EX {return atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= XTAL_FWD_(w))), self();}
+		XTAL_OP1_(T &)  /= (as_q<U> auto &&w) XTAL_0EX {return atom::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= XTAL_FWD_(w))), self();}
 
 
+	public:// CONSTRUCTION
+	//	using S_::S_;
+
+		~homotype() {};
+		XTAL_CO4_(homotype)
+		
+		XTAL_CON homotype()
+		{
+			_std::uninitialized_value_construct_n(S_::begin(), S_::size());
+		}
+		XTAL_CON homotype(bracket_t<U> etc)
+		XTAL_0EX
+		{
+			auto const n = etc.size();
+			_detail::copy_to(S_::begin(), etc);
+			_std::uninitialized_value_construct_n(S_::begin() + n, S_::size() - n);
+		}
+		template <bracket_q W>
+		XTAL_CXN homotype(W const &w)
+		{
+			_detail::copy_to(S_::begin(), w);
+		}
+		template <bracket_q W>
+		XTAL_CXN homotype(W &&w)
+		{
+			_detail::move_to(S_::begin(), w);
+		}
+		
 	};
 	using type = atom::isotype<homotype>;
 
