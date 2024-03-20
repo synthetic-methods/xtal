@@ -6,7 +6,5 @@
 #include "./message/all.ii"
 #include "./process/all.ii"
 #include "./processor/all.ii"
-#include "./quanta/all.ii"
-#include "./quantum/all.ii"
 #include "./resourced/all.ii"
 #include "./scheduled/all.ii"

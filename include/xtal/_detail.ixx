@@ -22,9 +22,10 @@ using sign_t = XTAL_STD_(sign_t);
 using byte_t = XTAL_STD_(byte_t);
 using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
-XTAL_LET_(size_t) size_1 = 1;
+XTAL_LET size_1 = (size_t) 1;
+XTAL_LET sign_f = [] (auto &&n) XTAL_0FN_(sign_t((0 < n) - (n < 0)));
 
-template <auto N          >	XTAL_LET sign_n = sign_t((0 < N) - (N < 0));
+template <auto N          >	XTAL_LET sign_n = sign_f(N);
 template <auto N, auto Z=0>	concept  sign_p = _std::integral<decltype(N)> and -1 == N or N == 1 or N == Z;
 
 
@@ -147,7 +148,9 @@ template <class      X >	struct   argument     {using type = X &&;};
 template <based_q    X >	struct   argument<X>  {using type = X const &;};
 
 template <class   ...Ts>	concept      some_q = 0 < sizeof...(Ts);
+template <auto    ...Ns>	concept      some_n = 0 < sizeof...(Ns);
 template <class   ...Ts>	concept      none_q = not some_q<Ts...>;
+template <auto    ...Ns>	concept      none_n = not some_n<Ns...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -192,9 +195,9 @@ template <class      T >	concept  pointer_q = requires {*XTAL_VAL_(T);};
 
 template <class      T >	XTAL_LET  parity_n = sizeof(T)%aligned<value_t<T>>::value;
 template <class      T >	XTAL_LET   arity_n = sizeof(T)/aligned<value_t<T>>::value;
-template <class      T >	using      array_t = _std::array<value_t<T>,  arity_n<T>>;
+template <class      T >	using      array_t = value_t<T>[arity_n<T>];
 template <class      T >	concept    arity_q = devalue_q<T> and 0 ==  parity_n<T>;
-template <class      T >	concept    array_q =  arity_q<T> and of_p< array_t<T>, T> or _std::is_array_v<T>;
+template <class      T >	concept    array_q = _std::is_array_v<T> or arity_q<T> and of_q<T, _std::array<value_t<T>, arity_n<T>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -280,6 +283,12 @@ template <iterator_q ...Ts>	struct   epimorphic<Ts...>: epimorphic<iteratee_t<Ts
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Arithmetic...
+
+template <class      T >	using    extremum_t = _std::numeric_limits<based_t<T>>;
+template <class      T >	concept  extremum_q = requires {typename extremum_t<T>;};
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <class T, size_t N_arity=2>
 concept equality_p = requires (T t, T u)
