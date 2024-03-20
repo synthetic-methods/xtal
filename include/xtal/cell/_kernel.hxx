@@ -40,7 +40,7 @@ template <class ...Ts>
 concept any_q = of_p<any_u, Ts...>;
 
 template <class T, typename ...As>
-concept any_p = any_q<T> and complete_q<typename T::template self_t<As...>>;
+concept any_p = any_q<T> and complete_q<typename T::template self_s<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

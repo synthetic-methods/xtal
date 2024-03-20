@@ -33,22 +33,17 @@ struct define
 		:	S_(XTAL_FWD_(oo)...)
 		{}
 
-
 	public://protected:
-		using T_self = T;
-		using U_self = unit_t;
+		using  T_self = T;
+		using  U_self = subtype;
+		struct U_tail {template <class _, typename ...Is> struct super: atom::seek_back<_, Is...> {};};
 
-	protected:
-		template <class Y_self, typename ...Is>
-		struct super: atom::seek_back<Y_self, Is...> {};
-		
-	//	template <class Y_self, typename ...Is>
-	//	XTAL_REQ_(typename S_::template super<Y_self, Is...>)
-	//	struct super<Y_self, Is...>: S_::template super<Y_self, Is...> {};
-		
+		template <class _, class ...Is>
+		using super = typename _detail::query<U_tail, U_self>::type::template super<_, Is...>;
+
 	public:
 		template <class ...Is>
-		using self_t = typename super<T_self, Is...>::type;
+		using self_s = typename super<T_self, Is...>::type;
 
 		///\returns `*this` with type `Y=T`. \
 

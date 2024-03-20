@@ -195,9 +195,9 @@ TAG_("cell", "composition")
 		TRUE_(sizeof(T_opt) == sizeof(T_hyp));
 	//	TRUE_(any_p<T_opt, L_aim>);
 //		TRUE_(any_p<T_opt, L_hyp>);
-		TRUE_(complete_q<T_opt::self_t<L_aim>>);
-		TRUE_(complete_q<T_opt::self_t<L_hyp>>);
-		UNTRUE_(complete_q<T_opt::self_t<L_etc>>);
+		TRUE_(complete_q<T_opt::self_s<L_aim>>);
+		TRUE_(complete_q<T_opt::self_s<L_hyp>>);
+		UNTRUE_(complete_q<T_opt::self_s<L_etc>>);
 		TRUE_(8 == T_opt::size());
 		TRUE_(4 == T_aim::size());
 		TRUE_(2 == T_hyp::size());

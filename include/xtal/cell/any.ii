@@ -34,25 +34,18 @@ struct define
 	
 	public://protected:
 		using typename S_::T_self;
-		using typename S_::U_self;
+		using U_self = subtype;
+		using U_tail = S_;
 
-	protected:
-		using _0 = cardinal_t<0>;
-		///\
-		Resolves the query/answer `X` w.r.t. the supplied context. \
+		template <class _, class ...Is>
+		using super = typename _detail::query<U_tail, U_self>::type::template super<_, Is...>;
 
-		template <class Y_self, typename ...Is> struct super:            S_::template super<Y_self, Is...> {};
-		template <class Y_self, typename ...Is> struct super<Y_self,  T_self, Is...>: super<T_self, Is...> {};
-		template <class Y_self, typename ...Is> struct super<Y_self,      _0, Is...>: super<U_self, Is...> {};
-	//	template <class Y_self, typename ...Is> struct super<Y_self,      _0, Is...>;
-		template <class Y_self                > struct super<Y_self> {using type = Y_self;};
-		
 	public:
 		using S_::S_;
 	//	using S_::self;
 
-		template <typename ...Is> using self_t = typename super<T_self, Is...>::type;
-	//	template <typename ...Is> using head_t = typename super<U_self, Is...>::type::U_head;
+		template <typename ...Is>
+		using self_s = typename super<T_self, Is...>::type;
 
 		XTAL_TO4_(
 		XTAL_TN2 self(), S_::self()
@@ -145,57 +138,31 @@ struct defer
 	using subkind = _detail::defer_field<U>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	using epitype = typename atom::compose_s<S, subkind>::U_head;
+
+	template <any_q S>
+	class subtype: public atom::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = atom::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>;
 
 	public://protected:
 		using typename S_::T_self;
 		using typename S_::U_head;
 		using U_self = subtype;
-
-	protected:
-		using _0 = cardinal_t<0>;
-		///\
-		Resolves the query/answer `X` w.r.t. the supplied context. \
-
-		template <class Y_self, typename ...Is> struct super:           S_::template super<Y_self, Is...> {};
-		template <class Y_self, typename ...Is> struct super<Y_self, U_self, Is...>: super<U_self, Is...> {};
-		template <class Y_self, typename ...Is> struct super<Y_self, U_head, Is...>: super<U_self, Is...> {};
-		template <class Y_self, typename ...Is> struct super<Y_self,     _0, Is...>: super<U_self, Is...> {};
-		template <class Y_self, liminal_q N, typename ...Is>
-		struct super<Y_self, N, Is...>: S_::template super<typename S_::U_self, subliminal_s<N>, Is...> {};
+		using U_tail = S_;
 
 	public:
-		using S_::S_;
 		using S_::self;
 		using S_::head;
 
-		template <typename ...Is> using self_t = typename super<T_self, Is...>::type;
-		template <typename ...Is> using head_t = typename super<U_self, Is...>::type::U_head;
+	public:
+		using S_::S_;
 
-		XTAL_TO4_(template <size_t I>
-		XTAL_TN2 self(auto &&...oo), self<cardinal_t<I>>(XTAL_FWD_(oo)...)
-		)		
-		XTAL_TO4_(template <typename ...Is>
-		XTAL_TN2 self(auto &&...oo), S_::template self<typename super<S, Is...>::type>(XTAL_FWD_(oo)...)
-		)
-		
 		///\
 		Converts `this` to the base-type (explicit). \
 
 		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
 
-		///\
-		\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
-		XTAL_TO4_(template <class  ...Is> requires (0 < sizeof...(Is))
-		XTAL_TN1 head(auto &&...oo), self<Is...>().head(XTAL_FWD_(oo)...)
-		)
-		XTAL_TO4_(template <size_t ...Is> requires (0 < sizeof...(Is))
-		XTAL_TN1 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
-		)
-		
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
@@ -211,7 +178,7 @@ struct defer
 		XTAL_OP2_(bool) == (subtype const &t)
 		XTAL_0FX
 		{
-			return heading(t.head()) and self<1>() == t;
+			return heading(t.head()) and S_::template self<1>() == t;
 		}
 
 	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return atom::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
@@ -228,7 +195,7 @@ struct defer
 		XTAL_0FX
 		{
 			return [this, g = XTAL_FWD_(f)] <size_t ...I>(atom::seek_t<I...>)
-				XTAL_0FN_(g(head<I>()...)) (atom::seek_f<arity::value> {});
+				XTAL_0FN_(g(S_::template head<I>()...)) (atom::seek_f<arity::value> {});
 		}
 		///\
 		Tuple conversion (via `apply`). \
@@ -252,8 +219,7 @@ struct refer: atom::compose<void
 ,	_detail::refer_iterators<U>
 ,	_detail::refer_qualities<U>
 >
-{
-};
+{};
 
 
 ////////////////////////////////////////////////////////////////////////////////

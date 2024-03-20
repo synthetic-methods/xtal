@@ -1138,7 +1138,7 @@ public:
 	XTAL_0EX
 	{
 		return truncated_f<0, 1>(target, N_zoom + 1);
-	}	
+	}
 
 	template <int N_zoom=0>
 	XTAL_FN2 truncated_f(aphex_t const &target)

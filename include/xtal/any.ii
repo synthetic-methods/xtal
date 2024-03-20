@@ -36,7 +36,7 @@ using    size_s = _detail:: size_s;
 XTAL_LET size_1 = _detail:: size_1;
 XTAL_LET sign_f = _detail:: sign_f;
 template <auto       N >	XTAL_LET sign_n =         _detail:: sign_n<N >;
-template <auto    ...Ns>	XTAL_ASK sign_p = (...and _detail:: sign_p<Ns>);
+template <auto    ...Ns>	concept  sign_p = (...and _detail:: sign_p<Ns>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,8 @@ template <class   ...Ts>	concept   cardinal_p = (...and  _detail::  cardinal_p<T
 template <class   ...Ts>	concept    ordinal_p = (...and  _detail::   ordinal_p<Ts>);
 template <class   ...Ts>	concept    logical_p = (...and  _detail::   logical_p<Ts>);
 
-template <class   ...Ts>	concept    liminal_q = (...and  _detail::     liminal_q<Ts>);
 template <class   ...Ts>	concept   terminal_q = (...and  _detail::    terminal_q<Ts>);
+template <class   ...Ts>	concept    liminal_q = (...and  _detail::     liminal_q<Ts>);
 template <liminal_q  T >	using   subliminal_s = typename _detail::  subliminal<T>::type;
 template <liminal_q  T >	using  semiliminal_s = typename _detail:: semiliminal<T>::type;
 

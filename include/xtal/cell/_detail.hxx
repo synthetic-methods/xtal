@@ -71,6 +71,7 @@ struct refine_head
 
 	};
 };
+
 template <class T>
 struct refine_tuple
 {
@@ -293,7 +294,6 @@ struct refer_equality<U>
 	};
 };
 
-
 template <class U>
 struct refer_inequality
 :	atom::compose<>
@@ -314,7 +314,6 @@ struct refer_inequality<U>
 
 	};
 };
-
 
 template <class U>
 struct refer_qualities
@@ -370,7 +369,6 @@ struct refer_binary_logic<U, 2>
 	};
 };
 
-
 template <class U, size_t N=0>
 struct refer_logics
 :	atom::compose<void
@@ -422,7 +420,6 @@ struct refer_multiplicative_group<U, 2>
 	};
 };
 
-
 template <class U, size_t N=0>
 struct refer_additive_group
 :	atom::compose<>
@@ -465,7 +462,6 @@ struct refer_additive_group<U, 2>
 	};
 };
 
-
 template <class U, size_t N=0>
 struct refer_discrete_group
 :	atom::compose<>
@@ -492,7 +488,6 @@ struct refer_discrete_group<U, 1>
 
 	};
 };
-
 
 template <class U, size_t N=0>
 struct refer_groups
