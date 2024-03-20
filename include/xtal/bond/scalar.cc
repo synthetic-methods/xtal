@@ -23,7 +23,7 @@ TAG_("scalar")
 	TRY_("construction")
 	{
 		auto foo = W_alpha {2.0, 0.5};
-		auto bar = forge_f<W_alpha>(re::template unsquare_f<0>((T_alpha) 2));
+		auto bar = forge_f<W_alpha>(re::template root_2f<2>((T_alpha) 2));
 		bar.transmorph([] XTAL_1FN_(re::square_f), atom::computrim_f<1>);
 		TRUE_(foo == bar);
 

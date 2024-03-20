@@ -13,6 +13,54 @@ namespace xtal::atom::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
+TAG_("realize", "unverse")
+{
+	using T_sigma = typename realized::sigma_t;
+	using T_delta = typename realized::delta_t;
+	using T_alpha = typename realized::alpha_t;
+	using T_aphex = typename realized::aphex_t;
+
+	auto mt19937_f = typename realized::mt19937_t();
+	mt19937_f.seed(Catch::rngSeed());
+
+	EST_("real unverse<-1, ~0>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = realized::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= realized::root_f<-1,~0>(x)/0x100;
+		}
+		return w;
+	};
+	EST_("real unverse<-1, 1>")
+	{
+		T_alpha constexpr two = 2;
+		T_alpha w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto x = realized::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			w *= realized::root_f<-1, 1>(x)/0x100;
+		}
+		return w;
+	};
+	TRY_("real unverse")
+	{
+		T_alpha constexpr eleven = 11;
+
+		echo(realized::root_f<-1,~0>(eleven));
+		echo(realized::root_f<-1, 3>(eleven));
+		echo(realized::root_f<-1, 2>(eleven));
+		echo(realized::root_f<-1, 1>(eleven));
+		echo(realized::root_f<-1, 0>(eleven));
+		echo();
+		echo(realized::root_f<-2, ~0>(eleven));
+		echo(realized::root_f<-2,  3>(eleven));
+		echo(realized::root_f<-2,  2>(eleven));
+		echo(realized::root_f<-2,  1>(eleven));
+		echo(realized::root_f<-2,  0>(eleven));
+		TRUE_(true);
+	};
+}
 TAG_("realize", "logarithm")
 {
 	using T_sigma = typename realized::sigma_t;

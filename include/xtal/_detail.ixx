@@ -409,29 +409,24 @@ concept simplex_field_p = algebraic_field_p<T, N_arity> and not complex_field_p<
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct lateral
+XTAL_FN2 lateral_f(T n)
+XTAL_0EX
 {
-	template <T ...Ms>
-	class joint
-	{
-		XTAL_LET N_width = sizeof(T)/sizeof...(Ms);
-		XTAL_LET N_depth = N_width << 3;
+	return n;
+}
+template <class T>
+XTAL_FN2 lateral_f(T n, T m, auto ...ms)
+XTAL_0EX
+{
+	auto constexpr N_count = 1 + 1 + sizeof...(ms);
+	auto constexpr N_width = sizeof(T)/N_count;
+	auto constexpr N_depth = N_width << 3;
+	static_assert(N_width*N_count == sizeof(T));
+	return lateral_f<T>(m|(n<<N_depth), ms...);
+}
 
-		static_assert(N_width*sizeof...(Ms) == sizeof(T));
-
-		template <            T ...Ns> struct join                : _std::integral_constant<T,  0> {};
-		template <T N0               > struct join<N0           > : _std::integral_constant<T, N0> {};
-		template <T N0, T N1, T ...Ns> struct join<N0, N1, Ns...> : join<(N0<<N_depth)|N1, Ns...> {};
-
-	public:
-		XTAL_LET value = join<Ms...>::value;
-
-	};
-	
-	template <T ...Ms>
-	XTAL_LET value = joint<Ms...>::value;
-
-};
+template <class T, auto ...Ms>
+using lateral = constant<lateral_f<T>(Ms...)>;
 
 
 }//////////////////////////////////////////////////////////////////////////////
