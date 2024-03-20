@@ -269,7 +269,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::binding`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding` compatible `&&`arguments|
 |Buffer allocation          |[`bond/store.ii`](include/xtal/bond/store.ii?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`bond/reciprocal.ii`](include/xtal/bond/reciprocal.ii?ts=3)|
+|Buffer arithmetic          |[`bond/scalar.ii`](include/xtal/bond/scalar.ii?ts=3)|
 |Buffer transformation      |[`bond/series.ii`](include/xtal/bond/series.ii?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`atom/realize.ii`](include/xtal/atom/realize.ii?ts=3) via `\.(?:truncate\|puncture)`|
 

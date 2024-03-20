@@ -42,7 +42,7 @@ struct series<U[N]>
 
 	public:
 		using S_::S_;
-		using S_::subscript;
+		using S_::get;
 		using S_::self;
 		using S_::twin;
 
@@ -80,20 +80,20 @@ struct series<U[N]>
 
 		//	Compute and populate the 0th and 1st powers:
 			auto const o = re::template explo_f<N_index>(u);
-			subscript(_0) = o;
-			subscript(_1) = o*u;
+			get(_0) = o;
+			get(_1) = o*u;
 
 			for (I i = _1; i < H_; ++i) {
-				auto w = re::square_f(subscript(i));
+				auto w = re::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
 				I ii = i << 1;
-				subscript(ii + 0) = w;
-				subscript(ii + 1) = w*u;
+				get(ii + 0) = w;
+				get(ii + 1) = w*u;
 			}
 		//	Compute the final value if `N_limit` is odd:
 			if constexpr (N_limit&1) {
-				subscript(N1) = subscript(N2)*u;
+				get(N1) = get(N2)*u;
 			}
 			return self();
 		}
@@ -120,9 +120,9 @@ struct series<U[N]>
 			typename S_::difference_type constexpr M = N >> 2;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
-			if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*M, _std::span(i, i + 1*M), [] (U const &v) XTAL_0FN_(U(-v.imag(), -v.real())));
-			if constexpr (-1 <= N_shift) _detail::copy_to(i + 2*M, _std::span(i, i + 2*M), [] (U const &v) XTAL_0FN_(U( v.imag(), -v.real())));
-			if constexpr (-0 <= N_shift) _detail::copy_to(i + 4*M, _std::span(i, i + 4*M), [] (U const &v) XTAL_0FN_(U(-v.real(), -v.imag())));
+			if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*M, _std::span(i, i + 1*M), [] (U const &v) XTAL_0FN_(U {-v.imag(), -v.real()}));
+			if constexpr (-1 <= N_shift) _detail::copy_to(i + 2*M, _std::span(i, i + 2*M), [] (U const &v) XTAL_0FN_(U { v.imag(), -v.real()}));
+			if constexpr (-0 <= N_shift) _detail::copy_to(i + 4*M, _std::span(i, i + 4*M), [] (U const &v) XTAL_0FN_(U {-v.real(), -v.imag()}));
 			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `atom::seek`.
 			
 			return self();
@@ -141,7 +141,7 @@ struct series<U[N]>
 		{
 			using I = typename Y::difference_type;
 		
-		//	Detect whether `Y` is a `reciprocal` of any `N` (by sleight of hand):
+		//	Detect whether `Y` is a `scalar` of any `N` (by sleight of hand):
 			bool constexpr degenerate = is_q<typename Y::template dual_t<Y>, Y>;
 
 		//	Ensure the size of both domain and codomain are powers of two:
@@ -161,13 +161,13 @@ struct series<U[N]>
 			}
 		//	Compute the transform of `that` using the precomputed sinusoid via `d`:
 			for (I k = 0; k < k_size; ++k) {
-				I const kn = K_size - k;
-				I const u = 1 << k;
-				I const w = u << 1;
-				I const n = n_size;
-				for (I                  i = 0; i < u; i += 1) {
-				for (I knife = i << kn, j = i; j < n; j += w) {
-					U const y = that[j + u]*subscript(knife);
+				I const _k = K_size - k;
+				I const  u = 1 << k;
+				I const  w = u << 1;
+				I const  n = n_size;
+				for (I i = 0; i < u; i += 1) {I const i_k = i << _k;
+				for (I j = i; j < n; j += w) {
+					U const y = that[j + u]*get(i_k);
 					U const x = that[j + 0];
 					that[j + u] = x - y;
 					that[j + 0] = x + y;

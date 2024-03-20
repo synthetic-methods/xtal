@@ -4,7 +4,7 @@ from conan.tools.files import copy
 from conan.tools.cmake import cmake_layout
 from conan.tools.build import check_min_cppstd
 
-class XTAL__Conan(ConanFile):
+class Xtal__Conan(ConanFile):
 	required_conan_version = ">=2.0.0"
 
 	# Info:

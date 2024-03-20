@@ -53,12 +53,12 @@ template <array_q Xs> using ectovector_t = bond::serial_t<ectoscalar_t<value_t<X
 XTAL_LET endovector_f = []<array_q Xs> (Xs &&xs)
 XTAL_0FN
 {
-	return forge_f<ipsovector_t<Xs>>(XTAL_FWD_(xs)).template transmute<endovector_t<Xs>>(endoscalar_f);
+	return forge_f<ipsovector_t<Xs>>(XTAL_FWD_(xs)).template transmorph<endovector_t<Xs>>(endoscalar_f);
 };
 XTAL_LET ectovector_f = []<array_q Xs> (Xs &&xs)
 XTAL_0FN
 {
-	return forge_f<ipsovector_t<Xs>>(XTAL_FWD_(xs)).template transmute<ectovector_t<Xs>>(ectoscalar_f);
+	return forge_f<ipsovector_t<Xs>>(XTAL_FWD_(xs)).template transmorph<ectovector_t<Xs>>(ectoscalar_f);
 };
 
 

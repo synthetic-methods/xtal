@@ -41,11 +41,11 @@ struct serial<U[N]>
 	
 	public:
 		using S_::S_;
-		using S_::subscript;
+		using S_::get;
 		using S_::self;
 		using S_::twin;
 
-		XTAL_TO4_(XTAL_OP0_(explicit) U(), subscript(0))
+		XTAL_TO4_(XTAL_OP0_(explicit) U(), get(0))
 
 		///\
 		Multiplication by linear convolution, truncated by `N`. \
@@ -59,12 +59,12 @@ struct serial<U[N]>
 		XTAL_0EX
 		{
 			if constexpr (re::alignment_n < N) {
-				for (auto i = N; ~--i;) {subscript(i) *= t.subscript(0);
-				for (auto j = i; j-- ;) {subscript(i) += t.subscript(j)*subscript(i - j);}}
+				for (auto i = N; ~--i;) {get(i) *= t.get(0);
+				for (auto j = i; j-- ;) {get(i) += t.get(j)*get(i - j);}}
 			}
 			else {
-				atom::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {subscript(I) *= t.subscript(0);
-				atom::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {subscript(I) += t.subscript(J)*subscript(I - J);});});
+				atom::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {get(I) *= t.get(0);
+				atom::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {get(I) += t.get(J)*get(I - J);});});
 			}
 			return self();
 		}
@@ -80,9 +80,7 @@ struct serial<U[N]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-		//	auto constexpr N0 = N - 0;
-			auto constexpr N1 = N - 1;
-			atom::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(0 + i) += subscript(1 + i)));
+			atom::seek_forward_f<N - 1>([&, this] (auto i) XTAL_0FN_(get(i) += get(i + 1)));
 			return self();
 		}
 
@@ -98,9 +96,7 @@ struct serial<U[N]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			auto constexpr N0 = N - 0;
-			auto constexpr N1 = N - 1;
-			atom::seek_forward_f<N1>([&, this] (auto i) XTAL_0FN_(subscript(N1 - i) -= subscript(N0 - i)));
+			atom::seek_backward_f<N - 1>([&, this] (auto i) XTAL_0FN_(get(i) -= get(i + 1)));
 			return self();
 		}
 
