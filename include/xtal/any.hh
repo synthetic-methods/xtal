@@ -177,6 +177,7 @@ static_assert(1400 <= XTAL_V00_LLVM);
 
 #define XTAL_IF0                  if constexpr (0);
 #define XTAL_IF1                  if constexpr (1);
+#define XTAL_0IF_(...)       else if constexpr (__VA_ARGS__)
 #define XTAL_0EX                               noexcept
 #define XTAL_0FX                     const     noexcept
 #define XTAL_0EX_(REF)                     REF noexcept

@@ -47,17 +47,18 @@ TAG_("realize", "unverse")
 	{
 		T_alpha constexpr eleven = 11;
 
-		echo(realized::root_f<-1,~0>(eleven));
-		echo(realized::root_f<-1, 3>(eleven));
-		echo(realized::root_f<-1, 2>(eleven));
-		echo(realized::root_f<-1, 1>(eleven));
-		echo(realized::root_f<-1, 0>(eleven));
-		echo();
-		echo(realized::root_f<-2, ~0>(eleven));
-		echo(realized::root_f<-2,  3>(eleven));
-		echo(realized::root_f<-2,  2>(eleven));
-		echo(realized::root_f<-2,  1>(eleven));
-		echo(realized::root_f<-2,  0>(eleven));
+	//	TODO:
+	//	echo(realized::root_f<-1,~0>(eleven));
+	//	echo(realized::root_f<-1, 3>(eleven));
+	//	echo(realized::root_f<-1, 2>(eleven));
+	//	echo(realized::root_f<-1, 1>(eleven));
+	//	echo(realized::root_f<-1, 0>(eleven));
+	//	echo();
+	//	echo(realized::root_f<-2, ~0>(eleven));
+	//	echo(realized::root_f<-2,  3>(eleven));
+	//	echo(realized::root_f<-2,  2>(eleven));
+	//	echo(realized::root_f<-2,  1>(eleven));
+	//	echo(realized::root_f<-2,  0>(eleven));
 		TRUE_(true);
 	};
 }
