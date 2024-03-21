@@ -16,22 +16,32 @@ namespace _detail
 //\
 Standard...
 
-using null_t = XTAL_STD_(null_t);
-using unit_t = XTAL_STD_(unit_t);
-using sign_t = XTAL_STD_(sign_t);
-using byte_t = XTAL_STD_(byte_t);
-using size_t = XTAL_STD_(size_t);
-using size_s = XTAL_STD_(size_s);
+XTAL_USE null_t = XTAL_STD_(null_t);
+XTAL_USE unit_t = XTAL_STD_(unit_t);
+XTAL_USE sign_t = XTAL_STD_(sign_t);
+XTAL_USE byte_t = XTAL_STD_(byte_t);
+XTAL_USE size_t = XTAL_STD_(size_t);
+XTAL_USE size_s = XTAL_STD_(size_s);
 XTAL_LET size_1 = (size_t) 1;
-XTAL_LET sign_f = [] (auto &&n) XTAL_0FN_(sign_t((0 < n) - (n < 0)));
 
-template <auto N          >	XTAL_LET sign_n = sign_f(N);
-template <auto N, auto Z=0>	concept  sign_p = _std::integral<decltype(N)> and -1 == N or N == 1 or N == Z;
+template <auto N_zero=0>
+XTAL_FN2_(sign_t) sign_f(auto &&i)
+XTAL_0EX
+{
+	XTAL_IF0
+	XTAL_0IF_(N_zero ==  0) {return (0 <  i) - (i <  0);}
+	XTAL_0IF_(N_zero == +1) {return (0 <= i) - (i <  0);}
+	XTAL_0IF_(N_zero == -1) {return (0 <  i) - (i <= 0);}
+}
 
-template <class   ...Ts>	concept      some_q = 0 < sizeof...(Ts);
-template <auto    ...Ns>	concept      some_n = 0 < sizeof...(Ns);
-template <class   ...Ts>	concept      none_q = not some_q<Ts...>;
-template <auto    ...Ns>	concept      none_n = not some_n<Ns...>;
+template <auto N, auto    ...Ms> concept    in_p = (...or (N == Ms));
+template <auto N, auto N_zero=0> concept  sign_p = in_p<N, -1, N_zero, 1>;
+template <auto N, auto N_zero=0> XTAL_LET sign_n = sign_f<N_zero>(N);
+
+template <class   ...Ts>         concept  some_q = 0 < sizeof...(Ts);
+template <auto    ...Ns>         concept  some_n = 0 < sizeof...(Ns);
+template <class   ...Ts>         concept  none_q = not some_q<Ts...>;
+template <auto    ...Ns>         concept  none_n = not some_n<Ns...>;
 
 
 

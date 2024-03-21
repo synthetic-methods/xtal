@@ -164,8 +164,11 @@ template <extremum_q T>
 XTAL_FN2 extremum_f(sign_t const &n_direction)
 XTAL_0EX
 {
-	based_t<T> constexpr ex[] = {extremum_t<T>::min(), 0, extremum_t<T>::max()};
-	return (T) ex[1 + sign_f(n_direction)];
+	switch (n_direction) {
+	case -1: return extremum_t<T>::min();
+	case  1: return extremum_t<T>::max();
+	default: return (T) 0;
+	}
 }
 
 
