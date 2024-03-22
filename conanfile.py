@@ -44,7 +44,7 @@ class Xtal__Conan(ConanFile):
 
 	# Package:
 	no_copy_source = True
-	exports_sources = "include*.h*", "include*.i*", "include/module.modulemap", "CMakeLists.txt", "LICENSE.*"
+	exports_sources = "include*.h*", "include*.i*", "include*.modulemap", "CMakeLists.txt", "LICENSE.*"
 
 	def package(self):
 		for glob in self.exports_sources:

@@ -1,0 +1,17 @@
+module xtal {
+	umbrella "."
+	export *
+	exclude header "./___.ixx"
+	exclude header "./_kernel.ixx"
+	exclude header "./_detail.ixx"
+	exclude header "./atom/_kernel.hxx"
+	exclude header "./atom/_detail.hxx"
+	exclude header "./bond/_detail.hxx"
+	exclude header "./cell/_detail.hxx"
+	exclude header "./flux/_detail.hxx"
+	exclude header "./message/_detail.hxx"
+	exclude header "./process/_detail.hxx"
+	exclude header "./processor/_detail.hxx"
+	exclude header "./resourced/_detail.hxx"
+	exclude header "./scheduled/_detail.hxx"
+}
