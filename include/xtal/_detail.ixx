@@ -50,13 +50,20 @@ template <auto    ...Ns>         concept  none_n = not some_n<Ns...>;
 //\
 Structural...
 
+template <class      T >	concept atomic_q = _std::same_as<T, _std::atomic<typename T::value_type>>;
+template <class      T >	concept atomic_p =
+	_std::is_trivially_copyable_v<T> &&
+	_std::is_copy_constructible_v<T> &&
+	_std::is_move_constructible_v<T> &&
+	_std::is_copy_assignable_v<T> &&
+	_std::is_move_assignable_v<T>;
+
 template <class      T             >	concept  incomplete_q = not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	concept    complete_q = not incomplete_q<T>;
 template <              class ...Ts>	struct     complete              {class type   {};};
 template <class      T, class ...Ts>	struct     complete<T, Ts...>:   complete<Ts...> {};
 template <complete_q T, class ...Ts>	struct     complete<T, Ts...>    {using type =  T;};
 template <              class ...Ts>	using      complete_t = typename complete<Ts...>::type;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -109,8 +116,8 @@ template <liminal_q  T >	using semiliminal   = constant<(T{} >> 1)>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class      T >	using       based_t = _std::remove_cvref_t<complete_t<T>>;
-template <class      T >	concept     based_q = _std::is_trivially_copyable_v<T>;
-template <class      T >	concept   unbased_q =  not based_q<T>;
+template <class      T >	concept     based_q =     atomic_p<T>;
+template <class      T >	concept   unbased_q = not atomic_p<T>;
 
 template <class      T >	struct    debased             : logical<0> {using type = _std::remove_reference_t<T>;};
 template <unbased_q  T >	struct    debased<T       & > : logical<1> {using type =       T*;};

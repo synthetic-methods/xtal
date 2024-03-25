@@ -18,7 +18,7 @@ Wrapper used to tunnel an existing type using `std::tuple`-based trarootsl.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename     ..._s> XTAL_NYM indent;
-template <typename     ...Ts> XTAL_ASK indent_q = bond::tagged_p<indent, Ts...>;
+template <typename     ...Ts> XTAL_ASK indent_q = bond::tag_p<indent, Ts...>;
 template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<ordinal_t<Ns>...>>;
 
 template <integral_q ...Ns>

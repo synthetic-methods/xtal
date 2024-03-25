@@ -45,6 +45,9 @@ template <auto N, auto  N_zero=0>	XTAL_LET sign_n = _detail:: sign_n<N, N_zero>;
 //\
 Structural...
 
+template <class   ...Ts>	concept     atomic_p	= (...and  _detail::     atomic_p<Ts>);
+template <class   ...Ts>	concept     atomic_q	= (...and  _detail::     atomic_q<Ts>);
+
 template <class   ...Ts>	concept incomplete_q	= (...and  _detail:: incomplete_q<Ts>);
 template <class   ...Ts>	concept   complete_q	= (...and  _detail::   complete_q<Ts>);
 template <class   ...Ts>	using     complete_t	= typename _detail::   complete_t<Ts...>;

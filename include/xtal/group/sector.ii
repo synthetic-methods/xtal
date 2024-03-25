@@ -13,7 +13,7 @@ namespace xtal::group
 
 template <class ..._s> XTAL_NYM sector;
 template <class ..._s> XTAL_USE sector_t = typename sector<_s...>::type;
-template <class ...Ts> XTAL_ASK sector_q = bond::tagged_p<sector, Ts...>;
+template <class ...Ts> XTAL_ASK sector_q = bond::tag_p<sector, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

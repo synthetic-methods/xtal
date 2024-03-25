@@ -13,7 +13,7 @@ namespace xtal::group
 
 template <class ..._s> XTAL_NYM scalar;
 template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class ...Ts> XTAL_ASK scalar_q = bond::tagged_p<scalar, Ts...>;
+template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

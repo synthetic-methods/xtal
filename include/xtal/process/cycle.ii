@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM cycle;
-template <typename ..._s> XTAL_ASK cycle_q = bond::tagged_p<cycle, _s...>;
+template <typename ..._s> XTAL_ASK cycle_q = bond::tag_p<cycle, _s...>;
 template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
 
 

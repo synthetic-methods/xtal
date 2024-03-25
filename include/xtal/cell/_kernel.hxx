@@ -23,24 +23,13 @@ template <class T> struct refine;///<   Finalizes `T`.
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Associates the internal `subtype` with the current namespace, \
-prepending the decorators `As...`. \
+Associates the internal `subtype` both with the current namespace, \
+the parent namespace, and with the decorators `As...` if provided. \
 
-template <typename ...As>
-using any = _retail::any<As..., class any_a>;
-
-template <typename ...As>
-using any_t = bond::compose_s<unit_t, any<As...>>;
-using any_u = any_t<>;
-
-///\
-Matches any `T` that inherits from `any_t<As...>`. \
-
-template <class ...Ts>
-concept any_q = of_p<any_u, Ts...>;
-
-template <class T, typename ...As>
-concept any_p = any_q<T> and complete_q<typename T::template self_s<As...>>;
+template <            typename ...As> struct  any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
+template <class    T, typename ...As> using   any_s = bond::compose_s<T, any<As...>>;
+template <class ...Ts               > concept any_q = bond::tag_p<any, Ts...>;
+template <class    T, typename ...As> concept any_p = any_q<T> and complete_q<typename T::template self_s<As...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +82,7 @@ struct confine
 	
 };
 template <class T, typename ...As>
-using confine_t = typename confine<T, As...>::template subtype<any_u>;
+using confine_t = typename confine<T, As...>::template subtype<any_s<unit_t>>;
 
 ///\
 Creates the `confine`d _decorator_ with `As...`. \
@@ -106,7 +95,7 @@ struct confined
 
 	template <class S>
 	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
-	using    type = subtype<any_u>;
+	using    type = subtype<any_s<unit_t>>;
 	
 };
 template <typename ...As>
