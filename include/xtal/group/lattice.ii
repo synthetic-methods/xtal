@@ -13,7 +13,7 @@ namespace xtal::group
 
 template <class ..._s> XTAL_NYM lattice;
 template <class ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class ..._s> XTAL_ASK lattice_q = bond::tagged_p<lattice, _s...>;
+template <class ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

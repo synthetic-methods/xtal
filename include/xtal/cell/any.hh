@@ -25,7 +25,6 @@ struct any
 	
 	template <class S>
 	using subtype = bond::compose_s<S, subkind>;
-	using    type = subtype<unit_t>;
 	
 };
 template <>
@@ -33,32 +32,15 @@ struct any<void>
 {	
 	template <class S>
 	using subtype = S;
-	using    type = subtype<unit_t>;
 
 };
 template <typename A>
 struct any<A>
 {	
-	//\
-	using subkind = bond::compose<>;
-	using subkind = bond::tab<A>;
-
-	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-		
-	public:
-		using S_::S_;
-		
-	};
 	template <class S> requires some_q<typename S::T_self>
-	and bond::untabbed_p<A, S>
-	//\
-
-	class subtype<S>: public bond::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S>;
 
 	public://protected:
 		using typename S::T_self;
