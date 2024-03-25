@@ -38,6 +38,7 @@ struct define
 		using  U_self = subtype;
 		struct U_tail {template <class _, typename ...Is> struct super: bond::seek_back<_, Is...> {};};
 
+	public:
 		template <class _, class ...Is>
 		using super = typename _detail::query<U_tail, U_self>::type::template super<_, Is...>;
 

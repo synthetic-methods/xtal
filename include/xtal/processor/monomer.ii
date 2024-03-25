@@ -37,7 +37,7 @@ struct monomer<U, As...>
 		template <class ...Xs>
 		using S_binding = typename S_::template binding<Xs...>;
 
-	public://protected:
+	protected:
 		using typename S_::T_self;
 
 	public:
