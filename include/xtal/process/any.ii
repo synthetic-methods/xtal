@@ -42,11 +42,24 @@ struct define
 			self().method(XTAL_FWD_(xs)...)
 		)
 		
+		///\
+		The default `method` defers to the static `function` (only when `this` is `const`). \
+
 		template <auto ...Is>
 		XTAL_TN2 method(auto &&...xs)
 		XTAL_0FX
 		{
 			return T::template function<Is...>(XTAL_FWD_(xs)...);
+		}
+
+		///\
+		The default `function` is the identity function. \
+
+		template <auto ...Is>
+		XTAL_FN2 function(auto &x)
+		XTAL_0EX
+		{
+			return XTAL_REF_(x);
 		}
 
 		///\returns the lambda abstraction of `method`, \

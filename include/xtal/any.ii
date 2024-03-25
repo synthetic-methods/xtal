@@ -136,6 +136,8 @@ template <class  T , class    Y >	using      qualify_t	= typename _detail::   qu
 template <class  T , class    Y >	using    requalify_t	= typename _detail:: requalify<T, Y>::type;
 template <           class    X >	using     argument_t	= typename _detail:: argument<X>::type;
 
+template <class  V , class ...Ts>	concept value_p = value_q<Ts...> and is_q<V, value_t<Ts>...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
