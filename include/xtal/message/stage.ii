@@ -16,7 +16,7 @@ namespace xtal::message
 template <typename ...As>
 struct stage
 {
-	using subkind = atom::compose<void
+	using subkind = bond::compose<void
 	,	_detail::refer_equality<XTAL_FLX>
 	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
@@ -24,9 +24,9 @@ struct stage
 	>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -36,7 +36,7 @@ struct stage
 template <integral_q A, typename ...As>
 struct stage<A, As...>
 {
-	using subkind = atom::compose<void
+	using subkind = bond::compose<void
 	,	_detail::refer_equality<XTAL_FLX>
 	,	_detail::refer_binary_logic<XTAL_FLX>
 	,	As...
@@ -44,9 +44,9 @@ struct stage<A, As...>
 	>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -70,7 +70,7 @@ struct stage<A, As...>
 	};
 };
 template <typename ...As>
-using stage_t = confined_t<stage<As..., atom::tag<stage>>>;
+using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 
 template <typename ...As>
 XTAL_FN2  stage_f(auto &&...oo)

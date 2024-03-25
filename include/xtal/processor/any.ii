@@ -48,9 +48,9 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 
 		XTAL_TO2_(template <class ...Xs>
 		XTAL_TN2 reified_(auto const ...ks),
@@ -95,21 +95,21 @@ template <class U>
 struct refer
 {
 	using U_scope = message::scope_t<counted_t<>>;
-	using subkind  = atom::compose<_retail::refer<U>, U_scope::attach<>>;
+	using subkind  = bond::compose<_retail::refer<U>, U_scope::attach<>>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
 
 	};
 	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
-	class subtype<S>: public atom::compose_s<S, subkind>
+	class subtype<S>: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -119,7 +119,7 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 method(),
 		{
-			using I = iteratee_t<U_scope>; using re = atom::realize<I>;
+			using I = iteratee_t<U_scope>; using re = bond::realize<I>;
 			auto const &m = S_::method();// NOTE: Must be &?
 			auto const &u = S_::template head<U_scope>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \

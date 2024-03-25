@@ -21,12 +21,12 @@ Adapt to provide polling. \
 template <typename ...As>
 struct thunk
 {
-	using subkind = atom::compose<As..., resourced::spool<-1>>;
+	using subkind = bond::compose<As..., resourced::spool<-1>>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 		static_assert(resourced::spool_q<S_>);
 
 	public:
@@ -38,9 +38,9 @@ struct thunk
 			using subkind = typename S_::template inqueue<X>;
 
 			template <process::any_q R>
-			class subtype: public atom::compose_s<R, subkind>
+			class subtype: public bond::compose_s<R, subkind>
 			{
-				using R_ = atom::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, subkind>;
 			
 			protected:
 				using typename R_::U_event;

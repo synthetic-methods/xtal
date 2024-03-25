@@ -15,7 +15,7 @@ namespace xtal::process::_test
 /**/
 TAG_("cycle")
 {
-	using re = atom::realized;
+	using re = bond::realized;
 	using T_sigma = typename re::sigma_t;
 	using T_alpha = typename re::alpha_t;
 	using U_phi = cycle_t<size_t[2]>;

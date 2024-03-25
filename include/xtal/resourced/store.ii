@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "../bond/store.ii"
+#include "../group/store.ii"
 
 
 
@@ -12,29 +12,29 @@ namespace xtal::resourced
 /////////////////////////////////////////////////////////////////////////////////
 
 XTAL_NYM store_a;
-template <class ...Ts> concept store_q = atom::tabbed_p<store_a, Ts...>;
+template <class ...Ts> concept store_q = bond::tabbed_p<store_a, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `bond::store`. \
+Provides a specialization of `group::store`. \
 If `N == -1`, the member-type `store_t` is dynamically allocated. \
 
 template <int N=-1>
 struct store
 {
-	using subkind = atom::tab<store_a>;
+	using subkind = bond::tab<store_a>;
 	
 	template <cell::any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
 		
 		template <class U>
-		using store_t = bond::store_t<U[(unsigned) N]>;
+		using store_t = group::store_t<U[(unsigned) N]>;
 
 	};
 };
