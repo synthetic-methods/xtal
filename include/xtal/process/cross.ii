@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM cross;
-template <typename ..._s> XTAL_ASK cross_q =      atom::tagged_p<cross, _s...>;
+template <typename ..._s> XTAL_ASK cross_q =      bond::tagged_p<cross, _s...>;
 template <typename ..._s> XTAL_USE cross_t = confined_t<cross< _s...>>;
 template <typename ...As>
 XTAL_FN2  cross_f(auto &&u)
@@ -26,11 +26,11 @@ template <size_t N>
 XTAL_FN2 dot(auto const &x, auto const &y)
 {
 	using namespace _std;
-	static_assert(N == atom::pack_size_n<decltype(x)>);
-	static_assert(N == atom::pack_size_n<decltype(y)>);
-	return [&]<size_t ...I>(atom::seek_t<I...>)
+	static_assert(N == bond::pack_size_n<decltype(x)>);
+	static_assert(N == bond::pack_size_n<decltype(y)>);
+	return [&]<size_t ...I>(bond::seek_t<I...>)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
-	(atom::seek_f<N - 1> {});
+	(bond::seek_f<N - 1> {});
 }
 
 
@@ -40,12 +40,12 @@ template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
 	using W_indent = typename flux::indent_s<W>::tunnel;
-	using subkind = atom::compose<W_indent, confer<U>, As..., atom::tag<cross>>;
+	using subkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 		
 	public:
 		using S_::S_;
@@ -56,12 +56,12 @@ struct cross<W, U, As...>
 		XTAL_TN2 method(auto &&...xs),
 		{
 			auto constexpr N = sizeof...(xs);
-			auto const     n = atom::pack_f(XTAL_FWD_(xs)...);
+			auto const     n = bond::pack_f(XTAL_FWD_(xs)...);
 			auto const    &m = head();
-			auto constexpr M = atom::pack_size_n<decltype(m)>;
-			return [&, this]<size_t ...I>(atom::seek_t<I...>)
+			auto constexpr M = bond::pack_size_n<decltype(m)>;
+			return [&, this]<size_t ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
-			(atom::seek_f<M> {});
+			(bond::seek_f<M> {});
 		})
 
 	};

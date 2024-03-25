@@ -19,17 +19,17 @@ namespace xtal::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace atom;
+using namespace bond;
 
-using scale_t = message::inferred_t<class scale_a, typename atom::realized::alpha_t>;
-using level_t = message::inferred_t<class level_a, typename atom::realized::alpha_t>;
+using scale_t = message::inferred_t<class scale_a, typename bond::realized::alpha_t>;
+using level_t = message::inferred_t<class level_a, typename bond::realized::alpha_t>;
 /*/
-using onset_t = message::inferred_t<class onset_a, typename atom::realized::alpha_t>;
+using onset_t = message::inferred_t<class onset_a, typename bond::realized::alpha_t>;
 /*/
 struct onset
-:	message::confer<typename atom::realized::alpha_t
+:	message::confer<typename bond::realized::alpha_t
 	,	message::any<class onset_a>
-	,	atom::assay<(1 << 7)>
+	,	bond::assay<(1 << 7)>
 	>
 {
 };
@@ -115,7 +115,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename atom::realized::iota_t;
+	using U_count  = typename bond::realized::iota_t;
 	using U_restep = message::restep_t<U_count>;
 
 	template <class T>

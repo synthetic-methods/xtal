@@ -11,107 +11,85 @@ namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-using namespace _retail::_detail;
+////////////////////////////////////////////////////////////////////////////////
+
+template <class U_tail, class U_self, class U_head=void>
+struct query
+{
+	class type
+	{
+	public:
+		template <class _,               class ...Is> struct duper:  U_tail::template super<_,                       Is...> {};
+		template <class _,               class ...Is> struct super                  : duper<_,                       Is...> {};
+		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...>: duper<null_t, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...>: super<U_self,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_head, Is...>: super<U_self,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_self, Is...>: super<U_self,                  Is...> {};
+
+	};
+	template <class S>
+	class subtype: public S
+	{
+		using S_ = S;
+
+	public://protected:
+		using typename S_::T_self;
+	//	using typename S_::U_head;
+
+		template <class _, class ...Is>
+		using super = typename type::template super<_, Is...>;
+
+	public:
+		using S_::S_;
+
+		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
+		template <class ...Is> using head_s = typename super<U_self, Is...>::type;
+		template <class ...Is> using head_t = typename head_s<Is...>::U_head;
+
+		using S_::self;
+		using S_::head;
+		
+		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
+		XTAL_TN2 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_FWD_(oo)...)
+		)
+		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
+		XTAL_TN2 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_FWD_(oo)...)
+		)
+		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
+		)
+		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
+		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
+		)
+
+	};
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 copy_to(I i, J const j0, J const jN, F &&f, bool o=false)
-XTAL_0EX
+template <int N_width>
+struct assay
 {
-	using namespace _std;
-#ifdef __cpp_lib_execution
-	auto constexpr seq = execution::  seq;
-	auto constexpr par = execution::unseq;
-	if (o) transform(seq, j0, jN, i, XTAL_FWD_(f));
-	else   transform(par, j0, jN, i, XTAL_FWD_(f));
-#else
-	transform(j0, jN, i, XTAL_FWD_(f));
-#endif
-}
-template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 copy_to(I i, J const &j, F &&f, bool o=false)
-XTAL_0EX
-{
-	copy_to(i, j.begin(), j.end(), XTAL_FWD_(f), o);
-}
-template <iterator_q I, iterator_q J>
-XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
-XTAL_0EX
-{
-	copy_to(i, j0, jN, as_f<based_t<iteratee_t<I>>>, o);
-}
-template <iterator_q I, iterator_q J>
-XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
-XTAL_0EX
-XTAL_REQ isomorphic_q<I, J>
-{
-	using namespace _std;
-#ifdef __cpp_lib_execution
-	auto constexpr seq = execution::  seq;
-	auto constexpr par = execution::unseq;
-	if (o) copy(seq, j0, jN, i);
-	else   copy(par, j0, jN, i);
-#else
-	copy(j0, jN, i);
-#endif
-}
-template <iterator_q I, bracket_q J>
-XTAL_FN0 copy_to(I i, J const &j, bool o=false)
-XTAL_0EX
-{
-	copy_to(i, j.begin(), j.end(), o);
-}
+	template <class S>
+	class subtype: public S
+	{
+		using S_ = S;
+	
+	public:
+		using S_::S_;
+
+		XTAL_FN2 size()
+		XTAL_0EX
+		{
+			return N_width;
+		};
+
+	};
+};
+template <class T>
+concept assay_q = requires {{T::size()} -> integral_p;};
 
 
-template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 move_to(I i, J const j0, J const jN, F &&f, bool o=false)
-XTAL_0EX
-{
-	auto const _j0 = mover_f(j0);
-	auto const _jN = mover_f(jN);
-	return copy_to(i, _j0, _jN, XTAL_FWD_(f), o);
-}
-template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 move_to(I i, J const &j, F &&f, bool o=false)
-XTAL_0EX
-{
-	move_to(i, j.begin(), j.end(), XTAL_FWD_(f), o);
-}
-template <iterator_q I, iterator_q J>
-XTAL_FN0 move_to(I i, J j0, J jN, bool o=false)
-XTAL_0EX
-{
-	auto const _j0 = mover_f(j0);
-	auto const _jN = mover_f(jN);
-	return copy_to(i, _j0, _jN, o);
-}
-template <iterator_q I, bracket_q J> requires (not is_q<I, begin_t<J>>)
-XTAL_FN0 move_to(I i, J &&j, bool o=false)
-XTAL_0EX
-{
-	_std::is_lvalue_reference_v<J>?
-		copy_to(i, j.begin(), j.end(), o):
-		move_to(i, j.begin(), j.end(), o);
-}
-template <iterator_q I, bracket_q J> requires is_q<I, begin_t<J>>
-XTAL_FN0 move_to(I i0, J &&j)
-XTAL_0EX
-{
-	_std::is_lvalue_reference_v<J>?
-		_std::memcpy (i0, XTAL_FWD_(j).begin(), sizeof(j)):
-		_std::memmove(i0, XTAL_FWD_(j).begin(), sizeof(j));
-}
-
-
-template <bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 apply_to(J &j, F &&f, bool o=false)
-XTAL_0EX
-{
-	move_to(j.begin(), j, XTAL_FWD_(f), o);
-}
-
-
-}//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////

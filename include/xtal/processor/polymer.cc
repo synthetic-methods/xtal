@@ -23,9 +23,9 @@ namespace xtal::processor::_test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using T_alpha = typename atom::realized::alpha_t;
-	using T_sigma = typename atom::realized::sigma_t;
-	using T_delta = typename atom::realized::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = cell::key_s<U_stage>;
@@ -89,9 +89,9 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename atom::realized::alpha_t;
-	using T_sigma = typename atom::realized::sigma_t;
-	using T_delta = typename atom::realized::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = cell::key_s<U_stage>;
@@ -134,9 +134,9 @@ void polymer_provision_spool__combined()
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
-	using T_alpha = typename atom::realized::alpha_t;
-	using T_sigma = typename atom::realized::sigma_t;
-	using T_delta = typename atom::realized::delta_t;
+	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::realized::sigma_t;
+	using T_delta = typename bond::realized::delta_t;
 
 	using U_stage = message::stage_t<>;
 	using U_event = cell::key_s<U_stage>;

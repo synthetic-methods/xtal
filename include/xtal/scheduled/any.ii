@@ -19,10 +19,10 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <class S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
 		friend T;
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
@@ -38,9 +38,9 @@ struct define
 		struct inqueue
 		{
 			template <process::any_q R>
-			class subtype: public atom::compose_s<R>
+			class subtype: public bond::compose_s<R>
 			{
-				using R_ = atom::compose_s<R>;
+				using R_ = bond::compose_s<R>;
 				static_assert(complete_q<Xs...>);
 				
 			protected:
@@ -115,9 +115,9 @@ struct refine
 	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype: public atom::compose_s<S, subkind>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = atom::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind>;
 	
 		template <class ...Xs>
 		using S_inqueue = typename S_::template inqueue<Xs...>;
@@ -130,7 +130,7 @@ struct refine
 		struct inqueue: S_inqueue<Xs...>
 		{
 			using kind = confined<S_inqueue<Xs...>>;
-			using type = atom::compose_s<S_, kind>;
+			using type = bond::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>

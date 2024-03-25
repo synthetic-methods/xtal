@@ -12,7 +12,7 @@ namespace xtal::process
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_NYM cycle;
-template <typename ..._s> XTAL_ASK cycle_q = atom::tagged_p<cycle, _s...>;
+template <typename ..._s> XTAL_ASK cycle_q = bond::tagged_p<cycle, _s...>;
 template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
 
 
@@ -28,7 +28,7 @@ struct cycle<W[N], As...>
 	using ectoscalar_u = _detail::ectoscalar_t<W >; using ectovector_u = _detail::ectovector_t<W_>;
 	using endoscalar_u = _detail::endoscalar_t<W >; using endovector_u = _detail::endovector_t<W_>;
 
-	using subkind = atom::compose<atom::tag<cycle>
+	using subkind = bond::compose<bond::tag<cycle>
 	,	As...
 	,	_detail::refer_iterators<endovector_u>
 	,	typename flux::indent_s<endovector_u>::tunnel
@@ -41,9 +41,9 @@ struct cycle<W[N], As...>
 	using epitype = ectovector_u;
 
 	template <class S>
-	class subtype: public atom::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>
+	class subtype: public bond::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>
 	{
-		using S_ = atom::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>;
+		using S_ = bond::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>;
 
 	public://protected:
 		using typename S_::T_self;

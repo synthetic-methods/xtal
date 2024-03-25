@@ -1,6 +1,6 @@
 #include "./any.cc"
-#include "./atom/all.cc"
 #include "./bond/all.cc"
+#include "./group/all.cc"
 #include "./cell/all.cc"
 #include "./flux/all.cc"
 #include "./message/all.cc"

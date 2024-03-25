@@ -18,14 +18,14 @@ Wrapper used to index an existing type. \
 ///\see e.g. [../processor/polymer.ipp]. \
 
 template <   typename    ..._s> XTAL_NYM key;
-template <         class ...Ts> XTAL_ASK key_q = atom::tagged_p<key, Ts...>;
+template <         class ...Ts> XTAL_ASK key_q = bond::tagged_p<key, Ts...>;
 template <class Y, class ...Ts> XTAL_ASK key_p = key_q<Ts...> and of_p<Y, Ts...>;
 
-template <class U> struct key<U>: conferred<U, atom::tag<key>> {};
+template <class U> struct key<U>: conferred<U, bond::tag<key>> {};
 template <       > struct key< >: key<size_t> {};
 
 template <class S=void, typename ...As>
-using key_s = atom::compose_s<complete_t<S, confined_t<>>, key<As...>>;
+using key_s = bond::compose_s<complete_t<S, confined_t<>>, key<As...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
