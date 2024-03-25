@@ -31,11 +31,15 @@ struct query
 	class subtype: public S
 	{
 		using S_ = S;
+		friend S_;
+		friend U_tail;
+		friend U_self;
 
 	public://protected:
 		using typename S_::T_self;
 	//	using typename S_::U_head;
 
+	public:
 		template <class _, class ...Is>
 		using super = typename type::template super<_, Is...>;
 

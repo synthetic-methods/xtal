@@ -64,6 +64,7 @@ struct any<A>
 		using typename S::T_self;
 		using typename S::U_self;
 
+	public:
 		template <class _, class ...Is> struct duper: S_::template super<_,      Is...> {};
 		template <class _, class ...Is> struct super             : duper<_,      Is...> {};
 		template <class _, class ...Is> struct super<_, A, Is...>: super<U_self, Is...> {};

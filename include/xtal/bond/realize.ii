@@ -843,11 +843,16 @@ public:
 
 	///\returns the `N_num`erator divided by the given de`nom`inator.
 
-	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) ratio_f(auto &&nom)
+	XTAL_FN2_(alpha_t) ratio_f(auto &&n_num, auto &&n_nom)
 	XTAL_0EX
 	{
-		return alpha_t(N_num)/XTAL_FWD_(nom);
+		return alpha_t(n_num)/XTAL_FWD_(n_nom);
+	}
+	template <auto N_num=1>
+	XTAL_FN2_(alpha_t) ratio_f(auto &&n_nom)
+	XTAL_0EX
+	{
+		return ratio_f(N_num, XTAL_FWD_(n_nom));
 	}
 	static_assert(ratio_f   (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_f<1>(alpha_t(2.0)) == 0.5);
@@ -856,11 +861,17 @@ public:
 
 	///\returns `pi` times `ratio_f<N_num>(nom)`.
 
-	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) patio_f(auto &&u)
+	XTAL_FN2_(alpha_t) patio_f(auto &&n_num, auto &&n_nom)
 	XTAL_0EX
 	{
-		return ratio_f<N_num>(XTAL_FWD_(u))*3.141592653589793238462643383279502884;
+		return 3.141592653589793238462643383279502884L*
+			ratio_f(XTAL_FWD_(n_num), XTAL_FWD_(n_nom));
+	}
+	template <auto N_num=1>
+	XTAL_FN2_(alpha_t) patio_f(auto &&n_nom)
+	XTAL_0EX
+	{
+		return patio_f(N_num, XTAL_FWD_(n_nom));
 	}
 	static_assert(patio_f<1>(alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
 	static_assert(patio_f<4>(alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));

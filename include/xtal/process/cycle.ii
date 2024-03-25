@@ -45,7 +45,7 @@ struct cycle<W[N], As...>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>;
 
-	public://protected:
+	protected:
 		using typename S_::T_self;
 		using U_self = subtype;
 		using U_head = ectovector_u;

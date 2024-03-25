@@ -31,12 +31,13 @@ struct define
 	class subtype: public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-	
+
 	public://protected:
 		using typename S_::T_self;
 		using U_self = subtype;
 		using U_tail = S_;
 
+	public:
 		template <class _, class ...Is>
 		using super = typename _detail::query<U_tail, U_self>::type::template super<_, Is...>;
 
@@ -138,7 +139,7 @@ struct defer
 	using subkind = _detail::defer_field<U>;
 
 	template <any_q S>
-	using epitype = typename bond::compose_s<S, subkind>::U_head;
+	using epitype = typename _detail::defer_field<U>::T_head;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>

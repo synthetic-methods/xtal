@@ -30,7 +30,7 @@ struct refine_head
 	template <any_q S> requires (1 == S::arity::value)
 	class subtype<S>: public S
 	{
-	public://protected:
+	protected:
 		using typename S::T_self;
 		using typename S::U_head;
 
@@ -96,14 +96,17 @@ struct refine_tuple
 template <class U>
 struct defer_field
 {
+	using T_head = U;
+	using T_body = debased_t<U>;
+
 	template <any_q S>
 	class subtype: public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
-	public://protected:
-		using U_head = U;
-		using U_body = debased_t<U>;
+	protected:
+		using U_head = T_head;
+		using U_body = T_body;
 
 	public:
 	//	using S_::S_;
@@ -153,14 +156,17 @@ struct defer_field
 template <integral_q U>
 struct defer_field<U>
 {
+	using T_head = U;
+	using T_body = debased_t<U>;
+
 	template <any_q S>
 	class subtype: public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
-	public://protected:
-		using U_head = U;
-		using U_body = debased_t<U>;
+	protected:
+		using U_head = T_head;
+		using U_body = T_body;
 
 	public:
 		using S_::S_;
@@ -188,6 +194,9 @@ struct defer_field<unit_t[N_width]>
 	XTAL_LET N_depth = bond::realized::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
+	using T_head = size_t;
+	using T_body = unsigned;
+
 	using subkind = bond::assay<N_width>;
 
 	template <any_q S>
@@ -195,9 +204,9 @@ struct defer_field<unit_t[N_width]>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
-	public://protected:
-		using U_head = size_t;
-		using U_body = unsigned;
+	protected:
+		using U_head = T_head;
+		using U_body = T_body;
 
 	public:
 		U_body u_body:N_depth;
@@ -357,7 +366,7 @@ struct refer_binary_logic<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-	public://protected:
+	protected:
 		using typename S::T_self;
 	
 	public:
@@ -409,7 +418,7 @@ struct refer_multiplicative_group<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-	public://protected:
+	protected:
 		using typename S::T_self;
 	
 	public:
@@ -450,7 +459,7 @@ struct refer_additive_group<U, 2>
 	template <any_q S>
 	class subtype: public S
 	{
-	public://protected:
+	protected:
 		using typename S::T_self;
 	
 	public:

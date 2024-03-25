@@ -55,7 +55,7 @@ struct prequel
 	template <any_q S>
 	class subtype: public S
 	{
-	public://protected:
+	protected:
 		using typename S::T_self;
 		using typename S::U_head;
 
@@ -238,7 +238,7 @@ struct scope<V>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
-	public://protected:
+	protected:
 		using typename S_::T_self;
 
 	public:
@@ -333,7 +333,7 @@ public:
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
-	public://protected:
+	protected:
 		using typename S_::T_self;
 
 	public:
