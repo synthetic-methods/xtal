@@ -45,6 +45,8 @@ struct sector<U[N]>
 		using S_::get;
 		using S_::self;
 		using S_::twin;
+		using S_::operator+=;
+		using S_::operator-=;
 
 		template <class Z>
 		using dual_t = typename scalar<U[N]>::type;

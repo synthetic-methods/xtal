@@ -35,11 +35,10 @@ struct define
 	public://protected:
 		using typename S_::T_self;
 		using U_self = subtype;
-		using U_tail = S_;
 
 	public:
 		template <class _, class ...Is>
-		using super = typename _detail::query<U_tail, U_self>::type::template super<_, Is...>;
+		using super = typename _detail::query<S_, U_self>::type::template super<_, Is...>;
 
 	public:
 		using S_::S_;
@@ -139,7 +138,7 @@ struct defer
 	using subkind = _detail::defer_field<U>;
 
 	template <any_q S>
-	using epitype = typename _detail::defer_field<U>::T_head;
+	using epitype = typename subkind::T_head;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
@@ -150,7 +149,6 @@ struct defer
 		using typename S_::T_self;
 		using typename S_::U_head;
 		using U_self = subtype;
-		using U_tail = S_;
 
 	public:
 		using S_::self;
@@ -215,10 +213,10 @@ Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
 struct refer: bond::compose<void
-,	_detail::refer_logics<U>
-,	_detail::refer_groups<U>
-,	_detail::refer_iterators<U>
-,	_detail::refer_qualities<U>
+,	_detail::infer_logics<U>
+,	_detail::infer_groups<U>
+,	_detail::infer_iterators<U>
+,	_detail::infer_qualities<U>
 >
 {};
 

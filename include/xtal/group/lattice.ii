@@ -126,8 +126,11 @@ struct lattice<U[N]>
 		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX {return self() += T(w);}
 		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w);}
 
-		XTAL_OP1_(T &)  *= (as_q<U> auto &&w) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= XTAL_FWD_(w))), self();}
-		XTAL_OP1_(T &)  /= (as_q<U> auto &&w) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= XTAL_FWD_(w))), self();}
+		XTAL_OP1_(T &)  *= (as_q<U> auto const &k) XTAL_0EX                            {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  *= k)), self();}
+		XTAL_OP1_(T &)  /= (as_q<U> auto const &k) XTAL_0EX                            {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  /= k)), self();}
+
+		XTAL_OP1_(T &) <<= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) <<= k)), self();}
+		XTAL_OP1_(T &) >>= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) >>= k)), self();}
 
 
 	public:// CONSTRUCTION
@@ -137,25 +140,31 @@ struct lattice<U[N]>
 		XTAL_CO4_(homotype)
 		
 		XTAL_CON homotype()
-		{
-			_std::uninitialized_value_construct_n(S_::begin(), S_::size());
-		}
-		XTAL_CON homotype(bracket_t<U> etc)
+		XTAL_0EX
+		:	homotype((size_t) 0)
+		{}
+		XTAL_CXN homotype(size_t n)
 		XTAL_0EX
 		{
-			auto const n = etc.size();
-			_detail::copy_to(S_::begin(), etc);
-			_std::uninitialized_value_construct_n(S_::begin() + n, S_::size() - n);
+			_std::uninitialized_value_construct_n(S_::data() + n, S_::size() - n);
 		}
-		template <bracket_q W>
-		XTAL_CXN homotype(W const &w)
+		XTAL_CON homotype(bracket_t<U> a)
+		XTAL_0EX
+		:	homotype((size_t) a.size())
 		{
-			_detail::copy_to(S_::begin(), w);
+			_detail::copy_to(S_::data(), a);
 		}
-		template <bracket_q W>
-		XTAL_CXN homotype(W &&w)
+		template <bracket_q A>
+		XTAL_CXN homotype(A const &a)
+		:	homotype((size_t) a.size())
 		{
-			_detail::move_to(S_::begin(), w);
+			_detail::copy_to(S_::data(), a);
+		}
+		template <bracket_q A>
+		XTAL_CXN homotype(A &&a)
+		:	homotype((size_t) a.size())
+		{
+			_detail::move_to(S_::data(), a);
 		}
 		
 	};

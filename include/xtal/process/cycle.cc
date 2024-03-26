@@ -17,8 +17,10 @@ TAG_("cycle")
 {
 	using re = bond::realized;
 	using T_sigma = typename re::sigma_t;
+	using T_delta = typename re::delta_t;
 	using T_alpha = typename re::alpha_t;
-	using U_phi = cycle_t<size_t[2]>;
+	using U_phi = cycle_t<T_delta[2]>;
+	using W_phi = group::cycle_t<T_alpha[2]>;
 
 	EST_("method")
 	{
@@ -53,6 +55,23 @@ TAG_("cycle")
 		TRUE_(phi() == U_phi {-3*x_dt, x_dt});
 		TRUE_(phi() == U_phi {-2*x_dt, x_dt});
 		TRUE_(phi() == U_phi {-1*x_dt, x_dt});
+
+	}
+	TRY_("multiplication")
+	{
+		T_alpha x =  0.33, x_dt = re::haplo_f(4);
+		T_alpha y =  5.55;
+		T_alpha z =  x*y;
+
+		U_phi phi {x, x_dt};
+
+	//	TRUE_(U_phi {x, x_dt} == phi);
+		TRUE_(U_phi {x, x_dt} == phi.head());
+		TRUE_(W_phi {x, x_dt} == phi.head());
+		TRUE_(x == phi.head() (0));
+
+		phi *= y;
+		TRUE_(bond::computrim_f<8>(phi.head() (0)) == bond::computrim_f<8>(z - _std::round(z)));
 
 	}
 }

@@ -271,6 +271,7 @@ public:
 	XTAL_LET exponent = word (N_exponent, N_fraction);
 	XTAL_LET     unit = word     (N_unit, N_fraction);
 	XTAL_LET     sign = word     (N_sign, N_positive);
+	XTAL_LET     half = word (N_depth >> 1, N_depth >> 1);
 	static_assert((sigma_t) ~sign.mask == positive.mask);
 
 

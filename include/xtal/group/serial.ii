@@ -34,27 +34,23 @@ struct serial<U[N]>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-	//	TODO: Subclass for serial pairs like `complex`. \
-
 		friend T;
-		using S_ = hemitype<T>;
+		using  T_ = hemitype<T>;
 	
-	public:
-		using S_::S_;
-		using S_::get;
-		using S_::self;
-		using S_::twin;
+	public:// CONSTRUCTION
+		using T_::T_;
 
-		XTAL_TO4_(XTAL_OP0_(explicit) U(), get(0))
+
+	public:// OPERATION
+		using T_::get;
+		using T_::self;
+		using T_::twin;
+		using T_::operator*=;
+
 
 		///\
 		Multiplication by linear convolution, truncated by `N`. \
 
-		XTAL_OP2_(T) * (T const &t)
-		XTAL_0FX
-		{
-			return twin() *= t;
-		}
 		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{

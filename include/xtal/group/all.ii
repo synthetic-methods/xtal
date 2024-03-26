@@ -1,4 +1,5 @@
 #include "./any.ii"
+#include "./cycle.ii"
 #include "./lattice.ii"
 #include "./scalar.ii"
 #include "./sector.ii"
