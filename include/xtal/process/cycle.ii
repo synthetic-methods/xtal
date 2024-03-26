@@ -18,85 +18,48 @@ template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Manages a truncated fixed-point unit differential like `phasor`, \
+Manages a truncated fixed-point unit differential like `cycle`, \
 providing evaluation/update via succession/replacement. \
 
 template <size_t N, class W, typename ...As>
 struct cycle<W[N], As...>
 {
-	using W_ = W[N];
-	using ectoscalar_u = _detail::ectoscalar_t<W >; using ectovector_u = _detail::ectovector_t<W_>;
-	using endoscalar_u = _detail::endoscalar_t<W >; using endovector_u = _detail::endovector_t<W_>;
+	using W_ = group::cycle_t<W[N]>;
+	
+	using re = bond::realize<W>;
+	using V = typename re::delta_t;
+	using U = typename re::alpha_t;
 
 	using subkind = bond::compose<bond::tag<cycle>
 	,	As...
-	,	_detail::refer_iterators<endovector_u>
-	,	typename flux::indent_s<endovector_u>::tunnel
+	,	_detail::refer_multiplicative_group<W_, 1>// Necessary?
+	,	typename flux::indent_s<W_>::tunnel
 	>;
 	
 	template <class S>
-	using exotype = typename S::U_tail;
-
-	template <class S>
-	using epitype = ectovector_u;
-
-	template <class S>
-	class subtype: public bond::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>
+	class subtype: public bond::compose_s<S, subkind>
 	{
-		using S_ = bond::compose_s<S, subkind, _detail::query<exotype<S>, subtype<S>, epitype<S>>>;
+		using S_ = bond::compose_s<S, subkind>;
 
-	protected:
+	public://protected:
 		using typename S_::T_self;
-		using U_self = subtype;
-		using U_head = ectovector_u;
-		using U_tail = typename S_::U_tail;
 
 	public:
-	//	using S_::S_;
-
-		XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
-		
-		XTAL_CXN subtype(bracket_t<ectoscalar_u> a)
-		XTAL_0EX
-		:	subtype(ectovector_u(XTAL_MOV_(a)))
-		{}
-		XTAL_CXN subtype(array_q auto &&a, auto &&...oo)
-		XTAL_0EX
-		:	S_(_detail::endovector_f(XTAL_FWD_(a)), XTAL_FWD_(oo)...)
-		{}
+		using S_::S_;
 
 	public:
-		XTAL_TO4_(XTAL_OP0_(implicit) ectovector_u(), head())
-		XTAL_TO4_(XTAL_OP0_(implicit) ectoscalar_u(), head()[0])
-		
-		XTAL_TO4_(XTAL_TN2 head(), _detail::ectovector_f(S_::head()))
-		
-		XTAL_TN2 head(auto &&...us)
-		XTAL_0EX
-		{
-			return S_::head(_detail::endoscalar_f(XTAL_FWD_(us))...);
-		}
-		///\
-		Update by unindented replacement. \
-		
-		template <class ...Is> requires none_q<Is...>
-		XTAL_TN2 head(subarray_q<N> auto &&us)
-		XTAL_0EX
-		{
-			return S_::head(_detail::endovector_f(XTAL_FWD_(us)));
-		}
+		using S_::self;
+		using S_::head;
 
-	public:
 	//	using S_::infuse;
 		///\
 		Update by indented replacement. \
 		
 		XTAL_TNX infuse(subarray_q<N> auto &&us)
 		{
-			using Ipso = decltype(us);
-			using Endo = typename flux::indent_s<_detail::endovector_t<Ipso>, N - arity_n<Ipso>>;
-			return S_::influx(Endo(_detail::endovector_f(XTAL_FWD_(us))));
+			using Us = decltype(us);
+			using Ux = typename flux::indent_s<W_, N - arity_n<Us>>;
+			return S_::influx(Ux(XTAL_FWD_(us)));
 		}
 		///\
 		Update by replacement. \
@@ -124,8 +87,7 @@ struct cycle<W[N], As...>
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
 		XTAL_TN2 method(),
 		{
-			++ S_::head();
-			return head();
+			++head(); return head();
 		})
 		///\
 		Evaluation by (possibly indented) replacement then succession. \

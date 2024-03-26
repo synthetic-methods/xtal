@@ -156,6 +156,7 @@ template <class  T , class ...Ts>	struct   epitropic<T, Ts...>: _std::conjunctio
 template <           class ...Ts>	concept          id_q = identical<Ts...>::value;
 template <           class ...Ts>	concept          is_q = isotropic<Ts...>::value;
 template <           class ...Ts>	concept          as_q = epitropic<Ts...>::value;
+template <class  T , class ...Ys>	concept          as_p = _std::constructible_from<T, Ys...>;
 
 template <class  T , class    Y >	concept          of_p = _std::derived_from<based_t<Y>, based_t<T>>;
 template <class  T , class    Y >	concept          of_q = _std::derived_from<based_t<T>, based_t<Y>>;
@@ -211,8 +212,13 @@ template <class      T >	using         end_t = decltype(XTAL_VAL_(T).  end());
 template <class      T >	concept     begin_q = requires (T t) {*t.begin();};
 template <class      T >	concept       end_q = requires (T t) {*t.  end();};
 
-template <class      W >	using    bracket_t  = _std::initializer_list<W>;
-template <class      T >	concept  bracket_q  = begin_q<T> and end_q<T>;
+template <class      T >	concept  embraced_q = requires {typename T::initializer_list;};
+template <class      T >	concept    braced_q = embraced_q<T> or value_q<T>;
+template <class      T >	struct     braced    {using type = _std::initializer_list<value_t<T>>;};
+template <embraced_q T >	struct     braced<T> {using type = typename T::initializer_list;};
+
+template <class      W >	using     bracket_t = _std::initializer_list<W>;
+template <class      T >	concept   bracket_q = begin_q<T> and end_q<T>;
 
 template <class      T >	using     iterate_t = _v3::ranges::view_interface<T>;
 template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;

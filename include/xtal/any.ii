@@ -11,7 +11,20 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _std = ::std;
+namespace _std
+{
+	using namespace ::std;
+
+	#if not __cpp_lib_bit_cast
+	template <class T, class S> requires (
+		is_trivially_copyable_v<T> and
+		is_trivially_copyable_v<S> and
+		sizeof(T) == sizeof(S)
+	)
+	static constexpr T bit_cast(S const& s) noexcept {return __builtin_bit_cast(T, s);}
+	#endif
+
+}
 namespace _v3
 {
 	namespace ranges = ::ranges;
@@ -124,6 +137,7 @@ template <class            ...Ts>	concept epimorphic_q	= _detail:: epimorphic<Ts
 template <class            ...Ts>	concept         id_q	= _detail:: identical<Ts...>::value;//< `Ts...` are identical.
 template <class            ...Ts>	concept         is_q	= _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
 template <class            ...Ts>	concept         as_q	= _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class  T , class ...Ys>	concept         as_p	= _detail:: as_p<T, Ys...>;
 
 template <class  T , class ...Ys>	concept         of_p	= (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
 template <class  T , class ...Ys>	concept         of_q	= (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
@@ -168,9 +182,12 @@ template <int N=-1, class  ...Ts>	concept  subarray_p = (...and subarray_q<Ts, N
 //\
 Ranged...
 
-template <class      W >	using       bracket_t = _detail:: bracket_t<W>;
-template <class      T >	using         begin_t = _detail::   begin_t<T>;
-template <class      T >	using           end_t = _detail::     end_t<T>;
+template <class   ...Ts>	concept      braced_q = (...and  _detail:: braced_q<Ts>);
+template <class      T >	using        braced_t = typename _detail:: braced  <T >::type;
+
+template <class      W >	using       bracket_t =          _detail:: bracket_t<W>;
+template <class      T >	using         begin_t =          _detail::   begin_t<T>;
+template <class      T >	using           end_t =          _detail::     end_t<T>;
 
 template <class   ...Ts>	concept     bracket_q = (...and  _detail::  bracket_q<Ts>);
 template <class   ...Ts>	concept       begin_q = (...and  _detail::    begin_q<Ts>);
@@ -231,23 +248,23 @@ template <class T, size_t N=2>	concept             equality_p = _detail::       
 template <class T, size_t N=2>	concept              quality_p = _detail::              quality_p<based_t<T>, N>;
 
 
-template <class   ...Ts>	concept multiplicative_group_q = (...and multiplicative_group_p<Ts>);
-template <class   ...Ts>	concept       additive_group_q = (...and       additive_group_p<Ts>);
-template <class   ...Ts>	concept       discrete_group_q = (...and       discrete_group_p<Ts>);
-template <class   ...Ts>	concept       quotient_group_q = (...and       quotient_group_p<Ts>);
-template <class   ...Ts>	concept       integral_group_q = (...and       integral_group_p<Ts>);
+template <class   ...Ts>	concept multiplicative_group_q = (...and _detail:: multiplicative_group_p<Ts>);
+template <class   ...Ts>	concept       additive_group_q = (...and _detail::       additive_group_p<Ts>);
+template <class   ...Ts>	concept       discrete_group_q = (...and _detail::       discrete_group_p<Ts>);
+template <class   ...Ts>	concept       quotient_group_q = (...and _detail::       quotient_group_p<Ts>);
+template <class   ...Ts>	concept       integral_group_q = (...and _detail::       integral_group_p<Ts>);
 
-template <class   ...Ts>	concept      algebraic_field_q = (...and      algebraic_field_p<Ts>);
-template <class   ...Ts>	concept        complex_field_q = (...and        complex_field_p<Ts>);
-template <class   ...Ts>	concept        simplex_field_q = (...and        simplex_field_p<Ts>);
-template <class   ...Ts>	concept           real_field_q = (...and           real_field_p<Ts>);
+template <class   ...Ts>	concept      algebraic_field_q = (...and _detail::      algebraic_field_p<Ts>);
+template <class   ...Ts>	concept        complex_field_q = (...and _detail::        complex_field_p<Ts>);
+template <class   ...Ts>	concept        simplex_field_q = (...and _detail::        simplex_field_p<Ts>);
+template <class   ...Ts>	concept           real_field_q = (...and _detail::           real_field_p<Ts>);
 
-template <class   ...Ts>	concept        boolean_logic_q = (...and        boolean_logic_p<Ts>);
-template <class   ...Ts>	concept         binary_logic_q = (...and         binary_logic_p<Ts>);
+template <class   ...Ts>	concept        boolean_logic_q = (...and _detail::        boolean_logic_p<Ts>);
+template <class   ...Ts>	concept         binary_logic_q = (...and _detail::         binary_logic_p<Ts>);
 
-template <class   ...Ts>	concept           inequality_q = (...and           inequality_p<Ts>);
-template <class   ...Ts>	concept             equality_q = (...and             equality_p<Ts>);
-template <class   ...Ts>	concept              quality_q = (...and              quality_p<Ts>);
+template <class   ...Ts>	concept           inequality_q = (...and _detail::           inequality_p<Ts>);
+template <class   ...Ts>	concept             equality_q = (...and _detail::             equality_p<Ts>);
+template <class   ...Ts>	concept              quality_q = (...and _detail::              quality_p<Ts>);
 
 
 static_assert(                  real_field_q<float>);

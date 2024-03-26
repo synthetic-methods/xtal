@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef  NDEBUG
-#define XTAL_SIC 0//release
+#define XTAL_SIC 1//release
 #else
 #define XTAL_SIC 1//debug
 #include <iostream>

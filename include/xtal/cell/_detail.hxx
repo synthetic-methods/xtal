@@ -49,7 +49,7 @@ struct refine_head
 //		\returns a copy of `this` with `head<Is...>(oo...)` applied. \
 //
 //		template <class  ...Is>
-//		XTAL_TN1 differ(auto &&...oo)
+//		XTAL_TN1 alter(auto &&...oo)
 //		XTAL_0FX
 //		{
 //			auto t = twin();
@@ -109,10 +109,14 @@ struct defer_field
 		using U_body = T_body;
 
 	public:
-	//	using S_::S_;
-		using S_::self;
+		//\
+		Public visibility allows `auto` parameterization in templates.
+
 		U_body u_body;
 
+	public:
+	//	using S_::S_;
+		
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 		
@@ -121,12 +125,21 @@ struct defer_field
 
 		XTAL_CON subtype()
 		XTAL_0EX
-		:	subtype(U_body{})
+		:	subtype(U_body {})
 		{}
-		XTAL_CON subtype(bracket_t<value_t<U_head>> a)
-		XTAL_REQ array_q<U_head> and rebased_q<U_head>
+		/**/
+		XTAL_CON subtype(braced_t<U_body> a)
+		XTAL_0EX
+		XTAL_REQ braced_q<U_body> and rebased_q<U>
 		:	u_body(a)
 		{}
+		/*/
+		XTAL_CON subtype(bracket_t<value_t<U_body>> a)
+		XTAL_0EX
+		XTAL_REQ array_q<U_body> and id_q<U_body, U_head>
+		:	u_body(a)
+		{}
+		/***/
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
@@ -255,10 +268,6 @@ struct defer_field<null_t[N_depth]>
 
 template <class U>
 struct refer_iterators
-:	bond::compose<>
-{};
-template <class U> requires begin_q<U>
-struct refer_iterators<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -282,15 +291,17 @@ struct refer_iterators<U>
 	};
 };
 
+template <class U>
+struct infer_iterators: bond::compose<> {};
+
+template <class U> requires begin_q<U>
+struct infer_iterators<U>: refer_iterators<U> {};
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class U>
 struct refer_equality
-:	bond::compose<>
-{};
-template <class U> requires equality_p<U>
-struct refer_equality<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -304,11 +315,14 @@ struct refer_equality<U>
 };
 
 template <class U>
+struct infer_equality: bond::compose<> {};
+
+template <class U> requires equality_q<U>
+struct infer_equality<U>: refer_equality<U> {};
+
+
+template <class U>
 struct refer_inequality
-:	bond::compose<>
-{};
-template <class U> requires inequality_p<U>
-struct refer_inequality<U>
 {
 	template <any_q S>
 	class subtype: public S
@@ -325,10 +339,24 @@ struct refer_inequality<U>
 };
 
 template <class U>
+struct infer_inequality: bond::compose<> {};
+
+template <class U> requires inequality_q<U>
+struct infer_inequality<U>: refer_inequality<U> {};
+
+
+template <class U>
 struct refer_qualities
 :	bond::compose<void
 	,	refer_equality<U>
 	,	refer_inequality<U>
+	>
+{};
+template <class U>
+struct infer_qualities
+:	bond::compose<void
+	,	infer_equality<U>
+	,	infer_inequality<U>
 	>
 {};
 
@@ -337,16 +365,12 @@ struct refer_qualities
 
 template <class U, size_t N=0>
 struct refer_binary_logic
-:	bond::compose<>
-{};
-template <class U>
-struct refer_binary_logic<U, 0>
 :	bond::compose<void
 	,	refer_binary_logic<U, 1>
 	,	refer_binary_logic<U, 2>
 	>
 {};
-template <class U> requires binary_logic_p<U, 1> and rebased_q<U>
+template <class U>
 struct refer_binary_logic<U, 1>
 {
 	template <any_q S>
@@ -354,13 +378,13 @@ struct refer_binary_logic<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 ^=(as_q<U> auto &&w) XTAL_0EX {return S::head() ^=(U) XTAL_FWD_(w), S::self();}
-		XTAL_OP1 |=(as_q<U> auto &&w) XTAL_0EX {return S::head() |=(U) XTAL_FWD_(w), S::self();}
-		XTAL_OP1 &=(as_q<U> auto &&w) XTAL_0EX {return S::head() &=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 ^=(auto &&o) XTAL_0EX {S::head() ^= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 |=(auto &&o) XTAL_0EX {S::head() |= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 &=(auto &&o) XTAL_0EX {S::head() &= XTAL_FWD_(o); return S::self();}
 
 	};
 };
-template <class U> requires binary_logic_p<U, 2>
+template <class U>
 struct refer_binary_logic<U, 2>
 {
 	template <any_q S>
@@ -371,17 +395,31 @@ struct refer_binary_logic<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() ^ (U) XTAL_FWD_(w));}
-		XTAL_OP2 | (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() | (U) XTAL_FWD_(w));}
-		XTAL_OP2 & (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() & (U) XTAL_FWD_(w));}
+		XTAL_OP2 ^ (auto &&o) XTAL_0FX {return T_self(S::head() ^ XTAL_FWD_(o));}
+		XTAL_OP2 | (auto &&o) XTAL_0FX {return T_self(S::head() | XTAL_FWD_(o));}
+		XTAL_OP2 & (auto &&o) XTAL_0FX {return T_self(S::head() & XTAL_FWD_(o));}
 
 	};
 };
 
 template <class U, size_t N=0>
+struct infer_binary_logic: bond::compose<> {};
+
+template <class U, size_t N> requires binary_logic_p<U, N>
+struct infer_binary_logic<U, N>: refer_binary_logic<U, N> {};
+
+
+
+template <class U, size_t N=0>
 struct refer_logics
 :	bond::compose<void
 	,	refer_binary_logic<U, N>
+	>
+{};
+template <class U, size_t N=0>
+struct infer_logics
+:	bond::compose<void
+	,	infer_binary_logic<U, N>
 	>
 {};
 
@@ -390,16 +428,12 @@ struct refer_logics
 
 template <class U, size_t N=0>
 struct refer_multiplicative_group
-:	bond::compose<>
-{};
-template <class U>
-struct refer_multiplicative_group<U, 0>
 :	bond::compose<void
 	,	refer_multiplicative_group<U, 1>
 	,	refer_multiplicative_group<U, 2>
 	>
 {};
-template <class U> requires multiplicative_group_p<U, 1> and rebased_q<U>
+template <class U>
 struct refer_multiplicative_group<U, 1>
 {
 	template <any_q S>
@@ -407,12 +441,12 @@ struct refer_multiplicative_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 *=(as_q<U> auto &&w) XTAL_0EX {return S::head() *=(U) XTAL_FWD_(w), S::self();}
-		XTAL_OP1 /=(as_q<U> auto &&w) XTAL_0EX {return S::head() /=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 *=(auto &&o) XTAL_0EX {S::head() *= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 /=(auto &&o) XTAL_0EX {S::head() /= XTAL_FWD_(o); return S::self();}
 
 	};
 };
-template <class U> requires multiplicative_group_p<U, 2>
+template <class U>
 struct refer_multiplicative_group<U, 2>
 {
 	template <any_q S>
@@ -423,24 +457,28 @@ struct refer_multiplicative_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 * (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() * (U) XTAL_FWD_(w));}
-		XTAL_OP2 / (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() / (U) XTAL_FWD_(w));}
+		XTAL_OP2 * (auto &&o) XTAL_0FX {return T_self(S::head() * XTAL_FWD_(o));}
+		XTAL_OP2 / (auto &&o) XTAL_0FX {return T_self(S::head() / XTAL_FWD_(o));}
 
 	};
 };
 
 template <class U, size_t N=0>
+struct infer_multiplicative_group: bond::compose<> {};
+
+template <class U, size_t N> requires multiplicative_group_p<U, N>
+struct infer_multiplicative_group<U, N>: refer_multiplicative_group<U, N> {};
+
+
+
+template <class U, size_t N=0>
 struct refer_additive_group
-:	bond::compose<>
-{};
-template <class U>
-struct refer_additive_group<U, 0>
 :	bond::compose<void
 	,	refer_additive_group<U, 1>
 	,	refer_additive_group<U, 2>
 	>
 {};
-template <class U> requires additive_group_p<U, 1> and rebased_q<U>
+template <class U>
 struct refer_additive_group<U, 1>
 {
 	template <any_q S>
@@ -448,12 +486,12 @@ struct refer_additive_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 +=(as_q<U> auto &&w) XTAL_0EX {return S::head() +=(U) XTAL_FWD_(w), S::self();}
-		XTAL_OP1 -=(as_q<U> auto &&w) XTAL_0EX {return S::head() -=(U) XTAL_FWD_(w), S::self();}
+		XTAL_OP1 +=(auto &&o) XTAL_0EX {S::head() += XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 -=(auto &&o) XTAL_0EX {S::head() -= XTAL_FWD_(o); return S::self();}
 
 	};
 };
-template <class U> requires additive_group_p<U, 2>
+template <class U>
 struct refer_additive_group<U, 2>
 {
 	template <any_q S>
@@ -464,25 +502,29 @@ struct refer_additive_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 + (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() + (U) XTAL_FWD_(w));}
-		XTAL_OP2 - (as_q<U> auto &&w) XTAL_0FX {return T_self(S::head() - (U) XTAL_FWD_(w));}
+		XTAL_OP2 + (auto &&o) XTAL_0FX {return T_self(S::head() + XTAL_FWD_(o));}
+		XTAL_OP2 - (auto &&o) XTAL_0FX {return T_self(S::head() - XTAL_FWD_(o));}
 		XTAL_OP1 - () XTAL_0FX {return T_self(-S::head());}
 
 	};
 };
 
 template <class U, size_t N=0>
+struct infer_additive_group: bond::compose<> {};
+
+template <class U, size_t N> requires additive_group_p<U, N>
+struct infer_additive_group<U, N>: refer_additive_group<U, N> {};
+
+
+
+template <class U, size_t N=0>
 struct refer_discrete_group
-:	bond::compose<>
-{};
-template <class U>
-struct refer_discrete_group<U, 0>
 :	bond::compose<void
 	,	refer_discrete_group<U, 1>
 	,	refer_discrete_group<U, 2>
 	>
 {};
-template <class U> requires discrete_group_p<U, 1> and rebased_q<U>
+template <class U>
 struct refer_discrete_group<U, 1>
 {
 	template <any_q S>
@@ -497,6 +539,21 @@ struct refer_discrete_group<U, 1>
 
 	};
 };
+template <class U>
+struct refer_discrete_group<U, 2>
+{
+	template <any_q S>
+	using subtype = S;
+
+};
+
+template <class U, size_t N=0>
+struct infer_discrete_group: bond::compose<> {};
+
+template <class U, size_t N> requires discrete_group_p<U, N>
+struct infer_discrete_group<U, N>: refer_discrete_group<U, N> {};
+
+
 
 template <class U, size_t N=0>
 struct refer_groups
@@ -504,6 +561,14 @@ struct refer_groups
 	,	refer_multiplicative_group<U, N>
 	,	refer_additive_group<U, N>
 	,	refer_discrete_group<U, N>
+	>
+{};
+template <class U, size_t N=0>
+struct infer_groups
+:	bond::compose<void
+	,	infer_multiplicative_group<U, N>
+	,	infer_additive_group<U, N>
+	,	infer_discrete_group<U, N>
 	>
 {};
 

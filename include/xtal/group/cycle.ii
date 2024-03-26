@@ -1,0 +1,132 @@
+#pragma once
+#include "./any.ii"
+#include "./serial.ii"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::group
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s> XTAL_NYM cycle;
+template <class ..._s> XTAL_USE cycle_t = typename cycle<_s...>::type;
+template <class ...Ts> XTAL_ASK cycle_q = bond::tag_p<cycle, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Extends `serial` as a fixed-point fractional value. \
+Allows floating-point construction via `std::initializer_list`, \
+and access via `operator()`/`operator(size_t)`. \
+
+template <class W, size_t N>
+struct cycle<W[N]>
+{
+	using re = bond::realize<W>;
+	using delta_t = typename re::delta_t;
+	using sigma_t = typename re::sigma_t;
+	using alpha_t = typename re::alpha_t;
+	
+	using V = delta_t;
+	using U = alpha_t;
+//	using V_serial = serial_t<V[N]>;
+	using U_serial = serial_t<U[N]>;
+
+	XTAL_LET V_f = [] (U const &u) XTAL_0FN -> V {return u*re::diplo_f(re::N_depth);};
+	XTAL_LET U_f = [] (V const &v) XTAL_0FN -> U {return v*re::haplo_f(re::N_depth);};
+
+
+	template <class T>
+	using demitype = typename serial<V[N]>::template homotype<T>;
+
+	template <class T>
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<cycle>>;
+
+	template <class T>
+	class homotype: public hemitype<T>
+	{
+		friend T;
+		using  T_ = hemitype<T>;
+
+
+	public:// CONSTRUCTION
+
+		~homotype() {};
+		XTAL_CO4_(homotype)
+		
+		XTAL_CON homotype()
+		XTAL_0EX
+		:	T_()
+		{}
+
+	//	Reified to allow inspection of initializer-type:
+		using initializer_list = _std::initializer_list<U>;
+
+		XTAL_CON homotype(initializer_list      o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
+		XTAL_CXN homotype(bracket_q auto const &o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
+		XTAL_CXN homotype(bracket_q auto      &&o) XTAL_0EX: T_(o.size()) {_detail::move_to(T_::data(), XTAL_MOV_(o), V_f);}
+		XTAL_CXN homotype(bracket_q auto      &&o) XTAL_0EX requires _std::integral<value_t<decltype(o)>>: T_(XTAL_FWD_(o)) {}
+
+
+	public:// OPERATION
+		using T_::self;
+		using T_::twin;
+
+		XTAL_OP1 () ()          XTAL_0FX {return     T_::template transmorph<U_serial>(U_f);}
+		XTAL_OP1 () (size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
+		
+		XTAL_OP0_(implicit) U_serial() XTAL_0FX {return operator()( );}
+		XTAL_OP0_(implicit) U       () XTAL_0FX {return operator()(0);}
+
+
+		///\todo\
+		Implement truncation (e.g. to `take` phase only)?
+
+		///\todo\
+		Implement scalar/floating-point addition and subtraction (for the first element only).
+
+		XTAL_OP1 /= (auto const &f)
+		XTAL_0EX
+		{
+			return operator*=(re::alpha_1/f);
+		}
+		XTAL_OP1 *= (_std::integral auto const &i)
+		XTAL_0EX
+		{
+			return T_::operator*=(i);
+		}
+		XTAL_OP1 *= (_std::floating_point auto const &f)
+		XTAL_0EX
+		{
+			delta_t constexpr N_sign = 1;
+			delta_t constexpr N_bias = re::N_width;
+			delta_t constexpr N_half = re::half.depth + N_bias;// e.g. {64,32} => {32,16}+B
+			delta_t constexpr M_half = re::half.depth - N_bias;// e.g. {52,23} => {32,16}-B
+
+			delta_t o = _std::bit_cast<delta_t>((alpha_t) f);
+			sigma_t s =        (o) >>          re::positive.depth; o <<= N_sign;
+			sigma_t m = sigma_t(o) >> N_half - re::exponent.depth;
+			sigma_t n = sigma_t(o) >> N_sign + re::exponent.shift;
+			n  = re::unit.mark + M_half - n;
+			m &= re::half.mark;
+			m |= re::sigma_1  << M_half;
+			m ^= s;
+			m += 1;
+
+			T_::operator >>=(n);
+			T_::operator  *=(m);
+			return self();
+		}
+
+	};
+	using type = bond::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

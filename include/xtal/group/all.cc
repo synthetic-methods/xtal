@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./cycle.cc"
 #include "./lattice.cc"
 #include "./scalar.cc"
 #include "./sector.cc"
