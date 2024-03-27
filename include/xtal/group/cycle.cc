@@ -42,13 +42,26 @@ TAG_("cycle")
 	{
 		T_alpha x =  0.33, x_dt = re::haplo_f(4);
 		T_alpha y =  5.55;
-		T_alpha z =  x*y;
+		T_alpha z =  x*y; z -= _std::round(z);
 
 		U_phi phi {x, x_dt};
 
 		phi *= y;
-	//	TRUE_(bond::computrim_f<8>(phi[0]) == bond::computrim_f<8>(z - _std::round(z)));
-		TRUE_(bond::computrim_f<8>(phi(0)) == bond::computrim_f<8>(z - _std::round(z)));
+	//	TRUE_(bond::computrim_f<8>(phi[0]) == bond::computrim_f<8>(z));
+		TRUE_(bond::computrim_f<8>(phi(0)) == bond::computrim_f<8>(z));
+
+	}
+	TRY_("addition")
+	{
+		T_alpha x =  0.33, x_dt = re::haplo_f(4);
+		T_alpha y =  5.55;
+		T_alpha z =  x+y; z -= _std::round(z);
+
+		U_phi phi {x, x_dt};
+
+		phi += y;
+	//	TRUE_(bond::computrim_f<8>(phi[0]) == bond::computrim_f<8>(z));
+		TRUE_(bond::computrim_f<8>(phi(0)) == bond::computrim_f<8>(z));
 
 	}
 }

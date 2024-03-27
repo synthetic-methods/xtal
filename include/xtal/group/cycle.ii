@@ -19,8 +19,12 @@ template <class ...Ts> XTAL_ASK cycle_q = bond::tag_p<cycle, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Extends `serial` as a fixed-point fractional value. \
+\
 Allows floating-point construction via `std::initializer_list`, \
 and access via `operator()`/`operator(size_t)`. \
+\
+Implements floating-point multiplication (affecting all elements) \
+and addition (affecting only the initial element). \
 
 template <class W, size_t N>
 struct cycle<W[N]>
@@ -82,11 +86,8 @@ struct cycle<W[N]>
 		XTAL_OP0_(implicit) U       () XTAL_0FX {return operator()(0);}
 
 
-		///\todo\
-		Implement truncation (e.g. to `take` phase only)?
-
-		///\todo\
-		Implement scalar/floating-point addition and subtraction (for the first element only).
+		///\
+		Scales all elements of the `cycle`. \
 
 		XTAL_OP1 /= (auto const &f)
 		XTAL_0EX
@@ -101,23 +102,47 @@ struct cycle<W[N]>
 		XTAL_OP1 *= (_std::floating_point auto const &f)
 		XTAL_0EX
 		{
-			delta_t constexpr N_sign = 1;
-			delta_t constexpr N_bias = re::N_width;
-			delta_t constexpr N_half = re::half.depth + N_bias;// e.g. {64,32} => {32,16}+B
-			delta_t constexpr M_half = re::half.depth - N_bias;// e.g. {52,23} => {32,16}-B
+			auto [m, n] = re::science_f(f);
 
-			delta_t o = _std::bit_cast<delta_t>((alpha_t) f);
-			sigma_t s =        (o) >>          re::positive.depth; o <<= N_sign;
-			sigma_t m = sigma_t(o) >> N_half - re::exponent.depth;
-			sigma_t n = sigma_t(o) >> N_sign + re::exponent.shift;
-			n  = re::unit.mark + M_half - n;
-			m &= re::half.mark;
-			m |= re::sigma_1  << M_half;
-			m ^= s;
-			m += 1;
-
-			T_::operator >>=(n);
+			auto constexpr N_bias = re::N_width;
+			auto constexpr N_half = re::half.depth + N_bias;// e.g. {64,32} => {32,16}+B
+			auto constexpr M_half = re::half.depth - N_bias;// e.g. {52,23} => {32,16}-B
+			m >>=                N_half;
+			m  |= re::sigma_1 << M_half;
+			T_::operator >>=(M_half - n);
 			T_::operator  *=(m);
+
+			return self();
+		}
+
+		///\
+		Offsets the first element of the `cycle`. \
+		
+		XTAL_OP1 -= (auto const &f)
+		XTAL_0EX
+		{
+			return operator+=(-f);
+		}
+		XTAL_OP1 += (_std::integral auto const &i)
+		XTAL_0EX
+		{
+			return self();
+		}
+		XTAL_OP1 += (_std::floating_point auto const &f)
+		XTAL_0EX
+		{
+			auto [m, n] = re::science_f(f);
+			
+			auto n_up = re::designed_f(n);
+			auto n_dn = n_up - n;
+			
+			m   <<= n_up;
+			m   >>= n_dn;
+			n_dn -= 1;
+			n_dn &= re::positive.depth;
+			m    += re::sign.mask >> n_dn;
+			T_::operator[](0) +=(m);
+
 			return self();
 		}
 

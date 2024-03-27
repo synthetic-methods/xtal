@@ -307,7 +307,9 @@ public:
 			return i;
 		}
 		else {
-			i *= N_side;
+			i ^= N_side;
+			i += 1;
+		//	i *= N_side;
 			i += designed_f(i);
 			return i >> 1;
 		}
@@ -548,6 +550,19 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_FN2 science_f(alpha_t const &f)
+	XTAL_0EX
+	{
+		auto o = _std::bit_cast<delta_t>(f);
+		auto s = (sigma_t) o >> positive.depth; o <<= 1;
+		auto m = (sigma_t) o << exponent.depth;
+		auto n = (sigma_t) o >> exponent.shift + 1;
+		n -= unit.mark;
+		m ^= s;
+		m += 1;
+		return couple_t<sigma_t> {m, n};
+	}
 
 	XTAL_FN2_(alpha_t) mantissa_f(sigma_t n)
 	XTAL_0EX
