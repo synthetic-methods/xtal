@@ -35,16 +35,16 @@ struct series<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using S_ = hemitype<T>;
+		using  T_ = hemitype<T>;
 	
 		template <class Y>
-		using duel_t = typename Y::template dual_t<T>;
+		using ipso_t = typename Y::template anti_t<T>;
 
 	public:
-		using S_::S_;
-		using S_::get;
-		using S_::self;
-		using S_::twin;
+		using T_::T_;
+		using T_::get;
+		using T_::self;
+		using T_::twin;
 
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
@@ -68,22 +68,20 @@ struct series<U[N]>
 		XTAL_TN1_(T &) generate(U const &u)
 		XTAL_0EX
 		{
-			using I = typename S_::difference_type;
+			using I = typename T_::difference_type;
 
 		//	Compute the start- and end-points for the required segment:
-			I constexpr H_limit = N_limit >> 1;
-			I constexpr _0 = N_index + 0;
-			I constexpr _1 = N_index + 1;
-			I constexpr H_ = N_index + H_limit;
-			I constexpr N1 = N_index + N_limit - 1;
-			I constexpr N2 = N_index + N_limit - 2;
+			I constexpr i0 = N_index + 0;
+			I constexpr i1 = N_index + 1;
+			I constexpr iM = N_index + (N_limit >> 1);
+			I constexpr iN = N_index + (N_limit  - 1);
 
 		//	Compute and populate the 0th and 1st powers:
 			auto const o = re::template explo_f<N_index>(u);
-			get(_0) = o;
-			get(_1) = o*u;
+			get(i0) = o;
+			get(i1) = o*u;
 
-			for (I i = _1; i < H_; ++i) {
+			for (I i = i1; i < iM; ++i) {
 				auto w = re::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
@@ -93,7 +91,7 @@ struct series<U[N]>
 			}
 		//	Compute the final value if `N_limit` is odd:
 			if constexpr (N_limit&1) {
-				get(N1) = get(N2)*u;
+				get(iN) = get(iN - 1)*u;
 			}
 			return self();
 		}
@@ -109,15 +107,15 @@ struct series<U[N]>
 		XTAL_REQ complex_field_q<U>
 		{
 		//	Initialize the forwards and backwards iterators:
-			auto const i = S_::begin();
-			auto const j = S_::rend() - 1;
+			auto const i = T_::begin();
+			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for the given `N`:
 			auto constexpr x = re::template patio_f<-1>(N);
 			auto const     y = re::circle_f(x);// TODO: Make `constexpr`.
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
-			typename S_::difference_type constexpr M = N >> 2;// `1/8`th
+			typename T_::difference_type constexpr M = N >> 2;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
 			if constexpr (-2 <= N_shift) _detail::copy_to(j - 2*M, _std::span(i, i + 1*M), [] (U const &v) XTAL_0FN_(U {-v.imag(), -v.real()}));
@@ -135,14 +133,14 @@ struct series<U[N]>
 		and `1 < that.size() <= this->size()`. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN1_(duel_t<Y> &) transform(Y &that)
+		XTAL_TN1_(ipso_t<Y> &) transform(Y &that)
 		XTAL_0FX
 		XTAL_REQ complex_field_q<U>
 		{
 			using I = typename Y::difference_type;
 		
 		//	Detect whether `Y` is a `scalar` of any `N` (by sleight of hand):
-			bool constexpr degenerate = is_q<typename Y::template dual_t<Y>, Y>;
+			bool constexpr degenerate = is_q<typename Y::template anti_t<Y>, Y>;
 
 		//	Ensure the size of both domain and codomain are powers of two:
 			I const n_size = that.size(); assert(2 <= n_size);
@@ -180,16 +178,16 @@ struct series<U[N]>
 			}
 		
 		//	Cast the output to the transformed domain:
-			return that.template self<duel_t<Y> &>();
+			return reinterpret_cast<ipso_t<Y> &>(that);
 		}
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN2_(duel_t<Y>) transformation(Y that)
+		XTAL_TN2 transformation(Y that)
 		XTAL_0FX
 		{
-			return transform(that);//.template self<duel_t<Y>>();
+			return transform(that);
 		}
 
 		///\returns `lhs` convolved with `rhs`, \
@@ -205,7 +203,7 @@ struct series<U[N]>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN2_(Y) convolution(Y lhs, Y const &rhs)
+		XTAL_TN2 convolution(Y lhs, Y const &rhs)
 		XTAL_0FX
 		{
 			return convolve(lhs, rhs);

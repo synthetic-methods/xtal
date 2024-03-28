@@ -23,7 +23,7 @@ Extends `serial` as a fixed-point fractional value. \
 Allows floating-point construction via `std::initializer_list`, \
 and access via `operator()`/`operator(size_t)`. \
 \
-Implements floating-point multiplication (affecting all elements) \
+Implements truncated floating-point multiplication (affecting all elements) \
 and addition (affecting only the initial element). \
 
 template <class W, size_t N>
@@ -133,14 +133,14 @@ struct cycle<W[N]>
 		{
 			auto [m, n] = re::science_f(f);
 			
-			auto n_up = re::designed_f(n);
-			auto n_dn = n_up - n;
+			auto up = re::designed_f(n);
+			auto dn = up - n;
 			
-			m   <<= n_up;
-			m   >>= n_dn;
-			n_dn -= 1;
-			n_dn &= re::positive.depth;
-			m    += re::sign.mask >> n_dn;
+			m <<= up;
+			m >>= dn;
+			dn -=  1;
+			dn &= re::positive.depth;
+			m  += re::sign.mask >> dn;
 			T_::operator[](0) +=(m);
 
 			return self();

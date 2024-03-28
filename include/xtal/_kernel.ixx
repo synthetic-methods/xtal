@@ -12,39 +12,6 @@ XTAL_LET as_f = [] XTAL_1FN_(T);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-XTAL_FN2 funge_f(auto &&u)
-XTAL_0EX
-{
-	using U = decltype(u);
-	static_assert(fungible_q<T, U>);
-	return      static_cast<qualify_t<T, U>>(XTAL_FWD_(u));
-}
-template <class T>
-XTAL_FN2 force_f(auto &&u)
-XTAL_0EX
-{
-	using U = decltype(u);
-	static_assert(forcible_q<T, U>);
-	return reinterpret_cast<qualify_t<T, U>>(XTAL_FWD_(u));
-}
-
-template <class T>
-XTAL_FN2 forge_f(auto &&u)
-XTAL_0EX
-{
-	using U = decltype(u);
-	if constexpr (fungible_q<T, U>) {
-		return funge_f<T>(XTAL_FWD_(u));
-	}	else
-	if constexpr (forcible_q<T, U>) {
-		return force_f<T>(XTAL_FWD_(u));
-	}
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 template <class  M > XTAL_FN2   member_f(auto &&w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_FWD_(w);}
 template <class  M > XTAL_FN2   member_f(auto &&w)     XTAL_0EX {return as_f<M>(XTAL_FWD_(w));}
 template <class  M > XTAL_FN2   member_f(auto &&...ws) XTAL_0EX {return as_f<M>(XTAL_FWD_(ws)...);}

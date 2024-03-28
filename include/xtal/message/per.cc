@@ -20,8 +20,8 @@ TAG_("per")
 		using T_sigma = typename bond::realized::sigma_t;
 		using T_alpha = typename bond::realized::alpha_t;
 
-		T_sigma b = bond::realized::diplo_f(16);
-		T_alpha p = bond::realized::haplo_f(16);
+		T_sigma constexpr b = bond::realized::diplo_f(16);
+		T_alpha constexpr p = bond::realized::haplo_f(16);
 
 		auto d = per_t(b);
 		auto q = per_t(p);

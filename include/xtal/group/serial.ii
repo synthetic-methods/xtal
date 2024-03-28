@@ -35,17 +35,17 @@ struct serial<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  H_ = hemitype<T>;
 	
 	public:// CONSTRUCTION
-		using T_::T_;
+		using H_::H_;
 
 
 	public:// OPERATION
-		using T_::get;
-		using T_::self;
-		using T_::twin;
-		using T_::operator*=;
+		using H_::get;
+		using H_::self;
+		using H_::twin;
+		using H_::operator*=;
 
 
 		///\

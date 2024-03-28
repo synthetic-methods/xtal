@@ -22,7 +22,7 @@ Extends `lattice` with pointwise multiplication and an inner sum. \
 This may be interpreted respectively as the Hadamard product and trace for diagonal matricies. \
 
 ///\note\
-Represents the `dual_t` of `sector_t`. \
+Represents the `anti_t` of `sector_t`. \
 
 ///\note\
 Intended both to support dual time/frequency-domain processing, \
@@ -44,18 +44,18 @@ struct scalar<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using S_ = hemitype<T>;
+		using  T_ = hemitype<T>;
 	
 	public:
-		using S_::S_;
-		using S_::get;
-		using S_::self;
-		using S_::twin;
-		using S_::operator*=;
-		using S_::operator/=;
+		using T_::T_;
+		using T_::get;
+		using T_::self;
+		using T_::twin;
+		using T_::operator*=;
+		using T_::operator/=;
 
 		template <class Z>
-		using dual_t = Z;
+		using anti_t = Z;
 
 		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= t.get(i))), self();}
 		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= t.get(i))), self();}

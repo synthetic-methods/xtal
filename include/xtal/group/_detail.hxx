@@ -106,7 +106,7 @@ XTAL_0EX
 
 
 template <bracket_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 apply_to(J &j, F &&f, bool o=false)
+XTAL_FN0 apply_to(J &&j, F &&f, bool o=false)
 XTAL_0EX
 {
 	move_to(j.begin(), j, XTAL_FWD_(f), o);

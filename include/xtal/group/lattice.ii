@@ -46,21 +46,21 @@ struct lattice<U[N]>
 	class homotype: public hemitype<T>
 	{
 		friend T;
-		using S_ = hemitype<T>;
-		using I_ = typename S_::size_type;
+		using  T_ = hemitype<T>;
+		using  I_ = typename T_::difference_type;
 
 	public:// ACCESS
-		using S_::self;
-		using S_::twin;
+		using T_::self;
+		using T_::twin;
 		XTAL_FN2_(size_t) size() {return N;}
 
-		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 get(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(S_::operator[](i));}
-		XTAL_TN2 get(I_ i) XTAL_0FX_(&)  {return           S_::operator[](i) ;}
-		XTAL_TN2 get(I_ i) XTAL_0EX_(&)  {return           S_::operator[](i) ;}
+		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
+		XTAL_TN2 get(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
+		XTAL_TN2 get(I_ i) XTAL_0FX_(&)  {return           T_::operator[](i) ;}
+		XTAL_TN2 get(I_ i) XTAL_0EX_(&)  {return           T_::operator[](i) ;}
 
 	public:// CONVERSION
-		template <template <class> class _t> using exomorph_t =       _t<U[N]>;
+		template <template <class> class _t> using exomorph_t =        _t<U[N]>;
 		template <                 class  V> using isomorph_t = lattice_t<V[N]>;
 		
 		///\
@@ -126,15 +126,15 @@ struct lattice<U[N]>
 		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX {return self() += T(w);}
 		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w);}
 
-		XTAL_OP1_(T &)  *= (as_q<U> auto const &k) XTAL_0EX                            {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  *= k)), self();}
-		XTAL_OP1_(T &)  /= (as_q<U> auto const &k) XTAL_0EX                            {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  /= k)), self();}
+		XTAL_OP1_(T &)  *= (as_q<U> auto const &k) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  *= k)); return self();}
+		XTAL_OP1_(T &)  /= (as_q<U> auto const &k) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  /= k)); return self();}
 
-		XTAL_OP1_(T &) <<= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) <<= k)), self();}
-		XTAL_OP1_(T &) >>= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) >>= k)), self();}
+		XTAL_OP1_(T &) <<= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) <<= k)); return self();}
+		XTAL_OP1_(T &) >>= (as_q<U> auto const &k) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) >>= k)); return self();}
 
 
 	public:// CONSTRUCTION
-	//	using S_::S_;
+	//	using T_::T_;
 
 		~homotype() {};
 		XTAL_CO4_(homotype)
@@ -146,25 +146,25 @@ struct lattice<U[N]>
 		XTAL_CXN homotype(size_t n)
 		XTAL_0EX
 		{
-			_std::uninitialized_value_construct_n(S_::data() + n, S_::size() - n);
+			_std::uninitialized_value_construct_n(T_::data() + n, T_::size() - n);
 		}
 		XTAL_CON homotype(bracket_t<U> a)
 		XTAL_0EX
 		:	homotype((size_t) a.size())
 		{
-			_detail::copy_to(S_::data(), a);
+			_detail::copy_to(T_::data(), a);
 		}
 		template <bracket_q A>
 		XTAL_CXN homotype(A const &a)
 		:	homotype((size_t) a.size())
 		{
-			_detail::copy_to(S_::data(), a);
+			_detail::copy_to(T_::data(), a);
 		}
 		template <bracket_q A>
 		XTAL_CXN homotype(A &&a)
 		:	homotype((size_t) a.size())
 		{
-			_detail::move_to(S_::data(), a);
+			_detail::move_to(T_::data(), a);
 		}
 		
 	};
