@@ -15,14 +15,17 @@ namespace _std
 {
 	using namespace ::std;
 
-	#if not __cpp_lib_bit_cast
-	template <class T, class S> requires (
-		is_trivially_copyable_v<T> and
-		is_trivially_copyable_v<S> and
-		sizeof(T) == sizeof(S)
-	)
-	static constexpr T bit_cast(S const& s) noexcept {return __builtin_bit_cast(T, s);}
-	#endif
+#if not __cpp_lib_bit_cast
+	template <class T>
+	XTAL_LET bit_cast = []<class S> (S const &s)
+	XTAL_0FN
+	{
+		static_assert(is_trivially_copyable_v<T>);
+		static_assert(is_trivially_copyable_v<S>);
+		static_assert(sizeof(T) == sizeof(S));
+		return __builtin_bit_cast(T, s);
+	};
+#endif
 
 }
 namespace _v3

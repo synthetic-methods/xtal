@@ -821,14 +821,15 @@ public:
 	XTAL_FN2 diplo_f(delta_t const &n_zoom)
 	XTAL_0EX
 	{
-	#if 1//XTAL_STD_IEC&559
-		delta_t m = n_zoom << unit.shift;
-		m += unit.mask;
-		m &= exponent.mask;
-		return _std::bit_cast<alpha_t>(m);
-	#else
-		return _std::ldexp<alpha_t>(1, n_zoom);// not `constexpr` until `C++23`!
-	#endif
+		if (_std::is_constant_evaluated()) {
+			delta_t m = n_zoom << unit.shift;
+			m += unit.mask;
+			m &= exponent.mask;
+			return _std::bit_cast<alpha_t>(m);
+		}
+		else {
+			return _std::ldexp(alpha_1, n_zoom);// not `constexpr` until `C++23`!
+		}
 	}
 	template <int N_zoom=0>
 	XTAL_LET diplo_n = diplo_f(N_zoom);
@@ -1181,7 +1182,7 @@ public:
 			delta_t const     rezone = N_infinity? M_zone - dezone: dezone;
 			delta_t const M = rezone + M_zoom;
 			delta_t o, n, m;
-			auto &t  = force_f<delta_t &>(target);
+			auto &t  = reinterpret_cast<delta_t &>(target);
 			n  =  t  & sign.mask;
 			m  =  t  ^ n;
 			m  =  M  - m;
@@ -1270,7 +1271,7 @@ public:
 			delta_t const     dezone = n_zone << exponent.shift;
 			delta_t const M = dezone + M_zoom*N_unit;
 			delta_t o, n, m;
-			auto &t  = force_f<delta_t &>(target);
+			auto &t  = reinterpret_cast<delta_t &>(target);
 			n   = t  & sign.mask;
 			m   = t  ^ n;
 			m  -= M;

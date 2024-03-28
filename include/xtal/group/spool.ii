@@ -39,7 +39,7 @@ struct spool<A>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-		using S_ = hemitype<T>;
+		using T_ = hemitype<T>;
 
 		using U_store = store_t<A>;
 		using U_point = typename U_store::iterator;
@@ -51,7 +51,7 @@ struct spool<A>
 		U_count u_end   = 0;
 
 	public:
-		using S_::S_;
+		using T_::T_;
 		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \

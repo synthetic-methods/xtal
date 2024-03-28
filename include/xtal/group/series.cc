@@ -25,7 +25,7 @@ TAG_("solid", "series")
 		using U_series = series_t<T_alpha[N]>;
 
 		U_series baz(2.0);
-		V_series bar = force_f<V_series &>(baz);
+		V_series bar = reinterpret_cast<V_series &>(baz);
 		V_series foo = {1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7};
 		TRUE_(equal_f(foo, bar));
 		

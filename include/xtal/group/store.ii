@@ -52,7 +52,7 @@ struct store<U[N]>
 	template <class T>
 	class homotype: public hemitype<T>
 	{
-		using R_ = hemitype<T>;
+		using T_ = hemitype<T>;
 		using A  = aligned_t<U>;
 
 	public:// DEFINITION
@@ -91,7 +91,7 @@ struct store<U[N]>
 
 
 	public:// SIZE
-		using R_::size;
+		using T_::size;
 	
 		///\
 		Reshapes `this` with `sN` elements. \
