@@ -47,7 +47,6 @@ struct serial<U[N]>
 		using H_::twin;
 		using H_::operator*=;
 
-
 		///\
 		Multiplication by linear convolution, truncated by `N`. \
 

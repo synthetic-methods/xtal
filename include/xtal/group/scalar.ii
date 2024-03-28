@@ -11,6 +11,7 @@ namespace xtal::group
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <class ..._s> XTAL_NYM series;// For `::dual` (`#include`d at EOF).
 template <class ..._s> XTAL_NYM scalar;
 template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
 template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
@@ -20,9 +21,6 @@ template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
 ///\
 Extends `lattice` with pointwise multiplication and an inner sum. \
 This may be interpreted respectively as the Hadamard product and trace for diagonal matricies. \
-
-///\note\
-Represents the `anti_t` of `sector_t`. \
 
 ///\note\
 Intended both to support dual time/frequency-domain processing, \
@@ -54,11 +52,14 @@ struct scalar<U[N]>
 		using T_::operator*=;
 		using T_::operator/=;
 
-		template <class Z>
-		using anti_t = Z;
+		///\note\
+		Every `scalar`'s `dual::type` is (currently) either free, or designated as `sector_t<...>`.
 
-		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= t.get(i))), self();}
-		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {return bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= t.get(i))), self();}
+		template <class W=typename sector<U[N]>::type>
+		struct dual {using type = W;};
+
+		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= t.get(i))); return self();}
+		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= t.get(i))); return self();}
 
 
 		///\
@@ -137,3 +138,5 @@ struct scalar<U[N]>
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
+
+#include "./series.ii"
