@@ -134,8 +134,10 @@ template <auto    ...Ns>	concept       none_n	=          _detail:: none_n<Ns...>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class            ...Ts>	concept isomorphic_q	= _detail:: isomorphic<Ts...>::value;
-template <class            ...Ts>	concept epimorphic_q	= _detail:: epimorphic<Ts...>::value;
+template <class   ...Ts>	concept         isomorphic_q	=     _detail:: isomorphic<Ts...>::value;
+template <class   ...Ts>	concept       anisomorphic_q	= not _detail:: isomorphic<Ts...>::value;
+template <class   ...Ts>	concept         epimorphic_q	=     _detail:: epimorphic<Ts...>::value;
+template <class   ...Ts>	concept       anepimorphic_q	= not _detail:: epimorphic<Ts...>::value;
 
 template <class            ...Ts>	concept         id_q	= _detail:: identical<Ts...>::value;//< `Ts...` are identical.
 template <class            ...Ts>	concept         is_q	= _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
