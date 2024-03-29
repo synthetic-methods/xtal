@@ -101,6 +101,12 @@ struct confined
 template <typename ...As>
 using confined_t = typename confined<As...>::type;
 
+template <class A>
+concept unconfined_q = requires {
+	typename A::template subtype<any_s<unit_t>>;
+	typename confined_t<A>;
+};
+
 
 ///\
 Creates a lifted form of `U`, _decorated_ with `As...`. \

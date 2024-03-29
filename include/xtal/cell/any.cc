@@ -189,6 +189,8 @@ TAG_("cell", "composition")
 	TRY_("task")
 	{
 		auto t_opt = T_opt(0b1'10u);
+		TRUE_(0b10 == t_opt.template head<0>());
+		TRUE_(0b1  == t_opt.template head<1>());
 		TRUE_(0b10 == t_opt.template head<L_aim>());
 		TRUE_(0b1  == t_opt.template head<L_hyp>());
 		TRUE_(sizeof(T_opt) == sizeof(T_aim));
