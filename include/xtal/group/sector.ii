@@ -21,7 +21,7 @@ template <class ...Ts> XTAL_ASK sector_q = bond::tag_p<sector, Ts...>;
 ///\
 Extends `lattice` with pointwise addition. \
 
-template <class U, size_t N>
+template <class U, int N>
 struct sector<U[N]>
 {
 	using re = bond::realize<U>;

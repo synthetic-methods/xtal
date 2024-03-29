@@ -860,38 +860,47 @@ public:
 
 	///\returns the `N_num`erator divided by the given de`nom`inator.
 
-	XTAL_FN2_(alpha_t) ratio_f(auto &&n_num, auto &&n_nom)
+	template <int N_pow=1> requires sign_p<N_pow, 0>
+	XTAL_FN2_(alpha_t) ratio_f(alpha_t const &n_num, alpha_t const &n_nom)
 	XTAL_0EX
 	{
-		return alpha_t(n_num)/XTAL_FWD_(n_nom);
+		XTAL_IF0
+		XTAL_0IF_(N_pow == -1) {return n_nom/n_num;}
+		XTAL_0IF_(N_pow ==  1) {return n_num/n_nom;}
+		XTAL_0IF_(N_pow ==  0) {return 1;}
 	}
 	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) ratio_f(auto &&n_nom)
+	XTAL_FN2_(alpha_t) ratio_f(alpha_t const &&n_nom)
 	XTAL_0EX
 	{
-		return ratio_f(N_num, XTAL_FWD_(n_nom));
+		return ratio_f<S_::sign_f(N_num)>(S_::designed_f(N_num), n_nom);
 	}
 	static_assert(ratio_f   (alpha_t(2.0)) == 0.5);
 	static_assert(ratio_f<1>(alpha_t(2.0)) == 0.5);
 	static_assert(ratio_f<4>(alpha_t(2.0)) == 2.0);
 
 
-	///\returns `pi` times `ratio_f<N_num>(nom)`.
+	///\returns `ratio_f<N_num>(PI*n_num, n_nom)`.
 
-	XTAL_FN2_(alpha_t) patio_f(auto &&n_num, auto &&n_nom)
+	template <int N_pow=1> requires sign_p<N_pow, 0>
+	XTAL_FN2_(alpha_t) patio_f(alpha_t const &n_num, alpha_t const &n_nom)
 	XTAL_0EX
 	{
-		return 3.141592653589793238462643383279502884L*
-			ratio_f(XTAL_FWD_(n_num), XTAL_FWD_(n_nom));
+		return ratio_f<N_pow>(3.141592653589793238462643383279502884L*n_num, n_nom);
 	}
 	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) patio_f(auto &&n_nom)
+	XTAL_FN2_(alpha_t) patio_f(alpha_t const &n_nom)
 	XTAL_0EX
 	{
-		return patio_f(N_num, XTAL_FWD_(n_nom));
+		return patio_f<S_::sign_f(N_num)>(S_::designed_f(N_num), n_nom);
 	}
-	static_assert(patio_f<1>(alpha_t(2.0)) == alpha_t(1.570796326794896619231321691639751442));
-	static_assert(patio_f<4>(alpha_t(2.0)) == alpha_t(6.283185307179586476925286766559005768));
+	static_assert(patio_f   ( 2) ==  alpha_t(1.570796326794896619231321691639751442L));
+	static_assert(patio_f   (-2) == -alpha_t(1.570796326794896619231321691639751442L));
+	static_assert(patio_f<4>( 2) ==  alpha_t(6.283185307179586476925286766559005768L));
+	static_assert(patio_f<4>(-2) == -alpha_t(6.283185307179586476925286766559005768L));
+
+	XTAL_LET patio_1 = patio_f<1>(1);
+	XTAL_LET patio_2 = patio_f<2>(1);
 
 
 	///\

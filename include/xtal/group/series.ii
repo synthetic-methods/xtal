@@ -20,7 +20,7 @@ template <class ...Ts> XTAL_ASK series_q = bond::tag_p<series, Ts...>;
 ///\
 Extends `sector` with multiplication defined by circular convolution. \
 
-template <class U, size_t N_size>
+template <class U, int N_size>
 struct series<U[N_size]>
 {
 	using re = bond::realize<U>;
@@ -108,7 +108,8 @@ struct series<U[N_size]>
 			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_size`:
-			auto constexpr x = re::template patio_f<-1>(N_size);
+		//	auto constexpr x = -3.141592653589793238462643383279502884L/double(N_size);//re::template patio_f<1>(-N_size);
+			auto constexpr x = re::patio_f(-N_size);
 			auto const     y = re::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:

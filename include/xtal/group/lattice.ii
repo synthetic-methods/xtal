@@ -28,7 +28,7 @@ Specialize for SIMDe types. \
 Adapt `_detail::apply_to` etc to execute in parallel using SIMDE? \
 
 
-template <class U, size_t N, size_t Ns>
+template <class U, size_t N, int Ns>
 struct lattice<U[N][Ns]>: lattice<lattice_t<U[N]>[Ns]>
 {};
 template <class U, size_t N>
