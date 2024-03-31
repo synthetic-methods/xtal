@@ -365,6 +365,11 @@ struct defer<U>
 	
 	public:
 		using S_::S_;
+
+		template <class ...Is> using head_s = typename S_::template head_s<Is...>;
+		template <class ...Is> using head_t = typename S_::template head_t<Is...>;
+
+	public:// INVOCATION
 		using S_::self;
 		using S_::head;
 
@@ -373,6 +378,27 @@ struct defer<U>
 		{
 			return head().template method<Is...>(XTAL_FWD_(xs)...);
 		})
+		template <auto ...Is>
+		XTAL_FN2 function(auto &&...xs)
+		XTAL_0EX
+		{
+			return head_t<>::template function<Is...>(XTAL_FWD_(xs)...);
+		}
+
+		///\note\
+		Adjacent `defer`red processes are (currently) composed together. \
+
+		XTAL_DO2_(template <auto ...Is> requires any_q<head_t<cardinal_1>>
+		XTAL_TN2 method(auto &&...xs),
+		{
+			return head().template method<Is...>(S::template method<Is...>(XTAL_FWD_(xs)...));
+		})
+		template <auto ...Is> requires any_q<head_t<cardinal_1>>
+		XTAL_FN2 function(auto &&...xs)
+		XTAL_0EX
+		{
+			return head_t<>::template function<Is...>(S::template function<Is...>(XTAL_FWD_(xs)...));
+		}
 
 	};
 };

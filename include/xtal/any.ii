@@ -106,6 +106,12 @@ template <class   ...Ts>	concept    liminal_q	= (...and  _detail::     liminal_q
 template <liminal_q  T >	using   subliminal_s	= typename _detail::  subliminal<T>::type;
 template <liminal_q  T >	using  semiliminal_s	= typename _detail:: semiliminal<T>::type;
 
+using cardinal_0 = cardinal_t<0>;
+using cardinal_1 = cardinal_t<1>;
+using  ordinal_0 =  ordinal_t<0>;
+using  ordinal_1 =  ordinal_t<1>;
+using  logical_0 =  ordinal_t<0>;
+using  logical_1 =  ordinal_t<1>;
 
 template <class      T >	using        based_t	=          _detail::   based_t<T>;
 template <class   ...Ts>	concept      based_q	= (...and  _detail::   based_q<Ts>);
