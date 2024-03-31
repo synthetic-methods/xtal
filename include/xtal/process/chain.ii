@@ -81,7 +81,7 @@ struct chain<A>
 		XTAL_FN2 function(auto &&...xs)
 		XTAL_0EX
 		{
-			using  That = S_::template head_t<>;
+			using  That = typename S_::template head_t<>;
 			return That::template function<Is...>(XTAL_FWD_(xs)...);
 		}
 
@@ -119,8 +119,8 @@ struct chain<A, As...>
 
 	};
 };
-template <unconfined_q A, class ...As>
-struct chain<A, As...>: chain<confined_t<A>, As...> {};
+//template <unconfined_q A, class ...As>
+//struct chain<A, As...>: chain<confined_t<A>, As...> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

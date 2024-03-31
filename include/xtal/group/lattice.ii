@@ -52,7 +52,7 @@ struct lattice<U[N]>
 	public:// ACCESS
 		using T_::self;
 		using T_::twin;
-		XTAL_FN2_(size_t) size() {return N;}
+		XTAL_FN2_(typename re::sigma_t) size() {return N;}
 
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
 		XTAL_TN2 get(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
@@ -92,9 +92,7 @@ struct lattice<U[N]>
 
 	public:// OPERATION
 
-		///\
-		Elementwise comparators. \
-
+	//	Vector comparators (performed point-wise):
 		XTAL_OP2 <=> (homotype const &t)
 		XTAL_0FX
 		{
@@ -111,27 +109,39 @@ struct lattice<U[N]>
 		XTAL_OP2_(bool) <  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <  t.get(I))) (bond::seek_f<N> {});}
 		XTAL_OP2_(bool) >  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_f<N> {});}
 
-		XTAL_OP2_(T)    *  (auto &&w) XTAL_0FX {return twin() *= XTAL_FWD_(w);}
-		XTAL_OP2_(T)    /  (auto &&w) XTAL_0FX {return twin() /= XTAL_FWD_(w);}
-		XTAL_OP2_(T)    +  (auto &&w) XTAL_0FX {return twin() += XTAL_FWD_(w);}
-		XTAL_OP2_(T)    -  (auto &&w) XTAL_0FX {return twin() -= XTAL_FWD_(w);}
+	//	Scalar operators (performed point-wise):
+		XTAL_OP1_(T &) <<= (anisomorphic_q<T> auto const &u) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) <<= u)); return self();}
+		XTAL_OP1_(T &) >>= (anisomorphic_q<T> auto const &u) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) >>= u)); return self();}
+		XTAL_OP1_(T &)  *= (anisomorphic_q<T> auto const &u) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  *= u)); return self();}
+		XTAL_OP1_(T &)  /= (anisomorphic_q<T> auto const &u) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  /= u)); return self();}
+
+	//	Generic operators (via lifted assignment):
+		XTAL_OP2_(T)   <<  (auto       &&w) XTAL_0FX XTAL_REQ _std::integral<U> {return twin() <<= XTAL_FWD_(w);}
+		XTAL_OP2_(T)   >>  (auto       &&w) XTAL_0FX XTAL_REQ _std::integral<U> {return twin() >>= XTAL_FWD_(w);}
+		XTAL_OP2_(T)    &  (auto       &&w) XTAL_0FX XTAL_REQ _std::integral<U> {return twin()  += XTAL_FWD_(w);}
+		XTAL_OP2_(T)    ^  (auto       &&w) XTAL_0FX XTAL_REQ _std::integral<U> {return twin()  /= XTAL_FWD_(w);}
+		XTAL_OP2_(T)    /  (auto       &&w) XTAL_0FX XTAL_REQ _std::integral<U> {return twin()  -= XTAL_FWD_(w);}
+		XTAL_OP2_(T)    *  (auto       &&w) XTAL_0FX                            {return twin()  *= XTAL_FWD_(w);}
+		XTAL_OP2_(T)    /  (auto       &&w) XTAL_0FX                            {return twin()  /= XTAL_FWD_(w);}
+		XTAL_OP2_(T)    +  (auto       &&w) XTAL_0FX                            {return twin()  += XTAL_FWD_(w);}
+		XTAL_OP2_(T)    -  (auto       &&w) XTAL_0FX                            {return twin()  -= XTAL_FWD_(w);}
+
+	//	Vector operators (via `std::initializer_list` reconstruction):
+		XTAL_OP1_(T &) <<= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() <<= T(w);}
+		XTAL_OP1_(T &) >>= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() >>= T(w);}
+		XTAL_OP1_(T &)  &= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  &= T(w);}
+		XTAL_OP1_(T &)  ^= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  ^= T(w);}
+		XTAL_OP1_(T &)  |= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  |= T(w);}
+		XTAL_OP1_(T &)  *= (bracket_t<U> w) XTAL_0EX                            {return self()  *= T(w);}
+		XTAL_OP1_(T &)  /= (bracket_t<U> w) XTAL_0EX                            {return self()  /= T(w);}
+		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX                            {return self()  += T(w);}
+		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX                            {return self()  -= T(w);}
 
 	//	XTAL_OP1_(T &)  *= (auto &&w) XTAL_0EX {return self() = self() * XTAL_FWD_(w);}
 	//	XTAL_OP1_(T &)  /= (auto &&w) XTAL_0EX {return self() = self() / XTAL_FWD_(w);}
 	//	XTAL_OP1_(T &)  += (auto &&w) XTAL_0EX {return self() = self() + XTAL_FWD_(w);}
 	//	XTAL_OP1_(T &)  -= (auto &&w) XTAL_0EX {return self() = self() - XTAL_FWD_(w);}
 		
-		XTAL_OP1_(T &)  *= (bracket_t<U> w) XTAL_0EX {return self() *= T(w);}
-		XTAL_OP1_(T &)  /= (bracket_t<U> w) XTAL_0EX {return self() /= T(w);}
-		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX {return self() += T(w);}
-		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX {return self() -= T(w);}
-
-		XTAL_OP1_(T &)  *= (anisomorphic_q<T> auto const &u) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  *= u)); return self();}
-		XTAL_OP1_(T &)  /= (anisomorphic_q<T> auto const &u) XTAL_0EX                            {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i)  /= u)); return self();}
-
-		XTAL_OP1_(T &) <<= (anisomorphic_q<T> auto const &u) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) <<= u)); return self();}
-		XTAL_OP1_(T &) >>= (anisomorphic_q<T> auto const &u) XTAL_0EX XTAL_REQ _std::integral<U> {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) >>= u)); return self();}
-
 
 	public:// CONSTRUCTION
 	//	using T_::T_;

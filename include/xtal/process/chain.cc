@@ -65,8 +65,8 @@ TAG_("chain")
 
 	TRY_("compose")
 	{
-		using halve_square_root_t = chain_t<halve, square_root_t>;
-		using square_root_halve_t = chain_t<square_root, halve_t>;
+		using halve_square_root_t = chain_t<halve_t, square_root_t>;
+		using square_root_halve_t = chain_t<square_root_t, halve_t>;
 		
 		TRUE_(2L == halve_square_root_t::function(16L));
 		TRUE_(3L == square_root_halve_t::function(18L));

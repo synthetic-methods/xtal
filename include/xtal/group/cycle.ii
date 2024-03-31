@@ -26,6 +26,12 @@ and access via `operator()`/`operator(size_t)`. \
 Implements truncated floating-point multiplication (affecting all elements) \
 and addition (affecting only the initial element). \
 
+///\todo\
+Might be worth implementing multiplication for the first element only, \
+either by truncating the type or by parameterizing the operator. \
+The latter could be achieved using `std::initializer_list`s, \
+parameterized by an `alpha_t`-wrapper with a distinguished element. \
+
 template <class W, size_t N>
 struct cycle<W[N]>
 {
@@ -79,8 +85,9 @@ struct cycle<W[N]>
 		using T_::self;
 		using T_::twin;
 
-		XTAL_OP1 () ()          XTAL_0FX {return     T_::template transmorph<U_serial>(U_f);}
-		XTAL_OP1 () (size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
+		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transmorph<U_serial>(U_f);}
+		XTAL_OP2 () (size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
+		XTAL_TN2   d(size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
 		
 		XTAL_OP0_(implicit) U_serial() XTAL_0FX {return operator()( );}
 		XTAL_OP0_(implicit) U       () XTAL_0FX {return operator()(0);}
@@ -102,16 +109,23 @@ struct cycle<W[N]>
 		XTAL_OP1 *= (_std::floating_point auto const &f)
 		XTAL_0EX
 		{
-			auto [m, n] = re::science_f(f);
+			auto [m, n] = re::scientific_f((alpha_t) f);
 
-			auto constexpr N_bias = re::N_width;
-			auto constexpr N_half = re::half.depth + N_bias;// e.g. {64,32} => {32,16}+B
-			auto constexpr M_half = re::half.depth - N_bias;// e.g. {52,23} => {32,16}-B
-			m >>=                N_half;
-			m  |= re::sigma_1 << M_half;
-			T_::operator >>=(M_half - n);
-			T_::operator  *=(m);
-
+			sigma_t constexpr  N_bias = re::N_width;
+			sigma_t constexpr  N_half = re::half.depth - N_bias;// e.g. {64,32} => {32,16}-B
+			sigma_t constexpr  M_half = re::half.depth + N_bias;// e.g. {52,23} => {32,16}+B
+			delta_t constexpr  M_down = re::fraction.depth - M_half;
+			auto const shift = M_down + n;
+			/**/
+			auto const up = re::template designed_f<1>(shift);
+			auto const dn = up - shift;
+			T_::operator <<=(up);
+			T_::operator >>=(dn);
+			/*/
+			T_::operator >>=(-shift);
+			/***/
+			T_::operator  *=(m >> M_down);
+			
 			return self();
 		}
 
@@ -131,18 +145,7 @@ struct cycle<W[N]>
 		XTAL_OP1 += (_std::floating_point auto const &f)
 		XTAL_0EX
 		{
-			auto [m, n] = re::science_f(f);
-			
-			auto up = re::designed_f(n);
-			auto dn = up - n;
-			
-			m <<= up;
-			m >>= dn;
-			dn -=  1;
-			dn &= re::positive.depth;
-			m  += re::sign.mask >> dn;
-			T_::operator[](0) +=(m);
-
+			T_::operator[](0) += re::fractional_f(f);
 			return self();
 		}
 
@@ -152,6 +155,6 @@ struct cycle<W[N]>
 };
 
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////FIXME
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

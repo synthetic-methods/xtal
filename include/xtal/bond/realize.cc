@@ -284,6 +284,48 @@ TAG_("realize", "bit_reverse")
 
 ////////////////////////////////////////////////////////////////////////////////
 
+TAG_("realize", "fraction")
+{
+	using T_sigma = typename realized::sigma_t;
+	using T_delta = typename realized::delta_t;
+	using T_alpha = typename realized::alpha_t;
+	using T_aphex = typename realized::aphex_t;
+	XTAL_LET_(T_alpha) two =  2;
+	XTAL_LET_(T_alpha) ten = 10;
+
+	auto mt19937_f = typename realized::mt19937_t();
+	mt19937_f.seed(Catch::rngSeed());
+
+	TRY_("comparing implementations")
+	{
+		for (T_sigma i = 0x100; ~--i;) {
+			T_alpha const u = ten*realized::mantissa_f(mt19937_f);
+			TRUE_(computrim_f<16>(realized::fraction_f(u)) == computrim_f<16>(u - _std::round(u)));
+		}
+	};
+	EST_("via integral arithmetic")
+	{
+		T_delta w {};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto const u = ten*realized::mantissa_f(mt19937_f);
+			w ^= realized::fractional_f(u);
+		}
+		return w;
+	};
+	EST_("via floating-point arithmetic")
+	{
+		T_alpha w {};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto const u = ten*realized::mantissa_f(mt19937_f);
+			w *= u - _std::round(u);
+		}
+		return w;
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <int N_sgn=1, int N_rho=0>
 void compute_truncate__zoned()
 {

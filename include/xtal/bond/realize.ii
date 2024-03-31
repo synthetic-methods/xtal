@@ -300,23 +300,47 @@ public:
 	XTAL_FN2 designed_f(delta_t i)
 	XTAL_0EX
 	{
-		if constexpr (N_side == 0) {
-			delta_t const m = i >> positive.depth;
-			i += m;
-			i ^= m;
+		delta_t const v = i >> positive.depth;
+		XTAL_IF0
+		XTAL_0IF_(N_side == -1) {
+			i &= v;
+			i += v;
+			i ^= v;
 			return i;
 		}
-		else {
-			i ^= N_side;
-			i += 1;
-		//	i *= N_side;
-			i += designed_f(i);
-			return i >> 1;
+		XTAL_0IF_(N_side ==  0) {
+			i += v;
+			i ^= v;
+			return i;
+		}
+		XTAL_0IF_(N_side ==  1) {
+			i &=~v;
+			return i;
 		}
 	}
-	static_assert(designed_f((delta_t) +2) == (2));
-	static_assert(designed_f((delta_t)  0) == (0));
-	static_assert(designed_f((delta_t) -2) == (2));
+	static_assert(designed_f< 0>((delta_t) +3) == (3));
+	static_assert(designed_f< 0>((delta_t) +2) == (2));
+	static_assert(designed_f< 0>((delta_t) +1) == (1));
+	static_assert(designed_f< 0>((delta_t)  0) == (0));
+	static_assert(designed_f< 0>((delta_t) -1) == (1));
+	static_assert(designed_f< 0>((delta_t) -2) == (2));
+	static_assert(designed_f< 0>((delta_t) -3) == (3));
+
+	static_assert(designed_f< 1>((delta_t) +3) == (3));
+	static_assert(designed_f< 1>((delta_t) +2) == (2));
+	static_assert(designed_f< 1>((delta_t) +1) == (1));
+	static_assert(designed_f< 1>((delta_t)  0) == (0));
+	static_assert(designed_f< 1>((delta_t) -1) == (0));
+	static_assert(designed_f< 1>((delta_t) -2) == (0));
+	static_assert(designed_f< 1>((delta_t) -3) == (0));
+
+	static_assert(designed_f<-1>((delta_t) +3) == (0));
+	static_assert(designed_f<-1>((delta_t) +2) == (0));
+	static_assert(designed_f<-1>((delta_t) +1) == (0));
+	static_assert(designed_f<-1>((delta_t)  0) == (0));
+	static_assert(designed_f<-1>((delta_t) -1) == (1));
+	static_assert(designed_f<-1>((delta_t) -2) == (2));
+	static_assert(designed_f<-1>((delta_t) -3) == (3));
 
 	template <integral_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
 	template <integral_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
@@ -550,19 +574,6 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-	XTAL_FN2 science_f(alpha_t const &f)
-	XTAL_0EX
-	{
-		auto o = _std::bit_cast<delta_t>(f);
-		auto s = (sigma_t) o >> positive.depth; o <<= 1;
-		auto m = (sigma_t) o << exponent.depth;
-		auto n = (sigma_t) o >> exponent.shift + 1;
-		n -= unit.mark;
-		m ^= s;
-		m += 1;
-		return couple_t<sigma_t> {m, n};
-	}
 
 	XTAL_FN2_(alpha_t) mantissa_f(sigma_t n)
 	XTAL_0EX
@@ -839,6 +850,8 @@ public:
 	static_assert(diplo_n< 0> == 1.0);
 	static_assert(diplo_n<-1> == 0.5);
 
+	XTAL_LET diplo_1 = diplo_n<1>;
+
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
 
@@ -854,6 +867,8 @@ public:
 	static_assert(haplo_n<+1> == 0.5);
 	static_assert(haplo_n< 0> == 1.0);
 	static_assert(haplo_n<-1> == 2.0);
+
+	XTAL_LET haplo_1 = haplo_n<1>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1036,6 +1051,10 @@ public:
 
 	///\returns the sign of `value` as an `alpha_t`. \
 
+	XTAL_FN2 assign_f(_std::unsigned_integral auto u)
+	{
+		return assign_f((sigma_t) u);
+	}
 	XTAL_FN2 assign_f(sigma_t u)
 	{
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
@@ -1076,7 +1095,7 @@ public:
 
 	///\returns the original sign of `target`, after applying the sign of `source`.
 
-	XTAL_FN1_(alpha_t) resign_f(alpha_t &target, alpha_t const &source=1)
+	XTAL_FN1_(alpha_t) resign_f(alpha_t &target, auto const &source=1)
 	XTAL_0EX
 	{
 		alpha_t const signum = sign_f(target);
@@ -1089,15 +1108,17 @@ public:
 	XTAL_0EX
 	{
 	#if XTAL_V00_MSVC
-		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
-		delta_t n = _std::bit_cast<delta_t>(source);
-		delta_t m = _std::bit_cast<delta_t>(target);
-		m &=    ~sign.mask;
-		m |= n & sign.mask;
-		return _std::bit_cast<alpha_t>(XTAL_MOV_(m));
+		return resigned_f(XTAL_MOV_(target), _std::bit_cast<delta_t>(source));
 	#else
 		return __builtin_copysign(target, source);// constexpr
 	#endif
+	}
+	XTAL_FN2_(alpha_t) resigned_f(alpha_t target, delta_t source=0)
+	XTAL_0EX
+	{
+		source &= sign.mask;
+		source |= unit.mask;
+		return target*_std::bit_cast<alpha_t>(source);
 	}
 
 
@@ -1172,6 +1193,76 @@ public:
 	static_assert(clamped_f<-1>( 0.0) == -minimal_f());
 	static_assert(clamped_f<-1>(-1.0) == -1.0);
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_FN2 scientific_f(alpha_t const &f)
+	XTAL_0EX
+	{
+		sigma_t  o = _std::bit_cast<sigma_t>(f);
+		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark + fraction.depth);
+		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
+		delta_t  z = static_cast<delta_t>(o) >> positive.depth;
+		o >>= positive.depth;
+		m  ^= z;
+		m  -= z;
+		return couple_t<delta_t> {m, n};
+	}
+	XTAL_FN2 unscientific_f(couple_t<delta_t> const &mn)
+	XTAL_0EX
+	{
+		auto const [m, n] = mn;
+		return alpha_t(m)*diplo_f(n);
+	}
+
+	static_assert( 2.25 == unscientific_f(scientific_f( 2.25)));
+	static_assert( 1.25 == unscientific_f(scientific_f( 1.25)));
+	static_assert( 0.25 == unscientific_f(scientific_f( 0.25)));
+	static_assert( 0.75 == unscientific_f(scientific_f( 0.75)));
+	static_assert( 1.75 == unscientific_f(scientific_f( 1.75)));
+	static_assert( 2.75 == unscientific_f(scientific_f( 2.75)));
+
+	static_assert(-2.25 == unscientific_f(scientific_f(-2.25)));
+	static_assert(-1.25 == unscientific_f(scientific_f(-1.25)));
+	static_assert(-0.25 == unscientific_f(scientific_f(-0.25)));
+	static_assert(-0.75 == unscientific_f(scientific_f(-0.75)));
+	static_assert(-1.75 == unscientific_f(scientific_f(-1.75)));
+	static_assert(-2.75 == unscientific_f(scientific_f(-2.75)));
+
+	XTAL_FN2 fractional_f(alpha_t const &f)
+	XTAL_0EX
+	{
+		sigma_t  o = _std::bit_cast<sigma_t>(f);
+		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark - exponent.depth - 1);
+		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
+		delta_t  z = static_cast<delta_t>(o) >> positive.depth;
+		delta_t up = designed_f<1>(n);
+		delta_t dn = up - n;
+		m <<= up;
+		m >>= dn;
+		m  ^=  z;
+		m  -=  z;
+		return m;
+	}
+	XTAL_FN2 fraction_f(alpha_t const &f)
+	XTAL_0EX
+	{
+		return alpha_t(fractional_f(f))*haplo_f(N_depth);
+	}
+
+	static_assert(fraction_f( 2.25) ==  0.25);
+	static_assert(fraction_f( 1.25) ==  0.25);
+	static_assert(fraction_f( 0.25) ==  0.25);
+	static_assert(fraction_f( 0.75) == -0.25);
+	static_assert(fraction_f( 1.75) == -0.25);
+	static_assert(fraction_f( 2.75) == -0.25);
+
+	static_assert(fraction_f(-2.25) == -0.25);
+	static_assert(fraction_f(-1.25) == -0.25);
+	static_assert(fraction_f(-0.25) == -0.25);
+	static_assert(fraction_f(-0.75) ==  0.25);
+	static_assert(fraction_f(-1.75) ==  0.25);
+	static_assert(fraction_f(-2.75) ==  0.25);
 
 ////////////////////////////////////////////////////////////////////////////////
 
