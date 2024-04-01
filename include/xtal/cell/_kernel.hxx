@@ -65,12 +65,25 @@ struct confined
 	using    type = subtype<any_s<unit_t>>;
 	
 };
-template <typename   ...As>	using       confined_t = typename confined<As...>::type;
+template <typename ...As>
+using confined_t = typename confined<As...>::type;
 
-template <typename   ...As>	concept   decorator_q = (...and requires {typename As::template subtype<confined_t<>>;});
-template <typename   ...As>	concept undecorator_q =     not decorator_q<As...>;
-///<\experimental\
-Determines whether `...As` can be used to decorate within the current namespace. \
+///\
+Creates the `define`d _decorator_ with `As...`. \
+
+template <typename ...As>
+struct defined
+{
+	template <class T>
+	using homokind = bond::compose<As..., define<T>>;
+
+	template <class S>
+	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
+	using    type = subtype<any_s<unit_t>>;
+	
+};
+template <typename ...As>
+using defined_t = typename defined<As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,38 +96,56 @@ template <class U, typename ...As>	using   conferred   = confined<confer<U, As..
 template <class U, typename ...As>	using   conferred_t = typename conferred<U, As...>::type;
 
 
-template <class   ...As>	concept   conferrable_q = complete_q<As...> and not decorator_q<As...>;
-template <class   ...As>	concept unconferrable_q = not conferrable_q<As...>;
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Lifts `A` with `defer`/`any` depending on whether `complete_q<U>`/`incomplete_q<U>`. \
 
-///\experimental\
-Will attempt to use `A` directly if it appears to be `decorator_q`.
+///\note\
+Will use `A` directly if it appears to be decorator w.r.t. `infers<As...>`.
 
-template <class        A          > struct infer       : defer<A> {};
-template <decorator_q A          > struct infer<A>    :       A  {};
-template <incomplete_q A          > struct infer<A>    :   any<A> {};
-template <incomplete_q A, size_t N> struct infer<A[N]> : bond::compose<any<A>, defer<unit_t[N]>> {};
-template <                        > struct infer<void> : bond::compose<                        > {};
-
-template <class   ...Us>	using infers = bond::compose<infer<Us>...>;///< Chained `infer`rals.
-template <class   ...Us>	using defers = bond::compose<defer<Us>...>;///< Chained `defer`rals.
-
-///\
-Delegates to the first `conferrable_q` provided, if any. \
-
-template <                   class ...Us> struct referred           : bond::compose<> {};
-template <unconferrable_q U, class ...Us> struct referred<U, Us...> : referred<Us...> {};
-template <  conferrable_q U, class ...Us> struct referred<U, Us...> : refer<U> {};
-
+template <                          class ...As> struct infers              : bond::compose<                                       > {};
+template <                          class ...As> struct infers<void, As...> : bond::compose<                          infers<As...>> {};
+template <incomplete_q A, size_t N, class ...As> struct infers<A[N], As...> : bond::compose<any<A>, defer<unit_t[N]>, infers<As...>> {};
+template <incomplete_q A          , class ...As> struct infers<A   , As...> : bond::compose<any<A>,                   infers<As...>> {};
+template <class        A          , class ...As> struct infers<A   , As...> : bond::compose<        defer<A>,         infers<As...>> {};
+template <class        A          , class ...As>
+XTAL_REQ_(typename A::template subtype<defined_t<infers<As...>>>)
+struct infers<A, As...>
+:	bond::compose<A, infers<As...>>
+{};
 
 ///\
-Creates a `confined` type from `infers<As...>`. \
+Creates a `confined` type from `infers<As...>`, delegating to the outermost `complete_q<head_t<>>`. \
 
-template <class   ...As>	using inferred   = confined<referred<As...>, infers<As...>>;
+template <typename ...As>
+struct inferrer
+{
+	using subkind = infers<As...>;
+
+	template <class S>
+	class subtype: public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+
+	};
+	template <class S>
+	using paratype = typename bond::compose_s<S, subkind>::template head_t<>;
+
+	template <class S> requires complete_q<paratype<S>>
+	class subtype<S>: public bond::compose_s<S, subkind, refer<paratype<S>>>
+	{
+		using S_ = bond::compose_s<S, subkind, refer<paratype<S>>>;
+	
+	public:
+		using S_::S_;
+
+	};
+	
+};
+template <class   ...As>	using inferred   = confined<inferrer<As...>>;
 template <class   ...As>	using inferred_t = typename inferred<As...>::type;
 
 
@@ -130,9 +161,9 @@ template <class   ...As>	concept packed_q = any_p<class packed_a, As...>;
 ///\
 Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
 
-template <class    T > struct  let    {using type = conferred_t<T>;};
-template <any_q    T > struct  let<T> {using type =             T ;};
-template <class    T > using   let_t = typename let<T>::type;
+template <class      T >	struct  let        {using type = conferred_t<T>;};
+template <any_q      T >	struct  let<T>     {using type =             T ;};
+template <class      T >	using   let_t    = typename let<T>::type;
 
 template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_REF_(w));}
 template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_REF_(w));}
