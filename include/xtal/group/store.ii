@@ -103,7 +103,7 @@ struct store<U[N]>
 				pop_back(sM - sN);
 			}
 			else {
-				insert_back(sN - sM, XTAL_FWD_(etc)...);
+				insert_back(sN - sM, XTAL_REF_(etc)...);
 			}
 		}
 		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N`. \
@@ -138,7 +138,7 @@ struct store<U[N]>
 
 		XTAL_CXN homotype(size_type sN, auto &&...etc)
 		{
-			insert_back(sN, XTAL_FWD_(etc)...);
+			insert_back(sN, XTAL_REF_(etc)...);
 		}
 		///\
 		Span constructor. \
@@ -218,7 +218,7 @@ struct store<U[N]>
 
 		XTAL_TN1 refresh_(auto &&...etc)
 		{
-			clear(); push_back(XTAL_FWD_(etc)...);
+			clear(); push_back(XTAL_REF_(etc)...);
 			return *this;
 		}
 
@@ -244,7 +244,7 @@ struct store<U[N]>
 
 		XTAL_TN0 push_back(as_q<U> auto &&...vs)
 		{
-			push_back(bracket_t<U>{U(XTAL_FWD_(vs))...});
+			push_back(bracket_t<U>{U(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -252,14 +252,14 @@ struct store<U[N]>
 
 		XTAL_TN1_(reference) emplace_back(auto &&...etc)
 		{
-			return *inplace_back(XTAL_FWD_(etc)...);
+			return *inplace_back(XTAL_REF_(etc)...);
 		}
 		///\
 		Invokes `insert` at `this->end()` with the given arguments. \
 
 		XTAL_TN1_(iterator) insert_back(auto &&...etc)
 		{
-			return insert(end(), XTAL_FWD_(etc)...);
+			return insert(end(), XTAL_REF_(etc)...);
 		}
 
 		///\
@@ -269,7 +269,7 @@ struct store<U[N]>
 		template <class I> requires common_q<iterator, I>
 		XTAL_TN1_(reference) emplace(I i, auto &&...etc)
 		{
-			return *inplace(i, XTAL_FWD_(etc)...);
+			return *inplace(i, XTAL_REF_(etc)...);
 		}
 
 		///\
@@ -303,7 +303,7 @@ struct store<U[N]>
 		template <class I> requires common_q<iterator, I>
 		XTAL_TN1_(iterator) insert(I i, common_q<U> auto &&v)
 		{
-			return inplace(i, XTAL_FWD_(v));
+			return inplace(i, XTAL_REF_(v));
 		}
 		///\
 		Initialises `sN` values with `v` beginning at `i`. \
@@ -312,7 +312,7 @@ struct store<U[N]>
 		XTAL_TN1_(iterator) insert(I i, size_type sN, common_q<U> auto &&v)
 		{
 			inject_(i, sN);
-			_std::uninitialized_fill_n(injector_(i), sN, XTAL_FWD_(v));
+			_std::uninitialized_fill_n(injector_(i), sN, XTAL_REF_(v));
 			return i;
 		}
 		///\
@@ -330,13 +330,13 @@ struct store<U[N]>
 		XTAL_TN1_(iterator) inplace_back(auto &&...etc)
 		{
 			reserve(1 + size());
-			return ::new (m_block + m_limit++) U(XTAL_FWD_(etc)...);
+			return ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
 		}
 		template <class I> requires common_q<iterator, I>
 		XTAL_TN1_(iterator) inplace(I i, auto &&...etc)
 		{
 			inject_(i, 1);
-			return ::new (injector_(i)) U(XTAL_FWD_(etc)...);
+			return ::new (injector_(i)) U(XTAL_REF_(etc)...);
 		}
 		///\
 		Allocates `sN` elements beginning at `i`. \

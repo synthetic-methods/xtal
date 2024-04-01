@@ -74,24 +74,24 @@ struct pack_item<T>
 XTAL_FN2 pack_item_f(auto &&t)
 XTAL_0EX
 {
-	return XTAL_FWD_(t);
+	return XTAL_REF_(t);
 }
 template <size_t N, size_t ...Ns>
 XTAL_FN2 pack_item_f(auto &&t)
 XTAL_0EX
 {
 	if constexpr (0 == sizeof...(Ns)) {
-		return _std::get<N>(XTAL_FWD_(t));
+		return _std::get<N>(XTAL_REF_(t));
 	}
 	else {
-		return pack_item_f<Ns...>(_std::get<N>(XTAL_FWD_(t)));
+		return pack_item_f<Ns...>(_std::get<N>(XTAL_REF_(t)));
 	}
 }
 template <template <class ...> class L, integral_q ...Ts>
 XTAL_FN2 pack_item_f(auto &&t, L<Ts...> const &)
 XTAL_0EX
 {
-	return pack_item_f<Ts{}...>(XTAL_FWD_(t));
+	return pack_item_f<Ts{}...>(XTAL_REF_(t));
 }
 
 
@@ -106,10 +106,10 @@ XTAL_LET pack_f = [] <class ...Xs>(Xs &&...xs)
 XTAL_0FN
 {
 	if constexpr (2 == sizeof...(xs)) {
-		return _std::make_pair(XTAL_FWD_(xs)...);
+		return _std::make_pair(XTAL_REF_(xs)...);
 	}
 	else {
-		return _std::make_tuple(XTAL_FWD_(xs)...);
+		return _std::make_tuple(XTAL_REF_(xs)...);
 	}
 };
 
@@ -135,7 +135,7 @@ template <template <class ...> class L, class ...Xs>// requires pack_p<L<Xs...>>
 struct pack<L<Xs...>>: pack<Xs...> {};
 
 //XTAL_LET  pack_f = [] <class ...Xs>(Xs &&...xs)
-//XTAL_0FN_(pack_t<Xs...>(XTAL_FWD_(xs)...));
+//XTAL_0FN_(pack_t<Xs...>(XTAL_REF_(xs)...));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -143,12 +143,12 @@ struct pack<L<Xs...>>: pack<Xs...> {};
 
 template <size_t N>
 XTAL_FN2 pack_fill_f(auto &&u)
-XTAL_0EZ_([u = XTAL_FWD_(u)] <auto ...I>(seek_t<I...>)
+XTAL_0EZ_([u = XTAL_REF_(u)] <auto ...I>(seek_t<I...>)
 XTAL_0FN_(pack_f(seek_i<I>(u)...)) (seek_f<N>{}));
 
 template <size_t N>
 XTAL_FN2 pack_fill_f(_std::invocable auto &&f)
-XTAL_0EZ_([f = XTAL_FWD_(f)] () XTAL_0FN_(pack_fill_f<N>(f())));
+XTAL_0EZ_([f = XTAL_REF_(f)] () XTAL_0FN_(pack_fill_f<N>(f())));
 
 
 ///////////////////////////////////////////////////////////////////////////////

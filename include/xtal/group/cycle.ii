@@ -78,7 +78,7 @@ struct cycle<A[N]>
 		XTAL_CON homotype(initializer_list      o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
 		XTAL_CXN homotype(bracket_q auto const &o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
 		XTAL_CXN homotype(bracket_q auto      &&o) XTAL_0EX: T_(o.size()) {_detail::move_to(T_::data(), XTAL_MOV_(o), V_f);}
-		XTAL_CXN homotype(bracket_q auto      &&o) XTAL_0EX requires _std::integral<value_t<decltype(o)>>: T_(XTAL_FWD_(o)) {}
+		XTAL_CXN homotype(bracket_q auto      &&o) XTAL_0EX requires _std::integral<value_t<decltype(o)>>: T_(XTAL_REF_(o)) {}
 
 
 	public:// OPERATION

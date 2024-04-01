@@ -25,7 +25,7 @@ struct resize
 		using S_::S_;
 		using U_size = U;
 
-		XTAL_TO4_(XTAL_TN2 size(auto &&...oo), S_::head(XTAL_FWD_(oo)...))
+		XTAL_TO4_(XTAL_TN2 size(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_TN2 empty(), 0 == size())
 
 	};
@@ -41,7 +41,7 @@ XTAL_FN2 resize_f(auto &&w)
 XTAL_0EX
 {
 	using re = bond::realize<XTAL_TYP_(w)>;
-	return resize_t<typename re::sigma_t>(XTAL_FWD_(w));
+	return resize_t<typename re::sigma_t>(XTAL_REF_(w));
 }
 
 

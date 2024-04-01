@@ -60,16 +60,16 @@ struct any<A>
 	//	using S_::head;
 		
 		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_FWD_(oo)...)
+		XTAL_TN2 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_FWD_(oo)...)
+		XTAL_TN2 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
+		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_FWD_(oo)...)
+		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 	
 	public:
@@ -85,11 +85,11 @@ struct any<A>
 		requires {typename W::template self_s<A>;}
 		XTAL_CON subtype(W &&w, auto &&...oo)
 		XTAL_0EX
-		:	S_(w.template head<A>(), XTAL_FWD_(w), XTAL_FWD_(oo)...)
+		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
 		{};
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{}
 
 	};

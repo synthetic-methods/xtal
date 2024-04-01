@@ -51,26 +51,26 @@ template <accessory_t N>
 XTAL_FN2 access_f(auto &&z)
 XTAL_0EX
 {
-	return access_t<N, XTAL_TYP_(z)>(XTAL_FWD_(z));
+	return access_t<N, XTAL_TYP_(z)>(XTAL_REF_(z));
 }
 template <accessory_t N>
 XTAL_FN2 access_f(auto &&z)
 XTAL_0EX
 XTAL_REQ  (N != (N|accessory::finite{})) and requires {z.size();}
 {
-	return access_f<N|accessory::finite{}>(XTAL_FWD_(z))|recount_f(z);
+	return access_f<N|accessory::finite{}>(XTAL_REF_(z))|recount_f(z);
 }
 
 
 XTAL_FN2 purify_f(auto &&z)
 XTAL_0EX
 {
-	return access_f<accessory::pure{}>(XTAL_FWD_(z));
+	return access_f<accessory::pure{}>(XTAL_REF_(z));
 }
 XTAL_FN2 impurify_f(auto &&z)
 XTAL_0EX
 {
-	return access_f<accessory::impure{}>(XTAL_FWD_(z));
+	return access_f<accessory::impure{}>(XTAL_REF_(z));
 }
 
 
@@ -79,31 +79,31 @@ XTAL_0EX
 XTAL_FN2 forever_f(auto &&z)
 XTAL_0EX
 {
-	return purify_f(_v3::views::repeat(XTAL_FWD_(z)));
+	return purify_f(_v3::views::repeat(XTAL_REF_(z)));
 }
 
 XTAL_FN2 map_f(auto &&f)
 XTAL_0EX
 {
 	using namespace _v3::views;
-	return [f = XTAL_FWD_(f)] (auto &&...xs)
+	return [f = XTAL_REF_(f)] (auto &&...xs)
 	XTAL_0FN {
 		if constexpr (0 == sizeof...(xs)) {
-			return forever_f(f)|transform([] (auto &&f) XTAL_0FN_(XTAL_FWD_(f) ()));
+			return forever_f(f)|transform([] (auto &&f) XTAL_0FN_(XTAL_REF_(f) ()));
 		//	return generate(f);// FIXME!
 		}	else
 		if constexpr (1 == sizeof...(xs)) {
-			return transform(XTAL_FWD_(xs)..., f);
+			return transform(XTAL_REF_(xs)..., f);
 		}	else
 		if constexpr (1 <  sizeof...(xs)) {
-			return zip_with(f, XTAL_FWD_(xs)...);
+			return zip_with(f, XTAL_REF_(xs)...);
 		}
 	};
 };
 
 XTAL_LET zip_f = [] XTAL_1FN_(_v3::views::zip);
 XTAL_LET zap_f = map_f([] XTAL_1FN_(_std::tie));
-XTAL_LET mix_f = map_f([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0));
+XTAL_LET mix_f = map_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 
 template <iterator_q ...Xs>
 XTAL_FN2 funnel_f(auto &&y, Xs &&...xs)
@@ -111,13 +111,13 @@ XTAL_0EX
 {
 	auto w_ = recount_f(y);
 	if constexpr (1 < sizeof...(xs)) {
-		return mix_f(XTAL_FWD_(y), mix_f((*XTAL_FWD_(xs)|w_)...));
+		return mix_f(XTAL_REF_(y), mix_f((*XTAL_REF_(xs)|w_)...));
 	}	else
 	if constexpr (1 == sizeof...(xs)) {
-		return mix_f(XTAL_FWD_(y), (*XTAL_FWD_(xs)|w_)...);
+		return mix_f(XTAL_REF_(y), (*XTAL_REF_(xs)|w_)...);
 	}	else
 	if constexpr (0 == sizeof...(xs)) {
-		return XTAL_FWD_(y);
+		return XTAL_REF_(y);
 	}
 }
 template <iterator_q ...Xs>
@@ -126,7 +126,7 @@ XTAL_0EX
 {
 	auto v_ = y.begin();
 	if constexpr (0 < sizeof...(xs)) {
-		_v3::ranges::move(funnel_f(XTAL_FWD_(y), XTAL_FWD_(xs)...), v_);
+		_v3::ranges::move(funnel_f(XTAL_REF_(y), XTAL_REF_(xs)...), v_);
 	}
 }
 
@@ -156,7 +156,7 @@ XTAL_0EX
 {
 	using It = XTAL_TYP_(it);
 	using At = iteratee_t<It>;
-	return _v3::ranges::span<At>(XTAL_FWD_(it), is);
+	return _v3::ranges::span<At>(XTAL_REF_(it), is);
 }
 template <size_t N_width>
 XTAL_FN2 squint_f(auto &&it, size_t is)

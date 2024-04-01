@@ -70,7 +70,7 @@ TAG_("process", "construct")
 
 	TRY_("lifting")
 	{
-		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0));
+		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.method(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
 		TRUE_(10 == f.reify() (1, 2, 3, 4));
@@ -78,8 +78,8 @@ TAG_("process", "construct")
 	}
 	TRY_("chaining")
 	{
-		using halve_square_root_t = lifted_t<halve_t, square_root_t>;
-		using square_root_halve_t = lifted_t<square_root_t, halve_t>;
+		using halve_square_root_t = inferred_t<halve_t, square_root_t>;
+		using square_root_halve_t = inferred_t<square_root_t, halve_t>;
 		
 		TRUE_(2L == halve_square_root_t::function(16L));
 		TRUE_(3L == square_root_halve_t::function(18L));
@@ -129,7 +129,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = message::lifted_t<class start_a, ordinal_t<0>>;
+	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -141,7 +141,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = message::lifted_t<class start_a, ordinal_t<0>>;
+	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized

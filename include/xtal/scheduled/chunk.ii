@@ -64,15 +64,15 @@ struct chunk
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_FWD_(o));
+					return R_::infuse(XTAL_REF_(o));
 				}
 				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
 					return 0 == u.head()?
-						R_::influx(XTAL_FWD_(u).then()):
-						(u_spool.push(XTAL_FWD_(u)), 0);
-					//	u == *u_spool.push(XTAL_FWD_(u));
+						R_::influx(XTAL_REF_(u).then()):
+						(u_spool.push(XTAL_REF_(u)), 0);
+					//	u == *u_spool.push(XTAL_REF_(u));
 				}
 
 				///\returns The delay until the next event to be processed. \

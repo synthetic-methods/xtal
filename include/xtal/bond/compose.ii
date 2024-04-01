@@ -16,13 +16,13 @@ namespace xtal::bond
 XTAL_FN2 compose_f(auto&& f)
 XTAL_0EX
 {
-	return XTAL_FWD_(f);
+	return XTAL_REF_(f);
 }
 XTAL_FN2 compose_f(auto&& f, auto&& ...fs)
 XTAL_0EX
 {
-	return [f = XTAL_FWD_(f), ...fs = XTAL_FWD_(fs)] (auto &&...xs)
-		XTAL_0FM_(compose_f(XTAL_FWD_(fs)...) (XTAL_FWD_(f) (XTAL_FWD_(xs)...)));
+	return [f = XTAL_REF_(f), ...fs = XTAL_REF_(fs)] (auto &&...xs)
+		XTAL_0FM_(compose_f(XTAL_REF_(fs)...) (XTAL_REF_(f) (XTAL_REF_(xs)...)));
 }
 
 

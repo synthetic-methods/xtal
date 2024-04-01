@@ -47,10 +47,10 @@ public:
 		template <iterated_q W>
 		XTAL_CXN subtype(W &&w, auto &&...oo)
 		XTAL_0EX
-		:	S_(visor_t<W>(XTAL_FWD_(w)), XTAL_FWD_(oo)...)
+		:	S_(visor_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), head(XTAL_FWD_(oo)...))
+		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_TN2 size(), head().size())
 
 		XTAL_TN2 slice(counted_q auto &&w)

@@ -65,7 +65,7 @@ struct indent<Ns...>
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_FWD_(o));
+					return R_::infuse(XTAL_REF_(o));
 				}
 				XTAL_TNX infuse(flux::indent_q auto &&o)
 				XTAL_0EX

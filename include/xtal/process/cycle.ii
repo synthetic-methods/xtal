@@ -59,7 +59,7 @@ struct cycle<W[N], As...>
 		{
 			using Us = decltype(us);
 			using Ux = typename flux::indent_s<W_, N - arity_n<Us>>;
-			return S_::influx(Ux(XTAL_FWD_(us)));
+			return S_::influx(Ux(XTAL_REF_(us)));
 		}
 		///\
 		Update by replacement. \
@@ -67,7 +67,7 @@ struct cycle<W[N], As...>
 		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX
 		{
-			return S_::infuse(XTAL_FWD_(o));
+			return S_::infuse(XTAL_REF_(o));
 		}
 
 
@@ -95,7 +95,7 @@ struct cycle<W[N], As...>
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
 		XTAL_TN2 method(subarray_q<N> auto &&a),
 		{
-			(void) S_::influx(XTAL_FWD_(a));
+			(void) S_::influx(XTAL_REF_(a));
 			return method();
 		})
 		

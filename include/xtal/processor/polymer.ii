@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ...As>
 XTAL_FN2  polymer_f(auto &&u)
-XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_FWD_(u)))
+XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ struct polymer<U, As...>
 				{
 					auto const i = io.head();
 					auto const o = io.then();
-					return influx(cell::key_s<>(i), o, XTAL_FWD_(oo)...);
+					return influx(cell::key_s<>(i), o, XTAL_REF_(oo)...);
 				}
 				XTAL_TNX influx(cell::key_s<> i, auto &&...oo)
 				XTAL_0EX
@@ -102,7 +102,7 @@ struct polymer<U, As...>
 					auto h = i.head();
 					auto w = u_ensemble.scan(h);
 					assert(u_ensemble and h == w->head());
-					return w->influx(XTAL_FWD_(oo)...);
+					return w->influx(XTAL_REF_(oo)...);
 				}
 				XTAL_TNX influx(cell::key_s<> i, V_event o, auto &&...oo)
 				XTAL_0EX
@@ -118,7 +118,7 @@ struct polymer<U, As...>
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
-					return w->influx(o, XTAL_FWD_(oo)...);
+					return w->influx(o, XTAL_REF_(oo)...);
 				}
 
 				///\
@@ -131,7 +131,7 @@ struct polymer<U, As...>
 					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v)
-							XTAL_0FN_(flx & XTAL_FWD_(v).influx(oo...))
+							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_TNX efflux_pull(auto &&...oo)
@@ -141,7 +141,7 @@ struct polymer<U, As...>
 					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v)
-							XTAL_0FN_(flx & XTAL_FWD_(v).efflux(oo...))
+							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
 

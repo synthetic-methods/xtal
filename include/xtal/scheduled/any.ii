@@ -45,7 +45,7 @@ struct define
 				
 			protected:
 				using W_tuple = _std::tuple<Xs...>;
-				using U_tuple = message::tupled_t<Xs...>;
+				using U_tuple = message::packed_t<Xs...>;
 				using U_event = cell::cue_s<U_tuple>;
 				using U_delay = cell::cue_s<>;
 				using V_delay = typename U_delay::template head_t<>;
@@ -60,7 +60,7 @@ struct define
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					return R_::infuse(XTAL_FWD_(o));
+					return R_::infuse(XTAL_REF_(o));
 				}
 				XTAL_TNX infuse(U_tuple u)
 				XTAL_0EX
@@ -79,7 +79,7 @@ struct define
 				XTAL_TNX influx(auto &&...oo)
 				XTAL_0EX
 				{
-					return R_::influx(XTAL_FWD_(oo)...);
+					return R_::influx(XTAL_REF_(oo)...);
 				}
 
 				XTAL_TNX influx(V_delay d_t, U_tuple d_u)
@@ -95,13 +95,13 @@ struct define
 				XTAL_TNX influx(V_delay d_t, is_q<Xs> auto &&...d_xs)
 				XTAL_0EX
 				{
-					return influx(d_t, U_tuple(XTAL_FWD_(d_xs)...));
+					return influx(d_t, U_tuple(XTAL_REF_(d_xs)...));
 				}
 
 				XTAL_TNX influx(cell::cue_s<> d_t, auto &&...oo)
 				XTAL_0EX
 				{
-					return influx(d_t.head(), XTAL_FWD_(oo)...);
+					return influx(d_t.head(), XTAL_REF_(oo)...);
 				}
 
 			};

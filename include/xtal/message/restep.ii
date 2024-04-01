@@ -25,7 +25,7 @@ struct restep
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_TN2 step(auto &&...oo), S_::head(XTAL_FWD_(oo)...))
+		XTAL_TO4_(XTAL_TN2 step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };
@@ -36,7 +36,7 @@ XTAL_FN2 restep_f(auto &&w)
 XTAL_0EX
 {
 	using re = bond::realize<XTAL_TYP_(w)>;
-	return restep_t<typename re::iota_t>(XTAL_FWD_(w));
+	return restep_t<typename re::iota_t>(XTAL_REF_(w));
 }
 
 

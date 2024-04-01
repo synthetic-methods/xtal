@@ -28,7 +28,7 @@ The following code examples use the following macros for brevity/clarity:
 	#define XTAL_TN1               constexpr decltype(auto)
 
 	#define XTAL_DEF       auto &&
-	#define XTAL_FWD_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
+	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 
 ## Processing
 
@@ -40,7 +40,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	   template <auto...>
 	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_FWD_(xs) + ... + 0);
+	      return (XTAL_REF_(xs) + ... + 0);
 	   }
 	};
 
@@ -66,20 +66,20 @@ with the inner-most components representing inputs, and the outer-most component
 Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
-	using Active = message::lifted_t<class active, int>;
+	using Active = message::inferred_t<class active, int>;
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
 	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_FWD_(xs) + ... + 0)*Active(*this);
-	   // return (XTAL_FWD_(xs) + ... + 0)*this->template head<Active>();
+	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
+	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
 	   }
 	};
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = message::lifted_t<class active, int>;
+	using Offset = message::inferred_t<class active, int>;
 	
 	struct Mix: process::confine_t<Mix
 	,  Offset::template dispatch<2>
@@ -89,7 +89,7 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	   template <auto offset, auto active>
 	   XTAL_TN2 method(auto &&...xs)
 	   {
-	      return (XTAL_FWD_(xs) + ... + offset)*active;
+	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }
 	};
 

@@ -28,9 +28,9 @@ void monomer_lifting()
 	auto y = U_group {00, 10, 20, 30, 40};
 	auto z = U_group {00, 11, 22, 33, 44};
 	auto a = U_group {99, 99, 99, 99, 99};
-//	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0));
+//	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
-	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_FWD_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
+	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= U_resize(N_size);
 	b >>= U_scope(N_size);

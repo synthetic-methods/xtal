@@ -65,13 +65,13 @@ struct define
 		XTAL_OP1 >>=(auto &&o)
 		XTAL_0EX
 		{
-			(void) self().efflux(XTAL_FWD_(o));
+			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_OP1 >>=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
-			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_FWD_(oo));
+			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
 			return self();
 		}
 		///\
@@ -83,7 +83,7 @@ struct define
 		XTAL_TNX efflux(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_FWD_(o)));
+			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 		XTAL_TNX efflux(null_t, auto &&...oo)
 		XTAL_0EX
@@ -104,13 +104,13 @@ struct define
 		XTAL_OP1 <<=(auto &&o)
 		XTAL_0EX
 		{
-			(void) self().influx(XTAL_FWD_(o));
+			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_OP1 <<=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
-			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_FWD_(oo));
+			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
 			return self();
 		}
 		///\
@@ -122,7 +122,7 @@ struct define
 		XTAL_TNX influx(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_FWD_(o)));
+			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 		XTAL_TNX influx(null_t, auto &&...oo)
 		XTAL_0EX
@@ -153,10 +153,10 @@ struct define
 			return is_q<cell::cue_s<>, decltype(o)>? 1: -1;
 			return -1;
 		}
-		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_FWD_(o));}
+		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
-		XTAL_TNX infuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_FWD_(o));}
+		XTAL_TNX infuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
 
@@ -187,7 +187,7 @@ struct define
 
 				XTAL_CXN subtype(auto &&...xs)
 				XTAL_0EX
-				:	R_(T{}, XTAL_FWD_(xs)...)
+				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
 
 			};
@@ -226,12 +226,12 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_FWD_(oo)...));
+			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 		XTAL_TNX influx(auto &&...oo)
 		XTAL_0EX
 		{
-			return S_::influx(XTAL_FWD_(oo)...);
+			return S_::influx(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -241,12 +241,12 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_FWD_(oo)...));
+			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_TNX efflux(auto &&...oo)
 		XTAL_0EX
 		{
-			return S_::efflux(XTAL_FWD_(oo)...);
+			return S_::efflux(XTAL_REF_(oo)...);
 		}
 
 		///\note\
@@ -260,7 +260,7 @@ struct defer
 		XTAL_TNX defuse(auto &&w)
 		XTAL_0EX
 		{
-			return S_::defuse(XTAL_FWD_(w));
+			return S_::defuse(XTAL_REF_(w));
 		}
 
 	};
@@ -275,11 +275,11 @@ struct refer
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class  X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_FWD_(x), XTAL_FWD_(y));}
-template <class  X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_FWD_(y), XTAL_FWD_(x));}
+template <class  X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_REF_(x), XTAL_REF_(y));}
+template <class  X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::make_tuple(XTAL_REF_(y), XTAL_REF_(x));}
 
-template <bond::pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_FWD_(x), _std::make_tuple(XTAL_FWD_(y)));}
-template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(_std::make_tuple(XTAL_FWD_(y)), XTAL_FWD_(x));}
+template <bond::pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), _std::make_tuple(XTAL_REF_(y)));}
+template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(_std::make_tuple(XTAL_REF_(y)), XTAL_REF_(x));}
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -30,7 +30,7 @@ struct define
 
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{}
 
 	public://protected:

@@ -27,7 +27,7 @@ TAG_("thunk", "process")
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = message::lifted_t<class gate_a, typename bond::realized::alpha_t>;
+		using V_gate = message::inferred_t<class gate_a, typename bond::realized::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -77,7 +77,7 @@ TAG_("thunk", "process")
 		using U_scope = message::scope_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = message::lifted_t<class gate_a, typename bond::realized::alpha_t>;
+		using V_gate = message::inferred_t<class gate_a, typename bond::realized::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -118,7 +118,7 @@ void thunk_processor()
 	using U_store  = _std::array<alpha_t, N_store>;
 	U_store u_store {};
 
-	using V_gate  = message::lifted_t<L_gate, alpha_t>;
+	using V_gate  = message::inferred_t<L_gate, alpha_t>;
 	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();

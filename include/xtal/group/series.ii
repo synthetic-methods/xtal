@@ -55,7 +55,7 @@ struct series<U[N_size]>
 
 		XTAL_CXN homotype(is_q<U> auto &&v)
 		{
-			generate(XTAL_FWD_(v));
+			generate(XTAL_REF_(v));
 		}
 
 		///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \

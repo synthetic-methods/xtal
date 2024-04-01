@@ -21,10 +21,10 @@ namespace xtal::_test
 
 using namespace bond;
 
-using scale_t = message::lifted_t<class scale_a, typename bond::realized::alpha_t>;
-using level_t = message::lifted_t<class level_a, typename bond::realized::alpha_t>;
+using scale_t = message::inferred_t<class scale_a, typename bond::realized::alpha_t>;
+using level_t = message::inferred_t<class level_a, typename bond::realized::alpha_t>;
 /*/
-using onset_t = message::lifted_t<class onset_a, typename bond::realized::alpha_t>;
+using onset_t = message::inferred_t<class onset_a, typename bond::realized::alpha_t>;
 /*/
 struct onset
 :	message::confer<typename bond::realized::alpha_t
@@ -47,7 +47,7 @@ struct mix
 		XTAL_TN2 method(auto &&...xs)
 		XTAL_0FX
 		{
-			return (XTAL_FWD_(xs) +...+ 0);
+			return (XTAL_REF_(xs) +...+ 0);
 		}
 
 	};
@@ -67,7 +67,7 @@ struct static_onset_mix
 		XTAL_FN2 function(auto &&...xs)
 		XTAL_0EX
 		{
-			return (XTAL_FWD_(xs) +...+ onset);
+			return (XTAL_REF_(xs) +...+ onset);
 		}
 
 	};
@@ -84,7 +84,7 @@ struct dynamic_onset_mix
 		XTAL_TN2 method(auto &&...xs)
 		XTAL_0EX
 		{
-			return (XTAL_FWD_(xs) +...+ this->template head<onset_t>());
+			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
 		}
 
 	};
@@ -103,7 +103,7 @@ struct dynamic_term
 		XTAL_TN2 method(auto &&x)
 		XTAL_0EX
 		{
-			return XTAL_FWD_(x)*this->template head<scale_t>();
+			return XTAL_REF_(x)*this->template head<scale_t>();
 		}
 
 	};

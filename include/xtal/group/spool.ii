@@ -102,15 +102,15 @@ struct spool<A>
 		XTAL_0EX
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end()
-			,	XTAL_FWD_(w)
+			,	XTAL_REF_(w)
 			);
 		}
 		XTAL_TN2_(U_point) scan(auto &&w, auto &&f)
 		XTAL_0EX
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end()
-			,	XTAL_FWD_(w)
-			,	[f = XTAL_FWD_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
+			,	XTAL_REF_(w)
+			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
 			);
 		}
 		///\note\
@@ -131,18 +131,18 @@ struct spool<A>
 		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
 		XTAL_0EX
 		{
-			return u_store.insert(v_, XTAL_FWD_(w));
+			return u_store.insert(v_, XTAL_REF_(w));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
 		{
-			return u_store.insert(v_, U_value(XTAL_FWD_(ws)...));
+			return u_store.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
-		XTAL_REQ_(u_store.inplace(v_, XTAL_FWD_(ws)...))
+		XTAL_REQ_(u_store.inplace(v_, XTAL_REF_(ws)...))
 		{
-			return u_store.inplace(v_, XTAL_FWD_(ws)...);
+			return u_store.inplace(v_, XTAL_REF_(ws)...);
 		}
 
 	};

@@ -15,7 +15,7 @@ namespace xtal::bond
 
 template <size_t  ...I > using    seek_t = _std::index_sequence<I...>;
 template <size_t     N > using    seek_f = _std::make_index_sequence<N>;
-template <auto    ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_FWD_(o));
+template <auto    ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_REF_(o));
 
 
 ////////////////////////////////////////////////////////////////////////////////

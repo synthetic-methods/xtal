@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ...As>
 XTAL_FN2  monomer_f(auto &&u)
-XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_FWD_(u)))
+XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,14 +66,14 @@ struct monomer<U, As...>
 
 				XTAL_CXN subtype(auto &&...xs)
 				XTAL_0EX
-				:	subtype(T_self {}, XTAL_FWD_(xs)...)
+				:	subtype(T_self {}, XTAL_REF_(xs)...)
 				{}
 				XTAL_CXN subtype(is_q<T_self> auto &&t, auto &&...xs)
 				XTAL_0EX
-				:	R_(R_::method(XTAL_FWD_(xs)...), XTAL_FWD_(t), XTAL_FWD_(xs)...)
+				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-				XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), R_::head(XTAL_FWD_(oo)...))
+				XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), R_::head(XTAL_REF_(oo)...))
 				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
 
 
@@ -82,7 +82,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(message::scope_q auto &&o_scope)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_FWD_(o_scope)));
+					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_scope)));
 				}
 
 			};
@@ -125,10 +125,10 @@ struct monomer<U, As...>
 				XTAL_0EX
 				{
 					if constexpr (is_q<U_resize, decltype(o)>) {
-						return R_::infuse(o) or (store().resize(XTAL_FWD_(o)), 0);
+						return R_::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
 					}
 					else {
-						return R_::infuse(XTAL_FWD_(o));
+						return R_::infuse(XTAL_REF_(o));
 					}
 				}
 				using R_::influx_push;
@@ -140,7 +140,7 @@ struct monomer<U, As...>
 				XTAL_0EX
 				XTAL_REQ (0 <= N_share)
 				{
-					return R_::template influx_push_tail<N_share>(null_t(), o_resize, XTAL_FWD_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_t(), o_resize, XTAL_REF_(oo)...);
 				}
 
 
@@ -154,7 +154,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(message::scope_q auto o_scope, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_respan(store()), o_scope, XTAL_FWD_(oo)...);
+					return efflux(U_respan(store()), o_scope, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `message::respan`, the supplied visor will be used instead. \

@@ -27,7 +27,7 @@ void chunk_processor_x1()
 	using U_chunk = chunk_t<spool<(1<<4)>>;
 
 	using U_alpha = typename bond::realized::alpha_t;
-	using U_event = message::tupled_t<onset_t>;
+	using U_event = message::packed_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
 	,	store<>

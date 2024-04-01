@@ -591,10 +591,10 @@ public:
 	XTAL_0EX
 	{
 		if (S_::N_fused and not _std::is_constant_evaluated()) {
-			return _std::fma((XTAL_FWD_(xs) *...* XTAL_FWD_(x)), N_sign, XTAL_FWD_(a));
+			return _std::fma((XTAL_REF_(xs) *...* XTAL_REF_(x)), N_sign, XTAL_REF_(a));
 		}
 		else {
-			return XTAL_FWD_(a) + N_sign*(XTAL_FWD_(x) *...* XTAL_FWD_(xs));
+			return XTAL_REF_(a) + N_sign*(XTAL_REF_(x) *...* XTAL_REF_(xs));
 		}
 	}
 
@@ -604,13 +604,13 @@ public:
 	{
 		using U = XTAL_TYP_(u);
 		if constexpr (N_pow ==  0) {
-			return couple_t<U> {u, 1/XTAL_FWD_(u)};
+			return couple_t<U> {u, 1/XTAL_REF_(u)};
 		}	else
 		if constexpr (N_pow == +1) {
-			return U(XTAL_FWD_(u));
+			return U(XTAL_REF_(u));
 		}	else
 		if constexpr (N_pow == -1) {
-			return U(1/XTAL_FWD_(u));
+			return U(1/XTAL_REF_(u));
 		}
 	}
 
@@ -711,7 +711,7 @@ public:
 	XTAL_FN2 root_1f(auto &&w)
 	XTAL_0EX
 	{
-		return single_t<alpha_t>(XTAL_FWD_(w));
+		return single_t<alpha_t>(XTAL_REF_(w));
 	}
 	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
 	XTAL_FN2 root_2f(alpha_t const &w)
@@ -746,7 +746,7 @@ public:
 	XTAL_FN2 unsquare_dot_f(auto &&u)
 	XTAL_0EX
 	{
-		return unsquare_f<N_pow, N_lim>(dot_f(XTAL_FWD_(u)));
+		return unsquare_f<N_pow, N_lim>(dot_f(XTAL_REF_(u)));
 	}
 
 
@@ -797,7 +797,7 @@ public:
 	XTAL_FN2 explo_f(auto &&base, sigma_t const &n_zoom)
 	XTAL_0EX
 	{
-		XTAL_TYP_(base) u = XTAL_FWD_(base), w = 1;
+		XTAL_TYP_(base) u = XTAL_REF_(base), w = 1;
 		for (sigma_t n = n_zoom; n; n >>= 1) {
 			if (n & 1) {
 			w *= u;
@@ -1013,7 +1013,7 @@ public:
 	XTAL_FN2 minimum_f(auto &&...values)
 	XTAL_0EX
 	{
-		return _std::min<alpha_t>({XTAL_FWD_(values)...});
+		return _std::min<alpha_t>({XTAL_REF_(values)...});
 	}
 
 
@@ -1042,7 +1042,7 @@ public:
 	XTAL_FN2 maximum_f(auto &&...values)
 	XTAL_0EX
 	{
-		return _std::max<alpha_t>({XTAL_FWD_(values)...});
+		return _std::max<alpha_t>({XTAL_REF_(values)...});
 	}
 
 
@@ -1612,7 +1612,7 @@ static_assert(sizeof(size_s) == sizeof(typename realized::alpha_t));
 
 template <auto ...N_etc>
 XTAL_LET computrim_f = []<class T>(T &&t)
-XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_FWD_(t)));
+XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 
 
 ///////////////////////////////////////////////////////////////////////////////

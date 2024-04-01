@@ -32,7 +32,7 @@ template <                     typename ..._s> XTAL_ASK scope_q = bond::tag_p<sc
 template <class W=counter_t<>, typename ...As> XTAL_USE scope_t = confined_t<scope<W>, As...>;
 template <                     typename ...As>
 XTAL_FN2  scope_f(auto &&w)
-XTAL_0EZ_(scope_t<counter_t<>, As...>(XTAL_FWD_(w)))
+XTAL_0EZ_(scope_t<counter_t<>, As...>(XTAL_REF_(w)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ struct prequel
 		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::infuse(XTAL_FWD_(o));
+			return S::infuse(XTAL_REF_(o));
 		}
 
 		///\
@@ -206,7 +206,7 @@ struct prequel
 		XTAL_TNX effuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::effuse(XTAL_FWD_(o));
+			return S::effuse(XTAL_REF_(o));
 		}
 		XTAL_TNX effuse(scope_q auto &&t)
 		XTAL_0EX
@@ -256,11 +256,11 @@ struct scope<V>
 		{}
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{}
 		XTAL_CXN subtype(iterated_q auto &&o, auto &&...oo)
 		XTAL_0EX
-		:	S_(count_f(XTAL_FWD_(o)), XTAL_FWD_(oo)...)
+		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TN2_(T_self) slice(counted_q auto &&w)

@@ -24,17 +24,17 @@ XTAL_0EX
 #ifdef __cpp_lib_execution
 	auto constexpr seq = execution::  seq;
 	auto constexpr par = execution::unseq;
-	if (o) transform(seq, j0, jN, i, XTAL_FWD_(f));
-	else   transform(par, j0, jN, i, XTAL_FWD_(f));
+	if (o) transform(seq, j0, jN, i, XTAL_REF_(f));
+	else   transform(par, j0, jN, i, XTAL_REF_(f));
 #else
-	transform(j0, jN, i, XTAL_FWD_(f));
+	transform(j0, jN, i, XTAL_REF_(f));
 #endif
 }
 template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 copy_to(I i, J const &j, F &&f, bool o=false)
 XTAL_0EX
 {
-	copy_to(i, j.begin(), j.end(), XTAL_FWD_(f), o);
+	copy_to(i, j.begin(), j.end(), XTAL_REF_(f), o);
 }
 template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
@@ -71,13 +71,13 @@ XTAL_0EX
 {
 	auto const _j0 = mover_f(j0);
 	auto const _jN = mover_f(jN);
-	return copy_to(i, _j0, _jN, XTAL_FWD_(f), o);
+	return copy_to(i, _j0, _jN, XTAL_REF_(f), o);
 }
 template <iterator_q I, bracket_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 move_to(I i, J const &j, F &&f, bool o=false)
 XTAL_0EX
 {
-	move_to(i, j.begin(), j.end(), XTAL_FWD_(f), o);
+	move_to(i, j.begin(), j.end(), XTAL_REF_(f), o);
 }
 template <iterator_q I, iterator_q J>
 XTAL_FN0 move_to(I i, J j0, J jN, bool o=false)
@@ -100,8 +100,8 @@ XTAL_FN0 move_to(I i0, J &&j)
 XTAL_0EX
 {
 	_std::is_lvalue_reference_v<J>?
-		_std::memcpy (i0, XTAL_FWD_(j).begin(), sizeof(j)):
-		_std::memmove(i0, XTAL_FWD_(j).begin(), sizeof(j));
+		_std::memcpy (i0, XTAL_REF_(j).begin(), sizeof(j)):
+		_std::memmove(i0, XTAL_REF_(j).begin(), sizeof(j));
 }
 
 
@@ -109,7 +109,7 @@ template <bracket_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 apply_to(J &&j, F &&f, bool o=false)
 XTAL_0EX
 {
-	move_to(j.begin(), j, XTAL_FWD_(f), o);
+	move_to(j.begin(), j, XTAL_REF_(f), o);
 }
 
 

@@ -53,7 +53,7 @@ struct refine_head
 //		XTAL_0FX
 //		{
 //			auto t = twin();
-//			(void) t.template head<Is...>(XTAL_FWD_(oo)...);
+//			(void) t.template head<Is...>(XTAL_REF_(oo)...);
 //			return t;
 //		}
 
@@ -66,7 +66,7 @@ struct refine_head
 		XTAL_0EX 
 	//	XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
 		{
-			return T_self(extremum_f<U_head>(N_polarity), XTAL_FWD_(oo)...);
+			return T_self(extremum_f<U_head>(N_polarity), XTAL_REF_(oo)...);
 		}
 
 	};
@@ -146,8 +146,8 @@ struct defer_field
 		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
-		,	u_body(member_f<U_head>(XTAL_FWD_(a)))
+		:	S_(XTAL_REF_(oo)...)
+		,	u_body(member_f<U_head>(XTAL_REF_(a)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -161,7 +161,7 @@ struct defer_field
 		XTAL_0EX
 		XTAL_REQ rebased_q<U_head> and (0 < sizeof...(oo))
 		{
-			return dismember_f(u_body, XTAL_FWD_(oo)...);
+			return dismember_f(u_body, XTAL_REF_(oo)...);
 		}
 
 	};
@@ -189,7 +189,7 @@ struct defer_field<U>
 		template <integral_q A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
+		:	S_(XTAL_REF_(oo)...)
 		{
 			static_assert(A::value == U::value);
 		}
@@ -237,14 +237,14 @@ struct defer_field<unit_t[N_width]>
 		template <infungible_q<subtype> A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_FWD_(oo)...)
-		,	u_body(member_f<U_head>(XTAL_FWD_(a)))
+		:	S_(XTAL_REF_(oo)...)
+		,	u_body(member_f<U_head>(XTAL_REF_(a)))
 		{
 		}
 		template <integral_p A>
 		XTAL_CON subtype(A &&a)
 		XTAL_0EX
-		:	S_(U_head(XTAL_FWD_(a)) >> N_depth)
+		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
 		,	u_body(U_head(a)&(N_width - 1))
 		{
 		}
@@ -378,9 +378,9 @@ struct refer_binary_logic<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 ^=(auto &&o) XTAL_0EX {S::head() ^= XTAL_FWD_(o); return S::self();}
-		XTAL_OP1 |=(auto &&o) XTAL_0EX {S::head() |= XTAL_FWD_(o); return S::self();}
-		XTAL_OP1 &=(auto &&o) XTAL_0EX {S::head() &= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 ^=(auto &&o) XTAL_0EX {S::head() ^= XTAL_REF_(o); return S::self();}
+		XTAL_OP1 |=(auto &&o) XTAL_0EX {S::head() |= XTAL_REF_(o); return S::self();}
+		XTAL_OP1 &=(auto &&o) XTAL_0EX {S::head() &= XTAL_REF_(o); return S::self();}
 
 	};
 };
@@ -395,9 +395,9 @@ struct refer_binary_logic<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 ^ (auto &&o) XTAL_0FX {return T_self(S::head() ^ XTAL_FWD_(o));}
-		XTAL_OP2 | (auto &&o) XTAL_0FX {return T_self(S::head() | XTAL_FWD_(o));}
-		XTAL_OP2 & (auto &&o) XTAL_0FX {return T_self(S::head() & XTAL_FWD_(o));}
+		XTAL_OP2 ^ (auto &&o) XTAL_0FX {return T_self(S::head() ^ XTAL_REF_(o));}
+		XTAL_OP2 | (auto &&o) XTAL_0FX {return T_self(S::head() | XTAL_REF_(o));}
+		XTAL_OP2 & (auto &&o) XTAL_0FX {return T_self(S::head() & XTAL_REF_(o));}
 
 	};
 };
@@ -441,8 +441,8 @@ struct refer_multiplicative_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 *=(auto &&o) XTAL_0EX {S::head() *= XTAL_FWD_(o); return S::self();}
-		XTAL_OP1 /=(auto &&o) XTAL_0EX {S::head() /= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 *=(auto &&o) XTAL_0EX {S::head() *= XTAL_REF_(o); return S::self();}
+		XTAL_OP1 /=(auto &&o) XTAL_0EX {S::head() /= XTAL_REF_(o); return S::self();}
 
 	};
 };
@@ -457,8 +457,8 @@ struct refer_multiplicative_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 * (auto &&o) XTAL_0FX {return T_self(S::head() * XTAL_FWD_(o));}
-		XTAL_OP2 / (auto &&o) XTAL_0FX {return T_self(S::head() / XTAL_FWD_(o));}
+		XTAL_OP2 * (auto &&o) XTAL_0FX {return T_self(S::head() * XTAL_REF_(o));}
+		XTAL_OP2 / (auto &&o) XTAL_0FX {return T_self(S::head() / XTAL_REF_(o));}
 
 	};
 };
@@ -486,8 +486,8 @@ struct refer_additive_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_OP1 +=(auto &&o) XTAL_0EX {S::head() += XTAL_FWD_(o); return S::self();}
-		XTAL_OP1 -=(auto &&o) XTAL_0EX {S::head() -= XTAL_FWD_(o); return S::self();}
+		XTAL_OP1 +=(auto &&o) XTAL_0EX {S::head() += XTAL_REF_(o); return S::self();}
+		XTAL_OP1 -=(auto &&o) XTAL_0EX {S::head() -= XTAL_REF_(o); return S::self();}
 
 	};
 };
@@ -502,8 +502,8 @@ struct refer_additive_group<U, 2>
 	
 	public:
 		using S::S;
-		XTAL_OP2 + (auto &&o) XTAL_0FX {return T_self(S::head() + XTAL_FWD_(o));}
-		XTAL_OP2 - (auto &&o) XTAL_0FX {return T_self(S::head() - XTAL_FWD_(o));}
+		XTAL_OP2 + (auto &&o) XTAL_0FX {return T_self(S::head() + XTAL_REF_(o));}
+		XTAL_OP2 - (auto &&o) XTAL_0FX {return T_self(S::head() - XTAL_REF_(o));}
 		XTAL_OP1 - () XTAL_0FX {return T_self(-S::head());}
 
 	};

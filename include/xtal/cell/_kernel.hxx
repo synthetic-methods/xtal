@@ -65,87 +65,77 @@ struct confined
 	using    type = subtype<any_s<unit_t>>;
 	
 };
-template <typename ...As>
-using confined_t = typename confined<As...>::type;
+template <typename   ...As>	using       confined_t = typename confined<As...>::type;
 
-
-///\experimental\
+template <typename   ...As>	concept   decorator_q = (...and requires {typename As::template subtype<confined_t<>>;});
+template <typename   ...As>	concept undecorator_q =     not decorator_q<As...>;
+///<\experimental\
 Determines whether `...As` can be used to decorate within the current namespace. \
 
-template <typename ...As> concept   confinable_q = (...and requires {typename As::template subtype<confined_t<>>;});
-template <typename ...As> concept unconfinable_q = not confinable_q<As...>;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Combines `defer` and `refer` to lift `U`, \
-sandwiching the decorators `As...`. \
+Combines `defer` and `refer` to lift `U`, sandwiching the decorators `As...`. \
 
-template <class U, typename ...As>
-struct confer: bond::compose<refer<U>, As..., defer<U>> {};
+template <class U, typename ...As>	struct  confer      : bond::compose<refer<U>, As..., defer<U>> {};
+template <class U, typename ...As>	using   conferred   = confined<confer<U, As...>>;
+template <class U, typename ...As>	using   conferred_t = typename conferred<U, As...>::type;
 
-///\
-Creates a lifted form of `U`, _decorated_ with `As...`. \
 
-template <class U, typename ...As> using conferred   = confined<confer<U, As...>>;
-template <class U, typename ...As> using conferred_t = typename conferred<U, As...>::type;
+template <class   ...As>	concept   conferrable_q = complete_q<As...> and not decorator_q<As...>;
+template <class   ...As>	concept unconferrable_q = not conferrable_q<As...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Lifts `A` with either `defer` or `any`, \
-depending respectively on whether `U` is `complete_q<U>` or `incomplete_q<U>`. \
+Lifts `A` with `defer`/`any` depending on whether `complete_q<U>`/`incomplete_q<U>`. \
 
 ///\experimental\
-Will attempt to use `A` directly if it appears to be 
+Will attempt to use `A` directly if it appears to be `decorator_q`.
 
-template <class        U          > struct infer       : defer<U> {};
-template <confinable_q U          > struct infer<U>    :       U  {};
-template <incomplete_q U          > struct infer<U>    :   any<U> {};
-template <incomplete_q U, size_t N> struct infer<U[N]> : bond::compose<any<U>, defer<unit_t[N]>> {};
+template <class        A          > struct infer       : defer<A> {};
+template <decorator_q A          > struct infer<A>    :       A  {};
+template <incomplete_q A          > struct infer<A>    :   any<A> {};
+template <incomplete_q A, size_t N> struct infer<A[N]> : bond::compose<any<A>, defer<unit_t[N]>> {};
+template <                        > struct infer<void> : bond::compose<                        > {};
 
-template <class ...Us> using infers = bond::compose<infer<Us>...>;///< Chained `infer`rals.
-template <class ...Us> using defers = bond::compose<defer<Us>...>;///< Chained `defer`rals.
-
-template <typename ...As> concept   referrable_q = complete_q<As...> and unconfinable_q<As...>;
-template <typename ...As> concept unreferrable_q = not referrable_q<As...>;
+template <class   ...Us>	using infers = bond::compose<infer<Us>...>;///< Chained `infer`rals.
+template <class   ...Us>	using defers = bond::compose<defer<Us>...>;///< Chained `defer`rals.
 
 ///\
-Delegates to the first `referrable_q` provided, if any. \
+Delegates to the first `conferrable_q` provided, if any. \
 
-template <                  class ...Us> struct referring           : bond::compose<> {};
-template <unreferrable_q U, class ...Us> struct referring<U, Us...> : referring<Us...> {};
-template <  referrable_q U, class ...Us> struct referring<U, Us...> : refer<U> {};
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-///\
-Creates a `std::tuple` analogue. \
-
-template <class ...Us> using   tupled   = confined<infers<Us...>, any<class tupled_a>>;
-template <class ...Us> using   tupled_t = typename tupled<Us...>::type;
-template <class ...Ts> concept tupled_q = any_p<class tupled_a, Ts...>;
+template <                   class ...Us> struct referred           : bond::compose<> {};
+template <unconferrable_q U, class ...Us> struct referred<U, Us...> : referred<Us...> {};
+template <  conferrable_q U, class ...Us> struct referred<U, Us...> : refer<U> {};
 
 
 ///\
 Creates a `confined` type from `infers<As...>`. \
 
-template <class ...Us> using   lifted   = confined<referring<Us...>, infers<Us...>>;
-template <class ...Us> using   lifted_t = typename lifted<Us...>::type;
+template <class   ...As>	using inferred   = confined<referred<As...>, infers<As...>>;
+template <class   ...As>	using inferred_t = typename inferred<As...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Creates a unique tuple `inferred` from `...As`. \
+
+template <class   ...As>	struct  packed   : inferred<As..., bond::tag<packed>> {};
+template <class   ...As>	using   packed_t = typename packed<As...>::type;
+template <class   ...As>	concept packed_q = any_p<class packed_a, As...>;
 
 
 ///\
-Defines `type` by `W` if `any_q<W>`, otherwise `conferred_t<W>`. \
+Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
 
-template <class ...Ws> struct  let;
-template <class    W > struct  let<W> {using type = conferred_t<W>;};
-template <any_q    W > struct  let<W> {using type =             W ;};
-template <class ...Ws> using   let_t = typename let<Ws...>::type;
+template <class    T > struct  let    {using type = conferred_t<T>;};
+template <any_q    T > struct  let<T> {using type =             T ;};
+template <class    T > using   let_t = typename let<T>::type;
 
-template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_FWD_(w));}
-template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_FWD_(w));}
+template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_REF_(w));}
+template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_REF_(w));}
 ///<\
 \returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
 

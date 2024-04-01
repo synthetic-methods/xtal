@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_ASK cross_q =      bond::tag_p<cross, _s...>;
 template <typename ..._s> XTAL_USE cross_t = confined_t<cross< _s...>>;
 template <typename ...As>
 XTAL_FN2  cross_f(auto &&u)
-XTAL_0EZ_(cross_t<XTAL_TYP_(u), As...>(XTAL_FWD_(u)))
+XTAL_0EZ_(cross_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
 namespace _detail
@@ -56,7 +56,7 @@ struct cross<W, U, As...>
 		XTAL_TN2 method(auto &&...xs),
 		{
 			auto constexpr N = sizeof...(xs);
-			auto const     n = bond::pack_f(XTAL_FWD_(xs)...);
+			auto const     n = bond::pack_f(XTAL_REF_(xs)...);
 			auto const    &m = head();
 			auto constexpr M = bond::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(bond::seek_t<I...>)

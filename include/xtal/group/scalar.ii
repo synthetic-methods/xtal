@@ -91,7 +91,7 @@ struct scalar<U[N]>
 				u = re::accumulate_f(u, s[i], t[i]);
 			});
 			return u;
-		//	return (twin() *= XTAL_FWD_(that)).sum();
+		//	return (twin() *= XTAL_REF_(that)).sum();
 		}
 
 		

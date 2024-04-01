@@ -62,7 +62,7 @@ struct define
 				XTAL_TNX influx(cell::mark_s<T> o, auto &&...oo)
 				XTAL_0EX
 				{
-					return self().influx(o.head(), o.then(), XTAL_FWD_(oo)...);
+					return self().influx(o.head(), o.then(), XTAL_REF_(oo)...);
 				}
 				XTAL_TNX influx(cell::mark_s<> m, auto &&...oo)
 				XTAL_0EX
@@ -71,10 +71,10 @@ struct define
 						return R_::influx();
 					}
 					else if (m &= W_mask) {
-						return R_::influx(m, XTAL_FWD_(oo)...);
+						return R_::influx(m, XTAL_REF_(oo)...);
 					}
 					else {
-						return R_::influx(XTAL_FWD_(oo)...);
+						return R_::influx(XTAL_REF_(oo)...);
 					}
 				}
 
@@ -118,7 +118,7 @@ struct define
 
 				XTAL_TO2_(
 				XTAL_OP2() (auto &&...xs),
-					(self().*deify<decltype(xs)...>()) (XTAL_FWD_(xs)...)
+					(self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
 				XTAL_TO4_(template <class ...Xs>
@@ -184,10 +184,10 @@ struct define
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return R_::heading(XTAL_FWD_(o));
+						return R_::heading(XTAL_REF_(o));
 					}
 					else {
-						return R_::effuse(XTAL_FWD_(o));
+						return R_::effuse(XTAL_REF_(o));
 					}
 				}
 
@@ -213,10 +213,10 @@ struct define
 				XTAL_0EX
 				{
 					if constexpr (is_q<T, XTAL_TYP_(o)>) {
-						return R_::heading(XTAL_FWD_(o));
+						return R_::heading(XTAL_REF_(o));
 					}
 					else {
-						return R_::infuse(XTAL_FWD_(o));
+						return R_::infuse(XTAL_REF_(o));
 					}
 				}
 

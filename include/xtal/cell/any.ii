@@ -65,7 +65,7 @@ struct define
 				return S_::template self<X>();
 			}
 			else {
-				return S_::template self<X>() = X(XTAL_FWD_(oo)..., XTAL_MOV_(self()));
+				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
 			}
 		})
 		///<\returns `this` indexed by `Is...`, \
@@ -127,7 +127,7 @@ struct refine
 ///////////////////////////////////////////////////////////////////////////////
 ///\
 Proxies the given `U` via `head`, \
-providing chained/tupled construction/access. \
+providing chained/packed construction/access. \
 
 ///\note\
 Mutable `lvalue`s are converted to pointers, \
@@ -181,8 +181,8 @@ struct defer
 			return heading(t.head()) and S_::template self<1>() == t;
 		}
 
-	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
-	//	XTAL_OP2 >> (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_FWD_(self()), XTAL_FWD_(t));}
+	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
+	//	XTAL_OP2 >> (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
 
 		///\
 		Tuple arity. \
@@ -194,7 +194,7 @@ struct defer
 		XTAL_TN2 apply(auto &&f)// TODO: Require `std::invocable`.
 		XTAL_0FX
 		{
-			return [this, g = XTAL_FWD_(f)] <size_t ...I>(bond::seek_t<I...>)
+			return [this, g = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(g(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
 		}
 		///\
@@ -204,7 +204,7 @@ struct defer
 		XTAL_0FX
 		{
 		//	return apply(bond::pack_f);
-			return apply([] (auto &&...oo) XTAL_0FN_(_std::make_tuple(XTAL_FWD_(oo)...)));
+			return apply([] (auto &&...oo) XTAL_0FN_(_std::make_tuple(XTAL_REF_(oo)...)));
 		}
 
 	};

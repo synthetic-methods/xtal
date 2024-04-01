@@ -33,11 +33,11 @@ public:
 
 		XTAL_CXN subtype(integral_p auto n, auto &&...oo)
 		XTAL_0EX
-		:	S_(n, (V) 1/V(n), XTAL_FWD_(oo)...)
+		:	S_(n, (V) 1/V(n), XTAL_REF_(oo)...)
 		{}
 		XTAL_CXN subtype(_std::floating_point auto u, auto &&...oo)
 		XTAL_0EX
-		:	S_((U) 1/V(u), u, XTAL_FWD_(oo)...)
+		:	S_((U) 1/V(u), u, XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2   rate(), S_::template head<0>())
