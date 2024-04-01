@@ -26,13 +26,14 @@ struct indent<Ns...>
 {
 	using path = confined<bond::tag<indent>, confer<Ns>...>;
 	
-	template <bond::pack_q S> using leaf_s = bond::pack_item_t<S, Ns{}...>;
-	template <bond::pack_q S> using node_s = bond::compose_s<conferred_t<leaf_s<S>>, path>;
+	template <bond::pack_q S> using leaf_u = bond::pack_item_t<S, Ns{}...>;
+	template <bond::pack_q S> using leaf_t = conferred_t<leaf_u<S>>;
+	template <bond::pack_q S> using node_t = typename path::template subtype<leaf_t<S>>;
 	template <bond::pack_q S>
-	class subtype: public node_s<S>
+	class subtype: public node_t<S>
 	{
-		using S_ = node_s<S>;
-		using L_ = leaf_s<S>;
+		using S_ = node_t<S>;
+		using L_ = leaf_u<S>;
 
 	public:
 		using S_::S_;

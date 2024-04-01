@@ -182,9 +182,9 @@ TAG_("cell", "composition")
 	class L_hyp;
 	class L_etc;
 
-	using T_aim = inferred_t<L_aim[4]>;
-	using T_hyp = inferred_t<L_hyp[2]>;
-	using T_opt = inferred_t<L_aim[4], L_hyp[2]>;
+	using T_aim = lifted_t<L_aim[4]>;
+	using T_hyp = lifted_t<L_hyp[2]>;
+	using T_opt = lifted_t<L_aim[4], L_hyp[2]>;
 	
 	TRY_("task")
 	{

@@ -21,10 +21,10 @@ namespace xtal::_test
 
 using namespace bond;
 
-using scale_t = message::inferred_t<class scale_a, typename bond::realized::alpha_t>;
-using level_t = message::inferred_t<class level_a, typename bond::realized::alpha_t>;
+using scale_t = message::lifted_t<class scale_a, typename bond::realized::alpha_t>;
+using level_t = message::lifted_t<class level_a, typename bond::realized::alpha_t>;
 /*/
-using onset_t = message::inferred_t<class onset_a, typename bond::realized::alpha_t>;
+using onset_t = message::lifted_t<class onset_a, typename bond::realized::alpha_t>;
 /*/
 struct onset
 :	message::confer<typename bond::realized::alpha_t

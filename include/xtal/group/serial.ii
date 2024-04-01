@@ -75,7 +75,7 @@ struct serial<U[N]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			bond::seek_forward_f<N - 1>([&, this] (auto i) XTAL_0FN_(get(i) += get(i + 1)));
+			bond::seek_forward_f<N - 1>([this] (auto i) XTAL_0FN_(get(i) += get(i + 1)));
 			return self();
 		}
 
@@ -91,7 +91,7 @@ struct serial<U[N]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			bond::seek_backward_f<N - 1>([&, this] (auto i) XTAL_0FN_(get(i) -= get(i + 1)));
+			bond::seek_backward_f<N - 1>([this] (auto i) XTAL_0FN_(get(i) -= get(i + 1)));
 			return self();
 		}
 
