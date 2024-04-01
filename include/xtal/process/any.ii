@@ -35,34 +35,34 @@ struct define
 		XTAL_0FX {return this == _std::addressof(t);}
 		
 		///\
-		Alias of `method(...)`. \
+		Alias of `functor(...)`. \
 		
 		XTAL_TO2_(
 		XTAL_OP2() (auto &&...xs),
-			self().method(XTAL_REF_(xs)...)
+			self().functor(XTAL_REF_(xs)...)
 		)
 		
 		///\
-		The default `method` defers to the static `function` (only when `this` is `const`). \
+		The default `functor` defers to the static `function` (only when `this` is `const`). \
 
 		template <auto ...Is>
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return T::template function<Is...>(XTAL_REF_(xs)...);
 		}
 
-		///\returns the lambda abstraction of `method`, \
+		///\returns the lambda abstraction of `functor`, \
 		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_TN2 reify(integral_q auto const ...is),
 		{
 			if constexpr (0 == sizeof...(is)) {
-				return [&, this] XTAL_1FN_(self().method);
+				return [&, this] XTAL_1FN_(self().functor);
 			}
 			else {
-				return [&, this] XTAL_1FN_(self().template method<is...>);
+				return [&, this] XTAL_1FN_(self().template functor<is...>);
 			}
 		})
 		//\
@@ -86,7 +86,7 @@ struct define
 		///\
 		Defines the subtype-indexed function-pointer table, \
 		dynamically indexed by message-value/subtype `T`, \
-		and statically-generated from `method<Is...>` with `sizeof...(Is)` entries. \
+		and statically-generated from `functor<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
 		struct being
@@ -95,21 +95,21 @@ struct define
 			class resolve
 			{
 			public:
-				using Y_return = decltype(XTAL_VAL_(T &).template method<Is...>(XTAL_VAL_(Xs)...));
+				using Y_return = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(Xs)...));
 				using Y_method = Y_return (T::*) (argument_t<Xs>...);
 
 			};
 			template <auto ...Is>
-			XTAL_REQ_(XTAL_VAL_(T const &).template method<Is...>(XTAL_VAL_(Xs)...))
+			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...))
 			class resolve<Is...>
 			{
 			public:
-				using Y_return = decltype(XTAL_VAL_(T const &).template method<Is...>(XTAL_VAL_(Xs)...));
+				using Y_return = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...));
 				using Y_method = Y_return (T::*) (argument_t<Xs>...) const;
 
 			};
 			template <auto ...Is> XTAL_USE Y_method = typename resolve<Is...>::Y_method;
-			template <auto ...Is> XTAL_LET m_method = static_cast<Y_method<Is...>>(&T::template method<Is...>);
+			template <auto ...Is> XTAL_LET m_method = static_cast<Y_method<Is...>>(&T::template functor<Is...>);
 		
 		};
 
@@ -170,16 +170,16 @@ struct define
 				}
 
 				///\
-				Evaluates the lifted `method` using the bound slots. \
+				Evaluates the lifted `functor` using the bound slots. \
 
 				template <auto ...Is>
-				XTAL_TN2 method()
+				XTAL_TN2 functor()
 				XTAL_0EX
 				{
-					return _std::apply([this] XTAL_1FN_(R_::template method<Is...>), slots());
+					return _std::apply([this] XTAL_1FN_(R_::template functor<Is...>), slots());
 				}
 				
-				using R_::method;
+				using R_::functor;
 			//	using R_::influx;
 			//	using R_::efflux;
 
@@ -340,7 +340,7 @@ struct defer
 		Constant redirection. \
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 method(auto &&...xs),
+		XTAL_TN2 functor(auto &&...xs),
 		{
 			if constexpr (_std::invocable<U_head, decltype(xs)...>) {
 				return head() (XTAL_REF_(xs)...);
@@ -374,9 +374,9 @@ struct defer<U>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 method(auto &&...xs),
+		XTAL_TN2 functor(auto &&...xs),
 		{
-			return head().template method<Is...>(XTAL_REF_(xs)...);
+			return head().template functor<Is...>(XTAL_REF_(xs)...);
 		})
 		template <auto ...Is>
 		XTAL_FN2 function(auto &&...xs)
@@ -389,9 +389,9 @@ struct defer<U>
 		Adjacent `defer`red processes are (currently) composed together. \
 
 		XTAL_DO2_(template <auto ...Is> requires any_q<head_t<cardinal_1>>
-		XTAL_TN2 method(auto &&...xs),
+		XTAL_TN2 functor(auto &&...xs),
 		{
-			return head().template method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
+			return head().template functor<Is...>(S::template functor<Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is> requires any_q<head_t<cardinal_1>>
 		XTAL_FN2 function(auto &&...xs)

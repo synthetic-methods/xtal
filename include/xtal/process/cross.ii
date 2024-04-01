@@ -53,14 +53,14 @@ struct cross<W, U, As...>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Ks>
-		XTAL_TN2 method(auto &&...xs),
+		XTAL_TN2 functor(auto &&...xs),
 		{
 			auto constexpr N = sizeof...(xs);
 			auto const     n = bond::pack_f(XTAL_REF_(xs)...);
 			auto const    &m = head();
 			auto constexpr M = bond::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(S_::template method<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
+				XTAL_0FN_(S_::template functor<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
 			(bond::seek_f<M> {});
 		})
 

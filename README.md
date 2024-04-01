@@ -38,21 +38,21 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	struct Mix: process::confine_t<Mix>
 	{
 	   template <auto...>
-	   XTAL_TN2 method(auto &&...xs)
+	   XTAL_TN2 functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0);
 	   }
 	};
 
-The implementation of a `process` is defined by the `template`d function `method`.
+The implementation of a `process` is defined by the `template`d function `functor`.
 When the `template` parameter list is undefined `<auto...>`,
-this `method` is aliased as the invocation `operator()`.
+this `functor` is aliased as the invocation `operator()`.
 
 	Mix mix;
 	auto six = mix(1.1, 2.2, 3.3);// 6.6
 
 Range-lifting is achieved using functors like `processor::{conferred,confined}`,
-which `zip` the underlying `method`.
+which `zip` the underlying `functor`.
 
 	using Mixer = processor::conferred_t<Mix>;
 	Mixer mixer;
@@ -70,7 +70,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 	struct Mix: process::confine_t<Mix, Active::template attach>
 	{
-	   XTAL_TN2 method(auto &&...xs)
+	   XTAL_TN2 functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
 	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
@@ -87,7 +87,7 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	>
 	{
 	   template <auto offset, auto active>
-	   XTAL_TN2 method(auto &&...xs)
+	   XTAL_TN2 functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }

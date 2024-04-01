@@ -71,7 +71,7 @@ TAG_("process", "construct")
 	TRY_("lifting")
 	{
 		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-		TRUE_(10 == f.method(1, 2, 3, 4));
+		TRUE_(10 == f.functor(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
 		TRUE_(10 == f.reify() (1, 2, 3, 4));
 
@@ -84,8 +84,8 @@ TAG_("process", "construct")
 		TRUE_(2L == halve_square_root_t::function(16L));
 		TRUE_(3L == square_root_halve_t::function(18L));
 
-		TRUE_(2L == halve_square_root_t {}.method(16L));
-		TRUE_(3L == square_root_halve_t {}.method(18L));
+		TRUE_(2L == halve_square_root_t {}.functor(16L));
+		TRUE_(3L == square_root_halve_t {}.functor(18L));
 
 	}
 }
@@ -160,11 +160,11 @@ TAG_("process", "message")
 	TRY_("influx operator (static)")  {process_provision__influx_operator( static_onset_mix_t());}
 	TRY_("efflux operator (static)")  {process_provision__efflux_operator( static_onset_mix_t());}
 
-	TRY_("influx method (dynamic)") {process_provision__influx_method(dynamic_onset_mix_t());}
-	TRY_("efflux method (dynamic)") {process_provision__efflux_method(dynamic_onset_mix_t());}
+	TRY_("influx functor (dynamic)") {process_provision__influx_method(dynamic_onset_mix_t());}
+	TRY_("efflux functor (dynamic)") {process_provision__efflux_method(dynamic_onset_mix_t());}
 
-	TRY_("influx method (static)")  {process_provision__influx_method( static_onset_mix_t());}
-	TRY_("efflux method (static)")  {process_provision__efflux_method( static_onset_mix_t());}
+	TRY_("influx functor (static)")  {process_provision__influx_method( static_onset_mix_t());}
+	TRY_("efflux functor (static)")  {process_provision__efflux_method( static_onset_mix_t());}
 
 }
 

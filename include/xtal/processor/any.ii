@@ -70,20 +70,20 @@ struct defer<U>
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
 		template <auto ...Ks>
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0EX
 		{
 			return _detail::impurify_f(reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...));
 		}
 		template <auto ...Ks>
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0EX
-		XTAL_REQ_(XTAL_VAL_(U const &).method(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
+		XTAL_REQ_(XTAL_VAL_(U const &).functor(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
 		{
 			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}
 		template <auto ...Ks>
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return reified_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
@@ -114,13 +114,13 @@ struct refer
 	public:
 		using S_::S_;
 
-	//	using S_::method;
+	//	using S_::functor;
 
 		XTAL_DO2_(template <auto ...>
-		XTAL_TN2 method(),
+		XTAL_TN2 functor(),
 		{
 			using I = iteratee_t<U_scope>; using re = bond::realize<I>;
-			auto const &m = S_::method();// NOTE: Must be &?
+			auto const &m = S_::functor();// NOTE: Must be &?
 			auto const &u = S_::template head<U_scope>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
@@ -135,8 +135,8 @@ struct refer
 			return m|_v3::views::slice(i, j);
 		})
 
-		XTAL_TO2_(XTAL_TN2 begin(), method().begin())
-		XTAL_TO2_(XTAL_TN2   end(), method().  end())
+		XTAL_TO2_(XTAL_TN2 begin(), functor().begin())
+		XTAL_TO2_(XTAL_TN2   end(), functor().  end())
 
 	};
 };

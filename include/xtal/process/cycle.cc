@@ -22,7 +22,7 @@ TAG_("cycle")
 	using U_phi = cycle_t<T_delta[2]>;
 	using W_phi = group::cycle_t<T_alpha[2]>;
 
-	EST_("method")
+	EST_("functor")
 	{
 		T_alpha x = re::haplo_f(17), x_dt = re::haplo_f(16);
 		T_alpha y = re::haplo_f(64);
@@ -34,7 +34,7 @@ TAG_("cycle")
 		return y;
 
 	};
-	TRY_("method")
+	TRY_("functor")
 	{
 		T_alpha x = 0, x_dt = re::haplo_f(4);
 

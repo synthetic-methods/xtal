@@ -13,7 +13,7 @@ namespace xtal::scheduled
 
 ///\
 Provides an `in(flux )queue` for `X` on the target object, \
-which produces a signal by successive calls to `method`. \
+which produces a signal by successive calls to `functor`. \
 
 ///\todo\
 Adapt to provide polling. \
@@ -72,7 +72,7 @@ struct thunk
 					return u == *u_spool.push(XTAL_REF_(u));
 				}
 
-				XTAL_TN2 method()
+				XTAL_TN2 functor()
 				XTAL_0EX
 				{
 					return u_spool.advance(v_delay++ == u_spool.peek(1).head()).then().head();
@@ -86,7 +86,7 @@ struct thunk
 				respectively enabling/disabling if the goal has/hasn't been met. \
 
 				///\todo\
-				Once the phasor-type is settled, define a `method` that updates only on reset. \
+				Once the phasor-type is settled, define a `functor` that updates only on reset. \
 
 			};
 		};

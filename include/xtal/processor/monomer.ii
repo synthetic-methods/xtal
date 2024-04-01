@@ -70,11 +70,11 @@ struct monomer<U, As...>
 				{}
 				XTAL_CXN subtype(is_q<T_self> auto &&t, auto &&...xs)
 				XTAL_0EX
-				:	R_(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				:	R_(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
 				XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), R_::head(XTAL_REF_(oo)...))
-				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
+				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
 
 
 				using R_::efflux;
@@ -82,7 +82,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(message::scope_q auto &&o_scope)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(R_::method()), -1) (R_::efflux(XTAL_REF_(o_scope)));
+					return XTAL_FLX_((void) serve(R_::functor()), -1) (R_::efflux(XTAL_REF_(o_scope)));
 				}
 
 			};
@@ -115,7 +115,7 @@ struct monomer<U, As...>
 				using R_::self;
 				using R_::serve;
 				using R_::store;
-				XTAL_TO2_(template <auto ...> XTAL_TN2 method(), serve())
+				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
 
 			//	using R_::infuse;
 				///\
@@ -180,7 +180,7 @@ struct monomer<U, As...>
 					auto const  t_ = respan_x.begin();
 					auto const _n  = recount_f(respan_x);
 					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, scope_x, oo...) or
-						(_v3::ranges::move(R_::method()|_n, t_), 0);
+						(_v3::ranges::move(R_::functor()|_n, t_), 0);
 				}
 
 			};

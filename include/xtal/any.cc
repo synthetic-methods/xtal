@@ -44,7 +44,7 @@ struct mix
 	{
 	public:
 
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return (XTAL_REF_(xs) +...+ 0);
@@ -81,7 +81,7 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_TN2 method(auto &&...xs)
+		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
@@ -100,7 +100,7 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_TN2 method(auto &&x)
+		XTAL_TN2 functor(auto &&x)
 		XTAL_0EX
 		{
 			return XTAL_REF_(x)*this->template head<scale_t>();
@@ -128,7 +128,7 @@ struct dynamic_count
 	public:
 		using co::co;
 
-		XTAL_TN2 method()
+		XTAL_TN2 functor()
 		XTAL_0EX
 		{
 			auto i = u_count; u_count += this->template head<U_restep>();

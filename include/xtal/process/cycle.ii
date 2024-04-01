@@ -85,7 +85,7 @@ struct cycle<W[N], As...>
 		Evaluation by succession. \
 		
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 method(),
+		XTAL_TN2 functor(),
 		{
 			++head(); return head();
 		})
@@ -93,10 +93,10 @@ struct cycle<W[N], As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 method(subarray_q<N> auto &&a),
+		XTAL_TN2 functor(subarray_q<N> auto &&a),
 		{
 			(void) S_::influx(XTAL_REF_(a));
-			return method();
+			return functor();
 		})
 		
 		///\todo\
