@@ -47,16 +47,12 @@ TAG_("cycle")
 	TRY_("multiplication")
 	{
 		T_alpha x =  0.33, x_dt = re::haplo_f(4);
-		T_alpha y =  11.11;// -22 => 11
-	//	T_alpha y =   7.77;// -21 => 10
-	//	T_alpha y =   9.99;// -20 =>  9
-		T_alpha z =  x*y; z -= _std::round(z);
 
 		U_phi   phi {x, x_dt};
 		T_alpha foo {x};
 
-		for (T_sigma i = 0x1; ~--i;) {
-			T_alpha const u = _std::pow(two, 1 + re::mantissa_f(mt19937_f));
+		for (T_sigma i = 0x2; ~--i;) {
+			T_alpha const u = -_std::pow(two, 1 + re::mantissa_f(mt19937_f));
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);

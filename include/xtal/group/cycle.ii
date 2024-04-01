@@ -30,27 +30,27 @@ and addition (affecting only the initial element). \
 Might be worth implementing multiplication for the first element only, \
 either by truncating the type or by parameterizing the operator. \
 The latter could be achieved using `std::initializer_list`s, \
-parameterized by an `alpha_t`-wrapper with a distinguished element. \
+parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
-template <class W, size_t N>
-struct cycle<W[N]>
+template <class A, size_t N>
+struct cycle<A[N]>
 {
-	using re = bond::realize<W>;
-	using delta_t = typename re::delta_t;
-	using sigma_t = typename re::sigma_t;
-	using alpha_t = typename re::alpha_t;
+	using re = bond::realize<A>;
+	using U_delta = typename re::delta_t;
+	using U_sigma = typename re::sigma_t;
+	using U_alpha = typename re::alpha_t;
 	
-	using V = delta_t;
-	using U = alpha_t;
-//	using V_serial = serial_t<V[N]>;
-	using U_serial = serial_t<U[N]>;
+	using W_delta = serial_t<U_delta[N]>;
+	using W_sigma = serial_t<U_sigma[N]>;
+	using W_alpha = serial_t<U_alpha[N]>;
 
-	XTAL_LET V_f = [] (U const &u) XTAL_0FN -> V {return u*re::diplo_f(re::N_depth);};
-	XTAL_LET U_f = [] (V const &v) XTAL_0FN -> U {return v*re::haplo_f(re::N_depth);};
+	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(_std::bit_cast<U_sigma>(U_delta(u*re::diplo_f(re::N_depth))));
+	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(_std::bit_cast<U_delta>(v))*re::haplo_f(re::N_depth));
 
+	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
 	template <class T>
-	using demitype = typename serial<V[N]>::template homotype<T>;
+	using demitype = typename serial<U_sigma[N]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<cycle>>;
@@ -73,7 +73,7 @@ struct cycle<W[N]>
 		{}
 
 	//	Reified to allow inspection of initializer-type:
-		using initializer_list = _std::initializer_list<U>;
+		using initializer_list = _std::initializer_list<U_alpha>;
 
 		XTAL_CON homotype(initializer_list      o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
 		XTAL_CXN homotype(bracket_q auto const &o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
@@ -85,12 +85,12 @@ struct cycle<W[N]>
 		using T_::self;
 		using T_::twin;
 
-		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transmorph<U_serial>(U_f);}
+		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transmorph<W_alpha>(U_f);}
 		XTAL_OP2 () (size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
 		XTAL_TN2   d(size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
 		
-		XTAL_OP0_(implicit) U_serial() XTAL_0FX {return operator()( );}
-		XTAL_OP0_(implicit) U       () XTAL_0FX {return operator()(0);}
+		XTAL_OP0_(implicit) W_alpha() XTAL_0FX {return operator()( );}
+		XTAL_OP0_(implicit) U_alpha() XTAL_0FX {return operator()(0);}
 
 
 		///\
@@ -109,22 +109,26 @@ struct cycle<W[N]>
 		XTAL_OP1 *= (_std::floating_point auto const &f)
 		XTAL_0EX
 		{
-			auto [m, n] = re::scientific_f((alpha_t) f);
+			auto [m, n] = re::scientific_f((U_alpha) f);
 
-			sigma_t constexpr  N_bias = re::N_width;
-			sigma_t constexpr  N_half = re::half.depth - N_bias;// e.g. {64,32} => {32,16}-B
-			sigma_t constexpr  M_half = re::half.depth + N_bias;// e.g. {52,23} => {32,16}+B
-			delta_t constexpr  M_down = re::fraction.depth - M_half;
+			U_sigma constexpr  N_bias = re::N_width;
+			U_sigma constexpr  N_half = re::half.depth - N_bias;// e.g. {64,32} => {32,16}-B
+			U_sigma constexpr  M_half = re::half.depth + N_bias;// e.g. {52,23} => {32,16}+B
+			U_delta constexpr  M_down = re::fraction.depth - M_half;
 			auto const shift = M_down + n;
+
+			auto &s = reinterpret_cast<W_delta &>(self());
+
 			/**/
 			auto const up = re::template designed_f<1>(shift);
 			auto const dn = up - shift;
-			T_::operator <<=(up);
-			T_::operator >>=(dn);
+
+			s <<= up;
+			s >>= dn;
 			/*/
-			T_::operator >>=(-shift);
+			s >>= -shift;
 			/***/
-			T_::operator  *=(m >> M_down);
+			T_::operator*=(m >> M_down);
 			
 			return self();
 		}
@@ -155,6 +159,6 @@ struct cycle<W[N]>
 };
 
 
-///////////////////////////////////////////////////////////////////////////////FIXME
+///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
