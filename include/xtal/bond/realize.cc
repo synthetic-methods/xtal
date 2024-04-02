@@ -274,10 +274,10 @@ TAG_("realize", "bit_reverse")
 {
 	TRY_("4")
 	{
-		TRUE_(realized::ratio_f<1>(4) == 0.25);
-		TRUE_(realized::ratio_f<2>(4) == 0.50);
-		TRUE_(realized::ratio_f<3>(4) == 0.75);
-		TRUE_(realized::ratio_f<4>(4) == 1.00);
+		TRUE_(realized::ratio_f(1, 4) == 0.25);
+		TRUE_(realized::ratio_f(2, 4) == 0.50);
+		TRUE_(realized::ratio_f(3, 4) == 0.75);
+		TRUE_(realized::ratio_f(4, 4) == 1.00);
 	}
 }
 

@@ -873,49 +873,38 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `N_num`erator divided by the given de`nom`inator.
+	///\returns the `n_num`erator divided by the given de`n_nom`inator.
 
-	template <int N_pow=1> requires sign_p<N_pow, 0>
-	XTAL_FN2_(alpha_t) ratio_f(alpha_t const &n_num, alpha_t const &n_nom)
+	template <int N_pow=1>
+	XTAL_FN2_(alpha_t) ratio_f(alpha_t const &n_num, alpha_t const &n_nom=1)
 	XTAL_0EX
 	{
+		static_assert(sign_p<N_pow, 0>);
 		XTAL_IF0
-		XTAL_0IF_(N_pow == -1) {return n_nom/n_num;}
-		XTAL_0IF_(N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF_(N_pow ==  0) {return 1;}
+		XTAL_0IF_(N_pow ==  1) {return n_num/n_nom;}
+		XTAL_0IF_(N_pow == -1) {return n_nom/n_num;}
 	}
-	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) ratio_f(alpha_t const &&n_nom)
-	XTAL_0EX
-	{
-		return ratio_f<S_::sign_f(N_num)>(S_::designed_f(N_num), n_nom);
-	}
-	static_assert(ratio_f   (alpha_t(2.0)) == 0.5);
-	static_assert(ratio_f<1>(alpha_t(2.0)) == 0.5);
-	static_assert(ratio_f<4>(alpha_t(2.0)) == 2.0);
+	static_assert(ratio_f(1, 2.0) == 0.5 && ratio_f<-1>(1, 2.0) == 2.0);
+	static_assert(ratio_f(4, 2.0) == 2.0 && ratio_f<-1>(4, 2.0) == 0.5);
 
 
-	///\returns `ratio_f<N_num>(PI*n_num, n_nom)`.
+	///\returns `ratio_f<N_pow>(PI*n_num, n_nom)`.
 
 	template <int N_pow=1> requires sign_p<N_pow, 0>
-	XTAL_FN2_(alpha_t) patio_f(alpha_t const &n_num, alpha_t const &n_nom)
+	XTAL_FN2_(alpha_t) patio_f(alpha_t const &n_num, alpha_t const &n_nom=1)
 	XTAL_0EX
 	{
-		return ratio_f<N_pow>(3.141592653589793238462643383279502884L*n_num, n_nom);
+		alpha_t constexpr pi = 3.141592653589793238462643383279502884L;
+		return ratio_f<N_pow>(pi*n_num, n_nom);
 	}
-	template <auto N_num=1>
-	XTAL_FN2_(alpha_t) patio_f(alpha_t const &n_nom)
-	XTAL_0EX
-	{
-		return patio_f<S_::sign_f(N_num)>(S_::designed_f(N_num), n_nom);
-	}
-	static_assert(patio_f   ( 2) ==  alpha_t(1.570796326794896619231321691639751442L));
-	static_assert(patio_f   (-2) == -alpha_t(1.570796326794896619231321691639751442L));
-	static_assert(patio_f<4>( 2) ==  alpha_t(6.283185307179586476925286766559005768L));
-	static_assert(patio_f<4>(-2) == -alpha_t(6.283185307179586476925286766559005768L));
+	static_assert(patio_f(1, 2) ==  alpha_t(1.570796326794896619231321691639751442L));
+	static_assert(patio_f(1,-2) == -alpha_t(1.570796326794896619231321691639751442L));
+	static_assert(patio_f(4, 2) ==  alpha_t(6.283185307179586476925286766559005768L));
+	static_assert(patio_f(4,-2) == -alpha_t(6.283185307179586476925286766559005768L));
 
-	XTAL_LET patio_1 = patio_f<1>(1);
-	XTAL_LET patio_2 = patio_f<2>(1);
+	XTAL_LET patio_1 = patio_f(1, 1);
+	XTAL_LET patio_2 = patio_f(2, 1);
 
 
 	///\
@@ -935,7 +924,7 @@ public:
 	template <int N_base, int N_shift=0>
 	XTAL_LET argue_n = argue_ns[N_base&0b11]*diplo_n<N_shift>;
 
-	static_assert(argue_n<-1> == patio_f<1>(1));
+	static_assert(argue_n<-1> == patio_f(1, 1));
 	static_assert(argue_n<-1> == argue_n<1, -1>);
 	
 
@@ -1459,9 +1448,9 @@ public:
 
 		return target;
 	}
-	static_assert(trim_f<2>(patio_f<2>(1)) == 6.25);
-	static_assert(trim_f<3>(patio_f<1>(1)) == 3.125);
-	static_assert(trim_f<4>(patio_f<1>(2)) == 1.5625);
+	static_assert(trim_f<2>(patio_f(2, 1)) == 6.25);
+	static_assert(trim_f<3>(patio_f(1, 1)) == 3.125);
+	static_assert(trim_f<4>(patio_f(1, 2)) == 1.5625);
 
 	template <int N_zoom=fraction.depth - 1>
 	XTAL_FN2 trim_f(aphex_t const &target)
@@ -1484,10 +1473,10 @@ public:
 	XTAL_0EX
 	{
 		int constexpr I = (N_lim&0b111) << 1;
-		alpha_t       t = ratio_f(I*2 + 1);
+		alpha_t       t = ratio_f(1, I*2 + 1);
 
 		bond::seek_backward_f<I>([&] (auto i)
-			XTAL_0FN_(t = accumulate_f<-1>(ratio_f(i*2 + 1), ratio_f<i*2 + 1>(i + 1 << 3), x, t)
+			XTAL_0FN_(t = accumulate_f<-1>(ratio_f(1, i*2 + 1), ratio_f(i*2 + 1, i + 1 << 3), x, t)
 		));
 		return t;
 	}
@@ -1546,8 +1535,8 @@ public:
 	{
 		alpha_t t = 1;
 		bond::seek_backward_f<I_lim>([&] (auto i)
-			XTAL_0FN_(t = accumulate_f(ratio_f(1)
-			,	ratio_f((i*2 + 2)*(i*2 + 3) << 2)
+			XTAL_0FN_(t = accumulate_f(alpha_1
+			,	ratio_f(1, (i*2 + 2)*(i*2 + 3) << 2)
 			,	x
 			,	t
 			)

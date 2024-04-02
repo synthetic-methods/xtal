@@ -108,8 +108,7 @@ struct series<U[N_size]>
 			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_size`:
-		//	auto constexpr x = -3.141592653589793238462643383279502884L/double(N_size);//re::template patio_f<1>(-N_size);
-			auto constexpr x = re::patio_f(-N_size);
+			auto constexpr x = re::patio_f(-1, N_size);
 			auto const     y = re::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
@@ -170,7 +169,7 @@ struct series<U[N_size]>
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
 				_detail::apply_to(that, [] XTAL_1FN_(_std::conj));
-				that *= re::template ratio_f<1>(n_size);
+				that *= re::ratio_f(1, n_size);
 			}
 		
 		//	Cast the output to the transformed domain:
