@@ -34,9 +34,10 @@ XTAL_0EX
 	XTAL_0IF_(N_zero == -1) {return (0 <  i) - (i <= 0);}
 }
 
-template <auto N, auto    ...Ms> concept    in_p = (...or (N == Ms));
-template <auto N, auto N_zero=0> concept  sign_p = in_p<N, -1, N_zero, 1>;
-template <auto N, auto N_zero=0> XTAL_LET sign_n = sign_f<N_zero>(N);
+template <auto N, auto  ...Ms>	concept exclusive_p = (...and (N != Ms));
+template <auto N, auto  ...Ms>	concept inclusive_p = (...or  (N == Ms));
+template <auto N, auto  N_0=0>	concept      sign_p = inclusive_p<N, -1, N_0, 1>;
+template <auto N, auto  N_0=0>	XTAL_LET     sign_n = sign_f<N_0>(N);
 
 template <class   ...Ts>         concept  some_q = 0 < sizeof...(Ts);
 template <auto    ...Ns>         concept  some_n = 0 < sizeof...(Ns);

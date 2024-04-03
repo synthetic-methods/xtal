@@ -51,9 +51,10 @@ using    size_t = _detail:: size_t;
 using    size_s = _detail:: size_s;
 XTAL_LET size_1 = _detail:: size_1;
 
-template <auto N, auto   ...Ms  >	concept    in_p = _detail::   in_p<N, Ms... >;
-template <auto N, auto  N_zero=0>	concept  sign_p = _detail:: sign_p<N, N_zero>;
-template <auto N, auto  N_zero=0>	XTAL_LET sign_n = _detail:: sign_n<N, N_zero>;
+template <auto N, auto  ...Ms>	concept exclusive_p = _detail::exclusive_p<N, Ms... >;
+template <auto N, auto  ...Ms>	concept inclusive_p = _detail::inclusive_p<N, Ms... >;
+template <auto N, auto  N_0=0>	concept      sign_p = _detail::     sign_p<N, N_0>;
+template <auto N, auto  N_0=0>	XTAL_LET     sign_n = _detail::     sign_n<N, N_0>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

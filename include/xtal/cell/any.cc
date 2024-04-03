@@ -68,7 +68,7 @@ TAG_("cell", "matching")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("cell", "trarootsl")
+TAG_("cell", "traversal")
 {
 	using qux = confined<void
 	,	infers<foo_a, int>

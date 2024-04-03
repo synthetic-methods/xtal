@@ -11,84 +11,67 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
+namespace compose_
+{///////////////////////////////////////////////////////////////////////////////
 
-XTAL_FN2 compose_f(auto&& f)
-XTAL_0EX
-{
-	return XTAL_REF_(f);
-}
-XTAL_FN2 compose_f(auto&& f, auto&& ...fs)
-XTAL_0EX
-{
-	return [f = XTAL_REF_(f), ...fs = XTAL_REF_(fs)] (auto &&...xs)
-		XTAL_0FM_(compose_f(XTAL_REF_(fs)...) (XTAL_REF_(f) (XTAL_REF_(xs)...)));
-}
+template <template <class> class T>
+struct reify {template <class S> using subtype = T<S>;};
+
+template <typename O>
+concept query = requires {typename reify<O::template subtype>;};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <typename ...Outer>
+concept compose_q = (...and compose_::query<Outer>);
 
 
 ///\
-NOTE: The decorators `Heads...` and `Tails...`, \
-supplied as the outer- and inner- arguments respectively, \
-are evaluated w.r.t. the corresponding right- or left- fold relative to `S`: \
-`Heads[0]::subtype<...Heads[N]::subtype<Tails[N]::subtype<...Tails[0]::subtype<S>>>>`. \
+Composes the supplied `Outer::subtype`s to define `::subtype<S, Inner...>`. \
 
-template <typename ...>
+///\note\
+The `Outer...::subtype`s are applied to `::subtype<S, Inner...>` from right-to-left, \
+while the `Inner...::subtype`s are applied to `S` from left-to-right. \
+
+template <typename ...Outer>
 struct compose;
 
 template <>
 struct compose<>
 {
-	template <class S, typename ..._s>
-	struct tail
-	{
-		using type = S;
-	};
-	template <class S, typename _, typename ..._s>
-	struct tail<S, _, _s...>
-	:	tail<typename _::template subtype<S>, _s...>
-	{
-	};
-	template <class S, typename ..._s>
-	using subtype = typename tail<S, _s...>::type;
+private:
+	template <class S, typename ...Inner                > struct compact {using type = S;};
+	template <class S, typename    Inner, typename ..._s>
+	struct compact<S, Inner, _s...>
+	:	compact<typename Inner::template subtype<S>, _s...>
+	{};
+
+public:
+	template <class S, typename ...Inner>
+	using subtype = typename compact<S, Inner...>::type;
 
 };
-template <typename A, typename ...As>
-struct compose<A, As...>
+template <typename Outer, typename ..._s>
+struct compose<Outer, _s...>
 {
-	template <class S, typename ..._s>
-	using subtype = typename A::template subtype<
-		typename compose<As...>::template subtype<S, _s...>
+	template <class S, typename ...Inner>
+	using subtype = typename Outer::template subtype<
+		typename compose<_s...>::template subtype<S, Inner...>
 	>;
 
 };
-template <typename ...As>
-struct compose<void, As...>
-:	compose<As...>
+template <typename ...Outer>
+struct compose<void, Outer...>
+:	compose<Outer...>
 {
 };
-
-template <class S, typename ..._s>
-using compose_s = typename compose<>::template subtype<S, _s...>;
-
 
 ///\
-Finalizes `compose` by providing a `type` based on `unit_t`. \
+Applys the `Inner::subtype`s to `S` from left-to-right. \
 
-template <typename ...As>
-struct composed
-{
-	using subkind = compose<As...>;
-	
-	template <class S, typename ..._s>
-	using subtype = compose_s<S, _s..., subkind>;
-	using    type = subtype<unit_t>;
-
-};
-template <class S, typename ...Tails>
-using composed_s = typename composed<>::template subtype<S, Tails...>;
-
-template <typename ...Heads>
-using composed_t = typename composed<Heads...>::type;
+template <class S, typename ...Inner>
+using compose_s = typename compose<>::template subtype<S, Inner...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

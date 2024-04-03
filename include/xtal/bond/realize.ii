@@ -453,7 +453,7 @@ public:
 		return bit_ceiling_f((sigma_t) v)*sign_f(v);
 	}
 
-	///\returns the bitwise-rerootsl of `u`, \
+	///\returns the bitwise-reversal of `u`, \
 	restricted to `N_subdepth` when `0 < N_subdepth < sizeof(u) << 3`. \
 
 	///\note Requires `log2(sizeof(u) << 3)` iterations. \
@@ -908,7 +908,7 @@ public:
 
 
 	///\
-	Defines the absolute logarithm of `in_p<N_base, -1, 0, 1, 2>`, scaled by `diplo_n<N_shift>`. \
+	Defines the absolute logarithm of `inclusive_p<N_base, -1, 0, 1, 2>`, scaled by `diplo_n<N_shift>`. \
 
 	///\note\
 	Bases `-1` and `1` are mapped to imaginary arguments `1*PI` and `2*PI`, respectively. \
