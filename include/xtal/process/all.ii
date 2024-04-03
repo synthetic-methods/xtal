@@ -1,3 +1,4 @@
 #include "./any.ii"
+#include "./chain.ii"
 #include "./cross.ii"
 #include "./cycle.ii"

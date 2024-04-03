@@ -265,6 +265,7 @@ struct define
 
 	};
 };
+
 template <class T>
 struct refine
 {
@@ -402,6 +403,7 @@ struct defer<U>
 
 	};
 };
+
 template <class U>
 struct refer
 :	_retail::refer<U>
