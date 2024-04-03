@@ -544,7 +544,7 @@ public:
 	using S_::N_depth;
 
 
-	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_IEC&60559: 0;
+	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD__IEC&60559: 0;
 
 	using default_alignment = cardinal_t<XTAL_STD_(L1)/N_width>;
 
@@ -1065,7 +1065,7 @@ public:
 	XTAL_FN2_(alpha_t) sign_f(alpha_t const &value)
 	XTAL_0EX
 	{
-	#ifdef XTAL_V00_MSVC
+	#if XTAL_V00_(MSVC)
 		return assign_f(_std::bit_cast<delta_t>(value));
 	#else
 		return __builtin_copysign((alpha_t) 1, value);
@@ -1096,7 +1096,7 @@ public:
 	XTAL_FN2_(alpha_t) resigned_f(alpha_t target, alpha_t const &source=1)
 	XTAL_0EX
 	{
-	#if XTAL_V00_MSVC
+	#if XTAL_V00_(MSVC)
 		return resigned_f(XTAL_MOV_(target), _std::bit_cast<delta_t>(source));
 	#else
 		return __builtin_copysign(target, source);// constexpr
@@ -1135,7 +1135,7 @@ public:
 	XTAL_0EX
 	{
 		if constexpr (N_side == 0) {
-		#if XTAL_V00_MSVC
+		#if XTAL_V00_(MSVC)
 			static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 			delta_t u = _std::bit_cast<delta_t>(value);
 			u &= positive.mask;

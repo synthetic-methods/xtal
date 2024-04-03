@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_(NYM) XTAL_##NYM
+#define XTAL_(...) XTAL_##__VA_ARGS__
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,114 +26,110 @@ TODO: Allow [c]?make configuration?
 #include <cstdint>
 
 
-//\note\
-sizeof (XTAL_INT_(NUM)) == (1 << NUM)
-#define XTAL_INT_(NUM) XTAL_INT_##NUM
-#define XTAL_INT_0          char
-#define XTAL_INT_1     short int
-#define XTAL_INT_2           int
-#define XTAL_INT_3      long int
-#define XTAL_INT_4 long long int
+#define XTAL_INT_(...) XTAL_INT__##__VA_ARGS__
+#define XTAL_INT__0          char
+#define XTAL_INT__1     short int
+#define XTAL_INT__2           int
+#define XTAL_INT__3      long int
+#define XTAL_INT__4 long long int
 
-//\note\
-sizeof (XTAL_FLT_(NUM)) == (1 << NUM)
-#define XTAL_FLT_(NUM) XTAL_FLT_##NUM
-#define XTAL_FLT_0          void
-#define XTAL_FLT_1          void
-#define XTAL_FLT_2         float
-#define XTAL_FLT_3        double
-#define XTAL_FLT_4   long double
+#define XTAL_FLT_(...) XTAL_FLT__##__VA_ARGS__
+#define XTAL_FLT__0          void
+#define XTAL_FLT__1          void
+#define XTAL_FLT__2         float
+#define XTAL_FLT__3        double
+#define XTAL_FLT__4   long double
 
 
-#define XTAL_STD_(NUM) XTAL_STD_##NUM
+#define XTAL_STD_(...) XTAL_STD__##__VA_ARGS__
 #define XTAL_STD ((__cplusplus/100)%100)
-#define XTAL_STD_IEC 60559
+#define XTAL_STD__IEC 60559
 
-#define XTAL_STD_null_t ::std::nullptr_t
-#define XTAL_STD_unit_t ::std::monostate
-#define XTAL_STD_byte_t ::std::byte
-#define XTAL_STD_sign_t ::std::int_fast8_t
-#define XTAL_STD_size_t ::std::size_t
-#define XTAL_STD_size_s ::std::ptrdiff_t
+#define XTAL_STD__null_t ::std::nullptr_t
+#define XTAL_STD__unit_t ::std::monostate
+#define XTAL_STD__byte_t ::std::byte
+#define XTAL_STD__sign_t ::std::int_fast8_t
+#define XTAL_STD__size_t ::std::size_t
+#define XTAL_STD__size_s ::std::ptrdiff_t
 
 
 #if     defined(__cacheline_aligned)
-#define XTAL_STD_L1 __cacheline_aligned
+#define XTAL_STD__L1 __cacheline_aligned
 
 #elif   defined(L1_CACHE_BYTES)
-#define XTAL_STD_L1 L1_CACHE_BYTES
+#define XTAL_STD__L1 L1_CACHE_BYTES
 
 #elif   defined(L1_CACHE_SHIFT)
-#define XTAL_STD_L1 L1_CACHE_SHIFT
+#define XTAL_STD__L1 L1_CACHE_SHIFT
 
 #else
-#define XTAL_STD_L1 0x40
+#define XTAL_STD__L1 0x40
 
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_V00_(MAJ, MIN) (100*MAJ + MIN)
-#define XTAL_V00 XTAL_V00_(1, 0)
+#define XTAL_V00_(...) XTAL_V00__##__VA_ARGS__
+
 #if     defined(_MSC_VER)
-#define XTAL_V00_MSVC _MSC_VER
-#define XTAL_V00_LLVM 0
-#define XTAL_V00_GNUC 0
+#define XTAL_V00__MSVC (_MSC_VER)
+#define XTAL_V00__LLVM 0
+#define XTAL_V00__GNUC 0
 
 #elif   defined(__clang__)
-#define XTAL_V00_LLVM XTAL_V00_(__clang_major__, __clang_minor__)
-#define XTAL_V00_GNUC 0
-#define XTAL_V00_MSVC 0
+#define XTAL_V00__LLVM (100*__clang_major__ + __clang_minor__)
+#define XTAL_V00__GNUC 0
+#define XTAL_V00__MSVC 0
 
 #elif   defined(__GNUC__)
-#define XTAL_V00_GNUC XTAL_V00_(__GNUC__, __GNUC_MINOR__)
-#define XTAL_V00_MSVC 0
-#define XTAL_V00_LLVM 0
+#define XTAL_V00__GNUC (100*__GNUC__ + __GNUC_MINOR__)
+#define XTAL_V00__MSVC 0
+#define XTAL_V00__LLVM 0
 
 #else
-#define XTAL_V00_MSVC 0
-#define XTAL_V00_LLVM 0
-#define XTAL_V00_GNUC 0
+#define XTAL_V00__MSVC 0
+#define XTAL_V00__LLVM 0
+#define XTAL_V00__GNUC 0
 
 #endif
 
 
-#if     XTAL_V00_MSVC
-static_assert(1933 <= XTAL_V00_MSVC);
+#if     XTAL_V00_(MSVC)
+static_assert(1933 <= XTAL_V00_(MSVC));
 
-#elif   XTAL_V00_LLVM
-static_assert(1400 <= XTAL_V00_LLVM);
+#elif   XTAL_V00_(LLVM)
+static_assert(1400 <= XTAL_V00_(LLVM));
 
-#elif   XTAL_V00_GNUC
-//static_assert(1200 <= XTAL_V00_GNUC);  
+#elif   XTAL_V00_(GNUC)
+//static_assert(1200 <= XTAL_V00_(GNUC));  
 
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ENV_(NYM) XTAL_ENV_##NYM
+#define XTAL_ENV_(...)  XTAL_ENV__##__VA_ARGS__
 
-#if     XTAL_V00_MSVC
-#define XTAL_ENV_pop  _Pragma("warning(pop)")
-#define XTAL_ENV_push _Pragma("warning(push)")\
-                      _Pragma("warning(disable:4010)")\
+#if     XTAL_V00_(MSVC)
+#define XTAL_ENV__pop   _Pragma("warning(pop)")
+#define XTAL_ENV__push  _Pragma("warning(push)")\
+                        _Pragma("warning(disable:4010)")\
 
-#elif   XTAL_V00_LLVM
-#define XTAL_ENV_pop  _Pragma("clang diagnostic pop")
-#define XTAL_ENV_push _Pragma("clang diagnostic push")\
-                      _Pragma("clang diagnostic ignored \"-Wcomment\"")\
-                      _Pragma("clang diagnostic ignored \"-Wdocumentation\"")\
-                      _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
-                      _Pragma("clang diagnostic ignored \"-Wshift-op-parentheses\"")\
-                      _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
+#elif   XTAL_V00_(LLVM)
+#define XTAL_ENV__pop   _Pragma("clang diagnostic pop")
+#define XTAL_ENV__push  _Pragma("clang diagnostic push")\
+                        _Pragma("clang diagnostic ignored \"-Wcomment\"")\
+                        _Pragma("clang diagnostic ignored \"-Wdocumentation\"")\
+                        _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
+                        _Pragma("clang diagnostic ignored \"-Wshift-op-parentheses\"")\
+                        _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
 
-#elif   XTAL_V00_GNUC
-#define XTAL_ENV_pop  _Pragma("GCC diagnostic pop")
-#define XTAL_ENV_push _Pragma("GCC diagnostic push")\
-                      _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
-//                    _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
+#elif   XTAL_V00_(GNUC)
+#define XTAL_ENV__pop   _Pragma("GCC diagnostic pop")
+#define XTAL_ENV__push  _Pragma("GCC diagnostic push")\
+                        _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
+//                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
 
 #endif
 
@@ -154,9 +150,9 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #define XTAL_CON                     constexpr       
 #define XTAL_CXN                     constexpr explicit
 
-#define XTAL_OP0_(SYM) XTAL_OP0_##SYM
-#define XTAL_OP0_explicit            constexpr explicit              operator
-#define XTAL_OP0_implicit            constexpr                       operator
+#define XTAL_OP0_(...)               XTAL_OP0__##__VA_ARGS__
+#define XTAL_OP0__explicit           constexpr explicit              operator
+#define XTAL_OP0__implicit           constexpr                       operator
 #define XTAL_OP1                     constexpr        decltype(auto) operator
 #define XTAL_OP2       [[nodiscard]] constexpr        decltype(auto) operator
 #define XTAL_TN0                                               void
@@ -173,6 +169,7 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #define XTAL_TN2_(...) [[nodiscard]] constexpr        __VA_ARGS__
 #define XTAL_FN1_(...)               constexpr static __VA_ARGS__
 #define XTAL_FN2_(...) [[nodiscard]] constexpr static __VA_ARGS__
+#define XTAL_FNZ_(...) [[nodiscard]] constexpr static __VA_ARGS__
 #define XTAL_LET_(...)               constexpr static __VA_ARGS__
 
 #define XTAL_IF0                  if constexpr (0);
@@ -180,9 +177,9 @@ static_assert(1400 <= XTAL_V00_LLVM);
 #define XTAL_0IF_(...)       else if constexpr (__VA_ARGS__)
 #define XTAL_0IF             else
 #define XTAL_0EX                               noexcept
-#define XTAL_0FX                     const     noexcept
-#define XTAL_0EX_(REF)                     REF noexcept
-#define XTAL_0FX_(REF)               const REF noexcept
+#define XTAL_0FX             const             noexcept
+#define XTAL_0EX_(...)             __VA_ARGS__ noexcept
+#define XTAL_0FX_(...)       const __VA_ARGS__ noexcept
 
 #define XTAL_0FN                     constexpr noexcept
 #define XTAL_0FM             mutable constexpr noexcept
@@ -210,6 +207,23 @@ static_assert(1400 <= XTAL_V00_LLVM);
                                      constexpr TYP              (TYP const &) noexcept = default;\
                                      constexpr TYP & operator = (TYP      &&) noexcept = default;\
                                      constexpr TYP              (TYP      &&) noexcept = default;;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_DEF              auto
+#define XTAL_DEF_(...)        XTAL_F1_(XTAL_KEY_,__VA_ARGS__)
+
+#define XTAL_KEY_(...)        XTAL_KEY__##__VA_ARGS__
+#define XTAL_KEY__pure        [[nodiscard]]
+#define XTAL_KEY__return      [[nodiscard]]
+#define XTAL_KEY__static      static
+#if     XTAL_V00_(MSVC)
+#define XTAL_KEY__inline      __forceinline
+#else
+#define XTAL_KEY__inline      inline __attribute__((always_inline))
+#endif
+#define XTAL_KEY__constexpr   constexpr
 
 
 ////////////////////////////////////////////////////////////////////////////////
