@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.ii"
 #include "./monomer.ii"
-#include "../resourced/all.ii"
 #include "../cell/key.ii"
-#include "../message/stage.ii"
+#include "../message/all.ii"
+#include "../resourced/all.ii"
 
 
 XTAL_ENV_(push)
@@ -11,9 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NYM polymer;
-template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_NEW polymer;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
+template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ...As>
 XTAL_FN2  polymer_f(auto &&u)
 XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
@@ -66,7 +66,7 @@ struct polymer<U, As...>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 				
-				U_ensemble u_ensemble;
+				U_ensemble u_ensemble {};
 
 			public:
 				using R_::R_;
@@ -114,7 +114,8 @@ struct polymer<U, As...>
 						if (u_ensemble and h == w->head()) {
 							(void) w->influx(message::stage_f(-1), oo...);
 						}
-						w = u_ensemble.poke(w, h, head());
+						auto y = head();
+						w = u_ensemble.poke(w, h, y);
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
@@ -122,60 +123,49 @@ struct polymer<U, As...>
 				}
 
 				///\
-				Forwards to all instances including the sentinel. \
+				Forwards to all instances including the sentinel (except when rendering). \
 
 				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = false;
+					bool constexpr impure = message::render_influx_q<decltype(oo)...>;
 					return _v3::ranges::accumulate(u_ensemble
 					,	impure? -1: head().influx(oo...)
-					,	[=] (XTAL_FLX flx, auto &&v)
-							XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
+					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = (...or message::scope_q<decltype(oo)>);
+					bool constexpr impure = message::render_efflux_q<decltype(oo)...>;
 					return _v3::ranges::accumulate(u_ensemble
-					,	impure? -1: head().efflux(oo...)
-					,	[=] (XTAL_FLX flx, auto &&v)
-							XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
+					,	 impure? -1: head().efflux(oo...)
+					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
 
 				///\
-				Renders the buffer slice designated by `respan_x` and `scope_x`. \
+				Renders the buffer slice designated by `respan_x` and `render_x` \
+				after liberating any voices that have reached the final `message::stage_f(-1)`. \
 				
-				template <message::respan_q R_x, message::scope_q S_x>
-				XTAL_TNX efflux_pull_slice(R_x respan_x, S_x scope_x, auto &&...oo)
+				template <message::respan_q R_x, message::render_q S_x>
+				XTAL_TNX efflux_pull_slice(R_x respan_x, S_x render_x, auto &&...oo)
 				XTAL_0EX
 				{
-					XTAL_FLX flx = -1;
-				//	Render each instance, while releasing any that have terminated:
-					for (auto _e = u_ensemble.end(); u_ensemble.begin() <= --_e;) {
-						if (_e->efflux(message::stage_f(-1)) == 1) {
-							u_ensemble.pop(_e);
-						}
-						else {
-							flx &= _e->efflux(scope_x, oo...);
+					u_ensemble.clear_if([] (auto &&e)
+						XTAL_0FN_(1 == XTAL_REF_(e).efflux(message::stage_f(-1)))
+					);
+					for (auto &voice:u_ensemble) {
+						if (1 == voice.efflux(render_x, XTAL_REF_(oo)...)) {
+							return 1;
 						}
 					}
-					if (1 == flx) return flx;// else...
-				//	Initialize buffer with first instance, then progressively chunk/mix the rest:
-					using namespace _v3;
-					using namespace _detail;
-					auto i = u_ensemble.begin(), iN = u_ensemble.end();
-					tunnel_f(respan_x, i++);
-					bond::seek_backward_f<4>([&, this] (auto M)// 3, 2, 1, 0
-					XTAL_0FN {
-						auto constexpr N = size_1 << M;// 8, 4, 2, 1
-						for (; N <= _std::distance(i, iN); i += N) {
-							tunnel_f<N>(respan_x, i);
+					for (auto &voice:u_ensemble) {
+						for (auto && [i, u]:_v3::views::enumerate(voice())) {
+							respan_x[XTAL_REF_(i)] += XTAL_REF_(u);
 						}
-					});
-					return flx;
+					}
+					return 0;
 				}
 				
 			};

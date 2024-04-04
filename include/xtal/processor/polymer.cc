@@ -23,25 +23,21 @@ namespace xtal::processor::_test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using T_alpha = typename bond::realized::alpha_t;
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_delta = typename bond::realized::delta_t;
-
-	using U_stage = message::stage_t<>;
-	using U_event = cell::key_s<U_stage>;
-	using U_empty = message::confined_t<>;
+	using re = bond::realized;
+	using U_alpha  = typename re::alpha_t;
+	using U_sigma  = typename re::sigma_t;
+	using U_delta  = typename re::delta_t;
 
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
-	
-
-	using U_thunk = scheduled::thunk_t<resourced::spool<N_spool>>;
-	using U_scope = message::scope_t<>;
+	using U_render  = message:: render_t<>;
+	using U_stage  = message:: stage_t<>;
+	using U_event  = cell::key_s<U_stage>;
+	using U_thunk  = scheduled::thunk_t<resourced::spool<(1<<5)>>;
 	using U_cue = cell::cue_s<>;
 
-//	Using `thunk` here currently fails if dynamically allocated. \
-	using W_gate = typename U_thunk::template inqueue<level_t>;
+	//\
 	using W_gate = typename level_t::poll<>;
+	using W_gate = typename U_thunk::template inqueue<level_t>;
 	using U_gate = process::confined_t<W_gate, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
@@ -57,10 +53,11 @@ void polymer_provision_spine__locamotion()
 	u_vox <<= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
 	u_vox <<= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
 	u_vox <<= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
+	u_vox <<= U_event(62, 0); TRUE_(5 == u_vox.ensemble().size());
 
 //	Render:
 //	u_vox <<= U_resize(N_window);
-	u_vox >>= U_scope(N_window);
+	u_vox >>= U_render(N_window);
 	
 	TRUE_(3 == u_vox.ensemble().size());
 	TRUE_(3 == u_vox.front());
@@ -89,16 +86,15 @@ TAG_("polymer", "message", "spine")
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename bond::realized::alpha_t;
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_delta = typename bond::realized::delta_t;
+	using U_alpha = typename bond::realized::alpha_t;
+	using U_sigma = typename bond::realized::sigma_t;
+	using U_delta = typename bond::realized::delta_t;
 
-	using U_stage = message::stage_t<>;
-	using U_event = cell::key_s<U_stage>;
-	using U_empty = message::confined_t<>;
+	using U_stage  = message::stage_t<>;
+	using U_event  = cell::key_s<U_stage>;
 
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
+	using U_render  = message::render_t<>;
 	
 	using U_gate = process::confined_t<void
 	,	typename U_stage::expect<>
@@ -120,7 +116,7 @@ void polymer_provision_spool__combined()
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);
-	u_vox >>= U_scope(N_window);
+	u_vox >>= U_render(N_window);
 	
 	TRUE_(3 == u_vox.ensemble().size());
 	TRUE_(8 == u_vox.front());
@@ -134,16 +130,15 @@ void polymer_provision_spool__combined()
 template <size_t N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
-	using T_alpha = typename bond::realized::alpha_t;
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_delta = typename bond::realized::delta_t;
+	using U_alpha = typename bond::realized::alpha_t;
+	using U_sigma = typename bond::realized::sigma_t;
+	using U_delta = typename bond::realized::delta_t;
 
-	using U_stage = message::stage_t<>;
-	using U_event = cell::key_s<U_stage>;
-	using U_empty = message::confined_t<>;
+	using U_stage  = message::stage_t<>;
+	using U_event  = cell::key_s<U_stage>;
 
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
+	using U_render  = message::render_t<>;
 	
 	using U_gate = process::confined_t<void
 	,	typename U_stage::expect<>
@@ -165,7 +160,7 @@ void polymer_provision_spool__composited()
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);
-	u_vox >>= U_scope(N_window);
+	u_vox >>= U_render(N_window);
 	
 	TRUE_(3 == u_vox.ensemble().size());
 	TRUE_(8 == u_vox.front());

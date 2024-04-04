@@ -34,7 +34,7 @@ void chunk_processor_x1()
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = message::resize_t<>;
-	using scope_n  = message::scope_t<>;
+	using render_n  = message::render_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(as_f<U_alpha>);
 	auto _10 = _01|_v3::views::transform([] (U_alpha n) {return n*10;});
@@ -44,10 +44,10 @@ void chunk_processor_x1()
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	
 	auto xhs = mix_z::bind_f(lhs, rhs);
-	auto seq = scope_n(4);
+	auto seq = render_n(4);
 
 	xhs <<= U_resize(4);
-	TRUE_(0 == xhs.size());//NOTE: Only changes after `scope`.
+	TRUE_(0 == xhs.size());//NOTE: Only changes after `render`.
 
 	xhs <<= cell::cue_s<U_event>(0, (onset_t) (U_alpha) 100);
 	xhs <<= cell::cue_s<U_event>(1, (onset_t) (U_alpha) 200);

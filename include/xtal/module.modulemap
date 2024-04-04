@@ -6,7 +6,7 @@ module xtal {
 	exclude header "./_detail.ixx"
 	exclude header "./bond/_kernel.hxx"
 	exclude header "./bond/_detail.hxx"
-	exclude header "./group/_detail.hxx"
+	exclude header "./atom/_detail.hxx"
 	exclude header "./cell/_detail.hxx"
 	exclude header "./flux/_detail.hxx"
 	exclude header "./message/_detail.hxx"

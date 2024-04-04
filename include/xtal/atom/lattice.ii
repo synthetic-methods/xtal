@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::group
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM lattice;
+template <class ..._s> XTAL_NEW lattice;
 template <class ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
 template <class ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
 
@@ -189,10 +189,10 @@ struct lattice<U[N]>
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::group::lattice_q T>
+template <xtal::atom::lattice_q T>
 struct tuple_size<T>: xtal::cardinal_t<T::size()> {};
 
-template <size_t N, xtal::group::lattice_q T>
+template <size_t N, xtal::atom::lattice_q T>
 struct tuple_element<N, T> {using type = xtal::devalue_t<T>;};
 
 

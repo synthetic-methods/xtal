@@ -20,7 +20,7 @@ TAG_("cycle")
 	using T_delta = typename re::delta_t;
 	using T_alpha = typename re::alpha_t;
 	using U_phi = cycle_t<T_delta[2]>;
-	using W_phi = group::cycle_t<T_alpha[2]>;
+	using W_phi = atom::cycle_t<T_alpha[2]>;
 
 	EST_("functor")
 	{

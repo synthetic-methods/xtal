@@ -4,16 +4,16 @@
 #include "../message/resize.ii"
 #include "../message/respan.ii"
 #include "../message/revise.ii"
-#include "../message/scope.ii"
+#include "../message/render.ii"
 
 XTAL_ENV_(push)
 namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NYM monomer;
-template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_NEW monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
+template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_FN2  monomer_f(auto &&u)
 XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
@@ -25,7 +25,7 @@ template <class U, typename ...As>
 struct monomer<U, As...>
 {
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
+	using U_render = message::render_t<>;
 
 	using subkind = confer<U, As...>;
 
@@ -50,8 +50,8 @@ struct monomer<U, As...>
 			using subkind = bond::compose<bond::tag<monomer>
 			,	cell::confer<typename S_binding<Xs...>::Y_result>
 		//	,	As...
-		//	,	U_resize::attach<>
-			,	U_scope::attach<>
+			,	U_resize::attach<>
+			,	U_render::attach<>
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
@@ -74,15 +74,15 @@ struct monomer<U, As...>
 				{}
 
 				XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), R_::head(XTAL_REF_(oo)...))
-				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
+				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve()|recount_f(R_::template head<U_resize>()))
 
 
 				using R_::efflux;
 
-				XTAL_TNX efflux(message::scope_q auto &&o_scope)
+				XTAL_TNX efflux(message::render_q auto &&o_render)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(R_::functor()), -1) (R_::efflux(XTAL_REF_(o_scope)));
+					return XTAL_FLX_((void) serve(R_::functor()), 0) (R_::efflux(XTAL_REF_(o_render)));
 				}
 
 			};
@@ -102,7 +102,7 @@ struct monomer<U, As...>
 			,	message::revise<U_store>
 			,	As...// NOTE: Necessary for `intermit`!
 			,	U_resize::attach<>
-			,	U_scope::attach<>
+			,	U_render::attach<>
 			,	S_binding<Xs...>
 			>;
 			template <any_q R>
@@ -146,40 +146,40 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 				///\
-				Responds to `message::scope` by rendering the internal `store()`. \
-				A match for the following scope will initiate the `respan` (returning `1`), \
-				while a match for the current scope will terminate (returning `0`). \
-				(Deviant behaviour is enforced by `assert`ion on `scope`.) \
+				Responds to `message::render` by rendering the internal `store()`. \
+				A match for the following render will initiate the `respan` (returning `1`), \
+				while a match for the current render will terminate (returning `0`). \
+				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
-				XTAL_TNX efflux(message::scope_q auto o_scope, auto &&...oo)
+				XTAL_TNX efflux(message::render_q auto o_render, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_respan(store()), o_scope, XTAL_REF_(oo)...);
+					return efflux(U_respan(store()), o_render, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `message::respan`, the supplied visor will be used instead. \
 				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				XTAL_TNX efflux(U_respan o_respan, message::scope_q auto o_scope, auto &&...oo)
+				XTAL_TNX efflux(U_respan o_respan, message::render_q auto o_render, auto &&...oo)
 				XTAL_0EX
 				{
-					if (R_::effuse(o_scope) == 1) return 1;
+					if (R_::effuse(o_render) == 1) return 1;
 				//	else...
 					(void) serve(o_respan);
 					return self().reflux([&, this] (auto n, counted_q auto w)
-						XTAL_0FN_(self().efflux_pull_slice(o_respan.slice(w), o_scope.slice(w).skip(n), oo...))
-					) & R_::template influx_push(o_scope);
+						XTAL_0FN_(self().efflux_pull_slice(o_respan.slice(w), o_render.slice(w).skip(n), oo...))
+					) & R_::template influx_push(o_render);
 				}
 				///\
-				Renders the buffer slice designated by `respan_x` and `scope_x`. \
+				Renders the buffer slice designated by `respan_x` and `render_x`. \
 				
-				XTAL_TNX efflux_pull_slice(U_respan respan_x, message::scope_q auto scope_x, auto &&...oo)
+				XTAL_TNX efflux_pull_slice(U_respan respan_x, message::render_q auto render_x, auto &&...oo)
 				XTAL_0EX
 				{
 					auto const  t_ = respan_x.begin();
 					auto const _n  = recount_f(respan_x);
-					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, scope_x, oo...) or
+					return 1 == R_::template efflux_pull_tail<N_share>(respan_x, render_x, oo...) or
 						(_v3::ranges::move(R_::functor()|_n, t_), 0);
 				}
 

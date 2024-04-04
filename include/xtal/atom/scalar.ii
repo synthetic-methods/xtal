@@ -7,12 +7,12 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::group
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM series;// For `::dual` (`#include`d at EOF).
-template <class ..._s> XTAL_NYM scalar;
+template <class ..._s> XTAL_NEW series;// For `::dual` (`#include`d at EOF).
+template <class ..._s> XTAL_NEW scalar;
 template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
 template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
 

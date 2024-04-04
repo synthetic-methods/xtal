@@ -17,3 +17,8 @@ endif()
 target_link_libraries(test xtal::xtal Catch2::Catch2WithMain)
 
 target_precompile_headers(test INTERFACE xtal::xtal Catch2::Catch2WithMain)
+
+set(CMAKE_CXX_CLANG_TIDY /opt/homebrew/opt/llvm@15/bin/clang-tidy;
+	-format-style='file';
+	-header-filter=${CMAKE_CURRENT_SOURCE_DIR};
+)

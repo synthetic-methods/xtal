@@ -17,11 +17,13 @@ TAG_("per")
 {
 	TRY_("construction")
 	{
-		using T_sigma = typename bond::realized::sigma_t;
-		using T_alpha = typename bond::realized::alpha_t;
+		using re = bond::realized;
 
-		T_sigma constexpr b = bond::realized::diplo_f(16);
-		T_alpha constexpr p = bond::realized::haplo_f(16);
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
+
+		T_sigma constexpr b = re::sigma_1 << 16;
+		T_alpha constexpr p = re::haplo_f(16);
 
 		auto d = per_t(b);
 		auto q = per_t(p);

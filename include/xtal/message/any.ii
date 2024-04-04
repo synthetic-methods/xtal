@@ -89,7 +89,7 @@ struct define
 		{
 		};
 		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to resolve `functor<auto ...>`. \
+		Attaches `T` as a member of `this`, appending it to the arguments used to `resolve` `functor<auto ...>`. \
 
 		template <int N_mask=-1>
 		struct dispatch
@@ -107,59 +107,59 @@ struct define
 				using R_::self;
 				using R_::head;
 
+
 				XTAL_CO0_(subtype);
 				XTAL_CO4_(subtype);
 
 				XTAL_CXN subtype(size_t const &n)
+				XTAL_0EX
 				:	R_(n)
-				{
-					assert(0 <= n and n < T::size());
-				}
+				{}
 
 				XTAL_TO2_(
-				XTAL_OP2() (auto &&...xs),
-					(self().*deify<decltype(xs)...>()) (XTAL_REF_(xs)...)
+				XTAL_OP2 () (auto &&...xs),
+					(self().*resolve<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_TN2 reify(integral_q auto const ...ks),
-					_std::bind_front(deify<Xs...>(ks...), &self())
+				XTAL_TN2 lambda(integral_q auto const ...is),
+					_std::bind_front(resolve<Xs...>(is...), &self())
 				)
-
-				template <class ...Xs>
-				XTAL_TN2 deify(integral_q auto const ...ks)
-				XTAL_0FX
-				{
-					return deify_(being<Xs...>::template m_method<ks...>);
-				}
-				XTAL_TN2 deify_(array_q auto const &fs)
-				XTAL_0FX
-				{
-					return R_::deify_(fs[head()]);
-				}
 
 			protected:
 				template <class ...Xs>
-				struct being
+				XTAL_TN2 resolve(integral_q auto const ...is)
+				XTAL_0FX
+				{
+					return dissolve(materialize<Xs...>::template type<is...>::value);
+				}
+				XTAL_TN2 dissolve(array_q<T::size()> auto const &value)
+				XTAL_0FX
+				{
+					static_assert(1 == bond::realized::bit_count_f(T::size()));
+					size_t i = head(); i &= (T::size() - 1);
+					return R_::dissolve(value[i]);
+				}
+
+				template <class ...Xs>
+				struct materialize
 				{
 					template <auto ...Is>
-					class resolve
+					class type
 					{
 						template <size_t ...I>
-						XTAL_FN2 method_f(bond::seek_t<I...>)
+						XTAL_FN2 enumerate_f(bond::seek_t<I...>)
 						XTAL_0EX
 						{
-							using doing = typename R_::template being<Xs...>;
-							return _std::array{(doing::template m_method<Is..., I>)...};
+							using context = typename R_::template materialize<Xs...>;
+							return _std::array {(context::template type<Is..., I>::value)...};
 						}
 					
 					public:
-						XTAL_LET m_method = method_f(bond::seek_f<T::size()> {});
+						XTAL_LET value      = enumerate_f(bond::seek_f<T::size()> {});
+						XTAL_USE value_type = decltype(value);
 					
 					};
-					template <auto ...Is> XTAL_LET m_method = resolve<Is...>::m_method;
-					template <auto ...Is> XTAL_USE Y_method = decltype(m_method<Is...>);
-				
 				};
 
 			};

@@ -48,8 +48,8 @@ struct define
 		XTAL_TNX reflux(auto const &f, auto &n)
 		XTAL_0EX
 		{
-			auto flx = -1;
-			auto  &s = self();
+			sign_t flx = -1;
+			auto &s = self();
 			for (size_s i = 0, j = s.delay(); i != j; j = s.relay(i = j)) {
 				flx &= f(n++, counted_f(i, j));
 			}
@@ -60,7 +60,7 @@ struct define
 
 		///\
 		Efflux operator: resolves the message for any dependencies before `this`, \
-		used for e.g. `message::respan` and `message::scope`. \
+		used for e.g. `message::respan` and `message::render`. \
 
 		XTAL_OP1 >>=(auto &&o)
 		XTAL_0EX

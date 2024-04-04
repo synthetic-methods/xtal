@@ -17,7 +17,7 @@ Wrapper used to scheduled an existing type.\
 
 ///\see e.g. [../message/any#hold] or [../message/any#intermit]`. \
 
-template <   typename    ..._s> XTAL_NYM cue;
+template <   typename    ..._s> XTAL_NEW cue;
 template <         class ...Ts> XTAL_ASK cue_q = bond::tag_p<cue, Ts...>;
 template <class Y, class ...Ts> XTAL_ASK cue_p = cue_q<Ts...> and of_p<Y, Ts...>;
 

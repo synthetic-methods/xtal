@@ -38,7 +38,7 @@ struct define
 		Alias of `functor(...)`. \
 		
 		XTAL_TO2_(
-		XTAL_OP2() (auto &&...xs),
+		XTAL_OP2 () (auto &&...xs),
 			self().functor(XTAL_REF_(xs)...)
 		)
 		
@@ -56,7 +56,7 @@ struct define
 		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
-		XTAL_TN2 reify(integral_q auto const ...is),
+		XTAL_TN2 lambda(integral_q auto const ...is),
 		{
 			if constexpr (0 == sizeof...(is)) {
 				return [&, this] XTAL_1FN_(self().functor);
@@ -65,52 +65,49 @@ struct define
 				return [&, this] XTAL_1FN_(self().template functor<is...>);
 			}
 		})
-		//\
-		XTAL_TN2 reify(auto const ...is), 
 		
-		///\returns the overloaded function-pointer for the given types. \
-
-		template <class ...Xs>
-		XTAL_TN2 deify(auto const ...is)
-		XTAL_0FX
-		{
-			return deify_(being<Xs...>::template m_method<is...>);
-		}
-		XTAL_TN2 deify_(auto const &f0)
-		XTAL_0FX
-		{
-			return f0;
-		}
-
 	protected:
+		template <class ...Xs>
+		XTAL_TN2 resolve(auto const ...is)
+		XTAL_0FX
+		{
+			return dissolve(materialize<Xs...>::template type<is...>::value);
+		}
+		XTAL_TN2 dissolve(auto const &value)
+		XTAL_0FX
+		{
+			return value;
+		}
+
 		///\
 		Defines the subtype-indexed function-pointer table, \
 		dynamically indexed by message-value/subtype `T`, \
 		and statically-generated from `functor<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
-		struct being
+		struct materialize
 		{
 			template <auto ...Is>
-			class resolve
+			class type
 			{
+				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(Xs)...));
+
 			public:
-				using Y_return = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(Xs)...));
-				using Y_method = Y_return (T::*) (argument_t<Xs>...);
+				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...);
+				XTAL_LET value      = static_cast<value_type>(&T::template functor<Is...>);
 
 			};
 			template <auto ...Is>
 			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...))
-			class resolve<Is...>
+			class type<Is...>
 			{
+				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...));
+
 			public:
-				using Y_return = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...));
-				using Y_method = Y_return (T::*) (argument_t<Xs>...) const;
+				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...) const;
+				XTAL_LET value      = static_cast<value_type>(&T::template functor<Is...>);
 
 			};
-			template <auto ...Is> XTAL_USE Y_method = typename resolve<Is...>::Y_method;
-			template <auto ...Is> XTAL_LET m_method = static_cast<Y_method<Is...>>(&T::template functor<Is...>);
-		
 		};
 
 	public:

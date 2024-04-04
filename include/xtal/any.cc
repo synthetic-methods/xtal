@@ -135,7 +135,7 @@ struct dynamic_count
 			return i;
 		}
 
-	protected:
+	private:
 		U_count u_count = 0;
 
 	};

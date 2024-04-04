@@ -16,7 +16,7 @@ scheduled via `influx` and processed in segments via `reflux`. \
 
 ///\todo\
 Allow for scheduled beyond the current window, \
-possibly using `message::scope` to convert between absolute and relative delays. \
+possibly using `message::render` to convert between absolute and relative delays. \
 
 template <typename ...As>
 struct chunk
@@ -47,6 +47,7 @@ struct chunk
 				using typename R_::V_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
+			private:
 				U_spool u_spool {U_event::template sentry<1>()};
 
 				XTAL_TO4_(XTAL_TN2 next_core(), u_spool.peek().then())
@@ -69,10 +70,14 @@ struct chunk
 				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
-					return 0 == u.head()?
-						R_::influx(XTAL_REF_(u).then()):
-						(u_spool.push(XTAL_REF_(u)), 0);
-					//	u == *u_spool.push(XTAL_REF_(u));
+					if (0 == u.head()) {
+						return R_::influx(XTAL_REF_(u).then());
+					}
+					else {
+						//\
+						return u.then() == u_spool.push(XTAL_REF_(u)).then();
+						u_spool.push(XTAL_REF_(u)); return 0;
+					}
 				}
 
 				///\returns The delay until the next event to be processed. \
@@ -94,7 +99,7 @@ struct chunk
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and next_head() <= i; u_spool.pop()) {
-					//	R_::operator<<=(next_core().apple());
+						R_::operator<<=(next_core().apple());
 						(void) R_::influx(next_core());
 					}
 					return delay();

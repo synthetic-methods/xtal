@@ -334,7 +334,7 @@ void compute_truncate__zoned()
 	auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 	auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-	realized::alpha_t x, co = N_sgn*_std::pow(2, N_rho);
+	realized::alpha_t x {}, co = N_sgn*_std::pow(2, N_rho);
 	x = co*up2; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn0);
 	x = co*up1; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn0);
 //	x = co*up0; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*dn0);
@@ -371,7 +371,7 @@ TAG_("realize", "truncate")
 		auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 		auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-		realized::alpha_t x;
+		realized::alpha_t x {};
 
 		x = 3.142; TRUE_(realized::truncate_f<1>(x, 1) == 1); TRUE_(x == 2*dn1);
 		x = 3.142; TRUE_(realized::truncate_f<1>(x, 2) == 0); TRUE_(x == 3.142);
@@ -390,7 +390,7 @@ void compute_puncture__real_zoned()
 	auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 	auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-	realized::alpha_t x, co = N_sgn*_std::pow(2, N_rho);
+	realized::alpha_t x {}, co = N_sgn*_std::pow(2, N_rho);
 	
 	x = co*up2; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up2);
 	x = co*up1; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up1);
@@ -422,7 +422,7 @@ void compute_puncture__real_unzoned()
 	auto const oo2 = realized::minimal_f(2);
 	auto const oo3 = realized::minimal_f(3);
 
-	realized::alpha_t w, x, y, co = N_sgn;
+	realized::alpha_t w {}, x {}, y {}, co = N_sgn;
 
 	w = x = co*oo2; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == co*oo2);
 	w = x = co*oo1; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == co*oo1);
@@ -461,7 +461,7 @@ TAG_("realize", "puncture")
 		auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 		auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-		realized::alpha_t x;
+		realized::alpha_t x {};
 
 		x = 3.142; TRUE_(realized::puncture_f<1>(x, 1) == 0); TRUE_(x == 3.142);
 		x = 3.142; TRUE_(realized::puncture_f<1>(x, 2) == 1); TRUE_(x == 4*up1);

@@ -117,6 +117,8 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
+		~subtype() = default;
+		
 	//	XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
 		
@@ -222,7 +224,7 @@ struct defer_field<unit_t[N_width]>
 		using U_body = T_body;
 
 	public:
-		U_body u_body:N_depth;
+		U_body u_body:N_depth {};
 
 	public:
 	//	using S_::S_;

@@ -124,10 +124,7 @@ template <iterator_q ...Xs>
 XTAL_FN0 tunnel_f(auto &&y, Xs &&...xs)
 XTAL_0EX
 {
-	auto v_ = y.begin();
-	if constexpr (0 < sizeof...(xs)) {
-		_v3::ranges::move(funnel_f(XTAL_REF_(y), XTAL_REF_(xs)...), v_);
-	}
+	_v3::ranges::move(funnel_f(y, XTAL_REF_(xs)...), y.begin());
 }
 
 template <size_t N>

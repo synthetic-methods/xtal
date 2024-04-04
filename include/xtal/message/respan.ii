@@ -11,7 +11,7 @@ namespace xtal::message
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NYM respan;
+template <typename ..._s> XTAL_NEW respan;
 template <typename ..._s> XTAL_ASK respan_q = bond::tag_p<respan, _s...>;
 template <iterated_q   U> XTAL_USE respan_t = confined_t<refer<U>, respan<U>, bond::tag<respan>>;
 /**/

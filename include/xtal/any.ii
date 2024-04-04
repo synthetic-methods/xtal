@@ -30,8 +30,9 @@ namespace _std
 }
 namespace _v3
 {
-	namespace ranges = ::ranges;
-	namespace views  = ::ranges::views;
+	namespace ranges  = ::ranges;
+	namespace views   = ::ranges::views;
+	namespace actions = ::ranges::actions;
 
 }
 

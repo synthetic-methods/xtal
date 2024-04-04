@@ -17,7 +17,7 @@ Wrapper used to index an existing type. \
 
 ///\see e.g. [../processor/polymer.ipp]. \
 
-template <   typename    ..._s> XTAL_NYM key;
+template <   typename    ..._s> XTAL_NEW key;
 template <         class ...Ts> XTAL_ASK key_q = bond::tag_p<key, Ts...>;
 template <class Y, class ...Ts> XTAL_ASK key_p = key_q<Ts...> and of_p<Y, Ts...>;
 

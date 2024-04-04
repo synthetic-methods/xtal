@@ -47,11 +47,15 @@ struct thunk
 				using typename R_::V_delay;
 				using U_spool = typename S_::template spool_t<U_event>;
 
+			private:
 				V_delay v_delay {0};
 				U_spool u_spool {U_event::template sentry<-1>(), U_event::template sentry<1>()};
 
 			public:
-				using R_::R_;
+			//	using R_::R_;
+				
+				XTAL_CO0_(subtype)
+				XTAL_CO4_(subtype)
 
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
@@ -69,7 +73,7 @@ struct thunk
 					if (u_spool.empty() and u.head() < v_delay) {
 						(void) u_spool.abandon().head(v_delay = 0);
 					}
-					return u == *u_spool.push(XTAL_REF_(u));
+					return u.then() == u_spool.push(XTAL_REF_(u)).then();
 				}
 
 				XTAL_TN2 functor()

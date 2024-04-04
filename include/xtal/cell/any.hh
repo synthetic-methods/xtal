@@ -1,6 +1,6 @@
 #pragma once
 #include "../bond/all.ii"// `_retail`
-#include "../group/all.ii"
+#include "../atom/all.ii"
 
 
 
@@ -38,9 +38,9 @@ template <typename A>
 struct any<A>
 {	
 	template <class S> requires some_q<typename S::T_self>
-	class subtype: public bond::compose_s<S>
+	class subtype: public S
 	{
-		using S_ = bond::compose_s<S>;
+		using S_ = S;
 
 	public://protected:
 		using typename S::T_self;
@@ -77,20 +77,24 @@ struct any<A>
 
 		XTAL_CO0_(subtype);
 		XTAL_CO4_(subtype);
-		///\
-		Attempts construction from infungible-but-compatible types via inspection. \
-		
-		template <class W>
-		requires infungible_q<subtype, W> and
-		requires {typename W::template self_s<A>;}
-		XTAL_CON subtype(W &&w, auto &&...oo)
-		XTAL_0EX
-		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
-		{};
+
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
+		XTAL_CXN subtype(of_q<S_> auto &&s, auto &&...oo)
+		XTAL_0EX
+		:	S_(static_cast<S_ &&>(s), XTAL_REF_(oo)...)
+		{}
+		///\
+		Attempts construction from infungible-but-compatible types via inspection. \
+		
+		template <infungible_q<subtype> W>
+		XTAL_REQ_(typename W::template self_s<A>)
+		XTAL_CON subtype(W &&w, auto &&...oo)
+		XTAL_0EX
+		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
+		{};
 
 	};
 };

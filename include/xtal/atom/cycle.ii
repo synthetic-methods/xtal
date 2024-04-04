@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::group
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM cycle;
+template <class ..._s> XTAL_NEW cycle;
 template <class ..._s> XTAL_USE cycle_t = typename cycle<_s...>::type;
 template <class ...Ts> XTAL_ASK cycle_q = bond::tag_p<cycle, Ts...>;
 

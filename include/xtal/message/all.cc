@@ -5,5 +5,5 @@
 #include "./respan.cc"
 #include "./restep.cc"
 #include "./revise.cc"
-#include "./scope.cc"
+#include "./render.cc"
 #include "./stage.cc"

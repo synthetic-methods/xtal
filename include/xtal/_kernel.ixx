@@ -158,10 +158,12 @@ public:
 class
 {
 	XTAL_TN0 print_list(auto &&x)
+	XTAL_0FX
 	{
 		for (auto &&w: XTAL_REF_(x)) ::std::cout << XTAL_REF_(w) << '\t';
 	}
 	XTAL_TN0 print_item(auto &&x)
+	XTAL_0FX
 	{
 		using W = XTAL_TYP_(x);
 		if constexpr (::std::is_floating_point_v<W>) {
@@ -175,6 +177,7 @@ class
 		::std::cout << XTAL_REF_(x) << '\t';
 	}
 	XTAL_TN1 put(auto &&x)
+	XTAL_0FX
 	{
 		using W = XTAL_TYP_(x);
 		if constexpr (_v3::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
@@ -188,6 +191,7 @@ class
 
 public:
 	XTAL_OP1() (auto &&...xs)
+	XTAL_0FX
 	{
 		if constexpr (0 < sizeof...(xs)) {
 			::std::cout << '\t'; auto const x = (put(XTAL_REF_(xs)), ...);
@@ -199,7 +203,7 @@ public:
 		}
 	}
 
-} echo;
+} const echo;
 #endif
 
 

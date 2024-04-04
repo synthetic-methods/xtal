@@ -14,17 +14,17 @@ namespace xtal::bond
 namespace compose_
 {///////////////////////////////////////////////////////////////////////////////
 
-template <template <class, class...> class T>
-struct reify {template <class S, class ..._s> using subtype = T<S, _s...>;};
+template <template <class, class...> class Sx>
+struct reify {template <class S, class ..._s> using subtype = Sx<S, _s...>;};
 
-template <typename O>
-concept query = requires {typename reify<O::template subtype>;};
+template <typename Sx>
+concept query = requires {typename reify<Sx::template subtype>;};
 
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Outer>
-concept compose_q = (...and compose_::query<Outer>);
+template <typename ...Ts>
+concept compose_q = (...and compose_::query<Ts>);
 
 
 ///\

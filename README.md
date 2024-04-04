@@ -27,7 +27,6 @@ The following code examples use the following macros for brevity/clarity:
 	#define XTAL_TN2 [[nodiscard]] constexpr decltype(auto)
 	#define XTAL_TN1               constexpr decltype(auto)
 
-	#define XTAL_DEF       auto &&
 	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
 
 ## Processing
@@ -114,7 +113,7 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
 
 	auto resize = resize_t(1024);
-	auto scope = scope_t(1024);
+	auto render = render_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, resourced::store<>>;
 	auto sixer = Mixer::bind_f(one, two, three);
@@ -130,16 +129,16 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	   // activate the `sixer` for the entirety of the first block
 	   sixer <<= Active(1);
 
-	   // render the current graph, and advance the `scope` cursor
-	   sixer >>= scope++;
+	   // process the current graph, and advance the `render` cursor
+	   sixer >>= render++;
 	}
 	// 2nd iteration
 	{
 	   // deactivate the `sixer` at an offset of `123` into the current block
 	   sixer <<= sixer <<= std::make_tuple(123, Active(0));
 
-	   // render the current graph, and advance the `scope` cursor
-	   sixer >>= scope++;
+	   // process the current graph, and advance the `render` cursor
+	   sixer >>= render++;
 	}
 
 # Development
@@ -228,8 +227,8 @@ The type-functions [`compose` and `compose_s`](include/xtal/bond/compose.ii?ts=3
 
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
-	namespace cell   {}
-	namespace flux   {namespace _retail = cell;}
+	namespace cell      {}
+	namespace flux      {namespace _retail = cell;}
 	namespace message   {namespace _retail = flux;}
 	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}
@@ -268,9 +267,9 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding`|
 |Processor polymorphism     |[`processor/polymer.ii`](include/xtal/processor/polymer.ii?ts=3) via `::binding`|
 |Buffer sharing             |[`processor/monomer.ii`](include/xtal/processor/monomer.ii?ts=3) via `::binding` compatible `&&`arguments|
-|Buffer allocation          |[`group/store.ii`](include/xtal/group/store.ii?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`group/scalar.ii`](include/xtal/group/scalar.ii?ts=3)|
-|Buffer transformation      |[`group/series.ii`](include/xtal/group/series.ii?ts=3) incl. convolution and iFFT/FFT|
+|Buffer allocation          |[`atom/store.ii`](include/xtal/atom/store.ii?ts=3) impl. static `std::vector`|
+|Buffer arithmetic          |[`atom/scalar.ii`](include/xtal/atom/scalar.ii?ts=3)|
+|Buffer transformation      |[`atom/series.ii`](include/xtal/atom/series.ii?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`bond/realize.ii`](include/xtal/bond/realize.ii?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution

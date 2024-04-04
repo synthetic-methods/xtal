@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::group
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NYM store;
+template <class ..._s> XTAL_NEW store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
 template <class ...Ts> XTAL_ASK store_q = bond::tag_p<store, Ts...>;
 
@@ -75,13 +75,12 @@ struct store<U[N]>
 		using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 	
 	private:
-		A m_block[N];
+		A m_block[N] {};
 		difference_type m_limit = 0;
 
-
 	public:// ACCESS
-		XTAL_TO2_(XTAL_TN2 begin(), injector_(m_block));
-		XTAL_TO2_(XTAL_TN2   end(), injector_(m_block + m_limit));
+		XTAL_TO2_(XTAL_TN2 begin(), injector_(_std::begin(m_block)));
+		XTAL_TO2_(XTAL_TN2   end(), injector_(_std::begin(m_block) + m_limit));
 
 	private:
 		XTAL_FN2 injector_(      A *i) XTAL_0EX {return appointer_f<      U *>(i);}
@@ -161,9 +160,10 @@ struct store<U[N]>
 		List assignment. \
 		Replaces the contents of `this` with the given values. \
 
-		XTAL_OP1 = (bracket_t<U> w)
+		XTAL_OP1_(homotype &) = (bracket_t<U> w)
 		{
-			return refresh_(w.begin(), w.end());
+			refresh_(w.begin(), w.end());
+			return *this;
 		}
 
 		///\
@@ -177,9 +177,10 @@ struct store<U[N]>
 		Copy assigment. \
 		Replaces the contents of `this` with the given data. \
 
-		XTAL_OP1 = (homotype const &t)
+		XTAL_OP1_(homotype &) = (homotype const &t)
 		{
-			return refresh_(t.begin(), t.end());
+			refresh_(t.begin(), t.end());
+			return *this;
 		}
 
 		///\
@@ -194,10 +195,11 @@ struct store<U[N]>
 		Move assigment. \
 		Replaces the contents of `this` with the given data. \
 
-		XTAL_OP1 = (homotype &&t)
+		XTAL_OP1_(homotype &) = (homotype &&t)
 		XTAL_REQ _std::move_constructible<U>
 		{
-			return refresh_(mover_f(t.begin()), mover_f(t.end()));
+			refresh_(mover_f(t.begin()), mover_f(t.end()));
+			return *this;
 		}
 
 		///\
@@ -330,13 +332,16 @@ struct store<U[N]>
 		XTAL_TN1_(iterator) inplace_back(auto &&...etc)
 		{
 			reserve(1 + size());
-			return ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
+			iterator i = end();
+			(void) ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
+			return i;
 		}
 		template <class I> requires common_q<iterator, I>
 		XTAL_TN1_(iterator) inplace(I i, auto &&...etc)
 		{
 			inject_(i, 1);
-			return ::new (injector_(i)) U(XTAL_REF_(etc)...);
+			(void) ::new (injector_(i)) U(XTAL_REF_(etc)...);
+			return i;
 		}
 		///\
 		Allocates `sN` elements beginning at `i`. \

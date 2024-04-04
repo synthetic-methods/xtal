@@ -101,7 +101,7 @@ struct recognize<(1<<2)>
 	,	sigma_n<0x6C078965>
 	>;
 
-	template <int _, int N_pow> XTAL_NYM root;
+	template <int _, int N_pow> XTAL_NEW root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
 	template <int _> struct root<_, -1>: sigma_u<0x7EEEEEEE> {};
 	template <int _> struct root<_, -2>: sigma_u<0x5F375A86> {};
@@ -171,7 +171,7 @@ struct recognize<(1<<3)>
 	,	sigma_n<0x5851F42D, 0x4C958000>
 	>;
 
-	template <int _, int N_pow> XTAL_NYM root;
+	template <int _, int N_pow> XTAL_NEW root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
 	template <int _> struct root<_, -1>: sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
 	template <int _> struct root<_, -2>: sigma_u<0x5FE6EB50, 0xC7B537A9> {};
@@ -1506,6 +1506,9 @@ public:
 	//	Log[m/Sqrt[2]] + Log[2]*(x + 1/2)
 	//	Log[m/Sqrt[2]] + Log[2]*(x*2 + 1)/2
 
+		alpha_t constexpr N_sqrt_half = 0.7071067811865475244008443621048490393e+0L;
+		alpha_t constexpr N_half_log2 = 0.3465735902799726547086160607290882840e+0L;
+
 		if constexpr (N_lim < 0) {
 			return _std::is_constant_evaluated()? logarithm_f<5>(x): _std::log(x);
 		}
@@ -1516,8 +1519,8 @@ public:
 			m     |= unit.mask;
 			n    >>= unit.shift - 1;
 			n     |= 1;
-			auto w = _std::bit_cast<alpha_t>(m)*0.7071067811865475244008443621048490393e+0L;// 1/Sqrt[2]
-			auto u =                alpha_t (n)*0.3465735902799726547086160607290882840e+0L;// Log[2]/2
+			auto w = N_sqrt_half*_std::bit_cast<alpha_t>(m);
+			auto u = N_half_log2*               alpha_t (n);
 			return logarithmic_f<N_lim>(w) + (u);
 		}
 	}

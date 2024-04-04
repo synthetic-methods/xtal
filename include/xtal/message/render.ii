@@ -13,31 +13,38 @@ namespace xtal::message
 ///\
 Tracks the progress of block-based `processor`s, \
 defined by the `step`, `size`, and position of the current block. \
-They are designed to prestore contiguity by maintaining monotonic ordering on `efflux`. \
+Preserves contiguity by maintaining monotonic ordering on `efflux`. \
 \
 The arithmetic operators are used to jump and/or resize to adjacent blocks, \
 while the logic operators facilitate contiguous comparison. \
 \
-The range-based `scope<counted_q>` uses `iota_view` to represent the sample-window corresponding to a block, \
+The range-based `render<counted_q>` uses `iota_view` to represent the sample-window corresponding to a block, \
 and may be used to parameterize `view`s of unbounded streams. \
 \
-The integer-based `scope<counter_q>` provides a lossy counterpart that mitigates the potential for overflow, \
+The integer-based `render<counter_q>` provides a lossy counterpart that mitigates the potential for overflow, \
 preserving only the `step` order and `size` of the object to which it's attached. \
 (A sample-accurate counter running at 96 kilohertz would otherwise overflow within 12 hours.) \
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <                     typename ..._s> XTAL_NYM scope;
-template <                     typename ..._s> XTAL_ASK scope_q = bond::tag_p<scope, _s...>;
-template <class W=counter_t<>, typename ...As> XTAL_USE scope_t = confined_t<scope<W>, As...>;
+template <                     typename ..._s> XTAL_NEW render;
+template <                     typename ..._s> XTAL_ASK render_q = bond::tag_p<render, _s...>;
+template <class W=counter_t<>, typename ...As> XTAL_USE render_t = confined_t<render<W>, As...>;
 template <                     typename ...As>
-XTAL_FN2  scope_f(auto &&w)
-XTAL_0EZ_(scope_t<counter_t<>, As...>(XTAL_REF_(w)))
+XTAL_FN2  render_f(auto &&w)
+XTAL_0EZ_(render_t<counter_t<>, As...>(XTAL_REF_(w)))
+
+
+template <class ...Ts>
+concept render_efflux_q = (...or (render_q<Ts>));
+
+template <class ...Ts>
+concept render_influx_q = false;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scope_q X, scope_q Y> requires (not is_q<X, Y>)
+template <render_q X, render_q Y> requires (not is_q<X, Y>)
 XTAL_OP2_(bool) == (X const &x, Y const &y)
 XTAL_0EX
 {
@@ -50,7 +57,7 @@ XTAL_0EX
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-struct prequel
+struct surrender
 {
 	template <any_q S>
 	class subtype: public S
@@ -175,7 +182,7 @@ struct prequel
 			return s == t or ((s = t), 0);
 		}
 		/**/
-		XTAL_TNX infuse(scope_q auto &&t)
+		XTAL_TNX infuse(render_q auto &&t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -197,10 +204,10 @@ struct prequel
 		}
 
 		///\
-		Enforces ordering on the incoming scopes by `assert`ion. \
+		Enforces ordering on the incoming renders by `assert`ion. \
 
 		///\note\
-		Unrecognized `scope_q` are incrementally incorporated, \
+		Unrecognized `render_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
 		XTAL_TNX effuse(auto &&o)
@@ -208,7 +215,7 @@ struct prequel
 		{
 			return S::effuse(XTAL_REF_(o));
 		}
-		XTAL_TNX effuse(scope_q auto &&t)
+		XTAL_TNX effuse(render_q auto &&t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -229,9 +236,9 @@ struct prequel
 }///////////////////////////////////////////////////////////////////////////////
 
 template <counter_q V>
-struct scope<V>
+struct render<V>
 {
-	using subkind = bond::compose<_detail::prequel, resize<V>, restep<V>, bond::tag<scope>>;
+	using subkind = bond::compose<_detail::surrender, resize<V>, restep<V>, bond::tag<render>>;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind>
@@ -320,13 +327,13 @@ struct scope<V>
 ////////////////////////////////////////////////////////////////////////////////
 
 template <counted_q U>
-struct scope<U>
+struct render<U>
 {
 private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = bond::compose<_detail::prequel, refer<U>, rescan<U>, restep<V>, bond::tag<scope>>;
+	using subkind = bond::compose<_detail::surrender, refer<U>, rescan<U>, restep<V>, bond::tag<render>>;
 
 	template <any_q S>
 	class subtype: public bond::compose_s<S, subkind>

@@ -4,7 +4,7 @@
 
 #include "../flux/indent.ii"
 #include "../processor/monomer.ii"
-#include "../group/all.ii"
+#include "../atom/all.ii"
 
 XTAL_ENV_(push)
 namespace xtal::process::_test
@@ -19,7 +19,7 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using U_model = group::lattice_t<int[2][3]>;
+		using U_model = atom::lattice_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = group::lattice_t<int[2][3]>;
+		using U_model = atom::lattice_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -50,7 +50,7 @@ TAG_("cross", "processor")
 		auto io = U_mixer::bind_f(_1, _n);
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
 		io <<= message::resize_t<>(3);
-		io >>= message::scope_t<>(3);
+		io >>= message::render_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 	//	(1*1 + 2*0) + (3*1 + 4*0) + (5*1 + 6*0)
@@ -62,7 +62,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = group::lattice_t<int[2][3]>;
+		using U_model = atom::lattice_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -72,7 +72,7 @@ TAG_("cross", "processor")
 		auto io = U_mixer::bind_f(_1, _n);
 		io <<= flux::indent_s<U_model>({{1, 2}, {3, 4}, {5, 6}});
 		io <<= message::resize_t<>(3);
-		io >>= message::scope_t<>(3);
+		io >>= message::render_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
@@ -81,7 +81,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = group::lattice_t<int[2][3]>;
+		using U_model = atom::lattice_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -93,16 +93,16 @@ TAG_("cross", "processor")
 		io <<= flux::indent_s<U_model, 1>({3, 4});
 		io <<= flux::indent_s<U_model, 2>({5, 6});
 		io <<= message::resize_t<>(3);
-		io >>= message::scope_t<>(3);
+		io >>= message::render_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
-	TRY_("shape with group indent")
+	TRY_("shape with vector indent")
 	{
 		using namespace _v3::views;
 
-		using U_model = group::lattice_t<int[2][3]>;
+		using U_model = atom::lattice_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resourced::store<>>;
 
@@ -117,7 +117,7 @@ TAG_("cross", "processor")
 		io <<= flux::indent_s<U_model, 2, 0>(5);
 		io <<= flux::indent_s<U_model, 2, 1>(6);
 		io <<= message::resize_t<>(3);
-		io >>= message::scope_t<>(3);
+		io >>= message::render_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 

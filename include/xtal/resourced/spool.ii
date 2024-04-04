@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.ii"
-#include "../group/spool.ii"
+#include "../atom/spool.ii"
 
 
 
@@ -11,13 +11,13 @@ namespace xtal::resourced
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NYM spool_a;
+XTAL_NEW spool_a;
 template <class ...Ts> concept spool_q = bond::tab_p<spool_a, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `group::spool`. \
+Provides a specialization of `atom::spool`. \
 If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
 template <int N=-1>
@@ -34,7 +34,7 @@ struct spool
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = group::spool_t<U[(unsigned) N]>;
+		using spool_t = atom::spool_t<U[(unsigned) N]>;
 
 	};
 };

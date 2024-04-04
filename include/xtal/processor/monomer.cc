@@ -20,9 +20,9 @@ void monomer_lifting()
 	using T_alpha = typename bond::realized::alpha_t;
 
 	T_sigma constexpr N_size = 5;
-	using U_group = group::lattice_t<T_alpha[N_size]>;
+	using U_group = atom::lattice_t<T_alpha[N_size]>;
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
+	using U_render = message::render_t<>;
 
 	auto x = U_group { 0,  1,  2,  3,  4};
 	auto y = U_group {00, 10, 20, 30, 40};
@@ -33,7 +33,7 @@ void monomer_lifting()
 	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= U_resize(N_size);
-	b >>= U_scope(N_size);
+	b >>= U_render(N_size);
 	_v3::ranges::move(b, a.begin());
 	TRUE_(a == z);
 	
@@ -54,7 +54,7 @@ void monomer_provision__advancing()
 	using T_sigma = typename bond::realized::sigma_t;
 	using T_alpha = typename bond::realized::alpha_t;
 
-	using U_scope = message::scope_t<>;
+	using U_render = message::render_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(as_f<T_alpha>);
@@ -65,7 +65,7 @@ void monomer_provision__advancing()
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = U_mixer::bind_f(lhs, rhs);
 
-	auto seq = U_scope(3); TRUE_(0 == xhs.size());// uninitialized...
+	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
 //	xhs <<=   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
@@ -74,7 +74,7 @@ void monomer_provision__advancing()
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
 	/**/
 
-//	xhs >>= ++seq; // NOTE: Can't skip ahead (`scope` assertion fails)!
+//	xhs >>= ++seq; // NOTE: Can't skip ahead (`render` assertion fails)!
 
 	seq += 6;     TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
@@ -102,7 +102,7 @@ void monomer_provision__provisioning()
 	using U_serve = visor_t<U_store>;
 	using U_respan = message::respan_t<U_serve>;
 	using U_resize = message::resize_t<>;
-	using U_scope = message::scope_t<>;
+	using U_render = message::render_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(as_f<T_alpha>);
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
@@ -112,17 +112,17 @@ void monomer_provision__provisioning()
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
-	auto m_slush = U_store {0, 0, 0};
-	auto m_respan = U_respan(m_slush);
-	auto m_scope = U_scope(3);
+	auto u_vector = U_store {0, 0, 0};
+	auto u_respan = U_respan(u_vector);
+	auto u_render = U_render(3);
 
 	TRUE_(0 == xhs.size());
 
-	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= onset_t((T_alpha) (11 + 1));
-	xhs >>= m_scope++ >> m_respan; TRUE_(equal_f(m_slush, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "message")
@@ -160,7 +160,7 @@ void monomer_chaining__rvalue()
 	yhs <<= onset_t((T_alpha) 000);
 	TRUE_(0 == yhs.size());
 
-	auto seq = message::scope_f(N);
+	auto seq = message::render_f(N);
 	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -192,7 +192,7 @@ void monomer_chaining__lvalue()
 	yhs <<= scale_t((T_alpha) 100);
 	xhs <<= onset_t((T_alpha) 000);
 
-	auto seq = message::scope_f(N);
+	auto seq = message::render_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -226,8 +226,8 @@ void monomer_chaining__shared()
 	yhs <<= message::restep_f((size_t) 50);
 	yhs <<= message::resize_f(N);
 
-	yhs >>= message::scope_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= message::scope_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= message::render_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= message::render_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")
