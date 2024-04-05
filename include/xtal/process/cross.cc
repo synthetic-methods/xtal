@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.cc"
-#include "./cross.ii"// testing...
+#include "./cross.hh"// testing...
 
-#include "../flux/indent.ii"
-#include "../processor/monomer.ii"
-#include "../atom/all.ii"
+#include "../flux/indent.hh"
+#include "../processor/monomer.hh"
+#include "../atom/all.hh"
 
 XTAL_ENV_(push)
 namespace xtal::process::_test

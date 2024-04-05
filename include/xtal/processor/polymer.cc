@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.cc"
-#include "./polymer.ii"// testing...
+#include "./polymer.hh"// testing...
 
-#include "./monomer.ii"
-#include "../resource/all.ii"
-#include "../schedule/all.ii"
+#include "./monomer.hh"
+#include "../resource/all.hh"
+#include "../schedule/all.hh"
 
 
 

@@ -1,254 +1,302 @@
 #pragma once
 
-#ifdef  NDEBUG
-#define XTAL_SIC 1//release
-#else
-#define XTAL_SIC 1//debug
-#include <iostream>
+#if __has_include(<execution>)
+#include <execution>
 #endif
+#include <concepts>
+#include <cassert>
+#include <cstring>
+#include <complex>
+#include <numbers>
+#include <cmath>
+#include <tuple>
+#include <array>
+#include <queue>
+#include <new>
+#include <bit>
 
-#define  _LIBCPP_DEBUG XTAL_SIC
-#define _GLIBCXX_DEBUG XTAL_SIC
+#include <iostream>
+
+#include <range/v3/all.hpp>
+#include <simde/arm/neon.h>
+//#if __has_include(<arm_neon.h>)
+//#include <arm_neon.h>
+//#endif
 
 
-///////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
+
+
+
+#include "./etc.hh"
+
+XTAL_ENV_(push)
+namespace xtal
+{/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_(...) XTAL_##__VA_ARGS__
+namespace _std
+{
+	using namespace ::std;
+
+#if not __cpp_lib_bit_cast
+	template <class T>
+	XTAL_LET bit_cast = []<class S> (S const &s)
+	XTAL_0FN
+	{
+		static_assert(is_trivially_copyable_v<T>);
+		static_assert(is_trivially_copyable_v<S>);
+		static_assert(sizeof(T) == sizeof(S));
+		return __builtin_bit_cast(T, s);
+	};
+#endif
+
+}
+namespace _v3
+{
+	namespace ranges  = ::ranges;
+	namespace views   = ::ranges::views;
+	namespace actions = ::ranges::actions;
+
+}
+
+#include "./_detail.ii"
 
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
-TODO: Allow [c]?make configuration?
+Standard...
 
-#include <variant>
-#include <cstdint>
+using    null_t = _detail:: null_t;
+using    unit_t = _detail:: unit_t;
+using    sign_t = _detail:: sign_t;
+using    byte_t = _detail:: byte_t;
+using    size_t = _detail:: size_t;
+using    size_s = _detail:: size_s;
+XTAL_LET size_1 = _detail:: size_1;
 
+template <auto N, auto  ...Ms>	concept exclusive_p = _detail::exclusive_p<N, Ms... >;
+template <auto N, auto  ...Ms>	concept inclusive_p = _detail::inclusive_p<N, Ms... >;
+template <auto N, auto  N_0=0>	concept      sign_p = _detail::     sign_p<N, N_0>;
+template <auto N, auto  N_0=0>	XTAL_LET     sign_n = _detail::     sign_n<N, N_0>;
 
-#define XTAL_INT_(...) XTAL_INT__##__VA_ARGS__
-#define XTAL_INT__0          char
-#define XTAL_INT__1     short int
-#define XTAL_INT__2           int
-#define XTAL_INT__3      long int
-#define XTAL_INT__4 long long int
-
-#define XTAL_FLT_(...) XTAL_FLT__##__VA_ARGS__
-#define XTAL_FLT__0          void
-#define XTAL_FLT__1          void
-#define XTAL_FLT__2         float
-#define XTAL_FLT__3        double
-#define XTAL_FLT__4   long double
-
-
-#define XTAL_STD_(...) XTAL_STD__##__VA_ARGS__
-#define XTAL_STD ((__cplusplus/100)%100)
-#define XTAL_STD__IEC 60559
-
-#define XTAL_STD__null_t ::std::nullptr_t
-#define XTAL_STD__unit_t ::std::monostate
-#define XTAL_STD__byte_t ::std::byte
-#define XTAL_STD__sign_t ::std::int_fast8_t
-#define XTAL_STD__size_t ::std::size_t
-#define XTAL_STD__size_s ::std::ptrdiff_t
+template <class         ...Ts>	concept      some_q = _detail::     some_q<Ts...>;
+template <auto          ...Ns>	concept      some_n = _detail::     some_n<Ns...>;
+template <class         ...Ts>	concept      none_q = _detail::     none_q<Ts...>;
+template <auto          ...Ns>	concept      none_n = _detail::     none_n<Ns...>;
 
 
-#if     defined(__cacheline_aligned)
-#define XTAL_STD__L1 __cacheline_aligned
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Structural...
 
-#elif   defined(L1_CACHE_BYTES)
-#define XTAL_STD__L1 L1_CACHE_BYTES
+template <class   ...Ts>	concept incomplete_q	= (...and  _detail:: incomplete_q<Ts>);
+template <class   ...Ts>	concept   complete_q	= (...and  _detail::   complete_q<Ts>);
+template <class   ...Ts>	using     complete_t	= typename _detail::   complete_t<Ts...>;
 
-#elif   defined(L1_CACHE_SHIFT)
-#define XTAL_STD__L1 L1_CACHE_SHIFT
 
-#else
-#define XTAL_STD__L1 0x40
+using cardinal_0 = _detail:: cardinal<0>::type;
+using cardinal_1 = _detail:: cardinal<1>::type;
+using  ordinal_0 = _detail::  ordinal<0>::type;
+using  ordinal_1 = _detail::  ordinal<1>::type;
+using  logical_0 = _detail::  ordinal<0>::type;
+using  logical_1 = _detail::  ordinal<1>::type;
 
-#endif
+template <auto       N >	using     constant_t	= typename _detail:: constant<N>::type;
+template <auto       N >	using     cardinal_t	= typename _detail:: cardinal<N>::type;
+template <auto       N >	using      ordinal_t	= typename _detail::  ordinal<N>::type;
+template <auto       N >	using      logical_t	= typename _detail::  logical<N>::type;
+
+template <class   ...Ts>	concept   constant_q	= (...and  _detail::  constant_q<Ts>);
+template <class   ...Ts>	concept   integral_q	= (...and  _detail::  integral_q<Ts>);
+template <class   ...Ts>	concept   cardinal_q	= (...and  _detail::  cardinal_q<Ts>);
+template <class   ...Ts>	concept    ordinal_q	= (...and  _detail::   ordinal_q<Ts>);
+template <class   ...Ts>	concept    logical_q	= (...and  _detail::   logical_q<Ts>);
+
+template <class   ...Ts>	concept   integral_p	= (...and  _detail::  integral_p<Ts>);
+template <class   ...Ts>	concept   cardinal_p	= (...and  _detail::  cardinal_p<Ts>);
+template <class   ...Ts>	concept    ordinal_p	= (...and  _detail::   ordinal_p<Ts>);
+template <class   ...Ts>	concept    logical_p	= (...and  _detail::   logical_p<Ts>);
+
+template <class   ...Ts>	concept   terminal_q	= (...and  _detail::    terminal_q<Ts>);
+template <class   ...Ts>	concept    liminal_q	= (...and  _detail::     liminal_q<Ts>);
+template <liminal_q  T >	using   subliminal_s	= typename _detail::  subliminal<T>::type;
+template <liminal_q  T >	using  semiliminal_s	= typename _detail:: semiliminal<T>::type;
+
+
+template <class      T >	using        based_t	=          _detail::   based_t<T>;
+template <class   ...Ts>	concept      based_q	= (...and  _detail::   based_q<Ts>);
+template <class   ...Ts>	concept    unbased_q	= (...and  _detail:: unbased_q<Ts>);
+
+template <class      T >	using      rebased_t	= typename _detail:: rebased<T>::type;
+template <class      T >	using      debased_t	= typename _detail:: debased<T>::type;
+template <class      T >	concept    rebased_p	=   (bool) _detail:: rebased<T>::value;
+template <class      T >	concept    debased_p	=   (bool) _detail:: debased<T>::value;
+template <class   ...Ts>	concept    rebased_q	= (...and  _detail:: rebased_q<Ts>);
+template <class   ...Ts>	concept    debased_q	= (...and  _detail:: debased_q<Ts>);
+
+
+template <class   ...Ts>	concept    devalue_q	= (...and  _detail::  devalue_q<Ts>);
+template <class   ...Ts>	concept    revalue_q	= (...and  _detail::  revalue_q<Ts>);
+template <class   ...Ts>	concept      value_q	= (...and  _detail::    value_q<Ts>);
+template <class      T >	using      devalue_t	=          _detail::  devalue_t<T>;
+template <class      T >	using      revalue_t	=          _detail::  revalue_t<T>;
+template <class      T >	using        value_t	=          _detail::    value_t<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_V00_(...) XTAL_V00__##__VA_ARGS__
+template <class         ...Ts>	concept    isomorphic_q	=     _detail:: isomorphic<Ts...>::value;
+template <class         ...Ts>	concept  anisomorphic_q	= not _detail:: isomorphic<Ts...>::value;
+template <class         ...Ts>	concept    epimorphic_q	=     _detail:: epimorphic<Ts...>::value;
+template <class         ...Ts>	concept  anepimorphic_q	= not _detail:: epimorphic<Ts...>::value;
 
-#if     defined(_MSC_VER)
-#define XTAL_V00__MSVC (_MSC_VER)
-#define XTAL_V00__LLVM 0
-#define XTAL_V00__GNUC 0
+template <class            ...Ts>	concept         id_q	= _detail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <class            ...Ts>	concept         is_q	= _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <class            ...Ts>	concept         as_q	= _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class  T , class ...Ys>	concept         as_p	= _detail:: as_p<T, Ys...>;
 
-#elif   defined(__clang__)
-#define XTAL_V00__LLVM (100*__clang_major__ + __clang_minor__)
-#define XTAL_V00__GNUC 0
-#define XTAL_V00__MSVC 0
+template <class  T , class ...Ys>	concept         of_p	= (...and _detail::of_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
+template <class  T , class ...Ys>	concept         of_q	= (...and _detail::of_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
 
-#elif   defined(__GNUC__)
-#define XTAL_V00__GNUC (100*__GNUC__ + __GNUC_MINOR__)
-#define XTAL_V00__MSVC 0
-#define XTAL_V00__LLVM 0
+template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
+template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
 
-#else
-#define XTAL_V00__MSVC 0
-#define XTAL_V00__LLVM 0
-#define XTAL_V00__GNUC 0
-
-#endif
-
-
-#if     XTAL_V00_(MSVC)
-static_assert(1933 <= XTAL_V00_(MSVC));
-
-#elif   XTAL_V00_(LLVM)
-static_assert(1400 <= XTAL_V00_(LLVM));
-
-#elif   XTAL_V00_(GNUC)
-//static_assert(1200 <= XTAL_V00_(GNUC));  
-
-#endif
+template <class            ...Ys>	concept     common_q	= some_q<Ys...> and _detail:: common_q<Ys...>;//< `Ys...` share an ancestor.
+template <class            ...Ys>	using       common_t	=                   _detail:: common_t<Ys...>;
+template <           class    X >	using     argument_t	=          typename _detail:: argument<X>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ENV_(...)  XTAL_ENV__##__VA_ARGS__
+template <class      T >	using       aligned_t = typename _detail:: aligned<T>::type;//< Equivalent to the soon-to-be-deprecated `std::aligned_storage`.
+template <class      T >	XTAL_LET    aligned_n =          _detail:: aligned<T>::value;
 
-#if     XTAL_V00_(MSVC)
-#define XTAL_ENV__pop   _Pragma("warning(pop)")
-#define XTAL_ENV__push  _Pragma("warning(push)")\
-                        _Pragma("warning(disable:4010)")\
+template <class      T >	using       pointed_t = _detail::pointed_t<T>;
+template <class      T >	using       pointer_t = _detail::pointer_t<T>;
+template <class   ...Ts>	concept     pointed_q = (... and _detail::pointed_q<Ts>);
+template <class   ...Ts>	concept     pointer_q = (... and _detail::pointer_q<Ts>);
 
-#elif   XTAL_V00_(LLVM)
-#define XTAL_ENV__pop   _Pragma("clang diagnostic pop")
-#define XTAL_ENV__push  _Pragma("clang diagnostic push")\
-                        _Pragma("clang diagnostic ignored \"-Wcomment\"")\
-                        _Pragma("clang diagnostic ignored \"-Wdocumentation\"")\
-                        _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
-                        _Pragma("clang diagnostic ignored \"-Wshift-op-parentheses\"")\
-                        _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
+template <class      T >	XTAL_LET     parity_n = _detail:: parity_n<T>;
+template <class      T >	XTAL_LET      arity_n = _detail::  arity_n<T>;
+template <class      T >	using         array_t = _detail::  array_t<T>;
 
-#elif   XTAL_V00_(GNUC)
-#define XTAL_ENV__pop   _Pragma("GCC diagnostic pop")
-#define XTAL_ENV__push  _Pragma("GCC diagnostic push")\
-                        _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
-//                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
+template <class  T, class  U>	concept      rank_q = _std::rank_v<T> == _std::rank_v<U>;
+template <class  T, class  U>	concept   subrank_q = _std::rank_v<T> <= _std::rank_v<U>;
 
-#endif
+template <class  T, int N=-1>	concept     array_q = _detail::array_q<T> and N <  0   or arity_n<T> == N;
+template <class  T, int N=-1>	concept  subarray_q = _detail::array_q<T> and 0 <= N  and arity_n<T> <= N;
+
+template <int N=-1, class  ...Ts>	concept     array_p = (...and    array_q<Ts, N>);
+template <int N=-1, class  ...Ts>	concept  subarray_p = (...and subarray_q<Ts, N>);
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Ranged...
+
+template <class      T >	using      iterface_t =          _detail:: iterface_t<T>;
+template <class      T >	using      interval_t =          _detail:: interval_t<T>;
+template <class      T >	using         visor_t =          _detail::    visor_t<T>;
+
+template <class   ...Ts>	concept   unbounded_q = (...and  _detail:: unbounded_q<Ts>);
+template <class   ...Ts>	concept     bounded_q = (...and  _detail::   bounded_q<Ts>);
+template <class   ...Ts>	concept      braced_q = (...and  _detail:: braced_q<Ts>);
+template <class      T >	using        braces_t =          _detail:: braces_t<T >;
+template <class      T >	using        braced_t =          _detail:: braced_t<T >;
+
+template <class   ...Ts>	concept    iterable_q = (...and  _detail:: iterable_q<Ts>);
+template <class   ...Ts>	concept    iterated_q = (...and  _detail:: iterated_q<Ts>);
+template <class   ...Ts>	concept    iterator_q = (...and  _detail:: iterator_q<Ts>);
+
+template <class      T >	using      iterated_t = typename _detail:: iterated<T>::type;
+template <class      T >	using      iterator_t = typename _detail:: iterator<T>::type;//_v3::ranges::iterator_t
+template <class      T >	using      iteratee_t = typename _detail:: iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class      T >	using      distance_t = _detail:: distance_t<T>;
+
+template <class   ...Ts>	concept     counted_q = (...and  _detail:: counted_q<Ts>);
+template <class   ...Ts>	concept     counter_q = (...and  _detail:: counter_q<Ts>);
+
+template <class   T=size_s>	using    counted_t = typename _detail:: counted<T>::type;
+template <class   T=size_s>	using    counter_t = typename _detail:: counter<T>::type;
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
+Arithmetic...
+
+template <class   ...Ts>	concept  number_q = (...and  _detail::  number_q<Ts>);
+template <class   ...Ts>	concept numeric_q = (...and  _detail:: numeric_q<Ts>);
+template <class      T >	using   numeric_t =          _detail:: numeric_t<T >;
+template <class   ...Ts>	concept integral_number_q = (...and  _detail:: integral_number_q<Ts>);
+template <class   ...Ts>	concept     real_number_q = (...and  _detail::     real_number_q<Ts>);
+template <class   ...Ts>	concept  complex_number_q = (...and  _detail::  complex_number_q<Ts>);
+
+
+template <size_t N, class T, class U=T>	concept multiplicative_group_p = _detail:: multiplicative_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept       additive_group_p = _detail::       additive_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept       discrete_group_p = _detail::       discrete_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept       quotient_group_p = _detail::       quotient_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept       integral_group_p = _detail::       integral_group_p<N, T, U>;
+
+template <size_t N, class T, class U=T>	concept     arithmetic_field_p = _detail::     arithmetic_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept        complex_field_p = _detail::        complex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept        simplex_field_p = _detail::        simplex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept           real_field_p = _detail::           real_field_p<N, T, U>;
+
+template <size_t N, class T, class U=T>	concept        boolean_logic_p = _detail::        boolean_logic_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept         binary_logic_p = _detail::         binary_logic_p<N, T, U>;
+
+template <size_t N, class T, class U=T>	concept           inequality_p = _detail::           inequality_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept             equality_p = _detail::             equality_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept              quality_p = _detail::              quality_p<N, T, U>;
+
+
+template <class   ...Ts>	concept multiplicative_group_q = (...and _detail:: multiplicative_group_p<0, Ts>);
+template <class   ...Ts>	concept       additive_group_q = (...and _detail::       additive_group_p<0, Ts>);
+template <class   ...Ts>	concept       discrete_group_q = (...and _detail::       discrete_group_p<0, Ts>);
+template <class   ...Ts>	concept       quotient_group_q = (...and _detail::       quotient_group_p<0, Ts>);
+template <class   ...Ts>	concept       integral_group_q = (...and _detail::       integral_group_p<0, Ts>);
+
+template <class   ...Ts>	concept     arithmetic_field_q = (...and _detail::     arithmetic_field_p<0, Ts>);
+template <class   ...Ts>	concept        complex_field_q = (...and _detail::        complex_field_p<0, Ts>);
+template <class   ...Ts>	concept        simplex_field_q = (...and _detail::        simplex_field_p<0, Ts>);
+template <class   ...Ts>	concept           real_field_q = (...and _detail::           real_field_p<0, Ts>);
+
+template <class   ...Ts>	concept        boolean_logic_q = (...and _detail::        boolean_logic_p<0, Ts>);
+template <class   ...Ts>	concept         binary_logic_q = (...and _detail::         binary_logic_p<0, Ts>);
+
+template <class   ...Ts>	concept           inequality_q = (...and _detail::           inequality_p<2, Ts>);
+template <class   ...Ts>	concept             equality_q = (...and _detail::             equality_p<2, Ts>);
+template <class   ...Ts>	concept              quality_q = (...and _detail::              quality_p<2, Ts>);
+
+
+static_assert(                  real_field_q<float>);
+static_assert(             arithmetic_field_q<float>);
+static_assert(          not quotient_group_q<float>);
+static_assert(              quotient_group_q<  int>);
+static_assert(complex_field_q<_std::complex<float>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TYP_(...)  ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_VAL_(...)  ::std::                 declval <__VA_ARGS__>()
-#define XTAL_MOV_(...)  ::std::                 move    (__VA_ARGS__)
-#define XTAL_REF_(...)              static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
-
-#define XTAL_NEW                       struct
-#define XTAL_USE                       using
-#define XTAL_ASK                       concept
-#define XTAL_REQ                       requires
-#define XTAL_REQ_(...)                 requires requires {__VA_ARGS__;}
-
-#define XTAL_CON                       constexpr       
-#define XTAL_CXN                       constexpr explicit
-
-
-#define XTAL_OP0_(...)                 XTAL_OP0__##__VA_ARGS__
-#define XTAL_OP0__explicit             constexpr explicit              operator
-#define XTAL_OP0__implicit             constexpr                       operator
-#define XTAL_OP1                       constexpr        decltype(auto) operator
-#define XTAL_OP2        [[nodiscard]]  constexpr        decltype(auto) operator
-#define XTAL_TN0                                                 void
-#define XTAL_TN1                       constexpr        decltype(auto)
-#define XTAL_TN2        [[nodiscard]]  constexpr        decltype(auto)
-#define XTAL_FN0                                 static          void
-#define XTAL_FN1                       constexpr static decltype(auto)
-#define XTAL_FN2        [[nodiscard]]  constexpr static decltype(auto)
-#define XTAL_LET                       constexpr static          auto
-
-#define XTAL_OP1_(...)                 constexpr        __VA_ARGS__ operator
-#define XTAL_OP2_(...)  [[nodiscard]]  constexpr        __VA_ARGS__ operator
-#define XTAL_TN1_(...)                 constexpr        __VA_ARGS__
-#define XTAL_TN2_(...)  [[nodiscard]]  constexpr        __VA_ARGS__
-#define XTAL_FN1_(...)                 constexpr static __VA_ARGS__
-#define XTAL_FN2_(...)  [[nodiscard]]  constexpr static __VA_ARGS__
-#define XTAL_LET_(...)                 constexpr static __VA_ARGS__
-
-#define XTAL_IF0                    if constexpr (0);
-#define XTAL_IF1                    if constexpr (1);
-#define XTAL_0IF_(...)        else  if constexpr (__VA_ARGS__)
-#define XTAL_0IF              else
-#define XTAL_0EX                                 noexcept
-#define XTAL_0FX              const              noexcept
-#define XTAL_0EX_(...)               __VA_ARGS__ noexcept
-#define XTAL_0FX_(...)        const  __VA_ARGS__ noexcept
-
-#define XTAL_0FN                       constexpr noexcept
-#define XTAL_0FM              mutable  constexpr noexcept
-#define XTAL_0FN_(...)                 constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FM_(...)        mutable  constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0EZ_(...)                           noexcept {return (__VA_ARGS__);}
-
-#define XTAL_TO2_(SIG, ...)   SIG      const     noexcept {return (__VA_ARGS__);}\
-                              SIG                noexcept {return (__VA_ARGS__);};
-#define XTAL_TO4_(SIG, ...)   SIG      const  &  noexcept {return (__VA_ARGS__);}\
-                              SIG             &  noexcept {return (__VA_ARGS__);}\
-                              SIG      const  && noexcept {return (__VA_ARGS__);}\
-                              SIG             && noexcept {return (__VA_ARGS__);};
-
-#define XTAL_DO2_(SIG, ...)   SIG      const     noexcept          __VA_ARGS__   \
-                              SIG                noexcept          __VA_ARGS__   ;
-#define XTAL_DO4_(SIG, ...)   SIG      const  &  noexcept          __VA_ARGS__   \
-                              SIG             &  noexcept          __VA_ARGS__   \
-                              SIG      const  && noexcept          __VA_ARGS__   \
-                              SIG             && noexcept          __VA_ARGS__   ;
-
-#define XTAL_CO0_(TYP)                           TYP()                          noexcept = default;\
-                                                ~TYP()                          noexcept = default;;
-#define XTAL_CO4_(TYP)                 constexpr TYP & operator = (TYP const &) noexcept = default;\
-                                       constexpr TYP              (TYP const &) noexcept = default;\
-                                       constexpr TYP & operator = (TYP      &&) noexcept = default;\
-                                       constexpr TYP              (TYP      &&) noexcept = default;;
+template <auto    ...Ns>	XTAL_USE   lateral_t	= typename _detail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
+template <auto    ...Ns>	XTAL_LET   lateral_n	=          _detail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_DEF              auto
-#define XTAL_DEF_(...)        XTAL_F1_(XTAL_DEC_,__VA_ARGS__)
-
-#define XTAL_DEC_(...)        XTAL_DEC__##__VA_ARGS__
-#if     XTAL_V00_(MSVC)
-#define XTAL_DEC__inline      __forceinline
-#else
-#define XTAL_DEC__inline      inline __attribute__((always_inline))
-#endif
-#define XTAL_DEC__return      [[nodiscard]]
-#define XTAL_DEC__static      static
-#define XTAL_DEC__constexpr   constexpr
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TNX              [[nodiscard]]  XTAL_STD_(sign_t)
-#define XTAL_FLX                             XTAL_STD_(sign_t)
-#define XTAL_FLX_(...)        [=, this]     (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
-
-#define XTAL_1FN_(...)        (auto &&...oo) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(oo)...))
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_E0 ()
-#define XTAL_F0() XTAL_F2_
-#define XTAL_F1_(F_,     ...)        __VA_OPT__(XTAL_X2_(XTAL_F2_(F_, __VA_ARGS__)))///< Map.
-#define XTAL_F2_(F_, A0, ...) F_(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (F_, __VA_ARGS__))
-
-#define XTAL_X0_(...)                __VA_ARGS__
-#define XTAL_X1_(...)         XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
-#define XTAL_X2_(...)         XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))///< Repeat.
-
-#define XTAL_S0_(SYM)                 #SYM
-#define XTAL_S1_(SYM)         XTAL_S0_(SYM)///< Stringify.
+#include "./_kernel.ii"
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

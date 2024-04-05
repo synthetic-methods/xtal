@@ -1,10 +1,10 @@
 #pragma once
 #include "./any.cc"
-#include "./monomer.ii"// testing...
+#include "./monomer.hh"// testing...
 
-#include "./all.ii"
-#include "../resource/all.ii"
-#include "../occur/all.ii"
+#include "./all.hh"
+#include "../resource/all.hh"
+#include "../occur/all.hh"
 
 XTAL_ENV_(push)
 namespace xtal::processor::_test

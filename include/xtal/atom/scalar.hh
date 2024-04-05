@@ -1,0 +1,142 @@
+#pragma once
+#include "./any.hh"
+#include "./lattice.hh"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s> XTAL_NEW series;// For `::dual` (`#include`d at EOF).
+template <class ..._s> XTAL_NEW scalar;
+template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
+template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Extends `lattice` with pointwise multiplication and an inner sum. \
+This may be interpreted respectively as the Hadamard product and trace for diagonal matricies. \
+
+///\note\
+Intended both to support dual time/frequency-domain processing, \
+and to provide a basis for manipulating mutual inverses and odd/even pairs. \
+
+
+template <class U, int N>
+struct scalar<U[N]>
+{
+	using re = bond::realize<U>;
+	
+	template <class T>
+	using demitype = typename lattice<U[N]>::template homotype<T>;
+
+	template <class T>
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<scalar>>;
+
+	template <class T>
+	class homotype : public hemitype<T>
+	{
+		friend T;
+		using  T_ = hemitype<T>;
+	
+	public:
+		using T_::T_;
+		using T_::get;
+		using T_::self;
+		using T_::twin;
+		using T_::operator*=;
+		using T_::operator/=;
+
+		///\note\
+		Every `scalar`'s `dual::type` is (currently) either free, or designated as `sector_t<...>`.
+
+		template <class W=typename sector<U[N]>::type>
+		struct dual {using type = W;};
+
+		XTAL_OP1_(T &) *= (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) *= t.get(i))); return self();}
+		XTAL_OP1_(T &) /= (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) /= t.get(i))); return self();}
+
+
+		///\
+		Sums the elements of `this` (equivalent to convolution by `{1}`). \
+
+		XTAL_TN2 sum()
+		XTAL_0FX
+		{
+			return [&, this]<auto ...M>(bond::seek_t<M...>)
+				XTAL_0FN_(get(M) +...+ U())
+			(bond::seek_f<N> {});
+		}
+		XTAL_TN2 product()
+		XTAL_0FX
+		{
+			U u{};
+			bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN {
+				auto const &w = get(i);
+				u = re::accumulate_f(u, w, w);
+			});
+			return u;
+		//	return re::square_f(*this).sum();
+		}
+		XTAL_TN2 product(iterated_q auto &&t)
+		XTAL_0FX
+		{
+			U u{}; T &s = self();
+			bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN {
+				u = re::accumulate_f(u, s[i], t[i]);
+			});
+			return u;
+		//	return (twin() *= XTAL_REF_(that)).sum();
+		}
+
+		
+		///\returns the mutually inverse `lhs +/- rhs`, \
+		scaled by the value indexed by `N_bias`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
+		
+		///\todo\
+		Generalize by taking the alternating sum for `N_par == -1`.
+
+		template <int N_par=0>
+		XTAL_TN2 reflected(int const n_bias=0)
+		XTAL_0FX
+		XTAL_REQ (N == 2)
+		{
+			auto const scale = re::explo_f(re::template unsquare_f<-1>(2), 1 - n_bias);
+			auto const lhs = scale*get(0);
+			auto const rhs = scale*get(1);
+			if constexpr (N_par ==  0) {
+				return T {lhs + rhs, lhs - rhs};
+			}
+			if constexpr (N_par == +1) {
+				return lhs + rhs;
+			}
+			if constexpr (N_par == -1) {
+				return lhs - rhs;
+			}
+		}
+		///\
+		Modifies `this`; \see `reflected()`.
+
+		XTAL_TN2 reflect(int const n_bias=0)
+		XTAL_0FX
+		XTAL_REQ (N == 2)
+		{
+			return self() = reflected(n_bias);
+		}
+
+	};
+	using type = bond::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
+
+#include "./series.hh"

@@ -1,7 +1,7 @@
 #pragma once
-#include "./occur/all.ii"
-#include "./process/any.ii"
-#include "./resource/all.ii"
+#include "./occur/all.hh"
+#include "./process/any.hh"
+#include "./resource/all.hh"
 #include <catch2/catch_all.hpp>
 
 #define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))

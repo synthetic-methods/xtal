@@ -1,0 +1,461 @@
+#pragma once
+#include "./any.hh"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s> XTAL_NEW store;
+template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
+template <class ...Ts> XTAL_ASK store_q = bond::tag_p<store, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+A fluid-sized fixed-capacity analogue of `std::vector`. \
+Configured by the array-like parameter `A`, where: \
+
+///\
+*	If `A` has capacity `< (unsigned) -1`, \
+then a fixed-capacity implementation is provided. \
+
+///\
+*	If `A` is either a pointer or an array of length `(unsigned) -1`, \
+the default (dynamically allocated) `std::vector` is used. \
+
+template <class U> requires pointer_q<U>
+struct store<U>
+{
+	using type = bond::compose_s<_std::vector<pointed_t<U>>, bond::tag<store>>;
+
+};
+template <class U>
+struct store<U[(unsigned) -1]>
+:	store<U *>
+{
+};
+template <class U, size_t N>
+struct store<U[N]>
+{
+	template <class T>
+	using demitype = iterface_t<T>;
+
+	template <class T>
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<store>>;
+
+	template <class T>
+	class homotype : public hemitype<T>
+	{
+		using T_ = hemitype<T>;
+		using A  = aligned_t<U>;
+
+	public:// DEFINITION
+		using             value_type = U;
+		using         allocator_type = T;// TODO: Provide interface!
+
+		using              size_type = size_t;
+		using        difference_type = size_s;
+
+		using              reference =       value_type &;
+		using        const_reference = const value_type &;
+		
+		using                pointer =       value_type *;
+		using          const_pointer = const value_type *;
+
+		using               iterator =       value_type *;
+		using         const_iterator = const value_type *;
+		
+		using       reverse_iterator = _std::reverse_iterator<      iterator>;
+		using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
+	
+	private:
+		A a_block[N] {};
+		difference_type a_limit = 0;
+
+	public:// ACCESS
+		XTAL_TO2_(XTAL_TN2 begin(), injector_(           (A *) a_block));
+		XTAL_TO2_(XTAL_TN2   end(), injector_(_std::next((A *) a_block, a_limit)));
+
+	private:
+		XTAL_FN2 injector_(      A *i) XTAL_0EX {return appointer_f<      U *>(i);}
+		XTAL_FN2 injector_(const A *i) XTAL_0EX {return appointer_f<const U *>(i);}
+		XTAL_FN2 injector_(      U *i) XTAL_0EX {return appointer_f<      A *>(i);}
+		XTAL_FN2 injector_(const U *i) XTAL_0EX {return appointer_f<const A *>(i);}
+
+
+	public:// SIZE
+		using T_::size;
+	
+		///\
+		Reshapes `this` with `sN` elements. \
+
+		XTAL_TN0 resize(size_type sN, auto &&...etc)
+		{
+			size_type const sM = size();
+			if (sN < sM) {
+				pop_back(sM - sN);
+			}
+			else {
+				insert_back(sN - sM, XTAL_REF_(etc)...);
+			}
+		}
+		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N`. \
+
+		XTAL_TN0 reserve(size_type sN)
+		{
+			if (N < sN) {
+				throw _std::bad_alloc{};
+			}
+		}
+		///\returns the constant `N`. \
+
+		XTAL_TN2_(size_type) capacity()
+		XTAL_0EX
+		{
+			return N;
+		}
+		///\
+		Does nothing. \
+
+		XTAL_TN0 shrink_make_fit()
+		XTAL_0EX
+		{}
+
+
+	public:// CONSTRUCTION
+		homotype() noexcept = default; ~homotype() {clear();}
+
+		///\
+		Insert constructor. \
+		Initializes `this` with `sN` values determined by the given arguments. \
+
+		XTAL_CXN homotype(size_type sN, auto &&...etc)
+		{
+			insert_back(sN, XTAL_REF_(etc)...);
+		}
+		///\
+		Span constructor. \
+		Initializes `this` with the values between `i0` and `iN`. \
+
+		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
+		XTAL_CXN homotype(I0 i0, IN iN)
+		{
+			push_back(i0, iN);
+		}
+		
+		///\
+		List constructor. \
+		Initializes `this` with the given values. \
+
+		XTAL_CON homotype(braces_t<U> w)
+		:	homotype(w.begin(), w.end())
+		{}
+		///\
+		List assignment. \
+		Replaces the contents of `this` with the given values. \
+
+		XTAL_OP1_(homotype &) = (braces_t<U> w)
+		{
+			refresh_(w.begin(), w.end());
+			return *this;
+		}
+
+		///\
+		Copy constructor. \
+		Initializes `this` with the given data. \
+
+		XTAL_CON homotype(homotype const &t)
+		:	homotype(t.begin(), t.end())
+		{}
+		///\
+		Copy assigment. \
+		Replaces the contents of `this` with the given data. \
+
+		XTAL_OP1_(homotype &) = (homotype const &t)
+		{
+			refresh_(t.begin(), t.end());
+			return *this;
+		}
+
+		///\
+		Move constructor. \
+		Initializes `this` with the given data. \
+
+		XTAL_CON homotype(homotype &&t)
+		XTAL_REQ _std::move_constructible<U>
+		:	homotype(mover_f(t.begin()), mover_f(t.end()))
+		{}
+		///\
+		Move assigment. \
+		Replaces the contents of `this` with the given data. \
+
+		XTAL_OP1_(homotype &) = (homotype &&t)
+		XTAL_REQ _std::move_constructible<U>
+		{
+			refresh_(mover_f(t.begin()), mover_f(t.end()));
+			return *this;
+		}
+
+		///\
+		Swaps the contents of `this` with the given data. \
+
+		XTAL_TN0 swap(homotype &t)
+		requires _std::swappable<value_type>
+		{
+			iterator j0 = t.begin();
+			iterator i0 =   begin();
+			iterator iN =     end();
+			_std::swap_ranges(injector_(i0), injector_(iN), injector_(j0));
+		}
+
+	private:
+		///\
+		Clears `this` and invokes `insert_back` with the given arguments. \
+
+		XTAL_TN1 refresh_(auto &&...etc)
+		{
+			clear(); push_back(XTAL_REF_(etc)...);
+			return *this;
+		}
+
+
+	public:// ALLOCATION
+		///\
+		Inserts the values `etc` beginning at `i0`. \
+
+		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
+		XTAL_TN0 push_back(I0 i0, IN iN)
+		{
+			insert(end(), i0, iN);
+		}
+		///\
+		Inserts the values `etc` beginning at `i0`. \
+
+		XTAL_TN0 push_back(braces_t<U> w)
+		{
+			push_back(w.begin(), w.end());
+		}
+		///\
+		Inserts the values `etc...` beginning at `i0`. \
+
+		XTAL_TN0 push_back(as_q<U> auto &&...vs)
+		{
+			push_back(braces_t<U>{U(XTAL_REF_(vs))...});
+		}
+		///\
+		Constructs an element at the end of `this` using the given arguments. \
+		\returns a reference to the element.
+
+		XTAL_TN1_(reference) emplace_back(auto &&...etc)
+		{
+			return *inplace_back(XTAL_REF_(etc)...);
+		}
+		///\
+		Invokes `insert` at `this->end()` with the given arguments. \
+
+		XTAL_TN1_(iterator) insert_back(auto &&...etc)
+		{
+			return insert(end(), XTAL_REF_(etc)...);
+		}
+
+		///\
+		Constructs an element at `i` using the given arguments. \
+		\returns a reference to the element.
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(reference) emplace(I i, auto &&...etc)
+		{
+			return *inplace(i, XTAL_REF_(etc)...);
+		}
+
+		///\
+		Inserts the values delimited by `j0` and `jN` beginning at `i`. \
+
+		template <class I, class J0, class JN> requires epimorphic_q<iterator, I, J0, JN>
+		XTAL_TN1_(iterator) insert(I i, J0 j0, JN jN)
+		{
+			using J = common_t<J0, JN>;
+			return insert(i, (J) j0, (J) jN);
+		}
+		template <class I, class J> requires epimorphic_q<iterator, I, J>
+		XTAL_TN1_(iterator) insert(I i, J j0, J jN)
+		{
+			size_type sN = _std::distance(j0, jN);
+			inject_(i, sN);
+			_detail::copy_to(i, j0, jN);
+			return i;
+		}
+		///\
+		Inserts the values `w` beginning at `i`. \
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, braces_t<U> w)
+		{
+			return insert(i, w.begin(), w.end());
+		}
+		///\
+		Inserts the value `v` at `i`. \
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, common_q<U> auto &&v)
+		{
+			return inplace(i, XTAL_REF_(v));
+		}
+		///\
+		Initialises `sN` values with `v` beginning at `i`. \
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, size_type sN, common_q<U> auto &&v)
+		{
+			inject_(i, sN);
+			_std::uninitialized_fill_n(injector_(i), sN, XTAL_REF_(v));
+			return i;
+		}
+		///\
+		Initialises `sN` values beginning at `i`. \
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(iterator) insert(I i, size_type sN)
+		{
+			inject_(i, sN);
+			_std::uninitialized_value_construct_n(injector_(i), sN);
+			return i;
+		}
+		
+	protected:
+		XTAL_TN1_(iterator) inplace_back(auto &&...etc)
+		{
+			reserve(1 + size());
+			iterator i = end();
+			(void) ::new (_std::next((A *) a_block, a_limit++)) U(XTAL_REF_(etc)...);
+			return i;
+		}
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN1_(iterator) inplace(I i, auto &&...etc)
+		{
+			inject_(i, 1);
+			(void) ::new (injector_(i)) U(XTAL_REF_(etc)...);
+			return i;
+		}
+		///\
+		Allocates `sN` elements beginning at `i`. \
+
+		XTAL_TN1_(iterator) inject_(iterator i0, size_type sN)
+		{
+			reserve(sN + size());
+			iterator j0 = end();
+			if (i0 < j0) {
+				auto iN = _std::next(i0, sN);
+				auto jN = _std::next(j0, sN);
+				assert(_std::move_constructible<U>);
+				_std::memmove(iN, i0, _std::distance(i0, j0)*sizeof(A));
+			}
+			a_limit += sN;
+			return i0;
+		}
+
+
+	public:// DEALLOCATION
+		///\
+		Removes the last element from `this`. \
+
+		XTAL_TN0 pop_back()
+		{
+			pop_back(1);
+		}
+		///\
+		Removes the last `sN` elements from `this`. \
+
+		XTAL_TN0 pop_back(size_type sN)
+		{
+			erase(_std::prev(end(), sN), end(), sN);
+		}
+		///\
+		Deletes all elements. \
+
+		XTAL_TN0 clear()
+		XTAL_0EX
+		{
+			erase(begin(), end());
+		}
+		///\
+		Deletes the element at `i0`. \
+
+		template <class I0> requires common_q<iterator, I0>
+		XTAL_TN1 erase(I0 i0)
+		XTAL_0EX
+		{
+			return erase(i0, 1);
+		}
+		///\
+		Deletes `sN` elements starting from `i0`. \
+
+		template <class I0> requires common_q<iterator, I0>
+		XTAL_TN1 erase(I0 i0, size_type sN)
+		XTAL_0EX
+		{
+			return erase(i0, _std::next(i0, sN), sN);
+		}
+		///\
+		Deletes the elements between `i0` and `iN`. \
+
+		template <class I0, class IN> requires common_q<iterator, I0, IN>
+		XTAL_TN1 erase(I0 i0, IN iN)
+		XTAL_0EX
+		{
+			using I = common_t<I0, IN>;
+			return erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
+		}
+		///\
+		Deletes `sN` elements between `i0` and `iN`. \
+
+		template <class I0, class IN> requires common_q<iterator, I0, IN>
+		XTAL_TN1 erase(I0 i0, IN iN, size_type sN)
+		XTAL_0EX
+		{
+			using I = common_t<I0, IN>;
+			erode_((I) i0, (I) iN, sN);
+			return i0;
+		}
+	
+	protected:
+		///\
+		Deletes `sN` elements between `i0` and `iN`. \
+
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN0 erode_(I i0, I iN, size_type sN)
+		XTAL_0EX
+		{
+			assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);
+			churn_(i0, iN, sN);
+			iterator iM = end();
+			if (iN < iM) {
+				assert(_std::move_constructible<U>);
+				_std::memmove(i0, iN, _std::distance(iN, iM)*sizeof(A));
+			}
+			a_limit -= sN;
+		}
+		template <class I> requires common_q<iterator, I>
+		XTAL_TN0 churn_(I i0, I iN, size_type sN)
+		XTAL_0EX
+		{
+			if constexpr (_std::destructible<U>) {
+				_std::destroy(i0, iN);
+			}
+		}
+
+	};
+	using type = bond::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

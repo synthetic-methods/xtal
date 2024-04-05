@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./assay.cc"
 #include "./compose.cc"
 #include "./isokind.cc"
 #include "./isotype.cc"
@@ -7,4 +8,3 @@
 #include "./seek.cc"
 #include "./tab.cc"
 #include "./tag.cc"
-#include "./assay.cc"

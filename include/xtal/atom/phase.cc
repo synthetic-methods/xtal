@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./phase.ii"// testing...
+#include "./phase.hh"// testing...
 
 
 
@@ -74,7 +74,7 @@ TAG_("phase")
 			}
 			return phi;
 		};
-		EST_("multiplication ((floating-point)")
+		EST_("multiplication (floating-point)")
 		{
 			T_alpha x = 0.33, x_dt = re::haplo_f(4);
 

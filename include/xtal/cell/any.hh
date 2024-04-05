@@ -1,6 +1,6 @@
 #pragma once
-#include "../bond/all.ii"// `_retail`
-#include "../atom/all.ii"
+#include "../bond/all.hh"// `_retail`
+
 
 
 
@@ -11,99 +11,249 @@ namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail {using namespace xtal::bond;}
-namespace _retail
-{///////////////////////////////////////////////////////////////////////////////
+#include "./_retail.ii"
+#include "./_detail.ii"
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ///\
-Creates a unique `subtype` tagged by the given `As...`, \
-such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`. \
+The following `subtype` decorators are specialized under each `xtal::*` namespace. \
+They provide instance and proxy initialization/finalization for the generated types in `./any.hxx`. \
 
-template <typename ...As>
-struct any
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Expands on the `self`-reflection established by `../bond/any.ipp#define`, \
+providing the mechanism for traversing the trait-lineage of `T`. \
+
+template <class T>
+struct define
 {
-	using subkind = bond::compose<any<As>...>;
+	using subkind = bond::compose<void
+	,	_retail::define<T>
+	>;
 	
 	template <class S>
-	using subtype = bond::compose_s<S, subkind>;
-	
-};
-template <>
-struct any<void>
-{	
-	template <class S>
-	using subtype = S;
-
-};
-template <typename A>
-struct any<A>
-{	
-	template <class S> requires some_q<typename S::T_self>
-	class subtype : public S
+	class subtype : public bond::compose_s<S, subkind>
 	{
-		using S_ = S;
+		using S_ = bond::compose_s<S, subkind>;
 
 	public://protected:
-		using typename S::T_self;
-		using typename S::U_self;
+		using typename S_::T_self;
+		using U_self = subtype;
+		using U_head = void;
 
 	public:
-		template <class _, class ...Is> struct duper : S_::template super<_,      Is...> {};
-		template <class _, class ...Is> struct super              : duper<_,      Is...> {};
-		template <class _, class ...Is> struct super<_, A, Is...> : super<U_self, Is...> {};
+		template <class _, class ...Is>
+		using super = typename _detail::query<S_, U_self, U_head>::type::template super<_, Is...>;
 
 	public:
-		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
-		template <class ...Is> using head_s = typename super<U_self, Is...>::type;
-		template <class ...Is> using head_t = typename head_s<Is...>::U_head;
-
+		using S_::S_;
 	//	using S_::self;
-	//	using S_::head;
+
+		template <typename ...Is>
+		using self_s = typename super<T_self, Is...>::type;
+
+		XTAL_TO4_(
+		XTAL_TN2 self(), S_::self()
+		)
+		XTAL_TO4_(template <of_q<subtype> X=T>
+		XTAL_TN2 self(), S_::template self<X>()
+		)
+		///<\returns `this` as `T`, or `of_q<subtype>`. \
 		
-		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
-		)
+		
+		XTAL_DO4_(template <typename ...Is>
+		XTAL_TN2 self(auto &&...oo),
+		{
+			using X = typename super<T, Is...>::type;
+			if constexpr (0 == sizeof...(oo)) {
+				return S_::template self<X>();
+			}
+			else {
+				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+			}
+		})
+		///<\returns `this` indexed by `Is...`, \
+		emplacing the matching part of `self` if arguments are supplied. \
+
+		//\
+		Trivial (in)equality. \
+		
+		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return true;}
+		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return not self().operator==(t.self());}
+		XTAL_OP2 <=> (subtype const &t)
+		XTAL_0FX
+		{
+			using is = _std::partial_ordering;
+			return self().operator==(t.self())? is::equivalent: is::unordered;
+		}
+
+		XTAL_TN2 apple() XTAL_0FX {return bond::pack_f();}
+		///<\returns a tuple representation of `this`. \
+
+		using arity = cardinal_0;
+		///< The `std::tuple_size` of `this`. \
+
+	};
+};
+///\
+Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
+binding `subtype` as the default target of `self`. \
+
+template <class T>
+struct refine
+{
+	using subkind = bond::compose<void
+	,	_detail::refine_head<T>
+	,	_detail::refine_tuple<T>
+	>;
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
-	//	using S_::S_;
+		using S_::S_;
 
-		XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
-
-		XTAL_CXN subtype(auto &&...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		{}
-		XTAL_CXN subtype(of_q<S_> auto &&s, auto &&...oo)
-		XTAL_0EX
-		:	S_(static_cast<S_ &&>(s), XTAL_REF_(oo)...)
-		{}
-		///\
-		Attempts construction from infungible-but-compatible types via inspection. \
-		
-		template <infungible_q<subtype> W>
-		XTAL_REQ_(typename W::template self_s<A>)
-		XTAL_CON subtype(W &&w, auto &&...oo)
-		XTAL_0EX
-		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
-		{};
+	};
+	template <any_q S> requires iterable_q<S>
+	class subtype<S> : public bond::compose_s<S, subkind>, public iterface_t<T>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
 
 	};
 };
 
-}///////////////////////////////////////////////////////////////////////////////
 
-#include "./_detail.hxx"
+///////////////////////////////////////////////////////////////////////////////
+///\
+Proxies the given `U` via `head`, \
+providing chained/packed construction/access. \
+
+///\note\
+Mutable `lvalue`s are converted to pointers, \
+providing a similar level of utility to `std::reference_wrapper`. \
+
+template <class U>
+struct defer
+{
+	using subkind = _detail::defer_field<U>;
+
+	template <any_q S>
+	using epitype = typename subkind::T_head;
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
+	{
+		using S_ = bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>;
+
+	public://protected:
+		using typename S_::T_self;
+		using typename S_::U_head;
+		using U_self = subtype;
+
+	public:
+		using S_::self;
+		using S_::head;
+
+	public:
+		using S_::S_;
+
+		///\
+		Converts `this` to the base-type (explicit). \
+
+		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
+
+		///\
+		\returns `true` if the supplied body matches `head`, `false` otherwise. \
+
+		XTAL_TN2_(bool) heading(U_head const &w)
+		XTAL_0FX
+		{
+			return equivalent_f(head(), w);
+		}
+		
+		///\
+		\returns `true` if the supplied body matches `this`, `false` otherwise. \
+
+		XTAL_OP2_(bool) == (subtype const &t)
+		XTAL_0FX
+		{
+			return heading(t.head()) and S_::template self<1>() == t;
+		}
+
+		///\
+		Tuple arity. \
+
+		XTAL_USE arity = cardinal_t<S_::arity::value + 1>;
+		///\
+		Tuple application. \
+
+		XTAL_TN2 apply(auto &&f)// TODO: Require `std::invocable`.
+		XTAL_0FX
+		{
+			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
+		}
+		///\
+		Tuple conversion (via `apply`). \
+
+		XTAL_TN2 apple()
+		XTAL_0FX
+		{
+			return apply(bond::pack_f);
+		}
+		XTAL_FN2 apple(XTAL_TYP_(XTAL_VAL_(S_).apple()) const &tuple)
+		XTAL_0EX
+		{
+			return _std::apply([] XTAL_1FN_(S_), tuple);
+		}
+
+	};
+};
+///\
+Defers selected operators to `U` as required for `refine`ment. \
+
+template <class U>
+struct refer : bond::compose<void
+,	_detail::infer_logics<U>
+,	_detail::infer_groups<U>
+,	_detail::infer_iterators<U>
+,	_detail::infer_qualities<U>
+>
+{};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <any_q W> XTAL_OP2 == (W const &x, W const &y) XTAL_0EX {return x.self().operator== (y.self());}
+template <any_q W> XTAL_OP2 != (W const &x, W const &y) XTAL_0EX {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+
+namespace std
+{////////////////////////////////////////////////////////////////////////////
+
+template <xtal::cell::any_q T>
+struct tuple_size<T> : xtal::cardinal_t<T::arity::value> {};
+
+template <size_t N, xtal::cell::any_q T>
+struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
+
+template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T const &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T       &&t) {return std::move(t).template head<N>();};
+template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T const  &t) {return t.template head<N>();};
+template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T        &t) {return t.template head<N>();};
+
+
+}//////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

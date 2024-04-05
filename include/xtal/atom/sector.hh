@@ -1,0 +1,73 @@
+#pragma once
+#include "./any.hh"
+#include "./lattice.hh"
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::atom
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s> XTAL_NEW scalar;// For `::dual` (`#include`d at EOF).
+template <class ..._s> XTAL_NEW sector;
+template <class ..._s> XTAL_USE sector_t = typename sector<_s...>::type;
+template <class ...Ts> XTAL_ASK sector_q = bond::tag_p<sector, Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+///\
+Extends `lattice` with pointwise addition. \
+
+template <class U, int N>
+struct sector<U[N]>
+{
+	using re = bond::realize<U>;
+	
+	template <class T>
+	using demitype = typename lattice<U[N]>::template homotype<T>;
+
+	template <class T>
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<sector>>;
+
+	template <class T>
+	class homotype : public hemitype<T>
+	{
+		friend T;
+		using  T_ = hemitype<T>;
+	
+	public:// CONSTRUCTION
+		using T_::T_;
+
+		///\note\
+		Every `sector`'s `dual::type` is (currently) designated as `scalar_t<...>`.
+
+		template <class W>
+		struct dual : scalar<U[N]> {};
+
+	public:// OPERATION
+		using T_::get;
+		using T_::self;
+		using T_::twin;
+		using T_::operator+=;
+		using T_::operator-=;
+
+		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) += t.get(i))); return self();}
+		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N>([&, this] (auto i) XTAL_0FN_(get(i) -= t.get(i))); return self();}
+
+		template <subarray_q<N> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {bond::seek_forward_f<arity_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN_(get(i) += w[i])); return self();}
+		template <subarray_q<N> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {bond::seek_forward_f<arity_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN_(get(i) -= w[i])); return self();}
+
+	};
+	using type = bond::isotype<homotype>;
+
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)
+
+#include "./scalar.hh"
