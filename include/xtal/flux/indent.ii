@@ -30,7 +30,7 @@ struct indent<Ns...>
 	template <bond::pack_q S> using leaf_t = conferred_t<leaf_u<S>>;
 	template <bond::pack_q S> using node_t = typename path::template subtype<leaf_t<S>>;
 	template <bond::pack_q S>
-	class subtype: public node_t<S>
+	class subtype : public node_t<S>
 	{
 		using S_ = node_t<S>;
 		using L_ = leaf_u<S>;
@@ -38,8 +38,8 @@ struct indent<Ns...>
 	public:
 		using S_::S_;
 		
-		XTAL_CON subtype(bracket_t<value_t<L_>> w)
-		XTAL_REQ bracket_q<L_>
+		XTAL_CON subtype(braces_t<value_t<L_>> w)
+		XTAL_REQ bounded_q<L_>
 		:	S_{L_(XTAL_MOV_(w))}
 		{}
 
@@ -48,7 +48,7 @@ struct indent<Ns...>
 			using subkind = defer<L_>;
 
 			template <cell::any_q R> requires (0 == sizeof...(Ns))
-			class subtype: public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 				

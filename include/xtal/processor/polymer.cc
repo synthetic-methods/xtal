@@ -3,8 +3,8 @@
 #include "./polymer.ii"// testing...
 
 #include "./monomer.ii"
-#include "../resourced/all.ii"
-#include "../scheduled/all.ii"
+#include "../resource/all.ii"
+#include "../schedule/all.ii"
 
 
 
@@ -28,21 +28,21 @@ void polymer_provision_spine__locamotion()
 	using U_sigma  = typename re::sigma_t;
 	using U_delta  = typename re::delta_t;
 
-	using U_resize = message::resize_t<>;
-	using U_render  = message:: render_t<>;
-	using U_stage  = message:: stage_t<>;
+	using U_resize = occur::resize_t<>;
+	using U_render = occur::render_t<>;
+	using U_stage  = occur::stage_t<>;
 	using U_event  = cell::key_s<U_stage>;
-	using U_thunk  = scheduled::thunk_t<resourced::spool<(1<<5)>>;
-	using U_cue = cell::cue_s<>;
+	using U_thunk  = schedule::thunk_t<resource::spool<(1<<5)>>;
+	using U_cue    = cell::cue_s<>;
 
 	//\
-	using W_gate = typename level_t::poll<>;
-	using W_gate = typename U_thunk::template inqueue<level_t>;
-	using U_gate = process::confined_t<W_gate, typename U_stage::expect<>>;
+	using W_gate   = typename level_t::poll<>;
+	using W_gate   = typename U_thunk::template inqueue<level_t>;
+	using U_gate   = process::confined_t<W_gate, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::store<N_store>
-	,	resourced::spool<N_spool>
+	,	resource::store<N_store>
+	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -68,7 +68,7 @@ void polymer_provision_spine__locamotion()
 	TRUE_(69 == vox_oo_++->head());
 
 }
-TAG_("polymer", "message", "spine")
+TAG_("polymer", "occur", "spine")
 {
 	TRY_("voice allocation/deallocation")
 	{
@@ -90,11 +90,11 @@ void polymer_provision_spool__combined()
 	using U_sigma = typename bond::realized::sigma_t;
 	using U_delta = typename bond::realized::delta_t;
 
-	using U_stage  = message::stage_t<>;
-	using U_event  = cell::key_s<U_stage>;
+	using U_stage = occur::stage_t<>;
+	using U_event = cell::key_s<U_stage>;
 
-	using U_resize = message::resize_t<>;
-	using U_render  = message::render_t<>;
+	using U_resize = occur::resize_t<>;
+	using U_render = occur::render_t<>;
 	
 	using U_gate = process::confined_t<void
 	,	typename U_stage::expect<>
@@ -102,8 +102,8 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::store<N_store>
-	,	resourced::spool<N_spool>
+	,	resource::store<N_store>
+	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -134,11 +134,11 @@ void polymer_provision_spool__composited()
 	using U_sigma = typename bond::realized::sigma_t;
 	using U_delta = typename bond::realized::delta_t;
 
-	using U_stage  = message::stage_t<>;
-	using U_event  = cell::key_s<U_stage>;
+	using U_stage = occur::stage_t<>;
+	using U_event = cell::key_s<U_stage>;
 
-	using U_resize = message::resize_t<>;
-	using U_render  = message::render_t<>;
+	using U_resize = occur::resize_t<>;
+	using U_render = occur::render_t<>;
 	
 	using U_gate = process::confined_t<void
 	,	typename U_stage::expect<>
@@ -146,8 +146,8 @@ void polymer_provision_spool__composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resourced::store<N_store>
-	,	resourced::spool<N_spool>
+	,	resource::store<N_store>
+	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -171,7 +171,7 @@ void polymer_provision_spool__composited()
 	TRUE_(69 == vox_oo_++->head());
 
 }
-TAG_("polymer", "message", "ensemble")
+TAG_("polymer", "occur", "ensemble")
 {
 	TRY_("with combined events")
 	{

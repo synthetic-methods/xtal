@@ -20,7 +20,7 @@ namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct link: bond::compose<link<As>...>
+struct link : bond::compose<link<As>...>
 {
 };
 template <incomplete_q A>
@@ -41,8 +41,8 @@ struct link<A>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <typename     ...As> struct chain   : bond::compose<_detail::link<As...>, bond::tag<chain>> {};
-template <bond::compose_q A > struct chain<A>: bond::compose<              A     , bond::tag<chain>> {};
+template <typename     ...As> struct chain    : bond::compose<_detail::link<As...>, bond::tag<chain>> {};
+template <bond::compose_q A > struct chain<A> : bond::compose<              A     , bond::tag<chain>> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.ii"
-
 #include "../flux/indent.ii"
+
 
 
 
@@ -43,7 +43,7 @@ struct cross<W, U, As...>
 	using subkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		

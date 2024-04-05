@@ -2,8 +2,8 @@
 #include "./any.ii"
 #include "./monomer.ii"
 #include "../cell/key.ii"
-#include "../message/all.ii"
-#include "../resourced/all.ii"
+
+
 
 
 XTAL_ENV_(push)
@@ -22,7 +22,7 @@ XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice store according to `message::stage` requests/responses. \
+but expands/contracts the voice store according to `occur::stage` requests/responses. \
 
 ///\note\
 The attached `store` and `spool` determine the sample buffer and voice spool respectively. \
@@ -33,22 +33,28 @@ struct polymer<U, As...>
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		using Y_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
-		using S_binding = typename S_::template binding<Xs...>;
+		using S__binding = typename S_::template binding<Xs...>;
+
+		template <class ...Xs>
+		using R__binding = bond::compose<void// `As...` included by `monomer`...
+		,	S__binding<Xs...>
+		,	bond::tag<polymer>
+		>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resourced::spool_q<S_> and resourced::store_q<S_>
-		struct binding: S_binding<Xs...>
+		template <class ...Xs> requires resource::spool_q<S_> and resource::store_q<S_>
+		struct binding : S__binding<Xs...>
 		{
-			using V_event = message::stage_t<>;
+			using V_event = occur::stage_t<>;
 			using U_event = cell::key_s<V_event>;
 			
 			using V_voice = typename Y_::template binding_t<Xs...>;
@@ -56,17 +62,14 @@ struct polymer<U, As...>
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = bond::compose<bond::tag<polymer>
-			,	defer<V_voice>
-		//	,	As...// NOTE: Necessary for `intermit`?
-			,	S_binding<Xs...>
-			>;
+			using subkind = bond::compose<bond::tag<polymer>, defer<V_voice>, R__binding<Xs...>>;
+
 			template <any_q R>
-			class subtype: public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 				
-				U_ensemble u_ensemble {};
+				U_ensemble u_ensemble{};
 
 			public:
 				using R_::R_;
@@ -80,8 +83,8 @@ struct polymer<U, As...>
 				using R_::influx;
 				
 				///\
-				Forwards the `cell::key`ed message to the associated instance. \
-				Messages associated with a `message/stage.ii` designate events, \
+				Forwards the `cell::key`ed occur to the associated instance. \
+				Messages associated with a `occur/stage.ii` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
 				///\note\
@@ -112,7 +115,7 @@ struct polymer<U, As...>
 				//	Detect and allocate incoming note-on, terminating if it already exists:
 					if (0 == o) {
 						if (u_ensemble and h == w->head()) {
-							(void) w->influx(message::stage_f(-1), oo...);
+							(void) w->influx(occur::stage_f(-1), oo...);
 						}
 						auto y = head();
 						w = u_ensemble.poke(w, h, y);
@@ -128,41 +131,41 @@ struct polymer<U, As...>
 				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = message::render_influx_q<decltype(oo)...>;
+					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
 					return _v3::ranges::accumulate(u_ensemble
-					,	impure? -1: head().influx(oo...)
+					,	rend? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
-					bool constexpr impure = message::render_efflux_q<decltype(oo)...>;
+					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
 					return _v3::ranges::accumulate(u_ensemble
-					,	 impure? -1: head().efflux(oo...)
+					,	 rend? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
 
 				///\
-				Renders the buffer slice designated by `respan_x` and `render_x` \
-				after liberating any voices that have reached the final `message::stage_f(-1)`. \
+				Renders the buffer slice designated by `review_o` and `render_o` \
+				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
-				template <message::respan_q R_x, message::render_q S_x>
-				XTAL_TNX efflux_pull_slice(R_x respan_x, S_x render_x, auto &&...oo)
+				template <occur::review_q Rv, occur::render_q Rn>
+				XTAL_TNX efflux_pull_slice(Rv review_o, Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					u_ensemble.clear_if([] (auto &&e)
-						XTAL_0FN_(1 == XTAL_REF_(e).efflux(message::stage_f(-1)))
+						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))
 					);
-					for (auto &voice:u_ensemble) {
-						if (1 == voice.efflux(render_x, XTAL_REF_(oo)...)) {
+					for (auto &vox:u_ensemble) {
+						if (1 == vox.efflux(render_o, XTAL_REF_(oo)...)) {
 							return 1;
 						}
 					}
-					for (auto &voice:u_ensemble) {
-						for (auto && [i, u]:_v3::views::enumerate(voice())) {
-							respan_x[XTAL_REF_(i)] += XTAL_REF_(u);
+					for (auto &vox:u_ensemble) {
+						for (auto && [i, u]:_v3::views::enumerate(vox()|recount_f(review_o))) {
+							review_o[XTAL_REF_(i)] += XTAL_REF_(u);
 						}
 					}
 					return 0;

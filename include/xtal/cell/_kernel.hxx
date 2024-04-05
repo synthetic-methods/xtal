@@ -92,7 +92,7 @@ struct referree
 
 	};
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 		using S_ = S;
 	
@@ -101,7 +101,7 @@ struct referree
 
 	};
 	template <any_q S> requires (1 == _std::tuple_size<S> {})
-	class subtype<S>: public bond::compose_s<S, subkind>
+	class subtype<S> : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -115,11 +115,11 @@ struct referree
 Unless `A` is already a decorator, \
 provides `defer<A>` or `any<A>` depending on whether `complete_q<A>`. \
 
-template <class           A          > struct  infer      :             defer<A>                    {};
-template <bond::compose_q A          > struct  infer<A   >:                   A                     {};
-template <incomplete_q    A          > struct  infer<A   >:               any<A>                    {};
-template <incomplete_q    A, size_t N> struct  infer<A[N]>: bond::compose<any<A>, defer<unit_t[N]>> {};
-template <                           > struct  infer<void>: bond::compose<                        > {};
+template <class           A          > struct  infer       :             defer<A>                    {};
+template <bond::compose_q A          > struct  infer<A   > :                   A                     {};
+template <incomplete_q    A          > struct  infer<A   > :               any<A>                    {};
+template <incomplete_q    A, size_t N> struct  infer<A[N]> : bond::compose<any<A>, defer<unit_t[N]>> {};
+template <                           > struct  infer<void> : bond::compose<                        > {};
 
 template <class ...As>
 using infers = bond::compose<infer<As>...>; 
@@ -127,28 +127,27 @@ using infers = bond::compose<infer<As>...>;
 ///\
 Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<head_t<>>`. \
 
-template <class   ...As>	using inferred   = confined<referree, infers<As...>>;
-template <class   ...As>	using inferred_t = typename inferred<As...>::type;
+template <class   ...As>	using  inferred   = confined<referree, infers<As...>>;
+template <class   ...As>	using  inferred_t = typename inferred<As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Creates a unique tuple `inferred` from `...As`. \
 
-template <class   ...As>	struct  packed   : inferred<As..., bond::tag<packed>> {};
-template <class   ...As>	using   packed_t = typename packed<As...>::type;
-template <class   ...As>	concept packed_q = any_p<class packed_a, As...>;
-
+template <class   ...Ts>	struct   packed   : inferred<Ts..., bond::tag<packed>> {};
+template <class   ...Ts>	using    packed_t = typename packed<Ts...>::type;
+template <class   ...Ts>	concept  packed_q = any_p<class packed_a, Ts...>;
+template <class   ...Ts>	XTAL_TN2 packed_f(Ts &&...as) XTAL_0EX {return packed<rebased_t<Ts>...>(XTAL_REF_(as)...);}
 
 ///\
 Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
 
-template <class      T >	struct  let        {using type = conferred_t<T>;};
-template <any_q      T >	struct  let<T>     {using type =             T ;};
-template <class      T >	using   let_t    = typename let<T>::type;
-
-template <class W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return conferred_t<W>(XTAL_REF_(w));}
-template <any_q W> XTAL_TN2 let_f(W &&w) XTAL_0EX {return               (XTAL_REF_(w));}
+template <class      T >	struct   let        {using type = conferred_t<T>;};
+template <any_q      T >	struct   let<T>     {using type =             T ;};
+template <class      T >	using    let_t    = typename let<T>::type;
+template <class      T >	XTAL_TN2 let_f(T &&t) XTAL_0EX {return conferred_t<T>(XTAL_REF_(t));}
+template <any_q      T >	XTAL_TN2 let_f(T &&t) XTAL_0EX {return               (XTAL_REF_(t));}
 ///<\
 \returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
 

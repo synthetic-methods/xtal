@@ -132,7 +132,7 @@ struct pack
 
 };
 template <template <class ...> class L, class ...Xs>// requires pack_p<L<Xs...>>
-struct pack<L<Xs...>>: pack<Xs...> {};
+struct pack<L<Xs...>> : pack<Xs...> {};
 
 //XTAL_LET  pack_f = [] <class ...Xs>(Xs &&...xs)
 //XTAL_0FN_(pack_t<Xs...>(XTAL_REF_(xs)...));

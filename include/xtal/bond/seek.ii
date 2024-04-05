@@ -45,17 +45,17 @@ template <class T, class ...Ts>  struct seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>   using seek_front_t = typename seek_front<Ts...>::type;
 
 template <         class ...Ts>  struct seek_back;
-template <class T, class ...Ts>  struct seek_back<T, Ts...>: seek_back<Ts...> {};
-template <class T             >  struct seek_back<T> {using type = T;};
+template <class T, class ...Ts>  struct seek_back<T, Ts...> : seek_back<Ts...> {};
+template <class T             >  struct seek_back<T       >                    {using type = T;};
 template <         class ...Ts>   using seek_back_t = typename seek_back<Ts...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int I=0, bool ...Ns>         struct seek_truth;
-template <int I              >         struct seek_truth<I              >: ordinal_t<-1> {};
-template <int I,   bool ...Ns>         struct seek_truth<I,  true, Ns...>: ordinal_t< I> {};
-template <int I,   bool ...Ns>         struct seek_truth<I, false, Ns...>: seek_truth<I + 1, Ns...> {};
+template <int I              >         struct seek_truth<I              > : ordinal_t<-1> {};
+template <int I,   bool ...Ns>         struct seek_truth<I,  true, Ns...> : ordinal_t< I> {};
+template <int I,   bool ...Ns>         struct seek_truth<I, false, Ns...> : seek_truth<I + 1, Ns...> {};
 template <         bool ...Ns> XTAL_LET_(int) seek_truth_n = seek_truth<0, Ns...>::value;
 
 static_assert(seek_truth_n<                   > == -1);

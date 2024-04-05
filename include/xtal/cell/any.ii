@@ -28,7 +28,7 @@ struct define
 	>;
 	
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
@@ -104,7 +104,7 @@ struct refine
 	>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -113,7 +113,7 @@ struct refine
 
 	};
 	template <any_q S> requires iterable_q<S>
-	class subtype<S>: public bond::compose_s<S, subkind>, public iterate_t<T>
+	class subtype<S> : public bond::compose_s<S, subkind>, public iterface_t<T>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -142,7 +142,7 @@ struct defer
 	using epitype = typename subkind::T_head;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
+	class subtype : public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>;
 
@@ -181,9 +181,6 @@ struct defer
 			return heading(t.head()) and S_::template self<1>() == t;
 		}
 
-	//	XTAL_OP2 << (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
-	//	XTAL_OP2 >> (any_q auto &&t) XTAL_0FX {return bond::pack_f(XTAL_REF_(self()), XTAL_REF_(t));}
-
 		///\
 		Tuple arity. \
 
@@ -194,8 +191,8 @@ struct defer
 		XTAL_TN2 apply(auto &&f)// TODO: Require `std::invocable`.
 		XTAL_0FX
 		{
-			return [this, g = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(g(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
+			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
 		}
 		///\
 		Tuple conversion (via `apply`). \
@@ -203,8 +200,12 @@ struct defer
 		XTAL_TN2 apple()
 		XTAL_0FX
 		{
-		//	return apply(bond::pack_f);
-			return apply([] (auto &&...oo) XTAL_0FN_(_std::make_tuple(XTAL_REF_(oo)...)));
+			return apply(bond::pack_f);
+		}
+		XTAL_FN2 apple(XTAL_TYP_(XTAL_VAL_(S_).apple()) const &tuple)
+		XTAL_0EX
+		{
+			return _std::apply([] XTAL_1FN_(S_), tuple);
 		}
 
 	};
@@ -213,7 +214,7 @@ struct defer
 Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
-struct refer: bond::compose<void
+struct refer : bond::compose<void
 ,	_detail::infer_logics<U>
 ,	_detail::infer_groups<U>
 ,	_detail::infer_iterators<U>
@@ -236,7 +237,7 @@ namespace std
 {////////////////////////////////////////////////////////////////////////////
 
 template <xtal::cell::any_q T>
-struct tuple_size<T>: xtal::cardinal_t<T::arity::value> {};
+struct tuple_size<T> : xtal::cardinal_t<T::arity::value> {};
 
 template <size_t N, xtal::cell::any_q T>
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};

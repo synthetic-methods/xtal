@@ -3,8 +3,8 @@
 #include "./monomer.ii"// testing...
 
 #include "./all.ii"
-#include "../resourced/all.ii"
-#include "../message/all.ii"
+#include "../resource/all.ii"
+#include "../occur/all.ii"
 
 XTAL_ENV_(push)
 namespace xtal::processor::_test
@@ -21,13 +21,13 @@ void monomer_lifting()
 
 	T_sigma constexpr N_size = 5;
 	using U_group = atom::lattice_t<T_alpha[N_size]>;
-	using U_resize = message::resize_t<>;
-	using U_render = message::render_t<>;
+	using U_resize = occur::resize_t<>;
+	using U_render = occur::render_t<>;
 
 	auto x = U_group { 0,  1,  2,  3,  4};
-	auto y = U_group {00, 10, 20, 30, 40};
-	auto z = U_group {00, 11, 22, 33, 44};
-	auto a = U_group {99, 99, 99, 99, 99};
+	auto y = U_group{00, 10, 20, 30, 40};
+	auto z = U_group{00, 11, 22, 33, 44};
+	auto a = U_group{99, 99, 99, 99, 99};
 //	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
@@ -40,7 +40,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<resourced::store<>>();}
+	TRY_("pure (material)") {monomer_lifting<resource::store<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -54,7 +54,7 @@ void monomer_provision__advancing()
 	using T_sigma = typename bond::realized::sigma_t;
 	using T_alpha = typename bond::realized::alpha_t;
 
-	using U_render = message::render_t<>;
+	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(as_f<T_alpha>);
@@ -96,13 +96,13 @@ void monomer_provision__provisioning()
 	using T_sigma = typename bond::realized::sigma_t;
 	using T_alpha = typename bond::realized::alpha_t;
 
-	using provide = resourced::store<(1<<5)>;
+	using provide = resource::store<(1<<5)>;
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
 	using U_serve = visor_t<U_store>;
-	using U_respan = message::respan_t<U_serve>;
-	using U_resize = message::resize_t<>;
-	using U_render = message::render_t<>;
+	using U_review = occur::review_t<U_serve>;
+	using U_resize = occur::resize_t<>;
+	using U_render = occur::render_t<>;
 
 	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(as_f<T_alpha>);
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
@@ -112,20 +112,20 @@ void monomer_provision__provisioning()
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
-	auto u_vector = U_store {0, 0, 0};
-	auto u_respan = U_respan(u_vector);
+	auto u_vector = U_store{0, 0, 0};
+	auto u_review = U_review(u_vector);
 	auto u_render = U_render(3);
 
 	TRUE_(0 == xhs.size());
 
-	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= onset_t((T_alpha) (11 + 1));
-	xhs >>= u_render++ >> u_respan; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
-TAG_("monomer", "message")
+TAG_("monomer", "occur")
 {
 	TRY_("advancing (dynamic)") {monomer_provision__advancing<dynamic_onset_mix_t>();}
 	TRY_("advancing (static)")  {monomer_provision__advancing< static_onset_mix_t>();}
@@ -151,16 +151,16 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resourced::store<>>;
-	using mul_op = monomer_t<U_mul, resourced::store<>>;
+	using mix_op = monomer_t<U_add, resource::store<>>;
+	using mul_op = monomer_t<U_mul, resource::store<>>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
-	yhs <<= message::resize_f(N);
+	yhs <<= occur::resize_f(N);
 	yhs <<= scale_t((T_alpha) 100);
 	yhs <<= onset_t((T_alpha) 000);
 	TRUE_(0 == yhs.size());
 
-	auto seq = message::render_f(N);
+	auto seq = occur::render_f(N);
 	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -181,18 +181,18 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resourced::store<>>;
-	using mul_op = monomer_t<U_mul, resourced::store<>>;
+	using mix_op = monomer_t<U_add, resource::store<>>;
+	using mul_op = monomer_t<U_mul, resource::store<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 	auto  yhs = mul_op::bind_f(xhs);
 
-	yhs <<= message::resize_f(N);
+	yhs <<= occur::resize_f(N);
 	yhs <<= scale_t((T_alpha) 100);
 	xhs <<= onset_t((T_alpha) 000);
 
-	auto seq = message::render_f(N);
+	auto seq = occur::render_f(N);
 	yhs >>= seq  ;// idempotent!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -213,7 +213,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<U_add, resourced::store<>>;
+	using mix_op = monomer_t<U_add, resource::store<>>;
 	using mix_fn = monomer_t<U_add>;
 	using ndfn = monomer_t<dynamic_count_t>;
 
@@ -223,11 +223,11 @@ void monomer_chaining__shared()
 	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
-	yhs <<= message::restep_f((size_t) 50);
-	yhs <<= message::resize_f(N);
+	yhs <<= occur::restep_f((size_t) 50);
+	yhs <<= occur::resize_f(N);
 
-	yhs >>= message::render_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= message::render_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= occur::render_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= occur::render_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")

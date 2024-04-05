@@ -7,13 +7,13 @@ XTAL is a cross-platform header-only zipper/combinator library for musical Digit
 It provides an extensible and performant framework for rapid prototyping and development, 
 aimed at building real-time instruments and effects for both hardware and software.
 
-The emphasis of the library is on composability and performance, accommodating dynamic message within a static framework.
+The emphasis of the library is on composability and performance, accommodating dynamic messaging within a static framework.
 It resembles the `SynthDef` subsystem of SuperCollider, fulfilling the buffer read/write cycle required by C++ frameworks like CoreAudio, JUCE, and Max/Min, while abstracting the nested iteration, state-management, and event handling used by these systems.
 
 The `process`es within the framework comprise pure functions and stateful functors like oscillators and filters, 
 which are lifted to define `processor`s that operate on blocks of samples. These `processor`s are then applied functionally to form acyclic DSP networks, accomodating both `1:N` and `1:1` connections as well as automatic sharing for suitable `rvalue` arguments.
 
-The procession of the network is governed by a static messaging protocol, and includes the capability for scheduled and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
+The procession of the network is governed by a static messaging protocol, and includes the capability for schedule and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
 
 The following sections provide an overview of the usage and development of this library.
 Further insight may be gleaned from the `*.ii` implementations or `*.cc` tests in [`include/xtal/**`](include/xtal/?ts=3).
@@ -34,7 +34,7 @@ The following code examples use the following macros for brevity/clarity:
 The fundamental mechanism for defining stream-based operators is range-lifting,
 whereby both pure and stateful `process`es are converted to `processor`s in order to `transform` block-based data.
 
-	struct Mix: process::confine_t<Mix>
+	struct Mix : process::confine_t<Mix>
 	{
 	   template <auto...>
 	   XTAL_TN2 functor(auto &&...xs)
@@ -62,12 +62,12 @@ with the inner-most components representing inputs, and the outer-most component
 
 ## Messaging
 
-Attributes are bound to a `process(?:or)?` using the `message` decorators `attach` and `dispatch`.
+Attributes are bound to a `process(?:or)?` using the `occur` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
-	using Active = message::inferred_t<class active, int>;
+	using Active = occur::inferred_t<class active, int>;
 
-	struct Mix: process::confine_t<Mix, Active::template attach>
+	struct Mix : process::confine_t<Mix, Active::template attach>
 	{
 	   XTAL_TN2 functor(auto &&...xs)
 	   {
@@ -78,9 +78,9 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = message::inferred_t<class active, int>;
+	using Offset = occur::inferred_t<class active, int>;
 	
-	struct Mix: process::confine_t<Mix
+	struct Mix : process::confine_t<Mix
 	,  Offset::template dispatch<2>
 	,  Active::template dispatch<2>
 	>
@@ -110,12 +110,12 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 
 	gated <<= std::make_tuple(cell::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
-They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `respan` the outcome.
+They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `review` the outcome.
 
 	auto resize = resize_t(1024);
 	auto render = render_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, resourced::store<>>;
+	using Mixer = processor::monomer_t<Mix, resource::store<>>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -229,7 +229,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 
 	namespace cell      {}
 	namespace flux      {namespace _retail = cell;}
-	namespace message   {namespace _retail = flux;}
+	namespace occur   {namespace _retail = flux;}
 	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}
 
@@ -241,7 +241,7 @@ The `confer` decorator reifies the supplied type `U` by composing `defer` and `r
 	template <class U> struct refer;
 
 	template <class U, typename ...As>
-	struct confer: compose<refer<U>, As..., defer<U>> {};
+	struct confer : compose<refer<U>, As..., defer<U>> {};
 
 The `confine` decorator constructs the supplied type `T` by composing `define` and `refine`, respectively providing initialization (e.g. providing `begin` and `end`) and finalization (e.g. applying `ranges::view_interface`).
 
@@ -249,7 +249,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 	template <class U> struct refine;
 
 	template <class U, typename ...As>
-	struct confine: compose<refine<U>, As..., define<U>> {};
+	struct confine : compose<refine<U>, As..., define<U>> {};
 
 ## Status
 
@@ -260,7 +260,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Dependency composition     |[`bond/compose.ii`](include/xtal/bond/compose.ii?ts=3)|
 |Dependency management      |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
 |Parameter bundling         |[`flux/any.ii`](include/xtal/flux/any.ii?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
-|Parameter handling         |[`message/any.ii`](include/xtal/message/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
+|Parameter handling         |[`occur/any.ii`](include/xtal/occur/any.ii?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.ii`](include/xtal/process/any.ii?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.ii`](include/xtal/process/cross.ii?ts=3)|
 |Processor lifting          |[`processor/any.ii`](include/xtal/processor/any.ii?ts=3) via `\.(?:de\|re)fer`|

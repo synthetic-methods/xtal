@@ -44,13 +44,13 @@ template <class U, size_t N>
 struct store<U[N]>
 {
 	template <class T>
-	using demitype = iterate_t<T>;
+	using demitype = iterface_t<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<store>>;
 
 	template <class T>
-	class homotype: public hemitype<T>
+	class homotype : public hemitype<T>
 	{
 		using T_ = hemitype<T>;
 		using A  = aligned_t<U>;
@@ -75,12 +75,12 @@ struct store<U[N]>
 		using const_reverse_iterator = _std::reverse_iterator<const_iterator>;
 	
 	private:
-		A m_block[N] {};
-		difference_type m_limit = 0;
+		A a_block[N] {};
+		difference_type a_limit = 0;
 
 	public:// ACCESS
-		XTAL_TO2_(XTAL_TN2 begin(), injector_(_std::begin(m_block)));
-		XTAL_TO2_(XTAL_TN2   end(), injector_(_std::begin(m_block) + m_limit));
+		XTAL_TO2_(XTAL_TN2 begin(), injector_(           (A *) a_block));
+		XTAL_TO2_(XTAL_TN2   end(), injector_(_std::next((A *) a_block, a_limit)));
 
 	private:
 		XTAL_FN2 injector_(      A *i) XTAL_0EX {return appointer_f<      U *>(i);}
@@ -153,14 +153,14 @@ struct store<U[N]>
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_CON homotype(bracket_t<U> w)
+		XTAL_CON homotype(braces_t<U> w)
 		:	homotype(w.begin(), w.end())
 		{}
 		///\
 		List assignment. \
 		Replaces the contents of `this` with the given values. \
 
-		XTAL_OP1_(homotype &) = (bracket_t<U> w)
+		XTAL_OP1_(homotype &) = (braces_t<U> w)
 		{
 			refresh_(w.begin(), w.end());
 			return *this;
@@ -237,7 +237,7 @@ struct store<U[N]>
 		///\
 		Inserts the values `etc` beginning at `i0`. \
 
-		XTAL_TN0 push_back(bracket_t<U> w)
+		XTAL_TN0 push_back(braces_t<U> w)
 		{
 			push_back(w.begin(), w.end());
 		}
@@ -246,7 +246,7 @@ struct store<U[N]>
 
 		XTAL_TN0 push_back(as_q<U> auto &&...vs)
 		{
-			push_back(bracket_t<U>{U(XTAL_REF_(vs))...});
+			push_back(braces_t<U>{U(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -295,7 +295,7 @@ struct store<U[N]>
 		Inserts the values `w` beginning at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, bracket_t<U> w)
+		XTAL_TN1_(iterator) insert(I i, braces_t<U> w)
 		{
 			return insert(i, w.begin(), w.end());
 		}
@@ -333,7 +333,7 @@ struct store<U[N]>
 		{
 			reserve(1 + size());
 			iterator i = end();
-			(void) ::new (m_block + m_limit++) U(XTAL_REF_(etc)...);
+			(void) ::new (_std::next((A *) a_block, a_limit++)) U(XTAL_REF_(etc)...);
 			return i;
 		}
 		template <class I> requires common_q<iterator, I>
@@ -356,7 +356,7 @@ struct store<U[N]>
 				assert(_std::move_constructible<U>);
 				_std::memmove(iN, i0, _std::distance(i0, j0)*sizeof(A));
 			}
-			m_limit += sN;
+			a_limit += sN;
 			return i0;
 		}
 
@@ -374,7 +374,7 @@ struct store<U[N]>
 
 		XTAL_TN0 pop_back(size_type sN)
 		{
-			erase(end() - sN, end(), sN);
+			erase(_std::prev(end(), sN), end(), sN);
 		}
 		///\
 		Deletes all elements. \
@@ -439,7 +439,7 @@ struct store<U[N]>
 				assert(_std::move_constructible<U>);
 				_std::memmove(i0, iN, _std::distance(iN, iM)*sizeof(A));
 			}
-			m_limit -= sN;
+			a_limit -= sN;
 		}
 		template <class I> requires common_q<iterator, I>
 		XTAL_TN0 churn_(I i0, I iN, size_type sN)

@@ -21,14 +21,14 @@ template <class T>
 struct refine_head
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
 
 	};
 	template <any_q S> requires (1 == S::arity::value)
-	class subtype<S>: public S
+	class subtype<S> : public S
 	{
 	protected:
 		using typename S::T_self;
@@ -61,7 +61,7 @@ struct refine_head
 		\returns the `sentinel` boundary in the direction of `N_polarity`, \
 		provided `std::numeric_limits<...>` exists. \
 
-		template <int N_polarity=0> requires sign_p<N_polarity, 0> and extremum_q<U_head>
+		template <int N_polarity=0> requires sign_p<N_polarity, 0> and numeric_q<U_head>
 		XTAL_FN2 sentry(auto &&...oo)
 		XTAL_0EX 
 	//	XTAL_REQ algebraic_field_q<U_head> and equality_q<U_head> and sign_p<N_polarity, 0>
@@ -76,7 +76,7 @@ template <class T>
 struct refine_tuple
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -100,7 +100,7 @@ struct defer_field
 	using T_body = debased_t<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S>
+	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
@@ -127,7 +127,7 @@ struct defer_field
 
 		XTAL_CON subtype()
 		XTAL_0EX
-		:	subtype(U_body {})
+		:	subtype(U_body{})
 		{}
 		/**/
 		XTAL_CON subtype(braced_t<U_body> a)
@@ -136,7 +136,7 @@ struct defer_field
 		:	u_body(a)
 		{}
 		/*/
-		XTAL_CON subtype(bracket_t<value_t<U_body>> a)
+		XTAL_CON subtype(braces_t<value_t<U_body>> a)
 		XTAL_0EX
 		XTAL_REQ array_q<U_body> and id_q<U_body, U_head>
 		:	u_body(a)
@@ -175,7 +175,7 @@ struct defer_field<U>
 	using T_body = debased_t<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S>
+	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
@@ -186,7 +186,7 @@ struct defer_field<U>
 	public:
 		using S_::S_;
 		using S_::self;
-		U_body u_body {};
+		U_body u_body{};
 
 		template <integral_q A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
@@ -215,7 +215,7 @@ struct defer_field<unit_t[N_width]>
 	using subkind = bond::assay<N_width>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
@@ -224,7 +224,7 @@ struct defer_field<unit_t[N_width]>
 		using U_body = T_body;
 
 	public:
-		U_body u_body:N_depth {};
+		U_body u_body:N_depth{};
 
 	public:
 	//	using S_::S_;
@@ -272,7 +272,7 @@ template <class U>
 struct refer_iterators
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -280,24 +280,33 @@ struct refer_iterators
 		XTAL_TN2   end() XTAL_0EX {return S::head().  end();}
 		
 	};
-	template <any_q S> requires begin_q<U const &>
-	class subtype<S>: public S
+	template <any_q S> requires unbounded_q<U const &>
+	class subtype<S> : public S
 	{
 	public:
 		using S::S;
 		XTAL_TN2 begin() XTAL_0EX {return S::head().begin();}
-		XTAL_TN2   end() XTAL_0EX {return S::head().  end();}
 		XTAL_TN2 begin() XTAL_0FX {return S::head().begin();}
+
+	};
+	template <any_q S> requires bounded_q<U const &>
+	class subtype<S> : public S
+	{
+	public:
+		using S::S;
+		XTAL_TN2 begin() XTAL_0EX {return S::head().begin();}
+		XTAL_TN2 begin() XTAL_0FX {return S::head().begin();}
+		XTAL_TN2   end() XTAL_0EX {return S::head().  end();}
 		XTAL_TN2   end() XTAL_0FX {return S::head().  end();}
 
 	};
 };
 
 template <class U>
-struct infer_iterators: bond::compose<> {};
+struct infer_iterators : bond::compose<> {};
 
-template <class U> requires begin_q<U>
-struct infer_iterators<U>: refer_iterators<U> {};
+template <class U> requires bounded_q<U> or unbounded_q<U>
+struct infer_iterators<U> : refer_iterators<U> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -306,7 +315,7 @@ template <class U>
 struct refer_equality
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -317,17 +326,17 @@ struct refer_equality
 };
 
 template <class U>
-struct infer_equality: bond::compose<> {};
+struct infer_equality : bond::compose<> {};
 
 template <class U> requires equality_q<U>
-struct infer_equality<U>: refer_equality<U> {};
+struct infer_equality<U> : refer_equality<U> {};
 
 
 template <class U>
 struct refer_inequality
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -341,10 +350,10 @@ struct refer_inequality
 };
 
 template <class U>
-struct infer_inequality: bond::compose<> {};
+struct infer_inequality : bond::compose<> {};
 
 template <class U> requires inequality_q<U>
-struct infer_inequality<U>: refer_inequality<U> {};
+struct infer_inequality<U> : refer_inequality<U> {};
 
 
 template <class U>
@@ -376,7 +385,7 @@ template <class U>
 struct refer_binary_logic<U, 1>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -390,7 +399,7 @@ template <class U>
 struct refer_binary_logic<U, 2>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	protected:
 		using typename S::T_self;
@@ -405,10 +414,10 @@ struct refer_binary_logic<U, 2>
 };
 
 template <class U, size_t N=0>
-struct infer_binary_logic: bond::compose<> {};
+struct infer_binary_logic : bond::compose<> {};
 
 template <class U, size_t N> requires binary_logic_p<U, N>
-struct infer_binary_logic<U, N>: refer_binary_logic<U, N> {};
+struct infer_binary_logic<U, N> : refer_binary_logic<U, N> {};
 
 
 
@@ -439,7 +448,7 @@ template <class U>
 struct refer_multiplicative_group<U, 1>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -452,7 +461,7 @@ template <class U>
 struct refer_multiplicative_group<U, 2>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	protected:
 		using typename S::T_self;
@@ -466,10 +475,10 @@ struct refer_multiplicative_group<U, 2>
 };
 
 template <class U, size_t N=0>
-struct infer_multiplicative_group: bond::compose<> {};
+struct infer_multiplicative_group : bond::compose<> {};
 
 template <class U, size_t N> requires multiplicative_group_p<U, N>
-struct infer_multiplicative_group<U, N>: refer_multiplicative_group<U, N> {};
+struct infer_multiplicative_group<U, N> : refer_multiplicative_group<U, N> {};
 
 
 
@@ -484,7 +493,7 @@ template <class U>
 struct refer_additive_group<U, 1>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -497,7 +506,7 @@ template <class U>
 struct refer_additive_group<U, 2>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	protected:
 		using typename S::T_self;
@@ -512,10 +521,10 @@ struct refer_additive_group<U, 2>
 };
 
 template <class U, size_t N=0>
-struct infer_additive_group: bond::compose<> {};
+struct infer_additive_group : bond::compose<> {};
 
 template <class U, size_t N> requires additive_group_p<U, N>
-struct infer_additive_group<U, N>: refer_additive_group<U, N> {};
+struct infer_additive_group<U, N> : refer_additive_group<U, N> {};
 
 
 
@@ -530,7 +539,7 @@ template <class U>
 struct refer_discrete_group<U, 1>
 {
 	template <any_q S>
-	class subtype: public S
+	class subtype : public S
 	{
 	public:
 		using S::S;
@@ -550,10 +559,10 @@ struct refer_discrete_group<U, 2>
 };
 
 template <class U, size_t N=0>
-struct infer_discrete_group: bond::compose<> {};
+struct infer_discrete_group : bond::compose<> {};
 
 template <class U, size_t N> requires discrete_group_p<U, N>
-struct infer_discrete_group<U, N>: refer_discrete_group<U, N> {};
+struct infer_discrete_group<U, N> : refer_discrete_group<U, N> {};
 
 
 

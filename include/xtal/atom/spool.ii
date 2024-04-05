@@ -20,7 +20,7 @@ template <class ...Ts> XTAL_ASK spool_q = bond::tag_p<spool, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 A fluid-sized fixed-capacity priority-queue based on `store_t<A>`. \
-Currently used for both event queues (\see `message/scheduled.ii`) \
+Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 ///\note\
@@ -31,13 +31,13 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using demitype = iterate_t<T>;
+	using demitype = iterface_t<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<spool>>;
 
 	template <class T>
-	class homotype: public hemitype<T>
+	class homotype : public hemitype<T>
 	{
 		using T_ = hemitype<T>;
 
@@ -59,8 +59,8 @@ struct spool<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON homotype(bracket_t<U_value> w)
-		:	u_end {_std::distance(w.begin(), w.end())}
+		XTAL_CON homotype(braces_t<U_value> w)
+		:	u_end{_std::distance(w.begin(), w.end())}
 		,	u_store(w.begin(), w.end())
 		{}
 

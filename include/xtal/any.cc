@@ -1,7 +1,7 @@
 #pragma once
-#include "./message/all.ii"
+#include "./occur/all.ii"
 #include "./process/any.ii"
-#include "./resourced/all.ii"
+#include "./resource/all.ii"
 #include <catch2/catch_all.hpp>
 
 #define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))
@@ -21,26 +21,26 @@ namespace xtal::_test
 
 using namespace bond;
 
-using scale_t = message::inferred_t<class scale_a, typename bond::realized::alpha_t>;
-using level_t = message::inferred_t<class level_a, typename bond::realized::alpha_t>;
+using scale_t = occur::inferred_t<class scale_a, typename bond::realized::alpha_t>;
+using level_t = occur::inferred_t<class level_a, typename bond::realized::alpha_t>;
 /*/
-using onset_t = message::inferred_t<class onset_a, typename bond::realized::alpha_t>;
+using onset_t = occur::inferred_t<class onset_a, typename bond::realized::alpha_t>;
 /*/
 struct onset
-:	message::confer<typename bond::realized::alpha_t
-	,	message::any<class onset_a>
+:	occur::confer<typename bond::realized::alpha_t
+	,	occur::any<class onset_a>
 	,	bond::assay<(1 << 7)>
 	>
 {
 };
-using onset_t = message::confined_t<onset>;
+using onset_t = occur::confined_t<onset>;
 /***/
 
 ////////////////////////////////////////////////////////////////////////////////
 
 struct mix
 {
-	class type: public process::confine_t<type>
+	class type : public process::confine_t<type>
 	{
 	public:
 
@@ -57,7 +57,7 @@ using mix_t = typename mix::type;
 
 struct static_onset_mix
 {
-	class type: public process::confine_t<type
+	class type : public process::confine_t<type
 	,	onset_t::dispatch<>
 	>
 	{
@@ -77,7 +77,7 @@ using static_onset_mix_t = typename static_onset_mix::type;
 
 struct dynamic_onset_mix
 {
-	class type: public process::confine_t<type, onset_t::attach<>>
+	class type : public process::confine_t<type, onset_t::attach<>>
 	{
 	public:
 
@@ -96,7 +96,7 @@ using dynamic_onset_mix_t = typename dynamic_onset_mix::type;
 
 struct dynamic_term
 {
-	class type: public process::confine_t<type, scale_t::attach<>>
+	class type : public process::confine_t<type, scale_t::attach<>>
 	{
 	public:
 
@@ -116,12 +116,12 @@ using dynamic_term_t = typename dynamic_term::type;
 struct dynamic_count
 {
 	using U_count  = typename bond::realized::iota_t;
-	using U_restep = message::restep_t<U_count>;
+	using U_restep = occur::restep_t<U_count>;
 
 	template <class T>
 	using homotype = process::confine_t<T, U_restep::attach<>>;
 
-	struct type: public homotype<type>
+	struct type : public homotype<type>
 	{
 		using co = homotype<type>;
 	

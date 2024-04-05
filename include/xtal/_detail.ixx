@@ -39,11 +39,10 @@ template <auto N, auto  ...Ms>	concept inclusive_p = (...or  (N == Ms));
 template <auto N, auto  N_0=0>	concept      sign_p = inclusive_p<N, -1, N_0, 1>;
 template <auto N, auto  N_0=0>	XTAL_LET     sign_n = sign_f<N_0>(N);
 
-template <class   ...Ts>         concept  some_q = 0 < sizeof...(Ts);
-template <auto    ...Ns>         concept  some_n = 0 < sizeof...(Ns);
-template <class   ...Ts>         concept  none_q = not some_q<Ts...>;
-template <auto    ...Ns>         concept  none_n = not some_n<Ns...>;
-
+template <class         ...Ts>	concept  some_q = 0 < sizeof...(Ts);
+template <auto          ...Ns>	concept  some_n = 0 < sizeof...(Ns);
+template <class         ...Ts>	concept  none_q = not some_q<Ts...>;
+template <auto          ...Ns>	concept  none_n = not some_n<Ns...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,51 +50,26 @@ template <auto    ...Ns>         concept  none_n = not some_n<Ns...>;
 //\
 Structural...
 
-template <class      T >	concept atomic_q = _std::same_as<T, _std::atomic<typename T::value_type>>;
-template <class      T >	concept atomic_p =
-	_std::is_trivially_copyable_v<T> &&
-	_std::is_copy_constructible_v<T> &&
-	_std::is_move_constructible_v<T> &&
-	_std::is_copy_assignable_v<T> &&
-	_std::is_move_assignable_v<T>;
-
 template <class      T             >	concept  incomplete_q = not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	concept    complete_q = not incomplete_q<T>;
 template <              class ...Ts>	struct     complete              {class type   {};};
-template <class      T, class ...Ts>	struct     complete<T, Ts...>:   complete<Ts...> {};
+template <class      T, class ...Ts>	struct     complete<T, Ts...> :  complete<Ts...> {};
 template <complete_q T, class ...Ts>	struct     complete<T, Ts...>    {using type =  T;};
 template <              class ...Ts>	using      complete_t = typename complete<Ts...>::type;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class      T >	concept  constant_q = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
-template <class      T >	concept constants_q = constant_q<T> and _std::is_array_v<typename T::value_type>;
-template <auto    ...Ns>   struct _constants
-{
-	using value_type = _std::array<_std::common_type_t<decltype(Ns)...>, sizeof...(Ns)>;
-	using type = _std::integral_constant<value_type, value_type {Ns...}>;
-};
-
-template <auto    ...Ns>   using   constants   = typename _constants<Ns...>::type;
-template <auto    ...Ns>   using   cardinals   = constants<(size_t) Ns...>;
-template <auto    ...Ns>   using    ordinals   = constants<(int)    Ns...>;
-template <auto    ...Ns>   using    logicals   = constants<(bool)   Ns...>;
-
 template <auto       N >	using    constant   = _std::integral_constant<decltype(N), N>;
 template <auto       N >	using    cardinal   = _std::integral_constant<size_t,      N>;
 template <auto       N >	using     ordinal   = _std::integral_constant<int,         N>;
 template <auto       N >	using     logical   = _std::integral_constant<bool,        N>;
 
-
 template <class      T >	concept _integral_p = _std::     integral  <T>;
 template <class      T >	concept _cardinal_p = _std::  is_unsigned_v<T>;
 template <class      T >	concept  _ordinal_p = _std::    is_signed_v<T>;
 template <class      T >	concept  _logical_p = _std:: convertible_to<T, bool>;
-
-template <class      T >	concept integrals_q = constants_q<T> and _integral_p<typename T::value_type::value_type>;
-template <class      T >	concept cardinals_q = constants_q<T> and _cardinal_p<typename T::value_type::value_type>;
-template <class      T >	concept  ordinals_q = constants_q<T> and  _ordinal_p<typename T::value_type::value_type>;
-template <class      T >	concept  logicals_q = constants_q<T> and  _logical_p<typename T::value_type::value_type>;
 
 template <class      T >	concept  integral_q =  constant_q<T> and _integral_p<typename T::value_type>;
 template <class      T >	concept  cardinal_q =  constant_q<T> and _cardinal_p<typename T::value_type>;
@@ -117,8 +91,11 @@ template <liminal_q  T >	using semiliminal   = constant<(T{} >> 1)>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class      T >	using       based_t = _std::remove_cvref_t<complete_t<T>>;
-template <class      T >	concept     based_q =     atomic_p<T>;
-template <class      T >	concept   unbased_q = not atomic_p<T>;
+template <class      T >	concept     based_q = _std::is_trivially_copyable_v<T> and
+	_std::is_copy_constructible_v<T> and _std::is_copy_assignable_v<T> and
+	_std::is_move_constructible_v<T> and _std::is_move_assignable_v<T> and
+	true;
+template <class      T >	concept   unbased_q = not based_q<T>;
 
 template <class      T >	struct    debased             : logical<0> {using type = _std::remove_reference_t<T>;};
 template <unbased_q  T >	struct    debased<T       & > : logical<1> {using type =       T*;};
@@ -137,22 +114,22 @@ template <devalue_q  T >	using     devalue_t =           typename based_t<T>::va
 template <class      T >	concept   revalue_q = not _std::same_as<based_t<T>, _std::remove_all_extents_t<based_t<T>>>;
 template <revalue_q  T >	using     revalue_t =                               _std::remove_all_extents_t<based_t<T>>;
 
-template <class      T >	concept    value_q = devalue_q<T> or revalue_q<T>;
-template <class      T >	struct    _value    {using value_type =   based_t<T>;};
-template <devalue_q  T >	struct    _value<T> {using value_type = devalue_t<T>;};
-template <revalue_q  T >	struct    _value<T> {using value_type = revalue_t<T>;};
-template <class      T >	using      value_t = typename _value<T>::value_type;
+template <class      T >	concept     value_q = devalue_q<T> or revalue_q<T>;
+template <class      T >	struct     _value    {using value_type =   based_t<T>;};
+template <devalue_q  T >	struct     _value<T> {using value_type = devalue_t<T>;};
+template <revalue_q  T >	struct     _value<T> {using value_type = revalue_t<T>;};
+template <class      T >	using       value_t = typename _value<T>::value_type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <           class ...Ts>	struct   identical;// `is_same`
-template <           class ...Ts>	struct   isotropic;// `is_same` modulo qualifiers
-template <           class ...Ts>	struct   epitropic;// `is_constructible`
+template <           class ...Ts>	struct    identical;// `is_same`
+template <           class ...Ts>	struct    isotropic;// `is_same` modulo qualifiers
+template <           class ...Ts>	struct    epitropic;// `is_constructible`
 
-template <class  T , class ...Ts>	struct   identical<T, Ts...>: _std::conjunction<_std::is_same<Ts, T>...> {};
-template <class  T , class ...Ts>	struct   isotropic<T, Ts...>: _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
-template <class  T , class ...Ts>	struct   epitropic<T, Ts...>: _std::conjunction<_std::is_constructible<Ts, T>...> {};
+template <class  T , class ...Ts>	struct    identical<T, Ts...> : _std::conjunction<_std::is_same<Ts, T>...> {};
+template <class  T , class ...Ts>	struct    isotropic<T, Ts...> : _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
+template <class  T , class ...Ts>	struct    epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<Ts, T>...> {};
 
 template <           class ...Ts>	concept          id_q = identical<Ts...>::value;
 template <           class ...Ts>	concept          is_q = isotropic<Ts...>::value;
@@ -162,24 +139,13 @@ template <class  T , class ...Ys>	concept          as_p = _std::constructible_fr
 template <class  T , class    Y >	concept          of_p = _std::derived_from<based_t<Y>, based_t<T>>;
 template <class  T , class    Y >	concept          of_q = _std::derived_from<based_t<T>, based_t<Y>>;
 
-template <           class ...Ts>	using        common   = _std::common_type  <Ts...>;
-template <           class ...Ts>	using        common_t = _std::common_type_t<Ts...>;
-template <           class ...Ts>	concept      common_q = requires {typename common_t<Ts...>;};
 template <class  T , class    Y >	concept    fungible_q = of_p<T, Y> or of_q<T, Y>;
-template <class  T , class    Y >	concept    forcible_q = sizeof(T) == sizeof(Y);
 template <class  T , class    Y >	concept  infungible_q = not fungible_q<T, Y>;
-template <class  T , class    Y >	concept  unforcible_q = not forcible_q<T, Y>;
 
-template <class  T , class    Y >	struct      qualify                {using type = T         ;};
-template <class  T , class    Y >	struct      qualify<T, Y const  &> {using type = T const  &;};
-template <class  T , class    Y >	struct      qualify<T, Y        &> {using type = T        &;};
-template <class  T , class    Y >	struct      qualify<T, Y const &&> {using type = T const &&;};
-template <class  T , class    Y >	struct      qualify<T, Y       &&> {using type = T       &&;};
-template <class  T , class    Y >	using     requalify = qualify<based_t<T>, Y>;
-
-template <class               X >	struct     argument     {using type = X &&;};
+template <           class ...Ts>	concept      common_q = requires {typename _std::common_type_t<Ts...>;};
+template <           class ...Ts>	using        common_t =                    _std::common_type_t<Ts...>;
+template <class               X >	struct     argument     {using type = X      &&;};
 template <based_q             X >	struct     argument<X>  {using type = X const &;};
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,15 +157,15 @@ struct aligned
 	XTAL_LET value = sizeof(type);
 };
 
-template <class      T >	using    pointed_t =          XTAL_TYP_(*XTAL_VAL_(T));
-template <class      T >	using    pointer_t =          XTAL_TYP_(&XTAL_VAL_(T));
+template <class      T >	using    pointed_t = XTAL_TYP_(*XTAL_VAL_(T));
+template <class      T >	using    pointer_t = XTAL_TYP_(&XTAL_VAL_(T));
 template <class      T >	concept  pointed_q = requires {&XTAL_VAL_(T);};
 template <class      T >	concept  pointer_q = requires {*XTAL_VAL_(T);};
 
 template <class      T >	XTAL_LET  parity_n = sizeof(T)%aligned<value_t<T>>::value;
 template <class      T >	XTAL_LET   arity_n = sizeof(T)/aligned<value_t<T>>::value;
 template <class      T >	using      array_t = value_t<T>[arity_n<T>];
-template <class      T >	concept    arity_q = devalue_q<T> and 0 ==  parity_n<T>;
+template <class      T >	concept    arity_q = devalue_q<T> and 0 == parity_n<T>;
 template <class      T >	concept    array_q = _std::is_array_v<T> or arity_q<T> and of_q<T, _std::array<value_t<T>, arity_n<T>>>;
 
 
@@ -208,29 +174,28 @@ template <class      T >	concept    array_q = _std::is_array_v<T> or arity_q<T> 
 //\
 Ranged...
 
-template <class      T >	using       begin_t = decltype(XTAL_VAL_(T).begin());
-template <class      T >	using         end_t = decltype(XTAL_VAL_(T).  end());
-template <class      T >	concept     begin_q = requires (T t) {*t.begin();};
-template <class      T >	concept       end_q = requires (T t) {*t.  end();};
+template <class      T >	using    iterface_t = _v3::ranges::view_interface<T>;
+template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
+
+template <class      T >	concept    _begin_q = requires {*XTAL_VAL_(T).begin();};
+template <class      T >	concept      _end_q = requires {*XTAL_VAL_(T).  end();};
+template <class      T >	using      _begin_t = decltype ( XTAL_VAL_(T).begin() );
+template <class      T >	using        _end_t = decltype ( XTAL_VAL_(T).  end() );
+
+template <class      T >	concept unbounded_q = _begin_q<T> and not _end_q<T>;
+template <class      T >	concept   bounded_q = _begin_q<T> and     _end_q<T>;
 
 template <class      T >	concept  embraced_q = requires {typename T::initializer_list;};
 template <class      T >	concept    braced_q = embraced_q<T> or value_q<T>;
 template <class      T >	struct     braced    {using type = _std::initializer_list<value_t<T>>;};
 template <embraced_q T >	struct     braced<T> {using type = typename T::initializer_list;};
-
-template <class      W >	using     bracket_t = _std::initializer_list<W>;
-template <class      T >	concept   bracket_q = begin_q<T> and end_q<T>;
-
-template <class      T >	using     iterate_t = _v3::ranges::view_interface<T>;
-template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
+template <class      T >	using      braced_t = typename braced<T>::type;
+template <class      W >	using      braces_t = _std::initializer_list<W>;
 
 
-
-
-template <class      T >	concept  iterable_q = begin_q<T> and not requires (T t) {t.front();};
-template <class      T >	concept  iterated_q = begin_q<T> and     requires (T t) {t.front();};//_v3::ranges::forward_range
+template <class      T >	concept  iterable_q = _begin_q<T> and not requires (T t) {t.front();};
+template <class      T >	concept  iterated_q = _begin_q<T> and     requires (T t) {t.front();};//_v3::ranges::forward_range
 template <class      T >	concept  iterator_q = requires (T t) {*++t;};//_v3::ranges::forward_iterator
-
 
 template <class      T >	struct   iterated;
 template <class      T >	struct   iterator;
@@ -246,13 +211,13 @@ template <iterated_q T >	struct   iterated<T>: logical<1> {using type =         
 template <iterator_q T >	struct   iterated<T>: logical<0> {using type =                     void ;};
 template <integral_p T >	struct   iterated<T>: logical<0> {using type =            interval_t<T> ;};
 
-template <iterable_q T >	struct   iterator<T>: logical<0> {using type =               begin_t<T> ;};
-template <iterated_q T >	struct   iterator<T>: logical<0> {using type =               begin_t<T> ;};
+template <iterable_q T >	struct   iterator<T>: logical<0> {using type =              _begin_t<T> ;};
+template <iterated_q T >	struct   iterator<T>: logical<0> {using type =              _begin_t<T> ;};
 template <iterator_q T >	struct   iterator<T>: logical<1> {using type =               based_t<T> ;};
 template <integral_p T >	struct   iterator<T>: logical<0> {using type = iterator_t<interval_t<T>>;};
 
-template <iterable_q T >	struct   iteratee<T>: logical<0> {using type =     pointed_t<begin_t<T>>;};
-template <iterated_q T >	struct   iteratee<T>: logical<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterable_q T >	struct   iteratee<T>: logical<0> {using type =    pointed_t<_begin_t<T>>;};
+template <iterated_q T >	struct   iteratee<T>: logical<0> {using type =    pointed_t<_begin_t<T>>;};
 template <iterator_q T >	struct   iteratee<T>: logical<0> {using type =             pointed_t<T> ;};
 template <integral_p T >	struct   iteratee<T>: logical<1> {using type =               based_t<T> ;};
 
@@ -260,8 +225,8 @@ template <class      T >	struct   distance                {using type = distance
 template <iterator_q T >	struct   distance<T>             {using type = XTAL_TYP_(_std::distance(XTAL_VAL_(T), XTAL_VAL_(T)));};
 
 
-template <class      T >	concept  counted_q  = iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
 template <class      T >	concept  counter_q  = integral_p<T>;
+template <class      T >	concept  counted_q  = iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
 
 template <class      T >	struct   counted;
 template <class      T >	struct   counter;
@@ -278,13 +243,13 @@ template <class      T >	using       visor_t = _v3::ranges::subrange<iterator_t<
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class      ...Ts>	struct   isomorphic       : isotropic<Ts...> {};
-template <iterated_q ...Ts>	struct   isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
-template <iterator_q ...Ts>	struct   isomorphic<Ts...>: isomorphic<iteratee_t<Ts>...> {};
+template <class      ...Ts>	struct   isomorphic        : isotropic<Ts...> {};
+template <iterated_q ...Ts>	struct   isomorphic<Ts...> : isomorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts>	struct   isomorphic<Ts...> : isomorphic<iteratee_t<Ts>...> {};
 
-template <class      ...Ts>	struct   epimorphic       : epitropic<Ts...> {};
-template <iterated_q ...Ts>	struct   epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
-template <iterator_q ...Ts>	struct   epimorphic<Ts...>: epimorphic<iteratee_t<Ts>...> {};
+template <class      ...Ts>	struct   epimorphic        : epitropic<Ts...> {};
+template <iterated_q ...Ts>	struct   epimorphic<Ts...> : epimorphic<iteratee_t<Ts>...> {};
+template <iterator_q ...Ts>	struct   epimorphic<Ts...> : epimorphic<iteratee_t<Ts>...> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,8 +257,10 @@ template <iterator_q ...Ts>	struct   epimorphic<Ts...>: epimorphic<iteratee_t<Ts
 //\
 Arithmetic...
 
-template <class      T >	using    extremum_t = _std::numeric_limits<based_t<T>>;
-template <class      T >	concept  extremum_q = requires {typename extremum_t<T>;};
+template <class      T >	using    numeric_t = _std::numeric_limits<based_t<T>>;
+//\
+template <class      T >	concept  numeric_q = requires {typename numeric_t<T>;};
+template <class      T >	concept  numeric_q = _std::floating_point<T> or _std::integral<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

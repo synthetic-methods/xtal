@@ -20,7 +20,7 @@ template <class T>
 struct define
 {
 	template <class S>
-	class subtype: public S
+	class subtype : public S
 	{
 		friend T;
 		using S_ = S;
@@ -40,7 +40,7 @@ struct define
 	public://protected:
 		using  T_self = T;
 		using  U_self = subtype;
-		struct U_tail {template <class _, typename ...Is> struct super: bond::seek_back<_, Is...> {};};
+		struct U_tail {template <class _, typename ...Is> struct super : bond::seek_back<_, Is...> {};};
 
 	public:
 		template <class _, class ...Is>

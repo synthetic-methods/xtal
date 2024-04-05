@@ -2,7 +2,7 @@
 #include "../any.cc"
 #include "./any.ii"// testing...
 
-#include "../message/all.ii"
+#include "../occur/all.ii"
 
 
 
@@ -19,7 +19,7 @@ using namespace xtal::_test;
 struct square_root
 {
 	template <class S>
-	class subtype: public bond::compose_s<S>
+	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
@@ -40,7 +40,7 @@ using square_root_t = confined_t<square_root>;
 struct halve
 {
 	template <class S>
-	class subtype: public bond::compose_s<S>
+	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
 
@@ -84,8 +84,8 @@ TAG_("process", "construct")
 		TRUE_(2L == halve_square_root_t::function(16L));
 		TRUE_(3L == square_root_halve_t::function(18L));
 
-		TRUE_(2L == halve_square_root_t {}.functor(16L));
-		TRUE_(3L == square_root_halve_t {}.functor(18L));
+		TRUE_(2L == halve_square_root_t{}.functor(16L));
+		TRUE_(3L == square_root_halve_t{}.functor(18L));
 
 	}
 }
@@ -129,7 +129,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
+	using U_start = occur::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -141,7 +141,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = message::inferred_t<class start_a, ordinal_t<0>>;
+	using U_start = occur::inferred_t<class start_a, ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized
@@ -152,7 +152,7 @@ void process_provision__efflux_method(auto z)
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 
 }
-TAG_("process", "message")
+TAG_("process", "occur")
 {
 	TRY_("influx operator (dynamic)") {process_provision__influx_operator(dynamic_onset_mix_t());}
 	TRY_("efflux operator (dynamic)") {process_provision__efflux_operator(dynamic_onset_mix_t());}

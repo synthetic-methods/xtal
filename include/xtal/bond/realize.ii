@@ -26,7 +26,7 @@ The translation-tables for the supplied `N_size` \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
 template <size_t N_size>
-struct recognize: recognize<(N_size >> 1)>
+struct recognize : recognize<(N_size >> 1)>
 {
 	using zed_t = logical_t<0>;
 
@@ -103,8 +103,8 @@ struct recognize<(1<<2)>
 
 	template <int _, int N_pow> XTAL_NEW root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
-	template <int _> struct root<_, -1>: sigma_u<0x7EEEEEEE> {};
-	template <int _> struct root<_, -2>: sigma_u<0x5F375A86> {};
+	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE> {};
+	template <int _> struct root<_,-2> : sigma_u<0x5F375A86> {};
 
 //	XTAL_LET root_1 = sigma_n<0x7EEEEEEE>;
 //	XTAL_LET root_2 = sigma_n<0x5F375A86>;
@@ -173,8 +173,8 @@ struct recognize<(1<<3)>
 
 	template <int _, int N_pow> XTAL_NEW root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
-	template <int _> struct root<_, -1>: sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
-	template <int _> struct root<_, -2>: sigma_u<0x5FE6EB50, 0xC7B537A9> {};
+	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
+	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
 
 	template <int N_pow=-1>
 	static alpha_t root_e(alpha_t const &w)
@@ -212,13 +212,13 @@ concept recognized_q = recognize<N_size>::zed_t::value;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_size>
-struct rationalize: rationalize<(N_size >> 1)>
+struct rationalize : rationalize<(N_size >> 1)>
 {
 	using zed_t = logical_t<0>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
-struct rationalize<N_size>: recognize<N_size>
+struct rationalize<N_size> : recognize<N_size>
 {
 private:
 	using S_ = recognize<N_size>;
@@ -497,16 +497,16 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N_size>
-struct realize: realize<(N_size >> 1)>
+struct realize : realize<(N_size >> 1)>
 {
 	using zed_t = logical_t<0>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
-struct realize<N_size>: rationalize<N_size>
+struct realize<N_size> : rationalize<N_size>
 {};
 template <size_t N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_t;}
-struct realize<N_size>: rationalize<N_size>
+struct realize<N_size> : rationalize<N_size>
 {
 private:
 	using S_ = rationalize<N_size>;
@@ -785,7 +785,7 @@ public:
 			return couple_t<aphex_t> {{x, y}, {x, -y}};
 		}
 		else {
-			return aphex_t {x, y*N_pow};
+			return aphex_t{x, y*N_pow};
 		}
 	}
 	
@@ -916,7 +916,7 @@ public:
 	///\note\
 	Base `0` is interpreted as `e`, and mapped to `1`. \
 
-	XTAL_LET_(_std::array<alpha_t, 4>) argue_ns {1L
+	XTAL_LET_(_std::array<alpha_t, 4>) argue_ns{1L
 	,	6.283185307179586476925286766559005768L//  1 => (Pi*2)
 	,	0.693147180559945309417232121458176568L//  2 => Log[2]
 	,	3.141592653589793238462643383279502884L// -1 => (Pi*1)
@@ -1304,7 +1304,7 @@ public:
 		auto &z = reinterpret_cast<alpha_t(&)[2]>(target);
 		alpha_t const x = truncate_f<N_zoom>(z[0]);
 		alpha_t const y = truncate_f<N_zoom>(z[1]);
-		return aphex_t {x, y};
+		return aphex_t{x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region below `dnsilon_f(N_zoom, n_zone)`. \
@@ -1330,7 +1330,7 @@ public:
 	{
 		alpha_t const x = truncated_f<N_zoom>(target.real());
 		alpha_t const y = truncated_f<N_zoom>(target.imag());
-		return aphex_t {x, y};
+		return aphex_t{x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
 	XTAL_FN2 truncated_f(aphex_t target, delta_t const &n_zone)
@@ -1393,7 +1393,7 @@ public:
 		auto &z = reinterpret_cast<alpha_t(&)[2]>(target);
 		alpha_t const x = puncture_f<N_zoom>(z[0]);
 		alpha_t const y = puncture_f<N_zoom>(z[1]);
-		return aphex_t {x, y};
+		return aphex_t{x, y};
 	}
 
 	///\returns the `target` with magnitude clamped to the region above `upsilon_f(N_zoom, n_zone)`. \
@@ -1419,7 +1419,7 @@ public:
 	{
 		alpha_t const x = punctured_f<N_zoom>(target.real());
 		alpha_t const y = punctured_f<N_zoom>(target.imag());
-		return aphex_t {x, y};
+		return aphex_t{x, y};
 	}
 	template <int N_zoom=0, bool N_zero=0>
 	XTAL_FN2 punctured_f(aphex_t target, delta_t const &n_zone)
@@ -1458,7 +1458,7 @@ public:
 	{
 		alpha_t const x = trim_f<N_zoom>(target.real());
 		alpha_t const y = trim_f<N_zoom>(target.imag());
-		return aphex_t {x, y};
+		return aphex_t{x, y};
 	}
 
 
@@ -1588,7 +1588,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct realize: _detail::realize<sizeof(value_t<T>)> {};
+struct realize : _detail::realize<sizeof(value_t<T>)> {};
 
 using realized = realize<size_s>;
 

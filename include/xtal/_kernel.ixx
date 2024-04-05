@@ -68,7 +68,7 @@ XTAL_0EX
 	if constexpr (counted_q<T>) {
 		return 1 + t.back() - XTAL_REF_(t).front();
 	}	else
-	if constexpr (bracket_q<T>) {
+	if constexpr (bounded_q<T>) {
 		return      t.end() - XTAL_REF_(t).begin();
 	}	else
 	if constexpr (requires {t.size();}) {
@@ -127,13 +127,13 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <extremum_q T>
+template <numeric_q T>
 XTAL_FN2 extremum_f(sign_t const &n_direction)
 XTAL_0EX
 {
 	switch (n_direction) {
-	case -1: return extremum_t<T>::min();
-	case  1: return extremum_t<T>::max();
+	case -1: return numeric_t<T>::min();
+	case  1: return numeric_t<T>::max();
 	default: return (T) 0;
 	}
 }

@@ -29,7 +29,7 @@ Adapt `_detail::apply_to` etc to execute in parallel using SIMDE? \
 
 
 template <class U, size_t N, int Ns>
-struct lattice<U[N][Ns]>: lattice<lattice_t<U[N]>[Ns]>
+struct lattice<U[N][Ns]> : lattice<lattice_t<U[N]>[Ns]>
 {};
 template <class U, size_t N>
 struct lattice<U[N]>
@@ -43,7 +43,7 @@ struct lattice<U[N]>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<lattice>>;
 
 	template <class T>
-	class homotype: public hemitype<T>
+	class homotype : public hemitype<T>
 	{
 		friend T;
 		using  T_ = hemitype<T>;
@@ -127,15 +127,15 @@ struct lattice<U[N]>
 		XTAL_OP2_(T)    -  (auto       &&w) XTAL_0FX                            {return twin()  -= XTAL_REF_(w);}
 
 	//	Vector operators (via `std::initializer_list` reconstruction):
-		XTAL_OP1_(T &) <<= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() <<= T(w);}
-		XTAL_OP1_(T &) >>= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() >>= T(w);}
-		XTAL_OP1_(T &)  &= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  &= T(w);}
-		XTAL_OP1_(T &)  ^= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  ^= T(w);}
-		XTAL_OP1_(T &)  |= (bracket_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  |= T(w);}
-		XTAL_OP1_(T &)  *= (bracket_t<U> w) XTAL_0EX                            {return self()  *= T(w);}
-		XTAL_OP1_(T &)  /= (bracket_t<U> w) XTAL_0EX                            {return self()  /= T(w);}
-		XTAL_OP1_(T &)  += (bracket_t<U> w) XTAL_0EX                            {return self()  += T(w);}
-		XTAL_OP1_(T &)  -= (bracket_t<U> w) XTAL_0EX                            {return self()  -= T(w);}
+		XTAL_OP1_(T &) <<= (braces_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() <<= T(w);}
+		XTAL_OP1_(T &) >>= (braces_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self() >>= T(w);}
+		XTAL_OP1_(T &)  &= (braces_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  &= T(w);}
+		XTAL_OP1_(T &)  ^= (braces_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  ^= T(w);}
+		XTAL_OP1_(T &)  |= (braces_t<U> w) XTAL_0EX XTAL_REQ _std::integral<U> {return self()  |= T(w);}
+		XTAL_OP1_(T &)  *= (braces_t<U> w) XTAL_0EX                            {return self()  *= T(w);}
+		XTAL_OP1_(T &)  /= (braces_t<U> w) XTAL_0EX                            {return self()  /= T(w);}
+		XTAL_OP1_(T &)  += (braces_t<U> w) XTAL_0EX                            {return self()  += T(w);}
+		XTAL_OP1_(T &)  -= (braces_t<U> w) XTAL_0EX                            {return self()  -= T(w);}
 
 	//	XTAL_OP1_(T &)  *= (auto &&w) XTAL_0EX {return self() = self() * XTAL_REF_(w);}
 	//	XTAL_OP1_(T &)  /= (auto &&w) XTAL_0EX {return self() = self() / XTAL_REF_(w);}
@@ -156,25 +156,25 @@ struct lattice<U[N]>
 		XTAL_CXN homotype(size_t n)
 		XTAL_0EX
 		{
-			_std::uninitialized_value_construct_n(T_::data() + n, T_::size() - n);
+			_std::uninitialized_value_construct_n(_std::next(T_::data(), n), T_::size() - n);
 		}
-		XTAL_CON homotype(bracket_t<U> a)
+		XTAL_CON homotype(braces_t<U> a)
 		XTAL_0EX
-		:	homotype((size_t) a.size())
+		:	homotype(a.size())
 		{
-			_detail::copy_to(T_::data(), a);
+			_detail::copy_to(T_::begin(), a.begin(), a.end());
 		}
-		template <bracket_q A>
+		template <bounded_q A>
 		XTAL_CXN homotype(A const &a)
-		:	homotype((size_t) a.size())
+		:	homotype(a.size())
 		{
-			_detail::copy_to(T_::data(), a);
+			_detail::copy_to(T_::begin(), a);
 		}
-		template <bracket_q A>
+		template <bounded_q A>
 		XTAL_CXN homotype(A &&a)
-		:	homotype((size_t) a.size())
+		:	homotype(a.size())
 		{
-			_detail::move_to(T_::data(), a);
+			_detail::move_to(T_::begin(), a);
 		}
 		
 	};
@@ -190,7 +190,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::atom::lattice_q T>
-struct tuple_size<T>: xtal::cardinal_t<T::size()> {};
+struct tuple_size<T> : xtal::cardinal_t<T::size()> {};
 
 template <size_t N, xtal::atom::lattice_q T>
 struct tuple_element<N, T> {using type = xtal::devalue_t<T>;};

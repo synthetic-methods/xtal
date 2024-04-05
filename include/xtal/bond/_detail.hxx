@@ -19,16 +19,16 @@ struct query
 	class type
 	{
 	public:
-		template <class _,               class ...Is> struct duper:  U_tail::template super<_,                       Is...> {};
-		template <class _,               class ...Is> struct super                  : duper<_,                       Is...> {};
-		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...>: duper<null_t, subliminal_s<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...>: super<U_self,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_head, Is...>: super<U_self,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_self, Is...>: super<U_self,                  Is...> {};
+		template <class _,               class ...Is> struct duper :  U_tail::template super<_,                       Is...> {};
+		template <class _,               class ...Is> struct super                   : duper<_,                       Is...> {};
+		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...> : super<U_self,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_head, Is...> : super<U_self,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_self, Is...> : super<U_self,                  Is...> {};
 
 	};
 	template <class S>
-	class subtype: public S
+	class subtype : public S
 	{
 		using S_ = S;
 		friend S_;
@@ -76,7 +76,7 @@ template <int N_width>
 struct assay
 {
 	template <class S>
-	class subtype: public S
+	class subtype : public S
 	{
 		using S_ = S;
 	

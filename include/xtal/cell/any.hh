@@ -38,7 +38,7 @@ template <typename A>
 struct any<A>
 {	
 	template <class S> requires some_q<typename S::T_self>
-	class subtype: public S
+	class subtype : public S
 	{
 		using S_ = S;
 
@@ -47,9 +47,9 @@ struct any<A>
 		using typename S::U_self;
 
 	public:
-		template <class _, class ...Is> struct duper: S_::template super<_,      Is...> {};
-		template <class _, class ...Is> struct super             : duper<_,      Is...> {};
-		template <class _, class ...Is> struct super<_, A, Is...>: super<U_self, Is...> {};
+		template <class _, class ...Is> struct duper : S_::template super<_,      Is...> {};
+		template <class _, class ...Is> struct super              : duper<_,      Is...> {};
+		template <class _, class ...Is> struct super<_, A, Is...> : super<U_self, Is...> {};
 
 	public:
 		template <class ...Is> using self_s = typename super<T_self, Is...>::type;

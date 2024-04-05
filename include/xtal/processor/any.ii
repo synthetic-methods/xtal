@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
 
-#include "../message/render.ii"
-#include "../message/resize.ii"
+#include "../occur/render.ii"
+#include "../occur/resize.ii"
 
 
 
@@ -32,23 +32,23 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-template <_detail::unprocessed_p U>
-struct defer<U>
-:	defer<_v3::ranges::repeat_view<U>>
-{
-};
-template <class U> requires iterated_q<U>
+template <iterated_q U>
 struct defer<U>
 :	_retail::defer<U>
 {
 };
-template <class U> requires uniterated_q<U> and _retail::any_q<U>
+template <_detail::unprocessed_q U>
+struct defer<U>
+:	defer<_v3::ranges::repeat_view<U>>
+{
+};
+template <_detail::reprocessed_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
@@ -94,11 +94,11 @@ struct defer<U>
 template <class U>
 struct refer
 {
-	using U_render = message::render_t<counted_t<>>;
+	using U_render = occur::render_t<counted_t<>>;
 	using subkind  = bond::compose<_retail::refer<U>, U_render::attach<>>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -106,8 +106,8 @@ struct refer
 		using S_::S_;
 
 	};
-	template <any_q S> requires iterated_q<U> or _detail::unprocessed_p<U>
-	class subtype<S>: public bond::compose_s<S, subkind>
+	template <any_q S> requires iterated_q<U> or _detail::unprocessed_q<U>
+	class subtype<S> : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	

@@ -22,7 +22,7 @@ TAG_("scalar")
 
 	TRY_("construction")
 	{
-		auto foo = W_alpha {2.0, 0.5};
+		auto foo = W_alpha{2.0, 0.5};
 		auto bar = static_cast<W_alpha>(re::template root_2f<2>((T_alpha) 2));
 		bar.transmorph([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
 		TRUE_(foo == bar);
@@ -32,7 +32,7 @@ TAG_("scalar")
 	}
 	TRY_("transformation")
 	{
-		auto bar = W_alpha {2.0, 0.5};
+		auto bar = W_alpha{2.0, 0.5};
 		auto foo = bar.reflected(-1);
 		auto baz = foo.reflected(+1);
 		

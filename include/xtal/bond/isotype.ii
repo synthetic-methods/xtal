@@ -14,7 +14,7 @@ namespace xtal::bond
 ////////////////////////////////////////////////////////////////////////////////
 
 template <template <typename> typename T_>
-class isotype: public T_<isotype<T_>>
+class isotype : public T_<isotype<T_>>
 {
 	using S = T_<isotype<T_>>;// -Wsubobject-linkage?
 	

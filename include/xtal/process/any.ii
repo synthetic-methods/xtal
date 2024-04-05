@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.hh"
 
-
-
-
+#include "../occur/all.ii"
+#include "../resource/all.ii"
+#include "../schedule/all.ii"
 
 
 XTAL_ENV_(push)
@@ -19,7 +19,7 @@ struct define
 	using subkind = _retail::define<T>;
 
 	template <class S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		friend T;
 		using S_ = bond::compose_s<S, subkind>;
@@ -53,7 +53,7 @@ struct define
 		}
 
 		///\returns the lambda abstraction of `functor`, \
-		resolved by the `[../message/any.ipp#dispatch]`ed parameters bound to `this`. \
+		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_TN2 lambda(integral_q auto const ...is),
@@ -81,7 +81,7 @@ struct define
 
 		///\
 		Defines the subtype-indexed function-pointer table, \
-		dynamically indexed by message-value/subtype `T`, \
+		dynamically indexed by the underlying subtype `T`, \
 		and statically-generated from `functor<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
@@ -90,7 +90,7 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(Xs)...));
+				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
 				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...);
@@ -98,10 +98,10 @@ struct define
 
 			};
 			template <auto ...Is>
-			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...))
+			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...))
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(Xs)...));
+				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
 				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...) const;
@@ -128,7 +128,7 @@ struct define
 			>;
 
 			template <any_q R>
-			class subtype: public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 
@@ -196,19 +196,19 @@ struct define
 				}
 
 				///\note\
-				If prefixed by `null_t()`, the message is forwarded directly to `slots`. \
+				If prefixed by `null_t()`, forwards the occur to all `slots`. \
 
 				XTAL_TNX influx(null_t, auto &&...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
 				XTAL_TNX efflux(null_t, auto &&...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
-				If prefixed by `integral_q`, the message is forwarded directly to the `slot` specified. \
+				If prefixed by `integral_q`, forwards the occur to the `slot` specified. \
 
 				XTAL_TNX influx(integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
 				XTAL_TNX efflux(integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
-				Forwards the message to `slots`, bypassing `self`. \
+				Forwards the occur to all `slots`, bypassing `self`. \
 
 				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
@@ -225,8 +225,8 @@ struct define
 					);
 				}
 				///\
-				Forwards the message tail to `slots`, bypassing `self`. \
-				If `~N_slot`, the slot at `N_slot` receives the full message. \
+				Forwards the occur-tail to all `slots`, bypassing `self`. \
+				If `~N_slot`, the slot at `N_slot` receives the full occur. \
 
 				template <int N_slot=-1>
 				XTAL_TNX influx_push_tail(auto o, auto ...oo)
@@ -269,7 +269,7 @@ struct refine
 	using subkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -281,7 +281,7 @@ struct refine
 		using S_::self;
 
 		template <class ...Xs>
-		struct binding: S_binding<Xs...>
+		struct binding : S_binding<Xs...>
 		{
 			using kind = confined<S_binding<Xs...>>;
 			using type = bond::compose_s<S_, kind>;
@@ -322,7 +322,7 @@ struct defer
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
@@ -357,7 +357,7 @@ struct defer<U>
 	using subkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype: public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	

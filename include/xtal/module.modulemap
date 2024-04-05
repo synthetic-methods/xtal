@@ -9,9 +9,9 @@ module xtal {
 	exclude header "./atom/_detail.hxx"
 	exclude header "./cell/_detail.hxx"
 	exclude header "./flux/_detail.hxx"
-	exclude header "./message/_detail.hxx"
+	exclude header "./occur/_detail.hxx"
 	exclude header "./process/_detail.hxx"
 	exclude header "./processor/_detail.hxx"
-	exclude header "./resourced/_detail.hxx"
-	exclude header "./scheduled/_detail.hxx"
+	exclude header "./resource/_detail.hxx"
+	exclude header "./schedule/_detail.hxx"
 }
