@@ -25,7 +25,7 @@ struct tab
 		using S::S;
 		
 	};
-	template <of_q<type> S>
+	template <made_q<type> S>
 	class subtype<S> : public S
 	{
 	public:
@@ -36,7 +36,7 @@ struct tab
 template <class Y=decltype([] () {})>
 using tab_t = typename tab<Y>::type;
 
-template <class Y, class ...Ts> concept tab_p = of_p<tab_t<Y>, Ts...>;
+template <class Y, class ...Ts> concept tab_p = made_p<tab_t<Y>, Ts...>;
 template <class T, class    Y > concept tab_q = tab_p<Y, T>;
 
 

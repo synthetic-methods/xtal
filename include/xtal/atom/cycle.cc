@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./phase.hh"// testing...
+#include "./cycle.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::atom::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("phase")
+TAG_("cycle")
 {
 	using re = bond::realize<size_t>;
 	using T_sigma = typename re::sigma_t;

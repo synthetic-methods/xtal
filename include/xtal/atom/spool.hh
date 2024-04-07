@@ -27,7 +27,7 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using demitype = iterface_t<T>;
+	using demitype = reiterant_t<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<spool>>;

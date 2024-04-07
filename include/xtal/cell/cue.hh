@@ -19,7 +19,7 @@ Wrapper used to schedule an existing type.\
 
 template <         class ...Ts> XTAL_NEW cue;
 template <         class ...Ts> XTAL_ASK cue_q = bond::tag_p<cue, Ts...>;
-template <class Y, class ...Ts> XTAL_ASK cue_p = cue_q<Ts...> and of_p<Y, Ts...>;
+template <class Y, class ...Ts> XTAL_ASK cue_p = cue_q<Ts...> and made_p<Y, Ts...>;
 
 template <class U> struct cue<U> : conferred<U, bond::tag<cue>> {};
 template <       > struct cue< > : cue<size_s> {};

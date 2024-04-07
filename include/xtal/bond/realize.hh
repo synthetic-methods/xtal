@@ -110,8 +110,8 @@ struct recognize<(1<<2)>
 //	XTAL_LET root_2 = sigma_n<0x5F375A86>;
 
 	template <int N_pow=-1>
-	XTAL_DEF_(return,static,inline)
-	XTAL_DEF root_e(alpha_t const &w)
+	XTAL_DEF_(return,inline)
+	XTAL_LET root_e(alpha_t const &w)
 	XTAL_0EX -> alpha_t
 	{
 		static_assert(N_pow <  -0);
@@ -123,8 +123,8 @@ struct recognize<(1<<2)>
 		}
 	}
 	template <int N_pow=-1>
-	XTAL_DEF_(return,static,inline)
-	XTAL_DEF root_e(alpha_t const &w, alpha_t const &n)
+	XTAL_DEF_(return,inline)
+	XTAL_LET root_e(alpha_t const &w, alpha_t const &n)
 	XTAL_0EX -> alpha_t
 	{
 		static_assert(N_pow <  -0);
@@ -179,8 +179,8 @@ struct recognize<(1<<3)>
 	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
 
 	template <int N_pow=-1>
-	XTAL_DEF_(return,static,inline)
-	XTAL_DEF root_e(alpha_t const &w)
+	XTAL_DEF_(return,inline)
+	XTAL_LET root_e(alpha_t const &w)
 	XTAL_0EX -> alpha_t
 	{
 		static_assert(N_pow <  -0);
@@ -192,8 +192,8 @@ struct recognize<(1<<3)>
 		}
 	}
 	template <int N_pow=-1>
-	XTAL_DEF_(return,static,inline)
-	XTAL_DEF root_e(alpha_t const &w, alpha_t const &n)
+	XTAL_DEF_(return,inline)
+	XTAL_LET root_e(alpha_t const &w, alpha_t const &n)
 	XTAL_0EX -> alpha_t
 	{
 		static_assert(N_pow <  -0);
@@ -255,8 +255,8 @@ public:
 		sigma_t mark;
 		sigma_t mask;
 
-		XTAL_FN2_(sigma_t) flag_f(sigma_t const m=0)                    XTAL_0EX {return N_negative <= m? sigma_0: sigma_1 << m;};
-		XTAL_FN2_(sigma_t) mark_f(sigma_t const m=0)                    XTAL_0EX {return flag_f(m)  - 1;};
+		XTAL_FN2_(sigma_t) flag_f(sigma_t const m=0)                    XTAL_0EX {return N_negative <= m?  sigma_0: sigma_1 << m;};
+		XTAL_FN2_(sigma_t) mark_f(sigma_t const m=0)                    XTAL_0EX {return N_negative <= m? ~sigma_0: flag_f(m) - 1;};
 		XTAL_FN2_(sigma_t) mask_f(sigma_t const m=0, sigma_t const n=0) XTAL_0EX {return mark_f(m) << n;};
 
 		XTAL_CXN word(sigma_t m_depth, sigma_t n_shift=0)
@@ -755,27 +755,26 @@ public:
 
 
 	template <int N_pow=1, int N_lim=+1> requires sign_p<N_pow, 0>
-	XTAL_FN2 square_f(simplex_field_q auto z)
+	XTAL_FN2 square_f(auto z)
 	XTAL_0EX
 	{
-		seek_forward_f<N_lim>([&] (auto i)
-			XTAL_0FN_(z *= z)
-		);
-		return versus_f<N_pow>(z);
-	}
-	template <int N_pow=1, int N_lim=+1> requires sign_p<N_pow, 0>
-	XTAL_FN2 square_f(complex_field_q auto const &z)
-	XTAL_0EX
-	{
-		auto x = z.real();
-		auto y = z.imag();
-		seek_forward_f<N_lim>([&] (auto) XTAL_0FN {
-			auto const xx = square_f(x);
-			auto const yy = square_f(y);
-			y = y*x*2;
-			x = xx - yy;
-		});
-		return versus_f<N_pow>(XTAL_TYP_(z) {x, y});
+		if constexpr (complex_field_q<decltype(z)>) {
+			auto x = z.real();
+			auto y = z.imag();
+			seek_forward_f<N_lim>([&] (auto) XTAL_0FN {
+				auto const xx = square_f(x);
+				auto const yy = square_f(y);
+				y = y*x*2;
+				x = xx - yy;
+			});
+			return versus_f<N_pow>(XTAL_TYP_(z) {x, y});
+		}
+		else {
+			seek_forward_f<N_lim>([&] (auto i)
+				XTAL_0FN_(z *= z)
+			);
+			return versus_f<N_pow>(z);
+		}
 	}
 
 
@@ -801,7 +800,7 @@ public:
 	XTAL_FN2 explo_f(auto &&base, sigma_t const &n_zoom)
 	XTAL_0EX
 	{
-		XTAL_TYP_(base) u = XTAL_REF_(base), w = 1;
+		XTAL_TYP_(base) u = XTAL_REF_(base), w = {1};
 		for (sigma_t n = n_zoom; n; n >>= 1) {
 			if (n & 1) {
 			w *= u;
@@ -811,7 +810,7 @@ public:
 		return w;
 	}
 	template <size_t N_zoom, class W>
-	XTAL_FN2 explo_f(W base, W then=1)
+	XTAL_FN2 explo_f(W base, W then = {1})
 	XTAL_0EX
 	{
 		size_t constexpr N = N_zoom >> 1;

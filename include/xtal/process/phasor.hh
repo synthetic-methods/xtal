@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/phase.hh"
+#include "../atom/cycle.hh"
 
 
 
@@ -58,7 +58,7 @@ struct phasor<W[N], As...>
 		XTAL_TNX infuse(subarray_q<N> auto &&us)
 		{
 			using Us = decltype(us);
-			using Ux = typename flux::indent_s<W_, N - arity_n<Us>>;
+			using Ux = typename flux::indent_s<W_, N - array_n<Us>>;
 			return S_::influx(Ux(XTAL_REF_(us)));
 		}
 		///\

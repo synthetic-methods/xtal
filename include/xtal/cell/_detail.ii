@@ -16,6 +16,28 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Constructs/references the current value. \
+
+template <debased_q  M >	XTAL_FN2    member_f(auto &&w)     XTAL_0EX XTAL_REQ debased_q<M> {return         &(XTAL_REF_(w));}
+template <class      M >	XTAL_FN2    member_f(auto &&w)     XTAL_0EX                       {return make_f<M>(XTAL_REF_(w));}
+template <class      M >	XTAL_FN2    member_f(auto &&...ws) XTAL_0EX                       {return make_f<M>(XTAL_REF_(ws)...);}
+
+///\
+Resolves/dereferences the current value. \
+
+template <class      W >	XTAL_FN2  remember_f(W &&w)        XTAL_0EX XTAL_REQ_(*w)         {return *XTAL_REF_(w);}
+template <class      W >	XTAL_FN2  remember_f(W &&w)        XTAL_0EX                       {return  XTAL_REF_(w);}
+
+///\
+Replaces and returns the previous value. \
+
+template <rebased_q  V >	XTAL_FN2 dismember_f(V &v, V w)         XTAL_0EX {return _std::exchange(v, XTAL_MOV_(w));}
+template <rebased_q  V >	XTAL_FN2 dismember_f(V &v, auto &&...w) XTAL_0EX {return dismember_f<V>(v, member_f<V>(XTAL_REF_(w)...));}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
 struct refine_head

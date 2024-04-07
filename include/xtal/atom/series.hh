@@ -40,6 +40,7 @@ struct series<U[N_size]>
 	public:
 		using T_::T_;
 		using T_::get;
+		using T_::let;
 		using T_::self;
 		using T_::twin;
 
@@ -75,20 +76,20 @@ struct series<U[N_size]>
 
 		//	Compute and populate the 0th and 1st powers:
 			auto const o = re::template explo_f<N_index>(u);
-			get(i0) = o;
-			get(i1) = o*u;
+			let(i0) = o;
+			let(i1) = o*u;
 
 			for (I i = i1; i < iM; ++i) {
 				auto w = re::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the value at `i << 1`:
 				I ii = i << 1;
-				get(ii + 0) = w;
-				get(ii + 1) = w*u;
+				let(ii + 0) = w;
+				let(ii + 1) = w*u;
 			}
 		//	Compute the final value if `N_limit` is odd:
 			if constexpr (N_limit&1) {
-				get(iN) = get(iN - 1)*u;
+				let(iN) = get(iN - 1)*u;
 			}
 			return self();
 		}
@@ -173,7 +174,7 @@ struct series<U[N_size]>
 			}
 		
 		//	Cast the output to the transformed domain:
-			return reinterpret_cast<typename Y::template dual<T>::type &>(that);
+			return reinterpret_cast<typename Y::dual::type &>(that);
 		}
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
@@ -206,6 +207,8 @@ struct series<U[N_size]>
 
 		///\
 		Multiplication by circular convolution. \
+
+		using T_::operator*=;
 
 		XTAL_OP1_(T &) *=(T const &t)
 		XTAL_0EX

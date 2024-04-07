@@ -54,6 +54,8 @@ struct polymer<U, As...>
 		template <class ...Xs> requires resource::spool_q<S_> and resource::store_q<S_>
 		struct binding : S__binding<Xs...>
 		{
+			using Y_return = typename S__binding<Xs...>::Y_return;
+
 			using V_event = occur::stage_t<>;
 			using U_event = cell::key_s<V_event>;
 			

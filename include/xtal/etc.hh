@@ -213,18 +213,17 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF              auto
-#define XTAL_DEF_(...)        XTAL_F1_(XTAL_DEC_,__VA_ARGS__)
+#define XTAL_DEF_(...)        XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
 
-#define XTAL_DEC_(...)        XTAL_DEC__##__VA_ARGS__
+#define XTAL_ATT_(...)        XTAL_ATT__##__VA_ARGS__
 #if     XTAL_V00_(MSVC)
-#define XTAL_DEC__inline      __forceinline
+#define XTAL_ATT__inline      __forceinline
 #else
-#define XTAL_DEC__inline      inline __attribute__((always_inline))
+#define XTAL_ATT__inline      inline __attribute__((always_inline))
 #endif
-#define XTAL_DEC__return      [[nodiscard]]
-#define XTAL_DEC__static      static
-#define XTAL_DEC__constexpr   constexpr
+#define XTAL_ATT__return      [[nodiscard]]
+#define XTAL_ATT__static      static
+#define XTAL_ATT__constexpr   constexpr
 
 
 ////////////////////////////////////////////////////////////////////////////////

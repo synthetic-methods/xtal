@@ -58,10 +58,10 @@ struct define
 		XTAL_TO4_(
 		XTAL_TN2 self(), S_::self()
 		)
-		XTAL_TO4_(template <of_q<subtype> X=T>
+		XTAL_TO4_(template <made_q<subtype> X=T>
 		XTAL_TN2 self(), S_::template self<X>()
 		)
-		///<\returns `this` as `T`, or `of_q<subtype>`. \
+		///<\returns `this` as `T`, or `made_q<subtype>`. \
 		
 		
 		XTAL_DO4_(template <typename ...Is>
@@ -120,7 +120,7 @@ struct refine
 
 	};
 	template <any_q S> requires iterable_q<S>
-	class subtype<S> : public bond::compose_s<S, subkind>, public iterface_t<T>
+	class subtype<S> : public bond::compose_s<S, subkind>, public reiterant_t<T>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	

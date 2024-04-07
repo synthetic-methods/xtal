@@ -35,17 +35,18 @@ struct serial<U[N]>
 	class homotype : public hemitype<T>
 	{
 		friend T;
-		using  H_ = hemitype<T>;
+		using  T_ = hemitype<T>;
 	
 	public:// CONSTRUCTION
-		using H_::H_;
+		using T_::T_;
 
 
 	public:// OPERATION
-		using H_::get;
-		using H_::self;
-		using H_::twin;
-		using H_::operator*=;
+		using T_::get;
+		using T_::let;
+		using T_::self;
+		using T_::twin;
+		using T_::operator*=;
 
 		///\
 		Multiplication by linear convolution, truncated by `N`. \
@@ -54,44 +55,13 @@ struct serial<U[N]>
 		XTAL_0EX
 		{
 			if constexpr (re::alignment_n < N) {
-				for (auto i = N; ~--i;) {get(i) *= t.get(0);
-				for (auto j = i; j-- ;) {get(i) += t.get(j)*get(i - j);}}
+				for (auto i = N; ~--i;) {let(i) *= t.get(0);
+				for (auto j = i; j-- ;) {let(i) += t.get(j)*get(i - j);}}
 			}
 			else {
-				bond::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {get(I) *= t.get(0);
-				bond::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {get(I) += t.get(J)*get(I - J);});});
+				bond::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {let(I) *= t.get(0);
+				bond::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {let(I) += t.get(J)*get(I - J);});});
 			}
-			return self();
-		}
-		///\
-		Produces the successor by pairwise addition from `begin()` to `end()`, \
-		assuming the entries of `this` are finite differences/derivatives. \
-
-		XTAL_OP1 ++ (int)
-		XTAL_0EX
-		{
-			auto t = twin(); operator++(); return t;
-		}
-		XTAL_OP1 ++ ()
-		XTAL_0EX
-		{
-			bond::seek_forward_f<N - 1>([this] (auto i) XTAL_0FN_(get(i) += get(i + 1)));
-			return self();
-		}
-
-		///\
-		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
-		assuming the entries of `this` are finite differences/derivatives. \
-
-		XTAL_OP1 -- (int)
-		XTAL_0EX
-		{
-			auto t = twin(); operator--(); return t;
-		}
-		XTAL_OP1 -- ()
-		XTAL_0EX
-		{
-			bond::seek_backward_f<N - 1>([this] (auto i) XTAL_0FN_(get(i) -= get(i + 1)));
 			return self();
 		}
 

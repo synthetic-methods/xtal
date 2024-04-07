@@ -6,52 +6,13 @@
 //\
 Structural...
 
-template <class T>
-XTAL_LET as_f = [] XTAL_1FN_(T);
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class  M > XTAL_FN2   member_f(auto &&w)     XTAL_0EX XTAL_REQ debased_q<M> {return &XTAL_REF_(w);}
-template <class  M > XTAL_FN2   member_f(auto &&w)     XTAL_0EX {return as_f<M>(XTAL_REF_(w));}
-template <class  M > XTAL_FN2   member_f(auto &&...ws) XTAL_0EX {return as_f<M>(XTAL_REF_(ws)...);}
-
-template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX XTAL_REQ_(*w) {return *XTAL_REF_(w);}
-template <class  W > XTAL_FN2 remember_f(W &&w) XTAL_0EX               {return  XTAL_REF_(w);}
-///< Governs access to the underlying member. \
-
-template <rebased_q V>
-XTAL_FN2 dismember_f(V &v, V w)
-XTAL_0EX
-{
-	_std::swap(v, w); return w;
-}
-template <rebased_q V>
-XTAL_FN2 dismember_f(V &v, auto &&...w)
-XTAL_0EX
-{
-	return dismember_f<V>(v, member_f<V>(XTAL_REF_(w)...));
-}
-///< Replaces the body of the underlying member. \
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class    I >
-XTAL_LET appointer_f = [] (auto i) XTAL_0FN_(_std::launder(reinterpret_cast<I>(i)));
+template <class T>	XTAL_LET make_f = [] XTAL_1FN_(T);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
-
-template <class      T >   XTAL_FN2    visor_f(T &&t) XTAL_0EX {return visor_t<T>(XTAL_REF_(t));}
-template <iterator_q I >	XTAL_FN2    mover_f(I   i) XTAL_0EX {return _std::   make_move_iterator(i);}
-template <iterator_q I >	XTAL_FN2 reverser_f(I   i) XTAL_0EX {return _std::make_reverse_iterator(i);}
-
-
-////////////////////////////////////////////////////////////////////////////////
 
 template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) {return counted_t<I>(i0, iN);}
 template <class      T >	XTAL_FN2 counted_f(T &&t)      {return counted_t<T>(XTAL_REF_(t));}
@@ -62,19 +23,20 @@ template <class    T>
 XTAL_FN2 count_f(T &&t)
 XTAL_0EX
 {
-	if constexpr (counter_q<T>) {
+	XTAL_IF0
+	XTAL_0IF_(counter_q<T>) {
 		return XTAL_REF_(t);
-	}	else
-	if constexpr (counted_q<T>) {
+	}
+	XTAL_0IF_(counted_q<T>) {
 		return 1 + t.back() - XTAL_REF_(t).front();
-	}	else
-	if constexpr (bounded_q<T>) {
+	}
+	XTAL_0IF_(bounded_q<T>) {
 		return      t.end() - XTAL_REF_(t).begin();
-	}	else
-	if constexpr (requires {t.size();}) {
+	}
+	XTAL_0IF_(requires {t.size();}) {
 		return XTAL_REF_(t).size();
-	}	else
-	{
+	}
+	XTAL_0IF {
 		return (size_t) 0;
 	}
 }

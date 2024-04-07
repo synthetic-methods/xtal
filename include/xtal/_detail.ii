@@ -124,13 +124,12 @@ template <class  T , class ...Ts>	struct    epitropic<T, Ts...> : _std::conjunct
 
 template <           class ...Ts>	concept          id_q = identical<Ts...>::value;
 template <           class ...Ts>	concept          is_q = isotropic<Ts...>::value;
-template <           class ...Ts>	concept          as_q = epitropic<Ts...>::value;
-template <class  T , class ...Ys>	concept          as_p = _std::constructible_from<T, Ys...>;
+template <           class ...Ts>	concept        make_q = epitropic<Ts...>::value;
+template <class  T , class ...Ys>	concept        make_p = _std::constructible_from<T, Ys...>;
+template <class  T , class    Y >	concept        made_p = _std::derived_from<based_t<Y>, based_t<T>>;
+template <class  T , class    Y >	concept        made_q = _std::derived_from<based_t<T>, based_t<Y>>;
 
-template <class  T , class    Y >	concept          of_p = _std::derived_from<based_t<Y>, based_t<T>>;
-template <class  T , class    Y >	concept          of_q = _std::derived_from<based_t<T>, based_t<Y>>;
-
-template <class  T , class    Y >	concept    fungible_q = of_p<T, Y> or of_q<T, Y>;
+template <class  T , class    Y >	concept    fungible_q = made_p<T, Y> or made_q<T, Y>;
 template <class  T , class    Y >	concept  infungible_q = not fungible_q<T, Y>;
 
 template <           class ...Ts>	concept      common_q = requires {typename _std::common_type_t<Ts...>;};
@@ -141,32 +140,19 @@ template <based_q             X >	struct     argument<X>  {using type = X const 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-struct aligned
-{
-	class type {alignas(alignof(T)) byte_t data[sizeof(T)];};
-	XTAL_LET value = sizeof(type);
-};
+template <class      T >	XTAL_LET    array_n = _std::is_array_v<T>? _std::extent_v<T>: T{}.size();
+template <class      T >	concept     array_q = _std::is_array_v<T> or made_q<T, _std::array<value_t<T>, array_n<T>>>;
 
-template <class      T >	using    pointed_t = XTAL_TYP_(*XTAL_VAL_(T));
-template <class      T >	using    pointer_t = XTAL_TYP_(&XTAL_VAL_(T));
-template <class      T >	concept  pointed_q = requires {&XTAL_VAL_(T);};
-template <class      T >	concept  pointer_q = requires {*XTAL_VAL_(T);};
-
-template <class      T >	XTAL_LET  parity_n = sizeof(T)%aligned<value_t<T>>::value;
-template <class      T >	XTAL_LET   arity_n = sizeof(T)/aligned<value_t<T>>::value;
-template <class      T >	using      array_t = value_t<T>[arity_n<T>];
-template <class      T >	concept    arity_q = devalue_q<T> and 0 == parity_n<T>;
-template <class      T >	concept    array_q = _std::is_array_v<T> or arity_q<T> and of_q<T, _std::array<value_t<T>, arity_n<T>>>;
+template <class      T >	using     pointed_t = _std::remove_reference_t<decltype(*XTAL_VAL_(T))>;
+template <class      T >	using     pointer_t = _std::remove_reference_t<decltype(&XTAL_VAL_(T))>;
+template <class      T >	concept   pointed_q = requires {&XTAL_VAL_(T);};
+template <class      T >	concept   pointer_q = requires {*XTAL_VAL_(T);};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
-
-template <class      T >	using    iterface_t = _v3::ranges::view_interface<T>;
-template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
 
 template <class      T >	concept    _begin_q = requires {*XTAL_VAL_(T).begin();};
 template <class      T >	concept      _end_q = requires {*XTAL_VAL_(T).  end();};
@@ -193,6 +179,7 @@ template <class      T >	struct   iterator;
 template <class      T >	struct   iteratee;
 template <class      T >	struct   distance;
 
+template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
 template <class      T >	using    iterated_t = typename iterated<T>::type;
 template <class      T >	using    iterator_t = typename iterator<T>::type;//_v3::ranges::iterator_t
 template <class      T >	using    iteratee_t = typename iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
@@ -217,7 +204,7 @@ template <iterator_q T >	struct   distance<T>             {using type = XTAL_TYP
 
 
 template <class      T >	concept  counter_q  = integral_p<T>;
-template <class      T >	concept  counted_q  = iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
+template <class      T >	concept  counted_q  = iterated_q<T> and make_q<T, interval_t<iteratee_t<T>>>;
 
 template <class      T >	struct   counted;
 template <class      T >	struct   counter;
@@ -229,7 +216,9 @@ template <counted_q  T >	struct   counter<T> : logical<0> {using type = iteratee
 template <counter_q  T >	struct   counter<T> : logical<1> {using type =    based_t<T>;};
 
 
-template <class      T >	using       visor_t = _v3::ranges::subrange<iterator_t<T>, _v3::ranges::sentinel_t<T>>;
+template <class      T >	using   reiterate_t = _v3::ranges::subrange<iterator_t<T>, _v3::ranges::sentinel_t<T>>;
+template <class      T >	using   reiterant_t = _v3::ranges::view_interface<T>;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +239,7 @@ Arithmetic...
 
 template <class      T >	concept   integral_number_q =  _std::integral      <based_t<T>>;
 template <class      T >	concept       real_number_q =  _std::floating_point<based_t<T>>;
-template <class      T >	concept    complex_number_q = of_q<T, _std::complex<value_t<T>>>;
+template <class      T >	concept    complex_number_q = made_q<T, _std::complex<value_t<T>>>;
 template <class      T >	concept            number_q = integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
 template <class      T >	concept           numeric_q = requires {typename _std::numeric_limits<based_t<T>>;};
 template <class      T >	using             numeric_t = _std::numeric_limits<value_t<T>>;

@@ -44,10 +44,10 @@ struct review<U>
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		template <iterated_q W> requires is_q<visor_t<W>, U>
+		template <iterated_q W> requires is_q<reiterate_t<W>, U>
 		XTAL_CXN subtype(W &&w, auto &&...oo)
 		XTAL_0EX
-		:	S_(visor_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
+		:	S_(reiterate_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), S_::head(XTAL_REF_(oo)...))

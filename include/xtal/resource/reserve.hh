@@ -22,7 +22,7 @@ template <bounded_q U>
 struct reserve<U>
 {
 	using U_store = based_t<U>;
-	using U_serve = visor_t<U>;
+	using U_serve = reiterate_t<U>;
 	using subkind = bond::compose<void
 	,	cell::refer<U_serve>
 	,	cell::defer<U_serve>

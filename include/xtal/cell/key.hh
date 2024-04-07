@@ -19,7 +19,7 @@ Wrapper used to index an existing type. \
 
 template <         class ...Ts> XTAL_NEW key;
 template <         class ...Ts> XTAL_ASK key_q = bond::tag_p<key, Ts...>;
-template <class Y, class ...Ts> XTAL_ASK key_p = key_q<Ts...> and of_p<Y, Ts...>;
+template <class Y, class ...Ts> XTAL_ASK key_p = key_q<Ts...> and made_p<Y, Ts...>;
 
 template <class U> struct key<U> : conferred<U, bond::tag<key>> {};
 template <       > struct key< > : key<size_t> {};

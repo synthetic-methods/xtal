@@ -75,7 +75,7 @@ struct any<A>
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		XTAL_CXN subtype(of_q<S_> auto &&s, auto &&...oo)
+		XTAL_CXN subtype(made_q<S_> auto &&s, auto &&...oo)
 		XTAL_0EX
 		:	S_(static_cast<S_ &&>(s), XTAL_REF_(oo)...)
 		{}

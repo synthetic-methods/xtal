@@ -19,7 +19,7 @@ Controls access to an `address`d `attach`ment.\
 
 template <         class ...Ts> XTAL_NEW mark;
 template <         class ...Ts> XTAL_ASK mark_q = bond::tag_p<mark, Ts...>;
-template <class Y, class ...Ts> XTAL_ASK mark_p = mark_q<Ts...> and of_p<Y, Ts...>;
+template <class Y, class ...Ts> XTAL_ASK mark_p = mark_q<Ts...> and made_p<Y, Ts...>;
 
 template <class U> struct mark<U> : conferred<U, bond::tag<mark>> {};
 template <       > struct mark< > : mark<size_t> {};

@@ -15,6 +15,50 @@ using namespace _retail::_detail;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+struct aligned
+{
+	class type {alignas(alignof(T)) byte_t data[sizeof(T)];};
+	XTAL_LET value = sizeof(type);
+
+};
+template <class T> XTAL_USE aligned_t = typename aligned<T>::type;
+template <class T> XTAL_LET aligned_n =          aligned<T>::value;
+
+
+template <iterator_q I >	XTAL_FN2    mover_f(I   i) XTAL_0EX {return _std::   make_move_iterator(i);}
+template <iterator_q I >	XTAL_FN2 reverser_f(I   i) XTAL_0EX {return _std::make_reverse_iterator(i);}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q I, iterator_q J>
+XTAL_FN0 swap_with(I i, J const j0, J const jN, bool o=false)
+XTAL_0EX
+XTAL_REQ isomorphic_q<I, J>
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	auto constexpr seq = execution::  seq;
+	auto constexpr par = execution::unseq;
+	if (o) swap_ranges(seq, j0, jN, i);
+	else   swap_ranges(par, j0, jN, i);
+#else
+	swap_ranges(j0, jN, i);
+#endif
+}
+template <iterator_q I, bounded_q J>
+XTAL_FN0 swap_with(I i, J const &j, bool o=false)
+XTAL_0EX
+{
+	swap_with(i, j.begin(), j.end(), o);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, F &&f, bool o=false)
@@ -40,7 +84,7 @@ template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
 XTAL_0EX
 {
-	copy_to(i, j0, jN, as_f<based_t<iteratee_t<I>>>, o);
+	copy_to(i, j0, jN, make_f<based_t<iteratee_t<I>>>, o);
 }
 template <iterator_q I, iterator_q J>
 XTAL_FN0 copy_to(I i, J const j0, J const jN, bool o=false)
@@ -64,6 +108,8 @@ XTAL_0EX
 	copy_to(i, j.begin(), j.end(), o);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q I, iterator_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 move_to(I i, J const j0, J const jN, F &&f, bool o=false)
@@ -91,9 +137,9 @@ template <iterator_q I, bounded_q J> requires (not is_q<I, iterator_t<J>>)
 XTAL_FN0 move_to(I i, J &&j, bool o=false)
 XTAL_0EX
 {
-	_std::is_lvalue_reference_v<J>?
-		copy_to(i, j.begin(), j.end(), o):
-		move_to(i, j.begin(), j.end(), o);
+	_std::is_rvalue_reference_v<J>?
+		move_to(i, j.begin(), j.end(), o):
+		copy_to(i, j.begin(), j.end(), o);
 }
 template <iterator_q I, bounded_q J> requires (is_q<I, iterator_t<J>>)
 XTAL_FN0 move_to(I i0, J &&j)
@@ -104,6 +150,8 @@ XTAL_0EX
 		_std::memmove(i0, XTAL_REF_(j).begin(), sizeof(j));
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <bounded_q J, _std::invocable<iteratee_t<J>> F>
 XTAL_FN0 apply_to(J &&j, F &&f, bool o=false)

@@ -1,5 +1,6 @@
 #include "./any.cc"
-#include "./phase.cc"
+#include "./cycle.cc"
+#include "./differential.cc"
 #include "./lattice.cc"
 #include "./scalar.cc"
 #include "./sector.cc"

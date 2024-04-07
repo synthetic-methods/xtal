@@ -97,7 +97,7 @@ struct monomer<U, As...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
-			using U_serve  = visor_t<U_store>;
+			using U_serve  = reiterate_t<U_store>;
 			using U_review = occur::review_t<U_serve>;
 		
 			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;

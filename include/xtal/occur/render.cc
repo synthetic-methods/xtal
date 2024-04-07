@@ -14,7 +14,7 @@ namespace xtal::occur::_test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class Y, class X>
-void serial__initialization(auto n)
+void render__initialization(auto n)
 {
 	X x; Y y;
 	x = X(n); y = Y(0); TRUE_(y.efflux(x) == 0); TRUE_(y.step() == 0); TRUE_(y.size() == n);
@@ -22,7 +22,7 @@ void serial__initialization(auto n)
 
 }
 template <class Y, class X>
-void serial__finalization(auto n)
+void render__finalization(auto n)
 {
 	X x; Y y;
 	x = X(n); y = Y(n)       ; TRUE_(y.influx(x) == 0); TRUE_(y.step() == 1); TRUE_(y.size() == 0);
@@ -30,7 +30,7 @@ void serial__finalization(auto n)
 
 }
 template <class Y, class X>
-void serial__interference(auto i)
+void render__interference(auto i)
 {
 	using V = counter_t<>;
 	using U = counted_t<>;
@@ -49,7 +49,7 @@ void serial__interference(auto i)
 	w_seq <<= n_seq++;                      TRUE_(w_seq == Y(U( 8, 12), 2));
 
 }
-TAG_("serial")
+TAG_("render")
 {
 	TRY_("initialization")
 	{
@@ -57,10 +57,10 @@ TAG_("serial")
 		using U_render = render_t<counted_t<>>;
 		using I = typename U_render::U_step;
 
-		serial__initialization<U_render, U_render>((I) 3);
-		serial__initialization<U_render, V_render>((I) 3);
-		serial__initialization<V_render, U_render>((I) 3);
-		serial__initialization<V_render, V_render>((I) 3);
+		render__initialization<U_render, U_render>((I) 3);
+		render__initialization<U_render, V_render>((I) 3);
+		render__initialization<V_render, U_render>((I) 3);
+		render__initialization<V_render, V_render>((I) 3);
 
 	}
 	TRY_("finalization")
@@ -69,10 +69,10 @@ TAG_("serial")
 		using U_render = render_t<counted_t<>>;
 		using I = typename U_render::U_step;
 		
-		serial__initialization<U_render, U_render>((I) 3);
-		serial__initialization<U_render, V_render>((I) 3);
-		serial__initialization<V_render, U_render>((I) 3);
-		serial__initialization<V_render, V_render>((I) 3);
+		render__initialization<U_render, U_render>((I) 3);
+		render__initialization<U_render, V_render>((I) 3);
+		render__initialization<V_render, U_render>((I) 3);
+		render__initialization<V_render, V_render>((I) 3);
 
 	}
 	TRY_("interference")
@@ -83,10 +83,10 @@ TAG_("serial")
 
 		for (I i = 0; i <= 1; ++i)
 		{
-			serial__interference<U_render, U_render>(i);
-			serial__interference<U_render, V_render>(i);
-			serial__interference<V_render, U_render>(i);
-			serial__interference<V_render, V_render>(i);
+			render__interference<U_render, U_render>(i);
+			render__interference<U_render, V_render>(i);
+			render__interference<V_render, U_render>(i);
+			render__interference<V_render, V_render>(i);
 		}
 
 	}

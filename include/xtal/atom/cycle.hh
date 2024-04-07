@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./serial.hh"
+#include "./differential.hh"
 
 
 
@@ -11,14 +11,14 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW phase;
-template <class ..._s> XTAL_USE phase_t = typename phase<_s...>::type;
-template <class ...Ts> XTAL_ASK phase_q = bond::tag_p<phase, Ts...>;
+template <class ..._s> XTAL_NEW cycle;
+template <class ..._s> XTAL_USE phase_t = typename cycle<_s...>::type;
+template <class ...Ts> XTAL_ASK phase_q = bond::tag_p<cycle, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `serial` as a fixed-point fractional/cyclic value. \
+Extends `differential` as a fixed-point fractional/cyclic value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_t)`. \
@@ -33,16 +33,16 @@ The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
 template <class A, size_t N>
-struct phase<A[N]>
+struct cycle<A[N]>
 {
 	using re = bond::realize<A>;
 	using U_delta = typename re::delta_t;
 	using U_sigma = typename re::sigma_t;
 	using U_alpha = typename re::alpha_t;
 	
-	using W_delta = serial_t<U_delta[N]>;
-	using W_sigma = serial_t<U_sigma[N]>;
-	using W_alpha = serial_t<U_alpha[N]>;
+	using W_delta = differential_t<U_delta[N]>;
+	using W_sigma = differential_t<U_sigma[N]>;
+	using W_alpha = differential_t<U_alpha[N]>;
 
 	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(_std::bit_cast<U_sigma>(U_delta(u*re::diplo_f(re::N_depth))));
 	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(_std::bit_cast<U_delta>(v))*re::haplo_f(re::N_depth));
@@ -50,10 +50,10 @@ struct phase<A[N]>
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
 	template <class T>
-	using demitype = typename serial<U_sigma[N]>::template homotype<T>;
+	using demitype = typename differential<U_sigma[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<phase>>;
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<cycle>>;
 
 	template <class T>
 	class homotype : public hemitype<T>
@@ -94,7 +94,7 @@ struct phase<A[N]>
 
 
 		///\
-		Scales all elements of the `phase`. \
+		Scales all elements of the `cycle`. \
 
 		XTAL_OP1 /= (numeric_q auto const &f)
 		XTAL_0EX
@@ -134,7 +134,7 @@ struct phase<A[N]>
 		}
 
 		///\
-		Offsets the first element of the `phase`. \
+		Offsets the first element of the `cycle`. \
 		
 		XTAL_OP1 -= (numeric_q auto const &f)
 		XTAL_0EX
