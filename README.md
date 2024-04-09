@@ -115,7 +115,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto resize = resize_t(1024);
 	auto render = render_t(1024);
 
-	using Mixer = processor::monomer_t<Mix, resource::store<>>;
+	using Mixer = processor::monomer_t<Mix, resource::buffer<>>;
 	auto sixer = Mixer::bind_f(one, two, three);
 
 	// initialization
@@ -267,7 +267,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::binding`|
 |Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::binding`|
 |Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::binding` compatible `&&`arguments|
-|Buffer allocation          |[`atom/store.hh`](include/xtal/atom/store.hh?ts=3) impl. static `std::vector`|
+|Buffer allocation          |[`atom/buffer.hh`](include/xtal/atom/buffer.hh?ts=3) impl. static `std::vector`|
 |Buffer arithmetic          |[`atom/scalar.hh`](include/xtal/atom/scalar.hh?ts=3)|
 |Buffer transformation      |[`atom/series.hh`](include/xtal/atom/series.hh?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`bond/realize.hh`](include/xtal/bond/realize.hh?ts=3) via `\.(?:truncate\|puncture)`|

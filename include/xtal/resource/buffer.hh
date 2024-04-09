@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/store.hh"
+#include "../atom/buffer.hh"
 
 
 
@@ -11,19 +11,19 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NEW store_a;
-template <class ...Ts> concept store_q = bond::tab_p<store_a, Ts...>;
+XTAL_NEW buffer_a;
+template <class ...Ts> concept buffer_q = bond::tab_p<buffer_a, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::store`. \
-If `N == -1`, the member-type `store_t` is dynamically allocated. \
+Provides a specialization of `atom::buffer`. \
+If `N == -1`, the member-type `buffer_t` is dynamically allocated. \
 
 template <int N=-1>
-struct store
+struct buffer
 {
-	using subkind = bond::tab<store_a>;
+	using subkind = bond::tab<buffer_a>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -34,7 +34,7 @@ struct store
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::store_t<U[(unsigned) N]>;
+		using buffer_t = atom::buffer_t<U[(unsigned) N]>;
 
 	};
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./store.hh"
+#include "./buffer.hh"
 
 
 
@@ -19,7 +19,7 @@ template <class ...Ts> XTAL_ASK spool_q = bond::tag_p<spool, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-A fluid-sized fixed-capacity priority-queue based on `store_t<A>`. \
+A fluid-sized fixed-capacity priority-queue based on `buffer_t<A>`. \
 Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
@@ -37,12 +37,12 @@ struct spool<A>
 	{
 		using T_ = hemitype<T>;
 
-		using U_store = store_t<A>;
-		using U_point = typename U_store::iterator;
-		using U_value = typename U_store::value_type;
-		using U_count = typename U_store::difference_type;
+		using U_buffer = buffer_t<A>;
+		using U_point = typename U_buffer::iterator;
+		using U_value = typename U_buffer::value_type;
+		using U_count = typename U_buffer::difference_type;
 
-		U_store u_store;
+		U_buffer u_buffer;
 		U_count u_begin = 0;
 		U_count u_end   = 0;
 
@@ -57,31 +57,27 @@ struct spool<A>
 
 		XTAL_CON homotype(braces_t<U_value> w)
 		:	u_end{_std::distance(w.begin(), w.end())}
-		,	u_store(w.begin(), w.end())
+		,	u_buffer(w.begin(), w.end())
 		{}
 
-		XTAL_TO2_(XTAL_TN2     begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
-		XTAL_TO2_(XTAL_TN2       end(U_count n=0), _std::prev(u_store.  end(), n + u_end))
-		XTAL_TN2_(U_value &)    peek(U_count n=0) XTAL_0EX {              return *begin(n);}
-		XTAL_TN1_(U_value &) advance(U_count n=1) XTAL_0EX {u_begin += n; return *begin(0);}
-		XTAL_TN1_(U_value &) abandon(U_count n=1)
+		XTAL_TO2_(XTAL_TN2   begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
+		XTAL_TO2_(XTAL_TN2     end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_TN1_(U_point) advance(U_count n=1) XTAL_0EX {u_begin += n; return  begin(0);}
+		XTAL_TN1_(U_point) abandon(U_count n=1)
 		XTAL_0EX
 		{
-			if (n) {
-				u_begin = 0;
-				clear();
-			}
-			return *begin();
+			if (n) {u_begin = 0; cull();}
+			return begin();
 		}
-		XTAL_TN0 clear()
+		XTAL_TN0 cull()
 		XTAL_0EX
 		{
-			u_store.erase(u_store.begin(), end());
+			u_buffer.erase(u_buffer.begin(), end());
 		}
-		XTAL_TN0 clear_if(auto &&f)
+		XTAL_TN0 cull(auto &&f)
 		XTAL_0EX
 		{
-			u_store.erase(_std::remove_if(begin(), end(), f), end());
+			u_buffer.erase(_std::remove_if(begin(), end(), f), end());
 		}
 
 		///\note\
@@ -93,7 +89,7 @@ struct spool<A>
 		{
 			assert(i < end());
 			u_begin -= i < begin();
-			u_store.erase(i);
+			u_buffer.erase(i);
 			abandon(begin() == end());
 		}
 		XTAL_TN0 pop()
@@ -105,46 +101,45 @@ struct spool<A>
 		XTAL_TN2_(U_point) scan(auto &&w)
 		XTAL_0EX
 		{
-			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
+			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w));
 		}
 		XTAL_TN2_(U_point) scan(auto &&w, auto &&f)
 		XTAL_0EX
 		{
-			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
+			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
 			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
 			);
 		}
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(U_value &) push(U_value v)
+		XTAL_TN1_(U_point) push(U_value v)
 		XTAL_0EX
 		{
 			U_point v_ = scan(v);
 			if (*v_ == v) {
-				_std::swap(v, *v_);
+				_std::swap(v, *v_); return v_;
 			}
 			else {
-				v_ = poke(v_, XTAL_MOV_(v));
+				return poke(v_, XTAL_MOV_(v));
 			}
-			return *v_;
 		}
 		template <is_q<U_value> W>
 		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
 		XTAL_0EX
 		{
-			return u_store.insert(v_, XTAL_REF_(w));
+			return u_buffer.insert(v_, XTAL_REF_(w));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
 		{
-			return u_store.insert(v_, U_value(XTAL_REF_(ws)...));
+			return u_buffer.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
-		XTAL_REQ_(u_store.inplace(v_, XTAL_REF_(ws)...))
+		XTAL_REQ_(u_buffer.inplace(v_, XTAL_REF_(ws)...))
 		{
-			return u_store.inplace(v_, XTAL_REF_(ws)...);
+			return u_buffer.inplace(v_, XTAL_REF_(ws)...);
 		}
 
 	};

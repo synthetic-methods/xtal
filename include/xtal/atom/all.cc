@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./buffer.cc"
 #include "./cycle.cc"
 #include "./differential.cc"
 #include "./lattice.cc"
@@ -7,4 +8,3 @@
 #include "./serial.cc"
 #include "./series.cc"
 #include "./spool.cc"
-#include "./store.cc"

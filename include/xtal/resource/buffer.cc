@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./store.hh"// testing...
+#include "./buffer.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::resource::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("store")
+TAG_("buffer")
 {
 	TRY_("task")
 	{

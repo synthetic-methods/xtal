@@ -1,4 +1,5 @@
 #include "./any.hh"
+#include "./buffer.hh"
 #include "./cycle.hh"
 #include "./differential.hh"
 #include "./lattice.hh"
@@ -7,4 +8,3 @@
 #include "./serial.hh"
 #include "./series.hh"
 #include "./spool.hh"
-#include "./store.hh"

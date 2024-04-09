@@ -20,7 +20,7 @@ namespace xtal::processor::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N_window=8, int N_store=-1, int N_spool=-1>
+template <size_t N_window=8, int N_buffer=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
 	using re = bond::realized;
@@ -41,7 +41,7 @@ void polymer_provision_spine__locamotion()
 	using U_gate   = process::confined_t<W_gate, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::store<N_store>
+	,	resource::buffer<N_buffer>
 	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
@@ -83,7 +83,7 @@ TAG_("polymer", "occur", "spine")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N_window=8, int N_store=0, int N_spool=0>
+template <size_t N_window=8, int N_buffer=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
 	using U_alpha = typename bond::realized::alpha_t;
@@ -102,7 +102,7 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::store<N_store>
+	,	resource::buffer<N_buffer>
 	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();
@@ -127,7 +127,7 @@ void polymer_provision_spool__combined()
 	TRUE_(69 == vox_oo_++->head());
 
 }
-template <size_t N_window=8, int N_store=0, int N_spool=0>
+template <size_t N_window=8, int N_buffer=0, int N_spool=0>
 void polymer_provision_spool__composited()
 {
 	using U_alpha = typename bond::realized::alpha_t;
@@ -146,7 +146,7 @@ void polymer_provision_spool__composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::store<N_store>
+	,	resource::buffer<N_buffer>
 	,	resource::spool<N_spool>
 	>;
 	auto u_vox = U_vox::bind_f();

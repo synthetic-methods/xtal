@@ -20,7 +20,7 @@ TAG_("thunk", "process")
 		using namespace resource;
 	//	using namespace schedule;
 
-		size_t constexpr N_store = (1<<3);
+		size_t constexpr N_buffer = (1<<3);
 		size_t constexpr N_spool = (1<<7);
 
 		using U_thunk = thunk_t<spool<N_spool>>;
@@ -52,7 +52,7 @@ TAG_("thunk", "process")
 		TRUE_(u_gate() == 77);
 		TRUE_(u_gate() == 77);
 	//	...
-		u_gate >>= U_render(N_store);
+		u_gate >>= U_render(N_buffer);
 		u_gate <<= (U_cue) 4 << (V_gate) 11;
 		TRUE_(u_gate() == 77);
 		TRUE_(u_gate() == 77);
@@ -70,7 +70,7 @@ TAG_("thunk", "process")
 		using namespace resource;
 	//	using namespace schedule;
 
-		size_t constexpr N_store = (1<<3);
+		size_t constexpr N_buffer = (1<<3);
 		size_t constexpr N_spool = (1<<7);
 
 		using U_thunk = thunk_t<spool<N_spool>>;
@@ -86,7 +86,7 @@ TAG_("thunk", "process")
 		u_gate <<=              (V_gate)  7;
 		TRUE_(u_gate() ==  7);
 	//	...
-		u_gate >>= U_render(N_store);
+		u_gate >>= U_render(N_buffer);
 	//	u_gate <<= (U_cue) 0 << (V_gate) 11;
 		u_gate <<=              (V_gate) 11;
 		TRUE_(u_gate() == 11);
@@ -107,23 +107,23 @@ void thunk_processor()
 
 	class L_gate;
 
-	size_t constexpr N_store = (1<<3);
+	size_t constexpr N_buffer = (1<<3);
 	size_t constexpr N_spool = (1<<7);
 	
 	using U_thunk = thunk_t<spool<N_spool>>;
 	using U_cue = cell::cue_s<>;
 
 	using U_resize = occur::resize_t<>;
-	using U_render  = occur::render_t<>;
-	using U_store  = _std::array<alpha_t, N_store>;
-	U_store u_store{};
+	using U_render = occur::render_t<>;
+	using U_buffer = _std::array<alpha_t, N_buffer>;
+	U_buffer u_buffer{};
 
 	using V_gate  = occur::inferred_t<L_gate, alpha_t>;
 	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	
-	fx_gate <<= U_resize(N_store);
+	fx_gate <<= U_resize(N_buffer);
 	fx_gate <<= (U_cue) 0 << (V_gate)  7;
 	fx_gate <<= (U_cue) 1 << (V_gate)  1;
 	fx_gate <<= (U_cue) 3 << (V_gate) -1;
@@ -132,19 +132,19 @@ void thunk_processor()
 	fx_gate <<= (U_cue) 7 << (V_gate)  7;
 	fx_gate <<= (U_cue) 7 << (V_gate) 77;
 
-	fx_gate >>= U_render(N_store)*0; _v3::ranges::copy(fx_gate, u_store.begin());
-	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
+	fx_gate >>= U_render(N_buffer)*0; _v3::ranges::copy(fx_gate, u_buffer.begin());
+	TRUE_(u_buffer == U_buffer {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	fx_gate <<= (U_cue) 4 << (V_gate) 11;
 	
-	fx_gate >>= U_render(N_store)*1; _v3::ranges::copy(fx_gate, u_store.begin());
-	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
+	fx_gate >>= U_render(N_buffer)*1; _v3::ranges::copy(fx_gate, u_buffer.begin());
+	TRUE_(u_buffer == U_buffer { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
 TAG_("thunk", "processor")
 {
 	using namespace processor;
-	TRY_("drive material") {thunk_processor<resource::store<>>();}
+	TRY_("drive material") {thunk_processor<resource::buffer<>>();}
 //	TRY_("drive virtual")  {thunk_processor<>();}// TODO?
 
 }

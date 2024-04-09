@@ -68,21 +68,21 @@ struct thunk
 				XTAL_TNX infuse(is_q<X> auto &&x)
 				XTAL_0EX
 				{
-					return u_spool.peek(0).then().infuse(XTAL_REF_(x));
+					return u_spool.begin()->then().infuse(XTAL_REF_(x));
 				}
 				XTAL_TNX infuse(is_q<U_event> auto &&u)
 				XTAL_0EX
 				{
 					if (u_spool.empty() and u.head() < v_delay) {
-						(void) u_spool.abandon().head(v_delay = 0);
+						(void) u_spool.abandon()->head(v_delay = 0);
 					}
-					return u.then() == u_spool.push(XTAL_REF_(u)).then();
+					return u.then() == u_spool.push(XTAL_REF_(u))->then();
 				}
 
 				XTAL_TN2 functor()
 				XTAL_0EX
 				{
-					return u_spool.advance(v_delay++ == u_spool.peek(1).head()).then().head();
+					return u_spool.advance(v_delay++ == u_spool.begin(1)->head())->then().head();
 				}
 
 				///\todo\

@@ -30,7 +30,7 @@ void chunk_processor_x1()
 	using U_event = occur::packed_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
-	,	store<>
+	,	buffer<>
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = occur::resize_t<>;

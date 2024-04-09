@@ -11,9 +11,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW store;
-template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_ASK store_q = bond::tag_p<store, Ts...>;
+template <class ..._s> XTAL_NEW buffer;
+template <class ..._s> XTAL_USE buffer_t = typename buffer<_s...>::type;
+template <class ...Ts> XTAL_ASK buffer_q = bond::tag_p<buffer, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,24 +30,24 @@ then a fixed-capacity implementation is provided. \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <class U> requires pointer_q<U>
-struct store<U>
+struct buffer<U>
 {
-	using type = bond::compose_s<_std::vector<pointed_t<U>>, bond::tag<store>>;
+	using type = bond::compose_s<_std::vector<pointed_t<U>>, bond::tag<buffer>>;
 
 };
 template <class U>
-struct store<U[~0U]>
-:	store<U *>
+struct buffer<U[~0U]>
+:	buffer<U *>
 {
 };
 template <class U, size_t N>
-struct store<U[N]>
+struct buffer<U[N]>
 {
 	template <class T>
 	using demitype = reiterant_t<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<store>>;
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<buffer>>;
 
 	template <class T>
 	class homotype : public hemitype<T>

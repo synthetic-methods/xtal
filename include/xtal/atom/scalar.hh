@@ -40,24 +40,40 @@ struct scalar<U_type[N_size]>
 		using  T_ = hemitype<T>;
 	
 	public:
-		using T_::T_;
 		using T_::get;
 		using T_::let;
 		using T_::self;
 		using T_::twin;
 
-		XTAL_CXN homotype(size_t n)
-		XTAL_0EX
-		{
-			_std::uninitialized_fill_n(_std::next(T_::data(), n), T_::size() - n, U_type{1});
-		}
-		XTAL_CON homotype(braces_t<U_type> a)
-		XTAL_0EX
-		:	homotype(a.size())
-		{
-			_detail::copy_to(T_::begin(), a.begin(), a.end());
-		}
+	public:// CONSTRUCT
+		/*/
+		using T_::T_;
+		/*/
+		~homotype() noexcept = default;
+	//	XTAL_CO0_(homotype)
+		XTAL_CO4_(homotype)
 
+		XTAL_CON homotype()
+		XTAL_0EX
+		{
+			_std::uninitialized_fill_n(T_::data(), T_::size(), U_type{1});
+		}
+		/***/
+		XTAL_CON homotype(braces_t<U_type> w)
+		XTAL_0EX
+		{
+			_detail::copy_to(T_::begin(), w.begin(), w.end());
+			if (1 == w.size()) {
+				_std::uninitialized_fill_n(_std::next(T_::data(), w.size()), T_::size() - w.size(), get(0));
+			}
+			else {
+				assert(w.size() == N_size);
+			}
+		}
+		XTAL_CON homotype(iterated_q auto &&w)
+		XTAL_0EX
+		:	T_(XTAL_REF_(w))
+		{}
 
 		XTAL_TN2 sum()
 		XTAL_0FX
@@ -125,9 +141,8 @@ struct scalar<U_type[N_size]>
 
 		XTAL_TN1_(T &) characterize()
 		XTAL_0EX
-		XTAL_REQ integral_number_q<U_type>
+		XTAL_REQ ((bool) (1&N_size)) and integral_number_q<U_type>
 		{
-			static_assert(N_size&1);
 			size_t constexpr M_size = N_size  - 1;
 			size_t constexpr K      = M_size >> 1;
 			size_t           k      =           1;
@@ -141,9 +156,8 @@ struct scalar<U_type[N_size]>
 		}
 		XTAL_TN1_(T &) characterize()
 		XTAL_0EX
-		XTAL_REQ complex_field_q<U_type>
+		XTAL_REQ ((bool) (1&N_size)) and complex_field_q<U_type>
 		{
-			static_assert(N_size&1);
 			size_t constexpr M_size = N_size  - 1;
 			size_t constexpr K      = M_size >> 1;
 			size_t           k      =           1;

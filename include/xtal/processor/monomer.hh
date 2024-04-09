@@ -92,17 +92,17 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::store_q<S_>
+		template <class ...Xs> requires resource::buffer_q<S_>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_store  = typename S_::template store_t<Y_return>;
-			using U_serve  = reiterate_t<U_store>;
+			using U_buffer = typename S_::template buffer_t<Y_return>;
+			using U_serve  = reiterate_t<U_buffer>;
 			using U_review = occur::review_t<U_serve>;
 		
 			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 
-			using subkind = bond::compose<resource::reserve<U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::reserve<U_buffer>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -113,18 +113,18 @@ struct monomer<U, As...>
 				using R_::R_;
 				using R_::self;
 				using R_::serve;
-				using R_::store;
+				using R_::buffer;
 				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
 
 			//	using R_::infuse;
 				///\
-				Responds to `occur::resize` by resizing the internal `store()`. \
+				Responds to `occur::resize` by resizing the internal `buffer()`. \
 
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<U_resize, decltype(o)>) {
-						return R_::infuse(o) or (store().resize(XTAL_REF_(o)), 0);
+						return R_::infuse(o) or (buffer().resize(XTAL_REF_(o)), 0);
 					}
 					else {
 						return R_::infuse(XTAL_REF_(o));
@@ -145,7 +145,7 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 				///\
-				Responds to `occur::render` by rendering the internal `store()`. \
+				Responds to `occur::render` by rendering the internal `buffer()`. \
 				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
@@ -154,7 +154,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_review(store()), render_o, XTAL_REF_(oo)...);
+					return efflux(U_review(buffer()), render_o, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \

@@ -15,10 +15,12 @@ namespace xtal::atom::_test
 
 TAG_("solid", "series")
 {
+	using re = bond::realized;
+
 	TRY_("initialization")
 	{
-		using T_sigma = typename bond::realized::sigma_t;
-		using T_alpha = typename bond::realized::alpha_t;
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
 
 		T_sigma constexpr N = 1 << 3;
 		using V_series = series_t<T_alpha[N]>;
@@ -32,9 +34,9 @@ TAG_("solid", "series")
 	}
 	TRY_("transformation")
 	{
-		using T_sigma = typename bond::realized::sigma_t;
-		using T_alpha = typename bond::realized::alpha_t;
-		using T_aphex = typename bond::realized::aphex_t;
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
+		using T_aphex = typename re::aphex_t;
 
 		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr O = 1 << 5;
@@ -64,9 +66,9 @@ TAG_("solid", "series")
 	}
 	TRY_("convolution")
 	{
-		using T_sigma = typename bond::realized::sigma_t;
-		using T_alpha = typename bond::realized::alpha_t;
-		using T_aphex = typename bond::realized::aphex_t;
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
+		using T_aphex = typename re::aphex_t;
 
 		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr N = 1 << 3;
@@ -84,15 +86,36 @@ TAG_("solid", "series")
 	}
 	TRY_("multiplication")
 	{
-		using T_sigma = typename bond::realized::sigma_t;
-		using T_alpha = typename bond::realized::alpha_t;
-		using T_aphex = typename bond::realized::aphex_t;
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
+		using T_aphex = typename re::aphex_t;
 
 		using C4 = series_t<T_aphex[4]>;
 		using D4 = series_t<T_aphex[4]>;
 		
 		TRUE_(C4{1000, 100, 10, 1} * C4{2000, 200, 20, 2} == C4{2000600, 400040, 60002, 8000});
 		TRUE_(D4{1000, 100, 10, 1} * D4{2000, 200, 20, 2} == D4{2000600, 400040, 60002, 8000});
+
+	}
+	TRY_("generation")
+	{
+		using T_sigma = typename re::sigma_t;
+		using T_alpha = typename re::alpha_t;
+		using T_aphex = typename re::aphex_t;
+
+		using U_alpha = scalar_t<T_alpha[1<<1]>;
+		using U_aphex = scalar_t<T_aphex[1<<1]>;
+		using W_aphex = series_t<U_aphex[1<<4]>;
+
+		W_aphex w_aphex; w_aphex.generate(T_aphex{0, 1}, T_alpha{2.0});
+
+		echo();
+		echo(w_aphex.get(0));
+		echo(w_aphex.get(1));
+		echo(w_aphex.get(2));
+		echo(w_aphex.get(3));
+		echo(w_aphex.get(4));
+		echo(w_aphex.get(5));
 
 	}
 }

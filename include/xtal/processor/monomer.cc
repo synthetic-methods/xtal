@@ -40,7 +40,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (material)") {monomer_lifting<resource::store<>>();}
+	TRY_("pure (material)") {monomer_lifting<resource::buffer<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -96,10 +96,10 @@ void monomer_provision__provisioning()
 	using T_sigma = typename bond::realized::sigma_t;
 	using T_alpha = typename bond::realized::alpha_t;
 
-	using provide = resource::store<(1<<5)>;
+	using provide = resource::buffer<(1<<5)>;
 
-	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
-	using U_serve = reiterate_t<U_store>;
+	using U_buffer = typename confined_t<provide>::template buffer_t<T_alpha>;
+	using U_serve = reiterate_t<U_buffer>;
 	using U_review = occur::review_t<U_serve>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -112,7 +112,7 @@ void monomer_provision__provisioning()
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
-	auto u_vector = U_store{0, 0, 0};
+	auto u_vector = U_buffer{0, 0, 0};
 	auto u_review = U_review(u_vector);
 	auto u_render = U_render(3);
 
@@ -151,8 +151,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::store<>>;
-	using mul_op = monomer_t<U_mul, resource::store<>>;
+	using mix_op = monomer_t<U_add, resource::buffer<>>;
+	using mul_op = monomer_t<U_mul, resource::buffer<>>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
@@ -165,7 +165,7 @@ void monomer_chaining__rvalue()
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	TRUE_(yhs.template slot<0>().store().empty());
+	TRUE_(yhs.template slot<0>().buffer().empty());
 
 }
 template <class U_add, typename U_mul=dynamic_term_t>
@@ -181,8 +181,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::store<>>;
-	using mul_op = monomer_t<U_mul, resource::store<>>;
+	using mix_op = monomer_t<U_add, resource::buffer<>>;
+	using mul_op = monomer_t<U_mul, resource::buffer<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
@@ -197,7 +197,7 @@ void monomer_chaining__lvalue()
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	TRUE_(yhs.template slot<0>().store().size() == 4);
+	TRUE_(yhs.template slot<0>().buffer().size() == 4);
 
 }
 template <class U_add, typename U_mul=dynamic_term_t>
@@ -213,7 +213,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<U_add, resource::store<>>;
+	using mix_op = monomer_t<U_add, resource::buffer<>>;
 	using mix_fn = monomer_t<U_add>;
 	using ndfn = monomer_t<dynamic_count_t>;
 

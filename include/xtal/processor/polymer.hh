@@ -22,10 +22,10 @@ XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice store according to `occur::stage` requests/responses. \
+but expands/contracts the voice buffer according to `occur::stage` requests/responses. \
 
 ///\note\
-The attached `store` and `spool` determine the sample buffer and voice spool respectively. \
+The attached `buffer` and `spool` determine the sample buffer and voice spool respectively. \
 
 template <class U, typename ...As>
 struct polymer<U, As...>
@@ -51,7 +51,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resource::spool_q<S_> and resource::store_q<S_>
+		template <class ...Xs> requires resource::spool_q<S_> and resource::buffer_q<S_>
 		struct binding : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
@@ -78,7 +78,7 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 				using R_::serve;
-				using R_::store;
+				using R_::buffer;
 				
 				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)
 
@@ -157,7 +157,7 @@ struct polymer<U, As...>
 				XTAL_TNX efflux_pull_slice(Rv review_o, Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					u_ensemble.clear_if([] (auto &&e)
+					u_ensemble.cull([] (auto &&e)
 						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))
 					);
 					for (auto &vox:u_ensemble) {

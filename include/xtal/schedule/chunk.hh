@@ -52,8 +52,8 @@ struct chunk
 					(U_event) numeric_t<V_delay>::max()
 				};
 
-				XTAL_TO4_(XTAL_TN2 next_core(), u_spool.peek().then())
-				XTAL_TO4_(XTAL_TN2 next_head(), u_spool.peek().head())
+				XTAL_TO4_(XTAL_TN2 next_core(), u_spool.begin()->then())
+				XTAL_TO4_(XTAL_TN2 next_head(), u_spool.begin()->head())
 
 			public:
 				using R_::R_;
@@ -77,7 +77,7 @@ struct chunk
 					}
 					else {
 						//\
-						return u.then() == u_spool.push(XTAL_REF_(u)).then();
+						return u.then() == u_spool.push(XTAL_REF_(u))->then();
 						u_spool.push(XTAL_REF_(u)); return 0;
 					}
 				}
