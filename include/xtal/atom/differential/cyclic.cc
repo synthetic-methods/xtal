@@ -1,19 +1,19 @@
 #pragma once
 #include "./any.cc"
-#include "./cycle.hh"// testing...
+#include "./cyclic.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::_test
+namespace xtal::atom::differential::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("cycle")
+TAG_("cyclic")
 {
 	using re = bond::realize<size_t>;
 	using T_sigma = typename re::sigma_t;
@@ -25,12 +25,12 @@ TAG_("cycle")
 	auto mt19937_f = typename realized::mt19937_t();
 	mt19937_f.seed(Catch::rngSeed());
 
-	using U_phi = phase_t<T_alpha[2]>;
+	using U_phi = cyclic_t<T_alpha[2]>;
 
-	using D1 = phase_t<T_delta[1]>;
-	using D2 = phase_t<T_delta[2]>;
-	using D3 = phase_t<T_delta[3]>;
-	using D4 = phase_t<T_delta[4]>;
+	using D1 = cyclic_t<T_delta[1]>;
+	using D2 = cyclic_t<T_delta[2]>;
+	using D3 = cyclic_t<T_delta[3]>;
+	using D4 = cyclic_t<T_delta[4]>;
 	
 	TRY_("construction")
 	{

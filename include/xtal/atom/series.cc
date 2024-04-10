@@ -109,13 +109,12 @@ TAG_("solid", "series")
 
 		W_aphex w_aphex; w_aphex.generate(T_aphex{0, 1}, T_alpha{2.0});
 
-		echo();
-		echo(w_aphex.get(0));
-		echo(w_aphex.get(1));
-		echo(w_aphex.get(2));
-		echo(w_aphex.get(3));
-		echo(w_aphex.get(4));
-		echo(w_aphex.get(5));
+		TRUE_(w_aphex.get(0) == U_aphex {{  1.00000,  0.00000}, {  1.00000,- 0.00000}});
+		TRUE_(w_aphex.get(1) == U_aphex {{  0.00000,  2.00000}, {  0.00000,- 0.50000}});
+		TRUE_(w_aphex.get(2) == U_aphex {{- 4.00000,  0.00000}, {- 0.25000,- 0.00000}});
+		TRUE_(w_aphex.get(3) == U_aphex {{- 0.00000,- 8.00000}, {- 0.00000,  0.12500}});
+		TRUE_(w_aphex.get(4) == U_aphex {{ 16.00000,- 0.00000}, {  0.06250,  0.00000}});
+		TRUE_(w_aphex.get(5) == U_aphex {{  0.00000, 32.00000}, {  0.00000,- 0.03125}});
 
 	}
 }

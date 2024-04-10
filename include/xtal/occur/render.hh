@@ -75,6 +75,8 @@ struct surrender
 		using S::twin;
 		using value_type = V_;
 
+		using ring = int;
+
 		XTAL_TN2_(T_self) skip(V_ v)
 		XTAL_0FX
 		{
@@ -436,6 +438,8 @@ public:
 	};
 };
 
+static_assert(render_q<render_t<counter_t<>>>);
+static_assert(render_q<render_t<counted_t<>>>);
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

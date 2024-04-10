@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./tab.hh"// testing...
 
-
+#include "./compose.hh"
 
 
 
@@ -11,13 +11,56 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+struct TagA
+{
+	template <class S>
+	class subtype: public bond::compose_s<S, tab<TagA>>
+	{
+		using S_ = bond::compose_s<S, tab<TagA>>;
+
+	public:
+		using S_::S_;
+
+	};
+};
+struct TagB
+{
+	template <class S>
+	class subtype: public bond::compose_s<S, tab<TagB>>
+	{
+		using S_ = bond::compose_s<S, tab<TagB>>;
+
+	public:
+		using S_::S_;
+
+	};
+};
+struct TagZ
+{
+	template <class S>
+	class subtype: public bond::compose_s<S, tab<TagZ>>
+	{
+		using S_ = bond::compose_s<S, tab<TagZ>>;
+
+	public:
+		using S_::S_;
+
+	};
+};
+
+using TagAB = bond::compose<TagA, TagB>;
+using TypAB = typename TagAB::template subtype<unit_t>;
+
+
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 TAG_("tab")
 {
 	TRY_("task")
 	{
-		TRUE_(true);
+		TRUE_(tab_p<TagA, TypAB>);
+		TRUE_(tab_p<TagB, TypAB>);
+		UNTRUE_(tab_p<TagZ, TypAB>);
 
 	}
 }

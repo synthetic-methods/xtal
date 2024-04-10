@@ -1,19 +1,19 @@
 #pragma once
 #include "./any.hh"
-#include "./serial.hh"
+#include "../serial.hh"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::atom
+namespace xtal::atom::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW differential;
-template <class ..._s> XTAL_USE differential_t = typename differential<_s...>::type;
-template <class ...Ts> XTAL_ASK differential_q = bond::tag_p<differential, Ts...>;
+template <class ..._s> XTAL_NEW linear;
+template <class ..._s> XTAL_USE linear_t = typename linear<_s...>::type;
+template <class ...Ts> XTAL_ASK linear_q = bond::tag_p<linear, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ template <class ...Ts> XTAL_ASK differential_q = bond::tag_p<differential, Ts...
 Extends `serial` with succession. \
 
 template <class U, int N>
-struct differential<U[N]>
+struct linear<U[N]>
 {
 	using re = bond::realize<U>;
 	
@@ -29,7 +29,7 @@ struct differential<U[N]>
 	using demitype = typename serial<U[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<differential>>;
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<linear>>;
 
 	template <class T>
 	class homotype : public hemitype<T>

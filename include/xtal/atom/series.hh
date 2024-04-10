@@ -23,7 +23,9 @@ Extends `sector` with multiplication defined by circular convolution. \
 template <class U_type, int N_size>
 struct series<U_type[N_size]>
 {
-	using V_type = value_t<U_type>;
+	using U_v0 = U_type;
+	using U_v1 = value_t<U_v0>;
+	using U_v2 = value_t<U_v1>;
 
 	using re = bond::realize<U_type>;
 	
@@ -62,19 +64,18 @@ struct series<U_type[N_size]>
 		}
 
 		template <size_t N_limit=N_size>
-		XTAL_TN1_(T &) generate(value_t<U_type> const &u1, value_t<V_type> const &u2)
+		XTAL_TN1_(T &) generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX
-		XTAL_REQ complex_field_q<V_type> and is_q<U_type, scalar_t<V_type[2]>>
+		XTAL_REQ complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_type>
 		{
-			//\
-			using W1 =          value_t<U_type>    ; W1 const &w1 = u1;
-			using W1 = scalar_t<value_t<U_type>[1]>; W1 w1 = {u1};
-			using W2 = scalar_t<value_t<V_type>[2]>; W2 w2 = {u2, re::template root_f<-1>(u2)};
-			using Y1 = series_t<W1[N_size<<1]>;
-			using Y2 = series_t<W2[N_size<<1]>;
-			static_assert(sizeof(Y1) == sizeof(Y2));
-			reinterpret_cast<Y1 &>(self()).template generate<N_size, 0, 2, 0>(w1);
-			reinterpret_cast<Y2 &>(self()).template generate<N_size, 0, 2, 1>(w2);
+			using W1  = U_v1;
+			using U2  = scalar_t<U_v2[2]>;
+			using W1_ = series_t<W1[N_size<<1]>;
+			using U2_ = series_t<U2[N_size<<1]>;
+			static_assert(sizeof(W1_) == sizeof(U2_));
+			
+			reinterpret_cast<W1_ &>(self()).template generate<N_size, 0, 2, 0>(u1);
+			reinterpret_cast<U2_ &>(self()).template generate<N_size, 0, 2, 1>({u2, re::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_size>([this] (auto i) XTAL_0FN {
 				auto const &[o, e] = get(i);
 				let(i) = {o*e.real(), _std::conj(o)*e.imag()};

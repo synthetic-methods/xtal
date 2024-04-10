@@ -1,24 +1,24 @@
 #pragma once
 #include "./any.cc"
-#include "./differential.hh"// testing...
+#include "./linear.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::_test
+namespace xtal::atom::differential::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("solid", "differential")
+TAG_("solid", "linear")
 {
-	using D1 = differential_t<int[1]>;
-	using D2 = differential_t<int[2]>;
-	using D3 = differential_t<int[3]>;
-	using D4 = differential_t<int[4]>;
+	using D1 = linear_t<int[1]>;
+	using D2 = linear_t<int[2]>;
+	using D3 = linear_t<int[3]>;
+	using D4 = linear_t<int[4]>;
 	
 	TRY_("integration")
 	{

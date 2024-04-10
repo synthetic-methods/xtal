@@ -52,7 +52,8 @@ struct lattice<U_type[N_size]>
 	public:// ACCESS
 		using T_::self;
 		using T_::twin;
-		XTAL_FN2_(typename re::sigma_t) size() {return N_size;}
+		XTAL_FN2_(typename re::sigma_t) size()
+		XTAL_0EX {return N_size;}
 
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&)  {return          (T_::operator[](i));}
@@ -149,7 +150,7 @@ struct lattice<U_type[N_size]>
 	public:// CONSTRUCTION
 	//	using T_::T_;
 
-		~homotype() {};
+		~homotype() noexcept = default;
 		XTAL_CO4_(homotype)
 		
 		XTAL_CON homotype()

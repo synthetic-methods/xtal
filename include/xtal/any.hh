@@ -160,6 +160,9 @@ template <class  T , class ...Ys>	concept         make_p	=     _detail:: make_p<
 template <class  T , class ...Ys>	concept         made_p	= (...and _detail::made_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
 template <class  T , class ...Ys>	concept         made_q	= (...and _detail::made_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
 
+template <class  T , class ...Ys>	concept       unmade_p	= not made_p<T, Ys...>;
+template <class  T , class ...Ys>	concept       unmade_q	= not made_q<T, Ys...>;
+
 template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
 template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
 

@@ -1,7 +1,5 @@
 #include "./any.hh"
 #include "./buffer.hh"
-#include "./cycle.hh"
-#include "./differential.hh"
 #include "./lattice.hh"
 #include "./scalar.hh"
 #include "./sector.hh"
