@@ -154,14 +154,14 @@ template <class         ...Ts>	concept  anepimorphic_q	= not _detail:: epimorphi
 
 template <class            ...Ts>	concept         id_q	=     _detail:: identical<Ts...>::value;//< `Ts...` are identical.
 template <class            ...Ts>	concept         is_q	=     _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <class            ...Ts>	concept         make_q	=     _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class  T , class ...Ys>	concept         make_p	=     _detail:: make_p<T, Ys...>;
+template <class            ...Ts>	concept       make_q	=     _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class  T , class ...Ys>	concept       make_p	=     _detail:: make_p<T, Ys...>;
 
-template <class  T , class ...Ys>	concept         made_p	= (...and _detail::made_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
-template <class  T , class ...Ys>	concept         made_q	= (...and _detail::made_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
+template <class  T , class ...Ys>	concept       made_p	= (...and _detail::made_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
+template <class  T , class ...Ys>	concept       made_q	= (...and _detail::made_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
 
-template <class  T , class ...Ys>	concept       unmade_p	= not made_p<T, Ys...>;
-template <class  T , class ...Ys>	concept       unmade_q	= not made_q<T, Ys...>;
+template <class  T , class ...Ys>	concept     unmade_p	= not made_p<T, Ys...>;
+template <class  T , class ...Ys>	concept     unmade_q	= not made_q<T, Ys...>;
 
 template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
 template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
@@ -169,6 +169,8 @@ template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...a
 template <class            ...Ys>	concept     common_q	= some_q<Ys...> and _detail:: common_q<Ys...>;//< `Ys...` share an ancestor.
 template <class            ...Ys>	using       common_t	=                   _detail:: common_t<Ys...>;
 template <           class    X >	using     argument_t	=          typename _detail:: argument<X>::type;
+
+template <class  T , class ...Ys>	concept        not_q	= anisomorphic_q<T, Ys...> or infungible_q<T, Ys...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

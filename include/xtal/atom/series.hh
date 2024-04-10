@@ -163,6 +163,7 @@ struct series<U_type[N_size]>
 		XTAL_REQ complex_field_q<U_type>
 		{
 			using Y = XTAL_TYP_(that);
+			using X = typename Y::dual::type;
 			using I = typename Y::difference_type;
 		
 		//	Ensure the size of both domain and codomain are powers of two:
@@ -196,21 +197,26 @@ struct series<U_type[N_size]>
 			}
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
-				_detail::apply_to(that, [] XTAL_1FN_(_std::conj));
-				that *= re::ratio_f(1, n_size);
+				_detail::apply_to(that, [=] XTAL_1FN_(_std::conj));
+				that /= n_size;
 			}
 		
 		//	Cast the output to the transformed domain:
-			return reinterpret_cast<typename Y::dual::type &>(that);
+			return reinterpret_cast<X &>(that);
 		}
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
 		template <int N_direction=1> requires sign_p<N_direction, 1>
-		XTAL_TN2 transformation(isomorphic_q<T> auto that)
+		XTAL_TN2 transformation(isomorphic_q<T> auto const &that)
 		XTAL_0FX
 		{
-			return transform<N_direction>(that);
+			using Y = XTAL_TYP_(that);
+			using X = typename Y::dual::type;
+			X  x = reinterpret_cast<X const &>(that);
+			Y &y = reinterpret_cast<Y       &>(x);
+			(void) transform<N_direction>(y);
+			return x;
 		}
 
 		///\returns `lhs` convolved with `rhs`, \
@@ -226,10 +232,10 @@ struct series<U_type[N_size]>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN2 convolution(Y lhs, Y const &rhs)
+		XTAL_TN2 convolution(Y const &lhs, Y const &rhs)
 		XTAL_0FX
 		{
-			return convolve(lhs, rhs);
+			auto lhs_ = lhs; convolve(lhs_, rhs); return lhs_;
 		}
 
 		///\
