@@ -1,20 +1,28 @@
 #pragma once
 #include "./any.cc"
-#include "./spool.hh"// testing...
+#include "./block.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::resource::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TAG_("spool")
+/**/
+TAG_("block")
 {
+	using re = bond::realized;
+	using T_delta = typename re::delta_t;
+	using T_sigma = typename re::sigma_t;
+	using T_alpha = typename re::alpha_t;
+	using T_aphex = typename re::aphex_t;
+
+	auto constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
+
 	TRY_("task")
 	{
 		TRUE_(true);

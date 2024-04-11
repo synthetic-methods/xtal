@@ -12,9 +12,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW spool;
-template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_ASK spool_q = bond::tag_p<spool, Ts...>;
+template <class ..._s> struct  spool;
+template <class ..._s> using   spool_t = typename spool<_s...>::type;
+template <class ...Ts> concept spool_q = bond::tag_p<spool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -141,9 +141,6 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_MOV_(...)  ::std::                 move    (__VA_ARGS__)
 #define XTAL_REF_(...)              static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
-#define XTAL_NEW                       struct
-#define XTAL_USE                       using
-#define XTAL_ASK                       concept
 #define XTAL_REQ                       requires
 #define XTAL_REQ_(...)                 requires requires {__VA_ARGS__;}
 
@@ -174,6 +171,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_FN2_(...)  [[nodiscard]]  constexpr static __VA_ARGS__
 #define XTAL_LET_(...)                 constexpr static __VA_ARGS__
 
+#define XTAL_IFY_(...)              if constexpr (requires {__VA_ARGS__;}) {__VA_ARGS__;}
+#define XTAL_IFQ_(...)              if constexpr (requires {__VA_ARGS__;})
 #define XTAL_IF0                    if constexpr (0);
 #define XTAL_IF1                    if constexpr (1);
 #define XTAL_0IF_(...)        else  if constexpr (__VA_ARGS__)

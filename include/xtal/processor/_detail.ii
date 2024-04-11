@@ -16,7 +16,7 @@ template <class T, class Y=T>
 concept collection_p = any_q<T> and requires (T t)
 {
 	{t.serve()} -> isomorphic_q<Y>;
-	{t.buffer()} -> isomorphic_q<Y>;
+	{t.store()} -> isomorphic_q<Y>;
 };
 template <class T, class Y>
 concept recollection_p = collection_p<T, Y> and _std::is_rvalue_reference_v<T>;

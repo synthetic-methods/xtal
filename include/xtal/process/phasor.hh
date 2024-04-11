@@ -11,9 +11,9 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NEW phasor;
-template <typename ..._s> XTAL_ASK phasor_q = bond::tag_p<phasor, _s...>;
-template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
+template <typename ..._s> struct  phasor;
+template <typename ..._s> using   phasor_t = confined_t<phasor<_s...>>;
+template <typename ..._s> concept phasor_q = bond::tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

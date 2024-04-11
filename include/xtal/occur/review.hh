@@ -11,12 +11,12 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NEW review;
-template <typename ..._s> XTAL_ASK review_q = bond::tag_p<review, _s...>;
-template <iterated_q   U> XTAL_USE review_t = confined_t<refer<U>, review<U>, bond::tag<review>>;
+template <typename ..._s> struct  review;
+template <iterated_q   U> using   review_t = confined_t<refer<U>, review<U>, bond::tag<review>>;
+template <typename ..._s> concept review_q = bond::tag_p<review, _s...>;
 /**/
 template <class S, iterated_q U>
-XTAL_USE review_s = bond::compose_s<S, confined<bond::tag<review>, refer<U>, review<U>>>;
+using review_s = bond::compose_s<S, confined<bond::tag<review>, refer<U>, review<U>>>;
 /***/
 
 template <iterated_q U>

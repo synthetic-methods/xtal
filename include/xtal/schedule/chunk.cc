@@ -24,13 +24,13 @@ void chunk_processor_x1()
 	using namespace resource;
 //	using namespace schedule;
 
-	using U_chunk = chunk_t<spool<(1<<4)>>;
+	using U_chunk = chunk_t<respool<constant_t<0x10>>>;
 
 	using U_alpha = typename bond::realized::alpha_t;
 	using U_event = occur::packed_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
-	,	buffer<>
+	,	restore<>
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = occur::resize_t<>;

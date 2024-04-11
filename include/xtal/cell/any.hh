@@ -191,7 +191,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		XTAL_USE arity = cardinal_t<S_::arity::value + 1>;
+		using arity = cardinal_t<S_::arity::value + 1>;
 		///\
 		Tuple application. \
 

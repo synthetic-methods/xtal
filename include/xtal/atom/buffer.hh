@@ -11,9 +11,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW buffer;
-template <class ..._s> XTAL_USE buffer_t = typename buffer<_s...>::type;
-template <class ...Ts> XTAL_ASK buffer_q = bond::tag_p<buffer, Ts...>;
+template <class ..._s> struct  buffer;
+template <class ..._s> using   buffer_t = typename buffer<_s...>::type;
+template <class ...Ts> concept buffer_q = bond::tag_p<buffer, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -59,7 +59,7 @@ TAG_("processor", "construct")
 //	TRY_("letting")
 //	{
 //		size_t constexpr N_size = 5;
-//		using U_group = atom::lattice_t<int[N_size]>;
+//		using U_group = atom::group::lattice_t<int[N_size]>;
 //		auto z = U_group{00, 11, 22, 33, 44};
 //		auto a = processor::let_f(z);
 //		
@@ -69,7 +69,7 @@ TAG_("processor", "construct")
 		using T_alpha = typename bond::realized::alpha_t;
 
 		size_t constexpr N_size = 5;
-		using U_group = atom::lattice_t<T_alpha[N_size]>;
+		using U_group = atom::group::lattice_t<T_alpha[N_size]>;
 		
 		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		auto x = U_group { 0,  1,  2,  3,  4};

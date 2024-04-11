@@ -2,9 +2,9 @@
 #include "./any.cc"
 #include "./cross.hh"// testing...
 
+#include "../atom/all.hh"
 #include "../flux/indent.hh"
 #include "../processor/monomer.hh"
-#include "../atom/all.hh"
 
 XTAL_ENV_(push)
 namespace xtal::process::_test
@@ -19,9 +19,9 @@ TAG_("cross", "process")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::lattice_t<int[2][3]>;
+		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::buffer<>>;
+		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
 		auto io = U_remix();
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
@@ -40,9 +40,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::lattice_t<int[2][3]>;
+		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::buffer<>>;
+		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -62,9 +62,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::lattice_t<int[2][3]>;
+		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::buffer<>>;
+		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -81,9 +81,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::lattice_t<int[2][3]>;
+		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::buffer<>>;
+		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));
@@ -102,9 +102,9 @@ TAG_("cross", "processor")
 	{
 		using namespace _v3::views;
 
-		using U_model = atom::lattice_t<int[2][3]>;
+		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::buffer<>>;
+		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
 		auto _1 = processor::let_f(1);
 		auto _n = processor::let_f(iota(0, 10));

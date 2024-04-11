@@ -7,12 +7,12 @@ namespace _detail
 //\
 Standard...
 
-XTAL_USE null_t = XTAL_STD_(null_t);
-XTAL_USE unit_t = XTAL_STD_(unit_t);
-XTAL_USE sign_t = XTAL_STD_(sign_t);
-XTAL_USE byte_t = XTAL_STD_(byte_t);
-XTAL_USE size_t = XTAL_STD_(size_t);
-XTAL_USE size_s = XTAL_STD_(size_s);
+using    null_t = XTAL_STD_(null_t);
+using    unit_t = XTAL_STD_(unit_t);
+using    sign_t = XTAL_STD_(sign_t);
+using    byte_t = XTAL_STD_(byte_t);
+using    size_t = XTAL_STD_(size_t);
+using    size_s = XTAL_STD_(size_s);
 XTAL_LET size_1 = (size_t) 1;
 
 template <auto N_zero=0>

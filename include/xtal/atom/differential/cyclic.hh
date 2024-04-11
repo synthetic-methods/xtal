@@ -11,9 +11,9 @@ namespace xtal::atom::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW cyclic;
-template <class ..._s> XTAL_USE cyclic_t = typename cyclic<_s...>::type;
-template <class ...Ts> XTAL_ASK cyclic_q = bond::tag_p<cyclic, Ts...>;
+template <class ..._s> struct  cyclic;
+template <class ..._s> using   cyclic_t = typename cyclic<_s...>::type;
+template <class ...Ts> concept cyclic_q = bond::tag_p<cyclic, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

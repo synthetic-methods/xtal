@@ -24,7 +24,7 @@ struct aligned
 	XTAL_LET value = sizeof(type);
 
 };
-template <class T> XTAL_USE aligned_t = typename aligned<T>::type;
+template <class T> using    aligned_t = typename aligned<T>::type;
 template <class T> XTAL_LET aligned_n =          aligned<T>::value;
 
 

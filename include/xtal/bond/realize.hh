@@ -79,9 +79,9 @@ struct recognize<(1<<2)>
 	using alpha_2x1_t = simde_float32x2_t;   // v(?:ld|st)1_f32
 	using alpha_2x2_t = simde_float32x2x2_t; // v(?:ld|st)2_f32
 
-	template <auto ...Ns> XTAL_USE delta_u = lateral_t<(delta_t) Ns...>;
+	template <auto ...Ns> using    delta_u = lateral_t<(delta_t) Ns...>;
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<(delta_t) Ns...>;
-	template <auto ...Ns> XTAL_USE sigma_u = lateral_t<(sigma_t) Ns...>;
+	template <auto ...Ns> using    sigma_u = lateral_t<(sigma_t) Ns...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<(sigma_t) Ns...>;
 
 	XTAL_LET_(sigma_t) N_exponent =  8;
@@ -101,7 +101,7 @@ struct recognize<(1<<2)>
 	,	sigma_n<0x6C078965>
 	>;
 
-	template <int _, int N_pow> XTAL_NEW root;
+	template <int _, int N_pow> struct   root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
 	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE> {};
 	template <int _> struct root<_,-2> : sigma_u<0x5F375A86> {};
@@ -151,9 +151,9 @@ struct recognize<(1<<3)>
 	using alpha_2x1_t = simde_float64x2_t;   // v(?:ld|st)1q_f64
 	using alpha_2x2_t = simde_float64x2x2_t; // v(?:ld|st)1q_f64_x2
 
-	template <auto ...Ns> XTAL_USE delta_u = lateral_t<(delta_t) Ns...>;
+	template <auto ...Ns> using    delta_u = lateral_t<(delta_t) Ns...>;
 	template <auto ...Ns> XTAL_LET delta_n = lateral_n<(delta_t) Ns...>;
-	template <auto ...Ns> XTAL_USE sigma_u = lateral_t<(sigma_t) Ns...>;
+	template <auto ...Ns> using    sigma_u = lateral_t<(sigma_t) Ns...>;
 	template <auto ...Ns> XTAL_LET sigma_n = lateral_n<(sigma_t) Ns...>;
 
 	XTAL_LET_(sigma_t) N_exponent = 11;
@@ -173,7 +173,7 @@ struct recognize<(1<<3)>
 	,	sigma_n<0x5851F42D, 0x4C958000>
 	>;
 
-	template <int _, int N_pow> XTAL_NEW root;
+	template <int _, int N_pow> struct   root;
 	template <int        N_pow> XTAL_LET root_n = root<0, N_pow>::value;
 	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
 	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};

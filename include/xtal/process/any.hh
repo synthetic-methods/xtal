@@ -97,7 +97,7 @@ struct define
 				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
-				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...);
+				using    value_type = Y_(T::*) (argument_t<Xs>...);
 				XTAL_LET value      = static_cast<value_type>(&T::template functor<Is...>);
 
 			};
@@ -108,7 +108,7 @@ struct define
 				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
-				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...) const;
+				using    value_type = Y_(T::*) (argument_t<Xs>...) const;
 				XTAL_LET value      = static_cast<value_type>(&T::template functor<Is...>);
 
 			};

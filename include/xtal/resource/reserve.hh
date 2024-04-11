@@ -16,8 +16,8 @@ namespace xtal::resource
 Represents a local `{buffer,serve}` pair, \
 used as e.g. a buffer and its abstract/copyable `std::span`. \
 
-template <typename ..._s> XTAL_NEW reserve;
-template <typename ..._s> XTAL_USE reserve_t = confined_t<reserve<_s...>>;
+template <typename ..._s> struct reserve;
+template <typename ..._s> using  reserve_t = confined_t<reserve<_s...>>;
 template <bounded_q U>
 struct reserve<U>
 {
@@ -56,12 +56,13 @@ struct reserve<U>
 		XTAL_0EX
 		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		XTAL_TN0 buffer(U_buffer o, auto &&...oo)
+		
+		XTAL_TN0 store(U_buffer o, auto &&...oo)
 		XTAL_0EX
 		{
 			self(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_TN2 buffer(), S_::template head<1>())
+		XTAL_TO4_(XTAL_TN2 store(), S_::template head<1>())
 		XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};

@@ -17,9 +17,9 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename     ..._s> XTAL_NEW indent;
-template <typename     ...Ts> XTAL_ASK indent_q = bond::tag_p<indent, Ts...>;
-template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<ordinal_t<Ns>...>>;
+template <typename     ..._s> struct  indent;
+template <typename     ..._s> concept indent_q = bond::tag_p<indent, _s...>;
+template <class S, int ...Ns> using   indent_s = bond::compose_s<S, indent<ordinal_t<Ns>...>>;
 
 template <integral_q ...Ns>
 struct indent<Ns...>

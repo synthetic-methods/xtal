@@ -97,8 +97,8 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//template <class ...Xs>    XTAL_NEW pack_base;
-//template <class ...Xs>    XTAL_USE pack_base_t = typename pack_base<Xs...>::type;
+//template <class ...Xs>      struct pack_base;
+//template <class ...Xs>      using  pack_base_t = typename pack_base<Xs...>::type;
 //template <class ...Xs>      struct pack_base       {using type = _std::tuple<Xs...>;};
 //template <class X, class Y> struct pack_base<X, Y> {using type = _std::pair<X, Y>;};
 
@@ -113,8 +113,8 @@ XTAL_0FN
 	}
 };
 
-template <class ...Xs> XTAL_NEW pack;
-template <class ...Xs> XTAL_USE pack_t = typename pack<Xs...>::type;
+template <class ...Xs> struct pack;
+template <class ...Xs> using  pack_t = typename pack<Xs...>::type;
 template <class ...Xs>
 struct pack
 {

@@ -11,9 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NEW monomer;
-template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
+template <typename ..._s> struct  monomer;
+template <typename ..._s> using   monomer_t = confined_t<monomer< _s...>>;
+template <typename ..._s> concept monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_FN2  monomer_f(auto &&u)
 XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
@@ -92,15 +92,16 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::buffer_q<S_>
+		template <class ...Xs> requires resource::restore_q<S_>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_buffer = typename S_::template buffer_t<Y_return>;
+			using U_buffer = typename S_::template store_t<Y_return>;
 			using U_serve  = reiterate_t<U_buffer>;
 			using U_review = occur::review_t<U_serve>;
 		
-			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
+			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
+			XTAL_LET_(bool) N_sized = requires (U_buffer &u) {u.resize(U_resize{});};
 
 			using subkind = bond::compose<resource::reserve<U_buffer>, R__binding<Xs...>>;
 
@@ -113,18 +114,24 @@ struct monomer<U, As...>
 				using R_::R_;
 				using R_::self;
 				using R_::serve;
-				using R_::buffer;
-				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
+				using R_::store;
+				XTAL_TO2_(template <auto ...>
+				XTAL_TN2 functor(), N_sized? serve(): serve()|recount_f(R_::template head_t<U_resize>))
 
 			//	using R_::infuse;
 				///\
-				Responds to `occur::resize` by resizing the internal `buffer()`. \
+				Responds to `occur::resize` by resizing the internal `store()`. \
 
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
 					if constexpr (is_q<U_resize, decltype(o)>) {
-						return R_::infuse(o) or (buffer().resize(XTAL_REF_(o)), 0);
+						return R_::infuse(o) or ([o = XTAL_REF_(o), this] ()
+						XTAL_0FN
+						{
+							if constexpr (N_sized) {store().resize(XTAL_MOV_(o));}
+							return XTAL_FLX{};
+						}	());
 					}
 					else {
 						return R_::infuse(XTAL_REF_(o));
@@ -145,7 +152,7 @@ struct monomer<U, As...>
 
 				using R_::efflux;
 				///\
-				Responds to `occur::render` by rendering the internal `buffer()`. \
+				Responds to `occur::render` by rendering the internal `store()`. \
 				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
@@ -154,7 +161,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_review(buffer()), render_o, XTAL_REF_(oo)...);
+					return efflux(U_review(store()), render_o, XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \

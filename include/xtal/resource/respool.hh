@@ -11,8 +11,8 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-XTAL_NEW spool_a;
-template <class ...Ts> concept spool_q = bond::tab_p<spool_a, Ts...>;
+template <class ..._s> struct  respool {};
+template <class ...Ts> concept respool_q = bond::tag_p<respool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,10 +20,10 @@ template <class ...Ts> concept spool_q = bond::tab_p<spool_a, Ts...>;
 Provides a specialization of `atom::spool`. \
 If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
-template <int N=-1>
-struct spool
+template <bond::compose_q A>
+struct respool<A>
 {
-	using subkind = bond::tab<spool_a>;
+	using subkind = bond::tag<respool>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -34,10 +34,32 @@ struct spool
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::spool_t<U[(unsigned) N]>;
+		using spool_t = typename A::template subtype<U>;
 
 	};
 };
+template <constant_q A>
+struct respool<A>
+{
+	using subkind = bond::tag<respool>;
+	
+	template <_retail::any_q S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using spool_t = atom::spool_t<U[(unsigned) A{}]>;
+
+	};
+};
+template <>
+struct respool<>
+:	respool<constant_t<~0U>>
+{};
 
 
 ///////////////////////////////////////////////////////////////////////////////

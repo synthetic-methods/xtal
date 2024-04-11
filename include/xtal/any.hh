@@ -277,7 +277,7 @@ static_assert(complex_field_q<_std::complex<float>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto    ...Ns>	XTAL_USE   lateral_t	= typename _detail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
+template <auto    ...Ns>	using      lateral_t	= typename _detail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
 template <auto    ...Ns>	XTAL_LET   lateral_n	=          _detail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type::value;
 
 

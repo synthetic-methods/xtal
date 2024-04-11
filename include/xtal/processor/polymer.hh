@@ -11,12 +11,12 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_NEW polymer;
-template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
-template <typename ...As>
+template <typename ..._s> struct  polymer;
+template <typename ..._s> using   polymer_t = confined_t<polymer< _s...>>;
+template <typename ..._s> concept polymer_q = bond::tag_p<polymer, _s...>;
+template <typename ..._s>
 XTAL_FN2  polymer_f(auto &&u)
-XTAL_0EZ_(polymer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
+XTAL_0EZ_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resource::spool_q<S_> and resource::buffer_q<S_>
+		template <class ...Xs> requires resource::respool_q<S_> and resource::restore_q<S_>
 		struct binding : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
@@ -78,7 +78,7 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 				using R_::serve;
-				using R_::buffer;
+				using R_::store;
 				
 				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)
 

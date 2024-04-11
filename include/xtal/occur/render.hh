@@ -27,12 +27,12 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <                     typename ..._s> XTAL_NEW render;
-template <                     typename ..._s> XTAL_ASK render_q = bond::tag_p<render, _s...>;
-template <class W=counter_t<>, typename ...As> XTAL_USE render_t = confined_t<render<W>, As...>;
-template <                     typename ...As>
+template <                     typename ..._s> struct  render;
+template <class W=counter_t<>, typename ..._s> using   render_t = confined_t<render<W>, _s...>;
+template <                     typename ..._s> concept render_q = bond::tag_p<render, _s...>;
+template <                     typename ..._s>
 XTAL_FN2  render_f(auto &&w)
-XTAL_0EZ_(render_t<counter_t<>, As...>(XTAL_REF_(w)))
+XTAL_0EZ_(render_t<counter_t<>, _s...>(XTAL_REF_(w)))
 
 
 template <class ...Ts>

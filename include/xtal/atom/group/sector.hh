@@ -7,18 +7,18 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom
+namespace xtal::atom::group
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW sector;
-template <class ..._s> XTAL_USE sector_t = typename sector<_s...>::type;
-template <class ...Ts> XTAL_ASK sector_q = bond::tag_p<sector, Ts...>;
+template <class ..._s> struct  sector;
+template <class ..._s> using   sector_t = typename sector<_s...>::type;
+template <class ...Ts> concept sector_q = bond::tag_p<sector, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with pointwise addition. \
+Extends `lattice` with point-wise addition. \
 Represents a `s(?:tatic_v)?ector`. \
 
 template <class U, int N>
@@ -43,7 +43,7 @@ struct sector<U[N]>
 
 		///\
 		The dual of `T`, \
-		replacing addition by pointwise multiplication. \
+		replacing addition by point-wise multiplication. \
 
 		struct dual
 		{

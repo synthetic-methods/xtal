@@ -7,13 +7,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom
+namespace xtal::atom::group
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_NEW serial;
-template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
-template <class ...Ts> XTAL_ASK serial_q = bond::tag_p<serial, Ts...>;
+template <class ..._s> struct  serial;
+template <class ..._s> using   serial_t = typename serial<_s...>::type;
+template <class ...Ts> concept serial_q = bond::tag_p<serial, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
