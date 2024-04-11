@@ -360,17 +360,17 @@ concept integral_group_p = integral_number_q<T> or discrete_group_p<N_arity, T> 
 
 
 template <size_t N_arity, class T, class U=T>
-concept arithmetic_field_p = multiplicative_group_p<N_arity, T> and additive_group_p<N_arity, T>;
+concept plex_field_p = multiplicative_group_p<N_arity, T> and additive_group_p<N_arity, T>;
 
 template <size_t N_arity, class T, class U=T>
-concept real_field_p = real_number_q<T> or arithmetic_field_p<N_arity, T> and requires (based_t<T> t)
+concept real_field_p = real_number_q<T> or plex_field_p<N_arity, T> and requires (based_t<T> t)
 {
 	requires quality_p<2, T>;
 	{_std::abs(t)} -> is_q<T>;
 };
 
 template <size_t N_arity, class T, class U=T>
-concept complex_field_p = complex_number_q<T> or arithmetic_field_p<2, T> and requires (based_t<T> t)
+concept complex_field_p = complex_number_q<T> or plex_field_p<2, T> and requires (based_t<T> t)
 {
 //	requires N_arity == 2;
 	requires equality_p<2, T>;
@@ -379,7 +379,7 @@ concept complex_field_p = complex_number_q<T> or arithmetic_field_p<2, T> and re
 	{t.imag()}     -> is_q<unvalue_t<T>>;
 };
 template <size_t N_arity, class T, class U=T>
-concept simplex_field_p = arithmetic_field_p<N_arity, T> and not complex_field_p<N_arity, T>;
+concept simplex_field_p = plex_field_p<N_arity, T> and not complex_field_p<N_arity, T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

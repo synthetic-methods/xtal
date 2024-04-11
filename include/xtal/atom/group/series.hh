@@ -58,9 +58,9 @@ struct series<U_type[N_size]>
 		///\
 		Generates the power series with the given seed. \
 
-		XTAL_CXN homotype(is_q<U_type> auto &&v)
+		XTAL_CXN homotype(auto &&...oo)
 		{
-			generate(XTAL_REF_(v));
+			generate(XTAL_REF_(oo)...);
 		}
 
 		template <size_t N_limit=N_size>

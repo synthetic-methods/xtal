@@ -4,3 +4,4 @@
 #include "./sector.hh"
 #include "./serial.hh"
 #include "./series.hh"
+#include "./symbol.hh"

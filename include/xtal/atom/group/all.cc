@@ -4,3 +4,4 @@
 #include "./sector.cc"
 #include "./serial.cc"
 #include "./series.cc"
+#include "./symbol.cc"

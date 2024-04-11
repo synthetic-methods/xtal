@@ -236,10 +236,10 @@ template <size_t N, class T, class U=T>	concept       discrete_group_p = _detail
 template <size_t N, class T, class U=T>	concept       quotient_group_p = _detail::       quotient_group_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept       integral_group_p = _detail::       integral_group_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	concept     arithmetic_field_p = _detail::     arithmetic_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept           plex_field_p = _detail::           plex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept           real_field_p = _detail::           real_field_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept        complex_field_p = _detail::        complex_field_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept        simplex_field_p = _detail::        simplex_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	concept           real_field_p = _detail::           real_field_p<N, T, U>;
 
 template <size_t N, class T, class U=T>	concept        boolean_logic_p = _detail::        boolean_logic_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept         binary_logic_p = _detail::         binary_logic_p<N, T, U>;
@@ -255,10 +255,10 @@ template <class   ...Ts>	concept       discrete_group_q = (...and _detail::     
 template <class   ...Ts>	concept       quotient_group_q = (...and _detail::       quotient_group_p<0, Ts>);
 template <class   ...Ts>	concept       integral_group_q = (...and _detail::       integral_group_p<0, Ts>);
 
-template <class   ...Ts>	concept     arithmetic_field_q = (...and _detail::     arithmetic_field_p<0, Ts>);
+template <class   ...Ts>	concept           plex_field_q = (...and _detail::           plex_field_p<0, Ts>);
+template <class   ...Ts>	concept           real_field_q = (...and _detail::           real_field_p<0, Ts>);
 template <class   ...Ts>	concept        complex_field_q = (...and _detail::        complex_field_p<0, Ts>);
 template <class   ...Ts>	concept        simplex_field_q = (...and _detail::        simplex_field_p<0, Ts>);
-template <class   ...Ts>	concept           real_field_q = (...and _detail::           real_field_p<0, Ts>);
 
 template <class   ...Ts>	concept        boolean_logic_q = (...and _detail::        boolean_logic_p<0, Ts>);
 template <class   ...Ts>	concept         binary_logic_q = (...and _detail::         binary_logic_p<0, Ts>);
@@ -269,7 +269,8 @@ template <class   ...Ts>	concept              quality_q = (...and _detail::     
 
 
 static_assert(                  real_field_q<float>);
-static_assert(            arithmetic_field_q<float>);
+static_assert(                  plex_field_q<float>);
+static_assert(          not  complex_field_q<float>);
 static_assert(          not quotient_group_q<float>);
 static_assert(              quotient_group_q<  int>);
 static_assert(complex_field_q<_std::complex<float>>);
