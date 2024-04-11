@@ -38,7 +38,7 @@ struct indent<Ns...>
 	public:
 		using S_::S_;
 		
-		XTAL_CON subtype(braces_t<value_t<L_>> w)
+		XTAL_CON subtype(braces_t<devalue_t<L_>> w)
 		XTAL_REQ bounded_q<L_>
 		:	S_{L_(XTAL_MOV_(w))}
 		{}

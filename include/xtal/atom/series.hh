@@ -24,8 +24,8 @@ template <class U_type, int N_size>
 struct series<U_type[N_size]>
 {
 	using U_v0 = U_type;
-	using U_v1 = value_t<U_v0>;
-	using U_v2 = value_t<U_v1>;
+	using U_v1 = devalue_t<U_v0>;
+	using U_v2 = devalue_t<U_v1>;
 
 	using re = bond::realize<U_type>;
 	

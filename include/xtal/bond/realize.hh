@@ -1551,12 +1551,14 @@ public:
 	XTAL_FN2 antilogarithm_f(alpha_t u)
 	XTAL_0EX
 	{
+		alpha_t constexpr  M_ln2 = 1.4426950408889634073599246810018921374e+0L;// 1/Log[2]
+		alpha_t constexpr  N_ln2 = 0.6931471805599453094172321214581765681e+0L;// 1*Log[2]
 		int constexpr I_ = I_lim < 0? -4*I_lim: I_lim;
 		int constexpr J_ = J_lim < 0? -4*J_lim: J_lim;
-		u *= 1.4426950408889634073599246810018921374e+0L;// 1/Log[2]
+		u *= M_ln2;
 		auto const n = _std::round(u);
 		u -= n;
-		u *= 0.6931471805599453094172321214581765681e+0L;// 1*Log[2]
+		u *= N_ln2;
 		return _std::ldexp(antilogarithmic_f<I_, J_>(u), n);
 	}
 
@@ -1569,14 +1571,14 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct realize : _detail::realize<sizeof(value_t<T>)> {};
+struct realize : _detail::realize<sizeof(devolve_t<T>)> {};
 
-using realized = realize<size_s>;
+using realized = realize<size_t>;
 
-//static_assert(is_q<size_t, typename realized::sigma_t>);
-static_assert(sizeof(size_s) == sizeof(typename realized::sigma_t));
-static_assert(sizeof(size_s) == sizeof(typename realized::delta_t));
-static_assert(sizeof(size_s) == sizeof(typename realized::alpha_t));
+static_assert(is_q<size_t, typename realized::sigma_t>);
+static_assert(sizeof(size_t) == sizeof(typename realized::sigma_t));
+static_assert(sizeof(size_t) == sizeof(typename realized::delta_t));
+static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
 
 
 ///////////////////////////////////////////////////////////////////////////////

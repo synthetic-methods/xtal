@@ -146,7 +146,7 @@ struct defer_field
 		:	u_body(a)
 		{}
 		/*/
-		XTAL_CON subtype(braces_t<value_t<U_body>> a)
+		XTAL_CON subtype(braces_t<devalue_t<U_body>> a)
 		XTAL_0EX
 		XTAL_REQ array_q<U_body> and id_q<U_body, U_head>
 		:	u_body(a)

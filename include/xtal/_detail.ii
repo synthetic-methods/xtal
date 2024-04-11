@@ -99,17 +99,21 @@ template <unbased_q  T >	struct    rebased<T const & > : logical<0> {using type 
 template <class      T >	concept   rebased_q = (bool) rebased<T>::value;
 
 
-template <class      T >	concept   devalue_q = requires {typename based_t<T>::value_type;};
-template <devalue_q  T >	using     devalue_t =           typename based_t<T>::value_type;
+template <class      T >	concept   unvalue_q = requires {typename based_t<T>::value_type;};
+template <unvalue_q  T >	using     unvalue_t =           typename based_t<T>::value_type;
 
-template <class      T >	concept   revalue_q = not _std::same_as<based_t<T>, _std::remove_all_extents_t<based_t<T>>>;
-template <revalue_q  T >	using     revalue_t =                               _std::remove_all_extents_t<based_t<T>>;
+template <class      T >	concept   invalue_q = not _std::same_as<based_t<T>, _std::remove_all_extents_t<based_t<T>>>;
+template <invalue_q  T >	using     invalue_t =                               _std::remove_all_extents_t<based_t<T>>;
 
-template <class      T >	concept     value_q = devalue_q<T> or revalue_q<T>;
-template <class      T >	struct     _value    {using value_type =   based_t<T>;};
-template <devalue_q  T >	struct     _value<T> {using value_type = devalue_t<T>;};
-template <revalue_q  T >	struct     _value<T> {using value_type = revalue_t<T>;};
-template <class      T >	using       value_t = typename _value<T>::value_type;
+template <class      T >	concept   devalue_q = unvalue_q<T> or invalue_q<T>;
+template <class      T >	struct    devalue    {using value_type =   based_t<T>;};
+template <unvalue_q  T >	struct    devalue<T> {using value_type = unvalue_t<T>;};
+template <invalue_q  T >	struct    devalue<T> {using value_type = invalue_t<T>;};
+template <class      T >	using     devalue_t = typename devalue<T>::value_type;
+
+template <class      T >	struct    devolve    {using value_type = based_t<T>;};
+template <devalue_q  T >	struct    devolve<T> : devalue<devalue_t<T>> {};
+template <class      T >	using     devolve_t = typename devolve<T>::value_type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +145,7 @@ template <based_q             X >	struct     argument<X>  {using type = X const 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class      T >	XTAL_LET    array_n = _std::is_array_v<T>? _std::extent_v<T>: T{}.size();
-template <class      T >	concept     array_q = _std::is_array_v<T> or made_q<T, _std::array<value_t<T>, array_n<T>>>;
+template <class      T >	concept     array_q = _std::is_array_v<T> or made_q<T, _std::array<devalue_t<T>, array_n<T>>>;
 
 template <class      T >	using     pointed_t = _std::remove_reference_t<decltype(*XTAL_VAL_(T))>;
 template <class      T >	using     pointer_t = _std::remove_reference_t<decltype(&XTAL_VAL_(T))>;
@@ -163,8 +167,8 @@ template <class      T >	concept unbounded_q = _begin_q<T> and not _end_q<T>;
 template <class      T >	concept   bounded_q = _begin_q<T> and     _end_q<T>;
 
 template <class      T >	concept  embraced_q = requires {typename T::initializer_list;};
-template <class      T >	concept    braced_q = embraced_q<T> or value_q<T>;
-template <class      T >	struct     braced    {using type = _std::initializer_list<value_t<T>>;};
+template <class      T >	concept    braced_q = embraced_q<T> or devalue_q<T>;
+template <class      T >	struct     braced    {using type = _std::initializer_list<devalue_t<T>>;};
 template <embraced_q T >	struct     braced<T> {using type = typename T::initializer_list;};
 template <class      T >	using      braced_t = typename braced<T>::type;
 template <class      W >	using      braces_t = _std::initializer_list<W>;
@@ -239,10 +243,10 @@ Arithmetic...
 
 template <class      T >	concept   integral_number_q =  _std::integral      <based_t<T>>;
 template <class      T >	concept       real_number_q =  _std::floating_point<based_t<T>>;
-template <class      T >	concept    complex_number_q = made_q<T, _std::complex<value_t<T>>>;
+template <class      T >	concept    complex_number_q = made_q<T, _std::complex<devalue_t<T>>>;
 template <class      T >	concept            number_q = integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
 template <class      T >	concept           numeric_q = requires {typename _std::numeric_limits<based_t<T>>;};
-template <class      T >	using             numeric_t = _std::numeric_limits<value_t<T>>;
+template <class      T >	using             numeric_t = _std::numeric_limits<devalue_t<T>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -370,9 +374,9 @@ concept complex_field_p = complex_number_q<T> or arithmetic_field_p<2, T> and re
 {
 //	requires N_arity == 2;
 	requires equality_p<2, T>;
-	{_std::abs(t)} -> is_q<devalue_t<T>>;
-	{t.real()}     -> is_q<devalue_t<T>>;
-	{t.imag()}     -> is_q<devalue_t<T>>;
+	{_std::abs(t)} -> is_q<unvalue_t<T>>;
+	{t.real()}     -> is_q<unvalue_t<T>>;
+	{t.imag()}     -> is_q<unvalue_t<T>>;
 };
 template <size_t N_arity, class T, class U=T>
 concept simplex_field_p = arithmetic_field_p<N_arity, T> and not complex_field_p<N_arity, T>;

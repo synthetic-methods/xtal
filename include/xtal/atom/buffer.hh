@@ -29,55 +29,51 @@ then a fixed-capacity implementation is provided. \
 *	If `A` is either a pointer or an array of length `(unsigned) -1`, \
 the default (dynamically allocated) `std::vector` is used. \
 
-template <class U> requires pointer_q<U>
-struct buffer<U>
+template <class U_data> requires pointer_q<U_data>
+struct buffer<U_data>
 {
-	using type = bond::compose_s<_std::vector<pointed_t<U>>, bond::tag<buffer>>;
+	using type = bond::compose_s<_std::vector<pointed_t<U_data>>, bond::tag<buffer>>;
 
 };
-template <class U>
-struct buffer<U[~0U]>
-:	buffer<U *>
+template <class U_data>
+struct buffer<U_data[~0U]>
+:	buffer<U_data *>
 {
 };
-template <class U, size_t N>
-struct buffer<U[N]>
+template <class U_data, size_t N_data>
+struct buffer<U_data[N_data]>
 {
-	template <class T>
-	using demitype = reiterant_t<T>;
+	using W_data = _detail::aligned_t<U_data>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<buffer>>;
+	using holotype = bond::compose_s<reiterant_t<T>, bond::tag<buffer>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
-		using T_ = hemitype<T>;
-		using U_ = _detail::aligned_t<U>;
+		using T_ = holotype<T>;
 
 	public:// DEFINITION
-		using              size_type  = size_t;
-		using        difference_type  = size_s;
+		using              size_type  =        size_t;
+		using        difference_type  =        size_s;
 
-		using             value_type  =        U;
+		using             value_type  =        U_data;
 		using         allocator_type  =        T;// TODO: Provide interface?
 
-		using              reference  =        U &;
-		using        const_reference  =  const U &;
+		using              reference  =        U_data &;
+		using        const_reference  =  const U_data &;
 		
-		using                pointer  =        U *;
-		using          const_pointer  =  const U *;
+		using                pointer  =        U_data *;
+		using          const_pointer  =  const U_data *;
 
-		using               iterator  =        U *;
-		using         const_iterator  =  const U *;
+		using               iterator  =        U_data *;
+		using         const_iterator  =  const U_data *;
 		using       reverse_iterator  = _std::reverse_iterator<      iterator >;
 		using const_reverse_iterator  = _std::reverse_iterator<const_iterator >;
 	
 	private:
-		using             value_type_ =        U_;
-
-		using               iterator_ =        U_*;
-		using         const_iterator_ =  const U_*;
+		using               iterator_ =        W_data *;
+		using         const_iterator_ =  const W_data *;
 		using       reverse_iterator_ = _std::reverse_iterator<      iterator_>;
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
@@ -96,25 +92,25 @@ struct buffer<U[N]>
 		XTAL_DEF_(return,inline) XTAL_LET defence(iterator_q auto         i) noexcept -> decltype(auto) {return _std::launder(offence(XTAL_REF_(i)));}
 		
 
-		value_type_ a_block[N]{};
-		difference_type a_limit{};
+		W_data m_data[N_data]{};
+		difference_type n_data{};
 
 
 	public:// ACCESS
-		XTAL_TN2 begin() XTAL_0EX {return defence(reinterpret_cast<      iterator_>(a_block));}
-		XTAL_TN2 begin() XTAL_0FX {return defence(reinterpret_cast<const_iterator_>(a_block));}
-		XTAL_TO2_(XTAL_TN2 end(), _std::next(begin(), a_limit))
+		XTAL_TN2 begin() XTAL_0EX {return defence(reinterpret_cast<      iterator_>(m_data));}
+		XTAL_TN2 begin() XTAL_0FX {return defence(reinterpret_cast<const_iterator_>(m_data));}
+		XTAL_TO2_(XTAL_TN2 end(), _std::next(begin(), n_data))
 
 
 	public:// SIZE
 		using T_::size;
 	
-		///\returns the constant `N`. \
+		///\returns the constant `N_data`. \
 
-		XTAL_TN2_(size_type) capacity()
+		XTAL_FN2_(size_type) capacity()
 		XTAL_0EX
 		{
-			return N;
+			return N_data;
 		}
 		///\
 		Does nothing. \
@@ -135,11 +131,11 @@ struct buffer<U[N]>
 				insert_back(sN - sM, XTAL_REF_(etc)...);
 			}
 		}
-		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N`. \
+		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N_data`. \
 
 		XTAL_TN0 reserve(size_type sN)
 		{
-			if (N < sN) {
+			if (N_data < sN) {
 				throw _std::bad_alloc{};
 			}
 		}
@@ -168,7 +164,7 @@ struct buffer<U[N]>
 				static_assert(_std::is_move_constructible_v<value_type>);
 				_std::memmove(offence(iN), offence(i0), sX*_detail::aligned_n<value_type>);
 			}
-			a_limit += sN;
+			n_data += sN;
 		}
 
 
@@ -198,28 +194,28 @@ struct buffer<U[N]>
 			clear(); push_back(i0, iN);
 		}
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
-		XTAL_TN0 assign(size_type sN, U const &u)
+		XTAL_TN0 assign(size_type sN, U_data const &u)
 		{
-			_std::uninitialized_fill_n((iterator_) a_block, sN, XTAL_REF_(u));
+			_std::uninitialized_fill_n((iterator_) m_data, sN, XTAL_REF_(u));
 		}
 		
 		///\
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_CON homotype(braces_t<U> w)
+		XTAL_CON homotype(braces_t<U_data> w)
 		:	homotype(w.begin(), w.end())
 		{}
 		///\
 		List assignment. \
 		Replaces the contents of `this` with the given values. \
 
-		XTAL_OP1_(homotype &) = (braces_t<U> w)
+		XTAL_OP1_(homotype &) = (braces_t<U_data> w)
 		{
 			assign(w);
 			return *this;
 		}
-		XTAL_TN0 assign(braces_t<U> w)
+		XTAL_TN0 assign(braces_t<U_data> w)
 		{
 			assign(w.begin(), w.end());
 		}
@@ -250,7 +246,7 @@ struct buffer<U[N]>
 		Initializes `this` with the given data. \
 
 		XTAL_CON homotype(homotype &&t)
-		XTAL_REQ _std::move_constructible<U>
+		XTAL_REQ _std::move_constructible<U_data>
 		:	homotype(_detail::mover_f(t.begin()), _detail::mover_f(t.end()))
 		{}
 		///\
@@ -258,13 +254,13 @@ struct buffer<U[N]>
 		Replaces the contents of `this` with the given data. \
 
 		XTAL_OP1_(homotype &) = (homotype &&t)
-		XTAL_REQ _std::move_constructible<U>
+		XTAL_REQ _std::move_constructible<U_data>
 		{
 			assign(XTAL_MOV_(t));
 			return *this;
 		}
 		XTAL_TN0 assign(homotype &&t)
-		XTAL_REQ _std::move_constructible<U>
+		XTAL_REQ _std::move_constructible<U_data>
 		{
 			assign(_detail::mover_f(t.begin()), _detail::mover_f(t.end()));
 		}
@@ -291,16 +287,16 @@ struct buffer<U[N]>
 		///\
 		Inserts the values `etc` beginning at `i0`. \
 
-		XTAL_TN0 push_back(braces_t<U> w)
+		XTAL_TN0 push_back(braces_t<U_data> w)
 		{
 			push_back(w.begin(), w.end());
 		}
 		///\
 		Inserts the values `etc...` beginning at `i0`. \
 
-		XTAL_TN0 push_back(make_q<U> auto &&...vs)
+		XTAL_TN0 push_back(make_q<U_data> auto &&...vs)
 		{
-			push_back(braces_t<U>{U(XTAL_REF_(vs))...});
+			push_back(braces_t<U_data>{U_data(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -349,7 +345,7 @@ struct buffer<U[N]>
 		Inserts the values `w` beginning at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, braces_t<U> w)
+		XTAL_TN1_(iterator) insert(I i, braces_t<U_data> w)
 		{
 			return insert(i, w.begin(), w.end());
 		}
@@ -357,7 +353,7 @@ struct buffer<U[N]>
 		Inserts the value `v` at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, common_q<U> auto &&u)
+		XTAL_TN1_(iterator) insert(I i, common_q<U_data> auto &&u)
 		{
 			return inplace(i, XTAL_REF_(u));
 		}
@@ -365,7 +361,7 @@ struct buffer<U[N]>
 		Initialises `sN` values with `u` beginning at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, size_type sN, common_q<U> auto &&u)
+		XTAL_TN1_(iterator) insert(I i, size_type sN, common_q<U_data> auto &&u)
 		{
 			deserve(sN, i);
 			_std::uninitialized_fill_n(offence(i), sN, XTAL_REF_(u));
@@ -386,7 +382,7 @@ struct buffer<U[N]>
 		XTAL_TN1_(iterator) inplace_back(auto &&...oo)
 		{
 			deserve(1);
-			iterator i = end(); ++a_limit;
+			iterator i = end(); ++n_data;
 			return (iterator) ::new(offence(i)) value_type(XTAL_REF_(oo)...);
 		}
 		XTAL_TN1_(iterator) inplace(iterator i, auto &&...oo)
@@ -468,7 +464,7 @@ struct buffer<U[N]>
 				static_assert(_std::is_move_constructible_v<value_type>);
 				_std::memmove(i0, iN, sX*_detail::aligned_n<value_type>);
 			}
-			a_limit -= sN;
+			n_data -= sN;
 			return i0;
 		}
 
