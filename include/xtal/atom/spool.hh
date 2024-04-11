@@ -27,7 +27,7 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using demitype = reiterant_t<T>;
+	using demitype = initerated_t<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<spool>>;
@@ -50,6 +50,7 @@ struct spool<A>
 	//	using T_::T_;
 		
 		XTAL_CO0_(homotype)
+		XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 
 		///\note\

@@ -186,6 +186,7 @@ struct define
 				using R_::self;
 
 				XTAL_CO0_(subtype);
+				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
 				///\

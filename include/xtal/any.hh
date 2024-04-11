@@ -189,30 +189,30 @@ template <class            ...Ts>	concept    pointer_q = (... and _detail:: poin
 //\
 Ranged...
 
-template <class   ...Ts>	concept   unbounded_q = (...and  _detail:: unbounded_q<Ts>);
-template <class   ...Ts>	concept     bounded_q = (...and  _detail::   bounded_q<Ts>);
-template <class   ...Ts>	concept      braced_q = (...and  _detail::    braced_q<Ts>);
-template <class      T >	using        braced_t =          _detail::    braced_t<T >;
-template <class      T >	using        braces_t =          _detail::    braces_t<T >;
+template <class      ...Ts>	concept   unbounded_q = (...and  _detail:: unbounded_q<Ts>);
+template <class      ...Ts>	concept     bounded_q = (...and  _detail::   bounded_q<Ts>);
+template <class      ...Ts>	concept      braced_q = (...and  _detail::    braced_q<Ts>);
+template <class         T >	using        braced_t =          _detail::    braced_t<T >;
+template <class         T >	using        braces_t =          _detail::    braces_t<T >;
 
-template <class   ...Ts>	concept    iterable_q = (...and  _detail::  iterable_q<Ts>);
-template <class   ...Ts>	concept    iterated_q = (...and  _detail::  iterated_q<Ts>);
-template <class   ...Ts>	concept    iterator_q = (...and  _detail::  iterator_q<Ts>);
+template <class      ...Ts>	concept    iterable_q = (...and  _detail::  iterable_q<Ts>);
+template <class      ...Ts>	concept    iterated_q = (...and  _detail::  iterated_q<Ts>);
+template <class      ...Ts>	concept    iterator_q = (...and  _detail::  iterator_q<Ts>);
 
-template <class      T >	using      interval_t =          _detail::  interval_t<T >;
-template <class      T >	using      iterated_t = typename _detail::  iterated  <T >::type;
-template <class      T >	using      iterator_t = typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
-template <class      T >	using      iteratee_t = typename _detail::  iteratee  <T >::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
-template <class      T >	using      distance_t =          _detail::  distance_t<T >;
+template <class         T >	using      interval_t =          _detail::  interval_t<T >;
+template <class         T >	using      iterated_t = typename _detail::  iterated  <T >::type;
+template <class         T >	using      iterator_t = typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
+template <class         T >	using      iteratee_t = typename _detail::  iteratee  <T >::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class         T >	using      distance_t =          _detail::  distance_t<T >;
 
-template <class   ...Ts>	concept     counted_q = (...and  _detail::   counted_q<Ts>);
-template <class   ...Ts>	concept     counter_q = (...and  _detail::   counter_q<Ts>);
+template <class      ...Ts>	concept     counted_q = (...and  _detail::   counted_q<Ts>);
+template <class      ...Ts>	concept     counter_q = (...and  _detail::   counter_q<Ts>);
 
-template <class   T=size_s>	using    counted_t = typename _detail::   counted  <T >::type;
-template <class   T=size_s>	using    counter_t = typename _detail::   counter  <T >::type;
+template <class   T=size_s>	using       counted_t = typename _detail::   counted  <T >::type;
+template <class   T=size_s>	using       counter_t = typename _detail::   counter  <T >::type;
 
-template <class      T >	using     reiterate_t =          _detail:: reiterate_t<T >;
-template <class      T >	using     reiterant_t =          _detail:: reiterant_t<T >;
+template <class         T >	using    reiterated_t =          _detail:: reiterated_t<T >;
+template <class         T >	using    initerated_t =          _detail:: initerated_t<T >;
 
 
 

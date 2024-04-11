@@ -51,9 +51,8 @@ struct stage<A, As...>
 	public:
 		using S_::S_;
 
-		~subtype() = default;
-
-	//	XTAL_CO0_(subtype)
+		XTAL_CO0_(subtype)
+	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 		
 		XTAL_CON subtype()

@@ -15,9 +15,6 @@ namespace xtal::schedule
 Provides an `in(flux )queue` for `X` on the target object, \
 which produces a signal by successive calls to `functor`. \
 
-///\todo\
-Adapt to provide polling. \
-
 template <typename ...As>
 struct thunk
 {
@@ -58,6 +55,7 @@ struct thunk
 			//	using R_::R_;
 				
 				XTAL_CO0_(subtype)
+				XTAL_CO1_(subtype)
 				XTAL_CO4_(subtype)
 
 				XTAL_TNX infuse(auto &&o)

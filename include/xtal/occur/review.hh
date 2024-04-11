@@ -38,16 +38,17 @@ struct review<U>
 		using U_span = U;
 
 		XTAL_CO0_(subtype);
+		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		template <iterated_q W> requires is_q<reiterate_t<W>, U>
+		template <iterated_q W> requires is_q<reiterated_t<W>, U>
 		XTAL_CXN subtype(W &&w, auto &&...oo)
 		XTAL_0EX
-		:	S_(reiterate_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
+		:	S_(reiterated_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), S_::head(XTAL_REF_(oo)...))

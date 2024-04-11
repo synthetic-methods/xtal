@@ -220,8 +220,8 @@ template <counted_q  T >	struct   counter<T> : logical<0> {using type = iteratee
 template <counter_q  T >	struct   counter<T> : logical<1> {using type =    based_t<T>;};
 
 
-template <class      T >	using   reiterate_t = _v3::ranges::subrange<iterator_t<T>, _v3::ranges::sentinel_t<T>>;
-template <class      T >	using   reiterant_t = _v3::ranges::view_interface<T>;
+template <class      T >	using reiterated_t  = _v3::ranges::subrange<iterator_t<T>, _v3::ranges::sentinel_t<T>>;
+template <class      T >	using initerated_t  = _v3::ranges::view_interface<T>;
 
 
 

@@ -110,8 +110,8 @@ struct define
 				using R_::self;
 				using R_::head;
 
-
 				XTAL_CO0_(subtype);
+				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
 				XTAL_CXN subtype(size_t const &n)

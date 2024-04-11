@@ -29,6 +29,7 @@ public:
 	//	using S_::S_;
 		
 		XTAL_CO0_(subtype);
+		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
 		XTAL_CXN subtype(integral_p auto n, auto &&...oo)

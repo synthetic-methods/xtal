@@ -53,7 +53,7 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct binding : S__binding<Xs...>
+		struct binding
 		{
 			using Y_result = typename S__binding<Xs...>::Y_result;
 			using subkind = bond::compose<cell::confer<Y_result>, R__binding<Xs...>>;
@@ -65,7 +65,9 @@ struct monomer<U, As...>
 
 			public:// CONSTRUCTION
 			//	using R_::R_;
+
 				XTAL_CO0_(subtype);
+				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
 				XTAL_CXN subtype(auto &&...xs)
@@ -97,7 +99,7 @@ struct monomer<U, As...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
 			using U_buffer = typename S_::template store_t<Y_return>;
-			using U_serve  = reiterate_t<U_buffer>;
+			using U_serve  = reiterated_t<U_buffer>;
 			using U_review = occur::review_t<U_serve>;
 		
 			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;

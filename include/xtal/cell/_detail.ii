@@ -127,10 +127,9 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-		~subtype() = default;
-		
-	//	XTAL_CO0_(subtype);
-		XTAL_CO4_(subtype);
+		XTAL_CO0_(subtype)
+	//	XTAL_CO1_(subtype)
+		XTAL_CO4_(subtype)
 		
 		///\
 		Constructs `this` using the default value. \
@@ -241,6 +240,7 @@ struct defer_field<unit_t[N_width]>
 		using S_::self;
 
 		XTAL_CO0_(subtype);
+		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 		
 		///\

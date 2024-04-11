@@ -99,7 +99,7 @@ void monomer_provision__provisioning()
 	using provide = resource::restore<constant_t<0x20>>;
 
 	using U_buffer = typename confined_t<provide>::template store_t<T_alpha>;
-	using U_serve = reiterate_t<U_buffer>;
+	using U_serve  = reiterated_t<U_buffer>;
 	using U_review = occur::review_t<U_serve>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;

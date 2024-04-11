@@ -46,7 +46,7 @@ struct buffer<U_data[N_data]>
 	using W_data = _detail::aligned_t<U_data>;
 
 	template <class T>
-	using holotype = bond::compose_s<reiterant_t<T>, bond::tag<buffer>>;
+	using holotype = bond::compose_s<initerated_t<T>, bond::tag<buffer>>;
 
 	template <class T>
 	class homotype : public holotype<T>

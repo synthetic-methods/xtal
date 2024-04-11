@@ -18,7 +18,6 @@ template <class ...Ts> concept restore_q = bond::tag_p<restore, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides a specialization of `atom::store`. \
-If `N == -1`, the member-type `store_t` is dynamically allocated. \
 
 template <bond::compose_q A>
 struct restore<A>

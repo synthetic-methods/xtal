@@ -22,8 +22,8 @@ template <bounded_q U>
 struct reserve<U>
 {
 	using U_buffer = based_t<U>;
-	using U_serve = reiterate_t<U>;
-	using subkind = bond::compose<void
+	using U_serve  = reiterated_t<U>;
+	using subkind  = bond::compose<void
 	,	cell::refer<U_serve>
 	,	cell::defer<U_serve>
 	,	cell::defer<U_buffer>
@@ -38,9 +38,8 @@ struct reserve<U>
 	//	using S_::S_;
 		using S_::self;
 		
-		~subtype() = default;
-	
-	//	XTAL_CO0_(subtype)
+		XTAL_CO0_(subtype)
+	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 	
 		XTAL_CON subtype()
@@ -56,7 +55,6 @@ struct reserve<U>
 		XTAL_0EX
 		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		
 		XTAL_TN0 store(U_buffer o, auto &&...oo)
 		XTAL_0EX
 		{

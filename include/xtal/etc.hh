@@ -171,8 +171,6 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_FN2_(...)  [[nodiscard]]  constexpr static __VA_ARGS__
 #define XTAL_LET_(...)                 constexpr static __VA_ARGS__
 
-#define XTAL_IFY_(...)              if constexpr (requires {__VA_ARGS__;}) {__VA_ARGS__;}
-#define XTAL_IFQ_(...)              if constexpr (requires {__VA_ARGS__;})
 #define XTAL_IF0                    if constexpr (0);
 #define XTAL_IF1                    if constexpr (1);
 #define XTAL_0IF_(...)        else  if constexpr (__VA_ARGS__)
@@ -202,8 +200,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
                               SIG      const  && noexcept          __VA_ARGS__   \
                               SIG             && noexcept          __VA_ARGS__   ;
 
-#define XTAL_CO0_(TYP)                           TYP()                          noexcept = default;\
-                                                ~TYP()                          noexcept = default;;
+#define XTAL_CO0_(TYP)                          ~TYP()                          noexcept = default;;
+#define XTAL_CO1_(TYP)                           TYP()                          noexcept = default;;
 #define XTAL_CO4_(TYP)                 constexpr TYP & operator = (TYP const &) noexcept = default;\
                                        constexpr TYP              (TYP const &) noexcept = default;\
                                        constexpr TYP & operator = (TYP      &&) noexcept = default;\

@@ -18,7 +18,6 @@ template <class ...Ts> concept respool_q = bond::tag_p<respool, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides a specialization of `atom::spool`. \
-If `N == -1`, the member-type `spool_t` is dynamically allocated. \
 
 template <bond::compose_q A>
 struct respool<A>

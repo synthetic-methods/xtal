@@ -120,7 +120,7 @@ struct refine
 
 	};
 	template <any_q S> requires iterable_q<S>
-	class subtype<S> : public bond::compose_s<S, subkind>, public reiterant_t<T>
+	class subtype<S> : public bond::compose_s<S, subkind>, public initerated_t<T>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
