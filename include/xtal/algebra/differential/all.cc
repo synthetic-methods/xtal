@@ -1,3 +1,3 @@
 #include "./any.cc"
-#include "./cyclic.cc"
+#include "./circular.cc"
 #include "./linear.cc"

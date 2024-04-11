@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./spool.hh"// testing...
+#include "./equeue.hh"// testing...
 
 
 
@@ -14,10 +14,10 @@ namespace xtal::atom::_test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N>
-void spool__operation()
+void equeue__operation()
 {
 	using U_event = bond::compose_s<onset_t, cell::conferred<int>>;
-	using U_queue = spool_t<U_event[N]>;
+	using U_queue = equeue_t<U_event[N]>;
 	U_queue q {(U_event) numeric_t<int>::max()};
 
 	auto e1 = U_event(1, onset_t(-1.0));
@@ -33,10 +33,10 @@ void spool__operation()
 	TRUE_(-2.0 == q.begin()->then()); q.advance(1); TRUE_(0 == q.size());
 
 }
-TAG_("spool")
+TAG_("equeue")
 {
-	TRY_("operation fluid") {spool__operation<00>();}
-	TRY_("operation fixed") {spool__operation<64>();}
+	TRY_("operation fluid") {equeue__operation<00>();}
+	TRY_("operation fixed") {equeue__operation<64>();}
 
 }
 

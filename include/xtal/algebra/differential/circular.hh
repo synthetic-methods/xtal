@@ -7,18 +7,18 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::differential
+namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  cyclic;
-template <class ..._s> using   cyclic_t = typename cyclic<_s...>::type;
-template <class ...Ts> concept cyclic_q = bond::tag_p<cyclic, Ts...>;
+template <class ..._s> struct  circular;
+template <class ..._s> using   circular_t = typename circular<_s...>::type;
+template <class ...Ts> concept circular_q = bond::tag_p<circular, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `linear` as a fixed-point fractional/cyclic value. \
+Extends `linear` as a fixed-point fractional/circular value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_t)`. \
@@ -33,7 +33,7 @@ The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
 template <class A, size_t N>
-struct cyclic<A[N]>
+struct circular<A[N]>
 {
 	using re = bond::realize<A>;
 	using U_delta = typename re::delta_t;
@@ -53,7 +53,7 @@ struct cyclic<A[N]>
 	using demitype = typename linear<U_sigma[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<cyclic>>;
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<circular>>;
 
 	template <class T>
 	class homotype : public hemitype<T>
@@ -94,7 +94,7 @@ struct cyclic<A[N]>
 
 
 		///\
-		Scales all elements of the `cyclic`. \
+		Scales all elements. \
 
 		XTAL_OP1 /= (numeric_q auto const &f)
 		XTAL_0EX
@@ -134,7 +134,7 @@ struct cyclic<A[N]>
 		}
 
 		///\
-		Offsets the first element of the `cyclic`. \
+		Offsets the first element. \
 		
 		XTAL_OP1 -= (numeric_q auto const &f)
 		XTAL_0EX

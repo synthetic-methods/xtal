@@ -268,8 +268,8 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::binding`|
 |Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::binding` compatible `&&`arguments|
 |Buffer allocation          |[`atom/buffer.hh`](include/xtal/atom/buffer.hh?ts=3) impl. static `std::vector`|
-|Buffer arithmetic          |[`atom/scalar.hh`](include/xtal/atom/scalar.hh?ts=3)|
-|Buffer transformation      |[`atom/series.hh`](include/xtal/atom/series.hh?ts=3) incl. convolution and iFFT/FFT|
+|Buffer arithmetic          |[`algebra/scalar.hh`](include/xtal/algebra/scalar.hh?ts=3)|
+|Buffer transformation      |[`algebra/series.hh`](include/xtal/algebra/series.hh?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`bond/realize.hh`](include/xtal/bond/realize.hh?ts=3) via `\.(?:truncate\|puncture)`|
 
 ## Contribution

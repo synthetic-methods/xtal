@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::group::_test
+namespace xtal::algebra::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +15,12 @@ namespace xtal::atom::group::_test
 
 TAG_("solid", "serial")
 {
+	using re = bond::realized;
+	using T_delta = typename re::delta_t;
+	using T_sigma = typename re::sigma_t;
+	using T_alpha = typename re::alpha_t;
+	using T_aphex = typename re::aphex_t;
+
 	using D1 = serial_t<int[1]>;
 	using D2 = serial_t<int[2]>;
 	using D3 = serial_t<int[3]>;

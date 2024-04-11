@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/differential/cyclic.hh"
+#include "../algebra/differential/circular.hh"
 
 
 
@@ -24,7 +24,7 @@ providing evaluation/update via succession/replacement. \
 template <size_t N, class W, typename ...As>
 struct phasor<W[N], As...>
 {
-	using W_ = atom::differential::cyclic_t<W[N]>;
+	using W_ = algebra::differential::circular_t<W[N]>;
 	
 	using re = bond::realize<W>;
 	using V = typename re::delta_t;

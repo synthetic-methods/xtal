@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::group
+namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -20,13 +20,13 @@ template <class ...Ts> concept serial_q = bond::tag_p<serial, Ts...>;
 ///\
 Extends `sector` with multiplication defined by linear convolution. \
 
-template <class U, int N>
-struct serial<U[N]>
+template <class U_data, int N_data>
+struct serial<U_data[N_data]>
 {
-	using re = bond::realize<U>;
+	using re = bond::realize<U_data>;
 	
 	template <class T>
-	using demitype = typename sector<U[N]>::template homotype<T>;
+	using demitype = typename sector<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<serial>>;
@@ -49,17 +49,17 @@ struct serial<U[N]>
 		using T_::operator*=;
 
 		///\
-		Multiplication by linear convolution, truncated by `N`. \
+		Multiplication by linear convolution, truncated by `N_data`. \
 
 		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{
-			if constexpr (re::alignment_n < N) {
-				for (auto i = N; ~--i;) {let(i) *= t.get(0);
+			if constexpr (re::alignment_n < N_data) {
+				for (auto i = N_data; ~--i;) {let(i) *= t.get(0);
 				for (auto j = i; j-- ;) {let(i) += t.get(j)*get(i - j);}}
 			}
 			else {
-				bond::seek_backward_f<N, 0>([&, this] (auto I) XTAL_0FN {let(I) *= t.get(0);
+				bond::seek_backward_f<N_data, 0>([&, this] (auto I) XTAL_0FN {let(I) *= t.get(0);
 				bond::seek_backward_f<I, 1>([&, this] (auto J) XTAL_0FN {let(I) += t.get(J)*get(I - J);});});
 			}
 			return self();

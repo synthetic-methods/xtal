@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::group::_test
+namespace xtal::algebra::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -23,11 +23,11 @@ TAG_("symbol")
 
 	TRY_("7th characterization (integer)")
 	{
-		auto constexpr N_size = 7;
-		auto constexpr M_size = N_size  - 1;
-		auto constexpr K      = M_size >> 1;
+		auto constexpr N_data = 7;
+		auto constexpr M_data = N_data  - 1;
+		auto constexpr K      = M_data >> 1;
 
-		using W = symbol_t<T_delta[N_size]>;
+		using W = symbol_t<T_delta[N_data]>;
 		W w; w.characterize();
 
 		TRUE_(w == W{ 0, 0, 2, 1,-2,-1, 3});
@@ -35,26 +35,26 @@ TAG_("symbol")
 	}
 	TRY_("7th characterization (complex)")
 	{
-		auto constexpr N_size = 7;
-		auto constexpr M_size = N_size  - 1;
-		auto constexpr K      = M_size >> 1;
+		auto constexpr N_data = 7;
+		auto constexpr M_data = N_data  - 1;
+		auto constexpr K      = M_data >> 1;
 
-		using W = symbol_t<T_aphex[N_size]>;
+		using W = symbol_t<T_aphex[N_data]>;
 		W w; w.characterize();
 		TRUE_(re::explo_f(w, K).transmorph(bond::computrim_f<8>) == W{0, 1, 1,-1, 1,-1,-1});
 
-		w.transmorph([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*M_size/re::patio_f(2, 1)));
+		w.transmorph([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*M_data/re::patio_f(2, 1)));
 		w.transmorph(bond::computrim_f<16>);
-		TRUE_(w == W{w[0], 0, 2, 1,-2,-1, w[M_size]});
+		TRUE_(w == W{w[0], 0, 2, 1,-2,-1, w[M_data]});
 
 	}
 	TRY_("7th characterization (real)")
 	{
-		auto constexpr N_size = 7;
-		auto constexpr M_size = N_size  - 1;
-		auto constexpr K      = M_size >> 1;
+		auto constexpr N_data = 7;
+		auto constexpr M_data = N_data  - 1;
+		auto constexpr K      = M_data >> 1;
 
-		using W = symbol_t<T_alpha[N_size]>;
+		using W = symbol_t<T_alpha[N_data]>;
 		W w; w.characterize();
 		w.transmorph(bond::computrim_f<16>);
 		TRUE_(w == W{0, 1, 1,-1, 1,-1,-1});
@@ -63,27 +63,27 @@ TAG_("symbol")
 
 	TRY_("5th characterization (complex)")
 	{
-		auto constexpr N_size = 5;
-		auto constexpr M_size = N_size  - 1;
-		auto constexpr K      = M_size >> 1;
+		auto constexpr N_data = 5;
+		auto constexpr M_data = N_data  - 1;
+		auto constexpr K      = M_data >> 1;
 
-		using W = symbol_t<T_aphex[N_size]>;
+		using W = symbol_t<T_aphex[N_data]>;
 		W w; w.characterize();
 		TRUE_(re::explo_f(w, K).transmorph(bond::computrim_f<8>) == W{0, 1,-1,-1, 1});
 
-		w.transmorph([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*M_size/re::patio_f(2, 1)));
+		w.transmorph([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*M_data/re::patio_f(2, 1)));
 		w.transmorph(bond::computrim_f<16>);
-		TRUE_(w == W{w[0], 0, 1,-1, w[M_size]});
+		TRUE_(w == W{w[0], 0, 1,-1, w[M_data]});
 
 	}
 	/*/
 	TRY_("5th characterization (real)")
 	{
-		auto constexpr N_size = 5;
-		auto constexpr M_size = N_size  - 1;
-		auto constexpr K      = M_size >> 1;
+		auto constexpr N_data = 5;
+		auto constexpr M_data = N_data  - 1;
+		auto constexpr K      = M_data >> 1;
 
-		using W = symbol_t<T_alpha[N_size]>;
+		using W = symbol_t<T_alpha[N_data]>;
 		W w; w.template characterize<2>();
 		w.transmorph(bond::computrim_f<16>);
 		echo(w);

@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::group::_test
+namespace xtal::algebra::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +16,13 @@ namespace xtal::atom::group::_test
 TAG_("solid", "series")
 {
 	using re = bond::realized;
+	using T_delta = typename re::delta_t;
+	using T_sigma = typename re::sigma_t;
+	using T_alpha = typename re::alpha_t;
+	using T_aphex = typename re::aphex_t;
 
 	TRY_("initialization")
 	{
-		using T_sigma = typename re::sigma_t;
-		using T_alpha = typename re::alpha_t;
-
 		T_sigma constexpr N = 1 << 3;
 		using V_series = series_t<T_alpha[N]>;
 		using U_series = series_t<T_alpha[N]>;
@@ -34,10 +35,6 @@ TAG_("solid", "series")
 	}
 	TRY_("transformation")
 	{
-		using T_sigma = typename re::sigma_t;
-		using T_alpha = typename re::alpha_t;
-		using T_aphex = typename re::aphex_t;
-
 		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr O = 1 << 5;
 		T_sigma constexpr N = 1 << 3;
@@ -66,10 +63,6 @@ TAG_("solid", "series")
 	}
 	TRY_("convolution")
 	{
-		using T_sigma = typename re::sigma_t;
-		using T_alpha = typename re::alpha_t;
-		using T_aphex = typename re::aphex_t;
-
 		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr N = 1 << 3;
 		T_sigma constexpr M = N  - 1;
@@ -86,10 +79,6 @@ TAG_("solid", "series")
 	}
 	TRY_("multiplication")
 	{
-		using T_sigma = typename re::sigma_t;
-		using T_alpha = typename re::alpha_t;
-		using T_aphex = typename re::aphex_t;
-
 		using C4 = series_t<T_aphex[4]>;
 		using D4 = series_t<T_aphex[4]>;
 		
@@ -99,10 +88,6 @@ TAG_("solid", "series")
 	}
 	TRY_("generation")
 	{
-		using T_sigma = typename re::sigma_t;
-		using T_alpha = typename re::alpha_t;
-		using T_aphex = typename re::aphex_t;
-
 		using U_alpha = scalar_t<T_alpha[1<<1]>;
 		using U_aphex = scalar_t<T_aphex[1<<1]>;
 		using W_aphex = series_t<U_aphex[1<<4]>;

@@ -1,6 +1,4 @@
 #include "./any.cc"
-#include "./differential/all.cc"
-#include "./group/all.cc"
 #include "./block.cc"
 #include "./buffer.cc"
-#include "./spool.cc"
+#include "./equeue.cc"

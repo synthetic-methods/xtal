@@ -1,6 +1,4 @@
 #include "./any.hh"
-#include "./differential/all.hh"
-#include "./group/all.hh"
 #include "./block.hh"
 #include "./buffer.hh"
-#include "./spool.hh"
+#include "./equeue.hh"

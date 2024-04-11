@@ -12,9 +12,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  spool;
-template <class ..._s> using   spool_t = typename spool<_s...>::type;
-template <class ...Ts> concept spool_q = bond::tag_p<spool, Ts...>;
+template <class ..._s> struct  equeue;
+template <class ..._s> using   equeue_t = typename equeue<_s...>::type;
+template <class ...Ts> concept equeue_q = bond::tag_p<equeue, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,14 +23,19 @@ A fluid-sized fixed-capacity priority-queue based on `buffer_t<A>`. \
 Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
+///\note\
+Naming intended to reflect event-processing, \
+as well as the shallow (in)equality comparison used for ordering. \
+
+
 template <class A>
-struct spool<A>
+struct equeue<A>
 {
 	template <class T>
 	using demitype = initerated_t<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<spool>>;
+	using hemitype = bond::compose_s<demitype<T>, bond::tag<equeue>>;
 
 	template <class T>
 	class homotype : public hemitype<T>

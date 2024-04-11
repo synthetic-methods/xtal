@@ -1,6 +1,7 @@
 #include "./any.hh"
-#include "./bond/all.hh"
+#include "./algebra/all.hh"
 #include "./atom/all.hh"
+#include "./bond/all.hh"
 #include "./cell/all.hh"
 #include "./flux/all.hh"
 #include "./occur/all.hh"

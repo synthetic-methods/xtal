@@ -1,13 +1,13 @@
 #pragma once
 #include "./any.hh"
-#include "../group/serial.hh"
+#include "../serial.hh"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::differential
+namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +26,7 @@ struct linear<U[N]>
 	using re = bond::realize<U>;
 	
 	template <class T>
-	using demitype = typename group::serial<U[N]>::template homotype<T>;
+	using demitype = typename serial<U[N]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<linear>>;

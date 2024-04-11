@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::group
+namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -20,17 +20,17 @@ template <class ...Ts> concept series_q = bond::tag_p<series, Ts...>;
 ///\
 Extends `sector` with multiplication defined by circular convolution. \
 
-template <class U_type, int N_size>
-struct series<U_type[N_size]>
+template <class U_data, int N_data>
+struct series<U_data[N_data]>
 {
-	using U_v0 = U_type;
+	using U_v0 = U_data;
 	using U_v1 = devalue_t<U_v0>;
 	using U_v2 = devalue_t<U_v1>;
 
-	using re = bond::realize<U_type>;
+	using re = bond::realize<U_data>;
 	
 	template <class T>
-	using demitype = typename sector<U_type[N_size]>::template homotype<T>;
+	using demitype = typename sector<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
 	using hemitype = bond::compose_s<demitype<T>, bond::tag<series>>;
@@ -63,20 +63,20 @@ struct series<U_type[N_size]>
 			generate(XTAL_REF_(oo)...);
 		}
 
-		template <size_t N_limit=N_size>
+		template <size_t N_limit=N_data>
 		XTAL_TN1_(T &) generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX
-		XTAL_REQ complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_type>
+		XTAL_REQ complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
 		{
 			using W1  = U_v1;
 			using U2  = scalar_t<U_v2[2]>;
-			using W1_ = series_t<W1[N_size<<1]>;
-			using U2_ = series_t<U2[N_size<<1]>;
+			using W1_ = series_t<W1[N_data<<1]>;
+			using U2_ = series_t<U2[N_data<<1]>;
 			static_assert(sizeof(W1_) == sizeof(U2_));
 			
-			reinterpret_cast<W1_ &>(self()).template generate<N_size, 0, 2, 0>(u1);
-			reinterpret_cast<U2_ &>(self()).template generate<N_size, 0, 2, 1>({u2, re::template root_f<-1>(u2)});
-			bond::seek_forward_f<N_size>([this] (auto i) XTAL_0FN {
+			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
+			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, re::template root_f<-1>(u2)});
+			bond::seek_forward_f<N_data>([this] (auto i) XTAL_0FN {
 				auto const &[o, e] = get(i);
 				let(i) = {o*e.real(), _std::conj(o)*e.imag()};
 			});
@@ -85,8 +85,8 @@ struct series<U_type[N_size]>
 		///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
 			filled by the corresponding powers of `u`. \
 
-		template <size_t N_limit=N_size, size_t N_index=0, size_s N_step=1, size_s N_skip=0>
-		XTAL_TN1_(T &) generate(U_type const &u)
+		template <size_t N_limit=N_data, size_t N_index=0, size_s N_step=1, size_s N_skip=0>
+		XTAL_TN1_(T &) generate(U_data const &u)
 		XTAL_0EX
 		{
 			using I = typename T_::difference_type;
@@ -129,23 +129,23 @@ struct series<U_type[N_size]>
 		template <int N_shift=0>
 		XTAL_TN1_(T &) generate()
 		XTAL_0EX
-		XTAL_REQ complex_field_q<U_type>
+		XTAL_REQ complex_field_q<U_data>
 		{
 		//	Initialize the forwards and backwards iterators:
 			auto const i = T_::begin();
 			auto const j = T_::rend() - 1;
 			
-		//	Compute the fractional sinusoid for this `N_size`:
-			auto constexpr x = re::patio_f(-1, N_size);
+		//	Compute the fractional sinusoid for this `N_data`:
+			auto constexpr x = re::patio_f(-1, N_data);
 			auto const     y = re::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
-			typename T_::difference_type constexpr M = N_size >> 2;// `1/8`th
+			typename T_::difference_type constexpr M = N_data >> 2;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
-			if constexpr (-2 <= N_shift) _detail::copy_to(_std::prev(j, 2*M), _std::span(i, _std::next(i, 1*M)), [] (U_type const &v) XTAL_0FN_(U_type {-v.imag(), -v.real()}));
-			if constexpr (-1 <= N_shift) _detail::copy_to(_std::next(i, 2*M), _std::span(i, _std::next(i, 2*M)), [] (U_type const &v) XTAL_0FN_(U_type { v.imag(), -v.real()}));
-			if constexpr (-0 <= N_shift) _detail::copy_to(_std::next(i, 4*M), _std::span(i, _std::next(i, 4*M)), [] (U_type const &v) XTAL_0FN_(U_type {-v.real(), -v.imag()}));
+			if constexpr (-2 <= N_shift) _detail::copy_to(_std::prev(j, 2*M), _std::span(i, _std::next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
+			if constexpr (-1 <= N_shift) _detail::copy_to(_std::next(i, 2*M), _std::span(i, _std::next(i, 2*M)), [] (U_data const &v) XTAL_0FN_(U_data { v.imag(), -v.real()}));
+			if constexpr (-0 <= N_shift) _detail::copy_to(_std::next(i, 4*M), _std::span(i, _std::next(i, 4*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.real(), -v.imag()}));
 			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `bond::seek`.
 			
 			return self();
@@ -160,7 +160,7 @@ struct series<U_type[N_size]>
 		template <int N_direction=1> requires sign_p<N_direction, 1>
 		XTAL_TN1 transform(isomorphic_q<T> auto &that)
 		XTAL_0FX
-		XTAL_REQ complex_field_q<U_type>
+		XTAL_REQ complex_field_q<U_data>
 		{
 			using Y = XTAL_TYP_(that);
 			using X = typename Y::dual::type;
@@ -170,7 +170,7 @@ struct series<U_type[N_size]>
 			I const n_size = that.size(); assert(2 <= n_size);
 			I const h_size = n_size >> 1; assert(1 <= h_size);
 			I const k_size = bond::realize<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
-			I const K_size = bond::realize<I>::bit_floor_f((I) N_size); assert(k_size <= K_size);
+			I const K_size = bond::realize<I>::bit_floor_f((I) N_data); assert(k_size <= K_size);
 
 		//	Move all entries to their bit-reversed locations:
 			for (I h = 0; h < h_size; ++h) {
@@ -189,8 +189,8 @@ struct series<U_type[N_size]>
 				I const  n = n_size;
 				for (I i = 0; i < u; i += 1) {I const i_k = i << _k;
 				for (I j = i; j < n; j += w) {
-					U_type const y = that[j + u]*get(i_k);
-					U_type const x = that[j + 0];
+					U_data const y = that[j + u]*get(i_k);
+					U_data const x = that[j + 0];
 					that[j + u] = x - y;
 					that[j + 0] = x + y;
 				}}
@@ -247,7 +247,7 @@ struct series<U_type[N_size]>
 		XTAL_0EX
 		{
 			auto &s = self();
-			if constexpr (complex_field_q<U_type>) {
+			if constexpr (complex_field_q<U_data>) {
 				T(ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {

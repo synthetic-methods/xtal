@@ -1,3 +1,3 @@
 #include "./any.hh"
-#include "./cyclic.hh"
+#include "./circular.hh"
 #include "./linear.hh"

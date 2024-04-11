@@ -21,12 +21,12 @@ template <typename ..._s> using  reserve_t = confined_t<reserve<_s...>>;
 template <bounded_q U>
 struct reserve<U>
 {
-	using U_buffer = based_t<U>;
-	using U_serve  = reiterated_t<U>;
-	using subkind  = bond::compose<void
+	using U_store = based_t<U>;
+	using U_serve = reiterated_t<U>;
+	using subkind = bond::compose<void
 	,	cell::refer<U_serve>
 	,	cell::defer<U_serve>
-	,	cell::defer<U_buffer>
+	,	cell::defer<U_store>
 	>;
 
 	template <class S>
@@ -44,18 +44,18 @@ struct reserve<U>
 	
 		XTAL_CON subtype()
 		XTAL_0EX
-		:	subtype(U_buffer())
+		:	subtype(U_store())
 		{}
 		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
-		:	subtype(U_buffer(), XTAL_REF_(oo)...)
+		:	subtype(U_store(), XTAL_REF_(oo)...)
 		{}
 		
-		XTAL_CXN subtype(U_buffer o, auto &&...oo)
+		XTAL_CXN subtype(U_store o, auto &&...oo)
 		XTAL_0EX
 		:	S_(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		XTAL_TN0 store(U_buffer o, auto &&...oo)
+		XTAL_TN0 store(U_store o, auto &&...oo)
 		XTAL_0EX
 		{
 			self(U_serve(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
