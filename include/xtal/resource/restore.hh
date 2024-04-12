@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/buffer.hh"
+#include "../atom/store.hh"
 
 
 
@@ -51,7 +51,7 @@ struct restore<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::buffer_t<U[(unsigned) A{}]>;
+		using store_t = atom::store_t<U[(unsigned) A{}]>;
 
 	};
 };

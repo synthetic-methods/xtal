@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./sector.hh"
+#include "./serial.hh"
 #include "./scalar.hh"
 
 
@@ -18,7 +18,7 @@ template <class ...Ts> concept series_q = bond::tag_p<series, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `sector` with multiplication defined by circular convolution. \
+Extends `serial` with multiplication defined by circular convolution. \
 
 template <class U_data, int N_data>
 struct series<U_data[N_data]>
@@ -30,16 +30,16 @@ struct series<U_data[N_data]>
 	using re = bond::realize<U_data>;
 	
 	template <class T>
-	using demitype = typename sector<U_data[N_data]>::template homotype<T>;
+	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<series>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<series>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 
 	public:
 		using T_::T_;
@@ -163,7 +163,7 @@ struct series<U_data[N_data]>
 		XTAL_REQ complex_field_q<U_data>
 		{
 			using Y = XTAL_TYP_(that);
-			using X = typename Y::dual::type;
+			using X = typename Y::transverse::type;
 			using I = typename Y::difference_type;
 		
 		//	Ensure the size of both domain and codomain are powers of two:
@@ -212,7 +212,7 @@ struct series<U_data[N_data]>
 		XTAL_0FX
 		{
 			using Y = XTAL_TYP_(that);
-			using X = typename Y::dual::type;
+			using X = typename Y::transverse::type;
 			X  x = reinterpret_cast<X const &>(that);
 			Y &y = reinterpret_cast<Y       &>(x);
 			(void) transform<N_direction>(y);

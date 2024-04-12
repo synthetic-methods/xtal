@@ -123,10 +123,10 @@ struct dynamic_count
 
 	struct type : public homotype<type>
 	{
-		using co = homotype<type>;
+		using T_ = homotype<type>;
 	
 	public:
-		using co::co;
+		using T_::T_;
 
 		XTAL_TN2 functor()
 		XTAL_0EX

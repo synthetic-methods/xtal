@@ -319,27 +319,27 @@ void compute_truncate__zoned()
 	auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 	auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-	realized::alpha_t x{}, co = N_sgn*_std::pow(2, N_rho);
-	x = co*up2; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn0);
-	x = co*up1; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn0);
-//	x = co*up0; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*dn0);
-	x = co*dn0; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*dn0);
-	x = co*dn1; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*dn1);
-	x = co*dn2; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*dn2);
+	realized::alpha_t x{}, a = N_sgn*_std::pow(2, N_rho);
+	x = a*up2; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn0);
+	x = a*up1; TRUE_(realized::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn0);
+//	x = a*up0; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*dn0);
+	x = a*dn0; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*dn0);
+	x = a*dn1; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*dn1);
+	x = a*dn2; TRUE_(realized::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*dn2);
 	
-	x = co*up2; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn1);
-	x = co*up1; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn1);
-	x = co*up0; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn1);
-	x = co*dn0; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn1);
-	x = co*dn1; TRUE_(realized::truncate_f<1>(x, N_rho) ==     0); TRUE_(x ==  co*dn1);
-	x = co*dn2; TRUE_(realized::truncate_f<1>(x, N_rho) ==     0); TRUE_(x ==  co*dn2);
+	x = a*up2; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn1);
+	x = a*up1; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn1);
+	x = a*up0; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn1);
+	x = a*dn0; TRUE_(realized::truncate_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn1);
+	x = a*dn1; TRUE_(realized::truncate_f<1>(x, N_rho) ==     0); TRUE_(x ==  a*dn1);
+	x = a*dn2; TRUE_(realized::truncate_f<1>(x, N_rho) ==     0); TRUE_(x ==  a*dn2);
 	
-	x = co*up2; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn2);
-	x = co*up1; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn2);
-	x = co*up0; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn2);
-	x = co*dn0; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn2);
-	x = co*dn1; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*dn2);
-	x = co*dn2; TRUE_(realized::truncate_f<2>(x, N_rho) ==     0); TRUE_(x ==  co*dn2);
+	x = a*up2; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn2);
+	x = a*up1; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn2);
+	x = a*up0; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn2);
+	x = a*dn0; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn2);
+	x = a*dn1; TRUE_(realized::truncate_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn2);
+	x = a*dn2; TRUE_(realized::truncate_f<2>(x, N_rho) ==     0); TRUE_(x ==  a*dn2);
 
 }
 TAG_("realize", "truncate")
@@ -375,28 +375,28 @@ void compute_puncture__real_zoned()
 	auto const up2 = realized::upsilon_f(2), dn2 = realized::dnsilon_f(2);
 	auto const up3 = realized::upsilon_f(3), dn3 = realized::dnsilon_f(3);
 
-	realized::alpha_t x{}, co = N_sgn*_std::pow(2, N_rho);
+	realized::alpha_t x{}, a = N_sgn*_std::pow(2, N_rho);
 	
-	x = co*up2; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up2);
-	x = co*up1; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up1);
-	x = co*up0; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up0);
-//	x = co*dn0; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  co*up0);
-	x = co*dn1; TRUE_(realized::puncture_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*up0);
-	x = co*dn2; TRUE_(realized::puncture_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  co*up0);
+	x = a*up2; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up2);
+	x = a*up1; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up1);
+	x = a*up0; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up0);
+//	x = a*dn0; TRUE_(realized::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up0);
+	x = a*dn1; TRUE_(realized::puncture_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*up0);
+	x = a*dn2; TRUE_(realized::puncture_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*up0);
 	
-	x = co*up2; TRUE_(realized::puncture_f<1>(x, N_rho) ==     0); TRUE_(x ==  co*up2);
-	x = co*up1; TRUE_(realized::puncture_f<1>(x, N_rho) ==     0); TRUE_(x ==  co*up1);
-	x = co*up0; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*up1);
-	x = co*dn0; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*up1);
-	x = co*dn1; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*up1);
-	x = co*dn2; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  co*up1);
+	x = a*up2; TRUE_(realized::puncture_f<1>(x, N_rho) ==     0); TRUE_(x ==  a*up2);
+	x = a*up1; TRUE_(realized::puncture_f<1>(x, N_rho) ==     0); TRUE_(x ==  a*up1);
+	x = a*up0; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*up1);
+	x = a*dn0; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*up1);
+	x = a*dn1; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*up1);
+	x = a*dn2; TRUE_(realized::puncture_f<1>(x, N_rho) == N_sgn); TRUE_(x ==  a*up1);
 	
-	x = co*up2; TRUE_(realized::puncture_f<2>(x, N_rho) ==     0); TRUE_(x ==  co*up2);
-	x = co*up1; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*up2);
-	x = co*up0; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*up2);
-	x = co*dn0; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*up2);
-	x = co*dn1; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*up2);
-	x = co*dn2; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  co*up2);
+	x = a*up2; TRUE_(realized::puncture_f<2>(x, N_rho) ==     0); TRUE_(x ==  a*up2);
+	x = a*up1; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*up2);
+	x = a*up0; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*up2);
+	x = a*dn0; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*up2);
+	x = a*dn1; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*up2);
+	x = a*dn2; TRUE_(realized::puncture_f<2>(x, N_rho) == N_sgn); TRUE_(x ==  a*up2);
 
 }
 template <int N_sgn=1>
@@ -407,22 +407,22 @@ void compute_puncture__real_unzoned()
 	auto const oo2 = realized::minimal_f(2);
 	auto const oo3 = realized::minimal_f(3);
 
-	realized::alpha_t w{}, x{}, y{}, co = N_sgn;
+	realized::alpha_t w{}, x{}, y{}, a = N_sgn;
 
-	w = x = co*oo2; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == co*oo2);
-	w = x = co*oo1; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == co*oo1);
-	w = x = co*oo0; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == co*oo0);
-//	w = x =      0; y = realized::puncture_f<0>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo0);
+	w = x = a*oo2; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == a*oo2);
+	w = x = a*oo1; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == a*oo1);
+	w = x = a*oo0; y = realized::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == a*oo0);
+//	w = x =      0; y = realized::puncture_f<0>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo0);
 
-	w = x = co*oo2; y = realized::puncture_f<1>(x); TRUE_(y ==     0); TRUE_(x == co*oo2);
-	w = x = co*oo1; y = realized::puncture_f<1>(x); TRUE_(y ==     0); TRUE_(x == co*oo1);
-	w = x = co*oo0; y = realized::puncture_f<1>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo1);
-//	w = x =      0; y = realized::puncture_f<1>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo1);
+	w = x = a*oo2; y = realized::puncture_f<1>(x); TRUE_(y ==     0); TRUE_(x == a*oo2);
+	w = x = a*oo1; y = realized::puncture_f<1>(x); TRUE_(y ==     0); TRUE_(x == a*oo1);
+	w = x = a*oo0; y = realized::puncture_f<1>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo1);
+//	w = x =      0; y = realized::puncture_f<1>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo1);
 
-	w = x = co*oo2; y = realized::puncture_f<2>(x); TRUE_(y ==     0); TRUE_(x == co*oo2);
-	w = x = co*oo1; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo2);
-	w = x = co*oo0; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo2);
-//	w = x =      0; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == co*oo2);
+	w = x = a*oo2; y = realized::puncture_f<2>(x); TRUE_(y ==     0); TRUE_(x == a*oo2);
+	w = x = a*oo1; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo2);
+	w = x = a*oo0; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo2);
+//	w = x =      0; y = realized::puncture_f<2>(x); TRUE_(y == N_sgn); TRUE_(x == a*oo2);
 
 }
 TAG_("realize", "puncture")

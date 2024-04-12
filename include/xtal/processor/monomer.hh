@@ -98,14 +98,14 @@ struct monomer<U, As...>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_buffer = typename S_::template store_t<Y_return>;
-			using U_serve  = reiterated_t<U_buffer>;
+			using U_store = typename S_::template store_t<Y_return>;
+			using U_serve  = reiterated_t<U_store>;
 			using U_review = occur::review_t<U_serve>;
 		
 			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
-			XTAL_LET_(bool) N_sized = requires (U_buffer &u) {u.resize(U_resize{});};
+			XTAL_LET_(bool) N_sized = requires (U_store &u) {u.resize(U_resize{});};
 
-			using subkind = bond::compose<resource::reserve<U_buffer>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::reserve<U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>

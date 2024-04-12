@@ -29,16 +29,16 @@ struct symbol<U_data[N_data]>
 	using U_alpha = typename re::alpha_t;
 	
 	template <class T>
-	using demitype = typename scalar<U_data[N_data]>::template homotype<T>;
+	using allotype = typename scalar<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<symbol>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<symbol>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 		using  I_ = typename T_::difference_type;
 
 		XTAL_LET modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
@@ -53,10 +53,10 @@ struct symbol<U_data[N_data]>
 	public:// OPERATE
 
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_TN2 get(I_ i) XTAL_0FX_(&)  {return          (T_::operator[](modulo(i)));}
+		XTAL_TN2 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
 
 		XTAL_TN2 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_TN2 let(I_ i) XTAL_0EX_(&)  {return          (T_::operator[](modulo(i)));}
+		XTAL_TN2 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
 
 
 	public:// CONSTRUCT

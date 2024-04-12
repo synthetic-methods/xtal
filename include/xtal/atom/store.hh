@@ -11,9 +11,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  buffer;
-template <class ..._s> using   buffer_t = typename buffer<_s...>::type;
-template <class ...Ts> concept buffer_q = bond::tag_p<buffer, Ts...>;
+template <class ..._s> struct  store;
+template <class ..._s> using   store_t = typename store<_s...>::type;
+template <class ...Ts> concept store_q = bond::tag_p<store, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,23 +30,23 @@ then a fixed-capacity implementation is provided. \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <class U_data> requires pointer_q<U_data>
-struct buffer<U_data>
+struct store<U_data>
 {
-	using type = bond::compose_s<_std::vector<pointed_t<U_data>>, bond::tag<buffer>>;
+	using type = bond::compose_s<_std::vector<pointed_t<U_data>>, bond::tag<store>>;
 
 };
 template <class U_data>
-struct buffer<U_data[~0U]>
-:	buffer<U_data *>
+struct store<U_data[~0U]>
+:	store<U_data *>
 {
 };
 template <class U_data, size_t N_data>
-struct buffer<U_data[N_data]>
+struct store<U_data[N_data]>
 {
 	using W_data = _detail::aligned_t<U_data>;
 
 	template <class T>
-	using holotype = bond::compose_s<initerated_t<T>, bond::tag<buffer>>;
+	using holotype = bond::compose_s<initerated_t<T>, bond::tag<store>>;
 
 	template <class T>
 	class homotype : public holotype<T>

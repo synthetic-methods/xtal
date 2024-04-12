@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./circular.hh"// testing...
+#include "./phase.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::algebra::differential::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("circular")
+TAG_("phase")
 {
 	using re = bond::realize<size_t>;
 	using T_sigma = typename re::sigma_t;
@@ -25,12 +25,12 @@ TAG_("circular")
 	auto mt19937_f = typename realized::mt19937_t();
 	mt19937_f.seed(Catch::rngSeed());
 
-	using U_phi = circular_t<T_alpha[2]>;
+	using U_phi = phase_t<T_alpha[2]>;
 
-	using D1 = circular_t<T_delta[1]>;
-	using D2 = circular_t<T_delta[2]>;
-	using D3 = circular_t<T_delta[3]>;
-	using D4 = circular_t<T_delta[4]>;
+	using D1 = phase_t<T_delta[1]>;
+	using D2 = phase_t<T_delta[2]>;
+	using D3 = phase_t<T_delta[3]>;
+	using D4 = phase_t<T_delta[4]>;
 	
 	TRY_("construction")
 	{

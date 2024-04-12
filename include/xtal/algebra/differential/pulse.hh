@@ -11,31 +11,37 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  linear;
-template <class ..._s> using   linear_t = typename linear<_s...>::type;
-template <class ...Ts> concept linear_q = bond::tag_p<linear, Ts...>;
+template <class ..._s> struct  pulse;
+template <class ..._s> using   pulse_t = typename pulse<_s...>::type;
+template <class ...Ts> concept pulse_q = bond::tag_p<pulse, Ts...>;
+
+XTAL_LET  pulse_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(pulse_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Extends `serial` with succession. \
 
-template <class U, int N>
-struct linear<U[N]>
+template <class U_data> requires disarray_q<U_data>
+struct pulse<U_data> : pulse<U_data[2]>
+{};
+template <class U_data, int N_data>
+struct pulse<U_data[N_data]>
 {
-	using re = bond::realize<U>;
+	using re = bond::realize<U_data>;
 	
 	template <class T>
-	using demitype = typename serial<U[N]>::template homotype<T>;
+	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<linear>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<pulse>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 	
 	public:// CONSTRUCTION
 		using T_::T_;
@@ -59,7 +65,7 @@ struct linear<U[N]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			bond::seek_forward_f<N - 1>([this] (auto i) XTAL_0FN_(let(i) += get(i + 1)));
+			bond::seek_forward_f<N_data - 1>([this] (auto i) XTAL_0FN_(let(i) += get(i + 1)));
 			return self();
 		}
 
@@ -75,7 +81,7 @@ struct linear<U[N]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			bond::seek_backward_f<N - 1>([this] (auto i) XTAL_0FN_(let(i) -= get(i + 1)));
+			bond::seek_backward_f<N_data - 1>([this] (auto i) XTAL_0FN_(let(i) -= get(i + 1)));
 			return self();
 		}
 

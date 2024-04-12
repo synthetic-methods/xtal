@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./buffer.hh"// testing...
+#include "./store.hh"// testing...
 
 
 
@@ -13,19 +13,19 @@ namespace xtal::atom::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("buffer")
+TAG_("store")
 {
 	TRY_("assignment")
 	{
 		using T_sigma = typename bond::realized::sigma_t;
 		using T_alpha = typename bond::realized::alpha_t;
 
-		using U_buffer = buffer_t<T_alpha[128]>;
+		using U_store = store_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;
 
-		auto const zhs = U_buffer{7, 8, 9};
-		auto       yhs = U_buffer{4, 5, 6};
-		auto       xhs = U_buffer{1, 2, 3};
+		auto const zhs = U_store{7, 8, 9};
+		auto       yhs = U_store{4, 5, 6};
+		auto       xhs = U_store{1, 2, 3};
 		TRUE_(equal_f(xhs, U_vector{1, 2, 3}));
 		
 		xhs = yhs;// copy
@@ -34,7 +34,7 @@ TAG_("buffer")
 		xhs = zhs;// copy
 		TRUE_(equal_f(xhs, U_vector{7, 8, 9}));
 
-		xhs = U_buffer{3, 5, 7};// move
+		xhs = U_store{3, 5, 7};// move
 		TRUE_(equal_f(xhs, U_vector{3, 5, 7}));
 
 	}
@@ -43,10 +43,10 @@ TAG_("buffer")
 		using T_sigma = typename bond::realized::sigma_t;
 		using T_alpha = typename bond::realized::alpha_t;
 
-		using U_buffer = buffer_t<T_alpha[128]>;
+		using U_store = store_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;
 
-		auto xs = U_buffer{0, 1, 2, 3, 4};
+		auto xs = U_store{0, 1, 2, 3, 4};
 		auto x_ = xs.begin();
 
 		xs.erase(_std::next(x_, 2));

@@ -97,7 +97,7 @@ XTAL_LET zap_f = map_f([] XTAL_1FN_(_std::tie));
 XTAL_LET mix_f = map_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 
 template <iterator_q ...Xs>
-XTAL_FN2 funnel_f(auto &&y, Xs &&...xs)
+XTAL_FN2 spool_f(auto &&y, Xs &&...xs)
 XTAL_0EX
 {
 	auto w_ = recount_f(y);
@@ -115,15 +115,15 @@ template <iterator_q ...Xs>
 XTAL_FN0 tunnel_f(auto &&y, Xs &&...xs)
 XTAL_0EX
 {
-	_v3::ranges::move(funnel_f(y, XTAL_REF_(xs)...), y.begin());
+	_v3::ranges::move(spool_f(y, XTAL_REF_(xs)...), y.begin());
 }
 
 template <size_t N>
-XTAL_FN2 funnel_f(auto &&y, iterator_q auto x)
+XTAL_FN2 spool_f(auto &&y, iterator_q auto x)
 XTAL_0EX
 {
 	return [&]<auto ...I>(bond::seek_t<I...>)
-		XTAL_0FN_(funnel_f(y, _std::next(x, I)...))
+		XTAL_0FN_(spool_f(y, _std::next(x, I)...))
 	(bond::seek_f<N> {});
 }
 template <size_t N>

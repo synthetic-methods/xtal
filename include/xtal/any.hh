@@ -174,9 +174,9 @@ template <           class    X >	using     argument_t	=          typename _deta
 template <class T               >	XTAL_LET     array_n =          _detail:: array_n<T>;
 template <class T,      int N=-1>	concept      array_q =          _detail:: array_q<T> and N <  0   or array_n<T> == N;
 template <class T,      int N=-1>	concept   subarray_q =          _detail:: array_q<T> and 0 <= N  and array_n<T> <= N;
-
-template <int N=-1,  class ...Ts>	concept      array_p = (...and    array_q<Ts, N>);
-template <int N=-1,  class ...Ts>	concept   subarray_p = (...and subarray_q<Ts, N>);
+template <           class ...Ts>	concept   disarray_q = not (...and    array_q<Ts>);
+template <int N=-1,  class ...Ts>	concept      array_p =     (...and    array_q<Ts, N>);
+template <int N=-1,  class ...Ts>	concept   subarray_p =     (...and subarray_q<Ts, N>);
 
 template <class               T >	using      pointed_t =          _detail:: pointed_t<T >;
 template <class               T >	using      pointer_t =          _detail:: pointer_t<T >;

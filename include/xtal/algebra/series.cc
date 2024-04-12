@@ -50,7 +50,7 @@ TAG_("solid", "series")
 		source[2] = source[M - 2] = T_aphex(3.0, 3.0);
 		source[3] = source[M - 3] = T_aphex(4.0, 4.0);
 
-		auto target = basis.transformation(source).transmorph(iffy);
+		auto target = basis.transformation(source).transact(iffy);
 		TRUE_(target[0] == iffy(T_aphex( 0.1600000000000000e+2,  0.1600000000000000e+2)));
 		TRUE_(target[1] == iffy(T_aphex(-0.4828427124746192e+1, -0.1165685424949238e+2)));
 		TRUE_(target[2] == iffy(T_aphex( 0.0000000000000000e+0,  0.0000000000000000e+0)));
@@ -73,7 +73,7 @@ TAG_("solid", "series")
 		U_series lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 		U_series rhs = {1, 0, 1, 0, 0, 0, 0, 0};
 		U_series xhs = {0, 1, 2, 1, 2, 0, 0, 0};
-		U_series yhs = basis.convolution(lhs, rhs).transmorph(iffy);
+		U_series yhs = basis.convolution(lhs, rhs).transact(iffy);
 		TRUE_(xhs == yhs);
 
 	}

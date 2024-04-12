@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/equeue.hh"
+#include "../atom/spool.hh"
 
 
 
@@ -17,7 +17,7 @@ template <class ...Ts> concept respool_q = bond::tag_p<respool, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::equeue`. \
+Provides a specialization of `atom::spool`. \
 
 template <bond::compose_q A>
 struct respool<A>
@@ -51,7 +51,7 @@ struct respool<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::equeue_t<U[(unsigned) A{}]>;
+		using spool_t = atom::spool_t<U[(unsigned) A{}]>;
 
 	};
 };

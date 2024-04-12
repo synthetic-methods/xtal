@@ -22,10 +22,10 @@ XTAL_0EZ_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice buffer according to `occur::stage` requests/responses. \
+but expands/contracts the voice spool according to `occur::stage` requests/responses. \
 
 ///\note\
-The attached `buffer` and `spool` determine the sample buffer and voice spool respectively. \
+The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
 template <class U, typename ...As>
 struct polymer<U, As...>
@@ -150,7 +150,7 @@ struct polymer<U, As...>
 				}
 
 				///\
-				Renders the buffer slice designated by `review_o` and `render_o` \
+				Renders the store slice designated by `review_o` and `render_o` \
 				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
 				template <occur::review_q Rv, occur::render_q Rn>

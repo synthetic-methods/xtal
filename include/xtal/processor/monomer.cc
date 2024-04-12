@@ -98,8 +98,8 @@ void monomer_provision__provisioning()
 
 	using provide = resource::restore<constant_t<0x20>>;
 
-	using U_buffer = typename confined_t<provide>::template store_t<T_alpha>;
-	using U_serve  = reiterated_t<U_buffer>;
+	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
+	using U_serve  = reiterated_t<U_store>;
 	using U_review = occur::review_t<U_serve>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -112,7 +112,7 @@ void monomer_provision__provisioning()
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
-	auto u_vector = U_buffer{0, 0, 0};
+	auto u_vector = U_store{0, 0, 0};
 	auto u_review = U_review(u_vector);
 	auto u_render = U_render(3);
 

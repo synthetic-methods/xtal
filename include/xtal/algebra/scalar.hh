@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./sector.hh"
+#include "./serial.hh"
 
 
 
@@ -15,11 +15,17 @@ template <class ..._s> struct  scalar;
 template <class ..._s> using   scalar_t = typename scalar<_s...>::type;
 template <class ...Ts> concept scalar_q = bond::tag_p<scalar, Ts...>;
 
+XTAL_LET  scalar_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(scalar_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends the `dual` of `sector` with even/odd-reflection iff `N_data == 2`. \
+Extends the `transverse` of `serial` with even/odd-reflection iff `N_data == 2`. \
 
+template <class U_data> requires disarray_q<U_data>
+struct scalar<U_data> : scalar<U_data[2]>
+{};
 template <class U_data, int N_data>
 struct scalar<U_data[N_data]>
 {
@@ -29,16 +35,16 @@ struct scalar<U_data[N_data]>
 	using U_alpha = typename re::alpha_t;
 	
 	template <class T>
-	using demitype = typename sector<U_data[N_data]>::type::dual::template homotype<T>;
+	using allotype = typename serial<U_data[N_data]>::type::transverse::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<scalar>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<scalar>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 	
 	public:
 		using T_::get;
@@ -51,10 +57,10 @@ struct scalar<U_data[N_data]>
 
 	};
 	template <class T> requires (N_data == 2)
-	class homotype<T> : public hemitype<T>
+	class homotype<T> : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 	
 	public:
 		using T_::get;

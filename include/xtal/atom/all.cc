@@ -1,4 +1,4 @@
 #include "./any.cc"
 #include "./block.cc"
-#include "./buffer.cc"
-#include "./equeue.cc"
+#include "./store.cc"
+#include "./spool.cc"

@@ -28,7 +28,7 @@ TAG_("scalar")
 
 		auto foo = W{2.0, 0.5};
 		auto bar = static_cast<W>(re::template root_2f<2>((T_alpha) 2));
-		bar.transmorph([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
+		bar.transact([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
 		TRUE_(foo == bar);
 
 		foo *= {(T_alpha) 0.0, (T_alpha) 0.0};

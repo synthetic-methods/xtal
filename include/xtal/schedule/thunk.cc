@@ -115,8 +115,8 @@ void thunk_processor()
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
-	using U_buffer = _std::array<alpha_t, N_store>;
-	U_buffer u_buffer{};
+	using U_store = _std::array<alpha_t, N_store>;
+	U_store u_store{};
 
 	using V_gate  = occur::inferred_t<L_gate, alpha_t>;
 	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
@@ -132,13 +132,13 @@ void thunk_processor()
 	fx_gate <<= (U_cue) 7 << (V_gate)  7;
 	fx_gate <<= (U_cue) 7 << (V_gate) 77;
 
-	fx_gate >>= U_render(N_store)*0; _v3::ranges::copy(fx_gate, u_buffer.begin());
-	TRUE_(u_buffer == U_buffer {  7,  1,  1, -1,  1, -1, -1, 77});
+	fx_gate >>= U_render(N_store)*0; _v3::ranges::copy(fx_gate, u_store.begin());
+	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	fx_gate <<= (U_cue) 4 << (V_gate) 11;
 	
-	fx_gate >>= U_render(N_store)*1; _v3::ranges::copy(fx_gate, u_buffer.begin());
-	TRUE_(u_buffer == U_buffer { 77, 77, 77, 77, 11, 11, 11, 11});
+	fx_gate >>= U_render(N_store)*1; _v3::ranges::copy(fx_gate, u_store.begin());
+	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
 TAG_("thunk", "processor")

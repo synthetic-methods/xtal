@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./buffer.hh"
+#include "./store.hh"
 
 
 
@@ -12,42 +12,37 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  equeue;
-template <class ..._s> using   equeue_t = typename equeue<_s...>::type;
-template <class ...Ts> concept equeue_q = bond::tag_p<equeue, Ts...>;
+template <class ..._s> struct  spool;
+template <class ..._s> using   spool_t = typename spool<_s...>::type;
+template <class ...Ts> concept spool_q = bond::tag_p<spool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-A fluid-sized fixed-capacity priority-queue based on `buffer_t<A>`. \
+A fluid-sized fixed-capacity priority-queue based on `store_t<A>`. \
 Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
-///\note\
-Naming intended to reflect event-processing, \
-as well as the shallow (in)equality comparison used for ordering. \
-
-
 template <class A>
-struct equeue<A>
+struct spool<A>
 {
 	template <class T>
-	using demitype = initerated_t<T>;
+	using allotype = initerated_t<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<equeue>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<spool>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
-		using T_ = hemitype<T>;
+		using T_ = holotype<T>;
 
-		using U_buffer = buffer_t<A>;
-		using U_point = typename U_buffer::iterator;
-		using U_value = typename U_buffer::value_type;
-		using U_count = typename U_buffer::difference_type;
+		using U_store = store_t<A>;
+		using U_point = typename U_store::iterator;
+		using U_value = typename U_store::value_type;
+		using U_count = typename U_store::difference_type;
 
-		U_buffer u_buffer;
+		U_store u_store;
 		U_count u_begin = 0;
 		U_count u_end   = 0;
 
@@ -63,11 +58,11 @@ struct equeue<A>
 
 		XTAL_CON homotype(braces_t<U_value> w)
 		:	u_end{_std::distance(w.begin(), w.end())}
-		,	u_buffer(w.begin(), w.end())
+		,	u_store(w.begin(), w.end())
 		{}
 
-		XTAL_TO2_(XTAL_TN2   begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
-		XTAL_TO2_(XTAL_TN2     end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_TO2_(XTAL_TN2   begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		XTAL_TO2_(XTAL_TN2     end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
 		XTAL_TN1_(U_point) advance(U_count n=1) XTAL_0EX {u_begin += n; return  begin(0);}
 		XTAL_TN1_(U_point) abandon(U_count n=1)
 		XTAL_0EX
@@ -78,12 +73,12 @@ struct equeue<A>
 		XTAL_TN0 cull()
 		XTAL_0EX
 		{
-			u_buffer.erase(u_buffer.begin(), end());
+			u_store.erase(u_store.begin(), end());
 		}
 		XTAL_TN0 cull(auto &&f)
 		XTAL_0EX
 		{
-			u_buffer.erase(_std::remove_if(begin(), end(), f), end());
+			u_store.erase(_std::remove_if(begin(), end(), f), end());
 		}
 
 		///\note\
@@ -95,7 +90,7 @@ struct equeue<A>
 		{
 			assert(i < end());
 			u_begin -= i < begin();
-			u_buffer.erase(i);
+			u_store.erase(i);
 			abandon(begin() == end());
 		}
 		XTAL_TN0 pop()
@@ -107,12 +102,12 @@ struct equeue<A>
 		XTAL_TN2_(U_point) scan(auto &&w)
 		XTAL_0EX
 		{
-			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w));
+			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
 		}
 		XTAL_TN2_(U_point) scan(auto &&w, auto &&f)
 		XTAL_0EX
 		{
-			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
+			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
 			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
 			);
 		}
@@ -134,18 +129,18 @@ struct equeue<A>
 		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
 		XTAL_0EX
 		{
-			return u_buffer.insert(v_, XTAL_REF_(w));
+			return u_store.insert(v_, XTAL_REF_(w));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
 		{
-			return u_buffer.insert(v_, U_value(XTAL_REF_(ws)...));
+			return u_store.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
-		XTAL_REQ_(u_buffer.inplace(v_, XTAL_REF_(ws)...))
+		XTAL_REQ_(u_store.inplace(v_, XTAL_REF_(ws)...))
 		{
-			return u_buffer.inplace(v_, XTAL_REF_(ws)...);
+			return u_store.inplace(v_, XTAL_REF_(ws)...);
 		}
 
 	};

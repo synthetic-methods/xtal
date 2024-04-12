@@ -30,16 +30,16 @@ struct lattice<U_data[N_data]>
 	using re = bond::realize<U_data>;
 	
 	template <class T>
-	using demitype = typename atom::block<U_data[N_data]>::template homotype<T>;
+	using allotype = typename atom::block<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<lattice>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<lattice>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 		using  I_ = typename T_::difference_type;
 
 	public:

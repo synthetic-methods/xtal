@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./linear.hh"
+#include "./pulse.hh"
 
 
 
@@ -11,14 +11,17 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  circular;
-template <class ..._s> using   circular_t = typename circular<_s...>::type;
-template <class ...Ts> concept circular_q = bond::tag_p<circular, Ts...>;
+template <class ..._s> struct  phase;
+template <class ..._s> using   phase_t = typename phase<_s...>::type;
+template <class ...Ts> concept phase_q = bond::tag_p<phase, Ts...>;
+
+XTAL_LET  phase_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(phase_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `linear` as a fixed-point fractional/circular value. \
+Extends `pulse` as a fixed-point fractional/phase value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_t)`. \
@@ -32,17 +35,20 @@ either by truncating the type or by parameterizing the operator. \
 The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
+template <class U_data> requires disarray_q<U_data>
+struct phase<U_data> : phase<U_data[2]>
+{};
 template <class A, size_t N>
-struct circular<A[N]>
+struct phase<A[N]>
 {
 	using re = bond::realize<A>;
 	using U_delta = typename re::delta_t;
 	using U_sigma = typename re::sigma_t;
 	using U_alpha = typename re::alpha_t;
 	
-	using W_delta = linear_t<U_delta[N]>;
-	using W_sigma = linear_t<U_sigma[N]>;
-	using W_alpha = linear_t<U_alpha[N]>;
+	using W_delta = pulse_t<U_delta[N]>;
+	using W_sigma = pulse_t<U_sigma[N]>;
+	using W_alpha = pulse_t<U_alpha[N]>;
 
 	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(_std::bit_cast<U_sigma>(U_delta(u*re::diplo_f(re::N_depth))));
 	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(_std::bit_cast<U_delta>(v))*re::haplo_f(re::N_depth));
@@ -50,16 +56,16 @@ struct circular<A[N]>
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
 	template <class T>
-	using demitype = typename linear<U_sigma[N]>::template homotype<T>;
+	using allotype = typename pulse<U_sigma[N]>::template homotype<T>;
 
 	template <class T>
-	using hemitype = bond::compose_s<demitype<T>, bond::tag<circular>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<phase>>;
 
 	template <class T>
-	class homotype : public hemitype<T>
+	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = hemitype<T>;
+		using  T_ = holotype<T>;
 
 	public:// CONSTRUCTION
 	//	using T_::T_;
@@ -81,7 +87,7 @@ struct circular<A[N]>
 		using T_::self;
 		using T_::twin;
 
-		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transmorph<W_alpha>(U_f);}
+		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transact<W_alpha>(U_f);}
 		XTAL_OP2 () (size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
 		XTAL_TN2   d(size_t i)  XTAL_0FX {return U_f(T_::operator[](i));}
 		

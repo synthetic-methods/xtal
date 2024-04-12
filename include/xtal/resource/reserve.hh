@@ -13,7 +13,7 @@ namespace xtal::resource
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Represents a local `{buffer,serve}` pair, \
+Represents a local `{store,serve}` pair, \
 used as e.g. a buffer and its abstract/copyable `std::span`. \
 
 template <typename ..._s> struct reserve;
