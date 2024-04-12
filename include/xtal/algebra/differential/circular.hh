@@ -61,16 +61,12 @@ struct circular<A[N]>
 		friend T;
 		using  T_ = hemitype<T>;
 
-
 	public:// CONSTRUCTION
+	//	using T_::T_;
 
-		~homotype() {};
+		XTAL_CO0_(homotype)
+	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
-		
-		XTAL_CON homotype()
-		XTAL_0EX
-		:	T_()
-		{}
 
 	//	Reified to allow inspection of initializer-type:
 		using initializer_list = _std::initializer_list<U_alpha>;

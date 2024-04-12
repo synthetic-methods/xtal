@@ -24,9 +24,9 @@ template <class U_data, int N_data>
 struct symbol<U_data[N_data]>
 {
 	using re = bond::realize<U_data>;
-	using U_delta = re::delta_t;
-	using U_sigma = re::sigma_t;
-	using U_alpha = re::alpha_t;
+	using U_delta = typename re::delta_t;
+	using U_sigma = typename re::sigma_t;
+	using U_alpha = typename re::alpha_t;
 	
 	template <class T>
 	using demitype = typename scalar<U_data[N_data]>::template homotype<T>;
@@ -70,28 +70,76 @@ struct symbol<U_data[N_data]>
 		XTAL_0EX
 		XTAL_REQ ((bool) (1&N_data))
 		{
-			size_t constexpr M_size = N_data  - 1;
-			size_t constexpr K      = M_size >> 1;
-			size_t           k      = N_subscript;
+			size_s constexpr N = N_data;
+			size_s constexpr M = N_data - 1;
+			size_s constexpr K = M >> 1;
+			size_s           k = N_subscript;
 			let(0) = {};
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<M_size>([&, this] (auto const &i) XTAL_0FN {
-					let(k%N_data) = i - M_size*(K < i);
+				bond::seek_forward_f<K>([&, this] (auto const &i) XTAL_0FN {
+					auto const o = k%N;
+					let(    o) =  i;
+					let(N - o) =  i - K;
 					k *= K;
 				});
+				let(1) = 0;
 			}
 			else {
 				U_data w =  1;
 				U_data u = -1;
 				if constexpr (complex_field_q<U_data>) {
-					u = re::circle_f(re::patio_f(2, M_size));
+					u = re::circle_f(re::patio_f(1, K));
 				}
 				bond::seek_forward_f<K>([&, this] (auto &&) XTAL_0FN {
-					auto const head = k%N_data;
-					auto const tail =   N_data - head;
-					let(head) =  w;
-					let(tail) = -w;
+					auto const o = k%N;
+					let(    o) =  w;
+					let(N - o) = -w;
+					w *= u;
+					k *= K;
+				});
+			}
+			return self();
+		}
+		template <int N_subscript=1>
+		XTAL_TN1_(T &) subcharacterize()
+		XTAL_0EX
+		{
+			size_t constexpr N = N_data*2 + 1;
+			size_t constexpr M = N_data*2 + 0;
+			size_t constexpr K = N_data;
+			size_t           k = N_data;
+
+			if constexpr (integral_number_q<U_data>) {
+				bond::seek_forward_f<K>([&, this] (auto const &i) XTAL_0FN {
+					auto const o = k%N;
+					if (K < o) {
+						let(M - o) = (1 + i) - K;
+					}
+					else {
+						let(o - 1) = (1 + i);
+					}
+					k *= K;
+				});
+				let(0) = 0;
+			}
+			else {
+				U_data w, u;
+				if constexpr (complex_field_q<U_data>) {
+					u = re::circle_f(re::patio_f(1, K));
+				}
+				else {
+					u = 1;
+				}
+				w = u;
+				bond::seek_forward_f<K>([&, this] (auto &&) XTAL_0FN {
+					auto const o = k%N;
+					if (K < o) {
+						let(M - o) = -w;
+					}
+					else {
+						let(o - 1) =  w;
+					}
 					w *= u;
 					k *= K;
 				});
@@ -103,7 +151,6 @@ struct symbol<U_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -169,7 +169,10 @@ struct buffer<U_data[N_data]>
 
 
 	public:// CONSTRUCTION
-		homotype() noexcept = default; ~homotype() {clear();}
+	~	homotype() {clear();}
+	
+	//	XTAL_CO0_(homotype)
+		XTAL_CO1_(homotype)
 
 		///\
 		Insert constructor. \

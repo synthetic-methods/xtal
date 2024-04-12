@@ -24,9 +24,9 @@ template <class U_data, int N_data>
 struct scalar<U_data[N_data]>
 {
 	using re = bond::realize<U_data>;
-	using U_delta = re::delta_t;
-	using U_sigma = re::sigma_t;
-	using U_alpha = re::alpha_t;
+	using U_delta = typename re::delta_t;
+	using U_sigma = typename re::sigma_t;
+	using U_alpha = typename re::alpha_t;
 	
 	template <class T>
 	using demitype = typename sector<U_data[N_data]>::type::dual::template homotype<T>;

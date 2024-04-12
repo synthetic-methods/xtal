@@ -91,7 +91,8 @@ struct block<U_type[N_size]>
 	public:// CONSTRUCTION
 	//	using T_::T_;
 
-		~homotype() noexcept = default;
+		XTAL_CO0_(homotype)
+	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
 		XTAL_CON homotype()
