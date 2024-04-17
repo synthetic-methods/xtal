@@ -71,7 +71,7 @@ struct phase<A[N]>
 	//	using T_::T_;
 
 		XTAL_CO0_(homotype)
-	//	XTAL_CO1_(homotype)
+		XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 
 	//	Reified to allow inspection of initializer-type:
@@ -81,6 +81,8 @@ struct phase<A[N]>
 		XTAL_CXN homotype(bounded_q auto const &o) XTAL_0EX: T_(o.size()) {_detail::copy_to(T_::data(), o, V_f);}
 		XTAL_CXN homotype(bounded_q auto      &&o) XTAL_0EX: T_(o.size()) {_detail::move_to(T_::data(), XTAL_MOV_(o), V_f);}
 		XTAL_CXN homotype(bounded_q auto      &&o) XTAL_0EX requires _std::integral<devalue_t<decltype(o)>> : T_(XTAL_REF_(o)) {}
+		XTAL_CON homotype(U_alpha             &&o) XTAL_0EX                                                 : homotype({XTAL_MOV_(o)}) {}
+		XTAL_CON homotype(U_alpha        const &o) XTAL_0EX                                                 : homotype({         (o)}) {}
 
 
 	public:// OPERATION
@@ -97,6 +99,9 @@ struct phase<A[N]>
 
 		///\
 		Scales all elements. \
+
+	//	using T_::operator/=;
+	//	using T_::operator*=;
 
 		XTAL_OP1 /= (numeric_q auto const &f)
 		XTAL_0EX
@@ -138,6 +143,9 @@ struct phase<A[N]>
 		///\
 		Offsets the first element. \
 		
+		using T_::operator-=;
+		using T_::operator+=;
+
 		XTAL_OP1 -= (numeric_q auto const &f)
 		XTAL_0EX
 		{

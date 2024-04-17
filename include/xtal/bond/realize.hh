@@ -674,6 +674,7 @@ public:
 	XTAL_0EX
 	{
 		using W = XTAL_TYP_(w);
+		using U = devalue_t<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
 		int constexpr M_lim = N_lim&0xF;
@@ -681,7 +682,7 @@ public:
 		XTAL_IF0 //	ELIMINATION
 		XTAL_0IF_(N_pow ==  0) {return W(1);}
 		XTAL_0IF_(N_pow ==  1) {return w   ;}
-		XTAL_0IF_(N_pow == -1 and N_lim < 0) {return 1/w;}
+		XTAL_0IF_(N_pow == -1 and N_lim < 0) {return U(1)/w;}
 		XTAL_0IF_(N_pow ==  2 and N_lim < 0) {if (not _std::is_constant_evaluated()) {return   _std::sqrt(w);}}
 		XTAL_0IF_(N_pow == -2 and N_lim < 0) {if (not _std::is_constant_evaluated()) {return 1/_std::sqrt(w);}}
 
@@ -695,8 +696,8 @@ public:
 		
 		XTAL_IF0	//	CORRECTION
 		XTAL_0IF_(K_pow == -2 and N_lim < 0) {
-			n /= 1 + n*n*w;
-			n *= 2;
+			n /= U(1) + n*n*w;
+			n *= U(2);
 		}
 		XTAL_IF0 // RESOLUTION
 	//	XTAL_0IF_(N_pow ==  1) {return w;}
@@ -712,13 +713,7 @@ public:
 	}
 
 	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
-	XTAL_FN2 root_1f(auto &&w)
-	XTAL_0EX
-	{
-		return single_t<alpha_t>(XTAL_REF_(w));
-	}
-	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
-	XTAL_FN2 root_2f(alpha_t const &w)
+	XTAL_FN2 roots_f(alpha_t const &w)
 	XTAL_0EX
 	{
 		int constexpr K_pow = -S_::designed_f(N_pow);
@@ -733,8 +728,8 @@ public:
 	static_assert(root_f<-2>(2) == (alpha_t) 0.7071067811865475244008443621048490393);
 	static_assert(root_f<-2>(3) == (alpha_t) 0.5773502691896257645091487805019574556);
 
-	static_assert(root_2f< 2>(2)[0] == (alpha_t) 1.4142135623730950488016887242096980786);
-	static_assert(root_2f< 2>(2)[1] == (alpha_t) 0.7071067811865475244008443621048490393);
+	static_assert(roots_f< 2>(2)[0] == (alpha_t) 1.4142135623730950488016887242096980786);
+	static_assert(roots_f< 2>(2)[1] == (alpha_t) 0.7071067811865475244008443621048490393);
 
 
 
@@ -743,7 +738,7 @@ public:
 	XTAL_0EX
 	{
 		XTAL_IF0
-		XTAL_0IF_(0 == N_pow) {return root_2f<2,       N_lim>(w);}
+		XTAL_0IF_(0 == N_pow) {return roots_f<2,       N_lim>(w);}
 		XTAL_0IF_(0 != N_pow) {return root_f <2*N_pow, N_lim>(w);}
 	}
 	template <int N_pow=1, int N_lim=-1> requires sign_p<N_pow, 0>

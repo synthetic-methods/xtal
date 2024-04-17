@@ -104,7 +104,7 @@ struct block<U_type[N_size]>
 			assert(n <= N_size);
 			_std::uninitialized_value_construct_n(_std::next(T_::data(), n), T_::size() - n);
 		}
-		XTAL_CON homotype(braces_t<U_type> a)
+		XTAL_CON homotype(embrace_t<U_type> a)
 		XTAL_0EX
 		:	homotype(a.size())
 		{

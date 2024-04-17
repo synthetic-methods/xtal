@@ -74,8 +74,8 @@ struct serial<U_data[N_data]>
 		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) += t.get(i);}); return self();}
 		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) -= t.get(i);}); return self();}
 
-		template <subarray_q<N_data> Y> XTAL_OP1_(T &) += (Y const &w) XTAL_0EX {bond::seek_forward_f<array_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN {let(i) += w[i];}); return self();}
-		template <subarray_q<N_data> Y> XTAL_OP1_(T &) -= (Y const &w) XTAL_0EX {bond::seek_forward_f<array_n<XTAL_TYP_(w)>>([&, this] (auto i) XTAL_0FN {let(i) -= w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_n<W>>([&, this] (auto i) XTAL_0FN {let(i) += w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_n<W>>([&, this] (auto i) XTAL_0FN {let(i) -= w[i];}); return self();}
 
 		///\
 		The dual of `T`, replacing addition by point-wise multiplication, \
@@ -106,6 +106,9 @@ struct serial<U_data[N_data]>
 			//	Vector multiplication (Hadamard product):
 				XTAL_OP1_(L &) *= (L const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) *= t.get(i);}); return self();}
 				XTAL_OP1_(L &) /= (L const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) /= t.get(i);}); return self();}
+
+				template <array_q<N_data> W> XTAL_OP1_(L &) *= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) *= w.get(i);}); return self();}
+				template <array_q<N_data> W> XTAL_OP1_(L &) /= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) /= w.get(i);}); return self();}
 
 			//	Scalar sum:
 				template <int N_sign=1>
@@ -165,7 +168,7 @@ struct serial<U_data[N_data]>
 					_std::uninitialized_fill_n(L_::data(), L_::size(), U_data{1});
 				}
 				/***/
-				XTAL_CON homotype(braces_t<U_data> w)
+				XTAL_CON homotype(embrace_t<U_data> w)
 				XTAL_0EX
 				{
 					_detail::copy_to(L_::begin(), w.begin(), w.end());

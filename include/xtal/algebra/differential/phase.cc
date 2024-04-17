@@ -26,12 +26,23 @@ TAG_("phase")
 	mt19937_f.seed(Catch::rngSeed());
 
 	using U_phi = phase_t<T_alpha[2]>;
+	using W_phi = _std::complex<U_phi>;
 
 	using D1 = phase_t<T_delta[1]>;
 	using D2 = phase_t<T_delta[2]>;
 	using D3 = phase_t<T_delta[3]>;
 	using D4 = phase_t<T_delta[4]>;
 	
+	TRY_("complexion")
+	{
+		W_phi a{{0.1}, {0.2}};
+		W_phi b{{0.1}, {0.2}};
+		W_phi c = b + a;
+
+		TRUE_(c.real());
+		TRUE_(c == W_phi{0.2, 0.4});
+
+	}
 	TRY_("construction")
 	{
 		D2 a_d2{0.250, 0.250};

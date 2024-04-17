@@ -56,7 +56,7 @@ struct spool<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON homotype(braces_t<U_value> w)
+		XTAL_CON homotype(embrace_t<U_value> w)
 		:	u_end{_std::distance(w.begin(), w.end())}
 		,	u_store(w.begin(), w.end())
 		{}

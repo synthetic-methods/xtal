@@ -137,32 +137,41 @@ template <class   ...Ts>	concept    rebased_q	= (...and  _detail:: rebased_q<Ts>
 template <class   ...Ts>	concept    debased_q	= (...and  _detail:: debased_q<Ts>);
 
 
-template <class   ...Ts>	concept    unvalue_q	= (...and  _detail::  unvalue_q<Ts>);
-template <class   ...Ts>	concept    invalue_q	= (...and  _detail::  invalue_q<Ts>);
-template <class   ...Ts>	concept    devalue_q	= (...and  _detail::  devalue_q<Ts>);
-template <class      T >	using      unvalue_t	=          _detail::  unvalue_t<T>;
-template <class      T >	using      invalue_t	=          _detail::  invalue_t<T>;
-template <class      T >	using      devalue_t	=          _detail::  devalue_t<T>;
-template <class      T >	using      devolve_t	=          _detail::  devolve_t<T>;
+template <class   ...Ts>	concept    unvalue_q	= (...and  _detail:: unvalue_q<Ts>);
+template <class   ...Ts>	concept    invalue_q	= (...and  _detail:: invalue_q<Ts>);
+template <class   ...Ts>	concept    devalue_q	= (...and  _detail:: devalue_q<Ts>);
+template <class      T >	using      unvalue_t	=          _detail:: unvalue_t<T>;
+template <class      T >	using      invalue_t	=          _detail:: invalue_t<T>;
+template <class      T >	using      devalue_t	=          _detail:: devalue_t<T>;
+template <class      T >	using      devolve_t	=          _detail:: devolve_t<T>;
+template <class      T >	XTAL_LET   devalue_n =          _detail:: devalue_n<T>;
+template <class      T >	XTAL_LET   devolve_n =          _detail:: devolve_n<T>;
+template <class T, class Y>	concept   devalued_q = devalue_n<T> < devalue_n<Y>;
+template <class T, class Y>	concept   devalued_p = devalue_n<Y> < devalue_n<T>;
+template <class T, class Y>	concept   devolved_q = devolve_n<T> < devolve_n<Y>;
+template <class T, class Y>	concept   devolved_p = devolve_n<Y> < devolve_n<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class            ...Ts>	concept isomorphic_q	=     _detail:: isomorphic<Ts...>::value;
-template <class            ...Ts>	concept epimorphic_q	=     _detail:: epimorphic<Ts...>::value;
+template <class         ...Ts>	concept   isomorphic_q	=         _detail:: isomorphic<Ts...>::value;
+template <class         ...Ts>	concept   epimorphic_q	=         _detail:: epimorphic<Ts...>::value;
+template <class         ...Ts>	concept anisomorphic_q	=     not _detail:: isomorphic<Ts...>::value;
+template <class         ...Ts>	concept anepimorphic_q	=     not _detail:: epimorphic<Ts...>::value;
 
-template <class            ...Ts>	concept         id_q	=     _detail:: identical<Ts...>::value;//< `Ts...` are identical.
-template <class            ...Ts>	concept         is_q	=     _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <class            ...Ts>	concept       make_q	=     _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class  T , class ...Ys>	concept       make_p	=     _detail:: make_p<T, Ys...>;
+template <class            ...Ts>	concept         id_q	=         _detail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <class            ...Ts>	concept         is_q	=         _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <class            ...Ts>	concept       make_q	=         _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class  T , class ...Ys>	concept       make_p	=         _detail:: make_p<T, Ys...>;
+template <class  T , class ...Ys>	concept       made_p	= (...and _detail:: made_p<T, Ys>);//< `Ys...` are derived from `T`.
+template <class  T , class ...Ys>	concept       made_q	= (...and _detail:: made_q<T, Ys>);//< `T` is derived from `Ys...`.
 
-template <class  T , class ...Ys>	concept       made_p	= (...and _detail::made_p<T, Ys>);//< `Ys...` are `std::derived_from<T>`.
-template <class  T , class ...Ys>	concept       made_q	= (...and _detail::made_q<T, Ys>);//< `T` is `std::derived_from<Ys>...`.
+template <class  T , class ...Ys>	concept      widen_q = make_q<T, Ys...> and not make_p<T, Ys...>;
+template <class  T , class ...Ys>	concept      widen_p = make_p<T, Ys...> and not make_q<T, Ys...>;
 
 template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
 template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
 
-template <class  T , class ...Ys>	concept      bogey_q	= infungible_q<T, Ys...> and not isomorphic_q<T, Ys...>;
 template <class            ...Ys>	concept     common_q	= some_q<Ys...> and _detail:: common_q<Ys...>;//< `Ys...` share an ancestor.
 template <class            ...Ys>	using       common_t	=                   _detail:: common_t<Ys...>;
 template <           class    X >	using     argument_t	=          typename _detail:: argument<X>::type;
@@ -171,9 +180,8 @@ template <           class    X >	using     argument_t	=          typename _deta
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T               >	XTAL_LET     array_n =          _detail:: array_n<T>;
-template <class T,      int N=-1>	concept      array_q =          _detail:: array_q<T> and N <  0   or array_n<T> == N;
-template <class T,      int N=-1>	concept   subarray_q =          _detail:: array_q<T> and 0 <= N  and array_n<T> <= N;
+template <class T,      int N=-1>	concept      array_q =          _detail::   array_q<T> and N <  0   or devalue_n<T> == N;
+template <class T,      int N=-1>	concept   subarray_q =          _detail::   array_q<T> and 0 <= N  and devalue_n<T> <= N;
 template <           class ...Ts>	concept   disarray_q = not (...and    array_q<Ts>);
 template <int N=-1,  class ...Ts>	concept      array_p =     (...and    array_q<Ts, N>);
 template <int N=-1,  class ...Ts>	concept   subarray_p =     (...and subarray_q<Ts, N>);
@@ -191,9 +199,9 @@ Ranged...
 
 template <class      ...Ts>	concept   unbounded_q = (...and  _detail:: unbounded_q<Ts>);
 template <class      ...Ts>	concept     bounded_q = (...and  _detail::   bounded_q<Ts>);
-template <class      ...Ts>	concept      braced_q = (...and  _detail::    braced_q<Ts>);
-template <class         T >	using        braced_t =          _detail::    braced_t<T >;
-template <class         T >	using        braces_t =          _detail::    braces_t<T >;
+template <class      ...Ts>	concept      reembrace_q = (...and  _detail::    reembrace_q<Ts>);
+template <class         T >	using        reembrace_t =          _detail::    reembrace_t<T >;
+template <class         T >	using        embrace_t =          _detail::    embrace_t<T >;
 
 template <class      ...Ts>	concept    iterable_q = (...and  _detail::  iterable_q<Ts>);
 template <class      ...Ts>	concept    iterated_q = (...and  _detail::  iterated_q<Ts>);

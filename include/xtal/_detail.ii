@@ -88,14 +88,14 @@ template <class      T >	concept     based_q = _std::is_trivially_copyable_v<T> 
 	true;
 template <class      T >	concept   unbased_q = not based_q<T>;
 
-template <class      T >	struct    debased             : logical<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_q  T >	struct    debased<T       & > : logical<1> {using type =       T*;};
-template <unbased_q  T >	struct    debased<T const & > : logical<1> {using type = const T*;};
+template <class      T >	struct    debased            : logical<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_q  T >	struct    debased<T       &> : logical<1> {using type =       T*;};
+template <unbased_q  T >	struct    debased<T const &> : logical<1> {using type = const T*;};
 template <class      T >	concept   debased_q = (bool) debased<T>::value;
 
-template <class      T >	struct    rebased             : logical<1> {using type = _std::remove_reference_t<T>;};
-template <unbased_q  T >	struct    rebased<T       & > : logical<0> {using type =       T&;};
-template <unbased_q  T >	struct    rebased<T const & > : logical<0> {using type = const T&;};
+template <class      T >	struct    rebased            : logical<1> {using type = _std::remove_reference_t<T>;};
+template <unbased_q  T >	struct    rebased<T       &> : logical<0> {using type =       T&;};
+template <unbased_q  T >	struct    rebased<T const &> : logical<0> {using type = const T&;};
 template <class      T >	concept   rebased_q = (bool) rebased<T>::value;
 
 
@@ -103,17 +103,21 @@ template <class      T >	concept   unvalue_q = requires {typename based_t<T>::va
 template <unvalue_q  T >	using     unvalue_t =           typename based_t<T>::value_type;
 
 template <class      T >	concept   invalue_q = not _std::same_as<based_t<T>, _std::remove_all_extents_t<based_t<T>>>;
-template <invalue_q  T >	using     invalue_t =                               _std::remove_all_extents_t<based_t<T>>;
+template <invalue_q  T >	using     invalue_t =                               _std::remove_all_extents_t<based_t<T>> ;
 
+template <class      T >	struct    devalue;
+template <class      T >	using     devalue_t = typename devalue<based_t<T>>::type;
+template <class      T >	XTAL_LET  devalue_n =          devalue<based_t<T>>::size;
+template <class      T >	struct    devalue    {using type =                     T  ; XTAL_LET_(size_t) size =                      1;};
+template <unvalue_q  T >	struct    devalue<T> {using type =           unvalue_t<T> ; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
+template <invalue_q  T >	struct    devalue<T> {using type =           invalue_t<T> ; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
 template <class      T >	concept   devalue_q = unvalue_q<T> or invalue_q<T>;
-template <class      T >	struct    devalue    {using value_type =   based_t<T>;};
-template <unvalue_q  T >	struct    devalue<T> {using value_type = unvalue_t<T>;};
-template <invalue_q  T >	struct    devalue<T> {using value_type = invalue_t<T>;};
-template <class      T >	using     devalue_t = typename devalue<T>::value_type;
 
-template <class      T >	struct    devolve    {using value_type = based_t<T>;};
-template <devalue_q  T >	struct    devolve<T> : devalue<devalue_t<T>> {};
-template <class      T >	using     devolve_t = typename devolve<T>::value_type;
+template <class      T >	struct    devolve;
+template <class      T >	using     devolve_t = typename devolve<based_t<T>>::type;
+template <class      T >	XTAL_LET  devolve_n =          devolve<based_t<T>>::size;
+template <class      T >	struct    devolve    {using type =                     T  ; XTAL_LET_(size_t) size =                      1;};
+template <devalue_q  T >	struct    devolve<T> {using type = devolve_t<devalue_t<T>>; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +136,6 @@ template <           class ...Ts>	concept        make_q = epitropic<Ts...>::valu
 template <class  T , class ...Ys>	concept        make_p = _std::constructible_from<T, Ys...>;
 template <class  T , class    Y >	concept        made_p = _std::derived_from<based_t<Y>, based_t<T>>;
 template <class  T , class    Y >	concept        made_q = _std::derived_from<based_t<T>, based_t<Y>>;
-
 template <class  T , class    Y >	concept    fungible_q = made_p<T, Y> or made_q<T, Y>;
 template <class  T , class    Y >	concept  infungible_q = not fungible_q<T, Y>;
 
@@ -144,8 +147,7 @@ template <based_q             X >	struct     argument<X>  {using type = X const 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class      T >	XTAL_LET    array_n = _std::is_array_v<T>? _std::extent_v<T>: T{}.size();
-template <class      T >	concept     array_q = _std::is_array_v<T> or made_q<T, _std::array<devalue_t<T>, array_n<T>>>;
+template <class      T >	concept     array_q = _std::is_array_v<T> or fungible_q<T, _std::array<devolve_t<T>, devalue_n<T>>>;
 
 template <class      T >	using     pointed_t = _std::remove_reference_t<decltype(*XTAL_VAL_(T))>;
 template <class      T >	using     pointer_t = _std::remove_reference_t<decltype(&XTAL_VAL_(T))>;
@@ -158,24 +160,24 @@ template <class      T >	concept   pointer_q = requires {*XTAL_VAL_(T);};
 //\
 Ranged...
 
-template <class      T >	concept    _begin_q = requires {*XTAL_VAL_(T).begin();};
-template <class      T >	concept      _end_q = requires {*XTAL_VAL_(T).  end();};
-template <class      T >	using      _begin_t = decltype ( XTAL_VAL_(T).begin() );
-template <class      T >	using        _end_t = decltype ( XTAL_VAL_(T).  end() );
+template <class      T >	concept     begin_q = requires {*XTAL_VAL_(T).begin();};
+template <class      T >	concept       end_q = requires {*XTAL_VAL_(T).  end();};
+template <class      T >	using       begin_t = decltype ( XTAL_VAL_(T).begin() );
+template <class      T >	using         end_t = decltype ( XTAL_VAL_(T).  end() );
 
-template <class      T >	concept unbounded_q = _begin_q<T> and not _end_q<T>;
-template <class      T >	concept   bounded_q = _begin_q<T> and     _end_q<T>;
+template <class      T >	concept unbounded_q = begin_q<T> and not end_q<T>;
+template <class      T >	concept   bounded_q = begin_q<T> and     end_q<T>;
 
-template <class      T >	concept  embraced_q = requires {typename T::initializer_list;};
-template <class      T >	concept    braced_q = embraced_q<T> or devalue_q<T>;
-template <class      T >	struct     braced    {using type = _std::initializer_list<devalue_t<T>>;};
-template <embraced_q T >	struct     braced<T> {using type = typename T::initializer_list;};
-template <class      T >	using      braced_t = typename braced<T>::type;
-template <class      W >	using      braces_t = _std::initializer_list<W>;
+template <class      T >	concept   debrace_q = requires {typename T::initializer_list;};
+template <class      T >	concept reembrace_q = debrace_q<T> or devalue_q<T>;
+template <class      T >	struct  reembrace    {using type = _std::initializer_list<devalue_t<T>>;};
+template <debrace_q  T >	struct  reembrace<T> {using type = typename T::initializer_list;};
+template <class      T >	using   reembrace_t = typename reembrace<T>::type;
+template <class      W >	using     embrace_t = _std::initializer_list<W>;
 
 
-template <class      T >	concept  iterable_q = _begin_q<T> and not requires (T t) {t.front();};
-template <class      T >	concept  iterated_q = _begin_q<T> and     requires (T t) {t.front();};//_v3::ranges::forward_range
+template <class      T >	concept  iterable_q = begin_q<T> and not requires (T t) {t.front();};
+template <class      T >	concept  iterated_q = begin_q<T> and     requires (T t) {t.front();};//_v3::ranges::forward_range
 template <class      T >	concept  iterator_q = requires (T t) {*++t;};//_v3::ranges::forward_iterator
 
 template <class      T >	struct   iterated;
@@ -193,13 +195,13 @@ template <iterated_q T >	struct   iterated<T>: logical<1> {using type =         
 template <iterator_q T >	struct   iterated<T>: logical<0> {using type =                     void ;};
 template <integral_p T >	struct   iterated<T>: logical<0> {using type =            interval_t<T> ;};
 
-template <iterable_q T >	struct   iterator<T>: logical<0> {using type =              _begin_t<T> ;};
-template <iterated_q T >	struct   iterator<T>: logical<0> {using type =              _begin_t<T> ;};
+template <iterable_q T >	struct   iterator<T>: logical<0> {using type =               begin_t<T> ;};
+template <iterated_q T >	struct   iterator<T>: logical<0> {using type =               begin_t<T> ;};
 template <iterator_q T >	struct   iterator<T>: logical<1> {using type =               based_t<T> ;};
 template <integral_p T >	struct   iterator<T>: logical<0> {using type = iterator_t<interval_t<T>>;};
 
-template <iterable_q T >	struct   iteratee<T>: logical<0> {using type =    pointed_t<_begin_t<T>>;};
-template <iterated_q T >	struct   iteratee<T>: logical<0> {using type =    pointed_t<_begin_t<T>>;};
+template <iterable_q T >	struct   iteratee<T>: logical<0> {using type =     pointed_t<begin_t<T>>;};
+template <iterated_q T >	struct   iteratee<T>: logical<0> {using type =     pointed_t<begin_t<T>>;};
 template <iterator_q T >	struct   iteratee<T>: logical<0> {using type =             pointed_t<T> ;};
 template <integral_p T >	struct   iteratee<T>: logical<1> {using type =               based_t<T> ;};
 

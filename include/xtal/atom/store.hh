@@ -206,19 +206,19 @@ struct store<U_data[N_data]>
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_CON homotype(braces_t<U_data> w)
+		XTAL_CON homotype(embrace_t<U_data> w)
 		:	homotype(w.begin(), w.end())
 		{}
 		///\
 		List assignment. \
 		Replaces the contents of `this` with the given values. \
 
-		XTAL_OP1_(homotype &) = (braces_t<U_data> w)
+		XTAL_OP1_(homotype &) = (embrace_t<U_data> w)
 		{
 			assign(w);
 			return *this;
 		}
-		XTAL_TN0 assign(braces_t<U_data> w)
+		XTAL_TN0 assign(embrace_t<U_data> w)
 		{
 			assign(w.begin(), w.end());
 		}
@@ -290,7 +290,7 @@ struct store<U_data[N_data]>
 		///\
 		Inserts the values `etc` beginning at `i0`. \
 
-		XTAL_TN0 push_back(braces_t<U_data> w)
+		XTAL_TN0 push_back(embrace_t<U_data> w)
 		{
 			push_back(w.begin(), w.end());
 		}
@@ -299,7 +299,7 @@ struct store<U_data[N_data]>
 
 		XTAL_TN0 push_back(make_q<U_data> auto &&...vs)
 		{
-			push_back(braces_t<U_data>{U_data(XTAL_REF_(vs))...});
+			push_back(embrace_t<U_data>{U_data(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -348,7 +348,7 @@ struct store<U_data[N_data]>
 		Inserts the values `w` beginning at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_TN1_(iterator) insert(I i, braces_t<U_data> w)
+		XTAL_TN1_(iterator) insert(I i, embrace_t<U_data> w)
 		{
 			return insert(i, w.begin(), w.end());
 		}

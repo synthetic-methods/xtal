@@ -27,7 +27,7 @@ TAG_("scalar")
 		using W = scalar_t<T_alpha[N_size]>;
 
 		auto foo = W{2.0, 0.5};
-		auto bar = static_cast<W>(re::template root_2f<2>((T_alpha) 2));
+		auto bar = static_cast<W>(re::template roots_f<2>((T_alpha) 2));
 		bar.transact([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
 		TRUE_(foo == bar);
 

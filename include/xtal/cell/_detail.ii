@@ -139,13 +139,13 @@ struct defer_field
 		:	subtype(U_body{})
 		{}
 		/**/
-		XTAL_CON subtype(braced_t<U_body> a)
+		XTAL_CON subtype(reembrace_t<U_body> a)
 		XTAL_0EX
-		XTAL_REQ braced_q<U_body> and rebased_q<U>
+		XTAL_REQ reembrace_q<U_body> and rebased_q<U>
 		:	u_body(a)
 		{}
 		/*/
-		XTAL_CON subtype(braces_t<devalue_t<U_body>> a)
+		XTAL_CON subtype(embrace_t<devalue_t<U_body>> a)
 		XTAL_0EX
 		XTAL_REQ array_q<U_body> and id_q<U_body, U_head>
 		:	u_body(a)
