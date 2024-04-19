@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../flux/indent.hh"
+#include "../occur/indent.hh"
 
 
 
@@ -39,7 +39,7 @@ XTAL_FN2 dot(auto const &x, auto const &y)
 template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
-	using W_indent = typename flux::indent_s<W>::tunnel;
+	using W_indent = typename occur::indent_s<W>::template funnel<>;
 	using subkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
 	template <any_q S>

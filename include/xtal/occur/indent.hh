@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux
+namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -60,9 +60,13 @@ struct indent<Ns...>
 		:	S_{w}
 		{}
 
-		struct tunnel
+		template <int N_mask=-1>
+		struct funnel
 		{
-			using subkind = defer<W_>;
+			///\todo\
+			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
+
+			using subkind = bond::compose<typename S_::template address<N_mask>, defer<W_>>;
 
 			template <cell::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, subkind>
@@ -84,7 +88,7 @@ struct indent<Ns...>
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(flux::indent_q auto &&o)
+				XTAL_TNX infuse(indent_q auto &&o)
 				XTAL_0EX
 				{
 					auto &w = bond::pack_item_f(head(), o.apple());

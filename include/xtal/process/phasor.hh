@@ -36,7 +36,7 @@ struct phasor<W_data[N_data], As...>
 	using subkind = bond::compose<bond::tag<phasor>
 	,	As...
 	,	_detail::refer_multiplicative_group<W_, 1>// Necessary?
-	,	typename flux::indent_s<W_>::tunnel
+	,	typename occur::indent_s<W_>::template funnel<>
 	>;
 	
 	template <class S>

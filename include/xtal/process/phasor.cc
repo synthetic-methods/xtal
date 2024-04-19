@@ -50,7 +50,7 @@ TAG_("phasor")
 		TRUE_(phi() == W_phi{ 5*x_d4, x_d4});
 		TRUE_(phi() == W_phi{ 6*x_d4, x_d4});
 		TRUE_(phi() == W_phi{ 7*x_d4, x_d4});
-		phi <<= flux::indent_s<W_phi, 1>(x_d3);
+		phi <<= occur::indent_s<W_phi, 1>(x_d3);
 	//	TRUE_(phi() == W_phi{-8*x_d4, x_d4});
 		TRUE_(phi() == W_phi{-7*x_d4, x_d3});
 	//	TRUE_(phi() == W_phi{-6*x_d4, x_d4});
