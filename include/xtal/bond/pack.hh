@@ -30,7 +30,9 @@ static_assert(pack_size_p<_std::array<null_t, 0>>);
 
 template <class T, size_t ...Ns >  struct pack_item;
 template <class T, size_t... Ns >   using pack_item_t = typename pack_item<T, Ns...>::type;
+//\
 template <class T, size_t    N  > concept pack_item_p = requires(T a) {{_std::get<N>(a)} -> is_q<pack_item_t<T, N>>;};
+template <class T, size_t    N  > concept pack_item_p = requires(T a) {_std::get<N>(a);};
 template <class T>
 concept pack_items_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and pack_item_p<T, N>)
@@ -57,13 +59,14 @@ template <class ...Ts > concept   homopack_q = (...and   homopack_p<Ts>);
 
 template <class T, size_t N, size_t ...Ns>
 struct pack_item<T, N, Ns...>
-:	pack_item<pack_item_t<T, N>, Ns...>
+:	pack_item<_std::tuple_element_t<N, _std::remove_reference_t<T>>, Ns...>
 {
 };
 template <class T, size_t N>
 struct pack_item<T, N>
 :	_std::tuple_element<N, _std::remove_reference_t<T>>
 {
+//	using type = XTAL_TYP_(_std::get<N>(XTAL_VAL_(based_t<T>)));
 };
 template <class T>
 struct pack_item<T>
@@ -81,10 +84,10 @@ XTAL_FN2 pack_item_f(auto &&t)
 XTAL_0EX
 {
 	if constexpr (0 == sizeof...(Ns)) {
-		return _std::get<N>(XTAL_REF_(t));
+		return xtal::get<N>(XTAL_REF_(t));
 	}
 	else {
-		return pack_item_f<Ns...>(_std::get<N>(XTAL_REF_(t)));
+		return pack_item_f<Ns...>(xtal::get<N>(XTAL_REF_(t)));
 	}
 }
 template <template <class ...> class L, integral_q ...Ts>

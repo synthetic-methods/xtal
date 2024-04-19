@@ -827,7 +827,7 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)`. \
 
-	XTAL_FN2 diplo_f(delta_t const &n_zoom)
+	XTAL_FN2 diplo_f(delta_t const &n_zoom=N_depth)
 	XTAL_0EX
 	{
 		if (_std::is_constant_evaluated()) {
@@ -837,10 +837,10 @@ public:
 			return _std::bit_cast<alpha_t>(m);
 		}
 		else {
-			return _std::ldexp(alpha_1, n_zoom);// not `constexpr` until `C++23`!
+			return _std::ldexp(alpha_1, (int) n_zoom);// not `constexpr` until `C++23`!
 		}
 	}
-	template <int N_zoom=0>
+	template <int N_zoom=N_depth>
 	XTAL_LET diplo_n = diplo_f(N_zoom);
 	///< Value expression of `diplo_f`. \
 
@@ -853,12 +853,12 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
 
-	XTAL_FN2 haplo_f(delta_t const &n_zoom)
+	XTAL_FN2 haplo_f(delta_t const &n_zoom=N_depth)
 	XTAL_0EX
 	{
 		return diplo_f(-n_zoom);
 	}
-	template <int N_zoom=0>
+	template <int N_zoom=N_depth>
 	XTAL_LET haplo_n = haplo_f(N_zoom);
 	///< Value expression of `haplo_f`. \
 

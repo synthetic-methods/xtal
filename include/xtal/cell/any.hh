@@ -90,7 +90,12 @@ struct define
 			return self().operator==(t.self())? is::equivalent: is::unordered;
 		}
 
-		XTAL_TN2 apple() XTAL_0FX {return bond::pack_f();}
+		XTAL_TN2 apple()
+		XTAL_0FX
+		{
+		//	static_assert(sizeof(S_) == sizeof(bond::pack_f()));
+			return bond::pack_f();
+		}
 		///<\returns a tuple representation of `this`. \
 
 		using arity = cardinal_0;

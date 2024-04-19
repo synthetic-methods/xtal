@@ -1,6 +1,7 @@
 #include "./any.cc"
 #include "./assay.cc"
 #include "./compose.cc"
+#include "./compost.cc"
 #include "./isokind.cc"
 #include "./isotype.cc"
 #include "./pack.cc"

@@ -1,6 +1,7 @@
 #include "./any.hh"
 #include "./assay.hh"
 #include "./compose.hh"
+#include "./compost.hh"
 #include "./isokind.hh"
 #include "./isotype.hh"
 #include "./pack.hh"

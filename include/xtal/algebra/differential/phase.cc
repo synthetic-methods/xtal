@@ -35,19 +35,25 @@ TAG_("phase")
 	
 	TRY_("complexion")
 	{
-		W_phi a{{0.1}, {0.2}};
-		W_phi b{{0.1}, {0.2}};
+		W_phi a{{0.1, 0.0}, {0.2, 0.0}};
+		W_phi b{{0.1, 0.0}, {0.2, 0.0}};
 		W_phi c = b + a;
 
 		TRUE_(c.real());
-		TRUE_(c == W_phi{0.2, 0.4});
+		TRUE_(c == W_phi{{0.2, 0.0}, {0.4, 0.0}});
 
 	}
 	TRY_("construction")
 	{
 		D2 a_d2{0.250, 0.250};
 		D2 b_d2{0.125, 0.125};
+		D2 z_d2{0.125};
 
+		TRUE_(z_d2 == D2{0.000, 0.125}); z_d2 <<= {0.250};
+		TRUE_(z_d2 == D2{0.000, 0.250}); z_d2 <<= _std::array<T_alpha, 1>{0.500};
+		TRUE_(z_d2 == D2{0.000, 0.500}); z_d2 >>= _std::array<T_alpha, 1>{0.333};
+		TRUE_(z_d2 == D2{0.333, 0.500});
+		
 		TRUE_(a_d2 == D2{0.250, 0.250});
 
 		a_d2 = b_d2;

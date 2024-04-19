@@ -24,28 +24,45 @@ template <class S, int ...Ns> using   indent_s = bond::compose_s<S, indent<ordin
 template <integral_q ...Ns>
 struct indent<Ns...>
 {
+	template <class S> using component_t = bond::pack_item_t<S, Ns{}...>;
+	using item = bond::compost<component_t>;
+	using leaf = bond::compost<conferred_t>;
 	using path = confined<bond::tag<indent>, confer<Ns>...>;
 	
-	template <bond::pack_q S> using leaf_u = bond::pack_item_t<S, Ns{}...>;
-	template <bond::pack_q S> using leaf_t = conferred_t<leaf_u<S>>;
-	template <bond::pack_q S> using node_t = typename path::template subtype<leaf_t<S>>;
+	using subkind = bond::compose<path, leaf, item>;
+
 	template <bond::pack_q S>
-	class subtype : public node_t<S>
+	class subtype : public bond::compose_s<S, subkind>
 	{
-		using S_ = node_t<S>;
-		using L_ = leaf_u<S>;
+		using S_ = bond::compose_s<S, subkind>;
+	//	using W_ = bond::compose_s<S, item>;
+		using W_ = component_t<S>;
+		using U_ = devalue_t<reembrace_t<S>>;//   presentation
+		using V_ = devalue_t<            S >;// representation
 
 	public:
 		using S_::S_;
 		
-		XTAL_CON subtype(embrace_t<devalue_t<L_>> w)
-		XTAL_REQ bounded_q<L_>
-		:	S_{L_(XTAL_MOV_(w))}
+		///\note\
+		Any integral/real re/presentation is interpreted as a full-width fixed-point value \
+		(\see `algebra/differential/phase.hh`). \
+
+		///\todo\
+		Normalize the use of `operator()` to access `block` elements, \
+		defining a `concept` to characterize the disparity. \
+
+		XTAL_CON subtype(U_ u)
+		XTAL_REQ real_number_q<U_> and integral_number_q<V_>
+		:	S_{XTAL_MOV_(u)*bond::realize<U_>::diplo_f()}
+		{}
+		XTAL_CON subtype(reembrace_t<W_> w)
+		XTAL_REQ bounded_q<W_>
+		:	S_{w}
 		{}
 
 		struct tunnel
 		{
-			using subkind = defer<L_>;
+			using subkind = defer<W_>;
 
 			template <cell::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, subkind>
@@ -71,14 +88,14 @@ struct indent<Ns...>
 				XTAL_0EX
 				{
 					auto &w = bond::pack_item_f(head(), o.apple());
-					auto  x = XTAL_TYP_(w) (o);
+					XTAL_TYP_(w) x(o);
 					_std::swap(w, x);
 					return w == x;
 				}
 
 			};
 		};
-	
+
 	};
 };
 

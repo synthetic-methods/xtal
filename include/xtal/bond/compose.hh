@@ -11,22 +11,7 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace compose_
-{///////////////////////////////////////////////////////////////////////////////
-
-template <template <class, class...> class Sx>
-struct reify {template <class S, class ..._s> using subtype = Sx<S, _s...>;};
-
-template <typename Sx>
-concept query = requires {typename reify<Sx::template subtype>;};
-
-
-}///////////////////////////////////////////////////////////////////////////////
-
-template <typename ...Ts>
-concept compose_q = (...and compose_::query<Ts>);
-
-
+////////////////////////////////////////////////////////////////////////////////
 ///\
 Composes the supplied `Outer::subtype`s to define `::subtype<S, Inner...>`. \
 
@@ -71,7 +56,10 @@ struct compose<void, Outer...>
 Applys the `Inner::subtype`s to `S` from left-to-right. \
 
 template <class S, typename ...Inner>
-using compose_s = typename compose<>::template subtype<S, Inner...>;
+using   compose_s = typename compose<>::template subtype<S, Inner...>;
+
+template <typename ...Subtyped>
+concept compose_q = (...and _detail::compose_q<Subtyped>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

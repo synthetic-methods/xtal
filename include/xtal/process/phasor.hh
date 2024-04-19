@@ -21,12 +21,15 @@ template <typename ..._s> concept phasor_q = bond::tag_p<phasor, _s...>;
 Manages a truncated fixed-point unit differential like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
-template <size_t N, class W, typename ...As>
-struct phasor<W[N], As...>
+template <size_t N_data, class W_data, typename ...As>
+struct phasor<W_data[N_data], As...>
 {
-	using W_ = algebra::differential::phase_t<W[N]>;
+	template <size_t N>
+	using phase_u = algebra::differential::phase_t<W_data[N]>;
+
+	using W_ = phase_u<N_data>;
 	
-	using re = bond::realize<W>;
+	using re = bond::realize<W_data>;
 	using V = typename re::delta_t;
 	using U = typename re::alpha_t;
 
@@ -51,25 +54,6 @@ struct phasor<W[N], As...>
 		using S_::self;
 		using S_::head;
 
-	//	using S_::infuse;
-		///\
-		Update by indented replacement. \
-		
-		XTAL_TNX infuse(subarray_q<N> auto &&us)
-		{
-			using Us = decltype(us);
-			using Ux = typename flux::indent_s<W_, N - devalue_n<Us>>;
-			return S_::influx(Ux(XTAL_REF_(us)));
-		}
-		///\
-		Update by replacement. \
-		
-		XTAL_TNX infuse(auto &&o)
-		XTAL_0EX
-		{
-			return S_::infuse(XTAL_REF_(o));
-		}
-
 
 	public:
 		///\
@@ -93,7 +77,7 @@ struct phasor<W[N], As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor(subarray_q<N> auto &&a),
+		XTAL_TN2 functor(subarray_q<N_data> auto &&a),
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return functor();

@@ -120,7 +120,7 @@ XTAL_0EX
 	return copy_to(i, _j0, _jN, XTAL_REF_(f), o);
 }
 template <iterator_q I, bounded_q J, _std::invocable<iteratee_t<J>> F>
-XTAL_FN0 move_to(I i, J const &j, F &&f, bool o=false)
+XTAL_FN0 move_to(I i, J &&j, F &&f, bool o=false)
 XTAL_0EX
 {
 	move_to(i, j.begin(), j.end(), XTAL_REF_(f), o);
