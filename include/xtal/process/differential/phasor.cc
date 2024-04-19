@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::process::_test
+namespace xtal::process::differential::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ TAG_("phasor")
 	using T_sigma = typename re::sigma_t;
 	using T_delta = typename re::delta_t;
 	using T_alpha = typename re::alpha_t;
-	using Y_phi = process::phasor_t<size_t[2]>;
+	using Y_phi = process::differential::phasor_t<size_t[2]>;
 	using W_phi = algebra::differential::phase_t<size_t[2]>;
 
 	TRY_("trial")

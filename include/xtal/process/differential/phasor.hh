@@ -1,13 +1,13 @@
 #pragma once
 #include "./any.hh"
 
-#include "../algebra/differential/phase.hh"
+#include "../../algebra/differential/phase.hh"
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::process
+namespace xtal::process::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
