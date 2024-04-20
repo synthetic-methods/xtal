@@ -5,6 +5,7 @@
 #include "./isokind.hh"
 #include "./isotype.hh"
 #include "./pack.hh"
+#include "./pact.hh"
 #include "./realize.hh"
 #include "./seek.hh"
 #include "./tab.hh"

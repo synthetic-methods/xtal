@@ -31,8 +31,8 @@ static_assert(pack_size_p<_std::array<null_t, 0>>);
 template <class T, size_t ...Ns >  struct pack_item;
 template <class T, size_t... Ns >   using pack_item_t = typename pack_item<T, Ns...>::type;
 //\
-template <class T, size_t    N  > concept pack_item_p = requires(T a) {{_std::get<N>(a)} -> is_q<pack_item_t<T, N>>;};
 template <class T, size_t    N  > concept pack_item_p = requires(T a) {_std::get<N>(a);};
+template <class T, size_t    N  > concept pack_item_p = requires(T a) {{_std::get<N>(a)} -> is_q<pack_item_t<T, N>>;};
 template <class T>
 concept pack_items_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and pack_item_p<T, N>)

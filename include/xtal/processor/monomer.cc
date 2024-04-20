@@ -14,6 +14,42 @@ namespace xtal::processor::_test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
+void monomer_zipping()
+{
+	using re = bond::realized;
+	using T_sigma = re::sigma_t;
+	using T_alpha = re::alpha_t;
+
+	using            U_data = T_alpha;
+	size_t constexpr U_size = 2;
+
+	//\
+	using U_group  =  algebra::lattice_t<U_data[U_size]>;
+	using U_group  =  _std::complex<U_data>;
+//	using U_resize = occur::resize_t<>;
+//	using U_render = occur::render_t<>;
+
+	U_data xs[] {0, 0, 0, 0};
+	U_data ys[] {0, 0, 0, 0};
+	auto zs = _v3::views::zip(xs, ys);
+//	zs[0] = U_group{1, 2};
+	zs[0] = bond::pact_made_f(U_group{1, 2});
+
+	TRUE_(xs[0] == 1);
+	TRUE_(ys[0] == 2);
+	
+}
+TAG_("monomer", "zipping")
+{
+	TRY_("pure (actual)") {monomer_zipping<resource::restore<>>();}
+	TRY_("pure (virtual)")  {monomer_zipping();}
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
 void monomer_lifting()
 {
 	using T_sigma = typename bond::realized::sigma_t;

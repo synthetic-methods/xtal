@@ -130,7 +130,7 @@ struct block<U_data[N_data]>
 		{
 			_detail::move_to(T_::begin(), a);
 		}
-		
+
 	};
 	using type = bond::isotype<homotype>;
 
@@ -143,7 +143,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::atom::block_q T>
-struct tuple_size<T> : xtal::cardinal_t<T::size()> {};
+struct tuple_size<T> : xtal::cardinal_t<xtal::devalue_n<T>> {};
 
 template <size_t N_datum, xtal::atom::block_q T>
 //\

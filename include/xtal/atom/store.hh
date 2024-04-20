@@ -78,18 +78,18 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
 
-		XTAL_DEF_(return,inline) XTAL_LET offence(iterated_q auto const & t) noexcept -> decltype(auto) {return _std::span(offence(t.begin()), offence(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_LET offence(              iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<                  iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(              iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<                  iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(        const_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<            const_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(        const_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<            const_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(      reverse_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<          reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(      reverse_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<          reverse_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(const_reverse_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<    const_reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_LET offence(const_reverse_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<    const_reverse_iterator >(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(iterated_q auto const & t) noexcept -> decltype(auto) {return _std::span(offence(t.begin()), offence(t.end()));}
+		XTAL_ACT_(return,inline) XTAL_LET offence(              iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<                  iterator_>(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(              iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<                  iterator >(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(        const_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<            const_iterator_>(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(        const_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<            const_iterator >(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(      reverse_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<          reverse_iterator_>(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(      reverse_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<          reverse_iterator >(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(const_reverse_iterator  i) noexcept -> decltype(auto) {return reinterpret_cast<    const_reverse_iterator_>(i);}
+		XTAL_ACT_(return,inline) XTAL_LET offence(const_reverse_iterator_ i) noexcept -> decltype(auto) {return reinterpret_cast<    const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline) XTAL_LET defence(iterated_q auto const & t) noexcept -> decltype(auto) {return _std::span(defence(t.begin()), defence(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_LET defence(iterator_q auto         i) noexcept -> decltype(auto) {return _std::launder(offence(XTAL_REF_(i)));}
+		XTAL_ACT_(return,inline) XTAL_LET defence(iterated_q auto const & t) noexcept -> decltype(auto) {return _std::span(defence(t.begin()), defence(t.end()));}
+		XTAL_ACT_(return,inline) XTAL_LET defence(iterator_q auto         i) noexcept -> decltype(auto) {return _std::launder(offence(XTAL_REF_(i)));}
 		
 
 		W_data m_data[N_data]{};
