@@ -300,36 +300,57 @@ public:
 	{
 		return N_side == 0? i: N_side*designed_f<N_side>(i);
 	}
-	template <int N_side=0> requires sign_p<N_side, 0>
-	XTAL_FN2 designed_f(delta_t i)
+
+	///\returns the original sign of `target`, before applying the sign of `source`. \
+
+	XTAL_FN2_(delta_t) resign_f(delta_t &target, delta_t const &source=0)
 	XTAL_0EX
 	{
-		delta_t const v = i >> positive.depth;
+		delta_t const t = target >> positive.depth;
+		delta_t const s = source >> positive.depth;
+		target ^= s;
+		target -= s;
+		return t;
+	}
+	///\returns the `target` magnitude with the sign of the `source`. \
+
+	XTAL_FN2_(delta_t) resigned_f(delta_t target, delta_t const &source=0)
+	XTAL_0EX
+	{
+		(void) resign_f(target, source); return target;
+	}
+
+
+	///\returns the original sign of `target`, after making it `abs`olute.
+
+	template <int N_side=0> requires sign_p<N_side, 0>
+	XTAL_FN2_(delta_t) design_f(delta_t &target)
+	XTAL_0EX
+	{
+		delta_t const signum = target >> positive.depth;
 		XTAL_IF0
 		XTAL_0IF_(N_side == -1) {
-			i &= v;
-			i += v;
-			i ^= v;
-			return i;
+			target &= signum;
+			target += signum;
+			target ^= signum;
 		}
 		XTAL_0IF_(N_side ==  0) {
-			i += v;
-			i ^= v;
-			return i;
+			target += signum;
+			target ^= signum;
 		}
 		XTAL_0IF_(N_side ==  1) {
-			i &=~v;
-			return i;
+			target &=~signum;
 		}
+		return signum;
 	}
-	static_assert(designed_f< 0>((delta_t) +3) == (3));
-	static_assert(designed_f< 0>((delta_t) +2) == (2));
-	static_assert(designed_f< 0>((delta_t) +1) == (1));
-	static_assert(designed_f< 0>((delta_t)  0) == (0));
-	static_assert(designed_f< 0>((delta_t) -1) == (1));
-	static_assert(designed_f< 0>((delta_t) -2) == (2));
-	static_assert(designed_f< 0>((delta_t) -3) == (3));
-
+	///\returns the magnitude of `value` (in the direction of `N_side`, if provided). \
+	
+	template <int N_side=0> requires sign_p<N_side, 0>
+	XTAL_FN2 designed_f(delta_t value)
+	XTAL_0EX
+	{
+		(void) design_f<N_side>(value); return value;
+	}
 	static_assert(designed_f< 1>((delta_t) +3) == (3));
 	static_assert(designed_f< 1>((delta_t) +2) == (2));
 	static_assert(designed_f< 1>((delta_t) +1) == (1));
@@ -337,6 +358,14 @@ public:
 	static_assert(designed_f< 1>((delta_t) -1) == (0));
 	static_assert(designed_f< 1>((delta_t) -2) == (0));
 	static_assert(designed_f< 1>((delta_t) -3) == (0));
+
+	static_assert(designed_f< 0>((delta_t) +3) == (3));
+	static_assert(designed_f< 0>((delta_t) +2) == (2));
+	static_assert(designed_f< 0>((delta_t) +1) == (1));
+	static_assert(designed_f< 0>((delta_t)  0) == (0));
+	static_assert(designed_f< 0>((delta_t) -1) == (1));
+	static_assert(designed_f< 0>((delta_t) -2) == (2));
+	static_assert(designed_f< 0>((delta_t) -3) == (3));
 
 	static_assert(designed_f<-1>((delta_t) +3) == (0));
 	static_assert(designed_f<-1>((delta_t) +2) == (0));
@@ -393,25 +422,20 @@ public:
 	{
 		return bit_count_f(internal_f(i));
 	}
-	XTAL_FN2_(sigma_t) bit_count_f(sigma_t u)
+	XTAL_FN2_(sigma_t) bit_count_f(sigma_t i)
 	XTAL_0EX
 	{
-		sigma_t n = 0;
-		while (u) {
-			n  += 1&u;
-			u >>= 1;
-		}
-		return n;
+		return _std::popcount(i);
 	}
-	XTAL_FN2_(delta_t) bit_count_f(delta_t const &v)
+	XTAL_FN2_(delta_t) bit_count_f(delta_t i)
 	XTAL_0EX
 	{
-		delta_t const v_sgn = sign_f(v);
-		delta_t const v_abs = v*v_sgn;
-		delta_t const y_abs = bit_count_f((sigma_t) v_abs);
-		return y_abs*v_sgn;
+		delta_t v = design_f(i);
+		delta_t u = bit_count_f((sigma_t) i);
+		u ^= v;
+		u -= v;
+		return u;
 	}
-//	static_assert(bit_count_f(0b10110100) == 4);
 
 
 	XTAL_FN2 bit_floor_f(integral_p auto i)
@@ -420,22 +444,20 @@ public:
 	{
 		return bit_floor_f(internal_f(i));
 	}
-	XTAL_FN2_(sigma_t) bit_floor_f(sigma_t u)
+	XTAL_FN2_(sigma_t) bit_floor_f(sigma_t i)
 	XTAL_0EX
 	{
-		sigma_t n = 0;
-		while (u >>= 1) {
-			++n;
-		}
+		sigma_t n = 0; for (; i >>= 1; ++n);
 		return n;
 	}
-	XTAL_FN2_(delta_t) bit_floor_f(delta_t const &v)
+	XTAL_FN2_(delta_t) bit_floor_f(delta_t i)
 	XTAL_0EX
 	{
-		delta_t const v_sgn = sign_f(v);
-		delta_t const v_abs = v*v_sgn;
-		delta_t const y_abs = bit_floor_f((sigma_t) v_abs);
-		return y_abs*v_sgn;
+		delta_t v = design_f(i);
+		delta_t u = bit_floor_f((sigma_t) i);
+		u ^= v;
+		u -= v;
+		return u;
 	}
 
 	XTAL_FN2 bit_ceiling_f(integral_p auto i)
@@ -444,17 +466,19 @@ public:
 	{
 		return bit_ceiling_f(internal_f(i));
 	}
-	XTAL_FN2_(sigma_t) bit_ceiling_f(sigma_t const &u)
+	XTAL_FN2_(sigma_t) bit_ceiling_f(sigma_t i)
 	XTAL_0EX
 	{
-		sigma_t n = bit_floor_f((sigma_t) u);
-		n += (1 << n) != u;
-		return n;
+		return _std::bit_width(i) - 1;
 	}
-	XTAL_FN2_(delta_t) bit_ceiling_f(delta_t const &v)
+	XTAL_FN2_(delta_t) bit_ceiling_f(delta_t i)
 	XTAL_0EX
 	{
-		return bit_ceiling_f((sigma_t) v)*sign_f(v);
+		delta_t v = design_f(i);
+		delta_t u = bit_ceiling_f((sigma_t) i);
+		u ^= v;
+		u -= v;
+		return u;
 	}
 
 	///\returns the bitwise-reversal of `u`, \
@@ -1058,9 +1082,11 @@ public:
 	}
 
 
-	///\returns the original sign of `target`, after applying the sign of `source`.
+	///\returns the original sign of `target`, before applying the sign of `source`. \
 
-	XTAL_FN1_(alpha_t) resign_f(alpha_t &target, auto const &source=1)
+	using S_::resign_f;
+
+	XTAL_FN2_(alpha_t) resign_f(alpha_t &target, auto const &source=1)
 	XTAL_0EX
 	{
 		alpha_t const signum = sign_f(target);
@@ -1089,7 +1115,9 @@ public:
 
 	///\returns the original sign of `target`, after making it `abs`olute.
 
-	XTAL_FN1_(alpha_t) design_f(alpha_t &target)
+	using S_::design_f;
+
+	XTAL_FN2_(alpha_t) design_f(alpha_t &target)
 	XTAL_0EX
 	{
 		alpha_t const signum = sign_f(target);
@@ -1097,8 +1125,9 @@ public:
 		return signum;
 	}
 
-//	using S_::designed_f;
 	///\returns the magnitude of `value` (in the direction of `N_side`, if provided). \
+	
+	using S_::designed_f;
 
 	template <int N_side=0>
 	XTAL_FN2 designed_f(integral_p auto value)
@@ -1128,8 +1157,8 @@ public:
 			return value;
 		}
 	}
-	static_assert(designed_f( 1.0) ==  1.0);
-	static_assert(designed_f(-1.0) ==  1.0);
+	static_assert(designed_f( alpha_1) ==  1.0);
+	static_assert(designed_f(-alpha_1) ==  1.0);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1151,12 +1180,12 @@ public:
 	{
 		return N_side? sign_n<N_side>*designed_f<N_side>(value): (value);
 	}
-	static_assert(clamped_f<+1>( 1.0) == +1.0);
-	static_assert(clamped_f<+1>( 0.0) == +minimal_f());
-	static_assert(clamped_f<+1>(-1.0) == +minimal_f());
-	static_assert(clamped_f<-1>( 1.0) == -minimal_f());
-	static_assert(clamped_f<-1>( 0.0) == -minimal_f());
-	static_assert(clamped_f<-1>(-1.0) == -1.0);
+	static_assert(clamped_f<+1>( alpha_1) == +1.0);
+	static_assert(clamped_f<+1>( alpha_0) == +minimal_f());
+	static_assert(clamped_f<+1>(-alpha_1) == +minimal_f());
+	static_assert(clamped_f<-1>( alpha_1) == -minimal_f());
+	static_assert(clamped_f<-1>( alpha_0) == -minimal_f());
+	static_assert(clamped_f<-1>(-alpha_1) == -1.0);
 
 
 ////////////////////////////////////////////////////////////////////////////////
