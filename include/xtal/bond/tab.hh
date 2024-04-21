@@ -17,20 +17,24 @@ Tags `subtype` while preserving Standard Layout. \
 Avoids the `sizeof` inflation that can occur with multiple-inheritance \
 (e.g. frustrated Empty Base Optimization). \
 
-template <class T> concept taboo_q = requires {typename T::taboo;};
-template <class T> using   taboo_s =           typename T::taboo::supertype;
-template <class T> using   taboo_t =           typename T::taboo::type;
+template <class   T> concept taboo_q = requires {typename T::taboo;};
+template <class   T> using   taboo_o =           typename T::taboo::pseudotype;
+template <class   T> using   taboo_s =           typename T::taboo:: supertype;
 
-template <class Y, class ...Ts>                              struct tab;//    : _std::conjunction<tab<Y, based_t<Ts>>...>;
-template <class Y, class    T >                              struct tab<Y, T> : logical_t<0> {};
-template <class Y, taboo_q  T > requires is_q<Y, taboo_t<T>> struct tab<Y, T> : logical_t<1> {};
-template <class Y, taboo_q  T >                              struct tab<Y, T> : tab<Y, taboo_s<T>> {};
+template <class   T,              class ...Ys> struct  tab_rest                        :               logical_t<0> {using type = void;};
+template <class   T,              class ...Ys> struct  tab_rest<T, cardinal_0 , Ys...> :               logical_t<1> {using type =    T;};
+template <taboo_q T                          > struct  tab_rest<T,  taboo_o<T>       > :               logical_t<1> {using type =    T;};
+template <taboo_q T,              class ...Ys> struct  tab_rest<T,              Ys...> : tab_rest<taboo_s<T>,                  Ys...> {};
+template <taboo_q T,              class ...Ys> struct  tab_rest<T,  taboo_o<T>, Ys...> : tab_rest<taboo_s<T>,                  Ys...> {};
+template <taboo_q T, liminal_q I, class ...Ys> struct  tab_rest<T,          I , Ys...> : tab_rest<taboo_s<T>, subliminal_s<I>, Ys...> {};
+template <class   T,              class ...Ys> using   tab_rest_t                      = typename tab_rest<T, Ys...>:: type;
+template <class   T,              class ...Ys> concept tab_rest_q                      =          tab_rest<T, Ys...>::value;
 
-template <class Y, class ...Ts> concept tab_p = _std::conjunction_v<tab<Y, based_t<Ts>>...>;
-template <class T, class ...Ys> concept tab_q = _std::conjunction_v<tab<Ys, based_t<T>>...>;
+template <class Y, class ...Ts> concept tab_p = _std::conjunction_v<tab_rest<based_t<Ts>, Y >...>;
+template <class T, class ...Ys> concept tab_q = _std::conjunction_v<tab_rest<based_t<T >, Ys>...>;
 
 template <class Y>
-struct tab<Y>
+struct tab
 {
 	template <class S>
 	class subtype : public S
@@ -40,8 +44,8 @@ struct tab<Y>
 		
 		struct taboo
 		{
-			using supertype = S;
-			using      type = Y;
+			using  supertype = S;
+			using pseudotype = Y;
 
 		};
 
