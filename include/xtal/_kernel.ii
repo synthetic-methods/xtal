@@ -6,13 +6,8 @@
 //\
 Structural...
 
-template <size_t N_datum> XTAL_FN2 get(auto &&t)
-XTAL_0EX
-{
-	return _std::get<N_datum>(XTAL_REF_(t));
-}
-
-template <class T>	XTAL_LET make_f = [] XTAL_1FN_(T);
+template <class T>
+XTAL_LET make_f = [] XTAL_1FN_(T);
 
 
 ////////////////////////////////////////////////////////////////////////////////

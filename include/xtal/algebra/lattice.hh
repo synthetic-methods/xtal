@@ -55,7 +55,7 @@ struct lattice<U_data[N_data]>
 
 	public:// OPERATION
 		XTAL_TN2 apply(auto &&f)
-		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(xtal::get<I>(*this)...)) (bond::seek_f<N_data> {});}
+		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(_std::get<I>(*this)...)) (bond::seek_f<N_data> {});}
 		
 		template <class F>
 		XTAL_TN2 make()

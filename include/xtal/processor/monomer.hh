@@ -167,7 +167,7 @@ struct monomer<U, As...>
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \
-				All `slots` are rendered locally unless a `visor`-compatible `rvalue` is found, \
+				All bound arguments are rendered privately unless a compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
 				template <occur::review_q Rv, occur::render_q Rn>

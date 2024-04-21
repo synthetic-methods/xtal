@@ -120,15 +120,22 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs>
-		struct binding
+		struct binding : binding<let_t<Xs>...>
 		{
-			using signature = bond::pack<let_t<Xs>...>;
-			using Y_result = typename signature::template invoke_t<T>;
+		};
+		template <class ...Xs> requires any_q<Xs...>
+		struct binding<Xs...>
+		{
+			//\
+			using signature_t = cell::packed_t<Xs...>;
+			using signature_t = bond::pack_t<Xs...>;
+			
+			using Y_result = _std::invoke_result_t<T, Xs...>;
 			using Y_return = iteratee_t<Y_result>;
 			
 			using subkind = bond::compose<void
-			,	cell::defer<typename signature::type>
 			,	defer<T>
+			,	cell::defer<signature_t>
 			>;
 
 			template <any_q R>
@@ -138,7 +145,6 @@ struct define
 
 			public:
 				using R_::R_;
-				using R_::self;
 				///\
 				Initializes `slots` using the arguments supplied. \
 
@@ -146,34 +152,44 @@ struct define
 				XTAL_0EX
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CXN subtype(is_q<T> auto &&t, Xs &&...xs)
+				XTAL_CXN subtype(fungible_q<T> auto &&t, Xs &&...xs)
 				XTAL_0EX
-				:	R_(signature::make(XTAL_REF_(xs)...), XTAL_REF_(t))
+				:	R_(XTAL_REF_(t), signature_t(XTAL_REF_(xs)...))
 				{}
 
-				XTAL_TO4_(XTAL_TN2 slots(), R_::head())
+			public:// ACCESS
+				using R_::self;
+
+				XTAL_TO4_(XTAL_TN2 slots(), R_::template head<1>())
 				
 				template <size_t N, size_t ...Ns>
 				XTAL_TN2 slot()
 				XTAL_0EX
 				{
 					if constexpr (0 == sizeof...(Ns)) {
-						return _std::get<N>(slots());
+						return get<N>(slots());
 					}
 					else {
-						return _std::get<N>(slots()).template slot<Ns...>();
+						return get<N>(slots()).template slot<Ns...>();
 					}
+				}
+				template <class F>
+				XTAL_TN2 make()
+				XTAL_0EX
+				{
+					return apply([] XTAL_1FN_(F));
 				}
 				XTAL_TN2 apply(auto &&f)
 				XTAL_0EX
 				{
+					//\
+					return slots().apply([f = XTAL_REF_(f)] XTAL_1FN_(f));
 					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
 				}
-				template <class F>
-				XTAL_TN2 make()
-				XTAL_0EX {return apply([] XTAL_1FN_(F));}
 
 
+			public:// OPERATION
+				using R_::functor;
 				///\
 				Evaluates the lifted `functor` using the bound slots. \
 
@@ -181,10 +197,10 @@ struct define
 				XTAL_TN2 functor()
 				XTAL_0EX
 				{
-					return _std::apply([this] XTAL_1FN_(R_::template functor<Is...>), slots());
+					return apply([this] XTAL_1FN_(R_::template functor<Is...>));
 				}
-				
-				using R_::functor;
+			
+			public:// FLUXION
 			//	using R_::influx;
 			//	using R_::efflux;
 

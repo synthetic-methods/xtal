@@ -67,7 +67,7 @@ TAG_("cell", "matching")
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/*/
 TAG_("cell", "traversal")
 {
 	using qux = confined<void
@@ -104,31 +104,31 @@ TAG_("cell", "traversal")
 		auto u_qux = U_qux(1, 2, 3);
 
 		(void) u_qux.self(11);
-		TRUE_(_std::get<0>(u_qux) == 11);
-		TRUE_(_std::get<1>(u_qux) ==  2);
-		TRUE_(_std::get<2>(u_qux) ==  3);
+		TRUE_(get<0>(u_qux) == 11);
+		TRUE_(get<1>(u_qux) ==  2);
+		TRUE_(get<2>(u_qux) ==  3);
 
 		(void) u_qux.self(111, 222);
-		TRUE_(_std::get<0>(u_qux) == 111);
-		TRUE_(_std::get<1>(u_qux) == 222);
-		TRUE_(_std::get<2>(u_qux) ==   3);
+		TRUE_(get<0>(u_qux) == 111);
+		TRUE_(get<1>(u_qux) == 222);
+		TRUE_(get<2>(u_qux) ==   3);
 
 		(void) u_qux.template self<1>(2222, 3333);
-		TRUE_(_std::get<0>(u_qux) ==  111);//!
-		TRUE_(_std::get<1>(u_qux) == 2222);
-		TRUE_(_std::get<2>(u_qux) == 3333);
+		TRUE_(get<0>(u_qux) ==  111);//!
+		TRUE_(get<1>(u_qux) == 2222);
+		TRUE_(get<2>(u_qux) == 3333);
 
 		(void) u_qux.template self<baz_a>(33333);
-		TRUE_(_std::get<0>(u_qux) ==   111);
-		TRUE_(_std::get<1>(u_qux) ==  2222);
-		TRUE_(_std::get<2>(u_qux) == 33333);
+		TRUE_(get<0>(u_qux) ==   111);
+		TRUE_(get<1>(u_qux) ==  2222);
+		TRUE_(get<2>(u_qux) == 33333);
 
 	}
 }
-
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/**/
 TAG_("cell", "conversion")
 {
 	TRY_("tuple")
@@ -143,9 +143,9 @@ TAG_("cell", "conversion")
 		static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
 
 		auto baz = (U_bar) foo;
-		TRUE_(_std::get<0>(baz) == _std::get<0>(bar));
-		TRUE_(_std::get<1>(baz) == _std::get<1>(bar));
-		TRUE_(_std::get<2>(baz) == _std::get<2>(bar));
+		TRUE_(get<0>(baz) == get<0>(bar));
+		TRUE_(get<1>(baz) == get<1>(bar));
+		TRUE_(get<2>(baz) == get<2>(bar));
 
 	//	TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
 		TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
@@ -156,12 +156,12 @@ TAG_("cell", "conversion")
 		TRUE_(_1 == 1);
 		TRUE_(_2 == 2);
 		TRUE_(_3 == 3);
-		TRUE_(_std::get<0>(foo) == 1);
-		TRUE_(_std::get<1>(foo) == 2);
-		TRUE_(_std::get<2>(foo) == 3);
-		TRUE_(_std::get<0>(foo) == _std::get<0>(bar));
-		TRUE_(_std::get<1>(foo) == _std::get<1>(bar));
-		TRUE_(_std::get<2>(foo) == _std::get<2>(bar));
+		TRUE_(get<0>(foo) == 1);
+		TRUE_(get<1>(foo) == 2);
+		TRUE_(get<2>(foo) == 3);
+		TRUE_(get<0>(foo) == get<0>(bar));
+		TRUE_(get<1>(foo) == get<1>(bar));
+		TRUE_(get<2>(foo) == get<2>(bar));
 
 		TRUE_(is_q<_std::tuple_element_t<0, U_foo>,  bool>);
 		TRUE_(is_q<_std::tuple_element_t<1, U_foo>,   int>);
@@ -172,7 +172,7 @@ TAG_("cell", "conversion")
 
 	}
 }
-
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 

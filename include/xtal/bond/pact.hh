@@ -66,8 +66,8 @@ XTAL_FN2 pact_item_f(T &&t)
 XTAL_0EX
 {
 	XTAL_IF0
-	XTAL_0IF_(requires {{_std::get<I>(XTAL_REF_(t))} -> pact_element_q<I, T>;}) {
-		return _std::get<I>(XTAL_REF_(t));
+	XTAL_0IF_(requires {{get<I>(XTAL_REF_(t))} -> pact_element_q<I, T>;}) {
+		return get<I>(XTAL_REF_(t));
 	}
 	XTAL_0IF_(devalue_q<T> and not _std::is_const_v<T>) {
 		return reinterpret_cast<      devalue_t<T>(&)[devalue_n<T>]>(XTAL_REF_(t))[I];

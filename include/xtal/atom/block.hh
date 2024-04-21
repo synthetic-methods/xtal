@@ -146,9 +146,7 @@ template <xtal::atom::block_q T>
 struct tuple_size<T> : xtal::cardinal_t<xtal::devalue_n<T>> {};
 
 template <size_t N_datum, xtal::atom::block_q T>
-//\
-struct tuple_element<N_datum, T> {using type = typename xtal::reembrace_t<T>::value_type;};
-struct tuple_element<N_datum, T> {using type = XTAL_TYP_(xtal::get<N_datum>(XTAL_VAL_(T)));};
+struct tuple_element<N_datum, T> {using type = xtal::devalue_t<T>;};
 
 
 }/////////////////////////////////////////////////////////////////////////////

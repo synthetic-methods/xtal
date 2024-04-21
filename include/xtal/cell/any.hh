@@ -249,6 +249,16 @@ template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self(
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
+namespace xtal
+{////////////////////////////////////////////////////////////////////////////
+
+template <size_t N> XTAL_TN1 get(cell::any_q auto const &&t) {return _std::move(t).template head<N>();};
+template <size_t N> XTAL_TN1 get(cell::any_q auto       &&t) {return _std::move(t).template head<N>();};
+template <size_t N> XTAL_TN1 get(cell::any_q auto const  &t) {return             t.template head<N>();};
+template <size_t N> XTAL_TN1 get(cell::any_q auto        &t) {return             t.template head<N>();};
+
+
+}//////////////////////////////////////////////////////////////////////////
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
@@ -257,11 +267,6 @@ struct tuple_size<T> : xtal::cardinal_t<T::arity::value> {};
 
 template <size_t N, xtal::cell::any_q T>
 struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
-
-template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T const &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T       &&t) {return std::move(t).template head<N>();};
-template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T const  &t) {return t.template head<N>();};
-template <size_t N, xtal::cell::any_q T> XTAL_TN1 get(T        &t) {return t.template head<N>();};
 
 
 }//////////////////////////////////////////////////////////////////////////

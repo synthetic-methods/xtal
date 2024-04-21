@@ -60,7 +60,7 @@ struct cross<W, U, As...>
 			auto const    &m = head();
 			auto constexpr M = bond::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(S_::template functor<Ks...>(_detail::dot<N>(n, _std::get<I>(m))...))
+				XTAL_0FN_(S_::template functor<Ks...>(_detail::dot<N>(n, get<I>(m))...))
 			(bond::seek_f<M> {});
 		})
 

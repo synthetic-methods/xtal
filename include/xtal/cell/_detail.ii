@@ -88,14 +88,16 @@ struct refine_tuple
 	template <any_q S>
 	class subtype : public S
 	{
+		using S_ = S;
+
 	public:
-		using S::S;
-		using S::pack;
+		using S_::S_;
 
 		using pack_type = XTAL_TYP_(XTAL_VAL_(S).pack());
 
-		XTAL_DO4_(XTAL_OP0_(implicit) pack_type(), {return pack();})
-		
+		XTAL_TO4_(XTAL_OP0_(implicit) pack_type(), S_::pack())
+		XTAL_TO4_(template <size_t N> XTAL_TN1 get(), S_::template head<N>())
+
 	};
 };
 
