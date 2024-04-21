@@ -101,7 +101,7 @@ struct chunk
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and next_head() <= i; u_spool.pop()) {
-						R_::operator<<=(next_core().apple());
+						R_::operator<<=(next_core().pack());
 						(void) R_::influx(next_core());
 					}
 					return delay();

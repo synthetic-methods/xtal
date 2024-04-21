@@ -90,11 +90,11 @@ struct refine_tuple
 	{
 	public:
 		using S::S;
-		using S::apple;
+		using S::pack;
 
-		using apple_type = XTAL_TYP_(XTAL_VAL_(S).apple());
+		using pack_type = XTAL_TYP_(XTAL_VAL_(S).pack());
 
-		XTAL_DO4_(XTAL_OP0_(implicit) apple_type(), {return apple();})
+		XTAL_DO4_(XTAL_OP0_(implicit) pack_type(), {return pack();})
 		
 	};
 };

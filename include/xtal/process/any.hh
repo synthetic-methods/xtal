@@ -169,6 +169,10 @@ struct define
 				{
 					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
 				}
+				template <class F>
+				XTAL_TN2 make()
+				XTAL_0EX {return apply([] XTAL_1FN_(F));}
+
 
 				///\
 				Evaluates the lifted `functor` using the bound slots. \

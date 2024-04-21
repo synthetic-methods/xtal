@@ -91,7 +91,7 @@ struct indent<Ns...>
 				XTAL_TNX infuse(indent_q auto &&o)
 				XTAL_0EX
 				{
-					auto &w = bond::pack_item_f(head(), o.apple());
+					auto &w = bond::pack_item_f(head(), o.pack());
 					XTAL_TYP_(w) x(o);
 					_std::swap(w, x);
 					return w == x;

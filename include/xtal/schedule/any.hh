@@ -94,7 +94,7 @@ struct define
 				XTAL_TNX influx(U_delay d_t, W_tuple d_v)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, U_tuple::apple(d_v)));
+					return influx(U_event(d_t, U_tuple::pack(d_v)));
 				}
 				XTAL_TNX influx(U_delay d_t, is_q<Xs> auto &&...d_xs)
 				XTAL_0EX

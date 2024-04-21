@@ -55,12 +55,14 @@ struct lattice<U_data[N_data]>
 
 	public:// OPERATION
 		XTAL_TN2 apply(auto &&f)
-		XTAL_0EX {
-			return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(xtal::get<I>(*this)...)) (bond::seek_f<N_data> {});
-		}
+		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(xtal::get<I>(*this)...)) (bond::seek_f<N_data> {});}
+		
+		template <class F>
+		XTAL_TN2 make()
+		XTAL_0EX {return apply([] XTAL_1FN_(F));}
 
 		using pact_t = bond::pact_made_t<T_>;
-		XTAL_OP0_(implicit) pact_t() XTAL_0EX {return apply([] XTAL_1FN_(pact_t));}
+		XTAL_OP0_(implicit) pact_t() XTAL_0EX {return make<pact_t>();}
 
 
 	//	Vector comparison (performed point-wise):

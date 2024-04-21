@@ -90,7 +90,7 @@ struct define
 			return self().operator==(t.self())? is::equivalent: is::unordered;
 		}
 
-		XTAL_TN2 apple()
+		XTAL_TN2 pack()
 		XTAL_0FX
 		{
 		//	static_assert(sizeof(S_) == sizeof(bond::pack_f()));
@@ -206,15 +206,19 @@ struct defer
 			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
 		}
-		///\
-		Tuple conversion (via `apply`). \
+		template <class F>
+		XTAL_TN2 make()
+		XTAL_0EX {return apply([] XTAL_1FN_(F));}
 
-		XTAL_TN2 apple()
+		///\
+		Tuple conversion (via `make`). \
+
+		XTAL_TN2 pack()
 		XTAL_0FX
 		{
 			return apply(bond::pack_f);
 		}
-		XTAL_FN2 apple(XTAL_TYP_(XTAL_VAL_(S_).apple()) const &tuple)
+		XTAL_FN2 pack(XTAL_TYP_(XTAL_VAL_(S_).pack()) const &tuple)
 		XTAL_0EX
 		{
 			return _std::apply([] XTAL_1FN_(S_), tuple);
