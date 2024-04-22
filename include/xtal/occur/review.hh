@@ -11,9 +11,10 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> struct  review;
-template <iterated_q   U> using   review_t = confined_t<refer<U>, review<U>, bond::tag<review>>;
-template <typename ..._s> concept review_q = bond::tag_p<review, _s...>;
+template <typename ..._s> XTAL_DEF review;
+template <typename ..._s> XTAL_ASK review_q = bond::tag_p<review, _s...>;
+template <iterated_q   U> XTAL_USE review_t = confined_t<refer<U>, review<U>, bond::tag<review>>;
+template <iterated_q   U> XTAL_FN2 review_f(U &&w) XTAL_0EX {return review_t<based_t<U>>(XTAL_REF_(w));};
 /**/
 template <class S, iterated_q U>
 using review_s = bond::compose_s<S, confined<bond::tag<review>, refer<U>, review<U>>>;
@@ -45,7 +46,7 @@ struct review<U>
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		template <iterated_q W> requires is_q<reiterated_t<W>, U>
+		template <iterated_q W> requires is_q<reiterated_t<W>, W>
 		XTAL_CXN subtype(W &&w, auto &&...oo)
 		XTAL_0EX
 		:	S_(reiterated_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
@@ -57,7 +58,7 @@ struct review<U>
 		XTAL_0FX
 		{
 			auto i = w.front(), j = w.back() + 1;
-			auto t = twin(); (void) t.span(t.span()|_v3::views::slice(i, j)); return t;
+			return review_f(span()|_v3::views::slice(i, j));
 		}
 
 	};

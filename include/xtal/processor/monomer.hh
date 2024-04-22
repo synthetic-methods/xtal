@@ -98,7 +98,7 @@ struct monomer<U, As...>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_store = typename S_::template store_t<Y_return>;
+			using U_store  = typename S_::template store_t<Y_return>;
 			using U_serve  = reiterated_t<U_store>;
 			using U_review = occur::review_t<U_serve>;
 		
@@ -174,8 +174,6 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rv review_o, Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					static_assert(is_q<Rv, U_review>);// Otherwise...?
-
 					if (R_::effuse(render_o) == 1) {
 						return 1;
 					}
@@ -193,8 +191,6 @@ struct monomer<U, As...>
 				XTAL_TNX efflux_pull_slice(Rv review_o, Rn render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					static_assert(is_q<Rv, U_review>);// Otherwise...?
-
 					return 1 == R_::template efflux_pull_tail<N_share>(review_o, render_o, oo...) or
 						(_v3::ranges::move(R_::functor()|recount_f(review_o), review_o.begin()), 0);
 				}

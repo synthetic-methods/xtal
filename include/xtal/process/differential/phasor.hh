@@ -68,20 +68,30 @@ struct phasor<W_data[N_data], As...>
 		///\
 		Evaluation by succession. \
 		
-		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor(),
+		///\todo\
+		Allow configuration of look-ahead (through `As...`), \
+		incorporating fractional/half-point sample-values. \
+
+		///\note\
+		The intention behind advancing before return is/was to allow integrated oscillators like BLIT \
+		to configure their initial state based on the value at zero. \
+
+		template <auto ...Is> requires none_n<Is...>
+		XTAL_TN2 functor()
+		XTAL_0EX
 		{
-			++head(); return head();
-		})
+			return ++head();
+		}
 		///\
 		Evaluation by (possibly indented) replacement then succession. \
 		
-		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor(subarray_q<N_data> auto &&a),
+		template <auto ...Is> requires none_n<Is...>
+		XTAL_TN2 functor(subarray_q<N_data> auto &&a)
+		XTAL_0EX
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return functor();
-		})
+		}
 		
 		///\todo\
 		Introduce `occur::sample` etc to manage downsampling \

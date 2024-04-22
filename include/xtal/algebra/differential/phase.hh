@@ -138,15 +138,25 @@ struct phase<A_data[N_data]>
 		///\
 		Scales all elements. \
 
-	//	using T_::operator/=;
-	//	using T_::operator*=;
+		///\note\
+		The symmetric signatures for `/=` and `*=` are declared-but-undefined \
+		to avoid compilation-failure when type-checking e.g. `multiplicative_group_q`. \
 
-		XTAL_OP1 /= (numeric_q auto const &f)
+	//	using T_::operator/=;
+		XTAL_VAR operator /= (T const &f)
+		XTAL_0EX -> T &;// Asymmetric!
+
+		XTAL_OP1_(T &) /= (number_q auto const &f)
 		XTAL_0EX
 		{
 			return operator*=(re::alpha_1/f);
 		}
-		XTAL_OP1 *= (real_number_q auto const &f)
+
+	//	using T_::operator*=;
+		XTAL_VAR operator *= (T const &t)
+		XTAL_0EX -> T &;// Asymmetric!
+
+		XTAL_OP1_(T &) *= (real_number_q auto const &f)
 		XTAL_0EX
 		{
 			auto [m, n] = re::scientific_f((U_alpha) f);
@@ -172,7 +182,7 @@ struct phase<A_data[N_data]>
 			
 			return self();
 		}
-		XTAL_OP1 *= (integral_number_q auto const &i)
+		XTAL_OP1_(T &) *= (integral_number_q auto const &i)
 		XTAL_0EX
 		{
 			return T_::operator*=(i);
@@ -184,18 +194,18 @@ struct phase<A_data[N_data]>
 		using T_::operator-=;
 		using T_::operator+=;
 
-		XTAL_OP1 -= (numeric_q auto const &f)
+		XTAL_OP1_(T &) -= (number_q auto const &f)
 		XTAL_0EX
 		{
 			return operator+=(-f);
 		}
-		XTAL_OP1 += (real_number_q auto const &f)
+		XTAL_OP1_(T &) += (real_number_q auto const &f)
 		XTAL_0EX
 		{
 			T_::operator[](0) += re::fractional_f(f);
 			return self();
 		}
-		XTAL_OP1 += (integral_number_q auto const &i)
+		XTAL_OP1_(T &) += (integral_number_q auto const &i)
 		XTAL_0EX
 		{
 			return self();

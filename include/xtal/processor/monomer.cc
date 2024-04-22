@@ -56,7 +56,7 @@ void monomer_lifting()
 	using T_alpha = typename bond::realized::alpha_t;
 
 	T_sigma constexpr N_size = 5;
-	using U_group  =  algebra::lattice_t<T_alpha[N_size]>;
+	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
