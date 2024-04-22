@@ -32,7 +32,7 @@ the default (dynamically allocated) `std::vector` is used. \
 template <class U_data> requires pointer_q<U_data>
 struct store<U_data>
 {
-	using type = bond::compose_s<_std::vector<pointed_t<U_data>>, bond::tag<store>>;
+	using type = bond::compose_s<_std::vector<pointee_t<U_data>>, bond::tag<store>>;
 
 };
 template <class U_data>
@@ -297,7 +297,7 @@ struct store<U_data[N_data]>
 		///\
 		Inserts the values `etc...` beginning at `i0`. \
 
-		XTAL_TN0 push_back(make_q<U_data> auto &&...vs)
+		XTAL_TN0 push_back(as_q<U_data> auto &&...vs)
 		{
 			push_back(embrace_t<U_data>{U_data(XTAL_REF_(vs))...});
 		}

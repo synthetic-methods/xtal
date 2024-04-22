@@ -161,16 +161,11 @@ template <class         ...Ts>	concept anepimorphic_q	=     not _detail:: epimor
 
 template <class            ...Ts>	concept         id_q	=         _detail:: identical<Ts...>::value;//< `Ts...` are identical.
 template <class            ...Ts>	concept         is_q	=         _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <class            ...Ts>	concept       make_q	=         _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class  T , class ...Ys>	concept       make_p	=         _detail:: make_p<T, Ys...>;
-template <class  T , class ...Ys>	concept       made_p	= (...and _detail:: made_p<T, Ys>);//< `Ys...` are derived from `T`.
-template <class  T , class ...Ys>	concept       made_q	= (...and _detail:: made_q<T, Ys>);//< `T` is derived from `Ys...`.
+template <class            ...Ts>	concept         as_q	=         _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class  T , class ...Ys>	concept         as_p	=         _detail:: as_p<T, Ys...>;
 
-template <class  T , class ...Ys>	concept      widen_q = make_q<T, Ys...> and not make_p<T, Ys...>;
-template <class  T , class ...Ys>	concept      widen_p = make_p<T, Ys...> and not make_q<T, Ys...>;
-
-template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are related by inheritance.
-template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);
+template <class  T , class ...Ys>	concept   fungible_q	= some_q<Ys...> and (...and _detail::   fungible_q<T, Ys>);//< `T` and `Ys...` are   related by inheritance.
+template <class  T , class ...Ys>	concept infungible_q	= some_q<Ys...> and (...and _detail:: infungible_q<T, Ys>);//< `T` and `Ys...` are unrelated by inheritance.
 
 template <class            ...Ys>	concept     common_q	= some_q<Ys...> and _detail:: common_q<Ys...>;//< `Ys...` share an ancestor.
 template <class            ...Ys>	using       common_t	=                   _detail:: common_t<Ys...>;
@@ -180,16 +175,17 @@ template <           class    X >	using     argument_t	=          typename _deta
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T,      int N=-1>	concept      array_q =          _detail::   array_q<T> and N <  0   or devalue_n<T> == N;
-template <class T,      int N=-1>	concept   subarray_q =          _detail::   array_q<T> and 0 <= N  and devalue_n<T> <= N;
-template <           class ...Ts>	concept   disarray_q = not (...and    array_q<Ts>);
-template <int N=-1,  class ...Ts>	concept      array_p =     (...and    array_q<Ts, N>);
-template <int N=-1,  class ...Ts>	concept   subarray_p =     (...and subarray_q<Ts, N>);
+template <class T,      int N=-1>	concept      array_q =             _detail:: array_q<T> and N <  0   or devalue_n<T> == N;
+template <class T,      int N=-1>	concept   subarray_q =             _detail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
+template <           class ...Ts>	concept   disarray_q =        not (...and    array_q<Ts>);
+template <int N=-1,  class ...Ts>	concept      array_p =            (...and    array_q<Ts, N>);
+template <int N=-1,  class ...Ts>	concept   subarray_p =            (...and subarray_q<Ts, N>);
 
-template <class               T >	using      pointed_t =          _detail:: pointed_t<T >;
-template <class               T >	using      pointer_t =          _detail:: pointer_t<T >;
-template <class            ...Ts>	concept    pointed_q = (... and _detail:: pointed_q<Ts>);
-template <class            ...Ts>	concept    pointer_q = (... and _detail:: pointer_q<Ts>);
+template <class            ...Ts>	concept   accessed_q = (... and _detail:: accessed_q<Ts>);
+template <class            ...Ts>	concept    pointer_q = (... and _detail::  pointer_q<Ts>);
+template <class               T >	using     accessed_t =          _detail:: accessed_t<T >;
+template <class               T >	using      pointer_t =          _detail::  pointer_t<T >;
+template <class               T >	using      pointee_t =          _detail::  pointee_t<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,30 +193,40 @@ template <class            ...Ts>	concept    pointer_q = (... and _detail:: poin
 //\
 Ranged...
 
-template <class      ...Ts>	concept   unbounded_q = (...and  _detail:: unbounded_q<Ts>);
-template <class      ...Ts>	concept     bounded_q = (...and  _detail::   bounded_q<Ts>);
-template <class      ...Ts>	concept      reembrace_q = (...and  _detail::    reembrace_q<Ts>);
-template <class         T >	using        reembrace_t =          _detail::    reembrace_t<T >;
-template <class         T >	using        embrace_t =          _detail::    embrace_t<T >;
+template <class      ...Ts>	concept     bounded_q    = (...and  _detail::   bounded_q<Ts>);
+template <class      ...Ts>	concept   unbounded_q    = (...and  _detail:: unbounded_q<Ts>);
+template <class      ...Ts>	concept   reembrace_q    = (...and  _detail:: reembrace_q<Ts>);
+template <class         T >	using     reembrace_t    =          _detail:: reembrace_t<T >;
+template <class         T >	using       embrace_t    =          _detail::   embrace_t<T >;
 
-template <class      ...Ts>	concept    iterable_q = (...and  _detail::  iterable_q<Ts>);
-template <class      ...Ts>	concept    iterated_q = (...and  _detail::  iterated_q<Ts>);
-template <class      ...Ts>	concept    iterator_q = (...and  _detail::  iterator_q<Ts>);
+template <class         T >	using      interval_t    =          _detail::  interval_t<T >;
+template <class         T >	using      iterated_t    = typename _detail::  iterated  <T >::type;
+template <class         T >	using      iterator_t    = typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
+template <class         T >	using      iteratee_t    = typename _detail::  iteratee  <T >::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class         T >	using      distance_t    =          _detail::  distance_t<T >;
 
-template <class         T >	using      interval_t =          _detail::  interval_t<T >;
-template <class         T >	using      iterated_t = typename _detail::  iterated  <T >::type;
-template <class         T >	using      iterator_t = typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
-template <class         T >	using      iteratee_t = typename _detail::  iteratee  <T >::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
-template <class         T >	using      distance_t =          _detail::  distance_t<T >;
+template <class      ...Ts>	concept    iteratee_q    = (...and  _detail::  iteratee_q<Ts>);
+template <class      ...Ts>	concept    iterable_q    = (...and  _detail::  iterable_q<Ts>);
+template <class      ...Ts>	concept    iterated_q    = (...and  _detail::  iterated_q<Ts>);
+template <class      ...Ts>	concept    iterator_q    = (...and  _detail::  iterator_q<Ts>);
+template <class      ...Ts>	concept    sentinel_q    = (...and  _detail::  sentinel_q<Ts>);
+template <class      ...Ts>	concept    distance_q    = (...and  _detail::  distance_q<Ts>);
 
-template <class      ...Ts>	concept     counted_q = (...and  _detail::   counted_q<Ts>);
-template <class      ...Ts>	concept     counter_q = (...and  _detail::   counter_q<Ts>);
+template <class T, class Y=iteratee_t<T>>	concept    iteratee_of_p = _detail::  iteratee_of_q<T, Y>;
+template <class T, class Y=iteratee_t<T>>	concept    iterable_of_p = _detail::  iterable_of_q<T, Y>;
+template <class T, class Y=iteratee_t<T>>	concept    iterated_of_p = _detail::  iterated_of_q<T, Y>;
+template <class T, class Y=iteratee_t<T>>	concept    iterator_of_p = _detail::  iterator_of_q<T, Y>;
+template <class T, class Y=iteratee_t<T>>	concept    sentinel_of_p = _detail::  sentinel_of_q<T, Y>;
+//mplate <class T, class Y=iteratee_t<T>>	concept    distance_of_p = _detail::  distance_of_q<T, Y>;
 
-template <class   T=size_s>	using       counted_t = typename _detail::   counted  <T >::type;
-template <class   T=size_s>	using       counter_t = typename _detail::   counter  <T >::type;
+template <class      ...Ts>	concept     counted_q    = (...and  _detail::   counted_q<Ts>);
+template <class      ...Ts>	concept     counter_q    = (...and  _detail::   counter_q<Ts>);
 
-template <class         T >	using    reiterated_t =          _detail:: reiterated_t<T >;
-template <class         T >	using    initerated_t =          _detail:: initerated_t<T >;
+template <class   T=size_s>	using       counted_t    = typename _detail::   counted  <T >::type;
+template <class   T=size_s>	using       counter_t    = typename _detail::   counter  <T >::type;
+
+template <class         T >	using    reiterated_t    =          _detail:: reiterated_t<T >;
+template <class         T >	using    initerated_t    =          _detail:: initerated_t<T >;
 
 
 

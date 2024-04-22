@@ -354,7 +354,7 @@ public:
 		XTAL_0EX
 		:	S_(u, v)
 		{}
-		template <make_q<V> W>
+		template <as_q<V> W>
 		XTAL_CXN subtype(W w)
 		XTAL_0EX
 		:	subtype(U(0, w), 0)

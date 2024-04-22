@@ -30,6 +30,14 @@ Adapt `_detail::apply_to` etc to execute in parallel using SIMDE? \
 template <class U, size_t N, int Ns>
 struct block<U[N][Ns]> : block<block_t<U[N]>[Ns]>
 {};
+/*/
+template <class U_data, size_t N_data>
+struct block<U_data(&)[N_data]>
+{
+///\todo Adapt as array-of-references using `...member_f` (or uniform `std::tuple`s)? \
+
+};
+/***/
 template <class U_data, size_t N_data>
 struct block<U_data[N_data]>
 {

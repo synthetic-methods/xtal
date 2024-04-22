@@ -19,7 +19,7 @@ Wrapper used to schedule an existing type.\
 
 template <         class ..._s> struct  cue;
 template <         class ..._s> concept cue_q = bond::tag_p<cue, _s...>;
-template <class Y, class ..._s> concept cue_p = cue_q<_s...> and made_p<Y, _s...>;
+template <class Y, class ..._s> concept cue_p = cue_q<_s...> and fungible_q<Y, _s...>;
 
 template <class U> struct cue<U> : conferred<U, bond::tag<cue>> {};
 template <       > struct cue< > : cue<size_s> {};

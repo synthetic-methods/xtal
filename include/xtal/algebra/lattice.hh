@@ -15,9 +15,6 @@ template <class ..._s> struct  lattice;
 template <class ..._s> using   lattice_t = typename lattice<_s...>::type;
 template <class ..._s> concept lattice_q = bond::tag_p<lattice, _s...>;
 
-template <class T, class U_data>	concept semilattice_q = lattice_q<T, U_data> and widen_q<typename T::value_type, typename U_data::value_type>;
-template <class T, class U_data>	concept semilattice_p = lattice_q<U_data, T> and widen_q<typename U_data::value_type, typename T::value_type>;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -55,7 +52,7 @@ struct lattice<U_data[N_data]>
 
 	public:// OPERATION
 		XTAL_TN2 apply(auto &&f)
-		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(_std::get<I>(*this)...)) (bond::seek_f<N_data> {});}
+		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(_std::get<I>(*this)...)) (bond::seek_s<N_data> {});}
 		
 		template <class F>
 		XTAL_TN2 make()
@@ -76,11 +73,11 @@ struct lattice<U_data[N_data]>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_OP2_(bool) ==     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) == t.get(I))) (bond::seek_f<N_data> {});}
-		XTAL_OP2_(bool) <=     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <= t.get(I))) (bond::seek_f<N_data> {});}
-		XTAL_OP2_(bool) >=     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >= t.get(I))) (bond::seek_f<N_data> {});}
-		XTAL_OP2_(bool) <      (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <  t.get(I))) (bond::seek_f<N_data> {});}
-		XTAL_OP2_(bool) >      (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_f<N_data> {});}
+		XTAL_OP2_(bool) ==     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) == t.get(I))) (bond::seek_s<N_data> {});}
+		XTAL_OP2_(bool) <=     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <= t.get(I))) (bond::seek_s<N_data> {});}
+		XTAL_OP2_(bool) >=     (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >= t.get(I))) (bond::seek_s<N_data> {});}
+		XTAL_OP2_(bool) <      (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <  t.get(I))) (bond::seek_s<N_data> {});}
+		XTAL_OP2_(bool) >      (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
 		XTAL_OP1_(T &) <<=            (U_data const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i) <<= u;}); return self();}

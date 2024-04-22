@@ -58,10 +58,10 @@ struct define
 		XTAL_TO4_(
 		XTAL_TN2 self(), S_::self()
 		)
-		XTAL_TO4_(template <made_q<subtype> X=T>
+		XTAL_TO4_(template <fungible_q<subtype> X=T>
 		XTAL_TN2 self(), S_::template self<X>()
 		)
-		///<\returns `this` as `T`, or `made_q<subtype>`. \
+		///<\returns `this` as `T`, or `fungible_q<subtype>`. \
 		
 		
 		XTAL_DO4_(template <typename ...Is>
@@ -204,7 +204,7 @@ struct defer
 		XTAL_0FX
 		{
 			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_f<arity::value> {});
+				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_s<arity::value> {});
 		}
 		template <class F>
 		XTAL_TN2 make()

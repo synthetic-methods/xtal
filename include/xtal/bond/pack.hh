@@ -49,7 +49,7 @@ template <class T, size_t    N  > concept pack_item_p = requires(T a) {{get<N>(a
 template <class T>
 concept pack_items_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and pack_item_p<T, N>)
-	(seek_f<pack_size_n<T>> {})
+	(seek_s<pack_size_n<T>> {})
 ;
 template <class ...Ts >
 concept pack_items_q = (true and ... and pack_items_p<Ts>);

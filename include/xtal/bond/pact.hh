@@ -98,7 +98,7 @@ XTAL_DEF pact_make
 		using type = pact_t<pact_element_t<Is, Ts...>...>;
 
 	};
-	using type = typename solve<bond::seek_f<pact_size_n<Ts...>>>::type;
+	using type = typename solve<bond::seek_s<pact_size_n<Ts...>>>::type;
 
 };
 template <class ...Ts>
@@ -107,9 +107,9 @@ XTAL_USE pact_make_t = typename pact_make<_std::remove_reference_t<Ts>...>::type
 XTAL_LET pact_make_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN
 {
-	return [&]<auto ...I>(bond::seek_t<I...>)
-		XTAL_0FN_(pact_make_t<Ts...>(pact_item_f<I>(ts...)...))
-	(bond::seek_f<pact_size_n<Ts...>>{});
+	return [&]<auto ...Is> (bond::seek_t<Is...>)
+		XTAL_0FN_(pact_make_t<Ts...>(pact_item_f<Is>(ts...)...))
+	(bond::seek_s<pact_size_n<Ts...>>{});
 };
 
 
@@ -123,7 +123,7 @@ XTAL_DEF pact_made
 		using type = pact_t<pact_element_t<Is, Ts...> &...>;
 
 	};
-	using type = typename solve<bond::seek_f<pact_size_n<Ts...>>>::type;
+	using type = typename solve<bond::seek_s<pact_size_n<Ts...>>>::type;
 
 };
 template <class ...Ts>
@@ -132,30 +132,35 @@ XTAL_USE pact_made_t = typename pact_made<_std::remove_reference_t<Ts>...>::type
 XTAL_LET pact_made_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN
 {
-	return [&]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {
-		return pact_made_t<Ts...>(pact_item_f<I>(ts...)...);
-	}	(bond::seek_f<pact_size_n<Ts...>>{});
+	return [&]<auto ...Is> (bond::seek_t<Is...>) XTAL_0FN {
+		return pact_made_t<Ts...>(pact_item_f<Is>(ts...)...);
+	}	(bond::seek_s<pact_size_n<Ts...>>{});
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N>
-XTAL_FN2 pact_phalanx_f(size_t n)
+template <size_t N, accessed_q W>
+XTAL_FN2 pact_columns_f(size_t const &n, W &&w)
 XTAL_0EX
 {
-	return [=] (auto &&w) XTAL_0FN {
-		using W = XTAL_TYP_(w);
-		using U = iteratee_t<W>;
-		return [&]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {
-			if constexpr (requires {_std::begin(XTAL_VAL_(U));}) {
-				return _v3::views::zip(_std::span(_std::begin(w[I]), n)...);
-			}
-			else {
-				return _v3::views::zip(_std::span(w[I], n)...);
-			}
-		}	(bond::seek_f<N>{});
-	};
+	return [&]<size_t ...Is> (bond::seek_t<Is...>)
+		XTAL_0FN_(_v3::views::zip(_std::span(_std::begin(w[Is]), n)...))
+	(bond::seek_s<N>{});
+}
+template <size_t N, accessed_q W> requires pointer_q<accessed_t<W>>
+XTAL_FN2 pact_columns_f(size_t const &n, W &&w)
+XTAL_0EX
+{
+	return [&]<size_t ...Is> (bond::seek_t<Is...>)
+		XTAL_0FN_(_v3::views::zip(_std::span(w[Is], n)...))
+	(bond::seek_s<N>{});
+}
+template <size_t N>
+XTAL_FN2 pact_columns_f(size_t n)
+XTAL_0EX
+{
+	return [=] (auto &&w) XTAL_0FN_(pact_columns_f<N>(n, XTAL_REF_(w)));
 }
 
 

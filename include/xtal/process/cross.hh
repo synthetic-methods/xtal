@@ -30,7 +30,7 @@ XTAL_FN2 dot(auto const &x, auto const &y)
 	static_assert(N == bond::pack_size_n<decltype(y)>);
 	return [&]<size_t ...I>(bond::seek_t<I...>)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
-	(bond::seek_f<N - 1> {});
+	(bond::seek_s<N - 1> {});
 }
 
 
@@ -61,7 +61,7 @@ struct cross<W, U, As...>
 			auto constexpr M = bond::pack_size_n<decltype(m)>;
 			return [&, this]<size_t ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(S_::template functor<Ks...>(_detail::dot<N>(n, get<I>(m))...))
-			(bond::seek_f<M> {});
+			(bond::seek_s<M> {});
 		})
 
 	};

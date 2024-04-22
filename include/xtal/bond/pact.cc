@@ -18,7 +18,7 @@ TAG_("pact")
 	TRY_("task")
 	{
 		double table[2][2] = {{0, 0}, {0, 0}};
-		auto zip = pact_phalanx_f<2>(2) (table);
+		auto zip = pact_columns_f<2>(2) (table);
 		zip[0] = pack_f(1.0, 2.0);
 		TRUE_(1 == table[0][0]);
 		TRUE_(2 == table[1][0]);

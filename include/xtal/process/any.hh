@@ -263,7 +263,7 @@ struct define
 						static_assert(0 <= N_slot);
 						return [&] <auto ...I>(bond::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...))
-						(bond::seek_f<sizeof...(Xs) - 1> {});
+						(bond::seek_s<sizeof...(Xs) - 1> {});
 					}
 				}
 				template <int N_slot=-1>
@@ -277,7 +277,7 @@ struct define
 						static_assert(0 <= N_slot);
 						return [&] <auto ...I>(bond::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...))
-						(bond::seek_f<sizeof...(Xs) - 1> {});
+						(bond::seek_s<sizeof...(Xs) - 1> {});
 					}
 				}
 

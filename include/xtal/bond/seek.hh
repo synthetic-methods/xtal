@@ -14,7 +14,7 @@ namespace xtal::bond
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t  ...I > using    seek_t = _std::index_sequence<I...>;
-template <size_t     N > using    seek_f = _std::make_index_sequence<N>;
+template <size_t     N > using    seek_s = _std::make_index_sequence<N>;
 template <auto    ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_REF_(o));
 
 
@@ -25,7 +25,7 @@ XTAL_FN1 seek_forward_f(auto const &f)
 XTAL_0EX
 {
 	return [&] <size_t ...I>(seek_t<I...>)
-		XTAL_0FN_(..., f(cardinal_t<I_onset  + I>{})) (seek_f<K> {});
+		XTAL_0FN_(..., f(cardinal_t<I_onset  + I>{})) (seek_s<K> {});
 }
 
 template <size_t K=0, auto I_onset=0>
@@ -34,7 +34,7 @@ XTAL_0EX
 {
 	size_t constexpr I_offset = I_onset + K - 1;
 	return [&] <size_t ...I>(seek_t<I...>)
-		XTAL_0FN_(..., f(cardinal_t<I_offset - I>{})) (seek_f<K> {});
+		XTAL_0FN_(..., f(cardinal_t<I_offset - I>{})) (seek_s<K> {});
 }
 
 

@@ -118,12 +118,12 @@ struct serial<U_data[N_data]>
 					if constexpr (0 < N_sign) {
 						return [&, this]<auto ...M>(bond::seek_t<M...>)
 							XTAL_0FN_(u +...+ (get(M)))
-						(bond::seek_f<N_data>{});
+						(bond::seek_s<N_data>{});
 					}
 					else {
 						return [&, this]<auto ...M>(bond::seek_t<M...>)
 							XTAL_0FN_(u +...+ (get(M)*re::assign_f((U_sigma) M)))
-						(bond::seek_f<N_data>{});
+						(bond::seek_s<N_data>{});
 					}
 				}
 			//	Scalar product:
