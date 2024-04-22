@@ -11,7 +11,7 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-struct per
+struct sample
 {
 private:
 	using U = _std::make_unsigned_t<typename bond::realized::iota_t>;
@@ -24,6 +24,8 @@ public:
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		//\todo\
+		Skip `head<1>` by inheriting `query<S_::template self_s<1>>`? \
 
 	public:
 	//	using S_::S_;
@@ -46,7 +48,7 @@ public:
 
 	};
 };
-using per_t = confined_t<per>;
+using sample_t = confined_t<sample>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

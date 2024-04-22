@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./per.hh"// testing...
+#include "./sample.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("per")
+TAG_("sample")
 {
 	TRY_("construction")
 	{
@@ -25,8 +25,8 @@ TAG_("per")
 		T_sigma constexpr b = re::sigma_1 << 16;
 		T_alpha constexpr p = re::haplo_f(16);
 
-		auto d = per_t(b);
-		auto q = per_t(p);
+		auto d = sample_t(b);
+		auto q = sample_t(p);
 
 		TRUE_(b == d.rate());
 		TRUE_(b == q.rate());

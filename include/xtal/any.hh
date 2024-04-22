@@ -146,10 +146,10 @@ template <class      T >	using      devalue_t	=          _detail:: devalue_t<T>;
 template <class      T >	using      devolve_t	=          _detail:: devolve_t<T>;
 template <class      T >	XTAL_LET   devalue_n =          _detail:: devalue_n<T>;
 template <class      T >	XTAL_LET   devolve_n =          _detail:: devolve_n<T>;
-template <class T, class Y>	concept   devalued_q = devalue_n<T> < devalue_n<Y>;
-template <class T, class Y>	concept   devalued_p = devalue_n<Y> < devalue_n<T>;
-template <class T, class Y>	concept   devolved_q = devolve_n<T> < devolve_n<Y>;
-template <class T, class Y>	concept   devolved_p = devolve_n<Y> < devolve_n<T>;
+template <class T, class Y>	concept    devalued_q = devalue_n<T> < devalue_n<Y>;
+template <class T, class Y>	concept    devalued_p = devalue_n<Y> < devalue_n<T>;
+template <class T, class Y>	concept    devolved_q = devolve_n<T> < devolve_n<Y>;
+template <class T, class Y>	concept    devolved_p = devolve_n<Y> < devolve_n<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

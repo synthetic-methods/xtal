@@ -165,8 +165,8 @@ template <class      T >	concept       end_q = requires {*XTAL_VAL_(T).  end();}
 template <class      T >	using       begin_t = decltype ( XTAL_VAL_(T).begin() );
 template <class      T >	using         end_t = decltype ( XTAL_VAL_(T).  end() );
 
-template <class      T >	concept unbounded_q = begin_q<T> and not end_q<T>;
 template <class      T >	concept   bounded_q = begin_q<T> and     end_q<T>;
+template <class      T >	concept unbounded_q = begin_q<T> and not end_q<T>;
 
 template <class      T >	concept   debrace_q = requires {typename T::initializer_list;};
 template <class      T >	concept reembrace_q = debrace_q<T> or devalue_q<T>;
@@ -176,6 +176,8 @@ template <class      T >	using   reembrace_t = typename reembrace<T>::type;
 template <class      W >	using     embrace_t = _std::initializer_list<W>;
 
 
+template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
+
 template <class      T >	concept  iterable_q = begin_q<T> and not requires (T t) {t.front();};
 template <class      T >	concept  iterated_q = begin_q<T> and     requires (T t) {t.front();};//_v3::ranges::forward_range
 template <class      T >	concept  iterator_q = requires (T t) {*++t;};//_v3::ranges::forward_iterator
@@ -183,12 +185,13 @@ template <class      T >	concept  iterator_q = requires (T t) {*++t;};//_v3::ran
 template <class      T >	struct   iterated;
 template <class      T >	struct   iterator;
 template <class      T >	struct   iteratee;
+template <class      T >	struct   sentinel;
 template <class      T >	struct   distance;
 
-template <class      W >	using    interval_t = _v3::ranges::iota_view<W, W>;
 template <class      T >	using    iterated_t = typename iterated<T>::type;
 template <class      T >	using    iterator_t = typename iterator<T>::type;//_v3::ranges::iterator_t
 template <class      T >	using    iteratee_t = typename iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class      T >	using    sentinel_t = typename sentinel<T>::type;
 template <class      T >	using    distance_t = typename distance<T>::type;
 
 template <iterated_q T >	struct   iterated<T>: logical<1> {using type =               based_t<T> ;};
@@ -204,6 +207,9 @@ template <iterable_q T >	struct   iteratee<T>: logical<0> {using type =     poin
 template <iterated_q T >	struct   iteratee<T>: logical<0> {using type =     pointed_t<begin_t<T>>;};
 template <iterator_q T >	struct   iteratee<T>: logical<0> {using type =             pointed_t<T> ;};
 template <integral_p T >	struct   iteratee<T>: logical<1> {using type =               based_t<T> ;};
+
+template <iterator_q T >	struct   sentinel<T>: logical<0> {using type = T;};
+template <iterated_q T >	struct   sentinel<T>: logical<0> {using type = _v3::ranges::sentinel_t<T>;};
 
 template <class      T >	struct   distance                {using type = distance_t<iterator_t<T>>;};
 template <iterator_q T >	struct   distance<T>             {using type = XTAL_TYP_(_std::distance(XTAL_VAL_(T), XTAL_VAL_(T)));};
@@ -222,8 +228,8 @@ template <counted_q  T >	struct   counter<T> : logical<0> {using type = iteratee
 template <counter_q  T >	struct   counter<T> : logical<1> {using type =    based_t<T>;};
 
 
-template <class      T >	using reiterated_t  = _v3::ranges::subrange<iterator_t<T>, _v3::ranges::sentinel_t<T>>;
-template <class      T >	using initerated_t  = _v3::ranges::view_interface<T>;
+template <class      T >	using  reiterated_t  = _v3::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+template <class      T >	using  initerated_t  = _v3::ranges::view_interface<T>;
 
 
 

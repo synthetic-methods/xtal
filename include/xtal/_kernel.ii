@@ -15,9 +15,9 @@ XTAL_LET make_f = [] XTAL_1FN_(T);
 //\
 Ranged...
 
-template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) {return counted_t<I>(i0, iN);}
-template <class      T >	XTAL_FN2 counted_f(T &&t)      {return counted_t<T>(XTAL_REF_(t));}
-template <class      T >	XTAL_FN2 counter_f(T &&t)      {return counter_t<T>(XTAL_REF_(t));}
+template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
+template <class      T >	XTAL_FN2 counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
+template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
 
 
 template <class    T>

@@ -84,7 +84,7 @@ struct phasor<W_data[N_data], As...>
 		})
 		
 		///\todo\
-		Introduce `occur::per` etc to manage downsampling \
+		Introduce `occur::sample` etc to manage downsampling \
 		(by integer multiplication followed by normalization). \
 
 	};
