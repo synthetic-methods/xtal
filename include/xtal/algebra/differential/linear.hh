@@ -11,12 +11,12 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  pulse;
-template <class ..._s> using   pulse_t = typename pulse<_s...>::type;
-template <class ...Ts> concept pulse_q = bond::tag_p<pulse, Ts...>;
+template <class ..._s> struct  linear;
+template <class ..._s> using   linear_t = typename linear<_s...>::type;
+template <class ...Ts> concept linear_q = bond::tag_p<linear, Ts...>;
 
-XTAL_LET  pulse_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(pulse_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+XTAL_LET  linear_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(linear_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,10 +24,10 @@ XTAL_0FN_(pulse_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 Extends `serial` with succession. \
 
 template <class U_data> requires disarray_q<U_data>
-struct pulse<U_data> : pulse<U_data[2]>
+struct linear<U_data> : linear<U_data[2]>
 {};
 template <class U_data, int N_data>
-struct pulse<U_data[N_data]>
+struct linear<U_data[N_data]>
 {
 	using re = bond::realize<U_data>;
 	
@@ -35,7 +35,7 @@ struct pulse<U_data[N_data]>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<pulse>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<linear>>;
 
 	template <class T>
 	class homotype : public holotype<T>

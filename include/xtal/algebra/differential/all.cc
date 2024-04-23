@@ -1,3 +1,3 @@
 #include "./any.cc"
-#include "./phase.cc"
-#include "./pulse.cc"
+#include "./linear.cc"
+#include "./modular.cc"

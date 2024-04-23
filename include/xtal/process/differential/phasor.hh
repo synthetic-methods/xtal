@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../../algebra/differential/phase.hh"
+#include "../../algebra/differential/modular.hh"
 
 
 
@@ -25,9 +25,9 @@ template <size_t N_data, class W_data, typename ...As>
 struct phasor<W_data[N_data], As...>
 {
 	template <size_t N>
-	using phase_u = algebra::differential::phase_t<W_data[N]>;
+	using modular_u = algebra::differential::modular_t<W_data[N]>;
 
-	using W_ = phase_u<N_data>;
+	using W_ = modular_u<N_data>;
 	
 	using re = bond::realize<W_data>;
 	using V = typename re::delta_t;

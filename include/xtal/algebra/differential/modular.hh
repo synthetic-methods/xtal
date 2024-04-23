@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./pulse.hh"
+#include "./linear.hh"
 
 
 
@@ -11,17 +11,17 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  phase;
-template <class ..._s> using   phase_t = typename phase<_s...>::type;
-template <class ...Ts> concept phase_q = bond::tag_p<phase, Ts...>;
+template <class ..._s> struct  modular;
+template <class ..._s> using   modular_t = typename modular<_s...>::type;
+template <class ...Ts> concept modular_q = bond::tag_p<modular, Ts...>;
 
-XTAL_LET  phase_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(phase_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+XTAL_LET  modular_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(modular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `pulse` as a fixed-point fractional/phase value. \
+Extends `linear` as a fixed-point fractional/modular value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_t)`. \
@@ -36,19 +36,19 @@ The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
 template <class U_data> requires disarray_q<U_data>
-struct phase<U_data> : phase<U_data[2]>
+struct modular<U_data> : modular<U_data[2]>
 {};
 template <class A_data, size_t N_data>
-struct phase<A_data[N_data]>
+struct modular<A_data[N_data]>
 {
 	using re = bond::realize<A_data>;
 	using U_delta = typename re::delta_t;
 	using U_sigma = typename re::sigma_t;
 	using U_alpha = typename re::alpha_t;
 	
-	using W_delta = pulse_t<U_delta[N_data]>;
-	using W_sigma = pulse_t<U_sigma[N_data]>;
-	using W_alpha = pulse_t<U_alpha[N_data]>;
+	using W_delta = linear_t<U_delta[N_data]>;
+	using W_sigma = linear_t<U_sigma[N_data]>;
+	using W_alpha = linear_t<U_alpha[N_data]>;
 
 	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(_std::bit_cast<U_sigma>(U_delta(u*re::diplo_f())));
 	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(_std::bit_cast<U_delta>(v))*re::haplo_f());
@@ -56,10 +56,10 @@ struct phase<A_data[N_data]>
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
 	template <class T>
-	using allotype = typename pulse<U_sigma[N_data]>::template homotype<T>;
+	using allotype = typename linear<U_sigma[N_data]>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<phase>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<modular>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -194,7 +194,7 @@ struct phase<A_data[N_data]>
 namespace xtal
 {///////////////////////////////////////////////////////////////////////////////
 
-//template <size_t N_datum, algebra::differential::phase_q T> XTAL_FN2 get(T &&t)
+//template <size_t N_datum, algebra::differential::modular_q T> XTAL_FN2 get(T &&t)
 //XTAL_0EX {return XTAL_REF_(t) (N_datum);}
 
 

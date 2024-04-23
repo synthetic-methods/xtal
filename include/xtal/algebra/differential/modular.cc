@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./phase.hh"// testing...
+#include "./modular.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::algebra::differential::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("phase")
+TAG_("modular")
 {
 	using re = bond::realize<size_t>;
 	using T_sigma = typename re::sigma_t;
@@ -25,13 +25,13 @@ TAG_("phase")
 	auto mt19937_f = typename realized::mt19937_t();
 	mt19937_f.seed(Catch::rngSeed());
 
-	using U_phi = phase_t<T_alpha[2]>;
+	using U_phi = modular_t<T_alpha[2]>;
 	using W_phi = _std::complex<U_phi>;
 
-	using D1 = phase_t<T_delta[1]>;
-	using D2 = phase_t<T_delta[2]>;
-	using D3 = phase_t<T_delta[3]>;
-	using D4 = phase_t<T_delta[4]>;
+	using D1 = modular_t<T_delta[1]>;
+	using D2 = modular_t<T_delta[2]>;
+	using D3 = modular_t<T_delta[3]>;
+	using D4 = modular_t<T_delta[4]>;
 	
 	TRY_("complexion")
 	{

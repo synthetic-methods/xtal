@@ -19,7 +19,7 @@ TAG_("phasor")
 	using T_sigma = typename re::sigma_t;
 	using T_delta = typename re::delta_t;
 	using T_alpha = typename re::alpha_t;
-	using W_phi = algebra::differential::phase_t <size_t[2]>;
+	using W_phi = algebra::differential::modular_t <size_t[2]>;
 	using Y_phi = process::differential::phasor_t<size_t[2]>;
 	using Z_phi = processor::monomer_t<Y_phi, resource::restore<constant_t<-1>>>;
 

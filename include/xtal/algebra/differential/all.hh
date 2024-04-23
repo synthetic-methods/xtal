@@ -1,3 +1,3 @@
 #include "./any.hh"
-#include "./phase.hh"
-#include "./pulse.hh"
+#include "./linear.hh"
+#include "./modular.hh"

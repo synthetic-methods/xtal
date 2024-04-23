@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./pulse.hh"// testing...
+#include "./linear.hh"// testing...
 
 
 
@@ -13,12 +13,12 @@ namespace xtal::algebra::differential::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("solid", "pulse")
+TAG_("solid", "linear")
 {
-	using D1 = pulse_t<int[1]>;
-	using D2 = pulse_t<int[2]>;
-	using D3 = pulse_t<int[3]>;
-	using D4 = pulse_t<int[4]>;
+	using D1 = linear_t<int[1]>;
+	using D2 = linear_t<int[2]>;
+	using D3 = linear_t<int[3]>;
+	using D4 = linear_t<int[4]>;
 	
 	TRY_("integration")
 	{
