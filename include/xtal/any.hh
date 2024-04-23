@@ -103,53 +103,56 @@ using  ordinal_1 = _detail::  ordinal<1>::type;
 using  logical_0 = _detail::  ordinal<0>::type;
 using  logical_1 = _detail::  ordinal<1>::type;
 
-template <auto       N >	using     constant_t	= typename _detail:: constant<N>::type;
-template <auto       N >	using     cardinal_t	= typename _detail:: cardinal<N>::type;
-template <auto       N >	using      ordinal_t	= typename _detail::  ordinal<N>::type;
-template <auto       N >	using      logical_t	= typename _detail::  logical<N>::type;
+template <auto       N >	using        constant_t	= typename _detail:: constant<N>::type;
+template <auto       N >	using        cardinal_t	= typename _detail:: cardinal<N>::type;
+template <auto       N >	using         ordinal_t	= typename _detail::  ordinal<N>::type;
+template <auto       N >	using         logical_t	= typename _detail::  logical<N>::type;
 
-template <class   ...Ts>	concept   constant_q	= (...and  _detail::  constant_q<Ts>);
-template <class   ...Ts>	concept   integral_q	= (...and  _detail::  integral_q<Ts>);
-template <class   ...Ts>	concept   cardinal_q	= (...and  _detail::  cardinal_q<Ts>);
-template <class   ...Ts>	concept    ordinal_q	= (...and  _detail::   ordinal_q<Ts>);
-template <class   ...Ts>	concept    logical_q	= (...and  _detail::   logical_q<Ts>);
+template <class   ...Ts>	concept      constant_q	= (...and  _detail::  constant_q<Ts>);
+template <class   ...Ts>	concept      integral_q	= (...and  _detail::  integral_q<Ts>);
+template <class   ...Ts>	concept      cardinal_q	= (...and  _detail::  cardinal_q<Ts>);
+template <class   ...Ts>	concept       ordinal_q	= (...and  _detail::   ordinal_q<Ts>);
+template <class   ...Ts>	concept       logical_q	= (...and  _detail::   logical_q<Ts>);
 
-template <class   ...Ts>	concept   integral_p	= (...and  _detail::  integral_p<Ts>);
-template <class   ...Ts>	concept   cardinal_p	= (...and  _detail::  cardinal_p<Ts>);
-template <class   ...Ts>	concept    ordinal_p	= (...and  _detail::   ordinal_p<Ts>);
-template <class   ...Ts>	concept    logical_p	= (...and  _detail::   logical_p<Ts>);
+template <class   ...Ts>	concept      integral_p	= (...and  _detail::  integral_p<Ts>);
+template <class   ...Ts>	concept      cardinal_p	= (...and  _detail::  cardinal_p<Ts>);
+template <class   ...Ts>	concept       ordinal_p	= (...and  _detail::   ordinal_p<Ts>);
+template <class   ...Ts>	concept       logical_p	= (...and  _detail::   logical_p<Ts>);
 
-template <class   ...Ts>	concept   terminal_q	= (...and  _detail::    terminal_q<Ts>);
-template <class   ...Ts>	concept    liminal_q	= (...and  _detail::     liminal_q<Ts>);
-template <liminal_q  T >	using   subliminal_s	= typename _detail::  subliminal<T>::type;
-template <liminal_q  T >	using  semiliminal_s	= typename _detail:: semiliminal<T>::type;
+template <class   ...Ts>	concept      terminal_q	= (...and  _detail::    terminal_q<Ts>);
+template <class   ...Ts>	concept       liminal_q	= (...and  _detail::     liminal_q<Ts>);
+template <liminal_q  T >	using      subliminal_s	= typename _detail::  subliminal<T>::type;
+template <liminal_q  T >	using     semiliminal_s	= typename _detail:: semiliminal<T>::type;
+
+template <int        N >	using      bisordinal_t	= typename _detail:: bisordinal<N    >::type;
+template <int     ...Ns>	using      fractional_t	= typename _detail:: fractional<Ns...>::type;
+template <int     ...Ns>	XTAL_LET   fractional_n	=          _detail:: fractional<Ns...>::value;
+
+template <class      T >	using           based_t	=          _detail::   based_t<T>;
+template <class   ...Ts>	concept         based_q	= (...and  _detail::   based_q<Ts>);
+template <class   ...Ts>	concept       unbased_q	= (...and  _detail:: unbased_q<Ts>);
+
+template <class      T >	using         rebased_t	= typename _detail:: rebased<T>::type;
+template <class      T >	using         debased_t	= typename _detail:: debased<T>::type;
+template <class      T >	concept       rebased_p	=   (bool) _detail:: rebased<T>::value;
+template <class      T >	concept       debased_p	=   (bool) _detail:: debased<T>::value;
+template <class   ...Ts>	concept       rebased_q	= (...and  _detail:: rebased_q<Ts>);
+template <class   ...Ts>	concept       debased_q	= (...and  _detail:: debased_q<Ts>);
 
 
-template <class      T >	using        based_t	=          _detail::   based_t<T>;
-template <class   ...Ts>	concept      based_q	= (...and  _detail::   based_q<Ts>);
-template <class   ...Ts>	concept    unbased_q	= (...and  _detail:: unbased_q<Ts>);
-
-template <class      T >	using      rebased_t	= typename _detail:: rebased<T>::type;
-template <class      T >	using      debased_t	= typename _detail:: debased<T>::type;
-template <class      T >	concept    rebased_p	=   (bool) _detail:: rebased<T>::value;
-template <class      T >	concept    debased_p	=   (bool) _detail:: debased<T>::value;
-template <class   ...Ts>	concept    rebased_q	= (...and  _detail:: rebased_q<Ts>);
-template <class   ...Ts>	concept    debased_q	= (...and  _detail:: debased_q<Ts>);
-
-
-template <class   ...Ts>	concept    unvalue_q	= (...and  _detail:: unvalue_q<Ts>);
-template <class   ...Ts>	concept    invalue_q	= (...and  _detail:: invalue_q<Ts>);
-template <class   ...Ts>	concept    devalue_q	= (...and  _detail:: devalue_q<Ts>);
-template <class      T >	using      unvalue_t	=          _detail:: unvalue_t<T>;
-template <class      T >	using      invalue_t	=          _detail:: invalue_t<T>;
-template <class      T >	using      devalue_t	=          _detail:: devalue_t<T>;
-template <class      T >	using      devolve_t	=          _detail:: devolve_t<T>;
-template <class      T >	XTAL_LET   devalue_n =          _detail:: devalue_n<T>;
-template <class      T >	XTAL_LET   devolve_n =          _detail:: devolve_n<T>;
-template <class T, class Y>	concept    devalued_q = devalue_n<T> < devalue_n<Y>;
-template <class T, class Y>	concept    devalued_p = devalue_n<Y> < devalue_n<T>;
-template <class T, class Y>	concept    devolved_q = devolve_n<T> < devolve_n<Y>;
-template <class T, class Y>	concept    devolved_p = devolve_n<Y> < devolve_n<T>;
+template <class   ...Ts>	concept       unvalue_q	= (...and  _detail:: unvalue_q<Ts>);
+template <class   ...Ts>	concept       invalue_q	= (...and  _detail:: invalue_q<Ts>);
+template <class   ...Ts>	concept       devalue_q	= (...and  _detail:: devalue_q<Ts>);
+template <class      T >	using         unvalue_t	=          _detail:: unvalue_t<T>;
+template <class      T >	using         invalue_t	=          _detail:: invalue_t<T>;
+template <class      T >	using         devalue_t	=          _detail:: devalue_t<T>;
+template <class      T >	using         devolve_t	=          _detail:: devolve_t<T>;
+template <class      T >	XTAL_LET      devalue_n =          _detail:: devalue_n<T>;
+template <class      T >	XTAL_LET      devolve_n =          _detail:: devolve_n<T>;
+template <class T, class Y>	concept   devalued_q = devalue_n<T> < devalue_n<Y>;
+template <class T, class Y>	concept   devalued_p = devalue_n<Y> < devalue_n<T>;
+template <class T, class Y>	concept   devolved_q = devolve_n<T> < devolve_n<Y>;
+template <class T, class Y>	concept   devolved_p = devolve_n<Y> < devolve_n<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

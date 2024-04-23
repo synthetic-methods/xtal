@@ -1196,7 +1196,7 @@ public:
 		sigma_t  o = _std::bit_cast<sigma_t>(f);
 		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark + fraction.depth);
 		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
-		delta_t  z = _std::bit_cast<delta_t>(o) >> positive.depth;
+		delta_t  z =    static_cast<delta_t>(o) >> positive.depth;
 		o >>= positive.depth;
 		m  ^= z;
 		m  -= z;

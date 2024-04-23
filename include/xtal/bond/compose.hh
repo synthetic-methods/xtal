@@ -11,6 +11,10 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <typename ...Subtyped> concept   compose_q =     (...and _detail::compose_q<Subtyped>);
+template <typename ...Subtyped> concept decompose_q = not (...and _detail::compose_q<Subtyped>);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Composes the supplied `Outer::subtype`s to define `::subtype<S, Inner...>`. \
@@ -26,11 +30,9 @@ template <>
 struct compose<>
 {
 private:
-	template <class S, typename ...Inner                > struct compact {using type = S;};
-	template <class S, typename    Inner, typename ..._s>
-	struct compact<S, Inner, _s...>
-	:	compact<typename Inner::template subtype<S>, _s...>
-	{};
+	template <class S, typename  ...Inner                > struct compact {using type = S;};
+	template <class S, incomplete_q Inner, typename ..._s> struct compact<S, Inner, _s...> : compact<                                 S , _s...> {};
+	template <class S, typename     Inner, typename ..._s> struct compact<S, Inner, _s...> : compact<typename Inner::template subtype<S>, _s...> {};
 
 public:
 	template <class S, typename ...Inner>
@@ -46,9 +48,8 @@ struct compose<Outer, _s...>
 	>;
 
 };
-template <typename ...Outer>
-struct compose<void, Outer...>
-:	compose<Outer...>
+template <incomplete_q Outer, typename ..._s>
+struct compose<Outer, _s...> : compose<_s...>
 {
 };
 
@@ -57,9 +58,6 @@ Applys the `Inner::subtype`s to `S` from left-to-right. \
 
 template <class S, typename ...Inner>
 using   compose_s = typename compose<>::template subtype<S, Inner...>;
-
-template <typename ...Subtyped>
-concept compose_q = (...and _detail::compose_q<Subtyped>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

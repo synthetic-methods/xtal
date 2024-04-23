@@ -51,6 +51,7 @@ TODO: Allow [c]?make configuration?
 #define XTAL_STD__sign_t ::std::int_fast8_t
 #define XTAL_STD__size_t ::std::size_t
 #define XTAL_STD__size_s ::std::ptrdiff_t
+#define XTAL_STD__real_s float
 
 
 #if     defined(__cacheline_aligned)

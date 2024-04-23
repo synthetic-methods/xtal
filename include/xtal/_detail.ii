@@ -13,6 +13,7 @@ using    sign_t = XTAL_STD_(sign_t);
 using    byte_t = XTAL_STD_(byte_t);
 using    size_t = XTAL_STD_(size_t);
 using    size_s = XTAL_STD_(size_s);
+using    real_s = XTAL_STD_(real_s);
 XTAL_LET size_1 = (size_t) 1;
 
 template <auto N_zero=0>
@@ -51,7 +52,7 @@ template <              class ...Ts>	using      complete_t = typename complete<T
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class      T >	concept  constant_q = _std::derived_from<T, _std::integral_constant<typename T::value_type, T::value>>;
+template <class      T >	concept  constant_q = _std::derived_from<T, _std::integral_constant<typename T::type::value_type, T::type::value>>;
 template <auto       N >	using    constant   = _std::integral_constant<decltype(N), N>;
 template <auto       N >	using    cardinal   = _std::integral_constant<size_t,      N>;
 template <auto       N >	using     ordinal   = _std::integral_constant<int,         N>;
@@ -77,6 +78,13 @@ template <class      T >	concept  terminal_q =  integral_q<T> and 0 == T::value;
 template <class      T >	concept   liminal_q =  integral_q<T> and 0 != T::value;
 template <liminal_q  T >	using  subliminal   = constant<(T{} - sign_n<T{}>)>;
 template <liminal_q  T >	using semiliminal   = constant<(T{} >> 1)>;
+
+template <int N           >	struct bisordinal    : constant<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N * real_s(0.5));};
+template <int N, int ...Ns>	struct fractional                  {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N + real_s(1.0)/fractional<Ns...>{});};
+template <int N           >	struct fractional<N> : constant<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N);};
+static_assert(fractional<2      >{} == 2.0);
+static_assert(fractional<1, 1   >{} == 2.0);
+static_assert(fractional<1, 1, 1>{} == 1.5);
 
 
 ////////////////////////////////////////////////////////////////////////////////

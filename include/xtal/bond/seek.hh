@@ -13,8 +13,8 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t  ...I > using    seek_t = _std::index_sequence<I...>;
-template <size_t     N > using    seek_s = _std::make_index_sequence<N>;
+template <size_t  ...I > XTAL_USE seek_t = _std::index_sequence<I...>;
+template <size_t     N > XTAL_USE seek_s = _std::make_index_sequence<N>;
 template <auto    ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_REF_(o));
 
 
@@ -42,21 +42,29 @@ XTAL_0EX
 
 template <         class ...Ts>  struct seek_front;
 template <class T, class ...Ts>  struct seek_front<T, Ts...> {using type = T;};
-template <         class ...Ts>   using seek_front_t = typename seek_front<Ts...>::type;
+template <         class ...Ts>  using  seek_front_t = typename seek_front<Ts...>::type;
 
 template <         class ...Ts>  struct seek_back;
 template <class T, class ...Ts>  struct seek_back<T, Ts...> : seek_back<Ts...> {};
 template <class T             >  struct seek_back<T       >                    {using type = T;};
-template <         class ...Ts>   using seek_back_t = typename seek_back<Ts...>::type;
+template <         class ...Ts>  using  seek_back_t = typename seek_back<Ts...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int I=0, bool ...Ns>         struct seek_truth;
-template <int I              >         struct seek_truth<I              > : ordinal_t<-1> {};
-template <int I,   bool ...Ns>         struct seek_truth<I,  true, Ns...> : ordinal_t< I> {};
-template <int I,   bool ...Ns>         struct seek_truth<I, false, Ns...> : seek_truth<I + 1, Ns...> {};
-template <         bool ...Ns> XTAL_LET_(int) seek_truth_n = seek_truth<0, Ns...>::value;
+template <              class ...Ts>  struct seek_constant           {using type = void;};
+template <constant_q T, class ...Ts>  struct seek_constant<T, Ts...> {using type =    T;};
+template <class      T, class ...Ts>  struct seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
+template <              class ...Ts>  using  seek_constant_t = typename seek_constant<Ts...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <int I=0, bool ...Ns> struct   seek_truth;
+template <int I              > struct   seek_truth<I              > : ordinal_t<-1> {};
+template <int I,   bool ...Ns> struct   seek_truth<I,  true, Ns...> : ordinal_t< I> {};
+template <int I,   bool ...Ns> struct   seek_truth<I, false, Ns...> : seek_truth<I + 1, Ns...> {};
+template <         bool ...Ns> XTAL_LET seek_truth_n = seek_truth<0, Ns...>::value;
 
 static_assert(seek_truth_n<                   > == -1);
 static_assert(seek_truth_n<               true> ==  0);

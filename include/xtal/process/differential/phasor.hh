@@ -32,6 +32,7 @@ struct phasor<W_data[N_data], As...>
 	using re = bond::realize<W_data>;
 	using V = typename re::delta_t;
 	using U = typename re::alpha_t;
+	XTAL_LET_(U) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
 
 	using subkind = bond::compose<bond::tag<phasor>
 	,	As...
@@ -49,6 +50,9 @@ struct phasor<W_data[N_data], As...>
 
 	public:
 		using S_::S_;
+
+		///\todo\
+		Override constructors/accessors to apply initial `u_onset`. \
 
 	public:
 		using S_::self;
@@ -68,14 +72,6 @@ struct phasor<W_data[N_data], As...>
 		///\
 		Evaluation by succession. \
 		
-		///\todo\
-		Allow configuration of look-ahead (through `As...`), \
-		incorporating fractional/half-point sample-values. \
-
-		///\note\
-		The intention behind advancing before return is/was to allow integrated oscillators like BLIT \
-		to configure their initial state based on the value at zero. \
-
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_TN2 functor()
 		XTAL_0EX
