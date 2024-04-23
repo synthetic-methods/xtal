@@ -160,10 +160,10 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_OP1                         constexpr        decltype(auto) operator
 #define XTAL_OP2           [[nodiscard]] constexpr        decltype(auto) operator
 #define XTAL_OP3           [[nodiscard]] constexpr friend decltype(auto) operator
-#define XTAL_TN0                                                   void
+#define XTAL_TN0                         constexpr                 void
 #define XTAL_TN1                         constexpr        decltype(auto)
 #define XTAL_TN2           [[nodiscard]] constexpr        decltype(auto)
-#define XTAL_FN0                                   static          void
+#define XTAL_FN0                         constexpr static          void
 #define XTAL_FN1                         constexpr static decltype(auto)
 #define XTAL_FN2           [[nodiscard]] constexpr static decltype(auto)
 #define XTAL_LET                         constexpr static          auto

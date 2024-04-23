@@ -35,6 +35,21 @@ template <iterator_q I >	XTAL_FN2 reverser_f(I   i) XTAL_0EX {return _std::make_
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+template <iterator_q I>
+XTAL_FN0 fill_to(I i, size_t n)
+XTAL_0EX
+{
+	if (_std::is_constant_evaluated()) {
+		bond::seek_forward_f<n>([=] (auto j) XTAL_0FN {*_std::next(i, j) = iteratee_t<I>{};});
+	}
+	else {
+		_std::uninitialized_value_construct_n(i, n);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <iterator_q I, iterator_q J>
 XTAL_FN0 swap_with(I i, J const j0, J const jN, bool o=false)
 XTAL_0EX
@@ -66,10 +81,15 @@ XTAL_0EX
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
-	XTAL_VAL seq = execution::  seq;
-	XTAL_VAL par = execution::unseq;
-	if (o) transform(seq, j0, jN, i, XTAL_REF_(f));
-	else   transform(par, j0, jN, i, XTAL_REF_(f));
+	if (not _std::is_constant_evaluated()) {
+		XTAL_VAL seq = execution::  seq;
+		XTAL_VAL par = execution::unseq;
+		if (o) transform(seq, j0, jN, i, XTAL_REF_(f));
+		else   transform(par, j0, jN, i, XTAL_REF_(f));
+	}
+	else {
+		transform(j0, jN, i, XTAL_REF_(f));
+	}
 #else
 	transform(j0, jN, i, XTAL_REF_(f));
 #endif
@@ -93,10 +113,15 @@ XTAL_REQ isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
-	XTAL_VAL seq = execution::  seq;
-	XTAL_VAL par = execution::unseq;
-	if (o) copy(seq, j0, jN, i);
-	else   copy(par, j0, jN, i);
+	if (not _std::is_constant_evaluated()) {
+		XTAL_VAL seq = execution::  seq;
+		XTAL_VAL par = execution::unseq;
+		if (o) copy(seq, j0, jN, i);
+		else   copy(par, j0, jN, i);
+	}
+	else {
+		copy(j0, jN, i);
+	}
 #else
 	copy(j0, jN, i);
 #endif

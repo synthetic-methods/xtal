@@ -72,7 +72,9 @@ struct block<U_data[N_data]>
 		///\
 		Elementwise immutative transformer. \
 
+		//\
 		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(make_f<devalue_t<W>>))
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(make_f<typename W::value_type>))
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_( &) {return copy_by<W>(XTAL_REF_(f));}
@@ -110,31 +112,32 @@ struct block<U_data[N_data]>
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CON homotype()
+		XTAL_CXN homotype()
 		XTAL_0EX
-		:	homotype((size_t) 0)
+		:	homotype(size_0)
 		{}
-		XTAL_CXN homotype(size_t n)
+		XTAL_CXN homotype(size_t const n)
 		XTAL_0EX
 		{
-			assert(n <= N_data);
-			_std::uninitialized_value_construct_n(_std::next(T_::data(), n), T_::size() - n);
+			if (_std::is_constant_evaluated() or n < N_data) {
+				T_::fill(U_data{});
+			}
 		}
 		XTAL_CON homotype(embrace_t<U_data> a)
 		XTAL_0EX
-		:	homotype(a.size())
+		:	homotype(devalue_f(XTAL_REF_(a)))
 		{
 			_detail::copy_to(T_::begin(), a.begin(), a.end());
 		}
-		template <bounded_q A>
-		XTAL_CXN homotype(A const &a)
-		:	homotype(a.size())
+		XTAL_CXN homotype(bounded_q auto const &a)
+		XTAL_0EX
+		:	homotype(devalue_f(XTAL_REF_(a)))
 		{
 			_detail::copy_to(T_::begin(), a);
 		}
-		template <bounded_q A>
-		XTAL_CXN homotype(A &&a)
-		:	homotype(a.size())
+		XTAL_CXN homotype(bounded_q auto &&a)
+		XTAL_0EX
+		:	homotype(devalue_f(XTAL_MOV_(a)))
 		{
 			_detail::move_to(T_::begin(), a);
 		}
@@ -151,7 +154,7 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::atom::block_q T>
-struct tuple_size<T> : xtal::cardinal_t<xtal::devalue_n<T>> {};
+struct tuple_size<T> : xtal::cardinal_t<T::size()> {};
 
 template <size_t N_datum, xtal::atom::block_q T>
 struct tuple_element<N_datum, T> {using type = xtal::devalue_t<T>;};

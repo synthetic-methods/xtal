@@ -7,14 +7,16 @@ namespace _detail
 //\
 Standard...
 
-using    null_t = XTAL_STD_(null_t);
-using    unit_t = XTAL_STD_(unit_t);
-using    sign_t = XTAL_STD_(sign_t);
-using    byte_t = XTAL_STD_(byte_t);
-using    size_t = XTAL_STD_(size_t);
-using    size_s = XTAL_STD_(size_s);
-using    real_s = XTAL_STD_(real_s);
-XTAL_LET size_1 = (size_t) 1;
+using null_t = XTAL_STD_(null_t);
+using unit_t = XTAL_STD_(unit_t);
+using sign_t = XTAL_STD_(sign_t);
+using byte_t = XTAL_STD_(byte_t);
+using size_t = XTAL_STD_(size_t);
+using size_s = XTAL_STD_(size_s);
+using real_s = XTAL_STD_(real_s);
+
+XTAL_LET_(size_t) size_0{0};
+XTAL_LET_(size_t) size_1{1};
 
 template <auto N_zero=0>
 XTAL_LET    sign_f(auto &&i)
@@ -113,19 +115,21 @@ template <unvalue_q  T >	using     unvalue_t =           typename based_t<T>::va
 template <class      T >	concept   invalue_q = not _std::same_as<based_t<T>, _std::remove_all_extents_t<based_t<T>>>;
 template <invalue_q  T >	using     invalue_t =                               _std::remove_all_extents_t<based_t<T>> ;
 
-template <class      T >	struct    devalue;
-template <class      T >	using     devalue_t = typename devalue<based_t<T>>::type;
-template <class      T >	XTAL_LET  devalue_n =          devalue<based_t<T>>::size;
-template <class      T >	struct    devalue    {using type =                     T  ; XTAL_LET_(size_t) size =                      1;};
-template <unvalue_q  T >	struct    devalue<T> {using type =           unvalue_t<T> ; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
-template <invalue_q  T >	struct    devalue<T> {using type =           invalue_t<T> ; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
-template <class      T >	concept   devalue_q = unvalue_q<T> or invalue_q<T>;
+template <class            T >	                                     struct    devalue;
+template <class            T >	                                     using     devalue_t = typename devalue<based_t<T>>::type;
+template <class            T >	                                     XTAL_LET  devalue_n =          devalue<based_t<T>>::size;
+template <class            T >	                                     struct    devalue                     {using type =           T  ; XTAL_LET size =            (size_t) 1U;};
+template <class U, size_t  N >	                                     struct    devalue<_std::array<U, N>>  {using type =           U  ; XTAL_LET size =                     N ;};
+template <unvalue_q        T >	requires (    requires {T::size();}) struct    devalue<T>                  {using type = unvalue_t<T> ; XTAL_LET size =              T::size();};
+template <unvalue_q        T >	requires (not requires {T::size();}) struct    devalue<T>                  {using type = unvalue_t<T> ; XTAL_LET size = sizeof(T)/sizeof(type);};
+template <invalue_q        T >	                                     struct    devalue<T>                  {using type = invalue_t<T> ; XTAL_LET size = sizeof(T)/sizeof(type);};
+template <class            T >	                                     concept   devalue_q = unvalue_q<T> or invalue_q<T>;
 
-template <class      T >	struct    devolve;
-template <class      T >	using     devolve_t = typename devolve<based_t<T>>::type;
-template <class      T >	XTAL_LET  devolve_n =          devolve<based_t<T>>::size;
-template <class      T >	struct    devolve    {using type =                     T  ; XTAL_LET_(size_t) size =                      1;};
-template <devalue_q  T >	struct    devolve<T> {using type = devolve_t<devalue_t<T>>; XTAL_LET_(size_t) size = sizeof(T)/sizeof(type);};
+template <class            T >	struct    devolve;
+template <class            T >	using     devolve_t = typename devolve<based_t<T>>::type;
+template <class            T >	XTAL_LET  devolve_n =          devolve<based_t<T>>::size;
+template <class            T >	struct    devolve                     {using type =                     T  ; XTAL_LET size =            (size_t) 1U;};
+template <devalue_q        T >	struct    devolve<T>                  {using type = devolve_t<devalue_t<T>>; XTAL_LET size = sizeof(T)/sizeof(type);};
 
 
 ////////////////////////////////////////////////////////////////////////////////

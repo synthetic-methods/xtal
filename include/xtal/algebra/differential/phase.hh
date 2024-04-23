@@ -73,67 +73,38 @@ struct phase<A_data[N_data]>
 	//	Reified to allow inspection of initializer-type:
 		using initializer_list = _std::initializer_list<U_alpha>;
 
-		template <int N_side=1>
-		XTAL_TN0 blank(size_t n)
-		XTAL_0EX
-		{
-			assert(n <= T_::size()); auto const m = T::size() - n;
-			XTAL_IF0
-			XTAL_0IF_(0 < T_::size()) {
-				_std::uninitialized_value_construct_n(T_::data(), m);
-			}
-			XTAL_0IF_(T_::size() < 0) {
-				_std::uninitialized_value_construct_n(_std::next(T_::data(), n), m);
-			}
-		}
-
 		XTAL_CO0_(homotype)
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CON homotype()
+		XTAL_CON homotype(size_t const n)
 		XTAL_0EX
-		:	homotype(0)
+		:	T_(n)
 		{}
-		XTAL_CXN homotype(int n)
-		XTAL_0EX
-		{
-			assert(n <= T_::size());
-			blank(n);
-		}
 
 		using T_::operator >>=;
 		using T_::operator <<=;
 
-		XTAL_CON  homotype        (initializer_list      o) XTAL_0EX {blank(o.size()); operator<<=(         (o));}
-		XTAL_CXN  homotype        (bounded_q auto const &o) XTAL_0EX {blank(o.size()); operator<<=(         (o));}
-		XTAL_CXN  homotype        (bounded_q auto      &&o) XTAL_0EX {blank(o.size()); operator<<=(XTAL_MOV_(o));}
+		XTAL_CON  homotype                          () XTAL_0EX : homotype(size_0)                                                  {}
+		XTAL_CON  homotype  (real_number_q auto ...oo) XTAL_0EX : homotype(sizeof...(oo))           {operator>>=({XTAL_MOV_(oo)...});}
+		XTAL_CON  homotype        (initializer_list o) XTAL_0EX : homotype(devalue_f(XTAL_REF_(o))) {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CXN  homotype        (bounded_q auto &&o) XTAL_0EX : homotype(devalue_f(XTAL_MOV_(o))) {operator<<=( XTAL_REF_(o)     );}
 		
-		XTAL_OP1_(homotype &) <<= (initializer_list      o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()),          (o), V_f); return *this;}
-		XTAL_OP1_(homotype &) <<= (bounded_q auto const &o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()),          (o), V_f); return *this;}
-		XTAL_OP1_(homotype &) <<= (bounded_q auto      &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_MOV_(o), V_f); return *this;}
+		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), V_f); return *this;}
+		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), V_f); return *this;}
 		
-		XTAL_OP1_(homotype &) >>= (initializer_list      o) XTAL_0EX {_detail::copy_to(T_::data(),          (o), V_f); return *this;}
-		XTAL_OP1_(homotype &) >>= (bounded_q auto const &o) XTAL_0EX {_detail::copy_to(T_::data(),          (o), V_f); return *this;}
-		XTAL_OP1_(homotype &) >>= (bounded_q auto      &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_MOV_(o), V_f); return *this;}
+		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), V_f); return *this;}
+		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), V_f); return *this;}
 		
-		XTAL_CXN  homotype      (bounded_q auto      &&o) XTAL_0EX requires _std::integral<devalue_t<decltype(o)>> :        T_(XTAL_REF_(o))  {}
-		XTAL_CON  homotype      (U_alpha             &&o) XTAL_0EX                                                 : homotype({XTAL_MOV_(o)}) {}
-		XTAL_CON  homotype      (U_alpha        const &o) XTAL_0EX                                                 : homotype({         (o)}) {}
-
-
-
 	public:// OPERATION
 		using T_::self;
 		using T_::twin;
 
-		XTAL_OP2 () ()          XTAL_0FX {return     T_::template transact<W_alpha>(U_f);}
-		XTAL_OP2 () (size_t i)  XTAL_0FX {return U_f(T_::get(i));}
-		XTAL_TN2   d(size_t i)  XTAL_0FX {return U_f(T_::get(i));}
+		XTAL_OP2 () ()                XTAL_0FX {return     T_::template transact<W_alpha>(U_f);}
+		XTAL_OP2 () (size_t i)        XTAL_0FX {return U_f(T_::get(i));}
 		
 		XTAL_OP0_(implicit) W_alpha() XTAL_0FX {return operator()( );}
 		XTAL_OP0_(implicit) U_alpha() XTAL_0FX {return operator()(0);}
-
 
 		///\
 		Scales all elements. \

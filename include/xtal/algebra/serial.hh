@@ -74,8 +74,8 @@ struct serial<U_data[N_data]>
 		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) += t.get(i);}); return self();}
 		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) -= t.get(i);}); return self();}
 
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_n<W>>([&, this] (auto i) XTAL_0FN {let(i) += w[i];}); return self();}
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_n<W>>([&, this] (auto i) XTAL_0FN {let(i) -= w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto i) XTAL_0FN {let(i) += w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto i) XTAL_0FN {let(i) -= w[i];}); return self();}
 
 		///\
 		The dual of `T`, replacing addition by point-wise multiplication, \

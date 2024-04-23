@@ -67,12 +67,15 @@ namespace _v3
 //\
 Standard...
 
-using    null_t = _detail:: null_t;
-using    unit_t = _detail:: unit_t;
-using    sign_t = _detail:: sign_t;
-using    byte_t = _detail:: byte_t;
-using    size_t = _detail:: size_t;
-using    size_s = _detail:: size_s;
+XTAL_USE null_t = _detail:: null_t;
+XTAL_USE unit_t = _detail:: unit_t;
+XTAL_USE sign_t = _detail:: sign_t;
+XTAL_USE byte_t = _detail:: byte_t;
+XTAL_USE size_t = _detail:: size_t;
+XTAL_USE size_s = _detail:: size_s;
+XTAL_USE real_s = _detail:: real_s;
+
+XTAL_LET size_0 = _detail:: size_0;
 XTAL_LET size_1 = _detail:: size_1;
 
 template <auto N, auto  ...Ms>	concept exclusive_p = _detail::exclusive_p<N, Ms... >;

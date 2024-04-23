@@ -70,10 +70,10 @@ XTAL_0EX
 		return get<I>(XTAL_REF_(t));
 	}
 	XTAL_0IF_(devalue_q<T> and not _std::is_const_v<T>) {
-		return reinterpret_cast<      devalue_t<T>(&)[devalue_n<T>]>(XTAL_REF_(t))[I];
+		return reinterpret_cast<      devalue_t<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
 	}
 	XTAL_0IF_(devalue_q<T> and     _std::is_const_v<T>) {
-		return reinterpret_cast<const devalue_t<T>(&)[devalue_n<T>]>(XTAL_REF_(t))[I];
+		return reinterpret_cast<const devalue_t<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
 	}
 }
 template <size_t I, class T, class ...Ts>
