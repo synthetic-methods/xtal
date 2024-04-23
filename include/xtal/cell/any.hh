@@ -218,7 +218,7 @@ struct defer
 		{
 			return apply(bond::pack_f);
 		}
-		XTAL_FN2 pack(XTAL_TYP_(XTAL_VAL_(S_).pack()) const &tuple)
+		XTAL_FN2 pack(XTAL_TYP_(XTAL_ANY_(S_).pack()) const &tuple)
 		XTAL_0EX
 		{
 			return _std::apply([] XTAL_1FN_(S_), tuple);
@@ -266,7 +266,7 @@ template <xtal::cell::any_q T>
 struct tuple_size<T> : xtal::cardinal_t<T::arity::value> {};
 
 template <size_t N, xtal::cell::any_q T>
-struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_VAL_(T).template head<N>());};
+struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_ANY_(T).template head<N>());};
 
 
 }//////////////////////////////////////////////////////////////////////////

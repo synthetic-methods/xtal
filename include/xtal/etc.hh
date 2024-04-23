@@ -136,81 +136,81 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ASK                                concept
-#define XTAL_DEF                                struct
-#define XTAL_USE                                using
-#define XTAL_VAR                                auto
-#define XTAL_TYP                                decltype(auto)
-#define XTAL_TYP_(...)  ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_VAL_(...)  ::std::                 declval <__VA_ARGS__>()
-#define XTAL_MOV_(...)  ::std::                 move    (__VA_ARGS__)
-#define XTAL_REF_(...)              static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
+#define XTAL_ASK                                   concept
+#define XTAL_DEF                                   struct
+#define XTAL_USE                                   using
+#define XTAL_TYP                                   decltype(auto)
+#define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
+#define XTAL_ANY_(...)     ::std::                 declval <__VA_ARGS__>()
+#define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)
+#define XTAL_REF_(...)                 static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
-#define XTAL_REQ                       requires
-#define XTAL_REQ_(...)                 requires requires {__VA_ARGS__;}
+#define XTAL_REQ                          requires
+#define XTAL_REQ_(...)                    requires requires {__VA_ARGS__;}
 
-#define XTAL_CON                       constexpr       
-#define XTAL_CXN                       constexpr explicit
+#define XTAL_VAR                                   auto
+#define XTAL_VAL                         constexpr auto
+#define XTAL_CON                         constexpr       
+#define XTAL_CXN                         constexpr explicit
 
+#define XTAL_OP0_(...)                   XTAL_OP0__##__VA_ARGS__
+#define XTAL_OP0__explicit               constexpr explicit              operator
+#define XTAL_OP0__implicit               constexpr                       operator
+#define XTAL_OP1                         constexpr        decltype(auto) operator
+#define XTAL_OP2           [[nodiscard]] constexpr        decltype(auto) operator
+#define XTAL_OP3           [[nodiscard]] constexpr friend decltype(auto) operator
+#define XTAL_TN0                                                   void
+#define XTAL_TN1                         constexpr        decltype(auto)
+#define XTAL_TN2           [[nodiscard]] constexpr        decltype(auto)
+#define XTAL_FN0                                   static          void
+#define XTAL_FN1                         constexpr static decltype(auto)
+#define XTAL_FN2           [[nodiscard]] constexpr static decltype(auto)
+#define XTAL_LET                         constexpr static          auto
 
-#define XTAL_OP0_(...)                 XTAL_OP0__##__VA_ARGS__
-#define XTAL_OP0__explicit             constexpr explicit              operator
-#define XTAL_OP0__implicit             constexpr                       operator
-#define XTAL_OP1                       constexpr        decltype(auto) operator
-#define XTAL_OP2        [[nodiscard]]  constexpr        decltype(auto) operator
-#define XTAL_OP3        [[nodiscard]]  constexpr friend decltype(auto) operator
-#define XTAL_TN0                                                 void
-#define XTAL_TN1                       constexpr        decltype(auto)
-#define XTAL_TN2        [[nodiscard]]  constexpr        decltype(auto)
-#define XTAL_FN0                                 static          void
-#define XTAL_FN1                       constexpr static decltype(auto)
-#define XTAL_FN2        [[nodiscard]]  constexpr static decltype(auto)
-#define XTAL_LET                       constexpr static          auto
+#define XTAL_OP1_(...)                   constexpr        __VA_ARGS__ operator
+#define XTAL_OP2_(...)     [[nodiscard]] constexpr        __VA_ARGS__ operator
+#define XTAL_OP3_(...)     [[nodiscard]] constexpr friend __VA_ARGS__ operator
+#define XTAL_TN1_(...)                   constexpr        __VA_ARGS__
+#define XTAL_TN2_(...)     [[nodiscard]] constexpr        __VA_ARGS__
+#define XTAL_FN1_(...)                   constexpr static __VA_ARGS__
+#define XTAL_FN2_(...)     [[nodiscard]] constexpr static __VA_ARGS__
+#define XTAL_LET_(...)                   constexpr static __VA_ARGS__
 
-#define XTAL_OP1_(...)                 constexpr        __VA_ARGS__ operator
-#define XTAL_OP2_(...)  [[nodiscard]]  constexpr        __VA_ARGS__ operator
-#define XTAL_OP3_(...)  [[nodiscard]]  constexpr friend __VA_ARGS__ operator
-#define XTAL_TN1_(...)                 constexpr        __VA_ARGS__
-#define XTAL_TN2_(...)  [[nodiscard]]  constexpr        __VA_ARGS__
-#define XTAL_FN1_(...)                 constexpr static __VA_ARGS__
-#define XTAL_FN2_(...)  [[nodiscard]]  constexpr static __VA_ARGS__
-#define XTAL_LET_(...)                 constexpr static __VA_ARGS__
+#define XTAL_IF0                      if constexpr (0);
+#define XTAL_IF1                      if constexpr (1);
+#define XTAL_0IF_(...)           else if constexpr (__VA_ARGS__)
+#define XTAL_0IF                 else
+#define XTAL_0EX                                   noexcept
+#define XTAL_0FX                 const             noexcept
+#define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
+#define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
 
-#define XTAL_IF0                    if constexpr (0);
-#define XTAL_IF1                    if constexpr (1);
-#define XTAL_0IF_(...)        else  if constexpr (__VA_ARGS__)
-#define XTAL_0IF              else
-#define XTAL_0EX                                 noexcept
-#define XTAL_0FX              const              noexcept
-#define XTAL_0EX_(...)               __VA_ARGS__ noexcept
-#define XTAL_0FX_(...)        const  __VA_ARGS__ noexcept
+#define XTAL_0FN                         constexpr noexcept
+#define XTAL_0FM                 mutable constexpr noexcept
+#define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
+#define XTAL_0FM_(...)           mutable constexpr noexcept {return (__VA_ARGS__);}
+#define XTAL_0EZ_(...)                             noexcept {return (__VA_ARGS__);}
 
-#define XTAL_0FN                       constexpr noexcept
-#define XTAL_0FM              mutable  constexpr noexcept
-#define XTAL_0FN_(...)                 constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FM_(...)        mutable  constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0EZ_(...)                           noexcept {return (__VA_ARGS__);}
+#define XTAL_TO2_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);}\
+                                 SIG               noexcept {return (__VA_ARGS__);};
+#define XTAL_TO4_(SIG, ...)      SIG     const  &  noexcept {return (__VA_ARGS__);}\
+                                 SIG            &  noexcept {return (__VA_ARGS__);}\
+                                 SIG     const  && noexcept {return (__VA_ARGS__);}\
+                                 SIG            && noexcept {return (__VA_ARGS__);};
 
-#define XTAL_TO2_(SIG, ...)   SIG      const     noexcept {return (__VA_ARGS__);}\
-                              SIG                noexcept {return (__VA_ARGS__);};
-#define XTAL_TO4_(SIG, ...)   SIG      const  &  noexcept {return (__VA_ARGS__);}\
-                              SIG             &  noexcept {return (__VA_ARGS__);}\
-                              SIG      const  && noexcept {return (__VA_ARGS__);}\
-                              SIG             && noexcept {return (__VA_ARGS__);};
+#define XTAL_DO2_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   \
+                                 SIG               noexcept          __VA_ARGS__   ;
+#define XTAL_DO4_(SIG, ...)      SIG     const  &  noexcept          __VA_ARGS__   \
+                                 SIG            &  noexcept          __VA_ARGS__   \
+                                 SIG     const  && noexcept          __VA_ARGS__   \
+                                 SIG            && noexcept          __VA_ARGS__   ;
 
-#define XTAL_DO2_(SIG, ...)   SIG      const     noexcept          __VA_ARGS__   \
-                              SIG                noexcept          __VA_ARGS__   ;
-#define XTAL_DO4_(SIG, ...)   SIG      const  &  noexcept          __VA_ARGS__   \
-                              SIG             &  noexcept          __VA_ARGS__   \
-                              SIG      const  && noexcept          __VA_ARGS__   \
-                              SIG             && noexcept          __VA_ARGS__   ;
-
-#define XTAL_CO0_(TYP)                          ~TYP()                          noexcept = default;;
-#define XTAL_CO1_(TYP)                           TYP()                          noexcept = default;;
-#define XTAL_CO4_(TYP)                 constexpr TYP & operator = (TYP const &) noexcept = default;\
-                                       constexpr TYP              (TYP const &) noexcept = default;\
-                                       constexpr TYP & operator = (TYP      &&) noexcept = default;\
-                                       constexpr TYP              (TYP      &&) noexcept = default;;
+#define XTAL_CO0_(TYP)          ~TYP()                          noexcept = default;;
+#define XTAL_CO1_(TYP)           TYP()                          noexcept = default;;
+#define XTAL_CO4_(TYP) constexpr TYP & operator = (TYP const &) noexcept = default;\
+                       constexpr TYP              (TYP const &) noexcept = default;\
+                       constexpr TYP & operator = (TYP      &&) noexcept = default;\
+                       constexpr TYP              (TYP      &&) noexcept = default;;
 
 
 ////////////////////////////////////////////////////////////////////////////////

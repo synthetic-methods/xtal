@@ -91,7 +91,7 @@ struct series<U_data[N_data]>
 		{
 			using I = typename T_::difference_type;
 
-			auto constexpr N_shift = re::bit_ceiling_f(N_step);
+			XTAL_VAL N_shift = re::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:

@@ -147,11 +147,11 @@ template <based_q             X >	struct     argument<X>  {using type = X const 
 
 template <class      T >	concept     array_q = _std::is_array_v<T> or fungible_q<T, _std::array<devolve_t<T>, devalue_n<T>>>;
 
-template <class      T >	concept  accessed_q = requires (T t) { t[XTAL_VAL_(size_t)];};
+template <class      T >	concept  accessed_q = requires (T t) { t[XTAL_ANY_(size_t)];};
 template <class      T >	concept   pointer_q = requires (T t) {*t;};
-template <class      T >	using    accessed_t = _std::remove_reference_t<decltype( XTAL_VAL_(T)[XTAL_VAL_(size_t)])>;
-template <class      T >	using     pointer_t = _std::remove_reference_t<decltype(&XTAL_VAL_(T))>;
-template <class      T >	using     pointee_t = _std::remove_reference_t<decltype(*XTAL_VAL_(T))>;
+template <class      T >	using    accessed_t = _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(size_t)])>;
+template <class      T >	using     pointer_t = _std::remove_reference_t<decltype(&XTAL_ANY_(T))>;
+template <class      T >	using     pointee_t = _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,15 +159,15 @@ template <class      T >	using     pointee_t = _std::remove_reference_t<decltype
 //\
 Ranged...
 
-template <class         T >	concept     begin_q    = requires {*XTAL_VAL_(T).begin();};
-template <class         T >	concept     front_q    = requires { XTAL_VAL_(T).front();};
-template <class         T >	concept      back_q    = requires { XTAL_VAL_(T). back();};
-template <class         T >	concept       end_q    = requires {*XTAL_VAL_(T).  end();};
+template <class         T >	concept     begin_q    = requires {*XTAL_ANY_(T).begin();};
+template <class         T >	concept     front_q    = requires { XTAL_ANY_(T).front();};
+template <class         T >	concept      back_q    = requires { XTAL_ANY_(T). back();};
+template <class         T >	concept       end_q    = requires {*XTAL_ANY_(T).  end();};
 
-template <class         T >	using       begin_t    = decltype ( XTAL_VAL_(T).begin() );
-template <class         T >	using       front_t    = decltype (*XTAL_VAL_(T).begin() );
-template <class         T >	using        back_t    = decltype (*XTAL_VAL_(T).  end() );
-template <class         T >	using         end_t    = decltype ( XTAL_VAL_(T).  end() );
+template <class         T >	using       begin_t    = decltype ( XTAL_ANY_(T).begin() );
+template <class         T >	using       front_t    = decltype (*XTAL_ANY_(T).begin() );
+template <class         T >	using        back_t    = decltype (*XTAL_ANY_(T).  end() );
+template <class         T >	using         end_t    = decltype ( XTAL_ANY_(T).  end() );
 
 template <class         T >	concept   bounded_q    = begin_q<T> and     end_q<T>;
 template <class         T >	concept unbounded_q    = begin_q<T> and not end_q<T>;
@@ -227,7 +227,7 @@ template <iterated_q T    >	struct   sentinel<T>   {using type = end_t<T>;};//_v
 template <iterator_q T    >	struct   sentinel<T>   {using type =       T ;};
 
 template <class      T    >	struct   distance                   {using type = distance_t<iterator_t<T>>;};
-template <iterator_q T    >	struct   distance<T>                {using type = XTAL_TYP_(_std::distance(XTAL_VAL_(T), XTAL_VAL_(T)));};
+template <iterator_q T    >	struct   distance<T>                {using type = XTAL_TYP_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
 
 template <class         T >	concept  counter_q     = integral_p<T>;
@@ -417,9 +417,9 @@ template <class T>
 XTAL_FN2 lateral_f(T n, T m, auto ...ms)
 XTAL_0EX
 {
-	auto constexpr N_count = 1 + 1 + sizeof...(ms);
-	auto constexpr N_width = sizeof(T)/N_count;
-	auto constexpr N_depth = N_width << 3;
+	XTAL_VAL N_count = 1 + 1 + sizeof...(ms);
+	XTAL_VAL N_width = sizeof(T)/N_count;
+	XTAL_VAL N_depth = N_width << 3;
 	static_assert(N_width*N_count == sizeof(T));
 	return lateral_f<T>(m|(n<<N_depth), ms...);
 }

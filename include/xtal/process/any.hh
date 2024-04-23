@@ -94,7 +94,7 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
 				using    value_type = Y_(T::*) (argument_t<Xs>...);
@@ -102,10 +102,10 @@ struct define
 
 			};
 			template <auto ...Is>
-			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...))
+			XTAL_REQ_(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...))
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
 				using    value_type = Y_(T::*) (argument_t<Xs>...) const;

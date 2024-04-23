@@ -83,7 +83,7 @@ struct defer<U>
 		template <auto ...Ks>
 		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0EX
-		XTAL_REQ_(XTAL_VAL_(U const &).functor(XTAL_VAL_(iteratee_t<decltype(xs)>)...))
+		XTAL_REQ_(XTAL_ANY_(U const &).functor(XTAL_ANY_(iteratee_t<decltype(xs)>)...))
 		{
 			return lift_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
 		}

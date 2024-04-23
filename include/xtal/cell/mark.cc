@@ -28,11 +28,11 @@ TAG_("mark")
 		TRUE_(99 == t1.template head<0>());
 		TRUE_(equal_f(counted_t<>(11, 22), t1.then()));
 
-		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(U_target).head()), typename V_target::template head_t<>>);
-		TRUE_(is_q<XTAL_TYP_(XTAL_VAL_(U_target).then()), U_source>);
+		TRUE_(is_q<XTAL_TYP_(XTAL_ANY_(U_target).head()), typename V_target::template head_t<>>);
+		TRUE_(is_q<XTAL_TYP_(XTAL_ANY_(U_target).then()), U_source>);
 
 	}
-	auto constexpr maybe = [] (mark_s<> g)
+	XTAL_VAL maybe = [] (mark_s<> g)
 	XTAL_0FN {
 		if (g) {
 			return true;

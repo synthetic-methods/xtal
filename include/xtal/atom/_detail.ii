@@ -42,8 +42,8 @@ XTAL_REQ isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
-	auto constexpr seq = execution::  seq;
-	auto constexpr par = execution::unseq;
+	XTAL_VAL seq = execution::  seq;
+	XTAL_VAL par = execution::unseq;
 	if (o) swap_ranges(seq, j0, jN, i);
 	else   swap_ranges(par, j0, jN, i);
 #else
@@ -66,8 +66,8 @@ XTAL_0EX
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
-	auto constexpr seq = execution::  seq;
-	auto constexpr par = execution::unseq;
+	XTAL_VAL seq = execution::  seq;
+	XTAL_VAL par = execution::unseq;
 	if (o) transform(seq, j0, jN, i, XTAL_REF_(f));
 	else   transform(par, j0, jN, i, XTAL_REF_(f));
 #else
@@ -93,8 +93,8 @@ XTAL_REQ isomorphic_q<I, J>
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
-	auto constexpr seq = execution::  seq;
-	auto constexpr par = execution::unseq;
+	XTAL_VAL seq = execution::  seq;
+	XTAL_VAL par = execution::unseq;
 	if (o) copy(seq, j0, jN, i);
 	else   copy(par, j0, jN, i);
 #else
