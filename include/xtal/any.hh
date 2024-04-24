@@ -256,7 +256,7 @@ template <size_t N, class T, class U=T>	concept       discrete_group_p = _detail
 template <size_t N, class T, class U=T>	concept       quotient_group_p = _detail::       quotient_group_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept       integral_group_p = _detail::       integral_group_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	concept           plex_field_p = _detail::           plex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	concept multiplicative_field_p = _detail:: multiplicative_field_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept           real_field_p = _detail::           real_field_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept        complex_field_p = _detail::        complex_field_p<N, T, U>;
 template <size_t N, class T, class U=T>	concept        simplex_field_p = _detail::        simplex_field_p<N, T, U>;
@@ -269,27 +269,27 @@ template <size_t N, class T, class U=T>	concept             equality_p = _detail
 template <size_t N, class T, class U=T>	concept              quality_p = _detail::              quality_p<N, T, U>;
 
 
-template <class   ...Ts>	concept multiplicative_group_q = (...and _detail:: multiplicative_group_p<0, Ts>);
-template <class   ...Ts>	concept       additive_group_q = (...and _detail::       additive_group_p<0, Ts>);
-template <class   ...Ts>	concept       discrete_group_q = (...and _detail::       discrete_group_p<0, Ts>);
-template <class   ...Ts>	concept       quotient_group_q = (...and _detail::       quotient_group_p<0, Ts>);
-template <class   ...Ts>	concept       integral_group_q = (...and _detail::       integral_group_p<0, Ts>);
+template <class   ...Ts>	concept multiplicative_group_q = (...and multiplicative_group_p<0, Ts>);
+template <class   ...Ts>	concept       additive_group_q = (...and       additive_group_p<0, Ts>);
+template <class   ...Ts>	concept       discrete_group_q = (...and       discrete_group_p<0, Ts>);
+template <class   ...Ts>	concept       quotient_group_q = (...and       quotient_group_p<0, Ts>);
+template <class   ...Ts>	concept       integral_group_q = (...and       integral_group_p<0, Ts>);
 
-template <class   ...Ts>	concept           plex_field_q = (...and _detail::           plex_field_p<0, Ts>);
-template <class   ...Ts>	concept           real_field_q = (...and _detail::           real_field_p<0, Ts>);
-template <class   ...Ts>	concept        complex_field_q = (...and _detail::        complex_field_p<0, Ts>);
-template <class   ...Ts>	concept        simplex_field_q = (...and _detail::        simplex_field_p<0, Ts>);
+template <class   ...Ts>	concept multiplicative_field_q = (...and multiplicative_field_p<0, Ts>);
+template <class   ...Ts>	concept           real_field_q = (...and           real_field_p<0, Ts>);
+template <class   ...Ts>	concept        complex_field_q = (...and        complex_field_p<0, Ts>);
+template <class   ...Ts>	concept        simplex_field_q = (...and        simplex_field_p<0, Ts>);
 
-template <class   ...Ts>	concept        boolean_logic_q = (...and _detail::        boolean_logic_p<0, Ts>);
-template <class   ...Ts>	concept         binary_logic_q = (...and _detail::         binary_logic_p<0, Ts>);
+template <class   ...Ts>	concept        boolean_logic_q = (...and        boolean_logic_p<0, Ts>);
+template <class   ...Ts>	concept         binary_logic_q = (...and         binary_logic_p<0, Ts>);
 
-template <class   ...Ts>	concept           inequality_q = (...and _detail::           inequality_p<2, Ts>);
-template <class   ...Ts>	concept             equality_q = (...and _detail::             equality_p<2, Ts>);
-template <class   ...Ts>	concept              quality_q = (...and _detail::              quality_p<2, Ts>);
+template <class   ...Ts>	concept           inequality_q = (...and           inequality_p<2, Ts>);
+template <class   ...Ts>	concept             equality_q = (...and             equality_p<2, Ts>);
+template <class   ...Ts>	concept              quality_q = (...and              quality_p<2, Ts>);
 
 
 static_assert(                  real_field_q<float>);
-static_assert(                  plex_field_q<float>);
+static_assert(        multiplicative_field_q<float>);
 static_assert(          not  complex_field_q<float>);
 static_assert(          not quotient_group_q<float>);
 static_assert(              quotient_group_q<  int>);

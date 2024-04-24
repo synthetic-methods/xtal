@@ -603,17 +603,6 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_FN2_(alpha_t) mantissa_f(sigma_t n)
-	XTAL_0EX
-	{
-		return _std::bit_cast<alpha_t>(n & ~unit.mask);
-	}
-	XTAL_FN2_(alpha_t) mantissa_f(mt19937_t &m)
-	XTAL_0EX
-	{
-		return mantissa_f(m());
-	}
-
 	template <int N_sign=1> requires sign_p<N_sign, 1>
 	XTAL_FN2_(alpha_t) accumulate_f(auto &&a, auto &&x, auto &&...xs)
 	XTAL_0EX
@@ -1036,6 +1025,21 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_FN2_(alpha_t) mantissa_f(delta_t n)
+	XTAL_0EX
+	{
+		n >>= sign.depth + exponent.depth;
+		return alpha_t(n)*haplo_f(fraction.depth);
+	}
+	XTAL_FN2_(alpha_t) mantissa_f(mt19937_t &m)
+	XTAL_0EX
+	{
+		return mantissa_f(m());
+	}
+
+
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\returns the sign of `value` as an `alpha_t`. \
@@ -1193,20 +1197,23 @@ public:
 	XTAL_FN2 scientific_f(alpha_t const &f)
 	XTAL_0EX
 	{
-		sigma_t  o = _std::bit_cast<sigma_t>(f);
-		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark + fraction.depth);
-		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
-		delta_t  z =    static_cast<delta_t>(o) >> positive.depth;
+		delta_t constexpr N = unit.mark + fraction.depth;
+		sigma_t constexpr M =  sigma_1 << fraction.depth;
+		
+		sigma_t o = _std::bit_cast<sigma_t>(f);
+		delta_t n = N - (o >> exponent.shift)&(exponent.mark);
+		delta_t m = M |                     o&(fraction.mask);
+		delta_t z = _std::bit_cast<delta_t>(o) >> positive.depth;
 		o >>= positive.depth;
 		m  ^= z;
 		m  -= z;
-		return couple_t<delta_t> {m, n};
+		return couple_t<delta_t>{m, n};
 	}
 	XTAL_FN2 unscientific_f(couple_t<delta_t> const &mn)
 	XTAL_0EX
 	{
 		auto const [m, n] = mn;
-		return alpha_t(m)*diplo_f(n);
+		return alpha_t(m)*haplo_f(n);
 	}
 
 	static_assert( 2.25 == unscientific_f(scientific_f( 2.25)));
@@ -1229,14 +1236,14 @@ public:
 		sigma_t  o = _std::bit_cast<sigma_t>(f);
 		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark - exponent.depth - 1);
 		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
-		delta_t  z = _std::bit_cast<delta_t>(o) >> positive.depth;
+		delta_t  z =       (static_cast<delta_t>(o) >> positive.depth);
 		delta_t up = designed_f<1>(n);
 		delta_t dn = up - n;
-		m <<= up;
-		m >>= dn;
-		m  ^=  z;
-		m  -=  z;
-		return m;
+		m   <<= up;
+		m   >>= dn;
+		m    ^=  z;
+		m    -=  z;
+		return   m;
 	}
 	XTAL_FN2 fraction_f(alpha_t const &f)
 	XTAL_0EX

@@ -102,6 +102,7 @@ struct modular<A_data[N_data]>
 
 		XTAL_OP2 () ()                XTAL_0FX {return     T_::template transact<W_alpha>(U_f);}
 		XTAL_OP2 () (size_t i)        XTAL_0FX {return U_f(T_::get(i));}
+		XTAL_TN2 got(size_t i)        XTAL_0FX {return U_f(T_::get(i));}
 		
 		XTAL_OP0_(implicit) W_alpha() XTAL_0FX {return operator()( );}
 		XTAL_OP0_(implicit) U_alpha() XTAL_0FX {return operator()(0);}
@@ -127,32 +128,22 @@ struct modular<A_data[N_data]>
 		XTAL_VAR operator *= (T const &t)
 		XTAL_0EX -> T &;// Asymmetric!
 
+		//\note\
+		This unit-modular fixed-point multiply has ~30 bit accuracy, \
+		and takes ~40% longer than the equivalent multiplication/rounding/subtraction. \
+
 		XTAL_OP1_(T &) *= (real_number_q auto const &f)
 		XTAL_0EX
 		{
+			size_t constexpr M_size = re::half.depth - 1;// {52,23} -> {20, 8}
 			auto [m, n] = re::scientific_f((U_alpha) f);
-
-			U_sigma constexpr  N_bias = re::N_width;
-			U_sigma constexpr  N_half = re::half.depth - N_bias;// e.g. {64,32} => {32,16}-B
-			U_sigma constexpr  M_half = re::half.depth + N_bias;// e.g. {52,23} => {32,16}+B
-			U_delta constexpr  M_down = re::fraction.depth - M_half;
-			auto const shift = M_down + n;
-
 			auto &s = reinterpret_cast<W_delta &>(self());
-
-			/**/
-			auto const up = re::template designed_f<1>(shift);
-			auto const dn = up - shift;
-
-			s <<= up;
-			s >>= dn;
-			/*/
-			s >>= -shift;
-			/***/
-			T_::operator*=(m >> M_down);
-			
+			m >>= n - M_size;
+			s >>=     M_size;
+			s  *= m;
 			return self();
 		}
+		
 		XTAL_OP1_(T &) *= (integral_number_q auto const &i)
 		XTAL_0EX
 		{

@@ -63,8 +63,9 @@ TAG_("realize", "logarithm")
 		T_alpha w{};
 		for (T_sigma i = 0x100; ~--i;) {
 			auto x = realized::mantissa_f(mt19937_f); x = _std::pow(two, x);
+			//\
 			w += realized::logarithm_f(x);
-		//	w += log(x);
+			w += _std::log(x);
 		}
 		return w;
 	};
