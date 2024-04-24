@@ -114,9 +114,8 @@ struct modular<A_data[N_data]>
 		The symmetric signatures for `/=` and `*=` are declared-but-undefined \
 		to avoid compilation-failure when type-checking e.g. `multiplicative_group_q`. \
 
-	//	using T_::operator/=;
-		XTAL_VAR operator /= (T const &f)
-		XTAL_0EX -> T &;// Asymmetric!
+		XTAL_VAR operator /= (T const &f) XTAL_0EX -> T &;// Asymmetric!
+		using T_::operator/=;
 
 		XTAL_OP1_(T &) /= (number_q auto const &f)
 		XTAL_0EX
@@ -124,18 +123,18 @@ struct modular<A_data[N_data]>
 			return operator*=(re::alpha_1/f);
 		}
 
-	//	using T_::operator*=;
-		XTAL_VAR operator *= (T const &t)
-		XTAL_0EX -> T &;// Asymmetric!
+		XTAL_VAR operator *= (T const &t) XTAL_0EX -> T &;// Asymmetric!
+		using T_::operator*=;
 
 		//\note\
-		This unit-modular fixed-point multiply has ~30 bit accuracy, \
+		This unit-modular fixed-point multiply has ~20 bit accuracy, \
 		and takes ~40% longer than the equivalent multiplication/rounding/subtraction. \
 
 		XTAL_OP1_(T &) *= (real_number_q auto const &f)
 		XTAL_0EX
 		{
-			size_t constexpr M_size = re::half.depth - 1;// {52,23} -> {20, 8}
+			size_t constexpr M_bias = re::N_width >> 3;
+			size_t constexpr M_size = re::half.depth - M_bias;// {52,23} -> {23, 9}
 			auto [m, n] = re::scientific_f((U_alpha) f);
 			auto &s = reinterpret_cast<W_delta &>(self());
 			m >>= n - M_size;

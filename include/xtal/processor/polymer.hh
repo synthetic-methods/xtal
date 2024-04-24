@@ -59,7 +59,7 @@ struct polymer<U, As...>
 			using V_event = occur::stage_t<>;
 			using U_event = cell::key_s<V_event>;
 			
-			using V_voice = typename Y_::template binding_t<Xs...>;
+			using V_voice = typename Y_::template bind_t<Xs...>;
 			using U_voice = cell::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;

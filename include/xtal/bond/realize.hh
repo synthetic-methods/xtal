@@ -1194,20 +1194,21 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_FN2 scientific_f(alpha_t const &f)
-	XTAL_0EX
+	XTAL_ACT_(return,inline)
+	XTAL_LET scientific_f(alpha_t const &f)
+	XTAL_0EX -> couple_t<delta_t>
 	{
 		delta_t constexpr N = unit.mark + fraction.depth;
 		sigma_t constexpr M =  sigma_1 << fraction.depth;
 		
 		sigma_t o = _std::bit_cast<sigma_t>(f);
-		delta_t n = N - (o >> exponent.shift)&(exponent.mark);
-		delta_t m = M |                     o&(fraction.mask);
+		delta_t n = N - (o << sign.depth >> sign.depth + exponent.shift);
+		delta_t m = M | (o&fraction.mask);
 		delta_t z = _std::bit_cast<delta_t>(o) >> positive.depth;
 		o >>= positive.depth;
 		m  ^= z;
 		m  -= z;
-		return couple_t<delta_t>{m, n};
+		return {m, n};
 	}
 	XTAL_FN2 unscientific_f(couple_t<delta_t> const &mn)
 	XTAL_0EX
@@ -1234,7 +1235,7 @@ public:
 	XTAL_0EX
 	{
 		sigma_t  o = _std::bit_cast<sigma_t>(f);
-		delta_t  n = (o << 1 >> 1 + exponent.shift) - (unit.mark - exponent.depth - 1);
+		delta_t  n = (o << sign.depth >> sign.depth + exponent.shift) - (unit.mark - exponent.depth - 1);
 		delta_t  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
 		delta_t  z =       (static_cast<delta_t>(o) >> positive.depth);
 		delta_t up = designed_f<1>(n);

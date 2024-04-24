@@ -312,7 +312,7 @@ struct refine
 		
 		};
 		template <class ...Xs>
-		using binding_t = typename binding<Xs...>::type;
+		using bind_t = typename binding<Xs...>::type;
 
 		template <typename ...As>
 		XTAL_FN2 bind_f(auto &&...xs)
