@@ -289,7 +289,7 @@ TAG_("realize", "fraction")
 			TRUE_(computrim_f<16>(realized::fraction_f(u)) == computrim_f<16>(u - _std::round(u)));
 		}
 	};
-	EST_("via integral arithmetic")
+	EST_("wrap via integral arithmetic")
 	{
 		T_delta w{};
 		for (T_sigma i = 0x100; ~--i;) {
@@ -298,7 +298,7 @@ TAG_("realize", "fraction")
 		}
 		return w;
 	};
-	EST_("via floating-point arithmetic")
+	EST_("wrap via floating-point arithmetic")
 	{
 		T_alpha w{};
 		for (T_sigma i = 0x100; ~--i;) {

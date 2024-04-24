@@ -23,4 +23,4 @@ jobs:
       run:  conan config install ${{github.workspace}}/.conan2
 
     - name: Run `conan create...`
-      run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}}
+      run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"
