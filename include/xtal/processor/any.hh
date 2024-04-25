@@ -57,11 +57,6 @@ struct defer<U>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
-		XTAL_TO2_(template <class ...Xs>
-		XTAL_TN2 lift_(auto const ...ks),
-			_detail::map_f(head().template lambda<iteratee_t<Xs>...>(ks...))
-		)
-
 	public:
 		using S_::S_;
 		using S_::self;
@@ -78,20 +73,37 @@ struct defer<U>
 		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0EX
 		{
-			return _detail::impurify_f(lift_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...));
-		}
-		template <auto ...Ks>
-		XTAL_TN2 functor(auto &&...xs)
-		XTAL_0EX
-		XTAL_REQ_(XTAL_ANY_(U const &).functor(XTAL_ANY_(iteratee_t<decltype(xs)>)...))
-		{
-			return lift_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			using namespace _v3::views;
+			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Ks...);
+			
+			XTAL_IF0
+			XTAL_0IF_(0 == sizeof...(xs)) {
+				//\
+				return _detail::forever_f(f)|transform([] (auto &&f) XTAL_0FN_(XTAL_REF_(f)()));
+				return generate(f);
+			}
+			XTAL_0IF_(1 == sizeof...(xs)) {
+				return transform(XTAL_REF_(xs)..., f);
+			}
+			XTAL_0IF_(1 <  sizeof...(xs)) {
+				return zip_with(f, XTAL_REF_(xs)...);
+			}
 		}
 		template <auto ...Ks>
 		XTAL_TN2 functor(auto &&...xs)
 		XTAL_0FX
 		{
-			return lift_<decltype(xs)...>(constant_t<Ks>{}...) (XTAL_REF_(xs)...);
+			using namespace _v3::views;
+			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Ks...);
+
+			static_assert(0 < sizeof...(xs));
+			XTAL_IF0
+			XTAL_0IF_(1 == sizeof...(xs)) {
+				return transform(XTAL_REF_(xs)..., f);
+			}
+			XTAL_0IF_(1 <  sizeof...(xs)) {
+				return zip_with(f, XTAL_REF_(xs)...);
+			}
 		}
 
 	};

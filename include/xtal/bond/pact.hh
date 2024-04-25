@@ -24,6 +24,13 @@ XTAL_DEF pact<Us...>
 template <class ...Us>
 using pact_t = typename pact<Us...>::type;
 
+template <class ...Us>
+XTAL_FN2 pact_f(Us &&...us)
+XTAL_0EX
+{
+	return pact_t<Us...>(XTAL_REF_(us)...);
+}
+
 
 template <class ...Ts>
 XTAL_DEF pact_size : cardinal_t<(0 +...+ pact_size<Ts>::value)> {};
@@ -111,6 +118,14 @@ XTAL_0FN
 		XTAL_0FN_(pact_make_t<Ts...>(pact_item_f<Is>(ts...)...))
 	(bond::seek_s<pact_size_n<Ts...>>{});
 };
+template <auto f>
+XTAL_LET impact_make_f = []<class ...Ts> (Ts &&...ts)
+XTAL_0FN
+{
+	return [&]<auto ...Is> (bond::seek_t<Is...>)
+		XTAL_0FN_(pact_f(f(pact_item_f<Is>(ts...))...))
+	(bond::seek_s<pact_size_n<Ts...>>{});
+};
 
 
 
@@ -141,7 +156,7 @@ XTAL_0FN
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N, accessed_q W>
-XTAL_FN2 pact_columns_f(size_t const &n, W &&w)
+XTAL_FN2 pact_bind_f(W &&w, size_t const &n)
 XTAL_0EX
 {
 	return [&]<size_t ...Is> (bond::seek_t<Is...>)
@@ -149,18 +164,24 @@ XTAL_0EX
 	(bond::seek_s<N>{});
 }
 template <size_t N, accessed_q W> requires pointer_q<accessed_t<W>>
-XTAL_FN2 pact_columns_f(size_t const &n, W &&w)
+XTAL_FN2 pact_bind_f(W &&w, size_t const &n)
 XTAL_0EX
 {
 	return [&]<size_t ...Is> (bond::seek_t<Is...>)
 		XTAL_0FN_(_v3::views::zip(_std::span(w[Is], n)...))
 	(bond::seek_s<N>{});
 }
-template <size_t N>
-XTAL_FN2 pact_columns_f(size_t n)
+template <size_t N, accessed_q W>
+XTAL_FN2 pact_bind_f(size_t const &n, W &&w)
 XTAL_0EX
 {
-	return [=] (auto &&w) XTAL_0FN_(pact_columns_f<N>(n, XTAL_REF_(w)));
+	return pact_bind_f<N>(XTAL_REF_(w), n);
+}
+template <size_t N>
+XTAL_FN2 pact_bind_f(size_t n)
+XTAL_0EX
+{
+	return [=] (auto &&w) XTAL_0FN_(pact_bind_f<N>(n, XTAL_REF_(w)));
 }
 
 

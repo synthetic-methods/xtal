@@ -11,11 +11,16 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <class W=size_t>
 struct sample
 {
 private:
-	using U = _std::make_unsigned_t<typename bond::realized::iota_t>;
-	using V = typename bond::realized::alpha_t;
+	using re = bond::realize<W>;
+	using U = typename re:: iota_t;
+	using V = typename re::alpha_t;
+
+	XTAL_LET_(U) U_1 = 1;
+	XTAL_LET_(V) V_1 = 1;
 
 public:
 	using subkind = bond::compose<defer<U>, defer<V>>;
@@ -34,13 +39,13 @@ public:
 		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_CXN subtype(integral_p auto n, auto &&...oo)
+		XTAL_CXN subtype(integral_number_q auto n, auto &&...oo)
 		XTAL_0EX
-		:	S_(n, (V) 1/V(n), XTAL_REF_(oo)...)
+		:	S_(n, V_1/n, XTAL_REF_(oo)...)
 		{}
-		XTAL_CXN subtype(_std::floating_point auto u, auto &&...oo)
+		XTAL_CXN subtype(real_number_q auto u, auto &&...oo)
 		XTAL_0EX
-		:	S_((U) 1/V(u), u, XTAL_REF_(oo)...)
+		:	S_(U_1/u, u, XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_TN2   rate(), S_::template head<0>())
@@ -48,7 +53,8 @@ public:
 
 	};
 };
-using sample_t = confined_t<sample>;
+template <class U=size_t>
+using sample_t = confined_t<sample<U>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -22,11 +22,11 @@ TAG_("sample")
 		using T_sigma = typename re::sigma_t;
 		using T_alpha = typename re::alpha_t;
 
-		T_sigma constexpr b = re::sigma_1 << 16;
+		T_sigma constexpr b = re::diplo_f(16);
 		T_alpha constexpr p = re::haplo_f(16);
 
-		auto d = sample_t(b);
-		auto q = sample_t(p);
+		auto d = sample_t<>{b};
+		auto q = sample_t<>{p};
 
 		TRUE_(b == d.rate());
 		TRUE_(b == q.rate());

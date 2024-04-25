@@ -403,7 +403,7 @@ public:
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
-			auto &s = self();
+		//	auto &s = self();
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const j0 = iM, jN = next(j0, v);
 			S_::step() += i0 != iM;
@@ -414,7 +414,7 @@ public:
 		XTAL_0EX
 		{
 			using namespace _v3::ranges;
-			auto &s = self();
+		//	auto &s = self();
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const jN = i0, j0 = prev(jN, v);
 			S_::step() -= v != 0;

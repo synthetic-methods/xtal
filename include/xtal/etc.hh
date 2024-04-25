@@ -19,8 +19,6 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-//\
-TODO: Allow [c]?make configuration?
 
 #include <variant>
 #include <cstdint>
@@ -157,6 +155,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_OP0_(...)                   XTAL_OP0__##__VA_ARGS__
 #define XTAL_OP0__explicit               constexpr explicit              operator
 #define XTAL_OP0__implicit               constexpr                       operator
+#define XTAL_OP0                         constexpr                 void  operator
 #define XTAL_OP1                         constexpr        decltype(auto) operator
 #define XTAL_OP2           [[nodiscard]] constexpr        decltype(auto) operator
 #define XTAL_OP3           [[nodiscard]] constexpr friend decltype(auto) operator

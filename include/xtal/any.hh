@@ -205,6 +205,8 @@ template <class      ...Ts>	concept   reembrace_q    = (...and  _detail:: reembr
 template <class         T >	using     reembrace_t    =          _detail:: reembrace_t<T >;
 template <class         T >	using       embrace_t    =          _detail::   embrace_t<T >;
 
+template <auto         N=0>	XTAL_LET    induced_n    =          _detail::   induced_n<N >;
+template <class         T >	using       induced_t    =          _detail::   induced_t<T >;
 template <class         T >	using      interval_t    =          _detail::  interval_t<T >;
 template <class         T >	using      iterated_t    = typename _detail::  iterated  <T >::type;
 template <class         T >	using      iterator_t    = typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
@@ -233,6 +235,8 @@ template <class   T=size_s>	using       counter_t    = typename _detail::   coun
 
 template <class         T >	using    reiterated_t    =          _detail:: reiterated_t<T >;
 template <class         T >	using    initerated_t    =          _detail:: initerated_t<T >;
+
+template <class      ...Ts>	concept     indexed_q    = (...and  _detail::    indexed_q<Ts>);
 
 
 

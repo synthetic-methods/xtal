@@ -31,27 +31,11 @@ struct review<U>
 		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
-	//	using S_::S_;
+		using S_::S_;
 		using S_::self;
 		using S_::twin;
 		using S_::head;
 		
-		using U_span = U;
-
-		XTAL_CO0_(subtype);
-		XTAL_CO1_(subtype);
-		XTAL_CO4_(subtype);
-
-		XTAL_CXN subtype(auto &&...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		{}
-		template <iterated_q W> requires is_q<reiterated_t<W>, W>
-		XTAL_CXN subtype(W &&w, auto &&...oo)
-		XTAL_0EX
-		:	S_(reiterated_t<W>(XTAL_REF_(w)), XTAL_REF_(oo)...)
-		{}
-
 		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 		XTAL_TN2 slice(counted_q auto &&w)

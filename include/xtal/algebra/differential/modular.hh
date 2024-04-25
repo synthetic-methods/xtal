@@ -49,9 +49,10 @@ struct modular<A_data[N_data]>
 	using W_delta = linear_t<U_delta[N_data]>;
 	using W_sigma = linear_t<U_sigma[N_data]>;
 	using W_alpha = linear_t<U_alpha[N_data]>;
+	using M_alpha = bond::pact_make_t<W_alpha>;
 
-	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(_std::bit_cast<U_sigma>(U_delta(u*re::diplo_f())));
-	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(_std::bit_cast<U_delta>(v))*re::haplo_f());
+	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*re::diplo_f())));
+	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*re::haplo_f());
 
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
@@ -100,12 +101,12 @@ struct modular<A_data[N_data]>
 		using T_::self;
 		using T_::twin;
 
-		XTAL_OP2 () ()                XTAL_0FX {return     T_::template transact<W_alpha>(U_f);}
-		XTAL_OP2 () (size_t i)        XTAL_0FX {return U_f(T_::get(i));}
 		XTAL_TN2 got(size_t i)        XTAL_0FX {return U_f(T_::get(i));}
+		XTAL_OP2 () (size_t i)        XTAL_0FX {return U_f(T_::get(i));}
+		XTAL_OP2 () ()                XTAL_0FX {return bond::impact_make_f<U_f>(*this);}
 		
-		XTAL_OP0_(implicit) W_alpha() XTAL_0FX {return operator()( );}
 		XTAL_OP0_(implicit) U_alpha() XTAL_0FX {return operator()(0);}
+		XTAL_OP0_(implicit) M_alpha() XTAL_0FX {return operator()( );}
 
 		///\
 		Scales all elements. \

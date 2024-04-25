@@ -11,9 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> struct  polymer;
-template <typename ..._s> using   polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> concept polymer_q = bond::tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_DEF polymer;
+template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
+template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_FN2  polymer_f(auto &&u)
 XTAL_0EZ_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
@@ -119,8 +119,7 @@ struct polymer<U, As...>
 						if (u_ensemble and h == w->head()) {
 							(void) w->influx(occur::stage_f(-1), oo...);
 						}
-						auto y = head();
-						w = u_ensemble.poke(w, h, y);
+						w = u_ensemble.poke(w, h, head());
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
@@ -154,21 +153,23 @@ struct polymer<U, As...>
 				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
 				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Rv review_o, Rn render_o, auto &&...oo)
+				XTAL_TNX efflux_pull_slice(Rv &&review_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					u_ensemble.cull([] (auto &&e)
 						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))
 					);
 					for (auto &vox:u_ensemble) {
-						if (1 == vox.efflux(render_o, XTAL_REF_(oo)...)) {
+						if (1 == vox.efflux(XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 							return 1;
 						}
 					}
 					for (auto &vox:u_ensemble) {
-						for (auto && [i, u]:_v3::views::enumerate(vox()|recount_f(review_o))) {
-							review_o[XTAL_REF_(i)] += XTAL_REF_(u);
-						}
+						auto result_o = vox();
+						using namespace _v3::ranges;
+						auto _s = begin(result_o);
+						auto _t = begin(review_o);
+						for (size_t i = 0, _i = count_f(review_o); i < _i; ++i) {*_t++ += *_s++;}
 					}
 					return 0;
 				}

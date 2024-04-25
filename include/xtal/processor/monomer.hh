@@ -11,9 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> struct  monomer;
-template <typename ..._s> using   monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> concept monomer_q = bond::tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_DEF monomer;
+template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
+template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_FN2  monomer_f(auto &&u)
 XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
@@ -118,7 +118,7 @@ struct monomer<U, As...>
 				using R_::serve;
 				using R_::store;
 				XTAL_TO2_(template <auto ...>
-				XTAL_TN2 functor(), N_sized? serve(): serve()|recount_f(R_::template head_t<U_resize>))
+				XTAL_TN2 functor(), N_sized? serve(): serve()|_v3::views::take(R_::template head_t<U_resize>))
 
 			//	using R_::infuse;
 				///\
@@ -160,10 +160,10 @@ struct monomer<U, As...>
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
 				template <occur::render_q Rn>
-				XTAL_TNX efflux(Rn render_o, auto &&...oo)
+				XTAL_TNX efflux(Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_review(store()), render_o, XTAL_REF_(oo)...);
+					return efflux(U_review(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \
@@ -171,7 +171,7 @@ struct monomer<U, As...>
 				in which case the visor will be reused for the intermediate result. \
 
 				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux(Rv review_o, Rn render_o, auto &&...oo)
+				XTAL_TNX efflux(Rv &&review_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(render_o) == 1) {
@@ -180,19 +180,30 @@ struct monomer<U, As...>
 					else {
 						(void) serve(review_o);
 						return self().reflux([&, this] (auto step, counted_q auto scan)
-							XTAL_0FN_(self().efflux_pull_slice(review_o.slice(scan), render_o.slice(scan).skip(step), oo...))
-						) & R_::template influx_push(render_o);
+							XTAL_0FN_(self().efflux_pull_slice(
+								review_o.slice(scan),
+								render_o.slice(scan).skip(step),
+								XTAL_REF_(oo)...
+							))
+						) & R_::template influx_push(XTAL_REF_(render_o));
 					}
 				}
 				///\
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
 				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Rv review_o, Rn render_o, auto &&...oo)
+				XTAL_TNX efflux_pull_slice(Rv &&review_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return 1 == R_::template efflux_pull_tail<N_share>(review_o, render_o, oo...) or
-						(_v3::ranges::move(R_::functor()|recount_f(review_o), review_o.begin()), 0);
+					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
+						return 1;
+					}
+					else {
+						using namespace _v3::ranges;
+						auto result_o = R_::functor();
+						copy_n(begin(result_o), count_f(review_o), begin(review_o));
+						return 0;
+					}
 				}
 
 			};

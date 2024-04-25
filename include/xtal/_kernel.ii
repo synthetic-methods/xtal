@@ -1,5 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+/**/
+template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> F>
+XTAL_OP2 | (T &&t, F &&f)
+XTAL_0EX
+{
+	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(f));
+};
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,18 +21,36 @@ template <class T>
 XTAL_FN2 devalue_f(T &&t)
 XTAL_0EX {return devalue_n<decltype(_std::array{XTAL_REF_(t)})>;}
 
+XTAL_LET valve_f = [] (auto &&f) XTAL_0FN_(XTAL_REF_(f) ());
+
+XTAL_LET argue_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN
+{
+	//\
+	return [...xs = XTAL_REF_(xs)]
+	return [&]
+		(_std::invocable<Xs...> auto &&f) XTAL_0FN_(XTAL_REF_(f)(xs...));
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
 
+template <counter_q  I >	XTAL_FN2 induced_f(I i0)       XTAL_0EX {return induced_t<I>(i0);}
 template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
 template <class      T >	XTAL_FN2 counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
 template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
 
 
-template <class    T>
+///\returns the `size` of the given range. \
+
+///\note\
+If provided with an `iota_view`, \
+returns a `value_type` instead of `size_type` which is twice the width. \
+
+template <class  T>
 XTAL_FN2 count_f(T &&t)
 XTAL_0EX
 {
@@ -44,18 +70,6 @@ XTAL_0EX
 	XTAL_0IF {
 		return (size_t) 0;
 	}
-}
-///<\returns the `size` of the given range. \
-
-///<\note\
-If provided with an `iota_view`, \
-returns a `value_type` instead of `size_type` which is twice the width. \
-
-template <class  T>
-XTAL_FN2 recount_f(T &&t)
-XTAL_0EX
-{
-	return _v3::views::take(count_f(XTAL_REF_(t)));
 }
 
 
