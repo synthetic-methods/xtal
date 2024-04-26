@@ -3,6 +3,6 @@
 #include "./render.hh"
 #include "./resize.hh"
 #include "./restep.hh"
-#include "./review.hh"
+#include "./revise.hh"
 #include "./sample.hh"
 #include "./stage.hh"

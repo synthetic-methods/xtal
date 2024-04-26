@@ -11,17 +11,21 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP review;
-template <typename ..._s> XTAL_ASK review_q = bond::tag_p<review, _s...>;
-template <iterated_q   U> XTAL_USE review_t = confined_t<refer<U>, review<U>, bond::tag<review>>;
-template <iterated_q   U> XTAL_FN2 review_f(U &&w) XTAL_0EX {return review_t<based_t<U>>(XTAL_REF_(w));};
-/**/
-template <class S, iterated_q U>
-using review_s = bond::compose_s<S, confined<bond::tag<review>, refer<U>, review<U>>>;
-/***/
+template <typename ..._s> XTAL_TYP revise;
+template <typename ..._s> XTAL_ASK revise_q = bond::tag_p<revise, _s...>;
+template <iterated_q   U> XTAL_USE revise_t = confined_t<refer<U>, revise<U>, bond::tag<revise>>;
+template <iterated_q   U> XTAL_FN2 revise_f(U &&w) XTAL_0EX {return revise_t<based_t<U>>(XTAL_REF_(w));};
 
-template <iterated_q U>
-struct review<U>
+template <class S, iterated_q U>
+using revise_s = bond::compose_s<S, confined<bond::tag<revise>, refer<U>, revise<U>>>;
+
+template <  materialized_q U>
+struct revise<U>
+:	revise<reiterated_t<U>>
+{
+};
+template <dematerialized_q U>
+struct revise<U>
 {
 	using subkind = defer<U>;
 
@@ -42,7 +46,7 @@ struct review<U>
 		XTAL_0FX
 		{
 			auto i = w.front(), j = w.back() + 1;
-			return review_f(span()|_v3::views::slice(i, j));
+			return revise_f(span()|_v3::views::slice(i, j));
 		}
 
 	};

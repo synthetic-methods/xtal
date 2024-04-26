@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./review.hh"
+#include "./revise.hh"
 #include "./resize.hh"
 #include "./restep.hh"
 
@@ -335,7 +335,7 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = bond::compose<_detail::surrender, refer<U>, review<U>, restep<V>, bond::tag<render>>;
+	using subkind = bond::compose<_detail::surrender, refer<U>, revise<U>, restep<V>, bond::tag<render>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>

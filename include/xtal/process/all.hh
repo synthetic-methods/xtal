@@ -2,3 +2,5 @@
 #include "./differential/all.hh"
 #include "./chain.hh"
 #include "./cross.hh"
+#include "./map.hh"
+#include "./mop.hh"

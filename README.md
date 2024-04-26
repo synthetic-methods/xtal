@@ -110,7 +110,7 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 
 	gated <<= std::make_tuple(cell::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
-They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `review` the outcome.
+They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `revise` the outcome.
 
 	auto resize = resize_t(1024);
 	auto render = render_t(1024);

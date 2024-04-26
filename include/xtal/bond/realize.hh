@@ -110,7 +110,7 @@ struct recognize<(1<<2)>
 //	XTAL_LET root_2 = sigma_n<0x5F375A86>;
 
 	template <int N_pow=-1>
-	XTAL_ACT_(return,inline)
+	XTAL_DEF_(return,inline)
 	XTAL_LET root_e(alpha_t const &w)
 	XTAL_0EX -> alpha_t
 	{
@@ -123,7 +123,7 @@ struct recognize<(1<<2)>
 		}
 	}
 	template <int N_pow=-1>
-	XTAL_ACT_(return,inline)
+	XTAL_DEF_(return,inline)
 	XTAL_LET root_e(alpha_t const &w, alpha_t const &n)
 	XTAL_0EX -> alpha_t
 	{
@@ -179,7 +179,7 @@ struct recognize<(1<<3)>
 	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
 
 	template <int N_pow=-1>
-	XTAL_ACT_(return,inline)
+	XTAL_DEF_(return,inline)
 	XTAL_LET root_e(alpha_t const &w)
 	XTAL_0EX -> alpha_t
 	{
@@ -192,7 +192,7 @@ struct recognize<(1<<3)>
 		}
 	}
 	template <int N_pow=-1>
-	XTAL_ACT_(return,inline)
+	XTAL_DEF_(return,inline)
 	XTAL_LET root_e(alpha_t const &w, alpha_t const &n)
 	XTAL_0EX -> alpha_t
 	{
@@ -1194,7 +1194,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_ACT_(return,inline)
+	XTAL_DEF_(return,inline)
 	XTAL_LET scientific_f(alpha_t const &f)
 	XTAL_0EX -> couple_t<delta_t>
 	{
@@ -1204,8 +1204,7 @@ public:
 		sigma_t o = _std::bit_cast<sigma_t>(f);
 		delta_t n = N - (o << sign.depth >> sign.depth + exponent.shift);
 		delta_t m = M | (o&fraction.mask);
-		delta_t z = _std::bit_cast<delta_t>(o) >> positive.depth;
-		o >>= positive.depth;
+		delta_t z = static_cast<delta_t>(o) >> positive.depth;
 		m  ^= z;
 		m  -= z;
 		return {m, n};

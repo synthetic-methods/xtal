@@ -214,7 +214,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ACT_(...)        XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
+#define XTAL_DEF_(...)        XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
 
 #define XTAL_ATT_(...)        XTAL_ATT__##__VA_ARGS__
 #if     XTAL_V00_(MSVC)

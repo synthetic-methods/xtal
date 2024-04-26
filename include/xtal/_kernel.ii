@@ -50,8 +50,20 @@ template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class  T>
-XTAL_FN2 count_f(T &&t)
+template <int N_offset=0, class T>
+XTAL_DEF_(return,inline)
+XTAL_LET iterator_f(T &&t)
+XTAL_0EX
+{
+	using namespace _v3::ranges;
+	XTAL_IF0
+	XTAL_0IF_(0 == N_offset) {return begin(XTAL_REF_(t));}
+	XTAL_0IF_(0 <  N_offset) {return next(begin(XTAL_REF_(t)), +N_offset);}
+	XTAL_0IF_(N_offset <  0) {return prev(  end(XTAL_REF_(t)), -N_offset);}
+}
+template <class T>
+XTAL_DEF_(return,inline)
+XTAL_LET count_f(T &&t)
 XTAL_0EX
 {
 	XTAL_IF0

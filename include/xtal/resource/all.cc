@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./rematerialize.cc"
 #include "./reserve.cc"
 #include "./respool.cc"
 #include "./restore.cc"

@@ -149,11 +149,11 @@ struct polymer<U, As...>
 				}
 
 				///\
-				Renders the store slice designated by `review_o` and `render_o` \
+				Renders the store slice designated by `revise_o` and `render_o` \
 				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
-				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Rv &&review_o, Rn &&render_o, auto &&...oo)
+				template <occur::revise_q Rv, occur::render_q Rn>
+				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					u_ensemble.cull([] (auto &&e)
@@ -166,10 +166,9 @@ struct polymer<U, As...>
 					}
 					for (auto &vox:u_ensemble) {
 						auto result_o = vox();
-						using namespace _v3::ranges;
-						auto _s = begin(result_o);
-						auto _t = begin(review_o);
-						for (size_t i = 0, _i = count_f(review_o); i < _i; ++i) {*_t++ += *_s++;}
+						auto _s = iterator_f(result_o);
+						auto _t = iterator_f(revise_o);
+						for (size_t i = 0, _i = count_f(revise_o); i < _i; ++i) {*_t++ += *_s++;}
 					}
 					return 0;
 				}

@@ -3,6 +3,6 @@
 #include "./render.cc"
 #include "./resize.cc"
 #include "./restep.cc"
-#include "./review.cc"
+#include "./revise.cc"
 #include "./sample.cc"
 #include "./stage.cc"

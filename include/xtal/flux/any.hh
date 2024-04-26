@@ -36,7 +36,7 @@ struct define
 		using S_::self;
 
 		XTAL_TN1_(V_delay) delay()         {return count_f(self());}
-		XTAL_TN1_(V_delay) relay(auto &&i) {return count_f(self());}
+		XTAL_TN1_(V_delay) relay(auto &&i) {return self().delay();}
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
@@ -67,7 +67,7 @@ struct define
 
 		///\
 		Efflux operator: resolves any dependencies before `this`, \
-		used for e.g. `occur::review` and `occur::render`. \
+		used for e.g. `occur::revise` and `occur::render`. \
 
 		XTAL_OP1 >>=(auto &&o)
 		XTAL_0EX
@@ -287,7 +287,9 @@ template <class        X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return b
 template <class        X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
 
 template <bond::pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+//\
 template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
+template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
 
 
 ///////////////////////////////////////////////////////////////////////////////

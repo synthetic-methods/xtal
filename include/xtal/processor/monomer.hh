@@ -27,7 +27,7 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	using subkind = confer<U, As...>;
+	using subkind = confer<U, As..., resource::reserve<>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -94,18 +94,18 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::restore_q<S_>
+		template <class ...Xs> requires resource::reserve_q<S_> and resource::restore_q<S_>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
-			using U_serve  = reiterated_t<U_store>;
-			using U_review = occur::review_t<U_serve>;
+			using U_serve  = typename S_::template serve_t<U_store >;
+			using U_revise = occur::revise_t<U_serve>;
 		
 			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 			XTAL_LET_(bool) N_sized = requires (U_store &u) {u.resize(U_resize{});};
 
-			using subkind = bond::compose<resource::reserve<U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::rematerialize<U_serve, U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -119,6 +119,13 @@ struct monomer<U, As...>
 				using R_::store;
 				XTAL_TO2_(template <auto ...>
 				XTAL_TN2 functor(), N_sized? serve(): serve()|_v3::views::take(R_::template head_t<U_resize>))
+
+				XTAL_TN2_(size_t) delay()
+				XTAL_0EX
+				{
+					size_t const n = R_::delay();
+					return 0 < n? n: R_::template head<U_resize>();
+				}
 
 			//	using R_::infuse;
 				///\
@@ -155,7 +162,7 @@ struct monomer<U, As...>
 				using R_::efflux;
 				///\
 				Responds to `occur::render` by rendering the internal `store()`. \
-				A match for the following render will initiate the `review` (returning `1`), \
+				A match for the following render will initiate the `revise` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
@@ -163,45 +170,52 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_review(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return efflux(U_revise(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
-				When accompanied by `occur::review`, the supplied visor will be used instead. \
+				When accompanied by `occur::revise`, the supplied visor will be used instead. \
 				All bound arguments are rendered privately unless a compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
-				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux(Rv &&review_o, Rn &&render_o, auto &&...oo)
+				///\note\
+				When the visor is unrecognized, \
+				the zipped `functor` is rendered without saving the result in `serve()`, \
+				which will remain empty. \
+
+				template <occur::revise_q Rv, occur::render_q Rn>
+				XTAL_TNX efflux(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(render_o) == 1) {
 						return 1;
 					}
 					else {
-						(void) serve(review_o);
+						if constexpr (as_p<U_serve, XTAL_TYP_(revise_o)>) {
+							(void) serve(revise_o);
+						}
 						return self().reflux([&, this] (auto step, counted_q auto scan)
-							XTAL_0FN_(self().efflux_pull_slice(
-								review_o.slice(scan),
+						XTAL_0FN {
+							return self().efflux_pull_apart(
+								revise_o.slice(scan),
 								render_o.slice(scan).skip(step),
 								XTAL_REF_(oo)...
-							))
-						) & R_::template influx_push(XTAL_REF_(render_o));
+							);
+						}) & R_::template influx_push(XTAL_REF_(render_o));
 					}
 				}
 				///\
-				Renders the buffer slice designated by `review_o` and `render_o`. \
+				Renders the buffer slice designated by `revise_o` and `render_o`. \
 				
-				template <occur::review_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Rv &&review_o, Rn &&render_o, auto &&...oo)
+				template <occur::revise_q Rv, occur::render_q Rn>
+				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
+					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 						return 1;
 					}
 					else {
-						using namespace _v3::ranges;
 						auto result_o = R_::functor();
-						copy_n(begin(result_o), count_f(review_o), begin(review_o));
+						_v3::ranges::copy_n(iterator_f(result_o), count_f(revise_o), iterator_f(revise_o));
 						return 0;
 					}
 				}

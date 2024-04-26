@@ -153,6 +153,7 @@ template <           class ...Ts>	concept      common_q = requires {typename _st
 template <           class ...Ts>	using        common_t =                    _std::common_type_t<Ts...>;
 template <class               X >	struct     argument     {using type = X      &&;};
 template <based_q             X >	struct     argument<X>  {using type = X const &;};
+template <auto                F >	struct      operate     {class type {public: XTAL_OP1() (auto &&...oo) {return F(XTAL_REF_(oo)...);}};};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,13 +216,6 @@ template <class         T >	concept  iterator_q    = requires (T t) {*++t;};//_v
 template <class         T >	concept  sentinel_q    = iterator_q<T>;
 template <class         T >	concept  distance_q    = integral_q<T>;//\todo Expand to accommodate `counted_t<size_t>{}.size()`.
 
-template <class T, class Y>	concept  iteratee_of_q = is_q<iteratee_t<T>, Y>;
-template <class T, class Y>	concept  iterable_of_q = iterable_q<T> and iteratee_of_q<T, Y>;
-template <class T, class Y>	concept  iterated_of_q = iterated_q<T> and iteratee_of_q<T, Y>;
-template <class T, class Y>	concept  iterator_of_q = iterator_q<T> and iteratee_of_q<T, Y>;
-template <class T, class Y>	concept  sentinel_of_q = sentinel_q<T> and iteratee_of_q<T, Y>;
-//mplate <class T, class Y>	concept  distance_of_q = distance_q<T> and iteratee_of_q<T, Y>;
-
 template <iterable_q T    >	struct   iteratee<T>   {using type =     pointee_t<begin_t<T>>;};
 template <iterated_q T    >	struct   iteratee<T>   {using type =     pointee_t<begin_t<T>>;};
 template <iterator_q T    >	struct   iteratee<T>   {using type =     pointee_t<        T >;};
@@ -256,12 +250,23 @@ template <counter_q     T >	struct   counted<T>    {using type = iterated_t<T>;}
 template <counted_q     T >	struct   counter<T>    {using type = iteratee_t<T>;};
 template <counter_q     T >	struct   counter<T>    {using type =    based_t<T>;};
 
+template <class         T >
+struct reiterated
+{
+	XTAL_USE I = iterator_t<T>;
+	XTAL_USE J = sentinel_t<T>;
+	XTAL_LET K = _v3::ranges::sized_sentinel_for<J, I>?
+		ranges::subrange_kind::  sized:
+		ranges::subrange_kind::unsized;
+	XTAL_USE type = _v3::ranges::subrange<I, J, K>;
 
-template <class         T >	using reiterated_t     = _v3::ranges::subrange<iterator_t<T>, iterator_t<T>>;
-template <class         T >	using initerated_t     = _v3::ranges::view_interface<T>;
+};
+template <class         T >	concept       reiterated_q	= fungible_q<T, typename reiterated<T>::type>;
+template <class         T >	using         reiterated_t	=               typename reiterated<T>::type;
+template <class         T >	using         initerated_t	= _v3::ranges::view_interface<T>;
 
-template <class         T >	concept  indexed_q     = _std::regular_invocable<T, size_t>;
-
+template <class         T >	concept        allocated_q	= requires {typename T::allocator_type;};
+template <class         T >	concept     materialized_q	= allocated_q<T> or array_q<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

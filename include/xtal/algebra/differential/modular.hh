@@ -50,6 +50,7 @@ struct modular<A_data[N_data]>
 	using W_sigma = linear_t<U_sigma[N_data]>;
 	using W_alpha = linear_t<U_alpha[N_data]>;
 	using M_alpha = bond::pact_make_t<W_alpha>;
+//	using M_alpha = bond::pact_t<U_alpha, U_alpha>;
 
 	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*re::diplo_f())));
 	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*re::haplo_f());

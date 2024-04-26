@@ -75,7 +75,7 @@ struct define
 		XTAL_TN2 resolve(auto const ...is)
 		XTAL_0FX
 		{
-			return dissolve(materialize<Xs...>::template type<is...>::value);
+			return dissolve(figure<Xs...>::template type<is...>::value);
 		}
 		XTAL_TN2 dissolve(auto const &value)
 		XTAL_0FX
@@ -89,7 +89,7 @@ struct define
 		and statically-generated from `functor<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
-		struct materialize
+		struct figure
 		{
 			template <auto ...Is>
 			class type

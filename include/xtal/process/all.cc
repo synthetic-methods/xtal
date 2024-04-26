@@ -2,3 +2,5 @@
 #include "./differential/all.cc"
 #include "./chain.cc"
 #include "./cross.cc"
+#include "./map.cc"
+#include "./mop.cc"

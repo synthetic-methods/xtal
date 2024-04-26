@@ -134,7 +134,7 @@ struct define
 				XTAL_TN2 resolve(integral_q auto const ...is)
 				XTAL_0FX
 				{
-					return dissolve(materialize<Xs...>::template type<is...>::value);
+					return dissolve(figure<Xs...>::template type<is...>::value);
 				}
 				XTAL_TN2 dissolve(array_q<T::size()> auto const &value)
 				XTAL_0FX
@@ -145,7 +145,7 @@ struct define
 				}
 
 				template <class ...Xs>
-				struct materialize
+				struct figure
 				{
 					template <auto ...Is>
 					class type
@@ -154,7 +154,7 @@ struct define
 						XTAL_FN2 enumerate_f(bond::seek_t<I...>)
 						XTAL_0EX
 						{
-							using context = typename R_::template materialize<Xs...>;
+							using context = typename R_::template figure<Xs...>;
 							return _std::array {(context::template type<Is..., I>::value)...};
 						}
 					
