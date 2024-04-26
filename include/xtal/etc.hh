@@ -136,9 +136,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_ASK                                   concept
-#define XTAL_DEF                                   struct
 #define XTAL_USE                                   using
-#define XTAL_TYP                                   decltype(auto)
+#define XTAL_TYP                                   struct
 #define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_ANY_(...)     ::std::                 declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)

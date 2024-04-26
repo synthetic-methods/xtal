@@ -16,14 +16,15 @@ namespace xtal::resource
 Represents a local `{store,serve}` pair, \
 used as e.g. a buffer and its abstract/copyable `std::span`. \
 
-template <typename ..._s> struct reserve;
-template <typename ..._s> using  reserve_t = confined_t<reserve<_s...>>;
+template <typename ..._s> XTAL_TYP reserve;
+template <typename ..._s> XTAL_USE reserve_t = confined_t<reserve<_s...>>;
+template <typename ..._s> XTAL_ASK reserve_q = bond::tag_p<reserve, _s...>;
 template <bounded_q U>
 struct reserve<U>
 {
 	using U_store = based_t<U>;
 	using U_serve = reiterated_t<U>;
-	using subkind = bond::compose<void
+	using subkind = bond::compose<bond::tag<reserve>
 	,	cell::refer<U_serve>
 	,	cell::defer<U_serve>
 	,	cell::defer<U_store>

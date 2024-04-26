@@ -14,11 +14,11 @@ namespace xtal::bond
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Us>
-XTAL_DEF pact
+XTAL_TYP pact
 {	using type = _v3::ranges::common_tuple<Us...>;
 };
 template <class ...Us> requires (2 == sizeof...(Us))
-XTAL_DEF pact<Us...>
+XTAL_TYP pact<Us...>
 {	using type = _v3::ranges::common_pair <Us...>;
 };
 template <class ...Us>
@@ -33,13 +33,13 @@ XTAL_0EX
 
 
 template <class ...Ts>
-XTAL_DEF pact_size : cardinal_t<(0 +...+ pact_size<Ts>::value)> {};
+XTAL_TYP pact_size : cardinal_t<(0 +...+ pact_size<Ts>::value)> {};
 
 template <class T>
-XTAL_DEF pact_size<T> : _std::tuple_size<T> {};
+XTAL_TYP pact_size<T> : _std::tuple_size<T> {};
 
 template <devalue_q T>
-XTAL_DEF pact_size<T> : cardinal_t<devalue_n<T>> {};
+XTAL_TYP pact_size<T> : cardinal_t<devalue_n<T>> {};
 
 template <class ...Ts>
 XTAL_LET pact_size_n = pact_size<_std::remove_reference_t<Ts>...>::value;
@@ -50,16 +50,16 @@ XTAL_0EX {return pact_size_n<Ts...>;}
 
 
 template <size_t I, class ...Ts>
-XTAL_DEF pact_element;
+XTAL_TYP pact_element;
 
 template <size_t I, class T>
-XTAL_DEF pact_element<I, T> : _std::tuple_element<I, T> {};
+XTAL_TYP pact_element<I, T> : _std::tuple_element<I, T> {};
 
 template <size_t I, devalue_q T>
-XTAL_DEF pact_element<I, T> {using type = typename T::value_type;};
+XTAL_TYP pact_element<I, T> {using type = typename T::value_type;};
 
 template <size_t I, class T, class ...Ts> requires (I >= pact_size_n<T>)
-XTAL_DEF pact_element<I, T, Ts...> : pact_element<I - pact_size_n<T>, Ts...> {};
+XTAL_TYP pact_element<I, T, Ts...> : pact_element<I - pact_size_n<T>, Ts...> {};
 
 template <size_t I, class ...Ts>
 XTAL_USE pact_element_t = typename pact_element<I, _std::remove_reference_t<Ts>...>::type;
@@ -97,7 +97,7 @@ XTAL_0EX
 
 
 template <class ...Ts>
-XTAL_DEF pact_make
+XTAL_TYP pact_make
 {
 	template <class     > struct solve;
 	template <auto ...Is> struct solve<bond::seek_t<Is...>>
@@ -130,7 +130,7 @@ XTAL_0FN
 
 
 template <class ...Ts>
-XTAL_DEF pact_made
+XTAL_TYP pact_made
 {
 	template <class     > struct solve;
 	template <auto ...Is> struct solve<bond::seek_t<Is...>>

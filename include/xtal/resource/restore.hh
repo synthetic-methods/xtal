@@ -11,8 +11,9 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  restore {};
-template <class ...Ts> concept restore_q = bond::tag_p<restore, Ts...>;
+template <typename ..._s> XTAL_TYP restore;
+template <typename ..._s> XTAL_USE restore_t = confined_t<restore<_s...>>;
+template <typename ..._s> XTAL_ASK restore_q = bond::tag_p<restore, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

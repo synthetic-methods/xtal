@@ -160,7 +160,7 @@ struct define
 					
 					public:
 						XTAL_LET value      = enumerate_f(bond::seek_s<T::size()> {});
-						using    value_type = decltype(value);
+						XTAL_USE value_type = decltype(value);
 					
 					};
 				};

@@ -78,8 +78,6 @@ struct defer<U>
 			
 			XTAL_IF0
 			XTAL_0IF_(0 == sizeof...(xs)) {
-				//\
-				return _detail::forever_f(f)|transform([] (auto &&f) XTAL_0FN_(XTAL_REF_(f)()));
 				return generate(f);
 			}
 			XTAL_0IF_(1 == sizeof...(xs)) {

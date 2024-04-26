@@ -28,11 +28,11 @@ using pack_t = _std::invoke_result_t<decltype(pack_f), Xs...>;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class    T  > using    pack_size   = _std::tuple_size<_std::remove_reference_t<T>>;
-template <class    T  > using    pack_size_t =   typename pack_size<T>::type;
+template <class    T  > XTAL_USE pack_size   = _std::tuple_size<_std::remove_reference_t<T>>;
+template <class    T  > XTAL_USE pack_size_t =   typename pack_size<T>::type;
 template <class    T  > XTAL_LET pack_size_n =            pack_size<T> {};
-template <class    T  > concept  pack_size_p = integral_q<pack_size_t<T>>;
-template <class ...Ts > concept  pack_size_q =    (...and pack_size_p<Ts>);
+template <class    T  > XTAL_ASK pack_size_p = integral_q<pack_size_t<T>>;
+template <class ...Ts > XTAL_ASK pack_size_q =    (...and pack_size_p<Ts>);
 
 static_assert(pack_size_n<_std::tuple<         >> == 0);
 static_assert(pack_size_n<_std::array<null_t, 0>> == 0);
@@ -43,9 +43,9 @@ static_assert(pack_size_q<_std::array<null_t, 0>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T, size_t ...Ns > struct  pack_item;
-template <class T, size_t... Ns > using   pack_item_t = typename pack_item<T, Ns...>::type;
-template <class T, size_t    N  > concept pack_item_p = requires(T a) {{get<N>(a)} -> is_q<pack_item_t<T, N>>;};
+template <class T, size_t ...Ns > XTAL_TYP pack_item;
+template <class T, size_t... Ns > XTAL_USE pack_item_t = typename pack_item<T, Ns...>::type;
+template <class T, size_t    N  > XTAL_ASK pack_item_p = requires(T a) {{get<N>(a)} -> is_q<pack_item_t<T, N>>;};
 template <class T>
 concept pack_items_p = [] <size_t ...N>
 	(seek_t<N...>) XTAL_0FN_(true and ... and pack_item_p<T, N>)

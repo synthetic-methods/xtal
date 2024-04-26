@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  lattice;
-template <class ..._s> using   lattice_t = typename lattice<_s...>::type;
-template <class ..._s> concept lattice_q = bond::tag_p<lattice, _s...>;
+template <class ..._s> XTAL_TYP lattice;
+template <class ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
+template <class ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

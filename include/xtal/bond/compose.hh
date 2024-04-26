@@ -57,7 +57,7 @@ struct compose<Outer, _s...> : compose<_s...>
 Applys the `Inner::subtype`s to `S` from left-to-right. \
 
 template <class S, typename ...Inner>
-using   compose_s = typename compose<>::template subtype<S, Inner...>;
+using compose_s = typename compose<>::template subtype<S, Inner...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
