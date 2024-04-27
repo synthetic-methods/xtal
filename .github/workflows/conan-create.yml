@@ -11,13 +11,18 @@ jobs:
     strategy:
       matrix:
         bt: [Debug, Release]
-        os: [macos, ubuntu]
+        os: [macos, ubuntu] #, windows-latest]
     
     runs-on: ${{matrix.os}}-latest
 
     steps:
     - uses: actions/checkout@v3
-    - uses: turtlebrowser/get-conan@main
+    
+    - run:  brew install conan
+      if:   ${{ matrix.os == 'macos' }}
+
+    - run:  pip3 install wheel setuptools; pip3 install conan --upgrade
+      if:   ${{ matrix.os != 'macos' }}
 
     - name: Run `conan config...`
       run:  conan config install ${{github.workspace}}/.conan2

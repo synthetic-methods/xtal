@@ -30,7 +30,9 @@ public:
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		//\todo\
-		Skip `head<1>` by inheriting `query<S_::template self_s<1>>`? \
+		Skip `head<1>` by inheriting `query<S_::template self_s<1>>`... \
+
+		XTAL_TO4_(template <size_t ...Ns> XTAL_TN2 head(auto &&...oo), S_::template head<Ns...>(XTAL_REF_(oo)...))
 
 	public:
 	//	using S_::S_;
@@ -48,8 +50,11 @@ public:
 		:	S_(U_1/u, u, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2   rate(), S_::template head<0>())
-		XTAL_TO4_(XTAL_TN2 period(), S_::template head<1>())
+		XTAL_TO4_(XTAL_TN2   rate(), head<0>())
+		XTAL_TO4_(XTAL_TN2 period(), head<1>())
+
+		XTAL_TO4_(XTAL_TN2   rate(auto &&...oo), head<0>(XTAL_REF_(oo)...), head<1>(1/head<0>()))
+		XTAL_TO4_(XTAL_TN2 period(auto &&...oo), head<1>(XTAL_REF_(oo)...), head<0>(1/head<1>()))
 
 	};
 };
