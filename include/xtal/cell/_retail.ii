@@ -30,14 +30,14 @@ struct any<void>
 template <typename A>
 struct any<A>
 {	
-	template <class S> requires some_q<typename S::T_self>
+	template <class S>
 	class subtype : public S
 	{
 		using S_ = S;
 
-	public://protected:
-		using typename S::T_self;
-		using typename S::U_self;
+	protected:
+		using typename S_::T_self;
+		using typename S_::U_self;
 
 	public:
 		template <class _, class ...Is> struct duper : S_::template super<_,      Is...> {};
@@ -47,7 +47,7 @@ struct any<A>
 	public:
 		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
 		template <class ...Is> using head_s = typename super<U_self, Is...>::type;
-		template <class ...Is> using head_t = typename head_s<Is...>::U_head;
+		template <class ...Is> using head_t = XTAL_TYP_(XTAL_ANY_(head_s<Is...>).head());
 
 	//	using S_::self;
 	//	using S_::head;

@@ -62,17 +62,19 @@ struct surrender
 	template <any_q S>
 	class subtype : public S
 	{
+		using S_ = S;
+		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
+
 	protected:
-		using typename S::T_self;
-		using typename S::U_head;
+		using typename S_::T_self;
 
 	private:
-		using V_ = counter_t<U_head>;
+		using V_ = counter_t<H_>;
 	
 	public:
-		using S::S;
-		using S::self;
-		using S::twin;
+		using S_::S_;
+		using S_::self;
+		using S_::twin;
 		using value_type = V_;
 
 		using ring = int;
@@ -164,13 +166,13 @@ struct surrender
 		XTAL_OP2_(bool) >=(subtype const &t)
 		XTAL_0FX
 		{
-			return S::operator>(t) or S::operator==(t);
+			return S_::operator>(t) or S_::operator==(t);
 		}
 
 		XTAL_OP2_(bool) <=(subtype const &t)
 		XTAL_0FX
 		{
-			return S::operator<(t) or S::operator==(t);
+			return S_::operator<(t) or S_::operator==(t);
 		}
 
 		///\
@@ -202,7 +204,7 @@ struct surrender
 		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::infuse(XTAL_REF_(o));
+			return S_::infuse(XTAL_REF_(o));
 		}
 
 		///\
@@ -215,7 +217,7 @@ struct surrender
 		XTAL_TNX effuse(auto &&o)
 		XTAL_0EX
 		{
-			return S::effuse(XTAL_REF_(o));
+			return S_::effuse(XTAL_REF_(o));
 		}
 		XTAL_TNX effuse(render_q auto &&t)
 		XTAL_0EX

@@ -65,9 +65,8 @@ struct query
 		friend U_that;
 		friend U_this;
 
-	public://protected:
+	protected:
 		using typename S_::T_self;
-	//	using typename S_::U_head;
 
 	public:
 		template <class _, class ...Is>
@@ -78,7 +77,7 @@ struct query
 
 		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
 		template <class ...Is> using head_s = typename super<U_this, Is...>::type;
-		template <class ...Is> using head_t = typename head_s<Is...>::U_head;
+		template <class ...Is> using head_t = XTAL_TYP_(XTAL_ANY_(head_s<Is...>).head());
 
 		using S_::self;
 		using S_::head;

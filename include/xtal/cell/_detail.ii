@@ -53,9 +53,11 @@ struct refine_head
 	template <any_q S> requires (1 == S::arity::value)
 	class subtype<S> : public S
 	{
+		using S_ = S;
+		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
+
 	protected:
 		using typename S::T_self;
-		using typename S::U_head;
 
 	public:
 		using S::S;
@@ -66,7 +68,7 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
+		XTAL_DO4_(XTAL_OP0_(implicit) H_(), {return head();})
 		
 //		///\
 //		\returns a copy of `this` with `head<Is...>(oo...)` applied. \

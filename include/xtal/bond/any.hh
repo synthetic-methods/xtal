@@ -37,7 +37,7 @@ struct define
 		:	S_(static_cast<S_ &&>(s), XTAL_REF_(oo)...)
 		{}
 
-	public://protected:
+	protected:
 		using  T_self = T;
 		using  U_self = subtype;
 		struct U_tail
