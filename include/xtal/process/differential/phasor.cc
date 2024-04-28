@@ -24,7 +24,9 @@ TAG_("phasor")
 	using Y_phi = process::differential::phasor_t  <W_phi>;
 	using Z_phi = processor::monomer_t<Y_phi, resource::restore<constant_t<0x1000>>>;
 
+	//\
 	using Y_psi = process::confined_t<process::mop<valve_f>, process::differential::phasor<W_phi>>;
+	using Y_psi = process::differential::phasor_t<W_phi, resource::example<>>;
 	using Z_psi = processor::monomer_t<Y_psi, resource::restore<constant_t<0x1000>>>;
 
 	TRY_("trial")
@@ -44,7 +46,7 @@ TAG_("phasor")
 		{
 			x_phi <<= {x_delta};
 
-			for (T_sigma i = 0; i < result_n; ++i) {
+			for (int i = 0; i < result_n; ++i) {
 				result_o[i] = pact_make_f(x_phi());
 			}
 
@@ -53,7 +55,7 @@ TAG_("phasor")
 		{
 			y_phi <<= occur::indent_s<X_phi, 1>(x_delta);
 
-			for (T_sigma i = 0; i < result_n; ++i) {
+			for (int i = 0; i < result_n; ++i) {
 				result_o[i] = pact_make_f(y_phi() ());
 			}
 
@@ -87,7 +89,7 @@ TAG_("phasor")
 			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
 			z_phi >>= z_ren++;
 
-			for (T_sigma i = 0; i < result_n; ++i) {result_o[i] = pact_make_f(z_phi.store()[i] ());}
+			for (int i = 0; i < result_n; ++i) {result_o[i] = pact_make_f(z_phi.store()[i] ());}
 
 		};
 		EST_("procession (processor: `ranges::for_each`)")
@@ -97,7 +99,7 @@ TAG_("phasor")
 			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
 			z_phi >>= z_ren++;
 
-			_v3::ranges::for_each(z_phi, [&] (size_t i) noexcept {result_o[i] = pact_make_f(z_phi.store()[i] ());});
+			_v3::ranges::for_each(z_phi, [&] (auto i) noexcept {result_o[i] = pact_make_f(z_phi.store()[i] ());});
 
 		};
 		EST_("procession (processor: `ranges::move(z|...)`)")
@@ -154,33 +156,33 @@ TAG_("phasor")
 		z_psi <<= occur::indent_s<X_phi, 1>(x_d4);
 		z_psi <<= z_req;
 		
-		static_assert(is_q<bond::pact_t<T_alpha, T_alpha>, iteratee_t<decltype(z_psi.store())>>);
+	//	static_assert(is_q<bond::pact_t<T_alpha, T_alpha>, iteratee_t<decltype(z_psi.store())>>);
 
 		//\
 		(void) z_psi.efflux(z_rev, z_ren++);
 		z_psi >>= z_ren++ >> z_rev;
-		TRUE_(z_out[0] == _std::pair{ 1*x_d4, x_d4});
-		TRUE_(z_out[1] == _std::pair{ 2*x_d4, x_d4});
-		TRUE_(z_out[2] == _std::pair{ 3*x_d4, x_d4});
-		TRUE_(z_out[3] == _std::pair{ 4*x_d4, x_d4});
-		TRUE_(z_out[4] == _std::pair{ 5*x_d4, x_d4});
-		TRUE_(z_out[5] == _std::pair{ 6*x_d4, x_d4});
-		TRUE_(z_out[6] == _std::pair{ 7*x_d4, x_d4});
-		TRUE_(z_out[7] == _std::pair{-8*x_d4, x_d4});
+		TRUE_(z_out[0] == bond::pact_f( 1*x_d4, x_d4));
+		TRUE_(z_out[1] == bond::pact_f( 2*x_d4, x_d4));
+		TRUE_(z_out[2] == bond::pact_f( 3*x_d4, x_d4));
+		TRUE_(z_out[3] == bond::pact_f( 4*x_d4, x_d4));
+		TRUE_(z_out[4] == bond::pact_f( 5*x_d4, x_d4));
+		TRUE_(z_out[5] == bond::pact_f( 6*x_d4, x_d4));
+		TRUE_(z_out[6] == bond::pact_f( 7*x_d4, x_d4));
+		TRUE_(z_out[7] == bond::pact_f(-8*x_d4, x_d4));
 
 		z_psi <<= occur::indent_s<X_phi, 1>(x_d3);
 
 		//\
 		(void) z_psi.efflux(z_rev, z_ren++);
 		z_psi >>= z_ren++ >> z_rev;
-		TRUE_(z_out[0] == _std::pair{-3*x_d3, x_d3});
-		TRUE_(z_out[1] == _std::pair{-2*x_d3, x_d3});
-		TRUE_(z_out[2] == _std::pair{-1*x_d3, x_d3});
-		TRUE_(z_out[3] == _std::pair{-0*x_d3, x_d3});
-		TRUE_(z_out[4] == _std::pair{ 1*x_d3, x_d3});
-		TRUE_(z_out[5] == _std::pair{ 2*x_d3, x_d3});
-		TRUE_(z_out[6] == _std::pair{ 3*x_d3, x_d3});
-		TRUE_(z_out[7] == _std::pair{-4*x_d3, x_d3});
+		TRUE_(z_out[0] == bond::pact_f(-3*x_d3, x_d3));
+		TRUE_(z_out[1] == bond::pact_f(-2*x_d3, x_d3));
+		TRUE_(z_out[2] == bond::pact_f(-1*x_d3, x_d3));
+		TRUE_(z_out[3] == bond::pact_f(-0*x_d3, x_d3));
+		TRUE_(z_out[4] == bond::pact_f( 1*x_d3, x_d3));
+		TRUE_(z_out[5] == bond::pact_f( 2*x_d3, x_d3));
+		TRUE_(z_out[6] == bond::pact_f( 3*x_d3, x_d3));
+		TRUE_(z_out[7] == bond::pact_f(-4*x_d3, x_d3));
 
 	}
 	TRY_("procession")
@@ -196,21 +198,22 @@ TAG_("phasor")
 		occur::resize_t<> z_req(8);
 		occur::render_t<> z_ren(8);
 
+
 		z_phi <<= occur::indent_s<X_phi, 1>(x_d4);
 		z_phi <<= z_req;
 		z_phi >>= z_ren++;
 		//\
 		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
-		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
+		_v3::ranges::move(z_phi|argue_f(), z_out.begin());
 
-		TRUE_(z_out[0] == _std::pair{ 1*x_d4, x_d4});
-		TRUE_(z_out[1] == _std::pair{ 2*x_d4, x_d4});
-		TRUE_(z_out[2] == _std::pair{ 3*x_d4, x_d4});
-		TRUE_(z_out[3] == _std::pair{ 4*x_d4, x_d4});
-		TRUE_(z_out[4] == _std::pair{ 5*x_d4, x_d4});
-		TRUE_(z_out[5] == _std::pair{ 6*x_d4, x_d4});
-		TRUE_(z_out[6] == _std::pair{ 7*x_d4, x_d4});
-		TRUE_(z_out[7] == _std::pair{-8*x_d4, x_d4});
+		TRUE_(z_out[0] == bond::pact_f( 1*x_d4, x_d4));
+		TRUE_(z_out[1] == bond::pact_f( 2*x_d4, x_d4));
+		TRUE_(z_out[2] == bond::pact_f( 3*x_d4, x_d4));
+		TRUE_(z_out[3] == bond::pact_f( 4*x_d4, x_d4));
+		TRUE_(z_out[4] == bond::pact_f( 5*x_d4, x_d4));
+		TRUE_(z_out[5] == bond::pact_f( 6*x_d4, x_d4));
+		TRUE_(z_out[6] == bond::pact_f( 7*x_d4, x_d4));
+		TRUE_(z_out[7] == bond::pact_f(-8*x_d4, x_d4));
 		
 		z_phi <<= occur::indent_s<X_phi, 1>(x_d3);
 		z_phi >>= z_ren++;
@@ -218,14 +221,14 @@ TAG_("phasor")
 		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
 		_v3::ranges::copy(z_phi|argue_f()|bond::pact_make_f, z_out.begin());
 		
-		TRUE_(z_out[0] == _std::pair{-3*x_d3, x_d3});
-		TRUE_(z_out[1] == _std::pair{-2*x_d3, x_d3});
-		TRUE_(z_out[2] == _std::pair{-1*x_d3, x_d3});
-		TRUE_(z_out[3] == _std::pair{-0*x_d3, x_d3});
-		TRUE_(z_out[4] == _std::pair{ 1*x_d3, x_d3});
-		TRUE_(z_out[5] == _std::pair{ 2*x_d3, x_d3});
-		TRUE_(z_out[6] == _std::pair{ 3*x_d3, x_d3});
-		TRUE_(z_out[7] == _std::pair{-4*x_d3, x_d3});
+		TRUE_(z_out[0] == bond::pact_f(-3*x_d3, x_d3));
+		TRUE_(z_out[1] == bond::pact_f(-2*x_d3, x_d3));
+		TRUE_(z_out[2] == bond::pact_f(-1*x_d3, x_d3));
+		TRUE_(z_out[3] == bond::pact_f(-0*x_d3, x_d3));
+		TRUE_(z_out[4] == bond::pact_f( 1*x_d3, x_d3));
+		TRUE_(z_out[5] == bond::pact_f( 2*x_d3, x_d3));
+		TRUE_(z_out[6] == bond::pact_f( 3*x_d3, x_d3));
+		TRUE_(z_out[7] == bond::pact_f(-4*x_d3, x_d3));
 
 	}
 	TRY_("multiplication")

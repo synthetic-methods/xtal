@@ -87,7 +87,7 @@ struct chunk
 				XTAL_TN1_(V_delay) delay()
 				XTAL_0EX
 				{
-				//	NOTE: The `std::initializer_list` syntax voids segfaulting in `RELEASE`. \
+				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
 					return _std::min<V_delay>({R_::delay(), next_head()});
 				}

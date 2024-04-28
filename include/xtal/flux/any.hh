@@ -156,9 +156,22 @@ struct define
 		XTAL_TNX defuse(auto &&o)
 		XTAL_0EX
 		{
-			//\
-			return is_q<cell::cue_s<>, decltype(o)>? 1: -1;
+			/**/
 			return -1;
+			/*/
+			if constexpr (is_q<T, decltype(o)>) {
+				if (self() != o) {
+					self(XTAL_REF_(o));
+					return 0;
+				}
+				else {
+					return 1;
+				}
+			}
+			else {
+				return -1;
+			}
+			/***/
 		}
 		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
@@ -260,15 +273,16 @@ struct defer
 		///\note\
 		Assigns the given value `u` if it matches the proxied type `U`. \
 
-		XTAL_TNX defuse(U u)
+		template <class W>
+		XTAL_TNX defuse(W &&w)
 		XTAL_0EX
 		{
-			return S_::heading(u) or (S_::head(u), 0);
-		}
-		XTAL_TNX defuse(auto &&w)
-		XTAL_0EX
-		{
-			return S_::defuse(XTAL_REF_(w));
+			if constexpr (is_q<U, W>) {
+				return S_::heading(w) or (S_::head(XTAL_REF_(w)), 0);
+			}
+			else {
+				return S_::defuse(XTAL_REF_(w));
+			}
 		}
 
 	};

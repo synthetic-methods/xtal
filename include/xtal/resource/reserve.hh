@@ -33,7 +33,7 @@ struct reserve<A>
 	public:
 		using S_::S_;
 		
-		template <class U>
+		template <iterated_q U>
 		using serve_t = typename A::template subtype<U>;
 
 	};

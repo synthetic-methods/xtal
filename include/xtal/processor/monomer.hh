@@ -98,14 +98,13 @@ struct monomer<U, As...>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_store  = typename S_::template store_t<Y_return>;
-			using U_serve  = typename S_::template serve_t<U_store >;
-			using U_revise = occur::revise_t<U_serve>;
+			using U_store = typename S_::template store_t<Y_return>;
+			using U_serve = typename S_::template serve_t<U_store >;
 		
 			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
 			XTAL_LET_(bool) N_sized = requires (U_store &u) {u.resize(U_resize{});};
 
-			using subkind = bond::compose<resource::rematerialize<U_serve, U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::reflect<U_serve, U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -134,12 +133,13 @@ struct monomer<U, As...>
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					if constexpr (is_q<U_resize, decltype(o)>) {
-						return R_::infuse(o) or ([o = XTAL_REF_(o), this] ()
-						XTAL_0FN
-						{
-							if constexpr (N_sized) {store().resize(XTAL_MOV_(o));}
-							return XTAL_FLX{};
+					if constexpr (occur::resize_q<decltype(o)>) {
+						return R_::infuse(o) or ([&, this] ()
+						XTAL_0FN {
+							if constexpr (N_sized) {
+								store().resize(XTAL_REF_(o).size());
+							}
+							return 0;
 						}	());
 					}
 					else {
@@ -151,11 +151,11 @@ struct monomer<U, As...>
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_TNX influx_push(U_resize o_resize, auto &&...oo)
+				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
 				XTAL_0EX
 				XTAL_REQ (0 <= N_share)
 				{
-					return R_::template influx_push_tail<N_share>(null_t(), o_resize, XTAL_REF_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_t(), XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}
 
 
@@ -170,7 +170,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(U_revise(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return efflux(occur::revise_t<U_serve>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::revise`, the supplied visor will be used instead. \

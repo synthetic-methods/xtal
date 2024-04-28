@@ -116,7 +116,7 @@ struct modular<A_data[N_data]>
 		The symmetric signatures for `/=` and `*=` are declared-but-undefined \
 		to avoid compilation-failure when type-checking e.g. `multiplicative_group_q`. \
 
-		XTAL_VAR operator /= (T const &f) XTAL_0EX -> T &;// Asymmetric!
+		XTAL_VAR operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		using T_::operator/=;
 
 		XTAL_OP1_(T &) /= (number_q auto const &f)
@@ -125,7 +125,7 @@ struct modular<A_data[N_data]>
 			return operator*=(re::alpha_1/f);
 		}
 
-		XTAL_VAR operator *= (T const &t) XTAL_0EX -> T &;// Asymmetric!
+		XTAL_VAR operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		using T_::operator*=;
 
 		//\note\

@@ -2,7 +2,7 @@
 #include "./any.hh"
 
 #include "../../algebra/differential/modular.hh"
-
+#include "../../resource/example.hh"
 
 
 
@@ -25,9 +25,10 @@ template <size_t N_data, class W_data, typename ...As>
 struct phasor<W_data[N_data], As...>
 {
 	template <size_t N>
-	using modular_u = algebra::differential::modular_t<W_data[N]>;
+	using U_modular = algebra::differential::modular_t<W_data[N]>;
+	using U_sample = occur::sample_t<>;
 
-	using W_ = modular_u<N_data>;
+	using W_ = U_modular<N_data>;
 	
 	using re = bond::realize<W_data>;
 	using V = typename re::delta_t;
@@ -35,15 +36,16 @@ struct phasor<W_data[N_data], As...>
 	XTAL_LET_(U) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
 
 	using subkind = bond::compose<bond::tag<phasor>
-	,	As...
-	,	_detail::refer_multiplicative_group<W_, 1>// Necessary?
+	,	_detail::refer_multiplicative_group<W_>
 	,	typename occur::indent_s<W_>::template funnel<>
+	,	As...
 	>;
 	
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
 
 	protected:
 		using typename S_::T_self;
@@ -58,6 +60,12 @@ struct phasor<W_data[N_data], As...>
 		using S_::self;
 		using S_::head;
 
+		XTAL_DO4_(XTAL_OP0_(implicit) H_(), {return head();})
+		///\note\
+		The above is defined in-case `refine_head` is bypassed...
+
+		///\todo\
+		...find a cleaner way to define the conversion, perhaps via `refer`?
 
 	public:
 		///\
@@ -76,7 +84,15 @@ struct phasor<W_data[N_data], As...>
 		XTAL_TN2 functor()
 		XTAL_0EX
 		{
-			return ++head();
+			if constexpr (resource::example_q<S_>) {
+				static_assert(N_data == 2);
+				auto result = (++head()) ();
+				_std::get<1>(result) *= S_::sample().rate();
+				return result;
+			}
+			else {
+				return ++head();
+			}
 		}
 		///\
 		Evaluation by (possibly indented) replacement then succession. \
