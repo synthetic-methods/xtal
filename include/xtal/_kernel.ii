@@ -101,7 +101,12 @@ template <iterated_q X, iterated_q Y> requires epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
-	return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
+	if constexpr (epimorphic_q<X, Y>) {
+		return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
+	}
+	else {
+		return false;
+	}
 }
 
 template <class X, class Y>
@@ -110,11 +115,29 @@ XTAL_0EX
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
-template <iterated_q X, iterated_q Y> requires isomorphic_q<X, Y>
+template <iterated_q X, iterated_q Y>
 XTAL_FN2 equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
-	return x.begin() == y.begin() and x.end() == y.end();
+	XTAL_IF0
+	if constexpr (isomorphic_q<X, Y>) {
+		return x.begin() == y.begin() and x.end() == y.end();
+	}
+	else {
+		return false;
+	}
+}
+template <iterated_q X, iterated_q Y>
+XTAL_FN2 dequivalent_f(X const &x, Y const &y)
+XTAL_0EX
+{
+	XTAL_IF0
+	if constexpr (is_q<X, Y> and requires {x.data() == y.data();}) {
+		return x.data() == y.data();
+	}
+	else {
+		return false;
+	}
 }
 
 

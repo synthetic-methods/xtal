@@ -24,12 +24,11 @@ XTAL_TYP pact<Us...>
 template <class ...Us>
 using pact_t = typename pact<Us...>::type;
 
-template <class ...Us>
-XTAL_FN2 pact_f(Us &&...us)
-XTAL_0EX
+XTAL_LET pact_f = []<class ...Us> (Us &&...us)
+XTAL_0FN
 {
 	return pact_t<Us...>(XTAL_REF_(us)...);
-}
+};
 
 
 template <class ...Ts>

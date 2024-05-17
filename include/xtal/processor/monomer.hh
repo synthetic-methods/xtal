@@ -116,8 +116,16 @@ struct monomer<U, As...>
 				using R_::self;
 				using R_::serve;
 				using R_::store;
-				XTAL_TO2_(template <auto ...>
-				XTAL_TN2 functor(), N_sized? serve(): serve()|_v3::views::take(R_::template head_t<U_resize>))
+				XTAL_DO2_(template <auto ...>
+				XTAL_TN2 functor(),
+				{
+					if constexpr (N_sized) {
+						return serve();
+					}
+					else {
+						return serve()|_v3::views::take(R_::template head_t<U_resize>);
+					}
+				})
 
 				XTAL_TN2_(size_t) delay()
 				XTAL_0EX
@@ -214,7 +222,7 @@ struct monomer<U, As...>
 						return 1;
 					}
 					else {
-						auto result_o = R_::functor();
+						auto result_o = R_::functor();// Materialize...
 						_v3::ranges::copy_n(iterator_f(result_o), count_f(revise_o), iterator_f(revise_o));
 						return 0;
 					}

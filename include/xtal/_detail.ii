@@ -210,14 +210,13 @@ template <class         T >	using    sentinel_t    = typename sentinel<T>::type;
 template <class         T >	using    distance_t    = typename distance<T>::type;
 
 template <class         T >	concept  iteratee_q    = true;
-template <class         T >	concept  iterable_q    = begin_q<T> and not front_q<T>;
-template <class         T >	concept  iterated_q    = begin_q<T> and     front_q<T>;//_v3::ranges::forward_range
+template <class         T >	concept  iterable_q    = begin_q<T>;
+template <class         T >	concept  iterated_q    = begin_q<T> and front_q<T>;//_v3::ranges::forward_range
 template <class         T >	concept  iterator_q    = requires (T t) {*++t;};//_v3::ranges::forward_iterator
 template <class         T >	concept  sentinel_q    = iterator_q<T>;
 template <class         T >	concept  distance_q    = integral_q<T>;//\todo Expand to accommodate `counted_t<size_t>{}.size()`.
 
 template <iterable_q T    >	struct   iteratee<T>   {using type =     pointee_t<begin_t<T>>;};
-template <iterated_q T    >	struct   iteratee<T>   {using type =     pointee_t<begin_t<T>>;};
 template <iterator_q T    >	struct   iteratee<T>   {using type =     pointee_t<        T >;};
 template <integral_p T    >	struct   iteratee<T>   {using type =               based_t<T> ;};
 
@@ -226,12 +225,10 @@ template <iterator_q T    >	struct   iterated<T>   {using type =                
 template <integral_p T    >	struct   iterated<T>   {using type =            interval_t<T> ;};
 
 template <iterable_q T    >	struct   iterator<T>   {using type =               begin_t<T> ;};
-template <iterated_q T    >	struct   iterator<T>   {using type =               begin_t<T> ;};
 template <iterator_q T    >	struct   iterator<T>   {using type =               based_t<T> ;};
 template <integral_p T    >	struct   iterator<T>   {using type = iterator_t<interval_t<T>>;};
 
 template <iterable_q T    >	struct   sentinel<T>   {using type = end_t<T>;};//_v3::ranges::sentinel_t<T>;
-template <iterated_q T    >	struct   sentinel<T>   {using type = end_t<T>;};//_v3::ranges::sentinel_t<T>;
 template <iterator_q T    >	struct   sentinel<T>   {using type =       T ;};
 
 template <class      T    >	struct   distance                   {using type = distance_t<iterator_t<T>>;};

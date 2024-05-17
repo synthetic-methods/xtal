@@ -13,8 +13,8 @@ namespace xtal::occur
 
 template <typename ..._s> XTAL_TYP revise;
 template <typename ..._s> XTAL_ASK revise_q = bond::tag_p<revise, _s...>;
-template <iterated_q   U> XTAL_USE revise_t = confined_t<refer<U>, revise<U>, bond::tag<revise>>;
-template <iterated_q   U> XTAL_FN2 revise_f(U &&w) XTAL_0EX {return revise_t<based_t<U>>(XTAL_REF_(w));};
+template <iterable_q  U > XTAL_USE revise_t = confined_t<refer<U>, revise<U>, bond::tag<revise>>;
+template <iterable_q  U > XTAL_FN2 revise_f(U &&u) XTAL_0EX {return revise_t<based_t<U>>(XTAL_REF_(u));};
 
 template <class S, iterated_q U>
 using revise_s = bond::compose_s<S, confined<bond::tag<revise>, refer<U>, revise<U>>>;
