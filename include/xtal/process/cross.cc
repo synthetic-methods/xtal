@@ -70,7 +70,7 @@ TAG_("cross", "processor")
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = U_mixer::bind_f(_1, _n);
-		io <<= occur::indent_s<U_model>({{1, 2}, {3, 4}, {5, 6}});
+		io <<= occur::indent_s<U_model>{{1, 2}, {3, 4}, {5, 6}};
 		io <<= occur::resize_t<>(3);
 		io >>= occur::render_t<>(3);
 
@@ -89,9 +89,9 @@ TAG_("cross", "processor")
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = U_mixer::bind_f(_1, _n);
-		io <<= occur::indent_s<U_model, 0>({1, 2});
-		io <<= occur::indent_s<U_model, 1>({3, 4});
-		io <<= occur::indent_s<U_model, 2>({5, 6});
+		io <<= occur::indent_s<U_model, 0>{1, 2};
+		io <<= occur::indent_s<U_model, 1>{3, 4};
+		io <<= occur::indent_s<U_model, 2>{5, 6};
 		io <<= occur::resize_t<>(3);
 		io >>= occur::render_t<>(3);
 
@@ -110,12 +110,12 @@ TAG_("cross", "processor")
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = U_mixer::bind_f(_1, _n);
-		io <<= occur::indent_s<U_model, 0, 0>(1);
-		io <<= occur::indent_s<U_model, 0, 1>(2);
-		io <<= occur::indent_s<U_model, 1, 0>(3);
-		io <<= occur::indent_s<U_model, 1, 1>(4);
-		io <<= occur::indent_s<U_model, 2, 0>(5);
-		io <<= occur::indent_s<U_model, 2, 1>(6);
+		io <<= occur::indent_s<U_model, 0, 0>{1};
+		io <<= occur::indent_s<U_model, 0, 1>{2};
+		io <<= occur::indent_s<U_model, 1, 0>{3};
+		io <<= occur::indent_s<U_model, 1, 1>{4};
+		io <<= occur::indent_s<U_model, 2, 0>{5};
+		io <<= occur::indent_s<U_model, 2, 1>{6};
 		io <<= occur::resize_t<>(3);
 		io >>= occur::render_t<>(3);
 

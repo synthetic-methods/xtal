@@ -38,9 +38,9 @@ TAG_("phasor")
 		XTAL_USE result_t = reiterated_t<XTAL_TYP_(result_o)>;
 		XTAL_LET x_delta  = re::ratio_f(7);
 		XTAL_VAR x_phi = X_phi        {}; x_phi <<=                          {re::ratio_f(7)};
-		XTAL_VAR y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>(re::ratio_f(7)); y_phi <<= occur::resize_t<>(result_n);
-		XTAL_VAR z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>(re::ratio_f(7)); z_phi <<= occur::resize_t<>(result_n);
-		XTAL_VAR z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>(re::ratio_f(7)); z_psi <<= occur::resize_t<>(result_n);
+		XTAL_VAR y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; y_phi <<= occur::resize_t<>(result_n);
+		XTAL_VAR z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_phi <<= occur::resize_t<>(result_n);
+		XTAL_VAR z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_psi <<= occur::resize_t<>(result_n);
 
 		EST_("procession (praxis)")
 		{
@@ -53,7 +53,7 @@ TAG_("phasor")
 		};
 		EST_("procession (process)")
 		{
-			y_phi <<= occur::indent_s<X_phi, 1>(x_delta);
+			y_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 
 			for (int i = 0; i < result_n; ++i) {
 				result_o[i] = pact_make_f(y_phi() ());
@@ -65,7 +65,7 @@ TAG_("phasor")
 			occur::render_t<        > z_ren(result_n);
 			occur::revise_t<result_t> z_rev(result_o);
 
-			z_psi <<= occur::indent_s<X_phi, 1>(x_delta);
+			z_psi <<= occur::indent_s<X_phi, 1>{x_delta};
 		//	z_psi >>= z_ren++;
 			(void) z_psi.efflux_pull_apart(z_rev, z_ren++);
 		//	(void) z_phi.efflux_pull_apart(z_rev, z_ren++);
@@ -75,7 +75,7 @@ TAG_("phasor")
 		{
 			occur::render_t<> z_ren(result_n);
 
-			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
+			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 			//\
 			_std::transform(z_phi.begin(), z_phi.end(), result_o.begin(), [] (auto &&o) XTAL_0FN_(bond::pact_make_f(XTAL_REF_(o) ())));
@@ -86,7 +86,7 @@ TAG_("phasor")
 		{
 			occur::render_t<> z_ren(result_n);
 
-			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
+			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 
 			for (int i = 0; i < result_n; ++i) {result_o[i] = pact_make_f(z_phi.store()[i] ());}
@@ -96,7 +96,7 @@ TAG_("phasor")
 		{
 			occur::render_t<> z_ren(result_n);
 
-			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
+			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 
 			_v3::ranges::for_each(z_phi, [&] (auto i) noexcept {result_o[i] = pact_make_f(z_phi.store()[i] ());});
@@ -106,7 +106,7 @@ TAG_("phasor")
 		{
 			occur::render_t<> z_ren(result_n);
 
-			z_phi <<= occur::indent_s<X_phi, 1>(x_delta);
+			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 			//\
 			_v3::ranges::move(z_phi|argue_f()|bond::pact_make_f, result_o.begin());
@@ -127,7 +127,7 @@ TAG_("phasor")
 		TRUE_(y_phi() == X_phi{ 5*x_d4, x_d4});
 		TRUE_(y_phi() == X_phi{ 6*x_d4, x_d4});
 		TRUE_(y_phi() == X_phi{ 7*x_d4, x_d4});
-		y_phi <<= occur::indent_s<X_phi, 1>(x_d3);
+		y_phi <<= occur::indent_s<X_phi, 1>{x_d3};
 	//	TRUE_(y_phi() == X_phi{-8*x_d4, x_d4});
 		TRUE_(y_phi() == X_phi{-7*x_d4, x_d3});
 	//	TRUE_(y_phi() == X_phi{-6*x_d4, x_d4});
@@ -153,7 +153,7 @@ TAG_("phasor")
 		occur::render_t<> z_ren(8);
 		occur::revise_t<Z_out> z_rev(z_out);
 
-		z_psi <<= occur::indent_s<X_phi, 1>(x_d4);
+		z_psi <<= occur::indent_s<X_phi, 1>{x_d4};
 		z_psi <<= z_req;
 		
 	//	static_assert(is_q<bond::pact_t<T_alpha, T_alpha>, iteratee_t<decltype(z_psi.store())>>);
@@ -170,7 +170,7 @@ TAG_("phasor")
 		TRUE_(z_out[6] == bond::pact_f( 7*x_d4, x_d4));
 		TRUE_(z_out[7] == bond::pact_f(-8*x_d4, x_d4));
 
-		z_psi <<= occur::indent_s<X_phi, 1>(x_d3);
+		z_psi <<= occur::indent_s<X_phi, 1>{x_d3};
 
 		//\
 		(void) z_psi.efflux(z_rev, z_ren++);
@@ -199,7 +199,7 @@ TAG_("phasor")
 		occur::render_t<> z_ren(8);
 
 
-		z_phi <<= occur::indent_s<X_phi, 1>(x_d4);
+		z_phi <<= occur::indent_s<X_phi, 1>{x_d4};
 		z_phi <<= z_req;
 		z_phi >>= z_ren++;
 		//\
@@ -215,7 +215,7 @@ TAG_("phasor")
 		TRUE_(z_out[6] == bond::pact_f( 7*x_d4, x_d4));
 		TRUE_(z_out[7] == bond::pact_f(-8*x_d4, x_d4));
 		
-		z_phi <<= occur::indent_s<X_phi, 1>(x_d3);
+		z_phi <<= occur::indent_s<X_phi, 1>{x_d3};
 		z_phi >>= z_ren++;
 		//\
 		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
