@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  series;
-template <class ..._s> using   series_t = typename series<_s...>::type;
-template <class ...Ts> concept series_q = bond::tag_p<series, Ts...>;
+template <class ..._s> XTAL_TYP series;
+template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
+template <class ...Ts> XTAL_ASK series_q = bond::tag_p<series, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

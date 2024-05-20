@@ -11,9 +11,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  block;
-template <class ..._s> using   block_t = typename block<_s...>::type;
-template <class ..._s> concept block_q = bond::tag_p<block, _s...>;
+template <class ..._s> XTAL_TYP block;
+template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
+template <class ..._s> XTAL_ASK block_q = bond::tag_p<block, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,10 +154,10 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::atom::block_q T>
-struct tuple_size<T> : xtal::cardinal_t<T::size()> {};
+struct tuple_size<T> : integral_constant<size_t, T::size()> {};
 
 template <size_t N_datum, xtal::atom::block_q T>
-struct tuple_element<N_datum, T> {using type = xtal::devalue_t<T>;};
+struct tuple_element<N_datum, T> {using type = typename T::value_type;};
 
 
 }/////////////////////////////////////////////////////////////////////////////

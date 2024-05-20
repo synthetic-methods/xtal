@@ -686,37 +686,49 @@ public:
 	XTAL_FN2 root_f(auto const &w)
 	XTAL_0EX
 	{
+		using _std::sqrt;
+
 		using W = XTAL_TYP_(w);
-		using U = devalue_t<W>;
+		using U = devolve_t<W>;
+
+	//	W constexpr W_1{1};
+		U constexpr U_1{1};
+		U constexpr U_2{2};
+
+		bool constexpr N_etc = unreal_number_q<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
 		int constexpr M_lim = N_lim&0xF;
 
 		XTAL_IF0 //	ELIMINATION
-		XTAL_0IF_(N_pow ==  0) {return W(1);}
-		XTAL_0IF_(N_pow ==  1) {return w   ;}
-		XTAL_0IF_(N_pow == -1 and N_lim < 0) {return U(1)/w;}
-		XTAL_0IF_(N_pow ==  2 and N_lim < 0) {if (not _std::is_constant_evaluated()) {return   _std::sqrt(w);}}
-		XTAL_0IF_(N_pow == -2 and N_lim < 0) {if (not _std::is_constant_evaluated()) {return 1/_std::sqrt(w);}}
+		XTAL_0IF_(N_pow ==  0) {return U_1;}
+		XTAL_0IF_(N_pow ==  1) {return w  ;}
+		XTAL_0IF_(N_pow == -1 and N_lim < 0 or N_etc) {return U_1/w;}
+		XTAL_0IF_(N_pow ==  2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return     sqrt(w);}}
+		XTAL_0IF_(N_pow == -2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return U_1/sqrt(w);}}
 
-		assert(_std::is_constant_evaluated()? K_pow == -2: K_pow < 0 and 0 <= N_lim);
+	//	assert(_std::is_constant_evaluated()? K_pow == -2: K_pow < 0 and 0 <= N_lim);
 	
-		XTAL_IF1	//	ESTIMATION
-		W n = root_e<K_pow>(w);
-		seek_forward_f<M_lim>([&] (auto)
-			XTAL_0FN {n *= root_e<K_pow>(w, n);}
-		);
-		
-		XTAL_IF0	//	CORRECTION
-		XTAL_0IF_(K_pow == -2 and N_lim < 0) {
-			n /= U(1) + n*n*w;
-			n *= U(2);
+		XTAL_IF0
+		XTAL_0IF_(real_number_q<W>) {
+		//	ESTIMATION:
+			W n = root_e<K_pow>(w);
+			seek_forward_f<M_lim>([&] (auto)
+				XTAL_0FN {n *= root_e<K_pow>(w, n);}
+			);
+		//	CORRECTION:
+			XTAL_IF0
+			XTAL_0IF_(K_pow == -2 and N_lim < 0) {
+				n /= U_1 + n*n*w;
+				n *= U_2;
+			}
+		//	RESOLUTION:
+			XTAL_IF0
+		//	XTAL_0IF_(N_pow ==  1) {return w;}
+			XTAL_0IF_(N_pow == -1) {return n;}
+			XTAL_0IF_(N_pow == -2) {return n;}
+			XTAL_0IF_(N_pow ==  2) {return w*n;}
 		}
-		XTAL_IF0 // RESOLUTION
-	//	XTAL_0IF_(N_pow ==  1) {return w;}
-		XTAL_0IF_(N_pow == -1) {return n;}
-		XTAL_0IF_(N_pow == -2) {return n;}
-		XTAL_0IF_(N_pow ==  2) {return w*n;}
 	}
 	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
 	XTAL_FN2 root_f(integral_p auto const &w)

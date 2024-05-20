@@ -11,9 +11,9 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  store;
-template <class ..._s> using   store_t = typename store<_s...>::type;
-template <class ...Ts> concept store_q = bond::tag_p<store, Ts...>;
+template <class ..._s> XTAL_TYP store;
+template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
+template <class ...Ts> XTAL_ASK store_q = bond::tag_p<store, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

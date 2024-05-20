@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  serial;
-template <class ..._s> using   serial_t = typename serial<_s...>::type;
-template <class ...Ts> concept serial_q = bond::tag_p<serial, Ts...>;
+template <class ..._s> XTAL_TYP serial;
+template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
+template <class ...Ts> XTAL_ASK serial_q = bond::tag_p<serial, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +165,12 @@ struct serial<U_data[N_data]>
 				XTAL_CON homotype()
 				XTAL_0EX
 				{
-					_std::uninitialized_fill_n(L_::data(), L_::size(), U_data{1});
+					if (_std::is_constant_evaluated()) {
+						bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) = U_data{1};});
+					}
+					else {
+						_std::uninitialized_fill_n(L_::data(), L_::size(), U_data{1});
+					}
 				}
 				/***/
 				XTAL_CON homotype(embrace_t<U_data> w)
@@ -173,7 +178,12 @@ struct serial<U_data[N_data]>
 				{
 					_detail::copy_to(L_::begin(), w.begin(), w.end());
 					if (1 == w.size()) {
-						_std::uninitialized_fill_n(_std::next(L_::data(), w.size()), L_::size() - w.size(), get(0));
+						if (_std::is_constant_evaluated()) {
+							bond::seek_forward_f<N_data - 1>([&, this] (auto i) XTAL_0FN {let(i + 1) = get(0);});
+						}
+						else {
+							_std::uninitialized_fill_n(_std::next(L_::data(), w.size()), L_::size() - w.size(), get(0));
+						}
 					}
 					else {
 						assert(w.size() == N_data);

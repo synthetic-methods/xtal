@@ -16,6 +16,7 @@ class Xtal_TestPackage__Conan(ConanFile):
 	def requirements(self):
 		self.requires(self.tested_reference_str)
 		self.requires("catch2/3.4.0")
+		self.requires("eigen/3.4.0")
 
 	def layout(self):
 		cmake_layout(self)

@@ -25,7 +25,7 @@ TAG_("phasor")
 	using Z_phi = processor::monomer_t<Y_phi, resource::restore<constant_t<0x1000>>>;
 
 	//\
-	using Y_psi = process::confined_t<process::mop<valve_f>, process::differential::phasor<W_phi>>;
+	using Y_psi = process::confined_t<process::mop<enforce_f()>, process::differential::phasor<W_phi>>;
 	using Y_psi = process::differential::phasor_t<W_phi, resource::example<>>;
 	using Z_psi = processor::monomer_t<Y_psi, resource::restore<constant_t<0x1000>>>;
 
@@ -109,7 +109,7 @@ TAG_("phasor")
 			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 			//\
-			_v3::ranges::move(z_phi|argue_f()|bond::pact_make_f, result_o.begin());
+			_v3::ranges::move(z_phi|enforce_f()|bond::pact_make_f, result_o.begin());
 			_v3::ranges::move(z_phi|[] (auto &&o) XTAL_0FN_(bond::pact_make_f(XTAL_REF_(o) ())), result_o.begin());
 
 		};
@@ -203,8 +203,8 @@ TAG_("phasor")
 		z_phi <<= z_req;
 		z_phi >>= z_ren++;
 		//\
-		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
-		_v3::ranges::move(z_phi|argue_f(), z_out.begin());
+		_v3::ranges::copy(z_phi|enforce_f(), z_out.begin());
+		_v3::ranges::move(z_phi|enforce_f(), z_out.begin());
 
 		TRUE_(z_out[0] == bond::pact_f( 1*x_d4, x_d4));
 		TRUE_(z_out[1] == bond::pact_f( 2*x_d4, x_d4));
@@ -218,8 +218,8 @@ TAG_("phasor")
 		z_phi <<= occur::indent_s<X_phi, 1>{x_d3};
 		z_phi >>= z_ren++;
 		//\
-		_v3::ranges::copy(z_phi|argue_f(), z_out.begin());
-		_v3::ranges::copy(z_phi|argue_f()|bond::pact_make_f, z_out.begin());
+		_v3::ranges::copy(z_phi|enforce_f(), z_out.begin());
+		_v3::ranges::copy(z_phi|enforce_f()|bond::pact_make_f, z_out.begin());
 		
 		TRUE_(z_out[0] == bond::pact_f(-3*x_d3, x_d3));
 		TRUE_(z_out[1] == bond::pact_f(-2*x_d3, x_d3));

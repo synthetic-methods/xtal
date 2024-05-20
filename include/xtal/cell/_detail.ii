@@ -431,7 +431,7 @@ struct refer_binary_logic<U, 2>
 template <class U, size_t N=0>
 struct infer_binary_logic : bond::compose<> {};
 
-template <class U, size_t N> requires binary_logic_p<N, U>
+template <class U, size_t N> requires binary_lattice_p<N, U>
 struct infer_binary_logic<U, N> : refer_binary_logic<U, N> {};
 
 

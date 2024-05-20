@@ -21,16 +21,16 @@ template <typename ..._s> XTAL_ASK phasor_q = bond::tag_p<phasor, _s...>;
 Manages a truncated fixed-point unit differential like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
-template <size_t N_data, class W_data, typename ...As>
-struct phasor<W_data[N_data], As...>
+template <size_t N_data, class K_data, typename ...As>
+struct phasor<K_data[N_data], As...>
 {
 	template <size_t N>
-	using U_modular = algebra::differential::modular_t<W_data[N]>;
+	using U_modular = algebra::differential::modular_t<K_data[N]>;
 	using U_sample = occur::sample_t<>;
 
 	using W_ = U_modular<N_data>;
 	
-	using re = bond::realize<W_data>;
+	using re = bond::realize<K_data>;
 	using V = typename re::delta_t;
 	using U = typename re::alpha_t;
 	XTAL_LET_(U) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
@@ -106,8 +106,8 @@ struct phasor<W_data[N_data], As...>
 		}
 		
 		///\todo\
-		Introduce `occur::sample` etc to manage downsampling \
-		(by integer multiplication followed by normalization). \
+		Use `resource::example` to manage downsampling \
+		e.g. by integer multiplication followed by normalization. \
 
 	};
 };

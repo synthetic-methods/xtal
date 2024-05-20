@@ -11,9 +11,9 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  modular;
-template <class ..._s> using   modular_t = typename modular<_s...>::type;
-template <class ...Ts> concept modular_q = bond::tag_p<modular, Ts...>;
+template <class ..._s> XTAL_TYP modular;
+template <class ..._s> XTAL_USE modular_t = typename modular<_s...>::type;
+template <class ...Ts> XTAL_ASK modular_q = bond::tag_p<modular, Ts...>;
 
 XTAL_LET  modular_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN_(modular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
@@ -35,13 +35,13 @@ either by truncating the type or by parameterizing the operator. \
 The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
-template <class U_data> requires disarray_q<U_data>
-struct modular<U_data> : modular<U_data[2]>
+template <class K_data> requires disarray_q<K_data>
+struct modular<K_data> : modular<K_data[2]>
 {};
-template <class A_data, size_t N_data>
-struct modular<A_data[N_data]>
+template <class K_data, size_t N_data>
+struct modular<K_data[N_data]>
 {
-	using re = bond::realize<A_data>;
+	using re = bond::realize<K_data>;
 	using U_delta = typename re::delta_t;
 	using U_sigma = typename re::sigma_t;
 	using U_alpha = typename re::alpha_t;

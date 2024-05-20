@@ -22,8 +22,7 @@ TAG_("modular")
 	XTAL_LET_(T_alpha) two =  2;
 	XTAL_LET_(T_alpha) ten = 10;
 
-	auto mt19937_f = typename realized::mt19937_t();
-	mt19937_f.seed(Catch::rngSeed());
+	auto mt19937_f = typename realized::mt19937_t(Catch::rngSeed());
 
 	using V_phi = T_alpha;
 	using U_phi = modular_t<V_phi[2]>;

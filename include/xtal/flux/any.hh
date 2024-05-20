@@ -156,23 +156,23 @@ struct define
 		XTAL_TNX defuse(auto &&o)
 		XTAL_0EX
 		{
-			/**/
 			return -1;
-			/*/
-			if constexpr (is_q<T, decltype(o)>) {
-				if (self() != o) {
-					self(XTAL_REF_(o));
-					return 0;
-				}
-				else {
-					return 1;
-				}
+		}
+		/*/
+		XTAL_TNX defuse(is_q<T> auto &&t)
+		XTAL_0EX
+		{
+			if (self() != t) {
+				//\
+				self() = XTAL_REF_(t);
+				self(XTAL_REF_(t));
+				return 0;
 			}
 			else {
-				return -1;
+				return 1;
 			}
-			/***/
 		}
+		/***/
 		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 

@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  scalar;
-template <class ..._s> using   scalar_t = typename scalar<_s...>::type;
-template <class ...Ts> concept scalar_q = bond::tag_p<scalar, Ts...>;
+template <class ..._s> XTAL_TYP scalar;
+template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
+template <class ...Ts> XTAL_ASK scalar_q = bond::tag_p<scalar, Ts...>;
 
 XTAL_LET  scalar_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN_(scalar_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
