@@ -27,7 +27,7 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	using subkind = confer<U, As..., resource::reserve<>>;
+	using subkind = confer<U, As..., resource::restate<>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -79,9 +79,8 @@ struct monomer<U, As...>
 				:	R_(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-				XTAL_TO4_(XTAL_TN2 serve(auto &&...oo), R_::head(XTAL_REF_(oo)...))
-				XTAL_TO2_(template <auto ...> XTAL_TN2 functor(), serve())
-
+				XTAL_TO4_(XTAL_TN2 state(auto &&...oo), R_::head(XTAL_REF_(oo)...))
+				XTAL_TO2_(template <auto ...> XTAL_DEF_(return,inline) XTAL_TN1 functor(), state())
 
 			public:// FLUXION
 				using R_::efflux;
@@ -89,22 +88,22 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(occur::render_q auto &&render_o)
 				XTAL_0EX
 				{
-					return XTAL_FLX_((void) serve(R_::functor()), 0) (R_::efflux(XTAL_REF_(render_o)));
+					return XTAL_FLX_((void) state(R_::functor()), 0) (R_::efflux(XTAL_REF_(render_o)));
 				}
 
 			};
 		};
-		template <class ...Xs> requires resource::reserve_q<S_> and resource::restore_q<S_>
+		template <class ...Xs> requires resource::restate_q<S_> and resource::restore_q<S_>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
 			using U_store = typename S_::template store_t<Y_return>;
-			using U_serve = typename S_::template serve_t<U_store >;
+			using U_state = typename S_::template serve_t<U_store >;
 		
-			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_serve>...>;
+			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 			XTAL_LET_(bool) N_sized = requires (U_store &u) {u.resize(U_resize{});};
 
-			using subkind = bond::compose<resource::reflect<U_serve, U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::restash<U_state, U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -114,18 +113,19 @@ struct monomer<U, As...>
 			public:
 				using R_::R_;
 				using R_::self;
-				using R_::serve;
+				using R_::state;
 				using R_::store;
 				XTAL_DO2_(template <auto ...>
-				XTAL_TN2 functor(),
+				XTAL_DEF_(return,inline)
+				XTAL_TN1 functor(),
 				{
 					using _v3::views::take;
 
 					if constexpr (N_sized) {
-						return serve();
+						return state();
 					}
 					else {
-						return serve()|take(R_::template head_t<U_resize>);
+						return state()|take(R_::template head_t<U_resize>);
 					}
 				})
 
@@ -180,7 +180,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(occur::revise_t<U_serve>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return efflux(occur::revise_t<U_state>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::revise`, the supplied visor will be used instead. \
@@ -189,7 +189,7 @@ struct monomer<U, As...>
 
 				///\note\
 				When the visor is unrecognized, \
-				the zipped `functor` is rendered without saving the result in `serve()`, \
+				the zipped `functor` is rendered without saving the result in `state()`, \
 				which will remain empty. \
 
 				template <occur::revise_q Rv, occur::render_q Rn>
@@ -200,17 +200,22 @@ struct monomer<U, As...>
 						return 1;
 					}
 					else {
-						if constexpr (as_p<U_serve, XTAL_TYP_(revise_o)>) {
-							(void) serve(revise_o);
+						if constexpr (as_p<U_state, XTAL_TYP_(revise_o)>) {
+							(void) state(revise_o);
 						}
-						return self().reflux([&, this] (auto step, counted_q auto scan)
-						XTAL_0FN {
-							return self().efflux_pull_apart(
-								revise_o.slice(scan),
-								render_o.slice(scan).skip(step),
-								XTAL_REF_(oo)...
-							);
-						}) & R_::template influx_push(XTAL_REF_(render_o));
+						if (delay() == R_::template head<U_resize>()) {
+							return self().efflux_pull_apart(revise_o, render_o, XTAL_REF_(oo)...);
+						}
+						else {
+							return self().reflux([&, this] (auto step, counted_q auto scan)
+							XTAL_0FN {
+								return self().efflux_pull_apart(
+									revise_o.slice(scan),
+									render_o.slice(scan).skip(step),
+									XTAL_REF_(oo)...
+								);
+							}) & R_::template influx_push(XTAL_REF_(render_o));
+						}
 					}
 				}
 				///\
@@ -220,6 +225,8 @@ struct monomer<U, As...>
 				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
+					using _v3::ranges::move;
+					using _v3::ranges::copy;
 					using _v3::ranges::copy_n;
 
 					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
@@ -227,6 +234,8 @@ struct monomer<U, As...>
 					}
 					else {
 						auto result_o = R_::functor();// Materialize...
+						//\
+						move(result_o|account_f(revise_o), point_f(revise_o));
 						copy_n(point_f(result_o), count_f(revise_o), point_f(revise_o));
 						return 0;
 					}

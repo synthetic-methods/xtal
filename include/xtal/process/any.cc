@@ -73,7 +73,7 @@ TAG_("process", "construct")
 		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.functor(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
-		TRUE_(10 == f.lambda() (1, 2, 3, 4));
+		TRUE_(10 == f.functory() (1, 2, 3, 4));
 
 	}
 	TRY_("chaining")

@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra::_test
+namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -52,8 +52,8 @@ TAG_("couple")
 		using W = couple_t<T_alpha, T_alpha>;
 
 		auto bar = W{2.0, 0.5};
-		auto foo = bar.reflected(-1);
-		auto baz = foo.reflected(+1);
+		auto foo = bar.template reflected<-1>();
+		auto baz = foo.template reflected<+1>();
 		
 		auto [x, y] = foo;
 

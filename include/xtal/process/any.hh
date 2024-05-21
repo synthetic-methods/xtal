@@ -50,7 +50,8 @@ struct define
 		The default `functor` defers to the static `function` (only when `this` is `const`). \
 
 		template <auto ...Is>
-		XTAL_TN2 functor(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return T::template function<Is...>(XTAL_REF_(xs)...);
@@ -60,13 +61,14 @@ struct define
 		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
 
 		XTAL_DO4_(template <class ...Xs>
-		XTAL_TN2 lambda(integral_q auto const ...is),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functory(integral_q auto const ...is),
 		{
 			if constexpr (0 == sizeof...(is)) {
-				return [&, this] XTAL_1FN_(self().functor);
+				return [this] XTAL_1FN_(self().functor);
 			}
 			else {
-				return [&, this] XTAL_1FN_(self().template functor<is...>);
+				return [this, is...] XTAL_1FN_(self().template functor<is...>);
 			}
 		})
 		
@@ -194,7 +196,8 @@ struct define
 				Evaluates the lifted `functor` using the bound slots. \
 
 				template <auto ...Is>
-				XTAL_TN2 functor()
+				XTAL_DEF_(return,inline)
+				XTAL_TN1 functor()
 				XTAL_0EX
 				{
 					return apply([this] XTAL_1FN_(R_::template functor<Is...>));
@@ -360,7 +363,8 @@ struct defer
 		Constant redirection. \
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 functor(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs),
 		{
 			if constexpr (_std::invocable<H_, decltype(xs)...>) {
 				return head() (XTAL_REF_(xs)...);
@@ -394,12 +398,14 @@ struct defer<U>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 functor(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs),
 		{
 			return head().template functor<Is...>(XTAL_REF_(xs)...);
 		})
 		template <auto ...Is>
-		XTAL_FN2 function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
 		{
 			return head_t<>::template function<Is...>(XTAL_REF_(xs)...);
@@ -409,12 +415,14 @@ struct defer<U>
 		Adjacent `defer`red processes are (currently) composed together. \
 
 		XTAL_DO2_(template <auto ...Is> requires any_q<head_t<cardinal_1>>
-		XTAL_TN2 functor(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs),
 		{
 			return head().template functor<Is...>(S::template functor<Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is> requires any_q<head_t<cardinal_1>>
-		XTAL_FN2 function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
 		{
 			return head_t<>::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...));

@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "./realize.hh"
+//#include "./realize.hh"
 #include "./pack.hh"
 
 
@@ -11,9 +11,9 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP couple;
-template <class ..._s> XTAL_USE couple_t = typename couple<_s...>::type;
-template <class ..._s> XTAL_ASK couple_q = bond::tag_p<couple, _s...>;
+template <class        ..._s> XTAL_TYP couple;
+template <class        ..._s> XTAL_ASK couple_q = bond::tag_p<couple, _s...>;
+template <class X, class Y=X> XTAL_USE couple_t = typename couple<X, Y>::type;
 
 template <template <class> class F=based_t, class X, class Y>
 XTAL_FN2 couple_f(X &&x, Y &&y)
@@ -30,7 +30,7 @@ struct couple<X, Y>
 {
 	using supertype = bond::compose_s<_std::pair<X, Y>, tag<couple>>;
 
-	using re = bond::realize<X>;
+//	using re = bond::realize<X>;
 
 	class type : public supertype
 	{
@@ -67,24 +67,31 @@ struct couple<X, Y>
 				return XTAL_1st + XTAL_2nd;
 			}
 		}
+		
+		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
+		
 		template <int N_par=0>
-		XTAL_TN2 reflected(int const n_bias=0)
+		XTAL_TN2 reflected()
 		XTAL_0FX
 		{
-			auto const o = re::explo_f(re::template unsquare_f<-1>(2), 1 - n_bias);
-			auto const x = o*XTAL_1st;
-			auto const y = o*XTAL_2nd;
-			if constexpr (N_par ==  0) {
-				return couple_f(x + y, x - y);
-			}
-			if constexpr (N_par == +1) {
-				return x + y;
-			}
-			if constexpr (N_par == -1) {
-				return x - y;
-			}
+			auto constexpr o = reflector<N_par>();
+			auto const     x = o*XTAL_1st;
+			auto const     y = o*XTAL_2nd;
+			return couple_f(x + y, x - y);
 		}
 
+		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
+		
+		template <int N_par=0>
+		XTAL_DEF_(return,inline)
+		XTAL_LET reflector()
+		XTAL_0EX -> devolve_t<X, Y>
+		{
+			XTAL_IF0
+			XTAL_0IF_(N_par == -1) {return 0.5000000000000000000000000000000000000L;}
+			XTAL_0IF_(N_par ==  0) {return 0.7071067811865475244008443621048490393L;}
+			XTAL_0IF_(N_par == +1) {return 1.0000000000000000000000000000000000000L;}
+		}
 
 	};
 };

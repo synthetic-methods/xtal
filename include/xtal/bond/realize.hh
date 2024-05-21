@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
-#include "../bond/seek.hh"
 
-
+#include "./seek.hh"
+#include "./couple.hh"
 
 
 
@@ -595,10 +595,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <class Z>
-	using single_t = typename _std::array<Z, 1>;
-
-	template <class Z>
+	//\
 	using couple_t = typename _std::array<Z, 2>;
+	using couple_t = bond::couple_t<Z, Z>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -748,13 +747,13 @@ public:
 		XTAL_0IF_(0 < N_pow) {return couple_t<alpha_t> {u, n};}
 		XTAL_0IF_(N_pow < 0) {return couple_t<alpha_t> {n, u};}
 	}
-	static_assert(root_f< 2>(3) == (alpha_t) 1.7320508075688772935274463415058723670);
-	static_assert(root_f< 2>(2) == (alpha_t) 1.4142135623730950488016887242096980786);
-	static_assert(root_f<-2>(2) == (alpha_t) 0.7071067811865475244008443621048490393);
-	static_assert(root_f<-2>(3) == (alpha_t) 0.5773502691896257645091487805019574556);
+	static_assert(root_f< 2>(3) == (alpha_t) 1.7320508075688772935274463415058723670L);
+	static_assert(root_f< 2>(2) == (alpha_t) 1.4142135623730950488016887242096980786L);
+	static_assert(root_f<-2>(2) == (alpha_t) 0.7071067811865475244008443621048490393L);
+	static_assert(root_f<-2>(3) == (alpha_t) 0.5773502691896257645091487805019574556L);
 
-	static_assert(roots_f< 2>(2)[0] == (alpha_t) 1.4142135623730950488016887242096980786);
-	static_assert(roots_f< 2>(2)[1] == (alpha_t) 0.7071067811865475244008443621048490393);
+	static_assert(_std::get<0>(roots_f< 2>(2)) == (alpha_t) 1.4142135623730950488016887242096980786L);
+	static_assert(_std::get<1>(roots_f< 2>(2)) == (alpha_t) 0.7071067811865475244008443621048490393L);
 
 
 
@@ -775,25 +774,35 @@ public:
 
 
 	template <int N_pow=1, int N_lim=+1> requires sign_p<N_pow, 0>
-	XTAL_FN2 square_f(auto z)
+	XTAL_FN2 square_f(auto const &z)
 	XTAL_0EX
 	{
-		if constexpr (complex_field_q<decltype(z)>) {
+		using Z = XTAL_TYP_(z);
+
+		XTAL_IF0
+		XTAL_0IF_(N_lim == 0) {
+			return versus_f<N_pow>(z);
+		}
+		XTAL_0IF_(complex_number_q<Z>) {
 			auto x = z.real();
 			auto y = z.imag();
-			seek_forward_f<N_lim>([&] (auto) XTAL_0FN {
+			seek_forward_f<N_lim>([&] (auto &&) XTAL_0FN {
 				auto const xx = square_f(x);
 				auto const yy = square_f(y);
 				y = y*x*2;
 				x = xx - yy;
 			});
-			return versus_f<N_pow>(XTAL_TYP_(z) {x, y});
+			return versus_f<N_pow>(Z{x, y});
 		}
-		else {
-			seek_forward_f<N_lim>([&] (auto i)
-				XTAL_0FN_(z *= z)
+		XTAL_0IF_(multiplicative_group_p<1, Z>) {
+			auto zz = z;
+			seek_forward_f<N_lim>([&] (auto &&)
+				XTAL_0FN_(zz *= zz)
 			);
-			return versus_f<N_pow>(z);
+			return versus_f<N_pow>(zz);
+		}
+		XTAL_0IF_(multiplicative_group_p<2, Z>) {
+			return square_f<N_pow, N_lim - 1>(z*z);
 		}
 	}
 

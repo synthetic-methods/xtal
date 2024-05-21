@@ -11,9 +11,9 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP reserve;
-template <typename ..._s> XTAL_USE reserve_t = confined_t<reserve<_s...>>;
-template <typename ..._s> XTAL_ASK reserve_q = bond::tag_p<reserve, _s...>;
+template <typename ..._s> XTAL_TYP restate;
+template <typename ..._s> XTAL_USE restate_t = confined_t<restate<_s...>>;
+template <typename ..._s> XTAL_ASK restate_q = bond::tag_p<restate, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@ template <typename ..._s> XTAL_ASK reserve_q = bond::tag_p<reserve, _s...>;
 Provides a specialization of `atom::store`. \
 
 template <bond::compose_q A>
-struct reserve<A>
+struct restate<A>
 {
-	using subkind = bond::tag<reserve>;
+	using subkind = bond::tag<restate>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -39,9 +39,9 @@ struct reserve<A>
 	};
 };
 template <>
-struct reserve<>
+struct restate<>
 {
-	using subkind = bond::tag<reserve>;
+	using subkind = bond::tag<restate>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>

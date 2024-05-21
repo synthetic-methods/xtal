@@ -70,13 +70,14 @@ struct defer<U>
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
 		XTAL_DO4_(template <auto ...Is>
-		XTAL_TN2 functor(iterable_q auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(iterable_q auto &&...xs),
 		{
 			using _v3::views::generate;
 			using _v3::views::transform;
 			using _v3::views::zip_with;
 
-			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Is...);
+			auto const f = head().template functory<iteratee_t<decltype(xs)> const &...>(Is...);
 			
 			XTAL_IF0
 			XTAL_0IF_(0 == sizeof...(xs)) {

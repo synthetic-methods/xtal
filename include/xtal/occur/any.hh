@@ -116,8 +116,11 @@ struct define
 				)
 
 				XTAL_TO4_(template <class ...Xs>
-				XTAL_TN2 lambda(integral_q auto const ...is),
+				XTAL_DEF_(return,inline)
+				XTAL_TN1 functory(integral_q auto const ...is),
+					//\
 					_std::bind_front(resolve<Xs...>(is...), &self())
+					[this, is...] (auto &&...xs) XTAL_0FN_((self().*resolve<Xs...>(is...)) (XTAL_REF_(xs)...))
 				)
 
 			protected:

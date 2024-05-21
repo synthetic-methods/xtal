@@ -77,7 +77,7 @@ struct polymer<U, As...>
 				using R_::R_;
 				using R_::self;
 				using R_::head;
-				using R_::serve;
+				using R_::state;
 				using R_::store;
 				
 				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)

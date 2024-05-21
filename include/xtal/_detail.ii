@@ -192,7 +192,8 @@ template <class   T, class    Y >	XTAL_ASK     infungible_q =	not fungible_q<T, 
 //\
 Ranged...
 
-template <class         T >	XTAL_ASK          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devolve_t<T>, devalue_n<T>>>;
+template <class         T >	XTAL_ASK          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalue_t<T>, devalue_n<T>>>;
+template <class         T >	XTAL_ASK           data_q =	requires {XTAL_ANY_(T).data();};
 
 template <class         T >	XTAL_ASK       accessed_q =	requires (T t) { t[XTAL_ANY_(size_t)];};
 template <class         T >	XTAL_ASK        pointer_q =	requires (T t) {*t;};
@@ -285,6 +286,12 @@ struct reiterated
 		ranges::subrange_kind::  sized:
 		ranges::subrange_kind::unsized;
 	XTAL_USE type = _v3::ranges::subrange<I, J, K>;
+
+};
+template <data_q        T >
+struct reiterated<T>
+{
+	XTAL_USE type = _std::span<iteratee_t<T>>;
 
 };
 template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;

@@ -15,11 +15,11 @@ namespace xtal::bond
 
 template <class ...Us>
 XTAL_TYP pact
-{	using type = _std::tuple<Us...>;
+{	using type = _v3::ranges::common_tuple<Us...>;
 };
 template <class ...Us> requires (2 == sizeof...(Us))
 XTAL_TYP pact<Us...>
-{	using type = _std::pair <Us...>;
+{	using type = _v3::ranges::common_pair <Us...>;
 };
 template <class ...Us>
 using pact_t = typename pact<Us...>::type;
@@ -98,13 +98,13 @@ XTAL_0EX
 template <class ...Ts>
 XTAL_TYP pact_make
 {
-	template <class     > struct solve;
-	template <auto ...Is> struct solve<bond::seek_t<Is...>>
+	template <class     > struct build;
+	template <auto ...Is> struct build<bond::seek_t<Is...>>
 	{
 		using type = pact_t<pact_element_t<Is, Ts...>...>;
 
 	};
-	using type = typename solve<bond::seek_s<pact_size_n<Ts...>>>::type;
+	using type = typename build<bond::seek_s<pact_size_n<Ts...>>>::type;
 
 };
 template <class ...Ts>
@@ -131,13 +131,13 @@ XTAL_0FN
 template <class ...Ts>
 XTAL_TYP pact_made
 {
-	template <class     > struct solve;
-	template <auto ...Is> struct solve<bond::seek_t<Is...>>
+	template <class     > struct build;
+	template <auto ...Is> struct build<bond::seek_t<Is...>>
 	{
 		using type = pact_t<pact_element_t<Is, Ts...> &...>;
 
 	};
-	using type = typename solve<bond::seek_s<pact_size_n<Ts...>>>::type;
+	using type = typename build<bond::seek_s<pact_size_n<Ts...>>>::type;
 
 };
 template <class ...Ts>

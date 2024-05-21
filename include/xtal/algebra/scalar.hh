@@ -71,36 +71,37 @@ struct scalar<U_data[N_data]>
 	public:// CONSTRUCT
 		using T_::T_;
 
-		///\returns the mutually inverse `lhs +/- rhs`, \
-		scaled by the value indexed by `n_bias`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
+		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
-		///\todo\
-		Generalize by taking the alternating sum for `N_par == -1`?
-
+		template <int N_par=0>
+		XTAL_TN2 reflected()
+		XTAL_0FX
+		{
+			auto constexpr o = reflector<N_par>();
+			auto const     x = o*get(0);
+			auto const     y = o*get(1);
+			return T {x + y, x - y};
+		}
+		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
+		
+		template <int N_par=0>
+		XTAL_DEF_(return,inline)
+		XTAL_LET reflector()
+		XTAL_0EX -> U_data
+		{
+			XTAL_IF0
+			XTAL_0IF_(N_par == -1) {return 0.5000000000000000000000000000000000000L;}
+			XTAL_0IF_(N_par ==  0) {return 0.7071067811865475244008443621048490393L;}
+			XTAL_0IF_(N_par == +1) {return 1.0000000000000000000000000000000000000L;}
+		}
 		///\
 		Modifies `this`; \see `reflected()`.
 
-		XTAL_TN2 reflect(int const n_bias=0)
-		XTAL_0FX
-		{
-			return self() = reflected(n_bias);
-		}
 		template <int N_par=0>
-		XTAL_TN2 reflected(int const n_bias=0)
+		XTAL_TN2 reflect()
 		XTAL_0FX
 		{
-			auto const o = re::explo_f(re::template unsquare_f<-1>(2), 1 - n_bias);
-			auto const x = o*get(0);
-			auto const y = o*get(1);
-			if constexpr (N_par ==  0) {
-				return T {x + y, x - y};
-			}
-			if constexpr (N_par == +1) {
-				return x + y;
-			}
-			if constexpr (N_par == -1) {
-				return x - y;
-			}
+			return self() = reflected<N_par>();
 		}
 
 	};

@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /**/
-template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> F>
-XTAL_OP2 | (T &&t, F &&f)
+template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
+XTAL_OP2 | (T &&t, U &&u)
 XTAL_0EX
 {
-	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(f));
+	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
 };
 /***/
 
@@ -25,41 +25,24 @@ XTAL_LET make_f = [] XTAL_1FN_(T);
 
 template <class T>
 XTAL_FN2 devalue_f(T &&t)
-XTAL_0EX {return devalue_n<decltype(_std::array{XTAL_REF_(t)})>;}
-
+XTAL_0EX {return devalue_n<T>;}
 
 template <class T> XTAL_REQ_(T::size())
 XTAL_FN2 devalue_f(T &&)
 XTAL_0EX {return T::size();}
 
 template <class U, size_t N>
-XTAL_FN2 devalue_f(U[N])
+XTAL_FN2 devalue_f(U(&)[N])
 XTAL_0EX {return N;}
 
 template <class U, size_t N>
 XTAL_FN2 devalue_f(_std::array<U, N> &&)
 XTAL_0EX {return N;}
 
-template <class U, size_t N>
-XTAL_FN2 devalue_f(_std::array<U, N> const &)
-XTAL_0EX {return N;}
+template <class U>
+XTAL_FN2 devalue_f(_std::initializer_list<U> t)
+XTAL_0EX {return devalue_n<decltype(_std::array{XTAL_REF_(t)})>;}
 
-
-template <class T> XTAL_REQ_(T::size())
-XTAL_FN2 account_f(T &&)
-XTAL_0EX {return T::size();}
-
-template <class U, size_t N>
-XTAL_FN2 account_f(U[N])
-XTAL_0EX {return N;}
-
-template <class U, size_t N>
-XTAL_FN2 account_f(_std::array<U, N> &&)
-XTAL_0EX {return N;}
-
-template <class U, size_t N>
-XTAL_FN2 account_f(_std::array<U, N> const &)
-XTAL_0EX {return N;}
 
 
 ///\returns a higher-order function that applies its argument to the supplied `...xs`. \
@@ -181,6 +164,22 @@ XTAL_0EX
 		return (size_t) 0;
 	}
 }
+template <class T>
+XTAL_DEF_(return,inline)
+XTAL_FN1 account_f(T &&t)
+XTAL_0EX
+{
+	using _v3::views::take;
+	return take(count_f(XTAL_REF_(t)));
+}
+template <class T>
+XTAL_DEF_(return,inline)
+XTAL_FN1 discount_f(T &&t)
+XTAL_0EX
+{
+	using _v3::views::drop;
+	return drop(count_f(XTAL_REF_(t)));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,18 +221,6 @@ XTAL_0EX
 	XTAL_IF0
 	if constexpr (isomorphic_q<X, Y>) {
 		return x.begin() == y.begin() and x.end() == y.end();
-	}
-	else {
-		return false;
-	}
-}
-template <iterated_q X, iterated_q Y>
-XTAL_FN2 dequivalent_f(X const &x, Y const &y)
-XTAL_0EX
-{
-	XTAL_IF0
-	if constexpr (is_q<X, Y> and requires {x.data() == y.data();}) {
-		return x.data() == y.data();
 	}
 	else {
 		return false;

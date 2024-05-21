@@ -23,13 +23,17 @@ TAG_("scalar")
 
 	TRY_("construction")
 	{
+		using _std::get;
+
 		auto constexpr N_size = 2;
 		using W = scalar_t<T_alpha[N_size]>;
 
 		auto foo = W{2.0, 0.5};
-		auto bar = static_cast<W>(re::template roots_f<2>((T_alpha) 2));
-		bar.transact([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
-		TRUE_(foo == bar);
+		auto bar = re::template roots_f<2>((T_alpha) 2);
+		auto baz = bar*bar;
+	//	bar.transact([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
+		TRUE_(get<0>(foo) == bond::computrim_f<19>(get<0>(baz)));
+		TRUE_(get<1>(foo) == bond::computrim_f<19>(get<1>(baz)));
 
 		foo *= {(T_alpha) 0.0, (T_alpha) 0.0};
 
@@ -50,8 +54,8 @@ TAG_("scalar")
 		using W = scalar_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
-		auto foo = bar.reflected(-1);
-		auto baz = foo.reflected(+1);
+		auto foo = bar.template reflected<-1>();
+		auto baz = foo.template reflected<+1>();
 		
 		TRUE_(bond::computrim_f<19>(foo[0]) == 1.25);
 		TRUE_(bond::computrim_f<19>(foo[1]) == 0.75);

@@ -205,11 +205,9 @@ template <class T, class ...Ts>	XTAL_ASK   infungible_q	= some_q<Ts...> and (...
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T, int   N=-1 >	XTAL_ASK     array_q =             _detail:: array_q<T> and N <  0   or devalue_n<T> == N;
-template <class T, int   N=-1 >	XTAL_ASK  subarray_q =             _detail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
+template <class T, int N=-1  >	XTAL_ASK     array_q =             _detail:: array_q<T> and N <  0   or devalue_n<T> == N;
+template <class T, int N=-1  >	XTAL_ASK  subarray_q =             _detail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
 template <         class ...Ts>	XTAL_ASK  disarray_q =        not (...and    array_q<Ts>);
-template <int   N, class ...Ts>	XTAL_ASK     array_p =            (...and    array_q<Ts, N>);
-template <int   N, class ...Ts>	XTAL_ASK  subarray_p =            (...and subarray_q<Ts, N>);
 
 template <class            ...Ts>	XTAL_ASK  accessed_q = (... and _detail:: accessed_q<Ts>);
 template <class            ...Ts>	XTAL_ASK   pointer_q = (... and _detail::  pointer_q<Ts>);
