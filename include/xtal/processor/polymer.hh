@@ -132,18 +132,20 @@ struct polymer<U, As...>
 				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
+					using _v3::ranges::accumulate;
+
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
-					return _v3::ranges::accumulate(u_ensemble
-					,	rend? -1: head().influx(oo...)
+					return accumulate(u_ensemble, rend? -1: head().influx(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
 				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
+					using _v3::ranges::accumulate;
+
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
-					return _v3::ranges::accumulate(u_ensemble
-					,	 rend? -1: head().efflux(oo...)
+					return accumulate(u_ensemble, rend? -1: head().efflux(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}
@@ -166,8 +168,8 @@ struct polymer<U, As...>
 					}
 					for (auto &vox:u_ensemble) {
 						auto result_o = vox();
-						auto _s = iterator_f(result_o);
-						auto _t = iterator_f(revise_o);
+						auto _s = point_f(result_o);
+						auto _t = point_f(revise_o);
 						for (size_t i = 0, _i = count_f(revise_o); i < _i; ++i) {*_t++ += *_s++;}
 					}
 					return 0;

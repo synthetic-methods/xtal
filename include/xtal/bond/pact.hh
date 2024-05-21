@@ -15,11 +15,11 @@ namespace xtal::bond
 
 template <class ...Us>
 XTAL_TYP pact
-{	using type = _v3::ranges::common_tuple<Us...>;
+{	using type = _std::tuple<Us...>;
 };
 template <class ...Us> requires (2 == sizeof...(Us))
 XTAL_TYP pact<Us...>
-{	using type = _v3::ranges::common_pair <Us...>;
+{	using type = _std::pair <Us...>;
 };
 template <class ...Us>
 using pact_t = typename pact<Us...>::type;
@@ -158,16 +158,11 @@ template <size_t N, accessed_q W>
 XTAL_FN2 pact_bind_f(W &&w, size_t const &n)
 XTAL_0EX
 {
+	using _std::span;
+	using _v3::views::zip;
+
 	return [&]<size_t ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN_(_v3::views::zip(_std::span(_std::begin(w[Is]), n)...))
-	(bond::seek_s<N>{});
-}
-template <size_t N, accessed_q W> requires pointer_q<accessed_t<W>>
-XTAL_FN2 pact_bind_f(W &&w, size_t const &n)
-XTAL_0EX
-{
-	return [&]<size_t ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN_(_v3::views::zip(_std::span(w[Is], n)...))
+		XTAL_0FN_(zip(span(point_f(w[Is]), n)...))
 	(bond::seek_s<N>{});
 }
 template <size_t N, accessed_q W>

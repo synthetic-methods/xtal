@@ -119,11 +119,13 @@ struct monomer<U, As...>
 				XTAL_DO2_(template <auto ...>
 				XTAL_TN2 functor(),
 				{
+					using _v3::views::take;
+
 					if constexpr (N_sized) {
 						return serve();
 					}
 					else {
-						return serve()|_v3::views::take(R_::template head_t<U_resize>);
+						return serve()|take(R_::template head_t<U_resize>);
 					}
 				})
 
@@ -218,12 +220,14 @@ struct monomer<U, As...>
 				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
+					using _v3::ranges::copy_n;
+
 					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 						return 1;
 					}
 					else {
 						auto result_o = R_::functor();// Materialize...
-						_v3::ranges::copy_n(iterator_f(result_o), count_f(revise_o), iterator_f(revise_o));
+						copy_n(point_f(result_o), count_f(revise_o), point_f(revise_o));
 						return 0;
 					}
 				}

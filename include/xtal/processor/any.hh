@@ -69,12 +69,14 @@ struct defer<U>
 		NOTE: Unless the underlying `process` is invocable as `const`, \
 		it is assumed to be stateful, and iterator monotonicity is enforced.
 
-		template <auto ...Ks>
-		XTAL_TN2 functor(auto &&...xs)
-		XTAL_0EX
+		XTAL_DO4_(template <auto ...Is>
+		XTAL_TN2 functor(iterable_q auto &&...xs),
 		{
-			using namespace _v3::views;
-			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Ks...);
+			using _v3::views::generate;
+			using _v3::views::transform;
+			using _v3::views::zip_with;
+
+			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Is...);
 			
 			XTAL_IF0
 			XTAL_0IF_(0 == sizeof...(xs)) {
@@ -86,23 +88,7 @@ struct defer<U>
 			XTAL_0IF_(1 <  sizeof...(xs)) {
 				return zip_with(f, XTAL_REF_(xs)...);
 			}
-		}
-		template <auto ...Ks>
-		XTAL_TN2 functor(auto &&...xs)
-		XTAL_0FX
-		{
-			using namespace _v3::views;
-			auto const f = head().template lambda<iteratee_t<decltype(xs)>...>(Ks...);
-
-			static_assert(0 < sizeof...(xs));
-			XTAL_IF0
-			XTAL_0IF_(1 == sizeof...(xs)) {
-				return transform(XTAL_REF_(xs)..., f);
-			}
-			XTAL_0IF_(1 <  sizeof...(xs)) {
-				return zip_with(f, XTAL_REF_(xs)...);
-			}
-		}
+		})
 
 	};
 };
@@ -134,6 +120,8 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 functor(),
 		{
+			using _v3::views::slice;
+
 			using I = iteratee_t<U_render>; using re = bond::realize<I>;
 			auto const &m = S_::functor();// NOTE: Must be &?
 			auto const &u = S_::template head<U_render>();
@@ -147,7 +135,7 @@ struct refer
 			i &= ~m_mask;
 			j &= ~m_mask;
 			j |=  m_mask&m_size;
-			return m|_v3::views::slice(i, j);
+			return m|slice(i, j);
 		})
 
 		XTAL_TO2_(XTAL_TN2 begin(), functor().begin())

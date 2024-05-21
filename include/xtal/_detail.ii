@@ -219,12 +219,12 @@ template <class         T >	XTAL_ASK      reembrace_q =	debrace_q<T> or devalue_
 template <class         T >	XTAL_TYP      reembrace       {using type = _std::initializer_list<devalue_t<T>>;};
 template <debrace_q     T >	XTAL_TYP      reembrace<T>    {using type = typename T::initializer_list;};
 template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::type;
-template <class         W >	XTAL_USE        embrace_t =	_std::initializer_list<W>;
+template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
 
 
 template <auto        N=0 >	XTAL_LET        induced_n =	_v3::ranges::iota_view{N};
-template <class         W >	XTAL_USE        induced_t =	_v3::ranges::iota_view<W>;
-template <class         W >	XTAL_USE       interval_t =	_v3::ranges::iota_view<W, W>;
+template <class         U >	XTAL_USE        induced_t =	_v3::ranges::iota_view<U>;
+template <class         U >	XTAL_USE       interval_t =	_v3::ranges::iota_view<U, U>;
 
 template <class         T >	XTAL_TYP       iteratee   ;
 template <class         T >	XTAL_TYP       iterated   ;
@@ -232,16 +232,16 @@ template <class         T >	XTAL_TYP       iterator   ;
 template <class         T >	XTAL_TYP       sentinel   ;
 template <class         T >	XTAL_TYP       distance   ;
 
-template <class         T >	XTAL_USE       iteratee_t =	typename iteratee<T>::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class         T >	XTAL_USE       iteratee_t =	typename iteratee<T>::type;
 template <class         T >	XTAL_USE       iterated_t =	typename iterated<T>::type;
-template <class         T >	XTAL_USE       iterator_t =	typename iterator<T>::type;//_v3::ranges::iterator_t
+template <class         T >	XTAL_USE       iterator_t =	typename iterator<T>::type;
 template <class         T >	XTAL_USE       sentinel_t =	typename sentinel<T>::type;
 template <class         T >	XTAL_USE       distance_t =	typename distance<T>::type;
 
 template <class         T >	XTAL_ASK       iteratee_q =	true;
 template <class         T >	XTAL_ASK       iterable_q =	begin_q<T>;
-template <class         T >	XTAL_ASK       iterated_q =	begin_q<T> and front_q<T>;//_v3::ranges::forward_range
-template <class         T >	XTAL_ASK       iterator_q =	requires (T t) {*++t;};//_v3::ranges::forward_iterator
+template <class         T >	XTAL_ASK       iterated_q =	begin_q<T> and front_q<T>;
+template <class         T >	XTAL_ASK       iterator_q =	requires (T t) {*++t;};
 template <class         T >	XTAL_ASK       sentinel_q =	iterator_q<T>;
 template <class         T >	XTAL_ASK       distance_q =	integral_q<T>;//\todo Expand to accommodate `counted_t<size_t>{}.size()`.
 
@@ -257,8 +257,8 @@ template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =           
 template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =               based_t<T> ;};
 template <integral_p    T >	XTAL_TYP       iterator<T>		{using type = iterator_t<interval_t<T>>;};
 
-template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type = end_t<T>;};//_v3::ranges::sentinel_t<T>;
-template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =       T ;};
+template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                  end_t<T>;};
+template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                        T ;};
 
 template <class         T >	XTAL_TYP       distance    	{using type = distance_t<iterator_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       distance<T> 	{using type = XTAL_TYP_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
@@ -287,8 +287,8 @@ struct reiterated
 	XTAL_USE type = _v3::ranges::subrange<I, J, K>;
 
 };
-template <class         T >	XTAL_ASK     reiterated_q =	fungible_q<T, typename reiterated<T>::type>;
-template <class         T >	XTAL_USE     reiterated_t =	              typename reiterated<T>::type;
+template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;
+template <class         T >	XTAL_ASK     reiterated_q =	fungible_q<T, reiterated_t<T>>;
 template <class         T >	XTAL_USE     initerated_t =	_v3::ranges::view_interface<T>;
 
 template <class         T >	XTAL_ASK      allocated_q =	requires {typename T::allocator_type;};

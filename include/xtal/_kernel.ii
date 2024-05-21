@@ -134,14 +134,30 @@ returns a `value_type` instead of `size_type` which is twice the width. \
 
 template <int N_offset=0, class T>
 XTAL_DEF_(return,inline)
-XTAL_LET iterator_f(T &&t)
+XTAL_LET point_f(T &&t)
 XTAL_0EX
 {
-	using namespace _v3::ranges;
-	XTAL_IF0
-	XTAL_0IF_(0 == N_offset) {return begin(XTAL_REF_(t));}
-	XTAL_0IF_(0 <  N_offset) {return next(begin(XTAL_REF_(t)), +N_offset);}
-	XTAL_0IF_(N_offset <  0) {return prev(  end(XTAL_REF_(t)), -N_offset);}
+	using _v3::ranges::begin;
+	using _v3::ranges::end;
+	using _v3::ranges::next;
+	using _v3::ranges::prev;
+	
+	if constexpr (iterator_q<T>) {
+		if constexpr (0 == N_offset) {
+			return XTAL_REF_(t); 
+		}
+		else {
+			return next(XTAL_REF_(t), N_offset);
+		}
+	}
+	else {
+		if constexpr (0 <= N_offset) {
+			return point_f<N_offset>(begin(XTAL_REF_(t)));
+		}
+		else {
+			return point_f<N_offset>(  end(XTAL_REF_(t)));
+		}
+	}
 }
 template <class T>
 XTAL_DEF_(return,inline)
@@ -183,8 +199,10 @@ template <iterated_q X, iterated_q Y> requires epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
+	using _v3::ranges::equal;
+
 	if constexpr (epimorphic_q<X, Y>) {
-		return _v3::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
+		return equal(XTAL_REF_(x), XTAL_REF_(y));
 	}
 	else {
 		return false;

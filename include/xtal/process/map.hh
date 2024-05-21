@@ -35,16 +35,16 @@ struct map<F, As...>
 		using S_::self;
 		using S_::head;
 
-		XTAL_DO2_(template <auto ...Ks>
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_TN2 functor(auto &&...xs),
 		{
-			return F{}(S_::functor(XTAL_REF_(xs)...));
+			return F{} (S_::functor(XTAL_REF_(xs)...));
 		})
 
 		XTAL_TN2 function(auto &&...xs)
 		XTAL_0FX
 		{
-			return F{}(S_::function(XTAL_REF_(xs)...));
+			return F{} (S_::function(XTAL_REF_(xs)...));
 		}
 
 	};

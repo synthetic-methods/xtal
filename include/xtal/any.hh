@@ -233,8 +233,8 @@ template <auto         N=0>	XTAL_LET         induced_n	=          _detail::   in
 template <class         T >	XTAL_USE         induced_t	=          _detail::   induced_t<T >;
 template <class         T >	XTAL_USE        interval_t	=          _detail::  interval_t<T >;
 template <class         T >	XTAL_USE        iterated_t	= typename _detail::  iterated  <T >::type;
-template <class         T >	XTAL_USE        iterator_t	= typename _detail::  iterator  <T >::type;//_v3::ranges::iterator_t
-template <class         T >	XTAL_USE        iteratee_t	= typename _detail::  iteratee  <T >::type;//_v3::ranges::range_reference_t, _v3::ranges::iter_reference_t
+template <class         T >	XTAL_USE        iterator_t	= typename _detail::  iterator  <T >::type;
+template <class         T >	XTAL_USE        iteratee_t	= typename _detail::  iteratee  <T >::type;
 template <class         T >	XTAL_USE        distance_t	=          _detail::  distance_t<T >;
 
 template <class      ...Ts>	XTAL_ASK        iteratee_q	= (...and  _detail::  iteratee_q<Ts>);

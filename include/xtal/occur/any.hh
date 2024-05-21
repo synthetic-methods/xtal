@@ -106,18 +106,9 @@ struct define
 				using K_ = typename R_::template head_t<>;
 			
 			public:
-			//	using R_::R_;
+				using R_::R_;
 				using R_::self;
 				using R_::head;
-
-				XTAL_CO0_(subtype);
-				XTAL_CO1_(subtype);
-				XTAL_CO4_(subtype);
-
-				XTAL_CXN subtype(size_t const &n)
-				XTAL_0EX
-				:	R_(n)
-				{}
 
 				XTAL_TO2_(
 				XTAL_OP2 () (auto &&...xs),
