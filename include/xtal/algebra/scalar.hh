@@ -46,12 +46,6 @@ struct scalar<U_data[N_data]>
 		friend T;
 		using  T_ = holotype<T>;
 	
-	public:
-		using T_::get;
-		using T_::let;
-		using T_::self;
-		using T_::twin;
-
 	public:// CONSTRUCT
 		using T_::T_;
 

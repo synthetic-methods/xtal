@@ -34,8 +34,8 @@ struct couple<X, Y>
 
 	class type : public supertype
 	{
-		using supertype::XTAL_1st;
-		using supertype::XTAL_2nd;
+		using supertype::XTAL_0DX;
+		using supertype::XTAL_1DX;
 
 	public:
 		using supertype::supertype;
@@ -47,13 +47,13 @@ struct couple<X, Y>
 		template <          class _> struct tuple_element_<1, _> {using type = Y;};
 		template <size_t N         > using  tuple_element = tuple_element_<N, type>;
 
-		template <size_t N> XTAL_TN2 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_2nd); else return XTAL_MOV_(XTAL_1st);}
-		template <size_t N> XTAL_TN2 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_2nd); else return          (XTAL_1st);}
-		template <size_t N> XTAL_TN2 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_2nd); else return XTAL_MOV_(XTAL_1st);}
-		template <size_t N> XTAL_TN2 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_2nd); else return          (XTAL_1st);}
+		template <size_t N> XTAL_TN2 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
+		template <size_t N> XTAL_TN2 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
+		template <size_t N> XTAL_TN2 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
+		template <size_t N> XTAL_TN2 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
 
-		template <pack_q W> XTAL_OP2 * (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_1st*get<0>(w), XTAL_2nd*get<1>(w));}
-		template <pack_q W> XTAL_OP2 / (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_1st/get<0>(w), XTAL_2nd/get<1>(w));}
+		template <pack_q W> XTAL_OP2 * (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX*get<0>(w), XTAL_1DX*get<1>(w));}
+		template <pack_q W> XTAL_OP2 / (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX/get<0>(w), XTAL_1DX/get<1>(w));}
 
 	//	Scalar sum:
 		template <int N_sgn=1>
@@ -61,10 +61,10 @@ struct couple<X, Y>
 		XTAL_0FX
 		{
 			if constexpr (N_sgn < 0) {
-				return XTAL_1st - XTAL_2nd;
+				return XTAL_0DX - XTAL_1DX;
 			}
 			else {
-				return XTAL_1st + XTAL_2nd;
+				return XTAL_0DX + XTAL_1DX;
 			}
 		}
 		
@@ -75,8 +75,8 @@ struct couple<X, Y>
 		XTAL_0FX
 		{
 			auto constexpr o = reflector<N_par>();
-			auto const     x = o*XTAL_1st;
-			auto const     y = o*XTAL_2nd;
+			auto const     x = o*XTAL_0DX;
+			auto const     y = o*XTAL_1DX;
 			return couple_f(x + y, x - y);
 		}
 

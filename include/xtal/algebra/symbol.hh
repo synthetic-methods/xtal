@@ -77,7 +77,7 @@ struct symbol<U_data[N_data]>
 			let(0) = {};
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<K>([&, this] (auto const &i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
 					auto const o = k%N;
 					let(    o) =  i;
 					let(N - o) =  i - K;
@@ -91,7 +91,7 @@ struct symbol<U_data[N_data]>
 				if constexpr (complex_field_q<U_data>) {
 					u = re::circle_f(re::patio_f(1, K));
 				}
-				bond::seek_forward_f<K>([&, this] (auto &&) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
 					auto const o = k%N;
 					let(    o) =  w;
 					let(N - o) = -w;
@@ -111,7 +111,7 @@ struct symbol<U_data[N_data]>
 			size_t           k = N_data;
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<K>([&, this] (auto const &i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
 					auto const o = k%N;
 					if (K < o) {
 						let(M - o) = (1 + i) - K;
@@ -132,7 +132,7 @@ struct symbol<U_data[N_data]>
 					u = 1;
 				}
 				w = u;
-				bond::seek_forward_f<K>([&, this] (auto &&) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
 					auto const o = k%N;
 					if (K < o) {
 						let(M - o) = -w;

@@ -65,7 +65,7 @@ struct assay
 		Default `integral_q` constructor, expects `0`. \
 
 		template <integral_p A>
-		XTAL_CON subtype(A &&a)
+		XTAL_CXN subtype(A &&a)
 		XTAL_0EX
 		{
 			assert(0 == a);

@@ -135,8 +135,10 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_1st                                   first
-#define XTAL_2nd                                   second
+#define XTAL_NDX                                   auto
+#define XTAL_0DX                                   first
+#define XTAL_1DX                                   second
+
 #define XTAL_ASK                                   concept
 #define XTAL_USE                                   using
 #define XTAL_TYP                                   struct

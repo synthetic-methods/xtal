@@ -31,13 +31,13 @@ struct define
 	public:
 		using S_::S_;
 
-		XTAL_CON subtype(size_t u)
+		XTAL_CXN subtype(size_t u)
 		XTAL_0EX
 		{
 			assert(0 == u);
 		};
 		template <cardinal_q U>
-		XTAL_CON subtype(U &&u)
+		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		{
 			assert(0 == u);

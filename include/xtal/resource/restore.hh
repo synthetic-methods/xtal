@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/store.hh"
+#include "../atom/all.hh"
 
 
 
@@ -38,7 +38,7 @@ struct restore<A>
 
 	};
 };
-template <constant_q A>
+template <constant_q A>// requires (A{} <  0 or 0x1000 <  A{})
 struct restore<A>
 {
 	using subkind = bond::tag<restore>;
@@ -56,6 +56,26 @@ struct restore<A>
 
 	};
 };
+/*/
+template <constant_q A> requires (0 <= A{} and A{} <= 0x1000)
+struct restore<A>
+{
+	using subkind = bond::tag<restore>;
+	
+	template <_retail::any_q S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using store_t = atom::block_t<U[(unsigned) A{}]>;
+
+	};
+};
+/***/
 template <>
 struct restore<>
 :	restore<constant_t<~0U>>

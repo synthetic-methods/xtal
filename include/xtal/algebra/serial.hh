@@ -71,11 +71,11 @@ struct serial<U_data[N_data]>
 		}
 
 	//	Vector addition:
-		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) += t.get(i);}); return self();}
-		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) -= t.get(i);}); return self();}
+		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) += t.get(i);}); return self();}
+		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) -= t.get(i);}); return self();}
 
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto i) XTAL_0FN {let(i) += w[i];}); return self();}
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto i) XTAL_0FN {let(i) -= w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) += w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) -= w[i];}); return self();}
 
 		///\
 		The dual of `T`, replacing addition by point-wise multiplication, \
@@ -83,46 +83,50 @@ struct serial<U_data[N_data]>
 		
 		struct transverse
 		{
-			template <class L>
-			using holotype = typename lattice<U_data[N_data]>::template homotype<L>;
+			template <class F>
+			using holotype = typename lattice<U_data[N_data]>::template homotype<F>;
 
-			template <class L>
-			class homotype : public holotype<L>
+			template <class F>
+			class homotype : public holotype<F>
 			{
-				friend L;
-				using  L_ = holotype<L>;
+				friend F;
+				using  F_ = holotype<F>;
 			
 			public:
 				struct transverse {using type = T;};
 
 			public:// OPERATION
-				using L_::get;
-				using L_::let;
-				using L_::self;
-				using L_::twin;
-				using L_::operator*=;
-				using L_::operator/=;
+				using F_::get;
+				using F_::let;
+				using F_::self;
+				using F_::twin;
+				using F_::operator*=;
+				using F_::operator/=;
 
 			//	Vector multiplication (Hadamard product):
-				XTAL_OP1_(L &) *= (L const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) *= t.get(i);}); return self();}
-				XTAL_OP1_(L &) /= (L const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) /= t.get(i);}); return self();}
+				
+				XTAL_OP1_(F &) *= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= f.get(i);}); return self();}
+				XTAL_OP1_(F &) /= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= f.get(i);}); return self();}
 
-				template <array_q<N_data> W> XTAL_OP1_(L &) *= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) *= w.get(i);}); return self();}
-				template <array_q<N_data> W> XTAL_OP1_(L &) /= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) /= w.get(i);}); return self();}
+				template <array_q<N_data> W> XTAL_OP1_(F &) *= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= w.get(i);}); return self();}
+				template <array_q<N_data> W> XTAL_OP1_(F &) /= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= w.get(i);}); return self();}
 
 			//	Scalar sum:
 				template <int N_sign=1>
 				XTAL_TN2 sum(U_data const &u={})
 				XTAL_0FX
 				{
+					using _std::get;
+					auto &s = self();
+
 					if constexpr (0 < N_sign) {
-						return [&, this]<auto ...M>(bond::seek_t<M...>)
-							XTAL_0FN_(u +...+ (get(M)))
+						return [&]<auto ...I>(bond::seek_t<I...>)
+							XTAL_0FN_(u +...+ (get<I>(s)))
 						(bond::seek_s<N_data>{});
 					}
 					else {
-						return [&, this]<auto ...M>(bond::seek_t<M...>)
-							XTAL_0FN_(u +...+ (get(M)*re::assign_f((U_sigma) M)))
+						return [&]<auto ...I>(bond::seek_t<I...>)
+							XTAL_0FN_(u +...+ (get<I>(s)*re::assign_f((U_sigma) I)))
 						(bond::seek_s<N_data>{});
 					}
 				}
@@ -131,15 +135,18 @@ struct serial<U_data[N_data]>
 				XTAL_TN2 product(U_data u={})
 				XTAL_0FX
 				{
+					using _std::get;
+					auto &s = self();
+					
 					if constexpr (0 < N_sign) {
-						bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {
-							auto const &v = get(i);
+						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
+							auto const &v = get<i>(s);
 							u = re::accumulate_f(u, v, v);
 						});
 					}
 					else {
-						bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {
-							auto const &v = get(i);
+						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
+							auto const &v = get<i>(s);
 							u = re::accumulate_f(u, v, v, re::assign_f((U_sigma) i));
 						});
 					}
@@ -148,15 +155,18 @@ struct serial<U_data[N_data]>
 				XTAL_TN2 product(iterated_q auto &&t)
 				XTAL_0FX
 				{
-					U_data u{}; T &s = self();
-					bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {
-						u = re::accumulate_f(u, s[i], t[i]);
+					using _std::get;
+					auto &s = self();
+					
+					U_data u{};
+					bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {
+						u = re::accumulate_f(u, get<i>(s), get<i>(t));
 					});
 					return u;
 				}
 
 			public:// CONSTRUCTION
-			//	using L_::L_;
+			//	using F_::F_;
 
 				XTAL_CO0_(homotype)
 			//	XTAL_CO1_(homotype)
@@ -166,32 +176,32 @@ struct serial<U_data[N_data]>
 				XTAL_0EX
 				{
 					if (_std::is_constant_evaluated()) {
-						bond::seek_forward_f<N_data>([&, this] (auto i) XTAL_0FN {let(i) = U_data{1};});
+						bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) = U_data{1};});
 					}
 					else {
-						_std::uninitialized_fill_n(L_::data(), L_::size(), U_data{1});
+						_std::uninitialized_fill_n(F_::data(), F_::size(), U_data{1});
 					}
 				}
 				/***/
 				XTAL_CON homotype(embrace_t<U_data> w)
 				XTAL_0EX
 				{
-					_detail::copy_to(L_::begin(), w.begin(), w.end());
+					_detail::copy_to(F_::begin(), w.begin(), w.end());
 					if (1 == w.size()) {
 						if (_std::is_constant_evaluated()) {
-							bond::seek_forward_f<N_data - 1>([&, this] (auto i) XTAL_0FN {let(i + 1) = get(0);});
+							bond::seek_forward_f<N_data - 1>([&, this] (XTAL_NDX i) XTAL_0FN {let(i + 1) = get(0);});
 						}
 						else {
-							_std::uninitialized_fill_n(_std::next(L_::data(), w.size()), L_::size() - w.size(), get(0));
+							_std::uninitialized_fill_n(_std::next(F_::data(), w.size()), F_::size() - w.size(), get(0));
 						}
 					}
 					else {
 						assert(w.size() == N_data);
 					}
 				}
-				XTAL_CON homotype(iterated_q auto &&w)
+				XTAL_CXN homotype(iterated_q auto &&w)
 				XTAL_0EX
-				:	L_(XTAL_REF_(w))
+				:	F_(XTAL_REF_(w))
 				{}
 				
 			};

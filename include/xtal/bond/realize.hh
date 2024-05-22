@@ -712,7 +712,7 @@ public:
 		XTAL_0IF_(real_number_q<W>) {
 		//	ESTIMATION:
 			W n = root_e<K_pow>(w);
-			seek_forward_f<M_lim>([&] (auto)
+			seek_forward_f<M_lim>([&] (XTAL_NDX)
 				XTAL_0FN {n *= root_e<K_pow>(w, n);}
 			);
 		//	CORRECTION:
@@ -786,7 +786,7 @@ public:
 		XTAL_0IF_(complex_number_q<Z>) {
 			auto x = z.real();
 			auto y = z.imag();
-			seek_forward_f<N_lim>([&] (auto &&) XTAL_0FN {
+			seek_forward_f<N_lim>([&] (XTAL_NDX) XTAL_0FN {
 				auto const xx = square_f(x);
 				auto const yy = square_f(y);
 				y = y*x*2;
@@ -796,7 +796,7 @@ public:
 		}
 		XTAL_0IF_(multiplicative_group_p<1, Z>) {
 			auto zz = z;
-			seek_forward_f<N_lim>([&] (auto &&)
+			seek_forward_f<N_lim>([&] (XTAL_NDX)
 				XTAL_0FN_(zz *= zz)
 			);
 			return versus_f<N_pow>(zz);

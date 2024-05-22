@@ -259,7 +259,7 @@ struct defer_field<unit_t[N_width]>
 		{
 		}
 		template <integral_p A>
-		XTAL_CON subtype(A &&a)
+		XTAL_CXN subtype(A &&a)
 		XTAL_0EX
 		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
 		,	u_body(U_head(a)&(N_width - 1))

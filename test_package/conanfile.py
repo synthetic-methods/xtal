@@ -1,6 +1,7 @@
 from os import path
 
 from conan             import ConanFile
+from conan.tools.env   import Environment
 from conan.tools.cmake import CMake, cmake_layout
 
 class Xtal_TestPackage__Conan(ConanFile):
@@ -27,6 +28,7 @@ class Xtal_TestPackage__Conan(ConanFile):
 		cmake.build()
 
 	def test(self):
+		env = Environment()
 		cmd = ['test']
 		if not self.options.benchmark:
 			cmd.append('--skip-benchmarks')

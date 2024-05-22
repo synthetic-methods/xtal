@@ -113,9 +113,9 @@ template <template <class ...> class Y, class ...Xs>
 struct pack<Y<Xs...>> : pack<Xs...> {};
 
 
-template <class ...Ts > concept       pack_q = pack_size_q<Ts...> and   pack_items_q<Ts...>;
-template <class ...Ts > concept   homopack_q =      pack_q<Ts...> and     iterated_q<Ts...>;
-template <class ...Ts > concept heteropack_q =      pack_q<Ts...> and not iterated_q<Ts...>;
+template <class ...Ts > concept       pack_q = pack_size_q<Ts...> and  pack_items_q<Ts...>;
+template <class ...Ts > concept   homopack_q =      pack_q<Ts...> and     iterable_q<Ts...>;
+template <class ...Ts > concept heteropack_q =      pack_q<Ts...> and not iterable_q<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

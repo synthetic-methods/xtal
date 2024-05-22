@@ -41,7 +41,6 @@ TAG_("modular")
 		W_phi c = 2.0 * a;
 		W_phi c = b + a;
 
-		TRUE_(c.real());
 		TRUE_(c == W_phi{{0.2, 0.0}, {0.4, 0.0}});
 
 	}

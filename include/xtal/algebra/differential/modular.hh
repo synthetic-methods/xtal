@@ -52,8 +52,8 @@ struct modular<K_data[N_data]>
 	using M_alpha = bond::pact_make_t<W_alpha>;
 //	using M_alpha = bond::pact_t<U_alpha, U_alpha>;
 
-	XTAL_LET V_f = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*re::diplo_f())));
-	XTAL_LET U_f = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*re::haplo_f());
+	XTAL_LET   ordinant = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*re::diplo_f())));
+	XTAL_LET coordinant = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*re::haplo_f());
 
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
@@ -79,36 +79,37 @@ struct modular<K_data[N_data]>
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CON homotype(size_t const n)
+		XTAL_CXN homotype(size_t const n)
 		XTAL_0EX
 		:	T_(n)
 		{}
 
-		using T_::operator >>=;
-		using T_::operator <<=;
-
 		XTAL_CON  homotype                          () XTAL_0EX : homotype(size_0)                                                  {}
-		XTAL_CON  homotype  (real_number_q auto ...oo) XTAL_0EX : homotype(sizeof...(oo))           {operator>>=({XTAL_MOV_(oo)...});}
+		XTAL_CXN  homotype  (real_number_q auto ...oo) XTAL_0EX : homotype(sizeof...(oo))           {operator>>=({XTAL_MOV_(oo)...});}
 		XTAL_CON  homotype        (initializer_list o) XTAL_0EX : homotype(devalue_f(XTAL_REF_(o))) {operator<<=( XTAL_REF_(o)     );}
 		XTAL_CXN  homotype        (bounded_q auto &&o) XTAL_0EX : homotype(devalue_f(XTAL_MOV_(o))) {operator<<=( XTAL_REF_(o)     );}
 		
-		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), V_f); return *this;}
-		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), V_f); return *this;}
+		using T_::operator >>=;
+		using T_::operator <<=;
+
+		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), ordinant); return *this;}
+		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), ordinant); return *this;}
 		
-		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), V_f); return *this;}
-		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), V_f); return *this;}
+		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinant); return *this;}
+		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinant); return *this;}
 		
 	public:// OPERATION
 		using T_::self;
 		using T_::twin;
+		using T_::get;
+		using T_::let;
 
-		XTAL_TN2 got(size_t i)        XTAL_0FX {return U_f(T_::get(i));}
-		XTAL_OP2 () (size_t i)        XTAL_0FX {return U_f(T_::get(i));}
-		XTAL_OP2 () ()                XTAL_0FX {return bond::impact_make_f<U_f>(*this);}
+		XTAL_FN2   ordinate(U_alpha u) XTAL_0EX {return   ordinant(u);}
+		XTAL_FN2 coordinate(U_sigma u) XTAL_0EX {return coordinant(u);}
+
+		XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
+		XTAL_OP2 () (size_t i) XTAL_0FX {return self().got(i);}
 		
-		XTAL_OP0_(implicit) U_alpha() XTAL_0FX {return operator()(0);}
-		XTAL_OP0_(implicit) M_alpha() XTAL_0FX {return operator()( );}
-
 		///\
 		Scales all elements. \
 

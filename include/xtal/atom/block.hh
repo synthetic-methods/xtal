@@ -15,6 +15,9 @@ template <class ..._s> XTAL_TYP block;
 template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
 template <class ..._s> XTAL_ASK block_q = bond::tag_p<block, _s...>;
 
+XTAL_LET  block_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(block_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -62,6 +65,24 @@ struct block<U_data[N_data]>
 		XTAL_FN2_(typename re::sigma_t) size()
 		XTAL_0EX {return N_data;}
 
+
+		XTAL_FN2   ordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
+		XTAL_FN2 coordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
+
+		//\
+		template <auto T_f=block_f, class ...Ts>
+		template <auto T_f=bond::pact_f, class ...Ts>
+		XTAL_TN2 got()
+		XTAL_0FX
+		{
+			return [&]<auto ...Ns> (bond::seek_t<Ns...>)
+				XTAL_0FN_(T_f(T::coordinate(bond::pact_item_f<Ns>(self()))...))
+			(bond::seek_s<N_data>{});
+		};
+		XTAL_TN2 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
+	//	XTAL_OP2 () (size_t i) XTAL_0FX {return self().got(i);}
+	//	XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
+
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
 		XTAL_TN2 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](i));}
 
@@ -99,14 +120,6 @@ struct block<U_data[N_data]>
 		
 	public:// CONSTRUCTION
 	//	using T_::T_;
-
-//		XTAL_OP1_(homotype &) >>= (embrace_t<U_data>     o) XTAL_0EX {_detail::copy_to(T_::data(),          (o)); return *this;}
-//		XTAL_OP1_(homotype &) >>= (bounded_q auto const &o) XTAL_0EX {_detail::copy_to(T_::data(),          (o)); return *this;}
-//		XTAL_OP1_(homotype &) >>= (bounded_q auto      &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_MOV_(o)); return *this;}
-//		
-//		XTAL_OP1_(homotype &) <<= (embrace_t<U_data>     o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()),          (o)); return *this;}
-//		XTAL_OP1_(homotype &) <<= (bounded_q auto const &o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()),          (o)); return *this;}
-//		XTAL_OP1_(homotype &) <<= (bounded_q auto      &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_MOV_(o)); return *this;}
 
 		XTAL_CO0_(homotype)
 	//	XTAL_CO1_(homotype)

@@ -60,7 +60,7 @@ struct stage<A, As...>
 		{
 			S_::head(A{});
 		}
-		XTAL_CON subtype(auto &&...oo)
+		XTAL_CXN subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{

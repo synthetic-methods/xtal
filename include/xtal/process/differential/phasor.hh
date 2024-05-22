@@ -85,10 +85,14 @@ struct phasor<K_data[N_data], As...>
 		XTAL_0EX
 		{
 			if constexpr (resource::example_q<S_>) {
+				/**/
+				auto phi = ++head();
+				return phi()*algebra::series_t<U[N_data]>(S_::sample().rate());
+				/*/
 				static_assert(N_data == 2);
-				auto result = (++head()) ();
-				_std::get<1>(result) *= S_::sample().rate();
-				return result;
+				auto phi = ++head();
+				return bond::pact_f(phi(0), phi(1)*S_::sample().rate());
+				/***/
 			}
 			else {
 				return ++head();

@@ -40,7 +40,7 @@ XTAL_FN0 fill_to(I i, size_t n)
 XTAL_0EX
 {
 	if (_std::is_constant_evaluated()) {
-		bond::seek_forward_f<n>([=] (auto j) XTAL_0FN {*_std::next(i, j) = iteratee_t<I>{};});
+		bond::seek_forward_f<n>([=] (XTAL_NDX j) XTAL_0FN {*_std::next(i, j) = iteratee_t<I>{};});
 	}
 	else {
 		_std::uninitialized_value_construct_n(i, n);

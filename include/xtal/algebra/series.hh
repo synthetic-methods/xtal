@@ -76,7 +76,7 @@ struct series<U_data[N_data]>
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, re::template root_f<-1>(u2)});
-			bond::seek_forward_f<N_data>([this] (auto i) XTAL_0FN {
+			bond::seek_forward_f<N_data>([this] (XTAL_NDX i) XTAL_0FN {
 				auto const &[o, e] = get(i);
 				let(i) = {o*e.real(), _std::conj(o)*e.imag()};
 			});

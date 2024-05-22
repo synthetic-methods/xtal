@@ -65,6 +65,29 @@ template <auto       F             >	XTAL_TYP        operate     {class type {pu
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <              class ...Ts>	XTAL_TYP      identical;// `is_same`
+template <              class ...Ts>	XTAL_TYP      isotropic;// `is_same` modulo qualifiers
+template <              class ...Ts>	XTAL_TYP      epitropic;// `is_constructible`
+
+template <class      T, class ...Ts>	XTAL_TYP      identical<T, Ts...> : _std::conjunction<_std::is_same<Ts, T>...> {};
+template <class      T, class ...Ts>	XTAL_TYP      isotropic<T, Ts...> : _std::conjunction<_std::is_same<_std::remove_cvref_t<Ts>, _std::remove_cvref_t<T>>...> {};
+template <class      T, class ...Ts>	XTAL_TYP      epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<Ts, T>...> {};
+
+template <              class ...Ts>	XTAL_ASK      isotropic_q =	    isotropic<Ts...>::value;
+template <              class ...Ts>	XTAL_ASK      epitropic_q =	    epitropic<Ts...>::value;
+template <              class ...Ts>	XTAL_ASK    anisotropic_q =	not isotropic<Ts...>::value;
+template <              class ...Ts>	XTAL_ASK    anepitropic_q =	not epitropic<Ts...>::value;
+
+template <              class ...Ts>	XTAL_ASK             id_q =	identical<Ts...>::value;
+template <              class ...Ts>	XTAL_ASK             is_q =	isotropic<Ts...>::value;
+template <              class ...Ts>	XTAL_ASK             as_q =	epitropic<Ts...>::value;
+template <class      T, class ...Ys>	XTAL_ASK             as_p =	_std::constructible_from<T, Ys...>;
+template <class      T, class    Y >	XTAL_ASK       fungible_q =	_std::derived_from<_std::remove_cvref_t<T>, _std::remove_cvref_t<Y>> or _std::derived_from<_std::remove_cvref_t<Y>, _std::remove_cvref_t<T>>;
+template <class      T, class    Y >	XTAL_ASK     infungible_q =	not fungible_q<T, Y>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class         T >	XTAL_ASK       constant_q =	_std::derived_from<T, _std::integral_constant<typename T::type::value_type, T::type::value>>;
 template <auto          N >	XTAL_USE       constant   =	_std::integral_constant<decltype(N), N>;
 template <auto          N >	XTAL_USE       cardinal   =	_std::integral_constant<size_t,      N>;
@@ -143,48 +166,27 @@ template <class         T >	XTAL_ASK          arity_q =	unvalue_q<T> and   compl
 
 
 template <class         T >	XTAL_TYP        devalue   ;
-template <class         T >	XTAL_ASK        devalue_q =	unvalue_q<T> or invalue_q<T> or eigenvalue_q<T>;
 template <class         T >	XTAL_USE        devalue_t =	typename devalue<based_t<T>>::type;
 template <class         T >	XTAL_LET        devalue_n =	         devalue<based_t<T>>::size;
-template <class         T >	XTAL_TYP        devalue                     {using type =              T  ; XTAL_LET size =            (size_t) 1U;};
-template <eigenvalue_q  T >	XTAL_TYP        devalue<T>                  {using type = eigenvalue_t<T> ; XTAL_LET size =            (size_t) 0U;};
+template <class         T >	XTAL_TYP        devalue                     {using type =              T  ; XTAL_LET size =           (size_t)  1 ;};
+template <eigenvalue_q  T >	XTAL_TYP        devalue<T>                  {using type = eigenvalue_t<T> ; XTAL_LET size =           (size_t)  0 ;};
 template <   invalue_q  T >	XTAL_TYP        devalue<T>                  {using type =    invalue_t<T> ; XTAL_LET size =      _std::extent_v<T>;};
-template <    varity_q  T >	XTAL_TYP        devalue<T>                  {using type =    unvalue_t<T> ; XTAL_LET size = sizeof(T)/sizeof(type);};
+template <    varity_q  T >	XTAL_TYP        devalue<T>                  {using type =    unvalue_t<T> ; XTAL_LET size = sizeof(T)/sizeof(type);};// For `std::complex` etc...
 template <     arity_q  T >	XTAL_TYP        devalue<T>                  {using type =    unvalue_t<T> ; XTAL_LET size =  _std::tuple_size_v<T>;};
-template <class U,  int N >	XTAL_TYP        devalue<_std::array<U, N>>  {using type =              U  ; XTAL_LET size =                      N;};
+template <class U,  int N >	XTAL_TYP        devalue<_std::array<U, N>>  {using type =              U  ; XTAL_LET size =                     N ;};
+template <class         T >	XTAL_ASK        devalue_q =	not _std::same_as<based_t<T>, based_t<devalue_t<T>>>;
+
 
 template <class         T >	XTAL_TYP        devolve   ;
-template <class         T >	XTAL_USE        devolve_t =	typename devolve<based_t<T>>::type;
-template <class         T >	XTAL_LET        devolve_n =	         devolve<based_t<T>>::size;
-template <class         T >	XTAL_TYP        devolve                     {using type =                     T  ; XTAL_LET size =            (size_t) 1U;};
-template <devalue_q     T >	XTAL_TYP        devolve<T>                  {using type = devolve_t<devalue_t<T>>; XTAL_LET size = sizeof(T)/sizeof(type);};
+template <class         T >	XTAL_USE        devolve_t =	typename devolve<  based_t<T>>::type;
+template <class         T >	XTAL_LET        devolve_n =	         devolve<  based_t<T>>::size;
+template <class         T >	XTAL_LET        devalve_n =	         devolve<devalue_t<T>>::size;
+template <class         T >	XTAL_TYP        devolve                     {using type =                     T  ; XTAL_LET size =               (size_t) 1U;};
+template <devalue_q     T >	XTAL_TYP        devolve<T>                  {using type = devolve_t<devalue_t<T>>; XTAL_LET size = devalue_n<T>*devalve_n<T>;};
 
 
 template <class         X >	XTAL_TYP       argument     {using type = X      &&;};
 template <based_q       X >	XTAL_TYP       argument<X>  {using type = X const &;};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <           class ...Ts>	XTAL_TYP      identical;// `is_same`
-template <           class ...Ts>	XTAL_TYP      isotropic;// `is_same` modulo qualifiers
-template <           class ...Ts>	XTAL_TYP      epitropic;// `is_constructible`
-
-template <class   T, class ...Ts>	XTAL_TYP      identical<T, Ts...> : _std::conjunction<_std::is_same<Ts, T>...> {};
-template <class   T, class ...Ts>	XTAL_TYP      isotropic<T, Ts...> : _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
-template <class   T, class ...Ts>	XTAL_TYP      epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<Ts, T>...> {};
-
-template <           class ...Ts>	XTAL_ASK      isotropic_q =	    isotropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK      epitropic_q =	    epitropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK    anisotropic_q =	not isotropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK    anepitropic_q =	not epitropic<Ts...>::value;
-
-template <           class ...Ts>	XTAL_ASK             id_q =	identical<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK             is_q =	isotropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK             as_q =	epitropic<Ts...>::value;
-template <class   T, class ...Ys>	XTAL_ASK             as_p =	_std::constructible_from<T, Ys...>;
-template <class   T, class    Y >	XTAL_ASK       fungible_q =	_std::derived_from<based_t<T>, based_t<Y>> or _std::derived_from<based_t<Y>, based_t<T>>;
-template <class   T, class    Y >	XTAL_ASK     infungible_q =	not fungible_q<T, Y>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

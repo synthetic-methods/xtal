@@ -109,6 +109,27 @@ template <auto       F >	XTAL_USE      operate_t	=          typename _detail::  
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <         class ...Ts>	XTAL_ASK    isotropic_q	=         _detail::  isotropic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK    epitropic_q	=         _detail::  epitropic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK  anisotropic_q	=     not _detail::  isotropic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK  anepitropic_q	=     not _detail::  epitropic<Ts...>::value;
+
+template <         class ...Ts>	XTAL_ASK   isomorphic_q	=         _detail:: isomorphic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK   epimorphic_q	=         _detail:: epimorphic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK anisomorphic_q	=     not _detail:: isomorphic<Ts...>::value;
+template <         class ...Ts>	XTAL_ASK anepimorphic_q	=     not _detail:: epimorphic<Ts...>::value;
+
+template <         class ...Ts>	XTAL_ASK           id_q	=         _detail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <         class ...Ts>	XTAL_ASK           is_q	=         _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <         class ...Ts>	XTAL_ASK           as_q	=         _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class T, class ...Ts>	XTAL_ASK           as_p	=         _detail:: as_p<T, Ts...>;
+
+template <class T, class ...Ts>	XTAL_ASK     fungible_q	= some_q<Ts...> and (...and _detail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
+template <class T, class ...Ts>	XTAL_ASK   infungible_q	= some_q<Ts...> and (...and _detail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 XTAL_USE cardinal_0 = _detail:: cardinal<0>::type;
 XTAL_USE cardinal_1 = _detail:: cardinal<1>::type;
 XTAL_USE  ordinal_0 = _detail::  ordinal<0>::type;
@@ -180,27 +201,6 @@ template <class T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolve_n<T> 
 
 
 template <class X             >	XTAL_USE     argument_t	=          typename _detail:: argument<X>::type;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <         class ...Ts>	XTAL_ASK    isotropic_q	=         _detail::  isotropic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK    epitropic_q	=         _detail::  epitropic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK  anisotropic_q	=     not _detail::  isotropic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK  anepitropic_q	=     not _detail::  epitropic<Ts...>::value;
-
-template <         class ...Ts>	XTAL_ASK   isomorphic_q	=         _detail:: isomorphic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK   epimorphic_q	=         _detail:: epimorphic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK anisomorphic_q	=     not _detail:: isomorphic<Ts...>::value;
-template <         class ...Ts>	XTAL_ASK anepimorphic_q	=     not _detail:: epimorphic<Ts...>::value;
-
-template <         class ...Ts>	XTAL_ASK           id_q	=         _detail:: identical<Ts...>::value;//< `Ts...` are identical.
-template <         class ...Ts>	XTAL_ASK           is_q	=         _detail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <         class ...Ts>	XTAL_ASK           as_q	=         _detail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class T, class ...Ts>	XTAL_ASK           as_p	=         _detail:: as_p<T, Ts...>;
-
-template <class T, class ...Ts>	XTAL_ASK     fungible_q	= some_q<Ts...> and (...and _detail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
-template <class T, class ...Ts>	XTAL_ASK   infungible_q	= some_q<Ts...> and (...and _detail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
 
 
 ////////////////////////////////////////////////////////////////////////////////

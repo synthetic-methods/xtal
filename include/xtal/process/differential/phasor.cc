@@ -42,21 +42,12 @@ TAG_("phasor")
 		XTAL_VAR z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_phi <<= occur::resize_t<>(result_n);
 		XTAL_VAR z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_psi <<= occur::resize_t<>(result_n);
 
-		EST_("procession (praxis)")
-		{
-			x_phi <<= {x_delta};
-
-			for (int i = 0; i < result_n; ++i) {
-				result_o[i] = pact_make_f(x_phi());
-			}
-
-		};
 		EST_("procession (process)")
 		{
 			y_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 
 			for (int i = 0; i < result_n; ++i) {
-				result_o[i] = pact_make_f(y_phi() ());
+				result_o[i] = pact_make_f(y_phi().got());
 			}
 
 		};
@@ -90,16 +81,6 @@ TAG_("phasor")
 			z_phi >>= z_ren++;
 
 			for (int i = 0; i < result_n; ++i) {result_o[i] = pact_make_f(z_phi.store()[i] ());}
-
-		};
-		EST_("procession (processor: `ranges::for_each`)")
-		{
-			occur::render_t<> z_ren(result_n);
-
-			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
-			z_phi >>= z_ren++;
-
-			_v3::ranges::for_each(z_phi, [&] (auto i) noexcept {result_o[i] = pact_make_f(z_phi.store()[i] ());});
 
 		};
 		EST_("procession (processor: `ranges::move(z|...)`)")

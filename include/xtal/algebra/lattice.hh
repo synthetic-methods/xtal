@@ -11,9 +11,11 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP lattice;
-template <class ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
+template <class          ..._s> XTAL_TYP lattice;
+template <class          ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
+template <class          ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
+template <class T, class L=T  > XTAL_ASK lettuce_q = bond::pack_q<T> and not lattice_q<T> and bond::pack_size_n<T> == bond::pack_size_n<L>;
+template <class L, class ...Ts> XTAL_ASK lettuce_p = (...and lettuce_q<Ts, L>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,42 +82,81 @@ struct lattice<U_data[N_data]>
 		XTAL_OP2_(bool) >  (homotype   const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
-		XTAL_OP1_(T &) <<= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i) <<= u;}); return self();}
-		XTAL_OP1_(T &) >>= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i) >>= u;}); return self();}
-		XTAL_OP1_(T &)  &= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i)  &= u;}); return self();}
-		XTAL_OP1_(T &)  ^= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i)  ^= u;}); return self();}
-		XTAL_OP1_(T &)  *= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i)  *= u;}); return self();}
-		XTAL_OP1_(T &)  %= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([                &, this] (auto i) XTAL_0FN {let(i)  %= u;}); return self();}
-		XTAL_OP1_(T &)  /= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([n = re::alpha_1/u, this] (auto i) XTAL_0FN {let(i)  *= n;}); return self();}
+		XTAL_OP1_(T &) <<= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i) <<= u;}); return self();}
+		XTAL_OP1_(T &) >>= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i) >>= u;}); return self();}
+		XTAL_OP1_(T &)  &= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  &= u;}); return self();}
+		XTAL_OP1_(T &)  ^= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  ^= u;}); return self();}
+		XTAL_OP1_(T &)  *= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  *= u;}); return self();}
+		XTAL_OP1_(T &)  %= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  %= u;}); return self();}
+		XTAL_OP1_(T &)  /= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([n = 1.0/u, this] (XTAL_NDX i) XTAL_0FN {let(i)  *= n;}); return self();}
 
 	//	Vector assignment (via `std::initializer_list`):
-		XTAL_OP1_(T &) <<= (embrace_t<U_data> w) XTAL_0EX {return   self() <<=         T(w);}
-		XTAL_OP1_(T &) >>= (embrace_t<U_data> w) XTAL_0EX {return   self() >>=         T(w);}
-		XTAL_OP1_(T &)  &= (embrace_t<U_data> w) XTAL_0EX {return   self()  &=         T(w);}
-		XTAL_OP1_(T &)  ^= (embrace_t<U_data> w) XTAL_0EX {return   self()  ^=         T(w);}
-		XTAL_OP1_(T &)  |= (embrace_t<U_data> w) XTAL_0EX {return   self()  |=         T(w);}
-		XTAL_OP1_(T &)  *= (embrace_t<U_data> w) XTAL_0EX {return   self()  *=         T(w);}
-		XTAL_OP1_(T &)  %= (embrace_t<U_data> w) XTAL_0EX {return   self()  %=         T(w);}
-		XTAL_OP1_(T &)  /= (embrace_t<U_data> w) XTAL_0EX {return   self()  /=         T(w);}
-		XTAL_OP1_(T &)  += (embrace_t<U_data> w) XTAL_0EX {return   self()  +=         T(w);}
-		XTAL_OP1_(T &)  -= (embrace_t<U_data> w) XTAL_0EX {return   self()  -=         T(w);}
+		XTAL_OP1_(T &) <<= (embrace_t<U_data> w) XTAL_0EX {return self() <<= T(w);}
+		XTAL_OP1_(T &) >>= (embrace_t<U_data> w) XTAL_0EX {return self() >>= T(w);}
+		XTAL_OP1_(T &)  &= (embrace_t<U_data> w) XTAL_0EX {return self()  &= T(w);}
+		XTAL_OP1_(T &)  ^= (embrace_t<U_data> w) XTAL_0EX {return self()  ^= T(w);}
+		XTAL_OP1_(T &)  |= (embrace_t<U_data> w) XTAL_0EX {return self()  |= T(w);}
+		XTAL_OP1_(T &)  *= (embrace_t<U_data> w) XTAL_0EX {return self()  *= T(w);}
+		XTAL_OP1_(T &)  %= (embrace_t<U_data> w) XTAL_0EX {return self()  %= T(w);}
+		XTAL_OP1_(T &)  /= (embrace_t<U_data> w) XTAL_0EX {return self()  /= T(w);}
+		XTAL_OP1_(T &)  += (embrace_t<U_data> w) XTAL_0EX {return self()  += T(w);}
+		XTAL_OP1_(T &)  -= (embrace_t<U_data> w) XTAL_0EX {return self()  -= T(w);}
 
 	//	Generic operation (via assignment):
-		XTAL_OP2_(T)   <<  (auto            &&w) XTAL_0FX {return   twin() <<= XTAL_REF_(w);}
-		XTAL_OP2_(T)   >>  (auto            &&w) XTAL_0FX {return   twin() >>= XTAL_REF_(w);}
-		XTAL_OP2_(T)    &  (auto            &&w) XTAL_0FX {return   twin()  &= XTAL_REF_(w);}
-		XTAL_OP2_(T)    ^  (auto            &&w) XTAL_0FX {return   twin()  ^= XTAL_REF_(w);}
-		XTAL_OP2_(T)    |  (auto            &&w) XTAL_0FX {return   twin()  |= XTAL_REF_(w);}
-		XTAL_OP2_(T)    *  (auto            &&w) XTAL_0FX {return   twin()  *= XTAL_REF_(w);}
-		XTAL_OP2_(T)    %  (auto            &&w) XTAL_0FX {return   twin()  %= XTAL_REF_(w);}
-		XTAL_OP2_(T)    /  (auto            &&w) XTAL_0FX {return   twin()  /= XTAL_REF_(w);}
-		XTAL_OP2_(T)    +  (auto            &&w) XTAL_0FX {return   twin()  += XTAL_REF_(w);}
-		XTAL_OP2_(T)    -  (auto            &&w) XTAL_0FX {return   twin()  -= XTAL_REF_(w);}
+		XTAL_OP2_(T)   <<  (auto const &w)       XTAL_0FX {return twin() <<=   w ;}
+		XTAL_OP2_(T)   >>  (auto const &w)       XTAL_0FX {return twin() >>=   w ;}
+		XTAL_OP2_(T)    &  (auto const &w)       XTAL_0FX {return twin()  &=   w ;}
+		XTAL_OP2_(T)    ^  (auto const &w)       XTAL_0FX {return twin()  ^=   w ;}
+		XTAL_OP2_(T)    |  (auto const &w)       XTAL_0FX {return twin()  |=   w ;}
+		XTAL_OP2_(T)    *  (auto const &w)       XTAL_0FX {return twin()  *=   w ;}
+		XTAL_OP2_(T)    %  (auto const &w)       XTAL_0FX {return twin()  %=   w ;}
+		XTAL_OP2_(T)    /  (auto const &w)       XTAL_0FX {return twin()  /=   w ;}
+		XTAL_OP2_(T)    +  (auto const &w)       XTAL_0FX {return twin()  +=   w ;}
+		XTAL_OP2_(T)    -  (auto const &w)       XTAL_0FX {return twin()  -=   w ;}
 
-		XTAL_OP3_(T)    * (devolved_q<T> auto &&w, T const &t) XTAL_0EX {return t * XTAL_REF_(w);}
-		XTAL_OP3_(T)    + (devolved_q<T> auto &&w, T const &t) XTAL_0EX {return t + XTAL_REF_(w);}
-		template <template <class> class K> XTAL_OP3_(T)    * (devolved_q<T> auto &&w, K<T> const &t) XTAL_0EX {return t * XTAL_REF_(w);}
-		template <template <class> class K> XTAL_OP3_(T)    + (devolved_q<T> auto &&w, K<T> const &t) XTAL_0EX {return t + XTAL_REF_(w);}
+		XTAL_OP3        *  (devolved_q<T> auto const &w, T const &t) XTAL_0EX {return t * w;}
+		XTAL_OP3        +  (devolved_q<T> auto const &w, T const &t) XTAL_0EX {return t + w;}
+
+		///\
+		Component-wise field-adjustment by an equal-sized non-`lattice`. \
+		
+		XTAL_OP3 * (T const &t, lettuce_q auto const &w)
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
+				XTAL_0FN_(bond::pact_f(get<i>(t) * get<i>(w)...))
+			(bond::seek_s<N_data>{});
+		}
+		XTAL_OP3 / (T const &t, lettuce_q auto const &w)
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
+				XTAL_0FN_(bond::pact_f(get<i>(t) / get<i>(w)...))
+			(bond::seek_s<N_data>{});
+		}
+		XTAL_OP3 + (T const &t, lettuce_q auto const &w)
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
+				XTAL_0FN_(bond::pact_f(get<i>(t) + get<i>(w)...))
+			(bond::seek_s<N_data>{});
+		}
+		XTAL_OP3 - (T const &t, lettuce_q auto const &w)
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
+				XTAL_0FN_(bond::pact_f(get<i>(t) - get<i>(w)...))
+			(bond::seek_s<N_data>{});
+		}
+
 
 	};
 	using type = bond::isotype<homotype>;

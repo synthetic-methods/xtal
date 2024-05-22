@@ -15,11 +15,11 @@ namespace xtal::bond
 
 template <class ...Us>
 XTAL_TYP pact
-{	using type = _v3::ranges::common_tuple<Us...>;
+{	using type = _std::tuple<Us...>;
 };
 template <class ...Us> requires (2 == sizeof...(Us))
 XTAL_TYP pact<Us...>
-{	using type = _v3::ranges::common_pair <Us...>;
+{	using type = _std::pair <Us...>;
 };
 template <class ...Us>
 using pact_t = typename pact<Us...>::type;

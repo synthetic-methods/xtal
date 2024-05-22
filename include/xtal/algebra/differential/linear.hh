@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "../serial.hh"
-
+#include "../series.hh"
 
 
 
@@ -65,7 +65,7 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			bond::seek_forward_f<N_data - 1>([this] (auto i) XTAL_0FN_(let(i) += get(i + 1)));
+			bond::seek_forward_f<N_data - 1>([this] (XTAL_NDX i) XTAL_0FN_(let(i) += get(i + 1)));
 			return self();
 		}
 
@@ -81,7 +81,7 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			bond::seek_backward_f<N_data - 1>([this] (auto i) XTAL_0FN_(let(i) -= get(i + 1)));
+			bond::seek_backward_f<N_data - 1>([this] (XTAL_NDX i) XTAL_0FN_(let(i) -= get(i + 1)));
 			return self();
 		}
 

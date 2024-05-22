@@ -119,13 +119,11 @@ struct monomer<U, As...>
 				XTAL_DEF_(return,inline)
 				XTAL_TN1 functor(),
 				{
-					using _v3::views::take;
-
 					if constexpr (N_sized) {
 						return state();
 					}
 					else {
-						return state()|take(R_::template head_t<U_resize>);
+						return state()|account_f(R_::template head_t<U_resize>);
 					}
 				})
 
