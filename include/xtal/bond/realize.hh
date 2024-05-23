@@ -688,7 +688,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_TYP_(w);
-		using U = devolve_t<W>;
+		using U = devolve_u<W>;
 
 	//	W constexpr W_1{1};
 		U constexpr U_1{1};
@@ -1623,7 +1623,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct realize : _detail::realize<sizeof(devolve_t<T>)> {};
+struct realize : _detail::realize<sizeof(devolve_u<T>)> {};
 
 using realized = realize<size_t>;
 

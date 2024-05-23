@@ -23,8 +23,8 @@ template <class L, class ...Ts> XTAL_ASK lettuce_p = (...and lettuce_q<Ts, L>);
 Extends `block` with point-wise comparison, \
 and lifts all other operators. \
 
-template <class U, size_t N, int Ns>
-struct lattice<U[N][Ns]> : lattice<lattice_t<U[N]>[Ns]>
+template <class U, size_t N, size_t ...Ns>
+struct lattice<U[N][Ns]...> : lattice<lattice_t<U[N]>[Ns]...>
 {};
 template <class U_data, size_t N_data>
 struct lattice<U_data[N_data]>
@@ -162,6 +162,7 @@ struct lattice<U_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

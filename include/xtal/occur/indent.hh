@@ -37,8 +37,8 @@ struct indent<Ns...>
 		using S_ = bond::compose_s<S, subkind>;
 	//	using W_ = bond::compose_s<S, item>;
 		using W_ = component_t<S>;
-		using U_ = devalue_t<reembrace_t<S>>;//   presentation
-		using V_ = devalue_t<            S >;// representation
+		using U_ = devalue_u<reembrace_t<S>>;//   presentation
+		using V_ = devalue_u<            S >;// representation
 
 	public:
 		using S_::S_;

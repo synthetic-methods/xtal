@@ -68,32 +68,82 @@ but can be specialized to support additional/custom data-types. \
 ///\todo\
 Restric `eigenvalue_q` to `Array`-derived types.
 
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f)
+XTAL_0EX
+{	return _v3::views::generate(XTAL_REF_(f));
+}
+template <iterable_q X>
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f, X &&x)
+XTAL_0EX
+{	return _v3::views::transform(XTAL_REF_(x), XTAL_REF_(f));
+}
+template <iterable_q ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f, Xs &&...xs)
+XTAL_0EX
+{	return _v3::views::zip_with(XTAL_REF_(f), XTAL_REF_(xs)...);
+}
+
+#if __has_include(<Eigen/Core>)
+template <eigenvalue_q X>
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f, X &&x)
+XTAL_0EX
+{	return XTAL_REF_(x).unaryExpr(XTAL_REF_(f));
+}
+template <eigenvalue_q X, eigenvalue_q Y>
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f, X &&x, Y &&y)
+XTAL_0EX
+{	return XTAL_REF_(x).binaryExpr(XTAL_REF_(y), XTAL_REF_(f));
+}
+template <eigenvalue_q X, eigenvalue_q Y, eigenvalue_q Z>
+XTAL_DEF_(return,inline)
+XTAL_LET map_f(auto &&f, X &&x, Y &&y, Z &&z)
+XTAL_0EX
+{	return XTAL_REF_(x).ternaryExpr(XTAL_REF_(y), XTAL_REF_(z), XTAL_REF_(f));
+}
+#endif
+
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_LET zap_f(auto &&f, Xs &&...xs)
+XTAL_0EX
+{
+	using F = XTAL_TYP_(f);
+	if constexpr (sizeof...(Xs) and _std::invocable<F, Xs...>) {
+		return XTAL_REF_(f) (XTAL_REF_(xs)...);
+	}
+	else {
+		return map_f(XTAL_REF_(f), XTAL_REF_(xs)...);
+	}
+}
+
+
+
 template <auto f, class ...Xs>
 XTAL_FN2 flex_f(Xs &&...xs)
 XTAL_0EX
-{
-	return f(XTAL_REF_(xs)...);
+{	return f(XTAL_REF_(xs)...);
 }
 
 #if __has_include(<Eigen/Core>)
 template <auto f, eigenvalue_q X>
 XTAL_FN2 flex_f(X &&x)
 XTAL_0EX
-{
-	return XTAL_REF_(x).unaryExpr(f);
+{	return XTAL_REF_(x).unaryExpr(f);
 }
 template <auto f, eigenvalue_q X, eigenvalue_q Y>
 XTAL_FN2 flex_f(X &&x, Y &&y)
 XTAL_0EX
-{
-	return XTAL_REF_(x).binaryExpr(XTAL_REF_(y), f);
+{	return XTAL_REF_(x).binaryExpr(XTAL_REF_(y), f);
 }
-
 template <auto f, eigenvalue_q X, eigenvalue_q Y, eigenvalue_q Z>
 XTAL_FN2 flex_f(X &&x, Y &&y, Z &&z)
 XTAL_0EX
-{
-	return XTAL_REF_(x).ternaryExpr(XTAL_REF_(y), XTAL_REF_(z), f);
+{	return XTAL_REF_(x).ternaryExpr(XTAL_REF_(y), XTAL_REF_(z), f);
 }
 #endif
 

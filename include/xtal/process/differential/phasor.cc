@@ -95,6 +95,7 @@ TAG_("phasor")
 
 		};
 	}
+	/**/
 	TRY_("progression")
 	{
 		T_alpha x_d4 = re::haplo_f(4);
@@ -142,7 +143,9 @@ TAG_("phasor")
 		//\
 		(void) z_psi.efflux(z_rev, z_ren++);
 		z_psi >>= z_ren++ >> z_rev;
+		//\
 		TRUE_(z_out[0] == bond::pact_f( 1*x_d4, x_d4));
+		TRUE_(z_out[0] == bond::pact_t<T_alpha, T_alpha>( 1*x_d4, x_d4));
 		TRUE_(z_out[1] == bond::pact_f( 2*x_d4, x_d4));
 		TRUE_(z_out[2] == bond::pact_f( 3*x_d4, x_d4));
 		TRUE_(z_out[3] == bond::pact_f( 4*x_d4, x_d4));
@@ -212,6 +215,7 @@ TAG_("phasor")
 		TRUE_(z_out[7] == bond::pact_f(-4*x_d3, x_d3));
 
 	}
+	/***/
 	TRY_("multiplication")
 	{
 		T_alpha x =  0.33, x_d4 = re::haplo_f(4);

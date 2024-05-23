@@ -39,6 +39,7 @@ class Xtal__Conan(ConanFile):
 		check_min_cppstd(self, 20)
 
 	def requirements(self):
+		self.requires("mdspan/0.6.0",    transitive_headers=True)
 		self.requires("range-v3/0.12.0", transitive_headers=True)
 		self.requires("simde/0.7.6",     transitive_headers=True)
 

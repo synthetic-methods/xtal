@@ -3,7 +3,7 @@
 #include "./pack.hh"
 #include "./seek.hh"
 
-
+//#include <ranges>
 
 
 XTAL_ENV_(push)
@@ -76,10 +76,10 @@ XTAL_0EX
 		return get<I>(XTAL_REF_(t));
 	}
 	XTAL_0IF_(devalue_q<T> and not _std::is_const_v<T>) {
-		return reinterpret_cast<      devalue_t<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
+		return reinterpret_cast<      devalue_u<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
 	}
 	XTAL_0IF_(devalue_q<T> and     _std::is_const_v<T>) {
-		return reinterpret_cast<const devalue_t<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
+		return reinterpret_cast<const devalue_u<T>(&)[devalue_f(t)]>(XTAL_REF_(t))[I];
 	}
 }
 template <size_t I, class T, class ...Ts>
@@ -159,6 +159,8 @@ XTAL_FN2 pact_bind_f(W &&w, size_t const &n)
 XTAL_0EX
 {
 	using _std::span;
+	//\
+	using _std::ranges::views::zip;
 	using _v3::views::zip;
 
 	return [&]<size_t ...Is> (bond::seek_t<Is...>)

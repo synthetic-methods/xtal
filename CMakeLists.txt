@@ -7,8 +7,10 @@ target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 
 find_package(range-v3 REQUIRED)
+find_package(mdspan REQUIRED)
 find_package(simde REQUIRED)
 target_link_libraries(${PROJECT_NAME} range-v3::range-v3)
+target_link_libraries(${PROJECT_NAME} std::mdspan)
 target_link_libraries(${PROJECT_NAME} simde::simde)
 
 

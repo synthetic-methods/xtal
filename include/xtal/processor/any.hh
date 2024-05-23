@@ -71,24 +71,9 @@ struct defer<U>
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(iterable_q auto &&...xs),
+		XTAL_TN1 functor(auto &&...xs),
 		{
-			using _v3::views::generate;
-			using _v3::views::transform;
-			using _v3::views::zip_with;
-
-			auto const f = head().template functory<iteratee_t<decltype(xs)> const &...>(Is...);
-			
-			XTAL_IF0
-			XTAL_0IF_(0 == sizeof...(xs)) {
-				return generate(f);
-			}
-			XTAL_0IF_(1 == sizeof...(xs)) {
-				return transform(XTAL_REF_(xs)..., f);
-			}
-			XTAL_0IF_(1 <  sizeof...(xs)) {
-				return zip_with(f, XTAL_REF_(xs)...);
-			}
+			return map_f(head().template functory<iteratee_t<decltype(xs)> const &...>(Is...), XTAL_REF_(xs)...);
 		})
 
 	};
