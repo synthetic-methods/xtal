@@ -71,12 +71,12 @@ struct block<U_data[N_data]>
 
 		//\
 		template <auto T_f=block_f, class ...Ts>
-		template <auto T_f=bond::pact_f, class ...Ts>
+		template <auto T_f=bond::pack_f, class ...Ts>
 		XTAL_TN2 got()
 		XTAL_0FX
 		{
 			return [&]<auto ...Ns> (bond::seek_t<Ns...>)
-				XTAL_0FN_(T_f(T::coordinate(bond::pact_item_f<Ns>(self()))...))
+				XTAL_0FN_(T_f(T::coordinate(bond::pack_item_f<Ns>(self()))...))
 			(bond::seek_s<N_data>{});
 		};
 		XTAL_TN2 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
@@ -90,6 +90,36 @@ struct block<U_data[N_data]>
 		XTAL_TN2 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
 
 	public:// CONVERSION
+		XTAL_TN1 apply(auto &&f)
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&, this]<auto ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(f(get<I>(*this)...))
+			(bond::seek_s<N_data> {});
+		}
+		template <auto f>
+		XTAL_TN1 apply()
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&, this]<auto ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(f(get<I>(*this)...))
+			(bond::seek_s<N_data> {});
+		}
+		template <class F>
+		XTAL_TN2 make()
+		XTAL_0EX
+		{
+			using _std::get;
+
+			return [&, this]<auto ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(F(get<I>(*this)...))
+			(bond::seek_s<N_data> {});
+		}
+
 		///\
 		Elementwise immutative transformer. \
 

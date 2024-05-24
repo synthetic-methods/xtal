@@ -53,17 +53,6 @@ struct lattice<U_data[N_data]>
 		using T_::let;
 
 	public:// OPERATION
-		XTAL_TN2 apply(auto &&f)
-		XTAL_0EX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(f(_std::get<I>(*this)...)) (bond::seek_s<N_data> {});}
-		
-		template <class F>
-		XTAL_TN2 make()
-		XTAL_0EX {return apply([] XTAL_1FN_(F));}
-
-		using pact_t = bond::pact_made_t<T_>;
-		XTAL_OP0_(implicit) pact_t() XTAL_0EX {return make<pact_t>();}
-
-
 	//	Vector comparison (performed point-wise):
 		XTAL_OP2 <=> (homotype const &t)
 		XTAL_0FX
@@ -126,7 +115,7 @@ struct lattice<U_data[N_data]>
 			using _std::get;
 
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
-				XTAL_0FN_(bond::pact_f(get<i>(t) * get<i>(w)...))
+				XTAL_0FN_(bond::pack_f(get<i>(t) * get<i>(w)...))
 			(bond::seek_s<N_data>{});
 		}
 		XTAL_OP3 / (T const &t, lettuce_q auto const &w)
@@ -135,7 +124,7 @@ struct lattice<U_data[N_data]>
 			using _std::get;
 
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
-				XTAL_0FN_(bond::pact_f(get<i>(t) / get<i>(w)...))
+				XTAL_0FN_(bond::pack_f(get<i>(t) / get<i>(w)...))
 			(bond::seek_s<N_data>{});
 		}
 		XTAL_OP3 + (T const &t, lettuce_q auto const &w)
@@ -144,7 +133,7 @@ struct lattice<U_data[N_data]>
 			using _std::get;
 
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
-				XTAL_0FN_(bond::pact_f(get<i>(t) + get<i>(w)...))
+				XTAL_0FN_(bond::pack_f(get<i>(t) + get<i>(w)...))
 			(bond::seek_s<N_data>{});
 		}
 		XTAL_OP3 - (T const &t, lettuce_q auto const &w)
@@ -153,7 +142,7 @@ struct lattice<U_data[N_data]>
 			using _std::get;
 
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
-				XTAL_0FN_(bond::pact_f(get<i>(t) - get<i>(w)...))
+				XTAL_0FN_(bond::pack_f(get<i>(t) - get<i>(w)...))
 			(bond::seek_s<N_data>{});
 		}
 

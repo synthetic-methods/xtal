@@ -29,7 +29,7 @@ private:
 	XTAL_LET_(U) U_1 = 1;
 	XTAL_LET_(V) V_1 = 1;
 
-	using M = bond::pact_t<U, V>;
+	using M = bond::pack_t<U, V>;
 
 public:
 	using subkind = bond::compose<defer<M>, bond::tag<sample>>;

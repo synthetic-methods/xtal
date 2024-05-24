@@ -130,7 +130,7 @@ struct define
 		{
 			//\
 			using signature_t = cell::packed_t<Xs...>;
-			using signature_t = bond::pack_t<Xs...>;
+			using signature_t = bond::pack_t<based_t<Xs>...>;
 			
 			using Y_result = _std::invoke_result_t<T, Xs...>;
 			using Y_return = iteratee_t<Y_result>;

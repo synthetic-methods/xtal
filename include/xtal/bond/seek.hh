@@ -13,9 +13,20 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t  ...I > XTAL_USE seek_t = _std::index_sequence<I...>;
+template <size_t  ...Is> XTAL_USE seek_t = _std::index_sequence<Is...>;
 template <size_t     N > XTAL_USE seek_s = _std::make_index_sequence<N>;
 template <auto    ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_REF_(o));
+
+XTAL_LET seek_f = []<class ...Is> (Is ...is)
+XTAL_0FN
+{
+	if constexpr (integral_q<Is...>) {
+		return seek_t<is.value...> {};
+	}
+	else {
+		return seek_t<> {};
+	}
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,11 +54,13 @@ XTAL_0EX
 template <         class ...Ts>  XTAL_TYP seek_front;
 template <class T, class ...Ts>  XTAL_TYP seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>  XTAL_USE seek_front_t = typename seek_front<Ts...>::type;
+template <         auto  ...Ns>  XTAL_LET seek_front_n = seek_front_t<cardinal_t<Ns>...>::value;
 
 template <         class ...Ts>  XTAL_TYP seek_back;
 template <class T, class ...Ts>  XTAL_TYP seek_back<T, Ts...> : seek_back<Ts...> {};
 template <class T             >  XTAL_TYP seek_back<T       >                    {using type = T;};
 template <         class ...Ts>  XTAL_USE seek_back_t = typename seek_back<Ts...>::type;
+template <         auto  ...Ns>  XTAL_LET seek_back_n = seek_back_t<cardinal_t<Ns>...>::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////

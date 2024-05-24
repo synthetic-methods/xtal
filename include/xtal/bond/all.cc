@@ -6,7 +6,6 @@
 #include "./isokind.cc"
 #include "./isotype.cc"
 #include "./pack.cc"
-#include "./pact.cc"
 #include "./realize.cc"
 #include "./seek.cc"
 #include "./tab.cc"

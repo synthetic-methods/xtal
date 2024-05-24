@@ -33,7 +33,7 @@ void monomer_zipping()
 	U_data ys[] {0, 0, 0, 0};
 	auto zs = _v3::views::zip(xs, ys);
 //	zs[0] = U_group{1, 2};
-	zs[0] = bond::pact_made_f(U_group{1, 2});
+	zs[0] = bond::pack_row_f(U_group{1, 2});
 
 	TRUE_(xs[0] == 1);
 	TRUE_(ys[0] == 2);
@@ -251,9 +251,9 @@ void monomer_chaining__shared()
 
 	using mix_op = monomer_t<U_add, resource::restore<>>;
 	using mix_fn = monomer_t<U_add>;
-	using ndfn = monomer_t<dynamic_count_t>;
+	using idx_fn = monomer_t<dynamic_count_t>;
 
-	auto _xx = ndfn::bind_f();
+	auto _xx = idx_fn::bind_f();
 	auto xhs = mix_op::bind_f(_xx);
 	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
 	auto rhs = mix_fn::bind_f(xhs, let_f(_10));

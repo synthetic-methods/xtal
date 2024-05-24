@@ -23,8 +23,6 @@ TAG_("scalar")
 
 	TRY_("construction")
 	{
-		using _std::get;
-
 		auto constexpr N_size = 2;
 		using W = scalar_t<T_alpha[N_size]>;
 

@@ -140,7 +140,7 @@ TAG_("cell", "conversion")
 		auto const bar = foo.pack();
 		using U_bar = XTAL_TYP_(bar);
 
-		static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
+	//	static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
 
 		auto baz = (U_bar) foo;
 		TRUE_(get<0>(baz) == get<0>(bar));

@@ -752,8 +752,8 @@ public:
 	static_assert(root_f<-2>(2) == (alpha_t) 0.7071067811865475244008443621048490393L);
 	static_assert(root_f<-2>(3) == (alpha_t) 0.5773502691896257645091487805019574556L);
 
-	static_assert(_std::get<0>(roots_f< 2>(2)) == (alpha_t) 1.4142135623730950488016887242096980786L);
-	static_assert(_std::get<1>(roots_f< 2>(2)) == (alpha_t) 0.7071067811865475244008443621048490393L);
+	static_assert(get<0>(roots_f< 2>(2)) == (alpha_t) 1.4142135623730950488016887242096980786L);
+	static_assert(get<1>(roots_f< 2>(2)) == (alpha_t) 0.7071067811865475244008443621048490393L);
 
 
 

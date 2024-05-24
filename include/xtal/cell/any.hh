@@ -206,14 +206,23 @@ struct defer
 		XTAL_0FX
 		{
 			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(f(S_::template head<I>()...)) (bond::seek_s<arity::value> {});
+				XTAL_0FN_(f(S_::template head<I>()...))
+			(bond::seek_s<arity::value> {});
 		}
 		template <class F>
 		XTAL_TN2 make()
 		XTAL_0EX {return apply([] XTAL_1FN_(F));}
 
 		///\
-		Tuple conversion (via `make`). \
+		Sequence conversion. \
+
+		XTAL_TN2 seek()
+		XTAL_0FX
+		{
+			return apply(bond::seek_f);
+		}
+		///\
+		Tuple conversion. \
 
 		XTAL_TN2 pack()
 		XTAL_0FX
@@ -254,10 +263,10 @@ template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self(
 namespace xtal
 {////////////////////////////////////////////////////////////////////////////
 
-template <size_t N> XTAL_TN1 get(cell::any_q auto const &&t) {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_TN1 get(cell::any_q auto       &&t) {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_TN1 get(cell::any_q auto const  &t) {return            t.template head<N>();};
-template <size_t N> XTAL_TN1 get(cell::any_q auto        &t) {return            t.template head<N>();};
+template <size_t N> XTAL_FN2 get(cell::any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <size_t N> XTAL_FN2 get(cell::any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <size_t N> XTAL_FN2 get(cell::any_q auto const  &t) XTAL_0EX {return          (t).template head<N>();};
+template <size_t N> XTAL_FN2 get(cell::any_q auto        &t) XTAL_0EX {return          (t).template head<N>();};
 
 
 }//////////////////////////////////////////////////////////////////////////

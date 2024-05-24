@@ -135,7 +135,7 @@ template <unbased_q     T >	XTAL_TYP         debased<T       &>:	logical<1> {usi
 template <unbased_q     T >	XTAL_TYP         debased<T const &>:	logical<1> {using type = const T*;};
 template <class         T >	XTAL_ASK         debased_q         =	debased<T>::value;
 
-template <class         T >	XTAL_TYP         rebased           :	logical<1> {using type = _std::remove_reference_t<T>;};
+template <class         T >	XTAL_TYP         rebased           :	logical<1> {using type = based_t<T>;};
 template <unbased_q     T >	XTAL_TYP         rebased<T       &>:	logical<0> {using type =       T&;};
 template <unbased_q     T >	XTAL_TYP         rebased<T const &>:	logical<0> {using type = const T&;};
 template <class         T >	XTAL_ASK         rebased_q         =	rebased<T>::value;
