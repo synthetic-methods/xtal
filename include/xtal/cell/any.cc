@@ -142,13 +142,17 @@ TAG_("cell", "conversion")
 
 	//	static_assert(_std::same_as<U_bar, _std::tuple<bool, int, float>>);
 
+		//\
 		auto baz = (U_bar) foo;
+		auto baz = foo.pack();
 		TRUE_(get<0>(baz) == get<0>(bar));
 		TRUE_(get<1>(baz) == get<1>(bar));
 		TRUE_(get<2>(baz) == get<2>(bar));
 
-	//	TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
-		TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
+		//\
+		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), foo));// nope...
+		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0), bond::pack_row_f(foo)));
+	//	TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(XTAL_REF_(oo) +...+ 0)));
 		TRUE_(3 == _std::tuple_size_v<U_foo>);
 		TRUE_(3 == _std::tuple_size_v<U_bar>);
 

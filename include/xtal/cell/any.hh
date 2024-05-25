@@ -100,7 +100,7 @@ struct define
 		}
 		///<\returns a tuple representation of `this`. \
 
-		using arity = cardinal_0;
+		using pack_size = cardinal_0;
 		///< The `std::tuple_size` of `this`. \
 
 	};
@@ -198,42 +198,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		using arity = cardinal_t<S_::arity::value + 1>;
-		///\
-		Tuple application. \
-
-		XTAL_TN2 apply(auto &&f)// TODO: Require `std::invocable`.
-		XTAL_0FX
-		{
-			return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(f(S_::template head<I>()...))
-			(bond::seek_s<arity::value> {});
-		}
-		template <class F>
-		XTAL_TN2 make()
-		XTAL_0EX {return apply([] XTAL_1FN_(F));}
-
-		///\
-		Sequence conversion. \
-
-		XTAL_TN2 seek()
-		XTAL_0FX
-		{
-			return apply(bond::seek_f);
-		}
-		///\
-		Tuple conversion. \
-
-		XTAL_TN2 pack()
-		XTAL_0FX
-		{
-			return apply(bond::pack_f);
-		}
-		XTAL_FN2 pack(XTAL_TYP_(XTAL_ANY_(S_).pack()) const &tuple)
-		XTAL_0EX
-		{
-			return _std::apply([] XTAL_1FN_(S_), tuple);
-		}
+		using pack_size = cardinal_t<S_::pack_size::value + 1>;
 
 	};
 };
@@ -259,25 +224,14 @@ template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self(
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-
-namespace xtal
-{////////////////////////////////////////////////////////////////////////////
-
-template <size_t N> XTAL_FN2 get(cell::any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_FN2 get(cell::any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_FN2 get(cell::any_q auto const  &t) XTAL_0EX {return          (t).template head<N>();};
-template <size_t N> XTAL_FN2 get(cell::any_q auto        &t) XTAL_0EX {return          (t).template head<N>();};
-
-
-}//////////////////////////////////////////////////////////////////////////
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
 template <xtal::cell::any_q T>
-struct tuple_size<T> : xtal::cardinal_t<T::arity::value> {};
+struct tuple_size<T> : T::pack_size {};
 
 template <size_t N, xtal::cell::any_q T>
-struct tuple_element<N, T> {using type = XTAL_TYP_(XTAL_ANY_(T).template head<N>());};
+struct tuple_element<N, T> {using type = typename T::template head_t<integral_constant<size_t, N>>;};
 
 
 }//////////////////////////////////////////////////////////////////////////

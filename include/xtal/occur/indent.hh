@@ -24,9 +24,11 @@ template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<ordi
 template <integral_q ...Ns>
 struct indent<Ns...>
 {
-	template <class S> using component_t = XTAL_TYP_(bond::pack_item_f<Ns{}...>(XTAL_ANY_(S)));
-	using item = bond::compost<component_t>;
-	using leaf = bond::compost<conferred_t>;
+	template <class S>
+	using component_t = bond::intrapack_item_t<S, Ns{}...>;
+	
+	using item = bond::compose_t<component_t>;
+	using leaf = bond::compose_t<conferred_t>;
 	using path = confined<bond::tag<indent>, confer<Ns>...>;
 	
 	using subkind = bond::compose<path, leaf, item>;

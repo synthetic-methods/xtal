@@ -34,7 +34,7 @@ TAG_("phasor")
 		T_sigma constexpr result_n = 0x1000;
 		T_alpha result_a[2][result_n]{};
 
-		XTAL_VAR result_o = bond::pack_zip_f<2>(result_n, result_a);
+		XTAL_VAR result_o = bond::pack_table_f<2>(result_n, result_a);
 		XTAL_USE result_t = reiterated_t<XTAL_TYP_(result_o)>;
 		XTAL_LET x_delta  = re::ratio_f(7);
 		XTAL_VAR x_phi = X_phi        {}; x_phi <<=                          {re::ratio_f(7)};
@@ -125,7 +125,7 @@ TAG_("phasor")
 		T_alpha x_d4 = re::haplo_f(4);
 		T_alpha x_d3 = re::haplo_f(3);
 		T_alpha z_outs[2][8]{};
-		auto  z_out = bond::pack_zip_f<2>(8, z_outs);
+		auto  z_out = bond::pack_table_f<2>(8, z_outs);
 		using Z_out = reiterated_t<XTAL_TYP_(z_out)>;
 
 		auto z_psi = Z_psi::bind_f();
@@ -174,7 +174,7 @@ TAG_("phasor")
 		T_alpha x_d4 = re::haplo_f(4);
 		T_alpha x_d3 = re::haplo_f(3);
 		T_alpha z_outs[2][8]{};
-		auto z_out = bond::pack_zip_f<2>(8, z_outs);
+		auto z_out = bond::pack_table_f<2>(8, z_outs);
 
 		auto z_phi = Z_phi::bind_f();
 		static_assert(is_q<X_phi, decltype(z_phi.store().front())>);

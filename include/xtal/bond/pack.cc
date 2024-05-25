@@ -18,7 +18,7 @@ TAG_("pack")
 	TRY_("bind")
 	{
 		double table[2][2] = {{0, 0}, {0, 0}};
-		auto zip = pack_zip_f<2>(2) (table);
+		auto zip = pack_table_f<2>(2) (table);
 		zip[0] = pack_f(1.0, 2.0);
 		TRUE_(1 == table[0][0]);
 		TRUE_(2 == table[1][0]);

@@ -297,13 +297,13 @@ struct refer
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class        X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(x), XTAL_REF_(y));}
-template <class        X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
+template <any_q Y, class    X > XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(x), XTAL_REF_(y));}
+template <any_q Y, class    X > XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
 
-template <bond::pack_q X, any_q Y> XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
-//\
-template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
-template <bond::pack_q X, any_q Y> XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+template <any_q Y, class ...Xs> XTAL_OP2 << (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+template <any_q Y, class ...Xs> XTAL_OP2 << (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+template <any_q Y, class ...Xs> XTAL_OP2 >> (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
+template <any_q Y, class ...Xs> XTAL_OP2 >> (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
 
 
 ///////////////////////////////////////////////////////////////////////////////

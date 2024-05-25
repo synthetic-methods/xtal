@@ -11,53 +11,66 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Subtyped> concept   compose_q =     (...and _detail::compose_q<Subtyped>);
-template <typename ...Subtyped> concept decompose_q = not (...and _detail::compose_q<Subtyped>);
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////////////////////
-///\
-Composes the supplied `Outer::subtype`s to define `::subtype<S, Inner...>`. \
-
-///\note\
-The `Outer...::subtype`s are applied to `::subtype<S, Inner...>` from right-to-left, \
-while the `Inner...::subtype`s are applied to `S` from left-to-right. \
-
-template <typename ...Outer>
-struct compose;
-
-template <>
-struct compose<>
+template <template <class, typename...> class Subtype>
+struct compost
 {
-private:
-	template <class S, typename  ...Inner                > struct compact {using type = S;};
-	template <class S, incomplete_q Inner, typename ..._s> struct compact<S, Inner, _s...> : compact<                                 S , _s...> {};
-	template <class S, typename     Inner, typename ..._s> struct compact<S, Inner, _s...> : compact<typename Inner::template subtype<S>, _s...> {};
-
-public:
-	template <class S, typename ...Inner>
-	using subtype = typename compact<S, Inner...>::type;
+	template <class S, class ...Inners>                            struct pseudokind               {using type = Subtype<S, Inners...>;};
+	template <class S, class ...Inners> requires none_q<Inners...> struct pseudokind<S, Inners...> {using type = Subtype<S           >;};
+	template <class S, class ...Inners>
+	//\
+	using subtype = Subtype<S, Inners...>;
+	using subtype = typename pseudokind<S, Inners...>::type;
+	//\note\
+	Even when `not sizeof...(Ts)`, `clang` can't instantiate unary alias-templates with `T, Ts...`. \
 
 };
-template <typename Outer, typename ..._s>
-struct compose<Outer, _s...>
+template <class S,                   typename ...Inners> struct compose {using type = S;};
+template <class S, typename   Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<                                 S , Inners...> {};
+template <class S, complete_q Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<typename Inner::template subtype<S>, Inners...> {};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+///\
+Defines `typename compose<Outers...>::template subtype<S, Inners...>`, \
+where `S` provides the kernel to which: \
+-	`Inners::template subtype<S>` are applied from left-to-right. \
+-	`Outers::template subtype<S>` are applied from right-to-left. \
+
+template <                  typename ...Outers> struct compose;
+template <typename   Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<Outers...> {};
+template <complete_q Outer, typename ...Outers> struct compose<Outer, Outers...>
 {
-	template <class S, typename ...Inner>
+	template <class S, typename ...Inners>
 	using subtype = typename Outer::template subtype<
-		typename compose<_s...>::template subtype<S, Inner...>
+		typename compose<Outers...>::template subtype<S, Inners...>
 	>;
 
 };
-template <incomplete_q Outer, typename ..._s>
-struct compose<Outer, _s...> : compose<_s...>
+template <>
+struct compose<>
 {
+	template <class S, typename ...Inners>
+	using subtype = typename _detail::compose<S, Inners...>::type;
+
 };
+///\
+Composes the `Subtypes`s right-to-left. \
+
+template <template <class, class...> class ...Subtypes>
+XTAL_USE compose_t = compose<_detail::compost<Subtypes>...>;
 
 ///\
-Applys the `Inner::subtype`s to `S` from left-to-right. \
+Applies the `Inners::subtype`s to `S` from left-to-right. \
 
-template <class S, typename ...Inner>
-using compose_s = typename compose<>::template subtype<S, Inner...>;
+template <class S, typename ...Inners>
+using compose_s = typename compose<>::template subtype<S, Inners...>;
+
+template <typename ...Outers> concept   compose_q =     complete_q<compose_t<Outers::template subtype...>>;
+template <typename ...Outers> concept decompose_q = not complete_q<compose_t<Outers::template subtype...>>;
+
 
 
 ///////////////////////////////////////////////////////////////////////////////

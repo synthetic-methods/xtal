@@ -60,8 +60,6 @@ template <              class ...Ts>	XTAL_USE       complete_t =	typename comple
 template <class               ...Ts>	XTAL_ASK         common_q =	requires {typename _std::common_type_t<Ts...>;};
 template <class               ...Ts>	XTAL_USE         common_t =	                   _std::common_type_t<Ts...>;
 
-template <auto       F             >	XTAL_TYP        operate     {class type {public: XTAL_OP1() (auto &&...oo) {return F(XTAL_REF_(oo)...);}};};
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -215,10 +213,6 @@ struct devolve<U, Ns...> : involve<U, Ns...>
 	};
 
 };
-
-
-template <class         X >	XTAL_TYP       argument     {using type = X      &&;};
-template <based_q       X >	XTAL_TYP       argument<X>  {using type = X const &;};
 
 
 ////////////////////////////////////////////////////////////////////////////////

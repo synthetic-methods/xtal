@@ -13,36 +13,6 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <class, typename...> class Subtype>
-struct compost
-{
-	template <class S, class ..._s>
-	struct pseudokind
-	{
-		using type = Subtype<S, _s...>;
-
-	};
-	template <class S, class ..._s> requires none_q<_s...>
-	struct pseudokind<S, _s...>
-	{
-		using type = Subtype<S>;
-
-	};
-	template <class S, class ..._s>
-	using subtype = typename pseudokind<S, _s...>::type;
-//	using subtype = Subtype<S, _s...>;
-//	NOTE: `clang` can't instantiate unary alias-templates with `T, Ts...` (with `0 == sizeof...(Ts)`).
-
-};
-template <template <class, typename...> class Subtype>
-concept compost_q = requires {typename compost<Subtype>;};
-
-template <typename Subtyped>
-concept compose_q = compost_q<Subtyped::template subtype>;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 template <class U_that, class U_this, class U_head=void>
 struct query
 {

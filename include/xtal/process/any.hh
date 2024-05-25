@@ -93,6 +93,10 @@ struct define
 		template <class ...Xs>
 		struct figure
 		{
+			template <class   X> struct argument      {using type = X      &&;};
+			template <based_q X> struct argument<X>   {using type = X const &;};
+			template <class   X> using  argument_t = typename argument<X>::type;
+
 			template <auto ...Is>
 			class type
 			{
@@ -129,8 +133,12 @@ struct define
 		struct binding<Xs...>
 		{
 			//\
+			template <class   X> using  argument_t = rebased_t<X>;//FIXME: `no matching member function for call to 'copy_assign'`
+			template <class   X> using  argument_t =   based_t<X>;
+
+			//\
+			using signature_t = bond::pack_t<argument_t<Xs>...>;
 			using signature_t = cell::packed_t<Xs...>;
-			using signature_t = bond::pack_t<based_t<Xs>...>;
 			
 			using Y_result = _std::invoke_result_t<T, Xs...>;
 			using Y_return = iteratee_t<Y_result>;
@@ -164,30 +172,24 @@ struct define
 
 				XTAL_TO4_(XTAL_TN2 slots(), R_::template head<1>())
 				
-				template <size_t N, size_t ...Ns>
+				template <size_t ...Ns>
 				XTAL_TN2 slot()
 				XTAL_0EX
 				{
-					if constexpr (0 == sizeof...(Ns)) {
-						return get<N>(slots());
-					}
-					else {
-						return get<N>(slots()).template slot<Ns...>();
-					}
+					return bond::pack_item_f<Ns...>(slots());
 				}
 				template <class F>
-				XTAL_TN2 make()
-				XTAL_0EX
+				XTAL_TN2 apply()
+				XTAL_0FX
 				{
 					return apply([] XTAL_1FN_(F));
 				}
-				XTAL_TN2 apply(auto &&f)
-				XTAL_0EX
+				XTAL_DO2_(XTAL_TN2 apply(auto &&f),
 				{
 					//\
-					return slots().apply([f = XTAL_REF_(f)] XTAL_1FN_(f));
-					return _std::apply([f = XTAL_REF_(f)] XTAL_1FN_(f), slots());
-				}
+					return _std::apply(XTAL_REF_(f), slots());
+					return slots().apply(XTAL_REF_(f));
+				})
 
 
 			public:// OPERATION

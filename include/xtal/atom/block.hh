@@ -90,18 +90,8 @@ struct block<U_data[N_data]>
 		XTAL_TN2 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
 
 	public:// CONVERSION
-		XTAL_TN1 apply(auto &&f)
-		XTAL_0EX
-		{
-			using _std::get;
-
-			return [&, this]<auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(f(get<I>(*this)...))
-			(bond::seek_s<N_data> {});
-		}
-		template <auto f>
-		XTAL_TN1 apply()
-		XTAL_0EX
+		XTAL_TN2 apply(auto &&f)
+		XTAL_0FX
 		{
 			using _std::get;
 
@@ -110,7 +100,7 @@ struct block<U_data[N_data]>
 			(bond::seek_s<N_data> {});
 		}
 		template <class F>
-		XTAL_TN2 make()
+		XTAL_TN2 apply()
 		XTAL_0EX
 		{
 			using _std::get;

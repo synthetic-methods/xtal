@@ -241,21 +241,22 @@ template <class X, class Y>
 XTAL_FN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
+	return false;
+}
+template <class X, class Y> requires common_q<X, Y>
+XTAL_FN2 equal_f(X const &x, Y const &y)
+XTAL_0EX
+{
 	using W = common_t<X, Y>;
 	return (W) x == (W) y;
 }
-template <iterated_q X, iterated_q Y> requires epimorphic_q<X, Y>
+template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
 	using _v3::ranges::equal;
 
-	if constexpr (epimorphic_q<X, Y>) {
-		return equal(XTAL_REF_(x), XTAL_REF_(y));
-	}
-	else {
-		return false;
-	}
+	return equal(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 template <class X, class Y>
@@ -264,16 +265,19 @@ XTAL_0EX
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
-template <iterated_q X, iterated_q Y>
+template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
 XTAL_FN2 equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
-	if constexpr (isomorphic_q<X, Y>) {
-		return x.begin() == y.begin() and x.end() == y.end();
+	if constexpr (requires {x.begin() == y.begin() and x.end() == y.end();}) {
+		return &x == &y or x.begin() == y.begin() and x.end() == y.end();
+	}
+	if constexpr (requires {x.begin() == y.begin();}) {
+		return &x == &y or x.begin() == y.begin();
 	}
 	else {
-		return false;
+		return &x == &y;
 	}
 }
 
