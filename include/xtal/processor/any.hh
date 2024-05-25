@@ -44,7 +44,7 @@ struct defer<U>
 };
 template <_detail::unprocessed_q U>
 struct defer<U>
-:	defer<_v3::ranges::repeat_view<U>>
+:	defer<_xtd::ranges::repeat_view<U>>
 {
 };
 template <_detail::reprocessed_q U>
@@ -106,16 +106,16 @@ struct refer
 		XTAL_DO2_(template <auto ...>
 		XTAL_TN2 functor(),
 		{
-			using _v3::views::slice;
+			using _xtd::ranges::views::slice;
 
-			using I = iteratee_t<U_render>; using re = bond::realize<I>;
+			using I = iteratee_t<U_render>; using op = bond::operate<I>;
 			auto const &m = S_::functor();// NOTE: Must be &?
 			auto const &u = S_::template head<U_render>();
 		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
 		
 			I const u_size = count_f(u);
 			I const m_size = count_f(m);
-			I const m_mask = m_size >> re::positive.depth;
+			I const m_mask = m_size >> op::positive.depth;
 			I i = u.front();
 			I j = u_size + i;
 			i &= ~m_mask;

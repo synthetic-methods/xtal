@@ -27,7 +27,7 @@ TAG_("thunk", "process")
 		using U_render = occur::render_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = occur::inferred_t<class gate_a, typename bond::realized::alpha_t>;
+		using V_gate = occur::inferred_t<class gate_a, typename bond::operating::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -77,7 +77,7 @@ TAG_("thunk", "process")
 		using U_render = occur::render_t<>;
 		using U_cue = cell::cue_s<>;
 		
-		using V_gate = occur::inferred_t<class gate_a, typename bond::realized::alpha_t>;
+		using V_gate = occur::inferred_t<class gate_a, typename bond::operating::alpha_t>;
 		using U_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 
 		U_gate u_gate;
@@ -103,7 +103,7 @@ void thunk_processor()
 	using namespace resource;
 //	using namespace schedule;
 
-	using alpha_t = typename bond::realized::alpha_t;
+	using alpha_t = typename bond::operating::alpha_t;
 
 	class L_gate;
 
@@ -132,12 +132,12 @@ void thunk_processor()
 	fx_gate <<= (U_cue) 7 << (V_gate)  7;
 	fx_gate <<= (U_cue) 7 << (V_gate) 77;
 
-	fx_gate >>= U_render(N_store)*0; _v3::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_render(N_store)*0; _xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	fx_gate <<= (U_cue) 4 << (V_gate) 11;
 	
-	fx_gate >>= U_render(N_store)*1; _v3::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_render(N_store)*1; _xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }

@@ -46,7 +46,7 @@ struct indent<Ns...>
 		using S_::S_;
 		
 		///\note\
-		Any integral/real re/presentation is interpreted as a full-width fixed-point value \
+		Any integral/real op/presentation is interpreted as a full-width fixed-point value \
 		(\see `algebra/differential/modular.hh`). \
 
 		///\todo\
@@ -55,7 +55,7 @@ struct indent<Ns...>
 
 		XTAL_CXN subtype(U_ u)
 		XTAL_REQ real_number_q<U_> and integral_number_q<V_>
-		:	S_{XTAL_MOV_(u)*bond::realize<U_>::diplo_f()}
+		:	S_{XTAL_MOV_(u)*bond::operate<U_>::diplo_f()}
 		{}
 		XTAL_CON subtype(reembrace_t<W_> w)
 		XTAL_REQ bounded_q<W_>

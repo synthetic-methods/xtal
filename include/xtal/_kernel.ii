@@ -71,19 +71,19 @@ Restric `eigenvalue_q` to `Array`-derived types.
 XTAL_DEF_(return,inline)
 XTAL_LET map_f(auto &&f)
 XTAL_0EX
-{	return _v3::views::generate(XTAL_REF_(f));
+{	return _xtd::ranges::views::     generate(XTAL_REF_(f));
 }
 template <iterable_q X>
 XTAL_DEF_(return,inline)
 XTAL_LET map_f(auto &&f, X &&x)
 XTAL_0EX
-{	return _v3::views::transform(XTAL_REF_(x), XTAL_REF_(f));
+{	return _xtd::ranges::views::    transform(XTAL_REF_(x), XTAL_REF_(f));
 }
 template <iterable_q ...Xs>
 XTAL_DEF_(return,inline)
 XTAL_LET map_f(auto &&f, Xs &&...xs)
 XTAL_0EX
-{	return _v3::views::zip_with(XTAL_REF_(f), XTAL_REF_(xs)...);
+{	return _xtd::ranges::views::zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);
 }
 
 #if __has_include(<Eigen/Core>)
@@ -91,13 +91,13 @@ template <eigenvalue_q X>
 XTAL_DEF_(return,inline)
 XTAL_LET map_f(auto &&f, X &&x)
 XTAL_0EX
-{	return XTAL_REF_(x).unaryExpr(XTAL_REF_(f));
+{	return XTAL_REF_(x).  unaryExpr(XTAL_REF_(f));
 }
 template <eigenvalue_q X, eigenvalue_q Y>
 XTAL_DEF_(return,inline)
 XTAL_LET map_f(auto &&f, X &&x, Y &&y)
 XTAL_0EX
-{	return XTAL_REF_(x).binaryExpr(XTAL_REF_(y), XTAL_REF_(f));
+{	return XTAL_REF_(x). binaryExpr(XTAL_REF_(y), XTAL_REF_(f));
 }
 template <eigenvalue_q X, eigenvalue_q Y, eigenvalue_q Z>
 XTAL_DEF_(return,inline)
@@ -170,10 +170,10 @@ XTAL_DEF_(return,inline)
 XTAL_LET point_f(T &&t)
 XTAL_0EX
 {
-	using _v3::ranges::begin;
-	using _v3::ranges::end;
-	using _v3::ranges::next;
-	using _v3::ranges::prev;
+	using _xtd::ranges::begin;
+	using _xtd::ranges::end;
+	using _xtd::ranges::next;
+	using _xtd::ranges::prev;
 	
 	if constexpr (iterator_q<T>) {
 		if constexpr (0 == N_offset) {
@@ -219,7 +219,7 @@ XTAL_DEF_(return,inline)
 XTAL_FN1 account_f(T &&t)
 XTAL_0EX
 {
-	using _v3::views::take;
+	using _xtd::ranges::views::take;
 	return take(count_f(XTAL_REF_(t)));
 }
 template <class T>
@@ -227,7 +227,7 @@ XTAL_DEF_(return,inline)
 XTAL_FN1 discount_f(T &&t)
 XTAL_0EX
 {
-	using _v3::views::drop;
+	using _xtd::ranges::views::drop;
 	return drop(count_f(XTAL_REF_(t)));
 }
 
@@ -254,7 +254,7 @@ template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
-	using _v3::ranges::equal;
+	using _xtd::ranges::equal;
 
 	return equal(XTAL_REF_(x), XTAL_REF_(y));
 }
@@ -323,7 +323,7 @@ class
 	XTAL_0FX
 	{
 		using W = XTAL_TYP_(x);
-		if constexpr (_v3::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
+		if constexpr (_xtd::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
 			print_list(XTAL_REF_(x));
 		}
 		else {

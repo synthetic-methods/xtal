@@ -21,13 +21,13 @@ namespace xtal::_test
 
 using namespace bond;
 
-using scale_t = occur::inferred_t<class scale_a, typename bond::realized::alpha_t>;
-using level_t = occur::inferred_t<class level_a, typename bond::realized::alpha_t>;
+using scale_t = occur::inferred_t<class scale_a, typename bond::operating::alpha_t>;
+using level_t = occur::inferred_t<class level_a, typename bond::operating::alpha_t>;
 /*/
-using onset_t = occur::inferred_t<class onset_a, typename bond::realized::alpha_t>;
+using onset_t = occur::inferred_t<class onset_a, typename bond::operating::alpha_t>;
 /*/
 struct onset
-:	occur::confer<typename bond::realized::alpha_t
+:	occur::confer<typename bond::operating::alpha_t
 	,	occur::any<class onset_a>
 	,	bond::assay<(1 << 7)>
 	>
@@ -115,7 +115,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename bond::realized::iota_t;
+	using U_count  = typename bond::operating::iota_t;
 	using U_restep = occur::restep_t<U_count>;
 
 	template <class T>

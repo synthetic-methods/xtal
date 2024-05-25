@@ -11,7 +11,7 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_p U=typename bond::realized::iota_t>
+template <integral_p U=typename bond::operating::iota_t>
 struct restep
 {
 	using subkind = defer<U>;
@@ -29,14 +29,14 @@ struct restep
 
 	};
 };
-template <integral_p U=typename bond::realized::iota_t>
+template <integral_p U=typename bond::operating::iota_t>
 using restep_t = confined_t<restep<U>>;
 
 XTAL_FN2 restep_f(auto &&w)
 XTAL_0EX
 {
-	using re = bond::realize<XTAL_TYP_(w)>;
-	return restep_t<typename re::iota_t>(XTAL_REF_(w));
+	using op = bond::operate<decltype(w)>;
+	return restep_t<typename op::iota_t>(XTAL_REF_(w));
 }
 
 

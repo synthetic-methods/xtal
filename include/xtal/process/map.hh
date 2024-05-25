@@ -39,14 +39,24 @@ struct map<F, As...>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			return F{} (S_::functor(XTAL_REF_(xs)...));
+			if constexpr (_std::invocable<F, decltype(xs)...>) {
+				return F{} (S_::functor(XTAL_REF_(xs)...));
+			}
+			else {
+				return F   (S_::functor(XTAL_REF_(xs)...));
+			}
 		})
 
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
 		{
-			return F{} (S_::function(XTAL_REF_(xs)...));
+			if constexpr (_std::invocable<F, decltype(xs)...>) {
+				return F{} (S_::function(XTAL_REF_(xs)...));
+			}
+			else {
+				return F   (S_::function(XTAL_REF_(xs)...));
+			}
 		}
 
 	};

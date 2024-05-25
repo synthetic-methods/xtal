@@ -17,7 +17,7 @@ TAG_("cross", "process")
 {
 	TRY_("shape with matrix")
 	{
-		using namespace _v3::views;
+		using namespace _xtd::ranges::views;
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
@@ -38,7 +38,7 @@ TAG_("cross", "processor")
 {
 	TRY_("shape with matrix")
 	{
-		using namespace _v3::views;
+		using namespace _xtd::ranges::views;
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
@@ -60,7 +60,7 @@ TAG_("cross", "processor")
 	}
 	TRY_("shape with matrix indent")
 	{
-		using namespace _v3::views;
+		using namespace _xtd::ranges::views;
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
@@ -79,7 +79,7 @@ TAG_("cross", "processor")
 	}
 	TRY_("shape with column indent")
 	{
-		using namespace _v3::views;
+		using namespace _xtd::ranges::views;
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
@@ -100,7 +100,7 @@ TAG_("cross", "processor")
 	}
 	TRY_("shape with vector indent")
 	{
-		using namespace _v3::views;
+		using namespace _xtd::ranges::views;
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;

@@ -223,9 +223,9 @@ struct monomer<U, As...>
 				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					using _v3::ranges::move;
-					using _v3::ranges::copy;
-					using _v3::ranges::copy_n;
+					using _xtd::ranges::move;
+					using _xtd::ranges::copy;
+					using _xtd::ranges::copy_n;
 
 					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 						return 1;

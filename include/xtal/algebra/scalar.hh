@@ -29,10 +29,10 @@ struct scalar<U_data> : scalar<U_data[2]>
 template <class U_data, int N_data>
 struct scalar<U_data[N_data]>
 {
-	using re = bond::realize<U_data>;
-	using U_delta = typename re::delta_t;
-	using U_sigma = typename re::sigma_t;
-	using U_alpha = typename re::alpha_t;
+	using op = bond::operate<U_data>;
+	using U_delta = typename op::delta_t;
+	using U_sigma = typename op::sigma_t;
+	using U_alpha = typename op::alpha_t;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::type::transverse::template homotype<T>;

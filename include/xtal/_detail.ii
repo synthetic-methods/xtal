@@ -251,9 +251,9 @@ template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::t
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
 
 
-template <auto        N=0 >	XTAL_LET        induced_n =	_v3::ranges::iota_view{N};
-template <class         U >	XTAL_USE        induced_t =	_v3::ranges::iota_view<U>;
-template <class         U >	XTAL_USE       interval_t =	_v3::ranges::iota_view<U, U>;
+template <auto        N=0 >	XTAL_LET        induced_n =	_xtd::ranges::iota_view{N};
+template <class         U >	XTAL_USE        induced_t =	_xtd::ranges::iota_view<U>;
+template <class         U >	XTAL_USE       interval_t =	_xtd::ranges::iota_view<U, U>;
 
 template <class         T >	XTAL_TYP       iteratee   ;
 template <class         T >	XTAL_TYP       iterated   ;
@@ -311,10 +311,10 @@ struct reiterated
 {
 	XTAL_USE I = iterator_t<T>;
 	XTAL_USE J = sentinel_t<T>;
-	XTAL_LET K = _v3::ranges::sized_sentinel_for<J, I>?
+	XTAL_LET K = _xtd::ranges::sized_sentinel_for<J, I>?
 		ranges::subrange_kind::  sized:
 		ranges::subrange_kind::unsized;
-	XTAL_USE type = _v3::ranges::subrange<I, J, K>;
+	XTAL_USE type = _xtd::ranges::subrange<I, J, K>;
 
 };
 template <data_q        T >
@@ -325,7 +325,7 @@ struct reiterated<T>
 };
 template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;
 template <class         T >	XTAL_ASK     reiterated_q =	fungible_q<T, reiterated_t<T>>;
-template <class         T >	XTAL_USE     initerated_t =	_v3::ranges::view_interface<T>;
+template <class         T >	XTAL_USE     initerated_t =	_xtd::ranges::view_interface<T>;
 
 template <class         T >	XTAL_ASK      allocated_q =	requires {typename T::allocator_type;};
 template <class         T >	XTAL_ASK   materialized_q =	allocated_q<T> or array_q<T>;

@@ -45,7 +45,7 @@ struct revise<U>
 		XTAL_TN2 slice(counted_q auto &&w)
 		XTAL_0FX
 		{
-			using _v3::views::slice;
+			using _xtd::ranges::views::slice;
 
 			auto i = w.front(), j = w.back() + 1;
 			return revise_f(span()|slice(i, j));

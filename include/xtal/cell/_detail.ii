@@ -269,7 +269,7 @@ struct defer_field<U>
 template <size_t N_width>
 struct defer_field<unit_t[N_width]>
 {
-	XTAL_LET N_depth = bond::realized::bit_ceiling_f(N_width);
+	XTAL_LET N_depth = bond::operating::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
 	using T_head = size_t;

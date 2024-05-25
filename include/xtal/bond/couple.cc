@@ -15,11 +15,11 @@ namespace xtal::bond::_test
 
 TAG_("couple")
 {
-	using re = bond::realized;
-	using T_delta = typename re::delta_t;
-	using T_sigma = typename re::sigma_t;
-	using T_alpha = typename re::alpha_t;
-	using T_aphex = typename re::aphex_t;
+	using op = bond::operating;
+	using T_delta = typename op::delta_t;
+	using T_sigma = typename op::sigma_t;
+	using T_alpha = typename op::alpha_t;
+	using T_aphex = typename op::aphex_t;
 
 	TRY_("production (multiplicative)")
 	{

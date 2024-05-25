@@ -16,9 +16,9 @@ namespace xtal::processor::_test
 template <typename ...As>
 void monomer_zipping()
 {
-	using re = bond::realized;
-	using T_sigma = re::sigma_t;
-	using T_alpha = re::alpha_t;
+	using op = bond::operating;
+	using T_sigma = op::sigma_t;
+	using T_alpha = op::alpha_t;
 
 	using            U_data = T_alpha;
 	size_t constexpr U_size = 2;
@@ -31,7 +31,7 @@ void monomer_zipping()
 
 	U_data xs[] {0, 0, 0, 0};
 	U_data ys[] {0, 0, 0, 0};
-	auto zs = _v3::views::zip(xs, ys);
+	auto zs = _xtd::ranges::views::zip(xs, ys);
 //	zs[0] = U_group{1, 2};
 	zs[0] = bond::pack_row_f(U_group{1, 2});
 
@@ -52,8 +52,8 @@ TAG_("monomer", "zipping")
 template <typename ...As>
 void monomer_lifting()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	T_sigma constexpr N_size = 5;
 	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
@@ -70,7 +70,7 @@ void monomer_lifting()
 
 	b <<= U_resize(N_size);
 	b >>= U_render(N_size);
-	_v3::ranges::move(b, a.begin());
+	_xtd::ranges::move(b, a.begin());
 	TRUE_(a == z);
 	
 }
@@ -87,15 +87,15 @@ TAG_("monomer", "lifting")
 template <class mix_t>
 void monomer_provision__advancing()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
-	auto _10 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*10);});
-	auto _11 = _01|_v3::views::transform([] (auto n) {return T_alpha(n*11);});
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
+	auto _11 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*11);});
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
@@ -120,8 +120,8 @@ void monomer_provision__advancing()
 
 //	xhs <<= onset_t((T_alpha) - (99 + 66));
 	auto const yhs = _11
-	|	_v3::views::take(xhs.size())
-	|	_v3::views::transform([] (auto n) {return n + 66 + 99;})
+	|	_xtd::ranges::views::take(xhs.size())
+	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));
 
@@ -129,8 +129,8 @@ void monomer_provision__advancing()
 template <class U_add>
 void monomer_provision__provisioning()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	using provide = resource::restore<constant_t<0x20>>;
 
@@ -140,9 +140,9 @@ void monomer_provision__provisioning()
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
-	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
 	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
@@ -177,12 +177,12 @@ TAG_("monomer", "occur")
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__rvalue()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	size_t constexpr N = 4;
 	
-	using namespace _v3;
+	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
@@ -207,15 +207,15 @@ void monomer_chaining__rvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__lvalue()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	size_t constexpr N = 4;
 
-	using namespace _v3;
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
-	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
+	using namespace _xtd::ranges;
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 	
 	using mix_op = monomer_t<U_add, resource::restore<>>;
 	using mul_op = monomer_t<U_mul, resource::restore<>>;
@@ -239,12 +239,12 @@ void monomer_chaining__lvalue()
 template <class U_add, typename U_mul=dynamic_term_t>
 void monomer_chaining__shared()
 {
-	using T_sigma = typename bond::realized::sigma_t;
-	using T_alpha = typename bond::realized::alpha_t;
+	using T_sigma = typename bond::operating::sigma_t;
+	using T_alpha = typename bond::operating::alpha_t;
 
 	size_t constexpr N = 4;
 
-	using namespace _v3;
+	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});

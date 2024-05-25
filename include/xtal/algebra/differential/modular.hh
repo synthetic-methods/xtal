@@ -41,17 +41,17 @@ struct modular<K_data> : modular<K_data[2]>
 template <class K_data, size_t N_data>
 struct modular<K_data[N_data]>
 {
-	using re = bond::realize<K_data>;
-	using U_delta = typename re::delta_t;
-	using U_sigma = typename re::sigma_t;
-	using U_alpha = typename re::alpha_t;
+	using op = bond::operate<K_data>;
+	using U_delta = typename op::delta_t;
+	using U_sigma = typename op::sigma_t;
+	using U_alpha = typename op::alpha_t;
 	
 	using W_delta = linear_t<U_delta[N_data]>;
 	using W_sigma = linear_t<U_sigma[N_data]>;
 	using W_alpha = linear_t<U_alpha[N_data]>;
 
-	XTAL_LET   ordinant = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*re::diplo_f())));
-	XTAL_LET coordinant = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*re::haplo_f());
+	XTAL_LET   ordinant = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*op::diplo_f())));
+	XTAL_LET coordinant = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*op::haplo_f());
 
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
@@ -121,7 +121,7 @@ struct modular<K_data[N_data]>
 		XTAL_OP1_(T &) /= (number_q auto const &f)
 		XTAL_0EX
 		{
-			return operator*=(re::alpha_1/f);
+			return operator*=(op::alpha_1/f);
 		}
 
 		XTAL_VAR operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
@@ -134,9 +134,9 @@ struct modular<K_data[N_data]>
 		XTAL_OP1_(T &) *= (real_number_q auto const &f)
 		XTAL_0EX
 		{
-			size_t constexpr M_bias = re::N_width >> 3;
-			size_t constexpr M_size = re::half.depth - M_bias;// {52,23} -> {23, 9}
-			auto [m, n] = re::scientific_f((U_alpha) f);
+			size_t constexpr M_bias = op::N_width >> 3;
+			size_t constexpr M_size = op::half.depth - M_bias;// {52,23} -> {23, 9}
+			auto [m, n] = op::scientific_f((U_alpha) f);
 			auto &s = reinterpret_cast<W_delta &>(self());
 			m >>= n - M_size;
 			s >>=     M_size;
@@ -164,7 +164,7 @@ struct modular<K_data[N_data]>
 		XTAL_OP1_(T &) += (real_number_q auto const &f)
 		XTAL_0EX
 		{
-			T_::operator[](0) += re::fractional_f(f);
+			T_::operator[](0) += op::fractional_f(f);
 			return self();
 		}
 		XTAL_OP1_(T &) += (integral_number_q auto const &i)

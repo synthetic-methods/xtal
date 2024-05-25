@@ -24,10 +24,10 @@ and multiplication defined by linear convolution. \
 template <class U_data, int N_data>
 struct serial<U_data[N_data]>
 {
-	using re = bond::realize<U_data>;
-	using U_delta = typename re::delta_t;
-	using U_sigma = typename re::sigma_t;
-	using U_alpha = typename re::alpha_t;
+	using op = bond::operate<U_data>;
+	using U_delta = typename op::delta_t;
+	using U_sigma = typename op::sigma_t;
+	using U_alpha = typename op::alpha_t;
 	
 	template <class T>
 	using allotype = typename lattice<U_data[N_data]>::template homotype<T>;
@@ -59,7 +59,7 @@ struct serial<U_data[N_data]>
 		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{
-			if constexpr (re::alignment_n < N_data) {
+			if constexpr (op::alignment_n < N_data) {
 				for (auto i = N_data; ~--i;) {let(i) *= t.get(0);
 				for (auto j = i; j-- ;) {let(i) += t.get(j)*get(i - j);}}
 			}
@@ -126,7 +126,7 @@ struct serial<U_data[N_data]>
 					}
 					else {
 						return [&]<auto ...I>(bond::seek_t<I...>)
-							XTAL_0FN_(u +...+ (get<I>(s)*re::assign_f((U_sigma) I)))
+							XTAL_0FN_(u +...+ (get<I>(s)*op::assign_f((U_sigma) I)))
 						(bond::seek_s<N_data>{});
 					}
 				}
@@ -141,13 +141,13 @@ struct serial<U_data[N_data]>
 					if constexpr (0 < N_sign) {
 						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
 							auto const &v = get<i>(s);
-							u = re::accumulate_f(u, v, v);
+							u = op::accumulate_f(u, v, v);
 						});
 					}
 					else {
 						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
 							auto const &v = get<i>(s);
-							u = re::accumulate_f(u, v, v, re::assign_f((U_sigma) i));
+							u = op::accumulate_f(u, v, v, op::assign_f((U_sigma) i));
 						});
 					}
 					return u;
@@ -160,7 +160,7 @@ struct serial<U_data[N_data]>
 					
 					U_data u{};
 					bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {
-						u = re::accumulate_f(u, get<i>(s), get<i>(t));
+						u = op::accumulate_f(u, get<i>(s), get<i>(t));
 					});
 					return u;
 				}

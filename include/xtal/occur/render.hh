@@ -381,8 +381,8 @@ public:
 		XTAL_OP1_(T_self &) *=(V v)
 		XTAL_0EX
 		{
-			using _v3::ranges::distance;
-			using _v3::ranges::next;
+			using _xtd::ranges::distance;
+			using _xtd::ranges::next;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
 			(void) S_::span(*next(i0, nm), *next(iM, nm));
@@ -392,8 +392,8 @@ public:
 		XTAL_OP1_(T_self &) /=(V v)
 		XTAL_0EX
 		{
-			using _v3::ranges::distance;
-			using _v3::ranges::prev;
+			using _xtd::ranges::distance;
+			using _xtd::ranges::prev;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
 			(void) S_::span(*prev(i0, nm), *prev(iM, nm));
@@ -406,7 +406,7 @@ public:
 		XTAL_OP1_(T_self &) +=(V v)
 		XTAL_0EX
 		{
-			using _v3::ranges::next;
+			using _xtd::ranges::next;
 		//	auto &s = self();
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const j0 = iM, jN = next(j0, v);
@@ -417,7 +417,7 @@ public:
 		XTAL_OP1_(T_self &) -=(V v)
 		XTAL_0EX
 		{
-			using _v3::ranges::prev;
+			using _xtd::ranges::prev;
 		//	auto &s = self();
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const jN = i0, j0 = prev(jN, v);

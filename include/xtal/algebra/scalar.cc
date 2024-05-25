@@ -15,11 +15,11 @@ namespace xtal::algebra::_test
 
 TAG_("scalar")
 {
-	using re = bond::realized;
-	using T_delta = typename re::delta_t;
-	using T_sigma = typename re::sigma_t;
-	using T_alpha = typename re::alpha_t;
-	using T_aphex = typename re::aphex_t;
+	using op = bond::operating;
+	using T_delta = typename op::delta_t;
+	using T_sigma = typename op::sigma_t;
+	using T_alpha = typename op::alpha_t;
+	using T_aphex = typename op::aphex_t;
 
 	TRY_("construction")
 	{
@@ -27,9 +27,9 @@ TAG_("scalar")
 		using W = scalar_t<T_alpha[N_size]>;
 
 		auto foo = W{2.0, 0.5};
-		auto bar = re::template roots_f<2>((T_alpha) 2);
+		auto bar = op::template roots_f<2>((T_alpha) 2);
 		auto baz = bar*bar;
-	//	bar.transact([] XTAL_1FN_(re::square_f), bond::computrim_f<1>);
+	//	bar.transact([] XTAL_1FN_(op::square_f), bond::computrim_f<1>);
 		TRUE_(get<0>(foo) == bond::computrim_f<19>(get<0>(baz)));
 		TRUE_(get<1>(foo) == bond::computrim_f<19>(get<1>(baz)));
 

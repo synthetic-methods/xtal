@@ -29,7 +29,7 @@ struct lattice<U[N][Ns]...> : lattice<lattice_t<U[N]>[Ns]...>
 template <class U_data, size_t N_data>
 struct lattice<U_data[N_data]>
 {
-	using re = bond::realize<U_data>;
+	using op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename atom::block<U_data[N_data]>::template homotype<T>;

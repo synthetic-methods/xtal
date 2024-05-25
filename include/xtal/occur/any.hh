@@ -133,7 +133,7 @@ struct define
 				XTAL_TN2 dissolve(array_q<T::size()> auto const &value)
 				XTAL_0FX
 				{
-					static_assert(1 == bond::realized::bit_count_f(T::size()));
+					static_assert(1 == bond::operating::bit_count_f(T::size()));
 					size_t i = head(); i &= (T::size() - 1);
 					return R_::dissolve(value[i]);
 				}
@@ -180,7 +180,7 @@ struct define
 				XTAL_TNX effuse(auto &&o)
 				XTAL_0EX
 				{
-					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
 					}
 					else {
@@ -209,7 +209,7 @@ struct define
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					if constexpr (is_q<T, XTAL_TYP_(o)>) {
+					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
 					}
 					else {

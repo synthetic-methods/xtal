@@ -30,7 +30,7 @@ struct couple<X, Y>
 {
 	using supertype = bond::compose_s<_std::pair<X, Y>, tag<couple>>;
 
-//	using re = bond::realize<X>;
+//	using op = bond::operate<X>;
 
 	class type : public supertype
 	{

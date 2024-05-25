@@ -132,7 +132,7 @@ struct polymer<U, As...>
 				XTAL_TNX influx_push(auto &&...oo)
 				XTAL_0EX
 				{
-					using _v3::ranges::accumulate;
+					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: head().influx(oo...)
@@ -142,7 +142,7 @@ struct polymer<U, As...>
 				XTAL_TNX efflux_pull(auto &&...oo)
 				XTAL_0EX
 				{
-					using _v3::ranges::accumulate;
+					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: head().efflux(oo...)

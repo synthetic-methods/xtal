@@ -15,14 +15,14 @@ namespace xtal::algebra::differential::_test
 
 TAG_("modular")
 {
-	using re = bond::realized;
-	using T_sigma = typename re::sigma_t;
-	using T_delta = typename re::delta_t;
-	using T_alpha = typename re::alpha_t;
+	using op = bond::operating;
+	using T_sigma = typename op::sigma_t;
+	using T_delta = typename op::delta_t;
+	using T_alpha = typename op::alpha_t;
 	XTAL_LET_(T_alpha) two =  2;
 	XTAL_LET_(T_alpha) ten = 10;
 
-	auto mt19937_f = typename realized::mt19937_t(Catch::rngSeed());
+	auto mt19937_f = typename operating::mt19937_t(Catch::rngSeed());
 
 	using V_phi = T_alpha;
 	using U_phi = modular_t<V_phi[2]>;
@@ -70,12 +70,12 @@ TAG_("modular")
 	}
 	TRY_("multiplication")
 	{
-		T_alpha x = 1/3.L, x_dt = re::haplo_f(4);
+		T_alpha x = 1/3.L, x_dt = op::haplo_f(4);
 		U_phi phi{x, x_dt};
 		V_phi foo{x};
 
 		for (T_sigma i = 0; i < 0x08; ++i) {
-			T_alpha const u = -_std::pow(two, 1 + re::mantissa_f(mt19937_f));
+			T_alpha const u = -_std::pow(two, 1 + op::mantissa_f(mt19937_f));
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);
@@ -88,26 +88,26 @@ TAG_("modular")
 	{
 		EST_("multiplication (fixed-point)")
 		{
-			T_alpha x = 0.33, x_dt = re::haplo_f(4);
+			T_alpha x = 0.33, x_dt = op::haplo_f(4);
 
 			U_phi   phi{x, x_dt};
 		//	T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + re::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + op::mantissa_f(mt19937_f));
 				phi *= u;
 			}
 			return phi;
 		};
 		EST_("multiplication (floating-point)")
 		{
-			T_alpha x = 0.33, x_dt = re::haplo_f(4);
+			T_alpha x = 0.33, x_dt = op::haplo_f(4);
 
 		//	U_phi   phi{x, x_dt};
 			T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + re::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + op::mantissa_f(mt19937_f));
 				foo *= u;
 				foo -= _std::round(foo);
 			}
@@ -117,7 +117,7 @@ TAG_("modular")
 	/***/
 	TRY_("addition")
 	{
-		T_alpha x =  0.33, x_dt = re::haplo_f(4);
+		T_alpha x =  0.33, x_dt = op::haplo_f(4);
 		T_alpha y =  5.55;
 		T_alpha z =  x+y; z -= _std::round(z);
 

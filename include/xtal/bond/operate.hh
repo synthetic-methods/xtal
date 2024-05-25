@@ -1623,23 +1623,23 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct realize : _detail::realize<sizeof(devolve_u<T>)> {};
+struct operate : _detail::realize<sizeof(devolve_u<T>)> {};
 
-using realized = realize<size_t>;
+using operating = operate<size_t>;
 
-static_assert(is_q<size_t, typename realized::sigma_t>);
-static_assert(sizeof(size_t) == sizeof(typename realized::sigma_t));
-static_assert(sizeof(size_t) == sizeof(typename realized::delta_t));
-static_assert(sizeof(size_t) == sizeof(typename realized::alpha_t));
+static_assert(is_q<size_t, typename operating::sigma_t>);
+static_assert(sizeof(size_t) == sizeof(typename operating::sigma_t));
+static_assert(sizeof(size_t) == sizeof(typename operating::delta_t));
+static_assert(sizeof(size_t) == sizeof(typename operating::alpha_t));
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-///\see `realized::trim_f`. \
+///\see `operating::trim_f`. \
 
 template <auto ...N_etc>
 XTAL_LET computrim_f = []<class T>(T &&t)
-XTAL_0FN_(realize<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
+XTAL_0FN_(operate<T>::template trim_f<N_etc...>(XTAL_REF_(t)));
 
 
 ///////////////////////////////////////////////////////////////////////////////

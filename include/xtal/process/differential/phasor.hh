@@ -30,9 +30,9 @@ struct phasor<K_data[N_data], As...>
 
 	using W_ = U_modular<N_data>;
 	
-	using re = bond::realize<K_data>;
-	using V = typename re::delta_t;
-	using U = typename re::alpha_t;
+	using op = bond::operate<K_data>;
+	using V = typename op::delta_t;
+	using U = typename op::alpha_t;
 	XTAL_LET_(U) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
 
 	using subkind = bond::compose<bond::tag<phasor>

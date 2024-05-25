@@ -75,10 +75,21 @@ namespace _xtd
 	using namespace ::std::experimental;
 
 }
-namespace _v3
+namespace _xtd::ranges
 {
-	namespace ranges  = ::ranges;
-	namespace views   = ::ranges::views;
+	using namespace ::ranges;
+
+}
+namespace _xtd::ranges::views
+{
+	using namespace ::ranges::views;
+
+	XTAL_DEF_(return,inline)
+	XTAL_FN1 zip_transform(auto &&...oo)
+	XTAL_0EX
+	{
+		return zip_with(XTAL_REF_(oo)...);
+	};
 
 }
 

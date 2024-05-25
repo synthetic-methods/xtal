@@ -44,7 +44,7 @@ struct block<U_data(&)[N_data]>
 template <class U_data, size_t N_data>
 struct block<U_data[N_data]>
 {
-	using re = bond::realize<U_data>;
+	using op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = bond::compose_s<_std::array<U_data, N_data>, bond::define<T>>;
@@ -62,7 +62,7 @@ struct block<U_data[N_data]>
 	public:// ACCESS
 		using T_::self;
 		using T_::twin;
-		XTAL_FN2_(typename re::sigma_t) size()
+		XTAL_FN2_(typename op::sigma_t) size()
 		XTAL_0EX {return N_data;}
 
 

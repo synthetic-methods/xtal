@@ -116,7 +116,7 @@ XTAL_FN2 pack_table_f(W &&w, size_t const &n)
 XTAL_0EX
 {
 	using _std::span;
-	using _v3::views::zip;
+	using _xtd::ranges::views::zip;
 
 	return [&]<size_t ...Is> (bond::seek_t<Is...>)
 		XTAL_0FN_(zip(span(point_f(w[Is]), n)...))

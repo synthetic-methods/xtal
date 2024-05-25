@@ -23,10 +23,10 @@ Extends `scalar` with Dirichlet characterization and modulo access. \
 template <class U_data, int N_data>
 struct symbol<U_data[N_data]>
 {
-	using re = bond::realize<U_data>;
-	using U_delta = typename re::delta_t;
-	using U_sigma = typename re::sigma_t;
-	using U_alpha = typename re::alpha_t;
+	using op = bond::operate<U_data>;
+	using U_delta = typename op::delta_t;
+	using U_sigma = typename op::sigma_t;
+	using U_alpha = typename op::alpha_t;
 	
 	template <class T>
 	using allotype = typename scalar<U_data[N_data]>::template homotype<T>;
@@ -89,7 +89,7 @@ struct symbol<U_data[N_data]>
 				U_data w =  1;
 				U_data u = -1;
 				if constexpr (complex_field_q<U_data>) {
-					u = re::circle_f(re::patio_f(1, K));
+					u = op::circle_f(op::patio_f(1, K));
 				}
 				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
 					auto const o = k%N;
@@ -126,7 +126,7 @@ struct symbol<U_data[N_data]>
 			else {
 				U_data w, u;
 				if constexpr (complex_field_q<U_data>) {
-					u = re::circle_f(re::patio_f(1, K));
+					u = op::circle_f(op::patio_f(1, K));
 				}
 				else {
 					u = 1;

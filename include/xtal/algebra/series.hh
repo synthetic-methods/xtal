@@ -27,7 +27,7 @@ struct series<U_data[N_data]>
 	using U_v1 = devalue_u<U_v0>;
 	using U_v2 = devalue_u<U_v1>;
 
-	using re = bond::realize<U_data>;
+	using op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
@@ -75,7 +75,7 @@ struct series<U_data[N_data]>
 			static_assert(sizeof(W1_) == sizeof(U2_));
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
-			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, re::template root_f<-1>(u2)});
+			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([this] (XTAL_NDX i) XTAL_0FN {
 				auto const &[o, e] = get(i);
 				let(i) = {o*e.real(), _std::conj(o)*e.imag()};
@@ -91,7 +91,7 @@ struct series<U_data[N_data]>
 		{
 			using I = typename T_::difference_type;
 
-			XTAL_VAL N_shift = re::bit_ceiling_f(N_step);
+			XTAL_VAL N_shift = op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
@@ -102,12 +102,12 @@ struct series<U_data[N_data]>
 			I constexpr M_skip = N_step - N_skip;
 
 		//	Compute and populate the 0th and 1st powers:
-			auto const o = re::template explo_f<N_index>(u);
+			auto const o = op::template explo_f<N_index>(u);
 			let(I0) = o;
 			let(I1) = o*u;
 
 			for (I i = I1; i < IM; i += N_step) {
-				auto w = re::square_f(get(i));
+				auto w = op::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the values at `i << 1`:
 				I ii = i << 1;
@@ -136,8 +136,8 @@ struct series<U_data[N_data]>
 			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_data`:
-			auto constexpr x = re::patio_f(-1, N_data);
-			auto const     y = re::circle_f(x);// TODO: Make `constexpr`?
+			auto constexpr x = op::patio_f(-1, N_data);
+			auto const     y = op::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
 			typename T_::difference_type constexpr M = N_data >> 2;// `1/8`th
@@ -169,12 +169,12 @@ struct series<U_data[N_data]>
 		//	Ensure the size of both domain and codomain are powers of two:
 			I const n_size = that.size(); assert(2 <= n_size);
 			I const h_size = n_size >> 1; assert(1 <= h_size);
-			I const k_size = bond::realize<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
-			I const K_size = bond::realize<I>::bit_floor_f((I) N_data); assert(k_size <= K_size);
+			I const k_size = bond::operate<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
+			I const K_size = bond::operate<I>::bit_floor_f((I) N_data); assert(k_size <= K_size);
 
 		//	Move all entries to their bit-reversed locations:
 			for (I h = 0; h < h_size; ++h) {
-				_std::swap(that[h], that[bond::realize<I>::bit_reverse_f(h, k_size)]);
+				_std::swap(that[h], that[bond::operate<I>::bit_reverse_f(h, k_size)]);
 			}
 		
 		//	Conjugate the input if computing the inverse transform of the codomain:
@@ -251,7 +251,7 @@ struct series<U_data[N_data]>
 				T(ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
-				using X = typename re::aphex_t;
+				using X = typename op::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);

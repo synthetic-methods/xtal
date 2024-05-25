@@ -24,10 +24,10 @@ void chunk_processor_x1()
 	using namespace resource;
 //	using namespace schedule;
 
-	using re = bond::realized;
-	using T_alpha  = typename re::alpha_t;
-	using T_sigma  = typename re::sigma_t;
-	using T_delta  = typename re::delta_t;
+	using op = bond::operating;
+	using T_alpha  = typename op::alpha_t;
+	using T_sigma  = typename op::sigma_t;
+	using T_delta  = typename op::delta_t;
 
 	using U_chunk = chunk_t<respool<constant_t<0x10>>>;
 	using U_event = occur::packed_t<onset_t>;
@@ -39,9 +39,9 @@ void chunk_processor_x1()
 	using U_resize = occur::resize_t<>;
 	using render_n  = occur::render_t<>;
 
-	auto _01 = _v3::views::iota(0, 10)|_v3::views::transform(make_f<T_alpha>);
-	auto _10 = _01|_v3::views::transform([] (T_alpha n) {return n*10;});
-	auto _11 = _01|_v3::views::transform([] (T_alpha n) {return n*11;});
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());

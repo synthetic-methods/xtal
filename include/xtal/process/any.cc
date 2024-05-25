@@ -63,10 +63,10 @@ using halve_t = confined_t<halve>;
 
 TAG_("process", "construct")
 {
-	using re = bond::realized;
-	using T_sigma = typename re::sigma_t;
-	using T_delta = typename re::delta_t;
-	using T_alpha = typename re::alpha_t;
+	using op = bond::operating;
+	using T_sigma = typename op::sigma_t;
+	using T_delta = typename op::delta_t;
+	using T_alpha = typename op::alpha_t;
 
 	TRY_("lifting")
 	{

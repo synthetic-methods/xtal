@@ -2,9 +2,9 @@
 #include "./any.cc"
 #include "./phasor.hh"// testing...
 
-#include "../mop.hh"
 #include "../../processor/monomer.hh"
 #include "../../resource/all.hh"
+
 
 XTAL_ENV_(push)
 namespace xtal::process::differential::_test
@@ -15,17 +15,15 @@ namespace xtal::process::differential::_test
 /**/
 TAG_("phasor")
 {
-	using re = bond::realized;
-	using T_sigma = typename re::sigma_t;
-	using T_delta = typename re::delta_t;
-	using T_alpha = typename re::alpha_t;
+	using op = bond::operating;
+	using T_sigma = typename op::sigma_t;
+	using T_delta = typename op::delta_t;
+	using T_alpha = typename op::alpha_t;
 	using W_phi = T_alpha[2];
 	using X_phi = algebra::differential::modular_t <W_phi>;
 	using Y_phi = process::differential::phasor_t  <W_phi>;
 	using Z_phi = processor::monomer_t<Y_phi, resource::restore<constant_t<0x1000>>>;
 
-	//\
-	using Y_psi = process::confined_t<process::mop<enforce_f()>, process::differential::phasor<W_phi>>;
 	using Y_psi = process::differential::phasor_t<W_phi, resource::example<>>;
 	using Z_psi = processor::monomer_t<Y_psi, resource::restore<constant_t<0x1000>>>;
 
@@ -36,11 +34,11 @@ TAG_("phasor")
 
 		XTAL_VAR result_o = bond::pack_table_f<2>(result_n, result_a);
 		XTAL_USE result_t = reiterated_t<XTAL_TYP_(result_o)>;
-		XTAL_LET x_delta  = re::ratio_f(7);
-		XTAL_VAR x_phi = X_phi        {}; x_phi <<=                          {re::ratio_f(7)};
-		XTAL_VAR y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; y_phi <<= occur::resize_t<>(result_n);
-		XTAL_VAR z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_phi <<= occur::resize_t<>(result_n);
-		XTAL_VAR z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{re::ratio_f(7)}; z_psi <<= occur::resize_t<>(result_n);
+		XTAL_LET x_delta  = op::ratio_f(7);
+		XTAL_VAR x_phi = X_phi        {}; x_phi <<=                          {op::ratio_f(7)};
+		XTAL_VAR y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; y_phi <<= occur::resize_t<>(result_n);
+		XTAL_VAR z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; z_phi <<= occur::resize_t<>(result_n);
+		XTAL_VAR z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; z_psi <<= occur::resize_t<>(result_n);
 
 		EST_("procession (process)")
 		{
@@ -70,7 +68,7 @@ TAG_("phasor")
 			z_phi >>= z_ren++;
 			//\
 			_std::transform(z_phi.begin(), z_phi.end(), result_o.begin(), [] (auto &&o) XTAL_0FN_(bond::pack_row_f(XTAL_REF_(o) ())));
-			_v3::ranges::transform(z_phi, result_o.begin(), [] (auto &&o) XTAL_0FN_(bond::pack_row_f(XTAL_REF_(o) ())));
+			_xtd::ranges::transform(z_phi, result_o.begin(), [] (auto &&o) XTAL_0FN_(bond::pack_row_f(XTAL_REF_(o) ())));
 
 		};
 		EST_("procession (processor: `ranges::for`)")
@@ -90,16 +88,16 @@ TAG_("phasor")
 			z_phi <<= occur::indent_s<X_phi, 1>{x_delta};
 			z_phi >>= z_ren++;
 			//\
-			_v3::ranges::move(z_phi|enforce_f()|bond::pack_row_f, result_o.begin());
-			_v3::ranges::move(z_phi|[] (auto &&o) XTAL_0FN_(bond::pack_row_f(XTAL_REF_(o) ())), result_o.begin());
+			_xtd::ranges::move(z_phi|enforce_f()|bond::pack_row_f, result_o.begin());
+			_xtd::ranges::move(z_phi|[] (auto &&o) XTAL_0FN_(bond::pack_row_f(XTAL_REF_(o) ())), result_o.begin());
 
 		};
 	}
 	/**/
 	TRY_("progression")
 	{
-		T_alpha x_d4 = re::haplo_f(4);
-		T_alpha x_d3 = re::haplo_f(3);
+		T_alpha x_d4 = op::haplo_f(4);
+		T_alpha x_d3 = op::haplo_f(3);
 		Y_phi y_phi{0, x_d4};
 
 		TRUE_(y_phi() == X_phi{ 1*x_d4, x_d4});
@@ -122,8 +120,8 @@ TAG_("phasor")
 	}
 	TRY_("procession in-place")
 	{
-		T_alpha x_d4 = re::haplo_f(4);
-		T_alpha x_d3 = re::haplo_f(3);
+		T_alpha x_d4 = op::haplo_f(4);
+		T_alpha x_d3 = op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto  z_out = bond::pack_table_f<2>(8, z_outs);
 		using Z_out = reiterated_t<XTAL_TYP_(z_out)>;
@@ -171,8 +169,8 @@ TAG_("phasor")
 	}
 	TRY_("procession")
 	{
-		T_alpha x_d4 = re::haplo_f(4);
-		T_alpha x_d3 = re::haplo_f(3);
+		T_alpha x_d4 = op::haplo_f(4);
+		T_alpha x_d3 = op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto z_out = bond::pack_table_f<2>(8, z_outs);
 
@@ -187,8 +185,8 @@ TAG_("phasor")
 		z_phi <<= z_req;
 		z_phi >>= z_ren++;
 		//\
-		_v3::ranges::copy(z_phi|enforce_f(), z_out.begin());
-		_v3::ranges::move(z_phi|enforce_f(), z_out.begin());
+		_xtd::ranges::copy(z_phi|enforce_f(), z_out.begin());
+		_xtd::ranges::move(z_phi|enforce_f(), z_out.begin());
 
 		TRUE_(z_out[0] == bond::pack_f( 1*x_d4, x_d4));
 		TRUE_(z_out[1] == bond::pack_f( 2*x_d4, x_d4));
@@ -202,8 +200,8 @@ TAG_("phasor")
 		z_phi <<= occur::indent_s<X_phi, 1>{x_d3};
 		z_phi >>= z_ren++;
 		//\
-		_v3::ranges::copy(z_phi|enforce_f(), z_out.begin());
-		_v3::ranges::copy(z_phi|enforce_f()|bond::pack_row_f, z_out.begin());
+		_xtd::ranges::copy(z_phi|enforce_f(), z_out.begin());
+		_xtd::ranges::copy(z_phi|enforce_f()|bond::pack_row_f, z_out.begin());
 		
 		TRUE_(z_out[0] == bond::pack_f(-3*x_d3, x_d3));
 		TRUE_(z_out[1] == bond::pack_f(-2*x_d3, x_d3));
@@ -218,7 +216,7 @@ TAG_("phasor")
 	/***/
 	TRY_("multiplication")
 	{
-		T_alpha x =  0.33, x_d4 = re::haplo_f(4);
+		T_alpha x =  0.33, x_d4 = op::haplo_f(4);
 		T_alpha y =  5.55;
 		T_alpha z =  x*y;
 
