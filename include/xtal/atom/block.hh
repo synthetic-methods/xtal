@@ -46,8 +46,10 @@ struct block<U_data[N_data]>
 {
 	using op = bond::operate<U_data>;
 	
+	using supertype = _std::array<U_data, N_data>;
+
 	template <class T>
-	using allotype = bond::compose_s<_std::array<U_data, N_data>, bond::define<T>>;
+	using allotype = bond::compose_s<supertype, bond::define<T>>;
 
 	template <class T>
 	using holotype = bond::compose_s<allotype<T>, bond::tag<block>>;
@@ -62,25 +64,35 @@ struct block<U_data[N_data]>
 	public:// ACCESS
 		using T_::self;
 		using T_::twin;
-		XTAL_FN2_(typename op::sigma_t) size()
-		XTAL_0EX {return N_data;}
+		
+		XTAL_FN2_(typename op::sigma_t) size() XTAL_0EX {return N_data;}
 
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
 
-		XTAL_FN2   ordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
-		XTAL_FN2 coordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
+		XTAL_TO4_(template <class F>
+		XTAL_OP0_(explicit) F(), got<F>())
 
-		//\
-		template <auto T_f=block_f, class ...Ts>
-		template <auto T_f=bond::pack_f, class ...Ts>
+		template <class F=decltype(bond::pack_f)>
 		XTAL_TN2 got()
 		XTAL_0FX
 		{
+			using _std::get;
+
 			return [&]<auto ...Ns> (bond::seek_t<Ns...>)
-				XTAL_0FN_(T_f(T::coordinate(bond::pack_item_f<Ns>(self()))...))
+				XTAL_0FN_(invoke_f<F>(T::coordinate(get<Ns>(self()))...))
 			(bond::seek_s<N_data>{});
-		};
+		}
+		template <class F>
+		XTAL_TN2  got(F &&f)
+		XTAL_0FX
+		XTAL_REQ_(got<F>())
+		{
+			return got<F>();
+		}
+
 		XTAL_TN2 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
-	//	XTAL_OP2 () (size_t i) XTAL_0FX {return self().got(i);}
+		XTAL_OP2 () (auto &&o) XTAL_0FX {return self().got(XTAL_REF_(o));}
 	//	XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
 
 		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}

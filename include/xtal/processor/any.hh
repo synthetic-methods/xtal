@@ -73,7 +73,7 @@ struct defer<U>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			return map_f(head().template functory<iteratee_t<decltype(xs)> const &...>(Is...), XTAL_REF_(xs)...);
+			return zap_f(head().template functory<iteratee_t<decltype(xs)> const &...>(Is...), XTAL_REF_(xs)...);
 		})
 
 	};

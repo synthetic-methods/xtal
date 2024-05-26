@@ -277,6 +277,8 @@ template <class      ...Ts>	XTAL_ASK         counter_q = (...and  _detail::   co
 template <class   T=size_s>	XTAL_USE         counted_t = typename _detail::   counted  <T >::type;
 template <class   T=size_s>	XTAL_USE         counter_t = typename _detail::   counter  <T >::type;
 
+template <class         T >	XTAL_USE       inflected_t = typename _detail:: inflected  <T >::type;
+
 template <class      ...Ts>	XTAL_ASK      deiterated_q = not (...and  _detail:: reiterated_q<Ts>);
 template <class      ...Ts>	XTAL_ASK      reiterated_q =     (...and  _detail:: reiterated_q<Ts>);
 template <class         T >	XTAL_USE      reiterated_t =              _detail:: reiterated_t<T >;

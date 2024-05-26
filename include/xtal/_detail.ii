@@ -306,6 +306,15 @@ template <counter_q     T >	XTAL_TYP        counted<T> 	{using type = iterated_t
 template <counted_q     T >	XTAL_TYP        counter<T> 	{using type = iteratee_t<T>;};
 template <counter_q     T >	XTAL_TYP        counter<T> 	{using type =    based_t<T>;};
 
+
+template <class        T  >	XTAL_TYP      inflected    	{using type = T;};
+template <iterator_q   T  >	XTAL_TYP      inflected<T>:	inflected<iteratee_t<T>> {};
+#if __has_include(<Eigen/Core>)
+//mplate <class A,               auto ...Ns> XTAL_TYP inflected<Eigen::VectorwiseOp<A, Ns...>> : inflected<iteratee_t<A>> {};
+template <class A, int M, int N, auto ...Ns> XTAL_TYP inflected<Eigen::Block <A, M, N, Ns...>> {using type = Eigen::Array<typename A::Scalar, M, N>;};
+#endif
+
+
 template <class         T >
 struct reiterated
 {

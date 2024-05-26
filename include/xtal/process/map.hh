@@ -35,29 +35,14 @@ struct map<F, As...>
 		using S_::self;
 		using S_::head;
 
-		XTAL_DO2_(template <auto ...Is>
+		XTAL_TO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
-		{
-			if constexpr (_std::invocable<F, decltype(xs)...>) {
-				return F{} (S_::functor(XTAL_REF_(xs)...));
-			}
-			else {
-				return F   (S_::functor(XTAL_REF_(xs)...));
-			}
-		})
-
+		XTAL_TN1 functor (auto &&...xs), invoke_f<F>(S_::functor (XTAL_REF_(xs)...))
+		)
+		XTAL_TO1_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs)
-		XTAL_0EX
-		{
-			if constexpr (_std::invocable<F, decltype(xs)...>) {
-				return F{} (S_::function(XTAL_REF_(xs)...));
-			}
-			else {
-				return F   (S_::function(XTAL_REF_(xs)...));
-			}
-		}
+		XTAL_TN1 function(auto &&...xs), invoke_f<F>(S_::function(XTAL_REF_(xs)...))
+		)
 
 	};
 };

@@ -202,12 +202,12 @@ struct monomer<U, As...>
 							(void) state(revise_o);
 						}
 						if (delay() == R_::template head<U_resize>()) {
-							return self().efflux_pull_apart(revise_o, render_o, XTAL_REF_(oo)...);
+							return self().efflux_pull_slice(revise_o, render_o, XTAL_REF_(oo)...);
 						}
 						else {
 							return self().reflux([&, this] (auto step, counted_q auto scan)
 							XTAL_0FN {
-								return self().efflux_pull_apart(
+								return self().efflux_pull_slice(
 									revise_o.slice(scan),
 									render_o.slice(scan).skip(step),
 									XTAL_REF_(oo)...
@@ -220,21 +220,34 @@ struct monomer<U, As...>
 				Renders the buffer slice designated by `revise_o` and `render_o`. \
 				
 				template <occur::revise_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
+				XTAL_TNX efflux_pull_slice(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					using _xtd::ranges::move;
 					using _xtd::ranges::copy;
 					using _xtd::ranges::copy_n;
+					using atom::_detail::copy_to;
 
 					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 						return 1;
 					}
 					else {
 						auto result_o = R_::functor();// Materialize...
-						//\
-						move(result_o|account_f(revise_o), point_f(revise_o));
-						copy_n(point_f(result_o), count_f(revise_o), point_f(revise_o));
+						auto _j = point_f(result_o);
+						auto _i = point_f(revise_o);
+						auto  n = count_f(revise_o);
+						
+						if constexpr (requires {copy_n(_j, n, _i);}) {
+							copy_n(_j, n, _i);
+						}
+						else {
+							using _I =    decltype(_i);
+							using  F = inflected_t<_I>;
+							//\
+							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {new (&_i)  F(*_j);}
+							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {     *_i = F(*_j);}
+						//	copy_to(_i, result_o|account_f(n), [] XTAL_1FN_(F));
+						}
 						return 0;
 					}
 				}

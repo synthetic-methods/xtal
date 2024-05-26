@@ -11,17 +11,17 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP modular;
-template <class ..._s> XTAL_USE modular_t = typename modular<_s...>::type;
-template <class ...Ts> XTAL_ASK modular_q = bond::tag_p<modular, Ts...>;
+template <class ..._s> XTAL_TYP circular;
+template <class ..._s> XTAL_USE circular_t = typename circular<_s...>::type;
+template <class ...Ts> XTAL_ASK circular_q = bond::tag_p<circular, Ts...>;
 
-XTAL_LET  modular_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(modular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+XTAL_LET  circular_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN_(circular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `linear` as a fixed-point fractional/modular value. \
+Extends `linear` as a fixed-point fractional/circular value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_t)`. \
@@ -36,10 +36,10 @@ The latter could be achieved using `std::initializer_list`s, \
 parameterized by an `U_alpha`-wrapper with a distinguished element. \
 
 template <class K_data> requires disarray_q<K_data>
-struct modular<K_data> : modular<K_data[2]>
+struct circular<K_data> : circular<K_data[2]>
 {};
 template <class K_data, size_t N_data>
-struct modular<K_data[N_data]>
+struct circular<K_data[N_data]>
 {
 	using op = bond::operate<K_data>;
 	using U_delta = typename op::delta_t;
@@ -59,7 +59,7 @@ struct modular<K_data[N_data]>
 	using allotype = typename linear<U_sigma[N_data]>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<modular>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<circular>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -102,11 +102,11 @@ struct modular<K_data[N_data]>
 		using T_::get;
 		using T_::let;
 
-		XTAL_FN2   ordinate(U_alpha u) XTAL_0EX {return   ordinant(u);}
-		XTAL_FN2 coordinate(U_sigma u) XTAL_0EX {return coordinant(u);}
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(U_alpha u) XTAL_0EX {return   ordinant(u);}
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(U_sigma u) XTAL_0EX {return coordinant(u);}
 
-		XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
 		XTAL_OP2 () (size_t i) XTAL_0FX {return self().got(i);}
+		XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
 		
 		///\
 		Scales all elements. \
@@ -128,7 +128,7 @@ struct modular<K_data[N_data]>
 		using T_::operator*=;
 
 		//\note\
-		This unit-modular fixed-point multiply has ~20 bit accuracy, \
+		This unit-circular fixed-point multiply has ~20 bit accuracy, \
 		and takes ~40% longer than the equivalent multiplication/rounding/subtraction. \
 
 		XTAL_OP1_(T &) *= (real_number_q auto const &f)
@@ -185,7 +185,7 @@ struct modular<K_data[N_data]>
 namespace xtal
 {///////////////////////////////////////////////////////////////////////////////
 
-//template <size_t N_datum, algebra::differential::modular_q T> XTAL_FN2 get(T &&t)
+//template <size_t N_datum, algebra::differential::circular_q T> XTAL_FN2 get(T &&t)
 //XTAL_0EX {return XTAL_REF_(t) (N_datum);}
 
 

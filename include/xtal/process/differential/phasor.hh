@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../../algebra/differential/modular.hh"
+#include "../../algebra/differential/circular.hh"
 #include "../../resource/example.hh"
 
 
@@ -24,20 +24,22 @@ providing evaluation/update via succession/replacement. \
 template <size_t N_data, class K_data, typename ...As>
 struct phasor<K_data[N_data], As...>
 {
-	template <size_t N>
-	using U_modular = algebra::differential::modular_t<K_data[N]>;
-	using U_sample = occur::sample_t<>;
-
-	using W_ = U_modular<N_data>;
-	
 	using op = bond::operate<K_data>;
-	using V = typename op::delta_t;
-	using U = typename op::alpha_t;
-	XTAL_LET_(U) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
+
+	using V_data = typename op::delta_t;
+	using U_data = typename op::alpha_t;
+
+	using  _data = U_data[N_data];
+	using W_data = algebra::d_:: circular_t<_data>;
+	using L_data = algebra::d_::   linear_t<_data>;
+	using S_data = algebra::       series_t<_data>;
+	using R_data = bond::pack_row_t<L_data>;
+	
+	XTAL_LET_(U_data) u_onset = bond::seek_constant_t<As..., cardinal_t<0>>{};
 
 	using subkind = bond::compose<bond::tag<phasor>
-	,	_detail::refer_multiplicative_group<W_>
-	,	typename occur::indent_s<W_>::template funnel<>
+	,	_detail::refer_multiplicative_group<W_data>
+	,	typename occur::indent_s<W_data>::template funnel<>
 	,	As...
 	>;
 	
@@ -85,14 +87,20 @@ struct phasor<K_data[N_data], As...>
 		XTAL_0EX
 		{
 			if constexpr (resource::example_q<S_>) {
-				/**/
+				auto const rate = S_::sample().rate();
 				auto phi = ++head();
-				return phi()*algebra::series_t<U[N_data]>(S_::sample().rate());
-				/*/
-				static_assert(N_data == 2);
-				auto phi = ++head();
-				return bond::pack_f(phi(0), phi(1)*S_::sample().rate());
-				/***/
+				XTAL_IF0
+				XTAL_0IF_(N_data == 1) {
+					//\
+					return bond::pack_f(phi(0));
+					return phi(0);
+				}
+				XTAL_0IF_(N_data == 2) {
+					return bond::pack_f(phi(0), phi(1)*rate);
+				}
+				XTAL_0IF {
+					return phi(bond::pack_f)*S_data(rate);
+				}
 			}
 			else {
 				return ++head();

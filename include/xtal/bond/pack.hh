@@ -24,10 +24,14 @@ XTAL_0FN
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class   ...Ts>	XTAL_USE pack_size_t   =	cardinal_t<(0 +...+ _std::tuple_size<based_t<Ts>>::value)>;
-template <class   ...Ts>	XTAL_ASK pack_size_q   =	complete_q<pack_size_t<Ts...>>;
-template <class   ...Ts>	XTAL_LET pack_size_n   =	           pack_size_t<Ts...>::value;
-template <class   ...Ts>	XTAL_FN2 pack_size_f(Ts &&...) XTAL_0EX {return pack_size_n<Ts...>;}
+template <class         T >	XTAL_ASK _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
+template <class         T >	XTAL_ASK     _extent_q   =	complete_q<_std::    extent<based_t<T>>> and 0 < _std::extent_v<based_t<T>>;
+template <class         T >	XTAL_TYP  pack_size;
+template <_tuple_size_q T >	XTAL_TYP  pack_size<T>  :	_std::tuple_size<based_t<T>> {};
+template <    _extent_q T >	XTAL_TYP  pack_size<T>  :	_std::    extent<based_t<T>> {};
+template <class      ...Ts>	XTAL_ASK  pack_size_q   =	complete_q<pack_size<Ts>...>;
+template <class      ...Ts>	XTAL_LET  pack_size_n   =	(0 +...+ pack_size<Ts>::value);
+template <class      ...Ts>	XTAL_USE  pack_size_t   =	cardinal_t<pack_size_n<Ts...>>;
 
 static_assert(pack_size_n<_std::tuple<         >> == 0);
 static_assert(pack_size_n<_std::array<null_t, 0>> == 0);
@@ -41,9 +45,13 @@ template <class T, size_t N> XTAL_ASK subpack_size_q = N < pack_size_n<T>;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N, class T> XTAL_TYP pack_item               {using type = _std::tuple_element_t<N, based_t<T>>        ;};
-template <size_t N, class T> XTAL_TYP pack_item<N, T       &> {using type = _std::tuple_element_t<N, based_t<T>>       &;};
-template <size_t N, class T> XTAL_TYP pack_item<N, T const &> {using type = _std::tuple_element_t<N, based_t<T>> const &;};
+template <size_t N,         class T> XTAL_TYP pack_item;
+template <size_t N, _tuple_size_q T> XTAL_TYP pack_item<N, T        > {using type = _std::tuple_element_t<N, based_t<T>>        ;};
+template <size_t N, _tuple_size_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::tuple_element_t<N, based_t<T>>       &;};
+template <size_t N, _tuple_size_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::tuple_element_t<N, based_t<T>> const &;};
+template <size_t N,     _extent_q T> XTAL_TYP pack_item<N, T        > {using type = _std::           remove_extent_t<T>         ;};
+template <size_t N,     _extent_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::           remove_extent_t<T>        &;};
+template <size_t N,     _extent_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::           remove_extent_t<T>  const &;};
 template <size_t N, class T> XTAL_USE pack_item_t = typename pack_item<N, T>::type;
 
 template <size_t N, class T> XTAL_ASK pack_item_p = N < pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
@@ -92,9 +100,9 @@ template <class T,                      size_t... Ns > XTAL_USE intrapack_item_t
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Ts> XTAL_TYP pack_row;
-template <class ...Ts> XTAL_USE pack_row_t = typename pack_row<Ts...>::type;
-template <class ...Ts> XTAL_TYP pack_row
+template <pack_size_q ...Ts> XTAL_TYP pack_row;
+template <pack_size_q ...Ts> XTAL_USE pack_row_t = typename pack_row<Ts...>::type;
+template <pack_size_q ...Ts> XTAL_TYP pack_row
 {
 	template <class     > struct sequence;
 	template <auto ...Is> struct sequence<bond::seek_t<Is...>>

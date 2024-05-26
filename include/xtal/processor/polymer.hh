@@ -155,7 +155,7 @@ struct polymer<U, As...>
 				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
 				template <occur::revise_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_apart(Rv &&revise_o, Rn &&render_o, auto &&...oo)
+				XTAL_TNX efflux_pull_slice(Rv &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					u_ensemble.cull([] (auto &&e)

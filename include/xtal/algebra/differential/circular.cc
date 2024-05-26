@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./modular.hh"// testing...
+#include "./circular.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::algebra::differential::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("modular")
+TAG_("circular")
 {
 	using op = bond::operating;
 	using T_sigma = typename op::sigma_t;
@@ -25,13 +25,13 @@ TAG_("modular")
 	auto mt19937_f = typename operating::mt19937_t(Catch::rngSeed());
 
 	using V_phi = T_alpha;
-	using U_phi = modular_t<V_phi[2]>;
+	using U_phi = circular_t<V_phi[2]>;
 	using W_phi = _std::complex<U_phi>;
 
-	using D1 = modular_t<T_delta[1]>;
-	using D2 = modular_t<T_delta[2]>;
-	using D3 = modular_t<T_delta[3]>;
-	using D4 = modular_t<T_delta[4]>;
+	using D1 = circular_t<T_delta[1]>;
+	using D2 = circular_t<T_delta[2]>;
+	using D3 = circular_t<T_delta[3]>;
+	using D4 = circular_t<T_delta[4]>;
 	
 	TRY_("complexion")
 	{
