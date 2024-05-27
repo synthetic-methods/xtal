@@ -21,13 +21,13 @@ XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, typename ...As>
-struct monomer<U, As...>
+template <class U_process, typename ...As>
+struct monomer<U_process, As...>
 {
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	using subkind = confer<U, As..., resource::restate<>>;
+	using subkind = confer<U_process, As..., resource::restate<>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -97,12 +97,11 @@ struct monomer<U, As...>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
-			using U_store = typename S_::template store_t<Y_return>;
-			using U_state = typename S_::template serve_t<U_store >;
+			using U_store  = typename S_::template store_t<Y_return>;
+			using U_state  = typename S_::template serve_t<U_store >;
 		
-			XTAL_LET_(int)  N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
-			XTAL_LET_(bool) N_sized = requires (U_store &u) {u.resize(U_resize{});};
-
+			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
+			
 			using subkind = bond::compose<resource::restash<U_state, U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
@@ -119,12 +118,9 @@ struct monomer<U, As...>
 				XTAL_DEF_(return,inline)
 				XTAL_TN1 functor(),
 				{
-					if constexpr (N_sized) {
-						return state();
-					}
-					else {
-						return state()|account_f(R_::template head_t<U_resize>);
-					}
+					XTAL_IF0
+					XTAL_0IF_(    resizeable_q<U_store>) {return state();}
+					XTAL_0IF_(not resizeable_q<U_store>) {return state()|account_f(R_::template head_t<U_resize>);}
 				})
 
 				XTAL_TN2_(size_t) delay()
@@ -141,14 +137,8 @@ struct monomer<U, As...>
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					if constexpr (occur::resize_q<decltype(o)>) {
-						return R_::infuse(o) or ([&, this] ()
-						XTAL_0FN {
-							if constexpr (N_sized) {
-								store().resize(XTAL_REF_(o).size());
-							}
-							return 0;
-						}	());
+					if constexpr (occur::resize_q<decltype(o)> and resizeable_q<U_store>) {
+						return R_::infuse(o) || (store().resize(XTAL_REF_(o).size()), 0);
 					}
 					else {
 						return R_::infuse(XTAL_REF_(o));
@@ -190,63 +180,49 @@ struct monomer<U, As...>
 				the zipped `functor` is rendered without saving the result in `state()`, \
 				which will remain empty. \
 
-				template <occur::revise_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux(Rv &&revise_o, Rn &&render_o, auto &&...oo)
+				template <occur::revise_q Re, occur::render_q Rn>
+				XTAL_TNX efflux(Re &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(render_o) == 1) {
 						return 1;
 					}
-					else {
-						if constexpr (as_p<U_state, XTAL_TYP_(revise_o)>) {
-							(void) state(revise_o);
-						}
-						if (delay() == R_::template head<U_resize>()) {
-							return self().efflux_pull_slice(revise_o, render_o, XTAL_REF_(oo)...);
-						}
-						else {
-							return self().reflux([&, this] (auto step, counted_q auto scan)
-							XTAL_0FN {
-								return self().efflux_pull_slice(
-									revise_o.slice(scan),
-									render_o.slice(scan).skip(step),
-									XTAL_REF_(oo)...
-								);
-							}) & R_::template influx_push(XTAL_REF_(render_o));
-						}
+					if constexpr (as_q<Re, U_state>) {
+						(void) state(revise_o);
 					}
+					return self().reflux([&, this] (counted_q auto scan, counter_q auto step)
+					XTAL_0FN_(self().efflux_pull_slice(
+						revise_o.slice(scan),
+						render_o.slice(scan).skip(step),
+						XTAL_REF_(oo)...
+					)))
+					&	R_::template influx_push(XTAL_REF_(render_o));
 				}
 				///\
 				Renders the buffer slice designated by `revise_o` and `render_o`. \
 				
-				template <occur::revise_q Rv, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Rv &&revise_o, Rn &&render_o, auto &&...oo)
+				template <occur::revise_q Re, occur::render_q Rn>
+				XTAL_TNX efflux_pull_slice(Re &&revise_o, Rn &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					using _xtd::ranges::move;
-					using _xtd::ranges::copy;
-					using _xtd::ranges::copy_n;
-					using atom::_detail::copy_to;
-
 					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
 						return 1;
 					}
 					else {
-						auto result_o = R_::functor();// Materialize...
-						auto _j = point_f(result_o);
-						auto _i = point_f(revise_o);
-						auto  n = count_f(revise_o);
+						auto review_o = R_::functor();// Materialize...
+						auto _j = point_f(review_o); using _J =    decltype(_j);
+						auto _i = point_f(revise_o); using _I =    decltype(_i);
+						auto  n = count_f(revise_o); using  F = inflected_t<_I>;
 						
-						if constexpr (requires {copy_n(_j, n, _i);}) {
-							copy_n(_j, n, _i);
+						XTAL_IF0
+						XTAL_0IF_(requires {_xtd::ranges::copy_n(_j, n, _i);}) {
+							_xtd::ranges::copy_n(_j, n, _i);
 						}
-						else {
-							using _I =    decltype(_i);
-							using  F = inflected_t<_I>;
+						XTAL_0IF {
 							//\
 							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {new (&_i)  F(*_j);}
 							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {     *_i = F(*_j);}
-						//	copy_to(_i, result_o|account_f(n), [] XTAL_1FN_(F));
+						//	atom::_detail::copy_to(_i, review_o|account_f(n), [] XTAL_1FN_(F));
 						}
 						return 0;
 					}

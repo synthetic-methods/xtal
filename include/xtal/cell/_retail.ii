@@ -53,16 +53,20 @@ struct any<A>
 	//	using S_::head;
 		
 		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_TN2 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_TN2 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 	
 	public:

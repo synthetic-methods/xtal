@@ -48,12 +48,7 @@ TAG_("phasor")
 		T_alpha z_data[2][N_data]{};
 
 		auto  v_data  = bond::pack_table_f<2>(N_data, z_data);
-		using V_data  = decltype(v_data);
-		using V_data_ = reiterated_t<V_data>;
-		
-		auto  e_data  = Map<Array<T_alpha, Dynamic, 2, ColMajor>>(*z_data, N_data, 2);
-		auto  e_data_ = e_data.rowwise();
-		using E_data_ = decltype(e_data_);
+		auto  e_data  = Map<Array<T_alpha, Dynamic, 2, ColMajor>>(*z_data, N_data, 2).rowwise();
 		
 		auto  x_phi = X_phi        {}; x_phi <<=                          {op::ratio_f(7)};
 		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
@@ -87,14 +82,19 @@ TAG_("phasor")
 			}
 
 		};
+		EST_("procession (processor out-of-place)")
+		{
+			z_psi >>= z_render++;
+
+		};
 		EST_("procession (processor in-place: `ranges::copy...`)")
 		{
-			z_psi >>= z_render++ >> occur::revise_t<V_data_>(v_data);
+			z_psi >>= z_render++ >> occur::revise_f(v_data);
 
 		};
 		EST_("procession (processor in-place: `Eigen...)")
 		{
-			z_phi >>= z_render++ >> occur::revise_f(e_data_);
+			z_phi >>= z_render++ >> occur::revise_f(e_data);
 
 		};
 		EST_("procession (processor re-place: `ranges::copy...`)")
@@ -105,8 +105,8 @@ TAG_("phasor")
 		};
 		EST_("procession (processor re-place: `for`)")
 		{
-			z_phi >>= z_render++;
-			for (int i = 0; i < N_data; ++i) {v_data[i] = V_phi(z_phi[i]);}
+			z_psi >>= z_render++;
+			for (int i = 0; i < N_data; ++i) {v_data[i] = z_psi[i];}
 
 		};
 	}

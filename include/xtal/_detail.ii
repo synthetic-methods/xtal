@@ -134,8 +134,8 @@ template <unbased_q     T >	XTAL_TYP         debased<T const &>:	logical<1> {usi
 template <class         T >	XTAL_ASK         debased_q         =	debased<T>::value;
 
 template <class         T >	XTAL_TYP         rebased           :	logical<1> {using type = based_t<T>;};
-template <unbased_q     T >	XTAL_TYP         rebased<T       &>:	logical<0> {using type =       T&;};
-template <unbased_q     T >	XTAL_TYP         rebased<T const &>:	logical<0> {using type = const T&;};
+template <unbased_q     T >	XTAL_TYP         rebased<T       &>:	logical<0> {using type =         T&;};
+template <unbased_q     T >	XTAL_TYP         rebased<T const &>:	logical<0> {using type =   const T&;};
 template <class         T >	XTAL_ASK         rebased_q         =	rebased<T>::value;
 
 
@@ -240,6 +240,10 @@ template <class         T >	XTAL_USE          front_t =	decltype (*XTAL_ANY_(T).
 template <class         T >	XTAL_USE           back_t =	decltype (*XTAL_ANY_(T).  end() );
 template <class         T >	XTAL_USE            end_t =	decltype ( XTAL_ANY_(T).  end() );
 
+template <class         T >	XTAL_USE       sizeable_t =	decltype ( XTAL_ANY_(T).  size() );
+template <class         T >	XTAL_ASK       sizeable_q =	requires { XTAL_ANY_(T).  size();};
+template <class         T >	XTAL_ASK     resizeable_q =	requires { XTAL_ANY_(T).resize(XTAL_ANY_(sizeable_t<T>));};
+
 template <class         T >	XTAL_ASK        bounded_q =	begin_q<T> and     end_q<T>;
 template <class         T >	XTAL_ASK      unbounded_q =	begin_q<T> and not end_q<T>;
 
@@ -251,8 +255,6 @@ template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::t
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
 
 
-template <auto        N=0 >	XTAL_LET        induced_n =	_xtd::ranges::iota_view{N};
-template <class         U >	XTAL_USE        induced_t =	_xtd::ranges::iota_view<U>;
 template <class         U >	XTAL_USE       interval_t =	_xtd::ranges::iota_view<U, U>;
 
 template <class         T >	XTAL_TYP       iteratee   ;
@@ -260,45 +262,44 @@ template <class         T >	XTAL_TYP       iterated   ;
 template <class         T >	XTAL_TYP       iterator   ;
 template <class         T >	XTAL_TYP       sentinel   ;
 template <class         T >	XTAL_TYP       distance   ;
+template <class         T >	XTAL_TYP        counted   ;
+template <class         T >	XTAL_TYP        counter   ;
 
 template <class         T >	XTAL_USE       iteratee_t =	typename iteratee<T>::type;
 template <class         T >	XTAL_USE       iterated_t =	typename iterated<T>::type;
 template <class         T >	XTAL_USE       iterator_t =	typename iterator<T>::type;
 template <class         T >	XTAL_USE       sentinel_t =	typename sentinel<T>::type;
 template <class         T >	XTAL_USE       distance_t =	typename distance<T>::type;
+template <class         T >	XTAL_USE        counted_t =	typename  counted<T>::type;
+template <class         T >	XTAL_USE        counter_t =	typename  counter<T>::type;
 
 template <class         T >	XTAL_ASK       iteratee_q =	true;
 template <class         T >	XTAL_ASK       iterable_q =	begin_q<T>;
 template <class         T >	XTAL_ASK       iterated_q =	begin_q<T> and front_q<T>;
 template <class         T >	XTAL_ASK       iterator_q =	requires (T t) {*++t;};
 template <class         T >	XTAL_ASK       sentinel_q =	iterator_q<T>;
-template <class         T >	XTAL_ASK       distance_q =	integral_q<T>;//\todo Expand to accommodate `counted_t<size_t>{}.size()`.
+template <class         T >	XTAL_ASK       distance_q =	_std::integral<based_t<T>>;;//TODO: Expand to accommodate `counted_t<size_t>{}.size()`.
+template <class         T >	XTAL_ASK        counter_q =	_std::integral<based_t<T>>;
+template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
 
 template <class         T >	XTAL_TYP       iteratee    	{using type =             devalue_u<T> ;};
 template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =     pointee_t<begin_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =     pointee_t<        T >;};
-template <integral_p    T >	XTAL_TYP       iteratee<T> 	{using type =               based_t<T> ;};
+template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type =               based_t<T> ;};
 
 template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type =               based_t<T> ;};
 template <iterator_q    T >	XTAL_TYP       iterated<T> 	{using type =                     void ;};
-template <integral_p    T >	XTAL_TYP       iterated<T> 	{using type =            interval_t<T> ;};
+template < counter_q    T >	XTAL_TYP       iterated<T> 	{using type =            interval_t<T> ;};
 
 template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =               begin_t<T> ;};
 template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =               based_t<T> ;};
-template <integral_p    T >	XTAL_TYP       iterator<T>		{using type = iterator_t<interval_t<T>>;};
+template < counter_q    T >	XTAL_TYP       iterator<T>		{using type = iterator_t<interval_t<T>>;};
 
 template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                  end_t<T>;};
 template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                        T ;};
 
 template <class         T >	XTAL_TYP       distance    	{using type = distance_t<iterator_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       distance<T> 	{using type = XTAL_TYP_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
-
-
-template <class         T >	XTAL_ASK        counter_q =	integral_p<T>;
-template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
-
-template <class         T >	XTAL_TYP        counted   ;
-template <class         T >	XTAL_TYP        counter   ;
 
 template <counted_q     T >	XTAL_TYP        counted<T> 	{using type =    based_t<T>;};
 template <counter_q     T >	XTAL_TYP        counted<T> 	{using type = iterated_t<T>;};
@@ -307,16 +308,19 @@ template <counted_q     T >	XTAL_TYP        counter<T> 	{using type = iteratee_t
 template <counter_q     T >	XTAL_TYP        counter<T> 	{using type =    based_t<T>;};
 
 
-template <class        T  >	XTAL_TYP      inflected    	{using type = T;};
-template <iterator_q   T  >	XTAL_TYP      inflected<T>:	inflected<iteratee_t<T>> {};
+template <class         T >	XTAL_TYP      inflected    	{using type = T;};
+template <iterator_q    T >	XTAL_TYP      inflected<T>:	inflected<iteratee_t<T>> {};
 #if __has_include(<Eigen/Core>)
 //mplate <class A,               auto ...Ns> XTAL_TYP inflected<Eigen::VectorwiseOp<A, Ns...>> : inflected<iteratee_t<A>> {};
 template <class A, int M, int N, auto ...Ns> XTAL_TYP inflected<Eigen::Block <A, M, N, Ns...>> {using type = Eigen::Array<typename A::Scalar, M, N>;};
 #endif
 
-
+template <class         T >	XTAL_USE     initerated_t =	_xtd::ranges::view_interface<T>;
+template <class         T >	XTAL_TYP     reiterated;
+template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;
+template <class         T >	XTAL_USE     reiterated_s =	_std::span<iteratee_t<T>>;
 template <class         T >
-struct reiterated
+XTAL_TYP reiterated
 {
 	XTAL_USE I = iterator_t<T>;
 	XTAL_USE J = sentinel_t<T>;
@@ -326,18 +330,13 @@ struct reiterated
 	XTAL_USE type = _xtd::ranges::subrange<I, J, K>;
 
 };
-template <data_q        T >
-struct reiterated<T>
+template <class         T >
+XTAL_REQ_(reiterated_s<T>(XTAL_ANY_(T)))
+XTAL_TYP reiterated<T>
 {
-	XTAL_USE type = _std::span<iteratee_t<T>>;
+	XTAL_USE type = reiterated_s<T>;
 
 };
-template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;
-template <class         T >	XTAL_ASK     reiterated_q =	fungible_q<T, reiterated_t<T>>;
-template <class         T >	XTAL_USE     initerated_t =	_xtd::ranges::view_interface<T>;
-
-template <class         T >	XTAL_ASK      allocated_q =	requires {typename T::allocator_type;};
-template <class         T >	XTAL_ASK   materialized_q =	allocated_q<T> or array_q<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

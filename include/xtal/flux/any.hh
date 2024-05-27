@@ -42,23 +42,15 @@ struct define
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-		XTAL_TNX reflux(auto const &f)
-		XTAL_0EX
-		{
-			return reflux(f, 0);
-		}
-		XTAL_TNX reflux(auto const &f, auto &&n)
-		XTAL_0EX
-		{
-			return reflux(f, n);
-		}
-		XTAL_TNX reflux(auto const &f, auto &n)
+		XTAL_TNX reflux(auto const &f)          XTAL_0EX {return reflux(f, 0);}
+		XTAL_TNX reflux(auto const &f, int &&n) XTAL_0EX {return reflux(f, n);}
+		XTAL_TNX reflux(auto const &f, int  &n)
 		XTAL_0EX
 		{
 			XTAL_FLX flx = -1;
 			auto &s = self();
-			for (size_s i{}, j = s.delay(); i != j; j = s.relay(i = j)) {
-				flx &= f(n++, counted_f(i, j));
+			for (int i{}, j = s.delay(); i != j; j = s.relay(i = j)) {
+				flx &= f(counted_f(i, j), n++);
 			}
 			--n;
 			return flx;
@@ -278,7 +270,7 @@ struct defer
 		XTAL_0EX
 		{
 			if constexpr (is_q<U, W>) {
-				return S_::heading(w) or (S_::head(XTAL_REF_(w)), 0);
+				return S_::heading(w) || (S_::head(XTAL_REF_(w)), 0);
 			}
 			else {
 				return S_::defuse(XTAL_REF_(w));

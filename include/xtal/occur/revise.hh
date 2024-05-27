@@ -19,11 +19,6 @@ template <iterable_q  U > XTAL_FN2 revise_f(U &&u) XTAL_0EX {return revise_t<U>(
 template <class S, iterated_q U>
 using revise_s = bond::compose_s<S, confined<revise<U>, bond::tag<revise>>>;
 
-template <materialized_q U>
-struct revise<U>
-:	revise<reiterated_t<U>>
-{
-};
 template <class U>
 struct revise<U>
 {
@@ -40,15 +35,24 @@ struct revise<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_TN2 span(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_TN2 view(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 		XTAL_TN2 slice(counted_q auto &&w)
 		XTAL_0FX
 		{
-			using _xtd::ranges::views::slice;
+			auto const i = w.front(), j = w.back() + 1;
+			
+			if constexpr (accessed_q<U>) {
+				using _xtd::ranges::next;
+			
+				auto _o = point_f(view());
+				return revise_f(reiterated_t<U>(next(_o, i), next(_o, j)));
+			}
+			else {
+				using _xtd::ranges::views::slice;
 
-			auto i = w.front(), j = w.back() + 1;
-			return revise_f(span()|slice(i, j));
+				return revise_f(view()|slice(i, j));
+			}
 		}
 
 	};

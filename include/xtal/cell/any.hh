@@ -58,16 +58,19 @@ struct define
 		using self_s = typename super<T_self, Is...>::type;
 
 		XTAL_TO4_(
-		XTAL_TN2 self(), S_::self()
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(), S_::self()
 		)
 		XTAL_TO4_(template <fungible_q<subtype> X=T>
-		XTAL_TN2 self(), S_::template self<X>()
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(), S_::template self<X>()
 		)
 		///<\returns `this` as `T`, or `fungible_q<subtype>`. \
 		
 		
 		XTAL_DO4_(template <typename ...Is>
-		XTAL_TN2 self(auto &&...oo),
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(auto &&...oo),
 		{
 			using X = typename super<T, Is...>::type;
 			if constexpr (0 == sizeof...(oo)) {

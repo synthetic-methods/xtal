@@ -183,7 +183,7 @@ struct surrender
 		XTAL_0EX
 		{
 			auto &s = self();
-			return s == t or ((s = t), 0);
+			return s == t || ((s = t), 0);
 		}
 		/**/
 		XTAL_TNX infuse(render_q auto &&t)
@@ -385,7 +385,7 @@ public:
 			using _xtd::ranges::next;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
-			(void) S_::span(*next(i0, nm), *next(iM, nm));
+			(void) S_::view(*next(i0, nm), *next(iM, nm));
 			S_::step() += v;
 			return self();
 		}
@@ -396,7 +396,7 @@ public:
 			using _xtd::ranges::prev;
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const nm = v*distance(i0, iM);
-			(void) S_::span(*prev(i0, nm), *prev(iM, nm));
+			(void) S_::view(*prev(i0, nm), *prev(iM, nm));
 			S_::step() -= v;
 			return self();
 		}
@@ -411,7 +411,7 @@ public:
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const j0 = iM, jN = next(j0, v);
 			S_::step() += i0 != iM;
-			(void) S_::span(*j0, *jN);
+			(void) S_::view(*j0, *jN);
 			return self();
 		}
 		XTAL_OP1_(T_self &) -=(V v)
@@ -422,7 +422,7 @@ public:
 			auto const i0 = S_::begin(), iM = S_::end();
 			auto const jN = i0, j0 = prev(jN, v);
 			S_::step() -= v != 0;
-			(void) S_::span(*j0, *jN);
+			(void) S_::view(*j0, *jN);
 			return self();
 		}
 
