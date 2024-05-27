@@ -110,7 +110,7 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 
 	gated <<= std::make_tuple(cell::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 
-They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `revise` the outcome.
+They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `review` the outcome.
 
 	auto resize = resize_t(1024);
 	auto render = render_t(1024);
@@ -164,7 +164,7 @@ The directories in the project are organised by namespace with the leaves repres
 
 The [`**/all.hh`](include/xtal/all.hh?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.hh` and specializations like `monomer`, etc.
 
-The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`cell/anytail.ii`](include/xtal/cell/anytail.ii?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`cell/any.ii`](include/xtal/cell/any.ii?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
@@ -233,7 +233,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = flux;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.hh`](include/xtal/process/any.hh?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`cell/anytail.ii`](include/xtal/cell/anytail.ii?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.hh`](include/xtal/process/any.hh?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`cell/any.ii`](include/xtal/cell/any.ii?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 

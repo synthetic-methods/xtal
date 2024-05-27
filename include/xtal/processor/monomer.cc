@@ -93,7 +93,7 @@ void monomer_provision__advancing()
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<mix_t>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
 	auto _11 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*11);});
 
@@ -136,11 +136,11 @@ void monomer_provision__provisioning()
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
 	using U_state  = reiterated_t<U_store>;
-	using U_review = occur::revise_t<U_state>;
+	using U_review = occur::review_t<U_state>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
@@ -183,7 +183,7 @@ void monomer_chaining__rvalue()
 	size_t constexpr N = 4;
 	
 	using namespace _xtd::ranges;
-	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
@@ -213,7 +213,7 @@ void monomer_chaining__lvalue()
 	size_t constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 	
@@ -245,7 +245,7 @@ void monomer_chaining__shared()
 	size_t constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 =  views::iota(0, 10)|views::transform(make_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 

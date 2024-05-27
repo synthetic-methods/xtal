@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "../atom/store.hh"
 
-
+#include "../occur/review.hh"
 
 
 
@@ -34,7 +34,7 @@ struct restate<A>
 		using S_::S_;
 		
 		template <iterated_q U>
-		using serve_t = typename A::template subtype<U>;
+		using state_t = typename A::template subtype<U>;
 
 	};
 };
@@ -52,7 +52,9 @@ struct restate<>
 		using S_::S_;
 		
 		template <iterated_q U>
-		using serve_t = reiterated_t<U>;
+		//\
+		using state_t = occur::review_t<U>;
+		using state_t = reiterated_t<U>;
 
 	};
 };

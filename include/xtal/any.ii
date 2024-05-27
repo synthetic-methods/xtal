@@ -1,18 +1,23 @@
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-/**/
-template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
-XTAL_OP2 | (T &&t, U &&u)
-XTAL_0EX
-{
-	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
-};
-/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Structural...
+
+///\
+Defines a factory for the supplied type. \
+
+template <class F>
+XTAL_LET invoke_f = [] (auto &&...oo)
+XTAL_0FN
+{
+	XTAL_IF0
+	XTAL_0IF_TO_(F   (XTAL_REF_(oo)...))
+	XTAL_0IF_TO_(F   {XTAL_REF_(oo)...})
+	XTAL_0IF_TO_(F{} (XTAL_REF_(oo)...))
+};
 
 ///\returns the compile-time size of the supplied array-like argument. \
 
@@ -21,51 +26,18 @@ template <class U, size_t N > XTAL_FN2 devalue_f(           _std::array<U, N> &&
 template <class U           > XTAL_FN2 devalue_f(_std::initializer_list<U   >   t) XTAL_0EX {return devalue_n<decltype(_std::array{XTAL_REF_(t)})>;}
 
 
-///\
-Defines a factory for the supplied type. \
-
-template <class T>
-XTAL_LET make_f = [] XTAL_1FN_(T);
-
-template <class F>
-XTAL_LET invoke_f = [] (auto &&...oo)
-XTAL_0FN
-{
-	XTAL_IF0
-	XTAL_0IF_(requires {F   {XTAL_REF_(oo)...};}) {return F   {XTAL_REF_(oo)...};}
-	XTAL_0IF_(requires {F   (XTAL_REF_(oo)...);}) {return F   (XTAL_REF_(oo)...);}
-	XTAL_0IF_(requires {F{} (XTAL_REF_(oo)...);}) {return F{} (XTAL_REF_(oo)...);}
-};
-
-
-///\returns the result of applying the `f` to `...xs`, \
-zipping them together if vectorized. \
-
-///\note\
-Provides experimental support for `Eigen` (via `\.(?:un|bin|tern)aryExpr`), \
-but can be specialized to support additional/custom data-types. \
-
-///\todo\
-Restrict `eigenvalue_q` to `Array`-derived types.
-
-#if __has_include(<Eigen/Core>)
-template <class F, eigenvalue_q X0                                  > XTAL_DEF_(inline) XTAL_LET zop_f(F &&f, X0 &&x0                  ) XTAL_0EX {return XTAL_REF_(x0).  unaryExpr(                              XTAL_REF_(f));}
-template <class F, eigenvalue_q X0, eigenvalue_q X1                 > XTAL_DEF_(inline) XTAL_LET zop_f(F &&f, X0 &&x0, X1 &&x1         ) XTAL_0EX {return XTAL_REF_(x0). binaryExpr(XTAL_REF_(x1),                XTAL_REF_(f));}
-template <class F, eigenvalue_q X0, eigenvalue_q X1, eigenvalue_q X2> XTAL_DEF_(inline) XTAL_LET zop_f(F &&f, X0 &&x0, X1 &&x1, X2 &&x2) XTAL_0EX {return XTAL_REF_(x0).ternaryExpr(XTAL_REF_(x1), XTAL_REF_(x2), XTAL_REF_(f));}
-#endif
-template <class F, class ...Xs> requires some_q<Xs...>                XTAL_DEF_(inline) XTAL_LET zop_f(F &&f, Xs &&...xs)                XTAL_0EX {return                                       XTAL_REF_(f) (XTAL_REF_(xs)...);}
-template <class F, class ...Xs> requires some_q<Xs...>                XTAL_DEF_(inline) XTAL_LET zop_f(       Xs &&...xs)                XTAL_0EX {return                                  zop_f(invoke_f<F>, XTAL_REF_(xs)...);}
-
-template <class F             >                                       XTAL_DEF_(inline) XTAL_LET zap_f(F &&f            )                XTAL_0EX {return    _xtd::ranges::views::     generate(XTAL_REF_(f)                  );}
-template <class F, class    X >                                       XTAL_DEF_(inline) XTAL_LET zap_f(F &&f, X  &&   x )                XTAL_0EX {return    _xtd::ranges::views::    transform(XTAL_REF_(x), XTAL_REF_(f)    );}
-template <class F, class ...Xs>                                       XTAL_DEF_(inline) XTAL_LET zap_f(F &&f, Xs &&...xs)                XTAL_0EX {return    _xtd::ranges::views::zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
-template <class F, class ...Xs>                                       XTAL_DEF_(inline) XTAL_LET zap_f(       Xs &&...xs)                XTAL_0EX {return                                  zap_f(invoke_f<F>, XTAL_REF_(xs)...);}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
+
+///\returns the result of zipping `...xs` with `f`. \
+
+template <class F             > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f            ) XTAL_0EX {return _xtd::ranges::views::     generate(XTAL_REF_(f)                  );}
+template <class F, class    X > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, X  &&   x ) XTAL_0EX {return _xtd::ranges::views::    transform(XTAL_REF_(x), XTAL_REF_(f)    );}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) XTAL_0EX {return _xtd::ranges::views::zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) XTAL_0EX {return                         iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+
 
 template <int N_offset=0, class T>
 XTAL_DEF_(return,inline)

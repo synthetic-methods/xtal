@@ -39,7 +39,7 @@ void chunk_processor_x1()
 	using U_resize = occur::resize_t<>;
 	using render_n  = occur::render_t<>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 

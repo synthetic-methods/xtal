@@ -98,7 +98,7 @@ struct monomer<U_process, As...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
-			using U_state  = typename S_::template serve_t<U_store >;
+			using U_state  = typename S_::template state_t<U_store >;
 		
 			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 			
@@ -160,18 +160,18 @@ struct monomer<U_process, As...>
 				using R_::efflux;
 				///\
 				Responds to `occur::render` by rendering the internal `store()`. \
-				A match for the following render will initiate the `revise` (returning `1`), \
+				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
-				template <occur::render_q Rn>
-				XTAL_TNX efflux(Rn &&render_o, auto &&...oo)
+				template <occur::render_q Ren>
+				XTAL_TNX efflux(Ren &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(occur::revise_t<U_state>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return efflux(occur::review_t<U_state>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
-				When accompanied by `occur::revise`, the supplied visor will be used instead. \
+				When accompanied by `occur::review`, the supplied visor will be used instead. \
 				All bound arguments are rendered privately unless a compatible `rvalue` is found, \
 				in which case the visor will be reused for the intermediate result. \
 
@@ -180,50 +180,45 @@ struct monomer<U_process, As...>
 				the zipped `functor` is rendered without saving the result in `state()`, \
 				which will remain empty. \
 
-				template <occur::revise_q Re, occur::render_q Rn>
-				XTAL_TNX efflux(Re &&revise_o, Rn &&render_o, auto &&...oo)
+				template <occur::review_q Rev, occur::render_q Ren>
+				XTAL_TNX efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
 					if (R_::effuse(render_o) == 1) {
 						return 1;
 					}
-					if constexpr (as_q<Re, U_state>) {
-						(void) state(revise_o);
+					if constexpr (as_q<Rev, U_state>) {
+						(void) state(review_o);
 					}
 					return self().reflux([&, this] (counted_q auto scan, counter_q auto step)
-					XTAL_0FN_(self().efflux_pull_slice(
-						revise_o.slice(scan),
-						render_o.slice(scan).skip(step),
-						XTAL_REF_(oo)...
+					XTAL_0FN_(self().efflux_slice(
+						review_o.slice(scan),
+						render_o.slice(scan).skip(step)
 					)))
-					&	R_::template influx_push(XTAL_REF_(render_o));
+					&	XTAL_FLX_(self().efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
 				}
 				///\
-				Renders the buffer slice designated by `revise_o` and `render_o`. \
+				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
-				template <occur::revise_q Re, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Re &&revise_o, Rn &&render_o, auto &&...oo)
+				template <occur::review_q Rev, occur::render_q Ren>
+				XTAL_TNX efflux_slice(Rev &&review_o, Ren &&render_o)
 				XTAL_0EX
 				{
-					if (1 == R_::template efflux_pull_tail<N_share>(XTAL_REF_(revise_o), XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
+					if (1 == R_::template efflux_pull_tail<N_share>(review_o, render_o)) {
 						return 1;
 					}
 					else {
-						auto review_o = R_::functor();// Materialize...
-						auto _j = point_f(review_o); using _J =    decltype(_j);
-						auto _i = point_f(revise_o); using _I =    decltype(_i);
-						auto  n = count_f(revise_o); using  F = inflected_t<_I>;
+						auto result_o = R_::functor();// Materialize...
+						auto _j = point_f(result_o);
+						auto _i = point_f(review_o);
+						auto  n = count_f(review_o);
 						
+						using namespace _xtd::ranges;
 						XTAL_IF0
-						XTAL_0IF_(requires {_xtd::ranges::copy_n(_j, n, _i);}) {
-							_xtd::ranges::copy_n(_j, n, _i);
-						}
-						XTAL_0IF {
-							//\
-							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {new (&_i)  F(*_j);}
-							for (size_t m = 0; m < n; ++m, ++_j, ++_i) {     *_i = F(*_j);}
-						//	atom::_detail::copy_to(_i, review_o|account_f(n), [] XTAL_1FN_(F));
-						}
+						XTAL_0IF_DO_(copy_n(_j, n, _i))
+						XTAL_0IF_DO_(move(result_o|account_f(n), _i))
+						XTAL_0IF {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+
 						return 0;
 					}
 				}
@@ -233,6 +228,7 @@ struct monomer<U_process, As...>
 
 	};
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

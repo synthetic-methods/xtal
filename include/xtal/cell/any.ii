@@ -132,7 +132,7 @@ Creates a unique tuple `inferred` from `...As`. \
 template <class   ...Ts>	XTAL_TYP packed     : inferred<Ts..., bond::tag<packed>> {};
 template <class   ...Ts>	XTAL_USE packed_t   = typename packed<Ts...>::type;
 template <class   ...Ts>	XTAL_ASK packed_q   = any_p<class packed_a, Ts...>;
-template <class   ...Ts>	XTAL_TN2 packed_f(Ts &&...as) XTAL_0EX {return packed<rebased_t<Ts>...>(XTAL_REF_(as)...);}
+template <class   ...Ts>	XTAL_TN2 packed_f(Ts &&...as) XTAL_0EX {return packed<Ts...>(XTAL_REF_(as)...);}
 
 ///\
 Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \

@@ -132,12 +132,6 @@ struct define
 		template <class ...Xs> requires any_q<Xs...>
 		struct binding<Xs...>
 		{
-			//\
-			template <class   X> using  argument_t = rebased_t<X>;//FIXME: `no matching member function for call to 'copy_assign'`
-			template <class   X> using  argument_t =   based_t<X>;
-
-			//\
-			using signature_t = bond::pack_t<argument_t<Xs>...>;
 			using signature_t = cell::packed_t<Xs...>;
 			
 			using Y_result = _std::invoke_result_t<T, Xs...>;

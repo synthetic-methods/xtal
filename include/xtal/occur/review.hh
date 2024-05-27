@@ -11,16 +11,13 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP revise;
-template <typename ..._s> XTAL_ASK revise_q = bond::tag_p<revise, _s...>;
-template <iterable_q  U > XTAL_USE revise_t = confined_t<revise<U>, bond::tag<revise>>;
-template <iterable_q  U > XTAL_FN2 revise_f(U &&u) XTAL_0EX {return revise_t<U>(XTAL_REF_(u));};
-
-template <class S, iterated_q U>
-using revise_s = bond::compose_s<S, confined<revise<U>, bond::tag<revise>>>;
+template <typename ..._s> XTAL_TYP review;
+template <typename ..._s> XTAL_ASK review_q = bond::tag_p<review, _s...>;
+template <iterable_q  U > XTAL_USE review_t = confined_t<review<U>, bond::tag<review>>;
+template <iterable_q  U > XTAL_FN2 review_f(U &&u) XTAL_0EX {return review_t<U>(XTAL_REF_(u));};
 
 template <class U>
-struct revise<U>
+struct review<U>
 {
 	using subkind = confer<U>;
 
@@ -37,23 +34,26 @@ struct revise<U>
 		
 		XTAL_TO4_(XTAL_TN2 view(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
-		XTAL_TN2 slice(counted_q auto &&w)
-		XTAL_0FX
+		XTAL_DO2_(XTAL_TN2 slice(counted_q auto &&w),
 		{
-			auto const i = w.front(), j = w.back() + 1;
+			distance_t<U> const i = w.front(), j = w.back() + 1;
 			
 			if constexpr (accessed_q<U>) {
 				using _xtd::ranges::next;
 			
 				auto _o = point_f(view());
-				return revise_f(reiterated_t<U>(next(_o, i), next(_o, j)));
+				auto _i = next(_o, i);
+				auto _j = next(_o, j);
+				return review_f(reiterated_t<U>(_i, _j));
 			}
 			else {
 				using _xtd::ranges::views::slice;
 
-				return revise_f(view()|slice(i, j));
+				//\
+				return review_f(view()|slice(i, j));
+				return review_f(view()|discount_f(i)|account_f(j - i));
 			}
-		}
+		})
 
 	};
 };

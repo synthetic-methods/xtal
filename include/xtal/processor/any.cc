@@ -21,7 +21,7 @@ void processor_provision__messaging()
 {
 	using T_alpha = typename bond::operating::alpha_t;
 
-	auto const _01 = _xtd::ranges::views::iota(0, 3)|_xtd::ranges::views::transform(make_f<T_alpha>);
+	auto const _01 = _xtd::ranges::views::iota(0, 3)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto const _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto const _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 

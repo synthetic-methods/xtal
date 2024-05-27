@@ -1,18 +1,10 @@
 #pragma once
+#include "./etc.cc"
 #include "./occur/all.hh"
 #include "./process/any.hh"
 #include "./resource/all.hh"
-#include <catch2/catch_all.hpp>
 
-#define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))
-#define   TRUE_(...)   REQUIRE(    (__VA_ARGS__))
-#define    TRY_(...)   SECTION(    (__VA_ARGS__))
-#define    EST_(...) BENCHMARK(    (__VA_ARGS__))
-
-#define TAG_(...) TEST_CASE(__FILE__ ":" XTAL_S1_(__LINE__), TAG_N_(__VA_ARGS__))
-#define TAG_N_(...)                                 XTAL_F1_(TAG_1_,__VA_ARGS__)
-#define TAG_1_(...)                                             "[" __VA_ARGS__ "]"
-
+#include <Eigen/Core>
 
 XTAL_ENV_(push)
 namespace xtal::_test
@@ -145,4 +137,12 @@ using dynamic_count_t = typename dynamic_count::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+/**/
+template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
+XTAL_OP2 | (T &&t, U &&u)
+XTAL_0EX
+{
+	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
+};
+/***/
 XTAL_ENV_(pop)

@@ -120,7 +120,7 @@ XTAL_0FN
 };
 
 template <size_t N, accessed_q W>
-XTAL_FN2 pack_table_f(W &&w, size_t const &n)
+XTAL_FN2 pack_rowwise_f(W &&w, size_t const &n)
 XTAL_0EX
 {
 	using _std::span;
@@ -131,16 +131,16 @@ XTAL_0EX
 	(bond::seek_s<N>{});
 }
 template <size_t N, accessed_q W>
-XTAL_FN2 pack_table_f(size_t const &n, W &&w)
+XTAL_FN2 pack_rowwise_f(size_t const &n, W &&w)
 XTAL_0EX
 {
-	return pack_table_f<N>(XTAL_REF_(w), n);
+	return pack_rowwise_f<N>(XTAL_REF_(w), n);
 }
 template <size_t N>
-XTAL_FN2 pack_table_f(size_t n)
+XTAL_FN2 pack_rowwise_f(size_t n)
 XTAL_0EX
 {
-	return [=] (auto &&w) XTAL_0FN_(pack_table_f<N>(n, XTAL_REF_(w)));
+	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N>(n, XTAL_REF_(w)));
 }
 
 

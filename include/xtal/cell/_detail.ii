@@ -21,8 +21,8 @@ Constructs/references the current value. \
 
 template <class   ...Ws>	XTAL_ASK    member_q = rebased_q<Ws...>;
 template <class      W >	XTAL_USE    member_t = debased_t<W    >;
-template <debased_q  W >	XTAL_FN2    member_f(auto &&   w)       XTAL_0EX {return          &XTAL_REF_(w)    ;}
-template <class      W >	XTAL_FN2    member_f(auto &&...w)       XTAL_0EX {return make_f<W>(XTAL_REF_(w)...);}
+template <debased_q  W >	XTAL_FN2    member_f(auto &&   w)       XTAL_0EX {return & XTAL_REF_(w)    ;}
+template <class      W >	XTAL_FN2    member_f(auto &&...w)       XTAL_0EX {return W(XTAL_REF_(w)...);}
 
 ///\
 Resolves/dereferences the current value. \
@@ -115,14 +115,7 @@ struct refine_tuple
 		XTAL_TN2 apply()
 		XTAL_0EX
 		{
-			if constexpr (not pack_size::value) {
-				return F{};
-			}
-			else {
-				return [this] <size_t ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(F(S_::template head<I>()...))
-				(bond::seek_s<pack_size::value> {});
-			}
+			return apply(invoke_f<F>);
 		}
 
 		///\

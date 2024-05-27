@@ -126,8 +126,8 @@ struct block<U_data[N_data]>
 		Elementwise immutative transformer. \
 
 		//\
-		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(make_f<devalue_u<W>>))
-		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(make_f<typename W::value_type>))
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalue_u<W>>))
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<typename W::value_type>))
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_( &) {return copy_by<W>(XTAL_REF_(f));}

@@ -135,6 +135,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#define XTAL_TAB  
 #define XTAL_NDX                                   auto
 #define XTAL_0DX                                   first
 #define XTAL_1DX                                   second
@@ -180,9 +181,10 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_LET_(...)                   constexpr static __VA_ARGS__
 
 #define XTAL_IF0                      if constexpr (0);
-#define XTAL_IF1                      if constexpr (1);
-#define XTAL_0IF_(...)           else if constexpr (__VA_ARGS__)
 #define XTAL_0IF                 else
+#define XTAL_0IF_(...)           else if constexpr (__VA_ARGS__)
+#define XTAL_0IF_DO_(...)        else if constexpr (requires {__VA_ARGS__;}) {       __VA_ARGS__;}
+#define XTAL_0IF_TO_(...)        else if constexpr (requires {__VA_ARGS__;}) {return __VA_ARGS__;}
 #define XTAL_0EX                                   noexcept
 #define XTAL_0FX                 const             noexcept
 #define XTAL_0EX_(...)                 __VA_ARGS__ noexcept

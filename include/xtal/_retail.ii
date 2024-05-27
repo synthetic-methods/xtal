@@ -1,4 +1,4 @@
-namespace _detail
+namespace _retail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -141,33 +141,19 @@ template <class         T >	XTAL_ASK         rebased_q         =	rebased<T>::val
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if __has_include(<Eigen/Core>)
-template <class         T >	XTAL_USE     eigenclass_t =	         Eigen::internal::traits<based_t<T>>;
-template <class         T >	XTAL_USE     eigenvalue_t =	typename Eigen::internal::traits<based_t<T>>::Scalar;
-template <class         T >	XTAL_ASK     eigenclass_q =	complete_q<eigenclass_t<T>>;
-template <class         T >	XTAL_ASK     eigenvalue_q =	complete_q<eigenvalue_t<T>>;//TODO: Restrict to `Array`-derived.
-#else
-template <class         T >	XTAL_USE     eigenclass_t =	void;
-template <class         T >	XTAL_USE     eigenvalue_t =	void;
-template <class         T >	XTAL_ASK     eigenclass_q =	false;
-template <class         T >	XTAL_ASK     eigenvalue_q =	false;
-#endif
-
 template <class         T >	XTAL_USE        invalue_u =	_std::remove_all_extents_t<based_t<T>> ;
 template <class         T >	XTAL_ASK        invalue_q =	complete_q<invalue_u<T>> and not _std::same_as<invalue_u<T>, based_t<T>>;
 
 template <class         T >	XTAL_USE        unvalue_u =	typename based_t<T>::value_type;
-template <class         T >	XTAL_ASK        unvalue_q =	complete_q<unvalue_u<T>> and not eigenvalue_q<T>;
+template <class         T >	XTAL_ASK        unvalue_q =	complete_q<unvalue_u<T>>;
 
 template <class         T >	XTAL_ASK         varity_q =	unvalue_q<T> and incomplete_q<_std::tuple_size<based_t<T>>>;
 template <class         T >	XTAL_ASK          arity_q =	unvalue_q<T> and   complete_q<_std::tuple_size<based_t<T>>>;
-
 
 template <class         T >	XTAL_TYP        devalue   ;
 template <class         T >	XTAL_USE        devalue_u =	typename devalue<based_t<T>>::value_type;
 template <class         T >	XTAL_LET        devalue_n =	         devalue<based_t<T>>::size();
 template <class         T >	XTAL_TYP        devalue                     {using value_type =              T  ; XTAL_LET size = [] () XTAL_0FN_(             size_t(1));};
-template <eigenvalue_q  T >	XTAL_TYP        devalue<T>                  {using value_type = eigenvalue_t<T> ; XTAL_LET size = [] () XTAL_0FN_(             size_t(0));};
 template <   invalue_q  T >	XTAL_TYP        devalue<T>                  {using value_type =    invalue_u<T> ; XTAL_LET size = [] () XTAL_0FN_(     _std::extent_v<T>);};
 template <    varity_q  T >	XTAL_TYP        devalue<T>                  {using value_type =    unvalue_u<T> ; XTAL_LET size = [] () XTAL_0FN_(             size_t(0));};
 template <     arity_q  T >	XTAL_TYP        devalue<T>                  {using value_type =    unvalue_u<T> ; XTAL_LET size = [] () XTAL_0FN_( _std::tuple_size_v<T>);};
@@ -182,8 +168,8 @@ template <class U, int N           >	XTAL_TYP  involve<U, N       > {using type 
 template <class U                  >	XTAL_TYP  involve<U          > {using type = U      ;};
 
 template <class  U, int    ...Ns>	XTAL_TYP     devolve;
-template <          int    ...Ns>	XTAL_USE     devolve_x =	_xtd::extents<int, Ns...>;
-template <class  T, class  ..._s>	XTAL_USE     devolve_s =	typename devolve<based_t<T>>::template subtype<_s...>;
+//mplate <          int    ...Ns>	XTAL_USE     devolve_x =	_xtd::extents<int, Ns...>;
+//mplate <class  T, class  ..._s>	XTAL_USE     devolve_s =	typename devolve<based_t<T>>::template subtype<_s...>;
 template <class  T              >	XTAL_USE     devolve_t =	typename devolve<based_t<T>>::            type;
 template <class  T              >	XTAL_USE     devolve_u =	typename devolve<based_t<T>>::      value_type;
 template <class  T              >	XTAL_LET     devolve_n =	         devolve<based_t<T>>::size();
@@ -197,8 +183,8 @@ XTAL_TYP devolve<T, Ns...>
 template <bevalue_q U, int ...Ns>
 struct devolve<U, Ns...> : involve<U, Ns...>
 {
-	template <class ..._s>
-	using    subtype = _xtd::mdspan<U, devolve_x<Ns...>, _s...>;
+//	template <class ..._s>
+//	using    subtype = _xtd::mdspan<U, devolve_x<Ns...>, _s...>;
 	using value_type = U;
 
 	XTAL_LET size = [] ()
@@ -308,35 +294,9 @@ template <counted_q     T >	XTAL_TYP        counter<T> 	{using type = iteratee_t
 template <counter_q     T >	XTAL_TYP        counter<T> 	{using type =    based_t<T>;};
 
 
-template <class         T >	XTAL_TYP      inflected    	{using type = T;};
-template <iterator_q    T >	XTAL_TYP      inflected<T>:	inflected<iteratee_t<T>> {};
-#if __has_include(<Eigen/Core>)
-//mplate <class A,               auto ...Ns> XTAL_TYP inflected<Eigen::VectorwiseOp<A, Ns...>> : inflected<iteratee_t<A>> {};
-template <class A, int M, int N, auto ...Ns> XTAL_TYP inflected<Eigen::Block <A, M, N, Ns...>> {using type = Eigen::Array<typename A::Scalar, M, N>;};
-#endif
-
-template <class         T >	XTAL_USE     initerated_t =	_xtd::ranges::view_interface<T>;
-template <class         T >	XTAL_TYP     reiterated;
+template <class         T >	XTAL_TYP     reiterated    	{using type = _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;};
 template <class         T >	XTAL_USE     reiterated_t =	typename reiterated<T>::type;
-template <class         T >	XTAL_USE     reiterated_s =	_std::span<iteratee_t<T>>;
-template <class         T >
-XTAL_TYP reiterated
-{
-	XTAL_USE I = iterator_t<T>;
-	XTAL_USE J = sentinel_t<T>;
-	XTAL_LET K = _xtd::ranges::sized_sentinel_for<J, I>?
-		ranges::subrange_kind::  sized:
-		ranges::subrange_kind::unsized;
-	XTAL_USE type = _xtd::ranges::subrange<I, J, K>;
-
-};
-template <class         T >
-XTAL_REQ_(reiterated_s<T>(XTAL_ANY_(T)))
-XTAL_TYP reiterated<T>
-{
-	XTAL_USE type = reiterated_s<T>;
-
-};
+template <class         T >	XTAL_USE     initerated_t =	_xtd::ranges::view_interface<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -372,14 +332,14 @@ template <class      T >	XTAL_USE           numeric_t =	_std::numeric_limits<dev
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_t N, class T, class U=T>
-concept equality_p = requires (based_t<T> t, U u)
+concept equality_p = requires (based_t<T> t, based_t<U> u)
 {
 	requires N == 2;
 	{t == u} -> is_q<bool>;
 	{t != u} -> is_q<bool>;
 };
 template <size_t N, class T, class U=T>
-concept inequality_p = equality_p<N, T> and requires (based_t<T> t, U u)
+concept inequality_p = equality_p<N, T> and requires (based_t<T> t, based_t<U> u)
 {
 	requires N == 2;
 	{t <= u} -> is_q<bool>;

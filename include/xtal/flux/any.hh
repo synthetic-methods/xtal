@@ -59,7 +59,7 @@ struct define
 
 		///\
 		Efflux operator: resolves any dependencies before `this`, \
-		used for e.g. `occur::revise` and `occur::render`. \
+		used for e.g. `occur::review` and `occur::render`. \
 
 		XTAL_OP1 >>=(auto &&o)
 		XTAL_0EX

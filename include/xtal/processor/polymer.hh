@@ -151,32 +151,28 @@ struct polymer<U, As...>
 				}
 
 				///\
-				Renders the store slice designated by `revise_o` and `render_o` \
+				Renders the store slice designated by `review_o` and `render_o` \
 				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
 				
-				template <occur::revise_q Re, occur::render_q Rn>
-				XTAL_TNX efflux_pull_slice(Re &&revise_o, Rn &&render_o, auto &&...oo)
+				template <occur::review_q Rev, occur::render_q Ren>
+				XTAL_TNX efflux_slice(Rev &&review_o, Ren &&render_o)
 				XTAL_0EX
 				{
 					u_ensemble.cull([] (auto &&e)
 						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))
 					);
 					for (auto &vox:u_ensemble) {
-						if (1 == vox.efflux(XTAL_REF_(render_o), XTAL_REF_(oo)...)) {
+						if (1 == vox.efflux(XTAL_REF_(render_o))) {
 							return 1;
 						}
 					}
 					for (auto &vox:u_ensemble) {
-						auto review_o = vox();
-						auto _j = point_f(review_o); using _J =    decltype(_j);
-						auto _i = point_f(revise_o); using _I =    decltype(_i);
-						auto  n = count_f(revise_o); using  F = inflected_t<_I>;
-						if constexpr (requires {*_i = *_j;}) {
-							for (size_t m = 0; m < n; ++m) {*_i++ +=  (*_j++);}
-						}
-						else {
-							for (size_t m = 0; m < n; ++m) {*_i++ += F(*_j++);}
-						}
+						auto result_o = vox();
+						auto _j = point_f(result_o);
+						auto _i = point_f(review_o);
+						auto  n = count_f(review_o);
+						
+						for (size_t m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
 					}
 					return 0;
 				}
