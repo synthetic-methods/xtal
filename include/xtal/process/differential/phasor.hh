@@ -96,7 +96,7 @@ struct phasor<K_data[N_data], As...>
 					return phi(0);
 				}
 				XTAL_0IF (N_data == 2) {
-					return bond::pack_f(phi(0), phi(1)*rate);
+					return bond::pack_f(phi(0), phi(1)*(rate));
 				}
 				XTAL_0IF (1) {
 					return phi(bond::pack_f)*S_data(rate);

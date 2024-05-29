@@ -71,13 +71,13 @@ struct lattice<U_data[N_data]>
 		XTAL_OP2_(bool) >  (homotype   const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
-		XTAL_OP1_(T &) <<= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i) <<= u;}); return self();}
-		XTAL_OP1_(T &) >>= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i) >>= u;}); return self();}
-		XTAL_OP1_(T &)  &= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  &= u;}); return self();}
-		XTAL_OP1_(T &)  ^= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  ^= u;}); return self();}
-		XTAL_OP1_(T &)  *= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  *= u;}); return self();}
-		XTAL_OP1_(T &)  %= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (XTAL_NDX i) XTAL_0FN {let(i)  %= u;}); return self();}
-		XTAL_OP1_(T &)  /= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([n = 1.0/u, this] (XTAL_NDX i) XTAL_0FN {let(i)  *= n;}); return self();}
+		XTAL_OP1_(T &) <<= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
+		XTAL_OP1_(T &) >>= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
+		XTAL_OP1_(T &)  &= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  &= u;}); return self();}
+		XTAL_OP1_(T &)  ^= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  ^= u;}); return self();}
+		XTAL_OP1_(T &)  *= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  *= u;}); return self();}
+		XTAL_OP1_(T &)  %= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  %= u;}); return self();}
+		XTAL_OP1_(T &)  /= (U_data     const &u) XTAL_0EX {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {let(I)  *= n;}); return self();}
 
 	//	Vector assignment (via `std::initializer_list`):
 		XTAL_OP1_(T &) <<= (embrace_t<U_data> w) XTAL_0EX {return self() <<= T(w);}

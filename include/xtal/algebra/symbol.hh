@@ -76,10 +76,10 @@ struct symbol<U_data[N_data]>
 			let(0) = {};
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (auto I) XTAL_0FN {
 					auto const o = k%N;
-					let(    o) =  i;
-					let(N - o) =  i - K;
+					let(    o) =  I;
+					let(N - o) =  I - K;
 					k *= K;
 				});
 				let(1) = 0;
@@ -90,7 +90,7 @@ struct symbol<U_data[N_data]>
 				if constexpr (complex_field_q<U_data>) {
 					u = op::circle_f(op::patio_f(1, K));
 				}
-				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (auto I) XTAL_0FN {
 					auto const o = k%N;
 					let(    o) =  w;
 					let(N - o) = -w;

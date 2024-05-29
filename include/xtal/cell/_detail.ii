@@ -183,6 +183,7 @@ struct defer_field
 
 		XTAL_CON subtype()
 		XTAL_0EX
+		XTAL_REQ _std::is_default_constructible_v<U_body>
 		:	subtype(U_body{})
 		{}
 		XTAL_CON subtype(reembrace_t<U_body> o)

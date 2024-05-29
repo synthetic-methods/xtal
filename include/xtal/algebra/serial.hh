@@ -71,11 +71,11 @@ struct serial<U_data[N_data]>
 		}
 
 	//	Vector addition:
-		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) += t.get(i);}); return self();}
-		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) -= t.get(i);}); return self();}
+		XTAL_OP1_(T &) += (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {let(I) += t.get(I);}); return self();}
+		XTAL_OP1_(T &) -= (T const &t) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {let(I) -= t.get(I);}); return self();}
 
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) += w[i];}); return self();}
-		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) -= w[i];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) += (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto I) XTAL_0FN {let(I) += w[I];}); return self();}
+		template <subarray_q<N_data> W> XTAL_OP1_(T &) -= (W const &w) XTAL_0EX {bond::seek_forward_f<devalue_f(w)>([&, this] (auto I) XTAL_0FN {let(I) -= w[I];}); return self();}
 
 		///\
 		The dual of `T`, replacing addition by point-wise multiplication, \
@@ -139,15 +139,15 @@ struct serial<U_data[N_data]>
 					auto &s = self();
 					
 					if constexpr (0 < N_sign) {
-						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
-							auto const &v = get<i>(s);
+						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+							auto const &v = get<I>(s);
 							u = op::accumulate_f(u, v, v);
 						});
 					}
 					else {
-						bond::seek_forward_f<N_data>([&] (XTAL_NDX i) XTAL_0FN {
-							auto const &v = get<i>(s);
-							u = op::accumulate_f(u, v, v, op::assign_f((U_sigma) i));
+						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+							auto const &v = get<I>(s);
+							u = op::accumulate_f(u, v, v, op::assign_f((U_sigma) I));
 						});
 					}
 					return u;
@@ -159,8 +159,8 @@ struct serial<U_data[N_data]>
 					auto &s = self();
 					
 					U_data u{};
-					bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {
-						u = op::accumulate_f(u, get<i>(s), get<i>(t));
+					bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
+						u = op::accumulate_f(u, get<I>(s), get<I>(t));
 					});
 					return u;
 				}
@@ -176,7 +176,7 @@ struct serial<U_data[N_data]>
 				XTAL_0EX
 				{
 					if (_std::is_constant_evaluated()) {
-						bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) = U_data{1};});
+						bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {let(I) = U_data{1};});
 					}
 					else {
 						_std::uninitialized_fill_n(F_::data(), F_::size(), U_data{1});

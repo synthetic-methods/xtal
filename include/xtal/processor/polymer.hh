@@ -16,8 +16,8 @@ template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ..._s> XTAL_ASK polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
-XTAL_FN1  polymer_f(auto &&u)
-XTAL_0EZ_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
+XTAL_FN1     polymer_f(auto &&u)
+XTAL_0EX_TO_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////

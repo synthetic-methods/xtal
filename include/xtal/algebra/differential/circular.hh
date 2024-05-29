@@ -105,9 +105,10 @@ struct circular<K_data[N_data]>
 		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(U_alpha u) XTAL_0EX {return   ordinant(u);}
 		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(U_sigma u) XTAL_0EX {return coordinant(u);}
 
-		XTAL_OP2 () (size_t i) XTAL_0FX {return self().got(i);}
-		XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
-		
+		XTAL_OP2() (size_t i) XTAL_0FX {return self().got(i);}
+	//	XTAL_OP2 * (        ) XTAL_0FX {return self().got( );}
+	//	using T_::operator*;
+
 		///\
 		Scales all elements. \
 

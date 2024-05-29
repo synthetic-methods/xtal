@@ -31,14 +31,6 @@ template <class U           > XTAL_FN2 devalue_f(_std::initializer_list<U   >   
 //\
 Ranged...
 
-///\returns the result of zipping `...xs` with `f`. \
-
-template <class F             > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f            ) XTAL_0EX {return _xtd::ranges::views::     generate(XTAL_REF_(f)                  );}
-template <class F, class    X > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, X  &&   x ) XTAL_0EX {return _xtd::ranges::views::    transform(XTAL_REF_(x), XTAL_REF_(f)    );}
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) XTAL_0EX {return _xtd::ranges::views::zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) XTAL_0EX {return                         iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
-
-
 template <int N_offset=0, class T>
 XTAL_DEF_(return,inline)
 XTAL_LET endpoint_f(T &&t)
@@ -89,12 +81,27 @@ XTAL_0EX -> size_t
 	XTAL_0IF (sizeable_q<T>) {return                t. size();}
 	XTAL_0IF (1)             {return                   size_0;}
 }
-template <class T> XTAL_DEF_(return,inline) XTAL_FN1  account_f(T &&t) XTAL_0EX {return _xtd::ranges::views::take(count_f(XTAL_REF_(t)));}
-template <class T> XTAL_DEF_(return,inline) XTAL_FN1 discount_f(T &&t) XTAL_0EX {return _xtd::ranges::views::drop(count_f(XTAL_REF_(t)));}
+XTAL_DEF_(return,inline)
+XTAL_LET count_f(auto const &...ts)
+XTAL_0EX -> size_t
+{
+	return _std::min<size_t>({(count_f(ts) - size_1)...}) + size_1;
+}
+XTAL_DEF_(return,inline) XTAL_FN1  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take(count_f(ts...));}
+XTAL_DEF_(return,inline) XTAL_FN1 discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop(count_f(ts...));}
+
 
 template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
 template <class      T >	XTAL_FN2 counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
 template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
+
+
+///\returns the result of zipping `...xs` with `f`. \
+
+template <class F             > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f            ) XTAL_0EX {return _xtd::ranges::views::      generate(XTAL_REF_(f)                  );}
+template <class F, class    X > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, X  &&   x ) XTAL_0EX {return _xtd::ranges::views::     transform(XTAL_REF_(x), XTAL_REF_(f)    );}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) XTAL_0EX {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) XTAL_0EX {return                          iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -112,16 +119,13 @@ template <class X, class Y> requires common_q<X, Y>
 XTAL_FN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
-	using W = common_t<X, Y>;
-	return (W) x == (W) y;
+	return x == y;
 }
 template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
-	using _xtd::ranges::equal;
-
-	return equal(XTAL_REF_(x), XTAL_REF_(y));
+	return _xtd::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 template <class X, class Y>
@@ -135,15 +139,9 @@ XTAL_FN2 equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
-	if constexpr (requires {x.begin() == y.begin() and x.end() == y.end();}) {
-		return &x == &y or x.begin() == y.begin() and x.end() == y.end();
-	}
-	if constexpr (requires {x.begin() == y.begin();}) {
-		return &x == &y or x.begin() == y.begin();
-	}
-	else {
-		return &x == &y;
-	}
+	XTAL_0IF XTAL_REQ_TO_(&x == &y or x.begin() == y.begin() and x.end() == y.end())
+	XTAL_0IF XTAL_REQ_TO_(&x == &y or x.begin() == y.begin())
+	XTAL_0IF XTAL_REQ_TO_(&x == &y)
 }
 
 

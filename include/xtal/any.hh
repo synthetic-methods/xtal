@@ -234,8 +234,8 @@ template <class               T >	XTAL_USE   pointee_t =          _retail::  poi
 //\
 Ranged...
 
-template <class      ...Ts>	XTAL_ASK        sizeable_q = (...and  _retail::   sizeable_q<Ts>);
-template <class      ...Ts>	XTAL_ASK      resizeable_q = (...and  _retail:: resizeable_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        sizeable_q = (...and  _retail::   sizeable_q<based_t<Ts>>);
+template <class      ...Ts>	XTAL_ASK      resizeable_q = (...and  _retail:: resizeable_q<based_t<Ts>>);
 
 template <class      ...Ts>	XTAL_ASK         bounded_q = (...and  _retail::    bounded_q<Ts>);
 template <class      ...Ts>	XTAL_ASK       unbounded_q = (...and  _retail::  unbounded_q<Ts>);

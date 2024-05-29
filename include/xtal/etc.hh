@@ -147,11 +147,6 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)
 #define XTAL_REF_(...)                 static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
-#define XTAL_REQ                          requires
-#define XTAL_REQ_(...)                   (requires {__VA_ARGS__;})
-#define XTAL_REQ_DO_(...)                (requires {__VA_ARGS__;}) {       __VA_ARGS__;}
-#define XTAL_REQ_TO_(...)                (requires {__VA_ARGS__;}) {return __VA_ARGS__;}
-
 #define XTAL_LET                         constexpr static auto
 #define XTAL_LET_(...)                   constexpr static __VA_ARGS__
 #define XTAL_SET                         constexpr        auto
@@ -182,19 +177,28 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_FN1_(...)                   constexpr static __VA_ARGS__
 #define XTAL_FN2_(...)     [[nodiscard]] constexpr static __VA_ARGS__
 
-#define XTAL_IF0                      if constexpr (0);
-#define XTAL_0IF                 else if constexpr
-#define XTAL_0EX                                   noexcept
-#define XTAL_0FX                 const             noexcept
-#define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
-#define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
-
 #define XTAL_1FN_(...)     (auto &&..._) constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN                         constexpr noexcept
 #define XTAL_0FM                 mutable constexpr noexcept
 #define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FM_(...)           mutable constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0EZ_(...)                             noexcept {return (__VA_ARGS__);}
+
+#define XTAL_IF0                      if constexpr (0);
+#define XTAL_0IF                 else if constexpr
+
+#define XTAL_0FX                 const             noexcept
+#define XTAL_0EX                                   noexcept
+#define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
+#define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
+#define XTAL_0FX_DO_(...)        const             noexcept {        __VA_ARGS__ ;}
+#define XTAL_0EX_DO_(...)                          noexcept {        __VA_ARGS__ ;}
+#define XTAL_0FX_TO_(...)        const             noexcept {return (__VA_ARGS__);}
+#define XTAL_0EX_TO_(...)                          noexcept {return (__VA_ARGS__);}
+
+#define XTAL_REQ                          requires
+#define XTAL_REQ_(...)                   (requires { __VA_ARGS__ ;})
+#define XTAL_REQ_DO_(...)                (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
+#define XTAL_REQ_TO_(...)                (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
 
 #define XTAL_TO1_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);};
 #define XTAL_TO2_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);}\

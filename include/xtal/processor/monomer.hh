@@ -16,8 +16,8 @@ template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_FN1  monomer_f(auto &&u)
-XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
+XTAL_FN1     monomer_f(auto &&u)
+XTAL_0EX_TO_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ struct monomer<U_process, As...>
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
-			XTAL_LET_(int) N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
+			XTAL_LET_(int) N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
 			using subkind = bond::compose<resource::restash<U_state, U_store>, R__binding<Xs...>>;
 

@@ -100,22 +100,22 @@ template <class T,                      size_t... Ns > XTAL_USE intrapack_item_t
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <pack_size_q ...Ts> XTAL_TYP pack_row;
-template <pack_size_q ...Ts> XTAL_USE pack_row_t = typename pack_row<Ts...>::type;
-template <pack_size_q ...Ts> XTAL_TYP pack_row
+template <pack_size_q ...Ts>
+XTAL_TYP pack_row
 {
-	template <class     > struct sequence;
-	template <auto ...Is> struct sequence<bond::seek_t<Is...>>
-	{	using type = pack_t<interpack_item_t<Is, Ts...>...>;
-	};
-	using type = typename sequence<bond::seek_s<pack_size_n<Ts...>>>::type;
+	template <size_t  ...Ns>
+	XTAL_LET make(seek_t<Ns...>) -> pack_t<interpack_item_t<Ns, Ts...>...>;
+
+	using type = decltype(make(seek_s<pack_size_n<Ts...>>()));
 
 };
+template <pack_size_q ...Ts>
+XTAL_USE pack_row_t = typename pack_row<Ts...>::type;
 XTAL_LET pack_row_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN
 {
-	return [&]<auto ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN_(pack_row_t<Ts...>(pack_item_f<Is>(ts...)...))
+	return [&]<auto ...Ns> (bond::seek_t<Ns...>)
+		XTAL_0FN_(pack_row_t<Ts...>(pack_item_f<Ns>(ts...)...))
 	(bond::seek_s<pack_size_n<Ts...>>{});
 };
 
@@ -126,8 +126,8 @@ XTAL_0EX
 	using _std::span;
 	using _xtd::ranges::views::zip;
 
-	return [&]<size_t ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN_(zip(span(point_f(w[Is]), n)...))
+	return [&]<size_t ...Ns> (bond::seek_t<Ns...>)
+		XTAL_0FN_(zip(span(point_f(w[Ns]), n)...))
 	(bond::seek_s<N>{});
 }
 template <size_t N, accessed_q W>

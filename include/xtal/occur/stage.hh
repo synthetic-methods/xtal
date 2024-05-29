@@ -75,8 +75,8 @@ using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_FN1  stage_f(auto &&...oo)
-XTAL_0EZ_(stage_t<As...>(XTAL_REF_(oo)...))
+XTAL_FN1     stage_f(auto &&...oo)
+XTAL_0EX_TO_(stage_t<As...>(XTAL_REF_(oo)...))
 
 
 ///////////////////////////////////////////////////////////////////////////////

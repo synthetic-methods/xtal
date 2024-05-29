@@ -50,8 +50,8 @@ struct review<U>
 				using _xtd::ranges::views::slice;
 
 				//\
-				return review_f(view()|slice(i, j));
 				return review_f(view()|discount_f(i)|account_f(j - i));
+				return review_f(view()|slice(i, j));
 			}
 		})
 

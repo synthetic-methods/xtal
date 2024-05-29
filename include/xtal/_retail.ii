@@ -268,23 +268,23 @@ template <class         T >	XTAL_ASK       distance_q =	_std::integral<based_t<T
 template <class         T >	XTAL_ASK        counter_q =	_std::integral<based_t<T>>;
 template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
 
-template <class         T >	XTAL_TYP       iteratee    	{using type =             devalue_u<T> ;};
-template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =     pointee_t<begin_t<T>>;};
-template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =     pointee_t<        T >;};
-template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type =               based_t<T> ;};
+template <class         T >	XTAL_TYP       iteratee    	{using type =                devalue_u<T> ;};
+template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t<begin_t<T>>;};
+template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t        <T> ;};
+template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type = _std::remove_reference_t<T> ;};
 
-template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type =               based_t<T> ;};
-template <iterator_q    T >	XTAL_TYP       iterated<T> 	{using type =                     void ;};
-template < counter_q    T >	XTAL_TYP       iterated<T> 	{using type =            interval_t<T> ;};
+template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type =                  based_t<T> ;};
+template <iterator_q    T >	XTAL_TYP       iterated<T> 	{using type =                        void ;};
+template < counter_q    T >	XTAL_TYP       iterated<T> 	{using type =               interval_t<T> ;};
 
-template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =               begin_t<T> ;};
-template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =               based_t<T> ;};
-template < counter_q    T >	XTAL_TYP       iterator<T>		{using type = iterator_t<interval_t<T>>;};
+template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =                  begin_t<T> ;};
+template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =                  based_t<T> ;};
+template < counter_q    T >	XTAL_TYP       iterator<T>		{using type =    iterator_t<interval_t<T>>;};
 
-template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                  end_t<T>;};
-template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                        T ;};
+template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                    end_t<T> ;};
+template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                          T  ;};
 
-template <class         T >	XTAL_TYP       distance    	{using type = distance_t<iterator_t<T>>;};
+template <class         T >	XTAL_TYP       distance    	{using type =    distance_t<iterator_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       distance<T> 	{using type = XTAL_TYP_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
 template <counted_q     T >	XTAL_TYP        counted<T> 	{using type =    based_t<T>;};

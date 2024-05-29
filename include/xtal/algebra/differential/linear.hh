@@ -57,15 +57,17 @@ struct linear<U_data[N_data]>
 		Produces the successor by pairwise addition from `begin()` to `end()`, \
 		assuming the entries of `this` are finite differences/derivatives. \
 
+		XTAL_DEF_(inline)
 		XTAL_OP1 ++ (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator++(); return t;
 		}
+		XTAL_DEF_(inline)
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			bond::seek_forward_f<N_data - 1>([this] (XTAL_NDX i) XTAL_0FN_(let(i) += get(i + 1)));
+			bond::seek_forward_f<N_data - 1>([this] (auto I) XTAL_0FN_(let(I) += get(I + 1)));
 			return self();
 		}
 
@@ -73,15 +75,17 @@ struct linear<U_data[N_data]>
 		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
 		assuming the entries of `this` are finite differences/derivatives. \
 
+		XTAL_DEF_(inline)
 		XTAL_OP1 -- (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator--(); return t;
 		}
+		XTAL_DEF_(inline)
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			bond::seek_backward_f<N_data - 1>([this] (XTAL_NDX i) XTAL_0FN_(let(i) -= get(i + 1)));
+			bond::seek_backward_f<N_data - 1>([this] (auto I) XTAL_0FN_(let(I) -= get(I + 1)));
 			return self();
 		}
 
