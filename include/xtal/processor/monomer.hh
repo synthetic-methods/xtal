@@ -15,7 +15,8 @@ template <typename ..._s> XTAL_TYP monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ..._s> XTAL_ASK monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
-XTAL_FN2  monomer_f(auto &&u)
+XTAL_DEF_(return,inline)
+XTAL_FN1  monomer_f(auto &&u)
 XTAL_0EZ_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
@@ -119,8 +120,8 @@ struct monomer<U_process, As...>
 				XTAL_TN1 functor(),
 				{
 					XTAL_IF0
-					XTAL_0IF_(    resizeable_q<U_store>) {return state();}
-					XTAL_0IF_(not resizeable_q<U_store>) {return state()|account_f(R_::template head_t<U_resize>);}
+					XTAL_0IF (    resizeable_q<U_store>) {return state();}
+					XTAL_0IF (not resizeable_q<U_store>) {return state()|account_f(R_::template head_t<U_resize>);}
 				})
 
 				XTAL_TN2_(size_t) delay()
@@ -215,9 +216,9 @@ struct monomer<U_process, As...>
 						
 						using namespace _xtd::ranges;
 						XTAL_IF0
-						XTAL_0IF_DO_(copy_n(_j, n, _i))
-						XTAL_0IF_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
+						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
+						XTAL_0IF (1) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
 					}

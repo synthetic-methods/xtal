@@ -65,10 +65,9 @@ struct symbol<U_data[N_data]>
 		///\
 		Dirichlet character generation. \
 
-		template <int N_subscript=1>
+		template <int N_subscript=1> requires ((bool) (1&N_data))
 		XTAL_TN1_(T &) characterize()
 		XTAL_0EX
-		XTAL_REQ ((bool) (1&N_data))
 		{
 			size_s constexpr N = N_data;
 			size_s constexpr M = N_data - 1;

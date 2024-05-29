@@ -84,12 +84,10 @@ struct block<U_data[N_data]>
 			(bond::seek_s<N_data>{});
 		}
 		template <class F>
-		XTAL_TN2  got(F &&f)
+		XTAL_TN2 got(F &&f)
 		XTAL_0FX
-		XTAL_REQ_(got<F>())
-		{
-			return got<F>();
-		}
+		XTAL_REQ
+		XTAL_REQ_TO_(got<F>())
 
 		XTAL_TN2 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
 		XTAL_OP2 () (auto &&o) XTAL_0FX {return self().got(XTAL_REF_(o));}

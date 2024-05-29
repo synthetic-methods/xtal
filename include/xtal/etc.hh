@@ -135,8 +135,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TAB  
-#define XTAL_NDX                                   auto
+#define XTAL_NDX                                   ::std::size_t
 #define XTAL_0DX                                   first
 #define XTAL_1DX                                   second
 
@@ -149,10 +148,15 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_REF_(...)                 static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
 #define XTAL_REQ                          requires
-#define XTAL_REQ_(...)                    requires requires {__VA_ARGS__;}
+#define XTAL_REQ_(...)                   (requires {__VA_ARGS__;})
+#define XTAL_REQ_DO_(...)                (requires {__VA_ARGS__;}) {       __VA_ARGS__;}
+#define XTAL_REQ_TO_(...)                (requires {__VA_ARGS__;}) {return __VA_ARGS__;}
 
-#define XTAL_VAR                                   auto
-#define XTAL_VAL                         constexpr auto
+#define XTAL_LET                         constexpr static auto
+#define XTAL_LET_(...)                   constexpr static __VA_ARGS__
+#define XTAL_SET                         constexpr        auto
+#define XTAL_SET_(...)                   constexpr        __VA_ARGS__
+
 #define XTAL_CON                         constexpr       
 #define XTAL_CXN                         constexpr explicit
 
@@ -169,7 +173,6 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_FN0                         constexpr static          void
 #define XTAL_FN1                         constexpr static decltype(auto)
 #define XTAL_FN2           [[nodiscard]] constexpr static decltype(auto)
-#define XTAL_LET                         constexpr static          auto
 
 #define XTAL_OP1_(...)                   constexpr        __VA_ARGS__ operator
 #define XTAL_OP2_(...)     [[nodiscard]] constexpr        __VA_ARGS__ operator
@@ -178,18 +181,15 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_TN2_(...)     [[nodiscard]] constexpr        __VA_ARGS__
 #define XTAL_FN1_(...)                   constexpr static __VA_ARGS__
 #define XTAL_FN2_(...)     [[nodiscard]] constexpr static __VA_ARGS__
-#define XTAL_LET_(...)                   constexpr static __VA_ARGS__
 
 #define XTAL_IF0                      if constexpr (0);
-#define XTAL_0IF                 else
-#define XTAL_0IF_(...)           else if constexpr (__VA_ARGS__)
-#define XTAL_0IF_DO_(...)        else if constexpr (requires {__VA_ARGS__;}) {       __VA_ARGS__;}
-#define XTAL_0IF_TO_(...)        else if constexpr (requires {__VA_ARGS__;}) {return __VA_ARGS__;}
+#define XTAL_0IF                 else if constexpr
 #define XTAL_0EX                                   noexcept
 #define XTAL_0FX                 const             noexcept
 #define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
 #define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
 
+#define XTAL_1FN_(...)     (auto &&..._) constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN                         constexpr noexcept
 #define XTAL_0FM                 mutable constexpr noexcept
 #define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
@@ -237,11 +237,11 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TNX              [[nodiscard]]  XTAL_STD_(sign_t)
+//\
+#define XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_t)
+#define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_t)
 #define XTAL_FLX                             XTAL_STD_(sign_t)
-#define XTAL_FLX_(...)        [=, this]     (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
-
-#define XTAL_1FN_(...)        (auto &&...oo) XTAL_0FN_(__VA_ARGS__(XTAL_REF_(oo)...))
+#define XTAL_FLX_(...)            [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
 
 ////////////////////////////////////////////////////////////////////////////////

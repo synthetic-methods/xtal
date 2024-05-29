@@ -138,10 +138,8 @@ struct spool<A>
 		}
 		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
 		XTAL_0EX
-		XTAL_REQ_(u_store.inplace(v_, XTAL_REF_(ws)...))
-		{
-			return u_store.inplace(v_, XTAL_REF_(ws)...);
-		}
+		XTAL_REQ
+		XTAL_REQ_TO_(u_store.inplace(v_, XTAL_REF_(ws)...))
 
 	};
 	using type = bond::isotype<homotype>;

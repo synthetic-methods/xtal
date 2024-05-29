@@ -90,15 +90,15 @@ struct phasor<K_data[N_data], As...>
 				auto const rate = S_::sample().rate();
 				auto phi = ++head();
 				XTAL_IF0
-				XTAL_0IF_(N_data == 1) {
+				XTAL_0IF (N_data == 1) {
 					//\
 					return bond::pack_f(phi(0));
 					return phi(0);
 				}
-				XTAL_0IF_(N_data == 2) {
+				XTAL_0IF (N_data == 2) {
 					return bond::pack_f(phi(0), phi(1)*rate);
 				}
-				XTAL_0IF {
+				XTAL_0IF (1) {
 					return phi(bond::pack_f)*S_data(rate);
 				}
 			}

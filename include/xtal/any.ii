@@ -14,9 +14,9 @@ XTAL_LET invoke_f = [] (auto &&...oo)
 XTAL_0FN
 {
 	XTAL_IF0
-	XTAL_0IF_TO_(F   (XTAL_REF_(oo)...))
-	XTAL_0IF_TO_(F   {XTAL_REF_(oo)...})
-	XTAL_0IF_TO_(F{} (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_REQ_TO_(F   (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_REQ_TO_(F   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_REQ_TO_(F{} (XTAL_REF_(oo)...))
 };
 
 ///\returns the compile-time size of the supplied array-like argument. \
@@ -46,13 +46,13 @@ XTAL_0EX
 {
 	if constexpr (iterator_q<T>) {
 		XTAL_IF0
-		XTAL_0IF_(0 == N_offset) {return XTAL_REF_(t);}
-		XTAL_0IF_(0 != N_offset) {return _xtd::ranges::prev(XTAL_REF_(t), N_offset);}
+		XTAL_0IF (0 == N_offset) {return XTAL_REF_(t);}
+		XTAL_0IF (0 != N_offset) {return _xtd::ranges::prev(XTAL_REF_(t), N_offset);}
 	}
 	else {
 		XTAL_IF0
-		XTAL_0IF_(0 <= N_offset) {return point_f<N_offset>(_xtd::ranges::  end(XTAL_REF_(t)));}
-		XTAL_0IF_(N_offset <  0) {return point_f<N_offset>(_xtd::ranges::begin(XTAL_REF_(t)));}
+		XTAL_0IF (0 <= N_offset) {return point_f<N_offset>(_xtd::ranges::  end(XTAL_REF_(t)));}
+		XTAL_0IF (N_offset <  0) {return point_f<N_offset>(_xtd::ranges::begin(XTAL_REF_(t)));}
 	}
 }
 template <int N_offset=0, class T>
@@ -62,13 +62,13 @@ XTAL_0EX
 {
 	if constexpr (iterator_q<T>) {
 		XTAL_IF0
-		XTAL_0IF_(0 == N_offset) {return XTAL_REF_(t);}
-		XTAL_0IF_(0 != N_offset) {return _xtd::ranges::next(XTAL_REF_(t), N_offset);}
+		XTAL_0IF (0 == N_offset) {return XTAL_REF_(t);}
+		XTAL_0IF (0 != N_offset) {return _xtd::ranges::next(XTAL_REF_(t), N_offset);}
 	}
 	else {
 		XTAL_IF0
-		XTAL_0IF_(0 <= N_offset) {return point_f<N_offset>(_xtd::ranges::begin(XTAL_REF_(t)));}
-		XTAL_0IF_(N_offset <  0) {return point_f<N_offset>(_xtd::ranges::  end(XTAL_REF_(t)));}
+		XTAL_0IF (0 <= N_offset) {return point_f<N_offset>(_xtd::ranges::begin(XTAL_REF_(t)));}
+		XTAL_0IF (N_offset <  0) {return point_f<N_offset>(_xtd::ranges::  end(XTAL_REF_(t)));}
 	}
 }
 ///\returns the `size` of the given range. \
@@ -83,11 +83,11 @@ XTAL_LET count_f(T const &t)
 XTAL_0EX -> size_t
 {
 	XTAL_IF0
-	XTAL_0IF_( counter_q<T>) {return t                       ;}
-	XTAL_0IF_( counted_q<T>) {return 1 + t.back() - t.front();}
-	XTAL_0IF_( bounded_q<T>) {return     t. end() - t.begin();}
-	XTAL_0IF_(sizeable_q<T>) {return                t. size();}
-	XTAL_0IF                 {return                   size_0;}
+	XTAL_0IF ( counter_q<T>) {return t                       ;}
+	XTAL_0IF ( counted_q<T>) {return 1 + t.back() - t.front();}
+	XTAL_0IF ( bounded_q<T>) {return     t. end() - t.begin();}
+	XTAL_0IF (sizeable_q<T>) {return                t. size();}
+	XTAL_0IF (1)             {return                   size_0;}
 }
 template <class T> XTAL_DEF_(return,inline) XTAL_FN1  account_f(T &&t) XTAL_0EX {return _xtd::ranges::views::take(count_f(XTAL_REF_(t)));}
 template <class T> XTAL_DEF_(return,inline) XTAL_FN1 discount_f(T &&t) XTAL_0EX {return _xtd::ranges::views::drop(count_f(XTAL_REF_(t)));}

@@ -32,7 +32,7 @@ TAG_("mark")
 		TRUE_(is_q<decltype(XTAL_ANY_(U_target).then()), U_source>);
 
 	}
-	XTAL_VAL maybe = [] (mark_s<> g)
+	XTAL_SET maybe = [] (mark_s<> g)
 	XTAL_0FN {
 		if (g) {
 			return true;

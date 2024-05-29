@@ -329,16 +329,16 @@ public:
 	{
 		delta_t const signum = target >> positive.depth;
 		XTAL_IF0
-		XTAL_0IF_(N_side == -1) {
+		XTAL_0IF (N_side == -1) {
 			target &= signum;
 			target += signum;
 			target ^= signum;
 		}
-		XTAL_0IF_(N_side ==  0) {
+		XTAL_0IF (N_side ==  0) {
 			target += signum;
 			target ^= signum;
 		}
-		XTAL_0IF_(N_side ==  1) {
+		XTAL_0IF (N_side ==  1) {
 			target &=~signum;
 		}
 		return signum;
@@ -401,10 +401,10 @@ public:
 	XTAL_0EX
 	{
 		XTAL_IF0
-		XTAL_0IF_(N_zero ==  0) {return (0 <  i) - (i <  0);}
-	//	XTAL_0IF_(N_zero == +1) {return (0 <= i) - (i <  0);}
-		XTAL_0IF_(N_zero == +1) {return (i>>positive.depth)|1;}
-		XTAL_0IF_(N_zero == -1) {return (0 <  i) - (i <= 0);}
+		XTAL_0IF (N_zero ==  0) {return (0 <  i) - (i <  0);}
+	//	XTAL_0IF (N_zero == +1) {return (0 <= i) - (i <  0);}
+		XTAL_0IF (N_zero == +1) {return (i>>positive.depth)|1;}
+		XTAL_0IF (N_zero == -1) {return (0 <  i) - (i <= 0);}
 	}
 		//	return (0 <= i) - (i <  0);
 	static_assert(sign_f((delta_t) +2) == +1);
@@ -700,16 +700,16 @@ public:
 		int constexpr M_lim = N_lim&0xF;
 
 		XTAL_IF0 //	ELIMINATION
-		XTAL_0IF_(N_pow ==  0) {return U_1;}
-		XTAL_0IF_(N_pow ==  1) {return w  ;}
-		XTAL_0IF_(N_pow == -1 and N_lim < 0 or N_etc) {return U_1/w;}
-		XTAL_0IF_(N_pow ==  2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return     sqrt(w);}}
-		XTAL_0IF_(N_pow == -2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return U_1/sqrt(w);}}
+		XTAL_0IF (N_pow ==  0) {return U_1;}
+		XTAL_0IF (N_pow ==  1) {return w  ;}
+		XTAL_0IF (N_pow == -1 and N_lim < 0 or N_etc) {return U_1/w;}
+		XTAL_0IF (N_pow ==  2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return     sqrt(w);}}
+		XTAL_0IF (N_pow == -2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return U_1/sqrt(w);}}
 
 	//	assert(_std::is_constant_evaluated()? K_pow == -2: K_pow < 0 and 0 <= N_lim);
 	
 		XTAL_IF0
-		XTAL_0IF_(real_number_q<W>) {
+		XTAL_0IF (real_number_q<W>) {
 		//	ESTIMATION:
 			W n = root_e<K_pow>(w);
 			seek_forward_f<M_lim>([&] (XTAL_NDX)
@@ -717,16 +717,16 @@ public:
 			);
 		//	CORRECTION:
 			XTAL_IF0
-			XTAL_0IF_(K_pow == -2 and N_lim < 0) {
+			XTAL_0IF (K_pow == -2 and N_lim < 0) {
 				n /= U_1 + n*n*w;
 				n *= U_2;
 			}
 		//	RESOLUTION:
 			XTAL_IF0
-		//	XTAL_0IF_(N_pow ==  1) {return w;}
-			XTAL_0IF_(N_pow == -1) {return n;}
-			XTAL_0IF_(N_pow == -2) {return n;}
-			XTAL_0IF_(N_pow ==  2) {return w*n;}
+		//	XTAL_0IF (N_pow ==  1) {return w;}
+			XTAL_0IF (N_pow == -1) {return n;}
+			XTAL_0IF (N_pow == -2) {return n;}
+			XTAL_0IF (N_pow ==  2) {return w*n;}
 		}
 	}
 	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
@@ -744,8 +744,8 @@ public:
 		alpha_t n = root_f<K_pow, N_lim>(w);
 		alpha_t u = n*w;
 		XTAL_IF0
-		XTAL_0IF_(0 < N_pow) {return couple_t<alpha_t> {u, n};}
-		XTAL_0IF_(N_pow < 0) {return couple_t<alpha_t> {n, u};}
+		XTAL_0IF (0 < N_pow) {return couple_t<alpha_t> {u, n};}
+		XTAL_0IF (N_pow < 0) {return couple_t<alpha_t> {n, u};}
 	}
 	static_assert(root_f< 2>(3) == (alpha_t) 1.7320508075688772935274463415058723670L);
 	static_assert(root_f< 2>(2) == (alpha_t) 1.4142135623730950488016887242096980786L);
@@ -762,8 +762,8 @@ public:
 	XTAL_0EX
 	{
 		XTAL_IF0
-		XTAL_0IF_(0 == N_pow) {return roots_f<2,       N_lim>(w);}
-		XTAL_0IF_(0 != N_pow) {return root_f <2*N_pow, N_lim>(w);}
+		XTAL_0IF (0 == N_pow) {return roots_f<2,       N_lim>(w);}
+		XTAL_0IF (0 != N_pow) {return root_f <2*N_pow, N_lim>(w);}
 	}
 	template <int N_pow=1, int N_lim=-1> requires sign_p<N_pow, 0>
 	XTAL_FN2 unsquare_dot_f(auto &&u)
@@ -780,10 +780,10 @@ public:
 		using Z = XTAL_TYP_(z);
 
 		XTAL_IF0
-		XTAL_0IF_(N_lim == 0) {
+		XTAL_0IF (N_lim == 0) {
 			return versus_f<N_pow>(z);
 		}
-		XTAL_0IF_(complex_number_q<Z>) {
+		XTAL_0IF (complex_number_q<Z>) {
 			auto x = z.real();
 			auto y = z.imag();
 			seek_forward_f<N_lim>([&] (XTAL_NDX) XTAL_0FN {
@@ -794,14 +794,14 @@ public:
 			});
 			return versus_f<N_pow>(Z{x, y});
 		}
-		XTAL_0IF_(multiplicative_group_p<1, Z>) {
+		XTAL_0IF (multiplicative_group_p<1, Z>) {
 			auto zz = z;
 			seek_forward_f<N_lim>([&] (XTAL_NDX)
 				XTAL_0FN_(zz *= zz)
 			);
 			return versus_f<N_pow>(zz);
 		}
-		XTAL_0IF_(multiplicative_group_p<2, Z>) {
+		XTAL_0IF (multiplicative_group_p<2, Z>) {
 			return square_f<N_pow, N_lim - 1>(z*z);
 		}
 	}
@@ -913,9 +913,9 @@ public:
 	{
 		static_assert(sign_p<N_pow, 0>);
 		XTAL_IF0
-		XTAL_0IF_(N_pow ==  0) {return 1;}
-		XTAL_0IF_(N_pow ==  1) {return n_num/n_nom;}
-		XTAL_0IF_(N_pow == -1) {return n_nom/n_num;}
+		XTAL_0IF (N_pow ==  0) {return 1;}
+		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
+		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
 	}
 	static_assert(ratio_f(1, 2.0) == 0.5 && ratio_f<-1>(1, 2.0) == 2.0);
 	static_assert(ratio_f(4, 2.0) == 2.0 && ratio_f<-1>(4, 2.0) == 0.5);

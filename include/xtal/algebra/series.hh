@@ -63,10 +63,9 @@ struct series<U_data[N_data]>
 			generate(XTAL_REF_(oo)...);
 		}
 
-		template <size_t N_limit=N_data>
+		template <size_t N_limit=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
 		XTAL_TN1_(T &) generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX
-		XTAL_REQ complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
 		{
 			using W1  = U_v1;
 			using U2  = scalar_t<U_v2[2]>;
@@ -91,7 +90,7 @@ struct series<U_data[N_data]>
 		{
 			using I = typename T_::difference_type;
 
-			XTAL_VAL N_shift = op::bit_ceiling_f(N_step);
+			XTAL_SET N_shift = op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
@@ -126,10 +125,9 @@ struct series<U_data[N_data]>
 		///\note\
 		To generate the FFT basis used by `transform` etc, use `N_shift == -1`. \
 
-		template <int N_shift=0>
+		template <int N_shift=0> requires complex_field_q<U_data>
 		XTAL_TN1_(T &) generate()
 		XTAL_0EX
-		XTAL_REQ complex_field_q<U_data>
 		{
 		//	Initialize the forwards and backwards iterators:
 			auto const i = T_::begin();
@@ -157,10 +155,9 @@ struct series<U_data[N_data]>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <int N_direction=1> requires sign_p<N_direction, 1>
+		template <int N_direction=1> requires complex_field_q<U_data> and sign_p<N_direction, 1>
 		XTAL_TN1 transform(isomorphic_q<T> auto &that)
 		XTAL_0FX
-		XTAL_REQ complex_field_q<U_data>
 		{
 			using Y = XTAL_TYP_(that);
 			using X = typename Y::transverse::type;

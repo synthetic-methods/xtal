@@ -108,6 +108,7 @@ struct define
 
 			};
 			template <auto ...Is>
+			XTAL_REQ
 			XTAL_REQ_(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...))
 			class type<Is...>
 			{

@@ -15,7 +15,8 @@ template <typename ..._s> XTAL_TYP cross;
 template <typename ..._s> XTAL_USE cross_t = confined_t<cross<_s...>>;
 template <typename ..._s> XTAL_ASK cross_q = bond::tag_p<cross, _s...>;
 template <typename ...As>
-XTAL_FN2  cross_f(auto &&u)
+XTAL_DEF_(return,inline)
+XTAL_FN1  cross_f(auto &&u)
 XTAL_0EZ_(cross_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 

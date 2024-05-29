@@ -88,9 +88,10 @@ struct any<A>
 		Attempts construction from infungible-but-compatible types via inspection. \
 		
 		template <infungible_q<subtype> W>
-		XTAL_REQ_(typename W::template self_s<A>)
 		XTAL_CXN subtype(W &&w, auto &&...oo)
 		XTAL_0EX
+		XTAL_REQ
+		XTAL_REQ_(typename W::template self_s<A>)
 		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
 		{};
 

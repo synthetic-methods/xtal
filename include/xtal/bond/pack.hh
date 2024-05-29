@@ -70,10 +70,10 @@ template <size_t N, size_t ...Ns>
 XTAL_FN2 pack_item_f(auto &&t, auto &&...ts)
 XTAL_0EX
 {
-	XTAL_VAL N_t = pack_size_n<decltype(t)>;
+	XTAL_SET N_t = pack_size_n<decltype(t)>;
 	XTAL_IF0
-	XTAL_0IF_(N <  N_t) {return pack_item_f<         Ns...>(get<N>(XTAL_REF_(t)));}
-	XTAL_0IF_(N >= N_t) {return pack_item_f<N - N_t, Ns...>(XTAL_REF_(ts)...);}
+	XTAL_0IF (N <  N_t) {return pack_item_f<         Ns...>(get<N>(XTAL_REF_(t)));}
+	XTAL_0IF (N >= N_t) {return pack_item_f<N - N_t, Ns...>(XTAL_REF_(ts)...);}
 }
 template <size_t ...Ns>
 XTAL_FN2 pack_item_f(seek_t<Ns...>, auto &&...ts)
