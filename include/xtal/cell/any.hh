@@ -33,55 +33,19 @@ struct define
 	using subkind = bond::compose<void
 	,	_retail::define<T>
 	>;
-	
+
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
 	protected:
 		using typename S_::T_self;
 		using U_self = subtype;
 
 	public:
-		template <class _, class ...Is>
-		using super = typename _detail::query<S_, U_self>::type::template super<_, Is...>;
-
-		XTAL_TN0 head() XTAL_0EX {}
-		XTAL_TN0 head() XTAL_0FX {}
-
-	public:
 		using S_::S_;
-	//	using S_::self;
-
-		template <typename ...Is>
-		using self_s = typename super<T_self, Is...>::type;
-
-		XTAL_TO4_(
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(), S_::self()
-		)
-		XTAL_TO4_(template <fungible_q<subtype> X=T>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(), S_::template self<X>()
-		)
-		///<\returns `this` as `T`, or `fungible_q<subtype>`. \
-		
-		
-		XTAL_DO4_(template <typename ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo),
-		{
-			using X = typename super<T, Is...>::type;
-			if constexpr (0 == sizeof...(oo)) {
-				return S_::template self<X>();
-			}
-			else {
-				return S_::template self<X>() = X(XTAL_REF_(oo)..., XTAL_MOV_(self()));
-			}
-		})
-		///<\returns `this` indexed by `Is...`, \
-		emplacing the matching part of `self` if arguments are supplied. \
+		using S_::self;
 
 		//\
 		Trivial (in)equality. \
@@ -98,7 +62,6 @@ struct define
 		XTAL_TN2 pack()
 		XTAL_0FX
 		{
-		//	static_assert(sizeof(S_) == sizeof(bond::pack_f()));
 			return bond::pack_f();
 		}
 		///<\returns a tuple representation of `this`. \
@@ -156,12 +119,9 @@ struct defer
 	using subkind = bond::compose<bond::tab<U>, _detail::defer_field<U>>;
 
 	template <any_q S>
-	using epitype = XTAL_TYP_(XTAL_ANY_(bond::compose_s<S, subkind>).head());
-
-	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>
+	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
-		using S_ = bond::compose_s<S, subkind, _detail::query<S, subtype<S>, epitype<S>>>;
+		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
 
 	protected:

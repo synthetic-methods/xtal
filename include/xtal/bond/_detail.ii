@@ -13,34 +13,29 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U_that, class U_this, class U_head=void>
+template <class U_this>
 struct query
 {
-	class type
-	{
-	public:
-		template <class _,               class ...Is> struct duper :  U_that::template super<_,                       Is...> {};
-		template <class _,               class ...Is> struct super                   : duper<_,                       Is...> {};
-		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...> : super<U_this,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_head, Is...> : super<U_this,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_this, Is...> : super<U_this,                  Is...> {};
-
-	};
 	template <class S>
 	class subtype : public S
 	{
 		using S_ = S;
 		friend S_;
-		friend U_that;
 		friend U_this;
 
 	protected:
 		using typename S_::T_self;
+		//\
+		using U_that = typename S_::U_head;
+		using U_that = XTAL_TYP_(XTAL_ANY_(S_).head());
 
 	public:
-		template <class _, class ...Is>
-		using super = typename type::template super<_, Is...>;
+		template <class _,               class ...Is> struct duper :      S_::template super<_,                       Is...> {};
+		template <class _,               class ...Is> struct super                   : duper<_,                       Is...> {};
+		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...> : super<U_this,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_that, Is...> : super<U_this,                  Is...> {};
+		template <class _,               class ...Is> struct super<_, U_this, Is...> : super<U_this,                  Is...> {};
 
 	public:
 		using S_::S_;
