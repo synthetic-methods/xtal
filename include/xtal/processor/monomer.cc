@@ -259,6 +259,8 @@ void monomer_chaining__shared()
 	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
+	//\
+	yhs <<= occur::restep_f(50);
 	yhs <<= occur::restep_f((size_t) 50);
 	yhs <<= occur::resize_f(N);
 

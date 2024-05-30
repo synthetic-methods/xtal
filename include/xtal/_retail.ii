@@ -264,7 +264,7 @@ template <class         T >	XTAL_ASK       iterable_q =	begin_q<T>;
 template <class         T >	XTAL_ASK       iterated_q =	begin_q<T> and front_q<T>;
 template <class         T >	XTAL_ASK       iterator_q =	requires (T t) {*++t;};
 template <class         T >	XTAL_ASK       sentinel_q =	iterator_q<T>;
-template <class         T >	XTAL_ASK       distance_q =	_std::integral<based_t<T>>;;//TODO: Expand to accommodate `counted_t<size_t>{}.size()`.
+template <class         T >	XTAL_ASK       distance_q =	_std::integral<based_t<T>>;//TODO: Expand to accommodate `counted_t<size_t>{}.size()`.
 template <class         T >	XTAL_ASK        counter_q =	_std::integral<based_t<T>>;
 template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
 

@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class          ..._s> XTAL_TYP lattice;
 template <class          ..._s> XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class          ..._s> XTAL_ASK lattice_q = bond::tag_p<lattice, _s...>;
+template <class          ..._s> XTAL_ASK lattice_q = bond::tag_head_p<lattice, _s...>;
 template <class T, class L=T  > XTAL_ASK lettuce_q = bond::pack_q<T> and not lattice_q<T> and bond::pack_size_n<T> == bond::pack_size_n<L>;
 template <class L, class ...Ts> XTAL_ASK lettuce_p = (...and lettuce_q<Ts, L>);
 

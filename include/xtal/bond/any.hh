@@ -22,7 +22,6 @@ struct define
 	template <class S>
 	class subtype : public S
 	{
-		friend T;
 		using S_ = S;
 
 	public:
@@ -42,8 +41,9 @@ struct define
 		{}
 
 	protected:
-		using  T_self = T;
+		using  T_self = T; friend T_self;
 		using  U_self = subtype;
+		using  U_head = void;
 
 	public:
 		template <class _, typename ...Is> struct super    : super<Is...> {};

@@ -12,41 +12,59 @@ namespace _detail
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-template <class U_this>
+template <class U_this, class A_that=void>
 struct query
 {
+	XTAL_LET_(bool) A_node =     is_q<A_that, void>;
+	XTAL_LET_(bool) A_edge = not is_q<A_that, void>;
+
 	template <class S>
 	class subtype : public S
 	{
 		using S_ = S;
-		friend S_;
 		friend U_this;
 
 	protected:
-		using typename S_::T_self;
-		//\
-		using U_that = typename S_::U_head;
-		using U_that = XTAL_TYP_(XTAL_ANY_(S_).head());
+		using typename S_::T_self; friend T_self;
+		using typename S_::U_self;
+		using typename S_::U_head;
 
 	public:
-		template <class _,               class ...Is> struct duper :      S_::template super<_,                       Is...> {};
-		template <class _,               class ...Is> struct super                   : duper<_,                       Is...> {};
-		template <class _,  liminal_q I, class ...Is> struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> struct super<_, I,      Is...> : super<U_this,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_that, Is...> : super<U_this,                  Is...> {};
-		template <class _,               class ...Is> struct super<_, U_this, Is...> : super<U_this,                  Is...> {};
+		template <class _,               class ...Is>                 struct duper :      S_::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires A_edge struct super<_, A_that, Is...> : duper<U_self, Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : super<U_this,                  Is...> {};
+		template <class _,               class ...Is> requires A_node struct super<_, U_head, Is...> : super<U_this,                  Is...> {};
+		template <class _,               class ...Is> requires A_node struct super<_, U_this, Is...> : super<U_this,                  Is...> {};
+
+		template <                       class ...Is> using self_s = typename super<T_self, Is...>::type;
+		template <                       class ...Is> using head_s = typename super<U_this, Is...>::type;
+
+		template <class _,               class ...Is> struct superhead    {using type = typename head_s<Is...>::template head_t<>;};
+		template <class _                           > struct superhead<_> {using type = _                                        ;};
+		//\
+		template <                       class ...Is> using head_t = typename head_s<Is...>::U_head;
+		template <                       class ...Is> using head_t = typename superhead<U_head, Is...>::type;
 
 	public:
 		using S_::S_;
-
-		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
-		template <class ...Is> using head_s = typename super<U_this, Is...>::type;
-		template <class ...Is> using head_t = XTAL_TYP_(XTAL_ANY_(head_s<Is...>).head());
-
+		/*/
 		using S_::self;
 		using S_::head;
-		
+		/*/
+		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
+		)
+		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 head(auto &&...oo), S_::head(XTAL_REF_(oo)...)
+		)
+		/***/
+
 		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
@@ -55,6 +73,7 @@ struct query
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)
+
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)

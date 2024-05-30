@@ -14,7 +14,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP spool;
 template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_ASK spool_q = bond::tag_p<spool, Ts...>;
+template <class ...Ts> XTAL_ASK spool_q = bond::tag_head_p<spool, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

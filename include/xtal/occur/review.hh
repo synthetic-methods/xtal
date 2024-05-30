@@ -12,7 +12,7 @@ namespace xtal::occur
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> XTAL_TYP review;
-template <typename ..._s> XTAL_ASK review_q = bond::tag_p<review, _s...>;
+template <typename ..._s> XTAL_ASK review_q = bond::tag_head_p<review, _s...>;
 template <iterable_q  U > XTAL_USE review_t = confined_t<review<U>, bond::tag<review>>;
 template <iterable_q  U > XTAL_FN2 review_f(U &&u) XTAL_0EX {return review_t<U>(XTAL_REF_(u));};
 

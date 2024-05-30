@@ -18,7 +18,7 @@ used as e.g. a buffer and its abstract/copyable `std::span`. \
 
 template <typename ..._s> XTAL_TYP restash;
 template <typename ..._s> XTAL_USE restash_t = confined_t<restash<_s...>>;
-template <typename ..._s> XTAL_ASK restash_q = bond::tag_p<restash, _s...>;
+template <typename ..._s> XTAL_ASK restash_q = bond::tag_head_p<restash, _s...>;
 template <bounded_q U_state, bounded_q U_store>
 struct restash<U_state, U_store>
 {

@@ -40,7 +40,7 @@ struct define
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
 	protected:
-		using typename S_::T_self;
+		using typename S_::T_self; friend T_self;
 		using U_self = subtype;
 
 	public:
@@ -116,16 +116,16 @@ providing a similar level of utility to `std::reference_wrapper`. \
 template <class U>
 struct defer
 {
-	using subkind = bond::compose<bond::tab<U>, _detail::defer_field<U>>;
+	using subkind = _detail::defer_field<U>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
-		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
 
 	protected:
-		using typename S_::T_self;
+		using typename S_::T_self; friend T_self;
+		using typename S_::U_head;
 		using U_self = subtype;
 
 	public:
@@ -138,15 +138,15 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) H_(), head())
+		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_TN2_(bool) heading(H_ const &w)
+		XTAL_TN2_(bool) heading(auto &&o)
 		XTAL_0FX
 		{
-			return equivalent_f(head(), w);
+			return equivalent_f(head(), XTAL_REF_(o));
 		}
 		
 		///\

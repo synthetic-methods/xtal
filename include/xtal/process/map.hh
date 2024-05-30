@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP map;
 template <typename ..._s> XTAL_USE map_t = confined_t<map<_s...>>;
-template <typename ..._s> XTAL_ASK map_q = bond::tag_p<map, _s...>;
+template <typename ..._s> XTAL_ASK map_q = bond::tag_head_p<map, _s...>;
 
 
 namespace _detail

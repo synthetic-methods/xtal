@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP chain;
 template <typename ..._s> XTAL_USE chain_t = confined_t<chain<_s...>>;
-template <typename ..._s> XTAL_ASK chain_q = bond::tag_p<chain, _s...>;
+template <typename ..._s> XTAL_ASK chain_q = bond::tag_head_p<chain, _s...>;
 
 
 namespace _detail

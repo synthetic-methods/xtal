@@ -107,7 +107,7 @@ using dynamic_term_t = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename bond::operating::iota_t;
+	using U_count  = typename bond::operating::delta_t;
 	using U_restep = occur::restep_t<U_count>;
 
 	template <class T>

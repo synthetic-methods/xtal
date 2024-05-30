@@ -154,14 +154,14 @@ struct define
 		XTAL_TNX defuse(is_q<T> auto &&t)
 		XTAL_0EX
 		{
-			if (self() != t) {
-				//\
-				self() = XTAL_REF_(t);
-				self(XTAL_REF_(t));
-				return 0;
+			if (self() == t) {
+				return 1;
 			}
 			else {
-				return 1;
+				//\
+				self() = XTAL_REF_(t);
+				(void) S_::self(XTAL_REF_(t));
+				return 0;
 			}
 		}
 		/***/
@@ -269,12 +269,10 @@ struct defer
 		XTAL_TNX defuse(W &&w)
 		XTAL_0EX
 		{
-			if constexpr (is_q<U, W>) {
-				return S_::heading(w) || (S_::head(XTAL_REF_(w)), 0);
-			}
-			else {
-				return S_::defuse(XTAL_REF_(w));
-			}
+			XTAL_IF0
+			XTAL_0IF (is_q<W, U>) {return S_::heading(w) || ((void) S_::head(XTAL_REF_(w)), 0);}
+		//	XTAL_0IF (as_q<W, U>) {return defuse((U) XTAL_REF_(w));}
+			XTAL_0IF (1)          {return S_::defuse(XTAL_REF_(w));}
 		}
 
 	};

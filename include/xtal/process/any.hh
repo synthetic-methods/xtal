@@ -349,8 +349,11 @@ struct defer
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
 	
+	protected:
+		using typename S_::T_self; friend T_self;
+		using typename S_::U_head;
+
 	public:
 		using S_::S_;
 		using S_::self;
@@ -363,7 +366,7 @@ struct defer
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			if constexpr (_std::invocable<H_, decltype(xs)...>) {
+			if constexpr (_std::invocable<U_head, decltype(xs)...>) {
 				return head() (XTAL_REF_(xs)...);
 			}
 			else {

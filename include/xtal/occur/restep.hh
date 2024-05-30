@@ -11,10 +11,23 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_p U=typename bond::operating::iota_t>
+template <integral_number_q U=size_s> XTAL_TYP restep;
+template <integral_number_q U=size_s> XTAL_USE restep_t = confined_t<restep<U>>;
+template <typename ..._s> XTAL_ASK restep_q = bond::tag_head_p<restep, _s...>;
+XTAL_FN2 restep_f(auto &&w)
+XTAL_0EX
+{
+	using op = bond::operate<decltype(w)>;
+	return restep_t<typename op::delta_t>(XTAL_REF_(w));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <integral_number_q U>
 struct restep
 {
-	using subkind = defer<U>;
+	using subkind = bond::compose<defer<U>, bond::tag<restep>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -29,15 +42,6 @@ struct restep
 
 	};
 };
-template <integral_p U=typename bond::operating::iota_t>
-using restep_t = confined_t<restep<U>>;
-
-XTAL_FN2 restep_f(auto &&w)
-XTAL_0EX
-{
-	using op = bond::operate<decltype(w)>;
-	return restep_t<typename op::iota_t>(XTAL_REF_(w));
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////

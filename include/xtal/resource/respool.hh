@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP respool;
 template <typename ..._s> XTAL_USE respool_t = confined_t<respool<_s...>>;
-template <typename ..._s> XTAL_ASK respool_q = bond::tag_p<respool, _s...>;
+template <typename ..._s> XTAL_ASK respool_q = bond::tag_head_p<respool, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

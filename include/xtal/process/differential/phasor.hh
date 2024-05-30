@@ -13,7 +13,7 @@ namespace xtal::process::differential
 
 template <typename ..._s> XTAL_TYP phasor;
 template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_ASK phasor_q = bond::tag_p<phasor, _s...>;
+template <typename ..._s> XTAL_ASK phasor_q = bond::tag_head_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,10 +47,10 @@ struct phasor<K_data[N_data], As...>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using H_ = XTAL_TYP_(XTAL_ANY_(S_).head());
 
 	protected:
-		using typename S_::T_self;
+		using typename S_::T_self; friend T_self;
+		using typename S_::U_head;
 
 	public:
 		using S_::S_;
@@ -62,7 +62,7 @@ struct phasor<K_data[N_data], As...>
 		using S_::self;
 		using S_::head;
 
-		XTAL_DO4_(XTAL_OP0_(implicit) H_(), {return head();})
+		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
 		///\note\
 		The above is defined in-case `refine_head` is bypassed...
 

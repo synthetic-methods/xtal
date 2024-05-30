@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP example;
 template <typename ..._s> XTAL_USE example_t = confined_t<example<_s...>>;
-template <typename ..._s> XTAL_ASK example_q = bond::tag_p<example, _s...>;
+template <typename ..._s> XTAL_ASK example_q = bond::tag_head_p<example, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

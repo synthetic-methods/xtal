@@ -31,47 +31,14 @@ template <typename A>
 struct any<A>
 {	
 	template <class S>
-	class subtype : public S
+	class subtype : public bond::compose_s<S, _detail::query<subtype<S>, A>>
 	{
-		using S_ = S;
-
-	protected:
-		using typename S_::T_self;
-		using typename S_::U_self;
+		using S_ = bond::compose_s<S, _detail::query<subtype<S>, A>>;
 
 	public:
-		template <class _, class ...Is> struct duper : S_::template super<_,      Is...> {};
-		template <class _, class ...Is> struct super              : duper<_,      Is...> {};
-		template <class _, class ...Is> struct super<_, A, Is...> : super<U_self, Is...> {};
-
-	public:
-		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
-		template <class ...Is> using head_s = typename super<U_self, Is...>::type;
-		template <class ...Is> using head_t = XTAL_TYP_(XTAL_ANY_(head_s<Is...>).head());
-
-	//	using S_::self;
-	//	using S_::head;
-		
-		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <class  ...Is>// requires some_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
-		)
-	
-	public:
-	//	using S_::S_;
-
+		/**/
+		using S_::S_;
+		/*/
 		XTAL_CO0_(subtype);
 		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
@@ -94,6 +61,7 @@ struct any<A>
 		XTAL_REQ_(typename W::template self_s<A>)
 		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
 		{};
+		/***/
 
 	};
 };

@@ -19,8 +19,8 @@ the parent namespace, and with the decorators `As...` if provided. \
 template <            typename ...As> XTAL_TYP any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> XTAL_USE any_s = bond::compose_s<     S, any<As...>>;
 template <            typename ...As> XTAL_USE any_t = bond::compose_s<unit_t, any<As...>>;
-template <class    T, typename ...As> XTAL_ASK any_p = bond::tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > XTAL_ASK any_q = bond::tag_p<any, Ts...>;
+template <class    T, typename ...As> XTAL_ASK any_p = bond::tag_head_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > XTAL_ASK any_q = bond::tag_head_p<any, Ts...>;
 
 template <size_t N> XTAL_FN1 get(any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
 template <size_t N> XTAL_FN1 get(any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};

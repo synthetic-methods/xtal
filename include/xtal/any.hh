@@ -128,6 +128,16 @@ template <class            ...Ts>	XTAL_USE         common_t =	                  
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <           class ...Ts>	XTAL_USE      isotropic_t =	               _retail::  isotropic<Ts...>;
+template <           class ...Ts>	XTAL_USE      epitropic_t =	               _retail::  epitropic<Ts...>;
+template <           class ...Ts>	XTAL_USE    anisotropic_t =	_std::negation<_retail::  isotropic<Ts...>>;
+template <           class ...Ts>	XTAL_USE    anepitropic_t =	_std::negation<_retail::  epitropic<Ts...>>;
+
+template <           class ...Ts>	XTAL_USE     isomorphic_t =	               _retail:: isomorphic<Ts...>;
+template <           class ...Ts>	XTAL_USE     epimorphic_t =	               _retail:: epimorphic<Ts...>;
+template <           class ...Ts>	XTAL_USE   anisomorphic_t =	_std::negation<_retail:: isomorphic<Ts...>>;
+template <           class ...Ts>	XTAL_USE   anepimorphic_t =	_std::negation<_retail:: epimorphic<Ts...>>;
+
 template <           class ...Ts>	XTAL_ASK      isotropic_q =	        _retail::  isotropic<Ts...>::value;
 template <           class ...Ts>	XTAL_ASK      epitropic_q =	        _retail::  epitropic<Ts...>::value;
 template <           class ...Ts>	XTAL_ASK    anisotropic_q =	    not _retail::  isotropic<Ts...>::value;
