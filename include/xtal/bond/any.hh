@@ -50,17 +50,12 @@ struct define
 		template <class _                > struct super<_> {using type = _;};
 
 	public:
-		XTAL_DO4_(template <typename ...Is>
+		XTAL_DO4_(template <fungible_q<subtype> Y>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 self(auto &&...oo),
+		XTAL_REQ (0 < sizeof...(oo))
 		{
-			using Y = typename super<T, Is...>::type;
-			if constexpr (0 == sizeof...(oo)) {
-				return self<Y>();
-			}
-			else {
-				return self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(self()));
-			}
+			return self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(self()));
 		})
 		///\returns `*this` with type `Y=T`. \
 

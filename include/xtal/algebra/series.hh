@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class ..._s> XTAL_TYP series;
 template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
-template <class ...Ts> XTAL_ASK series_q = bond::tag_head_p<series, Ts...>;
+template <class ...Ts> XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

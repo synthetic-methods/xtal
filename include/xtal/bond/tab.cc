@@ -58,9 +58,9 @@ TAG_("tab")
 {
 	TRY_("task")
 	{
-		TRUE_(tab_head_p<TagA, TypAB>);
-		TRUE_(tab_head_p<TagB, TypAB>);
-		UNTRUE_(tab_head_p<TagZ, TypAB>);
+		TRUE_(head_tab_p<TagA, TypAB>);
+		TRUE_(head_tab_p<TagB, TypAB>);
+		UNTRUE_(head_tab_p<TagZ, TypAB>);
 
 	}
 }

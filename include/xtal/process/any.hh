@@ -359,6 +359,9 @@ struct defer
 		using S_::self;
 		using S_::head;
 
+		template <class ...Is> using head_s = typename S_::template head_s<Is...>;
+		template <class ...Is> using head_t = typename S_::template head_t<Is...>;
+
 		///\
 		Constant redirection. \
 
@@ -366,14 +369,42 @@ struct defer
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			if constexpr (_std::invocable<U_head, decltype(xs)...>) {
-				return head() (XTAL_REF_(xs)...);
-			}
-			else {
-				static_assert(0 == sizeof...(xs));
-				return head();
-			}
+			static_assert(0 == sizeof...(xs));
+			return head();
 		})
+		///\
+		Function redirection. \
+
+		XTAL_DO2_(template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs),
+		XTAL_REQ (_std::invocable<U_head, decltype(xs)...>)
+		{
+			return head() (XTAL_REF_(xs)...);
+		})
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_FN1 function(auto &&...xs)
+		XTAL_0EX
+		XTAL_REQ (_std::invocable<invoke_t<U_head>, decltype(xs)...>)
+		{
+			return invoke_f<U_head> (XTAL_REF_(xs)...);
+		}
+
+		///\note\
+		Adjacent `defer`red processes are (currently) composed together. \
+
+		XTAL_DO2_(template <auto ...Is> requires any_q<head_t<cardinal_1>>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 functor(auto &&...xs),
+		{
+			return head() (S::template functor<Is...>(XTAL_REF_(xs)...));
+		})
+		template <auto ...Is> requires any_q<head_t<cardinal_1>>
+		XTAL_DEF_(return,inline)
+		XTAL_FN1 function(auto &&...xs)
+		XTAL_0EX
+		XTAL_REQ_TO_(invoke_f<U_head>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 	};
 };
@@ -407,9 +438,7 @@ struct defer<U>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
-		{
-			return head_t<>::template function<Is...>(XTAL_REF_(xs)...);
-		}
+		XTAL_REQ_TO_(head_t<>::template function<Is...>(XTAL_REF_(xs)...))
 
 		///\note\
 		Adjacent `defer`red processes are (currently) composed together. \
@@ -424,9 +453,7 @@ struct defer<U>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
-		{
-			return head_t<>::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...));
-		}
+		XTAL_REQ_TO_(head_t<>::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 	};
 };

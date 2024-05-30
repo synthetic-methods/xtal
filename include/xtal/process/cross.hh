@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP cross;
 template <typename ..._s> XTAL_USE cross_t = confined_t<cross<_s...>>;
-template <typename ..._s> XTAL_ASK cross_q = bond::tag_head_p<cross, _s...>;
+template <typename ..._s> XTAL_ASK cross_q = bond::head_tag_p<cross, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_FN1     cross_f(auto &&u)

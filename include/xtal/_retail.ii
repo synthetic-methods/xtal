@@ -50,6 +50,7 @@ XTAL_ASK atomic_q = _std::is_trivially_copyable_v<T>
 	and _std::is_move_constructible_v<T> and _std::is_move_assignable_v<T>
 	and true;
 
+template <class      T             >	XTAL_ASK           void_q =	_std::same_as<T, void>;
 template <class      T             >	XTAL_ASK     incomplete_q =	not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	XTAL_ASK       complete_q =	    requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <              class ...Ts>	XTAL_TYP       complete              {class type   {};};
@@ -163,9 +164,9 @@ template <class         T >	XTAL_ASK        devalue_q =	not _std::same_as<based_
 template <class         T >	XTAL_ASK        bevalue_q =	    _std::same_as<based_t<T>, based_t<devalue_u<T>>>;
 
 template <class U,        int ...Ns>	XTAL_TYP  involve;
-template <class U, int N, int ...Ns>	XTAL_TYP  involve<U, N, Ns...> : involve<U[N], Ns...> {};
-template <class U, int N           >	XTAL_TYP  involve<U, N       > {using type = U(&)[N];};
-template <class U                  >	XTAL_TYP  involve<U          > {using type = U      ;};
+template <class U,        int ...Ns>	XTAL_USE  involve_t =	            typename involve  <U, Ns...>::type;
+template <class U, int N, int ...Ns>	XTAL_TYP  involve<U, N, Ns...> {using type = involve_t<U, Ns...>[N];};
+template <class U                  >	XTAL_TYP  involve<U          > {using type =           U           ;};
 
 template <class  U, int    ...Ns>	XTAL_TYP     devolve;
 //mplate <          int    ...Ns>	XTAL_USE     devolve_x =	_xtd::extents<int, Ns...>;
@@ -215,11 +216,10 @@ template <class         T >	XTAL_USE       accessed_t =	_std::remove_reference_t
 template <class         T >	XTAL_USE        pointer_t =	_std::remove_reference_t<decltype(&XTAL_ANY_(T))>;
 template <class         T >	XTAL_USE        pointee_t =	_std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
 
-
-template <class         T >	XTAL_ASK          begin_q =	requires {*XTAL_ANY_(T).begin();};
-template <class         T >	XTAL_ASK          front_q =	requires { XTAL_ANY_(T).front();};
-template <class         T >	XTAL_ASK           back_q =	requires { XTAL_ANY_(T). back();};
-template <class         T >	XTAL_ASK            end_q =	requires {*XTAL_ANY_(T).  end();};
+template <class         T >	XTAL_ASK          begin_q =	requires (T &t) {*t.begin();};
+template <class         T >	XTAL_ASK          front_q =	requires (T &t) { t.front();};
+template <class         T >	XTAL_ASK           back_q =	requires (T &t) { t. back();};
+template <class         T >	XTAL_ASK            end_q =	requires (T &t) {*t.  end();};
 
 template <class         T >	XTAL_USE          begin_t =	decltype ( XTAL_ANY_(T).begin() );
 template <class         T >	XTAL_USE          front_t =	decltype (*XTAL_ANY_(T).begin() );

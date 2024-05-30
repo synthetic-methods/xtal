@@ -49,7 +49,7 @@ struct define
 		{
 			XTAL_FLX flx = -1;
 			auto &s = self();
-			for (int i{}, j = s.delay(); i != j; j = s.relay(i = j)) {
+			for (auto j = s.delay(), i = decltype(j) {}; j != i; j = s.relay(i = j)) {
 				flx &= f(counted_f(i, j), n++);
 			}
 			--n;

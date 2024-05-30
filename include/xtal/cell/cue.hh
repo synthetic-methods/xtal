@@ -18,7 +18,7 @@ Wrapper used to schedule an existing type.\
 ///\see e.g. [../occur/any#hold] or [../occur/any#intermit]`. \
 
 template <         class ..._s> struct  cue;
-template <         class ..._s> concept cue_q = bond::tag_head_p<cue, _s...>;
+template <         class ..._s> concept cue_q = bond::head_tag_p<cue, _s...>;
 template <class Y, class ..._s> concept cue_p = cue_q<_s...> and fungible_q<Y, _s...>;
 
 template <class U> struct cue<U> : conferred<U, bond::tag<cue>> {};

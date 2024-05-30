@@ -118,6 +118,7 @@ template <auto             ...Ns>	XTAL_ASK           none_n = _retail::     none
 //\
 Structural...
 
+template <class            ...Ts>	XTAL_ASK           void_q =	(...and  _retail::       void_q<Ts   >);
 template <class            ...Ts>	XTAL_ASK     incomplete_q =	(...and  _retail:: incomplete_q<Ts   >);
 template <class            ...Ts>	XTAL_ASK       complete_q =	(...and  _retail::   complete_q<Ts   >);
 template <class            ...Ts>	XTAL_USE       complete_t =	typename _retail::   complete_t<Ts...>;

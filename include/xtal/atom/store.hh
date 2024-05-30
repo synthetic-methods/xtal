@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_ASK store_q = bond::tag_head_p<store, Ts...>;
+template <class ...Ts> XTAL_ASK store_q = bond::head_tag_p<store, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

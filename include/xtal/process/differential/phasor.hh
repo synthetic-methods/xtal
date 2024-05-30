@@ -13,7 +13,7 @@ namespace xtal::process::differential
 
 template <typename ..._s> XTAL_TYP phasor;
 template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_ASK phasor_q = bond::tag_head_p<phasor, _s...>;
+template <typename ..._s> XTAL_ASK phasor_q = bond::head_tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

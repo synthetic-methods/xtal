@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class ..._s> XTAL_TYP linear;
 template <class ..._s> XTAL_USE linear_t = typename linear<_s...>::type;
-template <class ...Ts> XTAL_ASK linear_q = bond::tag_head_p<linear, Ts...>;
+template <class ...Ts> XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
 
 XTAL_LET  linear_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN_(linear_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});

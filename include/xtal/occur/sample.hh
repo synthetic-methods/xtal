@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class U=size_t> XTAL_TYP sample;
 template <class U=size_t> XTAL_USE sample_t = confined_t<sample<U>>;
-template <typename ..._s> XTAL_ASK sample_q = bond::tag_head_p<sample, _s...>;
+template <typename ..._s> XTAL_ASK sample_q = bond::head_tag_p<sample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////

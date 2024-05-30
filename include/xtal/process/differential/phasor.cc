@@ -45,7 +45,6 @@ TAG_("phasor")
 	using Z_psi = processor::monomer_t<Y_psi, U_restore>;
 	using Z_eig = processor::monomer_t<Y_eig, U_restore>;
 
-
 	TRY_("trial")
 	{
 		XTAL_LET x_delta  = op::ratio_f(7);

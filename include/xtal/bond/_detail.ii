@@ -17,8 +17,8 @@ namespace _detail
 template <class U_this, class A_that=void>
 struct query
 {
-	XTAL_LET_(bool) A_node =     is_q<A_that, void>;
-	XTAL_LET_(bool) A_edge = not is_q<A_that, void>;
+	XTAL_LET_(bool) A_node =     void_q<A_that>;
+	XTAL_LET_(bool) A_edge = not void_q<A_that>;
 
 	template <class S>
 	class subtype : public S

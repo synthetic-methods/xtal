@@ -12,7 +12,7 @@ namespace xtal::bond
 /////////////////////////////////////////////////////////////////////////////////
 
 template <class        ..._s> XTAL_TYP couple;
-template <class        ..._s> XTAL_ASK couple_q = bond::tag_head_p<couple, _s...>;
+template <class        ..._s> XTAL_ASK couple_q = bond::head_tag_p<couple, _s...>;
 template <class X, class Y=X> XTAL_USE couple_t = typename couple<X, Y>::type;
 
 template <template <class> class F=based_t, class X, class Y>

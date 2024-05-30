@@ -14,10 +14,13 @@ XTAL_LET invoke_f = [] (auto &&...oo)
 XTAL_0FN
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_(F   (XTAL_REF_(oo)...))
 	XTAL_0IF XTAL_REQ_TO_(F   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_REQ_TO_(F   (XTAL_REF_(oo)...))
 	XTAL_0IF XTAL_REQ_TO_(F{} (XTAL_REF_(oo)...))
 };
+template <class F>
+XTAL_USE invoke_t = decltype(invoke_f<F>);
+
 
 ///\returns the compile-time size of the supplied array-like argument. \
 
@@ -52,7 +55,7 @@ XTAL_DEF_(return,inline)
 XTAL_LET point_f(T &&t)
 XTAL_0EX
 {
-	if constexpr (iterator_q<T>) {
+	if constexpr (iterator_q<_std::decay_t<T>>) {
 		XTAL_IF0
 		XTAL_0IF (0 == N_offset) {return XTAL_REF_(t);}
 		XTAL_0IF (0 != N_offset) {return _xtd::ranges::next(XTAL_REF_(t), N_offset);}

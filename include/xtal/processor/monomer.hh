@@ -13,7 +13,7 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_ASK monomer_q = bond::tag_head_p<monomer, _s...>;
+template <typename ..._s> XTAL_ASK monomer_q = bond::head_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_FN1     monomer_f(auto &&u)

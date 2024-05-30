@@ -13,7 +13,7 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP polymer;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> XTAL_ASK polymer_q = bond::tag_head_p<polymer, _s...>;
+template <typename ..._s> XTAL_ASK polymer_q = bond::head_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_FN1     polymer_f(auto &&u)

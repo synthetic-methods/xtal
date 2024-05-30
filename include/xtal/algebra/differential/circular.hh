@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class ..._s> XTAL_TYP circular;
 template <class ..._s> XTAL_USE circular_t = typename circular<_s...>::type;
-template <class ...Ts> XTAL_ASK circular_q = bond::tag_head_p<circular, Ts...>;
+template <class ...Ts> XTAL_ASK circular_q = bond::head_tag_p<circular, Ts...>;
 
 XTAL_LET  circular_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN_(circular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
@@ -182,14 +182,4 @@ struct circular<K_data[N_data]>
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-/**/
-namespace xtal
-{///////////////////////////////////////////////////////////////////////////////
-
-//template <size_t N_datum, algebra::differential::circular_q T> XTAL_FN2 get(T &&t)
-//XTAL_0EX {return XTAL_REF_(t) (N_datum);}
-
-
-}/////////////////////////////////////////////////////////////////////////////
-/***/
 XTAL_ENV_(pop)

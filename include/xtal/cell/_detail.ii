@@ -206,7 +206,7 @@ struct defer_field
 		:	S_(XTAL_REF_(oo)...)
 		,	u_body(member_f<U_head>(XTAL_REF_(o)))
 		{}
-	//	XTAL_CXN subtype(bond::tab_selfish_q<U> auto &&o, auto &&...oo)
+	//	XTAL_CXN subtype(bond::selfish_tab_q<U> auto &&o, auto &&...oo)
 	//	XTAL_0EX
 	//	XTAL_REQ any_q<U>
 	//	:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)

@@ -119,29 +119,41 @@ XTAL_0FN
 	(bond::seek_s<pack_size_n<Ts...>>{});
 };
 
-template <size_t N, accessed_q W>
-XTAL_FN2 pack_rowwise_f(W &&w, size_t const &n)
+
+template <size_t N, class U=void>
+XTAL_FN2 pack_rowwise_f(size_t const &m, accessed_q auto &&w)
 XTAL_0EX
 {
 	using _std::span;
 	using _xtd::ranges::views::zip;
 
 	return [&]<size_t ...Ns> (bond::seek_t<Ns...>)
-		XTAL_0FN_(zip(span(point_f(w[Ns]), n)...))
+	XTAL_0FN {
+		if constexpr (void_q<U>) {
+			return zip(span(point_f(w[Ns]), m)...);
+		}
+		else {
+			return iterative_f<U>(span(point_f(w[Ns]), m)...);
+		}
+	}
 	(bond::seek_s<N>{});
 }
-template <size_t N, accessed_q W>
-XTAL_FN2 pack_rowwise_f(size_t const &n, W &&w)
-XTAL_0EX
-{
-	return pack_rowwise_f<N>(XTAL_REF_(w), n);
-}
-template <size_t N>
+template <size_t N, class U=void>
 XTAL_FN2 pack_rowwise_f(size_t n)
 XTAL_0EX
 {
-	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N>(n, XTAL_REF_(w)));
+	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N, U>(n, XTAL_REF_(w)));
 }
+template <size_t N, class U>
+XTAL_USE pack_rowwise_t = XTAL_TYP_(pack_rowwise_f<N, U>(XTAL_ANY_(size_t), XTAL_ANY_(_std::decay_t<devolve_t<U(&)[N]>>)));
+
+
+template <class U>
+XTAL_LET repack_rowwise_f = [] XTAL_1FN_(pack_rowwise_f<devalue_n<U>, U>);
+
+template <class U>
+XTAL_USE repack_rowwise_t = pack_rowwise_t<devalue_n<U>, U>;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

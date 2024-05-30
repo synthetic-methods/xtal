@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP restore;
 template <typename ..._s> XTAL_USE restore_t = confined_t<restore<_s...>>;
-template <typename ..._s> XTAL_ASK restore_q = bond::tag_head_p<restore, _s...>;
+template <typename ..._s> XTAL_ASK restore_q = bond::head_tag_p<restore, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

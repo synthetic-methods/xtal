@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP block;
 template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
-template <class ..._s> XTAL_ASK block_q = bond::tag_head_p<block, _s...>;
+template <class ..._s> XTAL_ASK block_q = bond::head_tag_p<block, _s...>;
 
 XTAL_LET  block_f = []<class ...Xs> (Xs &&...xs)
 XTAL_0FN_(block_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
