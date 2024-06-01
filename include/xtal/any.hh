@@ -157,6 +157,9 @@ template <class   T, class ...Ts>	XTAL_ASK             as_p =	        _retail:: 
 template <class   T, class ...Ts>	XTAL_ASK       fungible_q =	some_q<Ts...> and (...and _retail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
 template <class   T, class ...Ts>	XTAL_ASK     infungible_q =	some_q<Ts...> and (...and _retail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
 
+template <class   X, class ...Fs>	XTAL_ASK     idempotent_p =	(...and _retail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
+template <class   F, class    X >	XTAL_ASK     idempotent_q =	idempotent_p<X, F>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

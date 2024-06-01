@@ -50,9 +50,6 @@ struct circular<K_data[N_data]>
 	using W_sigma = linear_t<U_sigma[N_data]>;
 	using W_alpha = linear_t<U_alpha[N_data]>;
 
-	XTAL_LET   ordinant = [] (U_alpha const &u) XTAL_0FN_(static_cast<U_sigma>(U_delta(u*op::diplo_f())));
-	XTAL_LET coordinant = [] (U_sigma const &v) XTAL_0FN_(U_alpha(static_cast<U_delta>(v))*op::haplo_f());
-
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 
 	template <class T>
@@ -66,6 +63,23 @@ struct circular<K_data[N_data]>
 	{
 		friend T;
 		using  T_ = holotype<T>;
+
+		XTAL_LET   ordinate_f = [] (U_alpha const &o) XTAL_0FN_(static_cast<U_sigma>(U_delta(o*op::diplo_f())));
+		XTAL_LET coordinate_f = [] (U_sigma const &o) XTAL_0FN_(U_alpha(static_cast<U_delta>(o))*op::haplo_f());
+
+	public:// MAP
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(auto &&o) XTAL_0EX {return   ordinate_f(XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(auto &&o) XTAL_0EX {return coordinate_f(XTAL_REF_(o));}
+
+	public:// ACCESS
+		using T_::self;
+		using T_::twin;
+		using T_::get;
+		using T_::let;
+
+		XTAL_OP2() (size_t i) XTAL_0FX {return self().got(i);}
+	//	XTAL_OP2 * (        ) XTAL_0FX {return self().got( );}
+	//	using T_::operator*;
 
 	public:// CONSTRUCTION
 	//	using T_::T_;
@@ -82,33 +96,21 @@ struct circular<K_data[N_data]>
 		:	T_(n)
 		{}
 
-		XTAL_CON  homotype                          () XTAL_0EX : homotype(size_0)                                                  {}
-		XTAL_CXN  homotype  (real_number_q auto ...oo) XTAL_0EX : homotype(sizeof...(oo))           {operator>>=({XTAL_MOV_(oo)...});}
-		XTAL_CON  homotype        (initializer_list o) XTAL_0EX : homotype(devalue_f(XTAL_REF_(o))) {operator<<=( XTAL_REF_(o)     );}
-		XTAL_CXN  homotype        (bounded_q auto &&o) XTAL_0EX : homotype(devalue_f(XTAL_MOV_(o))) {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CON  homotype                          () XTAL_0EX : homotype(size_0)                                                {}
+		XTAL_CXN  homotype  (real_number_q auto ...oo) XTAL_0EX : homotype(sizeof...(oo))         {operator>>=({XTAL_MOV_(oo)...});}
+		XTAL_CON  homotype        (initializer_list o) XTAL_0EX : homotype(count_f(XTAL_REF_(o))) {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CXN  homotype        (bounded_q auto &&o) XTAL_0EX : homotype(count_f(XTAL_MOV_(o))) {operator<<=( XTAL_REF_(o)     );}
 		
 		using T_::operator >>=;
 		using T_::operator <<=;
 
-		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), ordinant); return *this;}
-		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), ordinant); return *this;}
+		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), ordinate_f); return *this;}
+		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), ordinate_f); return *this;}
 		
-		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinant); return *this;}
-		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinant); return *this;}
+		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinate_f); return *this;}
+		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), ordinate_f); return *this;}
 		
 	public:// OPERATION
-		using T_::self;
-		using T_::twin;
-		using T_::get;
-		using T_::let;
-
-		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(U_alpha u) XTAL_0EX {return   ordinant(u);}
-		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(U_sigma u) XTAL_0EX {return coordinant(u);}
-
-		XTAL_OP2() (size_t i) XTAL_0FX {return self().got(i);}
-	//	XTAL_OP2 * (        ) XTAL_0FX {return self().got( );}
-	//	using T_::operator*;
-
 		///\
 		Scales all elements. \
 

@@ -21,12 +21,13 @@ XTAL_0FN
 template <class F>
 XTAL_USE invoke_t = decltype(invoke_f<F>);
 
-
-///\returns the compile-time size of the supplied array-like argument. \
-
-template <class T           > XTAL_FN2 devalue_f(                       T     &&t) XTAL_0EX {return                                   devalue_n<T>;}
-template <class U, size_t N > XTAL_FN2 devalue_f(           _std::array<U, N> &&t) XTAL_0EX {return                                              N;}
-template <class U           > XTAL_FN2 devalue_f(_std::initializer_list<U   >   t) XTAL_0EX {return devalue_n<decltype(_std::array{XTAL_REF_(t)})>;}
+template <class T>
+XTAL_DEF_(return,inline)
+XTAL_FN1 devolve_f(T &t)
+XTAL_0EX
+{
+	return reinterpret_cast<devolve_t<_std::remove_reference_t<T>> &>(t);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +73,10 @@ XTAL_0EX
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
+template <class        ...Us>	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
+template <class U, size_t N >	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::array<U,  N>) XTAL_0EX {return size_t(N);}
+template <class U, class  V >	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std:: pair<U,  V>) XTAL_0EX {return size_t(2);}
+template <class U           > XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::initializer_list<U> t) XTAL_0EX {return count_f(_std::array{XTAL_REF_(t)});}
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_t
@@ -102,6 +107,10 @@ template <class F             > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f    
 template <class F, class    X > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, X  &&   x ) XTAL_0EX {return _xtd::ranges::views::     transform(XTAL_REF_(x), XTAL_REF_(f)    );}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) XTAL_0EX {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) XTAL_0EX {return                          iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+
+
+template <class T> XTAL_DEF_(inline) XTAL_FN1  objective_f(T &&t) XTAL_0EX_TO_(XTAL_REF_(t));
+template <class T> XTAL_DEF_(inline) XTAL_FN1 subjective_f(T &&t) XTAL_0EX_TO_(XTAL_REF_(t));
 
 
 ////////////////////////////////////////////////////////////////////////////////

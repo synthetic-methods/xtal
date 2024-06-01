@@ -61,14 +61,19 @@ struct block<U_data[N_data]>
 		using  T_ = holotype<T>;
 		using  I_ = typename T_::difference_type;
 
+	public:// MAP
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
+
+		XTAL_LET   ordinate_f = [] (auto &&o) XTAL_0FN_(  ordinate(XTAL_REF_(o)));
+		XTAL_LET coordinate_f = [] (auto &&o) XTAL_0FN_(coordinate(XTAL_REF_(o)));
+
 	public:// ACCESS
 		using T_::self;
 		using T_::twin;
 		
 		XTAL_FN2_(typename op::sigma_t) size() XTAL_0EX {return N_data;}
 
-		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
-		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(auto &&u) XTAL_0EX {return XTAL_REF_(u);}
 
 		XTAL_TO4_(template <class F>
 		XTAL_OP0_(explicit) F(), got<F>())
@@ -123,6 +128,9 @@ struct block<U_data[N_data]>
 		///\
 		Elementwise immutative transformer. \
 
+		///\todo\
+		Map `transact` with `(?:co)?ordinate`.
+
 		//\
 		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalue_u<W>>))
 		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<typename W::value_type>))
@@ -168,21 +176,36 @@ struct block<U_data[N_data]>
 		}
 		XTAL_CON homotype(embrace_t<U_data> a)
 		XTAL_0EX
-		:	homotype(devalue_f(XTAL_REF_(a)))
+		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			_detail::copy_to(T_::begin(), a.begin(), a.end());
+			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+				_detail::copy_to(T_::begin(), a.begin(), a.end());
+			}
+			else {
+				_detail::copy_to(T_::begin(), a.begin(), a.end(), ordinate_f);
+			}
 		}
 		XTAL_CXN homotype(bounded_q auto const &a)
 		XTAL_0EX
-		:	homotype(devalue_f(XTAL_REF_(a)))
+		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			_detail::copy_to(T_::begin(), a);
+			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+				_detail::copy_to(T_::begin(), a);
+			}
+			else {
+				_detail::copy_to(T_::begin(), a, ordinate_f);
+			}
 		}
 		XTAL_CXN homotype(bounded_q auto &&a)
 		XTAL_0EX
-		:	homotype(devalue_f(XTAL_MOV_(a)))
+		:	homotype(count_f(XTAL_MOV_(a)))
 		{
-			_detail::move_to(T_::begin(), a);
+			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+				_detail::move_to(T_::begin(), a);
+			}
+			else {
+				_detail::move_to(T_::begin(), a, ordinate_f);
+			}
 		}
 
 	};

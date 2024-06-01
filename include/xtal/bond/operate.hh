@@ -570,9 +570,27 @@ public:
 
 	using S_::N_width;
 	using S_::N_depth;
+	using S_::N_fused;
 
 
 	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD__IEC&60559: 0;
+
+	XTAL_DEF_(return,inline)
+	XTAL_LET use_IEC()
+	XTAL_0EX -> bool
+	{
+		return IEC&559;
+	}
+	XTAL_DEF_(return,inline)
+	XTAL_LET use_FMA()
+	XTAL_0EX -> bool
+	{
+	#if XTAL_STD < 23
+		return N_fused and not _std::is_constant_evaluated();
+	#else
+		return N_fused;
+	#endif
+	}
 
 	using default_alignment = cardinal_t<XTAL_STD_(L1)/N_width>;
 
@@ -606,7 +624,7 @@ public:
 	XTAL_FN2_(alpha_t) accumulate_f(auto &&a, auto &&x, auto &&...xs)
 	XTAL_0EX
 	{
-		if (S_::N_fused and not _std::is_constant_evaluated()) {
+		if (use_FMA()) {
 			return _std::fma((XTAL_REF_(xs) *...* XTAL_REF_(x)), N_sign, XTAL_REF_(a));
 		}
 		else {

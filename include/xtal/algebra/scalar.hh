@@ -15,8 +15,27 @@ template <class ..._s> XTAL_TYP scalar;
 template <class ..._s> XTAL_USE scalar_t = typename scalar<_s...>::type;
 template <class ...Ts> XTAL_ASK scalar_q = bond::head_tag_p<scalar, Ts...>;
 
-XTAL_LET  scalar_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(scalar_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+template <auto f, class ...Xs> requires common_q<Xs...>
+XTAL_DEF_(return,inline)
+XTAL_FN1 scalar_f(Xs &&...xs)
+XTAL_0EX
+{
+	XTAL_USE U = common_t<Xs...>;
+	XTAL_SET N = sizeof...(xs);
+	if constexpr (idempotent_p<U, decltype(f)>) {
+		return scalar_t<U[N]>{ (XTAL_REF_(xs))...};
+	}
+	else {
+		return scalar_t<U[N]>{f(XTAL_REF_(xs))...};
+	}
+}
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 scalar_f(Xs &&...xs)
+XTAL_0EX
+{
+	return scalar_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +100,7 @@ struct scalar<U_data[N_data]>
 		template <int N_par=0>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> U_data
+		XTAL_0EX -> devolve_u<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
