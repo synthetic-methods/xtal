@@ -24,10 +24,10 @@ providing evaluation/update via succession/replacement. \
 template <size_t N_data, class K_data, typename ...As>
 struct phasor<K_data[N_data], As...>
 {
-	using op = bond::operate<K_data>;
+	using Op = bond::operate<K_data>;
 
-	using V_data = typename op::delta_t;
-	using U_data = typename op::alpha_t;
+	using V_data = typename Op::delta_t;
+	using U_data = typename Op::alpha_t;
 
 	using  _data = U_data[N_data];
 	using W_data = algebra::d_:: circular_t<_data>;

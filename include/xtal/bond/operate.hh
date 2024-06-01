@@ -280,11 +280,11 @@ public:
 
 
 	template <class      T> struct internal;
-	template <cardinal_p T> struct internal<T> {using type = sigma_t;};
-	template < ordinal_p T> struct internal<T> {using type = delta_t;};
+	template <cardinal_q T> struct internal<T> {using type = sigma_t;};
+	template < ordinal_q T> struct internal<T> {using type = delta_t;};
 	template <class      T>  using internal_t = typename internal<T>::type;
 
-	template <integral_p I> requires (sizeof(I) < N_depth)
+	template <integral_q I> requires (sizeof(I) < N_depth)
 	XTAL_FN2 internal_f(I i)
 	XTAL_0EX
 	{
@@ -295,7 +295,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 	template <int N_side=0> requires sign_p<N_side, 0>
-	XTAL_FN2 clamped_f(integral_p auto i)
+	XTAL_FN2 clamped_f(integral_q auto i)
 	XTAL_0EX
 	{
 		return N_side == 0? i: N_side*designed_f<N_side>(i);
@@ -375,22 +375,22 @@ public:
 	static_assert(designed_f<-1>((delta_t) -2) == (2));
 	static_assert(designed_f<-1>((delta_t) -3) == (3));
 
-	template <integral_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
-	template <integral_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
+	template <cointegral_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
+	template <cointegral_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
 	
-	template <cardinal_p I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
-	template < ordinal_p I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
+	template <cardinal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
+	template < ordinal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
 	
-	template < ordinal_p I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (_std::make_unsigned_t<I>) designed_f(i);}
-	template <cardinal_p I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (_std::make_signed_t<I>) (i);}
+	template < ordinal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (_std::make_unsigned_t<I>) designed_f(i);}
+	template <cardinal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (_std::make_signed_t<I>) (i);}
 
 
-	XTAL_FN2_(delta_t) sign_f(cardinal_p auto i)
+	XTAL_FN2_(delta_t) sign_f(cardinal_q auto i)
 	XTAL_0EX
 	{
 		return 1;
 	}
-	XTAL_FN2_(delta_t) sign_f(ordinal_p auto i)
+	XTAL_FN2_(delta_t) sign_f(ordinal_q auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < sizeof(delta_t))
 	{
@@ -416,7 +416,7 @@ public:
 
 	///\returns the number of bits set in `u`. \
 
-	XTAL_FN2 bit_count_f(integral_p auto i)
+	XTAL_FN2 bit_count_f(integral_q auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < N_width)
 	{
@@ -438,7 +438,7 @@ public:
 	}
 
 
-	XTAL_FN2 bit_floor_f(integral_p auto i)
+	XTAL_FN2 bit_floor_f(integral_q auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < N_width)
 	{
@@ -460,7 +460,7 @@ public:
 		return u;
 	}
 
-	XTAL_FN2 bit_ceiling_f(integral_p auto i)
+	XTAL_FN2 bit_ceiling_f(integral_q auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < N_width)
 	{
@@ -505,13 +505,13 @@ public:
 	}
 
 	template <size_t N_subdepth=0>
-	XTAL_FN2 bit_reverse_f(integral_p auto i)
+	XTAL_FN2 bit_reverse_f(integral_q auto i)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < N_width)
 	{
 		return bit_reverse_f<N_subdepth>(internal_f(i));
 	}
-	XTAL_FN2 bit_reverse_f(integral_p auto i, sigma_t const &subdepth)
+	XTAL_FN2 bit_reverse_f(integral_q auto i, sigma_t const &subdepth)
 	XTAL_0EX
 	XTAL_REQ (sizeof(i) < N_width)
 	{
@@ -706,7 +706,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_TYP_(w);
-		using U = devolve_u<W>;
+		using U = devolve_t<W>;
 
 	//	W constexpr W_1{1};
 		U constexpr U_1{1};
@@ -748,7 +748,7 @@ public:
 		}
 	}
 	template <int N_pow=1, int N_lim=-1>// requires sign_p<N_pow, 0>
-	XTAL_FN2 root_f(integral_p auto const &w)
+	XTAL_FN2 root_f(integral_q auto const &w)
 	XTAL_0EX
 	{
 		return root_f<N_pow, N_lim>((alpha_t) w);
@@ -1173,7 +1173,7 @@ public:
 	using S_::designed_f;
 
 	template <int N_side=0>
-	XTAL_FN2 designed_f(integral_p auto value)
+	XTAL_FN2 designed_f(integral_q auto value)
 	XTAL_0EX
 	{
 		return S_::template designed_f<N_side>(value);
@@ -1212,7 +1212,7 @@ public:
 	///\returns `value` (restricted to `N_side`, if provided). \
 	
 	template <int N_side=0>
-	XTAL_FN2 clamped_f(integral_p auto value)
+	XTAL_FN2 clamped_f(integral_q auto value)
 	XTAL_0EX
 	{
 		return S_::template clamped_f<N_side>(value);
@@ -1641,7 +1641,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct operate : _detail::realize<sizeof(devolve_u<T>)> {};
+struct operate : _detail::realize<sizeof(devolve_t<T>)> {};
 
 using operating = operate<size_t>;
 

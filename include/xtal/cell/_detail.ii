@@ -228,7 +228,7 @@ struct defer_field
 
 	};
 };
-template <integral_q U>
+template <cointegral_q U>
 struct defer_field<U>
 {
 	template <any_q S>
@@ -246,7 +246,7 @@ struct defer_field<U>
 		using S_::self;
 		U_body u_body{};
 
-		template <integral_q A>
+		template <cointegral_q A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
@@ -302,7 +302,7 @@ struct defer_field<unit_t[N_width]>
 		,	u_body(member_f<U_head>(XTAL_REF_(a)))
 		{
 		}
-		template <integral_p A>
+		template <integral_q A>
 		XTAL_CXN subtype(A &&a)
 		XTAL_0EX
 		:	S_(U_head(XTAL_REF_(a)) >> N_depth)

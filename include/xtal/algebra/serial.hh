@@ -15,19 +15,40 @@ template <class ..._s> XTAL_TYP serial;
 template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
 template <class ...Ts> XTAL_ASK serial_q = bond::head_tag_p<serial, Ts...>;
 
+template <auto f, class ...Xs> requires common_q<Xs...>
+XTAL_DEF_(return,inline)
+XTAL_FN1 serial_f(Xs &&...xs)
+XTAL_0EX
+{
+	XTAL_USE U = common_t<Xs...>;
+	XTAL_SET N = sizeof...(xs);
+	if constexpr (idempotent_p<U, decltype(f)>) {
+		return serial_t<U[N]>{ (XTAL_REF_(xs))...};
+	}
+	else {
+		return serial_t<U[N]>{f(XTAL_REF_(xs))...};
+	}
+}
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 serial_f(Xs &&...xs)
+XTAL_0EX
+{
+	return serial_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with point-wise addition, \
-and multiplication defined by linear convolution. \
+Extends `lattice` with point-wise addition, and multiplication defined by linear convolution. \
 
 template <class U_data, int N_data>
 struct serial<U_data[N_data]>
 {
-	using op = bond::operate<U_data>;
-	using U_delta = typename op::delta_t;
-	using U_sigma = typename op::sigma_t;
-	using U_alpha = typename op::alpha_t;
+	using Op = bond::operate<U_data>;
+	using U_delta = typename Op::delta_t;
+	using U_sigma = typename Op::sigma_t;
+	using U_alpha = typename Op::alpha_t;
 	
 	template <class T>
 	using allotype = typename lattice<U_data[N_data]>::template homotype<T>;
@@ -59,7 +80,7 @@ struct serial<U_data[N_data]>
 		XTAL_OP1_(T &) *= (T const &t)
 		XTAL_0EX
 		{
-			if constexpr (op::alignment_n < N_data) {
+			if constexpr (Op::alignment_n < N_data) {
 				for (auto i = N_data; ~--i;) {let(i) *= t.get(0);
 				for (auto j = i; j-- ;) {let(i) += t.get(j)*get(i - j);}}
 			}
@@ -127,7 +148,7 @@ struct serial<U_data[N_data]>
 					}
 					else {
 						return [&]<auto ...I>(bond::seek_t<I...>)
-							XTAL_0FN_(u +...+ (get<I>(s)*op::assign_f((U_sigma) I)))
+							XTAL_0FN_(u +...+ (get<I>(s)*Op::assign_f((U_sigma) I)))
 						(bond::seek_s<N_data>{});
 					}
 				}
@@ -143,13 +164,13 @@ struct serial<U_data[N_data]>
 					if constexpr (0 < N_sign) {
 						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 							auto const &v = get<I>(s);
-							u = op::accumulate_f(u, v, v);
+							u = Op::accumulate_f(u, v, v);
 						});
 					}
 					else {
 						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 							auto const &v = get<I>(s);
-							u = op::accumulate_f(u, v, v, op::assign_f((U_sigma) I));
+							u = Op::accumulate_f(u, v, v, Op::assign_f((U_sigma) I));
 						});
 					}
 					return u;
@@ -163,7 +184,7 @@ struct serial<U_data[N_data]>
 					
 					U_data u{};
 					bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-						u = op::accumulate_f(u, get<I>(s), get<I>(t));
+						u = Op::accumulate_f(u, get<I>(s), get<I>(t));
 					});
 					return u;
 				}

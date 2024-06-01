@@ -84,33 +84,33 @@ namespace _xtd::ranges::views
 }
 
 
-#include "./_retail.ii"
+#include "./_entail.ii"
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Standard...
 
-XTAL_USE null_t = _retail:: null_t;
-XTAL_USE unit_t = _retail:: unit_t;
-XTAL_USE sign_t = _retail:: sign_t;
-XTAL_USE byte_t = _retail:: byte_t;
-XTAL_USE size_t = _retail:: size_t;
-XTAL_USE size_s = _retail:: size_s;
-XTAL_USE real_s = _retail:: real_s;
+XTAL_USE null_t = _entail:: null_t;
+XTAL_USE unit_t = _entail:: unit_t;
+XTAL_USE sign_t = _entail:: sign_t;
+XTAL_USE byte_t = _entail:: byte_t;
+XTAL_USE size_t = _entail:: size_t;
+XTAL_USE size_s = _entail:: size_s;
+XTAL_USE real_s = _entail:: real_s;
 
-XTAL_LET size_0 = _retail:: size_0;
-XTAL_LET size_1 = _retail:: size_1;
+XTAL_LET size_0 = _entail:: size_0;
+XTAL_LET size_1 = _entail:: size_1;
 
 
-template <auto    N, auto  ...Ms>	XTAL_ASK      exclusive_p = _retail::exclusive_p<N, Ms... >;
-template <auto    N, auto  ...Ms>	XTAL_ASK      inclusive_p = _retail::inclusive_p<N, Ms... >;
-template <auto    N, auto  N_0=0>	XTAL_ASK           sign_p = _retail::     sign_p<N, N_0>;
-template <auto    N, auto  N_0=0>	XTAL_LET           sign_n = _retail::     sign_n<N, N_0>;
+template <auto    N, auto  ...Ms>	XTAL_ASK      exclusive_p = _entail::exclusive_p<N, Ms... >;
+template <auto    N, auto  ...Ms>	XTAL_ASK      inclusive_p = _entail::inclusive_p<N, Ms... >;
+template <auto    N, auto  N_0=0>	XTAL_ASK           sign_p = _entail::     sign_p<N, N_0>;
+template <auto    N, auto  N_0=0>	XTAL_LET           sign_n = _entail::     sign_n<N, N_0>;
 
-template <class            ...Ts>	XTAL_ASK           some_q = _retail::     some_q<Ts...>;
-template <auto             ...Ns>	XTAL_ASK           some_n = _retail::     some_n<Ns...>;
-template <class            ...Ts>	XTAL_ASK           none_q = _retail::     none_q<Ts...>;
-template <auto             ...Ns>	XTAL_ASK           none_n = _retail::     none_n<Ns...>;
+template <class            ...Ts>	XTAL_ASK           some_q = _entail::     some_q<Ts...>;
+template <auto             ...Ns>	XTAL_ASK           some_n = _entail::     some_n<Ns...>;
+template <class            ...Ts>	XTAL_ASK           none_q = _entail::     none_q<Ts...>;
+template <auto             ...Ns>	XTAL_ASK           none_n = _entail::     none_n<Ns...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,111 +118,111 @@ template <auto             ...Ns>	XTAL_ASK           none_n = _retail::     none
 //\
 Structural...
 
-template <class            ...Ts>	XTAL_ASK           void_q =	(...and  _retail::       void_q<Ts   >);
-template <class            ...Ts>	XTAL_ASK     incomplete_q =	(...and  _retail:: incomplete_q<Ts   >);
-template <class            ...Ts>	XTAL_ASK       complete_q =	(...and  _retail::   complete_q<Ts   >);
-template <class            ...Ts>	XTAL_USE       complete_t =	typename _retail::   complete_t<Ts...>;
+template <class            ...Ts>	XTAL_ASK           void_q =	(...and  _entail::       void_q<Ts   >);
+template <class            ...Ts>	XTAL_ASK     incomplete_q =	(...and  _entail:: incomplete_q<Ts   >);
+template <class            ...Ts>	XTAL_ASK       complete_q =	(...and  _entail::   complete_q<Ts   >);
+template <class            ...Ts>	XTAL_USE       complete_t =	typename _entail::   complete_t<Ts...>;
 
-template <class            ...Ts>	XTAL_ASK         common_q =	some_q<Ts...> and _retail:: common_q<Ts...>;//< `Ts...` share an ancestor.
-template <class            ...Ts>	XTAL_USE         common_t =	                  _retail:: common_t<Ts...>;
+template <class            ...Ts>	XTAL_ASK         common_q =	some_q<Ts...> and _entail:: common_q<Ts...>;//< `Ts...` share an ancestor.
+template <class            ...Ts>	XTAL_USE         common_t =	                  _entail:: common_t<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <           class ...Ts>	XTAL_USE      isotropic_t =	               _retail::  isotropic<Ts...>;
-template <           class ...Ts>	XTAL_USE      epitropic_t =	               _retail::  epitropic<Ts...>;
-template <           class ...Ts>	XTAL_USE    anisotropic_t =	_std::negation<_retail::  isotropic<Ts...>>;
-template <           class ...Ts>	XTAL_USE    anepitropic_t =	_std::negation<_retail::  epitropic<Ts...>>;
+template <           class ...Ts>	XTAL_USE      isotropic_t =	               _entail::  isotropic<Ts...>;
+template <           class ...Ts>	XTAL_USE      epitropic_t =	               _entail::  epitropic<Ts...>;
+template <           class ...Ts>	XTAL_USE    anisotropic_t =	_std::negation<_entail::  isotropic<Ts...>>;
+template <           class ...Ts>	XTAL_USE    anepitropic_t =	_std::negation<_entail::  epitropic<Ts...>>;
 
-template <           class ...Ts>	XTAL_USE     isomorphic_t =	               _retail:: isomorphic<Ts...>;
-template <           class ...Ts>	XTAL_USE     epimorphic_t =	               _retail:: epimorphic<Ts...>;
-template <           class ...Ts>	XTAL_USE   anisomorphic_t =	_std::negation<_retail:: isomorphic<Ts...>>;
-template <           class ...Ts>	XTAL_USE   anepimorphic_t =	_std::negation<_retail:: epimorphic<Ts...>>;
+template <           class ...Ts>	XTAL_USE     isomorphic_t =	               _entail:: isomorphic<Ts...>;
+template <           class ...Ts>	XTAL_USE     epimorphic_t =	               _entail:: epimorphic<Ts...>;
+template <           class ...Ts>	XTAL_USE   anisomorphic_t =	_std::negation<_entail:: isomorphic<Ts...>>;
+template <           class ...Ts>	XTAL_USE   anepimorphic_t =	_std::negation<_entail:: epimorphic<Ts...>>;
 
-template <           class ...Ts>	XTAL_ASK      isotropic_q =	        _retail::  isotropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK      epitropic_q =	        _retail::  epitropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK    anisotropic_q =	    not _retail::  isotropic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK    anepitropic_q =	    not _retail::  epitropic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK      isotropic_q =	        _entail::  isotropic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK      epitropic_q =	        _entail::  epitropic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK    anisotropic_q =	    not _entail::  isotropic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK    anepitropic_q =	    not _entail::  epitropic<Ts...>::value;
 
-template <           class ...Ts>	XTAL_ASK     isomorphic_q =	        _retail:: isomorphic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK     epimorphic_q =	        _retail:: epimorphic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK   anisomorphic_q =	    not _retail:: isomorphic<Ts...>::value;
-template <           class ...Ts>	XTAL_ASK   anepimorphic_q =	    not _retail:: epimorphic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK     isomorphic_q =	        _entail:: isomorphic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK     epimorphic_q =	        _entail:: epimorphic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK   anisomorphic_q =	    not _entail:: isomorphic<Ts...>::value;
+template <           class ...Ts>	XTAL_ASK   anepimorphic_q =	    not _entail:: epimorphic<Ts...>::value;
 
-template <           class ...Ts>	XTAL_ASK             id_q =	        _retail:: identical<Ts...>::value;//< `Ts...` are identical.
-template <           class ...Ts>	XTAL_ASK             is_q =	        _retail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <           class ...Ts>	XTAL_ASK             as_q =	        _retail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class   T, class ...Ts>	XTAL_ASK             as_p =	        _retail:: as_p<T, Ts...>;
+template <           class ...Ts>	XTAL_ASK             id_q =	        _entail:: identical<Ts...>::value;//< `Ts...` are identical.
+template <           class ...Ts>	XTAL_ASK             is_q =	        _entail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
+template <           class ...Ts>	XTAL_ASK             as_q =	        _entail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
+template <class   T, class ...Ts>	XTAL_ASK             as_p =	        _entail:: as_p<T, Ts...>;
 
-template <class   T, class ...Ts>	XTAL_ASK       fungible_q =	some_q<Ts...> and (...and _retail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
-template <class   T, class ...Ts>	XTAL_ASK     infungible_q =	some_q<Ts...> and (...and _retail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
+template <class   T, class ...Ts>	XTAL_ASK       fungible_q =	some_q<Ts...> and (...and _entail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
+template <class   T, class ...Ts>	XTAL_ASK     infungible_q =	some_q<Ts...> and (...and _entail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
 
-template <class   X, class ...Fs>	XTAL_ASK     idempotent_p =	(...and _retail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
+template <class   X, class ...Fs>	XTAL_ASK     idempotent_p =	(...and _entail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
 template <class   F, class    X >	XTAL_ASK     idempotent_q =	idempotent_p<X, F>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_USE cardinal_0 = _retail:: cardinal<0>::type;
-XTAL_USE cardinal_1 = _retail:: cardinal<1>::type;
-XTAL_USE  ordinal_0 = _retail::  ordinal<0>::type;
-XTAL_USE  ordinal_1 = _retail::  ordinal<1>::type;
-XTAL_USE  logical_0 = _retail::  ordinal<0>::type;
-XTAL_USE  logical_1 = _retail::  ordinal<1>::type;
+XTAL_USE cardinal_0 = _entail:: cardinal<0>::type;
+XTAL_USE cardinal_1 = _entail:: cardinal<1>::type;
+XTAL_USE  ordinal_0 = _entail::  ordinal<0>::type;
+XTAL_USE  ordinal_1 = _entail::  ordinal<1>::type;
+XTAL_USE  logical_0 = _entail::  ordinal<0>::type;
+XTAL_USE  logical_1 = _entail::  ordinal<1>::type;
 
-template <auto       N >	XTAL_USE     constant_t = typename _retail:: constant<N>::type;
-template <auto       N >	XTAL_USE     cardinal_t = typename _retail:: cardinal<N>::type;
-template <auto       N >	XTAL_USE      ordinal_t = typename _retail::  ordinal<N>::type;
-template <auto       N >	XTAL_USE      logical_t = typename _retail::  logical<N>::type;
+template <auto       N >	XTAL_USE     constant_t = typename _entail:: constant<N>::type;
+template <auto       N >	XTAL_USE     cardinal_t = typename _entail:: cardinal<N>::type;
+template <auto       N >	XTAL_USE      ordinal_t = typename _entail::  ordinal<N>::type;
+template <auto       N >	XTAL_USE      logical_t = typename _entail::  logical<N>::type;
 
-template <class   ...Ts>	XTAL_ASK     constant_q = (...and  _retail::  constant_q<Ts>);
-template <class   ...Ts>	XTAL_ASK     integral_q = (...and  _retail::  integral_q<Ts>);
-template <class   ...Ts>	XTAL_ASK     cardinal_q = (...and  _retail::  cardinal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      ordinal_q = (...and  _retail::   ordinal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      logical_q = (...and  _retail::   logical_q<Ts>);
+template <class   ...Ts>	XTAL_ASK     constant_q = (...and  _entail::    constant_q<Ts>);
+template <class   ...Ts>	XTAL_ASK   cointegral_q = (...and  _entail::  cointegral_q<Ts>);
+template <class   ...Ts>	XTAL_ASK   cocardinal_q = (...and  _entail::  cocardinal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK    coordinal_q = (...and  _entail::   coordinal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK    cological_q = (...and  _entail::   cological_q<Ts>);
 
-template <class   ...Ts>	XTAL_ASK     integral_p = (...and  _retail::  integral_p<Ts>);
-template <class   ...Ts>	XTAL_ASK     cardinal_p = (...and  _retail::  cardinal_p<Ts>);
-template <class   ...Ts>	XTAL_ASK      ordinal_p = (...and  _retail::   ordinal_p<Ts>);
-template <class   ...Ts>	XTAL_ASK      logical_p = (...and  _retail::   logical_p<Ts>);
+template <class   ...Ts>	XTAL_ASK     integral_q = (...and  _entail::    integral_q<Ts>);
+template <class   ...Ts>	XTAL_ASK     cardinal_q = (...and  _entail::    cardinal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      ordinal_q = (...and  _entail::     ordinal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      logical_q = (...and  _entail::     logical_q<Ts>);
 
-template <class   ...Ts>	XTAL_ASK     terminal_q = (...and  _retail::    terminal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      liminal_q = (...and  _retail::     liminal_q<Ts>);
-template <liminal_q  T >	XTAL_USE   subliminal_s = typename _retail::  subliminal<T>::type;
-template <liminal_q  T >	XTAL_USE  semiliminal_s = typename _retail:: semiliminal<T>::type;
+template <class   ...Ts>	XTAL_ASK     terminal_q = (...and  _entail::    terminal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      liminal_q = (...and  _entail::     liminal_q<Ts>);
+template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal<T>::type;
+template <liminal_q  T >	XTAL_USE  semiliminal_s = typename _entail:: semiliminal<T>::type;
 
-template <int        N >	XTAL_USE   bisordinal_t = typename _retail:: bisordinal<N    >::type;
-template <int     ...Ns>	XTAL_USE   fractional_t = typename _retail:: fractional<Ns...>::type;
-template <int     ...Ns>	XTAL_LET   fractional_n =          _retail:: fractional<Ns...>::value;
-
-
-template <class      T >	XTAL_USE        based_t =          _retail::   based_t<T>;
-template <class   ...Ts>	XTAL_ASK        based_q = (...and  _retail::   based_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      unbased_q = (...and  _retail:: unbased_q<Ts>);
-
-template <class      T >	XTAL_USE      rebased_t = typename _retail:: rebased<T>::type;
-template <class      T >	XTAL_USE      debased_t = typename _retail:: debased<T>::type;
-template <class      T >	XTAL_ASK      rebased_p =   (bool) _retail:: rebased<T>::value;
-template <class      T >	XTAL_ASK      debased_p =   (bool) _retail:: debased<T>::value;
-template <class   ...Ts>	XTAL_ASK      rebased_q = (...and  _retail:: rebased_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      debased_q = (...and  _retail:: debased_q<Ts>);
+template <int        N >	XTAL_USE   bisordinal_t = typename _entail:: bisordinal<N    >::type;
+template <int     ...Ns>	XTAL_USE   fractional_t = typename _entail:: fractional<Ns...>::type;
+template <int     ...Ns>	XTAL_LET   fractional_n =          _entail:: fractional<Ns...>::value;
 
 
-template <           class ...Ts>	XTAL_ASK      invalue_q = (...and  _retail:: invalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      invalue_u = common_t<_retail:: invalue_u<Ts>...>;
+template <class      T >	XTAL_USE        based_t =          _entail::   based_t<T>;
+template <class   ...Ts>	XTAL_ASK        based_q = (...and  _entail::   based_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      unbased_q = (...and  _entail:: unbased_q<Ts>);
 
-template <           class ...Ts>	XTAL_ASK      unvalue_q = (...and  _retail:: unvalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      unvalue_u = common_t<_retail:: unvalue_u<Ts>...>;
+template <class      T >	XTAL_USE      rebased_t = typename _entail:: rebased<T>::type;
+template <class      T >	XTAL_USE      debased_t = typename _entail:: debased<T>::type;
+template <class      T >	XTAL_ASK      rebased_p =   (bool) _entail:: rebased<T>::value;
+template <class      T >	XTAL_ASK      debased_p =   (bool) _entail:: debased<T>::value;
+template <class   ...Ts>	XTAL_ASK      rebased_q = (...and  _entail:: rebased_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      debased_q = (...and  _entail:: debased_q<Ts>);
 
-template <           class ...Ts>	XTAL_ASK      devalue_q = (...and  _retail:: devalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      devalue_u = common_t<_retail:: devalue_u<Ts>...>;
-template <class   T             >	XTAL_LET      devalue_n = _retail:: devalue_n<T>;
 
-//mplate <           int   ...Ns>	XTAL_USE      devolve_x =	_retail:: devolve_x<   Ns...>;
-//mplate <class   T, class ..._s>	XTAL_USE      devolve_s =	_retail:: devolve_s<T, _s...>;
-template <class   T             >	XTAL_USE      devolve_t =	_retail:: devolve_t<T       >;
-template <           class ...Ts>	XTAL_USE      devolve_u = common_t<_retail:: devolve_u<Ts>...>;
-template <class   T             >	XTAL_LET      devolve_n = _retail:: devolve_n<T>;
+template <           class ...Ts>	XTAL_ASK      invalue_q = (...and  _entail:: invalue_q<Ts>);
+template <           class ...Ts>	XTAL_USE      invalue_t = common_t<_entail:: invalue_t<Ts>...>;
+
+template <           class ...Ts>	XTAL_ASK      unvalue_q = (...and  _entail:: unvalue_q<Ts>);
+template <           class ...Ts>	XTAL_USE      unvalue_t = common_t<_entail:: unvalue_t<Ts>...>;
+
+template <           class ...Ts>	XTAL_ASK      devalue_q = (...and  _entail:: devalue_q<Ts>);
+template <           class ...Ts>	XTAL_USE      devalue_t = common_t<_entail:: devalue_t<Ts>...>;
+template <class   T             >	XTAL_LET      devalue_n = _entail:: devalue_n<T>;
+
+//mplate <           int   ...Ns>	XTAL_USE      devolve_x =	_entail:: devolve_x<   Ns...>;
+//mplate <class   T, class ..._s>	XTAL_USE      devolve_s =	_entail:: devolve_s<T, _s...>;
+template <class   T             >	XTAL_USE      devolve_a =	_entail:: devolve_a<T       >;
+template <           class ...Ts>	XTAL_USE      devolve_t = common_t<_entail:: devolve_t<Ts>...>;
+template <class   T             >	XTAL_LET      devolve_n = _entail:: devolve_n<T>;
 
 template <class   T, class ...Ts>	XTAL_ASK     devalued_q = (...and (devalue_n<T> < devalue_n<Ts>));
 template <class   T, class ...Ts>	XTAL_ASK     devalued_p = (...and (devalue_n<T> > devalue_n<Ts>));
@@ -232,15 +232,15 @@ template <class   T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolve_n<T
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T,   int   N=-1 >	XTAL_ASK     array_q =             _retail:: array_q<T> and N <  0   or devalue_n<T> == N;
-template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =             _retail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
+template <class T,   int   N=-1 >	XTAL_ASK     array_q =             _entail:: array_q<T> and N <  0   or devalue_n<T> == N;
+template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =             _entail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
 template <           class ...Ts>	XTAL_ASK  disarray_q =        not (...and    array_q<Ts>);
 
-template <class            ...Ts>	XTAL_ASK  accessed_q = (... and _retail:: accessed_q<Ts>);
-template <class            ...Ts>	XTAL_ASK   pointer_q = (... and _retail::  pointer_q<Ts>);
-template <class               T >	XTAL_USE  accessed_t =          _retail:: accessed_t<T >;
-template <class               T >	XTAL_USE   pointer_t =          _retail::  pointer_t<T >;
-template <class               T >	XTAL_USE   pointee_t =          _retail::  pointee_t<T >;
+template <class            ...Ts>	XTAL_ASK  accessed_q = (... and _entail:: accessed_q<Ts>);
+template <class            ...Ts>	XTAL_ASK   pointer_q = (... and _entail::  pointer_q<Ts>);
+template <class               T >	XTAL_USE  accessed_t =          _entail:: accessed_t<T >;
+template <class               T >	XTAL_USE   pointer_t =          _entail::  pointer_t<T >;
+template <class               T >	XTAL_USE   pointee_t =          _entail::  pointee_t<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,42 +248,42 @@ template <class               T >	XTAL_USE   pointee_t =          _retail::  poi
 //\
 Ranged...
 
-template <class      ...Ts>	XTAL_ASK        sizeable_q =	    (...and  _retail::   sizeable_q<based_t<Ts>>);
-template <class      ...Ts>	XTAL_ASK      resizeable_q =	    (...and  _retail:: resizeable_q<based_t<Ts>>);
+template <class      ...Ts>	XTAL_ASK        sizeable_q =	    (...and  _entail::   sizeable_q<based_t<Ts>>);
+template <class      ...Ts>	XTAL_ASK      resizeable_q =	    (...and  _entail:: resizeable_q<based_t<Ts>>);
 
-template <class      ...Ts>	XTAL_ASK         bounded_q =	    (...and  _retail::    bounded_q<Ts>);
-template <class      ...Ts>	XTAL_ASK       unbounded_q =	    (...and  _retail::  unbounded_q<Ts>);
-template <class      ...Ts>	XTAL_ASK       reembrace_q =	    (...and  _retail::  reembrace_q<Ts>);
-template <class         T >	XTAL_USE       reembrace_t =	             _retail::  reembrace_t<T >;
-template <class         T >	XTAL_USE         embrace_t =	             _retail::    embrace_t<T >;
+template <class      ...Ts>	XTAL_ASK         bounded_q =	    (...and  _entail::    bounded_q<Ts>);
+template <class      ...Ts>	XTAL_ASK       unbounded_q =	    (...and  _entail::  unbounded_q<Ts>);
+template <class      ...Ts>	XTAL_ASK       reembrace_q =	    (...and  _entail::  reembrace_q<Ts>);
+template <class         T >	XTAL_USE       reembrace_t =	             _entail::  reembrace_t<T >;
+template <class         T >	XTAL_USE         embrace_t =	             _entail::    embrace_t<T >;
 
-template <class         T >	XTAL_USE        interval_t =	             _retail::   interval_t<T >;
-template <class         T >	XTAL_USE        iterated_t =	    typename _retail::   iterated  <T >::type;
-template <class         T >	XTAL_USE        iterator_t =	    typename _retail::   iterator  <T >::type;
-template <class         T >	XTAL_USE        iteratee_t =	    typename _retail::   iteratee  <T >::type;
-template <class         T >	XTAL_USE        distance_t =	             _retail::   distance_t<T >;
-template <class   T=size_s>	XTAL_USE         counted_t =	    typename _retail::    counted  <T >::type;
-template <class   T=size_s>	XTAL_USE         counter_t =	    typename _retail::    counter  <T >::type;
+template <class         T >	XTAL_USE        interval_t =	             _entail::   interval_t<T >;
+template <class         T >	XTAL_USE        iterated_t =	    typename _entail::   iterated  <T >::type;
+template <class         T >	XTAL_USE        iterator_t =	    typename _entail::   iterator  <T >::type;
+template <class         T >	XTAL_USE        iteratee_t =	    typename _entail::   iteratee  <T >::type;
+template <class         T >	XTAL_USE        distance_t =	             _entail::   distance_t<T >;
+template <class   T=size_s>	XTAL_USE         counted_t =	    typename _entail::    counted  <T >::type;
+template <class   T=size_s>	XTAL_USE         counter_t =	    typename _entail::    counter  <T >::type;
 
-template <class      ...Ts>	XTAL_ASK        interval_q =	    (...and  _retail::   interval_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        iteratee_q =	    (...and  _retail::   iteratee_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        iterable_q =	    (...and  _retail::   iterable_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        iterated_q =	    (...and  _retail::   iterated_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        iterator_q =	    (...and  _retail::   iterator_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        sentinel_q =	    (...and  _retail::   sentinel_q<Ts>);
-template <class      ...Ts>	XTAL_ASK        distance_q =	    (...and  _retail::   distance_q<Ts>);
-template <class      ...Ts>	XTAL_ASK         counted_q =	    (...and  _retail::    counted_q<Ts>);
-template <class      ...Ts>	XTAL_ASK         counter_q =	    (...and  _retail::    counter_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        interval_q =	    (...and  _entail::   interval_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        iteratee_q =	    (...and  _entail::   iteratee_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        iterable_q =	    (...and  _entail::   iterable_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        iterated_q =	    (...and  _entail::   iterated_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        iterator_q =	    (...and  _entail::   iterator_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        sentinel_q =	    (...and  _entail::   sentinel_q<Ts>);
+template <class      ...Ts>	XTAL_ASK        distance_q =	    (...and  _entail::   distance_q<Ts>);
+template <class      ...Ts>	XTAL_ASK         counted_q =	    (...and  _entail::    counted_q<Ts>);
+template <class      ...Ts>	XTAL_ASK         counter_q =	    (...and  _entail::    counter_q<Ts>);
 
-template <class      ...Ts>	XTAL_ASK     uniteratee_q =	not (...and  _retail::   iteratee_q<Ts>);
-template <class      ...Ts>	XTAL_ASK     uniterable_q =	not (...and  _retail::   iterable_q<Ts>);
-template <class      ...Ts>	XTAL_ASK     uniterated_q =	not (...and  _retail::   iterated_q<Ts>);
-template <class      ...Ts>	XTAL_ASK     uniterator_q =	not (...and  _retail::   iterator_q<Ts>);
-template <class      ...Ts>	XTAL_ASK      uncounted_q =	not (...and  _retail::    counted_q<Ts>);
-template <class      ...Ts>	XTAL_ASK      uncounter_q =	not (...and  _retail::    counter_q<Ts>);
+template <class      ...Ts>	XTAL_ASK     uniteratee_q =	not (...and  _entail::   iteratee_q<Ts>);
+template <class      ...Ts>	XTAL_ASK     uniterable_q =	not (...and  _entail::   iterable_q<Ts>);
+template <class      ...Ts>	XTAL_ASK     uniterated_q =	not (...and  _entail::   iterated_q<Ts>);
+template <class      ...Ts>	XTAL_ASK     uniterator_q =	not (...and  _entail::   iterator_q<Ts>);
+template <class      ...Ts>	XTAL_ASK      uncounted_q =	not (...and  _entail::    counted_q<Ts>);
+template <class      ...Ts>	XTAL_ASK      uncounter_q =	not (...and  _entail::    counter_q<Ts>);
 
-template <class         T >	XTAL_USE      reiterated_t =	             _retail:: reiterated_t<T >;
-template <class         T >	XTAL_USE      initerated_t =	             _retail:: initerated_t<T >;
+template <class         T >	XTAL_USE      reiterated_t =	             _entail:: reiterated_t<T >;
+template <class         T >	XTAL_USE      initerated_t =	             _entail:: initerated_t<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -291,30 +291,30 @@ template <class         T >	XTAL_USE      initerated_t =	             _retail:: 
 //\
 Arithmetic...
 
-template <class   ...Ts>	XTAL_ASK            number_q =	    (...and  _retail::          number_q<Ts>);
-template <class   ...Ts>	XTAL_ASK       real_number_q =	    (...and  _retail::     real_number_q<Ts>);
-template <class   ...Ts>	XTAL_ASK    complex_number_q =	    (...and  _retail::  complex_number_q<Ts>);
-template <class   ...Ts>	XTAL_ASK   integral_number_q =	    (...and  _retail:: integral_number_q<Ts>);
+template <class   ...Ts>	XTAL_ASK            number_q =	    (...and  _entail::          number_q<Ts>);
+template <class   ...Ts>	XTAL_ASK       real_number_q =	    (...and  _entail::     real_number_q<Ts>);
+template <class   ...Ts>	XTAL_ASK    complex_number_q =	    (...and  _entail::  complex_number_q<Ts>);
+template <class   ...Ts>	XTAL_ASK   integral_number_q =	    (...and  _entail:: integral_number_q<Ts>);
 
 
-template <size_t N, class T, class U=T>	XTAL_ASK multiplicative_group_p = _retail:: multiplicative_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK       additive_group_p = _retail::       additive_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK       discrete_group_p = _retail::       discrete_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK       quotient_group_p = _retail::       quotient_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK       integral_group_p = _retail::       integral_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK multiplicative_group_p = _entail:: multiplicative_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK       additive_group_p = _entail::       additive_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK       discrete_group_p = _entail::       discrete_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK       quotient_group_p = _entail::       quotient_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK       integral_group_p = _entail::       integral_group_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_ASK     contiguous_group_p = _retail::     contiguous_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK     contiguous_field_p = _retail::     contiguous_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK     continuous_field_p = _retail::     continuous_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK        complex_field_p = _retail::        complex_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK        simplex_field_p = _retail::        simplex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK     contiguous_group_p = _entail::     contiguous_group_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK     contiguous_field_p = _entail::     contiguous_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK     continuous_field_p = _entail::     continuous_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK        complex_field_p = _entail::        complex_field_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK        simplex_field_p = _entail::        simplex_field_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_ASK      boolean_lattice_p = _retail::      boolean_lattice_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK       binary_lattice_p = _retail::       binary_lattice_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK      boolean_lattice_p = _entail::      boolean_lattice_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK       binary_lattice_p = _entail::       binary_lattice_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_ASK           inequality_p = _retail::           inequality_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK             equality_p = _retail::             equality_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_ASK              quality_p = _retail::              quality_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK           inequality_p = _entail::           inequality_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK             equality_p = _entail::             equality_p<N, T, U>;
+template <size_t N, class T, class U=T>	XTAL_ASK              quality_p = _entail::              quality_p<N, T, U>;
 
 
 template <class   ...Ts>	XTAL_ASK multiplicative_group_q = (...and multiplicative_group_p<0, Ts>);
@@ -348,8 +348,8 @@ static_assert(complex_field_q<_std::complex<float>>);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto    ...Ns>	XTAL_USE   lateral_t = typename _retail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
-template <auto    ...Ns>	XTAL_LET   lateral_n =          _retail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type::value;
+template <auto    ...Ns>	XTAL_USE   lateral_t = typename _entail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
+template <auto    ...Ns>	XTAL_LET   lateral_n =          _entail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,6 +17,28 @@ template <class          ..._s> XTAL_ASK lattice_q = bond::head_tag_p<lattice, _
 template <class T, class L=T  > XTAL_ASK lettuce_q = bond::pack_q<T> and not lattice_q<T> and bond::pack_size_n<T> == bond::pack_size_n<L>;
 template <class L, class ...Ts> XTAL_ASK lettuce_p = (...and lettuce_q<Ts, L>);
 
+template <auto f, class ...Xs> requires common_q<Xs...>
+XTAL_DEF_(return,inline)
+XTAL_FN1 lattice_f(Xs &&...xs)
+XTAL_0EX
+{
+	XTAL_USE U = common_t<Xs...>;
+	XTAL_SET N = sizeof...(xs);
+	if constexpr (idempotent_p<U, decltype(f)>) {
+		return lattice_t<U[N]>{ (XTAL_REF_(xs))...};
+	}
+	else {
+		return lattice_t<U[N]>{f(XTAL_REF_(xs))...};
+	}
+}
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 lattice_f(Xs &&...xs)
+XTAL_0EX
+{
+	return lattice_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -29,7 +51,7 @@ struct lattice<U[N][Ns]...> : lattice<lattice_t<U[N]>[Ns]...>
 template <class U_data, size_t N_data>
 struct lattice<U_data[N_data]>
 {
-	using op = bond::operate<U_data>;
+	using Op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename atom::block<U_data[N_data]>::template homotype<T>;

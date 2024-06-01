@@ -44,7 +44,7 @@ struct block<U_data(&)[N_data]>
 template <class U_data, size_t N_data>
 struct block<U_data[N_data]>
 {
-	using op = bond::operate<U_data>;
+	using Op = bond::operate<U_data>;
 	
 	using supertype = _std::array<U_data, N_data>;
 
@@ -72,7 +72,7 @@ struct block<U_data[N_data]>
 		using T_::self;
 		using T_::twin;
 		
-		XTAL_FN2_(typename op::sigma_t) size() XTAL_0EX {return N_data;}
+		XTAL_FN2_(typename Op::sigma_t) size() XTAL_0EX {return N_data;}
 
 
 		XTAL_TO4_(template <class F>
@@ -132,7 +132,7 @@ struct block<U_data[N_data]>
 		Map `transact` with `(?:co)?ordinate`.
 
 		//\
-		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalue_u<W>>))
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalue_t<W>>))
 		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<typename W::value_type>))
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}

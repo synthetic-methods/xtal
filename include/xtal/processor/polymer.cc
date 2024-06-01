@@ -23,10 +23,10 @@ namespace xtal::processor::_test
 template <size_t N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using op = bond::operating;
-	using T_alpha  = typename op::alpha_t;
-	using T_sigma  = typename op::sigma_t;
-	using T_delta  = typename op::delta_t;
+	using Op = bond::operating;
+	using T_alpha  = typename Op::alpha_t;
+	using T_sigma  = typename Op::sigma_t;
+	using T_delta  = typename Op::delta_t;
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;

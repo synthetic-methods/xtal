@@ -48,10 +48,10 @@ struct scalar<U_data> : scalar<U_data[2]>
 template <class U_data, int N_data>
 struct scalar<U_data[N_data]>
 {
-	using op = bond::operate<U_data>;
-	using U_delta = typename op::delta_t;
-	using U_sigma = typename op::sigma_t;
-	using U_alpha = typename op::alpha_t;
+	using Op = bond::operate<U_data>;
+	using U_delta = typename Op::delta_t;
+	using U_sigma = typename Op::sigma_t;
+	using U_alpha = typename Op::alpha_t;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::type::transverse::template homotype<T>;
@@ -100,7 +100,7 @@ struct scalar<U_data[N_data]>
 		template <int N_par=0>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> devolve_u<U_data>
+		XTAL_0EX -> devolve_t<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

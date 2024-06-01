@@ -17,8 +17,8 @@ template <typename ..._s> XTAL_ASK resize_q = bond::head_tag_p<resize, _s...>;
 XTAL_FN2 resize_f(auto &&w)
 XTAL_0EX
 {
-	using op = bond::operate<decltype(w)>;
-	return resize_t<typename op::sigma_t>(XTAL_REF_(w));
+	using Op = bond::operate<decltype(w)>;
+	return resize_t<typename Op::sigma_t>(XTAL_REF_(w));
 }
 
 

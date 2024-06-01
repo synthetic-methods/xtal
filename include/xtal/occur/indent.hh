@@ -21,7 +21,7 @@ template <typename     ..._s> XTAL_TYP indent;
 template <typename     ..._s> XTAL_ASK indent_q = bond::head_tag_p<indent, _s...>;
 template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<ordinal_t<Ns>...>>;
 
-template <integral_q ...Ns>
+template <cointegral_q ...Ns>
 struct indent<Ns...>
 {
 	template <class S>
@@ -39,8 +39,8 @@ struct indent<Ns...>
 		using S_ = bond::compose_s<S, subkind>;
 	//	using W_ = bond::compose_s<S, item>;
 		using W_ = component_t<S>;
-		using U_ = devalue_u<reembrace_t<S>>;//   presentation
-		using V_ = devalue_u<            S >;// representation
+		using U_ = devalue_t<reembrace_t<S>>;//   presentation
+		using V_ = devalue_t<            S >;// representation
 
 	public:
 		using S_::S_;

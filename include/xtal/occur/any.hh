@@ -36,7 +36,7 @@ struct define
 		{
 			assert(0 == u);
 		};
-		template <cardinal_q U>
+		template <cocardinal_q U>
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		{
@@ -92,7 +92,7 @@ struct define
 		{
 		};
 		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to `resolve` `functor<auto ...>`. \
+		Attaches `T` as a member of `this`, appending it to the arguments used to `refunctor_` `functor<auto ...>`. \
 
 		template <int N_mask=-1>
 		struct dispatch
@@ -112,30 +112,31 @@ struct define
 
 				XTAL_TO2_(
 				XTAL_OP2 () (auto &&...xs),
-					(self().*resolve<decltype(xs)...>()) (XTAL_REF_(xs)...)
+					(self().*refunctor_<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
 				XTAL_TO4_(template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_TN1 functory(integral_q auto const ...is),
+				XTAL_TN1 refunctor(cointegral_q auto const ...is),
 					//\
-					_std::bind_front(resolve<Xs...>(is...), &self())
-					[this, is...] (auto &&...xs) XTAL_0FN_((self().*resolve<Xs...>(is...)) (XTAL_REF_(xs)...))
+					_std::bind_front(refunctor_<Xs...>(is...), &self())
+					[this, is...] (auto &&...xs) XTAL_0FN_((self().*refunctor_<Xs...>(is...)) (XTAL_REF_(xs)...))
 				)
 
 			protected:
 				template <class ...Xs>
-				XTAL_TN2 resolve(integral_q auto const ...is)
+				XTAL_TN2 refunctor_(cointegral_q auto const &...is)
 				XTAL_0FX
 				{
-					return dissolve(figure<Xs...>::template type<is...>::value);
+					return refunctor_(figure<Xs...>::template type<is...>::value);
 				}
-				XTAL_TN2 dissolve(array_q<T::size()> auto const &value)
+				template <class A>
+				XTAL_TN2 refunctor_(_std::array<A, T::size()> const &value)
 				XTAL_0FX
 				{
 					static_assert(1 == bond::operating::bit_count_f(T::size()));
 					size_t i = head(); i &= (T::size() - 1);
-					return R_::dissolve(value[i]);
+					return R_::refunctor_(value[i]);
 				}
 
 				template <class ...Xs>

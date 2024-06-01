@@ -23,10 +23,10 @@ TAG_("phasor")
 	using U_restore = resource::restore<constant_t<0x1000>>;
 	using U_example = resource::example<>;
 
-	using op = bond::operating;
-	using T_sigma = typename op::sigma_t;
-	using T_delta = typename op::delta_t;
-	using T_alpha = typename op::alpha_t;
+	using Op = bond::operating;
+	using T_sigma = typename Op::sigma_t;
+	using T_delta = typename Op::delta_t;
+	using T_alpha = typename Op::alpha_t;
 	
 	using T_eigencolumns = Array<T_alpha, Dynamic, 2, ColMajor>;
 	using T_eigenrows    = Array<T_alpha, Dynamic, 2, ColMajor>;
@@ -47,7 +47,7 @@ TAG_("phasor")
 
 	TRY_("trial")
 	{
-		XTAL_LET x_delta  = op::ratio_f(7);
+		XTAL_LET x_delta  = Op::ratio_f(7);
 		
 		T_sigma constexpr N_data = 0x1000;
 		T_alpha z_data[2][N_data]{};
@@ -55,11 +55,11 @@ TAG_("phasor")
 		auto  w_data  = bond::pack_rowwise_f<2>(N_data, z_data);
 		auto  e_data  = Map<T_eigencolumns>(*z_data, N_data, 2).rowwise();
 		
-		auto  x_phi = X_phi        {}; x_phi <<=                          {op::ratio_f(7)};
-		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
-		auto  z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
-		auto  z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
-		auto  z_eig = Z_eig::bind_f(); z_eig <<= occur::indent_s<X_phi, 1>{op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
+		auto  x_phi = X_phi        {}; x_phi <<=                          {Op::ratio_f(7)};
+		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
+		auto  z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
+		auto  z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
+		auto  z_eig = Z_eig::bind_f(); z_eig <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
 
 		occur::render_t<>         z_render(N_data);
 		occur::indent_s<X_phi, 1> z_indent{x_delta};
@@ -121,8 +121,8 @@ TAG_("phasor")
 	/**/
 	TRY_("progression")
 	{
-		T_alpha x_d4 = op::haplo_f(4);
-		T_alpha x_d3 = op::haplo_f(3);
+		T_alpha x_d4 = Op::haplo_f(4);
+		T_alpha x_d3 = Op::haplo_f(3);
 		Y_phi y_phi{0, x_d4};
 
 		TRUE_(y_phi() == X_phi{ 1*x_d4, x_d4});
@@ -145,8 +145,8 @@ TAG_("phasor")
 	}
 	TRY_("procession in-place")
 	{
-		T_alpha x_d4 = op::haplo_f(4);
-		T_alpha x_d3 = op::haplo_f(3);
+		T_alpha x_d4 = Op::haplo_f(4);
+		T_alpha x_d3 = Op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto  z_out = bond::pack_rowwise_f<2>(8, z_outs);
 		using Z_out = reiterated_t<XTAL_TYP_(z_out)>;
@@ -194,8 +194,8 @@ TAG_("phasor")
 	}
 	TRY_("procession")
 	{
-		T_alpha x_d4 = op::haplo_f(4);
-		T_alpha x_d3 = op::haplo_f(3);
+		T_alpha x_d4 = Op::haplo_f(4);
+		T_alpha x_d3 = Op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto z_out = bond::pack_rowwise_f<2>(8, z_outs);
 
@@ -241,7 +241,7 @@ TAG_("phasor")
 	/***/
 	TRY_("multiplication")
 	{
-		T_alpha x =  0.33, x_d4 = op::haplo_f(4);
+		T_alpha x =  0.33, x_d4 = Op::haplo_f(4);
 		T_alpha y =  5.55;
 		T_alpha z =  x*y;
 

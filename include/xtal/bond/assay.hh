@@ -34,7 +34,7 @@ struct assay
 	};
 };
 template <class T>
-concept assay_q = requires {{T::size()} -> integral_p;};
+concept assay_q = requires {{T::size()} -> integral_q;};
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ struct assay
 		using S_::S_;
 
 		///\
-		Default `integral_q` constructor, expects `0`. \
+		Default `cointegral_q` constructor, expects `0`. \
 
-		template <integral_p A>
+		template <integral_q A>
 		XTAL_CXN subtype(A &&a)
 		XTAL_0EX
 		{

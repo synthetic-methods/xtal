@@ -63,17 +63,17 @@ using halve_t = confined_t<halve>;
 
 TAG_("process", "construct")
 {
-	using op = bond::operating;
-	using T_sigma = typename op::sigma_t;
-	using T_delta = typename op::delta_t;
-	using T_alpha = typename op::alpha_t;
+	using Op = bond::operating;
+	using T_sigma = typename Op::sigma_t;
+	using T_delta = typename Op::delta_t;
+	using T_alpha = typename Op::alpha_t;
 
 	TRY_("lifting")
 	{
 		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.functor(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
-		TRUE_(10 == f.functory() (1, 2, 3, 4));
+		TRUE_(10 == f.refunctor() (1, 2, 3, 4));
 
 	}
 	TRY_("chaining")

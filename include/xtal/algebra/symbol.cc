@@ -15,11 +15,11 @@ namespace xtal::algebra::_test
 
 TAG_("symbol")
 {
-	using op = bond::operating;
-	using T_delta = typename op::delta_t;
-	using T_sigma = typename op::sigma_t;
-	using T_alpha = typename op::alpha_t;
-	using T_aphex = typename op::aphex_t;
+	using Op = bond::operating;
+	using T_delta = typename Op::delta_t;
+	using T_sigma = typename Op::sigma_t;
+	using T_alpha = typename Op::alpha_t;
+	using T_aphex = typename Op::aphex_t;
 
 
 	TRY_("11th characterization (integer)")
@@ -54,9 +54,9 @@ TAG_("symbol")
 
 		using W = symbol_t<T_aphex[N]>;
 		W w; w.characterize();
-		TRUE_(op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1,-1, 1,-1,-1, 1, 1,-1, 1,-1});
+		TRUE_(Op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1,-1, 1,-1,-1, 1, 1,-1, 1,-1});
 
-		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/op::patio_1));
+		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/Op::patio_1));
 		w.transact(bond::computrim_f<16>);
 		TRUE_(w == W{0, 0, -1, 2, 3, 1,-4,-2,-3, 4,-5});
 
@@ -94,9 +94,9 @@ TAG_("symbol")
 
 		using W = symbol_t<T_aphex[N]>;
 		W w; w.characterize();
-		TRUE_(op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1, 1,-1, 1,-1,-1});
+		TRUE_(Op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1, 1,-1, 1,-1,-1});
 
-		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/op::patio_1));
+		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/Op::patio_1));
 		w.transact(bond::computrim_f<16>);
 		TRUE_(w == W{0, 0, 2, 1,-2,-1, -3});
 
@@ -109,9 +109,9 @@ TAG_("symbol")
 
 		using W = symbol_t<T_aphex[K]>;
 		W w; w.subcharacterize();
-		TRUE_(op::explo_f(w, K).transact(bond::computrim_f<8>) == W{1, 1,-1});
+		TRUE_(Op::explo_f(w, K).transact(bond::computrim_f<8>) == W{1, 1,-1});
 
-		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/op::patio_1));
+		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/Op::patio_1));
 		w.transact(bond::computrim_f<16>);
 		TRUE_(w == W{0, 2, 1});
 
@@ -137,9 +137,9 @@ TAG_("symbol")
 
 		using W = symbol_t<T_aphex[N]>;
 		W w; w.characterize();
-		TRUE_(op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1,-1,-1, 1});
+		TRUE_(Op::explo_f(w, K).transact(bond::computrim_f<8>) == W{0, 1,-1,-1, 1});
 
-		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/op::patio_1));
+		w.transact([] (auto &&z) XTAL_0FN_(_std::arg(XTAL_REF_(z))*K/Op::patio_1));
 		w.transact(bond::computrim_f<16>);
 		TRUE_(w == W{w[0], 0, 1,-1, w[M]});
 	}

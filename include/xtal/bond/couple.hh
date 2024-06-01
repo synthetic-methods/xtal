@@ -30,7 +30,7 @@ struct couple<X, Y>
 {
 	using supertype = bond::compose_s<_std::pair<X, Y>, tag<couple>>;
 
-//	using op = bond::operate<X>;
+//	using Op = bond::operate<X>;
 
 	class type : public supertype
 	{
@@ -85,7 +85,7 @@ struct couple<X, Y>
 		template <int N_par=0>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> devolve_u<X, Y>
+		XTAL_0EX -> devolve_t<X, Y>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

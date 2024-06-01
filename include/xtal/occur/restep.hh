@@ -17,8 +17,8 @@ template <typename ..._s> XTAL_ASK restep_q = bond::head_tag_p<restep, _s...>;
 XTAL_FN2 restep_f(auto &&w)
 XTAL_0EX
 {
-	using op = bond::operate<decltype(w)>;
-	return restep_t<typename op::delta_t>(XTAL_REF_(w));
+	using Op = bond::operate<decltype(w)>;
+	return restep_t<typename Op::delta_t>(XTAL_REF_(w));
 }
 
 

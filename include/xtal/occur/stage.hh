@@ -33,7 +33,7 @@ struct stage
 
 	};
 };
-template <integral_q A, typename ...As>
+template <cointegral_q A, typename ...As>
 struct stage<A, As...>
 {
 	using subkind = bond::compose<void

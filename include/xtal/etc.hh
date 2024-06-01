@@ -201,6 +201,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_REQ_DO_(...)                (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
 #define XTAL_REQ_TO_(...)                (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
 
+#define XTAL_TO0_(SIG, ...)      SIG               noexcept {return (__VA_ARGS__);};
 #define XTAL_TO1_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);};
 #define XTAL_TO2_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);}\
                                  SIG               noexcept {return (__VA_ARGS__);};
@@ -209,6 +210,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
                                  SIG     const  && noexcept {return (__VA_ARGS__);}\
                                  SIG            && noexcept {return (__VA_ARGS__);};
 
+#define XTAL_DO0_(SIG, ...)      SIG               noexcept          __VA_ARGS__   ;
 #define XTAL_DO1_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   ;
 #define XTAL_DO2_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   \
                                  SIG               noexcept          __VA_ARGS__   ;

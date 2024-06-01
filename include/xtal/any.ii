@@ -21,12 +21,16 @@ XTAL_0FN
 template <class F>
 XTAL_USE invoke_t = decltype(invoke_f<F>);
 
+template <class F, class ...Xs>
+XTAL_ASK invoke_p = _std::invocable<invoke_t<F>, Xs...>;
+
+
 template <class T>
 XTAL_DEF_(return,inline)
 XTAL_FN1 devolve_f(T &t)
 XTAL_0EX
 {
-	return reinterpret_cast<devolve_t<_std::remove_reference_t<T>> &>(t);
+	return reinterpret_cast<devolve_a<_std::remove_reference_t<T>> &>(t);
 }
 
 
@@ -103,20 +107,56 @@ template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter
 
 ///\returns the result of zipping `...xs` with `f`. \
 
+///\note\
+The name is intended to mimic Haskell's `ApplicativeFunctor`. \
+
 template <class F             > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f            ) XTAL_0EX {return _xtd::ranges::views::      generate(XTAL_REF_(f)                  );}
 template <class F, class    X > XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, X  &&   x ) XTAL_0EX {return _xtd::ranges::views::     transform(XTAL_REF_(x), XTAL_REF_(f)    );}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) XTAL_0EX {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) XTAL_0EX {return                          iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
 
+/*/
+///\returns the result of applying `f` to `...xs`. \
 
-template <class T> XTAL_DEF_(inline) XTAL_FN1  objective_f(T &&t) XTAL_0EX_TO_(XTAL_REF_(t));
-template <class T> XTAL_DEF_(inline) XTAL_FN1 subjective_f(T &&t) XTAL_0EX_TO_(XTAL_REF_(t));
+///\note\
+To be extended by the host to transparently lift `f` when `xs...` are vectorized. \
+
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_FN1 operative_f(F &&f, Xs &&...xs) XTAL_0EX {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_FN1 operative_f(       Xs &&...xs) XTAL_0EX {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+template <class F             > XTAL_DEF_(inline) XTAL_FN1 operative_f(F &&f            ) XTAL_0EX {return         [] XTAL_1FN_(operative_f)         ;}
+/***/
+
+
+///\returns the result of evaluating the result `y`. \
+
+///\note\
+To be extended by the host to transparently reduce `y` when vectorized. \
+
+template <class Y> XTAL_DEF_(inline) XTAL_FN1  objective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
+template <class Y> XTAL_DEF_(inline) XTAL_FN1 subjective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Arithmetic...
+
+/*/
+template <template <class> class Y, class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 construxion_f(Xs &&...xs)
+XTAL_0EX
+{
+	using W = common_t<Xs...>;
+	return operative_f<Y<W>>(XTAL_REF_(xs)...);
+}
+XTAL_DEF_(return,inline)
+XTAL_FN1 complexion_f(auto &&...xs)
+XTAL_0EX
+{
+	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
+}
+/***/
 
 template <class X, class Y>
 XTAL_FN2 equal_f(X const &x, Y const &y)

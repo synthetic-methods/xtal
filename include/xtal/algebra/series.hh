@@ -15,6 +15,28 @@ template <class ..._s> XTAL_TYP series;
 template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
 template <class ...Ts> XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
 
+template <auto f, class ...Xs> requires common_q<Xs...>
+XTAL_DEF_(return,inline)
+XTAL_FN1 series_f(Xs &&...xs)
+XTAL_0EX
+{
+	XTAL_USE U = common_t<Xs...>;
+	XTAL_SET N = sizeof...(xs);
+	if constexpr (idempotent_p<U, decltype(f)>) {
+		return series_t<U[N]>{ (XTAL_REF_(xs))...};
+	}
+	else {
+		return series_t<U[N]>{f(XTAL_REF_(xs))...};
+	}
+}
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 series_f(Xs &&...xs)
+XTAL_0EX
+{
+	return series_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,10 +46,10 @@ template <class U_data, int N_data>
 struct series<U_data[N_data]>
 {
 	using U_v0 = U_data;
-	using U_v1 = devalue_u<U_v0>;
-	using U_v2 = devalue_u<U_v1>;
+	using U_v1 = devalue_t<U_v0>;
+	using U_v2 = devalue_t<U_v1>;
 
-	using op = bond::operate<U_data>;
+	using Op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
@@ -51,7 +73,7 @@ struct series<U_data[N_data]>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(integral_q auto const o_shift)
+		XTAL_CXN homotype(cointegral_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
@@ -74,7 +96,7 @@ struct series<U_data[N_data]>
 			static_assert(sizeof(W1_) == sizeof(U2_));
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
-			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, op::template root_f<-1>(u2)});
+			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, Op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([this] (auto I) XTAL_0FN {
 				auto const &[o, e] = get(I);
 				let(I) = {o*e.real(), _std::conj(o)*e.imag()};
@@ -90,7 +112,7 @@ struct series<U_data[N_data]>
 		{
 			using I = typename T_::difference_type;
 
-			XTAL_SET N_shift = op::bit_ceiling_f(N_step);
+			XTAL_SET N_shift = Op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
@@ -101,12 +123,12 @@ struct series<U_data[N_data]>
 			I constexpr M_skip = N_step - N_skip;
 
 		//	Compute and populate the 0th and 1st powers:
-			auto const o = op::template explo_f<N_index>(u);
+			auto const o = Op::template explo_f<N_index>(u);
 			let(I0) = o;
 			let(I1) = o*u;
 
 			for (I i = I1; i < IM; i += N_step) {
-				auto w = op::square_f(get(i));
+				auto w = Op::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the values at `i << 1`:
 				I ii = i << 1;
@@ -134,8 +156,8 @@ struct series<U_data[N_data]>
 			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_data`:
-			auto constexpr x = op::patio_f(-1, N_data);
-			auto const     y = op::circle_f(x);// TODO: Make `constexpr`?
+			auto constexpr x = Op::patio_f(-1, N_data);
+			auto const     y = Op::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
 			typename T_::difference_type constexpr M = N_data >> 2;// `1/8`th
@@ -248,7 +270,7 @@ struct series<U_data[N_data]>
 				T(ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
-				using X = typename op::aphex_t;
+				using X = typename Op::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);

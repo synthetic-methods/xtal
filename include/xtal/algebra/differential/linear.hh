@@ -15,8 +15,27 @@ template <class ..._s> XTAL_TYP linear;
 template <class ..._s> XTAL_USE linear_t = typename linear<_s...>::type;
 template <class ...Ts> XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
 
-XTAL_LET  linear_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(linear_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+template <auto f, class ...Xs> requires common_q<Xs...>
+XTAL_DEF_(return,inline)
+XTAL_FN1 linear_f(Xs &&...xs)
+XTAL_0EX
+{
+	XTAL_USE U = common_t<Xs...>;
+	XTAL_SET N = sizeof...(xs);
+	if constexpr (idempotent_p<U, decltype(f)>) {
+		return linear_t<U[N]>{ (XTAL_REF_(xs))...};
+	}
+	else {
+		return linear_t<U[N]>{f(XTAL_REF_(xs))...};
+	}
+}
+template <class ...Xs>
+XTAL_DEF_(return,inline)
+XTAL_FN1 linear_f(Xs &&...xs)
+XTAL_0EX
+{
+	return linear_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +48,7 @@ struct linear<U_data> : linear<U_data[2]>
 template <class U_data, int N_data>
 struct linear<U_data[N_data]>
 {
-	using op = bond::operate<U_data>;
+	using Op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;

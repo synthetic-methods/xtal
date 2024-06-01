@@ -17,7 +17,7 @@ template <XTAL_NDX ...Ns> XTAL_USE seek_t = _std::index_sequence<Ns...>;
 template <XTAL_NDX    N > XTAL_USE seek_s = _std::make_index_sequence<N>;
 template <auto     ...  > XTAL_LET seek_i = [] (auto &&o) XTAL_0FN_(XTAL_REF_(o));
 
-XTAL_LET seek_f = []<integral_q ...Ns> (Ns ...ns)
+XTAL_LET seek_f = []<cointegral_q ...Ns> (Ns ...ns)
 XTAL_0FN -> seek_t<Ns{}...> {return {};};
 
 template <XTAL_NDX  ...Ns> XTAL_LET antiseek_f(seek_t<Ns...>) -> seek_t<(sizeof...(Ns) - Ns - 1)...>;
