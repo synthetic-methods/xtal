@@ -40,13 +40,13 @@ void render__interference(auto i)
 
 	w_seq >>= n_seq++; TRUE_(w_seq == Y(U(0, 4), 0));
 	
-	w_seq >>= n_seq.skip(0).slice(U(0, 2)); TRUE_(w_seq == Y(U(4, 6), 1));
-	w_seq >>= n_seq.skip(1).slice(U(2, 4)); TRUE_(w_seq == Y(U(6, 8), 2));
-	w_seq <<= n_seq++;                      TRUE_(w_seq == Y(U(4, 8), 1));
+	w_seq >>= n_seq.skip(0).subview(U(0, 2)); TRUE_(w_seq == Y(U(4, 6), 1));
+	w_seq >>= n_seq.skip(1).subview(U(2, 4)); TRUE_(w_seq == Y(U(6, 8), 2));
+	w_seq <<= n_seq++;                        TRUE_(w_seq == Y(U(4, 8), 1));
 	
-	w_seq >>= n_seq.skip(0).slice(U(0, 2)); TRUE_(w_seq == Y(U( 8, 10), 2));
-	w_seq >>= n_seq.skip(1).slice(U(2, 4)); TRUE_(w_seq == Y(U(10, 12), 3));
-	w_seq <<= n_seq++;                      TRUE_(w_seq == Y(U( 8, 12), 2));
+	w_seq >>= n_seq.skip(0).subview(U(0, 2)); TRUE_(w_seq == Y(U( 8, 10), 2));
+	w_seq >>= n_seq.skip(1).subview(U(2, 4)); TRUE_(w_seq == Y(U(10, 12), 3));
+	w_seq <<= n_seq++;                        TRUE_(w_seq == Y(U( 8, 12), 2));
 
 }
 TAG_("render")
@@ -148,13 +148,13 @@ TAG_("render")
 		n_seq = V_render(11) *= (7);
 		TRUE_(n_seq == V_render(11, 7));
 
-		TRUE_(n_seq.skip(0).slice(U(0, 11)) == V_render(11, 7));
-		TRUE_(n_seq.skip(0).slice(U(0, 01)) == V_render(01, 7));
-		TRUE_(n_seq.skip(1).slice(U(1, 11)) == V_render(10, 8));
+		TRUE_(n_seq.skip(0).subview(U(0, 11)) == V_render(11, 7));
+		TRUE_(n_seq.skip(0).subview(U(0, 01)) == V_render(01, 7));
+		TRUE_(n_seq.skip(1).subview(U(1, 11)) == V_render(10, 8));
 
-		TRUE_(u_seq.skip(0).slice(U(0, 11)) == U_render(U(77, 88), 7));
-		TRUE_(u_seq.skip(0).slice(U(0, 01)) == U_render(U(77, 78), 7));
-		TRUE_(u_seq.skip(1).slice(U(1, 11)) == U_render(U(78, 88), 8));
+		TRUE_(u_seq.skip(0).subview(U(0, 11)) == U_render(U(77, 88), 7));
+		TRUE_(u_seq.skip(0).subview(U(0, 01)) == U_render(U(77, 78), 7));
+		TRUE_(u_seq.skip(1).subview(U(1, 11)) == U_render(U(78, 88), 8));
 
 		n_seq = V_render(4, 1);
 		n_seq = n_seq.null(); TRUE_(n_seq == V_render(0, 2));

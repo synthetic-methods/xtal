@@ -48,8 +48,10 @@ struct chunk
 				using U_spool = typename S_::template spool_t<U_event>;
 
 			private:
+				using Q_delay = _std::numeric_limits<V_delay>;
+
 				U_spool u_spool{
-					(U_event) numeric_t<V_delay>::max()
+					(U_event) Q_delay::max()
 				};
 
 				XTAL_TO4_(XTAL_TN2 next_core(), u_spool.begin()->then())

@@ -11,7 +11,7 @@ cmake_path(GET CMAKE_CURRENT_SOURCE_DIR PARENT_PATH XTAL_SOURCE_DIR)
 
 if (EXISTS ${XTAL_SOURCE_DIR}/include/FIXME.cc)
 	add_executable (test ${XTAL_SOURCE_DIR}/include/FIXME.cc)
-else ()
+else  ()
 	add_executable (test ${XTAL_SOURCE_DIR}/include/xtal/all.cc)
 endif ()
 

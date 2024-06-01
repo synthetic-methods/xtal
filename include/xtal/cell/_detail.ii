@@ -333,12 +333,44 @@ struct refer_iterators
 	template <any_q S>
 	class subtype : public S
 	{
+		using S_ = S;
+		using U_ = _std::remove_reference_t<U>;
+
 	public:
-		using S::S;
-		XTAL_TN2 begin() XTAL_0FX requires requires (S const &s) {s.head().begin();} {return S::head().begin();}
-		XTAL_TN2 begin() XTAL_0EX requires requires (S       &s) {s.head().begin();} {return S::head().begin();}
-		XTAL_TN2   end() XTAL_0FX requires requires (S const &s) {s.head().  end();} {return S::head().  end();}
-		XTAL_TN2   end() XTAL_0EX requires requires (S       &s) {s.head().  end();} {return S::head().  end();}
+		using S_::S_;
+
+		XTAL_TN2 begin() XTAL_0FX requires requires (U_ const &u_) {_xtd::ranges::begin(u_);} {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_TN2 begin() XTAL_0EX requires requires (U_       &u_) {_xtd::ranges::begin(u_);} {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_TN2   end() XTAL_0FX requires requires (U_ const &u_) {_xtd::ranges::  end(u_);} {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_TN2   end() XTAL_0EX requires requires (U_       &u_) {_xtd::ranges::  end(u_);} {return _xtd::ranges::  end(S_::template head<U>());}
+
+		XTAL_DO2_(template <counted_q V>
+		XTAL_TN2 subhead(V &&v),
+		{
+			using _xtd::ranges::next;
+			using _xtd::ranges::views::slice;
+
+			auto &u  = S_::template head<U>();
+			auto  u_ = begin();
+			using W_ = reiterated_t<decltype(u_)>;
+			auto  v0 = v.front(), vN = v.back() + 1;
+			/*/
+			size_t const uN = count_f(u);
+			v0 = _std::min(v0, uN);
+			vN = _std::min(vN, uN);
+			/***/
+
+			XTAL_IF0
+			XTAL_0IF (interval_q<U>) {
+				return U_(u_[v0], u_[vN]);
+			}
+			XTAL_0IF (accessed_q<U>) {
+				return W_(next(u_, v0), next(u_, vN));
+			}
+			XTAL_0IF (1) {
+				return u|slice(v0, vN);
+			}
+		})
 
 	};
 };

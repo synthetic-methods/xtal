@@ -151,6 +151,9 @@ struct lattice<U_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(not counted_q<lattice_t<   int[2]>>);
+static_assert(not counted_q<lattice_t<size_s[2]>>);
+static_assert(not counted_q<lattice_t<size_t[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

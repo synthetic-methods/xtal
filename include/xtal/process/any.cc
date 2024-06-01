@@ -81,11 +81,11 @@ TAG_("process", "construct")
 		using halve_square_root_t = inferred_t<halve_t, square_root_t>;
 		using square_root_halve_t = inferred_t<square_root_t, halve_t>;
 		
-		TRUE_(2L == halve_square_root_t::function(16L));
-		TRUE_(3L == square_root_halve_t::function(18L));
+		TRUE_(2. == halve_square_root_t::function(16.));
+		TRUE_(3. == square_root_halve_t::function(18.));
 
-		TRUE_(2L == halve_square_root_t{}.functor(16L));
-		TRUE_(3L == square_root_halve_t{}.functor(18L));
+		TRUE_(2. == halve_square_root_t{}.functor(16.));
+		TRUE_(3. == square_root_halve_t{}.functor(18.));
 
 	}
 }

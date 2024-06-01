@@ -421,6 +421,7 @@ struct defer<U>
 	public:
 		using S_::S_;
 
+		template <class ...Is> using self_s = typename S_::template self_s<Is...>;
 		template <class ...Is> using head_s = typename S_::template head_s<Is...>;
 		template <class ...Is> using head_t = typename S_::template head_t<Is...>;
 
@@ -447,13 +448,13 @@ struct defer<U>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			return head().template functor<Is...>(S::template functor<Is...>(XTAL_REF_(xs)...));
+			return head().template functor<Is...>(S_::template functor<Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is> requires any_q<head_t<cardinal_1>>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs)
 		XTAL_0EX
-		XTAL_REQ_TO_(head_t<>::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
+		XTAL_REQ_TO_(head_t<>::template function<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...)))
 
 	};
 };

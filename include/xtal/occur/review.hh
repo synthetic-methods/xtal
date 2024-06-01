@@ -32,28 +32,8 @@ struct review<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_TN2 view(auto &&...oo), S_::head(XTAL_REF_(oo)...))
-
-		XTAL_DO2_(XTAL_TN2 slice(counted_q auto &&w),
-		{
-			distance_t<U> const i = w.front(), j = w.back() + 1;
-			
-			if constexpr (accessed_q<U>) {
-				using _xtd::ranges::next;
-			
-				auto _o = point_f(view());
-				auto _i = next(_o, i);
-				auto _j = next(_o, j);
-				return review_f(reiterated_t<U>(_i, _j));
-			}
-			else {
-				using _xtd::ranges::views::slice;
-
-				//\
-				return review_f(view()|discount_f(i)|account_f(j - i));
-				return review_f(view()|slice(i, j));
-			}
-		})
+		XTAL_TO4_(XTAL_TN2    view(auto &&...oo),         (S_::   head(XTAL_REF_(oo)...)))
+		XTAL_TO2_(XTAL_TN2 subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

@@ -694,7 +694,7 @@ public:
 		U constexpr U_1{1};
 		U constexpr U_2{2};
 
-		bool constexpr N_etc = unreal_number_q<W>;
+		bool constexpr N_etc = not real_number_q<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
 		int constexpr M_lim = N_lim&0xF;

@@ -192,9 +192,9 @@ struct monomer<U_process, As...>
 						(void) state(review_o);
 					}
 					return self().reflux([&, this] (counted_q auto scan, counter_q auto step)
-					XTAL_0FN_(self().efflux_slice(
-						review_o.slice(scan),
-						render_o.slice(scan).skip(step)
+					XTAL_0FN_(self().efflux_subview(
+						review_o.subview(scan),
+						render_o.subview(scan).skip(step)
 					)))
 					&	XTAL_FLX_(self().efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
 				}
@@ -202,7 +202,7 @@ struct monomer<U_process, As...>
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux_slice(Rev &&review_o, Ren &&render_o)
+				XTAL_TNX efflux_subview(Rev &&review_o, Ren &&render_o)
 				XTAL_0EX
 				{
 					if (1 == R_::template efflux_pull_tail<N_share>(review_o, render_o)) {

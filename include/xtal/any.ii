@@ -72,17 +72,14 @@ XTAL_0EX
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class T>
 XTAL_DEF_(return,inline)
-XTAL_LET count_f(T const &t)
+XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_t
 {
 	XTAL_IF0
-	XTAL_0IF ( counter_q<T>) {return t                       ;}
-	XTAL_0IF ( counted_q<T>) {return 1 + t.back() - t.front();}
-	XTAL_0IF ( bounded_q<T>) {return     t. end() - t.begin();}
-	XTAL_0IF (sizeable_q<T>) {return                t. size();}
-	XTAL_0IF (1)             {return                   size_0;}
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(t.size()))
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(t))
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(0))
 }
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &...ts)

@@ -241,8 +241,6 @@ template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::t
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
 
 
-template <class         U >	XTAL_USE       interval_t =	_xtd::ranges::iota_view<U, U>;
-
 template <class         T >	XTAL_TYP       iteratee   ;
 template <class         T >	XTAL_TYP       iterated   ;
 template <class         T >	XTAL_TYP       iterator   ;
@@ -259,6 +257,9 @@ template <class         T >	XTAL_USE       distance_t =	typename distance<T>::ty
 template <class         T >	XTAL_USE        counted_t =	typename  counted<T>::type;
 template <class         T >	XTAL_USE        counter_t =	typename  counter<T>::type;
 
+template <class         U >	XTAL_USE       interval_t =	_xtd::ranges::iota_view<U, U>;
+template <class         T >	XTAL_ASK       interval_q =	is_q<interval_t<iteratee_t<T>>, T>;
+
 template <class         T >	XTAL_ASK       iteratee_q =	true;
 template <class         T >	XTAL_ASK       iterable_q =	begin_q<T>;
 template <class         T >	XTAL_ASK       iterated_q =	begin_q<T> and front_q<T>;
@@ -266,19 +267,19 @@ template <class         T >	XTAL_ASK       iterator_q =	requires (T t) {*++t;};
 template <class         T >	XTAL_ASK       sentinel_q =	iterator_q<T>;
 template <class         T >	XTAL_ASK       distance_q =	_std::integral<based_t<T>>;//TODO: Expand to accommodate `counted_t<size_t>{}.size()`.
 template <class         T >	XTAL_ASK        counter_q =	_std::integral<based_t<T>>;
-template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and as_q<T, interval_t<iteratee_t<T>>>;
+template <class         T >	XTAL_ASK        counted_q =	iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
 
 template <class         T >	XTAL_TYP       iteratee    	{using type =                devalue_u<T> ;};
 template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t<begin_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t        <T> ;};
 template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type = _std::remove_reference_t<T> ;};
 
-template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type =                  based_t<T> ;};
+template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type = _std::remove_reference_t<T> ;};
 template <iterator_q    T >	XTAL_TYP       iterated<T> 	{using type =                        void ;};
 template < counter_q    T >	XTAL_TYP       iterated<T> 	{using type =               interval_t<T> ;};
 
 template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =                  begin_t<T> ;};
-template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =                  based_t<T> ;};
+template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =                          T  ;};
 template < counter_q    T >	XTAL_TYP       iterator<T>		{using type =    iterator_t<interval_t<T>>;};
 
 template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                    end_t<T> ;};
@@ -325,8 +326,6 @@ template <class      T >	XTAL_ASK   integral_number_q =	 _std::integral      <ba
 template <class      T >	XTAL_ASK       real_number_q =	 _std::floating_point<based_t<T>>;
 template <class      T >	XTAL_ASK    complex_number_q =	fungible_q<T, _std::complex<unvalue_u<T>>> and real_number_q<unvalue_u<T>>;
 template <class      T >	XTAL_ASK            number_q =	integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
-template <class      T >	XTAL_ASK           numeric_q =	requires {typename _std::numeric_limits<based_t<T>>;};
-template <class      T >	XTAL_USE           numeric_t =	_std::numeric_limits<devalue_u<T>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -438,6 +437,9 @@ concept quotient_group_p = requires (based_t<T> t, based_t<U> u)
 template <size_t N, class T, class U=T>
 concept integral_group_p = integral_number_q<T> or discrete_group_p<N, T, U> and quotient_group_p<N, T, U>;
 
+
+template <size_t N, class T, class U=T>
+concept contiguous_group_p = multiplicative_group_p<N, T, U>  or additive_group_p<N, T, U>;
 
 template <size_t N, class T, class U=T>
 concept contiguous_field_p = multiplicative_group_p<N, T, U> and additive_group_p<N, T, U>;

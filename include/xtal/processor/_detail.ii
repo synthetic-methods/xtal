@@ -7,8 +7,9 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class   ...Ts>	concept unprocessed_q = not _retail::any_q<Ts...> and contiguous_field_q<Ts...>;
-template <class   ...Ts>	concept reprocessed_q =     _retail::any_q<Ts...> and not iterated_q<Ts...>;
+template <class U>	concept unprocessed_valued_q = not _retail::any_q<U> and       number_q<U>;
+template <class U>	concept unprocessed_ranged_q = not _retail::any_q<U> and     iterated_q<U>;
+template <class U>	concept processed_unranged_q =     _retail::any_q<U> and not iterated_q<U>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

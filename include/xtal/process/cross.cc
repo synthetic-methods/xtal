@@ -44,7 +44,9 @@ TAG_("cross", "processor")
 		using U_remix = process::cross_t<U_model, mix_t>;
 		using U_mixer = processor::monomer_t<U_remix, resource::restore<>>;
 
+		//\
 		auto _1 = processor::let_f(1);
+		auto _1 = processor::let_f(_xtd::ranges::views::repeat(1));
 		auto _n = processor::let_f(iota(0, 10));
 	//
 		auto io = U_mixer::bind_f(_1, _n);

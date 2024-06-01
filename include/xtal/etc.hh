@@ -242,8 +242,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//\
-#define XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_t)
+//efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_t)
 #define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_t)
 #define XTAL_FLX                             XTAL_STD_(sign_t)
 #define XTAL_FLX_(...)            [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))

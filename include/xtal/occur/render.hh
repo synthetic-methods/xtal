@@ -275,7 +275,7 @@ struct render<V>
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TN2_(T_self) slice(counted_q auto &&w)
+		XTAL_TN2_(T_self) subview(counted_q auto &&w)
 		XTAL_0FX
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
@@ -367,13 +367,10 @@ public:
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_TN2_(T_self) slice(counted_q auto &&w)
+		XTAL_TN2_(T_self) subview(counted_q auto &&w)
 		XTAL_0FX
 		{
-			V const &n_front = *S_::begin();
-			auto i = n_front + w.front();
-			auto j = n_front + w.back() + 1;
-			return T_self(U(i, j), S_::step());
+			return T_self(S_::subhead(XTAL_REF_(w)), S_::step());
 		}
 
 		///\

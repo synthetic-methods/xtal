@@ -45,11 +45,13 @@ struct thunk
 				using U_spool = typename S_::template spool_t<U_event>;
 
 			private:
-				V_delay v_delay{0};
+				using Q_delay = _std::numeric_limits<V_delay>;
+
 				U_spool u_spool{
-					(U_event) numeric_t<V_delay>::min(),
-					(U_event) numeric_t<V_delay>::max()
+					(U_event) Q_delay::min(),
+					(U_event) Q_delay::max()
 				};
+				V_delay v_delay{};
 
 			public:
 			//	using R_::R_;

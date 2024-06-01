@@ -18,7 +18,7 @@ void spool__operation()
 {
 	using U_event = bond::compose_s<onset_t, cell::conferred<int>>;
 	using U_queue = spool_t<U_event[N]>;
-	U_queue q {(U_event) numeric_t<int>::max()};
+	U_queue q {(U_event) _std::numeric_limits<int>::max()};
 
 	auto e1 = U_event(1, onset_t(-1.0));
 	auto e2 = U_event(2, onset_t(-2.0));

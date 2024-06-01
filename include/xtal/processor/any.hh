@@ -37,17 +37,43 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-template <iterated_q U>
-struct defer<U>
-:	_retail::defer<U>
-{
-};
-template <_detail::unprocessed_q U>
+template <_detail::unprocessed_valued_q U>
 struct defer<U>
 :	defer<_xtd::ranges::repeat_view<U>>
 {
 };
-template <_detail::reprocessed_q U>
+template <_detail::unprocessed_ranged_q U>
+struct defer<U>
+{
+	using V_render = occur::render_t<counted_t<>>;
+	using A_render = typename V_render::template attach<>;
+
+	using subkind = bond::compose<void
+	,	_detail::refer_iterators<U> // FIXME: Too dodgy?
+//	,	_detail::refer_subhead<U>   // TODO: Less dodgy?
+	,	_retail::defer<U>
+	,	A_render
+	>;
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+		using U_ = _std::remove_reference_t<U>;
+
+	public:
+		using S_::S_;
+
+		XTAL_DO2_(template <auto ...>
+		XTAL_TN2 functor(),
+		{
+			auto &v = S_::template head<V_render>().view();
+			return S_::subhead(v);
+		})
+
+	};
+};
+template <_detail::processed_unranged_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -65,9 +91,6 @@ struct defer<U>
 		///\
 		Defines the range-lifted form of `head` by `lift`ing the underlying `process`. \
 		This means that parameter resolution is only performed at the beginning of each block. \
-		\
-		NOTE: Unless the underlying `process` is invocable as `const`, \
-		it is assumed to be stateful, and iterator monotonicity is enforced.
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
@@ -78,54 +101,45 @@ struct defer<U>
 
 	};
 };
+
 template <class U>
 struct refer
+:	_retail::refer<U>
 {
-	using U_render = occur::render_t<counted_t<>>;
-	using subkind  = bond::compose<_retail::refer<U>, U_render::attach<>>;
+};
+template <_detail::unprocessed_ranged_q U>
+struct refer<U>
+{
+	using subkind = _retail::refer<U>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-	
+
 	public:
 		using S_::S_;
+
+		XTAL_TO2_(XTAL_TN2 begin(), S_::functor().begin())
+		XTAL_TO2_(XTAL_TN2   end(), S_::functor().  end())
 
 	};
-	template <any_q S> requires iterated_q<U> or _detail::unprocessed_q<U>
-	class subtype<S> : public bond::compose_s<S, subkind>
+};
+template <_detail::unprocessed_valued_q U>
+struct refer<U>
+{
+	using subkind = _retail::refer<_xtd::ranges::repeat_view<U>>;
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-	
+
 	public:
 		using S_::S_;
 
-	//	using S_::functor;
-
-		XTAL_DO2_(template <auto ...>
-		XTAL_TN2 functor(),
-		{
-			using _xtd::ranges::views::slice;
-
-			using I = iteratee_t<U_render>; using op = bond::operate<I>;
-			auto const &m = S_::functor();// NOTE: Must be &?
-			auto const &u = S_::template head<U_render>();
-		//	NOTE: Using `count_f` because `sizeof(u.size()) == sizeof(u::value_type) << 1`. \
-		
-			I const u_size = count_f(u);
-			I const m_size = count_f(m);
-			I const m_mask = m_size >> op::positive.depth;
-			I i = u.front();
-			I j = u_size + i;
-			i &= ~m_mask;
-			j &= ~m_mask;
-			j |=  m_mask&m_size;
-			return m|slice(i, j);
-		})
-
-		XTAL_TO2_(XTAL_TN2 begin(), functor().begin())
-		XTAL_TO2_(XTAL_TN2   end(), functor().  end())
+		XTAL_TO2_(XTAL_TN2 begin(), S_::functor().begin())
+		XTAL_TO2_(XTAL_TN2   end(), S_::functor().  end())
 
 	};
 };
