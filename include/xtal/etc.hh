@@ -152,6 +152,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_LET_(...)                   constexpr static __VA_ARGS__
 #define XTAL_SET                         constexpr        auto
 #define XTAL_SET_(...)                   constexpr        __VA_ARGS__
+#define XTAL_GET                         constexpr        auto &
+#define XTAL_GET_(...)                   constexpr        __VA_ARGS__
 
 #define XTAL_CON                         constexpr       
 #define XTAL_CXN                         constexpr explicit
@@ -186,6 +188,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 #define XTAL_IF0                      if constexpr (0);
 #define XTAL_0IF                 else if constexpr
+#define XTAL_0IF_(...)                   XTAL_0IF_##__VA_ARGS__
+#define XTAL_0IF_else            else
 
 #define XTAL_0FX                 const             noexcept
 #define XTAL_0EX                                   noexcept

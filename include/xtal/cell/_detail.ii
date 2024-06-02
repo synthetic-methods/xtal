@@ -367,7 +367,7 @@ struct refer_iterators
 			XTAL_0IF (accessed_q<U>) {
 				return W_(next(u_, v0), next(u_, vN));
 			}
-			XTAL_0IF (1) {
+			XTAL_0IF_(else) {
 				return u|slice(v0, vN);
 			}
 		})

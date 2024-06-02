@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./biased.cc"
 #include "./example.cc"
 #include "./respool.cc"
 #include "./restash.cc"

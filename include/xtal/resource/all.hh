@@ -1,4 +1,5 @@
 #include "./any.hh"
+#include "./biased.hh"
 #include "./example.hh"
 #include "./respool.hh"
 #include "./restash.hh"

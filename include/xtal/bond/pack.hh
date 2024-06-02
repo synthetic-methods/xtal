@@ -17,7 +17,11 @@ template <class ...Us> using pack_t = typename pack<Us...>::type;
 
 XTAL_LET pack_f = []<class ...Us> (Us &&...us)
 XTAL_0FN
-{	return pack_t<rebased_t<Us>...>(XTAL_REF_(us)...);
+{	return pack_t<Us...>(XTAL_REF_(us)...);
+};
+XTAL_LET repack_f = []<class ...Us> (Us &&...us)
+XTAL_0FN
+{	return pack_t<based_t<Us>...>(XTAL_REF_(us)...);
 };
 
 

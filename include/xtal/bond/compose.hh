@@ -31,17 +31,25 @@ template <class S,                   typename ...Inners> struct compose {using t
 template <class S, typename   Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<                                 S , Inners...> {};
 template <class S, complete_q Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<typename Inner::template subtype<S>, Inners...> {};
 
+template <typename Outer> concept   compose_q =     complete_q<compost<Outer::template subtype>>;
+template <typename Outer> concept decompose_q = not complete_q<compost<Outer::template subtype>>;
+
 
 }///////////////////////////////////////////////////////////////////////////////
+
+template <typename ...Outers> concept   compose_q =     (...and _detail::   compose_q<Outers>);
+template <typename ...Outers> concept decompose_q = not (...and _detail:: decompose_q<Outers>);
+
+
 ///\
 Defines `typename compose<Outers...>::template subtype<S, Inners...>`, \
 where `S` provides the kernel to which: \
 -	`Inners::template subtype<S>` are applied from left-to-right. \
 -	`Outers::template subtype<S>` are applied from right-to-left. \
 
-template <                  typename ...Outers> struct compose;
-template <typename   Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<Outers...> {};
-template <complete_q Outer, typename ...Outers> struct compose<Outer, Outers...>
+template <                 typename ...Outers> struct compose;
+template <typename  Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<Outers...> {};
+template <compose_q Outer, typename ...Outers> struct compose<Outer, Outers...>
 {
 	template <class S, typename ...Inners>
 	using subtype = typename Outer::template subtype<
@@ -67,10 +75,6 @@ Applies the `Inners::subtype`s to `S` from left-to-right. \
 
 template <class S, typename ...Inners>
 using compose_s = typename compose<>::template subtype<S, Inners...>;
-
-template <typename ...Outers> concept   compose_q =     complete_q<compose_t<Outers::template subtype...>>;
-template <typename ...Outers> concept decompose_q = not complete_q<compose_t<Outers::template subtype...>>;
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,7 @@
 
 XTAL_ENV_(push)
 namespace xtal::process::differential::_test
-{/////////////////////////////////////////////////////////////////////////////////
+{/////////////////////////////////////////////////////////////////////////////////FIXME
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,8 +167,8 @@ TAG_("phasor")
 		(void) z_psi.efflux(z_rev, z_ren++);
 		z_psi >>= z_ren++ >> z_rev;
 		//\
-		TRUE_(z_out[0] == bond::pack_f( 1*x_d4, x_d4));
 		TRUE_(z_out[0] == bond::pack_t<T_alpha, T_alpha>( 1*x_d4, x_d4));
+		TRUE_(z_out[0] == bond::pack_f( 1*x_d4, x_d4));
 		TRUE_(z_out[1] == bond::pack_f( 2*x_d4, x_d4));
 		TRUE_(z_out[2] == bond::pack_f( 3*x_d4, x_d4));
 		TRUE_(z_out[3] == bond::pack_f( 4*x_d4, x_d4));

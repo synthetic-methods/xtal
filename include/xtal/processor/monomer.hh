@@ -218,7 +218,7 @@ struct monomer<U_process, As...>
 						XTAL_IF0
 						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
 						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF (1) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						XTAL_0IF_(else) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
 					}
