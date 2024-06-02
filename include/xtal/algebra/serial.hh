@@ -11,31 +11,13 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP serial;
-template <class ..._s> XTAL_USE serial_t = typename serial<_s...>::type;
-template <class ...Ts> XTAL_ASK serial_q = bond::head_tag_p<serial, Ts...>;
-
-template <auto f, class ...Xs> requires common_q<Xs...>
+template <class   ..._s>	XTAL_TYP serial;
+template <class   ..._s>	XTAL_USE serial_t = typename serial<_s...>::type;
+template <class   ...Ts>	XTAL_ASK serial_q = bond::head_tag_p<serial, Ts...>;
+template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 serial_f(Xs &&...xs)
-XTAL_0EX
-{
-	XTAL_USE U = common_t<Xs...>;
-	XTAL_SET N = sizeof...(xs);
-	if constexpr (idempotent_p<U, decltype(f)>) {
-		return serial_t<U[N]>{ (XTAL_REF_(xs))...};
-	}
-	else {
-		return serial_t<U[N]>{f(XTAL_REF_(xs))...};
-	}
-}
-template <class ...Xs>
-XTAL_DEF_(return,inline)
-XTAL_FN1 serial_f(Xs &&...xs)
-XTAL_0EX
-{
-	return serial_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
-}
+XTAL_FN1 serial_f(auto &&...oo)
+XTAL_0EX {return _detail::build<serial_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,11 +108,11 @@ struct serial<U_data[N_data]>
 
 			//	Vector multiplication (Hadamard product):
 				
-				XTAL_OP1_(F &) *= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= f.get(i);}); return self();}
-				XTAL_OP1_(F &) /= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= f.get(i);}); return self();}
+				XTAL_DEF_(inline) XTAL_OP1_(F &) *= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= f.get(i);}); return self();}
+				XTAL_DEF_(inline) XTAL_OP1_(F &) /= (F const &f) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= f.get(i);}); return self();}
 
-				template <array_q<N_data> W> XTAL_OP1_(F &) *= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= w.get(i);}); return self();}
-				template <array_q<N_data> W> XTAL_OP1_(F &) /= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= w.get(i);}); return self();}
+				template <array_q<N_data> W> XTAL_DEF_(inline) XTAL_OP1_(F &) *= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) *= w.get(i);}); return self();}
+				template <array_q<N_data> W> XTAL_DEF_(inline) XTAL_OP1_(F &) /= (W const &w) XTAL_0EX {bond::seek_forward_f<N_data>([&, this] (XTAL_NDX i) XTAL_0FN {let(i) /= w.get(i);}); return self();}
 
 			//	Scalar sum:
 				template <int N_sign=1>

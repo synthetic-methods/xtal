@@ -15,11 +15,30 @@ template <class        ..._s> XTAL_TYP couple;
 template <class        ..._s> XTAL_ASK couple_q = bond::head_tag_p<couple, _s...>;
 template <class X, class Y=X> XTAL_USE couple_t = typename couple<X, Y>::type;
 
-template <template <class> class F=based_t, class X, class Y>
-XTAL_FN2 couple_f(X &&x, Y &&y)
+template <class O, class X, class Y>
+XTAL_DEF_(return,inline)
+XTAL_FN1 couple_f(X &&x, Y &&y)
 XTAL_0EX
 {
-	return couple_t<F<X>, F<Y>>(XTAL_REF_(x), XTAL_REF_(y));
+	XTAL_SET f = invoke_f<O>;
+	XTAL_USE F = invoke_t<O>;
+	if constexpr (idempotent_p<X, F> and idempotent_p<X, F>) {
+		using X_ = _std::remove_reference_t<X>;
+		using Y_ = _std::remove_reference_t<Y>;
+		return couple_t<X_, Y_>(XTAL_REF_(x), XTAL_REF_(y));
+	}
+	else {
+		using X_ = _std::remove_reference_t<_std::invoke_result_t<F, X>>;
+		using Y_ = _std::remove_reference_t<_std::invoke_result_t<F, Y>>;
+		return couple_t<X_, Y_>(f(XTAL_REF_(x)), f(XTAL_REF_(y)));
+	}
+}
+template <class X, class Y>
+XTAL_DEF_(return,inline)
+XTAL_FN1 couple_f(X &&x, Y &&y)
+XTAL_0EX
+{
+	return couple_f<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 
@@ -47,17 +66,33 @@ struct couple<X, Y>
 		template <          class _> struct tuple_element_<1, _> {using type = Y;};
 		template <size_t N         > using  tuple_element = tuple_element_<N, type>;
 
-		template <size_t N> XTAL_TN2 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
-		template <size_t N> XTAL_TN2 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
-		template <size_t N> XTAL_TN2 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
-		template <size_t N> XTAL_TN2 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
+		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
+		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
+		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
+		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
 
-		template <pack_q W> XTAL_OP2 * (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX*get<0>(w), XTAL_1DX*get<1>(w));}
-		template <pack_q W> XTAL_OP2 / (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX/get<0>(w), XTAL_1DX/get<1>(w));}
+		template <pack_q W> XTAL_DEF_(return,inline) XTAL_OP1 *  (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX*get<0>(w), XTAL_1DX*get<1>(w));}
+		template <pack_q W> XTAL_DEF_(return,inline) XTAL_OP1 /  (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX/get<0>(w), XTAL_1DX/get<1>(w));}
+
+		template <pack_q W> XTAL_DEF_(       inline) XTAL_OP1 *= (W const &w) XTAL_0EX {using _std::get; XTAL_0DX *= get<0>(w); XTAL_1DX *= get<1>(w); return *this;}
+		template <pack_q W> XTAL_DEF_(       inline) XTAL_OP1 /= (W const &w) XTAL_0EX {using _std::get; XTAL_0DX /= get<0>(w); XTAL_1DX /= get<1>(w); return *this;}
 
 	//	Scalar sum:
 		template <int N_sgn=1>
-		XTAL_TN2 sum()
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 sum(auto &&o)
+		XTAL_0FX
+		{
+			if constexpr (N_sgn < 0) {
+				return XTAL_0DX + XTAL_REF_(o) - XTAL_1DX;
+			}
+			else {
+				return XTAL_0DX + XTAL_REF_(o) + XTAL_1DX;
+			}
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 sum()
 		XTAL_0FX
 		{
 			if constexpr (N_sgn < 0) {
@@ -71,7 +106,8 @@ struct couple<X, Y>
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
 		template <int N_par=0>
-		XTAL_TN2 reflected()
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 reflected()
 		XTAL_0FX
 		{
 			auto constexpr o = reflector<N_par>();

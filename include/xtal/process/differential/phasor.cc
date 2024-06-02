@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.cc"
 #include "./phasor.hh"// testing...
-
 #include "../map.hh"
+#include "../chain.hh"
 #include "../../processor/monomer.hh"
 #include "../../resource/all.hh"
 
@@ -39,7 +39,9 @@ TAG_("phasor")
 	
 	using Y_phi = d_::phasor_t<_phi>;
 	using Y_psi = d_::phasor_t<_phi, U_example>;
-	using Y_eig = process::confined_t<process::map<T_eigenrow>, d_::phasor<_phi>>;
+	//\
+	using Y_eig = process::chain_t<T_eigenrow, d_::phasor<_phi>>;
+	using Y_eig = process::map_t<T_eigenrow, d_::phasor<_phi>>;
 
 	using Z_phi = processor::monomer_t<Y_phi, U_restore>;
 	using Z_psi = processor::monomer_t<Y_psi, U_restore>;

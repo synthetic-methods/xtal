@@ -11,9 +11,13 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP symbol;
-template <class ..._s> XTAL_USE symbol_t = typename symbol<_s...>::type;
-template <class ...Ts> XTAL_ASK symbol_q = bond::head_tag_p<symbol, Ts...>;
+template <class   ..._s>	XTAL_TYP symbol;
+template <class   ..._s>	XTAL_USE symbol_t = typename symbol<_s...>::type;
+template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol, Ts...>;
+template <class  V=void>
+XTAL_DEF_(return,inline)
+XTAL_FN1 symbol_f(auto &&...oo)
+XTAL_0EX {return _detail::build<symbol_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,11 +56,11 @@ struct symbol<U_data[N_data]>
 
 	public:// OPERATE
 
-		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_TN2 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
 
-		XTAL_TN2 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_TN2 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
 
 
 	public:// CONSTRUCT

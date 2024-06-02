@@ -159,13 +159,15 @@ XTAL_0EX
 /***/
 
 template <class X, class Y>
-XTAL_FN2 equal_f(X const &x, Y const &y)
+XTAL_DEF_(return,inline)
+XTAL_FN1 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	return false;
 }
 template <class X, class Y> requires common_q<X, Y>
-XTAL_FN2 equal_f(X const &x, Y const &y)
+XTAL_DEF_(return,inline)
+XTAL_FN1 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
@@ -173,20 +175,23 @@ XTAL_0EX
 	XTAL_0IF XTAL_REQ_TO_(&x == &y)
 }
 template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
-XTAL_FN2 equal_f(X &&x, Y &&y)
+XTAL_DEF_(return,inline)
+XTAL_FN1 equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
 	return _xtd::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 template <class X, class Y>
-XTAL_FN2 equivalent_f(X &&x, Y &&y)
+XTAL_DEF_(return,inline)
+XTAL_FN1 equivalent_f(X &&x, Y &&y)
 XTAL_0EX
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
 template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
-XTAL_FN2 equivalent_f(X const &x, Y const &y)
+XTAL_DEF_(return,inline)
+XTAL_FN1 equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0

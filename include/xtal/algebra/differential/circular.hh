@@ -11,12 +11,13 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP circular;
-template <class ..._s> XTAL_USE circular_t = typename circular<_s...>::type;
-template <class ...Ts> XTAL_ASK circular_q = bond::head_tag_p<circular, Ts...>;
-
-XTAL_LET  circular_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(circular_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
+template <class   ..._s>	XTAL_TYP circular;
+template <class   ..._s>	XTAL_USE circular_t = typename circular<_s...>::type;
+template <class   ...Ts>	XTAL_ASK circular_q = bond::head_tag_p<circular, Ts...>;
+template <class  V=void>
+XTAL_DEF_(return,inline)
+XTAL_FN1 circular_f(auto &&...oo)
+XTAL_0EX {return _detail::build<circular_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

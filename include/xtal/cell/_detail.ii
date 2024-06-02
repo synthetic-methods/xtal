@@ -19,30 +19,30 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class   ...Hs>	XTAL_ASK    member_q = rebased_q<Hs...>;
-template <class      W >	XTAL_TYP    member            {using type = debased_t<W>;};
-template <size_t     N >	XTAL_TYP    member<unit_t[N]> {using type =     unsigned;};
-template <size_t     N >	XTAL_TYP    member<null_t[N]> {using type =     unsigned;};
-template <class      W >	XTAL_USE    member_t = typename member<W>::type;
-template <debased_q  W >	XTAL_FN2    member_f(auto &&   w)       XTAL_0EX {return & XTAL_REF_(w)    ;}
-template <class      W >	XTAL_FN2    member_f(auto &&...w)       XTAL_0EX {return W(XTAL_REF_(w)...);}
+template <class   ...Hs>	XTAL_ASK         member_q = rebased_q<Hs...>;
+template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
+template <size_t     N >	XTAL_TYP         member<unit_t[N]> {using type =     unsigned;};
+template <size_t     N >	XTAL_TYP         member<null_t[N]> {using type =     unsigned;};
+template <class      W >	XTAL_USE         member_t = typename member<W>::type;
+template <debased_q  W >	XTAL_DEF_(return,inline) XTAL_FN1    member_f(auto &&   w)       XTAL_0EX {return & XTAL_REF_(w)    ;}
+template <class      W >	XTAL_DEF_(return,inline) XTAL_FN1    member_f(auto &&...w)       XTAL_0EX {return W(XTAL_REF_(w)...);}
 
 ///\
 Resolves/dereferences the current value. \
 
 
-template <class      W >	XTAL_TYP  remember            {using type =      W;};
-template <size_t     N >	XTAL_TYP  remember<unit_t[N]> {using type = size_t;};
-template <size_t     N >	XTAL_TYP  remember<null_t[N]> {using type = size_t;};
-template <class      W >	XTAL_USE  remember_t = typename remember<W>::type;
-template <pointer_q  M >	XTAL_FN2  remember_f(M &&m)             XTAL_0EX {return *XTAL_REF_(m);}
-template <class      M >	XTAL_FN2  remember_f(M &&m)             XTAL_0EX {return  XTAL_REF_(m);}
+template <class      W >	XTAL_TYP     remember            {using type =      W;};
+template <size_t     N >	XTAL_TYP     remember<unit_t[N]> {using type = size_t;};
+template <size_t     N >	XTAL_TYP     remember<null_t[N]> {using type = size_t;};
+template <class      W >	XTAL_USE     remember_t = typename remember<W>::type;
+template <pointer_q  M >	XTAL_DEF_(return,inline) XTAL_FN1  remember_f(M &&m)             XTAL_0EX {return *XTAL_REF_(m);}
+template <class      M >	XTAL_DEF_(return,inline) XTAL_FN1  remember_f(M &&m)             XTAL_0EX {return  XTAL_REF_(m);}
 
 ///\
 Replaces and returns the previous value. \
 
-template <rebased_q  W >	XTAL_FN2 dismember_f(W &m, W w)         XTAL_0EX {return _std::exchange(m, XTAL_MOV_(w));}
-template <rebased_q  W >	XTAL_FN2 dismember_f(W &m, auto &&...w) XTAL_0EX {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_FN1 dismember_f(W &m, W w)         XTAL_0EX {return _std::exchange(m, XTAL_MOV_(w));}
+template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_FN1 dismember_f(W &m, auto &&...w) XTAL_0EX {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,11 +214,12 @@ struct defer_field
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX_( &) {return remember_f(u_body);}
-		XTAL_TN2 head() XTAL_0EX_( &) {return remember_f(u_body);}
-		XTAL_TN2 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(u_body));}
-		XTAL_TN2 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(u_body));}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0FX_( &) {return remember_f(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0EX_( &) {return remember_f(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0FX_(&&) {return remember_f(XTAL_MOV_(u_body));}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0EX_(&&) {return remember_f(XTAL_MOV_(u_body));}
 		
+		XTAL_DEF_(inline)
 		XTAL_TN1 head(auto &&...oo)
 		XTAL_0EX
 		XTAL_REQ member_q<U_head> and (0 < sizeof...(oo))
@@ -256,8 +257,8 @@ struct defer_field<U>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return U_head(u_body);}
-		XTAL_TN2 head() XTAL_0EX {return U_head(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0FX {return U_head(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0EX {return U_head(u_body);}
 		
 	};
 };
@@ -312,8 +313,8 @@ struct defer_field<unit_t[N_width]>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TN2 head() XTAL_0FX {return U_head(u_body);}
-		XTAL_TN2 head() XTAL_0EX {return U_head(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0FX {return U_head(u_body);}
+		XTAL_DEF_(return,inline) XTAL_TN1 head() XTAL_0EX {return U_head(u_body);}
 		
 	};
 };

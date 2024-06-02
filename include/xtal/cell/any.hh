@@ -143,7 +143,8 @@ struct defer
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_TN2_(bool) heading(auto &&o)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1_(bool) heading(auto &&o)
 		XTAL_0FX
 		{
 			return equivalent_f(head(), XTAL_REF_(o));
@@ -152,7 +153,8 @@ struct defer
 		///\
 		\returns `true` if the supplied body matches `this`, `false` otherwise. \
 
-		XTAL_OP2_(bool) == (subtype const &t)
+		XTAL_DEF_(return,inline)
+		XTAL_OP1_(bool) == (subtype const &t)
 		XTAL_0FX
 		{
 			return heading(t.head()) and S_::template self<1>() == t;

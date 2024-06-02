@@ -11,31 +11,13 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP series;
-template <class ..._s> XTAL_USE series_t = typename series<_s...>::type;
-template <class ...Ts> XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
-
-template <auto f, class ...Xs> requires common_q<Xs...>
+template <class   ..._s>	XTAL_TYP series;
+template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
+template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
+template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 series_f(Xs &&...xs)
-XTAL_0EX
-{
-	XTAL_USE U = common_t<Xs...>;
-	XTAL_SET N = sizeof...(xs);
-	if constexpr (idempotent_p<U, decltype(f)>) {
-		return series_t<U[N]>{ (XTAL_REF_(xs))...};
-	}
-	else {
-		return series_t<U[N]>{f(XTAL_REF_(xs))...};
-	}
-}
-template <class ...Xs>
-XTAL_DEF_(return,inline)
-XTAL_FN1 series_f(Xs &&...xs)
-XTAL_0EX
-{
-	return series_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
-}
+XTAL_FN1 series_f(auto &&...oo)
+XTAL_0EX {return _detail::build<series_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -78,7 +78,8 @@ struct phasor<K_data[N_data], As...>
 
 		XTAL_TO4_(XTAL_TN2 get(size_t i), head().get(i))
 
-	public:
+	
+	protected:
 		///\
 		Evaluation by succession. \
 		
@@ -99,6 +100,8 @@ struct phasor<K_data[N_data], As...>
 			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
 			XTAL_0IF_(else)        {return                  XTAL_REF_(y);}
 		};
+		
+	public:
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_TN2 functor()
 		XTAL_0EX

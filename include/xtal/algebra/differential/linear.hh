@@ -11,31 +11,13 @@ namespace xtal::algebra::differential
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> XTAL_TYP linear;
-template <class ..._s> XTAL_USE linear_t = typename linear<_s...>::type;
-template <class ...Ts> XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
-
-template <auto f, class ...Xs> requires common_q<Xs...>
+template <class   ..._s>	XTAL_TYP linear;
+template <class   ..._s>	XTAL_USE linear_t = typename linear<_s...>::type;
+template <class   ...Ts>	XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
+template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 linear_f(Xs &&...xs)
-XTAL_0EX
-{
-	XTAL_USE U = common_t<Xs...>;
-	XTAL_SET N = sizeof...(xs);
-	if constexpr (idempotent_p<U, decltype(f)>) {
-		return linear_t<U[N]>{ (XTAL_REF_(xs))...};
-	}
-	else {
-		return linear_t<U[N]>{f(XTAL_REF_(xs))...};
-	}
-}
-template <class ...Xs>
-XTAL_DEF_(return,inline)
-XTAL_FN1 linear_f(Xs &&...xs)
-XTAL_0EX
-{
-	return linear_f<[] XTAL_1FN_(objective_f)>(XTAL_REF_(xs)...);
-}
+XTAL_FN1 linear_f(auto &&...oo)
+XTAL_0EX {return _detail::build<linear_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
