@@ -28,13 +28,13 @@ The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constex
 template <size_t N_size>
 struct recognize : recognize<(N_size >> 1)>
 {
-	using zed_t = logical_t<0>;
+	using zed_t = Logical_t<0>;
 
 };
 template <>
 struct recognize<(1<<0)>
 {
-	using   zed_t =           logical_t<1>;
+	using   zed_t =           Logical_t<1>;
 //	using  iota_t =           _std::int4_t;
 	using delta_t =    signed XTAL_INT_(0);
 	using sigma_t =  unsigned XTAL_INT_(0);
@@ -51,7 +51,7 @@ struct recognize<(1<<0)>
 template <>
 struct recognize<(1<<1)>
 {
-	using   zed_t =           logical_t<1>;
+	using   zed_t =           Logical_t<1>;
 	using  iota_t =    signed XTAL_INT_(0);
 	using delta_t =    signed XTAL_INT_(1);
 	using sigma_t =  unsigned XTAL_INT_(1);
@@ -68,7 +68,7 @@ struct recognize<(1<<1)>
 template <>
 struct recognize<(1<<2)>
 {
-	using   zed_t =           logical_t<1>;
+	using   zed_t =           Logical_t<1>;
 	using  iota_t =    signed XTAL_INT_(1);
 	using delta_t =    signed XTAL_INT_(2);
 	using sigma_t =  unsigned XTAL_INT_(2);
@@ -140,7 +140,7 @@ struct recognize<(1<<2)>
 template <>
 struct recognize<(1<<3)>
 {
-	using   zed_t =           logical_t<1>;
+	using   zed_t =           Logical_t<1>;
 	using  iota_t =    signed XTAL_INT_(2);
 	using delta_t =    signed XTAL_INT_(3);
 	using sigma_t =  unsigned XTAL_INT_(3);
@@ -218,7 +218,7 @@ concept recognized_q = recognize<N_size>::zed_t::value;
 template <size_t N_size>
 struct rationalize : rationalize<(N_size >> 1)>
 {
-	using zed_t = logical_t<0>;
+	using zed_t = Logical_t<0>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
@@ -375,11 +375,8 @@ public:
 	static_assert(designed_f<-1>((delta_t) -2) == (2));
 	static_assert(designed_f<-1>((delta_t) -3) == (3));
 
-	template <cointegral_q  I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return unsigned_f(i.value);}
-	template <cointegral_q  I> XTAL_FN2   signed_f(I i) XTAL_0EX {return   signed_f(i.value);}
-	
-	template <cardinal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return i;}
-	template < ordinal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return i;}
+	template <cardinal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return +i;}
+	template < ordinal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return +i;}
 	
 	template < ordinal_q I> XTAL_FN2 unsigned_f(I i) XTAL_0EX {return (_std::make_unsigned_t<I>) designed_f(i);}
 	template <cardinal_q I> XTAL_FN2   signed_f(I i) XTAL_0EX {return (_std::make_signed_t<I>) (i);}
@@ -527,7 +524,7 @@ public:
 template <size_t N_size>
 struct realize : realize<(N_size >> 1)>
 {
-	using zed_t = logical_t<0>;
+	using zed_t = Logical_t<0>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
@@ -585,18 +582,14 @@ public:
 	XTAL_LET use_FMA()
 	XTAL_0EX -> bool
 	{
-	#if XTAL_STD < 23
-		return N_fused and not _std::is_constant_evaluated();
-	#else
 		return N_fused;
-	#endif
 	}
 
-	using default_alignment = cardinal_t<XTAL_STD_(L1)/N_width>;
+	using default_alignment = Cardinal_t<XTAL_STD_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = cardinal_t<_std::hardware_constructive_interference_size/N_width>;
-	using  destructive_alignment = cardinal_t<_std:: hardware_destructive_interference_size/N_width>;
+	using constructive_alignment = Cardinal_t<_std::hardware_constructive_interference_size/N_width>;
+	using  destructive_alignment = Cardinal_t<_std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
 	using  destructive_alignment = default_alignment;
@@ -621,14 +614,23 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	template <int N_sign=1> requires sign_p<N_sign, 1>
-	XTAL_FN2_(alpha_t) accumulate_f(auto &&a, auto &&x, auto &&...xs)
+	XTAL_FN2_(alpha_t) accumulate_f(auto &&w, auto &&x, auto &&...xs)
 	XTAL_0EX
 	{
-		if (use_FMA()) {
-			return _std::fma((XTAL_REF_(xs) *...* XTAL_REF_(x)), N_sign, XTAL_REF_(a));
+		using _std::fma;
+
+		alpha_t constexpr n_sign = N_sign;
+
+		XTAL_IF0_(static) {
+			XTAL_IFQ (use_FMA() and requires {fma((xs *...* n_sign), x, w);}) {
+				return fma((XTAL_REF_(xs) *...* n_sign), XTAL_REF_(x), XTAL_REF_(w));
+			}
+			XTAL_0IF_(else) {
+				return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
+			}
 		}
-		else {
-			return XTAL_REF_(a) + N_sign*(XTAL_REF_(x) *...* XTAL_REF_(xs));
+		XTAL_0IF_(else) {
+			return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
 		}
 	}
 

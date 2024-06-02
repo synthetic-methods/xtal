@@ -62,7 +62,7 @@ struct assay
 		using S_::S_;
 
 		///\
-		Default `cointegral_q` constructor, expects `0`. \
+		Default `Integral_q` constructor, expects `0`. \
 
 		template <integral_q A>
 		XTAL_CXN subtype(A &&a)

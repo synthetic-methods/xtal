@@ -62,7 +62,7 @@ struct define
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 refunctor(cointegral_q auto const ...is),
+		XTAL_TN1 refunctor(Integral_q auto const ...is),
 		{
 			if constexpr (0 == sizeof...(is)) {
 				return [this] XTAL_1FN_(self().functor);
@@ -74,7 +74,7 @@ struct define
 		
 	protected:
 		template <class ...Xs>
-		XTAL_TN2 refunctor_(cointegral_q auto const &...is)
+		XTAL_TN2 refunctor_(Integral_q auto const &...is)
 		XTAL_0FX
 		{
 			return refunctor_(figure<Xs...>::template type<is...>::value);
@@ -226,10 +226,10 @@ struct define
 				XTAL_TNX efflux(null_t, auto &&...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
-				If prefixed by `cointegral_q`, forwards the occur to the `slot` specified. \
+				If prefixed by `Integral_q`, forwards the occur to the `slot` specified. \
 
-				XTAL_TNX influx(cointegral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
-				XTAL_TNX efflux(cointegral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
+				XTAL_TNX influx(Integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
+				XTAL_TNX efflux(Integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
 				Forwards the occur to all `slots`, bypassing `self`. \
@@ -349,8 +349,8 @@ struct defer
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using U0 = typename S_::template head_t<cardinal_0>;
-		using U1 = typename S_::template head_t<cardinal_1>;
+		using U0 = typename S_::template head_t<Cardinal_0>;
+		using U1 = typename S_::template head_t<Cardinal_1>;
 	
 	public:// CONSTRUCTION
 		using S_::S_;
@@ -374,21 +374,23 @@ struct defer
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
-		XTAL_REQ (invoke_p<U0, decltype(xs)...>)
 		{
-			return S_::head() (XTAL_REF_(xs)...);
+			XTAL_IF0
+			XTAL_0IF XTAL_REQ_TO_(invoke_f<U0> (XTAL_REF_(xs)...))
+			XTAL_0IF_(else) {return S_::head() (XTAL_REF_(xs)...);}
 		})
 		XTAL_DO2_(template <auto ...Is> requires any_q<U1>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
-			return S_::head() (S::template functor<Is...>(XTAL_REF_(xs)...));
+			XTAL_IF0
+			XTAL_0IF XTAL_REQ_TO_(invoke_f<U0> (S::template functor<Is...>(XTAL_REF_(xs)...)))
+			XTAL_0IF_(else) {return S_::head() (S::template functor<Is...>(XTAL_REF_(xs)...));}
 		})
 
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs),
-		XTAL_REQ (invoke_p<U0, decltype(xs)...>)
 		{
 			return invoke_f<U0> (XTAL_REF_(xs)...);
 		})
@@ -411,8 +413,8 @@ struct defer<U>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using U0 = typename S_::template head_t<cardinal_0>;
-		using U1 = typename S_::template head_t<cardinal_1>;
+		using U0 = typename S_::template head_t<Cardinal_0>;
+		using U1 = typename S_::template head_t<Cardinal_1>;
 
 	public:// CONSTRUCTION
 		using S_::S_;

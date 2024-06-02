@@ -20,10 +20,10 @@ TAG_("thunk", "process")
 		using namespace resource;
 	//	using namespace schedule;
 
-		size_t constexpr N_store = (1<<3);
-		size_t constexpr N_spool = (1<<7);
+		int constexpr N_store = (1<<3);
+		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<respool<constant_t<N_spool>>>;
+		using U_thunk = thunk_t<respool<Integral_t<N_spool>>>;
 		using U_render = occur::render_t<>;
 		using U_cue = cell::cue_s<>;
 		
@@ -70,10 +70,10 @@ TAG_("thunk", "process")
 		using namespace resource;
 	//	using namespace schedule;
 
-		size_t constexpr N_store = (1<<3);
-		size_t constexpr N_spool = (1<<7);
+		int constexpr N_store = (1<<3);
+		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<respool<constant_t<N_spool>>>;
+		using U_thunk = thunk_t<respool<Integral_t<N_spool>>>;
 		using U_render = occur::render_t<>;
 		using U_cue = cell::cue_s<>;
 		
@@ -107,10 +107,10 @@ void thunk_processor()
 
 	class L_gate;
 
-	size_t constexpr N_store = (1<<3);
-	size_t constexpr N_spool = (1<<7);
+	int constexpr N_store = (1<<3);
+	int constexpr N_spool = (1<<7);
 	
-	using U_thunk = thunk_t<respool<constant_t<N_spool>>>;
+	using U_thunk = thunk_t<respool<Integral_t<N_spool>>>;
 	using U_cue = cell::cue_s<>;
 
 	using U_resize = occur::resize_t<>;

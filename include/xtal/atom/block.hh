@@ -72,14 +72,17 @@ struct block<U_data[N_data]>
 		using T_::self;
 		using T_::twin;
 		
-		XTAL_FN2_(typename Op::sigma_t) size() XTAL_0EX {return N_data;}
+		XTAL_DEF_(return,inline)
+		XTAL_FN1_(typename Op::sigma_t) size() XTAL_0EX {return N_data;}
 
 
 		XTAL_TO4_(template <class F>
+		XTAL_DEF_(inline)
 		XTAL_OP0_(explicit) F(), got<F>())
 
 		template <class F=decltype(bond::pack_f)>
-		XTAL_TN2 got()
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 got()
 		XTAL_0FX
 		{
 			using _std::get;
@@ -89,20 +92,21 @@ struct block<U_data[N_data]>
 			(bond::seek_s<N_data>{});
 		}
 		template <class F>
-		XTAL_TN2 got(F &&f)
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 got(F &&f)
 		XTAL_0FX
 		XTAL_REQ
 		XTAL_REQ_TO_(got<F>())
 
-		XTAL_TN2 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
-		XTAL_OP2 () (auto &&o) XTAL_0FX {return self().got(XTAL_REF_(o));}
-	//	XTAL_OP2 () (        ) XTAL_0FX {return self().got( );}
+		XTAL_DEF_(return,inline) XTAL_TN1 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
+		XTAL_DEF_(return,inline) XTAL_OP1 () (auto &&o) XTAL_0FX {return self().got(XTAL_REF_(o));}
+	//	XTAL_DEF_(return,inline) XTAL_OP1 () (        ) XTAL_0FX {return self().got( );}
 
-		XTAL_TN2 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
-		XTAL_TN2 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](i));}
+		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](i));}
+		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](i));}
 
-		XTAL_TN2 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
-		XTAL_TN2 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
 
 	public:// CONVERSION
 		XTAL_TN2 apply(auto &&f)

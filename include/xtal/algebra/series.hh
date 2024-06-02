@@ -73,7 +73,7 @@ struct series<U_data[N_data]>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(cointegral_q auto const o_shift)
+		XTAL_CXN homotype(Integral_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
@@ -267,14 +267,14 @@ struct series<U_data[N_data]>
 		{
 			auto &s = self();
 			if constexpr (complex_field_q<U_data>) {
-				T(ordinal_t<-1>{}).convolve(s, t);
+				T(Ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
 				using X = typename Op::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);
-				Y(ordinal_t<-1>{}).convolve(s_, t_);
+				Y(Ordinal_t<-1>{}).convolve(s_, t_);
 				_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
 			}
 			return s;

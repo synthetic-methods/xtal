@@ -36,7 +36,7 @@ struct define
 		{
 			assert(0 == u);
 		};
-		template <cocardinal_q U>
+		template <Cardinal_q U>
 		XTAL_CXN subtype(U &&u)
 		XTAL_0EX
 		{
@@ -117,7 +117,7 @@ struct define
 
 				XTAL_TO4_(template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_TN1 refunctor(cointegral_q auto const ...is),
+				XTAL_TN1 refunctor(Integral_q auto const ...is),
 					//\
 					_std::bind_front(refunctor_<Xs...>(is...), &self())
 					[this, is...] (auto &&...xs) XTAL_0FN_((self().*refunctor_<Xs...>(is...)) (XTAL_REF_(xs)...))
@@ -125,7 +125,7 @@ struct define
 
 			protected:
 				template <class ...Xs>
-				XTAL_TN2 refunctor_(cointegral_q auto const &...is)
+				XTAL_TN2 refunctor_(Integral_q auto const &...is)
 				XTAL_0FX
 				{
 					return refunctor_(figure<Xs...>::template type<is...>::value);

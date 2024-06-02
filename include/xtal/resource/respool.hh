@@ -38,7 +38,7 @@ struct respool<A>
 
 	};
 };
-template <constant_q A>
+template <Integral_q A>
 struct respool<A>
 {
 	using subkind = bond::tag<respool>;
@@ -58,7 +58,7 @@ struct respool<A>
 };
 template <>
 struct respool<>
-:	respool<constant_t<~0U>>
+:	respool<Integral_t<-1>>
 {};
 
 

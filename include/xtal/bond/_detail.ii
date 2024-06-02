@@ -35,8 +35,8 @@ struct query
 		template <class _,               class ...Is>                 struct duper :      S_::template super<_,                       Is...> {};
 		template <class _,               class ...Is>                 struct super                   : duper<_,                       Is...> {};
 		template <class _,               class ...Is> requires A_edge struct super<_, A_that, Is...> : duper<U_self, Is...> {};
-		template <class _,  liminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : duper<null_t, subliminal_s<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : super<U_this,                  Is...> {};
+		template <class _,  Liminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : duper<null_t, Subliminal_s<I>, Is...> {};
+		template <class _, Terminal_q I, class ...Is> requires A_node struct super<_, I,      Is...> : super<U_this,                  Is...> {};
 		template <class _,               class ...Is> requires A_node struct super<_, U_head, Is...> : super<U_this,                  Is...> {};
 		template <class _,               class ...Is> requires A_node struct super<_, U_this, Is...> : super<U_this,                  Is...> {};
 
@@ -76,11 +76,11 @@ struct query
 
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), self<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_TN1 self(auto &&...oo), self<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), head<cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_TN1 head(auto &&...oo), head<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 
 	};

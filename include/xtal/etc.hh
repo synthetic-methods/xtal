@@ -186,10 +186,25 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FM_(...)           mutable constexpr noexcept {return (__VA_ARGS__);}
 
-#define XTAL_IF0                      if constexpr (0);
-#define XTAL_0IF                 else if constexpr
-#define XTAL_0IF_(...)                   XTAL_0IF_##__VA_ARGS__
-#define XTAL_0IF_else            else
+#define XTAL_IFQ                 if      constexpr
+#define XTAL_IF1                 if      constexpr (1);
+#define XTAL_IF0                 if      constexpr (0);
+#define XTAL_0IF            else if      constexpr
+#define XTAL_IF1_(...)                   XTAL_IF1__##__VA_ARGS__
+#define XTAL_IF0_(...)                   XTAL_IF0__##__VA_ARGS__
+#define XTAL_0IF_(...)                   XTAL_0IF__##__VA_ARGS__
+
+#define XTAL_0IF__else      else
+
+#if XTAL_STD < 26
+#define XTAL_IF1__static         if  (    _std::is_constant_evaluated())
+#define XTAL_IF0__static         if  (not _std::is_constant_evaluated())
+#define XTAL_0IF__static    else if  (    _std::is_constant_evaluated())
+#else
+#define XTAL_IF1__static         if      consteval
+#define XTAL_IF0__static         if  not consteval
+#define XTAL_0IF__static    else if      consteval
+#endif
 
 #define XTAL_0FX                 const             noexcept
 #define XTAL_0EX                                   noexcept

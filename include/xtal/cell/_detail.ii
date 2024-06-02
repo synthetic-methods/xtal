@@ -228,7 +228,7 @@ struct defer_field
 
 	};
 };
-template <cointegral_q U>
+template <Integral_q U>
 struct defer_field<U>
 {
 	template <any_q S>
@@ -246,7 +246,7 @@ struct defer_field<U>
 		using S_::self;
 		U_body u_body{};
 
-		template <cointegral_q A>
+		template <Integral_q A>
 		XTAL_CXN subtype(A &&a, auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)

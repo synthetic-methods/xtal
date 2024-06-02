@@ -168,7 +168,9 @@ template <class X, class Y> requires common_q<X, Y>
 XTAL_FN2 equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
-	return x == y;
+	XTAL_IF0
+	XTAL_0IF XTAL_REQ_TO_( x ==  y)
+	XTAL_0IF XTAL_REQ_TO_(&x == &y)
 }
 template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_FN2 equal_f(X &&x, Y &&y)

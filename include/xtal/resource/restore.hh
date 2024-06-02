@@ -38,7 +38,7 @@ struct restore<A>
 
 	};
 };
-template <constant_q A>// requires (A{} <  0 or 0x1000 <  A{})
+template <Integral_q A>// requires (A{} <  0 or 0x1000 <  A{})
 struct restore<A>
 {
 	using subkind = bond::tag<restore>;
@@ -57,7 +57,7 @@ struct restore<A>
 	};
 };
 /*/
-template <constant_q A> requires (0 <= A{} and A{} <= 0x1000)
+template <Integral_q A> requires (0 <= A{} and A{} <= 0x1000)
 struct restore<A>
 {
 	using subkind = bond::tag<restore>;
@@ -78,7 +78,7 @@ struct restore<A>
 /***/
 template <>
 struct restore<>
-:	restore<constant_t<~0U>>
+:	restore<Integral_t<-1>>
 {};
 
 

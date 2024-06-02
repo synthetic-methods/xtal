@@ -27,12 +27,12 @@ struct compost
 	Even when `not sizeof...(Ts)`, `clang` can't instantiate unary alias-templates with `T, Ts...`. \
 
 };
-template <class S,                   typename ...Inners> struct compose {using type = S;};
-template <class S, typename   Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<                                 S , Inners...> {};
-template <class S, complete_q Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<typename Inner::template subtype<S>, Inners...> {};
-
 template <typename Outer> concept   compose_q =     complete_q<compost<Outer::template subtype>>;
 template <typename Outer> concept decompose_q = not complete_q<compost<Outer::template subtype>>;
+
+template <class S,                  typename ...Inners> struct compose {using type = S;};
+template <class S, typename  Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<                                 S , Inners...> {};
+template <class S, compose_q Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<typename Inner::template subtype<S>, Inners...> {};
 
 
 }///////////////////////////////////////////////////////////////////////////////

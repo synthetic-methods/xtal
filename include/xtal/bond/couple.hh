@@ -40,7 +40,7 @@ struct couple<X, Y>
 	public:
 		using supertype::supertype;
 		
-		using tuple_size = cardinal_t<2>;
+		using tuple_size = Cardinal_t<2>;
 		
 		template <size_t N, class _> struct tuple_element_;
 		template <          class _> struct tuple_element_<0, _> {using type = X;};

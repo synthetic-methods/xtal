@@ -81,39 +81,40 @@ template <class      X, class    F >	XTAL_ASK     idempotent_p =	is_q<XTAL_TYP_(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class         T >	XTAL_ASK       constant_q =	_std::derived_from<T, _std::integral_constant<typename T::type::value_type, T::type::value>>;
-template <auto          N >	XTAL_USE       constant   =	_std::integral_constant<decltype(N), N>;
-template <auto          N >	XTAL_USE       cardinal   =	_std::integral_constant<size_t,      N>;
-template <auto          N >	XTAL_USE        ordinal   =	_std::integral_constant<int,         N>;
-template <auto          N >	XTAL_USE        logical   =	_std::integral_constant<bool,        N>;
+template <class         T >	XTAL_ASK        Nominal_q =	_std::derived_from<T, _std::integral_constant<typename T::type::value_type, T::type::value>>;
+template <auto          N >	XTAL_USE        Nominal_t =	_std::integral_constant<decltype(N), N>;
+template <auto          N >	XTAL_USE        Logical_t =	_std::integral_constant<bool,        N>;
+template <auto          N >	XTAL_USE        Ordinal_t =	_std::integral_constant<int,         N>;
+template <auto          N >	XTAL_USE       Cardinal_t =	_std::integral_constant<size_t,      N>;
+template <auto          N >	XTAL_USE       Integral_t =	_std::integral_constant<int,         N>;
 
-template <class         T >	XTAL_ASK       integral_  =	_std::     integral  <T>;
-template <class         T >	XTAL_ASK       cardinal_  =	_std::  is_unsigned_v<T>;
-template <class         T >	XTAL_ASK        ordinal_  =	_std::    is_signed_v<T>;
-template <class         T >	XTAL_ASK        logical_  =	_std:: convertible_to<T, bool>;
+template <class         T >	XTAL_ASK        logical_  =	_std::        same_as<_std::decay_t<T>, bool>;
+template <class         T >	XTAL_ASK        ordinal_  =	_std::    is_signed_v<_std::decay_t<T>>;
+template <class         T >	XTAL_ASK       cardinal_  =	_std::  is_unsigned_v<_std::decay_t<T>>;
+template <class         T >	XTAL_ASK       integral_  =	_std::     integral  <_std::decay_t<T>>;
 
-template <class         T >	XTAL_ASK     cointegral_q =	  constant_q<T> and  integral_<typename T::value_type>;
-template <class         T >	XTAL_ASK     cocardinal_q =	  constant_q<T> and  cardinal_<typename T::value_type>;
-template <class         T >	XTAL_ASK      coordinal_q =	  constant_q<T> and   ordinal_<typename T::value_type>;
-template <class         T >	XTAL_ASK      cological_q =	  constant_q<T> and   logical_<typename T::value_type>;
+template <class         T >	XTAL_ASK        Logical_q =	 Nominal_q<T> and   logical_<typename T::value_type>;
+template <class         T >	XTAL_ASK        Ordinal_q =	 Nominal_q<T> and   ordinal_<typename T::value_type>;
+template <class         T >	XTAL_ASK       Cardinal_q =	 Nominal_q<T> and  cardinal_<typename T::value_type>;
+template <class         T >	XTAL_ASK       Integral_q =	 Nominal_q<T> and  integral_<typename T::value_type>;
 
-template <class         T >	XTAL_ASK       integral_q =	cointegral_q<T>  or  integral_<T>;
-template <class         T >	XTAL_ASK       cardinal_q =	cocardinal_q<T>  or  cardinal_<T>;
-template <class         T >	XTAL_ASK        ordinal_q =	 coordinal_q<T>  or   ordinal_<T>;
-template <class         T >	XTAL_ASK        logical_q =	 cological_q<T>  or   logical_<T>;
+template <class         T >	XTAL_ASK        logical_q =	 Logical_q<T>  or   logical_<T>;
+template <class         T >	XTAL_ASK        ordinal_q =	 Ordinal_q<T>  or   ordinal_<T>;
+template <class         T >	XTAL_ASK       cardinal_q =	Cardinal_q<T>  or  cardinal_<T>;
+template <class         T >	XTAL_ASK       integral_q =	Integral_q<T>  or  integral_<T>;
 
-template <class         T >	XTAL_ASK       terminal_q =	cointegral_q<T> and 0 == T::value;
-template <class         T >	XTAL_ASK        liminal_q =	cointegral_q<T> and 0 != T::value;
-template <liminal_q     T >	XTAL_USE     subliminal   =	constant<(T{} - sign_n<T{}>)>;
-template <liminal_q     T >	XTAL_USE    semiliminal   =	constant<(T{} >> 1)>;
+template <class         T >	XTAL_ASK       Terminal_q =	Integral_q<T> and 0 == T::value;
+template <class         T >	XTAL_ASK        Liminal_q =	Integral_q<T> and 0 != T::value;
+template <Liminal_q     T >	XTAL_USE     Subliminal_s =	Nominal_t<(T{} - sign_n<T{}>)>;
+template <Liminal_q     T >	XTAL_USE    Semiliminal_s =	Nominal_t<(T{} >> 1)>;
 
-template <int N           >	XTAL_TYP     bisordinal   :	constant<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N * real_s(0.5));};
-template <int N, int ...Ns>	XTAL_TYP     fractional    	            {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N + real_s(1.0)/fractional<Ns...>{});};
-template <int N           >	XTAL_TYP     fractional<N>:	constant<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N);};
+template <int N           >	XTAL_TYP     Bisordinal   :	Nominal_t<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N * real_s(0.5));};
+template <int N, int ...Ns>	XTAL_TYP     Fractional    	             {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N + real_s(1.0)/Fractional<Ns...>{});};
+template <int N           >	XTAL_TYP     Fractional<N>:	Nominal_t<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N);};
 
-static_assert(fractional<2      >{} == 2.0);
-static_assert(fractional<1, 1   >{} == 2.0);
-static_assert(fractional<1, 1, 1>{} == 1.5);
+static_assert(Fractional<2      >{} == 2.0);
+static_assert(Fractional<1, 1   >{} == 2.0);
+static_assert(Fractional<1, 1, 1>{} == 1.5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,14 +137,14 @@ template <class         T >	XTAL_USE          based_t =	_std::remove_cvref_t<com
 template <class         T >	XTAL_ASK          based_q =	    atomic_q<T>;
 template <class         T >	XTAL_ASK        unbased_q =	not atomic_q<T>;
 
-template <class         T >	XTAL_TYP         debased           :	logical<0> {using type = _std::remove_reference_t<T>;};
-template <unbased_q     T >	XTAL_TYP         debased<T       &>:	logical<1> {using type =       T*;};
-template <unbased_q     T >	XTAL_TYP         debased<T const &>:	logical<1> {using type = const T*;};
+template <class         T >	XTAL_TYP         debased           :	Logical_t<0> {using type = _std::remove_reference_t<T>;};
+template <unbased_q     T >	XTAL_TYP         debased<T       &>:	Logical_t<1> {using type =       T*;};
+template <unbased_q     T >	XTAL_TYP         debased<T const &>:	Logical_t<1> {using type = const T*;};
 template <class         T >	XTAL_ASK         debased_q         =	debased<T>::value;
 
-template <class         T >	XTAL_TYP         rebased           :	logical<1> {using type = based_t<T>;};
-template <unbased_q     T >	XTAL_TYP         rebased<T       &>:	logical<0> {using type =         T&;};
-template <unbased_q     T >	XTAL_TYP         rebased<T const &>:	logical<0> {using type =   const T&;};
+template <class         T >	XTAL_TYP         rebased           :	Logical_t<1> {using type = based_t<T>;};
+template <unbased_q     T >	XTAL_TYP         rebased<T       &>:	Logical_t<0> {using type =         T&;};
+template <unbased_q     T >	XTAL_TYP         rebased<T const &>:	Logical_t<0> {using type =   const T&;};
 template <class         T >	XTAL_ASK         rebased_q         =	rebased<T>::value;
 
 
@@ -490,7 +491,7 @@ XTAL_0EX
 }
 
 template <class T, auto ...Ms>
-using lateral = constant<lateral_f<T>(Ms...)>;
+using lateral = Nominal_t<lateral_f<T>(Ms...)>;
 
 
 }//////////////////////////////////////////////////////////////////////////////
