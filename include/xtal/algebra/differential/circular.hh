@@ -181,6 +181,7 @@ struct circular<K_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(bond::pack_size_q<circular_t<double[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 #include "./any.hh"
 #include "./differential/all.hh"
-#include "./chain.hh"
 #include "./cross.hh"
-#include "./map.hh"
+#include "./lift.hh"
+#include "./link.hh"

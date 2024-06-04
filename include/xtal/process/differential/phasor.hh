@@ -31,9 +31,7 @@ struct phasor<K_data[N_data], As...>
 
 	using  _data = U_data[N_data];
 	using W_data = algebra::d_:: circular_t<_data>;
-	using L_data = algebra::d_::   linear_t<_data>;
 	using S_data = algebra::       series_t<_data>;
-	using R_data = bond::pack_row_t<L_data>;
 	
 	using subkind = bond::compose<bond::tag<phasor>
 	,	_detail::refer_multiplicative_group<W_data>
@@ -51,25 +49,25 @@ struct phasor<K_data[N_data], As...>
 		using typename S_::T_self; friend T_self;
 		using typename S_::U_head;
 
-	public:
+	public:// ACCESS
 		using S_::S_;
-
-	public:
 		using S_::self;
 		using S_::head;
 
-		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
+		using algebra_t = W_data;
+
 		///\note\
-		The above is defined in-case `refine_head` is bypassed...
+		This is defined in-case `refine_head` is bypassed...
 
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
+		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
+		
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 bias()
 		XTAL_0EX_TO_(S_::template bias<U_data>())
 
-	public:
 		///\
 		Access by dynamic index. \
 		
@@ -78,30 +76,24 @@ struct phasor<K_data[N_data], As...>
 
 		XTAL_TO4_(XTAL_TN2 get(size_t i), head().get(i))
 
-	
-	protected:
+	public:// EVALUATION
+		///\todo\
+		Use `resource::example` to manage downsampling \
+		e.g. by integer multiplication followed by normalization. \
+
 		///\
-		Evaluation by succession. \
+		Evaluation by (possibly indented) replacement then succession. \
 		
-		XTAL_DEF_(return,inline)
-		XTAL_GET ingress()
+		template <auto ...Is> requires none_n<Is...>
+		XTAL_TN2 functor(subarray_q<N_data> auto &&a)
 		XTAL_0EX
 		{
-			XTAL_IF0
-			XTAL_0IF (1 == bias()) {return ++head();}
-			XTAL_0IF_(else)        {return   head();}
-		};
-		template <class Y>
-		XTAL_DEF_(return,inline)
-		XTAL_SET egress(Y &&y)
-		XTAL_0EX
-		{
-			XTAL_IF0
-			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
-			XTAL_0IF_(else)        {return                  XTAL_REF_(y);}
-		};
+			(void) S_::influx(XTAL_REF_(a));
+			return functor();
+		}
+		///\
+		Evaluation by uccession. \
 		
-	public:
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_TN2 functor()
 		XTAL_0EX
@@ -129,21 +121,29 @@ struct phasor<K_data[N_data], As...>
 				return egress(ingress());
 			}
 		}
+
+	protected:
 		///\
-		Evaluation by (possibly indented) replacement then succession. \
+		Evaluation by succession. \
 		
-		template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor(subarray_q<N_data> auto &&a)
+		XTAL_DEF_(return,inline)
+		XTAL_GET ingress()
 		XTAL_0EX
 		{
-			(void) S_::influx(XTAL_REF_(a));
-			return functor();
-		}
+			XTAL_IF0
+			XTAL_0IF (1 == bias()) {return ++head();}
+			XTAL_0IF_(else)        {return   head();}
+		};
+		template <class Y>
+		XTAL_DEF_(return,inline)
+		XTAL_SET egress(Y &&y)
+		XTAL_0EX
+		{
+			XTAL_IF0
+			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
+			XTAL_0IF_(else)        {return                  XTAL_REF_(y);}
+		};
 		
-		///\todo\
-		Use `resource::example` to manage downsampling \
-		e.g. by integer multiplication followed by normalization. \
-
 	};
 };
 

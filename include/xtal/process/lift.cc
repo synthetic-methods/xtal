@@ -1,13 +1,13 @@
 #pragma once
 #include "./any.cc"
-#include "./chain.hh"// testing...
+#include "./lift.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::process::chain_test
+namespace xtal::process::_test_lift
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -31,12 +31,12 @@ struct foo
 };
 using foo_t = typename foo::type;
 using bar_t = process::confined_t<confer<foo_t>>;
-using baz_t = process::chain_t<decltype([] (auto &&o) XTAL_0FN_(o*10)), confer<foo_t>>;
+using baz_t = process::confined_t<lift<decltype([] (auto &&o) XTAL_0FN_(o*10))>, confer<foo_t>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("map")
+TAG_("lift")
 {
 	TRY_("task")
 	{

@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.cc"
 #include "./phasor.hh"// testing...
-#include "../map.hh"
-#include "../chain.hh"
+#include "../lift.hh"
+#include "../link.hh"
 #include "../../processor/monomer.hh"
 #include "../../resource/all.hh"
 
@@ -37,12 +37,15 @@ TAG_("phasor")
 	using W_phi = bond::pack_row_t<_phi>;
 	using X_phi = a_::  circular_t<_phi>;
 	
+	using Y_chi = process::link_t<decltype(bond::pack_row_f), d_::phasor<_phi, resource::example<>>>;
+//	using Y_chi = process::link_t<decltype(bond::pack_row_f), d_::phasor<_phi>>;
 	using Y_phi = d_::phasor_t<_phi>;
 	using Y_psi = d_::phasor_t<_phi, U_example>;
 	//\
-	using Y_eig = process::chain_t<T_eigenrow, d_::phasor<_phi>>;
-	using Y_eig = process::map_t<T_eigenrow, d_::phasor<_phi>>;
+	using Y_eig = process::link_t<T_eigenrow, d_::phasor<_phi>>;
+	using Y_eig = process::lift_t<T_eigenrow, d_::phasor<_phi>>;
 
+	using Z_chi = processor::monomer_t<Y_chi, U_restore>;
 	using Z_phi = processor::monomer_t<Y_phi, U_restore>;
 	using Z_psi = processor::monomer_t<Y_psi, U_restore>;
 	using Z_eig = processor::monomer_t<Y_eig, U_restore>;
@@ -59,6 +62,8 @@ TAG_("phasor")
 		
 		auto  x_phi = X_phi        {}; x_phi <<=                          {Op::ratio_f(7)};
 		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
+		
+		auto  z_chi = Z_chi::bind_f(); z_chi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
 		auto  z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
 		auto  z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
 		auto  z_eig = Z_eig::bind_f(); z_eig <<= occur::indent_s<X_phi, 1>{Op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);

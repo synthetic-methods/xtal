@@ -312,26 +312,13 @@ struct refine
 		
 		};
 		template <class ...Xs>
-		using bind_t = typename combined<Xs...>::type;
+		XTAL_USE bind_t = typename combined<Xs...>::type;
+		
+		XTAL_FN2 bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              XTAL_REF_(xs)...);}
+		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);}
 
-		template <typename ...As>
-		XTAL_FN2 bind_f(auto &&...xs)
-		XTAL_0EX
-		{
-			using  kind = confined<As..., S_binding<decltype(xs)...>>;
-			using  type = bond::compose_s<S_, kind>;
-			return type(XTAL_REF_(xs)...);
-		}
-		template <typename ...As>
-		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs)
-		XTAL_0EX
-		{
-			using  kind = confined<As..., S_binding<decltype(xs)...>>;
-			using  type = bond::compose_s<S_, kind>;
-			return type(XTAL_REF_(t), XTAL_REF_(xs)...);
-		}
-		XTAL_TO4_(template <typename ...As>
-		XTAL_TN2 bind(auto &&...xs), bind_f<As...>(self(), XTAL_REF_(xs)...)
+		XTAL_TO4_(template <class ...Xs>
+		XTAL_TN2 bind(Xs &&...xs), bind_f(self(), XTAL_REF_(xs)...)
 		)
 
 	};
@@ -359,99 +346,42 @@ struct defer
 		///\note\
 		Adjacent `defer`red processes are composed. \
 
-		///\
-		Constant redirection. \
-
-		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(),
-		{
-			return S_::head();
-		})
-		///\
-		Function redirection. \
-
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 functor(auto &&...xs),
 		{
 			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(invoke_f<U0> (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return S_::head() (XTAL_REF_(xs)...);}
+			XTAL_0IF (    any_q<U1>) {return functor_<Is...>(S_::template functor <Is...>(XTAL_REF_(xs)...));}
+			XTAL_0IF (not any_q<U1>) {return functor_<Is...>(                             XTAL_REF_(xs)... );}
 		})
-		XTAL_DO2_(template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
-		{
-			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(invoke_f<U0> (S::template functor<Is...>(XTAL_REF_(xs)...)))
-			XTAL_0IF_(else) {return S_::head() (S::template functor<Is...>(XTAL_REF_(xs)...));}
-		})
-
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function(auto &&...xs),
 		{
-			return invoke_f<U0> (XTAL_REF_(xs)...);
-		})
-		XTAL_DO0_(template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs),
-		XTAL_REQ_(invoke_f<U0>(S::template function<Is...>(XTAL_REF_(xs)...)))
-		{
-			return invoke_f<U0>(S::template function<Is...>(XTAL_REF_(xs)...));
+			XTAL_IF0
+			XTAL_0IF (    any_q<U1>) {return function_<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...));}
+			XTAL_0IF (not any_q<U1>) {return function_<Is...>(                             XTAL_REF_(xs)... );}
 		})
 
-	};
-};
-template <any_q U>
-struct defer<U>
-{
-	using subkind = _retail::defer<U>;
-
-	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-		using U0 = typename S_::template head_t<Cardinal_0>;
-		using U1 = typename S_::template head_t<Cardinal_1>;
-
-	public:// CONSTRUCTION
-		using S_::S_;
-
-	public:// INVOCATION
-		///\note\
-		Adjacent `defer`red processes are composed. \
-
-		///\
-		Process redirection. \
+	private:
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
+		XTAL_TN1 functor_(auto &&...xs),
 		{
-			return S_::head().template functor<Is...>(XTAL_REF_(xs)...);
+			XTAL_IF0
+			XTAL_0IF   XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF   XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
+			XTAL_0IF_(else) {return S_::head(); static_assert(0 == sizeof...(xs));}
 		})
-		XTAL_DO2_(template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
-		{
-			return S_::head().template functor<Is...>(S_::template functor<Is...>(XTAL_REF_(xs)...));
-		})
-
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs),
-		XTAL_REQ_(U0::template function<Is...>(XTAL_REF_(xs)...))
+		XTAL_FN1 function_(auto &&...xs),
 		{
-			return U0::template function<Is...>(XTAL_REF_(xs)...);
-		})
-		XTAL_DO0_(template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs),
-		XTAL_REQ_(U0::template function<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...)))
-		{
-			return U0::template function<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...));
+			XTAL_IF0
+			XTAL_0IF   XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF   XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
+			XTAL_0IF_(else) {return invoke_f<U0>(XTAL_REF_(xs)...);}
 		})
 
 	};

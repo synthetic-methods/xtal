@@ -89,7 +89,7 @@ struct defer<U>
 		using S_::head;
 
 		///\
-		Defines the range-lifted form of `head` by `lift`ing the underlying `process`. \
+		Defines the range-lifted form of `head` by lifting the underlying `process`. \
 		This means that parameter resolution is only performed at the beginning of each block. \
 
 		XTAL_DO4_(template <auto ...Is>
