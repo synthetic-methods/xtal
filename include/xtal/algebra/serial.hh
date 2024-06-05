@@ -17,7 +17,7 @@ template <class   ...Ts>	XTAL_ASK serial_q = bond::head_tag_p<serial, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 serial_f(auto &&...oo)
-XTAL_0EX {return _detail::build<serial_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<serial_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ struct monomer<U_process, As...>
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	using subkind = confer<U_process, As..., resource::restate<>>;
+	using subkind = confer<U_process, As..., resource::stated<>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -94,7 +94,7 @@ struct monomer<U_process, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::restate_q<S_> and resource::restore_q<S_>
+		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
 		struct binding<Xs...> : S__binding<Xs...>
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;
@@ -103,7 +103,7 @@ struct monomer<U_process, As...>
 		
 			XTAL_LET_(int) N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::restash<U_state, U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::stashed<U_state, U_store>, R__binding<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -218,7 +218,7 @@ struct monomer<U_process, As...>
 						XTAL_IF0
 						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
 						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(else) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						XTAL_0IF_(default) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
 					}

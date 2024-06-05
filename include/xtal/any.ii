@@ -25,12 +25,12 @@ template <class F, class ...Xs>
 XTAL_ASK invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
-template <class T>
 XTAL_DEF_(return,inline)
-XTAL_FN1 devolve_f(T &t)
+XTAL_FN1 devolved_f(auto &t)
 XTAL_0EX
 {
-	return reinterpret_cast<devolve_a<_std::remove_reference_t<T>> &>(t);
+	using T = _std::remove_reference_t<decltype(t)>;
+	return reinterpret_cast<typename devolved<T>::array_type &>(t);
 }
 
 

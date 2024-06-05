@@ -100,7 +100,7 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_ANY_(T &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
 				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...);
@@ -109,10 +109,10 @@ struct define
 			};
 			template <auto ...Is>
 			XTAL_REQ
-			XTAL_REQ_(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...))
+			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...))
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
 
 			public:
 				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...) const;
@@ -253,29 +253,29 @@ struct define
 				If `~N_slot`, the slot at `N_slot` receives the full occur. \
 
 				template <int N_slot=-1>
-				XTAL_TNX influx_push_tail(auto o, auto ...oo)
+				XTAL_TNX influx_push_tail(auto &&o, auto &&...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
-						return influx_push(XTAL_MOV_(oo)...);
+						return influx_push(XTAL_REF_(oo)...);
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(bond::seek_t<I...>)
+						return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)] <auto ...I>(bond::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...))
 						(bond::seek_s<sizeof...(Xs) - 1> {});
 					}
 				}
 				template <int N_slot=-1>
-				XTAL_TNX efflux_pull_tail(auto o, auto ...oo)
+				XTAL_TNX efflux_pull_tail(auto &&o, auto &&...oo)
 				XTAL_0EX
 				{
 					if constexpr (N_slot == -1) {
-						return efflux_pull(XTAL_MOV_(oo)...);
+						return efflux_pull(XTAL_REF_(oo)...);
 					}
 					else {
 						static_assert(0 <= N_slot);
-						return [&] <auto ...I>(bond::seek_t<I...>)
+						return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)] <auto ...I>(bond::seek_t<I...>)
 							XTAL_0FN_(slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...))
 						(bond::seek_s<sizeof...(Xs) - 1> {});
 					}
@@ -370,18 +370,18 @@ struct defer
 		XTAL_TN1 functor_(auto &&...xs),
 		{
 			XTAL_IF0
-			XTAL_0IF   XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF   XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return S_::head(); static_assert(0 == sizeof...(xs));}
+			XTAL_0IF XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
+			XTAL_0IF_(default) {return S_::head(); static_assert(0 == sizeof...(xs));}
 		})
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_FN1 function_(auto &&...xs),
 		{
 			XTAL_IF0
-			XTAL_0IF   XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF   XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return invoke_f<U0>(XTAL_REF_(xs)...);}
+			XTAL_0IF XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
+			XTAL_0IF_(default) {return invoke_f<U0>(XTAL_REF_(xs)...);}
 		})
 
 	};

@@ -11,9 +11,9 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP restate;
-template <typename ..._s> XTAL_USE restate_t = confined_t<restate<_s...>>;
-template <typename ..._s> XTAL_ASK restate_q = bond::head_tag_p<restate, _s...>;
+template <typename ..._s> XTAL_TYP stated;
+template <typename ..._s> XTAL_USE stated_t = confined_t<stated<_s...>>;
+template <typename ..._s> XTAL_ASK stated_q = bond::head_tag_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@ template <typename ..._s> XTAL_ASK restate_q = bond::head_tag_p<restate, _s...>;
 Provides a specialization of `atom::store`. \
 
 template <bond::compose_q A>
-struct restate<A>
+struct stated<A>
 {
-	using subkind = bond::tag<restate>;
+	using subkind = bond::tag<stated>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -39,9 +39,9 @@ struct restate<A>
 	};
 };
 template <>
-struct restate<>
+struct stated<>
 {
-	using subkind = bond::tag<restate>;
+	using subkind = bond::tag<stated>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>

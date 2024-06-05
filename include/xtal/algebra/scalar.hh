@@ -17,7 +17,7 @@ template <class   ...Ts>	XTAL_ASK scalar_q = bond::head_tag_p<scalar, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 scalar_f(auto &&...oo)
-XTAL_0EX {return _detail::build<scalar_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<scalar_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ struct scalar<U_data[N_data]>
 		template <int N_par=0>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> devolve_t<U_data>
+		XTAL_0EX -> devolved_t<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

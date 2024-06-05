@@ -15,9 +15,6 @@ template <class ..._s> XTAL_TYP block;
 template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
 template <class ..._s> XTAL_ASK block_q = bond::head_tag_p<block, _s...>;
 
-XTAL_LET  block_f = []<class ...Xs> (Xs &&...xs)
-XTAL_0FN_(block_t<common_t<Xs...>[sizeof...(Xs)]>{XTAL_REF_(xs)...});
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -62,11 +59,8 @@ struct block<U_data[N_data]>
 		using  I_ = typename T_::difference_type;
 
 	public:// MAP
-		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
-		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
-
-		XTAL_LET   ordinate_f = [] (auto &&o) XTAL_0FN_(  ordinate(XTAL_REF_(o)));
-		XTAL_LET coordinate_f = [] (auto &&o) XTAL_0FN_(coordinate(XTAL_REF_(o)));
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate_f(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate_f(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
 
 	public:// ACCESS
 		using T_::self;
@@ -88,7 +82,7 @@ struct block<U_data[N_data]>
 			using _std::get;
 
 			return [&]<auto ...Ns> (bond::seek_t<Ns...>)
-				XTAL_0FN_(invoke_f<F>(T::coordinate(get<Ns>(self()))...))
+				XTAL_0FN_(invoke_f<F>(T::coordinate_f(get<Ns>(self()))...))
 			(bond::seek_s<N_data>{});
 		}
 		template <class F>
@@ -98,7 +92,7 @@ struct block<U_data[N_data]>
 		XTAL_REQ
 		XTAL_REQ_TO_(got<F>())
 
-		XTAL_DEF_(return,inline) XTAL_TN1 got(size_t i) XTAL_0FX {return T::coordinate(self().get(i));}
+		XTAL_DEF_(return,inline) XTAL_TN1 got(size_t i) XTAL_0FX {return T::coordinate_f(self().get(i));}
 		XTAL_DEF_(return,inline) XTAL_OP1 () (auto &&o) XTAL_0FX {return self().got(XTAL_REF_(o));}
 	//	XTAL_DEF_(return,inline) XTAL_OP1 () (        ) XTAL_0FX {return self().got( );}
 
@@ -133,10 +127,10 @@ struct block<U_data[N_data]>
 		Elementwise immutative transformer. \
 
 		///\todo\
-		Map `transact` with `(?:co)?ordinate`.
+		Map `transact` with `(?:co)?ordinate_f`.
 
 		//\
-		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalue_t<W>>))
+		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<devalued_t<W>>))
 		XTAL_TO4_(template <array_q W> XTAL_TN1 transact(), transact<W>(invoke_f<typename W::value_type>))
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_TN1 transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
@@ -182,33 +176,33 @@ struct block<U_data[N_data]>
 		XTAL_0EX
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
 				_detail::copy_to(T_::begin(), a.begin(), a.end());
 			}
 			else {
-				_detail::copy_to(T_::begin(), a.begin(), a.end(), ordinate_f);
+				_detail::copy_to(T_::begin(), a.begin(), a.end(), [] XTAL_1FN_(T::ordinate_f));
 			}
 		}
 		XTAL_CXN homotype(bounded_q auto const &a)
 		XTAL_0EX
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
 				_detail::copy_to(T_::begin(), a);
 			}
 			else {
-				_detail::copy_to(T_::begin(), a, ordinate_f);
+				_detail::copy_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
 			}
 		}
 		XTAL_CXN homotype(bounded_q auto &&a)
 		XTAL_0EX
-		:	homotype(count_f(XTAL_MOV_(a)))
+		:	homotype(count_f(a))
 		{
-			if constexpr (idempotent_p<U_data, decltype(coordinate_f)>) {
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
 				_detail::move_to(T_::begin(), a);
 			}
 			else {
-				_detail::move_to(T_::begin(), a, ordinate_f);
+				_detail::move_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
 			}
 		}
 

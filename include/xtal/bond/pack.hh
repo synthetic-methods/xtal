@@ -152,14 +152,14 @@ XTAL_0EX
 	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N, U>(n, XTAL_REF_(w)));
 }
 template <size_t N, class U>
-XTAL_USE pack_rowwise_t = XTAL_TYP_(pack_rowwise_f<N, U>(XTAL_ANY_(size_t), XTAL_ANY_(_std::decay_t<devolve_a<U(&)[N]>>)));
+XTAL_USE pack_rowwise_t = XTAL_TYP_(pack_rowwise_f<N, U>(XTAL_VAL_(size_t), XTAL_VAL_(_std::decay_t<typename devolved<U(&)[N]>::array_type>)));
 
 
 template <class U>
-XTAL_LET repack_rowwise_f = [] XTAL_1FN_(pack_rowwise_f<devalue_n<U>, U>);
+XTAL_LET repack_rowwise_f = [] XTAL_1FN_(pack_rowwise_f<devalued_n<U>, U>);
 
 template <class U>
-XTAL_USE repack_rowwise_t = pack_rowwise_t<devalue_n<U>, U>;
+XTAL_USE repack_rowwise_t = pack_rowwise_t<devalued_n<U>, U>;
 
 
 
@@ -169,6 +169,20 @@ XTAL_USE repack_rowwise_t = pack_rowwise_t<devalue_n<U>, U>;
 template <class ...Ts> concept       pack_q = pack_size_q<Ts...> and (...and pack_list_q<Ts>);
 template <class ...Ts> concept   homopack_q = pack_q<Ts...> and     iterable_q<Ts...>;
 template <class ...Ts> concept heteropack_q = pack_q<Ts...> and not iterable_q<Ts...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <pack_q X, pack_q Y>
+XTAL_FN2 pack_dot_f(X const &x, Y const &y)
+{
+	XTAL_SET M = pack_size_n<X>;
+	XTAL_SET N = pack_size_n<Y>;
+	static_assert(M == N);
+	return [&]<size_t ...I>(bond::seek_t<I...>)
+		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
+	(bond::seek_s<N - 1> {});
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

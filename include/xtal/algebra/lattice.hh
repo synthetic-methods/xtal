@@ -17,7 +17,7 @@ template <class   ..._s>	XTAL_ASK lattice_q = bond::head_tag_p<lattice, _s...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 lattice_f(auto &&...oo)
-XTAL_0EX {return _detail::build<lattice_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<lattice_t>::template via<V>(XTAL_REF_(oo)...);}
 
 template <class  T, class  L=T  >	XTAL_ASK lettuce_q = bond::pack_q<T> and not lattice_q<T> and bond::pack_size_n<T> == bond::pack_size_n<L>;
 template <class  L, class ...Ts >	XTAL_ASK lettuce_p = (...and lettuce_q<Ts, L>);
@@ -108,8 +108,8 @@ struct lattice<U_data[N_data]>
 		XTAL_OP2_(T)    +  (auto const &w)       XTAL_0FX {return twin()  +=   w ;}
 		XTAL_OP2_(T)    -  (auto const &w)       XTAL_0FX {return twin()  -=   w ;}
 
-		XTAL_OP3        *  (devolved_q<T> auto const &w, T const &t) XTAL_0EX {return t * w;}
-		XTAL_OP3        +  (devolved_q<T> auto const &w, T const &t) XTAL_0EX {return t + w;}
+		template <devolved_p<T> W> XTAL_OP3 * (W const &w, T const &t) XTAL_0EX {return t * w;}
+		template <devolved_p<T> W> XTAL_OP3 + (W const &w, T const &t) XTAL_0EX {return t + w;}
 
 		///\
 		Component-wise field-adjustment by an equal-sized non-`lattice`. \

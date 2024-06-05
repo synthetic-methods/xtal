@@ -570,7 +570,7 @@ public:
 	using S_::N_fused;
 
 
-	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD__IEC&60559: 0;
+	XTAL_LET_(sigma_t) IEC = _std::numeric_limits<alpha_t>::is_iec559? XTAL_STD_(IEC)&60559: 0;
 
 	XTAL_DEF_(return,inline)
 	XTAL_LET use_IEC()
@@ -621,33 +621,29 @@ public:
 
 		alpha_t constexpr n_sign = N_sign;
 
-		XTAL_IF0_(static) {
-			XTAL_IFQ (use_FMA() and requires {fma((xs *...* n_sign), x, w);}) {
+		XTAL_IF0
+		XTAL_0IF_(dynamic) {
+			if constexpr (use_FMA() and requires {fma((xs *...* n_sign), x, w);}) {
 				return fma((XTAL_REF_(xs) *...* n_sign), XTAL_REF_(x), XTAL_REF_(w));
 			}
-			XTAL_0IF_(else) {
+			else {
 				return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
 			}
 		}
-		XTAL_0IF_(else) {
+		XTAL_0IF_(default) {
 			return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
 		}
 	}
 
-	template <auto N_pow=1> requires sign_p<N_pow, 0>
+	template <auto N_pow=1>
 	XTAL_FN2 versus_f(auto &&u)
 	XTAL_0EX
 	{
 		using U = XTAL_TYP_(u);
-		if constexpr (N_pow ==  0) {
-			return couple_t<U> {u, 1/XTAL_REF_(u)};
-		}	else
-		if constexpr (N_pow == +1) {
-			return U(XTAL_REF_(u));
-		}	else
-		if constexpr (N_pow == -1) {
-			return U(1/XTAL_REF_(u));
-		}
+		XTAL_IF0
+		XTAL_0IF (sign_n<N_pow> ==  0) {return couple_t<U>{u, 1/XTAL_REF_(u)};}
+		XTAL_0IF (sign_n<N_pow> == -1) {return static_cast<U>(1/XTAL_REF_(u));}
+		XTAL_0IF (sign_n<N_pow> == +1) {return static_cast<U>(  XTAL_REF_(u));}
 	}
 
 
@@ -708,7 +704,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_TYP_(w);
-		using U = devolve_t<W>;
+		using U = devolved_t<W>;
 
 	//	W constexpr W_1{1};
 		U constexpr U_1{1};
@@ -846,33 +842,43 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(base, n_zoom)` for an `unsigned int n_zoom`. \
 	
-	XTAL_FN2 explo_f(auto &&base, sigma_t const &n_zoom)
+	XTAL_FN2 explo_f(auto &&base, sigma_t const &n_exponent)
 	XTAL_0EX
 	{
 		XTAL_TYP_(base) u = XTAL_REF_(base), w = {1};
-		for (sigma_t n = n_zoom; n; n >>= 1) {
-			if (n & 1) {
-			w *= u;
+		for (sigma_t n = n_exponent; n; n >>= 1) {
+			if (n&1) {
+				w *= u;
 			}
 			u = square_f(u);
 		}
 		return w;
 	}
-	template <size_t N_zoom, class W>
-	XTAL_FN2 explo_f(W base, W then = {1})
+	template <size_t N_exponent>
+	XTAL_DEF_(return,inline)
+	XTAL_FN1 explo_f(auto &&base, auto result)
 	XTAL_0EX
 	{
-		size_t constexpr N = N_zoom >> 1;
-		if constexpr (N_zoom == 0) {
-			return then;
-		}	else
-		if constexpr (N_zoom ^ 1) {
-			return explo_f<N>(square_f(base), then);
-		}	else
-		if constexpr (N_zoom & 1) {
-			return explo_f<N>(square_f(base), then*base);
-		}
-//		return explo_f(XTAL_MOV_(base), N_zoom);
+		size_t constexpr N = N_exponent >> 0;
+		size_t constexpr M = N_exponent >> 1;
+		XTAL_IF0
+		XTAL_0IF (N == 0) {return result;}
+		XTAL_0IF (N  ^ 1) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
+		XTAL_0IF (N  & 1) {return explo_f<M>(square_f(         (base)), XTAL_REF_(base)*XTAL_MOV_(result));}
+	}
+	template <size_t N_exponent>
+	XTAL_DEF_(return,inline)
+	XTAL_FN1 explo_f(auto &&base)
+	XTAL_0EX
+	{
+		using X = decltype(base);
+		using Y =    based_t<X>;
+		using V = devolved_t<Y>;
+
+		size_t constexpr N = N_exponent;
+		XTAL_IF0
+		XTAL_0IF (N == 0) {return                             Y{1} ;}// FIXME: Won't work for `eigenclass_t`.
+		XTAL_0IF (N != 0) {return explo_f<N>(XTAL_REF_(base), V{1});}
 	}
 	static_assert(explo_f<0>(alpha_t(2.0)) == 1.00);
 	static_assert(explo_f<1>(alpha_t(2.0)) == 2.00);
@@ -1094,14 +1100,14 @@ public:
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 		u <<= positive.depth;
 		u  |= unit.mask;
-		return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
+		return _std::bit_cast<alpha_t>(u);
 	}
 	XTAL_FN2 assign_f(delta_t u)
 	{
 		static_assert(_std::numeric_limits<alpha_t>::is_iec559);
 		u &= sign.mask;
 		u |= unit.mask;
-		return _std::bit_cast<alpha_t>(XTAL_MOV_(u));
+		return _std::bit_cast<alpha_t>(u);
 	}
 
 	using S_::sign_f;
@@ -1643,7 +1649,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-struct operate : _detail::realize<sizeof(devolve_t<T>)> {};
+struct operate : _detail::realize<sizeof(devolved_t<T>)> {};
 
 using operating = operate<size_t>;
 

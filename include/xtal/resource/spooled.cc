@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./restate.hh"// testing...
+#include "./spooled.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::resource::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("restate")
+TAG_("spooled")
 {
 	TRY_("task")
 	{

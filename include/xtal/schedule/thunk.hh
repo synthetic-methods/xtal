@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../resource/respool.hh"
+#include "../resource/spooled.hh"
 
 
 
@@ -18,13 +18,13 @@ which produces a signal by successive calls to `functor`. \
 template <typename ...As>
 struct thunk
 {
-	using subkind = bond::compose<As..., resource::respool<Integral_t<-1>>>;
+	using subkind = bond::compose<As..., resource::spooled<Integral_t<-1>>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		static_assert(resource::respool_q<S_>);
+		static_assert(resource::spooled_q<S_>);
 
 	public:
 		using S_::S_;

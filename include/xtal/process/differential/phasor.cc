@@ -20,7 +20,7 @@ TAG_("phasor")
 	namespace a_ = algebra::differential;
 	namespace d_ = process::differential;
 	
-	using U_restore = resource::restore<Integral_t<0x1000>>;
+	using U_stored = resource::stored<Integral_t<0x1000>>;
 	using U_example = resource::example<>;
 
 	using Op = bond::operating;
@@ -45,10 +45,10 @@ TAG_("phasor")
 	using Y_eig = process::link_t<T_eigenrow, d_::phasor<_phi>>;
 	using Y_eig = process::lift_t<T_eigenrow, d_::phasor<_phi>>;
 
-	using Z_chi = processor::monomer_t<Y_chi, U_restore>;
-	using Z_phi = processor::monomer_t<Y_phi, U_restore>;
-	using Z_psi = processor::monomer_t<Y_psi, U_restore>;
-	using Z_eig = processor::monomer_t<Y_eig, U_restore>;
+	using Z_chi = processor::monomer_t<Y_chi, U_stored>;
+	using Z_phi = processor::monomer_t<Y_phi, U_stored>;
+	using Z_psi = processor::monomer_t<Y_psi, U_stored>;
+	using Z_eig = processor::monomer_t<Y_eig, U_stored>;
 
 	TRY_("trial")
 	{

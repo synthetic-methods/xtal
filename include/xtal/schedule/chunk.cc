@@ -29,11 +29,11 @@ void chunk_processor_x1()
 	using T_sigma  = typename Op::sigma_t;
 	using T_delta  = typename Op::delta_t;
 
-	using U_chunk = chunk_t<respool<Integral_t<0x10>>>;
+	using U_chunk = chunk_t<spooled<Integral_t<0x10>>>;
 	using U_event = occur::packed_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t
-	,	restore<>
+	,	stored<>
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = occur::resize_t<>;

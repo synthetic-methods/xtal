@@ -209,32 +209,30 @@ template <class   ...Ts>	XTAL_ASK      rebased_q = (...and  _entail:: rebased_q<
 template <class   ...Ts>	XTAL_ASK      debased_q = (...and  _entail:: debased_q<Ts>);
 
 
-template <           class ...Ts>	XTAL_ASK      invalue_q = (...and  _entail:: invalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      invalue_t = common_t<_entail:: invalue_t<Ts>...>;
+template <           class ...Ts>	XTAL_ASK     invalued_q = (...and  _entail:: invalued_q<Ts>);
+template <           class ...Ts>	XTAL_USE     invalued_t = common_t<_entail:: invalued_t<Ts>...>;
 
-template <           class ...Ts>	XTAL_ASK      unvalue_q = (...and  _entail:: unvalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      unvalue_t = common_t<_entail:: unvalue_t<Ts>...>;
+template <           class ...Ts>	XTAL_ASK     unvalued_q = (...and  _entail:: unvalued_q<Ts>);
+template <           class ...Ts>	XTAL_USE     unvalued_t = common_t<_entail:: unvalued_t<Ts>...>;
 
-template <           class ...Ts>	XTAL_ASK      devalue_q = (...and  _entail:: devalue_q<Ts>);
-template <           class ...Ts>	XTAL_USE      devalue_t = common_t<_entail:: devalue_t<Ts>...>;
-template <class   T             >	XTAL_LET      devalue_n = _entail:: devalue_n<T>;
+template <           class ...Ts>	XTAL_ASK     devalued_q = (...and  _entail:: devalued_q<Ts>);
+template <           class ...Ts>	XTAL_USE     devalued_t = common_t<_entail:: devalued_t<Ts>...>;
+template <class   T             >	XTAL_LET     devalued_n = _entail:: devalued_n<T>;
 
-//mplate <           int   ...Ns>	XTAL_USE      devolve_x =	_entail:: devolve_x<   Ns...>;
-//mplate <class   T, class ..._s>	XTAL_USE      devolve_s =	_entail:: devolve_s<T, _s...>;
-template <class   T             >	XTAL_USE      devolve_a =	_entail:: devolve_a<T       >;
-template <           class ...Ts>	XTAL_USE      devolve_t = common_t<_entail:: devolve_t<Ts>...>;
-template <class   T             >	XTAL_LET      devolve_n = _entail:: devolve_n<T>;
+template <class   T, int   ...Ns>	XTAL_USE     devolved   =	_entail:: devolved  <T, Ns...>;
+//mplate <           int   ...Ns>	XTAL_USE     devolved_x =	_entail:: devolved_x<   Ns...>;
+//mplate <class   T, class ..._s>	XTAL_USE     devolved_s =	_entail:: devolved_s<T, _s...>;
+template <           class ...Ts>	XTAL_USE     devolved_t = common_t<_entail:: devolved_t<Ts>...>;
+template <class   T             >	XTAL_LET     devolved_n = _entail:: devolved_n<T>;
 
-template <class   T, class ...Ts>	XTAL_ASK     devalued_q = (...and (devalue_n<T> < devalue_n<Ts>));
-template <class   T, class ...Ts>	XTAL_ASK     devalued_p = (...and (devalue_n<T> > devalue_n<Ts>));
-template <class   T, class ...Ts>	XTAL_ASK     devolved_q = (...and (devolve_n<T> < devolve_n<Ts>));
-template <class   T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolve_n<T> > devolve_n<Ts>));
+template <class   T, class ...Ts>	XTAL_ASK     devalued_p = (...and (devalued_n<T> < devalued_n<Ts>));
+template <class   T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolved_n<T> < devolved_n<Ts>));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T,   int   N=-1 >	XTAL_ASK     array_q =             _entail:: array_q<T> and N <  0   or devalue_n<T> == N;
-template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =             _entail:: array_q<T> and 0 <= N  and devalue_n<T> <= N;
+template <class T,   int   N=-1 >	XTAL_ASK     array_q =             _entail:: array_q<T> and N <  0   or devalued_n<T> == N;
+template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =             _entail:: array_q<T> and 0 <= N  and devalued_n<T> <= N;
 template <           class ...Ts>	XTAL_ASK  disarray_q =        not (...and    array_q<Ts>);
 
 template <class            ...Ts>	XTAL_ASK  accessed_q = (... and _entail:: accessed_q<Ts>);

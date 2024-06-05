@@ -17,7 +17,7 @@ template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 series_f(auto &&...oo)
-XTAL_0EX {return _detail::build<series_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<series_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,8 +28,8 @@ template <class U_data, int N_data>
 struct series<U_data[N_data]>
 {
 	using U_v0 = U_data;
-	using U_v1 = devalue_t<U_v0>;
-	using U_v2 = devalue_t<U_v1>;
+	using U_v1 = devalued_t<U_v0>;
+	using U_v2 = devalued_t<U_v1>;
 
 	using Op = bond::operate<U_data>;
 	

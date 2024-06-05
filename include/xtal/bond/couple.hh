@@ -67,8 +67,8 @@ struct couple<X, Y>
 		template <size_t N         > using  tuple_element = tuple_element_<N, type>;
 
 		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
-		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
 		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
+		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
 		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
 
 		template <pack_q W> XTAL_DEF_(return,inline) XTAL_OP1 *  (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX*get<0>(w), XTAL_1DX*get<1>(w));}
@@ -121,7 +121,7 @@ struct couple<X, Y>
 		template <int N_par=0>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> devolve_t<X, Y>
+		XTAL_0EX -> devolved_t<X, Y>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

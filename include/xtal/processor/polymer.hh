@@ -52,7 +52,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resource::respool_q<S_> and resource::restore_q<S_>
+		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
 		struct binding
 		{
 			using Y_return = typename S__binding<Xs...>::Y_return;

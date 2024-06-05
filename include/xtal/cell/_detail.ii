@@ -144,7 +144,7 @@ struct refine_tuple
 		{
 			return apply(bond::pack_f);
 		}
-		XTAL_FN2 pack(bond::pack_q auto const &tuple)
+		XTAL_FN2 pack_f(bond::pack_q auto const &tuple)
 		XTAL_0EX
 		{
 			return _std::apply([] XTAL_1FN_(T), tuple);
@@ -368,7 +368,7 @@ struct refer_iterators
 			XTAL_0IF (accessed_q<U>) {
 				return W_(next(u_, v0), next(u_, vN));
 			}
-			XTAL_0IF_(else) {
+			XTAL_0IF_(default) {
 				return u|slice(v0, vN);
 			}
 		})

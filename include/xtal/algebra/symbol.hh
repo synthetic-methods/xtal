@@ -17,7 +17,7 @@ template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 symbol_f(auto &&...oo)
-XTAL_0EX {return _detail::build<symbol_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<symbol_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,7 @@ template <class   ...Ts>	XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 linear_f(auto &&...oo)
-XTAL_0EX {return _detail::build<linear_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_0EX {return _detail::initialize<linear_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

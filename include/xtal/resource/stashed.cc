@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./restore.hh"// testing...
+#include "./stashed.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::resource::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("restore")
+TAG_("stashed")
 {
 	TRY_("task")
 	{

@@ -32,7 +32,7 @@ void polymer_provision_spine__locamotion()
 	using U_render = occur::render_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = cell::key_s<U_stage>;
-	using U_thunk  = schedule::thunk_t<resource::respool<Integral_t<0x20>>>;
+	using U_thunk  = schedule::thunk_t<resource::spooled<Integral_t<0x20>>>;
 	using U_cue    = cell::cue_s<>;
 
 	//\
@@ -41,8 +41,8 @@ void polymer_provision_spine__locamotion()
 	using U_gate   = process::confined_t<W_gate, typename U_stage::expect<>>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::restore<Integral_t<N_store>>
-	,	resource::respool<Integral_t<N_spool>>
+	,	resource::stored<Integral_t<N_store>>
+	,	resource::spooled<Integral_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -102,8 +102,8 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::restore<Integral_t<N_store>>
-	,	resource::respool<Integral_t<N_spool>>
+	,	resource::stored<Integral_t<N_store>>
+	,	resource::spooled<Integral_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -146,8 +146,8 @@ void polymer_provision_spool__composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::restore<Integral_t<N_store>>
-	,	resource::respool<Integral_t<N_spool>>
+	,	resource::stored<Integral_t<N_store>>
+	,	resource::spooled<Integral_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 

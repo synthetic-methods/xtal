@@ -11,9 +11,9 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP restore;
-template <typename ..._s> XTAL_USE restore_t = confined_t<restore<_s...>>;
-template <typename ..._s> XTAL_ASK restore_q = bond::head_tag_p<restore, _s...>;
+template <typename ..._s> XTAL_TYP stored;
+template <typename ..._s> XTAL_USE stored_t = confined_t<stored<_s...>>;
+template <typename ..._s> XTAL_ASK stored_q = bond::head_tag_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@ template <typename ..._s> XTAL_ASK restore_q = bond::head_tag_p<restore, _s...>;
 Provides a specialization of `atom::store`. \
 
 template <bond::compose_q A>
-struct restore<A>
+struct stored<A>
 {
-	using subkind = bond::tag<restore>;
+	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -39,9 +39,9 @@ struct restore<A>
 	};
 };
 template <Integral_q A>// requires (A{} <  0 or 0x1000 <  A{})
-struct restore<A>
+struct stored<A>
 {
-	using subkind = bond::tag<restore>;
+	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -58,9 +58,9 @@ struct restore<A>
 };
 /*/
 template <Integral_q A> requires (0 <= A{} and A{} <= 0x1000)
-struct restore<A>
+struct stored<A>
 {
-	using subkind = bond::tag<restore>;
+	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -77,8 +77,8 @@ struct restore<A>
 };
 /***/
 template <>
-struct restore<>
-:	restore<Integral_t<-1>>
+struct stored<>
+:	stored<Integral_t<-1>>
 {};
 
 

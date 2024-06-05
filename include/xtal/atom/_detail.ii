@@ -81,13 +81,6 @@ XTAL_0EX
 	transform(x0, xN, y0, XTAL_REF_(f));
 #endif
 }
-template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
-XTAL_DEF_(inline)
-XTAL_FN0 copy_to(Y_ y0, Xs const &xs, F &&f, bool o=false)
-XTAL_0EX
-{
-	copy_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
-}
 template <iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline)
 XTAL_FN0 copy_to(Y_ y0, X_ const x0, X_ const xN, bool o=false)
@@ -116,6 +109,20 @@ XTAL_0EX
 	copy(x0, xN, y0);
 #endif
 }
+
+template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
+XTAL_DEF_(inline)
+XTAL_FN0 copy_to(Y_ y0, Xs const &xs, F &&f, bool o=false)
+XTAL_0EX
+{
+	XTAL_IF0
+	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_STD_(L1)) {
+		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(xs[I]);});
+	}
+	XTAL_0IF_(default) {
+		copy_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
+	}
+}
 template <iterator_q Y_, bounded_q Xs>
 XTAL_DEF_(inline)
 XTAL_FN0 copy_to(Y_ y0, Xs const &xs, bool o=false)
@@ -124,10 +131,14 @@ XTAL_0EX
 	using X_ = iterator_t<Xs>;
 	using X  = iteratee_t<X_>;
 	using Y  = iteratee_t<Y_>;
-	if constexpr (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
+	XTAL_IF0
+//	XTAL_0IF (bond::pack_q<Xs>) {
+//		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = xs[I];});
+//	}
+	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memcpy(y0, XTAL_REF_(xs).begin(), sizeof(xs));
 	}
-	else {
+	XTAL_0IF_(default) {
 		copy_to(y0, xs.begin(), xs.end(), o);
 	}
 }
@@ -142,19 +153,26 @@ XTAL_0EX
 {
 	copy_to(y0, mover_f(x0), mover_f(xN), XTAL_REF_(f), o);
 }
-template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
-XTAL_DEF_(inline)
-XTAL_FN0 move_to(Y_ y0, Xs &&xs, F &&f, bool o=false)
-XTAL_0EX
-{
-	move_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
-}
 template <iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline)
 XTAL_FN0 move_to(Y_ y0, X_ x0, X_ xN, bool o=false)
 XTAL_0EX
 {
 	copy_to(y0, mover_f(x0), mover_f(xN), o);
+}
+
+template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
+XTAL_DEF_(inline)
+XTAL_FN0 move_to(Y_ y0, Xs &&xs, F &&f, bool o=false)
+XTAL_0EX
+{
+	XTAL_IF0
+	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_STD_(L1)) {
+		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(_std::move(xs[I]));});
+	}
+	XTAL_0IF_(default) {
+		move_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
+	}
 }
 template <iterator_q Y_, bounded_q Xs>
 XTAL_DEF_(inline)
@@ -164,10 +182,14 @@ XTAL_0EX
 	using X_ = iterator_t<Xs>;
 	using X  = iteratee_t<X_>;
 	using Y  = iteratee_t<Y_>;
-	if constexpr (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
+	XTAL_IF0
+//	XTAL_0IF (bond::pack_q<Xs>) {
+//		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = _std::move(xs[I]);});
+//	}
+	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memmove(y0, XTAL_REF_(xs).begin(), sizeof(xs));
 	}
-	else {
+	XTAL_0IF_(default) {
 		move_to(y0, xs.begin(), xs.end(), o);
 	}
 }

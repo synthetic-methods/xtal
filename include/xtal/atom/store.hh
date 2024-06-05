@@ -78,18 +78,18 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
 
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(iterated_q auto const & t) XTAL_0EX {return _std::span(offence(t.begin()), offence(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(              iterator  i) XTAL_0EX {return reinterpret_cast<                  iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(              iterator_ i) XTAL_0EX {return reinterpret_cast<                  iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(        const_iterator  i) XTAL_0EX {return reinterpret_cast<            const_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(        const_iterator_ i) XTAL_0EX {return reinterpret_cast<            const_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(      reverse_iterator  i) XTAL_0EX {return reinterpret_cast<          reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(      reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<          reverse_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(const_reverse_iterator  i) XTAL_0EX {return reinterpret_cast<    const_reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_FN1 offence(const_reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<    const_reverse_iterator >(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(iterated_q auto const & t) XTAL_0EX {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(              iterator  i) XTAL_0EX {return reinterpret_cast<              iterator_>(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(              iterator_ i) XTAL_0EX {return reinterpret_cast<              iterator >(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(        const_iterator  i) XTAL_0EX {return reinterpret_cast<        const_iterator_>(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(        const_iterator_ i) XTAL_0EX {return reinterpret_cast<        const_iterator >(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(      reverse_iterator  i) XTAL_0EX {return reinterpret_cast<      reverse_iterator_>(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(      reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<      reverse_iterator >(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(const_reverse_iterator  i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator_>(i);}
+		XTAL_DEF_(return,inline) XTAL_FN1 offence_f(const_reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline) XTAL_FN1 defence(iterated_q auto const & t) XTAL_0EX {return _std::span(defence(t.begin()), defence(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_FN1 defence(iterator_q auto         i) XTAL_0EX {return _std::launder(offence(XTAL_REF_(i)));}
+		XTAL_DEF_(return,inline) XTAL_FN1 defence_f(iterated_q auto const & t) XTAL_0EX {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
+		XTAL_DEF_(return,inline) XTAL_FN1 defence_f(iterator_q auto         i) XTAL_0EX {return _std::launder(offence_f(XTAL_REF_(i)));}
 		
 
 		W_data m_data[N_data]{};
@@ -97,8 +97,8 @@ struct store<U_data[N_data]>
 
 
 	public:// ACCESS
-		XTAL_TN2 begin() XTAL_0EX {return defence(reinterpret_cast<      iterator_>(m_data));}
-		XTAL_TN2 begin() XTAL_0FX {return defence(reinterpret_cast<const_iterator_>(m_data));}
+		XTAL_TN2 begin() XTAL_0EX {return defence_f(reinterpret_cast<      iterator_>(m_data));}
+		XTAL_TN2 begin() XTAL_0FX {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
 		XTAL_TO2_(XTAL_TN2 end(), _std::next(begin(), n_data))
 
 
@@ -162,7 +162,7 @@ struct store<U_data[N_data]>
 			auto sX = _std::distance(i0, end());
 			if (0 < sX) {
 				static_assert(_std::is_move_constructible_v<value_type>);
-				_std::memmove(offence(iN), offence(i0), sX*_detail::aligned_n<value_type>);
+				_std::memmove(offence_f(iN), offence_f(i0), sX*_detail::aligned_n<value_type>);
 			}
 			n_data += sN;
 		}
@@ -274,7 +274,7 @@ struct store<U_data[N_data]>
 		XTAL_TN0 swap(homotype &t)
 		requires _std::swappable<value_type>
 		{
-			_detail::swap_with(offence(begin()), offence(t));
+			_detail::swap_with(offence_f(begin()), offence_f(t));
 		}
 
 
@@ -367,7 +367,7 @@ struct store<U_data[N_data]>
 		XTAL_TN1_(iterator) insert(I i, size_type sN, common_q<U_data> auto &&u)
 		{
 			deserve(sN, i);
-			_std::uninitialized_fill_n(offence(i), sN, XTAL_REF_(u));
+			_std::uninitialized_fill_n(offence_f(i), sN, XTAL_REF_(u));
 			return i;
 		}
 		///\
@@ -377,7 +377,7 @@ struct store<U_data[N_data]>
 		XTAL_TN1_(iterator) insert(I i, size_type sN)
 		{
 			deserve(sN, i);
-			_std::uninitialized_value_construct_n(offence(i), sN);
+			_std::uninitialized_value_construct_n(offence_f(i), sN);
 			return i;
 		}
 		
@@ -386,12 +386,12 @@ struct store<U_data[N_data]>
 		{
 			deserve(1);
 			iterator i = end(); ++n_data;
-			return (iterator) ::new(offence(i)) value_type(XTAL_REF_(oo)...);
+			return (iterator) ::new(offence_f(i)) value_type(XTAL_REF_(oo)...);
 		}
 		XTAL_TN1_(iterator) inplace(iterator i, auto &&...oo)
 		{
 			deserve(1, i);
-			return (iterator) ::new(offence(i)) value_type(XTAL_REF_(oo)...);
+			return (iterator) ::new(offence_f(i)) value_type(XTAL_REF_(oo)...);
 		}
 
 

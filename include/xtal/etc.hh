@@ -24,100 +24,91 @@
 #include <cstdint>
 
 
-#define XTAL_INT_(...) XTAL_INT__##__VA_ARGS__
-#define XTAL_INT__0          char
-#define XTAL_INT__1     short int
-#define XTAL_INT__2           int
-#define XTAL_INT__3      long int
-#define XTAL_INT__4 long long int
+#define XTAL_INT_(...) XTAL_INT_##__VA_ARGS__
+#define XTAL_INT_0          char
+#define XTAL_INT_1     short int
+#define XTAL_INT_2           int
+#define XTAL_INT_3      long int
+#define XTAL_INT_4 long long int
 
-#define XTAL_FLT_(...) XTAL_FLT__##__VA_ARGS__
-#define XTAL_FLT__0          void
-#define XTAL_FLT__1          void
-#define XTAL_FLT__2         float
-#define XTAL_FLT__3        double
-#define XTAL_FLT__4   long double
+#define XTAL_FLT_(...) XTAL_FLT_##__VA_ARGS__
+#define XTAL_FLT_0          void
+#define XTAL_FLT_1          void
+#define XTAL_FLT_2         float
+#define XTAL_FLT_3        double
+#define XTAL_FLT_4   long double
 
 
-#define XTAL_STD_(...) XTAL_STD__##__VA_ARGS__
+#define XTAL_STD_(...) XTAL_STD_##__VA_ARGS__
 #define XTAL_STD ((__cplusplus/100)%100)
-#define XTAL_STD__IEC 60559
+#define XTAL_STD_IEC 60559
 
-#define XTAL_STD__null_t ::std::nullptr_t
-#define XTAL_STD__unit_t ::std::monostate
-#define XTAL_STD__byte_t ::std::byte
-#define XTAL_STD__sign_t ::std::int_fast8_t
-#define XTAL_STD__size_t ::std::size_t
-#define XTAL_STD__size_s ::std::ptrdiff_t
-#define XTAL_STD__real_s float
+#define XTAL_STD_null_t ::std::nullptr_t
+#define XTAL_STD_unit_t ::std::monostate
+#define XTAL_STD_byte_t ::std::byte
+#define XTAL_STD_sign_t ::std::int_fast8_t
+#define XTAL_STD_size_t ::std::size_t
+#define XTAL_STD_size_s ::std::ptrdiff_t
+#define XTAL_STD_real_s float
 
 
 #if     defined(__cacheline_aligned)
-#define XTAL_STD__L1 __cacheline_aligned
+#define XTAL_STD_L1 __cacheline_aligned
 
 #elif   defined(L1_CACHE_BYTES)
-#define XTAL_STD__L1 L1_CACHE_BYTES
+#define XTAL_STD_L1 L1_CACHE_BYTES
 
 #elif   defined(L1_CACHE_SHIFT)
-#define XTAL_STD__L1 L1_CACHE_SHIFT
+#define XTAL_STD_L1 L1_CACHE_SHIFT
 
 #else
-#define XTAL_STD__L1 0x40
+#define XTAL_STD_L1 0x40
 
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_V00_(...) XTAL_V00__##__VA_ARGS__
+#define XTAL_V00_(...) XTAL_V00_##__VA_ARGS__
 
 #if     defined(_MSC_VER)
-#define XTAL_V00__MSVC (_MSC_VER)
-#define XTAL_V00__LLVM 0
-#define XTAL_V00__GNUC 0
+#define XTAL_V00_MSVC (_MSC_VER)
+#define XTAL_V00_LLVM 0
+#define XTAL_V00_GNUC 0
+//static_assert(1933 <= XTAL_V00_(MSVC));
 
 #elif   defined(__clang__)
-#define XTAL_V00__LLVM (100*__clang_major__ + __clang_minor__)
-#define XTAL_V00__GNUC 0
-#define XTAL_V00__MSVC 0
+#define XTAL_V00_LLVM (100*__clang_major__ + __clang_minor__)
+#define XTAL_V00_GNUC 0
+#define XTAL_V00_MSVC 0
+//static_assert(1400 <= XTAL_V00_(LLVM));
 
 #elif   defined(__GNUC__)
-#define XTAL_V00__GNUC (100*__GNUC__ + __GNUC_MINOR__)
-#define XTAL_V00__MSVC 0
-#define XTAL_V00__LLVM 0
+#define XTAL_V00_GNUC (100*__GNUC__ + __GNUC_MINOR__)
+#define XTAL_V00_MSVC 0
+#define XTAL_V00_LLVM 0
+//static_assert(1200 <= XTAL_V00_(GNUC));  
 
 #else
-#define XTAL_V00__MSVC 0
-#define XTAL_V00__LLVM 0
-#define XTAL_V00__GNUC 0
-
-#endif
-
-
-#if     XTAL_V00_(MSVC)
-static_assert(1933 <= XTAL_V00_(MSVC));
-
-#elif   XTAL_V00_(LLVM)
-static_assert(1400 <= XTAL_V00_(LLVM));
-
-#elif   XTAL_V00_(GNUC)
-//static_assert(1200 <= XTAL_V00_(GNUC));  
+#define XTAL_V00_MSVC 0
+#define XTAL_V00_LLVM 0
+#define XTAL_V00_GNUC 0
 
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ENV_(...)  XTAL_ENV__##__VA_ARGS__
+#define XTAL_ENV_(...)  XTAL_ENV_##__VA_ARGS__
 
 #if     XTAL_V00_(MSVC)
-#define XTAL_ENV__pop   _Pragma("warning(pop)")
-#define XTAL_ENV__push  _Pragma("warning(push)")\
+#define XTAL_ENV_pop    _Pragma("warning(pop)")
+#define XTAL_ENV_push   _Pragma("warning(push)")\
                         _Pragma("warning(disable:4010)")\
 
 #elif   XTAL_V00_(LLVM)
-#define XTAL_ENV__pop   _Pragma("clang diagnostic pop")
-#define XTAL_ENV__push  _Pragma("clang diagnostic push")\
+#define XTAL_ENV_pop    _Pragma("clang diagnostic pop")
+#define XTAL_ENV_push   _Pragma("clang diagnostic push")\
                         _Pragma("clang diagnostic ignored \"-Wcomment\"")\
                         _Pragma("clang diagnostic ignored \"-Wdocumentation\"")\
                         _Pragma("clang diagnostic ignored \"-Wconstant-conversion\"")\
@@ -126,8 +117,8 @@ static_assert(1400 <= XTAL_V00_(LLVM));
                         _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
 
 #elif   XTAL_V00_(GNUC)
-#define XTAL_ENV__pop   _Pragma("GCC diagnostic pop")
-#define XTAL_ENV__push  _Pragma("GCC diagnostic push")\
+#define XTAL_ENV_pop    _Pragma("GCC diagnostic pop")
+#define XTAL_ENV_push   _Pragma("GCC diagnostic push")\
                         _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
 //                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
 
@@ -144,7 +135,7 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_USE                                   using
 #define XTAL_TYP                                   struct
 #define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_ANY_(...)     ::std::                 declval <__VA_ARGS__>()
+#define XTAL_VAL_(...)     ::std::                 declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)
 #define XTAL_REF_(...)                 static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 
@@ -158,9 +149,9 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_CON                         constexpr       
 #define XTAL_CXN                         constexpr explicit
 
-#define XTAL_OP0_(...)                   XTAL_OP0__##__VA_ARGS__
-#define XTAL_OP0__explicit               constexpr explicit              operator
-#define XTAL_OP0__implicit               constexpr                       operator
+#define XTAL_OP0_(...)                   XTAL_OP0_##__VA_ARGS__
+#define XTAL_OP0_explicit                constexpr explicit              operator
+#define XTAL_OP0_implicit                constexpr                       operator
 #define XTAL_OP0                         constexpr                 void  operator
 #define XTAL_OP1                         constexpr        decltype(auto) operator
 #define XTAL_OP2           [[nodiscard]] constexpr        decltype(auto) operator
@@ -186,24 +177,16 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 #define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FM_(...)           mutable constexpr noexcept {return (__VA_ARGS__);}
 
-#define XTAL_IFQ                 if      constexpr
-#define XTAL_IF1                 if      constexpr (1);
 #define XTAL_IF0                 if      constexpr (0);
 #define XTAL_0IF            else if      constexpr
-#define XTAL_IF1_(...)                   XTAL_IF1__##__VA_ARGS__
-#define XTAL_IF0_(...)                   XTAL_IF0__##__VA_ARGS__
-#define XTAL_0IF_(...)                   XTAL_0IF__##__VA_ARGS__
-
-#define XTAL_0IF__else      else
-
-#if XTAL_STD < 26
-#define XTAL_IF1__static         if  (    _std::is_constant_evaluated())
-#define XTAL_IF0__static         if  (not _std::is_constant_evaluated())
-#define XTAL_0IF__static    else if  (    _std::is_constant_evaluated())
+#define XTAL_0IF_(...)                   XTAL_0IF_##__VA_ARGS__
+#define XTAL_0IF_default    else
+#if     XTAL_STD < 26
+#define XTAL_0IF_dynamic    else if (not _std::is_constant_evaluated())
+#define XTAL_0IF_static     else if (    _std::is_constant_evaluated())
 #else
-#define XTAL_IF1__static         if      consteval
-#define XTAL_IF0__static         if  not consteval
-#define XTAL_0IF__static    else if      consteval
+#define XTAL_0IF_dynamic    else if  not consteval
+#define XTAL_0IF_static     else if      consteval
 #endif
 
 #define XTAL_0FX                 const             noexcept
@@ -248,17 +231,17 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)        XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
+#define XTAL_DEF_(...)           XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
 
-#define XTAL_ATT_(...)        XTAL_ATT__##__VA_ARGS__
+#define XTAL_ATT_(...)           XTAL_ATT_##__VA_ARGS__
 #if     XTAL_V00_(MSVC)
-#define XTAL_ATT__inline      __forceinline
+#define XTAL_ATT_inline          __forceinline
 #else
-#define XTAL_ATT__inline      inline __attribute__((always_inline))
+#define XTAL_ATT_inline          inline __attribute__((always_inline))
 #endif
-#define XTAL_ATT__return      [[nodiscard]]
-#define XTAL_ATT__static      static
-#define XTAL_ATT__constexpr   constexpr
+#define XTAL_ATT_return          [[nodiscard]]
+#define XTAL_ATT_static          static
+#define XTAL_ATT_constexpr       constexpr
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -273,15 +256,15 @@ static_assert(1400 <= XTAL_V00_(LLVM));
 
 #define XTAL_E0 ()
 #define XTAL_F0() XTAL_F2_
-#define XTAL_F1_(F_,     ...)        __VA_OPT__(XTAL_X2_(XTAL_F2_(F_, __VA_ARGS__)))///< Map.
-#define XTAL_F2_(F_, A0, ...) F_(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (F_, __VA_ARGS__))
+#define XTAL_F1_(F_,     ...)           __VA_OPT__(XTAL_X2_(XTAL_F2_(F_, __VA_ARGS__)))///< Map.
+#define XTAL_F2_(F_, A0, ...)    F_(A0) __VA_OPT__(XTAL_F0  XTAL_E0 (F_, __VA_ARGS__))
 
-#define XTAL_X0_(...)                __VA_ARGS__
-#define XTAL_X1_(...)         XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
-#define XTAL_X2_(...)         XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))///< Repeat.
+#define XTAL_X0_(...)                   __VA_ARGS__
+#define XTAL_X1_(...)            XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
+#define XTAL_X2_(...)            XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))///< Repeat.
 
-#define XTAL_S0_(SYM)                 #SYM
-#define XTAL_S1_(SYM)         XTAL_S0_(SYM)///< Stringify.
+#define XTAL_S0_(SYM)                    #SYM
+#define XTAL_S1_(SYM)            XTAL_S0_(SYM)///< Stringify.
 
 
 ///////////////////////////////////////////////////////////////////////////////

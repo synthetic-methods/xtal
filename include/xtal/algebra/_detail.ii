@@ -17,34 +17,37 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <template <class ...Us> class T>
-struct build
+struct initialize
 {
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
-	template <class V=void>
+	template <class V=void, class ...Xs>
 	XTAL_DEF_(return,inline)
-	XTAL_FN1 via(auto &&...xs)
+	XTAL_FN1 via(Xs &&...xs)
 	XTAL_0EX
-	XTAL_REQ common_q<decltype(xs)...>
 	{
-		if constexpr (complete_q<V>) {
+		XTAL_IF0
+		XTAL_0IF (complete_q<V>) {
 			XTAL_SET f = invoke_f<V>;
 			XTAL_USE F = invoke_t<V>;
-			XTAL_USE U = common_t<decltype(xs)...>;
+			XTAL_USE U = common_t<_std::invoke_result_t<F, Xs>...>;
 			XTAL_SET N = sizeof...(xs);
-			if constexpr (idempotent_p<U, decltype(f)>) {
+			if constexpr (idempotent_p<U, F>) {
 				return T<U[N]>{ (XTAL_REF_(xs))...};
 			}
 			else {
 				return T<U[N]>{f(XTAL_REF_(xs))...};
 			}
 		}
-		else {
+		XTAL_0IF (incomplete_q<V>) {
 			return via<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(xs)...);
 		}
 	}
 
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 }//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

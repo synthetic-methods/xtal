@@ -13,16 +13,15 @@ namespace xtal::resource
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Represents a local `{store,state}` pair, \
-used as e.g. a buffer and its abstract/copyable `std::span`. \
+Associates an abstract state/view with an underlying store. \
 
-template <typename ..._s> XTAL_TYP restash;
-template <typename ..._s> XTAL_USE restash_t = confined_t<restash<_s...>>;
-template <typename ..._s> XTAL_ASK restash_q = bond::head_tag_p<restash, _s...>;
+template <typename ..._s> XTAL_TYP stashed;
+template <typename ..._s> XTAL_USE stashed_t = confined_t<stashed<_s...>>;
+template <typename ..._s> XTAL_ASK stashed_q = bond::head_tag_p<stashed, _s...>;
 template <bounded_q U_state, bounded_q U_store>
-struct restash<U_state, U_store>
+struct stashed<U_state, U_store>
 {
-	using subkind = bond::compose<bond::tag<restash>
+	using subkind = bond::compose<bond::tag<stashed>
 	,	cell::refer<U_state>
 	,	cell::defer<U_state>
 	,	cell::defer<U_store>

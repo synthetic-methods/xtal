@@ -272,7 +272,7 @@ struct defer
 			XTAL_IF0
 			XTAL_0IF (is_q<W, U>) {return S_::heading(w) || ((void) S_::head(XTAL_REF_(w)), 0);}
 		//	XTAL_0IF (as_q<W, U>) {return defuse((U) XTAL_REF_(w));}
-			XTAL_0IF_(else)       {return S_::defuse(XTAL_REF_(w));}
+			XTAL_0IF_(default)    {return S_::defuse(XTAL_REF_(w));}
 		}
 
 	};

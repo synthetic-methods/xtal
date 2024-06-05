@@ -113,7 +113,7 @@ struct phasor<K_data[N_data], As...>
 				XTAL_0IF (N_data == 2) {
 					return egress(bond::repack_f(phi(0), phi(1)*(rate)));
 				}
-				XTAL_0IF_(else) {
+				XTAL_0IF_(default) {
 					return egress(phi.template got<decltype(bond::repack_f)>()*S_data(rate));
 				}
 			}
@@ -132,7 +132,7 @@ struct phasor<K_data[N_data], As...>
 		{
 			XTAL_IF0
 			XTAL_0IF (1 == bias()) {return ++head();}
-			XTAL_0IF_(else)        {return   head();}
+			XTAL_0IF_(default)     {return   head();}
 		};
 		template <class Y>
 		XTAL_DEF_(return,inline)
@@ -141,7 +141,7 @@ struct phasor<K_data[N_data], As...>
 		{
 			XTAL_IF0
 			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
-			XTAL_0IF_(else)        {return                  XTAL_REF_(y);}
+			XTAL_0IF_(default)     {return                  XTAL_REF_(y);}
 		};
 		
 	};

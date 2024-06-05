@@ -11,9 +11,9 @@ namespace xtal::resource
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP respool;
-template <typename ..._s> XTAL_USE respool_t = confined_t<respool<_s...>>;
-template <typename ..._s> XTAL_ASK respool_q = bond::head_tag_p<respool, _s...>;
+template <typename ..._s> XTAL_TYP spooled;
+template <typename ..._s> XTAL_USE spooled_t = confined_t<spooled<_s...>>;
+template <typename ..._s> XTAL_ASK spooled_q = bond::head_tag_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@ template <typename ..._s> XTAL_ASK respool_q = bond::head_tag_p<respool, _s...>;
 Provides a specialization of `atom::spool`. \
 
 template <bond::compose_q A>
-struct respool<A>
+struct spooled<A>
 {
-	using subkind = bond::tag<respool>;
+	using subkind = bond::tag<spooled>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -39,9 +39,9 @@ struct respool<A>
 	};
 };
 template <Integral_q A>
-struct respool<A>
+struct spooled<A>
 {
-	using subkind = bond::tag<respool>;
+	using subkind = bond::tag<spooled>;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -57,8 +57,8 @@ struct respool<A>
 	};
 };
 template <>
-struct respool<>
-:	respool<Integral_t<-1>>
+struct spooled<>
+:	spooled<Integral_t<-1>>
 {};
 
 
