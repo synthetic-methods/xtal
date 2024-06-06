@@ -155,7 +155,6 @@
 #define XTAL_OP0                         constexpr                 void  operator
 #define XTAL_OP1                         constexpr        decltype(auto) operator
 #define XTAL_OP2           [[nodiscard]] constexpr        decltype(auto) operator
-#define XTAL_OP3           [[nodiscard]] constexpr friend decltype(auto) operator
 #define XTAL_TN0                         constexpr                 void
 #define XTAL_TN1                         constexpr        decltype(auto)
 #define XTAL_TN2           [[nodiscard]] constexpr        decltype(auto)
@@ -165,7 +164,6 @@
 
 #define XTAL_OP1_(...)                   constexpr        __VA_ARGS__ operator
 #define XTAL_OP2_(...)     [[nodiscard]] constexpr        __VA_ARGS__ operator
-#define XTAL_OP3_(...)     [[nodiscard]] constexpr friend __VA_ARGS__ operator
 #define XTAL_TN1_(...)                   constexpr        __VA_ARGS__
 #define XTAL_TN2_(...)     [[nodiscard]] constexpr        __VA_ARGS__
 #define XTAL_FN1_(...)                   constexpr static __VA_ARGS__
@@ -241,6 +239,7 @@
 #endif
 #define XTAL_ATT_return          [[nodiscard]]
 #define XTAL_ATT_static          static
+#define XTAL_ATT_friend          friend
 #define XTAL_ATT_constexpr       constexpr
 
 

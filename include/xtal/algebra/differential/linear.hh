@@ -68,7 +68,10 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			bond::seek_forward_f<N_data - 1>([this] (auto I) XTAL_0FN_(let(I) += get(I + 1)));
+			auto &s = self();
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((_std::get<I>(s) += _std::get<I + 1>(s)),...);}
+			(bond::seek_s<N_data - 1>{});
 			return self();
 		}
 
@@ -86,7 +89,10 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			bond::seek_backward_f<N_data - 1>([this] (auto I) XTAL_0FN_(let(I) -= get(I + 1)));
+			auto &s = self();
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((_std::get<I>(s) -= _std::get<I + 1>(s)),...);}
+			(bond::antiseek_s<N_data - 1>{});
 			return self();
 		}
 

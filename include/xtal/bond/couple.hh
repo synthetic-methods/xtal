@@ -10,44 +10,46 @@ XTAL_ENV_(push)
 namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Binds multiple values/references, \
+providing point-wise multiplication/division and scalar summation. \
 
-template <class        ..._s> XTAL_TYP couple;
-template <class        ..._s> XTAL_ASK couple_q = bond::head_tag_p<couple, _s...>;
-template <class X, class Y=X> XTAL_USE couple_t = typename couple<X, Y>::type;
+template <class   ..._s>	XTAL_TYP couple;
+template <class   ..._s>	XTAL_ASK couple_q = bond::head_tag_p<couple, _s...>;
+template <class   ..._s>	XTAL_USE couple_t = typename couple<_s...>::type;
 
-template <class O, class X, class Y>
+template <class V=void, class ...Xs>
 XTAL_DEF_(return,inline)
-XTAL_FN1 couple_f(X &&x, Y &&y)
+XTAL_FN1 couple_f(Xs &&...xs)
 XTAL_0EX
 {
-	XTAL_SET f = invoke_f<O>;
-	XTAL_USE F = invoke_t<O>;
-	if constexpr (idempotent_p<X, F> and idempotent_p<X, F>) {
-		using X_ = _std::remove_reference_t<X>;
-		using Y_ = _std::remove_reference_t<Y>;
-		return couple_t<X_, Y_>(XTAL_REF_(x), XTAL_REF_(y));
+	XTAL_IF0
+	XTAL_0IF (complete_q<V>) {
+		XTAL_SET f = invoke_f<V>;
+		XTAL_USE F = invoke_t<V>;
+		if constexpr ((...and idempotent_p<Xs, F>)) {
+			return couple_t<based_t<_std::invoke_result_t<F, Xs>>...>{ (XTAL_REF_(xs))...};
+		}
+		else {
+			return couple_t<based_t<_std::invoke_result_t<F, Xs>>...>{f(XTAL_REF_(xs))...};
+		}
 	}
-	else {
-		using X_ = _std::remove_reference_t<_std::invoke_result_t<F, X>>;
-		using Y_ = _std::remove_reference_t<_std::invoke_result_t<F, Y>>;
-		return couple_t<X_, Y_>(f(XTAL_REF_(x)), f(XTAL_REF_(y)));
+	XTAL_0IF (incomplete_q<V>) {
+		return couple_f<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(xs)...);
 	}
-}
-template <class X, class Y>
-XTAL_DEF_(return,inline)
-XTAL_FN1 couple_f(X &&x, Y &&y)
-XTAL_0EX
-{
-	return couple_f<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(x), XTAL_REF_(y));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class X, class Y>
-struct couple<X, Y>
+template <class ...Xs>
+struct couple
 {
-	using supertype = bond::compose_s<_std::pair<X, Y>, tag<couple>>;
+	XTAL_LET N_data = sizeof...(Xs);
+	XTAL_USE U_data = devolved_t<Xs...>;
+
+	using archetype = pack_t<Xs...>;
+	using supertype = bond::compose_s<archetype, tag<couple>>;
 
 //	using Op = bond::operate<X>;
 
@@ -59,35 +61,65 @@ struct couple<X, Y>
 	public:
 		using supertype::supertype;
 		
-		using tuple_size = Cardinal_t<2>;
-		
-		template <size_t N, class _> struct tuple_element_;
-		template <          class _> struct tuple_element_<0, _> {using type = X;};
-		template <          class _> struct tuple_element_<1, _> {using type = Y;};
-		template <size_t N         > using  tuple_element = tuple_element_<N, type>;
+		template <size_t N>
+		using tuple_element = _std::tuple_element<N, archetype>;
+		using tuple_size    = _std::tuple_size   <   archetype>;
 
-		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
-		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_(&&) {if constexpr (N&1) return XTAL_MOV_(XTAL_1DX); else return XTAL_MOV_(XTAL_0DX);}
-		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0EX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
-		template <size_t N> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_( &) {if constexpr (N&1) return          (XTAL_1DX); else return          (XTAL_0DX);}
+		template <pack_q W> requires (N_data == pack_size_n<W>)
+		XTAL_DEF_(return,inline,friend)
+		XTAL_OP1 * (type const &s, W const &w)
+		XTAL_0EX
+		{
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(couple_f((_std::get<I>(s) * _std::get<I>(w))...))
+			(bond::seek_s<N_data>{});
+		}
+		template <pack_q W> requires (N_data == pack_size_n<W>)
+		XTAL_DEF_(return,inline,friend)
+		XTAL_OP1 / (type const &s, W const &w)
+		XTAL_0EX
+		{
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(couple_f((_std::get<I>(s) / _std::get<I>(w))...))
+			(bond::seek_s<N_data>{});
+		}
 
-		template <pack_q W> XTAL_DEF_(return,inline) XTAL_OP1 *  (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX*get<0>(w), XTAL_1DX*get<1>(w));}
-		template <pack_q W> XTAL_DEF_(return,inline) XTAL_OP1 /  (W const &w) XTAL_0FX {using _std::get; return couple_f(XTAL_0DX/get<0>(w), XTAL_1DX/get<1>(w));}
-
-		template <pack_q W> XTAL_DEF_(       inline) XTAL_OP1 *= (W const &w) XTAL_0EX {using _std::get; XTAL_0DX *= get<0>(w); XTAL_1DX *= get<1>(w); return *this;}
-		template <pack_q W> XTAL_DEF_(       inline) XTAL_OP1 /= (W const &w) XTAL_0EX {using _std::get; XTAL_0DX /= get<0>(w); XTAL_1DX /= get<1>(w); return *this;}
+		template <pack_q W> requires (N_data == pack_size_n<W>)
+		XTAL_DEF_(inline)
+		XTAL_OP1_(type &) *= (W const &w)
+		XTAL_0EX
+		{
+			[&, this]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((_std::get<I>(*this) *= _std::get<I>(w)),...);}
+			(bond::seek_s<N_data>{});
+			return *this;
+		}
+		template <pack_q W> requires (N_data == pack_size_n<W>)
+		XTAL_DEF_(inline)
+		XTAL_OP1_(type &) /= (W const &w)
+		XTAL_0EX
+		{
+			[&, this]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((_std::get<I>(*this) /= _std::get<I>(w)),...);}
+			(bond::seek_s<N_data>{});
+			return *this;
+		}
 
 	//	Scalar sum:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 sum(auto &&o)
+		XTAL_TN1 sum(auto const &u)
 		XTAL_0FX
 		{
-			if constexpr (N_sgn < 0) {
-				return XTAL_0DX + XTAL_REF_(o) - XTAL_1DX;
+			if constexpr (0 < N_sgn) {
+				return [&, this]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(u +...+ (_std::get<I>(*this)))
+				(bond::seek_s<N_data>{});
 			}
 			else {
-				return XTAL_0DX + XTAL_REF_(o) + XTAL_1DX;
+				return [&, this]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(u +...+ (_std::get<I>(*this)*U_data{-sign_n<I&1, -1>}))
+				(bond::seek_s<N_data>{});
 			}
 		}
 		template <int N_sgn=1>
@@ -95,33 +127,28 @@ struct couple<X, Y>
 		XTAL_TN1 sum()
 		XTAL_0FX
 		{
-			if constexpr (N_sgn < 0) {
-				return XTAL_0DX - XTAL_1DX;
-			}
-			else {
-				return XTAL_0DX + XTAL_1DX;
-			}
+			return sum<N_sgn>(U_data{0});
 		}
 		
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
-		template <int N_par=0>
+		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
 		XTAL_TN1 reflected()
 		XTAL_0FX
 		{
 			auto constexpr o = reflector<N_par>();
-			auto const     x = o*XTAL_0DX;
-			auto const     y = o*XTAL_1DX;
+			auto const x = o*_std::get<0>(*this);
+			auto const y = o*_std::get<1>(*this);
 			return couple_f(x + y, x - y);
 		}
 
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
-		template <int N_par=0>
+		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
 		XTAL_LET reflector()
-		XTAL_0EX -> devolved_t<X, Y>
+		XTAL_0EX -> U_data
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

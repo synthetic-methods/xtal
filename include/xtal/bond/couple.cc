@@ -59,8 +59,8 @@ TAG_("couple")
 
 		TRUE_(bond::computrim_f<19>(x) == 1.25);
 		TRUE_(bond::computrim_f<19>(y) == 0.75);
-		TRUE_(bond::computrim_f<19>(baz.get<0>()) == bar.get<0>());
-		TRUE_(bond::computrim_f<19>(baz.get<1>()) == bar.get<1>());
+		TRUE_(bond::computrim_f<19>(get<0>(baz)) == get<0>(bar));
+		TRUE_(bond::computrim_f<19>(get<1>(baz)) == get<1>(bar));
 
 	}
 }

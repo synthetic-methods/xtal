@@ -66,6 +66,8 @@ struct block<U_data[N_data]>
 		using T_::self;
 		using T_::twin;
 		
+		XTAL_TO4_(XTAL_DEF_(inline) XTAL_TN1 base(), T_::template self<supertype>())
+
 		XTAL_DEF_(return,inline)
 		XTAL_FN1_(typename Op::sigma_t) size() XTAL_0EX {return N_data;}
 
@@ -101,6 +103,12 @@ struct block<U_data[N_data]>
 
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
+
+//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](I));}
+//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_( &) {return          (T_::operator[](I));}
+//
+//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 let() XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](I));}
+//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 let() XTAL_0EX_( &) {return          (T_::operator[](I));}
 
 	public:// CONVERSION
 		XTAL_TN2 apply(auto &&f)
