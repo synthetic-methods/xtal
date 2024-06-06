@@ -859,14 +859,15 @@ public:
 	XTAL_FN1 explo_f(auto &&base, auto result)
 	XTAL_0EX
 	{
-		size_t constexpr N = N_exponent >> 0;
-		size_t constexpr M = N_exponent >> 1;
+		XTAL_SET N = N_exponent >> 0;
+		XTAL_SET M = N_exponent >> 1;
+		XTAL_SET I = N_exponent  & 1;
 		XTAL_IF0
 		XTAL_0IF (N == 0) {return result;}
-		XTAL_0IF (N  ^ 1) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
-		XTAL_0IF (N  & 1) {return explo_f<M>(square_f(         (base)), XTAL_REF_(base)*XTAL_MOV_(result));}
+		XTAL_0IF (I == 0) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
+		XTAL_0IF (I == 1) {return explo_f<M>(square_f(         (base)), XTAL_REF_(base)*XTAL_MOV_(result));}
 	}
-	template <size_t N_exponent>
+	template <int N_exponent>
 	XTAL_DEF_(return,inline)
 	XTAL_FN1 explo_f(auto &&base)
 	XTAL_0EX
@@ -875,10 +876,11 @@ public:
 		using Y =    based_t<X>;
 		using V = devolved_t<Y>;
 
-		size_t constexpr N = N_exponent;
+		XTAL_SET N = N_exponent;
 		XTAL_IF0
-		XTAL_0IF (N == 0) {return                             Y{1} ;}// FIXME: Won't work for `eigenclass_t`.
-		XTAL_0IF (N != 0) {return explo_f<N>(XTAL_REF_(base), V{1});}
+		XTAL_0IF (N == 0) {return                                   Y{1} ;}// FIXME: Won't work for `eigenclass_t`.
+		XTAL_0IF (0 <  N) {return explo_f< N>(     XTAL_REF_(base), V{1});}
+		XTAL_0IF (N <  0) {return explo_f<-N>(V{1}/XTAL_REF_(base), V{1});}
 	}
 	static_assert(explo_f<0>(alpha_t(2.0)) == 1.00);
 	static_assert(explo_f<1>(alpha_t(2.0)) == 2.00);

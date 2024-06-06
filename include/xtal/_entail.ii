@@ -28,9 +28,9 @@ XTAL_0EX -> sign_t
 	XTAL_0IF (N_0 == -1) {return (0 <  i) - (i <= 0);}
 }
 
-template <auto N, auto  ...Ms>	XTAL_ASK      exclusive_p =	(...and (N != Ms));
-template <auto N, auto  ...Ms>	XTAL_ASK      inclusive_p =	(...or  (N == Ms));
-template <auto N, auto  N_0=0>	XTAL_ASK           sign_p =	inclusive_p<N, -1, N_0, 1>;
+template <auto N, auto  ...Ms>	XTAL_ASK      exclusive_q =	(...and (N != Ms));
+template <auto N, auto  ...Ms>	XTAL_ASK      inclusive_q =	(...or  (N == Ms));
+template <auto N, auto  N_0=0>	XTAL_ASK           sign_p =	inclusive_q<N, -1, N_0, 1>;
 template <auto N, auto  N_0=0>	XTAL_LET           sign_n =	sign_f<N_0>(N);
 
 template <class         ...Ts>	XTAL_ASK           some_q =	0 < sizeof...(Ts);
@@ -112,6 +112,10 @@ template <int N           >	XTAL_TYP     Bisordinal   :	Nominal_t<N> {XTAL_TO4_(
 template <int N, int ...Ns>	XTAL_TYP     Fractional    	             {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N + real_s(1.0)/Fractional<Ns...>{});};
 template <int N           >	XTAL_TYP     Fractional<N>:	Nominal_t<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N);};
 
+template <       size_t N >	XTAL_TYP      Factorial   :	Nominal_t<N * Factorial<N - 1>{}> {};
+template <                >	XTAL_TYP      Factorial<0>:	Nominal_t<1> {};
+
+static_assert(Factorial <5      >{} == 120);
 static_assert(Fractional<2      >{} == 2.0);
 static_assert(Fractional<1, 1   >{} == 2.0);
 static_assert(Fractional<1, 1, 1>{} == 1.5);

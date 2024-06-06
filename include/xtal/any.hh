@@ -102,8 +102,8 @@ XTAL_LET size_0 = _entail:: size_0;
 XTAL_LET size_1 = _entail:: size_1;
 
 
-template <auto    N, auto  ...Ms>	XTAL_ASK      exclusive_p = _entail::exclusive_p<N, Ms... >;
-template <auto    N, auto  ...Ms>	XTAL_ASK      inclusive_p = _entail::inclusive_p<N, Ms... >;
+template <auto    N, auto  ...Ms>	XTAL_ASK      exclusive_q = _entail::exclusive_q<N, Ms... >;
+template <auto    N, auto  ...Ms>	XTAL_ASK      inclusive_q = _entail::inclusive_q<N, Ms... >;
 template <auto    N, auto  N_0=0>	XTAL_ASK           sign_p = _entail::     sign_p<N, N_0>;
 template <auto    N, auto  N_0=0>	XTAL_LET           sign_n = _entail::     sign_n<N, N_0>;
 
@@ -185,9 +185,9 @@ template <class   ...Ts>	XTAL_ASK      Liminal_q = (...and  _entail::     Limina
 template <Liminal_q  T >	XTAL_USE   Subliminal_s = typename _entail::  Subliminal_s<T >;
 template <Liminal_q  T >	XTAL_USE  Semiliminal_s = typename _entail:: Semiliminal_s<T >;
 
-template <int        N >	XTAL_USE   Bisordinal_t = typename _entail::  Bisordinal  <N    >::type;
-template <int     ...Ns>	XTAL_USE   Fractional_t = typename _entail::  Fractional  <Ns...>::type;
-template <int     ...Ns>	XTAL_LET   Fractional_n =          _entail::  Fractional  <Ns...>::value;
+template <size_t     N >	XTAL_LET    factorial_n =          _entail::   Factorial  <N    >::value;
+template <int        N >	XTAL_LET   bisordinal_n =          _entail::  Bisordinal  <N    >::value;
+template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  Fractional  <Ns...>::value;
 
 XTAL_USE  Logical_0 = _entail::  Logical_t<0>;
 XTAL_USE  Logical_1 = _entail::  Logical_t<1>;
