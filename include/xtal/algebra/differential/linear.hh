@@ -30,7 +30,7 @@ struct linear<U_data> : linear<U_data[2]>
 template <class U_data, int N_data>
 struct linear<U_data[N_data]>
 {
-	using Op = bond::operate<U_data>;
+	using _op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;

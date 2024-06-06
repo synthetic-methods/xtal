@@ -22,9 +22,9 @@ template <class W>
 struct sample
 {
 private:
-	using Op = bond::operate<W>;
-	using U = typename Op:: iota_t;
-	using V = typename Op::alpha_t;
+	using _op = bond::operate<W>;
+	using U = typename _op:: iota_t;
+	using V = typename _op::alpha_t;
 
 	XTAL_LET_(U) U_1 = 1;
 	XTAL_LET_(V) V_1 = 1;

@@ -16,9 +16,9 @@ namespace xtal::processor::_test
 template <typename ...As>
 void monomer_zipping()
 {
-	using Op = bond::operating;
-	using T_sigma = Op::sigma_t;
-	using T_alpha = Op::alpha_t;
+	using _op = bond::operating;
+	using T_sigma = _op::sigma_t;
+	using T_alpha = _op::alpha_t;
 
 	using            U_data = T_alpha;
 	size_t constexpr U_size = 2;

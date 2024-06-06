@@ -41,7 +41,7 @@ struct block<U_data(&)[N_data]>
 template <class U_data, size_t N_data>
 struct block<U_data[N_data]>
 {
-	using Op = bond::operate<U_data>;
+	using _op = bond::operate<U_data>;
 	
 	using supertype = _std::array<U_data, N_data>;
 
@@ -69,7 +69,7 @@ struct block<U_data[N_data]>
 		XTAL_TO4_(XTAL_DEF_(inline) XTAL_TN1 base(), T_::template self<supertype>())
 
 		XTAL_DEF_(return,inline)
-		XTAL_FN1_(typename Op::sigma_t) size() XTAL_0EX {return N_data;}
+		XTAL_FN1_(typename _op::sigma_t) size() XTAL_0EX {return N_data;}
 
 
 		XTAL_TO4_(template <class F>

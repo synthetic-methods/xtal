@@ -15,11 +15,11 @@ namespace xtal::atom::_test
 /**/
 TAG_("block")
 {
-	using Op = bond::operating;
-	using T_delta = typename Op::delta_t;
-	using T_sigma = typename Op::sigma_t;
-	using T_alpha = typename Op::alpha_t;
-	using T_aphex = typename Op::aphex_t;
+	using _op = bond::operating;
+	using T_delta = typename _op::delta_t;
+	using T_sigma = typename _op::sigma_t;
+	using T_alpha = typename _op::alpha_t;
+	using T_aphex = typename _op::aphex_t;
 
 	using W_alpha = block_t<T_alpha[2]>;
 	using W_aphex = block_t<T_aphex[2]>;

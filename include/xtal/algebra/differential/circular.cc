@@ -15,10 +15,10 @@ namespace xtal::algebra::differential::_test
 
 TAG_("circular")
 {
-	using Op = bond::operating;
-	using T_sigma = typename Op::sigma_t;
-	using T_delta = typename Op::delta_t;
-	using T_alpha = typename Op::alpha_t;
+	using _op = bond::operating;
+	using T_sigma = typename _op::sigma_t;
+	using T_delta = typename _op::delta_t;
+	using T_alpha = typename _op::alpha_t;
 	XTAL_LET_(T_alpha) two =  2;
 	XTAL_LET_(T_alpha) ten = 10;
 
@@ -70,12 +70,12 @@ TAG_("circular")
 	}
 	TRY_("multiplication")
 	{
-		T_alpha x = 1/3.L, x_dt = Op::haplo_f(4);
+		T_alpha x = 1/3.L, x_dt = _op::haplo_f(4);
 		U_phi phi{x, x_dt};
 		V_phi foo{x};
 
 		for (T_sigma i = 0; i < 0x08; ++i) {
-			T_alpha const u = -_std::pow(two, 1 + Op::mantissa_f(mt19937_f));
+			T_alpha const u = -_std::pow(two, 1 + _op::mantissa_f(mt19937_f));
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);
@@ -88,26 +88,26 @@ TAG_("circular")
 	{
 		EST_("multiplication (fixed-point)")
 		{
-			T_alpha x = 0.33, x_dt = Op::haplo_f(4);
+			T_alpha x = 0.33, x_dt = _op::haplo_f(4);
 
 			U_phi   phi{x, x_dt};
 		//	T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + Op::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + _op::mantissa_f(mt19937_f));
 				phi *= u;
 			}
 			return phi;
 		};
 		EST_("multiplication (floating-point)")
 		{
-			T_alpha x = 0.33, x_dt = Op::haplo_f(4);
+			T_alpha x = 0.33, x_dt = _op::haplo_f(4);
 
 		//	U_phi   phi{x, x_dt};
 			T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + Op::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + _op::mantissa_f(mt19937_f));
 				foo *= u;
 				foo -= _std::round(foo);
 			}
@@ -117,7 +117,7 @@ TAG_("circular")
 	/***/
 	TRY_("addition")
 	{
-		T_alpha x =  0.33, x_dt = Op::haplo_f(4);
+		T_alpha x =  0.33, x_dt = _op::haplo_f(4);
 		T_alpha y =  5.55;
 		T_alpha z =  x+y; z -= _std::round(z);
 

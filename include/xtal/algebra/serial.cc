@@ -15,11 +15,11 @@ namespace xtal::algebra::_test
 
 TAG_("solid", "serial")
 {
-	using Op = bond::operating;
-	using T_delta = typename Op::delta_t;
-	using T_sigma = typename Op::sigma_t;
-	using T_alpha = typename Op::alpha_t;
-	using T_aphex = typename Op::aphex_t;
+	using _op = bond::operating;
+	using T_delta = typename _op::delta_t;
+	using T_sigma = typename _op::sigma_t;
+	using T_alpha = typename _op::alpha_t;
+	using T_aphex = typename _op::aphex_t;
 
 	using D1 = serial_t<int[1]>;
 	using D2 = serial_t<int[2]>;

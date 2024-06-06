@@ -42,10 +42,10 @@ struct circular<K_data> : circular<K_data[2]>
 template <class K_data, size_t N_data>
 struct circular<K_data[N_data]>
 {
-	using Op = bond::operate<K_data>;
-	using U_delta = typename Op::delta_t;
-	using U_sigma = typename Op::sigma_t;
-	using U_alpha = typename Op::alpha_t;
+	using _op = bond::operate<K_data>;
+	using U_delta = typename _op::delta_t;
+	using U_sigma = typename _op::sigma_t;
+	using U_alpha = typename _op::alpha_t;
 	
 	using W_delta = linear_t<U_delta[N_data]>;
 	using W_sigma = linear_t<U_sigma[N_data]>;
@@ -66,8 +66,8 @@ struct circular<K_data[N_data]>
 		using  T_ = holotype<T>;
 
 	public:// MAP
-		XTAL_DEF_(return,inline) XTAL_FN1   ordinate_f(U_alpha const &o) XTAL_0EX {return static_cast<U_sigma>(static_cast<U_delta>(o*Op::diplo_f()));};
-		XTAL_DEF_(return,inline) XTAL_FN1 coordinate_f(U_sigma const &o) XTAL_0EX {return static_cast<U_alpha>(static_cast<U_delta>(o))*Op::haplo_f();};
+		XTAL_DEF_(return,inline) XTAL_FN1   ordinate_f(U_alpha const &o) XTAL_0EX {return static_cast<U_sigma>(static_cast<U_delta>(o*_op::diplo_f()));};
+		XTAL_DEF_(return,inline) XTAL_FN1 coordinate_f(U_sigma const &o) XTAL_0EX {return static_cast<U_alpha>(static_cast<U_delta>(o))*_op::haplo_f();};
 
 	public:// ACCESS
 		using T_::self;
@@ -122,7 +122,7 @@ struct circular<K_data[N_data]>
 		XTAL_OP1_(T &) /= (number_q auto const &f)
 		XTAL_0EX
 		{
-			return operator*=(Op::alpha_1/f);
+			return operator*=(_op::alpha_1/f);
 		}
 
 		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
@@ -135,9 +135,9 @@ struct circular<K_data[N_data]>
 		XTAL_OP1_(T &) *= (real_number_q auto const &f)
 		XTAL_0EX
 		{
-			size_t constexpr M_bias = Op::N_width >> 3;
-			size_t constexpr M_size = Op::half.depth - M_bias;// {52,23} -> {23, 9}
-			auto [m, n] = Op::scientific_f((U_alpha) f);
+			size_t constexpr M_bias = _op::N_width >> 3;
+			size_t constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
+			auto [m, n] = _op::scientific_f((U_alpha) f);
 			auto &s = reinterpret_cast<W_delta &>(self());
 			m >>= n - M_size;
 			s >>=     M_size;
@@ -165,7 +165,7 @@ struct circular<K_data[N_data]>
 		XTAL_OP1_(T &) += (real_number_q auto const &f)
 		XTAL_0EX
 		{
-			T_::operator[](0) += Op::fractional_f(f);
+			T_::operator[](0) += _op::fractional_f(f);
 			return self();
 		}
 		XTAL_OP1_(T &) += (integral_number_q auto const &i)

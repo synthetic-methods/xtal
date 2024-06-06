@@ -15,11 +15,11 @@ namespace xtal::algebra::_test
 /**/
 TAG_("lattice")
 {
-	using Op = bond::operating;
-	using T_delta = typename Op::delta_t;
-	using T_sigma = typename Op::sigma_t;
-	using T_alpha = typename Op::alpha_t;
-	using T_aphex = typename Op::aphex_t;
+	using _op = bond::operating;
+	using T_delta = typename _op::delta_t;
+	using T_sigma = typename _op::sigma_t;
+	using T_alpha = typename _op::alpha_t;
+	using T_aphex = typename _op::aphex_t;
 
 	auto constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 

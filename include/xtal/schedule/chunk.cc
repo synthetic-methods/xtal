@@ -24,10 +24,10 @@ void chunk_processor_x1()
 	using namespace resource;
 //	using namespace schedule;
 
-	using Op = bond::operating;
-	using T_alpha  = typename Op::alpha_t;
-	using T_sigma  = typename Op::sigma_t;
-	using T_delta  = typename Op::delta_t;
+	using _op = bond::operating;
+	using T_alpha  = typename _op::alpha_t;
+	using T_sigma  = typename _op::sigma_t;
+	using T_delta  = typename _op::delta_t;
 
 	using U_chunk = chunk_t<spooled<Integral_t<0x10>>>;
 	using U_event = occur::packed_t<onset_t>;

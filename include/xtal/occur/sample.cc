@@ -17,13 +17,13 @@ TAG_("sample")
 {
 	TRY_("construction")
 	{
-		using Op = bond::operating;
+		using _op = bond::operating;
 
-		using T_sigma = typename Op::sigma_t;
-		using T_alpha = typename Op::alpha_t;
+		using T_sigma = typename _op::sigma_t;
+		using T_alpha = typename _op::alpha_t;
 
-		auto constexpr b = (T_sigma) Op::diplo_f(16);
-		auto constexpr p = (T_alpha) Op::haplo_f(16);
+		auto constexpr b = (T_sigma) _op::diplo_f(16);
+		auto constexpr p = (T_alpha) _op::haplo_f(16);
 
 		auto d = sample_t<>{b};
 		auto q = sample_t<>{p};

@@ -31,7 +31,7 @@ struct series<U_data[N_data]>
 	using U_v1 = devalued_t<U_v0>;
 	using U_v2 = devalued_t<U_v1>;
 
-	using Op = bond::operate<U_data>;
+	using _op = bond::operate<U_data>;
 	
 	template <class T>
 	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
@@ -78,7 +78,7 @@ struct series<U_data[N_data]>
 			static_assert(sizeof(W1_) == sizeof(U2_));
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
-			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, Op::template root_f<-1>(u2)});
+			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([this] (auto I) XTAL_0FN {
 				auto const &[o, e] = get(I);
 				let(I) = {o*e.real(), _std::conj(o)*e.imag()};
@@ -94,7 +94,7 @@ struct series<U_data[N_data]>
 		{
 			using I = typename T_::difference_type;
 
-			XTAL_SET N_shift = Op::bit_ceiling_f(N_step);
+			XTAL_SET N_shift = _op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
@@ -105,12 +105,12 @@ struct series<U_data[N_data]>
 			I constexpr M_skip = N_step - N_skip;
 
 		//	Compute and populate the 0th and 1st powers:
-			auto const o = Op::template explo_f<N_index>(u);
+			auto const o = _op::template explo_f<N_index>(u);
 			let(I0) = o;
 			let(I1) = o*u;
 
 			for (I i = I1; i < IM; i += N_step) {
-				auto w = Op::square_f(get(i));
+				auto w = _op::square_f(get(i));
 			
 			//	Use the square of the previous value to populate the values at `i << 1`:
 				I ii = i << 1;
@@ -138,8 +138,8 @@ struct series<U_data[N_data]>
 			auto const j = T_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_data`:
-			auto constexpr x = Op::patio_f(-1, N_data);
-			auto const     y = Op::circle_f(x);// TODO: Make `constexpr`?
+			auto constexpr x = _op::patio_f(-1, N_data);
+			auto const     y = _op::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
 			typename T_::difference_type constexpr M = N_data >> 2;// `1/8`th
@@ -252,7 +252,7 @@ struct series<U_data[N_data]>
 				T(Ordinal_t<-1>{}).convolve(s, t);
 			}
 			else {
-				using X = typename Op::aphex_t;
+				using X = typename _op::aphex_t;
 				using Y = typename series<X>::type;
 				Y s_(s);
 				Y t_(t);
