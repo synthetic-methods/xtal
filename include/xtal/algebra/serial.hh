@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./lattice.hh"
-
+#include "./scalar.hh"
 
 
 
@@ -11,9 +11,10 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	XTAL_TYP serial;
-template <class   ..._s>	XTAL_USE serial_t = typename serial<_s...>::type;
-template <class   ...Ts>	XTAL_ASK serial_q = bond::head_tag_p<serial_t, Ts...>;
+template <class           ..._s>	XTAL_TYP serial;
+template <class           ..._s>	XTAL_USE serial_t = typename serial<_s...>::type;
+template <class           ...Ts>	XTAL_ASK serial_q = bond::head_tag_p<serial_t, Ts...>;
+template <size_t N, class ...Ts>	XTAL_ASK serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 serial_f(auto &&...oo)
@@ -121,7 +122,7 @@ struct serial<A>
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) += get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
+			(bond::seek_s<count_f(t)>{});
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -132,168 +133,28 @@ struct serial<A>
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) -= get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
+			(bond::seek_s<count_f(t)>{});
 			return self();
 		}
 
 		///\
-		The dual of `T`, replacing addition by point-wise multiplication, \
-		and implementing the inner sum/product. \
+		The dual of `T`, defined by `scalar`. \
 		
 		struct transverse
 		{
-			template <class F>
-			using holotype = typename lattice<A>::template homotype<F>;
+			template <class L>
+			using holotype = typename scalar<A>::template homotype<L>;
 
-			template <class F>
-			class homotype : public holotype<F>
+			template <class L>
+			class homotype : public holotype<L>
 			{
-				friend F;
-				using  F_ = holotype<F>;
+				friend L;
+				using  L_ = holotype<L>;
 			
 			public:
+				using L_::L_;
 				struct transverse {using type = T;};
 
-			public:// OPERATE
-			//	using F_::get;
-				using F_::let;
-				using F_::self;
-				using F_::twin;
-				using F_::operator*=;
-				using F_::operator/=;
-
-				XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
-				XTAL_DEF_(return,inline) XTAL_OP1_(auto) / (auto       const &t) XTAL_0FX {return twin() /=  (t);}
-				XTAL_DEF_(inline)        XTAL_OP1_(F  &) *=(embrace_t<U_data> t) XTAL_0EX {return self() *= F(t);}
-				XTAL_DEF_(inline)        XTAL_OP1_(F  &) /=(embrace_t<U_data> t) XTAL_0EX {return self() /= F(t);}
-
-			//	Vector multiplication (Hadamard product):
-				
-				XTAL_DEF_(inline)
-				XTAL_OP1_(F &) *=(array_q<N_data> auto const &t)
-				XTAL_0EX
-				{
-					using _std::get; auto &s = self();
-					
-					[&]<auto ...I> (bond::seek_t<I...>)
-						XTAL_0FN {((get<I>(s) *= get<I>(t)),...);}
-					(bond::seek_s<N_data>{});
-					return self();
-				}
-				XTAL_DEF_(inline)
-				XTAL_OP1_(F &) /=(array_q<N_data> auto const &t)
-				XTAL_0EX
-				{
-					using _std::get; auto &s = self();
-					
-					[&]<auto ...I> (bond::seek_t<I...>)
-						XTAL_0FN {((get<I>(s) /= get<I>(t)),...);}
-					(bond::seek_s<N_data>{});
-					return self();
-				}
-
-			//	Scalar sum:
-				template <int N_sgn=1>
-				XTAL_DEF_(return,inline)
-				XTAL_TN1 sum(U_data const &u={})
-				XTAL_0FX
-				{
-					using _std::get; auto &s = self();
-
-					if constexpr (0 < N_sgn) {
-						return [&]<auto ...I> (bond::seek_t<I...>)
-							XTAL_0FN_(u +...+ (get<I>(s)))
-						(bond::seek_s<N_data>{});
-					}
-					else {
-						return [&]<auto ...I> (bond::seek_t<I...>)
-							XTAL_0FN_(u +...+ (get<I>(s)*U_data(-sign_n<I&1, -1>)))
-						(bond::seek_s<N_data>{});
-					}
-				}
-			//	Scalar product:
-				template <int N_sgn=1>
-				XTAL_DEF_(return,inline)
-				XTAL_TN1 product(U_data u={})
-				XTAL_0FX
-				{
-					using _std::get; auto &s = self();
-					
-					if constexpr (0 < N_sgn) {
-						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-							auto const &v = get<I>(s);
-							u = _op::accumulate_f(u, v, v);
-						});
-					}
-					else {
-						bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-							auto const &v = get<I>(s);
-							u = _op::accumulate_f(u, v, v, U_data(-sign_n<I&1, -1>));
-						});
-					}
-					return u;
-				}
-				XTAL_DEF_(return,inline)
-				XTAL_TN1 product(iterated_q auto &&t)
-				XTAL_0FX
-				{
-					using _std::get; auto &s = self();
-					
-					U_data u{};
-					bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-						u = _op::accumulate_f(u, get<I>(s), get<I>(t));
-					});
-					return u;
-				}
-
-			public:// CONSTRUCT
-			//	using F_::F_;
-
-				XTAL_CO0_(homotype)
-			//	XTAL_CO1_(homotype)
-				XTAL_CO4_(homotype)
-
-				XTAL_CON homotype()
-				XTAL_0EX
-				{
-					using _std::get; auto &s = self();
-
-					XTAL_IF0
-					if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
-						[&]<auto ...I> (bond::seek_t<I...>)
-							XTAL_0FN {((get<I>(s) = U_data{1}),...);}
-						(bond::seek_s<N_data>{});
-					}
-					else {
-						_std::uninitialized_fill_n(F_::data(), F_::size(), U_data{1});
-					}
-				}
-				XTAL_CON homotype(embrace_t<U_data> w)
-				XTAL_0EX
-				{
-					using _std::get; auto &s = self();
-					auto const m = w.size();
-					
-					_detail::copy_to(F_::begin(), w);
-
-					assert(1 == m or m == N_data);
-					if (1 == m) {
-						auto const &u = get<0>(s);
-						if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
-							[&]<auto ...I> (bond::seek_t<I...>)
-								XTAL_0FN {((get<I + 1>(s) = u),...);}
-							(bond::seek_s<N_data - 1>{});
-						}
-						else {
-							_std::uninitialized_fill_n(_std::next(F_::data(), m), F_::size() - m, u);
-						}
-					}
-				}
-				XTAL_CXN homotype(iterated_q auto &&w)
-				XTAL_0EX
-				:	F_(XTAL_REF_(w))
-				{}
-				
 			};
 			using type = bond::isotype<homotype>;
 
