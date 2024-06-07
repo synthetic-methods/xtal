@@ -28,6 +28,11 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
+template <typename A, typename ...As> requires complete_q<typename confined_t<A, polymer<As...>>::template self_t<>>
+struct polymer<A, As...>
+:	bond::compose<A, polymer<As...>>
+{
+};
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
@@ -40,11 +45,11 @@ struct polymer<U, As...>
 		using Y_ = monomer_t<based_t<U>>;
 		
 		template <class ...Xs>
-		using S__binding = typename S_::template binding<Xs...>;
+		using S__compound = typename S_::template compound<Xs...>;
 
 		template <class ...Xs>
-		using R__binding = bond::compose<void// `As...` included by `monomer`...
-		,	S__binding<Xs...>
+		using R__compound = bond::compose<void// `As...` included by `monomer`...
+		,	S__compound<Xs...>
 		,	bond::tag<polymer>
 		>;
 
@@ -53,9 +58,9 @@ struct polymer<U, As...>
 		using S_::self;
 
 		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
-		struct binding
+		struct compound
 		{
-			using Y_return = typename S__binding<Xs...>::Y_return;
+			using Y_return = typename S__compound<Xs...>::Y_return;
 
 			using V_event = occur::stage_t<>;
 			using U_event = cell::key_s<V_event>;
@@ -65,7 +70,7 @@ struct polymer<U, As...>
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = bond::compose<bond::tag<polymer>, defer<V_voice>, R__binding<Xs...>>;
+			using subkind = bond::compose<bond::tag<polymer>, defer<V_voice>, R__compound<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>

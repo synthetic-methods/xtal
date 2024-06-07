@@ -127,20 +127,20 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs>
-		struct binding : binding<let_t<Xs>...>
+		struct compound : compound<let_t<Xs>...>
 		{
 		};
 		template <class ...Xs> requires any_q<Xs...>
-		struct binding<Xs...>
+		struct compound<Xs...>
 		{
-			using signature_t = cell::packed_t<Xs...>;
+			using X_packed = cell::packed_t<Xs...>;
 			
 			using Y_result = _std::invoke_result_t<T, Xs...>;
 			using Y_return = iteratee_t<Y_result>;
 			
 			using subkind = bond::compose<void
 			,	defer<T>
-			,	cell::defer<signature_t>
+			,	cell::defer<X_packed>
 			>;
 
 			template <any_q R>
@@ -159,7 +159,9 @@ struct define
 				{}
 				XTAL_CXN subtype(fungible_q<T> auto &&t, Xs &&...xs)
 				XTAL_0EX
-				:	R_(XTAL_REF_(t), signature_t(XTAL_REF_(xs)...))
+				//\
+				:	R_(XTAL_REF_(t), X_packed(process::let_f(XTAL_REF_(xs))...))
+				:	R_(XTAL_REF_(t), X_packed(XTAL_REF_(xs)...))
 				{}
 
 			public:// ACCESS
@@ -298,24 +300,28 @@ struct refine
 		using S_ = bond::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using S_binding = typename S_::template binding<Xs...>;
+		using S_compound = typename S_::template compound<Xs...>;
 
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs>
-		struct combined : S_binding<Xs...>
+		struct combined : S_compound<Xs...>
 		{
-			using kind = confined<S_binding<Xs...>>;
+			using kind = confined<S_compound<Xs...>>;
 			using type = bond::compose_s<S_, kind>;
 		
 		};
 		template <class ...Xs>
 		XTAL_USE bind_t = typename combined<Xs...>::type;
-		
+		/*/
 		XTAL_FN2 bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              XTAL_REF_(xs)...);}
 		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);}
+		/*/
+		XTAL_FN2 bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              process::let_f(XTAL_REF_(xs))...);}
+		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...);}
+		/***/
 
 		XTAL_TO4_(template <class ...Xs>
 		XTAL_TN2 bind(Xs &&...xs), bind_f(self(), XTAL_REF_(xs)...)

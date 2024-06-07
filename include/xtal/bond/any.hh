@@ -31,13 +31,9 @@ struct define
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		XTAL_CXN subtype(S_ &&s, auto &&...oo)
+		XTAL_CXN subtype(fungible_q<S_> auto &&s, auto &&...oo)
 		XTAL_0EX
-		:	S_(XTAL_MOV_(s), XTAL_REF_(oo)...)
-		{}
-		XTAL_CXN subtype(S_ const &s, auto &&...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(s), XTAL_REF_(oo)...)
+		:	S_(static_cast<S_ &&>(XTAL_REF_(s)), XTAL_REF_(oo)...)
 		{}
 
 	protected:

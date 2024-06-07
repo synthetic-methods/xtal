@@ -17,6 +17,8 @@ namespace _detail
 template <template <class, typename...> class Subtype>
 struct compost
 {
+	using exists = Logical_t<1>;
+
 	template <class S, class ...Inners>                            struct pseudokind               {using type = Subtype<S, Inners...>;};
 	template <class S, class ...Inners> requires none_q<Inners...> struct pseudokind<S, Inners...> {using type = Subtype<S           >;};
 	template <class S, class ...Inners>

@@ -73,7 +73,7 @@ struct define
 };
 ///\
 Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
-binding `subtype` as the default target of `self`. \
+compound `subtype` as the default target of `self`. \
 
 template <class T>
 struct refine

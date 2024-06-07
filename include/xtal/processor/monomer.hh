@@ -22,6 +22,11 @@ XTAL_0EX_TO_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <typename A, typename ...As> requires complete_q<typename confined_t<A, monomer<As...>>::template self_t<>>
+struct monomer<A, As...>
+:	bond::compose<A, monomer<As...>>
+{
+};
 template <class U_process, typename ...As>
 struct monomer<U_process, As...>
 {
@@ -36,13 +41,13 @@ struct monomer<U_process, As...>
 		using S_ = bond::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using S__binding = typename S_::template binding<Xs...>;
+		using S__compound = typename S_::template compound<Xs...>;
 
 		template <class ...Xs>
-		using R__binding = bond::compose<As...
+		using R__compound = bond::compose<As...
 		,	U_resize::attach<>
 		,	U_render::attach<>
-		,	S__binding<Xs...>
+		,	S__compound<Xs...>
 		,	bond::tag<monomer>
 		>;
 
@@ -54,10 +59,10 @@ struct monomer<U_process, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct binding
+		struct compound
 		{
-			using Y_result = typename S__binding<Xs...>::Y_result;
-			using subkind = bond::compose<cell::confer<Y_result>, R__binding<Xs...>>;
+			using Y_result = typename S__compound<Xs...>::Y_result;
+			using subkind = bond::compose<cell::confer<Y_result>, R__compound<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -95,15 +100,15 @@ struct monomer<U_process, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
-		struct binding<Xs...> : S__binding<Xs...>
+		struct compound<Xs...> : S__compound<Xs...>
 		{
-			using Y_return = typename S__binding<Xs...>::Y_return;
+			using Y_return = typename S__compound<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
 			XTAL_LET_(int) N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::stashed<U_state, U_store>, R__binding<Xs...>>;
+			using subkind = bond::compose<resource::stashed<U_state, U_store>, R__compound<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>

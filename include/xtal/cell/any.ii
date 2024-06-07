@@ -129,10 +129,10 @@ Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<he
 ///\
 Creates a unique tuple `inferred` from `...As`. \
 
-template <class   ...Ts>	XTAL_TYP packed     : inferred<Ts..., bond::tag<packed>> {};
-template <class   ...Ts>	XTAL_USE packed_t   = typename packed<Ts...>::type;
-template <class   ...Ts>	XTAL_ASK packed_q   = any_p<class packed_a, Ts...>;
-template <class   ...Ts>	XTAL_TN2 packed_f(Ts &&...as) XTAL_0EX {return packed<Ts...>(XTAL_REF_(as)...);}
+template <class   ...Us>	XTAL_TYP packed     : inferred<Us..., bond::tag<packed>> {};
+template <class   ...Us>	XTAL_USE packed_t   = typename packed<Us...>::type;
+template <class   ...Us>	XTAL_ASK packed_q   = bond::head_tag_p<packed, Us...>;
+template <class   ...Us>	XTAL_TN2 packed_f(Us &&...us) XTAL_0EX {return packed<Us...>(XTAL_REF_(us)...);}
 
 ///\
 Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
