@@ -69,7 +69,7 @@ struct monomer<U_process, As...>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 
-			public:// CONSTRUCTION
+			public:// CONSTRUCT
 			//	using R_::R_;
 
 				XTAL_CO0_(subtype);

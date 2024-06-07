@@ -55,17 +55,16 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              self() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              self() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              self() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              self() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1 self() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1 self() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1 self() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1 self() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
 		
 		///\returns a copy of `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              twin() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1              twin() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1_(based_t<Y>) twin() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_TN1_(based_t<Y>) twin() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T>
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 twin() XTAL_0FX {return static_cast<Y>(self());}
 
 		///\returns `this` as the `define`d supertype. \
 

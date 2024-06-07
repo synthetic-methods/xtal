@@ -14,7 +14,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP spool;
 template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_ASK spool_q = bond::head_tag_p<spool, Ts...>;
+template <class ...Ts> XTAL_ASK spool_q = bond::head_tag_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ struct spool<A>
 	using allotype = initerated_t<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<spool>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<spool_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

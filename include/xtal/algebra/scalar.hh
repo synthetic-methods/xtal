@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP scalar;
 template <class   ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class   ...Ts>	XTAL_ASK scalar_q = bond::head_tag_p<scalar, Ts...>;
+template <class   ...Ts>	XTAL_ASK scalar_q = bond::head_tag_p<scalar_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 scalar_f(auto &&...oo)
@@ -24,22 +24,19 @@ XTAL_0EX {return _detail::initialize<scalar_t>::template via<V>(XTAL_REF_(oo)...
 ///\
 Extends the `transverse` of `serial` with even/odd-reflection iff `N_data == 2`. \
 
-template <class U_data> requires disarray_q<U_data>
-struct scalar<U_data> : scalar<U_data[2]>
-{};
-template <class U_data, int N_data>
-struct scalar<U_data[N_data]>
+template <class A>
+struct scalar<A>
 {
-	using _op = bond::operate<U_data>;
+	using _op = bond::operate<A>;
 	using U_delta = typename _op::delta_t;
 	using U_sigma = typename _op::sigma_t;
 	using U_alpha = typename _op::alpha_t;
 	
 	template <class T>
-	using allotype = typename serial<U_data[N_data]>::type::transverse::template homotype<T>;
+	using allotype = typename serial<A>::type::transverse::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<scalar>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<scalar_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -51,12 +48,16 @@ struct scalar<U_data[N_data]>
 		using T_::T_;
 
 	};
-	template <class T> requires (N_data == 2)
+	template <class T> requires (_std::extent_v<A> == 2)
 	class homotype<T> : public holotype<T>
 	{
 		friend T;
 		using  T_ = holotype<T>;
 	
+	protected:
+		using          T_::N_data;
+		using typename T_::U_data;
+
 	public:
 		using T_::get;
 		using T_::let;
@@ -105,6 +106,9 @@ struct scalar<U_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(fungible_q<_std::array<float, 2>,
+	XTAL_TYP_(XTAL_VAL_(scalar_t<float(&)[2]>)*XTAL_VAL_(scalar_t<float(&)[2]>))>
+);
 
 
 ///////////////////////////////////////////////////////////////////////////////

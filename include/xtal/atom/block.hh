@@ -10,46 +10,132 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-template <class ..._s> XTAL_TYP block;
-template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
-template <class ..._s> XTAL_ASK block_q = bond::head_tag_p<block, _s...>;
-
-
-////////////////////////////////////////////////////////////////////////////////
 ///\
 Defines a fixed-width `type` that supports arithmetic operators. \
 
-///\todo\
-Specialize for SIMDe types. \
-
-///\todo\
-Adapt `_detail::apply_to` etc to execute in parallel using SIMDE? \
+template <class ..._s> XTAL_TYP block;
+template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
+template <class ..._s> XTAL_ASK block_q = bond::head_tag_p<block_t, _s...>;
 
 
-template <class U, size_t N, int Ns>
-struct block<U[N][Ns]> : block<block_t<U[N]>[Ns]>
-{};
-/*/
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s>
+struct superblock;
+
 template <class U_data, size_t N_data>
-struct block<U_data(&)[N_data]>
+struct superblock<U_data(&)[N_data]>
 {
-///\todo Adapt as array-of-references using `...member_f` (or uniform `std::tuple`s)? \
-
-};
-/***/
-template <class U_data, size_t N_data>
-struct block<U_data[N_data]>
-{
-	using _op = bond::operate<U_data>;
+	using supertype = _std::span<U_data, N_data>;
 	
+	template <class T>
+	using holotype = bond::compose_s<supertype, bond::define<T>>;
+
+	template <class T>
+	class homotype: public holotype<T>
+	{
+		using T_ = holotype<T>;
+
+	public:// CONSTRUCT
+		using T_::T_;
+
+		/**/
+		XTAL_TO4_(XTAL_DEF_(return,inline)
+		//\
+		XTAL_TN1 twin(), based_t<typename T::template endomorphism_t<based_t<U_data>[N_data]>>(*this))
+		XTAL_TN1 twin(), based_t<typename T::template endomorphism_t<based_t<U_data>[N_data]>>{*this})
+		/***/
+
+	};	
+};
+template <class U_data, size_t N_data>
+struct superblock<U_data   [N_data]>
+{
 	using supertype = _std::array<U_data, N_data>;
+	
+	template <class T>
+	using holotype = bond::compose_s<supertype, bond::define<T>>;
 
 	template <class T>
-	using allotype = bond::compose_s<supertype, bond::define<T>>;
+	class homotype: public holotype<T>
+	{
+		using T_ = holotype<T>;
+
+	public:// CONSTRUCT
+	//	using T_::T_;
+		
+		XTAL_CO0_(homotype)
+	//	XTAL_CO1_(homotype)
+		XTAL_CO4_(homotype)
+		
+		XTAL_CXN homotype()
+		XTAL_0EX
+		:	homotype(size_0)
+		{}
+		XTAL_CXN homotype(size_t const n)
+		XTAL_0EX
+		{
+			if (_std::is_constant_evaluated() or n < N_data) {
+				T_::fill(U_data{});
+			}
+		}
+		XTAL_CON homotype(embrace_t<U_data> a)
+		XTAL_0EX
+		:	homotype(count_f(XTAL_REF_(a)))
+		{
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
+				_detail::copy_to(T_::begin(), a.begin(), a.end());
+			}
+			else {
+				_detail::copy_to(T_::begin(), a.begin(), a.end(), [] XTAL_1FN_(T::ordinate_f));
+			}
+		}
+		XTAL_CXN homotype(bounded_q auto const &a)
+		XTAL_0EX
+		:	homotype(count_f(XTAL_REF_(a)))
+		{
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
+				_detail::copy_to(T_::begin(), a);
+			}
+			else {
+				_detail::copy_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
+			}
+		}
+		XTAL_CXN homotype(bounded_q auto &&a)
+		XTAL_0EX
+		:	homotype(count_f(a))
+		{
+			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
+				_detail::move_to(T_::begin(), a);
+			}
+			else {
+				_detail::move_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
+			}
+		}
+
+	};
+};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <class U, size_t N, size_t ...Ns>
+struct block<U[N][Ns]...> : block<block_t<U[N]>[Ns]...>
+{
+};
+template <column_q A>
+struct block<A>
+{
+	using _op = bond::operate<A>;
+	using U_sigma = typename _op::sigma_t;
+	using U_delta = typename _op::delta_t;
+	
+	template <class T>
+	using allotype = typename _detail::superblock<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<block>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<block_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -57,6 +143,13 @@ struct block<U_data[N_data]>
 		friend T;
 		using  T_ = holotype<T>;
 		using  I_ = typename T_::difference_type;
+
+	protected:
+		XTAL_LET N_data = _std::       extent_v<based_t<A>>;
+		XTAL_USE U_data = _std::remove_extent_t<based_t<A>>;
+
+	public:// CONSTRUCT
+		using T_::T_;
 
 	public:// MAP
 		XTAL_DEF_(return,inline) XTAL_FN1   ordinate_f(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
@@ -66,10 +159,8 @@ struct block<U_data[N_data]>
 		using T_::self;
 		using T_::twin;
 		
-		XTAL_TO4_(XTAL_DEF_(inline) XTAL_TN1 base(), T_::template self<supertype>())
-
 		XTAL_DEF_(return,inline)
-		XTAL_FN1_(typename _op::sigma_t) size() XTAL_0EX {return N_data;}
+		XTAL_FN1_(U_sigma) size() XTAL_0EX {return N_data;}
 
 
 		XTAL_TO4_(template <class F>
@@ -103,12 +194,6 @@ struct block<U_data[N_data]>
 
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](i));}
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](i));}
-
-//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](I));}
-//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 get() XTAL_0FX_( &) {return          (T_::operator[](I));}
-//
-//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 let() XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](I));}
-//		template <size_t I> XTAL_DEF_(return,inline) XTAL_TN1 let() XTAL_0EX_( &) {return          (T_::operator[](I));}
 
 	public:// CONVERSION
 		XTAL_TN2 apply(auto &&f)
@@ -162,62 +247,16 @@ struct block<U_data[N_data]>
 			return self();
 		}
 		
-	public:// CONSTRUCTION
-	//	using T_::T_;
-
-		XTAL_CO0_(homotype)
-	//	XTAL_CO1_(homotype)
-		XTAL_CO4_(homotype)
-		
-		XTAL_CXN homotype()
-		XTAL_0EX
-		:	homotype(size_0)
-		{}
-		XTAL_CXN homotype(size_t const n)
-		XTAL_0EX
-		{
-			if (_std::is_constant_evaluated() or n < N_data) {
-				T_::fill(U_data{});
-			}
-		}
-		XTAL_CON homotype(embrace_t<U_data> a)
-		XTAL_0EX
-		:	homotype(count_f(XTAL_REF_(a)))
-		{
-			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
-				_detail::copy_to(T_::begin(), a.begin(), a.end());
-			}
-			else {
-				_detail::copy_to(T_::begin(), a.begin(), a.end(), [] XTAL_1FN_(T::ordinate_f));
-			}
-		}
-		XTAL_CXN homotype(bounded_q auto const &a)
-		XTAL_0EX
-		:	homotype(count_f(XTAL_REF_(a)))
-		{
-			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
-				_detail::copy_to(T_::begin(), a);
-			}
-			else {
-				_detail::copy_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
-			}
-		}
-		XTAL_CXN homotype(bounded_q auto &&a)
-		XTAL_0EX
-		:	homotype(count_f(a))
-		{
-			if constexpr (idempotent_p<U_data, decltype([] XTAL_1FN_(T::coordinate_f))>) {
-				_detail::move_to(T_::begin(), a);
-			}
-			else {
-				_detail::move_to(T_::begin(), a, [] XTAL_1FN_(T::ordinate_f));
-			}
-		}
-
 	};
 	using type = bond::isotype<homotype>;
 
 };
+
+template <size_t I> XTAL_DEF_(return,inline) XTAL_FN1 get(block_q auto const &&o) {return XTAL_MOV_(o).get(I);}
+template <size_t I> XTAL_DEF_(return,inline) XTAL_FN1 get(block_q auto const  &o) {return          (o).get(I);}
+template <size_t I> XTAL_DEF_(return,inline) XTAL_FN1 get(block_q auto       &&o) {return XTAL_MOV_(o).let(I);}
+template <size_t I> XTAL_DEF_(return,inline) XTAL_FN1 get(block_q auto        &o) {return          (o).let(I);}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

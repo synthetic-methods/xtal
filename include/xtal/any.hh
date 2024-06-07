@@ -231,9 +231,10 @@ template <class   T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolved_n<
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T,   int   N=-1 >	XTAL_ASK     array_q =             _entail:: array_q<T> and N <  0   or devalued_n<T> == N;
-template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =             _entail:: array_q<T> and 0 <= N  and devalued_n<T> <= N;
-template <           class ...Ts>	XTAL_ASK  disarray_q =        not (...and    array_q<Ts>);
+template <           class ...Ts>	XTAL_ASK    column_q =  (...and _entail:: column_q<Ts>);
+template <class T,   int   N=-1 >	XTAL_ASK     array_q =          _entail::  array_q<T> and N <  0   or devalued_n<T> == N;
+template <class T,   int   N=-1 >	XTAL_ASK  subarray_q =          _entail::  array_q<T> and 0 <= N  and devalued_n<T> <= N;
+template <           class ...Ts>	XTAL_ASK  disarray_q =        not (...and  array_q<Ts>);
 
 template <class            ...Ts>	XTAL_ASK  accessed_q = (... and _entail:: accessed_q<Ts>);
 template <class            ...Ts>	XTAL_ASK   pointer_q = (... and _entail::  pointer_q<Ts>);

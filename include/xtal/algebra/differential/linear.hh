@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class   ..._s>	XTAL_TYP linear;
 template <class   ..._s>	XTAL_USE linear_t = typename linear<_s...>::type;
-template <class   ...Ts>	XTAL_ASK linear_q = bond::head_tag_p<linear, Ts...>;
+template <class   ...Ts>	XTAL_ASK linear_q = bond::head_tag_p<linear_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 linear_f(auto &&...oo)
@@ -24,19 +24,16 @@ XTAL_0EX {return _detail::initialize<linear_t>::template via<V>(XTAL_REF_(oo)...
 ///\
 Extends `serial` with succession. \
 
-template <class U_data> requires disarray_q<U_data>
-struct linear<U_data> : linear<U_data[2]>
-{};
-template <class U_data, int N_data>
-struct linear<U_data[N_data]>
+template <column_q A>
+struct linear<A>
 {
-	using _op = bond::operate<U_data>;
+	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
+	using allotype = typename serial<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<linear>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<linear_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -44,11 +41,14 @@ struct linear<U_data[N_data]>
 		friend T;
 		using  T_ = holotype<T>;
 	
-	public:// CONSTRUCTION
+	protected:
+		using          T_::N_data;
+		using typename T_::U_data;
+
+	public:// CONSTRUCT
 		using T_::T_;
 
-
-	public:// OPERATION
+	public:// OPERATE
 		using T_::get;
 		using T_::let;
 		using T_::self;
@@ -68,9 +68,10 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			auto &s = self();
+			using _std::get; auto &s = self();
+
 			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((_std::get<I>(s) += _std::get<I + 1>(s)),...);}
+				XTAL_0FN {((get<I>(s) += get<I + 1>(s)),...);}
 			(bond::seek_s<N_data - 1>{});
 			return self();
 		}
@@ -89,9 +90,10 @@ struct linear<U_data[N_data]>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			auto &s = self();
+			using _std::get; auto &s = self();
+
 			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((_std::get<I>(s) -= _std::get<I + 1>(s)),...);}
+				XTAL_0FN {((get<I>(s) -= get<I + 1>(s)),...);}
 			(bond::antiseek_s<N_data - 1>{});
 			return self();
 		}

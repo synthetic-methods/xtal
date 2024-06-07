@@ -189,7 +189,7 @@ struct define
 				})
 
 
-			public:// OPERATION
+			public:// OPERATE
 				using R_::functor;
 				///\
 				Evaluates the lifted `functor` using the bound slots. \
@@ -345,7 +345,7 @@ struct defer
 		using U0 = typename S_::template head_t<Cardinal_0>;
 		using U1 = typename S_::template head_t<Cardinal_1>;
 	
-	public:// CONSTRUCTION
+	public:// CONSTRUCT
 		using S_::S_;
 
 	public:// INVOCATION

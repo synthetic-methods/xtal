@@ -223,6 +223,7 @@ static_assert(id_q<const double (&)[2], typename devolved<const _std::complex<do
 //\
 Ranged...
 
+template <class         T >	XTAL_ASK         column_q =	_std::is_array_v<based_t<T>> and not _std::is_array_v<_std::remove_extent_t<based_t<T>>>;
 template <class         T >	XTAL_ASK          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalued_t<T>, devalued_n<T>>>;
 
 template <class         T >	XTAL_ASK       accessed_q =	requires (T t) { t[XTAL_VAL_(size_t)];};
@@ -412,7 +413,7 @@ concept multiplicative_group_p = requires (based_t<T> t, based_t<U> u)
 	};
 };
 template <size_t N, class T, class U=T>
-concept additive_group_p = requires (based_t<T> t, based_t<U> u)
+concept additive_group_p = requires (based_t<T> &t, based_t<U> &u)
 {
 	requires N == 2 or requires
 	{

@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP symbol;
 template <class   ..._s>	XTAL_USE symbol_t = typename symbol<_s...>::type;
-template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol, Ts...>;
+template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 symbol_f(auto &&...oo)
@@ -24,19 +24,19 @@ XTAL_0EX {return _detail::initialize<symbol_t>::template via<V>(XTAL_REF_(oo)...
 ///\
 Extends `scalar` with Dirichlet characterization and modulo access. \
 
-template <class U_data, int N_data>
-struct symbol<U_data[N_data]>
+template <column_q A>
+struct symbol<A>
 {
-	using _op = bond::operate<U_data>;
+	using _op = bond::operate<A>;
 	using U_delta = typename _op::delta_t;
 	using U_sigma = typename _op::sigma_t;
 	using U_alpha = typename _op::alpha_t;
 	
 	template <class T>
-	using allotype = typename scalar<U_data[N_data]>::template homotype<T>;
+	using allotype = typename scalar<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<symbol>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<symbol_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -44,6 +44,10 @@ struct symbol<U_data[N_data]>
 		friend T;
 		using  T_ = holotype<T>;
 		using  I_ = typename T_::difference_type;
+
+	protected:
+		using          T_::N_data;
+		using typename T_::U_data;
 
 		XTAL_LET modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
 

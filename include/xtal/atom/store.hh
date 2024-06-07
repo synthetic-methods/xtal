@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_ASK store_q = bond::head_tag_p<store, Ts...>;
+template <class ...Ts> XTAL_ASK store_q = bond::head_tag_p<store_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ the default (dynamically allocated) `std::vector` is used. \
 template <class U_data> requires pointer_q<U_data>
 struct store<U_data>
 {
-	using type = bond::compose_s<_std::vector<pointee_t<U_data>>, bond::tag<store>>;
+	using type = bond::compose_s<_std::vector<pointee_t<U_data>>, bond::tag<store_t>>;
 
 };
 template <class U_data>
@@ -168,7 +168,7 @@ struct store<U_data[N_data]>
 		}
 
 
-	public:// CONSTRUCTION
+	public:// CONSTRUCT
 	~	homotype() {clear();}
 	
 	//	XTAL_CO0_(homotype)

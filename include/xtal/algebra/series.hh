@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP series;
 template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
-template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series, Ts...>;
+template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_FN1 series_f(auto &&...oo)
@@ -24,26 +24,30 @@ XTAL_0EX {return _detail::initialize<series_t>::template via<V>(XTAL_REF_(oo)...
 ///\
 Extends `serial` with multiplication defined by circular convolution. \
 
-template <class U_data, int N_data>
-struct series<U_data[N_data]>
+template <column_q A>
+struct series<A>
 {
-	using U_v0 = U_data;
+	using U_v0 = invalued_t<A>;
 	using U_v1 = devalued_t<U_v0>;
 	using U_v2 = devalued_t<U_v1>;
 
-	using _op = bond::operate<U_data>;
+	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename serial<U_data[N_data]>::template homotype<T>;
+	using allotype = typename serial<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<series>>;
+	using holotype = bond::compose_s<allotype<T>, bond::tag<series_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
 	{
 		friend T;
 		using  T_ = holotype<T>;
+
+	protected:
+		using          T_::N_data;
+		using typename T_::U_data;
 
 	public:
 		using T_::T_;
@@ -243,6 +247,9 @@ struct series<U_data[N_data]>
 		Multiplication by circular convolution. \
 
 		using T_::operator*=;
+
+		XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=  (w))
+		XTAL_DEF_(inline)        XTAL_OP1_(T  &) *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
 
 		XTAL_OP1_(T &) *=(T const &t)
 		XTAL_0EX
