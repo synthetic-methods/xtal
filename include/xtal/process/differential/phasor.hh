@@ -72,9 +72,9 @@ struct phasor<K_data[N_data], As...>
 		Access by dynamic index. \
 		
 		///\todo\
-		Replace with accessor-decorator.
+		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_TN2 get(size_t i), head().get(i))
+		XTAL_TO4_(XTAL_TN2 let(size_t i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
@@ -114,7 +114,7 @@ struct phasor<K_data[N_data], As...>
 					return egress(bond::repack_f(phi(0), phi(1)*(rate)));
 				}
 				XTAL_0IF_(default) {
-					return egress(phi.template got<decltype(bond::repack_f)>()*S_data(rate));
+					return egress(phi.template apply<decltype(bond::repack_f)>()*S_data(rate));
 				}
 			}
 			else {

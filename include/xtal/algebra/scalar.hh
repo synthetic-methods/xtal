@@ -60,7 +60,7 @@ struct scalar<A>
 		XTAL_CON homotype()
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			XTAL_IF0
 			if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
@@ -75,7 +75,7 @@ struct scalar<A>
 		XTAL_CON homotype(embrace_t<U_data> w)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			auto const m = w.size();
 			
 			_detail::copy_to(T_::begin(), w);
@@ -93,13 +93,13 @@ struct scalar<A>
 				}
 			}
 		}
-		XTAL_CXN homotype(iterated_q auto &&w)
+		XTAL_CXN homotype(auto &&...oo)
 		XTAL_0EX
-		:	T_(XTAL_REF_(w))
+		XTAL_REQ (0 < sizeof...(oo))
+		:	T_(XTAL_REF_(oo)...)
 		{}
 
 	public:// ACCESS
-		using T_::get;
 		using T_::let;
 		using T_::self;
 		using T_::twin;
@@ -119,7 +119,7 @@ struct scalar<A>
 		XTAL_OP1_(T &) *=(array_q<N_data> auto const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) *= get<I>(t)),...);}
@@ -130,7 +130,7 @@ struct scalar<A>
 		XTAL_OP1_(T &) /=(array_q<N_data> auto const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) /= get<I>(t)),...);}
@@ -144,7 +144,7 @@ struct scalar<A>
 		XTAL_TN1 sum(U_data const &u={})
 		XTAL_0FX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
@@ -164,7 +164,7 @@ struct scalar<A>
 		XTAL_TN1 product(U_data u={})
 		XTAL_0FX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			if constexpr (0 < N_sgn) {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
@@ -184,7 +184,7 @@ struct scalar<A>
 		XTAL_TN1 product(iterated_q auto &&t)
 		XTAL_0FX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			U_data u{};
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
@@ -210,7 +210,7 @@ struct scalar<A>
 		XTAL_TN1 reflected()
 		XTAL_0FX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			auto constexpr o = reflector<N_par>();
 			auto const     x = o*get<0>(s);

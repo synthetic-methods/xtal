@@ -27,19 +27,19 @@ struct tag
 		using S_::S_;
 
 		template <class ...Xs>
-		struct endomorphism
+		struct tagged
 		{
 			template <class R>
 			using subtype = Y<Xs...>;
 
 		};
 //		template <class ...Xs> requires compose_q<Y<Xs...>>
-//		struct endomorphism<Xs...>
+//		struct tagged<Xs...>
 //		:	Y<Xs...>
 //		{
 //		};
 		template <class ...Xs>
-		using endomorphism_t = compose_s<S, endomorphism<Xs...>>;
+		using tagged_t = compose_s<S, tagged<Xs...>>;
 
 	};
 };

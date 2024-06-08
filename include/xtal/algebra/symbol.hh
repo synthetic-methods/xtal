@@ -51,17 +51,15 @@ struct symbol<A>
 
 		XTAL_LET modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
 
-	public:
-		using T_::get;
+	public:// ACCESS
 		using T_::let;
 		using T_::self;
 		using T_::twin;
 
-
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_TN1 get(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
 
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
 		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}

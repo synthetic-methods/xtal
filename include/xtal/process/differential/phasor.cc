@@ -80,7 +80,7 @@ TAG_("phasor")
 //			z_eig >>= z_render++ >> occur::review_f(e_data);
 //
 //			//\
-//			TRUE_(z_phi[3].template got<W_phi>() == W_phi{z_data[0][3], z_data[1][3]});
+//			TRUE_(z_phi[3].template apply<W_phi>() == W_phi{z_data[0][3], z_data[1][3]});
 //			echo(z_data[0][3], z_data[1][3]);
 //
 //		};

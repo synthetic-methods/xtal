@@ -51,7 +51,6 @@ struct series<A>
 
 	public:
 		using T_::T_;
-		using T_::get;
 		using T_::let;
 		using T_::self;
 		using T_::twin;
@@ -75,6 +74,8 @@ struct series<A>
 		XTAL_TN1_(T &) generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX
 		{
+			auto &s = self();
+
 			using W1  = U_v1;
 			using U2  = scalar_t<U_v2[2]>;
 			using W1_ = series_t<W1[N_data<<1]>;
@@ -83,8 +84,8 @@ struct series<A>
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
-			bond::seek_forward_f<N_data>([this] (auto I) XTAL_0FN {
-				auto const &[o, e] = get(I);
+			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
+				auto const &[o, e] = get<I>(s);
 				let(I) = {o*e.real(), _std::conj(o)*e.imag()};
 			});
 			return self();
@@ -96,6 +97,8 @@ struct series<A>
 		XTAL_TN1_(T &) generate(U_data const &u)
 		XTAL_0EX
 		{
+		//	auto &s = self();
+
 			using I = typename T_::difference_type;
 
 			XTAL_SET N_shift = _op::bit_ceiling_f(N_step);
@@ -114,7 +117,7 @@ struct series<A>
 			let(I1) = o*u;
 
 			for (I i = I1; i < IM; i += N_step) {
-				auto w = _op::square_f(get(i));
+				auto w = _op::square_f(let(i));
 			
 			//	Use the square of the previous value to populate the values at `i << 1`:
 				I ii = i << 1;
@@ -123,7 +126,7 @@ struct series<A>
 			}
 		//	Compute the final value if `N_limit` is odd:
 			if constexpr (N_limit&1) {
-				let(IN) = get(IN - N_step)*(u);
+				let(IN) = let(IN - N_step)*(u);
 			}
 			return self();
 		}
@@ -194,7 +197,7 @@ struct series<A>
 				I const  n = n_size;
 				for (I i = 0; i < u; i += 1) {I const i_k = i << _k;
 				for (I j = i; j < n; j += w) {
-					U_data const y = that[j + u]*get(i_k);
+					U_data const y = that[j + u]*let(i_k);
 					U_data const x = that[j + 0];
 					that[j + u] = x - y;
 					that[j + 0] = x + y;

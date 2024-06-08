@@ -53,7 +53,6 @@ struct serial<A>
 		using T_::T_;
 
 	public:// ACCESS
-		using T_::get;
 		using T_::let;
 		using T_::self;
 		using T_::twin;
@@ -76,11 +75,11 @@ struct serial<A>
 		XTAL_OP1_(T &) *=(T const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			if constexpr (_op::alignment_n < N_data) {
-				for (auto i = N_data; ~--i;) {let(i) *= t.get(0);
-				for (auto j = i; j-- ;) {let(i) += t.get(j)*get(i - j);}}
+				for (auto i = N_data; ~--i;) {let(i) *= get<0>(t);
+				for (auto j = i; j-- ;) {let(i) += t.let(j)*let(i - j);}}
 			}
 			else {
 				bond::seek_backward_f<N_data, 0>([&, this] (auto I) XTAL_0FN {get<I>(s) *= get<0>(t);
@@ -95,7 +94,7 @@ struct serial<A>
 		XTAL_OP1_(T &) +=(T const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) += get<I>(t)),...);}
@@ -106,7 +105,7 @@ struct serial<A>
 		XTAL_OP1_(T &) -=(T const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) -= get<I>(t)),...);}
@@ -118,7 +117,7 @@ struct serial<A>
 		XTAL_OP1_(T &) +=(subarray_q<N_data> auto const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) += get<I>(t)),...);}
@@ -129,7 +128,7 @@ struct serial<A>
 		XTAL_OP1_(T &) -=(subarray_q<N_data> auto const &t)
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {auto &s = self(); ((get<I>(s) -= get<I>(t)),...);}

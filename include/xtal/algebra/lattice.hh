@@ -59,7 +59,6 @@ struct lattice<A>
 		using T_::self;
 		using T_::twin;
 		using T_::size;
-		using T_::get;
 		using T_::let;
 
 	public:// OPERATE
@@ -75,11 +74,11 @@ struct lattice<A>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_DEF_(return,inline) XTAL_OP1_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) == t.get(I))) (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_OP1_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <= t.get(I))) (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_OP1_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >= t.get(I))) (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_OP1_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) <  t.get(I))) (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_OP1_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN_(...and (get(I) >  t.get(I))) (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_OP1_(bool) ==  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) == get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_OP1_(bool) <=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_OP1_(bool) >=  (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_OP1_(bool) <   (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_OP1_(bool) >   (homotype const &t) XTAL_0FX {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
 		XTAL_DEF_(inline)        XTAL_OP1_(T  &) <<= (size_t   const &u) XTAL_0EX {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
@@ -101,8 +100,6 @@ struct lattice<A>
 		XTAL_OP1 * (T const &s, lettuce_q auto const &t)
 		XTAL_0EX
 		{
-			using _std::get;
-
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
 				XTAL_0FN_(bond::pack_f(get<i>(s) * get<i>(t)...))
 			(bond::seek_s<N_data>{});
@@ -111,8 +108,6 @@ struct lattice<A>
 		XTAL_OP1 / (T const &s, lettuce_q auto const &t)
 		XTAL_0EX
 		{
-			using _std::get;
-
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
 				XTAL_0FN_(bond::pack_f(get<i>(s) / get<i>(t)...))
 			(bond::seek_s<N_data>{});
@@ -121,8 +116,6 @@ struct lattice<A>
 		XTAL_OP1 + (T const &s, lettuce_q auto const &t)
 		XTAL_0EX
 		{
-			using _std::get;
-
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
 				XTAL_0FN_(bond::pack_f(get<i>(s) + get<i>(t)...))
 			(bond::seek_s<N_data>{});
@@ -131,8 +124,6 @@ struct lattice<A>
 		XTAL_OP1 - (T const &s, lettuce_q auto const &t)
 		XTAL_0EX
 		{
-			using _std::get;
-
 			return [&]<XTAL_NDX ...i> (bond::seek_t<i...>)
 				XTAL_0FN_(bond::pack_f(get<i>(s) - get<i>(t)...))
 			(bond::seek_s<N_data>{});

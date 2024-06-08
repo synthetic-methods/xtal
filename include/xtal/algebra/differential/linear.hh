@@ -49,7 +49,7 @@ struct linear<A>
 		using T_::T_;
 
 	public:// OPERATE
-		using T_::get;
+	//	using T_::get;
 		using T_::let;
 		using T_::self;
 		using T_::twin;
@@ -68,7 +68,7 @@ struct linear<A>
 		XTAL_OP1 ++ ()
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) += get<I + 1>(s)),...);}
@@ -90,7 +90,7 @@ struct linear<A>
 		XTAL_OP1 -- ()
 		XTAL_0EX
 		{
-			using _std::get; auto &s = self();
+			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) -= get<I + 1>(s)),...);}
