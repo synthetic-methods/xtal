@@ -107,11 +107,14 @@ struct scalar<A>
 	public:// OPERATE
 		using T_::operator*=;
 		using T_::operator/=;
+		using T_::operator%=;
 
 		XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
 		XTAL_DEF_(return,inline) XTAL_OP1_(auto) / (auto       const &t) XTAL_0FX {return twin() /=  (t);}
+		XTAL_DEF_(return,inline) XTAL_OP1_(auto) % (auto       const &t) XTAL_0FX {return twin() %=  (t);}
 		XTAL_DEF_(inline)        XTAL_OP1_(T  &) *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_OP1_(T  &) /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
+		XTAL_DEF_(inline)        XTAL_OP1_(T  &) %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
 
 	//	Vector multiplication (Hadamard product):
 		
@@ -134,6 +137,17 @@ struct scalar<A>
 			
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) /= get<I>(t)),...);}
+			(bond::seek_s<N_data>{});
+			return self();
+		}
+		XTAL_DEF_(inline)
+		XTAL_OP1_(T &) %=(array_q<N_data> auto const &t)
+		XTAL_0EX
+		{
+			auto &s = self();
+			
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((get<I>(s) %= get<I>(t)),...);}
 			(bond::seek_s<N_data>{});
 			return self();
 		}
@@ -230,14 +244,71 @@ struct scalar<A>
 			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
 		}
 
-		XTAL_DEF_(return,inline)
-		XTAL_LET refactored()
-		XTAL_0EX
-		XTAL_REQ (N_data == 2)
-		{
-			auto const &[x, y] = self();
 
-			return decltype(twin()) {_std::gcd(x, y), _std::lcm(x, y)};
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 ordered()
+		XTAL_0FX
+		XTAL_REQ (2 == N_data)
+		{
+			using U2 = typename T::template tagged_t<U_data[2]>;
+
+			auto const &[x, y] = self();
+			return x < y? U2{x, y}: U2{y, x};
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 coordered()
+		XTAL_0FX
+		XTAL_REQ (2 == N_data) and _std::integral<U_data>
+		{
+			using U2 = typename T::template tagged_t<U_data[2]>;
+
+			auto const [x, y] = ordered();
+			if (x == _std::gcd(x, y) and y == _std::lcm(x, y)) {
+				return U2{x, y};
+			}
+			else {
+				return U2{0, 0};
+			}
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 coordered()
+		XTAL_0FX
+		XTAL_REQ (3 <= N_data) and _std::integral<U_data>
+		{
+			using U_ = _std::numeric_limits<U_data>;
+			using U2 = typename T::template tagged_t<U_data[2]>;
+			
+			auto &s = self();
+
+			U2 fact{U_::max(), U_::min()};
+			for (size_t i = 0; i < N_data - 1; ++i) {
+				for (size_t j = i + 1; j < N_data; ++j) {
+					auto factoid = U2{s[i], s[j]}.coordered();
+					fact.incorporate(factoid);
+					if (0 == factoid.sum()) {
+						return factoid;
+					}
+				}
+			}
+			return fact;
+		}
+
+		XTAL_DEF_(inline)
+		XTAL_TN1 incorporate(auto const &t)
+		XTAL_0EX
+		XTAL_REQ (2 == N_data)
+		{
+			auto &s = self();
+			if (t[0] < s[0]) {s[0] = t[0];}
+			if (s[1] < t[1]) {s[1] = t[1];}
+			return s;
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_TN1 incorporated(auto &&t)
+		XTAL_0FX
+		XTAL_REQ (2 == N_data)
+		{
+			return twin().incorporate(XTAl_REF_(t));
 		}
 
 	};

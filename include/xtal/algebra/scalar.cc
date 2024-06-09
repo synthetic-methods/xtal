@@ -61,6 +61,21 @@ TAG_("scalar")
 		TRUE_(bond::computrim_f<19>(baz[1]) == bar[1]);
 
 	}
+	TRY_("refactoring")
+	{
+		using U2 = scalar_t<T_sigma[2]>;
+		using U4 = scalar_t<T_sigma[4]>;
+
+		TRUE_(U2{2, 12} == U4{2, 12, 6, 2}.coordered());
+		TRUE_(U2{0,  0} == U4{2, 12, 6, 3}.coordered());
+		TRUE_(U2{0,  0} == U4{2, 12, 6, 4}.coordered());
+
+		U4 u4{2, 12, 6, 2};
+		TRUE_(U4{0, 0, 0, 0} == u4 % U4{1, 2, 1, 2});
+		u4 /= {1, 2, 1, 2};
+		TRUE_(U2{1, 6} == u4.coordered());
+
+	}
 }
 
 
