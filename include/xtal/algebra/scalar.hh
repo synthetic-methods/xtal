@@ -215,7 +215,7 @@ struct scalar<A>
 			auto constexpr o = reflector<N_par>();
 			auto const     x = o*get<0>(s);
 			auto const     y = o*get<1>(s);
-			return T {x + y, x - y};
+			return decltype(twin()) {x + y, x - y};
 		}
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
@@ -228,6 +228,16 @@ struct scalar<A>
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
 			XTAL_0IF (N_par ==  0) {return 0.7071067811865475244008443621048490393L;}
 			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
+		}
+
+		XTAL_DEF_(return,inline)
+		XTAL_LET refactored()
+		XTAL_0EX
+		XTAL_REQ (N_data == 2)
+		{
+			auto const &[x, y] = self();
+
+			return decltype(twin()) {_std::gcd(x, y), _std::lcm(x, y)};
 		}
 
 	};

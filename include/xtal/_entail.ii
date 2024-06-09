@@ -22,11 +22,20 @@ template <auto N_0=0>
 XTAL_LET    sign_f(auto &&i)
 XTAL_0EX -> sign_t
 {
+	XTAL_USE  I = XTAL_TYP_(i);
+	XTAL_SET_(size_t)  N = sizeof(I) << 3;
+	XTAL_SET_(size_t) _N =          N - 1;
+	XTAL_SET_(sign_t) _1 =              1;
 	XTAL_IF0
-	XTAL_0IF (N_0 ==  0) {return (0 <  i) - (i <  0);}
+	XTAL_0IF (N_0 == +1 and _std::  is_signed_v<I>) {return (i >> _N)|_1;}
+	XTAL_0IF (N_0 == +1 and _std::is_unsigned_v<I>) {return           _1;}
 	XTAL_0IF (N_0 == +1) {return (0 <= i) - (i <  0);}
+	XTAL_0IF (N_0 ==  0) {return (0 <  i) - (i <  0);}
 	XTAL_0IF (N_0 == -1) {return (0 <  i) - (i <= 0);}
 }
+static_assert(sign_f(+2) == +1);
+static_assert(sign_f( 0) ==  0);
+static_assert(sign_f(-2) == -1);
 
 template <auto N, auto  ...Ms>	XTAL_ASK      exclusive_q =	(...and (N != Ms));
 template <auto N, auto  ...Ms>	XTAL_ASK      inclusive_q =	(...or  (N == Ms));

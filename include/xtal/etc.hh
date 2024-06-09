@@ -232,11 +232,22 @@
 #define XTAL_DEF_(...)           XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
 
 #define XTAL_ATT_(...)           XTAL_ATT_##__VA_ARGS__
+
+#if     0
+#elif   XTAL_V00_(MSVC)
+#define XTAL_ATT_verbatim        //FIXME
+#elif   XTAL_V00_(LLVM)
+#define XTAL_ATT_verbatim        [[clang::optnone]] __attribute__((optnone))
+#elif   XTAL_V00_(GNUC)
+#define XTAL_ATT_verbatim        [[gnu::optimize(0)]] __attribute__((optimize(0)))
+#endif
+
 #if     XTAL_V00_(MSVC)
 #define XTAL_ATT_inline          __forceinline
 #else
 #define XTAL_ATT_inline          inline __attribute__((always_inline))
 #endif
+
 #define XTAL_ATT_return          [[nodiscard]]
 #define XTAL_ATT_static          static
 #define XTAL_ATT_friend          friend

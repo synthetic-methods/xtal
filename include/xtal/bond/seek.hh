@@ -46,10 +46,11 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <             class ...Ts>  XTAL_TYP seek_constant           {using type = void;};
-template <Nominal_q T, class ...Ts>  XTAL_TYP seek_constant<T, Ts...> {using type =    T;};
+template <             class ...Ts>  XTAL_TYP seek_constant                    {using type = void;};
+template <Nominal_q T, class ...Ts>  XTAL_TYP seek_constant<T, Ts...> :                        T {};
 template <class     T, class ...Ts>  XTAL_TYP seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
 template <             class ...Ts>  XTAL_USE seek_constant_t = typename seek_constant<Ts...>::type;
+template <             class ...Ts>  XTAL_LET seek_constant_n =          seek_constant<Ts...>::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////

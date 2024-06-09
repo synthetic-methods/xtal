@@ -43,13 +43,17 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _std
+namespace _std = ::std;
+namespace _xtd
 {
-	using namespace ::std;
+//	using namespace ::std::experimental;
 
-#if not __cpp_lib_bit_cast
-	template <class T>
-	XTAL_LET bit_cast = []<class S> (S const &s)
+#if __cpp_lib_bit_cast
+	using _std::bit_cast;
+#else
+	template <class T, class S>
+	XTAL_DEF_(inline)
+	XTAL_FN1 bit_cast(S const &s)
 	XTAL_0FN
 	{
 		static_assert(is_trivially_copyable_v<T>);
@@ -58,11 +62,6 @@ namespace _std
 		return __builtin_bit_cast(T, s);
 	};
 #endif
-
-}
-namespace _xtd
-{
-//	using namespace ::std::experimental;
 
 }
 namespace _xtd::ranges

@@ -15,6 +15,16 @@ else  ()
 	add_executable (test ${XTAL_SOURCE_DIR}/include/xtal/all.cc)
 endif ()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+else ()
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -freciprocal-math")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffp-contract=fast")
+endif ()
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Xclang -menable-no-nans")
+endif ()
+
 target_link_libraries (test xtal::xtal Catch2::Catch2WithMain Eigen3::Eigen)
 
 target_precompile_headers (test INTERFACE xtal::xtal Catch2::Catch2WithMain Eigen3::Eigen)
