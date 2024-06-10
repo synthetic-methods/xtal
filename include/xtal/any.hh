@@ -52,8 +52,8 @@ namespace _xtd
 	using _std::bit_cast;
 #else
 	template <class T, class S>
-	XTAL_DEF_(inline)
-	XTAL_FN1 bit_cast(S const &s)
+	XTAL_DEF_(inline,static)
+	XTAL_REF bit_cast(S const &s)
 	XTAL_0FN
 	{
 		static_assert(is_trivially_copyable_v<T>);
@@ -73,8 +73,8 @@ namespace _xtd::ranges::views
 {
 	using namespace ::ranges::views;
 
-	XTAL_DEF_(inline)
-	XTAL_FN1 zip_transform(auto &&...oo)
+	XTAL_DEF_(inline,static)
+	XTAL_REF zip_transform(auto &&...oo)
 	XTAL_0EX
 	{
 		return zip_with(XTAL_REF_(oo)...);
@@ -97,8 +97,8 @@ XTAL_USE size_t = _entail:: size_t;
 XTAL_USE size_s = _entail:: size_s;
 XTAL_USE real_s = _entail:: real_s;
 
-XTAL_LET size_0 = _entail:: size_0;
-XTAL_LET size_1 = _entail:: size_1;
+static constexpr size_t size_0 = _entail:: size_0;
+static constexpr size_t size_1 = _entail:: size_1;
 
 
 template <auto    N, auto  ...Ms>	XTAL_ASK      exclusive_q = _entail::exclusive_q<N, Ms... >;

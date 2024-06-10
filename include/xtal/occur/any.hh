@@ -31,13 +31,13 @@ struct define
 	public:
 		using S_::S_;
 
-		XTAL_CXN subtype(size_t u)
+		XTAL_CON_(explicit) subtype(size_t u)
 		XTAL_0EX
 		{
 			assert(0 == u);
 		};
 		template <Cardinal_q U>
-		XTAL_CXN subtype(U &&u)
+		XTAL_CON_(explicit) subtype(U &&u)
 		XTAL_0EX
 		{
 			assert(0 == u);
@@ -49,8 +49,8 @@ struct define
 		template <int N_mask=-1>
 		struct address
 		{
-			XTAL_LET_(size_t) M_mask =  N_mask;
-			XTAL_LET_(size_t) W_mask = ~M_mask;
+			static constexpr size_t M_mask =  N_mask;
+			static constexpr size_t W_mask = ~M_mask;
 			
 			template <_retail::any_q R>
 			class subtype : public bond::compose_s<R>
@@ -92,7 +92,7 @@ struct define
 		{
 		};
 		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to `refunctor_` `functor<auto ...>`. \
+		Attaches `T` as a member of `this`, appending it to the arguments used to `defunctor` `functor<auto ...>`. \
 
 		template <int N_mask=-1>
 		struct dispatch
@@ -110,33 +110,35 @@ struct define
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(
-				XTAL_OP2 () (auto &&...xs),
-					(self().*refunctor_<decltype(xs)...>()) (XTAL_REF_(xs)...)
+				XTAL_TO2_(XTAL_DEF_(return,inline)
+				XTAL_LET operator () (auto &&...xs),
+					(self().*defunctor<decltype(xs)...>()) (XTAL_REF_(xs)...)
 				)
 
 				XTAL_TO4_(template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_TN1 refunctor(Integral_q auto const ...is),
+				XTAL_REF refunctor(Integral_q auto const ...Is),
 					//\
-					_std::bind_front(refunctor_<Xs...>(is...), &self())
-					[this, is...] (auto &&...xs) XTAL_0FN_((self().*refunctor_<Xs...>(is...)) (XTAL_REF_(xs)...))
+					_std::bind_front(defunctor<Xs...>(Is...), &self())
+					[this, Is...] (auto &&...xs) XTAL_0FN_((self().*defunctor<Xs...>(Is...)) (XTAL_REF_(xs)...))
 				)
 
 			protected:
 				template <class ...Xs>
-				XTAL_TN2 refunctor_(Integral_q auto const &...is)
+				XTAL_DEF_(return,inline)
+				XTAL_REF defunctor(Integral_q auto const &...Is)
 				XTAL_0FX
 				{
-					return refunctor_(figure<Xs...>::template type<is...>::value);
+					return defunctor(figure<Xs...>::template type<Is...>::value);
 				}
 				template <class A>
-				XTAL_TN2 refunctor_(_std::array<A, T::size()> const &value)
+				XTAL_DEF_(return,inline)
+				XTAL_REF defunctor(_std::array<A, T::size()> const &value)
 				XTAL_0FX
 				{
 					static_assert(1 == bond::operating::bit_count_f(T::size()));
 					size_t i = head(); i &= (T::size() - 1);
-					return R_::refunctor_(value[i]);
+					return R_::defunctor(value[i]);
 				}
 
 				template <class ...Xs>
@@ -146,7 +148,8 @@ struct define
 					class type
 					{
 						template <size_t ...I>
-						XTAL_FN2 enumerate_f(bond::seek_t<I...>)
+						XTAL_DEF_(static)
+						XTAL_LET enumerate_f(bond::seek_t<I...>)
 						XTAL_0EX
 						{
 							using context = typename R_::template figure<Xs...>;
@@ -154,6 +157,7 @@ struct define
 						}
 					
 					public:
+						XTAL_DEF_(static)
 						XTAL_LET value      = enumerate_f(bond::seek_s<T::size()> {});
 						XTAL_USE value_type = decltype(value);
 					
@@ -237,7 +241,8 @@ struct define
 				using R_::R_;
 				using R_::head;
 
-				XTAL_TN2_(T) functor()
+				XTAL_DEF_(return,inline)
+				XTAL_LET functor()
 				XTAL_0FX
 				{
 					return head();

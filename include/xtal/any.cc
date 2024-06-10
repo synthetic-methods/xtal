@@ -36,7 +36,8 @@ struct mix
 	{
 	public:
 
-		XTAL_TN2 functor(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return (XTAL_REF_(xs) +...+ 0);
@@ -56,7 +57,8 @@ struct static_onset_mix
 	public:
 
 		template <size_t onset=0>
-		XTAL_FN2 function(auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ onset);
@@ -73,7 +75,8 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_TN2 functor(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(auto &&...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<onset_t>());
@@ -92,7 +95,8 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_TN2 functor(auto &&x)
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(auto &&x)
 		XTAL_0EX
 		{
 			return XTAL_REF_(x)*this->template head<scale_t>();
@@ -120,7 +124,8 @@ struct dynamic_count
 	public:
 		using T_::T_;
 
-		XTAL_TN2 functor()
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor()
 		XTAL_0EX
 		{
 			auto i = u_count; u_count += this->template head<U_restep>();
@@ -139,7 +144,8 @@ using dynamic_count_t = typename dynamic_count::type;
 }/////////////////////////////////////////////////////////////////////////////
 /**/
 template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
-XTAL_OP2 | (T &&t, U &&u)
+XTAL_DEF_(return,inline)
+XTAL_REF operator | (T &&t, U &&u)
 XTAL_0EX
 {
 	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));

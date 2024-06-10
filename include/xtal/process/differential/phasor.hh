@@ -62,10 +62,10 @@ struct phasor<K_data[N_data], As...>
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
-		XTAL_DO4_(XTAL_OP0_(implicit) U_head(), {return head();})
+		XTAL_DO4_(XTAL_CVN_(implicit) U_head(), {return head();})
 		
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 bias()
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET bias()
 		XTAL_0EX_TO_(S_::template bias<U_data>())
 
 		///\
@@ -74,7 +74,7 @@ struct phasor<K_data[N_data], As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_TN2 let(size_t i), head().let(i))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF let(size_t i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
@@ -85,7 +85,8 @@ struct phasor<K_data[N_data], As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor(subarray_q<N_data> auto &&a)
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(subarray_q<N_data> auto &&a)
 		XTAL_0EX
 		{
 			(void) S_::influx(XTAL_REF_(a));
@@ -95,7 +96,8 @@ struct phasor<K_data[N_data], As...>
 		Evaluation by uccession. \
 		
 		template <auto ...Is> requires none_n<Is...>
-		XTAL_TN2 functor()
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor()
 		XTAL_0EX
 		{
 			///\todo\
@@ -127,7 +129,7 @@ struct phasor<K_data[N_data], As...>
 		Evaluation by succession. \
 		
 		XTAL_DEF_(return,inline)
-		XTAL_GET ingress()
+		XTAL_REF ingress()
 		XTAL_0EX
 		{
 			XTAL_IF0
@@ -136,7 +138,7 @@ struct phasor<K_data[N_data], As...>
 		};
 		template <class Y>
 		XTAL_DEF_(return,inline)
-		XTAL_SET egress(Y &&y)
+		XTAL_LET egress(Y &&y)
 		XTAL_0EX
 		{
 			XTAL_IF0

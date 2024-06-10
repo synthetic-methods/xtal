@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ..._s> XTAL_ASK polymer_q = bond::head_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
-XTAL_FN1     polymer_f(auto &&u)
+XTAL_LET     polymer_f(auto &&u)
 XTAL_0EX_TO_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
 
 
@@ -86,7 +86,7 @@ struct polymer<U, As...>
 				using R_::state;
 				using R_::store;
 				
-				XTAL_TO2_(XTAL_TN2 ensemble(), u_ensemble)
+				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF ensemble(), u_ensemble)
 
 				using R_::influx;
 				

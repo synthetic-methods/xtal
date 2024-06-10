@@ -20,15 +20,6 @@ Further insight may be gleaned from the `*.hh` implementations or `*.cc` tests i
 
 # Usage
 
-## Prelude
-
-The following code examples use the following macros for brevity/clarity:
-
-	#define XTAL_TN2 [[nodiscard]] constexpr decltype(auto)
-	#define XTAL_TN1               constexpr decltype(auto)
-
-	#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__)&&>(__VA_ARGS__)
-
 ## Processing
 
 The fundamental mechanism for defining stream-based operators is range-lifting,
@@ -37,7 +28,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	struct Mix : process::confine_t<Mix>
 	{
 	   template <auto...>
-	   XTAL_TN2 functor(auto &&...xs)
+	   XTAL_REF functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0);
 	   }
@@ -69,7 +60,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 	struct Mix : process::confine_t<Mix, Active::template attach>
 	{
-	   XTAL_TN2 functor(auto &&...xs)
+	   XTAL_REF functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
 	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
@@ -86,7 +77,7 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	>
 	{
 	   template <auto offset, auto active>
-	   XTAL_TN2 functor(auto &&...xs)
+	   XTAL_REF functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }
@@ -173,27 +164,6 @@ As a header-only library, the accompanying `*.cc` are there only for testing and
 NOTE: When browsing/editing `include`, it can be useful to toggle the visibility of the `all.*`, `any.*`, and `*.cc` files. This can be accomplished in VSCode with the plug-ins [Toggle Excluded Files](https://marketplace.visualstudio.com/items?itemName=amodio.toggle-excluded-files) and [Open Related Files](https://marketplace.visualstudio.com/items?itemName=bryanthomaschen.open-related-file).
 
 
-## Macros
-
-The macros defined in [`xtal.hh`](include/xtal.hh?ts=3) are used throughout this library in order to finesse some of the keyword combinations required by `C++`.
-The most commonly encountered are those used for function definition, for example:
-
-	#define XTAL_OP1                      constexpr decltype(auto) operator
-	#define XTAL_OP2 [[nodiscard]]        constexpr decltype(auto) operator
-	#define XTAL_TN1                      constexpr decltype(auto)
-	#define XTAL_TN2 [[nodiscard]]        constexpr decltype(auto)
-	#define XTAL_FN1               static constexpr decltype(auto)
-	#define XTAL_FN2 [[nodiscard]] static constexpr decltype(auto)
-	
-	#define XTAL_0EX                      noexcept
-	#define XTAL_0EX_(REF)            REF noexcept
-	#define XTAL_0FX            const     noexcept
-	#define XTAL_0FX_(REF)      const REF noexcept
-
-This naming scheme is intended to be automnemonic...
-
-The codes `OP1` and `OP2` respectively designate unary and binary operators. This convention is carried over to the mutative and immutative function codes `FN1` and `FN2` and their counterparts on  `this`, `FM1` and `FM2`. The codes `0EX` and `0FX` respectively designate mutative and immutative definitions with `noexcept`, the latter a mnemonic for "no effects".
-
 ## Templates
 
 The majority of definitions in this library operate on decorators: type-level functions that map from a superclass `S` to a subclass. These decorators are expressed as a `struct` containing `class subtype`:
@@ -208,11 +178,11 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   template <class S>
 	   class subtype
 	   {
-	      XTAL_TN2 self() XTAL_0FX {return static_cast<T const &>(*this);}
-	      XTAL_TN2 self() XTAL_0EX {return static_cast<T       &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0FX {return static_cast<T const &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0EX {return static_cast<T       &>(*this);}
 
-	   // [[nodiscard]] constexpr decltype(auto) self() const noexcept {return static_cast<T const &>(*this);}
-	   // [[nodiscard]] constexpr decltype(auto) self()       noexcept {return static_cast<T       &>(*this);}
+	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept {return static_cast<T const &>(*this);}
+	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept {return static_cast<T       &>(*this);}
 
 	   };
 	};

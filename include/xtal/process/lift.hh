@@ -41,13 +41,13 @@ struct lift<F>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor (auto &&...xs),
+		XTAL_REF functor (auto &&...xs),
 		{
 			return invoke_f<F>(S_::template functor <Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_REF function(auto &&...xs)
 		XTAL_0EX
 		{
 			return invoke_f<F>(S_::template function<Is...>(XTAL_REF_(xs)...));

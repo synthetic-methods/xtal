@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
 template <typename ..._s> XTAL_ASK monomer_q = bond::head_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_FN1     monomer_f(auto &&u)
+XTAL_LET     monomer_f(auto &&u)
 XTAL_0EX_TO_(monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
@@ -76,17 +76,17 @@ struct monomer<U_process, As...>
 				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
-				XTAL_CXN subtype(auto &&...xs)
+				XTAL_CON_(explicit) subtype(auto &&...xs)
 				XTAL_0EX
 				:	subtype(T_self{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CXN subtype(is_q<T_self> auto &&t, auto &&...xs)
+				XTAL_CON_(explicit) subtype(is_q<T_self> auto &&t, auto &&...xs)
 				XTAL_0EX
 				:	R_(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-				XTAL_TO4_(XTAL_TN2 state(auto &&...oo), R_::head(XTAL_REF_(oo)...))
-				XTAL_TO2_(template <auto ...> XTAL_DEF_(return,inline) XTAL_TN1 functor(), state())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF state(auto &&...oo), R_::head(XTAL_REF_(oo)...))
+				XTAL_TO2_(template <auto ...> XTAL_DEF_(return,inline) XTAL_REF functor(), state())
 
 			public:// FLUXION
 				using R_::efflux;
@@ -106,7 +106,7 @@ struct monomer<U_process, As...>
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
-			XTAL_LET_(int) N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
+			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
 			using subkind = bond::compose<resource::stashed<U_state, U_store>, R__compound<Xs...>>;
 
@@ -120,17 +120,19 @@ struct monomer<U_process, As...>
 				using R_::self;
 				using R_::state;
 				using R_::store;
+				
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_TN1 functor(),
+				XTAL_REF functor(),
 				{
 					XTAL_IF0
 					XTAL_0IF (    resizeable_q<U_store>) {return state();}
 					XTAL_0IF (not resizeable_q<U_store>) {return state()|account_f(R_::template head_t<U_resize>);}
 				})
 
-				XTAL_TN2_(size_t) delay()
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET delay()
+				XTAL_0EX -> size_t
 				{
 					size_t const n = R_::delay();
 					return 0 < n? n: R_::template head<U_resize>();

@@ -16,7 +16,7 @@ template <class   ..._s>	XTAL_USE circular_t = typename circular<_s...>::type;
 template <class   ...Ts>	XTAL_ASK circular_q = bond::head_tag_p<circular_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 circular_f(auto &&...oo)
+XTAL_LET circular_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<circular_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
@@ -63,8 +63,8 @@ struct circular<A>
 		using typename T_::U_data;
 
 	public:// MAP
-		XTAL_DEF_(return,inline) XTAL_FN1   ordinate(U_alpha const &o) XTAL_0EX {return static_cast<U_sigma>(static_cast<U_delta>(o*_op::diplo_f()));};
-		XTAL_DEF_(return,inline) XTAL_FN1 coordinate(U_sigma const &o) XTAL_0EX {return static_cast<U_alpha>(static_cast<U_delta>(o))*_op::haplo_f();};
+		XTAL_DEF_(return,inline,static) XTAL_LET   ordinate(U_alpha const &o) XTAL_0EX {return static_cast<U_sigma>(static_cast<U_delta>(o*_op::diplo_f()));};
+		XTAL_DEF_(return,inline,static) XTAL_LET coordinate(U_sigma const &o) XTAL_0EX {return static_cast<U_alpha>(static_cast<U_delta>(o))*_op::haplo_f();};
 
 	public:// ACCESS
 		using T_::self;
@@ -81,25 +81,25 @@ struct circular<A>
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CXN homotype(size_t const n)
+		XTAL_CON_(explicit) homotype(size_t const n)
 		XTAL_0EX
 		:	T_(n)
 		{}
 
-		XTAL_CON  homotype                           () XTAL_0EX : homotype(size_0)        {                                }
-		XTAL_CXN  homotype (real_number_q auto &&...oo) XTAL_0EX : homotype(sizeof...(oo)) {operator>>=({XTAL_REF_(oo)...});}
-		XTAL_CON  homotype         (initializer_list o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
-		XTAL_CXN  homotype         (bounded_q auto &&o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CON_(implicit)  homotype                           () XTAL_0EX : homotype(size_0)        {                                }
+		XTAL_CON_(explicit)  homotype (real_number_q auto &&...oo) XTAL_0EX : homotype(sizeof...(oo)) {operator>>=({XTAL_REF_(oo)...});}
+		XTAL_CON_(implicit)  homotype         (initializer_list o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CON_(explicit)  homotype         (bounded_q auto &&o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
 		
 	public:// RECONSTRUCT
 		using T_::operator >>=;
 		using T_::operator <<=;
 
-		XTAL_OP1_(homotype &) >>= (initializer_list o) XTAL_0EX {_detail::copy_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
-		XTAL_OP1_(homotype &) >>= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator >>= (initializer_list o) XTAL_0EX -> homotype & {_detail::copy_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator >>= (bounded_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		
-		XTAL_OP1_(homotype &) <<= (initializer_list o) XTAL_0EX {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
-		XTAL_OP1_(homotype &) <<= (bounded_q auto &&o) XTAL_0EX {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator <<= (initializer_list o) XTAL_0EX -> homotype & {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator <<= (bounded_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		
 	public:// OPERATE
 		///\
@@ -115,18 +115,20 @@ struct circular<A>
 		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		auto operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
 
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=  (t))
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=  (t))
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=  (t))
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=  (t))
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
+		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
 
-		XTAL_OP1_(T &) /= (number_q auto const &f)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET operator /= (number_q auto const &f)
+		XTAL_0EX -> T &
 		{
 			return operator*=(_op::alpha_1/f);
 		}
-		XTAL_OP1_(T &) *= (real_number_q auto const &f)
-		XTAL_0EX
+	//	XTAL_DEF_(inline)
+		XTAL_LET operator *= (real_number_q auto const &f)
+		XTAL_0EX -> T &
 		{
 			size_t constexpr M_bias = _op::N_width >> 3;
 			size_t constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
@@ -137,8 +139,9 @@ struct circular<A>
 			s  *= m;
 			return self();
 		}
-		XTAL_OP1_(T &) *= (integral_number_q auto const &i)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET operator *= (integral_number_q auto const &i)
+		XTAL_0EX -> T &
 		{
 			return T_::operator*=(i);
 		}
@@ -149,19 +152,22 @@ struct circular<A>
 		using T_::operator-=;
 		using T_::operator+=;
 
-		XTAL_OP1_(T &) -= (number_q auto const &f)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET operator -= (number_q auto const &f)
+		XTAL_0EX -> T &
 		{
 			return operator+=(-f);
 		}
-		XTAL_OP1_(T &) += (real_number_q auto const &f)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET operator += (real_number_q auto const &f)
+		XTAL_0EX -> T &
 		{
 			T_::operator[](0) += _op::fractional_f(f);
 			return self();
 		}
-		XTAL_OP1_(T &) += (integral_number_q auto const &i)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET operator += (integral_number_q auto const &i)
+		XTAL_0EX -> T &
 		{
 			return self();
 		}

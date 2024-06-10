@@ -17,7 +17,7 @@ template <class           ...Ts>	XTAL_ASK scalar_q = bond::head_tag_p<scalar_t, 
 template <size_t N, class ...Ts>	XTAL_ASK scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 scalar_f(auto &&...oo)
+XTAL_LET scalar_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<scalar_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
@@ -57,7 +57,7 @@ struct scalar<A>
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 
-		XTAL_CON homotype()
+		XTAL_CON_(implicit) homotype()
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -72,7 +72,7 @@ struct scalar<A>
 				_std::uninitialized_fill_n(T_::data(), T_::size(), U_data{1});
 			}
 		}
-		XTAL_CON homotype(embrace_t<U_data> w)
+		XTAL_CON_(implicit) homotype(embrace_t<U_data> w)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -93,7 +93,7 @@ struct scalar<A>
 				}
 			}
 		}
-		XTAL_CXN homotype(auto &&...oo)
+		XTAL_CON_(explicit) homotype(auto &&...oo)
 		XTAL_0EX
 		XTAL_REQ (0 < sizeof...(oo))
 		:	T_(XTAL_REF_(oo)...)
@@ -109,18 +109,18 @@ struct scalar<A>
 		using T_::operator/=;
 		using T_::operator%=;
 
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) / (auto       const &t) XTAL_0FX {return twin() /=  (t);}
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) % (auto       const &t) XTAL_0FX {return twin() %=  (t);}
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX {return twin() /=  (t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator % (auto       const &t) XTAL_0FX {return twin() %=  (t);}
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
+		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
+		XTAL_DEF_(inline)        XTAL_REF operator %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
 
 	//	Vector multiplication (Hadamard product):
 		
 		XTAL_DEF_(inline)
-		XTAL_OP1_(T &) *=(array_q<N_data> auto const &t)
-		XTAL_0EX
+		XTAL_LET operator *=(array_q<N_data> auto const &t)
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 			
@@ -130,8 +130,8 @@ struct scalar<A>
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_OP1_(T &) /=(array_q<N_data> auto const &t)
-		XTAL_0EX
+		XTAL_LET operator /=(array_q<N_data> auto const &t)
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 			
@@ -141,8 +141,8 @@ struct scalar<A>
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_OP1_(T &) %=(array_q<N_data> auto const &t)
-		XTAL_0EX
+		XTAL_LET operator %=(array_q<N_data> auto const &t)
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 			
@@ -155,7 +155,7 @@ struct scalar<A>
 	//	Scalar sum:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 sum(U_data const &u={})
+		XTAL_REF sum(U_data const &u={})
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -175,7 +175,7 @@ struct scalar<A>
 	//	Scalar product:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 product(U_data u={})
+		XTAL_REF product(U_data u={})
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -195,7 +195,7 @@ struct scalar<A>
 			return u;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 product(iterated_q auto &&t)
+		XTAL_REF product(iterated_q auto &&t)
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -212,7 +212,7 @@ struct scalar<A>
 
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(inline)
-		XTAL_TN1 reflect()
+		XTAL_REF reflect()
 		XTAL_0EX
 		{
 			return self() = reflected<N_par>();
@@ -221,7 +221,7 @@ struct scalar<A>
 		
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 reflected()
+		XTAL_REF reflected()
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -234,7 +234,7 @@ struct scalar<A>
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(return,inline,static)
 		XTAL_LET reflector()
 		XTAL_0EX -> devolved_t<U_data>
 		{
@@ -246,7 +246,7 @@ struct scalar<A>
 
 
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 ordered()
+		XTAL_REF ordered()
 		XTAL_0FX
 		XTAL_REQ (2 == N_data)
 		{
@@ -256,7 +256,7 @@ struct scalar<A>
 			return x < y? U2{x, y}: U2{y, x};
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 coordered()
+		XTAL_REF coordered()
 		XTAL_0FX
 		XTAL_REQ (2 == N_data) and _std::integral<U_data>
 		{
@@ -271,7 +271,7 @@ struct scalar<A>
 			}
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 coordered()
+		XTAL_REF coordered()
 		XTAL_0FX
 		XTAL_REQ (3 <= N_data) and _std::integral<U_data>
 		{
@@ -294,7 +294,7 @@ struct scalar<A>
 		}
 
 		XTAL_DEF_(inline)
-		XTAL_TN1 incorporate(auto const &t)
+		XTAL_REF incorporate(auto const &t)
 		XTAL_0EX
 		XTAL_REQ (2 == N_data)
 		{
@@ -304,7 +304,7 @@ struct scalar<A>
 			return s;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 incorporated(auto &&t)
+		XTAL_REF incorporated(auto &&t)
 		XTAL_0FX
 		XTAL_REQ (2 == N_data)
 		{
@@ -316,7 +316,7 @@ struct scalar<A>
 
 };
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_TYP_(XTAL_VAL_(scalar_t<float(&)[2]>)*XTAL_VAL_(scalar_t<float(&)[2]>))>
+	XTAL_TYP_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>
 );
 
 

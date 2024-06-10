@@ -65,7 +65,8 @@ struct defer<U>
 		using S_::S_;
 
 		XTAL_DO2_(template <auto ...>
-		XTAL_TN2 functor(),
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(),
 		{
 			auto &v = S_::template head<V_render>().view();
 			return S_::subhead(v);
@@ -94,7 +95,7 @@ struct defer<U>
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
+		XTAL_REF functor(auto &&...xs),
 		{
 			return iterative_f(head().template refunctor<iteratee_t<decltype(xs)> const &...>(Is...), XTAL_REF_(xs)...);
 		})
@@ -120,8 +121,8 @@ struct refer<U>
 	public:
 		using S_::S_;
 
-		XTAL_TO2_(XTAL_TN2 begin(), S_::functor().begin())
-		XTAL_TO2_(XTAL_TN2   end(), S_::functor().  end())
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF begin(), S_::functor().begin())
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF   end(), S_::functor().  end())
 
 	};
 };
@@ -138,8 +139,8 @@ struct refer<U>
 	public:
 		using S_::S_;
 
-		XTAL_TO2_(XTAL_TN2 begin(), S_::functor().begin())
-		XTAL_TO2_(XTAL_TN2   end(), S_::functor().  end())
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF begin(), S_::functor().begin())
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF   end(), S_::functor().  end())
 
 	};
 };

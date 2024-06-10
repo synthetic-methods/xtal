@@ -40,26 +40,26 @@ struct stashed<U_state, U_store>
 	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 	
-		XTAL_CON subtype()
+		XTAL_CON_(implicit) subtype()
 		XTAL_0EX
 		:	subtype(U_store())
 		{}
-		XTAL_CXN subtype(auto &&...oo)
+		XTAL_CON_(explicit) subtype(auto &&...oo)
 		XTAL_0EX
 		:	subtype(U_store(), XTAL_REF_(oo)...)
 		{}
 		
-		XTAL_CXN subtype(U_store o, auto &&...oo)
+		XTAL_CON_(explicit) subtype(U_store o, auto &&...oo)
 		XTAL_0EX
 		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		XTAL_TN0 store(U_store o, auto &&...oo)
-		XTAL_0EX
+		XTAL_LET store(U_store o, auto &&...oo)
+		XTAL_0EX -> void
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_TN2 store(), S_::template head<1>())
-		XTAL_TO4_(XTAL_TN2 state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF store(), S_::template head<1>())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

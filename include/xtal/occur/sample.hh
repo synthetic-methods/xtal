@@ -26,8 +26,8 @@ private:
 	using U = typename _op:: iota_t;
 	using V = typename _op::alpha_t;
 
-	XTAL_LET_(U) U_1 = 1;
-	XTAL_LET_(V) V_1 = 1;
+	static constexpr U U_1{1};
+	static constexpr V V_1{1};
 
 	using M = bond::pack_t<U, V>;
 
@@ -46,21 +46,21 @@ public:
 	//	XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
-		XTAL_CON subtype()
+		XTAL_CON_(implicit) subtype()
 		XTAL_0EX
 		:	subtype(1)
 		{}
-		XTAL_CXN subtype(integral_number_q auto n, auto &&...oo)
+		XTAL_CON_(explicit) subtype(integral_number_q auto n, auto &&...oo)
 		XTAL_0EX
 		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
 		{}
-		XTAL_CXN subtype(real_number_q auto u, auto &&...oo)
+		XTAL_CON_(explicit) subtype(real_number_q auto u, auto &&...oo)
 		XTAL_0EX
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_TN2   rate(), get<0>(S_::head()))
-		XTAL_TO4_(XTAL_TN2 period(), get<1>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF   rate(), get<0>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF period(), get<1>(S_::head()))
 
 	};
 };

@@ -15,17 +15,17 @@ using size_t = XTAL_STD_(size_t);
 using size_s = XTAL_STD_(size_s);
 using real_s = XTAL_STD_(real_s);
 
-XTAL_LET_(size_t) size_0{0};
-XTAL_LET_(size_t) size_1{1};
+static constexpr size_t size_0{0};
+static constexpr size_t size_1{1};
 
 template <auto N_0=0>
 XTAL_LET    sign_f(auto &&i)
 XTAL_0EX -> sign_t
 {
-	XTAL_USE  I = XTAL_TYP_(i);
-	XTAL_SET_(size_t)  N = sizeof(I) << 3;
-	XTAL_SET_(size_t) _N =          N - 1;
-	XTAL_SET_(sign_t) _1 =              1;
+	using I = XTAL_TYP_(i);
+	size_t constexpr  N = sizeof(I) << 3;
+	size_t constexpr _N =          N - 1;
+	sign_t constexpr _1 =              1;
 	XTAL_IF0
 	XTAL_0IF (N_0 == +1 and _std::  is_signed_v<I>) {return (i >> _N)|_1;}
 	XTAL_0IF (N_0 == +1 and _std::is_unsigned_v<I>) {return           _1;}
@@ -85,7 +85,7 @@ template <class      T, class ...Ys>	XTAL_ASK             as_p =	_std::construct
 template <class      T, class    Y >	XTAL_ASK       fungible_q =	_std::derived_from<_std::remove_cvref_t<T>, _std::remove_cvref_t<Y>> or _std::derived_from<_std::remove_cvref_t<Y>, _std::remove_cvref_t<T>>;
 template <class      T, class    Y >	XTAL_ASK     infungible_q =	not fungible_q<T, Y>;
 
-template <class      X, class    F >	XTAL_ASK     idempotent_p =	is_q<XTAL_TYP_(XTAL_VAL_(F) (XTAL_VAL_(X))), X>;
+template <class      X, class    F >	XTAL_ASK     idempotent_p =	is_q<XTAL_TYP_(XTAL_ANY_(F) (XTAL_ANY_(X))), X>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,9 +117,9 @@ template <class         T >	XTAL_ASK        Liminal_q =	Integral_q<T> and 0 != T
 template <Liminal_q     T >	XTAL_USE     Subliminal_s =	Nominal_t<(T{} - sign_n<T{}>)>;
 template <Liminal_q     T >	XTAL_USE    Semiliminal_s =	Nominal_t<(T{} >> 1)>;
 
-template <int N           >	XTAL_TYP     Bisordinal   :	Nominal_t<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N * real_s(0.5));};
-template <int N, int ...Ns>	XTAL_TYP     Fractional    	             {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N + real_s(1.0)/Fractional<Ns...>{});};
-template <int N           >	XTAL_TYP     Fractional<N>:	Nominal_t<N> {XTAL_TO4_(XTAL_OP0_(implicit) real_s(), N);};
+template <int N           >	XTAL_TYP     Bisordinal   :	Nominal_t<N> {XTAL_TO4_(XTAL_CVN_(implicit) real_s(), N * real_s(0.5));};
+template <int N, int ...Ns>	XTAL_TYP     Fractional    	             {XTAL_TO4_(XTAL_CVN_(implicit) real_s(), N + real_s(1.0)/Fractional<Ns...>{});};
+template <int N           >	XTAL_TYP     Fractional<N>:	Nominal_t<N> {XTAL_TO4_(XTAL_CVN_(implicit) real_s(), N);};
 
 template <       size_t N >	XTAL_TYP      Factorial   :	Nominal_t<N * Factorial<N - 1>{}> {};
 template <                >	XTAL_TYP      Factorial<0>:	Nominal_t<1> {};
@@ -176,12 +176,12 @@ template <class         T >	XTAL_TYP       devalued   ;
 template <class         T >	XTAL_USE       devalued_t =	typename devalued<_std::remove_reference_t<T>>::value_type;
 template <class         T >	XTAL_LET       devalued_n =	         devalued<_std::remove_reference_t<T>>::size();
 template <class         T >	XTAL_ASK       devalued_q =	not is_q<T, devalued_t<T>>;
-template <class         T >	XTAL_TYP       devalued                     {using value_type =            T  ; XTAL_FN2 size() XTAL_0EX_TO_(             size_t(1));};
-template <   invalued_q T >	XTAL_TYP       devalued<T>                  {using value_type = invalued_t<T> ; XTAL_FN2 size() XTAL_0EX_TO_(     _std::extent_v<T>);};
-template <     varity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_FN2 size() XTAL_0EX_TO_(             size_t(0));};
-template <      arity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_FN2 size() XTAL_0EX_TO_( _std::tuple_size_v<T>);};
-template <class  U        >	XTAL_TYP       devalued<_std::complex<U>>   {using value_type =            U  ; XTAL_FN2 size() XTAL_0EX_TO_(             size_t(2));};
-template <class  U, int N >	XTAL_TYP       devalued<_std::array<U, N>>  {using value_type =            U  ; XTAL_FN2 size() XTAL_0EX_TO_(             size_t(N));};
+template <class         T >	XTAL_TYP       devalued                     {using value_type =            T  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_t(1));};
+template <   invalued_q T >	XTAL_TYP       devalued<T>                  {using value_type = invalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(     _std::extent_v<T>);};
+template <     varity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_t(0));};
+template <      arity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_( _std::tuple_size_v<T>);};
+template <class  U        >	XTAL_TYP       devalued<_std::complex<U>>   {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_t(2));};
+template <class  U, int N >	XTAL_TYP       devalued<_std::array<U, N>>  {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_t(N));};
 
 template <class U,        int ...Ns>	XTAL_TYP    involved               {using array_type = U;};
 template <class U, int N, int ...Ns>	XTAL_TYP    involved<U, N, Ns...>  {using array_type = typename involved<U, Ns...>::array_type[N];};
@@ -209,7 +209,8 @@ struct devolved : involved<U, Ns...>
 //	using extents_type = _xtd::extents<U, Ns...>;
 //	template <class ..._s> using subtype = _xtd::mdspan<U, extents_type, _s...>;
 
-	XTAL_FN2 size()
+	XTAL_DEF_(static)
+	XTAL_LET size()
 	XTAL_0EX
 	{
 		if constexpr (sizeof...(Ns) and (...and (0 < Ns))) {
@@ -235,25 +236,25 @@ Ranged...
 template <class         T >	XTAL_ASK         column_q =	_std::is_array_v<based_t<T>> and not _std::is_array_v<_std::remove_extent_t<based_t<T>>>;
 template <class         T >	XTAL_ASK          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalued_t<T>, devalued_n<T>>>;
 
-template <class         T >	XTAL_ASK       accessed_q =	requires (T t) { t[XTAL_VAL_(size_t)];};
+template <class         T >	XTAL_ASK       accessed_q =	requires (T t) { t[XTAL_ANY_(size_t)];};
 template <class         T >	XTAL_ASK        pointer_q =	requires (T t) {*t;};
-template <class         T >	XTAL_USE       accessed_t =	_std::remove_reference_t<decltype( XTAL_VAL_(T)[XTAL_VAL_(size_t)])>;
-template <class         T >	XTAL_USE        pointer_t =	_std::remove_reference_t<decltype(&XTAL_VAL_(T))>;
-template <class         T >	XTAL_USE        pointee_t =	_std::remove_reference_t<decltype(*XTAL_VAL_(T))>;
+template <class         T >	XTAL_USE       accessed_t =	_std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(size_t)])>;
+template <class         T >	XTAL_USE        pointer_t =	_std::remove_reference_t<decltype(&XTAL_ANY_(T))>;
+template <class         T >	XTAL_USE        pointee_t =	_std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
 
 template <class         T >	XTAL_ASK          begin_q =	requires (T &t) {*t.begin();};
 template <class         T >	XTAL_ASK          front_q =	requires (T &t) { t.front();};
 template <class         T >	XTAL_ASK           back_q =	requires (T &t) { t. back();};
 template <class         T >	XTAL_ASK            end_q =	requires (T &t) {*t.  end();};
 
-template <class         T >	XTAL_USE          begin_t =	decltype ( XTAL_VAL_(T).begin() );
-template <class         T >	XTAL_USE          front_t =	decltype (*XTAL_VAL_(T).begin() );
-template <class         T >	XTAL_USE           back_t =	decltype (*XTAL_VAL_(T).  end() );
-template <class         T >	XTAL_USE            end_t =	decltype ( XTAL_VAL_(T).  end() );
+template <class         T >	XTAL_USE          begin_t =	decltype ( XTAL_ANY_(T).begin() );
+template <class         T >	XTAL_USE          front_t =	decltype (*XTAL_ANY_(T).begin() );
+template <class         T >	XTAL_USE           back_t =	decltype (*XTAL_ANY_(T).  end() );
+template <class         T >	XTAL_USE            end_t =	decltype ( XTAL_ANY_(T).  end() );
 
-template <class         T >	XTAL_USE       sizeable_t =	decltype ( XTAL_VAL_(T).  size() );
-template <class         T >	XTAL_ASK       sizeable_q =	requires { XTAL_VAL_(T).  size();};
-template <class         T >	XTAL_ASK     resizeable_q =	requires { XTAL_VAL_(T).resize(XTAL_VAL_(sizeable_t<T>));};
+template <class         T >	XTAL_USE       sizeable_t =	decltype ( XTAL_ANY_(T).  size() );
+template <class         T >	XTAL_ASK       sizeable_q =	requires { XTAL_ANY_(T).  size();};
+template <class         T >	XTAL_ASK     resizeable_q =	requires { XTAL_ANY_(T).resize(XTAL_ANY_(sizeable_t<T>));};
 
 template <class         T >	XTAL_ASK        bounded_q =	begin_q<T> and     end_q<T>;
 template <class         T >	XTAL_ASK      unbounded_q =	begin_q<T> and not end_q<T>;
@@ -311,7 +312,7 @@ template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =           
 template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                          T  ;};
 
 template <class         T >	XTAL_TYP       distance    	{using type =    distance_t<iterator_t<T>>;};
-template <iterator_q    T >	XTAL_TYP       distance<T> 	{using type = XTAL_TYP_(_std::distance(XTAL_VAL_(T), XTAL_VAL_(T)));};
+template <iterator_q    T >	XTAL_TYP       distance<T> 	{using type = XTAL_TYP_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
 template <counted_q     T >	XTAL_TYP        counted<T> 	{using type =    based_t<T>;};
 template <counter_q     T >	XTAL_TYP        counted<T> 	{using type = iterated_t<T>;};
@@ -487,18 +488,20 @@ concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N,
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
-XTAL_FN2 lateral_f(T n)
+XTAL_DEF_(return,inline)
+XTAL_LET lateral_f(T n)
 XTAL_0EX
 {
 	return n;
 }
 template <class T>
-XTAL_FN2 lateral_f(T n, T m, auto ...ms)
+XTAL_DEF_(return,inline)
+XTAL_LET lateral_f(T n, T m, auto ...ms)
 XTAL_0EX
 {
-	XTAL_SET N_count = 1 + 1 + sizeof...(ms);
-	XTAL_SET N_width = sizeof(T)/N_count;
-	XTAL_SET N_depth = N_width << 3;
+	XTAL_LET N_count = 1 + 1 + sizeof...(ms);
+	XTAL_LET N_width = sizeof(T)/N_count;
+	XTAL_LET N_depth = N_width << 3;
 	static_assert(N_width*N_count == sizeof(T));
 	return lateral_f<T>(m|(n<<N_depth), ms...);
 }

@@ -16,7 +16,7 @@ template <class   ..._s>	XTAL_USE linear_t = typename linear<_s...>::type;
 template <class   ...Ts>	XTAL_ASK linear_q = bond::head_tag_p<linear_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 linear_f(auto &&...oo)
+XTAL_LET linear_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<linear_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
@@ -59,13 +59,13 @@ struct linear<A>
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_OP1 ++ (int)
+		XTAL_REF operator ++ (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator++(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_OP1 ++ ()
+		XTAL_REF operator ++ ()
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -81,13 +81,13 @@ struct linear<A>
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_OP1 -- (int)
+		XTAL_REF operator -- (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator--(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_OP1 -- ()
+		XTAL_REF operator -- ()
 		XTAL_0EX
 		{
 			auto &s = self();

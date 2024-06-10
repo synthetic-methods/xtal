@@ -16,7 +16,7 @@ template <class   ..._s>	XTAL_USE symbol_t = typename symbol<_s...>::type;
 template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 symbol_f(auto &&...oo)
+XTAL_LET symbol_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<symbol_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
@@ -49,7 +49,7 @@ struct symbol<A>
 		using          T_::N_data;
 		using typename T_::U_data;
 
-		XTAL_LET modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
+		static constexpr auto modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
 
 	public:// ACCESS
 		using T_::let;
@@ -58,11 +58,11 @@ struct symbol<A>
 
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
 
-		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_TN1 let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
 
 
 	public:// CONSTRUCT
@@ -72,8 +72,8 @@ struct symbol<A>
 		Dirichlet character generation. \
 
 		template <int N_subscript=1> requires ((bool) (1&N_data))
-		XTAL_TN1_(T &) characterize()
-		XTAL_0EX
+		XTAL_LET characterize()
+		XTAL_0EX -> T &
 		{
 			size_s constexpr N = N_data;
 			size_s constexpr M = N_data - 1;
@@ -82,10 +82,10 @@ struct symbol<A>
 			let(0) = {};
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<K>([&, this] (auto I) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (size_t i) XTAL_0FN {
 					auto const o = k%N;
-					let(    o) =  I;
-					let(N - o) =  I - K;
+					let(    o) =  i;
+					let(N - o) =  i - K;
 					k *= K;
 				});
 				let(1) = 0;
@@ -96,7 +96,7 @@ struct symbol<A>
 				if constexpr (complex_field_q<U_data>) {
 					u = _op::circle_f(_op::patio_f(1, K));
 				}
-				bond::seek_forward_f<K>([&, this] (auto I) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (size_t i) XTAL_0FN {
 					auto const o = k%N;
 					let(    o) =  w;
 					let(N - o) = -w;
@@ -107,8 +107,8 @@ struct symbol<A>
 			return self();
 		}
 		template <int N_subscript=1>
-		XTAL_TN1_(T &) subcharacterize()
-		XTAL_0EX
+		XTAL_LET subcharacterize()
+		XTAL_0EX -> T &
 		{
 			size_t constexpr N = N_data*2 + 1;
 			size_t constexpr M = N_data*2 + 0;
@@ -116,7 +116,7 @@ struct symbol<A>
 			size_t           k = N_data;
 
 			if constexpr (integral_number_q<U_data>) {
-				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (size_t i) XTAL_0FN {
 					auto const o = k%N;
 					if (K < o) {
 						let(M - o) = (1 + i) - K;
@@ -137,7 +137,7 @@ struct symbol<A>
 					u = 1;
 				}
 				w = u;
-				bond::seek_forward_f<K>([&, this] (XTAL_NDX i) XTAL_0FN {
+				bond::seek_forward_f<K>([&, this] (size_t i) XTAL_0FN {
 					auto const o = k%N;
 					if (K < o) {
 						let(M - o) = -w;

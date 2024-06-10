@@ -16,8 +16,8 @@ namespace _detail
 template <class U_this, class A_that=void>
 struct query
 {
-	XTAL_LET_(bool) A_node =     void_q<A_that>;
-	XTAL_LET_(bool) A_edge = not void_q<A_that>;
+	static constexpr bool A_node =     void_q<A_that>;
+	static constexpr bool A_edge = not void_q<A_that>;
 
 	template <class S>
 	class subtype : public S
@@ -56,30 +56,30 @@ struct query
 		/*/
 		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
+		XTAL_REF self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), S_::head(XTAL_REF_(oo)...)
+		XTAL_REF head(auto &&...oo), S_::head(XTAL_REF_(oo)...)
 		)
 		/***/
 
 		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
+		XTAL_REF self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
+		XTAL_REF head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)
 
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 self(auto &&...oo), self<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_REF self(auto &&...oo), self<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_t ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 head(auto &&...oo), head<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_REF head(auto &&...oo), head<Cardinal_t<Is>...>(XTAL_REF_(oo)...)
 		)
 
 	};

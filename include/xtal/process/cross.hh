@@ -16,7 +16,7 @@ template <typename ..._s> XTAL_USE cross_t = confined_t<cross<_s...>>;
 template <typename ..._s> XTAL_ASK cross_q = bond::head_tag_p<cross, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_FN1     cross_f(auto &&u)
+XTAL_LET     cross_f(auto &&u)
 XTAL_0EX_TO_(cross_t<XTAL_TYP_(u), As...>(XTAL_REF_(u)))
 
 
@@ -39,7 +39,8 @@ struct cross<W, U, As...>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_TN2 functor(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor(auto &&...xs),
 		{
 			auto const &y_ = head();
 			auto const  x  = bond::pack_f(XTAL_REF_(xs)...);

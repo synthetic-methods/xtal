@@ -26,7 +26,7 @@ XTAL_ASK invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
 XTAL_DEF_(return,inline)
-XTAL_FN1 devolved_f(auto &t)
+XTAL_REF devolved_f(auto &t)
 XTAL_0EX
 {
 	using T = _std::remove_reference_t<decltype(t)>;
@@ -77,10 +77,10 @@ XTAL_0EX
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class        ...Us>	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
-template <class U, size_t N >	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::array<U,  N>) XTAL_0EX {return size_t(N);}
-template <class U, class  V >	XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std:: pair<U,  V>) XTAL_0EX {return size_t(2);}
-template <class U           > XTAL_DEF_(return,inline) XTAL_FN1 count_f(_std::initializer_list<U> t) XTAL_0EX {return count_f(_std::array{XTAL_REF_(t)});}
+template <class        ...Us>	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
+template <class U, size_t N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::array<U,  N>) XTAL_0EX {return size_t(N);}
+template <class U, class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std:: pair<U,  V>) XTAL_0EX {return size_t(2);}
+template <class U           > XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U> t) XTAL_0EX {return count_f(_std::array{XTAL_REF_(t)});}
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_t
@@ -96,13 +96,13 @@ XTAL_0EX -> size_t
 {
 	return _std::min<size_t>({(count_f(ts) - size_1)...}) + size_1;
 }
-XTAL_DEF_(return,inline) XTAL_FN1  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take(count_f(ts...));}
-XTAL_DEF_(return,inline) XTAL_FN1 discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop(count_f(ts...));}
+XTAL_DEF_(return,inline,static) XTAL_LET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take(count_f(ts...));}
+XTAL_DEF_(return,inline,static) XTAL_LET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop(count_f(ts...));}
 
 
-template <counter_q  I >	XTAL_FN2 counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
-template <class      T >	XTAL_FN2 counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
-template <class      T >	XTAL_FN2 counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
+template <counter_q  I >	XTAL_DEF_(return,inline,static) XTAL_LET counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
+template <class      T >	XTAL_DEF_(return,inline,static) XTAL_LET counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
+template <class      T >	XTAL_DEF_(return,inline,static) XTAL_LET counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
 
 
 ///\returns the result of zipping `...xs` with `f`. \
@@ -121,9 +121,9 @@ template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs
 ///\note\
 To be extended by the host to transparently lift `f` when `xs...` are vectorized. \
 
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_FN1 operative_f(F &&f, Xs &&...xs) XTAL_0EX {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_FN1 operative_f(       Xs &&...xs) XTAL_0EX {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
-template <class F             > XTAL_DEF_(inline) XTAL_FN1 operative_f(F &&f            ) XTAL_0EX {return         [] XTAL_1FN_(operative_f)         ;}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_REF operative_f(F &&f, Xs &&...xs) XTAL_0EX {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_REF operative_f(       Xs &&...xs) XTAL_0EX {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+template <class F             > XTAL_DEF_(inline) XTAL_REF operative_f(F &&f            ) XTAL_0EX {return         [] XTAL_1FN_(operative_f)         ;}
 /***/
 
 
@@ -132,8 +132,8 @@ template <class F             > XTAL_DEF_(inline) XTAL_FN1 operative_f(F &&f    
 ///\note\
 To be extended by the host to transparently reduce `y` when vectorized. \
 
-template <class Y> XTAL_DEF_(inline) XTAL_FN1  objective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
-template <class Y> XTAL_DEF_(inline) XTAL_FN1 subjective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
+template <class Y> XTAL_DEF_(inline,static) XTAL_REF  objective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
+template <class Y> XTAL_DEF_(inline,static) XTAL_REF subjective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,14 +144,14 @@ Arithmetic...
 /*/
 template <template <class> class Y, class ...Xs>
 XTAL_DEF_(return,inline)
-XTAL_FN1 construxion_f(Xs &&...xs)
+XTAL_REF construxion_f(Xs &&...xs)
 XTAL_0EX
 {
 	using W = common_t<Xs...>;
 	return operative_f<Y<W>>(XTAL_REF_(xs)...);
 }
 XTAL_DEF_(return,inline)
-XTAL_FN1 complexion_f(auto &&...xs)
+XTAL_REF complexion_f(auto &&...xs)
 XTAL_0EX
 {
 	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
@@ -160,14 +160,14 @@ XTAL_0EX
 
 template <class X, class Y>
 XTAL_DEF_(return,inline)
-XTAL_FN1 equal_f(X const &x, Y const &y)
+XTAL_LET equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	return false;
 }
 template <class X, class Y> requires common_q<X, Y>
 XTAL_DEF_(return,inline)
-XTAL_FN1 equal_f(X const &x, Y const &y)
+XTAL_LET equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
@@ -176,7 +176,7 @@ XTAL_0EX
 }
 template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_DEF_(return,inline)
-XTAL_FN1 equal_f(X &&x, Y &&y)
+XTAL_LET equal_f(X &&x, Y &&y)
 XTAL_0EX
 {
 	return _xtd::ranges::equal(XTAL_REF_(x), XTAL_REF_(y));
@@ -184,14 +184,14 @@ XTAL_0EX
 
 template <class X, class Y>
 XTAL_DEF_(return,inline)
-XTAL_FN1 equivalent_f(X &&x, Y &&y)
+XTAL_LET equivalent_f(X &&x, Y &&y)
 XTAL_0EX
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
 template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
 XTAL_DEF_(return,inline)
-XTAL_FN1 equivalent_f(X const &x, Y const &y)
+XTAL_LET equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
@@ -208,7 +208,8 @@ XTAL_0EX
 class
 {
 public:
-	XTAL_OP1() (auto &&...xs)
+	XTAL_DEF_(inline)
+	XTAL_REF operator () (auto &&...xs)
 	{
 		if constexpr (0 < sizeof...(xs)) {
 			return (XTAL_REF_(xs), ...);
@@ -219,13 +220,13 @@ public:
 #else
 class
 {
-	XTAL_TN0 print_list(auto &&x)
-	XTAL_0FX
+	XTAL_LET print_list(auto &&x)
+	XTAL_0FX -> void
 	{
 		for (auto &&w: XTAL_REF_(x)) ::std::cout << XTAL_REF_(w) << '\t';
 	}
-	XTAL_TN0 print_item(auto &&x)
-	XTAL_0FX
+	XTAL_LET print_item(auto &&x)
+	XTAL_0FX -> void
 	{
 		using W = XTAL_TYP_(x);
 		if constexpr (::std::is_floating_point_v<W>) {
@@ -238,7 +239,7 @@ class
 		}
 		::std::cout << XTAL_REF_(x) << '\t';
 	}
-	XTAL_TN1 put(auto &&x)
+	XTAL_REF put(auto &&x)
 	XTAL_0FX
 	{
 		using W = XTAL_TYP_(x);
@@ -252,7 +253,7 @@ class
 	}
 
 public:
-	XTAL_OP1() (auto &&...xs)
+	XTAL_REF operator () (auto &&...xs)
 	XTAL_0FX
 	{
 		if constexpr (0 < sizeof...(xs)) {

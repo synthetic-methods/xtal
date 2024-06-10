@@ -25,7 +25,8 @@ struct assay
 	public:
 		using S_::S_;
 
-		XTAL_FN2 size()
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET size()
 		XTAL_0EX
 		{
 			return N_width;
@@ -65,7 +66,7 @@ struct assay
 		Default `Integral_q` constructor, expects `0`. \
 
 		template <integral_q A>
-		XTAL_CXN subtype(A &&a)
+		XTAL_CON_(explicit) subtype(A &&a)
 		XTAL_0EX
 		{
 			assert(0 == a);

@@ -79,7 +79,7 @@ struct thunk
 					return u.then() == u_spool.push(XTAL_REF_(u))->then();
 				}
 
-				XTAL_TN2 functor()
+				XTAL_REF functor()
 				XTAL_0EX
 				{
 					return u_spool.advance(v_delay++ == u_spool.begin(1)->head())->then().head();

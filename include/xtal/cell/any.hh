@@ -50,16 +50,17 @@ struct define
 		//\
 		Trivial (in)equality. \
 		
-		XTAL_OP2_(bool) == (subtype const &t) XTAL_0FX {return true;}
-		XTAL_OP2_(bool) != (subtype const &t) XTAL_0FX {return not self().operator==(t.self());}
-		XTAL_OP2 <=> (subtype const &t)
+		XTAL_DEF_(return,inline) XTAL_LET operator ==  (subtype const &t) XTAL_0FX -> bool {return true;}
+		XTAL_DEF_(return,inline) XTAL_LET operator !=  (subtype const &t) XTAL_0FX -> bool {return not self().operator==(t.self());}
+		XTAL_DEF_(return,inline) XTAL_REF operator <=> (subtype const &t)
 		XTAL_0FX
 		{
 			using is = _std::partial_ordering;
 			return self().operator==(t.self())? is::equivalent: is::unordered;
 		}
 
-		XTAL_TN2 pack()
+		XTAL_DEF_(return,inline)
+		XTAL_LET pack()
 		XTAL_0FX
 		{
 			return bond::pack_f();
@@ -138,14 +139,14 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_OP1_(explicit) U_head(), head())
+		XTAL_TO4_(XTAL_CVN_(explicit) U_head(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_TN1_(bool) heading(auto &&o)
-		XTAL_0FX
+		XTAL_LET heading(auto &&o)
+		XTAL_0FX -> bool
 		{
 			return equivalent_f(head(), XTAL_REF_(o));
 		}
@@ -154,8 +155,8 @@ struct defer
 		\returns `true` if the supplied body matches `this`, `false` otherwise. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_OP1_(bool) == (subtype const &t)
-		XTAL_0FX
+		XTAL_LET operator == (subtype const &t)
+		XTAL_0FX -> bool
 		{
 			return heading(t.head()) and S_::template self<1>() == t;
 		}
@@ -182,9 +183,9 @@ struct refer : bond::compose<void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <any_q W> XTAL_OP2 == (W const &x, W const &y) XTAL_0EX {return x.self().operator== (y.self());}
-template <any_q W> XTAL_OP2 != (W const &x, W const &y) XTAL_0EX {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_OP2 <=>(W const &x, W const &y) XTAL_0EX {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator== (y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_REF operator <=>(W const &x, W const &y) XTAL_0EX         {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////

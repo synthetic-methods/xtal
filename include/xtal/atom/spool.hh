@@ -56,27 +56,40 @@ struct spool<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON homotype(embrace_t<U_value> w)
+		XTAL_CON_(implicit) homotype(embrace_t<U_value> w)
 		:	u_end{_std::distance(w.begin(), w.end())}
 		,	u_store(w.begin(), w.end())
 		{}
 
-		XTAL_TO2_(XTAL_TN2   begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
-		XTAL_TO2_(XTAL_TN2     end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
-		XTAL_TN1_(U_point) advance(U_count n=1) XTAL_0EX {u_begin += n; return  begin(0);}
-		XTAL_TN1_(U_point) abandon(U_count n=1)
-		XTAL_0EX
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		
+		XTAL_DEF_(inline)
+		XTAL_LET advance(U_count n=1)
+		XTAL_0EX -> U_point
 		{
-			if (n) {u_begin = 0; cull();}
+			u_begin += n;
+			return begin(0);
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET abandon(U_count n=1)
+		XTAL_0EX -> U_point
+		{
+			if (n) {
+				u_begin = 0;
+				cull();
+			}
 			return begin();
 		}
-		XTAL_TN0 cull()
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET cull()
+		XTAL_0EX -> void
 		{
 			u_store.erase(u_store.begin(), end());
 		}
-		XTAL_TN0 cull(auto &&f)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET cull(auto &&f)
+		XTAL_0EX -> void
 		{
 			u_store.erase(_std::remove_if(begin(), end(), f), end());
 		}
@@ -85,27 +98,31 @@ struct spool<A>
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-		XTAL_TN0 pop(U_point i)
-		XTAL_0EX
+	//	XTAL_DEF_(inline)
+		XTAL_LET pop(U_point i)
+		XTAL_0EX -> void
 		{
 			assert(i < end());
 			u_begin -= i < begin();
 			u_store.erase(i);
 			abandon(begin() == end());
 		}
-		XTAL_TN0 pop()
-		XTAL_0EX
+	//	XTAL_DEF_(inline)
+		XTAL_LET pop()
+		XTAL_0EX -> void
 		{
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_TN2_(U_point) scan(auto &&w)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET scan(auto &&w)
+		XTAL_0EX -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
 		}
-		XTAL_TN2_(U_point) scan(auto &&w, auto &&f)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET scan(auto &&w, auto &&f)
+		XTAL_0EX -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
 			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
@@ -114,8 +131,9 @@ struct spool<A>
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_TN1_(U_point) push(U_value v)
-		XTAL_0EX
+	//	XTAL_DEF_(inline)
+		XTAL_LET push(U_value v)
+		XTAL_0EX -> U_point
 		{
 			U_point v_ = scan(v);
 			if (*v_ == v) {
@@ -126,18 +144,21 @@ struct spool<A>
 			}
 		}
 		template <is_q<U_value> W>
-		XTAL_TN1_(U_point) poke(U_point v_, W &&w)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET poke(U_point v_, W &&w)
+		XTAL_0EX -> U_point
 		{
 			return u_store.insert(v_, XTAL_REF_(w));
 		}
-		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET poke(U_point v_, auto &&...ws)
+		XTAL_0EX -> U_point
 		{
 			return u_store.insert(v_, U_value(XTAL_REF_(ws)...));
 		}
-		XTAL_TN1_(U_point) poke(U_point v_, auto &&...ws)
-		XTAL_0EX
+		XTAL_DEF_(inline)
+		XTAL_LET poke(U_point v_, auto &&...ws)
+		XTAL_0EX -> U_point
 		XTAL_REQ
 		XTAL_REQ_TO_(u_store.inplace(v_, XTAL_REF_(ws)...))
 

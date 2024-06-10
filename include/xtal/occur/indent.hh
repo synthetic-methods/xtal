@@ -53,11 +53,11 @@ struct indent<Ns...>
 		Normalize the use of `operator()` to access `block` elements, \
 		defining a `concept` to characterize the disparity. \
 
-		XTAL_CXN subtype(U_ u)
+		XTAL_CON_(explicit) subtype(U_ u)
 		XTAL_REQ real_number_q<U_> and integral_number_q<V_>
 		:	S_{XTAL_MOV_(u)*bond::operate<U_>::diplo_f()}
 		{}
-		XTAL_CON subtype(reembrace_t<W_> w)
+		XTAL_CON_(implicit) subtype(reembrace_t<W_> w)
 		XTAL_REQ bounded_q<W_>
 		:	S_{w}
 		{}

@@ -27,7 +27,8 @@ struct square_root
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_FN2 function(auto &&o)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&o)
 		XTAL_0EX
 		{
 			return _std::sqrt(o);
@@ -48,7 +49,8 @@ struct halve
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_FN2 function(auto &&o)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&o)
 		XTAL_0EX
 		{
 			return o*0.5L;

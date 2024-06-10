@@ -35,8 +35,8 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_TN1_(V_delay) delay()         {return count_f(self());}
-		XTAL_TN1_(V_delay) relay(auto &&i) {return self().delay();}
+		XTAL_DEF_(inline) XTAL_LET delay()         XTAL_0EX -> V_delay {return count_f(self());}
+		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX -> V_delay {return self().delay();}
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
@@ -61,13 +61,15 @@ struct define
 		Efflux operator: resolves any dependencies before `this`, \
 		used for e.g. `occur::review` and `occur::render`. \
 
-		XTAL_OP1 >>=(auto &&o)
+		XTAL_DEF_(inline)
+		XTAL_REF operator >>=(auto &&o)
 		XTAL_0EX
 		{
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 >>=(bond::heteropack_q auto &&oo)
+		XTAL_DEF_(inline)
+		XTAL_REF operator >>=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
@@ -100,13 +102,15 @@ struct define
 		Influx operator: resolves `this` before any dependencies, \
 		used for e.g. `occur::resize`. \
 
-		XTAL_OP1 <<=(auto &&o)
+		XTAL_DEF_(inline)
+		XTAL_REF operator <<=(auto &&o)
 		XTAL_0EX
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_OP1 <<=(bond::heteropack_q auto &&oo)
+		XTAL_DEF_(inline)
+		XTAL_REF operator <<=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
@@ -198,7 +202,7 @@ struct define
 				Constructs the `attach`ed `occur` using its default, \
 				before `forward`ing the arguments to `this`. \
 
-				XTAL_CXN subtype(auto &&...xs)
+				XTAL_CON_(explicit) subtype(auto &&...xs)
 				XTAL_0EX
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
@@ -287,13 +291,13 @@ struct refer
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <any_q Y, class    X > XTAL_OP2 << (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(x), XTAL_REF_(y));}
-template <any_q Y, class    X > XTAL_OP2 >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
+template <any_q Y, class    X > XTAL_DEF_(return,inline) XTAL_REF operator << (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(x), XTAL_REF_(y));}
+template <any_q Y, class    X > XTAL_DEF_(return,inline) XTAL_REF operator >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
 
-template <any_q Y, class ...Xs> XTAL_OP2 << (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
-template <any_q Y, class ...Xs> XTAL_OP2 << (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
-template <any_q Y, class ...Xs> XTAL_OP2 >> (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
-template <any_q Y, class ...Xs> XTAL_OP2 >> (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
+template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator << (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator << (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
+template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator >> (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
+template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator >> (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
 
 
 ///////////////////////////////////////////////////////////////////////////////

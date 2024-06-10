@@ -35,14 +35,15 @@ struct define
 
 		///\returns `true` if the pointers are identical, `false` otherwise. \
 
-		XTAL_OP2_(bool) == (subtype const &t)
-		XTAL_0FX {return this == _std::addressof(t);}
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator == (subtype const &t)
+		XTAL_0FX -> bool {return this == _std::addressof(t);}
 		
 		///\
 		Alias of `functor(...)`. \
 		
-		XTAL_TO2_(
-		XTAL_OP2 () (auto &&...xs),
+		XTAL_TO2_(XTAL_DEF_(return,inline)
+		XTAL_LET operator () (auto &&...xs),
 			self().functor(XTAL_REF_(xs)...)
 		)
 		
@@ -51,7 +52,7 @@ struct define
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs)
+		XTAL_REF functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return T::template function<Is...>(XTAL_REF_(xs)...);
@@ -62,24 +63,26 @@ struct define
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 refunctor(Integral_q auto const ...is),
+		XTAL_REF refunctor(Integral_q auto const ...Is),
 		{
-			if constexpr (0 == sizeof...(is)) {
+			if constexpr (0 == sizeof...(Is)) {
 				return [this] XTAL_1FN_(self().functor);
 			}
 			else {
-				return [this, is...] XTAL_1FN_(self().template functor<is...>);
+				return [this, Is...] XTAL_1FN_(self().template functor<Is...>);
 			}
 		})
 		
 	protected:
 		template <class ...Xs>
-		XTAL_TN2 refunctor_(Integral_q auto const &...is)
+		XTAL_DEF_(return,inline)
+		XTAL_REF defunctor(Integral_q auto const &...Is)
 		XTAL_0FX
 		{
-			return refunctor_(figure<Xs...>::template type<is...>::value);
+			return defunctor(figure<Xs...>::template type<Is...>::value);
 		}
-		XTAL_TN2 refunctor_(auto const &value)
+		XTAL_DEF_(return,inline)
+		XTAL_REF defunctor(auto const &value)
 		XTAL_0FX
 		{
 			return value;
@@ -100,23 +103,23 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_VAL_(T &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
-				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...);
-				XTAL_LET value = static_cast<value_type>(&T::template functor<Is...>);
+				using value_type = Y_(T::*) (argument_t<Xs>...);
+				static constexpr auto value = static_cast<value_type>(&T::template functor<Is...>);
 
 			};
 			template <auto ...Is>
 			XTAL_REQ
-			XTAL_REQ_(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...))
+			XTAL_REQ_(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...))
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_VAL_(T const &).template functor<Is...>(XTAL_VAL_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
-				XTAL_USE value_type = Y_(T::*) (argument_t<Xs>...) const;
-				XTAL_LET value = static_cast<value_type>(&T::template functor<Is...>);
+				using value_type = Y_(T::*) (argument_t<Xs>...) const;
+				static constexpr auto value = static_cast<value_type>(&T::template functor<Is...>);
 
 			};
 		};
@@ -153,11 +156,11 @@ struct define
 				///\
 				Initializes `slots` using the arguments supplied. \
 
-				XTAL_CXN subtype(Xs &&...xs)
+				XTAL_CON_(explicit) subtype(Xs &&...xs)
 				XTAL_0EX
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CXN subtype(fungible_q<T> auto &&t, Xs &&...xs)
+				XTAL_CON_(explicit) subtype(fungible_q<T> auto &&t, Xs &&...xs)
 				XTAL_0EX
 				//\
 				:	R_(XTAL_REF_(t), X_packed(process::let_f(XTAL_REF_(xs))...))
@@ -167,21 +170,24 @@ struct define
 			public:// ACCESS
 				using R_::self;
 
-				XTAL_TO4_(XTAL_TN2 slots(), R_::template head<1>())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF slots(), R_::template head<1>())
 				
 				template <size_t ...Ns>
-				XTAL_TN2 slot()
+				XTAL_DEF_(return,inline)
+				XTAL_REF slot()
 				XTAL_0EX
 				{
 					return bond::pack_item_f<Ns...>(slots());
 				}
 				template <class F>
-				XTAL_TN2 apply()
+				XTAL_DEF_(return,inline)
+				XTAL_REF apply()
 				XTAL_0FX
 				{
 					return apply([] XTAL_1FN_(F));
 				}
-				XTAL_DO2_(XTAL_TN2 apply(auto &&f),
+				XTAL_DO2_(XTAL_DEF_(return,inline)
+				XTAL_REF apply(auto &&f),
 				{
 					//\
 					return _std::apply(XTAL_REF_(f), slots());
@@ -196,7 +202,7 @@ struct define
 
 				template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_TN1 functor()
+				XTAL_REF functor()
 				XTAL_0EX
 				{
 					return apply([this] XTAL_1FN_(R_::template functor<Is...>));
@@ -316,15 +322,16 @@ struct refine
 		template <class ...Xs>
 		XTAL_USE bind_t = typename combined<Xs...>::type;
 		/*/
-		XTAL_FN2 bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              XTAL_REF_(xs)...);}
-		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);}
+		XTAL_DEF_(return,inline,static) XTAL_LET bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              XTAL_REF_(xs)...);}
+		XTAL_DEF_(return,inline,static) XTAL_LET bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);}
 		/*/
-		XTAL_FN2 bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              process::let_f(XTAL_REF_(xs))...);}
-		XTAL_FN2 bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...);}
+		XTAL_DEF_(return,inline,static) XTAL_LET bind_f(                  auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(              process::let_f(XTAL_REF_(xs))...);}
+		XTAL_DEF_(return,inline,static) XTAL_LET bind_f(is_q<T> auto &&t, auto &&...xs) XTAL_0EX {return bind_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...);}
 		/***/
 
 		XTAL_TO4_(template <class ...Xs>
-		XTAL_TN2 bind(Xs &&...xs), bind_f(self(), XTAL_REF_(xs)...)
+		XTAL_DEF_(return,inline)
+		XTAL_LET bind(Xs &&...xs), bind_f(self(), XTAL_REF_(xs)...)
 		)
 
 	};
@@ -354,41 +361,43 @@ struct defer
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor(auto &&...xs),
+		XTAL_REF functor(auto &&...xs),
 		{
 			XTAL_IF0
 			XTAL_0IF (    any_q<U1>) {return functor_<Is...>(S_::template functor <Is...>(XTAL_REF_(xs)...));}
 			XTAL_0IF (not any_q<U1>) {return functor_<Is...>(                             XTAL_REF_(xs)... );}
 		})
-		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 function(auto &&...xs),
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,static)
+		XTAL_REF function(auto &&...xs)
+		XTAL_0EX
 		{
 			XTAL_IF0
 			XTAL_0IF (    any_q<U1>) {return function_<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...));}
 			XTAL_0IF (not any_q<U1>) {return function_<Is...>(                             XTAL_REF_(xs)... );}
-		})
+		}
 
 	private:
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_TN1 functor_(auto &&...xs),
+		XTAL_REF functor_(auto &&...xs),
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
 			XTAL_0IF XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return S_::head(); static_assert(0 == sizeof...(xs));}
 		})
-		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_FN1 function_(auto &&...xs),
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,static)
+		XTAL_REF function_(auto &&...xs)
+		XTAL_0EX
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
 			XTAL_0IF XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return invoke_f<U0>(XTAL_REF_(xs)...);}
-		})
+		}
 
 	};
 };

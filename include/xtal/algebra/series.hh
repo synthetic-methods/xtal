@@ -16,7 +16,7 @@ template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
 template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_FN1 series_f(auto &&...oo)
+XTAL_LET series_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<series_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
@@ -58,21 +58,21 @@ struct series<A>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
-		XTAL_CXN homotype(Integral_q auto const o_shift)
+		XTAL_CON_(explicit) homotype(Integral_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
 		///\
 		Generates the power series with the given seed. \
 
-		XTAL_CXN homotype(auto &&...oo)
+		XTAL_CON_(explicit) homotype(auto &&...oo)
 		{
 			generate(XTAL_REF_(oo)...);
 		}
 
 		template <size_t N_limit=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
-		XTAL_TN1_(T &) generate(U_v1 const &u1, U_v2 const &u2)
-		XTAL_0EX
+		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 
@@ -94,14 +94,14 @@ struct series<A>
 			filled by the corresponding powers of `u`. \
 
 		template <size_t N_limit=N_data, size_t N_index=0, size_s N_step=1, size_s N_skip=0>
-		XTAL_TN1_(T &) generate(U_data const &u)
-		XTAL_0EX
+		XTAL_LET generate(U_data const &u)
+		XTAL_0EX -> T &
 		{
 		//	auto &s = self();
 
 			using I = typename T_::difference_type;
 
-			XTAL_SET N_shift = _op::bit_ceiling_f(N_step);
+			XTAL_LET N_shift = _op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
@@ -137,8 +137,8 @@ struct series<A>
 		To generate the FFT basis used by `transform` etc, use `N_shift == -1`. \
 
 		template <int N_shift=0> requires complex_field_q<U_data>
-		XTAL_TN1_(T &) generate()
-		XTAL_0EX
+		XTAL_LET generate()
+		XTAL_0EX -> T &
 		{
 		//	Initialize the forwards and backwards iterators:
 			auto const i = T_::begin();
@@ -167,7 +167,7 @@ struct series<A>
 		and `1 < that.size() <= this->size()`. \
 
 		template <int N_direction=1> requires complex_field_q<U_data> and sign_p<N_direction, 1>
-		XTAL_TN1 transform(isomorphic_q<T> auto &that)
+		XTAL_REF transform(isomorphic_q<T> auto &that)
 		XTAL_0FX
 		{
 			using Y = XTAL_TYP_(that);
@@ -216,7 +216,8 @@ struct series<A>
 		using `this` as the Fourier basis. \
 
 		template <int N_direction=1> requires sign_p<N_direction, 1>
-		XTAL_TN2 transformation(isomorphic_q<T> auto const &that)
+		XTAL_DEF_(return,inline)
+		XTAL_REF transformation(isomorphic_q<T> auto const &that)
 		XTAL_0FX
 		{
 			using Y = XTAL_TYP_(that);
@@ -231,7 +232,7 @@ struct series<A>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN1 convolve(Y &lhs, Y rhs)
+		XTAL_REF convolve(Y &lhs, Y rhs)
 		XTAL_0FX
 		{
 			return transform<-1>(transform<1>(lhs) *= transform<1>(rhs));
@@ -240,7 +241,8 @@ struct series<A>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_TN2 convolution(Y const &lhs, Y const &rhs)
+		XTAL_DEF_(return,inline)
+		XTAL_REF convolution(Y const &lhs, Y const &rhs)
 		XTAL_0FX
 		{
 			auto lhs_ = lhs; convolve(lhs_, rhs); return lhs_;
@@ -251,11 +253,12 @@ struct series<A>
 
 		using T_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_OP1_(auto) * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=  (w))
-		XTAL_DEF_(inline)        XTAL_OP1_(T  &) *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=  (w))
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
 
-		XTAL_OP1_(T &) *=(T const &t)
-		XTAL_0EX
+	//	XTAL_DEF_(inline)
+		XTAL_LET operator *=(T const &t)
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 			if constexpr (complex_field_q<U_data>) {

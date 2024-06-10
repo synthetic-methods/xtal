@@ -52,7 +52,7 @@ TAG_("phasor")
 
 	TRY_("trial")
 	{
-		XTAL_LET x_delta  = _op::ratio_f(7);
+		static constexpr T_alpha x_delta  = _op::ratio_f(7);
 		
 		T_sigma constexpr N_data = 0x1000;
 		T_alpha z_data[2][N_data]{};

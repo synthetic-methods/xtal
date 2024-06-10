@@ -21,7 +21,8 @@ struct foo
 	class type
 	{
 	public:
-		XTAL_OP2() (auto &&o)
+		XTAL_DEF_(inline)
+		XTAL_LET operator () (auto &&o)
 		XTAL_0FX
 		{
 			return XTAL_REF_(o) + 1;

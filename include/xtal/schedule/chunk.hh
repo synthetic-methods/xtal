@@ -54,8 +54,8 @@ struct chunk
 					(U_event) Q_delay::max()
 				};
 
-				XTAL_TO4_(XTAL_TN2 next_core(), u_spool.begin()->then())
-				XTAL_TO4_(XTAL_TN2 next_head(), u_spool.begin()->head())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF next_core(), u_spool.begin()->then())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF next_head(), u_spool.begin()->head())
 
 			public:
 				using R_::R_;
@@ -86,8 +86,9 @@ struct chunk
 
 				///\returns The delay until the next event to be processed. \
 
-				XTAL_TN1_(V_delay) delay()
-				XTAL_0EX
+				XTAL_DEF_(inline)
+				XTAL_LET delay()
+				XTAL_0EX -> V_delay
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
@@ -98,8 +99,9 @@ struct chunk
 				
 				///\returns the delay until the next event. \
 
-				XTAL_TN1_(V_delay) relay(V_delay i)
-				XTAL_0EX
+				XTAL_DEF_(inline)
+				XTAL_LET relay(V_delay i)
+				XTAL_0EX -> V_delay
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and next_head() <= i; u_spool.pop()) {

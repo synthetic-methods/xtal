@@ -55,12 +55,12 @@ struct stage<A, As...>
 	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 		
-		XTAL_CON subtype()
+		XTAL_CON_(implicit) subtype()
 		XTAL_0EX
 		{
 			S_::head(A{});
 		}
-		XTAL_CXN subtype(auto &&...oo)
+		XTAL_CON_(explicit) subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{
@@ -75,7 +75,7 @@ using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_FN1     stage_f(auto &&...oo)
+XTAL_LET     stage_f(auto &&...oo)
 XTAL_0EX_TO_(stage_t<As...>(XTAL_REF_(oo)...))
 
 

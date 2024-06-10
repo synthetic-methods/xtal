@@ -14,7 +14,13 @@ namespace xtal::occur
 template <typename ..._s> XTAL_TYP review;
 template <typename ..._s> XTAL_ASK review_q = bond::head_tag_p<review, _s...>;
 template <iterable_q  U > XTAL_USE review_t = confined_t<review<U>, bond::tag<review>>;
-template <iterable_q  U > XTAL_FN2 review_f(U &&u) XTAL_0EX {return review_t<U>(XTAL_REF_(u));};
+template <iterable_q  U >
+XTAL_DEF_(return,inline)
+XTAL_LET review_f(U &&u)
+XTAL_0EX
+{
+	return review_t<U>(XTAL_REF_(u));
+};
 
 template <class U>
 struct review<U>
@@ -32,8 +38,8 @@ struct review<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_TN2    view(auto &&...oo),         (S_::   head(XTAL_REF_(oo)...)))
-		XTAL_TO2_(XTAL_TN2 subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF    view(auto &&...oo),         (S_::   head(XTAL_REF_(oo)...)))
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

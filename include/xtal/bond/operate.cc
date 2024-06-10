@@ -296,8 +296,8 @@ TAG_("operate", "fraction")
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
-	XTAL_LET_(T_alpha) two =  2;
-	XTAL_LET_(T_alpha) ten = 10;
+	static constexpr T_alpha two =  2;
+	static constexpr T_alpha ten = 10;
 
 
 	TRY_("comparing implementations")

@@ -28,8 +28,8 @@ TAG_("cue")
 		TRUE_(99 == u_target.template head<0>());
 		TRUE_(equal_f(counted_t<>(11, 22), u_target.then()));
 
-		TRUE_(is_q<decltype(XTAL_VAL_(U_target).head()), typename V_target::template head_t<>>);
-		TRUE_(is_q<decltype(XTAL_VAL_(U_target).then()), U_source>);
+		TRUE_(is_q<decltype(XTAL_ANY_(U_target).head()), typename V_target::template head_t<>>);
+		TRUE_(is_q<decltype(XTAL_ANY_(U_target).then()), U_source>);
 
 	}
 }
