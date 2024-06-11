@@ -38,10 +38,9 @@ struct stored<A>
 
 	};
 };
-template <class A>
-struct stored<A>
+template <size_t N>
+struct stored<unit_t[N]>
 {
-	static_assert(nominal_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
@@ -53,15 +52,13 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::store_t<U[(unsigned) A{}]>;
+		using store_t = atom::block_t<U[N]>;
 
 	};
 };
-/*/
-template <class A> requires (0 <= A{} and A{} <= 0x1000)
-struct stored<A>
+template <unsigned N>
+struct stored<null_t[N]>
 {
-	static_assert(nominal_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
@@ -73,11 +70,33 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::block_t<U[(unsigned) A{}]>;
+		using store_t = atom::store_t<U[(unsigned) N]>;
 
 	};
 };
-/***/
+template <nominal_q A>
+struct stored<A>
+{
+	using subkind = bond::tag<stored>;
+	
+	template <_retail::any_q S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using store_t = atom::store_t<U[(unsigned) A::value]>;
+
+	};
+};
+//template <nominal_q U>
+//struct stored<U>
+//:	stored<null_t[(unsigned) U::value]>
+//{
+//};
 template <>
 struct stored<>
 :	stored<nominal_t<-1>>

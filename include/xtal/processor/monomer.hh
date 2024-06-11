@@ -200,11 +200,9 @@ struct monomer<U, As...>
 				XTAL_DEF_(return,inline)
 				XTAL_REF functor(),
 				{
-					XTAL_IF0
-					XTAL_0IF (    resizeable_q<U_store>) {return state();}
-					XTAL_0IF (not resizeable_q<U_store>) {return state()|account_f(R_::template head_t<U_resize>);}
+					return state();
 				})
-
+				
 				XTAL_DEF_(return,inline)
 				XTAL_LET delay()
 				XTAL_0EX -> size_t
@@ -220,11 +218,23 @@ struct monomer<U, As...>
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
-					if constexpr (occur::resize_q<decltype(o)> and resizeable_q<U_store>) {
-						return R_::infuse(o) || (store().resize(XTAL_REF_(o).size()), 0);
+					return R_::infuse(XTAL_REF_(o));
+				}
+				XTAL_TNX infuse(occur::resize_q auto &&o)
+				XTAL_0EX
+				{
+					if (R_::infuse(o) == 1) {
+						return 1;
 					}
 					else {
-						return R_::infuse(XTAL_REF_(o));
+						auto &u = store();
+						auto  i = u.begin();
+						auto  n = XTAL_REF_(o).size();
+						if constexpr (resizeable_q<U_store>) {
+							(void) u.resize(n);
+						}
+						(void) state(i, i);//NOTE: For consistency with `resizeable_q<U_store>`. 
+						return 0;
 					}
 				}
 				using R_::influx_push;
@@ -250,7 +260,9 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Ren &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					return efflux(occur::review_t<U_state>(store()), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					size_t vN = R_::template head<U_resize>();
+					occur::review_t<U_state> v_(store());
+					return efflux(v_.subview(vN), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \

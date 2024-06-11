@@ -381,9 +381,15 @@ struct refer_iterators
 		XTAL_DEF_(return,inline) XTAL_REF   end() XTAL_0FX requires requires (U_ const &u_) {_xtd::ranges::  end(u_);} {return _xtd::ranges::  end(S_::template head<U>());}
 		XTAL_DEF_(return,inline) XTAL_REF   end() XTAL_0EX requires requires (U_       &u_) {_xtd::ranges::  end(u_);} {return _xtd::ranges::  end(S_::template head<U>());}
 
-		XTAL_DO2_(template <counted_q V>
+		XTAL_DO2_(template <counter_q V>
 		XTAL_DEF_(return,inline)
 		XTAL_REF subhead(V &&v),
+		{
+			return subhead(counted_f(0, XTAL_REF_(v)));
+		})
+		XTAL_DO2_(template <counted_q W>
+		XTAL_DEF_(return,inline)
+		XTAL_REF subhead(W &&w),
 		{
 			using _xtd::ranges::next;
 			using _xtd::ranges::views::slice;
@@ -391,22 +397,22 @@ struct refer_iterators
 			auto &u  = S_::template head<U>();
 			auto  u_ = begin();
 			using W_ = reiterated_t<decltype(u_)>;
-			auto  v0 = v.front(), vN = v.back() + 1;
+			auto  w0 = w.front(), wN = w.back() + 1;
 			/*/
 			size_t const uN = count_f(u);
-			v0 = _std::min(v0, uN);
-			vN = _std::min(vN, uN);
+			w0 = _std::min(w0, uN);
+			wN = _std::min(wN, uN);
 			/***/
 
 			XTAL_IF0
 			XTAL_0IF (interval_q<U>) {
-				return U_(u_[v0], u_[vN]);
+				return U_(u_[w0], u_[wN]);
 			}
 			XTAL_0IF (accessed_q<U>) {
-				return W_(next(u_, v0), next(u_, vN));
+				return W_(next(u_, w0), next(u_, wN));
 			}
 			XTAL_0IF_(default) {
-				return u|slice(v0, vN);
+				return u|slice(w0, wN);
 			}
 		})
 

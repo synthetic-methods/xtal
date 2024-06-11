@@ -298,7 +298,7 @@ struct render<V>
 		{}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET subview(counted_q auto &&w)
+		XTAL_LET subview(auto &&w)
 		XTAL_0FX -> T_self
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
@@ -397,7 +397,7 @@ public:
 		{}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET subview(counted_q auto &&w)
+		XTAL_LET subview(auto &&w)
 		XTAL_0FX -> T_self
 		{
 			return T_self(S_::subhead(XTAL_REF_(w)), S_::step());

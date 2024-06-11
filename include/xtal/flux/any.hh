@@ -152,7 +152,7 @@ struct define
 		XTAL_TNX defuse(is_q<T> auto &&o)
 		XTAL_0EX
 		{
-			return o == self() || ((void) self(XTAL_REF_(o)), 0);
+			return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
 		}
 		XTAL_TNX defuse(auto &&o) XTAL_0EX {return -1;}
 		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
@@ -278,7 +278,7 @@ struct defer
 		XTAL_TNX defuse(is_q<U> auto &&o)
 		XTAL_0EX
 		{
-			return o == head() || ((void) head(XTAL_REF_(o)), 0);
+			return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);
 		}
 		XTAL_TNX defuse(auto &&o)
 		XTAL_0EX
