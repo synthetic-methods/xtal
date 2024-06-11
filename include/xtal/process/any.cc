@@ -80,8 +80,8 @@ TAG_("process", "construct")
 	}
 	TRY_("chaining")
 	{
-		using halve_square_root_t = inferred_t<halve_t, square_root_t>;
-		using square_root_halve_t = inferred_t<square_root_t, halve_t>;
+		using halve_square_root_t = reinferred_t<halve_t, square_root_t>;
+		using square_root_halve_t = reinferred_t<square_root_t, halve_t>;
 		
 		TRUE_(2. == halve_square_root_t::function(16.));
 		TRUE_(3. == square_root_halve_t::function(18.));
@@ -131,7 +131,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = occur::inferred_t<class start_a, Ordinal_t<0>>;
+	using U_start = occur::reinferred_t<class start_a, Ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -143,7 +143,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = occur::inferred_t<class start_a, Ordinal_t<0>>;
+	using U_start = occur::reinferred_t<class start_a, Ordinal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized

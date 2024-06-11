@@ -37,6 +37,11 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
+template <any_q U>
+struct defer<U>
+:	_retail::defer<U>
+{
+};
 template <_detail::unprocessed_valued_q U>
 struct defer<U>
 :	defer<_xtd::ranges::repeat_view<U>>
@@ -54,7 +59,6 @@ struct defer<U>
 	,	_retail::defer<U>
 	,	A_render
 	>;
-
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{

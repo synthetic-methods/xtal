@@ -59,10 +59,10 @@ struct symbol<A>
 	public:// OPERATE
 
 		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0FX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0FX_( &) {return           T_::operator[](modulo(i)) ;}
 
 		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0EX_( &) {return          (T_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_REF let(I_ i) XTAL_0EX_( &) {return           T_::operator[](modulo(i)) ;}
 
 
 	public:// CONSTRUCT

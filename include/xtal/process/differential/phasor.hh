@@ -46,7 +46,7 @@ struct phasor<K_data[N_data], As...>
 		using S_ = bond::compose_s<S, subkind>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using typename S_::U_head;
 
 	public:// ACCESS

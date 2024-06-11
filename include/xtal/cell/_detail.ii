@@ -19,7 +19,7 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class   ...Hs>	XTAL_ASK         member_q = rebased_q<Hs...>;
+template <class   ...Us>	XTAL_ASK         member_q = rebased_q<Us...>;
 template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
 template <size_t     N >	XTAL_TYP         member<unit_t[N]> {using type =     unsigned;};
 template <size_t     N >	XTAL_TYP         member<null_t[N]> {using type =     unsigned;};
@@ -66,7 +66,7 @@ struct refine_head
 		using S_ = S;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using typename S_::U_head;
 
 	public:
@@ -174,7 +174,7 @@ struct defer_field
 		using S_ = bond::compose_s<S>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -243,7 +243,7 @@ struct defer_field<U>
 		using S_ = bond::compose_s<S>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -283,7 +283,7 @@ struct defer_field<unit_t[N_width]>
 		using S_ = bond::compose_s<S, subkind>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -385,7 +385,7 @@ struct refer_iterators
 template <class U>
 struct infer_iterators : bond::compose<> {};
 
-template <class U> requires bounded_q<U> or unbounded_q<U>
+template <class U> requires iterable_q<U>
 struct infer_iterators<U> : refer_iterators<U> {};
 
 
@@ -490,7 +490,7 @@ struct refer_binary_logic<U, 2>
 		using S_ = S;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 	
 	public:
 		using S_::S_;
@@ -554,7 +554,7 @@ struct refer_multiplicative_group<U, 2>
 		using S_ = S;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 	
 	public:
 		using S_::S_;
@@ -601,7 +601,7 @@ struct refer_additive_group<U, 2>
 		using S_ = S;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 	
 	public:
 		using S_::S_;

@@ -56,7 +56,7 @@ with the inner-most components representing inputs, and the outer-most component
 Attributes are bound to a `process(?:or)?` using the `occur` decorators `attach` and `dispatch`.
 The value of an attribute is type-indexed on `this`, and can be read either by explicit conversion or by using the method `this->template head<...>()`.
 
-	using Active = occur::inferred_t<class active, int>;
+	using Active = occur::reinferred_t<class active, int>;
 
 	struct Mix : process::confine_t<Mix, Active::template attach>
 	{
@@ -69,7 +69,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 Templated parameters can be bound using `dispatch` to build the `vtable` required for dynamic resolution. For `process`es the function is resolved once per sample, while for `processor`s the function is resolved only once per block, providing coarse-grained choice without branching.
 
-	using Offset = occur::inferred_t<class active, int>;
+	using Offset = occur::reinferred_t<class active, int>;
 	
 	struct Mix : process::confine_t<Mix
 	,  Offset::template dispatch<2>
@@ -181,8 +181,8 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0FX {return static_cast<T const &>(*this);}
 	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0EX {return static_cast<T       &>(*this);}
 
-	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept {return static_cast<T const &>(*this);}
-	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept {return static_cast<T       &>(*this);}
+	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept...
+	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept...
 
 	   };
 	};

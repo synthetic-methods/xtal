@@ -13,10 +13,10 @@ namespace xtal::_test
 
 using namespace bond;
 
-using scale_t = occur::inferred_t<class scale_a, typename bond::operating::alpha_t>;
-using level_t = occur::inferred_t<class level_a, typename bond::operating::alpha_t>;
+using scale_t = occur::reinferred_t<class scale_a, typename bond::operating::alpha_t>;
+using level_t = occur::reinferred_t<class level_a, typename bond::operating::alpha_t>;
 /*/
-using onset_t = occur::inferred_t<class onset_a, typename bond::operating::alpha_t>;
+using onset_t = occur::reinferred_t<class onset_a, typename bond::operating::alpha_t>;
 /*/
 struct onset
 :	occur::confer<typename bond::operating::alpha_t

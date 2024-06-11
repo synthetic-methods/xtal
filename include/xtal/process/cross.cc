@@ -21,7 +21,6 @@ TAG_("cross", "process")
 
 		using U_model = atom::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, mix_t>;
-		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto io = U_remix();
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
@@ -36,6 +35,7 @@ TAG_("cross", "process")
 
 TAG_("cross", "processor")
 {
+	/**/
 	TRY_("shape with matrix")
 	{
 		using namespace _xtd::ranges::views;
@@ -60,6 +60,7 @@ TAG_("cross", "processor")
 	//	(1*1 + 2*2) + (3*1 + 4*2) + (5*1 + 6*2)
 
 	}
+	/***/
 	TRY_("shape with matrix indent")
 	{
 		using namespace _xtd::ranges::views;

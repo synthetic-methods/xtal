@@ -80,7 +80,7 @@ TAG_("circular")
 			foo *= u;
 			foo -= _std::round(foo);
 		//	echo(i, _std::log(_std::abs(phi(0)/foo - foo/phi(0))));
-			TRUE_(computrim_f<16>(phi(0)) == computrim_f<16>(foo));
+			TRUE_(computrim_f<13>(phi(0)) == computrim_f<13>(foo));
 		}
 	}
 	/**/

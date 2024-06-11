@@ -48,7 +48,9 @@ TAG_("phasor")
 	using Z_chi = processor::monomer_t<Y_chi, U_stored>;
 	using Z_phi = processor::monomer_t<Y_phi, U_stored>;
 	using Z_psi = processor::monomer_t<Y_psi, U_stored>;
+	//\
 	using Z_eig = processor::monomer_t<Y_eig, U_stored>;
+	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, d_::phasor<_phi>, U_stored>;
 
 	TRY_("trial")
 	{

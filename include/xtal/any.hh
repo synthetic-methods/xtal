@@ -29,8 +29,8 @@ namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
 #if XTAL_STD < 26
-template <size_t N, class U> constexpr U       & get(complex<U>        &t) {return          (reinterpret_cast<U(&)[2]>(t)[N&1]);};
-template <size_t N, class U> constexpr U const & get(complex<U> const  &t) {return          (reinterpret_cast<U(&)[2]>(t)[N&1]);};
+template <size_t N, class U> constexpr U       & get(complex<U>        &t) {return           reinterpret_cast<U(&)[2]>(t)[N&1] ;};
+template <size_t N, class U> constexpr U const & get(complex<U> const  &t) {return           reinterpret_cast<U(&)[2]>(t)[N&1] ;};
 template <size_t N, class U> constexpr U      && get(complex<U>       &&t) {return XTAL_MOV_(reinterpret_cast<U(&)[2]>(t)[N&1]);};
 template <size_t N, class U> constexpr U const&& get(complex<U> const &&t) {return XTAL_MOV_(reinterpret_cast<U(&)[2]>(t)[N&1]);};
 template <size_t N, class U> struct tuple_element<N, complex<U>> {using type = U;};
@@ -250,8 +250,6 @@ Ranged...
 template <class      ...Ts>	XTAL_ASK        sizeable_q =	    (...and  _entail::   sizeable_q<based_t<Ts>>);
 template <class      ...Ts>	XTAL_ASK      resizeable_q =	    (...and  _entail:: resizeable_q<based_t<Ts>>);
 
-template <class      ...Ts>	XTAL_ASK         bounded_q =	    (...and  _entail::    bounded_q<Ts>);
-template <class      ...Ts>	XTAL_ASK       unbounded_q =	    (...and  _entail::  unbounded_q<Ts>);
 template <class      ...Ts>	XTAL_ASK       reembrace_q =	    (...and  _entail::  reembrace_q<Ts>);
 template <class         T >	XTAL_USE       reembrace_t =	             _entail::  reembrace_t<T >;
 template <class         T >	XTAL_USE         embrace_t =	             _entail::    embrace_t<T >;

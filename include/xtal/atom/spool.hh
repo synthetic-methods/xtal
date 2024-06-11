@@ -57,7 +57,7 @@ struct spool<A>
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
 		XTAL_CON_(implicit) homotype(embrace_t<U_value> w)
-		:	u_end{_std::distance(w.begin(), w.end())}
+		:	u_end(count_f(w))
 		,	u_store(w.begin(), w.end())
 		{}
 
@@ -69,7 +69,7 @@ struct spool<A>
 		XTAL_0EX -> U_point
 		{
 			u_begin += n;
-			return begin(0);
+			return begin();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET abandon(U_count n=1)
@@ -132,35 +132,36 @@ struct spool<A>
 		Conflicting entries w.r.t. `==` are overwritten. \
 
 	//	XTAL_DEF_(inline)
-		XTAL_LET push(U_value v)
+		XTAL_LET push(U_value u)
 		XTAL_0EX -> U_point
 		{
-			U_point v_ = scan(v);
-			if (*v_ == v) {
-				_std::swap(v, *v_); return v_;
+			if (u_store.empty()) {
+				u_store.push_back(XTAL_MOV_(u));
+				return begin();
+			}
+			U_point _v = scan(u);
+			U_value &v = *_v;
+			if (v == u) {
+				v.~ U_value();
+				v = XTAL_MOV_(u);
+				return _v;
 			}
 			else {
-				return poke(v_, XTAL_MOV_(v));
+				return poke(_v, XTAL_MOV_(u));
 			}
 		}
-		template <is_q<U_value> W>
 		XTAL_DEF_(inline)
-		XTAL_LET poke(U_point v_, W &&w)
+		XTAL_LET poke(U_point _v, U_value u)
 		XTAL_0EX -> U_point
 		{
-			return u_store.insert(v_, XTAL_REF_(w));
+			return u_store.insert(_v, XTAL_MOV_(u));
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET poke(U_point v_, auto &&...ws)
+		XTAL_LET poke(U_point _v, auto..._s)
 		XTAL_0EX -> U_point
 		{
-			return u_store.insert(v_, U_value(XTAL_REF_(ws)...));
+			return u_store.emplace(_v, XTAL_MOV_(_s)...);
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET poke(U_point v_, auto &&...ws)
-		XTAL_0EX -> U_point
-		XTAL_REQ
-		XTAL_REQ_TO_(u_store.inplace(v_, XTAL_REF_(ws)...))
 
 	};
 	using type = bond::isotype<homotype>;

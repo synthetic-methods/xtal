@@ -40,7 +40,7 @@ struct define
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using U_self = subtype;
 
 	public:
@@ -93,7 +93,7 @@ struct refine
 		using S_::S_;
 
 	};
-	template <any_q S> requires iterable_q<S> and (not iterated_q<S>)
+	template <any_q S> requires iterable_q<S> and uniterated_q<S>
 	class subtype<S> : public bond::compose_s<S, subkind>, public initerated_t<T>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -125,7 +125,7 @@ struct defer
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using typename S_::U_head;
 		using U_self = subtype;
 

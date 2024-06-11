@@ -304,7 +304,7 @@ public:
 	XTAL_0EX
 	{
 		XTAL_IF0
-		XTAL_0IF (N_side == 0) {return                          (value);}
+		XTAL_0IF (N_side == 0) {return                           value ;}
 		XTAL_0IF (N_side != 0) {return N_side*designed_f<N_side>(value);}
 	}
 
@@ -869,7 +869,7 @@ public:
 		XTAL_IF0
 		XTAL_0IF (N == 0) {return result;}
 		XTAL_0IF (I == 0) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
-		XTAL_0IF (I == 1) {return explo_f<M>(square_f(         (base)), XTAL_REF_(base)*XTAL_MOV_(result));}
+		XTAL_0IF (I == 1) {return explo_f<M>(square_f(          base ), XTAL_REF_(base)*XTAL_MOV_(result));}
 	}
 	template <int N_exponent>
 	XTAL_DEF_(return,inline,static)
@@ -1265,7 +1265,7 @@ public:
 	XTAL_0EX
 	{
 		XTAL_IF0
-		XTAL_0IF (N_size == 0) {return                                  (value);}
+		XTAL_0IF (N_size == 0) {return                                   value ;}
 		XTAL_0IF (N_size != 0) {return sign_n<N_side>*designed_f<N_side>(value);}
 	}
 	static_assert(clamped_f<+1>( alpha_1) == +1.0);

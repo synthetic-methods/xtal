@@ -46,12 +46,20 @@ struct define
 		template <class _                > struct super<_> {using type = _;};
 
 	public:
-		XTAL_DO4_(template <fungible_q<subtype> Y>
+		XTAL_DO4_(template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
 		XTAL_REF self(auto &&...oo),
 		XTAL_REQ (0 < sizeof...(oo))
 		{
-			return self<Y>() = Y(XTAL_REF_(oo)..., XTAL_MOV_(self()));
+			auto &y = self<Y>();
+			if constexpr (_std::is_trivially_destructible_v<Y>) {
+				new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(y));
+			}
+			else {
+				auto x = self<Y>(); y.~Y();
+				new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
+			}
+			return y;
 		})
 		///\returns `*this` with type `Y=T`. \
 

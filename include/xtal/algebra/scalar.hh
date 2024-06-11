@@ -109,9 +109,9 @@ struct scalar<A>
 		using T_::operator/=;
 		using T_::operator%=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX {return twin() /=  (t);}
-		XTAL_DEF_(return,inline) XTAL_LET operator % (auto       const &t) XTAL_0FX {return twin() %=  (t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX {return twin() *=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX {return twin() /=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator % (auto       const &t) XTAL_0FX {return twin() %=   t ;}
 		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
 		XTAL_DEF_(inline)        XTAL_REF operator %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
@@ -195,7 +195,7 @@ struct scalar<A>
 			return u;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF product(iterated_q auto &&t)
+		XTAL_REF product(bond::pack_sized_q<N_data> auto &&t)
 		XTAL_0FX
 		{
 			auto &s = self();

@@ -101,7 +101,7 @@ struct superblock<U[N]>
 			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end());}
 			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end(), [this] XTAL_1FN_(T_::self().ordinate));}
 		}
-		XTAL_CON_(explicit) homotype(bounded_q auto const &a)
+		XTAL_CON_(explicit) homotype(iterable_q auto const &a)
 		XTAL_0EX
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
@@ -109,7 +109,7 @@ struct superblock<U[N]>
 			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a);}
 			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a, [this] XTAL_1FN_(T_::self().ordinate));}
 		}
-		XTAL_CON_(explicit) homotype(bounded_q auto &&a)
+		XTAL_CON_(explicit) homotype(iterable_q auto &&a)
 		XTAL_0EX
 		:	homotype(count_f(a))
 		{
@@ -246,9 +246,9 @@ struct block<A>
 };
 
 template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto const &&o) {return XTAL_MOV_(o).let(I);}
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto const  &o) {return          (o).let(I);}
+template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto const  &o) {return           o .let(I);}
 template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto       &&o) {return XTAL_MOV_(o).let(I);}
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto        &o) {return          (o).let(I);}
+template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto        &o) {return           o .let(I);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

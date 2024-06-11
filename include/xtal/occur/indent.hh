@@ -58,7 +58,7 @@ struct indent<Ns...>
 		:	S_{XTAL_MOV_(u)*bond::operate<U_>::diplo_f()}
 		{}
 		XTAL_CON_(implicit) subtype(reembrace_t<W_> w)
-		XTAL_REQ bounded_q<W_>
+		XTAL_REQ iterable_q<W_>
 		:	S_{w}
 		{}
 
@@ -100,7 +100,7 @@ struct indent<Ns...>
 					return m == x;
 					/*/
 					auto &m = bond::pack_item_f(o.seek(), head());
-					using M = XTAL_TYP_(m); m.~M();
+					using M = XTAL_TYP_(m); m.~ M();
 					new (&m) M(o);
 					return 0;
 					/***/

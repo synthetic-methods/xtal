@@ -84,7 +84,7 @@ struct define
 		XTAL_TNX efflux(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
+			return XTAL_FNX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 		XTAL_TNX efflux(null_t, auto &&...oo)
 		XTAL_0EX
@@ -125,7 +125,7 @@ struct define
 		XTAL_TNX influx(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FLX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
+			return XTAL_FNX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 		XTAL_TNX influx(null_t, auto &&...oo)
 		XTAL_0EX
@@ -154,21 +154,6 @@ struct define
 		{
 			return -1;
 		}
-		/*/
-		XTAL_TNX defuse(is_q<T> auto &&t)
-		XTAL_0EX
-		{
-			if (self() == t) {
-				return 1;
-			}
-			else {
-				//\
-				self() = XTAL_REF_(t);
-				(void) S_::self(XTAL_REF_(t));
-				return 0;
-			}
-		}
-		/***/
 		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
 		///\< \see `defuse`. \
 
@@ -243,7 +228,7 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
+			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 		XTAL_TNX influx(auto &&...oo)
 		XTAL_0EX
@@ -258,7 +243,7 @@ struct defer
 		XTAL_0EX
 		XTAL_REQ any_q<U>
 		{
-			return XTAL_FLX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
+			return XTAL_FNX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 		XTAL_TNX efflux(auto &&...oo)
 		XTAL_0EX
@@ -273,9 +258,12 @@ struct defer
 		XTAL_TNX defuse(W &&w)
 		XTAL_0EX
 		{
+			using T = typename S_::T_self;
+			auto &s = self();
+			auto &u = head();
 			XTAL_IF0
-			XTAL_0IF (is_q<W, U>) {return S_::heading(w) || ((void) S_::head(XTAL_REF_(w)), 0);}
-		//	XTAL_0IF (as_q<W, U>) {return defuse((U) XTAL_REF_(w));}
+		//	XTAL_0IF (is_q<W, T>) {return w == s || ((void) S_::self(XTAL_REF_(w)), 0);}
+			XTAL_0IF (is_q<W, U>) {return w == u || ((void) S_::head(XTAL_REF_(w)), 0);}
 			XTAL_0IF_(default)    {return S_::defuse(XTAL_REF_(w));}
 		}
 

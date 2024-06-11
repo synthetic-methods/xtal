@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../cell/key.hh"
-
+#include "../resource/all.hh"
 
 
 
@@ -28,7 +28,7 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
-template <typename A, typename ...As> requires complete_q<typename confined_t<A, polymer<As...>>::template self_t<>>
+template <typename A, typename ...As> requires anything_q<confined_t<polymer<As...>>>
 struct polymer<A, As...>
 :	bond::compose<A, polymer<As...>>
 {
@@ -42,7 +42,9 @@ struct polymer<U, As...>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using Y_ = monomer_t<based_t<U>>;
+		//\
+		using Y_ = confined_t<subkind>;
+		using Y_ = monomer_t<U>;
 		
 		template <class ...Xs>
 		using S__compound = typename S_::template compound<Xs...>;
@@ -57,7 +59,7 @@ struct polymer<U, As...>
 		using S_::S_;
 		using S_::self;
 
-		template <class ...Xs> requires resource::spooled_q<S_> and resource::stored_q<S_>
+		template <class ...Xs> requires resource::spooled_q<S_>
 		struct compound
 		{
 			using Y_return = typename S__compound<Xs...>::Y_return;
@@ -83,8 +85,6 @@ struct polymer<U, As...>
 				using R_::R_;
 				using R_::self;
 				using R_::head;
-				using R_::state;
-				using R_::store;
 				
 				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF ensemble(), u_ensemble)
 
@@ -157,8 +157,12 @@ struct polymer<U, As...>
 				}
 
 				///\
-				Renders the store slice designated by `review_o` and `render_o` \
-				after liberating any voices that have reached the final `occur::stage_f(-1)`. \
+				Renders the `store` slice designated by `review_o` and `render_o`, \
+				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
+				
+				///\note\
+				The `ensemble` is only mixed into `this` if `resource::stored_q`, \
+				otherwise the multichannel data is just rendered locally on each voice. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
 				XTAL_TNX efflux_subview(Rev &&review_o, Ren &&render_o)
@@ -172,13 +176,15 @@ struct polymer<U, As...>
 							return 1;
 						}
 					}
-					for (auto &vox:u_ensemble) {
-						auto result_o = vox();
-						auto _j = point_f(result_o);
-						auto _i = point_f(review_o);
-						auto  n = count_f(review_o);
-						
-						for (size_t m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
+					if constexpr (resource::stored_q<S_>) {
+						for (auto &vox:u_ensemble) {
+							auto result_o = vox();
+							auto _j = point_f(result_o);
+							auto _i = point_f(review_o);
+							auto  n = count_f(review_o);
+							
+							for (size_t m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
+						}
 					}
 					return 0;
 				}

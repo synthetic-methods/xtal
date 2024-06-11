@@ -217,14 +217,14 @@ struct define
 				XTAL_TNX influx(auto &&...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
+					return XTAL_FNX_(self().influx_push(oo...)) (R_::influx(XTAL_REF_(oo)...));
 				}
 				///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
 				XTAL_TNX efflux(auto &&...oo)
 				XTAL_0EX
 				{
-					return XTAL_FLX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+					return XTAL_FNX_(R_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 				}
 
 				///\note\

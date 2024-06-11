@@ -62,9 +62,9 @@ struct serial<A>
 	//	using T_::operator+=;
 	//	using T_::operator-=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX {return twin() *=  (t);}
-		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX {return twin() +=  (t);}
-		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX {return twin() -=  (t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX {return twin() *=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX {return twin() +=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX {return twin() -=   t ;}
 		XTAL_DEF_(inline)        XTAL_REF operator  *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_REF operator  +=(embrace_t<U_data> t) XTAL_0EX {return self() += T(t);}
 		XTAL_DEF_(inline)        XTAL_REF operator  -=(embrace_t<U_data> t) XTAL_0EX {return self() -= T(t);}

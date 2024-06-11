@@ -78,7 +78,7 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
 
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(iterated_q auto const & t) XTAL_0EX {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(iterable_q auto const & t) XTAL_0EX {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
 		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator  i) XTAL_0EX {return reinterpret_cast<              iterator_>(i);}
 		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator_ i) XTAL_0EX {return reinterpret_cast<              iterator >(i);}
 		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(        const_iterator  i) XTAL_0EX {return reinterpret_cast<        const_iterator_>(i);}
@@ -88,7 +88,7 @@ struct store<U_data[N_data]>
 		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator  i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator_>(i);}
 		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterated_q auto const & t) XTAL_0EX {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
+		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterable_q auto const & t) XTAL_0EX {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
 		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterator_q auto         i) XTAL_0EX {return _std::launder(offence_f(XTAL_REF_(i)));}
 		
 
@@ -345,13 +345,13 @@ struct store<U_data[N_data]>
 
 		///\
 		Constructs an element at `i` using the given arguments. \
-		\returns a reference to the element.
+		\returns an iterator at the element.
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_LET emplace(I i, auto &&...etc)
-		->	reference
+		->	iterator
 		{
-			return *inplace(i, XTAL_REF_(etc)...);
+			return inplace(i, XTAL_REF_(etc)...);
 		}
 
 		///\

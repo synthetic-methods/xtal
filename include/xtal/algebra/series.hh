@@ -105,8 +105,8 @@ struct series<A>
 			static_assert(N_step == 1 << N_shift);
 
 		//	Compute the start- and end-points for the required segment:
-			I constexpr I0 = N_skip + N_step*(N_index +            (0));
-			I constexpr I1 = N_skip + N_step*(N_index +            (1));
+			I constexpr I0 = N_skip + N_step*(N_index +             0 );
+			I constexpr I1 = N_skip + N_step*(N_index +             1 );
 			I constexpr IM = N_skip + N_step*(N_index + (N_limit >> 1));
 			I constexpr IN = N_skip + N_step*(N_index + (N_limit  - 1));
 			I constexpr M_skip = N_step - N_skip;
@@ -253,7 +253,7 @@ struct series<A>
 
 		using T_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=  (w))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=   w )
 		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
 
 	//	XTAL_DEF_(inline)

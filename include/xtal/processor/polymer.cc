@@ -35,15 +35,21 @@ void polymer_provision_spine__locamotion()
 	using U_thunk  = schedule::thunk_t<resource::spooled<Integral_t<0x20>>>;
 	using U_cue    = cell::cue_s<>;
 
-	//\
-	using W_gate   = typename level_t::poll<>;
-	using W_gate   = typename U_thunk::template inqueue<level_t>;
-	using U_gate   = process::confined_t<W_gate, typename U_stage::expect<>>;
+	using A_stored  = resource::stored  <Integral_t<N_store>>;
+	using A_spooled = resource::spooled <Integral_t<N_spool>>;
 
-	using U_vox = polymer_t<U_gate
-	,	resource::stored<Integral_t<N_store>>
-	,	resource::spooled<Integral_t<N_spool>>
-	>;
+	using A_gate   = bond::compose<typename U_thunk::template inqueue<level_t>, typename U_stage::expect<>>;
+	using U_gate   = process::confined_t<A_gate>;
+	using U_io     = process::conferred_t<decltype([] (auto &&o) XTAL_0FN_(XTAL_REF_(o)))>;
+	//\
+	using M_gate   = processor::monomer_t<A_gate>;
+	using M_gate   = processor::monomer_t<U_gate>;
+	//\
+	using W_gate   = process::conferred_t<typename M_gate::template bind_t<>>;
+	using W_gate   = typename M_gate::template bind_t<>;
+	//\
+	using U_vox = polymer_t<W_gate, A_stored, A_spooled>;
+	using U_vox = polymer_t<U_gate, A_stored, A_spooled>;
 	auto u_vox = U_vox::bind_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:

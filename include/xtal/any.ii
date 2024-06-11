@@ -77,10 +77,10 @@ XTAL_0EX
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class        ...Us>	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
-template <class U, size_t N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::array<U,  N>) XTAL_0EX {return size_t(N);}
-template <class U, class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std:: pair<U,  V>) XTAL_0EX {return size_t(2);}
-template <class U           > XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U> t) XTAL_0EX {return count_f(_std::array{XTAL_REF_(t)});}
+template <class        ...Us>	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
+template <class U, size_t N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           array<U,  N>) XTAL_0EX {size_t n =        N; return n;}
+template <class U, class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::            pair<U,  V>) XTAL_0EX {size_t n =        2; return n;}
+template <class U           > XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U>  t ) XTAL_0EX {size_t n = t.size(); return n;}
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_t
@@ -132,8 +132,13 @@ template <class F             > XTAL_DEF_(inline) XTAL_REF operative_f(F &&f    
 ///\note\
 To be extended by the host to transparently reduce `y` when vectorized. \
 
-template <class Y> XTAL_DEF_(inline,static) XTAL_REF  objective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
-template <class Y> XTAL_DEF_(inline,static) XTAL_REF subjective_f(Y &&y) XTAL_0EX_TO_(XTAL_REF_(y));
+template <class T>
+XTAL_DEF_(inline,static)
+XTAL_LET objective_f(T &&t)
+XTAL_0EX -> _std::remove_cvref_t<T>
+{
+	return XTAL_REF_(t);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

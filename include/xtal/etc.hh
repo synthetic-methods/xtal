@@ -133,9 +133,10 @@
 #define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
 #define XTAL_ANY_(...)     ::std::                 declval <__VA_ARGS__>()
 #define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)
-#define XTAL_REF_(...)                 static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)
+#define XTAL_REF_(...)                static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 #define XTAL_REF                         constexpr decltype(auto)
 #define XTAL_LET                         constexpr          auto
+#define XTAL_SET                  static constexpr          auto
 
 #define XTAL_CON_(...)                   XTAL_CON_##__VA_ARGS__
 #define XTAL_CON_explicit                constexpr explicit
@@ -231,7 +232,7 @@
 //efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_t)
 #define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_t)
 #define XTAL_FLX                             XTAL_STD_(sign_t)
-#define XTAL_FLX_(...)            [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
+#define XTAL_FNX_(...)            [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -13,13 +13,13 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <typename> typename T_>
+template <template <class, typename ...> class T_, typename ...As>
 struct isokind
 {
 	template <class S>
-	class subtype : public T_<subtype<S>>::template subtype<S>
+	class subtype : public T_<subtype<S>, As...>::template subtype<S>
 	{
-		using S_ = typename T_<subtype<S>>::template subtype<S>;
+		using S_ = typename T_<subtype<S>, As...>::template subtype<S>;
 	
 	public:
 		using S_::S_;

@@ -56,7 +56,7 @@ XTAL_0EX -> void
 	swap_ranges(x0, xN, y0);
 #endif
 }
-template <iterator_q Y_, bounded_q Xs>
+template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
 XTAL_LET swap_with(Y_ y0, Xs const &xs, bool o=false)
 XTAL_0EX -> void
@@ -116,7 +116,7 @@ XTAL_0EX -> void
 #endif
 }
 
-template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
+template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
 XTAL_DEF_(inline)
 XTAL_LET copy_to(Y_ y0, Xs const &xs, F &&f, bool o=false)
 XTAL_0EX -> void
@@ -129,7 +129,7 @@ XTAL_0EX -> void
 		copy_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
 	}
 }
-template <iterator_q Y_, bounded_q Xs>
+template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
 XTAL_LET copy_to(Y_ y0, Xs const &xs, bool o=false)
 XTAL_0EX -> void
@@ -167,7 +167,7 @@ XTAL_0EX -> void
 	copy_to(y0, mover_f(x0), mover_f(xN), o);
 }
 
-template <iterator_q Y_, bounded_q Xs, _std::invocable<iteratee_t<Xs>> F>
+template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
 XTAL_DEF_(inline)
 XTAL_LET move_to(Y_ y0, Xs &&xs, F &&f, bool o=false)
 XTAL_0EX -> void
@@ -180,7 +180,7 @@ XTAL_0EX -> void
 		move_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
 	}
 }
-template <iterator_q Y_, bounded_q Xs>
+template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
 XTAL_LET move_to(Y_ y0, Xs &&xs, bool o=false)
 XTAL_0EX -> void
@@ -210,7 +210,7 @@ XTAL_0EX -> void
 {
 	w = XTAL_REF_(f) (w);
 }
-template <class Ws, class F> requires bounded_q<Ws>
+template <class Ws, class F> requires iterable_q<Ws>
 XTAL_DEF_(inline)
 XTAL_LET apply_to(Ws &ws, F &&f, bool o=false)
 XTAL_0EX -> void

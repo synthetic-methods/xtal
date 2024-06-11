@@ -88,18 +88,18 @@ struct circular<A>
 
 		XTAL_CON_(implicit)  homotype                           () XTAL_0EX : homotype(size_0)        {                                }
 		XTAL_CON_(explicit)  homotype (real_number_q auto &&...oo) XTAL_0EX : homotype(sizeof...(oo)) {operator>>=({XTAL_REF_(oo)...});}
-		XTAL_CON_(implicit)  homotype         (initializer_list o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
-		XTAL_CON_(explicit)  homotype         (bounded_q auto &&o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CON_(implicit)  homotype        (initializer_list  o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
+		XTAL_CON_(explicit)  homotype        (iterable_q auto &&o) XTAL_0EX : homotype(count_f(o))    {operator<<=( XTAL_REF_(o)     );}
 		
 	public:// RECONSTRUCT
 		using T_::operator >>=;
 		using T_::operator <<=;
 
-		XTAL_DEF_(inline) XTAL_LET operator >>= (initializer_list o) XTAL_0EX -> homotype & {_detail::copy_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
-		XTAL_DEF_(inline) XTAL_LET operator >>= (bounded_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator >>= (initializer_list  o) XTAL_0EX -> homotype & {_detail::copy_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator >>= (iterable_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(T_::data(), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		
-		XTAL_DEF_(inline) XTAL_LET operator <<= (initializer_list o) XTAL_0EX -> homotype & {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
-		XTAL_DEF_(inline) XTAL_LET operator <<= (bounded_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator <<= (initializer_list  o) XTAL_0EX -> homotype & {_detail::copy_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
+		XTAL_DEF_(inline) XTAL_LET operator <<= (iterable_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(_std::next(T_::data(), T_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		
 	public:// OPERATE
 		///\
@@ -115,8 +115,8 @@ struct circular<A>
 		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		auto operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=  (t))
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=  (t))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=   t )
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=   t )
 		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
 		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
 

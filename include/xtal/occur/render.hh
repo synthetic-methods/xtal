@@ -67,7 +67,7 @@ struct surrender
 		using S_ = S;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using typename S_::U_head;
 
 	private:
@@ -267,7 +267,7 @@ struct render<V>
 		using S_ = bond::compose_s<S, subkind>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 
 	public:
 	//	using S_::S_;
@@ -369,7 +369,7 @@ public:
 		using S_ = bond::compose_s<S, subkind>;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 
 	public:
 		using S_::S_;

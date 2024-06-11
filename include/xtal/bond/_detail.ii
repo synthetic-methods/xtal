@@ -26,7 +26,7 @@ struct query
 		friend U_this;
 
 	protected:
-		using typename S_::T_self; friend T_self;
+		using typename S_::T_self;
 		using typename S_::U_self;
 		using typename S_::U_head;
 
