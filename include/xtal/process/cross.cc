@@ -61,6 +61,7 @@ TAG_("cross", "processor")
 
 	}
 	/***/
+	/**/
 	TRY_("shape with matrix indent")
 	{
 		using namespace _xtd::ranges::views;
@@ -80,6 +81,8 @@ TAG_("cross", "processor")
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
+	/***/
+	/**/
 	TRY_("shape with column indent")
 	{
 		using namespace _xtd::ranges::views;
@@ -101,6 +104,8 @@ TAG_("cross", "processor")
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
+	/***/
+	/**/
 	TRY_("shape with vector indent")
 	{
 		using namespace _xtd::ranges::views;
@@ -125,6 +130,7 @@ TAG_("cross", "processor")
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
 	}
+	/***/
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -46,17 +46,23 @@ public:
 	//	XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
+
 		XTAL_CON_(implicit) subtype()
 		XTAL_0EX
 		:	subtype(1)
 		{}
-		XTAL_CON_(explicit) subtype(integral_number_q auto n, auto &&...oo)
-		XTAL_0EX
-		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
-		{}
 		XTAL_CON_(explicit) subtype(real_number_q auto u, auto &&...oo)
 		XTAL_0EX
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
+		{}
+		XTAL_CON_(explicit) subtype(integral_number_q auto n, auto &&...oo)
+		XTAL_0EX
+		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF   rate(), get<0>(S_::head()))

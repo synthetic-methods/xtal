@@ -149,16 +149,14 @@ struct define
 		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
 		and truncating propagation when the aggregated result is `1`. \
 
-		XTAL_TNX defuse(auto &&o)
+		XTAL_TNX defuse(is_q<T> auto &&o)
 		XTAL_0EX
 		{
-			return -1;
+			return o == self() || ((void) self(XTAL_REF_(o)), 0);
 		}
-		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
-		///\< \see `defuse`. \
-
-		XTAL_TNX infuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}
-		///\< \see `defuse`. \
+		XTAL_TNX defuse(auto &&o) XTAL_0EX {return -1;}
+		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
+		XTAL_TNX infuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
 
 
 		///\
@@ -222,49 +220,47 @@ struct defer
 		using S_::head;
 
 		///\note\
-		Influxes the proxied value if supported, then `this`.
+		Influxes via the proxied value if supported, then via `this`.
 
-		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ any_q<U>
-		{
-			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
-		}
 		XTAL_TNX influx(auto &&...oo)
 		XTAL_0EX
 		{
 			return S_::influx(XTAL_REF_(oo)...);
 		}
+		XTAL_TNX influx(auto &&...oo)
+		XTAL_0EX
+		XTAL_REQ any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		{
+			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
+		}
 
 		///\note\
-		Effluxes `this`, then the proxied value if supported.
+		Effluxes via `this`, then via the proxied value if supported.
 
-		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ any_q<U>
-		{
-			return XTAL_FNX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
-		}
 		XTAL_TNX efflux(auto &&...oo)
 		XTAL_0EX
 		{
 			return S_::efflux(XTAL_REF_(oo)...);
 		}
+		XTAL_TNX efflux(auto &&...oo)
+		XTAL_0EX
+		XTAL_REQ any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		{
+			return XTAL_FNX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
+		}
 
 		///\note\
-		Assigns the given value `u` if it matches the proxied type `U`. \
+		Assigns the given value `O` if it matches the proxied type `U`. \
 
-		template <class W>
-		XTAL_TNX defuse(W &&w)
+		XTAL_TNX defuse(is_q<U> auto &&o)
 		XTAL_0EX
 		{
-			using T = typename S_::T_self;
-			auto &s = self();
-			auto &u = head();
-			XTAL_IF0
-		//	XTAL_0IF (is_q<W, T>) {return w == s || ((void) S_::self(XTAL_REF_(w)), 0);}
-			XTAL_0IF (is_q<W, U>) {return w == u || ((void) S_::head(XTAL_REF_(w)), 0);}
-			XTAL_0IF_(default)    {return S_::defuse(XTAL_REF_(w));}
+			return o == head() || ((void) head(XTAL_REF_(o)), 0);
+		}
+		XTAL_TNX defuse(auto &&o)
+		XTAL_0EX
+		{
+			return S_::defuse(XTAL_REF_(o));
 		}
 
 	};

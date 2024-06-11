@@ -160,7 +160,7 @@ struct define
 				XTAL_0EX
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CON_(explicit) subtype(fungible_q<T> auto &&t, Xs &&...xs)
+				XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
 				XTAL_0EX
 				//\
 				:	R_(XTAL_REF_(t), X_packed(process::let_f(XTAL_REF_(xs))...))

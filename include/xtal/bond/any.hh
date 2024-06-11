@@ -24,42 +24,32 @@ struct define
 	{
 		using S_ = S;
 
-	public:
+	protected:// TYPE
+		using T_self = T;
+		using U_self = subtype;
+		using U_head = void;
+
+	public:// CONSTRUCT
 		using S_::S_;
 
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
 		XTAL_CON_(explicit) subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&s, auto &&...oo)
-		XTAL_0EX
-		:	S_(static_cast<S_ &&>(XTAL_REF_(s)), XTAL_REF_(oo)...)
-		{}
-
-	protected:
-		using  T_self = T; friend T_self;
-		using  U_self = subtype;
-		using  U_head = void;
-
-	public:
-		template <class _, typename ...Is> struct super    : super<Is...> {};
-		template <class _                > struct super<_> {using type = _;};
 
 	public:
 		XTAL_DO4_(template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
 		XTAL_REF self(auto &&...oo),
-		XTAL_REQ (0 < sizeof...(oo))
 		{
-			auto &y = self<Y>();
-			if constexpr (_std::is_trivially_destructible_v<Y>) {
-				new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(y));
-			}
-			else {
-				auto x = self<Y>(); y.~Y();
-				new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
-			}
-			return y;
+			auto  x = self<Y>();
+			auto &y = self<Y>(); y.~ Y();
+			return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
 		})
 		///\returns `*this` with type `Y=T`. \
 

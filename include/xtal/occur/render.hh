@@ -278,6 +278,12 @@ struct render<V>
 	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
+
 		XTAL_CON_(implicit) subtype()
 		XTAL_0EX
 		:	S_(0, 0)

@@ -43,13 +43,14 @@ struct any<A>
 		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
 		XTAL_CON_(explicit) subtype(auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)
-		{}
-		XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&s, auto &&...oo)
-		XTAL_0EX
-		:	S_(static_cast<S_ &&>(s), XTAL_REF_(oo)...)
 		{}
 		///\
 		Attempts construction from infungible-but-compatible types via inspection. \

@@ -31,9 +31,8 @@ template <class T>
 struct define
 {
 	using subkind = bond::compose<void
-	,	_retail::define<T>
+	,	_detail::define_super<T>
 	>;
-
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{

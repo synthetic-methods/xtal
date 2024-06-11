@@ -46,6 +46,18 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <         class ...Ts>  XTAL_TYP seek_front;
+template <class T, class ...Ts>  XTAL_TYP seek_front<T, Ts...>       {using type = T;};
+template <         class ...Ts>  XTAL_USE seek_front_t = typename seek_front<Ts...>::type;
+
+template <         class ...Ts>  XTAL_TYP seek_back;
+template <class T             >  XTAL_TYP seek_back <T       >       {using type = T;};
+template <class T, class ...Ts>  XTAL_TYP seek_back <T, Ts...>  : seek_back <Ts...> {};
+template <         class ...Ts>  XTAL_USE seek_back_t  = typename seek_back <Ts...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <             class ...Ts>  XTAL_TYP seek_constant                    {using type = void;};
 template <Nominal_q T, class ...Ts>  XTAL_TYP seek_constant<T, Ts...> :                        T {};
 template <class     T, class ...Ts>  XTAL_TYP seek_constant<T, Ts...> :  seek_constant<Ts...>    {};

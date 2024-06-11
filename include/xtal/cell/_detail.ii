@@ -49,6 +49,29 @@ template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_REF dismember_f(W 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
+struct define_super
+{
+	using subkind = _retail::define<T>;
+
+	template <class S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+	
+	public:
+		using S_::S_;
+
+	public:
+		template <class ...Is>
+		struct super : bond::seek_back<Is...> {};
+
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+template <class T>
 struct refine_head
 {
 	template <any_q S>
@@ -94,7 +117,6 @@ struct refine_head
 
 	};
 };
-
 template <class T>
 struct refine_tuple
 {
@@ -156,7 +178,6 @@ struct refine_tuple
 		}
 
 		XTAL_TO4_(XTAL_CVN_(implicit) bond::pack_row_t<S_>(), pack())
-	//	XTAL_TO4_(template <size_t N> XTAL_REF get(), S_::template head<N>())
 
 	};
 };
@@ -191,6 +212,17 @@ struct defer_field
 	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 		
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
+		template <bond::selfish_tab_q<U> O>
+		XTAL_CON_(explicit) subtype(O &&o, auto &&...oo)
+		XTAL_0EX
+		:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)
+		{}
+
 		///\
 		Constructs `this` using the default value. \
 
@@ -211,11 +243,6 @@ struct defer_field
 		:	S_(XTAL_REF_(oo)...)
 		,	u_body(member_f<U_head>(XTAL_REF_(o)))
 		{}
-	//	XTAL_CON_(explicit) subtype(bond::selfish_tab_q<U> auto &&o, auto &&...oo)
-	//	XTAL_0EX
-	//	XTAL_REQ any_q<U>
-	//	:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)
-	//	{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
@@ -298,21 +325,26 @@ struct defer_field<unit_t[N_width]>
 		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 		
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
-		template <infungible_q<subtype> A>
-		XTAL_CON_(explicit) subtype(A &&a, auto &&...oo)
-		XTAL_0EX
-		:	S_(XTAL_REF_(oo)...)
-		,	u_body(member_f<U_head>(XTAL_REF_(a)))
-		{
-		}
 		template <integral_q A>
 		XTAL_CON_(explicit) subtype(A &&a)
 		XTAL_0EX
 		:	S_(U_head(XTAL_REF_(a)) >> N_depth)
 		,	u_body(U_head(a)&(N_width - 1))
+		{
+		}
+		template <infungible_q<subtype> A>
+		XTAL_CON_(explicit) subtype(A &&a, auto &&...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		,	u_body(member_f<U_head>(XTAL_REF_(a)))
 		{
 		}
 
@@ -330,7 +362,6 @@ struct defer_field<null_t[N_depth]>
 };
 
 
-///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 template <class U>
