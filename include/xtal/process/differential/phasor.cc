@@ -20,7 +20,7 @@ TAG_("phasor")
 	namespace a_ = algebra::differential;
 	namespace d_ = process::differential;
 	
-	using U_stored = resource::stored<Integral_t<0x1000>>;
+	using U_stored = resource::stored<nominal_t<0x1000>>;
 	using U_example = resource::example<>;
 
 	using _op = bond::operating;

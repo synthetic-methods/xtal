@@ -258,7 +258,7 @@ struct scalar<A>
 		XTAL_DEF_(return,inline)
 		XTAL_REF coordered()
 		XTAL_0FX
-		XTAL_REQ (2 == N_data) and _std::integral<U_data>
+		XTAL_REQ (2 == N_data) and integral_q<U_data>
 		{
 			using U2 = typename T::template tagged_t<U_data[2]>;
 
@@ -273,7 +273,7 @@ struct scalar<A>
 		XTAL_DEF_(return,inline)
 		XTAL_REF coordered()
 		XTAL_0FX
-		XTAL_REQ (3 <= N_data) and _std::integral<U_data>
+		XTAL_REQ (3 <= N_data) and integral_q<U_data>
 		{
 			using U_ = _std::numeric_limits<U_data>;
 			using U2 = typename T::template tagged_t<U_data[2]>;

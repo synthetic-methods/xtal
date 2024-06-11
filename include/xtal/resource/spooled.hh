@@ -38,7 +38,7 @@ struct spooled<A>
 
 	};
 };
-template <Integral_q A>
+template <nominal_q A>
 struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
@@ -58,7 +58,7 @@ struct spooled<A>
 };
 template <>
 struct spooled<>
-:	spooled<Integral_t<-1>>
+:	spooled<nominal_t<-1>>
 {};
 
 

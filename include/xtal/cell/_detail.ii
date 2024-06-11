@@ -261,7 +261,7 @@ struct defer_field
 
 	};
 };
-template <Integral_q U>
+template <nominal_q U>
 struct defer_field<U>
 {
 	template <any_q S>
@@ -279,7 +279,7 @@ struct defer_field<U>
 		using S_::self;
 		U_body u_body{};
 
-		template <Integral_q A>
+		template <nominal_q A>
 		XTAL_CON_(explicit) subtype(A &&a, auto &&...oo)
 		XTAL_0EX
 		:	S_(XTAL_REF_(oo)...)

@@ -42,7 +42,7 @@ TAG_("solid", "series")
 
 		using V_series = series_t<T_aphex[O]>;
 		using U_series = series_t<T_aphex[N]>;
-		V_series basis(Ordinal_t<-1>{});
+		V_series basis(nominal_t<-1>{});
 
 		U_series source;
 		source[0] = source[M - 0] = T_aphex(0.0, 0.0);
@@ -68,7 +68,7 @@ TAG_("solid", "series")
 		T_sigma constexpr M = N  - 1;
 
 		using U_series = series_t<T_aphex[N]>;
-		U_series basis(Ordinal_t<-1>{});
+		U_series basis(nominal_t<-1>{});
 
 		U_series lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 		U_series rhs = {1, 0, 1, 0, 0, 0, 0, 0};

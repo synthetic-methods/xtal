@@ -29,7 +29,7 @@ void chunk_processor_x1()
 	using T_sigma  = typename _op::sigma_t;
 	using T_delta  = typename _op::delta_t;
 
-	using U_chunk = chunk_t<spooled<Integral_t<0x10>>>;
+	using U_chunk = chunk_t<spooled<nominal_t<0x10>>>;
 	using U_event = occur::packed_t<onset_t>;
 
 	using mix_z = processor::monomer_t<mix_t

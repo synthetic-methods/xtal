@@ -28,13 +28,13 @@ The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constex
 template <size_t N_size>
 struct recognize : recognize<(N_size >> 1)>
 {
-	using zed_t = Logical_t<0>;
+	using zed_t = nominal_t<false>;
 
 };
 template <>
 struct recognize<(1<<0)>
 {
-	using   zed_t =           Logical_t<1>;
+	using   zed_t =           nominal_t< true>;
 //	using  iota_t =           _std::int4_t;
 	using delta_t =    signed XTAL_INT_(0);
 	using sigma_t =  unsigned XTAL_INT_(0);
@@ -51,7 +51,7 @@ struct recognize<(1<<0)>
 template <>
 struct recognize<(1<<1)>
 {
-	using   zed_t =           Logical_t<1>;
+	using   zed_t =           nominal_t< true>;
 	using  iota_t =    signed XTAL_INT_(0);
 	using delta_t =    signed XTAL_INT_(1);
 	using sigma_t =  unsigned XTAL_INT_(1);
@@ -68,7 +68,7 @@ struct recognize<(1<<1)>
 template <>
 struct recognize<(1<<2)>
 {
-	using   zed_t =           Logical_t<1>;
+	using   zed_t =           nominal_t< true>;
 	using  iota_t =    signed XTAL_INT_(1);
 	using delta_t =    signed XTAL_INT_(2);
 	using sigma_t =  unsigned XTAL_INT_(2);
@@ -141,7 +141,7 @@ struct recognize<(1<<2)>
 template <>
 struct recognize<(1<<3)>
 {
-	using   zed_t =           Logical_t<1>;
+	using   zed_t =           nominal_t< true>;
 	using  iota_t =    signed XTAL_INT_(2);
 	using delta_t =    signed XTAL_INT_(3);
 	using sigma_t =  unsigned XTAL_INT_(3);
@@ -221,7 +221,7 @@ concept recognized_q = recognize<N_size>::zed_t::value;
 template <size_t N_size>
 struct rationalize : rationalize<(N_size >> 1)>
 {
-	using zed_t = Logical_t<0>;
+	using zed_t = nominal_t<false>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
@@ -515,7 +515,7 @@ public:
 template <size_t N_size>
 struct realize : realize<(N_size >> 1)>
 {
-	using zed_t = Logical_t<0>;
+	using zed_t = nominal_t<false>;
 
 };
 template <size_t N_size> requires recognized_q<N_size>
@@ -576,19 +576,19 @@ public:
 		return N_fused;
 	}
 
-	using default_alignment = Cardinal_t<XTAL_STD_(L1)/N_width>;
+	using default_alignment = nominal_t<(size_t) XTAL_STD_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = Cardinal_t<_std::hardware_constructive_interference_size/N_width>;
-	using  destructive_alignment = Cardinal_t<_std:: hardware_destructive_interference_size/N_width>;
+	using constructive_alignment = nominal_t<(size_t) _std::hardware_constructive_interference_size/N_width>;
+//	using  destructive_alignment = nominal_t<(size_t) _std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
-	using  destructive_alignment = default_alignment;
+//	using  destructive_alignment = default_alignment;
 #endif
-	using alignment = destructive_alignment;
+	using alignment = constructive_alignment;
 
 	static constexpr sigma_t constructive_alignment_n = constructive_alignment::value;
-	static constexpr sigma_t  destructive_alignment_n =  destructive_alignment::value;
+//	static constexpr sigma_t  destructive_alignment_n =  destructive_alignment::value;
 	static constexpr sigma_t      default_alignment_n =      default_alignment::value;
 	static constexpr sigma_t              alignment_n =              alignment::value;
 	
@@ -1115,7 +1115,7 @@ public:
 	///\returns the sign of `value` as an `alpha_t`. \
 
 	XTAL_DEF_(return,inline,static)
-	XTAL_LET assigned_f(_std::integral auto u)
+	XTAL_LET assigned_f(integral_q auto u)
 	{
 		return assigned_f(S_::internal_f(u));
 	}

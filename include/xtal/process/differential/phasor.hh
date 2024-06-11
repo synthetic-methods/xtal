@@ -37,7 +37,7 @@ struct phasor<K_data[N_data], As...>
 	,	_detail::refer_multiplicative_group<W_data>
 	,	typename occur::indent_s<W_data>::template funnel<>
 	,	As...
-	,	resource::biased<Ordinal_1>
+	,	resource::biased<nominal_t<1>>
 	>;
 	
 	template <class S>

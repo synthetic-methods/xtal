@@ -56,7 +56,7 @@ public:
 		XTAL_0EX
 		:	subtype(1)
 		{}
-		XTAL_CON_(explicit) subtype(real_number_q auto u, auto &&...oo)
+		XTAL_CON_(explicit) subtype(    real_number_q auto u, auto &&...oo)
 		XTAL_0EX
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
 		{}

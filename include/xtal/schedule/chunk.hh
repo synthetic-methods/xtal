@@ -21,7 +21,7 @@ possibly using `occur::render` to convert between absolute and relative delays. 
 template <typename ...As>
 struct chunk
 {
-	using subkind = bond::compose<As..., resource::spooled<Integral_t<-1>>>;
+	using subkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>

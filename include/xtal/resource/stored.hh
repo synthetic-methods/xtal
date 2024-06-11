@@ -41,7 +41,7 @@ struct stored<A>
 template <class A>
 struct stored<A>
 {
-	static_assert(Integral_q<A>);
+	static_assert(nominal_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
@@ -61,7 +61,7 @@ struct stored<A>
 template <class A> requires (0 <= A{} and A{} <= 0x1000)
 struct stored<A>
 {
-	static_assert(Integral_q<A>);
+	static_assert(nominal_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
@@ -80,7 +80,7 @@ struct stored<A>
 /***/
 template <>
 struct stored<>
-:	stored<Integral_t<-1>>
+:	stored<nominal_t<-1>>
 {};
 
 

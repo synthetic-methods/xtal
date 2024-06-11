@@ -164,39 +164,21 @@ template <class   F, class    X >	XTAL_ASK     idempotent_q =	idempotent_p<X, F>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto       N >	XTAL_USE      Nominal_t = typename _entail::     Nominal_t<N >;
-template <auto       N >	XTAL_USE      Logical_t = typename _entail::     Logical_t<N >;
-template <auto       N >	XTAL_USE      Ordinal_t = typename _entail::     Ordinal_t<N >;
-template <auto       N >	XTAL_USE     Cardinal_t = typename _entail::    Cardinal_t<N >;
-template <auto       N >	XTAL_USE     Integral_t = typename _entail::    Integral_t<N >;
-
-template <class   ...Ts>	XTAL_ASK      Nominal_q = (...and  _entail::     Nominal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      Ordinal_q = (...and  _entail::     Ordinal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      Logical_q = (...and  _entail::     Logical_q<Ts>);
-template <class   ...Ts>	XTAL_ASK     Integral_q = (...and  _entail::    Integral_q<Ts>);
-template <class   ...Ts>	XTAL_ASK     Cardinal_q = (...and  _entail::    Cardinal_q<Ts>);
-
+template <auto       N >	XTAL_USE      nominal_t = typename _entail::     nominal_t<N >;
+template <class   ...Ts>	XTAL_ASK      nominal_q = (...and  _entail::     nominal_q<Ts>);
 template <class   ...Ts>	XTAL_ASK      logical_q = (...and  _entail::     logical_q<Ts>);
 template <class   ...Ts>	XTAL_ASK      ordinal_q = (...and  _entail::     ordinal_q<Ts>);
 template <class   ...Ts>	XTAL_ASK     cardinal_q = (...and  _entail::    cardinal_q<Ts>);
 template <class   ...Ts>	XTAL_ASK     integral_q = (...and  _entail::    integral_q<Ts>);
 
-template <class   ...Ts>	XTAL_ASK     Terminal_q = (...and  _entail::    Terminal_q<Ts>);
-template <class   ...Ts>	XTAL_ASK      Liminal_q = (...and  _entail::     Liminal_q<Ts>);
-template <Liminal_q  T >	XTAL_USE   Subliminal_s = typename _entail::  Subliminal_s<T >;
-template <Liminal_q  T >	XTAL_USE  Semiliminal_s = typename _entail:: Semiliminal_s<T >;
+template <class   ...Ts>	XTAL_ASK     terminal_q = (...and  _entail::    terminal_q<Ts>);
+template <class   ...Ts>	XTAL_ASK      liminal_q = (...and  _entail::     liminal_q<Ts>);
+template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal_s<T >;
+template <liminal_q  T >	XTAL_USE  semiliminal_s = typename _entail:: semiliminal_s<T >;
 
-template <size_t     N >	XTAL_LET    factorial_n =          _entail::   Factorial  <N    >::value;
-template <int        N >	XTAL_LET   bisordinal_n =          _entail::  Bisordinal  <N    >::value;
-template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  Fractional  <Ns...>::value;
-
-XTAL_USE  Logical_0 = _entail::  Logical_t<0>;
-XTAL_USE  Logical_1 = _entail::  Logical_t<1>;
-XTAL_USE  Ordinal_0 = _entail::  Ordinal_t<0>;
-XTAL_USE  Ordinal_1 = _entail::  Ordinal_t<1>;
-XTAL_USE Cardinal_0 = _entail:: Cardinal_t<0>;
-XTAL_USE Cardinal_1 = _entail:: Cardinal_t<1>;
-
+template <size_t     N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
+template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
+template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;
 
 template <class      T >	XTAL_USE        based_t =          _entail::   based_t<T>;
 template <class   ...Ts>	XTAL_ASK        based_q = (...and  _entail::   based_q<Ts>);

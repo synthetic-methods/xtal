@@ -63,7 +63,7 @@ struct assay
 		using S_::S_;
 
 		///\
-		Default `Integral_q` constructor, expects `0`. \
+		Default `nominal_q` constructor, expects `0`. \
 
 		template <integral_q A>
 		XTAL_CON_(explicit) subtype(A &&a)

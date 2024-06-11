@@ -131,7 +131,7 @@ void process_provision__efflux_operator(auto z)
 }
 void process_provision__influx_method(auto z)
 {
-	using U_start = occur::reinferred_t<class start_a, Ordinal_t<0>>;
+	using U_start = occur::reinferred_t<class start_a, nominal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
@@ -143,7 +143,7 @@ void process_provision__influx_method(auto z)
 }
 void process_provision__efflux_method(auto z)
 {
-	using U_start = occur::reinferred_t<class start_a, Ordinal_t<0>>;
+	using U_start = occur::reinferred_t<class start_a, nominal_t<0>>;
 
 	auto &o = z.template head<onset_t>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized

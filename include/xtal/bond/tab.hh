@@ -21,14 +21,14 @@ template <class 	                        ...Ts>	XTAL_ASK taboo_q = (...and requi
 template <class   T                            >	XTAL_USE taboo_s = typename T ::taboo::supertype;
 template <class   T                            >	XTAL_USE taboo_t = typename T ::taboo::     type;
 
-template <class   T,              class   ...Ys>	XTAL_TYP tail_tab                        :               Logical_t<0> {using type = void;};
-template <class   T,              class   ...Ys>	XTAL_TYP tail_tab<T, Cardinal_0 , Ys...> :               Logical_t<1> {using type =    T;};
-template <taboo_q T                            >	XTAL_TYP tail_tab<T,  taboo_t<T>       > :               Logical_t<1> {using type =    T;};
-template <taboo_q T,              class   ...Ys>	XTAL_TYP tail_tab<T,              Ys...> : tail_tab<taboo_s<T>,                  Ys...> {};
-template <taboo_q T,              class   ...Ys>	XTAL_TYP tail_tab<T,  taboo_t<T>, Ys...> : tail_tab<taboo_s<T>,                  Ys...> {};
-template <taboo_q T, Liminal_q I, class   ...Ys>	XTAL_TYP tail_tab<T,          I , Ys...> : tail_tab<taboo_s<T>, Subliminal_s<I>, Ys...> {};
-template <class   T,              class   ...Ys>	XTAL_USE tail_tab_t                      = typename tail_tab<T, Ys...>:: type;
-template <class   T,              class   ...Ys>	XTAL_ASK tail_tab_q                      =          tail_tab<T, Ys...>::value;
+template <class   T,              class   ...Ys>	XTAL_TYP tail_tab                         :               nominal_t<false> {using type = void;};
+template <class   T,              class   ...Ys>	XTAL_TYP tail_tab<T, nominal_t<0>, Ys...> :               nominal_t< true> {using type =    T;};
+template <taboo_q T                            >	XTAL_TYP tail_tab<T,   taboo_t<T>       > :               nominal_t< true> {using type =    T;};
+template <taboo_q T,              class   ...Ys>	XTAL_TYP tail_tab<T,               Ys...> : tail_tab<taboo_s<T>,                  Ys...> {};
+template <taboo_q T,              class   ...Ys>	XTAL_TYP tail_tab<T,   taboo_t<T>, Ys...> : tail_tab<taboo_s<T>,                  Ys...> {};
+template <taboo_q T, liminal_q I, class   ...Ys>	XTAL_TYP tail_tab<T,           I , Ys...> : tail_tab<taboo_s<T>, subliminal_s<I>, Ys...> {};
+template <class   T,              class   ...Ys>	XTAL_USE tail_tab_t                       = typename tail_tab<T, Ys...>:: type;
+template <class   T,              class   ...Ys>	XTAL_ASK tail_tab_q                       =          tail_tab<T, Ys...>::value;
 
 template <class   Y,              class   ...Ts>	XTAL_ASK head_tab_p = _std::conjunction_v<tail_tab<based_t<Ts>, Y >...>;
 template <class   T,              class   ...Ys>	XTAL_ASK head_tab_q = _std::conjunction_v<tail_tab<based_t<T >, Ys>...>;

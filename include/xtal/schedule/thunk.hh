@@ -18,7 +18,7 @@ which produces a signal by successive calls to `functor`. \
 template <typename ...As>
 struct thunk
 {
-	using subkind = bond::compose<As..., resource::spooled<Integral_t<-1>>>;
+	using subkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>

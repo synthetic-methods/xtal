@@ -63,7 +63,7 @@ struct define
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_REF refunctor(Integral_q auto const ...Is),
+		XTAL_REF refunctor(nominal_q auto const ...Is),
 		{
 			if constexpr (0 == sizeof...(Is)) {
 				return [this] XTAL_1FN_(self().functor);
@@ -76,7 +76,7 @@ struct define
 	protected:
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_REF defunctor(Integral_q auto const &...Is)
+		XTAL_REF defunctor(nominal_q auto const &...Is)
 		XTAL_0FX
 		{
 			return defunctor(figure<Xs...>::template type<Is...>::value);
@@ -234,10 +234,10 @@ struct define
 				XTAL_TNX efflux(null_t, auto &&...oo) XTAL_0EX {return self().efflux_pull(XTAL_REF_(oo)...);}
 
 				///\note\
-				If prefixed by `Integral_q`, forwards the occur to the `slot` specified. \
+				If prefixed by `nominal_q`, forwards the occur to the `slot` specified. \
 
-				XTAL_TNX influx(Integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
-				XTAL_TNX efflux(Integral_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
+				XTAL_TNX influx(nominal_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().influx(XTAL_REF_(oo)...);}
+				XTAL_TNX efflux(nominal_q auto i, auto &&...oo) XTAL_0EX {return slot<i>().efflux(XTAL_REF_(oo)...);}
 
 				///\
 				Forwards the occur to all `slots`, bypassing `self`. \
@@ -349,8 +349,8 @@ struct defer
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using U0 = typename S_::template head_t<Cardinal_0>;
-		using U1 = typename S_::template head_t<Cardinal_1>;
+		using U0 = typename S_::template head_t<nominal_t<0>>;
+		using U1 = typename S_::template head_t<nominal_t<1>>;
 	
 	public:// CONSTRUCT
 		using S_::S_;

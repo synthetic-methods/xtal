@@ -36,7 +36,7 @@ struct define
 		{
 			assert(0 == u);
 		};
-		template <Cardinal_q U>
+		template <nominal_q U>
 		XTAL_CON_(explicit) subtype(U &&u)
 		XTAL_0EX
 		{
@@ -117,7 +117,7 @@ struct define
 
 				XTAL_TO4_(template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_REF refunctor(Integral_q auto const ...Is),
+				XTAL_REF refunctor(nominal_q auto const ...Is),
 					//\
 					_std::bind_front(defunctor<Xs...>(Is...), &self())
 					[this, Is...] (auto &&...xs) XTAL_0FN_((self().*defunctor<Xs...>(Is...)) (XTAL_REF_(xs)...))
@@ -126,7 +126,7 @@ struct define
 			protected:
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_REF defunctor(Integral_q auto const &...Is)
+				XTAL_REF defunctor(nominal_q auto const &...Is)
 				XTAL_0FX
 				{
 					return defunctor(figure<Xs...>::template type<Is...>::value);
