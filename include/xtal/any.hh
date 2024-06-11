@@ -153,8 +153,10 @@ template <           class ...Ts>	XTAL_ASK             is_q =	        _entail:: 
 template <           class ...Ts>	XTAL_ASK             as_q =	        _entail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
 template <class   T, class ...Ts>	XTAL_ASK             as_p =	        _entail:: as_p<T, Ts...>;
 
-template <class   T, class ...Ts>	XTAL_ASK       fungible_q =	some_q<Ts...> and (...and _entail::   fungible_q<T, Ts>);//< `T` and `Ts...` are   related by inheritance.
-template <class   T, class ...Ts>	XTAL_ASK     infungible_q =	some_q<Ts...> and (...and _entail:: infungible_q<T, Ts>);//< `T` and `Ts...` are unrelated by inheritance.
+template <           class ...Ts>	XTAL_TYP       fungible             : _std::false_type                               {};
+template <class   T, class ...Ts>	XTAL_TYP       fungible<T, Ts...>   : _std::conjunction<_entail::fungible<T, Ts>...> {};
+template <           class ...Ts>	XTAL_ASK       fungible_q =	        fungible  <Ts...>::value; //< `T` and `Ts...` are   related by inheritance.
+template <           class ...Ts>	XTAL_ASK     infungible_q =	    not fungible_q<Ts...>;        //< `T` and `Ts...` are unrelated by inheritance.
 
 template <class   X, class ...Fs>	XTAL_ASK     idempotent_p =	(...and _entail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
 template <class   F, class    X >	XTAL_ASK     idempotent_q =	idempotent_p<X, F>;

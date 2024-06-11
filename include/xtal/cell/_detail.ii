@@ -217,7 +217,7 @@ struct defer_field
 		XTAL_0EX
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
-		template <bond::selfish_tab_q<U> O>
+		template <bond::twin_tab_q<U> O> requires _detail::member_q<U>
 		XTAL_CON_(explicit) subtype(O &&o, auto &&...oo)
 		XTAL_0EX
 		:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)

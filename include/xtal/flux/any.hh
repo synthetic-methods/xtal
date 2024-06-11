@@ -233,6 +233,15 @@ struct defer
 		{
 			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
+		/*/
+		template <bond::twin_tab_q<U> O> requires _detail::member_q<U>
+		XTAL_TNX influx(O &&o, auto &&...oo)
+		XTAL_0EX
+		{
+		//	echo(typeid(o).name());
+			return self().influx(XTAL_REF_(o).template apply<U>(), XTAL_REF_(oo)...);
+		}
+		/***/
 
 		///\note\
 		Effluxes via `this`, then via the proxied value if supported.
@@ -252,6 +261,20 @@ struct defer
 		///\note\
 		Assigns the given value `O` if it matches the proxied type `U`. \
 
+		/**/
+		template <bond::twin_tab_q<U> O> requires _detail::member_q<U>
+		XTAL_TNX infuse(O &&o)
+		XTAL_0EX
+		{
+		//	echo(typeid(o).name());
+			return self().infuse(XTAL_REF_(o).template apply<U>());
+		}
+		XTAL_TNX infuse(auto &&o)
+		XTAL_0EX
+		{
+			return S_::infuse(XTAL_REF_(o));
+		}
+		/***/
 		XTAL_TNX defuse(is_q<U> auto &&o)
 		XTAL_0EX
 		{

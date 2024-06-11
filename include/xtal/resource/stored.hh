@@ -38,9 +38,10 @@ struct stored<A>
 
 	};
 };
-template <Integral_q A>// requires (A{} <  0 or 0x1000 <  A{})
+template <class A>
 struct stored<A>
 {
+	static_assert(Integral_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>
@@ -57,9 +58,10 @@ struct stored<A>
 	};
 };
 /*/
-template <Integral_q A> requires (0 <= A{} and A{} <= 0x1000)
+template <class A> requires (0 <= A{} and A{} <= 0x1000)
 struct stored<A>
 {
+	static_assert(Integral_q<A>);
 	using subkind = bond::tag<stored>;
 	
 	template <_retail::any_q S>

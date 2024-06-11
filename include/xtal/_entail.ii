@@ -84,6 +84,8 @@ template <              class ...Ts>	XTAL_ASK             as_q =	epitropic<Ts...
 template <class      T, class ...Ys>	XTAL_ASK             as_p =	_std::constructible_from<T, Ys...>;
 template <class      T, class    Y >	XTAL_ASK       fungible_q =	_std::derived_from<_std::remove_cvref_t<T>, _std::remove_cvref_t<Y>> or _std::derived_from<_std::remove_cvref_t<Y>, _std::remove_cvref_t<T>>;
 template <class      T, class    Y >	XTAL_ASK     infungible_q =	not fungible_q<T, Y>;
+template <class      T, class    Y >	XTAL_TYP       fungible   :	_std::integral_constant<bool,   fungible_q<T, Y>> {};
+template <class      T, class    Y >	XTAL_TYP     infungible   :	_std::integral_constant<bool, infungible_q<T, Y>> {};
 
 template <class      X, class    F >	XTAL_ASK     idempotent_p =	is_q<XTAL_TYP_(XTAL_ANY_(F) (XTAL_ANY_(X))), X>;
 
