@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP lift;
 template <typename ..._s> XTAL_USE lift_t = confined_t<lift<_s...>>;
-template <typename ..._s> XTAL_ASK lift_q = bond::head_tag_p<lift, _s...>;
+template <typename ..._s> XTAL_REQ lift_q = bond::head_tag_p<lift, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

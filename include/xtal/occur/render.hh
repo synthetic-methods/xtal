@@ -29,7 +29,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <                     typename ..._s> XTAL_TYP render;
 template <class W=counter_t<>, typename ..._s> XTAL_USE render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> XTAL_ASK render_q = bond::head_tag_p<render, _s...>;
+template <                     typename ..._s> XTAL_REQ render_q = bond::head_tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET     render_f(auto &&w)

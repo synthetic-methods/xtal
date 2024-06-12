@@ -13,7 +13,7 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_ASK monomer_q = bond::head_tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_REQ monomer_q = bond::head_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET monomer_f(auto &&u)
@@ -115,8 +115,8 @@ struct monomer<U, As...>
 						
 						using namespace _xtd::ranges;
 						XTAL_IF0
-						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
-						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
+						XTAL_0IF XTAL_CAN_DO_(copy_n(_j, n, _i))
+						XTAL_0IF XTAL_CAN_DO_(move(result_o|account_f(n), _i))
 						XTAL_0IF_(default) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
@@ -243,8 +243,7 @@ struct monomer<U, As...>
 				continuing to propagate beyond. \
 
 				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
-				XTAL_0EX
-				XTAL_REQ (0 <= N_share)
+				XTAL_0EX requires (0 <= N_share)
 				{
 					return R_::template influx_push_tail<N_share>(null_t(), XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}

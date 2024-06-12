@@ -228,8 +228,7 @@ struct defer
 			return S_::influx(XTAL_REF_(oo)...);
 		}
 		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		XTAL_0EX requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
 			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
@@ -252,8 +251,7 @@ struct defer
 			return S_::efflux(XTAL_REF_(oo)...);
 		}
 		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		XTAL_0EX requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
 			return XTAL_FNX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}

@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP series;
 template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
-template <class   ...Ts>	XTAL_ASK series_q = bond::head_tag_p<series_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ series_q = bond::head_tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET series_f(auto &&...oo)
@@ -253,8 +253,8 @@ struct series<A>
 
 		using T_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=   w )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_CAN_TO_(twin() *=   w )
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_CAN_TO_(self() *= T(w))
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *=(T const &t)

@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP symbol;
 template <class   ..._s>	XTAL_USE symbol_t = typename symbol<_s...>::type;
-template <class   ...Ts>	XTAL_ASK symbol_q = bond::head_tag_p<symbol_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ symbol_q = bond::head_tag_p<symbol_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET symbol_f(auto &&...oo)

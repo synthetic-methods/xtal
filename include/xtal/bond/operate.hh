@@ -393,8 +393,7 @@ public:
 
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_count_f(integral_q auto i)
-	XTAL_0EX
-	XTAL_REQ (sizeof(i) < N_width)
+	XTAL_0EX requires (sizeof(i) < N_width)
 	{
 		return bit_count_f(internal_f(i));
 	}
@@ -418,8 +417,7 @@ public:
 
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_floor_f(integral_q auto i)
-	XTAL_0EX
-	XTAL_REQ (sizeof(i) < N_width)
+	XTAL_0EX requires (sizeof(i) < N_width)
 	{
 		return bit_floor_f(internal_f(i));
 	}
@@ -443,8 +441,7 @@ public:
 
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_ceiling_f(integral_q auto i)
-	XTAL_0EX
-	XTAL_REQ (sizeof(i) < N_width)
+	XTAL_0EX requires (sizeof(i) < N_width)
 	{
 		return bit_ceiling_f(internal_f(i));
 	}
@@ -493,15 +490,13 @@ public:
 	template <size_t N_subdepth=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_reverse_f(integral_q auto i)
-	XTAL_0EX
-	XTAL_REQ (sizeof(i) < N_width)
+	XTAL_0EX requires (sizeof(i) < N_width)
 	{
 		return bit_reverse_f<N_subdepth>(internal_f(i));
 	}
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_reverse_f(integral_q auto i, sigma_t const &subdepth)
-	XTAL_0EX
-	XTAL_REQ (sizeof(i) < N_width)
+	XTAL_0EX requires (sizeof(i) < N_width)
 	{
 		return bit_reverse_f(internal_f(i), subdepth);
 	}

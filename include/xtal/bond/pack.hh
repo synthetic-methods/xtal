@@ -28,12 +28,12 @@ XTAL_0FN
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class         T >	XTAL_ASK _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
-template <class         T >	XTAL_ASK     _extent_q   =	complete_q<_std::    extent<based_t<T>>> and 0 < _std::extent_v<based_t<T>>;
+template <class         T >	XTAL_REQ _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
+template <class         T >	XTAL_REQ     _extent_q   =	complete_q<_std::    extent<based_t<T>>> and 0 < _std::extent_v<based_t<T>>;
 template <class         T >	XTAL_TYP  pack_size;
 template <_tuple_size_q T >	XTAL_TYP  pack_size<T>  :	_std::tuple_size<based_t<T>> {};
 template <    _extent_q T >	XTAL_TYP  pack_size<T>  :	_std::    extent<based_t<T>> {};
-template <class      ...Ts>	XTAL_ASK  pack_size_q   =	complete_q<pack_size<Ts>...>;
+template <class      ...Ts>	XTAL_REQ  pack_size_q   =	complete_q<pack_size<Ts>...>;
 template <class      ...Ts>	XTAL_LET  pack_size_n   =	(0 +...+ pack_size<Ts>::value);
 template <class      ...Ts>	XTAL_USE  pack_size_t   =	nominal_t<pack_size_n<Ts...>>;
 
@@ -43,8 +43,8 @@ static_assert(pack_size_n<_std::array<null_t, 0>> == 0);
 static_assert(pack_size_q<_std::tuple<         >>);
 static_assert(pack_size_q<_std::array<null_t, 0>>);
 
-template <class T, size_t N> XTAL_ASK    pack_sized_q = N == pack_size_n<T>;
-template <class T, size_t N> XTAL_ASK subpack_sized_q = N <  pack_size_n<T>;
+template <class T, size_t N> XTAL_REQ    pack_sized_q = N == pack_size_n<T>;
+template <class T, size_t N> XTAL_REQ subpack_sized_q = N <  pack_size_n<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ template <size_t N,     _extent_q T> XTAL_TYP pack_item<N, T       &> {using typ
 template <size_t N,     _extent_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::           remove_extent_t<T>  const &;};
 template <size_t N, class T> XTAL_USE pack_item_t = typename pack_item<N, T>::type;
 
-template <size_t N, class T> XTAL_ASK pack_item_p = N < pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
-template <          class T> XTAL_ASK pack_list_q = [] <size_t ...Ns>
+template <size_t N, class T> XTAL_REQ pack_item_p = N < pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
+template <          class T> XTAL_REQ pack_list_q = [] <size_t ...Ns>
 	(seek_t<Ns...>) XTAL_0FN_(...and pack_item_p<Ns, T>)
 	(seek_s<pack_size_n<T>> {})
 ;

@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <integral_number_q U=size_s> XTAL_TYP restep;
 template <integral_number_q U=size_s> XTAL_USE restep_t = confined_t<restep<U>>;
-template <typename ..._s> XTAL_ASK restep_q = bond::head_tag_p<restep, _s...>;
+template <typename ..._s> XTAL_REQ restep_q = bond::head_tag_p<restep, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET restep_f(auto &&w)
 XTAL_0EX

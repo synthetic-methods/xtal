@@ -13,8 +13,8 @@ namespace xtal::algebra
 
 template <class           ..._s>	XTAL_TYP scalar;
 template <class           ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class           ...Ts>	XTAL_ASK scalar_q = bond::head_tag_p<scalar_t, Ts...>;
-template <size_t N, class ...Ts>	XTAL_ASK scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
+template <class           ...Ts>	XTAL_REQ scalar_q = bond::head_tag_p<scalar_t, Ts...>;
+template <size_t N, class ...Ts>	XTAL_REQ scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET scalar_f(auto &&...oo)
@@ -94,8 +94,7 @@ struct scalar<A>
 			}
 		}
 		XTAL_CON_(explicit) homotype(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ (0 < sizeof...(oo))
+		XTAL_0EX requires (0 < sizeof...(oo))
 		:	T_(XTAL_REF_(oo)...)
 		{}
 
@@ -247,8 +246,7 @@ struct scalar<A>
 
 		XTAL_DEF_(return,inline)
 		XTAL_REF ordered()
-		XTAL_0FX
-		XTAL_REQ (2 == N_data)
+		XTAL_0FX requires (2 == N_data)
 		{
 			using U2 = typename T::template tagged_t<U_data[2]>;
 
@@ -257,8 +255,7 @@ struct scalar<A>
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_REF coordered()
-		XTAL_0FX
-		XTAL_REQ (2 == N_data) and integral_q<U_data>
+		XTAL_0FX requires (2 == N_data) and integral_q<U_data>
 		{
 			using U2 = typename T::template tagged_t<U_data[2]>;
 
@@ -272,8 +269,7 @@ struct scalar<A>
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_REF coordered()
-		XTAL_0FX
-		XTAL_REQ (3 <= N_data) and integral_q<U_data>
+		XTAL_0FX requires (3 <= N_data) and integral_q<U_data>
 		{
 			using U_ = _std::numeric_limits<U_data>;
 			using U2 = typename T::template tagged_t<U_data[2]>;
@@ -295,8 +291,7 @@ struct scalar<A>
 
 		XTAL_DEF_(inline)
 		XTAL_REF incorporate(auto const &t)
-		XTAL_0EX
-		XTAL_REQ (2 == N_data)
+		XTAL_0EX requires (2 == N_data)
 		{
 			auto &s = self();
 			if (t[0] < s[0]) {s[0] = t[0];}
@@ -305,8 +300,7 @@ struct scalar<A>
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_REF incorporated(auto &&t)
-		XTAL_0FX
-		XTAL_REQ (2 == N_data)
+		XTAL_0FX requires (2 == N_data)
 		{
 			return twin().incorporate(XTAl_REF_(t));
 		}

@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP stored;
 template <typename ..._s> XTAL_USE stored_t = confined_t<stored<_s...>>;
-template <typename ..._s> XTAL_ASK stored_q = bond::head_tag_p<stored, _s...>;
+template <typename ..._s> XTAL_REQ stored_q = bond::head_tag_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

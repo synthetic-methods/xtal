@@ -127,7 +127,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_ASK                                   concept
+#define XTAL_REQ                                   concept
 #define XTAL_USE                                   using
 #define XTAL_TYP                                   struct
 #define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
@@ -173,10 +173,9 @@
 #define XTAL_0FX_TO_(...)        const             noexcept {return (__VA_ARGS__);}
 #define XTAL_0EX_TO_(...)                          noexcept {return (__VA_ARGS__);}
 
-#define XTAL_REQ                 requires
-#define XTAL_REQ_(...)          (requires { __VA_ARGS__ ;})
-#define XTAL_REQ_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
-#define XTAL_REQ_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
+#define XTAL_HAS_(...)          (requires { __VA_ARGS__ ;})
+#define XTAL_CAN_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
+#define XTAL_CAN_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
 
 #define XTAL_DO2_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   \
                                  SIG               noexcept          __VA_ARGS__   ;

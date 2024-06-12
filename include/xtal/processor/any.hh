@@ -23,6 +23,7 @@ struct define
 :	_retail::define<T>
 {
 };
+
 template <class T>
 struct refine
 :	_retail::refine<T>
@@ -37,27 +38,22 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-template <any_q U>
+template <_detail::unprocessed_value_q U>
 struct defer<U>
-:	_retail::defer<U>
+:	defer<_detail::arrange_t<U>>
 {
 };
-template <_detail::unprocessed_valued_q U>
-struct defer<U>
-:	defer<_xtd::ranges::repeat_view<U>>
-{
-};
-template <_detail::unprocessed_ranged_q U>
+template <_detail::unprocessed_range_q U>
 struct defer<U>
 {
 	using V_render = occur::render_t<counted_t<>>;
-	using A_render = typename V_render::template attach<>;
 
 	using subkind = bond::compose<void
-	,	_detail::refer_iterators<U> // FIXME: Too dodgy?
-//	,	_detail::refer_subhead<U>   // TODO: Less dodgy?
+	//\
+	,	_detail::refer_subhead<U>
+	,	_detail::refer_iterators<U>
 	,	_retail::defer<U>
-	,	A_render
+	,	typename V_render::attach<>
 	>;
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -78,7 +74,12 @@ struct defer<U>
 
 	};
 };
-template <_detail::processed_unranged_q U>
+template <_detail::processed_range_q U>
+struct defer<U>
+:	_retail::defer<U>
+{
+};
+template <_detail::processed_value_q U>
 struct defer<U>
 {
 	using subkind = _retail::defer<U>;
@@ -112,41 +113,10 @@ struct refer
 :	_retail::refer<U>
 {
 };
-template <_detail::unprocessed_ranged_q U>
+template <_detail::unprocessed_q U>
 struct refer<U>
+:	bond::compose<_detail::refer_unprocessed<U>, _retail::refer<_detail::arrange_t<U>>>
 {
-	using subkind = _retail::refer<U>;
-
-	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-
-	public:
-		using S_::S_;
-
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF begin(), S_::functor().begin())
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF   end(), S_::functor().  end())
-
-	};
-};
-template <_detail::unprocessed_valued_q U>
-struct refer<U>
-{
-	using subkind = _retail::refer<_xtd::ranges::repeat_view<U>>;
-
-	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-
-	public:
-		using S_::S_;
-
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF begin(), S_::functor().begin())
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF   end(), S_::functor().  end())
-
-	};
 };
 
 

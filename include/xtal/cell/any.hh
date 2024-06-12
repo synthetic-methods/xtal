@@ -138,7 +138,7 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_CVN_(explicit) U_head(), head())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_CVN_(explicit) U_head(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \

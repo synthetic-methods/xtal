@@ -57,9 +57,8 @@ struct any<A>
 		
 		template <infungible_q<subtype> W>
 		XTAL_CON_(explicit) subtype(W &&w, auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ
-		XTAL_REQ_(typename W::template self_s<A>)
+		XTAL_0EX requires
+			XTAL_HAS_(typename W::template self_s<A>)
 		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
 		{};
 		/***/

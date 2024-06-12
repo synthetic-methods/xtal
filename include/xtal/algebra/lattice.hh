@@ -13,14 +13,14 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP lattice;
 template <class   ..._s>	XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class   ..._s>	XTAL_ASK lattice_q = bond::head_tag_p<lattice_t, _s...>;
+template <class   ..._s>	XTAL_REQ lattice_q = bond::head_tag_p<lattice_t, _s...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET lattice_f(auto &&...oo)
 XTAL_0EX {return _detail::initialize<lattice_t>::template via<V>(XTAL_REF_(oo)...);}
 
 template <class T, class S=T>
-XTAL_ASK lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
+XTAL_REQ lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

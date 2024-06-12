@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_ASK store_q = bond::head_tag_p<store_t, Ts...>;
+template <class ...Ts> XTAL_REQ store_q = bond::head_tag_p<store_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ struct store<U_data[N_data]>
 		Initializes `this` with the given data. \
 
 		XTAL_CON_(implicit) homotype(homotype &&t)
-		XTAL_REQ _std::move_constructible<U_data>
+		requires _std::move_constructible<U_data>
 		:	homotype(_detail::mover_f(t.begin()), _detail::mover_f(t.end()))
 		{}
 		///\

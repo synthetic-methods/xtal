@@ -18,7 +18,7 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename     ..._s> XTAL_TYP indent;
-template <typename     ..._s> XTAL_ASK indent_q = bond::head_tag_p<indent, _s...>;
+template <typename     ..._s> XTAL_REQ indent_q = bond::head_tag_p<indent, _s...>;
 template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<nominal_t<Ns>...>>;
 
 template <nominal_q ...Ns>
@@ -54,11 +54,11 @@ struct indent<Ns...>
 		defining a `concept` to characterize the disparity. \
 
 		XTAL_CON_(explicit) subtype(U_ u)
-		XTAL_REQ real_number_q<U_> and integral_number_q<V_>
+		XTAL_0EX requires real_number_q<U_> and integral_number_q<V_>
 		:	S_{XTAL_MOV_(u)*bond::operate<U_>::diplo_f()}
 		{}
 		XTAL_CON_(implicit) subtype(reembrace_t<W_> w)
-		XTAL_REQ iterable_q<W_>
+		XTAL_0EX requires iterable_q<W_>
 		:	S_{w}
 		{}
 

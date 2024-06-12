@@ -103,23 +103,29 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_ANY_(T &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T &).
+					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
+				);
 
 			public:
 				using value_type = Y_(T::*) (argument_t<Xs>...);
-				static constexpr auto value = static_cast<value_type>(&T::template functor<Is...>);
+				static constexpr value_type value = &T::template functor<Is...>;
 
 			};
 			template <auto ...Is>
-			XTAL_REQ
-			XTAL_REQ_(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...))
+			requires
+				XTAL_HAS_(XTAL_ANY_(T const &).
+					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
+				)
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_ANY_(T const &).template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...));
+				using Y_ = decltype(XTAL_ANY_(T const &).
+					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
+				);
 
 			public:
 				using value_type = Y_(T::*) (argument_t<Xs>...) const;
-				static constexpr auto value = static_cast<value_type>(&T::template functor<Is...>);
+				static constexpr value_type value = &T::template functor<Is...>;
 
 			};
 		};
@@ -384,8 +390,8 @@ struct defer
 		XTAL_REF functor_(auto &&...xs),
 		{
 			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_CAN_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_CAN_TO_(S_::head()                        (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return S_::head(); static_assert(0 == sizeof...(xs));}
 		})
 		template <auto ...Is>
@@ -394,8 +400,8 @@ struct defer
 		XTAL_0EX
 		{
 			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_CAN_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_CAN_TO_(U0{}                         (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return invoke_f<U0>(XTAL_REF_(xs)...);}
 		}
 

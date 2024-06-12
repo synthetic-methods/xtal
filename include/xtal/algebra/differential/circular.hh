@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class   ..._s>	XTAL_TYP circular;
 template <class   ..._s>	XTAL_USE circular_t = typename circular<_s...>::type;
-template <class   ...Ts>	XTAL_ASK circular_q = bond::head_tag_p<circular_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ circular_q = bond::head_tag_p<circular_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET circular_f(auto &&...oo)
@@ -115,10 +115,10 @@ struct circular<A>
 		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		auto operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=   t )
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=   t )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
-		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_CAN_TO_(twin() *=   t )
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_CAN_TO_(twin() /=   t )
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_CAN_TO_(self() *= T(t))
+		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_CAN_TO_(self() /= T(t))
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (number_q auto const &f)

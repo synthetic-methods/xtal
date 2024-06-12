@@ -19,7 +19,7 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class   ...Us>	XTAL_ASK         member_q = rebased_q<Us...>;
+template <class   ...Us>	XTAL_REQ         member_q = rebased_q<Us...>;
 template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
 template <size_t     N >	XTAL_TYP         member<unit_t[N]> {using type =     unsigned;};
 template <size_t     N >	XTAL_TYP         member<null_t[N]> {using type =     unsigned;};
@@ -177,7 +177,9 @@ struct refine_tuple
 			return _std::apply([] XTAL_1FN_(T), tuple);
 		}
 
-		XTAL_TO4_(XTAL_CVN_(implicit) bond::pack_row_t<S_>(), pack())
+		XTAL_TO4_(XTAL_DEF_(return,inline)
+		XTAL_CVN_(implicit) bond::pack_row_t<S_>(), pack()
+		)
 
 	};
 };
@@ -218,7 +220,7 @@ struct defer_field
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 		template <bond::twin_tab_q<U> O> requires _detail::member_q<U>
-		XTAL_CON_(explicit) subtype(O &&o, auto &&...oo)
+		XTAL_CON_(implicit) subtype(O &&o, auto &&...oo)
 		XTAL_0EX
 		:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)
 		{}
@@ -231,8 +233,7 @@ struct defer_field
 		:	subtype(U_body{})
 		{}
 		XTAL_CON_(implicit) subtype(reembrace_t<U_body> o)
-		XTAL_0EX
-		XTAL_REQ member_q<U> and reembrace_q<U_body>
+		XTAL_0EX requires member_q<U> and reembrace_q<U_body>
 		:	u_body(o)
 		{}
 		///\
@@ -253,8 +254,7 @@ struct defer_field
 		
 		XTAL_DEF_(inline)
 		XTAL_REF head(auto &&...oo)
-		XTAL_0EX
-		XTAL_REQ member_q<U_head> and (0 < sizeof...(oo))
+		XTAL_0EX requires member_q<U_head> and (0 < sizeof...(oo))
 		{
 			return dismember_f(u_body, XTAL_REF_(oo)...);
 		}

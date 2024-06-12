@@ -15,7 +15,7 @@ Binds multiple values/references, \
 providing point-wise multiplication/division and scalar summation. \
 
 template <class   ..._s>	XTAL_TYP couple;
-template <class   ..._s>	XTAL_ASK couple_q = bond::head_tag_p<couple, _s...>;
+template <class   ..._s>	XTAL_REQ couple_q = bond::head_tag_p<couple, _s...>;
 template <class   ..._s>	XTAL_USE couple_t = typename couple<_s...>::type;
 
 template <class V=void, class ...Xs>

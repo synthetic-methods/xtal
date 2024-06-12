@@ -18,8 +18,8 @@ the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> XTAL_TYP any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> XTAL_USE any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> XTAL_ASK any_p = bond::head_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > XTAL_ASK any_q = bond::head_tag_p<any, Ts...>;
+template <class    T, typename ...As> XTAL_REQ any_p = bond::head_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > XTAL_REQ any_q = bond::head_tag_p<any, Ts...>;
 
 template <class ...Ts>
 concept anything_q = any_q<Ts...> and complete_q<typename Ts::template self_t<>...>;
@@ -123,7 +123,7 @@ Creates a unique tuple `inferred` from `...As`. \
 
 template <class   ...Us>	XTAL_TYP packed     : inferred<Us..., bond::tag<packed>> {};
 template <class   ...Us>	XTAL_USE packed_t   = typename packed<Us...>::type;
-template <class   ...Us>	XTAL_ASK packed_q   = bond::head_tag_p<packed, Us...>;
+template <class   ...Us>	XTAL_REQ packed_q   = bond::head_tag_p<packed, Us...>;
 template <class   ...Us>
 XTAL_DEF_(return,inline)
 XTAL_LET packed_f(Us &&...us) XTAL_0EX {return packed<Us...>(XTAL_REF_(us)...);}

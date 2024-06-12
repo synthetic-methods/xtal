@@ -15,7 +15,7 @@ Defines a fixed-width `type` that supports arithmetic operators. \
 
 template <class ..._s> XTAL_TYP block;
 template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
-template <class ..._s> XTAL_ASK block_q = bond::head_tag_p<block_t, _s...>;
+template <class ..._s> XTAL_REQ block_q = bond::head_tag_p<block_t, _s...>;
 
 
 namespace _detail
@@ -46,7 +46,9 @@ struct superblock<U(&)[N]>
 		using T_::T_;
 
 		XTAL_TO4_(XTAL_DEF_(return,inline)
-		XTAL_REF twin(), typename T::template tagged_t<U_data[N_data]>(T_::self()))
+		XTAL_REF twin(),
+			typename T::template tagged_t<U_data[N_data]>(T_::self())
+		)
 
 	};	
 };
