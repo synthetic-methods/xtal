@@ -231,40 +231,40 @@ template <class               T >	XTAL_USE   pointee_t =          _entail::  poi
 //\
 Ranged...
 
-template <class      ...Ts>	XTAL_REQ        sizeable_q =	    (...and  _entail::   sizeable_q<based_t<Ts>>);
-template <class      ...Ts>	XTAL_REQ      resizeable_q =	    (...and  _entail:: resizeable_q<based_t<Ts>>);
+template <class      ...Ts>	XTAL_REQ           count_q =	    (...and  _entail::count_q<based_t<Ts>>);
+template <class         T >	XTAL_USE           count_t =	             _entail::count_t<based_t<T >> ;
 
-template <class      ...Ts>	XTAL_REQ       reembrace_q =	    (...and  _entail::  reembrace_q<Ts>);
-template <class         T >	XTAL_USE       reembrace_t =	             _entail::  reembrace_t<T >;
-template <class         T >	XTAL_USE         embrace_t =	             _entail::    embrace_t<T >;
+template <class      ...Ts>	XTAL_REQ       reembrace_q =	    (...and  _entail::    reembrace_q<Ts>);
+template <class         T >	XTAL_USE       reembrace_t =	             _entail::    reembrace_t<T > ;
+template <class         T >	XTAL_USE         embrace_t =	             _entail::      embrace_t<T > ;
 
-template <class         T >	XTAL_USE        interval_t =	             _entail::   interval_t<T >;
-template <class         T >	XTAL_USE        iterated_t =	    typename _entail::   iterated  <T >::type;
-template <class         T >	XTAL_USE        iterator_t =	    typename _entail::   iterator  <T >::type;
-template <class         T >	XTAL_USE        iteratee_t =	    typename _entail::   iteratee  <T >::type;
-template <class         T >	XTAL_USE        distance_t =	             _entail::   distance_t<T >;
-template <class   T=size_s>	XTAL_USE         counted_t =	    typename _entail::    counted  <T >::type;
-template <class   T=size_s>	XTAL_USE         counter_t =	    typename _entail::    counter  <T >::type;
+template <class         T >	XTAL_USE        interval_t =	             _entail::     interval_t<T > ;
+template <class         T >	XTAL_USE        iterated_t =	    typename _entail::     iterated  <T >::type;
+template <class         T >	XTAL_USE        iterator_t =	    typename _entail::     iterator  <T >::type;
+template <class         T >	XTAL_USE        iteratee_t =	    typename _entail::     iteratee  <T >::type;
+template <class         T >	XTAL_USE        distance_t =	             _entail::     distance_t<T > ;
+template <class   T=size_s>	XTAL_USE         counted_t =	    typename _entail::      counted  <T >::type;
+template <class   T=size_s>	XTAL_USE         counter_t =	    typename _entail::      counter  <T >::type;
 
-template <class      ...Ts>	XTAL_REQ        interval_q =	    (...and  _entail::   interval_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        iteratee_q =	    (...and  _entail::   iteratee_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        iterable_q =	    (...and  _entail::   iterable_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        iterated_q =	    (...and  _entail::   iterated_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        iterator_q =	    (...and  _entail::   iterator_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        sentinel_q =	    (...and  _entail::   sentinel_q<Ts>);
-template <class      ...Ts>	XTAL_REQ        distance_q =	    (...and  _entail::   distance_q<Ts>);
-template <class      ...Ts>	XTAL_REQ         counted_q =	    (...and  _entail::    counted_q<Ts>);
-template <class      ...Ts>	XTAL_REQ         counter_q =	    (...and  _entail::    counter_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        interval_q =	    (...and  _entail::     interval_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        iteratee_q =	    (...and  _entail::     iteratee_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        iterable_q =	    (...and  _entail::     iterable_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        iterated_q =	    (...and  _entail::     iterated_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        iterator_q =	    (...and  _entail::     iterator_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        sentinel_q =	    (...and  _entail::     sentinel_q<Ts>);
+template <class      ...Ts>	XTAL_REQ        distance_q =	    (...and  _entail::     distance_q<Ts>);
+template <class      ...Ts>	XTAL_REQ         counted_q =	    (...and  _entail::      counted_q<Ts>);
+template <class      ...Ts>	XTAL_REQ         counter_q =	    (...and  _entail::      counter_q<Ts>);
 
-template <class      ...Ts>	XTAL_REQ     uniteratee_q =	not (...and  _entail::   iteratee_q<Ts>);
-template <class      ...Ts>	XTAL_REQ     uniterable_q =	not (...and  _entail::   iterable_q<Ts>);
-template <class      ...Ts>	XTAL_REQ     uniterated_q =	not (...and  _entail::   iterated_q<Ts>);
-template <class      ...Ts>	XTAL_REQ     uniterator_q =	not (...and  _entail::   iterator_q<Ts>);
-template <class      ...Ts>	XTAL_REQ      uncounted_q =	not (...and  _entail::    counted_q<Ts>);
-template <class      ...Ts>	XTAL_REQ      uncounter_q =	not (...and  _entail::    counter_q<Ts>);
+template <class      ...Ts>	XTAL_REQ     uniteratee_q =	not (...and  _entail::     iteratee_q<Ts>);
+template <class      ...Ts>	XTAL_REQ     uniterable_q =	not (...and  _entail::     iterable_q<Ts>);
+template <class      ...Ts>	XTAL_REQ     uniterated_q =	not (...and  _entail::     iterated_q<Ts>);
+template <class      ...Ts>	XTAL_REQ     uniterator_q =	not (...and  _entail::     iterator_q<Ts>);
+template <class      ...Ts>	XTAL_REQ      uncounted_q =	not (...and  _entail::      counted_q<Ts>);
+template <class      ...Ts>	XTAL_REQ      uncounter_q =	not (...and  _entail::      counter_q<Ts>);
 
-template <class         T >	XTAL_USE      reiterated_t =	             _entail:: reiterated_t<T >;
-template <class         T >	XTAL_USE      initerated_t =	             _entail:: initerated_t<T >;
+template <class         T >	XTAL_USE      reiterated_t =	             _entail::   reiterated_t<T >;
+template <class         T >	XTAL_USE      initerated_t =	             _entail::   initerated_t<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////

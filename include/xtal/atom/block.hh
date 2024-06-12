@@ -223,8 +223,8 @@ struct block<A>
 		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0EX_( &) {return copy_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0FX_( &) {return copy_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF  move_by(_std::invocable<U_data> auto &&f) XTAL_0EX {based_t<W> w; _detail::move_to(w.begin(), self(), XTAL_REF_(f)); return w;}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF  copy_by(_std::invocable<U_data> auto &&f) XTAL_0FX {based_t<W> w; _detail::copy_to(w.begin(), self(), XTAL_REF_(f)); return w;}
+		template <array_q W> XTAL_DEF_(inline) XTAL_REF  move_by(_std::invocable<U_data> auto &&f) XTAL_0EX {W w; _detail::move_to(w.begin(), self(), XTAL_REF_(f)); return w;}
+		template <array_q W> XTAL_DEF_(inline) XTAL_REF  copy_by(_std::invocable<U_data> auto &&f) XTAL_0FX {W w; _detail::copy_to(w.begin(), self(), XTAL_REF_(f)); return w;}
 		///\
 		Elementwise mutative transformer. \
 

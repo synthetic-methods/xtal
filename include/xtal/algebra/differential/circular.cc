@@ -79,7 +79,6 @@ TAG_("circular")
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);
-		//	echo(i, _std::log(_std::abs(phi(0)/foo - foo/phi(0))));
 			TRUE_(computrim_f<13>(phi(0)) == computrim_f<13>(foo));
 		}
 	}

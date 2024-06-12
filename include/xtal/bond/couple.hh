@@ -28,10 +28,10 @@ XTAL_0EX
 		XTAL_LET f = invoke_f<V>;
 		XTAL_USE F = invoke_t<V>;
 		if constexpr ((...and idempotent_p<Xs, F>)) {
-			return couple_t<based_t<_std::invoke_result_t<F, Xs>>...>{ (XTAL_REF_(xs))...};
+			return couple_t<_std::invoke_result_t<F, Xs>...>{ (XTAL_REF_(xs))...};
 		}
 		else {
-			return couple_t<based_t<_std::invoke_result_t<F, Xs>>...>{f(XTAL_REF_(xs))...};
+			return couple_t<_std::invoke_result_t<F, Xs>...>{f(XTAL_REF_(xs))...};
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {

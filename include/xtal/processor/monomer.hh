@@ -230,10 +230,9 @@ struct monomer<U, As...>
 						auto &u = store();
 						auto  i = u.begin();
 						auto  n = XTAL_REF_(o).size();
-						if constexpr (resizeable_q<U_store>) {
-							(void) u.resize(n);
-						}
-						(void) state(i, i);//NOTE: For consistency with `resizeable_q<U_store>`. 
+						XTAL_IF0
+						XTAL_0IF XTAL_CAN_DO_(u.resize(n))
+						(void) state(i, i);//NOTE: For consistency with `vector` stores.
 						return 0;
 					}
 				}

@@ -164,8 +164,8 @@ TAG_("phasor")
 	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
 
 		//\
-		occur::resize_t<unsigned int> z_req(8);
 		occur::resize_t<> z_req(8);
+		occur::resize_t<unsigned int> z_req(8);//FIX
 		occur::render_t<> z_ren(8);
 		occur::review_t<Z_out> z_rev(z_out);
 

@@ -135,10 +135,11 @@ struct refine_tuple
 		XTAL_DO2_(XTAL_DEF_(inline)
 		XTAL_REF apply(auto &&f),
 		{
-			if constexpr (not pack_size::value) {
+			XTAL_IF0
+			XTAL_0IF (0 == pack_size::value) {
 				return XTAL_REF_(f) ();
 			}
-			else {
+			XTAL_0IF (1 <= pack_size::value) {
 				return [this, f = XTAL_REF_(f)] <size_t ...I>(bond::seek_t<I...>)
 					XTAL_0FN_(f(S_::template head<I>()...))
 				(bond::seek_s<pack_size::value> {});
@@ -218,11 +219,6 @@ struct defer_field
 		XTAL_CON_(explicit) subtype(O &&o)
 		XTAL_0EX
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
-		{}
-		template <bond::twin_tab_q<U> O> requires _detail::member_q<U>
-		XTAL_CON_(implicit) subtype(O &&o, auto &&...oo)
-		XTAL_0EX
-		:	subtype(XTAL_REF_(o).apply([] XTAL_1FN_(U)), XTAL_REF_(oo)...)
 		{}
 
 		///\

@@ -28,26 +28,35 @@ XTAL_0EX
 template <class U>
 struct resize
 {
-	using subkind = bond::compose<bond::tag<resize>, defer<U>>;
+	using subkind = bond::compose<flux::tag<resize>, defer<U>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		using T_ = typename S_::T_self;
 	
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
-		using U_size = U;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF size(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+	public:// OPERATE
+		using S_::self;
+		using S_::head;
+
+		using size_type = U;
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF size(auto &&...oo), head(XTAL_REF_(oo)...))
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF empty(), 0 == size())
 
 	};
 };
 template <iterated_q U>
-struct resize<U> : resize<XTAL_TYP_(XTAL_ANY_(U).size())>
+struct resize<U> : resize<count_t<U>>
 {
 };
+
+static_assert(not bond::twin_tab_q<resize_t<size_t>, resize_t<size_t>>);
+static_assert(    bond::twin_tab_q<resize_t<size_t>, resize_t<int   >>);
+static_assert(    bond::self_tab_q<resize_t<size_t>, resize_t<size_t>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

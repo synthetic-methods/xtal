@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
-
-
+#include "./tab.hh"
+//nclude "./tag.hh"
 
 
 
@@ -32,9 +32,11 @@ struct compost
 template <typename Outer> concept   compose_q =     complete_q<compost<Outer::template subtype>>;
 template <typename Outer> concept decompose_q = not complete_q<compost<Outer::template subtype>>;
 
-template <class S,                  typename ...Inners> struct compose {using type = S;};
-template <class S, typename  Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<                                 S , Inners...> {};
-template <class S, compose_q Inner, typename ...Inners> struct compose<S, Inner, Inners...> : compose<typename Inner::template subtype<S>, Inners...> {};
+template <class S,                  typename ...Inners> struct subcompose {using type = S;};
+//\
+template <class S, typename  Inner, typename ...Inners> struct subcompose<S, Inner, Inners...> : subcompose<                                          Inners...> {};
+template <class S, typename  Inner, typename ...Inners> struct subcompose<S, Inner, Inners...> : subcompose<typename tab<Inner>::template subtype<S>, Inners...> {};
+template <class S, compose_q Inner, typename ...Inners> struct subcompose<S, Inner, Inners...> : subcompose<typename     Inner ::template subtype<S>, Inners...> {};
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -50,7 +52,9 @@ where `S` provides the kernel to which: \
 -	`Outers::template subtype<S>` are applied from right-to-left. \
 
 template <                 typename ...Outers> struct compose;
-template <typename  Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<Outers...> {};
+//\
+template <typename  Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<            Outers...> {};
+template <typename  Outer, typename ...Outers> struct compose<Outer, Outers...> : compose<tab<Outer>, Outers...> {};
 template <compose_q Outer, typename ...Outers> struct compose<Outer, Outers...>
 {
 	template <class S, typename ...Inners>
@@ -63,7 +67,7 @@ template <>
 struct compose<>
 {
 	template <class S, typename ...Inners>
-	using subtype = typename _detail::compose<S, Inners...>::type;
+	using subtype = typename _detail::subcompose<S, Inners...>::type;
 
 };
 ///\

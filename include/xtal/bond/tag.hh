@@ -48,8 +48,8 @@ template <class T, template <class ...> class ...Ys> XTAL_TYP tail_tag   :      
 template <class T, template <class ...> class ...Ys> XTAL_USE tail_tag_t = typename tail_tab<T, tag<Ys>...>:: type;
 template <class T, template <class ...> class ...Ys> XTAL_REQ tail_tag_q =          tail_tab<T, tag<Ys>...>::value;
 
-template <class T, template <class ...> class ...Ys> XTAL_REQ head_tag_q      = _std::conjunction_v<tail_tag<based_t<T >, Ys>...>;
-template <template <class ...> class Y, class ...Ts> XTAL_REQ head_tag_p      = _std::conjunction_v<tail_tag<based_t<Ts>, Y >...>;
+template <class T, template <class ...> class ...Ys> XTAL_REQ head_tag_q = _std::conjunction_v<tail_tag<based_t<T >, Ys>...>;
+template <template <class ...> class Y, class ...Ts> XTAL_REQ head_tag_p = _std::conjunction_v<tail_tag<based_t<Ts>, Y >...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

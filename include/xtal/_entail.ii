@@ -237,19 +237,13 @@ template <class         T >	XTAL_USE       accessed_t =	_std::remove_reference_t
 template <class         T >	XTAL_USE        pointer_t =	_std::remove_reference_t<decltype(&XTAL_ANY_(T))>;
 template <class         T >	XTAL_USE        pointee_t =	_std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
 
-template <class         T >	XTAL_REQ          begin_q =	requires (T &t) {*t.begin();};
-template <class         T >	XTAL_REQ          front_q =	requires (T &t) { t.front();};
-template <class         T >	XTAL_REQ           back_q =	requires (T &t) { t. back();};
-template <class         T >	XTAL_REQ            end_q =	requires (T &t) {*t.  end();};
+template <class         T >	XTAL_REQ       endpoint_q =	requires (T &t) {{t.  end()} -> pointer_q;};
+template <class         T >	XTAL_REQ          point_q =	requires (T &t) {{t.begin()} -> pointer_q;};
 
-template <class         T >	XTAL_USE          begin_t =	decltype ( XTAL_ANY_(T).begin() );
-template <class         T >	XTAL_USE          front_t =	decltype (*XTAL_ANY_(T).begin() );
-template <class         T >	XTAL_USE           back_t =	decltype (*XTAL_ANY_(T).  end() );
-template <class         T >	XTAL_USE            end_t =	decltype ( XTAL_ANY_(T).  end() );
-
-template <class         T >	XTAL_USE       sizeable_t =	decltype ( XTAL_ANY_(T).  size() );
-template <class         T >	XTAL_REQ       sizeable_q =	requires { XTAL_ANY_(T).  size();};
-template <class         T >	XTAL_REQ     resizeable_q =	requires { XTAL_ANY_(T).resize(XTAL_ANY_(sizeable_t<T>));};
+template <class         T >	XTAL_USE       endpoint_t =	decltype (XTAL_ANY_(T).  end() );
+template <class         T >	XTAL_USE          point_t =	decltype (XTAL_ANY_(T).begin() );
+template <class         T >	XTAL_USE          count_t =	decltype (XTAL_ANY_(T). size() );
+template <class         T >	XTAL_REQ          count_q =	requires {XTAL_ANY_(T). size();};
 
 template <class         T >	XTAL_REQ        debrace_q =	requires {typename T::initializer_list;};
 template <class         T >	XTAL_REQ      reembrace_q =	debrace_q<T> or devalued_q<T>;
@@ -279,16 +273,16 @@ template <class         U >	XTAL_USE       interval_t =	_xtd::ranges::iota_view<
 template <class         T >	XTAL_REQ       interval_q =	is_q<interval_t<iteratee_t<T>>, T>;
 
 template <class         T >	XTAL_REQ       iteratee_q =	true;
-template <class         T >	XTAL_REQ       iterable_q =	begin_q<T>;
-template <class         T >	XTAL_REQ       iterated_q =	begin_q<T> and front_q<T>;
+template <class         T >	XTAL_REQ       iterable_q =	point_q<T>;
+template <class         T >	XTAL_REQ       iterated_q =	point_q<T> and count_q<T>;
 template <class         T >	XTAL_REQ       iterator_q =	requires (T t) {*++t;};
 template <class         T >	XTAL_REQ       sentinel_q =	iterator_q<T>;
 template <class         T >	XTAL_REQ       distance_q =	integral_q<T>;//TODO: Expand to accommodate `counted_t<size_t>{}.size()`.
 template <class         T >	XTAL_REQ        counter_q =	integral_q<T>;
 template <class         T >	XTAL_REQ        counted_q =	iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
 
-template <class         T >	XTAL_TYP       iteratee    	{using type =                devalued_t<T> ;};
-template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t<begin_t<T>>;};
+template <class         T >	XTAL_TYP       iteratee    	{using type =               devalued_t<T> ;};
+template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t<point_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t        <T> ;};
 template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type = _std::remove_reference_t<T> ;};
 
@@ -296,11 +290,11 @@ template <iterated_q    T >	XTAL_TYP       iterated<T> 	{using type = _std::remo
 template <iterator_q    T >	XTAL_TYP       iterated<T> 	{using type =                        void ;};
 template < counter_q    T >	XTAL_TYP       iterated<T> 	{using type =               interval_t<T> ;};
 
-template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =                  begin_t<T> ;};
+template <iterable_q    T >	XTAL_TYP       iterator<T>		{using type =                  point_t<T> ;};
 template <iterator_q    T >	XTAL_TYP       iterator<T>		{using type =                          T  ;};
 template < counter_q    T >	XTAL_TYP       iterator<T>		{using type =    iterator_t<interval_t<T>>;};
 
-template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =                    end_t<T> ;};
+template <iterable_q    T >	XTAL_TYP       sentinel<T> 	{using type =               endpoint_t<T> ;};
 template <iterator_q    T >	XTAL_TYP       sentinel<T> 	{using type =                          T  ;};
 
 template <class         T >	XTAL_TYP       distance    	{using type =    distance_t<iterator_t<T>>;};
