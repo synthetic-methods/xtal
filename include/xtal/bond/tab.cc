@@ -14,7 +14,7 @@ namespace xtal::bond::_test
 struct TagA
 {
 	template <class S>
-	class subtype: public bond::compose_s<S, tab<TagA>>
+	class subtype : public bond::compose_s<S, tab<TagA>>
 	{
 		using S_ = bond::compose_s<S, tab<TagA>>;
 
@@ -26,7 +26,7 @@ struct TagA
 struct TagB
 {
 	template <class S>
-	class subtype: public bond::compose_s<S, tab<TagB>>
+	class subtype : public bond::compose_s<S, tab<TagB>>
 	{
 		using S_ = bond::compose_s<S, tab<TagB>>;
 
@@ -38,7 +38,7 @@ struct TagB
 struct TagZ
 {
 	template <class S>
-	class subtype: public bond::compose_s<S, tab<TagZ>>
+	class subtype : public bond::compose_s<S, tab<TagZ>>
 	{
 		using S_ = bond::compose_s<S, tab<TagZ>>;
 

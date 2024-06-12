@@ -60,9 +60,11 @@ struct confined
 	//\
 	using homokind = confine<T, As...>;
 	using homokind = bond::compose<refine<T>, As..., define<T>>;
+	
+	using subkind = bond::isokind<homokind>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, bond::isokind<homokind>>;
+	using subtype = bond::compose_s<S, subkind>;
 	using    type = subtype<any_s<unit_t>>;
 	
 };
@@ -126,7 +128,8 @@ template <class   ...Us>	XTAL_USE packed_t   = typename packed<Us...>::type;
 template <class   ...Us>	XTAL_REQ packed_q   = bond::head_tag_p<packed, Us...>;
 template <class   ...Us>
 XTAL_DEF_(return,inline)
-XTAL_LET packed_f(Us &&...us) XTAL_0EX {return packed<Us...>(XTAL_REF_(us)...);}
+XTAL_LET     packed_f(Us &&...us)
+XTAL_0EX_TO_(packed_t<Us...>(XTAL_REF_(us)...))
 
 ///\
 Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
@@ -136,16 +139,8 @@ template <any_q      T >	XTAL_TYP let<T>       {using type =             T ;};
 template <class      T >	XTAL_USE let_t      = typename let<T>::type;
 template <class      T >
 XTAL_DEF_(return,inline)
-XTAL_REF let_f(T &&t)
-XTAL_0EX
-{
-	if constexpr (any_q<T>) {
-		return XTAL_REF_(t);
-	}
-	else {
-		return conferred_t<T>(XTAL_REF_(t));
-	}
-}
+XTAL_REF     let_f(T &&t)
+XTAL_0EX_TO_(let_t<T>(XTAL_REF_(t)))
 ///<\
 \returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
 

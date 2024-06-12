@@ -121,7 +121,7 @@ void thunk_processor()
 	using V_gate  = occur::reinferred_t<L_gate, alpha_t>;
 	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_gate>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
-	auto  fx_gate = Fx_gate::bind_f();
+	auto  fx_gate = Fx_gate::binding_f();
 	
 	fx_gate <<= U_resize(N_store);
 	fx_gate <<= (U_cue) 0 << (V_gate)  7;

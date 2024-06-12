@@ -44,13 +44,13 @@ struct monomer<U, As...>
 		using S_ = bond::compose_s<S, subkind>;
 	
 		template <class ...Xs>
-		using S__compound = typename S_::template compound<Xs...>;
+		using S_compound = typename S_::template compound<Xs...>;
 
 		template <class ...Xs>
-		using R__compound = bond::compose<As...
+		using R_compound = bond::compose<As...
 		,	U_resize::attach<>
 		,	U_render::attach<>
-		,	S__compound<Xs...>
+		,	S_compound<Xs...>
 		,	bond::tag<monomer>
 		>;
 
@@ -64,10 +64,10 @@ struct monomer<U, As...>
 		template <class ...Xs>
 		struct common
 		{
-			using Y_result = typename S__compound<Xs...>::Y_result;
-			using Y_return = typename S__compound<Xs...>::Y_return;
+			using Y_result = typename S_compound<Xs...>::Y_result;
+			using Y_return = typename S_compound<Xs...>::Y_return;
 		
-			using subkind = R__compound<Xs...>;
+			using subkind = R_compound<Xs...>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -115,8 +115,8 @@ struct monomer<U, As...>
 						
 						using namespace _xtd::ranges;
 						XTAL_IF0
-						XTAL_0IF XTAL_CAN_DO_(copy_n(_j, n, _i))
-						XTAL_0IF XTAL_CAN_DO_(move(result_o|account_f(n), _i))
+						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
+						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
 						XTAL_0IF_(default) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
@@ -128,9 +128,9 @@ struct monomer<U, As...>
 		template <class ...Xs>
 		struct compound
 		{
-			using Y_result = typename S__compound<Xs...>::Y_result;
+			using Y_result = typename S_compound<Xs...>::Y_result;
 			//\
-			using subkind = cell::conferred<Y_result, R__compound<Xs...>>;
+			using subkind = cell::conferred<Y_result, R_compound<Xs...>>;
 			using subkind = bond::compose<cell::confer<Y_result>, common<Xs...>>;
 
 			template <any_q R>
@@ -175,9 +175,9 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
-		struct compound<Xs...> : S__compound<Xs...>
+		struct compound<Xs...> : S_compound<Xs...>
 		{
-			using Y_return = typename S__compound<Xs...>::Y_return;
+			using Y_return = typename S_compound<Xs...>::Y_return;
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
@@ -231,7 +231,7 @@ struct monomer<U, As...>
 						auto  i = u.begin();
 						auto  n = XTAL_REF_(o).size();
 						XTAL_IF0
-						XTAL_0IF XTAL_CAN_DO_(u.resize(n))
+						XTAL_0IF XTAL_REQ_DO_(u.resize(n))
 						(void) state(i, i);//NOTE: For consistency with `vector` stores.
 						return 0;
 					}

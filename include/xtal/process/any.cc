@@ -18,9 +18,9 @@ using namespace xtal::_test;
 /**/
 struct subtract
 {
-	using subkind = bond::compose<void
-	,	level_t::template attach<0b01>
-	,	level_t::template attach<0b10>
+	using subkind = typename flux::confined_t<>::template binding<
+		typename level_t::template attach_t<0b01>
+	,	typename level_t::template attach_t<0b10>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -35,8 +35,8 @@ struct subtract
 		XTAL_REF functor()
 		XTAL_0FX
 		{
-			typename operating::alpha_t x = this->template head<0>();
-			typename operating::alpha_t y = this->template head<1>();
+			typename operating::alpha_t x = S_::template slot<0>().head();
+			typename operating::alpha_t y = S_::template slot<1>().head();
 			return x - y;
 		}
 
@@ -90,7 +90,7 @@ using halve_t = confined_t<halve>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 TAG_("process", "attach")
 {
 	using _op = bond::operating;
@@ -102,9 +102,13 @@ TAG_("process", "attach")
 	{
 		subtract_t op{};
 
-		op <<= cell::mark_s<level_t>(0b01, level_t{2});
+		op <<= cell::mark_s<level_t>(0b01, level_t{9});
 		op <<= cell::mark_s<level_t>(0b10, level_t{1});
-		echo(op());
+		TRUE_(8 == op());
+
+		op <<= _std::tuple(nominal_t<0>{}, level_t{6});
+		op <<= _std::tuple(nominal_t<1>{}, level_t{3});
+		TRUE_(3 == op());
 
 	}
 }

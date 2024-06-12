@@ -115,10 +115,10 @@ struct circular<A>
 		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
 		auto operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_CAN_TO_(twin() *=   t )
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_CAN_TO_(twin() /=   t )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_CAN_TO_(self() *= T(t))
-		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_CAN_TO_(self() /= T(t))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=   t )
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=   t )
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
+		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (number_q auto const &f)

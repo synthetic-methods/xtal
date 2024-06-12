@@ -45,12 +45,12 @@ void polymer_provision_spine__locamotion()
 	using M_gate   = processor::monomer_t<A_gate>;
 	using M_gate   = processor::monomer_t<U_gate>;
 	//\
-	using W_gate   = process::conferred_t<typename M_gate::template bind_t<>>;
-	using W_gate   = typename M_gate::template bind_t<>;
+	using W_gate   = process::conferred_t<typename M_gate::template binding_t<>>;
+	using W_gate   = typename M_gate::template binding_t<>;
 	//\
 	using U_vox = polymer_t<W_gate, A_stored, A_spooled>;
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled>;
-	auto u_vox = U_vox::bind_f();
+	auto u_vox = U_vox::binding_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
 	u_vox <<= U_resize(N_window);
@@ -111,7 +111,7 @@ void polymer_provision_spool__combined()
 	,	resource::stored<nominal_t<N_store>>
 	,	resource::spooled<nominal_t<N_spool>>
 	>;
-	auto u_vox = U_vox::bind_f();
+	auto u_vox = U_vox::binding_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
@@ -134,7 +134,7 @@ void polymer_provision_spool__combined()
 
 }
 template <size_t N_window=8, int N_store=0, int N_spool=0>
-void polymer_provision_spool__composited()
+void polymer_provision_spool_composited()
 {
 	using T_alpha = typename bond::operating::alpha_t;
 	using T_sigma = typename bond::operating::sigma_t;
@@ -155,7 +155,7 @@ void polymer_provision_spool__composited()
 	,	resource::stored<nominal_t<N_store>>
 	,	resource::spooled<nominal_t<N_spool>>
 	>;
-	auto u_vox = U_vox::bind_f();
+	auto u_vox = U_vox::binding_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
@@ -189,10 +189,10 @@ TAG_("polymer", "occur", "ensemble")
 	}
 	TRY_("with composited events")
 	{
-		polymer_provision_spool__composited<8, -1, -1>();
-		polymer_provision_spool__composited<8, -1, 64>();
-		polymer_provision_spool__composited<8, 64, -1>();
-		polymer_provision_spool__composited<8, 64, 64>();
+		polymer_provision_spool_composited<8, -1, -1>();
+		polymer_provision_spool_composited<8, -1, 64>();
+		polymer_provision_spool_composited<8, 64, -1>();
+		polymer_provision_spool_composited<8, 64, 64>();
 
 	}
 }

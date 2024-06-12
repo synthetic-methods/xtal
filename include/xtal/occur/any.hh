@@ -1,7 +1,7 @@
 #pragma once
 #include "../flux/all.hh"// `_retail`
 
-#include "../cell/mark.hh"
+#include "../flux/route.hh"
 
 
 
@@ -44,63 +44,16 @@ struct define
 		};
 
 		///\
-		Forwards anything prefixed with `N_mask`. \
-
-		template <int N_mask=-1>
-		struct address
-		{
-			static constexpr size_t M_mask =  N_mask;
-			static constexpr size_t W_mask = ~M_mask;
-			
-			template <_retail::any_q R>
-			class subtype : public bond::compose_s<R>
-			{
-				using R_ = bond::compose_s<R>;
-			
-				using U_mark = cell::mark_s<T>;
-				using V_mark = cell::mark_s< >;
-
-			public:
-				using R_::R_;
-				using R_::self;
-			//	using R_::influx;
-
-				XTAL_TNX influx(auto &&...oo)
-				XTAL_0EX
-				{
-					return R_::influx(XTAL_REF_(oo)...);
-				}
-				XTAL_TNX influx(U_mark o, auto &&...oo)
-				XTAL_0EX
-				{
-					auto m = o.head();
-					return influx(V_mark(m), o.then(), XTAL_REF_(oo)...);
-				}
-				XTAL_TNX influx(V_mark o, auto &&...oo)
-				XTAL_0EX
-				{
-					auto m = o.head();
-					if (~m & M_mask) {
-						return -1;
-					}
-					else if (m &= W_mask) {
-						return R_::influx(V_mark(m), XTAL_REF_(oo)...);
-					}
-					else {
-						return R_::influx(           XTAL_REF_(oo)...);
-					}
-				}
-
-			};
-		};
-		///\
 		Attaches `T` as a member of `this`. \
 
 		template <int N_mask=-1>
 		struct attach
-		:	bond::compose<address<N_mask>, typename S_::template afflux<>>
+		:	bond::compose<flux::route<N_mask>, typename S_::template afflux<>>
 		{
 		};
+		template <int N_mask=-1>
+		using  attach_t = confined_t<attach<N_mask>>;
+
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to `defunctor` `functor<auto ...>`. \
 
@@ -176,6 +129,9 @@ struct define
 
 			};
 		};
+		template <int N_mask=-1>
+		using  dispatch_t = confined_t<dispatch<N_mask>>;
+
 		///\
 		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
 		
@@ -205,6 +161,9 @@ struct define
 
 			};
 		};
+		template <int N_mask=-1>
+		using  expect_t = confined_t<expect<N_mask>>;
+
 		///\
 		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
 
@@ -234,6 +193,9 @@ struct define
 
 			};
 		};
+		template <int N_mask=-1>
+		using  inspect_t = confined_t<inspect<N_mask>>;
+
 		///\
 		Uses the current `T` as the return value of `functor`. \
 		
@@ -260,6 +222,8 @@ struct define
 
 			};
 		};
+		template <int N_mask=-1>
+		using  poll_t = confined_t<poll<N_mask>>;
 
 	};
 };

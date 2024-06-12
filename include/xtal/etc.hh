@@ -152,16 +152,16 @@
 #define XTAL_0FN_(...)                   constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FM_(...)           mutable constexpr noexcept {return (__VA_ARGS__);}
 
-#define XTAL_IF0                 if      constexpr (0);
-#define XTAL_0IF            else if      constexpr
+#define XTAL_IF0              if         constexpr (0);
+#define XTAL_0IF         else if         constexpr
 #define XTAL_0IF_(...)                   XTAL_0IF_##__VA_ARGS__
-#define XTAL_0IF_default    else
+#define XTAL_0IF_default else
 #if     XTAL_STD < 26
-#define XTAL_0IF_dynamic    else if (not _std::is_constant_evaluated())
-#define XTAL_0IF_static     else if (    _std::is_constant_evaluated())
+#define XTAL_0IF_dynamic else if    (not _std::is_constant_evaluated())
+#define XTAL_0IF_static  else if    (    _std::is_constant_evaluated())
 #else
-#define XTAL_0IF_dynamic    else if  not consteval
-#define XTAL_0IF_static     else if      consteval
+#define XTAL_0IF_dynamic else if     not consteval
+#define XTAL_0IF_static  else if         consteval
 #endif
 
 #define XTAL_0FX                 const             noexcept
@@ -173,9 +173,9 @@
 #define XTAL_0FX_TO_(...)        const             noexcept {return (__VA_ARGS__);}
 #define XTAL_0EX_TO_(...)                          noexcept {return (__VA_ARGS__);}
 
-#define XTAL_HAS_(...)          (requires { __VA_ARGS__ ;})
-#define XTAL_CAN_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
-#define XTAL_CAN_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
+#define XTAL_REQ_(...)          (requires { __VA_ARGS__ ;})
+#define XTAL_REQ_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
+#define XTAL_REQ_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
 
 #define XTAL_DO2_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   \
                                  SIG               noexcept          __VA_ARGS__   ;

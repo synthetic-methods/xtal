@@ -65,10 +65,10 @@ TAG_("phasor")
 		auto  x_phi = X_phi        {}; x_phi <<=                          {_op::ratio_f(7)};
 		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
 		
-		auto  z_chi = Z_chi::bind_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
-		auto  z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
-		auto  z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
-		auto  z_eig = Z_eig::bind_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
+		auto  z_chi = Z_chi::binding_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
+		auto  z_phi = Z_phi::binding_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
+		auto  z_psi = Z_psi::binding_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
+		auto  z_eig = Z_eig::binding_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
 
 		occur::render_t<>         z_render(N_data);
 		occur::indent_s<X_phi, 1> z_indent{x_delta};
@@ -160,7 +160,7 @@ TAG_("phasor")
 		auto  z_out = bond::pack_rowwise_f<2>(8, z_outs);
 		using Z_out = reiterated_t<XTAL_TYP_(z_out)>;
 
-		auto z_psi = Z_psi::bind_f();
+		auto z_psi = Z_psi::binding_f();
 	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
 
 		//\
@@ -210,7 +210,7 @@ TAG_("phasor")
 		T_alpha z_outs[2][8]{};
 		auto z_out = bond::pack_rowwise_f<2>(8, z_outs);
 
-		auto z_phi = Z_phi::bind_f();
+		auto z_phi = Z_phi::binding_f();
 		static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
 
 		occur::resize_t<> z_req(8);

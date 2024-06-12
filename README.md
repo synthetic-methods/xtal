@@ -107,7 +107,7 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	auto render = render_t(1024);
 
 	using Mixer = processor::monomer_t<Mix, resource::stored<>>;
-	auto sixer = Mixer::bind_f(one, two, three);
+	auto sixer = Mixer::binding_f(one, two, three);
 
 	// initialization
 	{

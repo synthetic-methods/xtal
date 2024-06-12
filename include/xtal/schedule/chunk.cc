@@ -46,7 +46,7 @@ void chunk_processor_x1()
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	
-	auto xhs = mix_z::bind_f(lhs, rhs);
+	auto xhs = mix_z::binding_f(lhs, rhs);
 	auto seq = render_n(4);
 
 	xhs <<= U_resize(4);

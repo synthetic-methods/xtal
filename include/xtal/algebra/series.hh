@@ -253,8 +253,8 @@ struct series<A>
 
 		using T_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_CAN_TO_(twin() *=   w )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_CAN_TO_(self() *= T(w))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=   w )
+		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *=(T const &t)
