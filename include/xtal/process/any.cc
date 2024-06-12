@@ -16,6 +16,34 @@ using namespace xtal::_test;
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
+struct subtract
+{
+	using subkind = bond::compose<void
+	,	level_t::template attach<0b01>
+	,	level_t::template attach<0b10>
+	>;
+	template <class S>
+	class subtype : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+
+	public:
+		using S_::S_;
+
+		template <auto ...>
+		XTAL_DEF_(return,inline)
+		XTAL_REF functor()
+		XTAL_0FX
+		{
+			typename operating::alpha_t x = this->template head<0>();
+			typename operating::alpha_t y = this->template head<1>();
+			return x - y;
+		}
+
+	};
+};
+using subtract_t = process::confined_t<subtract>;
+
 struct square_root
 {
 	template <class S>
@@ -61,6 +89,27 @@ struct halve
 using halve_t = confined_t<halve>;
 
 
+////////////////////////////////////////////////////////////////////////////////
+/*/
+TAG_("process", "attach")
+{
+	using _op = bond::operating;
+	using T_sigma = typename _op::sigma_t;
+	using T_delta = typename _op::delta_t;
+	using T_alpha = typename _op::alpha_t;
+
+	TRY_("messaging")
+	{
+		subtract_t op{};
+
+		op <<= cell::mark_s<level_t>(0b01, level_t{2});
+		op <<= cell::mark_s<level_t>(0b10, level_t{1});
+		echo(op());
+
+	}
+}
+
+/***/
 ////////////////////////////////////////////////////////////////////////////////
 
 TAG_("process", "construct")

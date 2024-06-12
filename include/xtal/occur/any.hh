@@ -57,27 +57,37 @@ struct define
 			{
 				using R_ = bond::compose_s<R>;
 			
+				using U_mark = cell::mark_s<T>;
+				using V_mark = cell::mark_s< >;
+
 			public:
 				using R_::R_;
 				using R_::self;
-				using R_::influx;
+			//	using R_::influx;
 
-				XTAL_TNX influx(cell::mark_s<T> o, auto &&...oo)
+				XTAL_TNX influx(auto &&...oo)
 				XTAL_0EX
 				{
-					return self().influx(o.head(), o.then(), XTAL_REF_(oo)...);
+					return R_::influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(cell::mark_s<> m, auto &&...oo)
+				XTAL_TNX influx(U_mark o, auto &&...oo)
 				XTAL_0EX
 				{
+					auto m = o.head();
+					return influx(V_mark(m), o.then(), XTAL_REF_(oo)...);
+				}
+				XTAL_TNX influx(V_mark o, auto &&...oo)
+				XTAL_0EX
+				{
+					auto m = o.head();
 					if (~m & M_mask) {
-						return R_::influx();
+						return -1;
 					}
 					else if (m &= W_mask) {
-						return R_::influx(m, XTAL_REF_(oo)...);
+						return R_::influx(V_mark(m), XTAL_REF_(oo)...);
 					}
 					else {
-						return R_::influx(XTAL_REF_(oo)...);
+						return R_::influx(           XTAL_REF_(oo)...);
 					}
 				}
 
