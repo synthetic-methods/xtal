@@ -33,13 +33,12 @@ struct define
 	using subkind = bond::compose<void
 	,	_detail::define_super<T>
 	>;
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
 	protected:
-		using typename S_::T_self;
 		using U_self = subtype;
 
 	public:
@@ -73,7 +72,7 @@ struct define
 };
 ///\
 Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
-compound `subtype` as the default target of `self`. \
+bracket `subtype` as the default target of `self`. \
 
 template <class T>
 struct refine
@@ -122,10 +121,9 @@ struct defer
 	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
+		using U_ = typename S_::U_head;
 
 	protected:
-		using typename S_::T_self;
-		using typename S_::U_head;
 		using U_self = subtype;
 
 	public:
@@ -138,7 +136,7 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_CVN_(explicit) U_head(), head())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_CVN_(explicit) U_(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \

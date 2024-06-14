@@ -27,7 +27,7 @@ struct stashed<U_state, U_store>
 	,	cell::defer<U_store>
 	>;
 
-	template <class S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

@@ -22,7 +22,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		friend T;
@@ -62,7 +62,7 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <_retail::any_q R> requires bond::assay_q<T>
+			template <flux::any_q R> requires bond::assay_q<T>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
@@ -140,7 +140,7 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <_retail::any_q R>
+			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
@@ -172,7 +172,7 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <_retail::any_q R>
+			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
@@ -204,7 +204,7 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <_retail::any_q R>
+			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;

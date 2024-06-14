@@ -37,7 +37,7 @@ struct chunk
 		{
 			using subkind = typename S_::template inqueue<Xs...>;
 			
-			template <_retail::any_q R>
+			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;

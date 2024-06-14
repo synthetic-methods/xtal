@@ -25,7 +25,7 @@ struct stored<A>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct stored<unit_t[N]>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -61,7 +61,7 @@ struct stored<null_t[N]>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -79,7 +79,7 @@ struct stored<A>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

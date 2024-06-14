@@ -89,20 +89,26 @@ struct defer<U>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 
+		template <iterable_q X>
+		//\
+		using argument_t = iteratee_t<X> const &;
+		using argument_t = decltype(*XTAL_ANY_(X).begin()) &&;
+
 	public:
 		using S_::S_;
-		using S_::self;
-		using S_::head;
 
 		///\
 		Defines the range-lifted form of `head` by lifting the underlying `process`. \
-		This means that parameter resolution is only performed at the beginning of each block. \
+		Parameter resolution is only performed at the beginning of each block. \
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(auto &&...xs),
+		XTAL_REF functor(iterable_q auto &&...xs),
 		{
-			return iterative_f(head().template refunctor<iteratee_t<decltype(xs)> const &...>(Is...), XTAL_REF_(xs)...);
+			return iterative_f(S_::head().
+				template refunctor<argument_t<decltype(xs)>...>(Is...)
+			,	XTAL_REF_(xs)...
+			);
 		})
 
 	};

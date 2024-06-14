@@ -25,7 +25,7 @@ struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
 	
-	template <_retail::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

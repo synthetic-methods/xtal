@@ -42,33 +42,20 @@ struct monomer<U, As...>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		using T_ = typename S_::T_self;
 	
-		template <class ...Xs>
-		using S_compound = typename S_::template compound<Xs...>;
-
-		template <class ...Xs>
-		using R_compound = bond::compose<As...
-		,	U_resize::attach<>
-		,	U_render::attach<>
-		,	S_compound<Xs...>
-		,	bond::tag<monomer>
-		>;
-
-	protected:
-		using typename S_::T_self;
-
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs>
-		struct common
+		struct bracket_
 		{
-			using Y_result = typename S_compound<Xs...>::Y_result;
-			using Y_return = typename S_compound<Xs...>::Y_return;
-		
-			using subkind = R_compound<Xs...>;
-
+			using subkind = bond::compose<bond::tag<monomer>, As...
+			,	U_resize::attach<>
+			,	U_render::attach<>
+			,	typename S_::template bracket<Xs...>
+			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
@@ -126,12 +113,12 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs>
-		struct compound
+		struct bracket
 		{
-			using Y_result = typename S_compound<Xs...>::Y_result;
-			//\
-			using subkind = cell::conferred<Y_result, R_compound<Xs...>>;
-			using subkind = bond::compose<cell::confer<Y_result>, common<Xs...>>;
+			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
+		//	using Y_return = iteratee_t<Y_result>;
+
+			using subkind = bond::compose<cell::confer<Y_result>, bracket_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -147,16 +134,16 @@ struct monomer<U, As...>
 
 				XTAL_CON_(explicit) subtype(auto &&...xs)
 				XTAL_0EX
-				:	subtype(T_self{}, XTAL_REF_(xs)...)
+				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CON_(explicit) subtype(is_q<T_self> auto &&t, auto &&...xs)
+				XTAL_CON_(explicit) subtype(is_q<T_> auto &&t, auto &&...xs)
 				XTAL_0EX
 				:	R_(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
 				XTAL_TO4_(XTAL_DEF_(return,inline)
 				XTAL_REF state(auto &&...oo),
-				R_::template head<Y_result>(XTAL_REF_(oo)...)
+					R_::head(XTAL_REF_(oo)...)
 				)
 				XTAL_TO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
@@ -175,15 +162,17 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
-		struct compound<Xs...> : S_compound<Xs...>
+		struct bracket<Xs...>
 		{
-			using Y_return = typename S_compound<Xs...>::Y_return;
+			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
+			using Y_return = iteratee_t<Y_result>;
+
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
 			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::stashed<U_state, U_store>, common<Xs...>>;
+			using subkind = bond::compose<resource::stashed<U_state, U_store>, bracket_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -244,7 +233,7 @@ struct monomer<U, As...>
 				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
 				XTAL_0EX requires (0 <= N_share)
 				{
-					return R_::template influx_push_tail<N_share>(null_t(), XTAL_REF_(o_resize), XTAL_REF_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_t{}, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}
 
 				using R_::efflux;

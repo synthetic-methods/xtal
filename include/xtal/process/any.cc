@@ -18,35 +18,29 @@ using namespace xtal::_test;
 /**/
 struct subtract
 {
-	using subkind = typename flux::confined_t<>::template binding<
-		typename level_t::template attach_t<0b01>
-	,	typename level_t::template attach_t<0b10>
-	>;
-	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	template <process::any_q S>
+	class subtype : public bond::compose_s<S>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S>;
 
 	public:
 		using S_::S_;
 
 		template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor()
+		XTAL_REF functor(auto &&x, auto &&y)
 		XTAL_0FX
 		{
-			typename operating::alpha_t x = S_::template slot<0>().head();
-			typename operating::alpha_t y = S_::template slot<1>().head();
-			return x - y;
+			return XTAL_REF_(x) - XTAL_REF_(y);
 		}
 
 	};
 };
 using subtract_t = process::confined_t<subtract>;
-
+/***/
 struct square_root
 {
-	template <class S>
+	template <process::any_q S>
 	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
@@ -68,7 +62,7 @@ using square_root_t = confined_t<square_root>;
 
 struct halve
 {
-	template <class S>
+	template <process::any_q S>
 	class subtype : public bond::compose_s<S>
 	{
 		using S_ = bond::compose_s<S>;
@@ -98,16 +92,19 @@ TAG_("process", "attach")
 	using T_delta = typename _op::delta_t;
 	using T_alpha = typename _op::alpha_t;
 
+	using L01 = process::confined_t<typename level_t::template poll<0b01>>;
+	using L10 = process::confined_t<typename level_t::template poll<0b10>>;
+
 	TRY_("messaging")
 	{
-		subtract_t op{};
+		subtract_t::binding_t<L01, L10> op{};
 
 		op <<= cell::mark_s<level_t>(0b01, level_t{9});
 		op <<= cell::mark_s<level_t>(0b10, level_t{1});
 		TRUE_(8 == op());
 
-		op <<= _std::tuple(nominal_t<0>{}, level_t{6});
-		op <<= _std::tuple(nominal_t<1>{}, level_t{3});
+		op <<= nominal_t<0>{} << level_t{6};
+		op <<= nominal_t<1>{} << level_t{3};
 		TRUE_(3 == op());
 
 	}

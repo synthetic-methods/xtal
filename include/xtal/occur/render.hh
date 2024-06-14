@@ -65,25 +65,20 @@ struct surrender
 	class subtype : public S
 	{
 		using S_ = S;
-
-	protected:
-		using typename S_::T_self;
-		using typename S_::U_head;
-
-	private:
-		using V_ = counter_t<U_head>;
+		using T_ = typename S_::T_self;
+		using U_ = typename S_::U_head;
+		using V_ = counter_t<U_>;
 	
 	public:
 		using S_::S_;
 		using S_::self;
 		using S_::twin;
+		
 		using value_type = V_;
-
-		using ring = int;
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET skip(V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			auto t = self(); (void) t.step(t.step() + v);
 			return t;
@@ -93,13 +88,13 @@ struct surrender
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator * (V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator*=(v);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator / (V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator/=(v);
 		}
@@ -108,13 +103,13 @@ struct surrender
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator ++()
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			return self().operator+=(count_f(self()));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator ++(int)
-		XTAL_0EX -> T_self
+		XTAL_0EX -> T_
 		{
 			auto t = self(); operator++(); return t;
 		}
@@ -123,13 +118,13 @@ struct surrender
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator --()
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			return self().operator-=(count_f(self()));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator --(int)
-		XTAL_0EX -> T_self
+		XTAL_0EX -> T_
 		{
 			auto t = self(); operator--(); return t;
 		}
@@ -137,13 +132,13 @@ struct surrender
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET next(V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return self().operator*(v);
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET next()
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator++();
 		}
@@ -151,13 +146,13 @@ struct surrender
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET operator + (V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator+=(v);
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET operator - (V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator-=(v);
 		}
@@ -165,13 +160,13 @@ struct surrender
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET null()
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			return twin().operator+=(0);
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET null(V_ v)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			auto s = null(); s.step(v); return s;
 		}
@@ -196,7 +191,7 @@ struct surrender
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_TNX infuse(T_self t)
+		XTAL_TNX infuse(T_ t)
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -265,9 +260,7 @@ struct render<V>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-
-	protected:
-		using typename S_::T_self;
+		using T_ = typename S_::T_self;
 
 	public:
 	//	using S_::S_;
@@ -299,7 +292,7 @@ struct render<V>
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET subview(auto &&w)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
 		}
@@ -309,14 +302,14 @@ struct render<V>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator *=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			S_::step() += v;
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			S_::step() -= v;
 			return self();
@@ -326,14 +319,14 @@ struct render<V>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			S_::step() += S_::size() != 0; (void) S_::size(v);
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			S_::step() -= v != 0; (void) S_::size(v);
 			return self();
@@ -373,9 +366,7 @@ public:
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-
-	protected:
-		using typename S_::T_self;
+		using T_ = typename S_::T_self;
 
 	public:
 		using S_::S_;
@@ -398,9 +389,9 @@ public:
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET subview(auto &&w)
-		XTAL_0FX -> T_self
+		XTAL_0FX -> T_
 		{
-			return T_self(S_::subhead(XTAL_REF_(w)), S_::step());
+			return T_(S_::subhead(XTAL_REF_(w)), S_::step());
 		}
 
 		///\
@@ -408,7 +399,7 @@ public:
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator *=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			using _xtd::ranges::distance;
 			using _xtd::ranges::next;
@@ -420,7 +411,7 @@ public:
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			using _xtd::ranges::distance;
 			using _xtd::ranges::prev;
@@ -435,7 +426,7 @@ public:
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			using _xtd::ranges::next;
 		//	auto &s = self();
@@ -447,7 +438,7 @@ public:
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(V v)
-		XTAL_0EX -> T_self &
+		XTAL_0EX -> T_ &
 		{
 			using _xtd::ranges::prev;
 		//	auto &s = self();

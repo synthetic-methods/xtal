@@ -234,9 +234,9 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Process lifting            |[`process/any.hh`](include/xtal/process/any.hh?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.hh`](include/xtal/process/cross.hh?ts=3)|
 |Processor lifting          |[`processor/any.hh`](include/xtal/processor/any.hh?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::compound`|
-|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::compound`|
-|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::compound` compatible `&&`arguments|
+|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket`|
+|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::bracket`|
+|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket` compatible `&&`arguments|
 |Buffer allocation          |[`atom/store.hh`](include/xtal/atom/store.hh?ts=3) impl. static `std::vector`|
 |Buffer transformation      |[`algebra/series.hh`](include/xtal/algebra/series.hh?ts=3) incl. convolution and iFFT/FFT|
 |Numeric conditioning       |[`bond/operate.hh`](include/xtal/bond/operate.hh?ts=3) via `\.(?:truncate\|puncture)`|

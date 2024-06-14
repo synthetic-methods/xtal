@@ -87,10 +87,7 @@ struct refine_head
 	class subtype<S> : public S
 	{
 		using S_ = S;
-
-	protected:
-		using typename S_::T_self;
-		using typename S_::U_head;
+		using U_ = typename S_::U_head;
 
 	public:
 		using S_::S_;
@@ -101,7 +98,7 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_CVN_(implicit) U_head(), {return head();})
+		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
 		
 //		///\
 //		\returns a copy of `this` with `head<Is...>(oo...)` applied. \
@@ -198,7 +195,6 @@ struct defer_field
 		using S_ = bond::compose_s<S>;
 
 	protected:
-		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -266,7 +262,6 @@ struct defer_field<U>
 		using S_ = bond::compose_s<S>;
 
 	protected:
-		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -306,7 +301,6 @@ struct defer_field<unit_t[N_width]>
 		using S_ = bond::compose_s<S, subkind>;
 
 	protected:
-		using typename S_::T_self;
 		using U_head = remember_t<U>;
 		using U_body =   member_t<U>;
 
@@ -521,15 +515,13 @@ struct refer_binary_logic<U, 2>
 	class subtype : public S
 	{
 		using S_ = S;
+		using T_ = typename S_::T_self;
 
-	protected:
-		using typename S_::T_self;
-	
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator ^ (auto &&o) XTAL_0FX -> T_self {return T_self(S_::head() ^ XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator | (auto &&o) XTAL_0FX -> T_self {return T_self(S_::head() | XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator & (auto &&o) XTAL_0FX -> T_self {return T_self(S_::head() & XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator ^ (auto &&o) XTAL_0FX -> T_{return T_(S_::head() ^ XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator | (auto &&o) XTAL_0FX -> T_{return T_(S_::head() | XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator & (auto &&o) XTAL_0FX -> T_{return T_(S_::head() & XTAL_REF_(o));}
 
 	};
 };
@@ -585,14 +577,12 @@ struct refer_multiplicative_group<U, 2>
 	class subtype : public S
 	{
 		using S_ = S;
+		using T_ = typename S_::T_self;
 
-	protected:
-		using typename S_::T_self;
-	
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto &&o) XTAL_0FX -> T_self {return T_self(S_::head() * XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto &&o) XTAL_0FX -> T_self {return T_self(S_::head() / XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto &&o) XTAL_0FX -> T_{return T_(S_::head() * XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto &&o) XTAL_0FX -> T_{return T_(S_::head() / XTAL_REF_(o));}
 
 	};
 };
@@ -632,15 +622,13 @@ struct refer_additive_group<U, 2>
 	class subtype : public S
 	{
 		using S_ = S;
+		using T_ = typename S_::T_self;
 
-	protected:
-		using typename S_::T_self;
-	
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator + (auto &&o) XTAL_0FX -> T_self {return T_self( S_::head() + XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator - (auto &&o) XTAL_0FX -> T_self {return T_self( S_::head() - XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator - (        ) XTAL_0FX -> T_self {return T_self(-S_::head());}
+		XTAL_DEF_(return,inline) XTAL_LET operator + (auto &&o) XTAL_0FX -> T_{return T_( S_::head() + XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator - (auto &&o) XTAL_0FX -> T_{return T_( S_::head() - XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator - (        ) XTAL_0FX -> T_{return T_(-S_::head());}
 
 	};
 };

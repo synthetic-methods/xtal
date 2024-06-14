@@ -22,7 +22,7 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		friend T;

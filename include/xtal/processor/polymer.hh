@@ -46,24 +46,12 @@ struct polymer<U, As...>
 		using Y_ = confined_t<subkind>;
 		using Y_ = monomer_t<U>;
 		
-		template <class ...Xs>
-		using S_compound = typename S_::template compound<Xs...>;
-
-		template <class ...Xs>
-		using R_compound = bond::compose<void// `As...` included by `monomer`...
-		,	S_compound<Xs...>
-		,	bond::tag<polymer>
-		>;
-
 	public:
 		using S_::S_;
-		using S_::self;
 
 		template <class ...Xs> requires resource::spooled_q<S_>
-		struct compound
+		struct bracket
 		{
-			using Y_return = typename S_compound<Xs...>::Y_return;
-
 			using V_event = occur::stage_t<>;
 			using U_event = cell::key_s<V_event>;
 			
@@ -72,8 +60,10 @@ struct polymer<U, As...>
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = bond::compose<bond::tag<polymer>, defer<V_voice>, R_compound<Xs...>>;
-
+			using subkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
+			,	defer<V_voice>
+			,	typename S_::template bracket<Xs...>
+			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{

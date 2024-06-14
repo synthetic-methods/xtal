@@ -35,7 +35,7 @@ struct mark<U>
 {
 	using subkind = confer<U, bond::tag<mark>>;
 
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

@@ -1,10 +1,10 @@
 #pragma once
 #include "../flux/any.hh"// `_retail`
 
+#include "../flux/bracket.hh"
 #include "../occur/all.hh"
 #include "../resource/all.hh"
 #include "../schedule/all.hh"
-
 
 XTAL_ENV_(push)
 namespace xtal::process
@@ -22,16 +22,15 @@ struct define
 {
 	using subkind = _retail::define<T>;
 
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		friend T;
+		using T_ = T;
 		using S_ = bond::compose_s<S, subkind>;
 	
 	public:
 		using S_::S_;
-		using S_::self;
-
 
 		///\returns `true` if the pointers are identical, `false` otherwise. \
 
@@ -44,7 +43,7 @@ struct define
 		
 		XTAL_TO2_(XTAL_DEF_(return,inline)
 		XTAL_LET operator () (auto &&...xs),
-			self().functor(XTAL_REF_(xs)...)
+			S_::self().functor(XTAL_REF_(xs)...)
 		)
 		
 		///\
@@ -66,10 +65,10 @@ struct define
 		XTAL_REF refunctor(nominal_q auto const ...Is),
 		{
 			if constexpr (0 == sizeof...(Is)) {
-				return [this] XTAL_1FN_(self().functor);
+				return [this] XTAL_1FN_(S_::self().functor);
 			}
 			else {
-				return [this, Is...] XTAL_1FN_(self().template functor<Is...>);
+				return [this, Is...] XTAL_1FN_(S_::self().template functor<Is...>);
 			}
 		})
 		
@@ -90,7 +89,7 @@ struct define
 
 		///\
 		Defines the subtype-indexed function-pointer table, \
-		dynamically indexed by the underlying subtype `T`, \
+		dynamically indexed by the underlying subtype `T_`, \
 		and statically-generated from `functor<Is...>` with `sizeof...(Is)` entries. \
 
 		template <class ...Xs>
@@ -103,56 +102,84 @@ struct define
 			template <auto ...Is>
 			class type
 			{
-				using Y_ = decltype(XTAL_ANY_(T &).
+				using Y_ = decltype(XTAL_ANY_(T_ &).
 					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
 				);
 
 			public:
-				using value_type = Y_(T::*) (argument_t<Xs>...);
-				static constexpr value_type value = &T::template functor<Is...>;
+				using value_type = Y_(T_::*) (argument_t<Xs>...);
+				static constexpr value_type value = &T_::template functor<Is...>;
 
 			};
 			template <auto ...Is>
 			requires
-				XTAL_REQ_(XTAL_ANY_(T const &).
+				XTAL_REQ_(XTAL_ANY_(T_ const &).
 					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
 				)
 			class type<Is...>
 			{
-				using Y_ = decltype(XTAL_ANY_(T const &).
+				using Y_ = decltype(XTAL_ANY_(T_ const &).
 					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
 				);
 
 			public:
-				using value_type = Y_(T::*) (argument_t<Xs>...) const;
-				static constexpr value_type value = &T::template functor<Is...>;
+				using value_type = Y_(T_::*) (argument_t<Xs>...) const;
+				static constexpr value_type value = &T_::template functor<Is...>;
 
 			};
 		};
 
 	private:
 		template <class ...Xs>
-		using S_compound = typename S_::template compound<Xs...>;
+		struct bracket_ : flux::bracket<Xs...>
+		{
+			using subkind = bond::compose<void
+			,	defer<T_>
+			,	flux::bracket<Xs...>
+			>;
+			template <any_q R>
+			class subtype : public bond::compose_s<R, subkind>
+			{
+				using R_ = bond::compose_s<R, subkind>;
+				
+				using H0_ = typename R_::template head_t<nominal_t<0>>;
+				using H1_ = typename R_::template head_t<nominal_t<1>>;
+
+			public:// CONSTRUCT
+				using R_::R_;
+				///\
+				Initialize `slots` using the arguments supplied. \
+
+				XTAL_CON_(explicit) subtype(Xs &&...xs)
+				XTAL_0EX
+				:	subtype(T{}, XTAL_REF_(xs)...)
+				{}
+				XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
+				XTAL_0EX
+				:	R_(XTAL_REF_(t), H1_(XTAL_REF_(xs)...))
+				{}
+
+			public:// OPERATE
+				template <auto ...Is>
+				XTAL_DEF_(return,inline)
+				XTAL_REF functor(auto &&...xs)
+				XTAL_0EX
+				{
+					return R_::template functor<Is...>(XTAL_REF_(xs) ()...);
+				}
+
+			};
+		};
 
 	public:
 		///\
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
-		template <class ...Xs>
-		struct compound : compound<let_t<Xs>...>
-		{
-		};
 		template <class ...Xs> requires any_q<Xs...>
-		struct compound<Xs...>
+		struct bracket
 		{
-			using Xs_packed = typename S_compound<Xs...>::Xs_packed;
-			
-			using Y_result = _std::invoke_result_t<T, Xs...>;
-			using Y_return = iteratee_t<Y_result>;
-			
 			using subkind = bond::compose<void
-			,	defer<T>
-			,	S_compound<Xs...>
+			,	bracket_<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -161,22 +188,8 @@ struct define
 
 			public:// CONSTRUCT
 				using R_::R_;
-				///\
-				Initializes `slots` using the arguments supplied. \
-
-				XTAL_CON_(explicit) subtype(Xs &&...xs)
-				XTAL_0EX
-				:	subtype(T{}, XTAL_REF_(xs)...)
-				{}
-				XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
-				XTAL_0EX
-				//\
-				:	R_(XTAL_REF_(t), Xs_packed(process::let_f(XTAL_REF_(xs))...))
-				:	R_(XTAL_REF_(t), Xs_packed(XTAL_REF_(xs)...))
-				{}
 
 			public:// OPERATE
-				using R_::self;
 				using R_::slots;
 				using R_::functor;
 				///\
@@ -206,21 +219,14 @@ struct refine
 	{
 		using S_ = bond::compose_s<S, subkind>;
 	
-		template <class ...Xs>
-		using S_compound = typename S_::template compound<Xs...>;
-
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// ACCESS
-		using S_::self;
-
 	public:// BIND
-
 		template <class ...Xs>
 		struct binding
 		{
-			using subkind = confined<S_compound<Xs...>>;
+			using subkind = confined<typename S_::template bracket<let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, subkind>;
@@ -229,22 +235,18 @@ struct refine
 		};
 		template <class ...Xs>
 		XTAL_USE binding_t = typename binding<Xs...>::type;
-		/*/
+
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET     binding_f(auto &&...xs)
 		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(xs)...))
-		/*/
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET     binding_f(                  auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(              process::let_f(XTAL_REF_(xs))...))
-		/***/
+
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET     binding_f(is_q<T> auto &&t, auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...))
+		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...))
 		
 		XTAL_TO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET bind(Xs &&...xs), binding_f(self(), XTAL_REF_(xs)...)
+		XTAL_LET bind(Xs &&...xs), binding_f(S_::self(), XTAL_REF_(xs)...)
 		)
 
 	};

@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./bracket.cc"
 #include "./route.cc"
 #include "./tab.cc"
 #include "./tag.cc"

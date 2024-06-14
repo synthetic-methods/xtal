@@ -1,4 +1,5 @@
 #include "./any.hh"
+#include "./bracket.hh"
 #include "./route.hh"
 #include "./tab.hh"
 #include "./tag.hh"

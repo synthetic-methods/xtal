@@ -40,14 +40,11 @@ struct phasor<K_data[N_data], As...>
 	,	resource::biased<nominal_t<1>>
 	>;
 	
-	template <class S>
+	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-
-	protected:
-		using typename S_::T_self;
-		using typename S_::U_head;
+		using U_ = typename S_::U_head;
 
 	public:// ACCESS
 		using S_::S_;
@@ -62,7 +59,7 @@ struct phasor<K_data[N_data], As...>
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
-		XTAL_DO4_(XTAL_CVN_(implicit) U_head(), {return head();})
+		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
 		
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET bias()
