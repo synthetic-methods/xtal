@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class   ..._s>	XTAL_TYP circular;
 template <class   ..._s>	XTAL_USE circular_t = typename circular<_s...>::type;
-template <class   ...Ts>	XTAL_REQ circular_q = bond::head_tag_p<circular_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ circular_q = bond::any_tag_p<circular_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET circular_f(auto &&...oo)
@@ -25,7 +25,7 @@ XTAL_0EX {return _detail::initialize<circular_t>::template via<V>(XTAL_REF_(oo).
 Extends `linear` as a fixed-point fractional/circular value. \
 \
 Allows floating-point construction via `std::initializer_list`, \
-and access to the floating-point value via `operator()`/`operator(size_t)`. \
+and access to the floating-point value via `operator()`/`operator(size_type)`. \
 \
 Implements truncated floating-point multiplication (affecting all elements) \
 and addition (affecting only the initial element). \
@@ -81,7 +81,7 @@ struct circular<A>
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CON_(explicit) homotype(size_t const n)
+		XTAL_CON_(explicit) homotype(size_type const n)
 		XTAL_0EX
 		:	T_(n)
 		{}
@@ -117,8 +117,8 @@ struct circular<A>
 
 		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() *=   t )
 		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX XTAL_REQ_TO_(twin() /=   t )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
-		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
+		XTAL_DEF_(inline)        XTAL_RET operator *=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() *= T(t))
+		XTAL_DEF_(inline)        XTAL_RET operator /=(embrace_t<U_data> t) XTAL_0EX XTAL_REQ_TO_(self() /= T(t))
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (number_q auto const &f)
@@ -130,8 +130,8 @@ struct circular<A>
 		XTAL_LET operator *= (real_number_q auto const &f)
 		XTAL_0EX -> T &
 		{
-			size_t constexpr M_bias = _op::N_width >> 3;
-			size_t constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
+			size_type constexpr M_bias = _op::N_width >> 3;
+			size_type constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
 			auto [m, n] = _op::scientific_f((U_alpha) f);
 			auto &s = reinterpret_cast<linear_t<U_delta[N_data]> &>(self());
 			m >>= n - M_size;

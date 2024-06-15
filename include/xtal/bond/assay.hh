@@ -51,7 +51,7 @@ Defines the limits of a bit-field. \
 template <int N_width>
 struct assay
 {
-	template <size_t N_widen=1>
+	template <size_type N_widen=1>
 	using semikind = _detail::assay<N_widen*N_width>;
 
 	template <class S>

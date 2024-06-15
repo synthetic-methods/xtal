@@ -53,7 +53,7 @@ namespace _xtd
 #else
 	template <class T, class S>
 	XTAL_DEF_(inline,static)
-	XTAL_REF bit_cast(S const &s)
+	XTAL_RET bit_cast(S const &s)
 	XTAL_0FN
 	{
 		static_assert(is_trivially_copyable_v<T>);
@@ -74,7 +74,7 @@ namespace _xtd::ranges::views
 	using namespace ::ranges::views;
 
 	XTAL_DEF_(inline,static)
-	XTAL_REF zip_transform(auto &&...oo)
+	XTAL_RET zip_transform(auto &&...oo)
 	XTAL_0EX
 	{
 		return zip_with(XTAL_REF_(oo)...);
@@ -89,16 +89,15 @@ namespace _xtd::ranges::views
 //\
 Standard...
 
-XTAL_USE null_t = _entail:: null_t;
-XTAL_USE unit_t = _entail:: unit_t;
-XTAL_USE sign_t = _entail:: sign_t;
-XTAL_USE byte_t = _entail:: byte_t;
-XTAL_USE size_t = _entail:: size_t;
-XTAL_USE size_s = _entail:: size_s;
-XTAL_USE real_s = _entail:: real_s;
+XTAL_USE     null_type = _entail::     null_type;
+XTAL_USE     unit_type = _entail::     unit_type;
+XTAL_USE     sign_type = _entail::     sign_type;
+XTAL_USE     real_type = _entail::     real_type;
+XTAL_USE     size_type = _entail::     size_type;
+XTAL_USE integral_type = _entail:: integral_type;
 
-static constexpr size_t size_0 = _entail:: size_0;
-static constexpr size_t size_1 = _entail:: size_1;
+static constexpr size_type size_0 = _entail:: size_0;
+static constexpr size_type size_1 = _entail:: size_1;
 
 
 template <auto    N, auto  ...Ms>	XTAL_REQ      exclusive_q = _entail::exclusive_q<N, Ms... >;
@@ -174,9 +173,9 @@ template <class   ...Ts>	XTAL_REQ     integral_q = (...and  _entail::    integra
 template <class   ...Ts>	XTAL_REQ     terminal_q = (...and  _entail::    terminal_q<Ts>);
 template <class   ...Ts>	XTAL_REQ      liminal_q = (...and  _entail::     liminal_q<Ts>);
 template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal_s<T >;
-template <liminal_q  T >	XTAL_USE  semiliminal_s = typename _entail:: semiliminal_s<T >;
+template <liminal_q  T >	XTAL_USE superliminal_s = typename _entail::superliminal_s<T >;
 
-template <size_t     N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
+template <size_type     N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
 template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
 template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;
 
@@ -243,8 +242,8 @@ template <class         T >	XTAL_USE        iterated_t =	    typename _entail:: 
 template <class         T >	XTAL_USE        iterator_t =	    typename _entail::     iterator  <T >::type;
 template <class         T >	XTAL_USE        iteratee_t =	    typename _entail::     iteratee  <T >::type;
 template <class         T >	XTAL_USE        distance_t =	             _entail::     distance_t<T > ;
-template <class   T=size_s>	XTAL_USE         counted_t =	    typename _entail::      counted  <T >::type;
-template <class   T=size_s>	XTAL_USE         counter_t =	    typename _entail::      counter  <T >::type;
+template <class T=integral_type>	XTAL_USE         counted_t =	    typename _entail::      counted  <T >::type;
+template <class T=integral_type>	XTAL_USE         counter_t =	    typename _entail::      counter  <T >::type;
 
 template <class      ...Ts>	XTAL_REQ        interval_q =	    (...and  _entail::     interval_q<Ts>);
 template <class      ...Ts>	XTAL_REQ        iteratee_q =	    (...and  _entail::     iteratee_q<Ts>);
@@ -278,24 +277,24 @@ template <class   ...Ts>	XTAL_REQ    complex_number_q =	    (...and  _entail::  
 template <class   ...Ts>	XTAL_REQ   integral_number_q =	    (...and  _entail:: integral_number_q<Ts>);
 
 
-template <size_t N, class T, class U=T>	XTAL_REQ multiplicative_group_p = _entail:: multiplicative_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ       additive_group_p = _entail::       additive_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ       discrete_group_p = _entail::       discrete_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ       quotient_group_p = _entail::       quotient_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ       integral_group_p = _entail::       integral_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ multiplicative_group_p = _entail:: multiplicative_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       additive_group_p = _entail::       additive_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       discrete_group_p = _entail::       discrete_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       quotient_group_p = _entail::       quotient_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       integral_group_p = _entail::       integral_group_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_REQ     contiguous_group_p = _entail::     contiguous_group_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ     contiguous_field_p = _entail::     contiguous_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ     continuous_field_p = _entail::     continuous_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ        complex_field_p = _entail::        complex_field_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ        simplex_field_p = _entail::        simplex_field_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ     contiguous_group_p = _entail::     contiguous_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ     contiguous_field_p = _entail::     contiguous_field_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ     continuous_field_p = _entail::     continuous_field_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ        complex_field_p = _entail::        complex_field_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ        simplex_field_p = _entail::        simplex_field_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_REQ      boolean_lattice_p = _entail::      boolean_lattice_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ       binary_lattice_p = _entail::       binary_lattice_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ      boolean_lattice_p = _entail::      boolean_lattice_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       binary_lattice_p = _entail::       binary_lattice_p<N, T, U>;
 
-template <size_t N, class T, class U=T>	XTAL_REQ           inequality_p = _entail::           inequality_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ             equality_p = _entail::             equality_p<N, T, U>;
-template <size_t N, class T, class U=T>	XTAL_REQ              quality_p = _entail::              quality_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ           inequality_p = _entail::           inequality_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ             equality_p = _entail::             equality_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ              quality_p = _entail::              quality_p<N, T, U>;
 
 
 template <class   ...Ts>	XTAL_REQ multiplicative_group_q = (...and multiplicative_group_p<0, Ts>);
@@ -329,8 +328,8 @@ static_assert(complex_field_q<_std::complex<float>>);
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto    ...Ns>	XTAL_USE   lateral_t = typename _entail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type;
-template <auto    ...Ns>	XTAL_LET   lateral_n =          _entail::lateral<common_t<XTAL_TYP_(Ns)...>, Ns...>::type::value;
+template <auto    ...Ns>	XTAL_USE   lateral_t = typename _entail::lateral<common_t<XTAL_ALL_(Ns)...>, Ns...>::type;
+template <auto    ...Ns>	XTAL_LET   lateral_n =          _entail::lateral<common_t<XTAL_ALL_(Ns)...>, Ns...>::type::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////

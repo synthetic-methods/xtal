@@ -13,8 +13,8 @@ namespace xtal::algebra
 
 template <class           ..._s>	XTAL_TYP serial;
 template <class           ..._s>	XTAL_USE serial_t = typename serial<_s...>::type;
-template <class           ...Ts>	XTAL_REQ serial_q = bond::head_tag_p<serial_t, Ts...>;
-template <size_t N, class ...Ts>	XTAL_REQ serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
+template <class           ...Ts>	XTAL_REQ serial_q = bond::any_tag_p<serial_t, Ts...>;
+template <size_type N, class ...Ts>	XTAL_REQ serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET serial_f(auto &&...oo)
@@ -29,9 +29,6 @@ template <column_q A>
 struct serial<A>
 {
 	using _op = bond::operate<A>;
-	using U_delta = typename _op::delta_t;
-	using U_sigma = typename _op::sigma_t;
-	using U_alpha = typename _op::alpha_t;
 	
 	template <class T>
 	using allotype = typename lattice<A>::template homotype<T>;
@@ -65,9 +62,9 @@ struct serial<A>
 		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX {return twin() *=   t ;}
 		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX {return twin() +=   t ;}
 		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX {return twin() -=   t ;}
-		XTAL_DEF_(inline)        XTAL_REF operator  *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_REF operator  +=(embrace_t<U_data> t) XTAL_0EX {return self() += T(t);}
-		XTAL_DEF_(inline)        XTAL_REF operator  -=(embrace_t<U_data> t) XTAL_0EX {return self() -= T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator  *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator  +=(embrace_t<U_data> t) XTAL_0EX {return self() += T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator  -=(embrace_t<U_data> t) XTAL_0EX {return self() -= T(t);}
 
 		///\
 		Multiplication by linear convolution, truncated by `N_data`. \
@@ -90,55 +87,35 @@ struct serial<A>
 		}
 
 	//	Vector addition:
-		/**/
-		XTAL_DEF_(inline)
-		XTAL_LET operator +=(T const &t)
-		XTAL_0EX -> T &
-		{
-			auto &s = self();
 
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {auto &s = self(); ((get<I>(s) += get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
-			
-			return s;
+		XTAL_DEF_(inline)
+		XTAL_RET operator +=(T const &t)
+		XTAL_0EX
+		{
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator -=(T const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator -=(T const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {auto &s = self(); ((get<I>(s) -= get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
-			
-			return s;
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
-		/***/
+
 		XTAL_DEF_(inline)
-		XTAL_LET operator +=(subarray_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator +=(subarray_q<N_data> auto const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {auto &s = self(); ((get<I>(s) += get<I>(t)),...);}
-			(bond::seek_s<count_f(t)>{});
-			
-			return s;
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator -=(subarray_q<N_data> auto const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {auto &s = self(); ((get<I>(s) -= get<I>(t)),...);}
-			(bond::seek_s<count_f(t)>{});
-			
-			return s;
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
 		///\

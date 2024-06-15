@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP stored;
 template <typename ..._s> XTAL_USE stored_t = confined_t<stored<_s...>>;
-template <typename ..._s> XTAL_REQ stored_q = bond::head_tag_p<stored, _s...>;
+template <typename ..._s> XTAL_REQ stored_q = bond::any_tag_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,8 +38,8 @@ struct stored<A>
 
 	};
 };
-template <size_t N>
-struct stored<unit_t[N]>
+template <size_type N>
+struct stored<unit_type[N]>
 {
 	using subkind = bond::tag<stored>;
 	
@@ -57,7 +57,7 @@ struct stored<unit_t[N]>
 	};
 };
 template <unsigned N>
-struct stored<null_t[N]>
+struct stored<null_type[N]>
 {
 	using subkind = bond::tag<stored>;
 	
@@ -94,7 +94,7 @@ struct stored<A>
 };
 //template <nominal_q U>
 //struct stored<U>
-//:	stored<null_t[(unsigned) U::value]>
+//:	stored<null_type[(unsigned) U::value]>
 //{
 //};
 template <>

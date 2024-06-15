@@ -24,11 +24,6 @@ struct define
 	{
 		using S_ = S;
 
-	protected:// TYPE
-		using T_self = T;
-		using U_self = subtype;
-		using U_head = void;
-
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -45,7 +40,7 @@ struct define
 	public:
 		XTAL_DO4_(template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
-		XTAL_REF self(auto &&...oo),
+		XTAL_RET self(auto &&...oo),
 		{
 			auto  x = self<Y>();
 			auto &y = self<Y>(); y.~ Y();
@@ -53,20 +48,20 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
 		
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
-		XTAL_REF twin() XTAL_0FX {return static_cast<Y>(self());}
+		XTAL_RET twin() XTAL_0FX {return static_cast<Y>(self());}
 
 		///\returns `this` as the `define`d supertype. \
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF then(), self<S_>())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET tail(), self<S>())
 
 		template <typename ...Is>
 		XTAL_USE head_t = void;
@@ -75,7 +70,7 @@ struct define
 
 
 	};
-	using type = subtype<unit_t>;
+	using type = subtype<unit_type>;
 
 };
 template <class T>

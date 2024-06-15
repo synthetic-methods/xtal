@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP example;
 template <typename ..._s> XTAL_USE example_t = confined_t<example<_s...>>;
-template <typename ..._s> XTAL_REQ example_q = bond::head_tag_p<example, _s...>;
+template <typename ..._s> XTAL_REQ example_q = bond::any_tag_p<example, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ struct example
 	public:
 		using S_::S_;
 		
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF sample(), S_::head())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET sample(), S_::head())
 
 	};
 };

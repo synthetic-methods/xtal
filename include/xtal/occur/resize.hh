@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_t> XTAL_TYP resize;
-template <class U=size_t> XTAL_USE resize_t = confined_t<resize<U>>;
-template <typename ..._s> XTAL_REQ resize_q = bond::head_tag_p<resize, _s...>;
+template <class U=size_type> XTAL_TYP resize;
+template <class U=size_type> XTAL_USE resize_t = confined_t<resize<U>>;
+template <typename ..._s> XTAL_REQ resize_q = bond::any_tag_p<resize, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET resize_f(auto &&w)
 XTAL_0EX
@@ -34,7 +34,7 @@ struct resize
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using T_ = typename S_::T_self;
+		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT
 		using S_::S_;
@@ -44,8 +44,8 @@ struct resize
 		using S_::head;
 
 		using size_type = U;
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF empty(), 0 == size())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET empty(), 0 == size())
 
 	};
 };
@@ -54,9 +54,9 @@ struct resize<U> : resize<count_t<U>>
 {
 };
 
-static_assert(not bond::twin_tab_q<resize_t<size_t>, resize_t<size_t>>);
-static_assert(    bond::twin_tab_q<resize_t<size_t>, resize_t<int   >>);
-static_assert(    bond::self_tab_q<resize_t<size_t>, resize_t<size_t>>);
+static_assert(not bond::twin_tab_q<resize_t<size_type>, resize_t<size_type>>);
+static_assert(    bond::twin_tab_q<resize_t<size_type>, resize_t<int   >>);
+static_assert(    bond::self_tab_q<resize_t<size_type>, resize_t<size_type>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

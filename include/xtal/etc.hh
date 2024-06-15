@@ -43,13 +43,12 @@
 #define XTAL_STD ((__cplusplus/100)%100)
 #define XTAL_STD_IEC 60559
 
-#define XTAL_STD_null_t ::std::nullptr_t
-#define XTAL_STD_unit_t ::std::monostate
-#define XTAL_STD_byte_t ::std::byte
-#define XTAL_STD_sign_t ::std::int_fast8_t
-#define XTAL_STD_size_t ::std::size_t
-#define XTAL_STD_size_s ::std::ptrdiff_t
-#define XTAL_STD_real_s float
+#define XTAL_STD_null_type ::std::nullptr_t
+#define XTAL_STD_unit_type ::std::monostate
+#define XTAL_STD_sign_type int
+#define XTAL_STD_real_type float
+#define XTAL_STD_size_type ::std::size_t
+#define XTAL_STD_integral_type ::std::ptrdiff_t
 
 
 #if     defined(__cacheline_aligned)
@@ -127,14 +126,19 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_REQ                                   concept
 #define XTAL_USE                                   using
 #define XTAL_TYP                                   struct
-#define XTAL_TYP_(...)     ::std::  remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_ANY_(...)     ::std::                 declval <__VA_ARGS__>()
-#define XTAL_MOV_(...)     ::std::                 move    (__VA_ARGS__)
+#define XTAL_REQ                                   concept
+
+template <class T0, class T1>
+concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref_t<T1>>;
+#define XTAL_ARG_(...)                                              XTAL_ARG<__VA_ARGS__> auto
+#define XTAL_ANY_(...)                                       ::std::declval <__VA_ARGS__>()
+#define XTAL_ALL_(...)                        ::std::remove_cvref_t<decltype(__VA_ARGS__)>
+
+#define XTAL_MOV_(...)                                           ::std::move(__VA_ARGS__)
 #define XTAL_REF_(...)                static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
-#define XTAL_REF                         constexpr decltype(auto)
+#define XTAL_RET                         constexpr decltype(auto)
 #define XTAL_LET                         constexpr          auto
 #define XTAL_SET                  static constexpr          auto
 
@@ -228,10 +232,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_t)
-#define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_t)
-#define XTAL_FLX                             XTAL_STD_(sign_t)
-#define XTAL_FNX_(...)            [=, this] (XTAL_STD_(sign_t) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
+//efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_type)
+#define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_type)
+#define XTAL_FLX                             XTAL_STD_(sign_type)
+#define XTAL_FNX_(...)            [=, this] (XTAL_STD_(sign_type) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 #include "./any.hh"// testing...
 
 #include "../occur/all.hh"
-
+#include "../flux/mark.hh"
 
 
 XTAL_ENV_(push)
@@ -28,7 +28,7 @@ struct subtract
 
 		template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(auto &&x, auto &&y)
+		XTAL_RET functor(auto &&x, auto &&y)
 		XTAL_0FX
 		{
 			return XTAL_REF_(x) - XTAL_REF_(y);
@@ -99,8 +99,8 @@ TAG_("process", "attach")
 	{
 		subtract_t::binding_t<L01, L10> op{};
 
-		op <<= cell::mark_s<level_t>(0b01, level_t{9});
-		op <<= cell::mark_s<level_t>(0b10, level_t{1});
+		op <<= flux::mark_s<level_t>(0b01, level_t{9});
+		op <<= flux::mark_s<level_t>(0b10, level_t{1});
 		TRUE_(8 == op());
 
 		op <<= nominal_t<0>{} << level_t{6};

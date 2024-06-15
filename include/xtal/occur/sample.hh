@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_t> XTAL_TYP sample;
-template <class U=size_t> XTAL_USE sample_t = confined_t<sample<U>>;
-template <typename ..._s> XTAL_REQ sample_q = bond::head_tag_p<sample, _s...>;
+template <class U=size_type> XTAL_TYP sample;
+template <class U=size_type> XTAL_USE sample_t = confined_t<sample<U>>;
+template <typename ..._s> XTAL_REQ sample_q = bond::any_tag_p<sample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ public:
 		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF   rate(), get<0>(S_::head()))
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF period(), get<1>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET   rate(), get<0>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET period(), get<1>(S_::head()))
 
 	};
 };

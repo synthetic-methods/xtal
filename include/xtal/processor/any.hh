@@ -66,7 +66,7 @@ struct defer<U>
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(),
+		XTAL_RET functor(),
 		{
 			auto &v = S_::template head<V_render>().view();
 			return S_::subhead(v);
@@ -103,7 +103,7 @@ struct defer<U>
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(iterable_q auto &&...xs),
+		XTAL_RET functor(iterable_q auto &&...xs),
 		{
 			return iterative_f(S_::head().
 				template refunctor<argument_t<decltype(xs)>...>(Is...)

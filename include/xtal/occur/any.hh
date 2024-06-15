@@ -31,7 +31,7 @@ struct define
 	public:
 		using S_::S_;
 
-		XTAL_CON_(explicit) subtype(size_t u)
+		XTAL_CON_(explicit) subtype(size_type u)
 		XTAL_0EX
 		{
 			assert(0 == u);
@@ -66,7 +66,6 @@ struct define
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
-				using K_ = typename R_::template head_t<>;
 			
 			public:
 				using R_::R_;
@@ -80,7 +79,7 @@ struct define
 
 				XTAL_TO4_(template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_REF refunctor(nominal_q auto const ...Is),
+				XTAL_RET refunctor(nominal_q auto const ...Is),
 					//\
 					_std::bind_front(defunctor<Xs...>(Is...), &self())
 					[this, Is...] (auto &&...xs) XTAL_0FN_((self().*defunctor<Xs...>(Is...)) (XTAL_REF_(xs)...))
@@ -89,18 +88,18 @@ struct define
 			protected:
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_REF defunctor(nominal_q auto const &...Is)
+				XTAL_RET defunctor(nominal_q auto const &...Is)
 				XTAL_0FX
 				{
 					return defunctor(figure<Xs...>::template type<Is...>::value);
 				}
 				template <class A>
 				XTAL_DEF_(return,inline)
-				XTAL_REF defunctor(_std::array<A, T::size()> const &value)
+				XTAL_RET defunctor(_std::array<A, T::size()> const &value)
 				XTAL_0FX
 				{
 					static_assert(1 == bond::operating::bit_count_f(T::size()));
-					size_t i = head(); i &= (T::size() - 1);
+					size_type i = head(); i &= (T::size() - 1);
 					return R_::defunctor(value[i]);
 				}
 
@@ -110,7 +109,7 @@ struct define
 					template <auto ...Is>
 					class type
 					{
-						template <size_t ...I>
+						template <size_type ...I>
 						XTAL_DEF_(static)
 						XTAL_LET enumerate_f(bond::seek_t<I...>)
 						XTAL_0EX

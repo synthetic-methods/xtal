@@ -26,7 +26,7 @@ XTAL_REQ invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
 XTAL_DEF_(return,inline)
-XTAL_REF devolved_f(auto &t)
+XTAL_RET devolved_f(auto &t)
 XTAL_0EX
 {
 	using T = _std::remove_reference_t<decltype(t)>;
@@ -78,23 +78,23 @@ If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
 template <class        ...Us>	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
-template <class U, size_t N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           array<U,  N>) XTAL_0EX {size_t n =        N; return n;}
-template <class U, class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::            pair<U,  V>) XTAL_0EX {size_t n =        2; return n;}
-template <class U           > XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U>  t ) XTAL_0EX {size_t n = t.size(); return n;}
+template <class U, size_type N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           array<U,  N>) XTAL_0EX {size_type n =        N; return n;}
+template <class U, class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::            pair<U,  V>) XTAL_0EX {size_type n =        2; return n;}
+template <class U           > XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U>  t ) XTAL_0EX {size_type n = t.size(); return n;}
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &t)
-XTAL_0EX -> size_t
+XTAL_0EX -> size_type
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(t.size()))
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(t))
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_t>(0))
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(t.size()))
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(t))
+	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(0))
 }
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &...ts)
-XTAL_0EX -> size_t
+XTAL_0EX -> size_type
 {
-	return _std::min<size_t>({(count_f(ts) - size_1)...}) + size_1;
+	return _std::min<size_type>({(count_f(ts) - size_1)...}) + size_1;
 }
 XTAL_DEF_(return,inline,static) XTAL_LET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take(count_f(ts...));}
 XTAL_DEF_(return,inline,static) XTAL_LET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop(count_f(ts...));}
@@ -126,9 +126,9 @@ template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs
 ///\note\
 To be extended by the host to transparently lift `f` when `xs...` are vectorized. \
 
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_REF operative_f(F &&f, Xs &&...xs) XTAL_0EX {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_REF operative_f(       Xs &&...xs) XTAL_0EX {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
-template <class F             > XTAL_DEF_(inline) XTAL_REF operative_f(F &&f            ) XTAL_0EX {return         [] XTAL_1FN_(operative_f)         ;}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_RET operative_f(F &&f, Xs &&...xs) XTAL_0EX {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_RET operative_f(       Xs &&...xs) XTAL_0EX {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+template <class F             > XTAL_DEF_(inline) XTAL_RET operative_f(F &&f            ) XTAL_0EX {return         [] XTAL_1FN_(operative_f)         ;}
 /***/
 
 
@@ -154,14 +154,14 @@ Arithmetic...
 /*/
 template <template <class> class Y, class ...Xs>
 XTAL_DEF_(return,inline)
-XTAL_REF construxion_f(Xs &&...xs)
+XTAL_RET construxion_f(Xs &&...xs)
 XTAL_0EX
 {
 	using W = common_t<Xs...>;
 	return operative_f<Y<W>>(XTAL_REF_(xs)...);
 }
 XTAL_DEF_(return,inline)
-XTAL_REF complexion_f(auto &&...xs)
+XTAL_RET complexion_f(auto &&...xs)
 XTAL_0EX
 {
 	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
@@ -219,7 +219,7 @@ class
 {
 public:
 	XTAL_DEF_(inline)
-	XTAL_REF operator () (auto &&...xs)
+	XTAL_RET operator () (auto &&...xs)
 	{
 		if constexpr (0 < sizeof...(xs)) {
 			return (XTAL_REF_(xs), ...);
@@ -238,7 +238,7 @@ class
 	XTAL_LET print_item(auto &&x)
 	XTAL_0FX -> void
 	{
-		using W = XTAL_TYP_(x);
+		using W = XTAL_ALL_(x);
 		if constexpr (::std::is_floating_point_v<W>) {
 			::std::cout.precision(17);
 		}
@@ -249,10 +249,10 @@ class
 		}
 		::std::cout << XTAL_REF_(x) << '\t';
 	}
-	XTAL_REF put(auto &&x)
+	XTAL_RET put(auto &&x)
 	XTAL_0FX
 	{
-		using W = XTAL_TYP_(x);
+		using W = XTAL_ALL_(x);
 		if constexpr (_xtd::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
 			print_list(XTAL_REF_(x));
 		}
@@ -263,7 +263,7 @@ class
 	}
 
 public:
-	XTAL_REF operator () (auto &&...xs)
+	XTAL_RET operator () (auto &&...xs)
 	XTAL_0FX
 	{
 		if constexpr (0 < sizeof...(xs)) {

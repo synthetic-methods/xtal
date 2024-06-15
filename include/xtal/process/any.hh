@@ -51,7 +51,7 @@ struct define
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(auto &&...xs)
+		XTAL_RET functor(auto &&...xs)
 		XTAL_0FX
 		{
 			return T::template function<Is...>(XTAL_REF_(xs)...);
@@ -62,7 +62,7 @@ struct define
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_REF refunctor(nominal_q auto const ...Is),
+		XTAL_RET refunctor(nominal_q auto const ...Is),
 		{
 			if constexpr (0 == sizeof...(Is)) {
 				return [this] XTAL_1FN_(S_::self().functor);
@@ -75,13 +75,13 @@ struct define
 	protected:
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_REF defunctor(nominal_q auto const &...Is)
+		XTAL_RET defunctor(nominal_q auto const &...Is)
 		XTAL_0FX
 		{
 			return defunctor(figure<Xs...>::template type<Is...>::value);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF defunctor(auto const &value)
+		XTAL_RET defunctor(auto const &value)
 		XTAL_0FX
 		{
 			return value;
@@ -162,7 +162,7 @@ struct define
 			public:// OPERATE
 				template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_REF functor(auto &&...xs)
+				XTAL_RET functor(auto &&...xs)
 				XTAL_0EX
 				{
 					return R_::template functor<Is...>(XTAL_REF_(xs) ()...);
@@ -197,7 +197,7 @@ struct define
 
 				template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_REF functor()
+				XTAL_RET functor()
 				XTAL_0EX
 				{
 					return slots().apply([this] XTAL_1FN_(R_::template functor<Is...>));
@@ -276,7 +276,7 @@ struct defer
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(auto &&...xs),
+		XTAL_RET functor(auto &&...xs),
 		{
 			XTAL_IF0
 			XTAL_0IF (    any_q<U1>) {return functor_<Is...>(S_::template functor <Is...>(XTAL_REF_(xs)...));}
@@ -284,7 +284,7 @@ struct defer
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
-		XTAL_REF function(auto &&...xs)
+		XTAL_RET function(auto &&...xs)
 		XTAL_0EX
 		{
 			XTAL_IF0
@@ -296,7 +296,7 @@ struct defer
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor_(auto &&...xs),
+		XTAL_RET functor_(auto &&...xs),
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
@@ -305,7 +305,7 @@ struct defer
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
-		XTAL_REF function_(auto &&...xs)
+		XTAL_RET function_(auto &&...xs)
 		XTAL_0EX
 		{
 			XTAL_IF0

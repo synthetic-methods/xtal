@@ -28,7 +28,7 @@ whereby both pure and stateful `process`es are converted to `processor`s in orde
 	struct Mix : process::confine_t<Mix>
 	{
 	   template <auto...>
-	   XTAL_REF functor(auto &&...xs)
+	   XTAL_RET functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0);
 	   }
@@ -60,7 +60,7 @@ The value of an attribute is type-indexed on `this`, and can be read either by e
 
 	struct Mix : process::confine_t<Mix, Active::template attach>
 	{
-	   XTAL_REF functor(auto &&...xs)
+	   XTAL_RET functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + 0)*Active(*this);
 	   // return (XTAL_REF_(xs) + ... + 0)*this->template head<Active>();
@@ -77,7 +77,7 @@ Templated parameters can be bound using `dispatch` to build the `vtable` require
 	>
 	{
 	   template <auto offset, auto active>
-	   XTAL_REF functor(auto &&...xs)
+	   XTAL_RET functor(auto &&...xs)
 	   {
 	      return (XTAL_REF_(xs) + ... + offset)*active;
 	   }
@@ -178,8 +178,8 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   template <class S>
 	   class subtype
 	   {
-	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0FX {return static_cast<T const &>(*this);}
-	      XTAL_DEF_(return,inline) XTAL_REF self() XTAL_0EX {return static_cast<T       &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX {return static_cast<T const &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX {return static_cast<T       &>(*this);}
 
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept...
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept...

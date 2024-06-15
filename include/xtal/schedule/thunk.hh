@@ -2,8 +2,8 @@
 #include "./any.hh"
 #include "../resource/spooled.hh"
 
-
-
+#include "../algebra/differential/linear.hh"
+#include "../flux/cue.hh"
 
 
 XTAL_ENV_(push)
@@ -29,10 +29,10 @@ struct thunk
 	public:
 		using S_::S_;
 
-		template <class X>
+		template <class ...Xs>
 		struct inqueue
 		{
-			using subkind = typename S_::template inqueue<X>;
+			using subkind = typename S_::template inqueue<Xs...>;
 
 			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -40,68 +40,186 @@ struct thunk
 				using R_ = bond::compose_s<R, subkind>;
 			
 			protected:
-				using typename R_::U_event;
 				using typename R_::V_delay;
-				using U_spool = typename S_::template spool_t<U_event>;
+				using typename R_::V_event;
+				using typename R_::U_event;
 
-			private:
-				using Q_delay = _std::numeric_limits<V_delay>;
+				XTAL_USE X_tip = typename U_event::cue_type;
+				XTAL_SET K_tip =          U_event::cue_size::value;
+				//\
+				using V_shuttle = X_tip;
+				using V_shuttle =      algebra::d_::linear_t<X_tip[K_tip]>;
+				using U_shuttle =                   flux::cue_s<V_shuttle>;
+				using U_spool   = typename S_::template spool_t<U_shuttle>;
 
-				U_spool u_spool{
-					(U_event) Q_delay::min(),
-					(U_event) Q_delay::max()
-				};
-				V_delay v_delay{};
-
-			public:
+			public:// CONSTRUCT
 			//	using R_::R_;
 				
 				XTAL_CO0_(subtype)
 				XTAL_CO1_(subtype)
 				XTAL_CO4_(subtype)
 
+			private:// ACCESS
+				using L_delay = _std::numeric_limits<V_delay>;
+
+				U_spool u_spool{
+					(U_shuttle) L_delay::min(),
+					(U_shuttle) L_delay::max()
+				};
+				U_shuttle u_shuttle{};
+
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(), u_shuttle.head())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(), u_shuttle.tail())
+
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(int i), u_spool.begin(i)->head())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(int i), u_spool.begin(i)->tail())
+
+			public:// OPERATE
+				using R_::self;
+
+				XTAL_LET functor()
+				XTAL_0EX
+				{
+					return u_spool.advance(head_()++ == head_(1))
+					->	tail().apply([this] XTAL_1FN_(functor));
+				}
+				XTAL_DEF_(return,inline)
+				XTAL_LET functor(V_shuttle &x, auto &&...)
+				XTAL_0EX
+				{
+					if constexpr (algebra::d_::linear_q<V_shuttle>) {
+						return x++(0);
+					}
+					else {
+						return x;
+					}
+				}
+
+			public:// *FLUX
+
+				XTAL_TNX efflux(auto &&...oo)
+				XTAL_0EX
+				{
+					compact_();
+
+					return R_::efflux(XTAL_REF_(oo)...);
+				}
+				XTAL_TNX influx(is_q<X_tip> auto &&o)
+				XTAL_0EX
+				{
+					compact_();
+					
+					if constexpr (is_q<U_shuttle, decltype(o)>) {
+						return then_(0).influx(XTAL_REF_(o));
+					}
+					else {
+						return then_(0).influx(V_shuttle{XTAL_REF_(o)});
+					}
+				}
+				using R_::influx;
+
+			public:// *FUSE_
+				
 				XTAL_TNX infuse(auto &&o)
 				XTAL_0EX
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(is_q<X> auto &&x)
+				XTAL_TNX infuse(flux::cue_q auto &&o)
 				XTAL_0EX
 				{
-					return u_spool.begin()->then().infuse(XTAL_REF_(x));
-				}
-				XTAL_TNX infuse(is_q<U_event> auto &&u)
-				XTAL_0EX
-				{
-					if (u_spool.empty() and u.head() < v_delay) {
-						(void) u_spool.abandon()->head(v_delay = 0);
+					if constexpr (is_q<U_shuttle, decltype(o)>) {
+						return shuttle_(XTAL_REF_(o));
 					}
-					return u.then() == u_spool.push(XTAL_REF_(u))->then();
+					else {
+						return shuffle_(XTAL_REF_(o));
+					}
 				}
+				
+			private:
+				//\
+				Enqueues the given message. \
 
-				XTAL_REF functor()
+				XTAL_TNX shuttle_(XTAL_ARG_(U_shuttle) &&o)
 				XTAL_0EX
 				{
-					return u_spool.advance(v_delay++ == u_spool.begin(1)->head())->then().head();
+					compact_(o);
+					u_spool.push(XTAL_REF_(o));
+					return 0;
 				}
+				XTAL_TNX shuttle_(V_delay v, auto &&...oo)
+				XTAL_0EX
+				{
+					return shuttle_(U_shuttle(v, V_shuttle{XTAL_REF_(oo)...}));
+				}
+				
+			private:
+				//\
+				Unpacks the given message, \
+				allowing for gradient calculation/requeueing. \
+				
+				XTAL_TNX shuffle_(flux::cue_q auto &&o, auto &&...oo)
+				XTAL_0EX
+				{
+					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
+				}
+				XTAL_TNX shuffle_(XTAL_ARG_(X_tip) &&x1, V_delay t1)
+				XTAL_0EX
+				{
+					return shuttle_(t1, x1);
+				}
+				XTAL_TNX shuffle_(XTAL_ARG_(X_tip) &&x1, V_delay t1, V_delay t0)
+				XTAL_0EX
+				{
+					if (t0 < t1) {
+						//\
+						auto const i0 = flux::cue_s<>(t0);
+						auto const i0 = U_shuttle(t0);
+						//\
+						auto const x0 = V_shuttle(u_spool.scan(i0)->tail()) (0);
+						auto const x0 = V_shuttle(_std::prev(u_spool.scan(i0))->tail()) (0);
+						auto const x_ = x1 - x0;
+						double const t_ = t1 - t0;
+						(void) shuttle_(t0, x0, x_/t_);
+					}
+					return shuffle_(x1, t1);
+				}
+			
+			private:
+				//\
+				Reset the play-head, \
+				clearing all processed events, \
+				bringing forward any future events. \
 
-				///\todo\
-				Use `U_tuple=serial` to provide an incremental Dual pair, \
-				replacing the first-derivative with the minimum w.r.t. the current difference. \
-				\
-				Should be straightforward to parameterize with e.g. `<N_ramping=0>`, \
-				respectively enabling/disabling if the goal has/hasn't been met. \
-
-				///\todo\
-				Once the phasor-type is settled, define a `functor` that updates only on reset. \
+				XTAL_LET compact_()//TODO: Filter somehow?
+				XTAL_0EX -> void
+				{
+					V_delay const v_delay = head_(); head_() = 0;
+					(void) u_spool.abandon(u_spool.empty());
+					for (auto &u : u_spool.span(-1)) {
+						u -= v_delay;
+					}
+				}
+				XTAL_LET compact_(V_delay const &v)
+				XTAL_0EX -> void
+				{
+					if (v < u_shuttle.head()) {
+						compact_();
+					}
+				}
+				XTAL_LET compact_(flux::cue_q auto const &o)
+				XTAL_0EX -> void
+				{
+					compact_(o.head());
+				}
 
 			};
 		};
 
 	};
 };
-template <class X>
-using thunk_t = confined_t<thunk<X>>;
+template <class ...Xs>
+using thunk_t = confined_t<thunk<Xs...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

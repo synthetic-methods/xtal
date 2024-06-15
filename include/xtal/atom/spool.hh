@@ -14,7 +14,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP spool;
 template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_REQ spool_q = bond::head_tag_p<spool_t, Ts...>;
+template <class ...Ts> XTAL_REQ spool_q = bond::any_tag_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,9 @@ struct spool<A>
 		U_count u_end   = 0;
 
 	public:
+		using value_type = A;
+
+	public:
 	//	using T_::T_;
 		
 		XTAL_CO0_(homotype)
@@ -63,7 +66,11 @@ struct spool<A>
 
 		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
 		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
-		
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET  peek(U_count n=0), *begin(n))
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET  span(U_count n), span(n, n))
+		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET  span(         ), span(0, 0))
+
 		XTAL_DEF_(inline)
 		XTAL_LET advance(U_count n=1)
 		XTAL_0EX -> U_point
@@ -150,6 +157,13 @@ struct spool<A>
 				return poke(_v, XTAL_MOV_(u));
 			}
 		}
+		XTAL_DEF_(inline)
+		XTAL_LET push(auto ..._s)
+		XTAL_0EX -> U_point
+		{
+			return push(U_value(XTAL_MOV_(_s)...));
+		}
+
 		XTAL_DEF_(inline)
 		XTAL_LET poke(U_point _v, U_value u)
 		XTAL_0EX -> U_point

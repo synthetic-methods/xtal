@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP series;
 template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
-template <class   ...Ts>	XTAL_REQ series_q = bond::head_tag_p<series_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ series_q = bond::any_tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET series_f(auto &&...oo)
@@ -70,7 +70,7 @@ struct series<A>
 			generate(XTAL_REF_(oo)...);
 		}
 
-		template <size_t N_limit=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
+		template <size_type N_limit=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
 		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX -> T &
 		{
@@ -93,7 +93,7 @@ struct series<A>
 		///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
 			filled by the corresponding powers of `u`. \
 
-		template <size_t N_limit=N_data, size_t N_index=0, size_s N_step=1, size_s N_skip=0>
+		template <size_type N_limit=N_data, size_type N_index=0, integral_type N_step=1, integral_type N_skip=0>
 		XTAL_LET generate(U_data const &u)
 		XTAL_0EX -> T &
 		{
@@ -167,10 +167,10 @@ struct series<A>
 		and `1 < that.size() <= this->size()`. \
 
 		template <int N_direction=1> requires complex_field_q<U_data> and sign_p<N_direction, 1>
-		XTAL_REF transform(isomorphic_q<T> auto &that)
+		XTAL_RET transform(isomorphic_q<T> auto &that)
 		XTAL_0FX
 		{
-			using Y = XTAL_TYP_(that);
+			using Y = XTAL_ALL_(that);
 			using X = typename Y::transverse::type;
 			using I = typename Y::difference_type;
 		
@@ -217,10 +217,10 @@ struct series<A>
 
 		template <int N_direction=1> requires sign_p<N_direction, 1>
 		XTAL_DEF_(return,inline)
-		XTAL_REF transformation(isomorphic_q<T> auto const &that)
+		XTAL_RET transformation(isomorphic_q<T> auto const &that)
 		XTAL_0FX
 		{
-			using Y = XTAL_TYP_(that);
+			using Y = XTAL_ALL_(that);
 			using X = typename Y::transverse::type;
 			X  x = reinterpret_cast<X const &>(that);
 			Y &y = reinterpret_cast<Y       &>(x);
@@ -232,7 +232,7 @@ struct series<A>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y>
-		XTAL_REF convolve(Y &lhs, Y rhs)
+		XTAL_RET convolve(Y &lhs, Y rhs)
 		XTAL_0FX
 		{
 			return transform<-1>(transform<1>(lhs) *= transform<1>(rhs));
@@ -242,7 +242,7 @@ struct series<A>
 
 		template <isomorphic_q<T> Y>
 		XTAL_DEF_(return,inline)
-		XTAL_REF convolution(Y const &lhs, Y const &rhs)
+		XTAL_RET convolution(Y const &lhs, Y const &rhs)
 		XTAL_0FX
 		{
 			auto lhs_ = lhs; convolve(lhs_, rhs); return lhs_;
@@ -254,7 +254,7 @@ struct series<A>
 		using T_::operator*=;
 
 		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=   w )
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
+		XTAL_DEF_(inline)        XTAL_RET operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *=(T const &t)

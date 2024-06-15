@@ -29,7 +29,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <                     typename ..._s> XTAL_TYP render;
 template <class W=counter_t<>, typename ..._s> XTAL_USE render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> XTAL_REQ render_q = bond::head_tag_p<render, _s...>;
+template <                     typename ..._s> XTAL_REQ render_q = bond::any_tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET     render_f(auto &&w)
@@ -65,8 +65,8 @@ struct surrender
 	class subtype : public S
 	{
 		using S_ = S;
-		using T_ = typename S_::T_self;
-		using U_ = typename S_::U_head;
+		using T_ = typename S_::self_type;
+		using U_ = typename S_::head_type;
 		using V_ = counter_t<U_>;
 	
 	public:
@@ -260,7 +260,7 @@ struct render<V>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using T_ = typename S_::T_self;
+		using T_ = typename S_::self_type;
 
 	public:
 	//	using S_::S_;
@@ -366,7 +366,7 @@ public:
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using T_ = typename S_::T_self;
+		using T_ = typename S_::self_type;
 
 	public:
 		using S_::S_;

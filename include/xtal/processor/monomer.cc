@@ -21,7 +21,7 @@ void monomer_zipping()
 	using T_alpha = _op::alpha_t;
 
 	using            U_data = T_alpha;
-	size_t constexpr U_size = 2;
+	size_type constexpr U_size = 2;
 
 	//\
 	using U_group  =  algebra::lattice_t<U_data[U_size]>;
@@ -180,7 +180,7 @@ void monomer_chaining__rvalue()
 	using T_sigma = typename bond::operating::sigma_t;
 	using T_alpha = typename bond::operating::alpha_t;
 
-	size_t constexpr N = 4;
+	size_type constexpr N = 4;
 	
 	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
@@ -210,7 +210,7 @@ void monomer_chaining__lvalue()
 	using T_sigma = typename bond::operating::sigma_t;
 	using T_alpha = typename bond::operating::alpha_t;
 
-	size_t constexpr N = 4;
+	size_type constexpr N = 4;
 
 	using namespace _xtd::ranges;
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
@@ -242,7 +242,7 @@ void monomer_chaining__shared()
 	using T_sigma = typename bond::operating::sigma_t;
 	using T_alpha = typename bond::operating::alpha_t;
 
-	size_t constexpr N = 4;
+	size_type constexpr N = 4;
 
 	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
@@ -261,7 +261,7 @@ void monomer_chaining__shared()
 
 	//\
 	yhs <<= occur::restep_f(50);
-	yhs <<= occur::restep_f((size_t) 50);
+	yhs <<= occur::restep_f((size_type) 50);
 	yhs <<= occur::resize_f(N);
 
 	yhs >>= occur::render_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));

@@ -1,5 +1,8 @@
 #include "./any.hh"
 #include "./bracket.hh"
+#include "./cue.hh"
+#include "./key.hh"
+#include "./mark.hh"
 #include "./route.hh"
 #include "./tab.hh"
 #include "./tag.hh"

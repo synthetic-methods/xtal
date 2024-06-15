@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../cell/mark.hh"
+
 
 
 
@@ -38,13 +38,13 @@ struct bracket
 		using S_::self;
 		using S_::head;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF slots(), head())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET slots(), head())
 		
-		XTAL_TO2_(template <size_t ...Ns>
+		XTAL_TO2_(template <size_type ...Ns>
 		XTAL_DEF_(return,inline)
-		XTAL_REF slot(), bond::pack_item_f<Ns...>(slots()))
+		XTAL_RET slot(), bond::pack_item_f<Ns...>(slots()))
 
-	public:// FLUXION
+	public:// *FLUX
 	//	using S_::influx;
 	//	using S_::efflux;
 
@@ -59,10 +59,10 @@ struct bracket
 		XTAL_0EX_TO_(XTAL_FNX_(S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...)))
 
 		///\note\
-		If prefixed by `null_t{}`, forwards the occur to all `slots`. \
+		If prefixed by `null_type{}`, forwards the occur to all `slots`. \
 
-		XTAL_TNX influx(null_t, auto &&...oo) XTAL_0EX_TO_(self().influx_push(XTAL_REF_(oo)...))
-		XTAL_TNX efflux(null_t, auto &&...oo) XTAL_0EX_TO_(self().efflux_pull(XTAL_REF_(oo)...))
+		XTAL_TNX influx(null_type, auto &&...oo) XTAL_0EX_TO_(self().influx_push(XTAL_REF_(oo)...))
+		XTAL_TNX efflux(null_type, auto &&...oo) XTAL_0EX_TO_(self().efflux_pull(XTAL_REF_(oo)...))
 
 		///\note\
 		If prefixed by `nominal_q`, forwards the occur to the `slot` specified. \

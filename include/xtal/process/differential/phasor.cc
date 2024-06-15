@@ -20,7 +20,7 @@ TAG_("phasor")
 	namespace a_ = algebra::differential;
 	namespace d_ = process::differential;
 	
-	using U_stored = resource::stored<unit_t[0x1000]>;
+	using U_stored = resource::stored<unit_type[0x1000]>;
 	using U_example = resource::example<>;
 
 	using _op = bond::operating;
@@ -37,8 +37,8 @@ TAG_("phasor")
 	using W_phi = bond::pack_row_t<_phi>;
 	using X_phi = a_::  circular_t<_phi>;
 	
-	using Y_chi = process::link_t<decltype(bond::pack_row_f), d_::phasor<_phi, resource::example<>>>;
-//	using Y_chi = process::link_t<decltype(bond::pack_row_f), d_::phasor<_phi>>;
+	using Y_chi = process::link_t<decltype([] XTAL_1FN_(bond::pack_row_f)), d_::phasor<_phi, resource::example<>>>;
+//	using Y_chi = process::link_t<decltype([] XTAL_1FN_(bond::pack_row_f)), d_::phasor<_phi>>;
 	using Y_phi = d_::phasor_t<_phi>;
 	using Y_psi = d_::phasor_t<_phi, U_example>;
 	//\
@@ -158,7 +158,7 @@ TAG_("phasor")
 		T_alpha x_d3 = _op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto  z_out = bond::pack_rowwise_f<2>(8, z_outs);
-		using Z_out = reiterated_t<XTAL_TYP_(z_out)>;
+		using Z_out = reiterated_t<XTAL_ALL_(z_out)>;
 
 		auto z_psi = Z_psi::binding_f();
 	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);

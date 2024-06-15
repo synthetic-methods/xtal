@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP stated;
 template <typename ..._s> XTAL_USE stated_t = confined_t<stated<_s...>>;
-template <typename ..._s> XTAL_REQ stated_q = bond::head_tag_p<stated, _s...>;
+template <typename ..._s> XTAL_REQ stated_q = bond::any_tag_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

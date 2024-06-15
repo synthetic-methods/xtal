@@ -38,8 +38,12 @@ struct define
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
 
-	protected:
-		using U_self = subtype;
+		XTAL_DEF_(return,inline)
+		XTAL_LET equal_to_(subtype const &t)
+		XTAL_0FX -> bool
+		{
+			return self().operator==(t.self());
+		}
 
 	public:
 		using S_::S_;
@@ -48,13 +52,24 @@ struct define
 		//\
 		Trivial (in)equality. \
 		
-		XTAL_DEF_(return,inline) XTAL_LET operator ==  (subtype const &t) XTAL_0FX -> bool {return true;}
-		XTAL_DEF_(return,inline) XTAL_LET operator !=  (subtype const &t) XTAL_0FX -> bool {return not self().operator==(t.self());}
-		XTAL_DEF_(return,inline) XTAL_REF operator <=> (subtype const &t)
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator == (subtype const &t)
+		XTAL_0FX -> bool
+		{
+			return true;
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator != (subtype const &t)
+		XTAL_0FX -> bool
+		{
+			return not equal_to_(t);
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator <=> (subtype const &t)
 		XTAL_0FX
 		{
 			using is = _std::partial_ordering;
-			return self().operator==(t.self())? is::equivalent: is::unordered;
+			return equal_to_(t)? is::equivalent: is::unordered;
 		}
 
 		XTAL_DEF_(return,inline)
@@ -121,10 +136,7 @@ struct defer
 	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
 	{
 		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
-		using U_ = typename S_::U_head;
-
-	protected:
-		using U_self = subtype;
+		using U_ = typename S_::head_type;
 
 	public:
 		using S_::self;
@@ -179,10 +191,17 @@ struct refer : bond::compose<void
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(return,inline) XTAL_RET operator << (auto &&x0, any_q auto &&x1) XTAL_0EX {return bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_RET operator >> (any_q auto &&x1, auto &&x0) XTAL_0EX {return bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+
+XTAL_DEF_(return,inline) XTAL_RET operator << (bond::heteropack_q auto &&x0, any_q auto &&x1) XTAL_0EX {return bond::pack_row_f(XTAL_REF_(x0), bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(return,inline) XTAL_RET operator >> (bond::heteropack_q auto &&x1, any_q auto &&x0) XTAL_0EX {return bond::pack_row_f(bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator== (y.self());}
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_REF operator <=>(W const &x, W const &y) XTAL_0EX         {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_RET operator <=>(W const &x, W const &y) XTAL_0EX         {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////

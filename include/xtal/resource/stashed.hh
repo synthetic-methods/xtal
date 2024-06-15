@@ -17,7 +17,7 @@ Associates an abstract state/view with an underlying store. \
 
 template <typename ..._s> XTAL_TYP stashed;
 template <typename ..._s> XTAL_USE stashed_t = confined_t<stashed<_s...>>;
-template <typename ..._s> XTAL_REQ stashed_q = bond::head_tag_p<stashed, _s...>;
+template <typename ..._s> XTAL_REQ stashed_q = bond::any_tag_p<stashed, _s...>;
 template <iterable_q U_state, iterable_q U_store>
 struct stashed<U_state, U_store>
 {
@@ -64,8 +64,8 @@ struct stashed<U_state, U_store>
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF store(), S_::template head<1>())
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET store(), S_::template head<1>())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

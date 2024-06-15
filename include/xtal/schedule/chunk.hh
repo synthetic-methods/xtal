@@ -48,19 +48,17 @@ struct chunk
 				using U_spool = typename S_::template spool_t<U_event>;
 
 			private:
-				using Q_delay = _std::numeric_limits<V_delay>;
+				using L_delay = _std::numeric_limits<V_delay>;
 
 				U_spool u_spool{
-					(U_event) Q_delay::max()
+					(U_event) L_delay::max()
 				};
-
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF next_core(), u_spool.begin()->then())
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF next_head(), u_spool.begin()->head())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(int i), u_spool.begin(i - 1)->head())
+				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(int i), u_spool.begin(i - 1)->tail())
 
 			public:
 				using R_::R_;
 				using R_::self;
-			//	using R_::infuse;
 				
 				///\
 				Influxes the `U_event` immediately if the associated delay is `0`, \
@@ -75,12 +73,11 @@ struct chunk
 				XTAL_0EX
 				{
 					if (0 == u.head()) {
-						return R_::influx(XTAL_REF_(u).then());
+						return R_::influx(XTAL_REF_(u).tail());
 					}
 					else {
-						//\
-						return u.then() == u_spool.push(XTAL_REF_(u))->then();
 						u_spool.push(XTAL_REF_(u)); return 0;
+					//	NOTE: Always successful, since there's (currently) no collision testing...
 					}
 				}
 
@@ -92,7 +89,7 @@ struct chunk
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
-					return _std::min<V_delay>({R_::delay(), next_head()});
+					return _std::min<V_delay>({R_::delay(), head_(1)});
 				}
 				///\
 				Invokes `influx` for all events up-to the supplied delay `i`. \
@@ -104,9 +101,8 @@ struct chunk
 				XTAL_0EX -> V_delay
 				{
 					R_::relay(i);
-					for (; 0 < u_spool.size() and next_head() <= i; u_spool.pop()) {
-						R_::operator<<=(next_core().pack());
-						(void) R_::influx(next_core());
+					for (; 0 < u_spool.size() and head_(1) <= i; u_spool.pop()) {
+						(void) R_::influx(then_(1));
 					}
 					return delay();
 				}
