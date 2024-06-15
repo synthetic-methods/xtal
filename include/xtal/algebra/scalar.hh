@@ -13,8 +13,8 @@ namespace xtal::algebra
 
 template <class           ..._s>	XTAL_TYP scalar;
 template <class           ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class           ...Ts>	XTAL_REQ scalar_q = bond::head_tag_p<scalar_t, Ts...>;
-template <size_t N, class ...Ts>	XTAL_REQ scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
+template <class           ...Ts>	XTAL_REQ scalar_q = bond::any_tag_p<scalar_t, Ts...>;
+template <size_type N, class ...Ts>	XTAL_REQ scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET scalar_f(auto &&...oo)
@@ -30,9 +30,6 @@ template <class A>
 struct scalar<A>
 {
 	using _op = bond::operate<A>;
-	using U_delta = typename _op::delta_t;
-	using U_sigma = typename _op::sigma_t;
-	using U_alpha = typename _op::alpha_t;
 	
 	template <class T>
 	using allotype = typename lattice<A>::template homotype<T>;
@@ -111,50 +108,38 @@ struct scalar<A>
 		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &t) XTAL_0FX {return twin() *=   t ;}
 		XTAL_DEF_(return,inline) XTAL_LET operator / (auto       const &t) XTAL_0FX {return twin() /=   t ;}
 		XTAL_DEF_(return,inline) XTAL_LET operator % (auto       const &t) XTAL_0FX {return twin() %=   t ;}
-		XTAL_DEF_(inline)        XTAL_REF operator *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_REF operator /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
-		XTAL_DEF_(inline)        XTAL_REF operator %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator /=(embrace_t<U_data> t) XTAL_0EX {return self() /= T(t);}
+		XTAL_DEF_(inline)        XTAL_RET operator %=(embrace_t<U_data> t) XTAL_0EX {return self() %= T(t);}
 
 	//	Vector multiplication (Hadamard product):
 		
 		XTAL_DEF_(inline)
-		XTAL_LET operator *=(array_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator *=(array_q<N_data> auto const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(s) *= get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
-			return self();
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u *= v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator /=(array_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator /=(array_q<N_data> auto const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(s) /= get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
-			return self();
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u /= v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator %=(array_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		XTAL_RET operator %=(array_q<N_data> auto const &t)
+		XTAL_0EX
 		{
-			auto &s = self();
-			
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(s) %= get<I>(t)),...);}
-			(bond::seek_s<N_data>{});
-			return self();
+			return T_::template pointwise<[] (auto &u, auto const &v)
+				XTAL_0FN {u %= v;}>(XTAL_REF_(t));
 		}
 
 	//	Scalar sum:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_REF sum(U_data const &u={})
+		XTAL_RET sum(U_data const &u={})
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -174,7 +159,7 @@ struct scalar<A>
 	//	Scalar product:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_REF product(U_data u={})
+		XTAL_RET product(U_data u={})
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -194,7 +179,7 @@ struct scalar<A>
 			return u;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF product(bond::pack_sized_q<N_data> auto &&t)
+		XTAL_RET product(bond::pack_sized_q<N_data> auto &&t)
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -211,7 +196,7 @@ struct scalar<A>
 
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(inline)
-		XTAL_REF reflect()
+		XTAL_RET reflect()
 		XTAL_0EX
 		{
 			return self() = reflected<N_par>();
@@ -220,7 +205,7 @@ struct scalar<A>
 		
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
-		XTAL_REF reflected()
+		XTAL_RET reflected()
 		XTAL_0FX
 		{
 			auto &s = self();
@@ -243,9 +228,8 @@ struct scalar<A>
 			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
 		}
 
-
 		XTAL_DEF_(return,inline)
-		XTAL_REF ordered()
+		XTAL_RET ordered()
 		XTAL_0FX requires (2 == N_data)
 		{
 			using U2 = typename T::template tagged_t<U_data[2]>;
@@ -254,7 +238,7 @@ struct scalar<A>
 			return x < y? U2{x, y}: U2{y, x};
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF coordered()
+		XTAL_RET coordered()
 		XTAL_0FX requires (2 == N_data) and integral_q<U_data>
 		{
 			using U2 = typename T::template tagged_t<U_data[2]>;
@@ -268,7 +252,7 @@ struct scalar<A>
 			}
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF coordered()
+		XTAL_RET coordered()
 		XTAL_0FX requires (3 <= N_data) and integral_q<U_data>
 		{
 			using U_ = _std::numeric_limits<U_data>;
@@ -277,8 +261,8 @@ struct scalar<A>
 			auto &s = self();
 
 			U2 fact{U_::max(), U_::min()};
-			for (size_t i = 0; i < N_data - 1; ++i) {
-				for (size_t j = i + 1; j < N_data; ++j) {
+			for (size_type i = 0; i < N_data - 1; ++i) {
+				for (size_type j = i + 1; j < N_data; ++j) {
 					auto factoid = U2{s[i], s[j]}.coordered();
 					fact.incorporate(factoid);
 					if (0 == factoid.sum()) {
@@ -290,7 +274,7 @@ struct scalar<A>
 		}
 
 		XTAL_DEF_(inline)
-		XTAL_REF incorporate(auto const &t)
+		XTAL_RET incorporate(auto const &t)
 		XTAL_0EX requires (2 == N_data)
 		{
 			auto &s = self();
@@ -299,7 +283,7 @@ struct scalar<A>
 			return s;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_REF incorporated(auto &&t)
+		XTAL_RET incorporated(auto &&t)
 		XTAL_0FX requires (2 == N_data)
 		{
 			return twin().incorporate(XTAl_REF_(t));
@@ -310,7 +294,7 @@ struct scalar<A>
 
 };
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_TYP_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>
 );
 
 

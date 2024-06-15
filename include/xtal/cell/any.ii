@@ -18,16 +18,16 @@ the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> XTAL_TYP any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> XTAL_USE any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> XTAL_REQ any_p = bond::head_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > XTAL_REQ any_q = bond::head_tag_p<any, Ts...>;
+template <class    T, typename ...As> XTAL_REQ any_p = bond::any_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > XTAL_REQ any_q = bond::any_tag_p<any, Ts...>;
 
 template <class ...Ts>
 concept anything_q = any_q<Ts...> and complete_q<typename Ts::template self_t<>...>;
 
-template <size_t N> XTAL_DEF_(inline,static) XTAL_REF get(any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_DEF_(inline,static) XTAL_REF get(any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <size_t N> XTAL_DEF_(inline,static) XTAL_REF get(any_q auto const  &t) XTAL_0EX {return           t .template head<N>();};
-template <size_t N> XTAL_DEF_(inline,static) XTAL_REF get(any_q auto        &t) XTAL_0EX {return           t .template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto const  &t) XTAL_0EX {return           t .template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto        &t) XTAL_0EX {return           t .template head<N>();};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,8 +43,8 @@ struct confine
 
 	template <class S>
 	using subtype = bond::compose_s<S, subkind>;
-	using    type = subtype<any_s<unit_t>>;
-//	using    type = subtype<any_s<_std::conditional_t<iterable_t<unitype>, initerated_t<T>, unit_t>>>;
+	using    type = subtype<any_s<unit_type>>;
+//	using    type = subtype<any_s<_std::conditional_t<iterable_t<unitype>, initerated_t<T>, unit_type>>>;
 	
 };
 template <class T, typename ...As>
@@ -65,7 +65,7 @@ struct confined
 
 	template <class S>
 	using subtype = bond::compose_s<S, subkind>;
-	using    type = subtype<any_s<unit_t>>;
+	using    type = subtype<any_s<unit_type>>;
 	
 };
 template <typename ...As>
@@ -91,7 +91,7 @@ struct referree
 	struct subkind
 	{
 		template <any_q S>
-		using subtype = bond::compose_s<S, refer<typename S::template head_t<>>>;
+		using subtype = bond::compose_s<S, refer<typename S::head_type>>;
 
 	};
 	template <any_q S>
@@ -105,7 +105,7 @@ provides `defer<A>` or `any<A>` depending on whether `complete_q<A>`. \
 template <class           A          >	struct infer       :             defer<A>                    {};
 template <bond::compose_q A          >	struct infer<A   > :                   A                     {};
 template <incomplete_q    A          >	struct infer<A   > :               any<A>                    {};
-template <incomplete_q    A, size_t N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_t[N]>> {};
+template <incomplete_q    A, size_type N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};
 template <                           >	struct infer<void> : bond::compose<                        > {};
 
 template <class   ...As>	XTAL_USE   infers     = bond::compose<          infer   <As>...>;
@@ -115,31 +115,45 @@ template <class   ...As>	XTAL_USE reinferred   = confined<             reinfers 
 template <class   ...As>	XTAL_USE   inferred_t = typename                inferred<As...>::type;
 template <class   ...As>	XTAL_USE reinferred_t = typename              reinferred<As...>::type;
 ///<\
-Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<head_t<>>`. \
+Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<head_type>`. \
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Creates a unique tuple `inferred` from `...As`. \
+Defines an `inferred` tuple from `...As`. \
 
-template <class   ...Us>	XTAL_TYP packed     : inferred<Us..., bond::tag<packed>> {};
-template <class   ...Us>	XTAL_USE packed_t   = typename packed<Us...>::type;
-template <class   ...Us>	XTAL_REQ packed_q   = bond::head_tag_p<packed, Us...>;
-template <class   ...Us>
+template <class   ...Ts>	XTAL_TYP packed     : inferred<Ts..., bond::tag<bond::pack_t>> {};
+template <class   ...Ts>	XTAL_USE packed_t   = typename packed<Ts...>::type;
+template <class   ...Ts>	XTAL_REQ packed_q   = bond::any_tag_p<packed, Ts...>;
+template <class   ...Ts>
 XTAL_DEF_(return,inline)
-XTAL_LET     packed_f(Us &&...us)
-XTAL_0EX_TO_(packed_t<Us...>(XTAL_REF_(us)...))
+XTAL_LET     packed_f(Ts &&...as)
+XTAL_0EX_TO_(packed_t<Ts...>(XTAL_REF_(as)...))
 
 ///\
-Defines `type` by `T` if `any_q<T>`, otherwise `conferred_t<T>`. \
+Defines an `inferred` tuple from `...Ts`, \
+or `bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`. \
+
+template <class   ...Ts>	XTAL_TYP packet       {using type =   packed_t<Ts...>;};
+template <any_q      T >	XTAL_TYP packet<T>    {using type =            T     ;};
+template <             >	XTAL_TYP packet< >    {using type = confined_t<     >;};
+template <class   ...Ts>	XTAL_USE packet_t   = typename packet<Ts...>::type;
+template <class   ...Ts>
+XTAL_DEF_(return,inline)
+XTAL_LET     packet_f(Ts &&...as)
+XTAL_0EX_TO_(packet_t<Ts...>(XTAL_REF_(as)...))
+
+///\
+Defines a `conferred` value from `T`, \
+or `T` if `any_q<T>`. \
 
 template <class      T >	XTAL_TYP let          {using type = conferred_t<T>;};
 template <any_q      T >	XTAL_TYP let<T>       {using type =             T ;};
 template <class      T >	XTAL_USE let_t      = typename let<T>::type;
 template <class      T >
 XTAL_DEF_(return,inline)
-XTAL_REF     let_f(T &&t)
+XTAL_RET     let_f(T &&t)
 XTAL_0EX_TO_(let_t<T>(XTAL_REF_(t)))
 ///<\
 \returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \

@@ -15,7 +15,7 @@ Binds multiple values/references, \
 providing point-wise multiplication/division and scalar summation. \
 
 template <class   ..._s>	XTAL_TYP couple;
-template <class   ..._s>	XTAL_REQ couple_q = bond::head_tag_p<couple, _s...>;
+template <class   ..._s>	XTAL_REQ couple_q = bond::any_tag_p<couple, _s...>;
 template <class   ..._s>	XTAL_USE couple_t = typename couple<_s...>::type;
 
 template <class V=void, class ...Xs>
@@ -59,13 +59,13 @@ struct couple
 	public:
 		using supertype::supertype;
 		
-		template <size_t N>
+		template <size_type N>
 		using tuple_element = _std::tuple_element<N, archetype>;
 		using tuple_size    = _std::tuple_size   <   archetype>;
 
 		template <pack_q W> requires (N_data == pack_size_n<W>)
 		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator * (type const &s, W const &w)
+		XTAL_RET operator * (type const &s, W const &w)
 		XTAL_0EX
 		{
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -74,7 +74,7 @@ struct couple
 		}
 		template <pack_q W> requires (N_data == pack_size_n<W>)
 		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator / (type const &s, W const &w)
+		XTAL_RET operator / (type const &s, W const &w)
 		XTAL_0EX
 		{
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -122,7 +122,7 @@ struct couple
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_REF sum()
+		XTAL_RET sum()
 		XTAL_0FX
 		{
 			return sum<N_sgn>(U_data{0});
@@ -132,7 +132,7 @@ struct couple
 		
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
-		XTAL_REF reflected()
+		XTAL_RET reflected()
 		XTAL_0FX
 		{
 			auto constexpr o = reflector<N_par>();

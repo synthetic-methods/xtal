@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../cell/mark.hh"
+#include "./mark.hh"
 
 
 
@@ -22,10 +22,8 @@ struct route;
 template <int N_mask>
 struct route
 {
-	using U_mark = cell::mark_s<>;
-
-	static constexpr size_t M_mask =  N_mask;
-	static constexpr size_t W_mask = ~M_mask;
+	static constexpr size_type M_mask =  N_mask;
+	static constexpr size_type W_mask = ~M_mask;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S>
@@ -42,12 +40,12 @@ struct route
 		{
 			return S_::influx(XTAL_REF_(oo)...);
 		}
-		XTAL_TNX influx(cell::mark_q auto o, auto &&...oo)
+		XTAL_TNX influx(mark_q auto o, auto &&...oo)
 		XTAL_0EX
 		{
-			return influx(U_mark(o), o.then(), XTAL_REF_(oo)...);
+			return influx((mark_s<>) o.head(), o.tail(), XTAL_REF_(oo)...);
 		}
-		XTAL_TNX influx(U_mark o, auto &&...oo)
+		XTAL_TNX influx(mark_s<> o, auto &&...oo)
 		XTAL_0EX
 		{
 			auto m = o.head();
@@ -55,7 +53,7 @@ struct route
 				return -1;
 			}
 			else if (m &= W_mask) {
-				return S_::influx(U_mark(m), XTAL_REF_(oo)...);
+				return S_::influx(mark_s<>(m), XTAL_REF_(oo)...);
 			}
 			else {
 				return S_::influx(           XTAL_REF_(oo)...);

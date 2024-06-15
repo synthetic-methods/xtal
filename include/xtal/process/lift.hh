@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP lift;
 template <typename ..._s> XTAL_USE lift_t = confined_t<lift<_s...>>;
-template <typename ..._s> XTAL_REQ lift_q = bond::head_tag_p<lift, _s...>;
+template <typename ..._s> XTAL_REQ lift_q = bond::any_tag_p<lift, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,13 +41,13 @@ struct lift<F>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor (auto &&...xs),
+		XTAL_RET functor (auto &&...xs),
 		{
 			return invoke_f<F>(S_::template functor <Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
-		XTAL_REF function(auto &&...xs)
+		XTAL_RET function(auto &&...xs)
 		XTAL_0EX
 		{
 			return invoke_f<F>(S_::template function<Is...>(XTAL_REF_(xs)...));

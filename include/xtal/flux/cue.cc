@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::cell::_test
+namespace xtal::flux::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ TAG_("cue")
 {
 	TRY_("construct")
 	{
-		using U_source = cell::conferred_t<counted_t<>>;
+		using U_source = flux::conferred_t<counted_t<>>;
 		using U_target = cue_s<U_source>;
 		using V_target = cue_s<>;
 
@@ -26,10 +26,10 @@ TAG_("cue")
 
 		TRUE_(99 == v_target.template head<0>());
 		TRUE_(99 == u_target.template head<0>());
-		TRUE_(equal_f(counted_t<>(11, 22), u_target.then()));
+		TRUE_(equal_f(counted_t<>(11, 22), u_target.tail()));
 
-		TRUE_(is_q<decltype(XTAL_ANY_(U_target).head()), typename V_target::template head_t<>>);
-		TRUE_(is_q<decltype(XTAL_ANY_(U_target).then()), U_source>);
+		TRUE_(is_q<decltype(XTAL_ANY_(U_target).head()), typename V_target::head_type>);
+		TRUE_(is_q<decltype(XTAL_ANY_(U_target).tail()), U_source>);
 
 	}
 }

@@ -1,5 +1,8 @@
 #include "./any.cc"
 #include "./bracket.cc"
+#include "./cue.cc"
+#include "./key.cc"
+#include "./mark.cc"
 #include "./route.cc"
 #include "./tab.cc"
 #include "./tag.cc"

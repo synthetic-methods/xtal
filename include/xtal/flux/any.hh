@@ -1,7 +1,7 @@
 #pragma once
 #include "../cell/any.hh"// `_retail`
 
-#include "../cell/cue.hh"
+
 
 
 
@@ -20,9 +20,9 @@ namespace xtal::flux
 template <class T>
 struct define
 {
-	using U_delay = cell::cue_s<>;
-	using V_delay = typename U_delay::template head_t<>;
-	
+	using _op = bond::operating;
+	using T_iota = typename _op::iota_t;
+
 	using subkind = _retail::define<T>;
 
 	template <any_q S>
@@ -35,16 +35,16 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_DEF_(inline) XTAL_LET delay()         XTAL_0EX -> V_delay {return count_f(self());}
-		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX -> V_delay {return self().delay();}
+		XTAL_DEF_(inline) XTAL_LET delay()         XTAL_0EX -> T_iota {return count_f(self());}
+		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX -> T_iota {return self().delay();}
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-		XTAL_TNX reflux(auto const &f)          XTAL_0EX {return reflux(f, 0);}
-		XTAL_TNX reflux(auto const &f, int &&n) XTAL_0EX {return reflux(f, n);}
-		XTAL_TNX reflux(auto const &f, int  &n)
+		XTAL_TNX reflux(auto const &f)             XTAL_0EX {return reflux(f, 0);}
+		XTAL_TNX reflux(auto const &f, T_iota &&n) XTAL_0EX {return reflux(f, n);}
+		XTAL_TNX reflux(auto const &f, T_iota  &n)
 		XTAL_0EX
 		{
 			XTAL_FLX flx = -1;
@@ -62,14 +62,14 @@ struct define
 		used for e.g. `occur::review` and `occur::render`. \
 
 		XTAL_DEF_(inline)
-		XTAL_REF operator >>=(auto &&o)
+		XTAL_RET operator >>=(auto &&o)
 		XTAL_0EX
 		{
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_REF operator >>=(bond::heteropack_q auto &&oo)
+		XTAL_RET operator >>=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
@@ -81,12 +81,19 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_TNX efflux(auto &&o, auto &&...oo)
+		XTAL_TNX efflux_fuse(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FNX_(self().efflux(oo...)) (self().effuse(XTAL_REF_(o)));
+			XTAL_IF0
+			XTAL_0IF (1 <= sizeof...(oo)) {return XTAL_FNX_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));}
+			XTAL_0IF (0 == sizeof...(oo)) {return                                self().effuse(XTAL_REF_(o)) ;}
 		}
-		XTAL_TNX efflux(null_t, auto &&...oo)
+		XTAL_TNX efflux(auto &&...oo)
+		XTAL_0EX
+		{
+			return efflux_fuse(XTAL_REF_(oo)...);
+		}
+		XTAL_TNX efflux(null_type, auto &&...oo)
 		XTAL_0EX
 		{
 			return efflux();
@@ -97,20 +104,19 @@ struct define
 			return -1;
 		}
 
-
 		///\
 		Influx operator: resolves `this` before any dependencies, \
 		used for e.g. `occur::resize`. \
 
 		XTAL_DEF_(inline)
-		XTAL_REF operator <<=(auto &&o)
+		XTAL_RET operator <<=(auto &&o)
 		XTAL_0EX
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_REF operator <<=(bond::heteropack_q auto &&oo)
+		XTAL_RET operator <<=(bond::heteropack_q auto &&oo)
 		XTAL_0EX
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
@@ -119,15 +125,21 @@ struct define
 		///\
 		Influx handler: resolves `this` before any dependencies. \
 		
-		///\returns the result of `infuse` applied to the first argument \
-		`&` `influx` applied to the remaining arguments if successful. \
+		///\returns the result of `infuse` applied to the each argument. \
 
-		XTAL_TNX influx(auto &&o, auto &&...oo)
+		XTAL_TNX influx_fuse(auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			return XTAL_FNX_(self().influx(oo...)) (self().infuse(XTAL_REF_(o)));
+			XTAL_IF0
+			XTAL_0IF (1 <= sizeof...(oo)) {return XTAL_FNX_(influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));}
+			XTAL_0IF (0 == sizeof...(oo)) {return                                self().infuse(XTAL_REF_(o)) ;}
 		}
-		XTAL_TNX influx(null_t, auto &&...oo)
+		XTAL_TNX influx(auto &&...oo)
+		XTAL_0EX
+		{
+			return influx_fuse(XTAL_REF_(oo)...);
+		}
+		XTAL_TNX influx(null_type, auto &&...oo)
 		XTAL_0EX
 		{
 			return influx();
@@ -273,16 +285,6 @@ struct refer
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-template <any_q Y, class    X > XTAL_DEF_(return,inline) XTAL_REF operator << (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(x), XTAL_REF_(y));}
-template <any_q Y, class    X > XTAL_DEF_(return,inline) XTAL_REF operator >> (X &&x, Y &&y) XTAL_0EX {return bond::pack_f(XTAL_REF_(y), XTAL_REF_(x));}
-
-template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator << (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
-template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator << (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(XTAL_REF_(x), bond::pack_f(XTAL_REF_(y)));}
-template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator >> (_std::tuple<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
-template <any_q Y, class ...Xs> XTAL_DEF_(return,inline) XTAL_REF operator >> (_std:: pair<Xs...> &&x, Y &&y) XTAL_0EX {return _std::tuple_cat(bond::pack_f(XTAL_REF_(y)), XTAL_REF_(x));}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

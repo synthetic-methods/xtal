@@ -13,11 +13,6 @@ namespace xtal::schedule::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
 template <class mix_t>
 void chunk_processor_x1()
 {
@@ -30,14 +25,15 @@ void chunk_processor_x1()
 	using T_delta  = typename _op::delta_t;
 
 	using U_chunk = chunk_t<spooled<nominal_t<0x10>>>;
-	using U_event = occur::packed_t<onset_t>;
+	using U_value = flux::packet_t<onset_t>;
+	using U_event = flux::cue_s<U_value>;
 
 	using mix_z = processor::monomer_t<mix_t
 	,	stored<>
 	,	U_chunk::template inqueue<onset_t>
 	>;
 	using U_resize = occur::resize_t<>;
-	using render_n  = occur::render_t<>;
+	using U_render = occur::render_t<>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -47,19 +43,19 @@ void chunk_processor_x1()
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	
 	auto xhs = mix_z::binding_f(lhs, rhs);
-	auto seq = render_n(4);
+	auto seq = U_render(4);
 
 	xhs <<= U_resize(4);
 	TRUE_(0 == xhs.size());//NOTE: Only changes after `render`.
 
-	xhs <<= cell::cue_s<U_event>(0, (onset_t) (T_alpha) 100);
-	xhs <<= cell::cue_s<U_event>(1, (onset_t) (T_alpha) 200);
-	xhs <<= cell::cue_s<U_event>(2, (onset_t) (T_alpha) 300);
+	xhs <<= U_event(0, (onset_t) (T_alpha) 100);
+	xhs <<= U_event(1, (onset_t) (T_alpha) 200);
+	xhs <<= U_event(2, (onset_t) (T_alpha) 300);
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{100, 211, 322, 333}));
 
-	xhs <<= cell::cue_s<U_event>(2, (T_alpha) 400);// relative timing!
+	xhs <<= U_event(2, (T_alpha) 400);// relative timing!
 	xhs >>= seq++;
 	TRUE_(4 == xhs.size());
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));

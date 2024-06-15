@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP biased;
 template <typename ..._s> XTAL_USE biased_t = confined_t<biased<_s...>>;
-template <typename ..._s> XTAL_REQ biased_q = bond::head_tag_p<biased, _s...>;
+template <typename ..._s> XTAL_REQ biased_q = bond::any_tag_p<biased, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

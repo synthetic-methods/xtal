@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP spooled;
 template <typename ..._s> XTAL_USE spooled_t = confined_t<spooled<_s...>>;
-template <typename ..._s> XTAL_REQ spooled_q = bond::head_tag_p<spooled, _s...>;
+template <typename ..._s> XTAL_REQ spooled_q = bond::any_tag_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

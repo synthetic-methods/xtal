@@ -1,8 +1,8 @@
 #pragma once
 #include "../flux/any.hh"// `_retail`
 
-#include "../cell/cue.hh"
-
+#include "../flux/cue.hh"
+#include "../algebra/differential/linear.hh"
 
 
 
@@ -38,6 +38,9 @@ struct define
 		///\note\
 		The naming is intended to reflect that only `influx` is queued/`cue`d. \
 
+		///\todo\
+		Make it easier to glean the relevant `schedule` types. \
+
 		template <class ...Xs>
 		struct inqueue
 		{
@@ -48,58 +51,65 @@ struct define
 				static_assert(complete_q<Xs...>);
 				
 			protected:
-				using W_tuple = _std::tuple<Xs...>;
-				using U_tuple = occur::packed_t<Xs...>;
-				using U_event = cell::cue_s<U_tuple>;
-				using U_delay = cell::cue_s<>;
-				using V_delay = typename U_delay::template head_t<>;
+				using W_tuple = bond::pack_t<Xs...>;
+				using U_tuple = flux::packed_t<Xs...>;
+				using U_event = flux::cue_s<Xs...>;
+				using V_event = flux::cue_s<>;
+				using V_delay = typename V_event::head_type;
 
 			public:
 				using R_::R_;
 				using R_::self;
 
-			public:// POLL
-			//	using R_::infuse;
+				using event_type = U_event;
 
-				XTAL_TNX infuse(auto &&o)
-				XTAL_0EX
-				{
-					return R_::infuse(XTAL_REF_(o));
-				}
-				XTAL_TNX infuse(U_tuple u_tuple)
-				XTAL_0EX
-				{
-					return u_tuple.apply([&, this] XTAL_1FN_(influx));
-				}
-				XTAL_TNX infuse(W_tuple w_tuple)
-				XTAL_0EX
-				{
-					return _std::apply([&, this] XTAL_1FN_(influx), w_tuple);
-				}
+			public:// *FLUX
+				using R_::influx;
 
-			public:// ENQUEUE
-			//	using R_::influx;
+				///\
+				Expands the given unscheduled message, forwarding to `supertype::influx`. \
 
-				XTAL_TNX influx(auto &&...oo)
+				XTAL_TNX influx(XTAL_ARG_(U_tuple) &&o)
 				XTAL_0EX
 				{
-					return R_::influx(XTAL_REF_(oo)...);
+					return XTAL_REF_(o).apply([this] XTAL_1FN_(R_::influx));
+				}
+				XTAL_TNX influx(XTAL_ARG_(W_tuple) &&o)
+				XTAL_0EX
+				{
+					return _std::apply([this] XTAL_1FN_(R_::influx), XTAL_REF_(o));
 				}
 
-				XTAL_TNX influx(U_delay d_t, U_tuple d_u)
+				///\
+				Condenses the given scheduled message, forwarding to `self().infuse`. \
+				
+				XTAL_TNX influx(V_event d, XTAL_ARG_(Xs) &&...oo)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, d_u));
+					return joining_(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(U_delay d_t, W_tuple d_v)
+				XTAL_TNX influx(V_event d, XTAL_ARG_(U_tuple) &&o)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, U_tuple::pack(d_v)));
+					return XTAL_REF_(o).apply(joining_(XTAL_MOV_(d)));
 				}
-				XTAL_TNX influx(U_delay d_t, is_q<Xs> auto &&...d_xs)
+				XTAL_TNX influx(V_event d, XTAL_ARG_(W_tuple) &&o)
 				XTAL_0EX
 				{
-					return influx(U_event(d_t, U_tuple(XTAL_REF_(d_xs)...)));
+					return _std::apply(joining_(XTAL_MOV_(d)), XTAL_REF_(o));
+				}
+
+			private:
+				XTAL_DEF_(return,inline)
+				XTAL_RET joining_(auto o)
+				XTAL_0EX
+				{
+					return [=, this] (auto &&...oo) XTAL_0FN_(join_(XTAL_MOV_(o), XTAL_REF_(oo)...));
+				}
+				XTAL_TNX join_(auto &&...oo)
+				XTAL_0EX
+				{
+					return self().infuse((...<< XTAL_REF_(oo)));
 				}
 
 			};

@@ -13,7 +13,7 @@ namespace xtal::process::differential
 
 template <typename ..._s> XTAL_TYP phasor;
 template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_REQ phasor_q = bond::head_tag_p<phasor, _s...>;
+template <typename ..._s> XTAL_REQ phasor_q = bond::any_tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ template <typename ..._s> XTAL_REQ phasor_q = bond::head_tag_p<phasor, _s...>;
 Manages a truncated fixed-point unit differential like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
-template <size_t N_data, class K_data, typename ...As>
+template <size_type N_data, class K_data, typename ...As>
 struct phasor<K_data[N_data], As...>
 {
 	using _op = bond::operate<K_data>;
@@ -44,7 +44,7 @@ struct phasor<K_data[N_data], As...>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using U_ = typename S_::U_head;
+		using U_ = typename S_::head_type;
 
 	public:// ACCESS
 		using S_::S_;
@@ -71,7 +71,7 @@ struct phasor<K_data[N_data], As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF let(size_t i), head().let(i))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET let(size_type i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
@@ -83,7 +83,7 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor(subarray_q<N_data> auto &&a)
+		XTAL_RET functor(subarray_q<N_data> auto &&a)
 		XTAL_0EX
 		{
 			(void) S_::influx(XTAL_REF_(a));
@@ -94,7 +94,7 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_REF functor()
+		XTAL_RET functor()
 		XTAL_0EX
 		{
 			///\todo\
@@ -126,7 +126,7 @@ struct phasor<K_data[N_data], As...>
 		Evaluation by succession. \
 		
 		XTAL_DEF_(return,inline)
-		XTAL_REF ingress()
+		XTAL_RET ingress()
 		XTAL_0EX
 		{
 			XTAL_IF0

@@ -25,7 +25,7 @@ The translation-tables for the supplied `N_size` \
 \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
-template <size_t N_size>
+template <size_type N_size>
 struct recognize : recognize<(N_size >> 1)>
 {
 	using zed_t = nominal_t<false>;
@@ -210,7 +210,7 @@ struct recognize<(1<<3)>
 
 };
 
-template <size_t N_size>
+template <size_type N_size>
 concept recognized_q = recognize<N_size>::zed_t::value;
 
 
@@ -218,13 +218,13 @@ concept recognized_q = recognize<N_size>::zed_t::value;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N_size>
+template <size_type N_size>
 struct rationalize : rationalize<(N_size >> 1)>
 {
 	using zed_t = nominal_t<false>;
 
 };
-template <size_t N_size> requires recognized_q<N_size>
+template <size_type N_size> requires recognized_q<N_size>
 struct rationalize<N_size> : recognize<N_size>
 {
 private:
@@ -478,7 +478,7 @@ public:
 		u >>= N_depth - subdepth; assert(0 < subdepth and subdepth <= N_depth);
 		return u;
 	}
-	template <size_t N_subdepth=0>
+	template <size_type N_subdepth=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_reverse_f(sigma_t const &u)
 	XTAL_0EX -> sigma_t
@@ -487,7 +487,7 @@ public:
 		return bit_reverse_f(u, subdepth);
 	}
 
-	template <size_t N_subdepth=0>
+	template <size_type N_subdepth=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET bit_reverse_f(integral_q auto i)
 	XTAL_0EX requires (sizeof(i) < N_width)
@@ -507,16 +507,16 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_t N_size>
+template <size_type N_size>
 struct realize : realize<(N_size >> 1)>
 {
 	using zed_t = nominal_t<false>;
 
 };
-template <size_t N_size> requires recognized_q<N_size>
+template <size_type N_size> requires recognized_q<N_size>
 struct realize<N_size> : rationalize<N_size>
 {};
-template <size_t N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_t;}
+template <size_type N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_t;}
 struct realize<N_size> : rationalize<N_size>
 {
 private:
@@ -571,11 +571,11 @@ public:
 		return N_fused;
 	}
 
-	using default_alignment = nominal_t<(size_t) XTAL_STD_(L1)/N_width>;
+	using default_alignment = nominal_t<(size_type) XTAL_STD_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = nominal_t<(size_t) _std::hardware_constructive_interference_size/N_width>;
-//	using  destructive_alignment = nominal_t<(size_t) _std:: hardware_destructive_interference_size/N_width>;
+	using constructive_alignment = nominal_t<(size_type) _std::hardware_constructive_interference_size/N_width>;
+//	using  destructive_alignment = nominal_t<(size_type) _std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
 //	using  destructive_alignment = default_alignment;
@@ -627,7 +627,7 @@ public:
 	XTAL_LET versus_f(auto &&u)
 	XTAL_0EX
 	{
-		using U = XTAL_TYP_(u);
+		using U = XTAL_ALL_(u);
 		XTAL_IF0
 		XTAL_0IF (sign_n<N_pow> ==  0) {return couple_t<U>{u, 1/XTAL_REF_(u)};}
 		XTAL_0IF (sign_n<N_pow> == -1) {return static_cast<U>(1/XTAL_REF_(u));}
@@ -695,7 +695,7 @@ public:
 	{
 		using _std::sqrt;
 
-		using W = XTAL_TYP_(w);
+		using W = XTAL_ALL_(w);
 		using U = devolved_t<W>;
 
 	//	W constexpr W_1{1};
@@ -790,7 +790,7 @@ public:
 	XTAL_LET square_f(auto const &z)
 	XTAL_0EX
 	{
-		using Z = XTAL_TYP_(z);
+		using Z = XTAL_ALL_(z);
 
 		XTAL_IF0
 		XTAL_0IF (N_lim == 0) {
@@ -844,7 +844,7 @@ public:
 	XTAL_LET explo_f(auto &&base, sigma_t const &n_exponent)
 	XTAL_0EX
 	{
-		XTAL_TYP_(base) u = XTAL_REF_(base), w = {1};
+		XTAL_ALL_(base) u = XTAL_REF_(base), w = {1};
 		for (sigma_t n = n_exponent; n; n >>= 1) {
 			if (n&1) {
 				w *= u;
@@ -853,7 +853,7 @@ public:
 		}
 		return w;
 	}
-	template <size_t N_exponent>
+	template <size_type N_exponent>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET explo_f(auto &&base, auto result)
 	XTAL_0EX
@@ -1667,7 +1667,7 @@ public:
 	XTAL_LET antilogarithmic_f(auto const &x)
 	XTAL_0EX
 	{
-		using X = XTAL_TYP_(x);
+		using X = XTAL_ALL_(x);
 		int constexpr I_ = I_lim << 1;
 		int constexpr J_ = J_lim << 2;
 		X w = x*haplo_n<J_>; w *= antilogarithmetic_f<I_>(square_f(w));
@@ -1707,12 +1707,12 @@ public:
 template <class T>
 struct operate : _detail::realize<sizeof(devolved_t<T>)> {};
 
-using operating = operate<size_t>;
+using operating = operate<size_type>;
 
-static_assert(is_q<size_t, typename operating::sigma_t>);
-static_assert(sizeof(size_t) == sizeof(typename operating::sigma_t));
-static_assert(sizeof(size_t) == sizeof(typename operating::delta_t));
-static_assert(sizeof(size_t) == sizeof(typename operating::alpha_t));
+static_assert(is_q<size_type, typename operating::sigma_t>);
+static_assert(sizeof(size_type) == sizeof(typename operating::sigma_t));
+static_assert(sizeof(size_type) == sizeof(typename operating::delta_t));
+static_assert(sizeof(size_type) == sizeof(typename operating::alpha_t));
 
 
 ///////////////////////////////////////////////////////////////////////////////

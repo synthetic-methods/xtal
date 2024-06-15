@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> XTAL_TYP store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_REQ store_q = bond::head_tag_p<store_t, Ts...>;
+template <class ...Ts> XTAL_REQ store_q = bond::any_tag_p<store_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ struct store<U_data[~0U]>
 :	store<U_data *>
 {
 };
-template <class U_data, size_t N_data>
+template <class U_data, size_type N_data>
 struct store<U_data[N_data]>
 {
 	using W_data = _detail::aligned_t<U_data>;
@@ -54,8 +54,8 @@ struct store<U_data[N_data]>
 		using T_ = holotype<T>;
 
 	public:// DEFINITION
-		using              size_type  =        size_t;
-		using        difference_type  =        size_s;
+		using              size_type  =        ::std::size_t;
+		using        difference_type  =        ::std::ptrdiff_t;
 
 		using             value_type  =        U_data;
 		using         allocator_type  =        T;// TODO: Provide interface?
@@ -459,7 +459,7 @@ struct store<U_data[N_data]>
 		Deletes the element at `i0`. \
 
 		template <class I0> requires common_q<iterator, I0>
-		XTAL_REF erase(I0 i0)
+		XTAL_RET erase(I0 i0)
 		XTAL_0EX
 		{
 			return erase(i0, 1);
@@ -468,7 +468,7 @@ struct store<U_data[N_data]>
 		Deletes `sN` elements starting from `i0`. \
 
 		template <class I0> requires common_q<iterator, I0>
-		XTAL_REF erase(I0 i0, size_type sN)
+		XTAL_RET erase(I0 i0, size_type sN)
 		XTAL_0EX
 		{
 			return erase(i0, _std::next(i0, sN), sN);
@@ -477,7 +477,7 @@ struct store<U_data[N_data]>
 		Deletes the elements between `i0` and `iN`. \
 
 		template <class I0, class IN> requires common_q<iterator, I0, IN>
-		XTAL_REF erase(I0 i0, IN iN)
+		XTAL_RET erase(I0 i0, IN iN)
 		XTAL_0EX
 		{
 			using I = common_t<I0, IN>;
@@ -492,7 +492,7 @@ struct store<U_data[N_data]>
 		///\note\
 		Currently assumes move-invariance. \
 
-		XTAL_REF erase(iterator i0, iterator iN, size_type sN)
+		XTAL_RET erase(iterator i0, iterator iN, size_type sN)
 		XTAL_0EX
 		{
 			assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);

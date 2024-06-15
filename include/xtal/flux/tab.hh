@@ -34,12 +34,12 @@ struct tab
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using T_ = typename S_::T_self;
+		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// FUSE
+	public:// *FUSE
 
 		XTAL_TNX infuse(auto &&o)
 		XTAL_0EX

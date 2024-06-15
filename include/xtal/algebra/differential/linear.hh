@@ -13,7 +13,7 @@ namespace xtal::algebra::differential
 
 template <class   ..._s>	XTAL_TYP linear;
 template <class   ..._s>	XTAL_USE linear_t = typename linear<_s...>::type;
-template <class   ...Ts>	XTAL_REQ linear_q = bond::head_tag_p<linear_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ linear_q = bond::any_tag_p<linear_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET linear_f(auto &&...oo)
@@ -59,13 +59,13 @@ struct linear<A>
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_REF operator ++ (int)
+		XTAL_RET operator ++ (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator++(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_REF operator ++ ()
+		XTAL_RET operator ++ ()
 		XTAL_0EX
 		{
 			auto &s = self();
@@ -73,6 +73,7 @@ struct linear<A>
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) += get<I + 1>(s)),...);}
 			(bond::seek_s<N_data - 1>{});
+			
 			return self();
 		}
 
@@ -81,13 +82,13 @@ struct linear<A>
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_REF operator -- (int)
+		XTAL_RET operator -- (int)
 		XTAL_0EX
 		{
 			auto t = twin(); operator--(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_REF operator -- ()
+		XTAL_RET operator -- ()
 		XTAL_0EX
 		{
 			auto &s = self();

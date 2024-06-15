@@ -15,7 +15,7 @@ Defines a fixed-width `type` that supports arithmetic operators. \
 
 template <class ..._s> XTAL_TYP block;
 template <class ..._s> XTAL_USE block_t = typename block<_s...>::type;
-template <class ..._s> XTAL_REQ block_q = bond::head_tag_p<block_t, _s...>;
+template <class ..._s> XTAL_REQ block_q = bond::any_tag_p<block_t, _s...>;
 
 
 namespace _detail
@@ -24,7 +24,7 @@ namespace _detail
 template <class ..._s>
 struct superblock;
 
-template <class U, size_t N>
+template <class U, size_type N>
 struct superblock<U(&)[N]>
 {
 	using supertype = _std::span<U, N>;
@@ -46,13 +46,13 @@ struct superblock<U(&)[N]>
 		using T_::T_;
 
 		XTAL_TO4_(XTAL_DEF_(return,inline)
-		XTAL_REF twin(),
+		XTAL_RET twin(),
 			typename T::template tagged_t<U_data[N_data]>(T_::self())
 		)
 
 	};	
 };
-template <class U, size_t N>
+template <class U, size_type N>
 struct superblock<U[N]>
 {
 	using supertype = _std::array<U, N>;
@@ -74,7 +74,7 @@ struct superblock<U[N]>
 		XTAL_LET coordinated()
 		XTAL_0EX -> bool
 		{
-			return is_q<XTAL_TYP_(XTAL_ANY_(T).coordinate(XTAL_ANY_(U_data))), U_data>;
+			return is_q<XTAL_ALL_(XTAL_ANY_(T).coordinate(XTAL_ANY_(U_data))), U_data>;
 		}
 
 	public:// CONSTRUCT
@@ -88,7 +88,7 @@ struct superblock<U[N]>
 		XTAL_0EX
 		:	homotype(size_0)
 		{}
-		XTAL_CON_(explicit) homotype(size_t const n)
+		XTAL_CON_(explicit) homotype(size_type const n)
 		XTAL_0EX
 		{
 			if (_std::is_constant_evaluated() or n < N_data) {
@@ -101,7 +101,10 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end());}
-			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end(), [this] XTAL_1FN_(T_::self().ordinate));}
+			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end()
+				,	[this] XTAL_1FN_(T_::self().ordinate)
+				);
+			}
 		}
 		XTAL_CON_(explicit) homotype(iterable_q auto const &a)
 		XTAL_0EX
@@ -109,7 +112,10 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a);}
-			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a, [this] XTAL_1FN_(T_::self().ordinate));}
+			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a
+				,	[this] XTAL_1FN_(T_::self().ordinate)
+				);
+			}
 		}
 		XTAL_CON_(explicit) homotype(iterable_q auto &&a)
 		XTAL_0EX
@@ -117,7 +123,10 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    coordinated()) {_detail::move_to(T_::begin(), a);}
-			XTAL_0IF (not coordinated()) {_detail::move_to(T_::begin(), a, [this] XTAL_1FN_(T_::self().ordinate));}
+			XTAL_0IF (not coordinated()) {_detail::move_to(T_::begin(), a
+				,	[this] XTAL_1FN_(T_::self().ordinate)
+				);
+			}
 		}
 
 	};
@@ -126,7 +135,7 @@ struct superblock<U[N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class U, size_t N, size_t ...Ns>
+template <class U, size_type N, size_type ...Ns>
 struct block<U[N][Ns]...> : block<block_t<U[N]>[Ns]...>
 {
 };
@@ -134,8 +143,6 @@ template <column_q A>
 struct block<A>
 {
 	using _op = bond::operate<A>;
-	using U_sigma = typename _op::sigma_t;
-	using U_delta = typename _op::delta_t;
 	
 	template <class T>
 	using allotype = typename _detail::superblock<A>::template homotype<T>;
@@ -159,8 +166,8 @@ struct block<A>
 		using T_::T_;
 
 	public:// MAP
-		XTAL_DEF_(return,inline,static) XTAL_REF   ordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
-		XTAL_DEF_(return,inline,static) XTAL_REF coordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline,static) XTAL_RET   ordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline,static) XTAL_RET coordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
 
 	public:// ACCESS
 		using T_::self;
@@ -174,18 +181,18 @@ struct block<A>
 		}
 
 		XTAL_DEF_(return,inline)
-		XTAL_REF operator () (I_ i)
+		XTAL_RET operator () (I_ i)
 		XTAL_0FX
 		{
 			return self().coordinate(self().let(i));
 		}
 		XTAL_TO4_(
 		XTAL_DEF_(return,inline)
-		XTAL_REF let(I_ i), self().operator[](i)
+		XTAL_RET let(I_ i), self().operator[](i)
 		)
 		XTAL_TO4_(template <I_ I>
 		XTAL_DEF_(return,inline)
-		XTAL_REF let(), get<I>(self())
+		XTAL_RET let(), get<I>(self())
 		)
 
 	public:// OPERATE
@@ -195,14 +202,14 @@ struct block<A>
 		)
 		template <class F=decltype(bond::pack_f)>
 		XTAL_DEF_(return,inline)
-		XTAL_REF apply()
+		XTAL_RET apply()
 		XTAL_0FX
 		{
 			return apply(invoke_f<F>);
 		}
 		template <class F>
 		XTAL_DEF_(return,inline)
-		XTAL_REF apply(F &&f)
+		XTAL_RET apply(F &&f)
 		XTAL_0FX
 		{
 			return [&, this]<auto ...I> (bond::seek_t<I...>)
@@ -217,25 +224,25 @@ struct block<A>
 		Elementwise immutative transformer. \
 
 		//\
-		XTAL_TO4_(template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(), transact<W>(invoke_f<devalued_t<W>>))
-		XTAL_TO4_(template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(), transact<W>(invoke_f<typename W::value_type>))
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0EX_( &) {return copy_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF transact(_std::invocable<U_data> auto &&f) XTAL_0FX_( &) {return copy_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF  move_by(_std::invocable<U_data> auto &&f) XTAL_0EX {W w; _detail::move_to(w.begin(), self(), XTAL_REF_(f)); return w;}
-		template <array_q W> XTAL_DEF_(inline) XTAL_REF  copy_by(_std::invocable<U_data> auto &&f) XTAL_0FX {W w; _detail::copy_to(w.begin(), self(), XTAL_REF_(f)); return w;}
+		XTAL_TO4_(template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(), transact<W>(invoke_f<devalued_t<W>>))
+		XTAL_TO4_(template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(), transact<W>(invoke_f<typename W::value_type>))
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) {return move_by<W>(XTAL_REF_(f));}
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) {return move_by<W>(XTAL_REF_(f));}
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(_std::invocable<U_data> auto &&f) XTAL_0EX_( &) {return copy_by<W>(XTAL_REF_(f));}
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET transact(_std::invocable<U_data> auto &&f) XTAL_0FX_( &) {return copy_by<W>(XTAL_REF_(f));}
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET  move_by(_std::invocable<U_data> auto &&f) XTAL_0EX {W w; _detail::move_to(w.begin(), self(), XTAL_REF_(f)); return w;}
+		template <array_q W> XTAL_DEF_(inline) XTAL_RET  copy_by(_std::invocable<U_data> auto &&f) XTAL_0FX {W w; _detail::copy_to(w.begin(), self(), XTAL_REF_(f)); return w;}
 		///\
 		Elementwise mutative transformer. \
 
 		XTAL_DEF_(inline)
-		XTAL_REF transact(_std::invocable<U_data> auto &&...fs)
+		XTAL_RET transact(_std::invocable<U_data> auto &&...fs)
 		XTAL_0EX
 		{
 			return (transact(XTAL_REF_(fs)), ...);
 		}
 		XTAL_DEF_(inline)
-		XTAL_REF transact(_std::invocable<U_data> auto &&f)
+		XTAL_RET transact(_std::invocable<U_data> auto &&f)
 		XTAL_0EX
 		{
 			_detail::apply_to(self(), XTAL_REF_(f));
@@ -247,10 +254,10 @@ struct block<A>
 
 };
 
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto const &&o) {return XTAL_MOV_(o).let(I);}
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto const  &o) {return           o .let(I);}
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto       &&o) {return XTAL_MOV_(o).let(I);}
-template <size_t I> XTAL_DEF_(return,inline,static) XTAL_REF get(block_q auto        &o) {return           o .let(I);}
+template <size_type I> XTAL_DEF_(return,inline,static) XTAL_RET get(block_q auto const &&o) {return XTAL_MOV_(o).let(I);}
+template <size_type I> XTAL_DEF_(return,inline,static) XTAL_RET get(block_q auto const  &o) {return           o .let(I);}
+template <size_type I> XTAL_DEF_(return,inline,static) XTAL_RET get(block_q auto       &&o) {return XTAL_MOV_(o).let(I);}
+template <size_type I> XTAL_DEF_(return,inline,static) XTAL_RET get(block_q auto        &o) {return           o .let(I);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

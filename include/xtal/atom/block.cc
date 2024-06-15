@@ -26,7 +26,7 @@ TAG_("block")
 	auto constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 
 	//\
-	W_alpha constexpr w_alpha((size_t) 1);
+	W_alpha constexpr w_alpha((size_type) 1);
 	W_alpha constexpr w_alpha{0};
 
 	TRY_("task")

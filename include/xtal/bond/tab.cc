@@ -49,7 +49,7 @@ struct TagZ
 };
 
 using TagAB = bond::compose<TagA, TagB>;
-using TypAB = typename TagAB::template subtype<unit_t>;
+using TypAB = typename TagAB::template subtype<unit_type>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,9 +58,9 @@ TAG_("tab")
 {
 	TRY_("task")
 	{
-		TRUE_(head_tab_p<TagA, TypAB>);
-		TRUE_(head_tab_p<TagB, TypAB>);
-		UNTRUE_(head_tab_p<TagZ, TypAB>);
+		TRUE_(any_tab_p<TagA, TypAB>);
+		TRUE_(any_tab_p<TagB, TypAB>);
+		UNTRUE_(any_tab_p<TagZ, TypAB>);
 
 	}
 }

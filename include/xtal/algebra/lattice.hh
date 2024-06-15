@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	XTAL_TYP lattice;
 template <class   ..._s>	XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class   ..._s>	XTAL_REQ lattice_q = bond::head_tag_p<lattice_t, _s...>;
+template <class   ..._s>	XTAL_REQ lattice_q = bond::any_tag_p<lattice_t, _s...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET lattice_f(auto &&...oo)
@@ -28,7 +28,7 @@ XTAL_REQ lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pac
 Extends `block` with point-wise comparison, \
 and lifts all other operators. \
 
-template <class U, size_t N, size_t ...Ns>
+template <class U, size_type N, size_type ...Ns>
 struct lattice<U[N][Ns]...> : lattice<lattice_t<U[N]>[Ns]...>
 {
 };
@@ -64,7 +64,7 @@ struct lattice<A>
 	public:// OPERATE
 	//	Vector comparison (performed point-wise):
 		XTAL_DEF_(return,inline)
-		XTAL_REF operator <=> (homotype const &t)
+		XTAL_RET operator <=> (homotype const &t)
 		XTAL_0FX
 		{
 			homotype const &s = *this;
@@ -81,8 +81,8 @@ struct lattice<A>
 		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
-		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_t   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_t   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  ^= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  |= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  &= u;}); return self();}
@@ -93,49 +93,43 @@ struct lattice<A>
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t * s;}
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t + s;}
 
-		///\
-		Component-wise field-adjustment by an equal-sized `heteropack`. \
-		
-		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator * (T const &s, lettuce_q auto const &t)
-		XTAL_0EX
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise(auto const &t)
+		XTAL_0EX -> T &
 		{
-			return [&]<size_t ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(bond::pack_f(get<I>(s) * get<I>(t)...))
-			(bond::seek_s<N_data>{});
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+
+			auto &s = self();
+
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {(f(get<I>(s), get<I>(t)),...);}
+			(bond::seek_s<N>{});
+			
+			return s;
 		}
-		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator / (T const &s, lettuce_q auto const &t)
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise(auto const &s, auto const &t)
 		XTAL_0EX
 		{
-			return [&]<size_t ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(bond::pack_f(get<I>(s) / get<I>(t)...))
-			(bond::seek_s<N_data>{});
-		}
-		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator + (T const &s, lettuce_q auto const &t)
-		XTAL_0EX
-		{
-			return [&]<size_t ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(bond::pack_f(get<I>(s) + get<I>(t)...))
-			(bond::seek_s<N_data>{});
-		}
-		XTAL_DEF_(return,inline,friend)
-		XTAL_REF operator - (T const &s, lettuce_q auto const &t)
-		XTAL_0EX
-		{
-			return [&]<size_t ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(bond::pack_f(get<I>(s) - get<I>(t)...))
-			(bond::seek_s<N_data>{});
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+			
+			using F = XTAL_ALL_(twin());
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(F(f(get<I>(s), get<I>(t))...))
+			(bond::seek_s<N>{});
 		}
 
 	};
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(not counted_q<lattice_t<   int[2]>>);
-static_assert(not counted_q<lattice_t<size_s[2]>>);
-static_assert(not counted_q<lattice_t<size_t[2]>>);
+static_assert(not counted_q<lattice_t<        int[2]>>);
+static_assert(not counted_q<lattice_t<counter_t<>[2]>>);
+static_assert(not counted_q<lattice_t<     size_type[2]>>);
 
 static_assert(fungible_q<_std::span<float, 2>, lattice_t<float(&)[2]>>);
 

@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_number_q U=size_s> XTAL_TYP restep;
-template <integral_number_q U=size_s> XTAL_USE restep_t = confined_t<restep<U>>;
-template <typename ..._s> XTAL_REQ restep_q = bond::head_tag_p<restep, _s...>;
+template <integral_number_q U=integral_type> XTAL_TYP restep;
+template <integral_number_q U=integral_type> XTAL_USE restep_t = confined_t<restep<U>>;
+template <typename ..._s> XTAL_REQ restep_q = bond::any_tag_p<restep, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET restep_f(auto &&w)
 XTAL_0EX
@@ -39,7 +39,7 @@ struct restep
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_REF step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

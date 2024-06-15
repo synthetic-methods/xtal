@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./monomer.hh"
-#include "../cell/key.hh"
+#include "../flux/key.hh"
 #include "../resource/all.hh"
 
 
@@ -13,11 +13,11 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP polymer;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> XTAL_REQ polymer_q = bond::head_tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_REQ polymer_q = bond::any_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET     polymer_f(auto &&u)
-XTAL_0EX_TO_(polymer_t<XTAL_TYP_(u), _s...>(XTAL_REF_(u)))
+XTAL_0EX_TO_(polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u)))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,10 +53,10 @@ struct polymer<U, As...>
 		struct bracket
 		{
 			using V_event = occur::stage_t<>;
-			using U_event = cell::key_s<V_event>;
+			using U_event = flux::key_s<V_event>;
 			
 			using V_voice = typename Y_::template binding_t<Xs...>;
-			using U_voice = cell::key_s<V_voice>;
+			using U_voice = flux::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
@@ -76,12 +76,12 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 				
-				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_REF ensemble(), u_ensemble)
+				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(), u_ensemble)
 
 				using R_::influx;
 				
 				///\
-				Forwards the `cell::key`ed occur to the associated instance. \
+				Forwards the `flux::key`ed occur to the associated instance. \
 				Messages associated with a `occur/stage.ii` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
@@ -90,14 +90,14 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TNX influx(cell::key_q auto io, auto &&...oo)
+				XTAL_TNX influx(flux::key_q auto io, auto &&...oo)
 				XTAL_0EX
 				{
 					auto const i = io.head();
-					auto const o = io.then();
-					return influx(cell::key_s<>(i), o, XTAL_REF_(oo)...);
+					auto const o = io.tail();
+					return influx(flux::key_s<>(i), o, XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(cell::key_s<> i, auto &&...oo)
+				XTAL_TNX influx(flux::key_s<> i, auto &&...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -105,7 +105,7 @@ struct polymer<U, As...>
 					assert(u_ensemble and h == w->head());
 					return w->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(cell::key_s<> i, V_event o, auto &&...oo)
+				XTAL_TNX influx(flux::key_s<> i, V_event o, auto &&...oo)
 				XTAL_0EX
 				{
 					auto h = i.head();
@@ -173,7 +173,7 @@ struct polymer<U, As...>
 							auto _i = point_f(review_o);
 							auto  n = count_f(review_o);
 							
-							for (size_t m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
+							for (size_type m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
 						}
 					}
 					return 0;

@@ -13,13 +13,13 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_REQ monomer_q = bond::head_tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_REQ monomer_q = bond::any_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET monomer_f(auto &&u)
 XTAL_0EX
 {
-	return monomer_t<XTAL_TYP_(u), As...>(XTAL_REF_(u));
+	return monomer_t<XTAL_ALL_(u), As...>(XTAL_REF_(u));
 }
 
 
@@ -42,7 +42,7 @@ struct monomer<U, As...>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		using T_ = typename S_::T_self;
+		using T_ = typename S_::self_type;
 	
 	public:
 		using S_::S_;
@@ -88,7 +88,7 @@ struct monomer<U, As...>
 				XTAL_0EX
 				{
 					auto  &u_state = review_o.view();
-					using  U_state = XTAL_TYP_(u_state);
+					using  U_state = XTAL_ALL_(u_state);
 					static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 					
 					if (1 == R_::template efflux_pull_tail<N_share>(review_o, render_o)) {
@@ -104,7 +104,7 @@ struct monomer<U, As...>
 						XTAL_IF0
 						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
 						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(default) {for (size_t m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						XTAL_0IF_(default) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
 					}
@@ -142,15 +142,15 @@ struct monomer<U, As...>
 				{}
 
 				XTAL_TO4_(XTAL_DEF_(return,inline)
-				XTAL_REF state(auto &&...oo),
+				XTAL_RET state(auto &&...oo),
 					R_::head(XTAL_REF_(oo)...)
 				)
 				XTAL_TO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_REF functor(), state()
+				XTAL_RET functor(), state()
 				)
 
-			public:// FLUXION
+			public:// *FLUX
 				using R_::efflux;
 
 				XTAL_TNX efflux(occur::render_q auto &&render_o)
@@ -187,16 +187,16 @@ struct monomer<U, As...>
 				
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_REF functor(),
+				XTAL_RET functor(),
 				{
 					return state();
 				})
 				
 				XTAL_DEF_(return,inline)
 				XTAL_LET delay()
-				XTAL_0EX -> size_t
+				XTAL_0EX -> size_type
 				{
-					size_t const n = R_::delay();
+					size_type const n = R_::delay();
 					return 0 < n? n: R_::template head<U_resize>();
 				}
 
@@ -233,7 +233,7 @@ struct monomer<U, As...>
 				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
 				XTAL_0EX requires (0 <= N_share)
 				{
-					return R_::template influx_push_tail<N_share>(null_t{}, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
+					return R_::template influx_push_tail<N_share>(null_type{}, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}
 
 				using R_::efflux;
@@ -247,7 +247,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(Ren &&render_o, auto &&...oo)
 				XTAL_0EX
 				{
-					size_t vN = R_::template head<U_resize>();
+					size_type vN = R_::template head<U_resize>();
 					occur::review_t<U_state> v_(store());
 					return efflux(v_.subview(vN), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
