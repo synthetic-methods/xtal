@@ -75,7 +75,7 @@ struct serial<A>
 		{
 			auto &s = self();
 			
-			if constexpr (_op::alignment_n < N_data) {
+			if constexpr (_op::alignment::value < N_data) {
 				for (auto i = N_data; ~--i;) {let(i) *= get<0>(t);
 				for (auto j = i; j-- ;) {let(i) += t.let(j)*let(i - j);}}
 			}

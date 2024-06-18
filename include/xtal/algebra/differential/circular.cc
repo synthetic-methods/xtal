@@ -16,9 +16,9 @@ namespace xtal::algebra::differential::_test
 TAG_("circular")
 {
 	using _op = bond::operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
 	static constexpr T_alpha two =  2;
 	static constexpr T_alpha ten = 10;
 

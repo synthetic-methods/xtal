@@ -16,10 +16,10 @@ namespace xtal::algebra::_test
 TAG_("symbol")
 {
 	using _op = bond::operating;
-	using T_delta = typename _op::delta_t;
-	using T_sigma = typename _op::sigma_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_delta = typename _op::delta_type;
+	using T_sigma = typename _op::sigma_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 
 
 	TRY_("11th characterization (integer)")

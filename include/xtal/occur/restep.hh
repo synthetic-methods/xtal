@@ -19,7 +19,7 @@ XTAL_LET restep_f(auto &&w)
 XTAL_0EX
 {
 	using _op = bond::operate<decltype(w)>;
-	return restep_t<typename _op::delta_t>(XTAL_REF_(w));
+	return restep_t<typename _op::delta_type>(XTAL_REF_(w));
 }
 
 

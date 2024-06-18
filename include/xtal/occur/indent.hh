@@ -70,7 +70,7 @@ struct indent<Ns...>
 
 			using subkind = bond::compose<flux::route<N_mask>, defer<W_>>;
 
-			template <cell::any_q R> requires (0 == sizeof...(Ns))
+			template <compound::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;

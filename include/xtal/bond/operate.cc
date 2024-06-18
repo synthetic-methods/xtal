@@ -16,10 +16,10 @@ namespace xtal::bond::_test
 TAG_("operate", "root")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -50,10 +50,10 @@ TAG_("operate", "root")
 TAG_("operate", "logarithm")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -117,10 +117,10 @@ TAG_("operate", "logarithm")
 TAG_("operate", "exponential")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -197,17 +197,17 @@ TAG_("operate", "exponential")
 TAG_("operate", "bit_reverse")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
 	TRY_("32:03")
 	{
 		using _op = operate<uint32_t>;
-		using T_sigma = typename _op::sigma_t;
+		using T_sigma = typename _op::sigma_type;
 
 		T_sigma question = 0b011;
 		T_sigma answer   = 0b110;
@@ -218,7 +218,7 @@ TAG_("operate", "bit_reverse")
 	TRY_("16:16")
 	{
 		using _op = operate<uint16_t>;
-		using T_sigma = typename _op::sigma_t;
+		using T_sigma = typename _op::sigma_type;
 
 		T_sigma question = 0b0100100011100101;
 		T_sigma answer   = 0b1010011100010010;
@@ -229,7 +229,7 @@ TAG_("operate", "bit_reverse")
 	TRY_("16:12")
 	{
 		using _op = operate<uint16_t>;
-		using T_sigma = typename _op::sigma_t;
+		using T_sigma = typename _op::sigma_type;
 
 		T_sigma question = 0b010010001110;
 		T_sigma answer   = 0b011100010010;
@@ -240,7 +240,7 @@ TAG_("operate", "bit_reverse")
 	TRY_("8:8")
 	{
 		using _op = operate<uint8_t>;
-		using T_sigma = typename _op::sigma_t;
+		using T_sigma = typename _op::sigma_type;
 
 		T_sigma question = 0b01001101;
 		T_sigma answer   = 0b10110010;
@@ -251,7 +251,7 @@ TAG_("operate", "bit_reverse")
 	TRY_("8:6")
 	{
 		using _op = operate<uint8_t>;
-		using T_sigma = typename _op::sigma_t;
+		using T_sigma = typename _op::sigma_type;
 
 		T_sigma question = 0b010011;
 		T_sigma answer   = 0b110010;
@@ -267,10 +267,10 @@ TAG_("operate", "bit_reverse")
 TAG_("operate", "bit_reverse")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -289,10 +289,10 @@ TAG_("operate", "bit_reverse")
 TAG_("operate", "fraction")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -334,10 +334,10 @@ template <int N_sgn=1, int N_rho=0>
 void compute_truncate__zoned()
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -346,7 +346,7 @@ void compute_truncate__zoned()
 	auto const up2 = _op::upsilon_f(2), dn2 = _op::dnsilon_f(2);
 	auto const up3 = _op::upsilon_f(3), dn3 = _op::dnsilon_f(3);
 
-	_op::alpha_t x{}, a = N_sgn*_std::pow(2, N_rho);
+	_op::alpha_type x{}, a = N_sgn*_std::pow(2, N_rho);
 	x = a*up2; TRUE_(_op::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn0);
 	x = a*up1; TRUE_(_op::truncate_f<0>(x, N_rho) == N_sgn); TRUE_(x ==  a*dn0);
 //	x = a*up0; TRUE_(_op::truncate_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*dn0);
@@ -372,10 +372,10 @@ void compute_truncate__zoned()
 TAG_("operate", "truncate")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -391,7 +391,7 @@ TAG_("operate", "truncate")
 		auto const up2 = _op::upsilon_f(2), dn2 = _op::dnsilon_f(2);
 		auto const up3 = _op::upsilon_f(3), dn3 = _op::dnsilon_f(3);
 
-		_op::alpha_t x{};
+		_op::alpha_type x{};
 
 		x = 3.142; TRUE_(_op::truncate_f<1>(x, 1) == 1); TRUE_(x == 2*dn1);
 		x = 3.142; TRUE_(_op::truncate_f<1>(x, 2) == 0); TRUE_(x == 3.142);
@@ -406,10 +406,10 @@ template <int N_sgn=1, int N_rho=0>
 void compute_puncture__real_zoned()
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -418,7 +418,7 @@ void compute_puncture__real_zoned()
 	auto const up2 = _op::upsilon_f(2), dn2 = _op::dnsilon_f(2);
 	auto const up3 = _op::upsilon_f(3), dn3 = _op::dnsilon_f(3);
 
-	_op::alpha_t x{}, a = N_sgn*_std::pow(2, N_rho);
+	_op::alpha_type x{}, a = N_sgn*_std::pow(2, N_rho);
 	
 	x = a*up2; TRUE_(_op::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up2);
 	x = a*up1; TRUE_(_op::puncture_f<0>(x, N_rho) ==     0); TRUE_(x ==  a*up1);
@@ -446,10 +446,10 @@ template <int N_sgn=1>
 void compute_puncture__real_unzoned()
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -458,7 +458,7 @@ void compute_puncture__real_unzoned()
 	auto const oo2 = _op::minimal_f(2);
 	auto const oo3 = _op::minimal_f(3);
 
-	_op::alpha_t w{}, x{}, y{}, a = N_sgn;
+	_op::alpha_type w{}, x{}, y{}, a = N_sgn;
 
 	w = x = a*oo2; y = _op::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == a*oo2);
 	w = x = a*oo1; y = _op::puncture_f<0>(x); TRUE_(y ==     0); TRUE_(x == a*oo1);
@@ -479,10 +479,10 @@ void compute_puncture__real_unzoned()
 TAG_("operate", "puncture")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 
@@ -505,7 +505,7 @@ TAG_("operate", "puncture")
 		auto const up2 = _op::upsilon_f(2), dn2 = _op::dnsilon_f(2);
 		auto const up3 = _op::upsilon_f(3), dn3 = _op::dnsilon_f(3);
 
-		_op::alpha_t x{};
+		_op::alpha_type x{};
 
 		x = 3.142; TRUE_(_op::puncture_f<1>(x, 1) == 0); TRUE_(x == 3.142);
 		x = 3.142; TRUE_(_op::puncture_f<1>(x, 2) == 1); TRUE_(x == 4*up1);
@@ -519,10 +519,10 @@ TAG_("operate", "puncture")
 TAG_("operate", "puncture", "truncate")
 {
 	using _op = operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
-	using T_aphex = typename _op::aphex_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
 
 

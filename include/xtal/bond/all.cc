@@ -1,5 +1,5 @@
 #include "./any.cc"
-#include "./assay.cc"
+#include "./word.cc"
 #include "./compose.cc"
 #include "./couple.cc"
 #include "./isokind.cc"

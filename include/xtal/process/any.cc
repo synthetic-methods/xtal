@@ -88,23 +88,23 @@ using halve_t = confined_t<halve>;
 TAG_("process", "attach")
 {
 	using _op = bond::operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
 
-	using L01 = process::confined_t<typename level_t::template poll<0b01>>;
-	using L10 = process::confined_t<typename level_t::template poll<0b10>>;
+	using L01 = process::confined_t<typename Ox_level::template poll<0b01>>;
+	using L10 = process::confined_t<typename Ox_level::template poll<0b10>>;
 
 	TRY_("messaging")
 	{
 		subtract_t::binding_t<L01, L10> op{};
 
-		op <<= flux::mark_s<level_t>(0b01, level_t{9});
-		op <<= flux::mark_s<level_t>(0b10, level_t{1});
+		op <<= flux::mark_s<Ox_level>(0b01, Ox_level{9});
+		op <<= flux::mark_s<Ox_level>(0b10, Ox_level{1});
 		TRUE_(8 == op());
 
-		op <<= nominal_t<0>{} << level_t{6};
-		op <<= nominal_t<1>{} << level_t{3};
+		op <<= nominal_t<0>{} << Ox_level{6};
+		op <<= nominal_t<1>{} << Ox_level{3};
 		TRUE_(3 == op());
 
 	}
@@ -116,9 +116,9 @@ TAG_("process", "attach")
 TAG_("process", "construct")
 {
 	using _op = bond::operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
 
 	TRY_("lifting")
 	{
@@ -147,14 +147,14 @@ TAG_("process", "construct")
 
 void process_access__get(auto z)
 {
-	auto &o = z.template head<onset_t>();
+	auto &o = z.template head<Ox_onset>();
 	TRUE_(00.0 == (float) o);
 	TRUE_(10.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 TAG_("process", "access")
 {
-	TRY_("get (dynamic)") {process_access__get(dynamic_onset_mix_t());}
-	TRY_("get (static)")  {process_access__get( static_onset_mix_t());}
+	TRY_("get (dynamic)") {process_access__get(Px_dynamic_onset_mix());}
+	TRY_("get (static)")  {process_access__get( Px_static_onset_mix());}
 
 }
 
@@ -163,60 +163,60 @@ TAG_("process", "access")
 /**/
 void process_provision__influx_operator(auto z)
 {
-	auto &o = z.template head<onset_t>();
-	z <<= onset_t(0.0); TRUE_(0.0 == (float) o);
-	z <<= onset_t(1.0); TRUE_(1.0 == (float) o);
-	z <<= onset_t(2.0); TRUE_(2.0 == (float) o);
-	z <<= onset_t(3.0); TRUE_(3.0 == (float) o);
+	auto &o = z.template head<Ox_onset>();
+	z <<= Ox_onset(0.0); TRUE_(0.0 == (float) o);
+	z <<= Ox_onset(1.0); TRUE_(1.0 == (float) o);
+	z <<= Ox_onset(2.0); TRUE_(2.0 == (float) o);
+	z <<= Ox_onset(3.0); TRUE_(3.0 == (float) o);
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_provision__efflux_operator(auto z)
 {
-	auto &o = z.template head<onset_t>();
-	z >>= onset_t(0.0); TRUE_(0.0 == (float) o);
-	z >>= onset_t(1.0); TRUE_(1.0 == (float) o);
-	z >>= onset_t(2.0); TRUE_(2.0 == (float) o);
-	z >>= onset_t(3.0); TRUE_(3.0 == (float) o);
+	auto &o = z.template head<Ox_onset>();
+	z >>= Ox_onset(0.0); TRUE_(0.0 == (float) o);
+	z >>= Ox_onset(1.0); TRUE_(1.0 == (float) o);
+	z >>= Ox_onset(2.0); TRUE_(2.0 == (float) o);
+	z >>= Ox_onset(3.0); TRUE_(3.0 == (float) o);
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_provision__influx_method(auto z)
 {
 	using U_start = occur::reinferred_t<class start_a, nominal_t<0>>;
 
-	auto &o = z.template head<onset_t>();
+	auto &o = z.template head<Ox_onset>();
 	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
-	TRUE_( 1 == (int) z.influx(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
-	TRUE_( 0 == (int) z.influx(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.influx(onset_t(2.0))); TRUE_(2.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.influx(onset_t(3.0))); TRUE_(3.0 == (float) o);// changed
+	TRUE_( 1 == (int) z.influx(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
+	TRUE_( 0 == (int) z.influx(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.influx(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.influx(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_provision__efflux_method(auto z)
 {
 	using U_start = occur::reinferred_t<class start_a, nominal_t<0>>;
 
-	auto &o = z.template head<onset_t>();
+	auto &o = z.template head<Ox_onset>();
 	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized
-	TRUE_( 1 == (int) z.efflux(onset_t(0.0))); TRUE_(0.0 == (float) o);// unchanged
-	TRUE_( 0 == (int) z.efflux(onset_t(1.0))); TRUE_(1.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.efflux(onset_t(2.0))); TRUE_(2.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.efflux(onset_t(3.0))); TRUE_(3.0 == (float) o);// changed
+	TRUE_( 1 == (int) z.efflux(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
+	TRUE_( 0 == (int) z.efflux(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.efflux(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.efflux(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 
 }
 TAG_("process", "occur")
 {
-	TRY_("influx operator (dynamic)") {process_provision__influx_operator(dynamic_onset_mix_t());}
-	TRY_("efflux operator (dynamic)") {process_provision__efflux_operator(dynamic_onset_mix_t());}
+	TRY_("influx operator (dynamic)") {process_provision__influx_operator(Px_dynamic_onset_mix());}
+	TRY_("efflux operator (dynamic)") {process_provision__efflux_operator(Px_dynamic_onset_mix());}
 
-	TRY_("influx operator (static)")  {process_provision__influx_operator( static_onset_mix_t());}
-	TRY_("efflux operator (static)")  {process_provision__efflux_operator( static_onset_mix_t());}
+	TRY_("influx operator (static)")  {process_provision__influx_operator( Px_static_onset_mix());}
+	TRY_("efflux operator (static)")  {process_provision__efflux_operator( Px_static_onset_mix());}
 
-	TRY_("influx functor (dynamic)") {process_provision__influx_method(dynamic_onset_mix_t());}
-	TRY_("efflux functor (dynamic)") {process_provision__efflux_method(dynamic_onset_mix_t());}
+	TRY_("influx functor (dynamic)") {process_provision__influx_method(Px_dynamic_onset_mix());}
+	TRY_("efflux functor (dynamic)") {process_provision__efflux_method(Px_dynamic_onset_mix());}
 
-	TRY_("influx functor (static)")  {process_provision__influx_method( static_onset_mix_t());}
-	TRY_("efflux functor (static)")  {process_provision__efflux_method( static_onset_mix_t());}
+	TRY_("influx functor (static)")  {process_provision__influx_method( Px_static_onset_mix());}
+	TRY_("efflux functor (static)")  {process_provision__efflux_method( Px_static_onset_mix());}
 
 }
 

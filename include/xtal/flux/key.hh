@@ -19,7 +19,7 @@ Wrapper used to index an existing type. \
 
 template <class   ..._s>	XTAL_TYP key;
 template <class   ..._s>	XTAL_REQ key_q = bond::any_tag_p<key, _s...>;
-template <class   ..._s>	XTAL_USE key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
+template <class   ..._s>	XTAL_USE key_s = bond::compose_s<packet_t<_s...>, compound::confined<key<>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ struct key<>
 {
 	using _op = bond::operating;
 
-	using subkind = cell::confer<typename _op::iota_t, bond::tag<key>>;
+	using subkind = compound::confer<typename _op::iota_type, bond::tag<key>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -54,7 +54,6 @@ struct key<>
 		using S_::S_;
 
 		using key_size = superliminal_s<typename S_::key_size>;
-	//	TODO: Adapt `assay` for this?
 
 	};
 };

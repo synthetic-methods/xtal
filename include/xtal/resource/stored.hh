@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/all.hh"
+#include "../arrange/all.hh"
 
 
 
@@ -18,14 +18,14 @@ template <typename ..._s> XTAL_REQ stored_q = bond::any_tag_p<stored, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::store`. \
+Provides a specialization of `arrange::store`. \
 
 template <bond::compose_q A>
 struct stored<A>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct stored<unit_type[N]>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -52,7 +52,7 @@ struct stored<unit_type[N]>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::block_t<U[N]>;
+		using store_t = arrange::block_t<U[N]>;
 
 	};
 };
@@ -61,7 +61,7 @@ struct stored<null_type[N]>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -70,7 +70,7 @@ struct stored<null_type[N]>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::store_t<U[(unsigned) N]>;
+		using store_t = arrange::store_t<U[(unsigned) N]>;
 
 	};
 };
@@ -79,7 +79,7 @@ struct stored<A>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -88,7 +88,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::store_t<U[(unsigned) A::value]>;
+		using store_t = arrange::store_t<U[(unsigned) A::value]>;
 
 	};
 };

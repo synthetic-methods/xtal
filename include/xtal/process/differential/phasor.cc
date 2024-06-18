@@ -24,9 +24,9 @@ TAG_("phasor")
 	using U_example = resource::example<>;
 
 	using _op = bond::operating;
-	using T_sigma = typename _op::sigma_t;
-	using T_delta = typename _op::delta_t;
-	using T_alpha = typename _op::alpha_t;
+	using T_sigma = typename _op::sigma_type;
+	using T_delta = typename _op::delta_type;
+	using T_alpha = typename _op::alpha_type;
 	
 	using T_eigencolumns = Array<T_alpha, Dynamic, 2, ColMajor>;
 	using T_eigenrows    = Array<T_alpha, Dynamic, 2, ColMajor>;

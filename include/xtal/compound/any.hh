@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::cell
+namespace xtal::compound
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -209,10 +209,10 @@ template <any_q W> XTAL_DEF_(return,inline) XTAL_RET operator <=>(W const &x, W 
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::cell::any_q T>
+template <xtal::compound::any_q T>
 struct tuple_size<T> : T::pack_size {};
 
-template <size_t N, xtal::cell::any_q T>
+template <size_t N, xtal::compound::any_q T>
 struct tuple_element<N, T> {using type = typename T::template head_t<integral_constant<size_t, N>>;};
 
 
