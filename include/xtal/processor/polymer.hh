@@ -28,7 +28,7 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
-template <typename A, typename ...As> requires anything_q<confined_t<polymer<As...>>>
+template <typename A, typename ...As> requires self_q<confined_t<polymer<As...>>>
 struct polymer<A, As...>
 :	bond::compose<A, polymer<As...>>
 {

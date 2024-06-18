@@ -25,7 +25,7 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename A, typename ...As> requires anything_q<confined_t<monomer<As...>>>
+template <typename A, typename ...As> requires self_q<confined_t<monomer<As...>>>
 struct monomer<A, As...>
 :	bond::compose<A, monomer<As...>>
 {

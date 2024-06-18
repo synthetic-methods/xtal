@@ -28,13 +28,13 @@ The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constex
 template <size_type N_size>
 struct recognize : recognize<(N_size >> 1)>
 {
-	using zed_t = nominal_t<false>;
+	using _zed = nominal_t<false>;
 
 };
 template <>
 struct recognize<(1<<0)>
 {
-	using   zed_t =           nominal_t< true>;
+	using       _zed =        nominal_t<true>;
 //	using  iota_type =           _std::int4_t;
 	using delta_type =    signed XTAL_INT_(0);
 	using sigma_type =  unsigned XTAL_INT_(0);
@@ -51,7 +51,7 @@ struct recognize<(1<<0)>
 template <>
 struct recognize<(1<<1)>
 {
-	using   zed_t =           nominal_t< true>;
+	using       _zed =        nominal_t<true>;
 	using  iota_type =    signed XTAL_INT_(0);
 	using delta_type =    signed XTAL_INT_(1);
 	using sigma_type =  unsigned XTAL_INT_(1);
@@ -68,7 +68,7 @@ struct recognize<(1<<1)>
 template <>
 struct recognize<(1<<2)>
 {
-	using   zed_t =           nominal_t< true>;
+	using       _zed =        nominal_t<true>;
 	using  iota_type =    signed XTAL_INT_(1);
 	using delta_type =    signed XTAL_INT_(2);
 	using sigma_type =  unsigned XTAL_INT_(2);
@@ -79,8 +79,8 @@ struct recognize<(1<<2)>
 	using alpha_2x1_t = simde_float32x2_t;   // v(?:ld|st)1_f32
 	using alpha_2x2_t = simde_float32x2x2_t; // v(?:ld|st)2_f32
 
-	template <auto ...Ns> using                    delta_u = lateral_t<(delta_type) Ns...>;
-	template <auto ...Ns> using                    sigma_u = lateral_t<(sigma_type) Ns...>;
+	template <auto ...Ns> using                       delta_u = lateral_t<(delta_type) Ns...>;
+	template <auto ...Ns> using                       sigma_u = lateral_t<(sigma_type) Ns...>;
 	template <auto ...Ns> static constexpr delta_type delta_n = lateral_n<(delta_type) Ns...>;
 	template <auto ...Ns> static constexpr sigma_type sigma_n = lateral_n<(sigma_type) Ns...>;
 
@@ -141,7 +141,7 @@ struct recognize<(1<<2)>
 template <>
 struct recognize<(1<<3)>
 {
-	using   zed_t =           nominal_t< true>;
+	using   _zed =           nominal_t< true>;
 	using  iota_type =    signed XTAL_INT_(2);
 	using delta_type =    signed XTAL_INT_(3);
 	using sigma_type =  unsigned XTAL_INT_(3);
@@ -152,8 +152,8 @@ struct recognize<(1<<3)>
 	using alpha_2x1_t = simde_float64x2_t;   // v(?:ld|st)1q_f64
 	using alpha_2x2_t = simde_float64x2x2_t; // v(?:ld|st)1q_f64_x2
 
-	template <auto ...Ns> using                    delta_u = lateral_t<(delta_type) Ns...>;
-	template <auto ...Ns> using                    sigma_u = lateral_t<(sigma_type) Ns...>;
+	template <auto ...Ns> using                       delta_u = lateral_t<(delta_type) Ns...>;
+	template <auto ...Ns> using                       sigma_u = lateral_t<(sigma_type) Ns...>;
 	template <auto ...Ns> static constexpr delta_type delta_n = lateral_n<(delta_type) Ns...>;
 	template <auto ...Ns> static constexpr sigma_type sigma_n = lateral_n<(sigma_type) Ns...>;
 
@@ -211,7 +211,7 @@ struct recognize<(1<<3)>
 };
 
 template <size_type N_size>
-concept recognized_q = recognize<N_size>::zed_t::value;
+concept recognized_q = recognize<N_size>::_zed::value;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ concept recognized_q = recognize<N_size>::zed_t::value;
 template <size_type N_size>
 struct rationalize : rationalize<(N_size >> 1)>
 {
-	using zed_t = nominal_t<false>;
+	using _zed = nominal_t<false>;
 
 };
 template <size_type N_size> requires recognized_q<N_size>
@@ -467,7 +467,7 @@ public:
 
 	///\note Requires `log2(sizeof(u) << 3)` iterations. \
 
-	XTAL_DEF_(return, static)
+	XTAL_DEF_(return,static)
 	XTAL_LET bit_reverse_f(sigma_type u, sigma_type const &subdepth)
 	XTAL_0EX -> sigma_type
 	{
@@ -510,7 +510,7 @@ public:
 template <size_type N_size>
 struct realize : realize<(N_size >> 1)>
 {
-	using zed_t = nominal_t<false>;
+	using _zed = nominal_t<false>;
 
 };
 template <size_type N_size> requires recognized_q<N_size>
@@ -1564,131 +1564,6 @@ public:
 		alpha_type const x = trim_f<N_zoom>(target.real());
 		alpha_type const y = trim_f<N_zoom>(target.imag());
 		return aphex_type{x, y};
-	}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-	///\
-	Computes the Taylor series for `ArSinh[#/2]*2/#`. \
-
-	template <int N_lim=-1>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET logarithmetic_f(auto const &x)
-	XTAL_0EX
-	{
-		int constexpr I = (N_lim&0b111) << 1;
-		alpha_type       t = ratio_f(1, I*2 + 1);
-
-		bond::seek_backward_f<I>([&] (auto i)
-			XTAL_0FN_(t = accumulate_f<-1>(ratio_f(1, i*2 + 1), ratio_f(i*2 + 1, i + 1 << 3), x, t)
-		));
-		return t;
-	}
-	///\
-	Computes the `sqrt`-based approximation of `ln` around `1`. \
-
-	template <int N_lim=-1>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET logarithmic_f(auto const &x)
-	XTAL_0EX
-	{
-		auto const w = root_f<-2>(x)*(x - 1);
-		return logarithmetic_f<N_lim>(square_f(w))*(w);
-	}
-	///\
-	Computes the `sqrt`-based approximation of `ln` after argument truncation. \
-
-	///\todo\
-	Implement `logarithm_f` for complex numbers.
-
-	template <int N_lim=-1>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET logarithm_f(alpha_type const &x)
-	XTAL_0EX
-	{
-	//	Log[m 2^x]
-	//	Log[m] + Log[2^x]
-	//	Log[m] + Log[2]*x
-	//	Log[m/Sqrt[2]] + Log[2]*(x + 1/2)
-	//	Log[m/Sqrt[2]] + Log[2]*(x*2 + 1)/2
-
-		alpha_type constexpr N_sqrt_half = 0.7071067811865475244008443621048490393e+0L;
-		alpha_type constexpr N_half_log2 = 0.3465735902799726547086160607290882840e+0L;
-
-		if constexpr (N_lim < 0) {
-			return _std::is_constant_evaluated()? logarithm_f<5>(x): _std::log(x);
-		}
-		else {
-			auto m = _xtd::bit_cast<delta_type>(x);
-			auto n = m - unit.mask;
-			m     &= fraction.mask;
-			m     |= unit.mask;
-			n    >>= unit.shift - 1;
-			n     |= 1;
-			auto w = N_sqrt_half*_xtd::bit_cast<alpha_type>(m);
-			auto u = N_half_log2*               alpha_type (n);
-			return logarithmic_f<N_lim>(w) + (u);
-		}
-	}
-//	static_assert((0.6931471805599453094172321214581765681e+0L) == (logarithm_f((alpha_type) 2)));// FIXME: 64-bit only...
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-	///\
-	Computes the Taylor series for `Sinh[#/2]*2/#`. \
-
-	template <int I_lim=0>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET antilogarithmetic_f(auto const &x)
-	XTAL_0EX
-	{
-		alpha_type t = 1;
-		bond::seek_backward_f<I_lim>([&] (auto i)
-			XTAL_0FN_(t = accumulate_f(alpha_1
-			,	ratio_f(1, (i*2 + 2)*(i*2 + 3) << 2)
-			,	x
-			,	t
-			)
-		));
-		return t;
-	}
-	///\
-	Computes the `sqrt`-based approximation of `exp` around `0`. \
-
-	template <int I_lim=0, int J_lim=0>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET antilogarithmic_f(auto const &x)
-	XTAL_0EX
-	{
-		using X = XTAL_ALL_(x);
-		int constexpr I_ = I_lim << 1;
-		int constexpr J_ = J_lim << 2;
-		X w = x*haplo_n<J_>; w *= antilogarithmetic_f<I_>(square_f(w));
-		X u = w*haplo_n<1 >;
-		return square_f<1, J_>(accumulate_f(1, w, u + root_f<2>(accumulate_f(1, u, u))));
-	}
-	///\
-	Computes the `sqrt`-based approximation of `exp` after argument truncation. \
-
-	///\todo\
-	Implement `antilogarithm_f` for complex numbers.
-
-	template <int I_lim=-1, int J_lim=-1>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET antilogarithm_f(alpha_type u)
-	XTAL_0EX
-	{
-		alpha_type constexpr  M_ln2 = 1.4426950408889634073599246810018921374e+0L;// 1/Log[2]
-		alpha_type constexpr  N_ln2 = 0.6931471805599453094172321214581765681e+0L;// 1*Log[2]
-		int constexpr I_ = I_lim < 0? -4*I_lim: I_lim;
-		int constexpr J_ = J_lim < 0? -4*J_lim: J_lim;
-		u *= M_ln2;
-		auto const n = _std::round(u);
-		u -= n;
-		u *= N_ln2;
-		return _std::ldexp(antilogarithmic_f<I_, J_>(u), n);
 	}
 
 

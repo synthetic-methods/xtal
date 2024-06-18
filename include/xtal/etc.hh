@@ -1,14 +1,10 @@
 #pragma once
 
-#ifdef  NDEBUG
-#define XTAL_SIC 1//release
-#else
-#define XTAL_SIC 1//debug
-#include <iostream>
-#endif
-
-#define  _LIBCPP_DEBUG XTAL_SIC
-#define _GLIBCXX_DEBUG XTAL_SIC
+#include <variant>
+#include <cstdint>
+#include <cstring>
+#include <cassert>
+#include <concepts>
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -20,9 +16,21 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <variant>
-#include <cstdint>
+#ifdef  NDEBUG
+#define XTAL_LOG 1//release
+#else
+#define XTAL_LOG 1//debug
+#endif
 
+#if     XTAL_LOG
+#include <iostream>
+#endif
+
+#define  _LIBCPP_DEBUG XTAL_LOG
+#define _GLIBCXX_DEBUG XTAL_LOG
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_INT_(...) XTAL_INT_##__VA_ARGS__
 #define XTAL_INT_0          char
