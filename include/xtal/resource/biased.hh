@@ -28,7 +28,7 @@ struct biased
 
 	using subkind = bond::compose<bond::tag<biased>, As...>;
 
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

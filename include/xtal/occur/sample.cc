@@ -19,8 +19,8 @@ TAG_("sample")
 	{
 		using _op = bond::operating;
 
-		using T_sigma = typename _op::sigma_t;
-		using T_alpha = typename _op::alpha_t;
+		using T_sigma = typename _op::sigma_type;
+		using T_alpha = typename _op::alpha_type;
 
 		auto constexpr b = (T_sigma) _op::diplo_f(16);
 		auto constexpr p = (T_alpha) _op::haplo_f(16);

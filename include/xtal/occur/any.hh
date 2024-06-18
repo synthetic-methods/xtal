@@ -62,11 +62,13 @@ struct define
 		{
 			using subkind = attach<N_mask>;
 			
-			template <flux::any_q R> requires bond::assay_q<T>
+			template <flux::any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 			
+				static_assert(0 <= T::size());
+
 			public:
 				using R_::R_;
 				using R_::self;

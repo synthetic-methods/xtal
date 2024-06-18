@@ -118,7 +118,7 @@ struct monomer<U, As...>
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
-			using subkind = bond::compose<cell::confer<Y_result>, bracket_<Xs...>>;
+			using subkind = bond::compose<compound::confer<Y_result>, bracket_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>

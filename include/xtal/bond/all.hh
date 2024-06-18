@@ -1,5 +1,5 @@
 #include "./any.hh"
-#include "./assay.hh"
+#include "./word.hh"
 #include "./compose.hh"
 #include "./couple.hh"
 #include "./isokind.hh"

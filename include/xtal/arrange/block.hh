@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom
+namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -266,10 +266,10 @@ template <size_type I> XTAL_DEF_(return,inline,static) XTAL_RET get(block_q auto
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
-template <xtal::atom::block_q T>
+template <xtal::arrange::block_q T>
 struct tuple_size<T> : integral_constant<size_t, T::size()> {};
 
-template <size_t N_datum, xtal::atom::block_q T>
+template <size_t N_datum, xtal::arrange::block_q T>
 struct tuple_element<N_datum, T> {using type = typename T::value_type;};
 
 

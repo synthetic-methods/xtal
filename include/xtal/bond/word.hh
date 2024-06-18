@@ -15,7 +15,7 @@ namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
 template <int N_width>
-struct assay
+struct word
 {
 	template <class S>
 	class subtype : public S
@@ -35,13 +35,13 @@ struct assay
 	};
 };
 template <class T>
-concept assay_q = requires {{T::size()} -> integral_q;};
+concept word_q = requires {{T::size()} -> integral_q;};
 
 
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts>
-concept assay_q = (...and _detail::assay_q<Ts>);
+concept word_q = (...and _detail::word_q<Ts>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,10 +49,10 @@ concept assay_q = (...and _detail::assay_q<Ts>);
 Defines the limits of a bit-field. \
 
 template <int N_width>
-struct assay
+struct word
 {
 	template <size_type N_widen=1>
-	using semikind = _detail::assay<N_widen*N_width>;
+	using semikind = _detail::word<N_widen*N_width>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, semikind<>>
@@ -73,7 +73,7 @@ struct assay
 		};
 
 	};
-	template <class S> requires assay_q<S>
+	template <class S> requires word_q<S>
 	class subtype<S> : public bond::compose_s<S, semikind<S::size()>>
 	{
 		using S_ = bond::compose_s<S, semikind<S::size()>>;

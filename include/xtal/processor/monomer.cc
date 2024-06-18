@@ -17,8 +17,8 @@ template <typename ...As>
 void monomer_zipping()
 {
 	using _op = bond::operating;
-	using T_sigma = _op::sigma_t;
-	using T_alpha = _op::alpha_t;
+	using T_sigma = _op::sigma_type;
+	using T_alpha = _op::alpha_type;
 
 	using            U_data = T_alpha;
 	size_type constexpr U_size = 2;
@@ -52,8 +52,8 @@ TAG_("monomer", "zipping")
 template <typename ...As>
 void monomer_lifting()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	T_sigma constexpr N_size = 5;
 	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
@@ -84,14 +84,14 @@ TAG_("monomer", "lifting")
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class mix_t>
+template <class Px_mix>
 void monomer_provision__advancing()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	using U_render = occur::render_t<>;
-	using U_mixer = processor::monomer_t<mix_t>;
+	using U_mixer = processor::monomer_t<Px_mix>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
@@ -118,7 +118,7 @@ void monomer_provision__advancing()
 
 //	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
 
-//	xhs <<= onset_t((T_alpha) - (99 + 66));
+//	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11
 	|	_xtd::ranges::views::take(xhs.size())
 	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
@@ -129,8 +129,8 @@ void monomer_provision__advancing()
 template <class U_add>
 void monomer_provision__provisioning()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	using provide = resource::stored<nominal_t<0x20>>;
 
@@ -157,28 +157,28 @@ void monomer_provision__provisioning()
 	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
 	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
 	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
-	xhs <<= onset_t((T_alpha) (11 + 1));
+	xhs <<= Ox_onset((T_alpha) (11 + 1));
 	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "occur")
 {
-	TRY_("advancing (dynamic)") {monomer_provision__advancing<dynamic_onset_mix_t>();}
-	TRY_("advancing (static)")  {monomer_provision__advancing< static_onset_mix_t>();}
+	TRY_("advancing (dynamic)") {monomer_provision__advancing<Px_dynamic_onset_mix>();}
+	TRY_("advancing (static)")  {monomer_provision__advancing< Px_static_onset_mix>();}
 
-	TRY_("provisioning (dynamic)") {monomer_provision__provisioning<dynamic_onset_mix_t>();}
-	TRY_("provisioning (static)")  {monomer_provision__provisioning< static_onset_mix_t>();}
+	TRY_("provisioning (dynamic)") {monomer_provision__provisioning<Px_dynamic_onset_mix>();}
+	TRY_("provisioning (static)")  {monomer_provision__provisioning< Px_static_onset_mix>();}
 
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class U_add, typename U_mul=dynamic_term_t>
+template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__rvalue()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	size_type constexpr N = 4;
 	
@@ -192,8 +192,8 @@ void monomer_chaining__rvalue()
 	auto yhs = mul_op::binding_f(mix_op::binding_f(let_f(_01), let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
-	yhs <<= scale_t((T_alpha) 100);
-	yhs <<= onset_t((T_alpha) 000);
+	yhs <<= Ox_scale((T_alpha) 100);
+	yhs <<= Ox_onset((T_alpha) 000);
 	TRUE_(0 == yhs.size());
 
 	auto seq = occur::render_f(N);
@@ -204,11 +204,11 @@ void monomer_chaining__rvalue()
 	TRUE_(yhs.template slot<0>().store().empty());
 
 }
-template <class U_add, typename U_mul=dynamic_term_t>
+template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__lvalue()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	size_type constexpr N = 4;
 
@@ -225,8 +225,8 @@ void monomer_chaining__lvalue()
 	auto  yhs = mul_op::binding_f(xhs);
 
 	yhs <<= occur::resize_f(N);
-	yhs <<= scale_t((T_alpha) 100);
-	xhs <<= onset_t((T_alpha) 000);
+	yhs <<= Ox_scale((T_alpha) 100);
+	xhs <<= Ox_onset((T_alpha) 000);
 
 	auto seq = occur::render_f(N);
 	yhs >>= seq  ;// idempotent!
@@ -236,11 +236,11 @@ void monomer_chaining__lvalue()
 	TRUE_(yhs.template slot<0>().store().size() == 4);
 
 }
-template <class U_add, typename U_mul=dynamic_term_t>
+template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__shared()
 {
-	using T_sigma = typename bond::operating::sigma_t;
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	size_type constexpr N = 4;
 
@@ -251,7 +251,7 @@ void monomer_chaining__shared()
 
 	using mix_op = monomer_t<U_add, resource::stored<>>;
 	using mix_fn = monomer_t<U_add>;
-	using idx_fn = monomer_t<dynamic_count_t>;
+	using idx_fn = monomer_t<Px_dynamic_count>;
 
 	auto _xx = idx_fn::binding_f();
 	auto xhs = mix_op::binding_f(_xx);
@@ -270,14 +270,14 @@ void monomer_chaining__shared()
 }
 TAG_("monomer", "chaining")
 {
-	TRY_("rvalue (dynamic)") {monomer_chaining__rvalue<dynamic_onset_mix_t>();}
-	TRY_("rvalue (static)")  {monomer_chaining__rvalue< static_onset_mix_t>();}
+	TRY_("rvalue (dynamic)") {monomer_chaining__rvalue<Px_dynamic_onset_mix>();}
+	TRY_("rvalue (static)")  {monomer_chaining__rvalue< Px_static_onset_mix>();}
 
-	TRY_("lvalue (dynamic)") {monomer_chaining__lvalue<dynamic_onset_mix_t>();}
-	TRY_("lvalue (static)")  {monomer_chaining__lvalue< static_onset_mix_t>();}
+	TRY_("lvalue (dynamic)") {monomer_chaining__lvalue<Px_dynamic_onset_mix>();}
+	TRY_("lvalue (static)")  {monomer_chaining__lvalue< Px_static_onset_mix>();}
 
-	TRY_("shared (dynamic)") {monomer_chaining__shared<dynamic_onset_mix_t>();}
-	TRY_("shared (static)")  {monomer_chaining__shared< static_onset_mix_t>();}
+	TRY_("shared (dynamic)") {monomer_chaining__shared<Px_dynamic_onset_mix>();}
+	TRY_("shared (static)")  {monomer_chaining__shared< Px_static_onset_mix>();}
 
 }
 

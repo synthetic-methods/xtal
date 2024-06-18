@@ -40,9 +40,9 @@ template <column_q A>
 struct circular<A>
 {
 	using _op = bond::operate<A>;
-	using U_delta = typename _op::delta_t;
-	using U_sigma = typename _op::sigma_t;
-	using U_alpha = typename _op::alpha_t;
+	using U_delta = typename _op::delta_type;
+	using U_sigma = typename _op::sigma_type;
+	using U_alpha = typename _op::alpha_type;
 	
 	static_assert(_std::numeric_limits<U_sigma>::is_modulo);// D'oh!
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/block.hh"
+#include "../arrange/block.hh"
 
 
 
@@ -38,7 +38,7 @@ struct lattice<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename atom::block<A>::template homotype<T>;
+	using allotype = typename arrange::block<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<allotype<T>, bond::tag<lattice_t>>;

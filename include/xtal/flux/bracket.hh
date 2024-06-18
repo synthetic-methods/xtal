@@ -22,9 +22,9 @@ struct bracket;
 template <class ...Xs>
 struct bracket
 {
-	using Xs_packed = cell::packed_t<Xs...>;
+	using Xs_packed = compound::packed_t<Xs...>;
 	
-	using subkind = cell::defer<Xs_packed>;
+	using subkind = compound::defer<Xs_packed>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>

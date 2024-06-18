@@ -19,7 +19,7 @@ using namespace xtal::_test;
 template <class U_mix>
 void processor_provision__messaging()
 {
-	using T_alpha = typename bond::operating::alpha_t;
+	using T_alpha = typename bond::operating::alpha_type;
 
 	auto const _01 = _xtd::ranges::views::iota(0, 3)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
 	auto const _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -32,16 +32,16 @@ void processor_provision__messaging()
 	TRUE_(equal_f(o_mixed, _11));
 	TRUE_(equal_f(o_mixed, _std::vector{00.0, 11.0, 22.0}));
 
-	mixer_f <<= onset_t(33.0);
+	mixer_f <<= Ox_onset(33.0);
 
 	/*/
-	if constexpr (is_q<U_mix, static_onset_mix_t>) {
+	if constexpr (is_q<U_mix, Px_static_onset_mix>) {
 		//	NOTE: Parameters take effect when the `processor` is invoked, \
 		so the function is only resolved once for each collection to which it is applied. \
 
 		TRUE_(equal_f(o_mixed, _std::vector{00.0, 11.0, 22.0}));
 	}
-	if constexpr (is_q<U_mix, dynamic_onset_mix_t>) {
+	if constexpr (is_q<U_mix, Px_dynamic_onset_mix>) {
 		//	NOTE: Parameters take effect when the underlying `process` is invoked, \
 		so the function is resolved for each sample. \
 
@@ -54,8 +54,8 @@ void processor_provision__messaging()
 }
 TAG_("processor", "occur")
 {
-	TRY_("messaging (dynamic)") {processor_provision__messaging<dynamic_onset_mix_t>();}
-	TRY_("messaging (static)")  {processor_provision__messaging< static_onset_mix_t>();}
+	TRY_("messaging (dynamic)") {processor_provision__messaging<Px_dynamic_onset_mix>();}
+	TRY_("messaging (static)")  {processor_provision__messaging< Px_static_onset_mix>();}
 
 }
 TAG_("processor", "construct")
@@ -70,7 +70,7 @@ TAG_("processor", "construct")
 //	}
 	TRY_("lifting")
 	{
-		using T_alpha = typename bond::operating::alpha_t;
+		using T_alpha = typename bond::operating::alpha_type;
 
 		size_type constexpr N_size = 5;
 		using U_group = algebra::lattice_t<T_alpha[N_size]>;

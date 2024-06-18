@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/spool.hh"
+#include "../arrange/spool.hh"
 
 
 
@@ -18,14 +18,14 @@ template <typename ..._s> XTAL_REQ spooled_q = bond::any_tag_p<spooled, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::spool`. \
+Provides a specialization of `arrange::spool`. \
 
 template <bond::compose_q A>
 struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -52,7 +52,7 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::spool_t<U[(unsigned) A{}]>;
+		using spool_t = arrange::spool_t<U[(unsigned) A{}]>;
 
 	};
 };

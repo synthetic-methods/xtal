@@ -1,5 +1,5 @@
 #pragma once
-#include "../cell/any.hh"// `_retail`
+#include "../compound/any.hh"// `_retail`
 
 
 
@@ -21,7 +21,7 @@ template <class T>
 struct define
 {
 	using _op = bond::operating;
-	using T_iota = typename _op::iota_t;
+	using T_iota = typename _op::iota_type;
 
 	using subkind = _retail::define<T>;
 

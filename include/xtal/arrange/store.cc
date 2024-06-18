@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::atom::_test
+namespace xtal::arrange::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,8 +17,8 @@ TAG_("store")
 {
 	TRY_("assignment")
 	{
-		using T_sigma = typename bond::operating::sigma_t;
-		using T_alpha = typename bond::operating::alpha_t;
+		using T_sigma = typename bond::operating::sigma_type;
+		using T_alpha = typename bond::operating::alpha_type;
 
 		using U_store = store_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;
@@ -40,8 +40,8 @@ TAG_("store")
 	}
 	TRY_("mutation")
 	{
-		using T_sigma = typename bond::operating::sigma_t;
-		using T_alpha = typename bond::operating::alpha_t;
+		using T_sigma = typename bond::operating::sigma_type;
+		using T_alpha = typename bond::operating::alpha_type;
 
 		using U_store = store_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;

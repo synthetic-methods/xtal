@@ -23,8 +23,8 @@ struct sample
 {
 private:
 	using _op = bond::operate<W>;
-	using U = typename _op:: iota_t;
-	using V = typename _op::alpha_t;
+	using U = typename _op:: iota_type;
+	using V = typename _op::alpha_type;
 
 	static constexpr U U_1{1};
 	static constexpr V V_1{1};

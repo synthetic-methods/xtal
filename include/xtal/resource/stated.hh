@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/store.hh"
+#include "../arrange/store.hh"
 
 #include "../occur/review.hh"
 
@@ -18,14 +18,14 @@ template <typename ..._s> XTAL_REQ stated_q = bond::any_tag_p<stated, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `atom::store`. \
+Provides a specialization of `arrange::store`. \
 
 template <bond::compose_q A>
 struct stated<A>
 {
 	using subkind = bond::tag<stated>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -43,7 +43,7 @@ struct stated<>
 {
 	using subkind = bond::tag<stated>;
 	
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;

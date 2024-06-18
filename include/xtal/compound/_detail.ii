@@ -295,7 +295,7 @@ struct defer_field<unit_type[N_width]>
 	static constexpr size_type N_depth = bond::operating::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
-	using subkind = bond::assay<N_width>;
+	using subkind = bond::word<N_width>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>

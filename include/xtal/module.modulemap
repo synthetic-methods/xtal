@@ -7,9 +7,9 @@ module xtal {
 
 	exclude header           "./_detail.ii"
 	exclude header   "./algebra/_detail.ii"
-	exclude header      "./atom/_detail.ii"
+	exclude header      "./arrange/_detail.ii"
 	exclude header      "./bond/_detail.ii"
-	exclude header      "./cell/_detail.ii"
+	exclude header      "./compound/_detail.ii"
 	exclude header      "./flux/_detail.ii"
 	exclude header     "./occur/_detail.ii"
 	exclude header   "./process/_detail.ii"

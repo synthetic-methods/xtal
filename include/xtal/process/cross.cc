@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./cross.hh"// testing...
 
-#include "../atom/all.hh"
+#include "../arrange/all.hh"
 #include "../occur/indent.hh"
 #include "../processor/monomer.hh"
 
@@ -19,8 +19,8 @@ TAG_("cross", "process")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::block_t<int[2][3]>;
-		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_model = arrange::block_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, Px_mix>;
 
 		auto io = U_remix();
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
@@ -40,8 +40,8 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::block_t<int[2][3]>;
-		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_model = arrange::block_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		//\
@@ -66,8 +66,8 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::block_t<int[2][3]>;
-		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_model = arrange::block_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
@@ -87,8 +87,8 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::block_t<int[2][3]>;
-		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_model = arrange::block_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);
@@ -110,8 +110,8 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::block_t<int[2][3]>;
-		using U_remix = process::cross_t<U_model, mix_t>;
+		using U_model = arrange::block_t<int[2][3]>;
+		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
 		auto _1 = processor::let_f(1);

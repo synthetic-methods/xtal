@@ -17,7 +17,7 @@ Governs access to the `supertype`. \
 
 template <class	..._s> XTAL_TYP mark;
 template <class	..._s> XTAL_REQ mark_q = bond::any_tag_p<mark, _s...>;
-template <class	..._s> XTAL_USE mark_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<mark<>>>;
+template <class	..._s> XTAL_USE mark_s = bond::compose_s<flux::packet_t<_s...>, compound::confined<mark<>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ struct mark<>
 {
 	using _op = bond::operating;
 
-	using subkind = cell::confer<typename _op::sigma_t, bond::tag<mark>>;
+	using subkind = compound::confer<typename _op::sigma_type, bond::tag<mark>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -52,7 +52,6 @@ struct mark<>
 		using S_::S_;
 
 		using mark_size = superliminal_s<typename S_::mark_size>;
-	//	TODO: Adapt `assay` for this?
 
 	};
 };

@@ -17,7 +17,7 @@ Used for scheduling any type by prefixing with an integral delay. \
 
 template <class	..._s> XTAL_TYP cue;
 template <class	..._s> XTAL_REQ cue_q = bond::any_tag_p<cue, _s...>;
-template <class	..._s> XTAL_USE cue_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<cue<>>>;
+template <class	..._s> XTAL_USE cue_s = bond::compose_s<flux::packet_t<_s...>, compound::confined<cue<>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ struct cue<>
 {
 	using _op = bond::operating;
 
-	using subkind = cell::confer<typename _op::iota_t, bond::tag<cue>>;
+	using subkind = compound::confer<typename _op::iota_type, bond::tag<cue>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -51,9 +51,8 @@ struct cue<>
 	public:
 		using S_::S_;
 
+	//	TODO: Limit to instances of `cue`, not just derived...
 		using cue_size = superliminal_s<typename S_::cue_size>;
-	//	TODO: Adapt `assay` for this?
-
 	};
 };
 

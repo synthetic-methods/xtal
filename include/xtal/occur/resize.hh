@@ -19,7 +19,7 @@ XTAL_LET resize_f(auto &&w)
 XTAL_0EX
 {
 	using _op = bond::operate<decltype(w)>;
-	return resize_t<typename _op::sigma_t>(XTAL_REF_(w));
+	return resize_t<typename _op::sigma_type>(XTAL_REF_(w));
 }
 
 

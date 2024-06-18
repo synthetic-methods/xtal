@@ -22,12 +22,12 @@ template <iterable_q U_state, iterable_q U_store>
 struct stashed<U_state, U_store>
 {
 	using subkind = bond::compose<bond::tag<stashed>
-	,	cell::refer<U_state>
-	,	cell::defer<U_state>
-	,	cell::defer<U_store>
+	,	compound::refer<U_state>
+	,	compound::defer<U_state>
+	,	compound::defer<U_store>
 	>;
 
-	template <cell::any_q S>
+	template <compound::any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
