@@ -63,17 +63,55 @@ TAG_("scalar")
 	}
 	TRY_("refactoring")
 	{
-		using U2 = scalar_t<T_sigma[2]>;
-		using U4 = scalar_t<T_sigma[4]>;
+		using U0 = T_sigma;
+		using U1 = scalar_t<U0[1]>;
+		using U2 = scalar_t<U0[2]>;
+		using U3 = scalar_t<U0[3]>;
+		using U4 = scalar_t<U0[4]>;
 
-		TRUE_(U2{2, 12} == U4{2, 12, 6, 2}.coordered());
-		TRUE_(U2{0,  0} == U4{2, 12, 6, 3}.coordered());
-		TRUE_(U2{0,  0} == U4{2, 12, 6, 4}.coordered());
+		TRUE_(U2{2, 12} == U4{2, 12, 6, 2}.cofactored());
+		TRUE_(U2{0,  0} == U4{2, 12, 6, 3}.cofactored());
+		TRUE_(U2{0,  0} == U4{2, 12, 6, 4}.cofactored());
 
-		U4 u4{2, 12, 6, 2};
-		TRUE_(U4{0, 0, 0, 0} == u4 % U4{1, 2, 1, 2});
-		u4 /= {1, 2, 1, 2};
-		TRUE_(U2{1, 6} == u4.coordered());
+		U4   const xs_provided { 2, 12,  6,  2};
+		U4   const xs_expected { 1,  2,  1,  2};
+		
+		U4   const xs_ignored  = xs_provided%xs_expected;
+		U4   const xs_counted  = xs_provided/xs_expected;
+		U0   const ys_arity    = xs_counted.cofactored(1);
+		
+		U3   const ys_expected { 2,  1,  2};
+		U3   const ys_provided  = ys_expected*ys_arity;
+
+		TRUE_(xs_ignored == U4{0, 0, 0, 0});
+		TRUE_(xs_counted == U4{2, 6, 6, 1});
+		TRUE_(ys_arity   == 6);
+		
+		TRUE_(xs_provided.sum() == 22);
+		TRUE_(ys_provided.sum() == 30);
+
+		/*/
+		echo("\ninputs:");
+		for (size_type i = 0; i < ys_arity; ++i) {
+			auto input_tables = [&]<auto ...I> (bond::seek_t<I...>)
+				//\
+				XTAL_0FN_(bond::pack_rowwise_f<xs_expected[I]>(inputs.count(), inputs.samples(...)))
+				XTAL_0FN_(echo('\t'
+				,	((i*xs_expected[I])%xs_provided[I] + xs_provided++[I])...
+				))
+				(bond::seek_s<bond::pack_size_n<U4>>{});
+		}
+		echo("\noutputs:");
+		for (size_type i = 0; i < ys_arity; ++i) {
+			auto output_table = [&]<auto ...I> (bond::seek_t<I...>)
+				//\
+				XTAL_0FN_(bond::pack_f(bond::pack_rowwise_f<ys_expected[I]>(outputs.count(), output.samples(...)))
+				XTAL_0FN_(echo('\t'
+				,	((i*ys_expected[I])                + ys_provided++[I])...
+				))
+				(bond::seek_s<bond::pack_size_n<U3>>{});
+		}
+		/***/
 
 	}
 }

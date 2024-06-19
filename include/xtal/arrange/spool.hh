@@ -35,7 +35,7 @@ struct spool<A>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		using T_ = holotype<T>;
+		using S_ = holotype<T>;
 
 		using U_store = store_t<A>;
 		using U_point = typename U_store::iterator;
@@ -50,7 +50,7 @@ struct spool<A>
 		using value_type = A;
 
 	public:
-	//	using T_::T_;
+	//	using S_::S_;
 		
 		XTAL_CO0_(homotype)
 		XTAL_CO1_(homotype)

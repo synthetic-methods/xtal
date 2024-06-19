@@ -39,34 +39,34 @@ struct linear<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
+		using  S_ = holotype<T>;
 	
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
+		using          S_::N_data;
+		using typename S_::U_data;
 
 	public:// CONSTRUCT
-		using T_::T_;
+		using S_::S_;
 
 	public:// OPERATE
-	//	using T_::get;
-		using T_::let;
-		using T_::self;
-		using T_::twin;
+	//	using S_::get;
+		using S_::let;
+		using S_::self;
+		using S_::twin;
 
 		///\
 		Produces the successor by pairwise addition from `begin()` to `end()`, \
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator ++ (int)
-		XTAL_0EX
+		XTAL_LET operator ++ (int)
+		XTAL_0EX -> T
 		{
 			auto t = twin(); operator++(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator ++ ()
-		XTAL_0EX
+		XTAL_LET operator ++ ()
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 
@@ -74,7 +74,7 @@ struct linear<A>
 				XTAL_0FN {((get<I>(s) += get<I + 1>(s)),...);}
 			(bond::seek_s<N_data - 1>{});
 			
-			return self();
+			return s;
 		}
 
 		///\
@@ -82,21 +82,22 @@ struct linear<A>
 		assuming the entries of `this` are finite differences/derivatives. \
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator -- (int)
-		XTAL_0EX
+		XTAL_LET operator -- (int)
+		XTAL_0EX -> T
 		{
 			auto t = twin(); operator--(); return t;
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator -- ()
-		XTAL_0EX
+		XTAL_LET operator -- ()
+		XTAL_0EX -> T &
 		{
 			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(s) -= get<I + 1>(s)),...);}
 			(bond::antiseek_s<N_data - 1>{});
-			return self();
+			
+			return s;
 		}
 
 	};

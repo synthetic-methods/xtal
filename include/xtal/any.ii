@@ -6,6 +6,17 @@
 //\
 Structural...
 
+template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto const &&t) XTAL_0EX -> decltype(auto) {return      static_cast<T const &&>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto       &&t) XTAL_0EX -> decltype(auto) {return      static_cast<T       &&>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto const  &t) XTAL_0EX -> decltype(auto) {return      static_cast<T const  &>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto        &t) XTAL_0EX -> decltype(auto) {return      static_cast<T        &>(t);}
+
+template <class T> XTAL_DEF_(return,inline) XTAL_LET fudge_f(auto const &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<T const &&>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET fudge_f(auto       &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<T       &&>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET fudge_f(auto const  &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<T const  &>(t);}
+template <class T> XTAL_DEF_(return,inline) XTAL_LET fudge_f(auto        &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<T        &>(t);}
+
+
 ///\
 Defines a factory for the supplied type. \
 

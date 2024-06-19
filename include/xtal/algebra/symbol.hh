@@ -39,31 +39,31 @@ struct symbol<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
-		using  I_ = typename T_::difference_type;
+		using  S_ = holotype<T>;
+		using  I_ = typename S_::difference_type;
 
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
+		using          S_::N_data;
+		using typename S_::U_data;
 
 		static constexpr auto modulo = [] (I_ i) XTAL_0FN_(((i%N_data) + N_data)%N_data);
 
 	public:// ACCESS
-		using T_::let;
-		using T_::self;
-		using T_::twin;
+		using S_::let;
+		using S_::self;
+		using S_::twin;
 
 	public:// OPERATE
 
-		XTAL_DEF_(return,inline) XTAL_RET let(I_ i) XTAL_0FX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_RET let(I_ i) XTAL_0FX_( &) {return           T_::operator[](modulo(i)) ;}
+		XTAL_DEF_(return,inline) XTAL_LET let(I_ i) XTAL_0FX_(&&) -> decltype(auto) {return XTAL_MOV_(S_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_LET let(I_ i) XTAL_0FX_( &) -> decltype(auto) {return           S_::operator[](modulo(i)) ;}
 
-		XTAL_DEF_(return,inline) XTAL_RET let(I_ i) XTAL_0EX_(&&) {return XTAL_MOV_(T_::operator[](modulo(i)));}
-		XTAL_DEF_(return,inline) XTAL_RET let(I_ i) XTAL_0EX_( &) {return           T_::operator[](modulo(i)) ;}
+		XTAL_DEF_(return,inline) XTAL_LET let(I_ i) XTAL_0EX_(&&) -> decltype(auto) {return XTAL_MOV_(S_::operator[](modulo(i)));}
+		XTAL_DEF_(return,inline) XTAL_LET let(I_ i) XTAL_0EX_( &) -> decltype(auto) {return           S_::operator[](modulo(i)) ;}
 
 
 	public:// CONSTRUCT
-		using T_::T_;
+		using S_::S_;
 
 		///\
 		Dirichlet character generation. \

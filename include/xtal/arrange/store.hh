@@ -51,7 +51,7 @@ struct store<U_data[N_data]>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		using T_ = holotype<T>;
+		using S_ = holotype<T>;
 
 	public:// DEFINITION
 		using              size_type  =        ::std::size_t;
@@ -104,7 +104,7 @@ struct store<U_data[N_data]>
 
 
 	public:// SIZE
-		using T_::size;
+		using S_::size;
 	
 		///\returns the constant `N_data`. \
 
