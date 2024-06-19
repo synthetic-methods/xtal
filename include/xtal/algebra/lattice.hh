@@ -47,25 +47,25 @@ struct lattice<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
-		using  I_ = typename T_::difference_type;
+		using  S_ = holotype<T>;
+		using  I_ = typename S_::difference_type;
 
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
+		using          S_::N_data;
+		using typename S_::U_data;
 
 	public:
-		using T_::T_;
-		using T_::self;
-		using T_::twin;
-		using T_::size;
-		using T_::let;
+		using S_::S_;
+		using S_::self;
+		using S_::twin;
+		using S_::size;
+		using S_::let;
 
 	public:// OPERATE
 	//	Vector comparison (performed point-wise):
 		XTAL_DEF_(return,inline)
-		XTAL_RET operator <=> (homotype const &t)
-		XTAL_0FX
+		XTAL_LET operator <=> (homotype const &t)
+		XTAL_0FX -> decltype(auto)
 		{
 			homotype const &s = *this;
 			return\
@@ -80,15 +80,23 @@ struct lattice<A>
 		XTAL_DEF_(return,inline) XTAL_LET operator <   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <  get<I>(t)));} (bond::seek_s<N_data> {});}
 		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
+		XTAL_DEF_(return,inline)
+		XTAL_LET ordering()
+		XTAL_0FX requires (2 == N_data)// TODO: Provide variadic `ordering`.
+		{
+			auto const &[x, y] = self();
+			return x <=> y;
+		}
+
 	//	Scalar assignment (performed point-wide):
-		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  ^= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  |= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  &= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  %= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  *= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data   const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {let(I)  *= n;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  ^= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  |= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  &= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  %= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  *= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {let(I)  *= n;}); return self();}
 
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t * s;}
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t + s;}

@@ -35,7 +35,7 @@ struct superblock<U(&)[N]>
 	template <class T>
 	class homotype: public holotype<T>
 	{
-		using T_ = holotype<T>;
+		using S_ = holotype<T>;
 
 	protected:
 		XTAL_DEF_(static)
@@ -43,11 +43,11 @@ struct superblock<U(&)[N]>
 		XTAL_USE U_data = U;
 
 	public:// CONSTRUCT
-		using T_::T_;
+		using S_::S_;
 
 		XTAL_TO4_(XTAL_DEF_(return,inline)
-		XTAL_RET twin(),
-			typename T::template tagged_t<U_data[N_data]>(T_::self())
+		XTAL_LET twin(),
+			typename T::template tagged_t<U_data[N_data]>(S_::self())
 		)
 
 	};	
@@ -63,7 +63,7 @@ struct superblock<U[N]>
 	template <class T>
 	class homotype: public holotype<T>
 	{
-		using T_ = holotype<T>;
+		using S_ = holotype<T>;
 
 	protected:
 		XTAL_DEF_(static)
@@ -78,7 +78,7 @@ struct superblock<U[N]>
 		}
 
 	public:// CONSTRUCT
-	//	using T_::T_;
+	//	using S_::S_;
 		
 		XTAL_CO0_(homotype)
 	//	XTAL_CO1_(homotype)
@@ -92,7 +92,7 @@ struct superblock<U[N]>
 		XTAL_0EX
 		{
 			if (_std::is_constant_evaluated() or n < N_data) {
-				T_::fill(U_data{});
+				S_::fill(U_data{});
 			}
 		}
 		XTAL_CON_(implicit) homotype(embrace_t<U_data> a)
@@ -100,9 +100,9 @@ struct superblock<U[N]>
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
 			XTAL_IF0
-			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end());}
-			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a.begin(), a.end()
-				,	[this] XTAL_1FN_(T_::self().ordinate)
+			XTAL_0IF (    coordinated()) {_detail::copy_to(S_::begin(), a.begin(), a.end());}
+			XTAL_0IF (not coordinated()) {_detail::copy_to(S_::begin(), a.begin(), a.end()
+				,	[this] XTAL_1FN_(S_::self().ordinate)
 				);
 			}
 		}
@@ -111,9 +111,9 @@ struct superblock<U[N]>
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
 			XTAL_IF0
-			XTAL_0IF (    coordinated()) {_detail::copy_to(T_::begin(), a);}
-			XTAL_0IF (not coordinated()) {_detail::copy_to(T_::begin(), a
-				,	[this] XTAL_1FN_(T_::self().ordinate)
+			XTAL_0IF (    coordinated()) {_detail::copy_to(S_::begin(), a);}
+			XTAL_0IF (not coordinated()) {_detail::copy_to(S_::begin(), a
+				,	[this] XTAL_1FN_(S_::self().ordinate)
 				);
 			}
 		}
@@ -122,9 +122,9 @@ struct superblock<U[N]>
 		:	homotype(count_f(a))
 		{
 			XTAL_IF0
-			XTAL_0IF (    coordinated()) {_detail::move_to(T_::begin(), a);}
-			XTAL_0IF (not coordinated()) {_detail::move_to(T_::begin(), a
-				,	[this] XTAL_1FN_(T_::self().ordinate)
+			XTAL_0IF (    coordinated()) {_detail::move_to(S_::begin(), a);}
+			XTAL_0IF (not coordinated()) {_detail::move_to(S_::begin(), a
+				,	[this] XTAL_1FN_(S_::self().ordinate)
 				);
 			}
 		}
@@ -154,24 +154,24 @@ struct block<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
-		using  I_ = typename T_::difference_type;
+		using  S_ = holotype<T>;
+		using  I_ = typename S_::difference_type;
 
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
-		using U_size = typename T_::size_type;
+		using          S_::N_data;
+		using typename S_::U_data;
+		using U_size = typename S_::size_type;
 
 	public:// CONSTRUCT
-		using T_::T_;
+		using S_::S_;
 
 	public:// MAP
 		XTAL_DEF_(return,inline,static) XTAL_RET   ordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
 		XTAL_DEF_(return,inline,static) XTAL_RET coordinate(auto &&o) XTAL_0EX {return XTAL_REF_(o);}
 
 	public:// ACCESS
-		using T_::self;
-		using T_::twin;
+		using S_::self;
+		using S_::twin;
 		
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET size()

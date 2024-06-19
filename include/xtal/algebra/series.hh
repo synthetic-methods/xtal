@@ -43,17 +43,17 @@ struct series<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
+		using  S_ = holotype<T>;
 
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
+		using          S_::N_data;
+		using typename S_::U_data;
 
 	public:
-		using T_::T_;
-		using T_::let;
-		using T_::self;
-		using T_::twin;
+		using S_::S_;
+		using S_::let;
+		using S_::self;
+		using S_::twin;
 
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
@@ -99,7 +99,7 @@ struct series<A>
 		{
 		//	auto &s = self();
 
-			using I = typename T_::difference_type;
+			using I = typename S_::difference_type;
 
 			XTAL_LET N_shift = _op::bit_ceiling_f(N_step);
 			static_assert(N_step == 1 << N_shift);
@@ -141,15 +141,15 @@ struct series<A>
 		XTAL_0EX -> T &
 		{
 		//	Initialize the forwards and backwards iterators:
-			auto const i = T_::begin();
-			auto const j = T_::rend() - 1;
+			auto const i = S_::begin();
+			auto const j = S_::rend() - 1;
 			
 		//	Compute the fractional sinusoid for this `N_data`:
 			auto constexpr x = _op::patio_f(-1, N_data);
 			auto const     y = _op::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
-			typename T_::difference_type constexpr M = N_data >> 2;// `1/8`th
+			typename S_::difference_type constexpr M = N_data >> 2;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
 			if constexpr (-2 <= N_shift) _detail::copy_to(_std::prev(j, 2*M), _std::span(i, _std::next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
@@ -166,95 +166,95 @@ struct series<A>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <int N_direction=1> requires complex_field_q<U_data> and sign_p<N_direction, 1>
-		XTAL_RET transform(isomorphic_q<T> auto &that)
-		XTAL_0FX
+		template <int N_direction=1, isomorphic_q<T> Y0>
+			requires sign_p<N_direction, 1> and complex_field_q<U_data>
+		XTAL_LET transform(Y0 &&that)
+		XTAL_0FX -> decltype(auto)
 		{
-			using Y = XTAL_ALL_(that);
-			using X = typename Y::transverse::type;
+			using Y = based_t<Y0>;
 			using I = typename Y::difference_type;
 		
 		//	Ensure the size of both domain and codomain are powers of two:
-			I const n_size = that.size(); assert(2 <= n_size);
-			I const h_size = n_size >> 1; assert(1 <= h_size);
-			I const k_size = bond::operate<I>::bit_floor_f((I) n_size); assert(n_size == 1 << k_size);
-			I const K_size = bond::operate<I>::bit_floor_f((I) N_data); assert(k_size <= K_size);
+			I constexpr N_width = N_data;
+			I const     n_width = that.size();
+			I const     h_width = n_width >> 1; assert(1 <= h_width);
+			I const     n_depth = bond::operate<I>::bit_floor_f(n_width); assert(n_width == I{1} << n_depth);
+			I constexpr N_depth = bond::operate<I>::bit_floor_f(N_width); assert(n_depth         <= N_depth);
 
 		//	Move all entries to their bit-reversed locations:
-			for (I h = 0; h < h_size; ++h) {
-				_std::swap(that[h], that[bond::operate<I>::bit_reverse_f(h, k_size)]);
+			for (I h{}; h < h_width; ++h) {
+				_std::swap(that[h], that[bond::operate<I>::bit_reverse_f(h, n_depth)]);
 			}
 		
 		//	Conjugate the input if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
 				_detail::apply_to(that, [] XTAL_1FN_(_std::conj));
 			}
-		//	Compute the transform of `that` using the precomputed sinusoid via `d`:
-			for (I k = 0; k < k_size; ++k) {
-				I const _k = K_size - k;
-				I const  u = 1 << k;
-				I const  w = u << 1;
-				I const  n = n_size;
-				for (I i = 0; i < u; i += 1) {I const i_k = i << _k;
-				for (I j = i; j < n; j += w) {
-					U_data const y = that[j + u]*let(i_k);
-					U_data const x = that[j + 0];
-					that[j + u] = x - y;
-					that[j + 0] = x + y;
+		//	Compute the transform of `that` using the precomputed half-period sinusoid in `this`:
+			for (I n{}; n < n_depth; ++n) {
+				I const  u_width = I{1} << n;
+				I const  w_width = u_width << 1;
+				I const un_depth = N_depth  - n;
+				for (I u{ }; u < u_width; u +=       1) {auto const &o = let(u << un_depth);
+				for (I w{u}; w < n_width; w += w_width) {
+					auto const m = w + u_width;
+					U_data &y = that[m];
+					U_data &x = that[w];
+					U_data const yo = y*o;
+					y = x - yo;
+					x = x + yo;
 				}}
 			}
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
 				_detail::apply_to(that, [=] XTAL_1FN_(_std::conj));
-				that /= n_size;
+				that /= n_width;
 			}
 		
 		//	Cast the output to the transformed domain:
-			return reinterpret_cast<X &>(that);
+			return fudge_f<typename Y::transverse::type>(that);
 		}
+
+
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
-		template <int N_direction=1> requires sign_p<N_direction, 1>
+		template <int N_direction=1, isomorphic_q<T> Y0>
+			requires sign_p<N_direction, 1>
 		XTAL_DEF_(return,inline)
-		XTAL_RET transformation(isomorphic_q<T> auto const &that)
-		XTAL_0FX
+		XTAL_LET transformation(Y0 y0)
+		XTAL_0FX -> decltype(auto)
 		{
-			using Y = XTAL_ALL_(that);
-			using X = typename Y::transverse::type;
-			X  x = reinterpret_cast<X const &>(that);
-			Y &y = reinterpret_cast<Y       &>(x);
-			(void) transform<N_direction>(y);
-			return x;
+			return transform<N_direction>(XTAL_MOV_(y0));
 		}
 
 		///\returns `lhs` convolved with `rhs`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_q<T> Y>
-		XTAL_RET convolve(Y &lhs, Y rhs)
-		XTAL_0FX
+		template <isomorphic_q<T> Y0, is_q<Y0> Y1>
+		XTAL_LET convolve(Y0 &&y0, Y1 y1)
+		XTAL_0FX -> decltype(auto)
 		{
-			return transform<-1>(transform<1>(lhs) *= transform<1>(rhs));
+			return transform<-1>(transform<1>(XTAL_REF_(y0)) *= transform<1>(y1));
 		}
-		///\returns a new `series` representing the convolution of `lhs` with `rhs`, \
+		///\returns a new `series` representing the convolution of `y0` with `y1`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_q<T> Y>
+		template <isomorphic_q<T> Y0, is_q<Y0> Y1>
 		XTAL_DEF_(return,inline)
-		XTAL_RET convolution(Y const &lhs, Y const &rhs)
-		XTAL_0FX
+		XTAL_LET convolution(Y0 y0, Y1 const &y1)
+		XTAL_0FX -> Y0
 		{
-			auto lhs_ = lhs; convolve(lhs_, rhs); return lhs_;
+			return convolve(XTAL_MOV_(y0), y1);
 		}
 
 		///\
 		Multiplication by circular convolution. \
 
-		using T_::operator*=;
+		using S_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX XTAL_REQ_TO_(twin() *=   w )
-		XTAL_DEF_(inline)        XTAL_RET operator *=(embrace_t<U_data> w) XTAL_0EX XTAL_REQ_TO_(self() *= T(w))
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto       const &w) XTAL_0FX        {return twin() *=   w ;}
+		XTAL_DEF_(inline)        XTAL_LET operator *=(embrace_t<U_data> w) XTAL_0EX -> T & {return self() *= T(w);}
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *=(T const &t)

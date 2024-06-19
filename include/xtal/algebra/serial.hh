@@ -40,31 +40,31 @@ struct serial<A>
 	class homotype : public holotype<T>
 	{
 		friend T;
-		using  T_ = holotype<T>;
+		using  S_ = holotype<T>;
 	
 	protected:
-		using          T_::N_data;
-		using typename T_::U_data;
+		using          S_::N_data;
+		using typename S_::U_data;
 
 	public:// CONSTRUCT
-		using T_::T_;
+		using S_::S_;
 
 	public:// ACCESS
-		using T_::let;
-		using T_::self;
-		using T_::twin;
+		using S_::let;
+		using S_::self;
+		using S_::twin;
 	
 	public:// OPERATE
-		using T_::operator*=;
-	//	using T_::operator+=;
-	//	using T_::operator-=;
+		using S_::operator*=;
+	//	using S_::operator+=;
+	//	using S_::operator-=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX {return twin() *=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX {return twin() +=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX {return twin() -=   t ;}
-		XTAL_DEF_(inline)        XTAL_RET operator  *=(embrace_t<U_data> t) XTAL_0EX {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_RET operator  +=(embrace_t<U_data> t) XTAL_0EX {return self() += T(t);}
-		XTAL_DEF_(inline)        XTAL_RET operator  -=(embrace_t<U_data> t) XTAL_0EX {return self() -= T(t);}
+		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX        {return twin() *=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX        {return twin() +=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX        {return twin() -=   t ;}
+		XTAL_DEF_(inline)        XTAL_LET operator  *=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() *= T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator  +=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() += T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator  -=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() -= T(t);}
 
 		///\
 		Multiplication by linear convolution, truncated by `N_data`. \
@@ -89,32 +89,32 @@ struct serial<A>
 	//	Vector addition:
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator +=(T const &t)
-		XTAL_0EX
+		XTAL_LET operator +=(T const &t)
+		XTAL_0EX -> T &
 		{
-			return T_::template pointwise<[] (auto &u, auto const &v)
+			return S_::template pointwise<[] (auto &u, auto const &v)
 				XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator -=(T const &t)
-		XTAL_0EX
+		XTAL_LET operator -=(T const &t)
+		XTAL_0EX -> T &
 		{
-			return T_::template pointwise<[] (auto &u, auto const &v)
+			return S_::template pointwise<[] (auto &u, auto const &v)
 				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator +=(subarray_q<N_data> auto const &t)
-		XTAL_0EX
+		XTAL_LET operator +=(subarray_q<N_data> auto const &t)
+		XTAL_0EX -> T &
 		{
-			return T_::template pointwise<[] (auto &u, auto const &v)
+			return S_::template pointwise<[] (auto &u, auto const &v)
 				XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator -=(subarray_q<N_data> auto const &t)
-		XTAL_0EX
+		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
+		XTAL_0EX -> T &
 		{
-			return T_::template pointwise<[] (auto &u, auto const &v)
+			return S_::template pointwise<[] (auto &u, auto const &v)
 				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
@@ -123,17 +123,17 @@ struct serial<A>
 		
 		struct transverse
 		{
-			template <class L>
-			using holotype = typename scalar<A>::template homotype<L>;
+			template <class R>
+			using holotype = typename scalar<A>::template homotype<R>;
 
-			template <class L>
-			class homotype : public holotype<L>
+			template <class R>
+			class homotype : public holotype<R>
 			{
-				friend L;
-				using  L_ = holotype<L>;
+				friend R;
+				using  R_ = holotype<R>;
 			
 			public:
-				using L_::L_;
+				using R_::R_;
 				struct transverse {using type = T;};
 
 			};

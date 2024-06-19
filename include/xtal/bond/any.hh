@@ -63,6 +63,7 @@ struct define
 
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET tail(), self<S>())
 
+
 		template <typename ...Is>
 		XTAL_USE head_t = void;
 		XTAL_LET head() XTAL_0EX -> void {}
