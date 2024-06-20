@@ -59,8 +59,8 @@ template <size_type N,     _extent_q T> XTAL_TYP pack_item<N, T       &> {using 
 template <size_type N,     _extent_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::           remove_extent_t<T>  const &;};
 template <size_type N, class T> XTAL_USE pack_item_t = typename pack_item<N, T>::type;
 
-template <size_type N, class T> XTAL_REQ pack_item_p = N < pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
-template <          class T> XTAL_REQ pack_list_q = [] <size_type ...Ns>
+template <size_type N, class T> XTAL_REQ pack_item_p = N <  pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
+template <             class T> XTAL_REQ pack_list_q = 0 == pack_size_n<T> or [] <size_type ...Ns>
 	(seek_t<Ns...>) XTAL_0FN_(...and pack_item_p<Ns, T>)
 	(seek_s<pack_size_n<T>> {})
 ;

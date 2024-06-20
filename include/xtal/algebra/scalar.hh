@@ -294,104 +294,103 @@ struct scalar<A>
 			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
 		}
 
-		XTAL_DEF_(inline)
-		XTAL_LET reverse()
-		XTAL_0EX -> T &
-			requires (2 == N_data)
+
+		XTAL_DEF_(return,inline)
+		XTAL_LET ordering()
+		XTAL_0FX
 		{
-			auto &[x, y] = self();
-			_std::swap(x, y);
+			if constexpr (N_data == 2) {
+				auto const &[x, y] = self();
+				return x <=> y;
+			}
+		//	TODO: Provide variadic `ordering`.
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET ordered()
+		XTAL_0FX
+		{
+			return S_::twin().order();
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET order()
+		XTAL_0EX -> T &
+		{
+			if constexpr (N_data == 2) {
+				if (_std::strong_ordering::greater == ordering()) {
+					reverse();
+				}
+			}
+			else {
+				_std::sort(S_::begin(), S_::end());
+			}
 			return self();
 		}
+
 		XTAL_DEF_(return,inline)
 		XTAL_LET reversed()
 		XTAL_0FX
-			requires (2 == N_data)
 		{
-			using U2 = typename T::template tagged_t<U_data[2]>;
-			auto const &[x, y] = self();
-			return U2{y, x};
+			return S_::twin().reverse();
 		}
-
-		XTAL_DEF_(return,inline)
-		XTAL_LET coorder()
+		XTAL_DEF_(inline)
+		XTAL_LET reverse()
 		XTAL_0EX -> T &
-			requires (2 == N_data)
 		{
-			if (_std::strong_ordering::greater == S_::ordering()) {
-				reverse();
+			if constexpr (N_data == 2) {
+				auto &[x, y] = self();
+				_std::swap(x, y);
+			}
+			else {
+				_std::reverse(S_::begin(), S_::end());
 			}
 			return self();
 		}
-		XTAL_DEF_(return,inline)
-		XTAL_LET coordered()
-		XTAL_0FX
-			requires (2 == N_data)
-		{
-			using U2 = typename T::template tagged_t<U_data[2]>;
-			auto const &[x, y] = self();
-			return _std::strong_ordering::greater == S_::ordering()? U2{y, x}: U2{x, y};
-		}
+
 		
+		template <size_type N>
 		XTAL_DEF_(return,inline)
-		XTAL_LET cofactored(bool i)
+		XTAL_LET colimited()
+		XTAL_0FX -> U_data
+		{
+			return S_::template apply([] (auto &&...oo)
+			XTAL_0FN {
+				XTAL_IF0
+				XTAL_0IF (N == 1) {return _std::max<U_data>({XTAL_REF_(oo)...});}
+				XTAL_0IF (N <= 0) {return _std::min<U_data>({XTAL_REF_(oo)...});}
+			});
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET colimited()
 		XTAL_0FX
 		{
-			return cofactored()[i];
+			using  U2 = typename T::template tagged_t<U_data[2]>;
+			return U2{colimited<0>(), colimited<1>()};
+		}
+
+		template <size_type N>
+		XTAL_DEF_(return,inline)
+		XTAL_LET cofactored()
+		XTAL_0FX -> U_data
+		{
+			XTAL_IF0
+			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET cofactored()
 		XTAL_0FX
-			requires (2 == N_data) and integral_q<U_data>
 		{
-			using U2 = typename T::template tagged_t<U_data[2]>;
-			auto const &[x, y] = coordered();
-			if (x == _std::gcd(x, y) and y == _std::lcm(x, y)) {
-				return U2{x, y};
-			}
-			else {
-				return U2{0, 0};
-			}
+			using  U2 = typename T::template tagged_t<U_data[2]>;
+			return U2{cofactored<0>(), cofactored<1>()};
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET cofactored()
+		XTAL_LET cofactorable()
 		XTAL_0FX
-			requires (3 <= N_data) and integral_q<U_data>
 		{
-			using L_ = _std::numeric_limits<U_data>;
-			using U2 = typename T::template tagged_t<U_data[2]>;
-			
-			U2 fact{L_::max(), 1};
-			
-			for (size_type i = 0; i < N_data - 1; ++i) {
-				for (size_type j = i + 1; j < N_data; ++j) {
-					fact.refactor(let(i), let(j));
-				}
-			}
-			return fact;
-		}
-
-		XTAL_DEF_(inline)
-		XTAL_LET refactor(auto &&...oo)
-		XTAL_0EX -> T & requires (2 == N_data) and integral_q<U_data>
-		{
-			using U_ = typename T::template tagged_t<U_data[sizeof...(oo)]>;
-
-			auto  &s = self();
-			auto   t = U_{XTAL_REF_(oo)...}.cofactored();
-			U_data u =  !s[0]||!s[1]||!t[0]||!t[1];
-			U_data n = -!u;
-			
-			s[0] = n&_std::min(s[0], t[0]);
-			s[1] = n&_std::max(s[1], t[1]);
-
-			return s;
-		}
-		XTAL_DEF_(return,inline)
-		XTAL_LET refactored(auto &&...oo)
-		XTAL_0FX requires (2 == N_data) and integral_q<U_data>
-		{
-			return twin().refactor(XTAl_REF_(oo)...);
+			auto t = ordered();
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(...and (0 == get<I + 1>(t)%get<I>(t)))
+			(bond::seek_s<N_data - 1>{});
 		}
 
 	};

@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flux/route.hh"
+#include "../flux/marked.hh"
 
 
 
@@ -68,7 +68,7 @@ struct indent<Ns...>
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
 
-			using subkind = bond::compose<flux::route<N_mask>, defer<W_>>;
+			using subkind = bond::compose<flux::marked<N_mask>, defer<W_>>;
 
 			template <compound::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, subkind>

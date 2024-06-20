@@ -80,14 +80,6 @@ struct lattice<A>
 		XTAL_DEF_(return,inline) XTAL_LET operator <   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <  get<I>(t)));} (bond::seek_s<N_data> {});}
 		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
-		XTAL_DEF_(return,inline)
-		XTAL_LET ordering()
-		XTAL_0FX requires (2 == N_data)// TODO: Provide variadic `ordering`.
-		{
-			auto const &[x, y] = self();
-			return x <=> y;
-		}
-
 	//	Scalar assignment (performed point-wide):
 		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
@@ -101,6 +93,15 @@ struct lattice<A>
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t * s;}
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t + s;}
 
+		template <auto f, size_t I=N_data - 1>
+		XTAL_DEF_(return,inline)
+		XTAL_LET pointless()
+		XTAL_0FX
+		{
+			XTAL_IF0
+			XTAL_0IF (0 == I) {return   get<I>(self())                        ;}
+			XTAL_0IF (1 <= I) {return f(get<I>(self()), pointless<f, I - 1>());}
+		}
 		template <auto f>
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise(auto const &t)
@@ -118,7 +119,7 @@ struct lattice<A>
 			return s;
 		}
 		template <auto f>
-		XTAL_DEF_(inline)
+		XTAL_DEF_(return,inline)
 		XTAL_LET pointwise(auto const &s, auto const &t)
 		XTAL_0EX
 		{
