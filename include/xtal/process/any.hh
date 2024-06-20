@@ -1,7 +1,7 @@
 #pragma once
 #include "../flux/any.hh"// `_retail`
 
-#include "../flux/bracket.hh"
+#include "../flux/brace.hh"
 #include "../occur/all.hh"
 #include "../resource/all.hh"
 #include "../schedule/all.hh"
@@ -52,10 +52,10 @@ struct define
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_RET functor(auto &&...xs)
-		XTAL_0FX
-		{
-			return T::template function<Is...>(XTAL_REF_(xs)...);
-		}
+		XTAL_0FX_TO_(T::template function<Is...>(XTAL_REF_(xs)...))
+//		{
+//			return T::template function<Is...>(XTAL_REF_(xs)...);
+//		}
 
 		///\returns the lambda abstraction of `functor`, \
 		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
@@ -131,11 +131,11 @@ struct define
 
 	private:
 		template <class ...Xs>
-		struct bracket_ : flux::bracket<Xs...>
+		struct bundle_
 		{
 			using subkind = bond::compose<void
 			,	defer<T_>
-			,	flux::bracket<Xs...>
+			,	flux::brace<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -176,10 +176,10 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs> requires any_q<Xs...>
-		struct bracket
+		struct bundle
 		{
 			using subkind = bond::compose<void
-			,	bracket_<Xs...>
+			,	bundle_<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -226,7 +226,7 @@ struct refine
 		template <class ...Xs>
 		struct binding
 		{
-			using subkind = confined<typename S_::template bracket<let_t<Xs>...>>;
+			using subkind = confined<typename S_::template bundle<let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, subkind>;
@@ -238,11 +238,11 @@ struct refine
 
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET     binding_f(auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(xs)...))
+		XTAL_0EX_TO_(binding_t<decltype(xs)...>(process::let_f(XTAL_REF_(xs))...))
 
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET     binding_f(is_q<T> auto &&t, auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...))
+		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...))
 		
 		XTAL_TO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
@@ -299,8 +299,8 @@ struct defer
 		XTAL_RET functor_(auto &&...xs),
 		{
 			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_REQ_TO_(S_::head()                        (XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_TRY_TO_(S_::head().template functor<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_TRY_TO_(S_::head()                        (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return S_::head(); static_assert(0 == sizeof...(xs));}
 		})
 		template <auto ...Is>
@@ -309,8 +309,8 @@ struct defer
 		XTAL_0EX
 		{
 			XTAL_IF0
-			XTAL_0IF XTAL_REQ_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_REQ_TO_(U0{}                         (XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_TRY_TO_(U0{}.template function<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_TRY_TO_(U0{}                         (XTAL_REF_(xs)...))
 			XTAL_0IF_(default) {return invoke_f<U0>(XTAL_REF_(xs)...);}
 		}
 

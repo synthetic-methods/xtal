@@ -50,7 +50,7 @@ struct polymer<U, As...>
 		using S_::S_;
 
 		template <class ...Xs> requires resource::spooled_q<S_>
-		struct bracket
+		struct bundle
 		{
 			using V_event = occur::stage_t<>;
 			using U_event = flux::key_s<V_event>;
@@ -62,7 +62,7 @@ struct polymer<U, As...>
 
 			using subkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	defer<V_voice>
-			,	typename S_::template bracket<Xs...>
+			,	typename S_::template bundle<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -71,13 +71,17 @@ struct polymer<U, As...>
 				
 				U_ensemble u_ensemble{};
 
-			public:
+			public:// CONSTRUCT
 				using R_::R_;
+
+			public:// ACCESS
 				using R_::self;
 				using R_::head;
-				
-				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(), u_ensemble)
 
+				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(), u_ensemble)
+				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET lead(), R_::template head<V_voice>())
+
+			public:// *FLUX
 				using R_::influx;
 				
 				///\
@@ -115,7 +119,7 @@ struct polymer<U, As...>
 						if (u_ensemble and h == w->head()) {
 							(void) w->influx(occur::stage_f(-1), oo...);
 						}
-						w = u_ensemble.poke(w, h, head());
+						w = u_ensemble.poke(w, h, lead());
 					}
 				//	Forward to detected/allocated instance:
 					assert(w->head() == h);
@@ -131,7 +135,7 @@ struct polymer<U, As...>
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
-					return accumulate(u_ensemble, rend? -1: head().influx(oo...)
+					return accumulate(u_ensemble, rend? -1: lead().influx(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
 					);
 				}
@@ -141,7 +145,7 @@ struct polymer<U, As...>
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
-					return accumulate(u_ensemble, rend? -1: head().efflux(oo...)
+					return accumulate(u_ensemble, rend? -1: lead().efflux(oo...)
 					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
 					);
 				}

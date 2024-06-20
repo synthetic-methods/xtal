@@ -25,7 +25,7 @@ struct stored<A>
 {
 	using subkind = bond::tag<stored>;
 	
-	template <compound::any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -38,49 +38,19 @@ struct stored<A>
 
 	};
 };
-template <size_type N>
-struct stored<unit_type[N]>
-{
-	using subkind = bond::tag<stored>;
-	
-	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-		
-	public:
-		using S_::S_;
-		
-		template <class U>
-		using store_t = arrange::block_t<U[N]>;
-
-	};
-};
-template <unsigned N>
-struct stored<null_type[N]>
-{
-	using subkind = bond::tag<stored>;
-	
-	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
-	{
-		using S_ = bond::compose_s<S, subkind>;
-		
-	public:
-		using S_::S_;
-		
-		template <class U>
-		using store_t = arrange::store_t<U[(unsigned) N]>;
-
-	};
-};
 template <nominal_q A>
 struct stored<A>
 {
+	XTAL_USE value_type =  typename  A::value_type;
+	XTAL_SET value      = (unsigned) A{};
+
 	using subkind = bond::tag<stored>;
 	
-	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	template <class S>
+	class subtype;
+	
+	template <class S> requires _std::unsigned_integral<value_type>
+	class subtype<S> : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		
@@ -88,15 +58,32 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::store_t<U[(unsigned) A::value]>;
+		using store_t = arrange::block_t<U[value]>;
+
+	};
+	template <class S> requires _std::  signed_integral<value_type>
+	class subtype<S> : public bond::compose_s<S, subkind>
+	{
+		using S_ = bond::compose_s<S, subkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using store_t = arrange::store_t<U[value]>;
 
 	};
 };
-//template <nominal_q U>
-//struct stored<U>
-//:	stored<null_type[(unsigned) U::value]>
-//{
-//};
+template <auto N>
+struct stored<unit_type[N]>
+:	stored<nominal_t<unsigned(N)>>
+{
+};
+template <auto N>
+struct stored<null_type[N]>
+:	stored<nominal_t<  signed(N)>>
+{
+};
 template <>
 struct stored<>
 :	stored<nominal_t<-1>>
