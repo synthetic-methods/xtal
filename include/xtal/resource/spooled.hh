@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/spool.hh"
+#include "../arrange/all.hh"
 
 
 
@@ -25,7 +25,7 @@ struct spooled<A>
 {
 	using subkind = bond::tag<spooled>;
 	
-	template <compound::any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -41,9 +41,12 @@ struct spooled<A>
 template <nominal_q A>
 struct spooled<A>
 {
+	XTAL_USE value_type =  typename  A::value_type;
+	XTAL_SET value      = (unsigned) A{};
+
 	using subkind = bond::tag<spooled>;
 	
-	template <compound::any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
@@ -52,9 +55,19 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = arrange::spool_t<U[(unsigned) A{}]>;
+		using spool_t = arrange::spool_t<U[value]>;
 
 	};
+};
+template <auto N>
+struct spooled<unit_type[N]>
+:	spooled<nominal_t<unsigned(N)>>
+{
+};
+template <auto N>
+struct spooled<null_type[N]>
+:	spooled<nominal_t<  signed(N)>>
+{
 };
 template <>
 struct spooled<>

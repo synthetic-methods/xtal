@@ -49,12 +49,12 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct bracket_
+		struct bundle_
 		{
 			using subkind = bond::compose<bond::tag<monomer>, As...
 			,	U_resize::attach<>
 			,	U_render::attach<>
-			,	typename S_::template bracket<Xs...>
+			,	typename S_::template bundle<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -102,8 +102,8 @@ struct monomer<U, As...>
 						
 						using namespace _xtd::ranges;
 						XTAL_IF0
-						XTAL_0IF XTAL_REQ_DO_(copy_n(_j, n, _i))
-						XTAL_0IF XTAL_REQ_DO_(move(result_o|account_f(n), _i))
+						XTAL_0IF XTAL_TRY_DO_(copy_n(_j, n, _i))
+						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
 						XTAL_0IF_(default) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
@@ -113,12 +113,12 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs>
-		struct bracket
+		struct bundle
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
-			using subkind = bond::compose<compound::confer<Y_result>, bracket_<Xs...>>;
+			using subkind = bond::compose<compound::confer<Y_result>, bundle_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -126,29 +126,48 @@ struct monomer<U, As...>
 				using R_ = bond::compose_s<R, subkind>;
 
 			public:// CONSTRUCT
-			//	using R_::R_;
-
+				/*/
+				using R_::R_;
+				/*/
 				XTAL_CO0_(subtype);
-				XTAL_CO1_(subtype);
+			//	XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
-				XTAL_CON_(explicit) subtype(auto &&...xs)
+				XTAL_CON_(implicit) subtype()
 				XTAL_0EX
-				:	subtype(T_{}, XTAL_REF_(xs)...)
+				:	subtype(R_::functor(Xs{}...), T_{}, Xs{}...)
 				{}
-				XTAL_CON_(explicit) subtype(is_q<T_> auto &&t, auto &&...xs)
+				XTAL_CON_(explicit) subtype(XTAL_ARG_(Xs) &&...xs)
 				XTAL_0EX
-				:	R_(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				:	subtype(R_::functor(XTAL_REF_(xs)...), T_{}, XTAL_REF_(xs)...)
 				{}
+				XTAL_CON_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				XTAL_0EX
+				:	subtype(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				{}
+				XTAL_CON_(explicit) subtype(auto &&f, XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				XTAL_0EX
+				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
+				{}
+				/***/
 
-				XTAL_TO4_(XTAL_DEF_(return,inline)
-				XTAL_RET state(auto &&...oo),
-					R_::head(XTAL_REF_(oo)...)
-				)
-				XTAL_TO2_(template <auto ...>
+			public:// ACCESS
+
+				XTAL_DO4_(XTAL_DEF_(return,inline)
+				XTAL_LET state(auto &&...oo), -> decltype(auto)
+				{
+					return R_::template head<Y_result>(XTAL_REF_(oo)...);
+				})
+
+			public:// FUNC*
+			//	using R_::functor;
+
+				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_RET functor(), state()
-				)
+				XTAL_LET functor(), -> decltype(auto)
+				{
+					return state();
+				})
 
 			public:// *FLUX
 				using R_::efflux;
@@ -162,7 +181,7 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
-		struct bracket<Xs...>
+		struct bundle<Xs...>
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 			using Y_return = iteratee_t<Y_result>;
@@ -172,26 +191,33 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::stashed<U_state, U_store>, bracket_<Xs...>>;
+			using subkind = bond::compose<resource::stashed<U_state, U_store>, bundle_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
 
-			public:
+			public:// CONSTRUCT
 				using R_::R_;
+
+			public:// ACCESS
 				using R_::self;
 				using R_::state;
 				using R_::store;
+
+			public:// FUNC*
+			//	using R_::functor;
 				
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_RET functor(),
+				XTAL_LET functor(), -> decltype(auto)
 				{
 					return state();
 				})
 				
+			public:// *FLUX
+
 				XTAL_DEF_(return,inline)
 				XTAL_LET delay()
 				XTAL_0EX -> size_type
@@ -220,7 +246,7 @@ struct monomer<U, As...>
 						auto  i = u.begin();
 						auto  n = XTAL_REF_(o).size();
 						XTAL_IF0
-						XTAL_0IF XTAL_REQ_DO_(u.resize(n))
+						XTAL_0IF XTAL_TRY_DO_(u.resize(n))
 						(void) state(i, i);//NOTE: For consistency with `vector` stores.
 						return 0;
 					}

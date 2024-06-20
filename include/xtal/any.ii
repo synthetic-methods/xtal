@@ -25,9 +25,9 @@ XTAL_LET invoke_f = [] (auto &&...oo)
 XTAL_0FN
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_(F   {XTAL_REF_(oo)...})
-	XTAL_0IF XTAL_REQ_TO_(F   (XTAL_REF_(oo)...))
-	XTAL_0IF XTAL_REQ_TO_(F{} (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_TO_(F   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_TRY_TO_(F   (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_TO_(F{} (XTAL_REF_(oo)...))
 };
 template <class F>
 XTAL_USE invoke_t = decltype(invoke_f<F>);
@@ -97,9 +97,9 @@ XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_type
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(t.size()))
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(t))
-	XTAL_0IF XTAL_REQ_TO_(static_cast<size_type>(0))
+	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(t.size()))
+	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(t))
+	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(0))
 }
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &...ts)
@@ -192,8 +192,8 @@ XTAL_LET equal_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_( x ==  y)
-	XTAL_0IF XTAL_REQ_TO_(&x == &y)
+	XTAL_0IF XTAL_TRY_TO_( x ==  y)
+	XTAL_0IF XTAL_TRY_TO_(&x == &y)
 }
 template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
 XTAL_DEF_(return,inline)
@@ -216,9 +216,9 @@ XTAL_LET equivalent_f(X const &x, Y const &y)
 XTAL_0EX
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_REQ_TO_(&x == &y or x.begin() == y.begin() and x.end() == y.end())
-	XTAL_0IF XTAL_REQ_TO_(&x == &y or x.begin() == y.begin())
-	XTAL_0IF XTAL_REQ_TO_(&x == &y)
+	XTAL_0IF XTAL_TRY_TO_(&x == &y or x.begin() == y.begin() and x.end() == y.end())
+	XTAL_0IF XTAL_TRY_TO_(&x == &y or x.begin() == y.begin())
+	XTAL_0IF XTAL_TRY_TO_(&x == &y)
 }
 
 

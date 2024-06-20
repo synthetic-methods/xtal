@@ -87,7 +87,7 @@ struct define
 };
 ///\
 Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
-bracket `subtype` as the default target of `self`. \
+with `subtype` as the default target of `self`. \
 
 template <class T>
 struct refine

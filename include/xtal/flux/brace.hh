@@ -14,13 +14,13 @@ namespace xtal::flux
 Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 template <class ...Xs>
-struct bracket;
+struct brace;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Xs>
-struct bracket
+struct brace
 {
 	using Xs_packed = compound::packed_t<Xs...>;
 	

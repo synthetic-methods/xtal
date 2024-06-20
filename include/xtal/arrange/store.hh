@@ -123,7 +123,7 @@ struct store<U_data[N_data]>
 		///\
 		Reshapes `this` with `sN` elements. \
 
-		XTAL_LET resize(size_type sN, auto &&...etc)
+		XTAL_LET resize(size_type sN, auto &&...oo)
 		->	void
 		{
 			size_type const sM = size();
@@ -131,7 +131,7 @@ struct store<U_data[N_data]>
 				pop_back(sM - sN);
 			}
 			else {
-				insert_back(sN - sM, XTAL_REF_(etc)...);
+				insert_back(sN - sM, XTAL_REF_(oo)...);
 			}
 		}
 		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N_data`. \
@@ -184,9 +184,9 @@ struct store<U_data[N_data]>
 		Insert constructor. \
 		Initializes `this` with `sN` values determined by the given arguments. \
 
-		XTAL_CON_(explicit) homotype(size_type sN, auto &&...etc)
+		XTAL_CON_(explicit) homotype(size_type sN, auto &&...oo)
 		{
-			insert_back(sN, XTAL_REF_(etc)...);
+			insert_back(sN, XTAL_REF_(oo)...);
 		}
 		///\
 		Span constructor. \
@@ -300,8 +300,6 @@ struct store<U_data[N_data]>
 
 
 	public:// ALLOCATION
-		///\
-		Inserts the values `etc` beginning at `i0`. \
 
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_LET push_back(I0 i0, IN iN)
@@ -309,16 +307,12 @@ struct store<U_data[N_data]>
 		{
 			insert(end(), i0, iN);
 		}
-		///\
-		Inserts the values `etc` beginning at `i0`. \
 
 		XTAL_LET push_back(embrace_t<U_data> w)
 		->	void
 		{
 			push_back(w.begin(), w.end());
 		}
-		///\
-		Inserts the values `etc...` beginning at `i0`. \
 
 		XTAL_LET push_back(as_q<U_data> auto &&...vs)
 		->	void
@@ -329,18 +323,18 @@ struct store<U_data[N_data]>
 		Constructs an element at the end of `this` using the given arguments. \
 		\returns a reference to the element.
 
-		XTAL_LET emplace_back(auto &&...etc)
+		XTAL_LET emplace_back(auto &&...oo)
 		->	reference
 		{
-			return *inplace_back(XTAL_REF_(etc)...);
+			return *inplace_back(XTAL_REF_(oo)...);
 		}
 		///\
 		Invokes `insert` at `this->end()` with the given arguments. \
 
-		XTAL_LET insert_back(auto &&...etc)
+		XTAL_LET insert_back(auto &&...oo)
 		->	iterator
 		{
-			return insert(end(), XTAL_REF_(etc)...);
+			return insert(end(), XTAL_REF_(oo)...);
 		}
 
 		///\
@@ -348,10 +342,10 @@ struct store<U_data[N_data]>
 		\returns an iterator at the element.
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_LET emplace(I i, auto &&...etc)
+		XTAL_LET emplace(I i, auto &&...oo)
 		->	iterator
 		{
-			return inplace(i, XTAL_REF_(etc)...);
+			return inplace(i, XTAL_REF_(oo)...);
 		}
 
 		///\
