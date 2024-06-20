@@ -81,27 +81,14 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_TNX efflux_fuse(auto &&o, auto &&...oo)
+		XTAL_TNX efflux(                    auto &&...oo) XTAL_0EX {return efflux_fuse(XTAL_REF_(oo)...);}
+		XTAL_TNX efflux(unnatural_q auto I, auto &&...oo) XTAL_0EX {return -1;}
+		XTAL_TNX efflux(                                ) XTAL_0EX {return -1;}
+		XTAL_TNX efflux_fuse(                           ) XTAL_0EX {return -1;}
+		XTAL_TNX efflux_fuse(     auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			XTAL_IF0
-			XTAL_0IF (1 <= sizeof...(oo)) {return XTAL_FNX_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));}
-			XTAL_0IF (0 == sizeof...(oo)) {return                                self().effuse(XTAL_REF_(o)) ;}
-		}
-		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX
-		{
-			return efflux_fuse(XTAL_REF_(oo)...);
-		}
-		XTAL_TNX efflux(null_type, auto &&...oo)
-		XTAL_0EX
-		{
-			return efflux();
-		}
-		XTAL_TNX efflux()
-		XTAL_0EX
-		{
-			return -1;
+			return XTAL_FNX_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 
 		///\
@@ -127,27 +114,14 @@ struct define
 		
 		///\returns the result of `infuse` applied to the each argument. \
 
-		XTAL_TNX influx_fuse(auto &&o, auto &&...oo)
+		XTAL_TNX influx(                    auto &&...oo) XTAL_0EX {return influx_fuse(XTAL_REF_(oo)...);}
+		XTAL_TNX influx(unnatural_q auto I, auto &&...oo) XTAL_0EX {return -1;}
+		XTAL_TNX influx(                                ) XTAL_0EX {return -1;}
+		XTAL_TNX influx_fuse(                           ) XTAL_0EX {return -1;}
+		XTAL_TNX influx_fuse(     auto &&o, auto &&...oo)
 		XTAL_0EX
 		{
-			XTAL_IF0
-			XTAL_0IF (1 <= sizeof...(oo)) {return XTAL_FNX_(influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));}
-			XTAL_0IF (0 == sizeof...(oo)) {return                                self().infuse(XTAL_REF_(o)) ;}
-		}
-		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX
-		{
-			return influx_fuse(XTAL_REF_(oo)...);
-		}
-		XTAL_TNX influx(null_type, auto &&...oo)
-		XTAL_0EX
-		{
-			return influx();
-		}
-		XTAL_TNX influx()
-		XTAL_0EX
-		{
-			return -1;
+			return XTAL_FNX_(influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 
 

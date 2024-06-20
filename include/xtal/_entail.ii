@@ -36,8 +36,8 @@ static_assert(sign_f(+2) == +1);
 static_assert(sign_f( 0) ==  0);
 static_assert(sign_f(-2) == -1);
 
-template <auto N, auto  ...Ms>	XTAL_REQ      exclusive_q =	(...and (N != Ms));
-template <auto N, auto  ...Ms>	XTAL_REQ      inclusive_q =	(...or  (N == Ms));
+template <auto N, auto  ...Ms>	XTAL_REQ      exclusive_q =	(...or (N != Ms));
+template <auto N, auto  ...Ms>	XTAL_REQ      inclusive_q =	(...or (N == Ms));
 template <auto N, auto  N_0=0>	XTAL_REQ           sign_p =	inclusive_q<N, -1, N_0, 1>;
 template <auto N, auto  N_0=0>	XTAL_LET           sign_n =	sign_f<N_0>(N);
 
@@ -45,6 +45,10 @@ template <class         ...Ts>	XTAL_REQ           some_q =	0 < sizeof...(Ts);
 template <auto          ...Ns>	XTAL_REQ           some_n =	0 < sizeof...(Ns);
 template <class         ...Ts>	XTAL_REQ           none_q =	not some_q<Ts...>;
 template <auto          ...Ns>	XTAL_REQ           none_n =	not some_n<Ns...>;
+
+template <class            T >	XTAL_REQ           unit_q =	_std::derived_from<_std::decay_t<T>, unit_type>;
+template <class            T >	XTAL_REQ           null_q =	_std::same_as     <_std::decay_t<T>, null_type>;
+template <class            T  >	XTAL_REQ           void_q =	_std::same_as<T, void>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +110,8 @@ template <class         T >	XTAL_REQ        ordinal_q =	 ordinal_p<T> or  ordina
 template <class         T >	XTAL_REQ       cardinal_q =	cardinal_p<T> or cardinal_p<typename T::value_typeT> and nominal_q<T>;
 template <class         T >	XTAL_REQ       integral_q =	integral_p<T> or integral_p<typename T::value_typeT> and nominal_q<T>;
 
+template <class         T >	XTAL_REQ      unnatural_q =	nominal_q<T> and not ~T::value;
+template <class         T >	XTAL_REQ        natural_q =	nominal_q<T> and 0 <= T::value;
 template <class         T >	XTAL_REQ       terminal_q =	nominal_q<T> and 0 == T::value;
 template <class         T >	XTAL_REQ        liminal_q =	nominal_q<T> and 0 != T::value;
 template <class         S >	XTAL_USE     subliminal_s =	nominal_t<S{} - sign_n<S{}>>;
@@ -132,7 +138,6 @@ XTAL_REQ atomic_q = _std::is_trivially_copyable_v<T>
 	and _std::is_move_constructible_v<T> and _std::is_move_assignable_v<T>
 	and true;
 
-template <class      T             >	XTAL_REQ           void_q =	_std::same_as<T, void>;
 template <class      T             >	XTAL_REQ     incomplete_q =	not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class      T             >	XTAL_REQ       complete_q =	    requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <              class ...Ts>	XTAL_TYP       complete              {class type {};};

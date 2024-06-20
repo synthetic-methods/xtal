@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./marked.hh"// testing...
+#include "./mask.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::flux::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("marked")
+TAG_("mask")
 {
 	TRY_("task")
 	{

@@ -3,6 +3,7 @@
 #include "./cue.hh"
 #include "./key.hh"
 #include "./mark.hh"
-#include "./marked.hh"
+#include "./mask.hh"
+#include "./slot.hh"
 #include "./tab.hh"
 #include "./tag.hh"

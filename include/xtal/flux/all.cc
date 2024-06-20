@@ -3,6 +3,7 @@
 #include "./cue.cc"
 #include "./key.cc"
 #include "./mark.cc"
-#include "./marked.cc"
+#include "./mask.cc"
+#include "./slot.cc"
 #include "./tab.cc"
 #include "./tag.cc"

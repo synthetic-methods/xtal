@@ -104,13 +104,16 @@ template <auto             ...Ns>	XTAL_REQ           some_n = _entail::     some
 template <class            ...Ts>	XTAL_REQ           none_q = _entail::     none_q<Ts...>;
 template <auto             ...Ns>	XTAL_REQ           none_n = _entail::     none_n<Ns...>;
 
+template <class            ...Ts>	XTAL_REQ           unit_q =	(...and  _entail::       unit_q<Ts   >);
+template <class            ...Ts>	XTAL_REQ           null_q =	(...and  _entail::       null_q<Ts   >);
+template <class            ...Ts>	XTAL_REQ           void_q =	(...and  _entail::       void_q<Ts   >);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Structural...
 
-template <class            ...Ts>	XTAL_REQ           void_q =	(...and  _entail::       void_q<Ts   >);
 template <class            ...Ts>	XTAL_REQ     incomplete_q =	(...and  _entail:: incomplete_q<Ts   >);
 template <class            ...Ts>	XTAL_REQ       complete_q =	(...and  _entail::   complete_q<Ts   >);
 template <class            ...Ts>	XTAL_USE       complete_t =	typename _entail::   complete_t<Ts...>;
@@ -164,6 +167,8 @@ template <class   ...Ts>	XTAL_REQ      ordinal_q = (...and  _entail::     ordina
 template <class   ...Ts>	XTAL_REQ     cardinal_q = (...and  _entail::    cardinal_q<Ts>);
 template <class   ...Ts>	XTAL_REQ     integral_q = (...and  _entail::    integral_q<Ts>);
 
+template <class   ...Ts>	XTAL_REQ    unnatural_q = (...and  _entail::   unnatural_q<Ts>);
+template <class   ...Ts>	XTAL_REQ      natural_q = (...and  _entail::     natural_q<Ts>);
 template <class   ...Ts>	XTAL_REQ     terminal_q = (...and  _entail::    terminal_q<Ts>);
 template <class   ...Ts>	XTAL_REQ      liminal_q = (...and  _entail::     liminal_q<Ts>);
 template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal_s<T >;
