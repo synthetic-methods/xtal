@@ -13,7 +13,7 @@ namespace xtal::flux
 ///\
 Governs access to the `supertype`. \
 
-///\see `flux::route`. \
+///\see `flux::marked`. \
 
 template <class	..._s> XTAL_TYP mark;
 template <class	..._s> XTAL_REQ mark_q = bond::any_tag_p<mark, _s...>;

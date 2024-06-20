@@ -1,7 +1,7 @@
 #pragma once
 #include "../flux/all.hh"// `_retail`
 
-#include "../flux/route.hh"
+#include "../flux/marked.hh"
 
 
 
@@ -48,7 +48,7 @@ struct define
 
 		template <int N_mask=-1>
 		struct attach
-		:	bond::compose<flux::route<N_mask>, typename S_::template afflux<>>
+		:	bond::compose<flux::marked<N_mask>, typename S_::template afflux<>>
 		{
 		};
 		template <int N_mask=-1>

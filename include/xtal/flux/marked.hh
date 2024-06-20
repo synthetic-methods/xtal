@@ -14,13 +14,13 @@ namespace xtal::flux
 Forwards anything prefixed with `N_mask`. \
 
 template <int N_mask=-1>
-struct route;
+struct marked;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <int N_mask>
-struct route
+struct marked
 {
 	static constexpr size_type M_mask =  N_mask;
 	static constexpr size_type W_mask = ~M_mask;

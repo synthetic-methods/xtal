@@ -69,30 +69,32 @@ TAG_("scalar")
 		using U3 = scalar_t<U0[3]>;
 		using U4 = scalar_t<U0[4]>;
 
-		TRUE_(U2{2, 12} == U4{2, 12, 6, 2}.cofactored());
-		TRUE_(U2{0,  0} == U4{2, 12, 6, 3}.cofactored());
-		TRUE_(U2{0,  0} == U4{2, 12, 6, 4}.cofactored());
+		  TRUE_(U4{2, 12, 6, 2}.cofactored() == U2{2, 12});
+		  TRUE_(U4{2, 12, 6, 2}.cofactorable());
+		UNTRUE_(U4{2, 12, 6, 3}.cofactorable());
+		UNTRUE_(U4{2, 12, 6, 4}.cofactorable());
 
-		U4   const xs_provided { 2, 12,  6,  2};
-		U4   const xs_expected { 1,  2,  1,  2};
-		
-		U4   const xs_ignored  = xs_provided%xs_expected;
-		U4   const xs_counted  = xs_provided/xs_expected;
-		U0   const ys_arity    = xs_counted.cofactored(1);
-		
-		U3   const ys_expected { 2,  1,  2};
-		U3   const ys_provided  = ys_expected*ys_arity;
 
-		TRUE_(xs_ignored == U4{0, 0, 0, 0});
-		TRUE_(xs_counted == U4{2, 6, 6, 1});
-		TRUE_(ys_arity   == 6);
+		U4 const xs_expected { 1,  2,  1,  2};
+		U4 const xs_provided { 2, 12,  6,  2};
+		
+		auto const xs_extents = xs_provided/xs_expected;
+		auto const ys_extent  = xs_extents.cofactorable()? 
+			xs_extents.template cofactored<1>():
+			xs_extents.template  colimited<1>();
+		
+		U3 const ys_expected { 2,  1,  2};
+		U3 const ys_provided = ys_expected*ys_extent;
+
+		TRUE_(xs_extents == U4{2, 6, 6, 1});
+		TRUE_(ys_extent   == 6);
 		
 		TRUE_(xs_provided.sum() == 22);
 		TRUE_(ys_provided.sum() == 30);
 
 		/*/
 		echo("\ninputs:");
-		for (size_type i = 0; i < ys_arity; ++i) {
+		for (size_type i = 0; i < ys_extent; ++i) {
 			auto input_tables = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
 				XTAL_0FN_(bond::pack_rowwise_f<xs_expected[I]>(inputs.count(), inputs.samples(...)))
@@ -102,7 +104,7 @@ TAG_("scalar")
 				(bond::seek_s<bond::pack_size_n<U4>>{});
 		}
 		echo("\noutputs:");
-		for (size_type i = 0; i < ys_arity; ++i) {
+		for (size_type i = 0; i < ys_extent; ++i) {
 			auto output_table = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
 				XTAL_0FN_(bond::pack_f(bond::pack_rowwise_f<ys_expected[I]>(outputs.count(), output.samples(...)))
