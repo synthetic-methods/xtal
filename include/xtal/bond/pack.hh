@@ -28,19 +28,19 @@ XTAL_0FN
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class         T >	XTAL_REQ _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
 template <class         T >	XTAL_REQ     _extent_q   =	complete_q<_std::    extent<based_t<T>>> and 0 < _std::extent_v<based_t<T>>;
-template <class         T >	XTAL_TYP  pack_size;
-template <_tuple_size_q T >	XTAL_TYP  pack_size<T>  :	_std::tuple_size<based_t<T>> {};
-template <    _extent_q T >	XTAL_TYP  pack_size<T>  :	_std::    extent<based_t<T>> {};
-template <class      ...Ts>	XTAL_REQ  pack_size_q   =	complete_q<pack_size<Ts>...>;
-template <class      ...Ts>	XTAL_LET  pack_size_n   =	(0 +...+ pack_size<Ts>::value);
-template <class      ...Ts>	XTAL_USE  pack_size_t   =	nominal_t<pack_size_n<Ts...>>;
+template <class         T >	XTAL_REQ _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
+template <class         T >	XTAL_TYP   pack_size;
+template <_tuple_size_q T >	XTAL_TYP   pack_size<T>  :	_std::tuple_size<based_t<T>> {};
+template <    _extent_q T >	XTAL_TYP   pack_size<T>  :	_std::    extent<based_t<T>> {};
+template <class      ...Ts>	XTAL_REQ   pack_size_q   =	complete_q<pack_size<Ts>...>;
+template <class      ...Ts>	XTAL_LET   pack_size_n   =	(0 +...+ pack_size<Ts>::value);
+template <class      ...Ts>	XTAL_USE   pack_size_t   =	nominal_t<pack_size_n<Ts...>>;
 
-static_assert(pack_size_n<_std::tuple<         >> == 0);
+static_assert(pack_size_n<_std::tuple<            >> == 0);
 static_assert(pack_size_n<_std::array<null_type, 0>> == 0);
 
-static_assert(pack_size_q<_std::tuple<         >>);
+static_assert(pack_size_q<_std::tuple<            >>);
 static_assert(pack_size_q<_std::array<null_type, 0>>);
 
 template <class T, size_type N> XTAL_REQ    pack_sized_q = N == pack_size_n<T>;

@@ -193,12 +193,6 @@ struct refer : bond::compose<void
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline) XTAL_RET operator << (auto &&x0, any_q auto &&x1) XTAL_0EX {return bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF_(return,inline) XTAL_RET operator >> (any_q auto &&x1, auto &&x0) XTAL_0EX {return bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-
-XTAL_DEF_(return,inline) XTAL_RET operator << (bond::heteropack_q auto &&x0, any_q auto &&x1) XTAL_0EX {return bond::pack_row_f(XTAL_REF_(x0), bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline) XTAL_RET operator >> (bond::heteropack_q auto &&x1, any_q auto &&x0) XTAL_0EX {return bond::pack_row_f(bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
-
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator== (y.self());}
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator!= (y.self());}
 template <any_q W> XTAL_DEF_(return,inline) XTAL_RET operator <=>(W const &x, W const &y) XTAL_0EX         {return x.self().operator<=>(y.self());}
@@ -206,10 +200,18 @@ template <any_q W> XTAL_DEF_(return,inline) XTAL_RET operator <=>(W const &x, W 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(return,inline) XTAL_RET operator << (xtal::compound::any_q auto &&x0, auto &&x1) XTAL_0EX {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_RET operator >> (xtal::compound::any_q auto &&x1, auto &&x0) XTAL_0EX {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+
+XTAL_DEF_(return,inline) XTAL_RET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX {return xtal::bond::pack_row_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(return,inline) XTAL_RET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX {return xtal::bond::pack_row_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+
+
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::compound::any_q T>
+template <xtal::compound::any_q T> requires xtal::complete_q<typename T::pack_size>
 struct tuple_size<T> : T::pack_size {};
 
 template <size_t N, xtal::compound::any_q T>

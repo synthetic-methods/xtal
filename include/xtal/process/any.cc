@@ -2,8 +2,8 @@
 #include "../any.cc"
 #include "./any.hh"// testing...
 
+#include "../flux/all.hh"
 #include "../occur/all.hh"
-#include "../flux/mark.hh"
 
 
 XTAL_ENV_(push)
@@ -103,8 +103,9 @@ TAG_("process", "attach")
 		op <<= flux::mark_s<Ox_level>(0b10, Ox_level{1});
 		TRUE_(8 == op());
 
-		op <<= nominal_t<0>{} << Ox_level{6};
-		op <<= nominal_t<1>{} << Ox_level{3};
+		op <<= flux::slot_t<0>{} << _std::array<int, 0>{};
+		op <<= flux::slot_t<0>{} << Ox_level{6};
+		op <<= flux::slot_t<1>{} << Ox_level{3};
 		TRUE_(3 == op());
 
 	}

@@ -22,12 +22,14 @@ template <class    T, typename ...As> XTAL_REQ any_p = bond::any_tag_p<any, T> a
 template <class ...Ts               > XTAL_REQ any_q = bond::any_tag_p<any, Ts...>;
 
 template <class ...Ts>
-concept self_q = any_q<Ts...> and complete_q<typename Ts::template self_t<>...>;
+//\
+concept self_q = any_q<Ts...> and complete_q<typename Ts::template self_s<>...>;
+concept self_q = any_q<Ts...> and complete_q<typename Ts::self_type...>;
 
-template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto const  &t) XTAL_0EX {return           t .template head<N>();};
-template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(any_q auto        &t) XTAL_0EX {return           t .template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(self_q auto const &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(self_q auto       &&t) XTAL_0EX {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(self_q auto const  &t) XTAL_0EX {return           t .template head<N>();};
+template <::std::size_t N> XTAL_DEF_(inline,static) XTAL_RET get(self_q auto        &t) XTAL_0EX {return           t .template head<N>();};
 
 
 ////////////////////////////////////////////////////////////////////////////////

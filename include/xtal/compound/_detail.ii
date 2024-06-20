@@ -21,8 +21,8 @@ Constructs/references the current value. \
 
 template <class   ...Us>	XTAL_REQ         member_q = rebased_q<Us...>;
 template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
-template <size_type     N >	XTAL_TYP         member<unit_type[N]> {using type =     unsigned;};
-template <size_type     N >	XTAL_TYP         member<null_type[N]> {using type =     unsigned;};
+template <size_type  N >	XTAL_TYP         member<unit_type[N]> {using type =     unsigned;};
+template <size_type  N >	XTAL_TYP         member<null_type[N]> {using type =     unsigned;};
 template <class      W >	XTAL_USE         member_t = typename member<W>::type;
 template <debased_q  W >	XTAL_DEF_(return,inline,static) XTAL_RET    member_f(auto &&   w)       XTAL_0EX {return & XTAL_REF_(w)    ;}
 template <class      W >	XTAL_DEF_(return,inline,static) XTAL_RET    member_f(auto &&...w)       XTAL_0EX {return W(XTAL_REF_(w)...);}
@@ -31,8 +31,8 @@ template <class      W >	XTAL_DEF_(return,inline,static) XTAL_RET    member_f(au
 Resolves/dereferences the current value. \
 
 template <class      W >	XTAL_TYP     remember            {using type =      W;};
-template <size_type     N >	XTAL_TYP     remember<unit_type[N]> {using type = size_type;};
-template <size_type     N >	XTAL_TYP     remember<null_type[N]> {using type = size_type;};
+template <size_type  N >	XTAL_TYP     remember<unit_type[N]> {using type = size_type;};
+template <size_type  N >	XTAL_TYP     remember<null_type[N]> {using type = size_type;};
 template <class      W >	XTAL_USE     remember_t = typename remember<W>::type;
 template <pointer_q  M >	XTAL_DEF_(return,inline,static) XTAL_RET  remember_f(M &&m)             XTAL_0EX {return *XTAL_REF_(m);}
 template <class      M >	XTAL_DEF_(return,inline,static) XTAL_RET  remember_f(M &&m)             XTAL_0EX {return  XTAL_REF_(m);}

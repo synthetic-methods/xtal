@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "../flux/slot.hh"
 
 
 
@@ -25,11 +25,11 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename A, typename ...As> requires self_q<confined_t<monomer<As...>>>
-struct monomer<A, As...>
-:	bond::compose<A, monomer<As...>>
-{
-};
+//template <typename A, typename ...As> requires self_q<confined_t<monomer<As...>>>
+//struct monomer<A, As...>
+//:	bond::compose<A, monomer<As...>>
+//{
+//};
 template <class U, typename ...As>
 struct monomer<U, As...>
 {
@@ -91,7 +91,7 @@ struct monomer<U, As...>
 					using  U_state = XTAL_ALL_(u_state);
 					static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 					
-					if (1 == R_::template efflux_pull_tail<N_share>(review_o, render_o)) {
+					if (1 == R_::template efflux_pull<N_share>(review_o, render_o)) {
 						return 1;
 					}
 					else {
@@ -231,9 +231,9 @@ struct monomer<U, As...>
 				continuing to propagate beyond. \
 
 				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
-				XTAL_0EX requires (0 <= N_share)
+				XTAL_0EX
 				{
-					return R_::template influx_push_tail<N_share>(null_type{}, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
+					return R_::template influx_push<N_share>(flux::slot_n<-1>, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}
 
 				using R_::efflux;
