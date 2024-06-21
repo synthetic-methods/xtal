@@ -25,16 +25,16 @@ XTAL_0EX
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//template <typename A, typename ...As> requires self_q<confined_t<monomer<As...>>>
-//struct monomer<A, As...>
-//:	bond::compose<A, monomer<As...>>
-//{
-//};
+template <bond::compose_q A, typename ...As>
+struct monomer<A, As...>
+:	bond::compose<A, monomer<As...>>
+{
+};
 template <class U, typename ...As>
 struct monomer<U, As...>
 {
 	using U_resize = occur::resize_t<>;
-	using U_render = occur::render_t<>;
+//	using U_render = occur::render_t<>;
 
 	using subkind = confer<U, As..., resource::stated<>>;
 
@@ -43,82 +43,25 @@ struct monomer<U, As...>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		using T_ = typename S_::self_type;
+
+		template <class ...Xs>
+		using F_ = bond::compose<bond::tag<monomer>, As...
+//		,	U_resize::attach<>
+//		,	U_render::attach<>
+		,	typename S_::template bundle<Xs...>
+		>;
 	
 	public:
 		using S_::S_;
 		using S_::self;
 
 		template <class ...Xs>
-		struct bundle_
-		{
-			using subkind = bond::compose<bond::tag<monomer>, As...
-			,	U_resize::attach<>
-			,	U_render::attach<>
-			,	typename S_::template bundle<Xs...>
-			>;
-			template <any_q R>
-			class subtype : public bond::compose_s<R, subkind>
-			{
-				using R_ = bond::compose_s<R, subkind>;
-
-			public:// CONSTRUCT
-				using R_::R_;
-				using R_::self;
-				using R_::efflux;
-
-				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
-				XTAL_0EX
-				{
-					if (R_::effuse(render_o) == 1) {
-						return 1;
-					}
-					return self().reflux([&, this] (counted_q auto scan, counter_q auto step)
-					XTAL_0FN_(self().efflux_subview(
-						review_o.subview(scan),
-						render_o.subview(scan).skip(step)
-					)))
-					&	XTAL_FNX_(efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
-				}
-				///\
-				Renders the buffer slice designated by `review_o` and `render_o`. \
-				
-				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux_subview(Rev &&review_o, Ren &&render_o)
-				XTAL_0EX
-				{
-					auto  &u_state = review_o.view();
-					using  U_state = XTAL_ALL_(u_state);
-					static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
-					
-					if (1 == R_::template efflux_pull<N_share>(review_o, render_o)) {
-						return 1;
-					}
-					else {
-						auto result_o = R_::functor();// Materialize...
-						auto _j = point_f(result_o);
-						auto _i = point_f(review_o);
-						auto  n = count_f(review_o);
-						
-						using namespace _xtd::ranges;
-						XTAL_IF0
-						XTAL_0IF XTAL_TRY_DO_(copy_n(_j, n, _i))
-						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(default) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
-
-						return 0;
-					}
-				}
-
-			};
-		};
-		template <class ...Xs>
 		struct bundle
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
-			using subkind = bond::compose<compound::confer<Y_result>, bundle_<Xs...>>;
+			using subkind = bond::compose<compound::confer<Y_result>, F_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -126,20 +69,14 @@ struct monomer<U, As...>
 				using R_ = bond::compose_s<R, subkind>;
 
 			public:// CONSTRUCT
-				/*/
-				using R_::R_;
-				/*/
+			//	using R_::R_;
 				XTAL_CO0_(subtype);
-			//	XTAL_CO1_(subtype);
+				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
-				XTAL_CON_(implicit) subtype()
-				XTAL_0EX
-				:	subtype(R_::functor(Xs{}...), T_{}, Xs{}...)
-				{}
 				XTAL_CON_(explicit) subtype(XTAL_ARG_(Xs) &&...xs)
 				XTAL_0EX
-				:	subtype(R_::functor(XTAL_REF_(xs)...), T_{}, XTAL_REF_(xs)...)
+				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
 				XTAL_CON_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
 				XTAL_0EX
@@ -149,7 +86,6 @@ struct monomer<U, As...>
 				XTAL_0EX
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
-				/***/
 
 			public:// ACCESS
 
@@ -191,7 +127,7 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::stashed<U_state, U_store>, bundle_<Xs...>>;
+			using subkind = bond::compose<resource::stashed<U_state, U_store>, F_<Xs...>>;
 
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -217,14 +153,6 @@ struct monomer<U, As...>
 				})
 				
 			public:// *FLUX
-
-				XTAL_DEF_(return,inline)
-				XTAL_LET delay()
-				XTAL_0EX -> size_type
-				{
-					size_type const n = R_::delay();
-					return 0 < n? n: R_::template head<U_resize>();
-				}
 
 			//	using R_::infuse;
 				///\

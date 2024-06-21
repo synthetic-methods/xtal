@@ -99,9 +99,9 @@ template <size_type I, subpack_sized_q<I> T, class  ...Ts> XTAL_TYP interpack_it
 template <size_type I,                       class  ...Ts> XTAL_USE interpack_item_t = typename interpack_item<I, Ts...>::type;
 
 template <class T,                        size_type ...Ns> XTAL_TYP intrapack_item;
-template <class T,              size_type N, size_type ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
-template <class T,              size_type N              > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
-template <class T                                     > XTAL_TYP intrapack_item<T          > {using type = T;};
+template <class T,           size_type N, size_type ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
+template <class T,           size_type N                 > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
+template <class T                                        > XTAL_TYP intrapack_item<T          > {using type = T;};
 template <class T,                       size_type... Ns > XTAL_USE intrapack_item_t = typename intrapack_item<T, Ns...>::type;
 
 
@@ -127,8 +127,6 @@ XTAL_LET pack_row_f(auto &&...ts)
 XTAL_0EX
 {
 	return [&]<auto ...Ns> (bond::seek_t<Ns...>)
-		//\
-		XTAL_0FN_(F<decltype(ts)...>(pack_item_f<Ns>(ts...)...))
 		XTAL_0FN_(F<decltype(ts)...>{pack_item_f<Ns>(ts...)...})
 	(bond::seek_s<pack_size_n<decltype(ts)...>>{});
 };
@@ -161,19 +159,19 @@ XTAL_0EX
 	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N, U>(n, XTAL_REF_(w)));
 }
 template <size_type N, class U>
-XTAL_USE pack_rowwise_t = XTAL_ALL_(pack_rowwise_f<N, U>(XTAL_ANY_(size_type), XTAL_ANY_(_std::decay_t<typename devolved<U(&)[N]>::array_type>)));
+XTAL_USE pack_rowwise_t = XTAL_ALL_(pack_rowwise_f<N, U>(0x1000, XTAL_ANY_(debrace_t<U> **)));
 
-
-template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(pack_rowwise_f<devalued_n<U>, U>);
-template <class U> XTAL_USE repack_rowwise_t = pack_rowwise_t<devalued_n<U>, U>;
+template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(  pack_rowwise_f<devalued_n<U>, U>);
+template <class U> XTAL_USE repack_rowwise_t =    XTAL_ALL_(repack_rowwise_f<U>(0x1000, XTAL_ANY_(debrace_t<U> **)));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts> concept       pack_q = pack_size_q<Ts...> and (...and pack_list_q<Ts>);
-template <class ...Ts> concept   homopack_q = pack_q<Ts...> and     iterable_q<Ts...>;
-template <class ...Ts> concept heteropack_q = pack_q<Ts...> and not iterable_q<Ts...>;
+template <class ...Ts> concept   idiopack_q = (...and is_q<Ts, pack_row_t<Ts>>);
+template <class ...Ts> concept   homopack_q = pack_q<Ts...> and     iterable_q<Ts...> and idiopack_q<Ts...>;
+template <class ...Ts> concept heteropack_q = pack_q<Ts...> and not iterable_q<Ts...> and idiopack_q<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

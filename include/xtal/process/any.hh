@@ -32,12 +32,6 @@ struct define
 	public:
 		using S_::S_;
 
-		///\returns `true` if the pointers are identical, `false` otherwise. \
-
-		XTAL_DEF_(return,inline)
-		XTAL_LET operator == (subtype const &t)
-		XTAL_0FX -> bool {return this == _std::addressof(t);}
-		
 		///\
 		Alias of `functor(...)`. \
 		
@@ -224,7 +218,7 @@ struct refine
 
 	public:// BIND
 		template <class ...Xs>
-		struct binding
+		struct binds
 		{
 			using subkind = confined<typename S_::template bundle<let_t<Xs>...>>;
 
@@ -234,19 +228,19 @@ struct refine
 
 		};
 		template <class ...Xs>
-		XTAL_USE binding_t = typename binding<Xs...>::type;
+		XTAL_USE binds_t = typename binds<Xs...>::type;
 
 		XTAL_DEF_(return,inline,static)
-		XTAL_LET     binding_f(auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(process::let_f(XTAL_REF_(xs))...))
+		XTAL_LET     binds_f(auto &&...xs)
+		XTAL_0EX_TO_(binds_t<decltype(xs)...>(process::let_f(XTAL_REF_(xs))...))
 
 		XTAL_DEF_(return,inline,static)
-		XTAL_LET     binding_f(is_q<T> auto &&t, auto &&...xs)
-		XTAL_0EX_TO_(binding_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...))
+		XTAL_LET     binds_f(is_q<T> auto &&t, auto &&...xs)
+		XTAL_0EX_TO_(binds_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...))
 		
 		XTAL_TO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET bind(Xs &&...xs), binding_f(S_::self(), XTAL_REF_(xs)...)
+		XTAL_LET bind(Xs &&...xs), binds_f(S_::self(), XTAL_REF_(xs)...)
 		)
 
 	};
