@@ -235,14 +235,15 @@ template <class         T >	XTAL_USE           count_t =	             _entail::c
 template <class      ...Ts>	XTAL_REQ       reembrace_q =	    (...and  _entail::    reembrace_q<Ts>);
 template <class         T >	XTAL_USE       reembrace_t =	             _entail::    reembrace_t<T > ;
 template <class         T >	XTAL_USE         embrace_t =	             _entail::      embrace_t<T > ;
+template <class         T >	XTAL_USE         debrace_t =	             _entail::      debrace_t<T > ;
 
 template <class         T >	XTAL_USE        interval_t =	             _entail::     interval_t<T > ;
 template <class         T >	XTAL_USE        iterated_t =	    typename _entail::     iterated  <T >::type;
 template <class         T >	XTAL_USE        iterator_t =	    typename _entail::     iterator  <T >::type;
 template <class         T >	XTAL_USE        iteratee_t =	    typename _entail::     iteratee  <T >::type;
 template <class         T >	XTAL_USE        distance_t =	             _entail::     distance_t<T > ;
-template <class T=integral_type>	XTAL_USE         counted_t =	    typename _entail::      counted  <T >::type;
-template <class T=integral_type>	XTAL_USE         counter_t =	    typename _entail::      counter  <T >::type;
+template <class T=integral_type>	XTAL_USE      counted_t =	    typename _entail::      counted  <T >::type;
+template <class T=integral_type>	XTAL_USE      counter_t =	    typename _entail::      counter  <T >::type;
 
 template <class      ...Ts>	XTAL_REQ        interval_q =	    (...and  _entail::     interval_q<Ts>);
 template <class      ...Ts>	XTAL_REQ        iteratee_q =	    (...and  _entail::     iteratee_q<Ts>);

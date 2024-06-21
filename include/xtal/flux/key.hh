@@ -72,7 +72,13 @@ XTAL_0EX
 	XTAL_0IF (             any_q<T>) {return F(XTAL_REF_(s),                            XTAL_REF_(t) );}
 	XTAL_0IF (bond::heteropack_q<T>) {return F(XTAL_REF_(s), bond::pack_row_f<packed_t>(XTAL_REF_(t)));}
 	XTAL_0IF_(default)               {return F(XTAL_REF_(s),             conferred_t<Y>(XTAL_REF_(t)));}
-	
+}
+template <any_q T>
+XTAL_DEF_(return,inline)
+XTAL_LET key_f(integral_q auto &&s, T &&t)
+XTAL_0EX
+{
+	return key_f(key_s<>(XTAL_REF_(s)), XTAL_REF_(t));
 }
 template <any_q T> XTAL_DEF_(return,inline) XTAL_RET operator << (key_s<>       &&s, T &&t) XTAL_0EX {return key_f(XTAL_MOV_(s), XTAL_REF_(t));}
 template <any_q T> XTAL_DEF_(return,inline) XTAL_RET operator << (key_s<> const  &s, T &&t) XTAL_0EX {return key_f(XTAL_REF_(s), XTAL_REF_(t));}

@@ -97,7 +97,7 @@ TAG_("process", "attach")
 
 	TRY_("messaging")
 	{
-		subtract_t::binding_t<L01, L10> op{};
+		subtract_t::binds_t<L01, L10> op{};
 
 		op <<= flux::mark_s<Ox_level>(0b01, Ox_level{9});
 		op <<= flux::mark_s<Ox_level>(0b10, Ox_level{1});

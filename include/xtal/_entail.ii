@@ -282,6 +282,7 @@ template <class         T >	XTAL_TYP      reembrace       {using type = _std::in
 template <debrace_q     T >	XTAL_TYP      reembrace<T>    {using type = typename T::initializer_list;};
 template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::type;
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
+template <class         T >	XTAL_USE        debrace_t =	devalued_t<reembrace_t<T>>;
 
 
 template <class         T >	XTAL_TYP       iteratee   ;

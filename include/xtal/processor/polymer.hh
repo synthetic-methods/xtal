@@ -28,14 +28,16 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
-//template <typename A, typename ...As> requires self_q<confined_t<polymer<As...>>>
-//struct polymer<A, As...>
-//:	bond::compose<A, polymer<As...>>
-//{
-//};
+template <bond::compose_q A, typename ...As>
+struct polymer<A, As...>
+:	bond::compose<A, polymer<As...>>
+{
+};
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
+	//\
+	using subkind = monomer<monomer_t<U>, As...>;
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
@@ -55,7 +57,7 @@ struct polymer<U, As...>
 			using V_event = occur::stage_t<>;
 			using U_event = flux::key_s<V_event>;
 			
-			using V_voice = typename Y_::template binding_t<Xs...>;
+			using V_voice = typename Y_::template binds_t<Xs...>;
 			using U_voice = flux::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
@@ -78,54 +80,39 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
+				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(size_t i), u_ensemble[i])
 				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(), u_ensemble)
 				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
 				using R_::influx;
-				
+				using R_::efflux;
+
 				///\
-				Forwards the `flux::key`ed occur to the associated instance. \
-				Messages associated with a `occur/stage.ii` designate events, \
+				Forwards to the associated instance. \
+				Messages associated with `occur::stage` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
-				///\note\
-				If an incoming event is active `(0)`, \
-				the top-most associated instance is cut `(-1)` \
-				before a new instance is allocated from the prototype `head`. \
+				XTAL_TNX     influx(flux::key_q auto io, auto &&...oo)
+				XTAL_0EX_TO_(influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...))
 
-				XTAL_TNX influx(flux::key_q auto io, auto &&...oo)
-				XTAL_0EX
-				{
-					auto const i = io.head();
-					auto const o = io.tail();
-					return influx(flux::key_s<>(i), o, XTAL_REF_(oo)...);
-				}
+				XTAL_TNX     efflux(flux::key_q auto io, auto &&...oo)
+				XTAL_0EX_TO_(efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...))
+
 				XTAL_TNX influx(flux::key_s<> i, auto &&...oo)
 				XTAL_0EX
 				{
-					auto h = i.head();
-					auto w = u_ensemble.scan(h);
-					assert(u_ensemble and h == w->head());
-					return w->influx(XTAL_REF_(oo)...);
+					auto   u_ = u_ensemble.scan(i.head());
+					assert(u_ < u_ensemble.end() and i.head() == u_->head());
+					return u_->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(flux::key_s<> i, V_event o, auto &&...oo)
+				XTAL_TNX efflux(flux::key_s<> i, auto &&...oo)
 				XTAL_0EX
 				{
-					auto h = i.head();
-					auto w = u_ensemble.scan(h);
-				//	Detect and allocate incoming note-on, terminating if it already exists:
-					if (0 == o) {
-						if (u_ensemble and h == w->head()) {
-							(void) w->influx(occur::stage_f(-1), oo...);
-						}
-						w = u_ensemble.poke(w, h, lead());
-					}
-				//	Forward to detected/allocated instance:
-					assert(w->head() == h);
-					return w->influx(o, XTAL_REF_(oo)...);
+					auto   u_ = u_ensemble.scan(i.head());
+					assert(u_ < u_ensemble.end() and i.head() == u_->head());
+					return u_->efflux(XTAL_REF_(oo)...);
 				}
-
 				///\
 				Forwards to all instances including the sentinel (except when rendering). \
 
@@ -150,6 +137,31 @@ struct polymer<U, As...>
 					);
 				}
 
+				///\note\
+				If an incoming event is active `(0)`, \
+				the top-most associated instance is cut `(-1)` \
+				before a new instance is allocated from the prototype `head`. \
+
+				XTAL_TNX influx(flux::key_s<> i, V_event o, auto &&...oo)
+				XTAL_0EX
+				{
+					auto h  = i.head();
+					auto u_ = u_ensemble.scan(h);
+				//	When a voice is initiated...
+					if (0 == o) {
+					//	...terminate the previous entry, if it exists:
+						if (u_ < u_ensemble.end() and h == u_->head()) {
+						//	...assuming that it hasn't been terminated already:
+							assert(1 != u_->efflux(occur::stage_f(-1)));
+							(void) u_->influx(occur::stage_f(-1), oo...);
+						}
+					//	...then allocate a new instance:
+						u_ = u_ensemble.poke(u_, h, lead());
+					}
+					assert(u_->head() == h);
+					return u_->influx(o, XTAL_REF_(oo)...);
+				}
+
 				///\
 				Renders the `store` slice designated by `review_o` and `render_o`, \
 				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
@@ -170,6 +182,13 @@ struct polymer<U, As...>
 							return 1;
 						}
 					}
+					///\todo\
+					Either configure `vox` (e.g. with `stored`), \
+					or reapply the base `monomer`. \
+
+					///\todo\
+					Examine the possibility of forwarding an accumulating view. \
+
 					if constexpr (resource::stored_q<S_>) {
 						for (auto &vox:u_ensemble) {
 							auto result_o = vox();

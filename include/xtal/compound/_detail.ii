@@ -147,7 +147,7 @@ struct refine_tuple
 		template <class F>
 		XTAL_DEF_(return,inline)
 		XTAL_RET apply()
-		XTAL_0EX
+		XTAL_0FX
 		{
 			return apply(invoke_f<F>);
 		}
@@ -161,6 +161,7 @@ struct refine_tuple
 		{
 			return apply(bond::seek_f);
 		}
+		
 		///\
 		Tuple conversion. \
 
@@ -170,16 +171,19 @@ struct refine_tuple
 		{
 			return apply(bond::pack_f);
 		}
+		XTAL_DEF_(return,inline)
+		XTAL_CVN_(implicit) bond::pack_row_t<S_>()
+		XTAL_0FX
+		{
+			return pack();
+		}
+		
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET unpack_f(bond::pack_q auto const &tuple)
 		XTAL_0EX
 		{
 			return _std::apply([] XTAL_1FN_(T), tuple);
 		}
-
-		XTAL_TO4_(XTAL_DEF_(return,inline)
-		XTAL_CVN_(implicit) bond::pack_row_t<S_>(), pack()
-		)
 
 	};
 };
