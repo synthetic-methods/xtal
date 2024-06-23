@@ -19,6 +19,7 @@ TAG_("circular")
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
 	static constexpr T_alpha two =  2;
 	static constexpr T_alpha ten = 10;
 
@@ -26,15 +27,29 @@ TAG_("circular")
 
 	using V_phi = T_alpha;
 	using U_phi = circular_t<V_phi[2]>;
-	using W_phi = _std::complex<U_phi>;
 
 	using D1 = circular_t<T_delta[1]>;
 	using D2 = circular_t<T_delta[2]>;
 	using D3 = circular_t<T_delta[3]>;
 	using D4 = circular_t<T_delta[4]>;
 	
-	TRY_("complexion")
+	TRY_("phasor of complex")
 	{
+		using W_phi = circular_t<_std::complex<T_alpha>[2]>;
+
+		W_phi a{{0.1, 0.2}, {0.3, 0.3}};
+		W_phi b{{0.1, 0.2}, {0.3, 0.3}};
+
+		++a;
+		++a;
+		++a;
+		TRUE_(check_f<-1>(a(0), T_aphex{0.0, 0.1}));
+
+	}
+	TRY_("complex of phasor")
+	{
+		using W_phi = _std::complex<circular_t<T_alpha[2]>>;
+
 		W_phi a{{0.1, 0.0}, {0.2, 0.0}};
 		W_phi b{{0.1, 0.0}, {0.2, 0.0}};
 		//\
@@ -48,8 +63,10 @@ TAG_("circular")
 	{
 		D2 a_d2{0.250, 0.250};
 		D2 b_d2{0.125, 0.125};
-		D2 y_d2{0.125};
+		D2 y_d2{0.000, 0.125};
+		//\
 		D2 z_d2(0.125);
+		D2 z_d2{0.125};
 
 		TRUE_(z_d2 == D2{0.125, 0.000});
 

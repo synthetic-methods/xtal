@@ -280,9 +280,9 @@ template <class         T >	XTAL_REQ        debrace_q =	requires {typename T::in
 template <class         T >	XTAL_REQ      reembrace_q =	debrace_q<T> or devalued_q<T>;
 template <class         T >	XTAL_TYP      reembrace       {using type = _std::initializer_list<devalued_t<T>>;};
 template <debrace_q     T >	XTAL_TYP      reembrace<T>    {using type = typename T::initializer_list;};
-template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<T>::type;
+template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<based_t<T>>::type;
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
-template <class         T >	XTAL_USE        debrace_t =	devalued_t<reembrace_t<T>>;
+template <class         T >	XTAL_USE       debraced_t =	devalued_t<reembrace_t<T>>;
 
 
 template <class         T >	XTAL_TYP       iteratee   ;
