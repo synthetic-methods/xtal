@@ -17,25 +17,8 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-struct aligned
-{
-	class type {alignas(alignof(T)) ::std::byte data[sizeof(T)];};
-
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET size()
-	XTAL_0EX -> size_type
-	{
-		return sizeof(type);
-	}
-
-};
-template <class T> using                   aligned_t = typename aligned<T>::type;
-template <class T> static constexpr size_type aligned_n =          aligned<T>::size();
-
-
-template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET    mover_f(I   i) XTAL_0EX {return _std::   make_move_iterator(i);}
-template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET reverser_f(I   i) XTAL_0EX {return _std::make_reverse_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET    mover_f(I i) XTAL_0EX {return _std::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET reverser_f(I i) XTAL_0EX {return _std::make_reverse_iterator(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

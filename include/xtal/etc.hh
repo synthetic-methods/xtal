@@ -186,7 +186,7 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 #define XTAL_0FX_TO_(...)        const             noexcept {return (__VA_ARGS__);}
 #define XTAL_0EX_TO_(...)                          noexcept {return (__VA_ARGS__);}
 
-#define XTAL_REQ_(...)          (requires { __VA_ARGS__ ;})
+#define XTAL_TRY_(...)          (requires { __VA_ARGS__ ;})
 #define XTAL_TRY_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
 #define XTAL_TRY_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
 

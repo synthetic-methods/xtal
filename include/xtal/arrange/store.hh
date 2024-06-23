@@ -43,7 +43,7 @@ struct store<U_data[~0U]>
 template <class U_data, size_type N_data>
 struct store<U_data[N_data]>
 {
-	using W_data = _detail::aligned_t<U_data>;
+	using W_data = aligned_t<U_data>;
 
 	template <class T>
 	using holotype = bond::compose_s<initerated_t<T>, bond::tag<store>>;
@@ -168,7 +168,7 @@ struct store<U_data[N_data]>
 			auto sX = _std::distance(i0, end());
 			if (0 < sX) {
 				static_assert(_std::is_move_constructible_v<value_type>);
-				_std::memmove(offence_f(iN), offence_f(i0), sX*_detail::aligned_n<value_type>);
+				_std::memmove(offence_f(iN), offence_f(i0), sX*aligned_n<value_type>);
 			}
 			n_data += sN;
 		}
@@ -496,7 +496,7 @@ struct store<U_data[N_data]>
 			auto const sX = _std::distance(iN, end());
 			if (0 < sX) {
 				static_assert(_std::is_move_constructible_v<value_type>);
-				_std::memmove(i0, iN, sX*_detail::aligned_n<value_type>);
+				_std::memmove(i0, iN, sX*aligned_n<value_type>);
 			}
 			n_data -= sN;
 			return i0;

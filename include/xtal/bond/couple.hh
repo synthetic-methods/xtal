@@ -128,6 +128,17 @@ struct couple
 			return sum<N_sgn>(U_data{0});
 		}
 		
+		template <int N_par=0> requires (N_data == 2)
+		XTAL_DEF_(inline)
+		XTAL_LET ratio()
+		XTAL_0EX -> U_data
+		{
+			auto &s = *this;
+			
+			XTAL_IF0
+			XTAL_0IF (0 <= N_par) {return get<0>(s)/get<1>(s);}
+			XTAL_0IF (N_par <  0) {return get<1>(s)/get<0>(s);}
+		}
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
 		template <int N_par=0> requires (N_data == 2)

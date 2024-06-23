@@ -36,19 +36,30 @@ template <class F, class ...Xs>
 XTAL_REQ invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
-XTAL_DEF_(return,inline)
-XTAL_RET devolved_f(auto &t)
-XTAL_0EX
-{
-	using T = _std::remove_reference_t<decltype(t)>;
-	return reinterpret_cast<typename devolved<T>::array_type &>(t);
-}
+XTAL_DEF_(return,inline) XTAL_RET involved_f(auto const &&t) XTAL_0EX {return reinterpret_cast<involved_t<decltype(t)> const &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_RET involved_f(auto const  &t) XTAL_0EX {return reinterpret_cast<involved_t<decltype(t)> const  &>(XTAL_REF_(t));}
+XTAL_DEF_(return,inline) XTAL_RET involved_f(auto       &&t) XTAL_0EX {return reinterpret_cast<involved_t<decltype(t)>       &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_RET involved_f(auto        &t) XTAL_0EX {return reinterpret_cast<involved_t<decltype(t)>        &>(XTAL_REF_(t));}
+static_assert(id_q<      int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(id_q<const int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(id_q<      int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(id_q<const int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const &&)))>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
+
+template <class T>
+XTAL_DEF_(return,inline,static)
+XTAL_LET maligned_f(size_type &i)
+XTAL_0EX
+{
+	XTAL_LET N = aligned_n<T> << 3;
+	XTAL_LET M = N - 1;
+	i += M; i &= ~M; size_type j = i; i += M; return j >> 3;
+};
 
 template <int N_offset=0, class T>
 XTAL_DEF_(return,inline)

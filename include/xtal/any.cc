@@ -152,6 +152,25 @@ struct dynamic_count
 using Px_dynamic_count = typename dynamic_count::type;
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+TAG_("maligned")
+{
+	TRY_("allocation stepping") {
+		size_type i{};
+		TRUE_(maligned_f<_std::byte   >(i) == 0x0);
+		TRUE_(maligned_f<_std::int16_t>(i) == 0x2);
+		TRUE_(maligned_f<_std::byte   >(i) == 0x4);
+		TRUE_(maligned_f<_std::byte   >(i) == 0x5);
+		TRUE_(maligned_f<_std::int16_t>(i) == 0x6);
+		TRUE_(maligned_f<_std::byte   >(i) == 0x8);
+		TRUE_(maligned_f<_std::int16_t>(i) == 0xA);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 /**/

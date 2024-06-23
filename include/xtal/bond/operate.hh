@@ -235,9 +235,17 @@ public:
 	using typename S_::delta_type;
 	using typename S_::sigma_type;
 
-//	static constexpr  iota_type  iota_0 = 0,  iota_1 = 1;
-	static constexpr delta_type delta_0 = 0, delta_1 = 1;
-	static constexpr sigma_type sigma_0 = 0, sigma_1 = 1;
+//	static constexpr  iota_type  iota_0{0};
+//	static constexpr  iota_type  iota_1{1};
+//	static constexpr  iota_type  iota_2{2};
+
+	static constexpr delta_type delta_0{0};
+	static constexpr delta_type delta_1{1};
+	static constexpr delta_type delta_2{2};
+
+	static constexpr sigma_type sigma_0{0};
+	static constexpr sigma_type sigma_1{1};
+	static constexpr sigma_type sigma_2{2};
 
 	static constexpr sigma_type N_width = N_size;
 	static constexpr sigma_type N_depth = N_size << 3;
@@ -532,10 +540,15 @@ public:
 
 //	using S_::   iota_0;
 //	using S_::   iota_1;
+//	using S_::   iota_2;
+	
 	using S_::  delta_0;
 	using S_::  delta_1;
+	using S_::  delta_2;
+
 	using S_::  sigma_0;
 	using S_::  sigma_1;
+	using S_::  sigma_2;
 
 	using typename S_::   iota_type;
 	using typename S_::  delta_type;
@@ -544,12 +557,28 @@ public:
 	using typename S_::  aphex_type;
 	using typename S_::mt19937_t;
 
-	static constexpr alpha_type alpha_0 = 0;
-	static constexpr alpha_type alpha_1 = 1;
-	static constexpr aphex_type aphex_0 = {0, 0};
-	static constexpr aphex_type aphex_1 = {1, 0};
-	static constexpr aphex_type aphex_i = {0, 1};
+	static constexpr alpha_type  alpha_0{0};
+	static constexpr alpha_type  alpha_1{1};
+	static constexpr alpha_type  alpha_2{2};
+	
+	static constexpr aphex_type  aphex_0{0, 0};
+	static constexpr aphex_type  aphex_1{1, 0};
+	static constexpr aphex_type  aphex_2{2, 0};
+	static constexpr aphex_type  aphex_i{0, 1};
 
+	static constexpr aphex_type square_0{0, 0};
+	static constexpr aphex_type square_1{1, 1};
+	static constexpr aphex_type square_2{2, 2};
+	
+	static constexpr aphex_type circle_0 = square_0*0.7071067811865475244008443621048490393L;
+	static constexpr aphex_type circle_1 = square_1*0.7071067811865475244008443621048490393L;
+	static constexpr aphex_type circle_2 = square_2*0.7071067811865475244008443621048490393L;
+
+	XTAL_DEF_(return,inline,static) XTAL_LET  iota_f(auto &&u) XTAL_0EX {return  iota_type(XTAL_REF_(u));}
+	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(auto &&u) XTAL_0EX {return delta_type(XTAL_REF_(u));}
+	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(auto &&u) XTAL_0EX {return sigma_type(XTAL_REF_(u));}
+	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(auto &&u) XTAL_0EX {return alpha_type(XTAL_REF_(u));}
+	XTAL_DEF_(return,inline,static) XTAL_LET aphex_f(auto &&u) XTAL_0EX {return aphex_type(XTAL_REF_(u));}
 
 	using S_::N_width;
 	using S_::N_depth;
@@ -905,7 +934,9 @@ public:
 	static_assert(diplo_n< 0> == 1.0);
 	static_assert(diplo_n<-1> == 0.5);
 
+	static constexpr alpha_type diplo_0 = diplo_n<0>;
 	static constexpr alpha_type diplo_1 = diplo_n<1>;
+	static constexpr alpha_type diplo_2 = diplo_n<2>;
 
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
@@ -924,7 +955,9 @@ public:
 	static_assert(haplo_n< 0> == 1.0);
 	static_assert(haplo_n<-1> == 2.0);
 
+	static constexpr alpha_type haplo_0 = haplo_n<0>;
 	static constexpr alpha_type haplo_1 = haplo_n<1>;
+	static constexpr alpha_type haplo_2 = haplo_n<2>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -945,6 +978,9 @@ public:
 	static_assert(ratio_f(1, 2.0) == 0.5 && ratio_f<-1>(1, 2.0) == 2.0);
 	static_assert(ratio_f(4, 2.0) == 2.0 && ratio_f<-1>(4, 2.0) == 0.5);
 
+	static constexpr alpha_type ratio_0 = ratio_f(0, 1);
+	static constexpr alpha_type ratio_1 = ratio_f(1, 1);
+	static constexpr alpha_type ratio_2 = ratio_f(2, 1);
 
 	///\returns `ratio_f<N_pow>(PI*n_num, n_nom)`.
 
@@ -960,6 +996,7 @@ public:
 	static_assert(patio_f(4, 2) ==  alpha_type(6.283185307179586476925286766559005768L));
 	static_assert(patio_f(4,-2) == -alpha_type(6.283185307179586476925286766559005768L));
 
+	static constexpr alpha_type patio_0 = patio_f(0, 1);
 	static constexpr alpha_type patio_1 = patio_f(1, 1);
 	static constexpr alpha_type patio_2 = patio_f(2, 1);
 
@@ -1353,28 +1390,33 @@ public:
 	XTAL_LET truncate_f(alpha_type &target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
 	{
-	//	bool constexpr N_unit = not N_infinity;
-		if constexpr (IEC&559) {
-			delta_type constexpr M_zone = unit.mask + (1);
-			delta_type constexpr M_zoom = unit.mask - (delta_type(1) << N_zoom);
-			delta_type const     dezone = n_zone << exponent.shift;
-			delta_type const     rezone = N_infinity? M_zone - dezone: dezone;
-			delta_type const M = rezone + M_zoom;
-			delta_type o, n, m;
-			auto &t  = reinterpret_cast<delta_type &>(target);
-			n  =  t  & sign.mask;
-			m  =  t  ^ n;
-			m  =  M  - m;
-			o  =  m >> positive.depth;
-			n |=  o  & unit.mask;
-			t +=  o  & m;
-			return    _xtd::bit_cast<alpha_type>(n);
+		if constexpr (N_zoom < 0) {
+			return alpha_0;
 		}
 		else {
-			alpha_type const t = N_infinity? maximal_f(n_zone - 1): dnsilon_f(N_zoom, n_zone);
-			alpha_type const s = design_f(target), o = t < target;
-			target = s*minimum_f(t, target);
-			return o*s;
+		//	bool constexpr N_unit = not N_infinity;
+			if constexpr (IEC&559) {
+				delta_type constexpr M_zone = unit.mask + (1);
+				delta_type constexpr M_zoom = unit.mask - (delta_type(1) << N_zoom);
+				delta_type const     dezone = n_zone << exponent.shift;
+				delta_type const     rezone = N_infinity? M_zone - dezone: dezone;
+				delta_type const M = rezone + M_zoom;
+				delta_type o, n, m;
+				auto &t  = reinterpret_cast<delta_type &>(target);
+				n  =  t  & sign.mask;
+				m  =  t  ^ n;
+				m  =  M  - m;
+				o  =  m >> positive.depth;
+				n |=  o  & unit.mask;
+				t +=  o  & m;
+				return    _xtd::bit_cast<alpha_type>(n);
+			}
+			else {
+				alpha_type const t = N_infinity? maximal_f(n_zone - 1): dnsilon_f(N_zoom, n_zone);
+				alpha_type const s = design_f(target), o = t < target;
+				target = s*minimum_f(t, target);
+				return o*s;
+			}
 		}
 	}
 	/// Modifies the `target`, clamping the magnitude below `maximal_f(N_zoom)`. \
@@ -1382,18 +1424,18 @@ public:
 	///\returns zero if unchanged, else the sign of the `target`. \
 
 	template <int N_zoom=0>
-	XTAL_DEF_(static)
+	XTAL_DEF_(inline,static)
 	XTAL_LET truncate_f(alpha_type &target)
 	XTAL_0EX -> alpha_type
 	{
 		return truncate_f<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_DEF_(static)
+	XTAL_DEF_(inline,static)
 	XTAL_LET truncate_f(aphex_type &target)
 	XTAL_0EX -> aphex_type
 	{
-		auto &z = devolved_f(target);
+		auto &z = involved_f(target);
 		alpha_type const x = truncate_f<N_zoom>(z[0]);
 		alpha_type const y = truncate_f<N_zoom>(z[1]);
 		return aphex_type{x, y};
@@ -1453,26 +1495,31 @@ public:
 	XTAL_LET puncture_f(alpha_type &target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
 	{
-		bool constexpr N_unit = not N_zero;
-		if constexpr (IEC&559) {
-			delta_type constexpr M_zoom = unit.mask + (delta_type(1) << N_zoom);
-			delta_type const     dezone = n_zone << exponent.shift;
-			delta_type const M = dezone + M_zoom*N_unit;
-			delta_type o, n, m;
-			auto &t  = reinterpret_cast<delta_type &>(target);
-			n   = t  & sign.mask;
-			m   = t  ^ n;
-			m  -= M;
-			o   = m >> positive.depth;
-			n  |= o  & unit.mask;
-			t  -= o  & m;
-			return    _xtd::bit_cast<alpha_type>(XTAL_MOV_(n));
+		if constexpr (N_zoom < 0) {
+			return alpha_0;
 		}
 		else {
-			alpha_type const t = N_zero? minimal_f(n_zone - 1): upsilon_f(N_zoom, n_zone);
-			alpha_type const s = design_f(target), o = target < t;
-			target = s*maximum_f(t, target);
-			return o*s;
+			bool constexpr N_unit = not N_zero;
+			if constexpr (IEC&559) {
+				delta_type constexpr M_zoom = unit.mask + (delta_type(1) << N_zoom);
+				delta_type const     dezone = n_zone << exponent.shift;
+				delta_type const M = dezone + M_zoom*N_unit;
+				delta_type o, n, m;
+				auto &t  = reinterpret_cast<delta_type &>(target);
+				n   = t  & sign.mask;
+				m   = t  ^ n;
+				m  -= M;
+				o   = m >> positive.depth;
+				n  |= o  & unit.mask;
+				t  -= o  & m;
+				return    _xtd::bit_cast<alpha_type>(XTAL_MOV_(n));
+			}
+			else {
+				alpha_type const t = N_zero? minimal_f(n_zone - 1): upsilon_f(N_zoom, n_zone);
+				alpha_type const s = design_f(target), o = target < t;
+				target = s*maximum_f(t, target);
+				return o*s;
+			}
 		}
 	}
 	/// Modifies the `target`, clamping the magnitude above `minimal_f(N_zoom)`. \
@@ -1480,14 +1527,14 @@ public:
 	///\returns zero if unchanged, else the sign of the `target`. \
 
 	template <int N_zoom=0>
-	XTAL_DEF_(static)
+	XTAL_DEF_(inline,static)
 	XTAL_LET puncture_f(alpha_type &target)
 	XTAL_0EX -> alpha_type
 	{
 		return puncture_f<0, 1>(target, N_zoom + 1);
 	}
 	template <int N_zoom=0>
-	XTAL_DEF_(static)
+	XTAL_DEF_(inline,static)
 	XTAL_LET puncture_f(aphex_type &target)
 	XTAL_0EX -> alpha_type
 	{
