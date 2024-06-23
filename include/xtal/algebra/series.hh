@@ -266,7 +266,7 @@ struct series<A>
 			}
 			else {
 				using X = typename _op::aphex_type;
-				using Y = typename series<X>::type;
+				using Y = typename series<X[N_data]>::type;
 				Y s_(s);
 				Y t_(t);
 				Y(nominal_t<-1>{}).convolve(s_, t_);

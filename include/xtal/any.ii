@@ -240,7 +240,7 @@ class
 	XTAL_0FX -> void
 	{
 		using W = XTAL_ALL_(x);
-		if constexpr (::std::is_floating_point_v<W>) {
+		if constexpr (continuous_field_q<W>) {
 			::std::cout.precision(17);
 		}
 		if constexpr (::std::is_arithmetic_v<W>) {
