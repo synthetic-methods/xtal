@@ -35,21 +35,23 @@ struct define
 		///\
 		Alias of `functor(...)`. \
 		
-		XTAL_TO2_(XTAL_DEF_(return,inline)
+		XTAL_DO2_(XTAL_DEF_(return,inline)
 		XTAL_LET operator () (auto &&...xs),
-			S_::self().functor(XTAL_REF_(xs)...)
-		)
+		->	decltype(auto)
+		{
+			return S_::self().functor(XTAL_REF_(xs)...);
+		})
 		
 		///\
 		The default `functor` defers to the static `function` (only when `this` is `const`). \
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&...xs)
-		XTAL_0FX_TO_(T::template function<Is...>(XTAL_REF_(xs)...))
-//		{
-//			return T::template function<Is...>(XTAL_REF_(xs)...);
-//		}
+		XTAL_LET functor(auto &&...xs)
+		XTAL_0FX -> decltype(auto)
+		{
+			return T::template function<Is...>(XTAL_REF_(xs)...);
+		}
 
 		///\returns the lambda abstraction of `functor`, \
 		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
@@ -107,7 +109,7 @@ struct define
 			};
 			template <auto ...Is>
 			requires
-				XTAL_REQ_(XTAL_ANY_(T_ const &).
+				XTAL_TRY_(XTAL_ANY_(T_ const &).
 					template functor<Is...>(XTAL_ANY_(argument_t<Xs>)...)
 				)
 			class type<Is...>

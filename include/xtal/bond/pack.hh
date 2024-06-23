@@ -31,11 +31,12 @@ XTAL_0FN
 template <class         T >	XTAL_REQ     _extent_q   =	complete_q<_std::    extent<based_t<T>>> and 0 < _std::extent_v<based_t<T>>;
 template <class         T >	XTAL_REQ _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
 template <class         T >	XTAL_TYP   pack_size;
-template <_tuple_size_q T >	XTAL_TYP   pack_size<T>  :	_std::tuple_size<based_t<T>> {};
-template <    _extent_q T >	XTAL_TYP   pack_size<T>  :	_std::    extent<based_t<T>> {};
-template <class      ...Ts>	XTAL_REQ   pack_size_q   =	complete_q<pack_size<Ts>...>;
-template <class      ...Ts>	XTAL_LET   pack_size_n   =	(0 +...+ pack_size<Ts>::value);
-template <class      ...Ts>	XTAL_USE   pack_size_t   =	nominal_t<pack_size_n<Ts...>>;
+template <class         U >	XTAL_TYP   pack_size<_std::complex<U>>  :	nominal_t<size_2> {};
+template <    _extent_q T >	XTAL_TYP   pack_size<T>                 :	  _std::    extent<based_t<T>> {};
+template <_tuple_size_q T >	XTAL_TYP   pack_size<T>                 :	  _std::tuple_size<based_t<T>> {};
+template <class      ...Ts>	XTAL_LET   pack_size_n                  =	(0 +...+ pack_size<based_t<Ts>>::value);
+template <class      ...Ts>	XTAL_REQ   pack_size_q                  =	complete_q<pack_size<based_t<Ts>>...>;
+template <class      ...Ts>	XTAL_USE   pack_size_t                  =	 nominal_t<pack_size_n<based_t<Ts>...>>;
 
 static_assert(pack_size_n<_std::tuple<            >> == 0);
 static_assert(pack_size_n<_std::array<null_type, 0>> == 0);
@@ -65,22 +66,41 @@ template <             class T> XTAL_REQ pack_list_q = 0 == pack_size_n<T> or []
 	(seek_s<pack_size_n<T>> {})
 ;
 
-template <size_type ...Ns> requires none_n<Ns...>
 XTAL_DEF_(return,inline)
 XTAL_RET pack_item_f(auto &&t)
 XTAL_0EX
 {
 	return XTAL_REF_(t);
 }
-template <size_type N, size_type ...Ns>
+template <size_type N>
+XTAL_DEF_(return,inline)
+XTAL_RET pack_item_f(auto &&t)
+XTAL_0EX
+{
+	/*/
+	return get<N>(XTAL_REF_(t));
+	/*/
+	if constexpr (complex_field_q<decltype(t)>) {
+		return involved_f(XTAL_REF_(t))[N];
+	}
+	else {
+		return get<N>(XTAL_REF_(t));
+	}
+	/***/
+}
+template <size_type N, size_type ...Ns> requires some_n<Ns...>
 XTAL_DEF_(return,inline)
 XTAL_RET pack_item_f(auto &&t, auto &&...ts)
 XTAL_0EX
 {
 	XTAL_LET N_t = pack_size_n<decltype(t)>;
 	XTAL_IF0
-	XTAL_0IF (N <  N_t) {return pack_item_f<         Ns...>(get<N>(XTAL_REF_(t)));}
-	XTAL_0IF (N >= N_t) {return pack_item_f<N - N_t, Ns...>(XTAL_REF_(ts)...);}
+	XTAL_0IF (N >= N_t) {
+		return pack_item_f<N - N_t, Ns...>(XTAL_REF_(ts)...);
+	}
+	XTAL_0IF (N <  N_t) {
+		return pack_item_f<Ns...>(pack_item_f<N>(XTAL_REF_(t)));
+	}
 }
 template <size_type ...Ns>
 XTAL_DEF_(return,inline)

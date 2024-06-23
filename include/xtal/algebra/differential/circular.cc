@@ -27,6 +27,9 @@ TAG_("circular")
 
 	using V_phi = T_alpha;
 	using U_phi = circular_t<V_phi[2]>;
+	using W_phi = _std::complex<circular_t<T_alpha[2]>>;
+	using M_phi = circular_t<_std::complex<T_alpha>[2]>;
+	using A_phi = _std::array<V_phi, 2>;
 
 	using D1 = circular_t<T_delta[1]>;
 	using D2 = circular_t<T_delta[2]>;
@@ -35,21 +38,25 @@ TAG_("circular")
 	
 	TRY_("phasor of complex")
 	{
-		using W_phi = circular_t<_std::complex<T_alpha>[2]>;
 
-		W_phi a{{0.1, 0.2}, {0.3, 0.3}};
-		W_phi b{{0.1, 0.2}, {0.3, 0.3}};
+		M_phi a{{0.1, 0.2}, {0.3, 0.3}};
+		M_phi b{{0.1, 0.2}, {0.3, 0.3}};
 
 		++a;
 		++a;
 		++a;
 		TRUE_(check_f<-1>(a(0), T_aphex{0.0, 0.1}));
 
+	//	W_phi z = a;
+	//	TRUE_(check_f<19>(z.real() (0), 0.0));
+	//	TRUE_(check_f<19>(z.imag() (0), 0.1));
+	//	TRUE_(check_f<19>(z.real() (1), 0.3));
+	//	TRUE_(check_f<19>(z.imag() (1), 0.3));
+
+
 	}
 	TRY_("complex of phasor")
 	{
-		using W_phi = _std::complex<circular_t<T_alpha[2]>>;
-
 		W_phi a{{0.1, 0.0}, {0.2, 0.0}};
 		W_phi b{{0.1, 0.0}, {0.2, 0.0}};
 		//\

@@ -11,10 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class           ..._s>	XTAL_TYP scalar;
-template <class           ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class           ...Ts>	XTAL_REQ scalar_q = bond::any_tag_p<scalar_t, Ts...>;
-template <size_type N, class ...Ts>	XTAL_REQ scalar_p = scalar_q<Ts...> and (...and (N == Ts::size()));
+template <class   ..._s>	XTAL_TYP scalar;
+template <class   ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
+template <class   ...Ts>	XTAL_REQ scalar_q = bond::any_tag_p<scalar_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET scalar_f(auto &&...oo)
@@ -257,6 +256,17 @@ struct scalar<A>
 			return u;
 		}
 
+		template <int N_par=0> requires (N_data == 2)
+		XTAL_DEF_(inline)
+		XTAL_LET ratio()
+		XTAL_0EX -> U_data
+		{
+			auto &s = self();
+			
+			XTAL_IF0
+			XTAL_0IF (0 <= N_par) {return get<0>(s)/get<1>(s);}
+			XTAL_0IF (N_par <  0) {return get<1>(s)/get<0>(s);}
+		}
 		///\
 		Modifies `this`; \see `reflected()`.
 

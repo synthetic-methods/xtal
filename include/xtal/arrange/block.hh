@@ -91,6 +91,7 @@ struct superblock<U[N]>
 		XTAL_CON_(explicit) homotype(size_type const n)
 		XTAL_0EX
 		{
+			assert(n <= N_data);
 			if (_std::is_constant_evaluated() or n < N_data) {
 				S_::fill(U_data{});
 			}
@@ -196,7 +197,7 @@ struct block<A>
 		)
 
 	public:// OPERATE
-		XTAL_TO4_(template <class F>
+		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(inline)
 		XTAL_CVN_(explicit) F(), apply<F>()
 		)

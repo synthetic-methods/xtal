@@ -28,9 +28,12 @@ parameterized by an `continuous_field_q`-wrapper with a distinguished head. \
 ///\todo\
 Rework `operator`s to accommodate `std::complex`. \
 
-template <class   ..._s>	XTAL_TYP circular;
-template <class   ..._s>	XTAL_USE circular_t = typename circular<_s...>::type;
-template <class   ...Ts>	XTAL_REQ circular_q = bond::any_tag_p<circular_t, Ts...>;
+template <class   ..._s>	XTAL_TYP         circular;
+template <class   ..._s>	XTAL_USE         circular_t = typename circular<_s...>::type;
+template <class   ...Ts>	XTAL_REQ         circular_q = bond::any_tag_p<circular_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ    real_circular_q = bond::any_tag_p<circular_t, Ts...> and   real_number_q<debraced_t<Ts>...>;
+template <class   ...Ts>	XTAL_REQ simplex_circular_q = bond::any_tag_p<circular_t, Ts...> and simplex_field_q<debraced_t<Ts>...>;
+template <class   ...Ts>	XTAL_REQ complex_circular_q = bond::any_tag_p<circular_t, Ts...> and complex_field_q<debraced_t<Ts>...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET circular_f(auto &&...oo)
@@ -122,6 +125,9 @@ struct circular<A>
 		friend T;
 		using  S_ = holotype<T>;
 
+//		template <class A_>
+//		using  Vs_ = typename T::template tagged<A_>::type;
+
 	protected:
 		using          S_::N_data;
 		using typename S_::U_data;
@@ -155,6 +161,20 @@ struct circular<A>
 		XTAL_CON_(implicit)  homotype        (initializer_list  o) XTAL_0EX : homotype(count_f(o))    {operator>>=( XTAL_REF_(o)     );}
 		XTAL_CON_(explicit)  homotype        (iterable_q auto &&o) XTAL_0EX : homotype(count_f(o))    {operator>>=( XTAL_REF_(o)     );}
 		
+	//	XTAL_DEF_(inline)
+	//	XTAL_DO4_(XTAL_CVN_(implicit)
+	//	auto(),
+	//	{
+	//		if constexpr (complex_field_q<coordinate_type>) {
+	//			using F = _std::complex<typename S_::template tagged_t<devalued_t<coordinate_type>[N_data]>>;
+	//			auto &s = self();
+	//			
+	//			return [&]<auto ...I> (bond::seek_t<I...>)
+	//				XTAL_0FN_(F({s(I).real()...}, {s(I).imag()...}))
+	//			(bond::seek_s<N_data>{});
+	//		}
+	//	})
+		
 	public:// RECONSTRUCT
 		using S_::operator >>=;
 		using S_::operator <<=;
@@ -166,6 +186,7 @@ struct circular<A>
 		XTAL_DEF_(inline) XTAL_LET operator <<= (iterable_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(_std::next(S_::data(), S_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		
 	public:// OPERATE
+		
 		///\
 		Scales all elements. \
 

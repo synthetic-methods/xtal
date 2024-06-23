@@ -58,6 +58,7 @@ struct series<A>
 		///\
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
+		XTAL_DEF_(inline)
 		XTAL_CON_(explicit) homotype(nominal_q auto const o_shift)
 		{
 			generate<o_shift>();
@@ -65,12 +66,14 @@ struct series<A>
 		///\
 		Generates the power series with the given seed. \
 
+		XTAL_DEF_(inline)
 		XTAL_CON_(explicit) homotype(auto &&...oo)
 		{
 			generate(XTAL_REF_(oo)...);
 		}
 
-		template <size_type N_limit=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
+		template <size_type N_count=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
+		XTAL_DEF_(inline)
 		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX -> T &
 		{
@@ -90,43 +93,46 @@ struct series<A>
 			});
 			return self();
 		}
-		///\returns `this` with the elements `N_index, ..., N_index + N_limit - 1` \
+		///\returns `this` with the elements `N_index, ..., N_index + N_count - 1` \
 			filled by the corresponding powers of `u`. \
 
-		template <size_type N_limit=N_data, size_type N_index=0, integral_type N_step=1, integral_type N_skip=0>
+		template <size_type N_count=N_data, size_type N_index=0, integral_type N_step=1, integral_type N_skip=0>
+		XTAL_DEF_(inline)
 		XTAL_LET generate(U_data const &u)
 		XTAL_0EX -> T &
 		{
-		//	auto &s = self();
+			auto &s = self();
 
-			using I = typename S_::difference_type;
-
-			XTAL_LET N_shift = _op::bit_ceiling_f(N_step);
-			static_assert(N_step == 1 << N_shift);
+			using A_delta = typename S_::difference_type;
+			using A_sigma = typename S_::      size_type;
 
 		//	Compute the start- and end-points for the required segment:
-			I constexpr I0 = N_skip + N_step*(N_index +             0 );
-			I constexpr I1 = N_skip + N_step*(N_index +             1 );
-			I constexpr IM = N_skip + N_step*(N_index + (N_limit >> 1));
-			I constexpr IN = N_skip + N_step*(N_index + (N_limit  - 1));
-			I constexpr M_skip = N_step - N_skip;
+			A_delta constexpr N_limit = N_index + N_count;
+			A_delta constexpr _0 =  0*N_step;
+			A_delta constexpr _1 =  1*N_step;
+			A_delta constexpr _2 =  2*N_step;
+			A_delta constexpr U0 = _1*N_index + N_skip, W0 = _2*N_index + N_skip;
+			A_delta constexpr UZ = _1*N_limit + N_skip, WZ = _2*N_limit + N_skip;
 
-		//	Compute and populate the 0th and 1st powers:
+		//	Populate the 0th and 1st powers:
 			auto const o = _op::template explo_f<N_index>(u);
-			let(I0) = o;
-			let(I1) = o*u;
+			get<U0 + _0>(s) = o;
+			get<U0 + _1>(s) = o*u;
 
-			for (I i = I1; i < IM; i += N_step) {
-				auto w = _op::square_f(let(i));
-			
-			//	Use the square of the previous value to populate the values at `i << 1`:
-				I ii = i << 1;
-				let(ii - N_skip) = w;
-				let(ii + M_skip) = w*u;
-			}
-		//	Compute the final value if `N_limit` is odd:
-			if constexpr (N_limit&1) {
-				let(IN) = let(IN - N_step)*(u);
+		//	Populate the remaining powers by squaring/multiplication:
+			bond::seek_forward_f<(N_count >> 1)>([&] (auto M)
+				XTAL_0FN {
+					auto constexpr UM = U0 + _1*M;
+					auto constexpr WM = W0 + _2*M;
+					
+					auto const w = _op::square_f(get<UM>(s));
+					get<WM + _0>(s) =   w;
+					get<WM + _1>(s) = u*w;
+				}
+			);
+		//	Compute the final value if `N_count` is odd:
+			if constexpr ((N_count&1) and (N_count^1)) {
+				get<UZ - _1>(s) = get<UZ - _2>(s)*(u);
 			}
 			return self();
 		}

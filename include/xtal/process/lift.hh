@@ -22,8 +22,8 @@ Provides pure `head`-less mapping of `functor` and `function` (in contrast to `l
 in addition to allowing constructor mapping via `invoke_f`. \
 
 template <typename     ...As> struct lift    : bond::compose<lift<As>...> {};
-template <   incomplete_q A > struct lift<A> : bond::compose<          > {};
-template <bond::compose_q A > struct lift<A> :                         A {};
+template <   incomplete_q A > struct lift<A> : bond::compose<           > {};
+template <bond::compose_q A > struct lift<A> :                          A {};
 template <class           F >
 struct lift<F>
 {
@@ -33,6 +33,7 @@ struct lift<F>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		using T_ = typename S_::self_type;
 		
 	public:
 		using S_::S_;
@@ -41,17 +42,19 @@ struct lift<F>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor (auto &&...xs),
+		XTAL_LET functor (auto &&...xs),
+		->	decltype(auto)
 		{
-			return invoke_f<F>(S_::template functor <Is...>(XTAL_REF_(xs)...));
+			XTAL_IF0
+			XTAL_0IF XTAL_TRY_TO_(invoke_f<F>(S_::template functor <Is...>(XTAL_REF_(xs)...)))
+			XTAL_0IF XTAL_TRY_TO_(            T_::template function<Is...>(XTAL_REF_(xs)...) )
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
-		XTAL_RET function(auto &&...xs)
+		XTAL_LET function(auto &&...xs)
 		XTAL_0EX
-		{
-			return invoke_f<F>(S_::template function<Is...>(XTAL_REF_(xs)...));
-		}
+		->	decltype(auto)
+			requires XTAL_TRY_TO_(invoke_f<F>(S_::template function<Is...>(XTAL_REF_(xs)...)))
 
 	};
 };

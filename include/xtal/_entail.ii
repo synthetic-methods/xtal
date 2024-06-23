@@ -16,6 +16,7 @@ using integral_type = XTAL_STD_(integral_type);
 
 static constexpr size_type size_0{0};
 static constexpr size_type size_1{1};
+static constexpr size_type size_2{2};
 
 template <auto N_0=0>
 XTAL_LET    sign_f(auto &&i)
@@ -38,8 +39,10 @@ static_assert(sign_f(-2) == -1);
 
 template <auto N, auto  ...Ms>	XTAL_REQ      exclusive_q =	(...or (N != Ms));
 template <auto N, auto  ...Ms>	XTAL_REQ      inclusive_q =	(...or (N == Ms));
-template <auto N, auto  N_0=0>	XTAL_REQ           sign_p =	inclusive_q<N, -1, N_0, 1>;
-template <auto N, auto  N_0=0>	XTAL_LET           sign_n =	sign_f<N_0>(N);
+template <auto N, auto N_0=0 >	XTAL_REQ           sign_p =	inclusive_q<N, -1, N_0, 1>;
+template <auto N, auto N_0=0 >	XTAL_LET           sign_n =	sign_f<N_0>(N);
+template <auto N, auto     M >	XTAL_LET           stop_n =	N < 0 or M < N? M: N;
+template <auto N, auto   M=0 >	XTAL_LET            top_n =	decltype(N) (M <= N);
 
 template <class         ...Ts>	XTAL_REQ           some_q =	0 < sizeof...(Ts);
 template <auto          ...Ns>	XTAL_REQ           some_n =	0 < sizeof...(Ns);
@@ -188,8 +191,9 @@ template <class U, int N, int ...Ns>	XTAL_TYP    involved<U, N, Ns...>  {using a
 template <class  U,       int ...Ns>	XTAL_TYP    devolved;
 //mplate <                int ...Ns>	XTAL_USE    devolved_x =	_xtd::extents<int, Ns...>;
 //mplate <class  T,     class ..._s>	XTAL_USE    devolved_s =	typename devolved<_std::remove_reference_t<T>>::template subtype<_s...>;
-template <class  T                 >	XTAL_USE    devolved_t =	typename devolved<_std::remove_reference_t<T>>::value_type;
 template <class  T                 >	XTAL_LET    devolved_n =	         devolved<_std::remove_reference_t<T>>::size();
+template <class  T                 >	XTAL_USE    devolved_t =	typename devolved<_std::remove_reference_t<T>>::value_type;
+template <class  T                 >	XTAL_USE    involved_t =	typename devolved<                         T >::array_type;
 
 template <devalued_q T, int ...Ns> requires   mutable_q<T>
 XTAL_TYP devolved<T, Ns...>
@@ -258,6 +262,20 @@ static_assert(id_q<const double (&)[2], typename devolved<const _std::complex<do
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
+
+template <class T>
+struct aligned
+{
+	class type {alignas(alignof(T)) ::std::byte data[sizeof(T)];};
+
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET size()
+	XTAL_0EX -> size_type
+	{
+		return sizeof(type);
+	}
+
+};
 
 template <class         T >	XTAL_REQ         column_q =	_std::is_array_v<based_t<T>> and not _std::is_array_v<_std::remove_extent_t<based_t<T>>>;
 template <class         T >	XTAL_REQ          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalued_t<T>, devalued_n<T>>>;

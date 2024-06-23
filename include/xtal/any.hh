@@ -92,12 +92,15 @@ XTAL_USE integral_type = _entail:: integral_type;
 
 static constexpr size_type size_0 = _entail:: size_0;
 static constexpr size_type size_1 = _entail:: size_1;
+static constexpr size_type size_2 = _entail:: size_2;
 
 
 template <auto    N, auto  ...Ms>	XTAL_REQ      exclusive_q = _entail::exclusive_q<N, Ms... >;
 template <auto    N, auto  ...Ms>	XTAL_REQ      inclusive_q = _entail::inclusive_q<N, Ms... >;
-template <auto    N, auto  N_0=0>	XTAL_REQ           sign_p = _entail::     sign_p<N, N_0>;
-template <auto    N, auto  N_0=0>	XTAL_LET           sign_n = _entail::     sign_n<N, N_0>;
+template <auto    N, auto N_0=0 >	XTAL_REQ           sign_p = _entail::     sign_p<N, N_0>;
+template <auto    N, auto N_0=0 >	XTAL_LET           sign_n = _entail::     sign_n<N, N_0>;
+template <auto    N, auto   M   >	XTAL_LET           stop_n = _entail::     stop_n<N, M  >;
+template <auto    N, auto   M=0 >	XTAL_LET            top_n = _entail::      top_n<N, M  >;
 
 template <class            ...Ts>	XTAL_REQ           some_q = _entail::     some_q<Ts...>;
 template <auto             ...Ns>	XTAL_REQ           some_n = _entail::     some_n<Ns...>;
@@ -174,7 +177,7 @@ template <class   ...Ts>	XTAL_REQ      liminal_q = (...and  _entail::     limina
 template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal_s<T >;
 template <liminal_q  T >	XTAL_USE superliminal_s = typename _entail::superliminal_s<T >;
 
-template <size_type     N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
+template <size_type  N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
 template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
 template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;
 
@@ -203,14 +206,19 @@ template <class   T             >	XTAL_LET     devalued_n = _entail:: devalued_n
 template <class   T, int   ...Ns>	XTAL_USE     devolved   =	_entail:: devolved  <T, Ns...>;
 //mplate <           int   ...Ns>	XTAL_USE     devolved_x =	_entail:: devolved_x<   Ns...>;
 //mplate <class   T, class ..._s>	XTAL_USE     devolved_s =	_entail:: devolved_s<T, _s...>;
+template <class   T             >	XTAL_LET     devolved_n =  _entail:: devolved_n<T>;
 template <           class ...Ts>	XTAL_USE     devolved_t = common_t<_entail:: devolved_t<Ts>...>;
-template <class   T             >	XTAL_LET     devolved_n = _entail:: devolved_n<T>;
+template <class   T             >	XTAL_USE     involved_t =          _entail:: involved_t<T >    ;
 
 template <class   T, class ...Ts>	XTAL_REQ     devalued_p = (...and (devalued_n<T> < devalued_n<Ts>));
 template <class   T, class ...Ts>	XTAL_REQ     devolved_p = (...and (devolved_n<T> < devolved_n<Ts>));
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <class T               >	XTAL_USE   aligned_t =       typename _entail:: aligned<T >::type;
+template <           class ...Ts>	XTAL_LET   aligned_n =  (size_0 +...+ _entail:: aligned<Ts>::size());
+template <           class ...Ts>	XTAL_LET   aligned_m =  aligned_n<Ts...> - size_1;
 
 template <           class ...Ts>	XTAL_REQ    column_q =  (...and _entail:: column_q<Ts>);
 template <class T,   int   N=-1 >	XTAL_REQ     array_q =          _entail::  array_q<T> and N <  0   or devalued_n<T> == N;
