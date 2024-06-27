@@ -56,13 +56,13 @@ struct circumspect : bond::operate<A>
 	XTAL_LET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
-		return static_cast<ordinate_type>(static_cast<inordinate_type>(co*_op::diplo_f()));
+		return _xtd::bit_cast<ordinate_type>(static_cast<inordinate_type>(co*_op::diplo_f()));
 	};
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
-		return static_cast<coordinate_type>(static_cast<inordinate_type>(o))*_op::haplo_f();
+		return static_cast<coordinate_type>(_xtd::bit_cast<inordinate_type>(o))*_op::haplo_f();
 	};
 
 };
@@ -184,7 +184,7 @@ struct circular<A>
 		
 		XTAL_DEF_(inline) XTAL_LET operator <<= (initializer_list  o) XTAL_0EX -> homotype & {_detail::copy_to(_std::next(S_::data(), S_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
 		XTAL_DEF_(inline) XTAL_LET operator <<= (iterable_q auto &&o) XTAL_0EX -> homotype & {_detail::move_to(_std::next(S_::data(), S_::size() - o.size()), XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)); return *this;}
-		
+
 	public:// OPERATE
 		
 		///\

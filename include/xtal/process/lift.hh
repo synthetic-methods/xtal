@@ -40,15 +40,22 @@ struct lift<F>
 		using S_::self;
 		using S_::head;
 
-		XTAL_DO2_(template <auto ...Is>
+		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET functor (auto &&...xs),
-		->	decltype(auto)
+		XTAL_LET functor (auto &&...xs)
+		XTAL_0FX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ const &).template functor<Is...>(XTAL_REF_(xs)...))
 		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(invoke_f<F>(S_::template functor <Is...>(XTAL_REF_(xs)...)))
-			XTAL_0IF XTAL_TRY_TO_(            T_::template function<Is...>(XTAL_REF_(xs)...) )
-		})
+			return invoke_f<F>(S_::template functor<Is...>(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET functor (auto &&...xs)
+		XTAL_0EX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ &).template functor<Is...>(XTAL_REF_(xs)...))
+		{
+			return invoke_f<F>(S_::template functor<Is...>(XTAL_REF_(xs)...));
+		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET function(auto &&...xs)
