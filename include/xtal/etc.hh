@@ -142,6 +142,7 @@
 template <class T0, class T1>
 concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref_t<T1>>;
 #define XTAL_ARG_(...)                                              XTAL_ARG<__VA_ARGS__> auto
+#define XTAL_TMP_(...)                                             template <__VA_ARGS__>
 #define XTAL_ANY_(...)                                       ::std::declval <__VA_ARGS__>()
 #define XTAL_ALL_(...)                        ::std::remove_cvref_t<decltype(__VA_ARGS__)>
 

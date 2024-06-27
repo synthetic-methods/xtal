@@ -191,13 +191,16 @@ struct defer<U>
 		
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&...xs),
+		XTAL_LET functor(auto &&...xs),
+		->	decltype(auto)
+		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
 			return S_::template functor<Is...>(XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
-		XTAL_RET function(auto &&...xs),
+		XTAL_LET function(auto &&...xs),
+		->	decltype(auto)
 			requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
 		)
 
@@ -228,10 +231,23 @@ struct defer<U>
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(iterable_q auto &&...xs),
+		XTAL_LET functor(iterable_q auto &&...xs),
+		->	decltype(auto)
+		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
 			return iterative_f(S_::head().
-				template refunctor<argument_t<decltype(xs)>...>(Is...)
+				template reify<argument_t<decltype(xs)>...>(Is...)
+			,	XTAL_REF_(xs)...
+			);
+		})
+		XTAL_DO4_(template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET function(iterable_q auto &&...xs),
+		->	decltype(auto)
+			requires (XTAL_TRY_(S_::head().template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)>)...)))
+		{
+			return iterative_f(S_::head().
+				template reify<argument_t<decltype(xs)>...>(Is...)
 			,	XTAL_REF_(xs)...
 			);
 		})

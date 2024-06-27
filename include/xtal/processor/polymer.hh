@@ -123,7 +123,7 @@ struct polymer<U, As...>
 
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().influx(oo...)
-					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).influx(oo...))
+					,	[...oo=XTAL_REF_(oo)] (XTAL_FLX flx, auto &&vox) XTAL_0FN_(flx & XTAL_REF_(vox).influx(oo...))
 					);
 				}
 				XTAL_TNX efflux_pull(auto &&...oo)
@@ -133,7 +133,7 @@ struct polymer<U, As...>
 
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().efflux(oo...)
-					,	[=] (XTAL_FLX flx, auto &&v) XTAL_0FN_(flx & XTAL_REF_(v).efflux(oo...))
+					,	[...oo=XTAL_REF_(oo)] (XTAL_FLX flx, auto &&vox) XTAL_0FN_(flx & XTAL_REF_(vox).efflux(oo...))
 					);
 				}
 

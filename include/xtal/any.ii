@@ -195,7 +195,9 @@ XTAL_DEF_(return,inline)
 XTAL_LET identical_f(X const &x, Y const &y)
 XTAL_0EX -> bool
 {
-	return _std::addressof(x) == _std::addressof(y);
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_TO_(_std::addressof(x) == _std::addressof(y))
+	XTAL_0IF_(default) return false;
 }
 
 template <class X, class Y>
