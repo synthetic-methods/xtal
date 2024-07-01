@@ -98,7 +98,7 @@ struct define
 						return 1;
 					}
 					else {
-						auto result_o = R_::functor();// Materialize...
+						auto result_o = R_::method();// Materialize...
 						auto _j = point_f(result_o);
 						auto _i = point_f(review_o);
 						auto  n = count_f(review_o);
@@ -159,7 +159,7 @@ struct defer<U>
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(),
+		XTAL_RET method(),
 		{
 			auto &v = S_::template head<V_render>().view();
 			return S_::subhead(v);
@@ -191,11 +191,11 @@ struct defer<U>
 		
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET functor(auto &&...xs),
+		XTAL_LET method(auto &&...xs),
 		->	decltype(auto)
 		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
-			return S_::template functor<Is...>(XTAL_REF_(xs)...);
+			return S_::template method<Is...>(XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
@@ -231,7 +231,7 @@ struct defer<U>
 
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET functor(iterable_q auto &&...xs),
+		XTAL_LET method(iterable_q auto &&...xs),
 		->	decltype(auto)
 		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{

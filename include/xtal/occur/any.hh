@@ -55,7 +55,7 @@ struct define
 		using  attach_t = confined_t<attach<N_mask>>;
 
 		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `functor<auto ...>`. \
+		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
 
 		template <int N_mask=-1>
 		struct dispatch
@@ -204,7 +204,7 @@ struct define
 		using  inspect_t = confined_t<inspect<N_mask>>;
 
 		///\
-		Uses the current `T` as the return value of `functor`. \
+		Uses the current `T` as the return value of `method`. \
 		
 		template <int N_mask=-1>
 		struct poll
@@ -221,7 +221,7 @@ struct define
 				using R_::head;
 
 				XTAL_DEF_(return,inline)
-				XTAL_LET functor()
+				XTAL_LET method()
 				XTAL_0FX
 				{
 					return head();

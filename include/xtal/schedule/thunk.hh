@@ -13,7 +13,7 @@ namespace xtal::schedule
 
 ///\
 Provides an `in(flux )queue` for `X` on the target object, \
-which produces a signal by successive calls to `functor`. \
+which produces a signal by successive calls to `method`. \
 
 template <typename ...As>
 struct thunk
@@ -77,14 +77,14 @@ struct thunk
 			public:// OPERATE
 				using R_::self;
 
-				XTAL_LET functor()
+				XTAL_LET method()
 				XTAL_0EX
 				{
 					return u_spool.advance(head_()++ == head_(1))
-					->	tail().apply([this] XTAL_1FN_(functor));
+					->	tail().apply([this] XTAL_1FN_(method));
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET functor(V_shuttle &x, auto &&...)
+				XTAL_LET method(V_shuttle &x, auto &&...)
 				XTAL_0EX
 				{
 					if constexpr (algebra::d_::linear_q<V_shuttle>) {

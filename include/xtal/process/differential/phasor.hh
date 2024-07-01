@@ -83,18 +83,18 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(subarray_q<N_data> auto &&a)
+		XTAL_RET method(subarray_q<N_data> auto &&a)
 		XTAL_0EX
 		{
 			(void) S_::influx(XTAL_REF_(a));
-			return functor();
+			return method();
 		}
 		///\
 		Evaluation by uccession. \
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor()
+		XTAL_RET method()
 		XTAL_0EX
 		{
 			///\todo\
