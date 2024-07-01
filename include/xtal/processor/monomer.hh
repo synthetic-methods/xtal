@@ -80,7 +80,7 @@ struct monomer<U, As...>
 				{}
 				XTAL_CON_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
 				XTAL_0EX
-				:	subtype(R_::functor(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 				XTAL_CON_(explicit) subtype(auto &&f, XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
 				XTAL_0EX
@@ -96,11 +96,11 @@ struct monomer<U, As...>
 				})
 
 			public:// FUNC*
-			//	using R_::functor;
+			//	using R_::method;
 
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_LET functor(), -> decltype(auto)
+				XTAL_LET method(), -> decltype(auto)
 				{
 					return state();
 				})
@@ -111,7 +111,7 @@ struct monomer<U, As...>
 				XTAL_TNX efflux(occur::render_q auto &&render_o)
 				XTAL_0EX
 				{
-					return XTAL_FNX_((void) state(R_::functor()), 0) (R_::efflux(XTAL_REF_(render_o)));
+					return XTAL_FNX_((void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
 				}
 
 			};
@@ -143,11 +143,11 @@ struct monomer<U, As...>
 				using R_::store;
 
 			public:// FUNC*
-			//	using R_::functor;
+			//	using R_::method;
 				
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_LET functor(), -> decltype(auto)
+				XTAL_LET method(), -> decltype(auto)
 				{
 					return state();
 				})
@@ -212,7 +212,7 @@ struct monomer<U, As...>
 
 				///\note\
 				When the visor is unrecognized, \
-				the zipped `functor` is rendered without saving the result in `state()`, \
+				the zipped `method` is rendered without saving the result in `state()`, \
 				which will remain empty. \
 
 				template <occur::review_q Rev, occur::render_q Ren>

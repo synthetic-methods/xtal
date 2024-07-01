@@ -49,7 +49,7 @@ struct mix
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&...xs)
+		XTAL_RET method(auto &&...xs)
 		XTAL_0FX
 		{
 			return (XTAL_REF_(xs) +...+ 0);
@@ -88,7 +88,7 @@ struct dynamic_onset_mix
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&...xs)
+		XTAL_RET method(auto &&...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<Ox_onset>());
@@ -108,7 +108,7 @@ struct dynamic_term
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&x)
+		XTAL_RET method(auto &&x)
 		XTAL_0EX
 		{
 			return XTAL_REF_(x)*this->template head<Ox_scale>();
@@ -137,7 +137,7 @@ struct dynamic_count
 		using T_::T_;
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor()
+		XTAL_RET method()
 		XTAL_0EX
 		{
 			auto i = u_count; u_count += this->template head<U_restep>();

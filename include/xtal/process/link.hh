@@ -18,7 +18,7 @@ template <typename ..._s> XTAL_REQ link_q = bond::any_tag_p<link, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides (?:im)?pure mapping of `functor` and `function` by linking `head`s. \
+Provides (?:im)?pure mapping of `method` and `function` by linking `head`s. \
 
 template <typename     ...As> struct link    : bond::compose<link<As>...                          > {};
 template <   incomplete_q A > struct link<A> : bond::compose<                                     > {};

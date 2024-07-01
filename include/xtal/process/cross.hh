@@ -40,12 +40,12 @@ struct cross<W, U, As...>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET functor(auto &&...xs),
+		XTAL_RET method(auto &&...xs),
 		{
 			auto const &y_ = head();
 			auto const  x  = bond::pack_f(XTAL_REF_(xs)...);
 			return [&, this]<size_type ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(S_::template functor<Is...>(bond::pack_dot_f(x, get<I>(y_))...))
+				XTAL_0FN_(S_::template method<Is...>(bond::pack_dot_f(x, get<I>(y_))...))
 			(bond::seek_s<bond::pack_size_n<decltype(y_)>> {});
 		})
 

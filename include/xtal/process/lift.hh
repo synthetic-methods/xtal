@@ -18,7 +18,7 @@ template <typename ..._s> XTAL_REQ lift_q = bond::any_tag_p<lift, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides pure `head`-less mapping of `functor` and `function` (in contrast to `link`), \
+Provides pure `head`-less mapping of `method` and `function` (in contrast to `link`), \
 in addition to allowing constructor mapping via `invoke_f`. \
 
 template <typename     ...As> struct lift    : bond::compose<lift<As>...> {};
@@ -42,19 +42,18 @@ struct lift<F>
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET functor (auto &&...xs)
-		XTAL_0FX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_ const &).template functor<Is...>(XTAL_REF_(xs)...))
+		XTAL_LET method(auto &&...xs)
+		XTAL_0EX -> decltype(auto)
 		{
-			return invoke_f<F>(S_::template functor<Is...>(XTAL_REF_(xs)...));
+			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET functor (auto &&...xs)
-		XTAL_0EX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_ &).template functor<Is...>(XTAL_REF_(xs)...))
+		XTAL_LET method(auto &&...xs)
+		XTAL_0FX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
 		{
-			return invoke_f<F>(S_::template functor<Is...>(XTAL_REF_(xs)...));
+			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
