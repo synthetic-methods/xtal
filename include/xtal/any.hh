@@ -57,6 +57,31 @@ namespace _xtd
 	};
 #endif
 
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T const  &t) XTAL_0EX -> T const    {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T        &t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T const &&t) XTAL_0EX -> T const && {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T       &&t) XTAL_0EX -> T       && {return XTAL_REF_(t);}
+
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rvalue_f(T const  &t) XTAL_0EX -> T const  & {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rvalue_f(T        &t) XTAL_0EX -> T        & {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rvalue_f(T const &&t) XTAL_0EX -> T const    {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rvalue_f(T       &&t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lconst_f(T const  &t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lconst_f(T        &t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lconst_f(T const &&t) XTAL_0EX -> T const && {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lconst_f(T       &&t) XTAL_0EX -> T       && {return XTAL_REF_(t);}
+
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rconst_f(T const  &t) XTAL_0EX -> T const  & {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rconst_f(T        &t) XTAL_0EX -> T        & {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rconst_f(T const &&t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+	template <class T> XTAL_DEF_(inline) XTAL_LET decay_rconst_f(T       &&t) XTAL_0EX -> T          {return XTAL_REF_(t);}
+
+	template <class T>                   XTAL_USE decay_lvalue_t = decltype(decay_lvalue_f(XTAL_ANY_(T)));
+	template <class T>                   XTAL_USE decay_rvalue_t = decltype(decay_rvalue_f(XTAL_ANY_(T)));
+	template <class T>                   XTAL_USE decay_lconst_t = decltype(decay_lconst_f(XTAL_ANY_(T)));
+	template <class T>                   XTAL_USE decay_rconst_t = decltype(decay_rconst_f(XTAL_ANY_(T)));
+
 }
 namespace _xtd::ranges
 {
@@ -95,8 +120,8 @@ static constexpr size_type size_1 = _entail:: size_1;
 static constexpr size_type size_2 = _entail:: size_2;
 
 
-template <auto    N, auto  ...Ms>	XTAL_REQ      exclusive_q = _entail::exclusive_q<N, Ms... >;
-template <auto    N, auto  ...Ms>	XTAL_REQ      inclusive_q = _entail::inclusive_q<N, Ms... >;
+template <auto    N, auto  ...Ms>	XTAL_REQ             un_n = _entail::un_n<N, Ms... >;
+template <auto    N, auto  ...Ms>	XTAL_REQ             in_n = _entail::in_n<N, Ms... >;
 template <auto    N, auto N_0=0 >	XTAL_REQ           sign_p = _entail::     sign_p<N, N_0>;
 template <auto    N, auto N_0=0 >	XTAL_LET           sign_n = _entail::     sign_n<N, N_0>;
 template <auto    N, auto   M   >	XTAL_LET           stop_n = _entail::     stop_n<N, M  >;
