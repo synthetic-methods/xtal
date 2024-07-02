@@ -16,8 +16,11 @@ template <typename ..._s> XTAL_USE cross_t = confined_t<cross<_s...>>;
 template <typename ..._s> XTAL_REQ cross_q = bond::any_tag_p<cross, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
-XTAL_LET     cross_f(auto &&u)
-XTAL_0EX_TO_(cross_t<XTAL_ALL_(u), As...>(XTAL_REF_(u)))
+XTAL_LET cross_f(auto &&u)
+XTAL_0EX -> auto
+{
+	return cross_t<XTAL_ALL_(u), As...>(XTAL_REF_(u));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +43,7 @@ struct cross<W, U, As...>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(auto &&...xs),
+		XTAL_LET method(auto &&...xs), -> decltype(auto)
 		{
 			auto const &y_ = head();
 			auto const  x  = bond::pack_f(XTAL_REF_(xs)...);

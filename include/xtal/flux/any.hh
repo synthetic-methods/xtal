@@ -62,15 +62,15 @@ struct define
 		used for e.g. `occur::review` and `occur::render`. \
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator >>=(auto &&o)
-		XTAL_0EX
+		XTAL_LET operator >>=(auto &&o)
+		XTAL_0EX -> decltype(auto)
 		{
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator >>=(bond::heteropack_q auto &&oo)
-		XTAL_0EX
+		XTAL_LET operator >>=(bond::heteropack_q auto &&oo)
+		XTAL_0EX -> decltype(auto)
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
 			return self();
@@ -96,15 +96,15 @@ struct define
 		used for e.g. `occur::resize`. \
 
 		XTAL_DEF_(inline)
-		XTAL_RET operator <<=(auto &&o)
-		XTAL_0EX
+		XTAL_LET operator <<=(auto &&o)
+		XTAL_0EX -> decltype(auto)
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_RET operator <<=(bond::heteropack_q auto &&oo)
-		XTAL_0EX
+		XTAL_LET operator <<=(bond::heteropack_q auto &&oo)
+		XTAL_0EX -> decltype(auto)
 		{
 			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
 			return self();

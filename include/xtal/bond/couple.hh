@@ -65,8 +65,8 @@ struct couple
 
 		template <pack_q W> requires (N_data == pack_size_n<W>)
 		XTAL_DEF_(return,inline,friend)
-		XTAL_RET operator * (type const &s, W const &w)
-		XTAL_0EX
+		XTAL_LET operator * (type const &s, W const &w)
+		XTAL_0EX -> decltype(auto)
 		{
 			return [&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(couple_f((_std::get<I>(s) * _std::get<I>(w))...))
@@ -74,8 +74,8 @@ struct couple
 		}
 		template <pack_q W> requires (N_data == pack_size_n<W>)
 		XTAL_DEF_(return,inline,friend)
-		XTAL_RET operator / (type const &s, W const &w)
-		XTAL_0EX
+		XTAL_LET operator / (type const &s, W const &w)
+		XTAL_0EX -> decltype(auto)
 		{
 			return [&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(couple_f((_std::get<I>(s) / _std::get<I>(w))...))
@@ -122,8 +122,8 @@ struct couple
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_RET sum()
-		XTAL_0FX
+		XTAL_LET sum()
+		XTAL_0FX -> decltype(auto)
 		{
 			return sum<N_sgn>(U_data{0});
 		}
@@ -143,8 +143,8 @@ struct couple
 		
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
-		XTAL_RET reflected()
-		XTAL_0FX
+		XTAL_LET reflected()
+		XTAL_0FX -> decltype(auto)
 		{
 			auto constexpr o = reflector<N_par>();
 			auto const x = o*_std::get<0>(*this);

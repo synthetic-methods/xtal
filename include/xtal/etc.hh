@@ -135,16 +135,16 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_USE                                   using
-#define XTAL_TYP                                   struct
-#define XTAL_REQ                                   concept
+#define XTAL_USE                         using
+#define XTAL_TYP                         struct
+#define XTAL_REQ                         concept
 
 template <class T0, class T1>
 concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref_t<T1>>;
 #define XTAL_ARG_(...)                                              XTAL_ARG<__VA_ARGS__> auto
-#define XTAL_TMP_(...)                                             template <__VA_ARGS__>
-#define XTAL_ANY_(...)                                       ::std::declval <__VA_ARGS__>()
+#define XTAL_TMP_(...)                                              template<__VA_ARGS__>
 #define XTAL_ALL_(...)                        ::std::remove_cvref_t<decltype(__VA_ARGS__)>
+#define XTAL_ANY_(...)                                       ::std::declval <__VA_ARGS__>()
 
 #define XTAL_MOV_(...)                                           ::std::move(__VA_ARGS__)
 #define XTAL_REF_(...)                static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
@@ -157,8 +157,8 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 #define XTAL_CON_implicit                constexpr
 
 #define XTAL_CVN_(...)                   XTAL_CVN_##__VA_ARGS__
-#define XTAL_CVN_explicit                constexpr explicit       operator
-#define XTAL_CVN_implicit                constexpr                operator
+#define XTAL_CVN_explicit                constexpr explicit operator
+#define XTAL_CVN_implicit                constexpr          operator
 
 #define XTAL_1FN_(...)     (auto &&..._) constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN                         constexpr noexcept
@@ -182,10 +182,6 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 #define XTAL_0EX                                   noexcept
 #define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
 #define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
-#define XTAL_0FX_DO_(...)        const             noexcept {        __VA_ARGS__ ;}
-#define XTAL_0EX_DO_(...)                          noexcept {        __VA_ARGS__ ;}
-#define XTAL_0FX_TO_(...)        const             noexcept {return (__VA_ARGS__);}
-#define XTAL_0EX_TO_(...)                          noexcept {return (__VA_ARGS__);}
 
 #define XTAL_TRY_(...)          (requires { __VA_ARGS__ ;})
 #define XTAL_TRY_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
@@ -217,29 +213,28 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)           XTAL_F1_(XTAL_ATT_,__VA_ARGS__)
-
-#define XTAL_ATT_(...)           XTAL_ATT_##__VA_ARGS__
+#define XTAL_DEF_(...)           XTAL_F1_(XTAL_KEY_,__VA_ARGS__)
+#define XTAL_KEY_(...)           XTAL_KEY_##__VA_ARGS__
 
 #if     0
 #elif   XTAL_V00_(MSVC)
-#define XTAL_ATT_verbatim        //FIXME
+#define XTAL_KEY_verbatim        //FIXME
 #elif   XTAL_V00_(LLVM)
-#define XTAL_ATT_verbatim        [[clang::optnone]] __attribute__((optnone))
+#define XTAL_KEY_verbatim        [[clang::optnone]] __attribute__((optnone))
 #elif   XTAL_V00_(GNUC)
-#define XTAL_ATT_verbatim        [[gnu::optimize(0)]] __attribute__((optimize(0)))
+#define XTAL_KEY_verbatim        [[gnu::optimize(0)]] __attribute__((optimize(0)))
 #endif
 
 #if     XTAL_V00_(MSVC)
-#define XTAL_ATT_inline          __forceinline
+#define XTAL_KEY_inline          __forceinline
 #else
-#define XTAL_ATT_inline          inline __attribute__((always_inline))
+#define XTAL_KEY_inline          inline __attribute__((always_inline))
 #endif
 
-#define XTAL_ATT_return          [[nodiscard]]
-#define XTAL_ATT_static          static
-#define XTAL_ATT_friend          friend
-#define XTAL_ATT_constexpr       constexpr
+#define XTAL_KEY_return          [[nodiscard]]
+#define XTAL_KEY_static          static
+#define XTAL_KEY_friend          friend
+#define XTAL_KEY_constexpr       constexpr
 
 
 ////////////////////////////////////////////////////////////////////////////////

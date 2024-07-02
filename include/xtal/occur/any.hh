@@ -97,15 +97,15 @@ struct define
 			protected:
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_RET deify(nominal_q auto const &...Is)
-				XTAL_0FX
+				XTAL_LET deify(nominal_q auto const &...Is)
+				XTAL_0FX -> decltype(auto)
 				{
 					return deify(figure<Xs...>::template type<Is...>::value);
 				}
 				template <class A>
 				XTAL_DEF_(return,inline)
-				XTAL_RET deify(_std::array<A, N_> const &value)
-				XTAL_0FX
+				XTAL_LET deify(_std::array<A, N_> const &value)
+				XTAL_0FX -> decltype(auto)
 				{
 					size_type i = head(); i &= M_;
 					return R_::deify(value[i]);

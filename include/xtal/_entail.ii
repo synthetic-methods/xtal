@@ -178,12 +178,12 @@ template <class         T >	XTAL_TYP       devalued   ;
 template <class         T >	XTAL_USE       devalued_t =	typename devalued<_std::remove_reference_t<T>>::value_type;
 template <class         T >	XTAL_LET       devalued_n =	         devalued<_std::remove_reference_t<T>>::size();
 template <class         T >	XTAL_REQ       devalued_q =	not is_q<T, devalued_t<T>>;
-template <class         T >	XTAL_TYP       devalued                     {using value_type =            T  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_type(1));};
-template <   invalued_q T >	XTAL_TYP       devalued<T>                  {using value_type = invalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(        _std::extent_v<T>);};
-template <     varity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_type(0));};
-template <      arity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(    _std::tuple_size_v<T>);};
-template <class  U        >	XTAL_TYP       devalued<_std::complex<U>>   {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_type(2));};
-template <class  U, int N >	XTAL_TYP       devalued<_std::array<U, N>>  {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX_TO_(             size_type(N));};
+template <class         T >	XTAL_TYP       devalued                     {using value_type =            T  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return                    1 ;};};
+template <   invalued_q T >	XTAL_TYP       devalued<T>                  {using value_type = invalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return     _std::extent_v<T>;};};
+template <     varity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return                    0 ;};};
+template <      arity_q T >	XTAL_TYP       devalued<T>                  {using value_type = unvalued_t<T> ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return _std::tuple_size_v<T>;};};
+template <class  U        >	XTAL_TYP       devalued<_std::complex<U>>   {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return                    2 ;};};
+template <class  U, int N >	XTAL_TYP       devalued<_std::array<U, N>>  {using value_type =            U  ; XTAL_DEF_(static) XTAL_LET size() XTAL_0EX -> size_type {return                    N ;};};
 
 template <class U,        int ...Ns>	XTAL_TYP    involved               {using array_type = U;};
 template <class U, int N, int ...Ns>	XTAL_TYP    involved<U, N, Ns...>  {using array_type = typename involved<U, Ns...>::array_type[N];};

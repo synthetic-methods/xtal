@@ -453,8 +453,8 @@ struct store<U_data[N_data]>
 		Deletes the element at `i0`. \
 
 		template <class I0> requires common_q<iterator, I0>
-		XTAL_RET erase(I0 i0)
-		XTAL_0EX
+		XTAL_LET erase(I0 i0)
+		XTAL_0EX -> decltype(auto)
 		{
 			return erase(i0, 1);
 		}
@@ -462,8 +462,8 @@ struct store<U_data[N_data]>
 		Deletes `sN` elements starting from `i0`. \
 
 		template <class I0> requires common_q<iterator, I0>
-		XTAL_RET erase(I0 i0, size_type sN)
-		XTAL_0EX
+		XTAL_LET erase(I0 i0, size_type sN)
+		XTAL_0EX -> decltype(auto)
 		{
 			return erase(i0, _std::next(i0, sN), sN);
 		}
@@ -471,8 +471,8 @@ struct store<U_data[N_data]>
 		Deletes the elements between `i0` and `iN`. \
 
 		template <class I0, class IN> requires common_q<iterator, I0, IN>
-		XTAL_RET erase(I0 i0, IN iN)
-		XTAL_0EX
+		XTAL_LET erase(I0 i0, IN iN)
+		XTAL_0EX -> decltype(auto)
 		{
 			using I = common_t<I0, IN>;
 			return erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
@@ -486,8 +486,8 @@ struct store<U_data[N_data]>
 		///\note\
 		Currently assumes move-invariance. \
 
-		XTAL_RET erase(iterator i0, iterator iN, size_type sN)
-		XTAL_0EX
+		XTAL_LET erase(iterator i0, iterator iN, size_type sN)
+		XTAL_0EX -> decltype(auto)
 		{
 			assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);
 			if constexpr (_std::destructible<value_type>) {

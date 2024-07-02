@@ -80,8 +80,8 @@ XTAL_0EX
 {
 	return key_f(key_s<>(XTAL_REF_(s)), XTAL_REF_(t));
 }
-template <any_q T> XTAL_DEF_(return,inline) XTAL_RET operator << (key_s<>       &&s, T &&t) XTAL_0EX {return key_f(XTAL_MOV_(s), XTAL_REF_(t));}
-template <any_q T> XTAL_DEF_(return,inline) XTAL_RET operator << (key_s<> const  &s, T &&t) XTAL_0EX {return key_f(XTAL_REF_(s), XTAL_REF_(t));}
+template <any_q T> XTAL_DEF_(return,inline) XTAL_LET operator << (key_s<>       &&s, T &&t) XTAL_0EX -> decltype(auto) {return key_f(XTAL_MOV_(s), XTAL_REF_(t));}
+template <any_q T> XTAL_DEF_(return,inline) XTAL_LET operator << (key_s<> const  &s, T &&t) XTAL_0EX -> decltype(auto) {return key_f(XTAL_REF_(s), XTAL_REF_(t));}
 
 /***/
 ///////////////////////////////////////////////////////////////////////////////

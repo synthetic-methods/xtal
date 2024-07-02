@@ -195,17 +195,17 @@ struct refer : bond::compose<void
 
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator== (y.self());}
 template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_RET operator <=>(W const &x, W const &y) XTAL_0EX         {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W const &y) XTAL_0EX -> auto {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline) XTAL_RET operator << (xtal::compound::any_q auto &&x0, auto &&x1) XTAL_0EX {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF_(return,inline) XTAL_RET operator >> (xtal::compound::any_q auto &&x1, auto &&x0) XTAL_0EX {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::compound::any_q auto &&x0, auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::compound::any_q auto &&x1, auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_DEF_(return,inline) XTAL_RET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX {return xtal::bond::pack_row_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline) XTAL_RET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX {return xtal::bond::pack_row_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_row_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_row_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

@@ -18,8 +18,11 @@ template <size_type     N >	XTAL_USE seek_s = _std::make_index_sequence<N>;
 
 template <auto ...>
 XTAL_DEF_(inline)
-XTAL_RET seek_i(auto &&o)
-XTAL_0EX_TO_(XTAL_REF_(o))
+XTAL_LET seek_i(auto &&o)
+XTAL_0EX -> decltype(auto)
+{
+	return XTAL_REF_(o);
+}
 
 XTAL_LET seek_f = []<nominal_q ...Ns> (Ns ...ns)
 XTAL_0FN -> seek_t<Ns{}...> {return {};};
@@ -32,16 +35,16 @@ template <size_type     N >	XTAL_USE antiseek_s = decltype(antiseek_f(seek_s<N>(
 
 template <size_type N_count=0, auto N_onset=0>
 XTAL_DEF_(inline)
-XTAL_RET seek_forward_f(auto const &f)
-XTAL_0EX
+XTAL_LET seek_forward_f(auto const &f)
+XTAL_0EX -> decltype(auto)
 {
 	return [&] <size_type ...Ns>(seek_t<Ns...>)
 		XTAL_0FN_(..., f(nominal_t<N_onset + Ns>{})) (seek_s<N_count> {});
 }
 template <size_type N_count=0, auto N_onset=0>
 XTAL_DEF_(inline)
-XTAL_RET seek_backward_f(auto const &f)
-XTAL_0EX
+XTAL_LET seek_backward_f(auto const &f)
+XTAL_0EX -> decltype(auto)
 {
 	return [&] <size_type ...Ns>(seek_t<Ns...>)
 		XTAL_0FN_(..., f(nominal_t<N_onset + Ns>{})) (antiseek_s<N_count> {});

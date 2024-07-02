@@ -63,7 +63,10 @@ struct phasor<K_data[N_data], As...>
 		
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET bias()
-		XTAL_0EX_TO_(S_::template bias<U_data>())
+		XTAL_0EX -> auto
+		{
+			return S_::template bias<U_data>();
+		}
 
 		///\
 		Access by dynamic index. \
@@ -83,8 +86,8 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(subarray_q<N_data> auto &&a)
-		XTAL_0EX
+		XTAL_LET method(subarray_q<N_data> auto &&a)
+		XTAL_0EX -> decltype(auto)
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return method();
@@ -94,8 +97,8 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET method()
-		XTAL_0EX
+		XTAL_LET method()
+		XTAL_0EX -> decltype(auto)
 		{
 			///\todo\
 			Override constructors to apply fractional `bias`. \
@@ -126,8 +129,8 @@ struct phasor<K_data[N_data], As...>
 		Evaluation by succession. \
 		
 		XTAL_DEF_(return,inline)
-		XTAL_RET ingress()
-		XTAL_0EX
+		XTAL_LET ingress()
+		XTAL_0EX -> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (1 == bias()) {return ++head();}
@@ -136,7 +139,7 @@ struct phasor<K_data[N_data], As...>
 		template <class Y>
 		XTAL_DEF_(return,inline)
 		XTAL_LET egress(Y &&y)
-		XTAL_0EX
+		XTAL_0EX -> auto
 		{
 			XTAL_IF0
 			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}

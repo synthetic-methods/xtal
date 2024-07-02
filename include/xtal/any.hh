@@ -46,9 +46,9 @@ namespace _xtd
 	using _std::bit_cast;
 #else
 	template <class T, class S>
-	XTAL_DEF_(inline,static)
-	XTAL_RET bit_cast(S const &s)
-	XTAL_0FN
+	XTAL_DEF_(inline)
+	XTAL_LET bit_cast(S const &s)
+	XTAL_0EX -> decltype(auto)
 	{
 		static_assert(is_trivially_copyable_v<T>);
 		static_assert(is_trivially_copyable_v<S>);
@@ -67,9 +67,9 @@ namespace _xtd::ranges::views
 {
 	using namespace ::ranges::views;
 
-	XTAL_DEF_(inline,static)
-	XTAL_RET zip_transform(auto &&...oo)
-	XTAL_0EX
+	XTAL_DEF_(inline)
+	XTAL_LET zip_transform(auto &&...oo)
+	XTAL_0EX -> decltype(auto)
 	{
 		return zip_with(XTAL_REF_(oo)...);
 	};

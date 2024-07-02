@@ -64,7 +64,7 @@ struct define
 
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_RET reify(nominal_q auto const ...Is),
+		XTAL_LET reify(nominal_q auto const ...Is), -> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (none_n<Is...>) {return [this       ] XTAL_1FN_(S_::self().         method       );}
@@ -74,14 +74,14 @@ struct define
 	protected:
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_RET deify(nominal_q auto const &...Is)
-		XTAL_0FX
+		XTAL_LET deify(nominal_q auto const &...Is)
+		XTAL_0FX -> decltype(auto)
 		{
 			return deify(figure<Xs...>::template type<Is...>::value);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_RET deify(auto const &value)
-		XTAL_0FX
+		XTAL_LET deify(auto const &value)
+		XTAL_0FX -> decltype(auto)
 		{
 			return value;
 		}

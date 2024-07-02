@@ -16,8 +16,11 @@ template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
 template <typename ..._s> XTAL_REQ polymer_q = bond::any_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
-XTAL_LET     polymer_f(auto &&u)
-XTAL_0EX_TO_(polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u)))
+XTAL_LET polymer_f(auto &&u)
+XTAL_0EX -> auto
+{
+	return polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,11 +96,17 @@ struct polymer<U, As...>
 				Messages associated with `occur::stage` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
-				XTAL_TNX     influx(flux::key_q auto io, auto &&...oo)
-				XTAL_0EX_TO_(influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...))
+				XTAL_TNX influx(flux::key_q auto io, auto &&...oo)
+				XTAL_0EX
+				{
+					return influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
+				}
 
-				XTAL_TNX     efflux(flux::key_q auto io, auto &&...oo)
-				XTAL_0EX_TO_(efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...))
+				XTAL_TNX efflux(flux::key_q auto io, auto &&...oo)
+				XTAL_0EX
+				{
+					return efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
+				}
 
 				XTAL_TNX influx(flux::key_s<> i, auto &&...oo)
 				XTAL_0EX
