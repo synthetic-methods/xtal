@@ -67,15 +67,15 @@ template <             class T> XTAL_REQ pack_list_q = 0 == pack_size_n<T> or []
 ;
 
 XTAL_DEF_(return,inline)
-XTAL_RET pack_item_f(auto &&t)
-XTAL_0EX
+XTAL_LET pack_item_f(auto &&t)
+XTAL_0EX -> decltype(auto)
 {
 	return XTAL_REF_(t);
 }
 template <size_type N>
 XTAL_DEF_(return,inline)
-XTAL_RET pack_item_f(auto &&t)
-XTAL_0EX
+XTAL_LET pack_item_f(auto &&t)
+XTAL_0EX -> decltype(auto)
 {
 	/*/
 	return get<N>(XTAL_REF_(t));
@@ -90,8 +90,8 @@ XTAL_0EX
 }
 template <size_type N, size_type ...Ns> requires some_n<Ns...>
 XTAL_DEF_(return,inline)
-XTAL_RET pack_item_f(auto &&t, auto &&...ts)
-XTAL_0EX
+XTAL_LET pack_item_f(auto &&t, auto &&...ts)
+XTAL_0EX -> decltype(auto)
 {
 	XTAL_LET N_t = pack_size_n<decltype(t)>;
 	XTAL_IF0
@@ -104,8 +104,8 @@ XTAL_0EX
 }
 template <size_type ...Ns>
 XTAL_DEF_(return,inline)
-XTAL_RET pack_item_f(seek_t<Ns...>, auto &&...ts)
-XTAL_0EX
+XTAL_LET pack_item_f(seek_t<Ns...>, auto &&...ts)
+XTAL_0EX -> decltype(auto)
 {
 	return pack_item_f<Ns...>(XTAL_REF_(ts)...);
 }

@@ -40,7 +40,7 @@ struct define
 	public:
 		XTAL_DO4_(template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
-		XTAL_RET self(auto &&...oo),
+		XTAL_LET self(auto &&...oo), -> decltype(auto)
 		{
 			auto  x = self<Y>();
 			auto &y = self<Y>(); y.~ Y();
@@ -48,16 +48,20 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX_(&&) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX_(&&) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX_(&)  {return static_cast<Y const  &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX_(&)  {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&&) -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&&) -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&)  -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&)  -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
 		
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
-		XTAL_RET twin() XTAL_0FX {return static_cast<Y>(self());}
+		XTAL_LET twin()
+		XTAL_0FX -> decltype(auto)
+		{
+			return static_cast<Y>(self());
+		}
 
 		///\returns `this` as the `define`d supertype. \
 

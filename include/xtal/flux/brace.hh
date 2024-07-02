@@ -40,9 +40,12 @@ struct brace
 
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET slots(), head())
 		
-		XTAL_TO2_(template <size_type ...Ns>
+		XTAL_DO2_(template <size_type ...Ns>
 		XTAL_DEF_(return,inline)
-		XTAL_RET slot(), bond::pack_item_f<Ns...>(slots()))
+		XTAL_LET slot(), -> decltype(auto)
+		{
+			return bond::pack_item_f<Ns...>(slots());
+		})
 
 	public:// *FLUX
 	//	using S_::influx;
@@ -51,25 +54,31 @@ struct brace
 		///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
 		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX_TO_(XTAL_FNX_(self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...)))
+		XTAL_0EX
+		{
+			return XTAL_FNX_(self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...));
+		}
 
 		///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
 		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX_TO_(XTAL_FNX_(S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...)))
+		XTAL_0EX
+		{
+			return XTAL_FNX_(S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+		}
 
 		///\note\
 		If prefixed by `unnatural_q` a.k.a. `flux::slot_n<-1>`, forwards to all `slots`. \
 
-		XTAL_TNX influx(unnatural_q auto, auto &&...oo) XTAL_0EX_TO_(self().influx_push(XTAL_REF_(oo)...))
-		XTAL_TNX efflux(unnatural_q auto, auto &&...oo) XTAL_0EX_TO_(self().efflux_push(XTAL_REF_(oo)...))
+		XTAL_TNX influx(unnatural_q auto, auto &&...oo) XTAL_0EX {return self().influx_push(XTAL_REF_(oo)...);}
+		XTAL_TNX efflux(unnatural_q auto, auto &&...oo) XTAL_0EX {return self().efflux_push(XTAL_REF_(oo)...);}
 
 
 		///\note\
 		If prefixed by `natural_q`, forwards to the `slot` specified. \
 
-		XTAL_TNX influx(natural_q auto I, auto &&...oo) XTAL_0EX_TO_(slot<I>().influx(XTAL_REF_(oo)...))
-		XTAL_TNX efflux(natural_q auto I, auto &&...oo) XTAL_0EX_TO_(slot<I>().efflux(XTAL_REF_(oo)...))
+		XTAL_TNX influx(natural_q auto I, auto &&...oo) XTAL_0EX {return slot<I>().influx(XTAL_REF_(oo)...);}
+		XTAL_TNX efflux(natural_q auto I, auto &&...oo) XTAL_0EX {return slot<I>().efflux(XTAL_REF_(oo)...);}
 
 		///\
 		Forwards to all `slots`, bypassing `self`. \

@@ -32,8 +32,11 @@ template <class W=counter_t<>, typename ..._s> XTAL_USE render_t = confined_t<re
 template <                     typename ..._s> XTAL_REQ render_q = bond::any_tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(return,inline)
-XTAL_LET     render_f(auto &&w)
-XTAL_0EX_TO_(render_t<counter_t<>, _s...>(XTAL_REF_(w)))
+XTAL_LET render_f(auto &&w)
+XTAL_0EX -> auto
+{
+	return render_t<counter_t<>, _s...>(XTAL_REF_(w));
+}
 
 
 template <class ...Ts>

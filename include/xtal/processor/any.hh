@@ -159,7 +159,7 @@ struct defer<U>
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(),
+		XTAL_LET method(), -> decltype(auto)
 		{
 			auto &v = S_::template head<V_render>().view();
 			return S_::subhead(v);

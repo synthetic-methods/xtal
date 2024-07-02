@@ -49,8 +49,8 @@ struct mix
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(auto &&...xs)
-		XTAL_0FX
+		XTAL_LET method(auto &&...xs)
+		XTAL_0FX -> auto
 		{
 			return (XTAL_REF_(xs) +...+ 0);
 		}
@@ -88,8 +88,8 @@ struct dynamic_onset_mix
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(auto &&...xs)
-		XTAL_0EX
+		XTAL_LET method(auto &&...xs)
+		XTAL_0EX -> auto
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<Ox_onset>());
 		}
@@ -108,8 +108,8 @@ struct dynamic_term
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(auto &&x)
-		XTAL_0EX
+		XTAL_LET method(auto &&x)
+		XTAL_0EX -> auto
 		{
 			return XTAL_REF_(x)*this->template head<Ox_scale>();
 		}
@@ -137,8 +137,8 @@ struct dynamic_count
 		using T_::T_;
 
 		XTAL_DEF_(return,inline)
-		XTAL_RET method()
-		XTAL_0EX
+		XTAL_LET method()
+		XTAL_0EX -> auto
 		{
 			auto i = u_count; u_count += this->template head<U_restep>();
 			return i;
@@ -176,8 +176,8 @@ TAG_("maligned")
 /**/
 template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
 XTAL_DEF_(return,inline)
-XTAL_RET operator | (T &&t, U &&u)
-XTAL_0EX
+XTAL_LET operator | (T &&t, U &&u)
+XTAL_0EX -> decltype(auto)
 {
 	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
 };

@@ -22,8 +22,8 @@ struct foo
 	{
 	public:
 		XTAL_DEF_(return,inline)
-		XTAL_RET operator () (auto &&o)
-		XTAL_0FX
+		XTAL_LET operator () (auto &&o)
+		XTAL_0FX -> auto
 		{
 			return XTAL_REF_(o) + 1;
 		}

@@ -86,27 +86,27 @@ struct define
 				XTAL_TNX influx(V_event d, XTAL_ARG_(Xs) &&...oo)
 				XTAL_0EX
 				{
-					return joining_(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
+					return infuse_joint(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
 				}
 				XTAL_TNX influx(V_event d, XTAL_ARG_(U_tuple) &&o)
 				XTAL_0EX
 				{
-					return XTAL_REF_(o).apply(joining_(XTAL_MOV_(d)));
+					return XTAL_REF_(o).apply(infuse_joint(XTAL_MOV_(d)));
 				}
 				XTAL_TNX influx(V_event d, XTAL_ARG_(W_tuple) &&o)
 				XTAL_0EX
 				{
-					return _std::apply(joining_(XTAL_MOV_(d)), XTAL_REF_(o));
+					return _std::apply(infuse_joint(XTAL_MOV_(d)), XTAL_REF_(o));
 				}
 
 			private:
 				XTAL_DEF_(return,inline)
-				XTAL_RET joining_(auto o)
-				XTAL_0EX
+				XTAL_LET infuse_joint(auto o)
+				XTAL_0EX -> decltype(auto)
 				{
-					return [=, this] (auto &&...oo) XTAL_0FN_(join_(XTAL_MOV_(o), XTAL_REF_(oo)...));
+					return [=, this] (auto &&...oo) XTAL_0FN_(infuse_join(XTAL_MOV_(o), XTAL_REF_(oo)...));
 				}
-				XTAL_TNX join_(auto &&...oo)
+				XTAL_TNX infuse_join(auto &&...oo)
 				XTAL_0EX
 				{
 					return self().infuse((...<< XTAL_REF_(oo)));

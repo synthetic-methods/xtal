@@ -28,8 +28,8 @@ struct subtract
 
 		template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET method(auto &&x, auto &&y)
-		XTAL_0FX
+		XTAL_LET method(auto &&x, auto &&y)
+		XTAL_0FX -> auto
 		{
 			return XTAL_REF_(x) - XTAL_REF_(y);
 		}
@@ -51,7 +51,7 @@ struct square_root
 		template <auto ...>
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET function(auto &&o)
-		XTAL_0EX
+		XTAL_0EX -> auto
 		{
 			return _std::sqrt(o);
 		}
@@ -73,7 +73,7 @@ struct halve
 		template <auto ...>
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET function(auto &&o)
-		XTAL_0EX
+		XTAL_0EX -> auto
 		{
 			return o*0.5L;
 		}
