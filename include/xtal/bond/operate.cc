@@ -63,8 +63,6 @@ TAG_("operate", "bit_reverse")
 	TRY_("32:03")
 	{
 		using _op = operate<uint32_t>;
-		using T_sigma = typename _op::sigma_type;
-
 		T_sigma question = 0b011;
 		T_sigma answer   = 0b110;
 
@@ -74,8 +72,6 @@ TAG_("operate", "bit_reverse")
 	TRY_("16:16")
 	{
 		using _op = operate<uint16_t>;
-		using T_sigma = typename _op::sigma_type;
-
 		T_sigma question = 0b0100100011100101;
 		T_sigma answer   = 0b1010011100010010;
 
@@ -85,8 +81,6 @@ TAG_("operate", "bit_reverse")
 	TRY_("16:12")
 	{
 		using _op = operate<uint16_t>;
-		using T_sigma = typename _op::sigma_type;
-
 		T_sigma question = 0b010010001110;
 		T_sigma answer   = 0b011100010010;
 
@@ -96,8 +90,6 @@ TAG_("operate", "bit_reverse")
 	TRY_("8:8")
 	{
 		using _op = operate<uint8_t>;
-		using T_sigma = typename _op::sigma_type;
-
 		T_sigma question = 0b01001101;
 		T_sigma answer   = 0b10110010;
 
@@ -107,8 +99,6 @@ TAG_("operate", "bit_reverse")
 	TRY_("8:6")
 	{
 		using _op = operate<uint8_t>;
-		using T_sigma = typename _op::sigma_type;
-
 		T_sigma question = 0b010011;
 		T_sigma answer   = 0b110010;
 
@@ -142,9 +132,36 @@ TAG_("operate", "bit_reverse")
 
 ////////////////////////////////////////////////////////////////////////////////
 
+TAG_("operate", "semifractional")
+{
+	using _op = operating;
+	using T_iota  = typename _op:: iota_type;
+	using T_delta = typename _op::delta_type;
+	using T_sigma = typename _op::sigma_type;
+	using T_alpha = typename _op::alpha_type;
+	using T_aphex = typename _op::aphex_type;
+	auto mt19937_f = typename _op::mt19937_t(Catch::rngSeed());
+
+	TRY_("trial")
+	{
+		using _qp = bond::operate<T_iota>;
+		
+		TRUE_(check_f<- 6>(0.2220, _op::haplo_f()*T_alpha(_op::    fractional_f(222.2220))));
+		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(222.2220))));
+		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f( 22.2220))));
+		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(  2.2220))));
+		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(  0.2220))));
+		TRUE_(check_f<-21>(0.0222, _qp::haplo_f()*T_alpha(_op::semifractional_f(  0.0222))));
+	};
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 TAG_("operate", "fraction")
 {
 	using _op = operating;
+	using T_iota  = typename _op:: iota_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
@@ -162,6 +179,15 @@ TAG_("operate", "fraction")
 			T_alpha const u = ten*_op::mantissa_f(mt19937_f);
 			TRUE_(computrim_f<16>(_op::fraction_f(u)) == computrim_f<16>(u - _std::round(u)));
 		}
+	};
+	EST_("wrap via semintegral arithmetic")
+	{
+		T_iota w{};
+		for (T_sigma i = 0x100; ~--i;) {
+			auto const u = ten*_op::mantissa_f(mt19937_f);
+			w ^= _op::semifractional_f(u);
+		}
+		return w;
 	};
 	EST_("wrap via integral arithmetic")
 	{

@@ -69,12 +69,25 @@ struct define
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator >>=(bond::heteropack_q auto &&oo)
+		XTAL_LET operator >>=(bond::heteropack_q auto &&o)
 		XTAL_0EX -> decltype(auto)
 		{
-			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(oo));
+			(void) efflux_apply(XTAL_REF_(o));
 			return self();
 		}
+		XTAL_TNX efflux_apply(bond::heteropack_q auto &&o)
+		XTAL_0EX
+		{
+			return _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(o));
+		}
+		XTAL_TNX efflux_batch(bond::heteropack_q auto &&o)
+		XTAL_0EX
+		{
+			return _std::apply([this] (auto &&...oo)
+				XTAL_0FN_(-1 &...& self().efflux(XTAL_REF_(oo)))
+			,	XTAL_REF_(o));
+		}
+
 		///\
 		Efflux handler: resolves any dependencies before `this`. \
 		
@@ -91,6 +104,7 @@ struct define
 			return XTAL_FNX_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 
+
 		///\
 		Influx operator: resolves `this` before any dependencies, \
 		used for e.g. `occur::resize`. \
@@ -103,12 +117,25 @@ struct define
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator <<=(bond::heteropack_q auto &&oo)
+		XTAL_LET operator <<=(bond::heteropack_q auto &&o)
 		XTAL_0EX -> decltype(auto)
 		{
-			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(oo));
+			(void) influx_apply(XTAL_REF_(o));
 			return self();
 		}
+		XTAL_TNX influx_apply(bond::heteropack_q auto &&o)
+		XTAL_0EX
+		{
+			return _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(o));
+		}
+		XTAL_TNX influx_batch(bond::heteropack_q auto &&o)
+		XTAL_0EX
+		{
+			return _std::apply([this] (auto &&...oo)
+				XTAL_0FN_(-1 &...& self().influx(XTAL_REF_(oo)))
+			,	XTAL_REF_(o));
+		}
+
 		///\
 		Influx handler: resolves `this` before any dependencies. \
 		

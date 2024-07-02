@@ -537,6 +537,7 @@ public:
 	using S_:: exponent;
 	using S_::     unit;
 	using S_::     sign;
+	using S_::     half;
 
 //	using S_::   iota_0;
 //	using S_::   iota_1;
@@ -574,11 +575,25 @@ public:
 	static constexpr aphex_type circle_1 = square_1*0.7071067811865475244008443621048490393L;
 	static constexpr aphex_type circle_2 = square_2*0.7071067811865475244008443621048490393L;
 
-	XTAL_DEF_(return,inline,static) XTAL_LET  iota_f(auto &&u) XTAL_0EX {return  iota_type(XTAL_REF_(u));}
-	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(auto &&u) XTAL_0EX {return delta_type(XTAL_REF_(u));}
-	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(auto &&u) XTAL_0EX {return sigma_type(XTAL_REF_(u));}
-	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(auto &&u) XTAL_0EX {return alpha_type(XTAL_REF_(u));}
-	XTAL_DEF_(return,inline,static) XTAL_LET aphex_f(auto &&u) XTAL_0EX {return aphex_type(XTAL_REF_(u));}
+	XTAL_DEF_(return,inline,static) XTAL_LET  iota_f(auto &&o) XTAL_0EX {return  iota_type{XTAL_REF_(o)};}
+	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(auto &&o) XTAL_0EX {return delta_type{XTAL_REF_(o)};}
+	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(auto &&o) XTAL_0EX {return sigma_type{XTAL_REF_(o)};}
+	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(auto &&o) XTAL_0EX {return alpha_type{XTAL_REF_(o)};}
+	XTAL_DEF_(return,inline,static) XTAL_LET aphex_f(auto &&o) XTAL_0EX {return aphex_type{XTAL_REF_(o)};}
+
+	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(delta_type o) XTAL_0EX {return                            o  ;}
+	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(delta_type o) XTAL_0EX {return _xtd::bit_cast<sigma_type>(o) ;}
+	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(delta_type o) XTAL_0EX {return    static_cast<alpha_type>(o) ;}
+	
+	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(sigma_type o) XTAL_0EX {return _xtd::bit_cast<delta_type>(o) ;}
+	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(sigma_type o) XTAL_0EX {return                            o  ;}
+	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(sigma_type o) XTAL_0EX {return            alpha_f(delta_f(o));}
+	
+	XTAL_DEF_(return,inline,static) XTAL_LET delta_f(alpha_type o) XTAL_0EX {return    static_cast<delta_type>(o) ;}
+	XTAL_DEF_(return,inline,static) XTAL_LET sigma_f(alpha_type o) XTAL_0EX {return            sigma_f(delta_f(o));}
+	XTAL_DEF_(return,inline,static) XTAL_LET alpha_f(alpha_type o) XTAL_0EX {return                            o  ;}
+	
+	
 
 	using S_::N_width;
 	using S_::N_depth;
@@ -1343,11 +1358,25 @@ public:
 	static_assert(-2.75 == unscientific_f(scientific_f(-2.75)));
 
 	XTAL_DEF_(return,static)
+	XTAL_LET semifractional_f(alpha_type const &f)
+	XTAL_0EX -> iota_type
+	{
+		sigma_type constexpr _1 = sign.depth;
+		auto       const  o = _xtd::bit_cast<sigma_type>(f);
+		delta_type const  z = _xtd::bit_cast<delta_type>(o) >> positive.depth;
+		delta_type const dn = (fraction.depth + unit.mark - half.depth) - (o << _1 >> _1 + fraction.depth);
+		delta_type        m = (o&fraction.mask) | (_1 << fraction.depth);
+		m   >>= dn;
+		m    ^=  z;
+		m    -=  z;
+		return   m;
+	}
+	XTAL_DEF_(return,static)
 	XTAL_LET fractional_f(alpha_type const &f)
 	XTAL_0EX -> delta_type
 	{
 		auto       const  o = _xtd::bit_cast<sigma_type>(f);
-		delta_type const  z = (static_cast<delta_type>(o) >> positive.depth);
+		delta_type const  z = _xtd::bit_cast<delta_type>(o) >> positive.depth;
 		delta_type const  n = (o << sign.depth >> sign.depth + exponent.shift) - (unit.mark - exponent.depth - 1);
 		delta_type        m = (o&fraction.mask) | (sigma_1 << fraction.depth);
 		delta_type const up = designed_f<1>(n);
@@ -1621,8 +1650,8 @@ public:
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class T>
-struct operate : _detail::realize<sizeof(devolved_t<T>)> {};
+template <class ...Ts>
+struct operate : complete_t<_detail::realize<sizeof(devolved_t<Ts>)>...> {};
 
 using operating = operate<size_type>;
 

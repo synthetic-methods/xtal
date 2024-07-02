@@ -37,17 +37,17 @@ static_assert(sign_f(+2) == +1);
 static_assert(sign_f( 0) ==  0);
 static_assert(sign_f(-2) == -1);
 
-template <auto N, auto  ...Ms>	XTAL_REQ      exclusive_q =	(...or (N != Ms));
-template <auto N, auto  ...Ms>	XTAL_REQ      inclusive_q =	(...or (N == Ms));
-template <auto N, auto N_0=0 >	XTAL_REQ           sign_p =	inclusive_q<N, -1, N_0, 1>;
-template <auto N, auto N_0=0 >	XTAL_LET           sign_n =	sign_f<N_0>(N);
-template <auto N, auto     M >	XTAL_LET           stop_n =	N < 0 or M < N? M: N;
-template <auto N, auto   M=0 >	XTAL_LET            top_n =	decltype(N) (M <= N);
-
 template <class         ...Ts>	XTAL_REQ           some_q =	0 < sizeof...(Ts);
 template <auto          ...Ns>	XTAL_REQ           some_n =	0 < sizeof...(Ns);
 template <class         ...Ts>	XTAL_REQ           none_q =	not some_q<Ts...>;
 template <auto          ...Ns>	XTAL_REQ           none_n =	not some_n<Ns...>;
+template <auto N, auto  ...Ms>	XTAL_REQ             un_n =	none_n<Ms...> and  !N or (...or (N != Ms));
+template <auto N, auto  ...Ms>	XTAL_REQ             in_n =	none_n<Ms...> and !!N or (...or (N == Ms));
+
+template <auto N, auto N_0=0 >	XTAL_REQ           sign_p =	in_n<N, -1, N_0, 1>;
+template <auto N, auto N_0=0 >	XTAL_LET           sign_n =	sign_f<N_0>(N);
+template <auto N, auto     M >	XTAL_LET           stop_n =	N < 0 or M < N? M: N;
+template <auto N, auto   M=0 >	XTAL_LET            top_n =	decltype(N) (M <= N);
 
 template <class            T >	XTAL_REQ           unit_q =	_std::derived_from<_std::decay_t<T>, unit_type>;
 template <class            T >	XTAL_REQ           null_q =	_std::same_as     <_std::decay_t<T>, null_type>;

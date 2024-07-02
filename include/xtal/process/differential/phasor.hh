@@ -109,14 +109,14 @@ struct phasor<K_data[N_data], As...>
 				XTAL_IF0
 				XTAL_0IF (N_data == 1) {
 					//\
-					return egress(bond::repack_f(phi(0)));
+					return egress(bond::pack_f(phi(0)));
 					return egress(phi(0));
 				}
 				XTAL_0IF (N_data == 2) {
-					return egress(bond::repack_f(phi(0), phi(1)*(rate)));
+					return egress(bond::pack_f(phi(0), phi(1)*(rate)));
 				}
 				XTAL_0IF_(default) {
-					return egress(phi.template apply<decltype(bond::repack_f)>()*S_data(rate));
+					return egress(phi.template apply<decltype([] XTAL_1FN_(bond::pack_f))>()*S_data(rate));
 				}
 			}
 			else {

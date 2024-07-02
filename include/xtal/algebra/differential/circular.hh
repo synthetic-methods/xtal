@@ -56,13 +56,17 @@ struct circumspect : bond::operate<A>
 	XTAL_LET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
+		//\
 		return _xtd::bit_cast<ordinate_type>(static_cast<inordinate_type>(co*_op::diplo_f()));
+		return _op::sigma_f(co*_op::diplo_f());
 	};
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
+		//\
 		return static_cast<coordinate_type>(_xtd::bit_cast<inordinate_type>(o))*_op::haplo_f();
+		return _op::alpha_f(o)*_op::haplo_f();
 	};
 
 };

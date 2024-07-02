@@ -159,7 +159,7 @@ struct refine_tuple
 		XTAL_LET seek()
 		XTAL_0FX
 		{
-			return apply(bond::seek_f);
+			return apply([] XTAL_1FN_(bond::seek_f));
 		}
 		
 		///\
@@ -169,7 +169,7 @@ struct refine_tuple
 		XTAL_LET pack()
 		XTAL_0FX
 		{
-			return apply(bond::pack_f);
+			return apply([] XTAL_1FN_(bond::pack_f));
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_CVN_(implicit) bond::pack_row_t<S_>()
