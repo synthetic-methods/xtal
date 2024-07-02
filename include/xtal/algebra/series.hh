@@ -81,8 +81,8 @@ struct series<A>
 
 			using W1  = U_v1;
 			using U2  = scalar_t<U_v2[2]>;
-			using W1_ = series_t<W1[N_data<<1]>;
-			using U2_ = series_t<U2[N_data<<1]>;
+			using W1_ = series_t<W1[N_data<<1U]>;
+			using U2_ = series_t<U2[N_data<<1U]>;
 			static_assert(sizeof(W1_) == sizeof(U2_));
 			
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
@@ -120,7 +120,7 @@ struct series<A>
 			get<U0 + _1>(s) = o*u;
 
 		//	Populate the remaining powers by squaring/multiplication:
-			bond::seek_forward_f<(N_count >> 1)>([&] (auto M)
+			bond::seek_forward_f<(N_count >> 1U)>([&] (auto M)
 				XTAL_0FN {
 					auto constexpr UM = U0 + _1*M;
 					auto constexpr WM = W0 + _2*M;
@@ -131,7 +131,7 @@ struct series<A>
 				}
 			);
 		//	Compute the final value if `N_count` is odd:
-			if constexpr ((N_count&1) and (N_count^1)) {
+			if constexpr ((N_count&1U) and (N_count^1U)) {
 				get<UZ - _1>(s) = get<UZ - _2>(s)*(u);
 			}
 			return self();
@@ -155,7 +155,7 @@ struct series<A>
 			auto const     y = _op::circle_f(x);// TODO: Make `constexpr`?
 			
 		//	Compute the initial `1/8`th then mirror the remaining segments:
-			typename S_::difference_type constexpr M = N_data >> 2;// `1/8`th
+			typename S_::difference_type constexpr M = N_data >> 2U;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
 			if constexpr (-2 <= N_shift) _detail::copy_to(_std::prev(j, 2*M), _std::span(i, _std::next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
@@ -183,7 +183,7 @@ struct series<A>
 		//	Ensure the size of both domain and codomain are powers of two:
 			I constexpr N_width = N_data;
 			I const     n_width = that.size();
-			I const     h_width = n_width >> 1; assert(1 <= h_width);
+			I const     h_width = n_width >> 1U; assert(1 <= h_width);
 			I const     n_depth = bond::operate<I>::bit_floor_f(n_width); assert(n_width == I{1} << n_depth);
 			I constexpr N_depth = bond::operate<I>::bit_floor_f(N_width); assert(n_depth         <= N_depth);
 
@@ -199,8 +199,8 @@ struct series<A>
 		//	Compute the transform of `that` using the precomputed half-period sinusoid in `this`:
 			for (I n{}; n < n_depth; ++n) {
 				I const  u_width = I{1} << n;
-				I const  w_width = u_width << 1;
-				I const un_depth = N_depth  - n;
+				I const  w_width = u_width << 1U;
+				I const un_depth = N_depth   - n;
 				for (I u{ }; u < u_width; u +=       1) {auto const &o = let(u << un_depth);
 				for (I w{u}; w < n_width; w += w_width) {
 					auto const m = w + u_width;

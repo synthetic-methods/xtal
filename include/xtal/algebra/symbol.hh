@@ -74,7 +74,7 @@ struct symbol<A>
 		{
 			integral_type constexpr N = N_data;
 			integral_type constexpr M = N_data - 1;
-			integral_type constexpr K = M >> 1;
+			integral_type constexpr K = M >> 1U;
 			integral_type           k = N_subscript;
 			let(0) = {};
 

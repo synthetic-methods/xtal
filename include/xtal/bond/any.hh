@@ -23,7 +23,7 @@ struct define
 	class subtype : public S
 	{
 		using S_ = S;
-
+		
 	public:// CONSTRUCT
 		using S_::S_;
 

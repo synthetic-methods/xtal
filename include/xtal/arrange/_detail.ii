@@ -26,7 +26,7 @@ template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET reverser_f(I i) XTAL_
 
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
 XTAL_DEF_(inline)
-XTAL_LET swap_with(Y_ y0, X_ const x0, X_ const xN, bool o=false)
+XTAL_LET swap_with(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
 XTAL_0EX -> void
 {
 	using namespace _std;
@@ -41,7 +41,7 @@ XTAL_0EX -> void
 }
 template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
-XTAL_LET swap_with(Y_ y0, Xs const &xs, bool o=false)
+XTAL_LET swap_with(Y_ y0, Xs const &xs, bool const o=false)
 XTAL_0EX -> void
 {
 	swap_with(y0, xs.begin(), xs.end(), o);
@@ -52,7 +52,7 @@ XTAL_0EX -> void
 
 template <iterator_q Y_, iterator_q X_, _std::invocable<iteratee_t<X_>> F>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool o=false)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	using namespace _std;
@@ -72,7 +72,7 @@ XTAL_0EX -> void
 }
 template <iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool o=false)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
 XTAL_0EX -> void
 {
 	using Y = based_t<iteratee_t<Y_>>;
@@ -80,7 +80,7 @@ XTAL_0EX -> void
 }
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool o=false)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
 XTAL_0EX -> void
 {
 	using namespace _std;
@@ -101,7 +101,7 @@ XTAL_0EX -> void
 
 template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, Xs const &xs, F &&f, bool o=false)
+XTAL_LET copy_to(Y_ y0, Xs const &xs, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	XTAL_IF0
@@ -114,7 +114,7 @@ XTAL_0EX -> void
 }
 template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, Xs const &xs, bool o=false)
+XTAL_LET copy_to(Y_ y0, Xs const &xs, bool const o=false)
 XTAL_0EX -> void
 {
 	using X_ = iterator_t<Xs>;
@@ -137,14 +137,14 @@ XTAL_0EX -> void
 
 template <iterator_q Y_, iterator_q X_, _std::invocable<iteratee_t<X_>> F>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool o=false)
+XTAL_LET move_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	copy_to(y0, mover_f(x0), mover_f(xN), XTAL_REF_(f), o);
 }
 template <iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, X_ x0, X_ xN, bool o=false)
+XTAL_LET move_to(Y_ y0, X_ x0, X_ xN, bool const o=false)
 XTAL_0EX -> void
 {
 	copy_to(y0, mover_f(x0), mover_f(xN), o);
@@ -152,7 +152,7 @@ XTAL_0EX -> void
 
 template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, Xs &&xs, F &&f, bool o=false)
+XTAL_LET move_to(Y_ y0, Xs &&xs, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	XTAL_IF0
@@ -165,7 +165,7 @@ XTAL_0EX -> void
 }
 template <iterator_q Y_, iterable_q Xs>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, Xs &&xs, bool o=false)
+XTAL_LET move_to(Y_ y0, Xs &&xs, bool const o=false)
 XTAL_0EX -> void
 {
 	using X_ = iterator_t<Xs>;
@@ -188,14 +188,14 @@ XTAL_0EX -> void
 
 template <class W, class F>
 XTAL_DEF_(inline)
-XTAL_LET apply_to(W &w, F &&f, bool o=false)
+XTAL_LET apply_to(W &w, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	w = XTAL_REF_(f) (w);
 }
 template <class Ws, class F> requires iterable_q<Ws>
 XTAL_DEF_(inline)
-XTAL_LET apply_to(Ws &ws, F &&f, bool o=false)
+XTAL_LET apply_to(Ws &ws, F &&f, bool const o=false)
 XTAL_0EX -> void
 {
 	if constexpr (bond::pack_q<Ws>) {

@@ -24,7 +24,7 @@ XTAL_0EX -> decltype(auto)
 	return XTAL_REF_(o);
 }
 
-XTAL_LET seek_f = []<nominal_q ...Ns> (Ns ...ns)
+XTAL_LET seek_f = []<nominal_q ...Ns> (Ns ...)
 XTAL_0FN -> seek_t<Ns{}...> {return {};};
 
 template <size_type  ...Ns>	XTAL_LET antiseek_f(seek_t<Ns...>) -> seek_t<(sizeof...(Ns) - Ns - 1)...>;

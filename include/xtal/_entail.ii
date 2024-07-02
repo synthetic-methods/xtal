@@ -23,12 +23,12 @@ XTAL_LET    sign_f(auto &&i)
 XTAL_0EX -> sign_type
 {
 	using I = XTAL_ALL_(i);
-	size_type constexpr  N = sizeof(I) << 3;
-	size_type constexpr _N =          N - 1;
-	sign_type constexpr _1 =              1;
+	size_type constexpr  N = sizeof(I) << 3U;
+	size_type constexpr  M =          N - 1U;
+	sign_type constexpr _1 =              1U;
 	XTAL_IF0
-	XTAL_0IF (N_0 == +1 and _std::  is_signed_v<I>) {return (i >> _N)|_1;}
-	XTAL_0IF (N_0 == +1 and _std::is_unsigned_v<I>) {return           _1;}
+	XTAL_0IF (N_0 == +1 and _std::  is_signed_v<I>) {return (i >> M)|_1;}
+	XTAL_0IF (N_0 == +1 and _std::is_unsigned_v<I>) {return          _1;}
 	XTAL_0IF (N_0 == +1) {return (0 <= i) - (i <  0);}
 	XTAL_0IF (N_0 ==  0) {return (0 <  i) - (i <  0);}
 	XTAL_0IF (N_0 == -1) {return (0 <  i) - (i <= 0);}
@@ -539,7 +539,7 @@ XTAL_0EX
 {
 	XTAL_LET N_count = 1 + 1 + sizeof...(ms);
 	XTAL_LET N_width = sizeof(T)/N_count;
-	XTAL_LET N_depth = N_width << 3;
+	XTAL_LET N_depth = N_width << 3U;
 	static_assert(N_width*N_count == sizeof(T));
 	return lateral_f<T>(m|(n<<N_depth), ms...);
 }
