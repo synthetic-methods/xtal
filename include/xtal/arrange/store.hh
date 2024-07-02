@@ -265,6 +265,7 @@ struct store<U_data[N_data]>
 		Initializes `this` with the given data. \
 
 		XTAL_CON_(implicit) homotype(homotype &&t)
+		XTAL_0EX (_std::is_nothrow_move_constructible_v<U_data>)
 		requires _std::move_constructible<U_data>
 		:	homotype(_detail::mover_f(t.begin()), _detail::mover_f(t.end()))
 		{}
@@ -274,6 +275,7 @@ struct store<U_data[N_data]>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator = (homotype &&t)
+		XTAL_0EX (_std::is_nothrow_move_constructible_v<U_data>)
 		->	homotype & requires _std::move_constructible<U_data>
 		{
 			assign(XTAL_MOV_(t));

@@ -215,7 +215,7 @@ struct circular<A>
 		XTAL_LET operator *= (real_number_q auto const &f)
 		XTAL_0EX -> T &
 		{
-			size_type constexpr M_bias = _op::N_width >> 3;
+			size_type constexpr M_bias = _op::N_width >> 3U;
 			size_type constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
 			auto [m, n] = _op::scientific_f((U_alpha) f);
 			auto &s = reinterpret_cast<linear_t<U_delta[N_data]> &>(self());

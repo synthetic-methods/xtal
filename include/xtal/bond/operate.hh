@@ -26,13 +26,13 @@ The translation-tables for the supplied `N_size` \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
 template <size_type N_size>
-struct recognize : recognize<(N_size >> 1)>
+struct recognize : recognize<(N_size >> 1U)>
 {
 	using _zed = nominal_t<false>;
 
 };
 template <>
-struct recognize<(1<<0)>
+struct recognize<(1U<<0U)>
 {
 	using       _zed =        nominal_t<true>;
 //	using  iota_type =           _std::int4_t;
@@ -49,7 +49,7 @@ struct recognize<(1<<0)>
 
 };
 template <>
-struct recognize<(1<<1)>
+struct recognize<(1U<<1U)>
 {
 	using       _zed =        nominal_t<true>;
 	using  iota_type =    signed XTAL_INT_(0);
@@ -66,7 +66,7 @@ struct recognize<(1<<1)>
 
 };
 template <>
-struct recognize<(1<<2)>
+struct recognize<(1U<<2U)>
 {
 	using       _zed =        nominal_t<true>;
 	using  iota_type =    signed XTAL_INT_(1);
@@ -139,7 +139,7 @@ struct recognize<(1<<2)>
 
 };
 template <>
-struct recognize<(1<<3)>
+struct recognize<(1U<<3U)>
 {
 	using   _zed =           nominal_t< true>;
 	using  iota_type =    signed XTAL_INT_(2);
@@ -219,7 +219,7 @@ concept recognized_q = recognize<N_size>::_zed::value;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct rationalize : rationalize<(N_size >> 1)>
+struct rationalize : rationalize<(N_size >> 1U)>
 {
 	using _zed = nominal_t<false>;
 
@@ -248,7 +248,7 @@ public:
 	static constexpr sigma_type sigma_2{2};
 
 	static constexpr sigma_type N_width = N_size;
-	static constexpr sigma_type N_depth = N_size << 3;
+	static constexpr sigma_type N_depth = N_size << 3U;
 
 	static constexpr sigma_type N_fraction =          S_::N_fraction;
 	static constexpr sigma_type N_exponent =          S_::N_exponent;
@@ -260,11 +260,11 @@ public:
 
 	struct word
 	{
-		sigma_type width;
-		sigma_type depth;
-		sigma_type shift;
-		sigma_type mark;
-		sigma_type mask;
+		sigma_type const width;
+		sigma_type const depth;
+		sigma_type const shift;
+		sigma_type const mark;
+		sigma_type const mask;
 
 		XTAL_DEF_(return,inline,static) XTAL_LET flag_f(sigma_type const m=0)                    XTAL_0EX -> sigma_type {return N_negative <= m?  sigma_0: sigma_1 << m;};
 		XTAL_DEF_(return,inline,static) XTAL_LET mark_f(sigma_type const m=0)                    XTAL_0EX -> sigma_type {return N_negative <= m? ~sigma_0: flag_f(m) - 1;};
@@ -286,7 +286,7 @@ public:
 	static constexpr word exponent {N_exponent, N_fraction};
 	static constexpr word     unit     {N_unit, N_fraction};
 	static constexpr word     sign     {N_sign, N_positive};
-	static constexpr word     half {N_depth >> 1, N_depth >> 1};
+	static constexpr word     half {N_depth >> 1U, N_depth >> 1U};
 	static_assert((sigma_type) ~sign.mask == positive.mask);
 
 
@@ -471,9 +471,9 @@ public:
 	}
 
 	///\returns the bitwise-reversal of `u`, \
-	restricted to `N_subdepth` when `0 < N_subdepth < sizeof(u) << 3`. \
+	restricted to `N_subdepth` when `0 < N_subdepth < sizeof(u) << 3U`. \
 
-	///\note Requires `log2(sizeof(u) << 3)` iterations. \
+	///\note Requires `log2(sizeof(u) << 3U)` iterations. \
 
 	XTAL_DEF_(return,static)
 	XTAL_LET bit_reverse_f(sigma_type u, sigma_type const &subdepth)
@@ -516,7 +516,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct realize : realize<(N_size >> 1)>
+struct realize : realize<(N_size >> 1U)>
 {
 	using _zed = nominal_t<false>;
 
@@ -729,7 +729,7 @@ public:
 		bool constexpr N_etc = not real_number_q<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
-		int constexpr M_lim = N_lim&0xF;
+		int constexpr M_lim = stop_n<N_lim, 0xF>;
 
 		XTAL_IF0 //	ELIMINATION
 		XTAL_0IF (N_pow ==  0) {return U_1;}
@@ -870,7 +870,7 @@ public:
 	{
 		XTAL_ALL_(base) u = XTAL_REF_(base), w = {1};
 		for (sigma_type n = n_exponent; n; n >>= 1) {
-			if (n&1) {
+			if (n&1U) {
 				w *= u;
 			}
 			u = square_f(u);
@@ -882,9 +882,9 @@ public:
 	XTAL_LET explo_f(auto &&base, auto result)
 	XTAL_0EX
 	{
-		XTAL_LET N = N_exponent >> 0;
-		XTAL_LET M = N_exponent >> 1;
-		XTAL_LET I = N_exponent  & 1;
+		XTAL_LET N = N_exponent >> 0U;
+		XTAL_LET M = N_exponent >> 1U;
+		XTAL_LET I = N_exponent  & 1U;
 		XTAL_IF0
 		XTAL_0IF (N == 0) {return result;}
 		XTAL_0IF (I == 0) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
@@ -1312,10 +1312,10 @@ public:
 		delta_type constexpr N = unit.mark + fraction.depth;
 		sigma_type constexpr M =  sigma_1 << fraction.depth;
 		
-		sigma_type o = _xtd::bit_cast<sigma_type>(f);
-		delta_type n = N - (o << sign.depth >> sign.depth + exponent.shift);
-		delta_type m = M | (o&fraction.mask);
-		delta_type z = static_cast<delta_type>(o) >> positive.depth;
+		auto       const o = _xtd::bit_cast<sigma_type>(f);
+		delta_type const z = static_cast<delta_type>(o) >> positive.depth;
+		delta_type const n = N - (o << sign.depth >> sign.depth + exponent.shift);
+		delta_type       m = M | (o&fraction.mask);
 		m  ^= z;
 		m  -= z;
 		return {m, n};
@@ -1346,12 +1346,12 @@ public:
 	XTAL_LET fractional_f(alpha_type const &f)
 	XTAL_0EX -> delta_type
 	{
-		sigma_type  o = _xtd::bit_cast<sigma_type>(f);
-		delta_type  n = (o << sign.depth >> sign.depth + exponent.shift) - (unit.mark - exponent.depth - 1);
-		delta_type  m = (o & fraction.mask) | (sigma_1 << fraction.depth);
-		delta_type  z =       (static_cast<delta_type>(o) >> positive.depth);
-		delta_type up = designed_f<1>(n);
-		delta_type dn = up - n;
+		auto       const  o = _xtd::bit_cast<sigma_type>(f);
+		delta_type const  z = (static_cast<delta_type>(o) >> positive.depth);
+		delta_type const  n = (o << sign.depth >> sign.depth + exponent.shift) - (unit.mark - exponent.depth - 1);
+		delta_type        m = (o&fraction.mask) | (sigma_1 << fraction.depth);
+		delta_type const up = designed_f<1>(n);
+		delta_type const dn = up - n;
 		m   <<= up;
 		m   >>= dn;
 		m    ^=  z;
@@ -1385,7 +1385,7 @@ public:
 
 	///\returns zero if unchanged, else the sign of the `target`. \
 	
-	template <int N_zoom=0, bool N_infinity=0>
+	template <int N_zoom=0, int N_infinity=0>
 	XTAL_DEF_(static)
 	XTAL_LET truncate_f(alpha_type &target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
@@ -1395,7 +1395,7 @@ public:
 		}
 		else {
 		//	bool constexpr N_unit = not N_infinity;
-			if constexpr (IEC&559) {
+			if constexpr (IEC&559U) {
 				delta_type constexpr M_zone = unit.mask + (1);
 				delta_type constexpr M_zoom = unit.mask - (delta_type(1) << N_zoom);
 				delta_type const     dezone = n_zone << exponent.shift;
@@ -1443,7 +1443,7 @@ public:
 
 	///\returns the `target` with magnitude clamped to the region below `dnsilon_f(N_zoom, n_zone)`. \
 
-	template <int N_zoom=0, bool N_infinity=0>
+	template <int N_zoom=0, int N_infinity=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET truncated_f(alpha_type target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
@@ -1469,7 +1469,7 @@ public:
 		alpha_type const y = truncated_f<N_zoom>(target.imag());
 		return aphex_type{x, y};
 	}
-	template <int N_zoom=0, bool N_zero=0>
+	template <int N_zoom=0, int N_zero=0>
 #if XTAL_V00_(GNUC) and XTAL_V00_(GNUC) < 1300
 	[[gnu::optimize(1)]]
 #endif
@@ -1490,7 +1490,7 @@ public:
 
 	///\returns zero if unchanged, else the sign of the `target`. \
 
-	template <int N_zoom=0, bool N_zero=0>
+	template <int N_zoom=0, int N_zero=0>
 	XTAL_DEF_(static)
 	XTAL_LET puncture_f(alpha_type &target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
@@ -1500,7 +1500,7 @@ public:
 		}
 		else {
 			bool constexpr N_unit = not N_zero;
-			if constexpr (IEC&559) {
+			if constexpr (IEC&559U) {
 				delta_type constexpr M_zoom = unit.mask + (delta_type(1) << N_zoom);
 				delta_type const     dezone = n_zone << exponent.shift;
 				delta_type const M = dezone + M_zoom*N_unit;
@@ -1546,7 +1546,7 @@ public:
 
 	///\returns the `target` with magnitude clamped to the region above `upsilon_f(N_zoom, n_zone)`. \
 
-	template <int N_zoom=0, bool N_zero=0>
+	template <int N_zoom=0, int N_zero=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET punctured_f(alpha_type target, delta_type const &n_zone)
 	XTAL_0EX -> alpha_type
@@ -1572,7 +1572,7 @@ public:
 		alpha_type const y = punctured_f<N_zoom>(target.imag());
 		return aphex_type{x, y};
 	}
-	template <int N_zoom=0, bool N_zero=0>
+	template <int N_zoom=0, int N_zero=0>
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET punctured_f(aphex_type target, delta_type const &n_zone)
 	XTAL_0EX

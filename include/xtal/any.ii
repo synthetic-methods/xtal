@@ -56,9 +56,9 @@ XTAL_DEF_(return,inline,static)
 XTAL_LET maligned_f(size_type &i)
 XTAL_0EX
 {
-	XTAL_LET N = aligned_n<T> << 3;
+	XTAL_LET N = aligned_n<T> << 3U;
 	XTAL_LET M = N - 1;
-	i += M; i &= ~M; size_type j = i; i += M; return j >> 3;
+	i += M; i &= ~M; size_type const j = i; i += M; return j >> 3U;
 };
 
 template <int N_offset=0, class T>
