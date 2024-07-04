@@ -229,6 +229,7 @@ struct defer<U>
 		Defines the range-lifted form of `head` by lifting the underlying `process`. \
 		Parameter resolution is only performed at the beginning of each block. \
 
+		/*/
 		XTAL_DO4_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(iterable_q auto &&...xs),
@@ -236,18 +237,42 @@ struct defer<U>
 		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
 			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(Is...)
+				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
 			,	XTAL_REF_(xs)...
 			);
 		})
-		XTAL_DO4_(template <auto ...Is>
+		/*/
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(iterable_q auto &&...xs)
+		XTAL_0FX -> decltype(auto)
+		//	requires _std::is_const_v<decltype(XTAL_ANY_(U const &).template deify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...))>
+		{
+			return iterative_f(S_::head().
+				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
+			,	XTAL_REF_(xs)...
+			);
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(iterable_q auto &&...xs)
+		XTAL_0EX -> decltype(auto)
+		{
+			return iterative_f(S_::head().
+				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
+			,	XTAL_REF_(xs)...
+			);
+		}
+		/***/
+
+		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET function(iterable_q auto &&...xs),
 		->	decltype(auto)
 			requires (XTAL_TRY_(S_::head().template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)>)...)))
 		{
 			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(Is...)
+				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
 			,	XTAL_REF_(xs)...
 			);
 		})

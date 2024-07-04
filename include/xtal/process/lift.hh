@@ -29,14 +29,32 @@ struct lifter
 	public:
 		using S_::S_;
 
-		template <auto ...Is>
+		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ &).method(XTAL_REF_(xs)...))
+		{
+			return invoke_f<F>(S_::method(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is> requires some_n<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs)
+		XTAL_0EX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ &).template method<Is...>(XTAL_REF_(xs)...))
 		{
 			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
-		template <auto ...Is>
+		
+		template <auto ...Is> requires none_n<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs)
+		XTAL_0FX -> decltype(auto)
+			requires XTAL_TRY_(XTAL_ANY_(S_ const &).method(XTAL_REF_(xs)...))
+		{
+			return invoke_f<F>(S_::method(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0FX -> decltype(auto)
@@ -44,7 +62,7 @@ struct lifter
 		{
 			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
-		
+
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET function(auto &&...xs)

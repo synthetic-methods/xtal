@@ -77,12 +77,14 @@ struct thunk
 			public:// OPERATE
 				using R_::self;
 
+				template <auto ...>
 				XTAL_LET method()
 				XTAL_0EX
 				{
 					return u_spool.advance(head_()++ == head_(1))
 					->	tail().apply([this] XTAL_1FN_(method));
 				}
+				template <auto ...>
 				XTAL_DEF_(return,inline)
 				XTAL_LET method(V_shuttle &x, auto &&...)
 				XTAL_0EX

@@ -135,15 +135,6 @@ template <class T,                       size_type... Ns > XTAL_USE intrapack_it
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <class ...> class F=pack_row_t>
-XTAL_DEF_(inline)
-XTAL_LET pack_row_f(auto &&...ts)
-XTAL_0EX
-{
-	return [&]<auto ...Ns> (bond::seek_t<Ns...>)
-		XTAL_0FN_(F<decltype(ts)...>{pack_item_f<Ns>(ts...)...})
-	(bond::seek_s<pack_size_n<decltype(ts)...>>{});
-};
 template <pack_size_q ...Ts>
 XTAL_TYP pack_row
 {
@@ -154,15 +145,20 @@ XTAL_TYP pack_row
 	using type = decltype(make(seek_s<pack_size_n<Ts...>>()));
 
 };
-template <>
-XTAL_TYP pack_row
-{
-	using type = decltype([] XTAL_1FN_(pack_row_f));
-
-};
 template <pack_size_q ...Ts>
 XTAL_USE pack_row_t = typename pack_row<Ts...>::type;
 
+template <template <class ...> class F=pack_row_t>
+XTAL_DEF_(inline)
+XTAL_LET pack_row_f(auto &&...ts)
+XTAL_0EX
+{
+	return [&]<auto ...Ns> (bond::seek_t<Ns...>)
+		XTAL_0FN_(F<decltype(ts)...>{pack_item_f<Ns>(ts...)...})
+	(bond::seek_s<pack_size_n<decltype(ts)...>>{});
+};
+
+XTAL_USE pack_row_type = decltype([] XTAL_1FN_(pack_row_f));
 
 
 template <size_type N, class U=void>
