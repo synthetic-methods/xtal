@@ -216,63 +216,42 @@ struct defer<U>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
+		using U_ = typename S_::head_type;
 
 		template <iterable_q X>
-		//\
-		using argument_t = iteratee_t<X> const &;
-		using argument_t = decltype(*XTAL_ANY_(X).begin()) &&;
+		using value_t = decltype(*XTAL_ANY_(X).begin()) &&;
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
+
+	public:// OPERATE
+		using S_::self;
+		using S_::head;
 
 		///\
 		Defines the range-lifted form of `head` by lifting the underlying `process`. \
 		Parameter resolution is only performed at the beginning of each block. \
 
-		/*/
-		XTAL_DO4_(template <auto ...Is>
+		///\note\
+		Only `method` participates in parameter resolution, \
+		since `function` is stateless. \
+
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(iterable_q auto &&...xs),
-		->	decltype(auto)
+		XTAL_LET method(iterable_q auto &&...xs), -> decltype(auto)
 		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
-			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
+			return iterative_f(head().template reify<value_t<decltype(xs)>...>(nominal_t<Is>{}...)
 			,	XTAL_REF_(xs)...
 			);
 		})
-		/*/
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(iterable_q auto &&...xs)
-		XTAL_0FX -> decltype(auto)
-		//	requires _std::is_const_v<decltype(XTAL_ANY_(U const &).template deify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...))>
-		{
-			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
-			,	XTAL_REF_(xs)...
-			);
-		}
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(iterable_q auto &&...xs)
-		XTAL_0EX -> decltype(auto)
-		{
-			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
-			,	XTAL_REF_(xs)...
-			);
-		}
-		/***/
 
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET function(iterable_q auto &&...xs),
-		->	decltype(auto)
-			requires (XTAL_TRY_(S_::head().template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)>)...)))
+		XTAL_LET function(iterable_q auto &&...xs), -> decltype(auto)
+			requires (XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(value_t<decltype(xs)>)...)))
 		{
-			return iterative_f(S_::head().
-				template reify<argument_t<decltype(xs)>...>(nominal_t<Is>{}...)
+			return iterative_f([] XTAL_1FN_(U_::template function<Is...>)
 			,	XTAL_REF_(xs)...
 			);
 		})

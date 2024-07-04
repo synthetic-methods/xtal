@@ -30,48 +30,86 @@ struct define
 		using S_ = bond::compose_s<S, subkind>;
 		using T_ = typename S_::self_type;
 	
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
 
-	protected:
+	protected:// CODEX
 		///\
-		Resolves the function pointer for the given `Xs...` and `Is...`. \
-		Forms the basis for the table constructed by `occur/any.hh#dispatch`. \
+		Resolves the function pointer for the given `Xs...` and `Is...`, \
+		providing the kernel for the table constructed by `occur/any.hh#dispatch`. \
 
 		template <class ...Xs>
-		struct deity
+		struct codex
 		{
-			template <class   X> struct argument      {using type = X      &&;};
-			template <based_q X> struct argument<X>   {using type = X const &;};
+			template <class   X> struct argument    {using type = X       &&;};
+			template <based_q X> struct argument<X> {using type = X const  &;};
 			template <class   X> using  argument_t = typename argument<X>::type;
 
 			template <auto ...Is>
-			class type
+			class index
 			{
 				using Y = decltype(XTAL_ANY_(T &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
-				using value_type = Y (T::*) (argument_t<Xs>...);
-				static_assert(not _std::is_const_v<value_type>);
-				static constexpr value_type value = &T::template method<Is...>;
+				using point_type = Y (T::*) (argument_t<Xs>...);
+				static_assert(not _std::is_const_v<point_type>);
+				static constexpr point_type point = &T::template method<Is...>;
 
 			};
 			template <auto ...Is>
 				requires XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...))
-			class type<Is...>
+			class index<Is...>
 			{
 				using Y = decltype(XTAL_ANY_(T const &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
-				using value_type = _std::add_const_t<Y (T::*) (argument_t<Xs>...) const>;
-				static_assert(_std::is_const_v<value_type>);
-				static constexpr value_type value = &T::template method<Is...>;
+				using point_type = _std::add_const_t<Y (T::*) (argument_t<Xs>...) const>;
+				static_assert(_std::is_const_v<point_type>);
+				static constexpr point_type point = &T::template method<Is...>;
 
 			};
 		};
+		template <class ...Xs>
+		XTAL_DEF_(return,inline)
+		XTAL_LET deify(nominal_q auto const ...Is)
+		XTAL_0FX -> decltype(auto)
+		{
+			return deify(codex<Xs...>::template index<Is...>::point);
+		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET deify(auto const &point)
+		XTAL_0FX -> decltype(auto)
+		{
+			return point;
+		}
 
-	public:
+	public:// OPERATE
 		using S_::self;
+
+		///\returns the lambda abstraction of `method`, \
+		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
+
+		XTAL_DO2_(template <class ...Xs>
+		XTAL_DEF_(return,inline)
+		XTAL_LET reify(nominal_q auto const ...Is), -> decltype(auto)
+		{
+			return [=, this] XTAL_1FN_(self().operator());
+		})
+
+		///\
+		Alias of `method(...)`, \
+		with dynamic template-parameter aliasing if defined (\see `occur::any`). \
+		
+		XTAL_DO2_(template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator() (auto &&...xs),
+		->	decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF XTAL_TRY_TO_(self().         method       (XTAL_REF_(xs)...))
+		})
+		
 		///\
 		The default `method` defers to the static `function` (only when `this` is `const`). \
 
@@ -85,87 +123,6 @@ struct define
 			XTAL_IF0
 			XTAL_0IF (none_n<Is...>) {return T::         function       (XTAL_REF_(xs)...);}
 			XTAL_0IF (some_n<Is...>) {return T::template function<Is...>(XTAL_REF_(xs)...);}
-		}
-
-		///\
-		Alias of `method(...)`. \
-		
-		/*/
-		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET operator() (auto &&...xs),
-		->	decltype(auto)
-		{
-			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>) {return self().template method<Is...>(XTAL_REF_(xs)...);}
-		})
-		/*/
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET operator() (auto &&...xs)
-		XTAL_0FX -> decltype(auto)
-		//	requires _std::is_const_v<decltype(deify<decltype(xs)...>(nominal_t<Is>{}...))>
-		//	requires none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).         method             (XTAL_REF_(xs)...))
-		//	or       some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is.value...>(XTAL_REF_(xs)...))
-		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_TRY_TO_(self().         method       (XTAL_REF_(xs)...))
-		}
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET operator() (auto &&...xs)
-		XTAL_0EX -> decltype(auto)
-		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_TRY_TO_(self().         method       (XTAL_REF_(xs)...))
-		}
-		/***/
-		
-		///\returns the lambda abstraction of `method`, \
-		resolved by the `[../occur/any.ipp#dispatch]`ed parameters bound to `this`. \
-
-		/*/
-		XTAL_DO2_(template <class ...Xs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto const ...Is), -> decltype(auto)
-		{
-			return [=, this] XTAL_1FN_(self().operator());
-		})
-		/*/
-		template <class ...Xs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto const ...Is)
-		XTAL_0FX -> decltype(auto)
-		//	requires _std::is_const_v<decltype(deify<Xs...>(Is...))>
-		//	requires XTAL_TRY_(XTAL_ANY_(T const &).template operator()<Is...>(XTAL_ANY_(Xs)...))
-		{
-			return [=, this] XTAL_1FN_(self().operator());
-		}
-		template <class ...Xs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto const ...Is)
-		XTAL_0EX -> decltype(auto)
-		{
-			return [=, this] XTAL_1FN_(self().operator());
-		}
-		/***/
-
-	protected:
-		template <class ...Xs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET deify(nominal_q auto const ...Is)
-		XTAL_0FX -> decltype(auto)
-		{
-			return deify(deity<Xs...>::template type<Is...>::value);
-		}
-		XTAL_DEF_(return,inline)
-		XTAL_LET deify(auto const &value)
-		XTAL_0FX -> decltype(auto)
-		{
-			return value;
 		}
 
 	public:
@@ -242,7 +199,7 @@ struct refine
 		template <class ...Xs>
 		struct binds
 		{
-			using subkind = confined<typename S_::template bundle<let_t<Xs>...>>;
+			using subkind = confined<typename S_::template bundle<process::let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, subkind>;
