@@ -66,7 +66,8 @@ struct define
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
-				
+				using T_ = typename R_::self_type;
+
 				XTAL_SET N_ = T::size() - 0;
 				XTAL_SET M_ = T::size() - 1;
 
@@ -78,29 +79,38 @@ struct define
 				using R_::self;
 				using R_::head;
 
+				/*/
 				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
 				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
 				{
 					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
 				})
-
-				XTAL_DO4_(template <class ...Xs>
+				/*/
+				template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_LET reify(nominal_q auto const ...Is), -> decltype(auto)
+				XTAL_LET operator() (auto &&...xs)
+				XTAL_0FX -> decltype(auto)
+				//	requires _std::is_const_v<decltype(deify<decltype(xs)...>(nominal_t<Is>{}...))>
 				{
-					//\
-					return _std::bind_front(deify<Xs...>(Is...), &self());
-					return [this, Is...] XTAL_1FN_((self().*deify<Xs...>(Is...)));
-				})
+					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
+				}
+				template <auto ...Is>
+				XTAL_DEF_(return,inline)
+				XTAL_LET operator() (auto &&...xs)
+				XTAL_0EX -> decltype(auto)
+				{
+					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
+				}
+				/***/
 
 			protected:
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(nominal_q auto const &...Is)
+				XTAL_LET deify(nominal_q auto const ...Is)
 				XTAL_0FX -> decltype(auto)
 				{
-					return deify(figure<Xs...>::template type<Is...>::value);
+					return deify(deity<Xs...>::template type<Is...>::value);
 				}
 				template <class A>
 				XTAL_DEF_(return,inline)
@@ -112,23 +122,19 @@ struct define
 				}
 
 				template <class ...Xs>
-				struct figure
+				struct deity
 				{
-					template <auto ...Is>
+					using context = typename R_::template deity<Xs...>;
+
+					template <size_type ...Is>
 					class type
 					{
-						template <size_type ...I>
-						XTAL_DEF_(static)
-						XTAL_LET enumerate_f(bond::seek_t<I...>)
-						XTAL_0EX
-						{
-							using context = typename R_::template figure<Xs...>;
-							return _std::array{(context::template type<Is..., I>::value)...};
-						}
+						template <size_type    J > XTAL_SET extend_f = context::template type<Is..., J>::value;
+						template <size_type ...Js> XTAL_SET expand_f(bond::seek_t<Js...>)
+							XTAL_0EX {return _std::array{extend_f<Js>...};}
 					
 					public:
-						XTAL_DEF_(static)
-						XTAL_LET value      = enumerate_f(bond::seek_s<N_> {});
+						XTAL_SET value      = expand_f(bond::seek_s<N_> {});
 						XTAL_USE value_type = decltype(value);
 					
 					};
@@ -220,6 +226,7 @@ struct define
 				using R_::R_;
 				using R_::head;
 
+				template <auto ...>
 				XTAL_DEF_(return,inline)
 				XTAL_LET method()
 				XTAL_0FX
