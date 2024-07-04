@@ -66,76 +66,63 @@ struct define
 			class subtype : public bond::compose_s<R, subkind>
 			{
 				using R_ = bond::compose_s<R, subkind>;
-				using T_ = typename R_::self_type;
 
-				XTAL_SET N_ = T::size() - 0;
-				XTAL_SET M_ = T::size() - 1;
+				XTAL_SET A_size = T::size() - 0; static_assert(0 <= A_size);
+				XTAL_SET A_mask = T::size() - 1; static_assert(1 == bond::operating::bit_count_f(A_size));
 
-				static_assert(0 <= N_);
-				static_assert(1 == bond::operating::bit_count_f(N_));
-
-			public:
+			public:// CONSTRUCT
 				using R_::R_;
+			
+			public:// OPERATE
 				using R_::self;
 				using R_::head;
 
-				/*/
 				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
 				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
 				{
 					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
 				})
-				/*/
-				template <auto ...Is>
-				XTAL_DEF_(return,inline)
-				XTAL_LET operator() (auto &&...xs)
-				XTAL_0FX -> decltype(auto)
-				//	requires _std::is_const_v<decltype(deify<decltype(xs)...>(nominal_t<Is>{}...))>
-				{
-					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
-				}
-				template <auto ...Is>
-				XTAL_DEF_(return,inline)
-				XTAL_LET operator() (auto &&...xs)
-				XTAL_0EX -> decltype(auto)
-				{
-					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
-				}
-				/***/
 
-			protected:
+			protected:// DEIFY
+
+				template <class A>
+				XTAL_DEF_(return,inline)
+				XTAL_LET deify(_std::array<A, A_size> const &point)
+				XTAL_0FX -> decltype(auto)
+				{
+					size_type const i = head();
+					return R_::deify(point[A_mask&i]);
+				}
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
 				XTAL_LET deify(nominal_q auto const ...Is)
 				XTAL_0FX -> decltype(auto)
 				{
-					return deify(deity<Xs...>::template type<Is...>::value);
+					return deify(codex<Xs...>::template index<Is...>::point);
 				}
-				template <class A>
-				XTAL_DEF_(return,inline)
-				XTAL_LET deify(_std::array<A, N_> const &value)
-				XTAL_0FX -> decltype(auto)
-				{
-					size_type i = head(); i &= M_;
-					return R_::deify(value[i]);
-				}
-
+				
 				template <class ...Xs>
-				struct deity
+				struct codex
 				{
-					using context = typename R_::template deity<Xs...>;
+					using supercodex = typename R_::template codex<Xs...>;
 
 					template <size_type ...Is>
-					class type
+					class index
 					{
-						template <size_type    J > XTAL_SET extend_f = context::template type<Is..., J>::value;
-						template <size_type ...Js> XTAL_SET expand_f(bond::seek_t<Js...>)
-							XTAL_0EX {return _std::array{extend_f<Js>...};}
+						template <size_type    J > XTAL_SET extend_v = supercodex::template index<Is..., J>::point;
+						template <size_type    J > XTAL_USE extend_t = decltype(extend_v<J>);
+						template <size_type ...Js>
+						XTAL_SET expand_f(bond::seek_t<Js...>)
+						XTAL_0EX {
+							return _std::array{extend_v<Js>...};
+						//	return _std::array{_std::variant<extend_t<Js>...>{extend_v<Js>}...};
+						//	TODO: Find a way to store heterogeneous functions (e.g. `return zip_transform_view`)?
+						}
 					
 					public:
-						XTAL_SET value      = expand_f(bond::seek_s<N_> {});
-						XTAL_USE value_type = decltype(value);
+						XTAL_SET point      = expand_f(bond::seek_s<A_size> {});
+						XTAL_USE point_type = decltype(point);
 					
 					};
 				};
