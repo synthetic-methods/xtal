@@ -61,8 +61,8 @@ struct phasor<K_data[N_data], As...>
 
 		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
 		
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET bias()
+		XTAL_DEF_(return,inline)
+		XTAL_SET bias()
 		XTAL_0EX -> auto
 		{
 			return S_::template bias<U_data>();

@@ -22,8 +22,8 @@ struct initialize
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
 	template <class V=void, class ...Xs>
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET via(Xs &&...xs)
+	XTAL_DEF_(return,inline)
+	XTAL_SET via(Xs &&...xs)
 	XTAL_0EX
 	{
 		XTAL_IF0

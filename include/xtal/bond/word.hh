@@ -25,8 +25,8 @@ struct word
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET size()
+		XTAL_DEF_(return,inline)
+		XTAL_SET size()
 		XTAL_0EX
 		{
 			return N_width;

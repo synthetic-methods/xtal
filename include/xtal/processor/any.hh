@@ -200,8 +200,8 @@ struct defer<U>
 			return S_::template method<Is...>(XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs),
 		->	decltype(auto)
 			requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
 		)
@@ -235,31 +235,40 @@ struct defer<U>
 		Only `method` participates in parameter resolution, \
 		since `function` is stateless. \
 
-		XTAL_DO2_(template <auto ...Is>
+		///\note\
+		The `template-method` is type-erased with `ranges::any_view` so it can be `vtable`d, \
+		but it only works if `this` is mutable.., \
+
+		///\fixme\
+		Parameters don't seem to resolve for `polymer`. \
+		(Peformance-wise it's a wash anyway?) \
+
+		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs), -> decltype(auto)
+		XTAL_LET method(auto &&...xs)
+		XTAL_0EX -> decltype(auto)
 		{
 			using namespace _xtd::ranges;
 
-			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {
-				return iterative_f(head().template reify<range_reference_t<decltype(xs)>...>(Is...), XTAL_REF_(xs)...);
+			auto  y_ = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
+			using Y_ = decltype(y_);
+			using Z_ = any_view<range_reference_t<Y_>, get_categories<Y_>()>;
+			if constexpr XTAL_TRY_(y_.size()) {
+				auto const n = y_.size();
+				return Z_(XTAL_MOV_(y_))|account_f(n);
 			}
-			XTAL_0IF (some_n<Is...>) {
-				auto  x = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
-				using X = decltype(x);
-				using Y = any_view<range_reference_t<X>, get_categories<X>()>;
-				if constexpr XTAL_TRY_(x.size()) {
-					auto const n = x.size();
-					return Y(XTAL_MOV_(x))|account_f(n);
-				}
-				else {
-					return Y(XTAL_MOV_(x));
-				}
+			else {
+				return Z_(XTAL_MOV_(y_));
 			}
+		}
+		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs), -> decltype(auto)
+		{
+			return iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
 		})
 
-		XTAL_DO0_(template <auto ...Is>
+		XTAL_DO0_(template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET function(auto &&...xs), -> decltype(auto)
 			requires XTAL_TRY_(U_::template function<Is...>

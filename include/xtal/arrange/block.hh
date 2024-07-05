@@ -70,8 +70,8 @@ struct superblock<U[N]>
 		XTAL_LET N_data = N;
 		XTAL_USE U_data = U;
 
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET coordinated()
+		XTAL_DEF_(return,inline)
+		XTAL_SET coordinated()
 		XTAL_0EX -> bool
 		{
 			return is_q<XTAL_ALL_(XTAL_ANY_(T).coordinate(XTAL_ANY_(U_data))), U_data>;
@@ -167,15 +167,15 @@ struct block<A>
 		using S_::S_;
 
 	public:// MAP
-		XTAL_DEF_(return,inline,static) XTAL_LET   ordinate(auto &&o) XTAL_0EX -> decltype(auto) {return XTAL_REF_(o);}
-		XTAL_DEF_(return,inline,static) XTAL_LET coordinate(auto &&o) XTAL_0EX -> decltype(auto) {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline) XTAL_SET   ordinate(auto &&o) XTAL_0EX -> decltype(auto) {return XTAL_REF_(o);}
+		XTAL_DEF_(return,inline) XTAL_SET coordinate(auto &&o) XTAL_0EX -> decltype(auto) {return XTAL_REF_(o);}
 
 	public:// ACCESS
 		using S_::self;
 		using S_::twin;
 		
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET size()
+		XTAL_DEF_(return,inline)
+		XTAL_SET size()
 		XTAL_0EX
 		{
 			return static_cast<U_size>(N_data);
@@ -264,10 +264,10 @@ struct block<A>
 
 };
 
-template <size_type I> XTAL_DEF_(return,inline,static) XTAL_LET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
-template <size_type I> XTAL_DEF_(return,inline,static) XTAL_LET get(block_q auto const  &o) -> decltype(auto) {return           o .let(I);}
-template <size_type I> XTAL_DEF_(return,inline,static) XTAL_LET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
-template <size_type I> XTAL_DEF_(return,inline,static) XTAL_LET get(block_q auto        &o) -> decltype(auto) {return           o .let(I);}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const  &o) -> decltype(auto) {return           o .let(I);}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto        &o) -> decltype(auto) {return           o .let(I);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

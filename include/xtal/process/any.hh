@@ -52,7 +52,7 @@ struct define
 
 			public:
 				using point_type = Y (T::*) (argument_t<Xs>...);
-				static_assert(not _std::is_const_v<point_type>);
+			//	static_assert(not _std::is_const_v<point_type>);
 				static constexpr point_type point = &T::template method<Is...>;
 
 			};
@@ -63,8 +63,10 @@ struct define
 				using Y = decltype(XTAL_ANY_(T const &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...));
 
 			public:
+				//\
 				using point_type = _std::add_const_t<Y (T::*) (argument_t<Xs>...) const>;
-				static_assert(_std::is_const_v<point_type>);
+				using point_type = Y (T::*) (argument_t<Xs>...) const;
+			//	static_assert(_std::is_const_v<point_type>);
 				static constexpr point_type point = &T::template method<Is...>;
 
 			};
@@ -212,14 +214,14 @@ struct refine
 		template <class ...Xs>
 		XTAL_USE braced_t = typename braced<Xs...>::type;
 
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET braced_f(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET braced_f(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 		{
 			return braced_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET braced_f(XTAL_ARG_(T) &&t, auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET braced_f(XTAL_ARG_(T) &&t, auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 		{
 			return braced_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
@@ -268,8 +270,8 @@ struct defer
 			}
 		})
 		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET _function(auto &&...xs),
+		XTAL_DEF_(return,inline)
+		XTAL_SET _function(auto &&...xs),
 		->	decltype(auto)
 		{
 			XTAL_IF0
@@ -296,14 +298,14 @@ struct defer
 		})
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 			requires XTAL_TRY_TO_(_function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 			requires (not XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...)))
 			          and XTAL_TRY_TO_(        _function<Is...>(XTAL_REF_(xs)...))

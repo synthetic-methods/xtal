@@ -33,7 +33,7 @@ void monomer_zipping()
 	U_data ys[] {0, 0, 0, 0};
 	auto zs = _xtd::ranges::views::zip(xs, ys);
 //	zs[0] = U_group{1, 2};
-	zs[0] = bond::pack_row_f(U_group{1, 2});
+	zs[0] = bond::repack_f(U_group{1, 2});
 
 	TRUE_(xs[0] == 1);
 	TRUE_(ys[0] == 2);

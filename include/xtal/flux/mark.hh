@@ -68,7 +68,7 @@ XTAL_0EX
 	using F =   mark_s<Y>;
 	XTAL_IF0
 	XTAL_0IF (             any_q<T>) {return F(XTAL_REF_(s),                            XTAL_REF_(t) );}
-	XTAL_0IF (bond::heteropack_q<T>) {return F(XTAL_REF_(s), bond::pack_row_f<packed_t>(XTAL_REF_(t)));}
+	XTAL_0IF (bond::heteropack_q<T>) {return F(XTAL_REF_(s), bond::repack_f<packed_t>(XTAL_REF_(t)));}
 	XTAL_0IF_(default)               {return F(XTAL_REF_(s),             conferred_t<Y>(XTAL_REF_(t)));}
 	
 }

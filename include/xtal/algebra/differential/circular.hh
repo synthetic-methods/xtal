@@ -52,16 +52,16 @@ struct circumspect : bond::operate<A>
 	using inordinate_type = typename _op::delta_type;
 	using coordinate_type = typename _op::alpha_type;
 
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET    ordinate(coordinate_type const &co)
+	XTAL_DEF_(return,inline)
+	XTAL_SET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
 		//\
 		return _xtd::bit_cast<ordinate_type>(static_cast<inordinate_type>(co*_op::diplo_f()));
 		return _op::sigma_f(co*_op::diplo_f());
 	};
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET    coordinate(ordinate_type const &o)
+	XTAL_DEF_(return,inline)
+	XTAL_SET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
 		//\
@@ -80,16 +80,16 @@ struct circumspect<A> : bond::operate<A>
 	using inordinate_type = _std::complex<typename _op::delta_type>;
 	using coordinate_type = _std::complex<typename _op::alpha_type>;
 
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET    ordinate(coordinate_type const &co)
+	XTAL_DEF_(return,inline)
+	XTAL_SET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
 		auto const o_re = circumspect<devalued_t<A>>::ordinate(co.real());
 		auto const o_im = circumspect<devalued_t<A>>::ordinate(co.imag());
 		return {o_re, o_im};
 	};
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET    coordinate(ordinate_type const &o)
+	XTAL_DEF_(return,inline)
+	XTAL_SET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
 		auto const co_re = circumspect<devalued_t<A>>::coordinate(o.real());
@@ -137,8 +137,8 @@ struct circular<A>
 		using typename S_::U_data;
 
 	public:// MAP
-		XTAL_DEF_(return,inline,static) XTAL_LET   ordinate(coordinate_type const &co) XTAL_0EX {return _op::  ordinate(co);}
-		XTAL_DEF_(return,inline,static) XTAL_LET coordinate(  ordinate_type const & o) XTAL_0EX {return _op::coordinate( o);}
+		XTAL_DEF_(return,inline) XTAL_SET   ordinate(coordinate_type const &co) XTAL_0EX {return _op::  ordinate(co);}
+		XTAL_DEF_(return,inline) XTAL_SET coordinate(  ordinate_type const & o) XTAL_0EX {return _op::coordinate( o);}
 
 	public:// ACCESS
 		using S_::self;
