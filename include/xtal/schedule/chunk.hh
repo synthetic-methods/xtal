@@ -69,7 +69,7 @@ struct chunk
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(is_q<U_event> auto &&u)
+				XTAL_TNX infuse(XTAL_ARG_(U_event) &&u)
 				XTAL_0EX
 				{
 					if (0 == u.head()) {

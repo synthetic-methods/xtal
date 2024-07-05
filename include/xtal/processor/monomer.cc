@@ -99,7 +99,7 @@ void monomer_provision__advancing()
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = U_mixer::binds_f(lhs, rhs);
+	auto xhs = U_mixer::braced_f(lhs, rhs);
 
 	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
@@ -146,7 +146,7 @@ void monomer_provision__provisioning()
 
 	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = monomer_t<U_add, provide>::binds_f(lhs, rhs);
+	auto xhs = monomer_t<U_add, provide>::braced_f(lhs, rhs);
 
 	auto u_vector = U_store{0, 0, 0};
 	auto u_review = U_review(u_vector);
@@ -189,7 +189,7 @@ void monomer_chaining__rvalue()
 	
 	using mix_op = monomer_t<U_add, resource::stored<>>;
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
-	auto yhs = mul_op::binds_f(mix_op::binds_f(let_f(_01), let_f(_10)));
+	auto yhs = mul_op::braced_f(mix_op::braced_f(let_f(_01), let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -221,8 +221,8 @@ void monomer_chaining__lvalue()
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto  xhs = mix_op::binds_f(lhs, rhs);
-	auto  yhs = mul_op::binds_f(xhs);
+	auto  xhs = mix_op::braced_f(lhs, rhs);
+	auto  yhs = mul_op::braced_f(xhs);
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -253,11 +253,11 @@ void monomer_chaining__shared()
 	using mix_fn = monomer_t<U_add>;
 	using idx_fn = monomer_t<Px_dynamic_count>;
 
-	auto _xx = idx_fn::binds_f();
-	auto xhs = mix_op::binds_f(_xx);
-	auto lhs = mix_fn::binds_f(xhs, let_f(_01));
-	auto rhs = mix_fn::binds_f(xhs, let_f(_10));
-	auto yhs = mix_fn::binds_f(lhs, rhs);
+	auto _xx = idx_fn::braced_f();
+	auto xhs = mix_op::braced_f(_xx);
+	auto lhs = mix_fn::braced_f(xhs, let_f(_01));
+	auto rhs = mix_fn::braced_f(xhs, let_f(_10));
+	auto yhs = mix_fn::braced_f(lhs, rhs);
 
 	//\
 	yhs <<= occur::restep_f(50);

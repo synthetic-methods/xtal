@@ -212,7 +212,7 @@ void thunk_processor()
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
 	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_value>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
-	auto  fx_gate = Fx_gate::binds_f();
+	auto  fx_gate = Fx_gate::braced_f();
 	
 	using U_event = flux::cue_s<occur::packet_t<V_value>>;
 	using V_event = flux::cue_s<>;
