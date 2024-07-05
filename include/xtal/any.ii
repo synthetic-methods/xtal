@@ -52,8 +52,8 @@ static_assert(id_q<const int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex
 Ranged...
 
 template <class T>
-XTAL_DEF_(return,inline,static)
-XTAL_LET maligned_f(size_type &i)
+XTAL_DEF_(return,inline)
+XTAL_SET maligned_f(size_type &i)
 XTAL_0EX
 {
 	XTAL_LET N = aligned_n<T> << 3U;
@@ -99,10 +99,10 @@ XTAL_0EX
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class           ...Us>	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
-template <class U, size_type N >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::           array<U,  N>) XTAL_0EX {size_type n =        N; return n;}
-template <class U,    class  V >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::            pair<U,  V>) XTAL_0EX {size_type n =        2; return n;}
-template <class U              >	XTAL_DEF_(return,inline,static) XTAL_LET count_f(_std::initializer_list<U>  t ) XTAL_0EX {size_type n = t.size(); return n;}
+template <class           ...Us>	XTAL_DEF_(return,inline) XTAL_SET count_f(_std::           tuple<Us...>) XTAL_0EX {return sizeof...(Us);}
+template <class U, size_type N >	XTAL_DEF_(return,inline) XTAL_SET count_f(_std::           array<U,  N>) XTAL_0EX {size_type n =        N; return n;}
+template <class U,    class  V >	XTAL_DEF_(return,inline) XTAL_SET count_f(_std::            pair<U,  V>) XTAL_0EX {size_type n =        2; return n;}
+template <class U              >	XTAL_DEF_(return,inline) XTAL_SET count_f(_std::initializer_list<U>  t ) XTAL_0EX {size_type n = t.size(); return n;}
 XTAL_DEF_(return,inline)
 XTAL_LET count_f(auto const &t)
 XTAL_0EX -> size_type
@@ -118,18 +118,18 @@ XTAL_0EX -> size_type
 {
 	return _std::min<size_type>({(count_f(ts) - size_1)...}) + size_1;
 }
-XTAL_DEF_(return,inline,static) XTAL_LET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take_exactly(count_f(ts...));}
-XTAL_DEF_(return,inline,static) XTAL_LET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline) XTAL_SET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline) XTAL_SET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
 
 
 template <counter_q I0, counter_q IN>
-XTAL_DEF_(return,inline,static)
-XTAL_LET counted_f(I0 i0, IN iN)
+XTAL_DEF_(return,inline)
+XTAL_SET counted_f(I0 i0, IN iN)
 XTAL_0EX {return counted_t<common_t<I0, IN>>(i0, iN);}
 
-template <counter_q  I >	XTAL_DEF_(return,inline,static) XTAL_LET counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
-template <class      T >	XTAL_DEF_(return,inline,static) XTAL_LET counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
-template <class      T >	XTAL_DEF_(return,inline,static) XTAL_LET counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
+template <counter_q  I >	XTAL_DEF_(return,inline) XTAL_SET counted_f(I i0, I iN) XTAL_0EX {return counted_t<I>(i0, iN);}
+template <class      T >	XTAL_DEF_(return,inline) XTAL_SET counted_f(T &&t)      XTAL_0EX {return counted_t<T>(XTAL_REF_(t));}
+template <class      T >	XTAL_DEF_(return,inline) XTAL_SET counter_f(T &&t)      XTAL_0EX {return counter_t<T>(XTAL_REF_(t));}
 
 
 ///\returns the result of zipping `...xs` with `f`. \
@@ -160,8 +160,8 @@ template <class F             > XTAL_DEF_(inline) XTAL_LET operative_f(F &&f    
 To be extended by the host to transparently reduce `y` when vectorized. \
 
 template <class T>
-XTAL_DEF_(inline,static)
-XTAL_LET objective_f(T &&t)
+XTAL_DEF_(inline)
+XTAL_SET objective_f(T &&t)
 XTAL_0EX -> _std::remove_cvref_t<T>
 {
 	return XTAL_REF_(t);

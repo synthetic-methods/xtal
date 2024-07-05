@@ -24,8 +24,8 @@ template <class      W >	XTAL_TYP         member            {using type = debase
 template <size_type  N >	XTAL_TYP         member<unit_type[N]> {using type =     unsigned;};
 template <size_type  N >	XTAL_TYP         member<null_type[N]> {using type =     unsigned;};
 template <class      W >	XTAL_USE         member_t = typename member<W>::type;
-template <debased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&   w)       XTAL_0EX -> decltype(auto) {return & XTAL_REF_(w)    ;}
-template <class      W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&...w)       XTAL_0EX -> decltype(auto) {return W(XTAL_REF_(w)...);}
+template <debased_q  W >	XTAL_DEF_(return,inline) XTAL_SET    member_f(auto &&   w)       XTAL_0EX -> decltype(auto) {return & XTAL_REF_(w)    ;}
+template <class      W >	XTAL_DEF_(return,inline) XTAL_SET    member_f(auto &&...w)       XTAL_0EX -> decltype(auto) {return W(XTAL_REF_(w)...);}
 
 ///\
 Resolves/dereferences the current value. \
@@ -34,14 +34,14 @@ template <class      W >	XTAL_TYP     remember            {using type =      W;}
 template <size_type  N >	XTAL_TYP     remember<unit_type[N]> {using type = size_type;};
 template <size_type  N >	XTAL_TYP     remember<null_type[N]> {using type = size_type;};
 template <class      W >	XTAL_USE     remember_t = typename remember<W>::type;
-template <pointer_q  M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return *XTAL_REF_(m);}
-template <class      M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return  XTAL_REF_(m);}
+template <pointer_q  M >	XTAL_DEF_(return,inline) XTAL_SET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return *XTAL_REF_(m);}
+template <class      M >	XTAL_DEF_(return,inline) XTAL_SET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return  XTAL_REF_(m);}
 
 ///\
 Replaces and returns the previous value. \
 
-template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, W w)         XTAL_0EX -> decltype(auto) {return _std::exchange(m, XTAL_MOV_(w));}
-template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, auto &&...w) XTAL_0EX -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_SET dismember_f(W &m, W w)         XTAL_0EX -> decltype(auto) {return _std::exchange(m, XTAL_MOV_(w));}
+template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_SET dismember_f(W &m, auto &&...w) XTAL_0EX -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,14 +172,14 @@ struct refine_tuple
 			return apply([] XTAL_1FN_(bond::pack_f));
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_CVN_(implicit) bond::pack_row_t<S_>()
+		XTAL_CVN_(implicit) bond::repack_t<S_>()
 		XTAL_0FX
 		{
 			return pack();
 		}
 		
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET unpack_f(bond::pack_q auto const &tuple)
+		XTAL_DEF_(return,inline)
+		XTAL_SET unpack_f(bond::pack_q auto const &tuple)
 		XTAL_0EX
 		{
 			return _std::apply([] XTAL_1FN_(T), tuple);

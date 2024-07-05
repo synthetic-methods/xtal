@@ -34,11 +34,11 @@ TAG_("phasor")
 
 
 	using  _phi = T_alpha[2];
-	using W_phi = bond::pack_row_t<_phi>;
+	using W_phi = bond::repack_t<_phi>;
 	using X_phi =   a_::circular_t<_phi>;
 	
-	using Y_chi = process::link_t<decltype([] XTAL_1FN_(bond::pack_row_f)), d_::phasor<_phi, resource::example<>>>;
-//	using Y_chi = process::link_t<decltype([] XTAL_1FN_(bond::pack_row_f)), d_::phasor<_phi>>;
+	using Y_chi = process::link_t<bond::repack_y<>, d_::phasor<_phi, resource::example<>>>;
+//	using Y_chi = process::link_t<bond::repack_y<>, d_::phasor<_phi>>;
 	using Y_phi = d_::phasor_t<_phi>;
 	using Y_psi = d_::phasor_t<_phi, U_example>;
 	//\

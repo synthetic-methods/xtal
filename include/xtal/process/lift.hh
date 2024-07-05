@@ -33,7 +33,7 @@ struct lifter
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_       &).method(XTAL_REF_(xs)...))
+			requires XTAL_TRY_(XTAL_ANY_(S_      ).method(XTAL_REF_(xs)...))
 		{
 			return invoke_f<F>(S_::method(XTAL_REF_(xs)...));
 		}
@@ -41,7 +41,7 @@ struct lifter
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0FX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_ const &).method(XTAL_REF_(xs)...))
+			requires XTAL_TRY_(XTAL_ANY_(S_ const).method(XTAL_REF_(xs)...))
 		{
 			return invoke_f<F>(S_::method(XTAL_REF_(xs)...));
 		}
@@ -50,7 +50,7 @@ struct lifter
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
+			requires XTAL_TRY_(XTAL_ANY_(S_      ).template method<Is...>(XTAL_REF_(xs)...))
 		{
 			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
@@ -58,14 +58,14 @@ struct lifter
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		XTAL_0FX -> decltype(auto)
-			requires XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
+			requires XTAL_TRY_(XTAL_ANY_(S_ const).template method<Is...>(XTAL_REF_(xs)...))
 		{
 			return invoke_f<F>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs)
 		XTAL_0EX
 		->	decltype(auto)
 			requires XTAL_TRY_TO_(invoke_f<F>(S_::template function<Is...>(XTAL_REF_(xs)...)))
@@ -119,8 +119,8 @@ struct lifter<F>
 		}
 		
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs)
 		XTAL_0EX
 		->	decltype(auto)
 			requires XTAL_TRY_TO_(F_::template function<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...)))

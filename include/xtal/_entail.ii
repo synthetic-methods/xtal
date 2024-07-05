@@ -268,8 +268,8 @@ struct aligned
 {
 	class type {alignas(alignof(T)) ::std::byte data[sizeof(T)];};
 
-	XTAL_DEF_(return,inline,static)
-	XTAL_LET size()
+	XTAL_DEF_(return,inline)
+	XTAL_SET size()
 	XTAL_0EX -> size_type
 	{
 		return sizeof(type);

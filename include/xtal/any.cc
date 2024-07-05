@@ -98,8 +98,8 @@ struct static_onset_mix
 	public:
 
 		template <size_type onset=0>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_DEF_(return,inline)
+		XTAL_SET function(auto &&...xs)
 		XTAL_0EX
 		{
 			return (XTAL_REF_(xs) +...+ onset);

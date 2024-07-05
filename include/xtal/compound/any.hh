@@ -204,8 +204,8 @@ template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W 
 XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::compound::any_q auto &&x0, auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::compound::any_q auto &&x1, auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_row_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_row_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

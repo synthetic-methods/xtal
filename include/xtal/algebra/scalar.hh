@@ -294,8 +294,8 @@ struct scalar<A>
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET reflector()
+		XTAL_DEF_(return,inline)
+		XTAL_SET reflector()
 		XTAL_0EX -> devolved_t<U_data>
 		{
 			XTAL_IF0
