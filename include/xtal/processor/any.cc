@@ -16,6 +16,29 @@ using namespace xtal::_test;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+struct irritator_mix
+{
+	class type : public process::confine_t<type
+//	,	Ox_onset::dispatch<>
+	>
+	{
+	public:
+
+		template <size_type onset=0>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
+		XTAL_0EX
+		{
+			return (XTAL_REF_(xs) +...+ onset);
+		}
+
+	};
+};
+using Px_irritator_mix = typename irritator_mix::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class U_mix>
 void processor_provision__messaging()
 {

@@ -98,12 +98,13 @@ struct define
 						return 1;
 					}
 					else {
+						using namespace _xtd::ranges;
+						
 						auto result_o = R_::method();// Materialize...
 						auto _j = point_f(result_o);
 						auto _i = point_f(review_o);
 						auto  n = count_f(review_o);
 						
-						using namespace _xtd::ranges;
 						XTAL_IF0
 						XTAL_0IF XTAL_TRY_DO_(copy_n(_j, n, _i))
 						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
@@ -191,11 +192,10 @@ struct defer<U>
 
 	//	NOTE: Wrapped by the identity, rather than reiterated...
 		
-		XTAL_DO4_(template <auto ...Is>
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs),
 		->	decltype(auto)
-		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
 		{
 			return S_::template method<Is...>(XTAL_REF_(xs)...);
 		})
@@ -220,9 +220,6 @@ struct defer<U>
 		using S_ = bond::compose_s<S, subkind>;
 		using U_ = typename S_::head_type;
 
-		template <iterable_q X>
-		using value_t = decltype(*XTAL_ANY_(X).begin()) &&;
-
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -240,18 +237,34 @@ struct defer<U>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(iterable_q auto &&...xs), -> decltype(auto)
-		//	requires (not XTAL_TRY_(function<Is...>(XTAL_REF_(xs)...)))
+		XTAL_LET method(auto &&...xs), -> decltype(auto)
 		{
-			return iterative_f(head().template reify<value_t<decltype(xs)>...>(nominal_t<Is>{}...)
-			,	XTAL_REF_(xs)...
-			);
+			using namespace _xtd::ranges;
+
+			XTAL_IF0
+			XTAL_0IF (none_n<Is...>) {
+				return iterative_f(head().template reify<range_reference_t<decltype(xs)>...>(Is...), XTAL_REF_(xs)...);
+			}
+			XTAL_0IF (some_n<Is...>) {
+				auto  x = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
+				using X = decltype(x);
+				using Y = any_view<range_reference_t<X>, get_categories<X>()>;
+				if constexpr XTAL_TRY_(x.size()) {
+					auto const n = x.size();
+					return Y(XTAL_MOV_(x))|account_f(n);
+				}
+				else {
+					return Y(XTAL_MOV_(x));
+				}
+			}
 		})
 
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET function(iterable_q auto &&...xs), -> decltype(auto)
-			requires (XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(value_t<decltype(xs)>)...)))
+		XTAL_LET function(auto &&...xs), -> decltype(auto)
+			requires XTAL_TRY_(U_::template function<Is...>
+				(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...)
+			)
 		{
 			return iterative_f([] XTAL_1FN_(U_::template function<Is...>)
 			,	XTAL_REF_(xs)...
