@@ -106,7 +106,7 @@ struct thunk
 
 					return R_::efflux(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(is_q<X_tip> auto &&o)
+				XTAL_TNX influx(XTAL_ARG_(X_tip) &&o)
 				XTAL_0EX
 				{
 					compact_();

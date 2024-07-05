@@ -37,12 +37,12 @@ struct define
 		using S_::self;
 
 		template <class ...Xs>
-		struct bundle
+		struct brace
 		{
 			using subkind = bond::compose<void
 			,	U_resize::attach<>
 			,	U_render::attach<>
-			,	typename S_::template bundle<Xs...>
+			,	typename S_::template brace<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
@@ -115,6 +115,8 @@ struct define
 
 			};
 		};
+		template <class U>
+		using bracelet = processor::let<U>;
 
 	};
 };

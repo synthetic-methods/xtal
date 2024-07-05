@@ -162,7 +162,7 @@ struct define
 		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
 		and truncating propagation when the aggregated result is `1`. \
 
-		XTAL_TNX defuse(is_q<T> auto &&o)
+		XTAL_TNX defuse(XTAL_ARG_(T) &&o)
 		XTAL_0EX
 		{
 			return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
@@ -265,7 +265,7 @@ struct defer
 		///\note\
 		Assigns the given value `O` if it matches the proxied type `U`. \
 
-		XTAL_TNX defuse(is_q<U> auto &&o)
+		XTAL_TNX defuse(XTAL_ARG_(U) &&o)
 		XTAL_0EX
 		{
 			return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);

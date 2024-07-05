@@ -55,19 +55,19 @@ struct polymer<U, As...>
 		using S_::S_;
 
 		template <class ...Xs> requires resource::spooled_q<S_>
-		struct bundle
+		struct brace
 		{
 			using V_event = occur::stage_t<>;
 			using U_event = flux::key_s<V_event>;
 			
-			using V_voice = typename Y_::template binds_t<Xs...>;
+			using V_voice = typename Y_::template braced_t<Xs...>;
 			using U_voice = flux::key_s<V_voice>;
 			
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
 			using subkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	defer<V_voice>
-			,	typename S_::template bundle<Xs...>
+			,	typename S_::template brace<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>

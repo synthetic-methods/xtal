@@ -48,7 +48,7 @@ struct monomer<U, As...>
 		using F_ = bond::compose<bond::tag<monomer>, As...
 //		,	U_resize::attach<>
 //		,	U_render::attach<>
-		,	typename S_::template bundle<Xs...>
+		,	typename S_::template brace<Xs...>
 		>;
 	
 	public:
@@ -56,7 +56,7 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct bundle
+		struct brace
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
@@ -117,7 +117,7 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
-		struct bundle<Xs...>
+		struct brace<Xs...>
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 			using Y_return = iteratee_t<Y_result>;

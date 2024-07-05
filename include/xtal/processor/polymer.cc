@@ -45,12 +45,12 @@ void polymer_provision_spine__locamotion()
 	using M_gate   = processor::monomer_t<A_gate>;
 	using M_gate   = processor::monomer_t<U_gate>;
 	//\
-	using W_gate   = process::conferred_t<typename M_gate::template binds_t<>>;
-	using W_gate   = typename M_gate::template binds_t<>;
+	using W_gate   = process::conferred_t<typename M_gate::template braced_t<>>;
+	using W_gate   = typename M_gate::template braced_t<>;
 	//\
 	using U_vox = polymer_t<W_gate, A_stored, A_spooled>;
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled>;
-	auto u_vox = U_vox::binds_f();
+	auto u_vox = U_vox::braced_f();
 
 // Resize, and set the default `level: 1` and `stage: final`:
 	u_vox <<= U_resize(N_window);
@@ -112,7 +112,7 @@ void polymer_provision_spool__combined()
 	,	resource::stored<nominal_t<N_store>>
 	,	resource::spooled<nominal_t<N_spool>>
 	>;
-	auto u_vox = U_vox::binds_f();
+	auto u_vox = U_vox::braced_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
@@ -156,7 +156,7 @@ void polymer_provision_spool_composited()
 	,	resource::stored<nominal_t<N_store>>
 	,	resource::spooled<nominal_t<N_spool>>
 	>;
-	auto u_vox = U_vox::binds_f();
+	auto u_vox = U_vox::braced_f();
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);

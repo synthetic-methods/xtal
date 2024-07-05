@@ -130,7 +130,7 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs> requires any_q<Xs...>
-		struct bundle
+		struct brace
 		{
 			using subkind = bond::compose<void
 			,	defer<T_>
@@ -178,6 +178,8 @@ struct define
 
 			};
 		};
+		template <class U>
+		using bracelet = process::let<U>;
 
 	};
 };
@@ -197,9 +199,11 @@ struct refine
 
 	public:// BIND*
 		template <class ...Xs>
-		struct binds
+		struct braced
 		{
-			using subkind = confined<typename S_::template bundle<process::let_t<Xs>...>>;
+			//\
+			using subkind = confined<typename S_::template brace<typename S_::template bracelet<Xs>::type...>>;
+			using subkind = confined<typename S_::template brace<process::let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, subkind>;
@@ -207,26 +211,26 @@ struct refine
 
 		};
 		template <class ...Xs>
-		XTAL_USE binds_t = typename binds<Xs...>::type;
+		XTAL_USE braced_t = typename braced<Xs...>::type;
 
 		XTAL_DEF_(return,inline,static)
-		XTAL_LET binds_f(auto &&...xs)
+		XTAL_LET braced_f(auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 		{
-			return binds_t<decltype(xs)...>(process::let_f(XTAL_REF_(xs))...);
+			return braced_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
 		XTAL_DEF_(return,inline,static)
-		XTAL_LET binds_f(is_q<T> auto &&t, auto &&...xs)
+		XTAL_LET braced_f(XTAL_ARG_(T) &&t, auto &&...xs)
 		XTAL_0EX -> decltype(auto)
 		{
-			return binds_t<decltype(xs)...>(XTAL_REF_(t), process::let_f(XTAL_REF_(xs))...);
+			return braced_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
 		XTAL_LET bind(Xs &&...xs), -> decltype(auto)
 		{
-			return binds_f(S_::self(), XTAL_REF_(xs)...);
+			return braced_f(S_::self(), XTAL_REF_(xs)...);
 		})
 
 	};
