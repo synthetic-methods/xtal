@@ -71,16 +71,16 @@ struct define
 		};
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(nominal_q auto const ...Is)
+		XTAL_LET deify(integral_q auto &&...Is)
 		XTAL_0FX -> decltype(auto)
 		{
 			return deify(codex<Xs...>::template index<Is...>::point);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(auto const &point)
+		XTAL_LET deify(auto &&point)
 		XTAL_0FX -> decltype(auto)
 		{
-			return point;
+			return XTAL_REF_(point);
 		}
 
 	public:// OPERATE
@@ -91,9 +91,9 @@ struct define
 
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto const ...Is), -> decltype(auto)
+		XTAL_LET reify(auto const ...Is), -> decltype(auto)
 		{
-			return [=, this] XTAL_1FN_(self().operator());
+			return [=, this] XTAL_1FN_(self().template operator()<Is...>);
 		})
 
 		///\
@@ -164,17 +164,16 @@ struct define
 				///\
 				Evaluates the lifted `method` using the bound slots. \
 
-				template <auto ...Is>
+				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_LET method(auto &&...xs)
-				XTAL_0EX -> decltype(auto)
+				XTAL_LET method(auto &&...xs), -> decltype(auto)
 				{
 					XTAL_LET M = sizeof...(Xs);
 					XTAL_LET N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
 					XTAL_0IF (0 == N) {return         slots().apply([this] XTAL_1FN_(method));}
-				}
+				})
 
 			};
 		};

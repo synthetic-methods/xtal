@@ -118,8 +118,8 @@ XTAL_0EX -> size_type
 {
 	return _std::min<size_type>({(count_f(ts) - size_1)...}) + size_1;
 }
-XTAL_DEF_(return,inline,static) XTAL_LET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take(count_f(ts...));}
-XTAL_DEF_(return,inline,static) XTAL_LET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop(count_f(ts...));}
+XTAL_DEF_(return,inline,static) XTAL_LET  account_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,static) XTAL_LET discount_f(auto const &...ts) XTAL_0EX {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
 
 
 template <counter_q I0, counter_q IN>
@@ -192,49 +192,51 @@ XTAL_0EX -> decltype(auto)
 
 template <class X, class Y>
 XTAL_DEF_(return,inline)
-XTAL_LET identical_f(X const &x, Y const &y)
+XTAL_LET identical_f(X &&x, Y &&y)
 XTAL_0EX -> bool
 {
 	XTAL_IF0
+	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
+	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
 	XTAL_0IF XTAL_TRY_TO_(_std::addressof(x) == _std::addressof(y))
 	XTAL_0IF_(default) return false;
 }
 
 template <class X, class Y>
 XTAL_DEF_(return,inline)
-XTAL_LET equal_f(X const &x, Y const &y)
+XTAL_LET equal_f(X &&x, Y &&y)
 XTAL_0EX -> bool
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(x == y)
-	XTAL_0IF_(default) {return identical_f(x, y);}
+	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
-template <class X, class Y> requires iterable_q<X, Y> and epimorphic_q<X, Y>
+template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
 XTAL_DEF_(return,inline)
-XTAL_LET equal_f(X const &x, Y const &y)
+XTAL_LET equal_f(X &&x, Y &&y)
 XTAL_0EX -> bool
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(_xtd::ranges::equal(x, y))
-	XTAL_0IF_(default) {return identical_f(x, y);}
+	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
 template <class X, class Y>
 XTAL_DEF_(return,inline)
-XTAL_LET equivalent_f(X const &x, Y const &y)
+XTAL_LET equivalent_f(X &&x, Y &&y)
 XTAL_0EX -> bool
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
 template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
 XTAL_DEF_(return,inline)
-XTAL_LET equivalent_f(X const &x, Y const &y)
+XTAL_LET equivalent_f(X &&x, Y &&y)
 XTAL_0EX -> bool
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin() and x.end() == y.end())
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin())
-	XTAL_0IF_(default) {return identical_f(x, y);}
+	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
 

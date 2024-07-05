@@ -83,6 +83,34 @@ TAG_("monomer", "lifting")
 /***/
 
 ///////////////////////////////////////////////////////////////////////////////
+/**/
+TAG_("monomer", "irritating")
+{
+	using T_sigma = typename bond::operating::sigma_type;
+	using T_alpha = typename bond::operating::alpha_type;
+
+	using U_render = occur::render_t<>;
+	using U_mixer = processor::monomer_t<Px_irritator_mix, Ox_onset::dispatch<>>;
+
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
+	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
+	auto _11 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*11);});
+
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
+	auto xhs = U_mixer::braced_f(lhs, rhs);
+
+	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
+	TRUE_(3 == seq.size());
+
+	xhs >>=   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
+	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
+	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
+
+}
+/***/
+
+///////////////////////////////////////////////////////////////////////////////
 
 template <class Px_mix>
 void monomer_provision__advancing()
@@ -108,7 +136,6 @@ void monomer_provision__advancing()
 	xhs >>=   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
-	/**/
 
 //	xhs >>= ++seq; // NOTE: Can't skip ahead (`render` assertion fails)!
 
@@ -120,7 +147,7 @@ void monomer_provision__advancing()
 
 //	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11
-	|	_xtd::ranges::views::take(xhs.size())
+	|	_xtd::ranges::views::take_exactly(xhs.size())
 	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));
@@ -161,7 +188,7 @@ void monomer_provision__provisioning()
 	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
-TAG_("monomer", "occur")
+TAG_("monomer", "provision")
 {
 	TRY_("advancing (dynamic)") {monomer_provision__advancing<Px_dynamic_onset_mix>();}
 	TRY_("advancing (static)")  {monomer_provision__advancing< Px_static_onset_mix>();}

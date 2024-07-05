@@ -86,17 +86,16 @@ struct define
 
 			protected:// DEIFY
 
-				template <class A>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(_std::array<A, A_size> const &point)
+				XTAL_LET deify(array_q<A_size> auto &&point)
 				XTAL_0FX -> decltype(auto)
 				{
 					size_type const i = head();
-					return R_::deify(point[A_mask&i]);
+					return R_::deify(XTAL_REF_(point)[A_mask&i]);
 				}
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(nominal_q auto const ...Is)
+				XTAL_LET deify(integral_q auto &&...Is)
 				XTAL_0FX -> decltype(auto)
 				{
 					return deify(codex<Xs...>::template index<Is...>::point);
@@ -116,8 +115,6 @@ struct define
 						XTAL_SET expand_f(bond::seek_t<Js...>)
 						XTAL_0EX {
 							return _std::array{extend_v<Js>...};
-						//	return _std::array{_std::variant<extend_t<Js>...>{extend_v<Js>}...};
-						//	TODO: Find a way to store heterogeneous functions (e.g. `return zip_transform_view`)?
 						}
 					
 					public:
