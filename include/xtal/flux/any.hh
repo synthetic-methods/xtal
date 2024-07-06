@@ -186,7 +186,7 @@ struct define
 			{
 				using R_ = bond::compose_s<R, subkind>;
 			
-			public:
+			public:// CONSTRUCT
 			//	using R_::R_;
 				using R_::self;
 

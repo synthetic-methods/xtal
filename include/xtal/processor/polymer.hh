@@ -10,6 +10,12 @@ XTAL_ENV_(push)
 namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Polyphonic voice allocator. Functionally similar to `monomer`, \
+but expands/contracts the voice spool according to `occur::stage` requests/responses. \
+
+///\note\
+The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
 template <typename ..._s> XTAL_TYP polymer;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
@@ -24,12 +30,6 @@ XTAL_0EX -> auto
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice spool according to `occur::stage` requests/responses. \
-
-///\note\
-The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
 template <bond::compose_q A, typename ...As>
 struct polymer<A, As...>
@@ -40,29 +40,27 @@ template <class U, typename ...As>
 struct polymer<U, As...>
 {
 	//\
-	using subkind = monomer<monomer_t<U>, As...>;
+	using subkind = confer<monomer_t<U>, As...>;
 	using subkind = monomer<U, As...>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
 		using S_ = bond::compose_s<S, subkind>;
-		//\
-		using Y_ = confined_t<subkind>;
-		using Y_ = monomer_t<U>;
-		
+		using S_voice = typename S_::template voice<>;
+		using R_voice = monomer_t<U, resource::voiced<S_voice>>;
+
 	public:
 		using S_::S_;
 
 		template <class ...Xs> requires resource::spooled_q<S_>
 		struct brace
 		{
+			using V_voice = typename R_voice::template braced_t<Xs...>;
 			using V_event = occur::stage_t<>;
-			using U_event = flux::key_s<V_event>;
 			
-			using V_voice = typename Y_::template braced_t<Xs...>;
 			using U_voice = flux::key_s<V_voice>;
-			
+			using U_event = flux::key_s<V_event>;
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
 			using subkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...

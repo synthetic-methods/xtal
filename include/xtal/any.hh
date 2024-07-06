@@ -108,16 +108,16 @@ namespace _xtd::ranges::views
 //\
 Standard...
 
-XTAL_USE     null_type = _entail::     null_type;
-XTAL_USE     unit_type = _entail::     unit_type;
-XTAL_USE     sign_type = _entail::     sign_type;
-XTAL_USE     real_type = _entail::     real_type;
-XTAL_USE     size_type = _entail::     size_type;
-XTAL_USE integral_type = _entail:: integral_type;
+XTAL_USE      null_type = _entail::      null_type;
+XTAL_USE      unit_type = _entail::      unit_type;
+XTAL_USE      sign_type = _entail::      sign_type;
+XTAL_USE      real_type = _entail::      real_type;
+XTAL_USE      size_type = _entail::      size_type;
+XTAL_USE  integral_type = _entail::  integral_type;
 
-static constexpr size_type size_0 = _entail:: size_0;
-static constexpr size_type size_1 = _entail:: size_1;
-static constexpr size_type size_2 = _entail:: size_2;
+static constexpr size_type size_0{0};
+static constexpr size_type size_1{1};
+static constexpr size_type size_2{2};
 
 
 template <auto    N, auto  ...Ms>	XTAL_REQ             un_n = _entail::un_n<N, Ms... >;

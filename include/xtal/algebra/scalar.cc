@@ -11,6 +11,7 @@ namespace xtal::algebra::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TAG_("scalar")
@@ -114,6 +115,33 @@ TAG_("scalar")
 				(bond::seek_s<bond::pack_size_n<U3>>{});
 		}
 		/***/
+
+	}
+	TRY_("referencing")
+	{
+		XTAL_LET N = (size_type) 4;
+		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
+
+		using simplex_val = scalar_t<float   [N]>;
+		using simplex_ref = scalar_t<float(&)[N]>;
+		
+		using complex_val = _std::complex<simplex_val>;
+		using complex_ref = _std::complex<simplex_ref>;
+		
+		simplex_ref bar_re{_std::span(foo[0], 4)};
+		simplex_ref bar_im{_std::span(foo[1], 4)};
+		complex_ref bar{bar_re, bar_im};
+	//	complex_ref bar{_std::span(foo[0], 4), _std::span(foo[1], 4)};// NOPE!
+
+		simplex_val &baz_re = reinterpret_cast<simplex_val &>(foo[0]);
+		simplex_val &baz_im = reinterpret_cast<simplex_val &>(foo[1]);
+		complex_val &baz    = reinterpret_cast<complex_val &>(foo   );
+
+	//	auto bar_bar = bar*bar;
+	//	auto baz_baz = baz*baz;
+	//	auto baz_baz = _op::square_f(baz);
+
+	//	echo(baz.real());
 
 	}
 }
