@@ -45,7 +45,7 @@ struct define
 			template <based_q X> struct argument<X> {using type = X const  &;};
 			template <class   X> using  argument_t = typename argument<X>::type;
 
-			template <auto ...Is>
+			template <size_type ...Is>
 			class index
 			{
 				using Y = decltype(XTAL_ANY_(T &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...));
@@ -56,7 +56,7 @@ struct define
 				static constexpr point_type point = &T::template method<Is...>;
 
 			};
-			template <auto ...Is>
+			template <size_type ...Is>
 				requires XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...))
 			class index<Is...>
 			{
@@ -71,18 +71,18 @@ struct define
 
 			};
 		};
+		XTAL_DEF_(return,inline)
+		XTAL_LET deify(auto const &point)
+		XTAL_0FX -> decltype(auto)
+		{
+			return point;
+		}
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(integral_q auto &&...Is)
+		XTAL_LET deify(nominal_q auto ...Is)
 		XTAL_0FX -> decltype(auto)
 		{
-			return deify(codex<Xs...>::template index<Is...>::point);
-		}
-		XTAL_DEF_(return,inline)
-		XTAL_LET deify(auto &&point)
-		XTAL_0FX -> decltype(auto)
-		{
-			return XTAL_REF_(point);
+			return deify(codex<Xs...>::template index<XTAL_VAL_(Is)...>::point);
 		}
 
 	public:// OPERATE
@@ -93,16 +93,16 @@ struct define
 
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET reify(auto const ...Is), -> decltype(auto)
+		XTAL_LET reify(nominal_q auto ...Is), -> decltype(auto)
 		{
-			return [=, this] XTAL_1FN_(self().template operator()<Is...>);
+			return [=, this] XTAL_1FN_(self().template operator()<XTAL_VAL_(Is)...>);
 		})
 
 		///\
 		Alias of `method(...)`, \
 		with dynamic template-parameter aliasing if defined (\see `occur::any`). \
 		
-		XTAL_DO2_(template <auto ...Is>
+		XTAL_DO2_(template <unsigned int ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET operator() (auto &&...xs),
 		->	decltype(auto)

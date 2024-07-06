@@ -5,3 +5,4 @@
 #include "./stashed.cc"
 #include "./stated.cc"
 #include "./stored.cc"
+#include "./voiced.cc"

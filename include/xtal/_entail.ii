@@ -7,16 +7,12 @@ namespace _entail
 //\
 Standard...
 
-using null_type = XTAL_STD_(null_type);
-using unit_type = XTAL_STD_(unit_type);
-using sign_type = XTAL_STD_(sign_type);
-using real_type = XTAL_STD_(real_type);
-using size_type = XTAL_STD_(size_type);
-using integral_type = XTAL_STD_(integral_type);
-
-static constexpr size_type size_0{0};
-static constexpr size_type size_1{1};
-static constexpr size_type size_2{2};
+using      null_type = XTAL_STD_(null_type);
+using      unit_type = XTAL_STD_(unit_type);
+using      sign_type = XTAL_STD_(sign_type);
+using      real_type = XTAL_STD_(real_type);
+using      size_type = XTAL_STD_(size_type);
+using  integral_type = XTAL_STD_(integral_type);
 
 template <auto N_0=0>
 XTAL_LET    sign_f(auto &&i)

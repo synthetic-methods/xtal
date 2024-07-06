@@ -36,7 +36,7 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
 
-	using subkind = confer<U, As..., resource::stated<>>;
+	using subkind = confer<U, As..., resource::stated<>, resource::voiced<>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
@@ -61,8 +61,10 @@ struct monomer<U, As...>
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
-			using subkind = bond::compose<compound::confer<Y_result>, F_<Xs...>>;
-
+			using subkind = bond::compose<void
+			,	compound::confer<Y_result>
+			,	F_<Xs...>
+			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, subkind>
 			{

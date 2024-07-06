@@ -5,3 +5,4 @@
 #include "./stashed.hh"
 #include "./stated.hh"
 #include "./stored.hh"
+#include "./voiced.hh"

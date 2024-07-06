@@ -3,7 +3,7 @@
 
 #include "../occur/render.hh"
 #include "../occur/resize.hh"
-
+#include "../resource/voiced.hh"
 
 
 XTAL_ENV_(push)
@@ -232,16 +232,11 @@ struct defer<U>
 		Parameter resolution is only performed at the beginning of each block. \
 
 		///\note\
-		Only `method` participates in parameter resolution, \
-		since `function` is stateless. \
+		Only `method` participates in parameter resolution, since `function` is stateless. \
 
 		///\note\
-		The `template-method` is type-erased with `ranges::any_view` so it can be `vtable`d, \
-		but it only works if `this` is mutable.., \
-
-		///\fixme\
-		Parameters don't seem to resolve for `polymer`. \
-		(Peformance-wise it's a wash anyway?) \
+		The `template-method` is type-erased with `ranges::any_view` (so it can be `vtable`d), \
+		but it only works if `this` is mutable... \
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
@@ -254,8 +249,8 @@ struct defer<U>
 			using Y_ = decltype(y_);
 			using Z_ = any_view<range_reference_t<Y_>, get_categories<Y_>()>;
 			if constexpr XTAL_TRY_(y_.size()) {
-				auto const n = y_.size();
-				return Z_(XTAL_MOV_(y_))|account_f(n);
+				auto const z_affix = account_f(y_);//NOTE: `any_view` doesn't propagate `size()`...
+				return Z_(XTAL_MOV_(y_))|z_affix;
 			}
 			else {
 				return Z_(XTAL_MOV_(y_));

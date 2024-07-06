@@ -51,8 +51,6 @@ struct define
 		:	bond::compose<flux::mask<N_mask>, typename S_::template afflux<>>
 		{
 		};
-		template <int N_mask=-1>
-		using  attach_t = confined_t<attach<N_mask>>;
 
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
@@ -67,8 +65,8 @@ struct define
 			{
 				using R_ = bond::compose_s<R, subkind>;
 
-				XTAL_SET A_size = T::size() - 0; static_assert(0 <= A_size);
-				XTAL_SET A_mask = T::size() - 1; static_assert(1 == bond::operating::bit_count_f(A_size));
+				XTAL_SET A_size = T::size() - size_0; static_assert(size_0 <= A_size);
+				XTAL_SET A_mask = T::size() - size_1; static_assert(size_1 == bond::operating::bit_count_f(A_size));
 
 			public:// CONSTRUCT
 				using R_::R_;
@@ -77,28 +75,29 @@ struct define
 				using R_::self;
 				using R_::head;
 
-				XTAL_DO2_(template <auto ...Is>
+				XTAL_DO2_(template <size_type ...Is>
 				XTAL_DEF_(return,inline)
 				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
 				{
-					return (self().*deify<decltype(xs)...>(Is...)) (XTAL_REF_(xs)...);
+					return (self().*deify<decltype(xs)...>(nominal_t<Is>{}...)) (XTAL_REF_(xs)...);
 				})
 
 			protected:// DEIFY
 
+				template <class A>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(array_q<A_size> auto &&point)
+				XTAL_LET deify(_std::array<A, A_size> const &point)
 				XTAL_0FX -> decltype(auto)
 				{
-					size_type const i = head();
-					return R_::deify(XTAL_REF_(point)[A_mask&i]);
+					auto const i = static_cast<size_type>(head());
+					return R_::deify(point[A_mask&i]);
 				}
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(integral_q auto &&...Is)
+				XTAL_LET deify(nominal_q auto ...Is)
 				XTAL_0FX -> decltype(auto)
 				{
-					return deify(codex<Xs...>::template index<Is...>::point);
+					return deify(codex<Xs...>::template index<XTAL_VAL_(Is)...>::point);
 				}
 				
 				template <class ...Xs>
@@ -126,8 +125,6 @@ struct define
 
 			};
 		};
-		template <int N_mask=-1>
-		using  dispatch_t = confined_t<dispatch<N_mask>>;
 
 		///\
 		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
@@ -158,8 +155,6 @@ struct define
 
 			};
 		};
-		template <int N_mask=-1>
-		using  expect_t = confined_t<expect<N_mask>>;
 
 		///\
 		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
@@ -190,8 +185,6 @@ struct define
 
 			};
 		};
-		template <int N_mask=-1>
-		using  inspect_t = confined_t<inspect<N_mask>>;
 
 		///\
 		Uses the current `T` as the return value of `method`. \
@@ -220,8 +213,6 @@ struct define
 
 			};
 		};
-		template <int N_mask=-1>
-		using  poll_t = confined_t<poll<N_mask>>;
 
 	};
 };
