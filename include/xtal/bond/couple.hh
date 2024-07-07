@@ -27,11 +27,12 @@ XTAL_0EX
 	XTAL_0IF (complete_q<V>) {
 		XTAL_LET f = invoke_f<V>;
 		XTAL_USE F = invoke_t<V>;
+		XTAL_USE T = couple_t<_std::invoke_result_t<F, Xs>...>;
 		if constexpr ((...and idempotent_p<Xs, F>)) {
-			return couple_t<_std::invoke_result_t<F, Xs>...>{ (XTAL_REF_(xs))...};
+			return T{ (XTAL_REF_(xs))...};
 		}
 		else {
-			return couple_t<_std::invoke_result_t<F, Xs>...>{f(XTAL_REF_(xs))...};
+			return T{f(XTAL_REF_(xs))...};
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {
@@ -171,6 +172,21 @@ struct couple
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+/**/
+namespace xtal::_entail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <xtal::bond::couple_q T>
+struct devalued<T>
+{
+	XTAL_SET size() XTAL_0EX -> size_type {return _std::tuple_size_v<T>;};
+	XTAL_USE value_type = _std::tuple_element_t<0, T>;
+
+};
+
+
+}/////////////////////////////////////////////////////////////////////////////
+/***/
 /**/
 namespace std
 {///////////////////////////////////////////////////////////////////////////////

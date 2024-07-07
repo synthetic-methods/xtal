@@ -74,21 +74,21 @@ struct lattice<A>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_DEF_(return,inline) XTAL_LET operator ==  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) == get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator <=  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator >=  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator <   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) <  get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {auto &s = self(); return (...and (get<I>(s) >  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_LET operator ==  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) == get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_LET operator <=  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_LET operator >=  (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_LET operator <   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) XTAL_0FX -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
-		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) <<= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I) >>= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  ^= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  |= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  &= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  %= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {let(I)  *= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {let(I)  *= n;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) <<= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) >>= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  ^= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  |= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  &= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  %= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) XTAL_0EX -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
 
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t * s;}
 		XTAL_DEF_(return,inline,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) XTAL_0EX {return t + s;}

@@ -19,20 +19,6 @@
 #include "./etc.hh"
 
 XTAL_ENV_(push)
-namespace std
-{///////////////////////////////////////////////////////////////////////////////
-
-#if XTAL_STD < 26
-template <size_t N, class U> constexpr auto get(complex<U>        &t) noexcept -> U       & {return           reinterpret_cast<U(&)[2U]>(t)[N&1U] ;};
-template <size_t N, class U> constexpr auto get(complex<U> const  &t) noexcept -> U const & {return           reinterpret_cast<U(&)[2U]>(t)[N&1U] ;};
-template <size_t N, class U> constexpr auto get(complex<U>       &&t) noexcept -> U      && {return XTAL_MOV_(reinterpret_cast<U(&)[2U]>(t)[N&1U]);};
-template <size_t N, class U> constexpr auto get(complex<U> const &&t) noexcept -> U const&& {return XTAL_MOV_(reinterpret_cast<U(&)[2U]>(t)[N&1U]);};
-template <size_t N, class U> struct tuple_element<N, complex<U>> {using type = U;};
-template <          class U> struct tuple_size<complex<U>> : integral_constant<size_t, 2> {};
-#endif
-
-
-}/////////////////////////////////////////////////////////////////////////////
 namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
