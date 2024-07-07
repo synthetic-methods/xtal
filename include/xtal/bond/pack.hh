@@ -39,10 +39,10 @@ template <class         T >	XTAL_REQ     _extent_q   =	complete_q<_std::    exte
 template <class         T >	XTAL_REQ _tuple_size_q   =	complete_q<_std::tuple_size<based_t<T>>>;
 template <class         T >	XTAL_TYP   pack_size;
 template <class         U >	XTAL_TYP   pack_size<_std::complex<U>>  :	nominal_t<size_2> {};
-template <    _extent_q T >	XTAL_TYP   pack_size<T>                 :	  _std::    extent<based_t<T>> {};
-template <_tuple_size_q T >	XTAL_TYP   pack_size<T>                 :	  _std::tuple_size<based_t<T>> {};
-template <class      ...Ts>	XTAL_LET   pack_size_n                  =	(0 +...+ pack_size<based_t<Ts>>::value);
-template <class      ...Ts>	XTAL_REQ   pack_size_q                  =	complete_q<pack_size<based_t<Ts>>...>;
+template <    _extent_q T >	XTAL_TYP   pack_size<T>                 :	      _std::    extent<based_t<T>> {};
+template <_tuple_size_q T >	XTAL_TYP   pack_size<T>                 :	      _std::tuple_size<based_t<T>> {};
+template <class      ...Ts>	XTAL_LET   pack_size_n                  =	    (0 +...+ pack_size<based_t<Ts>>::value);
+template <class      ...Ts>	XTAL_REQ   pack_size_q                  =	  complete_q<pack_size<based_t<Ts>>...>;
 template <class      ...Ts>	XTAL_USE   pack_size_t                  =	 nominal_t<pack_size_n<based_t<Ts>...>>;
 
 static_assert(pack_size_n<_std::tuple<            >> == 0);
@@ -59,6 +59,10 @@ template <class T, size_type N> XTAL_REQ subpack_sized_q = N <  pack_size_n<T>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N,         class T> XTAL_TYP pack_item;
+template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const &&> {using type = U const   ;};//&&
+template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const  &> {using type = U const  &;};
+template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U>       &&> {using type = U         ;};//&&
+template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U>        &> {using type = U        &;};
 template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T        > {using type = _std::tuple_element_t<N, based_t<T>>        ;};
 template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::tuple_element_t<N, based_t<T>>       &;};
 template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::tuple_element_t<N, based_t<T>> const &;};
@@ -199,6 +203,7 @@ template <class U> XTAL_USE repack_rowwise_t =    XTAL_ALL_(repack_rowwise_f<U>(
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts> concept       pack_q = pack_size_q<Ts...> and (...and pack_list_q<Ts>);
+template <class ...Ts> concept     dipack_q = pack_q<Ts...> and (...and (2 == pack_size_n<Ts>));
 template <class ...Ts> concept   idiopack_q = (...and is_q<Ts, repack_t<Ts>>);
 template <class ...Ts> concept   homopack_q = pack_q<Ts...> and     iterable_q<Ts...> and idiopack_q<Ts...>;
 template <class ...Ts> concept heteropack_q = pack_q<Ts...> and not iterable_q<Ts...> and idiopack_q<Ts...>;

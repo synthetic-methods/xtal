@@ -27,10 +27,10 @@ struct superblock;
 template <class U, size_type N>
 struct superblock<U(&)[N]>
 {
-	using supertype = _std::span<U, N>;
+	using archetype = _std::span<U, N>;
 	
 	template <class T>
-	using holotype = bond::compose_s<supertype, bond::define<T>>;
+	using holotype = bond::compose_s<archetype, bond::define<T>>;
 
 	template <class T>
 	class homotype: public holotype<T>
@@ -55,10 +55,10 @@ struct superblock<U(&)[N]>
 template <class U, size_type N>
 struct superblock<U[N]>
 {
-	using supertype = _std::array<U, N>;
+	using archetype = _std::array<U, N>;
 	
 	template <class T>
-	using holotype = bond::compose_s<supertype, bond::define<T>>;
+	using holotype = bond::compose_s<archetype, bond::define<T>>;
 
 	template <class T>
 	class homotype: public holotype<T>
@@ -181,23 +181,36 @@ struct block<A>
 			return static_cast<U_size>(N_data);
 		}
 
+		template <size_type I>
+		XTAL_DEF_(return,inline)
+		XTAL_LET operator () ()
+		XTAL_0FX -> decltype(auto)
+		{
+			return self().coordinate(let<I>());
+		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET operator () (I_ i)
 		XTAL_0FX -> decltype(auto)
 		{
-			return self().coordinate(self().let(i));
+			return self().coordinate(let(i));
 		}
-		XTAL_DO4_(
-		XTAL_DEF_(return,inline)
-		XTAL_LET let(I_ i), -> decltype(auto)
-		{
-			return self().operator[](i);
-		})
+		
 		XTAL_DO4_(template <I_ I>
 		XTAL_DEF_(return,inline)
 		XTAL_LET let(), -> decltype(auto)
 		{
-			return get<I>(self());
+			using archetype = typename _detail::superblock<A>::archetype;
+			XTAL_IF0
+			XTAL_0IF XTAL_TRY_TO_(get<I>(S_::template self<archetype>()))
+			XTAL_0IF XTAL_TRY_TO_(let(I))
+		})
+		XTAL_DO4_(template <I_ I=0>
+		XTAL_DEF_(return,inline)
+		XTAL_LET let(I_ i), -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF (I == 0) {return self().operator[](I + i);}
+			XTAL_0IF (I != 0) {return self().operator[](    i);}
 		})
 
 	public:// OPERATE
@@ -264,10 +277,10 @@ struct block<A>
 
 };
 
-template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
-template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const  &o) -> decltype(auto) {return           o .let(I);}
-template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o).let(I);}
-template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto        &o) -> decltype(auto) {return           o .let(I);}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o).template let<I>();}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto const  &o) -> decltype(auto) {return           o .template let<I>();}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o).template let<I>();}
+template <size_type I> XTAL_DEF_(return,inline) XTAL_SET get(block_q auto        &o) -> decltype(auto) {return           o .template let<I>();}
 
 
 ///////////////////////////////////////////////////////////////////////////////

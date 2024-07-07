@@ -72,7 +72,9 @@ struct series<A>
 			generate(XTAL_REF_(oo)...);
 		}
 
+		//\
 		template <size_type N_count=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
+		template <size_type N_count=N_data> requires complex_field_q<U_v1> and bond::dipack_q<U_data>
 		XTAL_DEF_(inline)
 		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
 		XTAL_0EX -> T &
@@ -89,7 +91,7 @@ struct series<A>
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				auto const &[o, e] = get<I>(s);
-				let(I) = {o*e.real(), _std::conj(o)*e.imag()};
+				get<I>(self()) = {o*e.real(), _std::conj(o)*e.imag()};
 			});
 			return self();
 		}
@@ -146,6 +148,10 @@ struct series<A>
 		XTAL_LET generate()
 		XTAL_0EX -> T &
 		{
+			using _std::span;
+			using _std::prev;
+			using _std::next;
+
 		//	Initialize the forwards and backwards iterators:
 			auto const i = S_::begin();
 			auto const j = S_::rend() - 1;
@@ -158,9 +164,9 @@ struct series<A>
 			typename S_::difference_type constexpr M = N_data >> 2U;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
-			if constexpr (-2 <= N_shift) _detail::copy_to(_std::prev(j, 2*M), _std::span(i, _std::next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
-			if constexpr (-1 <= N_shift) _detail::copy_to(_std::next(i, 2*M), _std::span(i, _std::next(i, 2*M)), [] (U_data const &v) XTAL_0FN_(U_data { v.imag(), -v.real()}));
-			if constexpr (-0 <= N_shift) _detail::copy_to(_std::next(i, 4*M), _std::span(i, _std::next(i, 4*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.real(), -v.imag()}));
+			if constexpr (-2 <= N_shift) _detail::copy_to(prev(j, 2*M), span(i, next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
+			if constexpr (-1 <= N_shift) _detail::copy_to(next(i, 2*M), span(i, next(i, 2*M)), [] (U_data const &v) XTAL_0FN_(U_data { v.imag(), -v.real()}));
+			if constexpr (-0 <= N_shift) _detail::copy_to(next(i, 4*M), span(i, next(i, 4*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.real(), -v.imag()}));
 			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `bond::seek`.
 			
 			return self();
