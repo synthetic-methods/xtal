@@ -229,7 +229,7 @@ struct refine
 		
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET bind(Xs &&...xs), -> decltype(auto)
+		XTAL_LET bracket(Xs &&...xs), -> decltype(auto)
 		{
 			return braced_f(S_::self(), XTAL_REF_(xs)...);
 		})
