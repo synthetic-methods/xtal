@@ -35,12 +35,14 @@ TAG_("phasor")
 
 	using  _phi = T_alpha[2];
 	using W_phi = bond::repack_t<_phi>;
-	using X_phi =   a_::circular_t<_phi>;
+	using X_phi = a_::circular_t<_phi>;
 	
 	using Y_chi = process::link_t<bond::repack_y<>, d_::phasor<_phi, resource::example<>>>;
 //	using Y_chi = process::link_t<bond::repack_y<>, d_::phasor<_phi>>;
 	using Y_phi = d_::phasor_t<_phi>;
+	//\
 	using Y_psi = d_::phasor_t<_phi, U_example>;
+	using Y_psi = process::lift_t<bond::repack_t<_phi>, d_::phasor<_phi>>;
 	//\
 	using Y_eig = process::link_t<T_eigenrow, d_::phasor<_phi>>;
 	using Y_eig = process::lift_t<T_eigenrow, d_::phasor<_phi>>;
