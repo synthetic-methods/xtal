@@ -13,15 +13,15 @@ namespace xtal::resource
 ///\
 Bundles decorators for later use. \
 
-template <typename ..._s> XTAL_TYP voiced;
-template <typename ..._s> XTAL_USE voiced_t = confined_t<voiced<_s...>>;
-template <typename ..._s> XTAL_REQ voiced_q = bond::any_tag_p<voiced, _s...>;
+template <typename ..._s> XTAL_TYP invoice;
+template <typename ..._s> XTAL_USE invoice_t = confined_t<invoice<_s...>>;
+template <typename ..._s> XTAL_REQ invoice_q = bond::any_tag_p<invoice, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct voiced
+struct invoice
 {
 	using metakind = bond::compose<As...>;
 
