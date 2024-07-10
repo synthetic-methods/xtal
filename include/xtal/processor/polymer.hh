@@ -48,7 +48,7 @@ struct polymer<U, As...>
 	{
 		using S_ = bond::compose_s<S, subkind>;
 		using S_voice = typename S_::template voice<>;
-		using R_voice = monomer_t<U, resource::voiced<S_voice>>;
+		using R_voice = monomer_t<U, resource::invoice<S_voice>>;
 
 	public:
 		using S_::S_;

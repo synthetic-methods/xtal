@@ -3,7 +3,7 @@
 
 #include "../occur/render.hh"
 #include "../occur/resize.hh"
-#include "../resource/voiced.hh"
+#include "../resource/invoice.hh"
 
 
 XTAL_ENV_(push)

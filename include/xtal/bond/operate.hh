@@ -1361,32 +1361,50 @@ public:
 	XTAL_SET semifractional_f(alpha_type const &f)
 	XTAL_0EX -> iota_type
 	{
-		sigma_type constexpr _1 = sign.depth;
-		auto       const  o = _xtd::bit_cast<sigma_type>(f);
-		delta_type const  z = _xtd::bit_cast<delta_type>(o) >> positive.depth;
-		delta_type const dn = (fraction.depth + unit.mark - half.depth) - (o << _1 >> _1 + fraction.depth);
-		delta_type        m = (o&fraction.mask) | (_1 << fraction.depth);
-		m   >>= dn;
-		m    ^=  z;
-		m    -=  z;
-		return   m;
+	//	NOTE: Assumes exponent `f < (1 << {20,7})`!
+		delta_type constexpr X_1 = unit.mark + fraction.depth - half.depth;
+	
+		auto       const o = _xtd::bit_cast<delta_type>(f);
+		delta_type const z = o                 >> positive.depth;
+		delta_type const n = (o&exponent.mask) >> fraction.depth;
+		delta_type       m = (o&fraction.mask);
+		
+		delta_type const n_1 = n != 0;
+		delta_type const x_1 = X_1&-n_1;
+		
+		m    |= n_1 << fraction.depth;
+		m   >>= x_1 - n;//NOTE: Downwards only!
+		m    ^= z;
+		m    -= z;
+		return  m;
 	}
 	XTAL_DEF_(return)
 	XTAL_SET fractional_f(alpha_type const &f)
 	XTAL_0EX -> delta_type
 	{
-		auto       const  o = _xtd::bit_cast<sigma_type>(f);
-		delta_type const  z = _xtd::bit_cast<delta_type>(o) >> positive.depth;
-		delta_type const  n = (o << sign.depth >> sign.depth + exponent.shift) - (unit.mark - exponent.depth - 1);
-		delta_type        m = (o&fraction.mask) | (sigma_1 << fraction.depth);
-		delta_type const up = designed_f<1>(n);
-		delta_type const dn = up - n;
-		m   <<= up;
-		m   >>= dn;
-		m    ^=  z;
-		m    -=  z;
-		return   m;
+		delta_type constexpr X_1 = unit.mark - exponent.depth - 1;
+		
+		auto       const o = _xtd::bit_cast<delta_type>(f);
+		delta_type const z = o                 >> positive.depth;
+		delta_type       n = (o&exponent.mask) >> fraction.depth;
+		delta_type       m = (o&fraction.mask);
+		
+		delta_type const n_1 = n != 0;
+		delta_type const x_1 = X_1&-n_1;
+
+		delta_type const x_up = designed_f<1>(n -= x_1);
+		delta_type const x_dn = x_up - n;
+		
+		m    |= n_1 << fraction.depth;
+		m   <<= x_up;
+		m   >>= x_dn;
+		m    ^= z;
+		m    -= z;
+		return  m;
 	}
+	static_assert(0 ==     fractional_f(0.0));
+	static_assert(0 == semifractional_f(0.0));
+	
 	XTAL_DEF_(return,inline)
 	XTAL_SET fraction_f(alpha_type const &f)
 	XTAL_0EX -> alpha_type
