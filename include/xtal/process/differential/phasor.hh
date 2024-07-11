@@ -21,6 +21,9 @@ template <typename ..._s> XTAL_REQ phasor_q = bond::any_tag_p<phasor, _s...>;
 Manages a truncated fixed-point unit differential like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
+///\todo\
+Accommodate `std::complex` `value_type`s? \
+
 template <size_type N_data, class K_data, typename ...As>
 struct phasor<K_data[N_data], As...>
 {
@@ -30,8 +33,8 @@ struct phasor<K_data[N_data], As...>
 	using U_data = typename _op::alpha_type;
 
 	using  _data = U_data[N_data];
-	using W_data = algebra::d_:: circular_t<_data>;
-	using S_data = algebra::       series_t<_data>;
+	using W_data = algebra::d_::circular_t<_data>;
+	using S_data = algebra::      series_t<_data>;
 	
 	using subkind = bond::compose<bond::tag<phasor>
 	,	_detail::refer_multiplicative_group<W_data>
@@ -91,6 +94,15 @@ struct phasor<K_data[N_data], As...>
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return method();
+		}
+		template <auto ...Is> requires none_n<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(algebra::d_::circular_q auto &&phi, typename _op::alpha_type co)
+		XTAL_0EX -> decltype(auto)
+			requires bond::dipack_q<decltype(phi)>
+		{
+		//	TODO: Handle reset...
+			return method(indent_s<W_data, 1>(co*XTAL_REF_(phi) (1)));
 		}
 		///\
 		Evaluation by uccession. \
