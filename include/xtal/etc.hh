@@ -162,19 +162,20 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 #define XTAL_CVN_implicit                constexpr          operator
 
 #if 0//TODO: Check `[[msvc::attribute]]` position...
-#elif XTAL_V00_(MSVC)
+#elif   XTAL_V00_(MSVC)
 #define XTAL_1FN_(...)     (auto &&..._)          [[msvc::forceinline]] constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN_(...)                            [[msvc::forceinline]] constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FN                                  [[msvc::forceinline]] constexpr noexcept
-#elif XTAL_V00_(LLVM)
+#elif   XTAL_V00_(LLVM)
 #define XTAL_1FN_(...)     (auto &&..._) __attribute__((always_inline)) constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN_(...)                   __attribute__((always_inline)) constexpr noexcept {return (__VA_ARGS__);}
 #define XTAL_0FN                         __attribute__((always_inline)) constexpr noexcept
-#elif XTAL_V00_(GNUC)
+#elif   XTAL_V00_(GNUC)
 #define XTAL_1FN_(...)     (auto &&..._) constexpr noexcept __attribute__((always_inline)) {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
 #define XTAL_0FN_(...)                   constexpr noexcept __attribute__((always_inline)) {return (__VA_ARGS__);}
 #define XTAL_0FN                         constexpr noexcept __attribute__((always_inline))
 #endif
+#define XTAL_TFN_(...)                   decltype([] XTAL_1FN_(__VA_ARGS__))
 
 #define XTAL_IF0              if         constexpr (0);
 #define XTAL_0IF         else if         constexpr

@@ -40,7 +40,7 @@ struct initialize
 			}
 		}
 		XTAL_0IF (incomplete_q<V>) {
-			return via<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(xs)...);
+			return via<XTAL_TFN_(objective_f)>(XTAL_REF_(xs)...);
 		}
 	}
 
