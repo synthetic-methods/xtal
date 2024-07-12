@@ -163,7 +163,7 @@ XTAL_0EX
 	(bond::seek_s<pack_size_n<decltype(ts)...>>{});
 };
 template <template <class ...> class F=pack_t>
-XTAL_USE repack_y = decltype([] XTAL_1FN_(repack_f<F>));
+XTAL_USE repack_y = XTAL_TFN_(repack_f<F>);
 
 
 template <size_type N, class U=void>

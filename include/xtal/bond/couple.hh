@@ -36,7 +36,7 @@ XTAL_0EX
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {
-		return couple_f<decltype([] XTAL_1FN_(objective_f))>(XTAL_REF_(xs)...);
+		return couple_f<XTAL_TFN_(objective_f)>(XTAL_REF_(xs)...);
 	}
 }
 

@@ -220,7 +220,7 @@ struct block<A>
 		{
 			return apply<F>();
 		})
-		template <class F=decltype([] XTAL_1FN_(bond::pack_f))>
+		template <class F=XTAL_TFN_(bond::pack_f)>
 		XTAL_DEF_(return,inline)
 		XTAL_LET apply()
 		XTAL_0FX -> decltype(auto)
