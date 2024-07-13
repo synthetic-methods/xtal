@@ -90,8 +90,11 @@ struct series<A>
 			reinterpret_cast<W1_ &>(self()).template generate<N_data, 0, 2, 0>(u1);
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-				auto const &[o, e] = get<I>(s);
-				get<I>(self()) = {o*e.real(), _std::conj(o)*e.imag()};
+				auto &[o, e] = get<I>(s);
+				auto &e_ = involved_f(e);
+				_op::template truncate_f<4>(e_[0]);
+				_op::template puncture_f<4>(e_[1]);
+				get<I>(s) = {o*e_[0], _std::conj(o)*e_[1]};
 			});
 			return self();
 		}
