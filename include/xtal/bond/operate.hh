@@ -1037,6 +1037,10 @@ public:
 	static_assert(epsilon_n<1> <  epsilon_n<2>);
 	static_assert(epsilon_n<1> == _std::numeric_limits<alpha_type>::epsilon());
 	
+	XTAL_SET epsilon_0 = epsilon_n<0>;
+	XTAL_SET epsilon_1 = epsilon_n<1>;
+	XTAL_SET epsilon_2 = epsilon_n<2>;
+
 
 	///\returns the value `n_zoom` steps above `(alpha_type) 1`. \
 
@@ -1052,6 +1056,10 @@ public:
 	
 	static_assert(upsilon_n<1> > upsilon_n<0>);
 	static_assert(upsilon_n<2> > upsilon_n<1>);
+	
+	XTAL_SET upsilon_0 = upsilon_n<0>;
+	XTAL_SET upsilon_1 = upsilon_n<1>;
+	XTAL_SET upsilon_2 = upsilon_n<2>;
 
 
 	///\returns the value `n_zoom` steps below `(alpha_type) 1`. \
@@ -1069,6 +1077,10 @@ public:
 	static_assert(dnsilon_n<1> < dnsilon_n<0>);
 	static_assert(dnsilon_n<2> < dnsilon_n<1>);
 	
+	XTAL_SET dnsilon_0 = dnsilon_n<0>;
+	XTAL_SET dnsilon_1 = dnsilon_n<1>;
+	XTAL_SET dnsilon_2 = dnsilon_n<2>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1320,7 +1332,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_DEF_(return)
+	XTAL_DEF_(return,inline)
 	XTAL_SET scientific_f(alpha_type const &f)
 	XTAL_0EX -> couple_t<delta_type>
 	{
@@ -1357,6 +1369,23 @@ public:
 	static_assert(-1.75 == unscientific_f(scientific_f(-1.75)));
 	static_assert(-2.75 == unscientific_f(scientific_f(-2.75)));
 
+	XTAL_DEF_(return,inline)
+	XTAL_SET exponential_f(alpha_type const &f)
+	XTAL_0EX -> delta_type
+	{
+		delta_type constexpr X_1 = unit.mark;
+		auto       const o = _xtd::bit_cast<delta_type>(f);
+		delta_type const z = o                 >> positive.depth;
+		delta_type       n = (o&exponent.mask) >> fraction.depth;
+		n -= X_1&-(n != 0);
+		return n;
+	}
+	XTAL_DEF_(return,inline)
+	XTAL_SET exponential_f(XTAL_ARG_(aphex_type) &&f)
+	XTAL_0EX -> delta_type
+	{
+		return exponential_f(dot_f(XTAL_REF_(f))) >> 1;
+	}
 	XTAL_DEF_(return)
 	XTAL_SET semifractional_f(alpha_type const &f)
 	XTAL_0EX -> iota_type

@@ -49,7 +49,7 @@
 
 #define XTAL_STD_(...) XTAL_STD_##__VA_ARGS__
 #define XTAL_STD ((__cplusplus/100)%100)
-#define XTAL_STD_IEC 60559
+#define XTAL_STD_IEC 0//60559
 
 #define XTAL_STD_null_type ::std::nullptr_t
 #define XTAL_STD_unit_type ::std::monostate
