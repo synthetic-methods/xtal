@@ -71,7 +71,7 @@ struct circumspect : bond::operate<A>
 
 };
 template <class A>
-	requires complex_number_q<devalued_t<A>>
+	requires complex_number_q<devalued_u<A>>
 struct circumspect<A> : bond::operate<A>
 {
 	using _op = bond::operate<A>;
@@ -84,16 +84,16 @@ struct circumspect<A> : bond::operate<A>
 	XTAL_SET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
-		auto const o_re = circumspect<devalued_t<A>>::ordinate(co.real());
-		auto const o_im = circumspect<devalued_t<A>>::ordinate(co.imag());
+		auto const o_re = circumspect<devalued_u<A>>::ordinate(co.real());
+		auto const o_im = circumspect<devalued_u<A>>::ordinate(co.imag());
 		return {o_re, o_im};
 	};
 	XTAL_DEF_(return,inline)
 	XTAL_SET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
-		auto const co_re = circumspect<devalued_t<A>>::coordinate(o.real());
-		auto const co_im = circumspect<devalued_t<A>>::coordinate(o.imag());
+		auto const co_re = circumspect<devalued_u<A>>::coordinate(o.real());
+		auto const co_im = circumspect<devalued_u<A>>::coordinate(o.imag());
 		return {co_re, co_im};
 	};
 };
@@ -115,7 +115,7 @@ struct circular<A>
 	using inordinate_type = typename _op:: inordinate_type;
 	using coordinate_type = typename _op:: coordinate_type;
 
-	static_assert(_std::numeric_limits<devalued_t<ordinate_type>>::is_modulo);// D'oh!
+	static_assert(_std::numeric_limits<devalued_u<ordinate_type>>::is_modulo);// D'oh!
 
 	template <class T>
 	using allotype = typename linear<ordinate_type[_std::extent_v<A>]>::template homotype<T>;
@@ -170,7 +170,7 @@ struct circular<A>
 	//	auto(),
 	//	{
 	//		if constexpr (complex_field_q<coordinate_type>) {
-	//			using F = _std::complex<typename S_::template tagged_t<devalued_t<coordinate_type>[N_data]>>;
+	//			using F = _std::complex<typename S_::template tagged_t<devalued_u<coordinate_type>[N_data]>>;
 	//			auto &s = self();
 	//			
 	//			return [&]<auto ...I> (bond::seek_t<I...>)

@@ -36,26 +36,25 @@ template <class F, class ...Xs>
 XTAL_REQ invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
-//XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const &&>(XTAL_MOV_(t));}
-//XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const  &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const  &>(XTAL_REF_(t));}
-//XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto       &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>       &&>(XTAL_MOV_(t));}
-//XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto        &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>        &>(XTAL_REF_(t));}
-//static_assert(id_q<      int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>        &)))>);
-//static_assert(id_q<const int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-//static_assert(id_q<      int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-//static_assert(id_q<const int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const  &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const  &>(XTAL_REF_(t));}
+XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto       &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>       &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto        &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>        &>(XTAL_REF_(t));}
 
 XTAL_DEF_(return,inline) XTAL_LET involved_f(auto const &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)> const &&>(XTAL_MOV_(t));}
 XTAL_DEF_(return,inline) XTAL_LET involved_f(auto const  &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)> const  &>(XTAL_REF_(t));}
 XTAL_DEF_(return,inline) XTAL_LET involved_f(auto       &&t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)>       &&>(XTAL_MOV_(t));}
 XTAL_DEF_(return,inline) XTAL_LET involved_f(auto        &t) XTAL_0EX -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)>        &>(XTAL_REF_(t));}
+
+static_assert(id_q<      int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(id_q<const int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(id_q<      int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(id_q<const int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+
 static_assert(id_q<      int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>        &)))>);
 static_assert(id_q<const int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const  &)))>);
 static_assert(id_q<      int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>       &&)))>);
 static_assert(id_q<const int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const &&)))>);
-
-XTAL_DEF_(return,inline) XTAL_LET real_f(                auto &&t) XTAL_0EX -> decltype(auto) {return XTAL_REF_(t)       ;}
-XTAL_DEF_(return,inline) XTAL_LET real_f(complex_field_q auto &&t) XTAL_0EX -> decltype(auto) {return XTAL_REF_(t).real();}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -139,6 +139,9 @@ struct scalar<A>
 		Produces the progressive sum/difference, \
 		starting from zero if post-fixed. \
 
+		///\note\
+		Defined only for `const this`. \
+
 		XTAL_DEF_(inline)
 		XTAL_LET operator++()
 		XTAL_0FX
@@ -296,7 +299,7 @@ struct scalar<A>
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
 		XTAL_SET reflector()
-		XTAL_0EX -> devolved_t<U_data>
+		XTAL_0EX -> devolved_u<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

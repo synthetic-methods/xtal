@@ -27,9 +27,9 @@ Extends `serial` with multiplication defined by circular convolution. \
 template <column_q A>
 struct series<A>
 {
-	using U_v0 = invalued_t<A>;
-	using U_v1 = devalued_t<U_v0>;
-	using U_v2 = devalued_t<U_v1>;
+	using U_v0 = invalued_u<A>;
+	using U_v1 = devalued_u<U_v0>;
+	using U_v2 = devalued_u<U_v1>;
 
 	using _op = bond::operate<A>;
 	

@@ -735,7 +735,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_ALL_(w);
-		using U = devolved_t<W>;
+		using U = devolved_u<W>;
 
 	//	W constexpr W_1{1};
 		U constexpr U_1{1};
@@ -910,15 +910,16 @@ public:
 	XTAL_SET explo_f(auto &&base)
 	XTAL_0EX
 	{
-		using X = decltype(base);
-		using Y =    based_t<X>;
-		using V = devolved_t<Y>;
+		using Y = based_t<decltype(base)>;
+		using V = devolved_u<Y>;
 
-		XTAL_LET N = N_exponent;
+		V const v{1};// NOTE: Won't work for matricies...
+		Y const y{v};
+
 		XTAL_IF0
-		XTAL_0IF (N == 0) {return                                   Y{1} ;}// FIXME: Won't work for `eigenclass_t`.
-		XTAL_0IF (0 <  N) {return explo_f< N>(     XTAL_REF_(base), V{1});}
-		XTAL_0IF (N <  0) {return explo_f<-N>(V{1}/XTAL_REF_(base), V{1});}
+		XTAL_0IF (0 == N_exponent) {return y;}
+		XTAL_0IF (0 <  N_exponent) {return explo_f< N_exponent>(  XTAL_REF_(base), y);}
+		XTAL_0IF (N_exponent <  0) {return explo_f<-N_exponent>(y/XTAL_REF_(base), y);}
 	}
 	static_assert(explo_f<0>(alpha_type(2.0)) == 1.00);
 	static_assert(explo_f<1>(alpha_type(2.0)) == 2.00);
@@ -1698,7 +1699,7 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts>
-struct operate : complete_t<_detail::realize<sizeof(devolved_t<Ts>)>...> {};
+struct operate : complete_t<_detail::realize<sizeof(devolved_u<Ts>)>...> {};
 
 using operating = operate<size_type>;
 

@@ -205,21 +205,23 @@ template <class   ...Ts>	XTAL_REQ      debased_q = (...and  _entail:: debased_q<
 
 
 template <           class ...Ts>	XTAL_REQ     invalued_q = (...and  _entail:: invalued_q<Ts>);
-template <           class ...Ts>	XTAL_USE     invalued_t = common_t<_entail:: invalued_t<Ts>...>;
+template <           class ...Ts>	XTAL_USE     invalued_u = common_t<_entail:: invalued_u<Ts>...>;
 
 template <           class ...Ts>	XTAL_REQ     unvalued_q = (...and  _entail:: unvalued_q<Ts>);
-template <           class ...Ts>	XTAL_USE     unvalued_t = common_t<_entail:: unvalued_t<Ts>...>;
+template <           class ...Ts>	XTAL_USE     unvalued_u = common_t<_entail:: unvalued_u<Ts>...>;
 
 template <           class ...Ts>	XTAL_REQ     devalued_q = (...and  _entail:: devalued_q<Ts>);
-template <           class ...Ts>	XTAL_USE     devalued_t = common_t<_entail:: devalued_t<Ts>...>;
+template <           class ...Ts>	XTAL_USE     devalued_u = common_t<_entail:: devalued_u<Ts>...>;
 template <class   T             >	XTAL_LET     devalued_n = _entail:: devalued_n<T>;
 
 template <class   T, int   ...Ns>	XTAL_USE     devolved   =	_entail:: devolved  <T, Ns...>;
 //mplate <           int   ...Ns>	XTAL_USE     devolved_x =	_entail:: devolved_x<   Ns...>;
 //mplate <class   T, class ..._s>	XTAL_USE     devolved_s =	_entail:: devolved_s<T, _s...>;
 template <class   T             >	XTAL_LET     devolved_n =  _entail:: devolved_n<T>;
-template <           class ...Ts>	XTAL_USE     devolved_t = common_t<_entail:: devolved_t<Ts>...>;
-template <class   T             >	XTAL_USE     involved_t =          _entail:: involved_t<T >    ;
+template <           class ...Ts>	XTAL_USE     devolved_u = common_t<_entail:: devolved_u<Ts>...>;
+
+template <class   T             >	XTAL_USE     invalued_t =          _entail:: invalued_t<T >;
+template <class   T             >	XTAL_USE     involved_t =          _entail:: involved_t<T >;
 
 template <class   T, class ...Ts>	XTAL_REQ     devalued_p = (...and (devalued_n<T> < devalued_n<Ts>));
 template <class   T, class ...Ts>	XTAL_REQ     devolved_p = (...and (devolved_n<T> < devolved_n<Ts>));
@@ -293,6 +295,7 @@ Arithmetic...
 template <class   ...Ts>	XTAL_REQ            number_q =	    (...and  _entail::          number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ       real_number_q =	    (...and  _entail::     real_number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ    complex_number_q =	    (...and  _entail::  complex_number_q<Ts>);
+template <class   ...Ts>	XTAL_REQ    simplex_number_q =	    (...and  _entail::  simplex_number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ   integral_number_q =	    (...and  _entail:: integral_number_q<Ts>);
 
 
