@@ -48,7 +48,7 @@ struct couple
 {
 	XTAL_DEF_(static)
 	XTAL_LET N_data = sizeof...(Xs);
-	XTAL_USE U_data = devolved_t<Xs...>;
+	XTAL_USE U_data = devolved_u<Xs...>;
 
 	using archetype = pack_t<Xs...>;
 	using supertype = bond::compose_s<archetype, tag<couple>>;

@@ -247,7 +247,7 @@ struct block<A>
 		XTAL_DEF_(inline)
 		XTAL_LET transact(), -> decltype(auto)
 		{
-			return transact<W>(invoke_f<devalued_t<W>>);
+			return transact<W>(invoke_f<devalued_u<W>>);
 		})
 		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f) XTAL_0EX_(&&) -> decltype(auto) {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f) XTAL_0FX_(&&) -> decltype(auto) {return move_by<W>(XTAL_REF_(f));}

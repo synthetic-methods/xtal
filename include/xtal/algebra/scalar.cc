@@ -12,6 +12,29 @@ namespace xtal::algebra::_test
 /////////////////////////////////////////////////////////////////////////////////
 
 
+template <class ...Ts>
+class signature : _std::tuple<Ts...>
+{
+public:
+	XTAL_USE tuple_type = _std::tuple<Ts...>;
+	XTAL_USE arity_type = _std::size_t;
+	XTAL_USE array_type = xtal::algebra::scalar_t<arity_type[sizeof...(Ts)]>;
+
+	static
+	array_type constexpr layout{xtal::devalued_n<Ts>...};
+	array_type extent{0};
+	array_type extend{0};
+	arity_type expand{0};
+
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET size()
+	XTAL_0EX {return sizeof...(Ts);}
+
+	template <arity_type I> XTAL_USE item_t = _std::tuple_element_t<I, tuple_type>;
+	template <arity_type I> XTAL_SET item_n = xtal::devalued_n<item_t<I>>;
+	
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TAG_("scalar")
@@ -61,6 +84,46 @@ TAG_("scalar")
 		TRUE_(bond::computrim_f<19>(baz[0]) == bar[0]);
 		TRUE_(bond::computrim_f<19>(baz[1]) == bar[1]);
 
+	}
+	TRY_("formatting")
+	{
+		using source_type = signature<T_alpha, T_alpha>;
+		using target_type = signature<T_aphex>;
+		source_type source{};
+		target_type target{};
+
+		auto inputchanged = [&](long index, long count) {
+			if (source.extent[index] == count) {
+				return 0;
+			}
+			else {
+				source.extent[index] = count;
+				source.extend[index] = count/source.layout[index];
+
+				target.expand = source.extend.cofactorable()? 
+					source.extend.template cofactored<1>():
+					source.extend.template  colimited<1>();
+				target.extent = target.layout*target.expand;
+				target.extend = target.extent/target.layout;
+
+				return 1;
+			}
+		};
+	//	inputchanged(0, 1);
+	//	inputchanged(1, 1);
+	//	echo();
+	//	echo(source.layout);
+	//	echo(source.extent);
+	//	echo(source.extend);
+	//	echo();
+	//	echo(source.extend.cofactorable());
+	//	echo(source.extend.template cofactored<1>());
+	//	echo(source.extend.template  colimited<1>());
+	//	echo();
+	//	echo(target.expand);
+	//	echo(target.layout);
+	//	echo(target.extent);
+	//	echo(target.extend);
 	}
 	TRY_("refactoring")
 	{

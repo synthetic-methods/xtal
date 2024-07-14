@@ -161,23 +161,23 @@ template <class         T >	XTAL_REQ         rebased_q         =	rebased<T>::val
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class         T >	XTAL_USE       invalued_t =	_std::remove_extent_t<_std::remove_reference_t<T>> ;
-template <class         T >	XTAL_REQ       invalued_q =	complete_q<invalued_t<T>> and not _std::same_as<invalued_t<T>, _std::remove_reference_t<T>>;
+template <class         T >	XTAL_USE       invalued_u =	_std::remove_extent_t<_std::remove_reference_t<T>>;
+template <class         T >	XTAL_REQ       invalued_q =	complete_q<invalued_u<T>> and not _std::same_as<invalued_u<T>, _std::remove_reference_t<T>>;
 
-template <class         T >	XTAL_USE       unvalued_t =	typename _std::remove_reference_t<T>::value_type;
-template <class         T >	XTAL_REQ       unvalued_q =	complete_q<unvalued_t<T>>;
+template <class         T >	XTAL_USE       unvalued_u =	typename _std::remove_reference_t<T>::value_type;
+template <class         T >	XTAL_REQ       unvalued_q =	complete_q<unvalued_u<T>>;
 
 template <class         T >	XTAL_REQ        varity_q =	unvalued_q<T> and incomplete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
 template <class         T >	XTAL_REQ         arity_q =	unvalued_q<T> and   complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
 
 template <class         T >	XTAL_TYP       devalued   ;
-template <class         T >	XTAL_USE       devalued_t =	typename devalued<_std::remove_reference_t<T>>::value_type;
+template <class         T >	XTAL_USE       devalued_u =	typename devalued<_std::remove_reference_t<T>>::value_type;
 template <class         T >	XTAL_LET       devalued_n =	         devalued<_std::remove_reference_t<T>>::size();
-template <class         T >	XTAL_REQ       devalued_q =	not is_q<T, devalued_t<T>>;
+template <class         T >	XTAL_REQ       devalued_q =	not is_q<T, devalued_u<T>>;
 template <class         T >	XTAL_TYP       devalued                           {using value_type =            T  ; XTAL_SET size() XTAL_0EX -> size_type {return                    1 ;};};
-template <   invalued_q T >	XTAL_TYP       devalued<T>                        {using value_type = invalued_t<T> ; XTAL_SET size() XTAL_0EX -> size_type {return     _std::extent_v<T>;};};
-template <     varity_q T >	XTAL_TYP       devalued<T>                        {using value_type = unvalued_t<T> ; XTAL_SET size() XTAL_0EX -> size_type {return                    0 ;};};
-template <      arity_q T >	XTAL_TYP       devalued<T>                        {using value_type = unvalued_t<T> ; XTAL_SET size() XTAL_0EX -> size_type {return _std::tuple_size_v<T>;};};
+template <   invalued_q T >	XTAL_TYP       devalued<T>                        {using value_type = invalued_u<T> ; XTAL_SET size() XTAL_0EX -> size_type {return     _std::extent_v<T>;};};
+template <     varity_q T >	XTAL_TYP       devalued<T>                        {using value_type = unvalued_u<T> ; XTAL_SET size() XTAL_0EX -> size_type {return                    0 ;};};
+template <      arity_q T >	XTAL_TYP       devalued<T>                        {using value_type = unvalued_u<T> ; XTAL_SET size() XTAL_0EX -> size_type {return _std::tuple_size_v<T>;};};
 template <class  U        >	XTAL_TYP       devalued<_std::complex<U>       >  {using value_type = U             ; XTAL_SET size() XTAL_0EX -> size_type {return                    2 ;};};
 template <class  U        >	XTAL_TYP       devalued<_std::complex<U>  const>  {using value_type = U const       ; XTAL_SET size() XTAL_0EX -> size_type {return                    2 ;};};
 template <class  U, int N >	XTAL_TYP       devalued<_std::array<U, N>      >  {using value_type = U             ; XTAL_SET size() XTAL_0EX -> size_type {return                    N ;};};
@@ -187,20 +187,20 @@ template <class U,        int ...Ns>	XTAL_TYP    involved                     {u
 template <class U, int N, int ...Ns>	XTAL_TYP    involved<U, N, Ns...>        {using array_type = typename involved<U, Ns...>::array_type[N];};
 
 template <class  U,       int ...Ns>	XTAL_TYP    devolved;
-//mplate <                int ...Ns>	XTAL_USE    devolved_x =	_xtd::extents<int, Ns...>;
-//mplate <class  T,     class ..._s>	XTAL_USE    devolved_s =	typename devolved<_std::remove_reference_t<T>>::template subtype<_s...>;
 template <class  T                 >	XTAL_LET    devolved_n =	         devolved<_std::remove_reference_t<T>>::size();
-template <class  T                 >	XTAL_USE    devolved_t =	typename devolved<_std::remove_reference_t<T>>::value_type;
+template <class  T                 >	XTAL_USE    devolved_u =	typename devolved<_std::remove_reference_t<T>>::value_type;
+
 template <class  T                 >	XTAL_USE    involved_t =	typename devolved<                         T >::array_type;
+template <class  T                 >	XTAL_USE    invalued_t =	devalued_u<T>[devalued_n<T>];
 
 template <devalued_q T, int ...Ns> requires   mutable_q<T>
 XTAL_TYP devolved<T, Ns...>
-:	devolved<devalued_t<T> , Ns..., devalued_n<T>>
+:	devolved<devalued_u<T> , Ns..., devalued_n<T>>
 {
 };
 template <devalued_q T, int ...Ns> requires immutable_q<T>
 XTAL_TYP devolved<T, Ns...>
-:	devolved<immutable_t<devalued_t<mutable_t<T>>>, Ns..., devalued_n<T>>
+:	devolved<immutable_t<devalued_u<mutable_t<T>>>, Ns..., devalued_n<T>>
 {
 };
 template <class U, int ...Ns>
@@ -208,33 +208,23 @@ struct devolved : involved<U, Ns...>
 {
 	using value_type = U;
 
-//	using extents_type = _xtd::extents<U, Ns...>;
-//	template <class ..._s> using subtype = _xtd::mdspan<U, extents_type, _s...>;
+	XTAL_SET size()
+	XTAL_0EX -> size_type {return 0;}
 
-	XTAL_DEF_(static)
-	XTAL_LET size()
-	XTAL_0EX
+	XTAL_SET size()
+	XTAL_0EX -> size_type
+		requires some_n<Ns...> and (...and (0 < Ns))
 	{
-		if constexpr (sizeof...(Ns) and (...and (0 < Ns))) {
-			return (size_type) (1 *...* Ns);
-		}
-		else {
-			return (size_type) (0);
-		}
+		return (1 *...* Ns);
 	};
-
 };
 template <class T> requires complete_q<typename T::scalar_type>
 struct devolved<T>
 {
 	using value_type = typename T::scalar_type;
 
-	XTAL_DEF_(static)
-	XTAL_LET size()
-	XTAL_0EX -> size_type
-	{
-		return 0;
-	};
+	XTAL_SET size()
+	XTAL_0EX -> size_type {return 0;}
 
 };
 template <class T> requires complete_q<typename T::Scalar>
@@ -242,12 +232,8 @@ struct devolved<T>
 {
 	using value_type = typename T::Scalar;
 
-	XTAL_DEF_(static)
-	XTAL_LET size()
-	XTAL_0EX -> size_type
-	{
-		return 0;
-	};
+	XTAL_SET size()
+	XTAL_0EX -> size_type {return 0;}
 
 };
 static_assert(id_q<      double    [2], typename devolved<      _std::complex<double>>::array_type  >);
@@ -276,7 +262,7 @@ struct aligned
 };
 
 template <class         T >	XTAL_REQ         column_q =	_std::is_array_v<based_t<T>> and not _std::is_array_v<_std::remove_extent_t<based_t<T>>>;
-template <class         T >	XTAL_REQ          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalued_t<T>, devalued_n<T>>>;
+template <class         T >	XTAL_REQ          array_q =	_std::is_array_v<T> or fungible_q<T, _std::array<devalued_u<T>, devalued_n<T>>>;
 
 template <class         T >	XTAL_REQ       accessed_q =	requires (T t) { t[XTAL_ANY_(size_type)];};
 template <class         T >	XTAL_REQ        pointer_q =	requires (T t) {*t;};
@@ -294,11 +280,11 @@ template <class         T >	XTAL_REQ          count_q =	requires {XTAL_ANY_(T). 
 
 template <class         T >	XTAL_REQ        debrace_q =	requires {typename T::initializer_list;};
 template <class         T >	XTAL_REQ      reembrace_q =	debrace_q<T> or devalued_q<T>;
-template <class         T >	XTAL_TYP      reembrace       {using type = _std::initializer_list<devalued_t<T>>;};
+template <class         T >	XTAL_TYP      reembrace       {using type = _std::initializer_list<devalued_u<T>>;};
 template <debrace_q     T >	XTAL_TYP      reembrace<T>    {using type = typename T::initializer_list;};
 template <class         T >	XTAL_USE      reembrace_t =	typename reembrace<based_t<T>>::type;
 template <class         U >	XTAL_USE        embrace_t =	_std::initializer_list<U>;
-template <class         T >	XTAL_USE       debraced_t =	devalued_t<reembrace_t<T>>;
+template <class         T >	XTAL_USE       debraced_t =	devalued_u<reembrace_t<T>>;
 
 
 template <class         T >	XTAL_TYP       iteratee   ;
@@ -329,7 +315,7 @@ template <class         T >	XTAL_REQ       distance_q =	integral_q<T>;//TODO: Ex
 template <class         T >	XTAL_REQ        counter_q =	integral_q<T>;
 template <class         T >	XTAL_REQ        counted_q =	iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
 
-template <class         T >	XTAL_TYP       iteratee    	{using type =               devalued_t<T> ;};
+template <class         T >	XTAL_TYP       iteratee    	{using type =               devalued_u<T> ;};
 template <iterable_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t<point_t<T>>;};
 template <iterator_q    T >	XTAL_TYP       iteratee<T> 	{using type =        pointee_t        <T> ;};
 template < counter_q    T >	XTAL_TYP       iteratee<T> 	{using type = _std::remove_reference_t<T> ;};
@@ -386,7 +372,8 @@ Arithmetic...
 template <class      T >	XTAL_REQ   integral_number_q =	 _std::integral      <based_t<T>>;
 template <class      T >	XTAL_REQ   integral_number_q =	 integral_q<T>;
 template <class      T >	XTAL_REQ       real_number_q =	 _std::floating_point<based_t<T>>;
-template <class      T >	XTAL_REQ    complex_number_q =	fungible_q<T, _std::complex<unvalued_t<T>>> and real_number_q<unvalued_t<T>>;
+template <class      T >	XTAL_REQ    complex_number_q =	fungible_q<T, _std::complex<unvalued_u<T>>> and real_number_q<unvalued_u<T>>;
+template <class      T >	XTAL_REQ    simplex_number_q =	integral_number_q<T> or real_number_q<T>;
 template <class      T >	XTAL_REQ            number_q =	integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
 
 
