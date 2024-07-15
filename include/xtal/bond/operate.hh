@@ -394,7 +394,7 @@ public:
 	static_assert(designed_f<-1>((delta_type) -2) == (2));
 	static_assert(designed_f<-1>((delta_type) -3) == (3));
 
-
+	
 ///////////////////////////////////////////////////////////////////////////////
 
 	///\returns the number of bits set in `u`. \

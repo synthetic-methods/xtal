@@ -43,6 +43,36 @@ namespace _xtd
 	};
 #endif
 
+	XTAL_DEF_(inline)
+	XTAL_SET make_signed_f(auto &&u)
+	XTAL_0EX
+	{
+		using U = XTAL_ALL_(u); static_assert(_std::is_integral_v<U>);
+		using V = _std::make_signed_t<U>;
+		
+		if constexpr (_std::is_same_v<U, V>) {
+			return XTAL_REF_(u);
+		}
+		else {
+			return _xtd::bit_cast<V>(XTAL_REF_(u));
+		}
+	}
+	XTAL_DEF_(inline)
+	XTAL_SET make_unsigned_f(auto &&v)
+	XTAL_0EX
+	{
+		using V = XTAL_ALL_(v); static_assert(_std::is_integral_v<V>);
+		using U = _std::make_unsigned_t<V>;
+		
+		if constexpr (_std::is_same_v<U, V>) {
+			return XTAL_REF_(v);
+		}
+		else {
+			return _xtd::bit_cast<U>(XTAL_REF_(v));
+		}
+	}
+
+
 	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T const  &t) XTAL_0EX -> T const    {return XTAL_REF_(t);}
 	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T        &t) XTAL_0EX -> T          {return XTAL_REF_(t);}
 	template <class T> XTAL_DEF_(inline) XTAL_LET decay_lvalue_f(T const &&t) XTAL_0EX -> T const && {return XTAL_REF_(t);}
