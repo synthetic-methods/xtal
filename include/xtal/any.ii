@@ -6,6 +6,21 @@
 //\
 Structural...
 
+///\returns the conditional `x` reinterpreted as type `Y`, \
+where `std::floating_point`s and `bool`eans are `static_cast`, \
+while all other `std::integral`s are negated. \
+
+template <class Y>
+XTAL_DEF_(return,inline)
+XTAL_LET condition_f(bool x)
+XTAL_0EX -> Y
+{
+	XTAL_IF0
+	XTAL_0IF (       is_q<bool, Y>) {return x;}
+	XTAL_0IF (    real_number_q<Y>) {return static_cast<Y>(+x);}
+	XTAL_0IF (integral_number_q<Y>) {return static_cast<Y>(-x);}
+}
+
 template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto const &&t) XTAL_0EX -> decltype(auto) {return      static_cast<T const &&>(t);}
 template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto       &&t) XTAL_0EX -> decltype(auto) {return      static_cast<T       &&>(t);}
 template <class T> XTAL_DEF_(return,inline) XTAL_LET funge_f(auto const  &t) XTAL_0EX -> decltype(auto) {return      static_cast<T const  &>(t);}
@@ -61,6 +76,9 @@ static_assert(id_q<const int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Ranged...
+
+///\returns the nearest aligned offset for type `T`, \
+adjusting the referenced index `i` to point to the next available slot. \
 
 template <class T>
 XTAL_DEF_(return,inline)

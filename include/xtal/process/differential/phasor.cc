@@ -3,8 +3,10 @@
 #include "./phasor.hh"// testing...
 #include "../lift.hh"
 #include "../link.hh"
+#include "../repacked.hh"
 #include "../../processor/monomer.hh"
 #include "../../resource/all.hh"
+#include "../../occur/indent.hh"
 
 XTAL_ENV_(push)
 namespace xtal::process::differential::_test
@@ -61,16 +63,16 @@ TAG_("phasor")
 		T_sigma constexpr N_data = 0x1000;
 		T_alpha z_data[2][N_data]{};
 
-		auto  w_data  = bond::pack_rowwise_f<2>(N_data, z_data);
-		auto  e_data  = Map<T_eigencolumns>(*z_data, N_data, 2).rowwise();
+		auto w_data  = bond::pack_rowwise_f<2>(N_data, z_data);
+		auto e_data  = Map<T_eigencolumns>(*z_data, N_data, 2).rowwise();
 		
-		auto  x_phi = X_phi        {}; x_phi <<=                          {_op::ratio_f(7)};
-		auto  y_phi = Y_phi        {}; y_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
+		auto x_phi = X_phi{}; x_phi <<=                          {_op::ratio_f(7)};
+		auto y_phi = Y_phi{}; y_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
 		
-		auto  z_chi = Z_chi::braced_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
-		auto  z_phi = Z_phi::braced_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
-		auto  z_psi = Z_psi::braced_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
-		auto  z_eig = Z_eig::braced_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
+		auto z_chi = Z_chi::braced_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
+		auto z_phi = Z_phi::braced_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
+		auto z_psi = Z_psi::braced_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
+		auto z_eig = Z_eig::braced_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
 
 		occur::render_t<>         z_render(N_data);
 		occur::indent_s<X_phi, 1> z_indent{x_delta};
@@ -130,6 +132,24 @@ TAG_("phasor")
 		};
 	}
 	/**/
+	TRY_("reprogression")
+	{
+		using Y_source = d_::phasor_t<_phi>;
+		using Y_target = d_::phasor_t<_phi, d_::phasor<_phi>>;
+
+		Y_source y_source{0, _op::haplo_f(5)}; X_phi x_source;
+		Y_target y_target{0, _op::haplo_f(4)}; X_phi x_target;
+		
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-1>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-1>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-1>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-1>(2.0*x_source(0), x_target(0)));
+		y_source <<= occur::indent_s<X_phi, 0>{0.1};
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-18>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-18>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-18>(2.0*x_source(0), x_target(0)));
+		x_source = y_source(); x_target = y_target(x_source, 2.0); TRUE_(check_f<-18>(2.0*x_source(0), x_target(0)));
+	}
 	TRY_("progression")
 	{
 		T_alpha x_d4 = _op::haplo_f(4);
