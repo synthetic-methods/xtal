@@ -4,7 +4,7 @@
 #include "../../algebra/differential/circular.hh"
 #include "../../resource/example.hh"
 #include "../../resource/biased.hh"
-
+#include "../../occur/indent.hh"
 
 XTAL_ENV_(push)
 namespace xtal::process::differential
@@ -24,25 +24,29 @@ providing evaluation/update via succession/replacement. \
 ///\todo\
 Accommodate `std::complex` `value_type`s? \
 
-template <size_type N_data, class K_data, typename ...As>
-struct phasor<K_data[N_data], As...>
+template <column_q A, typename ...As>
+struct phasor<A, As...>
 {
-	using _op = bond::operate<K_data>;
+	using _op = algebra::d_::_detail::circumspect<A>;
+	using coordinate_type = typename _op::coordinate_type;
+	using inordinate_type = typename _op::inordinate_type;
+	using   ordinate_type = typename _op::  ordinate_type;
 
-	using V_data = typename _op::delta_type;
-	using U_data = typename _op::alpha_type;
+	XTAL_SET N  = _std::extent_v<A>;
 
-	using  _data = U_data[N_data];
-	using W_data = algebra::d_::circular_t<_data>;
-	using S_data = algebra::      series_t<_data>;
+	using U_phased = algebra::d_::circular_t<coordinate_type[N]>;
+	using U_pulsed = algebra::d_::  linear_t<inordinate_type[N]>;
+	using U_series = algebra::      series_t<coordinate_type[N]>;
 	
-	using subkind = bond::compose<bond::tag<phasor>
-	,	_detail::refer_multiplicative_group<W_data>
-	,	typename occur::indent_s<W_data>::template funnel<>
+	using semikind = bond::compose<void
+	,	_detail::refer_multiplicative_group<U_phased>
+	,	typename occur::indent_s<U_phased>::template funnel<>
 	,	As...
+	>;
+	using subkind = bond::compose<bond::tag<phasor>
+	,	semikind
 	,	resource::biased<nominal_t<1>>
 	>;
-	
 	template <any_q S>
 	class subtype : public bond::compose_s<S, subkind>
 	{
@@ -54,7 +58,7 @@ struct phasor<K_data[N_data], As...>
 		using S_::self;
 		using S_::head;
 
-		using algebra_t = W_data;
+		using algebra_t = U_phased;
 
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
@@ -68,7 +72,7 @@ struct phasor<K_data[N_data], As...>
 		XTAL_SET bias()
 		XTAL_0EX -> auto
 		{
-			return S_::template bias<U_data>();
+			return S_::template bias<coordinate_type>();
 		}
 
 		///\
@@ -89,21 +93,13 @@ struct phasor<K_data[N_data], As...>
 		
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(subarray_q<N_data> auto &&a)
+		XTAL_LET method(subarray_q<N> auto &&a)
 		XTAL_0EX -> decltype(auto)
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return method();
 		}
-		template <auto ...Is> requires none_n<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(algebra::d_::circular_q auto &&phi, typename _op::alpha_type co)
-		XTAL_0EX -> decltype(auto)
-			requires bond::dipack_q<decltype(phi)>
-		{
-		//	TODO: Handle reset...
-			return method(indent_s<W_data, 1>(co*XTAL_REF_(phi) (1)));
-		}
+
 		///\
 		Evaluation by uccession. \
 		
@@ -119,16 +115,16 @@ struct phasor<K_data[N_data], As...>
 				auto const rate = S_::sample().rate();
 				auto &phi = ingress();
 				XTAL_IF0
-				XTAL_0IF (N_data == 1) {
+				XTAL_0IF (N == 1) {
 					//\
 					return egress(bond::pack_f(phi(0)));
 					return egress(phi(0));
 				}
-				XTAL_0IF (N_data == 2) {
+				XTAL_0IF (N == 2) {
 					return egress(bond::pack_f(phi(0), phi(1)*(rate)));
 				}
 				XTAL_0IF_(default) {
-					return egress(phi.template apply<XTAL_TFN_(bond::pack_f)>()*S_data(rate));
+					return egress(phi.template apply<XTAL_TFN_(bond::pack_f)>()*U_series(rate));
 				}
 			}
 			else {
@@ -158,6 +154,69 @@ struct phasor<K_data[N_data], As...>
 			XTAL_0IF_(default)     {return                  XTAL_REF_(y);}
 		};
 		
+	};
+	template <any_q S> requires phasor_q<bond::compose_s<S, semikind>>
+	class subtype<S> : public bond::compose_s<S, semikind>
+	{
+		using S_ = bond::compose_s<S, semikind>;
+		using U_ = typename S_::head_type;
+
+	public:// ACCESS
+		using S_::S_;
+		using S_::self;
+		using S_::head;
+
+		using algebra_t = U_phased;
+
+		///\note\
+		This is defined in-case `refine_head` is bypassed...
+
+		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
+		
+		///\
+		Access by dynamic index. \
+		
+		///\todo\
+		Replace with accessor-decorator?
+
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET let(size_type i), head().let(i))
+
+	public:// REEVALUATION
+		///\returns the current differential after scaling the incoming `phi` by `co`. \
+
+		///\todo\
+		Supply `precision` and/or `subdivision` `attach`ments? \
+
+		template <int N_root=1>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(U_phased phi, coordinate_type co)
+		XTAL_0EX -> auto
+			requires is_q<U_phased, typename S_::template head_t<nominal_t<size_1>>>
+		{
+			static_assert(bond::dipack_q<U_phased>);
+
+			auto &_phi = S_::template head<1>();
+			auto &_psi = S_::template head<0>();
+
+		//	Calculates the deviation of `phi[0]` w.r.t. phi[1], \
+		//	using the difference in `phi[1]` to determine the threshold for reset. \
+
+			auto  u_delta = _phi - phi; u_delta[0] += phi[1];
+			auto &v_delta = reinterpret_cast<U_pulsed const &>(u_delta);
+			auto  n_delta = 1 + _op::bit_floor_f(_op::designed_f(v_delta[1]));
+			auto  i_delta = condition_f<ordinate_type>(v_delta[0] >> n_delta);
+
+			_phi = XTAL_MOV_(phi);
+
+			phi *= _op::template root_f<N_root>(co);
+			_psi[1]  = phi[1];
+			_psi.operator++();
+			_psi[0] &=       ~i_delta;
+			_psi[0] |= phi[0]&i_delta;
+
+			return _psi;
+		}
+
 	};
 };
 

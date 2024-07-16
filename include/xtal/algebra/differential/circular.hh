@@ -251,7 +251,7 @@ struct circular<A>
 		XTAL_LET operator += (real_number_q auto const &f)
 		XTAL_0EX -> T &
 		{
-			S_::operator[](0) += _op::fractional_f(f);
+			get<0>(*this) += _op::fractional_f(f);
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -259,6 +259,24 @@ struct circular<A>
 		XTAL_0EX -> T &
 		{
 			return self();
+		}
+
+		template <class Y=U_alpha>
+		XTAL_DEF_(return,inline)
+		XTAL_LET continuity()
+		XTAL_0EX -> Y
+		{
+			return condition_f<Y>(not discontinuity<bool>());
+		}
+		template <class Y=U_alpha>
+		XTAL_DEF_(return,inline)
+		XTAL_LET discontinuity()
+		XTAL_0EX -> Y
+		{
+			auto [u0, u1] = *this;
+			auto const v0 = _xtd::make_signed_f(u0) >> _op::positive.depth; u0 ^= v0; u0 -= v0;
+			auto const v1 = _xtd::make_signed_f(u1) >> _op::positive.depth; u1 ^= v1; u1 -= v1;
+			return condition_f<Y>(v0 == v1 and u0 < u1);
 		}
 
 	};
