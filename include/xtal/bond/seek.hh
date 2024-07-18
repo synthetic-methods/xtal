@@ -32,21 +32,29 @@ template <size_type     N >	XTAL_USE                   antiseek_s = decltype(ant
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <auto ...Ns>
+XTAL_DEF_(inline)
+XTAL_LET seek_each_f(auto const &f)
+XTAL_0EX -> decltype(auto)
+{
+	return [&] <size_type ...I>(seek_t<I...>)
+		XTAL_0FN_(..., f(nominal_t<I>{})) (seek_t<Ns...> {});
+}
 template <size_type N_count=0, auto N_onset=0>
 XTAL_DEF_(inline)
 XTAL_LET seek_forward_f(auto const &f)
 XTAL_0EX -> decltype(auto)
 {
-	return [&] <size_type ...Ns>(seek_t<Ns...>)
-		XTAL_0FN_(..., f(nominal_t<N_onset + Ns>{})) (seek_s<N_count> {});
+	return [&] <size_type ...I>(seek_t<I...>)
+		XTAL_0FN_(..., f(nominal_t<N_onset + I>{})) (seek_s<N_count> {});
 }
 template <size_type N_count=0, auto N_onset=0>
 XTAL_DEF_(inline)
 XTAL_LET seek_backward_f(auto const &f)
 XTAL_0EX -> decltype(auto)
 {
-	return [&] <size_type ...Ns>(seek_t<Ns...>)
-		XTAL_0FN_(..., f(nominal_t<N_onset + Ns>{})) (antiseek_s<N_count> {});
+	return [&] <size_type ...I>(seek_t<I...>)
+		XTAL_0FN_(..., f(nominal_t<N_onset + I>{})) (antiseek_s<N_count> {});
 }
 
 

@@ -172,18 +172,22 @@ XTAL_LET pack_rowwise_f(size_type const &m, accessed_q auto &&w)
 XTAL_0EX
 {
 	using _std::span;
-	using _xtd::ranges::views::zip;
 
-	return [&]<size_type ...Ns> (bond::seek_t<Ns...>)
-	XTAL_0FN {
-		if constexpr (void_q<U>) {
-			return zip(span(point_f(w[Ns]), m)...);
-		}
-		else {
-			return iterative_f<U>(span(point_f(w[Ns]), m)...);
-		}
+	if constexpr (is_q<U, decltype(**w)>) {
+		return span(*w, m);
 	}
-	(bond::seek_s<N>{});
+	else {
+		return [&]<size_type ...Ns> (bond::seek_t<Ns...>)
+		XTAL_0FN {
+			if constexpr (void_q<U>) {
+				return _xtd::ranges::views::zip(span(point_f(w[Ns]), m)...);
+			}
+			else {
+				return iterative_f<U>(span(point_f(w[Ns]), m)...);
+			}
+		}
+		(bond::seek_s<N>{});
+	}
 }
 template <size_type N, class U=void>
 XTAL_DEF_(return,inline)
