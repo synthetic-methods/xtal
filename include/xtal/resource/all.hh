@@ -1,5 +1,6 @@
 #include "./any.hh"
 #include "./biased.hh"
+#include "./cached.hh"
 #include "./example.hh"
 #include "./spooled.hh"
 #include "./stashed.hh"

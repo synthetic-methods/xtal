@@ -37,6 +37,7 @@ struct define
 
 		XTAL_DEF_(inline) XTAL_LET delay()         XTAL_0EX {return static_cast<T_iota>(count_f(self()));}
 		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX {return self().delay();}
+	//	XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX {return _std::min<T_iota>({0x80, self().delay()});}// Force chunking somehow?
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \

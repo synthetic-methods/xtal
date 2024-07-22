@@ -58,8 +58,8 @@ struct define
 				XTAL_LET delay()
 				XTAL_0EX
 				{
-					auto const n = R_::delay();
-					return 0 < n? n: static_cast<XTAL_ALL_(n)>(R_::template head<U_resize>());
+					auto const n = R_::delay(); using T_iota = decltype(n);
+					return 0 < n? n: static_cast<T_iota>(R_::template head<U_resize>());
 				}
 
 			public:// *FLUX
