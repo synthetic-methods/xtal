@@ -94,6 +94,11 @@ struct scalar<A>
 		:	S_(XTAL_REF_(oo)...)
 		{}
 
+		XTAL_CON_(explicit) homotype(bool o)
+		XTAL_0EX
+		:	S_{condition_f<U_data>(o), condition_f<U_data>(not o)}
+		{}
+
 	public:// ACCESS
 		using S_::let;
 		using S_::self;
