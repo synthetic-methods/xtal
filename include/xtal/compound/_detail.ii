@@ -139,7 +139,7 @@ struct refine_tuple
 				return XTAL_REF_(f) ();
 			}
 			XTAL_0IF (1 <= pack_size::value) {
-				return [this, f = XTAL_REF_(f)] <size_type ...I>(bond::seek_t<I...>)
+				return [this, f = XTAL_REF_(f)] <auto ...I>(bond::seek_t<I...>)
 					XTAL_0FN_(f(S_::template head<I>()...))
 				(bond::seek_s<pack_size::value> {});
 			}
@@ -290,6 +290,72 @@ struct defer_field<U>
 		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return head_type(u_body);}
 		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return head_type(u_body);}
 		
+	};
+};
+template <class T, auto ...Ns>
+struct defer_field<_std::integer_sequence<T, Ns...>>
+{
+	using _op = bond::operate<decltype(Ns)...>;
+
+	XTAL_SET N_array =    _std::array{Ns...};
+	XTAL_SET N_upper = _op::maximum_f(Ns...);
+	XTAL_SET N_lower = _op::minimum_f(Ns...);
+	
+	XTAL_SET I_array = []<auto ...I> (bond::seek_t<I...>)
+		XTAL_0FN_(_std::array{(size_type) bond::seek_index_of_n<I + N_lower, Ns...>...})
+	(bond::seek_s<1 + N_upper - N_lower>{});
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S>
+	{
+		using S_ = bond::compose_s<S>;
+
+	public:
+		using head_type = T;
+		using body_type = size_type;
+
+	public:
+	//	using S_::S_;
+		using S_::self;
+		body_type u_body{};
+
+		XTAL_CO0_(subtype);
+		XTAL_CO1_(subtype);
+		XTAL_CO4_(subtype);
+		
+		template <fungible_q<subtype> O>
+		XTAL_CON_(explicit) subtype(O &&o)
+		XTAL_0EX
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
+		template <infungible_q<subtype> O> requires (not integral_q<O>)
+		XTAL_CON_(explicit) subtype(O &&o, auto &&...oo)
+		XTAL_0EX
+		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		{
+		}
+		XTAL_CON_(explicit) subtype(XTAL_ARG_(head_type) &&o, auto &&...oo)
+		XTAL_0EX
+		:	subtype(I_array[XTAL_REF_(o) - N_lower], XTAL_REF_(oo)...)
+		{
+		}
+		XTAL_CON_(explicit) subtype(XTAL_ARG_(body_type) &&o, auto &&...oo)
+		XTAL_0EX
+		:	S_(XTAL_REF_(oo)...)
+		,	u_body(XTAL_REF_(o))
+		{
+		}
+
+		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
+
+		XTAL_DEF_(return,inline) XTAL_SET size() XTAL_0EX {return sizeof...(Ns);}
+		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return N_array[u_body];}
+		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return N_array[u_body];}
+		
+		XTAL_DEF_(inline) XTAL_CVN_(explicit) size_type() XTAL_0EX {return u_body;}
+		XTAL_DEF_(inline) XTAL_CVN_(explicit) size_type() XTAL_0FX {return u_body;}
+		
+
 	};
 };
 template <size_type N_width>

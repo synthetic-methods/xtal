@@ -21,7 +21,7 @@ XTAL_0EX
 {
 	return pack_t<_xtd::decay_rconst_t<decltype(us)>...>(XTAL_REF_(us)...);
 };
-template <size_type N>
+template <auto N>
 XTAL_DEF_(inline)
 XTAL_LET pack_f(auto &&f)
 XTAL_0EX
@@ -51,28 +51,28 @@ static_assert(pack_size_n<_std::array<null_type, 0>> == 0);
 static_assert(pack_size_q<_std::tuple<            >>);
 static_assert(pack_size_q<_std::array<null_type, 0>>);
 
-template <class T, size_type N> XTAL_REQ    pack_sized_q = N == pack_size_n<T>;
-template <class T, size_type N> XTAL_REQ subpack_sized_q = N <  pack_size_n<T>;
+template <class T, auto N> XTAL_REQ    pack_sized_q = N == pack_size_n<T>;
+template <class T, auto N> XTAL_REQ subpack_sized_q = N <  pack_size_n<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_type N,         class T> XTAL_TYP pack_item;
-template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const &&> {using type = U const   ;};//&&
-template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const  &> {using type = U const  &;};
-template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U>       &&> {using type = U         ;};//&&
-template <size_type N,         class U> XTAL_TYP pack_item<N, _std::complex<U>        &> {using type = U        &;};
-template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T        > {using type = _std::tuple_element_t<N, based_t<T>>        ;};
-template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::tuple_element_t<N, based_t<T>>       &;};
-template <size_type N, _tuple_size_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::tuple_element_t<N, based_t<T>> const &;};
-template <size_type N,     _extent_q T> XTAL_TYP pack_item<N, T        > {using type = _std::           remove_extent_t<T>         ;};
-template <size_type N,     _extent_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::           remove_extent_t<T>        &;};
-template <size_type N,     _extent_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::           remove_extent_t<T>  const &;};
-template <size_type N, class T> XTAL_USE pack_item_t = typename pack_item<N, T>::type;
+template <auto N,         class T> XTAL_TYP pack_item;
+template <auto N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const &&> {using type = U const   ;};//&&
+template <auto N,         class U> XTAL_TYP pack_item<N, _std::complex<U> const  &> {using type = U const  &;};
+template <auto N,         class U> XTAL_TYP pack_item<N, _std::complex<U>       &&> {using type = U         ;};//&&
+template <auto N,         class U> XTAL_TYP pack_item<N, _std::complex<U>        &> {using type = U        &;};
+template <auto N, _tuple_size_q T> XTAL_TYP pack_item<N, T        > {using type = _std::tuple_element_t<N, based_t<T>>        ;};
+template <auto N, _tuple_size_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::tuple_element_t<N, based_t<T>>       &;};
+template <auto N, _tuple_size_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::tuple_element_t<N, based_t<T>> const &;};
+template <auto N,     _extent_q T> XTAL_TYP pack_item<N, T        > {using type = _std::           remove_extent_t<T>         ;};
+template <auto N,     _extent_q T> XTAL_TYP pack_item<N, T       &> {using type = _std::           remove_extent_t<T>        &;};
+template <auto N,     _extent_q T> XTAL_TYP pack_item<N, T const &> {using type = _std::           remove_extent_t<T>  const &;};
+template <auto N, class T> XTAL_USE pack_item_t = typename pack_item<N, T>::type;
 
-template <size_type N, class T> XTAL_REQ pack_item_p = N <  pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
-template <             class T> XTAL_REQ pack_list_q = 0 == pack_size_n<T> or [] <size_type ...Ns>
+template <auto N, class T> XTAL_REQ pack_item_p = N <  pack_size_n<T> and requires(T t) {{get<N>(t)} -> as_q<pack_item_t<N, T>>;};
+template <             class T> XTAL_REQ pack_list_q = 0 == pack_size_n<T> or [] <auto ...Ns>
 	(seek_t<Ns...>) XTAL_0FN_(...and pack_item_p<Ns, T>)
 	(seek_s<pack_size_n<T>> {})
 ;
@@ -83,7 +83,7 @@ XTAL_0EX -> decltype(auto)
 {
 	return XTAL_REF_(t);
 }
-template <size_type N>
+template <auto N>
 XTAL_DEF_(return,inline)
 XTAL_LET pack_item_f(auto &&t)
 XTAL_0EX -> decltype(auto)
@@ -99,7 +99,7 @@ XTAL_0EX -> decltype(auto)
 	}
 	/***/
 }
-template <size_type N, size_type ...Ns> requires some_n<Ns...>
+template <auto N, auto ...Ns> requires some_n<Ns...>
 XTAL_DEF_(return,inline)
 XTAL_LET pack_item_f(auto &&t, auto &&...ts)
 XTAL_0EX -> decltype(auto)
@@ -113,7 +113,7 @@ XTAL_0EX -> decltype(auto)
 		return pack_item_f<Ns...>(pack_item_f<N>(XTAL_REF_(t)));
 	}
 }
-template <size_type ...Ns>
+template <auto ...Ns>
 XTAL_DEF_(return,inline)
 XTAL_LET pack_item_f(seek_t<Ns...>, auto &&...ts)
 XTAL_0EX -> decltype(auto)
@@ -124,14 +124,14 @@ XTAL_0EX -> decltype(auto)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_type I,                       class  ...Ts> XTAL_TYP interpack_item;
-template <size_type I,              class T, class  ...Ts> XTAL_TYP interpack_item<I, T, Ts...> : interpack_item<I - pack_size_n<T>, Ts...> {};
-template <size_type I, subpack_sized_q<I> T, class  ...Ts> XTAL_TYP interpack_item<I, T, Ts...> :      pack_item<I, T>                      {};
-template <size_type I,                       class  ...Ts> XTAL_USE interpack_item_t = typename interpack_item<I, Ts...>::type;
+template <auto I,                       class  ...Ts> XTAL_TYP interpack_item;
+template <auto I,              class T, class  ...Ts> XTAL_TYP interpack_item<I, T, Ts...> : interpack_item<I - pack_size_n<T>, Ts...> {};
+template <auto I, subpack_sized_q<I> T, class  ...Ts> XTAL_TYP interpack_item<I, T, Ts...> :      pack_item<I, T>                      {};
+template <auto I,                       class  ...Ts> XTAL_USE interpack_item_t = typename interpack_item<I, Ts...>::type;
 
-template <class T,                        size_type ...Ns> XTAL_TYP intrapack_item;
-template <class T,           size_type N, size_type ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
-template <class T,           size_type N                 > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
+template <class T,                        auto ...Ns> XTAL_TYP intrapack_item;
+template <class T,           auto N, auto ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
+template <class T,           auto N                 > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
 template <class T                                        > XTAL_TYP intrapack_item<T          > {using type = T;};
 template <class T,                       size_type... Ns > XTAL_USE intrapack_item_t = typename intrapack_item<T, Ns...>::type;
 
@@ -142,7 +142,7 @@ template <class T,                       size_type... Ns > XTAL_USE intrapack_it
 template <pack_size_q ...Ts>
 XTAL_TYP repack
 {
-	template <size_type  ...Ns>
+	template <auto  ...Ns>
 	XTAL_DEF_(static)
 	XTAL_LET make(seek_t<Ns...>) -> pack_t<interpack_item_t<Ns, Ts...>...>;
 
@@ -166,9 +166,9 @@ template <template <class ...> class F=pack_t>
 XTAL_USE repack_y = XTAL_TFN_(repack_f<F>);
 
 
-template <size_type N, class U=void>
+template <auto N, class U=void>
 XTAL_DEF_(return,inline)
-XTAL_LET pack_rowwise_f(size_type const &m, size_type const &i, accessed_q auto &&w)
+XTAL_LET pack_rowwise_f(auto const &m, auto const &i, accessed_q auto &&w)
 XTAL_0EX
 {
 	using _std::span;
@@ -178,7 +178,7 @@ XTAL_0EX
 		return span(next(*w, i), m);
 	}
 	else {
-		return [&]<size_type ...Ns> (bond::seek_t<Ns...>)
+		return [&]<auto ...Ns> (bond::seek_t<Ns...>)
 		XTAL_0FN {
 			if constexpr (void_q<U>) {
 				return _xtd::ranges::views::zip(span(next(point_f(w[Ns]), i), m)...);
@@ -190,21 +190,21 @@ XTAL_0EX
 		(bond::seek_s<N>{});
 	}
 }
-template <size_type N, class U=void>
+template <auto N, class U=void>
 XTAL_DEF_(return,inline)
-XTAL_LET pack_rowwise_f(size_type const &m, accessed_q auto &&w)
+XTAL_LET pack_rowwise_f(auto const &m, accessed_q auto &&w)
 XTAL_0EX
 {
 	return pack_rowwise_f<N, U>(XTAL_REF_(m), size_0, XTAL_REF_(w));
 }
-template <size_type N, class U=void>
+template <auto N, class U=void>
 XTAL_DEF_(return,inline)
 XTAL_LET pack_rowwise_f(integral_number_q auto ...ns)
 XTAL_0EX
 {
 	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<N, U>(ns..., XTAL_REF_(w)));
 }
-template <size_type N, class U>
+template <auto N, class U>
 XTAL_USE pack_rowwise_t = XTAL_ALL_(pack_rowwise_f<N, U>(0x1000, XTAL_ANY_(debraced_t<U> **)));
 
 template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(  pack_rowwise_f<devalued_n<U>, U>);
@@ -230,7 +230,7 @@ XTAL_LET pack_dot_f(X const &x, Y const &y)
 	XTAL_LET M = pack_size_n<X>;
 	XTAL_LET N = pack_size_n<Y>;
 	static_assert(M == N);
-	return [&]<size_type ...I>(bond::seek_t<I...>)
+	return [&]<auto ...I>(bond::seek_t<I...>)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
 	(bond::seek_s<N - 1> {});
 }

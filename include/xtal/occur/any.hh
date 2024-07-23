@@ -75,7 +75,7 @@ struct define
 				using R_::self;
 				using R_::head;
 
-				XTAL_DO2_(template <size_type ...Is>
+				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
 				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
 				{
@@ -105,15 +105,20 @@ struct define
 				{
 					using supercodex = typename R_::template codex<Xs...>;
 
-					template <size_type ...Is>
+					template <auto ...Is>
 					class index
 					{
-						template <size_type    J > XTAL_SET extend_v = supercodex::template index<Is..., J>::point;
-						template <size_type    J > XTAL_USE extend_t = decltype(extend_v<J>);
-						template <size_type ...Js>
-						XTAL_SET expand_f(bond::seek_t<Js...>)
+						template <auto _I>
+						XTAL_SET intend_v = is_q<typename T::body_type, size_type>?
+							(decltype(_I)) T(static_cast<size_type>(_I)): _I;
+						
+						template <auto _I>
+						XTAL_SET extend_v = supercodex::template index<Is..., intend_v<_I>>::point;
+						
+						template <auto ..._Is>
+						XTAL_SET expand_f(bond::seek_t<_Is...>)
 						XTAL_0EX {
-							return _std::array{extend_v<Js>...};
+							return _std::array{extend_v<_Is>...};
 						}
 					
 					public:

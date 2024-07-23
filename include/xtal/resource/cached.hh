@@ -51,7 +51,7 @@ struct cached<A[N]>
 			using W = _std::tuple<Us &...>;
 			size_type i{};
 			
-			return [&] <size_type ...I>(bond::seek_t<I...>)
+			return [&] <auto ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(W(bond::seek_i<I>(
 					reinterpret_cast<bond::pack_item_t<I, W> &>(m_cache[maligned_f<bond::pack_item_t<I, W>>(i)]))...
 				))

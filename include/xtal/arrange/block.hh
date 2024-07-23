@@ -180,6 +180,30 @@ struct block<A>
 		{
 			return static_cast<U_size>(N_data);
 		}
+		template <U_size n_data>
+		XTAL_DEF_(return,inline)
+		XTAL_LET capsize()
+		XTAL_0EX -> decltype(auto)
+		{
+			static_assert(n_data <= N_data);
+			using X = typename T::template tagged_t<U_data   [n_data]> &;
+			using Y = typename T::template tagged_t<U_data(&)[n_data]>  ;
+			//\
+			return reinterpret_cast<X>(*this);
+			return Y(*this);
+		}
+		template <U_size n_data>
+		XTAL_DEF_(return,inline)
+		XTAL_LET capsize()
+		XTAL_0FX -> decltype(auto)
+		{
+			static_assert(n_data <= N_data);
+			using X = typename T::template tagged_t<U_data   [n_data]> const &;
+			using Y = typename T::template tagged_t<U_data(&)[n_data]> const  ;
+			//\
+			return reinterpret_cast<X>(*this);
+			return Y(*this);
+		}
 
 		template <size_type I>
 		XTAL_DEF_(return,inline)

@@ -1107,11 +1107,23 @@ public:
 		return minimal_f();
 	}
 	XTAL_DEF_(return,inline)
-	XTAL_SET minimum_f(auto &&...values)
+	XTAL_SET minimum_f(auto &&w, auto &&x)
 	XTAL_0EX
 	{
-		return _std::min<alpha_type>({XTAL_REF_(values)...});
+		return w < x? XTAL_REF_(w): XTAL_REF_(x);
 	}
+	XTAL_DEF_(return,inline)
+	XTAL_SET minimum_f(auto &&w, auto &&x, auto &&...xs)
+	XTAL_0EX
+	{
+		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
+	}
+//	XTAL_DEF_(return,inline)
+//	XTAL_SET minimum_f(auto &&...values)
+//	XTAL_0EX
+//	{
+//		return _std::min<alpha_type>({XTAL_REF_(values)...});
+//	}
 
 
 	///\returns haplo_f(n_zoom)/std::numeric_limits<alpha_type>::min()`. \
@@ -1140,11 +1152,23 @@ public:
 		return maximal_f();
 	}
 	XTAL_DEF_(return,inline)
-	XTAL_SET maximum_f(auto &&...values)
+	XTAL_SET maximum_f(auto &&w, auto &&x)
 	XTAL_0EX
 	{
-		return _std::max<alpha_type>({XTAL_REF_(values)...});
+		return w < x? XTAL_REF_(x): XTAL_REF_(w);
 	}
+	XTAL_DEF_(return,inline)
+	XTAL_SET maximum_f(auto &&w, auto &&x, auto &&...xs)
+	XTAL_0EX
+	{
+		return maximum_f(maximum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
+	}
+//	XTAL_DEF_(return,inline)
+//	XTAL_SET maximum_f(auto &&...values)
+//	XTAL_0EX
+//	{
+//		return _std::max<common_t<decltype(values)...>>({XTAL_REF_(values)...});
+//	}
 
 
 ////////////////////////////////////////////////////////////////////////////////

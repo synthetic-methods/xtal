@@ -118,7 +118,7 @@ struct circular<A>
 	static_assert(_std::numeric_limits<devalued_u<ordinate_type>>::is_modulo);// D'oh!
 
 	template <class T>
-	using allotype = typename linear<ordinate_type[_std::extent_v<A>]>::template homotype<T>;
+	using allotype = typename linear<ordinate_type[_std::extent_v<based_t<A>>]>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<allotype<T>, bond::tag<circular_t>>;

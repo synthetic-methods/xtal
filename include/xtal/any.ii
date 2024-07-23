@@ -6,6 +6,32 @@
 //\
 Structural...
 
+template <auto M=0 >	XTAL_LET  top_f(auto n) {return decltype(n) (M <= n);}
+template <auto M   >	XTAL_LET stop_f(auto n) {return n < 0 or M < n? M: n;}
+
+template <auto N0, auto N1> requires (N0 < N1)
+XTAL_LET bounded_f(auto const &u)
+{
+	XTAL_IF0
+	XTAL_0IF_(dynamic) {
+		using _std::abs;
+		using U = XTAL_ALL_(u);
+		U constexpr  n0 = N0;
+		U constexpr  n1 = N1;
+		U constexpr n01 = N0 + N1;
+		if constexpr (integral_number_q<U>) {
+			return (abs(u - n0) - abs(u - n1) + n01) >> 1;
+		}
+		else {
+			return (abs(u - n0) - abs(u - n1) + n01)*0.5f;
+		}
+	}
+	XTAL_0IF_(default) {
+		return u < N0? N0: N1 < u? N1: u;
+	}
+}
+
+
 ///\returns the conditional `x` reinterpreted as type `Y`, \
 where `std::floating_point`s and `bool`eans are `static_cast`, \
 while all other `std::integral`s are negated. \
