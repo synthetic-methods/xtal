@@ -45,7 +45,7 @@ struct define
 			template <based_q X> struct argument<X> {using type = X const  &;};
 			template <class   X> using  argument_t = typename argument<X>::type;
 
-			template <size_type ...Is>
+			template <auto ...Is>
 			class index
 			{
 				using Y = decltype(XTAL_ANY_(T &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...));
@@ -56,7 +56,7 @@ struct define
 				static constexpr point_type point = &T::template method<Is...>;
 
 			};
-			template <size_type ...Is>
+			template <auto ...Is>
 				requires XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_ANY_(argument_t<Xs>)...))
 			class index<Is...>
 			{

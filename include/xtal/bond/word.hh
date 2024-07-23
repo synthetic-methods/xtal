@@ -14,7 +14,7 @@ namespace xtal::bond
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <int N_width>
+template <int N_size>
 struct word
 {
 	template <class S>
@@ -27,10 +27,7 @@ struct word
 
 		XTAL_DEF_(return,inline)
 		XTAL_SET size()
-		XTAL_0EX
-		{
-			return N_width;
-		};
+		XTAL_0EX -> size_type {return N_size;};
 
 	};
 };
@@ -48,11 +45,11 @@ concept word_q = (...and _detail::word_q<Ts>);
 ///\
 Defines the limits of a bit-field. \
 
-template <int N_width>
+template <int N_size>
 struct word
 {
-	template <size_type N_widen=1>
-	using semikind = _detail::word<N_widen*N_width>;
+	template <int M_size=1>
+	using semikind = _detail::word<M_size*N_size>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, semikind<>>
