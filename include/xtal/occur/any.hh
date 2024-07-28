@@ -51,7 +51,44 @@ struct define
 		:	bond::compose<flux::mask<N_mask>, typename S_::template afflux<>>
 		{
 		};
+		///\
+		Attaches `T` as a member of `this`, \
+		`dispatch`ing a conditional indicating positivity. \
 
+		template <int N_mask=-1>
+			requires anisotropic_q<bool, typename T::head_type>// Avoids self-referencing `T`...
+		struct clutch
+		{
+			using U_switch = conferred_t<bool, bond::tab<clutch<N_mask>>>;
+
+			using subkind = bond::compose<void
+			,	typename U_switch::template dispatch<N_mask>
+			,	attach<N_mask>
+			>;
+			template <flux::any_q R>
+			class subtype : public bond::compose_s<R, subkind>
+			{
+				using R_ = bond::compose_s<R, subkind>;
+
+			public:// CONSTRUCT
+				using R_::R_;
+			
+			public:// *FLUX
+
+				XTAL_TNX influx(auto &&...oo)
+				XTAL_0EX
+				{
+					return R_::influx(XTAL_REF_(oo)...);
+				}
+				XTAL_TNX influx(XTAL_ARG_(T) &&t, auto &&...oo)
+				XTAL_0EX
+				{
+					(void) R_::influx(U_switch(0 < t));
+					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
+				}
+			
+			};
+		};
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
 
@@ -65,8 +102,8 @@ struct define
 			{
 				using R_ = bond::compose_s<R, subkind>;
 
-				XTAL_SET A_size = T::size() - size_0; static_assert(size_0 <= A_size);
-				XTAL_SET A_mask = T::size() - size_1; static_assert(size_1 == bond::operating::bit_count_f(A_size));
+				XTAL_SET A_size = T::cardinality() - size_0; static_assert(size_0 <= A_size);
+				XTAL_SET A_mask = T::cardinality() - size_1; static_assert(size_1 == bond::operating::bit_count_f(A_size));
 
 			public:// CONSTRUCT
 				using R_::R_;

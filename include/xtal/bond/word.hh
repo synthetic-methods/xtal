@@ -26,13 +26,13 @@ struct word
 		using S_::S_;
 
 		XTAL_DEF_(return,inline)
-		XTAL_SET size()
+		XTAL_SET cardinality()
 		XTAL_0EX -> size_type {return N_size;};
 
 	};
 };
 template <class T>
-concept word_q = requires {{T::size()} -> integral_q;};
+concept word_q = requires {{T::cardinality()} -> integral_q;};
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -71,9 +71,9 @@ struct word
 
 	};
 	template <class S> requires word_q<S>
-	class subtype<S> : public bond::compose_s<S, semikind<S::size()>>
+	class subtype<S> : public bond::compose_s<S, semikind<S::cardinality()>>
 	{
-		using S_ = bond::compose_s<S, semikind<S::size()>>;
+		using S_ = bond::compose_s<S, semikind<S::cardinality()>>;
 	
 	public:
 		using S_::S_;

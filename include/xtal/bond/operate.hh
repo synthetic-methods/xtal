@@ -1536,7 +1536,7 @@ public:
 	XTAL_SET truncate_f(aphex_type &target)
 	XTAL_0EX -> aphex_type
 	{
-		auto &z = involved_f(target);
+		auto &z = invalued_f(target);
 		alpha_type const x = truncate_f<N_zoom>(z[0]);
 		alpha_type const y = truncate_f<N_zoom>(z[1]);
 		return aphex_type{x, y};
