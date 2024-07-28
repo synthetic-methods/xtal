@@ -258,6 +258,19 @@ struct defer_field
 			return dismember_f(u_body, XTAL_REF_(oo)...);
 		}
 
+		XTAL_DEF_(return,inline)
+		XTAL_SET cardinality()
+		XTAL_0EX
+			requires XTAL_TRY_TO_(S_::cardinality())
+
+		XTAL_DEF_(return,inline)
+		XTAL_SET cardinality()
+		XTAL_0EX
+			requires in_n<S_::pack_size::value, 0> and is_q<bool, U>
+		{
+			return size_2;
+		}
+
 	};
 };
 template <nominal_q U>
@@ -348,7 +361,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(return,inline) XTAL_SET size() XTAL_0EX {return sizeof...(Ns);}
+		XTAL_DEF_(return,inline) XTAL_SET cardinality() XTAL_0EX {return sizeof...(Ns);}
 		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return N_array[u_body];}
 		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return N_array[u_body];}
 		

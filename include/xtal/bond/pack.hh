@@ -92,7 +92,7 @@ XTAL_0EX -> decltype(auto)
 	return get<N>(XTAL_REF_(t));
 	/*/
 	if constexpr (complex_field_q<decltype(t)>) {
-		return involved_f(XTAL_REF_(t))[N];
+		return invalued_f(XTAL_REF_(t))[N];
 	}
 	else {
 		return get<N>(XTAL_REF_(t));

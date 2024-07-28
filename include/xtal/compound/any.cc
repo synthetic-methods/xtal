@@ -204,9 +204,9 @@ TAG_("compound", "composition")
 		TRUE_(complete_q<T_opt::self_s<L_aim>>);
 		TRUE_(complete_q<T_opt::self_s<L_hyp>>);
 		UNTRUE_(complete_q<T_opt::self_s<L_etc>>);
-		TRUE_(8 == T_opt::size());
-		TRUE_(4 == T_aim::size());
-		TRUE_(2 == T_hyp::size());
+		TRUE_(8 == T_opt::cardinality());
+		TRUE_(4 == T_aim::cardinality());
+		TRUE_(2 == T_hyp::cardinality());
 
 	}
 }
@@ -222,7 +222,7 @@ TAG_("compound", "inference")
 	TRY_("task")
 	{
 		T_order constexpr ord{1};
-		TRUE_(2 == ord.size());
+		TRUE_(2 == ord.cardinality());
 		TRUE_(1 == ord.head());
 		TRUE_(0 == (size_type) ord);
 

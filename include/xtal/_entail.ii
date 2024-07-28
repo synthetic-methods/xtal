@@ -193,7 +193,7 @@ template <class  T                 >	XTAL_USE    devolved_u =	typename devolved<
 template <class  T                 >	XTAL_USE    involved_t =	typename devolved<                         T >::array_type;
 template <class  T                 >	XTAL_USE    invalued_t =	devalued_u<T>[devalued_n<T>];
 
-template <devalued_q T, int ...Ns> requires   mutable_q<T>
+template <devalued_q T, int ...Ns> requires mutable_q<T>
 XTAL_TYP devolved<T, Ns...>
 :	devolved<devalued_u<T> , Ns..., devalued_n<T>>
 {
