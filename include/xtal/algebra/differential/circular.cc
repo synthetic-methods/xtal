@@ -21,6 +21,7 @@ TAG_("circular")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 	static constexpr T_alpha two =  2;
+	static constexpr T_alpha six =  6;
 	static constexpr T_alpha ten = 10;
 
 	auto mt19937_f = typename operating::mt19937_t(Catch::rngSeed());
@@ -92,18 +93,60 @@ TAG_("circular")
 	//	TRUE_(a_d2 == D2{0x40000000, 0x40000000});
 
 	}
+	TRY_("iteration")
+	{
+		U_phi   phi{0, _op::haplo_f(4)};
+		T_sigma tip{_op::sign.mask};
+
+		tip ^= _op::sign.mask;
+		for (T_sigma i = 0; i < 0x8; ++i) {
+			TRUE_((_op::sign.mask&phi[0]) == tip);
+			++phi;
+		}
+		tip ^= _op::sign.mask;
+		for (T_sigma i = 0; i < 0x8; ++i) {
+			TRUE_((_op::sign.mask&phi[0]) == tip);
+			++phi;
+		}
+		tip ^= _op::sign.mask;
+		for (T_sigma i = 0; i < 0x8; ++i) {
+			TRUE_((_op::sign.mask&phi[0]) == tip);
+			++phi;
+		}
+		tip ^= _op::sign.mask;
+		for (T_sigma i = 0; i < 0x8; ++i) {
+			TRUE_((_op::sign.mask&phi[0]) == tip);
+			++phi;
+		}
+
+	}
+	TRY_("addition")
+	{
+		T_alpha x =  0.33, x_dt = _op::haplo_f(4);
+		T_alpha y =  5.55;
+		T_alpha z =  x+y; z -= _std::round(z);
+
+		U_phi phi{x, x_dt};
+
+		phi += y;
+	//	TRUE_(bond::computrim_f<8>(phi[0]) == bond::computrim_f<8>(z));
+		TRUE_(bond::computrim_f<8>(phi(0)) == bond::computrim_f<8>(z));
+
+	}
 	TRY_("multiplication")
 	{
 		T_alpha x = 1/3.L, x_dt = _op::haplo_f(4);
 		U_phi phi{x, x_dt};
 		V_phi foo{x};
 
-		for (T_sigma i = 0; i < 0x08; ++i) {
-			T_alpha const u = -_std::pow(two, 1 + _op::mantissa_f(mt19937_f));
+		for (T_sigma i = 0; i < 0x8; ++i) {
+		//	T_alpha const u = -_std::pow(six, 1 + _op::mantissa_f(mt19937_f));
+			auto const v = static_cast<T_alpha>(i + 1);
+			auto const u{exp(asinh(v*_op::haplo_1))};
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);
-			TRUE_(computrim_f<13>(phi(0)) == computrim_f<13>(foo));
+			TRUE_(check_f<-31>(phi(0), foo));
 		}
 	}
 	/**/
@@ -138,19 +181,6 @@ TAG_("circular")
 		};
 	}
 	/***/
-	TRY_("addition")
-	{
-		T_alpha x =  0.33, x_dt = _op::haplo_f(4);
-		T_alpha y =  5.55;
-		T_alpha z =  x+y; z -= _std::round(z);
-
-		U_phi phi{x, x_dt};
-
-		phi += y;
-	//	TRUE_(bond::computrim_f<8>(phi[0]) == bond::computrim_f<8>(z));
-		TRUE_(bond::computrim_f<8>(phi(0)) == bond::computrim_f<8>(z));
-
-	}
 }
 
 
