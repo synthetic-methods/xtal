@@ -93,14 +93,16 @@ struct serial<A>
 		XTAL_0EX -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u += v;}>(XTAL_REF_(t));
+				XTAL_0FN {u += v;}
+			>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(T const &t)
 		XTAL_0EX -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
+				XTAL_0FN {u -= v;}
+			>(XTAL_REF_(t));
 		}
 
 		XTAL_DEF_(inline)
@@ -108,14 +110,16 @@ struct serial<A>
 		XTAL_0EX -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u += v;}>(XTAL_REF_(t));
+				XTAL_0FN {u += v;}
+			>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
 		XTAL_0EX -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u -= v;}>(XTAL_REF_(t));
+				XTAL_0FN {u -= v;}
+			>(XTAL_REF_(t));
 		}
 
 		///\

@@ -56,16 +56,12 @@ struct circumspect : bond::operate<A>
 	XTAL_SET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
-		//\
-		return _xtd::bit_cast<ordinate_type>(static_cast<inordinate_type>(co*_op::diplo_f()));
 		return _op::sigma_f(co*_op::diplo_f());
 	};
 	XTAL_DEF_(return,inline)
 	XTAL_SET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
-		//\
-		return static_cast<coordinate_type>(_xtd::bit_cast<inordinate_type>(o))*_op::haplo_f();
 		return _op::alpha_f(o)*_op::haplo_f();
 	};
 
@@ -219,9 +215,9 @@ struct circular<A>
 		XTAL_LET operator *= (real_number_q auto const &f)
 		XTAL_0EX -> T &
 		{
-			size_type constexpr M_bias = _op::N_width >> 3U;
-			size_type constexpr M_size = _op::half.depth - M_bias;// {52,23} -> {23, 9}
-			auto [m, n] = _op::scientific_f((U_alpha) f);
+			size_type constexpr M_bias = _op::half.depth >> 4U;
+			size_type constexpr M_size = _op::half.depth - M_bias;
+			auto [m, n] = _op::scientific_f(static_cast<U_alpha>(f));
 			auto &s = reinterpret_cast<linear_t<U_delta[N_data]> &>(self());
 			m >>= n - M_size;
 			s >>=     M_size;

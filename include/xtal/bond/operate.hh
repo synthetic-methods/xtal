@@ -249,6 +249,7 @@ public:
 
 	static constexpr sigma_type N_width = N_size;
 	static constexpr sigma_type N_depth = N_size << 3U;
+	static constexpr sigma_type M_depth = N_depth - 1U;
 
 	static constexpr sigma_type N_fraction =          S_::N_fraction;
 	static constexpr sigma_type N_exponent =          S_::N_exponent;
@@ -266,13 +267,13 @@ public:
 		sigma_type const mark;
 		sigma_type const mask;
 
-		XTAL_DEF_(return,inline) XTAL_SET flag_f(sigma_type const m=0)                    XTAL_0EX -> sigma_type {return N_negative <= m?  sigma_0: sigma_1 << m;};
-		XTAL_DEF_(return,inline) XTAL_SET mark_f(sigma_type const m=0)                    XTAL_0EX -> sigma_type {return N_negative <= m? ~sigma_0: flag_f(m) - 1;};
-		XTAL_DEF_(return,inline) XTAL_SET mask_f(sigma_type const m=0, sigma_type const n=0) XTAL_0EX -> sigma_type {return mark_f(m) << n;};
+		XTAL_DEF_(return,inline) XTAL_SET flag_f(sigma_type const m=0)                       XTAL_0EX -> sigma_type {return sigma_1 << (m&M_depth);};
+		XTAL_DEF_(return,inline) XTAL_SET mark_f(sigma_type const m=0)                       XTAL_0EX -> sigma_type {return    ~-flag_f(m)        ;};
+		XTAL_DEF_(return,inline) XTAL_SET mask_f(sigma_type const m=0, sigma_type const n=0) XTAL_0EX -> sigma_type {return      mark_f(m) << n   ;};
 
 		XTAL_CON_(explicit) word(sigma_type m_depth, sigma_type n_shift=0)
 		XTAL_0EX
-		:	width (flag_f(m_depth))
+		:	width (m_depth >> 3U)
 		,	depth (m_depth)
 		,	shift (n_shift)
 		,	mark  (mark_f(m_depth))
@@ -287,6 +288,7 @@ public:
 	static constexpr word     unit     {N_unit, N_fraction};
 	static constexpr word     sign     {N_sign, N_positive};
 	static constexpr word     half {N_depth >> 1U, N_depth >> 1U};
+	static constexpr word     full = negative;
 	static_assert((sigma_type) ~sign.mask == positive.mask);
 
 
