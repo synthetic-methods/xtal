@@ -52,9 +52,9 @@ struct cached<A[N]>
 			size_type i{};
 			
 			return [&] <auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(W(bond::seek_i<I>(
-					reinterpret_cast<bond::pack_item_t<I, W> &>(m_cache[maligned_f<bond::pack_item_t<I, W>>(i)]))...
-				))
+				XTAL_0FN_(W{reinterpret_cast<bond::pack_item_t<I, W> &>(
+					m_cache[maligned_f<bond::pack_item_t<I, W>>(i)]
+				)...})
 			(bond::seek_s<sizeof...(Us)> {});
 		}
 
