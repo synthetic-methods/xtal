@@ -563,19 +563,23 @@ public:
 	static constexpr alpha_type  alpha_0{0};
 	static constexpr alpha_type  alpha_1{1};
 	static constexpr alpha_type  alpha_2{2};
+	static constexpr alpha_type  alpha_3{3};
 	
 	static constexpr aphex_type  aphex_0{0, 0};
 	static constexpr aphex_type  aphex_1{1, 0};
 	static constexpr aphex_type  aphex_2{2, 0};
+	static constexpr aphex_type  aphex_3{3, 0};
 	static constexpr aphex_type  aphex_i{0, 1};
 
 	static constexpr aphex_type square_0{0, 0};
 	static constexpr aphex_type square_1{1, 1};
 	static constexpr aphex_type square_2{2, 2};
+	static constexpr aphex_type square_3{3, 3};
 	
 	static constexpr aphex_type circle_0 = square_0*0.7071067811865475244008443621048490393L;
 	static constexpr aphex_type circle_1 = square_1*0.7071067811865475244008443621048490393L;
 	static constexpr aphex_type circle_2 = square_2*0.7071067811865475244008443621048490393L;
+	static constexpr aphex_type circle_3 = square_3*0.7071067811865475244008443621048490393L;
 
 	XTAL_DEF_(return,inline) XTAL_SET  iota_f(auto &&o) XTAL_0EX {return  iota_type{XTAL_REF_(o)};}
 	XTAL_DEF_(return,inline) XTAL_SET delta_f(auto &&o) XTAL_0EX {return delta_type{XTAL_REF_(o)};}
@@ -719,7 +723,7 @@ public:
 				return (2.0 - n*w)*(w);
 			}	else
 			if constexpr (N_pow == -2) {
-				return (0.5)*(3.0 - w*n*n);
+				return (1.5 - 0.5*w*n*n);
 			}
 		}
 		else {
@@ -1109,6 +1113,12 @@ public:
 		return minimal_f();
 	}
 	XTAL_DEF_(return,inline)
+	XTAL_SET minimum_f(auto &&w)
+	XTAL_0EX
+	{
+		return XTAL_REF_(w);
+	}
+	XTAL_DEF_(return,inline)
 	XTAL_SET minimum_f(auto &&w, auto &&x)
 	XTAL_0EX
 	{
@@ -1152,6 +1162,12 @@ public:
 	XTAL_0EX
 	{
 		return maximal_f();
+	}
+	XTAL_DEF_(return,inline)
+	XTAL_SET maximum_f(auto &&w)
+	XTAL_0EX
+	{
+		return XTAL_REF_(w);
 	}
 	XTAL_DEF_(return,inline)
 	XTAL_SET maximum_f(auto &&w, auto &&x)
@@ -1483,6 +1499,27 @@ public:
 	static_assert(fraction_f(-2.75) ==  0.25);
 
 ////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_DEF_(static)
+	XTAL_LET unitialize_f(alpha_type &o)
+	XTAL_0EX -> alpha_type
+	{
+		if constexpr (IEC&559U) {
+			reinterpret_cast<delta_type &>(o) |= unit.mask&-delta_type(o == alpha_0);
+		}
+		else {
+			o += o == 0;
+		}
+		return o;
+	}
+	XTAL_DEF_(static)
+	XTAL_LET unitialized_f(alpha_type o)
+	XTAL_0EX -> alpha_type
+	{
+		unitialize_f(o);
+		return o;
+	}
+
 
 	/// Modifies the `target`, clamping the magnitude below `dnsilon_f(N_zoom, n_zone)`. \
 

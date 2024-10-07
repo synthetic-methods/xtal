@@ -120,7 +120,7 @@ template <int N           >	XTAL_TYP     bisordinal   :	nominal_t<N> {XTAL_TO4_(
 template <int N, int ...Ns>	XTAL_TYP     fractional    	             {XTAL_TO4_(XTAL_CVN_(implicit) real_type(), N + real_type(1.0)/fractional<Ns...>{});};
 template <int N           >	XTAL_TYP     fractional<N>:	nominal_t<N> {XTAL_TO4_(XTAL_CVN_(implicit) real_type(), N);};
 
-template <       size_type N >	XTAL_TYP      factorial   :	nominal_t<N * factorial<N - 1>{}> {};
+template <    size_type N >	XTAL_TYP      factorial   :	nominal_t<N * factorial<N - 1>{}> {};
 template <                >	XTAL_TYP      factorial<0>:	nominal_t<1> {};
 
 static_assert(factorial <5      >{} == 120);
@@ -371,7 +371,8 @@ Arithmetic...
 //\
 template <class      T >	XTAL_REQ   integral_number_q =	 _std::integral      <based_t<T>>;
 template <class      T >	XTAL_REQ   integral_number_q =	 integral_q<T>;
-template <class      T >	XTAL_REQ       real_number_q =	 _std::floating_point<based_t<T>>;
+template <class      T >	XTAL_REQ     unreal_number_q =	 not _std::floating_point<based_t<T>>;
+template <class      T >	XTAL_REQ       real_number_q =	     _std::floating_point<based_t<T>>;
 template <class      T >	XTAL_REQ    complex_number_q =	fungible_q<T, _std::complex<unvalued_u<T>>> and real_number_q<unvalued_u<T>>;
 template <class      T >	XTAL_REQ    simplex_number_q =	integral_number_q<T> or real_number_q<T>;
 template <class      T >	XTAL_REQ            number_q =	integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
