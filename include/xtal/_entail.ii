@@ -371,7 +371,8 @@ Arithmetic...
 //\
 template <class      T >	XTAL_REQ   integral_number_q =	 _std::integral      <based_t<T>>;
 template <class      T >	XTAL_REQ   integral_number_q =	 integral_q<T>;
-template <class      T >	XTAL_REQ       real_number_q =	 _std::floating_point<based_t<T>>;
+template <class      T >	XTAL_REQ     unreal_number_q =	 not _std::floating_point<based_t<T>>;
+template <class      T >	XTAL_REQ       real_number_q =	     _std::floating_point<based_t<T>>;
 template <class      T >	XTAL_REQ    complex_number_q =	fungible_q<T, _std::complex<unvalued_u<T>>> and real_number_q<unvalued_u<T>>;
 template <class      T >	XTAL_REQ    simplex_number_q =	integral_number_q<T> or real_number_q<T>;
 template <class      T >	XTAL_REQ            number_q =	integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
