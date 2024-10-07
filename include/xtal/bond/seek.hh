@@ -41,7 +41,7 @@ Invokes the function `f` with each index `Ns...`. \
 
 template <auto ...Ns>
 XTAL_DEF_(inline)
-XTAL_LET seek_each_f(auto const &f)
+XTAL_LET seek_access_f(auto const &f)
 XTAL_0EX -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)

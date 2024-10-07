@@ -134,6 +134,7 @@ XTAL_USE  integral_type = _entail::  integral_type;
 static constexpr size_type size_0{0};
 static constexpr size_type size_1{1};
 static constexpr size_type size_2{2};
+static constexpr size_type size_3{3};
 
 
 template <auto    N, auto  ...Ms>	XTAL_REQ             un_n = _entail::un_n<N, Ms... >;
@@ -220,7 +221,7 @@ template <liminal_q  T >	XTAL_USE superliminal_s = typename _entail::superlimina
 
 template <size_type  N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
 template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
-template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;
+template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;///< `FromContinuedFraction`
 
 template <class      T >	XTAL_USE        based_t =          _entail::   based_t<T>;
 template <class   ...Ts>	XTAL_REQ        based_q = (...and  _entail::   based_q<Ts>);
@@ -324,6 +325,7 @@ Arithmetic...
 
 template <class   ...Ts>	XTAL_REQ            number_q =	    (...and  _entail::          number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ       real_number_q =	    (...and  _entail::     real_number_q<Ts>);
+template <class   ...Ts>	XTAL_REQ     unreal_number_q =	    (...and  _entail::   unreal_number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ    complex_number_q =	    (...and  _entail::  complex_number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ    simplex_number_q =	    (...and  _entail::  simplex_number_q<Ts>);
 template <class   ...Ts>	XTAL_REQ   integral_number_q =	    (...and  _entail:: integral_number_q<Ts>);
