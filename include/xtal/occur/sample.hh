@@ -32,12 +32,12 @@ private:
 	using M = bond::pack_t<U, V>;
 
 public:
-	using subkind = bond::compose<defer<M>, bond::tag<sample>>;
+	using superkind = bond::compose<defer<M>, bond::tag<sample>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 	//	using S_::S_;

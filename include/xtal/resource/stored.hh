@@ -23,12 +23,12 @@ Provides a specialization of `arrange::store`. \
 template <bond::compose_q A>
 struct stored<A>
 {
-	using subkind = bond::tag<stored>;
+	using superkind = bond::tag<stored>;
 	
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;
@@ -44,15 +44,15 @@ struct stored<A>
 	XTAL_USE value_type =  typename  A::value_type;
 	XTAL_SET value      = (unsigned) A{};
 
-	using subkind = bond::tag<stored>;
+	using superkind = bond::tag<stored>;
 	
 	template <class S>
 	class subtype;
 	
 	template <class S> requires _std::unsigned_integral<value_type>
-	class subtype<S> : public bond::compose_s<S, subkind>
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;
@@ -62,9 +62,9 @@ struct stored<A>
 
 	};
 	template <class S> requires _std::  signed_integral<value_type>
-	class subtype<S> : public bond::compose_s<S, subkind>
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

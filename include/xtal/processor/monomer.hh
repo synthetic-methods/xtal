@@ -36,12 +36,12 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
 
-	using subkind = confer<U, As..., resource::stated<>, resource::invoice<>>;
+	using superkind = confer<U, As..., resource::stated<>, resource::invoice<>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
 		template <class ...Xs>
@@ -61,14 +61,14 @@ struct monomer<U, As...>
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
-			using subkind = bond::compose<void
+			using superkind = bond::compose<void
 			,	compound::confer<Y_result>
 			,	F_<Xs...>
 			>;
 			template <any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
 			//	using R_::R_;
@@ -129,12 +129,12 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using subkind = bond::compose<resource::stashed<U_state, U_store>, F_<Xs...>>;
+			using superkind = bond::compose<resource::stashed<U_state, U_store>, F_<Xs...>>;
 
 			template <any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
 				using R_::R_;

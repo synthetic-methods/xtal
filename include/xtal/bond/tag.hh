@@ -16,12 +16,12 @@ namespace xtal::bond
 template <template <class ...> class Y>
 struct tag
 {
-	using subkind = tab<tag<Y>>;
+	using superkind = tab<tag<Y>>;
 
 	template <class S>
-	class subtype : public compose_s<S, subkind>
+	class subtype : public compose_s<S, superkind>
 	{
-		using S_ = compose_s<S, subkind>;
+		using S_ = compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;

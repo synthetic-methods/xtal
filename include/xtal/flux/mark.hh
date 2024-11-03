@@ -27,12 +27,12 @@ struct mark<>
 {
 	using _op = bond::operating;
 
-	using subkind = compound::confer<typename _op::sigma_type, bond::tag<mark>>;
+	using superkind = compound::confer<typename _op::sigma_type, bond::tag<mark>>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 		using S_::S_;
@@ -44,9 +44,9 @@ struct mark<>
 
 	};
 	template <mark_q S>
-	class subtype<S> : public bond::compose_s<S, subkind>
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 		using S_::S_;

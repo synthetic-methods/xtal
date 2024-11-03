@@ -25,12 +25,12 @@ struct cached<A[N]>
 {
 	using _op = bond::operating;
 	
-	using subkind = bond::tag<cached>;
+	using superkind = bond::tag<cached>;
 
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	//	NOTE: Expected maximum is 64/8: 6 doubles not including coefficients...
 		XTAL_SET L_cache = _op::alignment{}*sizeof(size_type);

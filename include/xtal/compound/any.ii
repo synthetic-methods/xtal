@@ -38,10 +38,10 @@ sandwiching the decorators `As...`. \
 template <class T, typename ...As>
 struct confine
 {
-	using subkind = bond::compose<refine<T>, As..., define<T>>;
+	using superkind = bond::compose<refine<T>, As..., define<T>>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, subkind>;
+	using subtype = bond::compose_s<S, superkind>;
 	using    type = subtype<any_type>;
 	
 };
@@ -59,10 +59,10 @@ struct confined
 	using homokind = confine<T, As...>;
 	using homokind = bond::compose<refine<T>, As..., define<T>>;
 	
-	using subkind = bond::isokind<homokind>;
+	using superkind = bond::isokind<homokind>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, subkind>;
+	using subtype = bond::compose_s<S, superkind>;
 	using    type = subtype<any_type>;
 	
 };
@@ -86,25 +86,25 @@ Applies `refer` to the outermost `head_t`. \
 
 struct referree
 {
-	struct subkind
+	struct superkind
 	{
 		template <any_q S>
 		using subtype = bond::compose_s<S, refer<typename S::head_type>>;
 
 	};
 	template <any_q S>
-	using subtype = bond::compose_s<S, subkind>;
+	using subtype = bond::compose_s<S, superkind>;
 	
 };
 ///\
 Unless `A` is already a decorator, \
 provides `defer<A>` or `any<A>` depending on whether `complete_q<A>`. \
 
-template <class           A          >	struct infer       :             defer<A>                    {};
-template <bond::compose_q A          >	struct infer<A   > :                   A                     {};
-template <incomplete_q    A          >	struct infer<A   > :               any<A>                    {};
+template <class           A             >	struct infer       :             defer<A>                       {};
+template <bond::compose_q A             >	struct infer<A   > :                   A                        {};
+template <incomplete_q    A             >	struct infer<A   > :               any<A>                       {};
 template <incomplete_q    A, size_type N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};
-template <                           >	struct infer<void> : bond::compose<                        > {};
+template <                              >	struct infer<void> : bond::compose<                           > {};
 
 template <class   ...As>	XTAL_USE   infers     = bond::compose<          infer   <As>...>;
 template <class   ...As>	XTAL_USE reinfers     = bond::compose<referree, infer   <As>...>;

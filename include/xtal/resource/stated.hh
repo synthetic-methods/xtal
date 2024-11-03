@@ -23,12 +23,12 @@ Provides a specialization of `arrange::store`. \
 template <bond::compose_q A>
 struct stated<A>
 {
-	using subkind = bond::tag<stated>;
+	using superkind = bond::tag<stated>;
 	
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;
@@ -41,12 +41,12 @@ struct stated<A>
 template <>
 struct stated<>
 {
-	using subkind = bond::tag<stated>;
+	using superkind = bond::tag<stated>;
 	
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

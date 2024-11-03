@@ -30,13 +30,13 @@ providing the mechanism for traversing the trait-lineage of `T`. \
 template <class T>
 struct define
 {
-	using subkind = bond::compose<void
+	using superkind = bond::compose<void
 	,	_detail::define_super<T>
 	>;
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
+	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
 	{
-		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
+		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET equal_to_(subtype const &t)
@@ -92,24 +92,24 @@ with `subtype` as the default target of `self`. \
 template <class T>
 struct refine
 {
-	using subkind = bond::compose<void
+	using superkind = bond::compose<void
 	,	_detail::refine_head<T>
 	,	_detail::refine_tuple<T>
 	>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
 
 	};
 	template <any_q S> requires iterable_q<S> and uniterated_q<S>
-	class subtype<S> : public bond::compose_s<S, subkind>, public initerated_t<T>
+	class subtype<S> : public bond::compose_s<S, superkind>, public initerated_t<T>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -130,12 +130,12 @@ providing a similar level of utility to `std::reference_wrapper`. \
 template <class U>
 struct defer
 {
-	using subkind = _detail::defer_field<U>;
+	using superkind = _detail::defer_field<U>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind, _detail::query<subtype<S>>>
+	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
 	{
-		using S_ = bond::compose_s<S, subkind, _detail::query<subtype<S>>>;
+		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 		using U_ = typename S_::head_type;
 
 	public:

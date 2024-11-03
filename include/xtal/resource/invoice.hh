@@ -36,12 +36,12 @@ struct invoice
 		template <class ...Vs>
 		struct voice
 		{
-			using subkind = bond::compose<Vs..., metakind>;
+			using superkind = bond::compose<Vs..., metakind>;
 			
 			template <class R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
 				using R_::R_;
@@ -51,12 +51,12 @@ struct invoice
 //		template <class ...Xs>
 //		struct brace
 //		{
-//			using subkind = voice<typename S_::template brace<Xs...>>;
+//			using superkind = voice<typename S_::template brace<Xs...>>;
 //			
 //			template <class R>
-//			class subtype : public bond::compose_s<R, subkind>
+//			class subtype : public bond::compose_s<R, superkind>
 //			{
-//				using R_ = bond::compose_s<R, subkind>;
+//				using R_ = bond::compose_s<R, superkind>;
 //
 //			public:// CONSTRUCT
 //				using R_::R_;

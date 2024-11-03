@@ -50,12 +50,12 @@ template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_SET dismember_f(W &m, aut
 template <class T>
 struct define_super
 {
-	using subkind = _retail::define<T>;
+	using superkind = _retail::define<T>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -379,12 +379,12 @@ struct defer_field<unit_type[N_width]>
 	static constexpr size_type N_depth = bond::operating::bit_ceiling_f(N_width);
 	static_assert(N_width == size_1 << N_depth);
 
-	using subkind = bond::word<N_width>;
+	using superkind = bond::word<N_width>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 		using head_type = remember_t<U>;

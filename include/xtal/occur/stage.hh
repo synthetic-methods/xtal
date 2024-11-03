@@ -16,7 +16,7 @@ namespace xtal::occur
 template <typename ...As>
 struct stage
 {
-	using subkind = bond::compose<void
+	using superkind = bond::compose<void
 	,	_detail::infer_equality<XTAL_FLX>
 	,	_detail::infer_binary_logic<XTAL_FLX>
 	,	As...
@@ -24,9 +24,9 @@ struct stage
 	>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -36,7 +36,7 @@ struct stage
 template <nominal_q A, typename ...As>
 struct stage<A, As...>
 {
-	using subkind = bond::compose<void
+	using superkind = bond::compose<void
 	,	_detail::infer_equality<XTAL_FLX>
 	,	_detail::infer_binary_logic<XTAL_FLX>
 	,	As...
@@ -44,9 +44,9 @@ struct stage<A, As...>
 	>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;

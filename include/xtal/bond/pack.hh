@@ -130,10 +130,10 @@ template <auto I, subpack_sized_q<I> T, class  ...Ts> XTAL_TYP interpack_item<I,
 template <auto I,                       class  ...Ts> XTAL_USE interpack_item_t = typename interpack_item<I, Ts...>::type;
 
 template <class T,                        auto ...Ns> XTAL_TYP intrapack_item;
-template <class T,           auto N, auto ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
-template <class T,           auto N                 > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
-template <class T                                        > XTAL_TYP intrapack_item<T          > {using type = T;};
-template <class T,                       size_type... Ns > XTAL_USE intrapack_item_t = typename intrapack_item<T, Ns...>::type;
+template <class T,                auto N, auto ...Ns> XTAL_TYP intrapack_item<T, N, Ns...> : intrapack_item<pack_item_t<N, T>, Ns...> {};
+template <class T,                auto N            > XTAL_TYP intrapack_item<T, N       > :                pack_item  <N, T>         {};
+template <class T                                   > XTAL_TYP intrapack_item<T          > {using type = T;};
+template <class T,                  size_type... Ns > XTAL_USE intrapack_item_t = typename intrapack_item<T, Ns...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ XTAL_USE repack_t = typename repack<Ts...>::type;
 
 template <template <class ...> class F=pack_t>
 XTAL_DEF_(inline)
-XTAL_LET repack_f(auto &&...ts)
+XTAL_LET repack_f(pack_size_q auto &&...ts)
 XTAL_0EX
 {
 	return [&]<auto ...Ns> (bond::seek_t<Ns...>)

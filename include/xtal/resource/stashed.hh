@@ -23,15 +23,15 @@ template <typename ..._s> XTAL_REQ stashed_q = bond::any_tag_p<stashed, _s...>;
 template <iterable_q U_state, iterable_q U_store>
 struct stashed<U_state, U_store>
 {
-	using subkind = bond::compose<bond::tag<stashed>
+	using superkind = bond::compose<bond::tag<stashed>
 	,	compound::refer<U_state>
 	,	compound::defer<U_state>
 	,	compound::defer<U_store>
 	>;
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 	//	using S_::S_;
