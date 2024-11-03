@@ -28,12 +28,12 @@ XTAL_0EX
 template <class U>
 struct resize
 {
-	using subkind = bond::compose<flux::tag<resize>, defer<U>>;
+	using superkind = bond::compose<flux::tag<resize>, defer<U>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT

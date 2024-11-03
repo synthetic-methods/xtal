@@ -20,14 +20,14 @@ namespace xtal::process
 template <class T>
 struct define
 {
-	using subkind = _retail::define<T>;
+	using superkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
 		friend T;
 		
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT
@@ -134,14 +134,14 @@ struct define
 		template <class ...Xs> requires any_q<Xs...>
 		struct brace
 		{
-			using subkind = bond::compose<void
+			using superkind = bond::compose<void
 			,	defer<T_>
 			,	flux::brace<Xs...>
 			>;
 			template <any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 				using H0_ = typename R_::template head_t<nominal_t<0>>;
 				using H1_ = typename R_::template head_t<nominal_t<1>>;
@@ -188,26 +188,26 @@ struct define
 template <class T>
 struct refine
 {
-	using subkind = _retail::refine<T>;
+	using superkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// BIND*
+	public:// BRACE*
 		template <class ...Xs>
 		struct braced
 		{
 			//\
-			using subkind = confined<typename S_::template brace<typename S_::template bracelet<Xs>::type...>>;
-			using subkind = confined<typename S_::template brace<process::let_t<Xs>...>>;
+			using superkind = confined<typename S_::template brace<typename S_::template bracelet<Xs>::type...>>;
+			using superkind = confined<typename S_::template brace<process::let_t<Xs>...>>;
 
 			template <class R>
-			using subtype = bond::compose_s<R, subkind>;
+			using subtype = bond::compose_s<R, superkind>;
 			using    type = subtype<S_>;
 
 		};
@@ -243,12 +243,12 @@ struct refine
 template <class U>
 struct defer
 {
-	using subkind = _retail::defer<U>;
+	using superkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 		using U0 = typename S_::template head_t<nominal_t<0>>;
 		using U1 = typename S_::template head_t<nominal_t<1>>;

@@ -28,12 +28,12 @@ struct tab;
 template <typename ..._s>
 struct tab
 {
-	using subkind = bond::compose<bond::tab<_s>...>;
+	using superkind = bond::compose<bond::tab<_s>...>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT

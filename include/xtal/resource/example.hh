@@ -26,14 +26,14 @@ Parameterise `sample` by decoration rather-than unit-type? \
 template <typename ...As>
 struct example
 {
-	using subkind = bond::compose<bond::tag<example>
+	using superkind = bond::compose<bond::tag<example>
 	,	typename occur::sample_t<>::template attach<>
 	,	As...
 	>;
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

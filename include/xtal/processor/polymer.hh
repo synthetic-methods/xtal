@@ -40,13 +40,13 @@ template <class U, typename ...As>
 struct polymer<U, As...>
 {
 	//\
-	using subkind = confer<monomer_t<U>, As...>;
-	using subkind = monomer<U, As...>;
+	using superkind = confer<monomer_t<U>, As...>;
+	using superkind = monomer<U, As...>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using S_voice = typename S_::template voice<>;
 		using R_voice = monomer_t<U, resource::invoice<S_voice>>;
 
@@ -63,14 +63,14 @@ struct polymer<U, As...>
 			using U_event = flux::key_s<V_event>;
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
-			using subkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
+			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	defer<V_voice>
 			,	typename S_::template brace<Xs...>
 			>;
 			template <any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 				
 				U_ensemble u_ensemble{};
 

@@ -257,12 +257,12 @@ struct surrender
 template <counter_q V>
 struct render<V>
 {
-	using subkind = bond::compose<_detail::surrender, resize<V>, restep<V>, bond::tag<render>>;
+	using superkind = bond::compose<_detail::surrender, resize<V>, restep<V>, bond::tag<render>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
 	public:
@@ -363,12 +363,12 @@ private:
 	using V = iteratee_t<U>;
 
 public:
-	using subkind = bond::compose<_detail::surrender, review<U>, restep<V>, bond::tag<render>>;
+	using superkind = bond::compose<_detail::surrender, review<U>, restep<V>, bond::tag<render>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
 	public:

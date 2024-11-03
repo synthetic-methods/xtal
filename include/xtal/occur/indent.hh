@@ -31,12 +31,12 @@ struct indent<Ns...>
 	using leaf = bond::compose_t<conferred_t>;
 	using path = confined<bond::tag<indent>, confer<Ns>...>;
 	
-	using subkind = bond::compose<path, leaf, item>;
+	using superkind = bond::compose<path, leaf, item>;
 
 	template <bond::pack_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	//	using W_ = bond::compose_s<S, item>;
 		using W_ = component_t<S>;
 		using U_ = devalued_u<reembrace_t<S>>;//   presentation
@@ -68,12 +68,12 @@ struct indent<Ns...>
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
 
-			using subkind = bond::compose<flux::mask<N_mask>, defer<W_>>;
+			using superkind = bond::compose<flux::mask<N_mask>, defer<W_>>;
 
 			template <compound::any_q R> requires (0 == sizeof...(Ns))
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 				
 			public:
 				using R_::R_;

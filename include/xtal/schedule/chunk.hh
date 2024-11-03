@@ -21,12 +21,12 @@ possibly using `occur::render` to convert between absolute and relative delays. 
 template <typename ...As>
 struct chunk
 {
-	using subkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
+	using superkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		static_assert(resource::spooled_q<S_>);
 
 	public:
@@ -35,12 +35,12 @@ struct chunk
 		template <class ...Xs>
 		struct inqueue
 		{
-			using subkind = typename S_::template inqueue<Xs...>;
+			using superkind = typename S_::template inqueue<Xs...>;
 			
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 			protected:
 				using typename R_::U_event;

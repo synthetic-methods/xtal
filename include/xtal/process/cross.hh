@@ -29,12 +29,12 @@ template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
 	using W_indent = typename occur::indent_s<W>::template funnel<>;
-	using subkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
+	using superkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

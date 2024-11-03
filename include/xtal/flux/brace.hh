@@ -24,12 +24,12 @@ struct brace
 {
 	using Xs_packed = compound::packed_t<Xs...>;
 	
-	using subkind = compound::defer<Xs_packed>;
+	using superkind = compound::defer<Xs_packed>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:// CONSTRUCT
 		using S_::S_;

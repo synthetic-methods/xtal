@@ -26,12 +26,12 @@ struct biased
 {
 	XTAL_USE U_bias = bond::seek_constant_t<As..., nominal_t<0>>;
 
-	using subkind = bond::compose<bond::tag<biased>, As...>;
+	using superkind = bond::compose<bond::tag<biased>, As...>;
 
 	template <compound::any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

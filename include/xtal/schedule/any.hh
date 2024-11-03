@@ -20,13 +20,13 @@ namespace xtal::schedule
 template <class T>
 struct define
 {
-	using subkind = _retail::define<T>;
+	using superkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
 		friend T;
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -120,12 +120,12 @@ struct define
 template <class T>
 struct refine
 {
-	using subkind = _retail::refine<T>;
+	using superkind = _retail::refine<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 		template <class ...Xs>
 		using S_inqueue = typename S_::template inqueue<Xs...>;

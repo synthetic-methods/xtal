@@ -23,12 +23,12 @@ Provides a specialization of `arrange::spool`. \
 template <bond::compose_q A>
 struct spooled<A>
 {
-	using subkind = bond::tag<spooled>;
+	using superkind = bond::tag<spooled>;
 	
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;
@@ -44,12 +44,12 @@ struct spooled<A>
 	XTAL_USE value_type =  typename  A::value_type;
 	XTAL_SET value      = (unsigned) A{};
 
-	using subkind = bond::tag<spooled>;
+	using superkind = bond::tag<spooled>;
 	
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;

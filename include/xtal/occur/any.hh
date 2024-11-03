@@ -20,13 +20,13 @@ namespace xtal::occur
 template <class T>
 struct define
 {
-	using subkind = _retail::define<T>;
+	using superkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
 		friend T;
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -61,14 +61,14 @@ struct define
 		{
 			using U_switch = conferred_t<bool, bond::tab<clutch<N_mask>>>;
 
-			using subkind = bond::compose<void
+			using superkind = bond::compose<void
 			,	typename U_switch::template dispatch<N_mask>
 			,	attach<N_mask>
 			>;
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
 				using R_::R_;
@@ -95,12 +95,12 @@ struct define
 		template <int N_mask=-1>
 		struct dispatch
 		{
-			using subkind = attach<N_mask>;
+			using superkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 
 				XTAL_SET A_size = T::cardinality() - size_0; static_assert(size_0 <= A_size);
 				XTAL_SET A_mask = T::cardinality() - size_1; static_assert(size_1 == bond::operating::bit_count_f(A_size));
@@ -174,12 +174,12 @@ struct define
 		template <int N_mask=-1>
 		struct expect
 		{
-			using subkind = attach<N_mask>;
+			using superkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 			
 			public:
 				using R_::R_;
@@ -204,12 +204,12 @@ struct define
 		template <int N_mask=-1>
 		struct inspect
 		{
-			using subkind = attach<N_mask>;
+			using superkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 			
 			public:
 				using R_::R_;
@@ -234,12 +234,12 @@ struct define
 		template <int N_mask=-1>
 		struct poll
 		{
-			using subkind = attach<N_mask>;
+			using superkind = attach<N_mask>;
 			
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 			
 			public:
 				using R_::R_;

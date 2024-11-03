@@ -18,12 +18,12 @@ which produces a signal by successive calls to `method`. \
 template <typename ...As>
 struct thunk
 {
-	using subkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
+	using superkind = bond::compose<As..., resource::spooled<nominal_t<-1>>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		static_assert(resource::spooled_q<S_>);
 
 	public:
@@ -32,12 +32,12 @@ struct thunk
 		template <class ...Xs>
 		struct inqueue
 		{
-			using subkind = typename S_::template inqueue<Xs...>;
+			using superkind = typename S_::template inqueue<Xs...>;
 
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 			
 			protected:
 				using typename R_::V_delay;

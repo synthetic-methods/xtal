@@ -28,12 +28,12 @@ XTAL_0EX
 template <integral_number_q U>
 struct restep
 {
-	using subkind = bond::compose<defer<U>, bond::tag<restep>>;
+	using superkind = bond::compose<defer<U>, bond::tag<restep>>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;

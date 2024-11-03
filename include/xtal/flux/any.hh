@@ -23,13 +23,13 @@ struct define
 	using _op = bond::operating;
 	using T_iota = typename _op::iota_type;
 
-	using subkind = _retail::define<T>;
+	using superkind = _retail::define<T>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
 		friend T;
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
@@ -180,12 +180,12 @@ struct define
 		template <typename ...As>
 		struct afflux
 		{
-			using subkind = bond::compose<any<As>..., defer<T>>;
+			using superkind = bond::compose<any<As>..., defer<T>>;
 
 			template <flux::any_q R>
-			class subtype : public bond::compose_s<R, subkind>
+			class subtype : public bond::compose_s<R, superkind>
 			{
-				using R_ = bond::compose_s<R, subkind>;
+				using R_ = bond::compose_s<R, superkind>;
 			
 			public:// CONSTRUCT
 			//	using R_::R_;
@@ -223,12 +223,12 @@ struct refine
 template <class U>
 struct defer
 {
-	using subkind = _retail::defer<U>;
+	using superkind = _retail::defer<U>;
 
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;

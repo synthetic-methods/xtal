@@ -27,12 +27,12 @@ struct cue<>
 {
 	using _op = bond::operating;
 
-	using subkind = compound::confer<typename _op::iota_type, bond::tag<cue>>;
+	using superkind = compound::confer<typename _op::iota_type, bond::tag<cue>>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 		using S_::S_;
@@ -44,9 +44,9 @@ struct cue<>
 
 	};
 	template <cue_q S>
-	class subtype<S> : public bond::compose_s<S, subkind>
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 
 	public:
 		using S_::S_;

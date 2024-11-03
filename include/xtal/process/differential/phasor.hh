@@ -43,14 +43,14 @@ struct phasor<A, As...>
 	,	typename occur::indent_s<U_phased>::template funnel<>
 	,	As...
 	>;
-	using subkind = bond::compose<bond::tag<phasor>
+	using superkind = bond::compose<bond::tag<phasor>
 	,	semikind
 	,	resource::biased<nominal_t<1>>
 	>;
 	template <any_q S>
-	class subtype : public bond::compose_s<S, subkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, subkind>;
+		using S_ = bond::compose_s<S, superkind>;
 		using U_ = typename S_::head_type;
 
 	public:// ACCESS
