@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./lattice.hh"
-#include "./scalar.hh"
+
 
 
 
@@ -31,10 +31,10 @@ struct serial<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename lattice<A>::template homotype<T>;
+	using endotype = typename lattice<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<serial_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<serial_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -65,6 +65,39 @@ struct serial<A>
 		XTAL_DEF_(inline)        XTAL_LET operator  *=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator  +=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() += T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator  -=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() -= T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator ++ (int)                 XTAL_0EX -> T   {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline)        XTAL_LET operator -- (int)                 XTAL_0EX -> T   {auto t = twin(); operator--(); return t;}
+
+
+		///\
+		Produces the successor by pairwise addition from `begin()` to `end()`, \
+		assuming the entries of `this` are finite differences/derivatives. \
+
+		XTAL_DEF_(inline)
+		XTAL_LET operator ++ ()
+		XTAL_0EX -> T &
+		{
+			[this]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((get<I>(self()) += get<I + 1>(self())),...);}
+			(bond::seek_s<N_data - 1>{});
+			
+			return self();
+		}
+		///\
+		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
+		assuming the entries of `this` are finite differences/derivatives. \
+
+		XTAL_DEF_(inline)
+		XTAL_LET operator -- ()
+		XTAL_0EX -> T &
+		{
+			[this]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {((get<I>(self()) -= get<I + 1>(self())),...);}
+			(bond::antiseek_s<N_data - 1>{});
+			
+			return self();
+		}
+
 
 		///\
 		Multiplication by linear convolution, truncated by `N_data`. \
@@ -83,7 +116,7 @@ struct serial<A>
 				bond::seek_backward_f<N_data, 0>([&, this] (auto I) XTAL_0FN {get<I>(s) *= get<0>(t);
 				bond::seek_backward_f<     I, 1>([&, this] (auto J) XTAL_0FN {get<I>(s) += get<J>(t)*get<I - J>(s);});});
 			}
-			return self();
+			return s;
 		}
 
 	//	Vector addition:
@@ -92,58 +125,28 @@ struct serial<A>
 		XTAL_LET operator +=(T const &t)
 		XTAL_0EX -> T &
 		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u += v;}
-			>(XTAL_REF_(t));
+			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(T const &t)
 		XTAL_0EX -> T &
 		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u -= v;}
-			>(XTAL_REF_(t));
+			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(subarray_q<N_data> auto const &t)
 		XTAL_0EX -> T &
 		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u += v;}
-			>(XTAL_REF_(t));
+			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
 		XTAL_0EX -> T &
 		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u -= v;}
-			>(XTAL_REF_(t));
+			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
-		///\
-		The dual of `T`, defined by `scalar`. \
-		
-		struct transverse
-		{
-			template <class R>
-			using holotype = typename scalar<A>::template homotype<R>;
-
-			template <class R>
-			class homotype : public holotype<R>
-			{
-				friend R;
-				using  R_ = holotype<R>;
-			
-			public:
-				using R_::R_;
-				struct transverse {using type = T;};
-
-			};
-			using type = bond::isotype<homotype>;
-
-		};
 	};
 	using type = bond::isotype<homotype>;
 

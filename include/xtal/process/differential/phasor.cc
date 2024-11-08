@@ -25,10 +25,10 @@ TAG_("phasor")
 	using U_stored = resource::stored<unit_type[0x1000]>;
 	using U_example = resource::example<>;
 
-	using _op = bond::operating;
-	using T_sigma = typename _op::sigma_type;
-	using T_delta = typename _op::delta_type;
-	using T_alpha = typename _op::alpha_type;
+	using _Op = bond::operating;
+	using T_sigma = typename _Op::sigma_type;
+	using T_delta = typename _Op::delta_type;
+	using T_alpha = typename _Op::alpha_type;
 	
 	using T_eigencolumns = Array<T_alpha, Dynamic, 2, ColMajor>;
 	using T_eigenrows    = Array<T_alpha, Dynamic, 2, ColMajor>;
@@ -55,6 +55,8 @@ TAG_("phasor")
 	//\
 	using Z_eig = processor::monomer_t<Y_eig, U_stored>;
 	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, d_::phasor<_phi>, U_stored>;
+
+	using _op = bond::template operate<typename X_phi::value_type>;
 
 	TRY_("trial")
 	{
@@ -155,6 +157,7 @@ TAG_("phasor")
 		T_alpha x_d4 = _op::haplo_f(4);
 		T_alpha x_d3 = _op::haplo_f(3);
 		Y_phi y_phi{0, x_d4};
+		X_phi x_phi;
 
 		TRUE_(y_phi() == X_phi{ 1*x_d4, x_d4});
 		TRUE_(y_phi() == X_phi{ 2*x_d4, x_d4});
@@ -164,13 +167,13 @@ TAG_("phasor")
 		TRUE_(y_phi() == X_phi{ 6*x_d4, x_d4});
 		TRUE_(y_phi() == X_phi{ 7*x_d4, x_d4});
 		y_phi <<= occur::indent_s<X_phi, 1>{x_d3};
-	//	TRUE_(y_phi() == X_phi{-8*x_d4, x_d4});
+	//	TRUE_(y_phi() == X_phi{-8*x_d4, x_d3});
 		TRUE_(y_phi() == X_phi{-7*x_d4, x_d3});
-	//	TRUE_(y_phi() == X_phi{-6*x_d4, x_d4});
+	//	TRUE_(y_phi() == X_phi{-6*x_d4, x_d3});
 		TRUE_(y_phi() == X_phi{-5*x_d4, x_d3});
-	//	TRUE_(y_phi() == X_phi{-4*x_d4, x_d4});
+	//	TRUE_(y_phi() == X_phi{-4*x_d4, x_d3});
 		TRUE_(y_phi() == X_phi{-3*x_d4, x_d3});
-	//	TRUE_(y_phi() == X_phi{-2*x_d4, x_d4});
+	//	TRUE_(y_phi() == X_phi{-2*x_d4, x_d3});
 		TRUE_(y_phi() == X_phi{-1*x_d4, x_d3});
 
 	}
@@ -283,10 +286,10 @@ TAG_("phasor")
 	//	TRUE_(Y_phi{x, x_d4} == y_phi);
 		TRUE_(Y_phi{x, x_d4} == y_phi.head());
 		TRUE_(X_phi{x, x_d4} == y_phi.head());
-		TRUE_(x == y_phi.head() (0));
+		TRUE_(check_f<6>(x, y_phi.head() (0)));
 
 		y_phi *= y;
-		TRUE_(bond::computrim_f<8>(y_phi.head() (0)) == bond::computrim_f<8>(z - _std::round(z)));
+		TRUE_(check_f<6>(y_phi.head() (0), z - _std::round(z)));
 
 	}
 }

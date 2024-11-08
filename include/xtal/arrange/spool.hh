@@ -27,10 +27,10 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using allotype = initerated_t<T>;
+	using endotype = initerated_t<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<spool_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<spool_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

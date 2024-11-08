@@ -146,10 +146,10 @@ struct block<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename _detail::superblock<A>::template homotype<T>;
+	using endotype = typename _detail::superblock<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<block_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<block_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

@@ -27,7 +27,7 @@ Accommodate `std::complex` `value_type`s? \
 template <column_q A, typename ...As>
 struct phasor<A, As...>
 {
-	using _op = algebra::d_::_detail::circumspect<A>;
+	using _op = algebra::d_::_detail::circumscribe<A>;
 	using coordinate_type = typename _op::coordinate_type;
 	using inordinate_type = typename _op::inordinate_type;
 	using   ordinate_type = typename _op::  ordinate_type;

@@ -1,5 +1,6 @@
 #include <catch2/catch_all.hpp>
 
+#define   VOID_(...)        (void) (__VA_ARGS__);
 #define UNTRUE_(...)   REQUIRE(not (__VA_ARGS__))
 #define   TRUE_(...)   REQUIRE(    (__VA_ARGS__))
 #define    TRY_(...)   SECTION(    (__VA_ARGS__))

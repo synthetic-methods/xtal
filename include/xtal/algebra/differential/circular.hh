@@ -43,78 +43,86 @@ XTAL_0EX {return _detail::initialize<circular_t>::template via<V>(XTAL_REF_(oo).
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class A>
-struct circumspect : bond::operate<A>
+template <            class V> struct circumspect    : circumspect<devolved_u<V>> {};
+template <    real_number_q V> struct circumspect<V> : bond::operate<V>::template widen<-1> {};
+template <integral_number_q V> struct circumspect<V> : bond::operate<V>::template widen< 0> {};
+
+template <class V>
+struct circumscribe : circumspect<V>
 {
-	using _op = bond::operate<A>;
+	using _op = circumspect<V>;
+	using _Op = typename _op::template widen<1>;
 
 	using   ordinate_type = typename _op::sigma_type;
 	using inordinate_type = typename _op::delta_type;
-	using coordinate_type = typename _op::alpha_type;
+	using coordinate_type = typename _Op::alpha_type;
 
 	XTAL_DEF_(return,inline)
-	XTAL_SET    ordinate(coordinate_type const &co)
+	XTAL_SET    ordinate(real_number_q auto const &co)
 	XTAL_0EX -> ordinate_type
 	{
-		return _op::sigma_f(co*_op::diplo_f());
+		return _op::sigma_f(_op::delta_f(co*_op::diplo_f()));
 	};
 	XTAL_DEF_(return,inline)
-	XTAL_SET    coordinate(ordinate_type const &o)
+	XTAL_SET    coordinate(integral_number_q auto const &o)
 	XTAL_0EX -> coordinate_type
 	{
-		return _op::alpha_f(o)*_op::haplo_f();
+		return _Op::alpha_f(_op::delta_f(o))*_op::haplo_f();
 	};
 
 };
-template <class A>
-	requires complex_number_q<devalued_u<A>>
-struct circumspect<A> : bond::operate<A>
+template <complex_number_q A>
+struct circumscribe<A> : circumscribe<devalued_u<A>>
 {
-	using _op = bond::operate<A>;
+	using _op = circumscribe<devalued_u<A>>;
 
-	using   ordinate_type = _std::complex<typename _op::sigma_type>;
-	using inordinate_type = _std::complex<typename _op::delta_type>;
-	using coordinate_type = _std::complex<typename _op::alpha_type>;
+	using   ordinate_type = _std::complex<typename _op::  ordinate_type>;
+	using inordinate_type = _std::complex<typename _op::inordinate_type>;
+	using coordinate_type = _std::complex<typename _op::coordinate_type>;
 
 	XTAL_DEF_(return,inline)
 	XTAL_SET    ordinate(coordinate_type const &co)
 	XTAL_0EX -> ordinate_type
 	{
-		auto const o_re = circumspect<devalued_u<A>>::ordinate(co.real());
-		auto const o_im = circumspect<devalued_u<A>>::ordinate(co.imag());
+		auto const o_re = _op::ordinate(co.real());
+		auto const o_im = _op::ordinate(co.imag());
 		return {o_re, o_im};
 	};
 	XTAL_DEF_(return,inline)
 	XTAL_SET    coordinate(ordinate_type const &o)
 	XTAL_0EX -> coordinate_type
 	{
-		auto const co_re = circumspect<devalued_u<A>>::coordinate(o.real());
-		auto const co_im = circumspect<devalued_u<A>>::coordinate(o.imag());
+		auto const co_re = _op::coordinate(o.real());
+		auto const co_im = _op::coordinate(o.imag());
 		return {co_re, co_im};
 	};
 };
+template <column_q A>
+struct circumscribe<A> : circumscribe<devalued_u<A>>
+{
+};
+
+static_assert(circumspect <double>::full.width == circumspect <int>::full.width);
+static_assert(circumscribe<double>::full.width == circumscribe<int>::full.width);
+
 
 }///////////////////////////////////////////////////////////////////////////////
 
 template <column_q A>
 struct circular<A>
 {
-	//\
-	using _op = bond::operate<A>;
-	using _op = _detail::circumspect<A>;
+	using _op = _detail::circumscribe<A>;
 	
-	using U_alpha = typename _op::alpha_type;
-	using U_delta = typename _op::delta_type;
-	using U_sigma = typename _op::sigma_type;
-	
-	using   ordinate_type = typename _op::   ordinate_type;
-	using inordinate_type = typename _op:: inordinate_type;
-	using coordinate_type = typename _op:: coordinate_type;
+	XTAL_SET M_data = _std::extent_v<based_t<A>>;
+
+	using   ordinate_type = typename _op::  ordinate_type;
+	using inordinate_type = typename _op::inordinate_type;
+	using coordinate_type = typename _op::coordinate_type;
 
 	static_assert(_std::numeric_limits<devalued_u<ordinate_type>>::is_modulo);// D'oh!
 
 	template <class T>
-	using allotype = typename linear<ordinate_type[_std::extent_v<based_t<A>>]>::template homotype<T>;
+	using allotype = typename linear<ordinate_type[M_data]>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<allotype<T>, bond::tag<circular_t>>;
@@ -132,7 +140,11 @@ struct circular<A>
 		using          S_::N_data;
 		using typename S_::U_data;
 
+
 	public:// MAP
+		using   ordinates_type = linear<  ordinate_type[M_data]>;
+		using coordinates_type = linear<coordinate_type[M_data]>;
+
 		XTAL_DEF_(return,inline)
 		XTAL_SET ordinate(coordinate_type const &co)
 		XTAL_0EX
@@ -170,7 +182,7 @@ struct circular<A>
 		XTAL_0EX : homotype(size_0)
 		{
 		}
-		XTAL_CON_(explicit) homotype (real_number_q auto &&...oo)
+		XTAL_CON_(explicit) homotype(real_number_q auto &&...oo)
 		XTAL_0EX : homotype(sizeof...(oo))
 		{
 			operator>>=({XTAL_REF_(oo)...});
@@ -205,7 +217,7 @@ struct circular<A>
 		using S_::operator <<=;
 
 		XTAL_DEF_(inline)
-		XTAL_LET operator >>= (initializer_list  o)
+		XTAL_LET operator >>=(initializer_list  o)
 		XTAL_0EX -> homotype &
 		{
 			_detail::copy_to(S_::data()
@@ -214,7 +226,7 @@ struct circular<A>
 			return *this;
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator >>= (iterable_q auto &&o)
+		XTAL_LET operator >>=(iterable_q auto &&o)
 		XTAL_0EX -> homotype &
 		{
 			_detail::move_to(S_::data()
@@ -224,7 +236,7 @@ struct circular<A>
 		}
 		
 		XTAL_DEF_(inline)
-		XTAL_LET operator <<= (initializer_list  o)
+		XTAL_LET operator <<=(initializer_list  o)
 		XTAL_0EX -> homotype &
 		{
 			_detail::copy_to(_std::next(S_::data(), S_::size() - o.size())
@@ -233,7 +245,7 @@ struct circular<A>
 			return *this;
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator <<= (iterable_q auto &&o)
+		XTAL_LET operator <<=(iterable_q auto &&o)
 		XTAL_0EX -> homotype &
 		{
 			_detail::move_to(_std::next(S_::data(), S_::size() - o.size())
@@ -290,13 +302,29 @@ struct circular<A>
 		XTAL_LET operator *= (real_number_q auto const &f)
 		XTAL_0EX -> T &
 		{
-			size_type constexpr M_bias = _op::half.depth >> _op::half.width;
-			size_type constexpr M_size = _op::half.depth - M_bias;
-			auto [m, n] = _op::scientific_f(static_cast<U_alpha>(f));
-			auto &s = reinterpret_cast<linear_t<U_delta[N_data]> &>(self());
-			m >>= n - M_size;
-			s >>=     M_size;
-			s  *= m;
+			auto &s = reinterpret_cast<linear_t<inordinate_type[N_data]> &>(self());
+			XTAL_IF0
+			XTAL_0IF (1*sizeof(ordinate_type) == sizeof(coordinate_type)) {
+				size_type constexpr M_bias = _op::half.depth >> _op::half.width;
+				size_type constexpr M_size = _op::half.depth - M_bias;
+				auto [m, n] = bond::operate<decltype(f)>::scientific_f(f);
+				m >>= n - M_size;
+				s >>=     M_size;
+				s  *= m;
+			}
+			XTAL_IF0
+			XTAL_0IF (2*sizeof(ordinate_type) == sizeof(coordinate_type)) {
+				using V = typename bond::operate<coordinate_type>::sigma_type;
+				using U = typename bond::operate<  ordinate_type>::sigma_type;
+				V const s_k(f*_op::diplo_f());
+				V       s_i;
+				#pragma unroll
+				for (int i{}; i < N_data; ++i) {
+					s_i  = s_k*s[i];
+					s[i] = reinterpret_cast<U(&)[2]>(s_i)[1];
+				}
+			}
+			/***/
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -332,14 +360,14 @@ struct circular<A>
 			return self();
 		}
 
-		template <class Y=U_alpha>
+		template <class Y=coordinate_type>
 		XTAL_DEF_(return,inline)
 		XTAL_LET continuity()
 		XTAL_0EX -> Y
 		{
 			return condition_f<Y>(not discontinuity<bool>());
 		}
-		template <class Y=U_alpha>
+		template <class Y=coordinate_type>
 		XTAL_DEF_(return,inline)
 		XTAL_LET discontinuity()
 		XTAL_0EX -> Y
