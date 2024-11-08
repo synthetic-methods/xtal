@@ -30,10 +30,10 @@ struct symbol<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename scalar<A>::template homotype<T>;
+	using endotype = typename scalar<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<symbol_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<symbol_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

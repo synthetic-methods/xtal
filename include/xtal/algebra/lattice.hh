@@ -38,10 +38,10 @@ struct lattice<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename arrange::block<A>::template homotype<T>;
+	using endotype = typename arrange::block<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<lattice_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<lattice_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

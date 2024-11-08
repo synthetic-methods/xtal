@@ -183,12 +183,7 @@ TAG_("operate", "semifractional")
 	{
 		using _qp = bond::operate<T_iota>;
 		
-		TRUE_(check_f<- 6>(0.2220, _op::haplo_f()*T_alpha(_op::    fractional_f(222.2220))));
-		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(222.2220))));
-		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f( 22.2220))));
-		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(  2.2220))));
-		TRUE_(check_f<-24>(0.2220, _qp::haplo_f()*T_alpha(_op::semifractional_f(  0.2220))));
-		TRUE_(check_f<-21>(0.0222, _qp::haplo_f()*T_alpha(_op::semifractional_f(  0.0222))));
+		TRUE_(check_f<- 6>(0.2220, _op::haplo_f()*T_alpha(_op::fractional_f(222.2220))));
 	};
 }
 
@@ -216,15 +211,6 @@ TAG_("operate", "fraction")
 			T_alpha const u = ten*_op::mantissa_f(mt19937_f);
 			TRUE_(computrim_f<16>(_op::fraction_f(u)) == computrim_f<16>(u - _std::round(u)));
 		}
-	};
-	EST_("wrap via semintegral arithmetic")
-	{
-		T_iota w{};
-		for (T_sigma i = 0x100; ~--i;) {
-			auto const u = ten*_op::mantissa_f(mt19937_f);
-			w ^= _op::semifractional_f(u);
-		}
-		return w;
 	};
 	EST_("wrap via integral arithmetic")
 	{

@@ -4,6 +4,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
+Standard...
+
+template <int ...Ns> XTAL_DEF_(return,inline) XTAL_SET in_f(                  auto const &t) XTAL_0EX -> auto {using T = XTAL_ALL_(t); return T{ (...or  (t == T{Ns}))};}
+template <int ...Ns> XTAL_DEF_(return,inline) XTAL_SET in_f(integral_number_q auto const &t) XTAL_0EX -> auto {using T = XTAL_ALL_(t); return T{-(...or  (t == T{Ns}))};}
+
+template <int ...Ns> XTAL_DEF_(return,inline) XTAL_SET un_f(                  auto const &t) XTAL_0EX -> auto {using T = XTAL_ALL_(t); return T{ (...and (t != T{Ns}))};}
+template <int ...Ns> XTAL_DEF_(return,inline) XTAL_SET un_f(integral_number_q auto const &t) XTAL_0EX -> auto {using T = XTAL_ALL_(t); return T{-(...and (t != T{Ns}))};}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//\
 Structural...
 
 template <auto M=0 >	XTAL_LET  top_f(auto n) {return decltype(n) (M <= n);}

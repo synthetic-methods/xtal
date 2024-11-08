@@ -31,10 +31,10 @@ struct scalar<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using allotype = typename lattice<A>::template homotype<T>;
+	using endotype = typename lattice<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<allotype<T>, bond::tag<scalar_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<scalar_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

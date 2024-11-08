@@ -46,7 +46,7 @@ struct indent<Ns...>
 		using S_::S_;
 		
 		///\note\
-		Any integral/real op/presentation is interpreted as a full-width fixed-point value \
+		Any integral/real op/presentation is interpreted as a half-width fixed-point value \
 		(\see `algebra/differential/circular.hh`). \
 
 		///\todo\
@@ -55,7 +55,7 @@ struct indent<Ns...>
 
 		XTAL_CON_(explicit) subtype(U_ u)
 		XTAL_0EX requires real_number_q<U_> and integral_number_q<V_>
-		:	S_{XTAL_MOV_(u)*bond::operate<U_>::diplo_f()}
+		:	S_{XTAL_MOV_(u)*bond::operate<V_>::diplo_f()}
 		{}
 		XTAL_CON_(implicit) subtype(reembrace_t<W_> w)
 		XTAL_0EX requires iterable_q<W_>
