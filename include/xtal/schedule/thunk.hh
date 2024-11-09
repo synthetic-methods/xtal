@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "../resource/spooled.hh"
 
-#include "../algebra/differential/linear.hh"
+#include "../algebra/serial.hh"
 #include "../flux/cue.hh"
 
 
@@ -48,7 +48,7 @@ struct thunk
 				XTAL_SET K_tip =          U_event::cue_size::value;
 				//\
 				using V_shuttle = X_tip;
-				using V_shuttle =      algebra::d_::linear_t<X_tip[K_tip]>;
+				using V_shuttle =          algebra::serial_t<X_tip[K_tip]>;
 				using U_shuttle =                   flux::cue_s<V_shuttle>;
 				using U_spool   = typename S_::template spool_t<U_shuttle>;
 
@@ -89,7 +89,7 @@ struct thunk
 				XTAL_LET method(V_shuttle &x, auto &&...)
 				XTAL_0EX
 				{
-					if constexpr (algebra::d_::linear_q<V_shuttle>) {
+					if constexpr (algebra::serial_q<V_shuttle>) {
 						return x++(0);
 					}
 					else {

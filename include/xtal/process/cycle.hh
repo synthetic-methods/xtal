@@ -1,49 +1,49 @@
 #pragma once
 #include "./any.hh"
 
-#include "../../algebra/differential/circular.hh"
-#include "../../resource/example.hh"
-#include "../../resource/biased.hh"
-#include "../../occur/indent.hh"
+#include "../algebra/bicycle.hh"
+#include "../resource/example.hh"
+#include "../resource/biased.hh"
+#include "../occur/indent.hh"
 
 XTAL_ENV_(push)
-namespace xtal::process::differential
+namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP phasor;
-template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_REQ phasor_q = bond::any_tag_p<phasor, _s...>;
+template <typename ..._s> XTAL_TYP cycle;
+template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
+template <typename ..._s> XTAL_REQ cycle_q = bond::any_tag_p<cycle, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Manages a truncated fixed-point unit differential like `phasor`, \
+Manages a truncated fixed-point unit differential like `cycle`, \
 providing evaluation/update via succession/replacement. \
 
 ///\todo\
 Accommodate `std::complex` `value_type`s? \
 
 template <column_q A, typename ...As>
-struct phasor<A, As...>
+struct cycle<A, As...>
 {
-	using _op = algebra::d_::_detail::circumscribe<A>;
+	using _op = algebra::_detail::circumscribe<A>;
 	using coordinate_type = typename _op::coordinate_type;
 	using inordinate_type = typename _op::inordinate_type;
 	using   ordinate_type = typename _op::  ordinate_type;
 
 	XTAL_SET N  = _std::extent_v<A>;
 
-	using U_phased = algebra::d_::circular_t<coordinate_type[N]>;
-	using U_pulsed = algebra::d_::  linear_t<inordinate_type[N]>;
-	using U_series = algebra::      series_t<coordinate_type[N]>;
+	using U_phased = algebra::bicycle_t<coordinate_type[N]>;
+	using U_pulsed = algebra:: serial_t<inordinate_type[N]>;
+	using U_series = algebra:: series_t<coordinate_type[N]>;
 	
 	using semikind = bond::compose<void
 	,	_detail::refer_multiplicative_group<U_phased>
 	,	typename occur::indent_s<U_phased>::template funnel<>
 	,	As...
 	>;
-	using superkind = bond::compose<bond::tag<phasor>
+	using superkind = bond::compose<bond::tag<cycle>
 	,	semikind
 	,	resource::biased<nominal_t<1>>
 	>;
@@ -155,7 +155,7 @@ struct phasor<A, As...>
 		};
 		
 	};
-	template <any_q S> requires phasor_q<bond::compose_s<S, semikind>>
+	template <any_q S> requires cycle_q<bond::compose_s<S, semikind>>
 	class subtype<S> : public bond::compose_s<S, semikind>
 	{
 		using S_ = bond::compose_s<S, semikind>;

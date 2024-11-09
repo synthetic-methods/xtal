@@ -1,26 +1,23 @@
 #pragma once
 #include "./any.cc"
-#include "./phasor.hh"// testing...
-#include "../lift.hh"
-#include "../link.hh"
-#include "../repacked.hh"
-#include "../../processor/monomer.hh"
-#include "../../resource/all.hh"
-#include "../../occur/indent.hh"
+#include "./cycle.hh"// testing...
+#include "./lift.hh"
+#include "./link.hh"
+#include "./repacked.hh"
+#include "../processor/monomer.hh"
+#include "../resource/all.hh"
+#include "../occur/indent.hh"
 
 XTAL_ENV_(push)
-namespace xtal::process::differential::_test
+namespace xtal::process::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("phasor")
+TAG_("cycle")
 {
 	using namespace Eigen;
-	
-	namespace a_ = algebra::differential;
-	namespace d_ = process::differential;
 	
 	using U_stored = resource::stored<unit_type[0x1000]>;
 	using U_example = resource::example<>;
@@ -37,24 +34,24 @@ TAG_("phasor")
 
 	using  _phi = T_alpha[2];
 	using W_phi = bond::repack_t<_phi>;
-	using X_phi = a_::circular_t<_phi>;
+	using X_phi = algebra::bicycle_t<_phi>;
 	
-	using Y_chi = process::repacked_t<d_::phasor<_phi, resource::example<>>>;
-//	using Y_chi = process::repacked_t<d_::phasor<_phi>>;
-	using Y_phi = d_::phasor_t<_phi>;
+	using Y_chi = process::repacked_t<process::cycle<_phi, resource::example<>>>;
+//	using Y_chi = process::repacked_t<process::cycle<_phi>>;
+	using Y_phi = process::cycle_t<_phi>;
 	//\
-	using Y_psi = d_::phasor_t<_phi, U_example>;
-	using Y_psi = process::lift_t<bond::repack_t<_phi>, d_::phasor<_phi>>;
+	using Y_psi = process::cycle_t<_phi, U_example>;
+	using Y_psi = process::lift_t<bond::repack_t<_phi>, process::cycle<_phi>>;
 	//\
-	using Y_eig = process::link_t<T_eigenrow, d_::phasor<_phi>>;
-	using Y_eig = process::lift_t<T_eigenrow, d_::phasor<_phi>>;
+	using Y_eig = process::link_t<T_eigenrow, process::cycle<_phi>>;
+	using Y_eig = process::lift_t<T_eigenrow, process::cycle<_phi>>;
 
 	using Z_chi = processor::monomer_t<Y_chi, U_stored>;
 	using Z_phi = processor::monomer_t<Y_phi, U_stored>;
 	using Z_psi = processor::monomer_t<Y_psi, U_stored>;
 	//\
 	using Z_eig = processor::monomer_t<Y_eig, U_stored>;
-	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, d_::phasor<_phi>, U_stored>;
+	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, process::cycle<_phi>, U_stored>;
 
 	using _op = bond::template operate<typename X_phi::value_type>;
 
@@ -136,8 +133,8 @@ TAG_("phasor")
 	/**/
 	TRY_("reprogression")
 	{
-		using Y_source = d_::phasor_t<_phi>;
-		using Y_target = d_::phasor_t<_phi, d_::phasor<_phi>>;
+		using Y_source = process::cycle_t<_phi>;
+		using Y_target = process::cycle_t<_phi, process::cycle<_phi>>;
 
 		Y_source y_source{0, _op::haplo_f(5)}; X_phi x_source;
 		Y_target y_target{0, _op::haplo_f(4)}; X_phi x_target;

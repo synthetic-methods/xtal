@@ -1,7 +1,6 @@
 #include "./any.cc"
 #include "./cross.cc"
+#include "./cycle.cc"
 #include "./lift.cc"
 #include "./link.cc"
 #include "./repacked.cc"
-
-#include "./differential/all.cc"
