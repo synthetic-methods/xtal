@@ -13,7 +13,7 @@ namespace xtal::algebra::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("solid", "serial")
+TAG_("algebra", "serial")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -40,6 +40,17 @@ TAG_("solid", "serial")
 		TRUE_(D4{1000, 100, 10, 1} * D4{2000, 200, 20, 2} == D4{2000000, 400000, 60000, 8000});
 
 		TRUE_(D2{1, 2} < D2{3, 4});
+
+	}
+	TRY_("integration")
+	{
+		D4 d4{1000, 100, 10, 1};
+
+		TRUE_(++d4 == D4{1100, 110, 11, 1});
+		TRUE_(++d4 == D4{1210, 121, 12, 1});
+		TRUE_(++d4 == D4{1331, 133, 13, 1});
+		TRUE_(--d4 == D4{1210, 121, 12, 1});
+		TRUE_(--d4 == D4{1100, 110, 11, 1});
 
 	}
 }

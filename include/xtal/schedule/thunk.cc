@@ -36,7 +36,7 @@ TAG_("thunk", "process")
 		using U1_event = flux::cue_s<U0_event>;
 		using U2_event = flux::cue_s<U1_event>;
 		
-		using W0_event = algebra::d_::linear_t<U0_event[2]>;
+		using W0_event = algebra::serial_t<U0_event[2]>;
 		using V_event = flux::cue_s<>;
 		
 		//\

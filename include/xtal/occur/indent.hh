@@ -47,7 +47,7 @@ struct indent<Ns...>
 		
 		///\note\
 		Any integral/real op/presentation is interpreted as a half-width fixed-point value \
-		(\see `algebra/differential/circular.hh`). \
+		(\see `algebra/bicycle.hh`). \
 
 		///\todo\
 		Normalize the use of `operator()` to access `block` elements, \

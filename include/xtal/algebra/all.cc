@@ -1,7 +1,6 @@
 #include "./any.cc"
-#include "./differential/all.cc"
+#include "./bicycle.cc"
 #include "./lattice.cc"
 #include "./scalar.cc"
 #include "./serial.cc"
 #include "./series.cc"
-#include "./symbol.cc"
