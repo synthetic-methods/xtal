@@ -168,8 +168,8 @@ TAG_("render")
 		using U_render = render_t<U>; auto u_seq = U_render(3), w_seq = u_seq;
 
 		TRUE_(w_seq.efflux(u_seq) == 1); TRUE_(w_seq == U_render(U(0, 3), 0));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_render(U(3, 6), 1));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_render(U(6, 9), 2));
+		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(3, 6), 1));
+		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(6, 9), 2));
 
 	}
 	TRY_("intrepidation with null-offset")
@@ -180,11 +180,11 @@ TAG_("render")
 		using U_render = render_t<U>; auto u_seq = U_render(3), w_seq = U_render(0);
 
 		TRUE_(w_seq.efflux(u_seq) == 0); TRUE_(w_seq == U_render(U(0, 3), 0));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_render(U(3, 6), 1));
-		w_seq >>= ++u_seq;                 TRUE_(w_seq == U_render(U(6, 9), 2));
+		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(3, 6), 1));
+		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(6, 9), 2));
 
 	}
-	TRY_("life-cycle")
+	TRY_("lifecycle")
 	{
 		using V = counter_t<size_type>; using V_render = render_t<V>;
 		using U = counted_t<size_type>; using U_render = render_t<U>;

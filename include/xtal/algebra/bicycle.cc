@@ -41,7 +41,7 @@ TAG_("bicycle")
 	using D4 = bicycle_t<T_alpha[4]>;
 	
 	/**/
-	TRY_("cycle of complex")
+	TRY_("bicycle of complex")
 	{
 		M_phi a{{0.1, 0.2}, {0.3, 0.3}};
 		M_phi b{{0.1, 0.2}, {0.3, 0.3}};
@@ -60,7 +60,7 @@ TAG_("bicycle")
 	}
 	/***/
 	/**/
-	TRY_("complex of cycle")
+	TRY_("complex of bicycle")
 	{
 		W_phi a{{0.1, 0.0}, {0.2, 0.0}};
 		W_phi b{{0.1, 0.0}, {0.2, 0.0}};
