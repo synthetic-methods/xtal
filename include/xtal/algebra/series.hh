@@ -313,6 +313,7 @@ struct series<A>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(based_q<lattice_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

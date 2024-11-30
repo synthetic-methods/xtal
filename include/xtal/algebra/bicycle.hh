@@ -390,6 +390,8 @@ struct bicycle<A>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(based_q<bicycle_t<float[2]>>);
+
 static_assert(bond::pack_size_q<bicycle_t<double[2]>>);
 
 

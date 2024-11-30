@@ -134,13 +134,13 @@ struct define
 				XTAL_LET deify(nominal_q auto ...Is)
 				XTAL_0FX -> decltype(auto)
 				{
-					return deify(codex<Xs...>::template index<XTAL_VAL_(Is)...>::point);
+					return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
 				}
 				
 				template <class ...Xs>
-				struct codex
+				struct digest
 				{
-					using supercodex = typename R_::template codex<Xs...>;
+					using digested = typename R_::template digest<Xs...>;
 
 					template <auto ...Is>
 					class index
@@ -150,7 +150,7 @@ struct define
 							(decltype(_I)) T(static_cast<size_type>(_I)): _I;
 						
 						template <auto _I>
-						XTAL_SET extend_v = supercodex::template index<Is..., intend_v<_I>>::point;
+						XTAL_SET extend_v = digested::template index<Is..., intend_v<_I>>::point;
 						
 						template <auto ..._Is>
 						XTAL_SET expand_f(bond::seek_t<_Is...>)

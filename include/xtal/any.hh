@@ -219,20 +219,23 @@ template <class   ...Ts>	XTAL_REQ      liminal_q = (...and  _entail::     limina
 template <liminal_q  T >	XTAL_USE   subliminal_s = typename _entail::  subliminal_s<T >;
 template <liminal_q  T >	XTAL_USE superliminal_s = typename _entail::superliminal_s<T >;
 
-template <size_type  N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
-template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
 template <int     ...Ns>	XTAL_LET   fractional_n =          _entail::  fractional  <Ns...>::value;///< `FromContinuedFraction`
+template <int        N >	XTAL_LET   bisordinal_n =          _entail::  bisordinal  <N    >::value;
+template <int        N >	XTAL_LET    factorial_n =          _entail::   factorial  <N    >::value;
 
-template <class      T >	XTAL_USE        based_t =          _entail::   based_t<T>;
-template <class   ...Ts>	XTAL_REQ        based_q = (...and  _entail::   based_q<Ts>);
-template <class   ...Ts>	XTAL_REQ      unbased_q = (...and  _entail:: unbased_q<Ts>);
 
-template <class      T >	XTAL_USE      rebased_t = typename _entail:: rebased<T>::type;
-template <class      T >	XTAL_USE      debased_t = typename _entail:: debased<T>::type;
-template <class      T >	XTAL_REQ      rebased_p =   (bool) _entail:: rebased<T>::value;
-template <class      T >	XTAL_REQ      debased_p =   (bool) _entail:: debased<T>::value;
-template <class   ...Ts>	XTAL_REQ      rebased_q = (...and  _entail:: rebased_q<Ts>);
-template <class   ...Ts>	XTAL_REQ      debased_q = (...and  _entail:: debased_q<Ts>);
+template <class      T >	XTAL_USE        based_t =          _entail::    based_t<T>;
+template <class   ...Ts>	XTAL_REQ        based_q = (...and  _entail::    based_q<Ts>);
+template <class   ...Ts>	XTAL_REQ      unbased_q = (...and  _entail::  unbased_q<Ts>);
+
+template <class      T >	XTAL_USE      debased_t = typename _entail::  debased<T>::type;
+template <class      T >	XTAL_USE      rebased_t = typename _entail::  rebased<T>::type;
+
+template <class      T >	XTAL_REQ      debased_p =   (bool) _entail::  debased<T>::value;
+template <class      T >	XTAL_REQ      rebased_p =   (bool) _entail::  rebased<T>::value;
+
+template <class   ...Ts>	XTAL_REQ      debased_q = (...and  _entail::  debased_q<Ts>);
+template <class   ...Ts>	XTAL_REQ      rebased_q = (...and  _entail::  rebased_q<Ts>);
 
 
 template <           class ...Ts>	XTAL_REQ     invalued_q = (...and  _entail:: invalued_q<Ts>);
