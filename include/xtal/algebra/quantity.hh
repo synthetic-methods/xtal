@@ -11,13 +11,13 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	XTAL_TYP lattice;
-template <class   ..._s>	XTAL_USE lattice_t = typename lattice<_s...>::type;
-template <class   ..._s>	XTAL_REQ lattice_q = bond::any_tag_p<lattice_t, _s...>;
+template <class   ..._s>	XTAL_TYP quantity;
+template <class   ..._s>	XTAL_USE quantity_t = typename quantity<_s...>::type;
+template <class   ..._s>	XTAL_REQ quantity_q = bond::any_tag_p<quantity_t, _s...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_LET lattice_f(auto &&...oo)
-XTAL_0EX {return _detail::initialize<lattice_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_LET quantity_f(auto &&...oo)
+XTAL_0EX {return _detail::initialize<quantity_t>::template via<V>(XTAL_REF_(oo)...);}
 
 template <class T, class S=T>
 XTAL_REQ lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
@@ -29,11 +29,11 @@ Extends `block` with point-wise comparison, \
 and lifts all other operators. \
 
 template <class U, size_type N, size_type ...Ns>
-struct lattice<U[N][Ns]...> : lattice<lattice_t<U[N]>[Ns]...>
+struct quantity<U[N][Ns]...> : quantity<quantity_t<U[N]>[Ns]...>
 {
 };
 template <column_q A>
-struct lattice<A>
+struct quantity<A>
 {
 	using _op = bond::operate<A>;
 	
@@ -41,7 +41,7 @@ struct lattice<A>
 	using endotype = typename arrange::block<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<lattice_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<quantity_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -136,13 +136,13 @@ struct lattice<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<lattice_t<float[2]>>);
+static_assert(based_q<quantity_t<float[2]>>);
 
-static_assert(not counted_q<lattice_t<        int[2]>>);
-static_assert(not counted_q<lattice_t<counter_t<>[2]>>);
-static_assert(not counted_q<lattice_t<  size_type[2]>>);
+static_assert(not counted_q<quantity_t<        int[2]>>);
+static_assert(not counted_q<quantity_t<counter_t<>[2]>>);
+static_assert(not counted_q<quantity_t<  size_type[2]>>);
 
-static_assert(fungible_q<_std::span<float, 2>, lattice_t<float(&)[2]>>);
+static_assert(fungible_q<_std::span<float, 2>, quantity_t<float(&)[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

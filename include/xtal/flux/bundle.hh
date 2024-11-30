@@ -14,13 +14,13 @@ namespace xtal::flux
 Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 template <class ...Xs>
-struct brace;
+struct bundle;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Xs>
-struct brace
+struct bundle
 {
 	using superkind = compound::defer<compound::packed_t<Xs...>>;
 

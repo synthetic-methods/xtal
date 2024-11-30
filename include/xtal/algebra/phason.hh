@@ -28,16 +28,16 @@ parameterized by an `continuous_field_q`-wrapper with a distinguished head. \
 ///\todo\
 Rework `operator`s to accommodate `std::complex`. \
 
-template <class   ..._s>	XTAL_TYP         bicycle;
-template <class   ..._s>	XTAL_USE         bicycle_t = typename bicycle<_s...>::type;
-template <class   ...Ts>	XTAL_REQ         bicycle_q = bond::any_tag_p<bicycle_t, Ts...>;
-template <class   ...Ts>	XTAL_REQ    real_bicycle_q = bond::any_tag_p<bicycle_t, Ts...> and   real_number_q<debraced_t<Ts>...>;
-template <class   ...Ts>	XTAL_REQ simplex_bicycle_q = bond::any_tag_p<bicycle_t, Ts...> and simplex_field_q<debraced_t<Ts>...>;
-template <class   ...Ts>	XTAL_REQ complex_bicycle_q = bond::any_tag_p<bicycle_t, Ts...> and complex_field_q<debraced_t<Ts>...>;
+template <class   ..._s>	XTAL_TYP         phason;
+template <class   ..._s>	XTAL_USE         phason_t = typename phason<_s...>::type;
+template <class   ...Ts>	XTAL_REQ         phason_q = bond::any_tag_p<phason_t, Ts...>;
+template <class   ...Ts>	XTAL_REQ    real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<debraced_t<Ts>...>;
+template <class   ...Ts>	XTAL_REQ simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<debraced_t<Ts>...>;
+template <class   ...Ts>	XTAL_REQ complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<debraced_t<Ts>...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
-XTAL_LET bicycle_f(auto &&...oo)
-XTAL_0EX {return _detail::initialize<bicycle_t>::template via<V>(XTAL_REF_(oo)...);}
+XTAL_LET phason_f(auto &&...oo)
+XTAL_0EX {return _detail::initialize<phason_t>::template via<V>(XTAL_REF_(oo)...);}
 
 
 namespace _detail
@@ -109,7 +109,7 @@ static_assert(circumscribe<double>::full.width == circumscribe<int>::full.width)
 }///////////////////////////////////////////////////////////////////////////////
 
 template <column_q A>
-struct bicycle<A>
+struct phason<A>
 {
 	using T_op = _detail::circumscribe<A>;
 	using U_op = bond::operate<typename T_op::coordinate_type>;
@@ -122,7 +122,7 @@ struct bicycle<A>
 
 	static_assert(_std::numeric_limits<devalued_u<ordinate_type>>::is_modulo);// D'oh!
 
-	using holotag  = bond::tag<bicycle_t>;
+	using holotag  = bond::tag<phason_t>;
 	using holokind = serial<ordinate_type[M_data]>;
 
 	template <class T>
@@ -390,9 +390,9 @@ struct bicycle<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<bicycle_t<float[2]>>);
+static_assert(based_q<phason_t<float[2]>>);
 
-static_assert(bond::pack_size_q<bicycle_t<double[2]>>);
+static_assert(bond::pack_size_q<phason_t<double[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

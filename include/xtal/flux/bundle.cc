@@ -1,24 +1,27 @@
 #pragma once
-#include "./any.hh"
-
+#include "./any.cc"
+#include "./bundle.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::process
+namespace xtal::flux::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Convenience wrapper to repack the result of the provided process \
-to make it suitable for output to `pack::rowwise_f`. \
-
-template <typename A, typename ...As> using repacked   = confined  <lift<XTAL_TFN_(bond::repack_f<>), A>, As...>;
-template <typename A, typename ...As> using repacked_t = confined_t<lift<XTAL_TFN_(bond::repack_f<>), A>, As...>;
-
 
 ////////////////////////////////////////////////////////////////////////////////
+/*/
+TAG_("bundle")
+{
+	TRY_("task")
+	{
+		TRUE_(true);
+
+	}
+}
+/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

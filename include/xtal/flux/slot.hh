@@ -11,7 +11,7 @@ namespace xtal::flux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Governs access to the arguments of `flux::brace`. \
+Governs access to the arguments of `flux::bundle`. \
 
 //\
 template <  int N             >	XTAL_USE slot_t = bond::compose_s<any_s<nominal_t<N>>, confined<>>;

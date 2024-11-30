@@ -1,27 +1,24 @@
 #pragma once
-#include "./any.cc"
-#include "./repacked.hh"// testing...
+#include "./any.hh"
+
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::resource::_test
+namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Convenience wrapper to repack the result of the provided process \
+to make it suitable for output to `pack::rowwise_f`. \
+
+template <typename A, typename ...As> using conveyor   = confined  <lift<XTAL_TFN_(bond::repack_f<>), A>, As...>;
+template <typename A, typename ...As> using conveyor_t = confined_t<lift<XTAL_TFN_(bond::repack_f<>), A>, As...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TAG_("repacked")
-{
-	TRY_("task")
-	{
-		TRUE_(true);
-
-	}
-}
-/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

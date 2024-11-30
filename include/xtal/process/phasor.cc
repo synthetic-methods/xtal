@@ -1,9 +1,9 @@
 #pragma once
 #include "./any.cc"
-#include "./cycle.hh"// testing...
+#include "./phasor.hh"// testing...
 #include "./lift.hh"
 #include "./link.hh"
-#include "./repacked.hh"
+#include "./conveyor.hh"
 #include "../processor/monomer.hh"
 #include "../resource/all.hh"
 #include "../occur/indent.hh"
@@ -15,7 +15,7 @@ namespace xtal::process::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("cycle")
+TAG_("phasor")
 {
 	using namespace Eigen;
 	
@@ -34,24 +34,24 @@ TAG_("cycle")
 
 	using  _phi = T_alpha[2];
 	using W_phi = bond::repack_t<_phi>;
-	using X_phi = algebra::bicycle_t<_phi>;
+	using X_phi = algebra::phason_t<_phi>;
 	
-	using Y_chi = process::repacked_t<process::cycle<_phi, resource::example<>>>;
-//	using Y_chi = process::repacked_t<process::cycle<_phi>>;
-	using Y_phi = process::cycle_t<_phi>;
+	using Y_chi = process::conveyor_t<process::phasor<_phi, resource::example<>>>;
+//	using Y_chi = process::conveyor_t<process::phasor<_phi>>;
+	using Y_phi = process::phasor_t<_phi>;
 	//\
-	using Y_psi = process::cycle_t<_phi, U_example>;
-	using Y_psi = process::lift_t<bond::repack_t<_phi>, process::cycle<_phi>>;
+	using Y_psi = process::phasor_t<_phi, U_example>;
+	using Y_psi = process::lift_t<bond::repack_t<_phi>, process::phasor<_phi>>;
 	//\
-	using Y_eig = process::link_t<T_eigenrow, process::cycle<_phi>>;
-	using Y_eig = process::lift_t<T_eigenrow, process::cycle<_phi>>;
+	using Y_eig = process::link_t<T_eigenrow, process::phasor<_phi>>;
+	using Y_eig = process::lift_t<T_eigenrow, process::phasor<_phi>>;
 
 	using Z_chi = processor::monomer_t<Y_chi, U_stored>;
 	using Z_phi = processor::monomer_t<Y_phi, U_stored>;
 	using Z_psi = processor::monomer_t<Y_psi, U_stored>;
 	//\
 	using Z_eig = processor::monomer_t<Y_eig, U_stored>;
-	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, process::cycle<_phi>, U_stored>;
+	using Z_eig = processor::monomer_t<process::lift_t<T_eigenrow>, process::phasor<_phi>, U_stored>;
 
 	using _op = bond::template operate<typename X_phi::value_type>;
 
@@ -68,10 +68,10 @@ TAG_("cycle")
 		auto x_phi = X_phi{}; x_phi <<=                          {_op::ratio_f(7)};
 		auto y_phi = Y_phi{}; y_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; y_phi <<= occur::resize_t<>(N_data);
 		
-		auto z_chi = Z_chi::braced_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
-		auto z_phi = Z_phi::braced_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
-		auto z_psi = Z_psi::braced_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
-		auto z_eig = Z_eig::braced_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
+		auto z_chi = Z_chi::bind_f(); z_chi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_chi <<= occur::resize_t<>(N_data);
+		auto z_phi = Z_phi::bind_f(); z_phi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_phi <<= occur::resize_t<>(N_data);
+		auto z_psi = Z_psi::bind_f(); z_psi <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_psi <<= occur::resize_t<>(N_data);
+		auto z_eig = Z_eig::bind_f(); z_eig <<= occur::indent_s<X_phi, 1>{_op::ratio_f(7)}; z_eig <<= occur::resize_t<>(N_data);
 
 		occur::render_t<>         z_render(N_data);
 		occur::indent_s<X_phi, 1> z_indent{x_delta};
@@ -133,8 +133,8 @@ TAG_("cycle")
 	/**/
 	TRY_("reprogression")
 	{
-		using Y_source = process::cycle_t<_phi>;
-		using Y_target = process::cycle_t<_phi, process::cycle<_phi>>;
+		using Y_source = process::phasor_t<_phi>;
+		using Y_target = process::phasor_t<_phi, process::phasor<_phi>>;
 
 		Y_source y_source{0, _op::haplo_f(5)}; X_phi x_source;
 		Y_target y_target{0, _op::haplo_f(4)}; X_phi x_target;
@@ -182,7 +182,7 @@ TAG_("cycle")
 		auto  z_out = bond::pack_rowwise_f<2>(8, z_outs);
 		using Z_out = reiterated_t<XTAL_ALL_(z_out)>;
 
-		auto z_psi = Z_psi::braced_f();
+		auto z_psi = Z_psi::bind_f();
 	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
 
 		//\
@@ -232,7 +232,7 @@ TAG_("cycle")
 		T_alpha z_outs[2][8]{};
 		auto z_out = bond::pack_rowwise_f<2>(8, z_outs);
 
-		auto z_phi = Z_phi::braced_f();
+		auto z_phi = Z_phi::bind_f();
 		static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
 
 		occur::resize_t<> z_req(8);

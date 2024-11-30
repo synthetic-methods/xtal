@@ -37,12 +37,12 @@ struct define
 		using S_::self;
 
 		template <class ...Xs>
-		struct brace
+		struct bracket
 		{
 			using superkind = bond::compose<void
 			,	U_resize::attach<>
 			,	U_render::attach<>
-			,	typename S_::template brace<Xs...>
+			,	typename S_::template bracket<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -108,7 +108,7 @@ struct define
 						XTAL_IF0
 						XTAL_0IF XTAL_TRY_DO_(copy_n(_j, n, _i))
 						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(default) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						XTAL_0IF_(else) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
 
 						return 0;
 					}
