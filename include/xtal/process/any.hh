@@ -1,7 +1,7 @@
 #pragma once
 #include "../flux/any.hh"// `_retail`
 
-#include "../flux/brace.hh"
+#include "../flux/bundle.hh"
 #include "../occur/all.hh"
 #include "../resource/all.hh"
 #include "../schedule/all.hh"
@@ -80,7 +80,7 @@ struct define
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET dignify(auto &&...xs)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).         method       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).template method<Is...>(XTAL_REF_(xs)...)))
 		{
@@ -161,11 +161,11 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs> requires any_q<Xs...>
-		struct brace
+		struct bracket
 		{
 			using superkind = bond::compose<void
 			,	defer<T_>
-			,	flux::brace<Xs...>
+			,	flux::bundle<Xs...>
 			>;
 			template <any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -181,11 +181,11 @@ struct define
 				Initialize `slots` using the arguments supplied. \
 
 				XTAL_CON_(explicit) subtype(Xs &&...xs)
-				XTAL_0EX
+				noexcept
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
 				XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
-				XTAL_0EX
+				noexcept
 				:	R_(XTAL_REF_(t), H1_(XTAL_REF_(xs)...))
 				{}
 
@@ -227,13 +227,13 @@ struct refine
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// BRACE*
+	public:// BRACKET
 		template <class ...Xs>
-		struct braced
+		struct bracket
 		{
 			//\
-			using superkind = confined<typename S_::template brace<typename S_::template bracelet<Xs>::type...>>;
-			using superkind = confined<typename S_::template brace<process::let_t<Xs>...>>;
+			using superkind = confined<typename S_::template bracket<typename S_::template bracelet<Xs>::type...>>;
+			using superkind = confined<typename S_::template bracket<process::let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, superkind>;
@@ -241,26 +241,26 @@ struct refine
 
 		};
 		template <class ...Xs>
-		XTAL_USE braced_t = typename braced<Xs...>::type;
+		XTAL_USE bind_t = typename bracket<Xs...>::type;
 
 		XTAL_DEF_(return,inline)
-		XTAL_SET braced_f(auto &&...xs)
-		XTAL_0EX -> decltype(auto)
+		XTAL_SET bind_f(auto &&...xs)
+		noexcept -> decltype(auto)
 		{
-			return braced_t<decltype(xs)...>(XTAL_REF_(xs)...);
+			return bind_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_SET braced_f(XTAL_ARG_(T) &&t, auto &&...xs)
-		XTAL_0EX -> decltype(auto)
+		XTAL_SET bind_f(XTAL_ARG_(T) &&t, auto &&...xs)
+		noexcept -> decltype(auto)
 		{
-			return braced_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
+			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		
 		XTAL_DO4_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET bracket(Xs &&...xs), -> decltype(auto)
+		XTAL_LET rebound(Xs &&...xs), -> decltype(auto)
 		{
-			return braced_f(S_::self(), XTAL_REF_(xs)...);
+			return bind_f(S_::self(), XTAL_REF_(xs)...);
 		})
 
 	};
@@ -287,25 +287,23 @@ struct defer
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET _method(auto &&...xs),
+		XTAL_LET map_method(auto &&...xs),
 		->	decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_TO_(S_::head().template operator()<Is...>(XTAL_REF_(xs)...))
 			XTAL_0IF XTAL_TRY_TO_(S_::head()                           (XTAL_REF_(xs)...))
-			XTAL_0IF_(default) {
-				static_assert(0 == sizeof...(xs));
-				return S_::head();
-			}
+			XTAL_0IF XTAL_TRY_TO_(S_::head())
+			XTAL_0IF_(void)
 		})
 		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_SET _function(auto &&...xs),
+		XTAL_SET map_function(auto &&...xs),
 		->	decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (any_q<U0>) {return U0::template function<Is...>(XTAL_REF_(xs)...);}
-			XTAL_0IF_(default)   {return U0{}                        (XTAL_REF_(xs)...);}
+			XTAL_0IF_(else)      {return U0{}                        (XTAL_REF_(xs)...);}
 		})
 
 	public:// FUNC*
@@ -317,27 +315,51 @@ struct defer
 		///\note\
 		Only `method`s participate in parameter resolution. \
 
-		XTAL_DO2_(template <auto ...Is>
+		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs), -> decltype(auto)
+		XTAL_LET method(auto &&...xs)
+		noexcept -> decltype(auto)
 		{
-			XTAL_IF0
-			XTAL_0IF (any_q<U1>) {return _method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));}
-			XTAL_0IF_(default)   {return _method<Is...>(                          XTAL_REF_(xs)... );}
-		})
+			return map_method<Is...>(XTAL_REF_(xs)...);
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs) const
+		noexcept -> decltype(auto)
+		{
+			return map_method<Is...>(XTAL_REF_(xs)...);
+		}
+
+		template <auto ...Is> requires any_q<U1>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires in_n<XTAL_TRY_(XTAL_ANY_(S       &).template method<Is...>(XTAL_REF_(xs)...))>
+		{
+			return map_method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is> requires any_q<U1>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs) const
+		noexcept -> decltype(auto)
+		requires in_n<XTAL_TRY_(XTAL_ANY_(S const &).template method<Is...>(XTAL_REF_(xs)...))>
+		{
+			return map_method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
+		}
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_SET function(auto &&...xs)
-		XTAL_0EX -> decltype(auto)
-			requires XTAL_TRY_TO_(_function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
+		noexcept -> decltype(auto)
+		requires un_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
+		and XTAL_TRY_TO_(map_function<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_SET function(auto &&...xs)
-		XTAL_0EX -> decltype(auto)
-			requires (not XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...)))
-			          and XTAL_TRY_TO_(        _function<Is...>(XTAL_REF_(xs)...))
+		noexcept -> decltype(auto)
+		requires in_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
+		and XTAL_TRY_TO_(map_function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 	public:// CONSTRUCT
 		using S_::S_;

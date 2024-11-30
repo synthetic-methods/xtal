@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../algebra/bicycle.hh"
+#include "../algebra/phason.hh"
 #include "../resource/example.hh"
 #include "../resource/biased.hh"
 #include "../occur/indent.hh"
@@ -11,21 +11,21 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP cycle;
-template <typename ..._s> XTAL_USE cycle_t = confined_t<cycle<_s...>>;
-template <typename ..._s> XTAL_REQ cycle_q = bond::any_tag_p<cycle, _s...>;
+template <typename ..._s> XTAL_TYP phasor;
+template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
+template <typename ..._s> XTAL_REQ phasor_q = bond::any_tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Manages a truncated fixed-point unit differential like `cycle`, \
+Manages a truncated fixed-point unit differential like `phasor`, \
 providing evaluation/update via succession/replacement. \
 
 ///\todo\
 Accommodate `std::complex` `value_type`s? \
 
 template <column_q A, typename ...As>
-struct cycle<A, As...>
+struct phasor<A, As...>
 {
 	using _op = algebra::_detail::circumscribe<A>;
 	using coordinate_type = typename _op::coordinate_type;
@@ -34,16 +34,16 @@ struct cycle<A, As...>
 
 	XTAL_SET N  = _std::extent_v<A>;
 
-	using U_phased = algebra::bicycle_t<coordinate_type[N]>;
-	using U_pulsed = algebra:: serial_t<inordinate_type[N]>;
-	using U_series = algebra:: series_t<coordinate_type[N]>;
+	using U_phason = algebra::phason_t<coordinate_type[N]>;
+	using U_pulson = algebra::serial_t<inordinate_type[N]>;
+	using U_series = algebra::series_t<coordinate_type[N]>;
 	
 	using semikind = bond::compose<void
-	,	_detail::refer_multiplicative_group<U_phased>
-	,	typename occur::indent_s<U_phased>::template funnel<>
+	,	_detail::refer_multiplicative_group<U_phason>
+	,	typename occur::indent_s<U_phason>::template funnel<>
 	,	As...
 	>;
-	using superkind = bond::compose<bond::tag<cycle>
+	using superkind = bond::compose<bond::tag<phasor>
 	,	semikind
 	,	resource::biased<nominal_t<1>>
 	>;
@@ -58,7 +58,7 @@ struct cycle<A, As...>
 		using S_::self;
 		using S_::head;
 
-		using algebra_t = U_phased;
+		using algebra_t = U_phason;
 
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
@@ -123,7 +123,7 @@ struct cycle<A, As...>
 				XTAL_0IF (N == 2) {
 					return egress(bond::pack_f(phi(0), phi(1)*(rate)));
 				}
-				XTAL_0IF_(default) {
+				XTAL_0IF_(else) {
 					return egress(phi.template apply<XTAL_TFN_(bond::pack_f)>()*U_series(rate));
 				}
 			}
@@ -142,7 +142,7 @@ struct cycle<A, As...>
 		{
 			XTAL_IF0
 			XTAL_0IF (1 == bias()) {return ++head();}
-			XTAL_0IF_(default)     {return   head();}
+			XTAL_0IF_(else)        {return   head();}
 		};
 		template <class Y>
 		XTAL_DEF_(return,inline)
@@ -151,11 +151,11 @@ struct cycle<A, As...>
 		{
 			XTAL_IF0
 			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
-			XTAL_0IF_(default)     {return                  XTAL_REF_(y);}
+			XTAL_0IF_(else)        {return                  XTAL_REF_(y);}
 		};
 		
 	};
-	template <any_q S> requires cycle_q<bond::compose_s<S, semikind>>
+	template <any_q S> requires phasor_q<bond::compose_s<S, semikind>>
 	class subtype<S> : public bond::compose_s<S, semikind>
 	{
 		using S_ = bond::compose_s<S, semikind>;
@@ -166,7 +166,7 @@ struct cycle<A, As...>
 		using S_::self;
 		using S_::head;
 
-		using algebra_t = U_phased;
+		using algebra_t = U_phason;
 
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
@@ -189,11 +189,11 @@ struct cycle<A, As...>
 
 		template <int N_root=1>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(U_phased phi, coordinate_type co)
+		XTAL_LET method(U_phason phi, coordinate_type co)
 		XTAL_0EX -> auto
-			requires is_q<U_phased, typename S_::template head_t<nominal_t<size_1>>>
+			requires is_q<U_phason, typename S_::template head_t<nominal_t<size_1>>>
 		{
-			static_assert(bond::dipack_q<U_phased>);
+			static_assert(bond::dipack_q<U_phason>);
 
 			auto &_phi = S_::template head<1>();
 			auto &_psi = S_::template head<0>();
@@ -202,7 +202,7 @@ struct cycle<A, As...>
 		//	using the difference in `phi[1]` to determine the threshold for reset. \
 
 			auto  u_delta = _phi - phi; u_delta[0] += phi[1];
-			auto &v_delta = reinterpret_cast<U_pulsed const &>(u_delta);
+			auto &v_delta = reinterpret_cast<U_pulson const &>(u_delta);
 			auto  n_delta = 1 + _op::bit_floor_f(_op::designed_f(v_delta[1]));
 			auto  i_delta = condition_f<ordinate_type>(v_delta[0] >> n_delta);
 

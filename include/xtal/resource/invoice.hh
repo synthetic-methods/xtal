@@ -49,9 +49,9 @@ struct invoice
 			};
 		};
 //		template <class ...Xs>
-//		struct brace
+//		struct bracket
 //		{
-//			using superkind = voice<typename S_::template brace<Xs...>>;
+//			using superkind = voice<typename S_::template bracket<Xs...>>;
 //			
 //			template <class R>
 //			class subtype : public bond::compose_s<R, superkind>

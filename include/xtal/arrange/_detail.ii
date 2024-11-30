@@ -108,7 +108,7 @@ XTAL_0EX -> void
 	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_STD_(L1)) {
 		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(xs[I]);});
 	}
-	XTAL_0IF_(default) {
+	XTAL_0IF_(else) {
 		copy_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
 	}
 }
@@ -127,7 +127,7 @@ XTAL_0EX -> void
 	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memcpy(y0, XTAL_REF_(xs).begin(), sizeof(xs));
 	}
-	XTAL_0IF_(default) {
+	XTAL_0IF_(else) {
 		copy_to(y0, xs.begin(), xs.end(), o);
 	}
 }
@@ -159,7 +159,7 @@ XTAL_0EX -> void
 	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_STD_(L1)) {
 		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(_std::move(xs[I]));});
 	}
-	XTAL_0IF_(default) {
+	XTAL_0IF_(else) {
 		move_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
 	}
 }
@@ -178,7 +178,7 @@ XTAL_0EX -> void
 	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memmove(y0, XTAL_REF_(xs).begin(), sizeof(xs));
 	}
-	XTAL_0IF_(default) {
+	XTAL_0IF_(else) {
 		move_to(y0, xs.begin(), xs.end(), o);
 	}
 }

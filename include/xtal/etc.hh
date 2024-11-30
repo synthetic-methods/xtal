@@ -74,8 +74,10 @@
 #endif
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
+#define XTAL_V00 0
 #define XTAL_V00_(...) XTAL_V00_##__VA_ARGS__
 
 #if     defined(_MSC_VER)
@@ -98,18 +100,21 @@
 
 #else
 #define XTAL_V00_MSVC 0
-#define XTAL_V00_LLVM 0
+#define XTAL_V00_LLVM 1
 #define XTAL_V00_GNUC 0
 
 #endif
 #define XTAL_V00_GCC XTAL_V00_GNUC
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_ENV_(...)  XTAL_ENV_##__VA_ARGS__
 
-#if     XTAL_V00_(MSVC)
+#if 00//XTAL_ENV_(warning)
+
+#elif   XTAL_V00_(MSVC)
 #define XTAL_ENV_pop    _Pragma("warning(pop)")
 #define XTAL_ENV_push   _Pragma("warning(push)")\
                         _Pragma("warning(disable:4010)")\
@@ -130,122 +135,146 @@
                         _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
 //                      _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
 
-#endif
+#endif//XTAL_ENV_(warning)
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_USE                         using
-#define XTAL_TYP                         struct
-#define XTAL_REQ                         concept
+#define XTAL_USE        using
+#define XTAL_TYP        struct
+#define XTAL_REQ        concept
 
-template <class T0, class T1>
-concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref_t<T1>>;
-#define XTAL_ARG_(...)                                              XTAL_ARG<__VA_ARGS__> auto
-#define XTAL_TMP_(...)                                              template<__VA_ARGS__>
-#define XTAL_VAL_(...)                        ::std::remove_cvref_t<decltype(__VA_ARGS__)>::value
-#define XTAL_ALL_(...)                        ::std::remove_cvref_t<decltype(__VA_ARGS__)>
-#define XTAL_ANY_(...)                                       ::std::declval <__VA_ARGS__>()
+#define XTAL_NEW_(...)         ::std::remove_cvref_t<__VA_ARGS__>
+#define XTAL_VAL_(...)            XTAL_NEW_(decltype(__VA_ARGS__))::value
+#define XTAL_ALL_(...)            XTAL_NEW_(decltype(__VA_ARGS__))
+#define XTAL_ANY_(...)               ::std::declval <__VA_ARGS__>()
+#define XTAL_ARG_(...)                     XTAL_ARG <__VA_ARGS__> auto
 
-#define XTAL_MOV_(...)                                           ::std::move(__VA_ARGS__)
-#define XTAL_REF_(...)                static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
-#define XTAL_RET                         constexpr decltype(auto)
-#define XTAL_LET                         constexpr          auto
-#define XTAL_SET                  static constexpr          auto
+template <class XTAL_(X0), class XTAL_(X1)>
+concept XTAL_ARG = ::std::same_as<XTAL_NEW_(XTAL_(X0)), XTAL_NEW_(XTAL_(X1))>;
 
-#define XTAL_CON_(...)                   XTAL_CON_##__VA_ARGS__
-#define XTAL_CON_explicit                constexpr explicit
-#define XTAL_CON_implicit                constexpr
 
-#define XTAL_CVN_(...)                   XTAL_CVN_##__VA_ARGS__
-#define XTAL_CVN_explicit                constexpr explicit operator
-#define XTAL_CVN_implicit                constexpr          operator
+#define XTAL_MOV_(...)                                      ::std::move(__VA_ARGS__)
+#define XTAL_REF_(...)           static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
+#define XTAL_RET                    constexpr decltype(auto)
+#define XTAL_LET                    constexpr          auto
+#define XTAL_SET             static constexpr          auto
 
-#if 0//TODO: Check `[[msvc::attribute]]` position...
+#define XTAL_CON_(...)              XTAL_CON_##__VA_ARGS__
+#define XTAL_CON_explicit           constexpr explicit
+#define XTAL_CON_implicit           constexpr
+
+#define XTAL_CVN_(...)              XTAL_CVN_##__VA_ARGS__
+#define XTAL_CVN_explicit           constexpr explicit operator
+#define XTAL_CVN_implicit           constexpr          operator
+
+
+#define XTAL_TFN_(...)            decltype([] XTAL_1FN_(__VA_ARGS__))
+#define XTAL_1FN_(...)  (auto &&...XTAL_(xs)) XTAL_0FN {return (__VA_ARGS__(XTAL_REF_(XTAL_(xs))...));}
+#define XTAL_0FN_(...)                        XTAL_0FN {return (__VA_ARGS__);}
+
+#if 00//XTAL_0FN
 #elif   XTAL_V00_(MSVC)
-#define XTAL_1FN_(...)     (auto &&..._)          [[msvc::forceinline]] constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
-#define XTAL_0FN_(...)                            [[msvc::forceinline]] constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FN                                  [[msvc::forceinline]] constexpr noexcept
+#define XTAL_0FN                                [[msvc::forceinline]] constexpr noexcept
 #elif   XTAL_V00_(LLVM)
-#define XTAL_1FN_(...)     (auto &&..._) __attribute__((always_inline)) constexpr noexcept {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
-#define XTAL_0FN_(...)                   __attribute__((always_inline)) constexpr noexcept {return (__VA_ARGS__);}
-#define XTAL_0FN                         __attribute__((always_inline)) constexpr noexcept
+#define XTAL_0FN                       __attribute__((always_inline)) constexpr noexcept
 #elif   XTAL_V00_(GNUC)
-#define XTAL_1FN_(...)     (auto &&..._) constexpr noexcept __attribute__((always_inline)) {return (__VA_ARGS__(static_cast<decltype(_) &&>(_)...));}
-#define XTAL_0FN_(...)                   constexpr noexcept __attribute__((always_inline)) {return (__VA_ARGS__);}
-#define XTAL_0FN                         constexpr noexcept __attribute__((always_inline))
-#endif
-#define XTAL_TFN_(...)                   decltype([] XTAL_1FN_(__VA_ARGS__))
+#define XTAL_0FN                   constexpr noexcept __attribute__((always_inline))
+#endif//XTAL_0FN
 
-#define XTAL_IF0              if         constexpr (0);
-#define XTAL_0IF         else if         constexpr
-#define XTAL_0IF_(...)                   XTAL_0IF_##__VA_ARGS__
-#define XTAL_0IF_default else
-#if     XTAL_STD < 26
-#define XTAL_0IF_dynamic else if    (not _std::is_constant_evaluated())
-#define XTAL_0IF_static  else if    (    _std::is_constant_evaluated())
+
+#define XTAL_0FX                    const             noexcept
+#define XTAL_0EX                                      noexcept
+#define XTAL_0FX_(...)              const __VA_ARGS__ noexcept
+#define XTAL_0EX_(...)                    __VA_ARGS__ noexcept
+
+
+#define XTAL_TRY_(...)             (requires { __VA_ARGS__ ;})
+#define XTAL_TRY_DO_(...)          (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
+#define XTAL_TRY_TO_(...)          (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
+
+
+#define XTAL_DO0_(SIG, ...)         SIG               noexcept          __VA_ARGS__   ;
+#define XTAL_DO1_(SIG, ...)         SIG     const     noexcept          __VA_ARGS__   ;
+#define XTAL_DO2_(SIG, ...)         SIG     const     noexcept          __VA_ARGS__   \
+                                    SIG               noexcept          __VA_ARGS__   ;
+#define XTAL_DO4_(SIG, ...)         SIG     const  &  noexcept          __VA_ARGS__   \
+                                    SIG            &  noexcept          __VA_ARGS__   \
+                                    SIG     const  && noexcept          __VA_ARGS__   \
+                                    SIG            && noexcept          __VA_ARGS__   ;
+
+#define XTAL_TO2_(SIG, ...)         SIG     const     noexcept {return (__VA_ARGS__);}\
+                                    SIG               noexcept {return (__VA_ARGS__);};
+#define XTAL_TO4_(SIG, ...)         SIG     const  &  noexcept {return (__VA_ARGS__);}\
+                                    SIG            &  noexcept {return (__VA_ARGS__);}\
+                                    SIG     const  && noexcept {return (__VA_ARGS__);}\
+                                    SIG            && noexcept {return (__VA_ARGS__);};
+
+#define XTAL_CO0_(TYP)             ~TYP()                          noexcept = default;;
+#define XTAL_CO1_(TYP)              TYP()                          noexcept = default;;
+#define XTAL_CO4_(TYP)  constexpr   TYP & operator = (TYP const &) noexcept = default;\
+                        constexpr   TYP              (TYP const &) noexcept = default;\
+                        constexpr   TYP & operator = (TYP      &&) noexcept = default;\
+                        constexpr   TYP              (TYP      &&) noexcept = default;;
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_IF0                 if constexpr (false);
+#define XTAL_0IF            else if constexpr
+#define XTAL_0IF_(...)              XTAL_0IF_##__VA_ARGS__
+#define XTAL_0IF_else       else
+
+#if 00//XTAL_0IF_static
+#elif   XTAL_STD <= 25
+#define XTAL_0IF_static     else if(    ::std::is_constant_evaluated())
+#elif   XTAL_STD >= 26
+#define XTAL_0IF_static     else if     consteval
+#endif//XTAL_0IF_static
+
+#if 00//XTAL_0IF_dynamic
+#elif   XTAL_STD <= 25
+#define XTAL_0IF_dynamic    else if(not ::std::is_constant_evaluated())
+#elif   XTAL_STD >= 26
+#define XTAL_0IF_dynamic    else if not consteval
+#endif//XTAL_0IF_dynamic
+
+#if 00//XTAL_0IF_void
+#elif   XTAL_V00_(MSVC)
+#define XTAL_0IF_void       else   {__assume(false);}
 #else
-#define XTAL_0IF_dynamic else if     not consteval
-#define XTAL_0IF_static  else if         consteval
-#endif
+#define XTAL_0IF_void       else   {__builtin_unreachable();}
+#endif//XTAL_0IF_void
 
-#define XTAL_0FX                 const             noexcept
-#define XTAL_0EX                                   noexcept
-#define XTAL_0FX_(...)           const __VA_ARGS__ noexcept
-#define XTAL_0EX_(...)                 __VA_ARGS__ noexcept
-
-#define XTAL_TRY_(...)          (requires { __VA_ARGS__ ;})
-#define XTAL_TRY_DO_(...)       (requires { __VA_ARGS__ ;}) {        __VA_ARGS__ ;}
-#define XTAL_TRY_TO_(...)       (requires {(__VA_ARGS__);}) {return (__VA_ARGS__);}
-
-#define XTAL_DO0_(SIG, ...)      SIG               noexcept          __VA_ARGS__   ;
-#define XTAL_DO1_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   ;
-#define XTAL_DO2_(SIG, ...)      SIG     const     noexcept          __VA_ARGS__   \
-                                 SIG               noexcept          __VA_ARGS__   ;
-#define XTAL_DO4_(SIG, ...)      SIG     const  &  noexcept          __VA_ARGS__   \
-                                 SIG            &  noexcept          __VA_ARGS__   \
-                                 SIG     const  && noexcept          __VA_ARGS__   \
-                                 SIG            && noexcept          __VA_ARGS__   ;
-
-#define XTAL_TO2_(SIG, ...)      SIG     const     noexcept {return (__VA_ARGS__);}\
-                                 SIG               noexcept {return (__VA_ARGS__);};
-#define XTAL_TO4_(SIG, ...)      SIG     const  &  noexcept {return (__VA_ARGS__);}\
-                                 SIG            &  noexcept {return (__VA_ARGS__);}\
-                                 SIG     const  && noexcept {return (__VA_ARGS__);}\
-                                 SIG            && noexcept {return (__VA_ARGS__);};
-
-#define XTAL_CO0_(TYP)          ~TYP()                          noexcept = default;;
-#define XTAL_CO1_(TYP)           TYP()                          noexcept = default;;
-#define XTAL_CO4_(TYP) constexpr TYP & operator = (TYP const &) noexcept = default;\
-                       constexpr TYP              (TYP const &) noexcept = default;\
-                       constexpr TYP & operator = (TYP      &&) noexcept = default;\
-                       constexpr TYP              (TYP      &&) noexcept = default;;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_DEF_(...)           XTAL_F1_(XTAL_KEY_,__VA_ARGS__)
 #define XTAL_KEY_(...)           XTAL_KEY_##__VA_ARGS__
+#define XTAL_KEY_return          [[nodiscard]]
+#define XTAL_KEY_static          static
+#define XTAL_KEY_friend          friend
+#define XTAL_KEY_constexpr       constexpr
 
-#if     0
+#if 00//XTAL_KEY_verbatim
 #elif   XTAL_V00_(MSVC)
 #define XTAL_KEY_verbatim        //FIXME
 #elif   XTAL_V00_(LLVM)
 #define XTAL_KEY_verbatim        [[clang::optnone]] __attribute__((optnone))
 #elif   XTAL_V00_(GNUC)
 #define XTAL_KEY_verbatim        [[gnu::optimize(0)]] __attribute__((optimize(0)))
-#endif
+#endif//XTAL_KEY_verbatim
 
-#if     XTAL_V00_(MSVC)
+#if 00//XTAL_KEY_inline
+#elif   XTAL_V00_(MSVC)
 #define XTAL_KEY_inline          __forceinline
 #else
 #define XTAL_KEY_inline          inline __attribute__((always_inline))
-#endif
+#endif//XTAL_KEY_inline
 
-#define XTAL_KEY_return          [[nodiscard]]
-#define XTAL_KEY_static          static
-#define XTAL_KEY_friend          friend
-#define XTAL_KEY_constexpr       constexpr
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -253,7 +282,8 @@ concept XTAL_ARG = ::std::same_as<::std::remove_cvref_t<T0>, ::std::remove_cvref
 //efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_type)
 #define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_type)
 #define XTAL_FLX                             XTAL_STD_(sign_type)
-#define XTAL_FNX_(...)            [=, this] (XTAL_STD_(sign_type) o) XTAL_0FN_(1 == o? o: o&(__VA_ARGS__))
+#define XTAL_FNX_(...)\
+[=, this] (XTAL_FLX XTAL_(x)) XTAL_0FN_(1 == XTAL_(x)? XTAL_(x): XTAL_(x)&(__VA_ARGS__))
 
 
 ////////////////////////////////////////////////////////////////////////////////

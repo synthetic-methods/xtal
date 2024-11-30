@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./lattice.hh"
+#include "./quantity.hh"
 
 
 
@@ -23,7 +23,7 @@ XTAL_0EX {return _detail::initialize<serial_t>::template via<V>(XTAL_REF_(oo)...
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with point-wise addition, and multiplication defined by linear convolution. \
+Extends `quantity` with point-wise addition, and multiplication defined by linear convolution. \
 
 template <column_q A>
 struct serial<A>
@@ -31,7 +31,7 @@ struct serial<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename lattice<A>::template homotype<T>;
+	using endotype = typename quantity<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<serial_t>>;

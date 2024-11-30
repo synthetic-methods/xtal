@@ -401,7 +401,7 @@ concept quality_p = equality_p<N, T> and inequality_p<N, T>;
 
 
 template <size_type N, class T, class U=T>
-concept boolean_lattice_p = requires (based_t<T> t, based_t<U> u)
+concept boolean_quantity_p = requires (based_t<T> t, based_t<U> u)
 {
 	requires N == 2 or requires
 	{
@@ -414,7 +414,7 @@ concept boolean_lattice_p = requires (based_t<T> t, based_t<U> u)
 	};
 };
 template <size_type N, class T, class U=T>
-concept binary_lattice_p = requires (based_t<T> t, based_t<U> u)
+concept binary_quantity_p = requires (based_t<T> t, based_t<U> u)
 {
 	requires N == 2 or requires
 	{

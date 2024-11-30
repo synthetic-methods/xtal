@@ -346,8 +346,8 @@ template <size_type N, class T, class U=T>	XTAL_REQ     continuous_field_p = _en
 template <size_type N, class T, class U=T>	XTAL_REQ        complex_field_p = _entail::        complex_field_p<N, T, U>;
 template <size_type N, class T, class U=T>	XTAL_REQ        simplex_field_p = _entail::        simplex_field_p<N, T, U>;
 
-template <size_type N, class T, class U=T>	XTAL_REQ      boolean_lattice_p = _entail::      boolean_lattice_p<N, T, U>;
-template <size_type N, class T, class U=T>	XTAL_REQ       binary_lattice_p = _entail::       binary_lattice_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ      boolean_quantity_p = _entail::      boolean_quantity_p<N, T, U>;
+template <size_type N, class T, class U=T>	XTAL_REQ       binary_quantity_p = _entail::       binary_quantity_p<N, T, U>;
 
 template <size_type N, class T, class U=T>	XTAL_REQ           inequality_p = _entail::           inequality_p<N, T, U>;
 template <size_type N, class T, class U=T>	XTAL_REQ             equality_p = _entail::             equality_p<N, T, U>;
@@ -366,8 +366,8 @@ template <class   ...Ts>	XTAL_REQ     continuous_field_q = (...and     continuou
 template <class   ...Ts>	XTAL_REQ        complex_field_q = (...and        complex_field_p<0, Ts>);
 template <class   ...Ts>	XTAL_REQ        simplex_field_q = (...and        simplex_field_p<0, Ts>);
 
-template <class   ...Ts>	XTAL_REQ      boolean_lattice_q = (...and      boolean_lattice_p<0, Ts>);
-template <class   ...Ts>	XTAL_REQ       binary_lattice_q = (...and       binary_lattice_p<0, Ts>);
+template <class   ...Ts>	XTAL_REQ      boolean_quantity_q = (...and      boolean_quantity_p<0, Ts>);
+template <class   ...Ts>	XTAL_REQ       binary_quantity_q = (...and       binary_quantity_p<0, Ts>);
 
 template <class   ...Ts>	XTAL_REQ           inequality_q = (...and           inequality_p<2, Ts>);
 template <class   ...Ts>	XTAL_REQ             equality_q = (...and             equality_p<2, Ts>);

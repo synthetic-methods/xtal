@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./bicycle.hh"// testing...
+#include "./phason.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::algebra::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("bicycle")
+TAG_("phason")
 {
 	using _op = bond::operate<double>;
 	using T_iota  = typename _op:: iota_type;
@@ -28,20 +28,20 @@ TAG_("bicycle")
 	auto mt19937_f = _op::mt19937_t(Catch::rngSeed());
 
 	using V_phi = T_alpha;
-	using U_phi = bicycle_t<V_phi[2]>;
-	using W_phi = _std::complex<bicycle_t<T_alpha[2]>>;
-	using M_phi = bicycle_t<_std::complex<T_alpha>[2]>;
+	using U_phi = phason_t<V_phi[2]>;
+	using W_phi = _std::complex<phason_t<T_alpha[2]>>;
+	using M_phi = phason_t<_std::complex<T_alpha>[2]>;
 	using A_phi = _std::array<V_phi, 2>;
 
 	using _qp = bond::template operate<typename U_phi::value_type>;
 
-	using D1 = bicycle_t<T_alpha[1]>;
-	using D2 = bicycle_t<T_alpha[2]>;
-	using D3 = bicycle_t<T_alpha[3]>;
-	using D4 = bicycle_t<T_alpha[4]>;
+	using D1 = phason_t<T_alpha[1]>;
+	using D2 = phason_t<T_alpha[2]>;
+	using D3 = phason_t<T_alpha[3]>;
+	using D4 = phason_t<T_alpha[4]>;
 	
 	/**/
-	TRY_("bicycle of complex")
+	TRY_("phason of complex")
 	{
 		M_phi a{{0.1, 0.2}, {0.3, 0.3}};
 		M_phi b{{0.1, 0.2}, {0.3, 0.3}};
@@ -60,7 +60,7 @@ TAG_("bicycle")
 	}
 	/***/
 	/**/
-	TRY_("complex of bicycle")
+	TRY_("complex of phason")
 	{
 		W_phi a{{0.1, 0.0}, {0.2, 0.0}};
 		W_phi b{{0.1, 0.0}, {0.2, 0.0}};
@@ -101,7 +101,7 @@ TAG_("bicycle")
 		TRUE_(a_d2 != b_d2); b_d2 = a_d2; ++a_d2[0];
 	//	TRUE_(a_d2 == D2{0x40000000, 0x40000000});
 
-		TRUE_(check_f<-19>(0.1, bicycle_t<T_alpha[2]>{0.1, 0.1}(0)));
+		TRUE_(check_f<-19>(0.1, phason_t<T_alpha[2]>{0.1, 0.1}(0)));
 
 	}
 	TRY_("iteration")

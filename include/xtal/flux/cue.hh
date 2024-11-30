@@ -69,7 +69,7 @@ XTAL_0EX
 	XTAL_IF0
 	XTAL_0IF (             any_q<T>) {return F(XTAL_REF_(s),                            XTAL_REF_(t) );}
 	XTAL_0IF (bond::heteropack_q<T>) {return F(XTAL_REF_(s), bond::repack_f<packed_t>(XTAL_REF_(t)));}
-	XTAL_0IF_(default)               {return F(XTAL_REF_(s),             conferred_t<Y>(XTAL_REF_(t)));}
+	XTAL_0IF_(else)                  {return F(XTAL_REF_(s),             conferred_t<Y>(XTAL_REF_(t)));}
 	
 }
 template <any_q T> XTAL_DEF_(return,inline) XTAL_LET operator << (cue_s<>       &&s, T &&t) XTAL_0EX -> decltype(auto) {return cue_f(XTAL_MOV_(s), XTAL_REF_(t));}

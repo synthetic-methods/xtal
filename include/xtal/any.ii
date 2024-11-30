@@ -38,7 +38,7 @@ XTAL_LET bounded_f(auto const &u)
 			return (abs(u - n0) - abs(u - n1) + n01)*0.5f;
 		}
 	}
-	XTAL_0IF_(default) {
+	XTAL_0IF_(else) {
 		return u < N0? N0: N1 < u? N1: u;
 	}
 }
@@ -266,7 +266,7 @@ XTAL_0EX -> bool
 	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
 	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
 	XTAL_0IF XTAL_TRY_TO_(_std::addressof(x) == _std::addressof(y))
-	XTAL_0IF_(default) return false;
+	XTAL_0IF_(else) return false;
 }
 
 template <class X, class Y>
@@ -276,7 +276,7 @@ XTAL_0EX -> bool
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(x == y)
-	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
 XTAL_DEF_(return,inline)
@@ -285,7 +285,7 @@ XTAL_0EX -> bool
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(_xtd::ranges::equal(x, y))
-	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
 template <class X, class Y>
@@ -303,7 +303,7 @@ XTAL_0EX -> bool
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin() and x.end() == y.end())
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin())
-	XTAL_0IF_(default) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
 

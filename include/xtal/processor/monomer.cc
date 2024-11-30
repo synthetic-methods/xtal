@@ -24,7 +24,7 @@ void monomer_zipping()
 	size_type constexpr U_size = 2;
 
 	//\
-	using U_group  =  algebra::lattice_t<U_data[U_size]>;
+	using U_group  =  algebra::quantity_t<U_data[U_size]>;
 	using U_group  =  _std::complex<U_data>;
 //	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
@@ -56,7 +56,7 @@ void monomer_lifting()
 	using T_alpha = typename bond::operating::alpha_type;
 
 	T_sigma constexpr N_size = 5;
-	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
+	using U_group  = algebra::quantity_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
@@ -65,8 +65,8 @@ void monomer_lifting()
 	auto z = U_group{00, 11, 22, 33, 44};
 	auto a = U_group{99, 99, 99, 99, 99};
 //	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-//	auto b = f.bracket(processor::let_f(x), processor::let_f(y));
-	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).bracket(processor::let_f(x), processor::let_f(y));
+//	auto b = f.rebound(processor::let_f(x), processor::let_f(y));
+	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).rebound(processor::let_f(x), processor::let_f(y));
 
 	b <<= U_resize(N_size);
 	b >>= U_render(N_size);
@@ -98,7 +98,7 @@ TAG_("monomer", "irritating")
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = U_mixer::braced_f(lhs, rhs);
+	auto xhs = U_mixer::bind_f(lhs, rhs);
 
 	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
@@ -127,7 +127,7 @@ void monomer_provision__advancing()
 
 	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = U_mixer::braced_f(lhs, rhs);
+	auto xhs = U_mixer::bind_f(lhs, rhs);
 
 	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
@@ -173,7 +173,7 @@ void monomer_provision__provisioning()
 
 	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto xhs = monomer_t<U_add, provide>::braced_f(lhs, rhs);
+	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
 	auto u_vector = U_store{0, 0, 0};
 	auto u_review = U_review(u_vector);
@@ -216,7 +216,7 @@ void monomer_chaining__rvalue()
 	
 	using mix_op = monomer_t<U_add, resource::stored<>>;
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
-	auto yhs = mul_op::braced_f(mix_op::braced_f(let_f(_01), let_f(_10)));
+	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -248,8 +248,8 @@ void monomer_chaining__lvalue()
 	using mul_op = monomer_t<U_mul, resource::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
-	auto  xhs = mix_op::braced_f(lhs, rhs);
-	auto  yhs = mul_op::braced_f(xhs);
+	auto  xhs = mix_op::bind_f(lhs, rhs);
+	auto  yhs = mul_op::bind_f(xhs);
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -280,11 +280,11 @@ void monomer_chaining__shared()
 	using mix_fn = monomer_t<U_add>;
 	using idx_fn = monomer_t<Px_dynamic_count>;
 
-	auto _xx = idx_fn::braced_f();
-	auto xhs = mix_op::braced_f(_xx);
-	auto lhs = mix_fn::braced_f(xhs, let_f(_01));
-	auto rhs = mix_fn::braced_f(xhs, let_f(_10));
-	auto yhs = mix_fn::braced_f(lhs, rhs);
+	auto _xx = idx_fn::bind_f();
+	auto xhs = mix_op::bind_f(_xx);
+	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
+	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
+	auto yhs = mix_fn::bind_f(lhs, rhs);
 
 	//\
 	yhs <<= occur::restep_f(50);
