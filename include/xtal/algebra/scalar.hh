@@ -415,6 +415,8 @@ struct scalar<A>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(based_q<scalar_t<float[2]>>);
+
 static_assert(fungible_q<_std::array<float, 2>,
 	XTAL_ALL_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>
 );

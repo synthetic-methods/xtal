@@ -136,9 +136,11 @@ struct lattice<A>
 	using type = bond::isotype<homotype>;
 
 };
+static_assert(based_q<lattice_t<float[2]>>);
+
 static_assert(not counted_q<lattice_t<        int[2]>>);
 static_assert(not counted_q<lattice_t<counter_t<>[2]>>);
-static_assert(not counted_q<lattice_t<     size_type[2]>>);
+static_assert(not counted_q<lattice_t<  size_type[2]>>);
 
 static_assert(fungible_q<_std::span<float, 2>, lattice_t<float(&)[2]>>);
 

@@ -48,11 +48,11 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&&) -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
 		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&&) -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&)  -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
 		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&)  -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
-		
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&&) -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&)  -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
+
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T>

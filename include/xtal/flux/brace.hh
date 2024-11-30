@@ -22,9 +22,7 @@ struct brace;
 template <class ...Xs>
 struct brace
 {
-	using Xs_packed = compound::packed_t<Xs...>;
-	
-	using superkind = compound::defer<Xs_packed>;
+	using superkind = compound::defer<compound::packed_t<Xs...>>;
 
 	template <any_q S>
 	class subtype : public bond::compose_s<S, superkind>
