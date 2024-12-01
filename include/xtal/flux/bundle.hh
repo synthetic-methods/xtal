@@ -11,7 +11,11 @@ namespace xtal::flux
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
+Ties `Xs...` to unify flux branching, etc. \
+
+///\note\
+Deified as a `process`'s `bracket`, binding the provided arguments. \
+
 
 template <class ...Xs>
 struct bundle;

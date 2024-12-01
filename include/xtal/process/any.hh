@@ -41,8 +41,8 @@ struct define
 
 	protected:// DIGEST
 		///\brief\
-		Resolves the function pointer for the given `Xs...` and `Is...`, \
-		providing the kernel for the table constructed by `occur/any.hh#dispatch`. \
+		Addresses the function pointer for the given types `Xs...` and indicies `Is...`, \
+		providing the kernel for the dispatch-table constructed with `occur/any.hh#dispatch`. \
 
 		template <class ...Xs>
 		struct digest
@@ -50,36 +50,36 @@ struct define
 			template <auto ...Is>
 			class index
 			{
-				using Y = decltype(XTAL_ANY_(T &).template dignify<Is...>(XTAL_ANY_(Xs)...));
+				using Y = decltype(XTAL_ANY_(T &).template divest<Is...>(XTAL_ANY_(Xs)...));
 
 			public:
 				using point_type = Y (T::*) (Xs...);
 				static_assert(not _std::is_const_v<point_type>);
 				
-				static constexpr point_type point = &T::template dignify<Is...>;
+				static constexpr point_type point = &T::template divest<Is...>;
 
 			};
 			template <auto ...Is>
-				requires XTAL_TRY_(XTAL_ANY_(T const &).template dignify<Is...>(XTAL_ANY_(Xs)...))
+				requires XTAL_TRY_(XTAL_ANY_(T const &).template divest<Is...>(XTAL_ANY_(Xs)...))
 			class index<Is...>
 			{
-				using Y = decltype(XTAL_ANY_(T const &).template dignify<Is...>(XTAL_ANY_(Xs)...));
+				using Y = decltype(XTAL_ANY_(T const &).template divest<Is...>(XTAL_ANY_(Xs)...));
 
 			public:
 				using point_type = _std::add_const_t<Y (T::*) (Xs...) const>;
 				static_assert(_std::is_const_v<point_type>);
 				
-				XTAL_SET point = static_cast<point_type>(&T::template dignify<Is...>);
+				XTAL_SET point = static_cast<point_type>(&T::template divest<Is...>);
 
 			};
 		};
-		///\returns the result of applying `method` with the given parameters. \
-		///\note\
-		The indirection is required since binding
-
+		///\brief\
+		Provides a layer of indirection separating the types submitted/visible to `digest`, \
+		and those received by `method`. \
+		
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET dignify(auto &&...xs)
+		XTAL_LET divest(auto &&...xs)
 		noexcept -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).         method       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).template method<Is...>(XTAL_REF_(xs)...)))
@@ -90,7 +90,7 @@ struct define
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET dignify(auto &&...xs)
+		XTAL_LET divest(auto &&...xs)
 		XTAL_0FX -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).         method       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_REF_(xs)...)))
@@ -100,7 +100,7 @@ struct define
 			XTAL_0IF (some_n<Is...>)                    {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 
-		///\returns a pointer to the digested `method` for the given parameters. \
+		///\brief a pointer to the digested `method` for the given parameters. \
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET deify(auto const &point)
@@ -284,6 +284,9 @@ struct defer
 	
 		///\
 		Resolves `head` as either a function or value. \
+
+		///\note\
+		The value of `head` is only returned. \
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)

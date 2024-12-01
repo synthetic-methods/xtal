@@ -1,0 +1,50 @@
+#pragma once
+#include "./any.hh"
+
+
+
+
+
+
+XTAL_ENV_(push)
+namespace xtal::occur
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+///\
+Ties `Xs...` to unify handling, arithmetic, etc. \
+
+template <class ...Xs>
+struct bundle;
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+template <class ...Xs>
+struct bundle
+{
+	using superkind = _retail::bundle<Xs...>;
+
+	template <any_q S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		using S_ = bond::compose_s<S, superkind>;
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// ACCESS
+		using S_::self;
+		using S_::head;
+		using S_::slots;
+
+
+	public:// ARITHMETIC... (TODO)
+
+
+	};
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
+XTAL_ENV_(pop)

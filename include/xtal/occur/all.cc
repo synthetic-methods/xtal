@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./bundle.cc"
 #include "./indent.cc"
 #include "./render.cc"
 #include "./resize.cc"
