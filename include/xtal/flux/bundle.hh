@@ -16,9 +16,9 @@ Ties `Xs...` to unify flux branching, etc. \
 ///\note\
 Deified as a `process`'s `bracket`, binding the provided arguments. \
 
-
-template <class ...Xs>
-struct bundle;
+template <class ...Xs> XTAL_TYP bundle;
+template <class ...Xs> XTAL_USE bundle_t = confined_t<bundle<Xs...>>;
+template <class ..._s> XTAL_ASK bundle_q = bond::any_tag_p<bundle, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -26,15 +26,25 @@ struct bundle;
 template <class ...Xs>
 struct bundle
 {
-	using superkind = cell::defer<cell::packed_t<Xs...>>;
-
+	using superkind = bond::compose<bond::tag<bundle>
+	,	cell::defer<cell::packed_t<Xs...>>
+	>;
 	template <any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
+		using H_ = typename S_::head_type;
 
 	public:// CONSTRUCT
 		using S_::S_;
+
+		///\
+		Initialize `slots` using the arguments supplied. \
+
+		XTAL_NEW_(explicit) subtype(Xs &&...xs)
+		noexcept
+		:	subtype(H_{XTAL_REF_(xs)...})
+		{}
 
 	public:// ACCESS
 		using S_::self;
