@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange::_test
+namespace xtal::access::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@ namespace xtal::arrange::_test
 template <int N>
 void spool__operation()
 {
-	using U_event = bond::compose_s<Ox_onset, compound::conferred<int>>;
+	using U_event = bond::compose_s<Ox_onset, cell::conferred<int>>;
 	using U_queue = spool_t<U_event[N]>;
 	U_queue q {(U_event) _std::numeric_limits<int>::max()};
 

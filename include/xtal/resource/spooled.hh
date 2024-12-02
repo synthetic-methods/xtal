@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/all.hh"
+#include "../access/all.hh"
 
 
 
@@ -13,12 +13,12 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP spooled;
 template <typename ..._s> XTAL_USE spooled_t = confined_t<spooled<_s...>>;
-template <typename ..._s> XTAL_REQ spooled_q = bond::any_tag_p<spooled, _s...>;
+template <typename ..._s> XTAL_ASK spooled_q = bond::any_tag_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::spool`. \
+Provides a specialization of `access::spool`. \
 
 template <bond::compose_q A>
 struct spooled<A>
@@ -55,7 +55,7 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = arrange::spool_t<U[value]>;
+		using spool_t = access::spool_t<U[value]>;
 
 	};
 };

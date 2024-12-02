@@ -18,7 +18,7 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename     ..._s> XTAL_TYP indent;
-template <typename     ..._s> XTAL_REQ indent_q = bond::any_tag_p<indent, _s...>;
+template <typename     ..._s> XTAL_ASK indent_q = bond::any_tag_p<indent, _s...>;
 template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<nominal_t<Ns>...>>;
 
 template <nominal_q ...Ns>
@@ -37,28 +37,32 @@ struct indent<Ns...>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-	//	using W_ = bond::compose_s<S, item>;
-		using W_ = component_t<S>;
-		using U_ = devalued_u<reembrace_t<S>>;//   presentation
-		using V_ = devalued_u<            S >;// representation
+	//	using U_ = bond::compose_s<S, item>;
+		using U_ = component_t<S>;
 
 	public:
 		using S_::S_;
 		
 		///\note\
-		Any integral/real op/presentation is interpreted as a half-width fixed-point value \
-		(\see `algebra/phason.hh`). \
+		When `uncoordinated_q<S>`, `S::ordinate` is invoked to produce the edit. \
 
 		///\todo\
-		Normalize the use of `operator()` to access `block` elements, \
-		defining a `concept` to characterize the disparity. \
+		Find a way to invoke `S::ordinate` for any `indent`ed fragments. \
 
-		XTAL_CON_(explicit) subtype(U_ u)
-		XTAL_0EX requires real_number_q<U_> and integral_number_q<V_>
-		:	S_{XTAL_MOV_(u)*bond::operate<V_>::diplo_f()}
+		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
+		noexcept
+		requires   coordinated_q<S>
+		:	S_{XTAL_MOV_(u)}
 		{}
-		XTAL_CON_(implicit) subtype(reembrace_t<W_> w)
-		XTAL_0EX requires iterable_q<W_>
+		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
+		noexcept
+		requires uncoordinated_q<S>
+		:	S_{S::ordinate(XTAL_MOV_(u))}
+		{}
+
+		XTAL_NEW_(implicit) subtype(initializer_t<U_> w)
+		noexcept
+		requires iterable_q<U_>
 		:	S_{w}
 		{}
 
@@ -68,9 +72,9 @@ struct indent<Ns...>
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
 
-			using superkind = bond::compose<flux::mask<N_mask>, defer<W_>>;
+			using superkind = bond::compose<flux::mask<N_mask>, defer<U_>>;
 
-			template <compound::any_q R> requires (0 == sizeof...(Ns))
+			template <cell::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -85,13 +89,15 @@ struct indent<Ns...>
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
 				Requires subsequence ordering for `bond::pack`s? \
 				
-				XTAL_TNX infuse(auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET infuse(auto &&o)
+				noexcept -> sign_type
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(indent_q auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET infuse(indent_q auto &&o)
+				noexcept -> sign_type
 				{
 					/*/
 					auto &m = bond::pack_item_f(o.seek(), head());

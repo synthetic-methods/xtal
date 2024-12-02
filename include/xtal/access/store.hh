@@ -7,13 +7,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::access
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template <class ..._s> XTAL_TYP store;
 template <class ..._s> XTAL_USE store_t = typename store<_s...>::type;
-template <class ...Ts> XTAL_REQ store_q = bond::any_tag_p<store_t, Ts...>;
+template <class ...Ts> XTAL_ASK store_q = bond::any_tag_p<store_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ struct store<U_data[N_data]>
 	using W_data = aligned_t<U_data>;
 
 	template <class T>
-	using holotype = bond::compose_s<initerated_t<T>, bond::tag<store>>;
+	using holotype = bond::compose_s<arranged_t<T>, bond::tag<store>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -78,18 +78,18 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
 
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(iterable_q auto const & t) XTAL_0EX {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(              iterator  i) XTAL_0EX {return reinterpret_cast<              iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(              iterator_ i) XTAL_0EX {return reinterpret_cast<              iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(        const_iterator  i) XTAL_0EX {return reinterpret_cast<        const_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(        const_iterator_ i) XTAL_0EX {return reinterpret_cast<        const_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(      reverse_iterator  i) XTAL_0EX {return reinterpret_cast<      reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(      reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<      reverse_iterator >(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(const_reverse_iterator  i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline) XTAL_SET offence_f(const_reverse_iterator_ i) XTAL_0EX {return reinterpret_cast<const_reverse_iterator >(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator  i) noexcept -> auto {return reinterpret_cast<              iterator_>(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator_ i) noexcept -> auto {return reinterpret_cast<              iterator >(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(        const_iterator  i) noexcept -> auto {return reinterpret_cast<        const_iterator_>(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(        const_iterator_ i) noexcept -> auto {return reinterpret_cast<        const_iterator >(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(      reverse_iterator  i) noexcept -> auto {return reinterpret_cast<      reverse_iterator_>(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(      reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<      reverse_iterator >(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator  i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator_>(i);}
+		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline) XTAL_SET defence_f(iterable_q auto const & t) XTAL_0EX {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
-		XTAL_DEF_(return,inline) XTAL_SET defence_f(iterator_q auto         i) XTAL_0EX {return _std::launder(offence_f(XTAL_REF_(i)));}
+		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
+		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterator_q auto         i) noexcept -> auto {return _std::launder(offence_f(XTAL_REF_(i)));}
 		
 
 		W_data m_data[N_data]{};
@@ -97,10 +97,10 @@ struct store<U_data[N_data]>
 
 
 	public:// ACCESS
-		XTAL_DEF_(return,inline) XTAL_LET begin() XTAL_0EX {return defence_f(reinterpret_cast<      iterator_>(m_data));}
-		XTAL_DEF_(return,inline) XTAL_LET begin() XTAL_0FX {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
-		XTAL_DEF_(return,inline) XTAL_LET   end() XTAL_0EX {return _std::next(begin(), n_data);}
-		XTAL_DEF_(return,inline) XTAL_LET   end() XTAL_0FX {return _std::next(begin(), n_data);}
+		XTAL_DEF_(return,inline) XTAL_LET begin()       noexcept -> auto {return defence_f(reinterpret_cast<      iterator_>(m_data));}
+		XTAL_DEF_(return,inline) XTAL_LET begin() const noexcept -> auto {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
+		XTAL_DEF_(return,inline) XTAL_LET   end()       noexcept -> auto {return _std::next(begin(), n_data);}
+		XTAL_DEF_(return,inline) XTAL_LET   end() const noexcept -> auto {return _std::next(begin(), n_data);}
 
 
 	public:// SIZE
@@ -108,9 +108,9 @@ struct store<U_data[N_data]>
 	
 		///\returns the constant `N_data`. \
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET capacity()
-		XTAL_0EX -> size_type
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET capacity()
+		noexcept -> size_type
 		{
 			return N_data;
 		}
@@ -118,13 +118,13 @@ struct store<U_data[N_data]>
 		Does nothing. \
 
 		XTAL_LET shrink_make_fit()
-		XTAL_0EX -> void
+		noexcept -> void
 		{}
 		///\
 		Reshapes `this` with `sN` elements. \
 
 		XTAL_LET resize(size_type sN, auto &&...oo)
-		->	void
+		noexcept(false) -> void
 		{
 			size_type const sM = size();
 			if (sN < sM) {
@@ -137,7 +137,7 @@ struct store<U_data[N_data]>
 		///\throws `std::bad_alloc` if the required `sN` exceeds the maximum `N_data`. \
 
 		XTAL_LET reserve(size_type sN)
-		->	void
+		noexcept(false) -> void
 		{
 			if (N_data < sN) {
 				throw _std::bad_alloc{};
@@ -149,7 +149,7 @@ struct store<U_data[N_data]>
 		Allocates `sN` additional elements. \
 
 		XTAL_LET deserve(size_type sN)
-		->	void
+		noexcept(false) -> void
 		{
 			reserve(sN + size());
 		}
@@ -161,7 +161,7 @@ struct store<U_data[N_data]>
 		Currently assumes move-invariance. \
 
 		XTAL_LET deserve(size_type sN, iterator i0)
-		->	void
+		noexcept(false) -> void
 		{
 			deserve(sN);
 			auto iN = _std::next(i0, sN);
@@ -184,7 +184,7 @@ struct store<U_data[N_data]>
 		Insert constructor. \
 		Initializes `this` with `sN` values determined by the given arguments. \
 
-		XTAL_CON_(explicit) homotype(size_type sN, auto &&...oo)
+		XTAL_NEW_(explicit) homotype(size_type sN, auto &&...oo)
 		{
 			insert_back(sN, XTAL_REF_(oo)...);
 		}
@@ -193,19 +193,19 @@ struct store<U_data[N_data]>
 		Initializes `this` with the values between `i0` and `iN`. \
 
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
-		XTAL_CON_(explicit) homotype(I0 i0, IN iN)
+		XTAL_NEW_(explicit) homotype(I0 i0, IN iN)
 		{
 			push_back(i0, iN);
 		}
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_LET assign(I0 i0, IN iN)
-		->	void
+		noexcept(false) -> void
 		{
 			clear(); push_back(i0, iN);
 		}
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_LET assign(size_type sN, U_data const &u)
-		->	void
+		noexcept(false) -> void
 		{
 			_std::uninitialized_fill_n((iterator_) m_data, sN, XTAL_REF_(u));
 		}
@@ -214,7 +214,8 @@ struct store<U_data[N_data]>
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_CON_(implicit) homotype(embrace_t<U_data> w)
+		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_data> w)
+		noexcept(false)
 		:	homotype(w.begin(), w.end())
 		{}
 		///\
@@ -222,15 +223,15 @@ struct store<U_data[N_data]>
 		Replaces the contents of `this` with the given values. \
 
 		XTAL_DEF_(inline)
-		XTAL_LET operator = (embrace_t<U_data> w)
-		->	homotype &
+		XTAL_LET operator = (_std::initializer_list<U_data> w)
+		noexcept(false) -> homotype &
 		{
 			assign(w);
 			return *this;
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET assign(embrace_t<U_data> w)
-		->	void
+		XTAL_LET assign(_std::initializer_list<U_data> w)
+		noexcept(false) -> void
 		{
 			assign(w.begin(), w.end());
 		}
@@ -239,7 +240,8 @@ struct store<U_data[N_data]>
 		Copy constructor. \
 		Initializes `this` with the given data. \
 
-		XTAL_CON_(implicit) homotype(homotype const &t)
+		XTAL_NEW_(implicit) homotype(homotype const &t)
+		noexcept(false)
 		:	homotype(t.begin(), t.end())
 		{}
 		///\
@@ -248,14 +250,14 @@ struct store<U_data[N_data]>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator = (homotype const &t)
-		->	homotype &
+		noexcept(false) -> homotype &
 		{
 			assign(t);
 			return *this;
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET assign(homotype const &t)
-		->	void
+		noexcept(false) -> void
 		{
 			assign(t.begin(), t.end());
 		}
@@ -264,9 +266,9 @@ struct store<U_data[N_data]>
 		Move constructor. \
 		Initializes `this` with the given data. \
 
-		XTAL_CON_(implicit) homotype(homotype &&t)
-		XTAL_0EX (_std::is_nothrow_move_constructible_v<U_data>)
-		requires _std::move_constructible<U_data>
+		XTAL_NEW_(implicit) homotype(homotype &&t)
+		noexcept(_std::is_nothrow_move_constructible_v<U_data>)
+		requires _std::           move_constructible  <U_data>
 		:	homotype(_detail::mover_f(t.begin()), _detail::mover_f(t.end()))
 		{}
 		///\
@@ -275,15 +277,15 @@ struct store<U_data[N_data]>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator = (homotype &&t)
-		XTAL_0EX (_std::is_nothrow_move_constructible_v<U_data>)
-		->	homotype & requires _std::move_constructible<U_data>
+		noexcept(_std::is_nothrow_move_constructible_v<U_data>) ->homotype &
+		requires _std::           move_constructible  <U_data>
 		{
 			assign(XTAL_MOV_(t));
 			return *this;
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET assign(homotype &&t)
-		->	void
+		noexcept(false) -> void
 		requires _std::move_constructible<U_data>
 		{
 			assign(_detail::mover_f(t.begin()), _detail::mover_f(t.end()));
@@ -294,7 +296,7 @@ struct store<U_data[N_data]>
 
 		XTAL_DEF_(inline)
 		XTAL_LET swap(homotype &t)
-		->	void
+		noexcept(false) -> void
 		requires _std::swappable<value_type>
 		{
 			_detail::swap_with(offence_f(begin()), offence_f(t));
@@ -305,28 +307,28 @@ struct store<U_data[N_data]>
 
 		template <class I0, class IN> requires epimorphic_q<iterator, I0, IN>
 		XTAL_LET push_back(I0 i0, IN iN)
-		->	void
+		noexcept(false) -> void
 		{
 			insert(end(), i0, iN);
 		}
 
-		XTAL_LET push_back(embrace_t<U_data> w)
-		->	void
+		XTAL_LET push_back(_std::initializer_list<U_data> w)
+		noexcept(false) -> void
 		{
 			push_back(w.begin(), w.end());
 		}
 
 		XTAL_LET push_back(as_q<U_data> auto &&...vs)
-		->	void
+		noexcept(false) -> void
 		{
-			push_back(embrace_t<U_data>{U_data(XTAL_REF_(vs))...});
+			push_back(_std::initializer_list<U_data>{U_data(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
 		\returns a reference to the element.
 
 		XTAL_LET emplace_back(auto &&...oo)
-		->	reference
+		noexcept(false) -> reference
 		{
 			return *inplace_back(XTAL_REF_(oo)...);
 		}
@@ -334,7 +336,7 @@ struct store<U_data[N_data]>
 		Invokes `insert` at `this->end()` with the given arguments. \
 
 		XTAL_LET insert_back(auto &&...oo)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			return insert(end(), XTAL_REF_(oo)...);
 		}
@@ -345,7 +347,7 @@ struct store<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_LET emplace(I i, auto &&...oo)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			return inplace(i, XTAL_REF_(oo)...);
 		}
@@ -355,14 +357,14 @@ struct store<U_data[N_data]>
 
 		template <class I, class J0, class JN> requires epimorphic_q<iterator, I, J0, JN>
 		XTAL_LET insert(I i, J0 j0, JN jN)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			using J = common_t<J0, JN>;
 			return insert(i, (J) j0, (J) jN);
 		}
 		template <class I, class J> requires epimorphic_q<iterator, I, J>
 		XTAL_LET insert(I i, J j0, J jN)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			size_type sN = _std::distance(j0, jN);
 			deserve(sN, i);
@@ -373,8 +375,8 @@ struct store<U_data[N_data]>
 		Inserts the values `w` beginning at `i`. \
 
 		template <class I> requires common_q<iterator, I>
-		XTAL_LET insert(I i, embrace_t<U_data> w)
-		->	iterator
+		XTAL_LET insert(I i, _std::initializer_list<U_data> w)
+		noexcept(false) -> iterator
 		{
 			return insert(i, w.begin(), w.end());
 		}
@@ -383,7 +385,7 @@ struct store<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_LET insert(I i, common_q<U_data> auto &&u)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			return inplace(i, XTAL_REF_(u));
 		}
@@ -392,7 +394,7 @@ struct store<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_LET insert(I i, size_type sN, common_q<U_data> auto &&u)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			deserve(sN, i);
 			_std::uninitialized_fill_n(offence_f(i), sN, XTAL_REF_(u));
@@ -403,7 +405,7 @@ struct store<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_LET insert(I i, size_type sN)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			deserve(sN, i);
 			_std::uninitialized_value_construct_n(offence_f(i), sN);
@@ -412,14 +414,14 @@ struct store<U_data[N_data]>
 		
 	protected:
 		XTAL_LET inplace_back(auto &&...oo)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			deserve(1);
 			iterator i = end(); ++n_data;
 			return (iterator) ::new(offence_f(i)) value_type(XTAL_REF_(oo)...);
 		}
 		XTAL_LET inplace(iterator i, auto &&...oo)
-		->	iterator
+		noexcept(false) -> iterator
 		{
 			deserve(1, i);
 			return (iterator) ::new(offence_f(i)) value_type(XTAL_REF_(oo)...);
@@ -431,7 +433,7 @@ struct store<U_data[N_data]>
 		Removes the last element from `this`. \
 
 		XTAL_LET pop_back()
-		->	void
+		noexcept(false) -> void
 		{
 			pop_back(1);
 		}
@@ -439,7 +441,7 @@ struct store<U_data[N_data]>
 		Removes the last `sN` elements from `this`. \
 
 		XTAL_LET pop_back(size_type sN)
-		->	void
+		noexcept(false) -> void
 		{
 			erase(_std::prev(end(), sN), end(), sN);
 		}
@@ -447,7 +449,7 @@ struct store<U_data[N_data]>
 		Deletes all elements. \
 
 		XTAL_LET clear()
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			erase(begin(), end());
 		}
@@ -456,7 +458,7 @@ struct store<U_data[N_data]>
 
 		template <class I0> requires common_q<iterator, I0>
 		XTAL_LET erase(I0 i0)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			return erase(i0, 1);
 		}
@@ -465,7 +467,7 @@ struct store<U_data[N_data]>
 
 		template <class I0> requires common_q<iterator, I0>
 		XTAL_LET erase(I0 i0, size_type sN)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			return erase(i0, _std::next(i0, sN), sN);
 		}
@@ -474,7 +476,7 @@ struct store<U_data[N_data]>
 
 		template <class I0, class IN> requires common_q<iterator, I0, IN>
 		XTAL_LET erase(I0 i0, IN iN)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			using I = common_t<I0, IN>;
 			return erase((I) i0, (I) iN, _std::distance((I) i0, (I) iN));
@@ -489,7 +491,7 @@ struct store<U_data[N_data]>
 		Currently assumes move-invariance. \
 
 		XTAL_LET erase(iterator i0, iterator iN, size_type sN)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			assert(begin() <= i0 and iN <= end() and _std::distance(i0, iN) == sN);
 			if constexpr (_std::destructible<value_type>) {

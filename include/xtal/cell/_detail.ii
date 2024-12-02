@@ -19,13 +19,13 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class   ...Us>	XTAL_REQ         member_q = rebased_q<Us...>;
+template <class   ...Us>	XTAL_ASK         member_q = rebased_q<Us...>;
 template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
 template <size_type  N >	XTAL_TYP         member<unit_type[N]> {using type =     unsigned;};
 template <size_type  N >	XTAL_TYP         member<null_type[N]> {using type =     unsigned;};
 template <class      W >	XTAL_USE         member_t = typename member<W>::type;
-template <debased_q  W >	XTAL_DEF_(return,inline) XTAL_SET    member_f(auto &&   w)       XTAL_0EX -> decltype(auto) {return & XTAL_REF_(w)    ;}
-template <class      W >	XTAL_DEF_(return,inline) XTAL_SET    member_f(auto &&...w)       XTAL_0EX -> decltype(auto) {return W(XTAL_REF_(w)...);}
+template <debased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&   w)       noexcept -> decltype(auto) {return & XTAL_REF_(w)    ;}
+template <class      W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&...w)       noexcept -> decltype(auto) {return W(XTAL_REF_(w)...);}
 
 ///\
 Resolves/dereferences the current value. \
@@ -34,14 +34,14 @@ template <class      W >	XTAL_TYP     remember            {using type =      W;}
 template <size_type  N >	XTAL_TYP     remember<unit_type[N]> {using type = size_type;};
 template <size_type  N >	XTAL_TYP     remember<null_type[N]> {using type = size_type;};
 template <class      W >	XTAL_USE     remember_t = typename remember<W>::type;
-template <pointer_q  M >	XTAL_DEF_(return,inline) XTAL_SET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return *XTAL_REF_(m);}
-template <class      M >	XTAL_DEF_(return,inline) XTAL_SET  remember_f(M &&m)             XTAL_0EX -> decltype(auto) {return  XTAL_REF_(m);}
+template <pointer_q  M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             noexcept -> decltype(auto) {return *XTAL_REF_(m);}
+template <class      M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             noexcept -> decltype(auto) {return  XTAL_REF_(m);}
 
 ///\
 Replaces and returns the previous value. \
 
-template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_SET dismember_f(W &m, W w)         XTAL_0EX -> decltype(auto) {return _std::exchange(m, XTAL_MOV_(w));}
-template <rebased_q  W >	XTAL_DEF_(return,inline) XTAL_SET dismember_f(W &m, auto &&...w) XTAL_0EX -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, W w)         noexcept -> decltype(auto) {return _std::exchange(m, XTAL_MOV_(w));}
+template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, auto &&...w) noexcept -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,14 +100,14 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
+		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
 		
 //		///\
 //		\returns a copy of `this` with `head<Is...>(oo...)` applied. \
 //
 //		template <class  ...Is>
-//		XTAL_LET alter(auto &&...oo)
-//		XTAL_0FX -> decltype(auto)
+//		XTAL_LET alter(auto &&...oo) const
+//		noexcept -> decltype(auto)
 //		{
 //			auto t = twin();
 //			(void) t.template head<Is...>(XTAL_REF_(oo)...);
@@ -146,8 +146,8 @@ struct refine_tuple
 		})
 		template <class F>
 		XTAL_DEF_(return,inline)
-		XTAL_LET apply()
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET apply() const
+		noexcept -> decltype(auto)
 		{
 			return apply(invoke_f<F>);
 		}
@@ -156,8 +156,7 @@ struct refine_tuple
 		Sequence conversion. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET seek()
-		XTAL_0FX
+		XTAL_LET seek() const
 		{
 			return apply([] XTAL_1FN_(bond::seek_f));
 		}
@@ -166,21 +165,19 @@ struct refine_tuple
 		Tuple conversion. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET pack()
-		XTAL_0FX
+		XTAL_LET pack() const
 		{
 			return apply([] XTAL_1FN_(bond::pack_f));
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_CVN_(implicit) bond::repack_t<S_>()
-		XTAL_0FX
+		XTAL_ION_(implicit) bond::repack_t<S_>() const
 		{
 			return pack();
 		}
 		
-		XTAL_DEF_(return,inline)
-		XTAL_SET unpack_f(bond::pack_q auto const &tuple)
-		XTAL_0EX
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET unpack_f(bond::pack_q auto const &tuple)
+		noexcept -> T
 		{
 			return _std::apply([] XTAL_1FN_(T), tuple);
 		}
@@ -208,7 +205,7 @@ struct defer_field
 		//\
 		Public visibility allows `auto` parameterization in templates.
 
-		body_type u_body;
+		body_type body_part;
 
 	public:
 	//	using S_::S_;
@@ -218,55 +215,57 @@ struct defer_field
 		XTAL_CO4_(subtype)
 		
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
 		///\
 		Constructs `this` using the default value. \
 
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		:	subtype(body_type{})
 		{}
-		XTAL_CON_(implicit) subtype(reembrace_t<body_type> o)
-		XTAL_0EX requires member_q<U> and reembrace_q<body_type>
-		:	u_body(o)
-		{}
+		XTAL_NEW_(implicit) subtype(initializer_t<body_type> o)
+		noexcept
+		requires member_q<U> and initializer_q<body_type>
+		:	body_part(o)
+		{
+		}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
-		XTAL_CON_(explicit) subtype(auto &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(auto &&o, auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
-		,	u_body(member_f<head_type>(XTAL_REF_(o)))
+		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(return,inline) XTAL_LET head() XTAL_0FX_( &) -> decltype(auto) {return remember_f(u_body);}
-		XTAL_DEF_(return,inline) XTAL_LET head() XTAL_0EX_( &) -> decltype(auto) {return remember_f(u_body);}
-		XTAL_DEF_(return,inline) XTAL_LET head() XTAL_0FX_(&&) -> decltype(auto) {return remember_f(XTAL_MOV_(u_body));}
-		XTAL_DEF_(return,inline) XTAL_LET head() XTAL_0EX_(&&) -> decltype(auto) {return remember_f(XTAL_MOV_(u_body));}
+		XTAL_DEF_(return,inline) XTAL_LET head() const  &noexcept -> decltype(auto) {return remember_f(body_part);}
+		XTAL_DEF_(return,inline) XTAL_LET head()        &noexcept -> decltype(auto) {return remember_f(body_part);}
+		XTAL_DEF_(return,inline) XTAL_LET head() const &&noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_DEF_(return,inline) XTAL_LET head()       &&noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
 		
 		XTAL_DEF_(inline)
 		XTAL_LET head(auto &&...oo)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 			requires member_q<head_type> and (0 < sizeof...(oo))
 		{
-			return dismember_f(u_body, XTAL_REF_(oo)...);
+			return dismember_f(body_part, XTAL_REF_(oo)...);
 		}
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET cardinality()
-		XTAL_0EX
-			requires XTAL_TRY_TO_(S_::cardinality())
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET cardinality()
+		noexcept -> auto
+		requires XTAL_TRY_TO_(S_::cardinality())
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET cardinality()
-		XTAL_0EX
-			requires in_n<S_::pack_size::value, 0> and is_q<bool, U>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET cardinality()
+		noexcept -> auto
+		requires in_n<S_::pack_size::value, 0> and is_q<bool, U>
 		{
 			return size_2;
 		}
@@ -288,11 +287,11 @@ struct defer_field<U>
 	public:
 		using S_::S_;
 		using S_::self;
-		body_type u_body{};
+		body_type body_part{};
 
 		template <nominal_q A>
-		XTAL_CON_(explicit) subtype(A &&a, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(A &&a, auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{
 			static_assert(A::value == U::value);
@@ -300,8 +299,8 @@ struct defer_field<U>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return head_type(u_body);}
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return head_type(u_body);}
+		XTAL_DEF_(return,inline) XTAL_LET head() const noexcept -> head_type const & requires      member_q<U>  {return             body_part;}
+		XTAL_DEF_(return,inline) XTAL_LET head() const noexcept -> head_type         requires un_n<member_q<U>> {return (head_type) body_part;}
 		
 	};
 };
@@ -330,43 +329,51 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 	public:
 	//	using S_::S_;
 		using S_::self;
-		body_type u_body{};
+		body_type body_part{};
 
 		XTAL_CO0_(subtype);
 		XTAL_CO1_(subtype);
 		XTAL_CO4_(subtype);
 		
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 		template <infungible_q<subtype> O> requires (not integral_q<O>)
-		XTAL_CON_(explicit) subtype(O &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o, auto &&...oo)
+		noexcept
 		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
 		}
-		XTAL_CON_(explicit) subtype(XTAL_ARG_(head_type) &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(XTAL_ARG_(head_type) &&o, auto &&...oo)
+		noexcept
 		:	subtype(I_array[XTAL_REF_(o) - N_lower], XTAL_REF_(oo)...)
 		{
 		}
-		XTAL_CON_(explicit) subtype(XTAL_ARG_(body_type) &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(XTAL_ARG_(body_type) &&o, auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
-		,	u_body(XTAL_REF_(o))
+		,	body_part(XTAL_REF_(o))
 		{
 		}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
-		XTAL_DEF_(return,inline) XTAL_SET cardinality() XTAL_0EX {return sizeof...(Ns);}
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return N_array[u_body];}
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return N_array[u_body];}
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET cardinality()
+		noexcept -> auto
+		{
+			return sizeof...(Ns);
+		}
 		
-		XTAL_DEF_(inline) XTAL_CVN_(explicit) size_type() XTAL_0EX {return u_body;}
-		XTAL_DEF_(inline) XTAL_CVN_(explicit) size_type() XTAL_0FX {return u_body;}
+		XTAL_DEF_(return,inline)
+		XTAL_LET head() const
+		noexcept -> auto
+		{
+			return N_array[body_part];
+		}
+		
+		XTAL_DEF_(inline) XTAL_ION_(explicit) size_type()       noexcept {return body_part;}
+		XTAL_DEF_(inline) XTAL_ION_(explicit) size_type() const noexcept {return body_part;}
 		
 
 	};
@@ -391,7 +398,7 @@ struct defer_field<unit_type[N_width]>
 		using body_type =   member_t<U>;
 
 	public:
-		body_type u_body:N_depth{};
+		body_type body_part:N_depth{};
 
 	public:
 	//	using S_::S_;
@@ -402,32 +409,35 @@ struct defer_field<unit_type[N_width]>
 		XTAL_CO4_(subtype);
 		
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		template <integral_q A>
-		XTAL_CON_(explicit) subtype(A &&a)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(A &&a)
+		noexcept
 		:	S_(head_type(XTAL_REF_(a)) >> N_depth)
-		,	u_body(head_type(a)&(N_width - 1))
+		,	body_part(head_type(a)&(N_width - 1))
 		{
 		}
 		template <infungible_q<subtype> A>
-		XTAL_CON_(explicit) subtype(A &&a, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(A &&a, auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
-		,	u_body(member_f<head_type>(XTAL_REF_(a)))
+		,	body_part(member_f<head_type>(XTAL_REF_(a)))
 		{
 		}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0FX {return head_type(u_body);}
-		XTAL_DEF_(return,inline) XTAL_RET head() XTAL_0EX {return head_type(u_body);}
+		XTAL_DO2_(XTAL_DEF_(return,inline)
+		XTAL_LET head(), -> decltype(auto)
+		{
+			return head_type(body_part);
+		})
 		
 	};
 };
@@ -452,10 +462,10 @@ struct refer_iterators
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline) XTAL_LET begin() XTAL_0FX -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET begin() XTAL_0EX -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET   end() XTAL_0FX -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET   end() XTAL_0EX -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF_(return,inline) XTAL_LET begin() const noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF_(return,inline) XTAL_LET begin()       noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF_(return,inline) XTAL_LET   end() const noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF_(return,inline) XTAL_LET   end()       noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
 
 		XTAL_DO2_(template <counter_q V>
 		XTAL_DEF_(return,inline)
@@ -472,7 +482,7 @@ struct refer_iterators
 
 			auto &u  = S_::template head<U>();
 			auto  u_ = begin();
-			using W_ = reiterated_t<decltype(u_)>;
+			using W_ = deranged_t<decltype(u_)>;
 			auto  w0 = w.front(), wN = w.back() + 1;
 			/*/
 			size_type const uN = count_f(u);
@@ -512,8 +522,8 @@ struct refer_equality
 	{
 	public:
 		using S::S;
-		XTAL_DEF_(return,inline) XTAL_LET operator == (subtype const &t) XTAL_0FX -> bool {return S::head() == t.head();}
-		XTAL_DEF_(return,inline) XTAL_LET operator != (subtype const &t) XTAL_0FX -> bool {return S::head() != t.head();}
+		XTAL_DEF_(return,inline) XTAL_LET operator == (subtype const &t) const noexcept -> bool {return S::head() == t.head();}
+		XTAL_DEF_(return,inline) XTAL_LET operator != (subtype const &t) const noexcept -> bool {return S::head() != t.head();}
 
 	};
 };
@@ -537,8 +547,8 @@ struct refer_inequality
 		using S_::S_;
 		
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator <=> (subtype const &t)
-		XTAL_0FX -> auto
+		XTAL_LET operator <=> (subtype const &t) const
+		noexcept -> auto
 		{
 			return S_::head() <=> t.head();
 		}
@@ -588,9 +598,9 @@ struct refer_binary_logic<U, 1>
 
 	public:
 		using S_::S_;
-		XTAL_DEF_(inline) XTAL_LET operator ^=(auto &&o) XTAL_0EX -> decltype(auto) {S_::head() ^= XTAL_REF_(o); return S_::self();}
-		XTAL_DEF_(inline) XTAL_LET operator |=(auto &&o) XTAL_0EX -> decltype(auto) {S_::head() |= XTAL_REF_(o); return S_::self();}
-		XTAL_DEF_(inline) XTAL_LET operator &=(auto &&o) XTAL_0EX -> decltype(auto) {S_::head() &= XTAL_REF_(o); return S_::self();}
+		XTAL_DEF_(inline) XTAL_LET operator ^=(auto &&o) noexcept -> decltype(auto) {S_::head() ^= XTAL_REF_(o); return S_::self();}
+		XTAL_DEF_(inline) XTAL_LET operator |=(auto &&o) noexcept -> decltype(auto) {S_::head() |= XTAL_REF_(o); return S_::self();}
+		XTAL_DEF_(inline) XTAL_LET operator &=(auto &&o) noexcept -> decltype(auto) {S_::head() &= XTAL_REF_(o); return S_::self();}
 
 	};
 };
@@ -605,9 +615,9 @@ struct refer_binary_logic<U, 2>
 
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator ^ (auto &&o) XTAL_0FX -> T_{return T_(S_::head() ^ XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator | (auto &&o) XTAL_0FX -> T_{return T_(S_::head() | XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator & (auto &&o) XTAL_0FX -> T_{return T_(S_::head() & XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator ^ (auto &&o) const noexcept -> T_{return T_(S_::head() ^ XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator | (auto &&o) const noexcept -> T_{return T_(S_::head() | XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator & (auto &&o) const noexcept -> T_{return T_(S_::head() & XTAL_REF_(o));}
 
 	};
 };
@@ -651,8 +661,8 @@ struct refer_multiplicative_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_DEF_(inline) XTAL_LET operator *=(auto &&o) XTAL_0EX -> decltype(auto) {S::head() *= XTAL_REF_(o); return S::self();}
-		XTAL_DEF_(inline) XTAL_LET operator /=(auto &&o) XTAL_0EX -> decltype(auto) {S::head() /= XTAL_REF_(o); return S::self();}
+		XTAL_DEF_(inline) XTAL_LET operator *=(auto &&o) noexcept -> decltype(auto) {S::head() *= XTAL_REF_(o); return S::self();}
+		XTAL_DEF_(inline) XTAL_LET operator /=(auto &&o) noexcept -> decltype(auto) {S::head() /= XTAL_REF_(o); return S::self();}
 
 	};
 };
@@ -667,8 +677,8 @@ struct refer_multiplicative_group<U, 2>
 
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto &&o) XTAL_0FX -> T_{return T_(S_::head() * XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto &&o) XTAL_0FX -> T_{return T_(S_::head() / XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator * (auto &&o) const noexcept -> T_{return T_(S_::head() * XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator / (auto &&o) const noexcept -> T_{return T_(S_::head() / XTAL_REF_(o));}
 
 	};
 };
@@ -696,8 +706,8 @@ struct refer_additive_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_DEF_(inline) XTAL_LET operator +=(auto &&o) XTAL_0EX -> decltype(auto) {S::head() += XTAL_REF_(o); return S::self();}
-		XTAL_DEF_(inline) XTAL_LET operator -=(auto &&o) XTAL_0EX -> decltype(auto) {S::head() -= XTAL_REF_(o); return S::self();}
+		XTAL_DEF_(inline) XTAL_LET operator +=(auto &&o) noexcept -> decltype(auto) {S::head() += XTAL_REF_(o); return S::self();}
+		XTAL_DEF_(inline) XTAL_LET operator -=(auto &&o) noexcept -> decltype(auto) {S::head() -= XTAL_REF_(o); return S::self();}
 
 	};
 };
@@ -712,9 +722,9 @@ struct refer_additive_group<U, 2>
 
 	public:
 		using S_::S_;
-		XTAL_DEF_(return,inline) XTAL_LET operator + (auto &&o) XTAL_0FX -> T_{return T_( S_::head() + XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator - (auto &&o) XTAL_0FX -> T_{return T_( S_::head() - XTAL_REF_(o));}
-		XTAL_DEF_(return,inline) XTAL_LET operator - (        ) XTAL_0FX -> T_{return T_(-S_::head());}
+		XTAL_DEF_(return,inline) XTAL_LET operator + (auto &&o) const noexcept -> T_{return T_( S_::head() + XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator - (auto &&o) const noexcept -> T_{return T_( S_::head() - XTAL_REF_(o));}
+		XTAL_DEF_(return,inline) XTAL_LET operator - (        ) const noexcept -> T_{return T_(-S_::head());}
 
 	};
 };
@@ -742,10 +752,10 @@ struct refer_discrete_group<U, 1>
 	{
 	public:
 		using S::S;
-		XTAL_DEF_(inline) XTAL_LET operator ++(int) XTAL_0EX -> decltype(auto) {auto  t = S::self(); ++S::head(); return t;}
-		XTAL_DEF_(inline) XTAL_LET operator --(int) XTAL_0EX -> decltype(auto) {auto  t = S::self(); --S::head(); return t;}
-		XTAL_DEF_(inline) XTAL_LET operator ++()    XTAL_0EX -> decltype(auto) {auto &s = S::self(); ++S::head(); return s;}
-		XTAL_DEF_(inline) XTAL_LET operator --()    XTAL_0EX -> decltype(auto) {auto &s = S::self(); --S::head(); return s;}
+		XTAL_DEF_(inline) XTAL_LET operator ++(int) noexcept -> decltype(auto) {auto  t = S::self(); ++S::head(); return t;}
+		XTAL_DEF_(inline) XTAL_LET operator --(int) noexcept -> decltype(auto) {auto  t = S::self(); --S::head(); return t;}
+		XTAL_DEF_(inline) XTAL_LET operator ++()    noexcept -> decltype(auto) {auto &s = S::self(); ++S::head(); return s;}
+		XTAL_DEF_(inline) XTAL_LET operator --()    noexcept -> decltype(auto) {auto &s = S::self(); --S::head(); return s;}
 
 	};
 };

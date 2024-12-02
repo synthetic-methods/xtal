@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/store.hh"
+#include "../access/store.hh"
 
 #include "../occur/review.hh"
 
@@ -13,19 +13,19 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP stated;
 template <typename ..._s> XTAL_USE stated_t = confined_t<stated<_s...>>;
-template <typename ..._s> XTAL_REQ stated_q = bond::any_tag_p<stated, _s...>;
+template <typename ..._s> XTAL_ASK stated_q = bond::any_tag_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::store`. \
+Provides a specialization of `access::store`. \
 
 template <bond::compose_q A>
 struct stated<A>
 {
 	using superkind = bond::tag<stated>;
 	
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -43,7 +43,7 @@ struct stated<>
 {
 	using superkind = bond::tag<stated>;
 	
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -54,7 +54,7 @@ struct stated<>
 		template <iterated_q U>
 		//\
 		using state_t = occur::review_t<U>;
-		using state_t = reiterated_t<U>;
+		using state_t = deranged_t<U>;
 
 	};
 };

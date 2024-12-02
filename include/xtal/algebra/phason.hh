@@ -30,14 +30,17 @@ Rework `operator`s to accommodate `std::complex`. \
 
 template <class   ..._s>	XTAL_TYP         phason;
 template <class   ..._s>	XTAL_USE         phason_t = typename phason<_s...>::type;
-template <class   ...Ts>	XTAL_REQ         phason_q = bond::any_tag_p<phason_t, Ts...>;
-template <class   ...Ts>	XTAL_REQ    real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<debraced_t<Ts>...>;
-template <class   ...Ts>	XTAL_REQ simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<debraced_t<Ts>...>;
-template <class   ...Ts>	XTAL_REQ complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<debraced_t<Ts>...>;
+template <class   ...Ts>	XTAL_ASK         phason_q = bond::any_tag_p<phason_t, Ts...>;
+template <class   ...Ts>	XTAL_ASK    real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
+template <class   ...Ts>	XTAL_ASK simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
+template <class   ...Ts>	XTAL_ASK complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET phason_f(auto &&...oo)
-XTAL_0EX {return _detail::initialize<phason_t>::template via<V>(XTAL_REF_(oo)...);}
+noexcept -> auto
+{
+	return _detail::initialize<phason_t>::template via<V>(XTAL_REF_(oo)...);
+}
 
 
 namespace _detail
@@ -57,15 +60,15 @@ struct circumscribe : circumspect<V>
 	using inordinate_type = typename _op::delta_type;
 	using coordinate_type = typename _Op::alpha_type;
 
-	XTAL_DEF_(return,inline)
-	XTAL_SET    ordinate(real_number_q auto const &co)
-	XTAL_0EX -> ordinate_type
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET    ordinate(real_number_q auto const &co)
+	noexcept -> ordinate_type
 	{
 		return _op::sigma_f(_op::fractional_f(co));
 	};
-	XTAL_DEF_(return,inline)
-	XTAL_SET    coordinate(integral_number_q auto const &o)
-	XTAL_0EX -> coordinate_type
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET    coordinate(integral_number_q auto const &o)
+	noexcept -> coordinate_type
 	{
 		return _Op::haplo_f(_op::full.depth)*_Op::alpha_f(_op::delta_f(o));
 	};
@@ -80,17 +83,17 @@ struct circumscribe<A> : circumscribe<devalued_u<A>>
 	using inordinate_type = _std::complex<typename _op::inordinate_type>;
 	using coordinate_type = _std::complex<typename _op::coordinate_type>;
 
-	XTAL_DEF_(return,inline)
-	XTAL_SET    ordinate(coordinate_type const &co)
-	XTAL_0EX -> ordinate_type
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET    ordinate(coordinate_type const &co)
+	noexcept -> ordinate_type
 	{
 		auto const o_re = _op::ordinate(co.real());
 		auto const o_im = _op::ordinate(co.imag());
 		return {o_re, o_im};
 	};
-	XTAL_DEF_(return,inline)
-	XTAL_SET    coordinate(ordinate_type const &o)
-	XTAL_0EX -> coordinate_type
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET    coordinate(ordinate_type const &o)
+	noexcept -> coordinate_type
 	{
 		auto const co_re = _op::coordinate(o.real());
 		auto const co_im = _op::coordinate(o.imag());
@@ -137,6 +140,7 @@ struct phason<A>
 	protected:
 		using          S_::N_data;
 		using typename S_::U_data;
+		using initializer_list = _std::initializer_list<coordinate_type>;
 
 	public:// TYPE
 
@@ -145,15 +149,15 @@ struct phason<A>
 
 	public:// MAP
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET ordinate(coordinate_type const &co)
-		XTAL_0EX
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET ordinate(coordinate_type const &co)
+		noexcept -> ordinate_type
 		{
 			return T_op::ordinate(co);
 		}
-		XTAL_DEF_(return,inline)
-		XTAL_SET coordinate(ordinate_type const &o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET coordinate(ordinate_type const &o)
+		noexcept -> coordinate_type
 		{
 			return T_op::coordinate(o);
 		}
@@ -166,40 +170,41 @@ struct phason<A>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	//	Reified to allow inspection of initializer-type:
-		using initializer_list = _std::initializer_list<coordinate_type>;
-
 		XTAL_CO0_(homotype)
 	//	XTAL_CO1_(homotype)
 		XTAL_CO4_(homotype)
 		
-		XTAL_CON_(explicit) homotype(size_type const n)
-		XTAL_0EX
+		XTAL_NEW_(explicit) homotype(size_type const n)
+		noexcept
 		:	S_(n)
 		{}
 
-		XTAL_CON_(implicit) homotype()
-		XTAL_0EX : homotype(size_0)
+		XTAL_NEW_(implicit) homotype()
+		noexcept
+		:	homotype(size_0)
 		{
 		}
-		XTAL_CON_(explicit) homotype(real_number_q auto &&...oo)
-		XTAL_0EX : homotype(sizeof...(oo))
+		XTAL_NEW_(explicit) homotype(real_number_q auto &&...oo)
+		noexcept
+		:	homotype(sizeof...(oo))
 		{
 			operator>>=({XTAL_REF_(oo)...});
 		}
-		XTAL_CON_(implicit) homotype(initializer_list o)
-		XTAL_0EX : homotype(count_f(o))
+		XTAL_NEW_(implicit) homotype(initializer_list o)
+		noexcept
+		:	homotype(count_f(o))
 		{
 			operator>>=(XTAL_REF_(o));
 		}
-		XTAL_CON_(explicit) homotype(iterable_q auto &&o)
-		XTAL_0EX : homotype(count_f(o))
+		XTAL_NEW_(explicit) homotype(iterable_q auto &&o)
+		noexcept
+		:	homotype(count_f(o))
 		{
 			operator>>=(XTAL_REF_(o));
 		}
 		
 	//	XTAL_DEF_(inline)
-	//	XTAL_DO4_(XTAL_CVN_(implicit)
+	//	XTAL_DO4_(XTAL_ION_(implicit)
 	//	auto(),
 	//	{
 	//		if constexpr (complex_field_q<coordinate_type>) {
@@ -218,7 +223,7 @@ struct phason<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(initializer_list  o)
-		XTAL_0EX -> homotype &
+		noexcept -> homotype &
 		{
 			_detail::copy_to(S_::data()
 			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
@@ -227,7 +232,7 @@ struct phason<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(iterable_q auto &&o)
-		XTAL_0EX -> homotype &
+		noexcept -> homotype &
 		{
 			_detail::move_to(S_::data()
 			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
@@ -237,7 +242,7 @@ struct phason<A>
 		
 		XTAL_DEF_(inline)
 		XTAL_LET operator <<=(initializer_list  o)
-		XTAL_0EX -> homotype &
+		noexcept -> homotype &
 		{
 			_detail::copy_to(_std::next(S_::data(), S_::size() - o.size())
 			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
@@ -246,7 +251,7 @@ struct phason<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator <<=(iterable_q auto &&o)
-		XTAL_0EX -> homotype &
+		noexcept -> homotype &
 		{
 			_detail::move_to(_std::next(S_::data(), S_::size() - o.size())
 			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
@@ -266,41 +271,41 @@ struct phason<A>
 		using S_::operator*=;
 		using S_::operator/=;
 
-		auto operator *= (T const &) XTAL_0EX -> T &;// Asymmetric!
-		auto operator /= (T const &) XTAL_0EX -> T &;// Asymmetric!
+		auto operator *= (T const &) noexcept -> T &;// Asymmetric!
+		auto operator /= (T const &) noexcept -> T &;// Asymmetric!
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator * (auto const &t)
-		XTAL_0FX {
+		XTAL_LET operator * (auto const &t) const
+		noexcept -> auto {
 			return twin() *= t;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator / (auto const &t)
-		XTAL_0FX {
+		XTAL_LET operator / (auto const &t) const
+		noexcept -> auto {
 			return twin() /= t;
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator *= (initializer_list t)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return self() *= T(t);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (initializer_list t)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return self() /= T(t);
 		}
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (number_q auto const &f)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return operator*=(T_op::alpha_1/f);
 		}
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *= (real_number_q auto const &f)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			using _op = bond::operate<decltype(f)>;
 			auto &s = reinterpret_cast<serial_t<inordinate_type[N_data]> &>(self());
@@ -337,7 +342,7 @@ struct phason<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator *= (integral_number_q auto const &i)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return S_::operator*=(i);
 		}
@@ -350,20 +355,20 @@ struct phason<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator -= (number_q auto const &f)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return operator+=(-f);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator += (real_number_q auto const &f)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			get<0>(*this) += T_op::fractional_f(f);
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator += (integral_number_q auto const &i)
-		XTAL_0EX -> T &
+		noexcept -> auto &
 		{
 			return self();
 		}
@@ -371,14 +376,14 @@ struct phason<A>
 		template <class Y=coordinate_type>
 		XTAL_DEF_(return,inline)
 		XTAL_LET continuity()
-		XTAL_0EX -> Y
+		noexcept -> Y
 		{
 			return condition_f<Y>(not discontinuity<bool>());
 		}
 		template <class Y=coordinate_type>
 		XTAL_DEF_(return,inline)
 		XTAL_LET discontinuity()
-		XTAL_0EX -> Y
+		noexcept -> Y
 		{
 			auto [u0, u1] = *this;
 			auto const v0 = _xtd::make_signed_f(u0) >> T_op::positive.depth; u0 ^= v0; u0 -= v0;

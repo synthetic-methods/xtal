@@ -90,8 +90,8 @@ struct define
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET divest(auto &&...xs)
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET divest(auto &&...xs) const
+		noexcept -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).         method       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_REF_(xs)...)))
 		{
@@ -103,15 +103,15 @@ struct define
 		///\brief a pointer to the digested `method` for the given parameters. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(auto const &point)
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET deify(auto const &point) const
+		noexcept -> decltype(auto)
 		{
 			return point;
 		}
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(nominal_q auto ...Is)
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET deify(nominal_q auto ...Is) const
+		noexcept -> decltype(auto)
 		{
 			return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
 		}
@@ -123,8 +123,8 @@ struct define
 
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto ...Is)
-		,	-> decltype(auto)
+		XTAL_LET reify(nominal_q auto ...Is),
+		-> decltype(auto)
 		{
 			return [this] XTAL_1FN_(self().template operator()<XTAL_VAL_(Is)...>);
 		})
@@ -133,8 +133,8 @@ struct define
 		
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator() (auto &&...xs)
-		,	->	decltype(auto)
+		XTAL_LET operator() (auto &&...xs),
+		-> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
@@ -146,8 +146,8 @@ struct define
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs)
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET method(auto &&...xs) const
+		noexcept -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(T::         function       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(T::template function<Is...>(XTAL_REF_(xs)...)))
 		{
@@ -180,11 +180,11 @@ struct define
 				///\
 				Initialize `slots` using the arguments supplied. \
 
-				XTAL_CON_(explicit) subtype(Xs &&...xs)
+				XTAL_NEW_(explicit) subtype(Xs &&...xs)
 				noexcept
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CON_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
+				XTAL_NEW_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(t), H1_(XTAL_REF_(xs)...))
 				{}
@@ -243,14 +243,14 @@ struct refine
 		template <class ...Xs>
 		XTAL_USE bind_t = typename bracket<Xs...>::type;
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET bind_f(auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET bind_f(auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			return bind_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
-		XTAL_DEF_(return,inline)
-		XTAL_SET bind_f(XTAL_ARG_(T) &&t, auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET bind_f(XTAL_ARG_(T) &&t, auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
@@ -291,7 +291,7 @@ struct defer
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET map_method(auto &&...xs),
-		->	decltype(auto)
+		-> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_TO_(S_::head().template operator()<Is...>(XTAL_REF_(xs)...))
@@ -300,9 +300,9 @@ struct defer
 			XTAL_0IF_(void)
 		})
 		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_SET map_function(auto &&...xs),
-		->	decltype(auto)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET map_function(auto &&...xs),
+		-> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (any_q<U0>) {return U0::template function<Is...>(XTAL_REF_(xs)...);}
@@ -351,15 +351,15 @@ struct defer
 		}
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_SET function(auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires un_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
 		and XTAL_TRY_TO_(map_function<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_SET function(auto &&...xs)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires in_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
 		and XTAL_TRY_TO_(map_function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))

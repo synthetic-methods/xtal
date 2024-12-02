@@ -141,36 +141,39 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_USE        using
-#define XTAL_TYP        struct
-#define XTAL_REQ        concept
+#define XTAL_USE                    using
+#define XTAL_TYP                    struct
+#define XTAL_ASK                    concept
 
-#define XTAL_NEW_(...)         ::std::remove_cvref_t<__VA_ARGS__>
-#define XTAL_VAL_(...)            XTAL_NEW_(decltype(__VA_ARGS__))::value
-#define XTAL_ALL_(...)            XTAL_NEW_(decltype(__VA_ARGS__))
-#define XTAL_ANY_(...)               ::std::declval <__VA_ARGS__>()
-#define XTAL_ARG_(...)                     XTAL_ARG <__VA_ARGS__> auto
+#define XTAL_VAR_(...)           ::std::remove_cvref_t<__VA_ARGS__>
+#define XTAL_VAL_(...)              XTAL_VAR_(decltype(__VA_ARGS__))::value
+#define XTAL_ALL_(...)              XTAL_VAR_(decltype(__VA_ARGS__))
+#define XTAL_ANY_(...)                 ::std::declval <__VA_ARGS__>()
+#define XTAL_ARG_(...)                       XTAL_ARG <__VA_ARGS__> auto
+#define XTAL_FUN_(...)           decltype([] XTAL_1FN_(__VA_ARGS__))
 
 template <class XTAL_(X0), class XTAL_(X1)>
-concept XTAL_ARG = ::std::same_as<XTAL_NEW_(XTAL_(X0)), XTAL_NEW_(XTAL_(X1))>;
+concept XTAL_ARG = ::std::same_as<XTAL_VAR_(XTAL_(X0)), XTAL_VAR_(XTAL_(X1))>;
 
 
 #define XTAL_MOV_(...)                                      ::std::move(__VA_ARGS__)
 #define XTAL_REF_(...)           static_cast< decltype(__VA_ARGS__) &&>(__VA_ARGS__)
 #define XTAL_RET                    constexpr decltype(auto)
 #define XTAL_LET                    constexpr          auto
+#define XTAL_LET_(...)              constexpr          __VA_ARGS__
 #define XTAL_SET             static constexpr          auto
+#define XTAL_SET_(...)       static constexpr          __VA_ARGS__
 
-#define XTAL_CON_(...)              XTAL_CON_##__VA_ARGS__
-#define XTAL_CON_explicit           constexpr explicit
-#define XTAL_CON_implicit           constexpr
+#define XTAL_NEW_(...)              XTAL_NEW_##__VA_ARGS__
+#define XTAL_NEW_explicit           constexpr explicit
+#define XTAL_NEW_implicit           constexpr
 
-#define XTAL_CVN_(...)              XTAL_CVN_##__VA_ARGS__
-#define XTAL_CVN_explicit           constexpr explicit operator
-#define XTAL_CVN_implicit           constexpr          operator
+#define XTAL_ION_(...)              XTAL_ION_##__VA_ARGS__
+#define XTAL_ION_explicit           constexpr explicit operator
+#define XTAL_ION_implicit           constexpr          operator
 
 
-#define XTAL_TFN_(...)            decltype([] XTAL_1FN_(__VA_ARGS__))
+#define XTAL_XFN_(...)        (auto XTAL_(x)) XTAL_0FN_(XTAL_ALL_(XTAL_(x)){1} == XTAL_(x)? XTAL_(x): XTAL_(x)&(__VA_ARGS__))
 #define XTAL_1FN_(...)  (auto &&...XTAL_(xs)) XTAL_0FN {return (__VA_ARGS__(XTAL_REF_(XTAL_(xs))...));}
 #define XTAL_0FN_(...)                        XTAL_0FN {return (__VA_ARGS__);}
 
@@ -182,12 +185,6 @@ concept XTAL_ARG = ::std::same_as<XTAL_NEW_(XTAL_(X0)), XTAL_NEW_(XTAL_(X1))>;
 #elif   XTAL_V00_(GNUC)
 #define XTAL_0FN                   constexpr noexcept __attribute__((always_inline))
 #endif//XTAL_0FN
-
-
-#define XTAL_0FX                    const             noexcept
-#define XTAL_0EX                                      noexcept
-#define XTAL_0FX_(...)              const __VA_ARGS__ noexcept
-#define XTAL_0EX_(...)                    __VA_ARGS__ noexcept
 
 
 #define XTAL_TRY_(...)             (requires { __VA_ARGS__ ;})
@@ -275,15 +272,6 @@ concept XTAL_ARG = ::std::same_as<XTAL_NEW_(XTAL_(X0)), XTAL_NEW_(XTAL_(X1))>;
 #define XTAL_KEY_inline          inline __attribute__((always_inline))
 #endif//XTAL_KEY_inline
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-//efine XTAL_TNX   XTAL_DEF_(return,inline)  XTAL_STD_(sign_type)
-#define XTAL_TNX   XTAL_DEF_(return)         XTAL_STD_(sign_type)
-#define XTAL_FLX                             XTAL_STD_(sign_type)
-#define XTAL_FNX_(...)\
-[=, this] (XTAL_FLX XTAL_(x)) XTAL_0FN_(1 == XTAL_(x)? XTAL_(x): XTAL_(x)&(__VA_ARGS__))
 
 
 ////////////////////////////////////////////////////////////////////////////////

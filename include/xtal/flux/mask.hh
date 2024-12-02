@@ -35,18 +35,21 @@ struct mask
 		using S_::self;
 	//	using S_::influx;
 
-		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx(auto &&...oo)
+		noexcept -> sign_type
 		{
 			return S_::influx(XTAL_REF_(oo)...);
 		}
-		XTAL_TNX influx(mark_q auto o, auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx(mark_q auto o, auto &&...oo)
+		noexcept -> sign_type
 		{
 			return influx((mark_s<>) o.head(), o.tail(), XTAL_REF_(oo)...);
 		}
-		XTAL_TNX influx(mark_s<> o, auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return)
+		XTAL_LET influx(mark_s<> o, auto &&...oo)
+		noexcept -> sign_type
 		{
 			auto m = o.head();
 			if (~m & M_mask) {

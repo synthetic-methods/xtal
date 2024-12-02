@@ -19,11 +19,11 @@ The attached `store` and `spool` determine the sample store and voice spool resp
 
 template <typename ..._s> XTAL_TYP polymer;
 template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> XTAL_REQ polymer_q = bond::any_tag_p<polymer, _s...>;
+template <typename ..._s> XTAL_ASK polymer_q = bond::any_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET polymer_f(auto &&u)
-XTAL_0EX -> auto
+noexcept -> auto
 {
 	return polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u));
 }
@@ -94,27 +94,31 @@ struct polymer<U, As...>
 				Messages associated with `occur::stage` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
-				XTAL_TNX influx(flux::key_q auto io, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET influx(flux::key_q auto io, auto &&...oo)
+				noexcept -> sign_type
 				{
 					return influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
 				}
 
-				XTAL_TNX efflux(flux::key_q auto io, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET efflux(flux::key_q auto io, auto &&...oo)
+				noexcept -> sign_type
 				{
 					return efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
 				}
 
-				XTAL_TNX influx(flux::key_s<> i, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET influx(flux::key_s<> i, auto &&...oo)
+				noexcept -> sign_type
 				{
 					auto   u_ = u_ensemble.scan(i.head());
 					assert(u_ < u_ensemble.end() and i.head() == u_->head());
 					return u_->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX efflux(flux::key_s<> i, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux(flux::key_s<> i, auto &&...oo)
+				noexcept -> sign_type
 				{
 					auto   u_ = u_ensemble.scan(i.head());
 					assert(u_ < u_ensemble.end() and i.head() == u_->head());
@@ -123,24 +127,26 @@ struct polymer<U, As...>
 				///\
 				Forwards to all instances including the sentinel (except when rendering). \
 
-				XTAL_TNX influx_push(auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET influx_push(auto &&...oo)
+				noexcept -> sign_type
 				{
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().influx(oo...)
-					,	[...oo=XTAL_REF_(oo)] (XTAL_FLX flx, auto &&vox) XTAL_0FN_(flx & XTAL_REF_(vox).influx(oo...))
+					,	[...oo=XTAL_REF_(oo)] (sign_type x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).influx(oo...))
 					);
 				}
-				XTAL_TNX efflux_pull(auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux_pull(auto &&...oo)
+				noexcept -> sign_type
 				{
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().efflux(oo...)
-					,	[...oo=XTAL_REF_(oo)] (XTAL_FLX flx, auto &&vox) XTAL_0FN_(flx & XTAL_REF_(vox).efflux(oo...))
+					,	[...oo=XTAL_REF_(oo)] (sign_type x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).efflux(oo...))
 					);
 				}
 
@@ -149,8 +155,9 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_TNX influx(flux::key_s<> i, V_event o, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET influx(flux::key_s<> i, V_event o, auto &&...oo)
+				noexcept -> sign_type
 				{
 					auto h  = i.head();
 					auto u_ = u_ensemble.scan(h);
@@ -178,8 +185,9 @@ struct polymer<U, As...>
 				otherwise the multichannel data is just rendered locally on each voice. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux_subview(Rev &&review_o, Ren &&render_o)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
+				noexcept -> sign_type
 				{
 					u_ensemble.cull([] (auto &&e)
 						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))

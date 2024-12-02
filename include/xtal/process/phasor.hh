@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP phasor;
 template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_REQ phasor_q = bond::any_tag_p<phasor, _s...>;
+template <typename ..._s> XTAL_ASK phasor_q = bond::any_tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,11 +66,11 @@ struct phasor<A, As...>
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
-		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
+		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
 		
-		XTAL_DEF_(return,inline)
-		XTAL_SET bias()
-		XTAL_0EX -> auto
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET bias()
+		noexcept -> auto
 		{
 			return S_::template bias<coordinate_type>();
 		}
@@ -94,7 +94,7 @@ struct phasor<A, As...>
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(subarray_q<N> auto &&a)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			(void) S_::influx(XTAL_REF_(a));
 			return method();
@@ -106,7 +106,7 @@ struct phasor<A, As...>
 		template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method()
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			///\todo\
 			Override constructors to apply fractional `bias`. \
@@ -124,7 +124,7 @@ struct phasor<A, As...>
 					return egress(bond::pack_f(phi(0), phi(1)*(rate)));
 				}
 				XTAL_0IF_(else) {
-					return egress(phi.template apply<XTAL_TFN_(bond::pack_f)>()*U_series(rate));
+					return egress(phi.template apply<XTAL_FUN_(bond::pack_f)>()*U_series(rate));
 				}
 			}
 			else {
@@ -138,7 +138,7 @@ struct phasor<A, As...>
 		
 		XTAL_DEF_(return,inline)
 		XTAL_LET ingress()
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (1 == bias()) {return ++head();}
@@ -147,7 +147,7 @@ struct phasor<A, As...>
 		template <class Y>
 		XTAL_DEF_(return,inline)
 		XTAL_LET egress(Y &&y)
-		XTAL_0EX -> auto
+		noexcept -> auto
 		{
 			XTAL_IF0
 			XTAL_0IF (0 == bias()) {return (void) ++head(), XTAL_REF_(y);}
@@ -171,7 +171,7 @@ struct phasor<A, As...>
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
 
-		XTAL_DO4_(XTAL_CVN_(implicit) U_(), {return head();})
+		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
 		
 		///\
 		Access by dynamic index. \
@@ -190,7 +190,7 @@ struct phasor<A, As...>
 		template <int N_root=1>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(U_phason phi, coordinate_type co)
-		XTAL_0EX -> auto
+		noexcept -> auto
 			requires is_q<U_phason, typename S_::template head_t<nominal_t<size_1>>>
 		{
 			static_assert(bond::dipack_q<U_phason>);

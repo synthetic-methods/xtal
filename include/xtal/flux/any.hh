@@ -1,5 +1,5 @@
 #pragma once
-#include "../compound/any.hh"// `_retail`
+#include "../cell/any.hh"// `_retail`
 
 
 
@@ -13,6 +13,8 @@ namespace xtal::flux
 
 #include "./_retail.ii"
 #include "./_detail.ii"
+
+using type = sign_type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,26 +37,27 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_DEF_(inline) XTAL_LET delay()         XTAL_0EX {return static_cast<T_iota>(count_f(self()));}
-		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX {return self().delay();}
-	//	XTAL_DEF_(inline) XTAL_LET relay(auto &&i) XTAL_0EX {return _std::min<T_iota>({0x80, self().delay()});}// Force chunking somehow?
+		XTAL_DEF_(inline) XTAL_LET delay()         noexcept -> auto {return static_cast<T_iota>(count_f(self()));}
+		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) noexcept -> auto {return self().delay();}
+	//	XTAL_DEF_(inline) XTAL_LET relay(auto &&i) noexcept -> auto {return _std::min<T_iota>({0x80, self().delay()});}// Force chunking somehow?
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-		XTAL_TNX reflux(auto const &f)             XTAL_0EX {return reflux(f, 0);}
-		XTAL_TNX reflux(auto const &f, T_iota &&n) XTAL_0EX {return reflux(f, n);}
-		XTAL_TNX reflux(auto const &f, T_iota  &n)
-		XTAL_0EX
+		XTAL_DEF_(return,inline) XTAL_LET reflux(auto const &f)             noexcept -> sign_type {return reflux(f, 0);}
+		XTAL_DEF_(return,inline) XTAL_LET reflux(auto const &f, T_iota &&n) noexcept -> sign_type {return reflux(f, n);}
+		XTAL_DEF_(return)
+		XTAL_LET reflux(auto const &f, T_iota  &n)
+		noexcept
 		{
-			XTAL_FLX flx = -1;
+			auto x = influx();
 			auto &s = self();
 			for (auto j = s.delay(), i = decltype(j) {}; j != i; j = s.relay(i = j)) {
-				flx &= f(counted_f(i, j), n++);
+				x &= f(counted_f(i, j), n++);
 			}
 			--n;
-			return flx;
+			return x;
 		}
 
 
@@ -64,25 +67,27 @@ struct define
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(auto &&o)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			(void) self().efflux(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(bond::heteropack_q auto &&o)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			(void) efflux_apply(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_TNX efflux_apply(bond::heteropack_q auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET efflux_apply(bond::heteropack_q auto &&o)
+		noexcept -> sign_type
 		{
 			return _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(o));
 		}
-		XTAL_TNX efflux_batch(bond::heteropack_q auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET efflux_batch(bond::heteropack_q auto &&o)
+		noexcept -> sign_type
 		{
 			return _std::apply([this] (auto &&...oo)
 				XTAL_0FN_(-1 &...& self().efflux(XTAL_REF_(oo)))
@@ -95,14 +100,13 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_TNX efflux(                    auto &&...oo) XTAL_0EX {return efflux_fuse(XTAL_REF_(oo)...);}
-		XTAL_TNX efflux(unnatural_q auto I, auto &&...oo) XTAL_0EX {return -1;}
-		XTAL_TNX efflux(                                ) XTAL_0EX {return -1;}
-		XTAL_TNX efflux_fuse(                           ) XTAL_0EX {return -1;}
-		XTAL_TNX efflux_fuse(     auto &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline) XTAL_LET efflux(                    auto &&...oo) noexcept -> sign_type {return efflux_fuse(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline) XTAL_LET efflux(unnatural_q auto I, auto &&...oo) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET efflux(                                ) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET efflux_fuse(                           ) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET efflux_fuse(     auto &&o, auto &&...oo) noexcept -> sign_type
 		{
-			return XTAL_FNX_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
+			return [this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 
 
@@ -112,25 +116,27 @@ struct define
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator <<=(auto &&o)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			(void) self().influx(XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator <<=(bond::heteropack_q auto &&o)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			(void) influx_apply(XTAL_REF_(o));
 			return self();
 		}
-		XTAL_TNX influx_apply(bond::heteropack_q auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx_apply(bond::heteropack_q auto &&o)
+		noexcept -> sign_type
 		{
 			return _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(o));
 		}
-		XTAL_TNX influx_batch(bond::heteropack_q auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx_batch(bond::heteropack_q auto &&o)
+		noexcept -> sign_type
 		{
 			return _std::apply([this] (auto &&...oo)
 				XTAL_0FN_(-1 &...& self().influx(XTAL_REF_(oo)))
@@ -142,14 +148,13 @@ struct define
 		
 		///\returns the result of `infuse` applied to the each argument. \
 
-		XTAL_TNX influx(                    auto &&...oo) XTAL_0EX {return influx_fuse(XTAL_REF_(oo)...);}
-		XTAL_TNX influx(unnatural_q auto I, auto &&...oo) XTAL_0EX {return -1;}
-		XTAL_TNX influx(                                ) XTAL_0EX {return -1;}
-		XTAL_TNX influx_fuse(                           ) XTAL_0EX {return -1;}
-		XTAL_TNX influx_fuse(     auto &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline) XTAL_LET influx(                    auto &&...oo) noexcept -> sign_type {return influx_fuse(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline) XTAL_LET influx(unnatural_q auto I, auto &&...oo) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET influx(                                ) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET influx_fuse(                           ) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET influx_fuse(     auto &&o, auto &&...oo) noexcept -> sign_type
 		{
-			return XTAL_FNX_(influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));
+			return [this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 
 
@@ -163,14 +168,15 @@ struct define
 		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
 		and truncating propagation when the aggregated result is `1`. \
 
-		XTAL_TNX defuse(XTAL_ARG_(T) &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET defuse(XTAL_ARG_(T) &&o)
+		noexcept -> sign_type
 		{
 			return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
 		}
-		XTAL_TNX defuse(auto &&o) XTAL_0EX {return -1;}
-		XTAL_TNX effuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
-		XTAL_TNX infuse(auto &&o) XTAL_0EX {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
+		XTAL_DEF_(return,inline) XTAL_LET defuse(auto &&o) noexcept -> sign_type {return -1;}
+		XTAL_DEF_(return,inline) XTAL_LET effuse(auto &&o) noexcept -> sign_type {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
+		XTAL_DEF_(return,inline) XTAL_LET infuse(auto &&o) noexcept -> sign_type {return self().defuse(XTAL_REF_(o));}///\< \see `defuse`.
 
 
 		///\
@@ -199,8 +205,8 @@ struct define
 				Constructs the `attach`ed `occur` using its default, \
 				before `forward`ing the arguments to `this`. \
 
-				XTAL_CON_(explicit) subtype(auto &&...xs)
-				XTAL_0EX
+				XTAL_NEW_(explicit) subtype(auto &&...xs)
+				noexcept
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
 
@@ -238,41 +244,49 @@ struct defer
 		///\note\
 		Influxes via the proxied value if supported, then via `this`.
 
-		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx(auto &&...oo)
+		noexcept -> sign_type
 		{
 			return S_::influx(XTAL_REF_(oo)...);
 		}
-		XTAL_TNX influx(auto &&...oo)
-		XTAL_0EX requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		XTAL_DEF_(return,inline)
+		XTAL_LET influx(auto &&...oo)
+		noexcept -> sign_type
+		requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
-			return XTAL_FNX_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 
 		///\note\
 		Effluxes via `this`, then via the proxied value if supported.
 
-		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET efflux(auto &&...oo)
+		noexcept -> sign_type
 		{
 			return S_::efflux(XTAL_REF_(oo)...);
 		}
-		XTAL_TNX efflux(auto &&...oo)
-		XTAL_0EX requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		XTAL_DEF_(return,inline)
+		XTAL_LET efflux(auto &&...oo)
+		noexcept -> sign_type
+		requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
-			return XTAL_FNX_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 
 		///\note\
 		Assigns the given value `O` if it matches the proxied type `U`. \
 
-		XTAL_TNX defuse(XTAL_ARG_(U) &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET defuse(XTAL_ARG_(U) &&o)
+		noexcept -> sign_type
 		{
 			return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);
 		}
-		XTAL_TNX defuse(auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET defuse(auto &&o)
+		noexcept -> sign_type
 		{
 			return S_::defuse(XTAL_REF_(o));
 		}

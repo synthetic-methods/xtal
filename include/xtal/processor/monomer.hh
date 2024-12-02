@@ -13,11 +13,11 @@ namespace xtal::processor
 
 template <typename ..._s> XTAL_TYP monomer;
 template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_REQ monomer_q = bond::any_tag_p<monomer, _s...>;
+template <typename ..._s> XTAL_ASK monomer_q = bond::any_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET monomer_f(auto &&u)
-XTAL_0EX
+noexcept -> auto
 {
 	return monomer_t<XTAL_ALL_(u), As...>(XTAL_REF_(u));
 }
@@ -62,7 +62,7 @@ struct monomer<U, As...>
 		//	using Y_return = iteratee_t<Y_result>;
 
 			using superkind = bond::compose<void
-			,	compound::confer<Y_result>
+			,	cell::confer<Y_result>
 			,	F_<Xs...>
 			>;
 			template <any_q R>
@@ -76,16 +76,16 @@ struct monomer<U, As...>
 				XTAL_CO1_(subtype);
 				XTAL_CO4_(subtype);
 
-				XTAL_CON_(explicit) subtype(XTAL_ARG_(Xs) &&...xs)
-				XTAL_0EX
+				XTAL_NEW_(explicit) subtype(XTAL_ARG_(Xs) &&...xs)
+				noexcept
 				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_CON_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
-				XTAL_0EX
+				XTAL_NEW_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				noexcept
 				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
-				XTAL_CON_(explicit) subtype(auto &&f, XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
-				XTAL_0EX
+				XTAL_NEW_(explicit) subtype(auto &&f, XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				noexcept
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
@@ -110,10 +110,11 @@ struct monomer<U, As...>
 			public:// *FLUX
 				using R_::efflux;
 
-				XTAL_TNX efflux(occur::render_q auto &&render_o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET efflux(occur::render_q auto &&render_o)
+				noexcept -> sign_type
 				{
-					return XTAL_FNX_((void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
+					return [this] XTAL_XFN_((void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
 				}
 
 			};
@@ -160,13 +161,15 @@ struct monomer<U, As...>
 				///\
 				Responds to `occur::resize` by resizing the internal `store()`. \
 
-				XTAL_TNX infuse(auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET infuse(auto &&o)
+				noexcept -> sign_type
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(occur::resize_q auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET infuse(occur::resize_q auto &&o)
+				noexcept -> sign_type
 				{
 					if (R_::infuse(o) == 1) {
 						return 1;
@@ -186,8 +189,9 @@ struct monomer<U, As...>
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
-				XTAL_TNX influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
+				noexcept -> sign_type
 				{
 					return R_::template influx_push<N_share>(flux::slot_n<-1>, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
 				}
@@ -200,8 +204,9 @@ struct monomer<U, As...>
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
 				template <occur::render_q Ren>
-				XTAL_TNX efflux(Ren &&render_o, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux(Ren &&render_o, auto &&...oo)
+				noexcept -> sign_type
 				{
 					size_type vN = R_::template head<U_resize>();
 					occur::review_t<U_state> v_(store());
@@ -218,8 +223,9 @@ struct monomer<U, As...>
 				which will remain empty. \
 
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
+				noexcept -> sign_type
 				{
 					if constexpr (as_q<Rev, U_state>) {
 						(void) state(review_o);

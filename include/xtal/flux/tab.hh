@@ -41,8 +41,9 @@ struct tab
 
 	public:// *FUSE
 
-		XTAL_TNX infuse(auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET infuse(auto &&o)
+		noexcept -> sign_type
 		{
 			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
 				return S_::infuse(XTAL_REF_(o).apply(invoke_f<T_>));
@@ -51,8 +52,9 @@ struct tab
 				return S_::infuse(XTAL_REF_(o));
 			}
 		}
-		XTAL_TNX effuse(auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET effuse(auto &&o)
+		noexcept -> sign_type
 		{
 			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
 				return S_::effuse(XTAL_REF_(o).apply(invoke_f<T_>));

@@ -22,8 +22,7 @@ struct foo
 	{
 	public:
 		XTAL_DEF_(inline)
-		XTAL_LET operator () (auto &&o)
-		XTAL_0FX
+		XTAL_LET operator () (auto &&o) const
 		{
 			return XTAL_REF_(o) + 1;
 		}

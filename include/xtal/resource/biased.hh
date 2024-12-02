@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP biased;
 template <typename ..._s> XTAL_USE biased_t = confined_t<biased<_s...>>;
-template <typename ..._s> XTAL_REQ biased_q = bond::any_tag_p<biased, _s...>;
+template <typename ..._s> XTAL_ASK biased_q = bond::any_tag_p<biased, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ struct biased
 
 	using superkind = bond::compose<bond::tag<biased>, As...>;
 
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -37,9 +37,9 @@ struct biased
 		using S_::S_;
 		
 		template <class U=U_bias>
-		XTAL_DEF_(return,inline)
-		XTAL_SET bias()
-		XTAL_0EX -> auto
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET bias()
+		noexcept -> auto
 		{
 			return static_cast<U>(U_bias {});
 		}

@@ -17,12 +17,12 @@ providing point-wise multiplication/division and scalar summation. \
 template <class   ..._s>	XTAL_TYP couple;
 template <class   ..._s>	XTAL_USE couple_t = typename couple<_s...>::type;
 //\
-template <class   ..._s>	XTAL_REQ couple_q = bond::any_tag_p<couple, _s...>;
-template <class T     , class ...Xs>	XTAL_REQ couple_q = bond::any_tag_p<couple, T> and (0 == sizeof...(Xs) or as_q<T, bond::pack_t<Xs...>>);
+template <class   ..._s>	XTAL_ASK couple_q = bond::any_tag_p<couple, _s...>;
+template <class T     , class ...Xs>	XTAL_ASK couple_q = bond::any_tag_p<couple, T> and (0 == sizeof...(Xs) or as_q<T, bond::pack_t<Xs...>>);
 template <class V=void, class ...Xs>
 XTAL_DEF_(return,inline)
 XTAL_LET couple_f(Xs &&...xs)
-XTAL_0EX
+noexcept -> auto
 {
 	XTAL_IF0
 	XTAL_0IF (complete_q<V>) {
@@ -37,7 +37,7 @@ XTAL_0EX
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {
-		return couple_f<XTAL_TFN_(objective_f)>(XTAL_REF_(xs)...);
+		return couple_f<XTAL_FUN_(objective_f)>(XTAL_REF_(xs)...);
 	}
 }
 
@@ -67,108 +67,158 @@ struct couple
 
 		XTAL_DO4_(template <complete_q F>
 		XTAL_DEF_(inline)
-		XTAL_CVN_(explicit) F(),
+		XTAL_ION_(explicit) F(),
 		{
 			return apply<F>();
 		})
-		template <class F=XTAL_TFN_(bond::pack_f)>
+		template <class F=XTAL_FUN_(bond::pack_f)>
 		XTAL_DEF_(return,inline)
-		XTAL_LET apply()
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET apply() const
+		noexcept -> decltype(auto)
 		{
 			return apply(invoke_f<F>);
 		}
 		template <class F>
 		XTAL_DEF_(return,inline)
-		XTAL_LET apply(F &&f)
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET apply(F &&f) const
+		noexcept -> decltype(auto)
 		{
 			return _std::apply(XTAL_REF_(f), *this);
 		}
 
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(return,inline,friend)
-		XTAL_LET operator * (type const &s, W const &w)
-		XTAL_0EX -> decltype(auto)
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise()
+		noexcept -> auto &
+		requires requires (archetype &s) {f(get<0>(s));}
 		{
-			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(couple_f((get<I>(s) * get<I>(w))...))
+			auto &s = *this;
+
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {(f(get<I>(s)),...);}
 			(bond::seek_s<N_data>{});
+			
+			return s;
 		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(return,inline,friend)
-		XTAL_LET operator / (type const &s, W const &w)
-		XTAL_0EX -> decltype(auto)
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise(auto const &t)
+		noexcept -> auto &
+		requires requires (archetype &s) {f(get<0>(s), get<0>(t));}
 		{
-			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(couple_f((get<I>(s) / get<I>(w))...))
-			(bond::seek_s<N_data>{});
-		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(return,inline,friend)
-		XTAL_LET operator + (type const &s, W const &w)
-		XTAL_0EX -> decltype(auto)
-		{
-			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(couple_f((get<I>(s) + get<I>(w))...))
-			(bond::seek_s<N_data>{});
-		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(return,inline,friend)
-		XTAL_LET operator - (type const &s, W const &w)
-		XTAL_0EX -> decltype(auto)
-		{
-			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(couple_f((get<I>(s) - get<I>(w))...))
-			(bond::seek_s<N_data>{});
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+
+			auto &s = *this;
+
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {(f(get<I>(s), get<I>(t)),...);}
+			(bond::seek_s<N>{});
+			
+			return s;
 		}
 
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(inline)
-		XTAL_LET operator *= (W const &w)
-		XTAL_0EX -> type &
+		template <auto f>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET pointwise(auto const &s)
+		noexcept -> auto
+		requires requires (archetype const &s) {f(get<0>(s));}
 		{
-			[&, this]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(*this) *= get<I>(w)),...);}
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(couple_f(f(get<I>(s))...))
 			(bond::seek_s<N_data>{});
-			return *this;
 		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(inline)
-		XTAL_LET operator /= (W const &w)
-		XTAL_0EX -> type &
+		template <auto f>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET pointwise(auto const &s, auto const &t)
+		noexcept -> auto
+		requires requires (archetype const &s) {f(get<0>(s), get<0>(t));}
 		{
-			[&, this]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(*this) /= get<I>(w)),...);}
-			(bond::seek_s<N_data>{});
-			return *this;
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+			
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(couple_f(f(get<I>(s), get<I>(t))...))
+			(bond::seek_s<N>{});
 		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(inline)
-		XTAL_LET operator += (W const &w)
-		XTAL_0EX -> type &
+
+
+		XTAL_DEF_(return,inline,friend)
+		XTAL_LET operator * (type const &s, pack_q auto const &t)
+		noexcept -> decltype(auto)
 		{
-			[&, this]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(*this) += get<I>(w)),...);}
-			(bond::seek_s<N_data>{});
-			return *this;
+			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u * v)>(s, t);
 		}
-		template <pack_q W> requires (N_data == pack_size_n<W>)
-		XTAL_DEF_(inline)
-		XTAL_LET operator -= (W const &w)
-		XTAL_0EX -> type &
+		XTAL_DEF_(return,inline,friend)
+		XTAL_LET operator / (type const &s, pack_q auto const &t)
+		noexcept -> decltype(auto)
 		{
-			[&, this]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I>(*this) -= get<I>(w)),...);}
-			(bond::seek_s<N_data>{});
-			return *this;
+			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u / v)>(s, t);
 		}
+		XTAL_DEF_(return,inline,friend)
+		XTAL_LET operator + (type const &s, pack_q auto const &t)
+		noexcept -> decltype(auto)
+		{
+			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u + v)>(s, t);
+		}
+		XTAL_DEF_(return,inline,friend)
+		XTAL_LET operator - (type const &s, pack_q auto const &t)
+		noexcept -> decltype(auto)
+		{
+			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u - v)>(s, t);
+		}
+
+		XTAL_DEF_(inline)
+		XTAL_LET operator *= (pack_q auto const &t)
+		noexcept -> type &
+		{
+			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x *= y)>(t);
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET operator /= (pack_q auto const &t)
+		noexcept -> type &
+		{
+			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x /= y)>(t);
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET operator += (pack_q auto const &t)
+		noexcept -> type &
+		{
+			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x += y)>(t);
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET operator -= (pack_q auto const &t)
+		noexcept -> type &
+		{
+			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x -= y)>(t);
+		}
+
+		XTAL_DEF_(return,inline,friend)
+		XTAL_LET operator - (type const &s)
+		noexcept -> type
+		{
+			return pointwise<[] (auto const &x) XTAL_0FN_(-x)>(s);
+		}
+
+		template <int N_sgn=1>
+		XTAL_DEF_(inline)
+		XTAL_LET flip()
+		noexcept -> type
+		{
+			XTAL_IF0
+			XTAL_0IF (0 <= N_sgn) {
+				return *this;
+			}
+			XTAL_0IF (N_sgn <  0) {
+				return pointwise<[] (auto &x) XTAL_0FN_(x = -x)>();
+			}
+		}
+
 
 	//	Scalar sum:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_LET sum(auto const &u)
-		XTAL_0FX
+		XTAL_LET sum(auto const &u) const
 		{
 			if constexpr (0 < N_sgn) {
 				return [&, this]<auto ...I> (bond::seek_t<I...>)
@@ -183,8 +233,8 @@ struct couple
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline)
-		XTAL_LET sum()
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET sum() const
+		noexcept -> decltype(auto)
 		{
 			return sum<N_sgn>(U_data{0});
 		}
@@ -192,7 +242,7 @@ struct couple
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(inline)
 		XTAL_LET ratio()
-		XTAL_0EX -> U_data
+		noexcept -> U_data
 		{
 			auto &s = *this;
 			
@@ -204,8 +254,8 @@ struct couple
 		
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(return,inline)
-		XTAL_LET reflected()
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET reflected() const
+		noexcept -> decltype(auto)
 		{
 			auto constexpr o = reflector<N_par>();
 			auto const x = o*get<0>(*this);
@@ -216,9 +266,9 @@ struct couple
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(return,inline)
-		XTAL_SET reflector()
-		XTAL_0EX -> U_data
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET reflector()
+		noexcept -> U_data
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
@@ -239,7 +289,8 @@ namespace xtal::_entail
 template <xtal::bond::couple_q T>
 struct devalued<T>
 {
-	XTAL_SET size() XTAL_0EX -> size_type {return _std::tuple_size_v<T>;};
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET size() noexcept -> size_type {return _std::tuple_size_v<T>;};
 	XTAL_USE value_type = _std::tuple_element_t<0, T>;
 
 };

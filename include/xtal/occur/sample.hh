@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class U=size_type> XTAL_TYP sample;
 template <class U=size_type> XTAL_USE sample_t = confined_t<sample<U>>;
-template <typename ..._s> XTAL_REQ sample_q = bond::any_tag_p<sample, _s...>;
+template <typename ..._s> XTAL_ASK sample_q = bond::any_tag_p<sample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -47,21 +47,21 @@ public:
 		XTAL_CO4_(subtype);
 
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		:	subtype(1)
 		{}
-		XTAL_CON_(explicit) subtype(    real_number_q auto u, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(    real_number_q auto u, auto &&...oo)
+		noexcept
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
 		{}
-		XTAL_CON_(explicit) subtype(integral_number_q auto n, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(integral_number_q auto n, auto &&...oo)
+		noexcept
 		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
 		{}
 

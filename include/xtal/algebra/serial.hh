@@ -13,12 +13,15 @@ namespace xtal::algebra
 
 template <class           ..._s>	XTAL_TYP serial;
 template <class           ..._s>	XTAL_USE serial_t = typename serial<_s...>::type;
-template <class           ...Ts>	XTAL_REQ serial_q = bond::any_tag_p<serial_t, Ts...>;
-template <size_type N, class ...Ts>	XTAL_REQ serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
+template <class           ...Ts>	XTAL_ASK serial_q = bond::any_tag_p<serial_t, Ts...>;
+template <size_type N, class ...Ts>	XTAL_ASK serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET serial_f(auto &&...oo)
-XTAL_0EX {return _detail::initialize<serial_t>::template via<V>(XTAL_REF_(oo)...);}
+noexcept -> auto
+{
+	return _detail::initialize<serial_t>::template via<V>(XTAL_REF_(oo)...);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,14 +62,14 @@ struct serial<A>
 	//	using S_::operator+=;
 	//	using S_::operator-=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto       const &t) XTAL_0FX        {return twin() *=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto       const &t) XTAL_0FX        {return twin() +=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto       const &t) XTAL_0FX        {return twin() -=   t ;}
-		XTAL_DEF_(inline)        XTAL_LET operator  *=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator  +=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() += T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator  -=(embrace_t<U_data> t) XTAL_0EX -> T & {return self() -= T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator ++ (int)                 XTAL_0EX -> T   {auto t = twin(); operator++(); return t;}
-		XTAL_DEF_(inline)        XTAL_LET operator -- (int)                 XTAL_0EX -> T   {auto t = twin(); operator--(); return t;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto const &t)               const noexcept -> auto   {return twin() *=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto const &t)               const noexcept -> auto   {return twin() +=   t ;}
+		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto const &t)               const noexcept -> auto   {return twin() -=   t ;}
+		XTAL_DEF_(inline)        XTAL_LET operator  *=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() *= T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator  +=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() += T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator  -=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() -= T(t);}
+		XTAL_DEF_(inline)        XTAL_LET operator ++ (int)                               noexcept -> auto   {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline)        XTAL_LET operator -- (int)                               noexcept -> auto   {auto t = twin(); operator--(); return t;}
 
 
 		///\
@@ -75,7 +78,7 @@ struct serial<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator ++ ()
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(self()) += get<I + 1>(self())),...);}
@@ -89,7 +92,7 @@ struct serial<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator -- ()
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(self()) -= get<I + 1>(self())),...);}
@@ -104,7 +107,7 @@ struct serial<A>
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *=(T const &t)
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			auto &s = self();
 			
@@ -123,26 +126,26 @@ struct serial<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(T const &t)
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(T const &t)
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(subarray_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
-		XTAL_0EX -> T &
+		noexcept -> T &
 		{
 			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}

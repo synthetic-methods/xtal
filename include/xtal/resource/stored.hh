@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/all.hh"
+#include "../access/all.hh"
 
 
 
@@ -13,12 +13,12 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP stored;
 template <typename ..._s> XTAL_USE stored_t = confined_t<stored<_s...>>;
-template <typename ..._s> XTAL_REQ stored_q = bond::any_tag_p<stored, _s...>;
+template <typename ..._s> XTAL_ASK stored_q = bond::any_tag_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::store`. \
+Provides a specialization of `access::store`. \
 
 template <bond::compose_q A>
 struct stored<A>
@@ -58,7 +58,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::block_t<U[value]>;
+		using store_t = access::block_t<U[value]>;
 
 	};
 	template <class S> requires _std::  signed_integral<value_type>
@@ -70,7 +70,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::store_t<U[value]>;
+		using store_t = access::store_t<U[value]>;
 
 	};
 };

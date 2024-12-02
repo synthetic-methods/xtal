@@ -31,14 +31,14 @@ struct define
 	public:
 		using S_::S_;
 
-		XTAL_CON_(explicit) subtype(size_type u)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(size_type u)
+		noexcept
 		{
 			assert(0 == u);
 		};
 		template <nominal_q U>
-		XTAL_CON_(explicit) subtype(U &&u)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(U &&u)
+		noexcept
 		{
 			assert(0 == u);
 		};
@@ -75,13 +75,15 @@ struct define
 			
 			public:// *FLUX
 
-				XTAL_TNX influx(auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET influx(auto &&...oo)
+				noexcept -> sign_type
 				{
 					return R_::influx(XTAL_REF_(oo)...);
 				}
-				XTAL_TNX influx(XTAL_ARG_(T) &&t, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET influx(XTAL_ARG_(T) &&t, auto &&...oo)
+				noexcept -> sign_type
 				{
 					(void) R_::influx(U_switch(0 < t));
 					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
@@ -123,16 +125,16 @@ struct define
 
 				template <class A>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(_std::array<A, A_size> const &point)
-				XTAL_0FX -> decltype(auto)
+				XTAL_LET deify(_std::array<A, A_size> const &point) const
+				noexcept -> decltype(auto)
 				{
 					auto const i = static_cast<size_type>(head());
 					return R_::deify(point[A_mask&i]);
 				}
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(nominal_q auto ...Is)
-				XTAL_0FX -> decltype(auto)
+				XTAL_LET deify(nominal_q auto ...Is) const
+				noexcept -> decltype(auto)
 				{
 					return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
 				}
@@ -154,7 +156,8 @@ struct define
 						
 						template <auto ..._Is>
 						XTAL_SET expand_f(bond::seek_t<_Is...>)
-						XTAL_0EX {
+						noexcept -> auto
+						{
 							return _std::array{extend_v<_Is>...};
 						}
 					
@@ -184,8 +187,9 @@ struct define
 			public:
 				using R_::R_;
 				
-				XTAL_TNX effuse(auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET effuse(auto &&o)
+				noexcept -> sign_type
 				{
 					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
@@ -214,8 +218,9 @@ struct define
 			public:
 				using R_::R_;
 
-				XTAL_TNX infuse(auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET infuse(auto &&o)
+				noexcept -> sign_type
 				{
 					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
@@ -247,9 +252,8 @@ struct define
 
 				template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_LET method()
-				XTAL_0FX
-				{
+				XTAL_LET method() const
+								{
 					return head();
 				}
 

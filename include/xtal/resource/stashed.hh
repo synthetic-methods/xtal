@@ -15,7 +15,7 @@ Associates an abstract state/view with an underlying store. \
 
 template <typename ..._s> XTAL_TYP stashed;
 template <typename ..._s> XTAL_USE stashed_t = confined_t<stashed<_s...>>;
-template <typename ..._s> XTAL_REQ stashed_q = bond::any_tag_p<stashed, _s...>;
+template <typename ..._s> XTAL_ASK stashed_q = bond::any_tag_p<stashed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,11 +24,11 @@ template <iterable_q U_state, iterable_q U_store>
 struct stashed<U_state, U_store>
 {
 	using superkind = bond::compose<bond::tag<stashed>
-	,	compound::refer<U_state>
-	,	compound::defer<U_state>
-	,	compound::defer<U_store>
+	,	cell::refer<U_state>
+	,	cell::defer<U_state>
+	,	cell::defer<U_store>
 	>;
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -42,26 +42,26 @@ struct stashed<U_state, U_store>
 		XTAL_CO4_(subtype)
 	
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		:	subtype(U_store())
 		{}
-		XTAL_CON_(explicit) subtype(auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
 		:	subtype(U_store(), XTAL_REF_(oo)...)
 		{}
 		
-		XTAL_CON_(explicit) subtype(U_store o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(U_store o, auto &&...oo)
+		noexcept
 		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
 		XTAL_LET store(U_store o, auto &&...oo)
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
