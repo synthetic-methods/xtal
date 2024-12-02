@@ -172,9 +172,6 @@ struct define
 			{
 				using R_ = bond::compose_s<R, superkind>;
 
-				using H0_ = typename R_::template head_t<nominal_t<0>>;
-				using H1_ = typename R_::template head_t<nominal_t<1>>;
-
 			public:// CONSTRUCT
 				using R_::R_;
 				///\
@@ -186,7 +183,7 @@ struct define
 				{}
 				XTAL_NEW_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
 				noexcept
-				:	R_(XTAL_REF_(t), H1_(XTAL_REF_(xs)...))
+				:	R_(XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
 			public:// OPERATE
