@@ -40,7 +40,7 @@ void polymer_provision_spine__locamotion()
 
 	using A_gate   = bond::compose<typename U_thunk::template inqueue<Ox_level>, typename U_stage::expect<>>;
 	using U_gate   = process::confined_t<A_gate>;
-	using U_io     = process::conferred_t<XTAL_TFN_(bond::seek_i<>)>;
+	using U_io     = process::conferred_t<XTAL_FUN_(bond::seek_i<>)>;
 	//\
 	using M_gate   = processor::monomer_t<A_gate>;
 	using M_gate   = processor::monomer_t<U_gate>;

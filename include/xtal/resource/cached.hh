@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP cached;
 template <typename ..._s> XTAL_USE cached_t = confined_t<cached<_s...>>;
-template <typename ..._s> XTAL_REQ cached_q = bond::any_tag_p<cached, _s...>;
+template <typename ..._s> XTAL_ASK cached_q = bond::any_tag_p<cached, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ struct cached<A[N]>
 	
 	using superkind = bond::tag<cached>;
 
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -43,7 +43,7 @@ struct cached<A[N]>
 		template <class ...Us>
 		XTAL_DEF_(return,inline)
 		XTAL_LET cache()
-		XTAL_0EX
+		noexcept -> auto
 		{
 			static_assert(aligned_n<Us...> <= N_cache);
 			static_assert((...and _std::is_trivially_destructible_v<Us>));

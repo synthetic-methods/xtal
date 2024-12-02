@@ -56,18 +56,20 @@ struct define
 
 				XTAL_DEF_(return,inline)
 				XTAL_LET delay()
-				XTAL_0EX
+				noexcept -> auto
 				{
-					auto const n = R_::delay(); using T_iota = decltype(n);
-					return 0 < n? n: static_cast<T_iota>(R_::template head<U_resize>());
+					using R_delay = XTAL_ALL_(R_::delay());
+					R_delay const n = R_::delay();
+					return 0 < n? n: static_cast<R_delay>(R_::template head<U_resize>());
 				}
 
 			public:// *FLUX
 				using R_::efflux;
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
+				noexcept -> sign_type
 				{
 					auto &s = R_::self();
 					
@@ -80,15 +82,16 @@ struct define
 								review_o.subview(scan),
 								render_o.subview(scan).skip(step)
 							)))
-						&	XTAL_FNX_(R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
+						&	[this, ...oo = XTAL_REF_(oo)] XTAL_XFN_(R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
 					}
 				}
 				///\
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_TNX efflux_subview(Rev &&review_o, Ren &&render_o)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
+				noexcept -> sign_type
 				{
 					auto    &u_state = review_o.view();
 					XTAL_USE U_state = XTAL_ALL_(u_state);
@@ -190,19 +193,19 @@ struct defer<U>
 	public:
 		using S_::S_;
 
-	//	NOTE: Wrapped by the identity, rather than reiterated...
+	//	NOTE: Wrapped by the identity, rather than deranged...
 		
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs),
-		->	decltype(auto)
+		-> decltype(auto)
 		{
 			return S_::template method<Is...>(XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_SET function(auto &&...xs),
-		->	decltype(auto)
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs),
+		-> decltype(auto)
 			requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
 		)
 
@@ -241,7 +244,7 @@ struct defer<U>
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
-		XTAL_0EX -> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			using namespace _xtd::ranges;
 

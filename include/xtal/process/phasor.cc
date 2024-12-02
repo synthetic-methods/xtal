@@ -180,7 +180,7 @@ TAG_("phasor")
 		T_alpha x_d3 = _op::haplo_f(3);
 		T_alpha z_outs[2][8]{};
 		auto  z_out = bond::pack_rowwise_f<2>(8, z_outs);
-		using Z_out = reiterated_t<XTAL_ALL_(z_out)>;
+		using Z_out = deranged_t<XTAL_ALL_(z_out)>;
 
 		auto z_psi = Z_psi::bind_f();
 	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);

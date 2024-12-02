@@ -13,10 +13,10 @@ namespace xtal::occur
 
 template <class U=size_type> XTAL_TYP resize;
 template <class U=size_type> XTAL_USE resize_t = confined_t<resize<U>>;
-template <typename ..._s> XTAL_REQ resize_q = bond::any_tag_p<resize, _s...>;
+template <typename ..._s> XTAL_ASK resize_q = bond::any_tag_p<resize, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET resize_f(auto &&w)
-XTAL_0EX
+noexcept -> auto
 {
 	using _op = bond::operate<decltype(w)>;
 	return resize_t<typename _op::sigma_type>(XTAL_REF_(w));

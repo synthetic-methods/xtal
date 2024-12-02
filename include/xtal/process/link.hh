@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> XTAL_TYP link;
 template <typename ..._s> XTAL_USE link_t = confined_t<link<_s...>>;
-template <typename ..._s> XTAL_REQ link_q = bond::any_tag_p<link, _s...>;
+template <typename ..._s> XTAL_ASK link_q = bond::any_tag_p<link, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

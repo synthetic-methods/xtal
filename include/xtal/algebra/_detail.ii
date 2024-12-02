@@ -22,9 +22,9 @@ struct initialize
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
 	template <class V=void, class ...Xs>
-	XTAL_DEF_(return,inline)
-	XTAL_SET via(Xs &&...xs)
-	XTAL_0EX
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET via(Xs &&...xs)
+	noexcept -> auto
 	{
 		XTAL_IF0
 		XTAL_0IF (complete_q<V>) {
@@ -40,7 +40,7 @@ struct initialize
 			}
 		}
 		XTAL_0IF (incomplete_q<V>) {
-			return via<XTAL_TFN_(objective_f)>(XTAL_REF_(xs)...);
+			return via<XTAL_FUN_(objective_f)>(XTAL_REF_(xs)...);
 		}
 	}
 

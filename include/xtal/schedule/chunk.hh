@@ -64,13 +64,15 @@ struct chunk
 				Influxes the `U_event` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
-				XTAL_TNX infuse(auto &&o)
-				XTAL_0EX
+				XTAL_DEF_(return,inline)
+				XTAL_LET infuse(auto &&o)
+				noexcept -> sign_type
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_TNX infuse(XTAL_ARG_(U_event) &&u)
-				XTAL_0EX
+				XTAL_DEF_(return)
+				XTAL_LET infuse(XTAL_ARG_(U_event) &&u)
+				noexcept -> sign_type
 				{
 					if (0 == u.head()) {
 						return R_::influx(XTAL_REF_(u).tail());
@@ -85,7 +87,7 @@ struct chunk
 
 				XTAL_DEF_(inline)
 				XTAL_LET delay()
-				XTAL_0EX -> V_delay
+				noexcept -> V_delay
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
@@ -98,7 +100,7 @@ struct chunk
 
 				XTAL_DEF_(inline)
 				XTAL_LET relay(V_delay i)
-				XTAL_0EX -> V_delay
+				noexcept -> V_delay
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and head_(1) <= i; u_spool.pop()) {

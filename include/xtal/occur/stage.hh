@@ -17,10 +17,10 @@ template <typename ...As>
 struct stage
 {
 	using superkind = bond::compose<void
-	,	_detail::infer_equality<XTAL_FLX>
-	,	_detail::infer_binary_logic<XTAL_FLX>
+	,	_detail::infer_equality<sign_type>
+	,	_detail::infer_binary_logic<sign_type>
 	,	As...
-	,	defer<XTAL_FLX>
+	,	defer<sign_type>
 	>;
 
 	template <any_q S>
@@ -37,10 +37,10 @@ template <nominal_q A, typename ...As>
 struct stage<A, As...>
 {
 	using superkind = bond::compose<void
-	,	_detail::infer_equality<XTAL_FLX>
-	,	_detail::infer_binary_logic<XTAL_FLX>
+	,	_detail::infer_equality<sign_type>
+	,	_detail::infer_binary_logic<sign_type>
 	,	As...
-	,	defer<XTAL_FLX>
+	,	defer<sign_type>
 	>;
 
 	template <any_q S>
@@ -55,13 +55,13 @@ struct stage<A, As...>
 	//	XTAL_CO1_(subtype)
 		XTAL_CO4_(subtype)
 		
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		{
 			S_::head(A{});
 		}
-		XTAL_CON_(explicit) subtype(auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{
 			S_::head(A{});
@@ -76,7 +76,7 @@ using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET stage_f(auto &&...oo)
-XTAL_0EX -> auto
+noexcept -> auto
 {
 	return stage_t<As...>(XTAL_REF_(oo)...);
 }

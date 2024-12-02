@@ -25,9 +25,9 @@ struct word
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline)
-		XTAL_SET cardinality()
-		XTAL_0EX -> size_type {return N_size;};
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET cardinality()
+		noexcept -> size_type {return N_size;};
 
 	};
 };
@@ -63,8 +63,8 @@ struct word
 		Default `nominal_q` constructor, expects `0`. \
 
 		template <integral_q A>
-		XTAL_CON_(explicit) subtype(A &&a)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(A &&a)
+		noexcept
 		{
 			assert(0 == a);
 		};

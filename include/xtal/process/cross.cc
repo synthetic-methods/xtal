@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./cross.hh"// testing...
 
-#include "../arrange/all.hh"
+#include "../access/all.hh"
 #include "../occur/indent.hh"
 #include "../processor/monomer.hh"
 
@@ -19,7 +19,7 @@ TAG_("cross", "process")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = arrange::block_t<int[2][3]>;
+		using U_model = access::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, Px_mix>;
 
 		auto io = U_remix();
@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = arrange::block_t<int[2][3]>;
+		using U_model = access::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -66,7 +66,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = arrange::block_t<int[2][3]>;
+		using U_model = access::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -87,7 +87,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = arrange::block_t<int[2][3]>;
+		using U_model = access::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 
@@ -110,7 +110,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = arrange::block_t<int[2][3]>;
+		using U_model = access::block_t<int[2][3]>;
 		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, resource::stored<>>;
 

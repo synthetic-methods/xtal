@@ -28,12 +28,12 @@ struct define
 		using S_::S_;
 
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
-		XTAL_CON_(explicit) subtype(auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{}
 
@@ -48,17 +48,17 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&&) -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0EX_(&)  -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&&) -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() XTAL_0FX_(&)  -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self()       &&noexcept -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() const &&noexcept -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self()        &noexcept -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline) XTAL_LET self() const  &noexcept -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T>
 		XTAL_DEF_(return,inline)
-		XTAL_LET twin()
-		XTAL_0FX -> decltype(auto)
+		XTAL_LET twin() const
+		noexcept -> decltype(auto)
 		{
 			return static_cast<Y>(self());
 		}
@@ -70,8 +70,8 @@ struct define
 
 		template <typename ...Is>
 		XTAL_USE head_t = void;
-		XTAL_LET head() XTAL_0EX -> void {}
-		XTAL_LET head() XTAL_0FX -> void {}
+		XTAL_LET head()       noexcept -> void {}
+		XTAL_LET head() const noexcept -> void {}
 
 
 	};

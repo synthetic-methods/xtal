@@ -14,14 +14,14 @@ namespace xtal::_test
 template <int N_index>
 XTAL_DEF_(return)
 XTAL_LET check_f(auto const &u, auto const &v)
-XTAL_0EX -> bool
+noexcept -> bool
 {
 	return bond::computrim_f<N_index>(u) == bond::computrim_f<N_index>(v);
 }
 template <int N_index, int N_limit>
 XTAL_DEF_(return)
 XTAL_LET check_f(auto const &u, auto const &v)
-XTAL_0EX -> int
+noexcept -> int
 {
 	XTAL_LET Z_index = sign_n<N_index>;
 	XTAL_LET Z_limit = sign_n<N_limit>;
@@ -43,7 +43,7 @@ XTAL_0EX -> int
 }
 XTAL_DEF_(return)
 XTAL_LET check_f(auto const &u, auto const &v)
-XTAL_0EX -> int
+noexcept -> int
 {
 	return check_f<-1, 1 - (int) bond::operating::fraction.depth>(u, v);
 }
@@ -78,8 +78,8 @@ struct mix
 	public:
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs)
-		XTAL_0FX -> auto
+		XTAL_LET method(auto &&...xs) const
+		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ 0);
 		}
@@ -97,10 +97,10 @@ struct static_onset_mix
 	{
 	public:
 
-		template <size_type onset=0>
-		XTAL_DEF_(return,inline)
-		XTAL_SET function(auto &&...xs)
-		XTAL_0EX
+		template <auto onset=0>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
+		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
 		}
@@ -118,7 +118,7 @@ struct dynamic_onset_mix
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
-		XTAL_0EX -> auto
+		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<Ox_onset>());
 		}
@@ -138,7 +138,7 @@ struct dynamic_term
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&x)
-		XTAL_0EX -> auto
+		noexcept -> auto
 		{
 			return XTAL_REF_(x)*this->template head<Ox_scale>();
 		}
@@ -167,7 +167,7 @@ struct dynamic_count
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET method()
-		XTAL_0EX -> auto
+		noexcept -> auto
 		{
 			auto i = u_count; u_count += this->template head<U_restep>();
 			return i;
@@ -206,7 +206,7 @@ TAG_("maligned")
 template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
 XTAL_DEF_(return,inline)
 XTAL_LET operator | (T &&t, U &&u)
-XTAL_0EX -> decltype(auto)
+noexcept -> decltype(auto)
 {
 	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
 };

@@ -13,10 +13,10 @@ namespace xtal::occur
 
 template <integral_number_q U=integral_type> XTAL_TYP restep;
 template <integral_number_q U=integral_type> XTAL_USE restep_t = confined_t<restep<U>>;
-template <typename ..._s> XTAL_REQ restep_q = bond::any_tag_p<restep, _s...>;
+template <typename ..._s> XTAL_ASK restep_q = bond::any_tag_p<restep, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET restep_f(auto &&w)
-XTAL_0EX
+noexcept -> auto
 {
 	using _op = bond::operate<decltype(w)>;
 	return restep_t<typename _op::delta_type>(XTAL_REF_(w));

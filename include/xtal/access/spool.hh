@@ -8,13 +8,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::access
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 template <class ..._s> XTAL_TYP spool;
 template <class ..._s> XTAL_USE spool_t = typename spool<_s...>::type;
-template <class ...Ts> XTAL_REQ spool_q = bond::any_tag_p<spool_t, Ts...>;
+template <class ...Ts> XTAL_ASK spool_q = bond::any_tag_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using endotype = initerated_t<T>;
+	using endotype = arranged_t<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<spool_t>>;
@@ -59,7 +59,8 @@ struct spool<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_CON_(implicit) homotype(embrace_t<U_value> w)
+		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_value> w)
+		noexcept(false)
 		:	u_end(count_f(w))
 		,	u_store(w.begin(), w.end())
 		{}
@@ -73,14 +74,14 @@ struct spool<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET advance(U_count n=1)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			u_begin += n;
 			return begin();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET abandon(U_count n=1)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			if (n) {
 				u_begin = 0;
@@ -90,13 +91,13 @@ struct spool<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET cull()
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			u_store.erase(u_store.begin(), end());
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET cull(auto &&f)
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			u_store.erase(_std::remove_if(begin(), end(), f), end());
 		}
@@ -107,7 +108,7 @@ struct spool<A>
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET pop(U_point i)
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			assert(i < end());
 			u_begin -= i < begin();
@@ -116,20 +117,20 @@ struct spool<A>
 		}
 	//	XTAL_DEF_(inline)
 		XTAL_LET pop()
-		XTAL_0EX -> void
+		noexcept -> void
 		{
 			advance();
 			abandon(begin() == end());
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET scan(auto &&w)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
 		}
 		XTAL_DEF_(return,inline)
 		XTAL_LET scan(auto &&w, auto &&f)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
 			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
@@ -140,7 +141,7 @@ struct spool<A>
 
 	//	XTAL_DEF_(inline)
 		XTAL_LET push(U_value u)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			if (u_store.empty()) {
 				u_store.push_back(XTAL_MOV_(u));
@@ -159,20 +160,20 @@ struct spool<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET push(auto ..._s)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			return push(U_value(XTAL_MOV_(_s)...));
 		}
 
 		XTAL_DEF_(inline)
 		XTAL_LET poke(U_point _v, U_value u)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			return u_store.insert(_v, XTAL_MOV_(u));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET poke(U_point _v, auto..._s)
-		XTAL_0EX -> U_point
+		noexcept -> U_point
 		{
 			return u_store.emplace(_v, XTAL_MOV_(_s)...);
 		}

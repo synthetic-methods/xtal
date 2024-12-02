@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::compound
+namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -39,8 +39,8 @@ struct define
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET equal_to_(subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET equal_to_(subtype const &t) const
+		noexcept -> bool
 		{
 			return self().operator==(t.self());
 		}
@@ -53,28 +53,26 @@ struct define
 		Trivial (in)equality. \
 		
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator == (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator == (subtype const &t) const
+		noexcept -> bool
 		{
 			return true;
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator != (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator != (subtype const &t) const
+		noexcept -> bool
 		{
 			return not equal_to_(t);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator <=> (subtype const &t)
-		XTAL_0FX
+		XTAL_LET operator <=> (subtype const &t) const
 		{
 			using is = _std::partial_ordering;
 			return equal_to_(t)? is::equivalent: is::unordered;
 		}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET pack()
-		XTAL_0FX
+		XTAL_LET pack() const
 		{
 			return bond::pack_f();
 		}
@@ -106,8 +104,8 @@ struct refine
 		using S_::S_;
 
 	};
-	template <any_q S> requires iterable_q<S> and uniterated_q<S>
-	class subtype<S> : public bond::compose_s<S, superkind>, public initerated_t<T>
+	template <any_q S> requires iterable_q<S> and un_n<iterated_q<S>>
+	class subtype<S> : public bond::compose_s<S, superkind>, public arranged_t<T>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 	
@@ -148,14 +146,14 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_CVN_(explicit) U_(), head())
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(explicit) U_(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET heading(auto &&o)
-		XTAL_0FX -> bool
+		XTAL_LET heading(auto &&o) const
+		noexcept -> bool
 		{
 			return equivalent_f(head(), XTAL_REF_(o));
 		}
@@ -164,8 +162,8 @@ struct defer
 		\returns `true` if the supplied body matches `this`, `false` otherwise. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator == (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator == (subtype const &t) const
+		noexcept -> bool
 		{
 			return heading(t.head()) and S_::template self<1>() == t;
 		}
@@ -193,28 +191,28 @@ struct refer : bond::compose<void
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator== (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) XTAL_0EX -> bool {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W const &y) XTAL_0EX -> auto {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) noexcept -> bool {return x.self().operator== (y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) noexcept -> bool {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W const &y) noexcept -> auto {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::compound::any_q auto &&x0, auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::compound::any_q auto &&x1, auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::compound::any_q auto &&x1) XTAL_0EX -> decltype(auto) {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::compound::any_q auto &&x0) XTAL_0EX -> decltype(auto) {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept -> decltype(auto) {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept -> decltype(auto) {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::compound::any_q T> requires xtal::complete_q<typename T::pack_size>
+template <xtal::cell::any_q T> requires xtal::complete_q<typename T::pack_size>
 struct tuple_size<T> : T::pack_size {};
 
-template <size_t N, xtal::compound::any_q T>
+template <size_t N, xtal::cell::any_q T>
 struct tuple_element<N, T> {using type = typename T::template head_t<integral_constant<size_t, N>>;};
 
 

@@ -19,8 +19,8 @@ Avoids the `sizeof` inflation that can occur with multiple-inheritance \
 
 template <class   T                            >	XTAL_USE   taboo_s = typename based_t<T>::taboo::supertype;
 template <class   T                            >	XTAL_USE   taboo_t = typename based_t<T>::taboo::     type;
-template <                        class   ...Ts>	XTAL_REQ   taboo_d = (...and not requires {typename taboo_t<Ts>;});
-template <                        class   ...Ts>	XTAL_REQ   taboo_q = (...and     requires {typename taboo_t<Ts>;});
+template <                        class   ...Ts>	XTAL_ASK   taboo_d = (...and not requires {typename taboo_t<Ts>;});
+template <                        class   ...Ts>	XTAL_ASK   taboo_q = (...and     requires {typename taboo_t<Ts>;});
 
 template <class   T,              class   ...Ys>	XTAL_TYP   all_tab                         :           nominal_t<false> {using type = void;};
 template <class   T,              class   ...Ys>	XTAL_TYP   all_tab<T, nominal_t<0>, Ys...> :           nominal_t< true> {using type =    T;};
@@ -29,16 +29,16 @@ template <taboo_q T,              class   ...Ys>	XTAL_TYP   all_tab<T,          
 template <taboo_q T,              class   ...Ys>	XTAL_TYP   all_tab<T,   taboo_t<T>, Ys...> : all_tab<taboo_s<T>,                  Ys...> {};
 template <taboo_q T, liminal_q I, class   ...Ys>	XTAL_TYP   all_tab<T,           I , Ys...> : all_tab<taboo_s<T>, subliminal_s<I>, Ys...> {};
 template <class   T,              class   ...Ys>	XTAL_USE   all_tab_t                       = typename all_tab<T, Ys...>:: type;
-template <class   T,              class   ...Ys>	XTAL_REQ   all_tab_q                       =          all_tab<T, Ys...>::value;
+template <class   T,              class   ...Ys>	XTAL_ASK   all_tab_q                       =          all_tab<T, Ys...>::value;
 
-template <class   Y,              class   ...Ts>	XTAL_REQ   any_tab_p = _std::conjunction_v<all_tab<based_t<Ts>, Y >...>;
-template <class   T,              class   ...Ys>	XTAL_REQ   any_tab_q = _std::conjunction_v<all_tab<based_t<T >, Ys>...>;
+template <class   Y,              class   ...Ts>	XTAL_ASK   any_tab_p = _std::conjunction_v<all_tab<based_t<Ts>, Y >...>;
+template <class   T,              class   ...Ys>	XTAL_ASK   any_tab_q = _std::conjunction_v<all_tab<based_t<T >, Ys>...>;
 
 template <                        class   ...Ts>	XTAL_TYP   self_tab        : _std::false_type {};
 template <                        taboo_d ...Ts>	XTAL_TYP   self_tab<Ts...> : isotropic_t<Ts...> {};
 template <                        taboo_q ...Ts>	XTAL_TYP   self_tab<Ts...> : _std::conjunction<self_tab<taboo_t<Ts>...>, self_tab<taboo_s<Ts>...>> {};
-template <                        class   ...Ts>	XTAL_REQ   self_tab_q      = self_tab<based_t<Ts>...>::value;
-template <                        class   ...Ts>	XTAL_REQ   twin_tab_q      = not isotropic_q<Ts...> and taboo_q<Ts...> and self_tab_q<Ts...>;
+template <                        class   ...Ts>	XTAL_ASK   self_tab_q      = self_tab<based_t<Ts>...>::value;
+template <                        class   ...Ts>	XTAL_ASK   twin_tab_q      = not isotropic_q<Ts...> and taboo_q<Ts...> and self_tab_q<Ts...>;
 
 template <class Y>
 struct tab

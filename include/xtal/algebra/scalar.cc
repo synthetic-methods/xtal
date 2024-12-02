@@ -28,7 +28,10 @@ public:
 
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET size()
-	XTAL_0EX {return sizeof...(Ts);}
+	noexcept -> auto
+	{
+		return sizeof...(Ts);
+	}
 
 	template <arity_type I> XTAL_USE item_t = _std::tuple_element_t<I, tuple_type>;
 	template <arity_type I> XTAL_SET item_n = xtal::devalued_n<item_t<I>>;

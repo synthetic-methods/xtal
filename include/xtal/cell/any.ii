@@ -18,15 +18,15 @@ the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> XTAL_TYP any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> XTAL_USE any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> XTAL_REQ any_p = bond::any_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > XTAL_REQ any_q = bond::any_tag_p<any, Ts...>;
+template <class    T, typename ...As> XTAL_ASK any_p = bond::any_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > XTAL_ASK any_q = bond::any_tag_p<any, Ts...>;
 
 using any_type = any_s<unit_type>;
 
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T const &&t) XTAL_0EX -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T       &&t) XTAL_0EX -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T const  &t) XTAL_0EX -> decltype(auto) {return           t .template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T        &t) XTAL_0EX -> decltype(auto) {return           t .template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T const &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T       &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T const  &t) noexcept -> decltype(auto) {return           t .template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(inline) XTAL_LET get(T        &t) noexcept -> decltype(auto) {return           t .template head<N>();};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,11 +123,11 @@ Defines an `inferred` tuple from `...As`. \
 
 template <class   ...Ts>	XTAL_TYP packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
 template <class   ...Ts>	XTAL_USE packed_t = typename packed<Ts...>::type;
-template <class   ...Ts>	XTAL_REQ packed_q = bond::any_tag_p<packed, Ts...>;
+template <class   ...Ts>	XTAL_ASK packed_q = bond::any_tag_p<packed, Ts...>;
 template <class   ...Ts>
 XTAL_DEF_(return,inline)
 XTAL_LET packed_f(Ts &&...as)
-XTAL_0EX -> auto
+noexcept -> auto
 {
 	return packed_t<Ts...>(XTAL_REF_(as)...);
 }
@@ -143,7 +143,7 @@ template <class   ...Ts>	XTAL_USE packet_t = typename packet<Ts...>::type;
 template <class   ...Ts>
 XTAL_DEF_(return,inline)
 XTAL_LET packet_f(Ts &&...as)
-XTAL_0EX -> auto
+noexcept -> auto
 {
 	return packet_t<Ts...>(XTAL_REF_(as)...);
 }
@@ -158,7 +158,7 @@ template <class      T >	XTAL_USE let_t    = typename let<T>::type;
 template <class      T >
 XTAL_DEF_(return,inline)
 XTAL_LET let_f(T &&t)
-XTAL_0EX -> decltype(auto)
+noexcept -> decltype(auto)
 {
 	return let_t<T>(XTAL_REF_(t));
 }

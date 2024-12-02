@@ -13,7 +13,7 @@ namespace xtal::resource
 
 template <typename ..._s> XTAL_TYP example;
 template <typename ..._s> XTAL_USE example_t = confined_t<example<_s...>>;
-template <typename ..._s> XTAL_REQ example_q = bond::any_tag_p<example, _s...>;
+template <typename ..._s> XTAL_ASK example_q = bond::any_tag_p<example, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ struct example
 	,	typename occur::sample_t<>::template attach<>
 	,	As...
 	>;
-	template <compound::any_q S>
+	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;

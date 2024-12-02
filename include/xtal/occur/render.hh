@@ -29,11 +29,11 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <                     typename ..._s> XTAL_TYP render;
 template <class W=counter_t<>, typename ..._s> XTAL_USE render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> XTAL_REQ render_q = bond::any_tag_p<render, _s...>;
+template <                     typename ..._s> XTAL_ASK render_q = bond::any_tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET render_f(auto &&w)
-XTAL_0EX -> auto
+noexcept -> auto
 {
 	return render_t<counter_t<>, _s...>(XTAL_REF_(w));
 }
@@ -51,7 +51,7 @@ concept influx_render_q = false;
 template <render_q X, render_q Y> requires (not is_q<X, Y>)
 XTAL_DEF_(inline)
 XTAL_LET operator == (X const &x, Y const &y)
-XTAL_0EX -> bool
+noexcept -> bool
 {
 	auto &s = x.self();
 	auto &t = y.self();
@@ -80,8 +80,8 @@ struct surrender
 		using value_type = V_;
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET skip(V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET skip(V_ v) const
+		noexcept -> T_
 		{
 			auto t = self(); (void) t.step(t.step() + v);
 			return t;
@@ -90,14 +90,14 @@ struct surrender
 		///\returns the block at distance `v` steps with the same `size`. \
 
 		XTAL_DEF_(inline)
-		XTAL_LET operator * (V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET operator * (V_ v) const
+		noexcept -> T_
 		{
 			return twin().operator*=(v);
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator / (V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET operator / (V_ v) const
+		noexcept -> T_
 		{
 			return twin().operator/=(v);
 		}
@@ -106,13 +106,13 @@ struct surrender
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator ++()
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			return self().operator+=(count_f(self()));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator ++(int)
-		XTAL_0EX -> T_
+		noexcept -> T_
 		{
 			auto t = self(); operator++(); return t;
 		}
@@ -121,55 +121,55 @@ struct surrender
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator --()
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			return self().operator-=(count_f(self()));
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator --(int)
-		XTAL_0EX -> T_
+		noexcept -> T_
 		{
 			auto t = self(); operator--(); return t;
 		}
 		///\returns the adjacent block with the same `size`. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET next(V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET next(V_ v) const
+		noexcept -> T_
 		{
 			return self().operator*(v);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET next()
-		XTAL_0FX -> T_
+		XTAL_LET next() const
+		noexcept -> T_
 		{
 			return twin().operator++();
 		}
 		///\returns the adjacent block of size `v`. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator + (V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET operator + (V_ v) const
+		noexcept -> T_
 		{
 			return twin().operator+=(v);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator - (V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET operator - (V_ v) const
+		noexcept -> T_
 		{
 			return twin().operator-=(v);
 		}
 		///\returns the adjacent block of size `0`. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET null()
-		XTAL_0FX -> T_
+		XTAL_LET null() const
+		noexcept -> T_
 		{
 			return twin().operator+=(0);
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET null(V_ v)
-		XTAL_0FX -> T_
+		XTAL_LET null(V_ v) const
+		noexcept -> T_
 		{
 			auto s = null(); s.step(v); return s;
 		}
@@ -177,15 +177,15 @@ struct surrender
 		///\returns `true` iff the left-hand argument immediately follows the right. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator >=(subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator >=(subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::operator>(t) or S_::operator==(t);
 		}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator <=(subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator <=(subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::operator<(t) or S_::operator==(t);
 		}
@@ -194,15 +194,10 @@ struct surrender
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		XTAL_TNX infuse(T_ t)
-		XTAL_0EX
-		{
-			auto &s = self();
-			return s == t || ((s = t), 0);
-		}
 		/**/
-		XTAL_TNX infuse(render_q auto &&t)
-		XTAL_0EX
+		XTAL_DEF_(return)
+		XTAL_LET infuse(render_q auto &&t)
+		noexcept -> sign_type
 		{
 			auto &s = self();
 			if (s == t) {
@@ -215,9 +210,17 @@ struct surrender
 				return 0;
 			}
 		}
+		XTAL_DEF_(return,inline)
+		XTAL_LET infuse(T_ t)
+		noexcept -> sign_type
+		{
+			auto &s = self();
+			return s == t || ((s = t), 0);
+		}
 		/***/
-		XTAL_TNX infuse(auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET infuse(auto &&o)
+		noexcept -> sign_type
 		{
 			return S_::infuse(XTAL_REF_(o));
 		}
@@ -229,13 +232,15 @@ struct surrender
 		Unrecognized `render_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
-		XTAL_TNX effuse(auto &&o)
-		XTAL_0EX
+		XTAL_DEF_(return,inline)
+		XTAL_LET effuse(auto &&o)
+		noexcept -> sign_type
 		{
 			return S_::effuse(XTAL_REF_(o));
 		}
-		XTAL_TNX effuse(render_q auto &&t)
-		XTAL_0EX
+		XTAL_DEF_(return)
+		XTAL_LET effuse(render_q auto &&t)
+		noexcept -> sign_type
 		{
 			auto &s = self();
 			if (s == t) {
@@ -275,27 +280,27 @@ struct render<V>
 		XTAL_CO4_(subtype)
 
 		template <fungible_q<subtype> O>
-		XTAL_CON_(explicit) subtype(O &&o)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(O &&o)
+		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		:	S_(0, 0)
 		{}
-		XTAL_CON_(explicit) subtype(auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{}
-		XTAL_CON_(explicit) subtype(iterated_q auto &&o, auto &&...oo)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(iterated_q auto &&o, auto &&...oo)
+		noexcept
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET subview(auto &&w)
-		XTAL_0FX -> T_
+		XTAL_LET subview(auto &&w) const
+		noexcept -> T_
 		{
 			auto t = twin(); (void) t.size(count_f(w)); return t;
 		}
@@ -305,14 +310,14 @@ struct render<V>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator *=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			S_::step() += v;
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			S_::step() -= v;
 			return self();
@@ -322,14 +327,14 @@ struct render<V>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			S_::step() += S_::size() != 0; (void) S_::size(v);
 			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			S_::step() -= v != 0; (void) S_::size(v);
 			return self();
@@ -338,14 +343,14 @@ struct render<V>
 		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator < (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator < (subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::next().step() == t.step();
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator > (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator > (subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::step() == t.next().step();
 		}
@@ -376,23 +381,23 @@ public:
 		using S_::self;
 		using S_::twin;
 		
-		XTAL_CON_(explicit) subtype(U u, V v)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(U u, V v)
+		noexcept
 		:	S_(u, v)
 		{}
 		template <as_q<V> W>
-		XTAL_CON_(explicit) subtype(W w)
-		XTAL_0EX
+		XTAL_NEW_(explicit) subtype(W w)
+		noexcept
 		:	subtype(U(0, w), 0)
 		{}
-		XTAL_CON_(implicit) subtype()
-		XTAL_0EX
+		XTAL_NEW_(implicit) subtype()
+		noexcept
 		:	subtype(U(0, 0), 0)
 		{}
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET subview(auto &&w)
-		XTAL_0FX -> T_
+		XTAL_LET subview(auto &&w) const
+		noexcept -> T_
 		{
 			return T_(S_::subhead(XTAL_REF_(w)), S_::step());
 		}
@@ -402,7 +407,7 @@ public:
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator *=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			using _xtd::ranges::distance;
 			using _xtd::ranges::next;
@@ -414,7 +419,7 @@ public:
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			using _xtd::ranges::distance;
 			using _xtd::ranges::prev;
@@ -429,7 +434,7 @@ public:
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator +=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			using _xtd::ranges::next;
 		//	auto &s = self();
@@ -441,7 +446,7 @@ public:
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -=(V v)
-		XTAL_0EX -> T_ &
+		noexcept -> T_ &
 		{
 			using _xtd::ranges::prev;
 		//	auto &s = self();
@@ -455,14 +460,14 @@ public:
 		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator < (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator < (subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::end() == t.begin();
 		}
 		XTAL_DEF_(return,inline)
-		XTAL_LET operator > (subtype const &t)
-		XTAL_0FX -> bool
+		XTAL_LET operator > (subtype const &t) const
+		noexcept -> bool
 		{
 			return S_::begin() == t.end();
 		}

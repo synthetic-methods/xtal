@@ -7,7 +7,7 @@
 
 /**/
 XTAL_ENV_(push)
-namespace xtal::compound::_test
+namespace xtal::cell::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +31,7 @@ template <typename ...As>
 using bar_baz_t = typename bar_baz<As...>::type;
 
 
-TAG_("compound", "matching")
+TAG_("cell", "matching")
 {
 	TRY_("any root")
 	{
@@ -68,7 +68,7 @@ TAG_("compound", "matching")
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("compound", "traversal")
+TAG_("cell", "traversal")
 {
 	using qux = confined<void
 	,	infers<foo_a, int>
@@ -129,7 +129,7 @@ TAG_("compound", "traversal")
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("compound", "conversion")
+TAG_("cell", "conversion")
 {
 	TRY_("tuple")
 	{
@@ -180,7 +180,7 @@ TAG_("compound", "conversion")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("compound", "composition")
+TAG_("cell", "composition")
 {
 	class L_aim;
 	class L_hyp;
@@ -214,7 +214,7 @@ TAG_("compound", "composition")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("compound", "inference")
+TAG_("cell", "inference")
 {
 	class L_order;
 	using T_order = reinferred_t<L_order, bond::seek_t<1, 2>>;
