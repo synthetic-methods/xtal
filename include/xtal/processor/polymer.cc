@@ -32,11 +32,11 @@ void polymer_provision_spine__locamotion()
 	using U_render = occur::render_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flux::key_s<U_stage>;
-	using U_thunk  = schedule::thunk_t<resource::spooled<nominal_t<0x20>>>;
+	using U_thunk  = schedule::thunk_t<resource::spooled<constant_t<0x20>>>;
 	using U_cue    = flux::cue_s<>;
 
-	using A_stored  = resource::stored  <nominal_t<N_store>>;
-	using A_spooled = resource::spooled <nominal_t<N_spool>>;
+	using A_stored  = resource::stored  <constant_t<N_store>>;
+	using A_spooled = resource::spooled <constant_t<N_spool>>;
 
 	using A_gate   = bond::compose<typename U_thunk::template inqueue<Ox_level>, typename U_stage::expect<>>;
 	using U_gate   = process::confined_t<A_gate>;
@@ -109,8 +109,8 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::stored<nominal_t<N_store>>
-	,	resource::spooled<nominal_t<N_spool>>
+	,	resource::stored<constant_t<N_store>>
+	,	resource::spooled<constant_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 
@@ -153,8 +153,8 @@ void polymer_provision_spool_composited()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	resource::stored<nominal_t<N_store>>
-	,	resource::spooled<nominal_t<N_spool>>
+	,	resource::stored<constant_t<N_store>>
+	,	resource::spooled<constant_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
 

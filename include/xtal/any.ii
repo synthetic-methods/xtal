@@ -89,25 +89,15 @@ template <class F, class ...Xs>
 XTAL_ASK invoke_p = _std::invocable<invoke_t<F>, Xs...>;
 
 
-XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const &&t) noexcept -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const &&>(XTAL_MOV_(t));}
-XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto const  &t) noexcept -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)> const  &>(XTAL_REF_(t));}
-XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto       &&t) noexcept -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>       &&>(XTAL_MOV_(t));}
-XTAL_DEF_(return,inline) XTAL_LET invalued_f(auto        &t) noexcept -> decltype(auto) {return reinterpret_cast<invalued_t<decltype(t)>        &>(XTAL_REF_(t));}
+XTAL_DEF_(return,inline) XTAL_LET devalued_f(auto const &&t) noexcept -> decltype(auto) {return reinterpret_cast<devalued_t<decltype(t)> const &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_LET devalued_f(auto const  &t) noexcept -> decltype(auto) {return reinterpret_cast<devalued_t<decltype(t)> const  &>(XTAL_REF_(t));}
+XTAL_DEF_(return,inline) XTAL_LET devalued_f(auto       &&t) noexcept -> decltype(auto) {return reinterpret_cast<devalued_t<decltype(t)>       &&>(XTAL_MOV_(t));}
+XTAL_DEF_(return,inline) XTAL_LET devalued_f(auto        &t) noexcept -> decltype(auto) {return reinterpret_cast<devalued_t<decltype(t)>        &>(XTAL_REF_(t));}
 
-XTAL_DEF_(return,inline) XTAL_LET involved_f(auto const &&t) noexcept -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)> const &&>(XTAL_MOV_(t));}
-XTAL_DEF_(return,inline) XTAL_LET involved_f(auto const  &t) noexcept -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)> const  &>(XTAL_REF_(t));}
-XTAL_DEF_(return,inline) XTAL_LET involved_f(auto       &&t) noexcept -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)>       &&>(XTAL_MOV_(t));}
-XTAL_DEF_(return,inline) XTAL_LET involved_f(auto        &t) noexcept -> decltype(auto) {return reinterpret_cast<involved_t<decltype(t)>        &>(XTAL_REF_(t));}
-
-static_assert(id_q<      int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(id_q<const int( &)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(id_q<      int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(id_q<const int(&&)[2], decltype(invalued_f(XTAL_ANY_(_std::complex<int> const &&)))>);
-
-static_assert(id_q<      int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(id_q<const int( &)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(id_q<      int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(id_q<const int(&&)[2], decltype(involved_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+static_assert(id_q<      int( &)[2], decltype(devalued_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(id_q<const int( &)[2], decltype(devalued_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(id_q<      int(&&)[2], decltype(devalued_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(id_q<const int(&&)[2], decltype(devalued_f(XTAL_ANY_(_std::complex<int> const &&)))>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +207,7 @@ template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs
 ///\returns the result of applying `f` to `...xs`. \
 
 ///\note\
-To be extended by the host to transparently lift `f` when `xs...` are vectorized. \
+To be implemented by the host to transparently lift `f` when `xs...` are vectorized. \
 
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(       Xs &&...xs) noexcept -> decltype(auto) {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
@@ -228,7 +218,7 @@ template <class F             > XTAL_DEF_(inline) XTAL_LET operative_f(F &&f    
 ///\returns the result of evaluating the result `y`. \
 
 ///\note\
-To be extended by the host to transparently reduce `y` when vectorized. \
+To be implemented by the host to transparently reduce `y` when vectorized. \
 
 template <class T>
 XTAL_DEF_(inline,static)

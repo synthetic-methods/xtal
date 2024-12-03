@@ -28,13 +28,13 @@ The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constex
 template <size_type N_size>
 struct recognize : recognize<(N_size >> 1U)>
 {
-	using _zed = nominal_t<false>;
+	using _zed = constant_t<false>;
 
 };
 template <>
 struct recognize<(1U<<0U)>
 {
-	using       _zed =        nominal_t<true>;
+	using       _zed =        constant_t<true>;
 //	using  iota_type =           _std::int4_t;
 	using delta_type =    signed XTAL_INT_(0);
 	using sigma_type =  unsigned XTAL_INT_(0);
@@ -51,7 +51,7 @@ struct recognize<(1U<<0U)>
 template <>
 struct recognize<(1U<<1U)>
 {
-	using       _zed =        nominal_t<true>;
+	using       _zed =        constant_t<true>;
 	using  iota_type =    signed XTAL_INT_(0);
 	using delta_type =    signed XTAL_INT_(1);
 	using sigma_type =  unsigned XTAL_INT_(1);
@@ -68,7 +68,7 @@ struct recognize<(1U<<1U)>
 template <>
 struct recognize<(1U<<2U)>
 {
-	using       _zed =        nominal_t<true>;
+	using       _zed =        constant_t<true>;
 	using  iota_type =    signed XTAL_INT_(1);
 	using delta_type =    signed XTAL_INT_(2);
 	using sigma_type =  unsigned XTAL_INT_(2);
@@ -141,7 +141,7 @@ struct recognize<(1U<<2U)>
 template <>
 struct recognize<(1U<<3U)>
 {
-	using   _zed =           nominal_t< true>;
+	using   _zed =           constant_t< true>;
 	using  iota_type =    signed XTAL_INT_(2);
 	using delta_type =    signed XTAL_INT_(3);
 	using sigma_type =  unsigned XTAL_INT_(3);
@@ -221,7 +221,7 @@ concept recognized_q = recognize<N_size>::_zed::value;
 template <size_type N_size>
 struct rationalize : rationalize<(N_size >> 1U)>
 {
-	using _zed = nominal_t<false>;
+	using _zed = constant_t<false>;
 
 };
 template <size_type N_size> requires recognized_q<N_size>
@@ -532,7 +532,7 @@ public:
 template <size_type N_size>
 struct realize : realize<(N_size >> 1U)>
 {
-	using _zed = nominal_t<false>;
+	using _zed = constant_t<false>;
 
 	template <int N_shift=0>
 	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
@@ -676,11 +676,11 @@ public:
 		return N_fused;
 	}
 
-	using default_alignment = nominal_t<(size_type) XTAL_STD_(L1)/N_width>;
+	using default_alignment = constant_t<(size_type) XTAL_STD_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = nominal_t<(size_type) _std::hardware_constructive_interference_size/N_width>;
-//	using  destructive_alignment = nominal_t<(size_type) _std:: hardware_destructive_interference_size/N_width>;
+	using constructive_alignment = constant_t<(size_type) _std::hardware_constructive_interference_size/N_width>;
+//	using  destructive_alignment = constant_t<(size_type) _std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
 //	using  destructive_alignment = default_alignment;
@@ -1592,7 +1592,7 @@ public:
 	XTAL_LET truncate_f(aphex_type &target)
 	noexcept -> aphex_type
 	{
-		auto &z = invalued_f(target);
+		auto &z = devalued_f(target);
 		alpha_type const x = truncate_f<N_zoom>(z[0]);
 		alpha_type const y = truncate_f<N_zoom>(z[1]);
 		return aphex_type{x, y};

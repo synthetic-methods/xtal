@@ -45,7 +45,7 @@ struct phasor<A, As...>
 	>;
 	using superkind = bond::compose<bond::tag<phasor>
 	,	semikind
-	,	resource::biased<nominal_t<1>>
+	,	resource::biased<constant_t<1>>
 	>;
 	template <any_q S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -191,7 +191,7 @@ struct phasor<A, As...>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(U_phason phi, coordinate_type co)
 		noexcept -> auto
-			requires is_q<U_phason, typename S_::template head_t<nominal_t<size_1>>>
+			requires is_q<U_phason, typename S_::template head_t<constant_t<size_1>>>
 		{
 			static_assert(bond::dipack_q<U_phason>);
 

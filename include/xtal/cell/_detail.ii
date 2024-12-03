@@ -272,7 +272,7 @@ struct defer_field
 
 	};
 };
-template <nominal_q U>
+template <constant_q U>
 struct defer_field<U>
 {
 	template <any_q S>
@@ -289,7 +289,7 @@ struct defer_field<U>
 		using S_::self;
 		body_type body_part{};
 
-		template <nominal_q A>
+		template <constant_q A>
 		XTAL_NEW_(explicit) subtype(A &&a, auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)

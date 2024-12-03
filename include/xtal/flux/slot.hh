@@ -14,11 +14,11 @@ namespace xtal::flux
 Governs access to the arguments of `flux::bundle`. \
 
 //\
-template <  int N             >	XTAL_USE slot_t = bond::compose_s<any_s<nominal_t<N>>, confined<>>;
-template <  int N             >	XTAL_USE slot_t = any_s<nominal_t<N>>  ;
-template <  int N             >	XTAL_LET slot_n = any_s<nominal_t<N>>{};
-template <  int N, class ...Ts>	XTAL_ASK slot_p = nominal_q<Ts...> and (some_q<Ts...> and not un_n<N, Ts::value...>);
-template <class T,   int ...Ns>	XTAL_ASK slot_q = nominal_q<T    > and (none_n<Ns...> or      in_n<T::value, Ns...>);
+template <  int N             >	XTAL_USE slot_t = bond::compose_s<any_s<constant_t<N>>, confined<>>;
+template <  int N             >	XTAL_USE slot_t = any_s<constant_t<N>>  ;
+template <  int N             >	XTAL_LET slot_n = any_s<constant_t<N>>{};
+template <  int N, class ...Ts>	XTAL_ASK slot_p = constant_q<Ts...> and (some_q<Ts...> and not un_n<N, Ts::value...>);
+template <class T,   int ...Ns>	XTAL_ASK slot_q = constant_q<T    > and (none_n<Ns...> or      in_n<T::value, Ns...>);
 
 static_assert(    slot_p<3, slot_t<3>, slot_t<3>, slot_t<3>>);
 static_assert(not slot_p<3, slot_t<3>, slot_t<3>, slot_t<2>>);

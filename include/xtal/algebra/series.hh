@@ -30,7 +30,7 @@ Extends `serial` with multiplication defined by circular convolution. \
 template <column_q A>
 struct series<A>
 {
-	using U_v0 = invalued_u<A>;
+	using U_v0 = _std::remove_extent_t<A>;
 	using U_v1 = devalued_u<U_v0>;
 	using U_v2 = devalued_u<U_v1>;
 
@@ -62,7 +62,7 @@ struct series<A>
 		Generates part of the complex sinusoid determined by `std::pow(2, o_shift{})`. \
 
 		XTAL_DEF_(inline)
-		XTAL_NEW_(explicit) homotype(nominal_q auto const o_shift)
+		XTAL_NEW_(explicit) homotype(constant_q auto const o_shift)
 		{
 			generate<o_shift>();
 		}
@@ -94,7 +94,7 @@ struct series<A>
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				auto &[o, e] = get<I>(s);
-				auto &[f, g] = invalued_f(e);
+				auto &[f, g] = devalued_f(e);
 			//	_op::template truncate_f<4>(f);
 				get<I>(s) = {o*f, _std::conj(o)*g};
 			});
@@ -277,14 +277,14 @@ struct series<A>
 		{
 			auto &s = self();
 			if constexpr (complex_field_q<U_data>) {
-				T(nominal_t<-1>{}).convolve(s, t);
+				T(constant_t<-1>{}).convolve(s, t);
 			}
 			else {
 				using X = typename _op::aphex_type;
 				using Y = typename series<X[N_data]>::type;
 				Y s_(s);
 				Y t_(t);
-				Y(nominal_t<-1>{}).convolve(s_, t_);
+				Y(constant_t<-1>{}).convolve(s_, t_);
 				_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
 			}
 			return s;

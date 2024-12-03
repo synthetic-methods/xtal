@@ -22,9 +22,9 @@ template <class   T                            >	XTAL_USE   taboo_t = typename b
 template <                        class   ...Ts>	XTAL_ASK   taboo_d = (...and not requires {typename taboo_t<Ts>;});
 template <                        class   ...Ts>	XTAL_ASK   taboo_q = (...and     requires {typename taboo_t<Ts>;});
 
-template <class   T,              class   ...Ys>	XTAL_TYP   all_tab                         :           nominal_t<false> {using type = void;};
-template <class   T,              class   ...Ys>	XTAL_TYP   all_tab<T, nominal_t<0>, Ys...> :           nominal_t< true> {using type =    T;};
-template <taboo_q T                            >	XTAL_TYP   all_tab<T,   taboo_t<T>       > :           nominal_t< true> {using type =    T;};
+template <class   T,              class   ...Ys>	XTAL_TYP   all_tab                         :           constant_t<false> {using type = void;};
+template <class   T,              class   ...Ys>	XTAL_TYP   all_tab<T, constant_t<0>, Ys...> :           constant_t< true> {using type =    T;};
+template <taboo_q T                            >	XTAL_TYP   all_tab<T,   taboo_t<T>       > :           constant_t< true> {using type =    T;};
 template <taboo_q T,              class   ...Ys>	XTAL_TYP   all_tab<T,               Ys...> : all_tab<taboo_s<T>,                  Ys...> {};
 template <taboo_q T,              class   ...Ys>	XTAL_TYP   all_tab<T,   taboo_t<T>, Ys...> : all_tab<taboo_s<T>,                  Ys...> {};
 template <taboo_q T, liminal_q I, class   ...Ys>	XTAL_TYP   all_tab<T,           I , Ys...> : all_tab<taboo_s<T>, subliminal_s<I>, Ys...> {};

@@ -74,11 +74,11 @@ struct query
 
 		XTAL_TO4_(template <size_type ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET self(auto &&...oo), self<nominal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_RET self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...)
 		)
 		XTAL_TO4_(template <size_type ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_RET head(auto &&...oo), head<nominal_t<Is>...>(XTAL_REF_(oo)...)
+		XTAL_RET head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...)
 		)
 
 	};

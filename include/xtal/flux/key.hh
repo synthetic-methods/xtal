@@ -42,7 +42,7 @@ struct key<>
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(implicit) auto(), key_s<>(S_::head()))
 		
 		using key_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
-		using key_size = nominal_t<size_1>;
+		using key_size = constant_t<size_1>;
 
 	};
 	template <key_q S>

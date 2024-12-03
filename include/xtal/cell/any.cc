@@ -93,7 +93,7 @@ TAG_("cell", "traversal")
 		TRUE_(2 == u_qux.template head<bar_a, baz_a>());
 	//	TRUE_(1 != u_qux.template head<baz_a, bar_a>());// Fails!
 		
-	//	TRUE_(    any_p<U_qux, nominal_t<1>>);
+	//	TRUE_(    any_p<U_qux, constant_t<1>>);
 	//	TRUE_(    any_p<U_qux, bar_a, baz_a>);
 		TRUE_(not any_p<U_qux, baz_a, bar_a>);
 	//	UNTRUE_(requires {u_qux.template head<baz_a, bar_a>();});// Shouldn't fail?

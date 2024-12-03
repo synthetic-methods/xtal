@@ -38,7 +38,7 @@ struct stored<A>
 
 	};
 };
-template <nominal_q A>
+template <constant_q A>
 struct stored<A>
 {
 	XTAL_USE value_type =  typename  A::value_type;
@@ -76,17 +76,17 @@ struct stored<A>
 };
 template <auto N>
 struct stored<unit_type[N]>
-:	stored<nominal_t<unsigned(N)>>
+:	stored<constant_t<unsigned(N)>>
 {
 };
 template <auto N>
 struct stored<null_type[N]>
-:	stored<nominal_t<  signed(N)>>
+:	stored<constant_t<  signed(N)>>
 {
 };
 template <>
 struct stored<>
-:	stored<nominal_t<-1>>
+:	stored<constant_t<-1>>
 {};
 
 

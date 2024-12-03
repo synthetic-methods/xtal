@@ -38,7 +38,7 @@ struct spooled<A>
 
 	};
 };
-template <nominal_q A>
+template <constant_q A>
 struct spooled<A>
 {
 	XTAL_USE value_type =  typename  A::value_type;
@@ -61,17 +61,17 @@ struct spooled<A>
 };
 template <auto N>
 struct spooled<unit_type[N]>
-:	spooled<nominal_t<unsigned(N)>>
+:	spooled<constant_t<unsigned(N)>>
 {
 };
 template <auto N>
 struct spooled<null_type[N]>
-:	spooled<nominal_t<  signed(N)>>
+:	spooled<constant_t<  signed(N)>>
 {
 };
 template <>
 struct spooled<>
-:	spooled<nominal_t<-1>>
+:	spooled<constant_t<-1>>
 {};
 
 

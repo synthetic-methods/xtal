@@ -28,7 +28,7 @@ noexcept -> auto
 		XTAL_USE F = invoke_t<V>;
 		XTAL_USE T = bundle_t<_std::invoke_result_t<F, Xs>...>;
 		if constexpr ((...and idempotent_p<Xs, F>)) {
-			return T{ (XTAL_REF_(xs))...};
+			return T{  XTAL_REF_(xs) ...};
 		}
 		else {
 			return T{f(XTAL_REF_(xs))...};
@@ -257,7 +257,6 @@ struct bundle
 				return pointwise<[] (auto &x) XTAL_0FN_(x = -x)>();
 			}
 		}
-
 
 	};
 };

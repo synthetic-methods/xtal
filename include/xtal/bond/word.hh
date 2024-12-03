@@ -60,7 +60,7 @@ struct word
 		using S_::S_;
 
 		///\
-		Default `nominal_q` constructor, expects `0`. \
+		Default `constant_q` constructor, expects `0`. \
 
 		template <integral_q A>
 		XTAL_NEW_(explicit) subtype(A &&a)

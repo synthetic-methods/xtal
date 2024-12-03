@@ -43,7 +43,7 @@ struct bundle
 
 		XTAL_NEW_(explicit) subtype(Xs &&...xs)
 		noexcept
-		:	subtype(H_{XTAL_REF_(xs)...})
+		:	S_(H_{XTAL_REF_(xs)...})
 		{}
 
 	public:// ACCESS

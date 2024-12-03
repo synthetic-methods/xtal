@@ -110,7 +110,7 @@ struct define
 		}
 		template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET deify(nominal_q auto ...Is) const
+		XTAL_LET deify(constant_q auto ...Is) const
 		noexcept -> decltype(auto)
 		{
 			return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
@@ -123,7 +123,7 @@ struct define
 
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
-		XTAL_LET reify(nominal_q auto ...Is),
+		XTAL_LET reify(constant_q auto ...Is),
 		-> decltype(auto)
 		{
 			return [this] XTAL_1FN_(self().template operator()<XTAL_VAL_(Is)...>);
@@ -276,8 +276,8 @@ struct defer
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
-		using U0 = typename S_::template head_t<nominal_t<0>>;
-		using U1 = typename S_::template head_t<nominal_t<1>>;
+		using U0 = typename S_::template head_t<constant_t<0>>;
+		using U1 = typename S_::template head_t<constant_t<1>>;
 	
 		///\
 		Resolves `head` as either a function or value. \

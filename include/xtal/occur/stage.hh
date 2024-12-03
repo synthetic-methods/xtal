@@ -33,7 +33,7 @@ struct stage
 
 	};
 };
-template <nominal_q A, typename ...As>
+template <constant_q A, typename ...As>
 struct stage<A, As...>
 {
 	using superkind = bond::compose<void

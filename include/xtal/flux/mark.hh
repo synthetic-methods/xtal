@@ -40,7 +40,7 @@ struct mark<>
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(implicit) auto(), mark_s<>(S_::head()))
 		
 		using mark_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
-		using mark_size = nominal_t<size_1>;
+		using mark_size = constant_t<size_1>;
 
 	};
 	template <mark_q S>

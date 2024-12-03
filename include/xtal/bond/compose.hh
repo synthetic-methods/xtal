@@ -17,7 +17,7 @@ namespace _detail
 template <template <class, typename...> class Subtype>
 struct compost
 {
-	using exists = nominal_t< true>;
+	using exists = constant_t< true>;
 
 	template <class S, class ...Inners>                            struct pseudokind               {using type = Subtype<S, Inners...>;};
 	template <class S, class ...Inners> requires none_q<Inners...> struct pseudokind<S, Inners...> {using type = Subtype<S           >;};
@@ -31,7 +31,7 @@ struct compost
 };
 
 template <typename Outer> concept   compose_q =   complete_q<compost<Outer::template subtype>> and not requires {typename Outer::subtype;};
-template <typename Outer> concept decompose_q = incomplete_q<Outer> or nominal_q<Outer>;
+template <typename Outer> concept decompose_q = incomplete_q<Outer> or constant_q<Outer>;
 //\
 template <class A> struct recompose {template <class S> using subtype = S;};
 template <class A> using  recompose = tab<A>;

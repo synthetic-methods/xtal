@@ -24,7 +24,7 @@ Provides a fixed amount of biased/behind determined from the constant provided \
 template <typename ...As>
 struct biased
 {
-	XTAL_USE U_bias = bond::seek_constant_t<As..., nominal_t<0>>;
+	XTAL_USE U_bias = bond::seek_constant_t<As..., constant_t<0>>;
 
 	using superkind = bond::compose<bond::tag<biased>, As...>;
 

@@ -78,7 +78,7 @@ struct define
 		}
 		///<\returns a tuple representation of `this`. \
 
-		using pack_size = nominal_t<0>;
+		using pack_size = constant_t<0>;
 		///< The `std::tuple_size` of `this`. \
 
 	};
@@ -171,7 +171,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		using pack_size = nominal_t<S_::pack_size::value + 1>;
+		using pack_size = constant_t<S_::pack_size::value + 1>;
 
 	};
 };

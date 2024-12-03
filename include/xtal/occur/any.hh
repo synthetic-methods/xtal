@@ -36,7 +36,7 @@ struct define
 		{
 			assert(0 == u);
 		};
-		template <nominal_q U>
+		template <constant_q U>
 		XTAL_NEW_(explicit) subtype(U &&u)
 		noexcept
 		{
@@ -118,7 +118,7 @@ struct define
 				XTAL_DEF_(return,inline)
 				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
 				{
-					return (self().*deify<decltype(xs)...>(nominal_t<Is>{}...)) (XTAL_REF_(xs)...);
+					return (self().*deify<decltype(xs)...>(constant_t<Is>{}...)) (XTAL_REF_(xs)...);
 				})
 
 			protected:// DEIFY
@@ -133,7 +133,7 @@ struct define
 				}
 				template <class ...Xs>
 				XTAL_DEF_(return,inline)
-				XTAL_LET deify(nominal_q auto ...Is) const
+				XTAL_LET deify(constant_q auto ...Is) const
 				noexcept -> decltype(auto)
 				{
 					return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);

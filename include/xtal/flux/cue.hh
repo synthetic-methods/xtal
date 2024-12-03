@@ -40,7 +40,7 @@ struct cue<>
 		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(implicit) auto(), cue_s<>(S_::head()))
 
 		using cue_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
-		using cue_size = nominal_t<size_1>;
+		using cue_size = constant_t<size_1>;
 
 	};
 	template <cue_q S>

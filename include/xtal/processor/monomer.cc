@@ -159,7 +159,7 @@ void monomer_provision__provisioning()
 	using T_sigma = typename bond::operating::sigma_type;
 	using T_alpha = typename bond::operating::alpha_type;
 
-	using provide = resource::stored<nominal_t<0x20>>;
+	using provide = resource::stored<constant_t<0x20>>;
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
 	using U_state  = deranged_t<U_store>;

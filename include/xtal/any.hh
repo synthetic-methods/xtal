@@ -205,8 +205,8 @@ template <class   F, class    X >	XTAL_ASK     idempotent_q =	idempotent_p<X, F>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto       N >	XTAL_USE      nominal_t = typename _entail::     nominal_t<N >;
-template <class   ...Ts>	XTAL_ASK      nominal_q = (...and  _entail::     nominal_q<Ts>);
+template <auto       N >	XTAL_USE      constant_t = typename _entail::     constant_t<N >;
+template <class   ...Ts>	XTAL_ASK      constant_q = (...and  _entail::     constant_q<Ts>);
 template <class   ...Ts>	XTAL_ASK      logical_q = (...and  _entail::     logical_q<Ts>);
 template <class   ...Ts>	XTAL_ASK      ordinal_q = (...and  _entail::     ordinal_q<Ts>);
 template <class   ...Ts>	XTAL_ASK     cardinal_q = (...and  _entail::    cardinal_q<Ts>);
@@ -238,27 +238,43 @@ template <class   ...Ts>	XTAL_ASK      debased_q = (...and  _entail::  debased_q
 template <class   ...Ts>	XTAL_ASK      rebased_q = (...and  _entail::  rebased_q<Ts>);
 
 
-template <           class ...Ts>	XTAL_ASK     invalued_q = (...and  _entail:: invalued_q<Ts>);
-template <           class ...Ts>	XTAL_USE     invalued_u = common_t<_entail:: invalued_u<Ts>...>;
+template <class T               >	XTAL_LET tuple_sized_n    =          _entail::   tuple_sized_n<T >;
+template <class T               >	XTAL_USE tuple_sized_t    =          _entail::   tuple_sized_t<T >;
+template <           class ...Ts>	XTAL_ASK tuple_sized_q    = (...and  _entail::   tuple_sized_q<Ts>);
 
-template <           class ...Ts>	XTAL_ASK     unvalued_q = (...and  _entail:: unvalued_q<Ts>);
-template <           class ...Ts>	XTAL_USE     unvalued_u = common_t<_entail:: unvalued_u<Ts>...>;
+template <class T               >	XTAL_LET array_sized_n    =          _entail::   tuple_sized_n<T >;
+template <class T               >	XTAL_USE array_sized_t    =          _entail::   tuple_sized_t<T >;
+template <           class ...Ts>	XTAL_ASK array_sized_q    = (...and  _entail::   tuple_sized_q<Ts>);
+
+template <class T               >	XTAL_USE       sized      =          _entail::         sized  <T >;
+template <class T               >	XTAL_LET       sized_n    =          _entail::         sized_n<T >;
+template <class T               >	XTAL_USE       sized_t    =          _entail::         sized_t<T >;
+template <           class ...Ts>	XTAL_ASK       sized_q    = (...and  _entail::         sized_q<Ts>);
+
+
+template <           class ...Ts>	XTAL_USE inner_valued_u   = common_t<_entail::   inner_valued_u<Ts>...>;
+template <           class ...Ts>	XTAL_ASK inner_valued_q   = (...and  _entail::   inner_valued_q<Ts>);
+
+template <           class ...Ts>	XTAL_USE array_valued_u   = common_t<_entail::   array_valued_u<Ts>...>;
+template <           class ...Ts>	XTAL_ASK array_valued_q   = (...and  _entail::   array_valued_q<Ts>);
+
+template <           class ...Ts>	XTAL_USE       valued_u   = common_t<_entail::   valued_u<Ts>...>;
+template <           class ...Ts>	XTAL_ASK       valued_q   = (...and  _entail::   valued_q<Ts>);
+
 
 template <           class ...Ts>	XTAL_ASK     devalued_q = (...and  _entail:: devalued_q<Ts>);
+template <class T               >	XTAL_USE     devalued_t =          _entail:: devalued_t<T >;
 template <           class ...Ts>	XTAL_USE     devalued_u = common_t<_entail:: devalued_u<Ts>...>;
-template <class   T             >	XTAL_LET     devalued_n = _entail:: devalued_n<T>;
+template <class T               >	XTAL_LET     devalued_n = _entail:: devalued_n<T>;
+template <class T,   class ...Ts>	XTAL_ASK     devalued_p = (...and (devalued_n<T> < devalued_n<Ts>));
 
-template <class   T, int   ...Ns>	XTAL_USE     devolved   =	_entail:: devolved  <T, Ns...>;
+template <class T,   int   ...Ns>	XTAL_USE     devolved   =	_entail:: devolved  <T, Ns...>;
 //mplate <           int   ...Ns>	XTAL_USE     devolved_x =	_entail:: devolved_x<   Ns...>;
 //mplate <class   T, class ..._s>	XTAL_USE     devolved_s =	_entail:: devolved_s<T, _s...>;
-template <class   T             >	XTAL_LET     devolved_n =  _entail:: devolved_n<T>;
+template <class T               >	XTAL_LET     devolved_n =  _entail:: devolved_n<T>;
 template <           class ...Ts>	XTAL_USE     devolved_u = common_t<_entail:: devolved_u<Ts>...>;
-
-template <class   T             >	XTAL_USE     invalued_t =          _entail:: invalued_t<T >;
-template <class   T             >	XTAL_USE     involved_t =          _entail:: involved_t<T >;
-
-template <class   T, class ...Ts>	XTAL_ASK     devalued_p = (...and (devalued_n<T> < devalued_n<Ts>));
-template <class   T, class ...Ts>	XTAL_ASK     devolved_p = (...and (devolved_n<T> < devolved_n<Ts>));
+template <class T               >	XTAL_USE     devolved_t =          _entail:: devolved_t<T >;
+template <class T,   class ...Ts>	XTAL_ASK     devolved_p = (...and (devolved_n<T> < devolved_n<Ts>));
 
 
 ////////////////////////////////////////////////////////////////////////////////
