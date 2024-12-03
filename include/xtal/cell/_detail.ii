@@ -59,6 +59,7 @@ struct define_super
 	
 	public:
 		using S_::S_;
+		using S_::self;
 
 	public:// TYPE
 		template <class ...Is>
@@ -66,6 +67,16 @@ struct define_super
 
 		using self_type = T;
 		using head_type = void;
+
+		XTAL_DEF_(return,inline)
+		XTAL_LET pack() const
+		{
+			return bond::pack_f();
+		}
+		///<\returns a tuple representation of `this`. \
+
+		using pack_size = constant_t<0>;
+		///< The `std::tuple_size` of `this`. \
 
 	};
 };

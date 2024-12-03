@@ -49,25 +49,29 @@ struct query
 
 	public:
 		using S_::S_;
+
+		XTAL_TO4_(
+		XTAL_DEF_(return,inline)
+		XTAL_RET node(), self<node_type>()
+		)
 		/*/
 		using S_::self;
 		using S_::head;
 		/*/
-		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
+		XTAL_TO4_(template <class     ...Is> requires none_q<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_RET self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
 		)
-		XTAL_TO4_(template <class  ...Is> requires none_q<Is...>
+		XTAL_TO4_(template <class     ...Is> requires none_q<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_RET head(auto &&...oo), S_::head(XTAL_REF_(oo)...)
 		)
 		/***/
-
-		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
+		XTAL_TO4_(template <class     ...Is> requires some_q<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_RET self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
 		)
-		XTAL_TO4_(template <class  ...Is> requires some_q<Is...>
+		XTAL_TO4_(template <class     ...Is> requires some_q<Is...>
 		XTAL_DEF_(return,inline)
 		XTAL_RET head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)

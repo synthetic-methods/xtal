@@ -50,15 +50,24 @@ struct bundle
 		using S_::self;
 		using S_::head;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET slots(), head())
-		
-		XTAL_DO2_(template <size_type ...Ns>
+		//\note\
+		Tentative override of `node` allows unmodified `bundle`s to be destructured using `get`, etc. \
+		Use `slots` for unmitigated access. \
+
+		XTAL_TO4_(
+		XTAL_DEF_(return,inline)
+		XTAL_RET node(), head()
+		)
+		using node_type = typename S_::head_type;
+
+		XTAL_DO2_(template <size_type ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET slot(), -> decltype(auto)
 		{
-			return bond::pack_item_f<Ns...>(slots());
+			return bond::pack_item_f<Is...>(head());
 		})
-
+		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET slots(), head())
+		
 	public:// *FLUX
 	//	using S_::influx;
 	//	using S_::efflux;

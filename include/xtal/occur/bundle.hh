@@ -60,6 +60,7 @@ struct bundle
 	public:// ACCESS
 		using S_::self;
 		using S_::twin;
+		using S_::node;
 		using S_::head;
 		using S_::slots;
 
@@ -79,7 +80,7 @@ struct bundle
 		noexcept -> auto &
 		requires requires {f(slot<0>());}
 		{
-			auto &s_ = slots();
+			auto &s_ = node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -96,7 +97,7 @@ struct bundle
 	//	requires requires {(f(XTAL_ANY_(Xs), t), ...);}
 		requires complete_q<common_t<Xs..., decltype(t)>>
 		{
-			auto &s_ = slots();
+			auto &s_ = node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -109,10 +110,10 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise(bundle_q auto const &t)
 		noexcept -> auto &
-		requires requires {f(slot<0>(), t.template slot<0>());}
+		requires requires {f(slot<0>(), get<0>(t));}
 		{
-			auto       &s_ =   slots();
-			auto const &t_ = t.slots();
+			auto       &s_ =   node();
+			auto const &t_ = t.node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);
@@ -128,9 +129,9 @@ struct bundle
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET pointwise(subtype const &s)
 		noexcept -> auto
-		requires requires {f(s.template slot<0>());}
+		requires requires {f(get<0>(s));}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -143,7 +144,7 @@ struct bundle
 		noexcept -> auto
 		requires un_n<fungible_q<subtype, decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -156,7 +157,7 @@ struct bundle
 		noexcept -> auto
 		requires un_n<fungible_q<subtype, decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -167,10 +168,10 @@ struct bundle
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET pointwise(subtype const &s, auto const &t)
 		noexcept -> auto
-		requires requires {f(s.template slot<0>(), t.template slot<0>());}
+		requires requires {f(get<0>(s), get<0>(t));}
 		{
-			auto       &s_ = s.slots();
-			auto const &t_ = t.slots();
+			auto       &s_ = s.node();
+			auto const &t_ = t.node();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);

@@ -23,6 +23,11 @@ TAG_("bundle")
 		using M = XTAL_ALL_(m);
 		TRUE_(is_q<W, M>);
 
+		auto const &[a, b, c] = m;
+		TRUE_(a == 1);
+		TRUE_(b == 2);
+		TRUE_(c == 3);
+
 		w += m;
 		m *= 2;
 		TRUE_(w == m);

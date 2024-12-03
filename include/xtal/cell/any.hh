@@ -71,16 +71,6 @@ struct define
 			return equal_to_(t)? is::equivalent: is::unordered;
 		}
 
-		XTAL_DEF_(return,inline)
-		XTAL_LET pack() const
-		{
-			return bond::pack_f();
-		}
-		///<\returns a tuple representation of `this`. \
-
-		using pack_size = constant_t<0>;
-		///< The `std::tuple_size` of `this`. \
-
 	};
 };
 ///\
@@ -209,11 +199,11 @@ XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::cell::any_q T> requires xtal::complete_q<typename T::pack_size>
-struct tuple_size<T> : T::pack_size {};
+template <xtal::cell::any_q T> requires xtal::complete_q<typename T::node_type>
+struct tuple_size<T> : T::node_type::pack_size {};
 
-template <size_t N, xtal::cell::any_q T>
-struct tuple_element<N, T> {using type = typename T::template head_t<integral_constant<size_t, N>>;};
+template <size_t N, xtal::cell::any_q T> requires xtal::complete_q<typename T::node_type>
+struct tuple_element<N, T> {using type = typename T::node_type::template head_t<integral_constant<size_t, N>>;};
 
 
 }//////////////////////////////////////////////////////////////////////////
