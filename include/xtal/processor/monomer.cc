@@ -3,7 +3,7 @@
 #include "./monomer.hh"// testing...
 
 #include "./all.hh"
-#include "../resource/all.hh"
+#include "../provision/all.hh"
 #include "../occur/all.hh"
 
 XTAL_ENV_(push)
@@ -41,7 +41,7 @@ void monomer_zipping()
 }
 TAG_("monomer", "zipping")
 {
-	TRY_("pure (actual)") {monomer_zipping<resource::stored<>>();}
+	TRY_("pure (actual)") {monomer_zipping<provision::stored<>>();}
 	TRY_("pure (virtual)")  {monomer_zipping();}
 
 }
@@ -76,7 +76,7 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (actual)") {monomer_lifting<resource::stored<>>();}
+	TRY_("pure (actual)") {monomer_lifting<provision::stored<>>();}
 	TRY_("pure (virtual)")  {monomer_lifting();}
 
 }
@@ -159,10 +159,10 @@ void monomer_provision__provisioning()
 	using T_sigma = typename bond::operating::sigma_type;
 	using T_alpha = typename bond::operating::alpha_type;
 
-	using provide = resource::stored<constant_t<0x20>>;
+	using provide = provision::stored<constant_t<0x20>>;
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
-	using U_state  = deranged_t<U_store>;
+	using U_state  = reiterated_t<U_store>;
 	using U_review = occur::review_t<U_state>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -214,8 +214,8 @@ void monomer_chaining__rvalue()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::stored<>>;
-	using mul_op = monomer_t<U_mul, resource::stored<>>;
+	using mix_op = monomer_t<U_add, provision::stored<>>;
+	using mul_op = monomer_t<U_mul, provision::stored<>>;
 	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
@@ -244,8 +244,8 @@ void monomer_chaining__lvalue()
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 	
-	using mix_op = monomer_t<U_add, resource::stored<>>;
-	using mul_op = monomer_t<U_mul, resource::stored<>>;
+	using mix_op = monomer_t<U_add, provision::stored<>>;
+	using mul_op = monomer_t<U_mul, provision::stored<>>;
 	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
 	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
@@ -276,7 +276,7 @@ void monomer_chaining__shared()
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
-	using mix_op = monomer_t<U_add, resource::stored<>>;
+	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mix_fn = monomer_t<U_add>;
 	using idx_fn = monomer_t<Px_dynamic_count>;
 

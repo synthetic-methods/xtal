@@ -15,9 +15,9 @@ Governs access to the `supertype`. \
 
 ///\see `flux::mask`. \
 
-template <class	..._s> XTAL_TYP mark;
-template <class	..._s> XTAL_ASK mark_q = bond::any_tag_p<mark, _s...>;
-template <class	..._s> XTAL_USE mark_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<mark<>>>;
+template <class	..._s> struct   mark;
+template <class	..._s> concept  mark_q = bond::any_tag_p<mark, _s...>;
+template <class	..._s> using    mark_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<mark<>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ struct mark<>
 /**/
 template <any_q T>
 XTAL_DEF_(return,inline)
-XTAL_LET mark_f(XTAL_ARG_(mark_s<>) &&s, T &&t)
+XTAL_LET mark_f(XTAL_SYN_(mark_s<>) auto &&s, T &&t)
 noexcept -> auto
 {
 	using Y = based_t<T>;

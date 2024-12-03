@@ -16,9 +16,9 @@ template <class ...Ts>
 class signature : _std::tuple<Ts...>
 {
 public:
-	XTAL_USE tuple_type = _std::tuple<Ts...>;
-	XTAL_USE arity_type = _std::size_t;
-	XTAL_USE array_type = xtal::algebra::scalar_t<arity_type[sizeof...(Ts)]>;
+	using    tuple_type = _std::tuple<Ts...>;
+	using    arity_type = _std::size_t;
+	using    array_type = xtal::algebra::scalar_t<arity_type[sizeof...(Ts)]>;
 
 	static
 	array_type constexpr layout{xtal::devalued_n<Ts>...};
@@ -33,7 +33,7 @@ public:
 		return sizeof...(Ts);
 	}
 
-	template <arity_type I> XTAL_USE item_t = _std::tuple_element_t<I, tuple_type>;
+	template <arity_type I> using    item_t = _std::tuple_element_t<I, tuple_type>;
 	template <arity_type I> XTAL_SET item_n = xtal::devalued_n<item_t<I>>;
 	
 };

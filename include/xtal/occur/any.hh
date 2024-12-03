@@ -22,10 +22,10 @@ struct define
 {
 	using superkind = _retail::define<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
-		friend T;
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -56,13 +56,12 @@ struct define
 		`dispatch`ing a conditional indicating positivity. \
 
 		template <int N_mask=-1>
-			requires anisotropic_q<bool, typename T::head_type>// Avoids self-referencing `T`...
 		struct clutch
 		{
-			using U_switch = conferred_t<bool, bond::tab<clutch<N_mask>>>;
+			using U_choke = conferred_t<bool, bond::tab<clutch<N_mask>>>;
 
 			using superkind = bond::compose<void
-			,	typename U_switch::template dispatch<N_mask>
+			,	typename U_choke::template dispatch<N_mask>
 			,	attach<N_mask>
 			>;
 			template <flux::any_q R>
@@ -82,10 +81,10 @@ struct define
 					return R_::influx(XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(XTAL_ARG_(T) &&t, auto &&...oo)
+				XTAL_LET influx(XTAL_SYN_(T) auto &&t, auto &&...oo)
 				noexcept -> sign_type
 				{
-					(void) R_::influx(U_switch(0 < t));
+					(void) R_::influx(U_choke(0 < t));
 					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
 				}
 			
@@ -116,7 +115,8 @@ struct define
 
 				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_LET operator() (auto &&...xs), -> decltype(auto)
+				XTAL_LET operator() (auto &&...xs),
+				noexcept -> decltype(auto)
 				{
 					return (self().*deify<decltype(xs)...>(constant_t<Is>{}...)) (XTAL_REF_(xs)...);
 				})
@@ -136,7 +136,7 @@ struct define
 				XTAL_LET deify(constant_q auto ...Is) const
 				noexcept -> decltype(auto)
 				{
-					return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
+					return deify(digest<Xs...>::template index<Is...>::point);
 				}
 				
 				template <class ...Xs>
@@ -163,7 +163,7 @@ struct define
 					
 					public:
 						XTAL_SET point      = expand_f(bond::seek_s<A_size> {});
-						XTAL_USE point_type = decltype(point);
+						using    point_type = decltype(point);
 					
 					};
 				};
@@ -253,7 +253,7 @@ struct define
 				template <auto ...>
 				XTAL_DEF_(return,inline)
 				XTAL_LET method() const
-								{
+				{
 					return head();
 				}
 

@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./thunk.hh"// testing...
 
-#include "../resource/all.hh"
+#include "../provision/all.hh"
 #include "../processor/monomer.hh"
 
 
@@ -23,7 +23,7 @@ TAG_("thunk", "process")
 	/**/
 	TRY_("continuous")
 	{
-		using namespace resource;
+		using namespace provision;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -100,7 +100,7 @@ TAG_("thunk", "process")
 	/**/
 	TRY_("discrete")
 	{
-		using namespace resource;
+		using namespace provision;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -156,7 +156,7 @@ TAG_("thunk", "process")
 	TRY_("through")
 	{
 
-		using namespace resource;
+		using namespace provision;
 	//	using namespace schedule;
 
 		int constexpr N_store = (1<<3);
@@ -194,7 +194,7 @@ void thunk_processor()
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
 
-	using namespace resource;
+	using namespace provision;
 //	using namespace schedule;
 
 	class L_gate;
@@ -256,7 +256,7 @@ void thunk_processor()
 TAG_("thunk", "processor")
 {
 	using namespace processor;
-	TRY_("drive actual") {thunk_processor<resource::stored<>>();}
+	TRY_("drive actual") {thunk_processor<provision::stored<>>();}
 //	TRY_("drive virtual")  {thunk_processor<>();}// TODO?
 
 }

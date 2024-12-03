@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP review;
-template <typename ..._s> XTAL_ASK review_q = bond::any_tag_p<review, _s...>;
-template <iterable_q  U > XTAL_USE review_t = confined_t<review<U>, bond::tag<review>>;
+template <typename ..._s> struct   review;
+template <typename ..._s> concept  review_q = bond::any_tag_p<review, _s...>;
+template <iterable_q  U > using    review_t = confined_t<review<U>, bond::tag<review>>;
 template <iterable_q  U >
 XTAL_DEF_(return,inline)
 XTAL_LET review_f(U &&u)
@@ -27,9 +27,10 @@ struct review<U>
 {
 	using superkind = confer<U>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -38,8 +39,8 @@ struct review<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
+		XTAL_TO4_(XTAL_GET    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
+		XTAL_TO2_(XTAL_GET subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

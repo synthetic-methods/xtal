@@ -11,9 +11,9 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP monomer;
-template <typename ..._s> XTAL_USE monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> XTAL_ASK monomer_q = bond::any_tag_p<monomer, _s...>;
+template <typename ..._s> struct   monomer;
+template <typename ..._s> using    monomer_t = confined_t<monomer< _s...>>;
+template <typename ..._s> concept  monomer_q = bond::any_tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET monomer_f(auto &&u)
@@ -36,11 +36,12 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
 
-	using superkind = confer<U, As..., resource::stated<>, resource::invoice<>>;
+	using superkind = confer<U, As..., provision::stated<>, provision::context<>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
@@ -65,44 +66,44 @@ struct monomer<U, As...>
 			,	cell::confer<Y_result>
 			,	F_<Xs...>
 			>;
-			template <any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-				XTAL_CO0_(subtype);
-				XTAL_CO1_(subtype);
-				XTAL_CO4_(subtype);
+			~	subtype() noexcept=default;
+				subtype() noexcept=default;
 
-				XTAL_NEW_(explicit) subtype(XTAL_ARG_(Xs) &&...xs)
+				XTAL_NEW_(copy, subtype, noexcept=default)
+				XTAL_NEW_(move, subtype, noexcept=default)
+
+				XTAL_NEW_(explicit) subtype(XTAL_SYN_(Xs) auto &&...xs)
 				noexcept
 				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				XTAL_NEW_(explicit) subtype(XTAL_SYN_(T_) auto &&t, XTAL_SYN_(Xs) auto &&...xs)
 				noexcept
 				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(auto &&f, XTAL_ARG_(T_) &&t, XTAL_ARG_(Xs) &&...xs)
+				XTAL_NEW_(explicit) subtype(auto &&f, XTAL_SYN_(T_) auto &&t, XTAL_SYN_(Xs) auto &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
 			public:// ACCESS
 
-				XTAL_DO4_(XTAL_DEF_(return,inline)
-				XTAL_LET state(auto &&...oo), -> decltype(auto)
-				{
-					return R_::template head<Y_result>(XTAL_REF_(oo)...);
-				})
+				XTAL_TO4_(XTAL_GET state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
 			public:// FUNC*
 			//	using R_::method;
 
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_LET method(), -> decltype(auto)
+				XTAL_LET method(),
+				noexcept -> decltype(auto)
 				{
 					return state();
 				})
@@ -119,7 +120,7 @@ struct monomer<U, As...>
 
 			};
 		};
-		template <class ...Xs> requires resource::stated_q<S_> and resource::stored_q<S_>
+		template <class ...Xs> requires provision::stated_q<S_> and provision::stored_q<S_>
 		struct bracket<Xs...>
 		{
 			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
@@ -130,11 +131,12 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using superkind = bond::compose<resource::stashed<U_state, U_store>, F_<Xs...>>;
+			using superkind = bond::compose<provision::stashed<U_state, U_store>, F_<Xs...>>;
 
-			template <any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
@@ -150,7 +152,8 @@ struct monomer<U, As...>
 				
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(return,inline)
-				XTAL_LET method(), -> decltype(auto)
+				XTAL_LET method(),
+				noexcept -> decltype(auto)
 				{
 					return state();
 				})

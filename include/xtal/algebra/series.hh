@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	XTAL_TYP series;
-template <class   ..._s>	XTAL_USE series_t = typename series<_s...>::type;
-template <class   ...Ts>	XTAL_ASK series_q = bond::any_tag_p<series_t, Ts...>;
+template <class   ..._s>	struct   series;
+template <class   ..._s>	using    series_t = typename series<_s...>::type;
+template <class   ...Ts>	concept  series_q = bond::any_tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET series_f(auto &&...oo)
@@ -45,7 +45,6 @@ struct series<A>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		friend T;
 		using  S_ = holotype<T>;
 
 	protected:
@@ -94,7 +93,7 @@ struct series<A>
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				auto &[o, e] = get<I>(s);
-				auto &[f, g] = devalued_f(e);
+				auto &[f, g] = part_f(e);
 			//	_op::template truncate_f<4>(f);
 				get<I>(s) = {o*f, _std::conj(o)*g};
 			});
@@ -103,7 +102,7 @@ struct series<A>
 		///\returns `this` with the elements `N_index, ..., N_index + N_count - 1` \
 			filled by the corresponding powers of `u`. \
 
-		template <size_type N_count=N_data, size_type N_index=0, integral_type N_step=1, integral_type N_skip=0>
+		template <size_type N_count=N_data, size_type N_index=0, integer_type N_step=1, integer_type N_skip=0>
 		XTAL_DEF_(inline)
 		XTAL_LET generate(U_data const &u)
 		noexcept -> T &

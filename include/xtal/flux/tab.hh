@@ -30,9 +30,10 @@ struct tab
 {
 	using superkind = bond::compose<bond::tab<_s>...>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	

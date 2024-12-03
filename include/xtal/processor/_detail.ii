@@ -27,12 +27,12 @@ template <class U>	concept       unprocessed_q =  unprocessed_value_q<U> or unpr
 template <class U>	concept         processed_q =    processed_value_q<U> or   processed_range_q<U>;
 
 
-template <        class   T> XTAL_TYP repeated;
-template <       _value_q T> XTAL_TYP repeated<T> {using type = _xtd::ranges::  repeat_view<T>;};
-template <     iterable_q T> XTAL_TYP repeated<T> {using type = T;};
-template <_std::invocable T> XTAL_TYP repeated<T> {using type = _xtd::ranges::generate_view<T>;};
-template <        class   T> XTAL_USE repeated_t  = typename repeated<T>::type;
-template <        class   T> XTAL_ASK repeated_q  = not is_q<T, repeated_t<T>>;
+template <        class   T> struct   repeated;
+template <       _value_q T> struct   repeated<T> {using type = _xtd::ranges::  repeat_view<T>;};
+template <     iterable_q T> struct   repeated<T> {using type = T;};
+template <_std::invocable T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
+template <        class   T> using    repeated_t  = typename repeated<T>::type;
+template <        class   T> concept  repeated_q  = not is_q<T, repeated_t<T>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,16 +40,17 @@ template <        class   T> XTAL_ASK repeated_q  = not is_q<T, repeated_t<T>>;
 template <class U>
 struct refer_unprocessed
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
 
 	public:
 		using S_::S_;
 
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET begin(), S_::method().begin())
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET   end(), S_::method().  end())
+		XTAL_TO2_(XTAL_GET begin(), S_::method().begin())
+		XTAL_TO2_(XTAL_GET   end(), S_::method().  end())
 
 	};
 };

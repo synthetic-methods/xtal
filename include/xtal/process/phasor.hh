@@ -2,8 +2,8 @@
 #include "./any.hh"
 
 #include "../algebra/phason.hh"
-#include "../resource/example.hh"
-#include "../resource/biased.hh"
+#include "../provision/example.hh"
+#include "../provision/biased.hh"
 #include "../occur/indent.hh"
 
 XTAL_ENV_(push)
@@ -11,9 +11,9 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP phasor;
-template <typename ..._s> XTAL_USE phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> XTAL_ASK phasor_q = bond::any_tag_p<phasor, _s...>;
+template <typename ..._s> struct   phasor;
+template <typename ..._s> using    phasor_t = confined_t<phasor<_s...>>;
+template <typename ..._s> concept  phasor_q = bond::any_tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,11 +45,12 @@ struct phasor<A, As...>
 	>;
 	using superkind = bond::compose<bond::tag<phasor>
 	,	semikind
-	,	resource::biased<constant_t<1>>
+	,	provision::biased<constant_t<1>>
 	>;
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using U_ = typename S_::head_type;
 
@@ -66,7 +67,7 @@ struct phasor<A, As...>
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
-		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
+		XTAL_TO4_(XTAL_ION_(implicit) U_(), head())
 		
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET bias()
@@ -81,11 +82,11 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_GET let(size_type i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
-		Use `resource::example` to manage downsampling \
+		Use `provision::example` to manage downsampling \
 		e.g. by integer multiplication followed by normalization. \
 
 		///\
@@ -111,7 +112,7 @@ struct phasor<A, As...>
 			///\todo\
 			Override constructors to apply fractional `bias`. \
 			
-			if constexpr (resource::example_q<S_>) {
+			if constexpr (provision::example_q<S_>) {
 				auto const rate = S_::sample().rate();
 				auto &phi = ingress();
 				XTAL_IF0
@@ -155,9 +156,10 @@ struct phasor<A, As...>
 		};
 		
 	};
-	template <any_q S> requires phasor_q<bond::compose_s<S, semikind>>
+	template <class S> requires phasor_q<bond::compose_s<S, semikind>>
 	class subtype<S> : public bond::compose_s<S, semikind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, semikind>;
 		using U_ = typename S_::head_type;
 
@@ -171,7 +173,7 @@ struct phasor<A, As...>
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
 
-		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
+		XTAL_TO4_(XTAL_ION_(implicit) U_(), head())
 		
 		///\
 		Access by dynamic index. \
@@ -179,7 +181,7 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_GET let(size_type i), head().let(i))
 
 	public:// REEVALUATION
 		///\returns the current differential after scaling the incoming `phi` by `co`. \

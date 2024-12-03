@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	XTAL_TYP scalar;
-template <class   ..._s>	XTAL_USE scalar_t = typename scalar<_s...>::type;
-template <class   ...Ts>	XTAL_ASK scalar_q = bond::any_tag_p<scalar_t, Ts...>;
+template <class   ..._s>	struct   scalar;
+template <class   ..._s>	using    scalar_t = typename scalar<_s...>::type;
+template <class   ...Ts>	concept  scalar_q = bond::any_tag_p<scalar_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET scalar_f(auto &&...oo)
@@ -42,7 +42,6 @@ struct scalar<A>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		friend T;
 		using  S_ = holotype<T>;
 	
 	protected:
@@ -52,16 +51,17 @@ struct scalar<A>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-		XTAL_CO0_(homotype)
-	//	XTAL_CO1_(homotype)
-		XTAL_CO4_(homotype)
+	~	homotype() noexcept=default;
+	//	homotype() noexcept=default;
+
+		XTAL_NEW_(copy, homotype, noexcept=default)
+		XTAL_NEW_(move, homotype, noexcept=default)
 
 		XTAL_NEW_(implicit) homotype()
 		noexcept
 		{
 			auto &s = self();
 
-			XTAL_IF0
 			if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
 				[&]<auto ...I> (bond::seek_t<I...>)
 					XTAL_0FN {((get<I>(s) = U_data{1}),...);}

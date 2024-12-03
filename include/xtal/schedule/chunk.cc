@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./chunk.hh"// testing...
 
-#include "../resource/all.hh"
+#include "../provision/all.hh"
 #include "../processor/monomer.hh"
 
 
@@ -16,7 +16,7 @@ namespace xtal::schedule::_test
 template <class Px_mix>
 void chunk_processor_x1()
 {
-	using namespace resource;
+	using namespace provision;
 //	using namespace schedule;
 
 	using _op = bond::operating;

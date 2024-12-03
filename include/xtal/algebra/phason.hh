@@ -28,12 +28,12 @@ parameterized by an `continuous_field_q`-wrapper with a distinguished head. \
 ///\todo\
 Rework `operator`s to accommodate `std::complex`. \
 
-template <class   ..._s>	XTAL_TYP         phason;
-template <class   ..._s>	XTAL_USE         phason_t = typename phason<_s...>::type;
-template <class   ...Ts>	XTAL_ASK         phason_q = bond::any_tag_p<phason_t, Ts...>;
-template <class   ...Ts>	XTAL_ASK    real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
-template <class   ...Ts>	XTAL_ASK simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
-template <class   ...Ts>	XTAL_ASK complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
+template <class   ..._s>	struct           phason;
+template <class   ..._s>	using            phason_t = typename phason<_s...>::type;
+template <class   ...Ts>	concept          phason_q = bond::any_tag_p<phason_t, Ts...>;
+template <class   ...Ts>	concept     real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept  simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept  complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET phason_f(auto &&...oo)
@@ -46,9 +46,9 @@ noexcept -> auto
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <            class V> struct circumspect    : circumspect<devolved_u<V>> {};
-template <    real_number_q V> struct circumspect<V> : bond::operate<V>::template widen<-1> {};
-template <integral_number_q V> struct circumspect<V> : bond::operate<V>::template widen< 0> {};
+template <        class V> struct circumspect    : circumspect<devolved_u<V>> {};
+template <    integer_q V> struct circumspect<V> : bond::operate<V>::template widen< 0> {};
+template <real_number_q V> struct circumspect<V> : bond::operate<V>::template widen<-1> {};
 
 template <class V>
 struct circumscribe : circumspect<V>
@@ -67,7 +67,7 @@ struct circumscribe : circumspect<V>
 		return _op::sigma_f(_op::fractional_f(co));
 	};
 	XTAL_DEF_(return,inline,static)
-	XTAL_LET    coordinate(integral_number_q auto const &o)
+	XTAL_LET    coordinate(integer_q auto const &o)
 	noexcept -> coordinate_type
 	{
 		return _Op::haplo_f(_op::full.depth)*_Op::alpha_f(_op::delta_f(o));
@@ -134,7 +134,6 @@ struct phason<A>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		friend T;
 		using  S_ = holotype<T>;
 
 	protected:
@@ -170,20 +169,21 @@ struct phason<A>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-		XTAL_CO0_(homotype)
-	//	XTAL_CO1_(homotype)
-		XTAL_CO4_(homotype)
+	~	homotype() noexcept=default;
+	//	homotype() noexcept=default;
+
+		XTAL_NEW_(implicit) homotype()
+		noexcept
+		:	homotype(size_0)
+		{}
+		XTAL_NEW_(copy, homotype, noexcept=default)
+		XTAL_NEW_(move, homotype, noexcept=default)
 		
 		XTAL_NEW_(explicit) homotype(size_type const n)
 		noexcept
 		:	S_(n)
 		{}
 
-		XTAL_NEW_(implicit) homotype()
-		noexcept
-		:	homotype(size_0)
-		{
-		}
 		XTAL_NEW_(explicit) homotype(real_number_q auto &&...oo)
 		noexcept
 		:	homotype(sizeof...(oo))
@@ -341,7 +341,7 @@ struct phason<A>
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator *= (integral_number_q auto const &i)
+		XTAL_LET operator *= (integer_q auto const &i)
 		noexcept -> auto &
 		{
 			return S_::operator*=(i);
@@ -360,16 +360,16 @@ struct phason<A>
 			return operator+=(-f);
 		}
 		XTAL_DEF_(inline)
+		XTAL_LET operator += (integer_q auto const &i)
+		noexcept -> auto &
+		{
+			return self();
+		}
+		XTAL_DEF_(inline)
 		XTAL_LET operator += (real_number_q auto const &f)
 		noexcept -> auto &
 		{
 			get<0>(*this) += T_op::fractional_f(f);
-			return self();
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator += (integral_number_q auto const &i)
-		noexcept -> auto &
-		{
 			return self();
 		}
 
@@ -386,8 +386,8 @@ struct phason<A>
 		noexcept -> Y
 		{
 			auto [u0, u1] = *this;
-			auto const v0 = _xtd::make_signed_f(u0) >> T_op::positive.depth; u0 ^= v0; u0 -= v0;
-			auto const v1 = _xtd::make_signed_f(u1) >> T_op::positive.depth; u1 ^= v1; u1 -= v1;
+			auto const v0 = _xtd::bit_cast<inordinate_type>(u0) >> T_op::positive.depth; u0 ^= v0; u0 -= v0;
+			auto const v1 = _xtd::bit_cast<inordinate_type>(u1) >> T_op::positive.depth; u1 ^= v1; u1 -= v1;
 			return condition_f<Y>(v0 == v1 and u0 < u1);
 		}
 

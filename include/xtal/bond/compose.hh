@@ -17,8 +17,6 @@ namespace _detail
 template <template <class, typename...> class Subtype>
 struct compost
 {
-	using exists = constant_t< true>;
-
 	template <class S, class ...Inners>                            struct pseudokind               {using type = Subtype<S, Inners...>;};
 	template <class S, class ...Inners> requires none_q<Inners...> struct pseudokind<S, Inners...> {using type = Subtype<S           >;};
 	template <class S, class ...Inners>
@@ -73,7 +71,7 @@ struct compose<>
 Composes the `Subtypes`s right-to-left. \
 
 template <template <class, class...> class ...Subtypes>
-XTAL_USE compose_t = compose<_detail::compost<Subtypes>...>;
+using    compose_t = compose<_detail::compost<Subtypes>...>;
 
 ///\
 Applies the `Inners::subtype`s to `S` from left-to-right. \

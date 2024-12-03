@@ -13,77 +13,95 @@ namespace _detail
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U_this, class U_that=void>
+template <class U_node, class U_edge=void>
 struct query
 {
-	static constexpr bool A_node =     void_q<U_that>;
-	static constexpr bool A_edge = not void_q<U_that>;
+	XTAL_SET Q_node =     void_q<U_edge>;
+	XTAL_SET Q_edge = not void_q<U_edge>;
+
+	using U_dex = size_type;
 
 	template <class S>
 	class subtype : public S
 	{
-		using S_ = S;
+		using U_self = typename S::self_type;
+		using U_null =             null_type;
 
 	public:
-		using typename S_::self_type;
-		using typename S_::head_type;
-		using node_type = U_this;
+		using node_type = U_node;
 
 	public:
-		template <class _,               class ...Is>                 struct duper :         S_::template super<_,                       Is...> {};
-		template <class _,               class ...Is>                 struct super                      : duper<_,                       Is...> {};
-		template <class _,               class ...Is> requires A_edge struct super<_, U_that,    Is...> : duper<node_type, Is...> {};
-		template <class _,  liminal_q I, class ...Is> requires A_node struct super<_, I,         Is...> : duper<null_type, subliminal_s<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> requires A_node struct super<_, I,         Is...> : super<node_type,                  Is...> {};
-		template <class _,               class ...Is> requires A_node struct super<_, head_type, Is...> : super<node_type,                  Is...> {};
-		template <class _,               class ...Is> requires A_node struct super<_, node_type, Is...> : super<node_type,                  Is...> {};
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
 
-		template <                       class ...Is> using self_s = typename super<self_type, Is...>::type;
-		template <                       class ...Is> using head_s = typename super<node_type, Is...>::type;
-
-		template <class _,               class ...Is> struct superhead    {using type = typename head_s<Is...>::head_type;};
-		template <class _                           > struct superhead<_> {using type = _                                ;};
-		//\
-		template <                       class ...Is> using head_t = typename head_s<Is...>::head_type;
-		template <                       class ...Is> using head_t = typename superhead<head_type, Is...>::type;
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
 
 	public:
-		using S_::S_;
+		using S::S;
 
-		XTAL_TO4_(
-		XTAL_DEF_(return,inline)
-		XTAL_RET node(), self<node_type>()
-		)
-		/*/
-		using S_::self;
-		using S_::head;
-		/*/
-		XTAL_TO4_(template <class     ...Is> requires none_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <class     ...Is> requires none_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET head(auto &&...oo), S_::head(XTAL_REF_(oo)...)
-		)
-		/***/
-		XTAL_TO4_(template <class     ...Is> requires some_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <class     ...Is> requires some_q<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET head(auto &&...oo), S_::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
-		)
+		XTAL_TO4_(XTAL_GET node(), self<U_node>())
 
-		XTAL_TO4_(template <size_type ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...)
-		)
-		XTAL_TO4_(template <size_type ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
-		XTAL_RET head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...)
-		)
+		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_GET self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_GET self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_GET self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+
+	};
+	template <class S> requires complete_q<typename S::head_type>
+	class subtype<S> : public S
+	{
+		using U_self = typename S::self_type;
+		using U_head = typename S::head_type;
+		using U_null =             null_type;
+
+	public:
+		using node_type = U_node;
+
+	public:
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_head, Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+		template <                       class ...Is> using  head_s = typename super<U_node, Is...>::type;
+		template <                       class ...Is> using  head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
+
+	public:
+		using S::S;
+
+		XTAL_TO4_(XTAL_GET node(), self<node_type>())
+
+
+		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_GET self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_GET self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_GET self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+		
+
+		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_GET head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
+
+		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_GET head(auto &&...oo), S::head(XTAL_REF_(oo)...))
+
+		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_GET head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
 
 	};
 };

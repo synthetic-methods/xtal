@@ -39,9 +39,11 @@ struct any<A>
 		/**/
 		using S_::S_;
 		/*/
-		XTAL_CO0_(subtype);
-		XTAL_CO1_(subtype);
-		XTAL_CO4_(subtype);
+	~	subtype() noexcept=default;
+		subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 
 		template <fungible_q<subtype> O>
 		XTAL_NEW_(explicit) subtype(O &&o)

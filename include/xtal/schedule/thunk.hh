@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../resource/spooled.hh"
+#include "../provision/spooled.hh"
 
 #include "../algebra/serial.hh"
 #include "../flux/cue.hh"
@@ -18,13 +18,14 @@ which produces a signal by successive calls to `method`. \
 template <typename ...As>
 struct thunk
 {
-	using superkind = bond::compose<As..., resource::spooled<constant_t<-1>>>;
+	using superkind = bond::compose<As..., provision::spooled<constant_t<-1>>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		static_assert(resource::spooled_q<S_>);
+		static_assert(provision::spooled_q<S_>);
 
 	public:
 		using S_::S_;
@@ -44,7 +45,7 @@ struct thunk
 				using typename R_::V_event;
 				using typename R_::U_event;
 
-				XTAL_USE X_tip = typename U_event::cue_type;
+				using    X_tip = typename U_event::cue_type;
 				XTAL_SET K_tip =          U_event::cue_size::value;
 				//\
 				using V_shuttle = X_tip;
@@ -55,9 +56,11 @@ struct thunk
 			public:// CONSTRUCT
 			//	using R_::R_;
 				
-				XTAL_CO0_(subtype)
-				XTAL_CO1_(subtype)
-				XTAL_CO4_(subtype)
+			~	subtype() noexcept=default;
+				subtype() noexcept=default;
+
+				XTAL_NEW_(copy, subtype, noexcept=default)
+				XTAL_NEW_(move, subtype, noexcept=default)
 
 			private:// ACCESS
 				using L_delay = _std::numeric_limits<V_delay>;
@@ -68,16 +71,17 @@ struct thunk
 				};
 				U_shuttle u_shuttle{};
 
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(), u_shuttle.head())
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(), u_shuttle.tail())
+				XTAL_TO4_(XTAL_GET head_(), u_shuttle.head())
+				XTAL_TO4_(XTAL_GET then_(), u_shuttle.tail())
 
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(int i), u_spool.begin(i)->head())
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(int i), u_spool.begin(i)->tail())
+				XTAL_TO4_(XTAL_GET head_(int i), u_spool.begin(i)->head())
+				XTAL_TO4_(XTAL_GET then_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
 
 				template <auto ...>
+				XTAL_DEF_(return,inline)
 				XTAL_LET method()
 				noexcept -> decltype(auto)
 				{
@@ -109,7 +113,7 @@ struct thunk
 					return R_::efflux(XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(XTAL_ARG_(X_tip) &&o)
+				XTAL_LET influx(XTAL_SYN_(X_tip) auto &&o)
 				noexcept -> sign_type
 				{
 					compact_();
@@ -148,7 +152,7 @@ struct thunk
 				Enqueues the given message. \
 
 				XTAL_DEF_(return)
-				XTAL_LET shuttle_(XTAL_ARG_(U_shuttle) &&o)
+				XTAL_LET shuttle_(XTAL_SYN_(U_shuttle) auto &&o)
 				noexcept -> sign_type
 				{
 					compact_(o);
@@ -174,13 +178,13 @@ struct thunk
 					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(return)
-				XTAL_LET shuffle_(XTAL_ARG_(X_tip) &&x1, V_delay t1)
+				XTAL_LET shuffle_(XTAL_SYN_(X_tip) auto &&x1, V_delay t1)
 				noexcept -> sign_type
 				{
 					return shuttle_(t1, x1);
 				}
 				XTAL_DEF_(return)
-				XTAL_LET shuffle_(XTAL_ARG_(X_tip) &&x1, V_delay t1, V_delay t0)
+				XTAL_LET shuffle_(XTAL_SYN_(X_tip) auto &&x1, V_delay t1, V_delay t0)
 				noexcept -> sign_type
 				{
 					if (t0 < t1) {

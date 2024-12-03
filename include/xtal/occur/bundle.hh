@@ -13,9 +13,9 @@ namespace xtal::occur
 ///\
 Ties `Xs...` to unify handling, arithmetic, etc. \
 
-template <class ...Xs> XTAL_TYP bundle;
-template <class ...Xs> XTAL_USE bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> XTAL_ASK bundle_q = bond::any_tag_p<bundle, _s...>;
+template <class ...Xs> struct   bundle;
+template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
+template <class ..._s> concept  bundle_q = bond::any_tag_p<bundle, _s...>;
 
 template <class V=void, class ...Xs>
 XTAL_DEF_(return,inline)
@@ -25,8 +25,8 @@ noexcept -> auto
 	XTAL_IF0
 	XTAL_0IF (complete_q<V>) {
 		XTAL_LET f = invoke_f<V>;
-		XTAL_USE F = invoke_t<V>;
-		XTAL_USE T = bundle_t<_std::invoke_result_t<F, Xs>...>;
+		using    F = invoke_t<V>;
+		using    T = bundle_t<_std::invoke_result_t<F, Xs>...>;
 		if constexpr ((...and idempotent_p<Xs, F>)) {
 			return T{  XTAL_REF_(xs) ...};
 		}
@@ -48,9 +48,10 @@ struct bundle
 	using superkind = bond::compose<bond::tag<bundle>
 	,	_retail::bundle<Xs...>
 	>;
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
@@ -66,7 +67,8 @@ struct bundle
 
 		XTAL_DO2_(template <size_type ...Ns>
 		XTAL_DEF_(return,inline)
-		XTAL_LET slot(), -> decltype(auto)
+		XTAL_LET slot(),
+		noexcept -> decltype(auto)
 		{
 			return S_::template slot<Ns...>();
 		})
@@ -78,9 +80,9 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise()
 		noexcept -> auto &
-		requires requires {f(slot<0>());}
+		requires requires {f(S_::template slot<0>());}
 		{
-			auto &s_ = node();
+			auto &s_ = slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -93,11 +95,11 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise(auto const &t)
 		noexcept -> auto &
-	//	requires requires {f(slot<0>(), t);}
+	//	requires requires {f(S_::template slot<0>(), t);}
 	//	requires requires {(f(XTAL_ANY_(Xs), t), ...);}
 		requires complete_q<common_t<Xs..., decltype(t)>>
 		{
-			auto &s_ = node();
+			auto &s_ = slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -110,10 +112,11 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise(bundle_q auto const &t)
 		noexcept -> auto &
-		requires requires {f(slot<0>(), get<0>(t));}
+		requires complete_q<common_t<Xs..., decltype(get<0>(t))>>
+	//	requires requires {f(S_::template slot<0>(), get<0>(t));}
 		{
-			auto       &s_ =   node();
-			auto const &t_ = t.node();
+			auto       &s_ =   slots();
+			auto const &t_ = t.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);
@@ -131,7 +134,7 @@ struct bundle
 		noexcept -> auto
 		requires requires {f(get<0>(s));}
 		{
-			auto &s_ = s.node();
+			auto &s_ = s.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -142,9 +145,10 @@ struct bundle
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET pointwise(subtype const &s, auto const &t)
 		noexcept -> auto
-		requires un_n<fungible_q<subtype, decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
+		requires complete_q<common_t<Xs..., decltype(t)>>
+	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
 		{
-			auto &s_ = s.node();
+			auto &s_ = s.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -155,9 +159,10 @@ struct bundle
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET pointwise(auto const &t, subtype const &s)
 		noexcept -> auto
-		requires un_n<fungible_q<subtype, decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
+		requires complete_q<common_t<decltype(t), Xs...>>
+	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
 		{
-			auto &s_ = s.node();
+			auto &s_ = s.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -170,8 +175,8 @@ struct bundle
 		noexcept -> auto
 		requires requires {f(get<0>(s), get<0>(t));}
 		{
-			auto       &s_ = s.node();
-			auto const &t_ = t.node();
+			auto       &s_ = s.slots();
+			auto const &t_ = t.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
 			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);

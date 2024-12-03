@@ -17,9 +17,9 @@ Wrapper used to index an existing type. \
 
 ///\see e.g. [../processor/polymer.hh]. \
 
-template <class   ..._s>	XTAL_TYP key;
-template <class   ..._s>	XTAL_ASK key_q = bond::any_tag_p<key, _s...>;
-template <class   ..._s>	XTAL_USE key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
+template <class   ..._s>	struct   key;
+template <class   ..._s>	concept  key_q = bond::any_tag_p<key, _s...>;
+template <class   ..._s>	using    key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ struct key<>
 /**/
 template <any_q T>
 XTAL_DEF_(return,inline)
-XTAL_LET key_f(XTAL_ARG_(key_s<>) &&s, T &&t)
+XTAL_LET key_f(XTAL_SYN_(key_s<>) auto &&s, T &&t)
 noexcept -> auto
 {
 	using Y = based_t<T>;

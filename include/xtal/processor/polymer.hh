@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../flux/key.hh"
-#include "../resource/all.hh"
+#include "../provision/all.hh"
 
 
 
@@ -17,9 +17,9 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
-template <typename ..._s> XTAL_TYP polymer;
-template <typename ..._s> XTAL_USE polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> XTAL_ASK polymer_q = bond::any_tag_p<polymer, _s...>;
+template <typename ..._s> struct   polymer;
+template <typename ..._s> using    polymer_t = confined_t<polymer< _s...>>;
+template <typename ..._s> concept  polymer_q = bond::any_tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET polymer_f(auto &&u)
@@ -39,24 +39,24 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
-	//\
-	using superkind = confer<monomer_t<U>, As...>;
 	using superkind = monomer<U, As...>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using S_voice = typename S_::template voice<>;
-		using R_voice = monomer_t<U, resource::invoice<S_voice>>;
+		using S_subtext = typename S_::template subtext<>;
 
 	public:
 		using S_::S_;
 
-		template <class ...Xs> requires resource::spooled_q<S_>
+		template <class ...Xs> requires provision::spooled_q<S_>
 		struct bracket
 		{
-			using V_voice = typename R_voice::template bind_t<Xs...>;
+			//\
+			using V_voice = monomer_t<U, provision::context<S_subtext>>::template bind_t<Xs...>;
+			using V_voice = monomer_t<U, S_subtext>::template bind_t<Xs...>;
 			using V_event = occur::stage_t<>;
 			
 			using U_voice = flux::key_s<V_voice>;
@@ -67,9 +67,10 @@ struct polymer<U, As...>
 			,	defer<V_voice>
 			,	typename S_::template bracket<Xs...>
 			>;
-			template <any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
 				U_ensemble u_ensemble{};
@@ -81,9 +82,9 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(size_t i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET ensemble(), u_ensemble)
-				XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_RET lead(), R_::template head<V_voice>())
+				XTAL_TO2_(XTAL_GET ensemble(size_t i), u_ensemble[i])
+				XTAL_TO2_(XTAL_GET ensemble(        ), u_ensemble   )
+				XTAL_TO2_(XTAL_GET lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
 				using R_::influx;
@@ -181,7 +182,7 @@ struct polymer<U, As...>
 				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
 				
 				///\note\
-				The `ensemble` is only mixed into `this` if `resource::stored_q`, \
+				The `ensemble` is only mixed into `this` if `provision::stored_q`, \
 				otherwise the multichannel data is just rendered locally on each voice. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
@@ -204,7 +205,7 @@ struct polymer<U, As...>
 					///\todo\
 					Examine the possibility of forwarding an accumulating view. \
 
-					if constexpr (resource::stored_q<S_>) {
+					if constexpr (provision::stored_q<S_>) {
 						for (auto &vox:u_ensemble) {
 							auto result_o = vox();
 							auto _j = point_f(result_o);

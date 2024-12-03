@@ -27,10 +27,10 @@ struct define
 
 	using superkind = _retail::define<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
-		friend T;
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -169,7 +169,7 @@ struct define
 		and truncating propagation when the aggregated result is `1`. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET defuse(XTAL_ARG_(T) &&o)
+		XTAL_LET defuse(XTAL_SYN_(T) auto &&o)
 		noexcept -> sign_type
 		{
 			return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
@@ -197,9 +197,11 @@ struct define
 			//	using R_::R_;
 				using R_::self;
 
-				XTAL_CO0_(subtype);
-				XTAL_CO1_(subtype);
-				XTAL_CO4_(subtype);
+			~	subtype() noexcept=default;
+				subtype() noexcept=default;
+
+				XTAL_NEW_(copy, subtype, noexcept=default)
+				XTAL_NEW_(move, subtype, noexcept=default)
 
 				///\
 				Constructs the `attach`ed `occur` using its default, \
@@ -231,9 +233,10 @@ struct defer
 {
 	using superkind = _retail::defer<U>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -279,7 +282,7 @@ struct defer
 		Assigns the given value `O` if it matches the proxied type `U`. \
 
 		XTAL_DEF_(return,inline)
-		XTAL_LET defuse(XTAL_ARG_(U) &&o)
+		XTAL_LET defuse(XTAL_SYN_(U) auto &&o)
 		noexcept -> sign_type
 		{
 			return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);

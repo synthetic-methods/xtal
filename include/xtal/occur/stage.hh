@@ -23,9 +23,10 @@ struct stage
 	,	defer<sign_type>
 	>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -43,17 +44,20 @@ struct stage<A, As...>
 	,	defer<sign_type>
 	>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
 
-		XTAL_CO0_(subtype)
-	//	XTAL_CO1_(subtype)
-		XTAL_CO4_(subtype)
+	~	subtype() noexcept=default;
+	//	subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 		
 		XTAL_NEW_(implicit) subtype()
 		noexcept

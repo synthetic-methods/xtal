@@ -1,6 +1,6 @@
 #pragma once
 #include "../any.hh"
-#include "../access/all.hh"
+#include "../arrange/all.hh"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::access;
+namespace _retail = xtal::arrange;
 #include "./_detail.ii"
 
 

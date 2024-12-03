@@ -3,7 +3,7 @@
 
 #include "../flux/bundle.hh"
 #include "../occur/all.hh"
-#include "../resource/all.hh"
+#include "../provision/all.hh"
 #include "../schedule/all.hh"
 
 XTAL_ENV_(push)
@@ -14,27 +14,18 @@ namespace xtal::process
 #include "./_retail.ii"
 #include "./_detail.ii"
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
-
-template <class T> concept invaluable_q = _std::is_trivially_copyable_v<_std::remove_cvref_t<T>> and     _std::is_trivially_constructible_v<_std::remove_cvref_t<T>>;
-template <class T> concept   valuable_q = _std::is_trivially_copyable_v<_std::remove_cvref_t<T>> and not _std::is_trivially_constructible_v<_std::remove_cvref_t<T>>;
-
-
-}///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
 struct define
 {
 	using superkind = _retail::define<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
-		friend T;
-		
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using T_ = typename S_::self_type;
 	
 	public:// CONSTRUCT
 		using S_::S_;
@@ -50,26 +41,22 @@ struct define
 			template <auto ...Is>
 			class index
 			{
-				using Y = decltype(XTAL_ANY_(T &).template divest<Is...>(XTAL_ANY_(Xs)...));
+				using Y = decltype(XTAL_ANY_(T &).template divert<Is...>(XTAL_ANY_(Xs)...));
 
 			public:
 				using point_type = Y (T::*) (Xs...);
-				static_assert(not _std::is_const_v<point_type>);
-				
-				static constexpr point_type point = &T::template divest<Is...>;
+				static constexpr point_type point = &T::template divert<Is...>;
 
 			};
 			template <auto ...Is>
-				requires XTAL_TRY_(XTAL_ANY_(T const &).template divest<Is...>(XTAL_ANY_(Xs)...))
+			requires XTAL_TRY_(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))
 			class index<Is...>
 			{
-				using Y = decltype(XTAL_ANY_(T const &).template divest<Is...>(XTAL_ANY_(Xs)...));
+				using Y = decltype(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...));
 
 			public:
-				using point_type = _std::add_const_t<Y (T::*) (Xs...) const>;
-				static_assert(_std::is_const_v<point_type>);
-				
-				XTAL_SET point = static_cast<point_type>(&T::template divest<Is...>);
+				using point_type = _std::add_const_t<Y (T::*) (Xs...) const>;// Added `const` for type-reflection...
+				XTAL_SET point = static_cast<point_type>(&T::template divert<Is...>);
 
 			};
 		};
@@ -79,10 +66,10 @@ struct define
 		
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET divest(auto &&...xs)
+		XTAL_LET divert(auto &&...xs)
 		noexcept -> decltype(auto)
-			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).         method       (XTAL_REF_(xs)...)))
-			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T        ).template method<Is...>(XTAL_REF_(xs)...)))
+			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T       &).         method       (XTAL_REF_(xs)...)))
+			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T       &).template method<Is...>(XTAL_REF_(xs)...)))
 		{
 			XTAL_IF0
 			XTAL_0IF (none_n<Is...>)                    {return self().         method       (XTAL_REF_(xs)...);}
@@ -90,7 +77,7 @@ struct define
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET divest(auto &&...xs) const
+		XTAL_LET divert(auto &&...xs) const
 		noexcept -> decltype(auto)
 			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).         method       (XTAL_REF_(xs)...)))
 			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_REF_(xs)...)))
@@ -113,7 +100,7 @@ struct define
 		XTAL_LET deify(constant_q auto ...Is) const
 		noexcept -> decltype(auto)
 		{
-			return deify(digest<Xs...>::template index<XTAL_VAL_(Is)...>::point);
+			return deify(digest<Xs...>::template index<Is...>::point);
 		}
 
 	public:// OPERATE
@@ -124,9 +111,9 @@ struct define
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(return,inline)
 		XTAL_LET reify(constant_q auto ...Is),
-		-> decltype(auto)
+		noexcept -> decltype(auto)
 		{
-			return [this] XTAL_1FN_(self().template operator()<XTAL_VAL_(Is)...>);
+			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(Is)::value...>);
 		})
 
 		///\returns the result of applying `method`, with `dispatch`ed parameters resolved. \
@@ -134,7 +121,7 @@ struct define
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET operator() (auto &&...xs),
-		-> decltype(auto)
+		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
@@ -164,12 +151,13 @@ struct define
 		struct bracket
 		{
 			using superkind = bond::compose<void
-			,	defer<T_>
+			,	defer<T>
 			,	flux::bundle<Xs...>
 			>;
-			template <any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
@@ -186,21 +174,29 @@ struct define
 				:	R_(XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
-			public:// OPERATE
+			public:// ACCESS
 				using R_::slots;
+
+				using process_type = T;
+				XTAL_TO4_(XTAL_GET process(), S_::head())
+
+
+			public:// OPERATE
 				using R_::method;
 				///\
 				Evaluates the lifted `method` using the bound slots. \
 
 				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(return,inline)
-				XTAL_LET method(auto &&...xs), -> decltype(auto)
+				XTAL_LET method(auto &&...xs),
+				noexcept -> decltype(auto)
 				{
 					XTAL_LET M = sizeof...(Xs);
 					XTAL_LET N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
 					XTAL_0IF (0 == N) {return         slots().apply([this] XTAL_1FN_(method));}
+					XTAL_0IF_(void)
 				})
 
 			};
@@ -216,9 +212,10 @@ struct refine
 {
 	using superkind = _retail::refine<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:// CONSTRUCT
@@ -238,7 +235,7 @@ struct refine
 
 		};
 		template <class ...Xs>
-		XTAL_USE bind_t = typename bracket<Xs...>::type;
+		using    bind_t = typename bracket<Xs...>::type;
 
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET bind_f(auto &&...xs)
@@ -247,18 +244,14 @@ struct refine
 			return bind_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
 		XTAL_DEF_(return,inline,static)
-		XTAL_LET bind_f(XTAL_ARG_(T) &&t, auto &&...xs)
+		XTAL_LET bind_f(XTAL_SYN_(T) auto &&t, auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		
-		XTAL_DO4_(template <class ...Xs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET rebound(Xs &&...xs), -> decltype(auto)
-		{
-			return bind_f(S_::self(), XTAL_REF_(xs)...);
-		})
+		XTAL_TO4_(template <class ...Xs>
+		XTAL_GET rebound(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
 
 	};
 };
@@ -269,100 +262,44 @@ struct refine
 template <class U>
 struct defer
 {
-	using superkind = _retail::defer<U>;
+	using superkind = _detail::invoke_head<_retail::defer<U>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using T_ = typename S_::self_type;
-		using U0 = typename S_::template head_t<constant_t<0>>;
-		using U1 = typename S_::template head_t<constant_t<1>>;
-	
-		///\
-		Resolves `head` as either a function or value. \
-
-		///\note\
-		The value of `head` is only returned. \
-
-		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET map_method(auto &&...xs),
-		-> decltype(auto)
-		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(S_::head().template operator()<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_TRY_TO_(S_::head()                           (XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_TRY_TO_(S_::head())
-			XTAL_0IF_(void)
-		})
-		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET map_function(auto &&...xs),
-		-> decltype(auto)
-		{
-			XTAL_IF0
-			XTAL_0IF (any_q<U0>) {return U0::template function<Is...>(XTAL_REF_(xs)...);}
-			XTAL_0IF_(else)      {return U0{}                        (XTAL_REF_(xs)...);}
-		})
-
-	public:// FUNC*
-
-		///\
-		Resolves `head` as either a function or value, \
-		composed with the inherited `method` or `function` if `defer`red. \
-
-		///\note\
-		Only `method`s participate in parameter resolution. \
-
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs)
-		noexcept -> decltype(auto)
-		{
-			return map_method<Is...>(XTAL_REF_(xs)...);
-		}
-		template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs) const
-		noexcept -> decltype(auto)
-		{
-			return map_method<Is...>(XTAL_REF_(xs)...);
-		}
-
-		template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires in_n<XTAL_TRY_(XTAL_ANY_(S       &).template method<Is...>(XTAL_REF_(xs)...))>
-		{
-			return map_method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
-		}
-		template <auto ...Is> requires any_q<U1>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs) const
-		noexcept -> decltype(auto)
-		requires in_n<XTAL_TRY_(XTAL_ANY_(S const &).template method<Is...>(XTAL_REF_(xs)...))>
-		{
-			return map_method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
-		}
-
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires un_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
-		and XTAL_TRY_TO_(map_function<Is...>(XTAL_REF_(xs)...))
-
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires in_n<XTAL_TRY_(S::template function<Is...>(XTAL_REF_(xs)...))>
-		and XTAL_TRY_TO_(map_function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 	public:// CONSTRUCT
 		using S_::S_;
+
+	};
+	template <class S> requires any_q<typename S::head_type>
+	class subtype<S> : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// OPERATE
+		///\
+		Resolves `head` as either a function or value, \
+		composed with the inherited `method` or `function` if the parent is a `defer`red `process`. \
+
+		XTAL_DO2_(template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs),
+		noexcept -> decltype(auto)
+		{
+			return S_::template method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
+		})
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_TO_(S_::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
 
 	};
 };

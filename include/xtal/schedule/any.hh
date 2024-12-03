@@ -22,10 +22,10 @@ struct define
 {
 	using superkind = _retail::define<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
-		friend T;
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -70,13 +70,13 @@ struct define
 				Expands the given unscheduled message, forwarding to `supertype::influx`. \
 
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(XTAL_ARG_(U_tuple) &&o)
+				XTAL_LET influx(XTAL_SYN_(U_tuple) auto &&o)
 				noexcept -> sign_type
 				{
 					return XTAL_REF_(o).apply([this] XTAL_1FN_(R_::influx));
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(XTAL_ARG_(W_tuple) &&o)
+				XTAL_LET influx(XTAL_SYN_(W_tuple) auto &&o)
 				noexcept -> sign_type
 				{
 					return _std::apply([this] XTAL_1FN_(R_::influx), XTAL_REF_(o));
@@ -86,19 +86,19 @@ struct define
 				Condenses the given scheduled message, forwarding to `self().infuse`. \
 				
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(V_event d, XTAL_ARG_(Xs) &&...oo)
+				XTAL_LET influx(V_event d, XTAL_SYN_(Xs) auto &&...oo)
 				noexcept -> sign_type
 				{
 					return infuse_joint(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(V_event d, XTAL_ARG_(U_tuple) &&o)
+				XTAL_LET influx(V_event d, XTAL_SYN_(U_tuple) auto &&o)
 				noexcept -> sign_type
 				{
 					return XTAL_REF_(o).apply(infuse_joint(XTAL_MOV_(d)));
 				}
 				XTAL_DEF_(return,inline)
-				XTAL_LET influx(V_event d, XTAL_ARG_(W_tuple) &&o)
+				XTAL_LET influx(V_event d, XTAL_SYN_(W_tuple) auto &&o)
 				noexcept -> sign_type
 				{
 					return _std::apply(infuse_joint(XTAL_MOV_(d)), XTAL_REF_(o));
@@ -128,9 +128,10 @@ struct refine
 {
 	using superkind = _retail::refine<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 		template <class ...Xs>

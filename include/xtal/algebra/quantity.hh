@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../access/block.hh"
+#include "../arrange/block.hh"
 
 
 
@@ -11,9 +11,9 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	XTAL_TYP quantity;
-template <class   ..._s>	XTAL_USE quantity_t = typename quantity<_s...>::type;
-template <class   ..._s>	XTAL_ASK quantity_q = bond::any_tag_p<quantity_t, _s...>;
+template <class   ..._s>	struct   quantity;
+template <class   ..._s>	using    quantity_t = typename quantity<_s...>::type;
+template <class   ..._s>	concept  quantity_q = bond::any_tag_p<quantity_t, _s...>;
 template <class  V=void>
 XTAL_DEF_(return,inline)
 XTAL_LET quantity_f(auto &&...oo)
@@ -23,7 +23,7 @@ noexcept -> auto
 }
 
 template <class T, class S=T>
-XTAL_ASK lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
+concept  lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ struct quantity<A>
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename access::block<A>::template homotype<T>;
+	using endotype = typename arrange::block<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<quantity_t>>;
@@ -49,7 +49,6 @@ struct quantity<A>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		friend T;
 		using  S_ = holotype<T>;
 		using  I_ = typename S_::difference_type;
 

@@ -33,9 +33,10 @@ struct define
 	using superkind = bond::compose<void
 	,	_detail::define_super<T>
 	>;
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 
 		XTAL_DEF_(return,inline)
@@ -85,18 +86,20 @@ struct refine
 	,	_detail::refine_tuple<T>
 	>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
 
 	};
-	template <any_q S> requires iterable_q<S> and un_n<iterated_q<S>>
+	template <class S> requires iterable_q<S> and un_n<iterated_q<S>>
 	class subtype<S> : public bond::compose_s<S, superkind>, public arranged_t<T>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
@@ -120,9 +123,10 @@ struct defer
 {
 	using superkind = _detail::defer_field<U>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 		using U_ = typename S_::head_type;
 
@@ -189,11 +193,11 @@ template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_GET operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_GET operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_DEF_(return,inline) XTAL_LET operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept -> decltype(auto) {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline) XTAL_LET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept -> decltype(auto) {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_GET operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_GET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

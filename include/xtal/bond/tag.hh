@@ -47,12 +47,12 @@ struct tag
 	};
 };
 
-template <class T, template <class ...> class ...Ys> XTAL_TYP all_tag   :          all_tab<T, tag<Ys>...>     {};
-template <class T, template <class ...> class ...Ys> XTAL_USE all_tag_t = typename all_tab<T, tag<Ys>...>:: type;
-template <class T, template <class ...> class ...Ys> XTAL_ASK all_tag_q =          all_tab<T, tag<Ys>...>::value;
+template <class T, template <class ...> class ...Ys> struct   all_tag   :          all_tab<T, tag<Ys>...>     {};
+template <class T, template <class ...> class ...Ys> using    all_tag_t = typename all_tab<T, tag<Ys>...>:: type;
+template <class T, template <class ...> class ...Ys> concept  all_tag_q =          all_tab<T, tag<Ys>...>::value;
 
-template <class T, template <class ...> class ...Ys> XTAL_ASK any_tag_q = _std::conjunction_v<all_tag<based_t<T >, Ys>...>;
-template <template <class ...> class Y, class ...Ts> XTAL_ASK any_tag_p = _std::conjunction_v<all_tag<based_t<Ts>, Y >...>;
+template <class T, template <class ...> class ...Ys> concept  any_tag_q = _std::conjunction_v<all_tag<based_t<T >, Ys>...>;
+template <template <class ...> class Y, class ...Ts> concept  any_tag_p = _std::conjunction_v<all_tag<based_t<Ts>, Y >...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

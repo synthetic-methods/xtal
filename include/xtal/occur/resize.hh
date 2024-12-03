@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_type> XTAL_TYP resize;
-template <class U=size_type> XTAL_USE resize_t = confined_t<resize<U>>;
-template <typename ..._s> XTAL_ASK resize_q = bond::any_tag_p<resize, _s...>;
+template <class U=size_type> struct   resize;
+template <class U=size_type> using    resize_t = confined_t<resize<U>>;
+template <typename ..._s> concept  resize_q = bond::any_tag_p<resize, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET resize_f(auto &&w)
 noexcept -> auto
@@ -30,9 +30,10 @@ struct resize
 {
 	using superkind = bond::compose<flux::tag<resize>, defer<U>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
@@ -44,13 +45,13 @@ struct resize
 		using S_::head;
 
 		using size_type = U;
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET empty(), 0 == size())
+		XTAL_TO4_(XTAL_GET size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_GET empty(), 0 == size())
 
 	};
 };
 template <iterated_q U>
-struct resize<U> : resize<count_t<U>>
+struct resize<U> : resize<counter_t<U>>
 {
 };
 

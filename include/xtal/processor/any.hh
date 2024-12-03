@@ -3,7 +3,7 @@
 
 #include "../occur/render.hh"
 #include "../occur/resize.hh"
-#include "../resource/invoice.hh"
+#include "../provision/context.hh"
 
 
 XTAL_ENV_(push)
@@ -26,9 +26,10 @@ struct define
 
 	using superkind = _retail::define<T>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
@@ -44,9 +45,10 @@ struct define
 			,	U_render::attach<>
 			,	typename S_::template bracket<Xs...>
 			>;
-			template <any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
@@ -82,7 +84,7 @@ struct define
 								review_o.subview(scan),
 								render_o.subview(scan).skip(step)
 							)))
-						&	[this, ...oo = XTAL_REF_(oo)] XTAL_XFN_(R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
+						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
 					}
 				}
 				///\
@@ -94,7 +96,7 @@ struct define
 				noexcept -> sign_type
 				{
 					auto    &u_state = review_o.view();
-					XTAL_USE U_state = XTAL_ALL_(u_state);
+					using    U_state = XTAL_ALL_(u_state);
 					XTAL_LET N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
 					
 					if (1 == R_::template efflux_pull<N_share>(review_o, render_o)) {
@@ -139,9 +141,11 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-template <_detail::unprocessed_value_q U>
+//\
+template <any_q U>
+template <_detail::  processed_range_q U>
 struct defer<U>
-:	defer<_detail::repeated_t<U>>
+:	_retail::defer<U>
 {
 };
 template <_detail::unprocessed_range_q U>
@@ -154,9 +158,10 @@ struct defer<U>
 	,	_retail::defer<U>
 	,	typename V_render::attach<>
 	>;
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using U_ = _std::remove_reference_t<U>;
 
@@ -165,7 +170,8 @@ struct defer<U>
 
 		XTAL_DO2_(template <auto ...>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(), -> decltype(auto)
+		XTAL_LET method(),
+		noexcept -> decltype(auto)
 		{
 			auto &v = S_::template head<V_render>().view();
 			return S_::subhead(v);
@@ -173,53 +179,21 @@ struct defer<U>
 
 	};
 };
-/*/
-template <_detail::processed_range_q U>
+
+template <_detail::unprocessed_value_q U>
 struct defer<U>
-:	_retail::defer<U>
+:	defer<_detail::repeated_t<U>>
 {
 };
-/*/
-template <any_q U>
+template <_detail::  processed_value_q U>
 struct defer<U>
 {
 	using superkind = _retail::defer<U>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, superkind>;
-
-	public:
-		using S_::S_;
-
-	//	NOTE: Wrapped by the identity, rather than deranged...
-		
-		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs),
-		-> decltype(auto)
-		{
-			return S_::template method<Is...>(XTAL_REF_(xs)...);
-		})
-		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET function(auto &&...xs),
-		-> decltype(auto)
-			requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
-		)
-
-	};
-};
-/***/
-template <_detail::processed_value_q U>
-struct defer<U>
-{
-	using superkind = _retail::defer<U>;
-
-	template <any_q S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using U_ = typename S_::head_type;
 
@@ -241,41 +215,47 @@ struct defer<U>
 		The `template-method` is type-erased with `ranges::any_view` (so it can be `vtable`d), \
 		but it only works if `this` is mutable... \
 
-		template <auto ...Is>
+		XTAL_DO2_(template <auto ...Is> requires some_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs)
+		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{
 			using namespace _xtd::ranges;
-
-			auto  y_ = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
-			using Y_ = decltype(y_);
-			using Z_ = any_view<range_reference_t<Y_>, get_categories<Y_>()>;
+			//\
+			auto const y_ = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
+			auto const y_ = iterative_f(head().template reify<decltype(xs)...>(constant_t<Is>{}...), XTAL_REF_(xs)...);
+			using      Y_ = decltype(y_);
+			using      Z_ = any_view<range_reference_t<Y_>, get_categories<Y_>()>;
 			if constexpr XTAL_TRY_(y_.size()) {
-				auto const z_affix = account_f(y_);//NOTE: `any_view` doesn't propagate `size()`...
-				return Z_(XTAL_MOV_(y_))|z_affix;
+				return Z_(XTAL_MOV_(y_))|account_f(y_);//NOTE: `any_view` doesn't propagate `size()`...
 			}
 			else {
 				return Z_(XTAL_MOV_(y_));
 			}
-		}
+		})
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs), -> decltype(auto)
+		XTAL_LET method(auto &&...xs),
+		noexcept -> decltype(auto)
 		{
-			return iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
+			return iterative_f(head().template reify<decltype(xs)...>(), XTAL_REF_(xs)...);
 		})
 
 		XTAL_DO0_(template <auto ...Is> requires none_n<Is...>
 		XTAL_DEF_(return,inline)
-		XTAL_LET function(auto &&...xs), -> decltype(auto)
-			requires XTAL_TRY_(U_::template function<Is...>
-				(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...)
-			)
+		XTAL_LET function(auto &&...xs),
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(U_::function(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
 		{
-			return iterative_f([] XTAL_1FN_(U_::template function<Is...>)
-			,	XTAL_REF_(xs)...
-			);
+			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
+		})
+		XTAL_DO0_(template <auto ...Is> requires some_n<Is...>
+		XTAL_DEF_(return,inline)
+		XTAL_LET function(auto &&...xs),
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
+		{
+			return iterative_f([] XTAL_1FN_(U_::template function<Is...>), XTAL_REF_(xs)...);
 		})
 
 	};

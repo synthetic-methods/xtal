@@ -14,11 +14,11 @@ namespace xtal::bond
 Binds multiple values/references, \
 providing point-wise multiplication/division and scalar summation. \
 
-template <class   ..._s>	XTAL_TYP couple;
-template <class   ..._s>	XTAL_USE couple_t = typename couple<_s...>::type;
+template <class   ..._s>	struct   couple;
+template <class   ..._s>	using    couple_t = typename couple<_s...>::type;
 //\
-template <class   ..._s>	XTAL_ASK couple_q = bond::any_tag_p<couple, _s...>;
-template <class T     , class ...Xs>	XTAL_ASK couple_q = bond::any_tag_p<couple, T> and (0 == sizeof...(Xs) or as_q<T, bond::pack_t<Xs...>>);
+template <class   ..._s>	concept  couple_q = bond::any_tag_p<couple, _s...>;
+template <class T     , class ...Xs>	concept  couple_q = bond::any_tag_p<couple, T> and (0 == sizeof...(Xs) or as_q<T, bond::pack_t<Xs...>>);
 template <class V=void, class ...Xs>
 XTAL_DEF_(return,inline)
 XTAL_LET couple_f(Xs &&...xs)
@@ -27,8 +27,8 @@ noexcept -> auto
 	XTAL_IF0
 	XTAL_0IF (complete_q<V>) {
 		XTAL_LET f = invoke_f<V>;
-		XTAL_USE F = invoke_t<V>;
-		XTAL_USE T = couple_t<_std::invoke_result_t<F, Xs>...>;
+		using    F = invoke_t<V>;
+		using    T = couple_t<_std::invoke_result_t<F, Xs>...>;
 		if constexpr ((...and idempotent_p<Xs, F>)) {
 			return T{ (XTAL_REF_(xs))...};
 		}
@@ -49,7 +49,7 @@ struct couple
 {
 	XTAL_DEF_(static)
 	XTAL_LET N_data = sizeof...(Xs);
-	XTAL_USE U_data = devolved_u<Xs...>;
+	using    U_data = devolved_u<Xs...>;
 
 	using archetype = pack_t<Xs...>;
 	using supertype = bond::compose_s<archetype, tag<couple>>;
@@ -65,12 +65,10 @@ struct couple
 		using tuple_element = _std::tuple_element<N, archetype>;
 		using tuple_size    = _std::tuple_size   <   archetype>;
 
-		XTAL_DO4_(template <complete_q F>
+		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(inline)
-		XTAL_ION_(explicit) F(),
-		{
-			return apply<F>();
-		})
+		XTAL_ION_(explicit) F(), apply<F>())
+
 		template <class F=XTAL_FUN_(bond::pack_f)>
 		XTAL_DEF_(return,inline)
 		XTAL_LET apply() const
@@ -291,7 +289,7 @@ struct devalued<T>
 {
 	XTAL_DEF_(return,inline,static)
 	XTAL_LET size() noexcept -> size_type {return _std::tuple_size_v<T>;};
-	XTAL_USE value_type = _std::tuple_element_t<0, T>;
+	using    value_type = _std::tuple_element_t<0, T>;
 
 };
 

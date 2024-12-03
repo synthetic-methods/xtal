@@ -19,29 +19,34 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class   ...Us>	XTAL_ASK         member_q = rebased_q<Us...>;
-template <class      W >	XTAL_TYP         member            {using type = debased_t<W>;};
-template <size_type  N >	XTAL_TYP         member<unit_type[N]> {using type =     unsigned;};
-template <size_type  N >	XTAL_TYP         member<null_type[N]> {using type =     unsigned;};
-template <class      W >	XTAL_USE         member_t = typename member<W>::type;
-template <debased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&   w)       noexcept -> decltype(auto) {return & XTAL_REF_(w)    ;}
-template <class      W >	XTAL_DEF_(return,inline,static) XTAL_LET    member_f(auto &&...w)       noexcept -> decltype(auto) {return W(XTAL_REF_(w)...);}
+template <class      W >	struct      member               : constant_t< true> {using type = based_t<W>;};
+template <size_type  N >	struct      member<unit_type[N]> : constant_t< true> {using type =   unsigned;};
+template <size_type  N >	struct      member<null_type[N]> : constant_t< true> {using type =   unsigned;};
+template <unbased_q  W >	struct      member<W const &   > : constant_t<false> {using type =   const W*;};
+template <unbased_q  W >	struct      member<W       &   > : constant_t<false> {using type =         W*;};
+template <class      W >	using       member_t = typename member<W>:: type;
+template <class      W >	concept     member_q =          member<W>::value;
+template <class      W >	concept  dismember_q =      not member<W>::value;
+
+template <class      M >	requires dismember_q<M>XTAL_GET member_f(auto &&    o) noexcept {return & XTAL_REF_(o )    ;}
+template <class      M >	                       XTAL_GET member_f(auto &&...oo) noexcept {return M(XTAL_REF_(oo)...);}
 
 ///\
 Resolves/dereferences the current value. \
 
-template <class      W >	XTAL_TYP     remember            {using type =      W;};
-template <size_type  N >	XTAL_TYP     remember<unit_type[N]> {using type = size_type;};
-template <size_type  N >	XTAL_TYP     remember<null_type[N]> {using type = size_type;};
-template <class      W >	XTAL_USE     remember_t = typename remember<W>::type;
-template <pointer_q  M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             noexcept -> decltype(auto) {return *XTAL_REF_(m);}
-template <class      M >	XTAL_DEF_(return,inline,static) XTAL_LET  remember_f(M &&m)             noexcept -> decltype(auto) {return  XTAL_REF_(m);}
+template <class      W >	struct   remember               {using type = W        ;};
+template <size_type  N >	struct   remember<unit_type[N]> {using type = size_type;};
+template <size_type  N >	struct   remember<null_type[N]> {using type = size_type;};
+template <class      W >	using    remember_t = typename remember<W>::type;
+
+template <pointed_q  M >	XTAL_GET remember_f(M &&m) noexcept {return *XTAL_REF_(m);}
+template <class      M >	XTAL_GET remember_f(M &&m) noexcept {return  XTAL_REF_(m);}
 
 ///\
 Replaces and returns the previous value. \
 
-template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, W w)         noexcept -> decltype(auto) {return _std::exchange(m, XTAL_MOV_(w));}
-template <rebased_q  W >	XTAL_DEF_(return,inline,static) XTAL_LET dismember_f(W &m, auto &&...w) noexcept -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <member_q   W >	XTAL_GET dismember_f(W &m,         W w) noexcept {return                 _std::exchange(m, XTAL_MOV_(w));}
+template <member_q   W >	XTAL_GET dismember_f(W &m, auto &&...w) noexcept {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +71,7 @@ struct define_super
 		struct super : bond::seek_back<Is...> {};
 
 		using self_type = T;
-		using head_type = void;
+	//	using head_type = void;
 
 		XTAL_DEF_(return,inline)
 		XTAL_LET pack() const
@@ -87,18 +92,20 @@ struct define_super
 template <class T>
 struct refine_head
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 
 	public:
 		using S_::S_;
 
 	};
-	template <any_q S> requires (1 == S::pack_size::value)
+	template <class S> requires (1 == S::pack_size::value)
 	class subtype<S> : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using U_ = typename S_::head_type;
 
@@ -111,7 +118,7 @@ struct refine_head
 		///\
 		Implicit conversion to the singleton kernel-type. \
 
-		XTAL_DO4_(XTAL_ION_(implicit) U_(), {return head();})
+		XTAL_TO4_(XTAL_ION_(implicit) U_(), head())
 		
 //		///\
 //		\returns a copy of `this` with `head<Is...>(oo...)` applied. \
@@ -130,9 +137,10 @@ struct refine_head
 template <class T>
 struct refine_tuple
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 
 	public:
@@ -143,7 +151,8 @@ struct refine_tuple
 		Tuple application. \
 
 		XTAL_DO2_(XTAL_DEF_(inline)
-		XTAL_LET apply(auto &&f), -> decltype(auto)
+		XTAL_LET apply(auto &&f),
+		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
 			XTAL_0IF (0 == pack_size::value) {
@@ -203,9 +212,10 @@ struct refine_tuple
 template <class U>
 struct defer_field
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
 
 	public:
@@ -221,9 +231,11 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-		XTAL_CO0_(subtype)
-	//	XTAL_CO1_(subtype)
-		XTAL_CO4_(subtype)
+	~	subtype() noexcept=default;
+	//	subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 		
 		template <fungible_q<subtype> O>
 		XTAL_NEW_(explicit) subtype(O &&o)
@@ -255,10 +267,10 @@ struct defer_field
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(return,inline) XTAL_LET head() const  &noexcept -> decltype(auto) {return remember_f(body_part);}
-		XTAL_DEF_(return,inline) XTAL_LET head()        &noexcept -> decltype(auto) {return remember_f(body_part);}
-		XTAL_DEF_(return,inline) XTAL_LET head() const &&noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
-		XTAL_DEF_(return,inline) XTAL_LET head()       &&noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_GET head() const  &noexcept {return remember_f(body_part);}
+		XTAL_GET head()        &noexcept {return remember_f(body_part);}
+		XTAL_GET head() const &&noexcept {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_GET head()       &&noexcept {return remember_f(XTAL_MOV_(body_part));}
 		
 		XTAL_DEF_(inline)
 		XTAL_LET head(auto &&...oo)
@@ -286,9 +298,10 @@ struct defer_field
 template <constant_q U>
 struct defer_field<U>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
 
 	public:
@@ -328,9 +341,10 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		XTAL_0FN_(_std::array{(size_type) bond::seek_index_of_n<I + N_lower, Ns...>...})
 	(bond::seek_s<1 + N_upper - N_lower>{});
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
 
 	public:
@@ -342,9 +356,11 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		using S_::self;
 		body_type body_part{};
 
-		XTAL_CO0_(subtype);
-		XTAL_CO1_(subtype);
-		XTAL_CO4_(subtype);
+	~	subtype() noexcept=default;
+		subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 		
 		template <fungible_q<subtype> O>
 		XTAL_NEW_(explicit) subtype(O &&o)
@@ -357,12 +373,12 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
 		}
-		XTAL_NEW_(explicit) subtype(XTAL_ARG_(head_type) &&o, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(XTAL_SYN_(head_type) auto &&o, auto &&...oo)
 		noexcept
 		:	subtype(I_array[XTAL_REF_(o) - N_lower], XTAL_REF_(oo)...)
 		{
 		}
-		XTAL_NEW_(explicit) subtype(XTAL_ARG_(body_type) &&o, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(XTAL_SYN_(body_type) auto &&o, auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		,	body_part(XTAL_REF_(o))
@@ -399,9 +415,10 @@ struct defer_field<unit_type[N_width]>
 
 	using superkind = bond::word<N_width>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
 	public:
@@ -415,9 +432,11 @@ struct defer_field<unit_type[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-		XTAL_CO0_(subtype);
-		XTAL_CO1_(subtype);
-		XTAL_CO4_(subtype);
+	~	subtype() noexcept=default;
+		subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 		
 		template <fungible_q<subtype> O>
 		XTAL_NEW_(explicit) subtype(O &&o)
@@ -444,11 +463,7 @@ struct defer_field<unit_type[N_width]>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DO2_(XTAL_DEF_(return,inline)
-		XTAL_LET head(), -> decltype(auto)
-		{
-			return head_type(body_part);
-		})
+		XTAL_TO2_(XTAL_GET head(), head_type{body_part})
 		
 	};
 };
@@ -464,36 +479,39 @@ struct defer_field<null_type[N_depth]>
 template <class U>
 struct refer_iterators
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using U_ = _std::remove_reference_t<U>;
 
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline) XTAL_LET begin() const noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET begin()       noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET   end() const noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
-		XTAL_DEF_(return,inline) XTAL_LET   end()       noexcept -> decltype(auto) requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_GET begin() const noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_GET begin()       noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_GET   end() const noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_GET   end()       noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
 
 		XTAL_DO2_(template <counter_q V>
 		XTAL_DEF_(return,inline)
-		XTAL_LET subhead(V &&v), -> decltype(auto)
+		XTAL_LET subhead(V &&v),
+		noexcept -> decltype(auto)
 		{
 			return subhead(counted_f(0, XTAL_REF_(v)));
 		})
 		XTAL_DO2_(template <counted_q W>
 		XTAL_DEF_(return,inline)
-		XTAL_LET subhead(W &&w), -> decltype(auto)
+		XTAL_LET subhead(W &&w),
+		noexcept -> decltype(auto)
 		{
 			using _xtd::ranges::next;
 			using _xtd::ranges::views::slice;
 
 			auto &u  = S_::template head<U>();
 			auto  u_ = begin();
-			using W_ = deranged_t<decltype(u_)>;
+			using W_ = reiterated_t<decltype(u_)>;
 			auto  w0 = w.front(), wN = w.back() + 1;
 			/*/
 			size_type const uN = count_f(u);
@@ -505,7 +523,7 @@ struct refer_iterators
 			XTAL_0IF (interval_q<U>) {
 				return U_(u_[w0], u_[wN]);
 			}
-			XTAL_0IF (accessed_q<U>) {
+			XTAL_0IF (indexed_q<U>) {
 				return W_(next(u_, w0), next(u_, wN));
 			}
 			XTAL_0IF_(else) {
@@ -528,9 +546,10 @@ struct infer_iterators<U> : refer_iterators<U> {};
 template <class U>
 struct refer_equality
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 	public:
 		using S::S;
 		XTAL_DEF_(return,inline) XTAL_LET operator == (subtype const &t) const noexcept -> bool {return S::head() == t.head();}
@@ -549,9 +568,10 @@ struct infer_equality<U> : refer_equality<U> {};
 template <class U>
 struct refer_inequality
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 
 	public:
@@ -602,9 +622,10 @@ struct refer_binary_logic
 template <class U>
 struct refer_binary_logic<U, 1>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 
 	public:
@@ -618,9 +639,10 @@ struct refer_binary_logic<U, 1>
 template <class U>
 struct refer_binary_logic<U, 2>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using T_ = typename S_::self_type;
 
@@ -667,9 +689,10 @@ struct refer_multiplicative_group
 template <class U>
 struct refer_multiplicative_group<U, 1>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 	public:
 		using S::S;
 		XTAL_DEF_(inline) XTAL_LET operator *=(auto &&o) noexcept -> decltype(auto) {S::head() *= XTAL_REF_(o); return S::self();}
@@ -680,9 +703,10 @@ struct refer_multiplicative_group<U, 1>
 template <class U>
 struct refer_multiplicative_group<U, 2>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using T_ = typename S_::self_type;
 
@@ -712,9 +736,10 @@ struct refer_additive_group
 template <class U>
 struct refer_additive_group<U, 1>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 	public:
 		using S::S;
 		XTAL_DEF_(inline) XTAL_LET operator +=(auto &&o) noexcept -> decltype(auto) {S::head() += XTAL_REF_(o); return S::self();}
@@ -725,9 +750,10 @@ struct refer_additive_group<U, 1>
 template <class U>
 struct refer_additive_group<U, 2>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using T_ = typename S_::self_type;
 
@@ -758,9 +784,10 @@ struct refer_discrete_group
 template <class U>
 struct refer_discrete_group<U, 1>
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 	public:
 		using S::S;
 		XTAL_DEF_(inline) XTAL_LET operator ++(int) noexcept -> decltype(auto) {auto  t = S::self(); ++S::head(); return t;}
@@ -773,7 +800,7 @@ struct refer_discrete_group<U, 1>
 template <class U>
 struct refer_discrete_group<U, 2>
 {
-	template <any_q S>
+	template <class S>
 	using subtype = S;
 
 };

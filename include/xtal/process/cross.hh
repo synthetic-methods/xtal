@@ -11,9 +11,9 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP cross;
-template <typename ..._s> XTAL_USE cross_t = confined_t<cross<_s...>>;
-template <typename ..._s> XTAL_ASK cross_q = bond::any_tag_p<cross, _s...>;
+template <typename ..._s> struct   cross;
+template <typename ..._s> using    cross_t = confined_t<cross<_s...>>;
+template <typename ..._s> concept  cross_q = bond::any_tag_p<cross, _s...>;
 template <typename ...As>
 XTAL_DEF_(return,inline)
 XTAL_LET cross_f(auto &&u)
@@ -31,9 +31,10 @@ struct cross<W, U, As...>
 	using W_indent = typename occur::indent_s<W>::template funnel<>;
 	using superkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
@@ -43,7 +44,8 @@ struct cross<W, U, As...>
 
 		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET method(auto &&...xs), -> decltype(auto)
+		XTAL_LET method(auto &&...xs),
+		noexcept -> decltype(auto)
 		{
 			auto const &y_ = head();
 			auto const  x  = bond::pack_f(XTAL_REF_(xs)...);

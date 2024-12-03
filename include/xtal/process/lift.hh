@@ -11,8 +11,8 @@ namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> XTAL_TYP lift;
-template <typename ..._s> XTAL_USE lift_t = confined_t<lift<_s...>>;
+template <typename ..._s> struct   lift;
+template <typename ..._s> using    lift_t = confined_t<lift<_s...>>;
 
 
 namespace _detail
@@ -21,11 +21,12 @@ namespace _detail
 template <class F>
 struct lifter
 {
-	using superkind = prospect<>;
+	using superkind = invoke_body<>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
 	public:

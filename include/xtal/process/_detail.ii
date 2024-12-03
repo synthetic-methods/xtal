@@ -8,51 +8,128 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct prospect
+struct invoke_head
 {
 	using superkind = bond::compose<As...>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
+		using U_ = typename S_::head_type;
+		static_assert(complete_q<U_>);
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
+
+	public:// ACCESS
+		using S_::head;
+
+	public:// OPERATE
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires some_n<Is...> and XTAL_TRY_(S_::template function<Is...>(XTAL_REF_(xs)...))
-		or       none_n<Is...> and XTAL_TRY_(S_::         function       (XTAL_REF_(xs)...))
+		requires             XTAL_TRY_(U_::template function<Is...>(XTAL_REF_(xs)...))
+		or                   XTAL_TRY_(U_::         function       (XTAL_REF_(xs)...))
+		or                   XTAL_TRY_(U_{}                        (XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (some_n<Is...>)  {return S_::template function<Is...>(XTAL_REF_(xs)...);}
-			XTAL_0IF (none_n<Is...>)  {return S_::         function       (XTAL_REF_(xs)...);}
+			XTAL_0IF       XTAL_TRY_TO_(U_::template function<Is...>(XTAL_REF_(xs)...)) 
+			XTAL_0IF       XTAL_TRY_TO_(U_::         function       (XTAL_REF_(xs)...)) 
+			XTAL_0IF       XTAL_TRY_TO_(U_{}                        (XTAL_REF_(xs)...)) 
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs) const
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF  XTAL_TRY_TO_(head().template operator()<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().template method    <Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().template operator()       (XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().         method           (XTAL_REF_(xs)...))
+			XTAL_0IF_(else) {
+				static_assert(none_q<decltype(xs)...>);
+				return head();
+			}
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline)
+		XTAL_LET method(auto &&...xs)
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF  XTAL_TRY_TO_(head().template operator()<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().template method    <Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().template operator()       (XTAL_REF_(xs)...))
+			XTAL_0IF  XTAL_TRY_TO_(head().         method           (XTAL_REF_(xs)...))
+			XTAL_0IF_(else) {
+				static_assert(none_q<decltype(xs)...>);
+				return head();
+			}
+		}
+
+	};
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+struct invoke_body
+{
+	using superkind = bond::compose<As...>;
+
+	template <class S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// ACCESS
+		using S_::head;
+
+	public:// OPERATE
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,static)
+		XTAL_LET function(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires     some_n<Is...> and XTAL_TRY_(S_::template function<Is...>(XTAL_REF_(xs)...))
+		or           none_n<Is...> and XTAL_TRY_(S_::         function       (XTAL_REF_(xs)...))
+		{
+			XTAL_IF0
+			XTAL_0IF (some_n<Is...>)      {return S_::template function<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_n<Is...>)      {return S_::         function       (XTAL_REF_(xs)...);}
 		}
 		
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
-		or       none_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_ const &).         method       (XTAL_REF_(xs)...))
+		requires     some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
+		or           none_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_ const &).         method       (XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (some_n<Is...>)                   {return S_::template method<Is...>(XTAL_REF_(xs)...);}
-			XTAL_0IF (none_n<Is...>)                   {return S_::         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_n<Is...>)                        {return S_::template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_n<Is...>)                        {return S_::         method       (XTAL_REF_(xs)...);}
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline)
 		XTAL_LET method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
-		or       none_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_       &).         method       (XTAL_REF_(xs)...))
+		requires    some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
+		or          none_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_       &).         method       (XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (some_n<Is...>)                    {return S_::template method<Is...>(XTAL_REF_(xs)...);}
-			XTAL_0IF (none_n<Is...>)                    {return S_::         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_n<Is...>)                       {return S_::template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_n<Is...>)                       {return S_::         method       (XTAL_REF_(xs)...);}
 		}
 
 	};

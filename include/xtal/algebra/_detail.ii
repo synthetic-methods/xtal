@@ -29,8 +29,8 @@ struct initialize
 		XTAL_IF0
 		XTAL_0IF (complete_q<V>) {
 			XTAL_LET f = invoke_f<V>;
-			XTAL_USE F = invoke_t<V>;
-			XTAL_USE U = common_t<based_t<_std::invoke_result_t<F, Xs>>...>;
+			using    F = invoke_t<V>;
+			using    U = common_t<based_t<_std::invoke_result_t<F, Xs>>...>;
 			XTAL_LET N = sizeof...(xs);
 			if constexpr (idempotent_p<U, F>) {
 				return T<U[N]>{ (XTAL_REF_(xs))...};

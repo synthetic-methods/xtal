@@ -1,0 +1,236 @@
+
+
+
+
+
+
+
+
+
+namespace _detail
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+using namespace _retail::_detail;
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+struct aligned
+{
+	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
+
+	XTAL_DEF_(return,inline,static)
+	XTAL_LET size() noexcept -> size_type {return sizeof(type);}
+
+};
+template <class T             >	using    aligned_t	=       typename aligned<T >::type;
+template <         class ...Ts>	XTAL_LET aligned_n	=  (size_0 +...+ aligned<Ts>::size());
+template <         class ...Ts>	XTAL_LET aligned_m	=  aligned_n<Ts...> - size_1;
+
+template <class T>
+XTAL_DEF_(return,inline)
+XTAL_LET maligned_f(auto &i)
+noexcept -> auto
+{
+	using I = XTAL_ALL_(i);
+	I constexpr N = aligned_n<T> << 3U;
+	I constexpr M = N - 1;
+	i += M; i &= ~M; auto const j = i; i += M; return j >> 3U;
+};
+
+
+template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET    mover_f(I i) noexcept -> auto {return _std::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET reverser_f(I i) noexcept -> auto {return _std::make_reverse_iterator(i);}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
+XTAL_DEF_(inline)
+XTAL_LET swap_with(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
+noexcept -> void
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	XTAL_LET seq = execution::  seq;
+	XTAL_LET par = execution::unseq;
+	if (o) swap_ranges(seq, x0, xN, y0);
+	else   swap_ranges(par, x0, xN, y0);
+#else
+	swap_ranges(x0, xN, y0);
+#endif
+}
+template <iterator_q Y_, iterable_q Xs>
+XTAL_DEF_(inline)
+XTAL_LET swap_with(Y_ y0, Xs const &xs, bool const o=false)
+noexcept -> void
+{
+	swap_with(y0, xs.begin(), xs.end(), o);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q Y_, iterator_q X_, _std::invocable<iteratee_t<X_>> F>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool const o=false)
+noexcept -> void
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	if (not _std::is_constant_evaluated()) {
+		XTAL_LET seq = execution::  seq;
+		XTAL_LET par = execution::unseq;
+		if (o) transform(seq, x0, xN, y0, XTAL_REF_(f));
+		else   transform(par, x0, xN, y0, XTAL_REF_(f));
+	}
+	else {
+		transform(x0, xN, y0, XTAL_REF_(f));
+	}
+#else
+	transform(x0, xN, y0, XTAL_REF_(f));
+#endif
+}
+template <iterator_q Y_, iterator_q X_>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
+noexcept -> void
+{
+	using Y = based_t<iteratee_t<Y_>>;
+	copy_to(y0, x0, xN, invoke_f<Y>, o);
+}
+template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const o=false)
+noexcept -> void
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	if (not _std::is_constant_evaluated()) {
+		XTAL_LET seq = execution::  seq;
+		XTAL_LET par = execution::unseq;
+		if (o) copy(seq, x0, xN, y0);
+		else   copy(par, x0, xN, y0);
+	}
+	else {
+		copy(x0, xN, y0);
+	}
+#else
+	copy(x0, xN, y0);
+#endif
+}
+
+template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(Y_ y0, Xs const &xs, F &&f, bool const o=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_SYS_(L1)) {
+		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(xs[I]);});
+	}
+	XTAL_0IF_(else) {
+		copy_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
+	}
+}
+template <iterator_q Y_, iterable_q Xs>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(Y_ y0, Xs const &xs, bool const o=false)
+noexcept -> void
+{
+	using X_ = iterator_t<Xs>;
+	using X  = iteratee_t<X_>;
+	using Y  = iteratee_t<Y_>;
+	XTAL_IF0
+//	XTAL_0IF (bond::pack_q<Xs>) {
+//		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = xs[I];});
+//	}
+	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
+		_std::memcpy(y0, XTAL_REF_(xs).begin(), sizeof(xs));
+	}
+	XTAL_0IF_(else) {
+		copy_to(y0, xs.begin(), xs.end(), o);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q Y_, iterator_q X_, _std::invocable<iteratee_t<X_>> F>
+XTAL_DEF_(inline)
+XTAL_LET move_to(Y_ y0, X_ const x0, X_ const xN, F &&f, bool const o=false)
+noexcept -> void
+{
+	copy_to(y0, mover_f(x0), mover_f(xN), XTAL_REF_(f), o);
+}
+template <iterator_q Y_, iterator_q X_>
+XTAL_DEF_(inline)
+XTAL_LET move_to(Y_ y0, X_ x0, X_ xN, bool const o=false)
+noexcept -> void
+{
+	copy_to(y0, mover_f(x0), mover_f(xN), o);
+}
+
+template <iterator_q Y_, iterable_q Xs, _std::invocable<iteratee_t<Xs>> F>
+XTAL_DEF_(inline)
+XTAL_LET move_to(Y_ y0, Xs &&xs, F &&f, bool const o=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (bond::pack_q<Xs> and sizeof(iteratee_t<Xs>) <= XTAL_SYS_(L1)) {
+		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = f(_std::move(xs[I]));});
+	}
+	XTAL_0IF_(else) {
+		move_to(y0, xs.begin(), xs.end(), XTAL_REF_(f), o);
+	}
+}
+template <iterator_q Y_, iterable_q Xs>
+XTAL_DEF_(inline)
+XTAL_LET move_to(Y_ y0, Xs &&xs, bool const o=false)
+noexcept -> void
+{
+	using X_ = iterator_t<Xs>;
+	using X  = iteratee_t<X_>;
+	using Y  = iteratee_t<Y_>;
+	XTAL_IF0
+//	XTAL_0IF (bond::pack_q<Xs>) {
+//		bond::seek_forward_f<bond::pack_size_n<Xs>>([&] (auto I) XTAL_0FN {y0[I] = _std::move(xs[I]);});
+//	}
+	XTAL_0IF (is_q<Y_, X_> and alignof(Y) == alignof(X)) {
+		_std::memmove(y0, XTAL_REF_(xs).begin(), sizeof(xs));
+	}
+	XTAL_0IF_(else) {
+		move_to(y0, xs.begin(), xs.end(), o);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class W, class F>
+XTAL_DEF_(inline)
+XTAL_LET apply_to(W &w, F &&f, bool const o=false)
+noexcept -> void
+{
+	w = XTAL_REF_(f) (w);
+}
+template <class Ws, class F> requires iterable_q<Ws>
+XTAL_DEF_(inline)
+XTAL_LET apply_to(Ws &ws, F &&f, bool const o=false)
+noexcept -> void
+{
+	if constexpr (bond::pack_q<Ws>) {
+		bond::seek_forward_f<bond::pack_size_n<Ws>>([&] (auto I) XTAL_0FN {apply_to(get<I>(ws), f);});
+	}
+	else {
+		move_to(ws.begin(), ws, XTAL_REF_(f), o);
+	}
+}
+
+
+}//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////

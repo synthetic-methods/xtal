@@ -27,9 +27,9 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <                     typename ..._s> XTAL_TYP render;
-template <class W=counter_t<>, typename ..._s> XTAL_USE render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> XTAL_ASK render_q = bond::any_tag_p<render, _s...>;
+template <                     typename ..._s> struct   render;
+template <class W=counter_t<>, typename ..._s> using    render_t = confined_t<render<W>, _s...>;
+template <                     typename ..._s> concept  render_q = bond::any_tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(return,inline)
 XTAL_LET render_f(auto &&w)
@@ -64,9 +64,10 @@ namespace _detail
 
 struct surrender
 {
-	template <any_q S>
+	template <class S>
 	class subtype : public S
 	{
+		static_assert(any_q<S>);
 		using S_ = S;
 		using T_ = typename S_::self_type;
 		using U_ = typename S_::head_type;
@@ -264,9 +265,10 @@ struct render<V>
 {
 	using superkind = bond::compose<_detail::surrender, resize<V>, restep<V>, bond::tag<render>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 
@@ -275,9 +277,11 @@ struct render<V>
 		using S_::self;
 		using S_::twin;
 
-		XTAL_CO0_(subtype)
-	//	XTAL_CO1_(subtype)
-		XTAL_CO4_(subtype)
+	~	subtype() noexcept=default;
+	//	subtype() noexcept=default;
+
+		XTAL_NEW_(copy, subtype, noexcept=default)
+		XTAL_NEW_(move, subtype, noexcept=default)
 
 		template <fungible_q<subtype> O>
 		XTAL_NEW_(explicit) subtype(O &&o)
@@ -370,9 +374,10 @@ private:
 public:
 	using superkind = bond::compose<_detail::surrender, review<U>, restep<V>, bond::tag<render>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 

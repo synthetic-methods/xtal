@@ -17,9 +17,9 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename     ..._s> XTAL_TYP indent;
-template <typename     ..._s> XTAL_ASK indent_q = bond::any_tag_p<indent, _s...>;
-template <class S, int ...Ns> XTAL_USE indent_s = bond::compose_s<S, indent<constant_t<Ns>...>>;
+template <typename     ..._s> struct   indent;
+template <typename     ..._s> concept  indent_q = bond::any_tag_p<indent, _s...>;
+template <class S, int ...Ns> using    indent_s = bond::compose_s<S, indent<constant_t<Ns>...>>;
 
 template <constant_q ...Ns>
 struct indent<Ns...>
@@ -44,19 +44,19 @@ struct indent<Ns...>
 		using S_::S_;
 		
 		///\note\
-		When `uncoordinated_q<S>`, `S::ordinate` is invoked to produce the edit. \
+		When `uncorrelated_q<S>`, `S::ordinate` is invoked to produce the edit. \
 
 		///\todo\
 		Find a way to invoke `S::ordinate` for any `indent`ed fragments. \
 
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   coordinated_q<S>
+		requires   correlated_q<S>
 		:	S_{XTAL_MOV_(u)}
 		{}
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires uncoordinated_q<S>
+		requires uncorrelated_q<S>
 		:	S_{S::ordinate(XTAL_MOV_(u))}
 		{}
 

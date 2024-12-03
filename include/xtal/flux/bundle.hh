@@ -16,9 +16,9 @@ Ties `Xs...` to unify flux branching, etc. \
 ///\note\
 Deified as a `process`'s `bracket`, binding the provided arguments. \
 
-template <class ...Xs> XTAL_TYP bundle;
-template <class ...Xs> XTAL_USE bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> XTAL_ASK bundle_q = bond::any_tag_p<bundle, _s...>;
+template <class ...Xs> struct   bundle;
+template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
+template <class ..._s> concept  bundle_q = bond::any_tag_p<bundle, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -29,9 +29,10 @@ struct bundle
 	using superkind = bond::compose<bond::tag<bundle>
 	,	cell::defer<cell::packed_t<Xs...>>
 	>;
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using H_ = typename S_::head_type;
 
@@ -51,22 +52,21 @@ struct bundle
 		using S_::head;
 
 		//\note\
-		Tentative override of `node` allows unmodified `bundle`s to be destructured using `get`, etc. \
+		Contingent override of `node` allows unextended `bundle`s to be destructured. \
 		Use `slots` for unmitigated access. \
 
-		XTAL_TO4_(
-		XTAL_DEF_(return,inline)
-		XTAL_RET node(), head()
-		)
 		using node_type = typename S_::head_type;
 
+		XTAL_TO4_(XTAL_GET  node(), head())
+		XTAL_TO4_(XTAL_GET slots(), head())
+		
 		XTAL_DO2_(template <size_type ...Is>
 		XTAL_DEF_(return,inline)
-		XTAL_LET slot(), -> decltype(auto)
+		XTAL_LET slot(),
+		noexcept -> decltype(auto)
 		{
 			return bond::pack_item_f<Is...>(head());
 		})
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET slots(), head())
 		
 	public:// *FLUX
 	//	using S_::influx;

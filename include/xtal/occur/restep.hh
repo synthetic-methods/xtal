@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_number_q U=integral_type> XTAL_TYP restep;
-template <integral_number_q U=integral_type> XTAL_USE restep_t = confined_t<restep<U>>;
-template <typename ..._s> XTAL_ASK restep_q = bond::any_tag_p<restep, _s...>;
+template <integer_q U=integer_type> struct   restep;
+template <integer_q U=integer_type> using    restep_t = confined_t<restep<U>>;
+template <typename ..._s> concept  restep_q = bond::any_tag_p<restep, _s...>;
 XTAL_DEF_(return,inline)
 XTAL_LET restep_f(auto &&w)
 noexcept -> auto
@@ -25,21 +25,22 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <integral_number_q U>
+template <integer_q U>
 struct restep
 {
 	using superkind = bond::compose<defer<U>, bond::tag<restep>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_GET step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

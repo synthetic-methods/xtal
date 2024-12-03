@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../resource/spooled.hh"
+#include "../provision/spooled.hh"
 
 
 
@@ -21,13 +21,14 @@ possibly using `occur::render` to convert between absolute and relative delays. 
 template <typename ...As>
 struct chunk
 {
-	using superkind = bond::compose<As..., resource::spooled<constant_t<-1>>>;
+	using superkind = bond::compose<As..., provision::spooled<constant_t<-1>>>;
 
-	template <any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		static_assert(resource::spooled_q<S_>);
+		static_assert(provision::spooled_q<S_>);
 
 	public:
 		using S_::S_;
@@ -53,8 +54,8 @@ struct chunk
 				U_spool u_spool{
 					(U_event) L_delay::max()
 				};
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET head_(int i), u_spool.begin(i - 1)->head())
-				XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_RET then_(int i), u_spool.begin(i - 1)->tail())
+				XTAL_TO4_(XTAL_GET head_(int i), u_spool.begin(i - 1)->head())
+				XTAL_TO4_(XTAL_GET then_(int i), u_spool.begin(i - 1)->tail())
 
 			public:
 				using R_::R_;
@@ -71,7 +72,7 @@ struct chunk
 					return R_::infuse(XTAL_REF_(o));
 				}
 				XTAL_DEF_(return)
-				XTAL_LET infuse(XTAL_ARG_(U_event) &&u)
+				XTAL_LET infuse(XTAL_SYN_(U_event) auto &&u)
 				noexcept -> sign_type
 				{
 					if (0 == u.head()) {
