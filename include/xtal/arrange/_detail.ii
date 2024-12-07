@@ -22,7 +22,7 @@ struct aligned
 {
 	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
 
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET size() noexcept -> size_type {return sizeof(type);}
 
 };
@@ -31,7 +31,7 @@ template <         class ...Ts>	XTAL_LET aligned_n	=  (size_0 +...+ aligned<Ts>:
 template <         class ...Ts>	XTAL_LET aligned_m	=  aligned_n<Ts...> - size_1;
 
 template <class T>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET maligned_f(auto &i)
 noexcept -> auto
 {
@@ -42,8 +42,8 @@ noexcept -> auto
 };
 
 
-template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET    mover_f(I i) noexcept -> auto {return _std::   make_move_iterator(i);}
-template <iterator_q I > XTAL_DEF_(return,inline) XTAL_LET reverser_f(I i) noexcept -> auto {return _std::make_reverse_iterator(i);}
+template <iterator_q I > XTAL_DEF_(short) XTAL_LET    mover_f(I i) noexcept -> auto {return _std::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(short) XTAL_LET reverser_f(I i) noexcept -> auto {return _std::make_reverse_iterator(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

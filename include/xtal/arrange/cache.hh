@@ -30,32 +30,33 @@ struct cache
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using I  = _std::underlying_type_t<_std::byte>;
 
 	//	NOTE: Expected maximum is 64/8: 6 doubles not including coefficients...
-		XTAL_SET L_cache = bond::operate<byte_type>::alignment{};
+		XTAL_SET L_cache = bond::operate<_std::byte>::alignment{};
 		XTAL_SET N_cache = size_1 << bond::operating::bit_ceiling_f((L_cache +...+ sizeof(As))) - 1;
 		//\
 		XTAL_SET A_cache = alignof(common_t<scalar_t<As>...>);
 		XTAL_SET A_cache = N_cache;
-		alignas (A_cache) byte_type m_cache[N_cache];
+		alignas (A_cache) _std::byte m_cache[N_cache];
 
 	public:
 		using S_::S_;
 	
-		XTAL_LET free(bite_type value=0)
+		XTAL_LET free(I value=0)
 		noexcept -> void
 		{
 			memset(m_cache, value, N_cache);
 		}
 		template <class V>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET form(int &i)
 		noexcept -> V &
 		{
 			return reinterpret_cast<V &>(m_cache[_detail::maligned_f<V>(i)]);
 		}
 		template <class ...Vs>
-		XTAL_DEF_(return)
+		XTAL_DEF_(long)
 		XTAL_LET form()
 		noexcept -> auto
 		{

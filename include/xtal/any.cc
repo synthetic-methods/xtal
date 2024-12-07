@@ -12,19 +12,19 @@ namespace xtal::_test
 /////////////////////////////////////////////////////////////////////////////////
 
 template <int N_index>
-XTAL_DEF_(return)
+XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> bool
 {
 	return bond::computrim_f<N_index>(u) == bond::computrim_f<N_index>(v);
 }
 template <int N_index, int N_limit>
-XTAL_DEF_(return)
+XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> int
 {
-	XTAL_LET Z_index = sign_n<N_index>;
-	XTAL_LET Z_limit = sign_n<N_limit>;
+	XTAL_LET Z_index = signum_n<N_index>;
+	XTAL_LET Z_limit = signum_n<N_limit>;
 	static_assert(Z_index == Z_limit);
 
 	XTAL_IF0
@@ -41,7 +41,7 @@ noexcept -> int
 		return check_f<N_limit>(u, v)? N_limit: check_f<N_index, N_limit - Z_limit>(u, v);
 	}
 }
-XTAL_DEF_(return)
+XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> int
 {
@@ -77,7 +77,7 @@ struct mix
 	{
 	public:
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> auto
 		{
@@ -98,7 +98,7 @@ struct static_onset_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> auto
 		{
@@ -116,7 +116,7 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs)
 		noexcept -> auto
 		{
@@ -136,7 +136,7 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&x)
 		noexcept -> auto
 		{
@@ -165,12 +165,11 @@ struct dynamic_count
 	public:
 		using T_::T_;
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method()
 		noexcept -> auto
 		{
-			auto i = u_count; u_count += this->template head<U_restep>();
-			return i;
+			auto i = u_count; u_count += this->template head<U_restep>(); return i;
 		}
 
 	private:
@@ -187,7 +186,7 @@ using Px_dynamic_count = typename dynamic_count::type;
 }/////////////////////////////////////////////////////////////////////////////
 /**/
 template <xtal::iterated_q T, ::std::invocable<xtal::iteratee_t<T>> U>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET operator | (T &&t, U &&u)
 noexcept -> decltype(auto)
 {

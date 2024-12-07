@@ -42,9 +42,9 @@ struct tab
 
 	public:// *FUSE
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET infuse(auto &&o)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
 				return S_::infuse(XTAL_REF_(o).apply(invoke_f<T_>));
@@ -53,9 +53,9 @@ struct tab
 				return S_::infuse(XTAL_REF_(o));
 			}
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET effuse(auto &&o)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
 				return S_::effuse(XTAL_REF_(o).apply(invoke_f<T_>));

@@ -74,15 +74,15 @@ struct define
 			
 			public:// *FLUX
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return R_::influx(XTAL_REF_(oo)...);
 				}
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(XTAL_SYN_(T) auto &&t, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					(void) R_::influx(U_choke(0 < t));
 					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
@@ -114,7 +114,7 @@ struct define
 				using R_::head;
 
 				XTAL_DO2_(template <auto ...Is>
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET operator() (auto &&...xs),
 				noexcept -> decltype(auto)
 				{
@@ -124,7 +124,7 @@ struct define
 			protected:// DEIFY
 
 				template <class A>
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
@@ -132,7 +132,7 @@ struct define
 					return R_::deify(point[A_mask&i]);
 				}
 				template <class ...Xs>
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET deify(constant_q auto ...Is) const
 				noexcept -> decltype(auto)
 				{
@@ -187,9 +187,9 @@ struct define
 			public:
 				using R_::R_;
 				
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET effuse(auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
@@ -218,9 +218,9 @@ struct define
 			public:
 				using R_::R_;
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET infuse(auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					if constexpr (is_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
@@ -251,7 +251,7 @@ struct define
 				using R_::head;
 
 				template <auto ...>
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET method() const
 				{
 					return head();

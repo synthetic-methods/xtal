@@ -29,7 +29,7 @@ struct invoke_head
 	public:// OPERATE
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires             XTAL_TRY_(U_::template function<Is...>(XTAL_REF_(xs)...))
@@ -42,7 +42,7 @@ struct invoke_head
 			XTAL_0IF       XTAL_TRY_TO_(U_{}                        (XTAL_REF_(xs)...)) 
 		}
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
 		{
@@ -57,7 +57,7 @@ struct invoke_head
 			}
 		}
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs)
 		noexcept -> decltype(auto)
 		{
@@ -98,7 +98,7 @@ struct invoke_body
 	public:// OPERATE
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires     some_n<Is...> and XTAL_TRY_(S_::template function<Is...>(XTAL_REF_(xs)...))
@@ -110,7 +110,7 @@ struct invoke_body
 		}
 		
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
 		requires     some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
@@ -121,7 +121,7 @@ struct invoke_body
 			XTAL_0IF (none_n<Is...>)                        {return S_::         method       (XTAL_REF_(xs)...);}
 		}
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires    some_n<Is...> and XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))

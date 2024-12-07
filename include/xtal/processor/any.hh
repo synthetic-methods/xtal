@@ -56,7 +56,7 @@ struct define
 
 			public:// ACCESS
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET delay()
 				noexcept -> auto
 				{
@@ -69,9 +69,9 @@ struct define
 				using R_::efflux;
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					auto &s = R_::self();
 					
@@ -91,9 +91,9 @@ struct define
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					auto    &u_state = review_o.view();
 					using    U_state = XTAL_ALL_(u_state);
@@ -169,7 +169,7 @@ struct defer<U>
 		using S_::S_;
 
 		XTAL_DO2_(template <auto ...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(),
 		noexcept -> decltype(auto)
 		{
@@ -216,7 +216,7 @@ struct defer<U>
 		but it only works if `this` is mutable... \
 
 		XTAL_DO2_(template <auto ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{
@@ -234,7 +234,7 @@ struct defer<U>
 			}
 		})
 		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{
@@ -242,7 +242,7 @@ struct defer<U>
 		})
 
 		XTAL_DO0_(template <auto ...Is> requires none_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(U_::function(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
@@ -250,7 +250,7 @@ struct defer<U>
 			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is> requires some_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))

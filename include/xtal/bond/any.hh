@@ -39,7 +39,7 @@ struct define
 
 	public:
 		XTAL_DO4_(template <fungible_q<subtype> Y=T>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET self(auto &&...oo),
 		noexcept -> decltype(auto)
 		{
@@ -49,15 +49,15 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_GET self()       &&noexcept {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_GET self() const &&noexcept {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_GET self()        &noexcept {return static_cast<Y        &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_GET self() const  &noexcept {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()       &&noexcept {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const &&noexcept {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()        &noexcept {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const  &noexcept {return static_cast<Y const  &>          (*this) ;}
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET twin() const
 		noexcept -> decltype(auto)
 		{
@@ -66,7 +66,7 @@ struct define
 
 		///\returns `this` as the `define`d supertype. \
 
-		XTAL_TO4_(XTAL_GET tail(), self<S>())
+		XTAL_TO4_(XTAL_DEF_(alias) tail(), self<S>())
 
 
 		template <typename ...Is>

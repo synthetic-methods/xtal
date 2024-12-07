@@ -25,7 +25,7 @@ struct word
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
 		noexcept -> size_type {return N_size;};
 

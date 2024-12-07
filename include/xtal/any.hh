@@ -33,16 +33,14 @@ Standard...
 
 using    null_type	= _entail::   null_type;
 using    unit_type	= _entail::   unit_type;
-using    sign_type	= _entail::   sign_type;
-using    bite_type	= _entail::   bite_type;
-using    byte_type	= _entail::   byte_type;
 using    size_type	= _entail::   size_type;
+using  signum_type	= _entail:: signum_type;
 using integer_type	= _entail::integer_type;
 
-static   constexpr    size_type size_0{0};
-static   constexpr    size_type size_1{1};
-static   constexpr    size_type size_2{2};
-static   constexpr    size_type size_3{3};
+XTAL_LET_(size_type) size_0{0};
+XTAL_LET_(size_type) size_1{1};
+XTAL_LET_(size_type) size_2{2};
+XTAL_LET_(size_type) size_3{3};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,22 +48,17 @@ static   constexpr    size_type size_3{3};
 //\
 Structural...
 
-template <auto  N, auto  ...Ms>	concept            is_n	=          _entail::   is_n<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::   in_n<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::   un_n<N, Ms...>;
-template <auto  N, auto   Z=0 >	concept          sign_p	=          _entail:: sign_p<N, Z>;
-template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	=          _entail:: sign_n<N, Z>;
-template <auto  N, auto   M   >	XTAL_LET         stop_n	=          _entail:: stop_n<N, M>;
-template <auto  N, auto   M=0 >	XTAL_LET          top_n	=          _entail::  top_n<N, M>;
+template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::     in_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::     un_n<N, Ms...>;
+template <auto  N, auto   Z=0 >	concept        signum_p	=          _entail:: signum_p<N, Z>;
+template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail:: signum_n<N, Z>;
+template <auto  N, auto   M   >	XTAL_LET          end_n	=          _entail::    end_n<N, M>;
+template <auto  N, auto   M=0 >	XTAL_LET          top_n	=          _entail::    top_n<N, M>;
 
 template <class          ...Ts>	concept          some_q	=          _entail:: some_q<Ts...>;
 template <auto           ...Ns>	concept          some_n	=          _entail:: some_n<Ns...>;
 template <class          ...Ts>	concept          none_q	=          _entail:: none_q<Ts...>;
 template <auto           ...Ns>	concept          none_n	=          _entail:: none_n<Ns...>;
-
-template <class          ...Ts>	concept          unit_q	= (...and  _entail:: unit_q<Ts>);
-template <class          ...Ts>	concept          null_q	= (...and  _entail:: null_q<Ts>);
-template <class          ...Ts>	concept          void_q	= (...and  _entail:: void_q<Ts>);
 
 template <class          ...Ts>	concept    incomplete_q	= (...and  _entail:: incomplete_q<Ts   >);
 template <class          ...Ts>	concept      complete_q	= (...and  _entail::   complete_q<Ts   >);
@@ -77,35 +70,33 @@ template <class          ...Ts>	using          common_t	=          _entail::    
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <         class ...Ts>	using       isotropic_t	=  _entail::    isotropic<Ts...>;
-template <         class ...Ts>	using       epitropic_t	=  _entail::    epitropic<Ts...>;
-template <         class ...Ts>	using     anisotropic_t	=  _entail::  anisotropic<Ts...>;
-template <         class ...Ts>	using     anepitropic_t	=  _entail::  anepitropic<Ts...>;
+template <         class ...Ts>	using       isotropic_t	= _entail::    isotropic <Ts...>;
+template <         class ...Ts>	using       epitropic_t	= _entail::    epitropic <Ts...>;
+template <         class ...Ts>	using     anisotropic_t	= _entail::  anisotropic <Ts...>;
+template <         class ...Ts>	using     anepitropic_t	= _entail::  anepitropic <Ts...>;
 
-template <         class ...Ts>	using      isomorphic_t	=  _entail::   isomorphic<Ts...>;
-template <         class ...Ts>	using      epimorphic_t	=  _entail::   epimorphic<Ts...>;
-template <         class ...Ts>	using    anisomorphic_t	=  _entail:: anisomorphic<Ts...>;
-template <         class ...Ts>	using    anepimorphic_t	=  _entail:: anepimorphic<Ts...>;
+template <         class ...Ts>	concept     isotropic_q	= _entail::    isotropic_q<Ts...>;
+template <         class ...Ts>	concept     epitropic_q	= _entail::    epitropic_q<Ts...>;
+template <         class ...Ts>	concept   anisotropic_q	= _entail::  anisotropic_q<Ts...>;
+template <         class ...Ts>	concept   anepitropic_q	= _entail::  anepitropic_q<Ts...>;
 
-template <         class ...Ts>	concept     isotropic_q	=          _entail::  isotropic<Ts...>::value;
-template <         class ...Ts>	concept     epitropic_q	=          _entail::  epitropic<Ts...>::value;
-template <         class ...Ts>	concept   anisotropic_q	=      not _entail::  isotropic<Ts...>::value;
-template <         class ...Ts>	concept   anepitropic_q	=      not _entail::  epitropic<Ts...>::value;
+template <         class ...Ts>	using      isomorphic_t	= _entail::   isomorphic <Ts...>;
+template <         class ...Ts>	using      epimorphic_t	= _entail::   epimorphic <Ts...>;
+template <         class ...Ts>	using    anisomorphic_t	= _entail:: anisomorphic <Ts...>;
+template <         class ...Ts>	using    anepimorphic_t	= _entail:: anepimorphic <Ts...>;
 
-template <         class ...Ts>	concept    isomorphic_q	=          _entail:: isomorphic<Ts...>::value;
-template <         class ...Ts>	concept    epimorphic_q	=          _entail:: epimorphic<Ts...>::value;
-template <         class ...Ts>	concept  anisomorphic_q	=      not _entail:: isomorphic<Ts...>::value;
-template <         class ...Ts>	concept  anepimorphic_q	=      not _entail:: epimorphic<Ts...>::value;
+template <         class ...Ts>	concept    isomorphic_q	= _entail::   isomorphic_q<Ts...>;
+template <         class ...Ts>	concept    epimorphic_q	= _entail::   epimorphic_q<Ts...>;
+template <         class ...Ts>	concept  anisomorphic_q	= _entail:: anisomorphic_q<Ts...>;
+template <         class ...Ts>	concept  anepimorphic_q	= _entail:: anepimorphic_q<Ts...>;
 
-template <         class ...Ts>	concept            id_q	=          _entail:: identical<Ts...>::value;//< `Ts...` are identical.
-template <         class ...Ts>	concept            is_q	=          _entail:: isotropic<Ts...>::value;//< `Ts...` are identical modulo qualifiers.
-template <         class ...Ts>	concept            as_q	=          _entail:: epitropic<Ts...>::value;//< `Ts...` are constructible from `Ts[0]`.
-template <class T, class ...Ts>	concept            as_p	=          _entail:: as_p<T, Ts...>;
+template <         class ...Ts>	concept            id_q	= _entail:: id_q<   Ts...>;//< `Ts...` are identical.
+template <         class ...Ts>	concept            is_q	= _entail:: is_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
+template <         class ...Ts>	concept            as_q	= _entail:: as_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
+template <class T, class ...Ts>	concept            as_p	= _entail:: as_p<T, Ts...>;
 
-template <         class ...Ts>	struct       fungible             : _std::false_type                               {};
-template <class T, class ...Ts>	struct       fungible<T, Ts...>   : _std::conjunction<_entail::fungible<T, Ts>...> {};
-template <         class ...Ts>	concept      fungible_q	=          fungible  <Ts...>::value; //< `T` and `Ts...` are   related by inheritance.
-template <         class ...Ts>	concept    infungible_q	=      not fungible_q<Ts...>;        //< `T` and `Ts...` are unrelated by inheritance.
+template <         class ...Ts>	concept      fungible_q	= _entail::   fungible_q<Ts...>; //< `T` and `Ts...` are   related by inheritance.
+template <         class ...Ts>	concept    infungible_q	= _entail:: infungible_q<Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
 template <class X, class ...Fs>	concept    idempotent_p	=  (...and _entail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
 template <class F, class    X >	concept    idempotent_q	=  idempotent_p<X, F>;
@@ -114,21 +105,20 @@ template <class F, class    X >	concept    idempotent_q	=  idempotent_p<X, F>;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto N              >	using        constant_t	= typename _entail::     constant_t<N >;
-template <class          ...Ts>	concept      constant_q	= (...and  _entail::     constant_q<Ts>);
-template <class          ...Ts>	concept       logical_q	= (...and  _entail::     logical_q<Ts>);
-template <class          ...Ts>	concept       ordinal_q	= (...and  _entail::     ordinal_q<Ts>);
-template <class          ...Ts>	concept      cardinal_q	= (...and  _entail::    cardinal_q<Ts>);
-template <class          ...Ts>	concept      integral_q	= (...and  _entail::    integral_q<Ts>);
+template <class          ...Ts>	concept      constant_q	= (...and  _entail::     constant_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept       logical_q	= (...and  _entail::      logical_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept       ordinal_q	= (...and  _entail::      ordinal_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      cardinal_q	= (...and  _entail::     cardinal_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      integral_q	= (...and  _entail::     integral_q<XTAL_RAW_(Ts)>);
 
-template <class          ...Ts>	concept     unnatural_q	= (...and  _entail::   unnatural_q<Ts>);
-template <class          ...Ts>	concept       natural_q	= (...and  _entail::     natural_q<Ts>);
-template <class          ...Ts>	concept      terminal_q	= (...and  _entail::    terminal_q<Ts>);
-template <class          ...Ts>	concept       liminal_q	= (...and  _entail::     liminal_q<Ts>);
-template <liminal_q T         >	using      subliminal_s	= typename _entail::  subliminal_s<T >;
-template <liminal_q T         >	using    superliminal_s	= typename _entail::superliminal_s<T >;
+template <class          ...Ts>	concept     unnatural_q	= (...and  _entail::    unnatural_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept       natural_q	= (...and  _entail::      natural_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      terminal_q	= (...and  _entail::     terminal_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept       liminal_q	= (...and  _entail::      liminal_q<XTAL_RAW_(Ts)>);
+template <liminal_q T         >	using      subliminal_s	= typename _entail::   subliminal_s<T >;
+template <liminal_q T         >	using    superliminal_s	= typename _entail:: superliminal_s<T >;
 
 
-template <class T             >	using           valve_t	=          _entail::    valve_t<T>;
 template <class T             >	using           based_t	=          _entail::    based_t<T>;
 template <class          ...Ts>	concept         based_q	= (...and  _entail::    based_q<Ts>);
 template <class          ...Ts>	concept       unbased_q	= (...and  _entail::  unbased_q<Ts>);
@@ -158,11 +148,11 @@ template <         class ...Ts>	using          valued_u	= common_t<_entail::   v
 template <         class ...Ts>	concept        valued_q	= (...and  _entail::   valued_q<Ts>);
 
 
-template <         class ...Ts>	concept      devalued_q	= (...and  _entail:: devalued_q<Ts>);
-template <class T             >	using        devalued_t	=          _entail:: devalued_t<T >;
-template <         class ...Ts>	using        devalued_u	= common_t<_entail:: devalued_u<Ts>...>;
-template <class T             >	XTAL_LET     devalued_n	= _entail:: devalued_n<T>;
-template <class T, class ...Ts>	concept      devalued_p	= (...and (devalued_n<T> < devalued_n<Ts>));
+template <         class ...Ts>	concept      apart_q	= (...and  _entail:: apart_q<Ts>);
+template <class T             >	using        apart_t	=          _entail:: apart_t<T >;
+template <         class ...Ts>	using        apart_u	= common_t<_entail:: apart_u<Ts>...>;
+template <class T             >	XTAL_LET     apart_n	= _entail:: apart_n<T>;
+template <class T, class ...Ts>	concept      apart_p	= (...and (apart_n<T> < apart_n<Ts>));
 
 template <class T, int   ...Ns>	using        devolved  	= _entail:: devolved  <T, Ns...>;
 //mplate <         int   ...Ns>	using        devolved_x	= _entail:: devolved_x<   Ns...>;
@@ -176,8 +166,8 @@ template <class T, class ...Ts>	concept      devolved_p	= (...and (devolved_n<T>
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	concept        column_q	=  (...and _entail:: column_q<Ts>);
-template <class T, int   N=-1 >	concept         array_q	=          _entail::  array_q<T> and N <  0   or devalued_n<T> == N;
-template <class T, int   N=-1 >	concept      subarray_q	=          _entail::  array_q<T> and 0 <= N  and devalued_n<T> <= N;
+template <class T, int   N=-1 >	concept         array_q	=          _entail::  array_q<T> and N <  0   or apart_n<T> == N;
+template <class T, int   N=-1 >	concept      subarray_q	=          _entail::  array_q<T> and 0 <= N  and apart_n<T> <= N;
 template <         class ...Ts>	concept      disarray_q	=        not (...and  array_q<Ts>);
 
 template <class          ...Ts>	concept       indexed_q	= (... and _entail:: indexed_q<Ts>);

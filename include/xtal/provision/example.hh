@@ -38,7 +38,7 @@ struct example
 	public:
 		using S_::S_;
 		
-		XTAL_TO4_(XTAL_GET sample(), S_::head())
+		XTAL_TO4_(XTAL_DEF_(alias) sample(), S_::head())
 
 	};
 };

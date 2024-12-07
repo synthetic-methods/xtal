@@ -15,7 +15,7 @@ template <class   ..._s>	struct   quantity;
 template <class   ..._s>	using    quantity_t = typename quantity<_s...>::type;
 template <class   ..._s>	concept  quantity_q = bond::any_tag_p<quantity_t, _s...>;
 template <class  V=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET quantity_f(auto &&...oo)
 noexcept -> auto
 {
@@ -65,7 +65,7 @@ struct quantity<A>
 
 	public:// OPERATE
 	//	Vector comparison (performed point-wise):
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator <=> (homotype const &t) const
 		noexcept -> decltype(auto)
 		{
@@ -76,11 +76,11 @@ struct quantity<A>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_DEF_(return,inline) XTAL_LET operator ==  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) == get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator <=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator >=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator <   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <  get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(return,inline) XTAL_LET operator >   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(short) XTAL_LET operator ==  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) == get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(short) XTAL_LET operator <=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(short) XTAL_LET operator >=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(short) XTAL_LET operator <   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(short) XTAL_LET operator >   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
 		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) <<= u;}); return self();}
@@ -92,11 +92,11 @@ struct quantity<A>
 		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
 
-		XTAL_DEF_(return,inline,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t * s;}
-		XTAL_DEF_(return,inline,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t + s;}
+		XTAL_DEF_(short,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t * s;}
+		XTAL_DEF_(short,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t + s;}
 
 		template <auto f, size_t I=N_data - 1>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET pointless() const
 		{
 			XTAL_IF0
@@ -137,7 +137,7 @@ struct quantity<A>
 		}
 
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(T      const &s)
 		noexcept -> auto
 		requires requires (U_data const &u) {f(u);}
@@ -147,7 +147,7 @@ struct quantity<A>
 			(bond::seek_s<N_data>{});
 		}
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(T      const &s, auto const &t)
 		noexcept -> auto
 		requires requires (U_data const &u, iteratee_t<decltype(t)> v) {f(u, v);}
@@ -160,7 +160,7 @@ struct quantity<A>
 			(bond::seek_s<N>{});
 		}
 
-//		XTAL_DEF_(return,inline,friend)
+//		XTAL_DEF_(short,friend)
 //		XTAL_LET operator - (T const &s)
 //		noexcept -> auto
 //		{

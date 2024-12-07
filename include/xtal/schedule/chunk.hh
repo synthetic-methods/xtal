@@ -54,8 +54,8 @@ struct chunk
 				U_spool u_spool{
 					(U_event) L_delay::max()
 				};
-				XTAL_TO4_(XTAL_GET head_(int i), u_spool.begin(i - 1)->head())
-				XTAL_TO4_(XTAL_GET then_(int i), u_spool.begin(i - 1)->tail())
+				XTAL_TO4_(XTAL_DEF_(alias) head_(int i), u_spool.begin(i - 1)->head())
+				XTAL_TO4_(XTAL_DEF_(alias) then_(int i), u_spool.begin(i - 1)->tail())
 
 			public:
 				using R_::R_;
@@ -65,15 +65,15 @@ struct chunk
 				Influxes the `U_event` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET infuse(auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return R_::infuse(XTAL_REF_(o));
 				}
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET infuse(XTAL_SYN_(U_event) auto &&u)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					if (0 == u.head()) {
 						return R_::influx(XTAL_REF_(u).tail());

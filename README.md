@@ -178,8 +178,8 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   template <class S>
 	   class subtype
 	   {
-	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX {return static_cast<T const &>(*this);}
-	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX {return static_cast<T       &>(*this);}
+	      XTAL_DEF_(short) XTAL_RET self() XTAL_0FX {return static_cast<T const &>(*this);}
+	      XTAL_DEF_(short) XTAL_RET self() XTAL_0EX {return static_cast<T       &>(*this);}
 
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept...
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept...

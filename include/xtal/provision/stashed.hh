@@ -67,8 +67,8 @@ struct stashed<U_state, U_store>
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_GET store(), S_::template head<1>())
-		XTAL_TO4_(XTAL_GET state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(alias) store(), S_::template head<1>())
+		XTAL_TO4_(XTAL_DEF_(alias) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

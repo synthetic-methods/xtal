@@ -26,26 +26,26 @@ struct cached
 	using superkind = bond::compose<bond::tag<cached>
 	,	defer<arrange::cache_t<As...>>
 	>;
-
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		
+		using I  = _std::underlying_type_t<_std::byte>;
+
 	public:// CONSTRUCT
 		using S_::S_;
 		
 	public:// ACCESS
 		using S_::head;
 
-		XTAL_TO4_(XTAL_GET cache(), head())
+		XTAL_TO4_(XTAL_DEF_(alias) cache(), head())
 		
 		XTAL_TO4_(template <class ...Vs> requires some_q<Vs...>
-		XTAL_GET cache(), head().template form<Vs...>())
+		XTAL_DEF_(alias) cache(), head().template form<Vs...>())
 		
-		template <bite_type I>
-		XTAL_DEF_(inline) XTAL_LET cache(           ) noexcept -> void {head().free(I);}
-		XTAL_DEF_(inline) XTAL_LET cache(bite_type i) noexcept -> void {head().free(i);}
+		template <I i>
+		XTAL_DEF_(inline) XTAL_LET cache(   ) noexcept -> void {head().free(i);}
+		XTAL_DEF_(inline) XTAL_LET cache(I i) noexcept -> void {head().free(i);}
 
 	};
 };

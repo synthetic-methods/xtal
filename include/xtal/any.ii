@@ -55,7 +55,10 @@ template <auto N0, auto N1> requires (N0 < N1)
 XTAL_LET bounded_f(auto const &u)
 {
 	XTAL_IF0
-	XTAL_0IF_(dynamic) {
+	XTAL_0IF_(constexpr) {
+		return u < N0? N0: N1 < u? N1: u;
+	}
+	XTAL_0IF_(else) {
 		using _std::abs;
 		using U = XTAL_ALL_(u);
 		U constexpr  n0 = N0;
@@ -68,9 +71,6 @@ XTAL_LET bounded_f(auto const &u)
 			return (abs(u - n0) - abs(u - n1) + n01)*0.5f;
 		}
 	}
-	XTAL_0IF_(else) {
-		return u < N0? N0: N1 < u? N1: u;
-	}
 }
 
 
@@ -79,7 +79,7 @@ where `std::floating_point`s and `bool`eans are `static_cast`, \
 while all other `std::integral`s are negated. \
 
 template <class Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET condition_f(bool x)
 noexcept -> Y
 {
@@ -89,18 +89,18 @@ noexcept -> Y
 	XTAL_0IF (real_number_q<Y>) {return static_cast<Y>(+x);}
 }
 
-template <class T> XTAL_GET funge_f(auto const &&t) noexcept {return      static_cast<T const &&>(t);}
-template <class T> XTAL_GET funge_f(auto       &&t) noexcept {return      static_cast<T       &&>(t);}
-template <class T> XTAL_GET funge_f(auto const  &t) noexcept {return      static_cast<T const  &>(t);}
-template <class T> XTAL_GET funge_f(auto        &t) noexcept {return      static_cast<T        &>(t);}
+template <class T> XTAL_DEF_(alias) funge_f(auto const &&t) noexcept {return      static_cast<T const &&>(t);}
+template <class T> XTAL_DEF_(alias) funge_f(auto       &&t) noexcept {return      static_cast<T       &&>(t);}
+template <class T> XTAL_DEF_(alias) funge_f(auto const  &t) noexcept {return      static_cast<T const  &>(t);}
+template <class T> XTAL_DEF_(alias) funge_f(auto        &t) noexcept {return      static_cast<T        &>(t);}
 
-template <class T> XTAL_GET fudge_f(auto const &&t) noexcept {return reinterpret_cast<T const &&>(t);}
-template <class T> XTAL_GET fudge_f(auto       &&t) noexcept {return reinterpret_cast<T       &&>(t);}
-template <class T> XTAL_GET fudge_f(auto const  &t) noexcept {return reinterpret_cast<T const  &>(t);}
-template <class T> XTAL_GET fudge_f(auto        &t) noexcept {return reinterpret_cast<T        &>(t);}
+template <class T> XTAL_DEF_(alias) fudge_f(auto const &&t) noexcept {return reinterpret_cast<T const &&>(t);}
+template <class T> XTAL_DEF_(alias) fudge_f(auto       &&t) noexcept {return reinterpret_cast<T       &&>(t);}
+template <class T> XTAL_DEF_(alias) fudge_f(auto const  &t) noexcept {return reinterpret_cast<T const  &>(t);}
+template <class T> XTAL_DEF_(alias) fudge_f(auto        &t) noexcept {return reinterpret_cast<T        &>(t);}
 
 template <int M>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET modulo_f(_std::unsigned_integral auto n)
 noexcept -> auto
 {
@@ -109,7 +109,7 @@ noexcept -> auto
 	return n;
 }
 template <int M>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET modulo_f(_std::  signed_integral auto n)
 noexcept -> auto
 {
@@ -121,24 +121,17 @@ noexcept -> auto
 }
 
 
-template <class T> XTAL_DEF_(return,inline) XTAL_LET valve_f(T const  &t) noexcept -> T const  & {return XTAL_REF_(t);}
-template <class T> XTAL_DEF_(return,inline) XTAL_LET valve_f(T        &t) noexcept -> T        & {return XTAL_REF_(t);}
-template <class T> XTAL_DEF_(return,inline) XTAL_LET valve_f(T const &&t) noexcept -> T          {return XTAL_REF_(t);}
-template <class T> XTAL_DEF_(return,inline) XTAL_LET valve_f(T       &&t) noexcept -> T          {return XTAL_REF_(t);}
-
-
-
 template <int N>
-XTAL_DEF_(return,inline)
-XTAL_LET part_f(auto &&t)
+XTAL_DEF_(short)
+XTAL_LET apart_f(auto &&t)
 noexcept
 requires sized_q<decltype(t)>
 {
 	XTAL_LET M = sized_n<decltype(t)>;
-	return get<modulo_f<M>(N)>(part_f(XTAL_REF_(t)));
+	return get<modulo_f<M>(N)>(apart_f(XTAL_REF_(t)));
 }
-XTAL_DEF_(return,inline)
-XTAL_LET part_f(auto &&t)
+XTAL_DEF_(short)
+XTAL_LET apart_f(auto &&t)
 noexcept -> decltype(auto)
 requires sized_q<decltype(t)>
 {
@@ -148,13 +141,13 @@ requires sized_q<decltype(t)>
 		return XTAL_REF_(t);
 	}
 	XTAL_0IF_(else) {
-		return reinterpret_cast<devalued_t<T> &&>(XTAL_REF_(t));
+		return reinterpret_cast<apart_t<T> &&>(XTAL_REF_(t));
 	}
 }
-static_assert(id_q<      int( &)[2], decltype(part_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(id_q<const int( &)[2], decltype(part_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(id_q<      int(&&)[2], decltype(part_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(id_q<const int(&&)[2], decltype(part_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+static_assert(id_q<      int( &)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(id_q<const int( &)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(id_q<      int(&&)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(id_q<const int(&&)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int> const &&)))>);
 
 ///\
 Defines a factory for the supplied type. \
@@ -186,7 +179,7 @@ Ranged...
 adjusting the referenced index `i` to point to the next available slot. \
 
 template <int N_offset=0, class T>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET endpoint_f(T &&t)
 noexcept -> auto
 {
@@ -202,7 +195,7 @@ noexcept -> auto
 	}
 }
 template <int N_offset=0, class T>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET point_f(T &&t)
 noexcept -> auto
 {
@@ -223,11 +216,11 @@ noexcept -> auto
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class           ...Us>	XTAL_DEF_(return,inline) XTAL_LET count_f(_std::           tuple<Us...>) noexcept -> size_type {return sizeof...(Us);}
-template <class U, size_type N >	XTAL_DEF_(return,inline) XTAL_LET count_f(_std::           array<U,  N>) noexcept -> size_type {return        N;}
-template <class U,    class  V >	XTAL_DEF_(return,inline) XTAL_LET count_f(_std::            pair<U,  V>) noexcept -> size_type {return        2;}
-template <class U              >	XTAL_DEF_(return,inline) XTAL_LET count_f(_std::initializer_list<U>  t ) noexcept -> size_type {return t.size();}
-XTAL_DEF_(return,inline)
+template <class           ...Us>	XTAL_DEF_(short) XTAL_LET count_f(_std::           tuple<Us...>) noexcept -> size_type {return sizeof...(Us);}
+template <class U, size_type N >	XTAL_DEF_(short) XTAL_LET count_f(_std::           array<U,  N>) noexcept -> size_type {return        N;}
+template <class U,    class  V >	XTAL_DEF_(short) XTAL_LET count_f(_std::            pair<U,  V>) noexcept -> size_type {return        2;}
+template <class U              >	XTAL_DEF_(short) XTAL_LET count_f(_std::initializer_list<U>  t ) noexcept -> size_type {return t.size();}
+XTAL_DEF_(short)
 XTAL_LET count_f(auto const &t)
 noexcept -> size_type
 {
@@ -236,27 +229,27 @@ noexcept -> size_type
 	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(t))
 	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(0))
 }
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET count_f(auto const &...ts)
 noexcept -> size_type
 {
 	return _std::min<size_type>({(count_f(ts) - size_1)...}) + size_1;
 }
-XTAL_DEF_(return,inline) XTAL_LET  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
-XTAL_DEF_(return,inline) XTAL_LET discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(short) XTAL_LET  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(short) XTAL_LET discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
 
 
 template <counter_q I0, counter_q IN>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET counted_f(I0 i0, IN iN)
 noexcept -> auto
 {
 	return counted_t<common_t<I0, IN>>(i0, iN);
 }
 
-template <counter_q  I >	XTAL_DEF_(return,inline) XTAL_LET counted_f(I i0, I iN) noexcept -> auto {return counted_t<I>(i0, iN);}
-template <class      T >	XTAL_DEF_(return,inline) XTAL_LET counted_f(T &&t)      noexcept -> auto {return counted_t<T>(XTAL_REF_(t));}
-template <class      T >	XTAL_DEF_(return,inline) XTAL_LET counter_f(T &&t)      noexcept -> auto {return counter_t<T>(XTAL_REF_(t));}
+template <counter_q  I >	XTAL_DEF_(short) XTAL_LET counted_f(I i0, I iN) noexcept -> auto {return counted_t<I>(i0, iN);}
+template <class      T >	XTAL_DEF_(short) XTAL_LET counted_f(T &&t)      noexcept -> auto {return counted_t<T>(XTAL_REF_(t));}
+template <class      T >	XTAL_DEF_(short) XTAL_LET counter_f(T &&t)      noexcept -> auto {return counter_t<T>(XTAL_REF_(t));}
 
 
 ///\returns the result of zipping `...xs` with `f`. \
@@ -302,14 +295,14 @@ Arithmetic...
 
 /*/
 template <template <class> class Y, class ...Xs>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET construxion_f(Xs &&...xs)
 noexcept -> decltype(auto)
 {
 	using W = common_t<Xs...>;
 	return operative_f<Y<W>>(XTAL_REF_(xs)...);
 }
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET complexion_f(auto &&...xs)
 noexcept -> decltype(auto)
 {
@@ -318,7 +311,7 @@ noexcept -> decltype(auto)
 /***/
 
 template <class X, class Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET identical_f(X &&x, Y &&y)
 noexcept -> bool
 {
@@ -330,7 +323,7 @@ noexcept -> bool
 }
 
 template <class X, class Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
@@ -339,7 +332,7 @@ noexcept -> bool
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
@@ -349,14 +342,14 @@ noexcept -> bool
 }
 
 template <class X, class Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET equivalent_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
 }
 template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET equivalent_f(X &&x, Y &&y)
 noexcept -> bool
 {

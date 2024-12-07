@@ -37,7 +37,7 @@ struct mark<>
 	public:
 		using S_::S_;
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(implicit) auto(), mark_s<>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(implicit operator) auto(), mark_s<>(S_::head()))
 		
 		using mark_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
 		using mark_size = constant_t<size_1>;
@@ -60,7 +60,7 @@ struct mark<>
 ////////////////////////////////////////////////////////////////////////////////
 /**/
 template <any_q T>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET mark_f(XTAL_SYN_(mark_s<>) auto &&s, T &&t)
 noexcept -> auto
 {
@@ -72,8 +72,8 @@ noexcept -> auto
 	XTAL_0IF_(else)                  {return F(XTAL_REF_(s),           conferred_t<Y>(XTAL_REF_(t)));}
 	
 }
-template <any_q T> XTAL_DEF_(return,inline) XTAL_LET operator << (mark_s<>       &&s, T &&t) noexcept -> decltype(auto) {return mark_f(XTAL_MOV_(s), XTAL_REF_(t));}
-template <any_q T> XTAL_DEF_(return,inline) XTAL_LET operator << (mark_s<> const  &s, T &&t) noexcept -> decltype(auto) {return mark_f(XTAL_REF_(s), XTAL_REF_(t));}
+template <any_q T> XTAL_DEF_(short) XTAL_LET operator << (mark_s<>       &&s, T &&t) noexcept -> decltype(auto) {return mark_f(XTAL_MOV_(s), XTAL_REF_(t));}
+template <any_q T> XTAL_DEF_(short) XTAL_LET operator << (mark_s<> const  &s, T &&t) noexcept -> decltype(auto) {return mark_f(XTAL_REF_(s), XTAL_REF_(t));}
 
 /***/
 ///////////////////////////////////////////////////////////////////////////////

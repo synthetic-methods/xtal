@@ -14,7 +14,7 @@ namespace xtal::occur
 template <integer_q U=integer_type> struct   restep;
 template <integer_q U=integer_type> using    restep_t = confined_t<restep<U>>;
 template <typename ..._s> concept  restep_q = bond::any_tag_p<restep, _s...>;
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET restep_f(auto &&w)
 noexcept -> auto
 {
@@ -40,7 +40,7 @@ struct restep
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_GET step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(alias) step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

@@ -15,7 +15,7 @@ template <class   ..._s>	struct   scalar;
 template <class   ..._s>	using    scalar_t = typename scalar<_s...>::type;
 template <class   ...Ts>	concept  scalar_q = bond::any_tag_p<scalar_t, Ts...>;
 template <class  V=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET scalar_f(auto &&...oo)
 noexcept -> auto
 {
@@ -113,9 +113,9 @@ struct scalar<A>
 		using S_::operator/=;
 		using S_::operator%=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto const &t)              const noexcept -> auto   {return twin() *=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator / (auto const &t)              const noexcept -> auto   {return twin() /=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator % (auto const &t)              const noexcept -> auto   {return twin() %=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator * (auto const &t)              const noexcept -> auto   {return twin() *=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator / (auto const &t)              const noexcept -> auto   {return twin() /=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator % (auto const &t)              const noexcept -> auto   {return twin() %=   t ;}
 		XTAL_DEF_(inline)        XTAL_LET operator *=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator /=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() /= T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator %=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() %= T(t);}
@@ -211,7 +211,7 @@ struct scalar<A>
 
 	//	Scalar sum:
 		template <int N_sgn=1>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET sum(U_data const &u={}) const
 		noexcept -> U_data
 		{
@@ -224,14 +224,14 @@ struct scalar<A>
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(s)*U_data(-sign_n<I&1, -1>)))
+					XTAL_0FN_(u +...+ (get<I>(s)*U_data(-signum_n<I&1, -1>)))
 				(bond::seek_s<N_data>{});
 			}
 		}
 
 	//	Scalar product:
 		template <int N_sgn=1>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET product(U_data u={}) const
 		noexcept -> U_data
 		{
@@ -246,12 +246,12 @@ struct scalar<A>
 			else {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _op::accumulate_f(u, v, v, U_data(-sign_n<I&1, -1>));
+					u = _op::accumulate_f(u, v, v, U_data(-signum_n<I&1, -1>));
 				});
 			}
 			return u;
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET product(bond::pack_sized_q<N_data> auto &&t) const
 		noexcept -> U_data
 		{
@@ -288,7 +288,7 @@ struct scalar<A>
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET reflected() const
 		noexcept -> decltype(auto)
 		{
@@ -302,7 +302,7 @@ struct scalar<A>
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET reflector()
 		noexcept -> devolved_u<U_data>
 		{
@@ -313,7 +313,7 @@ struct scalar<A>
 		}
 
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET ordering() const
 		{
 			if constexpr (N_data == 2) {
@@ -322,12 +322,12 @@ struct scalar<A>
 			}
 		//	TODO: Provide variadic `ordering`.
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET ordered() const
 		{
 			return S_::twin().order();
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET order()
 		noexcept -> T &
 		{
@@ -342,7 +342,7 @@ struct scalar<A>
 			return self();
 		}
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET reversed() const
 		{
 			return S_::twin().reverse();
@@ -363,7 +363,7 @@ struct scalar<A>
 
 		
 		template <size_type N>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET colimited() const
 		noexcept -> U_data
 		{
@@ -374,7 +374,7 @@ struct scalar<A>
 				XTAL_0IF (N <= 0) {return _std::min<U_data>({XTAL_REF_(oo)...});}
 			});
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET colimited() const
 		{
 			using  U2 = typename T::template tagged_t<U_data[2]>;
@@ -382,7 +382,7 @@ struct scalar<A>
 		}
 
 		template <size_type N>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET cofactored() const
 		noexcept -> U_data
 		{
@@ -390,13 +390,13 @@ struct scalar<A>
 			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
 			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET cofactored() const
 		{
 			using  U2 = typename T::template tagged_t<U_data[2]>;
 			return U2{cofactored<0>(), cofactored<1>()};
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET cofactorable() const
 		{
 			auto t = ordered();

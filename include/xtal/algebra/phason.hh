@@ -35,7 +35,7 @@ template <class   ...Ts>	concept     real_phason_q = bond::any_tag_p<phason_t, T
 template <class   ...Ts>	concept  simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
 template <class   ...Ts>	concept  complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
 template <class  V=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET phason_f(auto &&...oo)
 noexcept -> auto
 {
@@ -60,13 +60,13 @@ struct circumscribe : circumspect<V>
 	using inordinate_type = typename _op::delta_type;
 	using coordinate_type = typename _Op::alpha_type;
 
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET    ordinate(real_number_q auto const &co)
 	noexcept -> ordinate_type
 	{
 		return _op::sigma_f(_op::fractional_f(co));
 	};
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET    coordinate(integer_q auto const &o)
 	noexcept -> coordinate_type
 	{
@@ -75,15 +75,15 @@ struct circumscribe : circumspect<V>
 
 };
 template <complex_number_q A>
-struct circumscribe<A> : circumscribe<devalued_u<A>>
+struct circumscribe<A> : circumscribe<apart_u<A>>
 {
-	using _op = circumscribe<devalued_u<A>>;
+	using _op = circumscribe<apart_u<A>>;
 
 	using   ordinate_type = _std::complex<typename _op::  ordinate_type>;
 	using inordinate_type = _std::complex<typename _op::inordinate_type>;
 	using coordinate_type = _std::complex<typename _op::coordinate_type>;
 
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET    ordinate(coordinate_type const &co)
 	noexcept -> ordinate_type
 	{
@@ -91,7 +91,7 @@ struct circumscribe<A> : circumscribe<devalued_u<A>>
 		auto const o_im = _op::ordinate(co.imag());
 		return {o_re, o_im};
 	};
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET    coordinate(ordinate_type const &o)
 	noexcept -> coordinate_type
 	{
@@ -101,7 +101,7 @@ struct circumscribe<A> : circumscribe<devalued_u<A>>
 	};
 };
 template <column_q A>
-struct circumscribe<A> : circumscribe<devalued_u<A>>
+struct circumscribe<A> : circumscribe<apart_u<A>>
 {
 };
 
@@ -123,7 +123,7 @@ struct phason<A>
 	using inordinate_type = typename T_op::inordinate_type;
 	using coordinate_type = typename T_op::coordinate_type;
 
-	static_assert(_std::numeric_limits<devalued_u<ordinate_type>>::is_modulo);// D'oh!
+	static_assert(_std::numeric_limits<apart_u<ordinate_type>>::is_modulo);// D'oh!
 
 	using holotag  = bond::tag<phason_t>;
 	using holokind = serial<ordinate_type[M_data]>;
@@ -148,13 +148,13 @@ struct phason<A>
 
 	public:// MAP
 
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET ordinate(coordinate_type const &co)
 		noexcept -> ordinate_type
 		{
 			return T_op::ordinate(co);
 		}
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET coordinate(ordinate_type const &o)
 		noexcept -> coordinate_type
 		{
@@ -202,20 +202,6 @@ struct phason<A>
 		{
 			operator>>=(XTAL_REF_(o));
 		}
-		
-	//	XTAL_DEF_(inline)
-	//	XTAL_DO4_(XTAL_ION_(implicit)
-	//	auto(),
-	//	{
-	//		if constexpr (complex_field_q<coordinate_type>) {
-	//			using F = _std::complex<typename S_::template tagged_t<devalued_u<coordinate_type>[N_data]>>;
-	//			auto &s = self();
-	//			
-	//			return [&]<auto ...I> (bond::seek_t<I...>)
-	//				XTAL_0FN_(F({s(I).real()...}, {s(I).imag()...}))
-	//			(bond::seek_s<N_data>{});
-	//		}
-	//	})
 		
 	public:// RECONSTRUCT
 		using S_::operator >>=;
@@ -274,12 +260,12 @@ struct phason<A>
 		auto operator *= (T const &) noexcept -> T &;// Asymmetric!
 		auto operator /= (T const &) noexcept -> T &;// Asymmetric!
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator * (auto const &t) const
 		noexcept -> auto {
 			return twin() *= t;
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator / (auto const &t) const
 		noexcept -> auto {
 			return twin() /= t;
@@ -374,14 +360,14 @@ struct phason<A>
 		}
 
 		template <class Y=coordinate_type>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET continuity()
 		noexcept -> Y
 		{
 			return condition_f<Y>(not discontinuity<bool>());
 		}
 		template <class Y=coordinate_type>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET discontinuity()
 		noexcept -> Y
 		{

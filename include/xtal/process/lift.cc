@@ -21,7 +21,7 @@ struct foo
 	class type
 	{
 	public:
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator () (auto &&o) const
 		noexcept -> auto
 		{

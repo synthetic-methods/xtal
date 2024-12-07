@@ -67,12 +67,12 @@ struct spool<A>
 		,	u_store(w.begin(), w.end())
 		{}
 
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
-		XTAL_TO2_(XTAL_DEF_(return,inline) XTAL_LET  peek(U_count n=0), *begin(n))
-		XTAL_TO2_(XTAL_GET  span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_TO2_(XTAL_GET  span(U_count n), span(n, n))
-		XTAL_TO2_(XTAL_GET  span(         ), span(0, 0))
+		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
+		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET  peek(U_count n=0), *begin(n))
+		XTAL_TO2_(XTAL_DEF_(alias)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_TO2_(XTAL_DEF_(alias)  span(U_count n), span(n, n))
+		XTAL_TO2_(XTAL_DEF_(alias)  span(         ), span(0, 0))
 
 		XTAL_DEF_(inline)
 		XTAL_LET advance(U_count n=1)
@@ -124,13 +124,13 @@ struct spool<A>
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET scan(auto &&w)
 		noexcept -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET scan(auto &&w, auto &&f)
 		noexcept -> U_point
 		{

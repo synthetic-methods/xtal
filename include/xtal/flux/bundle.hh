@@ -57,11 +57,11 @@ struct bundle
 
 		using node_type = typename S_::head_type;
 
-		XTAL_TO4_(XTAL_GET  node(), head())
-		XTAL_TO4_(XTAL_GET slots(), head())
+		XTAL_TO4_(XTAL_DEF_(alias)  node(), head())
+		XTAL_TO4_(XTAL_DEF_(alias) slots(), head())
 		
 		XTAL_DO2_(template <size_type ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET slot(),
 		noexcept -> decltype(auto)
 		{
@@ -74,18 +74,18 @@ struct bundle
 
 		///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET influx(auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return [this, oo...] XTAL_XFN_(self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...));
 		}
 
 		///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET efflux(auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return [this, oo...] XTAL_XFN_(S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 		}
@@ -93,15 +93,15 @@ struct bundle
 		///\note\
 		If prefixed by `unnatural_q` a.k.a. `flux::slot_n<-1>`, forwards to all `slots`. \
 
-		XTAL_DEF_(return,inline) XTAL_LET influx(unnatural_q auto, auto &&...oo) noexcept -> sign_type {return self().influx_push(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline) XTAL_LET efflux(unnatural_q auto, auto &&...oo) noexcept -> sign_type {return self().efflux_push(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short) XTAL_LET influx(unnatural_q auto, auto &&...oo) noexcept -> signed {return self().influx_push(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short) XTAL_LET efflux(unnatural_q auto, auto &&...oo) noexcept -> signed {return self().efflux_push(XTAL_REF_(oo)...);}
 
 
 		///\note\
 		If prefixed by `natural_q`, forwards to the `slot` specified. \
 
-		XTAL_DEF_(return,inline) XTAL_LET influx(natural_q auto I, auto &&...oo) noexcept -> sign_type {return slot<I>().influx(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline) XTAL_LET efflux(natural_q auto I, auto &&...oo) noexcept -> sign_type {return slot<I>().efflux(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short) XTAL_LET influx(natural_q auto I, auto &&...oo) noexcept -> signed {return slot<I>().influx(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short) XTAL_LET efflux(natural_q auto I, auto &&...oo) noexcept -> signed {return slot<I>().efflux(XTAL_REF_(oo)...);}
 
 		///\
 		Forwards to all `slots`, bypassing `self`. \
@@ -110,17 +110,17 @@ struct bundle
 		If `0 <= N_slot` provided, \
 		forwards `o, oo...` to the slot specified, then `oo...` to the remainder. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET influx_push(auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return slots().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
 				XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
 			);
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET efflux_pull(auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return slots().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
 				XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
@@ -128,9 +128,9 @@ struct bundle
 		}
 		
 		template <int N_slot>
-		XTAL_DEF_(return)
+		XTAL_DEF_(long)
 		XTAL_LET influx_push(auto &&o, auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			XTAL_IF0
 			XTAL_0IF (N_slot <  0) {
@@ -146,9 +146,9 @@ struct bundle
 			}
 		}
 		template <int N_slot>
-		XTAL_DEF_(return)
+		XTAL_DEF_(long)
 		XTAL_LET efflux_pull(auto &&o, auto &&...oo)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			XTAL_IF0
 			XTAL_0IF (N_slot <  0) {

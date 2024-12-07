@@ -11,15 +11,29 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class        ...Us> struct   pack         {using type = _std::tuple<Us...>;};
-template <class U0, class U1> struct   pack<U0, U1> {using type = _std::pair<U0, U1>;};
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <class T>	struct  item             {using type = T         ;};
+template <class T>	struct  item<T const   > {using type = T const   ;};
+template <class T>	struct  item<T       &&> {using type = T         ;};
+template <class T>	struct  item<T const &&> {using type = T const   ;};
+template <class T>	struct  item<T        &> {using type = T        &;};
+template <class T>	struct  item<T const  &> {using type = T const  &;};
+template <class T>	using   item_t	= typename item<T>::type;
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <class        ...Us> struct   pack         {using type = _std::tuple<_detail::item_t<Us>...>;};
+template <class U0, class U1> struct   pack<U0, U1> {using type = _std::pair <_detail::item_t<U0>, _detail::item_t<U1>>;};
 template <class        ...Us> using    pack_t = typename pack<Us...>::type;
 
 XTAL_DEF_(inline)
 XTAL_LET pack_f(auto &&...us)
 noexcept -> auto
 {
-	return pack_t<valve_t<decltype(us)>...>(XTAL_REF_(us)...);
+	return pack_t<_detail::item_t<decltype(us)>...>(XTAL_REF_(us)...);
 };
 template <auto I>
 XTAL_DEF_(inline)
@@ -80,23 +94,23 @@ using    pack_item_t = typename pack_item<T, Is...>::type;
 //\brief\
 Determines the element-value indexed by `Is...` nested within and across the concatenated `t, ts...`. \
 
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_item_f(auto &&t)
 noexcept -> decltype(auto)
 {
 	return XTAL_REF_(t);
 }
 template <auto I>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_item_f(auto &&t)
 noexcept -> decltype(auto)
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(get<I>(XTAL_REF_(t)))
-	XTAL_0IF_(else) return part_f(XTAL_REF_(t))[I];
+	XTAL_0IF_(else) return apart_f(XTAL_REF_(t))[I];
 }
 template <auto I, auto ...Is> requires some_n<Is...>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_item_f(auto &&t, auto &&...ts)
 noexcept -> decltype(auto)
 {
@@ -110,7 +124,7 @@ noexcept -> decltype(auto)
 	}
 }
 template <auto ...Is>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_item_f(seek_t<Is...>, auto &&...ts)
 noexcept -> decltype(auto)
 {
@@ -148,7 +162,7 @@ template <pack_size_q ...Ts>
 struct   repack
 {
 	template <auto  ...Is>
-	XTAL_DEF_(static)
+	XTAL_DEF_(short,static)
 	XTAL_LET make(seek_t<Is...>) -> pack_t<interpack_item_t<Is, Ts...>...>;
 
 	using type = decltype(make(seek_s<pack_size_n<Ts...>>()));
@@ -172,7 +186,7 @@ using    repack_y = XTAL_FUN_(repack_f<F>);
 
 
 template <auto I, class U=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_rowwise_f(auto const &m, auto const &i, indexed_q auto &&w)
 noexcept -> auto
 {
@@ -185,25 +199,26 @@ noexcept -> auto
 	else {
 		return [&]<auto ...Is> (bond::seek_t<Is...>)
 		XTAL_0FN {
-			if constexpr (void_q<U>) {
-				return _xtd::ranges::views::zip(span(next(point_f(w[Is]), i), m)...);
+			XTAL_IF0
+			XTAL_0IF (  complete_q<U>) {
+				return           iterative_f<U>(span(next(point_f(w[Is]), i), m)...);
 			}
-			else {
-				return iterative_f<U>(span(next(point_f(w[Is]), i), m)...);
+			XTAL_0IF (incomplete_q<U>) {
+				return _xtd::ranges::views::zip(span(next(point_f(w[Is]), i), m)...);
 			}
 		}
 		(bond::seek_s<I>{});
 	}
 }
 template <auto I, class U=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_rowwise_f(auto const &m, indexed_q auto &&w)
 noexcept -> decltype(auto)
 {
 	return pack_rowwise_f<I, U>(XTAL_REF_(m), size_0, XTAL_REF_(w));
 }
 template <auto I, class U=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_rowwise_f(integer_q auto ...ns)
 noexcept -> decltype(auto)
 {
@@ -212,7 +227,7 @@ noexcept -> decltype(auto)
 template <auto I, class U>
 using    pack_rowwise_t = XTAL_ALL_(pack_rowwise_f<I, U>(0x1000, XTAL_ANY_(initializer_u<U> **)));
 
-template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(  pack_rowwise_f<devalued_n<U>, U>);
+template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(  pack_rowwise_f<apart_n<U>, U>);
 template <class U> using    repack_rowwise_t =    XTAL_ALL_(repack_rowwise_f<U>(0x1000, XTAL_ANY_(initializer_u<U> **)));
 
 
@@ -229,7 +244,7 @@ template <class ...Ts> concept heteropack_q = pack_q<Ts...> and un_n<iterable_q<
 ////////////////////////////////////////////////////////////////////////////////
 
 template <pack_q X, pack_q Y>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET pack_dot_f(X const &x, Y const &y)
 {
 	XTAL_LET M = pack_size_n<X>;

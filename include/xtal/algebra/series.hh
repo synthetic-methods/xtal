@@ -15,7 +15,7 @@ template <class   ..._s>	struct   series;
 template <class   ..._s>	using    series_t = typename series<_s...>::type;
 template <class   ...Ts>	concept  series_q = bond::any_tag_p<series_t, Ts...>;
 template <class  V=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET series_f(auto &&...oo)
 noexcept -> auto
 {
@@ -31,8 +31,8 @@ template <column_q A>
 struct series<A>
 {
 	using U_v0 = _std::remove_extent_t<A>;
-	using U_v1 = devalued_u<U_v0>;
-	using U_v2 = devalued_u<U_v1>;
+	using U_v1 = apart_u<U_v0>;
+	using U_v2 = apart_u<U_v1>;
 
 	using _op = bond::operate<A>;
 	
@@ -93,7 +93,7 @@ struct series<A>
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				auto &[o, e] = get<I>(s);
-				auto &[f, g] = part_f(e);
+				auto &[f, g] = apart_f(e);
 			//	_op::template truncate_f<4>(f);
 				get<I>(s) = {o*f, _std::conj(o)*g};
 			});
@@ -182,7 +182,7 @@ struct series<A>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <int N_direction=1, isomorphic_q<T> Y0> requires sign_p<N_direction, 1> and complex_field_q<U_data>
+		template <int N_direction=1, isomorphic_q<T> Y0> requires signum_p<N_direction, 1> and complex_field_q<U_data>
 		XTAL_LET transform(Y0 &&that) const
 		noexcept -> decltype(auto)
 		{
@@ -234,8 +234,8 @@ struct series<A>
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
-		template <int N_direction=1, isomorphic_q<T> Y0> requires sign_p<N_direction, 1>
-		XTAL_DEF_(return,inline)
+		template <int N_direction=1, isomorphic_q<T> Y0> requires signum_p<N_direction, 1>
+		XTAL_DEF_(short)
 		XTAL_LET transformation(Y0 y0) const
 		noexcept -> decltype(auto)
 		{
@@ -255,7 +255,7 @@ struct series<A>
 		using `this` as the Fourier basis. \
 
 		template <isomorphic_q<T> Y0, is_q<Y0> Y1>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET convolution(Y0 y0, Y1 const &y1) const
 		noexcept -> Y0
 		{
@@ -267,7 +267,7 @@ struct series<A>
 
 		using S_::operator*=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator * (auto const &w)              const noexcept -> auto   {return twin() *=   w ;}
+		XTAL_DEF_(short) XTAL_LET operator * (auto const &w)              const noexcept -> auto   {return twin() *=   w ;}
 		XTAL_DEF_(inline)        XTAL_LET operator *=(_std::initializer_list<U_data> w) noexcept -> auto & {return self() *= T(w);}
 
 	//	XTAL_DEF_(inline)

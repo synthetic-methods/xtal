@@ -31,7 +31,7 @@ template <                     typename ..._s> struct   render;
 template <class W=counter_t<>, typename ..._s> using    render_t = confined_t<render<W>, _s...>;
 template <                     typename ..._s> concept  render_q = bond::any_tag_p<render, _s...>;
 template <                     typename ..._s>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET render_f(auto &&w)
 noexcept -> auto
 {
@@ -80,7 +80,7 @@ struct surrender
 		
 		using value_type = V_;
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET skip(V_ v) const
 		noexcept -> T_
 		{
@@ -134,13 +134,13 @@ struct surrender
 		}
 		///\returns the adjacent block with the same `size`. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET next(V_ v) const
 		noexcept -> T_
 		{
 			return self().operator*(v);
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET next() const
 		noexcept -> T_
 		{
@@ -148,13 +148,13 @@ struct surrender
 		}
 		///\returns the adjacent block of size `v`. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator + (V_ v) const
 		noexcept -> T_
 		{
 			return twin().operator+=(v);
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator - (V_ v) const
 		noexcept -> T_
 		{
@@ -162,13 +162,13 @@ struct surrender
 		}
 		///\returns the adjacent block of size `0`. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET null() const
 		noexcept -> T_
 		{
 			return twin().operator+=(0);
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET null(V_ v) const
 		noexcept -> T_
 		{
@@ -177,14 +177,14 @@ struct surrender
 
 		///\returns `true` iff the left-hand argument immediately follows the right. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator >=(subtype const &t) const
 		noexcept -> bool
 		{
 			return S_::operator>(t) or S_::operator==(t);
 		}
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator <=(subtype const &t) const
 		noexcept -> bool
 		{
@@ -196,9 +196,9 @@ struct surrender
 		while setting `size = 0` for future `efflux`. \
 		
 		/**/
-		XTAL_DEF_(return)
+		XTAL_DEF_(long)
 		XTAL_LET infuse(render_q auto &&t)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			auto &s = self();
 			if (s == t) {
@@ -211,17 +211,17 @@ struct surrender
 				return 0;
 			}
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET infuse(T_ t)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			auto &s = self();
 			return s == t || ((s = t), 0);
 		}
 		/***/
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET infuse(auto &&o)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return S_::infuse(XTAL_REF_(o));
 		}
@@ -233,15 +233,15 @@ struct surrender
 		Unrecognized `render_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET effuse(auto &&o)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			return S_::effuse(XTAL_REF_(o));
 		}
-		XTAL_DEF_(return)
+		XTAL_DEF_(long)
 		XTAL_LET effuse(render_q auto &&t)
-		noexcept -> sign_type
+		noexcept -> signed
 		{
 			auto &s = self();
 			if (s == t) {
@@ -302,7 +302,7 @@ struct render<V>
 		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET subview(auto &&w) const
 		noexcept -> T_
 		{
@@ -346,13 +346,13 @@ struct render<V>
 
 		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator < (subtype const &t) const
 		noexcept -> bool
 		{
 			return S_::next().step() == t.step();
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator > (subtype const &t) const
 		noexcept -> bool
 		{
@@ -400,7 +400,7 @@ public:
 		:	subtype(U(0, 0), 0)
 		{}
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET subview(auto &&w) const
 		noexcept -> T_
 		{
@@ -464,13 +464,13 @@ public:
 
 		///\returns `true` iff the left-hand argument immediately precedes the right. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator < (subtype const &t) const
 		noexcept -> bool
 		{
 			return S_::end() == t.begin();
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator > (subtype const &t) const
 		noexcept -> bool
 		{

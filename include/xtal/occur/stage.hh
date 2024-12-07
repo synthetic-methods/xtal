@@ -17,10 +17,10 @@ template <typename ...As>
 struct stage
 {
 	using superkind = bond::compose<void
-	,	_detail::infer_equality<sign_type>
-	,	_detail::infer_binary_logic<sign_type>
+	,	_detail::infer_equality<signed>
+	,	_detail::infer_binary_logic<signed>
 	,	As...
-	,	defer<sign_type>
+	,	defer<signed>
 	>;
 
 	template <class S>
@@ -38,10 +38,10 @@ template <constant_q A, typename ...As>
 struct stage<A, As...>
 {
 	using superkind = bond::compose<void
-	,	_detail::infer_equality<sign_type>
-	,	_detail::infer_binary_logic<sign_type>
+	,	_detail::infer_equality<signed>
+	,	_detail::infer_binary_logic<signed>
 	,	As...
-	,	defer<sign_type>
+	,	defer<signed>
 	>;
 
 	template <class S>
@@ -78,7 +78,7 @@ template <typename ...As>
 using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
 
 template <typename ...As>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET stage_f(auto &&...oo)
 noexcept -> auto
 {

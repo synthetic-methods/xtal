@@ -22,7 +22,7 @@ struct initialize
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
 	template <class V=void, class ...Xs>
-	XTAL_DEF_(return,inline,static)
+	XTAL_DEF_(short,static)
 	XTAL_LET via(Xs &&...xs)
 	noexcept -> auto
 	{

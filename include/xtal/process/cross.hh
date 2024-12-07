@@ -15,7 +15,7 @@ template <typename ..._s> struct   cross;
 template <typename ..._s> using    cross_t = confined_t<cross<_s...>>;
 template <typename ..._s> concept  cross_q = bond::any_tag_p<cross, _s...>;
 template <typename ...As>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET cross_f(auto &&u)
 noexcept -> auto
 {
@@ -43,7 +43,7 @@ struct cross<W, U, As...>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(long)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{

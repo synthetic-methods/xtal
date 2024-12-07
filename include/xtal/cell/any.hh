@@ -39,7 +39,7 @@ struct define
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET equal_to_(subtype const &t) const
 		noexcept -> bool
 		{
@@ -53,19 +53,19 @@ struct define
 		//\
 		Trivial (in)equality. \
 		
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator == (subtype const &t) const
 		noexcept -> bool
 		{
 			return true;
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator != (subtype const &t) const
 		noexcept -> bool
 		{
 			return not equal_to_(t);
 		}
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator <=> (subtype const &t) const
 		{
 			using is = _std::partial_ordering;
@@ -140,12 +140,12 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_TO4_(XTAL_DEF_(return,inline) XTAL_ION_(explicit) U_(), head())
+		XTAL_TO4_(XTAL_DEF_(explicit operator) U_(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET heading(auto &&o) const
 		noexcept -> bool
 		{
@@ -155,7 +155,7 @@ struct defer
 		///\
 		\returns `true` if the supplied body matches `this`, `false` otherwise. \
 
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET operator == (subtype const &t) const
 		noexcept -> bool
 		{
@@ -185,19 +185,19 @@ struct refer : bond::compose<void
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator == (W const &x, W const &y) noexcept -> bool {return x.self().operator== (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator != (W const &x, W const &y) noexcept -> bool {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_DEF_(return,inline) XTAL_LET operator <=>(W const &x, W const &y) noexcept -> auto {return x.self().operator<=>(y.self());}
+template <any_q W> XTAL_DEF_(short) XTAL_LET operator == (W const &x, W const &y) noexcept -> bool {return x.self().operator== (y.self());}
+template <any_q W> XTAL_DEF_(short) XTAL_LET operator != (W const &x, W const &y) noexcept -> bool {return x.self().operator!= (y.self());}
+template <any_q W> XTAL_DEF_(short) XTAL_LET operator <=>(W const &x, W const &y) noexcept -> auto {return x.self().operator<=>(y.self());}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
-XTAL_GET operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_GET operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(alias) operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(alias) operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_GET operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_GET operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_DEF_(alias) operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(alias) operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

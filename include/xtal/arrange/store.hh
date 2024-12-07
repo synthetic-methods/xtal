@@ -78,18 +78,18 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 
 
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator  i) noexcept -> auto {return reinterpret_cast<              iterator_>(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(              iterator_ i) noexcept -> auto {return reinterpret_cast<              iterator >(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(        const_iterator  i) noexcept -> auto {return reinterpret_cast<        const_iterator_>(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(        const_iterator_ i) noexcept -> auto {return reinterpret_cast<        const_iterator >(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(      reverse_iterator  i) noexcept -> auto {return reinterpret_cast<      reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(      reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<      reverse_iterator >(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator  i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator_>(i);}
-		XTAL_DEF_(return,inline,static) XTAL_LET offence_f(const_reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator >(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(offence_f(t.begin()), offence_f(t.end()));}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(              iterator  i) noexcept -> auto {return reinterpret_cast<              iterator_>(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(              iterator_ i) noexcept -> auto {return reinterpret_cast<              iterator >(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(        const_iterator  i) noexcept -> auto {return reinterpret_cast<        const_iterator_>(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(        const_iterator_ i) noexcept -> auto {return reinterpret_cast<        const_iterator >(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(      reverse_iterator  i) noexcept -> auto {return reinterpret_cast<      reverse_iterator_>(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(      reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<      reverse_iterator >(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(const_reverse_iterator  i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator_>(i);}
+		XTAL_DEF_(short,static) XTAL_LET offence_f(const_reverse_iterator_ i) noexcept -> auto {return reinterpret_cast<const_reverse_iterator >(i);}
 
-		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
-		XTAL_DEF_(return,inline,static) XTAL_LET defence_f(iterator_q auto         i) noexcept -> auto {return _std::launder(offence_f(XTAL_REF_(i)));}
+		XTAL_DEF_(short,static) XTAL_LET defence_f(iterable_q auto const & t) noexcept -> auto {return _std::span(defence_f(t.begin()), defence_f(t.end()));}
+		XTAL_DEF_(short,static) XTAL_LET defence_f(iterator_q auto         i) noexcept -> auto {return _std::launder(offence_f(XTAL_REF_(i)));}
 		
 
 		W_data m_data[N_data]{};
@@ -97,10 +97,10 @@ struct store<U_data[N_data]>
 
 
 	public:// ACCESS
-		XTAL_DEF_(return,inline) XTAL_LET begin()       noexcept -> auto {return defence_f(reinterpret_cast<      iterator_>(m_data));}
-		XTAL_DEF_(return,inline) XTAL_LET begin() const noexcept -> auto {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
-		XTAL_DEF_(return,inline) XTAL_LET   end()       noexcept -> auto {return _std::next(begin(), n_data);}
-		XTAL_DEF_(return,inline) XTAL_LET   end() const noexcept -> auto {return _std::next(begin(), n_data);}
+		XTAL_DEF_(short) XTAL_LET begin()       noexcept -> auto {return defence_f(reinterpret_cast<      iterator_>(m_data));}
+		XTAL_DEF_(short) XTAL_LET begin() const noexcept -> auto {return defence_f(reinterpret_cast<const_iterator_>(m_data));}
+		XTAL_DEF_(short) XTAL_LET   end()       noexcept -> auto {return _std::next(begin(), n_data);}
+		XTAL_DEF_(short) XTAL_LET   end() const noexcept -> auto {return _std::next(begin(), n_data);}
 
 
 	public:// SIZE
@@ -108,7 +108,7 @@ struct store<U_data[N_data]>
 	
 		///\returns the constant `N_data`. \
 
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET capacity()
 		noexcept -> size_type
 		{

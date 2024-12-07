@@ -18,7 +18,7 @@ template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
 template <class ..._s> concept  bundle_q = bond::any_tag_p<bundle, _s...>;
 
 template <class V=void, class ...Xs>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET bundle_f(Xs &&...xs)
 noexcept -> auto
 {
@@ -66,7 +66,7 @@ struct bundle
 		using S_::slots;
 
 		XTAL_DO2_(template <size_type ...Ns>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET slot(),
 		noexcept -> decltype(auto)
 		{
@@ -129,7 +129,7 @@ struct bundle
 		}
 
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(subtype const &s)
 		noexcept -> auto
 		requires requires {f(get<0>(s));}
@@ -142,7 +142,7 @@ struct bundle
 			(bond::seek_s<N>{});
 		}
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(subtype const &s, auto const &t)
 		noexcept -> auto
 		requires complete_q<common_t<Xs..., decltype(t)>>
@@ -156,7 +156,7 @@ struct bundle
 			(bond::seek_s<N>{});
 		}
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(auto const &t, subtype const &s)
 		noexcept -> auto
 		requires complete_q<common_t<decltype(t), Xs...>>
@@ -170,7 +170,7 @@ struct bundle
 			(bond::seek_s<N>{});
 		}
 		template <auto f>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET pointwise(subtype const &s, auto const &t)
 		noexcept -> auto
 		requires requires {f(get<0>(s), get<0>(t));}
@@ -212,38 +212,38 @@ struct bundle
 			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x -= y)>(t);
 		}
 
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator * (subtype const &s, auto const &t)
 		noexcept -> auto
 		{
 			return pointwise<[] (auto const &x, auto const &y) XTAL_0FN_(x * y)>(s, t);
 		}
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator * (auto const &t, subtype const &s)
 		noexcept -> auto
 		{
 			return pointwise<[] (auto const &x, auto const &y) XTAL_0FN_(x * y)>(t, s);
 		}
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator / (subtype const &s, auto const &t)
 		noexcept -> auto
 		{
 			return pointwise<[] (auto const &x, auto const &y) XTAL_0FN_(x / y)>(s, t);
 		}
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator + (subtype const &s, auto const &t)
 		noexcept -> auto
 		{
 			return pointwise<[] (auto const &x, auto const &y) XTAL_0FN_(x + y)>(s, t);
 		}
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator - (subtype const &s, auto const &t)
 		noexcept -> auto
 		{
 			return pointwise<[] (auto const &x, auto const &y) XTAL_0FN_(x - y)>(s, t);
 		}
 
-		XTAL_DEF_(return,inline,friend)
+		XTAL_DEF_(short,friend)
 		XTAL_LET operator - (subtype const &s)
 		noexcept -> subtype
 		{

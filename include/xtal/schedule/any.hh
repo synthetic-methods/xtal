@@ -69,15 +69,15 @@ struct define
 				///\
 				Expands the given unscheduled message, forwarding to `supertype::influx`. \
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(XTAL_SYN_(U_tuple) auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply([this] XTAL_1FN_(R_::influx));
 				}
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(XTAL_SYN_(W_tuple) auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return _std::apply([this] XTAL_1FN_(R_::influx), XTAL_REF_(o));
 				}
@@ -85,35 +85,35 @@ struct define
 				///\
 				Condenses the given scheduled message, forwarding to `self().infuse`. \
 				
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(V_event d, XTAL_SYN_(Xs) auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return infuse_joint(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
 				}
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(V_event d, XTAL_SYN_(U_tuple) auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply(infuse_joint(XTAL_MOV_(d)));
 				}
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(V_event d, XTAL_SYN_(W_tuple) auto &&o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return _std::apply(infuse_joint(XTAL_MOV_(d)), XTAL_REF_(o));
 				}
 
 			private:
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET infuse_joint(auto o)
 				noexcept -> decltype(auto)
 				{
 					return [=, this] (auto &&...oo) XTAL_0FN_(infuse_join(XTAL_MOV_(o), XTAL_REF_(oo)...));
 				}
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET infuse_join(auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return self().infuse((...<< XTAL_REF_(oo)));
 				}

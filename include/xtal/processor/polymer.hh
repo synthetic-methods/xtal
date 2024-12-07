@@ -21,7 +21,7 @@ template <typename ..._s> struct   polymer;
 template <typename ..._s> using    polymer_t = confined_t<polymer< _s...>>;
 template <typename ..._s> concept  polymer_q = bond::any_tag_p<polymer, _s...>;
 template <typename ..._s>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET polymer_f(auto &&u)
 noexcept -> auto
 {
@@ -82,9 +82,9 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_GET ensemble(size_t i), u_ensemble[i])
-				XTAL_TO2_(XTAL_GET ensemble(        ), u_ensemble   )
-				XTAL_TO2_(XTAL_GET lead(), R_::template head<V_voice>())
+				XTAL_TO2_(XTAL_DEF_(alias) ensemble(size_t i), u_ensemble[i])
+				XTAL_TO2_(XTAL_DEF_(alias) ensemble(        ), u_ensemble   )
+				XTAL_TO2_(XTAL_DEF_(alias) lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
 				using R_::influx;
@@ -95,31 +95,31 @@ struct polymer<U, As...>
 				Messages associated with `occur::stage` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET influx(flux::key_q auto io, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
 				}
 
-				XTAL_DEF_(return,inline)
+				XTAL_DEF_(short)
 				XTAL_LET efflux(flux::key_q auto io, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					return efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
 				}
 
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET influx(flux::key_s<> i, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					auto   u_ = u_ensemble.scan(i.head());
 					assert(u_ < u_ensemble.end() and i.head() == u_->head());
 					return u_->influx(XTAL_REF_(oo)...);
 				}
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET efflux(flux::key_s<> i, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					auto   u_ = u_ensemble.scan(i.head());
 					assert(u_ < u_ensemble.end() and i.head() == u_->head());
@@ -128,26 +128,26 @@ struct polymer<U, As...>
 				///\
 				Forwards to all instances including the sentinel (except when rendering). \
 
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET influx_push(auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().influx(oo...)
-					,	[...oo=XTAL_REF_(oo)] (sign_type x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).influx(oo...))
+					,	[...oo=XTAL_REF_(oo)] (signed x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).influx(oo...))
 					);
 				}
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET efflux_pull(auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					using _xtd::ranges::accumulate;
 
 					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
 					return accumulate(u_ensemble, rend? -1: lead().efflux(oo...)
-					,	[...oo=XTAL_REF_(oo)] (sign_type x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).efflux(oo...))
+					,	[...oo=XTAL_REF_(oo)] (signed x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).efflux(oo...))
 					);
 				}
 
@@ -156,9 +156,9 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET influx(flux::key_s<> i, V_event o, auto &&...oo)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					auto h  = i.head();
 					auto u_ = u_ensemble.scan(h);
@@ -186,9 +186,9 @@ struct polymer<U, As...>
 				otherwise the multichannel data is just rendered locally on each voice. \
 				
 				template <occur::review_q Rev, occur::render_q Ren>
-				XTAL_DEF_(return)
+				XTAL_DEF_(long)
 				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
-				noexcept -> sign_type
+				noexcept -> signed
 				{
 					u_ensemble.cull([] (auto &&e)
 						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))

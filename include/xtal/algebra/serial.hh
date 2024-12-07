@@ -16,7 +16,7 @@ template <class           ..._s>	using    serial_t = typename serial<_s...>::typ
 template <class           ...Ts>	concept  serial_q = bond::any_tag_p<serial_t, Ts...>;
 template <size_type N, class ...Ts>	concept  serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
-XTAL_DEF_(return,inline)
+XTAL_DEF_(short)
 XTAL_LET serial_f(auto &&...oo)
 noexcept -> auto
 {
@@ -61,9 +61,9 @@ struct serial<A>
 	//	using S_::operator+=;
 	//	using S_::operator-=;
 
-		XTAL_DEF_(return,inline) XTAL_LET operator  * (auto const &t)               const noexcept -> auto   {return twin() *=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  + (auto const &t)               const noexcept -> auto   {return twin() +=   t ;}
-		XTAL_DEF_(return,inline) XTAL_LET operator  - (auto const &t)               const noexcept -> auto   {return twin() -=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator  * (auto const &t)               const noexcept -> auto   {return twin() *=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator  + (auto const &t)               const noexcept -> auto   {return twin() +=   t ;}
+		XTAL_DEF_(short) XTAL_LET operator  - (auto const &t)               const noexcept -> auto   {return twin() -=   t ;}
 		XTAL_DEF_(inline)        XTAL_LET operator  *=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() *= T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator  +=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() += T(t);}
 		XTAL_DEF_(inline)        XTAL_LET operator  -=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() -= T(t);}

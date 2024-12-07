@@ -33,7 +33,7 @@ struct lifter
 		using S_::S_;
 
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(S_::template function<Is...>(XTAL_REF_(xs)...))
@@ -41,7 +41,7 @@ struct lifter
 			return target_f<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
@@ -49,7 +49,7 @@ struct lifter
 			return target_f<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
@@ -59,7 +59,7 @@ struct lifter
 
 	private:
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET target_f(auto &&...xs)
 		noexcept -> decltype(auto)
 		{

@@ -67,9 +67,9 @@ struct phasor<A, As...>
 		///\todo\
 		...find a cleaner way to define the conversion, perhaps via `refer`?
 
-		XTAL_TO4_(XTAL_ION_(implicit) U_(), head())
+		XTAL_TO4_(XTAL_DEF_(implicit operator) U_(), head())
 		
-		XTAL_DEF_(return,inline,static)
+		XTAL_DEF_(short,static)
 		XTAL_LET bias()
 		noexcept -> auto
 		{
@@ -82,7 +82,7 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_GET let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_DEF_(alias) let(size_type i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
@@ -93,7 +93,7 @@ struct phasor<A, As...>
 		Evaluation by (possibly indented) replacement then succession. \
 		
 		template <auto ...Is> requires none_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method(subarray_q<N> auto &&a)
 		noexcept -> decltype(auto)
 		{
@@ -105,7 +105,7 @@ struct phasor<A, As...>
 		Evaluation by uccession. \
 		
 		template <auto ...Is> requires none_n<Is...>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET method()
 		noexcept -> decltype(auto)
 		{
@@ -137,7 +137,7 @@ struct phasor<A, As...>
 		///\
 		Evaluation by succession. \
 		
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET ingress()
 		noexcept -> decltype(auto)
 		{
@@ -146,7 +146,7 @@ struct phasor<A, As...>
 			XTAL_0IF_(else)        {return   head();}
 		};
 		template <class Y>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(short)
 		XTAL_LET egress(Y &&y)
 		noexcept -> auto
 		{
@@ -173,7 +173,7 @@ struct phasor<A, As...>
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
 
-		XTAL_TO4_(XTAL_ION_(implicit) U_(), head())
+		XTAL_TO4_(XTAL_DEF_(implicit operator) U_(), head())
 		
 		///\
 		Access by dynamic index. \
@@ -181,7 +181,7 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_GET let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_DEF_(alias) let(size_type i), head().let(i))
 
 	public:// REEVALUATION
 		///\returns the current differential after scaling the incoming `phi` by `co`. \
@@ -190,7 +190,7 @@ struct phasor<A, As...>
 		Supply `precision` and/or `subdivision` `attach`ments? \
 
 		template <int N_root=1>
-		XTAL_DEF_(return,inline)
+		XTAL_DEF_(long)
 		XTAL_LET method(U_phason phi, coordinate_type co)
 		noexcept -> auto
 			requires is_q<U_phason, typename S_::template head_t<constant_t<size_1>>>
