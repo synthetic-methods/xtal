@@ -97,11 +97,18 @@ struct spool<A>
 		{
 			u_store.erase(u_store.begin(), end());
 		}
+
 		XTAL_DEF_(inline)
-		XTAL_LET cull(auto &&f)
+		XTAL_LET cull(logical_p<U_value> auto &&f)
 		noexcept -> void
 		{
 			u_store.erase(_std::remove_if(begin(), end(), f), end());
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET cull(ordinal_p<U_value> auto &&f)
+		noexcept -> void
+		{
+			cull([f=XTAL_REF_(f)] (auto &&...oo) XTAL_0FN_(0 < f(XTAL_REF_(oo)...)));
 		}
 
 		///\note\

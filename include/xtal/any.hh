@@ -106,10 +106,16 @@ template <class F, class    X >	concept    idempotent_q	=  idempotent_p<X, F>;
 
 template <auto N              >	using        constant_t	= typename _entail::     constant_t<N >;
 template <class          ...Ts>	concept      constant_q	= (...and  _entail::     constant_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept       logical_q	= (...and  _entail::      logical_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept       ordinal_q	= (...and  _entail::      ordinal_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      cardinal_q	= (...and  _entail::     cardinal_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      integral_q	= (...and  _entail::     integral_q<XTAL_RAW_(Ts)>);
+
+template <         class ...Ts>	concept       logical_q	= (...and  _entail::      logical_q<XTAL_RAW_(Ts)>);
+template <         class ...Ts>	concept       ordinal_q	= (...and  _entail::      ordinal_q<XTAL_RAW_(Ts)>);
+template <         class ...Ts>	concept      cardinal_q	= (...and  _entail::     cardinal_q<XTAL_RAW_(Ts)>);
+template <         class ...Ts>	concept      integral_q	= (...and  _entail::     integral_q<XTAL_RAW_(Ts)>);
+
+template <class T, class ...Xs>	concept       logical_p	=          _entail::      logical_p<T, Xs...>;
+template <class T, class ...Xs>	concept       ordinal_p	=          _entail::      ordinal_p<T, Xs...>;
+template <class T, class ...Xs>	concept      cardinal_p	=          _entail::     cardinal_p<T, Xs...>;
+template <class T, class ...Xs>	concept      integral_p	=          _entail::     integral_p<T, Xs...>;
 
 template <class          ...Ts>	concept     unnatural_q	= (...and  _entail::    unnatural_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept       natural_q	= (...and  _entail::      natural_q<XTAL_RAW_(Ts)>);

@@ -190,9 +190,8 @@ struct polymer<U, As...>
 				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
 				noexcept -> signed
 				{
-					u_ensemble.cull([] (auto &&e)
-						XTAL_0FN_(1 == XTAL_REF_(e).efflux(occur::stage_f(-1)))
-					);
+					u_ensemble.cull([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
+					
 					for (auto &vox:u_ensemble) {
 						if (1 == vox.efflux(XTAL_REF_(render_o))) {
 							return 1;

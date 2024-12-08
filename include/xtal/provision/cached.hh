@@ -44,8 +44,8 @@ struct cached
 		XTAL_DEF_(alias) cache(), head().template form<Vs...>())
 		
 		template <I i>
-		XTAL_DEF_(inline) XTAL_LET cache(   ) noexcept -> void {head().free(i);}
-		XTAL_DEF_(inline) XTAL_LET cache(I i) noexcept -> void {head().free(i);}
+		XTAL_DEF_(inline) XTAL_LET cache(   ) noexcept -> void {head().fill(i);}
+		XTAL_DEF_(inline) XTAL_LET cache(I i) noexcept -> void {head().fill(i);}
 
 	};
 };

@@ -362,9 +362,9 @@ struct scalar<A>
 		}
 
 		
-		template <size_type N>
+		template <int N>
 		XTAL_DEF_(short)
-		XTAL_LET colimited() const
+		XTAL_LET extremum() const
 		noexcept -> U_data
 		{
 			return S_::template apply([] (auto &&...oo)
@@ -375,15 +375,18 @@ struct scalar<A>
 			});
 		}
 		XTAL_DEF_(short)
-		XTAL_LET colimited() const
+		XTAL_LET extremum() const
 		{
 			using  U2 = typename T::template tagged_t<U_data[2]>;
-			return U2{colimited<0>(), colimited<1>()};
+			return U2{extremum<0>(), extremum<1>()};
 		}
+		XTAL_DEF_(alias) maximum() const {return extremum<1>();}
+		XTAL_DEF_(alias) minimum() const {return extremum<0>();}
 
-		template <size_type N>
+
+		template <int N>
 		XTAL_DEF_(short)
-		XTAL_LET cofactored() const
+		XTAL_LET extremal() const
 		noexcept -> U_data
 		{
 			XTAL_IF0
@@ -391,11 +394,15 @@ struct scalar<A>
 			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
 		}
 		XTAL_DEF_(short)
-		XTAL_LET cofactored() const
+		XTAL_LET extremal() const
 		{
 			using  U2 = typename T::template tagged_t<U_data[2]>;
-			return U2{cofactored<0>(), cofactored<1>()};
+			return U2{extremal<0>(), extremal<1>()};
 		}
+		XTAL_DEF_(alias) maximal() const {return extremal<1>();}
+		XTAL_DEF_(alias) minimal() const {return extremal<0>();}
+
+
 		XTAL_DEF_(short)
 		XTAL_LET cofactorable() const
 		{

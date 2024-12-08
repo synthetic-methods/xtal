@@ -43,7 +43,7 @@ struct cache
 	public:
 		using S_::S_;
 	
-		XTAL_LET free(I value=0)
+		XTAL_LET fill(I value)
 		noexcept -> void
 		{
 			memset(m_cache, value, N_cache);

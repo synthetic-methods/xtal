@@ -141,6 +141,11 @@ template <class T             >	concept       ordinal_q	= constant_q<T> and  ord
 template <class T             >	concept      cardinal_q	= constant_q<T> and cardinal_o<typename T::value_type> or cardinal_o<T>;
 template <class T             >	concept      integral_q	= constant_q<T> and integral_o<typename T::value_type> or integral_o<T>;
 
+template <class T, class ...Xs>	concept       logical_p	= _std::invocable<T, Xs...> and  logical_q<_std::invoke_result_t<T, Xs...>>;
+template <class T, class ...Xs>	concept       ordinal_p	= _std::invocable<T, Xs...> and  ordinal_q<_std::invoke_result_t<T, Xs...>>;
+template <class T, class ...Xs>	concept      cardinal_p	= _std::invocable<T, Xs...> and cardinal_q<_std::invoke_result_t<T, Xs...>>;
+template <class T, class ...Xs>	concept      integral_p	= _std::invocable<T, Xs...> and integral_q<_std::invoke_result_t<T, Xs...>>;
+
 template <class T             >	concept       natural_q	= constant_q<T> and 0 <= T::value;
 template <class T             >	concept     unnatural_q	= constant_q<T> and not ~T::value;
 template <class T             >	concept       liminal_q	= constant_q<T> and 0 != T::value;

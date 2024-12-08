@@ -71,7 +71,7 @@ struct superblock<U[N]>
 		
 	~	homotype() noexcept=default;
 	//	homotype() noexcept=default;
-		
+
 		XTAL_NEW_(copy, homotype, noexcept=default)
 		XTAL_NEW_(move, homotype, noexcept=default)
 		
@@ -93,10 +93,7 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    correlated_q<T>) {_detail::move_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a
-				,	[this] XTAL_1FN_(S_::self().ordinate)
-				);
-			}
+			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
 		noexcept
@@ -104,10 +101,7 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    correlated_q<T>) {_detail::move_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a
-				,	[this] XTAL_1FN_(S_::self().ordinate)
-				);
-			}
+			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
 		noexcept
@@ -115,10 +109,7 @@ struct superblock<U[N]>
 		{
 			XTAL_IF0
 			XTAL_0IF (    correlated_q<T>) {_detail::copy_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::copy_to(S_::begin(), a
-				,	[this] XTAL_1FN_(S_::self().ordinate)
-				);
-			}
+			XTAL_0IF (not correlated_q<T>) {_detail::copy_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
 		}
 
 	};

@@ -104,8 +104,8 @@ TAG_("scalar")
 				source.extend[index] = count/source.layout[index];
 
 				target.expand = source.extend.cofactorable()? 
-					source.extend.template cofactored<1>():
-					source.extend.template  colimited<1>();
+					source.extend.template extremal<1>():
+					source.extend.template  extremum<1>();
 				target.extent = target.layout*target.expand;
 				target.extend = target.extent/target.layout;
 
@@ -120,8 +120,8 @@ TAG_("scalar")
 	//	echo(source.extend);
 	//	echo();
 	//	echo(source.extend.cofactorable());
-	//	echo(source.extend.template cofactored<1>());
-	//	echo(source.extend.template  colimited<1>());
+	//	echo(source.extend.template extremal<1>());
+	//	echo(source.extend.template  extremum<1>());
 	//	echo();
 	//	echo(target.expand);
 	//	echo(target.layout);
@@ -136,7 +136,7 @@ TAG_("scalar")
 		using U3 = scalar_t<U0[3]>;
 		using U4 = scalar_t<U0[4]>;
 
-		  TRUE_(U4{2, 12, 6, 2}.cofactored() == U2{2, 12});
+		  TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 		  TRUE_(U4{2, 12, 6, 2}.cofactorable());
 		UNTRUE_(U4{2, 12, 6, 3}.cofactorable());
 		UNTRUE_(U4{2, 12, 6, 4}.cofactorable());
@@ -147,8 +147,8 @@ TAG_("scalar")
 		
 		auto const xs_extents = xs_provided/xs_expected;
 		auto const ys_extent  = xs_extents.cofactorable()? 
-			xs_extents.template cofactored<1>():
-			xs_extents.template  colimited<1>();
+			xs_extents.template extremal<1>():
+			xs_extents.template  extremum<1>();
 		
 		U3 const ys_expected { 2,  1,  2};
 		U3 const ys_provided = ys_expected*ys_extent;
