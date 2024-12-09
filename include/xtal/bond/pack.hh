@@ -50,7 +50,7 @@ noexcept -> auto
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	struct   pack_size;
-template <sized_q T           >	struct   pack_size<T> : sized_t<T> {};
+template <fixed_sized_q T     >	struct   pack_size<T> : fixed_sized_t<T> {};
 template <         class ...Ts>	XTAL_LET pack_size_n = pack_size<based_t<Ts>...>::value;
 template <         class ...Ts>	concept  pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
@@ -83,7 +83,7 @@ struct   pack_item<T> {using type = T;};
 template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};
 
-template <     valued_q T, size_type I> requires un_n<tuple_sized_q<T>> struct pack_item<T, I> {using type = valued_u<T>;};
+template <     fixed_valued_q T, size_type I> requires un_n<tuple_sized_q<T>> struct pack_item<T, I> {using type = fixed_valued_u<T>;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T        , I> {using type = _std::tuple_element_t<I, based_t<T>>        ;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T       &, I> {using type = _std::tuple_element_t<I, based_t<T>>       &;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T const &, I> {using type = _std::tuple_element_t<I, based_t<T>> const &;};
@@ -185,50 +185,38 @@ template <template <class ...> class F=pack_t>
 using    repack_y = XTAL_FUN_(repack_f<F>);
 
 
-template <auto I, class U=void>
+////////////////////////////////////////////////////////////////////////////////
+
+template <class U>
 XTAL_DEF_(short)
-XTAL_LET pack_rowwise_f(auto const &m, auto const &i, indexed_q auto &&w)
+XTAL_LET transpack_f(int i, size_type m, indexed_q auto &&w)
 noexcept -> auto
 {
-	using _std::span;
-	using _std::next;
-
-	if constexpr (is_q<U, decltype(**w)>) {
-		return span(next(*w, i), m);
+	if constexpr (is_q<decltype(**w), U>) {
+		return _std::span(point_f(XTAL_REF_(w)[i]), m);
 	}
 	else {
 		return [&]<auto ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN {
-			XTAL_IF0
-			XTAL_0IF (  complete_q<U>) {
-				return           iterative_f<U>(span(next(point_f(w[Is]), i), m)...);
-			}
-			XTAL_0IF (incomplete_q<U>) {
-				return _xtd::ranges::views::zip(span(next(point_f(w[Is]), i), m)...);
-			}
-		}
-		(bond::seek_s<I>{});
+			XTAL_0FN_(iterative_f<U>(_std::span(point_f(XTAL_REF_(w)[Is], i), m)...))
+		(bond::seek_s<fluid_sized_n<U>>{});
 	}
 }
-template <auto I, class U=void>
+template <class U>
 XTAL_DEF_(short)
-XTAL_LET pack_rowwise_f(auto const &m, indexed_q auto &&w)
+XTAL_LET transpack_f(size_type m, indexed_q auto &&w)
 noexcept -> decltype(auto)
 {
-	return pack_rowwise_f<I, U>(XTAL_REF_(m), size_0, XTAL_REF_(w));
+	return transpack_f<U>(0, m, XTAL_REF_(w));
 }
-template <auto I, class U=void>
+template <class U>
 XTAL_DEF_(short)
-XTAL_LET pack_rowwise_f(integer_q auto ...ns)
+XTAL_LET transpack_f(integral_q auto const &...ns)
 noexcept -> decltype(auto)
 {
-	return [=] (auto &&w) XTAL_0FN_(pack_rowwise_f<I, U>(ns..., XTAL_REF_(w)));
+	return [=] (auto &&w) XTAL_0FN_(transpack_f<U>(ns..., XTAL_REF_(w)));
 }
-template <auto I, class U>
-using    pack_rowwise_t = XTAL_ALL_(pack_rowwise_f<I, U>(0x1000, XTAL_ANY_(initializer_u<U> **)));
-
-template <class U> XTAL_LET repack_rowwise_f = [] XTAL_1FN_(  pack_rowwise_f<apart_n<U>, U>);
-template <class U> using    repack_rowwise_t =    XTAL_ALL_(repack_rowwise_f<U>(0x1000, XTAL_ANY_(initializer_u<U> **)));
+template <class U>
+using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000, XTAL_ANY_(initializer_u<U> **)));
 
 
 ////////////////////////////////////////////////////////////////////////////////

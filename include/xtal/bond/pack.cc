@@ -19,8 +19,8 @@ TAG_("pack")
 	TRY_("bind")
 	{
 		double table[2][2] = {{0, 0}, {0, 0}};
-		auto column_0 = pack_rowwise_f<2>(2, 0) (table);
-		auto column_1 = pack_rowwise_f<2>(2, 1) (table);
+		auto column_0 = transpack_f<void_type[2]>(0, 2) (table);
+		auto column_1 = transpack_f<void_type[2]>(1, 2) (table);
 		column_0[0] = pack_f(1.0, 2.0);
 		column_1[0] = pack_f(3.0, 4.0);
 		TRUE_(1 == table[0][0]);

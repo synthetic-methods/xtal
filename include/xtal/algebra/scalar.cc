@@ -164,7 +164,7 @@ TAG_("scalar")
 		for (size_type i = 0; i < ys_extent; ++i) {
 			auto input_tables = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
-				XTAL_0FN_(bond::pack_rowwise_f<xs_expected[I]>(inputs.count(), inputs.samples(...)))
+				XTAL_0FN_(bond::transpack_f<void_type[xs_expected[I]]>(inputs.count(), inputs.samples(...)))
 				XTAL_0FN_(echo('\t'
 				,	((i*xs_expected[I])%xs_provided[I] + xs_provided++[I])...
 				))
@@ -174,7 +174,7 @@ TAG_("scalar")
 		for (size_type i = 0; i < ys_extent; ++i) {
 			auto output_table = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
-				XTAL_0FN_(bond::pack_f(bond::pack_rowwise_f<ys_expected[I]>(outputs.count(), output.samples(...)))
+				XTAL_0FN_(bond::pack_f(bond::transpack_f<void_type[ys_expected[I]]>(outputs.count(), output.samples(...)))
 				XTAL_0FN_(echo('\t'
 				,	((i*ys_expected[I])                + ys_provided++[I])...
 				))

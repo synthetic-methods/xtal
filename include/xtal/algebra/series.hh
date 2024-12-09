@@ -182,7 +182,7 @@ struct series<A>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <int N_direction=1, isomorphic_q<T> Y0> requires signum_p<N_direction, 1> and complex_field_q<U_data>
+		template <int N_direction=1, isomorphic_q<T> Y0> requires in_n<N_direction, 1, -1> and complex_field_q<U_data>
 		XTAL_LET transform(Y0 &&that) const
 		noexcept -> decltype(auto)
 		{
@@ -234,7 +234,7 @@ struct series<A>
 		///\returns a new `series` representing the FFT of `lhs`, \
 		using `this` as the Fourier basis. \
 
-		template <int N_direction=1, isomorphic_q<T> Y0> requires signum_p<N_direction, 1>
+		template <int N_direction=1, isomorphic_q<T> Y0> requires in_n<N_direction, 1, -1>
 		XTAL_DEF_(short)
 		XTAL_LET transformation(Y0 y0) const
 		noexcept -> decltype(auto)

@@ -102,7 +102,7 @@ struct recognize<(1U<<2U)>
 	>;
 
 	template <int _, int N_pow> struct   root;
-	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE> {};
+	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE> {};
 	template <int _> struct root<_,-2> : sigma_u<0x5F375A86> {};
 
 	template <int N_pow>
@@ -175,7 +175,7 @@ struct recognize<(1U<<3U)>
 	>;
 
 	template <int _, int N_pow> struct   root;
-	template <int _> struct root<_,-1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
+	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
 	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
 	
 	template <int N_pow>
@@ -326,7 +326,7 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-	template <int N_side=0> requires signum_p<N_side, 0>
+	template <int N_side=0> requires in_n<N_side, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET clamped_f(integral_q auto value)
 	noexcept -> auto
@@ -360,7 +360,7 @@ public:
 
 	///\returns the original sign of `target`, after making it `abs`olute.
 
-	template <int N_side=0> requires signum_p<N_side, 0>
+	template <int N_side=0> requires in_n<N_side, 1, 0, -1>
 	XTAL_DEF_(long)
 	XTAL_SET design_f(delta_type &target)
 	noexcept -> delta_type
@@ -383,7 +383,7 @@ public:
 	}
 	///\returns the magnitude of `value` (in the direction of `N_side`, if provided). \
 	
-	template <int N_side=0> requires signum_p<N_side, 0>
+	template <int N_side=0> requires in_n<N_side, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET designed_f(delta_type value)
 	noexcept -> auto
@@ -698,7 +698,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	template <int N_sign=1> requires signum_p<N_sign, 1>
+	template <int N_sign=1> requires in_n<N_sign, 1, -1>
 	XTAL_DEF_(short)
 	XTAL_SET accumulate_f(auto &&w, auto &&x, auto &&...xs)
 	noexcept -> alpha_type
@@ -739,7 +739,7 @@ public:
 	///\
 	Computes: `abs(u)**2`. \
 
-	template <int N_pow=1> requires signum_p<N_pow, 0>
+	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET dot_f(aphex_type const &u)
 	noexcept -> alpha_type
@@ -787,7 +787,7 @@ public:
 	///\
 	Computes: `w**(1/N_pow)`. \
 
-	template <int N_pow=1, int N_lim=-1>// requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET root_f(auto const &w)
 	noexcept -> alpha_type
@@ -804,7 +804,7 @@ public:
 		bool constexpr N_etc = not real_number_q<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
-		int constexpr M_lim = end_n<N_lim, 0xF>;
+		int constexpr M_lim = lower_n<(unsigned) N_lim, (1<<4)>;
 
 		XTAL_IF0 //	ELIMINATION
 		XTAL_0IF (N_pow ==  0) {return U_1;}
@@ -836,7 +836,7 @@ public:
 			XTAL_0IF (N_pow ==  2) {return w*n;}
 		}
 	}
-	template <int N_pow=1, int N_lim=-1>// requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET root_f(integral_q auto const &w)
 	noexcept -> alpha_type
@@ -844,7 +844,7 @@ public:
 		return root_f<N_pow, N_lim>((alpha_type) w);
 	}
 
-	template <int N_pow=1, int N_lim=-1>// requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET roots_f(alpha_type const &w)
 	noexcept -> couple_t<alpha_type>
@@ -866,7 +866,7 @@ public:
 
 
 
-	template <int N_pow=1, int N_lim=-1> requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=-1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET unsquare_f(alpha_type const &w)
 	noexcept -> decltype(auto)
@@ -875,7 +875,7 @@ public:
 		XTAL_0IF (0 == N_pow) {return roots_f<2,       N_lim>(w);}
 		XTAL_0IF (0 != N_pow) {return root_f <2*N_pow, N_lim>(w);}
 	}
-	template <int N_pow=1, int N_lim=-1> requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=-1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET unsquare_dot_f(auto &&u)
 	noexcept -> decltype(auto)
@@ -884,7 +884,7 @@ public:
 	}
 
 
-	template <int N_pow=1, int N_lim=+1> requires signum_p<N_pow, 0>
+	template <int N_pow=1, int N_lim=+1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(long)
 	XTAL_SET square_f(auto const &z)
 	noexcept -> auto
@@ -919,7 +919,7 @@ public:
 	}
 
 
-	template <int N_pow=1> requires signum_p<N_pow, 0>
+	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET circle_f(alpha_type const &u)
 	noexcept -> aphex_type
@@ -1045,7 +1045,7 @@ public:
 	XTAL_SET ratio_f(alpha_type const &n_num, alpha_type const &n_nom=1)
 	noexcept -> alpha_type
 	{
-		static_assert(signum_p<N_pow, 0>);
+		static_assert(in_n<N_pow, 1, 0, -1>);
 		XTAL_IF0
 		XTAL_0IF (N_pow ==  0) {return 1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
@@ -1060,7 +1060,7 @@ public:
 
 	///\returns `ratio_f<N_pow>(PI*n_num, n_nom)`.
 
-	template <int N_pow=1> requires signum_p<N_pow, 0>
+	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET patio_f(alpha_type const &n_num, alpha_type const &n_nom=1)
 	noexcept -> alpha_type

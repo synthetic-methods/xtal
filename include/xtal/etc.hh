@@ -7,9 +7,9 @@
 #define XTAL_Q_(...)                                         XTAL_q_(__VA_ARGS__)   ///< Stringify.
 #define XTAL_q_(...)                                                #__VA_ARGS__
 
-#define XTAL_N_(A0,...)                __VA_OPT__(XTAL_X_(XTAL_M_(A0,__VA_ARGS__))) ///< Map.
-#define XTAL_M_(A0,A1,...)       A0(A1)__VA_OPT__(XTAL_m_ XTAL_X (A0,__VA_ARGS__))
-#define XTAL_m_() XTAL_M_
+#define XTAL_N_(F0,...)                __VA_OPT__(XTAL_X_(XTAL_M_(F0,__VA_ARGS__))) ///< Map.
+#define XTAL_M_(F0,A1,...)       F0(A1)__VA_OPT__(XTAL_M  XTAL_X (F0,__VA_ARGS__))
+#define XTAL_M() XTAL_M_
 
 #define XTAL_X ()
 #define XTAL_X_(...)                                        XTAL_X4_(__VA_ARGS__)   ///< Repeat.
@@ -73,7 +73,6 @@ XTAL_ENV_(push)
 #define XTAL_STD_null_type         ::std::nullptr_t
 #define XTAL_STD_unit_type         ::std::monostate
 #define XTAL_STD_size_type         ::std::size_t
-#define XTAL_STD_signum_type              signed
 #define XTAL_STD_integer_type      ::std::ptrdiff_t
 
 #define XTAL_STD_int(...)                 XTAL_STD_int_##__VA_ARGS__

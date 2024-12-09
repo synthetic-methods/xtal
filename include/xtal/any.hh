@@ -31,16 +31,17 @@ namespace xtal
 //\
 Standard...
 
+using    void_type	= _entail::   void_type;
 using    null_type	= _entail::   null_type;
 using    unit_type	= _entail::   unit_type;
 using    size_type	= _entail::   size_type;
 using  signum_type	= _entail:: signum_type;
 using integer_type	= _entail::integer_type;
 
-XTAL_LET_(size_type) size_0{0};
-XTAL_LET_(size_type) size_1{1};
-XTAL_LET_(size_type) size_2{2};
-XTAL_LET_(size_type) size_3{3};
+XTAL_LET_(size_type) size_0 = _entail::size_0;
+XTAL_LET_(size_type) size_1 = _entail::size_1;
+XTAL_LET_(size_type) size_2 = _entail::size_2;
+XTAL_LET_(size_type) size_3 = _entail::size_3;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,10 +51,11 @@ Structural...
 
 template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::     in_n<N, Ms...>;
 template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::     un_n<N, Ms...>;
-template <auto  N, auto   Z=0 >	concept        signum_p	=          _entail:: signum_p<N, Z>;
+template <auto  N, auto   M=0 >	XTAL_LET        upper_n	=          _entail::  upper_n<N, M>;
+template <auto  N, auto   M=0 >	XTAL_LET        lower_n	=          _entail::  lower_n<N, M>;
+template <auto  N, auto   M=0 >	XTAL_LET        above_n	=          _entail::  above_n<N, M>;
+template <auto  N, auto   M=0 >	XTAL_LET        below_n	=          _entail::  below_n<N, M>;
 template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail:: signum_n<N, Z>;
-template <auto  N, auto   M   >	XTAL_LET          end_n	=          _entail::    end_n<N, M>;
-template <auto  N, auto   M=0 >	XTAL_LET          top_n	=          _entail::    top_n<N, M>;
 
 template <class          ...Ts>	concept          some_q	=          _entail:: some_q<Ts...>;
 template <auto           ...Ns>	concept          some_n	=          _entail:: some_n<Ns...>;
@@ -98,8 +100,7 @@ template <class T, class ...Ts>	concept            as_p	= _entail:: as_p<T, Ts..
 template <         class ...Ts>	concept      fungible_q	= _entail::   fungible_q<Ts...>; //< `T` and `Ts...` are   related by inheritance.
 template <         class ...Ts>	concept    infungible_q	= _entail:: infungible_q<Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
-template <class X, class ...Fs>	concept    idempotent_p	=  (...and _entail:: idempotent_p<X, Fs>);//< `X` is unchanged by `Fs...`.
-template <class F, class    X >	concept    idempotent_q	=  idempotent_p<X, F>;
+template <class X, class ...Fs>	concept    idempotent_q	=  (...and _entail:: idempotent_q<X, Fs>);//< `X` is unchanged by `Fs...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,27 +139,38 @@ template <class T             >	XTAL_LET  array_sized_n	=          _entail::   t
 template <class T             >	using     array_sized_t	=          _entail::   tuple_sized_t<T >;
 template <         class ...Ts>	concept   array_sized_q	= (...and  _entail::   tuple_sized_q<Ts>);
 
-template <class T             >	using           sized  	=          _entail::         sized  <T >;
-template <class T             >	XTAL_LET        sized_n	=          _entail::         sized_n<T >;
-template <class T             >	using           sized_t	=          _entail::         sized_t<T >;
-template <         class ...Ts>	concept         sized_q	= (...and  _entail::         sized_q<Ts>);
+template <class T             >	using     fixed_sized  	=          _entail::   fixed_sized  <T >;
+template <class T             >	XTAL_LET  fixed_sized_n	=          _entail::   fixed_sized_n<T >;
+template <class T             >	using     fixed_sized_t	=          _entail::   fixed_sized_t<T >;
+template <         class ...Ts>	concept   fixed_sized_q	= (...and  _entail::   fixed_sized_q<Ts>);
 
+template <class T             >	using     fluid_sized  	=          _entail::   fluid_sized  <T >;
+template <class T             >	XTAL_LET  fluid_sized_n	=          _entail::   fluid_sized_n<T >;
+template <class T             >	using     fluid_sized_t	=          _entail::   fluid_sized_t<T >;
+template <         class ...Ts>	concept   fluid_sized_q	= (...and  _entail::   fluid_sized_q<Ts>);
 
-template <         class ...Ts>	using    inner_valued_u	= common_t<_entail::   inner_valued_u<Ts>...>;
-template <         class ...Ts>	concept  inner_valued_q	= (...and  _entail::   inner_valued_q<Ts>);
 
 template <         class ...Ts>	using    array_valued_u	= common_t<_entail::   array_valued_u<Ts>...>;
 template <         class ...Ts>	concept  array_valued_q	= (...and  _entail::   array_valued_q<Ts>);
 
-template <         class ...Ts>	using          valued_u	= common_t<_entail::   valued_u<Ts>...>;
-template <         class ...Ts>	concept        valued_q	= (...and  _entail::   valued_q<Ts>);
+template <         class ...Ts>	using    inner_valued_u	= common_t<_entail::   inner_valued_u<Ts>...>;
+template <         class ...Ts>	concept  inner_valued_q	= (...and  _entail::   inner_valued_q<Ts>);
+
+template <         class ...Ts>	using    under_valued_u	= common_t<_entail::   under_valued_u<Ts>...>;
+template <         class ...Ts>	concept  under_valued_q	= (...and  _entail::   under_valued_q<Ts>);
+
+template <         class ...Ts>	using    fixed_valued_u	= common_t<_entail::   fixed_valued_u<Ts>...>;
+template <         class ...Ts>	concept  fixed_valued_q	= (...and  _entail::   fixed_valued_q<Ts>);
+
+template <         class ...Ts>	using    fluid_valued_u	= common_t<_entail::   fluid_valued_u<Ts>...>;
+template <         class ...Ts>	concept  fluid_valued_q	= (...and  _entail::   fluid_valued_q<Ts>);
 
 
-template <         class ...Ts>	concept      apart_q	= (...and  _entail:: apart_q<Ts>);
-template <class T             >	using        apart_t	=          _entail:: apart_t<T >;
-template <         class ...Ts>	using        apart_u	= common_t<_entail:: apart_u<Ts>...>;
-template <class T             >	XTAL_LET     apart_n	= _entail:: apart_n<T>;
-template <class T, class ...Ts>	concept      apart_p	= (...and (apart_n<T> < apart_n<Ts>));
+template <         class ...Ts>	concept         apart_q	= (...and  _entail:: apart_q<Ts>);
+template <class T             >	using           apart_t	=          _entail:: apart_t<T >;
+template <         class ...Ts>	using           apart_u	= common_t<_entail:: apart_u<Ts>...>;
+template <class T             >	XTAL_LET        apart_n	= _entail:: apart_n<T>;
+template <class T, class ...Ts>	concept         apart_p	= (...and (apart_n<T> < apart_n<Ts>));
 
 template <class T, int   ...Ns>	using        devolved  	= _entail:: devolved  <T, Ns...>;
 //mplate <         int   ...Ns>	using        devolved_x	= _entail:: devolved_x<   Ns...>;
