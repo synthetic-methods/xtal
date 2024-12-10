@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../algebra/phason.hh"
+#include "../algebra/all.hh"
 #include "../provision/example.hh"
 #include "../provision/biased.hh"
 #include "../occur/indent.hh"

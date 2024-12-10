@@ -139,12 +139,11 @@ XTAL_ENV_(push)
 #define XTAL_SYM_(...)              XTAL_SYN <decltype(__VA_ARGS__)>  ///< Matches the underlying-type of a value.
 template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL_RAW_(Y)>;///< Matches underlying-types.
 
-#define XTAL_FUN_(...)              decltype([] XTAL_1FN_(__VA_ARGS__))  ///< Realises the type-level counterpart of a function.
-
 #define XTAL_REF_(...)  static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
 #define XTAL_MOV_(...)                         ::std::   move(__VA_ARGS__)   ///< Moves    a value.
 #define XTAL_ANY_(...)                         ::std::declval<__VA_ARGS__>() ///< Yields the existential value for a type.
 #define XTAL_VAL_(...)                        [] () XTAL_0FN_(__VA_ARGS__)   ///< Yields a thunk returning a value.
+#define XTAL_FUN_(...)                  decltype([] XTAL_1FN_(__VA_ARGS__))  ///< Yields a type-level alias of a function.
 
 
 ////////////////////////////////////////////////////////////////////////////////
