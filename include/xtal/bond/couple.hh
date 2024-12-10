@@ -49,7 +49,7 @@ struct couple
 {
 	XTAL_SET N_data = sizeof...(Xs);
 //	using    U_data =   common_t<Xs...>;
-	using    V_data = devolved_u<Xs...>;
+	using    V_data = dissolve_u<Xs...>;
 
 	using archetype = pack_t<Xs...>;
 	using supertype = bond::compose_s<archetype, tag<couple>>;
@@ -284,7 +284,7 @@ namespace xtal::_entail
 {///////////////////////////////////////////////////////////////////////////////
 
 template <xtal::bond::couple_q T>
-struct apart<T>
+struct destruct<T>
 {
 	XTAL_DEF_(short,static)
 	XTAL_LET size() noexcept -> size_type {return _std::tuple_size_v<T>;};

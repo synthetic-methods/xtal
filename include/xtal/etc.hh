@@ -25,6 +25,15 @@
 #define XTAL_ENV_(NAME,...) XTAL_ENV_##NAME __VA_ARGS__///< Compiler version (`100*${major}.${minor}`), and `_Pragma`s.
 #if 00//XTAL_ENV
 
+#ifdef  NDEBUG
+#define XTAL_ENV_release 1
+#define XTAL_ENV_debug   0
+#else
+#define XTAL_ENV_release 0
+#define XTAL_ENV_debug   1
+#endif
+
+
 #elif   defined(_MSC_VER)
 #define XTAL_ENV_MSVC   (_MSC_VER)
 #define XTAL_ENV_LLVM   0
@@ -135,6 +144,7 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_REF_(...)  static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
 #define XTAL_MOV_(...)                         ::std::   move(__VA_ARGS__)   ///< Moves    a value.
 #define XTAL_ANY_(...)                         ::std::declval<__VA_ARGS__>() ///< Yields the existential value for a type.
+#define XTAL_VAL_(...)                        [] () XTAL_0FN_(__VA_ARGS__)   ///< Yields a thunk returning a value.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -239,10 +249,10 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #endif//XTAL_0IF_void
 
 #if     XTAL_VER_(STD >= 2600)
-#define XTAL_0IF_constexpr     else if consteval                                 ///< Begin constant-evaluated branch.
+#define XTAL_0IF_consteval     else if consteval                                 ///< Begin constant-evaluated branch.
 #else
-#define XTAL_0IF_constexpr     else if (::std::is_constant_evaluated())          ///< Begin constant-evaluated branch.
-#endif//XTAL_0IF_constexpr
+#define XTAL_0IF_consteval     else if (::std::is_constant_evaluated())          ///< Begin constant-evaluated branch.
+#endif//XTAL_0IF_consteval
 
 
 ///////////////////////////////////////////////////////////////////////////////

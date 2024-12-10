@@ -31,8 +31,8 @@ template <column_q A>
 struct series<A>
 {
 	using U_v0 = _std::remove_extent_t<A>;
-	using U_v1 = apart_u<U_v0>;
-	using U_v2 = apart_u<U_v1>;
+	using U_v1 = destruct_u<U_v0>;
+	using U_v2 = destruct_u<U_v1>;
 
 	using _op = bond::operate<A>;
 	
@@ -93,8 +93,7 @@ struct series<A>
 			reinterpret_cast<U2_ &>(self()).template generate<N_data, 0, 2, 1>({u2, _op::template root_f<-1>(u2)});
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				auto &[o, e] = get<I>(s);
-				auto &[f, g] = apart_f(e);
-			//	_op::template truncate_f<4>(f);
+				auto &[f, g] = destruct_f(e);
 				get<I>(s) = {o*f, _std::conj(o)*g};
 			});
 			return self();

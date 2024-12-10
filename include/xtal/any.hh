@@ -69,6 +69,9 @@ template <class          ...Ts>	using        complete_t	= typename _entail::   c
 template <class          ...Ts>	concept        common_q	=          _entail::    common_q<Ts...>;//< `Ts...` share an ancestor.
 template <class          ...Ts>	using          common_t	=          _entail::    common_t<Ts...>;
 
+template <class F, class ...Xs>	concept        return_p	=          _entail::    return_p<F, Xs...>;
+template <class F, class ...Xs>	using          return_t	=          _entail::    return_t<F, Xs...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -105,18 +108,20 @@ template <class X, class ...Fs>	concept    idempotent_q	=  (...and _entail:: ide
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto N              >	using        constant_t	= typename _entail::     constant_t<N >;
+template <auto N=null_type{}  >	using        constant_t	= typename _entail::     constant_t<N >;
 template <class          ...Ts>	concept      constant_q	= (...and  _entail::     constant_q<XTAL_RAW_(Ts)>);
 
 template <         class ...Ts>	concept       logical_q	= (...and  _entail::      logical_q<XTAL_RAW_(Ts)>);
 template <         class ...Ts>	concept       ordinal_q	= (...and  _entail::      ordinal_q<XTAL_RAW_(Ts)>);
 template <         class ...Ts>	concept      cardinal_q	= (...and  _entail::     cardinal_q<XTAL_RAW_(Ts)>);
 template <         class ...Ts>	concept      integral_q	= (...and  _entail::     integral_q<XTAL_RAW_(Ts)>);
+template <         class ...Ts>	concept   disintegral_q	= (...and  _entail::  disintegral_q<XTAL_RAW_(Ts)>);
 
 template <class T, class ...Xs>	concept       logical_p	=          _entail::      logical_p<T, Xs...>;
 template <class T, class ...Xs>	concept       ordinal_p	=          _entail::      ordinal_p<T, Xs...>;
 template <class T, class ...Xs>	concept      cardinal_p	=          _entail::     cardinal_p<T, Xs...>;
 template <class T, class ...Xs>	concept      integral_p	=          _entail::     integral_p<T, Xs...>;
+template <class T, class ...Xs>	concept   disintegral_p	=          _entail::  disintegral_p<T, Xs...>;
 
 template <class          ...Ts>	concept     unnatural_q	= (...and  _entail::    unnatural_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept       natural_q	= (...and  _entail::      natural_q<XTAL_RAW_(Ts)>);
@@ -166,26 +171,26 @@ template <         class ...Ts>	using    fluid_valued_u	= common_t<_entail::   f
 template <         class ...Ts>	concept  fluid_valued_q	= (...and  _entail::   fluid_valued_q<Ts>);
 
 
-template <         class ...Ts>	concept         apart_q	= (...and  _entail:: apart_q<Ts>);
-template <class T             >	using           apart_t	=          _entail:: apart_t<T >;
-template <         class ...Ts>	using           apart_u	= common_t<_entail:: apart_u<Ts>...>;
-template <class T             >	XTAL_LET        apart_n	= _entail:: apart_n<T>;
-template <class T, class ...Ts>	concept         apart_p	= (...and (apart_n<T> < apart_n<Ts>));
+template <         class ...Ts>	concept         destruct_q	= (...and  _entail:: destruct_q<Ts>);
+template <class T             >	using           destruct_t	=          _entail:: destruct_t<T >;
+template <         class ...Ts>	using           destruct_u	= common_t<_entail:: destruct_u<Ts>...>;
+template <class T             >	XTAL_LET        destruct_n	= _entail:: destruct_n<T>;
+template <class T, class ...Ts>	concept         destruct_p	= (...and (destruct_n<T> < destruct_n<Ts>));
 
-template <class T, int   ...Ns>	using        devolved  	= _entail:: devolved  <T, Ns...>;
-//mplate <         int   ...Ns>	using        devolved_x	= _entail:: devolved_x<   Ns...>;
-//mplate <class T, class ..._s>	using        devolved_s	= _entail:: devolved_s<T, _s...>;
-template <class T             >	XTAL_LET     devolved_n	= _entail:: devolved_n<T>;
-template <         class ...Ts>	using        devolved_u	= common_t<_entail:: devolved_u<Ts>...>;
-template <class T             >	using        devolved_t	=          _entail:: devolved_t<T >;
-template <class T, class ...Ts>	concept      devolved_p	= (...and (devolved_n<T> < devolved_n<Ts>));
+template <class T, int   ...Ns>	using        dissolve  	= _entail:: dissolve  <T, Ns...>;
+//mplate <         int   ...Ns>	using        dissolve_x	= _entail:: dissolve_x<   Ns...>;
+//mplate <class T, class ..._s>	using        dissolve_s	= _entail:: dissolve_s<T, _s...>;
+template <class T             >	XTAL_LET     dissolve_n	= _entail:: dissolve_n<T>;
+template <         class ...Ts>	using        dissolve_u	= common_t<_entail:: dissolve_u<Ts>...>;
+template <class T             >	using        dissolve_t	=          _entail:: dissolve_t<T >;
+template <class T, class ...Ts>	concept      dissolve_p	= (...and (dissolve_n<T> < dissolve_n<Ts>));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	concept        column_q	=  (...and _entail:: column_q<Ts>);
-template <class T, int   N=-1 >	concept         array_q	=          _entail::  array_q<T> and N <  0   or apart_n<T> == N;
-template <class T, int   N=-1 >	concept      subarray_q	=          _entail::  array_q<T> and 0 <= N  and apart_n<T> <= N;
+template <class T, int   N=-1 >	concept         array_q	=          _entail::  array_q<T> and N <  0   or destruct_n<T> == N;
+template <class T, int   N=-1 >	concept      subarray_q	=          _entail::  array_q<T> and 0 <= N  and destruct_n<T> <= N;
 template <         class ...Ts>	concept      disarray_q	=        not (...and  array_q<Ts>);
 
 template <class          ...Ts>	concept       indexed_q	= (... and _entail:: indexed_q<Ts>);

@@ -328,11 +328,11 @@ public:
 
 	template <int N_side=0> requires in_n<N_side, 1, 0, -1>
 	XTAL_DEF_(short)
-	XTAL_SET clamped_f(integral_q auto value)
+	XTAL_SET clamped_f(integral_q auto const &value)
 	noexcept -> auto
 	{
 		XTAL_IF0
-		XTAL_0IF (N_side == 0) {return                           value ;}
+		XTAL_0IF (N_side == 0) {return                          (value);}
 		XTAL_0IF (N_side != 0) {return N_side*designed_f<N_side>(value);}
 	}
 
@@ -708,7 +708,7 @@ public:
 		alpha_type constexpr n_sign = N_sign;
 
 		XTAL_IF0
-		XTAL_0IF_(constexpr) {
+		XTAL_0IF_(consteval) {
 			return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
 		}
 		XTAL_0IF_(else) {
@@ -795,7 +795,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_ALL_(w);
-		using V = devolved_u<W>;
+		using V = dissolve_u<W>;
 
 	//	W constexpr W_1{1};
 		V constexpr U_1{1};
@@ -971,7 +971,7 @@ public:
 	noexcept -> auto
 	{
 		using Y = based_t<decltype(base)>;
-		using V = devolved_u<Y>;
+		using V = dissolve_u<Y>;
 
 		V const v{1};// NOTE: Won't work for matricies...
 		Y const y{v};
@@ -1098,6 +1098,11 @@ public:
 	static_assert(epsilon_n<1> <  epsilon_n<2>);
 	static_assert(epsilon_n<1> == _std::numeric_limits<alpha_type>::epsilon());
 	
+	static_assert(alpha_1 <  alpha_1 + epsilon_n< 1>);
+	static_assert(alpha_1 == alpha_1 + epsilon_n< 0>);
+	static_assert(alpha_1 == alpha_1 - epsilon_n<-1>);
+	static_assert(alpha_1  > alpha_1 - epsilon_n< 1>);
+	
 	XTAL_SET_(alpha_type) epsilon_0 = epsilon_n<0>;
 	XTAL_SET_(alpha_type) epsilon_1 = epsilon_n<1>;
 	XTAL_SET_(alpha_type) epsilon_2 = epsilon_n<2>;
@@ -1109,14 +1114,17 @@ public:
 	XTAL_SET upsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
 	{
-		return (1 + epsilon_f(n_zoom + 1))*diplo_f(n_zone);
+		auto constexpr N_diff = fraction.depth + 1;
+		auto const     n_unit = alpha_1 + haplo_f(N_diff - n_zoom);
+		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
 	XTAL_SET_(alpha_type) upsilon_n = upsilon_f(N_zoom);
 	///< Value expression of `upsilon_f`. \
 	
-	static_assert(upsilon_n<1> > upsilon_n<0>);
-	static_assert(upsilon_n<2> > upsilon_n<1>);
+	static_assert(    alpha_1  == upsilon_n<0>);
+	static_assert(upsilon_n<0> <  upsilon_n<1>);
+	static_assert(upsilon_n<1> <  upsilon_n<2>);
 	
 	XTAL_SET_(alpha_type) upsilon_0 = upsilon_n<0>;
 	XTAL_SET_(alpha_type) upsilon_1 = upsilon_n<1>;
@@ -1129,14 +1137,17 @@ public:
 	XTAL_SET dnsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
 	{
-		return (1 - epsilon_f(n_zoom + 0))*diplo_f(n_zone);
+		auto constexpr N_diff = fraction.depth + 2;
+		auto const     n_unit = alpha_1 - haplo_f(N_diff - n_zoom);
+		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
 	XTAL_SET_(alpha_type) dnsilon_n = dnsilon_f(N_zoom);
 	///< Value expression of `dnsilon_f`. \
 	
-	static_assert(dnsilon_n<1> < dnsilon_n<0>);
-	static_assert(dnsilon_n<2> < dnsilon_n<1>);
+	static_assert(    alpha_1  == dnsilon_n<0>);
+	static_assert(dnsilon_n<1> <  dnsilon_n<0>);
+	static_assert(dnsilon_n<2> <  dnsilon_n<1>);
 	
 	XTAL_SET_(alpha_type) dnsilon_0 = dnsilon_n<0>;
 	XTAL_SET_(alpha_type) dnsilon_1 = dnsilon_n<1>;
@@ -1148,15 +1159,22 @@ public:
 	///\returns `std::numeric_limits<alpha_type>::min()` magnified by `diplo_f(n_zoom)`. \
 
 	XTAL_DEF_(short)
-	XTAL_SET minimal_f(delta_type const &n_zoom=0)
+	XTAL_SET minilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		alpha_type constexpr co = _std::numeric_limits<alpha_type>::min();
-		return co*diplo_f(n_zoom);
+	//	alpha_type constexpr co = _std::numeric_limits<alpha_type>::min();
+	//	return co*diplo_f(n_zoom);
+		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_SET_(alpha_type) minimal_n = minimal_f(N_zoom);
-	///< Value expression for `minimal_f`. \
+	XTAL_SET_(alpha_type) minilon_n = minilon_f(N_zoom);
+	///< Value expression for `minilon_f`. \
+
+	XTAL_SET minilon_0 = minilon_n<0>;
+	XTAL_SET minilon_1 = minilon_n<1>;
+	XTAL_SET minilon_2 = minilon_n<2>;
+	XTAL_SET minilon_3 = minilon_n<3>;
+
 
 	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
 
@@ -1164,7 +1182,7 @@ public:
 	XTAL_SET minimum_f()
 	noexcept -> decltype(auto)
 	{
-		return minimal_f();
+		return minilon_f();
 	}
 	XTAL_DEF_(short)
 	XTAL_SET minimum_f(auto const &w)
@@ -1188,20 +1206,27 @@ public:
 
 	///\returns haplo_f(n_zoom)/std::numeric_limits<alpha_type>::min()`. \
 	
-	///\note Defined as the multiplicative inverse of `minimal_f`, \
+	///\note Defined as the multiplicative inverse of `minilon_f`, \
 		rather than w.r.t. `std::numeric_limits<alpha_type>::max()`, \
 		which is two orders of (binary) magnitude larger. \
 
 	XTAL_DEF_(short)
-	XTAL_SET maximal_f(delta_type const &n_zoom=0)
+	XTAL_SET maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		alpha_type constexpr co = alpha_1/_std::numeric_limits<alpha_type>::min();
-		return co*haplo_f(n_zoom);
+	//	alpha_type constexpr co = alpha_1/_std::numeric_limits<alpha_type>::min();
+	//	return co*haplo_f(n_zoom);
+		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
 	}
 	template <int N_zoom=0>
-	XTAL_SET_(alpha_type) maximal_n = maximal_f(N_zoom);
-	///< Value expression for `maximal_f`. \
+	XTAL_SET_(alpha_type) maxilon_n = maxilon_f(N_zoom);
+	///< Value expression for `maxilon_f`. \
+
+	XTAL_SET maxilon_0 = maxilon_n<0>;
+	XTAL_SET maxilon_1 = maxilon_n<1>;
+	XTAL_SET maxilon_2 = maxilon_n<2>;
+	XTAL_SET maxilon_3 = maxilon_n<3>;
+
 
 	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
 
@@ -1209,7 +1234,7 @@ public:
 	XTAL_SET maximum_f()
 	noexcept -> decltype(auto)
 	{
-		return maximal_f();
+		return maxilon_f();
 	}
 	XTAL_DEF_(short)
 	XTAL_SET maximum_f(auto const &w)
@@ -1284,7 +1309,7 @@ public:
 	XTAL_SET assigned_f(alpha_type const &value)
 	noexcept -> alpha_type
 	{
-		return _xtd::copysign(alpha_1, value);
+		return _xtd::signbit(value);
 	}
 	static_assert(assigned_f((alpha_type)  0.5) ==  1.0);
 	static_assert(assigned_f((alpha_type)  0.0) ==  1.0);
@@ -1331,15 +1356,20 @@ public:
 			return _xtd::copysign(value, alpha_1);
 		}
 		else {
-			int constexpr N_sign = assigned_f(N_side);
-			int constexpr M_side = designed_f(N_side);
-			value *= N_sign*haplo_f(1); value -= minimal_n<M_side - 1>;
-			value += designed_f(value); value += minimal_n<M_side - 1>;
+			delta_type constexpr N_diff = designed_f(N_side);
+			alpha_type constexpr N_sign = assigned_f(N_side);
+			value *= N_sign*haplo_f(1); value -= minilon_n<N_diff - 1>;
+			value += designed_f(value); value += minilon_n<N_diff - 1>;
 			return value;
 		}
 	}
 	static_assert(designed_f( alpha_1) ==  1.0);
 	static_assert(designed_f(-alpha_1) ==  1.0);
+
+//	static_assert(designed_f< 1>( alpha_1) ==  1.0);
+//	static_assert(designed_f< 1>(-alpha_1) ==  0.0);
+//	static_assert(designed_f<-1>( alpha_1) ==  0.0);
+//	static_assert(designed_f<-1>(-alpha_1) ==  1.0);
 
 
 	///\returns the original sign of `target`, before applying the sign of `source`. \
@@ -1358,7 +1388,7 @@ public:
 	requires in_n<sizeof(target), sizeof(source)>
 	{
 		XTAL_IF0
-		XTAL_0IF_(constexpr) {
+		XTAL_0IF_(consteval) {
 			alpha_type const signum = assigned_f(target);
 			target = resigned_f(target, source);
 			return signum;
@@ -1416,10 +1446,10 @@ public:
 		XTAL_0IF (N_size != 0) {return signum_n<N_side>*designed_f<N_side>(value);}
 	}
 	static_assert(clamped_f<+1>( alpha_1) == +1.0);
-	static_assert(clamped_f<+1>( alpha_0) == +minimal_f());
-	static_assert(clamped_f<+1>(-alpha_1) == +minimal_f());
-	static_assert(clamped_f<-1>( alpha_1) == -minimal_f());
-	static_assert(clamped_f<-1>( alpha_0) == -minimal_f());
+	static_assert(clamped_f<+1>( alpha_0) == +minilon_f());
+	static_assert(clamped_f<+1>(-alpha_1) == +minilon_f());
+	static_assert(clamped_f<-1>( alpha_1) == -minilon_f());
+	static_assert(clamped_f<-1>( alpha_0) == -minilon_f());
 	static_assert(clamped_f<-1>(-alpha_1) == -1.0);
 
 
@@ -1541,38 +1571,6 @@ public:
 	static_assert(fraction_f(-2.75) ==  0.25);
 
 
-	///\returns the continued fraction for the provided sequence. \
-
-	template <int ...Ns>
-	XTAL_DEF_(short)
-	XTAL_SET confraction_f(seek_t<Ns...>)
-	noexcept -> alpha_type
-	{
-		return confraction_f(alpha_type{Ns}...);
-	}
-	XTAL_DEF_(short)
-	XTAL_SET confraction_f(integer_q auto ...Ns)
-	noexcept -> alpha_type
-	{
-		return confraction_f(alpha_type{Ns}...);
-	}
-	XTAL_DEF_(short)
-	XTAL_SET confraction_f(alpha_type n, XTAL_SYM_(n) auto ...ns)
-	noexcept -> alpha_type
-	{
-		return n + alpha_1/confraction_f(ns...);
-	}
-	XTAL_DEF_(short)
-	XTAL_SET confraction_f(alpha_type const &n)
-	noexcept -> alpha_type const &
-	{
-		return n;
-	}
-	static_assert(confraction_f(seek_t<2      >{}) == 2.0);
-	static_assert(confraction_f(seek_t<1, 1   >{}) == 2.0);
-	static_assert(confraction_f(seek_t<1, 1, 1>{}) == 1.5);
-
-
 	XTAL_DEF_(short)
 	XTAL_SET factorial_f(sigma_type n)
 	noexcept -> sigma_type
@@ -1593,209 +1591,6 @@ public:
 
 	static_assert(factorial_f(5) == 120);
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-	/// Modifies the `target`, clamping the magnitude below `dnsilon_f(N_zoom, n_zone)`. \
-
-	///\returns zero if unchanged, else the sign of the `target`. \
-	
-	template <int N_zoom=0, int N_infinity=0>
-	XTAL_SET truncate_f(alpha_type &target, delta_type const &n_zone)
-	noexcept -> alpha_type
-	{
-		if constexpr (N_zoom < 0) {
-			return alpha_0;
-		}
-		else {
-		//	bool constexpr N_unit = not N_infinity;
-			if constexpr (IEC&559U) {
-				delta_type constexpr M_zone = unit.mask + (1);
-				delta_type constexpr M_zoom = unit.mask - (delta_type(1) << N_zoom);
-				delta_type const     dezone = n_zone << exponent.shift;
-				delta_type const     rezone = N_infinity? M_zone - dezone: dezone;
-				delta_type const M = rezone + M_zoom;
-				delta_type o, n, m;
-				auto &t  = reinterpret_cast<delta_type &>(target);
-				n  =  t  & sign.mask;
-				m  =  t  ^ n;
-				m  =  M  - m;
-				o  =  m >> positive.depth;
-				n |=  o  & unit.mask;
-				t +=  o  & m;
-				return    _xtd::bit_cast<alpha_type>(n);
-			}
-			else {
-				alpha_type const t = N_infinity? maximal_f(n_zone - 1): dnsilon_f(N_zoom, n_zone);
-				alpha_type const s = design_f(target), o = t < target;
-				target = s*minimum_f(t, target);
-				return o*s;
-			}
-		}
-	}
-	/// Modifies the `target`, clamping the magnitude below `maximal_f(N_zoom)`. \
-
-	///\returns zero if unchanged, else the sign of the `target`. \
-
-	template <int N_zoom=0>
-	XTAL_DEF_(inline)
-	XTAL_SET truncate_f(alpha_type &target)
-	noexcept -> alpha_type
-	{
-		return truncate_f<0, 1>(target, N_zoom + 1);
-	}
-	template <int N_zoom=0>
-	XTAL_DEF_(inline)
-	XTAL_SET truncate_f(aphex_type &target)
-	noexcept -> aphex_type
-	{
-		auto &z = apart_f(target);
-		alpha_type const x = truncate_f<N_zoom>(z[0]);
-		alpha_type const y = truncate_f<N_zoom>(z[1]);
-		return aphex_type{x, y};
-	}
-
-	///\returns the `target` with magnitude clamped to the region below `dnsilon_f(N_zoom, n_zone)`. \
-
-	template <int N_zoom=0, int N_infinity=0>
-	XTAL_DEF_(short)
-	XTAL_SET truncated_f(alpha_type target, delta_type const &n_zone)
-	noexcept -> alpha_type
-	{
-		(void) truncate_f<N_zoom, N_infinity>(target, n_zone); return target;
-	}
-	///\returns the `target` with magnitude clamped to the region below `maximal_f(N_zoom)`. \
-
-	template <int N_zoom=0>
-	XTAL_DEF_(short)
-	XTAL_SET truncated_f(alpha_type const &target)
-	noexcept -> alpha_type
-	{
-		return truncated_f<0, 1>(target, N_zoom + 1);
-	}
-
-	template <int N_zoom=0>
-	XTAL_DEF_(short)
-	XTAL_SET truncated_f(aphex_type const &target)
-	noexcept -> aphex_type
-	{
-		alpha_type const x = truncated_f<N_zoom>(target.real());
-		alpha_type const y = truncated_f<N_zoom>(target.imag());
-		return aphex_type{x, y};
-	}
-	template <int N_zoom=0, int N_zero=0>
-#if XTAL_VER_(GNUC < 1300)
-	[[gnu::optimize(1)]]
-#endif
-	XTAL_DEF_(short)
-	XTAL_SET truncated_f(aphex_type const &source, delta_type const &n_zone)
-	noexcept -> aphex_type
-	{
-		auto target = truncated_f<(delta_1 << (exponent.depth - 2))>(source);
-		auto [w, m] = unsquare_dot_f<0>(target);
-		target *= m; truncate_f<N_zoom, N_zero>(w, n_zone);
-		target *= w;
-		return target;
-	}
-
-////////////////////////////////////////////////////////////////////////////////
-
-	/// Modifies the `target`, clamping the magnitude above `upsilon_f(N_zoom, n_zone)`. \
-
-	///\returns zero if unchanged, else the sign of the `target`. \
-
-	template <int N_zoom=0, int N_zero=0>
-	XTAL_SET puncture_f(alpha_type &target, delta_type const &n_zone)
-	noexcept -> alpha_type
-	{
-		if constexpr (N_zoom < 0) {
-			return alpha_0;
-		}
-		else {
-			bool constexpr N_unit = not N_zero;
-			if constexpr (IEC&559U) {
-				delta_type constexpr M_zoom = unit.mask + (delta_type(1) << N_zoom);
-				delta_type const     dezone = n_zone << exponent.shift;
-				delta_type const M = dezone + M_zoom*N_unit;
-				delta_type o, n, m;
-				auto &t  = reinterpret_cast<delta_type &>(target);
-				n   = t  & sign.mask;
-				m   = t  ^ n;
-				m  -= M;
-				o   = m >> positive.depth;
-				n  |= o  & unit.mask;
-				t  -= o  & m;
-				return    _xtd::bit_cast<alpha_type>(XTAL_MOV_(n));
-			}
-			else {
-				alpha_type const t = N_zero? minimal_f(n_zone - 1): upsilon_f(N_zoom, n_zone);
-				alpha_type const s = design_f(target), o = target < t;
-				target = s*maximum_f(t, target);
-				return o*s;
-			}
-		}
-	}
-	/// Modifies the `target`, clamping the magnitude above `minimal_f(N_zoom)`. \
-
-	///\returns zero if unchanged, else the sign of the `target`. \
-
-	template <int N_zoom=0>
-	XTAL_DEF_(inline)
-	XTAL_SET puncture_f(alpha_type &target)
-	noexcept -> alpha_type
-	{
-		return puncture_f<0, 1>(target, N_zoom + 1);
-	}
-	template <int N_zoom=0>
-	XTAL_DEF_(inline)
-	XTAL_SET puncture_f(aphex_type &target)
-	noexcept -> alpha_type
-	{
-		auto &z = reinterpret_cast<alpha_type(&)[2]>(target);
-		alpha_type const x = puncture_f<N_zoom>(z[0]);
-		alpha_type const y = puncture_f<N_zoom>(z[1]);
-		return aphex_type{x, y};
-	}
-
-	///\returns the `target` with magnitude clamped to the region above `upsilon_f(N_zoom, n_zone)`. \
-
-	template <int N_zoom=0, int N_zero=0>
-	XTAL_DEF_(short)
-	XTAL_SET punctured_f(alpha_type target, delta_type const &n_zone)
-	noexcept -> alpha_type
-	{
-		(void) puncture_f<N_zoom, N_zero>(target, n_zone); return target;
-	}
-	///\returns the `target` with magnitude clamped to the region above `minimal_f(N_zoom)`. \
-
-	template <int N_zoom=0>
-	XTAL_DEF_(short)
-	XTAL_SET punctured_f(alpha_type const &target)
-	noexcept -> alpha_type
-	{
-		return punctured_f<0, 1>(target, N_zoom + 1);
-	}
-
-	template <int N_zoom=0>
-	XTAL_DEF_(short)
-	XTAL_SET punctured_f(aphex_type const &target)
-	noexcept -> aphex_type
-	{
-		alpha_type const x = punctured_f<N_zoom>(target.real());
-		alpha_type const y = punctured_f<N_zoom>(target.imag());
-		return aphex_type{x, y};
-	}
-	template <int N_zoom=0, int N_zero=0>
-	XTAL_DEF_(short)
-	XTAL_SET punctured_f(aphex_type target, delta_type const &n_zone)
-	noexcept -> aphex_type
-	{
-		auto [w, m] = unsquare_dot_f<0>(target);
-		target *= m; puncture_f<N_zoom, N_zero>(w, n_zone);
-		target *= w;
-		return target;
-	}
-	
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1836,12 +1631,12 @@ public:
 
 template <class ...Ts>
 struct   operate
-:	complete_t<_detail::realize<sizeof(devolved_u<Ts...>)>>
+:	complete_t<_detail::realize<sizeof(dissolve_u<Ts...>)>>
 {
 };
 template <class ...Ts> requires seek_constant_q<Ts...>
 struct   operate<Ts...>
-:	complete_t<_detail::realize<sizeof(devolved_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
+:	complete_t<_detail::realize<sizeof(dissolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
 {
 };
 using operating = operate<size_type>;

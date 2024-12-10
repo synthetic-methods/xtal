@@ -249,7 +249,7 @@ struct block<A>
 		Elementwise immutative transformer. \
 
 		XTAL_TO4_(template <array_q W>
-		XTAL_DEF_(alias) transact(), transact<W>(invoke_f<apart_u<W>>))
+		XTAL_DEF_(alias) transact(), transact<W>(invoke_f<destruct_u<W>>))
 
 		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f)       &&noexcept -> W&& {return move_by<W>(XTAL_REF_(f));}
 		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f) const &&noexcept -> W&& {return move_by<W>(XTAL_REF_(f));}

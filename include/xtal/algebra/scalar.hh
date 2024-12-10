@@ -304,7 +304,7 @@ struct scalar<A>
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(short,static)
 		XTAL_LET reflector()
-		noexcept -> devolved_u<U_data>
+		noexcept -> dissolve_u<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}

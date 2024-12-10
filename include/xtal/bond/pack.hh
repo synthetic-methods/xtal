@@ -107,7 +107,7 @@ noexcept -> decltype(auto)
 {
 	XTAL_IF0
 	XTAL_0IF XTAL_TRY_TO_(get<I>(XTAL_REF_(t)))
-	XTAL_0IF_(else) return apart_f(XTAL_REF_(t))[I];
+	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
 }
 template <auto I, auto ...Is> requires some_n<Is...>
 XTAL_DEF_(short)

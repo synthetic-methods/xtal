@@ -16,7 +16,18 @@ namespace _xtd
 	};
 #endif
 
-#if XTAL_VER_(STD >= 2300) and not XTAL_VER_(MSVC < 1617)
+#if XTAL_VER_(STD >= 2300) and not XTAL_VER_(MSVC < 1700)
+	using _std::signbit;
+#else
+	template <class T>
+	XTAL_DEF_(inline)
+	XTAL_LET signbit(T t)
+	noexcept -> decltype(auto)
+	{
+		return __builtin_copysign(T{1}, t);
+	};
+#endif
+#if XTAL_VER_(STD >= 2300) and not XTAL_VER_(MSVC < 1700)
 	using _std::copysign;
 #else
 	template <class T>
@@ -52,7 +63,7 @@ template <auto N0, auto N1> requires (N0 < N1)
 XTAL_LET bounded_f(auto const &u)
 {
 	XTAL_IF0
-	XTAL_0IF_(constexpr) {
+	XTAL_0IF_(consteval) {
 		return u < N0? N0: N1 < u? N1: u;
 	}
 	XTAL_0IF_(else) {
@@ -120,15 +131,15 @@ noexcept -> auto
 
 template <int N>
 XTAL_DEF_(short)
-XTAL_LET apart_f(auto &&t)
+XTAL_LET destruct_f(auto &&t)
 noexcept
 requires fixed_sized_q<decltype(t)>
 {
 	XTAL_LET M = fixed_sized_n<decltype(t)>;
-	return get<modulo_f<M>(N)>(apart_f(XTAL_REF_(t)));
+	return get<modulo_f<M>(N)>(destruct_f(XTAL_REF_(t)));
 }
 XTAL_DEF_(short)
-XTAL_LET apart_f(auto &&t)
+XTAL_LET destruct_f(auto &&t)
 noexcept -> decltype(auto)
 requires fixed_sized_q<decltype(t)>
 {
@@ -138,13 +149,13 @@ requires fixed_sized_q<decltype(t)>
 		return XTAL_REF_(t);
 	}
 	XTAL_0IF_(else) {
-		return reinterpret_cast<apart_t<T> &&>(XTAL_REF_(t));
+		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
 	}
 }
-static_assert(id_q<      int( &)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(id_q<const int( &)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(id_q<      int(&&)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(id_q<const int(&&)[2], decltype(apart_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+static_assert(id_q<      int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(id_q<const int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(id_q<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(id_q<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const &&)))>);
 
 ///\
 Defines a factory for the supplied type. \

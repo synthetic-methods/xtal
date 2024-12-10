@@ -92,8 +92,8 @@ struct quantity<A>
 		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
 
-		XTAL_DEF_(short,friend) XTAL_LET operator * (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t * s;}
-		XTAL_DEF_(short,friend) XTAL_LET operator + (devolved_p<T> auto const &s, T const &t) noexcept -> auto {return t + s;}
+		XTAL_DEF_(short,friend) XTAL_LET operator * (dissolve_p<T> auto const &s, T const &t) noexcept -> auto {return t * s;}
+		XTAL_DEF_(short,friend) XTAL_LET operator + (dissolve_p<T> auto const &s, T const &t) noexcept -> auto {return t + s;}
 
 		template <auto f, size_t I=N_data - 1>
 		XTAL_DEF_(short)

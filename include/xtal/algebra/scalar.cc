@@ -21,7 +21,7 @@ public:
 	using    array_type = xtal::algebra::scalar_t<arity_type[sizeof...(Ts)]>;
 
 	static
-	array_type constexpr layout{xtal::apart_n<Ts>...};
+	array_type constexpr layout{xtal::destruct_n<Ts>...};
 	array_type extent{0};
 	array_type extend{0};
 	arity_type expand{0};
@@ -34,7 +34,7 @@ public:
 	}
 
 	template <arity_type I> using    item_t = _std::tuple_element_t<I, tuple_type>;
-	template <arity_type I> XTAL_SET item_n = xtal::apart_n<item_t<I>>;
+	template <arity_type I> XTAL_SET item_n = xtal::destruct_n<item_t<I>>;
 	
 };
 
