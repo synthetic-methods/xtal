@@ -632,10 +632,10 @@ public:
 		XTAL_0IF (       is_q<delta_type, Q>) {return                                 XTAL_REF_(o)  ;}
 		XTAL_0IF (       is_q<sigma_type, Q>) {return      _std::bit_cast<delta_type>(XTAL_REF_(o)) ;}
 		XTAL_0IF (       is_q<alpha_type, Q>) {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (_std::  signed_integral<Q>) {return delta_f(static_cast<delta_type>(XTAL_REF_(o)));}
+	//	XTAL_0IF (_std::  signed_integral<Q>) {return delta_f(static_cast<delta_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::unsigned_integral<Q>) {return delta_f(static_cast<sigma_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::   floating_point<Q>) {return delta_f(static_cast<alpha_type>(XTAL_REF_(o)));}
-		XTAL_0IF_(else)                       {return                    (delta_type) XTAL_REF_(o)  ;}
+		XTAL_0IF_(else)                       {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
 	}
 	XTAL_DEF_(short)
 	XTAL_SET sigma_f(auto &&o)
@@ -647,9 +647,9 @@ public:
 		XTAL_0IF (       is_q<sigma_type, Q>) {return                                 XTAL_REF_(o)  ;}
 		XTAL_0IF (       is_q<alpha_type, Q>) {return                 sigma_f(delta_f(XTAL_REF_(o)));}
 		XTAL_0IF (_std::  signed_integral<Q>) {return sigma_f(static_cast<delta_type>(XTAL_REF_(o)));}
-		XTAL_0IF (_std::unsigned_integral<Q>) {return sigma_f(static_cast<sigma_type>(XTAL_REF_(o)));}
+	//	XTAL_0IF (_std::unsigned_integral<Q>) {return sigma_f(static_cast<sigma_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::   floating_point<Q>) {return sigma_f(static_cast<alpha_type>(XTAL_REF_(o)));}
-		XTAL_0IF_(else)                       {return                    (sigma_type) XTAL_REF_(o)  ;}
+		XTAL_0IF_(else)                       {return         static_cast<sigma_type>(XTAL_REF_(o)) ;}
 	}
 	XTAL_DEF_(short)
 	XTAL_SET alpha_f(auto &&o)
@@ -662,8 +662,8 @@ public:
 		XTAL_0IF (       is_q<alpha_type, Q>) {return                                 XTAL_REF_(o)  ;}
 		XTAL_0IF (_std::  signed_integral<Q>) {return alpha_f(static_cast<delta_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::unsigned_integral<Q>) {return alpha_f(static_cast<sigma_type>(XTAL_REF_(o)));}
-		XTAL_0IF (_std::   floating_point<Q>) {return alpha_f(static_cast<alpha_type>(XTAL_REF_(o)));}
-		XTAL_0IF_(else)                       {return                    (alpha_type) XTAL_REF_(o)  ;}
+	//	XTAL_0IF (_std::   floating_point<Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
+		XTAL_0IF_(else)                       {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
 	}
 
 

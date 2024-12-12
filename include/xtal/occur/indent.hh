@@ -44,19 +44,19 @@ struct indent<Ns...>
 		using S_::S_;
 		
 		///\note\
-		When `uncorrelated_q<S>`, `S::ordinate` is invoked to produce the edit. \
+		When `covalued_q<S>`, `S::ordinate` is invoked to produce the edit. \
 
 		///\todo\
-		Find a way to invoke `S::ordinate` for any `indent`ed fragments. \
+		Find a way to invoke `S::ordinate` implicitly for any `indent`ed fragments. \
 
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   correlated_q<S>
+		requires   indexed_q<S> and un_n<covalued_q<S>>
 		:	S_{XTAL_MOV_(u)}
 		{}
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires uncorrelated_q<S>
+		requires   indexed_q<S> and in_n<covalued_q<S>>
 		:	S_{S::ordinate(XTAL_MOV_(u))}
 		{}
 

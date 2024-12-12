@@ -656,7 +656,7 @@ struct refer_binary_logic<U, 2>
 template <class U, size_type N=0>
 struct infer_binary_logic : bond::compose<> {};
 
-template <class U, size_type N> requires binary_quantity_p<N, U>
+template <class U, size_type N> requires binary_group_p<N, U>
 struct infer_binary_logic<U, N> : refer_binary_logic<U, N> {};
 
 

@@ -1,6 +1,6 @@
 #include "./any.hh"
+#include "./lattice.hh"
 #include "./phason.hh"
-#include "./quantity.hh"
-#include "./scalar.hh"
+#include "./sector.hh"
 #include "./serial.hh"
 #include "./series.hh"

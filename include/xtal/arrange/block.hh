@@ -87,29 +87,28 @@ struct superblock<U[N]>
 				S_::fill(U_data{});
 			}
 		}
+	//	TODO: Should check `coindexed_q`? Or how to determine if `ordinate` has been replaced?
+
 		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_data> a)
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			XTAL_IF0
-			XTAL_0IF (    correlated_q<T>) {_detail::move_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			if constexpr (covalued_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			else                         {_detail::move_to(S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
 		noexcept
 		:	homotype(count_f(a))
 		{
-			XTAL_IF0
-			XTAL_0IF (    correlated_q<T>) {_detail::move_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			if constexpr (covalued_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			else                         {_detail::move_to(S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			XTAL_IF0
-			XTAL_0IF (    correlated_q<T>) {_detail::copy_to(S_::begin(), a);}
-			XTAL_0IF (not correlated_q<T>) {_detail::copy_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			if constexpr (covalued_q<T>) {_detail::copy_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
+			else                         {_detail::copy_to(S_::begin(), a);}
 		}
 
 	};
@@ -118,11 +117,10 @@ struct superblock<U[N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class U, size_type N, size_type ...Ns>
-struct block<U[N][Ns]...> : block<block_t<U[N]>[Ns]...>
-{
-};
-template <column_q A>
+template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct block<U   [N][Ns]...> : block<block_t<U[N]>   [Ns]...> {};
+template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct block<U(&)[N][Ns]...> : block<block_t<U[N]>(&)[Ns]...> {};
+
+template <vector_q A>
 struct block<A>
 {
 	using _op = bond::operate<A>;

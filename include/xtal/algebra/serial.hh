@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./quantity.hh"
+#include "./lattice.hh"
 
 
 
@@ -26,15 +26,15 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `quantity` with point-wise addition, and multiplication defined by linear convolution. \
+Extends `lattice` with point-wise addition, and multiplication defined by linear convolution. \
 
-template <column_q A>
+template <vector_q A>
 struct serial<A>
 {
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename quantity<A>::template homotype<T>;
+	using endotype = typename lattice<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<serial_t>>;

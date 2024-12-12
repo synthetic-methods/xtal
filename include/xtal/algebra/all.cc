@@ -1,6 +1,6 @@
 #include "./any.cc"
+#include "./lattice.cc"
 #include "./phason.cc"
-#include "./quantity.cc"
-#include "./scalar.cc"
+#include "./sector.cc"
 #include "./serial.cc"
 #include "./series.cc"

@@ -100,7 +100,7 @@ struct circumscribe<A> : circumscribe<valued_u<A>>
 		return {co_re, co_im};
 	};
 };
-template <column_q A>
+template <vector_q A>
 struct circumscribe<A> : circumscribe<valued_u<A>>
 {
 };
@@ -111,7 +111,7 @@ static_assert(circumscribe<double>::full.width == circumscribe<int>::full.width)
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <column_q A>
+template <vector_q A>
 struct phason<A>
 {
 	using T_op = _detail::circumscribe<A>;

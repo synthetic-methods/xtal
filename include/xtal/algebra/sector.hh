@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./quantity.hh"
+#include "./lattice.hh"
 
 
 
@@ -11,33 +11,33 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   scalar;
-template <class   ..._s>	using    scalar_t = typename scalar<_s...>::type;
-template <class   ...Ts>	concept  scalar_q = bond::any_tag_p<scalar_t, Ts...>;
+template <class   ..._s>	struct   sector;
+template <class   ..._s>	using    sector_t = typename sector<_s...>::type;
+template <class   ...Ts>	concept  sector_q = bond::any_tag_p<sector_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET scalar_f(auto &&...oo)
+XTAL_LET sector_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<scalar_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<sector_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `quantity` with point-wise addition, and the scalar sum/product. \
+Extends `lattice` with point-wise addition, and the sector sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
 template <class A>
-struct scalar<A>
+struct sector<A>
 {
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename quantity<A>::template homotype<T>;
+	using endotype = typename lattice<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<scalar_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<sector_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -416,10 +416,10 @@ struct scalar<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<scalar_t<float[2]>>);
+static_assert(atomic_q<sector_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(sector_t<float(&)[2]>)*XTAL_ANY_(sector_t<float(&)[2]>))>
 );
 
 

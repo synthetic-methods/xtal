@@ -24,7 +24,7 @@ providing evaluation/update via succession/replacement. \
 ///\todo\
 Accommodate `std::complex` `value_type`s? \
 
-template <column_q A, typename ...As>
+template <vector_q A, typename ...As>
 struct phasor<A, As...>
 {
 	using _op = algebra::_detail::circumscribe<A>;

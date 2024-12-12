@@ -19,10 +19,10 @@ TAG_("pack")
 	TRY_("bind")
 	{
 		double table[2][2] = {{0, 0}, {0, 0}};
-		auto column_0 = transpack_f<void_type[2]>(0, 2) (table);
-		auto column_1 = transpack_f<void_type[2]>(1, 2) (table);
-		column_0[0] = pack_f(1.0, 2.0);
-		column_1[0] = pack_f(3.0, 4.0);
+		auto col_0 = transpack_f<void_type[2]>(0, 2) (table);
+		auto col_1 = transpack_f<void_type[2]>(1, 2) (table);
+		col_0[0] = pack_f(1.0, 2.0);
+		col_1[0] = pack_f(3.0, 4.0);
 		TRUE_(1 == table[0][0]);
 		TRUE_(2 == table[1][0]);
 		TRUE_(3 == table[0][1]);

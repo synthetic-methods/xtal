@@ -24,7 +24,7 @@ void monomer_zipping()
 	size_type constexpr U_size = 2;
 
 	//\
-	using U_group  =  algebra::quantity_t<U_data[U_size]>;
+	using U_group  =  algebra::lattice_t<U_data[U_size]>;
 	using U_group  =  _std::complex<U_data>;
 //	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
@@ -56,7 +56,7 @@ void monomer_lifting()
 	using T_alpha = typename bond::operating::alpha_type;
 
 	T_sigma constexpr N_size = 5;
-	using U_group  = algebra::quantity_t<T_alpha[N_size]>;
+	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 

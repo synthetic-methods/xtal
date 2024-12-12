@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./scalar.hh"// testing...
+#include "./sector.hh"// testing...
 
 
 
@@ -18,7 +18,7 @@ class signature : _std::tuple<Ts...>
 public:
 	using    tuple_type = _std::tuple<Ts...>;
 	using    arity_type = _std::size_t;
-	using    array_type = xtal::algebra::scalar_t<arity_type[sizeof...(Ts)]>;
+	using    array_type = xtal::algebra::sector_t<arity_type[sizeof...(Ts)]>;
 
 	static
 	array_type constexpr layout{xtal::destruct_n<Ts>...};
@@ -40,7 +40,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("scalar")
+TAG_("sector")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -51,7 +51,7 @@ TAG_("scalar")
 	TRY_("construction")
 	{
 		auto constexpr N_size = 2;
-		using W = scalar_t<T_alpha[N_size]>;
+		using W = sector_t<T_alpha[N_size]>;
 
 		auto foo = W{2.0, 0.5};
 		auto bar = _op::template roots_f<2>((T_alpha) 2);
@@ -66,7 +66,7 @@ TAG_("scalar")
 	TRY_("summation")
 	{
 		auto constexpr N_size = 3;
-		using W = scalar_t<T_alpha[N_size]>;
+		using W = sector_t<T_alpha[N_size]>;
 		auto  w = W{2.0, 1.0, 0.5};
 
 		TRUE_(3.5 == w.sum());
@@ -76,7 +76,7 @@ TAG_("scalar")
 	TRY_("reflection")
 	{
 		auto constexpr N_size = 2;
-		using W = scalar_t<T_alpha[N_size]>;
+		using W = sector_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
 		auto foo = bar.template reflected<-1>();
@@ -131,10 +131,10 @@ TAG_("scalar")
 	TRY_("refactoring")
 	{
 		using U0 = T_sigma;
-		using U1 = scalar_t<U0[1]>;
-		using U2 = scalar_t<U0[2]>;
-		using U3 = scalar_t<U0[3]>;
-		using U4 = scalar_t<U0[4]>;
+		using U1 = sector_t<U0[1]>;
+		using U2 = sector_t<U0[2]>;
+		using U3 = sector_t<U0[3]>;
+		using U4 = sector_t<U0[4]>;
 
 		  TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 		  TRUE_(U4{2, 12, 6, 2}.cofactorable());
@@ -188,8 +188,8 @@ TAG_("scalar")
 		XTAL_LET N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
-		using simplex_val = scalar_t<float   [N]>;
-		using simplex_ref = scalar_t<float(&)[N]>;
+		using simplex_val = sector_t<float   [N]>;
+		using simplex_ref = sector_t<float(&)[N]>;
 		
 		using complex_val = _std::complex<simplex_val>;
 		using complex_ref = _std::complex<simplex_ref>;

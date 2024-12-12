@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./serial.hh"
-#include "./scalar.hh"
+#include "./sector.hh"
 
 
 
@@ -27,7 +27,7 @@ noexcept -> auto
 ///\
 Extends `serial` with multiplication defined by circular convolution. \
 
-template <column_q A>
+template <vector_q A>
 struct series<A>
 {
 	using U_v0 = _std::remove_extent_t<A>;
@@ -75,7 +75,7 @@ struct series<A>
 		}
 
 		//\
-		template <size_type N_count=N_data> requires complex_field_q<U_v1> and is_q<scalar_t<U_v1[2]>, U_data>
+		template <size_type N_count=N_data> requires complex_field_q<U_v1> and is_q<sector_t<U_v1[2]>, U_data>
 		template <size_type N_count=N_data> requires complex_field_q<U_v1> and bond::dipack_q<U_data>
 		XTAL_DEF_(inline)
 		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
@@ -84,7 +84,7 @@ struct series<A>
 			auto &s = self();
 
 			using W1  = U_v1;
-			using U2  = scalar_t<U_v2[2]>;
+			using U2  = sector_t<U_v2[2]>;
 			using W1_ = series_t<W1[N_data<<1U]>;
 			using U2_ = series_t<U2[N_data<<1U]>;
 			static_assert(sizeof(W1_) == sizeof(U2_));
@@ -289,12 +289,12 @@ struct series<A>
 		}
 
 		///\
-		The dual of `T`, defined by `scalar`. \
+		The dual of `T`, defined by `sector`. \
 		
 		struct transverse
 		{
 			template <class R>
-			using holotype = typename scalar<A>::template homotype<R>;
+			using holotype = typename sector<A>::template homotype<R>;
 
 			template <class R>
 			class homotype : public holotype<R>
@@ -314,7 +314,7 @@ struct series<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<quantity_t<float[2]>>);
+static_assert(atomic_q<lattice_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

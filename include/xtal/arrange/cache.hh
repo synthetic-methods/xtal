@@ -35,8 +35,6 @@ struct cache
 	//	NOTE: Expected maximum is 64/8: 6 doubles not including coefficients...
 		XTAL_SET L_cache = bond::operate<_std::byte>::alignment{};
 		XTAL_SET N_cache = size_1 << bond::operating::bit_ceiling_f((L_cache +...+ sizeof(As))) - 1;
-		//\
-		XTAL_SET A_cache = alignof(common_t<scalar_t<As>...>);
 		XTAL_SET A_cache = N_cache;
 		alignas (A_cache) _std::byte m_cache[N_cache];
 

@@ -11,15 +11,15 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   quantity;
-template <class   ..._s>	using    quantity_t = typename quantity<_s...>::type;
-template <class   ..._s>	concept  quantity_q = bond::any_tag_p<quantity_t, _s...>;
+template <class   ..._s>	struct   lattice;
+template <class   ..._s>	using    lattice_t = typename lattice<_s...>::type;
+template <class   ..._s>	concept  lattice_q = bond::any_tag_p<lattice_t, _s...>;
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET quantity_f(auto &&...oo)
+XTAL_LET lattice_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<quantity_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<lattice_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 template <class T, class S=T>
@@ -31,12 +31,11 @@ concept  lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pac
 Extends `block` with point-wise comparison, \
 and lifts all other operators. \
 
-template <class U, size_type N, size_type ...Ns>
-struct quantity<U[N][Ns]...> : quantity<quantity_t<U[N]>[Ns]...>
-{
-};
-template <column_q A>
-struct quantity<A>
+template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct lattice<U   [N][Ns]...> : lattice<lattice_t<U[N]>   [Ns]...> {};
+template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct lattice<U(&)[N][Ns]...> : lattice<lattice_t<U[N]>(&)[Ns]...> {};
+
+template <vector_q A>
+struct lattice<A>
 {
 	using _op = bond::operate<A>;
 	
@@ -44,7 +43,7 @@ struct quantity<A>
 	using endotype = typename arrange::block<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<quantity_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<lattice_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -204,13 +203,13 @@ struct quantity<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<quantity_t<float[2]>>);
+static_assert(atomic_q<lattice_t<float[2]>>);
 
-static_assert(not counted_q<quantity_t<        int[2]>>);
-static_assert(not counted_q<quantity_t<counter_t<>[2]>>);
-static_assert(not counted_q<quantity_t<  size_type[2]>>);
+static_assert(not counted_q<lattice_t<        int[2]>>);
+static_assert(not counted_q<lattice_t<counter_t<>[2]>>);
+static_assert(not counted_q<lattice_t<  size_type[2]>>);
 
-static_assert(fungible_q<_std::span<float, 2>, quantity_t<float(&)[2]>>);
+static_assert(fungible_q<_std::span<float, 2>, lattice_t<float(&)[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////
