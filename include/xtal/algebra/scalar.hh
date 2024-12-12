@@ -240,13 +240,13 @@ struct scalar<A>
 			if constexpr (0 < N_sgn) {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _op::accumulate_f(u, v, v);
+					u = _xtd::fam(u, v, v);
 				});
 			}
 			else {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _op::accumulate_f(u, v, v, U_data(-signum_n<I&1, -1>));
+					u = _xtd::fam(u, v, v*U_data{-signum_n<I&1, -1>});
 				});
 			}
 			return u;
@@ -259,7 +259,7 @@ struct scalar<A>
 			
 			U_data u{};
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-				u = _op::accumulate_f(u, get<I>(s), get<I>(t));
+				u = _xtd::fam(u, get<I>(s), get<I>(t));
 			});
 			return u;
 		}

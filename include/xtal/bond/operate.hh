@@ -698,29 +698,6 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	template <int N_sign=1> requires in_n<N_sign, 1, -1>
-	XTAL_DEF_(short)
-	XTAL_SET accumulate_f(auto &&w, auto &&x, auto &&...xs)
-	noexcept -> alpha_type
-	{
-		using _std::fma;
-
-		alpha_type constexpr n_sign = N_sign;
-
-		XTAL_IF0
-		XTAL_0IF_(consteval) {
-			return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
-		}
-		XTAL_0IF_(else) {
-			if constexpr (use_FMA() and requires {fma((xs *...* n_sign), x, w);}) {
-				return fma((XTAL_REF_(xs) *...* n_sign), XTAL_REF_(x), XTAL_REF_(w));
-			}
-			else {
-				return (XTAL_REF_(xs) *...* (n_sign*XTAL_REF_(x))) + XTAL_REF_(w);
-			}
-		}
-	}
-
 	template <auto N_pow=1>
 	XTAL_DEF_(short)
 	XTAL_SET versus_f(auto &&u)
@@ -746,7 +723,7 @@ public:
 	{
 		alpha_type const x = u.real();
 		alpha_type const y = u.imag();
-		return versus_f<N_pow>(accumulate_f(x*x, y, y));
+		return versus_f<N_pow>(_xtd::fam(x*x, y, y));
 	}
 
 
@@ -1309,7 +1286,7 @@ public:
 	XTAL_SET assigned_f(alpha_type const &value)
 	noexcept -> alpha_type
 	{
-		return _xtd::signbit(value);
+		return _xtd::copysign(alpha_1, value);
 	}
 	static_assert(assigned_f((alpha_type)  0.5) ==  1.0);
 	static_assert(assigned_f((alpha_type)  0.0) ==  1.0);

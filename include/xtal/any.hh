@@ -62,6 +62,9 @@ template <auto           ...Ns>	concept          some_n	=          _entail:: som
 template <class          ...Ts>	concept          none_q	=          _entail:: none_q<Ts...>;
 template <auto           ...Ns>	concept          none_n	=          _entail:: none_n<Ns...>;
 
+template <class          ...Ts>	concept     molecular_q	= (...and  _entail::  molecular_q<Ts   >);
+template <class          ...Ts>	concept        atomic_q	= (...and  _entail::     atomic_q<Ts   >);
+
 template <class          ...Ts>	concept    incomplete_q	= (...and  _entail:: incomplete_q<Ts   >);
 template <class          ...Ts>	concept      complete_q	= (...and  _entail::   complete_q<Ts   >);
 template <class          ...Ts>	using        complete_t	= typename _entail::   complete_t<Ts...>;

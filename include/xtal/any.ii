@@ -4,40 +4,117 @@ namespace _xtd
 #if __cpp_lib_bit_cast
 	using _std::bit_cast;
 #else
-	template <class T, class S>
-	XTAL_DEF_(inline)
-	XTAL_LET bit_cast(S const &s)
-	noexcept -> decltype(auto)
-	{
-		static_assert(_std::is_trivially_copyable_v<T>);
-		static_assert(_std::is_trivially_copyable_v<S>);
-		static_assert(sizeof(T) == sizeof(S));
-		return __builtin_bit_cast(T, s);
-	};
+	template <atomic_q T, atomic_q S> requires in_n<sizeof(T), sizeof(S)>
+	XTAL_DEF_(alias) bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
-#if XTAL_VER_(STD >= 2300) and not XTAL_VER_(MSVC < 1700)
-	using _std::signbit;
+#if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)
+	template <atomic_q T>
+	XTAL_DEF_(alias) copysign(T t, T s) noexcept {return __builtin_copysign(t, s);}
 #else
-	template <class T>
-	XTAL_DEF_(inline)
-	XTAL_LET signbit(T t)
-	noexcept -> decltype(auto)
-	{
-		return __builtin_copysign(T{1}, t);
-	};
-#endif
-#if XTAL_VER_(STD >= 2300) and not XTAL_VER_(MSVC < 1700)
 	using _std::copysign;
-#else
-	template <class T>
-	XTAL_DEF_(inline)
-	XTAL_LET copysign(T t, T s)
-	noexcept -> decltype(auto)
-	{
-		return __builtin_copysign(t, s);
-	};
 #endif
+
+
+XTAL_DEF_(short)
+XTAL_LET fam(auto &&w, auto &&x, auto &&y, auto &&...ys)
+noexcept -> auto
+requires some_q<decltype(ys)...>
+{
+	return fam(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
+}
+template <class W, class X, class Y> requires integral_q<W, X, Y> or un_n<number_q<W, X, Y>>
+XTAL_DEF_(short)
+XTAL_LET fam(W &&w, X &&x, Y &&y)
+noexcept -> auto
+{
+	if (requires {fma(y, x, w);} and not _std::is_constant_evaluated()) {
+		return fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+	else {
+		return XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w);
+	}
+}
+template <real_number_q W, real_number_q X, real_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return XTAL_IMP_fam(w, x, y);
+}
+template <real_number_q W, complex_number_q X, real_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{XTAL_IMP_fam(w, x.real(), y), x.imag()*y};
+}
+template <real_number_q W, real_number_q X, complex_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{XTAL_IMP_fam(w, x, y.real()), x*y.imag()};
+}
+template <real_number_q W, complex_number_q X, complex_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = XTAL_IMP_fam(XTAL_IMP_fam(w, x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = XTAL_IMP_fam(                x.imag()*y.real() ,  x.real(),y.imag());
+		return _std::complex{z_re, z_im};
+		/***/
+	}
+}
+
+template <complex_number_q W, real_number_q X, real_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{XTAL_IMP_fam(w.real(), x, y), w.imag()};
+}
+template <complex_number_q W, complex_number_q X, real_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{XTAL_IMP_fam(w.real(), x.real(), y), XTAL_IMP_fam(w.imag(), x.imag(), y)};
+}
+template <complex_number_q W, real_number_q X, complex_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{XTAL_IMP_fam(w.real(), x, y.real()), XTAL_IMP_fam(w.imag(), x, y.imag())};
+}
+
+template <complex_number_q W, complex_number_q X, complex_number_q Y>
+XTAL_DEF_(short)
+XTAL_LET fam(W w, X x, Y y)
+noexcept -> auto
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = fam(XTAL_IMP_fam(w.real(), x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = fam(XTAL_IMP_fam(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
+		return _std::complex{z_re, z_im};
+		/***/
+	}
+}
 
 }
 namespace _xtd::ranges::views

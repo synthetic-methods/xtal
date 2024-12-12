@@ -208,6 +208,19 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_1FN_(...)  (auto &&...oo) XTAL_0FN {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
 #define XTAL_XFN_(...)        (auto o) XTAL_0FN_(decltype(o){1} == o? o: o&(__VA_ARGS__)) ///< Lambda `signed` short-circuiting reducer (after `[captures]`).
 
+#define XTAL_IMP_(ARG,...)                XTAL_IMP_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
+
+#if     XTAL_ENV_(MSVC == 0000)
+#define XTAL_IMP_fma(Y, X, W)        __builtin_fma(Y, X, W)
+#define XTAL_IMP_fam(W, X, Y)        __builtin_fma(Y, X, W)
+#elif   XTAL_ENV_(MSVC >= 1700)
+#define XTAL_IMP_fma(Y, X, W)           ::std::fma(Y, X, W)
+#define XTAL_IMP_fam(W, X, Y)           ::std::fma(Y, X, W)
+#elif   XTAL_ENV_(MSVC <  1700)
+#define XTAL_IMP_fma(Y, X, W)                ((Y)*(X) + (W))
+#define XTAL_IMP_fam(W, X, Y)                ((Y)*(X) + (W))
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

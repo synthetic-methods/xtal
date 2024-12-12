@@ -68,23 +68,23 @@ struct define
 		XTAL_DEF_(short)
 		XTAL_LET divert(auto &&...xs)
 		noexcept -> decltype(auto)
-			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T       &).         method       (XTAL_REF_(xs)...)))
-			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T       &).template method<Is...>(XTAL_REF_(xs)...)))
+			requires (0 == sizeof...(Is)) and XTAL_TRY_(XTAL_ANY_(T       &).         method       (XTAL_REF_(xs)...))
+			or       (1 <= sizeof...(Is)) and XTAL_TRY_(XTAL_ANY_(T       &).template method<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>)                    {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>)                    {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (0 == sizeof...(Is))                    {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (1 <= sizeof...(Is))                    {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 		template <auto ...Is>
 		XTAL_DEF_(short)
 		XTAL_LET divert(auto &&...xs) const
 		noexcept -> decltype(auto)
-			requires (none_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).         method       (XTAL_REF_(xs)...)))
-			or       (some_n<Is...> and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_REF_(xs)...)))
+			requires (0 == sizeof...(Is)) and XTAL_TRY_(XTAL_ANY_(T const &).         method       (XTAL_REF_(xs)...))
+			or       (1 <= sizeof...(Is)) and XTAL_TRY_(XTAL_ANY_(T const &).template method<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>)                    {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>)                    {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (0 == sizeof...(Is))                    {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (1 <= sizeof...(Is))                    {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 
 		///\brief a pointer to the digested `method` for the given parameters. \
@@ -135,12 +135,12 @@ struct define
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
-			requires (none_n<Is...> and XTAL_TRY_(T::         function       (XTAL_REF_(xs)...)))
-			or       (some_n<Is...> and XTAL_TRY_(T::template function<Is...>(XTAL_REF_(xs)...)))
+			requires (0 == sizeof...(Is)) and XTAL_TRY_(T::         function       (XTAL_REF_(xs)...))
+			or       (1 <= sizeof...(Is)) and XTAL_TRY_(T::template function<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>)      {return T::         function       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>)      {return T::template function<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (0 == sizeof...(Is))      {return T::         function       (XTAL_REF_(xs)...);}
+			XTAL_0IF (1 <= sizeof...(Is))      {return T::template function<Is...>(XTAL_REF_(xs)...);}
 		}
 
 	public:

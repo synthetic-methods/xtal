@@ -105,7 +105,7 @@ void polymer_provision_spool__combined()
 	>;
 
 	using U_vox = polymer_t<U_gate
-	,	provision::stored<constant_t<N_store>>
+	,	provision::stored <constant_t<N_store>>
 	,	provision::spooled<constant_t<N_spool>>
 	>;
 	auto u_vox = U_vox::bind_f();
