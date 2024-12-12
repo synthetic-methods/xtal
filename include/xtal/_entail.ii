@@ -1,6 +1,12 @@
 namespace _std = ::std;
 namespace _xtd
 {
+
+template <class T> using        remove_reference_t =                                                     _std::remove_reference_t<T>;
+template <class T> using remove_rvalue_reference_t = _std::conditional_t<_std::is_rvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
+template <class T> using remove_lvalue_reference_t = _std::conditional_t<_std::is_lvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
+
+
 #if XTAL_VER_(ranges == 3)
 namespace ranges        {using namespace      ::ranges;}
 namespace ranges::views {using namespace      ::ranges::views;}
@@ -17,12 +23,14 @@ namespace _entail
 //\
 Prelude...
 
-class    void_type	;
+class    void_type   ;
 using    null_type	= XTAL_STD_(null_type);
 using    unit_type	= XTAL_STD_(unit_type);
 using    size_type	= XTAL_STD_(size_type);
 using  signum_type	= XTAL_ALL_(true - false);
 using integer_type	= XTAL_STD_(integer_type);
+
+using  unsize_type	= _std::make_signed_t<size_type>;
 
 XTAL_LET_(size_type) size_0{0};
 XTAL_LET_(size_type) size_1{1};
@@ -30,59 +38,66 @@ XTAL_LET_(size_type) size_2{2};
 XTAL_LET_(size_type) size_3{3};
 
 template <class T>
-concept  atomic_q = _std::is_trivially_copyable_v<T>
+concept  molecular_q = _std::is_standard_layout_v<T>;
+
+template <class T>
+concept     atomic_q = _std::is_trivially_copyable_v<T>
 	and _std::is_copy_constructible_v<T> and _std::is_copy_assignable_v<T>
 	and _std::is_move_constructible_v<T> and _std::is_move_assignable_v<T>;
 
 template <class T>
-concept  molecular_q = _std::is_standard_layout_v<T>;
+concept      ionic_q = not atomic_q<T>;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto  N, signum_type  Z=0 >	XTAL_LET       signum_n	= (0 < N) - (N < 0) + (N == 0)*Z;
-template <auto  N, XTAL_ALL_(N) L   >	XTAL_LET       modulo_n	= ((N%L) + L)%L;
-template <auto  N, XTAL_ALL_(N) M=0 >	XTAL_LET        upper_n	= (M <= N)? N: M;
-template <auto  N, XTAL_ALL_(N) M=0 >	XTAL_LET        lower_n	= (N <= M)? N: M;
-template <auto  N, XTAL_ALL_(N) M=0 >	XTAL_LET        above_n	= (M <  N)? N: M + 1;
-template <auto  N, XTAL_ALL_(N) M=0 >	XTAL_LET        below_n	= (N <  M)? N: M - 1;
-static_assert(0 == below_n<(size_type)  0, (1<<2)>);
-static_assert(1 == below_n<(size_type)  1, (1<<2)>);
-static_assert(2 == below_n<(size_type)  2, (1<<2)>);
-static_assert(3 == below_n<(size_type)  3, (1<<2)>);
-static_assert(3 == below_n<(size_type)  4, (1<<2)>);
-static_assert(3 == below_n<(size_type) -1, (1<<2)>);
+template <auto  M,        auto    N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
+template <auto  M,        auto    N >	XTAL_LET        above_m	= (M < N)? N: static_cast<XTAL_ALL_(N)>(M + 1);
+template <auto  M,        auto    N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
+template <auto  M,        auto ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
+template <auto  M,        auto ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
 
-template <class          ...Ts>	concept          some_q	= 0 < sizeof...(Ts);
-template <auto           ...Ns>	concept          some_n	= 0 < sizeof...(Ns);
-template <class          ...Ts>	concept          none_q	= not some_q<Ts...>;
-template <auto           ...Ns>	concept          none_n	= not some_n<Ns...>;
-template <auto  N,  auto ...Ms>	concept            in_n	= ((none_n<Ms...> and !!N) or...or (N == Ms));
-template <auto  N,  auto ...Ms>	concept            un_n	= ((none_n<Ms...> and  !N) or...or (N != Ms));
+static_assert(0 == below_m<(1<<2), (size_type)  0>);
+static_assert(1 == below_m<(1<<2), (size_type)  1>);
+static_assert(2 == below_m<(1<<2), (size_type)  2>);
+static_assert(3 == below_m<(1<<2), (size_type)  3>);
+static_assert(3 == below_m<(1<<2), (size_type)  4>);
+static_assert(3 == below_m<(1<<2), (size_type) -1>);
+//atic_assert(1 == above_m<-1,  1UL>);
+//atic_assert(     above_p<-1,  1UL>);
+static_assert(     above_m<-1,  1> ==  1);
+static_assert(     above_m<-1,  0> ==  0);
+static_assert(     above_m<-1, -1> ==  0);
+static_assert(     above_p<-1,  1>);
+static_assert(     above_p<-1,  0>);
+static_assert(not  above_p<-1, -1>);
+
+template <auto  N,  auto ...Ms>	concept            in_n	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
+template <auto  N,  auto ...Ms>	concept            un_n	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
 
 template <class T             >	using           based_t	= _std::remove_cvref_t<T>;
-//\
-template <class T             >	concept         based_q	= molecular_q<based_t<T>>;
-template <class T             >	concept         based_q	=    atomic_q<based_t<T>>;
-template <class T             >	concept       unbased_q	=         not based_q<T> ;
+template <class T             >	concept         based_q	=        _std::same_as<T, based_t<T>>;
+template <class T             >	concept       unbased_q	=  not   _std::same_as<T, based_t<T>>;
 
 template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
 template <class F, class ...Xs>	concept        return_p	= _std::invocable      <F, Xs...>;
-template <         class ...Ts>	using          common_t	=                                      _std::common_type_t<Ts...>;
-template <         class ...Ts>	concept        common_q	= some_q<Ts...> and requires {typename _std::common_type_t<Ts...>;};
+template <         class ...Ts>	using          common_t	=                                           _std::common_type_t<Ts...>;
+template <         class ...Ts>	concept        common_q	= 1 <= sizeof...(Ts) and requires {typename _std::common_type_t<Ts...>;};
 
 template <class T                  >	concept    incomplete_q	= not requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <class T                  >	concept      complete_q	=     requires {typename _std::void_t<decltype(sizeof(T))>;};
 template <              class ...Ts>	struct       complete              {class type { };};
 template <complete_q T, class ...Ts>	struct       complete<T, Ts...>    {using type = T;};
-template <class      T, class ...Ts>	struct       complete<T, Ts...>  : complete<Ts...> {};
+template <class T     , class ...Ts>	struct       complete<T, Ts...>  : complete<Ts...> {};
 template <              class ...Ts>	using        complete_t	= typename complete<Ts...>::type;
 static_assert(incomplete_q           <void     > );
 static_assert(incomplete_q           <void_type> );
 static_assert(  complete_q<complete_t<void     >>);
 static_assert(  complete_q<complete_t<void_type>>);
 
-template <auto  t                  >	struct       constant	;
+template <auto  t                  >	struct       constant   ;
 template <auto  t=null_type{}      >	using        constant_t	=  constant<t>;
 template <auto  t=null_type{}      >	using        constant_s	= _std::integral_constant<XTAL_ALL_(t), t>;
 template <class T                  >	concept      constant_q	= _std::derived_from<based_t<T>, constant_s<T::value>>;
@@ -141,15 +156,15 @@ Structural...
 template <class T             >	struct       identity                         {using type = _std::type_identity<T>;};
 template <class U             >	struct       identity<_std::type_identity<U>> {using type = _std::type_identity<U>;};
 template <class T             >	using        identity_t	= typename identity<T>::type;
-template <class T             >	using        identity_u	= typename identity<T>::type::type;
-template <auto  N             >	using        identity_n	= identity_t<constant_t<N>>;
+template <class T             >	using        identity_u	= identity_t<T>::type;
+template <class T             >	XTAL_LET     identity_n	= identity_u<T>::value;
 template <class T             >	concept      identity_q	= _std::same_as<identity_t<T>, T>;
 
 
-template <         class ...Ts>	struct      identical	;// `is_same`
+template <         class ...Ts>	struct      identical   ;// `is_same`
 
-template <         class ...Ts>	struct      isotropic	;// `is_same` modulo qualifiers
-template <         class ...Ts>	struct      epitropic	;// `is_constructible`
+template <         class ...Ts>	struct      isotropic   ;// `is_same` modulo qualifiers
+template <         class ...Ts>	struct      epitropic   ;// `is_constructible`
 template <         class ...Ts>	struct    anisotropic	: _std::negate< isotropic<Ts...>> {};
 template <         class ...Ts>	struct    anepitropic	: _std::negate< epitropic<Ts...>> {};
 
@@ -188,113 +203,219 @@ template <class X, class F    >	concept    idempotent_q	=  is_q<return_t<F, X>, 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T             >	XTAL_LET  tuple_sized_n	=              _std::tuple_size_v<based_t<T>> ;
-template <class T             >	using     tuple_sized_t	=              _std::tuple_size  <based_t<T>> ;
-template <class T             >	concept   tuple_sized_q	=   complete_q<_std::tuple_size  <based_t<T>>>;
+template <auto ...Ns>	struct   assign_sized   ;
+template <auto ...Ns>	XTAL_LET assign_sized_n	= assign_sized<Ns...>::size();
+template <auto ...Ns>	XTAL_LET assign_sized_r	= assign_sized<Ns...>::rank();
 
-template <class T             >	XTAL_LET  array_sized_n	=              _std::    extent_v<based_t<T>> ;
-template <class T             >	using     array_sized_t	=              _std::    extent  <based_t<T>> ;
-template <class T             >	concept   array_sized_q	=              _std::  is_array_v<based_t<T>>;
+template <auto ...Ns>
+struct   assign_sized
+{
+	XTAL_DEF_(short,static)
+	XTAL_LET size()
+	noexcept
+	{
+		XTAL_IF0
+		XTAL_0IF ((...and (Ns != -1))) {return static_cast<  size_type>((1 *...* Ns));}
+		XTAL_0IF ((...or  (Ns == -1))) {return static_cast<unsize_type>(-1);}
+	};
 
-template <class T             >	struct    based_sized	;
-template <identity_q    T     >	struct    based_sized	<T> {XTAL_DEF_(short) XTAL_SET size() noexcept -> size_type {return identity_u<T>::value;};};
-template <tuple_sized_q T     >	struct    based_sized	<T>                 : based_sized<identity_t<tuple_sized_t<T>>> {};
-template <array_sized_q T     >	struct    based_sized	<T>                 : based_sized<identity_t<array_sized_t<T>>> {};
-template <class  U            >	struct    based_sized	<_std::complex<U>>  : based_sized<identity_t<constant_t<size_2>>> {};
-template <class T             >	concept   based_sized_q = complete_q<based_sized<based_t<T>>>;
+	XTAL_DEF_(short,static)
+	XTAL_LET rank()
+	noexcept -> size_type
+	{
+		return static_cast<size_type>((0 +...+ above_p<0, Ns>));
+	};
+
+};
+template <>
+struct   assign_sized<>
+{
+	XTAL_DEF_(short,static)
+	XTAL_LET size() noexcept {return size_0;};
+
+	XTAL_DEF_(short,static)
+	XTAL_LET rank() noexcept {return size_0;};
+
+};
+static_assert(assign_sized_n<       1            > ==   1);
+static_assert(assign_sized_n<       1, 2, 3, 4, 5> == 120);
+static_assert(assign_sized_n<    0, 1, 2, 3, 4, 5> ==   0);
+static_assert(assign_sized_n<-1, 0, 1, 2, 3, 4, 5> ==  -1);
+static_assert(assign_sized_r<       1, 2, 3, 4, 5> ==   5);
+static_assert(assign_sized_r<    0, 1, 2, 3, 4, 5> ==   5);
+static_assert(assign_sized_r<-1, 0, 1, 2, 3, 4, 5> ==   5);
+
+template <class T             >	concept   tuple_sized_q	=   complete_q<_std::tuple_size  <_std::remove_reference_t<T>>>;
+template <class T             >	XTAL_LET  tuple_sized_n	=              _std::tuple_size_v<_std::remove_reference_t<T>> ;
+template <class T             >	struct    tuple_sized	:       assign_sized<tuple_sized_n<T>> {};
+
+template <class T             >	concept   array_sized_q	=              _std::  is_array_v<_std::remove_reference_t<T>>;
+template <class T             >	XTAL_LET  array_sized_n	=              _std::    extent_v<_std::remove_reference_t<T>> ;
+template <class T             >	struct    array_sized	:       assign_sized<array_sized_n<T>> {};
 
 template <class T             >	struct    fixed_sized	;
-template <based_sized_q T     >	struct    fixed_sized	<T> : based_sized<based_t<T>> {};
+template <class T=void        >	struct    fluid_sized   ;
+template <class T             >	struct          sized	;
+
 template <class T             >	XTAL_LET  fixed_sized_n =  fixed_sized<T>::size();
-template <class T             >	using     fixed_sized_t =  constant_t<fixed_sized_n<T>>;
-template <class T             >	concept   fixed_sized_q =  complete_q<fixed_sized  <T>>;
-
-template <class T=void        >	struct    fluid_sized	     : fixed_sized<identity_t<constant_t<size_0>>> {};
-template <fixed_sized_q  T    >	struct    fluid_sized	<T>  : fixed_sized<T> {};
 template <class T             >	XTAL_LET  fluid_sized_n	=  fluid_sized<T>::size();
-template <class T             >	concept   fluid_sized_q =  complete_q<fluid_sized  <T>>;
-template <class T             >	using     fluid_sized_t =  constant_t<fluid_sized_n<T>>;
+template <class T             >	XTAL_LET        sized_n	=        sized<T>::size();
 
+template <class T             >	concept   fixed_sized_q =  complete_q<fixed_sized<T>>;
+template <class T             >	concept   fluid_sized_q =  complete_q<fluid_sized<T>>;
+template <class T             >	concept         sized_q =  complete_q<      sized<T>>;
+
+template <class T             >	concept  static_sized_q	=   not fixed_sized_q<T>                           and requires {          T::size();};
+template <class T             >	concept dynamic_sized_q	=   not fixed_sized_q<T> and not static_sized_q<T> and requires {XTAL_ANY_(T).size();};
+
+
+template <  based_q T>	requires      identity_q<T>          struct fixed_sized<T>                : assign_sized<   identity_n<T>> {};
+template <  based_q T>	requires   tuple_sized_q<T>          struct fixed_sized<T>                : assign_sized<tuple_sized_n<T>> {};
+template <  based_q T>	requires   array_sized_q<T>          struct fixed_sized<T>                : assign_sized<array_sized_n<T>> {};
+template <unbased_q T>	requires   fixed_sized_q<based_t<T>> struct fixed_sized<T>                :  fixed_sized<      based_t<T>> {};
+template <class     U>	                                     struct fixed_sized<_std::complex<U>> :  fixed_sized<identity_t<constant_t<size_2>>> {};
+
+template <           >	                                     struct fluid_sized<void>             : assign_sized< 0> {};
+template <  based_q T>	                                     struct fluid_sized<T>                : assign_sized< 0> {};
+template <  based_q T>	requires dynamic_sized_q<T>          struct fluid_sized<T>                : assign_sized<-1> {};
+template <  based_q T>	requires  static_sized_q<T>          struct fluid_sized<T>                : assign_sized< T::size()> {};
+template <  based_q T>	requires   fixed_sized_q<T>          struct fluid_sized<T>                :  fixed_sized< T        > {};
+template <unbased_q T>	requires   fluid_sized_q<based_t<T>> struct fluid_sized<T>                :  fluid_sized<based_t<T>> {};
+
+template <class T    >	requires un_n<constant_q<T>>         struct       sized<T>                :  fluid_sized<           T > {};
+template <class T    >	requires      constant_q<T>          struct       sized<T>                :        sized<identity_t<T>> {};
+
+static_assert(1 ==  assign_sized<1UL>::size());
+static_assert(1 ==  assign_sized<tuple_sized_n<_std::array<float, 1>>>::size());
+static_assert(1 ==  tuple_sized_n<_std::array   <float, 1>>);
+static_assert(1 ==  fixed_sized_n<_std::array   <float, 1>>);
+static_assert(not dynamic_sized_q<_std::array   <float, 1>>);
+static_assert(not dynamic_sized_q<_std::complex <float   >>);
+
+static_assert(sized_n<_std::vector  <float   >> == -1);
+static_assert(sized_n<_std::array   <float, 1>> ==  1);
+static_assert(sized_n<_std::complex <float   >> ==  2);
+static_assert(sized_n<constant_t<(unsigned) 2>> ==  2);
+static_assert(sized_n<constant_t<(  signed) 2>> ==  2);
+
+
+template <class T             >	struct   fixed_valued   ;
+template <class T             >	struct   fluid_valued   ;
+template <class T             >	using          valued   = fluid_valued<T>;
 
 template <class T, class U    >	using    const_valued_u	= _std::conditional_t<_std::is_const_v<T>, const U, U>;
-
 template <class T             >	using    array_valued_u	=  const_valued_u<T, _std::remove_extent_t<T>>;
-template <class T             >	concept  array_valued_q	=                 _std::is_array_v<based_t<T>>;
-
 template <class T             >	using    inner_valued_u	=  const_valued_u<T, typename _std::remove_reference_t<T>::value_type>;
-template <class T             >	concept  inner_valued_q	=  requires         {typename _std::remove_reference_t<T>::value_type;};
-
 template <class T             >	using    under_valued_u	=  const_valued_u<T, _std::underlying_type_t<T>>;
-template <class T             >	concept  under_valued_q	=         complete_q<_std::underlying_type_t<based_t<T>>>;
+template <class T             >	using    fixed_valued_u	=  typename fixed_valued<T>::value_type;
+template <class T             >	using    fluid_valued_u	=  typename fluid_valued<T>::value_type;
+template <class T             >	using          valued_u	=  typename       valued<T>::value_type;
+template <class T             >	using   scalar_valued_u	=  const_valued_u<T, typename based_t<T>::scalar_type>;
+template <class T             >	using   Scalar_valued_u	=  const_valued_u<T, typename based_t<T>::Scalar     >;
 
-template <class T             >	struct   fixed_valued	;
-template <     identity_q T   >	struct   fixed_valued	<T> {using value_type =     identity_u<T>;};
-template < array_valued_q T   >	struct   fixed_valued	<T> {using value_type = array_valued_u<T>;};
-template < inner_valued_q T   >	struct   fixed_valued	<T> {using value_type = inner_valued_u<T>;};
-template < under_valued_q T   >	struct   fixed_valued	<T> {using value_type = under_valued_u<T>;};
-template <class T             >	using    fixed_valued_u	= typename   fixed_valued<T>::value_type;
-template <class T             >	concept  fixed_valued_q	= complete_q<fixed_valued<T>>;
+template <class T             >	concept  array_valued_q	=  _std::is_array_v<based_t<T>>;
+template <class T             >	concept  inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
+template <class T             >	concept  under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
+template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>>;
+template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>>;
+template <class T             >	concept        valued_q	=  complete_q<      valued<T>>;
+template <class T             >	concept scalar_valued_q	=  complete_q<scalar_valued_u<T>> and not fixed_valued_q<T>;
+template <class T             >	concept Scalar_valued_q	=  complete_q<Scalar_valued_u<T>> and not fixed_valued_q<T>;
 
+template <     identity_q T   >	struct   fixed_valued<T> {using value_type =      identity_u<T>;};
+template < array_valued_q T   >	struct   fixed_valued<T> {using value_type =  array_valued_u<T>;};
+template < inner_valued_q T   >	struct   fixed_valued<T> {using value_type =  inner_valued_u<T>;};
+template < under_valued_q T   >	struct   fixed_valued<T> {using value_type =  under_valued_u<T>;};
 
-template <class T             >	struct  scalar_valued	;
-template <class T             >	concept scalar_valued_o	= not fixed_valued_q<T> and complete_q<typename based_t<T>::scalar_type>  ;
-template <class T             >	concept Scalar_valued_o	= not fixed_valued_q<T> and complete_q<typename based_t<T>::Scalar     >  ;
-template <scalar_valued_o T   >	struct  scalar_valued<T> {using value_type = const_valued_u<T, typename based_t<T>::scalar_type>;};
-template <Scalar_valued_o T   >	struct  scalar_valued<T> {using value_type = const_valued_u<T, typename based_t<T>::Scalar     >;};
-template <class T             >	using   scalar_valued_u	= typename   scalar_valued<T>::value_type;
-template <class T             >	concept scalar_valued_q	= complete_q<scalar_valued<T>>;
-
-template <class T             >	struct   fluid_valued   :  fixed_valued<identity_t<T>> {};
-template < fixed_valued_q T   >	struct   fluid_valued<T>:  fixed_valued<T> {};
-template <scalar_valued_q T   >	struct   fluid_valued<T>: scalar_valued<T> {};
-template <class T             >	using    fluid_valued_u	= typename   fluid_valued<T>::value_type;
-template <class T             >	concept  fluid_valued_q	= complete_q<fluid_valued<T>>;
-
-
-template <class          T    >	struct       destruct	;
-template <class T             >	concept      destruct_q        = fixed_valued_q<T> and fixed_sized_q<T>;
-template <class T             >	using        destruct_t        = typename destruct<T>::array_type;
-template <class T             >	using        destruct_u        = typename destruct<T>::value_type;
-template <class T             >	XTAL_LET     destruct_n        =          destruct<T>::size();
-
-template <class          T    >	struct       destruct	       : virtual fluid_sized<T>, virtual fluid_valued<T> {using array_type = T;};
-template <fixed_valued_q T    >	struct       destruct	<T   > : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
-template <fixed_valued_q T    >	struct       destruct	<T &&> : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
-template <fixed_valued_q T    >	struct       destruct	<T  &> : fixed_sized<T> {using array_type = fixed_valued_u<T>(&)[fixed_sized_n<T>]; using value_type = fixed_valued_u<T> &;};
-static_assert(id_q<const float(&)[2],         destruct_t<        const float(&)[2]   >>);
-static_assert(id_q<      float(&)[2],         destruct_t<              float(&)[2]   >>);
-static_assert(id_q<const float   [2],         destruct_t<        const float   [2]   >>);
-static_assert(id_q<      float   [2],         destruct_t<              float   [2]   >>);
-static_assert(id_q<const float(&)[2],         destruct_t<_std::complex<float> const &>>);
-static_assert(id_q<      float(&)[2],         destruct_t<_std::complex<float>       &>>);
-static_assert(id_q<const float   [2],         destruct_t<_std::complex<float> const  >>);
-static_assert(id_q<      float   [2],         destruct_t<_std::complex<float>        >>);
+template <class T             >	struct   fluid_valued    {using value_type =                 T ;};
+template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
+template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_u<T>;};
+template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
 
 
-template <class U,        int ...Ns>	struct    arrayed;
-template <class U,        int ...Ns>	using     arrayed_t = typename arrayed<U, Ns...>::array_type;
-template <                int ...Ns>	XTAL_LET  arrayed_n = (some_n<Ns...> *...* upper_n<Ns>);
-
-template <class U,        int ...Ns>	struct    arrayed                 {using array_type = U;};
-template <class U, int N, int ...Ns>	struct    arrayed<U   , N, Ns...> {using array_type = const_valued_u<U, arrayed_t<U, Ns...>>   [N];};
-template <class U, int N, int ...Ns>	struct    arrayed<U &&, N, Ns...> {using array_type = const_valued_u<U, arrayed_t<U, Ns...>>   [N];};
-template <class U, int N, int ...Ns>	struct    arrayed<U  &, N, Ns...> {using array_type = const_valued_u<U, arrayed_t<U, Ns...>>(&)[N];};
+template <class T             >	concept         fixed_q = fixed_valued_q<T> and fixed_sized_q<T>;
+template <class T             >	concept         fluid_q = fluid_valued_q<T> and fluid_sized_q<T> and not fixed_q<T>;
+template <class T             >	using           fixed_u = fixed_valued_u<T>;
+template <class T             >	using           fluid_u = fluid_valued_u<T>;
+template <class T             >	XTAL_LET        fixed_n =  fixed_sized_n<T>;
+template <class T             >	XTAL_LET        fluid_n =  fluid_sized_n<T>;
 
 
-template <class T,        int ...Ns>	struct   dissolve           : virtual arrayed<T, Ns...>, virtual fluid_valued<T>, virtual fluid_sized<identity_n<arrayed_n<Ns...>>> {};
-template <destruct_q T,   int ...Ns>	struct   dissolve<T, Ns...> : dissolve<destruct_u<T> , Ns..., destruct_n<T>> {};
-template <class T                  >	using    dissolve_u	       = based_t<typename dissolve<T>::value_type>;
-template <class T                  >	using    dissolve_t	       =         typename dissolve<T>::array_type ;
-template <class T                  >	XTAL_LET dissolve_n	       =                  dissolve<T>::size()     ;
+template <class U,        int ...Ns>	struct    instruct   ;
+template <class T                  >	struct    destruct   ;
+template <class T,        int ...Ns>	struct    dissolve   ;
 
-static_assert(id_q<      float   [2],           dissolve_t<      _std::complex<float>  >>);
-static_assert(id_q<      float(&)[2],           dissolve_t<      _std::complex<float> &>>);
-static_assert(id_q<const float   [2],           dissolve_t<const _std::complex<float>  >>);
-static_assert(id_q<const float(&)[2],           dissolve_t<const _std::complex<float> &>>);
-static_assert(id_q<      float,                 dissolve_u<      _std::complex<float>  >>);
-static_assert(id_q<      float,                 dissolve_u<      _std::complex<float> &>>);
-static_assert(id_q<      float,                 dissolve_u<const _std::complex<float>  >>);
-static_assert(id_q<      float,                 dissolve_u<const _std::complex<float> &>>);
+template <class U,        int ...Ns>	using     instruct_t = typename instruct<U, Ns...>::array_type;
+template <class T                  >	using     destruct_t = typename destruct<T       >::array_type;
+template <class T                  >	using     dissolve_t	= typename dissolve<T       >::array_type;
+
+template <class T                  >	using     destruct_u = typename destruct<T>::value_type;
+template <class T                  >	using     dissolve_u	= typename dissolve<T>::value_type;
+
+template <class T                  >	XTAL_LET  destruct_n = destruct<T>::size();
+template <class T                  >	XTAL_LET  dissolve_n	= dissolve<T>::size();
+template <class T                  >	XTAL_LET  dissolve_r	= dissolve<T>::rank();
+
+template <class T                  >	using      absolve_t	= based_t<dissolve_t<based_t<T>>>;
+template <class T                  >	using      absolve_u	= based_t<dissolve_u<based_t<T>>>;
+template <class T                  >	XTAL_LET   absolve_n	= dissolve<T>::size();
+template <class T                  >	XTAL_LET   absolve_r	= dissolve<T>::rank();
+
+
+template <class U,        int ...Ns>	struct    instruct       : instruct<U &&, Ns...> {};
+template <class U, int N, int ...Ns>	struct    instruct<U &&, N, Ns...>        {using array_type = const_valued_u<U, instruct_t<U, Ns...>>   [N];};
+template <class U, int N, int ...Ns>	struct    instruct<U  &, N, Ns...>        {using array_type = const_valued_u<U, instruct_t<U, Ns...>>(&)[N];};
+template <class U                  >	struct    instruct<U &&>                  {using array_type = U  ;};
+template <class U                  >	struct    instruct<U  &>                  {using array_type = U &;};
+
+template <class T                  >	struct    destruct       : destruct<T &&> {};
+template <fluid_q T                >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type = fluid_valued_u<T>  ;};
+template <fluid_q T                >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type = fluid_valued_u<T> &;};
+template <fixed_q T                >	struct    destruct<T &&> : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
+template <fixed_q T                >	struct    destruct<T  &> : fixed_sized<T> {using array_type = fixed_valued_u<T>(&)[fixed_sized_n<T>]; using value_type = fixed_valued_u<T> &;};
+
+template <class T,        int ...Ns>	struct    dissolve           : assign_sized<Ns...> {using value_type = destruct_u<T>; using array_type = instruct_t<T, Ns...>;};
+template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<destruct_u<T> , Ns..., destruct_n<T>> {};
+
+
+static_assert(id_q<unsigned, valued_u<constant_t<(unsigned) 2>>>);
+static_assert(id_q<  signed, valued_u<constant_t<(  signed) 2>>>);
+
+static_assert(id_q<const float(&)[2], destruct_t<const float(&)[2]>>);
+static_assert(id_q<      float(&)[2], destruct_t<      float(&)[2]>>);
+static_assert(id_q<const float   [2], destruct_t<const float   [2]>>);
+static_assert(id_q<      float   [2], destruct_t<      float   [2]>>);
+static_assert(id_q<const float &    , destruct_u<const float(&)[2]>>);
+static_assert(id_q<      float &    , destruct_u<      float(&)[2]>>);
+static_assert(id_q<const float      , destruct_u<const float   [2]>>);
+static_assert(id_q<      float      , destruct_u<      float   [2]>>);
+
+static_assert(id_q<const float(&)[2], destruct_t<const _std::complex<float> &>>);
+static_assert(id_q<      float(&)[2], destruct_t<      _std::complex<float> &>>);
+static_assert(id_q<const float   [2], destruct_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2], destruct_t<      _std::complex<float>  >>);
+static_assert(id_q<const float &    , destruct_u<const _std::complex<float> &>>);
+static_assert(id_q<      float &    , destruct_u<      _std::complex<float> &>>);
+static_assert(id_q<const float      , destruct_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      , destruct_u<      _std::complex<float>  >>);
+
+static_assert(id_q<const float(&)[2], dissolve_t<const _std::complex<float> &>>);
+static_assert(id_q<      float(&)[2], dissolve_t<      _std::complex<float> &>>);
+static_assert(id_q<const float   [2], dissolve_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2], dissolve_t<      _std::complex<float>  >>);
+static_assert(id_q<const float &    , dissolve_u<const _std::complex<float> &>>);
+static_assert(id_q<      float &    , dissolve_u<      _std::complex<float> &>>);
+static_assert(id_q<const float      , dissolve_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      , dissolve_u<      _std::complex<float>  >>);
+
+static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float> &>>);
+static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float> &>>);
+static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<      _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<const _std::complex<float> &>>);
+static_assert(id_q<      float      ,  absolve_u<      _std::complex<float> &>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -305,22 +426,22 @@ Ranged...
 template <class T             >	concept        column_q	= _std::is_array_v<based_t<T>> and not _std::is_array_v<_std::remove_extent_t<based_t<T>>>;
 template <class T             >	concept         array_q	= _std::is_array_v<T> or fungible_q<T, _std::array<inner_valued_u<T>, tuple_sized_n<T>>>;
 
-template <class T             >	concept       annexed_q	= requires (T t) { t(XTAL_ANY_(int));};
-template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(int)];};
-template <class T             >	concept       pointed_q	= requires (T t) {*t;};
-template <class T             >	using         annexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(int)))>;
-template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
+template <class T             >	concept       pointed_q	=                  requires (T t) {*t;};
+template <class T             >	concept       indexed_q	=                  requires (T t) { t[XTAL_ANY_(int)];};
+template <class T             >	concept       annexed_q	= indexed_q<T> and requires (T t) { t(XTAL_ANY_(int));};
 template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
+template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
+template <class T             >	using         annexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(int)))>;
 
 
-template <class T             >	struct    initializer	;
-template <class T             >	struct       iteratee	;
-template <class T             >	struct       iterated	;
-template <class T             >	struct       iterator	;
-template <class T             >	struct       sentinel	;
-template <class T             >	struct       distance	;
-template <class T             >	struct        counted	;
-template <class T             >	struct        counter	;
+template <class T             >	struct    initializer   ;
+template <class T             >	struct       iteratee   ;
+template <class T             >	struct       iterated   ;
+template <class T             >	struct       iterator   ;
+template <class T             >	struct       sentinel   ;
+template <class T             >	struct       distance   ;
+template <class T             >	struct        counted   ;
+template <class T             >	struct        counter   ;
 
 template <class T             >	using     initializer_u	= typename initializer<T>::value_type;
 template <class T             >	using     initializer_t	= typename initializer<T>::type;
@@ -337,9 +458,8 @@ template <class T             >	using        arranged_t	= _xtd::ranges::view_int
 template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<U, V>;
 template <class T             >	concept      interval_q	= is_q<interval_t<iteratee_t<T>>, T>;
 
-template <class T             >	concept      collated_q	= indexed_q<T> and annexed_q<T>;
-template <class T             >	concept    correlated_q	= collated_q<T> and     is_q<annexed_u<T>, indexed_u<T>>;
-template <class T             >	concept  uncorrelated_q	= collated_q<T> and not is_q<annexed_u<T>, indexed_u<T>>;
+template <class T             >	concept    correlated_q	= annexed_q<T> and     is_q<annexed_u<T>, indexed_u<T>>;
+template <class T             >	concept  uncorrelated_q	= annexed_q<T> and not is_q<annexed_u<T>, indexed_u<T>>;
 
 template <class T             >	concept   initializer_q	= not is_q<T, initializer_u<T>>;
 template <class T             >	concept      iteratee_q	= true;
@@ -352,11 +472,11 @@ template <class T             >	concept       counter_q	= integral_q<T>;
 template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
 
 
-template <class      T        >	                             	struct initializer    {using value_type =                   T  ; using type = _std::initializer_list<value_type>;};
-template <destruct_q    T        >	requires      annexed_q<T> 	struct initializer<T> {using value_type = based_t<annexed_u<T>>; using type = _std::initializer_list<value_type>;};
-template <destruct_q    T        >	requires un_n<annexed_q<T>>	struct initializer<T> {using value_type = based_t<  destruct_u<T>>; using type = _std::initializer_list<value_type>;};
+template <class T             >	                             	struct initializer    {using value_type =           T ; using type = _std::initializer_list<value_type>;};
+template <fixed_valued_q T    >	requires un_n<annexed_q<T>>	struct initializer<T> {using value_type =  valued_u<T>; using type = _std::initializer_list<value_type>;};
+template <fixed_valued_q T    >	requires      annexed_q<T> 	struct initializer<T> {using value_type = annexed_u<T>; using type = _std::initializer_list<value_type>;};
 
-template <class      T        >	struct       iteratee    {using type =                    destruct_u<T> ;};
+template <class T             >	struct       iteratee    {using type =                 destruct_u<T> ;};
 template <iterable_q T        >	struct       iteratee<T> {using type =       pointed_u<iterator_t<T>>;};
 template <iterator_q T        >	struct       iteratee<T> {using type =       pointed_u           <T> ;};
 template < counter_q T        >	struct       iteratee<T> {using type =   _std::remove_reference_t<T> ;};
@@ -372,7 +492,7 @@ template < counter_q T        >	struct       iterator<T> {using type =      iter
 template <iterable_q T        >	struct       sentinel<T> {using type =   decltype(XTAL_ANY_(T).end());};
 template <iterator_q T        >	struct       sentinel<T> {using type =                            T  ;};
 
-template <class      T        >	struct       distance    {using type =      distance_t<iterator_t<T>>;};
+template <class T             >	struct       distance    {using type =      distance_t<iterator_t<T>>;};
 template <iterator_q T        >	struct       distance<T> {using type = XTAL_ALL_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
 template <counted_q  T        >	struct        counted<T> {using type =    based_t<T>;};

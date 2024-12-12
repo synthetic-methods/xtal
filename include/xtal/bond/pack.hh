@@ -50,11 +50,11 @@ noexcept -> auto
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	struct   pack_size;
-template <fixed_sized_q T     >	struct   pack_size<T> : fixed_sized_t<T> {};
+template <fixed_sized_q T     >	struct   pack_size<T> : constant_t<fixed_sized_n<T>> {};
 template <         class ...Ts>	XTAL_LET pack_size_n = pack_size<based_t<Ts>...>::value;
 template <         class ...Ts>	concept  pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
-template <class T, class ...Ts>	requires some_q<Ts...> and pack_size_q<T, Ts...>
+template <class T, class ...Ts>	requires (1 <= sizeof...(Ts)) and pack_size_q<T, Ts...>
 struct pack_size<T, Ts...> : constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)> {};
 
 
@@ -109,7 +109,7 @@ noexcept -> decltype(auto)
 	XTAL_0IF XTAL_TRY_TO_(get<I>(XTAL_REF_(t)))
 	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
 }
-template <auto I, auto ...Is> requires some_n<Is...>
+template <auto I, auto ...Is> requires (1 <= sizeof...(Is))
 XTAL_DEF_(short)
 XTAL_LET pack_item_f(auto &&t, auto &&...ts)
 noexcept -> decltype(auto)

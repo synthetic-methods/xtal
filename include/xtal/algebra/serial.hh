@@ -153,7 +153,7 @@ struct serial<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<serial_t<float[2]>>);
+static_assert(atomic_q<serial_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -46,7 +46,7 @@ noexcept -> auto
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <        class V> struct circumspect    : circumspect<dissolve_u<V>> {};
+template <        class V> struct circumspect    : circumspect<absolve_u<V>> {};
 template <    integer_q V> struct circumspect<V> : bond::operate<V>::template widen< 0> {};
 template <real_number_q V> struct circumspect<V> : bond::operate<V>::template widen<-1> {};
 
@@ -75,9 +75,9 @@ struct circumscribe : circumspect<V>
 
 };
 template <complex_number_q A>
-struct circumscribe<A> : circumscribe<destruct_u<A>>
+struct circumscribe<A> : circumscribe<valued_u<A>>
 {
-	using _op = circumscribe<destruct_u<A>>;
+	using _op = circumscribe<valued_u<A>>;
 
 	using   ordinate_type = _std::complex<typename _op::  ordinate_type>;
 	using inordinate_type = _std::complex<typename _op::inordinate_type>;
@@ -101,7 +101,7 @@ struct circumscribe<A> : circumscribe<destruct_u<A>>
 	};
 };
 template <column_q A>
-struct circumscribe<A> : circumscribe<destruct_u<A>>
+struct circumscribe<A> : circumscribe<valued_u<A>>
 {
 };
 
@@ -123,7 +123,7 @@ struct phason<A>
 	using inordinate_type = typename T_op::inordinate_type;
 	using coordinate_type = typename T_op::coordinate_type;
 
-	static_assert(_std::numeric_limits<destruct_u<ordinate_type>>::is_modulo);// D'oh!
+	static_assert(_std::numeric_limits<absolve_u<ordinate_type>>::is_modulo);// D'oh!
 
 	using holotag  = bond::tag<phason_t>;
 	using holokind = serial<ordinate_type[M_data]>;
@@ -381,7 +381,7 @@ struct phason<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<phason_t<float[2]>>);
+static_assert(atomic_q<phason_t<float[2]>>);
 
 static_assert(bond::pack_size_q<phason_t<double[2]>>);
 

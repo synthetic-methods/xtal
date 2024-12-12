@@ -48,8 +48,8 @@ template <class ...Xs>
 struct couple
 {
 	XTAL_SET N_data = sizeof...(Xs);
-//	using    U_data =   common_t<Xs...>;
-	using    V_data = dissolve_u<Xs...>;
+//	using    U_data =  common_t<Xs...>;
+	using    V_data = absolve_u<Xs...>;
 
 	using archetype = pack_t<Xs...>;
 	using supertype = bond::compose_s<archetype, tag<couple>>;

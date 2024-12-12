@@ -31,8 +31,8 @@ template <column_q A>
 struct series<A>
 {
 	using U_v0 = _std::remove_extent_t<A>;
-	using U_v1 = destruct_u<U_v0>;
-	using U_v2 = destruct_u<U_v1>;
+	using U_v1 =  valued_u<U_v0>;
+	using U_v2 =  valued_u<U_v1>;
 
 	using _op = bond::operate<A>;
 	
@@ -314,7 +314,7 @@ struct series<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<quantity_t<float[2]>>);
+static_assert(atomic_q<quantity_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

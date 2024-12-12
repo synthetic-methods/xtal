@@ -51,19 +51,14 @@ Structural...
 
 template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::     in_n<N, Ms...>;
 template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::     un_n<N, Ms...>;
-template <auto  N, auto   M=0 >	XTAL_LET        upper_n	=          _entail::  upper_n<N, M>;
-template <auto  N, auto   M=0 >	XTAL_LET        lower_n	=          _entail::  lower_n<N, M>;
-template <auto  N, auto   M=0 >	XTAL_LET        above_n	=          _entail::  above_n<N, M>;
-template <auto  N, auto   M=0 >	XTAL_LET        below_n	=          _entail::  below_n<N, M>;
+template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::  above_m<M, N>;
+template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::  below_m<M, N>;
+template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail:: modulo_m<M, N>;
 template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail:: signum_n<N, Z>;
-
-template <class          ...Ts>	concept          some_q	=          _entail:: some_q<Ts...>;
-template <auto           ...Ns>	concept          some_n	=          _entail:: some_n<Ns...>;
-template <class          ...Ts>	concept          none_q	=          _entail:: none_q<Ts...>;
-template <auto           ...Ns>	concept          none_n	=          _entail:: none_n<Ns...>;
 
 template <class          ...Ts>	concept     molecular_q	= (...and  _entail::  molecular_q<Ts   >);
 template <class          ...Ts>	concept        atomic_q	= (...and  _entail::     atomic_q<Ts   >);
+template <class          ...Ts>	concept         ionic_q	= (...and  _entail::      ionic_q<Ts   >);
 
 template <class          ...Ts>	concept    incomplete_q	= (...and  _entail:: incomplete_q<Ts   >);
 template <class          ...Ts>	concept      complete_q	= (...and  _entail::   complete_q<Ts   >);
@@ -140,22 +135,22 @@ template <class          ...Ts>	concept       unbased_q	= (...and  _entail::  un
 
 
 template <class T             >	XTAL_LET  tuple_sized_n	=          _entail::   tuple_sized_n<T >;
-template <class T             >	using     tuple_sized_t	=          _entail::   tuple_sized_t<T >;
 template <         class ...Ts>	concept   tuple_sized_q	= (...and  _entail::   tuple_sized_q<Ts>);
 
-template <class T             >	XTAL_LET  array_sized_n	=          _entail::   tuple_sized_n<T >;
-template <class T             >	using     array_sized_t	=          _entail::   tuple_sized_t<T >;
-template <         class ...Ts>	concept   array_sized_q	= (...and  _entail::   tuple_sized_q<Ts>);
+template <class T             >	XTAL_LET  array_sized_n	=          _entail::   array_sized_n<T >;
+template <         class ...Ts>	concept   array_sized_q	= (...and  _entail::   array_sized_q<Ts>);
 
 template <class T             >	using     fixed_sized  	=          _entail::   fixed_sized  <T >;
 template <class T             >	XTAL_LET  fixed_sized_n	=          _entail::   fixed_sized_n<T >;
-template <class T             >	using     fixed_sized_t	=          _entail::   fixed_sized_t<T >;
 template <         class ...Ts>	concept   fixed_sized_q	= (...and  _entail::   fixed_sized_q<Ts>);
 
 template <class T             >	using     fluid_sized  	=          _entail::   fluid_sized  <T >;
 template <class T             >	XTAL_LET  fluid_sized_n	=          _entail::   fluid_sized_n<T >;
-template <class T             >	using     fluid_sized_t	=          _entail::   fluid_sized_t<T >;
 template <         class ...Ts>	concept   fluid_sized_q	= (...and  _entail::   fluid_sized_q<Ts>);
+
+template <class T             >	using           sized  	=          _entail::         sized  <T >;
+template <class T             >	XTAL_LET        sized_n	=          _entail::         sized_n<T >;
+template <         class ...Ts>	concept         sized_q	= (...and  _entail::         sized_q<Ts>);
 
 
 template <         class ...Ts>	using    array_valued_u	= common_t<_entail::   array_valued_u<Ts>...>;
@@ -173,20 +168,35 @@ template <         class ...Ts>	concept  fixed_valued_q	= (...and  _entail::   f
 template <         class ...Ts>	using    fluid_valued_u	= common_t<_entail::   fluid_valued_u<Ts>...>;
 template <         class ...Ts>	concept  fluid_valued_q	= (...and  _entail::   fluid_valued_q<Ts>);
 
+template <         class ...Ts>	using          valued_u	= common_t<_entail::         valued_u<Ts>...>;
+template <         class ...Ts>	concept        valued_q	= (...and  _entail::         valued_q<Ts>);
 
-template <         class ...Ts>	concept         destruct_q	= (...and  _entail:: destruct_q<Ts>);
-template <class T             >	using           destruct_t	=          _entail:: destruct_t<T >;
-template <         class ...Ts>	using           destruct_u	= common_t<_entail:: destruct_u<Ts>...>;
-template <class T             >	XTAL_LET        destruct_n	= _entail:: destruct_n<T>;
-template <class T, class ...Ts>	concept         destruct_p	= (...and (destruct_n<T> < destruct_n<Ts>));
+
+template <class T             >	XTAL_LET        fixed_n	=          _entail::          fixed_n<T >;
+template <         class ...Ts>	using           fixed_u	= common_t<_entail::          fixed_u<Ts>...>;
+template <         class ...Ts>	concept         fixed_q	= (...and  _entail::          fixed_q<Ts>);
+
+template <class T             >	XTAL_LET        fluid_n	=          _entail::          fluid_n<T >;
+template <         class ...Ts>	using           fluid_u	= common_t<_entail::          fluid_u<Ts>...>;
+template <         class ...Ts>	concept         fluid_q	= (...and  _entail::          fluid_q<Ts>);
+
+
+template <class T             >	using        destruct_t	=          _entail:: destruct_t<T >;
+template <         class ...Ts>	using        destruct_u	= common_t<_entail:: destruct_u<Ts>...>;
+template <class T             >	XTAL_LET     destruct_n	=          _entail:: destruct_n<T >;
 
 template <class T, int   ...Ns>	using        dissolve  	= _entail:: dissolve  <T, Ns...>;
 //mplate <         int   ...Ns>	using        dissolve_x	= _entail:: dissolve_x<   Ns...>;
 //mplate <class T, class ..._s>	using        dissolve_s	= _entail:: dissolve_s<T, _s...>;
-template <class T             >	XTAL_LET     dissolve_n	= _entail:: dissolve_n<T>;
-template <         class ...Ts>	using        dissolve_u	= common_t<_entail:: dissolve_u<Ts>...>;
 template <class T             >	using        dissolve_t	=          _entail:: dissolve_t<T >;
-template <class T, class ...Ts>	concept      dissolve_p	= (...and (dissolve_n<T> < dissolve_n<Ts>));
+template <         class ...Ts>	using        dissolve_u	= common_t<_entail:: dissolve_u<Ts>...>;
+template <class T             >	XTAL_LET     dissolve_n	=          _entail:: dissolve_n<T >;
+template <class T             >	XTAL_LET     dissolve_r	=          _entail:: dissolve_r<T >;
+
+template <class T             >	using         absolve_t	=          _entail::  absolve_t<T >;
+template <         class ...Ts>	using         absolve_u	= common_t<_entail::  absolve_u<Ts>...>;
+template <class T             >	XTAL_LET      absolve_n	=          _entail::  absolve_n<T >;
+template <class T             >	XTAL_LET      absolve_r	=          _entail::  absolve_r<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +242,6 @@ template <class          ...Ts>	concept      interval_q	=      (...and  _entail:
 template <class          ...Ts>	concept       counted_q	=      (...and  _entail::      counted_q<Ts>);
 template <class          ...Ts>	concept       counter_q	=      (...and  _entail::      counter_q<Ts>);
 
-template <class          ...Ts>	concept      collated_q	=      (...and  _entail::    collated_q<Ts>);
 template <class          ...Ts>	concept    correlated_q	=      (...and  _entail::  correlated_q<Ts>);
 template <class          ...Ts>	concept  uncorrelated_q	=      (...and  _entail::uncorrelated_q<Ts>);
 

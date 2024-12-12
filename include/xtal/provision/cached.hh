@@ -40,7 +40,7 @@ struct cached
 
 		XTAL_TO4_(XTAL_DEF_(alias) cache(), head())
 		
-		XTAL_TO4_(template <class ...Vs> requires some_q<Vs...>
+		XTAL_TO4_(template <class ...Vs> requires (1 <= sizeof...(Vs))
 		XTAL_DEF_(alias) cache(), head().template form<Vs...>())
 		
 		template <I i>

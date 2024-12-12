@@ -92,7 +92,7 @@ struct phasor<A, As...>
 		///\
 		Evaluation by (possibly indented) replacement then succession. \
 		
-		template <auto ...Is> requires none_n<Is...>
+		template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method(subarray_q<N> auto &&a)
 		noexcept -> decltype(auto)
@@ -104,7 +104,7 @@ struct phasor<A, As...>
 		///\
 		Evaluation by uccession. \
 		
-		template <auto ...Is> requires none_n<Is...>
+		template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method()
 		noexcept -> decltype(auto)

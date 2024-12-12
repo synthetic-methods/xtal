@@ -304,7 +304,7 @@ struct scalar<A>
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(short,static)
 		XTAL_LET reflector()
-		noexcept -> dissolve_u<U_data>
+		noexcept -> absolve_u<U_data>
 		{
 			XTAL_IF0
 			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
@@ -416,7 +416,7 @@ struct scalar<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<scalar_t<float[2]>>);
+static_assert(atomic_q<scalar_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
 	XTAL_ALL_(XTAL_ANY_(scalar_t<float(&)[2]>)*XTAL_ANY_(scalar_t<float(&)[2]>))>

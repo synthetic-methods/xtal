@@ -45,13 +45,13 @@ struct query
 
 		XTAL_TO4_(XTAL_DEF_(alias) node(), self<U_node>())
 
-		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
-		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
 		
-		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
 
 	};
@@ -84,23 +84,23 @@ struct query
 		XTAL_TO4_(XTAL_DEF_(alias) node(), self<node_type>())
 
 
-		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
-		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
 		
-		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
 		
 
-		XTAL_TO4_(template <U_dex ...Is> requires some_n<Is...>
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
 
-		XTAL_TO4_(template <class ...Is> requires none_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(alias) head(auto &&...oo), S::head(XTAL_REF_(oo)...))
 
-		XTAL_TO4_(template <class ...Is> requires some_q<Is...>
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(alias) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
 
 	};

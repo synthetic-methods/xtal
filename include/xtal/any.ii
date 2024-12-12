@@ -19,7 +19,7 @@ namespace _xtd
 XTAL_DEF_(short)
 XTAL_LET fam(auto &&w, auto &&x, auto &&y, auto &&...ys)
 noexcept -> auto
-requires some_q<decltype(ys)...>
+requires (1 <= sizeof...(ys))
 {
 	return fam(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }

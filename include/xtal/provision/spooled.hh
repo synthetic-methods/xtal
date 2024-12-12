@@ -18,7 +18,7 @@ template <typename ..._s> concept  spooled_q = bond::any_tag_p<spooled, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::spool`. \
+Provides a specialization of `arrange::store`. \
 
 template <bond::compose_q A>
 struct spooled<A>
@@ -38,13 +38,19 @@ struct spooled<A>
 
 	};
 };
-template <constant_q A>
+template <class A>
 struct spooled<A>
 {
+	using    value_type = valued_u<A>;
+	XTAL_SET value      =  sized_n<A>;
+
 	using superkind = bond::tag<spooled>;
 	
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
+	class subtype;
+	
+	template <class S> requires _std::unsigned_integral<value_type>
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		
@@ -52,7 +58,19 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = arrange::spool_t<U[static_cast<unsigned>(A{})]>;
+		using spool_t = arrange::block_t<U[(unsigned) value]>;
+
+	};
+	template <class S> requires _std::  signed_integral<value_type>
+	class subtype<S> : public bond::compose_s<S, superkind>
+	{
+		using S_ = bond::compose_s<S, superkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using spool_t = arrange::spool_t<U[(unsigned) value]>;
 
 	};
 };

@@ -217,7 +217,7 @@ struct defer<U>
 		The `template-method` is type-erased with `ranges::any_view` (so it can be `vtable`d), \
 		but it only works if `this` is mutable... \
 
-		XTAL_DO2_(template <auto ...Is> requires some_n<Is...>
+		XTAL_DO2_(template <auto ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
@@ -235,7 +235,7 @@ struct defer<U>
 				return Z_(XTAL_MOV_(y_));
 			}
 		})
-		XTAL_DO2_(template <auto ...Is> requires none_n<Is...>
+		XTAL_DO2_(template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
@@ -243,7 +243,7 @@ struct defer<U>
 			return iterative_f(head().template reify<decltype(xs)...>(), XTAL_REF_(xs)...);
 		})
 
-		XTAL_DO0_(template <auto ...Is> requires none_n<Is...>
+		XTAL_DO0_(template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> decltype(auto)
@@ -251,7 +251,7 @@ struct defer<U>
 		{
 			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
 		})
-		XTAL_DO0_(template <auto ...Is> requires some_n<Is...>
+		XTAL_DO0_(template <auto ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> decltype(auto)

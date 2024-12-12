@@ -52,7 +52,7 @@ struct invoke_head
 			XTAL_0IF  XTAL_TRY_TO_(head().template operator()       (XTAL_REF_(xs)...))
 			XTAL_0IF  XTAL_TRY_TO_(head().         method           (XTAL_REF_(xs)...))
 			XTAL_0IF_(else) {
-				static_assert(none_q<decltype(xs)...>);
+				static_assert(0 == sizeof...(xs));
 				return head();
 			}
 		}
@@ -67,7 +67,7 @@ struct invoke_head
 			XTAL_0IF  XTAL_TRY_TO_(head().template operator()       (XTAL_REF_(xs)...))
 			XTAL_0IF  XTAL_TRY_TO_(head().         method           (XTAL_REF_(xs)...))
 			XTAL_0IF_(else) {
-				static_assert(none_q<decltype(xs)...>);
+				static_assert(0 == sizeof...(xs));
 				return head();
 			}
 		}

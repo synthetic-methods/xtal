@@ -772,7 +772,7 @@ public:
 		using _std::sqrt;
 
 		using W = XTAL_ALL_(w);
-		using V = dissolve_u<W>;
+		using V = absolve_u<W>;
 
 	//	W constexpr W_1{1};
 		V constexpr U_1{1};
@@ -781,7 +781,7 @@ public:
 		bool constexpr N_etc = not real_number_q<W>;
 
 		int constexpr K_pow = -S_::designed_f(N_pow);
-		int constexpr M_lim = lower_n<(unsigned) N_lim, (1<<4)>;
+		int constexpr M_lim = below_m<(1<<4), (unsigned) N_lim>;
 
 		XTAL_IF0 //	ELIMINATION
 		XTAL_0IF (N_pow ==  0) {return U_1;}
@@ -948,7 +948,7 @@ public:
 	noexcept -> auto
 	{
 		using Y = based_t<decltype(base)>;
-		using V = dissolve_u<Y>;
+		using V = absolve_u<Y>;
 
 		V const v{1};// NOTE: Won't work for matricies...
 		Y const y{v};
@@ -1608,12 +1608,12 @@ public:
 
 template <class ...Ts>
 struct   operate
-:	complete_t<_detail::realize<sizeof(dissolve_u<Ts...>)>>
+:	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
 {
 };
 template <class ...Ts> requires seek_constant_q<Ts...>
 struct   operate<Ts...>
-:	complete_t<_detail::realize<sizeof(dissolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
+:	complete_t<_detail::realize<sizeof(absolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
 {
 };
 using operating = operate<size_type>;

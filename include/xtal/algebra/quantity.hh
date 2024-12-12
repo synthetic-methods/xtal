@@ -92,8 +92,20 @@ struct quantity<A>
 		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = 1.0/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
 
-		XTAL_DEF_(short,friend) XTAL_LET operator * (dissolve_p<T> auto const &s, T const &t) noexcept -> auto {return t * s;}
-		XTAL_DEF_(short,friend) XTAL_LET operator + (dissolve_p<T> auto const &s, T const &t) noexcept -> auto {return t + s;}
+		XTAL_DEF_(short,friend)
+		XTAL_LET operator * (auto const &s, T const &t)
+		noexcept -> auto
+		requires (dissolve_r<decltype(s)> < dissolve_r<T>)
+		{
+			return t * s;
+		}
+		XTAL_DEF_(short,friend)
+		XTAL_LET operator + (auto const &s, T const &t)
+		noexcept -> auto
+		requires (dissolve_r<decltype(s)> < dissolve_r<T>)
+		{
+			return t + s;
+		}
 
 		template <auto f, size_t I=N_data - 1>
 		XTAL_DEF_(short)
@@ -192,7 +204,7 @@ struct quantity<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(based_q<quantity_t<float[2]>>);
+static_assert(atomic_q<quantity_t<float[2]>>);
 
 static_assert(not counted_q<quantity_t<        int[2]>>);
 static_assert(not counted_q<quantity_t<counter_t<>[2]>>);

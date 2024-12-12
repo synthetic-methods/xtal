@@ -22,8 +22,8 @@ Constructs/references the current value. \
 template <class       W >	struct      member               : constant_t< true> {using type = based_t<W>;};
 template <size_type   N >	struct      member<unit_type[N]> : constant_t< true> {using type =   unsigned;};
 template <size_type   N >	struct      member<null_type[N]> : constant_t< true> {using type =   unsigned;};
-template <unbased_q   W >	struct      member<W const &   > : constant_t<false> {using type =   const W*;};
-template <unbased_q   W >	struct      member<W       &   > : constant_t<false> {using type =         W*;};
+template <ionic_q     W >	struct      member<W const &   > : constant_t<false> {using type =   const W*;};
+template <ionic_q     W >	struct      member<W       &   > : constant_t<false> {using type =         W*;};
 template <class       W >	using       member_t = typename member<W>:: type;
 template <class       W >	concept     member_q =          member<W>::value;
 template <class       W >	concept  dismember_q =      not member<W>::value;
