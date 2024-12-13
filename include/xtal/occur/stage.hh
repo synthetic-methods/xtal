@@ -16,7 +16,7 @@ namespace xtal::occur
 template <typename ...As>
 struct stage
 {
-	using superkind = bond::compose<void
+	using superkind = bond::compose<bond::tag<stage>
 	,	_detail::infer_equality<signed>
 	,	_detail::infer_binary_logic<signed>
 	,	As...
@@ -37,7 +37,7 @@ struct stage
 template <constant_q A, typename ...As>
 struct stage<A, As...>
 {
-	using superkind = bond::compose<void
+	using superkind = bond::compose<bond::tag<stage>
 	,	_detail::infer_equality<signed>
 	,	_detail::infer_binary_logic<signed>
 	,	As...
@@ -74,16 +74,12 @@ struct stage<A, As...>
 
 	};
 };
-template <typename ...As>
-using stage_t = confined_t<stage<As..., bond::tag<stage>>>;
-
+template <   class ..._s>	concept  stage_q = bond::any_tag_p<stage, _s...>;
+template <typename ...As>	using    stage_t = confined_t<stage<As...>>;
 template <typename ...As>
 XTAL_DEF_(short)
 XTAL_LET stage_f(auto &&...oo)
-noexcept -> auto
-{
-	return stage_t<As...>(XTAL_REF_(oo)...);
-}
+noexcept -> auto {return stage_t<As...>(XTAL_REF_(oo)...);}
 
 
 ///////////////////////////////////////////////////////////////////////////////

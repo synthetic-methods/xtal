@@ -132,7 +132,7 @@ TAG_("operate", "bit_reverse")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("operate", "exponential")
+TAG_("operate", "bit_floor_f")
 {
 	using _op = operating;
 	using T_iota  = typename _op:: iota_type;
@@ -144,24 +144,52 @@ TAG_("operate", "exponential")
 
 	TRY_("trial")
 	{
-		TRUE_(_op::exponential_f(0.1) == -4);
-		TRUE_(_op::exponential_f(0.2) == -3);
-		TRUE_(_op::exponential_f(0.3) == -2);
-		TRUE_(_op::exponential_f(0.4) == -2);
-		TRUE_(_op::exponential_f(0.5) == -1);
-		TRUE_(_op::exponential_f(0.6) == -1);
-		TRUE_(_op::exponential_f(0.7) == -1);
-		TRUE_(_op::exponential_f(0.8) == -1);
-		TRUE_(_op::exponential_f(0.9) == -1);
-		TRUE_(_op::exponential_f(1.0) ==  0);
-		TRUE_(_op::exponential_f(2.0) ==  1);
-		TRUE_(_op::exponential_f(3.0) ==  1);
-		TRUE_(_op::exponential_f(4.0) ==  2);
-		TRUE_(_op::exponential_f(5.0) ==  2);
-		TRUE_(_op::exponential_f(6.0) ==  2);
-		TRUE_(_op::exponential_f(7.0) ==  2);
-		TRUE_(_op::exponential_f(8.0) ==  3);
-		TRUE_(_op::exponential_f(9.0) ==  3);
+		TRUE_(0 == _op::template bit_floor_f<0>(0));
+		TRUE_(0 == _op::template bit_floor_f<0>(1));
+		TRUE_(1 == _op::template bit_floor_f<0>(2));
+		TRUE_(0 == _op::template bit_floor_f<0>(0.0));
+		TRUE_(0 == _op::template bit_floor_f<0>(1.0));
+		TRUE_(1 == _op::template bit_floor_f<0>(2.0));
+	//	TRUE_(_op::bit_floor_f(0.0) == _op::bit_floor_f(0));
+		TRUE_(_op::bit_floor_f(1.0) == _op::bit_floor_f(1));
+		TRUE_(_op::bit_floor_f(2.0) == _op::bit_floor_f(2));
+		TRUE_(_op::bit_floor_f(3.0) == _op::bit_floor_f(3));
+		TRUE_(_op::bit_floor_f(4.0) == _op::bit_floor_f(4));
+		TRUE_(_op::bit_floor_f(5.0) == _op::bit_floor_f(5));
+		TRUE_(_op::bit_floor_f(6.0) == _op::bit_floor_f(6));
+		TRUE_(_op::bit_floor_f(7.0) == _op::bit_floor_f(7));
+		TRUE_(_op::bit_floor_f(8.0) == _op::bit_floor_f(8));
+		TRUE_(_op::bit_floor_f(9.0) == _op::bit_floor_f(9));
+
+	//	TRUE_(_op::bit_floor_f(0.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(0));
+		TRUE_(_op::bit_floor_f(1.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(1));
+		TRUE_(_op::bit_floor_f(2.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(2));
+		TRUE_(_op::bit_floor_f(3.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(3));
+		TRUE_(_op::bit_floor_f(4.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(4));
+		TRUE_(_op::bit_floor_f(5.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(5));
+		TRUE_(_op::bit_floor_f(6.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(6));
+		TRUE_(_op::bit_floor_f(7.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(7));
+		TRUE_(_op::bit_floor_f(8.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(8));
+		TRUE_(_op::bit_floor_f(9.0*_op::diplo_1*_op::dnsilon_1) == _op::bit_ceiling_f(9));
+
+		TRUE_(_op::bit_floor_f(0.1) == -4);
+		TRUE_(_op::bit_floor_f(0.2) == -3);
+		TRUE_(_op::bit_floor_f(0.3) == -2);
+		TRUE_(_op::bit_floor_f(0.4) == -2);
+		TRUE_(_op::bit_floor_f(0.5) == -1);
+		TRUE_(_op::bit_floor_f(0.6) == -1);
+		TRUE_(_op::bit_floor_f(0.7) == -1);
+		TRUE_(_op::bit_floor_f(0.8) == -1);
+		TRUE_(_op::bit_floor_f(0.9) == -1);
+		TRUE_(_op::bit_floor_f(1.0) ==  0);
+		TRUE_(_op::bit_floor_f(2.0) ==  1);
+		TRUE_(_op::bit_floor_f(3.0) ==  1);
+		TRUE_(_op::bit_floor_f(4.0) ==  2);
+		TRUE_(_op::bit_floor_f(5.0) ==  2);
+		TRUE_(_op::bit_floor_f(6.0) ==  2);
+		TRUE_(_op::bit_floor_f(7.0) ==  2);
+		TRUE_(_op::bit_floor_f(8.0) ==  3);
+		TRUE_(_op::bit_floor_f(9.0) ==  3);
 
 	};
 }
@@ -183,7 +211,7 @@ TAG_("operate", "semifractional")
 	{
 		using _qp = bond::operate<T_iota>;
 		
-		TRUE_(check_f<- 6>(0.2220, _op::haplo_f()*T_alpha(_op::fractional_f(222.2220))));
+		TRUE_(check_f<- 6>(0.2220, _op::haplo_f()*T_alpha(_op::bit_fraction_f(222.2220))));
 	};
 }
 
@@ -217,7 +245,7 @@ TAG_("operate", "fraction")
 		T_delta w{};
 		for (T_sigma i = 0x100; ~--i;) {
 			auto const u = ten*_op::mantissa_f(mt19937_f);
-			w ^= _op::fractional_f(u);
+			w ^= _op::bit_fraction_f(u);
 		}
 		return w;
 	};

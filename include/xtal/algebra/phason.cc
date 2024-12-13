@@ -15,17 +15,18 @@ namespace xtal::algebra::_test
 
 TAG_("phason")
 {
-	using _op = bond::operate<double>;
-	using T_iota  = typename _op:: iota_type;
-	using T_delta = typename _op::delta_type;
-	using T_sigma = typename _op::sigma_type;
-	using T_alpha = typename _op::alpha_type;
-	using T_aphex = typename _op::aphex_type;
+	using U_op = bond::operate<int>;
+	using T_op = bond::operate<double>;
+	using T_iota  = typename T_op:: iota_type;
+	using T_delta = typename T_op::delta_type;
+	using T_sigma = typename T_op::sigma_type;
+	using T_alpha = typename T_op::alpha_type;
+	using T_aphex = typename T_op::aphex_type;
 	static constexpr T_alpha two =  2;
 	static constexpr T_alpha six =  6;
 	static constexpr T_alpha ten = 10;
 
-	auto mt19937_f = _op::mt19937_t(Catch::rngSeed());
+	auto mt19937_f = T_op::mt19937_t(Catch::rngSeed());
 
 	using V_phi = T_alpha;
 	using U_phi = phason_t<V_phi[2]>;
@@ -101,12 +102,12 @@ TAG_("phason")
 		TRUE_(a_d2 != b_d2); b_d2 = a_d2; ++a_d2[0];
 	//	TRUE_(a_d2 == D2{0x40000000, 0x40000000});
 
-		TRUE_(check_f<-19>(0.1, phason_t<T_alpha[2]>{0.1, 0.1}(0)));
+		TRUE_(check_f<4>(0.1, phason_t<T_alpha[2]>{0.1, 0.1}(0)));
 
 	}
 	TRY_("iteration")
 	{
-		U_phi   phi{0, _op::haplo_f(4)};
+		U_phi   phi{0, T_op::haplo_f(4)};
 		auto constexpr N_tip = _qp::sign.mask;
 		auto           n_tip = N_tip;
 
@@ -134,7 +135,7 @@ TAG_("phason")
 	}
 	TRY_("addition")
 	{
-		T_alpha x =  0.33, x_dt = _op::haplo_f(4);
+		T_alpha x =  0.33, x_dt = T_op::haplo_f(4);
 		T_alpha y =  5.55;
 		T_alpha z =  x+y; z -= _std::round(z);
 
@@ -147,13 +148,13 @@ TAG_("phason")
 	}
 	TRY_("multiplication")
 	{
-		T_alpha x = 1/3.L, x_dt = _op::haplo_f(4);
+		T_alpha x = 1/3.L, x_dt = T_op::haplo_f(4);
 		U_phi phi{x, x_dt};
 		V_phi foo{x};
 
 		for (T_sigma i = 0; i < 0x4; ++i) {
 			auto const v = static_cast<T_alpha>(i + 1);
-			auto const u{exp(asinh(v*_op::haplo_1))};
+			auto const u{exp(asinh(v*T_op::haplo_1))};
 			phi *= u;
 			foo *= u;
 			foo -= _std::round(foo);
@@ -166,26 +167,26 @@ TAG_("phason")
 	{
 		EST_("multiplication (fixed-point)")
 		{
-			T_alpha x = 0.33, x_dt = _op::haplo_f(4);
+			T_alpha x = 0.33, x_dt = T_op::haplo_f(4);
 
 			U_phi   phi{x, x_dt};
 		//	T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + _op::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + T_op::mantissa_f(mt19937_f));
 				phi *= u;
 			}
 			return phi;
 		};
 		EST_("multiplication (floating-point)")
 		{
-			T_alpha x = 0.33, x_dt = _op::haplo_f(4);
+			T_alpha x = 0.33, x_dt = T_op::haplo_f(4);
 
 		//	U_phi   phi{x, x_dt};
 			T_alpha foo{x};
 
 			for (T_sigma i = 0x100; ~--i;) {
-				T_alpha const u = _std::pow(two, 1 + _op::mantissa_f(mt19937_f));
+				T_alpha const u = _std::pow(two, 1 + T_op::mantissa_f(mt19937_f));
 				foo *= u;
 				foo -= _std::round(foo);
 			}

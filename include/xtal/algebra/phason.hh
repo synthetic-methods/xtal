@@ -43,85 +43,21 @@ noexcept -> auto
 }
 
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-template <        class V> struct circumspect    : circumspect<absolve_u<V>> {};
-template <    integer_q V> struct circumspect<V> : bond::operate<V>::template widen< 0> {};
-template <real_number_q V> struct circumspect<V> : bond::operate<V>::template widen<-1> {};
-
-template <class V>
-struct circumscribe : circumspect<V>
-{
-	using _op = circumspect<V>;
-	using _Op = typename _op::template widen<1>;
-
-	using   ordinate_type = typename _op::sigma_type;
-	using inordinate_type = typename _op::delta_type;
-	using coordinate_type = typename _Op::alpha_type;
-
-	XTAL_DEF_(short,static)
-	XTAL_LET    ordinate(real_number_q auto const &co)
-	noexcept -> ordinate_type
-	{
-		return _op::sigma_f(_op::fractional_f(co));
-	};
-	XTAL_DEF_(short,static)
-	XTAL_LET    coordinate(integer_q auto const &o)
-	noexcept -> coordinate_type
-	{
-		return _Op::haplo_f(_op::full.depth)*_Op::alpha_f(_op::delta_f(o));
-	};
-
-};
-template <complex_number_q A>
-struct circumscribe<A> : circumscribe<valued_u<A>>
-{
-	using _op = circumscribe<valued_u<A>>;
-
-	using   ordinate_type = _std::complex<typename _op::  ordinate_type>;
-	using inordinate_type = _std::complex<typename _op::inordinate_type>;
-	using coordinate_type = _std::complex<typename _op::coordinate_type>;
-
-	XTAL_DEF_(short,static)
-	XTAL_LET    ordinate(coordinate_type const &co)
-	noexcept -> ordinate_type
-	{
-		auto const o_re = _op::ordinate(co.real());
-		auto const o_im = _op::ordinate(co.imag());
-		return {o_re, o_im};
-	};
-	XTAL_DEF_(short,static)
-	XTAL_LET    coordinate(ordinate_type const &o)
-	noexcept -> coordinate_type
-	{
-		auto const co_re = _op::coordinate(o.real());
-		auto const co_im = _op::coordinate(o.imag());
-		return {co_re, co_im};
-	};
-};
-template <vector_q A>
-struct circumscribe<A> : circumscribe<valued_u<A>>
-{
-};
-
-static_assert(circumspect <double>::full.width == circumspect <int>::full.width);
-static_assert(circumscribe<double>::full.width == circumscribe<int>::full.width);
-
-
-}///////////////////////////////////////////////////////////////////////////////
-
-template <vector_q A>
+template <vector_q A> requires real_number_q<absolve_u<A>>
 struct phason<A>
 {
-	using T_op = _detail::circumscribe<A>;
-	using U_op = bond::operate<typename T_op::coordinate_type>;
-	
 	XTAL_SET M_data = _std::extent_v<based_t<A>>;
 
-	using   ordinate_type = typename T_op::  ordinate_type;
-	using inordinate_type = typename T_op::inordinate_type;
-	using coordinate_type = typename T_op::coordinate_type;
+	using coordinate_type = valued_u<A>;
+
+	using U_   = bond::  forge<coordinate_type>;
+	using U_op = bond::operate<coordinate_type>;
+	using T_op = typename U_op::template widen<-1>;
+	
+	using   ordinate_type = bond::compose_s<typename T_op::sigma_type, U_>;
+	using inordinate_type = bond::compose_s<typename T_op::delta_type, U_>;
 
 	static_assert(_std::numeric_limits<absolve_u<ordinate_type>>::is_modulo);// D'oh!
 
@@ -152,13 +88,13 @@ struct phason<A>
 		XTAL_LET ordinate(coordinate_type const &co)
 		noexcept -> ordinate_type
 		{
-			return T_op::ordinate(co);
+			return U_op::template bit_fraction_f<ordinate_type>(co);
 		}
 		XTAL_DEF_(short,static)
 		XTAL_LET coordinate(ordinate_type const &o)
 		noexcept -> coordinate_type
 		{
-			return T_op::coordinate(o);
+			return T_op::template fraction_f<coordinate_type>(o);
 		}
 
 	public:// ACCESS
@@ -355,7 +291,7 @@ struct phason<A>
 		XTAL_LET operator += (real_number_q auto const &f)
 		noexcept -> auto &
 		{
-			get<0>(*this) += T_op::fractional_f(f);
+			get<0>(*this) += T_op::bit_fraction_f(f);
 			return self();
 		}
 

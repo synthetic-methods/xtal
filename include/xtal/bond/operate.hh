@@ -417,6 +417,20 @@ public:
 	
 ///////////////////////////////////////////////////////////////////////////////
 
+	XTAL_DEF_(short)
+	XTAL_SET bit_sign_f(delta_type const n)
+	noexcept -> delta_type
+	{
+		return n >> positive.depth;
+	}
+	XTAL_DEF_(short)
+	XTAL_SET bit_sign_f(sigma_type const n)
+	noexcept -> sigma_type
+	{
+		return _xtd::bit_cast<sigma_type>(_xtd::bit_cast<delta_type>(n) >> positive.depth);
+	}
+
+
 	///\returns the number of bits set in `u`. \
 
 	XTAL_DEF_(short)
@@ -444,53 +458,83 @@ public:
 	}
 
 
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_floor_f(integral_q auto i)
 	noexcept -> auto
 	requires (sizeof(i) < N_width)
 	{
-		return bit_floor_f(internal_f(i));
+		return bit_floor_f<N_zero>(internal_f(i));
 	}
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_floor_f(sigma_type i)
 	noexcept -> sigma_type
 	{
-		sigma_type n = 0; for (; i >>= 1; ++n);
-		return n;
+		if constexpr (N_zero == -1) {
+			/*/
+			sigma_type const  z =  i == sigma_0;
+			sigma_type const _z = unit.depth&-z;
+			return _std::bit_width(i) - (sigma_1 << _z) + z;// 0 -> -1023
+			/*/
+			return _std::bit_width(i) - sigma_1;// 0 -> -1
+			/***/
+		}
+		else {
+			XTAL_LET N = N_zero + sigma_1;
+			i  =   bit_floor_f(i);
+			i += N&bit_sign_f(i);
+			return i;
+		}
 	}
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_floor_f(delta_type i)
 	noexcept -> delta_type
 	{
 		delta_type v = design_f(i);
-		delta_type u = bit_floor_f((sigma_type) i);
+		delta_type u = bit_floor_f<N_zero>(_xtd::bit_cast<sigma_type>(i));
 		u ^= v;
 		u -= v;
-		return u;
+		return _xtd::bit_cast<delta_type>(u);
 	}
 
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_ceiling_f(integral_q auto i)
 	noexcept -> auto
 	requires (sizeof(i) < N_width)
 	{
-		return bit_ceiling_f(internal_f(i));
+		return bit_ceiling_f<N_zero>(internal_f(i));
 	}
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_ceiling_f(sigma_type i)
 	noexcept -> sigma_type
 	{
-		return _std::bit_width(i) - 1;
+		if constexpr (N_zero == -1) {
+			sigma_type const z = i == sigma_0;
+			//\
+			return _std::bit_width(i - !z) - (z << unit.depth) + z;// 0 -> -1023
+			return _std::bit_width(i - !z)                     - z;// 0 -> -1
+		}
+		else {
+			XTAL_LET N = N_zero + sigma_1;
+			i  =   bit_ceiling_f(i);
+			i += N&bit_sign_f(i);
+			return i;
+		}
 	}
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
 	XTAL_SET bit_ceiling_f(delta_type i)
 	noexcept -> delta_type
 	{
 		delta_type v = design_f(i);
-		delta_type u = bit_ceiling_f((sigma_type) i);
+		sigma_type u = bit_ceiling_f<N_zero>(_xtd::bit_cast<sigma_type>(i));
 		u ^= v;
 		u -= v;
-		return u;
+		return _xtd::bit_cast<delta_type>(u);
 	}
 
 	///\returns the bitwise-reversal of `u`, \
@@ -966,18 +1010,30 @@ public:
 	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)`. \
 
 	XTAL_DEF_(short)
-	XTAL_SET diplo_f(delta_type const &n_zoom=N_depth)
+	XTAL_SET diplo_f(delta_type const &n_zoom=N_depth, alpha_type const &n_silon=alpha_1)
 	noexcept -> alpha_type
 	{
 		if (_std::is_constant_evaluated()) {
-			delta_type m = n_zoom << unit.shift;
-			m += unit.mask;
-			m &= exponent.mask;
-			return _xtd::bit_cast<alpha_type>(m);
+			auto m = _xtd::bit_cast<sigma_type>(n_zoom);
+			m  += unit.mark;
+			m <<= 1 + exponent.shift;
+			m >>= 1;
+			return n_silon*_xtd::bit_cast<alpha_type>(m);
 		}
 		else {
-			return _std::ldexp(alpha_1, (int) n_zoom);// not `constexpr` until `C++23`!
+			return _std::ldexp(n_silon, (int) n_zoom);// not `constexpr` until `C++23`!
 		}
+	}
+	template <int N_silon=0>
+	XTAL_DEF_(short)
+	XTAL_SET diplo_f(delta_type const &n_zoom=N_depth)
+	noexcept -> alpha_type
+	{
+		XTAL_LET o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - magnum_n<N_silon>};
+		XTAL_IF0
+		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
+		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}
+		XTAL_0IF_(else)        {return diplo_f(n_zoom, alpha_1                           );}
 	}
 	template <int N_zoom=N_depth>
 	XTAL_SET_(alpha_type) diplo_n = diplo_f(N_zoom);
@@ -994,11 +1050,12 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
 
+	template <int N_silon=0>
 	XTAL_DEF_(short)
 	XTAL_SET haplo_f(delta_type const &n_zoom=N_depth)
 	noexcept -> alpha_type
 	{
-		return diplo_f(-n_zoom);
+		return diplo_f<-N_silon>(-n_zoom);
 	}
 	template <int N_zoom=N_depth>
 	XTAL_SET_(alpha_type) haplo_n = haplo_f(N_zoom);
@@ -1469,68 +1526,159 @@ public:
 	static_assert(-1.75 == unscientific_f(scientific_f(-1.75)));
 	static_assert(-2.75 == unscientific_f(scientific_f(-2.75)));
 
+
+
+
+
+
+
+//	using S_::bit_floor_f;
+	template <int N_zero=-1>
 	XTAL_DEF_(short)
-	XTAL_SET exponential_f(alpha_type const &f)
-	noexcept -> delta_type
+	XTAL_SET bit_floor_f(integral_q auto &&f)
+	noexcept -> auto
 	{
-		delta_type constexpr X_1 = unit.mark;
-		auto       const o = _xtd::bit_cast<delta_type>(f);
-		delta_type const z = o                 >> positive.depth;
-		delta_type       n = (o&exponent.mask) >> fraction.depth;
-		n -= X_1&-(n != 0);
-		return n;
+		return S_::template bit_floor_f<N_zero>(XTAL_REF_(f));
 	}
+	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
-	XTAL_SET exponential_f(XTAL_SYN_(aphex_type) auto &&f)
-	noexcept -> delta_type
+	XTAL_SET bit_floor_f(real_number_q auto &&f)
+	noexcept -> auto
 	{
-		return exponential_f(dot_f(XTAL_REF_(f))) >> 1;
+		return bit_floor_f<N_zero>(internal_f(XTAL_REF_(f)));
 	}
+	template <int N_zero=-int{unit.mark}>
+	XTAL_DEF_(short)
+	XTAL_SET bit_floor_f(alpha_type const f)
+	noexcept -> auto
+	{
+		auto constexpr N = N_zero + unit.mark << unit.shift;
+		auto n = _xtd::bit_cast<sigma_type>(f);
+		n &= ~sign.mask;
+		n -=  unit.mask;
+		n += N&S_::bit_sign_f(n);
+		return _xtd::bit_cast<delta_type>(n) >> unit.shift;
+	}
+	template <int N_zero=-int{unit.mark}>
+	XTAL_DEF_(short)
+	XTAL_SET bit_floor_f(aphex_type const f)
+	noexcept -> auto
+	{
+		return bit_floor_f<N_zero>(dot_f(f)) >> 1;
+	}
+
+//	using S_::bit_ceiling_f;
+	template <int N_zero=-1>
+	XTAL_DEF_(short)
+	XTAL_SET bit_ceiling_f(integral_q auto &&f)
+	noexcept -> auto
+	{
+		return S_::template bit_ceiling_f<N_zero>(XTAL_REF_(f));
+	}
+	template <int N_zero=-int{unit.mark}>
+	XTAL_DEF_(short)
+	XTAL_SET bit_ceiling_f(real_number_q auto &&f)
+	noexcept -> auto
+	{
+		return bit_ceiling_f<N_zero>(internal_f(XTAL_REF_(f)));
+	}
+	template <int N_zero=-int{unit.mark}>
+	XTAL_DEF_(short)
+	XTAL_SET bit_ceiling_f(alpha_type const f)
+	noexcept -> auto
+	{
+		return bit_floor_f<N_zero>(f*diplo_1*dnsilon_1);
+	}
+	template <int N_zero=-int{unit.mark}>
+	XTAL_DEF_(short)
+	XTAL_SET bit_ceiling_f(aphex_type const &&f)
+	noexcept -> auto
+	{
+		return bit_ceiling_f<N_zero>(dot_f(XTAL_REF_(f))) >> 1;
+	}
+
+
 
 	///\returns the fractional component of `x` as a full-width `delta_type`.
 
 	template <integer_q Y=delta_type>
 	XTAL_DEF_(long)
-	XTAL_SET fractional_f(real_number_q auto const &x)
+	XTAL_SET bit_fraction_f(real_number_q auto const x)
 	noexcept -> Y
 	{
-		XTAL_LET Y_width = sizeof(Y), Y_depth = Y_width << 3;
 		XTAL_LET X_width = sizeof(x), X_depth = X_width << 3;
+		XTAL_LET Y_width = sizeof(Y), Y_depth = Y_width << 3;
 		XTAL_IF0
-		XTAL_0IF (full.width != X_width) {
-			return realize<X_width>::template fractional_f<Y>(x);
+		XTAL_0IF (X_width != full.width) {
+			return realize<X_width>::template bit_fraction_f<Y>(x);
 		}
-		XTAL_IF0
-		XTAL_0IF (full.width == X_width) {
-			auto n = _xtd::bit_cast<delta_type>(x);
-			delta_type const n_sgn_ = n >> positive.depth;
-			delta_type       n_pow  = n&exponent.mask;
-			delta_type const n_one  = n_pow != 0;
+		//\
+		XTAL_0IF (true) {
+		XTAL_0IF_(consteval) {
+			XTAL_LET N_exp = unit.mark + fraction.depth - Y_depth;
 
-			delta_type constexpr N_pow = unit.mark + fraction.depth - Y_depth;
-			n_pow >>= fraction.depth;
-			n_pow  -= N_pow & -n_one;
-			delta_type const n_pow_up = designed_f<(+1)>(n_pow);
-			delta_type const n_pow_dn = n_pow_up - n_pow;
-			delta_type const n_car_up = n_one << n_pow_dn;
+			auto o = _xtd::bit_cast<sigma_type>(x);
+			sigma_type const _o = S_::bit_sign_f(o);
+			sigma_type        x = o << 1;
+			sigma_type const  i = x != 0;
 
-			n  &=            fraction. mask;
-			n  |=   n_one << fraction.depth;
-			n <<=   n_pow_up;
-			n  += n&n_car_up;
-			n >>=   n_pow_dn;
-			n  ^=   n_sgn_;
-			n  -=   n_sgn_;
-			return n;
+			x >>= fraction.depth + 1;
+			x  -= N_exp&-i;
+			delta_type const x_dn = -x&S_::bit_sign_f(x);
+			delta_type const x_up =  x + x_dn;
+
+			o  &=        fraction. mask;
+			o  |=   i << fraction.depth;
+			o <<=   x_up;
+			o >>=   x_dn;
+			o  +=   o&sigma_1;
+			o  ^=  _o;
+			o  -=  _o;
+			return _xtd::bit_cast<delta_type>(o);
+		}
+		XTAL_0IF_(else) {
+			auto y = x - round(x); y *= diplo_n<Y_depth>;
+			return _xtd::bit_cast<Y>(static_cast<_std::make_signed_t<Y>>(y));
 		}
 	}
-	static_assert(0 == fractional_f(0.0));
+	template <class Y=_std::complex<delta_type>>
+	XTAL_DEF_(short)
+	XTAL_SET bit_fraction_f(complex_number_q auto const &x)
+	noexcept -> Y
+	{
+		using V = typename Y::value_type;
+		return {bit_fraction_f<V>(x.real()), bit_fraction_f<V>(x.imag())};
+	}
 	
+	template <real_number_q Y=alpha_type>
+	XTAL_DEF_(short)
+	XTAL_SET fraction_f(integer_q auto const &x)
+	noexcept -> Y
+	{
+		XTAL_LET X_width = sizeof(x), X_depth = X_width << 3;
+		XTAL_LET Y_width = sizeof(Y), Y_depth = Y_width << 3;
+		XTAL_IF0
+		XTAL_0IF (X_width != full.width) {
+			return realize<X_width>::template fraction_f<Y>(x);
+		}
+		XTAL_0IF_(else) {
+			return realize<Y_width>::haplo_f(full.depth)*realize<Y_width>::alpha_f(delta_f(x));
+		}
+	}
+	template <class Y=_std::complex<alpha_type>, integer_q X>
+	XTAL_DEF_(short)
+	XTAL_SET fraction_f(_std::complex<X> const &x)
+	noexcept -> Y
+	{
+		using V = typename Y::value_type;
+		return {fraction_f<V>(x.real()), fraction_f<V>(x.imag())};
+	}
+
 	XTAL_DEF_(short)
 	XTAL_SET fraction_f(alpha_type const &f)
 	noexcept -> alpha_type
 	{
-		return static_cast<alpha_type>(fractional_f(f))*haplo_f(N_depth);
+		return static_cast<alpha_type>(bit_fraction_f(f))*haplo_f(full.depth);
 	}
 
 	static_assert(fraction_f( 2.25) ==  0.25);

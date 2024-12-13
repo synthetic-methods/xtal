@@ -271,19 +271,6 @@ template <unbased_q T>	requires   fluid_sized_q<based_t<T>> struct fluid_sized<T
 template <class T    >	requires un_n<constant_q<T>>         struct       sized<T>                :  fluid_sized<           T > {};
 template <class T    >	requires      constant_q<T>          struct       sized<T>                :        sized<identity_t<T>> {};
 
-static_assert(1 ==  assign_sized<1UL>::size());
-static_assert(1 ==  assign_sized<tuple_sized_n<_std::array<float, 1>>>::size());
-static_assert(1 ==  tuple_sized_n<_std::array   <float, 1>>);
-static_assert(1 ==  fixed_sized_n<_std::array   <float, 1>>);
-static_assert(not dynamic_sized_q<_std::array   <float, 1>>);
-static_assert(not dynamic_sized_q<_std::complex <float   >>);
-
-static_assert(sized_n<_std::vector  <float   >> == -1);
-static_assert(sized_n<_std::array   <float, 1>> ==  1);
-static_assert(sized_n<_std::complex <float   >> ==  2);
-static_assert(sized_n<constant_t<(unsigned) 2>> ==  2);
-static_assert(sized_n<constant_t<(  signed) 2>> ==  2);
-
 
 template <class T             >	struct   fixed_valued   ;
 template <class T             >	struct   fluid_valued   ;
@@ -364,46 +351,6 @@ template <class T,        int ...Ns>	struct    dissolve           : assign_sized
 template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<destruct_u<T> , Ns..., destruct_n<T>> {};
 
 
-static_assert(id_q<unsigned, valued_u<constant_t<(unsigned) 2>>>);
-static_assert(id_q<  signed, valued_u<constant_t<(  signed) 2>>>);
-
-static_assert(id_q<const float(&)[2], destruct_t<const float(&)[2]>>);
-static_assert(id_q<      float(&)[2], destruct_t<      float(&)[2]>>);
-static_assert(id_q<const float   [2], destruct_t<const float   [2]>>);
-static_assert(id_q<      float   [2], destruct_t<      float   [2]>>);
-static_assert(id_q<const float &    , destruct_u<const float(&)[2]>>);
-static_assert(id_q<      float &    , destruct_u<      float(&)[2]>>);
-static_assert(id_q<const float      , destruct_u<const float   [2]>>);
-static_assert(id_q<      float      , destruct_u<      float   [2]>>);
-
-static_assert(id_q<const float(&)[2], destruct_t<const _std::complex<float> &>>);
-static_assert(id_q<      float(&)[2], destruct_t<      _std::complex<float> &>>);
-static_assert(id_q<const float   [2], destruct_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2], destruct_t<      _std::complex<float>  >>);
-static_assert(id_q<const float &    , destruct_u<const _std::complex<float> &>>);
-static_assert(id_q<      float &    , destruct_u<      _std::complex<float> &>>);
-static_assert(id_q<const float      , destruct_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      , destruct_u<      _std::complex<float>  >>);
-
-static_assert(id_q<const float(&)[2], dissolve_t<const _std::complex<float> &>>);
-static_assert(id_q<      float(&)[2], dissolve_t<      _std::complex<float> &>>);
-static_assert(id_q<const float   [2], dissolve_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2], dissolve_t<      _std::complex<float>  >>);
-static_assert(id_q<const float &    , dissolve_u<const _std::complex<float> &>>);
-static_assert(id_q<      float &    , dissolve_u<      _std::complex<float> &>>);
-static_assert(id_q<const float      , dissolve_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      , dissolve_u<      _std::complex<float>  >>);
-
-static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float> &>>);
-static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float> &>>);
-static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<      _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<const _std::complex<float> &>>);
-static_assert(id_q<      float      ,  absolve_u<      _std::complex<float> &>>);
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
@@ -462,8 +409,8 @@ template <class T             >	concept       counter_q	= integral_q<T>;
 template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
 
 
-template <class T             >	struct initializer    {using value_type =   valued_u<T>; using type = _std::initializer_list<value_type>;};
-template <covalued_q T        >	struct initializer<T> {using value_type = covalued_u<T>; using type = _std::initializer_list<value_type>;};
+template <class T             >	struct    initializer    {using value_type =   valued_u<T>; using type = _std::initializer_list<value_type>;};
+template <covalued_q T        >	struct    initializer<T> {using value_type = covalued_u<T>; using type = _std::initializer_list<value_type>;};
 
 template <class T             >	struct       iteratee    {using type =                 destruct_u<T> ;};
 template <iterable_q T        >	struct       iteratee<T> {using type =       pointed_u<iterator_t<T>>;};

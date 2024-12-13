@@ -27,10 +27,11 @@ Accommodate `std::complex` `value_type`s? \
 template <vector_q A, typename ...As>
 struct phasor<A, As...>
 {
-	using _op = algebra::_detail::circumscribe<A>;
-	using coordinate_type = typename _op::coordinate_type;
-	using inordinate_type = typename _op::inordinate_type;
-	using   ordinate_type = typename _op::  ordinate_type;
+	using _op =   bond::operate<A>;
+	using _ph = algebra::phason<A>;
+	using coordinate_type = typename _ph::coordinate_type;
+	using inordinate_type = typename _ph::inordinate_type;
+	using   ordinate_type = typename _ph::  ordinate_type;
 
 	XTAL_SET N  = _std::extent_v<A>;
 

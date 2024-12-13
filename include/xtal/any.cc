@@ -11,6 +11,63 @@ namespace xtal::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+static_assert(sized_n<_std::vector  <float   >> == -1);
+static_assert(sized_n<_std::array   <float, 1>> ==  1);
+static_assert(sized_n<_std::complex <float   >> ==  2);
+static_assert(sized_n<constant_t<(unsigned) 2>> ==  2);
+static_assert(sized_n<constant_t<(  signed) 2>> ==  2);
+
+
+static_assert(id_q<unsigned, valued_u<constant_t<(unsigned) 2>>>);
+static_assert(id_q<  signed, valued_u<constant_t<(  signed) 2>>>);
+
+static_assert(id_q<const float(&)[2], destruct_t<const float(&)[2]>>);
+static_assert(id_q<      float(&)[2], destruct_t<      float(&)[2]>>);
+static_assert(id_q<const float   [2], destruct_t<const float   [2]>>);
+static_assert(id_q<      float   [2], destruct_t<      float   [2]>>);
+static_assert(id_q<const float &    , destruct_u<const float(&)[2]>>);
+static_assert(id_q<      float &    , destruct_u<      float(&)[2]>>);
+static_assert(id_q<const float      , destruct_u<const float   [2]>>);
+static_assert(id_q<      float      , destruct_u<      float   [2]>>);
+
+static_assert(id_q<const float(&)[2], destruct_t<const _std::complex<float> &>>);
+static_assert(id_q<      float(&)[2], destruct_t<      _std::complex<float> &>>);
+static_assert(id_q<const float   [2], destruct_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2], destruct_t<      _std::complex<float>  >>);
+static_assert(id_q<const float &    , destruct_u<const _std::complex<float> &>>);
+static_assert(id_q<      float &    , destruct_u<      _std::complex<float> &>>);
+static_assert(id_q<const float      , destruct_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      , destruct_u<      _std::complex<float>  >>);
+
+static_assert(id_q<const float(&)[2], dissolve_t<const _std::complex<float> &>>);
+static_assert(id_q<      float(&)[2], dissolve_t<      _std::complex<float> &>>);
+static_assert(id_q<const float   [2], dissolve_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2], dissolve_t<      _std::complex<float>  >>);
+static_assert(id_q<const float &    , dissolve_u<const _std::complex<float> &>>);
+static_assert(id_q<      float &    , dissolve_u<      _std::complex<float> &>>);
+static_assert(id_q<const float      , dissolve_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      , dissolve_u<      _std::complex<float>  >>);
+
+static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float> &>>);
+static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float> &>>);
+static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float>  >>);
+static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<const _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<      _std::complex<float>  >>);
+static_assert(id_q<      float      ,  absolve_u<const _std::complex<float> &>>);
+static_assert(id_q<      float      ,  absolve_u<      _std::complex<float> &>>);
+
+
+static_assert(            contiguous_field_q<float>);
+static_assert(               simplex_field_q<float>);
+static_assert(          not  complex_field_q<float>);
+static_assert(          not quotient_group_q<float>);
+static_assert(              quotient_group_q<  int>);
+static_assert(complex_field_q<_std::complex<float>>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <int N_index>
 XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)

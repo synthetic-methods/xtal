@@ -31,12 +31,12 @@ namespace xtal
 //\
 Standard...
 
-using    void_type	= _entail::   void_type;
-using    null_type	= _entail::   null_type;
-using    unit_type	= _entail::   unit_type;
-using    size_type	= _entail::   size_type;
-using  signum_type	= _entail:: signum_type;
-using integer_type	= _entail::integer_type;
+using    void_type	= _entail::    void_type;
+using    null_type	= _entail::    null_type;
+using    unit_type	= _entail::    unit_type;
+using    size_type	= _entail::    size_type;
+using  signum_type	= _entail::  signum_type;
+using integer_type	= _entail:: integer_type;
 
 XTAL_LET_(size_type) size_0 = _entail::size_0;
 XTAL_LET_(size_type) size_1 = _entail::size_1;
@@ -68,9 +68,9 @@ template <class F, class ...Xs>	concept        return_p	=          _entail::    
 template <class          ...Ts>	using          common_t	=          _entail::     common_t<Ts...>;
 template <class          ...Ts>	concept        common_q	=          _entail::     common_q<Ts...>;
 
-template <class          ...Ts>	using        complete_t	= typename _entail::   complete_t<Ts...>;
-template <class          ...Ts>	concept      complete_q	= (...and  _entail::   complete_q<Ts   >);
 template <class          ...Ts>	concept    incomplete_q	= (...and  _entail:: incomplete_q<Ts   >);
+template <class          ...Ts>	concept      complete_q	= (...and  _entail::   complete_q<Ts   >);
+template <class          ...Ts>	using        complete_t	= typename _entail::   complete_t<Ts...>;
 
 template <class          ...Ts>	concept     molecular_q	= (...and  _entail::  molecular_q<Ts   >);
 template <class          ...Ts>	concept        atomic_q	= (...and  _entail::     atomic_q<Ts   >);
@@ -192,14 +192,14 @@ template <         class ...Ts>	concept         fluid_q	= (...and  _entail::    
 
 
 template <class T             >	using        destruct_t	=          _entail:: destruct_t<T >;
-template <         class ...Ts>	using        destruct_u	= common_t<_entail:: destruct_u<Ts>...>;
+template <class T             >	using        destruct_u	=          _entail:: destruct_u<T >;
 template <class T             >	XTAL_LET     destruct_n	=          _entail:: destruct_n<T >;
 
 template <class T, int   ...Ns>	using        dissolve  	= _entail:: dissolve  <T, Ns...>;
 //mplate <         int   ...Ns>	using        dissolve_x	= _entail:: dissolve_x<   Ns...>;
 //mplate <class T, class ..._s>	using        dissolve_s	= _entail:: dissolve_s<T, _s...>;
 template <class T             >	using        dissolve_t	=          _entail:: dissolve_t<T >;
-template <         class ...Ts>	using        dissolve_u	= common_t<_entail:: dissolve_u<Ts>...>;
+template <class T             >	using        dissolve_u	=          _entail:: dissolve_u<T >;
 template <class T             >	XTAL_LET     dissolve_n	=          _entail:: dissolve_n<T >;
 template <class T             >	XTAL_LET     dissolve_r	=          _entail:: dissolve_r<T >;
 
@@ -307,14 +307,6 @@ template <class   ...Ts>	concept        binary_group_q	= (...and       binary_gr
 template <class   ...Ts>	concept             inequality_q	= (...and           inequality_p<2, Ts>);
 template <class   ...Ts>	concept               equality_q	= (...and             equality_p<2, Ts>);
 template <class   ...Ts>	concept                quality_q	= (...and              quality_p<2, Ts>);
-
-
-static_assert(            contiguous_field_q<float>);
-static_assert(               simplex_field_q<float>);
-static_assert(          not  complex_field_q<float>);
-static_assert(          not quotient_group_q<float>);
-static_assert(              quotient_group_q<  int>);
-static_assert(complex_field_q<_std::complex<float>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
