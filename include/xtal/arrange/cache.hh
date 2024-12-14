@@ -33,7 +33,7 @@ struct cache
 		using I  = valued_u<_std::byte>;
 
 		XTAL_SET N_cache = size_1 << bond::operating::bit_ceiling_f((0U +...+ _detail::aligned_n<As>));
-		alignas (N_cache) _std::byte m_cache[N_cache];
+		alignas (N_cache) _std::byte mutable m_cache[N_cache];
 
 	public:
 		using S_::S_;
@@ -96,6 +96,7 @@ struct cache
 		noexcept -> auto
 		{
 			static_assert(_detail::aligned_n<Vs...> <= N_cache);
+			static_assert((...and _std::is_standard_layout_v<Vs>));
 			static_assert((...and _std::is_trivially_destructible_v<Vs>));
 
 			using W = _std::tuple<Vs &...>;

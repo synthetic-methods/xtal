@@ -129,7 +129,7 @@ struct monomer<U, As...>
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
-			static constexpr int N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
+			static constexpr int N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 			
 			using superkind = bond::compose<provision::stashed<U_state, U_store>, F_<Xs...>>;
 

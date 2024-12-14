@@ -418,6 +418,12 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 	XTAL_DEF_(short)
+	XTAL_SET bit_sign_f(auto const &n)
+	noexcept -> decltype(auto)
+	{
+		return bit_sign_f(internal_f(n));
+	}
+	XTAL_DEF_(short)
 	XTAL_SET bit_sign_f(delta_type const n)
 	noexcept -> delta_type
 	{
@@ -481,7 +487,8 @@ public:
 			/***/
 		}
 		else {
-			XTAL_LET N = N_zero + sigma_1;
+			XTAL_LET Z =         -1;
+			XTAL_LET N = N_zero - Z;
 			i  =   bit_floor_f(i);
 			i += N&bit_sign_f(i);
 			return i;
@@ -519,7 +526,8 @@ public:
 			return _std::bit_width(i - !z)                     - z;// 0 -> -1
 		}
 		else {
-			XTAL_LET N = N_zero + sigma_1;
+			XTAL_LET Z =         -1;
+			XTAL_LET N = N_zero - Z;
 			i  =   bit_ceiling_f(i);
 			i += N&bit_sign_f(i);
 			return i;
@@ -1476,7 +1484,7 @@ public:
 	noexcept -> alpha_type
 	{
 		XTAL_IF0
-		XTAL_0IF (N_size == 0) {return                                   value ;}
+		XTAL_0IF (N_size == 0) {return                                     value ;}
 		XTAL_0IF (N_size != 0) {return signum_n<N_side>*designed_f<N_side>(value);}
 	}
 	static_assert(clamped_f<+1>( alpha_1) == +1.0);
@@ -1552,7 +1560,9 @@ public:
 	XTAL_SET bit_floor_f(alpha_type const f)
 	noexcept -> auto
 	{
-		auto constexpr N = N_zero + unit.mark << unit.shift;
+		XTAL_LET Z = -unit.mark;
+		XTAL_LET N = N_zero - Z << unit.shift;
+
 		auto n = _xtd::bit_cast<sigma_type>(f);
 		n &= ~sign.mask;
 		n -=  unit.mask;

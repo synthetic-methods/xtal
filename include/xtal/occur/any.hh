@@ -96,6 +96,8 @@ struct define
 		template <int N_mask=-1>
 		struct dispatch
 		{
+			static_assert(integral_q<typename T::head_type>);
+
 			using superkind = attach<N_mask>;
 			
 			template <flux::any_q R>
@@ -103,8 +105,8 @@ struct define
 			{
 				using R_ = bond::compose_s<R, superkind>;
 
-				XTAL_SET A_size = T::cardinality() - size_0; static_assert(size_0 <= A_size);
-				XTAL_SET A_mask = T::cardinality() - size_1; static_assert(size_1 == bond::operating::bit_count_f(A_size));
+				XTAL_SET A_size = T::cardinality() - size_0;
+				XTAL_SET A_mask = T::cardinality() - size_1;
 
 			public:// CONSTRUCT
 				using R_::R_;
@@ -128,8 +130,13 @@ struct define
 				XTAL_LET deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
-					auto const i = static_cast<size_type>(head());
-					return R_::deify(point[A_mask&i]);
+					auto const &h = head();
+					//\
+					auto        i = static_cast<size_type>(h);// TODO: Should be handled by conversion?
+					auto        i = static_cast<size_type>(h.body_part);
+					auto const _i = A_mask - i;
+					i += bond::operating::bit_sign_f(_i)&_i;
+					return R_::deify(point[i]);
 				}
 				template <class ...Xs>
 				XTAL_DEF_(short)

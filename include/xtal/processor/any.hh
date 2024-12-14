@@ -97,7 +97,7 @@ struct define
 				{
 					auto    &u_state = review_o.view();
 					using    U_state = XTAL_ALL_(u_state);
-					XTAL_LET N_share = bond::seek_index_n<_detail::recollection_p<Xs, U_state>...>;
+					XTAL_LET N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 					
 					if (1 == R_::template efflux_pull<N_share>(review_o, render_o)) {
 						return 1;

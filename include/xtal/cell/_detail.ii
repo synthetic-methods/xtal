@@ -331,13 +331,8 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 {
 	using _op = bond::operate<decltype(Ns)...>;
 
-	XTAL_SET N_array =    _std::array{Ns...};
-	XTAL_SET N_upper = _op::maximum_f(Ns...);
-	XTAL_SET N_lower = _op::minimum_f(Ns...);
-	
-	XTAL_SET I_array = []<auto ...I> (bond::seek_t<I...>)
-		XTAL_0FN_(_std::array{(size_type) bond::seek_index_of_n<I + N_lower, Ns...>...})
-	(bond::seek_s<1 + N_upper - N_lower>{});
+	XTAL_SET N_coordinate = bond::  seek_n<Ns...>;
+	XTAL_SET N_ordinate   = bond::unseek_n<Ns...>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -346,7 +341,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		using S_ = bond::compose_s<S>;
 
 	public:
-		using head_type = T;
+		using head_type = _std::make_signed_t<T>;
 		using body_type = size_type;
 
 	public:
@@ -373,7 +368,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		}
 		XTAL_NEW_(explicit) subtype(XTAL_SYN_(head_type) auto &&o, auto &&...oo)
 		noexcept
-		:	subtype(I_array[XTAL_REF_(o) - N_lower], XTAL_REF_(oo)...)
+		:	subtype(static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...)
 		{
 		}
 		XTAL_NEW_(explicit) subtype(XTAL_SYN_(body_type) auto &&o, auto &&...oo)
@@ -394,7 +389,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		XTAL_LET head() const
 		noexcept -> auto
 		{
-			return N_array[body_part];
+			return N_coordinate[body_part];
 		}
 		
 		XTAL_DEF_(explicit operator) size_type()       noexcept {return body_part;}

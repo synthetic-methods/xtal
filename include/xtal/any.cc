@@ -117,7 +117,7 @@ using Ox_level = occur::reinferred_t<class A_level, typename bond::operating::al
 using Ox_onset = occur::reinferred_t<class onset_a, typename bond::operating::alpha_type>;
 /*/
 struct onset
-:	occur::confer<typename bond::operating::alpha_type
+:	occur::confer<typename bond::operating::delta_type
 	,	occur::any<class onset_a>
 	,	bond::word<(1 << 7)>
 	>
