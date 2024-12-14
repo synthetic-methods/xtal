@@ -43,9 +43,12 @@ struct cached
 		XTAL_TO4_(template <class ...Vs> requires (1 <= sizeof...(Vs))
 		XTAL_DEF_(alias) cache(), head().template form<Vs...>())
 		
+		XTAL_TO4_(template <class ...Vs> requires (1 <= sizeof...(Vs))
+		XTAL_DEF_(alias) cache(Vs const &...vs), head().form(vs...))
+		
 		template <I i>
 		XTAL_DEF_(inline) XTAL_LET cache(   ) noexcept -> void {head().fill(i);}
-		XTAL_DEF_(inline) XTAL_LET cache(I i) noexcept -> void {head().fill(i);}
+	//	XTAL_DEF_(inline) XTAL_LET cache(I i) noexcept -> void {head().fill(i);}
 
 	};
 };
