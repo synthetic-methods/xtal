@@ -44,8 +44,13 @@ struct superblock<U(&)[N]>
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_TO4_(XTAL_DEF_(short)
-		XTAL_LET twin(), typename T::template tagged_t<U_data[N_data]>(S_::self()))
+		template <class V_data=U_data>
+		XTAL_DEF_(short)
+		XTAL_LET twin() const
+		noexcept -> decltype(auto)
+		{
+			return typename T::template tagged_t<V_data[N_data]>(S_::self());
+		}
 
 	};	
 };
@@ -67,8 +72,21 @@ struct superblock<U[N]>
 		using    U_data = U;
 
 	public:// CONSTRUCT
-	//	using S_::S_;
+		using S_::S_;
 		
+		template <class V_data=void>
+		XTAL_DEF_(short)
+		XTAL_LET twin() const
+		noexcept -> decltype(auto)
+		{
+			if constexpr (incomplete_q<V_data>) {
+				return S_::twin();
+			}
+			else {
+				return typename T::template tagged_t<V_data[N_data]>(S_::self());
+			}
+		}
+
 	~	homotype() noexcept=default;
 	//	homotype() noexcept=default;
 
@@ -221,23 +239,34 @@ struct block<A>
 
 	public:// OPERATE
 		XTAL_TO4_(template <complete_q F>
-		XTAL_DEF_(explicit operator) F(), apply<F>())
+		XTAL_DEF_(explicit operator) F(), apply(invoke_f<F>))
 
-		template <class F=XTAL_FUN_(bond::pack_f)>
+		template <auto f=[] XTAL_1FN_(bond::pack_f)>
 		XTAL_DEF_(short)
 		XTAL_LET apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply(invoke_f<F>);
+			return apply(f);
 		}
-		template <class F>
 		XTAL_DEF_(short)
-		XTAL_LET apply(F &&f) const
+		XTAL_LET apply(auto &&f) const
 		noexcept -> decltype(auto)
 		{
-			return [&, this]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(f(self().coordinate(get<I>(self()))...))
+			return [this, f=XTAL_REF_(f)]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(f(self() (I)...))
 			(bond::seek_s<N_data>{});
+		}
+
+		template <auto f>
+		XTAL_DEF_(short,static)
+		XTAL_LET map_f(auto &&...ts)
+		noexcept -> decltype(auto)
+		{
+			return [f_ = [&] (auto i)
+				XTAL_0FN_(f([&] (auto const &t)
+					XTAL_0FN {if constexpr (is_q<decltype(t), T>) {return t(i);} else {return t;}}
+				(ts)...))
+			]<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(T{f_(I)...}) (bond::seek_s<N_data>{});
 		}
 
 		///\todo\
