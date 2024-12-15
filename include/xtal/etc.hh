@@ -120,6 +120,12 @@ XTAL_ENV_(push)
 #endif//XTAL_STD_L1
 
 
+// TODO: Find better way to check for `__builtin_\w+`?
+#define XTAL_SYS_builtin (1000 < XTAL_VER_(GNUC) or 1000 < XTAL_VER_(LLVM))
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 #define XTAL_VER_MSVC               XTAL_ENV_MSVC and XTAL_ENV_MSVC
 #define XTAL_VER_LLVM               XTAL_ENV_LLVM and XTAL_ENV_LLVM
 #define XTAL_VER_GNUC               XTAL_ENV_GNUC and XTAL_ENV_GNUC
@@ -131,6 +137,8 @@ XTAL_ENV_(push)
 #define XTAL_ver_(...)     or XTAL_VER_##__VA_ARGS__
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_RAW_(...)           ::std::remove_cvref_t<__VA_ARGS__>   ///< Reveals the underlying-type.
@@ -210,7 +218,7 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 
 #define XTAL_IMP_(ARG,...)                XTAL_IMP_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
 
-#if     XTAL_ENV_(MSVC == 0000)
+#if     XTAL_SYS_(builtin)
 #define XTAL_IMP_fma(Y, X, W)        __builtin_fma(Y, X, W)
 #define XTAL_IMP_fam(W, X, Y)        __builtin_fma(Y, X, W)
 #elif   XTAL_ENV_(MSVC >= 1700)

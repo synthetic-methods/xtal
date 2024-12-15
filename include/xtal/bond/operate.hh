@@ -303,25 +303,10 @@ public:
 	using alignment = constructive_alignment;
 
 
-	template <class      T> struct internal;
-	template <cardinal_q T> struct internal<T> {using type = sigma_type;};
-	template < ordinal_q T> struct internal<T> {using type = delta_type;};
-	template <class      T>  using internal_t = typename internal<T>::type;
-
-	XTAL_DEF_(short)
-	XTAL_SET internal_f(integral_q auto const &i)
-	noexcept -> auto const &
-	requires (sizeof(i) == N_width)
-	{
-		return i;
-	}
-	XTAL_DEF_(short)
-	XTAL_SET internal_f(integral_q auto const &i)
-	noexcept -> auto
-	requires (sizeof(i) <  N_width)
-	{
-		return static_cast<internal_t<XTAL_ALL_(i)>>(i);
-	}
+	XTAL_DEF_(short) XTAL_SET internal_f(     delta_type const &i) noexcept -> auto {return i;}
+	XTAL_DEF_(short) XTAL_SET internal_f(     sigma_type const &i) noexcept -> auto {return i;}
+	XTAL_DEF_(short) XTAL_SET internal_f( ordinal_q auto const &i) noexcept -> auto {return static_cast<delta_type>(i);}
+	XTAL_DEF_(short) XTAL_SET internal_f(cardinal_q auto const &i) noexcept -> auto {return static_cast<sigma_type>(i);}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -669,6 +654,10 @@ public:
 	XTAL_SET_(aphex_type) circle_2 = square_2*0.7071067811865475244008443621048490393L;
 	XTAL_SET_(aphex_type) circle_3 = square_3*0.7071067811865475244008443621048490393L;
 
+	XTAL_DEF_(short) XTAL_SET internal_f(     alpha_type const &i) noexcept -> auto {return i;}
+	XTAL_DEF_(short) XTAL_SET internal_f(integral_q auto const &i) noexcept -> auto {return S_::internal_f(i);}
+
+
 	XTAL_DEF_(short) XTAL_SET  iota_f(auto &&o) noexcept -> auto {return  iota_type(XTAL_REF_(o));}
 //	XTAL_DEF_(short) XTAL_SET delta_f(auto &&o) noexcept -> auto {return delta_type(XTAL_REF_(o));}
 //	XTAL_DEF_(short) XTAL_SET sigma_f(auto &&o) noexcept -> auto {return sigma_type(XTAL_REF_(o));}
@@ -964,6 +953,24 @@ public:
 	}
 	
 
+	XTAL_DEF_(short)
+	XTAL_SET round_f(real_number_q auto const x)
+	noexcept -> decltype(auto)
+	{
+#if XTAL_SYS_(builtin)
+		return           round(x);
+#else
+		return __builtin_round(x);
+#endif
+	}
+	XTAL_DEF_(short)
+	XTAL_SET round_f(complex_number_q auto const &x)
+	noexcept -> XTAL_ALL_(x)
+	{
+		return {round_f(x.real()), round_f(x.imag())};
+	}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 	///\returns the `constexpr` equivalent of `std:pow(base, n_zoom)` for an `unsigned int n_zoom`. \
@@ -1018,7 +1025,19 @@ public:
 	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)`. \
 
 	XTAL_DEF_(short)
-	XTAL_SET diplo_f(delta_type const &n_zoom=N_depth, alpha_type const &n_silon=alpha_1)
+	XTAL_SET diplo_e(alpha_type n_zoom, alpha_type o_silon)
+	noexcept -> alpha_type
+	{
+		if constexpr (XTAL_SYS_(builtin)) {
+			return o_silon*__builtin_exp2(n_zoom);
+		}
+		else {
+			XTAL_LET N_ln2 = alpha_f(0.6931471805599453094172321214581770e0L);
+			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `consteval`?
+		}
+	}
+	XTAL_DEF_(short)
+	XTAL_SET diplo_e(delta_type n_zoom, alpha_type o_silon)
 	noexcept -> alpha_type
 	{
 		if (_std::is_constant_evaluated()) {
@@ -1026,23 +1045,43 @@ public:
 			m  += unit.mark;
 			m <<= 1 + exponent.shift;
 			m >>= 1;
-			return n_silon*_xtd::bit_cast<alpha_type>(m);
+			return o_silon*_xtd::bit_cast<alpha_type>(m);
 		}
 		else {
-			return _std::ldexp(n_silon, (int) n_zoom);// not `constexpr` until `C++23`!
+			return _std::ldexp(o_silon, (int) n_zoom);// not `constexpr` until `C++23`!
 		}
 	}
+	XTAL_DEF_(short)
+	XTAL_SET diplo_e(sigma_type n_zoom, alpha_type o_silon)
+	noexcept -> alpha_type
+	{
+		return diplo_e(_xtd::bit_cast<delta_type>(n_zoom), o_silon);
+	}
+	XTAL_DEF_(short) XTAL_SET diplo_e(auto n_zoom, alpha_type o_silon)
+	noexcept -> decltype(auto)
+	{
+		return diplo_e(internal_f(XTAL_REF_(n_zoom)), o_silon);
+	}
+
 	template <int N_silon=0>
 	XTAL_DEF_(short)
-	XTAL_SET diplo_f(delta_type const &n_zoom=N_depth)
+	XTAL_SET diplo_f(auto const &n_zoom)
 	noexcept -> alpha_type
 	{
 		XTAL_LET o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - magnum_n<N_silon>};
 		XTAL_IF0
-		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
-		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}
-		XTAL_0IF_(else)        {return diplo_f(n_zoom, alpha_1                           );}
+		XTAL_0IF (0 < N_silon) {return diplo_e(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
+		XTAL_0IF (N_silon < 0) {return diplo_e(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}
+		XTAL_0IF_(else)        {return diplo_e(n_zoom, alpha_1                           );}
 	}
+	template <int N_silon=0>
+	XTAL_DEF_(short)
+	XTAL_SET diplo_f()
+	noexcept -> alpha_type
+	{
+		return diplo_f<N_silon>(N_depth);
+	}
+
 	template <int N_zoom=N_depth>
 	XTAL_SET_(alpha_type) diplo_n = diplo_f(N_zoom);
 	///< Value expression of `diplo_f`. \
@@ -1058,13 +1097,9 @@ public:
 
 	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
 
-	template <int N_silon=0>
-	XTAL_DEF_(short)
-	XTAL_SET haplo_f(delta_type const &n_zoom=N_depth)
-	noexcept -> alpha_type
-	{
-		return diplo_f<-N_silon>(-n_zoom);
-	}
+	template <int N_silon=0> XTAL_DEF_(short) XTAL_SET haplo_f(auto const &n_zoom) noexcept -> auto {return diplo_f<-N_silon>(-n_zoom );}
+	template <int N_silon=0> XTAL_DEF_(short) XTAL_SET haplo_f(                  ) noexcept -> auto {return diplo_f<-N_silon>(-N_depth);}
+
 	template <int N_zoom=N_depth>
 	XTAL_SET_(alpha_type) haplo_n = haplo_f(N_zoom);
 	///< Value expression of `haplo_f`. \
@@ -1612,7 +1647,7 @@ public:
 	///\returns the fractional component of `x` as a full-width `delta_type`.
 
 	template <integer_q Y=delta_type>
-	XTAL_DEF_(long)
+	XTAL_DEF_(short)
 	XTAL_SET bit_fraction_f(real_number_q auto const x)
 	noexcept -> Y
 	{
@@ -1647,7 +1682,7 @@ public:
 			return _xtd::bit_cast<delta_type>(o);
 		}
 		XTAL_0IF_(else) {
-			auto y = x - round(x); y *= diplo_n<Y_depth>;
+			auto y = x - round_f(x); y *= diplo_n<Y_depth>;
 			return _xtd::bit_cast<Y>(static_cast<_std::make_signed_t<Y>>(y));
 		}
 	}
