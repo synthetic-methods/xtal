@@ -231,6 +231,26 @@ noexcept -> void
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+template <class Y, class X>
+XTAL_LET mix_to(Y &y, X &&x)
+noexcept -> void
+{
+	auto _j = point_f(x);
+	auto _i = point_f(y);
+	auto  n = count_f(y);
+	
+	for (size_type m{0}; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
+};
+template <class Y, class ...Xs>
+XTAL_DEF_(inline)
+XTAL_LET mix_to(Y &y, Xs &&...xs)
+noexcept -> void
+{
+	mix_to(y, iterative_f([] (auto &&o, auto &&...oo) XTAL_0FN_(o +...+ oo), XTAL_REF_(xs)...));
+};
+
 
 }//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

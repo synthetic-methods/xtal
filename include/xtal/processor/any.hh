@@ -110,12 +110,16 @@ struct define
 						auto _i = point_f(review_o);
 						auto  n = count_f(review_o);
 						
-						XTAL_IF0// TODO: Confirm that `result_o` can/shoud be moved?
-						//\
-						XTAL_0IF XTAL_TRY_DO_(copy_n(_j, n, _i))
-						XTAL_0IF XTAL_TRY_DO_(copy_n(make_move_iterator(_j), n, _i))
-						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(else) {for (size_type m = 0; m < n; ++m) {*_i++ = XTAL_MOV_(*_j++);}}
+						auto &copy_j =                    _j ;
+						auto  move_j = make_move_iterator(_j);
+
+						XTAL_IF0
+#if XTAL_VER_(LLVM)
+						XTAL_0IF XTAL_TRY_DO_(_std::copy_n(copy_j, n, _i))
+#endif
+						XTAL_0IF XTAL_TRY_DO_(      copy_n(move_j, n, _i))
+						XTAL_0IF XTAL_TRY_DO_(      move  (result_o|account_f(n), _i))
+						XTAL_0IF_(else) {for (size_type m = 0; m < n; ++m) {*_i++ = *move_j++;}}
 
 						return 0;
 					}

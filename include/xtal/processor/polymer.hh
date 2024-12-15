@@ -39,6 +39,7 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
+
 	using superkind = monomer<U, As...>;
 
 	template <class S>
@@ -205,14 +206,28 @@ struct polymer<U, As...>
 					Examine the possibility of forwarding an accumulating view. \
 
 					if constexpr (provision::stored_q<S_>) {
+						/**/
+						using namespace arrange::_detail;
+						
+						size_type i{count_f(u_ensemble)};
+						
+						auto vox_f = [&]<class N> (N n) XTAL_0FN {
+							i -= n;
+							[&]<auto ...I> (bond::seek_t<I...>) XTAL_0FN {
+								mix_to(review_o, u_ensemble[i + I]()...);
+							} (bond::seek_s<n>{});
+						};
+						while (i) {switch (i) {
+							case 1:          {vox_f(constant_t<1>{}); break;}
+							case 2:          {vox_f(constant_t<2>{}); break;}
+							case 3:          {vox_f(constant_t<3>{}); break;}
+							case 4: default: {vox_f(constant_t<4>{}); break;}
+						}}
+						/*/
 						for (auto &vox:u_ensemble) {
-							auto result_o = vox();
-							auto _j = point_f(result_o);
-							auto _i = point_f(review_o);
-							auto  n = count_f(review_o);
-							
-							for (size_type m = 0; m < n; ++m) {*_i++ += XTAL_MOV_(*_j++);}
+							assign_mix_f(review_o, vox());
 						}
+						/***/
 					}
 					return 0;
 				}

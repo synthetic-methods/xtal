@@ -62,7 +62,6 @@
 #define XTAL_ENV_pop   _Pragma("GCC diagnostic pop")
 #define XTAL_ENV_push  _Pragma("GCC diagnostic push")\
                        _Pragma("GCC diagnostic ignored \"-Wsubobject-linkage\"")\
-//                     _Pragma("GCC diagnostic ignored \"-Winterference-size\"")\
 
 #else
 #endif//XTAL_ENV
