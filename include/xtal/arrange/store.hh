@@ -58,7 +58,7 @@ struct store<U_data[N_data]>
 		using        difference_type  =        ::std::ptrdiff_t;
 
 		using             value_type  =        U_data;
-		using         allocator_type  =        T;// TODO: Provide interface?
+		using         allocator_type  =        T;// TODO: Provide interface.
 
 		using              reference  =        U_data &;
 		using        const_reference  =  const U_data &;
@@ -72,6 +72,7 @@ struct store<U_data[N_data]>
 		using const_reverse_iterator  = _std::reverse_iterator<const_iterator >;
 	
 	private:
+		using             value_type_ =        W_data;
 		using               iterator_ =        W_data *;
 		using         const_iterator_ =  const W_data *;
 		using       reverse_iterator_ = _std::reverse_iterator<      iterator_>;
@@ -92,7 +93,7 @@ struct store<U_data[N_data]>
 		XTAL_DEF_(short,static) XTAL_LET defence_f(iterator_q auto         i) noexcept -> auto {return _std::launder(offence_f(XTAL_REF_(i)));}
 		
 
-		W_data m_data[N_data]{};
+		value_type_ m_data[N_data]{};
 		difference_type n_data{};
 
 
@@ -508,6 +509,13 @@ struct store<U_data[N_data]>
 	using type = bond::isotype<homotype>;
 
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+static_assert(std::is_copy_assignable_v<store_t<float             *  >>);
+static_assert(std::is_copy_assignable_v<store_t<float[(unsigned)  -1]>>);
+static_assert(std::is_copy_assignable_v<store_t<float[(unsigned) 0x8]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

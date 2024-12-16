@@ -96,7 +96,7 @@ struct refine
 		using S_::S_;
 
 	};
-	template <class S> requires iterable_q<S> and un_n<iterated_q<S>>
+	template <class S> requires iterable_q<S> and un_q<iterated_q<S>>
 	class subtype<S> : public bond::compose_s<S, superkind>, public arranged_t<T>
 	{
 		static_assert(any_q<S>);

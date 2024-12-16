@@ -52,12 +52,11 @@ struct spool<A>
 	public:
 	//	using S_::S_;
 		
-	~	homotype() noexcept=default;
-		homotype() noexcept=default;
-
+	~	homotype()                noexcept=default;
+		homotype()                noexcept=default;
 		XTAL_NEW_(copy, homotype, noexcept=default)
 		XTAL_NEW_(move, homotype, noexcept=default)
-
+		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
@@ -65,6 +64,12 @@ struct spool<A>
 		noexcept(false)
 		:	u_end(count_f(w))
 		,	u_store(w.begin(), w.end())
+		{}
+		template <class W> requires as_q<W, U_value> and un_q<is_q<W, U_value>>
+		XTAL_NEW_(explicit) homotype(W &&w)
+		noexcept(false)
+		:	u_begin(1)
+		,	u_store{U_value{XTAL_REF_(w)}}
 		{}
 
 		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
@@ -87,28 +92,22 @@ struct spool<A>
 		{
 			if (n) {
 				u_begin = 0;
-				cull();
+				free();
 			}
 			return begin();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET cull()
+		XTAL_LET free()
 		noexcept -> void
 		{
 			u_store.erase(u_store.begin(), end());
 		}
 
 		XTAL_DEF_(inline)
-		XTAL_LET cull(logical_p<U_value> auto &&f)
+		XTAL_LET free(auto &&f)
 		noexcept -> void
 		{
 			u_store.erase(_std::remove_if(begin(), end(), f), end());
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET cull(ordinal_p<U_value> auto &&f)
-		noexcept -> void
-		{
-			cull([f=XTAL_REF_(f)] (auto &&...oo) XTAL_0FN_(0 < f(XTAL_REF_(oo)...)));
 		}
 
 		///\note\
@@ -191,6 +190,13 @@ struct spool<A>
 	using type = bond::isotype<homotype>;
 
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+static_assert(std::is_copy_assignable_v<spool_t<float             *  >>);
+static_assert(std::is_copy_assignable_v<spool_t<float[(unsigned)  -1]>>);
+static_assert(std::is_copy_assignable_v<spool_t<float[(unsigned) 0x8]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

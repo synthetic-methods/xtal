@@ -17,6 +17,11 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
+///\todo\
+For `dimer`, clone-then-unstage the current voice. \
+Either define `lead()` as the `front()` of the ensemble, \
+or conditionally incorporate `lead()` into rendering and `key`ed event propagation. \
+
 template <typename ..._s> struct   polymer;
 template <typename ..._s> using    polymer_t = confined_t<polymer< _s...>>;
 template <typename ..._s> concept  polymer_q = bond::any_tag_p<polymer, _s...>;
@@ -39,7 +44,6 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
-
 	using superkind = monomer<U, As...>;
 
 	template <class S>
@@ -74,6 +78,8 @@ struct polymer<U, As...>
 				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
+				//\
+				U_ensemble u_ensemble = U_ensemble(-1);
 				U_ensemble u_ensemble{};
 
 			public:// CONSTRUCT
@@ -85,6 +91,8 @@ struct polymer<U, As...>
 
 				XTAL_TO2_(XTAL_DEF_(alias) ensemble(size_t i), u_ensemble[i])
 				XTAL_TO2_(XTAL_DEF_(alias) ensemble(        ), u_ensemble   )
+				//\
+				XTAL_TO2_(XTAL_DEF_(alias) lead(), u_ensemble.front())
 				XTAL_TO2_(XTAL_DEF_(alias) lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
@@ -163,16 +171,27 @@ struct polymer<U, As...>
 				{
 					auto h  = i.head();
 					auto u_ = u_ensemble.scan(h);
-				//	When a voice is initiated...
+
+				// If an onset-event is received...
 					if (0 == o) {
-					//	...terminate the previous entry, if it exists:
+					
+					// If a voice already exists for this `key_s`...
 						if (u_ < u_ensemble.end() and h == u_->head()) {
-						//	...assuming that it hasn't been terminated already:
-							assert(1 != u_->efflux(occur::stage_f(-1)));
-							(void) u_->influx(occur::stage_f(-1), oo...);
+
+						//	Recycle/terminate the current voice:
+							auto u = *u_;
+							switch (u_->influx(occur::stage_f(-1), oo...)) {
+							case  0: break;// Successful termination.
+							case  1: break;// Already terminated?
+							case -1:       // No response!
+								_std::abort();
+							}
+							u_ = u_ensemble.poke(u_, h, XTAL_MOV_(u));
 						}
-					//	...then allocate a new instance:
-						u_ = u_ensemble.poke(u_, h, lead());
+						else {
+						//	Allocate a new voice using the `lead()`:
+							u_ = u_ensemble.poke(u_, h, lead());
+						}
 					}
 					assert(u_->head() == h);
 					return u_->influx(o, XTAL_REF_(oo)...);
@@ -191,7 +210,7 @@ struct polymer<U, As...>
 				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
 				noexcept -> signed
 				{
-					u_ensemble.cull([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
+					u_ensemble.free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
 					
 					for (auto &vox:u_ensemble) {
 						if (1 == vox.efflux(XTAL_REF_(render_o))) {
@@ -202,20 +221,16 @@ struct polymer<U, As...>
 					Either configure `vox` (e.g. with `stored`), \
 					or reapply the base `monomer`. \
 
-					///\todo\
-					Examine the possibility of forwarding an accumulating view. \
-
 					if constexpr (provision::stored_q<S_>) {
+						using arrange::_detail::mix_to;
 						/**/
-						using namespace arrange::_detail;
-						
 						size_type i{count_f(u_ensemble)};
 						
 						auto vox_f = [&]<class N> (N n) XTAL_0FN {
 							i -= n;
-							[&]<auto ...I> (bond::seek_t<I...>) XTAL_0FN {
-								mix_to(review_o, u_ensemble[i + I]()...);
-							} (bond::seek_s<n>{});
+							[&]<auto ...I> (bond::seek_t<I...>)
+								XTAL_0FN {mix_to(review_o, u_ensemble[i + I]()...);}
+							(bond::seek_s<n>{});
 						};
 						while (i) {switch (i) {
 							case 1:          {vox_f(constant_t<1>{}); break;}
@@ -225,7 +240,7 @@ struct polymer<U, As...>
 						}}
 						/*/
 						for (auto &vox:u_ensemble) {
-							assign_mix_f(review_o, vox());
+							mix_to(review_o, vox());
 						}
 						/***/
 					}

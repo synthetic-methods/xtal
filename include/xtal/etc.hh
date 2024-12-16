@@ -211,9 +211,9 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_0FN                      [[msvc::forceinline]] constexpr noexcept
 #endif//XTAL_0FN
 
-#define XTAL_0FN_(...)                 XTAL_0FN {return (__VA_ARGS__);}                   ///< Lambda expression (after `[captures]`).
-#define XTAL_1FN_(...)  (auto &&...oo) XTAL_0FN {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
-#define XTAL_XFN_(...)        (auto o) XTAL_0FN_(decltype(o){1} == o? o: o&(__VA_ARGS__)) ///< Lambda `signed` short-circuiting reducer (after `[captures]`).
+#define XTAL_1FN_(...)     (auto &&...oo) XTAL_0FN            {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
+#define XTAL_0FN_(...)                    XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda expression (after `[captures]`).
+#define XTAL_XFN_(ARG,SYM,...)   (auto o) XTAL_0FN_(ARG == o? o: o SYM(__VA_ARGS__))                    ///< Lambda accumulating conditional (after `[captures]`).
 
 #define XTAL_IMP_(ARG,...)                XTAL_IMP_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
 
@@ -231,23 +231,23 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DO0_(SIG, ...)         SIG                           __VA_ARGS__   ;///< Define member function.
-#define XTAL_DO1_(SIG, ...)         SIG const                     __VA_ARGS__   ;///< Define `const` member function.
-#define XTAL_DO2_(SIG, ...)         SIG const                     __VA_ARGS__   \
-                                    SIG                           __VA_ARGS__   ;///< Define `const?` member functions.
-#define XTAL_DO4_(SIG, ...)         SIG const&                    __VA_ARGS__   \
-                                    SIG      &                    __VA_ARGS__   \
-                                    SIG const&&                   __VA_ARGS__   \
-                                    SIG      &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
+#define XTAL_DO0_(SIG, ...)         SIG                            __VA_ARGS__   ;///< Define member function.
+#define XTAL_DO1_(SIG, ...)         SIG const                      __VA_ARGS__   ;///< Define `const` member function.
+#define XTAL_DO2_(SIG, ...)         SIG const                      __VA_ARGS__   \
+                                    SIG                            __VA_ARGS__   ;///< Define `const?` member functions.
+#define XTAL_DO4_(SIG, ...)         SIG const &                    __VA_ARGS__   \
+                                    SIG       &                    __VA_ARGS__   \
+                                    SIG const &&                   __VA_ARGS__   \
+                                    SIG       &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
 
-#define XTAL_TO0_(SIG, ...)         SIG         noexcept {return (__VA_ARGS__);};///< Define `noexcept` member expression returning `...`.
-#define XTAL_TO1_(SIG, ...)         SIG const   noexcept {return (__VA_ARGS__);};///< Define `noexcept` `const` member expression returning `...`.
-#define XTAL_TO2_(SIG, ...)         SIG const   noexcept {return (__VA_ARGS__);}\
-                                    SIG         noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
-#define XTAL_TO4_(SIG, ...)         SIG const&  noexcept {return (__VA_ARGS__);}\
-                                    SIG      &  noexcept {return (__VA_ARGS__);}\
-                                    SIG const&& noexcept {return (__VA_ARGS__);}\
-                                    SIG      && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
+#define XTAL_TO0_(SIG, ...)         SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` member expression returning `...`.
+#define XTAL_TO1_(SIG, ...)         SIG const    noexcept {return (__VA_ARGS__);};///< Define `noexcept` `const` member expression returning `...`.
+#define XTAL_TO2_(SIG, ...)         SIG const    noexcept {return (__VA_ARGS__);}\
+                                    SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
+#define XTAL_TO4_(SIG, ...)         SIG const &  noexcept {return (__VA_ARGS__);}\
+                                    SIG       &  noexcept {return (__VA_ARGS__);}\
+                                    SIG const && noexcept {return (__VA_ARGS__);}\
+                                    SIG       && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
 
 
 #define XTAL_TRY_(...)         (requires{ __VA_ARGS__ ;})                        ///< Check requirements.

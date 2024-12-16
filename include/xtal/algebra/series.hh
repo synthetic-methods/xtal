@@ -167,9 +167,9 @@ struct series<A>
 			typename S_::difference_type constexpr M = N_data >> 2U;// `1/8`th
 			static_assert(-4 <  N_shift);
 			generate<M + (-3 <  N_shift)>(y);
-			if constexpr (-2 <= N_shift) _detail::copy_to(prev(j, 2*M), span(i, next(i, 1*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.imag(), -v.real()}));
-			if constexpr (-1 <= N_shift) _detail::copy_to(next(i, 2*M), span(i, next(i, 2*M)), [] (U_data const &v) XTAL_0FN_(U_data { v.imag(), -v.real()}));
-			if constexpr (-0 <= N_shift) _detail::copy_to(next(i, 4*M), span(i, next(i, 4*M)), [] (U_data const &v) XTAL_0FN_(U_data {-v.real(), -v.imag()}));
+			if constexpr (-2 <= N_shift) _detail::copy_to<[] (U_data const &v) XTAL_0FN_(U_data{-v.imag(), -v.real()})>(prev(j, 2*M), span(i, next(i, 1*M)));
+			if constexpr (-1 <= N_shift) _detail::copy_to<[] (U_data const &v) XTAL_0FN_(U_data{ v.imag(), -v.real()})>(next(i, 2*M), span(i, next(i, 2*M)));
+			if constexpr (-0 <= N_shift) _detail::copy_to<[] (U_data const &v) XTAL_0FN_(U_data{-v.real(), -v.imag()})>(next(i, 4*M), span(i, next(i, 4*M)));
 			static_assert( 0 >= N_shift);// TODO: Extend to allow multiple copies using `bond::seek`.
 			
 			return self();
@@ -181,12 +181,13 @@ struct series<A>
 		The size of both `this` and `that` must be expressible as an integral power of two, \
 		and `1 < that.size() <= this->size()`. \
 
-		template <int N_direction=1, isomorphic_q<T> Y0> requires in_n<N_direction, 1, -1> and complex_field_q<U_data>
-		XTAL_LET transform(Y0 &&that) const
+		template <int N_direction=1> requires in_q<N_direction, 1, -1> and complex_field_q<U_data>
+		XTAL_LET transform(isomorphic_q<T> auto &that) const
 		noexcept -> decltype(auto)
 		{
-			using Y = based_t<Y0>;
-			using I = typename Y::difference_type;
+			using Xs = XTAL_ALL_(that);
+			using Ys = typename Xs::transverse::type;
+			using I  = typename Xs:: difference_type;
 		
 		//	Ensure the size of both domain and codomain are powers of two:
 			I constexpr N_width = N_data;
@@ -202,7 +203,7 @@ struct series<A>
 		
 		//	Conjugate the input if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
-				_detail::apply_to(that, [] XTAL_1FN_(_std::conj));
+				_detail::apply_to<[] XTAL_1FN_(_std::conj)>(that);
 			}
 		//	Compute the transform of `that` using the precomputed half-period sinusoid in `this`:
 			for (I n{}; n < n_depth; ++n) {
@@ -221,31 +222,35 @@ struct series<A>
 			}
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
-				_detail::apply_to(that, [=] XTAL_1FN_(_std::conj));
+				_detail::apply_to<[] XTAL_1FN_(_std::conj)>(that);
 				that /= n_width;
 			}
-		
+
 		//	Cast the output to the transformed domain:
-			return fudge_f<typename Y::transverse::type>(that);
+			return reinterpret_cast<Ys &>(that);
 		}
-
-
-		///\returns a new `series` representing the FFT of `lhs`, \
-		using `this` as the Fourier basis. \
-
-		template <int N_direction=1, isomorphic_q<T> Y0> requires in_n<N_direction, 1, -1>
-		XTAL_DEF_(short)
-		XTAL_LET transformation(Y0 y0) const
+		template <int N_direction=1> requires in_q<N_direction, 1, -1> and complex_field_q<U_data>
+		XTAL_LET transform(isomorphic_q<T> auto &&that) const
 		noexcept -> decltype(auto)
 		{
-			return transform<N_direction>(XTAL_MOV_(y0));
+			(void) transform<N_direction >(that);
+			return reinterpret_cast<typename XTAL_ALL_(that)::transverse::type &&>(that);
+		}
+		///\returns a new `series` representing the FFT of `that`, \
+		using `this` as the Fourier basis. \
+
+		template <int N_direction=1> requires in_q<N_direction, 1, -1>
+		XTAL_DEF_(short)
+		XTAL_LET transformation(isomorphic_q<T> auto that) const
+		noexcept -> auto
+		{
+			return transform<N_direction>(XTAL_MOV_(that));
 		}
 
 		///\returns `lhs` convolved with `rhs`, \
 		using `this` as the Fourier basis. \
-
-		template <isomorphic_q<T> Y0, is_q<Y0> Y1>
-		XTAL_LET convolve(Y0 &&y0, Y1 y1) const
+s
+		XTAL_LET convolve(isomorphic_q<T> auto &&y0, XTAL_SYM_(y0) auto y1) const
 		noexcept -> decltype(auto)
 		{
 			return transform<-1>(transform<1>(XTAL_REF_(y0)) *= transform<1>(y1));
@@ -253,10 +258,9 @@ struct series<A>
 		///\returns a new `series` representing the convolution of `y0` with `y1`, \
 		using `this` as the Fourier basis. \
 
-		template <isomorphic_q<T> Y0, is_q<Y0> Y1>
 		XTAL_DEF_(short)
-		XTAL_LET convolution(Y0 y0, Y1 const &y1) const
-		noexcept -> Y0
+		XTAL_LET convolution(isomorphic_q<T> auto y0, XTAL_SYM_(y0) auto const &y1) const
+		noexcept -> auto
 		{
 			return convolve(XTAL_MOV_(y0), y1);
 		}
@@ -283,7 +287,7 @@ struct series<A>
 				Y s_(s);
 				Y t_(t);
 				Y(constant_t<-1>{}).convolve(s_, t_);
-				_detail::move_to(s.begin(), s_, [] XTAL_1FN_(_std::real));
+				_detail::move_to<[] XTAL_1FN_(_std::real)>(s.begin(), s_);
 			}
 			return s;
 		}

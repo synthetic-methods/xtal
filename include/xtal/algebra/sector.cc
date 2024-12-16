@@ -56,9 +56,8 @@ TAG_("sector")
 		auto foo = W{2.0, 0.5};
 		auto bar = _op::template roots_f<2>((T_alpha) 2);
 		auto baz = bar*bar;
-	//	bar.transact([] XTAL_1FN_(_op::square_f), bond::computrim_f<1>);
-		TRUE_(get<0>(foo) == bond::computrim_f<19>(get<0>(baz)));
-		TRUE_(get<1>(foo) == bond::computrim_f<19>(get<1>(baz)));
+		TRUE_(check_f<19>(get<0>(foo), get<0>(baz)));
+		TRUE_(check_f<19>(get<1>(foo), get<1>(baz)));
 
 		foo *= {(T_alpha) 0.0, (T_alpha) 0.0};
 

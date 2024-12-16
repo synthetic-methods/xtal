@@ -74,9 +74,8 @@ struct monomer<U, As...>
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-			~	subtype() noexcept=default;
-				subtype() noexcept=default;
-
+			~	subtype()                noexcept=default;
+				subtype()                noexcept=default;
 				XTAL_NEW_(copy, subtype, noexcept=default)
 				XTAL_NEW_(move, subtype, noexcept=default)
 
@@ -115,7 +114,7 @@ struct monomer<U, As...>
 				XTAL_LET efflux(occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
-					return [this] XTAL_XFN_((void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
+					return [this] XTAL_XFN_(1,&,(void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
 				}
 
 			};

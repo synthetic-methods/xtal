@@ -27,8 +27,7 @@ struct define
 	public:// CONSTRUCT
 		using S_::S_;
 
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
@@ -49,10 +48,10 @@ struct define
 		})
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()       &&noexcept {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const &&noexcept {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()        &noexcept {return static_cast<Y        &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const  &noexcept {return static_cast<Y const  &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()       && noexcept {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const && noexcept {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self()        & noexcept {return static_cast<Y        &>          (*this) ;}
+		template <fungible_q<subtype> Y=T> XTAL_DEF_(alias) self() const  & noexcept {return static_cast<Y const  &>          (*this) ;}
 
 		///\returns a copy of `*this` with type `Y=T`. \
 

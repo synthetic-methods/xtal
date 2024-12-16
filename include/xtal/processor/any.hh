@@ -84,7 +84,7 @@ struct define
 								review_o.subview(scan),
 								render_o.subview(scan).skip(step)
 							)))
-						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
+						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
 					}
 				}
 				///\
@@ -224,7 +224,7 @@ struct defer<U>
 		XTAL_DO2_(template <auto ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			using namespace _xtd::ranges;
 			//\
@@ -242,7 +242,7 @@ struct defer<U>
 		XTAL_DO2_(template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			return iterative_f(head().template reify<decltype(xs)...>(), XTAL_REF_(xs)...);
 		})
@@ -250,7 +250,7 @@ struct defer<U>
 		XTAL_DO0_(template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		requires XTAL_TRY_(U_::function(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
 		{
 			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
@@ -258,7 +258,7 @@ struct defer<U>
 		XTAL_DO0_(template <auto ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
 		{
 			return iterative_f([] XTAL_1FN_(U_::template function<Is...>), XTAL_REF_(xs)...);

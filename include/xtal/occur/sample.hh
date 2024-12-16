@@ -49,8 +49,7 @@ public:
 		XTAL_NEW_(copy, subtype, noexcept=default)
 		XTAL_NEW_(move, subtype, noexcept=default)
 
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}

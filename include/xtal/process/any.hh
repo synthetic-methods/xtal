@@ -55,6 +55,8 @@ struct define
 				using Y = decltype(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...));
 
 			public:
+				//\
+				using point_type = Y (T::*) (Xs...) const;
 				using point_type = _std::add_const_t<Y (T::*) (Xs...) const>;// Added `const` for type-reflection...
 				XTAL_SET point = static_cast<point_type>(&T::template divert<Is...>);
 

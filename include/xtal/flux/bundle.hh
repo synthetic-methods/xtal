@@ -78,7 +78,7 @@ struct bundle
 		XTAL_LET influx(auto &&...oo)
 		noexcept -> signed
 		{
-			return [this, oo...] XTAL_XFN_(self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(1,&,self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...));
 		}
 
 		///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
@@ -87,7 +87,7 @@ struct bundle
 		XTAL_LET efflux(auto &&...oo)
 		noexcept -> signed
 		{
-			return [this, oo...] XTAL_XFN_(S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(1,&,S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 		}
 
 		///\note\

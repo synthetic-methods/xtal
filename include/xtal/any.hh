@@ -56,8 +56,8 @@ template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::    
 template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::      below_m<M, N>;
 template <auto  M, auto  ...Ns>	concept         above_p =          _entail::      above_p<M, Ns...>;
 template <auto  M, auto  ...Ns>	concept         below_p =          _entail::      below_p<M, Ns...>;
-template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::         in_n<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::         un_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            in_q	=          _entail::         in_q<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_q	=          _entail::         un_q<N, Ms...>;
 
 template <class T             >	using           based_t	=          _entail::      based_t<T>;
 template <class          ...Ts>	concept         based_q	= (...and  _entail::      based_q<Ts>);
@@ -113,23 +113,15 @@ template <         class ...Ts>	using       identical_t	= _entail::    identical
 
 template <         class ...Ts>	using       isotropic_t	= _entail::    isotropic <Ts...>;
 template <         class ...Ts>	using       epitropic_t	= _entail::    epitropic <Ts...>;
-template <         class ...Ts>	using     anisotropic_t	= _entail::  anisotropic <Ts...>;
-template <         class ...Ts>	using     anepitropic_t	= _entail::  anepitropic <Ts...>;
 
 template <         class ...Ts>	concept     isotropic_q	= _entail::    isotropic_q<Ts...>;
 template <         class ...Ts>	concept     epitropic_q	= _entail::    epitropic_q<Ts...>;
-template <         class ...Ts>	concept   anisotropic_q	= _entail::  anisotropic_q<Ts...>;
-template <         class ...Ts>	concept   anepitropic_q	= _entail::  anepitropic_q<Ts...>;
 
 template <         class ...Ts>	using      isomorphic_t	= _entail::   isomorphic <Ts...>;
 template <         class ...Ts>	using      epimorphic_t	= _entail::   epimorphic <Ts...>;
-template <         class ...Ts>	using    anisomorphic_t	= _entail:: anisomorphic <Ts...>;
-template <         class ...Ts>	using    anepimorphic_t	= _entail:: anepimorphic <Ts...>;
 
 template <         class ...Ts>	concept    isomorphic_q	= _entail::   isomorphic_q<Ts...>;
 template <         class ...Ts>	concept    epimorphic_q	= _entail::   epimorphic_q<Ts...>;
-template <         class ...Ts>	concept  anisomorphic_q	= _entail:: anisomorphic_q<Ts...>;
-template <         class ...Ts>	concept  anepimorphic_q	= _entail:: anepimorphic_q<Ts...>;
 
 template <         class ...Ts>	concept            id_q	= _entail:: id_q<   Ts...>;//< `Ts...` are identical.
 template <         class ...Ts>	concept            is_q	= _entail:: is_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
@@ -139,7 +131,8 @@ template <class T, class ...Ts>	concept            as_p	= _entail:: as_p<T, Ts..
 template <         class ...Ts>	concept      fungible_q	= _entail::   fungible_q<Ts...>; //< `T` and `Ts...` are   related by inheritance.
 template <         class ...Ts>	concept    infungible_q	= _entail:: infungible_q<Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
-template <class X, class ...Fs>	concept    idempotent_q	=  (...and _entail:: idempotent_q<X, Fs>);//< `X` is unchanged by `Fs...`.
+template <class F, class ...Xs>	concept    automorphism_p	=  (...and _entail:: automorphism_p<F, Xs>);//< `Xs` are unchanged by `F ...`.
+template <class X, class ...Fs>	concept    automorphism_q	=  (...and _entail:: automorphism_q<X, Fs>);//< `X `  is unchanged by `Fs...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

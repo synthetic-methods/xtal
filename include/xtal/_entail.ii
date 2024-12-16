@@ -45,8 +45,8 @@ template <auto  M, auto     N >	XTAL_LET        above_m	= (M < N)? N: static_cas
 template <auto  M, auto     N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
 template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
 template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
-template <auto  N, auto  ...Ms>	concept            in_n	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
-template <auto  N, auto  ...Ms>	concept            un_n	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
+template <auto  N, auto  ...Ms>	concept            in_q	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
+template <auto  N, auto  ...Ms>	concept            un_q	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
 
 template <class T             >	using           based_t	= _std::remove_cvref_t<T>;
 template <class T             >	concept         based_q	=        _std::same_as<T, based_t<T>>;
@@ -151,26 +151,16 @@ template <class U             >	struct       identity<_std::type_identity<U>> {u
 template <         class ...Ts>	struct      identical   ;// `is_same`
 template <         class ...Ts>	struct      isotropic   ;// `is_same` modulo qualifiers
 template <         class ...Ts>	struct      epitropic   ;// `is_constructible`
-template <         class ...Ts>	struct    anisotropic	: _std::negate< isotropic<Ts...>> {};
-template <         class ...Ts>	struct    anepitropic	: _std::negate< epitropic<Ts...>> {};
-template <         class ...Ts>	struct     isomorphic	:  isotropic<Ts...> {};
-template <         class ...Ts>	struct     epimorphic	:  epitropic<Ts...> {};
-template <         class ...Ts>	struct   anisomorphic	: _std::negate<isomorphic<Ts...>> {};
-template <         class ...Ts>	struct   anepimorphic	: _std::negate<epimorphic<Ts...>> {};
-
 template <class T, class ...Ts>	struct      identical	<T, Ts...> : _std::conjunction<_std::is_same<Ts, T>...> {};
 template <class T, class ...Ts>	struct      isotropic	<T, Ts...> : _std::conjunction<_std::is_same<based_t<Ts>, based_t<T>>...> {};
 template <class T, class ...Ts>	struct      epitropic	<T, Ts...> : _std::conjunction<_std::is_constructible<Ts, T>...> {};
-
 template <         class ...Ts>	concept     isotropic_q	=	   isotropic<Ts...>::value;
 template <         class ...Ts>	concept     epitropic_q	=	   epitropic<Ts...>::value;
-template <         class ...Ts>	concept   anisotropic_q	=	 anisotropic<Ts...>::value;
-template <         class ...Ts>	concept   anepitropic_q	=	 anepitropic<Ts...>::value;
 
+template <         class ...Ts>	struct     isomorphic	:  isotropic<Ts...> {};
+template <         class ...Ts>	struct     epimorphic	:  epitropic<Ts...> {};
 template <         class ...Ts>	concept    isomorphic_q	=	  isomorphic<Ts...>::value;
 template <         class ...Ts>	concept    epimorphic_q	=	  epimorphic<Ts...>::value;
-template <         class ...Ts>	concept  anisomorphic_q	=	anisomorphic<Ts...>::value;
-template <         class ...Ts>	concept  anepimorphic_q	=	anepimorphic<Ts...>::value;
 
 template <         class ...Ts>	concept            id_q	=  identical<Ts...>::value;
 template <         class ...Ts>	concept            is_q	=  isotropic<Ts...>::value;
@@ -184,7 +174,8 @@ template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disju
 template <         class ...Ts>	concept      fungible_q	=      fungible<XTAL_RAW_(Ts)...>::value;
 template <         class ...Ts>	concept    infungible_q	=  not fungible<XTAL_RAW_(Ts)...>::value;
 
-template <class X, class F    >	concept    idempotent_q	=  is_q<return_t<F, X>, X>;
+template <class F, class X    >	concept  automorphism_p	=  is_q<return_t<F, X>, X>;
+template <class X, class F    >	concept  automorphism_q	=  is_q<return_t<F, X>, X>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +259,7 @@ template <  based_q T>	requires  static_sized_q<T>          struct fluid_sized<T
 template <  based_q T>	requires   fixed_sized_q<T>          struct fluid_sized<T>                :  fixed_sized< T        > {};
 template <unbased_q T>	requires   fluid_sized_q<based_t<T>> struct fluid_sized<T>                :  fluid_sized<based_t<T>> {};
 
-template <class T    >	requires un_n<constant_q<T>>         struct       sized<T>                :  fluid_sized<           T > {};
+template <class T    >	requires un_q<constant_q<T>>         struct       sized<T>                :  fluid_sized<           T > {};
 template <class T    >	requires      constant_q<T>          struct       sized<T>                :        sized<identity_t<T>> {};
 
 
@@ -581,8 +572,8 @@ concept continuous_field_p = contiguous_field_p<N, T, U> and not integral_group_
 template <size_type N, class T, class U=T>
 concept complex_field_p = complex_number_q<T> or continuous_field_p<2, T, U> and requires (based_t<T> t)
 {
-	{t.real()} -> anisotropic_q<T>;
-	{t.imag()} -> anisotropic_q<T>;
+	{t.real()};// -> is_q<valued_u<T>>;
+	{t.imag()};// -> is_q<valued_u<T>>;
 };
 template <size_type N, class T, class U=T>
 concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;

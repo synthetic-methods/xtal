@@ -51,12 +51,12 @@ struct indent<Ns...>
 
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   indexed_q<S> and un_n<covalued_q<S>>
+		requires   indexed_q<S> and un_q<covalued_q<S>>
 		:	S_{XTAL_MOV_(u)}
 		{}
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   indexed_q<S> and in_n<covalued_q<S>>
+		requires   indexed_q<S> and in_q<covalued_q<S>>
 		:	S_{S::ordinate(XTAL_MOV_(u))}
 		{}
 

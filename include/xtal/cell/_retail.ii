@@ -39,26 +39,23 @@ struct any<A>
 		/**/
 		using S_::S_;
 		/*/
-	~	subtype() noexcept=default;
-		subtype() noexcept=default;
-
+	~	subtype()                noexcept=default;
+		subtype()                noexcept=default;
 		XTAL_NEW_(copy, subtype, noexcept=default)
 		XTAL_NEW_(move, subtype, noexcept=default)
 
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
-		noexcept
-		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
-		{}
 		XTAL_NEW_(explicit) subtype(auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{}
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
+		noexcept
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
 		///\
 		Attempts construction from infungible-but-compatible types via inspection. \
 		
-		template <infungible_q<subtype> W>
-		XTAL_NEW_(explicit) subtype(W &&w, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(infungible_q<subtype> auto &&w, auto &&...oo)
 		noexcept
 		requires XTAL_TRY_(typename W::template self_s<A>)
 		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)

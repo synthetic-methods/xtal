@@ -229,14 +229,12 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-	~	subtype() noexcept=default;
-	//	subtype() noexcept=default;
-
+	~	subtype()                noexcept=default;
+	//	subtype()                noexcept=default;
 		XTAL_NEW_(copy, subtype, noexcept=default)
 		XTAL_NEW_(move, subtype, noexcept=default)
 		
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
@@ -265,10 +263,10 @@ struct defer_field
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(alias) head() const  &noexcept {return remember_f(body_part);}
-		XTAL_DEF_(alias) head()        &noexcept {return remember_f(body_part);}
-		XTAL_DEF_(alias) head() const &&noexcept {return remember_f(XTAL_MOV_(body_part));}
-		XTAL_DEF_(alias) head()       &&noexcept {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_DEF_(alias) head() const  & noexcept {return remember_f(body_part);}
+		XTAL_DEF_(alias) head()        & noexcept {return remember_f(body_part);}
+		XTAL_DEF_(alias) head() const && noexcept {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_DEF_(alias) head()       && noexcept {return remember_f(XTAL_MOV_(body_part));}
 		
 		XTAL_DEF_(inline)
 		XTAL_LET head(auto &&...oo)
@@ -286,7 +284,7 @@ struct defer_field
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
 		noexcept -> auto
-		requires in_n<S_::pack_size::value, 0> and is_q<bool, U>
+		requires in_q<S_::pack_size::value, 0> and is_q<bool, U>
 		{
 			return size_2;
 		}
@@ -322,7 +320,7 @@ struct defer_field<U>
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type const & requires      member_q<U>  {return             body_part;}
-		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type         requires un_n<member_q<U>> {return (head_type) body_part;}
+		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type         requires un_q<member_q<U>> {return (head_type) body_part;}
 		
 	};
 };
@@ -349,20 +347,18 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		using S_::self;
 		body_type body_part{};
 
-	~	subtype() noexcept=default;
-		subtype() noexcept=default;
-
+	~	subtype()                noexcept=default;
+		subtype()                noexcept=default;
 		XTAL_NEW_(copy, subtype, noexcept=default)
 		XTAL_NEW_(move, subtype, noexcept=default)
 		
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
-		template <infungible_q<subtype> O> requires (not integral_q<O>)
-		XTAL_NEW_(explicit) subtype(O &&o, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(infungible_q<subtype> auto &&o, auto &&...oo)
 		noexcept
+		requires un_q<integral_q<decltype(o)>>
 		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
 		}
@@ -425,29 +421,25 @@ struct defer_field<unit_type[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-	~	subtype() noexcept=default;
-		subtype() noexcept=default;
-
+	~	subtype()                noexcept=default;
+		subtype()                noexcept=default;
 		XTAL_NEW_(copy, subtype, noexcept=default)
 		XTAL_NEW_(move, subtype, noexcept=default)
 		
-		template <fungible_q<subtype> O>
-		XTAL_NEW_(explicit) subtype(O &&o)
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 		///\
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
-		template <integral_q A>
-		XTAL_NEW_(explicit) subtype(A &&a)
+		XTAL_NEW_(explicit) subtype(integral_q auto &&a)
 		noexcept
 		:	S_(head_type(XTAL_REF_(a)) >> N_depth)
 		,	body_part(head_type(a)&(N_width - 1))
 		{
 		}
-		template <infungible_q<subtype> A>
-		XTAL_NEW_(explicit) subtype(A &&a, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(infungible_q<subtype> auto &&a, auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		,	body_part(member_f<head_type>(XTAL_REF_(a)))

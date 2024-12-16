@@ -15,9 +15,9 @@ namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
 template <class T>	struct  item             {using type = T         ;};
-template <class T>	struct  item<T const   > {using type = T const   ;};
+template <class T>	struct  item<T const   > {using type = T         ;};
 template <class T>	struct  item<T       &&> {using type = T         ;};
-template <class T>	struct  item<T const &&> {using type = T const   ;};
+template <class T>	struct  item<T const &&> {using type = T         ;};
 template <class T>	struct  item<T        &> {using type = T        &;};
 template <class T>	struct  item<T const  &> {using type = T const  &;};
 template <class T>	using   item_t	= typename item<T>::type;
@@ -83,7 +83,7 @@ struct   pack_item<T> {using type = T;};
 template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};
 
-template <     fixed_valued_q T, size_type I> requires un_n<tuple_sized_q<T>> struct pack_item<T, I> {using type = fixed_valued_u<T>;};
+template <     fixed_valued_q T, size_type I> requires un_q<tuple_sized_q<T>> struct pack_item<T, I> {using type = fixed_valued_u<T>;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T        , I> {using type = _std::tuple_element_t<I, based_t<T>>        ;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T       &, I> {using type = _std::tuple_element_t<I, based_t<T>>       &;};
 template <tuple_sized_q T, size_type I>                                 struct pack_item<T const &, I> {using type = _std::tuple_element_t<I, based_t<T>> const &;};
@@ -226,7 +226,7 @@ template <class ...Ts> concept       pack_q = pack_size_q<Ts...> and (...and pac
 template <class ...Ts> concept     dipack_q = pack_q<Ts...> and (...and (2 == pack_size_n<Ts>));
 template <class ...Ts> concept   idiopack_q = (...and is_q<Ts, repack_t<Ts>>);
 template <class ...Ts> concept   homopack_q = pack_q<Ts...> and      iterable_q<Ts...>  and idiopack_q<Ts...>;
-template <class ...Ts> concept heteropack_q = pack_q<Ts...> and un_n<iterable_q<Ts...>> and idiopack_q<Ts...>;
+template <class ...Ts> concept heteropack_q = pack_q<Ts...> and un_q<iterable_q<Ts...>> and idiopack_q<Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

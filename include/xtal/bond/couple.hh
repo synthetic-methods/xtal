@@ -29,7 +29,7 @@ noexcept -> auto
 		XTAL_LET f = invoke_f<V>;
 		using    F = invoke_t<V>;
 		using    T = couple_t<_std::invoke_result_t<F, Xs>...>;
-		if constexpr ((...and idempotent_q<Xs, F>)) {
+		if constexpr (automorphism_p<F, Xs...>) {
 			return T{ (XTAL_REF_(xs))...};
 		}
 		else {

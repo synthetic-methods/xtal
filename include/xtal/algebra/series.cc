@@ -35,7 +35,6 @@ TAG_("solid", "series")
 	}
 	TRY_("transformation")
 	{
-		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr O = 1 << 5;
 		T_sigma constexpr N = 1 << 3;
 		T_sigma constexpr M = N  - 1;
@@ -50,20 +49,19 @@ TAG_("solid", "series")
 		source[2] = source[M - 2] = T_aphex(3.0, 3.0);
 		source[3] = source[M - 3] = T_aphex(4.0, 4.0);
 
-		auto target = basis.transformation(source).transact(iffy);
-		TRUE_(target[0] == iffy(T_aphex( 0.1600000000000000e+2,  0.1600000000000000e+2)));
-		TRUE_(target[1] == iffy(T_aphex(-0.4828427124746192e+1, -0.1165685424949238e+2)));
-		TRUE_(target[2] == iffy(T_aphex( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-		TRUE_(target[3] == iffy(T_aphex(-0.3431457505076203e+0,  0.8284271247461885e+0)));
-		TRUE_(target[4] == iffy(T_aphex( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-		TRUE_(target[5] == iffy(T_aphex( 0.8284271247461912e+0, -0.3431457505076203e+0)));
-		TRUE_(target[6] == iffy(T_aphex( 0.0000000000000000e+0,  0.0000000000000000e+0)));
-		TRUE_(target[7] == iffy(T_aphex(-0.1165685424949238e+2, -0.4828427124746188e+1)));
+		auto target = basis.transformation(source);
+		TRUE_(check_f<-6>(target[0], T_aphex{ 0.1600000000000000e+2,  0.1600000000000000e+2}));
+		TRUE_(check_f<-6>(target[1], T_aphex{-0.4828427124746192e+1, -0.1165685424949238e+2}));
+		TRUE_(check_f<-6>(target[2], T_aphex{ 0.0000000000000000e+0,  0.0000000000000000e+0}));
+		TRUE_(check_f<-6>(target[3], T_aphex{-0.3431457505076203e+0,  0.8284271247461885e+0}));
+		TRUE_(check_f<-6>(target[4], T_aphex{ 0.0000000000000000e+0,  0.0000000000000000e+0}));
+		TRUE_(check_f<-6>(target[5], T_aphex{ 0.8284271247461912e+0, -0.3431457505076203e+0}));
+		TRUE_(check_f<-6>(target[6], T_aphex{ 0.0000000000000000e+0,  0.0000000000000000e+0}));
+		TRUE_(check_f<-6>(target[7], T_aphex{-0.1165685424949238e+2, -0.4828427124746188e+1}));
 
 	}
 	TRY_("convolution")
 	{
-		auto    constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
 		T_sigma constexpr N = 1 << 3;
 		T_sigma constexpr M = N  - 1;
 
@@ -73,7 +71,8 @@ TAG_("solid", "series")
 		U_series lhs = {0, 1, 2, 0, 0, 0, 0, 0};
 		U_series rhs = {1, 0, 1, 0, 0, 0, 0, 0};
 		U_series xhs = {0, 1, 2, 1, 2, 0, 0, 0};
-		U_series yhs = basis.convolution(lhs, rhs).transact(iffy);
+		U_series yhs = basis.convolution(lhs, rhs);
+		_detail::apply_to<[] XTAL_1FN_(bond::computrim_f<16>)>(yhs);
 		TRUE_(xhs == yhs);
 
 	}

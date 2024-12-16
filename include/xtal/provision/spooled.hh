@@ -47,22 +47,7 @@ struct spooled<A>
 	using superkind = bond::tag<spooled>;
 	
 	template <class S>
-	class subtype;
-	
-	template <class S> requires _std::unsigned_integral<value_type>
-	class subtype<S> : public bond::compose_s<S, superkind>
-	{
-		using S_ = bond::compose_s<S, superkind>;
-		
-	public:
-		using S_::S_;
-		
-		template <class U>
-		using spool_t = arrange::block_t<U[(unsigned) value]>;
-
-	};
-	template <class S> requires _std::  signed_integral<value_type>
-	class subtype<S> : public bond::compose_s<S, superkind>
+	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		

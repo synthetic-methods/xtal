@@ -224,7 +224,7 @@ void monomer_chaining__rvalue()
 	TRUE_(0 == yhs.size());
 
 	auto seq = occur::render_f(N);
-	yhs >>= seq  ; TRUE_(N == yhs.size());// idempotent!
+	yhs >>= seq  ; TRUE_(N == yhs.size());// automorphism!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
@@ -256,7 +256,7 @@ void monomer_chaining__lvalue()
 	xhs <<= Ox_onset((T_alpha) 000);
 
 	auto seq = occur::render_f(N);
-	yhs >>= seq  ;// idempotent!
+	yhs >>= seq  ;// automorphism!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 

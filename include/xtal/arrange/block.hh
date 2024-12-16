@@ -71,9 +71,7 @@ struct superblock<U[N]>
 		XTAL_SET N_data = N;
 		using    U_data = U;
 
-	public:// CONSTRUCT
-		using S_::S_;
-		
+	public:// ACCESS
 		template <class V_data=void>
 		XTAL_DEF_(short)
 		XTAL_LET twin() const
@@ -87,9 +85,10 @@ struct superblock<U[N]>
 			}
 		}
 
-	~	homotype() noexcept=default;
-	//	homotype() noexcept=default;
-
+	public:// CONSTRUCT
+		using S_::S_;
+	~	homotype()                noexcept=default;
+	//	homotype()                noexcept=default;
 		XTAL_NEW_(copy, homotype, noexcept=default)
 		XTAL_NEW_(move, homotype, noexcept=default)
 		
@@ -111,22 +110,31 @@ struct superblock<U[N]>
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			if constexpr (covalued_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
-			else                         {_detail::move_to(S_::begin(), a);}
+			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
+			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
+			XTAL_IF0
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<o_f>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to     (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
 		noexcept
 		:	homotype(count_f(a))
 		{
-			if constexpr (covalued_q<T>) {_detail::move_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
-			else                         {_detail::move_to(S_::begin(), a);}
+			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
+			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
+			XTAL_IF0
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<o_f>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to     (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			if constexpr (covalued_q<T>) {_detail::copy_to(S_::begin(), a, [this] XTAL_1FN_(T::ordinate));}
-			else                         {_detail::copy_to(S_::begin(), a);}
+			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
+			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
+			XTAL_IF0
+			XTAL_0IF (covalued_q<T>) {_detail::copy_to<o_f>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::copy_to     (S_::begin(), a);}
 		}
 
 	};
@@ -270,47 +278,17 @@ struct block<A>
 		}
 
 		///\todo\
-		Map `transact` with `(?:co)?ordinate`? \
+		Define in-place `map` via `(?:co)?ordinate`? \
 
-		///\
-		Elementwise immutative transformer. \
-
-		XTAL_TO4_(template <array_q W>
-		XTAL_DEF_(alias) transact(), transact<W>(invoke_f<valued_u<W>>))
-
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f)       &&noexcept -> W&& {return move_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f) const &&noexcept -> W&& {return move_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f)        &noexcept -> W&& {return copy_by<W>(XTAL_REF_(f));}
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET transact(_std::invocable<U_data> auto &&f) const  &noexcept -> W&& {return copy_by<W>(XTAL_REF_(f));}
-		
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET  move_by(_std::invocable<U_data> auto &&f)         noexcept -> W&& {W w; _detail::move_to(w.begin(), self(), XTAL_REF_(f)); return XTAL_MOV_(w);}
-		template <array_q W> XTAL_DEF_(inline) XTAL_LET  copy_by(_std::invocable<U_data> auto &&f) const   noexcept -> W&& {W w; _detail::copy_to(w.begin(), self(), XTAL_REF_(f)); return XTAL_MOV_(w);}
-		///\
-		Elementwise mutative transformer. \
-
-		XTAL_DEF_(inline)
-		XTAL_LET transact(_std::invocable<U_data> auto &&...fs)
-		noexcept -> decltype(auto)
-		{
-			return (transact(XTAL_REF_(fs)), ...);
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET transact(_std::invocable<U_data> auto &&f)
-		noexcept -> decltype(auto)
-		{
-			_detail::apply_to(self(), XTAL_REF_(f));
-			return self();
-		}
-		
 	};
 	using type = bond::isotype<homotype>;
 
 };
 
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o).template let<I>();}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const  &o) -> decltype(auto) {return           o .template let<I>();}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o).template let<I>();}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto        &o) -> decltype(auto) {return           o .template let<I>();}
+template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o)[I];}
+template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o)[I];}
+template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const  &o) -> decltype(auto) {return           o [I];}
+template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto        &o) -> decltype(auto) {return           o [I];}
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@ namespace _xtd
 #if __cpp_lib_bit_cast
 	using _std::bit_cast;
 #else
-	template <atomic_q T, atomic_q S> requires in_n<sizeof(T), sizeof(S)>
+	template <atomic_q T, atomic_q S> requires in_q<sizeof(T), sizeof(S)>
 	XTAL_DEF_(alias) bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
@@ -23,7 +23,7 @@ requires (1 <= sizeof...(ys))
 {
 	return fam(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }
-template <class W, class X, class Y> requires integral_q<W, X, Y> or un_n<number_q<W, X, Y>>
+template <class W, class X, class Y> requires integral_q<W, X, Y> or un_q<number_q<W, X, Y>>
 XTAL_DEF_(short)
 XTAL_LET fam(W &&w, X &&x, Y &&y)
 noexcept -> auto
@@ -173,16 +173,6 @@ noexcept -> Y
 	XTAL_0IF (   integral_q<Y>) {return static_cast<Y>(-x);}
 	XTAL_0IF (real_number_q<Y>) {return static_cast<Y>(+x);}
 }
-
-template <class T> XTAL_DEF_(alias) funge_f(auto const &&t) noexcept {return      static_cast<T const &&>(t);}
-template <class T> XTAL_DEF_(alias) funge_f(auto       &&t) noexcept {return      static_cast<T       &&>(t);}
-template <class T> XTAL_DEF_(alias) funge_f(auto const  &t) noexcept {return      static_cast<T const  &>(t);}
-template <class T> XTAL_DEF_(alias) funge_f(auto        &t) noexcept {return      static_cast<T        &>(t);}
-
-template <class T> XTAL_DEF_(alias) fudge_f(auto const &&t) noexcept {return reinterpret_cast<T const &&>(t);}
-template <class T> XTAL_DEF_(alias) fudge_f(auto       &&t) noexcept {return reinterpret_cast<T       &&>(t);}
-template <class T> XTAL_DEF_(alias) fudge_f(auto const  &t) noexcept {return reinterpret_cast<T const  &>(t);}
-template <class T> XTAL_DEF_(alias) fudge_f(auto        &t) noexcept {return reinterpret_cast<T        &>(t);}
 
 template <int M>
 XTAL_DEF_(short)

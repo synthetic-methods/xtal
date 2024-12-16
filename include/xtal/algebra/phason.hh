@@ -104,16 +104,15 @@ struct phason<A>
 
 	public:// CONSTRUCT
 	//	using S_::S_;
-
-	~	homotype() noexcept=default;
-	//	homotype() noexcept=default;
+	~	homotype()                noexcept=default;
+	//	homotype()                noexcept=default;
+		XTAL_NEW_(copy, homotype, noexcept=default)
+		XTAL_NEW_(move, homotype, noexcept=default)
 
 		XTAL_NEW_(implicit) homotype()
 		noexcept
 		:	homotype(size_0)
 		{}
-		XTAL_NEW_(copy, homotype, noexcept=default)
-		XTAL_NEW_(move, homotype, noexcept=default)
 		
 		XTAL_NEW_(explicit) homotype(size_type const n)
 		noexcept
@@ -145,40 +144,52 @@ struct phason<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(initializer_list  o)
-		noexcept -> homotype &
+		noexcept -> auto &
 		{
-			_detail::copy_to(S_::data()
-			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
-			);
-			return *this;
+			auto i0 = S_::data();
+			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator >>=(iterable_q auto &&o)
-		noexcept -> homotype &
+		noexcept -> auto &
 		{
-			_detail::move_to(S_::data()
-			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
-			);
-			return *this;
+			auto i0 = S_::data();
+			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			return self();
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET operator >>=(iterable_q auto const &o)
+		noexcept -> auto &
+		{
+			auto i0 = S_::data();
+			_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			return self();
 		}
 		
 		XTAL_DEF_(inline)
-		XTAL_LET operator <<=(initializer_list  o)
-		noexcept -> homotype &
+		XTAL_LET operator <<=(initializer_list o)
+		noexcept -> auto &
 		{
-			_detail::copy_to(_std::next(S_::data(), S_::size() - o.size())
-			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
-			);
-			return *this;
+			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
+			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			return self();
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator <<=(iterable_q auto &&o)
-		noexcept -> homotype &
+		noexcept -> auto &
 		{
-			_detail::move_to(_std::next(S_::data(), S_::size() - o.size())
-			,	XTAL_REF_(o), [this] XTAL_1FN_(self().ordinate)
-			);
-			return *this;
+			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
+			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			return self();
+		}
+		XTAL_DEF_(inline)
+		XTAL_LET operator <<=(iterable_q auto const &o)
+		noexcept -> auto &
+		{
+			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
+			_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			return self();
 		}
 
 	public:// OPERATE
