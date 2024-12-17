@@ -1,7 +1,6 @@
 #pragma once
 
 #include <range/v3/all.hpp>
-#include <simde/arm/neon.h>
 #if __has_include(<execution>)
 #include <execution>
 #endif

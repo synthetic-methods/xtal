@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
-
 #include "./seek.hh"
 #include "./couple.hh"
+
 
 
 
@@ -75,10 +75,6 @@ struct recognize<(1U<<2U)>
 	using alpha_type =           XTAL_STD_(float, 2);
 	using aphex_type = _std::complex<alpha_type>;
 
-	using aphex_1x1_t = simde_float32x2_t;
-	using alpha_2x1_t = simde_float32x2_t;   // v(?:ld|st)1_f32
-	using alpha_2x2_t = simde_float32x2x2_t; // v(?:ld|st)2_f32
-
 	template <auto ...Ns> using                       delta_u = lateral_t<(delta_type) Ns...>;
 	template <auto ...Ns> using                       sigma_u = lateral_t<(sigma_type) Ns...>;
 	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<(delta_type) Ns...>;
@@ -103,7 +99,7 @@ struct recognize<(1U<<2U)>
 
 	template <int _, int N_pow> struct   root;
 	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE> {};
-	template <int _> struct root<_,-2> : sigma_u<0x5F375A86> {};
+	template <int _> struct root<_, -2> : sigma_u<0x5F375A86> {};
 
 	template <int N_pow>
 	XTAL_SET_(sigma_type) root_n = root<0, N_pow>::value;
@@ -115,26 +111,50 @@ struct recognize<(1U<<2U)>
 	XTAL_SET root_e(alpha_type const &w)
 	noexcept -> alpha_type
 	{
-		static_assert(N_pow <  -0);
-		if constexpr (N_pow == -1) {
-			return simde_vrecpes_f32(w);
-		}	else
-		if constexpr (N_pow == -2) {
-			return simde_vrsqrtes_f32(w);
+		static_assert(in_q<N_pow, -1, -2>);
+		XTAL_IF0
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(consteval)
+#endif
+		{
+			delta_type const v = _xtd::bit_cast<delta_type>(w) >> size_1;
+			sigma_type const u = root_n<N_pow> - v;
+			return _xtd::bit_cast<alpha_type>(u);
 		}
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(else) {
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return  vrecpes_f32(w);}
+			XTAL_0IF (N_pow == -2) {return vrsqrtes_f32(w);}
+		}
+#endif
 	}
 	template <int N_pow=-1>
 	XTAL_DEF_(short)
 	XTAL_SET root_e(alpha_type const &w, alpha_type const &n)
 	noexcept -> alpha_type
 	{
-		static_assert(N_pow <  -0);
-		if constexpr (N_pow == -1) {
-			return simde_vrecpss_f32(w, n);
-		}	else
-		if constexpr (N_pow == -2) {
-			return simde_vrsqrtss_f32(w, n*n);
+		static_assert(in_q<N_pow, -1, -2>);
+		XTAL_IF0
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(consteval)
+#endif
+		{
+			XTAL_LET _2_0 = alpha_type{2.0};
+			XTAL_LET _1_5 = alpha_type{1.5};
+			XTAL_LET _1_0 = alpha_type{1.0};
+			XTAL_LET _0_5 = alpha_type{0.5};
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(_2_0, -_1_0*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(_1_5, -_0_5*w, n*n);}
 		}
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(else) {
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return  vrecpss_f32(w,   n);}
+			XTAL_0IF (N_pow == -2) {return vrsqrtss_f32(w, n*n);}
+		}
+#endif
 	}
 
 };
@@ -148,12 +168,8 @@ struct recognize<(1U<<3U)>
 	using alpha_type =           XTAL_STD_(float, 3);
 	using aphex_type = _std::complex<alpha_type>;
 
-	using aphex_1x1_t = simde_float64x2_t;
-	using alpha_2x1_t = simde_float64x2_t;   // v(?:ld|st)1q_f64
-	using alpha_2x2_t = simde_float64x2x2_t; // v(?:ld|st)1q_f64_x2
-
-	template <auto ...Ns> using                       delta_u = lateral_t<(delta_type) Ns...>;
-	template <auto ...Ns> using                       sigma_u = lateral_t<(sigma_type) Ns...>;
+	template <auto ...Ns> using                 delta_u = lateral_t<(delta_type) Ns...>;
+	template <auto ...Ns> using                 sigma_u = lateral_t<(sigma_type) Ns...>;
 	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<(delta_type) Ns...>;
 	template <auto ...Ns> XTAL_SET_(sigma_type) sigma_n = lateral_n<(sigma_type) Ns...>;
 
@@ -176,7 +192,7 @@ struct recognize<(1U<<3U)>
 
 	template <int _, int N_pow> struct   root;
 	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
-	template <int _> struct root<_,-2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
+	template <int _> struct root<_, -2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
 	
 	template <int N_pow>
 	XTAL_SET_(sigma_type) root_n = root<0, N_pow>::value;
@@ -186,26 +202,50 @@ struct recognize<(1U<<3U)>
 	XTAL_SET root_e(alpha_type const &w)
 	noexcept -> alpha_type
 	{
-		static_assert(N_pow <  -0);
-		if constexpr (N_pow == -1) {
-			return simde_vrecped_f64(w);
-		}	else
-		if constexpr (N_pow == -2) {
-			return simde_vrsqrted_f64(w);
+		static_assert(in_q<N_pow, -1, -2>);
+		XTAL_IF0
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(consteval)
+#endif
+		{
+			delta_type const v = _xtd::bit_cast<delta_type>(w) >> size_1;
+			sigma_type const u = root_n<N_pow> - v;
+			return _xtd::bit_cast<alpha_type>(u);
 		}
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(else) {
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return  vrecped_f64(w);}
+			XTAL_0IF (N_pow == -2) {return vrsqrted_f64(w);}
+		}
+#endif
 	}
 	template <int N_pow=-1>
 	XTAL_DEF_(short)
 	XTAL_SET root_e(alpha_type const &w, alpha_type const &n)
 	noexcept -> alpha_type
 	{
-		static_assert(N_pow <  -0);
-		if constexpr (N_pow == -1) {
-			return simde_vrecpsd_f64(w, n);
-		}	else
-		if constexpr (N_pow == -2) {
-			return simde_vrsqrtsd_f64(w, n*n);
+		static_assert(in_q<N_pow, -1, -2>);
+		XTAL_IF0
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(consteval)
+#endif
+		{
+			XTAL_LET _2_0 = alpha_type{2.0};
+			XTAL_LET _1_5 = alpha_type{1.5};
+			XTAL_LET _1_0 = alpha_type{1.0};
+			XTAL_LET _0_5 = alpha_type{0.5};
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(_2_0, -_1_0*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(_1_5, -_0_5*w, n*n);}
 		}
+#if XTAL_SYS_(Neon)
+		XTAL_0IF_(else) {
+			XTAL_IF0
+			XTAL_0IF (N_pow == -1) {return  vrecpsd_f64(w,   n);}
+			XTAL_0IF (N_pow == -2) {return vrsqrtsd_f64(w, n*n);}
+		}
+#endif
 	}
 
 };

@@ -122,6 +122,22 @@ XTAL_ENV_(push)
 // TODO: Find better way to check for `__builtin_\w+`?
 #define XTAL_SYS_builtin (1000 < XTAL_VER_(GNUC) or 1000 < XTAL_VER_(LLVM))
 
+#if         defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
+#define XTAL_SYS_FMA 0b110
+#elif       defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
+#define XTAL_SYS_FMA 0b100
+#elif   not defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
+#define XTAL_SYS_FMA 0b010
+#elif   not defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
+#define XTAL_SYS_FMA 0b000
+#endif
+
+#ifdef __ARM_FP
+#define XTAL_SYS_Neon 1
+#else
+#define XTAL_SYS_Neon 0
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -217,13 +233,13 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 
 #define XTAL_IMP_(ARG,...)                XTAL_IMP_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
 
-#if     XTAL_SYS_(builtin)
+#if     XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
 #define XTAL_IMP_fma(Y, X, W)        __builtin_fma(Y, X, W)
 #define XTAL_IMP_fam(W, X, Y)        __builtin_fma(Y, X, W)
-#elif   XTAL_ENV_(MSVC >= 1700)
+#elif   XTAL_SYS_(FMA)
 #define XTAL_IMP_fma(Y, X, W)           ::std::fma(Y, X, W)
 #define XTAL_IMP_fam(W, X, Y)           ::std::fma(Y, X, W)
-#elif   XTAL_ENV_(MSVC <  1700)
+#else
 #define XTAL_IMP_fma(Y, X, W)                ((Y)*(X) + (W))
 #define XTAL_IMP_fam(W, X, Y)                ((Y)*(X) + (W))
 #endif
@@ -287,6 +303,10 @@ XTAL_ENV_(pop)
 #if      XTAL_VER_(ranges ==  3)
 #include <range/v3/all.hpp>
 #endif
+#if      XTAL_SYS_(Neon)
+#include <arm_neon.h>
+#endif
+
 #include <variant>
 #include <cstdint>
 #include <cstring>
