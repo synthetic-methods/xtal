@@ -29,10 +29,10 @@ using    unit_type	= XTAL_STD_(unit_type);
 using    size_type	= XTAL_STD_(size_type);
 using    sign_type	= XTAL_ALL_(true - false);
 
-XTAL_LET_(size_type) size_0{0};
-XTAL_LET_(size_type) size_1{1};
-XTAL_LET_(size_type) size_2{2};
-XTAL_LET_(size_type) size_3{3};
+XTAL_LET size_0 = (size_type) 0;
+XTAL_LET size_1 = (size_type) 1;
+XTAL_LET size_2 = (size_type) 2;
+XTAL_LET size_3 = (size_type) 3;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,24 +120,22 @@ using  ordinal_type	= _std::  make_signed_t<size_type>;
 using cardinal_type	= _std::make_unsigned_t<size_type>;
 using integral_type	= int;
 
-template <auto  t             >	struct       constant   ;
-template <auto  t=null_type{} >	using        constant_t	=  constant<t>;
-template <auto  t=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(t), t>;
+template <auto                >	struct       constant   ;
+template <auto  o=null_type{} >	using        constant_t	=  constant<o>;
+template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
 template <class T             >	concept      constant_q	= _std::derived_from<XTAL_RAW_(T), constant_s<T::value>>;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
-template <auto  t             >	struct       constant : constant_s<t> {};
-template <auto  t             >
-requires _std::invocable<decltype(t)>
-struct   constant<t> : constant_s<t>
+template <         auto o     >	struct       constant    :         constant_s<o> {};
+template <return_p auto o     >	struct       constant<o> : private constant_s<o>
 {
-	using        type = constant;
-	using  value_type = XTAL_ALL_(t);
-	using return_type = XTAL_ALL_(t());
+	XTAL_SET value      = o;
+	using    value_type = XTAL_ALL_(o);
+	using   return_type = XTAL_ALL_(o());
+	using          type = constant;
 
-	template <make_q<return_type> T>
-	XTAL_DEF_(implicit) operator  T() const {return T{t()};}
-	XTAL_DEF            operator() () const {return   t() ;}
+	XTAL_DEF_(implicit) operator return_type() const {return o();}
+	XTAL_DEF            operator()          () const {return o();}
 
 };
 
@@ -169,7 +167,7 @@ template <class T             >	struct   fluid_valued   ;
 template <class T             >	using          valued   = fluid_valued<T>;
 
 template <class T, class U    >	using    const_valued_u	= _std::conditional_t<_std::is_const_v<T>, const U, U>;
-template <class T             >	using    array_valued_u	=  const_valued_u<T, _std::remove_extent_t<T>>;
+template <class T             >	using    array_valued_u	=  const_valued_u<T, _std::remove_extent_t<_std::remove_reference_t<T>>>;
 template <class T             >	using    inner_valued_u	=  const_valued_u<T, typename _std::remove_reference_t<T>::value_type>;
 template <class T             >	using    under_valued_u	=  const_valued_u<T, _std::underlying_type_t<T>>;
 template <class T             >	using    fixed_valued_u	=  typename fixed_valued<T>::value_type;
@@ -178,7 +176,7 @@ template <class T             >	using          valued_u	=  typename       valued
 template <class T             >	using   scalar_valued_u	=  const_valued_u<T, typename XTAL_RAW_(T)::scalar_type>;
 template <class T             >	using   Scalar_valued_u	=  const_valued_u<T, typename XTAL_RAW_(T)::Scalar     >;
 
-template <class T             >	concept  array_valued_q	=  not same_q<_std::remove_extent_t<T>, T>;
+template <class T             >	concept  array_valued_q	=  _std::is_array_v<_std::remove_reference_t<T>>;
 template <class T             >	concept  inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
 template <class T             >	concept  under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
 template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>>;

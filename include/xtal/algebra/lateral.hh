@@ -31,7 +31,10 @@ Provides even/odd-reflection iff `N_data == 2`. \
 template <vector_q A>
 struct lateral<A>
 {
-	using _op = bond::operate<A>;
+	using A_op = bond::operate<A>;
+	using A_sigma = typename A_op::sigma_type;
+	using A_alpha = typename A_op::alpha_type;
+	using A_aphex = typename A_op::aphex_type;
 	
 	template <class T>
 	using endotype = typename lattice<A>::template homotype<T>;
@@ -60,7 +63,7 @@ struct lateral<A>
 		{
 			auto &s = self();
 
-			if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
+			if (_std::is_constant_evaluated() or N_data <= A_op::alignment::value) {
 				[&]<auto ...I> (bond::seek_t<I...>)
 					XTAL_0FN {((get<I>(s) = U_data{1}),...);}
 				(bond::seek_s<N_data>{});
@@ -80,7 +83,7 @@ struct lateral<A>
 			assert(1 == m or m == N_data);
 			if (1 == m) {
 				auto const &u = get<0>(s);
-				if (_std::is_constant_evaluated() or N_data <= _op::alignment::value) {
+				if (_std::is_constant_evaluated() or N_data <= A_op::alignment::value) {
 					[&]<auto ...I> (bond::seek_t<I...>)
 						XTAL_0FN {((get<I + 1>(s) = u),...);}
 					(bond::seek_s<N_data - 1>{});
@@ -107,6 +110,45 @@ struct lateral<A>
 		using S_::twin;
 
 	public:// OPERATE
+		using S_::  zeroed;
+		using S_::unzeroed;
+
+		template <int N_value=1>
+		XTAL_DEF_(inline)
+		XTAL_LET unzero()
+		noexcept -> logical_type
+		{
+			using U_value = dissolve_u<U_data>;
+			using V_value = typename bond::operate<U_value>::sigma_type;
+
+			auto constexpr u  =    static_cast<U_value>(N_value);
+			auto constexpr v  = _xtd::bit_cast<V_value>(u);
+			bool const     z  = zeroed();
+			auto const     zu = u* static_cast<U_value>(z);
+			auto const    _zv = v&-z;
+#if XTAL_ENV_(LLVM)
+			if constexpr (false) {
+			}
+#else
+			if constexpr (real_number_q<U_data> or complex_number_q<U_data>) {
+				auto &s = dissolve_f(*this);
+				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+					XTAL_IF0
+					XTAL_0IF (   real_number_q<U_data>) {return reinterpret_cast<V_value &>(s[I]   ) |= _zv;}
+					XTAL_0IF (complex_number_q<U_data>) {return reinterpret_cast<V_value &>(s[I][0]) |= _zv;}
+				});
+			}
+#endif
+			else {
+				auto const n = static_cast<U_value>(z)*u;
+				auto      &s = *this;
+				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+					get<I>(s) += n;
+				});
+			}
+			return z;
+		}
+
 		using S_::operator*=;
 		using S_::operator/=;
 		using S_::operator%=;

@@ -32,20 +32,28 @@ struct cache
 		using S_ = holotype<T>;
 		using I  = valued_u<_std::byte>;
 
-		XTAL_SET N_cache = size_1 << bond::operating::bit_ceiling_f((0U +...+ _detail::aligned_n<As>));
-		alignas (N_cache) _std::byte mutable m_cache[N_cache];
+		XTAL_SET N_bytes = size_1 << bond::operating::bit_ceiling_f((0U +...+ _detail::aligned_n<As>));
+		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
+		alignas (N_bytes)        _std::byte mutable   m_bytes[N_bytes]  ;
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
 	
+	public:// OPERATE
+
 		///\returns the size in `byte`s. \
 
 		XTAL_DEF_(return,inline,static)
 		XTAL_LET size()
 		noexcept -> size_type
 		{
-			return N_cache;
+			return N_bytes;
 		}
+
+		///\returns `true` if the cache is zeroed, `false` otherwise. \
+
+		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(m_zeros, m_bytes, N_bytes);}
+		XTAL_DEF_(alias)   zeroed() const noexcept {return 0 == memcmp(m_zeros, m_bytes, N_bytes);}
 
 		///\returns `(void)` after overwriting the `byte`s in the cache with `(char) value`. \
 
@@ -53,7 +61,7 @@ struct cache
 		XTAL_LET fill(I value=I{})
 		noexcept -> void
 		{
-			memset(m_cache, value, N_cache);
+			memset(m_bytes, value, N_bytes);
 		}
 
 		///\returns a tuple of values conforming to `Vs...`, \
@@ -95,7 +103,7 @@ struct cache
 		XTAL_LET form(),
 		noexcept -> auto
 		{
-			static_assert(_detail::aligned_n<Vs...> <= N_cache);
+			static_assert(_detail::aligned_n<Vs...> <= N_bytes);
 			static_assert((...and _std::is_standard_layout_v<Vs>));
 			static_assert((...and _std::is_trivially_destructible_v<Vs>));
 
@@ -111,7 +119,7 @@ struct cache
 		XTAL_LET form(int &i),
 		noexcept -> V &
 		{
-			return reinterpret_cast<V &>(m_cache[_detail::maligned_f<V>(i)]);
+			return reinterpret_cast<V &>(m_bytes[_detail::maligned_f<V>(i)]);
 		})
 
 	};

@@ -21,8 +21,8 @@ template <class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s>
-struct superblock;
+template <class ..._s> struct   superblock;
+template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
 
 template <class U, size_type N>
 struct superblock<U(&)[N]>
@@ -53,6 +53,8 @@ struct superblock<U(&)[N]>
 		}
 
 	};	
+	using type = bond::isotype<homotype>;
+
 };
 template <class U, size_type N>
 struct superblock<U[N]>
@@ -110,34 +112,30 @@ struct superblock<U[N]>
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
-			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<o_f>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to     (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to                           (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
 		noexcept
 		:	homotype(count_f(a))
 		{
-			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
-			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<o_f>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to     (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to                           (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
-			XTAL_LET  o_f = [] XTAL_1FN_(T::  ordinate);
-			XTAL_LET co_f = [] XTAL_1FN_(T::coordinate);
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::copy_to<o_f>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::copy_to     (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::copy_to                           (S_::begin(), a);}
 		}
 
 	};
+	using type = bond::isotype<homotype>;
+
 };
 
 
@@ -168,6 +166,8 @@ struct block<A>
 		using typename S_::U_data;
 		using U_size = typename S_::size_type;
 		using initializer_list = _std::initializer_list<U_data>;
+
+		static constexpr _detail::superblock_t<U_data[N_data]> zeroed_{};
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -246,6 +246,9 @@ struct block<A>
 		})
 
 	public:// OPERATE
+		XTAL_DEF_(alias)   zeroed() const noexcept {return 0 == memcmp(S_::data(), zeroed_.data(), sizeof(*this));}
+		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(S_::data(), zeroed_.data(), sizeof(*this));}
+
 		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(explicit operator) F(), apply(invoke_f<F>))
 

@@ -48,6 +48,28 @@ TAG_("lateral")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
+	EST_("lateral reinitialization")
+	{
+		lateral_t<T_aphex[4]> foo{};
+
+		for (int i{0}; i < 0x100; ++i) {
+			foo *= T_alpha{};
+			foo.unzero();
+		}
+		return foo;
+	};
+	TRY_("lateral reinitialization")
+	{
+		using W_aphex = lateral_t<T_aphex[2]>;
+
+		auto constexpr N_size = 2;
+		W_aphex foo{};
+
+		foo *= T_alpha{};
+		TRUE_(foo == W_aphex{{0}, {0}}); TRUE_(foo.unzero() == 1);
+		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.unzero() == 0);
+
+	}
 	TRY_("construction")
 	{
 		auto constexpr N_size = 2;

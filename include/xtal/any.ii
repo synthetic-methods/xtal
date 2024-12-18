@@ -136,6 +136,106 @@ namespace _xtd::ranges::views
 //\
 Structural...
 
+///\returns the conditional `x` reinterpreted as type `Y`, \
+where `std::floating_point`s and `bool`eans are `static_cast`, \
+while all other `std::integral`s are negated. \
+
+template <class Y>
+XTAL_DEF_(short)
+XTAL_LET condition_f(bool x)
+noexcept -> Y
+{
+	XTAL_IF0
+	XTAL_0IF (    logical_q<Y>) {return x;}
+	XTAL_0IF (   integral_q<Y>) {return static_cast<Y>(-x);}
+	XTAL_0IF (real_number_q<Y>) {return static_cast<Y>(+x);}
+}
+
+
+
+template <int N>
+XTAL_DEF_(short)
+XTAL_LET destruct_f(auto &&t)
+noexcept
+requires fixed_sized_q<decltype(t)>
+{
+	XTAL_LET M = fixed_sized_n<decltype(t)>;
+	return get<modulo_m<M, N>>(destruct_f(XTAL_REF_(t)));
+}
+XTAL_DEF_(short)
+XTAL_LET destruct_f(auto &&t)
+noexcept -> decltype(auto)
+requires fixed_sized_q<decltype(t)>
+{
+	using T = decltype(t);
+	XTAL_IF0
+	XTAL_0IF (tuple_sized_q<T>) {
+		return XTAL_REF_(t);
+	}
+	XTAL_0IF_(else) {
+		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
+	}
+}
+static_assert(_std::same_as<      int( &)[2], decltype(destruct_f(XTAL_ANY_(      _std::complex<int>  &)))>);
+static_assert(_std::same_as<const int( &)[2], decltype(destruct_f(XTAL_ANY_(const _std::complex<int>  &)))>);
+static_assert(_std::same_as<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(      _std::complex<int> &&)))>);
+static_assert(_std::same_as<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(const _std::complex<int> &&)))>);
+
+template <int N, int ...Ns>
+XTAL_DEF_(short)
+XTAL_LET dissolve_f(auto &&t)
+noexcept
+requires fixed_sized_q<decltype(t)>
+{
+	XTAL_LET M = fixed_sized_n<decltype(t)>;
+	XTAL_LET I = modulo_m<M, N>;
+	XTAL_IF0
+	XTAL_0IF (0 == sizeof...(Ns)) {
+		return                   get<I>(destruct_f(XTAL_REF_(t)));
+	}
+	XTAL_0IF (1 <= sizeof...(Ns)) {
+		return dissolve_f<Ns...>(get<I>(dissolve_f(XTAL_REF_(t))));
+	}
+}
+XTAL_DEF_(short)
+XTAL_LET dissolve_f(auto &&t)
+noexcept -> decltype(auto)
+requires fixed_sized_q<decltype(t)>
+{
+	using T = decltype(t);
+	return reinterpret_cast<dissolve_t<T> &&>(XTAL_REF_(t));
+}
+static_assert(_std::same_as<      int( &)[2][2], decltype(dissolve_f(XTAL_ANY_(      _std::complex<int>(&)[2])))>);
+static_assert(_std::same_as<const int( &)[2][2], decltype(dissolve_f(XTAL_ANY_(const _std::complex<int>(&)[2])))>);
+static_assert(_std::same_as<      int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(      _std::complex<int>   [2])))>);
+static_assert(_std::same_as<const int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(const _std::complex<int>   [2])))>);
+
+///\
+Defines a factory for the supplied type. \
+
+template <class F>
+XTAL_LET invoke_f = [] (auto &&...oo)
+XTAL_0FN
+{
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_TO_(F   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_TRY_TO_(F   (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_TO_(F{} (XTAL_REF_(oo)...))
+};
+template <class F>
+using    invoke_t = decltype(invoke_f<F>);
+
+template <class F, class ...Xs>
+concept  invoke_p = _std::invocable<invoke_t<F>, Xs...>;
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+///\
+Valued...
+
 template <auto N0, auto N1> requires (N0 < N1)
 XTAL_LET bounded_f(auto const &u)
 {
@@ -157,92 +257,6 @@ XTAL_LET bounded_f(auto const &u)
 		}
 	}
 }
-
-
-///\returns the conditional `x` reinterpreted as type `Y`, \
-where `std::floating_point`s and `bool`eans are `static_cast`, \
-while all other `std::integral`s are negated. \
-
-template <class Y>
-XTAL_DEF_(short)
-XTAL_LET condition_f(bool x)
-noexcept -> Y
-{
-	XTAL_IF0
-	XTAL_0IF (    logical_q<Y>) {return x;}
-	XTAL_0IF (   integral_q<Y>) {return static_cast<Y>(-x);}
-	XTAL_0IF (real_number_q<Y>) {return static_cast<Y>(+x);}
-}
-
-template <int M>
-XTAL_DEF_(short)
-XTAL_LET modulo_f(_std::unsigned_integral auto n)
-noexcept -> auto
-{
-	XTAL_ALL_(n) constexpr m{M};
-	n %= m;
-	return n;
-}
-template <int M>
-XTAL_DEF_(short)
-XTAL_LET modulo_f(_std::  signed_integral auto n)
-noexcept -> auto
-{
-	XTAL_ALL_(n) constexpr m{M};
-	n %= m;
-	n += m;
-	n %= m;
-	return n;
-}
-
-
-template <int N>
-XTAL_DEF_(short)
-XTAL_LET destruct_f(auto &&t)
-noexcept
-requires fixed_sized_q<decltype(t)>
-{
-	XTAL_LET M = fixed_sized_n<decltype(t)>;
-	return get<modulo_f<M>(N)>(destruct_f(XTAL_REF_(t)));
-}
-XTAL_DEF_(short)
-XTAL_LET destruct_f(auto &&t)
-noexcept -> decltype(auto)
-requires fixed_sized_q<decltype(t)>
-{
-	using T = decltype(t);
-	XTAL_IF0
-	XTAL_0IF (tuple_sized_q<T>) {
-		return XTAL_REF_(t);
-	}
-	XTAL_0IF_(else) {
-		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
-	}
-}
-static_assert(_std::same_as<      int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(_std::same_as<const int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(_std::same_as<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(_std::same_as<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const &&)))>);
-
-///\
-Defines a factory for the supplied type. \
-
-template <class F>
-XTAL_LET invoke_f = [] (auto &&...oo)
-XTAL_0FN
-{
-	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(F   {XTAL_REF_(oo)...})
-	XTAL_0IF XTAL_TRY_TO_(F   (XTAL_REF_(oo)...))
-	XTAL_0IF XTAL_TRY_TO_(F{} (XTAL_REF_(oo)...))
-};
-template <class F>
-using    invoke_t = decltype(invoke_f<F>);
-
-template <class F, class ...Xs>
-concept  invoke_p = _std::invocable<invoke_t<F>, Xs...>;
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -30,15 +30,26 @@ struct example
 	,	typename occur::sample_t<>::template attach<>
 	,	As...
 	>;
-	template <cell::any_q S>
+	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(cell::any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		
 	public:
 		using S_::S_;
 		
 		XTAL_TO4_(XTAL_DEF sample(), S_::head())
+
+	};
+	template <class S> requires example_q<S>
+	class subtype<S> : public bond::compose_s<S>
+	{
+		static_assert(cell::any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+		
+	public:
+		using S_::S_;
 
 	};
 };
