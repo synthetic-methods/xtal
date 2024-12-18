@@ -15,7 +15,7 @@ Defines a fixed-width `type` that supports arithmetic operators. \
 
 template <class ..._s> struct   block;
 template <class ..._s> using    block_t = typename block<_s...>::type;
-template <class ..._s> concept  block_q = bond::any_tag_p<block_t, _s...>;
+template <class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
 
 
 namespace _detail
@@ -49,7 +49,7 @@ struct superblock<U(&)[N]>
 		XTAL_LET twin() const
 		noexcept -> decltype(auto)
 		{
-			return typename T::template tagged_t<V_data[N_data]>(S_::self());
+			return typename T::taboo::template type<V_data[N_data]>(S_::self());
 		}
 
 	};	
@@ -81,7 +81,7 @@ struct superblock<U[N]>
 				return S_::twin();
 			}
 			else {
-				return typename T::template tagged_t<V_data[N_data]>(S_::self());
+				return typename T::taboo::template type<V_data[N_data]>(S_::self());
 			}
 		}
 
@@ -192,8 +192,8 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::template tagged_t<U_data   [n_data]> &;
-			using Y = typename T::template tagged_t<U_data(&)[n_data]>  ;
+			using X = typename T::taboo::template type<U_data   [n_data]> &;
+			using Y = typename T::taboo::template type<U_data(&)[n_data]>  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
@@ -204,8 +204,8 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::template tagged_t<U_data   [n_data]> const &;
-			using Y = typename T::template tagged_t<U_data(&)[n_data]> const  ;
+			using X = typename T::taboo::template type<U_data   [n_data]> const &;
+			using Y = typename T::taboo::template type<U_data(&)[n_data]> const  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
@@ -272,7 +272,7 @@ struct block<A>
 		{
 			return [f_ = [&] (auto i)
 				XTAL_0FN_(f([&] (auto const &t)
-					XTAL_0FN {if constexpr (is_q<decltype(t), T>) {return t(i);} else {return t;}}
+					XTAL_0FN {if constexpr (same_q<decltype(t), T>) {return t(i);} else {return t;}}
 				(ts)...))
 			]<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(T{f_(I)...}) (bond::seek_s<N_data>{});
 		}

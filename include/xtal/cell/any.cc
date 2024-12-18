@@ -167,12 +167,12 @@ TAG_("cell", "conversion")
 		TRUE_(get<1>(foo) == get<1>(bar));
 		TRUE_(get<2>(foo) == get<2>(bar));
 
-		TRUE_(is_q<_std::tuple_element_t<0, U_foo>,  bool>);
-		TRUE_(is_q<_std::tuple_element_t<1, U_foo>,   int>);
-		TRUE_(is_q<_std::tuple_element_t<2, U_foo>, float>);
-		TRUE_(is_q<_std::tuple_element_t<0, U_foo>, _std::tuple_element_t<0, U_bar>>);
-		TRUE_(is_q<_std::tuple_element_t<1, U_foo>, _std::tuple_element_t<1, U_bar>>);
-		TRUE_(is_q<_std::tuple_element_t<2, U_foo>, _std::tuple_element_t<2, U_bar>>);
+		TRUE_(same_q<_std::tuple_element_t<0, U_foo>,  bool>);
+		TRUE_(same_q<_std::tuple_element_t<1, U_foo>,   int>);
+		TRUE_(same_q<_std::tuple_element_t<2, U_foo>, float>);
+		TRUE_(same_q<_std::tuple_element_t<0, U_foo>, _std::tuple_element_t<0, U_bar>>);
+		TRUE_(same_q<_std::tuple_element_t<1, U_foo>, _std::tuple_element_t<1, U_bar>>);
+		TRUE_(same_q<_std::tuple_element_t<2, U_foo>, _std::tuple_element_t<2, U_bar>>);
 
 	}
 }

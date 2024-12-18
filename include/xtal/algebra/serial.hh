@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class           ..._s>	struct   serial;
 template <class           ..._s>	using    serial_t = typename serial<_s...>::type;
-template <class           ...Ts>	concept  serial_q = bond::any_tag_p<serial_t, Ts...>;
+template <class           ...Ts>	concept  serial_q = bond::tag_p<serial_t, Ts...>;
 template <size_type N, class ...Ts>	concept  serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(short)

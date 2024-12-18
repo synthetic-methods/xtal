@@ -180,7 +180,7 @@ struct define
 				using R_::slots;
 
 				using process_type = T;
-				XTAL_TO4_(XTAL_DEF_(alias) process(), S_::head())
+				XTAL_TO4_(XTAL_DEF process(), S_::head())
 
 
 			public:// OPERATE
@@ -253,7 +253,7 @@ struct refine
 		}
 		
 		XTAL_TO4_(template <class ...Xs>
-		XTAL_DEF_(alias) rebound(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
+		XTAL_DEF rebound(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
 
 	};
 };

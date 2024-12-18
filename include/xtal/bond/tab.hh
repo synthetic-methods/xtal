@@ -17,30 +17,7 @@ Tags `subtype` while preserving Standard Layout. \
 Avoids the `sizeof` inflation that can occur with multiple-inheritance \
 (e.g. frustrated Empty Base Optimization). \
 
-template <class   T                            >	using      taboo_s = typename based_t<T>::taboo::supertype;
-template <class   T                            >	using      taboo_t = typename based_t<T>::taboo::     type;
-template <                        class   ...Ts>	concept    taboo_d = (...and not requires {typename taboo_t<Ts>;});
-template <                        class   ...Ts>	concept    taboo_q = (...and     requires {typename taboo_t<Ts>;});
-
-template <class   T,              class   ...Ys>	struct     all_tab                         :           constant_t<false> {using type = void;};
-template <class   T,              class   ...Ys>	struct     all_tab<T, constant_t<0>, Ys...> :           constant_t< true> {using type =    T;};
-template <taboo_q T                            >	struct     all_tab<T,   taboo_t<T>       > :           constant_t< true> {using type =    T;};
-template <taboo_q T,              class   ...Ys>	struct     all_tab<T,               Ys...> : all_tab<taboo_s<T>,                  Ys...> {};
-template <taboo_q T,              class   ...Ys>	struct     all_tab<T,   taboo_t<T>, Ys...> : all_tab<taboo_s<T>,                  Ys...> {};
-template <taboo_q T, liminal_q I, class   ...Ys>	struct     all_tab<T,           I , Ys...> : all_tab<taboo_s<T>, subliminal_s<I>, Ys...> {};
-template <class   T,              class   ...Ys>	using      all_tab_t                       = typename all_tab<T, Ys...>:: type;
-template <class   T,              class   ...Ys>	concept    all_tab_q                       =          all_tab<T, Ys...>::value;
-
-template <class   Y,              class   ...Ts>	concept    any_tab_p = _std::conjunction_v<all_tab<based_t<Ts>, Y >...>;
-template <class   T,              class   ...Ys>	concept    any_tab_q = _std::conjunction_v<all_tab<based_t<T >, Ys>...>;
-
-template <                        class   ...Ts>	struct     self_tab        : _std::false_type {};
-template <                        taboo_d ...Ts>	struct     self_tab<Ts...> : isotropic_t<Ts...> {};
-template <                        taboo_q ...Ts>	struct     self_tab<Ts...> : _std::conjunction<self_tab<taboo_t<Ts>...>, self_tab<taboo_s<Ts>...>> {};
-template <                        class   ...Ts>	concept    self_tab_q      = self_tab<based_t<Ts>...>::value;
-template <                        class   ...Ts>	concept    twin_tab_q      = not isotropic_q<Ts...> and taboo_q<Ts...> and self_tab_q<Ts...>;
-
-template <class Y>
+template <class I>
 struct tab
 {
 	template <class S>
@@ -48,16 +25,43 @@ struct tab
 	{
 	public:
 		using S::S;
-		
+
 		struct taboo
 		{
-			using supertype = S;
-			using      type = Y;
+			using endotype = S;
+			using peritype = I;
 
 		};
 
 	};
 };
+template <class   T                           > using        taboo_t =   typename based_t<T>::taboo;
+template <class   T                           > using        taboo_s =   typename taboo_t<T>::endotype;
+template <class   T                           > using        taboo_u =   typename taboo_t<T>::peritype;
+template <                         class ...Ts> concept      taboo_q = complete_q<taboo_t<Ts>...>;
+
+template <                         class ...Ts> struct  same_tabs;
+template <                         class ...Ts> concept same_tabs_q      = same_tabs<based_t<Ts>...>::value;
+
+template <                         class ...Ts> struct  same_tabs        : constant_t<same_q<        Ts... >                                > {};
+template <                       taboo_q ...Ts> struct  same_tabs<Ts...> : constant_t<same_q<taboo_u<Ts>...> and same_tabs_q<taboo_s<Ts>...>> {};
+
+template <                         class ..._s> struct       tabbed   ;
+template <                         class ..._s> using        tabbed_s = typename tabbed<based_t<_s>...>:: type;
+template <                         class ..._s> concept      tabbed_q =          tabbed<based_t<_s>...>::value;
+
+template <class   T                           >                                                  struct tabbed<T, logical_t<1>       > : logical_t<1> {using type =    T;};
+template <class   T                           >                                                  struct tabbed<T, logical_t<0>       > : logical_t<0> {using type = void;};
+template <class   T,               class ...Is>                                                  struct tabbed<T,               Is...> : tabbed<T,        constant_t<same_q<T, Is...>>> {};
+template <taboo_q T,               class ...Is>                                                  struct tabbed<T,   taboo_u<T>, Is...> : tabbed<taboo_s<T>,                    Is...>   {};
+template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>, subliminal_s<I>,   Is...>   {};
+template <class   T, constant_q I, class ...Is> requires                         terminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<        T ,                    Is...>   {};
+template <taboo_q T, identity_q I, class ...Is> requires      same_q<taboo_u<T>, identity_u<I>>  struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,                    Is...>   {};
+template <taboo_q T, identity_q I, class ...Is> requires un_q<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
+
+
+template <class   T,               class ...Is> concept      tab_q = (...and tabbed_q<T , identity_t<Is>>);
+template <class   I,               class ...Ts> concept      tab_p = (...and tabbed_q<Ts, identity_t<I >>);
 
 
 

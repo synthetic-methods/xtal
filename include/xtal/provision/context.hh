@@ -16,7 +16,7 @@ Used to provide a uniform interface between different instantiations. \
 
 template <typename ..._s> struct   context;
 template <typename ..._s> using    context_t = confined_t<context<_s...>>;
-template <typename ..._s> concept  context_q = bond::any_tag_p<context, _s...>;
+template <typename ..._s> concept  context_q = bond::tag_p<context, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

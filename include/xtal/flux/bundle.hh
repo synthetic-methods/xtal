@@ -18,7 +18,7 @@ Deified as a `process`'s `bracket`, binding the provided arguments. \
 
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::any_tag_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ struct bundle
 
 		using node_type = typename S_::head_type;
 
-		XTAL_TO4_(XTAL_DEF_(alias)  node(), head())
-		XTAL_TO4_(XTAL_DEF_(alias) slots(), head())
+		XTAL_TO4_(XTAL_DEF  node(), head())
+		XTAL_TO4_(XTAL_DEF slots(), head())
 		
 		XTAL_DO2_(template <size_type ...Is>
 		XTAL_DEF_(short)

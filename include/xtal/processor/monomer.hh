@@ -13,7 +13,7 @@ namespace xtal::processor
 
 template <typename ..._s> struct   monomer;
 template <typename ..._s> using    monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> concept  monomer_q = bond::any_tag_p<monomer, _s...>;
+template <typename ..._s> concept  monomer_q = bond::tag_p<monomer, _s...>;
 template <typename ...As>
 XTAL_DEF_(short)
 XTAL_LET monomer_f(auto &&u)
@@ -59,7 +59,7 @@ struct monomer<U, As...>
 		template <class ...Xs>
 		struct bracket
 		{
-			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
+			using Y_result = return_t<T_, return_t<Xs>...>;
 		//	using Y_return = iteratee_t<Y_result>;
 
 			using superkind = bond::compose<void
@@ -94,7 +94,7 @@ struct monomer<U, As...>
 
 			public:// ACCESS
 
-				XTAL_TO4_(XTAL_DEF_(alias) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_DEF state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
 			public:// FUNC*
 			//	using R_::method;
@@ -122,7 +122,7 @@ struct monomer<U, As...>
 		template <class ...Xs> requires provision::stated_q<S_> and provision::stored_q<S_>
 		struct bracket<Xs...>
 		{
-			using Y_result = _std::invoke_result_t<T_, _std::invoke_result_t<Xs>...>;
+			using Y_result = return_t<T_, return_t<Xs>...>;
 			using Y_return = iteratee_t<Y_result>;
 
 			using U_store  = typename S_::template store_t<Y_return>;
@@ -229,7 +229,7 @@ struct monomer<U, As...>
 				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
-					if constexpr (as_q<Rev, U_state>) {
+					if constexpr (make_p<U_state, Rev>) {
 						(void) state(review_o);
 					}
 					return R_::efflux(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...);

@@ -16,7 +16,7 @@ Governs access to the `supertype`. \
 ///\see `flux::mask`. \
 
 template <class	..._s> struct   mark;
-template <class	..._s> concept  mark_q = bond::any_tag_p<mark, _s...>;
+template <class	..._s> concept  mark_q = bond::tag_p<mark, _s...>;
 template <class	..._s> using    mark_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<mark<>>>;
 
 

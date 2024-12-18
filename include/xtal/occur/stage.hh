@@ -22,10 +22,10 @@ instead intercepted dynamically to affect/query state. \
 Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
 template <typename ...As>	struct    stage	;
-template <   class ..._s>	concept   stage_q = bond::any_tag_p<stage, _s...>;
+template <   class ..._s>	concept   stage_q = bond::tag_p<stage, _s...>;
 template <typename ...As>	using     stage_t = confined_t<stage<As...>>;
 template <typename ...As>
-XTAL_DEF_(alias) stage_f(auto &&...oo) noexcept {return stage_t<As...>(XTAL_REF_(oo)...);}
+XTAL_DEF stage_f(auto &&...oo) noexcept {return stage_t<As...>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

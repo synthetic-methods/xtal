@@ -14,7 +14,7 @@ namespace xtal::arrange
 
 template <class ..._s> struct   spool;
 template <class ..._s> using    spool_t = typename spool<_s...>::type;
-template <class ...Ts> concept  spool_q = bond::any_tag_p<spool_t, Ts...>;
+template <class ...Ts> concept  spool_q = bond::tag_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ struct spool<A>
 		:	u_end(count_f(w))
 		,	u_store(w.begin(), w.end())
 		{}
-		template <class W> requires as_q<W, U_value> and un_q<is_q<W, U_value>>
+		template <class W> requires make_p<U_value, W> and un_q<same_q<U_value, W>>
 		XTAL_NEW_(explicit) homotype(W &&w)
 		noexcept(false)
 		:	u_begin(1)
@@ -75,9 +75,9 @@ struct spool<A>
 		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
 		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
 		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET  peek(U_count n=0), *begin(n))
-		XTAL_TO2_(XTAL_DEF_(alias)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_TO2_(XTAL_DEF_(alias)  span(U_count n), span(n, n))
-		XTAL_TO2_(XTAL_DEF_(alias)  span(         ), span(0, 0))
+		XTAL_TO2_(XTAL_DEF  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_TO2_(XTAL_DEF  span(U_count n), span(n, n))
+		XTAL_TO2_(XTAL_DEF  span(         ), span(0, 0))
 
 		XTAL_DEF_(inline)
 		XTAL_LET advance(U_count n=1)

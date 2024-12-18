@@ -42,22 +42,24 @@ struct tab
 
 	public:// *FUSE
 
+		template <class O>
 		XTAL_DEF_(short)
-		XTAL_LET infuse(auto &&o)
+		XTAL_LET infuse(O &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
+			if constexpr (bond::same_tabs_q<T_, O> and not same_q<T_, O>) {
 				return S_::infuse(XTAL_REF_(o).apply(invoke_f<T_>));
 			}
 			else {
 				return S_::infuse(XTAL_REF_(o));
 			}
 		}
+		template <class O>
 		XTAL_DEF_(short)
-		XTAL_LET effuse(auto &&o)
+		XTAL_LET effuse(O &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::twin_tab_q<T_, decltype(o)>) {
+			if constexpr (bond::same_tabs_q<T_, O> and not same_q<T_, O>) {
 				return S_::effuse(XTAL_REF_(o).apply(invoke_f<T_>));
 			}
 			else {

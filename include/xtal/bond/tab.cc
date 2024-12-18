@@ -58,9 +58,9 @@ TAG_("tab")
 {
 	TRY_("task")
 	{
-		TRUE_(any_tab_p<TagA, TypAB>);
-		TRUE_(any_tab_p<TagB, TypAB>);
-		UNTRUE_(any_tab_p<TagZ, TypAB>);
+		TRUE_(tab_p<TagA, TypAB>);
+		TRUE_(tab_p<TagB, TypAB>);
+		UNTRUE_(tab_p<TagZ, TypAB>);
 
 	}
 }

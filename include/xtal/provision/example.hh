@@ -13,7 +13,7 @@ namespace xtal::provision
 
 template <typename ..._s> struct   example;
 template <typename ..._s> using    example_t = confined_t<example<_s...>>;
-template <typename ..._s> concept  example_q = bond::any_tag_p<example, _s...>;
+template <typename ..._s> concept  example_q = bond::tag_p<example, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ struct example
 	public:
 		using S_::S_;
 		
-		XTAL_TO4_(XTAL_DEF_(alias) sample(), S_::head())
+		XTAL_TO4_(XTAL_DEF sample(), S_::head())
 
 	};
 };

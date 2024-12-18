@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./serial.hh"
-#include "./sector.hh"
+#include "./lateral.hh"
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::algebra
 
 template <class   ..._s>	struct   series;
 template <class   ..._s>	using    series_t = typename series<_s...>::type;
-template <class   ...Ts>	concept  series_q = bond::any_tag_p<series_t, Ts...>;
+template <class   ...Ts>	concept  series_q = bond::tag_p<series_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(short)
 XTAL_LET series_f(auto &&...oo)
@@ -75,7 +75,7 @@ struct series<A>
 		}
 
 		//\
-		template <size_type N_count=N_data> requires complex_field_q<U_v1> and is_q<sector_t<U_v1[2]>, U_data>
+		template <size_type N_count=N_data> requires complex_field_q<U_v1> and same_q<lateral_t<U_v1[2]>, U_data>
 		template <size_type N_count=N_data> requires complex_field_q<U_v1> and bond::dipack_q<U_data>
 		XTAL_DEF_(inline)
 		XTAL_LET generate(U_v1 const &u1, U_v2 const &u2)
@@ -84,7 +84,7 @@ struct series<A>
 			auto &s = self();
 
 			using W1  = U_v1;
-			using U2  = sector_t<U_v2[2]>;
+			using U2  = lateral_t<U_v2[2]>;
 			using W1_ = series_t<W1[N_data<<1U]>;
 			using U2_ = series_t<U2[N_data<<1U]>;
 			static_assert(sizeof(W1_) == sizeof(U2_));
@@ -101,7 +101,7 @@ struct series<A>
 		///\returns `this` with the elements `N_index, ..., N_index + N_count - 1` \
 			filled by the corresponding powers of `u`. \
 
-		template <size_type N_count=N_data, size_type N_index=0, integer_type N_step=1, integer_type N_skip=0>
+		template <size_type N_count=N_data, size_type N_index=0, ordinal_type N_step=1, ordinal_type N_skip=0>
 		XTAL_DEF_(inline)
 		XTAL_LET generate(U_data const &u)
 		noexcept -> T &
@@ -293,12 +293,12 @@ s
 		}
 
 		///\
-		The dual of `T`, defined by `sector`. \
+		The dual of `T`, defined by `lateral`. \
 		
 		struct transverse
 		{
 			template <class R>
-			using holotype = typename sector<A>::template homotype<R>;
+			using holotype = typename lateral<A>::template homotype<R>;
 
 			template <class R>
 			class homotype : public holotype<R>

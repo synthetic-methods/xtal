@@ -201,7 +201,7 @@ TAG_("phasor")
 		using Z_out = reiterated_t<XTAL_ALL_(z_out)>;
 
 		auto z_psi = Z_psi::bind_f();
-	//	static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
+	//	static_assert(same_q<X_phi, decltype(z_phi.store().front())>);
 
 		//\
 		occur::resize_t<> z_req(8);
@@ -212,7 +212,7 @@ TAG_("phasor")
 		z_psi <<= occur::indent_s<X_phi, 1>{x_d4};
 		z_psi <<= z_req;
 		
-	//	static_assert(is_q<bond::pack_t<T_alpha, T_alpha>, iteratee_t<decltype(z_psi.store())>>);
+	//	static_assert(same_q<bond::pack_t<T_alpha, T_alpha>, iteratee_t<decltype(z_psi.store())>>);
 
 		//\
 		(void) z_psi.efflux(z_rev, z_ren++);
@@ -251,7 +251,7 @@ TAG_("phasor")
 		auto z_out = bond::transpack_f<void_type[2]>(8, z_outs);
 
 		auto z_phi = Z_phi::bind_f();
-		static_assert(is_q<X_phi, decltype(z_phi.store().front())>);
+		static_assert(same_q<X_phi, decltype(z_phi.store().front())>);
 
 		occur::resize_t<> z_req(8);
 		occur::render_t<> z_ren(8);

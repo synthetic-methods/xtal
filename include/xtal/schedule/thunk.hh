@@ -70,11 +70,11 @@ struct thunk
 				};
 				U_shuttle u_shuttle{};
 
-				XTAL_TO4_(XTAL_DEF_(alias) head_(), u_shuttle.head())
-				XTAL_TO4_(XTAL_DEF_(alias) then_(), u_shuttle.tail())
+				XTAL_TO4_(XTAL_DEF head_(), u_shuttle.head())
+				XTAL_TO4_(XTAL_DEF then_(), u_shuttle.tail())
 
-				XTAL_TO4_(XTAL_DEF_(alias) head_(int i), u_spool.begin(i)->head())
-				XTAL_TO4_(XTAL_DEF_(alias) then_(int i), u_spool.begin(i)->tail())
+				XTAL_TO4_(XTAL_DEF head_(int i), u_spool.begin(i)->head())
+				XTAL_TO4_(XTAL_DEF then_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
@@ -117,7 +117,7 @@ struct thunk
 				{
 					compact_();
 					
-					if constexpr (is_q<U_shuttle, decltype(o)>) {
+					if constexpr (same_q<U_shuttle, decltype(o)>) {
 						return then_(0).influx(XTAL_REF_(o));
 					}
 					else {
@@ -138,7 +138,7 @@ struct thunk
 				XTAL_LET infuse(flux::cue_q auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (is_q<U_shuttle, decltype(o)>) {
+					if constexpr (same_q<U_shuttle, decltype(o)>) {
 						return shuttle_(XTAL_REF_(o));
 					}
 					else {

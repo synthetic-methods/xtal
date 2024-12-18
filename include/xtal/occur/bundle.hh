@@ -15,7 +15,7 @@ Ties `Xs...` to unify handling, arithmetic, etc. \
 
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::any_tag_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
 
 template <class V=void, class ...Xs>
 XTAL_DEF_(short)
@@ -26,7 +26,7 @@ noexcept -> auto
 	XTAL_0IF (complete_q<V>) {
 		XTAL_LET f = invoke_f<V>;
 		using    F = invoke_t<V>;
-		using    T = bundle_t<_std::invoke_result_t<F, Xs>...>;
+		using    T = bundle_t<return_t<F, Xs>...>;
 		if constexpr (automorphism_p<F, Xs...>) {
 			return T{  XTAL_REF_(xs) ...};
 		}

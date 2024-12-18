@@ -125,8 +125,8 @@ XTAL_LET unseek_n = []<auto ...I> (bond::seek_t<I...>)
 	XTAL_0FN_(_std::array{bond::seek_index_n<I, Ns...>...})
 (bond::seek_s<1U << _std::bit_width((unsigned) seek_maximum_n<Ns...>)>{});
 
-template <constant_q ...Ns>	XTAL_DEF_(alias) unseek_f(       Ns... ) noexcept {return unseek_n<Ns{}...>;}
-template <int        ...Ns>	XTAL_DEF_(alias) unseek_f(seek_t<Ns...>) noexcept {return unseek_n<Ns  ...>;}
+template <constant_q ...Ns>	XTAL_DEF unseek_f(       Ns... ) noexcept {return unseek_n<Ns{}...>;}
+template <int        ...Ns>	XTAL_DEF unseek_f(seek_t<Ns...>) noexcept {return unseek_n<Ns  ...>;}
 
 
 ////////////////////////////////////////////////////////////////////////////////

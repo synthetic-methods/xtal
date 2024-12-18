@@ -13,7 +13,7 @@ namespace xtal::provision
 
 template <typename ..._s> struct   biased;
 template <typename ..._s> using    biased_t = confined_t<biased<_s...>>;
-template <typename ..._s> concept  biased_q = bond::any_tag_p<biased, _s...>;
+template <typename ..._s> concept  biased_q = bond::tag_p<biased, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@ namespace xtal::flux
 Used for scheduling any type by prefixing with an integral delay. \
 
 template <class	..._s> struct   cue;
-template <class	..._s> concept  cue_q = bond::any_tag_p<cue, _s...>;
+template <class	..._s> concept  cue_q = bond::tag_p<cue, _s...>;
 template <class	..._s> using    cue_s = bond::compose_s<flux::packet_t<_s...>, cell::confined<cue<>>>;
 
 

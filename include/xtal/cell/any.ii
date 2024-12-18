@@ -18,15 +18,15 @@ the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> struct   any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> using    any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> concept  any_p = bond::any_tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > concept  any_q = bond::any_tag_p<any, Ts...>;
+template <class    T, typename ...As> concept  any_p = bond::tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > concept  any_q = bond::tag_p<any, Ts...>;
 
 using any_type = any_s<unit_type>;
 
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(alias) get(T const &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(alias) get(T       &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(alias) get(T const  &t) noexcept {return           t .node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(alias) get(T        &t) noexcept {return           t .node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T const &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T       &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T const  &t) noexcept {return           t .node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T        &t) noexcept {return           t .node().template head<N>();};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ Defines an `inferred` tuple from `...As`. \
 
 template <class   ...Ts>	struct   packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
 template <class   ...Ts>	using    packed_t = typename packed<Ts...>::type;
-template <class   ...Ts>	concept  packed_q = bond::any_tag_p<packed, Ts...>;
+template <class   ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
 template <class   ...Ts>
 XTAL_DEF_(short)
 XTAL_LET packed_f(Ts &&...as)

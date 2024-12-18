@@ -45,8 +45,8 @@ struct forge<T_<U, _s...>>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(is_q<_std::complex<int   >, compose_s<int, forge<_std::complex<double   >>>>);
-static_assert(is_q<_std::array  <int, 2>, compose_s<int, forge<_std::array  <double, 2>>>>);
+static_assert(same_q<_std::complex<int   >, compose_s<int, forge<_std::complex<double   >>>>);
+static_assert(same_q<_std::array  <int, 2>, compose_s<int, forge<_std::array  <double, 2>>>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

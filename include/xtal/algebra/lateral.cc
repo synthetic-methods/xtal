@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./sector.hh"// testing...
+#include "./lateral.hh"// testing...
 
 
 
@@ -18,7 +18,7 @@ class signature : _std::tuple<Ts...>
 public:
 	using    tuple_type = _std::tuple<Ts...>;
 	using    arity_type = _std::size_t;
-	using    array_type = xtal::algebra::sector_t<arity_type[sizeof...(Ts)]>;
+	using    array_type = xtal::algebra::lateral_t<arity_type[sizeof...(Ts)]>;
 
 	static
 	array_type constexpr layout{xtal::destruct_n<Ts>...};
@@ -40,7 +40,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("sector")
+TAG_("lateral")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -51,7 +51,7 @@ TAG_("sector")
 	TRY_("construction")
 	{
 		auto constexpr N_size = 2;
-		using W = sector_t<T_alpha[N_size]>;
+		using W = lateral_t<T_alpha[N_size]>;
 
 		auto foo = W{2.0, 0.5};
 		auto bar = _op::template roots_f<2>((T_alpha) 2);
@@ -65,7 +65,7 @@ TAG_("sector")
 	TRY_("summation")
 	{
 		auto constexpr N_size = 3;
-		using W = sector_t<T_alpha[N_size]>;
+		using W = lateral_t<T_alpha[N_size]>;
 		auto  w = W{2.0, 1.0, 0.5};
 
 		TRUE_(3.5 == w.sum());
@@ -75,7 +75,7 @@ TAG_("sector")
 	TRY_("reflection")
 	{
 		auto constexpr N_size = 2;
-		using W = sector_t<T_alpha[N_size]>;
+		using W = lateral_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
 		auto foo = bar.template reflected<-1>();
@@ -102,9 +102,7 @@ TAG_("sector")
 				source.extent[index] = count;
 				source.extend[index] = count/source.layout[index];
 
-				target.expand = source.extend.cofactorable()? 
-					source.extend.template extremal<1>():
-					source.extend.template  extremum<1>();
+				target.expand = source.extend.maximum();
 				target.extent = target.layout*target.expand;
 				target.extend = target.extent/target.layout;
 
@@ -118,7 +116,6 @@ TAG_("sector")
 	//	echo(source.extent);
 	//	echo(source.extend);
 	//	echo();
-	//	echo(source.extend.cofactorable());
 	//	echo(source.extend.template extremal<1>());
 	//	echo(source.extend.template  extremum<1>());
 	//	echo();
@@ -130,24 +127,19 @@ TAG_("sector")
 	TRY_("refactoring")
 	{
 		using U0 = T_sigma;
-		using U1 = sector_t<U0[1]>;
-		using U2 = sector_t<U0[2]>;
-		using U3 = sector_t<U0[3]>;
-		using U4 = sector_t<U0[4]>;
+		using U1 = lateral_t<U0[1]>;
+		using U2 = lateral_t<U0[2]>;
+		using U3 = lateral_t<U0[3]>;
+		using U4 = lateral_t<U0[4]>;
 
-		  TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
-		  TRUE_(U4{2, 12, 6, 2}.cofactorable());
-		UNTRUE_(U4{2, 12, 6, 3}.cofactorable());
-		UNTRUE_(U4{2, 12, 6, 4}.cofactorable());
+	//	TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 
 
 		U4 const xs_expected { 1,  2,  1,  2};
 		U4 const xs_provided { 2, 12,  6,  2};
 		
 		auto const xs_extents = xs_provided/xs_expected;
-		auto const ys_extent  = xs_extents.cofactorable()? 
-			xs_extents.template extremal<1>():
-			xs_extents.template  extremum<1>();
+		auto const ys_extent  = xs_extents.maximum();
 		
 		U3 const ys_expected { 2,  1,  2};
 		U3 const ys_provided = ys_expected*ys_extent;
@@ -187,8 +179,8 @@ TAG_("sector")
 		XTAL_LET N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
-		using simplex_val = sector_t<float   [N]>;
-		using simplex_ref = sector_t<float(&)[N]>;
+		using simplex_val = lateral_t<float   [N]>;
+		using simplex_ref = lateral_t<float(&)[N]>;
 		
 		using complex_val = _std::complex<simplex_val>;
 		using complex_ref = _std::complex<simplex_ref>;

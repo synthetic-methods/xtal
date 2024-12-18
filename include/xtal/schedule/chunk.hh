@@ -54,8 +54,8 @@ struct chunk
 				U_spool u_spool{
 					(U_event) L_delay::max()
 				};
-				XTAL_TO4_(XTAL_DEF_(alias) head_(int i), u_spool.begin(i - 1)->head())
-				XTAL_TO4_(XTAL_DEF_(alias) then_(int i), u_spool.begin(i - 1)->tail())
+				XTAL_TO4_(XTAL_DEF head_(int i), u_spool.begin(i - 1)->head())
+				XTAL_TO4_(XTAL_DEF then_(int i), u_spool.begin(i - 1)->tail())
 
 			public:
 				using R_::R_;

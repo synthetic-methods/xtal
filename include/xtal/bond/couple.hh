@@ -17,8 +17,8 @@ providing point-wise multiplication/division and scalar summation. \
 template <class   ..._s>	struct   couple;
 template <class   ..._s>	using    couple_t = typename couple<_s...>::type;
 //\
-template <class   ..._s>	concept  couple_q = bond::any_tag_p<couple, _s...>;
-template <class T     , class ...Xs>	concept  couple_q = bond::any_tag_p<couple, T> and (0 == sizeof...(Xs) or as_q<T, bond::pack_t<Xs...>>);
+template <class   ..._s>	concept  couple_q = bond::tag_p<couple, _s...>;
+template <class T     , class ...Xs>	concept  couple_q = bond::tag_p<couple, T> and (0 == sizeof...(Xs) or make_p<bond::pack_t<Xs...>, T>);
 template <class V=void, class ...Xs>
 XTAL_DEF_(short)
 XTAL_LET couple_f(Xs &&...xs)
@@ -28,7 +28,7 @@ noexcept -> auto
 	XTAL_0IF (complete_q<V>) {
 		XTAL_LET f = invoke_f<V>;
 		using    F = invoke_t<V>;
-		using    T = couple_t<_std::invoke_result_t<F, Xs>...>;
+		using    T = couple_t<return_t<F, Xs>...>;
 		if constexpr (automorphism_p<F, Xs...>) {
 			return T{ (XTAL_REF_(xs))...};
 		}

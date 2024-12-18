@@ -24,7 +24,7 @@ or conditionally incorporate `lead()` into rendering and `key`ed event propagati
 
 template <typename ..._s> struct   polymer;
 template <typename ..._s> using    polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> concept  polymer_q = bond::any_tag_p<polymer, _s...>;
+template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s...>;
 template <typename ..._s>
 XTAL_DEF_(short)
 XTAL_LET polymer_f(auto &&u)
@@ -89,11 +89,11 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_DEF_(alias) ensemble(size_t i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF_(alias) ensemble(        ), u_ensemble   )
+				XTAL_TO2_(XTAL_DEF ensemble(size_t i), u_ensemble[i])
+				XTAL_TO2_(XTAL_DEF ensemble(        ), u_ensemble   )
 				//\
-				XTAL_TO2_(XTAL_DEF_(alias) lead(), u_ensemble.front())
-				XTAL_TO2_(XTAL_DEF_(alias) lead(), R_::template head<V_voice>())
+				XTAL_TO2_(XTAL_DEF lead(), u_ensemble.front())
+				XTAL_TO2_(XTAL_DEF lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
 				using R_::influx;
@@ -222,14 +222,13 @@ struct polymer<U, As...>
 					or reapply the base `monomer`. \
 
 					if constexpr (provision::stored_q<S_>) {
-						using arrange::_detail::mix_to;
 						/**/
 						size_type i{count_f(u_ensemble)};
 						
 						auto vox_f = [&]<class N> (N n) XTAL_0FN {
 							i -= n;
 							[&]<auto ...I> (bond::seek_t<I...>)
-								XTAL_0FN {mix_to(review_o, u_ensemble[i + I]()...);}
+								XTAL_0FN {_detail::mix_to(review_o, u_ensemble[i + I]()...);}
 							(bond::seek_s<n>{});
 						};
 						while (i) {switch (i) {
@@ -240,7 +239,7 @@ struct polymer<U, As...>
 						}}
 						/*/
 						for (auto &vox:u_ensemble) {
-							mix_to(review_o, vox());
+							_detail::mix_to(review_o, vox());
 						}
 						/***/
 					}

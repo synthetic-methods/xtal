@@ -81,7 +81,7 @@ XTAL_ENV_(push)
 #define XTAL_STD_null_type         ::std::nullptr_t
 #define XTAL_STD_unit_type         ::std::monostate
 #define XTAL_STD_size_type         ::std::size_t
-#define XTAL_STD_integer_type      ::std::ptrdiff_t
+#define XTAL_STD_ordinal_type      ::std::ptrdiff_t
 
 #define XTAL_STD_int(...)                 XTAL_STD_int_##__VA_ARGS__
 #define XTAL_STD_int_0                    char
@@ -199,6 +199,7 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_KEY_implicit           XTAL_KEY_short constexpr                ///< Start abridged short `implicit` function.
 #define XTAL_KEY_alias              XTAL_KEY_short constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
 
+#define XTAL_DEF                    XTAL_KEY_short constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
 
 #define XTAL_NEW_(ARG,...)          XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__)) ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit           constexpr explicit                       ///< Start        `explicit` constructor.

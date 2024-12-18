@@ -5,7 +5,111 @@ namespace _retail
 using namespace xtal::bond;
 
 
-////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+using namespace xtal::bond::_detail;
+
+
+template <class U_node, class U_edge=void>
+struct query
+{
+	XTAL_SET Q_node =     same_q<void, U_edge>;
+	XTAL_SET Q_edge = not same_q<void, U_edge>;
+
+	using U_dex = size_type;
+
+	template <class S>
+	class subtype : public S
+	{
+		using U_self = typename S::self_type;
+		using U_null =             null_type;
+
+	public:
+		using node_type = U_node;
+
+	public:
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+
+	public:
+		using S::S;
+
+		XTAL_TO4_(XTAL_DEF node(), self<U_node>())
+
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+
+	};
+	template <class S> requires complete_q<typename S::head_type>
+	class subtype<S> : public S
+	{
+		using U_self = typename S::self_type;
+		using U_head = typename S::head_type;
+		using U_null =             null_type;
+
+	public:
+		using node_type = U_node;
+
+	public:
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_s<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_head, Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+		/**/
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+		template <                       class ...Is> using  head_s = typename super<U_node, Is...>::type;
+		/*/
+		template <                       class ...Is> using  self_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_self>;
+		template <                       class ...Is> using  head_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_node>;
+		/***/
+		template <                       class ...Is> using  head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
+
+	public:
+		using S::S;
+
+		XTAL_TO4_(XTAL_DEF node(), self<node_type>())
+
+
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+		
+
+		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
+
+		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF head(auto &&...oo), S::head(XTAL_REF_(oo)...))
+
+		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
+
+	};
+};
+
+
+}///////////////////////////////////////////////////////////////////////////////
 
 ///\
 Creates a unique `subtype` tagged by the given `As...`, \
@@ -66,7 +170,7 @@ struct any<A>
 };
 
 
-}//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////
 
 #include "../cell/any.ii"

@@ -30,10 +30,10 @@ Rework `operator`s to accommodate `std::complex`. \
 
 template <class   ..._s>	struct           phason;
 template <class   ..._s>	using            phason_t = typename phason<_s...>::type;
-template <class   ...Ts>	concept          phason_q = bond::any_tag_p<phason_t, Ts...>;
-template <class   ...Ts>	concept     real_phason_q = bond::any_tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
-template <class   ...Ts>	concept  simplex_phason_q = bond::any_tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
-template <class   ...Ts>	concept  complex_phason_q = bond::any_tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept          phason_q = bond::tag_p<phason_t, Ts...>;
+template <class   ...Ts>	concept     real_phason_q = bond::tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept  simplex_phason_q = bond::tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept  complex_phason_q = bond::tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
 template <class  V=void>
 XTAL_DEF_(short)
 XTAL_LET phason_f(auto &&...oo)

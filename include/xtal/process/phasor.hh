@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> struct   phasor;
 template <typename ..._s> using    phasor_t = confined_t<phasor<_s...>>;
-template <typename ..._s> concept  phasor_q = bond::any_tag_p<phasor, _s...>;
+template <typename ..._s> concept  phasor_q = bond::tag_p<phasor, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_DEF_(alias) let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_DEF let(size_type i), head().let(i))
 
 	public:// EVALUATION
 		///\todo\
@@ -182,7 +182,7 @@ struct phasor<A, As...>
 		///\todo\
 		Replace with accessor-decorator?
 
-		XTAL_TO4_(XTAL_DEF_(alias) let(size_type i), head().let(i))
+		XTAL_TO4_(XTAL_DEF let(size_type i), head().let(i))
 
 	public:// REEVALUATION
 		///\returns the current differential after scaling the incoming `phi` by `co`. \
@@ -194,7 +194,7 @@ struct phasor<A, As...>
 		XTAL_DEF_(long)
 		XTAL_LET method(U_phason phi, coordinate_type co)
 		noexcept -> auto
-			requires is_q<U_phason, typename S_::template head_t<constant_t<size_1>>>
+			requires same_q<U_phason, typename S_::template head_t<constant_t<size_1>>>
 		{
 			static_assert(bond::dipack_q<U_phason>);
 

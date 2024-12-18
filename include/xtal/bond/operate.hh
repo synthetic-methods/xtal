@@ -41,9 +41,6 @@ struct recognize<(1U<<0U)>
 //	using alpha_type =           XTAL_STD_(float, 0);
 //	using aphex_type = _std::complex<alpha_type>;
 
-	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<delta_type(Ns)...>;
-	template <auto ...Ns> XTAL_SET_(sigma_type) sigma_n = lateral_n<sigma_type(Ns)...>;
-
 	XTAL_SET_(sigma_type) N_exponent = 3;
 	XTAL_SET_(sigma_type) N_fraction = 4;
 
@@ -57,9 +54,6 @@ struct recognize<(1U<<1U)>
 	using sigma_type =  unsigned XTAL_STD_(int,   1);
 //	using alpha_type =           XTAL_STD_(float, 1);
 //	using aphex_type = _std::complex<alpha_type>;
-
-	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<delta_type(Ns)...>;
-	template <auto ...Ns> XTAL_SET_(sigma_type) sigma_n = lateral_n<sigma_type(Ns)...>;
 
 	XTAL_SET_(sigma_type) N_exponent =  5;
 	XTAL_SET_(sigma_type) N_fraction = 10;
@@ -75,11 +69,6 @@ struct recognize<(1U<<2U)>
 	using alpha_type =           XTAL_STD_(float, 2);
 	using aphex_type = _std::complex<alpha_type>;
 
-	template <auto ...Ns> using                       delta_u = lateral_t<(delta_type) Ns...>;
-	template <auto ...Ns> using                       sigma_u = lateral_t<(sigma_type) Ns...>;
-	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<(delta_type) Ns...>;
-	template <auto ...Ns> XTAL_SET_(sigma_type) sigma_n = lateral_n<(sigma_type) Ns...>;
-
 	XTAL_SET_(sigma_type) N_exponent =  8;
 	XTAL_SET_(sigma_type) N_fraction = 23;
 
@@ -90,21 +79,19 @@ struct recognize<(1U<<2U)>
 #endif
 
 	using mt19937_t = _std::mersenne_twister_engine<sigma_type, 32, 624, 397, 31
-	,	sigma_n<0x9908B0DF>, 11
-	,	sigma_n<0xFFFFFFFF>,  7
-	,	sigma_n<0x9D2C5680>, 15
-	,	sigma_n<0xEFC60000>, 18
-	,	sigma_n<0x6C078965>
+	,	literal_f<sigma_type>(0x9908B0DF), 11
+	,	literal_f<sigma_type>(0xFFFFFFFF),  7
+	,	literal_f<sigma_type>(0x9D2C5680), 15
+	,	literal_f<sigma_type>(0xEFC60000), 18
+	,	literal_f<sigma_type>(0x6C078965)
 	>;
 
 	template <int _, int N_pow> struct   root;
-	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE> {};
-	template <int _> struct root<_, -2> : sigma_u<0x5F375A86> {};
+	template <int _           > struct   root<_, -1> : constant_t<literal_f<sigma_type>(0x7EEEEEEE)> {};
+	template <int _           > struct   root<_, -2> : constant_t<literal_f<sigma_type>(0x5F375A86)> {};
 
 	template <int N_pow>
 	XTAL_SET_(sigma_type) root_n = root<0, N_pow>::value;
-//	XTAL_SET_(sigma_type) root_1 = sigma_n<0x7EEEEEEE>;
-//	XTAL_SET_(sigma_type) root_2 = sigma_n<0x5F375A86>;
 
 	template <int N_pow=-1>
 	XTAL_DEF_(short)
@@ -168,11 +155,6 @@ struct recognize<(1U<<3U)>
 	using alpha_type =           XTAL_STD_(float, 3);
 	using aphex_type = _std::complex<alpha_type>;
 
-	template <auto ...Ns> using                 delta_u = lateral_t<(delta_type) Ns...>;
-	template <auto ...Ns> using                 sigma_u = lateral_t<(sigma_type) Ns...>;
-	template <auto ...Ns> XTAL_SET_(delta_type) delta_n = lateral_n<(delta_type) Ns...>;
-	template <auto ...Ns> XTAL_SET_(sigma_type) sigma_n = lateral_n<(sigma_type) Ns...>;
-
 	XTAL_SET_(sigma_type) N_exponent = 11;
 	XTAL_SET_(sigma_type) N_fraction = 52;
 
@@ -183,16 +165,16 @@ struct recognize<(1U<<3U)>
 #endif
 
 	using mt19937_t = _std::mersenne_twister_engine<sigma_type, 64, 312, 156, 31
-	,	sigma_n<0xB5026F5A, 0xA96619E9>, 29
-	,	sigma_n<0x55555555, 0x55555555>, 17
-	,	sigma_n<0x71D67FFF, 0xEDA60000>, 37
-	,	sigma_n<0xFFF7EEE0, 0x00000000>, 43
-	,	sigma_n<0x5851F42D, 0x4C958000>
+	,	literal_f<sigma_type>(0xB5026F5A, 0xA96619E9), 29
+	,	literal_f<sigma_type>(0x55555555, 0x55555555), 17
+	,	literal_f<sigma_type>(0x71D67FFF, 0xEDA60000), 37
+	,	literal_f<sigma_type>(0xFFF7EEE0, 0x00000000), 43
+	,	literal_f<sigma_type>(0x5851F42D, 0x4C958000)
 	>;
 
 	template <int _, int N_pow> struct   root;
-	template <int _> struct root<_, -1> : sigma_u<0x7EEEEEEE, 0xEEEEEEEE> {};
-	template <int _> struct root<_, -2> : sigma_u<0x5FE6EB50, 0xC7B537A9> {};
+	template <int _           > struct   root<_, -1> : constant_t<literal_f<sigma_type>(0x7EEEEEEE, 0xEEEEEEEE)> {};
+	template <int _           > struct   root<_, -2> : constant_t<literal_f<sigma_type>(0x5FE6EB50, 0xC7B537A9)> {};
 	
 	template <int N_pow>
 	XTAL_SET_(sigma_type) root_n = root<0, N_pow>::value;
@@ -710,9 +692,9 @@ public:
 	{
 		using Q = XTAL_ALL_(o);
 		XTAL_IF0
-		XTAL_0IF (       is_q<delta_type, Q>) {return                                 XTAL_REF_(o)  ;}
-		XTAL_0IF (       is_q<sigma_type, Q>) {return      _std::bit_cast<delta_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (       is_q<alpha_type, Q>) {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
+		XTAL_0IF (       same_q<delta_type, Q>) {return                                 XTAL_REF_(o)  ;}
+		XTAL_0IF (       same_q<sigma_type, Q>) {return      _std::bit_cast<delta_type>(XTAL_REF_(o)) ;}
+		XTAL_0IF (       same_q<alpha_type, Q>) {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
 	//	XTAL_0IF (_std::  signed_integral<Q>) {return delta_f(static_cast<delta_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::unsigned_integral<Q>) {return delta_f(static_cast<sigma_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::   floating_point<Q>) {return delta_f(static_cast<alpha_type>(XTAL_REF_(o)));}
@@ -724,9 +706,9 @@ public:
 	{
 		using Q = XTAL_ALL_(o);
 		XTAL_IF0
-		XTAL_0IF (       is_q<delta_type, Q>) {return      _std::bit_cast<sigma_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (       is_q<sigma_type, Q>) {return                                 XTAL_REF_(o)  ;}
-		XTAL_0IF (       is_q<alpha_type, Q>) {return                 sigma_f(delta_f(XTAL_REF_(o)));}
+		XTAL_0IF (       same_q<delta_type, Q>) {return      _std::bit_cast<sigma_type>(XTAL_REF_(o)) ;}
+		XTAL_0IF (       same_q<sigma_type, Q>) {return                                 XTAL_REF_(o)  ;}
+		XTAL_0IF (       same_q<alpha_type, Q>) {return                 sigma_f(delta_f(XTAL_REF_(o)));}
 		XTAL_0IF (_std::  signed_integral<Q>) {return sigma_f(static_cast<delta_type>(XTAL_REF_(o)));}
 	//	XTAL_0IF (_std::unsigned_integral<Q>) {return sigma_f(static_cast<sigma_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::   floating_point<Q>) {return sigma_f(static_cast<alpha_type>(XTAL_REF_(o)));}
@@ -738,9 +720,9 @@ public:
 	{
 		using Q = XTAL_ALL_(o);
 		XTAL_IF0
-		XTAL_0IF (       is_q<delta_type, Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (       is_q<sigma_type, Q>) {return                 alpha_f(delta_f(XTAL_REF_(o)));}
-		XTAL_0IF (       is_q<alpha_type, Q>) {return                                 XTAL_REF_(o)  ;}
+		XTAL_0IF (       same_q<delta_type, Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
+		XTAL_0IF (       same_q<sigma_type, Q>) {return                 alpha_f(delta_f(XTAL_REF_(o)));}
+		XTAL_0IF (       same_q<alpha_type, Q>) {return                                 XTAL_REF_(o)  ;}
 		XTAL_0IF (_std::  signed_integral<Q>) {return alpha_f(static_cast<delta_type>(XTAL_REF_(o)));}
 		XTAL_0IF (_std::unsigned_integral<Q>) {return alpha_f(static_cast<sigma_type>(XTAL_REF_(o)));}
 	//	XTAL_0IF (_std::   floating_point<Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
@@ -1851,7 +1833,7 @@ struct   operate<Ts...>
 };
 using operating = operate<size_type>;
 
-static_assert(is_q<size_type, typename operating::sigma_type>);
+static_assert(same_q<size_type, typename operating::sigma_type>);
 static_assert(sizeof(size_type) == sizeof(typename operating::sigma_type));
 static_assert(sizeof(size_type) == sizeof(typename operating::delta_type));
 static_assert(sizeof(size_type) == sizeof(typename operating::alpha_type));

@@ -133,7 +133,7 @@ noexcept -> decltype(auto)
 
 
 template <class T, size_type I>
-concept  pack_item_p = I <  pack_size_n<T> and requires(T t) {{get<I>(t)} -> as_q<pack_item_t<T, I>>;};
+concept  pack_item_p = I <  pack_size_n<T> and requires(T t) {{get<I>(t)} -> make_q<pack_item_t<T, I>>;};
 
 template <class T>
 concept  pack_list_q = 0 == pack_size_n<T> or [] <auto ...Is>
@@ -192,7 +192,7 @@ XTAL_DEF_(short)
 XTAL_LET transpack_f(int i, size_type m, indexed_q auto &&w)
 noexcept -> auto
 {
-	if constexpr (is_q<decltype(**w), U>) {
+	if constexpr (same_q<decltype(**w), U>) {
 		return _std::span(point_f(XTAL_REF_(w)[i]), m);
 	}
 	else {
@@ -224,7 +224,7 @@ using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000, XTAL_ANY_(initializer_u<
 
 template <class ...Ts> concept       pack_q = pack_size_q<Ts...> and (...and pack_list_q<Ts>);
 template <class ...Ts> concept     dipack_q = pack_q<Ts...> and (...and (2 == pack_size_n<Ts>));
-template <class ...Ts> concept   idiopack_q = (...and is_q<Ts, repack_t<Ts>>);
+template <class ...Ts> concept   idiopack_q = (...and same_q<Ts, repack_t<Ts>>);
 template <class ...Ts> concept   homopack_q = pack_q<Ts...> and      iterable_q<Ts...>  and idiopack_q<Ts...>;
 template <class ...Ts> concept heteropack_q = pack_q<Ts...> and un_q<iterable_q<Ts...>> and idiopack_q<Ts...>;
 

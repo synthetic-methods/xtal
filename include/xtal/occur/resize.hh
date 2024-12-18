@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class U=size_type> struct   resize;
 template <class U=size_type> using    resize_t = confined_t<resize<U>>;
-template <typename ..._s> concept  resize_q = bond::any_tag_p<resize, _s...>;
+template <typename    ..._s> concept  resize_q = bond::tag_p<resize, _s...>;
 XTAL_DEF_(short)
 XTAL_LET resize_f(auto &&w)
 noexcept -> auto
@@ -45,8 +45,8 @@ struct resize
 		using S_::head;
 
 		using size_type = U;
-		XTAL_TO4_(XTAL_DEF_(alias) size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_DEF_(alias) empty(), 0 == size())
+		XTAL_TO4_(XTAL_DEF size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF empty(), 0 == size())
 
 	};
 };
@@ -55,9 +55,8 @@ struct resize<U> : resize<counter_t<U>>
 {
 };
 
-static_assert(not bond::twin_tab_q<resize_t<size_type>, resize_t<size_type>>);
-static_assert(    bond::twin_tab_q<resize_t<size_type>, resize_t<int   >>);
-static_assert(    bond::self_tab_q<resize_t<size_type>, resize_t<size_type>>);
+static_assert(bond::same_tabs_q<resize_t<size_type>, resize_t<size_type>>);
+static_assert(bond::same_tabs_q<resize_t<size_type>, resize_t<int      >>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename     ..._s> struct   indent;
-template <typename     ..._s> concept  indent_q = bond::any_tag_p<indent, _s...>;
+template <typename     ..._s> concept  indent_q = bond::tag_p<indent, _s...>;
 template <class S, int ...Ns> using    indent_s = bond::compose_s<S, indent<constant_t<Ns>...>>;
 
 template <constant_q ...Ns>

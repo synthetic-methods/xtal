@@ -29,7 +29,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <                     typename ..._s> struct   render;
 template <class W=counter_t<>, typename ..._s> using    render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> concept  render_q = bond::any_tag_p<render, _s...>;
+template <                     typename ..._s> concept  render_q = bond::tag_p<render, _s...>;
 template <                     typename ..._s>
 XTAL_DEF_(short)
 XTAL_LET render_f(auto &&w)
@@ -48,7 +48,7 @@ concept influx_render_q = false;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <render_q X, render_q Y> requires (not is_q<X, Y>)
+template <render_q X, render_q Y> requires (not same_q<X, Y>)
 XTAL_DEF_(inline)
 XTAL_LET operator == (X const &x, Y const &y)
 noexcept -> bool
@@ -388,7 +388,7 @@ public:
 		noexcept
 		:	S_(u, v)
 		{}
-		template <as_q<V> W>
+		template <make_q<V> W>
 		XTAL_NEW_(explicit) subtype(W w)
 		noexcept
 		:	subtype(U(0, w), 0)

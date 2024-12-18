@@ -11,6 +11,26 @@ namespace xtal::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+static_assert(incomplete_q           <void     > );
+static_assert(incomplete_q           <void_type> );
+static_assert(  complete_q<complete_t<void     >>);
+static_assert(  complete_q<complete_t<void_type>>);
+
+static_assert(    integral_q<constant_t<1>>);
+static_assert(    integral_q<  int>);
+static_assert(not integral_q<float>);
+
+
+
+static_assert(assign_sized_n<       1            > ==   1);
+static_assert(assign_sized_n<       1, 2, 3, 4, 5> == 120);
+static_assert(assign_sized_n<    0, 1, 2, 3, 4, 5> ==   0);
+static_assert(assign_sized_n<-1, 0, 1, 2, 3, 4, 5> ==  -1);
+static_assert(assign_sized_r<       1, 2, 3, 4, 5> ==   5);
+static_assert(assign_sized_r<    0, 1, 2, 3, 4, 5> ==   5);
+static_assert(assign_sized_r<-1, 0, 1, 2, 3, 4, 5> ==   5);
+
+
 static_assert(sized_n<_std::vector  <float   >> == -1);
 static_assert(sized_n<_std::array   <float, 1>> ==  1);
 static_assert(sized_n<_std::complex <float   >> ==  2);
@@ -18,44 +38,44 @@ static_assert(sized_n<constant_t<(unsigned) 2>> ==  2);
 static_assert(sized_n<constant_t<(  signed) 2>> ==  2);
 
 
-static_assert(id_q<unsigned, valued_u<constant_t<(unsigned) 2>>>);
-static_assert(id_q<  signed, valued_u<constant_t<(  signed) 2>>>);
+static_assert(_std::same_as<unsigned, valued_u<constant_t<(unsigned) 2>>>);
+static_assert(_std::same_as<  signed, valued_u<constant_t<(  signed) 2>>>);
 
-static_assert(id_q<const float(&)[2], destruct_t<const float(&)[2]>>);
-static_assert(id_q<      float(&)[2], destruct_t<      float(&)[2]>>);
-static_assert(id_q<const float   [2], destruct_t<const float   [2]>>);
-static_assert(id_q<      float   [2], destruct_t<      float   [2]>>);
-static_assert(id_q<const float &    , destruct_u<const float(&)[2]>>);
-static_assert(id_q<      float &    , destruct_u<      float(&)[2]>>);
-static_assert(id_q<const float      , destruct_u<const float   [2]>>);
-static_assert(id_q<      float      , destruct_u<      float   [2]>>);
+static_assert(_std::same_as<const float(&)[2], destruct_t<const float(&)[2]>>);
+static_assert(_std::same_as<      float(&)[2], destruct_t<      float(&)[2]>>);
+static_assert(_std::same_as<const float   [2], destruct_t<const float   [2]>>);
+static_assert(_std::same_as<      float   [2], destruct_t<      float   [2]>>);
+static_assert(_std::same_as<const float &    , destruct_u<const float(&)[2]>>);
+static_assert(_std::same_as<      float &    , destruct_u<      float(&)[2]>>);
+static_assert(_std::same_as<const float      , destruct_u<const float   [2]>>);
+static_assert(_std::same_as<      float      , destruct_u<      float   [2]>>);
 
-static_assert(id_q<const float(&)[2], destruct_t<const _std::complex<float> &>>);
-static_assert(id_q<      float(&)[2], destruct_t<      _std::complex<float> &>>);
-static_assert(id_q<const float   [2], destruct_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2], destruct_t<      _std::complex<float>  >>);
-static_assert(id_q<const float &    , destruct_u<const _std::complex<float> &>>);
-static_assert(id_q<      float &    , destruct_u<      _std::complex<float> &>>);
-static_assert(id_q<const float      , destruct_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      , destruct_u<      _std::complex<float>  >>);
+static_assert(_std::same_as<const float(&)[2], destruct_t<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float(&)[2], destruct_t<      _std::complex<float> &>>);
+static_assert(_std::same_as<const float   [2], destruct_t<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float   [2], destruct_t<      _std::complex<float>  >>);
+static_assert(_std::same_as<const float &    , destruct_u<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float &    , destruct_u<      _std::complex<float> &>>);
+static_assert(_std::same_as<const float      , destruct_u<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float      , destruct_u<      _std::complex<float>  >>);
 
-static_assert(id_q<const float(&)[2], dissolve_t<const _std::complex<float> &>>);
-static_assert(id_q<      float(&)[2], dissolve_t<      _std::complex<float> &>>);
-static_assert(id_q<const float   [2], dissolve_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2], dissolve_t<      _std::complex<float>  >>);
-static_assert(id_q<const float &    , dissolve_u<const _std::complex<float> &>>);
-static_assert(id_q<      float &    , dissolve_u<      _std::complex<float> &>>);
-static_assert(id_q<const float      , dissolve_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      , dissolve_u<      _std::complex<float>  >>);
+static_assert(_std::same_as<const float(&)[2], dissolve_t<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float(&)[2], dissolve_t<      _std::complex<float> &>>);
+static_assert(_std::same_as<const float   [2], dissolve_t<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float   [2], dissolve_t<      _std::complex<float>  >>);
+static_assert(_std::same_as<const float &    , dissolve_u<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float &    , dissolve_u<      _std::complex<float> &>>);
+static_assert(_std::same_as<const float      , dissolve_u<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float      , dissolve_u<      _std::complex<float>  >>);
 
-static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float> &>>);
-static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float> &>>);
-static_assert(id_q<      float   [2],  absolve_t<const _std::complex<float>  >>);
-static_assert(id_q<      float   [2],  absolve_t<      _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<const _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<      _std::complex<float>  >>);
-static_assert(id_q<      float      ,  absolve_u<const _std::complex<float> &>>);
-static_assert(id_q<      float      ,  absolve_u<      _std::complex<float> &>>);
+static_assert(_std::same_as<      float   [2],  absolve_t<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float   [2],  absolve_t<      _std::complex<float> &>>);
+static_assert(_std::same_as<      float   [2],  absolve_t<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float   [2],  absolve_t<      _std::complex<float>  >>);
+static_assert(_std::same_as<      float      ,  absolve_u<const _std::complex<float>  >>);
+static_assert(_std::same_as<      float      ,  absolve_u<      _std::complex<float>  >>);
+static_assert(_std::same_as<      float      ,  absolve_u<const _std::complex<float> &>>);
+static_assert(_std::same_as<      float      ,  absolve_u<      _std::complex<float> &>>);
 
 
 static_assert(            contiguous_field_q<float>);

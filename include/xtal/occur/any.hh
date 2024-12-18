@@ -155,7 +155,7 @@ struct define
 					class index
 					{
 						template <auto _I>
-						XTAL_SET intend_v = is_q<typename T::body_type, size_type>?
+						XTAL_SET intend_v = same_q<typename T::body_type, size_type>?
 							(decltype(_I)) T(static_cast<size_type>(_I)): _I;
 						
 						template <auto _I>
@@ -198,7 +198,7 @@ struct define
 				XTAL_LET effuse(auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (is_q<T, decltype(o)>) {
+					if constexpr (same_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
 					}
 					else {
@@ -229,7 +229,7 @@ struct define
 				XTAL_LET infuse(auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (is_q<T, decltype(o)>) {
+					if constexpr (same_q<T, decltype(o)>) {
 						return R_::heading(XTAL_REF_(o));
 					}
 					else {

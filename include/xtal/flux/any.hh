@@ -100,11 +100,11 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_DEF_(short) XTAL_LET efflux(                    auto &&...oo) noexcept -> signed {return efflux_fuse(XTAL_REF_(oo)...);}
-		XTAL_DEF_(short) XTAL_LET efflux(unnatural_q auto I, auto &&...oo) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux(                                ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux_fuse(                           ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux_fuse(     auto &&o, auto &&...oo) noexcept -> signed
+		XTAL_DEF_(short) XTAL_LET efflux(                  auto &&...oo) noexcept -> signed {return efflux_fuse(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short) XTAL_LET efflux(unnatural_q auto, auto &&...oo) noexcept -> signed {return -1;}
+		XTAL_DEF_(short) XTAL_LET efflux(                              ) noexcept -> signed {return -1;}
+		XTAL_DEF_(short) XTAL_LET efflux_fuse(                         ) noexcept -> signed {return -1;}
+		XTAL_DEF_(short) XTAL_LET efflux_fuse(   auto &&o, auto &&...oo) noexcept -> signed
 		{
 			return [this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
@@ -255,7 +255,7 @@ struct defer
 		XTAL_DEF_(short)
 		XTAL_LET influx(auto &&...oo)
 		noexcept -> signed
-		requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		requires any_q<U> and (not same_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
 			return [this, oo...] XTAL_XFN_(1,&,S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
@@ -272,7 +272,7 @@ struct defer
 		XTAL_DEF_(short)
 		XTAL_LET efflux(auto &&...oo)
 		noexcept -> signed
-		requires any_q<U> and (not is_q<U, bond::seek_front_t<decltype(oo)...>>)
+		requires any_q<U> and (not same_q<U, bond::seek_front_t<decltype(oo)...>>)
 		{
 			return [this, oo...] XTAL_XFN_(1,&,head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}

@@ -15,7 +15,7 @@ Provides local arena-like storage via `cache()`. \
 
 template <typename ...As> struct   cached;
 template <typename ...As> using    cached_t = confined_t<cached<As...>>;
-template <typename ..._s> concept  cached_q = bond::any_tag_p<cached, _s...>;
+template <typename ..._s> concept  cached_q = bond::tag_p<cached, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,13 +38,13 @@ struct cached
 	public:// ACCESS
 		using S_::head;
 
-		XTAL_TO4_(XTAL_DEF_(alias) cache(), head())
+		XTAL_TO4_(XTAL_DEF cache(), head())
 		
 		XTAL_TO4_(template <class ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(alias) cache(), head().template form<Vs...>())
+		XTAL_DEF cache(), head().template form<Vs...>())
 		
 		XTAL_TO4_(template <class ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(alias) cache(Vs const &...vs), head().form(vs...))
+		XTAL_DEF cache(Vs const &...vs), head().form(vs...))
 		
 		template <I i>
 		XTAL_DEF_(inline) XTAL_LET cache(   ) noexcept -> void {head().fill(i);}

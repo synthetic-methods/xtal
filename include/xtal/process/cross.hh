@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> struct   cross;
 template <typename ..._s> using    cross_t = confined_t<cross<_s...>>;
-template <typename ..._s> concept  cross_q = bond::any_tag_p<cross, _s...>;
+template <typename ..._s> concept  cross_q = bond::tag_p<cross, _s...>;
 template <typename ...As>
 XTAL_DEF_(short)
 XTAL_LET cross_f(auto &&u)

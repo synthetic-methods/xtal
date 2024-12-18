@@ -5,12 +5,12 @@ namespace _xtd
 	using _std::bit_cast;
 #else
 	template <atomic_q T, atomic_q S> requires in_q<sizeof(T), sizeof(S)>
-	XTAL_DEF_(alias) bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
+	XTAL_DEF bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
 #if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)
 	template <atomic_q T>
-	XTAL_DEF_(alias) copysign(T t, T s) noexcept {return __builtin_copysign(t, s);}
+	XTAL_DEF copysign(T t, T s) noexcept {return __builtin_copysign(t, s);}
 #else
 	using _std::copysign;
 #endif
@@ -219,10 +219,10 @@ requires fixed_sized_q<decltype(t)>
 		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
 	}
 }
-static_assert(id_q<      int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>        &)))>);
-static_assert(id_q<const int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const  &)))>);
-static_assert(id_q<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>       &&)))>);
-static_assert(id_q<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const &&)))>);
+static_assert(_std::same_as<      int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>        &)))>);
+static_assert(_std::same_as<const int( &)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const  &)))>);
+static_assert(_std::same_as<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int>       &&)))>);
+static_assert(_std::same_as<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(_std::complex<int> const &&)))>);
 
 ///\
 Defines a factory for the supplied type. \
@@ -438,6 +438,25 @@ noexcept -> bool
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin() and x.end() == y.end())
 	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin())
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+XTAL_DEF_(short)
+XTAL_LET literal_f(T n)
+noexcept -> auto
+{
+	return n;
+}
+template <class T>
+XTAL_DEF_(short)
+XTAL_LET literal_f(T n, T m, auto ...ms)
+noexcept -> auto
+{
+	XTAL_LET N_depth = sizeof(T) << 3, N_count = 1 + 1 + sizeof...(ms);
+	return literal_f<T>((n << N_depth/N_count)|m, ms...);
 }
 
 

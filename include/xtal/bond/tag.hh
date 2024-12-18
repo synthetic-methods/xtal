@@ -26,33 +26,20 @@ struct tag
 	public:
 		using S_::S_;
 
-		template <class ...Xs>
-		struct tagged
+		struct taboo
+		:	S_::taboo
 		{
-		//	template <class R>
-		//	using subtype = Y<Xs...>;
-			using    type = Y<Xs...>;
+			template <class ...Xs> using type = Y<Xs...>;
 
 		};
-//		template <class ...Xs> requires compose_q<Y<Xs...>>
-//		struct tagged<Xs...>
-//		:	Y<Xs...>
-//		{
-//		};
-		template <class ...Xs>
-		//\
-		using tagged_t = compose_s<S, tagged<Xs...>>;
-		using tagged_t = typename tagged<Xs...>::type;
 
 	};
 };
 
-template <class T, template <class ...> class ...Ys> struct   all_tag   :          all_tab<T, tag<Ys>...>     {};
-template <class T, template <class ...> class ...Ys> using    all_tag_t = typename all_tab<T, tag<Ys>...>:: type;
-template <class T, template <class ...> class ...Ys> concept  all_tag_q =          all_tab<T, tag<Ys>...>::value;
-
-template <class T, template <class ...> class ...Ys> concept  any_tag_q = _std::conjunction_v<all_tag<based_t<T >, Ys>...>;
-template <template <class ...> class Y, class ...Ts> concept  any_tag_p = _std::conjunction_v<all_tag<based_t<Ts>, Y >...>;
+template <class T, template <class ...> class ...Ys> using    tagged_s = tabbed_s<T, tag<Ys>...>;
+template <class T, template <class ...> class ...Ys> concept  tagged_q = tabbed_q<T, tag<Ys>...>;
+template <class T, template <class ...> class ...Ys> concept     tag_q =    tab_q<T, tag<Ys>...>;
+template <template <class ...> class Y, class ...Ts> concept     tag_p =    tab_p<tag<Y>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

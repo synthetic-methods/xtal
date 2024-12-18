@@ -19,17 +19,21 @@ using namespace _retail::_detail;
 ///\
 Constructs/references the current value. \
 
-template <class       W >	struct      member               : constant_t< true> {using type = based_t<W>;};
-template <size_type   N >	struct      member<unit_type[N]> : constant_t< true> {using type =   unsigned;};
-template <size_type   N >	struct      member<null_type[N]> : constant_t< true> {using type =   unsigned;};
-template <ionic_q     W >	struct      member<W const &   > : constant_t<false> {using type =   const W*;};
-template <ionic_q     W >	struct      member<W       &   > : constant_t<false> {using type =         W*;};
-template <class       W >	using       member_t = typename member<W>:: type;
-template <class       W >	concept     member_q =          member<W>::value;
-template <class       W >	concept  dismember_q =      not member<W>::value;
+//\
+template <class    ...Ws>	concept  dismember_q = not    atomic_q<Ws...>;
+template <class    ...Ws>	concept  dismember_q = not molecular_q<Ws...>;
+template <class    ...Ws>	concept     member_q = not dismember_q<Ws...>;
+template <class       W >	struct      member;
+template <class       W >	using       member_t = typename member<W>::type;
 
-template <dismember_q M >	XTAL_DEF_(alias) member_f(auto &&    o) noexcept {return & XTAL_REF_(o )    ;}
-template <class       M >	XTAL_DEF_(alias) member_f(auto &&...oo) noexcept {return M(XTAL_REF_(oo)...);}
+template <class       W >	struct      member               {using type = based_t<W>;};
+template <size_type   N >	struct      member<unit_type[N]> {using type =   unsigned;};
+template <size_type   N >	struct      member<null_type[N]> {using type =   unsigned;};
+template <dismember_q W >	struct      member<W const &   > {using type =   const W*;};
+template <dismember_q W >	struct      member<W       &   > {using type =         W*;};
+
+template <dismember_q M >	XTAL_DEF    member_f(auto &&    o) noexcept {return & XTAL_REF_(o )    ;}
+template <class       M >	XTAL_DEF    member_f(auto &&...oo) noexcept {return M(XTAL_REF_(oo)...);}
 
 ///\
 Resolves/dereferences the current value. \
@@ -39,14 +43,14 @@ template <size_type   N >	struct   remember<unit_type[N]> {using type = size_typ
 template <size_type   N >	struct   remember<null_type[N]> {using type = size_type;};
 template <class       W >	using    remember_t = typename remember<W>::type;
 
-template <pointed_q   M >	XTAL_DEF_(alias) remember_f(M &&m) noexcept {return *XTAL_REF_(m);}
-template <class       M >	XTAL_DEF_(alias) remember_f(M &&m) noexcept {return  XTAL_REF_(m);}
+template <pointed_q   M >	XTAL_DEF remember_f(M &&m) noexcept {return *XTAL_REF_(m);}
+template <class       M >	XTAL_DEF remember_f(M &&m) noexcept {return  XTAL_REF_(m);}
 
 ///\
 Replaces and returns the previous value. \
 
-template <member_q    W >	XTAL_DEF_(alias) dismember_f(W &m,         W w) noexcept {return                 _std::exchange(m, XTAL_MOV_(w));}
-template <member_q    W >	XTAL_DEF_(alias) dismember_f(W &m, auto &&...w) noexcept {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <member_q    W >	XTAL_DEF dismember_f(W &m,         W w) noexcept {return                 _std::exchange(m, XTAL_MOV_(w));}
+template <member_q    W >	XTAL_DEF dismember_f(W &m, auto &&...w) noexcept {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -263,10 +267,10 @@ struct defer_field
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_DEF_(alias) head() const  & noexcept {return remember_f(body_part);}
-		XTAL_DEF_(alias) head()        & noexcept {return remember_f(body_part);}
-		XTAL_DEF_(alias) head() const && noexcept {return remember_f(XTAL_MOV_(body_part));}
-		XTAL_DEF_(alias) head()       && noexcept {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_DEF head() const  & noexcept {return remember_f(body_part);}
+		XTAL_DEF head()        & noexcept {return remember_f(body_part);}
+		XTAL_DEF head() const && noexcept {return remember_f(XTAL_MOV_(body_part));}
+		XTAL_DEF head()       && noexcept {return remember_f(XTAL_MOV_(body_part));}
 		
 		XTAL_DEF_(inline)
 		XTAL_LET head(auto &&...oo)
@@ -284,7 +288,7 @@ struct defer_field
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
 		noexcept -> auto
-		requires in_q<S_::pack_size::value, 0> and is_q<bool, U>
+		requires in_q<S_::pack_size::value, 0> and same_q<bool, U>
 		{
 			return size_2;
 		}
@@ -448,7 +452,7 @@ struct defer_field<unit_type[N_width]>
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
-		XTAL_TO2_(XTAL_DEF_(alias) head(), head_type{body_part})
+		XTAL_TO2_(XTAL_DEF head(), head_type{body_part})
 		
 	};
 };
@@ -474,10 +478,10 @@ struct refer_iterators
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(alias) begin() const noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(alias) begin()       noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(alias)   end() const noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
-		XTAL_DEF_(alias)   end()       noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF begin() const noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF begin()       noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF   end() const noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF   end()       noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
 
 		XTAL_DO2_(template <counter_q V>
 		XTAL_DEF_(short)
@@ -816,5 +820,5 @@ struct infer_groups
 {};
 
 
-}//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////

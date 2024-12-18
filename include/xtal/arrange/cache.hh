@@ -13,7 +13,7 @@ namespace xtal::arrange
 
 template <class ...As>	struct   cache;
 template <class ...As>	using    cache_t = typename cache<As...>::type;
-template <class ..._s>	concept  cache_q = bond::any_tag_p<cache, _s...>;
+template <class ..._s>	concept  cache_q = bond::tag_p<cache, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -13,7 +13,7 @@ namespace xtal::arrange
 
 template <class ..._s> struct   store;
 template <class ..._s> using    store_t = typename store<_s...>::type;
-template <class ...Ts> concept  store_q = bond::any_tag_p<store_t, Ts...>;
+template <class ...Ts> concept  store_q = bond::tag_p<store_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ struct store<U_data[N_data]>
 			push_back(w.begin(), w.end());
 		}
 
-		XTAL_LET push_back(as_q<U_data> auto &&...vs)
+		XTAL_LET push_back(make_q<U_data> auto &&...vs)
 		noexcept(false) -> void
 		{
 			push_back(_std::initializer_list<U_data>{U_data(XTAL_REF_(vs))...});

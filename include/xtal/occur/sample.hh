@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class U=size_type>	struct   sample;
 template <class U=size_type>	using    sample_t = confined_t<sample<U>>;
-template <typename    ..._s>	concept  sample_q = bond::any_tag_p<sample, _s...>;
+template <typename    ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -67,8 +67,8 @@ public:
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_DEF_(alias)   rate(), get<0>(S_::head()))
-		XTAL_TO4_(XTAL_DEF_(alias) period(), get<1>(S_::head()))
+		XTAL_TO4_(XTAL_DEF   rate(), get<0>(S_::head()))
+		XTAL_TO4_(XTAL_DEF period(), get<1>(S_::head()))
 
 	};
 };

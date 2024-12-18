@@ -17,7 +17,7 @@ TAG_("seek")
 {
 	TRY_("task")
 	{
-		static_assert(is_q<seek_s<4>, seek_t<0, 1, 2, 3>>);
+		static_assert(same_q<seek_s<4>, seek_t<0, 1, 2, 3>>);
 
 		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[1] == 0);
 		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[3] == 1);

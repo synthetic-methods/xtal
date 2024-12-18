@@ -21,7 +21,7 @@ TAG_("bundle")
 		W w{1, 2, 3};
 		auto m = bundle_f(1, 2, 3);
 		using M = XTAL_ALL_(m);
-		TRUE_(is_q<W, M>);
+		TRUE_(same_q<W, M>);
 
 		auto const &[a, b, c] = m;
 		TRUE_(a == 1);

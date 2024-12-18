@@ -11,25 +11,25 @@ namespace xtal::algebra
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   sector;
-template <class   ..._s>	using    sector_t = typename sector<_s...>::type;
-template <class   ...Ts>	concept  sector_q = bond::any_tag_p<sector_t, Ts...>;
+template <class   ..._s>	struct   lateral;
+template <class   ..._s>	using    lateral_t = typename lateral<_s...>::type;
+template <class   ...Ts>	concept  lateral_q = bond::tag_p<lateral_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET sector_f(auto &&...oo)
+XTAL_LET lateral_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<sector_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<lateral_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with point-wise addition, and the sector sum/product. \
+Extends `lattice` with point-wise addition, and the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
-template <class A>
-struct sector<A>
+template <vector_q A>
+struct lateral<A>
 {
 	using _op = bond::operate<A>;
 	
@@ -37,7 +37,7 @@ struct sector<A>
 	using endotype = typename lattice<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<sector_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<lateral_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -154,7 +154,7 @@ struct sector<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::template tagged_t<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
@@ -167,7 +167,7 @@ struct sector<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::template tagged_t<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
@@ -181,7 +181,7 @@ struct sector<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::template tagged_t<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -196,7 +196,7 @@ struct sector<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::template tagged_t<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -310,77 +310,26 @@ struct sector<A>
 			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
 		}
 
-
-		XTAL_DEF_(short)
-		XTAL_LET ordering() const
+		XTAL_DEF_(short) XTAL_LET  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}
+		XTAL_DEF_(short) XTAL_LET  minimum() const noexcept -> auto const & {return *_xtd::ranges::min_element(self());}
+		XTAL_DEF_(short) XTAL_LET extremum() const noexcept -> auto const
 		{
-			if constexpr (N_data == 2) {
-				auto const &[x, y] = self();
-				return x <=> y;
-			}
-		//	TODO: Provide variadic `ordering`.
+			auto const &[min_, max_] = _xtd::ranges::minmax_element(self());
+			return _std::tie(*min_, *max_);
 		}
-		XTAL_DEF_(short)
-		XTAL_LET ordered() const
-		{
-			return S_::twin().order();
-		}
-		XTAL_DEF_(short)
-		XTAL_LET order()
-		noexcept -> T &
-		{
-			if constexpr (N_data == 2) {
-				if (_std::strong_ordering::greater == ordering()) {
-					reverse();
-				}
-			}
-			else {
-				_std::sort(S_::begin(), S_::end());
-			}
-			return self();
-		}
-
-		XTAL_DEF_(short)
-		XTAL_LET reversed() const
-		{
-			return S_::twin().reverse();
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET reverse()
-		noexcept -> T &
-		{
-			if constexpr (N_data == 2) {
-				auto &[x, y] = self();
-				_std::swap(x, y);
-			}
-			else {
-				_std::reverse(S_::begin(), S_::end());
-			}
-			return self();
-		}
-
-		
 		template <int N>
 		XTAL_DEF_(short)
 		XTAL_LET extremum() const
 		noexcept -> U_data
 		{
-			return S_::template apply([] (auto &&...oo)
-			XTAL_0FN {
-				XTAL_IF0
-				XTAL_0IF (N == 1) {return _std::max<U_data>({XTAL_REF_(oo)...});}
-				XTAL_0IF (N <= 0) {return _std::min<U_data>({XTAL_REF_(oo)...});}
-			});
+			XTAL_IF0
+			XTAL_0IF (0 <  N) {return maximum();}
+			XTAL_0IF (N <= 0) {return minimum();}
 		}
-		XTAL_DEF_(short)
-		XTAL_LET extremum() const
-		{
-			using  U2 = typename T::template tagged_t<U_data[2]>;
-			return U2{extremum<0>(), extremum<1>()};
-		}
-		XTAL_DEF_(alias) maximum() const {return extremum<1>();}
-		XTAL_DEF_(alias) minimum() const {return extremum<0>();}
 
+		XTAL_DEF  maximal() const {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
+		XTAL_DEF  minimal() const {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
+		XTAL_DEF extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
 		XTAL_DEF_(short)
@@ -391,33 +340,16 @@ struct sector<A>
 			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
 			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
 		}
-		XTAL_DEF_(short)
-		XTAL_LET extremal() const
-		{
-			using  U2 = typename T::template tagged_t<U_data[2]>;
-			return U2{extremal<0>(), extremal<1>()};
-		}
-		XTAL_DEF_(alias) maximal() const {return extremal<1>();}
-		XTAL_DEF_(alias) minimal() const {return extremal<0>();}
 
-
-		XTAL_DEF_(short)
-		XTAL_LET cofactorable() const
-		{
-			auto t = ordered();
-			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(...and (0 == get<I + 1>(t)%get<I>(t)))
-			(bond::seek_s<N_data - 1>{});
-		}
 
 	};
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<sector_t<float[2]>>);
+static_assert(atomic_q<lateral_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(sector_t<float(&)[2]>)*XTAL_ANY_(sector_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(lateral_t<float(&)[2]>)*XTAL_ANY_(lateral_t<float(&)[2]>))>
 );
 
 

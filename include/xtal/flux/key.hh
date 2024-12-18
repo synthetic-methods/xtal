@@ -18,7 +18,7 @@ Wrapper used to index an existing type. \
 ///\see e.g. [../processor/polymer.hh]. \
 
 template <class   ..._s>	struct   key;
-template <class   ..._s>	concept  key_q = bond::any_tag_p<key, _s...>;
+template <class   ..._s>	concept  key_q = bond::tag_p<key, _s...>;
 template <class   ..._s>	using    key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
 
 
