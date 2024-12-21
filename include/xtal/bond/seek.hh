@@ -14,13 +14,18 @@ namespace xtal::bond
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <int        ...Ns>	XTAL_LET seek_n =                 _std::array     {Ns...};
+template <int        ...Ns>	XTAL_LET seek_n = _std::                array     {Ns...};
 template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
 template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
+
+template <class T         >	struct   seek                : logical_t<0> {};
+template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : logical_t<1> {};
+template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
 
 
 }///////////////////////////////////////////////////////////////////////////////
 
+template <class      ...Ts>	                 concept       seek_q = _detail::seek_q<Ts...>;
 template <int        ...Ns>	                 XTAL_LET      seek_n = _detail::seek_n<Ns...>;
 template <int        ...Ns>	                 using         seek_t = _detail::seek_t<Ns...>;
 template <auto       ...  >	XTAL_DEF_(short) XTAL_LET      seek_i(auto &&o     ) noexcept -> decltype(auto) {return XTAL_REF_(o);}
@@ -121,9 +126,49 @@ template <int ...Ns>	XTAL_LET seek_minimum_n = seek_ordered_n<[] (auto i, auto j
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int ...Ns>
-XTAL_LET unseek_n = []<auto ...I> (bond::seek_t<I...>)
-	XTAL_0FN_(_std::array{bond::seek_index_n<I, Ns...>...})
-(bond::seek_s<1U << _std::bit_width((unsigned) seek_maximum_n<Ns...>)>{});
+struct unseek
+{
+	XTAL_SET N_minimum = (unsigned) seek_minimum_n<Ns...>;
+	XTAL_SET N_maximum = (unsigned) seek_maximum_n<Ns...>;
+	//\
+	XTAL_SET N_size    = 1U << _std::bit_width(1U + N_maximum - N_minimum);
+	XTAL_SET N_size    = 1U + N_maximum - N_minimum;
+	
+	using supertype = _std::array<int, N_size>;
+
+	class type : public supertype
+	{
+		using S_ = supertype;
+
+	public:// CONSTRUCT
+	//	using S_::S_;
+	~	type()                noexcept=default;
+	//	type()                noexcept=default;
+		XTAL_NEW_(copy, type, noexcept=default)
+		XTAL_NEW_(move, type, noexcept=default)
+
+		XTAL_NEW_(implicit) type()
+		noexcept
+		:	S_{
+				[]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(supertype{(seek_index_n<I + N_minimum, Ns...>)...})
+				(bond::seek_s<N_size>{})
+			}
+		{
+		};
+
+	public:// OPERATE
+		XTAL_TO4_(XTAL_DEF operator[](auto i), S_::operator[](i - N_minimum))
+		XTAL_TO4_(XTAL_DEF operator()(auto i), S_::operator[](i - N_minimum))
+		
+	};
+
+};
+template <int ...Ns>
+using    unseek_t = typename unseek<Ns...>::type;
+
+template <int ...Ns>
+XTAL_LET unseek_n = unseek_t<Ns...>{};
 
 template <constant_q ...Ns>	XTAL_DEF unseek_f(       Ns... ) noexcept {return unseek_n<Ns{}...>;}
 template <int        ...Ns>	XTAL_DEF unseek_f(seek_t<Ns...>) noexcept {return unseek_n<Ns  ...>;}

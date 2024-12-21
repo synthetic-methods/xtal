@@ -58,7 +58,7 @@ struct define
 		template <int N_mask=-1>
 		struct clutch
 		{
-			using U_choke = conferred_t<bool, bond::tab<clutch<N_mask>>>;
+			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1,-1>>;
 
 			using superkind = bond::compose<void
 			,	typename U_choke::template dispatch<N_mask>
@@ -84,7 +84,10 @@ struct define
 				XTAL_LET influx(XTAL_SYN_(T) auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
-					(void) R_::influx(U_choke(0 < t));
+					auto const h = t.head();
+					auto const h_up = 0 < h;
+					auto const h_dn = h < 0;
+					(void) R_::influx(U_choke(h_up - h_dn));
 					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
 				}
 			

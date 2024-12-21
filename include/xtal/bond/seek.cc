@@ -19,10 +19,13 @@ TAG_("seek")
 	{
 		static_assert(same_q<seek_s<4>, seek_t<0, 1, 2, 3>>);
 
-		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[1] == 0);
-		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[3] == 1);
-		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[2] == 2);
-		TRUE_(unseek_f(seek_t<1, 3, 2, 4>{})[4] == 3);
+		TRUE_(unseek_n<0, 1,-1>[ 0] == 0);
+		TRUE_(unseek_n<0, 1,-1>[ 1] == 1);
+		TRUE_(unseek_n<0, 1,-1>[-1] == 2);
+
+		TRUE_(unseek_n<0, 1,-1>( 0) == 0);
+		TRUE_(unseek_n<0, 1,-1>( 1) == 1);
+		TRUE_(unseek_n<0, 1,-1>(-1) == 2);
 		
 	}
 }
