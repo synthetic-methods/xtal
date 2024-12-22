@@ -307,6 +307,21 @@ template <class   ...Ts>	concept                quality_q	= (...and             
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <auto   N=null_type{}>	using           thunk_t	= typename _entail::        thunk_t<N   >;
+template <class Y, class T    >	concept         thunk_q	=          _entail::        thunk_q<Y, T>;
+template <class T, class Y    >	concept         thunk_p	=          _entail::        thunk_p<T, Y>;
+
+XTAL_LET zero = thunk_t<XTAL_VAL_(0   )>{};
+XTAL_LET half = thunk_t<XTAL_VAL_(0.5F)>{};
+XTAL_LET  one = thunk_t<XTAL_VAL_(1   )>{};
+XTAL_LET  two = thunk_t<XTAL_VAL_(2   )>{};
+
+template <auto  N> XTAL_LET half_n = thunk_t<XTAL_VAL_(1.F/(one << N))>{};
+template <auto  N> XTAL_LET  two_n = thunk_t<XTAL_VAL_(1.F*(one << N))>{};
+
+
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "./any.ii"

@@ -234,7 +234,7 @@ struct phason<A>
 		XTAL_LET operator /= (number_q auto const &f)
 		noexcept -> auto &
 		{
-			return operator*=(T_op::alpha_1/f);
+			return operator*=(one/f);
 		}
 	//	XTAL_DEF_(inline)
 		XTAL_LET operator *= (real_number_q auto const &f)

@@ -127,13 +127,11 @@ struct recognize<(1U<<2U)>
 		XTAL_0IF_(consteval)
 #endif
 		{
-			XTAL_LET _2_0 = alpha_type{2.0};
-			XTAL_LET _1_5 = alpha_type{1.5};
-			XTAL_LET _1_0 = alpha_type{1.0};
-			XTAL_LET _0_5 = alpha_type{0.5};
+			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
+			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
 			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(_2_0, -_1_0*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(_1_5, -_0_5*w, n*n);}
+			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(a0, a1*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(a0, a1*w, n*n);}
 		}
 #if XTAL_SYS_(Neon)
 		XTAL_0IF_(else) {
@@ -213,13 +211,11 @@ struct recognize<(1U<<3U)>
 		XTAL_0IF_(consteval)
 #endif
 		{
-			XTAL_LET _2_0 = alpha_type{2.0};
-			XTAL_LET _1_5 = alpha_type{1.5};
-			XTAL_LET _1_0 = alpha_type{1.0};
-			XTAL_LET _0_5 = alpha_type{0.5};
+			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
+			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
 			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(_2_0, -_1_0*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(_1_5, -_0_5*w, n*n);}
+			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(a0, a1*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(a0, a1*w, n*n);}
 		}
 #if XTAL_SYS_(Neon)
 		XTAL_0IF_(else) {
@@ -768,9 +764,9 @@ public:
 	{
 		using U = XTAL_ALL_(u);
 		XTAL_IF0
-		XTAL_0IF (signum_n<N_pow> ==  0) {return couple_t<U>{u, alpha_1/XTAL_REF_(u)};}
-		XTAL_0IF (signum_n<N_pow> == -1) {return                alpha_1/XTAL_REF_(u) ;}
-		XTAL_0IF (signum_n<N_pow> == +1) {return                        XTAL_REF_(u) ;}
+		XTAL_0IF (signum_n<N_pow> ==  0) {return couple_t<U>{u, one/XTAL_REF_(u)};}
+		XTAL_0IF (signum_n<N_pow> == -1) {return                one/XTAL_REF_(u) ;}
+		XTAL_0IF (signum_n<N_pow> == +1) {return                    XTAL_REF_(u) ;}
 	}
 
 
@@ -1090,11 +1086,11 @@ public:
 	XTAL_SET diplo_f(auto const &n_zoom)
 	noexcept -> alpha_type
 	{
-		XTAL_LET o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - magnum_n<N_silon>};
+		XTAL_LET o_silon = one/alpha_type{sigma_1 << fraction.depth - magnum_n<N_silon>};
 		XTAL_IF0
-		XTAL_0IF (0 < N_silon) {return diplo_e(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
-		XTAL_0IF (N_silon < 0) {return diplo_e(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}
-		XTAL_0IF_(else)        {return diplo_e(n_zoom, alpha_1                           );}
+		XTAL_0IF (0 < N_silon) {return diplo_e(n_zoom, one + alpha_type{0.50}/o_silon);}
+		XTAL_0IF (N_silon < 0) {return diplo_e(n_zoom, one - alpha_type{0.25}/o_silon);}
+		XTAL_0IF_(else)        {return diplo_e(n_zoom,       alpha_type{1.00}        );}
 	}
 	template <int N_silon=0>
 	XTAL_DEF_(short)
@@ -1197,10 +1193,10 @@ public:
 	static_assert(epsilon_n<1> <  epsilon_n<2>);
 	static_assert(epsilon_n<1> == _std::numeric_limits<alpha_type>::epsilon());
 	
-	static_assert(alpha_1 <  alpha_1 + epsilon_n< 1>);
-	static_assert(alpha_1 == alpha_1 + epsilon_n< 0>);
-	static_assert(alpha_1 == alpha_1 - epsilon_n<-1>);
-	static_assert(alpha_1  > alpha_1 - epsilon_n< 1>);
+	static_assert(one <  one + epsilon_n< 1>);
+	static_assert(one == one + epsilon_n< 0>);
+	static_assert(one == one - epsilon_n<-1>);
+	static_assert(one  > one - epsilon_n< 1>);
 	
 	XTAL_SET_(alpha_type) epsilon_0 = epsilon_n<0>;
 	XTAL_SET_(alpha_type) epsilon_1 = epsilon_n<1>;
@@ -1214,14 +1210,14 @@ public:
 	noexcept -> alpha_type
 	{
 		auto constexpr N_diff = fraction.depth + 1;
-		auto const     n_unit = alpha_1 + haplo_f(N_diff - n_zoom);
+		auto const     n_unit = one + haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
 	XTAL_SET_(alpha_type) upsilon_n = upsilon_f(N_zoom);
 	///< Value expression of `upsilon_f`. \
 	
-	static_assert(    alpha_1  == upsilon_n<0>);
+	static_assert(         one == upsilon_n<0>);
 	static_assert(upsilon_n<0> <  upsilon_n<1>);
 	static_assert(upsilon_n<1> <  upsilon_n<2>);
 	
@@ -1237,14 +1233,14 @@ public:
 	noexcept -> alpha_type
 	{
 		auto constexpr N_diff = fraction.depth + 2;
-		auto const     n_unit = alpha_1 - haplo_f(N_diff - n_zoom);
+		auto const     n_unit = one - haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
 	XTAL_SET_(alpha_type) dnsilon_n = dnsilon_f(N_zoom);
 	///< Value expression of `dnsilon_f`. \
 	
-	static_assert(    alpha_1  == dnsilon_n<0>);
+	static_assert(         one == dnsilon_n<0>);
 	static_assert(dnsilon_n<1> <  dnsilon_n<0>);
 	static_assert(dnsilon_n<2> <  dnsilon_n<1>);
 	
@@ -1313,7 +1309,7 @@ public:
 	XTAL_SET maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-	//	alpha_type constexpr co = alpha_1/_std::numeric_limits<alpha_type>::min();
+	//	alpha_type constexpr co = one/_std::numeric_limits<alpha_type>::min();
 	//	return co*haplo_f(n_zoom);
 		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
 	}
@@ -1559,7 +1555,7 @@ public:
 	noexcept -> couple_t<delta_type>
 	{
 		delta_type constexpr N = unit.mark + fraction.depth;
-		sigma_type constexpr M =  sigma_1 << fraction.depth;
+		sigma_type constexpr M =      one << fraction.depth;
 		
 		auto       const o = _xtd::bit_cast<sigma_type>(f);
 		delta_type const z = static_cast<delta_type>(o) >> positive.depth;
@@ -1776,9 +1772,9 @@ public:
 	noexcept -> alpha_type
 	{
 		XTAL_IF0
-		XTAL_0IF (0 == N) {return alpha_1;}
-		XTAL_0IF (0 <  N) {return         factorial_f((sigma_type) N);}
-		XTAL_0IF (N <  0) {return alpha_1/factorial_f((sigma_type)-N);}
+		XTAL_0IF (0 == N) {return one;}
+		XTAL_0IF (0 <  N) {return     factorial_f((sigma_type) N);}
+		XTAL_0IF (N <  0) {return one/factorial_f((sigma_type)-N);}
 	}
 
 	static_assert(factorial_f(5) == 120);

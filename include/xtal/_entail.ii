@@ -105,6 +105,11 @@ template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>
 //\
 Valued...
 
+using  logical_type	= bool;
+using  ordinal_type	= _std::  make_signed_t<size_type>;
+using cardinal_type	= _std::make_unsigned_t<size_type>;
+using integral_type	= int;
+
 template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
 template <auto  N             >	XTAL_LET       magnum_n	= signum_n<N>*N;
 template <auto  M, auto     N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
@@ -115,10 +120,6 @@ template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns
 template <auto  N, auto  ...Ms>	concept            in_q	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
 template <auto  N, auto  ...Ms>	concept            un_q	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
 
-using  logical_type	= bool;
-using  ordinal_type	= _std::  make_signed_t<size_type>;
-using cardinal_type	= _std::make_unsigned_t<size_type>;
-using integral_type	= int;
 
 template <auto                >	struct       constant   ;
 template <auto  o=null_type{} >	using        constant_t	=  constant<o>;
@@ -126,17 +127,18 @@ template <auto  o=null_type{} >	using        constant_s	= _std::integral_constan
 template <class T             >	concept      constant_q	= _std::derived_from<XTAL_RAW_(T), constant_s<T::value>>;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
-template <         auto o     >	struct       constant    :         constant_s<o> {};
-template <return_p auto o     >	struct       constant<o> : private constant_s<o>
+template <         auto o     >	struct       constant    : constant_s<o> {};
+template <return_p auto o     >	struct       constant<o> : constant_s<o>
 {
-	XTAL_SET value      = o;
-	using    value_type = XTAL_ALL_(o);
-	using   return_type = XTAL_ALL_(o());
-	using          type = constant;
 
-	XTAL_DEF_(implicit) operator return_type() const {return o();}
-	XTAL_DEF            operator()          () const {return o();}
+	using        type = constant;
+	using   supertype = constant_s<o>;
+	using  value_type = typename supertype::value_type;
 
+	template <class T>
+	XTAL_DEF_(implicit) operator   T() const noexcept {return T{o()};}
+	XTAL_DEF            operator()  () const noexcept {return   o();}
+	
 };
 
 template <class T             >	concept       logical_b	= _std::same_as<logical_type, XTAL_RAW_(T)>;
@@ -179,9 +181,9 @@ template <class T             >	using   Scalar_valued_u	=  const_valued_u<T, typ
 template <class T             >	concept  array_valued_q	=  _std::is_array_v<_std::remove_reference_t<T>>;
 template <class T             >	concept  inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
 template <class T             >	concept  under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
-template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>>;
-template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>>;
-template <class T             >	concept        valued_q	=  complete_q<      valued<T>>;
+template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>> and not same_q<T, fixed_valued_u<T>>;
+template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>> and not same_q<T, fluid_valued_u<T>>;
+template <class T             >	concept        valued_q	=  complete_q<      valued<T>> and not same_q<T,       valued_u<T>>;
 template <class T             >	concept scalar_valued_q	=  complete_q<scalar_valued_u<T>> and not fixed_valued_q<T>;
 template <class T             >	concept Scalar_valued_q	=  complete_q<Scalar_valued_u<T>> and not fixed_valued_q<T>;
 
@@ -190,7 +192,7 @@ template < array_valued_q T   >	struct   fixed_valued<T> {using value_type =  ar
 template < inner_valued_q T   >	struct   fixed_valued<T> {using value_type =  inner_valued_u<T>;};
 template < under_valued_q T   >	struct   fixed_valued<T> {using value_type =  under_valued_u<T>;};
 
-template <class T             >	struct   fluid_valued    {using value_type =                 T ;};
+template <class T             >	struct   fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
 template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
 template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_u<T>;};
 template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
@@ -312,6 +314,8 @@ template <class U                  >	struct    instruct<U &&>                  {
 template <class U                  >	struct    instruct<U  &>                  {using array_type = U &;};
 
 template <class T                  >	struct    destruct       : destruct<T &&> {};
+template <class T                  >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type =                T   ;};
+template <class T                  >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type =                T  &;};
 template <fluid_q T                >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type = fluid_valued_u<T>  ;};
 template <fluid_q T                >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type = fluid_valued_u<T> &;};
 template <fixed_q T                >	struct    destruct<T &&> : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
@@ -556,6 +560,105 @@ concept complex_field_p = complex_number_q<T> or continuous_field_p<2, T, U> and
 };
 template <size_type N, class T, class U=T>
 concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto                >	struct          thunk   ;
+template <auto  o=null_type{} >	using           thunk_t	=  thunk<o>;
+template <class Y, class T    >	concept         thunk_q	=  return_p<T> and make_q<T, Y>;
+template <class T, class Y    >	concept         thunk_p	=  return_p<T> and make_q<T, Y>;
+template <         auto o     >	struct          thunk   : thunk<XTAL_VAL_(o)> {};
+template <return_p auto o     >	struct          thunk<o>
+{
+	using object_type = XTAL_ALL_(o());
+
+	template <class T            >	XTAL_DEF_(short) XTAL_SET  object_f(T &&) noexcept -> auto                       {return  object_f<based_t<T>>();}
+	template <class T=object_type>	XTAL_DEF_(short) XTAL_SET  object_f(    ) noexcept -> auto requires unbased_q<T> {return  object_f<based_t<T>>();}
+	template <class T            >	XTAL_DEF_(short) XTAL_SET subject_f(T &&) noexcept -> auto                       {return subject_f<based_t<T>>();}
+	template <class T=object_type>	XTAL_DEF_(short) XTAL_SET subject_f(    ) noexcept -> auto requires unbased_q<T> {return subject_f<based_t<T>>();}
+
+	template <class T=object_type>
+	XTAL_DEF_(short)
+	XTAL_SET object_f()
+	noexcept -> auto
+	requires based_q<T>
+	{
+		XTAL_IF0
+		XTAL_0IF (same_q<T, object_type>) {return o();}
+		XTAL_0IF XTAL_TRY_TO_(static_cast<T>(o()))
+		XTAL_0IF XTAL_TRY_TO_(T{o()})
+		XTAL_0IF XTAL_TRY_TO_(T(o()))
+	}
+	template <class T=object_type>
+	XTAL_DEF_(short)
+	XTAL_SET subject_f()
+	noexcept -> auto
+	requires based_q<T>
+	{
+		if constexpr (fluid_valued_q<T> and complete_q<decltype(object_f<fluid_valued_u<T>>())>) {
+			return subject_f<fluid_valued_u<T>>();
+		}
+		else {
+			return object_f<T>();
+		}
+	}
+
+	template <class T>
+	XTAL_DEF_(implicit) operator   T() const noexcept {return object_f<T>();}
+	XTAL_DEF            operator()  () const noexcept {return object_f   ();}
+
+	XTAL_DEF_(short,friend) XTAL_LET operator  -  (thunk const &) noexcept -> auto {return thunk_t<XTAL_VAL_(-object_f())>{};}
+	XTAL_DEF_(short,friend) XTAL_LET operator  ~  (thunk const &) noexcept -> auto {return thunk_t<XTAL_VAL_(~object_f())>{};}
+
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s <=> t;} {return object_f<T>() <=> t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s  == t;} {return object_f<T>()  == t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s  <= t;} {return object_f<T>()  <= t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s  <  t;} {return object_f<T>()  <  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s  >= t;} {return object_f<T>()  >= t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (T s) {s  >  t;} {return object_f<T>()  >  t;}
+
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  -  t;} {return subject_f<T>()  -  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  +  t;} {return subject_f<T>()  +  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  *  t;} {return subject_f<T>()  *  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  /  t;} {return subject_f<T>()  /  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  %  t;} {return subject_f<T>()  %  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  &  t;} {return subject_f<T>()  &  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  ^  t;} {return subject_f<T>()  ^  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s  |  t;} {return subject_f<T>()  |  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s <<  t;} {return subject_f<T>() <<  t;}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (thunk const &, T const &t) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {s >>  t;} {return subject_f<T>() >>  t;}
+
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t <=> s;} {return t <=> subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  == s;} {return t  == subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  <= s;} {return t  <= subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  <  s;} {return t  <  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  >= s;} {return t  >= subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  >  s;} {return t  >  subject_f<T>();}
+
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  -  s;} {return t  -  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  +  s;} {return t  +  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  *  s;} {return t  *  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  /  s;} {return t  /  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  %  s;} {return t  %  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  &  s;} {return t  &  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  ^  s;} {return t  ^  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t  |  s;} {return t  |  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t >>  s;} {return t >>  subject_f<T>();}
+	template <class T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (T const &t, thunk const &) noexcept -> auto   requires un_q<return_p<T>> and requires (valued_u<T> s) {t <<  s;} {return t <<  subject_f<T>();}
+
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  -= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  -= s;} {return t  -= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  += (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  += s;} {return t  += subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  *= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  *= s;} {return t  *= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  /= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  /= s;} {return t  /= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  %= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  %= s;} {return t  %= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  &= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  &= s;} {return t  &= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  ^= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  ^= s;} {return t  ^= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator  |= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t  |= s;} {return t  |= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator <<= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t <<= s;} {return t <<= subject_f<T>();}
+	template <class T> XTAL_DEF_(inline,friend) XTAL_LET operator >>= (T       &t, thunk const &) noexcept -> auto & requires un_q<return_p<T>> and requires (valued_u<T> s) {t >>= s;} {return t >>= subject_f<T>();}
+
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
