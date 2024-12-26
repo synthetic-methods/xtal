@@ -1251,14 +1251,12 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns `std::numeric_limits<alpha_type>::min()` magnified by `diplo_f(n_zoom)`. \
+	///\returns the minimum value that still accommodates arithmetic puncturing. \
 
 	XTAL_DEF_(short)
 	XTAL_SET minilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-	//	alpha_type constexpr co = _std::numeric_limits<alpha_type>::min();
-	//	return co*diplo_f(n_zoom);
 		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
 	}
 	template <int N_zoom=0>
@@ -1299,18 +1297,12 @@ public:
 	}
 
 
-	///\returns haplo_f(n_zoom)/std::numeric_limits<alpha_type>::min()`. \
-	
-	///\note Defined as the multiplicative inverse of `minilon_f`, \
-		rather than w.r.t. `std::numeric_limits<alpha_type>::max()`, \
-		which is two orders of (binary) magnitude larger. \
+	///\returns the maximum value that still accommodates arithmetic truncation. \
 
 	XTAL_DEF_(short)
 	XTAL_SET maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-	//	alpha_type constexpr co = one/_std::numeric_limits<alpha_type>::min();
-	//	return co*haplo_f(n_zoom);
 		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
 	}
 	template <int N_zoom=0>

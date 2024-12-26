@@ -45,7 +45,7 @@ struct define
 
 			public:
 				using point_type = Y (T::*) (Xs...);
-				static constexpr point_type point = &T::template divert<Is...>;
+				XTAL_SET point = static_cast<point_type>(&T::template divert<Is...>);
 
 			};
 			template <auto ...Is>
@@ -110,13 +110,41 @@ struct define
 
 		///\returns the lambda abstraction of `operator()`. \
 
+		/**/
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(short)
-		XTAL_LET reify(constant_q auto ...Is),
+		XTAL_LET reify(constant_q auto ...is),
 		noexcept -> decltype(auto)
 		{
-			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(Is)::value...>);
+			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(is)::value...>);
 		})
+		/*/
+		XTAL_DO2_(template <class ...Xs> requires (0 == sizeof...(Xs))
+		XTAL_DEF_(short)
+		XTAL_LET reify(constant_q auto ...is),
+		noexcept -> decltype(auto)
+		{
+			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(is)::value...>);
+		})
+		template <class ...Xs> requires (1 <= sizeof...(Xs))
+		XTAL_DEF_(short)
+		XTAL_LET reify(constant_q auto ...is)
+		noexcept -> decltype(auto)
+		requires requires (T       &t) {t.template deify<Xs...>(is...);}
+		{
+			auto       *t_ = static_cast<T       *>(this);
+			return _std::bind_front(t_->template deify<Xs...>(is...), t_);
+		}
+		template <class ...Xs> requires (1 <= sizeof...(Xs))
+		XTAL_DEF_(short)
+		XTAL_LET reify(constant_q auto ...is) const
+		noexcept -> decltype(auto)
+		requires requires (T const &t) {t.template deify<Xs...>(is...);}
+		{
+			auto const *t_ = static_cast<T const *>(this);
+			return _std::bind_front(t_->template deify<Xs...>(is...), t_);
+		}
+		/***/
 
 		///\returns the result of applying `method`, with `dispatch`ed parameters resolved. \
 		
@@ -180,7 +208,7 @@ struct define
 				using R_::slots;
 
 				using process_type = T;
-				XTAL_TO4_(XTAL_DEF process(), S_::head())
+				XTAL_TO4_(XTAL_DEF_(let) process(), S_::head())
 
 
 			public:// OPERATE
@@ -253,7 +281,7 @@ struct refine
 		}
 		
 		XTAL_TO4_(template <class ...Xs>
-		XTAL_DEF rebound(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
+		XTAL_DEF_(let) rebound(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
 
 	};
 };

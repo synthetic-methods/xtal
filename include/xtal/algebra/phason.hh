@@ -100,7 +100,6 @@ struct phason<A>
 	public:// ACCESS
 		using S_::self;
 		using S_::twin;
-		using S_::let;
 
 	public:// CONSTRUCT
 	//	using S_::S_;

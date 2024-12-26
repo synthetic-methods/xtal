@@ -67,8 +67,8 @@ public:
 		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
 		{}
 
-		XTAL_TO4_(XTAL_DEF   rate(), get<0>(S_::head()))
-		XTAL_TO4_(XTAL_DEF period(), get<1>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(let)   rate(), get<0>(S_::head()))
+		XTAL_TO4_(XTAL_DEF_(let) period(), get<1>(S_::head()))
 
 	};
 };

@@ -62,7 +62,6 @@ struct lattice<A>
 		using S_::self;
 		using S_::twin;
 		using S_::size;
-		using S_::let;
 
 		template <auto f>
 		XTAL_DEF_(inline)

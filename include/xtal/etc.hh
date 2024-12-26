@@ -165,45 +165,47 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_REF_(...)  static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
 #define XTAL_MOV_(...)                         ::std::   move(__VA_ARGS__)   ///< Moves    a value.
 #define XTAL_ANY_(...)                         ::std::declval<__VA_ARGS__>() ///< Yields the existential value for a type.
-#define XTAL_VAL_(...)                        [] () XTAL_0FN_(__VA_ARGS__)   ///< Yields a thunk returning a value.
 #define XTAL_FUN_(...)                  decltype([] XTAL_1FN_(__VA_ARGS__))  ///< Yields a type-level alias of a function.
+#define XTAL_VAL_(...)                        [] () XTAL_0FN_(__VA_ARGS__)   ///< Yields a thunk returning a value.
+#define XTAL_VAL                              [] () XTAL_0FN                 ///< Yields a thunk returning a value.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)              XTAL_N_(XTAL_KEY_,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
-#define XTAL_KEY_(...)              XTAL_KEY_##__VA_ARGS__
+#define XTAL_DEF_(...)              XTAL_N_(XTAL_DEF,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
+#define XTAL_DEF(...)               XTAL_DEF_##__VA_ARGS__
 
-#define XTAL_KEY_return             [[nodiscard]]
-#define XTAL_KEY_static             static
-#define XTAL_KEY_friend             friend
+#define XTAL_DEF_return             [[nodiscard]]
+#define XTAL_DEF_static             static
+#define XTAL_DEF_friend             friend
 
 #if     XTAL_ENV_(MSVC)
-#define XTAL_KEY_inline           __forceinline
+#define XTAL_DEF_inline           __forceinline
 #else
-#define XTAL_KEY_inline             inline __attribute__((always_inline))
-#endif//XTAL_KEY_inline
+#define XTAL_DEF_inline             inline __attribute__((always_inline))
+#endif//XTAL_DEF_inline
 
 #if     XTAL_ENV_(MSVC)
-#define XTAL_KEY_verbatim           /*FIXME*/
+#define XTAL_DEF_verbatim           /*FIXME*/
 #elif   XTAL_ENV_(LLVM)
-#define XTAL_KEY_verbatim           [[clang::optnone]]    __attribute__((optnone))
+#define XTAL_DEF_verbatim           [[clang::optnone]]    __attribute__((optnone))
 #elif   XTAL_ENV_(GNUC)
-#define XTAL_KEY_verbatim           [[gnu::optimize(0)]]  __attribute__((optimize(0)))
-#endif//XTAL_KEY_verbatim
+#define XTAL_DEF_verbatim           [[gnu::optimize(0)]]  __attribute__((optimize(0)))
+#endif//XTAL_DEF_verbatim
 
-#define XTAL_KEY_long               XTAL_KEY_return                         ///< Start abridged long  function (not inlined).
-#define XTAL_KEY_short              XTAL_KEY_return XTAL_KEY_inline         ///< Start abridged short function     (inlined).
+#define XTAL_DEF_long               XTAL_DEF_return                                ///< Start abridged long  function (not inlined).
+#define XTAL_DEF_short              XTAL_DEF_return XTAL_DEF_inline                ///< Start abridged short function     (inlined).
 
-#define XTAL_KEY_explicit           XTAL_KEY_short constexpr explicit       ///< Start abridged short `explicit` function.
-#define XTAL_KEY_implicit           XTAL_KEY_short constexpr                ///< Start abridged short `implicit` function.
-#define XTAL_KEY_alias              XTAL_KEY_short constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
+#define XTAL_DEF_explicit           XTAL_DEF_short        constexpr explicit       ///< Start abridged short `explicit` function.
+#define XTAL_DEF_implicit           XTAL_DEF_short        constexpr                ///< Start abridged short `implicit` function.
+#define XTAL_DEF_alias              XTAL_DEF_short        constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
 
-#define XTAL_DEF                    XTAL_KEY_short constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
+#define XTAL_DEF_let                XTAL_DEF_short        constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
+#define XTAL_DEF_set                XTAL_DEF_short static constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
 
-#define XTAL_NEW_(ARG,...)          XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__)) ///< Start `(?:ex|im)plicit` constructor.
-#define XTAL_NEW_explicit           constexpr explicit                       ///< Start        `explicit` constructor.
-#define XTAL_NEW_implicit           constexpr                                ///< Start        `implicit` constructor.
+#define XTAL_NEW_(ARG,...)          XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
+#define XTAL_NEW_explicit           constexpr explicit                             ///< Start        `explicit` constructor.
+#define XTAL_NEW_implicit           constexpr                                      ///< Start        `implicit` constructor.
 #define XTAL_NEW_copy(TYP,...)      constexpr TYP              (TYP const &) __VA_ARGS__;\
                                     constexpr TYP & operator = (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
 #define XTAL_NEW_move(TYP,...)      constexpr TYP              (TYP      &&) __VA_ARGS__;\
@@ -228,8 +230,10 @@ template <class X, class Y> concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL
 #define XTAL_0FN                      [[msvc::forceinline]] constexpr noexcept
 #endif//XTAL_0FN
 
+#define XTAL_0TN                       () XTAL_0FN                                                      ///< Lambda thunk (after `[captures]`).
+#define XTAL_0TN_(...)                 () XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
+#define XTAL_0FN_(...)                    XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
 #define XTAL_1FN_(...)     (auto &&...oo) XTAL_0FN            {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
-#define XTAL_0FN_(...)                    XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda expression (after `[captures]`).
 #define XTAL_XFN_(ARG,SYM,...)   (auto o) XTAL_0FN_(ARG == o? o: o SYM(__VA_ARGS__))                    ///< Lambda accumulating conditional (after `[captures]`).
 
 #define XTAL_IMP_(ARG,...)                XTAL_IMP_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.

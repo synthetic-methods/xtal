@@ -52,7 +52,7 @@ struct serial<A>
 		using S_::S_;
 
 	public:// ACCESS
-		using S_::let;
+		using S_::element;
 		using S_::self;
 		using S_::twin;
 	
@@ -111,8 +111,8 @@ struct serial<A>
 			auto &s = self();
 			
 			if constexpr (_op::alignment::value < N_data) {
-				for (auto i = N_data; ~--i;) {let(i) *= get<0>(t);
-				for (auto j = i; j-- ;) {let(i) += t.let(j)*let(i - j);}}
+				for (auto i = N_data; ~--i;) {element(i) *= get<0>(t);
+				for (auto j = i; j-- ;) {element(i) += t.element(j)*element(i - j);}}
 			}
 			else {
 				bond::seek_backward_f<N_data, 0>([&, this] (auto I) XTAL_0FN {get<I>(s) *= get<0>(t);

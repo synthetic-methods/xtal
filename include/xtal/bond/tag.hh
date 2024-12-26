@@ -29,7 +29,8 @@ struct tag
 		struct taboo
 		:	S_::taboo
 		{
-			template <class ...Xs> using type = Y<Xs...>;
+			template <class ...Xs>
+			using ectotype = Y<Xs...>;
 
 		};
 

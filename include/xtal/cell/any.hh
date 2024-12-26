@@ -193,11 +193,11 @@ template <any_q W> XTAL_DEF_(short) XTAL_LET operator <=>(W const &x, W const &y
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(let) operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
+XTAL_DEF_(let) operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
 
-XTAL_DEF operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
+XTAL_DEF_(let) operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
+XTAL_DEF_(let) operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

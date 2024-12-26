@@ -53,7 +53,6 @@ struct series<A>
 
 	public:
 		using S_::S_;
-		using S_::let;
 		using S_::self;
 		using S_::twin;
 
@@ -210,7 +209,7 @@ struct series<A>
 				I const  u_width = I{1} << n;
 				I const  w_width = u_width << 1U;
 				I const un_depth = N_depth   - n;
-				for (I u{ }; u < u_width; u +=       1) {auto const &o = let(u << un_depth);
+				for (I u{ }; u < u_width; u +=     one) {auto const &o = S_::element(u << un_depth);
 				for (I w{u}; w < n_width; w += w_width) {
 					auto const m = w + u_width;
 					U_data &y = that[m];

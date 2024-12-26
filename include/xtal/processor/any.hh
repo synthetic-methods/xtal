@@ -227,11 +227,9 @@ struct defer<U>
 		noexcept -> auto
 		{
 			using namespace _xtd::ranges;
-			//\
-			auto const y_ = iterative_f([this] XTAL_1FN_(head().template operator()<Is...>), XTAL_REF_(xs)...);
-			auto const y_ = iterative_f(head().template reify<decltype(xs)...>(constant_t<Is>{}...), XTAL_REF_(xs)...);
+			auto const y_ = iterative_f(head().template reify<iteratee_t<decltype(xs)>...>(constant_t<Is>{}...), XTAL_REF_(xs)...);
 			using      Y_ = decltype(y_);
-			using      Z_ = any_view<range_reference_t<Y_>, get_categories<Y_>()>;
+			using      Z_ = any_view<iteratee_t<Y_>, get_categories<Y_>()>;
 			if constexpr XTAL_TRY_(y_.size()) {
 				return Z_(XTAL_MOV_(y_))|account_f(y_);//NOTE: `any_view` doesn't propagate `size()`...
 			}
@@ -244,14 +242,14 @@ struct defer<U>
 		XTAL_LET method(auto &&...xs),
 		noexcept -> auto
 		{
-			return iterative_f(head().template reify<decltype(xs)...>(), XTAL_REF_(xs)...);
+			return iterative_f(head().template reify<iteratee_t<decltype(xs)>...>(), XTAL_REF_(xs)...);
 		})
 
 		XTAL_DO0_(template <auto ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> auto
-		requires XTAL_TRY_(U_::function(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
+		requires XTAL_TRY_(U_::function(XTAL_ANY_(iteratee_t<decltype(xs)>)...))
 		{
 			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
 		})
@@ -259,7 +257,7 @@ struct defer<U>
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> auto
-		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(_xtd::ranges::range_reference_t<decltype(xs)>)...))
+		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)>)...))
 		{
 			return iterative_f([] XTAL_1FN_(U_::template function<Is...>), XTAL_REF_(xs)...);
 		})

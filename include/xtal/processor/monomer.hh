@@ -94,7 +94,7 @@ struct monomer<U, As...>
 
 			public:// ACCESS
 
-				XTAL_TO4_(XTAL_DEF state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
+				XTAL_TO4_(XTAL_DEF_(let) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
 			public:// FUNC*
 			//	using R_::method;

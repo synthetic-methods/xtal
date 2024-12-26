@@ -137,7 +137,7 @@ template <return_p auto o     >	struct       constant<o> : constant_s<o>
 
 	template <class T>
 	XTAL_DEF_(implicit) operator   T() const noexcept {return T{o()};}
-	XTAL_DEF            operator()  () const noexcept {return   o();}
+	XTAL_DEF_(let)      operator()  () const noexcept {return   o();}
 	
 };
 
@@ -606,7 +606,7 @@ template <return_p auto o     >	struct          thunk<o>
 
 	template <class T>
 	XTAL_DEF_(implicit) operator   T() const noexcept {return object_f<T>();}
-	XTAL_DEF            operator()  () const noexcept {return object_f   ();}
+	XTAL_DEF_(let)      operator()  () const noexcept {return object_f   ();}
 
 	XTAL_DEF_(short,friend) XTAL_LET operator  -  (thunk const &) noexcept -> auto {return thunk_t<XTAL_VAL_(-object_f())>{};}
 	XTAL_DEF_(short,friend) XTAL_LET operator  ~  (thunk const &) noexcept -> auto {return thunk_t<XTAL_VAL_(~object_f())>{};}

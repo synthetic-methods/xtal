@@ -57,8 +57,8 @@ struct bundle
 
 		using node_type = typename S_::head_type;
 
-		XTAL_TO4_(XTAL_DEF  node(), head())
-		XTAL_TO4_(XTAL_DEF slots(), head())
+		XTAL_TO4_(XTAL_DEF_(let)  node(), head())
+		XTAL_TO4_(XTAL_DEF_(let) slots(), head())
 		
 		XTAL_DO2_(template <size_type ...Is>
 		XTAL_DEF_(short)

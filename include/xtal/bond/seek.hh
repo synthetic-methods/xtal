@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "./tag.hh"
 
 
 
@@ -77,7 +77,8 @@ noexcept -> decltype(auto)
 
 template <         class ...Ts>  struct   seek_front;
 template <class T, class ...Ts>  struct   seek_front<T, Ts...>       {using type = T;};
-template <         class ...Ts>  using    seek_front_t = typename seek_front<Ts...>::type;
+template <         class ...Ts>  using    seek_front_t = typename seek_front  <           Ts ...>:: type;
+template <         auto  ...Ns>  XTAL_LET seek_front_n =          seek_front_t<constant_t<Ns>...>::value;
 
 template <         class ...Ts>  struct   seek_back;
 template <class T             >  struct   seek_back <T       >       {using type = T;};
@@ -97,12 +98,26 @@ template <              class ...Ts>  XTAL_LET seek_constant_n =          seek_c
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <int I=0, bool ...Ns> struct   seek_truth;
-template <int I              > struct   seek_truth<I              > : constant_t<-1> {};
-template <int I,   bool ...Ns> struct   seek_truth<I,  true, Ns...> : constant_t< I> {};
-template <int I,   bool ...Ns> struct   seek_truth<I, false, Ns...> : seek_truth<I + 1, Ns...> {};
-template <         bool ...Ns> XTAL_LET seek_truth_n = seek_truth<0, Ns...>::value;
-template <auto A,  auto ...As> XTAL_LET seek_index_n = seek_truth_n<(A == As)...>;
+template <auto F,                   auto ...Ns>                      struct   seek_order;
+template <auto F, auto N0                     >                      struct   seek_order<F, N0           > : constant_t<N0> {};
+template <auto F, auto N0, auto N1, auto ...Ns> requires (F(N0, N1)) struct   seek_order<F, N0, N1, Ns...> : seek_order<F, N0, Ns...> {};
+template <auto F, auto N0, auto N1, auto ...Ns>                      struct   seek_order<F, N0, N1, Ns...> : seek_order<F, N1, Ns...> {};
+template <auto F,                   auto ...Ns>                      XTAL_LET seek_order_n = seek_order<F, Ns...>::value;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto  ...Ns>	XTAL_LET seek_upper_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(i > j), Ns...>;
+template <auto  ...Ns>	XTAL_LET seek_lower_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(i < j), Ns...>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <int  I, bool ...Ns>	struct   seek_truth;
+template <int  I            >	struct   seek_truth<I          > : constant_t<   -1       > {};
+template <int  I, bool ...Ns>	struct   seek_truth<I, 1, Ns...> : constant_t<    I       > {};
+template <int  I, bool ...Ns>	struct   seek_truth<I, 0, Ns...> : seek_truth<1 + I, Ns...> {};
+template <        bool ...Ns>	XTAL_LET seek_truth_n = seek_truth<0, Ns...>::value;
 
 static_assert(seek_truth_n<                   > == -1);
 static_assert(seek_truth_n<               true> ==  0);
@@ -113,35 +128,26 @@ static_assert(seek_truth_n<false, false, false> == -1);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto F,                   auto ...Ns>                      struct   seek_ordered;
-template <auto F, auto N0                     >                      struct   seek_ordered<F, N0           > : constant_t<N0> {};
-template <auto F, auto N0, auto N1, auto ...Ns> requires (F(N0, N1)) struct   seek_ordered<F, N0, N1, Ns...> : seek_ordered<F, N0, Ns...> {};
-template <auto F, auto N0, auto N1, auto ...Ns>                      struct   seek_ordered<F, N0, N1, Ns...> : seek_ordered<F, N1, Ns...> {};
-template <auto F,                   auto ...Ns>                      XTAL_LET seek_ordered_n = seek_ordered<F, Ns...>::value;
+template <auto A, auto ...As> XTAL_LET seek_index_n = seek_truth_n<(A == As)...>;
 
-template <int ...Ns>	XTAL_LET seek_maximum_n = seek_ordered_n<[] (auto i, auto j) XTAL_0FN_(i > j), Ns...>;
-template <int ...Ns>	XTAL_LET seek_minimum_n = seek_ordered_n<[] (auto i, auto j) XTAL_0FN_(i < j), Ns...>;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <int ...Ns>
-struct unseek
+template <auto ...Ns> requires (1 <= sizeof...(Ns))
+struct seek_index
 {
-	XTAL_SET N_minimum = (unsigned) seek_minimum_n<Ns...>;
-	XTAL_SET N_maximum = (unsigned) seek_maximum_n<Ns...>;
-	//\
-	XTAL_SET N_size    = 1U << _std::bit_width(1U + N_maximum - N_minimum);
-	XTAL_SET N_size    = 1U + N_maximum - N_minimum;
-	
-	using supertype = _std::array<int, N_size>;
+	XTAL_SET N_upper = (unsigned) seek_upper_n<Ns...>;
+	XTAL_SET N_lower = (unsigned) seek_lower_n<Ns...>;
 
-	class type : public supertype
+	//\
+	XTAL_SET N_limit = 1U + N_upper - N_lower;
+	XTAL_SET N_limit = 1U << _std::bit_width(N_upper - N_lower);
+	
+	using  supertype = _std::array<int, N_limit>;
+	class       type : public supertype
 	{
 		using S_ = supertype;
 
 	public:// CONSTRUCT
 	//	using S_::S_;
+
 	~	type()                noexcept=default;
 	//	type()                noexcept=default;
 		XTAL_NEW_(copy, type, noexcept=default)
@@ -149,33 +155,64 @@ struct unseek
 
 		XTAL_NEW_(implicit) type()
 		noexcept
-		:	S_{
-				[]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(supertype{(seek_index_n<I + N_minimum, Ns...>)...})
-				(bond::seek_s<N_size>{})
-			}
+		:	S_{[]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(supertype{(seek_index_n<I + N_lower, Ns...>)...})
+			(bond::seek_s<N_limit>{})}
 		{
 		};
 
 	public:// OPERATE
-		XTAL_TO4_(XTAL_DEF operator[](auto i), S_::operator[](i - N_minimum))
-		XTAL_TO4_(XTAL_DEF operator()(auto i), S_::operator[](i - N_minimum))
+		XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) element(I i),
+			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
+
+		XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) operator[](I i), element(i))
+	//	XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) operator()(I i), element(i))
 		
 	};
 
 };
-template <int ...Ns>
-using    unseek_t = typename unseek<Ns...>::type;
-
-template <int ...Ns>
-XTAL_LET unseek_n = unseek_t<Ns...>{};
-
-template <constant_q ...Ns>	XTAL_DEF unseek_f(       Ns... ) noexcept {return unseek_n<Ns{}...>;}
-template <int        ...Ns>	XTAL_DEF unseek_f(seek_t<Ns...>) noexcept {return unseek_n<Ns  ...>;}
+template <auto ...Ns>
+using    seek_index_t = typename seek_index<Ns...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <auto ...Ns> requires (1 <= sizeof...(Ns))
+struct seek_value
+{
+	//\
+	XTAL_SET N_limit = sizeof...(Ns);
+	XTAL_SET N_limit = 1U << _std::bit_width(sizeof...(Ns) - 1);
+	
+	using  supertype = _std::array<int, N_limit>;
+	class       type : public supertype
+	{
+		using S_ = supertype;
+
+	public:// CONSTRUCT
+	//	using S_::S_;
+
+	~	type()                noexcept=default;
+	//	type()                noexcept=default;
+		XTAL_NEW_(copy, type, noexcept=default)
+		XTAL_NEW_(move, type, noexcept=default)
+
+		XTAL_NEW_(implicit) type()
+		noexcept
+		:	S_{[]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(supertype{Ns...})
+			(bond::seek_s<N_limit>{})}
+		{
+		};
+
+	};
+
+};
+template <auto ...Ns>
+using    seek_value_t = typename seek_value<Ns...>::type;
+
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
+
 XTAL_ENV_(pop)

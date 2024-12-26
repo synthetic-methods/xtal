@@ -77,14 +77,6 @@ struct phasor<A, As...>
 			return S_::template bias<coordinate_type>();
 		}
 
-		///\
-		Access by dynamic index. \
-		
-		///\todo\
-		Replace with accessor-decorator?
-
-		XTAL_TO4_(XTAL_DEF let(size_type i), head().let(i))
-
 	public:// EVALUATION
 		///\todo\
 		Use `provision::example` to manage downsampling \
@@ -176,14 +168,6 @@ struct phasor<A, As...>
 
 		XTAL_TO4_(XTAL_DEF_(implicit operator) U_(), head())
 		
-		///\
-		Access by dynamic index. \
-		
-		///\todo\
-		Replace with accessor-decorator?
-
-		XTAL_TO4_(XTAL_DEF let(size_type i), head().let(i))
-
 	public:// REEVALUATION
 		///\returns the current differential after scaling the incoming `phi` by `co`. \
 

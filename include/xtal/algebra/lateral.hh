@@ -105,7 +105,6 @@ struct lateral<A>
 		{}
 
 	public:// ACCESS
-		using S_::let;
 		using S_::self;
 		using S_::twin;
 
@@ -196,7 +195,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
@@ -209,7 +208,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
@@ -223,7 +222,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -238,7 +237,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template type<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -369,9 +368,9 @@ struct lateral<A>
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF  maximal() const {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
-		XTAL_DEF  minimal() const {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
-		XTAL_DEF extremal() const {return bond::pack_f(minimal(), maximal());}
+		XTAL_DEF_(let)  maximal() const {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
+		XTAL_DEF_(let)  minimal() const {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
+		XTAL_DEF_(let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
 		XTAL_DEF_(short)

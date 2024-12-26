@@ -89,11 +89,11 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_DEF ensemble(size_t i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF ensemble(        ), u_ensemble   )
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(size_t i), u_ensemble[i])
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(        ), u_ensemble   )
 				//\
-				XTAL_TO2_(XTAL_DEF lead(), u_ensemble.front())
-				XTAL_TO2_(XTAL_DEF lead(), R_::template head<V_voice>())
+				XTAL_TO2_(XTAL_DEF_(let) lead(), u_ensemble.front())
+				XTAL_TO2_(XTAL_DEF_(let) lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
 				using R_::influx;

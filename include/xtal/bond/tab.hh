@@ -28,17 +28,16 @@ struct tab
 
 		struct taboo
 		{
-			using endotype = S;
+			using paratype = S;
 			using peritype = I;
 
 		};
 
 	};
 };
-template <class   T                           > using        taboo_t =   typename based_t<T>::taboo;
-template <class   T                           > using        taboo_s =   typename taboo_t<T>::endotype;
-template <class   T                           > using        taboo_u =   typename taboo_t<T>::peritype;
-template <                         class ...Ts> concept      taboo_q = complete_q<taboo_t<Ts>...>;
+template <class   T                           > using        taboo_s =            typename T ::taboo::paratype;
+template <class   T                           > using        taboo_u =            typename T ::taboo::peritype;
+template <                         class ...Ts> concept      taboo_q = complete_q<typename Ts::taboo...>;
 
 template <                         class ...Ts> struct  same_tabs;
 template <                         class ...Ts> concept same_tabs_q      = same_tabs<based_t<Ts>...>::value;

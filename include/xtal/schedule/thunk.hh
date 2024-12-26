@@ -70,11 +70,11 @@ struct thunk
 				};
 				U_shuttle u_shuttle{};
 
-				XTAL_TO4_(XTAL_DEF head_(), u_shuttle.head())
-				XTAL_TO4_(XTAL_DEF then_(), u_shuttle.tail())
+				XTAL_TO4_(XTAL_DEF_(let) head_(), u_shuttle.head())
+				XTAL_TO4_(XTAL_DEF_(let) then_(), u_shuttle.tail())
 
-				XTAL_TO4_(XTAL_DEF head_(int i), u_spool.begin(i)->head())
-				XTAL_TO4_(XTAL_DEF then_(int i), u_spool.begin(i)->tail())
+				XTAL_TO4_(XTAL_DEF_(let) head_(int i), u_spool.begin(i)->head())
+				XTAL_TO4_(XTAL_DEF_(let) then_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;

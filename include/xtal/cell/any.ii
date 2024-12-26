@@ -23,10 +23,10 @@ template <class ...Ts               > concept  any_q = bond::tag_p<any, Ts...>;
 
 using any_type = any_s<unit_type>;
 
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T const &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T       &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T const  &t) noexcept {return           t .node().template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF get(T        &t) noexcept {return           t .node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(let) get(T const &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(let) get(T       &&t) noexcept {return XTAL_MOV_(t).node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(let) get(T const  &t) noexcept {return           t .node().template head<N>();};
+template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(let) get(T        &t) noexcept {return           t .node().template head<N>();};
 
 
 ////////////////////////////////////////////////////////////////////////////////

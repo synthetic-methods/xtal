@@ -39,8 +39,8 @@ struct review<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_DEF    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
-		XTAL_TO2_(XTAL_DEF subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
+		XTAL_TO4_(XTAL_DEF_(let)    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
+		XTAL_TO2_(XTAL_DEF_(let) subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

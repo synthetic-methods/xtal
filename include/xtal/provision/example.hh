@@ -39,7 +39,7 @@ struct example
 	public:
 		using S_::S_;
 		
-		XTAL_TO4_(XTAL_DEF sample(), S_::head())
+		XTAL_TO4_(XTAL_DEF_(let) sample(), S_::head())
 
 	};
 	template <class S> requires example_q<S>

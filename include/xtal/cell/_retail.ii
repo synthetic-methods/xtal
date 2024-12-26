@@ -41,16 +41,16 @@ struct query
 	public:
 		using S::S;
 
-		XTAL_TO4_(XTAL_DEF node(), self<U_node>())
+		XTAL_TO4_(XTAL_DEF_(let) node(), self<U_node>())
 
 		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
 
 	};
 	template <class S> requires complete_q<typename S::head_type>
@@ -83,27 +83,27 @@ struct query
 	public:
 		using S::S;
 
-		XTAL_TO4_(XTAL_DEF node(), self<node_type>())
+		XTAL_TO4_(XTAL_DEF_(let) node(), self<node_type>())
 
 
 		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
 		
 
 		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
 
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF head(auto &&...oo), S::head(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) head(auto &&...oo), S::head(XTAL_REF_(oo)...))
 
 		XTAL_TO4_(template <class ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
+		XTAL_DEF_(let) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
 
 	};
 };

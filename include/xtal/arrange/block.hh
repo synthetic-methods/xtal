@@ -44,12 +44,14 @@ struct superblock<U(&)[N]>
 	public:// CONSTRUCT
 		using S_::S_;
 
+		XTAL_TO4_(XTAL_DEF_(let) base(), S_::template self<archetype>())
+
 		template <class V_data=U_data>
 		XTAL_DEF_(short)
 		XTAL_LET twin() const
 		noexcept -> decltype(auto)
 		{
-			return typename T::taboo::template type<V_data[N_data]>(S_::self());
+			return typename T::taboo::template ectotype<V_data[N_data]>(S_::self());
 		}
 
 	};	
@@ -74,6 +76,8 @@ struct superblock<U[N]>
 		using    U_data = U;
 
 	public:// ACCESS
+		XTAL_TO4_(XTAL_DEF_(let) base(), S_::template self<archetype>())
+
 		template <class V_data=void>
 		XTAL_DEF_(short)
 		XTAL_LET twin() const
@@ -83,7 +87,7 @@ struct superblock<U[N]>
 				return S_::twin();
 			}
 			else {
-				return typename T::taboo::template type<V_data[N_data]>(S_::self());
+				return typename T::taboo::template ectotype<V_data[N_data]>(S_::self());
 			}
 		}
 
@@ -192,8 +196,8 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template type<U_data   [n_data]> &;
-			using Y = typename T::taboo::template type<U_data(&)[n_data]>  ;
+			using X = typename T::taboo::template ectotype<U_data   [n_data]> &;
+			using Y = typename T::taboo::template ectotype<U_data(&)[n_data]>  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
@@ -204,40 +208,30 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template type<U_data   [n_data]> const &;
-			using Y = typename T::taboo::template type<U_data(&)[n_data]> const  ;
+			using X = typename T::taboo::template ectotype<U_data   [n_data]> const &;
+			using Y = typename T::taboo::template ectotype<U_data(&)[n_data]> const  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
 		}
 
 		template <size_type I>
-		XTAL_DEF_(short)
-		XTAL_LET operator () () const
-		noexcept -> decltype(auto)
-		{
-			return self().coordinate(let<I>());
-		}
-		XTAL_DEF_(short)
-		XTAL_LET operator () (I_ i) const
-		noexcept -> decltype(auto)
-		{
-			return self().coordinate(let(i));
-		}
+		XTAL_DEF_(let) operator () (    ) const noexcept {return self().coordinate(element<I>());}
+		XTAL_DEF_(let) operator () (I_ i) const noexcept {return self().coordinate(element(i)  );}
 		
 		XTAL_DO4_(template <I_ I>
 		XTAL_DEF_(short)
-		XTAL_LET let(),
+		XTAL_LET element(),
 		noexcept -> decltype(auto)
 		{
 			using archetype = typename _detail::superblock<A>::archetype;
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_TO_(get<I>(S_::template self<archetype>()))
-			XTAL_0IF XTAL_TRY_TO_(let(I))
+			XTAL_0IF XTAL_TRY_TO_(element(I))
 		})
 		XTAL_DO4_(template <I_ I=0>
 		XTAL_DEF_(short)
-		XTAL_LET let(I_ i),
+		XTAL_LET element(I_ i),
 		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
@@ -287,11 +281,17 @@ struct block<A>
 	using type = bond::isotype<homotype>;
 
 };
-
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const &&o) -> decltype(auto) {return XTAL_MOV_(o)[I];}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto       &&o) -> decltype(auto) {return XTAL_MOV_(o)[I];}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto const  &o) -> decltype(auto) {return           o [I];}
-template <size_type I> XTAL_DEF_(short,static) XTAL_LET get(block_q auto        &o) -> decltype(auto) {return           o [I];}
+/*/
+template <size_type I> XTAL_DEF_(let) get(block_q auto const &&o) noexcept {return _std::get<I>(XTAL_MOV_(o).base());}
+template <size_type I> XTAL_DEF_(let) get(block_q auto       &&o) noexcept {return _std::get<I>(XTAL_MOV_(o).base());}
+template <size_type I> XTAL_DEF_(let) get(block_q auto const  &o) noexcept {return _std::get<I>(XTAL_REF_(o).base());}
+template <size_type I> XTAL_DEF_(let) get(block_q auto        &o) noexcept {return _std::get<I>(XTAL_REF_(o).base());}
+/*/
+template <size_type I> XTAL_DEF_(let) get(block_q auto const &&o) noexcept {return XTAL_MOV_(o)[I];}
+template <size_type I> XTAL_DEF_(let) get(block_q auto       &&o) noexcept {return XTAL_MOV_(o)[I];}
+template <size_type I> XTAL_DEF_(let) get(block_q auto const  &o) noexcept {return XTAL_REF_(o)[I];}
+template <size_type I> XTAL_DEF_(let) get(block_q auto        &o) noexcept {return XTAL_REF_(o)[I];}
+/***/
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -45,8 +45,8 @@ struct resize
 		using S_::head;
 
 		using size_type = U;
-		XTAL_TO4_(XTAL_DEF size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_DEF empty(), 0 == size())
+		XTAL_TO4_(XTAL_DEF_(let) size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(let) empty(), 0 == size())
 
 	};
 };

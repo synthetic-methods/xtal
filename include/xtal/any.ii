@@ -5,12 +5,12 @@ namespace _xtd
 	using _std::bit_cast;
 #else
 	template <atomic_q T, atomic_q S> requires in_q<sizeof(T), sizeof(S)>
-	XTAL_DEF bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
+	XTAL_DEF_(let) bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
 #if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)
 	template <atomic_q T>
-	XTAL_DEF copysign(T t, T s) noexcept {return __builtin_copysign(t, s);}
+	XTAL_DEF_(let) copysign(T t, T s) noexcept {return __builtin_copysign(t, s);}
 #else
 	using _std::copysign;
 #endif

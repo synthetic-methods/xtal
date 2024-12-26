@@ -40,7 +40,7 @@ struct restep
 		using S_::S_;
 		using U_step = U;
 
-		XTAL_TO4_(XTAL_DEF step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_TO4_(XTAL_DEF_(let) step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };
