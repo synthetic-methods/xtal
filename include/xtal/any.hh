@@ -123,10 +123,8 @@ template <auto  N             >	using         ordinal_t	= constant_t<static_cast
 template <auto  N             >	using        cardinal_t	= constant_t<static_cast<cardinal_type>(N)>;
 template <auto  N             >	using        integral_t	= constant_t<static_cast<integral_type>(N)>;
 
-template <class          ...Ts>	concept     unnatural_q	=  (...and _entail::    unnatural_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept       natural_q	=  (...and _entail::      natural_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      terminal_q	=  (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept       liminal_q	=  (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      terminal_q	=  (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
 template <liminal_q T         >	using      subliminal_s	= typename _entail::   subliminal_s<T >;
 template <liminal_q T         >	using    superliminal_s	= typename _entail:: superliminal_s<T >;
 
@@ -135,6 +133,14 @@ template <liminal_q T         >	using    superliminal_s	= typename _entail:: sup
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Valued & Sized...
+
+template <class T             >	using         pointee_t	=          _entail::      pointee_t<T >;
+template <class T             >	using         pointed_u	=          _entail::      pointed_u<T >;
+template <class          ...Ts>	concept       pointed_q	= (... and _entail::      pointed_q<Ts>);
+
+template <class T             >	using         indexee_t	=          _entail::      indexee_t<T >;
+template <class T             >	using         indexed_u	=          _entail::      indexed_u<T >;
+template <class          ...Ts>	concept       indexed_q	= (... and _entail::      indexed_q<Ts>);
 
 template <         class ...Ts>	using    array_valued_u	= common_t<_entail::   array_valued_u<Ts>...>;
 template <         class ...Ts>	concept  array_valued_q	=  (...and _entail::   array_valued_q<Ts>);
@@ -219,11 +225,7 @@ template <class T, int   N=-1 >	concept         array_q	=          _entail::    
 template <class T, int   N=-1 >	concept      subarray_q	=          _entail::        array_q<T > and 0 <= N  and destruct_n<T> <= N;
 
 
-template <class T             >	using         pointed_u	=          _entail::      pointed_u<T >;
-template <class T             >	using         indexed_u	=          _entail::      indexed_u<T >;
 template <class T             >	using       coindexed_u	=          _entail::    coindexed_u<T >;
-template <class          ...Ts>	concept       pointed_q	= (... and _entail::      pointed_q<Ts>);
-template <class          ...Ts>	concept       indexed_q	= (... and _entail::      indexed_q<Ts>);
 template <class          ...Ts>	concept     coindexed_q	= (... and _entail::    coindexed_q<Ts>);
 template <class          ...Ts>	concept      covalued_q	= (... and _entail::     covalued_q<Ts>);
 
@@ -231,9 +233,12 @@ template <class          ...Ts>	concept      covalued_q	= (... and _entail::    
 template <class T             >	using        arranged_t	=          _entail::     arranged_t<T >;
 template <class T             >	using      reiterated_t	=          _entail::   reiterated_t<T >;
 
-template <class T             >	using     initializer_u	=          _entail::  initializer_u<T > ;
 template <class T             >	using     initializer_t	=          _entail::  initializer_t<T > ;
+template <class T             >	using     initializer_u	=          _entail::  initializer_u<T > ;
+template <class          ...Ts>	concept   initializer_q	=  (...and _entail::  initializer_q<Ts>);
+
 template <class T             >	using        iteratee_t	= typename _entail::     iteratee  <T >::type;
+template <class T             >	using        iterated_u	= _std::remove_reference_t<iteratee_t<T>>;
 template <class T             >	using        iterated_t	= typename _entail::     iterated  <T >::type;
 template <class T             >	using        iterator_t	= typename _entail::     iterator  <T >::type;
 template <class T             >	using        distance_t	=          _entail::     distance_t<T > ;
@@ -241,8 +246,6 @@ template <class T             >	using        interval_t	=          _entail::    
 template <class T=ordinal_type>	using         counted_t	= typename _entail::      counted  <T >::type;
 template <class T=ordinal_type>	using         counter_t	= typename _entail::      counter  <T >::type;
 
-template <class          ...Ts>	concept   initializer_q	=  (...and _entail::  initializer_q<Ts>);
-template <class          ...Ts>	concept      iteratee_q	=  (...and _entail::     iteratee_q<Ts>);
 template <class          ...Ts>	concept      iterable_q	=  (...and _entail::     iterable_q<Ts>);
 template <class          ...Ts>	concept      iterated_q	=  (...and _entail::     iterated_q<Ts>);
 template <class          ...Ts>	concept      iterator_q	=  (...and _entail::     iterator_q<Ts>);

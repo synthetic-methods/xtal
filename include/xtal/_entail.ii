@@ -151,8 +151,6 @@ template <class T             >	concept       ordinal_q	= constant_q<T> and     
 template <class T             >	concept      cardinal_q	= constant_q<T> and    cardinal_b<typename T::value_type> or    cardinal_b<T>;
 template <class T             >	concept      integral_q	= constant_q<T> and    integral_b<typename T::value_type> or    integral_b<T>;
 
-template <class T             >	concept     unnatural_q	= constant_q<T> and T::value <  0;
-template <class T             >	concept       natural_q	= constant_q<T> and 0 <= T::value;
 template <class T             >	concept       liminal_q	= constant_q<T> and 0 != T::value;
 template <class T             >	concept      terminal_q	= constant_q<T> and 0 == T::value;
 template <class S             >	using      subliminal_s	= constant_t<S::value - signum_n<S::value>>;
@@ -161,8 +159,18 @@ template <class S             >	using    superliminal_s	= constant_t<S::value + 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //\
 Valued & Sized...
+
+template <class T             >	using         pointee_t	=                          decltype(*XTAL_ANY_(T)) ;
+template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
+template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(int)]) ;
+template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
+
+template <class T             >	concept       pointed_q	= requires (T t) {*t;};
+template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)];};
+
 
 template <class T             >	struct   fixed_valued   ;
 template <class T             >	struct   fluid_valued   ;
@@ -193,6 +201,7 @@ template < inner_valued_q T   >	struct   fixed_valued<T> {using value_type =  in
 template < under_valued_q T   >	struct   fixed_valued<T> {using value_type =  under_valued_u<T>;};
 
 template <class T             >	struct   fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
+//mplate <      pointed_q T   >	struct   fluid_valued<T> {using value_type =       pointed_u<T>;};
 template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
 template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_u<T>;};
 template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
@@ -330,6 +339,12 @@ template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<des
 //\
 Ranged...
 
+template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(int)))>;
+template <class T             >	concept     coindexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)]; t(XTAL_ANY_(unsigned));};
+
+template <class T             >	using        covalued_u	= coindexed_u<T>;
+template <class T             >	concept      covalued_q	= fixed_q<T> and coindexed_q<T> and not same_q<coindexed_u<T>, indexed_u<T>>;;
+
 template <class T             >	concept        scalar_q	=                                 not array_valued_q<T> ;
 template <class T             >	concept        vector_q	= array_sized_q<T> and       scalar_q<array_valued_u<T>>;
 template <class T             >	concept        matrix_q	= array_sized_q<T> and       vector_q<array_valued_u<T>>;
@@ -337,58 +352,41 @@ template <class T             >	concept        tensor_q	= array_sized_q<T> and a
 template <class T             >	concept         array_q	= array_sized_q<T> or fungible_q<T, _std::array<inner_valued_u<T>, tuple_sized_n<T>>>;
 
 
-template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
-template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
-template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(int)))>;
-template <class T             >	using        covalued_u	=  coindexed_u<T>;
-
-template <class T             >	concept       pointed_q	= requires (T t) {*t;};
-template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)];                        };
-template <class T             >	concept     coindexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)]; t(XTAL_ANY_(unsigned));};
-template <class T             >	concept      covalued_q	= fixed_q<T> and coindexed_q<T> and not same_q<coindexed_u<T>, indexed_u<T>>;;
-
-
 template <class T             >	struct    initializer   ;
-template <class T             >	struct       iteratee   ;
-template <class T             >	struct       iterated   ;
-template <class T             >	struct       iterator   ;
-template <class T             >	struct       sentinel   ;
-template <class T             >	struct       distance   ;
-template <class T             >	struct        counted   ;
-template <class T             >	struct        counter   ;
-
 template <class T             >	using     initializer_u	= typename initializer<T>::value_type;
 template <class T             >	using     initializer_t	= typename initializer<T>::type;
-template <class T             >	using        iteratee_t	= typename    iteratee<T>::type;
-template <class T             >	using        iterated_t	= typename    iterated<T>::type;
-template <class T             >	using        iterator_t	= typename    iterator<T>::type;
-template <class T             >	using        sentinel_t	= typename    sentinel<T>::type;
-template <class T             >	using        distance_t	= typename    distance<T>::type;
-template <class T             >	using         counted_t	= typename     counted<T>::type;
-template <class T             >	using         counter_t	= typename     counter<T>::type;
-
-template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
-template <class T             >	using        arranged_t	= _xtd::ranges::view_interface<T>;
-template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<U, V>;
-template <class T             >	concept      interval_q	= same_q<interval_t<iteratee_t<T>>, T>;
-
 template <class T             >	concept   initializer_q	= not same_q<T, initializer_u<T>>;
-template <class T             >	concept      iteratee_q	= true;
-template <class T             >	concept      iterable_q	= requires (T t) {t.begin();};
-template <class T             >	concept      iterated_q	= requires (T t) {t.begin(); t.size();};
-template <class T             >	concept      iterator_q	= requires (T t) {*++t;};
-template <class T             >	concept      sentinel_q	= iterator_q<T>;
-template <class T             >	concept      distance_q	= integral_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
-template <class T             >	concept       counter_q	= integral_q<T>;
-template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<iteratee_t<T>>>;
-
-
 template <class T             >	struct    initializer    {using value_type =   valued_u<T>; using type = _std::initializer_list<value_type>;};
 template <covalued_q T        >	struct    initializer<T> {using value_type = covalued_u<T>; using type = _std::initializer_list<value_type>;};
 
-template <class T             >	struct       iteratee    {using type =                 destruct_u<T> ;};
-template <iterable_q T        >	struct       iteratee<T> {using type =       pointed_u<iterator_t<T>>;};
-template <iterator_q T        >	struct       iteratee<T> {using type =       pointed_u           <T> ;};
+
+template <class T>	struct iteratee;	template <class T>	using iteratee_t = typename iteratee<T>::type;
+template <class T>	struct iterated;	template <class T>	using iterated_t = typename iterated<T>::type;
+template <class T>	struct iterator;	template <class T>	using iterator_t = typename iterator<T>::type;
+template <class T>	struct sentinel;	template <class T>	using sentinel_t = typename sentinel<T>::type;
+template <class T>	struct distance;	template <class T>	using distance_t = typename distance<T>::type;
+template <class T>	struct  counted;	template <class T>	using  counted_t = typename  counted<T>::type;
+template <class T>	struct  counter;	template <class T>	using  counter_t = typename  counter<T>::type;
+
+
+template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+template <class T             >	using        arranged_t	= _xtd::ranges::view_interface<T>;
+template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<based_t<U>, based_t<V>>;
+template <class T             >	concept      interval_q	= same_q<interval_t<_std::remove_reference_t<iteratee_t<T>>>, T>;
+template <class T             >	using        iterated_u	= _std::remove_reference_t<typename iteratee<T>::type>;
+
+
+template <class T             >	concept      iterable_q	= requires (T &t) {t.begin();};
+template <class T             >	concept      iterated_q	= requires (T &t) {t.begin(); t.size();};
+template <class T             >	concept      iterator_q	=  pointed_q<T> and requires (T &t) {++t;};
+template <class T             >	concept      sentinel_q	= iterator_q<T>;
+template <class T             >	concept      distance_q	= integral_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
+template <class T             >	concept       counter_q	= integral_q<T>;
+template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
+
+template <class T             >	struct       iteratee    {using type =                   valued_u<T> ;};
+template <iterable_q T        >	struct       iteratee<T> {using type =       pointee_t<iterator_t<T>>;};
+template <iterator_q T        >	struct       iteratee<T> {using type =       pointee_t           <T> ;};
 template < counter_q T        >	struct       iteratee<T> {using type =   _std::remove_reference_t<T> ;};
 
 template <iterated_q T        >	struct       iterated<T> {using type =   _std::remove_reference_t<T> ;};
@@ -399,26 +397,27 @@ template <iterable_q T        >	struct       iterator<T> {using type = decltype(
 template <iterator_q T        >	struct       iterator<T> {using type =                            T  ;};
 template < counter_q T        >	struct       iterator<T> {using type =      iterator_t<interval_t<T>>;};
 
-template <iterable_q T        >	struct       sentinel<T> {using type =   decltype(XTAL_ANY_(T).end());};
+template <iterable_q T        >	struct       sentinel<T> {using type = decltype(XTAL_ANY_(T).  end());};
 template <iterator_q T        >	struct       sentinel<T> {using type =                            T  ;};
 
 template <class T             >	struct       distance    {using type =      distance_t<iterator_t<T>>;};
 template <iterator_q T        >	struct       distance<T> {using type = XTAL_ALL_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
 
-template <counted_q  T        >	struct        counted<T> {using type =    XTAL_RAW_(T);};
+
+template <counted_q  T        >	struct        counted<T> {using type =  XTAL_RAW_(T);};
 template <counter_q  T        >	struct        counted<T> {using type = iterated_t<T>;};
 
-template <counted_q  T        >	struct        counter<T> {using type = iteratee_t<T>;};
-template <counter_q  T        >	struct        counter<T> {using type =    XTAL_RAW_(T);};
+template <counted_q  T        >	struct        counter<T> {using type = iterated_u<T>;};
+template <counter_q  T        >	struct        counter<T> {using type =  XTAL_RAW_(T);};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <    iterated_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iteratee_t<Ts>...> {};
-template <    iterator_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iteratee_t<Ts>...> {};
+template <    iterated_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iterated_u<Ts>...> {};
+template <    iterator_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iterated_u<Ts>...> {};
 
-template <    iterated_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iteratee_t<Ts>...> {};
-template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iteratee_t<Ts>...> {};
+template <    iterated_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iterated_u<Ts>...> {};
+template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iterated_u<Ts>...> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

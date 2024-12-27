@@ -76,22 +76,8 @@ struct define
 		XTAL_LET operator >>=(bond::heteropack_q auto &&o)
 		noexcept -> decltype(auto)
 		{
-			(void) efflux_apply(XTAL_REF_(o));
+			(void) _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(o));
 			return self();
-		}
-		XTAL_DEF_(short)
-		XTAL_LET efflux_apply(bond::heteropack_q auto &&o)
-		noexcept -> signed
-		{
-			return _std::apply([this] XTAL_1FN_(self().efflux), XTAL_REF_(o));
-		}
-		XTAL_DEF_(short)
-		XTAL_LET efflux_batch(bond::heteropack_q auto &&o)
-		noexcept -> signed
-		{
-			return _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(-1 &...& self().efflux(XTAL_REF_(oo)))
-			,	XTAL_REF_(o));
 		}
 
 		///\
@@ -100,15 +86,19 @@ struct define
 		///\returns the result of `effuse` applied to the first argument \
 		`&` `efflux` applied to the remaining arguments if successful. \
 
-		XTAL_DEF_(short) XTAL_LET efflux(                  auto &&...oo) noexcept -> signed {return efflux_fuse(XTAL_REF_(oo)...);}
-		XTAL_DEF_(short) XTAL_LET efflux(unnatural_q auto, auto &&...oo) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux(                              ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux_fuse(                         ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET efflux_fuse(   auto &&o, auto &&...oo) noexcept -> signed
+		XTAL_DEF_(short)
+		XTAL_LET efflux(auto &&...oo)
+		noexcept -> signed
 		{
-			return [this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,efflux_fuse(oo...)) (self().effuse(XTAL_REF_(o)));
+			return -1;
 		}
-
+		XTAL_DEF_(short)
+		XTAL_LET efflux(variable_q auto &&o, auto &&...oo)
+		noexcept -> signed
+		{
+			return [this, ...oo=XTAL_REF_(oo)]
+				XTAL_XFN_(1,&,efflux(oo...)) (self().effuse(XTAL_REF_(o)));
+		}
 
 		///\
 		Influx operator: resolves `this` before any dependencies, \
@@ -125,36 +115,28 @@ struct define
 		XTAL_LET operator <<=(bond::heteropack_q auto &&o)
 		noexcept -> decltype(auto)
 		{
-			(void) influx_apply(XTAL_REF_(o));
+			(void) _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(o));
 			return self();
-		}
-		XTAL_DEF_(short)
-		XTAL_LET influx_apply(bond::heteropack_q auto &&o)
-		noexcept -> signed
-		{
-			return _std::apply([this] XTAL_1FN_(self().influx), XTAL_REF_(o));
-		}
-		XTAL_DEF_(short)
-		XTAL_LET influx_batch(bond::heteropack_q auto &&o)
-		noexcept -> signed
-		{
-			return _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(-1 &...& self().influx(XTAL_REF_(oo)))
-			,	XTAL_REF_(o));
 		}
 
 		///\
 		Influx handler: resolves `this` before any dependencies. \
 		
-		///\returns the result of `infuse` applied to the each argument. \
+		///\returns the result of `infuse` applied to the each argument \
+		`&` `influx` applied to the remaining arguments if successful. \
 
-		XTAL_DEF_(short) XTAL_LET influx(                    auto &&...oo) noexcept -> signed {return influx_fuse(XTAL_REF_(oo)...);}
-		XTAL_DEF_(short) XTAL_LET influx(unnatural_q auto I, auto &&...oo) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET influx(                                ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET influx_fuse(                           ) noexcept -> signed {return -1;}
-		XTAL_DEF_(short) XTAL_LET influx_fuse(     auto &&o, auto &&...oo) noexcept -> signed
+		XTAL_DEF_(short)
+		XTAL_LET influx(auto &&...oo)
+		noexcept -> signed
 		{
-			return [this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,influx_fuse(oo...)) (self().infuse(XTAL_REF_(o)));
+			return -1;
+		}
+		XTAL_DEF_(short)
+		XTAL_LET influx(variable_q auto &&o, auto &&...oo)
+		noexcept -> signed
+		{
+			return [this, ...oo=XTAL_REF_(oo)]
+				XTAL_XFN_(1,&,influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 
 

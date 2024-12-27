@@ -31,7 +31,6 @@ TAG_("phason")
 	using V_phi = T_alpha;
 	using U_phi = phason_t<V_phi[2]>;
 	using W_phi = _std::complex<phason_t<T_alpha[2]>>;
-	using M_phi = phason_t<_std::complex<T_alpha>[2]>;
 	using A_phi = _std::array<V_phi, 2>;
 
 	using _qp = bond::template operate<typename U_phi::value_type>;
@@ -44,8 +43,9 @@ TAG_("phason")
 	/**/
 	TRY_("phason of complex")
 	{
-		M_phi a{{0.1, 0.2}, {0.3, 0.3}};
-		M_phi b{{0.1, 0.2}, {0.3, 0.3}};
+		using M_phi = phason_t<_std::complex<T_alpha>[2]>;
+		phason_t<_std::complex<T_alpha>[2]> a{{0.1, 0.2}, {0.3, 0.3}};
+		phason_t<_std::complex<T_alpha>[2]> b{{0.1, 0.2}, {0.3, 0.3}};
 
 		++a;
 		++a;

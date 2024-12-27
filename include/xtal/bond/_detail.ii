@@ -73,7 +73,7 @@ XTAL_DEF_(inline)
 XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const n_seq=false)
 noexcept -> void
 {
-	using Y = based_t<iteratee_t<Y_>>;
+	using Y = iterated_u<Y_>;
 	copy_to(y0, x0, xN, invoke_f<Y>, n_seq);
 }
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
@@ -111,8 +111,8 @@ XTAL_LET copy_to(Y_ y0, Xs const &xs, bool const n_seq=false)
 noexcept -> void
 {
 	using X_ = iterator_t<Xs>;
-	using X  = iteratee_t<X_>;
-	using Y  = iteratee_t<Y_>;
+	using X  = iterated_u<X_>;
+	using Y  = iterated_u<Y_>;
 	XTAL_IF0
 	XTAL_0IF (same_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memcpy(y0, XTAL_REF_(xs).begin(), sizeof(xs));
@@ -153,8 +153,8 @@ XTAL_LET move_to(Y_ y0, Xs &&xs, bool const n_seq=false)
 noexcept -> void
 {
 	using X_ = iterator_t<Xs>;
-	using X  = iteratee_t<X_>;
-	using Y  = iteratee_t<Y_>;
+	using X  = iterated_u<X_>;
+	using Y  = iterated_u<Y_>;
 	XTAL_IF0
 	XTAL_0IF (same_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memmove(y0, XTAL_REF_(xs).begin(), sizeof(xs));

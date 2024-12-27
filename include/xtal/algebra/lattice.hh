@@ -79,9 +79,9 @@ struct lattice<A>
 		}
 		template <auto f>
 		XTAL_DEF_(inline)
-		XTAL_LET pointwise(auto const &t)
+		XTAL_LET pointwise(fixed_valued_q auto const &t)
 		noexcept -> auto &
-		requires requires (U_data &u, iteratee_t<decltype(t)> v) {f(u, v);}
+		requires requires (U_data &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
 		{
 			size_type constexpr N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);
@@ -107,9 +107,9 @@ struct lattice<A>
 		}
 		template <auto f>
 		XTAL_DEF_(short,static)
-		XTAL_LET pointwise(T      const &s, auto const &t)
+		XTAL_LET pointwise(T      const &s, fixed_valued_q auto const &t)
 		noexcept -> auto
-		requires requires (U_data const &u, iteratee_t<decltype(t)> v) {f(u, v);}
+		requires requires (U_data const &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
 		{
 			size_type constexpr N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);

@@ -118,16 +118,16 @@ struct define
 				using R_::self;
 				using R_::head;
 
-				XTAL_DO2_(template <auto ...Is>
+			protected:// DEIFY
+			public:
+
+				template <class ...Xs>
 				XTAL_DEF_(short)
-				XTAL_LET operator() (auto &&...xs),
+				XTAL_LET deify(constant_q auto ...Is) const
 				noexcept -> decltype(auto)
 				{
-					return (self().*deify<decltype(xs)...>(constant_t<Is>{}...)) (XTAL_REF_(xs)...);
-				})
-
-			protected:// DEIFY
-
+					return deify(digest<Xs...>::template index<Is...>::point);
+				}
 				template <class A>
 				XTAL_DEF_(short)
 				XTAL_LET deify(_std::array<A, A_size> const &point) const
@@ -141,13 +141,6 @@ struct define
 					i += bond::operating::bit_sign_f(_i)&_i;
 					return R_::deify(point[i]);
 				}
-				template <class ...Xs>
-				XTAL_DEF_(short)
-				XTAL_LET deify(constant_q auto ...Is) const
-				noexcept -> decltype(auto)
-				{
-					return deify(digest<Xs...>::template index<Is...>::point);
-				}
 				
 				template <class ...Xs>
 				struct digest
@@ -157,18 +150,18 @@ struct define
 					template <auto ...Is>
 					class index
 					{
-						template <auto _I>
+						template <auto J>
 						XTAL_SET intend_v = same_q<typename T::body_type, size_type>?
-							(decltype(_I)) T(static_cast<size_type>(_I)): _I;
+							(decltype(J)) T(static_cast<size_type>(J)): J;
 						
-						template <auto _I>
-						XTAL_SET extend_v = digested::template index<Is..., intend_v<_I>>::point;
+						template <auto J>
+						XTAL_SET extend_v = digested::template index<Is..., intend_v<J>>::point;
 						
-						template <auto ..._Is>
-						XTAL_SET expand_f(bond::seek_t<_Is...>)
+						template <auto ...Js>
+						XTAL_SET expand_f(bond::seek_t<Js...>)
 						noexcept -> auto
 						{
-							return _std::array{extend_v<_Is>...};
+							return _std::array{extend_v<Js>...};
 						}
 					
 					public:

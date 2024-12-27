@@ -367,7 +367,7 @@ template <counted_q U>
 struct render<U>
 {
 private:
-	using V = iteratee_t<U>;
+	using V = iterated_u<U>;
 
 public:
 	using superkind = bond::compose<_detail::surrender, review<U>, restep<V>, bond::tag<render>>;

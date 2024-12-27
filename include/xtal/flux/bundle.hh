@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "./slot.hh"
 
 
 
@@ -90,18 +90,26 @@ struct bundle
 			return [this, oo...] XTAL_XFN_(1,&,S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
 		}
 
-		///\note\
-		If prefixed by `unnatural_q` a.k.a. `flux::slot_n<-1>`, forwards to all `slots`. \
+		///\returns the result of `*flux`ing with the supplied routing. \
+		If prefixed by a positive `slot_q`, forwards to the `slot` specified. \
+		If prefixed by a negative `slot_q` , forwards to all `slots`. \
 
-		XTAL_DEF_(short) XTAL_LET influx(unnatural_q auto, auto &&...oo) noexcept -> signed {return self().influx_push(XTAL_REF_(oo)...);}
-		XTAL_DEF_(short) XTAL_LET efflux(unnatural_q auto, auto &&...oo) noexcept -> signed {return self().efflux_push(XTAL_REF_(oo)...);}
-
-
-		///\note\
-		If prefixed by `natural_q`, forwards to the `slot` specified. \
-
-		XTAL_DEF_(short) XTAL_LET influx(natural_q auto I, auto &&...oo) noexcept -> signed {return slot<I>().influx(XTAL_REF_(oo)...);}
-		XTAL_DEF_(short) XTAL_LET efflux(natural_q auto I, auto &&...oo) noexcept -> signed {return slot<I>().efflux(XTAL_REF_(oo)...);}
+		XTAL_DEF_(short)
+		XTAL_LET influx(flux::slot_q auto i, auto &&...oo)
+		noexcept -> signed
+		{
+			XTAL_IF0
+			XTAL_0IF (0 <= i) {return slot<i>().influx     (XTAL_REF_(oo)...);}
+			XTAL_0IF (i <  0) {return self   ().influx_push(XTAL_REF_(oo)...);}
+		}
+		XTAL_DEF_(short)
+		XTAL_LET efflux(flux::slot_q auto i, auto &&...oo)
+		noexcept -> signed
+		{
+			XTAL_IF0
+			XTAL_0IF (0 <= i) {return slot<i>().efflux     (XTAL_REF_(oo)...);}
+			XTAL_0IF (i <  0) {return self   ().efflux_push(XTAL_REF_(oo)...);}
+		}
 
 		///\
 		Forwards to all `slots`, bypassing `self`. \

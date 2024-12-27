@@ -103,9 +103,9 @@ TAG_("process", "attach")
 		op <<= flux::mark_s<Ox_level>(0b10, Ox_level{1});
 		TRUE_(8 == op());
 
-		op <<= flux::slot_t<0>{} << _std::array<int, 0>{};
-		op <<= flux::slot_t<0>{} << Ox_level{6};
-		op <<= flux::slot_t<1>{} << Ox_level{3};
+		op <<= flux::slot_n<0> << _std::array<int, 0>{};
+		op <<= flux::slot_n<0> << Ox_level{6};
+		op <<= flux::slot_n<1> << Ox_level{3};
 		TRUE_(3 == op());
 
 	}

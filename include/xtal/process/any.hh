@@ -31,33 +31,38 @@ struct define
 		using S_::S_;
 
 	protected:// DIGEST
+	public:
 		///\brief\
 		Addresses the function pointer for the given types `Xs...` and indicies `Is...`, \
 		providing the kernel for the dispatch-table constructed with `occur/any.hh#dispatch`. \
 
+		///\todo\
+		Incorporate receiver at the front of `Xs...` to provide both `const` and non-`const` invocation. \
+
 		template <class ...Xs>
 		struct digest
 		{
+		private:
 			template <auto ...Is>
-			class index
+			struct solve
 			{
-				using Y = decltype(XTAL_ANY_(T &).template divert<Is...>(XTAL_ANY_(Xs)...));
-
-			public:
-				using point_type = Y (T::*) (Xs...);
-				XTAL_SET point = static_cast<point_type>(&T::template divert<Is...>);
+				using type = decltype(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...) const;
 
 			};
 			template <auto ...Is>
-			requires XTAL_TRY_(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))
-			class index<Is...>
+			requires  un_q<XTAL_TRY_(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))>
+			struct solve<Is...>
 			{
-				using Y = decltype(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...));
+				using type = decltype(XTAL_ANY_(T       &).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...);
 
+			};
+		
+		public:
+			template <auto ...Is>
+			class index
+			{
 			public:
-				//\
-				using point_type = Y (T::*) (Xs...) const;
-				using point_type = _std::add_const_t<Y (T::*) (Xs...) const>;// Added `const` for type-reflection...
+				using    point_type = typename solve<Is...>::type;
 				XTAL_SET point = static_cast<point_type>(&T::template divert<Is...>);
 
 			};
@@ -110,41 +115,20 @@ struct define
 
 		///\returns the lambda abstraction of `operator()`. \
 
-		/**/
 		XTAL_DO2_(template <class ...Xs>
 		XTAL_DEF_(short)
 		XTAL_LET reify(constant_q auto ...is),
 		noexcept -> decltype(auto)
 		{
-			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(is)::value...>);
+			if constexpr (same_q<typename T::template digest<Xs...>, digest<Xs...>>) {
+				return [this] XTAL_1FN_(self().template operator()<decltype(is){}...>);
+			}
+			else {
+				//\
+				return [this, deity=self().template deify<Xs...>(is...)] XTAL_1FN_((self().*deity));
+				return _std::bind_front(self().template deify<Xs...>(is...), &self());
+			}
 		})
-		/*/
-		XTAL_DO2_(template <class ...Xs> requires (0 == sizeof...(Xs))
-		XTAL_DEF_(short)
-		XTAL_LET reify(constant_q auto ...is),
-		noexcept -> decltype(auto)
-		{
-			return [this] XTAL_1FN_(self().template operator()<XTAL_ALL_(is)::value...>);
-		})
-		template <class ...Xs> requires (1 <= sizeof...(Xs))
-		XTAL_DEF_(short)
-		XTAL_LET reify(constant_q auto ...is)
-		noexcept -> decltype(auto)
-		requires requires (T       &t) {t.template deify<Xs...>(is...);}
-		{
-			auto       *t_ = static_cast<T       *>(this);
-			return _std::bind_front(t_->template deify<Xs...>(is...), t_);
-		}
-		template <class ...Xs> requires (1 <= sizeof...(Xs))
-		XTAL_DEF_(short)
-		XTAL_LET reify(constant_q auto ...is) const
-		noexcept -> decltype(auto)
-		requires requires (T const &t) {t.template deify<Xs...>(is...);}
-		{
-			auto const *t_ = static_cast<T const *>(this);
-			return _std::bind_front(t_->template deify<Xs...>(is...), t_);
-		}
-		/***/
 
 		///\returns the result of applying `method`, with `dispatch`ed parameters resolved. \
 		
@@ -153,9 +137,16 @@ struct define
 		XTAL_LET operator() (auto &&...xs),
 		noexcept -> decltype(auto)
 		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF XTAL_TRY_TO_(self().         method       (XTAL_REF_(xs)...))
+			if constexpr (same_q<typename T::template digest<decltype(xs)...>, digest<decltype(xs)...>>) {
+				XTAL_IF0
+				XTAL_0IF XTAL_TRY_TO_(self().template method<Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF XTAL_TRY_TO_(self().         method       (XTAL_REF_(xs)...))
+			}
+			else {
+				auto &s = self();
+				auto  d = self().template deify<decltype(xs)...>(constant_t<Is>{}...);
+				return (s.*d) (XTAL_REF_(xs)...);
+			}
 		})
 		
 		///\returns the outcome of the current process (if defined), \
