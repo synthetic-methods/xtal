@@ -259,8 +259,8 @@ TAG_("phasor")
 		z_phi <<= z_req;
 		z_phi >>= z_ren++;
 		//\
-		_xtd::ranges::move(z_phi|[] XTAL_1FN_(W_phi), z_out.begin());
-		_xtd::ranges::copy(z_phi|[] XTAL_1FN_(W_phi), z_out.begin());
+		_xtd::ranges::move(z_phi|XTAL_FUN_(W_phi), z_out.begin());
+		_xtd::ranges::copy(z_phi|XTAL_FUN_(W_phi), z_out.begin());
 
 		TRUE_(z_out[0] == bond::pack_f( 1*x_d4, x_d4));
 		TRUE_(z_out[1] == bond::pack_f( 2*x_d4, x_d4));
@@ -274,8 +274,8 @@ TAG_("phasor")
 		z_phi <<= occur::indent_s<X_phi, 1>{x_d3};
 		z_phi >>= z_ren++;
 		//\
-		_xtd::ranges::copy(z_phi|[] XTAL_1FN_(W_phi), z_out.begin());
-		_xtd::ranges::copy(z_phi|[] XTAL_1FN_(W_phi), z_out.begin());
+		_xtd::ranges::copy(z_phi|XTAL_FUN_(W_phi), z_out.begin());
+		_xtd::ranges::copy(z_phi|XTAL_FUN_(W_phi), z_out.begin());
 		
 		TRUE_(z_out[0] == bond::pack_f(-3*x_d3, x_d3));
 		TRUE_(z_out[1] == bond::pack_f(-2*x_d3, x_d3));

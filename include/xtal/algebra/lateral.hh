@@ -279,13 +279,13 @@ struct lateral<A>
 			if constexpr (0 < N_sgn) {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _xtd::fam(u, v, v);
+					u = _xtd::accumulator(XTAL_MOV_(u), v, v);
 				});
 			}
 			else {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _xtd::fam(u, v, v*U_data{-signum_n<I&1, -1>});
+					u = _xtd::accumulator(XTAL_MOV_(u), v, v*U_data{-signum_n<I&1, -1>});
 				});
 			}
 			return u;
@@ -298,7 +298,7 @@ struct lateral<A>
 			
 			U_data u{};
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-				u = _xtd::fam(u, get<I>(s), get<I>(t));
+				u = _xtd::accumulator(XTAL_MOV_(u), get<I>(s), get<I>(t));
 			});
 			return u;
 		}
@@ -368,8 +368,8 @@ struct lateral<A>
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF_(let)  maximal() const {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
-		XTAL_DEF_(let)  minimal() const {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
+		XTAL_DEF_(let)  maximal() const {return S_::template pointless<XTAL_FUN_(_std::lcm)>();}
+		XTAL_DEF_(let)  minimal() const {return S_::template pointless<XTAL_FUN_(_std::gcd)>();}
 		XTAL_DEF_(let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
@@ -378,8 +378,8 @@ struct lateral<A>
 		noexcept -> U_data
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_1FN_(_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_1FN_(_std::gcd)>();}
+			XTAL_0IF (N == 1) {return S_::template pointless<XTAL_FUN_(_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template pointless<XTAL_FUN_(_std::gcd)>();}
 		}
 
 

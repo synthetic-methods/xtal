@@ -172,7 +172,7 @@ XTAL_DEF_(inline)
 XTAL_LET apply_to(W &w, bool const n_seq=false)
 noexcept -> void
 {
-	w = f(w);
+	w = f(XTAL_MOV_(w));
 }
 template <auto f, class Ws> requires iterable_q<Ws>
 XTAL_DEF_(inline)

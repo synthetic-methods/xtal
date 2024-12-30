@@ -21,7 +21,7 @@ TAG_("lattice")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
-	auto constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
+	auto constexpr iffy = XTAL_FUN_(bond::computrim_f<16>);
 
 	TRY_("scalar multiplication")
 	{

@@ -250,7 +250,7 @@ struct defer<U>
 		noexcept -> auto
 		requires XTAL_TRY_(U_::function(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
 		{
-			return iterative_f([] XTAL_1FN_(U_::function), XTAL_REF_(xs)...);
+			return iterative_f(XTAL_FUN_(U_::function), XTAL_REF_(xs)...);
 		})
 		XTAL_DO0_(template <auto ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(short)
@@ -258,7 +258,7 @@ struct defer<U>
 		noexcept -> auto
 		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
 		{
-			return iterative_f([] XTAL_1FN_(U_::template function<Is...>), XTAL_REF_(xs)...);
+			return iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
 		})
 
 	};

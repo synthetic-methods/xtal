@@ -35,7 +35,7 @@ noexcept -> auto
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {
-		return bundle_f<XTAL_FUN_(objective_f)>(XTAL_REF_(xs)...);
+		return bundle_f<decltype(XTAL_FUN_(objective_f))>(XTAL_REF_(xs)...);
 	}
 }
 
@@ -260,7 +260,7 @@ struct bundle
 				return self();
 			}
 			XTAL_0IF (N_sgn <  0) {
-				return pointwise<[] (auto &x) XTAL_0FN_(x = -x)>();
+				return pointwise<[] (auto &x) XTAL_0FN_(x = -XTAL_MOV_(x))>();
 			}
 		}
 

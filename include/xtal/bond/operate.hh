@@ -130,8 +130,8 @@ struct recognize<(1U<<2U)>
 			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
 			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
 			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(a0, a1*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(a0, a1*w, n*n);}
+			XTAL_0IF (N_pow == -1) {return _xtd::accumulator(a0, a1*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return _xtd::accumulator(a0, a1*w, n*n);}
 		}
 #if XTAL_SYS_(Neon)
 		XTAL_0IF_(else) {
@@ -214,8 +214,8 @@ struct recognize<(1U<<3U)>
 			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
 			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
 			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return XTAL_IMP_fam(a0, a1*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return XTAL_IMP_fam(a0, a1*w, n*n);}
+			XTAL_0IF (N_pow == -1) {return _xtd::accumulator(a0, a1*w, n)*w;}
+			XTAL_0IF (N_pow == -2) {return _xtd::accumulator(a0, a1*w, n*n);}
 		}
 #if XTAL_SYS_(Neon)
 		XTAL_0IF_(else) {
@@ -782,7 +782,7 @@ public:
 	{
 		alpha_type const x = u.real();
 		alpha_type const y = u.imag();
-		return versus_f<N_pow>(_xtd::fam(x*x, y, y));
+		return versus_f<N_pow>(_xtd::accumulator(x*x, y, y));
 	}
 
 
@@ -937,8 +937,8 @@ public:
 			seek_forward_f<N_lim>([&] (auto) XTAL_0FN {
 				auto const xx = square_f(x);
 				auto const yy = square_f(y);
-				y = y*x*2;
-				x = xx - yy;
+				y *= two*x;
+				x  = xx - yy;
 			});
 			return versus_f<N_pow>(Z{x, y});
 		}
@@ -1002,7 +1002,7 @@ public:
 			if (n&1U) {
 				w *= u;
 			}
-			u = square_f(u);
+			u = square_f(XTAL_MOV_(u));
 		}
 		return w;
 	}

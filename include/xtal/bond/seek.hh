@@ -14,7 +14,6 @@ namespace xtal::bond
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <int        ...Ns>	XTAL_LET seek_n = _std::                array     {Ns...};
 template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
 template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
 
@@ -26,9 +25,7 @@ template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class      ...Ts>	                 concept       seek_q = _detail::seek_q<Ts...>;
-template <int        ...Ns>	                 XTAL_LET      seek_n = _detail::seek_n<Ns...>;
 template <int        ...Ns>	                 using         seek_t = _detail::seek_t<Ns...>;
-template <auto       ...  >	XTAL_DEF_(short) XTAL_LET      seek_i(auto &&o     ) noexcept -> decltype(auto) {return XTAL_REF_(o);}
 template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(       Ns... ) noexcept -> seek_t<(                         Ns{})...> {return {};}
 template <int        ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(seek_t<Ns...>) noexcept -> seek_t<(                         Ns  )...> {return {};}
 template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET  antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - size_1 - Ns{})...> {return {};}
@@ -46,10 +43,9 @@ template <int           N >	                 using     antiseek_s = superseek_t<
 ///\
 Invokes the function `f` with each index `Ns...`. \
 
-template <auto ...Ns>
-XTAL_DEF_(inline)
-XTAL_LET seek_access_f(auto const &f)
-noexcept -> decltype(auto)
+template <integral_q auto ...Ns>
+XTAL_DEF_(let) seek_f(applicable_p<valued_u<decltype(Ns)...>> auto const &f)
+noexcept
 {
 	return [&] <int ...I>(seek_t<I...>)
 		XTAL_0FN_(..., f(constant_t<I>{})) (seek_t<Ns...> {});

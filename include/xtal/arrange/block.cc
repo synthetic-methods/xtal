@@ -23,7 +23,7 @@ TAG_("block")
 
 	using W_alpha = block_t<T_alpha[2]>; using U_alpha_ = block_t<T_alpha(&)[1]>;
 	using W_aphex = block_t<T_aphex[2]>; using U_aphex_ = block_t<T_aphex(&)[1]>;
-	auto constexpr iffy = [] XTAL_1FN_(bond::computrim_f<16>);
+	auto constexpr iffy = XTAL_FUN_(bond::computrim_f<16>);
 
 	TRY_("block slicing")
 	{

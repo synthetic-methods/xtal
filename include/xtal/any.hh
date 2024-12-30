@@ -83,7 +83,8 @@ template <         class ...Ts>	concept          make_q	=          _entail::    
 template <class T, class ...Ts>	concept          make_p	=          _entail::         make_p<T, Ts...>;//< `T` is constructible from `Ts...`.
 
 template <class F, class ...Xs>	using          return_t	=          _entail::       return_t<F, Xs...>;
-template <class F, class ...Xs>	concept        return_p	=          _entail::       return_p<F, Xs...>;
+template <class F, class ...Xs>	concept    applicable_p	=          _entail::   applicable_p<F, Xs...>;
+template <class F, class ...Xs>	concept  inapplicable_p	=          _entail:: inapplicable_p<F, Xs...>;
 
 template <class F, class ...Xs>	concept  automorphism_p	=  (...and _entail:: automorphism_p<F, Xs   >);//< `Xs` are unchanged by `F ...`.
 template <class X, class ...Fs>	concept  automorphism_q	=  (...and _entail:: automorphism_q<X, Fs   >);//< `X `  is unchanged by `Fs...`.
@@ -311,17 +312,14 @@ template <class   ...Ts>	concept                quality_q	= (...and             
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto   N=null_type{}>	using           thunk_t	= typename _entail::        thunk_t<N   >;
-template <class Y, class T    >	concept         thunk_q	=          _entail::        thunk_q<Y, T>;
-template <class T, class Y    >	concept         thunk_p	=          _entail::        thunk_p<T, Y>;
+XTAL_LET zero   = constant_t<XTAL_VAL_(0   )>{};
+XTAL_LET half   = constant_t<XTAL_VAL_(0.5F)>{};
+XTAL_LET  one   = constant_t<XTAL_VAL_(1   )>{};
+XTAL_LET  two   = constant_t<XTAL_VAL_(2   )>{};
+XTAL_LET  three = constant_t<XTAL_VAL_(3   )>{};
 
-XTAL_LET zero = thunk_t<XTAL_VAL_(0   )>{};
-XTAL_LET half = thunk_t<XTAL_VAL_(0.5F)>{};
-XTAL_LET  one = thunk_t<XTAL_VAL_(1   )>{};
-XTAL_LET  two = thunk_t<XTAL_VAL_(2   )>{};
-
-template <auto  N> XTAL_LET half_n = thunk_t<XTAL_VAL_(1.F/(one << N))>{};
-template <auto  N> XTAL_LET  two_n = thunk_t<XTAL_VAL_(1.F*(one << N))>{};
+template <auto  N> XTAL_LET half_n = constant_t<XTAL_VAL_(1.F/(one << N))>{};
+template <auto  N> XTAL_LET  two_n = constant_t<XTAL_VAL_(1.F*(one << N))>{};
 
 
 ////////////////////////////////////////////////////////////////////////////////

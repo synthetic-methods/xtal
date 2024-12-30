@@ -37,7 +37,7 @@ noexcept -> auto
 		}
 	}
 	XTAL_0IF (incomplete_q<V>) {
-		return couple_f<XTAL_FUN_(objective_f)>(XTAL_REF_(xs)...);
+		return couple_f<decltype(XTAL_FUN_(objective_f))>(XTAL_REF_(xs)...);
 	}
 }
 
@@ -68,16 +68,15 @@ struct couple
 		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(explicit operator) F(), apply<F>())
 
-		template <class F=XTAL_FUN_(bond::pack_f)>
+		template <auto f=XTAL_FUN_(bond::pack_f)>
 		XTAL_DEF_(short)
 		XTAL_LET apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply(invoke_f<F>);
+			return apply(f);
 		}
-		template <class F>
 		XTAL_DEF_(short)
-		XTAL_LET apply(F &&f) const
+		XTAL_LET apply(auto &&f) const
 		noexcept -> decltype(auto)
 		{
 			return _std::apply(XTAL_REF_(f), *this);
@@ -207,7 +206,7 @@ struct couple
 				return *this;
 			}
 			XTAL_0IF (N_sgn <  0) {
-				return pointwise<[] (auto &x) XTAL_0FN_(x = -x)>();
+				return pointwise<[] (auto &x) XTAL_0FN_(x = -XTAL_MOV_(x))>();
 			}
 		}
 

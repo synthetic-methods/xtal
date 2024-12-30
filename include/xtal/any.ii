@@ -16,49 +16,46 @@ namespace _xtd
 #endif
 
 
+template <class W, class X, class Y> requires simplex_number_q<W, X, Y> or un_q<number_q<W> or number_q<X> or number_q<Y>>
 XTAL_DEF_(short)
-XTAL_LET fam(auto &&w, auto &&x, auto &&y, auto &&...ys)
-noexcept -> auto
-requires (1 <= sizeof...(ys))
+XTAL_LET accumulator(W &&w, X &&x, Y &&y)
+noexcept -> XTAL_ALL_(w + x*y)
 {
-	return fam(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
-}
-template <class W, class X, class Y> requires integral_q<W, X, Y> or un_q<number_q<W, X, Y>>
-XTAL_DEF_(short)
-XTAL_LET fam(W &&w, X &&x, Y &&y)
-noexcept -> auto
-{
-	if (requires {fma(y, x, w);} and not _std::is_constant_evaluated()) {
-		return fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
-	else {
-		return XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w);
+#if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
+	XTAL_0IF (requires {_std::fma(y, x, w);}) {
+		return __builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
 	}
-}
-template <real_number_q W, real_number_q X, real_number_q Y>
-XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
-noexcept -> auto
-{
-	return XTAL_IMP_fam(w, x, y);
+#endif
+#if   XTAL_SYS_(FMA)
+	XTAL_0IF (requires {fma(y, x, w);}) {
+		return           fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+#endif
+	XTAL_0IF_(else) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+	}
 }
 template <real_number_q W, complex_number_q X, real_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
-	return _std::complex{XTAL_IMP_fam(w, x.real(), y), x.imag()*y};
+	return _std::complex{accumulator(w, x.real(), y), x.imag()*y};
 }
 template <real_number_q W, real_number_q X, complex_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
-	return _std::complex{XTAL_IMP_fam(w, x, y.real()), x*y.imag()};
+	return _std::complex{accumulator(w, x, y.real()), x*y.imag()};
 }
 template <real_number_q W, complex_number_q X, complex_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	if constexpr (requires {fma(y, x, w);}) {
@@ -68,8 +65,8 @@ noexcept -> auto
 		/**/
 		return y*x + w;
 		/*/
-		auto const z_re = XTAL_IMP_fam(XTAL_IMP_fam(w, x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = XTAL_IMP_fam(                x.imag()*y.real() ,  x.real(),y.imag());
+		auto const z_re = accumulator(accumulator(w, x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator(       x.imag()*y.real() ,  x.real(),y.imag());
 		return _std::complex{z_re, z_im};
 		/***/
 	}
@@ -77,29 +74,29 @@ noexcept -> auto
 
 template <complex_number_q W, real_number_q X, real_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
-	return _std::complex{XTAL_IMP_fam(w.real(), x, y), w.imag()};
+	return _std::complex{accumulator(w.real(), x, y), w.imag()};
 }
 template <complex_number_q W, complex_number_q X, real_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
-	return _std::complex{XTAL_IMP_fam(w.real(), x.real(), y), XTAL_IMP_fam(w.imag(), x.imag(), y)};
+	return _std::complex{accumulator(w.real(), x.real(), y), accumulator(w.imag(), x.imag(), y)};
 }
 template <complex_number_q W, real_number_q X, complex_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
-	return _std::complex{XTAL_IMP_fam(w.real(), x, y.real()), XTAL_IMP_fam(w.imag(), x, y.imag())};
+	return _std::complex{accumulator(w.real(), x, y.real()), accumulator(w.imag(), x, y.imag())};
 }
 
 template <complex_number_q W, complex_number_q X, complex_number_q Y>
 XTAL_DEF_(short)
-XTAL_LET fam(W w, X x, Y y)
+XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	if constexpr (requires {fma(y, x, w);}) {
@@ -109,11 +106,19 @@ noexcept -> auto
 		/**/
 		return y*x + w;
 		/*/
-		auto const z_re = fam(XTAL_IMP_fam(w.real(), x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = fam(XTAL_IMP_fam(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
+		auto const z_re = accumulator(accumulator(w.real(), x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator(accumulator(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
 		return _std::complex{z_re, z_im};
 		/***/
 	}
+}
+
+XTAL_DEF_(short)
+XTAL_LET accumulator(auto &&w, auto &&x, auto &&y, auto &&...ys)
+noexcept -> auto
+requires (1 <= sizeof...(ys))
+{
+	return accumulator(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }
 
 }
@@ -365,7 +370,7 @@ To be implemented by the host to transparently lift `f` when `xs...` are vectori
 
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(       Xs &&...xs) noexcept -> decltype(auto) {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
-template <class F             > XTAL_DEF_(inline) XTAL_LET operative_f(F &&f            ) noexcept -> decltype(auto) {return         [] XTAL_1FN_(operative_f)         ;}
+template <class F             > XTAL_DEF_(inline) XTAL_LET operative_f(F &&f            ) noexcept -> decltype(auto) {return         XTAL_FUN_(operative_f)         ;}
 /***/
 
 

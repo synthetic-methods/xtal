@@ -72,7 +72,7 @@ TAG_("solid", "series")
 		U_series rhs = {1, 0, 1, 0, 0, 0, 0, 0};
 		U_series xhs = {0, 1, 2, 1, 2, 0, 0, 0};
 		U_series yhs = basis.convolution(lhs, rhs);
-		_detail::apply_to<[] XTAL_1FN_(bond::computrim_f<16>)>(yhs);
+		_detail::apply_to<XTAL_FUN_(bond::computrim_f<16>)>(yhs);
 		TRUE_(xhs == yhs);
 
 	}

@@ -202,7 +202,7 @@ struct series<A>
 		
 		//	Conjugate the input if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
-				_detail::apply_to<[] XTAL_1FN_(_std::conj)>(that);
+				_detail::apply_to<XTAL_FUN_(_std::conj)>(that);
 			}
 		//	Compute the transform of `that` using the precomputed half-period sinusoid in `this`:
 			for (I n{}; n < n_depth; ++n) {
@@ -215,13 +215,13 @@ struct series<A>
 					U_data &y = that[m];
 					U_data &x = that[w];
 					U_data const yo = y*o;
-					y = x - yo;
-					x = x + yo;
+					y  = x - yo;
+					x +=     yo;
 				}}
 			}
 		//	Conjugate and scale the output if computing the inverse transform of the codomain:
 			if constexpr (N_direction == -1) {
-				_detail::apply_to<[] XTAL_1FN_(_std::conj)>(that);
+				_detail::apply_to<XTAL_FUN_(_std::conj)>(that);
 				that /= n_width;
 			}
 
@@ -286,7 +286,7 @@ s
 				Y s_(s);
 				Y t_(t);
 				Y(constant_t<-1>{}).convolve(s_, t_);
-				_detail::move_to<[] XTAL_1FN_(_std::real)>(s.begin(), s_);
+				_detail::move_to<XTAL_FUN_(_std::real)>(s.begin(), s_);
 			}
 			return s;
 		}

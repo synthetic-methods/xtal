@@ -146,7 +146,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data();
-			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			_detail::move_to<XTAL_FUN_(T::ordinate)>(i0, XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -154,7 +154,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data();
-			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			_detail::move_to<XTAL_FUN_(T::ordinate)>(i0, XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -162,7 +162,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data();
-			_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(i0, XTAL_REF_(o));
+			_detail::copy_to<XTAL_FUN_(T::ordinate)>(i0, XTAL_REF_(o));
 			return self();
 		}
 		
@@ -171,7 +171,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
-			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			_detail::move_to<XTAL_FUN_(T::ordinate)>(iN, XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -179,7 +179,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
-			_detail::move_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			_detail::move_to<XTAL_FUN_(T::ordinate)>(iN, XTAL_REF_(o));
 			return self();
 		}
 		XTAL_DEF_(inline)
@@ -187,7 +187,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			auto i0 = S_::data(), iN = _std::next(i0, S_::size() - o.size());
-			_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(iN, XTAL_REF_(o));
+			_detail::copy_to<XTAL_FUN_(T::ordinate)>(iN, XTAL_REF_(o));
 			return self();
 		}
 

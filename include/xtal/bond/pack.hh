@@ -181,8 +181,6 @@ noexcept -> decltype(auto)
 		XTAL_0FN_(F<interpack_item_t<Is, decltype(ts)...>...>{pack_item_f<Is>(ts...)...})
 	(bond::seek_s<pack_size_n<decltype(ts)...>>{});
 };
-template <template <class ...> class F=pack_t>
-using    repack_y = XTAL_FUN_(repack_f<F>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

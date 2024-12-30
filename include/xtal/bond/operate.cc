@@ -29,7 +29,7 @@ TAG_("operate", "root")
 			T_alpha constexpr two = 2;
 			T_alpha w{};
 			for (T_sigma i = 0x100; ~--i;) {
-				auto x = _op::mantissa_f(mt19937_f); x = _std::pow(two, x);
+				auto x = _op::mantissa_f(mt19937_f); x = _std::pow(two, XTAL_MOV_(x));
 				w *= _op::root_f<-1,~0>(x)/0x100;
 			}
 			return w;
@@ -39,7 +39,7 @@ TAG_("operate", "root")
 			T_alpha constexpr two = 2;
 			T_alpha w{};
 			for (T_sigma i = 0x100; ~--i;) {
-				auto x = _op::mantissa_f(mt19937_f); x = _std::pow(two, x);
+				auto x = _op::mantissa_f(mt19937_f); x = _std::pow(two, XTAL_MOV_(x));
 				w *= _op::root_f<-1, 1>(x)/0x100;
 			}
 			return w;

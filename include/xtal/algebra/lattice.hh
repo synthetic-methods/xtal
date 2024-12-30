@@ -139,7 +139,7 @@ struct lattice<A>
 				return self();
 			}
 			XTAL_0IF (N_sgn <  0) {
-				return pointwise<[] (auto &x) XTAL_0FN_(x = -x)>();
+				return pointwise<[] (auto &x) XTAL_0FN_(x = -XTAL_MOV_(x))>();
 			}
 		}
 		template <int N_sgn=1>

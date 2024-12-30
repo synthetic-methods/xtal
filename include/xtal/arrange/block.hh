@@ -117,24 +117,24 @@ struct superblock<U[N]>
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to                           (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<XTAL_FUN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to                        (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
 		noexcept
 		:	homotype(count_f(a))
 		{
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to                           (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::move_to<XTAL_FUN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::move_to                        (S_::begin(), a);}
 		}
 		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
 		noexcept
 		:	homotype(count_f(XTAL_REF_(a)))
 		{
 			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::copy_to<[] XTAL_1FN_(T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::copy_to                           (S_::begin(), a);}
+			XTAL_0IF (covalued_q<T>) {_detail::copy_to<XTAL_FUN_(T::ordinate)>(S_::begin(), a);}
+			XTAL_0IF_(else)          {_detail::copy_to                        (S_::begin(), a);}
 		}
 
 	};
@@ -246,7 +246,7 @@ struct block<A>
 		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(explicit operator) F(), apply(invoke_f<F>))
 
-		template <auto f=[] XTAL_1FN_(bond::pack_f)>
+		template <auto f=XTAL_FUN_(bond::pack_f)>
 		XTAL_DEF_(short)
 		XTAL_LET apply() const
 		noexcept -> decltype(auto)
