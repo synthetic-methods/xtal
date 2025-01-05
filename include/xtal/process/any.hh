@@ -50,7 +50,7 @@ struct define
 
 			};
 			template <auto ...Is>
-			requires  un_q<XTAL_TRY_(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))>
+			requires  un_n<XTAL_TRY_(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))>
 			struct solve<Is...>
 			{
 				using type = decltype(XTAL_ANY_(T       &).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...);

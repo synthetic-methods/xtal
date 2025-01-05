@@ -61,14 +61,14 @@ struct serial<A>
 	//	using S_::operator+=;
 	//	using S_::operator-=;
 
-		XTAL_DEF_(short) XTAL_LET operator  * (auto const &t)               const noexcept -> auto   {return twin() *=   t ;}
-		XTAL_DEF_(short) XTAL_LET operator  + (auto const &t)               const noexcept -> auto   {return twin() +=   t ;}
-		XTAL_DEF_(short) XTAL_LET operator  - (auto const &t)               const noexcept -> auto   {return twin() -=   t ;}
-		XTAL_DEF_(inline)        XTAL_LET operator  *=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() *= T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator  +=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() += T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator  -=(_std::initializer_list<U_data> t)  noexcept -> auto & {return self() -= T(t);}
-		XTAL_DEF_(inline)        XTAL_LET operator ++ (int)                               noexcept -> auto   {auto t = twin(); operator++(); return t;}
-		XTAL_DEF_(inline)        XTAL_LET operator -- (int)                               noexcept -> auto   {auto t = twin(); operator--(); return t;}
+		XTAL_DEF_(short)  XTAL_LET operator  * (auto const &t)      const noexcept -> auto   {return twin() *=   t ;}
+		XTAL_DEF_(short)  XTAL_LET operator  + (auto const &t)      const noexcept -> auto   {return twin() +=   t ;}
+		XTAL_DEF_(short)  XTAL_LET operator  - (auto const &t)      const noexcept -> auto   {return twin() -=   t ;}
+		XTAL_DEF_(inline) XTAL_LET operator  *=(initializer_s<U_data> t)  noexcept -> auto & {return self() *= T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator  +=(initializer_s<U_data> t)  noexcept -> auto & {return self() += T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator  -=(initializer_s<U_data> t)  noexcept -> auto & {return self() -= T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator ++ (int)                      noexcept -> auto   {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline) XTAL_LET operator -- (int)                      noexcept -> auto   {auto t = twin(); operator--(); return t;}
 
 
 		///\

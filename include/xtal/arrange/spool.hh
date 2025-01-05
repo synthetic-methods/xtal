@@ -65,7 +65,7 @@ struct spool<A>
 		:	u_end(count_f(w))
 		,	u_store(w.begin(), w.end())
 		{}
-		template <class W> requires make_p<U_value, W> and un_q<same_q<U_value, W>>
+		template <class W> requires make_p<U_value, W> and un_n<same_q<U_value, W>>
 		XTAL_NEW_(explicit) homotype(W &&w)
 		noexcept(false)
 		:	u_begin(1)

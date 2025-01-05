@@ -288,7 +288,7 @@ struct defer_field
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
 		noexcept -> auto
-		requires in_q<S_::pack_size::value, 0> and same_q<bool, U>
+		requires in_n<S_::pack_size::value, 0> and same_q<bool, U>
 		{
 			return size_2;
 		}
@@ -324,7 +324,7 @@ struct defer_field<U>
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
 		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type const & requires      member_q<U>  {return             body_part;}
-		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type         requires un_q<member_q<U>> {return (head_type) body_part;}
+		XTAL_DEF_(short) XTAL_LET head() const noexcept -> head_type         requires un_n<member_q<U>> {return (head_type) body_part;}
 		
 	};
 };
@@ -362,7 +362,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		{}
 		XTAL_NEW_(explicit) subtype(infungible_q<subtype> auto &&o, auto &&...oo)
 		noexcept
-		requires un_q<integral_q<decltype(o)>>
+		requires un_n<integral_q<decltype(o)>>
 		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{
 		}

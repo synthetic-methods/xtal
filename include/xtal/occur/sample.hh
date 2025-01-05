@@ -58,7 +58,7 @@ public:
 		noexcept
 		:	subtype(1)
 		{}
-		XTAL_NEW_(explicit) subtype(integer_q auto n, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(integral_number_q auto n, auto &&...oo)
 		noexcept
 		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
 		{}

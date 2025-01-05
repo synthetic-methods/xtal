@@ -47,37 +47,38 @@ XTAL_LET_(size_type) size_3 = _entail::size_3;
 //\
 Structural...
 
-template <         class ...Ts>	concept     isotropic_q	=          _entail::    isotropic<Ts...>::value;
-template <         class ...Ts>	concept     epitropic_q	=          _entail::    epitropic<Ts...>::value;
-template <         class ...Ts>	concept    isomorphic_q	=          _entail::   isomorphic<Ts...>::value;
-template <         class ...Ts>	concept    epimorphic_q	=          _entail::   epimorphic<Ts...>::value;
+template <         class ...Ts>	concept     isotropic_q	=          _entail::      isotropic<   Ts...>::value;
+template <         class ...Ts>	concept     epitropic_q	=          _entail::      epitropic<   Ts...>::value;
+template <         class ...Ts>	concept    isomorphic_q	=          _entail::     isomorphic<   Ts...>::value;
+template <         class ...Ts>	concept    epimorphic_q	=          _entail::     epimorphic<   Ts...>::value;
 
-template <         class ...Ts>	concept      fungible_q	=          _entail::   fungible_q<Ts...>; //< `T` and `Ts...` are   related by inheritance.
-template <         class ...Ts>	concept    infungible_q	=          _entail:: infungible_q<Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
-
-
-template <class T             >	using           based_t	=          _entail::      based_t<T>;
-template <class          ...Ts>	concept         based_q	=  (...and _entail::      based_q<Ts>);
-template <class          ...Ts>	concept       unbased_q	=  (...and _entail::    unbased_q<Ts>);
-
-template <class          ...Ts>	using          common_t	=          _entail::     common_t<Ts...>;
-template <class          ...Ts>	concept        common_q	=          _entail::     common_q<Ts...>;
+template <         class ...Ts>	concept      fungible_q	=          _entail::     fungible_q<   Ts...>; //< `T` and `Ts...` are   related by inheritance.
+template <         class ...Ts>	concept    infungible_q	=          _entail::   infungible_q<   Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
 
-template <class T             >	using        identity_t	=          _entail:: identity_t<T>;
-template <class T             >	using        identity_u	=          _entail:: identity_u<T>;
-template <class T             >	XTAL_LET     identity_n	=          _entail:: identity_n<T>;
-template <class T             >	concept      identity_q	=          _entail:: identity_q<T>;
+template <class T             >	using           based_t	=          _entail::        based_t<T       > ;
+template <class          ...Ts>	concept         based_q	=  (...and _entail::        based_q<   Ts   >);
+template <class          ...Ts>	concept       unbased_q	=  (...and _entail::      unbased_q<   Ts   >);
 
-template <class          ...Ts>	using        complete_t	= typename _entail::   complete_t<Ts...>;
-template <class          ...Ts>	concept      complete_q	=  (...and _entail::   complete_q<Ts   >);
-template <class          ...Ts>	concept    incomplete_q	=  (...and _entail:: incomplete_q<Ts   >);
+template <class          ...Ts>	using          common_t	=          _entail::       common_t<   Ts...>;
+template <class          ...Ts>	concept        common_q	=          _entail::       common_q<   Ts...>;
 
 
-template <class          ...Ts>	concept     molecular_q	=  (...and _entail::  molecular_q<Ts   >);
-template <class          ...Ts>	concept        atomic_q	=  (...and _entail::     atomic_q<Ts   >);
+template <class T             >	using        identity_t	=          _entail::     identity_t<T       >;
+template <class T             >	using        identity_u	=          _entail::     identity_u<T       >;
+template <class T             >	XTAL_LET     identity_n	=          _entail::     identity_n<T       >;
+template <class T             >	concept      identity_q	=          _entail::     identity_q<T       >;
+
+template <class          ...Ts>	using        complete_t	= typename _entail::     complete_t<   Ts...> ;
+template <class          ...Ts>	concept      complete_q	=  (...and _entail::     complete_q<   Ts   >);
+template <class          ...Ts>	concept    incomplete_q	=  (...and _entail::   incomplete_q<   Ts   >);
 
 
+template <class          ...Ts>	concept     molecular_q	=  (...and _entail::    molecular_q<   Ts   >);
+template <class          ...Ts>	concept        atomic_q	=  (...and _entail::       atomic_q<   Ts   >);
+
+
+template <         class ...Ts>	concept        insame_q	=          _entail::       insame_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
 template <         class ...Ts>	concept          same_q	=          _entail::         same_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
 template <         class ...Ts>	concept          make_q	=          _entail::         make_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
 template <class T, class ...Ts>	concept          make_p	=          _entail::         make_p<T, Ts...>;//< `T` is constructible from `Ts...`.
@@ -95,20 +96,31 @@ template <class X, class ...Fs>	concept  automorphism_q	=  (...and _entail:: aut
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail::     signum_n<N, Z>;
-template <auto  N             >	XTAL_LET       magnum_n	=          _entail::     magnum_n<N   >;
-template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail::     modulo_m<M, N>;
-template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::      above_m<M, N>;
-template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::      below_m<M, N>;
-template <auto  M, auto  ...Ns>	concept         above_p =          _entail::      above_p<M, Ns...>;
-template <auto  M, auto  ...Ns>	concept         below_p =          _entail::      below_p<M, Ns...>;
-template <auto  N, auto  ...Ms>	concept            in_q	=          _entail::         in_q<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            un_q	=          _entail::         un_q<N, Ms...>;
-
 using   logical_type	= _entail::  logical_type;
 using   ordinal_type	= _entail::  ordinal_type;
 using  cardinal_type	= _entail:: cardinal_type;
 using  integral_type	= _entail:: integral_type;
+
+template <class 	    ...Ts>  concept           number_q	=  (...and _entail::          number_q<   Ts   >);
+template <class 	    ...Ts>  concept      real_number_q	=  (...and _entail::     real_number_q<   Ts   >);
+template <class 	    ...Ts>  concept   complex_number_q	=  (...and _entail::  complex_number_q<   Ts   >);
+template <class 	    ...Ts>  concept   simplex_number_q	=  (...and _entail::  simplex_number_q<   Ts   >);
+template <class 	    ...Ts>  concept   ordinal_number_q	=  (...and _entail::  ordinal_number_q<   Ts   >);
+template <class 	    ...Ts>  concept  cardinal_number_q	=  (...and _entail:: cardinal_number_q<   Ts   >);
+template <class 	    ...Ts>  concept   logical_number_q	=  (...and _entail::  logical_number_q<   Ts   >);
+template <class 	    ...Ts>  concept  integral_number_q	=  (...and _entail:: integral_number_q<   Ts   >);
+
+template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail::          signum_n<N, Z    >;
+template <auto  N             >	XTAL_LET       magnum_n	=          _entail::          magnum_n<N       >;
+template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail::          modulo_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::           above_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::           below_m<M, N    >;
+template <auto  M, auto  ...Ns>	concept         above_p =          _entail::           above_p<M, Ns...>;
+template <auto  M, auto  ...Ns>	concept         below_p =          _entail::           below_p<M, Ns...>;
+template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::              in_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::              un_n<N, Ms...>;
+template <class T, class ...Ts>	concept            in_q	=          _entail::              in_q<T, Ts...>;
+template <class T, class ...Ts>	concept            un_q	=          _entail::              un_q<T, Ts...>;
 
 template <auto   N=null_type{}>	using        constant_t	= typename _entail::     constant_t<N >;
 template <class          ...Ts>	concept      constant_q	=  (...and _entail::     constant_q<XTAL_RAW_(Ts)>);
@@ -234,6 +246,7 @@ template <class          ...Ts>	concept      covalued_q	= (... and _entail::    
 template <class T             >	using        arranged_t	=          _entail::     arranged_t<T >;
 template <class T             >	using      reiterated_t	=          _entail::   reiterated_t<T >;
 
+template <class T             >	using     initializer_s	=          _entail::  initializer_s<T > ;
 template <class T             >	using     initializer_t	=          _entail::  initializer_t<T > ;
 template <class T             >	using     initializer_u	=          _entail::  initializer_u<T > ;
 template <class          ...Ts>	concept   initializer_q	=  (...and _entail::  initializer_q<Ts>);
@@ -262,14 +275,6 @@ template <class          ...Ts>	concept       counter_q	=  (...and _entail::    
 //\
 Arithmetic...
 
-template <class 	    ...Ts>  concept           number_q	=  (...and _entail::          number_q<Ts>);
-template <class 	    ...Ts>  concept      real_number_q	=  (...and _entail::     real_number_q<Ts>);
-template <class 	    ...Ts>  concept   complex_number_q	=  (...and _entail::  complex_number_q<Ts>);
-template <class 	    ...Ts>  concept   simplex_number_q	=  (...and _entail::  simplex_number_q<Ts>);
-template <class 	    ...Ts>  concept          integer_q	=  (...and _entail::         integer_q<Ts>);
-template <class 	    ...Ts>  concept          boolean_q	=  (...and _entail::         boolean_q<Ts>);
-
-
 template <size_type N, class T, class U=T>	concept  multiplicative_group_p	= _entail:: multiplicative_group_p<N, T, U>;
 template <size_type N, class T, class U=T>	concept        additive_group_p	= _entail::       additive_group_p<N, T, U>;
 template <size_type N, class T, class U=T>	concept        discrete_group_p	= _entail::       discrete_group_p<N, T, U>;
@@ -282,8 +287,8 @@ template <size_type N, class T, class U=T>	concept      continuous_field_p	= _en
 template <size_type N, class T, class U=T>	concept         complex_field_p	= _entail::        complex_field_p<N, T, U>;
 template <size_type N, class T, class U=T>	concept         simplex_field_p	= _entail::        simplex_field_p<N, T, U>;
 
-template <size_type N, class T, class U=T>	concept       boolean_group_p	= _entail::      boolean_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept        binary_group_p	= _entail::       binary_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	concept         logical_group_p	= _entail::        logical_group_p<N, T, U>;
+template <size_type N, class T, class U=T>	concept          binary_group_p	= _entail::         binary_group_p<N, T, U>;
 
 template <size_type N, class T, class U=T>	concept            inequality_p	= _entail::           inequality_p<N, T, U>;
 template <size_type N, class T, class U=T>	concept              equality_p	= _entail::             equality_p<N, T, U>;
@@ -302,7 +307,7 @@ template <class   ...Ts>	concept       continuous_field_q	= (...and     continuo
 template <class   ...Ts>	concept          complex_field_q	= (...and        complex_field_p<0, Ts>);
 template <class   ...Ts>	concept          simplex_field_q	= (...and        simplex_field_p<0, Ts>);
 
-template <class   ...Ts>	concept          boolean_group_q	= (...and        boolean_group_p<0, Ts>);
+template <class   ...Ts>	concept          logical_group_q	= (...and        logical_group_p<0, Ts>);
 template <class   ...Ts>	concept           binary_group_q	= (...and         binary_group_p<0, Ts>);
 
 template <class   ...Ts>	concept             inequality_q	= (...and           inequality_p<2, Ts>);

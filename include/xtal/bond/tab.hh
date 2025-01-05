@@ -56,7 +56,7 @@ template <taboo_q T,               class ...Is>                                 
 template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>, subliminal_s<I>,   Is...>   {};
 template <class   T, constant_q I, class ...Is> requires                         terminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<        T ,                    Is...>   {};
 template <taboo_q T, identity_q I, class ...Is> requires      same_q<taboo_u<T>, identity_u<I>>  struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,                    Is...>   {};
-template <taboo_q T, identity_q I, class ...Is> requires un_q<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
+template <taboo_q T, identity_q I, class ...Is> requires un_n<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
 
 
 template <class   T,               class ...Is> concept      tab_q = (...and tabbed_q<T , identity_t<Is>>);

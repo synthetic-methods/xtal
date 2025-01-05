@@ -158,11 +158,11 @@ struct seek_index
 		};
 
 	public:// OPERATE
-		XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) element(I i),
+		XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) element(I i),
 			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
 
-		XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) operator[](I i), element(i))
-	//	XTAL_TO4_(template <integer_q I> XTAL_DEF_(let) operator()(I i), element(i))
+		XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) operator[](I i), element(i))
+	//	XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) operator()(I i), element(i))
 		
 	};
 

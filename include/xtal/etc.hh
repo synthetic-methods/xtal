@@ -138,6 +138,12 @@ XTAL_ENV_(push)
 #define XTAL_SYS_Neon 0
 #endif
 
+#if defined(__aarch64__) or defined(__amd64__) or defined(__amd64) or defined(__x86_64__) or defined(__x86_64) or defined(_M_AMD64) or defined(_M_X64) or defined(__ia64__) or defined(_IA64) or defined(__IA64__) or defined(__ia64) or defined(_M_IA64) or defined(_M_IA64) or defined(__powerpc64__) or defined(__ppc64__) or defined(__PPC64__) or defined(_ARCH_PPC64)
+#define XTAL_SYS_CPU 64
+#else
+#define XTAL_SYS_CPU 32
+#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

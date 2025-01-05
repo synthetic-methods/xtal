@@ -4,7 +4,7 @@ namespace _xtd
 #if __cpp_lib_bit_cast
 	using _std::bit_cast;
 #else
-	template <atomic_q T, atomic_q S> requires in_q<sizeof(T), sizeof(S)>
+	template <atomic_q T, atomic_q S> requires in_n<sizeof(T), sizeof(S)>
 	XTAL_DEF_(let) bit_cast(S s) noexcept {return __builtin_bit_cast(T, s);}
 #endif
 
@@ -16,7 +16,7 @@ namespace _xtd
 #endif
 
 
-template <class W, class X, class Y> requires simplex_number_q<W, X, Y> or un_q<number_q<W> or number_q<X> or number_q<Y>>
+template <class W, class X, class Y> requires simplex_number_q<W, X, Y> or un_n<number_q<W> or number_q<X> or number_q<Y>>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W &&w, X &&x, Y &&y)
 noexcept -> XTAL_ALL_(w + x*y)
@@ -254,7 +254,7 @@ XTAL_LET bounded_f(auto const &u)
 		U constexpr  n0 = N0;
 		U constexpr  n1 = N1;
 		U constexpr n01 = N0 + N1;
-		if constexpr (integer_q<U>) {
+		if constexpr (integral_number_q<U>) {
 			return (abs(u - n0) - abs(u - n1) + n01) >> 1;
 		}
 		else {

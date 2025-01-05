@@ -146,7 +146,7 @@ struct bundle
 		XTAL_LET pointwise(subtype const &s, auto const &t)
 		noexcept -> auto
 		requires complete_q<common_t<Xs..., decltype(t)>>
-	//	requires un_q<_retail::bundle_q<decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
+	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
 		{
 			auto &s_ = s.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
@@ -160,7 +160,7 @@ struct bundle
 		XTAL_LET pointwise(auto const &t, subtype const &s)
 		noexcept -> auto
 		requires complete_q<common_t<decltype(t), Xs...>>
-	//	requires un_q<_retail::bundle_q<decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
+	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
 		{
 			auto &s_ = s.slots();
 			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
