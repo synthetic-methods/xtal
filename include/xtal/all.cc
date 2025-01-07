@@ -1,5 +1,4 @@
 #include "./any.cc"
-#include "./algebra/all.cc"
 #include "./arrange/all.cc"
 #include "./bond/all.cc"
 #include "./cell/all.cc"

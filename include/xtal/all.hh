@@ -1,5 +1,4 @@
 #include "./any.hh"
-#include "./algebra/all.hh"
 #include "./arrange/all.hh"
 #include "./bond/all.hh"
 #include "./cell/all.hh"

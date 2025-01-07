@@ -567,9 +567,9 @@ struct constant<o> : constant_s<o>
 		using U = based_t<T>;
 		XTAL_IF0
 		XTAL_0IF (same_q<U, object_type>) {return o();}
-		XTAL_0IF XTAL_TRY_TO_(static_cast<U>(o()))
 		XTAL_0IF XTAL_TRY_TO_(U{o()})
 		XTAL_0IF XTAL_TRY_TO_(U(o()))
+		XTAL_0IF XTAL_TRY_TO_(static_cast<U>(o()))
 	}
 	template <class T=object_type>
 	XTAL_DEF_(short)

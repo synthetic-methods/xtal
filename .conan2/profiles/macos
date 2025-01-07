@@ -1,6 +1,6 @@
 [settings]
 build_type=Release
-arch=x86_64
+arch=armv8
 os=Macos
 compiler=apple-clang
 compiler.cppstd=20
@@ -8,4 +8,6 @@ compiler.version=14
 compiler.libcxx=libc++
 
 [buildenv]
-CXXFLAGS=-O3
+CXXFLAGS=-m64 -O3
+LDFLAGS=-m64
+CFLAGS=-m64

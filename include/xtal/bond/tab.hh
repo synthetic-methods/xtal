@@ -28,14 +28,14 @@ struct tab
 
 		struct taboo
 		{
-			using paratype = S;
+			using hypotype = S;
 			using peritype = I;
 
 		};
 
 	};
 };
-template <class   T                           > using        taboo_s =            typename T ::taboo::paratype;
+template <class   T                           > using        taboo_s =            typename T ::taboo::hypotype;
 template <class   T                           > using        taboo_u =            typename T ::taboo::peritype;
 template <                         class ...Ts> concept      taboo_q = complete_q<typename Ts::taboo...>;
 

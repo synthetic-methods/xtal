@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../algebra/all.hh"
+#include "../arrange/all.hh"
 #include "../provision/example.hh"
 #include "../provision/biased.hh"
 #include "../occur/indent.hh"
@@ -28,16 +28,17 @@ template <vector_q A, typename ...As>
 struct phasor<A, As...>
 {
 	using _op =   bond::operate<A>;
-	using _ph = algebra::phason<A>;
+	using _ph = arrange::phason<A>;
 	using coordinate_type = typename _ph::coordinate_type;
 	using inordinate_type = typename _ph::inordinate_type;
 	using   ordinate_type = typename _ph::  ordinate_type;
 
 	XTAL_SET N  = _std::extent_v<A>;
 
-	using U_phason = algebra::phason_t<coordinate_type[N]>;
-	using U_pulson = algebra::serial_t<inordinate_type[N]>;
-	using U_series = algebra::series_t<coordinate_type[N]>;
+	using U_phason = arrange::phason_t<coordinate_type[N]>;
+	using V_lepton = arrange::quason_t<coordinate_type[N]>;
+	using V_phason = arrange::quason_t<inordinate_type[N]>;
+//	using V_phason = U_phason::taboo::template hypertype<inordinate_type[N]>;
 	
 	using semikind = bond::compose<void
 	,	_detail::refer_multiplicative_group<U_phason>
@@ -59,8 +60,6 @@ struct phasor<A, As...>
 		using S_::S_;
 		using S_::self;
 		using S_::head;
-
-		using algebra_t = U_phason;
 
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
@@ -118,7 +117,7 @@ struct phasor<A, As...>
 					return egress(bond::pack_f(phi(0), phi(1)*(rate)));
 				}
 				XTAL_0IF_(else) {
-					return egress(phi.template apply<XTAL_FUN_(bond::pack_f)>()*U_series(rate));
+					return egress(phi.template apply<XTAL_FUN_(bond::pack_f)>()*V_lepton(rate));
 				}
 			}
 			else {
@@ -161,8 +160,6 @@ struct phasor<A, As...>
 		using S_::self;
 		using S_::head;
 
-		using algebra_t = U_phason;
-
 		///\note\
 		This is defined in-case `refine_head` is bypassed...
 
@@ -189,17 +186,17 @@ struct phasor<A, As...>
 		//	using the difference in `phi[1]` to determine the threshold for reset. \
 
 			auto  u_delta = _phi - phi; u_delta[0] += phi[1];
-			auto &v_delta = reinterpret_cast<U_pulson const &>(u_delta);
+			auto &v_delta = reinterpret_cast<V_phason const &>(u_delta);
 			auto  n_delta = 1 + _op::bit_floor_f(_op::designed_f(v_delta[1]));
 			auto  i_delta = condition_f<ordinate_type>(v_delta[0] >> n_delta);
 
 			_phi = XTAL_MOV_(phi);
 
-			phi *= _op::template root_f<N_root>(co);
-			_psi[1]  = phi[1];
+			_phi *= co;
+			_psi[1]  = _phi[1];
 			_psi.operator++();
-			_psi[0] &=       ~i_delta;
-			_psi[0] |= phi[0]&i_delta;
+			_psi[0] &=        ~i_delta;
+			_psi[0] |= _phi[0]&i_delta;
 
 			return _psi;
 		}

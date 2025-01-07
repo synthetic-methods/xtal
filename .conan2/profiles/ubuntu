@@ -8,5 +8,8 @@ compiler.version=12
 compiler.libcxx=libstdc++
 
 [buildenv]
-CC=gcc-12
+CXXFLAGS=-m64 -Wno-psabi -O3
+LDFLAGS=-m64
+CFLAGS=-m64
 CXX=g++-12
+CC=gcc-12

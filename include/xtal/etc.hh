@@ -84,10 +84,10 @@ XTAL_ENV_(push)
 #define XTAL_STD_ordinal_type      ::std::ptrdiff_t
 
 #define XTAL_STD_int(...)                 XTAL_STD_int_##__VA_ARGS__
-#define XTAL_STD_int_0                    char
-#define XTAL_STD_int_1              short int
-#define XTAL_STD_int_2                    int
-#define XTAL_STD_int_3               long int
+#define XTAL_STD_int_0             ::std::int8_t
+#define XTAL_STD_int_1             ::std::int16_t
+#define XTAL_STD_int_2             ::std::int32_t
+#define XTAL_STD_int_3             ::std::int64_t
 #define XTAL_STD_int_4          long long int
 
 #define XTAL_STD_float(...)               XTAL_STD_float_##__VA_ARGS__

@@ -43,5 +43,38 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <template <class ...Us> class T>
+struct initialize
+{
+//	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
+
+	template <class V=void, class ...Xs>
+	XTAL_DEF_(short,static)
+	XTAL_LET via(Xs &&...xs)
+	noexcept -> auto
+	{
+		XTAL_IF0
+		XTAL_0IF (complete_q<V>) {
+			XTAL_LET f = invoke_f<V>;
+			using    F = invoke_t<V>;
+			using    U = common_t<return_t<F, Xs>...>;
+			XTAL_LET N = sizeof...(xs);
+			if constexpr (automorphism_p<F, U>) {
+				return T<U[N]>{ (XTAL_REF_(xs))...};
+			}
+			else {
+				return T<U[N]>{f(XTAL_REF_(xs))...};
+			}
+		}
+		XTAL_0IF (incomplete_q<V>) {
+			return via<decltype(XTAL_FUN_(objective_f))>(XTAL_REF_(xs)...);
+		}
+	}
+
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

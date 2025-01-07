@@ -1,43 +1,43 @@
 #pragma once
 #include "./any.hh"
-#include "./lattice.hh"
+#include "./order.hh"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra
+namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class           ..._s>	struct   serial;
-template <class           ..._s>	using    serial_t = typename serial<_s...>::type;
-template <class           ...Ts>	concept  serial_q = bond::tag_p<serial_t, Ts...>;
-template <size_type N, class ...Ts>	concept  serial_p = serial_q<Ts...> and (...and (N == Ts::size()));
+template <class              ..._s>	struct   quason;
+template <class              ..._s>	using    quason_t = typename quason<_s...>::type;
+template <class              ...Ts>	concept  quason_q = bond::tag_p<quason_t, Ts...>;
+template <size_type N, class ...Ts>	concept  quason_p = quason_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET serial_f(auto &&...oo)
+XTAL_LET quason_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<serial_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<quason_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with point-wise addition, and multiplication defined by linear convolution. \
+Extends `arrange::order` with point-wise addition, and multiplication defined by linear convolution. \
 
 template <vector_q A>
-struct serial<A>
+struct quason<A>
 {
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename lattice<A>::template homotype<T>;
+	using endotype = typename arrange::order<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<serial_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<quason_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -153,7 +153,7 @@ struct serial<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<serial_t<float[2]>>);
+static_assert(atomic_q<quason_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

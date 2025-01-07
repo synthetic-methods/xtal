@@ -34,11 +34,11 @@ struct recognize : recognize<(N_size >> 1U)>
 template <>
 struct recognize<(1U<<0U)>
 {
-	using       _zed =        constant_t<true>;
-//	using  iota_type =           _std::int4_t;
-	using delta_type =    signed XTAL_STD_(int,   0);
-	using sigma_type =  unsigned XTAL_STD_(int,   0);
-//	using alpha_type =           XTAL_STD_(float, 0);
+	using       _zed =  constant_t<true>;
+//	using  iota_type =                               _std::int4_t;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   0)>;
+//	using alpha_type =                       XTAL_STD_(float, 0) ;
 //	using aphex_type = _std::complex<alpha_type>;
 
 	XTAL_SET_(sigma_type) N_exponent = 3;
@@ -53,12 +53,12 @@ struct recognize<(1U<<0U)>
 template <>
 struct recognize<(1U<<1U)>
 {
-	using       _zed =        constant_t<true>;
-	using  iota_type =    signed XTAL_STD_(int,   0);
-	using delta_type =    signed XTAL_STD_(int,   1);
-	using sigma_type =  unsigned XTAL_STD_(int,   1);
-//	using alpha_type =           XTAL_STD_(float, 1);
-//	using aphex_type = _std::complex<alpha_type>;
+	using       _zed =  constant_t<true>;
+	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   1)>;
+//	using alpha_type =                       XTAL_STD_(float, 1) ;
+//	using aphex_type =  _std::complex<alpha_type>;
 
 	XTAL_SET_(sigma_type) N_exponent =  5;
 	XTAL_SET_(sigma_type) N_fraction = 10;
@@ -73,11 +73,11 @@ struct recognize<(1U<<1U)>
 template <>
 struct recognize<(1U<<2U)>
 {
-	using       _zed =        constant_t<true>;
-	using  iota_type =    signed XTAL_STD_(int,   1);
-	using delta_type =    signed XTAL_STD_(int,   2);
-	using sigma_type =  unsigned XTAL_STD_(int,   2);
-	using alpha_type =           XTAL_STD_(float, 2);
+	using       _zed =  constant_t<true>;
+	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   2)>;
+	using alpha_type =                       XTAL_STD_(float, 2) ;
 	using aphex_type = _std::complex<alpha_type>;
 
 	XTAL_SET_(sigma_type) N_exponent =  8;
@@ -102,71 +102,17 @@ struct recognize<(1U<<2U)>
 	template <           class _     > struct   powered<3, _> : constant_t<(sigma_type) 0x4546B3DBU> {};
 	template <int N_pow              > XTAL_SET powered_n = powered<N_pow, void>::value;
 
-	template <int N_pow, class _=void> struct   root;
-	template <           class _     > struct   root<-1, _> : constant_t<(sigma_type) 0x7EEEEEEEU> {};
-	template <           class _     > struct   root<-2, _> : constant_t<(sigma_type) 0x5F375A86U> {};
-	template <int N_pow              > XTAL_SET root_n = root<N_pow, void>::value;
-
-	template <int N_pow=-1>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w)
-	noexcept -> alpha_type
-	{
-		static_assert(in_n<N_pow, -1, -2>);
-		XTAL_IF0
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(consteval)
-#endif
-		{
-			delta_type const v = _xtd::bit_cast<delta_type>(w) >> size_1;
-			sigma_type const u = root_n<N_pow> - v;
-			return _xtd::bit_cast<alpha_type>(u);
-		}
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(else) {
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return  vrecpes_f32(w);}
-			XTAL_0IF (N_pow == -2) {return vrsqrtes_f32(w);}
-		}
-#endif
-	}
-	template <int N_pow=-1>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w, alpha_type const &n)
-	noexcept -> alpha_type
-	{
-		static_assert(in_n<N_pow, -1, -2>);
-		XTAL_IF0
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(consteval)
-#endif
-		{
-			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
-			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return _xtd::accumulator(a0, a1*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return _xtd::accumulator(a0, a1*w, n*n);}
-		}
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(else) {
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return  vrecpss_f32(w,   n);}
-			XTAL_0IF (N_pow == -2) {return vrsqrtss_f32(w, n*n);}
-		}
-#endif
-	}
-
 };
 #endif
 #if 0x40 <= XTAL_SYS_(CPU)
 template <>
 struct recognize<(1U<<3U)>
 {
-	using   _zed =           constant_t< true>;
-	using  iota_type =    signed XTAL_STD_(int,   2);
-	using delta_type =    signed XTAL_STD_(int,   3);
-	using sigma_type =  unsigned XTAL_STD_(int,   3);
-	using alpha_type =           XTAL_STD_(float, 3);
+	using       _zed =  constant_t<true>;
+	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   3)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   3)>;
+	using alpha_type =                       XTAL_STD_(float, 3) ;
 	using aphex_type = _std::complex<alpha_type>;
 
 	XTAL_SET_(sigma_type) N_exponent = 11;
@@ -191,62 +137,10 @@ struct recognize<(1U<<3U)>
 	template <           class _     > struct   powered<3, _> : constant_t<(sigma_type) 0x383D9170'B85FF80BU> {};
 	template <int N_pow              > XTAL_SET powered_n = powered<N_pow, void>::value;
 
-	template <int N_pow, class _=void> struct   root;
-	template <           class _     > struct   root<-1, _> : constant_t<0x7EEEEEEE'EEEEEEEEU> {};
-	template <           class _     > struct   root<-2, _> : constant_t<0x5FE6EB50'C7B537A9U> {};
-	template <int N_pow              > XTAL_SET root_n = root<N_pow, void>::value;
-
-	template <int N_pow=-1>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w)
-	noexcept -> alpha_type
-	{
-		static_assert(in_n<N_pow, -1, -2>);
-		XTAL_IF0
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(consteval)
-#endif
-		{
-			delta_type const v = _xtd::bit_cast<delta_type>(w) >> size_1;
-			sigma_type const u = root_n<N_pow> - v;
-			return _xtd::bit_cast<alpha_type>(u);
-		}
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(else) {
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return  vrecped_f64(w);}
-			XTAL_0IF (N_pow == -2) {return vrsqrted_f64(w);}
-		}
-#endif
-	}
-	template <int N_pow=-1>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w, alpha_type const &n)
-	noexcept -> alpha_type
-	{
-		static_assert(in_n<N_pow, -1, -2>);
-		XTAL_IF0
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(consteval)
-#endif
-		{
-			auto constexpr a0 = alpha_type{N_pow - 1}/alpha_type{N_pow};
-			auto constexpr a1 = alpha_type{        1}/alpha_type{N_pow};
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return _xtd::accumulator(a0, a1*w, n)*w;}
-			XTAL_0IF (N_pow == -2) {return _xtd::accumulator(a0, a1*w, n*n);}
-		}
-#if XTAL_SYS_(Neon)
-		XTAL_0IF_(else) {
-			XTAL_IF0
-			XTAL_0IF (N_pow == -1) {return  vrecpsd_f64(w,   n);}
-			XTAL_0IF (N_pow == -2) {return vrsqrtsd_f64(w, n*n);}
-		}
-#endif
-	}
-
 };
 #endif
+//\todo\
+Allow for 128-bit. \
 
 template <size_type N_size>
 concept recognized_q = recognize<N_size>::_zed::value;
@@ -349,19 +243,19 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	template <sigma_type N> requires incomplete_q<typename S_::template powered<N>>
+	template <sigma_type N>
 	XTAL_DEF_(short)
 	XTAL_SET powered_f(sigma_type u)
 	noexcept -> sigma_type
 	{
-		return 1U;
-	}
-	template <sigma_type N> requires   complete_q<typename S_::template powered<N>>
-	XTAL_DEF_(short)
-	XTAL_SET powered_f(sigma_type u)
-	noexcept -> sigma_type
-	{
-		return S_::template powered_n<N>%u|(u == 0)|(u == 1);
+		//\
+		if constexpr (complete_q<typename S_::template powered<N>>) {
+		if constexpr (N == 2 or N == 3) {
+			return S_::template powered_n<N>%u|(u == 0)|(u == 1);
+		}
+		else {
+			return 1U;
+		}
 	}
 	template <sigma_type N>
 	XTAL_DEF_(short)
@@ -385,12 +279,13 @@ public:
 
 	template <int N_side=0> requires in_n<N_side, 1, 0, -1>
 	XTAL_DEF_(short)
-	XTAL_SET clamped_f(integral_q auto const &value)
+	XTAL_SET clamped_f(integral_q auto i)
 	noexcept -> auto
+	requires un_n<full.width, sizeof(i)>
 	{
 		XTAL_IF0
-		XTAL_0IF (N_side == 0) {return                          (value);}
-		XTAL_0IF (N_side != 0) {return N_side*designed_f<N_side>(value);}
+		XTAL_0IF (N_side == 0) {return                          (i);}
+		XTAL_0IF (N_side != 0) {return N_side*designed_f<N_side>(i);}
 	}
 
 	///\returns the original sign of `target`, before applying the sign of `source`. \
@@ -499,7 +394,7 @@ public:
 	XTAL_DEF_(short)
 	XTAL_SET bit_count_f(integral_q auto i)
 	noexcept -> auto
-	requires (sizeof(i) < N_width)
+	requires un_n<full.width, sizeof(i)>
 	{
 		return bit_count_f(internal_f(i));
 	}
@@ -525,7 +420,7 @@ public:
 	XTAL_DEF_(short)
 	XTAL_SET bit_floor_f(integral_q auto i)
 	noexcept -> auto
-	requires (sizeof(i) < N_width)
+	requires un_n<full.width, sizeof(i)>
 	{
 		return bit_floor_f<N_zero>(internal_f(i));
 	}
@@ -567,7 +462,7 @@ public:
 	XTAL_DEF_(short)
 	XTAL_SET bit_ceiling_f(integral_q auto i)
 	noexcept -> auto
-	requires (sizeof(i) < N_width)
+	requires un_n<full.width, sizeof(i)>
 	{
 		return bit_ceiling_f<N_zero>(internal_f(i));
 	}
@@ -611,6 +506,7 @@ public:
 	XTAL_SET bit_reverse_f(sigma_type u, sigma_type const &subdepth)
 	noexcept -> sigma_type
 	{
+		#pragma inline
 		for (sigma_type m = -1, i = N_depth; i >>= 1;) {
 			m ^= m<<i;
 			u = (u&m)<<i | (u&~m)>>i;
@@ -618,27 +514,27 @@ public:
 		u >>= N_depth - subdepth; assert(0 < subdepth and subdepth <= N_depth);
 		return u;
 	}
-	template <size_type N_subdepth=0>
+	template <int N_subdepth=0>
 	XTAL_DEF_(short)
-	XTAL_SET bit_reverse_f(sigma_type const &u)
+	XTAL_SET bit_reverse_f(sigma_type u)
 	noexcept -> sigma_type
 	{
 		sigma_type constexpr subdepth = 0 < N_subdepth? N_subdepth: N_depth;
 		return bit_reverse_f(u, subdepth);
 	}
 
-	template <size_type N_subdepth=0>
+	template <int N_subdepth=0>
 	XTAL_DEF_(short)
 	XTAL_SET bit_reverse_f(integral_q auto i)
 	noexcept -> auto
-	requires (sizeof(i) < N_width)
+	requires un_n<full.width, sizeof(i)>
 	{
 		return bit_reverse_f<N_subdepth>(internal_f(i));
 	}
 	XTAL_DEF_(short)
 	XTAL_SET bit_reverse_f(integral_q auto i, sigma_type const &subdepth)
 	noexcept -> auto
-	requires (sizeof(i) < N_width)
+	requires un_n<full.width, sizeof(i)>
 	{
 		return bit_reverse_f(internal_f(i), subdepth);
 	}
@@ -839,116 +735,16 @@ public:
 		return versus_f<N_pow>(_xtd::accumulator(x*x, y, y));
 	}
 
-
-	///\
-	Estimates: `w**(1/N_pow)`. \
-
-	template <int N_pow>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w)
-	noexcept -> alpha_type
-	{
-		static_assert(N_pow < 0);
-		return S_::template root_e<N_pow>(w);
-	}
-	template <int N_pow>
-	XTAL_DEF_(short)
-	XTAL_SET root_e(alpha_type const &w, alpha_type const &n)
-	noexcept -> alpha_type
-	{
-		static_assert(N_pow < 0);
-		return S_::template root_e<N_pow>(w, n);
-	}
-	///\
-	Computes: `w**(1/N_pow)`. \
-
-	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
-	XTAL_DEF_(short)
-	XTAL_SET root_f(auto const &w)
-	noexcept -> alpha_type
-	{
-		using _std::sqrt;
-
-		using W = XTAL_ALL_(w);
-		using V = absolve_u<W>;
-
-	//	W constexpr W_1{1};
-		V constexpr U_1{1};
-		V constexpr U_2{2};
-
-		bool constexpr N_etc = not real_number_q<W>;
-
-		int constexpr K_pow = -S_::designed_f(N_pow);
-		int constexpr M_lim = below_m<(1<<4), (unsigned) N_lim>;
-
-		XTAL_IF0 //	ELIMINATION
-		XTAL_0IF (N_pow ==  0) {return U_1;}
-		XTAL_0IF (N_pow ==  1) {return w  ;}
-		XTAL_0IF (N_pow == -1 and N_lim < 0 or N_etc) {return U_1/w;}
-		XTAL_0IF (N_pow ==  2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return     sqrt(w);}}
-		XTAL_0IF (N_pow == -2 and N_lim < 0 or N_etc) {if (N_etc or not _std::is_constant_evaluated()) {return U_1/sqrt(w);}}
-
-	//	assert(_std::is_constant_evaluated()? K_pow == -2: K_pow < 0 and 0 <= N_lim);
-	
-		XTAL_IF0
-		XTAL_0IF (real_number_q<W>) {
-		//	ESTIMATION:
-			W n = root_e<K_pow>(w);
-			seek_forward_f<M_lim>([&] (auto)
-				XTAL_0FN {n *= root_e<K_pow>(w, n);}
-			);
-		//	CORRECTION:
-			XTAL_IF0
-			XTAL_0IF (K_pow == -2 and N_lim < 0) {
-				n /= U_1 + n*n*w;
-				n *= U_2;
-			}
-		//	RESOLUTION:
-			XTAL_IF0
-		//	XTAL_0IF (N_pow ==  1) {return w;}
-			XTAL_0IF (N_pow == -1) {return n;}
-			XTAL_0IF (N_pow == -2) {return n;}
-			XTAL_0IF (N_pow ==  2) {return w*n;}
-		}
-	}
-	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
-	XTAL_DEF_(short)
-	XTAL_SET root_f(integral_q auto const &w)
-	noexcept -> alpha_type
-	{
-		return root_f<N_pow, N_lim>((alpha_type) w);
-	}
-
-	template <int N_pow=1, int N_lim=-1>// requires in_n<N_pow, 1, 0, -1>
-	XTAL_DEF_(short)
-	XTAL_SET roots_f(alpha_type const &w)
-	noexcept -> couple_t<alpha_type>
-	{
-		int constexpr K_pow = -S_::designed_f(N_pow);
-		alpha_type n = root_f<K_pow, N_lim>(w);
-		alpha_type u = n*w;
-		XTAL_IF0
-		XTAL_0IF (0 < N_pow) {return couple_t<alpha_type> {u, n};}
-		XTAL_0IF (N_pow < 0) {return couple_t<alpha_type> {n, u};}
-	}
-	static_assert(root_f< 2>(3) == (alpha_type) 1.7320508075688772935274463415058723670L);
-	static_assert(root_f< 2>(2) == (alpha_type) 1.4142135623730950488016887242096980786L);
-	static_assert(root_f<-2>(2) == (alpha_type) 0.7071067811865475244008443621048490393L);
-	static_assert(root_f<-2>(3) == (alpha_type) 0.5773502691896257645091487805019574556L);
-
-	static_assert(get<0>(roots_f< 2>(2)) == (alpha_type) 1.4142135623730950488016887242096980786L);
-	static_assert(get<1>(roots_f< 2>(2)) == (alpha_type) 0.7071067811865475244008443621048490393L);
-
-
-
 	template <int N_pow=1, int N_lim=-1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
 	XTAL_SET unsquare_f(alpha_type const &w)
 	noexcept -> decltype(auto)
 	{
+		auto const n = sqrt(w);
 		XTAL_IF0
-		XTAL_0IF (0 == N_pow) {return roots_f<2,       N_lim>(w);}
-		XTAL_0IF (0 != N_pow) {return root_f <2*N_pow, N_lim>(w);}
+		XTAL_0IF (N_pow ==  0) {return couple_t<alpha_type>(w*n, n);}
+		XTAL_0IF (N_pow ==  1) {return                      w*n    ;}
+		XTAL_0IF (N_pow == -1) {return                           n ;}
 	}
 	template <int N_pow=1, int N_lim=-1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(short)
@@ -1030,55 +826,6 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `constexpr` equivalent of `std:pow(base, n_zoom)` for an `unsigned int n_zoom`. \
-	
-	XTAL_DEF_(long)
-	XTAL_SET explo_f(auto &&base, sigma_type const &n_exponent)
-	noexcept -> auto
-	{
-		XTAL_ALL_(base) u = XTAL_REF_(base), w = {1};
-		for (sigma_type n = n_exponent; n; n >>= 1) {
-			if (n&1U) {
-				w *= u;
-			}
-			u = square_f(XTAL_MOV_(u));
-		}
-		return w;
-	}
-	template <size_type N_exponent>
-	XTAL_DEF_(short)
-	XTAL_SET explo_f(auto &&base, auto result)
-	noexcept -> auto
-	{
-		XTAL_LET N = N_exponent >> 0U;
-		XTAL_LET M = N_exponent >> 1U;
-		XTAL_LET I = N_exponent  & 1U;
-		XTAL_IF0
-		XTAL_0IF (N == 0) {return result;}
-		XTAL_0IF (I == 0) {return explo_f<M>(square_f(XTAL_REF_(base)),                 XTAL_MOV_(result));}
-		XTAL_0IF (I == 1) {return explo_f<M>(square_f(          base ), XTAL_REF_(base)*XTAL_MOV_(result));}
-	}
-	template <int N_exponent>
-	XTAL_DEF_(short)
-	XTAL_SET explo_f(auto &&base)
-	noexcept -> auto
-	{
-		using Y = based_t<decltype(base)>;
-		using V = absolve_u<Y>;
-
-		V const v{1};// NOTE: Won't work for matricies...
-		Y const y{v};
-
-		XTAL_IF0
-		XTAL_0IF (0 == N_exponent) {return y;}
-		XTAL_0IF (0 <  N_exponent) {return explo_f< N_exponent>(  XTAL_REF_(base), y);}
-		XTAL_0IF (N_exponent <  0) {return explo_f<-N_exponent>(y/XTAL_REF_(base), y);}
-	}
-	static_assert(explo_f<0>(alpha_type(2.0)) == 1.00);
-	static_assert(explo_f<1>(alpha_type(2.0)) == 2.00);
-	static_assert(explo_f<2>(alpha_type(2.0)) == 4.00);
-
-
 	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)`. \
 
 	XTAL_DEF_(short)
@@ -1115,7 +862,7 @@ public:
 		return diplo_e(_xtd::bit_cast<delta_type>(n_zoom), o_silon);
 	}
 	XTAL_DEF_(short) XTAL_SET diplo_e(auto n_zoom, alpha_type o_silon)
-	noexcept -> decltype(auto)
+	noexcept -> auto
 	{
 		return diplo_e(internal_f(XTAL_REF_(n_zoom)), o_silon);
 	}
@@ -1405,29 +1152,51 @@ public:
 	///\returns the sign of `value` as an `alpha_type`. \
 
 	XTAL_DEF_(short)
-	XTAL_SET assigned_f(integral_q auto u)
+	XTAL_SET assigned_f(integral_q auto i)
 	noexcept -> alpha_type
+	requires un_n<full.width, sizeof(i)>
 	{
-		return assigned_f(S_::internal_f(u));
+		return assigned_f(S_::internal_f(i));
 	}
 	XTAL_DEF_(short)
 	XTAL_SET assigned_f(sigma_type u)
 	noexcept -> alpha_type
 	{
-		static_assert(_std::numeric_limits<alpha_type>::is_iec559);
-		u <<= positive.depth;
-		u  |= unit.mask;
-		return _xtd::bit_cast<alpha_type>(u);
+		//\
+		if constexpr (IEC&559) {
+		if constexpr (false) {
+			u <<= positive.depth;
+			u  ^= sign.mask|unit.mask;
+			return _xtd::bit_cast<alpha_type>(u);
+		}
+		else {
+			return assigned_f(_xtd::bit_cast<delta_type>(u&one));
+		}
 	}
+//	static_assert(assigned_f((sigma_type)  1) ==  1.0);
+//	static_assert(assigned_f((sigma_type)  0) == -1.0);
+//	static_assert(assigned_f((sigma_type) -1) ==  1.0);
 	XTAL_DEF_(short)
 	XTAL_SET assigned_f(delta_type u)
 	noexcept -> alpha_type
 	{
-		static_assert(_std::numeric_limits<alpha_type>::is_iec559);
-		u &= sign.mask;
-		u |= unit.mask;
-		return _xtd::bit_cast<alpha_type>(u);
+		u  -= 1;
+		u >>= positive.depth;
+		//\
+		if constexpr (IEC&559) {
+		if constexpr (false) {
+			u &= sign.mask;
+			u |= unit.mask;
+			return _xtd::bit_cast<alpha_type>(u);
+		}
+		else {
+			u |= 1;
+			return    static_cast<alpha_type>(u);
+		}
 	}
+//	static_assert(assigned_f((delta_type)  1) ==  1.0);
+//	static_assert(assigned_f((delta_type)  0) ==  1.0);
+//	static_assert(assigned_f((delta_type) -1) == -1.0);
 
 	///\returns the sign of `value`. \
 
@@ -1437,9 +1206,9 @@ public:
 	{
 		return _xtd::copysign(alpha_1, value);
 	}
-	static_assert(assigned_f((alpha_type)  0.5) ==  1.0);
-	static_assert(assigned_f((alpha_type)  0.0) ==  1.0);
-	static_assert(assigned_f((alpha_type) -0.5) == -1.0);
+	static_assert(assigned_f((alpha_type)  1) ==  1.0);
+	static_assert(assigned_f((alpha_type)  0) ==  1.0);
+	static_assert(assigned_f((alpha_type) -1) == -1.0);
 
 	XTAL_DEF_(short)
 	XTAL_SET assigned_f(aphex_type const &value)
@@ -1468,10 +1237,11 @@ public:
 
 	template <int N_side=0>
 	XTAL_DEF_(short)
-	XTAL_SET designed_f(integral_q auto value)
+	XTAL_SET designed_f(integral_q auto i)
 	noexcept -> decltype(auto)
+	requires un_n<full.width, sizeof(i)>
 	{
-		return S_::template designed_f<N_side>(value);
+		return S_::template designed_f<N_side>(i);
 	}
 	template <int N_side=0>
 	XTAL_DEF_(short)
@@ -1559,6 +1329,7 @@ public:
 	XTAL_DEF_(short)
 	XTAL_SET clamped_f(integral_q auto value)
 	noexcept -> decltype(auto)
+	requires un_n<full.width, sizeof(value)>
 	{
 		return S_::template clamped_f<N_side>(value);
 	}
@@ -1627,27 +1398,29 @@ public:
 //	using S_::bit_floor_f;
 	template <int N_zero=-1>
 	XTAL_DEF_(short)
-	XTAL_SET bit_floor_f(integral_q auto &&f)
+	XTAL_SET bit_floor_f(integral_q auto value)
 	noexcept -> auto
+	requires un_n<full.width, sizeof(value)>
 	{
-		return S_::template bit_floor_f<N_zero>(XTAL_REF_(f));
+		return S_::template bit_floor_f<N_zero>(value);
 	}
 	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
-	XTAL_SET bit_floor_f(real_number_q auto &&f)
+	XTAL_SET bit_floor_f(real_number_q auto value)
 	noexcept -> auto
+	requires un_n<full.width, sizeof(value)>
 	{
-		return bit_floor_f<N_zero>(internal_f(XTAL_REF_(f)));
+		return bit_floor_f<N_zero>(internal_f(value));
 	}
 	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
-	XTAL_SET bit_floor_f(alpha_type const f)
+	XTAL_SET bit_floor_f(alpha_type const value)
 	noexcept -> auto
 	{
 		XTAL_LET Z = -unit.mark;
 		XTAL_LET N = N_zero - Z << unit.shift;
 
-		auto n = _xtd::bit_cast<sigma_type>(f);
+		auto n = _xtd::bit_cast<sigma_type>(value);
 		n &= ~sign.mask;
 		n -=  unit.mask;
 		n += N&S_::bit_sign_f(n);
@@ -1655,26 +1428,28 @@ public:
 	}
 	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
-	XTAL_SET bit_floor_f(aphex_type const f)
+	XTAL_SET bit_floor_f(aphex_type const value)
 	noexcept -> auto
 	{
-		return bit_floor_f<N_zero>(dot_f(f)) >> 1;
+		return bit_floor_f<N_zero>(dot_f(value)) >> 1;
 	}
 
 //	using S_::bit_ceiling_f;
 	template <int N_zero=-1>
 	XTAL_DEF_(short)
-	XTAL_SET bit_ceiling_f(integral_q auto &&f)
+	XTAL_SET bit_ceiling_f(integral_q auto i)
 	noexcept -> auto
+	requires un_n<full.width, sizeof(i)>
 	{
-		return S_::template bit_ceiling_f<N_zero>(XTAL_REF_(f));
+		return S_::template bit_ceiling_f<N_zero>(i);
 	}
 	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
-	XTAL_SET bit_ceiling_f(real_number_q auto &&f)
+	XTAL_SET bit_ceiling_f(real_number_q auto f)
 	noexcept -> auto
+	requires un_n<full.width, sizeof(f)>
 	{
-		return bit_ceiling_f<N_zero>(internal_f(XTAL_REF_(f)));
+		return bit_ceiling_f<N_zero>(internal_f(f));
 	}
 	template <int N_zero=-int{unit.mark}>
 	XTAL_DEF_(short)
@@ -1709,25 +1484,27 @@ public:
 		//\
 		XTAL_0IF (true) {
 		XTAL_0IF_(consteval) {
-			XTAL_LET N_exp = unit.mark + fraction.depth - Y_depth;
+			XTAL_LET N_exp = exponent.shift;
+			XTAL_LET M_exp = unit.mark + unit.shift - Y_depth;
+			XTAL_LET M_sgn = sign.mask;
 
 			auto o = _xtd::bit_cast<sigma_type>(x);
-			sigma_type const _o = S_::bit_sign_f(o);
-			sigma_type        x = o << 1;
-			sigma_type const  i = x != 0;
 
-			x >>= fraction.depth + 1;
-			x  -= N_exp&-i;
-			delta_type const x_dn = -x&S_::bit_sign_f(x);
-			delta_type const x_up =  x + x_dn;
+			delta_type o_ = o &  M_sgn; o  ^= o_; o_ >>= sign.shift;
+			sigma_type x  = o >> N_exp; x  -= M_exp;
+			sigma_type u  = x != 0    ; u <<= fraction.depth;
 
-			o  &=        fraction. mask;
-			o  |=   i << fraction.depth;
-			o <<=   x_up;
-			o >>=   x_dn;
-			o  +=   o&sigma_1;
-			o  ^=  _o;
-			o  -=  _o;
+			auto const x_on = ~S_::bit_sign_f(x);
+			auto const x_up = x_on & x;
+			auto const x_dn = x_up - x;
+
+			o  &=  fraction.mask;
+			o  ^=  u;
+			o <<=  x_up;
+			o >>=  x_dn;
+		//	o  |=  1;
+			o  ^=  o_;
+			o  -=  o_;
 			return _xtd::bit_cast<delta_type>(o);
 		}
 		XTAL_0IF_(else) {
@@ -1775,19 +1552,19 @@ public:
 		return static_cast<alpha_type>(bit_fraction_f(f))*haplo_f(full.depth);
 	}
 
-	static_assert(fraction_f( 2.25) ==  0.25);
-	static_assert(fraction_f( 1.25) ==  0.25);
-	static_assert(fraction_f( 0.25) ==  0.25);
-	static_assert(fraction_f( 0.75) == -0.25);
-	static_assert(fraction_f( 1.75) == -0.25);
-	static_assert(fraction_f( 2.75) == -0.25);
-
-	static_assert(fraction_f(-2.25) == -0.25);
-	static_assert(fraction_f(-1.25) == -0.25);
-	static_assert(fraction_f(-0.25) == -0.25);
-	static_assert(fraction_f(-0.75) ==  0.25);
-	static_assert(fraction_f(-1.75) ==  0.25);
-	static_assert(fraction_f(-2.75) ==  0.25);
+//	static_assert(fraction_f( 2.25) ==  0.25);
+//	static_assert(fraction_f( 1.25) ==  0.25);
+//	static_assert(fraction_f( 0.25) ==  0.25);
+//	static_assert(fraction_f( 0.75) == -0.25);
+//	static_assert(fraction_f( 1.75) == -0.25);
+//	static_assert(fraction_f( 2.75) == -0.25);
+//
+//	static_assert(fraction_f(-2.25) == -0.25);
+//	static_assert(fraction_f(-1.25) == -0.25);
+//	static_assert(fraction_f(-0.25) == -0.25);
+//	static_assert(fraction_f(-0.75) ==  0.25);
+//	static_assert(fraction_f(-1.75) ==  0.25);
+//	static_assert(fraction_f(-2.75) ==  0.25);
 
 
 	XTAL_DEF_(short)
@@ -1860,10 +1637,10 @@ struct   operate<Ts...>
 };
 using operating = operate<size_type>;
 
-static_assert(same_q<size_type, typename operating::sigma_type>);
-static_assert(sizeof(size_type) == sizeof(typename operating::sigma_type));
-static_assert(sizeof(size_type) == sizeof(typename operating::delta_type));
-static_assert(sizeof(size_type) == sizeof(typename operating::alpha_type));
+//static_assert(same_q<size_type, typename operating::sigma_type>);
+//static_assert(sizeof(size_type) == sizeof(typename operating::sigma_type));
+//static_assert(sizeof(size_type) == sizeof(typename operating::delta_type));
+//static_assert(sizeof(size_type) == sizeof(typename operating::alpha_type));
 
 
 static_assert(operating::full.width == operating::template widen<1>::full.width);

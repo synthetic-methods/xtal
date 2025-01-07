@@ -1,46 +1,19 @@
 #pragma once
 #include "./any.cc"
-#include "./lateral.hh"// testing...
+#include "./couple.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra::_test
+namespace xtal::arrange::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-
-template <class ...Ts>
-class signature : _std::tuple<Ts...>
-{
-public:
-	using    tuple_type = _std::tuple<Ts...>;
-	using    arity_type = _std::size_t;
-	using    array_type = xtal::algebra::lateral_t<arity_type[sizeof...(Ts)]>;
-
-	static
-	array_type constexpr layout{xtal::destruct_n<Ts>...};
-	array_type extent{0};
-	array_type extend{0};
-	arity_type expand{0};
-
-	XTAL_DEF_(short,static)
-	XTAL_LET size()
-	noexcept -> auto
-	{
-		return sizeof...(Ts);
-	}
-
-	template <arity_type I> using    item_t = _std::tuple_element_t<I, tuple_type>;
-	template <arity_type I> XTAL_SET item_n = xtal::destruct_n<item_t<I>>;
-	
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("lateral")
+TAG_("couple")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -48,9 +21,9 @@ TAG_("lateral")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
-	EST_("lateral reinitialization")
+	EST_("couple reinitialization")
 	{
-		lateral_t<T_aphex[4]> foo{};
+		couple_t<T_aphex[4]> foo{};
 
 		for (int i{0}; i < 0x100; ++i) {
 			foo *= T_alpha{};
@@ -58,9 +31,9 @@ TAG_("lateral")
 		}
 		return foo;
 	};
-	TRY_("lateral reinitialization")
+	TRY_("couple reinitialization")
 	{
-		using W_aphex = lateral_t<T_aphex[2]>;
+		using W_aphex = couple_t<T_aphex[2]>;
 
 		auto constexpr N_size = 2;
 		W_aphex foo{};
@@ -70,24 +43,10 @@ TAG_("lateral")
 		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.unzero() == 0);
 
 	}
-	TRY_("construction")
-	{
-		auto constexpr N_size = 2;
-		using W = lateral_t<T_alpha[N_size]>;
-
-		auto foo = W{2.0, 0.5};
-		auto bar = _op::template roots_f<2>((T_alpha) 2);
-		auto baz = bar*bar;
-		TRUE_(check_f<19>(get<0>(foo), get<0>(baz)));
-		TRUE_(check_f<19>(get<1>(foo), get<1>(baz)));
-
-		foo *= {(T_alpha) 0.0, (T_alpha) 0.0};
-
-	}
 	TRY_("summation")
 	{
 		auto constexpr N_size = 3;
-		using W = lateral_t<T_alpha[N_size]>;
+		using W = couple_t<T_alpha[N_size]>;
 		auto  w = W{2.0, 1.0, 0.5};
 
 		TRUE_(3.5 == w.sum());
@@ -97,7 +56,7 @@ TAG_("lateral")
 	TRY_("reflection")
 	{
 		auto constexpr N_size = 2;
-		using W = lateral_t<T_alpha[N_size]>;
+		using W = couple_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
 		auto foo = bar.template reflected<-1>();
@@ -109,50 +68,13 @@ TAG_("lateral")
 		TRUE_(bond::computrim_f<19>(baz[1]) == bar[1]);
 
 	}
-	TRY_("formatting")
-	{
-		using source_type = signature<T_alpha, T_alpha>;
-		using target_type = signature<T_aphex>;
-		source_type source{};
-		target_type target{};
-
-		auto inputchanged = [&](long index, long count) {
-			if (source.extent[index] == count) {
-				return 0;
-			}
-			else {
-				source.extent[index] = count;
-				source.extend[index] = count/source.layout[index];
-
-				target.expand = source.extend.maximum();
-				target.extent = target.layout*target.expand;
-				target.extend = target.extent/target.layout;
-
-				return 1;
-			}
-		};
-	//	inputchanged(0, 1);
-	//	inputchanged(1, 1);
-	//	echo();
-	//	echo(source.layout);
-	//	echo(source.extent);
-	//	echo(source.extend);
-	//	echo();
-	//	echo(source.extend.template extremal<1>());
-	//	echo(source.extend.template  extremum<1>());
-	//	echo();
-	//	echo(target.expand);
-	//	echo(target.layout);
-	//	echo(target.extent);
-	//	echo(target.extend);
-	}
 	TRY_("refactoring")
 	{
 		using U0 = T_sigma;
-		using U1 = lateral_t<U0[1]>;
-		using U2 = lateral_t<U0[2]>;
-		using U3 = lateral_t<U0[3]>;
-		using U4 = lateral_t<U0[4]>;
+		using U1 = couple_t<U0[1]>;
+		using U2 = couple_t<U0[2]>;
+		using U3 = couple_t<U0[3]>;
+		using U4 = couple_t<U0[4]>;
 
 	//	TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 
@@ -201,8 +123,8 @@ TAG_("lateral")
 		XTAL_LET N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
-		using simplex_val = lateral_t<float   [N]>;
-		using simplex_ref = lateral_t<float(&)[N]>;
+		using simplex_val = couple_t<float   [N]>;
+		using simplex_ref = couple_t<float(&)[N]>;
 		
 		using complex_val = _std::complex<simplex_val>;
 		using complex_ref = _std::complex<simplex_ref>;

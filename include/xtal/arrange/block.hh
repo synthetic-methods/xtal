@@ -44,14 +44,12 @@ struct superblock<U(&)[N]>
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_TO4_(XTAL_DEF_(let) base(), S_::template self<archetype>())
-
 		template <class V_data=U_data>
 		XTAL_DEF_(short)
 		XTAL_LET twin() const
 		noexcept -> decltype(auto)
 		{
-			return typename T::taboo::template ectotype<V_data[N_data]>(S_::self());
+			return typename T::taboo::template hypertype<V_data[N_data]>(S_::self());
 		}
 
 	};	
@@ -76,7 +74,6 @@ struct superblock<U[N]>
 		using    U_data = U;
 
 	public:// ACCESS
-		XTAL_TO4_(XTAL_DEF_(let) base(), S_::template self<archetype>())
 
 		template <class V_data=void>
 		XTAL_DEF_(short)
@@ -87,7 +84,7 @@ struct superblock<U[N]>
 				return S_::twin();
 			}
 			else {
-				return typename T::taboo::template ectotype<V_data[N_data]>(S_::self());
+				return typename T::taboo::template hypertype<V_data[N_data]>(S_::self());
 			}
 		}
 
@@ -196,8 +193,8 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template ectotype<U_data   [n_data]> &;
-			using Y = typename T::taboo::template ectotype<U_data(&)[n_data]>  ;
+			using X = typename T::taboo::template hypertype<U_data   [n_data]> &;
+			using Y = typename T::taboo::template hypertype<U_data(&)[n_data]>  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
@@ -208,8 +205,8 @@ struct block<A>
 		noexcept -> auto
 		{
 			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template ectotype<U_data   [n_data]> const &;
-			using Y = typename T::taboo::template ectotype<U_data(&)[n_data]> const  ;
+			using X = typename T::taboo::template hypertype<U_data   [n_data]> const &;
+			using Y = typename T::taboo::template hypertype<U_data(&)[n_data]> const  ;
 			//\
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
@@ -277,21 +274,102 @@ struct block<A>
 		///\todo\
 		Define in-place `map` via `(?:co)?ordinate`? \
 
+
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise()
+		noexcept -> auto &
+		requires requires (U_data &u) {f(u);}
+		{
+			auto &s = self();
+
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {(f(get<I>(s)),...);}
+			(bond::seek_s<N_data>{});
+			
+			return s;
+		}
+		template <auto f>
+		XTAL_DEF_(inline)
+		XTAL_LET pointwise(fixed_valued_q auto const &t)
+		noexcept -> auto &
+		requires requires (U_data &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
+		{
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+
+			auto &s = self();
+
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN {(f(get<I>(s), get<I>(t)),...);}
+			(bond::seek_s<N>{});
+			
+			return s;
+		}
+
+		template <auto f>
+		XTAL_DEF_(short,static)
+		XTAL_LET pointwise(T      const &s)
+		noexcept -> auto
+		requires requires (U_data const &u) {f(u);}
+		{
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(T{f(get<I>(s))...})
+			(bond::seek_s<N_data>{});
+		}
+		template <auto f>
+		XTAL_DEF_(short,static)
+		XTAL_LET pointwise(T      const &s, fixed_valued_q auto const &t)
+		noexcept -> auto
+		requires requires (U_data const &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
+		{
+			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			static_assert(N <= N_data);
+			
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(T{f(get<I>(s), get<I>(t))...})
+			(bond::seek_s<N>{});
+		}
+
+		template <auto f, size_t I=N_data - 1>
+		XTAL_DEF_(short)
+		XTAL_LET pointless() const
+		{
+			XTAL_IF0
+			XTAL_0IF (0 == I) {return   get<I>(self())                        ;}
+			XTAL_0IF (1 <= I) {return f(get<I>(self()), pointless<f, I - 1>());}
+		}
+
+
+		template <int N_sgn=1>
+		XTAL_DEF_(inline)
+		XTAL_LET flip()
+		noexcept -> auto &
+		{
+			XTAL_IF0
+			XTAL_0IF (0 <= N_sgn) {
+				return self();
+			}
+			XTAL_0IF (N_sgn <  0) {
+				return pointwise<[] (auto &x) XTAL_0FN_(x = -XTAL_MOV_(x))>();
+			}
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(inline)
+		XTAL_LET flipped()
+		noexcept -> auto
+		{
+			return twin().template flip<N_sgn>();
+		}
+
 	};
 	using type = bond::isotype<homotype>;
 
 };
-/*/
-template <size_type I> XTAL_DEF_(let) get(block_q auto const &&o) noexcept {return _std::get<I>(XTAL_MOV_(o).base());}
-template <size_type I> XTAL_DEF_(let) get(block_q auto       &&o) noexcept {return _std::get<I>(XTAL_MOV_(o).base());}
-template <size_type I> XTAL_DEF_(let) get(block_q auto const  &o) noexcept {return _std::get<I>(XTAL_REF_(o).base());}
-template <size_type I> XTAL_DEF_(let) get(block_q auto        &o) noexcept {return _std::get<I>(XTAL_REF_(o).base());}
-/*/
 template <size_type I> XTAL_DEF_(let) get(block_q auto const &&o) noexcept {return XTAL_MOV_(o)[I];}
 template <size_type I> XTAL_DEF_(let) get(block_q auto       &&o) noexcept {return XTAL_MOV_(o)[I];}
 template <size_type I> XTAL_DEF_(let) get(block_q auto const  &o) noexcept {return XTAL_REF_(o)[I];}
 template <size_type I> XTAL_DEF_(let) get(block_q auto        &o) noexcept {return XTAL_REF_(o)[I];}
-/***/
 
 
 ///////////////////////////////////////////////////////////////////////////////

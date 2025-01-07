@@ -53,7 +53,7 @@ TAG_("phasor")
 
 	using  _phi = T_cell[2];
 	using W_phi = bond::repack_t<_phi>;
-	using X_phi = algebra::phason_t<_phi>;
+	using X_phi = arrange::phason_t<_phi>;
 	
 	using Y_chi = process::conveyor_t<process::phasor<_phi, provision::example<>>>;
 //	using Y_chi = process::conveyor_t<process::phasor<_phi>>;

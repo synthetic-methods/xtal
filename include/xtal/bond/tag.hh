@@ -30,7 +30,7 @@ struct tag
 		:	S_::taboo
 		{
 			template <class ...Xs>
-			using ectotype = Y<Xs...>;
+			using hypertype = Y<Xs...>;
 
 		};
 

@@ -237,8 +237,7 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket`|
 |Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::bracket`|
 |Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket` compatible `&&`arguments|
-|Buffer allocation          |[`atom/store.hh`](include/xtal/atom/store.hh?ts=3) impl. static `std::vector`|
-|Buffer transformation      |[`algebra/series.hh`](include/xtal/algebra/series.hh?ts=3) incl. convolution and iFFT/FFT|
+|Buffer allocation          |[`arrange/store.hh`](include/xtal/arrange/store.hh?ts=3) impl. static `std::vector`|
 
 ## Contribution
 

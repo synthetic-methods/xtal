@@ -1,19 +1,19 @@
 #pragma once
 #include "./any.cc"
-#include "./lattice.hh"// testing...
+#include "./order.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra::_test
+namespace xtal::arrange::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("lattice")
+TAG_("order")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -25,8 +25,8 @@ TAG_("lattice")
 
 	TRY_("scalar multiplication")
 	{
-		using U2_alpha = lattice_t<T_alpha[2]>;
-		using U2_aphex = lattice_t<T_aphex[2]>;
+		using U2_alpha = order_t<T_alpha[2]>;
+		using U2_aphex = order_t<T_aphex[2]>;
 		U2_alpha x{1, 2}; x *= (T_alpha) 10;
 		U2_aphex y{1, 2}; y *= (T_alpha) 10;
 
@@ -43,7 +43,7 @@ TAG_("pack")
 {
 	TRY_("pack_item_f({...std::complex{...}})")
 	{
-		using U_nested = lattice_t<lattice_t<_std::complex<float>[2]>[2]>;
+		using U_nested = order_t<order_t<_std::complex<float>[2]>[2]>;
 		U_nested etc{{{00, 01}, {02, 03}}, {{04, 05}, {06, 07}}};
 		TRUE_(pack_item_f<1, 1, 1>(etc) == etc[1][1].imag());
 

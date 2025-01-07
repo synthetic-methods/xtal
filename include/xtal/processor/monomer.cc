@@ -20,20 +20,20 @@ void monomer_zipping()
 	using T_sigma = _op::sigma_type;
 	using T_alpha = _op::alpha_type;
 
-	using            U_data = T_alpha;
+	using U_data = T_alpha;
 	size_type constexpr U_size = 2;
 
 	//\
-	using U_group  =  algebra::lattice_t<U_data[U_size]>;
-	using U_group  =  _std::complex<U_data>;
+	using U_block  =  arrange::block_t<U_data[U_size]>;
+	using U_block  =  _std::complex<U_data>;
 //	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
 
 	U_data xs[] {0, 0, 0, 0};
 	U_data ys[] {0, 0, 0, 0};
 	auto zs = _xtd::ranges::views::zip(xs, ys);
-//	zs[0] = U_group{1, 2};
-	zs[0] = bond::repack_f(U_group{1, 2});
+//	zs[0] = U_block{1, 2};
+	zs[0] = bond::repack_f(U_block{1, 2});
 
 	TRUE_(xs[0] == 1);
 	TRUE_(ys[0] == 2);
@@ -56,14 +56,14 @@ void monomer_lifting()
 	using T_alpha = typename bond::operating::alpha_type;
 
 	T_sigma constexpr N_size = 5;
-	using U_group  = algebra::lattice_t<T_alpha[N_size]>;
+	using U_block  = arrange::block_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	auto x = U_group{ 0,  1,  2,  3,  4};
-	auto y = U_group{00, 10, 20, 30, 40};
-	auto z = U_group{00, 11, 22, 33, 44};
-	auto a = U_group{99, 99, 99, 99, 99};
+	auto x = U_block{ 0,  1,  2,  3,  4};
+	auto y = U_block{00, 10, 20, 30, 40};
+	auto z = U_block{00, 11, 22, 33, 44};
+	auto a = U_block{99, 99, 99, 99, 99};
 //	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
 //	auto b = f.rebound(processor::let_f(x), processor::let_f(y));
 	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0)).rebound(processor::let_f(x), processor::let_f(y));

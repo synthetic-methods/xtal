@@ -1,35 +1,35 @@
 #pragma once
 #include "./any.hh"
-#include "./lattice.hh"
+#include "./order.hh"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra
+namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   lateral;
-template <class   ..._s>	using    lateral_t = typename lateral<_s...>::type;
-template <class   ...Ts>	concept  lateral_q = bond::tag_p<lateral_t, Ts...>;
+template <class   ..._s>	struct   couple;
+template <class   ..._s>	using    couple_t = typename couple<_s...>::type;
+template <class   ...Ts>	concept  couple_q = bond::tag_p<couple_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET lateral_f(auto &&...oo)
+XTAL_LET couple_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<lateral_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<couple_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `lattice` with point-wise addition, and the scalar sum/product. \
+Extends `arrange::order` with point-wise addition, and the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
 template <vector_q A>
-struct lateral<A>
+struct couple<A>
 {
 	using A_op = bond::operate<A>;
 	using A_sigma = typename A_op::sigma_type;
@@ -37,10 +37,10 @@ struct lateral<A>
 	using A_aphex = typename A_op::aphex_type;
 	
 	template <class T>
-	using endotype = typename lattice<A>::template homotype<T>;
+	using endotype = typename arrange::order<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<lateral_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -152,12 +152,12 @@ struct lateral<A>
 		using S_::operator/=;
 		using S_::operator%=;
 
-		XTAL_DEF_(short)  XTAL_LET operator * (auto const &t)              const noexcept -> auto   {return twin() *=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator / (auto const &t)              const noexcept -> auto   {return twin() /=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator % (auto const &t)              const noexcept -> auto   {return twin() %=   t ;}
-		XTAL_DEF_(inline) XTAL_LET operator *=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() *= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator /=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() /= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator %=(_std::initializer_list<U_data> t) noexcept -> auto & {return self() %= T(t);}
+		XTAL_DEF_(short)  XTAL_LET operator * (auto const &t)              const noexcept -> auto   {return S_::twin() *=   t ;}
+		XTAL_DEF_(short)  XTAL_LET operator / (auto const &t)              const noexcept -> auto   {return S_::twin() /=   t ;}
+		XTAL_DEF_(short)  XTAL_LET operator % (auto const &t)              const noexcept -> auto   {return S_::twin() %=   t ;}
+		XTAL_DEF_(inline) XTAL_LET operator *=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() *= T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator /=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() /= T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator %=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() %= T(t);}
 
 	//	Vector multiplication (Hadamard product):
 		
@@ -188,14 +188,15 @@ struct lateral<A>
 		starting from zero if post-fixed. \
 
 		///\note\
-		Defined only for `const this`. \
+		Defined only for `const this`, \
+		because this is whack (but fun). \
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator++() const
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
@@ -208,7 +209,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
@@ -222,7 +223,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -237,7 +238,7 @@ struct lateral<A>
 				{
 			//\
 			auto t = S_::twin();
-			auto t = typename T::taboo::template ectotype<U_data[N_data]>(S_::self());
+			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -387,10 +388,10 @@ struct lateral<A>
 	using type = bond::isotype<homotype>;
 
 };
-static_assert(atomic_q<lateral_t<float[2]>>);
+static_assert(atomic_q<couple_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(lateral_t<float(&)[2]>)*XTAL_ANY_(lateral_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
 );
 
 

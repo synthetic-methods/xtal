@@ -2,7 +2,7 @@
 #include "../any.cc"
 #include "./any.hh"// testing...
 
-#include "../algebra/all.hh"
+#include "../arrange/all.hh"
 
 
 
@@ -83,26 +83,18 @@ TAG_("processor", "occur")
 }
 TAG_("processor", "construct")
 {
-//	TRY_("letting")
-//	{
-//		size_type constexpr N_size = 5;
-//		using U_group = algebra::lattice_t<int[N_size]>;
-//		auto z = U_group{00, 11, 22, 33, 44};
-//		auto a = processor::let_f(z);
-//		
-//	}
 	TRY_("lifting")
 	{
 		using T_alpha = typename bond::operating::alpha_type;
 
 		size_type constexpr N_size = 5;
-		using U_group = algebra::lattice_t<T_alpha[N_size]>;
+		using U_block = arrange::block_t<T_alpha[N_size]>;
 		
 		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
-		auto x = U_group { 0,  1,  2,  3,  4};
-		auto y = U_group{00, 10, 20, 30, 40};
-		auto z = U_group{00, 11, 22, 33, 44};
-		auto a = U_group{00, 00, 00, 00, 00};
+		auto x = U_block { 0,  1,  2,  3,  4};
+		auto y = U_block{00, 10, 20, 30, 40};
+		auto z = U_block{00, 11, 22, 33, 44};
+		auto a = U_block{00, 00, 00, 00, 00};
 		auto b = f(x, y);
 		
 		_xtd::ranges::move(b, a.begin());

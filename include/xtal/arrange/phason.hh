@@ -1,17 +1,17 @@
 #pragma once
 #include "./any.hh"
-#include "./serial.hh"
+#include "./quason.hh"
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::algebra
+namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `serial` as a fixed-point fractional/cyclic value with a bisected representation. \
+Extends `quason` as a fixed-point fractional/cyclic value with a bisected representation. \
 \
 Allows floating-point construction via `std::initializer_list`, \
 and access to the floating-point value via `operator()`/`operator(size_type)`. \
@@ -61,11 +61,8 @@ struct phason<A>
 
 	static_assert(_std::numeric_limits<absolve_u<ordinate_type>>::is_modulo);// D'oh!
 
-	using holotag  = bond::tag<phason_t>;
-	using holokind = serial<ordinate_type[M_data]>;
-
 	template <class T>
-	using holotype = bond::compose_s<typename holokind::template homotype<T>, holotag>;
+	using holotype = bond::compose_s<typename quason<ordinate_type[M_data]>::template homotype<T>, bond::tag<phason_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -75,11 +72,6 @@ struct phason<A>
 	protected:
 		using          S_::N_data;
 		using typename S_::U_data;
-
-	public:// TYPE
-
-		using supertype = S_;
-
 
 	public:// MAP
 
@@ -212,7 +204,7 @@ struct phason<A>
 		noexcept -> auto &
 		{
 			using _op = bond::operate<decltype(f)>;
-			auto &s = reinterpret_cast<serial_t<inordinate_type[N_data]> &>(self());
+			auto &s = reinterpret_cast<quason_t<inordinate_type[N_data]> &>(self());
 			/*/
 			size_type constexpr M_bias = T_op::half.depth >> T_op::half.width;
 			size_type constexpr M_size = T_op::half.depth - M_bias;
