@@ -24,11 +24,6 @@ jobs:
     - run:  pip3 install wheel setuptools; pip3 install conan --upgrade
       if:   ${{ matrix.os != 'macos' }}
 
-    - name: Run `conan update...`
-      run:  conan remote update conancenter --url="https://center2.conan.io"
-
-    - name: Run `conan config...`
-      run:  conan config install ${{github.workspace}}/.conan2
-
-    - name: Run `conan create...`
-      run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"
+    - run:  conan remote update conancenter --url="https://center2.conan.io"
+    - run:  conan config install ${{github.workspace}}/.conan2
+    - run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"

@@ -1,4 +1,4 @@
-FIXME.c*
+FIXME.*
 build
 *.c++
 *-workspace
