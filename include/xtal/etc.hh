@@ -81,7 +81,7 @@ XTAL_ENV_(push)
 #define XTAL_STD_null_type         ::std::nullptr_t
 #define XTAL_STD_unit_type         ::std::monostate
 #define XTAL_STD_size_type         ::std::size_t
-#define XTAL_STD_ordinal_type      ::std::ptrdiff_t
+#define XTAL_STD_extent_type       ::std::ptrdiff_t
 
 #define XTAL_STD_int(...)                 XTAL_STD_int_##__VA_ARGS__
 #define XTAL_STD_int_0             ::std::int8_t

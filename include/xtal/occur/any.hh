@@ -108,8 +108,8 @@ struct define
 			{
 				using R_ = bond::compose_s<R, superkind>;
 
-				XTAL_SET A_size = T::cardinality() - size_0;
-				XTAL_SET A_mask = T::cardinality() - size_1;
+				XTAL_SET A_size = T::cardinality();
+				XTAL_SET A_mask = A_size - one;
 
 			public:// CONSTRUCT
 				using R_::R_;

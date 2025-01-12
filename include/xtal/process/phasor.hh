@@ -175,7 +175,7 @@ struct phasor<A, As...>
 		XTAL_DEF_(long)
 		XTAL_LET method(U_phason phi, coordinate_type co)
 		noexcept -> auto
-			requires same_q<U_phason, typename S_::template head_t<constant_t<size_1>>>
+			requires same_q<U_phason, typename S_::template head_t<constant_t<size_type{1}>>>
 		{
 			static_assert(bond::dipack_q<U_phason>);
 

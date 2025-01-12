@@ -138,12 +138,6 @@ TAG_("couple")
 		simplex_val &baz_im = reinterpret_cast<simplex_val &>(foo[1]);
 		complex_val &baz    = reinterpret_cast<complex_val &>(foo   );
 
-	//	auto bar_bar = bar*bar;
-	//	auto baz_baz = baz*baz;
-	//	auto baz_baz = _op::square_f(baz);
-
-	//	echo(baz.real());
-
 	}
 }
 

@@ -16,7 +16,7 @@ namespace _xtd
 #endif
 
 
-template <class W, class X, class Y> requires simplex_number_q<W, X, Y> or un_n<number_q<W> or number_q<X> or number_q<Y>>
+template <class W, class X, class Y> requires simplex_variable_q<W, X, Y> or un_n<anyplex_q<W> or anyplex_q<X> or anyplex_q<Y>>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W &&w, X &&x, Y &&y)
 noexcept -> XTAL_ALL_(w + x*y)
@@ -39,21 +39,21 @@ noexcept -> XTAL_ALL_(w + x*y)
 		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
 }
-template <real_number_q W, complex_number_q X, real_number_q Y>
+template <real_variable_q W, complex_variable_q X, real_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	return _std::complex{accumulator(w, x.real(), y), x.imag()*y};
 }
-template <real_number_q W, real_number_q X, complex_number_q Y>
+template <real_variable_q W, real_variable_q X, complex_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	return _std::complex{accumulator(w, x, y.real()), x*y.imag()};
 }
-template <real_number_q W, complex_number_q X, complex_number_q Y>
+template <real_variable_q W, complex_variable_q X, complex_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
@@ -72,21 +72,21 @@ noexcept -> auto
 	}
 }
 
-template <complex_number_q W, real_number_q X, real_number_q Y>
+template <complex_variable_q W, real_variable_q X, real_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	return _std::complex{accumulator(w.real(), x, y), w.imag()};
 }
-template <complex_number_q W, complex_number_q X, real_number_q Y>
+template <complex_variable_q W, complex_variable_q X, real_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
 {
 	return _std::complex{accumulator(w.real(), x.real(), y), accumulator(w.imag(), x.imag(), y)};
 }
-template <complex_number_q W, real_number_q X, complex_number_q Y>
+template <complex_variable_q W, real_variable_q X, complex_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
@@ -94,7 +94,7 @@ noexcept -> auto
 	return _std::complex{accumulator(w.real(), x, y.real()), accumulator(w.imag(), x, y.imag())};
 }
 
-template <complex_number_q W, complex_number_q X, complex_number_q Y>
+template <complex_variable_q W, complex_variable_q X, complex_variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET accumulator(W w, X x, Y y)
 noexcept -> auto
@@ -145,15 +145,15 @@ Structural...
 where `std::floating_point`s and `bool`eans are `static_cast`, \
 while all other `std::integral`s are negated. \
 
-template <class Y>
+template <variable_q Y>
 XTAL_DEF_(short)
 XTAL_LET condition_f(bool x)
 noexcept -> Y
 {
 	XTAL_IF0
-	XTAL_0IF (    logical_q<Y>) {return x;}
-	XTAL_0IF (   integral_q<Y>) {return static_cast<Y>(-x);}
-	XTAL_0IF (real_number_q<Y>) {return static_cast<Y>(+x);}
+	XTAL_0IF ( logical_q<Y>) {return x;}
+	XTAL_0IF (integral_q<Y>) {return static_cast<Y>(-x);}
+	XTAL_0IF (    real_q<Y>) {return static_cast<Y>(+x);}
 }
 
 
@@ -254,7 +254,7 @@ XTAL_LET bounded_f(auto const &u)
 		U constexpr  n0 = N0;
 		U constexpr  n1 = N1;
 		U constexpr n01 = N0 + N1;
-		if constexpr (integral_number_q<U>) {
+		if constexpr (integral_variable_q<U>) {
 			return (abs(u - n0) - abs(u - n1) + n01) >> 1;
 		}
 		else {
@@ -327,7 +327,7 @@ XTAL_DEF_(short)
 XTAL_LET count_f(auto const &...ts)
 noexcept -> size_type
 {
-	return _std::min<size_type>({(count_f(ts) - size_1)...}) + size_1;
+	return _std::min<size_type>({(count_f(ts) - one)...}) + one;
 }
 XTAL_DEF_(short) XTAL_LET  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
 XTAL_DEF_(short) XTAL_LET discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}

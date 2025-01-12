@@ -11,8 +11,8 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <integral_number_q U=ordinal_type> struct   restep;
-template <integral_number_q U=ordinal_type> using    restep_t = confined_t<restep<U>>;
+template <integral_variable_q U=extent_type> struct   restep;
+template <integral_variable_q U=extent_type> using    restep_t = confined_t<restep<U>>;
 template <typename ..._s> concept  restep_q = bond::tag_p<restep, _s...>;
 XTAL_DEF_(short)
 XTAL_LET restep_f(auto &&w)
@@ -25,7 +25,7 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <integral_number_q U>
+template <integral_variable_q U>
 struct restep
 {
 	using superkind = bond::compose<defer<U>, bond::tag<restep>>;

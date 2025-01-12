@@ -25,9 +25,9 @@ struct aligned
 	XTAL_LET size() noexcept -> size_type {return sizeof(type);}
 
 };
-template <class T             >	using    aligned_t	=       typename aligned<T >::type;
-template <         class ...Ts>	XTAL_LET aligned_n	=  (size_0 +...+ aligned<Ts>::size());
-template <         class ...Ts>	XTAL_LET aligned_m	=  aligned_n<Ts...> - size_1;
+template <class T             >	using    aligned_t	=  typename aligned<T >::type;
+template <         class ...Ts>	XTAL_LET aligned_n	=  (size_type{0} +...+ aligned<Ts>::size());
+template <         class ...Ts>	XTAL_LET aligned_m	=  aligned_n<Ts...> - one;
 
 template <class T>
 XTAL_DEF_(short)

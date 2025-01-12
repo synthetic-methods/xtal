@@ -83,7 +83,7 @@ struct bundle
 		requires requires {f(S_::template slot<0>());}
 		{
 			auto &s_ = slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(f(get<I>(s_)),...);}
@@ -100,7 +100,7 @@ struct bundle
 		requires complete_q<common_t<Xs..., decltype(t)>>
 		{
 			auto &s_ = slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(f(get<I>(s_), t),...);}
@@ -117,8 +117,8 @@ struct bundle
 		{
 			auto       &s_ =   slots();
 			auto const &t_ = t.slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
-			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -135,7 +135,7 @@ struct bundle
 		requires requires {f(get<0>(s));}
 		{
 			auto &s_ = s.slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(T_(f(get<I>(s_))...))
@@ -149,7 +149,7 @@ struct bundle
 	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
 		{
 			auto &s_ = s.slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(T_(f(get<I>(s_), t)...))
@@ -163,7 +163,7 @@ struct bundle
 	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
 		{
 			auto &s_ = s.slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(T_(f(t, get<I>(s_))...))
@@ -177,8 +177,8 @@ struct bundle
 		{
 			auto       &s_ = s.slots();
 			auto const &t_ = t.slots();
-			size_type constexpr N = bond::pack_size_n<decltype(s_)>;
-			size_type constexpr M = bond::pack_size_n<decltype(t_)>;
+			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
+			XTAL_LET M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);
 			
 			return [&]<auto ...I> (bond::seek_t<I...>)

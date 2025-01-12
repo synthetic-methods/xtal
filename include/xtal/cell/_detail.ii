@@ -282,15 +282,15 @@ struct defer_field
 
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
-		noexcept -> auto
+		noexcept -> size_type
 		requires XTAL_TRY_TO_(S_::cardinality())
 
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
-		noexcept -> auto
+		noexcept -> size_type
 		requires in_n<S_::pack_size::value, 0> and same_q<bool, U>
 		{
-			return size_2;
+			return 2;
 		}
 
 	};
@@ -398,13 +398,13 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 
 	};
 };
-template <size_type N_width>
+template <unsigned N_width>
 struct defer_field<unit_type[N_width]>
 {
 	using U = unit_type[N_width];
 
-	static constexpr size_type N_depth = bond::operating::bit_ceiling_f(N_width);
-	static_assert(N_width == size_1 << N_depth);
+	static constexpr unsigned N_depth = bond::operating::bit_ceiling_f(N_width);
+	static_assert(N_width == one << N_depth);
 
 	using superkind = bond::word<N_width>;
 
@@ -456,9 +456,9 @@ struct defer_field<unit_type[N_width]>
 		
 	};
 };
-template <size_type N_depth>
+template <unsigned N_depth>
 struct defer_field<null_type[N_depth]>
-:	defer_field<unit_type[(size_1 << N_depth)]>
+:	defer_field<unit_type[(one << N_depth)]>
 {
 };
 
@@ -601,7 +601,7 @@ struct infer_qualities
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_binary_logic
 :	bond::compose<void
 	,	refer_binary_logic<U, 1>
@@ -644,21 +644,21 @@ struct refer_binary_logic<U, 2>
 	};
 };
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_binary_logic : bond::compose<> {};
 
-template <class U, size_type N> requires binary_group_p<N, U>
+template <class U, int N  > requires binary_group_p<N, U>
 struct infer_binary_logic<U, N> : refer_binary_logic<U, N> {};
 
 
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_logics
 :	bond::compose<void
 	,	refer_binary_logic<U, N>
 	>
 {};
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_logics
 :	bond::compose<void
 	,	infer_binary_logic<U, N>
@@ -668,7 +668,7 @@ struct infer_logics
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_multiplicative_group
 :	bond::compose<void
 	,	refer_multiplicative_group<U, 1>
@@ -707,15 +707,15 @@ struct refer_multiplicative_group<U, 2>
 	};
 };
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_multiplicative_group : bond::compose<> {};
 
-template <class U, size_type N> requires multiplicative_group_p<N, U>
+template <class U, int N  > requires multiplicative_group_p<N, U>
 struct infer_multiplicative_group<U, N> : refer_multiplicative_group<U, N> {};
 
 
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_additive_group
 :	bond::compose<void
 	,	refer_additive_group<U, 1>
@@ -755,15 +755,15 @@ struct refer_additive_group<U, 2>
 	};
 };
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_additive_group : bond::compose<> {};
 
-template <class U, size_type N> requires additive_group_p<N, U>
+template <class U, int N  > requires additive_group_p<N, U>
 struct infer_additive_group<U, N> : refer_additive_group<U, N> {};
 
 
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_discrete_group
 :	bond::compose<void
 	,	refer_discrete_group<U, 1>
@@ -794,15 +794,15 @@ struct refer_discrete_group<U, 2>
 
 };
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_discrete_group : bond::compose<> {};
 
-template <class U, size_type N> requires discrete_group_p<N, U>
+template <class U, int N  > requires discrete_group_p<N, U>
 struct infer_discrete_group<U, N> : refer_discrete_group<U, N> {};
 
 
 
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct refer_groups
 :	bond::compose<void
 	,	refer_multiplicative_group<U, N>
@@ -810,7 +810,7 @@ struct refer_groups
 	,	refer_discrete_group<U, N>
 	>
 {};
-template <class U, size_type N=0>
+template <class U, int N=0>
 struct infer_groups
 :	bond::compose<void
 	,	infer_multiplicative_group<U, N>

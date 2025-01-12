@@ -115,7 +115,7 @@ struct couple<A>
 		template <int N_value=1>
 		XTAL_DEF_(inline)
 		XTAL_LET unzero()
-		noexcept -> logical_type
+		noexcept -> bool
 		{
 			using U_value = dissolve_u<U_data>;
 			using V_value = typename bond::operate<U_value>::sigma_type;
@@ -129,12 +129,12 @@ struct couple<A>
 			if constexpr (false) {
 			}
 #else
-			if constexpr (real_number_q<U_data> or complex_number_q<U_data>) {
+			if constexpr (anyplex_q<U_data>) {
 				auto &s = dissolve_f(*this);
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					XTAL_IF0
-					XTAL_0IF (   real_number_q<U_data>) {return reinterpret_cast<V_value &>(s[I]   ) |= _zv;}
-					XTAL_0IF (complex_number_q<U_data>) {return reinterpret_cast<V_value &>(s[I][0]) |= _zv;}
+					XTAL_0IF (simplex_q<U_data>) {return reinterpret_cast<V_value &>(s[I]   ) |= _zv;}
+					XTAL_0IF (complex_q<U_data>) {return reinterpret_cast<V_value &>(s[I][0]) |= _zv;}
 				});
 			}
 #endif

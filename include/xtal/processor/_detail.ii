@@ -14,8 +14,8 @@ template <class U>	concept        _processed_q =     _retail::any_q<U>;
 template <class U>	concept          _unvalue_q = cell::any_q<U> or iterable_q<U> or requires {&U::operator();};
 //\
 template <class U>	concept            _value_q = not iterable_q<U> and not _unvalue_q<U> and _std::is_standard_layout_v<based_t<U>>;
-template <class U>	concept            _value_q =       number_q<U>;
-template <class U>	concept            _range_q =     iterable_q<U>;
+template <class U>	concept            _value_q = anyplex_variable_q<U>;
+template <class U>	concept            _range_q =         iterable_q<U>;
 
 template <class U>	concept unprocessed_value_q = _unprocessed_q<U> and _value_q<U>;
 template <class U>	concept unprocessed_range_q = _unprocessed_q<U> and _range_q<U>;

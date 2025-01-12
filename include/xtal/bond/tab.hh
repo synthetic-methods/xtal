@@ -49,14 +49,14 @@ template <                         class ..._s> struct       tabbed   ;
 template <                         class ..._s> using        tabbed_s = typename tabbed<based_t<_s>...>:: type;
 template <                         class ..._s> concept      tabbed_q =          tabbed<based_t<_s>...>::value;
 
-template <class   T                           >                                                  struct tabbed<T, logical_t<1>       > : logical_t<1> {using type =    T;};
-template <class   T                           >                                                  struct tabbed<T, logical_t<0>       > : logical_t<0> {using type = void;};
-template <class   T,               class ...Is>                                                  struct tabbed<T,               Is...> : tabbed<T,        constant_t<same_q<T, Is...>>> {};
-template <taboo_q T,               class ...Is>                                                  struct tabbed<T,   taboo_u<T>, Is...> : tabbed<taboo_s<T>,                    Is...>   {};
-template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>, subliminal_s<I>,   Is...>   {};
-template <class   T, constant_q I, class ...Is> requires                         terminal_q<I>   struct tabbed<T,           I , Is...> : tabbed<        T ,                    Is...>   {};
-template <taboo_q T, identity_q I, class ...Is> requires      same_q<taboo_u<T>, identity_u<I>>  struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,                    Is...>   {};
-template <taboo_q T, identity_q I, class ...Is> requires un_n<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,           I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
+template <class   T                           >                                                  struct tabbed<T, constant_t<(bool) 1>> : constant_t<(bool) 1> {using type =    T;};
+template <class   T                           >                                                  struct tabbed<T, constant_t<(bool) 0>> : constant_t<(bool) 0> {using type = void;};
+template <class   T,               class ...Is>                                                  struct tabbed<T,                Is...> : tabbed<T,        constant_t<same_q<T, Is...>>> {};
+template <taboo_q T,               class ...Is>                                                  struct tabbed<T,    taboo_u<T>, Is...> : tabbed<taboo_s<T>,                    Is...>   {};
+template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>, subliminal_s<I>,   Is...>   {};
+template <class   T, constant_q I, class ...Is> requires                         terminal_q<I>   struct tabbed<T,            I , Is...> : tabbed<        T ,                    Is...>   {};
+template <taboo_q T, identity_q I, class ...Is> requires      same_q<taboo_u<T>, identity_u<I>>  struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>,                    Is...>   {};
+template <taboo_q T, identity_q I, class ...Is> requires un_n<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
 
 
 template <class   T,               class ...Is> concept      tab_q = (...and tabbed_q<T , identity_t<Is>>);

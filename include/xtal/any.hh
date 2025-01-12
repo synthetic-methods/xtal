@@ -30,16 +30,12 @@ namespace xtal
 //\
 Standard...
 
-using     void_type	       = _entail::void_type;
-using     null_type	       = _entail::null_type;
-using     unit_type	       = _entail::unit_type;
-using     size_type	       = _entail::size_type;
-using     sign_type	       = _entail::sign_type;
-
-XTAL_LET_(size_type) size_0 = _entail::size_0;
-XTAL_LET_(size_type) size_1 = _entail::size_1;
-XTAL_LET_(size_type) size_2 = _entail::size_2;
-XTAL_LET_(size_type) size_3 = _entail::size_3;
+using   void_type = _entail::  void_type;
+using   null_type = _entail::  null_type;
+using   unit_type = _entail::  unit_type;
+using   sign_type = _entail::  sign_type;
+using   size_type = _entail::  size_type;
+using extent_type = _entail::extent_type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,20 +92,6 @@ template <class X, class ...Fs>	concept  automorphism_q	=  (...and _entail:: aut
 //\
 Valued...
 
-using   logical_type	= _entail::  logical_type;
-using   ordinal_type	= _entail::  ordinal_type;
-using  cardinal_type	= _entail:: cardinal_type;
-using  integral_type	= _entail:: integral_type;
-
-template <class 	    ...Ts>  concept           number_q	=  (...and _entail::          number_q<   Ts   >);
-template <class 	    ...Ts>  concept      real_number_q	=  (...and _entail::     real_number_q<   Ts   >);
-template <class 	    ...Ts>  concept   complex_number_q	=  (...and _entail::  complex_number_q<   Ts   >);
-template <class 	    ...Ts>  concept   simplex_number_q	=  (...and _entail::  simplex_number_q<   Ts   >);
-template <class 	    ...Ts>  concept   ordinal_number_q	=  (...and _entail::  ordinal_number_q<   Ts   >);
-template <class 	    ...Ts>  concept  cardinal_number_q	=  (...and _entail:: cardinal_number_q<   Ts   >);
-template <class 	    ...Ts>  concept   logical_number_q	=  (...and _entail::  logical_number_q<   Ts   >);
-template <class 	    ...Ts>  concept  integral_number_q	=  (...and _entail:: integral_number_q<   Ts   >);
-
 template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail::          signum_n<N, Z    >;
 template <auto  N             >	XTAL_LET       magnum_n	=          _entail::          magnum_n<N       >;
 template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail::          modulo_m<M, N    >;
@@ -126,15 +108,32 @@ template <auto   N=null_type{}>	using        constant_t	= typename _entail::    
 template <class          ...Ts>	concept      constant_q	=  (...and _entail::     constant_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept      variable_q	=  (...and _entail::     variable_q<XTAL_RAW_(Ts)>);
 
-template <         class ...Ts>	concept       logical_q	=  (...and _entail::      logical_q<XTAL_RAW_(Ts)>);
-template <         class ...Ts>	concept       ordinal_q	=  (...and _entail::      ordinal_q<XTAL_RAW_(Ts)>);
-template <         class ...Ts>	concept      cardinal_q	=  (...and _entail::     cardinal_q<XTAL_RAW_(Ts)>);
-template <         class ...Ts>	concept      integral_q	=  (...and _entail::     integral_q<XTAL_RAW_(Ts)>);
+template <class 	 ...Ts>  concept   integral_variable_q	=  (...and _entail:: integral_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_variable_q	=  (...and _entail:: cardinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_variable_q	=  (...and _entail::  ordinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_variable_q	=  (...and _entail::  logical_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_variable_q	=  (...and _entail::     real_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_variable_q	=  (...and _entail::  complex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_variable_q	=  (...and _entail::  simplex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_variable_q	=  (...and _entail::  anyplex_variable_q<   Ts   >);
 
-template <auto  N             >	using         logical_t	= constant_t<static_cast< logical_type>(N)>;
-template <auto  N             >	using         ordinal_t	= constant_t<static_cast< ordinal_type>(N)>;
-template <auto  N             >	using        cardinal_t	= constant_t<static_cast<cardinal_type>(N)>;
-template <auto  N             >	using        integral_t	= constant_t<static_cast<integral_type>(N)>;
+template <class 	 ...Ts>  concept   integral_constant_q	=  (...and _entail:: integral_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_constant_q	=  (...and _entail:: cardinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_constant_q	=  (...and _entail::  ordinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_constant_q	=  (...and _entail::  logical_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_constant_q	=  (...and _entail::     real_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_constant_q	=  (...and _entail::  complex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_constant_q	=  (...and _entail::  simplex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_constant_q	=  (...and _entail::  anyplex_constant_q<   Ts   >);
+
+template <class       ...Ts>	concept         integral_q	=  (...and _entail::     integral_q<Ts>);
+template <class       ...Ts>	concept         cardinal_q	=  (...and _entail::     cardinal_q<Ts>);
+template <class       ...Ts>	concept          ordinal_q	=  (...and _entail::      ordinal_q<Ts>);
+template <class       ...Ts>	concept          logical_q	=  (...and _entail::      logical_q<Ts>);
+template <class 	    ...Ts>  concept             real_q	=  (...and _entail::         real_q<Ts>);
+template <class 	    ...Ts>  concept          complex_q	=  (...and _entail::      complex_q<Ts>);
+template <class 	    ...Ts>  concept          simplex_q	=  (...and _entail::      simplex_q<Ts>);
+template <class 	    ...Ts>  concept          anyplex_q	=  (...and _entail::      anyplex_q<Ts>);
 
 template <class          ...Ts>	concept       liminal_q	=  (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept      terminal_q	=  (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
@@ -257,8 +256,8 @@ template <class T             >	using        iterated_t	= typename _entail::    
 template <class T             >	using        iterator_t	= typename _entail::     iterator  <T >::type;
 template <class T             >	using        distance_t	=          _entail::     distance_t<T > ;
 template <class T             >	using        interval_t	=          _entail::     interval_t<T > ;
-template <class T=ordinal_type>	using         counted_t	= typename _entail::      counted  <T >::type;
-template <class T=ordinal_type>	using         counter_t	= typename _entail::      counter  <T >::type;
+template <class T=extent_type >	using         counted_t	= typename _entail::      counted  <T >::type;
+template <class T=extent_type >	using         counter_t	= typename _entail::      counter  <T >::type;
 
 template <class          ...Ts>	concept      iterable_q	=  (...and _entail::     iterable_q<Ts>);
 template <class          ...Ts>	concept      iterated_q	=  (...and _entail::     iterated_q<Ts>);
@@ -275,24 +274,24 @@ template <class          ...Ts>	concept       counter_q	=  (...and _entail::    
 //\
 Arithmetic...
 
-template <size_type N, class T, class U=T>	concept  multiplicative_group_p	= _entail:: multiplicative_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept        additive_group_p	= _entail::       additive_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept        discrete_group_p	= _entail::       discrete_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept        quotient_group_p	= _entail::       quotient_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept        integral_group_p	= _entail::       integral_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept  multiplicative_group_p	= _entail:: multiplicative_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        additive_group_p	= _entail::       additive_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        discrete_group_p	= _entail::       discrete_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        quotient_group_p	= _entail::       quotient_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        integral_group_p	= _entail::       integral_group_p<N, T, U>;
 
-template <size_type N, class T, class U=T>	concept      contiguous_group_p	= _entail::     contiguous_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept      contiguous_field_p	= _entail::     contiguous_field_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept      continuous_field_p	= _entail::     continuous_field_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept         complex_field_p	= _entail::        complex_field_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept         simplex_field_p	= _entail::        simplex_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept      contiguous_group_p	= _entail::     contiguous_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept      contiguous_field_p	= _entail::     contiguous_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept      continuous_field_p	= _entail::     continuous_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept         complex_field_p	= _entail::        complex_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept         simplex_field_p	= _entail::        simplex_field_p<N, T, U>;
 
-template <size_type N, class T, class U=T>	concept         logical_group_p	= _entail::        logical_group_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept          binary_group_p	= _entail::         binary_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept         logical_group_p	= _entail::        logical_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept          binary_group_p	= _entail::         binary_group_p<N, T, U>;
 
-template <size_type N, class T, class U=T>	concept            inequality_p	= _entail::           inequality_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept              equality_p	= _entail::             equality_p<N, T, U>;
-template <size_type N, class T, class U=T>	concept               quality_p	= _entail::              quality_p<N, T, U>;
+template <int N, class T, class U=T>	concept            inequality_p	= _entail::           inequality_p<N, T, U>;
+template <int N, class T, class U=T>	concept              equality_p	= _entail::             equality_p<N, T, U>;
+template <int N, class T, class U=T>	concept               quality_p	= _entail::              quality_p<N, T, U>;
 
 
 template <class   ...Ts>	concept   multiplicative_group_q	= (...and multiplicative_group_p<0, Ts>);

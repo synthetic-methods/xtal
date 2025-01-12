@@ -26,13 +26,9 @@ Standard...
 class    void_type   ;
 using    null_type	= XTAL_STD_(null_type);
 using    unit_type	= XTAL_STD_(unit_type);
-using    size_type	= XTAL_STD_(size_type);
 using    sign_type	= XTAL_ALL_(true - false);
-
-XTAL_LET size_0 = (size_type) 0;
-XTAL_LET size_1 = (size_type) 1;
-XTAL_LET size_2 = (size_type) 2;
-XTAL_LET size_3 = (size_type) 3;
+using    size_type	= XTAL_STD_(size_type);
+using  extent_type	= _std::make_signed_t<size_type>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,21 +103,6 @@ template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>
 //\
 Valued...
 
-using  logical_type	=                             bool;
-using  ordinal_type	= _std::  make_signed_t<size_type>;
-using cardinal_type	= _std::make_unsigned_t<size_type>;
-using integral_type	=                              int;
-
-template <class T             >	concept   logical_number_q	= _std::same_as<logical_type, XTAL_RAW_(T)>;
-template <class T             >	concept   ordinal_number_q	= _std::      signed_integral<XTAL_RAW_(T)>;
-template <class T             >	concept  cardinal_number_q	= _std::    unsigned_integral<XTAL_RAW_(T)>;
-template <class T             >	concept  integral_number_q	= _std::             integral<XTAL_RAW_(T)>;
-template <class T             >	concept      real_number_q	= _std::floating_point<XTAL_RAW_(T)>;
-template <class T             >	concept   complex_number_q	=  fungible_q<T, _std::complex<typename XTAL_RAW_(T)::value_type>>;
-template <class T             >	concept   simplex_number_q	=  integral_number_q<T> or real_number_q<T>;
-template <class T             >	concept           number_q	=  integral_number_q<T> or real_number_q<T> or complex_number_q<T>;
-
-
 template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
 template <auto  N             >	XTAL_LET       magnum_n	= signum_n<N>*N;
 template <auto  M, auto     N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
@@ -135,23 +116,52 @@ template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) a
 template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or (insame_q<T, Ts>));
 
 
-////////////////////////////////////////////////////////////////////////////////
-
 template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
 template <auto  o             >	struct       constant    : constant_s<o> {};
 template <auto  o=null_type{} >	using        constant_t	=  constant  <o>   ;
 template <class T             >	concept      constant_q	= _std::derived_from<XTAL_RAW_(T), constant_s<T::value>>;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
-template <class T             >	concept       logical_q	= constant_q<T> and  logical_number_q<typename T::value_type> or  logical_number_q<T>;
-template <class T             >	concept       ordinal_q	= constant_q<T> and  ordinal_number_q<typename T::value_type> or  ordinal_number_q<T>;
-template <class T             >	concept      cardinal_q	= constant_q<T> and cardinal_number_q<typename T::value_type> or cardinal_number_q<T>;
-template <class T             >	concept      integral_q	= constant_q<T> and integral_number_q<typename T::value_type> or integral_number_q<T>;
+using integral_type	=                              int;
+using cardinal_type	= _std::make_unsigned_t<size_type>;
+using  extent_type	= _std::  make_signed_t<size_type>;
+using  logical_type	=                             bool;
+
+template <class T        >	concept   integral_variable_q	= _std::             integral<XTAL_RAW_(T)>;
+template <class T        >	concept   cardinal_variable_q	= _std::    unsigned_integral<XTAL_RAW_(T)>;
+template <class T        >	concept    ordinal_variable_q	= _std::      signed_integral<XTAL_RAW_(T)>;
+template <class T        >	concept    logical_variable_q	= _std::        same_as<bool, XTAL_RAW_(T)>;
+template <class T        >	concept       real_variable_q	= _std::       floating_point<XTAL_RAW_(T)>;
+template <class T        >	concept    complex_variable_q	=  fungible_q<T, _std::complex<typename XTAL_RAW_(T)::value_type>>;
+template <class T        >	concept    simplex_variable_q	=  integral_variable_q<T> or    real_variable_q<T>;
+template <class T        >	concept    anyplex_variable_q	=   complex_variable_q<T> or simplex_variable_q<T>;
+
+template <class T        >	concept   integral_constant_q	= constant_q<T> and requires {requires integral_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept   cardinal_constant_q	= constant_q<T> and requires {requires cardinal_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept    ordinal_constant_q	= constant_q<T> and requires {requires  ordinal_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept    logical_constant_q	= constant_q<T> and requires {requires  logical_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept       real_constant_q	= constant_q<T> and requires {requires     real_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept    complex_constant_q	= constant_q<T> and requires {requires  complex_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept    simplex_constant_q	= constant_q<T> and requires {requires  simplex_variable_q<XTAL_ALL_(T{}())>;};
+template <class T        >	concept    anyplex_constant_q	= constant_q<T> and requires {requires  anyplex_variable_q<XTAL_ALL_(T{}())>;};
+
+template <class T             >	concept      integral_q	= integral_variable_q<T> or integral_constant_q<T>;
+template <class T             >	concept      cardinal_q	= cardinal_variable_q<T> or cardinal_constant_q<T>;
+template <class T             >	concept       ordinal_q	=  ordinal_variable_q<T> or  ordinal_constant_q<T>;
+template <class T             >	concept       logical_q	=  logical_variable_q<T> or  logical_constant_q<T>;
+template <class T             >	concept          real_q	=     real_variable_q<T> or     real_constant_q<T>;
+template <class T             >	concept       complex_q	=  complex_variable_q<T> or  complex_constant_q<T>;
+template <class T             >	concept       simplex_q	=  simplex_variable_q<T> or  simplex_constant_q<T>;
+template <class T             >	concept       anyplex_q	=  anyplex_variable_q<T> or  anyplex_constant_q<T>;
 
 template <class T             >	concept       liminal_q	= constant_q<T> and 0 != T::value;
 template <class T             >	concept      terminal_q	= constant_q<T> and 0 == T::value;
 template <class S             >	using      subliminal_s	= constant_t<S::value - signum_n<S::value>>;
 template <class S             >	using    superliminal_s	= constant_t<S::value + signum_n<S::value>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +229,7 @@ struct   assign_sized
 	{
 		XTAL_IF0
 		XTAL_0IF ((...and (Ns != -1))) {return static_cast<   size_type>((1 *...* Ns));}
-		XTAL_0IF ((...or  (Ns == -1))) {return static_cast<ordinal_type>(-1);}
+		XTAL_0IF ((...or  (Ns == -1))) {return static_cast<extent_type>(-1);}
 	};
 
 	XTAL_DEF_(short,static)
@@ -236,10 +246,10 @@ struct   assign_sized<>
 	using type = assign_sized;
 
 	XTAL_DEF_(short,static)
-	XTAL_LET size() noexcept {return size_0;};
+	XTAL_LET size() noexcept -> size_type {return 0;};
 
 	XTAL_DEF_(short,static)
-	XTAL_LET rank() noexcept {return size_0;};
+	XTAL_LET rank() noexcept -> size_type {return 0;};
 
 };
 
@@ -271,7 +281,7 @@ template <  based_q T>	requires      identity_q<T>            struct fixed_sized
 template <  based_q T>	requires   tuple_sized_q<T>            struct fixed_sized<T>                : assign_sized<tuple_sized_n<T>> {};
 template <  based_q T>	requires   array_sized_q<T>            struct fixed_sized<T>                : assign_sized<array_sized_n<T>> {};
 template <unbased_q T>	requires   fixed_sized_q<XTAL_RAW_(T)> struct fixed_sized<T>                :  fixed_sized<      XTAL_RAW_(T)> {};
-template <class     U>	                                       struct fixed_sized<_std::complex<U>> :  fixed_sized<identity_t<constant_t<size_2>>> {};
+template <class     U>	                                       struct fixed_sized<_std::complex<U>> :  fixed_sized<identity_t<constant_t<size_type{2}>>> {};
 
 template <           >	                                       struct fluid_sized<void>             : assign_sized< 0> {};
 template <  based_q T>	                                       struct fluid_sized<T>                : assign_sized< 0> {};
@@ -378,8 +388,8 @@ template <class T             >	concept      iterable_q	= requires (T &t) {t.beg
 template <class T             >	concept      iterated_q	= requires (T &t) {t.begin(); t.size();};
 template <class T             >	concept      iterator_q	=  pointed_q<T> and requires (T &t) {++t;};
 template <class T             >	concept      sentinel_q	= iterator_q<T>;
-template <class T             >	concept      distance_q	= integral_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
-template <class T             >	concept       counter_q	= integral_q<T>;
+template <class T             >	concept      distance_q	= integral_variable_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
+template <class T             >	concept       counter_q	= integral_variable_q<T>;
 template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
 
 template <class T             >	struct       iteratee    {using type =                   valued_u<T> ;};
@@ -423,14 +433,14 @@ template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<itera
 //\
 Arithmetic...
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept equality_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2;
 	{t == u} -> same_q<bool>;
 	{t != u} -> same_q<bool>;
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept inequality_p = equality_p<N, T> and requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2;
@@ -439,11 +449,11 @@ concept inequality_p = equality_p<N, T> and requires (XTAL_RAW_(T) t, XTAL_RAW_(
 	{t >= u} -> same_q<bool>;
 	{t >  u} -> same_q<bool>;
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept quality_p = equality_p<N, T> and inequality_p<N, T>;
 
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept logical_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2 or requires
@@ -456,7 +466,7 @@ concept logical_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 		{t && u} -> same_q<T>;
 	};
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept binary_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2 or requires
@@ -475,7 +485,7 @@ concept binary_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 };
 
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept multiplicative_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2 or requires
@@ -489,7 +499,7 @@ concept multiplicative_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 		{t  /  u};// -> same_q<T>;
 	};
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept quotient_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2 or requires
@@ -501,7 +511,7 @@ concept quotient_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 		{t  %  u};// -> same_q<T>;
 	};
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept additive_group_p = requires (XTAL_RAW_(T) &t, XTAL_RAW_(U) &u)
 {
 	requires N == 2 or requires
@@ -516,7 +526,7 @@ concept additive_group_p = requires (XTAL_RAW_(T) &t, XTAL_RAW_(U) &u)
 		{t  -  u};// -> same_q<T>;
 	};
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept discrete_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 {
 	requires N == 2 or requires
@@ -525,27 +535,27 @@ concept discrete_group_p = requires (XTAL_RAW_(T) t, XTAL_RAW_(U) u)
 		{t--} -> same_q<T>; {--u} -> same_q<T>;
 	};
 };
-template <size_type N, class T, class U=T>
-concept integral_group_p = integral_number_q<T> or discrete_group_p<N, T, U> and quotient_group_p<N, T, U>;
+template <int N, class T, class U=T>
+concept integral_group_p = integral_q<T> or discrete_group_p<N, T, U> and quotient_group_p<N, T, U>;
 
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept contiguous_group_p = multiplicative_group_p<N, T, U>  or additive_group_p<N, T, U>;
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept contiguous_field_p = multiplicative_group_p<N, T, U> and additive_group_p<N, T, U>;
 
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept continuous_field_p = contiguous_field_p<N, T, U> and not integral_group_p<0, T, U>;
 
 
-template <size_type N, class T, class U=T>
-concept complex_field_p = complex_number_q<T> or continuous_field_p<2, T, U> and requires (XTAL_RAW_(T) t)
+template <int N, class T, class U=T>
+concept complex_field_p = complex_q<T> or continuous_field_p<2, T, U> and requires (XTAL_RAW_(T) t)
 {
 	{t.real()};// -> same_q<valued_u<T>>;
 	{t.imag()};// -> same_q<valued_u<T>>;
 };
-template <size_type N, class T, class U=T>
+template <int N, class T, class U=T>
 concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;
 
 

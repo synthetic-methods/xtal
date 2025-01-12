@@ -17,8 +17,8 @@ namespace _detail
 template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
 template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
 
-template <class T         >	struct   seek                : logical_t<0> {};
-template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : logical_t<1> {};
+template <class T         >	struct   seek                : constant_t<(bool) 0> {};
+template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : constant_t<(bool) 1> {};
 template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
 
 
@@ -26,10 +26,10 @@ template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
 
 template <class      ...Ts>	                 concept       seek_q = _detail::seek_q<Ts...>;
 template <int        ...Ns>	                 using         seek_t = _detail::seek_t<Ns...>;
-template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(       Ns... ) noexcept -> seek_t<(                         Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(seek_t<Ns...>) noexcept -> seek_t<(                         Ns  )...> {return {};}
-template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET  antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - size_1 - Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(short) XTAL_LET  antiseek_f(seek_t<Ns...>) noexcept -> seek_t<(sizeof...(Ns) - size_1 - Ns  )...> {return {};}
+template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(       Ns... ) noexcept -> seek_t<(                      Ns{})...> {return {};}
+template <int        ...Ns>	XTAL_DEF_(short) XTAL_LET      seek_f(seek_t<Ns...>) noexcept -> seek_t<(                      Ns  )...> {return {};}
+template <constant_q ...Ns>	XTAL_DEF_(short) XTAL_LET  antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - one - Ns{})...> {return {};}
+template <int        ...Ns>	XTAL_DEF_(short) XTAL_LET  antiseek_f(seek_t<Ns...>) noexcept -> seek_t<(sizeof...(Ns) - one - Ns  )...> {return {};}
 
 template <int           N >	                 struct   superseek    {using type = decltype(    seek_f(_detail::seek_s<+N>{}));};
 template <int           N >	requires (N < 0) struct   superseek<N> {using type = decltype(antiseek_f(_detail::seek_s<-N>{}));};
@@ -158,11 +158,11 @@ struct seek_index
 		};
 
 	public:// OPERATE
-		XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) element(I i),
+		XTAL_TO4_(template <integral_q I> XTAL_DEF_(let) element(I i),
 			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
 
-		XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) operator[](I i), element(i))
-	//	XTAL_TO4_(template <integral_number_q I> XTAL_DEF_(let) operator()(I i), element(i))
+		XTAL_TO4_(template <integral_q I> XTAL_DEF_(let) operator[](I i), element(i))
+	//	XTAL_TO4_(template <integral_q I> XTAL_DEF_(let) operator()(I i), element(i))
 		
 	};
 

@@ -97,7 +97,7 @@ struct superblock<U[N]>
 		
 		XTAL_NEW_(explicit) homotype()
 		noexcept
-		:	homotype(size_0)
+		:	homotype(size_type{})
 		{}
 		XTAL_NEW_(explicit) homotype(size_type const n)
 		noexcept

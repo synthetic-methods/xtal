@@ -31,7 +31,7 @@ Rework `operator`s to accommodate `std::complex`. \
 template <class   ..._s>	struct           phason;
 template <class   ..._s>	using            phason_t = typename phason<_s...>::type;
 template <class   ...Ts>	concept          phason_q = bond::tag_p<phason_t, Ts...>;
-template <class   ...Ts>	concept     real_phason_q = bond::tag_p<phason_t, Ts...> and   real_number_q<initializer_u<Ts>...>;
+template <class   ...Ts>	concept     real_phason_q = bond::tag_p<phason_t, Ts...> and real_variable_q<initializer_u<Ts>...>;
 template <class   ...Ts>	concept  simplex_phason_q = bond::tag_p<phason_t, Ts...> and simplex_field_q<initializer_u<Ts>...>;
 template <class   ...Ts>	concept  complex_phason_q = bond::tag_p<phason_t, Ts...> and complex_field_q<initializer_u<Ts>...>;
 template <class  V=void>
@@ -45,7 +45,7 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <vector_q A> requires real_number_q<absolve_u<A>>
+template <vector_q A> requires real_variable_q<absolve_u<A>>
 struct phason<A>
 {
 	XTAL_SET M_data = _std::extent_v<based_t<A>>;
@@ -91,7 +91,7 @@ struct phason<A>
 
 		XTAL_NEW_(implicit) homotype()
 		noexcept
-		:	homotype(size_0)
+		:	homotype(size_type{0})
 		{}
 		
 		XTAL_NEW_(explicit) homotype(size_type const n)
@@ -99,7 +99,7 @@ struct phason<A>
 		:	S_(n)
 		{}
 
-		XTAL_NEW_(explicit) homotype(real_number_q auto &&...oo)
+		XTAL_NEW_(explicit) homotype(real_variable_q auto &&...oo)
 		noexcept
 		:	homotype(sizeof...(oo))
 		{
@@ -194,13 +194,13 @@ struct phason<A>
 		XTAL_DEF_(inline) XTAL_LET operator /= (initializer_s<coordinate_type> t) noexcept -> auto & {return self() /= T(t);}
 
 		XTAL_DEF_(inline)
-		XTAL_LET operator /= (number_q auto const &f)
+		XTAL_LET operator /= (simplex_variable_q auto const &f)
 		noexcept -> auto &
 		{
 			return operator*=(one/f);
 		}
 	//	XTAL_DEF_(inline)
-		XTAL_LET operator *= (real_number_q auto const &f)
+		XTAL_LET operator *= (real_variable_q auto const &f)
 		noexcept -> auto &
 		{
 			using _op = bond::operate<decltype(f)>;
@@ -237,7 +237,7 @@ struct phason<A>
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator *= (integral_number_q auto const &i)
+		XTAL_LET operator *= (integral_variable_q auto const &i)
 		noexcept -> auto &
 		{
 			return S_::operator*=(i);
@@ -250,19 +250,19 @@ struct phason<A>
 		using S_::operator+=;
 
 		XTAL_DEF_(inline)
-		XTAL_LET operator -= (number_q auto const &f)
+		XTAL_LET operator -= (simplex_variable_q auto const &f)
 		noexcept -> auto &
 		{
 			return operator+=(-f);
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator += (integral_number_q auto const &i)
+		XTAL_LET operator += (integral_variable_q auto const &i)
 		noexcept -> auto &
 		{
 			return self();
 		}
 		XTAL_DEF_(inline)
-		XTAL_LET operator += (real_number_q auto const &f)
+		XTAL_LET operator += (real_variable_q auto const &f)
 		noexcept -> auto &
 		{
 			get<0>(*this) += T_op::bit_fraction_f(f);
