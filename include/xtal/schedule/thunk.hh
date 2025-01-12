@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "../provision/spooled.hh"
 
-#include "../arrange/quason.hh"
+#include "../arrange/grade.hh"
 #include "../flux/cue.hh"
 
 
@@ -45,11 +45,11 @@ struct thunk
 				using typename R_::V_event;
 				using typename R_::U_event;
 
-				using    X_tip = typename U_event::cue_type;
-				XTAL_SET K_tip =          U_event::cue_size::value;
+				using    X_cue = typename U_event::cue_type;
+				XTAL_SET K_cut =          U_event::cue_size::value;
 				//\
-				using V_shuttle = X_tip;
-				using V_shuttle =          arrange::quason_t<X_tip[K_tip]>;
+				using V_shuttle = X_cue;
+				using V_shuttle =           arrange::grade_t<X_cue[K_cut]>;
 				using U_shuttle =                   flux::cue_s<V_shuttle>;
 				using U_spool   = typename S_::template spool_t<U_shuttle>;
 
@@ -108,7 +108,7 @@ struct thunk
 					return R_::efflux(XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(short)
-				XTAL_LET influx(XTAL_SYN_(X_tip) auto &&o)
+				XTAL_LET influx(XTAL_SYN_(X_cue) auto &&o)
 				noexcept -> signed
 				{
 					compact_();
@@ -173,13 +173,13 @@ struct thunk
 					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(long)
-				XTAL_LET shuffle_(XTAL_SYN_(X_tip) auto &&x1, V_delay t1)
+				XTAL_LET shuffle_(XTAL_SYN_(X_cue) auto &&x1, V_delay t1)
 				noexcept -> signed
 				{
 					return shuttle_(t1, x1);
 				}
 				XTAL_DEF_(long)
-				XTAL_LET shuffle_(XTAL_SYN_(X_tip) auto &&x1, V_delay t1, V_delay t0)
+				XTAL_LET shuffle_(XTAL_SYN_(X_cue) auto &&x1, V_delay t1, V_delay t0)
 				noexcept -> signed
 				{
 					if (t0 < t1) {
@@ -190,8 +190,8 @@ struct thunk
 						auto const x0 = V_shuttle(u_spool.scan(i0)->tail()) (0);
 						auto const x0 = V_shuttle(_std::prev(u_spool.scan(i0))->tail()) (0);
 						auto const x_ = x1 - x0;
-						double const t_ = t1 - t0;
-						(void) shuttle_(t0, x0, x_/t_);
+						auto const t_ = t1 - t0;
+						(void) shuttle_(t0, x0, x_/XTAL_ALL_(x_){t_});
 					}
 					return shuffle_(x1, t1);
 				}

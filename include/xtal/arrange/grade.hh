@@ -11,25 +11,25 @@ namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class              ..._s>	struct   quason;
-template <class              ..._s>	using    quason_t = typename quason<_s...>::type;
-template <class              ...Ts>	concept  quason_q = bond::tag_p<quason_t, Ts...>;
-template <size_type N, class ...Ts>	concept  quason_p = quason_q<Ts...> and (...and (N == Ts::size()));
+template <class              ..._s>	struct   grade;
+template <class              ..._s>	using    grade_t = typename grade<_s...>::type;
+template <class              ...Ts>	concept  grade_q = bond::tag_p<grade_t, Ts...>;
+template <size_type N, class ...Ts>	concept  grade_p = grade_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET quason_f(auto &&...oo)
+XTAL_LET grade_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<quason_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<grade_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `order` with point-wise addition, and multiplication defined by linear convolution. \
+Extends `order` with point-wise addition and differential succession. \
 
 template <vector_q A>
-struct quason<A>
+struct grade<A>
 {
 	using _op = bond::operate<A>;
 	
@@ -37,7 +37,7 @@ struct quason<A>
 	using endotype = typename arrange::order<A>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<quason_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -57,18 +57,15 @@ struct quason<A>
 		using S_::twin;
 	
 	public:// OPERATE
-		using S_::operator*=;
 	//	using S_::operator+=;
 	//	using S_::operator-=;
 
-		XTAL_DEF_(short)  XTAL_LET operator  * (auto const &t)      const noexcept -> auto   {return twin() *=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator  + (auto const &t)      const noexcept -> auto   {return twin() +=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator  - (auto const &t)      const noexcept -> auto   {return twin() -=   t ;}
-		XTAL_DEF_(inline) XTAL_LET operator  *=(initializer_s<U_data> t)  noexcept -> auto & {return self() *= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator  +=(initializer_s<U_data> t)  noexcept -> auto & {return self() += T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator  -=(initializer_s<U_data> t)  noexcept -> auto & {return self() -= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator ++ (int)                      noexcept -> auto   {auto t = twin(); operator++(); return t;}
-		XTAL_DEF_(inline) XTAL_LET operator -- (int)                      noexcept -> auto   {auto t = twin(); operator--(); return t;}
+		XTAL_DEF_(short)  XTAL_LET operator + (auto const &t)      const noexcept -> auto   {return twin() +=   t ;}
+		XTAL_DEF_(short)  XTAL_LET operator - (auto const &t)      const noexcept -> auto   {return twin() -=   t ;}
+		XTAL_DEF_(inline) XTAL_LET operator +=(initializer_s<U_data> t)  noexcept -> auto & {return self() += T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator -=(initializer_s<U_data> t)  noexcept -> auto & {return self() -= T(t);}
+		XTAL_DEF_(inline) XTAL_LET operator ++(int)                      noexcept -> auto   {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline) XTAL_LET operator --(int)                      noexcept -> auto   {auto t = twin(); operator--(); return t;}
 
 
 		///\
@@ -100,26 +97,6 @@ struct quason<A>
 			return self();
 		}
 
-
-		///\
-		Multiplication by linear convolution, truncated by `N_data`. \
-
-	//	XTAL_DEF_(inline)
-		XTAL_LET operator *=(T const &t)
-		noexcept -> T &
-		{
-			auto &s = self();
-			
-			if constexpr (_op::alignment::value < N_data) {
-				for (auto i = N_data; ~--i;) {element(i) *= get<0>(t);
-				for (auto j = i; j-- ;) {element(i) += t.element(j)*element(i - j);}}
-			}
-			else {
-				bond::seek_backward_f<N_data, 0>([&, this] (auto I) XTAL_0FN {get<I>(s) *= get<0>(t);
-				bond::seek_backward_f<     I, 1>([&, this] (auto J) XTAL_0FN {get<I>(s) += get<J>(t)*get<I - J>(s);});});
-			}
-			return s;
-		}
 
 	//	Vector addition:
 
@@ -153,7 +130,7 @@ struct quason<A>
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<quason_t<float[2]>>);
+static_assert(atomic_q<grade_t<float[2]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

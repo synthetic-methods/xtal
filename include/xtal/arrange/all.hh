@@ -3,7 +3,6 @@
 #include "./cache.hh"
 #include "./couple.hh"
 #include "./order.hh"
-#include "./phason.hh"
-#include "./quason.hh"
+#include "./grade.hh"
 #include "./store.hh"
 #include "./spool.hh"

@@ -266,13 +266,4 @@ using Px_dynamic_count = typename dynamic_count::type;
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-/**/
-template <xtal::iterated_q T, ::std::invocable<xtal::iterated_u<T>> U>
-XTAL_DEF_(short)
-XTAL_LET operator | (T &&t, U &&u)
-noexcept -> decltype(auto)
-{
-	return XTAL_REF_(t)|::ranges::views::transform(XTAL_REF_(u));
-};
-/***/
 XTAL_ENV_(pop)

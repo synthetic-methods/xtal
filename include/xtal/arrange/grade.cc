@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./quason.hh"// testing...
+#include "./grade.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::arrange::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("arrange", "quason")
+TAG_("arrange", "grade")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -21,10 +21,10 @@ TAG_("arrange", "quason")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
-	using D1 = quason_t<int[1]>;
-	using D2 = quason_t<int[2]>;
-	using D3 = quason_t<int[3]>;
-	using D4 = quason_t<int[4]>;
+	using D1 = grade_t<int[1]>;
+	using D2 = grade_t<int[2]>;
+	using D3 = grade_t<int[3]>;
+	using D4 = grade_t<int[4]>;
 	
 	TRY_("partial construction")
 	{

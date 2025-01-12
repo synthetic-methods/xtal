@@ -3,7 +3,6 @@
 #include "./cache.cc"
 #include "./couple.cc"
 #include "./order.cc"
-#include "./phason.cc"
-#include "./quason.cc"
+#include "./grade.cc"
 #include "./store.cc"
 #include "./spool.cc"

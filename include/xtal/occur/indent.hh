@@ -87,7 +87,7 @@ struct indent<Ns...>
 
 				///\todo\
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
-				Requires subsequence ordering for `bond::pack`s? \
+				Requires subsequent ordering for `bond::pack`s? \
 				
 				XTAL_DEF_(short)
 				XTAL_LET infuse(auto &&o)
