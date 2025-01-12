@@ -53,11 +53,11 @@ template <         class ...Ts>	concept    infungible_q	=          _entail::   i
 
 
 template <class T             >	using           based_t	=          _entail::        based_t<T       > ;
-template <class          ...Ts>	concept         based_q	=  (...and _entail::        based_q<   Ts   >);
-template <class          ...Ts>	concept       unbased_q	=  (...and _entail::      unbased_q<   Ts   >);
+template <         class ...Ts>	concept         based_q	=  (...and _entail::        based_q<   Ts   >);
+template <         class ...Ts>	concept       unbased_q	=  (...and _entail::      unbased_q<   Ts   >);
 
-template <class          ...Ts>	using          common_t	=          _entail::       common_t<   Ts...>;
-template <class          ...Ts>	concept        common_q	=          _entail::       common_q<   Ts...>;
+template <         class ...Ts>	using          common_t	=          _entail::       common_t<   Ts...>;
+template <         class ...Ts>	concept        common_q	=          _entail::       common_q<   Ts...>;
 
 
 template <class T             >	using        identity_t	=          _entail::     identity_t<T       >;
@@ -65,13 +65,12 @@ template <class T             >	using        identity_u	=          _entail::    
 template <class T             >	XTAL_LET     identity_n	=          _entail::     identity_n<T       >;
 template <class T             >	concept      identity_q	=          _entail::     identity_q<T       >;
 
-template <class          ...Ts>	using        complete_t	= typename _entail::     complete_t<   Ts...> ;
-template <class          ...Ts>	concept      complete_q	=  (...and _entail::     complete_q<   Ts   >);
-template <class          ...Ts>	concept    incomplete_q	=  (...and _entail::   incomplete_q<   Ts   >);
+template <         class ...Ts>	using        complete_t	= typename _entail::     complete_t<   Ts...> ;
+template <         class ...Ts>	concept      complete_q	=  (...and _entail::     complete_q<   Ts   >);
+template <         class ...Ts>	concept    incomplete_q	=  (...and _entail::   incomplete_q<   Ts   >);
 
-
-template <class          ...Ts>	concept     molecular_q	=  (...and _entail::    molecular_q<   Ts   >);
-template <class          ...Ts>	concept        atomic_q	=  (...and _entail::       atomic_q<   Ts   >);
+template <         class ...Ts>	concept     molecular_q	=  (...and _entail::    molecular_q<   Ts   >);
+template <         class ...Ts>	concept        atomic_q	=  (...and _entail::       atomic_q<   Ts   >);
 
 
 template <         class ...Ts>	concept        insame_q	=          _entail::       insame_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
@@ -85,6 +84,10 @@ template <class F, class ...Xs>	concept  inapplicable_p	=          _entail:: ina
 
 template <class F, class ...Xs>	concept  automorphism_p	=  (...and _entail:: automorphism_p<F, Xs   >);//< `Xs` are unchanged by `F ...`.
 template <class X, class ...Fs>	concept  automorphism_q	=  (...and _entail:: automorphism_q<X, Fs   >);//< `X `  is unchanged by `Fs...`.
+
+
+template <template <class> class T_>
+using derive_t	= typename _entail::derive<T_>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

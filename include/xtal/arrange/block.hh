@@ -53,7 +53,7 @@ struct superblock<U(&)[N]>
 		}
 
 	};	
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 template <class U, size_type N>
@@ -135,7 +135,7 @@ struct superblock<U[N]>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 
@@ -211,6 +211,13 @@ struct block<A>
 			return reinterpret_cast<X>(*this);
 			return Y(*this);
 		}
+		XTAL_DO2_(template <constant_q I>
+		XTAL_DEF_(short)
+		XTAL_LET capsize(I),
+		noexcept -> decltype(auto)
+		{
+			return capsize<I::value>();
+		})
 
 		template <size_type I>
 		XTAL_DEF_(let) operator () (    ) const noexcept {return self().coordinate(element<I>());}
@@ -363,7 +370,7 @@ struct block<A>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 template <size_type I> XTAL_DEF_(let) get(block_q auto const &&o) noexcept {return XTAL_MOV_(o)[I];}

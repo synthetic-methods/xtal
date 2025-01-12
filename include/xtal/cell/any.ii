@@ -55,14 +55,17 @@ template <typename ...As>
 struct confined
 {
 	template <class T>
-	//\
 	using homokind = confine<T, As...>;
-	using homokind = bond::compose<refine<T>, As..., define<T>>;
-	
-	using superkind = bond::isokind<homokind>;
 
 	template <class S>
-	using subtype = bond::compose_s<S, superkind>;
+	class subtype : public bond::compose_s<S, homokind<subtype<S>>>
+	{
+		using S_ = bond::compose_s<S, homokind<subtype<S>>>;
+
+	public:
+		using S_::S_;
+
+	};
 	using    type = subtype<any_type>;
 	
 };

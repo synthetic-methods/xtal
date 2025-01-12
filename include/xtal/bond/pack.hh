@@ -240,6 +240,12 @@ XTAL_LET pack_dot_f(X const &x, Y const &y)
 		XTAL_0FN_((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
 	(bond::seek_s<I - 1> {});
 }
+template <pack_q X, pack_q Y>
+XTAL_DEF_(short)
+XTAL_LET pack_dot_f(X const &x)
+{
+	return pack_dot_f(x, x);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

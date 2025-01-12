@@ -2,8 +2,6 @@
 #include "./compose.cc"
 #include "./couple.cc"
 #include "./forge.cc"
-#include "./isokind.cc"
-#include "./isotype.cc"
 #include "./operate.cc"
 #include "./pack.cc"
 #include "./seek.cc"

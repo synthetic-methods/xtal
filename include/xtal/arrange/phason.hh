@@ -288,7 +288,7 @@ struct phason<A>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 static_assert(atomic_q<phason_t<float[2]>>);

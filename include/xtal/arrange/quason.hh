@@ -26,7 +26,7 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `arrange::order` with point-wise addition, and multiplication defined by linear convolution. \
+Extends `order` with point-wise addition, and multiplication defined by linear convolution. \
 
 template <vector_q A>
 struct quason<A>
@@ -150,7 +150,7 @@ struct quason<A>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 static_assert(atomic_q<quason_t<float[2]>>);

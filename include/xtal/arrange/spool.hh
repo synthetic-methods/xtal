@@ -187,7 +187,7 @@ struct spool<A>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 

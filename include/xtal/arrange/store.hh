@@ -506,7 +506,7 @@ struct store<U_data[N_data]>
 		}
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 

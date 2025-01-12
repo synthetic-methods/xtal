@@ -98,6 +98,20 @@ template <class F, class X    >	concept  automorphism_p	=  same_q<return_t<F, X>
 template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>, X>;
 
 
+template <template <class> class T_>
+struct derive
+{
+	class type : public T_<type>
+	{
+		using S_ = T_<type>;// -Wsubobject-linkage?
+		
+	public:
+		using S_::S_;
+
+	};
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\

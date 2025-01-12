@@ -264,7 +264,7 @@ struct couple<A>
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(s)*U_data(-signum_n<I&1, -1>)))
+					XTAL_0FN_(u +...+ (get<I>(s)*U_data{-signum_n<I&1, -1>}))
 				(bond::seek_s<N_data>{});
 			}
 		}
@@ -385,7 +385,7 @@ struct couple<A>
 
 
 	};
-	using type = bond::isotype<homotype>;
+	using type = derive_t<homotype>;
 
 };
 static_assert(atomic_q<couple_t<float[2]>>);

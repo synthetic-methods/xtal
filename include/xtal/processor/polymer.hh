@@ -17,14 +17,13 @@ but expands/contracts the voice spool according to `occur::stage` requests/respo
 ///\note\
 The attached `store` and `spool` determine the sample store and voice spool respectively. \
 
-///\todo\
-For `dimer`, clone-then-unstage the current voice. \
-Either define `lead()` as the `front()` of the ensemble, \
-or conditionally incorporate `lead()` into rendering and `key`ed event propagation. \
+///\note\
+The `scan` method of `spool` must return the most recently activated voice for a given `key_s`. \
+The default implementation uses `lower_bound` to this effect. \
 
 template <typename ..._s> struct   polymer;
-template <typename ..._s> using    polymer_t = confined_t<polymer< _s...>>;
-template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s...>;
+template <typename ..._s> using    polymer_t =  confined_t<polymer< _s...>>;
+template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s... >;
 template <typename ..._s>
 XTAL_DEF_(short)
 XTAL_LET polymer_f(auto &&u)
@@ -180,12 +179,8 @@ struct polymer<U, As...>
 
 						//	Recycle/terminate the current voice:
 							auto u = *u_;
-							switch (u_->influx(occur::stage_f(-1), oo...)) {
-							case  0: break;// Successful termination.
-							case  1: break;// Already terminated?
-							case -1:       // No response!
-								_std::abort();
-							}
+							auto x = u_->influx(occur::stage_f(-1), oo...);
+							assert(x != -1);
 							u_ = u_ensemble.poke(u_, h, XTAL_MOV_(u));
 						}
 						else {

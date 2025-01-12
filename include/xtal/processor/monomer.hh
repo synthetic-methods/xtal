@@ -12,8 +12,8 @@ namespace xtal::processor
 /////////////////////////////////////////////////////////////////////////////////
 
 template <typename ..._s> struct   monomer;
-template <typename ..._s> using    monomer_t = confined_t<monomer< _s...>>;
-template <typename ..._s> concept  monomer_q = bond::tag_p<monomer, _s...>;
+template <typename ..._s> using    monomer_t =  confined_t<monomer< _s...>>;
+template <typename ..._s> concept  monomer_q = bond::tag_p<monomer, _s... >;
 template <typename ...As>
 XTAL_DEF_(short)
 XTAL_LET monomer_f(auto &&u)
