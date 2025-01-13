@@ -21,8 +21,6 @@ TAG_("order")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
-	auto constexpr iffy = XTAL_FUN_(bond::computrim_f<16>);
-
 	TRY_("scalar multiplication")
 	{
 		using U2_alpha = order_t<T_alpha[2]>;

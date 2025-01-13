@@ -62,10 +62,10 @@ TAG_("couple")
 		auto foo = bar.template reflected<-1>();
 		auto baz = foo.template reflected<+1>();
 		
-		TRUE_(bond::computrim_f<19>(foo[0]) == 1.25);
-		TRUE_(bond::computrim_f<19>(foo[1]) == 0.75);
-		TRUE_(bond::computrim_f<19>(baz[0]) == bar[0]);
-		TRUE_(bond::computrim_f<19>(baz[1]) == bar[1]);
+		TRUE_(check_f<19>(foo[0], 1.25));
+		TRUE_(check_f<19>(foo[1], 0.75));
+		TRUE_(check_f<19>(baz[0], bar[0]));
+		TRUE_(check_f<19>(baz[1], bar[1]));
 
 	}
 	TRY_("refactoring")

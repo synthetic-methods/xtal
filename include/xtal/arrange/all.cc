@@ -4,5 +4,6 @@
 #include "./couple.cc"
 #include "./order.cc"
 #include "./grade.cc"
+#include "./group.cc"
 #include "./store.cc"
 #include "./spool.cc"

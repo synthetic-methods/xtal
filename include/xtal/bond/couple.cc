@@ -57,10 +57,10 @@ TAG_("couple")
 		
 		auto [x, y] = foo;
 
-		TRUE_(bond::computrim_f<19>(x) == 1.25);
-		TRUE_(bond::computrim_f<19>(y) == 0.75);
-		TRUE_(bond::computrim_f<19>(get<0>(baz)) == get<0>(bar));
-		TRUE_(bond::computrim_f<19>(get<1>(baz)) == get<1>(bar));
+		TRUE_(check_f<19>(x, 1.25));
+		TRUE_(check_f<19>(y, 0.75));
+		TRUE_(check_f<19>(get<0>(baz), get<0>(bar)));
+		TRUE_(check_f<19>(get<1>(baz), get<1>(bar)));
 
 	}
 }

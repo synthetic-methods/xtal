@@ -25,7 +25,7 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `arrange::order` with point-wise addition, and the scalar sum/product. \
+Extends `order` with point-wise multiplication, and the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
 template <vector_q A>
@@ -37,7 +37,7 @@ struct couple<A>
 	using A_aphex = typename A_op::aphex_type;
 	
 	template <class T>
-	using endotype = typename arrange::order<A>::template homotype<T>;
+	using endotype = typename order<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -117,7 +117,7 @@ struct couple<A>
 		XTAL_LET unzero()
 		noexcept -> bool
 		{
-			using U_value = dissolve_u<U_data>;
+			using U_value = absolve_u<U_data>;
 			using V_value = typename bond::operate<U_value>::sigma_type;
 
 			auto constexpr u  =    static_cast<U_value>(N_value);

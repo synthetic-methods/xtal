@@ -88,8 +88,10 @@ struct order<A>
 		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  |= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  &= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  %= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
 		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = one/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
+		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
+	//	XTAL_DEF_(inline)        XTAL_LET operator  -= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  -= u;}); return self();}
+	//	XTAL_DEF_(inline)        XTAL_LET operator  += (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  += u;}); return self();}
 
 		XTAL_DEF_(short,friend)
 		XTAL_LET operator * (auto const &s, T const &t)

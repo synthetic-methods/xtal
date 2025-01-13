@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./order.hh"
+#include "./group.hh"
 
 
 
@@ -26,15 +26,20 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `order` with point-wise addition and differential succession. \
+Extends `group` with point-wise addition and differential succession. \
 
 template <vector_q A>
 struct grade<A>
+:	grade<A, _std::plus<void>>
+{
+};
+template <vector_q A>
+struct grade<A, _std::plus<void>>
 {
 	using _op = bond::operate<A>;
 	
 	template <class T>
-	using endotype = typename arrange::order<A>::template homotype<T>;
+	using endotype = typename group<A>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
@@ -57,16 +62,8 @@ struct grade<A>
 		using S_::twin;
 	
 	public:// OPERATE
-	//	using S_::operator+=;
-	//	using S_::operator-=;
-
-		XTAL_DEF_(short)  XTAL_LET operator + (auto const &t)      const noexcept -> auto   {return twin() +=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator - (auto const &t)      const noexcept -> auto   {return twin() -=   t ;}
-		XTAL_DEF_(inline) XTAL_LET operator +=(initializer_s<U_data> t)  noexcept -> auto & {return self() += T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator -=(initializer_s<U_data> t)  noexcept -> auto & {return self() -= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator ++(int)                      noexcept -> auto   {auto t = twin(); operator++(); return t;}
-		XTAL_DEF_(inline) XTAL_LET operator --(int)                      noexcept -> auto   {auto t = twin(); operator--(); return t;}
-
+		XTAL_DEF_(inline) XTAL_LET operator ++(int) noexcept -> auto {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline) XTAL_LET operator --(int) noexcept -> auto {auto t = twin(); operator--(); return t;}
 
 		///\
 		Produces the successor by pairwise addition from `begin()` to `end()`, \
@@ -95,35 +92,6 @@ struct grade<A>
 			(bond::antiseek_s<N_data - 1>{});
 			
 			return self();
-		}
-
-
-	//	Vector addition:
-
-		XTAL_DEF_(inline)
-		XTAL_LET operator +=(T const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator -=(T const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
-		}
-
-		XTAL_DEF_(inline)
-		XTAL_LET operator +=(subarray_q<N_data> auto const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator -=(subarray_q<N_data> auto const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));
 		}
 
 	};

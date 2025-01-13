@@ -98,7 +98,8 @@ XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> bool
 {
-	return bond::computrim_f<N_index>(u) == bond::computrim_f<N_index>(v);
+	using _op = bond::operate<decltype(u), decltype(v)>;
+	return _op::template trim_f<N_index>(u) == _op::template trim_f<N_index>(v);
 }
 template <int N_index, int N_limit>
 XTAL_DEF_(long)

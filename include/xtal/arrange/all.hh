@@ -4,5 +4,6 @@
 #include "./couple.hh"
 #include "./order.hh"
 #include "./grade.hh"
+#include "./group.hh"
 #include "./store.hh"
 #include "./spool.hh"

@@ -281,7 +281,7 @@ TAG_("operate", "fraction")
 	{
 		for (T_sigma i = 0x100; ~--i;) {
 			T_alpha const u = ten*_op::mantissa_f(mt19937_f);
-			TRUE_(computrim_f<16>(_op::fraction_f(u)) == computrim_f<16>(u - _std::round(u)));
+			TRUE_(check_f<16>(_op::fraction_f(u), u - _std::round(u)));
 		}
 	};
 	EST_("wrap via integral arithmetic")
