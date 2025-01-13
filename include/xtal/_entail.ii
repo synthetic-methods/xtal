@@ -117,9 +117,8 @@ struct derive
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
-template <auto  N             >	XTAL_LET       magnum_n	= signum_n<N>*N;
 template <auto  M, auto     N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
+template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
 template <auto  M, auto     N >	XTAL_LET        above_m	= (M < N)? N: static_cast<XTAL_ALL_(N)>(M + 1);
 template <auto  M, auto     N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
 template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
@@ -131,15 +130,13 @@ template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) a
 
 
 template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
-template <auto  o             >	struct       constant    : constant_s<o> {};
+template <auto  o             >	struct       constant   :  constant_s<o> {};
 template <auto  o=null_type{} >	using        constant_t	=  constant  <o>   ;
 template <class T             >	concept      constant_q	= _std::derived_from<XTAL_RAW_(T), constant_s<T::value>>;
+template <class T             >	struct       variable     {using value_type =          based_t<T>            ;};
+template <constant_q T        >	struct       variable<T>  {using value_type = typename based_t<T>::value_type;};
+template <class T             >	using        variable_u	=  typename variable<T>::value_type;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
-
-using integral_type	=                              int;
-using cardinal_type	= _std::make_unsigned_t<size_type>;
-using  extent_type	= _std::  make_signed_t<size_type>;
-using  logical_type	=                             bool;
 
 template <class T        >	concept   integral_variable_q	= _std::             integral<XTAL_RAW_(T)>;
 template <class T        >	concept   cardinal_variable_q	= _std::    unsigned_integral<XTAL_RAW_(T)>;
@@ -170,8 +167,8 @@ template <class T             >	concept       anyplex_q	=  anyplex_variable_q<T>
 
 template <class T             >	concept       liminal_q	= constant_q<T> and 0 != T::value;
 template <class T             >	concept      terminal_q	= constant_q<T> and 0 == T::value;
-template <class S             >	using      subliminal_s	= constant_t<S::value - signum_n<S::value>>;
-template <class S             >	using    superliminal_s	= constant_t<S::value + signum_n<S::value>>;
+template <class S             >	using      subliminal_s	= constant_t<S::value - sign_n<S::value>>;
+template <class S             >	using    superliminal_s	= constant_t<S::value + sign_n<S::value>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
 #include "./any.hh"
+#include "./bit.hh"
 #include "./compose.hh"
 #include "./couple.hh"
 #include "./forge.hh"

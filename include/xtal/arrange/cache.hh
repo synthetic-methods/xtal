@@ -32,7 +32,7 @@ struct cache
 		using S_ = holotype<T>;
 		using I  = valued_u<_std::byte>;
 
-		XTAL_SET N_bytes = one << bond::operating::bit_ceiling_f(_detail::aligned_n<As...>);
+		XTAL_SET N_bytes = one << bond::bit_ceiling_f(_detail::aligned_n<As...>);
 		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
 		alignas (N_bytes)        _std::byte mutable   m_bytes[N_bytes]  ;
 

@@ -264,7 +264,7 @@ struct couple<A>
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(s)*U_data{-signum_n<I&1, -1>}))
+					XTAL_0FN_(u +...+ (get<I>(s)*U_data{-sign_n<I&1, -1>}))
 				(bond::seek_s<N_data>{});
 			}
 		}
@@ -286,7 +286,7 @@ struct couple<A>
 			else {
 				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 					auto const &v = get<I>(s);
-					u = _xtd::accumulator(XTAL_MOV_(u), v, v*U_data{-signum_n<I&1, -1>});
+					u = _xtd::accumulator(XTAL_MOV_(u), v, v*U_data{-sign_n<I&1, -1>});
 				});
 			}
 			return u;

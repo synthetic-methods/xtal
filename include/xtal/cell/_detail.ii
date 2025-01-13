@@ -403,7 +403,7 @@ struct defer_field<unit_type[N_width]>
 {
 	using U = unit_type[N_width];
 
-	static constexpr unsigned N_depth = bond::operating::bit_ceiling_f(N_width);
+	XTAL_SET_(unsigned) N_depth = bond::bit_ceiling_f(N_width);
 	static_assert(N_width == one << N_depth);
 
 	using superkind = bond::word<N_width>;

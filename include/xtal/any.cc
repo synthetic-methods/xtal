@@ -106,8 +106,8 @@ XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> int
 {
-	XTAL_LET Z_index = signum_n<N_index>;
-	XTAL_LET Z_limit = signum_n<N_limit>;
+	XTAL_LET Z_index = sign_n<N_index>;
+	XTAL_LET Z_limit = sign_n<N_limit>;
 	static_assert(Z_index == Z_limit);
 
 	XTAL_IF0

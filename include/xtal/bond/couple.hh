@@ -44,8 +44,12 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Xs>
-struct couple
+template <terminal_q N, class X, class ...Xs> struct couple<N, X, Xs...> : couple<                       Xs...> {};
+template < liminal_q N, class X, class ...Xs> struct couple<N, X, Xs...> : couple<subliminal_s<N>, X, X, Xs...> {};
+template <      auto N, class X             > struct couple<   X   [N] > : couple<  constant_t<N>, X          > {};
+template <      auto N, class X             > struct couple<   X(&)[N] > : couple<  constant_t<N>, X  &       > {};
+template <class ...Xs> requires scalar_q<Xs...> and variable_q<Xs...>
+struct couple<Xs...>
 {
 	XTAL_SET N_data = sizeof...(Xs);
 //	using    U_data =  common_t<Xs...>;
@@ -223,7 +227,7 @@ struct couple
 			}
 			else {
 				return [&, this]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(*this)*V_data{-signum_n<I&1, -1>}))
+					XTAL_0FN_(u +...+ (get<I>(*this)*V_data{-sign_n<I&1, -1>}))
 				(bond::seek_s<N_data>{});
 			}
 		}

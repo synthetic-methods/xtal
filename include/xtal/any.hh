@@ -95,8 +95,7 @@ using derive_t	= typename _entail::derive<T_>::type;
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	XTAL_LET       signum_n	=          _entail::          signum_n<N, Z    >;
-template <auto  N             >	XTAL_LET       magnum_n	=          _entail::          magnum_n<N       >;
+template <auto  N, auto   Z=0 >	XTAL_LET       sign_n	=          _entail::          sign_n<N, Z    >;
 template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail::          modulo_m<M, N    >;
 template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::           above_m<M, N    >;
 template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::           below_m<M, N    >;

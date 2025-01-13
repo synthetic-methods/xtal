@@ -141,6 +141,16 @@ namespace _xtd::ranges::views
 //\
 Structural...
 
+XTAL_DEF_(short)
+XTAL_LET variable_f(auto &&x)
+noexcept -> decltype(auto)
+{
+	using X = XTAL_ALL_(x);
+	XTAL_IF0
+	XTAL_0IF (variable_q<X>) {return XTAL_REF_(x);}
+	XTAL_0IF (constant_q<X>) {return     X::value;}
+}
+
 ///\returns the conditional `x` reinterpreted as type `Y`, \
 where `std::floating_point`s and `bool`eans are `static_cast`, \
 while all other `std::integral`s are negated. \

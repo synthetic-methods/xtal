@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./bit.cc"
 #include "./compose.cc"
 #include "./couple.cc"
 #include "./forge.cc"
