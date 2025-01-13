@@ -27,9 +27,7 @@ template <class   ..._s>	using    key_s = bond::compose_s<packet_t<_s...>, cell:
 template <>
 struct key<>
 {
-	using _op = bond::operating;
-
-	using superkind = cell::confer<typename _op::iota_type, bond::tag<key>>;
+	using superkind = cell::confer<signed, bond::tag<key>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -42,7 +40,7 @@ struct key<>
 		XTAL_TO4_(XTAL_DEF_(implicit operator) auto(), key_s<>(S_::head()))
 		
 		using key_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
-		using key_size = constant_t<size_type{1}>;
+		using key_size = constant_t<unsigned{1}>;
 
 	};
 	template <key_q S>

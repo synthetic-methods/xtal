@@ -76,7 +76,6 @@ TAG_("bit", "bit_reverse")
 TAG_("bit_floor_f")
 {
 	using _op = operating;
-	using T_iota  = typename _op:: iota_type;
 	using T_delta = typename _op::delta_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_alpha = typename _op::alpha_type;
@@ -152,7 +151,6 @@ TAG_("bit_floor_f")
 TAG_("bit_representation_f")
 {
 	using _op = operating;
-	using T_iota  = typename _op:: iota_type;
 	using T_delta = typename _op::delta_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_alpha = typename _op::alpha_type;

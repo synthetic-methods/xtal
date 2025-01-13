@@ -17,8 +17,8 @@ namespace _detail
 template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
 template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
 
-template <class T         >	struct   seek                : constant_t<(bool) 0> {};
-template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : constant_t<(bool) 1> {};
+template <class T         >	struct   seek                : constant_t<false> {};
+template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : constant_t< true> {};
 template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
 
 
@@ -110,9 +110,9 @@ template <auto  ...Ns>	XTAL_LET seek_lower_n = seek_order_n<[] (auto i, auto j) 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int  I, bool ...Ns>	struct   seek_truth;
-template <int  I            >	struct   seek_truth<I          > : constant_t<   -1       > {};
-template <int  I, bool ...Ns>	struct   seek_truth<I, 1, Ns...> : constant_t<    I       > {};
-template <int  I, bool ...Ns>	struct   seek_truth<I, 0, Ns...> : seek_truth<1 + I, Ns...> {};
+template <int  I            >	struct   seek_truth<I              > : constant_t<   -1       > {};
+template <int  I, bool ...Ns>	struct   seek_truth<I,  true, Ns...> : constant_t<    I       > {};
+template <int  I, bool ...Ns>	struct   seek_truth<I, false, Ns...> : seek_truth<1 + I, Ns...> {};
 template <        bool ...Ns>	XTAL_LET seek_truth_n = seek_truth<0, Ns...>::value;
 
 static_assert(seek_truth_n<                   > == -1);

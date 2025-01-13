@@ -84,7 +84,7 @@ struct define
 								review_o.subview(scan),
 								render_o.subview(scan).skip(step)
 							)))
-						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,R_::efflux(oo...)) (R_::template influx_push(XTAL_REF_(render_o)));
+						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,R_::efflux(oo...)) (R_::influx_push(XTAL_REF_(render_o)));
 					}
 				}
 				///\
@@ -117,9 +117,9 @@ struct define
 #if XTAL_VER_(LLVM)
 						XTAL_0IF XTAL_TRY_DO_(_std::copy_n(copy_j, n, _i))
 #endif
-						XTAL_0IF XTAL_TRY_DO_(      copy_n(move_j, n, _i))
-						XTAL_0IF XTAL_TRY_DO_(      move  (result_o|account_f(n), _i))
-						XTAL_0IF_(else) {for (size_type m = 0; m < n; ++m) {*_i++ = *move_j++;}}
+						XTAL_0IF XTAL_TRY_DO_(copy_n(move_j, n, _i))
+						XTAL_0IF XTAL_TRY_DO_(move  (result_o|account_f(n), _i))
+						XTAL_0IF_(else) {for (int m{}; m < n; ++m) {*_i++ = *move_j++;}}
 
 						return 0;
 					}

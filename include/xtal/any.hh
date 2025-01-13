@@ -30,12 +30,12 @@ namespace xtal
 //\
 Standard...
 
-using   void_type = _entail::  void_type;
-using   null_type = _entail::  null_type;
-using   unit_type = _entail::  unit_type;
-using   sign_type = _entail::  sign_type;
-using   size_type = _entail::  size_type;
-using extent_type = _entail::extent_type;
+using     void_type = _entail::  void_type;
+using     null_type = _entail::  null_type;
+using     unit_type = _entail::  unit_type;
+using     sign_type = _entail::  sign_type;
+using     size_type = _entail::  size_type;
+using   extent_type = _entail::extent_type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -235,8 +235,8 @@ template <         class ...Ts>	concept        scalar_q	=  (...and _entail::    
 template <         class ...Ts>	concept        vector_q	=  (...and _entail::       vector_q<Ts>);
 template <         class ...Ts>	concept        matrix_q	=  (...and _entail::       matrix_q<Ts>);
 template <         class ...Ts>	concept        tensor_q	=  (...and _entail::       tensor_q<Ts>);
-template <class T, int   N=-1 >	concept         array_q	=          _entail::        array_q<T > and N <  0   or destruct_n<T> == N;
-template <class T, int   N=-1 >	concept      subarray_q	=          _entail::        array_q<T > and 0 <= N  and destruct_n<T> <= N;
+template <class T, int   N=-1 >	concept         array_q	=          _entail::        array_q<T > and N < 0 or destruct_n<T> == N;
+template <class T, int   N=-1 >	concept      subarray_q	=          _entail::        array_q<T > and N < 0 or destruct_n<T> <= N;
 
 
 template <class T             >	using       coindexed_u	=          _entail::    coindexed_u<T >;

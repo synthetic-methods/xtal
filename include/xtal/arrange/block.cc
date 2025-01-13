@@ -28,9 +28,7 @@ TAG_("block")
 	{
 		W_alpha w_alpha{1, 2};
 
-		//\
-		auto &u_alpha_ = w_alpha.template capsize<1>();
-		auto  u_alpha_ = w_alpha.template capsize<1>();
+		auto  u_alpha_ = w_alpha.self(one);
 		TRUE_(w_alpha == W_alpha{1, 2});
 		u_alpha_[0] = 3;
 		TRUE_(w_alpha == W_alpha{3, 2});

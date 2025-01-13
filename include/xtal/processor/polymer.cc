@@ -20,7 +20,7 @@ namespace xtal::processor::_test
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template <size_type N_window=8, int N_store=-1, int N_spool=-1>
+template <int N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
 	using _op = bond::operating;
@@ -86,7 +86,7 @@ TAG_("polymer", "occur", "spine")
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <size_type N_window=8, int N_store=0, int N_spool=0>
+template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
 	using T_alpha = typename bond::operating::alpha_type;
@@ -130,7 +130,7 @@ void polymer_provision_spool__combined()
 	TRUE_(69 == vox_oo_++->head());
 
 }
-template <size_type N_window=8, int N_store=0, int N_spool=0>
+template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool_composited()
 {
 	using T_alpha = typename bond::operating::alpha_type;

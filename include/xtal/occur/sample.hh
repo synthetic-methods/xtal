@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_type>	struct   sample;
-template <class U=size_type>	using    sample_t = confined_t<sample<U>>;
-template <typename    ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
+template <class U=unsigned>	struct   sample;
+template <class U=unsigned>	using    sample_t = confined_t<sample<U>>;
+template <typename   ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -23,11 +23,8 @@ struct sample
 {
 private:
 	using _op = bond::operate<W>;
-	using U = typename _op:: iota_type;
+	using U = typename _op::delta_type;
 	using V = typename _op::alpha_type;
-
-	static constexpr U U_1{1};
-	static constexpr V V_1{1};
 
 	using M = bond::pack_t<U, V>;
 
@@ -60,11 +57,11 @@ public:
 		{}
 		XTAL_NEW_(explicit) subtype(integral_variable_q auto n, auto &&...oo)
 		noexcept
-		:	S_(M{n, 0 == n? 0: V_1/n}, XTAL_REF_(oo)...)
+		:	S_(M{n, 0 == n? 0: V{1}/n}, XTAL_REF_(oo)...)
 		{}
 		XTAL_NEW_(explicit) subtype(real_variable_q auto u, auto &&...oo)
 		noexcept
-		:	S_(M{0 == u? 0: U_1/u, u}, XTAL_REF_(oo)...)
+		:	S_(M{0 == u? 0: U{1}/u, u}, XTAL_REF_(oo)...)
 		{}
 
 		XTAL_TO4_(XTAL_DEF_(let)   rate(), get<0>(S_::head()))

@@ -44,14 +44,6 @@ struct superblock<U(&)[N]>
 	public:// CONSTRUCT
 		using S_::S_;
 
-		template <class V_data=U_data>
-		XTAL_DEF_(short)
-		XTAL_LET twin() const
-		noexcept -> decltype(auto)
-		{
-			return typename T::taboo::template hypertype<V_data[N_data]>(S_::self());
-		}
-
 	};	
 	using type = derive_t<homotype>;
 
@@ -72,21 +64,6 @@ struct superblock<U[N]>
 	protected:
 		XTAL_SET N_data = N;
 		using    U_data = U;
-
-	public:// ACCESS
-
-		template <class V_data=void>
-		XTAL_DEF_(short)
-		XTAL_LET twin() const
-		noexcept -> decltype(auto)
-		{
-			if constexpr (incomplete_q<V_data>) {
-				return S_::twin();
-			}
-			else {
-				return typename T::taboo::template hypertype<V_data[N_data]>(S_::self());
-			}
-		}
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -173,51 +150,37 @@ struct block<A>
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// MAP
-		XTAL_DEF_(short,static) XTAL_LET   ordinate(auto &&o) noexcept -> decltype(auto) {return XTAL_REF_(o);}
-		XTAL_DEF_(short,static) XTAL_LET coordinate(auto &&o) noexcept -> decltype(auto) {return XTAL_REF_(o);}
+		XTAL_DEF_(set)   ordinate(auto &&o) noexcept {return XTAL_REF_(o);}
+		XTAL_DEF_(set) coordinate(auto &&o) noexcept {return XTAL_REF_(o);}
+
+		template <vector_q _A, class _=void> struct  reforge       {using type = typename T::taboo::template hypertype<_A>;};
+		template <             class _     > struct  reforge<A, _> {using type = T;};
+		template <vector_q _A              > using   reforge_t = typename reforge<_A>::type;
 
 	public:// ACCESS
 		using S_::self;
-		using S_::twin;
-		
+
+		XTAL_DO2_(template <vector_q _A=U_data[N_data]>
+		XTAL_DEF_(let) reform(), noexcept {return reforge_t<_A>(self());})
+
+		///\returns the first `i` elements of `this` as a truncated view over `_U`. \
+
+	//	XTAL_DO2_(template <scalar_q _U=U_data> XTAL_DEF_(let) self(                 ), noexcept {return reform<_U(&)[N_data]>();})
+		XTAL_DO2_(template <scalar_q _U=U_data> XTAL_DEF_(let) self(constant_q auto i), noexcept {return reform<_U(&)[i()   ]>();})
+
+		///\returns the first `i` elements of `this` as a truncated copy over `_U`. \
+
+		XTAL_DO2_(template <scalar_q _U=U_data> XTAL_DEF_(let) twin(                 ), noexcept {return reform<_U   [N_data]>();})
+		XTAL_DO2_(template <scalar_q _U=U_data> XTAL_DEF_(let) twin(constant_q auto i), noexcept {return reform<_U   [i()   ]>();})
+
+		///\returns the size of this type or value. \
+
 		XTAL_DEF_(short,static)
 		XTAL_LET size()
 		noexcept -> auto
 		{
 			return static_cast<U_size>(N_data);
 		}
-		template <U_size n_data>
-		XTAL_DEF_(short)
-		XTAL_LET capsize()
-		noexcept -> auto
-		{
-			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template hypertype<U_data   [n_data]> &;
-			using Y = typename T::taboo::template hypertype<U_data(&)[n_data]>  ;
-			//\
-			return reinterpret_cast<X>(*this);
-			return Y(*this);
-		}
-		template <U_size n_data>
-		XTAL_DEF_(short)
-		XTAL_LET capsize() const
-		noexcept -> auto
-		{
-			static_assert(n_data <= N_data);
-			using X = typename T::taboo::template hypertype<U_data   [n_data]> const &;
-			using Y = typename T::taboo::template hypertype<U_data(&)[n_data]> const  ;
-			//\
-			return reinterpret_cast<X>(*this);
-			return Y(*this);
-		}
-		XTAL_DO2_(template <constant_q I>
-		XTAL_DEF_(short)
-		XTAL_LET capsize(I),
-		noexcept -> decltype(auto)
-		{
-			return capsize<I::value>();
-		})
 
 		template <size_type I>
 		XTAL_DEF_(let) operator () (    ) const noexcept {return self().coordinate(element<I>());}
@@ -298,7 +261,7 @@ struct block<A>
 		}
 		template <auto f>
 		XTAL_DEF_(inline)
-		XTAL_LET pointwise(fixed_valued_q auto const &t)
+		XTAL_LET pointwise(fixed_sized_q auto const &t)
 		noexcept -> auto &
 		requires requires (U_data &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
 		{
@@ -320,22 +283,38 @@ struct block<A>
 		noexcept -> auto
 		requires requires (U_data const &u) {f(u);}
 		{
+			using T_ = reforge_t<U_data[N_data]>;
+
 			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(T{f(get<I>(s))...})
+				XTAL_0FN_(T_{f(get<I>(s))...})
 			(bond::seek_s<N_data>{});
 		}
 		template <auto f>
 		XTAL_DEF_(short,static)
-		XTAL_LET pointwise(T      const &s, fixed_valued_q auto const &t)
+		XTAL_LET pointwise(T      const &s, fixed_sized_q auto const &t)
 		noexcept -> auto
 		requires requires (U_data const &u, fixed_valued_u<decltype(t)> const &v) {f(u, v);}
 		{
 			size_type constexpr N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);
 			
+			using T_ = reforge_t<U_data[N_data]>;
+
 			return [&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(T{f(get<I>(s), get<I>(t))...})
+				XTAL_0FN_(T_{f(get<I>(s), get<I>(t))...})
 			(bond::seek_s<N>{});
+		}
+		template <auto f>
+		XTAL_DEF_(short,static)
+		XTAL_LET pointwise(T      const &s, U_data const &v)
+		noexcept -> auto
+		requires requires (U_data const &u) {f(u, v);}
+		{
+			using T_ = reforge_t<U_data[N_data]>;
+
+			return [&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(T_{f(get<I>(s), v)...})
+			(bond::seek_s<N_data>{});
 		}
 
 		template <auto f, size_t I=N_data - 1>

@@ -23,7 +23,6 @@ template <class T>
 struct define
 {
 	using _op = bond::operating;
-	using T_iota = typename _op::iota_type;
 
 	using superkind = _retail::define<T>;
 
@@ -37,18 +36,18 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_DEF_(inline) XTAL_LET delay()         noexcept -> auto {return static_cast<T_iota>(count_f(self()));}
+		XTAL_DEF_(inline) XTAL_LET delay()         noexcept -> auto {return static_cast<signed>(count_f(self()));}
 		XTAL_DEF_(inline) XTAL_LET relay(auto &&i) noexcept -> auto {return self().delay();}
-	//	XTAL_DEF_(inline) XTAL_LET relay(auto &&i) noexcept -> auto {return _std::min<T_iota>({0x80, self().delay()});}// Force chunking somehow?
+	//	XTAL_DEF_(inline) XTAL_LET relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		
 		///\
 		Relays all queued events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
 		XTAL_DEF_(short) XTAL_LET reflux(auto const &f)             noexcept -> signed {return reflux(f, 0);}
-		XTAL_DEF_(short) XTAL_LET reflux(auto const &f, T_iota &&n) noexcept -> signed {return reflux(f, n);}
+		XTAL_DEF_(short) XTAL_LET reflux(auto const &f, signed &&n) noexcept -> signed {return reflux(f, n);}
 		XTAL_DEF_(long)
-		XTAL_LET reflux(auto const &f, T_iota  &n)
+		XTAL_LET reflux(auto const &f, signed &n)
 		noexcept
 		{
 			auto x = influx();

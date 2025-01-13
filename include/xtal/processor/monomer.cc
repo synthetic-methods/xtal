@@ -8,7 +8,7 @@
 
 XTAL_ENV_(push)
 namespace xtal::processor::_test
-{/////////////////////////////////////////////////////////////////////////////////FIXME
+{/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ void monomer_zipping()
 	using T_alpha = _op::alpha_type;
 
 	using U_data = T_alpha;
-	size_type constexpr U_size = 2;
+	unsigned constexpr U_size = 2;
 
 	//\
 	using U_block  =  arrange::block_t<U_data[U_size]>;
@@ -207,7 +207,7 @@ void monomer_chaining__rvalue()
 	using T_sigma = typename bond::operating::sigma_type;
 	using T_alpha = typename bond::operating::alpha_type;
 
-	size_type constexpr N = 4;
+	unsigned constexpr N = 4;
 	
 	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
@@ -237,7 +237,7 @@ void monomer_chaining__lvalue()
 	using T_sigma = typename bond::operating::sigma_type;
 	using T_alpha = typename bond::operating::alpha_type;
 
-	size_type constexpr N = 4;
+	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
@@ -269,7 +269,7 @@ void monomer_chaining__shared()
 	using T_sigma = typename bond::operating::sigma_type;
 	using T_alpha = typename bond::operating::alpha_type;
 
-	size_type constexpr N = 4;
+	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
 	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);

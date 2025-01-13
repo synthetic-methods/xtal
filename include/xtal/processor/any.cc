@@ -87,7 +87,7 @@ TAG_("processor", "construct")
 	{
 		using T_alpha = typename bond::operating::alpha_type;
 
-		size_type constexpr N_size = 5;
+		unsigned constexpr N_size = 5;
 		using U_block = arrange::block_t<T_alpha[N_size]>;
 		
 		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));

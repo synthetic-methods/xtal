@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./order.hh"
+#include "./group.hh"
 
 
 
@@ -25,7 +25,7 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `order` with point-wise multiplication, and the scalar sum/product. \
+Extends the multiplicative `group` with the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
 template <vector_q A>
@@ -37,7 +37,7 @@ struct couple<A>
 	using A_aphex = typename A_op::aphex_type;
 	
 	template <class T>
-	using endotype = typename order<A>::template homotype<T>;
+	using endotype = typename group<A, _std::multiplies<void>>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -148,41 +148,6 @@ struct couple<A>
 			return z;
 		}
 
-		using S_::operator*=;
-		using S_::operator/=;
-		using S_::operator%=;
-
-		XTAL_DEF_(short)  XTAL_LET operator * (auto const &t)              const noexcept -> auto   {return S_::twin() *=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator / (auto const &t)              const noexcept -> auto   {return S_::twin() /=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator % (auto const &t)              const noexcept -> auto   {return S_::twin() %=   t ;}
-		XTAL_DEF_(inline) XTAL_LET operator *=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() *= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator /=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() /= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator %=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() %= T(t);}
-
-	//	Vector multiplication (Hadamard product):
-		
-		XTAL_DEF_(inline)
-		XTAL_LET operator *=(array_q<N_data> auto const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u *= v;}>(XTAL_REF_(t));
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator /=(array_q<N_data> auto const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u /= v;}>(XTAL_REF_(t));
-		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator %=(array_q<N_data> auto const &t)
-		noexcept -> T &
-		{
-			return S_::template pointwise<[] (auto &u, auto const &v)
-				XTAL_0FN {u %= v;}>(XTAL_REF_(t));
-		}
-
 		///\
 		Produces the progressive sum/difference, \
 		starting from zero if post-fixed. \
@@ -193,10 +158,8 @@ struct couple<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator++() const
-				{
-			//\
+		{
 			auto t = S_::twin();
-			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
@@ -206,10 +169,8 @@ struct couple<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator--() const
-				{
-			//\
+		{
 			auto t = S_::twin();
-			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
@@ -220,10 +181,8 @@ struct couple<A>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator++(int) const
-				{
-			//\
+		{
 			auto t = S_::twin();
-			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};
@@ -235,10 +194,8 @@ struct couple<A>
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator--(int) const
-				{
-			//\
+		{
 			auto t = S_::twin();
-			auto t = typename T::taboo::template hypertype<U_data[N_data]>(S_::self());
 
 			U_data u{};
 			U_data v{};

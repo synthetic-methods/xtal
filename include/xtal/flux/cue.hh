@@ -25,9 +25,7 @@ template <class	..._s> using    cue_s = bond::compose_s<flux::packet_t<_s...>, c
 template <>
 struct cue<>
 {
-	using _op = bond::operating;
-
-	using superkind = cell::confer<typename _op::iota_type, bond::tag<cue>>;
+	using superkind = cell::confer<signed, bond::tag<cue>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -40,7 +38,7 @@ struct cue<>
 		XTAL_TO4_(XTAL_DEF_(implicit operator) auto(), cue_s<>(S_::head()))
 
 		using cue_type = XTAL_ALL_(XTAL_ANY_(S_).tail());
-		using cue_size = constant_t<size_type{1}>;
+		using cue_size = constant_t<unsigned{1}>;
 
 	};
 	template <cue_q S>

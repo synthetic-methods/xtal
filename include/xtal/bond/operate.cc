@@ -16,7 +16,6 @@ namespace xtal::bond::_test
 TAG_("operate", "semifractional")
 {
 	using _op = operating;
-	using T_iota  = typename _op:: iota_type;
 	using T_delta = typename _op::delta_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_alpha = typename _op::alpha_type;
@@ -25,7 +24,7 @@ TAG_("operate", "semifractional")
 
 	TRY_("trial")
 	{
-		using _qp = bond::operate<T_iota>;
+		using _qp = bond::operate<int>;
 		
 		TRUE_(check_f<-1>(_op::haplo_f()*_op::bit_fraction_f(+123456789.0e-00), (+123456789.0e-00) - round(+123456789.0e-00)));
 		TRUE_(check_f<-1>(_op::haplo_f()*_op::bit_fraction_f(+123456789.0e-01), (+123456789.0e-01) - round(+123456789.0e-01)));
@@ -81,7 +80,6 @@ TAG_("operate", "semifractional")
 TAG_("operate", "fraction")
 {
 	using _op = operating;
-	using T_iota  = typename _op:: iota_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;

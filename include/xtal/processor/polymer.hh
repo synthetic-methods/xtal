@@ -59,8 +59,8 @@ struct polymer<U, As...>
 		struct bracket
 		{
 			//\
-			using V_voice = monomer_t<U, provision::context<S_subtext>>::template bind_t<Xs...>;
-			using V_voice = monomer_t<U, S_subtext>::template bind_t<Xs...>;
+			using V_voice = typename monomer_t<U, provision::context<S_subtext>>::template bind_t<Xs...>;
+			using V_voice = typename monomer_t<U, S_subtext>::template bind_t<Xs...>;
 			using V_event = occur::stage_t<>;
 			
 			using U_voice = flux::key_s<V_voice>;

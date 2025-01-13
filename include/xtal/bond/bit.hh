@@ -17,59 +17,47 @@ Move to `xtal::process::math::boole`?
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Ts>	using   bit_iota_t = typename operate<Ts...>:: iota_type;
-template <class ...Ts>	using  bit_delta_t = typename operate<Ts...>::delta_type;
-template <class ...Ts>	using  bit_sigma_t = typename operate<Ts...>::sigma_type;
-template <class ...Ts>	using  bit_alpha_t = typename operate<Ts...>::alpha_type;
-template <class ...Ts>	using  bit_aphex_t = typename operate<Ts...>::aphex_type;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
+template <class V>
+XTAL_DEF_(short)
+XTAL_SET bit_depth_f()
+noexcept -> auto
+{
+	return static_cast<int>(sizeof(V) << 3);
+}
 XTAL_DEF_(short)
 XTAL_SET bit_depth_f(variable_q auto v)
-noexcept -> auto
+noexcept -> int
 {
-	return sizeof(v) << 3;
+	return static_cast<int>(sizeof(v) << 3);
 }
-
 XTAL_DEF_(short)
 XTAL_SET bit_depth_f(constant_q auto w)
-noexcept -> auto
+noexcept -> int
 {
-	return constant_t<bit_depth_f(w.value)>{};
-}
-template <int N_diff>
-XTAL_DEF_(short)
-XTAL_SET bit_depth_f(auto x)
-noexcept -> auto
-{
-	return bit_depth_f(x) + N_diff;
+	return constant_t<bit_depth_f(w())>{};
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 XTAL_DEF_(short)
-XTAL_SET bit_sign_f(cardinal_variable_q auto u)
-noexcept -> auto
+XTAL_SET bit_sign_f(integral_variable_q auto o)
+noexcept -> int
 {
-	using U = bit_sigma_t<decltype(u)>;
-	using V = bit_delta_t<decltype(u)>;
-	return _xtd::bit_cast<U>(_xtd::bit_cast<V>(u) >> bit_depth_f<-1>(u));
+	return static_cast<int>(ordinal_f(o) >> bit_depth_f<decltype(o)>() - one);
 }
 XTAL_DEF_(short)
-XTAL_SET bit_sign_f(ordinal_variable_q auto v)
-noexcept -> auto
+XTAL_SET bit_sign_f(real_variable_q auto o)
+noexcept -> int
 {
-	return v >> operate<decltype(v)>::positive.depth;
+	using _op = bond::operate<decltype(o)>;
+	return bit_sign_f(_xtd::bit_cast<typename _op::delta_type>(o));
 }
-
 XTAL_DEF_(short)
 XTAL_SET bit_sign_f(constant_q auto w)
 noexcept -> auto
 {
-	return constant_t<bit_sign_f(w.value)>{};
+	return constant_t<bit_sign_f(w())>{};
 }
 
 
@@ -77,41 +65,39 @@ noexcept -> auto
 
 XTAL_DEF_(short)
 XTAL_SET bit_count_f(cardinal_variable_q auto u)
-noexcept -> auto
+noexcept -> int
 {
 	return _std::popcount(u);
 }
 XTAL_DEF_(short)
 XTAL_SET bit_count_f(ordinal_variable_q auto v)
-noexcept -> auto
+noexcept -> int
 {
-	using U = bit_sigma_t<decltype(v)>;
-	using V = bit_delta_t<decltype(v)>;
-	auto  x = bit_sign_f(v);
+	int  x = bit_sign_f(v);
 	v ^= x;
 	v -= x;
-	v  = _xtd::bit_cast<V>(bit_count_f(_xtd::bit_cast<U>(v)));
-	v ^= x;
-	v -= x;
-	return v;
+	int  y = bit_count_f(cardinal_f(v));
+	y ^= x;
+	y -= x;
+	return y;
 }
 
 XTAL_DEF_(short)
 XTAL_SET bit_count_f(constant_q auto w)
 noexcept -> auto
 {
-	return constant_t<bit_count_f(w.value)>{};
+	return constant_t<bit_count_f(w())>{};
 }
 
 
 template <int N_zero=-1> requires (N_zero == -1)
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(cardinal_variable_q auto u)
-noexcept -> bit_delta_t<decltype(u)>
+noexcept -> int
 {
 	/*/
 	U const  z =      one == u;
-	U const _z = operate<decltype(u)>::unit.depth&-z;
+	U const _z = bond::operate<decltype(u)>::unit.depth&-z;
 	return _std::bit_width(u) - (one << _z) + z;// 0 -> -1023
 	/*/
 	return _std::bit_width(u) - one;// 0 -> -1
@@ -120,38 +106,34 @@ noexcept -> bit_delta_t<decltype(u)>
 template <int N_zero=-1> requires (N_zero != -1)
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(cardinal_variable_q auto u)
-noexcept -> bit_delta_t<decltype(u)>
+noexcept -> int
 {
-	XTAL_LET Z =         -1;
-	XTAL_LET N = N_zero - Z;
-	u  =  bit_floor_f(u);
-	u += N&bit_sign_f(u);
-	return u;
+	int constexpr N = N_zero + one;
+	int y = bit_floor_f(u); y += (N&bit_sign_f(y));
+	return y;
 }
 template <int N_zero=-1>
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(ordinal_variable_q auto v)
-noexcept -> bit_delta_t<decltype(v)>
+noexcept -> int
 {
-	using U = bit_sigma_t<decltype(v)>;
-	using V = bit_delta_t<decltype(v)>;
-	auto  x = bit_sign_f(v);
+	int  x = bit_sign_f(v);
 	v ^= x;
 	v -= x;
-	v  = _xtd::bit_cast<V>(bit_floor_f<N_zero>(_xtd::bit_cast<U>(v)));
-	v ^= x;
-	v -= x;
-	return v;
+	int  y = bit_floor_f<N_zero>(cardinal_f(v));
+	y ^= x;
+	y -= x;
+	return y;
 }
 
 template <int N_zero>
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(real_variable_q auto &&x)
-noexcept -> bit_delta_t<decltype(x)>
+noexcept -> int
 {
-	using X_op =  operate<decltype(x)>;
-	using U = bit_sigma_t<decltype(x)>;
-	using V = bit_delta_t<decltype(x)>;
+	using X_op =  bond::operate<decltype(x)>;
+	using U = typename X_op::sigma_type;
+	using V = typename X_op::delta_type;
 
 	XTAL_LET Z = -X_op::unit.mark;
 	XTAL_LET N = N_zero - Z << X_op::unit.shift;
@@ -165,13 +147,13 @@ noexcept -> bit_delta_t<decltype(x)>
 template <int N_zero>
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(complex_variable_q auto &&x)
-noexcept -> bit_delta_t<decltype(x)>
+noexcept -> int
 {
 	return bit_floor_f<N_zero>(norm(XTAL_REF_(x))) >> one;
 }
 XTAL_DEF_(short)
 XTAL_SET bit_floor_f(auto &&x)
-noexcept -> bit_delta_t<decltype(x)>
+noexcept -> int
 requires real_variable_q<absolve_u<decltype(x)>>
 {
 	XTAL_LET N_zero = -static_cast<int>(bond::operate<decltype(x)>::unit.mark);
@@ -183,16 +165,16 @@ XTAL_DEF_(short)
 XTAL_SET bit_floor_f(constant_q auto w)
 noexcept -> auto
 {
-	return constant_t<bit_floor_f<N_zero>(w.value)>{};
+	return constant_t<bit_floor_f<N_zero>(w())>{};
 }
 
 
 template <int N_zero=-1> requires (N_zero == -1)
 XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(cardinal_variable_q auto u)
-noexcept -> bit_delta_t<decltype(u)>
+noexcept -> int
 {
-	auto const z = u == zero;
+	int const z = u == zero;
 	//\
 	return _std::bit_width(u - !z) - (z << unit.depth) + z;// 0 -> -1023
 	return _std::bit_width(u - !z)                     - z;// 0 -> -1
@@ -200,42 +182,38 @@ noexcept -> bit_delta_t<decltype(u)>
 template <int N_zero=-1> requires (N_zero != -1)
 XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(cardinal_variable_q auto u)
-noexcept -> bit_delta_t<decltype(u)>
+noexcept -> int
 {
-	XTAL_LET Z =         -1;
-	XTAL_LET N = N_zero - Z;
-	u  =   bit_ceiling_f(u);
-	u +=    N&bit_sign_f(u);
-	return u;
+	int constexpr N = N_zero + one;
+	int y = bit_ceiling_f(u); y += N&bit_sign_f(y);
+	return y;
 }
 template <int N_zero=-1>
 XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(ordinal_variable_q auto v)
-noexcept -> bit_delta_t<decltype(v)>
+noexcept -> int
 {
-	using U = bit_sigma_t<decltype(v)>;
-	using V = bit_delta_t<decltype(v)>;
-	V x = bit_sign_f(v);
+	int  x = bit_sign_f(v);
 	v ^= x;
 	v -= x;
-	v  = _xtd::bit_cast<V>(bit_ceiling_f(_xtd::bit_cast<U>(v)));
-	v ^= x;
-	v -= x;
-	return v;
+	int  y = bit_ceiling_f<N_zero>(cardinal_f(v));
+	y ^= x;
+	y -= x;
+	return y;
 }
 
 template <int N_zero=+1>
 XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(real_variable_q auto &&x)
-noexcept -> bit_delta_t<decltype(x)>
+noexcept -> int
 {
 	using X_op = bond::operate<decltype(x)>;
-	return bit_floor_f<N_zero>(XTAL_REF_(x)*X_op::diplo_1*X_op::dnsilon_1);
+	return bit_floor_f<N_zero>(X_op::diplo_1*X_op::dnsilon_1*XTAL_REF_(x));
 }
 template <int N_zero=+1>
 XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(complex_variable_q auto &&x)
-noexcept -> bit_delta_t<decltype(x)>
+noexcept -> int
 {
 	return bit_ceiling_f<N_zero>(norm(XTAL_REF_(x))) >> 1;
 }
@@ -245,7 +223,7 @@ XTAL_DEF_(short)
 XTAL_SET bit_ceiling_f(constant_q auto w)
 noexcept -> auto
 {
-	return constant_t<bit_ceiling_f<N_zero>(w.value)>{};
+	return constant_t<bit_ceiling_f<N_zero>(w())>{};
 }
 
 
@@ -258,27 +236,25 @@ XTAL_DEF_(long)
 XTAL_SET bit_reverse_f(cardinal_variable_q auto u, int const &n_subdepth)
 noexcept -> auto
 {
-	using U = XTAL_ALL_(u);
-	using U_op = bond::operate<U>;
+	using    U =      decltype(u);
+	XTAL_LET N = bit_depth_f<U>();
 
 	#pragma inline
-	for (U m = -1, i = U_op::full.depth; i >>= 1;) {
+	for (U m = -1, i = N; i >>= 1;) {
 		m ^= m<<i;
 		u = (u&m)<<i | (u&~m)>>i;
 	}
-	u >>= U_op::full.depth - n_subdepth; assert(0 < n_subdepth and n_subdepth <= U_op::full.depth);
+	u >>= N - n_subdepth; assert(0 < n_subdepth and n_subdepth <= N);
 	return u;
 }
 XTAL_DEF_(long)
 XTAL_SET bit_reverse_f(ordinal_variable_q auto v, int const &n_subdepth)
 noexcept -> auto
 {
-	using U = bit_sigma_t<decltype(v)>;
-	using V = bit_delta_t<decltype(v)>;
-	V x = bit_sign_f(v);
+	decltype(v) x = bit_sign_f(v);
 	v ^= x;
 	v -= x;
-	v  = _xtd::bit_cast<V>(bit_reverse_f(_xtd::bit_cast<U>(v), n_subdepth));
+	v  = ordinal_f(bit_reverse_f(cardinal_f(v), n_subdepth));
 	v ^= x;
 	v -= x;
 	return v;
@@ -288,7 +264,7 @@ XTAL_DEF_(short)
 XTAL_SET bit_reverse_f(constant_q auto w, int const &n_subdepth)
 noexcept -> auto
 {
-	return constant_t<bit_reverse_f(w.value, n_subdepth)>{};
+	return constant_t<bit_reverse_f(w(), n_subdepth)>{};
 }
 template <int N_subdepth>
 XTAL_DEF_(short)
@@ -306,11 +282,11 @@ noexcept -> auto
 
 XTAL_DEF_(short)
 XTAL_SET bit_representation_f(real_variable_q auto x)
-noexcept -> couple_t<bit_delta_t<decltype(x)>[2]>
+noexcept -> auto
 {
-	using X_op =  operate<decltype(x)>;
-	using U = bit_sigma_t<decltype(x)>;
-	using V = bit_delta_t<decltype(x)>;
+	using X_op =  bond::operate<decltype(x)>;
+	using U = typename X_op::sigma_type;
+	using V = typename X_op::delta_type;
 
 	U constexpr N = X_op::unit.mark + X_op::fraction.depth;
 	U constexpr M =            one << X_op::fraction.depth;
@@ -321,14 +297,14 @@ noexcept -> couple_t<bit_delta_t<decltype(x)>[2]>
 	V       m = M | (o&X_op::fraction.mask);
 	m  ^= z;
 	m  -= z;
-	return {m, n};
+	return couple_t<V[2]>{m, n};
 }
 XTAL_DEF_(short)
 XTAL_SET bit_presentation_f(couple_q auto const &mn)
 noexcept -> auto
 {
 	auto const &[m, n] = mn;
-	using MN_op = operate<decltype(m), decltype(n)>;
+	using MN_op = bond::operate<decltype(m), decltype(n)>;
 	return static_cast<typename MN_op::alpha_type>(m)*MN_op::haplo_f(n);
 }
 

@@ -135,9 +135,9 @@ struct define
 				{
 					auto const &h = head();
 					//\
-					size_type   i  = static_cast<size_type>(h);// TODO: Should be handled by conversion?
-					size_type   i  = static_cast<size_type>(h.body_part);
-					extent_type i_ = A_mask - i;
+					auto i  = static_cast<  size_type>(h);// TODO: Should be handled by conversion?
+					auto i  = static_cast<  size_type>(h.body_part);
+					auto i_ = static_cast<extent_type>(A_mask -  i);
 					i_ &= bond::bit_sign_f(i_);
 					i  += i_;
 					return R_::deify(point[i]);

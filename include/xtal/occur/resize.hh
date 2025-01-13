@@ -11,9 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_type> struct   resize;
-template <class U=size_type> using    resize_t = confined_t<resize<U>>;
-template <typename    ..._s> concept  resize_q = bond::tag_p<resize, _s...>;
+template <class U=unsigned> struct   resize;
+template <class U=unsigned> using    resize_t = confined_t<resize<U>>;
+template <typename   ..._s> concept  resize_q = bond::tag_p<resize, _s...>;
 XTAL_DEF_(short)
 XTAL_LET resize_f(auto &&w)
 noexcept -> auto
@@ -55,8 +55,8 @@ struct resize<U> : resize<counter_t<U>>
 {
 };
 
-static_assert(bond::same_tabs_q<resize_t<size_type>, resize_t<size_type>>);
-static_assert(bond::same_tabs_q<resize_t<size_type>, resize_t<int      >>);
+static_assert(bond::same_tabs_q<resize_t<unsigned>, resize_t<unsigned>>);
+static_assert(bond::same_tabs_q<resize_t<unsigned>, resize_t<  signed>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

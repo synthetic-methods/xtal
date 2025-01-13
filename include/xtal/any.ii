@@ -141,6 +141,13 @@ namespace _xtd::ranges::views
 //\
 Structural...
 
+XTAL_DEF_(short) XTAL_LET  ordinal_f( ordinal_variable_q auto o) noexcept -> auto {return o;}
+XTAL_DEF_(short) XTAL_LET cardinal_f(cardinal_variable_q auto o) noexcept -> auto {return o;}
+XTAL_DEF_(short) XTAL_LET  ordinal_f(cardinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::  make_signed_t<decltype(o)>>(o);}
+XTAL_DEF_(short) XTAL_LET cardinal_f( ordinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::make_unsigned_t<decltype(o)>>(o);}
+XTAL_DEF_(short) XTAL_LET  ordinal_f(         constant_q auto o) noexcept -> auto {return constant_t< ordinal_f(o.value)>{};}
+XTAL_DEF_(short) XTAL_LET cardinal_f(         constant_q auto o) noexcept -> auto {return constant_t<cardinal_f(o.value)>{};}
+
 XTAL_DEF_(short)
 XTAL_LET variable_f(auto &&x)
 noexcept -> decltype(auto)

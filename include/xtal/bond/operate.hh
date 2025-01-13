@@ -21,7 +21,6 @@ The translation-tables for the supplied `N_size` \
 -	`alpha_type` represents floating-point real numbers. \
 -	`sigma_type` represents full-N_width `unsigned int`s like `std::size`. \
 -	`delta_type` represents full-N_width   `signed int`s used for binary and integer arithmetic. \
--	`iota_type`  represents half-N_width   `signed int`s required for `ranges::difference_type`. \
 \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
@@ -35,7 +34,6 @@ template <>
 struct recognize<(1U<<0U)>
 {
 	using       _zed =  constant_t<true>;
-//	using  iota_type =                               _std::int4_t;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   0)>;
 //	using alpha_type =                       XTAL_STD_(float, 0) ;
@@ -54,7 +52,6 @@ template <>
 struct recognize<(1U<<1U)>
 {
 	using       _zed =  constant_t<true>;
-	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   1)>;
 //	using alpha_type =                       XTAL_STD_(float, 1) ;
@@ -74,7 +71,6 @@ template <>
 struct recognize<(1U<<2U)>
 {
 	using       _zed =  constant_t<true>;
-	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   2)>;
 	using alpha_type =                       XTAL_STD_(float, 2) ;
@@ -109,7 +105,6 @@ template <>
 struct recognize<(1U<<3U)>
 {
 	using       _zed =  constant_t<true>;
-	using  iota_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   3)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   3)>;
 	using alpha_type =                       XTAL_STD_(float, 3) ;
@@ -163,12 +158,8 @@ private:
 	using S_ = recognize<N_size>;
 
 public:
-//	using typename S_:: iota_type;
 	using typename S_::delta_type;
 	using typename S_::sigma_type;
-
-//	XTAL_SET_( iota_type)  iota_0{0};
-//	XTAL_SET_( iota_type)  iota_1{1};
 
 	XTAL_SET_(delta_type) delta_0{0};
 	XTAL_SET_(delta_type) delta_1{1};
@@ -320,16 +311,12 @@ public:
 	using S_::     half;
 	using S_::     full;
 
-//	using S_::   iota_0;
-//	using S_::   iota_1;
-	
 	using S_::  delta_0;
 	using S_::  delta_1;
 
 	using S_::  sigma_0;
 	using S_::  sigma_1;
 
-	using typename S_::   iota_type;
 	using typename S_::  delta_type;
 	using typename S_::  sigma_type;
 	using typename S_::  alpha_type;
@@ -343,18 +330,11 @@ public:
 	XTAL_SET_(aphex_type)  aphex_1{1, 0};
 	XTAL_SET_(aphex_type)  aphex_i{0, 1};
 
-	XTAL_SET_(aphex_type) square_0{0, 0};
-	XTAL_SET_(aphex_type) square_1{1, 1};
-	
-	XTAL_SET_(aphex_type) circle_0 = square_0*0.7071067811865475244008443621048490393L;
-	XTAL_SET_(aphex_type) circle_1 = square_1*0.7071067811865475244008443621048490393L;
-
 	XTAL_DEF_(short) XTAL_SET internal_f(alpha_type      i) noexcept -> auto {return                         i ;}
 	XTAL_DEF_(short) XTAL_SET internal_f(    real_q auto i) noexcept -> auto {return static_cast<alpha_type>(i);}
 	XTAL_DEF_(short) XTAL_SET internal_f(integral_q auto i) noexcept -> auto {return          S_::internal_f(i);}
 
 
-	XTAL_DEF_(short) XTAL_SET  iota_f(auto &&o) noexcept -> auto {return  iota_type(XTAL_REF_(o));}
 //	XTAL_DEF_(short) XTAL_SET delta_f(auto &&o) noexcept -> auto {return delta_type(XTAL_REF_(o));}
 //	XTAL_DEF_(short) XTAL_SET sigma_f(auto &&o) noexcept -> auto {return sigma_type(XTAL_REF_(o));}
 //	XTAL_DEF_(short) XTAL_SET alpha_f(auto &&o) noexcept -> auto {return alpha_type(XTAL_REF_(o));}
@@ -445,7 +425,7 @@ public:
 			return o_silon*__builtin_exp2(n_zoom);
 		}
 		else {
-			XTAL_LET N_ln2 = alpha_f(0.6931471805599453094172321214581770e0L);
+			XTAL_LET N_ln2 = _std::numbers::ln2_v<alpha_type>;
 			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `consteval`?
 		}
 	}
@@ -931,9 +911,6 @@ using operating = operate<size_type>;
 //static_assert(sizeof(size_type) == sizeof(typename operating::sigma_type));
 //static_assert(sizeof(size_type) == sizeof(typename operating::delta_type));
 //static_assert(sizeof(size_type) == sizeof(typename operating::alpha_type));
-
-
-static_assert(operating::full.width == operating::template widen<1>::full.width);
 
 
 ///////////////////////////////////////////////////////////////////////////////
