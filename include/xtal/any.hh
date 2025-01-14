@@ -30,12 +30,20 @@ namespace xtal
 //\
 Standard...
 
-using     void_type = _entail::  void_type;
-using     null_type = _entail::  null_type;
-using     unit_type = _entail::  unit_type;
-using     sign_type = _entail::  sign_type;
-using     size_type = _entail::  size_type;
-using   extent_type = _entail::extent_type;
+using extent_type =        _entail:: extent_type;
+using   size_type =        _entail::   size_type;
+using   sign_type =        _entail::   sign_type;
+using   null_type =        _entail::   null_type;
+class   void_type ;
+//ing   unit_type =        _entail::   unit_type;
+class   unit_type : public _entail::   unit_type
+{
+	using S_ = _entail::unit_type;
+
+public:
+	using S_::S_;
+
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,7 @@ struct query
 	XTAL_SET Q_node =     same_q<void, U_edge>;
 	XTAL_SET Q_edge = not same_q<void, U_edge>;
 
-	using U_dex = size_type;
+	using index = unsigned;
 
 	template <class S>
 	class subtype : public S
@@ -43,7 +43,7 @@ struct query
 
 		XTAL_TO4_(XTAL_DEF_(let) node(), self<U_node>())
 
-		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_TO4_(template <index ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(let) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
@@ -86,7 +86,7 @@ struct query
 		XTAL_TO4_(XTAL_DEF_(let) node(), self<node_type>())
 
 
-		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_TO4_(template <index ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(let) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
 		
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))
@@ -96,7 +96,7 @@ struct query
 		XTAL_DEF_(let) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
 		
 
-		XTAL_TO4_(template <U_dex ...Is> requires (1 <= sizeof...(Is))
+		XTAL_TO4_(template <index ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(let) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
 
 		XTAL_TO4_(template <class ...Is> requires (0 == sizeof...(Is))

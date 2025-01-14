@@ -14,11 +14,10 @@ namespace xtal::bond
 Binds multiple values/references, \
 providing point-wise multiplication/division and scalar summation. \
 
-template <class   ..._s>	struct   couple;
-template <class   ..._s>	using    couple_t = typename couple<_s...>::type;
-//\
-template <class   ..._s>	concept  couple_q = bond::tag_p<couple, _s...>;
-template <class T     , class ...Xs>	concept  couple_q = bond::tag_p<couple, T> and (0 == sizeof...(Xs) or make_p<bond::pack_t<Xs...>, T>);
+template <class               ..._s>	struct   couple;
+template <class               ..._s>	using    couple_t = typename couple<_s...>::type;
+template <class               ..._s>	concept  couple_q = bond::tag_p<couple, _s...>;
+template <class T     , class ...Xs>	concept  couple_p = bond::tag_p<couple, T> and make_q<T, bond::pack_t<Xs...>>;
 template <class V=void, class ...Xs>
 XTAL_DEF_(short)
 XTAL_LET couple_f(Xs &&...xs)
@@ -52,22 +51,28 @@ template <class ...Xs> requires scalar_q<Xs...> and variable_q<Xs...>
 struct couple<Xs...>
 {
 	XTAL_SET N_data = sizeof...(Xs);
-//	using    U_data =  common_t<Xs...>;
+	using    U_data =  common_t<Xs...>;
 	using    V_data = absolve_u<Xs...>;
 
 	using archetype = pack_t<Xs...>;
-	using supertype = bond::compose_s<archetype, tag<couple>>;
 
-//	using _op = bond::operate<X>;
+	template <class T>
+	using holotype = bond::compose_s<archetype, define<T>, bond::tag<couple>>;
 
-	class type : public supertype
+	template <class T>
+	class homotype : public holotype<T>
 	{
-	public:
-		using supertype::supertype;
+		using S_ = holotype<T>;
+
+	public:// CONSTRUCT
+		using S_::S_;
 		
 		template <size_type N>
 		using tuple_element = _std::tuple_element<N, archetype>;
 		using tuple_size    = _std::tuple_size   <   archetype>;
+
+	public:// OPERATE
+		using S_::self;
 
 		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(explicit operator) F(), apply<F>())
@@ -83,7 +88,7 @@ struct couple<Xs...>
 		XTAL_LET apply(auto &&f) const
 		noexcept -> decltype(auto)
 		{
-			return _std::apply(XTAL_REF_(f), *this);
+			return _std::apply(XTAL_REF_(f), self());
 		}
 
 		template <auto f>
@@ -92,7 +97,7 @@ struct couple<Xs...>
 		noexcept -> auto &
 		requires requires (archetype &s) {f(get<0>(s));}
 		{
-			auto &s = *this;
+			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(f(get<I>(s)),...);}
@@ -109,7 +114,7 @@ struct couple<Xs...>
 			size_type constexpr N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);
 
-			auto &s = *this;
+			auto &s = self();
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(f(get<I>(s), get<I>(t)),...);}
@@ -144,25 +149,25 @@ struct couple<Xs...>
 
 
 		XTAL_DEF_(short,friend)
-		XTAL_LET operator * (type const &s, pack_q auto const &t)
+		XTAL_LET operator * (homotype const &s, pack_q auto const &t)
 		noexcept -> decltype(auto)
 		{
 			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u * v)>(s, t);
 		}
 		XTAL_DEF_(short,friend)
-		XTAL_LET operator / (type const &s, pack_q auto const &t)
+		XTAL_LET operator / (homotype const &s, pack_q auto const &t)
 		noexcept -> decltype(auto)
 		{
 			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u / v)>(s, t);
 		}
 		XTAL_DEF_(short,friend)
-		XTAL_LET operator + (type const &s, pack_q auto const &t)
+		XTAL_LET operator + (homotype const &s, pack_q auto const &t)
 		noexcept -> decltype(auto)
 		{
 			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u + v)>(s, t);
 		}
 		XTAL_DEF_(short,friend)
-		XTAL_LET operator - (type const &s, pack_q auto const &t)
+		XTAL_LET operator - (homotype const &s, pack_q auto const &t)
 		noexcept -> decltype(auto)
 		{
 			return pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u - v)>(s, t);
@@ -170,32 +175,32 @@ struct couple<Xs...>
 
 		XTAL_DEF_(inline)
 		XTAL_LET operator *= (pack_q auto const &t)
-		noexcept -> type &
+		noexcept -> homotype &
 		{
 			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x *= y)>(t);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator /= (pack_q auto const &t)
-		noexcept -> type &
+		noexcept -> homotype &
 		{
 			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x /= y)>(t);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator += (pack_q auto const &t)
-		noexcept -> type &
+		noexcept -> homotype &
 		{
 			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x += y)>(t);
 		}
 		XTAL_DEF_(inline)
 		XTAL_LET operator -= (pack_q auto const &t)
-		noexcept -> type &
+		noexcept -> homotype &
 		{
 			return pointwise<[] (auto &x, auto const &y) XTAL_0FN_(x -= y)>(t);
 		}
 
 		XTAL_DEF_(short,friend)
-		XTAL_LET operator - (type const &s)
-		noexcept -> type
+		XTAL_LET operator - (homotype const &s)
+		noexcept -> homotype
 		{
 			return pointwise<[] (auto const &x) XTAL_0FN_(-x)>(s);
 		}
@@ -203,11 +208,11 @@ struct couple<Xs...>
 		template <int N_sgn=1>
 		XTAL_DEF_(inline)
 		XTAL_LET flip()
-		noexcept -> type
+		noexcept -> homotype
 		{
 			XTAL_IF0
 			XTAL_0IF (0 <= N_sgn) {
-				return *this;
+				return self();
 			}
 			XTAL_0IF (N_sgn <  0) {
 				return pointwise<[] (auto &x) XTAL_0FN_(x = -XTAL_MOV_(x))>();
@@ -222,12 +227,12 @@ struct couple<Xs...>
 		{
 			if constexpr (0 < N_sgn) {
 				return [&, this]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(*this)))
+					XTAL_0FN_(u +...+ (get<I>(self())))
 				(bond::seek_s<N_data>{});
 			}
 			else {
 				return [&, this]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(*this)*V_data{-sign_n<I&1, -1>}))
+					XTAL_0FN_(u +...+ (get<I>(self())*V_data{-sign_n<I&1, -1>}))
 				(bond::seek_s<N_data>{});
 			}
 		}
@@ -244,7 +249,7 @@ struct couple<Xs...>
 		XTAL_LET ratio()
 		noexcept -> auto
 		{
-			auto &s = *this;
+			auto &s = self();
 			
 			XTAL_IF0
 			XTAL_0IF (0 <= N_par) {return get<0>(s)/get<1>(s);}
@@ -258,8 +263,8 @@ struct couple<Xs...>
 		noexcept -> decltype(auto)
 		{
 			auto constexpr o = reflector<N_par>();
-			auto const x = o*get<0>(*this);
-			auto const y = o*get<1>(*this);
+			auto const x = o*get<0>(self());
+			auto const y = o*get<1>(self());
 			return couple_f(x + y, x - y);
 		}
 
@@ -271,12 +276,14 @@ struct couple<Xs...>
 		noexcept -> V_data
 		{
 			XTAL_IF0
-			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
-			XTAL_0IF (N_par ==  0) {return 0.7071067811865475244008443621048490393L;}
-			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
+			XTAL_0IF (N_par == -1) {return half;}
+			XTAL_0IF (N_par ==  0) {return one/_std::numbers::sqrt2_v<V_data>;}
+			XTAL_0IF (N_par == +1) {return one;}
 		}
 
 	};
+	using type = derive_t<homotype>;
+
 };
 
 

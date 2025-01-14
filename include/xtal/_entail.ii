@@ -23,12 +23,11 @@ namespace _entail
 //\
 Standard...
 
-class    void_type   ;
+using  extent_type	= _std::  make_signed_t<XTAL_STD_(size_type)>;
+using    size_type	= _std::make_unsigned_t<XTAL_STD_(size_type)>;
+using    sign_type	= XTAL_ALL_(false - true);
 using    null_type	= XTAL_STD_(null_type);
 using    unit_type	= XTAL_STD_(unit_type);
-using    sign_type	= XTAL_ALL_(true - false);
-using    size_type	= XTAL_STD_(size_type);
-using  extent_type	= _std::make_signed_t<size_type>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,14 +52,6 @@ template <         class ...Ts>	concept      fungible_q	=      fungible<XTAL_RAW
 template <         class ...Ts>	concept    infungible_q	=  not fungible<XTAL_RAW_(Ts)...>::value;
 
 
-template <class T             >	using           based_t	=                       XTAL_RAW_(T) ;
-template <class T             >	concept         based_q	=      _std::same_as<T, XTAL_RAW_(T)>;
-template <class T             >	concept       unbased_q	=  not _std::same_as<T, XTAL_RAW_(T)>;
-
-template <         class ...Ts>	using          common_t	=                                            _std::common_type_t<Ts...>;
-template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and requires {typename _std::common_type_t<Ts...>;};
-
-
 template <class T             >	struct       identity;
 template <class T             >	using        identity_t	= typename identity  <T>::type;
 template <class T             >	using        identity_u	= typename identity_t<T>::type;
@@ -81,8 +72,15 @@ template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type 
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
 
+template <class T             >	using           based_t	=                       XTAL_RAW_(T) ;
+template <class T             >	concept         based_q	=      _std::same_as<T, XTAL_RAW_(T)>;
+template <class T             >	concept       unbased_q	=  not _std::same_as<T, XTAL_RAW_(T)>;
+
 template <class T             >  concept     molecular_q = _std::semiregular<XTAL_RAW_(T)>;
-template <class T             >  concept        atomic_q = molecular_q<T> and _std::is_trivially_copyable_v<T>;
+template <class T             >  concept        atomic_q = _std::semiregular<XTAL_RAW_(T)> and _std::is_trivially_copyable_v<T>;
+
+template <         class ...Ts>	using          common_t	=  typename complete_t<_std::common_type<Ts...>, identity_t<void>>::type;
+template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and complete_q<common_t<Ts...>>;
 
 
 template <         class ...Ts>	concept        insame_q	=  not  isotropic<Ts...>::value;

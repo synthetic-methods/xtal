@@ -186,9 +186,9 @@ TAG_("render")
 	}
 	TRY_("lifecycle")
 	{
-		using V = counter_t<size_type>; using V_render = render_t<V>;
-		using U = counted_t<size_type>; using U_render = render_t<U>;
-		size_type constexpr N = 5;
+		using V = counter_t<extent_type>; using V_render = render_t<V>;
+		using U = counted_t<extent_type>; using U_render = render_t<U>;
+		extent_type constexpr N = 5;
 
 		V_render n_seq(N); n_seq *= N;
 		V_render m_seq = n_seq;

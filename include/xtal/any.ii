@@ -346,9 +346,10 @@ noexcept -> size_type
 {
 	return _std::min<size_type>({(count_f(ts) - one)...}) + one;
 }
-XTAL_DEF_(short) XTAL_LET  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
-XTAL_DEF_(short) XTAL_LET discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
-
+XTAL_DEF_(let) discount_f(auto const &...ts) noexcept {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(let)  account_f(auto const &...ts) noexcept {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(let)  recount_f(auto const &...ts) noexcept requires in_n<sized_q<decltype(ts)...>> {return  account_f(ts...);}
+XTAL_DEF_(let)  recount_f(auto const &...ts) noexcept requires un_n<sized_q<decltype(ts)...>> {return discount_f(0    );}
 
 template <counter_q I0, counter_q IN>
 XTAL_DEF_(short)

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./couple.hh"// testing...
+#include "./collate.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::arrange::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("couple")
+TAG_("collate")
 {
 	using _op = bond::operating;
 	using T_delta = typename _op::delta_type;
@@ -21,9 +21,9 @@ TAG_("couple")
 	using T_alpha = typename _op::alpha_type;
 	using T_aphex = typename _op::aphex_type;
 
-	EST_("couple reinitialization")
+	EST_("collate reinitialization")
 	{
-		couple_t<T_aphex[4]> foo{};
+		collate_t<T_aphex[4]> foo{};
 
 		for (int i{0}; i < 0x100; ++i) {
 			foo *= T_alpha{};
@@ -31,9 +31,9 @@ TAG_("couple")
 		}
 		return foo;
 	};
-	TRY_("couple reinitialization")
+	TRY_("collate reinitialization")
 	{
-		using W_aphex = couple_t<T_aphex[2]>;
+		using W_aphex = collate_t<T_aphex[2]>;
 
 		auto constexpr N_size = 2;
 		W_aphex foo{};
@@ -46,7 +46,7 @@ TAG_("couple")
 	TRY_("summation")
 	{
 		auto constexpr N_size = 3;
-		using W = couple_t<T_alpha[N_size]>;
+		using W = collate_t<T_alpha[N_size]>;
 		auto  w = W{2.0, 1.0, 0.5};
 
 		TRUE_(3.5 == w.sum());
@@ -56,7 +56,7 @@ TAG_("couple")
 	TRY_("reflection")
 	{
 		auto constexpr N_size = 2;
-		using W = couple_t<T_alpha[N_size]>;
+		using W = collate_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
 		auto foo = bar.template reflected<-1>();
@@ -71,10 +71,10 @@ TAG_("couple")
 	TRY_("refactoring")
 	{
 		using U0 = T_sigma;
-		using U1 = couple_t<U0[1]>;
-		using U2 = couple_t<U0[2]>;
-		using U3 = couple_t<U0[3]>;
-		using U4 = couple_t<U0[4]>;
+		using U1 = collate_t<U0[1]>;
+		using U2 = collate_t<U0[2]>;
+		using U3 = collate_t<U0[3]>;
+		using U4 = collate_t<U0[4]>;
 
 	//	TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 
@@ -123,8 +123,8 @@ TAG_("couple")
 		XTAL_LET N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
-		using simplex_val = couple_t<float   [N]>;
-		using simplex_ref = couple_t<float(&)[N]>;
+		using simplex_val = collate_t<float   [N]>;
+		using simplex_ref = collate_t<float(&)[N]>;
 		
 		using complex_val = _std::complex<simplex_val>;
 		using complex_ref = _std::complex<simplex_ref>;

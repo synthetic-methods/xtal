@@ -92,9 +92,6 @@ struct invoke_body
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// ACCESS
-		using S_::head;
-
 	public:// OPERATE
 
 		template <auto ...Is>

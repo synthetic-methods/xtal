@@ -103,11 +103,11 @@ struct referree
 Unless `A` is already a decorator, \
 provides `defer<A>` or `any<A>` depending on whether `complete_q<A>`. \
 
-template <class           A             >	struct infer       :             defer<A>                       {};
-template <bond::compose_q A             >	struct infer<A   > :                   A                        {};
-template <incomplete_q    A             >	struct infer<A   > :               any<A>                       {};
-template <incomplete_q    A, size_type N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};
-template <                              >	struct infer<void> : bond::compose<                           > {};
+template <class           A            >	struct infer       :             defer<A>                       {};
+template <bond::compose_q A            >	struct infer<A   > :                   A                        {};
+template <incomplete_q    A            >	struct infer<A   > :               any<A>                       {};
+template <incomplete_q    A, unsigned N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};
+template <                             >	struct infer<void> : bond::compose<                           > {};
 
 template <class   ...As>	using      infers     = bond::compose<          infer   <As>...>;
 template <class   ...As>	using    reinfers     = bond::compose<referree, infer   <As>...>;

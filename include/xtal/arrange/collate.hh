@@ -11,15 +11,15 @@ namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   couple;
-template <class   ..._s>	using    couple_t = typename couple<_s...>::type;
-template <class   ...Ts>	concept  couple_q = bond::tag_p<couple_t, Ts...>;
+template <class   ..._s>	struct   collate;
+template <class   ..._s>	using    collate_t = typename collate<_s...>::type;
+template <class   ...Ts>	concept  collate_q = bond::tag_p<collate_t, Ts...>;
 template <class  V=void>
 XTAL_DEF_(short)
-XTAL_LET couple_f(auto &&...oo)
+XTAL_LET collate_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<couple_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::initialize<collate_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
 
@@ -29,7 +29,7 @@ Extends the multiplicative `group` with the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
 template <vector_q A>
-struct couple<A>
+struct collate<A>
 {
 	using A_op = bond::operate<A>;
 	using A_sigma = typename A_op::sigma_type;
@@ -40,7 +40,7 @@ struct couple<A>
 	using endotype = typename group<A, _std::multiplies<void>>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<collate_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -345,10 +345,10 @@ struct couple<A>
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<couple_t<float[2]>>);
+static_assert(atomic_q<collate_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(collate_t<float(&)[2]>)*XTAL_ANY_(collate_t<float(&)[2]>))>
 );
 
 

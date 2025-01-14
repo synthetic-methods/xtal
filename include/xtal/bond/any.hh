@@ -67,13 +67,6 @@ struct define
 
 		XTAL_TO4_(XTAL_DEF_(let) tail(), self<S>())
 
-
-		template <typename ...Is>
-		using    head_t = void;
-		XTAL_LET head()       noexcept -> void {}
-		XTAL_LET head() const noexcept -> void {}
-
-
 	};
 	using type = subtype<unit_type>;
 
