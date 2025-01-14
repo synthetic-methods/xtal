@@ -51,6 +51,9 @@ struct collate<A>
 		using          S_::N_data;
 		using typename S_::U_data;
 
+	private:
+		using V_data = absolve_u<U_data>;
+
 	public:// CONSTRUCT
 	//	using S_::S_;
 	~	homotype()                noexcept=default;
@@ -301,12 +304,13 @@ struct collate<A>
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(short,static)
 		XTAL_LET reflector()
-		noexcept -> absolve_u<U_data>
+		noexcept -> V_data
 		{
+			XTAL_LET _sqrt2 = one/_std::numbers::sqrt2_v<V_data>;
 			XTAL_IF0
-			XTAL_0IF (N_par == -1) {return 0.5000000000000000000000000000000000000L;}
-			XTAL_0IF (N_par ==  0) {return 0.7071067811865475244008443621048490393L;}
-			XTAL_0IF (N_par == +1) {return 1.0000000000000000000000000000000000000L;}
+			XTAL_0IF (N_par == -1) {return _sqrt2*_sqrt2*one;}
+			XTAL_0IF (N_par ==  0) {return        _sqrt2*one;}
+			XTAL_0IF (N_par == +1) {return               one;}
 		}
 
 		XTAL_DEF_(short) XTAL_LET  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}

@@ -119,8 +119,8 @@ struct superblock<U[N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct block<U   [N][Ns]...> : block<block_t<U[N]>   [Ns]...> {};
-template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct block<U(&)[N][Ns]...> : block<block_t<U[N]>(&)[Ns]...> {};
+template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct block<U   [N][Ns]...> : block<block_t<U[N]>   [Ns]...> {};
+template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct block<U(&)[N][Ns]...> : block<block_t<U[N]>(&)[Ns]...> {};
 
 template <vector_q A>
 struct block<A>
@@ -137,7 +137,6 @@ struct block<A>
 	class homotype : public holotype<T>
 	{
 		using  S_ = holotype<T>;
-		using  I_ = typename S_::difference_type;
 
 	protected:
 		using          S_::N_data;
@@ -183,10 +182,10 @@ struct block<A>
 		}
 
 		template <size_type I>
-		XTAL_DEF_(let) operator () (    ) const noexcept {return self().coordinate(element<I>());}
-		XTAL_DEF_(let) operator () (I_ i) const noexcept {return self().coordinate(element(i)  );}
+		XTAL_DEF_(let) operator () (      ) const noexcept {return self().coordinate(element<I>());}
+		XTAL_DEF_(let) operator () (auto i) const noexcept {return self().coordinate(element(i)  );}
 		
-		XTAL_DO4_(template <I_ I>
+		XTAL_DO4_(template <size_type I>
 		XTAL_DEF_(short)
 		XTAL_LET element(),
 		noexcept -> decltype(auto)
@@ -196,9 +195,9 @@ struct block<A>
 			XTAL_0IF XTAL_TRY_TO_(get<I>(S_::template self<archetype>()))
 			XTAL_0IF XTAL_TRY_TO_(element(I))
 		})
-		XTAL_DO4_(template <I_ I=0>
+		XTAL_DO4_(template <auto I=0>
 		XTAL_DEF_(short)
-		XTAL_LET element(I_ i),
+		XTAL_LET element(auto i),
 		noexcept -> decltype(auto)
 		{
 			XTAL_IF0

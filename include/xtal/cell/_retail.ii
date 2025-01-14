@@ -17,7 +17,7 @@ struct query
 	XTAL_SET Q_node =     same_q<void, U_edge>;
 	XTAL_SET Q_edge = not same_q<void, U_edge>;
 
-	using index = unsigned;
+	using index = size_type;
 
 	template <class S>
 	class subtype : public S

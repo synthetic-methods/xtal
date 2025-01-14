@@ -8,11 +8,15 @@ on:
 
 jobs:
   create:
+
     strategy:
       matrix:
         bt: [Debug, Release]
         os: [macos, ubuntu] #, windows]
     
+    concurrency:
+      group: ${{github.workflow}}-${{matrix.os}}
+
     runs-on: ${{matrix.os}}-latest
 
     steps:
@@ -26,4 +30,9 @@ jobs:
 
     - run:  conan remote update conancenter --url="https://center2.conan.io"
     - run:  conan config install ${{github.workspace}}/.conan2
+
+    - run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}}
+      if:   ${{ matrix.bt != 'Release' }}
+
     - run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"
+      if:   ${{ matrix.bt == 'Release' }}

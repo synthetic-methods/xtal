@@ -25,7 +25,7 @@ template <class	..._s> using    mark_s = bond::compose_s<flux::packet_t<_s...>, 
 template <>
 struct mark<>
 {
-	using superkind = cell::confer<size_type, bond::tag<mark>>;
+	using superkind = cell::confer<extent_type, bond::tag<mark>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

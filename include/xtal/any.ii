@@ -327,10 +327,10 @@ noexcept -> auto
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <class           ...Us>	XTAL_DEF_(short) XTAL_LET count_f(_std::           tuple<Us...>) noexcept -> size_type {return sizeof...(Us);}
-template <class U, size_type N >	XTAL_DEF_(short) XTAL_LET count_f(_std::           array<U,  N>) noexcept -> size_type {return        N;}
-template <class U,    class  V >	XTAL_DEF_(short) XTAL_LET count_f(_std::            pair<U,  V>) noexcept -> size_type {return        2;}
-template <class U              >	XTAL_DEF_(short) XTAL_LET count_f(_std::initializer_list<U>  t ) noexcept -> size_type {return t.size();}
+template <class       ...Us>	XTAL_DEF_(short) XTAL_LET count_f(_std::           tuple<Us...>) noexcept -> size_type {return sizeof...(Us);}
+template <class U, auto  N >	XTAL_DEF_(short) XTAL_LET count_f(_std::           array<U,  N>) noexcept -> size_type {return        N;}
+template <class U, class V >	XTAL_DEF_(short) XTAL_LET count_f(_std::            pair<U,  V>) noexcept -> size_type {return        2;}
+template <class U          >	XTAL_DEF_(short) XTAL_LET count_f(_std::initializer_list<U>  t ) noexcept -> size_type {return t.size();}
 XTAL_DEF_(short)
 XTAL_LET count_f(auto const &t)
 noexcept -> size_type

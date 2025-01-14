@@ -46,7 +46,7 @@ struct define
 		///\
 		Attaches `T` as a member of `this`. \
 
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct attach
 		:	bond::compose<flux::mask<N_mask>, typename S_::template afflux<>>
 		{
@@ -55,7 +55,7 @@ struct define
 		Attaches `T` as a member of `this`, \
 		`dispatch`ing a conditional indicating positivity. \
 
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct clutch
 		{
 			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1,-1>>;
@@ -96,7 +96,7 @@ struct define
 		///\
 		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
 
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct dispatch
 		{
 			static_assert(integral_q<typename T::head_type>);
@@ -138,8 +138,8 @@ struct define
 					auto i  = static_cast<  size_type>(h);// TODO: Should be handled by conversion?
 					auto i  = static_cast<  size_type>(h.body_part);
 					auto i_ = static_cast<extent_type>(A_mask -  i);
-					i_ &= bond::bit_sign_f(i_);
-					i  += i_;
+					i_     &= static_cast<extent_type>(bond::bit_sign_f(i_));
+					i      += i_;
 					return R_::deify(point[i]);
 				}
 				
@@ -178,7 +178,7 @@ struct define
 		///\
 		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
 		
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct expect
 		{
 			using superkind = attach<N_mask>;
@@ -209,7 +209,7 @@ struct define
 		///\
 		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
 
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct inspect
 		{
 			using superkind = attach<N_mask>;
@@ -240,7 +240,7 @@ struct define
 		///\
 		Uses the current `T` as the return value of `method`. \
 		
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct poll
 		{
 			using superkind = attach<N_mask>;

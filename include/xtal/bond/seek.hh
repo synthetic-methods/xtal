@@ -51,7 +51,7 @@ noexcept
 		XTAL_0FN_(..., f(constant_t<I>{})) (seek_t<Ns...> {});
 }
 
-template <int N_count=0, auto N_onset=0>
+template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline)
 XTAL_LET seek_forward_f(auto const &f)
 noexcept -> decltype(auto)
@@ -59,7 +59,7 @@ noexcept -> decltype(auto)
 	return [&] <int ...I>(seek_t<I...>)
 		XTAL_0FN_(..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
 }
-template <int N_count=0, auto N_onset=0>
+template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline)
 XTAL_LET seek_backward_f(auto const &f)
 noexcept -> decltype(auto)

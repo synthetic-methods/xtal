@@ -118,7 +118,7 @@ struct define
 						XTAL_0IF XTAL_TRY_DO_(_std::copy_n(copy_j, n, _i))
 #endif
 						XTAL_0IF XTAL_TRY_DO_(copy_n(move_j, n, _i))
-						XTAL_0IF XTAL_TRY_DO_(move  (result_o|account_f(n), _i))
+						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
 						XTAL_0IF_(else) {for (int m{}; m < n; ++m) {*_i++ = *move_j++;}}
 
 						return 0;
@@ -226,7 +226,7 @@ struct defer<U>
 		XTAL_LET method(auto &&...xs),
 		noexcept -> auto
 		{
-			auto const f  = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
+			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
 			return iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...);
 		})
 		XTAL_DO2_(template <auto ...Is> requires (1 <= sizeof...(Is))

@@ -36,7 +36,7 @@ struct store<U_data>
 
 };
 template <class U_data>
-struct store<U_data[~0U]>
+struct store<U_data[(unsigned) -1]>
 :	store<U_data *>
 {
 };

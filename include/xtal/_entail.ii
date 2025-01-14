@@ -232,21 +232,9 @@ struct   assign_sized
 {
 	using type = assign_sized;
 
-	XTAL_DEF_(short,static)
-	XTAL_LET size()
-	noexcept
-	{
-		XTAL_IF0
-		XTAL_0IF ((...and (Ns != -1))) {return static_cast<   size_type>((1 *...* Ns));}
-		XTAL_0IF ((...or  (Ns == -1))) {return static_cast<extent_type>(-1);}
-	};
-
-	XTAL_DEF_(short,static)
-	XTAL_LET rank()
-	noexcept -> size_type
-	{
-		return static_cast<size_type>((0 +...+ above_p<0, Ns>));
-	};
+	XTAL_DEF_(set) rank() noexcept                                {return   size_type{(0 +...+ above_p<0, Ns>) };}
+	XTAL_DEF_(set) size() noexcept requires ((...and (Ns != -1))) {return   size_type{(1 *...* Ns)             };}
+	XTAL_DEF_(set) size() noexcept requires ((...or  (Ns == -1))) {return extent_type{-1                       };}
 
 };
 template <>
@@ -254,11 +242,8 @@ struct   assign_sized<>
 {
 	using type = assign_sized;
 
-	XTAL_DEF_(short,static)
-	XTAL_LET size() noexcept -> size_type {return 0;};
-
-	XTAL_DEF_(short,static)
-	XTAL_LET rank() noexcept -> size_type {return 0;};
+	XTAL_DEF_(set) rank() noexcept {return size_type{};};
+	XTAL_DEF_(set) size() noexcept {return size_type{};};
 
 };
 

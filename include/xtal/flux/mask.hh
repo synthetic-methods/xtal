@@ -13,17 +13,17 @@ namespace xtal::flux
 ///\
 Forwards anything prefixed with `N_mask`. \
 
-template <int N_mask=-1>
+template <extent_type N_mask=-1>
 struct mask;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
-template <int N_mask>
+template <extent_type N_mask>
 struct mask
 {
-	static constexpr size_type M_mask =  N_mask;
-	static constexpr size_type W_mask = ~M_mask;
+	static constexpr extent_type M_mask =  N_mask;
+	static constexpr extent_type W_mask = ~M_mask;
 	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S>
@@ -59,7 +59,7 @@ struct mask
 				return S_::influx(mark_s<>(m), XTAL_REF_(oo)...);
 			}
 			else {
-				return S_::influx(           XTAL_REF_(oo)...);
+				return S_::influx(XTAL_REF_(oo)...);
 			}
 		}
 

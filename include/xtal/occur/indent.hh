@@ -47,18 +47,26 @@ struct indent<Ns...>
 		When `covalued_q<S>`, `S::ordinate` is invoked to produce the edit. \
 
 		///\todo\
-		Find a way to invoke `S::ordinate` implicitly for any `indent`ed fragments. \
+		Find a better way to invoke `S::ordinate` implicitly for any `indent`ed scalar fragments. \
 
+		/*/
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   indexed_q<S> and un_n<covalued_q<S>>
+		:	S_{XTAL_MOV_(u)}
+		{}
+		/*/
+		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
+		noexcept
+		requires   in_n<iterable_q<initializer_u<S>>>
 		:	S_{XTAL_MOV_(u)}
 		{}
 		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
 		noexcept
-		requires   indexed_q<S> and in_n<covalued_q<S>>
+		requires   un_n<iterable_q<initializer_u<S>>>
 		:	S_{S::ordinate(XTAL_MOV_(u))}
-		{}
+		{
+		}
+		/***/
 
 		XTAL_NEW_(implicit) subtype(initializer_t<U_> w)
 		noexcept
@@ -66,7 +74,7 @@ struct indent<Ns...>
 		:	S_{w}
 		{}
 
-		template <int N_mask=-1>
+		template <extent_type N_mask=-1>
 		struct funnel
 		{
 			///\todo\
@@ -106,8 +114,8 @@ struct indent<Ns...>
 					return m == x;
 					/*/
 					auto &m = bond::pack_item_f(o.seek(), head());
-					using M = XTAL_ALL_(m); m.~ M();
-					new (&m) M(o);
+					using M = XTAL_ALL_(m);
+					m.~M(); new (&m) M(XTAL_REF_(o));
 					return 0;
 					/***/
 				}

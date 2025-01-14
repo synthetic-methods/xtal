@@ -22,30 +22,10 @@ struct define
 	template <class S>
 	class subtype : public S
 	{
-		using S_ = S;
-		
 	public:// CONSTRUCT
-		using S_::S_;
-
-		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
-		noexcept
-		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
-		{}
-		XTAL_NEW_(explicit) subtype(auto &&...oo)
-		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		{}
+		using S::S;
 
 	public:
-		XTAL_DO4_(template <fungible_q<subtype> Y=T>
-		XTAL_DEF_(short)
-		XTAL_LET self(auto &&...oo),
-		noexcept -> decltype(auto)
-		{
-			auto  x = self<Y>();
-			auto &y = self<Y>(); y.~ Y();
-			return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
-		})
 		///\returns `*this` with type `Y=T`. \
 
 		template <fungible_q<subtype> Y=T> XTAL_DEF_(let) self()       && noexcept {return static_cast<Y       &&>(XTAL_MOV_(*this));}

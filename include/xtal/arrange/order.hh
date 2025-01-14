@@ -31,8 +31,8 @@ concept  lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pac
 Extends `block` with point-wise comparison, \
 and lifts all other operators. \
 
-template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct order<U   [N][Ns]...> : order<order_t<U[N]>   [Ns]...> {};
-template <class U, unsigned N, unsigned ...Ns> requires (1 <= sizeof...(Ns)) struct order<U(&)[N][Ns]...> : order<order_t<U[N]>(&)[Ns]...> {};
+template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct order<U   [N][Ns]...> : order<order_t<U[N]>   [Ns]...> {};
+template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct order<U(&)[N][Ns]...> : order<order_t<U[N]>(&)[Ns]...> {};
 
 template <vector_q A>
 struct order<A>

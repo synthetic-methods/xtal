@@ -27,9 +27,9 @@ template <class       W >	struct           member;
 template <class       W >	using            member_t = typename member<W>::type;
 
 template <class       W >	struct           member               {using type = based_t<W>;};
-template <size_type   N >	struct           member<unit_type[N]> {using type =   unsigned;};
-template <size_type   N >	struct           member<null_type[N]> {using type =   unsigned;};
-template <dismember_q W >	struct           member<W const &   > {using type =   const W*;};
+template <auto        N >	struct           member<unit_type[N]> {using type = unsigned  ;};
+template <auto        N >	struct           member<null_type[N]> {using type = unsigned  ;};
+template <dismember_q W >	struct           member<W const &   > {using type = const   W*;};
 template <dismember_q W >	struct           member<W       &   > {using type =         W*;};
 
 template <dismember_q M >	XTAL_DEF_(let)   member_f(auto &&    o) noexcept {return & XTAL_REF_(o )    ;}
@@ -38,9 +38,9 @@ template <class       M >	XTAL_DEF_(let)   member_f(auto &&...oo) noexcept {retu
 ///\
 Resolves/dereferences the current value. \
 
-template <class       W >	struct         remember               {using type = W        ;};
-template <size_type   N >	struct         remember<unit_type[N]> {using type = size_type;};
-template <size_type   N >	struct         remember<null_type[N]> {using type = size_type;};
+template <class       W >	struct         remember               {using type =         W ;};
+template <auto        N >	struct         remember<unit_type[N]> {using type =  size_type;};
+template <auto        N >	struct         remember<null_type[N]> {using type =  size_type;};
 template <class       W >	using          remember_t = typename remember<W>::type;
 
 template <pointed_q   M >	XTAL_DEF_(let) remember_f(M &&m) noexcept {return *XTAL_REF_(m);}
@@ -66,16 +66,36 @@ struct define_super
 	{
 		using S_ = bond::compose_s<S, superkind>;
 	
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
-		using S_::self;
+
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
+		noexcept
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
+		:	S_(XTAL_REF_(oo)...)
+		{}
+
 
 	public:// TYPE
-		template <class ...Is>
-		struct super : bond::seek_back<Is...> {};
+		using S_::self;
 
 		using self_type = T;
-	//	using head_type = void;
+
+		XTAL_DO4_(template <fungible_q<subtype> Y=T>
+		XTAL_DEF_(short)
+		XTAL_LET self(auto &&...oo),
+		noexcept -> decltype(auto)
+		{
+			auto  x = self<Y>();
+			auto &y = self<Y>(); y.~ Y();
+			return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
+		})
+
+		template <class ...Is>
+		struct super : bond::seek_back<Is...> {};
 
 		XTAL_DEF_(short)
 		XTAL_LET pack() const
@@ -86,6 +106,7 @@ struct define_super
 
 		using pack_size = constant_t<0>;
 		///< The `std::tuple_size` of `this`. \
+
 
 	};
 };
@@ -398,7 +419,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 
 	};
 };
-template <unsigned N_width>
+template <size_type N_width>
 struct defer_field<unit_type[N_width]>
 {
 	using U = unit_type[N_width];
@@ -456,7 +477,7 @@ struct defer_field<unit_type[N_width]>
 		
 	};
 };
-template <unsigned N_depth>
+template <size_type N_depth>
 struct defer_field<null_type[N_depth]>
 :	defer_field<unit_type[(one << N_depth)]>
 {
