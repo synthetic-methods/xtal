@@ -83,7 +83,7 @@ template <         class ...Ts>	using          common_t	=  typename complete_t<_
 template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and complete_q<common_t<Ts...>>;
 
 
-template <         class ...Ts>	concept        insame_q	=  not  isotropic<Ts...>::value;
+template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>::value;
 template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>::value;
 template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>::value;
 template <class T, class ...Us>	concept          make_p	= _std::constructible_from<XTAL_RAW_(T), Us...>;
@@ -109,6 +109,16 @@ struct derive
 	};
 };
 
+template <class T>
+XTAL_LET invoke_n = [] (auto &&...oo)
+XTAL_0FN
+{
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_TO_(T   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_TRY_TO_(T   (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_TO_(T{} (XTAL_REF_(oo)...))
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,8 +133,8 @@ template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns
 template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
 template <auto  N, auto  ...Ms>	concept            in_n	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
 template <auto  N, auto  ...Ms>	concept            un_n	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
-template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or (  same_q<T, Ts>));
-template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or (insame_q<T, Ts>));
+template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or      same_q<T, Ts>);
+template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
 
 
 template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
@@ -139,7 +149,7 @@ template <class T             >	concept      variable_q	=  not constant_q<T>;
 template <class T        >	concept   integral_variable_q	= _std::             integral<XTAL_RAW_(T)>;
 template <class T        >	concept   cardinal_variable_q	= _std::    unsigned_integral<XTAL_RAW_(T)>;
 template <class T        >	concept    ordinal_variable_q	= _std::      signed_integral<XTAL_RAW_(T)>;
-template <class T        >	concept    logical_variable_q	= _std::        same_as<bool, XTAL_RAW_(T)>;
+template <class T        >	concept    logical_variable_q	= _std::      same_as<bool  , XTAL_RAW_(T)>;
 template <class T        >	concept       real_variable_q	= _std::       floating_point<XTAL_RAW_(T)>;
 template <class T        >	concept    complex_variable_q	=  fungible_q<T, _std::complex<typename XTAL_RAW_(T)::value_type>>;
 template <class T        >	concept    simplex_variable_q	=  integral_variable_q<T> or    real_variable_q<T>;
@@ -205,9 +215,9 @@ template <class T             >	using   Scalar_valued_u	=  const_valued_u<T, typ
 template <class T             >	concept  array_valued_q	=  _std::is_array_v<_std::remove_reference_t<T>>;
 template <class T             >	concept  inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
 template <class T             >	concept  under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
-template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>> and not same_q<T, fixed_valued_u<T>>;
-template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>> and not same_q<T, fluid_valued_u<T>>;
-template <class T             >	concept        valued_q	=  complete_q<      valued<T>> and not same_q<T,       valued_u<T>>;
+template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>> and different_q<T, fixed_valued_u<T>>;
+template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>> and different_q<T, fluid_valued_u<T>>;
+template <class T             >	concept        valued_q	=  complete_q<      valued<T>> and different_q<T,       valued_u<T>>;
 template <class T             >	concept scalar_valued_q	=  complete_q<scalar_valued_u<T>> and not fixed_valued_q<T>;
 template <class T             >	concept Scalar_valued_q	=  complete_q<Scalar_valued_u<T>> and not fixed_valued_q<T>;
 
@@ -344,7 +354,7 @@ template <class T             >	using       coindexed_u	= _std::remove_reference
 template <class T             >	concept     coindexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)]; t(XTAL_ANY_(unsigned));};
 
 template <class T             >	using        covalued_u	= coindexed_u<T>;
-template <class T             >	concept      covalued_q	= fixed_q<T> and coindexed_q<T> and not same_q<coindexed_u<T>, indexed_u<T>>;;
+template <class T             >	concept      covalued_q	= fixed_q<T> and coindexed_q<T> and different_q<coindexed_u<T>, indexed_u<T>>;;
 
 template <class T             >	concept        scalar_q	=                                 not array_valued_q<T> ;
 template <class T             >	concept        vector_q	= array_sized_q<T> and       scalar_q<array_valued_u<T>>;
@@ -357,7 +367,7 @@ template <class T             >	struct    initializer   ;
 template <class T             >	using     initializer_u	= typename initializer<T>::value_type;
 template <class T             >	using     initializer_t	= typename initializer<T>::type;
 template <class T             >	using     initializer_s	= _std::initializer_list<_std::remove_reference_t<T>>;
-template <class T             >	concept   initializer_q	= not same_q<T, initializer_u<T>>;
+template <class T             >	concept   initializer_q	= different_q<T, initializer_u<T>>;
 template <class T             >	struct    initializer    {using value_type =   valued_u<T>; using type = initializer_s<value_type>;};
 template <covalued_q T        >	struct    initializer<T> {using value_type = covalued_u<T>; using type = initializer_s<value_type>;};
 

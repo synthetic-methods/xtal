@@ -40,7 +40,7 @@ struct store<U_data[(unsigned) -1]>
 :	store<U_data *>
 {
 };
-template <class U_data, size_type N_data>
+template <class U_data, auto N_data>
 struct store<U_data[N_data]>
 {
 	using W_data = _detail::aligned_t<U_data>;

@@ -25,7 +25,7 @@ noexcept -> auto
 template <class U>
 struct review<U>
 {
-	using superkind = confer<U>;
+	using superkind = bond::compose<bond::tag<review>, confer<U>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

@@ -14,7 +14,7 @@ namespace xtal::bond
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <int N_size>
+template <size_type N_size>
 struct word
 {
 	template <class S>
@@ -27,12 +27,12 @@ struct word
 
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
-		noexcept -> size_type {return N_size;};
+		noexcept -> auto {return N_size;};
 
 	};
 };
 template <class T>
-concept word_q = requires {{T::cardinality()} -> integral_q;};
+concept word_q = requires {{T::cardinality()} -> cardinal_q;};
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ concept word_q = (...and _detail::word_q<Ts>);
 ///\
 Defines the limits of a bit-field. \
 
-template <int N_size>
+template <size_type N_size>
 struct word
 {
 	template <int M_size=1>

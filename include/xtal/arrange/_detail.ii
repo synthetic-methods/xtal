@@ -21,8 +21,7 @@ struct aligned
 {
 	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
 
-	XTAL_DEF_(short,static)
-	XTAL_LET size() noexcept -> size_type {return sizeof(type);}
+	XTAL_DEF_(set) size() noexcept {return sizeof(type);}
 
 };
 template <class T             >	using    aligned_t	=  typename aligned<T >::type;
@@ -55,7 +54,7 @@ struct initialize
 	{
 		XTAL_IF0
 		XTAL_0IF (complete_q<V>) {
-			XTAL_LET f = invoke_f<V>;
+			XTAL_LET f = invoke_n<V>;
 			using    F = invoke_t<V>;
 			using    U = common_t<return_t<F, Xs>...>;
 			XTAL_LET N = sizeof...(xs);

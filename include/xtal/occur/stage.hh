@@ -93,21 +93,41 @@ struct stage<A, As...>
 
 	public:// *FUSE
 	//	using S_::infuse;
+	//	using S_::effuse;
 
 		XTAL_DEF_(long)
-		XTAL_LET influx(stage_q auto &&o)
+		XTAL_LET infuse(auto &&o)
 		noexcept -> signed
 		{
-			if constexpr (stage_q<decltype(o)>) {
-			//	TODO: Configure transition-rules (returning `-1` if invalid)?
-				switch (head()) {
-				case  0:;
-				case  1:;
-				case -1:;
-				}
+			return S_::infuse(XTAL_REF_(o));
+		}
+		XTAL_DEF_(long)
+		XTAL_LET effuse(auto &&o)
+		noexcept -> signed
+		{
+			return S_::effuse(XTAL_REF_(o));
+		}
+
+		XTAL_DEF_(long)
+		XTAL_LET infuse(stage_q auto &&o)
+		noexcept -> signed
+		{
+		//	TODO: Configure transition-rules (returning `-1` if invalid)?
+			switch (head()) {
+			case  0:;
+			case  1:;
+			case -1:;
 			}
 			return S_::infuse(XTAL_REF_(o));
 		}
+		/**/
+		XTAL_DEF_(long)
+		XTAL_LET effuse(stage_q auto &&o)
+		noexcept -> signed
+		{
+			return XTAL_REF_(o) == head();
+		}
+		/***/
 
 	};
 };

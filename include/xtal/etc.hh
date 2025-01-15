@@ -132,12 +132,6 @@ XTAL_ENV_(push)
 #define XTAL_SYS_FMA 0b000
 #endif
 
-#ifdef __ARM_FP
-#define XTAL_SYS_Neon 1
-#else
-#define XTAL_SYS_Neon 0
-#endif
-
 #if defined(__aarch64__) or defined(__amd64__) or defined(__amd64) or defined(__x86_64__) or defined(__x86_64) or defined(_M_AMD64) or defined(_M_X64) or defined(__ia64__) or defined(_IA64) or defined(__IA64__) or defined(__ia64) or defined(_M_IA64) or defined(_M_IA64) or defined(__powerpc64__) or defined(__ppc64__) or defined(__PPC64__) or defined(_ARCH_PPC64)
 #define XTAL_SYS_CPU 64
 #else
@@ -292,16 +286,11 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 /////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
-
-
 #if      XTAL_VER_(ranges == -1)
 #include <ranges>
 #endif
 #if      XTAL_VER_(ranges ==  3)
 #include <range/v3/all.hpp>
-#endif
-#if      XTAL_SYS_(Neon)
-#include <arm_neon.h>
 #endif
 
 #include <variant>

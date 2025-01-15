@@ -47,8 +47,8 @@ struct tab
 		XTAL_LET infuse(O &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::same_tabs_q<T_, O> and not same_q<T_, O>) {
-				return S_::infuse(XTAL_REF_(o).apply(invoke_f<T_>));
+			if constexpr (bond::tab_compatible_q<T_, O> and different_q<T_, O>) {
+				return S_::infuse(XTAL_REF_(o).apply(invoke_n<T_>));
 			}
 			else {
 				return S_::infuse(XTAL_REF_(o));
@@ -59,8 +59,8 @@ struct tab
 		XTAL_LET effuse(O &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::same_tabs_q<T_, O> and not same_q<T_, O>) {
-				return S_::effuse(XTAL_REF_(o).apply(invoke_f<T_>));
+			if constexpr (bond::tab_compatible_q<T_, O> and different_q<T_, O>) {
+				return S_::effuse(XTAL_REF_(o).apply(invoke_n<T_>));
 			}
 			else {
 				return S_::effuse(XTAL_REF_(o));

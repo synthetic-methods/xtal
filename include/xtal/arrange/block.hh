@@ -24,7 +24,7 @@ namespace _detail
 template <class ..._s> struct   superblock;
 template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
 
-template <class U, size_type N>
+template <class U, auto N>
 struct superblock<U(&)[N]>
 {
 	using archetype = _std::span<U, N>;
@@ -48,7 +48,7 @@ struct superblock<U(&)[N]>
 	using type = derive_t<homotype>;
 
 };
-template <class U, size_type N>
+template <class U, auto N>
 struct superblock<U[N]>
 {
 	using archetype = _std::array<U, N>;
@@ -210,7 +210,7 @@ struct block<A>
 		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(S_::data(), zeroed_.data(), sizeof(*this));}
 
 		XTAL_TO4_(template <complete_q F>
-		XTAL_DEF_(explicit operator) F(), apply(invoke_f<F>))
+		XTAL_DEF_(explicit operator) F(), apply(invoke_n<F>))
 
 		template <auto f=XTAL_FUN_(bond::pack_f)>
 		XTAL_DEF_(short)

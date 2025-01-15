@@ -48,135 +48,123 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f, iterator_q Y_, iterator_q X_>
+template <auto f=null_type{}>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const n_seq=false)
+XTAL_LET copy_to(iterator_q auto y0, iterator_q auto const x0, iterator_q auto const xN, bool const n_seq=false)
 noexcept -> void
+requires same_q<decltype(x0), decltype(xN)>
 {
+	using Y = iteratee_t<decltype(y0)>;
+	using X = iteratee_t<decltype(x0)>;
+	using F =            decltype(f ) ;
 	using namespace _std;
-#ifdef __cpp_lib_execution
-	if (not _std::is_constant_evaluated()) {
-		XTAL_LET seq = execution::  seq;
-		XTAL_LET par = execution::unseq;
-		if    (n_seq) transform(seq, x0, xN, y0, f);
-		else          transform(par, x0, xN, y0, f);
+	XTAL_IF0
+	XTAL_0IF (same_q<F, null_type> and different_q<Y, X>) {
+		copy_to<invoke_n<Y>>(y0, x0, xN, n_seq);
 	}
-	else {
-		transform(x0, xN, y0, f);
-	}
+	XTAL_0IF (same_q<F, null_type> and      same_q<Y, X>) {
+#if __cpp_lib_execution
+		if constexpr (not _std::is_constant_evaluated()) {
+			if (n_seq) copy(execution::  seq, x0, xN, y0);
+			else       copy(execution::unseq, x0, xN, y0);
+		}
 #else
-	transform(x0, xN, y0, f);
+		if constexpr (false) {}
 #endif
-}
-template <iterator_q Y_, iterator_q X_>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const n_seq=false)
-noexcept -> void
-{
-	using Y = iterated_u<Y_>;
-	copy_to(y0, x0, xN, invoke_f<Y>, n_seq);
-}
-template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, X_ const x0, X_ const xN, bool const n_seq=false)
-noexcept -> void
-{
-	using namespace _std;
-#ifdef __cpp_lib_execution
-	if (not _std::is_constant_evaluated()) {
-		XTAL_LET seq = execution::  seq;
-		XTAL_LET par = execution::unseq;
-		if    (n_seq) copy(seq, x0, xN, y0);
-		else          copy(par, x0, xN, y0);
+		else {
+			copy(x0, xN, y0);
+		}
 	}
-	else {
-		copy(x0, xN, y0);
-	}
+	XTAL_0IF_(else) {
+#if __cpp_lib_execution
+		if constexpr (not _std::is_constant_evaluated()) {
+			if (n_seq) transform(execution::  seq, x0, xN, y0, f);
+			else       transform(execution::unseq, x0, xN, y0, f);
+		}
 #else
-	copy(x0, xN, y0);
+		if constexpr (false) {}
 #endif
+		else {
+			transform(x0, xN, y0, f);
+		}
+	}
 }
-
-template <auto f, iterator_q Y_, iterable_q Xs>
+template <auto f=null_type{}>
 XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, Xs const &xs, bool const n_seq=false)
-noexcept -> void
-//requires return_q<decltype(f), iteratee_t<Xs>>
-{
-	copy_to<f>(y0, xs.begin(), xs.end(), n_seq);
-}
-template <iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(Y_ y0, Xs const &xs, bool const n_seq=false)
+XTAL_LET copy_to(iterator_q auto y0, iterable_q auto const &xs, bool const n_seq=false)
 noexcept -> void
 {
-	using X_ = iterator_t<Xs>;
+	using X_ = iterator_t<decltype(xs)>;
+	using Y_ =            decltype(y0) ;
 	using X  = iterated_u<X_>;
 	using Y  = iterated_u<Y_>;
 	XTAL_IF0
-	XTAL_0IF (same_q<Y_, X_> and alignof(Y) == alignof(X)) {
-		_std::memcpy(y0, XTAL_REF_(xs).begin(), sizeof(xs));
+	XTAL_0IF (same_q<null_type, decltype(f)> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
+		_std::memcpy(y0, xs.begin(), sizeof(xs));
 	}
 	XTAL_0IF_(else) {
-		copy_to(y0, xs.begin(), xs.end(), n_seq);
+		copy_to<f>(y0, xs.begin(), xs.end(), n_seq);
 	}
+}
+template <auto f=null_type{}>
+XTAL_DEF_(inline)
+XTAL_LET copy_to(iterable_q auto &ys, iterable_q auto const &xs, bool const n_seq=false)
+noexcept -> void
+{
+	copy_to<f>(ys.begin(), xs, n_seq);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f, iterator_q Y_, iterator_q X_>
+template <auto f=null_type{}>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, X_ const x0, X_ const xN, bool const n_seq=false)
+XTAL_LET move_to(iterator_q auto y0, iterator_q auto const x0, iterator_q auto const xN, bool const n_seq=false)
 noexcept -> void
+requires same_q<decltype(x0), decltype(xN)>
 {
 	copy_to<f>(y0, mover_f(x0), mover_f(xN), n_seq);
 }
-template <iterator_q Y_, iterator_q X_>
+template <auto f=null_type{}>
 XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, X_ x0, X_ xN, bool const n_seq=false)
+XTAL_LET move_to(iterator_q auto y0, iterable_q auto const &xs, bool const n_seq=false)
 noexcept -> void
 {
-	copy_to(y0, mover_f(x0), mover_f(xN), n_seq);
-}
-
-template <auto f, iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, Xs &&xs, bool const n_seq=false)
-noexcept -> void
-{
-	move_to<f>(y0, xs.begin(), xs.end(), n_seq);
-}
-template <iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline)
-XTAL_LET move_to(Y_ y0, Xs &&xs, bool const n_seq=false)
-noexcept -> void
-{
-	using X_ = iterator_t<Xs>;
+	using X_ = iterator_t<decltype(xs)>;
+	using Y_ =            decltype(y0) ;
+	using F  =            decltype(f ) ;
 	using X  = iterated_u<X_>;
 	using Y  = iterated_u<Y_>;
+
 	XTAL_IF0
-	XTAL_0IF (same_q<Y_, X_> and alignof(Y) == alignof(X)) {
-		_std::memmove(y0, XTAL_REF_(xs).begin(), sizeof(xs));
+	XTAL_0IF (same_q<F, null_type> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
+		_std::memmove(y0, xs.begin(), sizeof(xs));
 	}
 	XTAL_0IF_(else) {
-		move_to(y0, xs.begin(), xs.end(), n_seq);
+		move_to<f>(y0, xs.begin(), xs.end(), n_seq);
 	}
+}
+template <auto f=null_type{}>
+XTAL_DEF_(inline)
+XTAL_LET move_to(iterable_q auto &ys, iterable_q auto const &xs, bool const n_seq=false)
+noexcept -> void
+{
+	move_to<f>(ys.begin(), xs, n_seq);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f, class W>
+template <auto f>
 XTAL_DEF_(inline)
-XTAL_LET apply_to(W &w, bool const n_seq=false)
+XTAL_LET apply_to(auto &w, bool const n_seq=false)
 noexcept -> void
 {
 	w = f(XTAL_MOV_(w));
 }
-template <auto f, class Ws> requires iterable_q<Ws>
+template <auto f>
 XTAL_DEF_(inline)
-XTAL_LET apply_to(Ws &ws, bool const n_seq=false)
+XTAL_LET apply_to(iterable_q auto &ws, bool const n_seq=false)
 noexcept -> void
 {
 	move_to<f>(ws.begin(), ws, n_seq);
@@ -186,8 +174,7 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 /**/
-template <class Y, class X>
-XTAL_LET mix_to(Y &y, X &&x)
+XTAL_LET mix_to(auto &y, auto &&x)
 noexcept -> void
 {
 	auto j = point_f(x);
@@ -195,12 +182,12 @@ noexcept -> void
 	auto N = count_f(y);
 	for (XTAL_ALL_(N) n{}; n < N; ++n) {*i++ += XTAL_MOV_(*j++);}
 };
-template <class Y, class ...Xs>
 XTAL_DEF_(inline)
-XTAL_LET mix_to(Y &y, Xs &&...xs)
+XTAL_LET mix_to(auto &y, auto &&...xs)
 noexcept -> void
 {
-	mix_to(y, iterative_f([] (auto &&o, auto &&...oo) XTAL_0FN_(o +...+ oo), XTAL_REF_(xs)...));
+	auto const f = [] (auto &&o, auto &&...oo) XTAL_0FN_(XTAL_REF_(o) +...+ XTAL_REF_(oo));
+	mix_to(y, iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));
 };
 /*/
 template <class Y, class ...Xs>

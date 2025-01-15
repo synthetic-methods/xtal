@@ -84,7 +84,7 @@ struct define
 								review_o.subview(scan),
 								render_o.subview(scan).skip(step)
 							)))
-						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1,&,R_::efflux(oo...)) (R_::influx_push(XTAL_REF_(render_o)));
+						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1, &, R_::efflux(oo...)) (R_::influx_push(XTAL_REF_(render_o)));
 					}
 				}
 				///\
@@ -221,41 +221,29 @@ struct defer<U>
 		If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` \
  		(so it can be `vtable`d). \
 
-		XTAL_DO2_(template <auto ...Is> requires (0 == sizeof...(Is))
+		XTAL_DO2_(template <auto ...Is>
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> auto
 		{
 			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
-			return iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...);
-		})
-		XTAL_DO2_(template <auto ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs),
-		noexcept -> auto
-		{
-			auto const f  = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
-			auto const y  = iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...);
-			using      Y  = XTAL_ALL_(y);
-			using      Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
-			return     Y_(XTAL_MOV_(y))|recount_f(y);
+			XTAL_IF0
+			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
+			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
 
-		XTAL_DO0_(template <auto ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(short)
-		XTAL_LET function(auto &&...xs),
-		noexcept -> auto
-		requires XTAL_TRY_(U_::function(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
-		{
-			return iterative_f(XTAL_FUN_(U_::function), XTAL_REF_(xs)...);
-		})
-		XTAL_DO0_(template <auto ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DO0_(template <auto ...Is>
 		XTAL_DEF_(short)
 		XTAL_LET function(auto &&...xs),
 		noexcept -> auto
 		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
 		{
-			return iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
+			auto const f = iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
+			XTAL_IF0
+			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
+			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
+
+			return iterative_f(XTAL_FUN_(U_::function), XTAL_REF_(xs)...);
 		})
 
 	};

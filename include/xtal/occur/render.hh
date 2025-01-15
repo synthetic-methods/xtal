@@ -48,7 +48,7 @@ concept influx_render_q = false;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <render_q X, render_q Y> requires (not same_q<X, Y>)
+template <render_q X, render_q Y> requires different_q<X, Y>
 XTAL_DEF_(inline)
 XTAL_LET operator == (X const &x, Y const &y)
 noexcept -> bool

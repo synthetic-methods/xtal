@@ -232,26 +232,6 @@ static_assert(_std::same_as<const int( &)[2][2], decltype(dissolve_f(XTAL_ANY_(c
 static_assert(_std::same_as<      int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(      _std::complex<int>   [2])))>);
 static_assert(_std::same_as<const int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(const _std::complex<int>   [2])))>);
 
-///\
-Defines a factory for the supplied type. \
-
-template <class F>
-XTAL_LET invoke_f = [] (auto &&...oo)
-XTAL_0FN
-{
-	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(F   {XTAL_REF_(oo)...})
-	XTAL_0IF XTAL_TRY_TO_(F   (XTAL_REF_(oo)...))
-	XTAL_0IF XTAL_TRY_TO_(F{} (XTAL_REF_(oo)...))
-};
-template <class F>
-using    invoke_t = decltype(invoke_f<F>);
-
-template <class F, class ...Xs>
-concept  invoke_p = _std::invocable<invoke_t<F>, Xs...>;
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -364,6 +344,17 @@ template <class      T >	XTAL_DEF_(short) XTAL_LET counted_f(T &&t)      noexcep
 template <class      T >	XTAL_DEF_(short) XTAL_LET counter_f(T &&t)      noexcept -> auto {return counter_t<T>(XTAL_REF_(t));}
 
 
+///\returns the `any_view` type-erased form of `y`. \
+
+XTAL_DEF_(short)
+XTAL_LET derange_f(iterable_q auto &&y)
+noexcept -> auto
+{
+	using  Y  = XTAL_ALL_(y);
+	using  Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
+	return Y_(XTAL_MOV_(y))|recount_f(y);
+}
+
 ///\returns the result of zipping `...xs` with `f`. \
 
 ///\note\
@@ -377,7 +368,7 @@ template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline
 template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline) XTAL_LET iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	requires incomplete_q<F       > XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (              XTAL_REF_(xs)...);}
 //mplate <         class ...Xs>	                                XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (              XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	requires invocative_p<F, Xs...> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                          iterative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	requires invocative_p<F, Xs...> XTAL_DEF_(inline) XTAL_LET iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                          iterative_f(invoke_n<F>, XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	                                                  using    iterative_t = XTAL_ALL_(iterative_f<F>(XTAL_ANY_(Xs)...));
 
 /*/
@@ -387,7 +378,7 @@ template <class F, class ...Xs>	                                                
 To be implemented by the host to transparently lift `f` when `xs...` are vectorized. \
 
 template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
-template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(       Xs &&...xs) noexcept -> decltype(auto) {return operative_f(invoke_f<F>, XTAL_REF_(xs)...);}
+template <class F, class ...Xs> XTAL_DEF_(inline) XTAL_LET operative_f(       Xs &&...xs) noexcept -> decltype(auto) {return operative_f(invoke_n<F>, XTAL_REF_(xs)...);}
 template <class F             > XTAL_DEF_(inline) XTAL_LET operative_f(F &&f            ) noexcept -> decltype(auto) {return         XTAL_FUN_(operative_f)         ;}
 /***/
 
@@ -400,9 +391,16 @@ To be implemented by the host to transparently reduce `y` when vectorized. \
 template <class T>
 XTAL_DEF_(inline)
 XTAL_LET objective_f(T &&t)
-noexcept -> _std::remove_cvref_t<T>
+noexcept -> auto
 {
 	return XTAL_REF_(t);
+}
+template <constant_q T>
+XTAL_DEF_(inline)
+XTAL_LET objective_f(T &&t)
+noexcept -> auto
+{
+	return XTAL_REF_(t)();
 }
 
 

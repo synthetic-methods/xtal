@@ -96,7 +96,7 @@ struct define
 		noexcept -> signed
 		{
 			return [this, ...oo=XTAL_REF_(oo)]
-				XTAL_XFN_(1,&,efflux(oo...)) (self().effuse(XTAL_REF_(o)));
+				XTAL_XFN_(1, &, efflux(oo...)) (self().effuse(XTAL_REF_(o)));
 		}
 
 		///\
@@ -135,7 +135,7 @@ struct define
 		noexcept -> signed
 		{
 			return [this, ...oo=XTAL_REF_(oo)]
-				XTAL_XFN_(1,&,influx(oo...)) (self().infuse(XTAL_REF_(o)));
+				XTAL_XFN_(1, &, influx(oo...)) (self().infuse(XTAL_REF_(o)));
 		}
 
 
@@ -236,9 +236,9 @@ struct defer
 		XTAL_DEF_(short)
 		XTAL_LET influx(auto &&...oo)
 		noexcept -> signed
-		requires any_q<U> and (not same_q<U, bond::seek_front_t<decltype(oo)...>>)
+		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
 		{
-			return [this, oo...] XTAL_XFN_(1,&,S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(1, &, S_::influx(oo...)) (head().influx(XTAL_REF_(oo)...));
 		}
 
 		///\note\
@@ -253,25 +253,24 @@ struct defer
 		XTAL_DEF_(short)
 		XTAL_LET efflux(auto &&...oo)
 		noexcept -> signed
-		requires any_q<U> and (not same_q<U, bond::seek_front_t<decltype(oo)...>>)
+		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
 		{
-			return [this, oo...] XTAL_XFN_(1,&,head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
+			return [this, oo...] XTAL_XFN_(1, &, head().efflux(oo...)) (S_::efflux(XTAL_REF_(oo)...));
 		}
 
 		///\note\
 		Assigns the given value `O` if it matches the proxied type `U`. \
 
 		XTAL_DEF_(short)
-		XTAL_LET defuse(XTAL_SYN_(U) auto &&o)
-		noexcept -> signed
-		{
-			return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);
-		}
-		XTAL_DEF_(short)
 		XTAL_LET defuse(auto &&o)
 		noexcept -> signed
 		{
-			return S_::defuse(XTAL_REF_(o));
+			if constexpr (same_q<U, decltype(o)>) {
+				return equivalent_f(o, head()) || ((void) head(XTAL_REF_(o)), 0);
+			}
+			else {
+				return S_::defuse(XTAL_REF_(o));
+			}
 		}
 
 	};

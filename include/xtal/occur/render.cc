@@ -55,7 +55,7 @@ TAG_("render")
 	{
 		using V_render = render_t<counter_t<>>;
 		using U_render = render_t<counted_t<>>;
-		using I = typename U_render::U_step;
+		using I = typename U_render::step_type;
 
 		render__initialization<U_render, U_render>((I) 3);
 		render__initialization<U_render, V_render>((I) 3);
@@ -67,7 +67,7 @@ TAG_("render")
 	{
 		using V_render = render_t<counter_t<>>;
 		using U_render = render_t<counted_t<>>;
-		using I = typename U_render::U_step;
+		using I = typename U_render::step_type;
 		
 		render__initialization<U_render, U_render>((I) 3);
 		render__initialization<U_render, V_render>((I) 3);
@@ -79,7 +79,7 @@ TAG_("render")
 	{
 		using V = counter_t<>; using V_render = render_t<V>;
 		using U = counted_t<>; using U_render = render_t<U>;
-		using I = typename U_render::U_step;
+		using I = typename U_render::step_type;
 
 		for (I i = 0; i <= 1; ++i)
 		{

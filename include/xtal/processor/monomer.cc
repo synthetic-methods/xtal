@@ -92,7 +92,7 @@ TAG_("monomer", "irritating")
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<Px_irritator_mix, Ox_onset::dispatch<>>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
 	auto _11 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*11);});
 
@@ -121,7 +121,7 @@ void monomer_provision__advancing()
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<Px_mix>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*10);});
 	auto _11 = _01|_xtd::ranges::views::transform([] (auto n) {return T_alpha(n*11);});
 
@@ -167,7 +167,7 @@ void monomer_provision__provisioning()
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
@@ -210,7 +210,7 @@ void monomer_chaining__rvalue()
 	unsigned constexpr N = 4;
 	
 	using namespace _xtd::ranges;
-	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 	
@@ -240,7 +240,7 @@ void monomer_chaining__lvalue()
 	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_f<T_alpha>);
+	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 	
@@ -272,7 +272,7 @@ void monomer_chaining__shared()
 	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 =  views::iota(0, 10)|views::transform(invoke_f<T_alpha>);
+	auto _01 =  views::iota(0, 10)|views::transform(invoke_n<T_alpha>);
 	auto _10 = _01|views::transform([] (auto n) {return n*10;});
 	auto _11 = _01|views::transform([] (auto n) {return n*11;});
 
@@ -287,7 +287,7 @@ void monomer_chaining__shared()
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
 	//\
-	yhs <<= occur::restep_f(50);
+	yhs <<= occur::restep_f(50U);
 	yhs <<= occur::restep_f((size_type) 50);
 	yhs <<= occur::resize_f(N);
 
@@ -309,6 +309,6 @@ TAG_("monomer", "chaining")
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////FIXME
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

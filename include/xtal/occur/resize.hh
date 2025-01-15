@@ -11,16 +11,12 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=size_type> struct   resize;
-template <class U=size_type> using    resize_t = confined_t<resize<U>>;
-template <typename    ..._s> concept  resize_q = bond::tag_p<resize, _s...>;
-XTAL_DEF_(short)
-XTAL_LET resize_f(auto &&w)
-noexcept -> auto
-{
-	using _op = bond::operate<decltype(w)>;
-	return resize_t<typename _op::sigma_type>(XTAL_REF_(w));
-}
+template <class U=typename bond::operating::sigma_type> struct   resize;
+template <class U=typename bond::operating::sigma_type> using    resize_t =  confined_t<resize<U>>;
+template <     typename ...Qs> concept  resize_q = bond::tag_p<resize, Qs...>;
+
+XTAL_DEF_(let) resize_f(auto &&w)
+noexcept {return resize_t<typename bond::operate<decltype(w)>::sigma_type>(XTAL_REF_(w));}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -55,8 +51,8 @@ struct resize<U> : resize<counter_t<U>>
 {
 };
 
-static_assert(bond::same_tabs_q<resize_t<unsigned>, resize_t<unsigned>>);
-static_assert(bond::same_tabs_q<resize_t<unsigned>, resize_t<  signed>>);
+static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
+static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<  signed>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

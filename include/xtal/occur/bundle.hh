@@ -24,7 +24,7 @@ noexcept -> auto
 {
 	XTAL_IF0
 	XTAL_0IF (complete_q<V>) {
-		XTAL_LET f = invoke_f<V>;
+		XTAL_LET f = invoke_n<V>;
 		using    F = invoke_t<V>;
 		using    T = bundle_t<return_t<F, Xs>...>;
 		if constexpr (automorphism_p<F, Xs...>) {

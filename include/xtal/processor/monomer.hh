@@ -210,9 +210,9 @@ struct monomer<U, As...>
 				XTAL_LET efflux(Ren &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
-					size_type vN = R_::template head<U_resize>();
+					auto const u_resize = R_::template head<U_resize>();
 					occur::review_t<U_state> v_(store());
-					return efflux(v_.subview(vN), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return efflux(v_.subview(u_resize), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \

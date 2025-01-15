@@ -31,17 +31,9 @@ struct define
 	public:
 		using S_::S_;
 
-		XTAL_NEW_(explicit) subtype(size_type u)
-		noexcept
-		{
-			assert(0 == u);
-		};
 		template <constant_q U>
-		XTAL_NEW_(explicit) subtype(U &&u)
-		noexcept
-		{
-			assert(0 == u);
-		};
+		XTAL_NEW_(explicit) subtype(U       &&u) noexcept {assert(0 == u);};
+		XTAL_NEW_(explicit) subtype(size_type u) noexcept {assert(0 == u);};
 
 		///\
 		Attaches `T` as a member of `this`. \
@@ -153,7 +145,7 @@ struct define
 					{
 						template <auto J>
 						XTAL_SET intend_v = same_q<typename T::body_type, size_type>?
-							(decltype(J)) T(static_cast<size_type>(J)): J;
+							(XTAL_ALL_(J)) T(static_cast<size_type>(J)): J;
 						
 						template <auto J>
 						XTAL_SET extend_v = digested::template index<Is..., intend_v<J>>::point;

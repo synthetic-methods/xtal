@@ -26,7 +26,7 @@ noexcept -> auto
 {
 	XTAL_IF0
 	XTAL_0IF (complete_q<V>) {
-		XTAL_LET f = invoke_f<V>;
+		XTAL_LET f = invoke_n<V>;
 		using    F = invoke_t<V>;
 		using    T = couple_t<return_t<F, Xs>...>;
 		if constexpr (automorphism_p<F, Xs...>) {
@@ -106,7 +106,7 @@ struct couple<Xs...>
 		noexcept -> auto &
 		requires requires (archetype &s) {f(get<0>(s), get<0>(t));}
 		{
-			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			XTAL_LET N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);
 
 			auto &s = *this;
@@ -134,7 +134,7 @@ struct couple<Xs...>
 		noexcept -> auto
 		requires requires (archetype const &s) {f(get<0>(s), get<0>(t));}
 		{
-			size_type constexpr N = bond::pack_size_n<decltype(t)>;
+			XTAL_LET N = bond::pack_size_n<decltype(t)>;
 			static_assert(N <= N_data);
 			
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -290,7 +290,7 @@ template <xtal::bond::couple_q T>
 struct destruct<T>
 {
 	XTAL_DEF_(short,static)
-	XTAL_LET size() noexcept -> size_type {return _std::tuple_size_v<T>;};
+	XTAL_LET size() noexcept -> auto {return _std::tuple_size_v<T>;};
 	using    value_type = _std::tuple_element_t<0, T>;
 
 };

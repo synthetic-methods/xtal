@@ -67,7 +67,7 @@ struct lifter
 				return confined_t<superkind, F>::template function<Is...>(XTAL_REF_(xs)...);
 			}
 			else {
-				return invoke_f<F>(XTAL_REF_(xs)...);
+				return invoke_n<F>(XTAL_REF_(xs)...);
 			}
 		}
 
@@ -80,7 +80,7 @@ struct lifter
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides pure `head`-less mapping of `method` and `function` (in contrast to `link`), \
-in addition to allowing constructor mapping via `invoke_f`. \
+in addition to allowing constructor mapping via `invoke_n`. \
 
 template <                   typename ...As> struct lift;
 template <bond::compose_q A                > struct lift<A       > :                                              A {};

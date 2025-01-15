@@ -905,12 +905,12 @@ struct   operate<Ts...>
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
 {
 };
-using operating = operate<size_type>;
-
-//static_assert(same_q<size_type, typename operating::sigma_type>);
-//static_assert(sizeof(size_type) == sizeof(typename operating::sigma_type));
-//static_assert(sizeof(size_type) == sizeof(typename operating::delta_type));
-//static_assert(sizeof(size_type) == sizeof(typename operating::alpha_type));
+template <>
+struct   operate<>
+:	operate<size_type>
+{
+};
+using operating = operate<>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

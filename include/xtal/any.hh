@@ -81,7 +81,7 @@ template <         class ...Ts>	concept     molecular_q	=  (...and _entail::    
 template <         class ...Ts>	concept        atomic_q	=  (...and _entail::       atomic_q<   Ts   >);
 
 
-template <         class ...Ts>	concept        insame_q	=          _entail::       insame_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
+template <         class ...Ts>	concept     different_q	=          _entail::    different_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
 template <         class ...Ts>	concept          same_q	=          _entail::         same_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
 template <         class ...Ts>	concept          make_q	=          _entail::         make_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
 template <class T, class ...Ts>	concept          make_p	=          _entail::         make_p<T, Ts...>;//< `T` is constructible from `Ts...`.
@@ -94,8 +94,24 @@ template <class F, class ...Xs>	concept  automorphism_p	=  (...and _entail:: aut
 template <class X, class ...Fs>	concept  automorphism_q	=  (...and _entail:: automorphism_q<X, Fs   >);//< `X `  is unchanged by `Fs...`.
 
 
+///\
+Resolves the given CRTP `template` as a type. \
+
 template <template <class> class T_>
 using derive_t	= typename _entail::derive<T_>::type;
+
+
+///\
+Defines a factory for the supplied type. \
+
+template <class T>
+XTAL_LET invoke_n = _entail::invoke_n<T>;
+
+template <class T>
+using    invoke_t = decltype(invoke_n<T>);
+
+template <class T, class ...Xs>
+concept  invoke_p = _std::invocable<invoke_t<T>, Xs...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +160,7 @@ template <class 	    ...Ts>  concept             real_q	=  (...and _entail::    
 template <class 	    ...Ts>  concept          complex_q	=  (...and _entail::      complex_q<Ts>);
 template <class 	    ...Ts>  concept          simplex_q	=  (...and _entail::      simplex_q<Ts>);
 template <class 	    ...Ts>  concept          anyplex_q	=  (...and _entail::      anyplex_q<Ts>);
+template <class 	    ...Ts>  concept           number_q	=                         anyplex_variable_q<Ts...>;
 
 template <class          ...Ts>	concept       liminal_q	=  (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
 template <class          ...Ts>	concept      terminal_q	=  (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);

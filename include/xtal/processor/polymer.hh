@@ -88,10 +88,13 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(size_t i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(        ), u_ensemble   )
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(), u_ensemble)
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(integral_q auto i), u_ensemble[i])
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(occur::stage_q auto const &o)
+				,	u_ensemble|_xtd::ranges::views::filter([&] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(o)))
+				)
 				//\
-				XTAL_TO2_(XTAL_DEF_(let) lead(), u_ensemble.front())
+				XTAL_TO2_(XTAL_DEF_(let) lead(), ensemble().front())
 				XTAL_TO2_(XTAL_DEF_(let) lead(), R_::template head<V_voice>())
 
 			public:// *FLUX
@@ -121,42 +124,54 @@ struct polymer<U, As...>
 				XTAL_LET influx(flux::key_s<> i, auto &&...oo)
 				noexcept -> signed
 				{
-					auto   u_ = u_ensemble.scan(i.head());
-					assert(u_ < u_ensemble.end() and i.head() == u_->head());
+					auto   u_ = ensemble().scan(i.head());
+					assert(u_ < ensemble().end() and i.head() == u_->head());
 					return u_->influx(XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(long)
 				XTAL_LET efflux(flux::key_s<> i, auto &&...oo)
 				noexcept -> signed
 				{
-					auto   u_ = u_ensemble.scan(i.head());
-					assert(u_ < u_ensemble.end() and i.head() == u_->head());
+					auto   u_ = ensemble().scan(i.head());
+					assert(u_ < ensemble().end() and i.head() == u_->head());
 					return u_->efflux(XTAL_REF_(oo)...);
 				}
 				///\
-				Forwards to all instances including the sentinel (except when rendering). \
+				Forwards to all active instances including the sentinel (except when rendering). \
 
-				XTAL_DEF_(long)
+				XTAL_DEF_(let) influx_pushed(auto &&...oo) noexcept {return occur::influx_render_q<decltype(oo)...>? -1: lead().influx(XTAL_REF_(oo)...);}
+				XTAL_DEF_(let) efflux_pushed(auto &&...oo) noexcept {return occur::efflux_render_q<decltype(oo)...>? -1: lead().efflux(XTAL_REF_(oo)...);}
+
+				XTAL_DEF_(let) influx_pusher(auto &&...oo) noexcept {return [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).influx(XTAL_MOV_(oo)...));}
+				XTAL_DEF_(let) efflux_pusher(auto &&...oo) noexcept {return [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).efflux(XTAL_MOV_(oo)...));}
+
+				XTAL_DEF_(short)
 				XTAL_LET influx_push(auto &&...oo)
 				noexcept -> signed
 				{
 					using _xtd::ranges::accumulate;
-
-					bool constexpr rend = occur::influx_render_q<decltype(oo)...>;
-					return accumulate(u_ensemble, rend? -1: lead().influx(oo...)
-					,	[...oo=XTAL_REF_(oo)] (signed x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).influx(oo...))
-					);
+					auto const x = influx_pushed(          oo ...);
+					auto const f = influx_pusher(XTAL_REF_(oo)...);
+					if constexpr ((... or occur::stage_q<decltype(oo)>)) {
+						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
+					}
+					else {
+						return accumulate(ensemble(occur::stage_f(0)), x, XTAL_MOV_(f));
+					}
 				}
-				XTAL_DEF_(long)
+				XTAL_DEF_(short)
 				XTAL_LET efflux_pull(auto &&...oo)
 				noexcept -> signed
 				{
 					using _xtd::ranges::accumulate;
-
-					bool constexpr rend = occur::efflux_render_q<decltype(oo)...>;
-					return accumulate(u_ensemble, rend? -1: lead().efflux(oo...)
-					,	[...oo=XTAL_REF_(oo)] (signed x, auto &&vox) XTAL_0FN_(x & XTAL_REF_(vox).efflux(oo...))
-					);
+					auto const x = efflux_pushed(          oo ...);
+					auto const f = efflux_pusher(XTAL_REF_(oo)...);
+					if constexpr ((... or occur::stage_q<decltype(oo)>)) {
+						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
+					}
+					else {
+						return accumulate(ensemble(occur::stage_f(0)), x, XTAL_MOV_(f));
+					}
 				}
 
 				///\note\
@@ -169,23 +184,23 @@ struct polymer<U, As...>
 				noexcept -> signed
 				{
 					auto h  = i.head();
-					auto u_ = u_ensemble.scan(h);
+					auto u_ = ensemble().scan(h);
 
 				// If an onset-event is received...
 					if (0 == o) {
 					
 					// If a voice already exists for this `key_s`...
-						if (u_ < u_ensemble.end() and h == u_->head()) {
+						if (u_ < ensemble().end() and h == u_->head()) {
 
 						//	Recycle/terminate the current voice:
 							auto u = *u_;
 							auto x = u_->influx(occur::stage_f(-1), oo...);
 							assert(x != -1);
-							u_ = u_ensemble.poke(u_, h, XTAL_MOV_(u));
+							u_ = ensemble().poke(u_, h, XTAL_MOV_(u));
 						}
 						else {
 						//	Allocate a new voice using the `lead()`:
-							u_ = u_ensemble.poke(u_, h, lead());
+							u_ = ensemble().poke(u_, h, lead());
 						}
 					}
 					assert(u_->head() == h);
@@ -205,38 +220,31 @@ struct polymer<U, As...>
 				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
 				noexcept -> signed
 				{
-					u_ensemble.free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
+					ensemble().free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
 					
-					for (auto &vox:u_ensemble) {
-						if (1 == vox.efflux(XTAL_REF_(render_o))) {
+					for (auto &e:ensemble()) {
+						if (1 == e.efflux(XTAL_REF_(render_o))) {
 							return 1;
 						}
 					}
-					///\todo\
-					Either configure `vox` (e.g. with `stored`), \
-					or reapply the base `monomer`. \
-
 					if constexpr (provision::stored_q<S_>) {
-						/**/
-						size_type i{count_f(u_ensemble)};
-						
-						auto vox_f = [&]<class N> (N n) XTAL_0FN {
-							i -= n;
-							[&]<auto ...I> (bond::seek_t<I...>)
-								XTAL_0FN {_detail::mix_to(review_o, u_ensemble[i + I]()...);}
-							(bond::seek_s<n>{});
+						size_type i{count_f(ensemble())};
+
+						auto const mix_f = [&] (constant_q auto N) XTAL_0FN {
+							[&]<auto ...I> (bond::seek_t<I...>) XTAL_0FN {
+								i -= N; _detail::mix_to(review_o, ensemble(i + I)()...);
+							}	(bond::seek_s<N>{});
 						};
-						while (i) {switch (i) {
-							case 1:          {vox_f(constant_t<1>{}); break;}
-							case 2:          {vox_f(constant_t<2>{}); break;}
-							case 3:          {vox_f(constant_t<3>{}); break;}
-							case 4: default: {vox_f(constant_t<4>{}); break;}
-						}}
-						/*/
-						for (auto &vox:u_ensemble) {
-							_detail::mix_to(review_o, vox());
+
+						if (i) {
+							i -= 1; _xtd::ranges::move(ensemble(i)()|account_f(review_o), point_f(review_o));
 						}
-						/***/
+						while (i) {switch (i) {
+							case 1:          {mix_f(constant_t<1>{}); break;}
+							case 2:          {mix_f(constant_t<2>{}); break;}
+							case 3:          {mix_f(constant_t<3>{}); break;}
+							case 4: default: {mix_f(constant_t<4>{}); break;}
+						}}
 					}
 					return 0;
 				}
