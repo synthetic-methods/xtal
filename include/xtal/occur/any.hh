@@ -1,7 +1,7 @@
 #pragma once
-#include "../flux/all.hh"// `_retail`
+#include "../flow/all.hh"// `_retail`
 
-#include "../flux/mask.hh"
+#include "../flow/mask.hh"
 
 
 
@@ -40,7 +40,7 @@ struct define
 
 		template <extent_type N_mask=-1>
 		struct attach
-		:	bond::compose<flux::mask<N_mask>, typename S_::template afflux<>>
+		:	bond::compose<flow::mask<N_mask>, typename S_::template afflux<>>
 		{
 		};
 		///\
@@ -56,7 +56,7 @@ struct define
 			,	typename U_choke::template dispatch<N_mask>
 			,	attach<N_mask>
 			>;
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -64,23 +64,24 @@ struct define
 			public:// CONSTRUCT
 				using R_::R_;
 			
-			public:// *FLUX
-
+			public:// FLOW
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(auto &&...oo)
+				XTAL_LET flux(auto &&...oo)
 				noexcept -> signed
 				{
-					return R_::influx(XTAL_REF_(oo)...);
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
+				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(short)
-				XTAL_LET influx(XTAL_SYN_(T) auto &&t, auto &&...oo)
+				XTAL_LET flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
 					auto const h = t.head();
 					auto const h_up = 0 < h;
 					auto const h_dn = h < 0;
-					(void) R_::influx(U_choke(h_up - h_dn));
-					return R_::influx(XTAL_REF_(t), XTAL_REF_(oo)...);
+					(void) R_::template flux<N_ion>(U_choke(h_up - h_dn));
+					return R_::template flux<N_ion>(XTAL_REF_(t), XTAL_REF_(oo)...);
 				}
 			
 			};
@@ -95,7 +96,7 @@ struct define
 
 			using superkind = attach<N_mask>;
 			
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -127,11 +128,15 @@ struct define
 				{
 					auto const &h = head();
 					//\
-					auto i  = static_cast<  size_type>(h);// TODO: Should be handled by conversion?
-					auto i  = static_cast<  size_type>(h.body_part);
-					auto i_ = static_cast<extent_type>(A_mask -  i);
-					i_     &= static_cast<extent_type>(bond::bit_sign_f(i_));
-					i      += i_;
+					auto i = static_cast<size_type>(h);
+					auto i = static_cast<size_type>(h.body_part);
+					if constexpr (1 == _std::popcount(A_size)) {
+						i &= A_mask;
+					}
+					else {
+						i %= A_size;
+					}
+					assert(0 <= i and i < A_size);
 					return R_::deify(point[i]);
 				}
 				
@@ -175,7 +180,7 @@ struct define
 		{
 			using superkind = attach<N_mask>;
 			
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -183,16 +188,19 @@ struct define
 			public:
 				using R_::R_;
 				
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET effuse(auto &&o)
+				XTAL_LET fuse(auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (same_q<T, decltype(o)>) {
-						return R_::heading(XTAL_REF_(o));
-					}
-					else {
-						return R_::effuse(XTAL_REF_(o));
-					}
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
+				template <signed N_ion> requires in_n<N_ion, -1>
+				XTAL_DEF_(short)
+				XTAL_LET fuse(same_q<T> auto &&o)
+				noexcept -> signed
+				{
+					return R_::heading(XTAL_REF_(o));
 				}
 
 			};
@@ -206,7 +214,7 @@ struct define
 		{
 			using superkind = attach<N_mask>;
 			
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -214,16 +222,19 @@ struct define
 			public:
 				using R_::R_;
 
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET infuse(auto &&o)
+				XTAL_LET fuse(auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (same_q<T, decltype(o)>) {
-						return R_::heading(XTAL_REF_(o));
-					}
-					else {
-						return R_::infuse(XTAL_REF_(o));
-					}
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
+				template <signed N_ion> requires in_n<N_ion, +1>
+				XTAL_DEF_(short)
+				XTAL_LET fuse(same_q<T> auto &&o)
+				noexcept -> signed
+				{
+					return R_::heading(XTAL_REF_(o));
 				}
 
 			};
@@ -237,7 +248,7 @@ struct define
 		{
 			using superkind = attach<N_mask>;
 			
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;

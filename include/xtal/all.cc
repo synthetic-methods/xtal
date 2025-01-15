@@ -2,7 +2,7 @@
 #include "./arrange/all.cc"
 #include "./bond/all.cc"
 #include "./cell/all.cc"
-#include "./flux/all.cc"
+#include "./flow/all.cc"
 #include "./occur/all.cc"
 #include "./process/all.cc"
 #include "./processor/all.cc"

@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux::_test
+namespace xtal::flow::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ TAG_("cue")
 {
 	TRY_("construct")
 	{
-		using U_source = flux::conferred_t<counted_t<>>;
+		using U_source = flow::conferred_t<counted_t<>>;
 		using U_target = cue_s<U_source>;
 		using V_target = cue_s<>;
 

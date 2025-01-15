@@ -159,7 +159,6 @@ XTAL_ENV_(push)
 #define XTAL_RAW_(...)                 ::std::remove_cvref_t<__VA_ARGS__>   ///< Reveals the underlying-type.
 #define XTAL_ALL_(...)                    XTAL_RAW_(decltype(__VA_ARGS__))  ///< Reveals the underlying-type of a value.
 #define XTAL_SYN_(...)                    XTAL_SYN <         __VA_ARGS__ >  ///< Matches the underlying-type.
-#define XTAL_SYM_(...)                    XTAL_SYN <decltype(__VA_ARGS__)>  ///< Matches the underlying-type of a value.
 template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL_RAW_(Y)>;///< Matches underlying-types.
 
 #define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.

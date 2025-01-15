@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flux/slot.hh"
+#include "../flow/slot.hh"
 
 
 
@@ -79,15 +79,15 @@ struct monomer<U, As...>
 				XTAL_NEW_(copy, subtype, noexcept=default)
 				XTAL_NEW_(move, subtype, noexcept=default)
 
-				XTAL_NEW_(explicit) subtype(XTAL_SYN_(Xs) auto &&...xs)
+				XTAL_NEW_(explicit) subtype(same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(XTAL_SYN_(T_) auto &&t, XTAL_SYN_(Xs) auto &&...xs)
+				XTAL_NEW_(explicit) subtype(same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(auto &&f, XTAL_SYN_(T_) auto &&t, XTAL_SYN_(Xs) auto &&...xs)
+				XTAL_NEW_(explicit) subtype(auto &&f, same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
@@ -96,8 +96,7 @@ struct monomer<U, As...>
 
 				XTAL_TO4_(XTAL_DEF_(let) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
-			public:// FUNC*
-			//	using R_::method;
+			public:// OPERATE
 
 				XTAL_DO2_(template <auto ...>
 				XTAL_DEF_(short)
@@ -107,14 +106,22 @@ struct monomer<U, As...>
 					return state();
 				})
 
-			public:// *FLUX
-				using R_::efflux;
-
+			public:// FLOW
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET efflux(occur::render_q auto &&render_o)
+				XTAL_LET flux(auto &&...oo)
 				noexcept -> signed
 				{
-					return [this] XTAL_XFN_(1,&,(void) state(R_::method()), 0) (R_::efflux(XTAL_REF_(render_o)));
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
+				template <signed N_ion> requires in_n<N_ion, -1>
+				XTAL_DEF_(short)
+				XTAL_LET flux(occur::render_q auto &&render_o)
+				noexcept -> signed
+				{
+					return [this]
+						XTAL_XFN_(1, &, (void) state(R_::method()), 0)
+							(R_::template flux<N_ion>(XTAL_REF_(render_o)));
 				}
 
 			};
@@ -157,62 +164,58 @@ struct monomer<U, As...>
 					return state();
 				})
 				
-			public:// *FLUX
+			public:// FLOW
 
-			//	using R_::infuse;
+				template <signed N_ion> XTAL_DEF_(let) fuse(auto &&o    ) noexcept {return R_::template fuse<N_ion>(XTAL_REF_(o)    );}
+				template <signed N_ion> XTAL_DEF_(let) flux(auto &&...oo) noexcept {return R_::template flux<N_ion>(XTAL_REF_(oo)...);}
+
 				///\
 				Responds to `occur::resize` by resizing the internal `store()`. \
 
+				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(short)
-				XTAL_LET infuse(auto &&o)
+				XTAL_LET fuse(occur::resize_q auto &&o)
 				noexcept -> signed
 				{
-					return R_::infuse(XTAL_REF_(o));
-				}
-				XTAL_DEF_(long)
-				XTAL_LET infuse(occur::resize_q auto &&o)
-				noexcept -> signed
-				{
-					if (R_::infuse(o) == 1) {
+					if (R_::template fuse<N_ion>(o) == 1) {
 						return 1;
 					}
 					else {
 						auto &u = store();
-						auto  i = u.begin();
-						auto  n = XTAL_REF_(o).size();
-						XTAL_IF0
-						XTAL_0IF XTAL_TRY_DO_(u.resize(n))
+						auto  i = point_f(u);
+						auto  n = count_f(XTAL_REF_(o));
+						if constexpr XTAL_TRY_DO_(u.resize(n))
 						(void) state(i, i);//NOTE: For consistency with `vector` stores.
 						return 0;
 					}
 				}
-				using R_::influx_push;
 				///\note\
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx_push(occur::resize_q auto &&o_resize, auto &&...oo)
+				XTAL_LET flux_slots(auto &&...oo)
 				noexcept -> signed
 				{
-					return R_::template influx_push<N_share>(flux::slot_n<-1>, XTAL_REF_(o_resize), XTAL_REF_(oo)...);
+					XTAL_LET N_dex = occur::some_resize_q<decltype(oo)...>? N_share: -1;
+					return R_::template flux_slotted<N_ion, N_dex>(flow::slot_n<-1>, XTAL_REF_(oo)...);
 				}
 
-				using R_::efflux;
 				///\
 				Responds to `occur::render` by rendering the internal `store()`. \
 				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
-				template <occur::render_q Ren>
-				XTAL_DEF_(long)
-				XTAL_LET efflux(Ren &&render_o, auto &&...oo)
+				template <signed N_ion> requires in_n<N_ion, -1>
+				XTAL_DEF_(short)
+				XTAL_LET flux(occur::render_q auto &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
-					auto const u_resize = R_::template head<U_resize>();
+					size_type const n_resize = R_::template head<U_resize>();
 					occur::review_t<U_state> v_(store());
-					return efflux(v_.subview(u_resize), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return flux<N_ion>(v_.subview(n_resize), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \
@@ -224,15 +227,15 @@ struct monomer<U, As...>
 				the zipped `method` is rendered without saving the result in `state()`, \
 				which will remain empty. \
 
-				template <occur::review_q Rev, occur::render_q Ren>
+				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(short)
-				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
+				XTAL_LET flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
-					if constexpr (make_p<U_state, Rev>) {
+					if constexpr (make_p<U_state, decltype(review_o)>) {
 						(void) state(review_o);
 					}
-					return R_::efflux(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return R_::template flux<N_ion>(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...);
 				}
 
 			};

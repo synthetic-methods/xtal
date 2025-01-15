@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./monomer.hh"
-#include "../flux/key.hh"
+#include "../flow/key.hh"
 #include "../provision/all.hh"
 
 
@@ -63,8 +63,8 @@ struct polymer<U, As...>
 			using V_voice = typename monomer_t<U, S_subtext>::template bind_t<Xs...>;
 			using V_event = occur::stage_t<>;
 			
-			using U_voice = flux::key_s<V_voice>;
-			using U_event = flux::key_s<V_event>;
+			using U_voice = flow::key_s<V_voice>;
+			using U_event = flow::key_s<V_event>;
 			using U_ensemble = typename S_::template spool_t<U_voice>;
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
@@ -91,86 +91,60 @@ struct polymer<U, As...>
 				XTAL_TO2_(XTAL_DEF_(let) ensemble(), u_ensemble)
 				XTAL_TO2_(XTAL_DEF_(let) ensemble(integral_q auto i), u_ensemble[i])
 				XTAL_TO2_(XTAL_DEF_(let) ensemble(occur::stage_q auto const &o)
-				,	u_ensemble|_xtd::ranges::views::filter([&] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(o)))
+				,	u_ensemble|_xtd::ranges::views::filter([&] (auto &&e) XTAL_0FN_(0 != XTAL_REF_(e).template flux<-1>(o)))
 				)
 				//\
 				XTAL_TO2_(XTAL_DEF_(let) lead(), ensemble().front())
 				XTAL_TO2_(XTAL_DEF_(let) lead(), R_::template head<V_voice>())
 
-			public:// *FLUX
-				using R_::influx;
-				using R_::efflux;
-
+			public:// FLOW
+				template <signed N_ion>
+				XTAL_DEF_(short)
+				XTAL_LET flux(auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
 				///\
 				Forwards to the associated instance. \
 				Messages associated with `occur::stage` designate events, \
 				and govern the allocation/deallocation of keyed instances. \
 				
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(flux::key_q auto io, auto &&...oo)
+				XTAL_LET flux(flow::key_q auto io, auto &&...oo)
 				noexcept -> signed
 				{
-					return influx(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
+					return flux<N_ion>(flow::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
+				}
+				template <signed N_ion>
+				XTAL_DEF_(short)
+				XTAL_LET flux(flow::key_s<> i_, auto &&...oo)
+				noexcept -> signed
+				{
+					auto   u_ = ensemble().scan(i_.head());
+					assert(u_ < ensemble().end() and i_.head() == u_->head());
+					return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 
-				XTAL_DEF_(short)
-				XTAL_LET efflux(flux::key_q auto io, auto &&...oo)
-				noexcept -> signed
-				{
-					return efflux(flux::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
-				}
-
-				XTAL_DEF_(long)
-				XTAL_LET influx(flux::key_s<> i, auto &&...oo)
-				noexcept -> signed
-				{
-					auto   u_ = ensemble().scan(i.head());
-					assert(u_ < ensemble().end() and i.head() == u_->head());
-					return u_->influx(XTAL_REF_(oo)...);
-				}
-				XTAL_DEF_(long)
-				XTAL_LET efflux(flux::key_s<> i, auto &&...oo)
-				noexcept -> signed
-				{
-					auto   u_ = ensemble().scan(i.head());
-					assert(u_ < ensemble().end() and i.head() == u_->head());
-					return u_->efflux(XTAL_REF_(oo)...);
-				}
 				///\
 				Forwards to all active instances including the sentinel (except when rendering). \
 
-				XTAL_DEF_(let) influx_pushed(auto &&...oo) noexcept {return occur::influx_render_q<decltype(oo)...>? -1: lead().influx(XTAL_REF_(oo)...);}
-				XTAL_DEF_(let) efflux_pushed(auto &&...oo) noexcept {return occur::efflux_render_q<decltype(oo)...>? -1: lead().efflux(XTAL_REF_(oo)...);}
-
-				XTAL_DEF_(let) influx_pusher(auto &&...oo) noexcept {return [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).influx(XTAL_MOV_(oo)...));}
-				XTAL_DEF_(let) efflux_pusher(auto &&...oo) noexcept {return [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).efflux(XTAL_MOV_(oo)...));}
-
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx_push(auto &&...oo)
+				XTAL_LET flux_slots(auto &&...oo)
 				noexcept -> signed
 				{
 					using _xtd::ranges::accumulate;
-					auto const x = influx_pushed(          oo ...);
-					auto const f = influx_pusher(XTAL_REF_(oo)...);
+					auto const x = N_ion < 0 and occur::some_render_q<decltype(oo)...>? -1:       lead().template flux<N_ion>(XTAL_REF_(oo)...) ;
+					auto const f = [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).template flux<N_ion>(XTAL_MOV_(oo)...));
 					if constexpr ((... or occur::stage_q<decltype(oo)>)) {
 						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
 					}
 					else {
+						//\
 						return accumulate(ensemble(occur::stage_f(0)), x, XTAL_MOV_(f));
-					}
-				}
-				XTAL_DEF_(short)
-				XTAL_LET efflux_pull(auto &&...oo)
-				noexcept -> signed
-				{
-					using _xtd::ranges::accumulate;
-					auto const x = efflux_pushed(          oo ...);
-					auto const f = efflux_pusher(XTAL_REF_(oo)...);
-					if constexpr ((... or occur::stage_q<decltype(oo)>)) {
 						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
-					}
-					else {
-						return accumulate(ensemble(occur::stage_f(0)), x, XTAL_MOV_(f));
 					}
 				}
 
@@ -179,8 +153,9 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
+				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(long)
-				XTAL_LET influx(flux::key_s<> i, V_event o, auto &&...oo)
+				XTAL_LET flux(flow::key_s<> i, V_event o, auto &&...oo)
 				noexcept -> signed
 				{
 					auto h  = i.head();
@@ -194,7 +169,7 @@ struct polymer<U, As...>
 
 						//	Recycle/terminate the current voice:
 							auto u = *u_;
-							auto x = u_->influx(occur::stage_f(-1), oo...);
+							auto x = u_->template flux<N_ion>(occur::stage_f(-1), oo...);
 							assert(x != -1);
 							u_ = ensemble().poke(u_, h, XTAL_MOV_(u));
 						}
@@ -204,7 +179,7 @@ struct polymer<U, As...>
 						}
 					}
 					assert(u_->head() == h);
-					return u_->influx(o, XTAL_REF_(oo)...);
+					return u_->template flux<N_ion>(o, XTAL_REF_(oo)...);
 				}
 
 				///\
@@ -215,15 +190,15 @@ struct polymer<U, As...>
 				The `ensemble` is only mixed into `this` if `provision::stored_q`, \
 				otherwise the multichannel data is just rendered locally on each voice. \
 				
-				template <occur::review_q Rev, occur::render_q Ren>
+				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(long)
-				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
+				XTAL_LET subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
-					ensemble().free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).efflux(occur::stage_f(-1))));
+					ensemble().free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).template flux<N_ion>(occur::stage_f(-1))));
 					
 					for (auto &e:ensemble()) {
-						if (1 == e.efflux(XTAL_REF_(render_o))) {
+						if (1 == e.template flux<N_ion>(XTAL_REF_(render_o))) {
 							return 1;
 						}
 					}

@@ -113,7 +113,11 @@ template <class T>
 XTAL_LET invoke_n = [] (auto &&...oo)
 XTAL_0FN
 {
+//	XTAL_LET front = [] (auto &&o, auto &&...oo) XTAL_0FN_(XTAL_REF_(o));
 	XTAL_IF0
+//	XTAL_0IF (1 == sizeof...(oo) and requires {static_cast<T>(front(XTAL_REF_(oo)...));}) {
+//		return static_cast<T>(front(XTAL_REF_(oo)...));
+//	}
 	XTAL_0IF XTAL_TRY_TO_(T   {XTAL_REF_(oo)...})
 	XTAL_0IF XTAL_TRY_TO_(T   (XTAL_REF_(oo)...))
 	XTAL_0IF XTAL_TRY_TO_(T{} (XTAL_REF_(oo)...))
@@ -565,7 +569,7 @@ concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <applicable_p auto o >
+template <applicable_p auto o>
 struct constant<o> : constant_s<o>
 {
 	using        type = constant;

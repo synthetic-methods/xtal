@@ -15,7 +15,7 @@ namespace xtal::schedule::_test
 
 TAG_("thunk", "process")
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
@@ -33,11 +33,11 @@ TAG_("thunk", "process")
 		using U_render = occur::render_t<>;
 
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
-		using U1_event = flux::cue_s<U0_event>;
-		using U2_event = flux::cue_s<U1_event>;
+		using U1_event = flow::cue_s<U0_event>;
+		using U2_event = flow::cue_s<U1_event>;
 		
 		using W0_event = arrange::grade_t<U0_event[2]>;
-		using V_event = flux::cue_s<>;
+		using V_event = flow::cue_s<>;
 		
 		//\
 		using U_inqueue = typename U_thunk::template inqueue<V_event, U0_event>;
@@ -112,8 +112,8 @@ TAG_("thunk", "process")
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
 		using Z_value = process::confined_t<typename U_thunk::template inqueue<V_value>>;
 
-		using U_event = flux::cue_s<occur::packet_t<V_value>>;
-		using V_event = flux::cue_s<>;
+		using U_event = flow::cue_s<occur::packet_t<V_value>>;
+		using V_event = flow::cue_s<>;
 		
 		Z_value u_gate;
 		
@@ -164,7 +164,7 @@ TAG_("thunk", "process")
 
 		using U_thunk = thunk_t<spooled<constant_t<N_spool>>>;
 		using U_render = occur::render_t<>;
-		using V_event = flux::cue_s<>;
+		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
 		using Z_value = process::confined_t<typename U_thunk::template inqueue<V_value>>;
@@ -189,7 +189,7 @@ TAG_("thunk", "process")
 template <typename ...As>
 void thunk_processor()
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
@@ -214,8 +214,8 @@ void thunk_processor()
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	
-	using U_event = flux::cue_s<occur::packet_t<V_value>>;
-	using V_event = flux::cue_s<>;
+	using U_event = flow::cue_s<occur::packet_t<V_value>>;
+	using V_event = flow::cue_s<>;
 
 	fx_gate <<= U_resize(N_store);
 	/*/

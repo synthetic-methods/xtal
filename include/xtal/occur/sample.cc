@@ -17,22 +17,20 @@ TAG_("sample")
 {
 	TRY_("construction")
 	{
-		using _op = bond::operating;
+		using U = double; using U_op = bond::operate<U>;
+		using V =  float; using V_op = bond::operate<V>;
 
-		using T_sigma = typename _op::sigma_type;
-		using T_alpha = typename _op::alpha_type;
+		sample_t<V> o;
+		TRUE_(V_op::diplo_f(00) == o.  rate());
+		TRUE_(V_op::haplo_f(00) == o.period());
 
-		auto constexpr b = (T_sigma) _op::diplo_f(16);
-		auto constexpr p = (T_alpha) _op::haplo_f(16);
+		o   = sample_t<V>{(unsigned short) 16};
+		TRUE_(V_op::diplo_f(4) == o.  rate());
+		TRUE_(V_op::haplo_f(4) == o.period());
 
-		auto d = sample_t<>{b};
-		auto q = sample_t<>{p};
-
-		TRUE_(b == d.rate());
-		TRUE_(b == q.rate());
-
-		TRUE_(p == d.period());
-		TRUE_(p == q.period());
+		o <<= sample_t<U>{(unsigned  long) 32};
+		TRUE_(V_op::diplo_f(5) == o.  rate());
+		TRUE_(V_op::haplo_f(5) == o.period());
 
 	}
 }

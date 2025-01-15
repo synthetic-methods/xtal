@@ -76,7 +76,7 @@ struct superblock<U[N]>
 		noexcept
 		:	homotype(size_type{})
 		{}
-		XTAL_NEW_(explicit) homotype(size_type const n)
+		XTAL_NEW_(explicit) homotype(same_q<size_type> auto const n)
 		noexcept
 		{
 			assert(n <= N_data);

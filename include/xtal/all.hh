@@ -2,7 +2,7 @@
 #include "./arrange/all.hh"
 #include "./bond/all.hh"
 #include "./cell/all.hh"
-#include "./flux/all.hh"
+#include "./flow/all.hh"
 #include "./occur/all.hh"
 #include "./process/all.hh"
 #include "./processor/all.hh"

@@ -9,7 +9,7 @@ module xtal {
 	exclude header   "./arrange/_detail.ii"
 	exclude header      "./bond/_detail.ii"
 	exclude header      "./cell/_detail.ii"
-	exclude header      "./flux/_detail.ii"
+	exclude header      "./flow/_detail.ii"
 	exclude header     "./occur/_detail.ii"
 	exclude header   "./process/_detail.ii"
 	exclude header "./processor/_detail.ii"

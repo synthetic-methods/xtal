@@ -27,23 +27,13 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <                     typename ..._s> struct   render;
-template <class W=counter_t<>, typename ..._s> using    render_t = confined_t<render<W>, _s...>;
-template <                     typename ..._s> concept  render_q = bond::tag_p<render, _s...>;
-template <                     typename ..._s>
-XTAL_DEF_(short)
-XTAL_LET render_f(auto &&w)
-noexcept -> auto
-{
-	return render_t<counter_t<>, _s...>(XTAL_REF_(w));
-}
+template <class U=void> struct        render;
+template <class U=void> using         render_t =          confined_t<render<U>>;
+template <class  ..._s> concept       render_q = un_n<0, bond::tag_p<render, _s>...>;
+template <class  ..._s> concept  some_render_q = in_n<1, bond::tag_p<render, _s>...>;
 
-
-template <class ...Ts>
-concept efflux_render_q = (...or (render_q<Ts>));
-
-template <class ...Ts>
-concept influx_render_q = false;
+XTAL_DEF_(let)   render_f(auto &&w)
+noexcept {return render_t<>(XTAL_REF_(w));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,41 +181,19 @@ struct surrender
 			return S_::operator<(t) or S_::operator==(t);
 		}
 
+
+		template <signed N_ion>
+		XTAL_DEF_(short)
+		XTAL_LET fuse(auto &&o)
+		noexcept -> signed
+		{
+			return S_::template fuse<N_ion>(XTAL_REF_(o));
+		}
+
 		///\
 		Updates to the incoming position, \
 		while setting `size = 0` for future `efflux`. \
 		
-		/**/
-		XTAL_DEF_(long)
-		XTAL_LET infuse(render_q auto &&t)
-		noexcept -> signed
-		{
-			auto &s = self();
-			if (s == t) {
-				return 1;
-			}
-			else {
-				s.operator+=(0);
-				s.operator-=(count_f(t));
-				(void) s.step(t.step());
-				return 0;
-			}
-		}
-		XTAL_DEF_(short)
-		XTAL_LET infuse(T_ t)
-		noexcept -> signed
-		{
-			auto &s = self();
-			return s == t || ((s = t), 0);
-		}
-		/***/
-		XTAL_DEF_(short)
-		XTAL_LET infuse(auto &&o)
-		noexcept -> signed
-		{
-			return S_::infuse(XTAL_REF_(o));
-		}
-
 		///\
 		Enforces ordering on the incoming renders by `assert`ion. \
 
@@ -233,14 +201,9 @@ struct surrender
 		Unrecognized `render_q` are incrementally incorporated, \
 		updating the size and step only if they align. \
 
+		template <signed N_ion> requires in_n<N_ion, -1>
 		XTAL_DEF_(short)
-		XTAL_LET effuse(auto &&o)
-		noexcept -> signed
-		{
-			return S_::effuse(XTAL_REF_(o));
-		}
-		XTAL_DEF_(long)
-		XTAL_LET effuse(render_q auto &&t)
+		XTAL_LET fuse(render_q auto &&t)
 		noexcept -> signed
 		{
 			auto &s = self();
@@ -253,6 +216,29 @@ struct surrender
 				return 0;
 			}
 		}
+		/**/
+		template <signed N_ion> requires in_n<N_ion, +1>
+		XTAL_DEF_(short)
+		XTAL_LET fuse(render_q auto &&t)
+		noexcept -> signed
+		{
+			auto &s = self();
+			if (s == t) {
+				return 1;
+			}
+			else {
+				if constexpr (same_q<T_, decltype(t)>) {
+					s = t;
+				}
+				else {
+					s.operator+=(0);
+					s.operator-=(count_f(t));
+					(void) s.step(t.step());
+				}
+				return 0;
+			}
+		}
+		/***/
 
 	};
 };
@@ -478,8 +464,18 @@ public:
 	};
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <>
+struct render<void>
+:	render<counter_t<>>
+{
+};
+
 static_assert(render_q<render_t<counter_t<>>>);
 static_assert(render_q<render_t<counted_t<>>>);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

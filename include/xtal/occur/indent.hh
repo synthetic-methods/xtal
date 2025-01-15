@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flux/mask.hh"
+#include "../flow/mask.hh"
 
 
 
@@ -80,7 +80,7 @@ struct indent<Ns...>
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
 
-			using superkind = bond::compose<flux::mask<N_mask>, defer<U_>>;
+			using superkind = bond::compose<flow::mask<N_mask>, defer<U_>>;
 
 			template <cell::any_q R> requires (0 == sizeof...(Ns))
 			class subtype : public bond::compose_s<R, superkind>
@@ -91,20 +91,21 @@ struct indent<Ns...>
 				using R_::R_;
 				using R_::self;
 				using R_::head;
-			//	using R_::infuse;
 
 				///\todo\
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
 				Requires subsequent ordering for `bond::pack`s? \
 				
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET infuse(auto &&o)
+				XTAL_LET fuse(auto &&o)
 				noexcept -> signed
 				{
-					return R_::infuse(XTAL_REF_(o));
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
-				XTAL_DEF_(long)
-				XTAL_LET infuse(indent_q auto &&o)
+				template <signed N_ion> requires in_n<N_ion, +1>
+				XTAL_DEF_(short)
+				XTAL_LET fuse(indent_q auto &&o)
 				noexcept -> signed
 				{
 					/*/

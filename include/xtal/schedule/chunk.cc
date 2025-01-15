@@ -19,14 +19,14 @@ void chunk_processor_x1()
 	using namespace provision;
 //	using namespace schedule;
 
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_alpha  = typename _op::alpha_type;
 	using T_sigma  = typename _op::sigma_type;
 	using T_delta  = typename _op::delta_type;
 
 	using U_chunk = chunk_t<spooled<constant_t<0x10>>>;
-	using U_value = flux::packet_t<Ox_onset>;
-	using U_event = flux::cue_s<U_value>;
+	using U_value = flow::packet_t<Ox_onset>;
+	using U_event = flow::cue_s<U_value>;
 
 	using mix_z = processor::monomer_t<Px_mix
 	,	stored<>

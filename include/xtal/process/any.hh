@@ -1,7 +1,7 @@
 #pragma once
-#include "../flux/any.hh"// `_retail`
+#include "../flow/any.hh"// `_retail`
 
-#include "../flux/bundle.hh"
+#include "../flow/bundle.hh"
 #include "../occur/all.hh"
 #include "../provision/all.hh"
 #include "../schedule/all.hh"
@@ -173,7 +173,7 @@ struct define
 		{
 			using superkind = bond::compose<void
 			,	defer<T>
-			,	flux::bundle<Xs...>
+			,	flow::bundle<Xs...>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -265,7 +265,7 @@ struct refine
 			return bind_t<decltype(xs)...>(XTAL_REF_(xs)...);
 		}
 		XTAL_DEF_(short,static)
-		XTAL_LET bind_f(XTAL_SYN_(T) auto &&t, auto &&...xs)
+		XTAL_LET bind_f(same_q<T> auto &&t, auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);

@@ -29,14 +29,14 @@ struct tab
 		struct taboo
 		{
 			using hypotype = S;
-			using peritype = I;
+			using ectotype = I;
 
 		};
 
 	};
 };
 template <class   T                           > using         taboo_s =            typename T ::taboo::hypotype;
-template <class   T                           > using         taboo_u =            typename T ::taboo::peritype;
+template <class   T                           > using         taboo_u =            typename T ::taboo::ectotype;
 template <                         class ...Ts> concept       taboo_q = complete_q<typename Ts::taboo...>;
 
 template <                         class ..._s> struct        tabbed   ;
@@ -58,6 +58,7 @@ template <class   I,               class ...Ts> concept      tab_p = (...and tab
 
 template <                         class ...Ts> struct       tab_compatible;
 template <                         class ...Ts> concept      tab_compatible_q      = tab_compatible<based_t<Ts>...>::value;
+template <                         class ...Ts> concept      tab_constructible_q   = tab_compatible_q<Ts...> and infungible_q<Ts...>;
 
 template <                         class ...Ts> struct       tab_compatible        : constant_t<same_q<        Ts... >                                > {};
 template <                       taboo_q ...Ts> struct       tab_compatible<Ts...> : constant_t<same_q<taboo_u<Ts>...> and tab_compatible_q<taboo_s<Ts>...>> {};

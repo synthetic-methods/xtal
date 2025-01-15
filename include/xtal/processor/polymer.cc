@@ -23,7 +23,7 @@ namespace xtal::processor::_test
 template <int N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_alpha  = typename _op::alpha_type;
 	using T_sigma  = typename _op::sigma_type;
 	using T_delta  = typename _op::delta_type;
@@ -31,9 +31,9 @@ void polymer_provision_spine__locamotion()
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 	using U_stage  = occur::stage_t<>;
-	using U_event  = flux::key_s<U_stage>;
+	using U_event  = flow::key_s<U_stage>;
 	using U_thunk  = schedule::thunk_t<provision::spooled<constant_t<0x20>>>;
-	using U_cue    = flux::cue_s<>;
+	using U_cue    = flow::cue_s<>;
 
 	using A_stored  = provision::stored  <constant_t<N_store>>;
 	using A_spooled = provision::spooled <constant_t<N_spool>>;
@@ -89,12 +89,12 @@ TAG_("polymer", "occur", "spine")
 template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename bond::operating::alpha_type;
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_delta = typename bond::operating::delta_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_delta = typename bond::operate<>::delta_type;
 
 	using U_stage = occur::stage_t<>;
-	using U_event = flux::key_s<U_stage>;
+	using U_event = flow::key_s<U_stage>;
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -133,12 +133,12 @@ void polymer_provision_spool__combined()
 template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool_composited()
 {
-	using T_alpha = typename bond::operating::alpha_type;
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_delta = typename bond::operating::delta_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_delta = typename bond::operate<>::delta_type;
 
 	using U_stage = occur::stage_t<>;
-	using U_event = flux::key_s<U_stage>;
+	using U_event = flow::key_s<U_stage>;
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -156,10 +156,10 @@ void polymer_provision_spool_composited()
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
-	u_vox <<= flux::key_s<>(62) << U_stage(0) << Ox_level(1); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= flux::key_s<>(65) << U_stage(0) << Ox_level(2); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= flux::key_s<>(69) << U_stage(0) << Ox_level(3); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= flux::key_s<>(65) << U_stage(0) << Ox_level(4); TRUE_(4 == u_vox.ensemble().size());
+	u_vox <<= flow::key_s<>(62) << U_stage(0) << Ox_level(1); TRUE_(1 == u_vox.ensemble().size());
+	u_vox <<= flow::key_s<>(65) << U_stage(0) << Ox_level(2); TRUE_(2 == u_vox.ensemble().size());
+	u_vox <<= flow::key_s<>(69) << U_stage(0) << Ox_level(3); TRUE_(3 == u_vox.ensemble().size());
+	u_vox <<= flow::key_s<>(65) << U_stage(0) << Ox_level(4); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);

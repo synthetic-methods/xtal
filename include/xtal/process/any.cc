@@ -2,7 +2,7 @@
 #include "../any.cc"
 #include "./any.hh"// testing...
 
-#include "../flux/all.hh"
+#include "../flow/all.hh"
 #include "../occur/all.hh"
 
 
@@ -87,7 +87,7 @@ using halve_t = confined_t<halve>;
 /**/
 TAG_("process", "attach")
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
@@ -99,13 +99,13 @@ TAG_("process", "attach")
 	{
 		subtract_t::bind_t<L01, L10> op{};
 
-		op <<= flux::mark_s<Ox_level>(0b01, Ox_level{9});
-		op <<= flux::mark_s<Ox_level>(0b10, Ox_level{1});
+		op <<= flow::mark_s<Ox_level>(0b01, Ox_level{9});
+		op <<= flow::mark_s<Ox_level>(0b10, Ox_level{1});
 		TRUE_(8 == op());
 
-		op <<= flux::slot_n<0> << _std::array<int, 0>{};
-		op <<= flux::slot_n<0> << Ox_level{6};
-		op <<= flux::slot_n<1> << Ox_level{3};
+		op <<= flow::slot_n<0> << _std::array<int, 0>{};
+		op <<= flow::slot_n<0> << Ox_level{6};
+		op <<= flow::slot_n<1> << Ox_level{3};
 		TRUE_(3 == op());
 
 	}
@@ -116,7 +116,7 @@ TAG_("process", "attach")
 
 TAG_("process", "construct")
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_sigma = typename _op::sigma_type;
 	using T_delta = typename _op::delta_type;
 	using T_alpha = typename _op::alpha_type;
@@ -185,11 +185,11 @@ void process_provision__influx_method(auto z)
 	using U_start = occur::reinferred_t<class start_a, constant_t<0>>;
 
 	auto &o = z.template head<Ox_onset>();
-	TRUE_(-1 == (int) z.influx(U_start()));                            // unrecognized
-	TRUE_( 1 == (int) z.influx(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
-	TRUE_( 0 == (int) z.influx(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.influx(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.influx(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
+	TRUE_(-1 == (int) z.template flux<+1>(U_start()));                            // unrecognized
+	TRUE_( 1 == (int) z.template flux<+1>(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
+	TRUE_( 0 == (int) z.template flux<+1>(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.template flux<+1>(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.template flux<+1>(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 }
 void process_provision__efflux_method(auto z)
@@ -197,11 +197,11 @@ void process_provision__efflux_method(auto z)
 	using U_start = occur::reinferred_t<class start_a, constant_t<0>>;
 
 	auto &o = z.template head<Ox_onset>();
-	TRUE_(-1 == (int) z.efflux(U_start()));                            // unrecognized
-	TRUE_( 1 == (int) z.efflux(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
-	TRUE_( 0 == (int) z.efflux(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.efflux(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
-	TRUE_( 0 == (int) z.efflux(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
+	TRUE_(-1 == (int) z.template flux<-1>(U_start()));                            // unrecognized
+	TRUE_( 1 == (int) z.template flux<-1>(Ox_onset(0.0))); TRUE_(0.0 == (float) o);// unchanged
+	TRUE_( 0 == (int) z.template flux<-1>(Ox_onset(1.0))); TRUE_(1.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.template flux<-1>(Ox_onset(2.0))); TRUE_(2.0 == (float) o);// changed
+	TRUE_( 0 == (int) z.template flux<-1>(Ox_onset(3.0))); TRUE_(3.0 == (float) o);// changed
 	TRUE_(13.0 == (float) z(1.0, 2.0, 3.0, 4.0));
 
 }

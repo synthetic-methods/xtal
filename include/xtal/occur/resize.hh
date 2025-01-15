@@ -11,12 +11,13 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=typename bond::operating::sigma_type> struct   resize;
-template <class U=typename bond::operating::sigma_type> using    resize_t =  confined_t<resize<U>>;
-template <     typename ...Qs> concept  resize_q = bond::tag_p<resize, Qs...>;
+template <class U=void> struct        resize;
+template <class U=void> using         resize_t =          confined_t<resize<U>>;
+template <class  ..._s> concept       resize_q = un_n<0, bond::tag_p<resize, _s>...>;
+template <class  ..._s> concept  some_resize_q = in_n<1, bond::tag_p<resize, _s>...>;
 
-XTAL_DEF_(let) resize_f(auto &&w)
-noexcept {return resize_t<typename bond::operate<decltype(w)>::sigma_type>(XTAL_REF_(w));}
+XTAL_DEF_(let)   resize_f(auto &&w)
+noexcept {return resize_t<>(XTAL_REF_(w));}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ noexcept {return resize_t<typename bond::operate<decltype(w)>::sigma_type>(XTAL_
 template <class U>
 struct resize
 {
-	using superkind = bond::compose<flux::tag<resize>, defer<U>>;
+	using superkind = bond::compose<flow::tag<resize>, defer<U>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -50,9 +51,14 @@ template <iterated_q U>
 struct resize<U> : resize<counter_t<U>>
 {
 };
+template <>
+struct resize<void>
+:	resize<size_type>
+{
+};
 
-static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
-static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<  signed>>);
+static_assert(bond::   tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
+static_assert(bond::tab_constructible_q<resize_t<unsigned>, resize_t<  signed>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

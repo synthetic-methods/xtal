@@ -1,7 +1,7 @@
 #pragma once
-#include "../flux/any.hh"// `_retail`
+#include "../flow/any.hh"// `_retail`
 
-#include "../flux/cue.hh"
+#include "../flow/cue.hh"
 
 
 
@@ -44,7 +44,7 @@ struct define
 		template <class ...Xs>
 		struct inqueue
 		{
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R>
 			{
 				using R_ = bond::compose_s<R>;
@@ -52,9 +52,9 @@ struct define
 				
 			protected:
 				using W_tuple = bond::pack_t<Xs...>;
-				using U_tuple = flux::packed_t<Xs...>;
-				using U_event = flux::cue_s<Xs...>;
-				using V_event = flux::cue_s<>;
+				using U_tuple = flow::packed_t<Xs...>;
+				using U_event = flow::cue_s<Xs...>;
+				using V_event = flow::cue_s<>;
 				using V_delay = typename V_event::head_type;
 
 			public:
@@ -63,59 +63,78 @@ struct define
 
 				using event_type = U_event;
 
-			public:// *FLUX
-				using R_::influx;
+			public:// FLOW
 
-				///\
-				Expands the given unscheduled message, forwarding to `supertype::influx`. \
-
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(XTAL_SYN_(U_tuple) auto &&o)
+				XTAL_LET flux(auto &&...oo)
 				noexcept -> signed
 				{
-					return XTAL_REF_(o).apply([this] XTAL_1FN_(R_::influx));
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
+				///\
+				Expands the given unscheduled message, forwarding to `supertype::flux`. \
+
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(XTAL_SYN_(W_tuple) auto &&o)
+				XTAL_LET flux(same_q<U_tuple> auto &&o)
 				noexcept -> signed
 				{
-					return _std::apply([this] XTAL_1FN_(R_::influx), XTAL_REF_(o));
+					return XTAL_REF_(o).apply([this] (auto &&...oo)
+						XTAL_0FN_(R_::template flux<N_ion>(XTAL_REF_(oo)...))
+					);
+				}
+				template <signed N_ion>
+				XTAL_DEF_(short)
+				XTAL_LET flux(same_q<W_tuple> auto &&o)
+				noexcept -> signed
+				{
+					return _std::apply([this] (auto &&...oo)
+						XTAL_0FN_(R_::template flux<N_ion>(XTAL_REF_(oo)...))
+					,	XTAL_REF_(o)
+					);
 				}
 
 				///\
 				Condenses the given scheduled message, forwarding to `self().infuse`. \
 				
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(V_event d, XTAL_SYN_(Xs) auto &&...oo)
+				XTAL_LET flux(V_event d, same_q<Xs> auto &&...oo)
 				noexcept -> signed
 				{
-					return infuse_joint(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
+					return fuse_joint<N_ion>(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
 				}
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(V_event d, XTAL_SYN_(U_tuple) auto &&o)
+				XTAL_LET flux(V_event d, same_q<U_tuple> auto &&o)
 				noexcept -> signed
 				{
-					return XTAL_REF_(o).apply(infuse_joint(XTAL_MOV_(d)));
+					return XTAL_REF_(o).apply(fuse_joint<N_ion>(XTAL_MOV_(d)));
 				}
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET influx(V_event d, XTAL_SYN_(W_tuple) auto &&o)
+				XTAL_LET flux(V_event d, same_q<W_tuple> auto &&o)
 				noexcept -> signed
 				{
-					return _std::apply(infuse_joint(XTAL_MOV_(d)), XTAL_REF_(o));
+					return _std::apply(fuse_joint<N_ion>(XTAL_MOV_(d)), XTAL_REF_(o));
 				}
 
 			private:
+
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET infuse_joint(auto o)
+				XTAL_LET fuse_joint(auto o)
 				noexcept -> decltype(auto)
 				{
-					return [=, this] (auto &&...oo) XTAL_0FN_(infuse_join(XTAL_MOV_(o), XTAL_REF_(oo)...));
+					return [=, this] (auto &&...oo) XTAL_0FN_(fuse_join<N_ion>(XTAL_MOV_(o), XTAL_REF_(oo)...));
 				}
+				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET infuse_join(auto &&...oo)
+				XTAL_LET fuse_join(auto &&...oo)
 				noexcept -> signed
 				{
-					return self().infuse((...<< XTAL_REF_(oo)));
+					return self().template fuse<N_ion>((...<< XTAL_REF_(oo)));
 				}
 
 			};

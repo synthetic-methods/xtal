@@ -17,7 +17,7 @@ TAG_("arrange", "group")
 {
 	using F = _std::plus<void>;
 
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_delta = typename _op::delta_type;
 	using T_sigma = typename _op::sigma_type;
 	using T_alpha = typename _op::alpha_type;

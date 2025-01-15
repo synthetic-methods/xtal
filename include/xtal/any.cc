@@ -128,7 +128,7 @@ XTAL_DEF_(long)
 XTAL_LET check_f(auto const &u, auto const &v)
 noexcept -> int
 {
-	return check_f<-1, 1 - (int) bond::operating::fraction.depth>(u, v);
+	return check_f<-1, 1 - (int) bond::operate<>::fraction.depth>(u, v);
 }
 
 
@@ -137,13 +137,13 @@ noexcept -> int
 
 using namespace bond;
 
-using Ox_scale = occur::reinferred_t<class A_scale, typename bond::operating::alpha_type>;
-using Ox_level = occur::reinferred_t<class A_level, typename bond::operating::alpha_type>;
+using Ox_scale = occur::reinferred_t<class A_scale, typename bond::operate<>::alpha_type>;
+using Ox_level = occur::reinferred_t<class A_level, typename bond::operate<>::alpha_type>;
 /*/
-using Ox_onset = occur::reinferred_t<class onset_a, typename bond::operating::alpha_type>;
+using Ox_onset = occur::reinferred_t<class onset_a, typename bond::operate<>::alpha_type>;
 /*/
 struct onset
-:	occur::confer<typename bond::operating::delta_type
+:	occur::confer<typename bond::operate<>::delta_type
 	,	occur::any<class onset_a>
 	,	bond::word<(1 << 7)>
 	>
@@ -235,7 +235,7 @@ using Px_dynamic_term = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename bond::operating::delta_type;
+	using U_count  = typename bond::operate<>::delta_type;
 	using U_restep = occur::restep_t<U_count>;
 
 	template <class T>

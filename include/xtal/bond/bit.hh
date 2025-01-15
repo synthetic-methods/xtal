@@ -10,7 +10,6 @@ XTAL_ENV_(push)
 namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
 //\todo\
 Move to `xtal::process::math::boole`?
 
@@ -131,18 +130,25 @@ XTAL_DEF_(short)
 XTAL_SET bit_floor_f(real_variable_q auto &&x)
 noexcept -> int
 {
-	using X_op =  bond::operate<decltype(x)>;
+	using    X_op =  bond::operate<absolve_u<decltype(x)>>;
+	XTAL_LET Z    = -static_cast<int>(X_op::unit.mark);
+
+	XTAL_LET      unit = X_op::    unit;
+	XTAL_LET      sign = X_op::    sign;
+	XTAL_LET  exponent = X_op::exponent;
 	using U = typename X_op::sigma_type;
 	using V = typename X_op::delta_type;
 
-	XTAL_LET Z = -X_op::unit.mark;
-	XTAL_LET N = N_zero - Z << X_op::unit.shift;
-
-	auto n = _xtd::bit_cast<U>(XTAL_REF_(x));
-	n &= ~X_op::sign.mask;
-	n -=  X_op::unit.mask;
-	n +=  N&bit_sign_f(n);
-	return   _xtd::bit_cast<V>(n) >> X_op::unit.shift;
+	auto n = _xtd::bit_cast<V>(XTAL_REF_(x));
+	n >>= exponent.shift;
+	n  &= exponent. mark;
+	n  -=     unit. mark;
+	if constexpr (N_zero != Z) {
+		n  -=      N_zero;
+		n  &=  -n >> sign.shift;
+		n  +=      N_zero;
+	}
+	return n;
 }
 template <int N_zero>
 XTAL_DEF_(short)
@@ -156,8 +162,10 @@ XTAL_SET bit_floor_f(auto &&x)
 noexcept -> int
 requires real_variable_q<absolve_u<decltype(x)>>
 {
-	XTAL_LET N_zero = -static_cast<int>(bond::operate<decltype(x)>::unit.mark);
-	return bit_floor_f<N_zero>(XTAL_REF_(x));
+	using    X_op =  bond::operate<absolve_u<decltype(x)>>;
+	XTAL_LET Z    = -static_cast<int>(X_op::unit.mark);
+
+	return bit_floor_f<Z>(XTAL_REF_(x));
 }
 
 template <int N_zero=-1>
@@ -247,7 +255,7 @@ noexcept -> auto
 	u >>= N - n_subdepth; assert(0 < n_subdepth and n_subdepth <= N);
 	return u;
 }
-XTAL_DEF_(long)
+XTAL_DEF_(short)
 XTAL_SET bit_reverse_f(ordinal_variable_q auto v, int const &n_subdepth)
 noexcept -> auto
 {
@@ -280,7 +288,7 @@ noexcept -> auto
 
 ///////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(short)
+XTAL_DEF_(long)
 XTAL_SET bit_representation_f(real_variable_q auto x)
 noexcept -> auto
 {
@@ -306,6 +314,145 @@ noexcept -> auto
 	auto const &[m, n] = mn;
 	using MN_op = bond::operate<decltype(m), decltype(n)>;
 	return static_cast<typename MN_op::alpha_type>(m)*MN_op::haplo_f(n);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+///\returns the fractional component of `x` as a full-width `delta_type`.
+
+template <class T_return=void>
+XTAL_DEF_(short)
+XTAL_SET bit_fraction_f()
+noexcept -> auto
+{
+	using Y       = T_return;
+	using Y_op    = bond::operate<Y>;
+
+	XTAL_IF0
+	XTAL_0IF (integral_q<Y>) {
+		return Y_op::diplo_f(Y_op::full.depth);
+	}
+	XTAL_0IF (    real_q<Y>) {
+		return Y_op::haplo_f(Y_op::full.depth);
+	}
+	XTAL_0IF_(void)
+}
+template <class Y_return=void>
+XTAL_DEF_(short)
+XTAL_SET bit_fraction_f(integral_variable_q auto x)
+noexcept -> auto
+{
+	using X       =              XTAL_ALL_(x);
+	using X_op    =          bond::operate<X>;
+	using X_alpha = typename X_op::alpha_type;
+	using X_sigma = typename X_op::sigma_type;
+	using X_delta = typename X_op::delta_type;
+
+	using Y       = complete_t<Y_return, X_alpha>;
+	using Y_op    = bond::operate<Y>;
+	using Y_alpha = typename Y_op::alpha_type;
+	using Y_sigma = typename Y_op::sigma_type;
+	using Y_delta = typename Y_op::delta_type;
+
+	XTAL_IF0
+	XTAL_0IF (cardinal_q<Y>) {
+		return Y_op::sigma_f(x);
+	}
+	XTAL_0IF ( ordinal_q<Y>) {
+		return Y_op::delta_f(x);
+	}
+	XTAL_0IF (    real_q<Y>) {
+		//\
+		return Y_op::alpha_f(x)*Y_op::haplo_f(X_op::full.depth);
+		return Y_op::alpha_f(static_cast<X_delta>(x))*Y_op::haplo_f(X_op::full.depth);
+	}
+	XTAL_0IF_(void)
+}
+template <class Y_return=void>
+XTAL_DEF_(short)
+XTAL_SET bit_fraction_f(real_variable_q auto x)
+noexcept -> auto
+{
+	using X       =              XTAL_ALL_(x);
+	using X_op    =          bond::operate<X>;
+	using X_alpha = typename X_op::alpha_type;
+	using X_sigma = typename X_op::sigma_type;
+	using X_delta = typename X_op::delta_type;
+
+	using Y       = complete_t<Y_return, X_delta>;
+	using Y_op    = bond::operate<Y>;
+	using Y_alpha = typename Y_op::alpha_type;
+	using Y_sigma = typename Y_op::sigma_type;
+	using Y_delta = typename Y_op::delta_type;
+
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		XTAL_IF0
+		XTAL_0IF (    real_q<Y>) {
+			return static_cast<Y>(bit_fraction_f<Y_delta>(x))*bit_fraction_f<Y_alpha>();
+		}
+		XTAL_0IF ( ordinal_q<Y>) {
+			XTAL_LET N_exp = X_op::exponent.shift;
+			XTAL_LET M_exp = X_op::unit.mark + X_op::unit.shift - Y_op::full.depth;
+			XTAL_LET M_sgn = X_op::sign.mask;
+
+			auto o = _xtd::bit_cast<X_sigma>(x);
+
+			X_delta o_ = o &  M_sgn; o  ^= o_; o_ >>= X_op::sign.shift;
+			X_sigma x  = o >> N_exp; x  -= M_exp;
+			X_sigma u  = x != 0    ; u <<= X_op::fraction.depth;
+
+			auto const x_on = _xtd::bit_cast<X_delta>(~x) >> X_op::positive.depth;
+			auto const x_up = x_on & x;
+			auto const x_dn = x_up - x;
+
+			o  &=  X_op::fraction.mask;
+			o  ^=  u;
+			o <<=  x_up;
+			o >>=  x_dn;
+		//	o  |=  1;
+			o  ^=  o_;
+			o  -=  o_;
+			return static_cast<Y>(_xtd::bit_cast<X_delta>(o));
+		}
+		XTAL_0IF (cardinal_q<Y>) {
+			return _xtd::bit_cast<Y>(bit_fraction_f<Y_delta>(x));
+		}
+		XTAL_0IF_(void)
+	}
+	XTAL_0IF_(else) {
+		x -= round(x);
+		XTAL_IF0
+		XTAL_0IF (    real_q<Y>) {
+			return static_cast<Y>(x);
+		}
+		XTAL_0IF ( ordinal_q<Y>) {
+			return static_cast<Y>(x*bit_fraction_f<Y_delta>());
+		}
+		XTAL_0IF (cardinal_q<Y>) {
+			return _xtd::bit_cast<Y>(bit_fraction_f<Y_delta>(x));
+		}
+		XTAL_0IF_(void)
+	}
+}
+template <class T_return=void>
+XTAL_DEF_(short)
+XTAL_SET bit_fraction_f(complex_variable_q auto const &x)
+noexcept -> auto
+{
+	using X       = XTAL_ALL_(x);
+	using X_op    = bond::operate<X>;
+	using X_alpha = typename X_op::alpha_type;
+	using X_sigma = typename X_op::sigma_type;
+	using X_delta = typename X_op::delta_type;
+
+	using U = _std::conditional_t<integral_q<typename X::value_type>, X_alpha, X_delta>;
+	using Y = complete_t<T_return, _std::complex<U>>;
+	using V = typename Y::value_type;
+
+	return Y{bit_fraction_f<V>(x.real()), bit_fraction_f<V>(x.imag())};
 }
 
 

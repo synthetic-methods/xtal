@@ -16,21 +16,21 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Constructs/references the current value. \
-
 //\
 template <class    ...Ws>	concept       dismember_q = not    atomic_q<Ws...>;
 template <class    ...Ws>	concept       dismember_q = not molecular_q<Ws...>;
 template <class    ...Ws>	concept          member_q = not dismember_q<Ws...>;
-template <class       W >	struct           member;
-template <class       W >	using            member_t = typename member<W>::type;
 
-template <class       W >	struct           member               {using type = based_t<W>;};
-template <auto        N >	struct           member<unit_type[N]> {using type = unsigned  ;};
-template <auto        N >	struct           member<null_type[N]> {using type = unsigned  ;};
-template <dismember_q W >	struct           member<W const &   > {using type = const   W*;};
-template <dismember_q W >	struct           member<W       &   > {using type =         W*;};
+template <class       W >	struct           member            {using type = based_t<W>;};
+template <dismember_q W >	struct           member<W const &> {using type = const   W*;};
+template <dismember_q W >	struct           member<W       &> {using type =         W*;};
+template <class       W >	struct         remember            {using type =         W ;};
+
+template <class       W >	using            member_t = typename member<W>::type;
+template <class       W >	using          remember_t = typename remember<W>::type;
+
+///\
+Constructs/references the current value. \
 
 template <dismember_q M >	XTAL_DEF_(let)   member_f(auto &&    o) noexcept {return             &  XTAL_REF_(o )    ;}
 template <   number_q M >	XTAL_DEF_(let)   member_f(auto &&    o) noexcept {return static_cast<M>(XTAL_REF_(o ))   ;}
@@ -38,11 +38,6 @@ template <class       M >	XTAL_DEF_(let)   member_f(auto &&...oo) noexcept {retu
 
 ///\
 Resolves/dereferences the current value. \
-
-template <class       W >	struct         remember               {using type =         W ;};
-template <auto        N >	struct         remember<unit_type[N]> {using type = unsigned  ;};
-template <auto        N >	struct         remember<null_type[N]> {using type = unsigned  ;};
-template <class       W >	using          remember_t = typename remember<W>::type;
 
 template <pointed_q   M >	XTAL_DEF_(let) remember_f(M &&m) noexcept {return *XTAL_REF_(m);}
 template <class       M >	XTAL_DEF_(let) remember_f(M &&m) noexcept {return  XTAL_REF_(m);}
@@ -350,8 +345,8 @@ struct defer_field<U>
 		
 	};
 };
-template <class T, auto ...Ns>
-struct defer_field<_std::integer_sequence<T, Ns...>>
+template <class I, auto ...Ns>
+struct defer_field<_std::integer_sequence<I, Ns...>>
 {
 	using _op = bond::operate<decltype(Ns)...>;
 
@@ -365,7 +360,7 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 		using S_ = bond::compose_s<S>;
 
 	public:
-		using head_type = _std::make_signed_t<T>;
+		using head_type = _std::make_signed_t<I>;
 		using body_type = size_type;
 
 	public:
@@ -423,9 +418,10 @@ struct defer_field<_std::integer_sequence<T, Ns...>>
 template <size_type N_width>
 struct defer_field<unit_type[N_width]>
 {
+	static_assert(0 < N_width);
 	using U = unit_type[N_width];
 
-	XTAL_SET_(unsigned) N_depth = bond::bit_ceiling_f(N_width);
+	XTAL_SET N_depth = _std::bit_width(N_width - one);
 	static_assert(N_width == one << N_depth);
 
 	using superkind = bond::word<N_width>;
@@ -437,8 +433,8 @@ struct defer_field<unit_type[N_width]>
 		using S_ = bond::compose_s<S, superkind>;
 
 	public:
-		using head_type = remember_t<U>;
-		using body_type =   member_t<U>;
+		using head_type = unsigned;
+		using body_type = unsigned;
 
 	public:
 		body_type body_part:N_depth{};

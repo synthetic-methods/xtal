@@ -7,7 +7,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux
+namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -33,22 +33,24 @@ struct mask
 	public:
 		using S_::S_;
 		using S_::self;
-	//	using S_::influx;
 
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET influx(auto &&...oo)
+		XTAL_LET flux(auto &&...oo)
 		noexcept -> signed
 		{
-			return S_::influx(XTAL_REF_(oo)...);
+			return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 		}
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET influx(mark_q auto o, auto &&...oo)
+		XTAL_LET flux(mark_q auto o, auto &&...oo)
 		noexcept -> signed
 		{
-			return influx((mark_s<>) o.head(), o.tail(), XTAL_REF_(oo)...);
+			return flux<N_ion>((mark_s<>) o.head(), o.tail(), XTAL_REF_(oo)...);
 		}
-		XTAL_DEF_(long)
-		XTAL_LET influx(mark_s<> o, auto &&...oo)
+		template <signed N_ion>
+		XTAL_DEF_(short)
+		XTAL_LET flux(mark_s<> o, auto &&...oo)
 		noexcept -> signed
 		{
 			auto m = o.head();
@@ -56,10 +58,10 @@ struct mask
 				return -1;
 			}
 			else if (m &= W_mask) {
-				return S_::influx(mark_s<>(m), XTAL_REF_(oo)...);
+				return S_::template flux<N_ion>(mark_s<>(m), XTAL_REF_(oo)...);
 			}
 			else {
-				return S_::influx(XTAL_REF_(oo)...);
+				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 			}
 		}
 

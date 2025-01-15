@@ -61,6 +61,10 @@ struct collate<A>
 		XTAL_NEW_(copy, homotype, noexcept=default)
 		XTAL_NEW_(move, homotype, noexcept=default)
 
+		XTAL_NEW_(explicit) homotype(auto &&...oo)
+		noexcept
+		:	S_(XTAL_REF_(oo)...)
+		{}
 		XTAL_NEW_(implicit) homotype()
 		noexcept
 		{
@@ -96,16 +100,26 @@ struct collate<A>
 				}
 			}
 		}
-		XTAL_NEW_(explicit) homotype(auto &&...oo)
-		noexcept
-		requires (0 < sizeof...(oo))
-		:	S_(XTAL_REF_(oo)...)
-		{}
 
-		XTAL_NEW_(explicit) homotype(bool o)
+		template <class U> requires real_q<U> or complex_q<U>
+		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		:	S_{condition_f<U_data>(o), condition_f<U_data>(not o)}
+		requires in_n<N_data, 2> and      same_q<U, U_data>
+		:	S_{u, one/(u + A_op::minilon_f()*(not u))}
 		{}
+		template <class U> requires real_q<U> or complex_q<U>
+		XTAL_NEW_(explicit) homotype(U &&u)
+		noexcept
+		requires in_n<N_data, 2> and different_q<U, U_data>
+		:	homotype(static_cast<U_data>(XTAL_REF_(u)))
+		{}
+		template <class U> requires logical_q<U>
+		XTAL_NEW_(explicit) homotype(U &&u)
+		noexcept
+		requires in_n<N_data, 2> and different_q<U, U_data>
+		:	S_{static_cast<U_data>(u), static_cast<U_data>(not u)}
+		{}
+	//	TODO: Adapt the above with `objective_f`?
 
 	public:// ACCESS
 		using S_::self;

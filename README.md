@@ -92,7 +92,7 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.influx(cell::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.template flux<+1>(cell::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
@@ -198,9 +198,9 @@ The type-functions [`compose` and `compose_s`](include/xtal/bond/compose.hh?ts=3
 The primary namespaces within `xtal` constitute a hierarchy linked by the namespace `_retail` designating the parent:
 
 	namespace cell      {}
-	namespace flux      {namespace _retail = cell;}
-	namespace occur   {namespace _retail = flux;}
-	namespace process   {namespace _retail = flux;}
+	namespace flow      {namespace _retail = cell;}
+	namespace occur   {namespace _retail = flow;}
+	namespace process   {namespace _retail = flow;}
 	namespace processor {namespace _retail = process;}
 
 The [`any.hh`](include/xtal/process/any.hh?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`cell/any.ii`](include/xtal/cell/any.ii?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
@@ -228,8 +228,8 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Feature                    |Reference|
 |---------------------------|---------|
 |Dependency composition     |[`bond/compose.hh`](include/xtal/bond/compose.hh?ts=3)|
-|Dependency management      |[`flux/any.hh`](include/xtal/flux/any.hh?ts=3) via `\.(?:de\|ef\|in)(?:flux\|fuse)`|
-|Parameter bundling         |[`flux/any.hh`](include/xtal/flux/any.hh?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
+|Dependency management      |[`flow/any.hh`](include/xtal/flow/any.hh?ts=3) via `\.(?:de\|ef\|in)(?:flow\|fuse)`|
+|Parameter bundling         |[`flow/any.hh`](include/xtal/flow/any.hh?ts=3) via `\.operator(?:<<\|>>)=` with `std::tuple`|
 |Parameter handling         |[`occur/any.hh`](include/xtal/occur/any.hh?ts=3) via `::(?:attach\|dispatch\|hold\|intermit)`|
 |Process lifting            |[`process/any.hh`](include/xtal/process/any.hh?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.hh`](include/xtal/process/cross.hh?ts=3)|

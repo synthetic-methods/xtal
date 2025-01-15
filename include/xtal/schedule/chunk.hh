@@ -38,7 +38,7 @@ struct chunk
 		{
 			using superkind = typename S_::template inqueue<Xs...>;
 			
-			template <flux::any_q R>
+			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
 				using R_ = bond::compose_s<R, superkind>;
@@ -61,25 +61,27 @@ struct chunk
 				using R_::R_;
 				using R_::self;
 				
+				template <signed N_ion>
+				XTAL_DEF_(short)
+				XTAL_LET fuse(auto &&o)
+				noexcept -> signed
+				{
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
 				///\
 				Influxes the `U_event` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
+				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(short)
-				XTAL_LET infuse(auto &&o)
+				XTAL_LET fuse(same_q<U_event> auto &&o)
 				noexcept -> signed
 				{
-					return R_::infuse(XTAL_REF_(o));
-				}
-				XTAL_DEF_(long)
-				XTAL_LET infuse(XTAL_SYN_(U_event) auto &&u)
-				noexcept -> signed
-				{
-					if (0 == u.head()) {
-						return R_::influx(XTAL_REF_(u).tail());
+					if (0 == o.head()) {
+						return R_::template flux<N_ion>(XTAL_REF_(o).tail());
 					}
 					else {
-						u_spool.push(XTAL_REF_(u)); return 0;
+						u_spool.push(XTAL_REF_(o)); return 0;
 					//	NOTE: Always successful, since there's (currently) no collision testing...
 					}
 				}
@@ -105,7 +107,7 @@ struct chunk
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and head_(1) <= i; u_spool.pop()) {
-						(void) R_::influx(then_(1));
+						(void) R_::template flux<+1>(then_(1));
 					}
 					return delay();
 				}

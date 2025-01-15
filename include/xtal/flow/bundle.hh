@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux
+namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Ties `Xs...` to unify flux branching, etc. \
+Ties `Xs...` to unify flow branching, etc. \
 
 ///\note\
 Deified as a `process`'s `bracket`, binding the provided arguments. \
@@ -68,105 +68,73 @@ struct bundle
 			return bond::pack_item_f<Is...>(head());
 		})
 		
-	public:// *FLUX
-	//	using S_::influx;
-	//	using S_::efflux;
+	public:// FLOW
 
-		///\returns the result of `influx`ing `self` then  (if `& 1`) `slots`. \
+		///\returns the result of influxing `self` then  (if `& 1`) `slots`. \
+		///\returns the result of effluxing `slots` then (if `& 1`) `self`. \
 
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET influx(auto &&...oo)
+		XTAL_LET flux(auto &&...oo)
 		noexcept -> signed
 		{
-			return [this, oo...] XTAL_XFN_(1, &, self().influx_push(oo...)) (S_::influx(XTAL_REF_(oo)...));
+			XTAL_IF0
+			XTAL_0IF (N_ion == +1) {
+				return [this, oo...]
+					XTAL_XFN_(1, &, self().template flux_slots<N_ion>(oo...))
+						(S_::template flux<N_ion>(XTAL_REF_(oo)...));
+			}
+			XTAL_0IF (N_ion == -1) {
+				return [this, oo...]
+					XTAL_XFN_(1, &, S_::template flux<N_ion>(oo...))
+						(self().template flux_slots<N_ion>(XTAL_REF_(oo)...));
+			}
 		}
 
-		///\returns the result of `efflux`ing `slots` then (if `& 1`) `self`. \
-
-		XTAL_DEF_(short)
-		XTAL_LET efflux(auto &&...oo)
-		noexcept -> signed
-		{
-			return [this, oo...] XTAL_XFN_(1, &, S_::efflux(oo...)) (self().efflux_pull(XTAL_REF_(oo)...));
-		}
-
-		///\returns the result of `*flux`ing with the supplied routing. \
+		///\returns the result of `*flow`ing with the supplied routing. \
 		If prefixed by a positive `slot_q`, forwards to the `slot` specified. \
 		If prefixed by a negative `slot_q` , forwards to all `slots`. \
 
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET influx(flux::slot_q auto i, auto &&...oo)
+		XTAL_LET flux(flow::slot_q auto i, auto &&...oo)
 		noexcept -> signed
 		{
 			XTAL_IF0
-			XTAL_0IF (0 <= i) {return slot<i>().influx     (XTAL_REF_(oo)...);}
-			XTAL_0IF (i <  0) {return self   ().influx_push(XTAL_REF_(oo)...);}
-		}
-		XTAL_DEF_(short)
-		XTAL_LET efflux(flux::slot_q auto i, auto &&...oo)
-		noexcept -> signed
-		{
-			XTAL_IF0
-			XTAL_0IF (0 <= i) {return slot<i>().efflux     (XTAL_REF_(oo)...);}
-			XTAL_0IF (i <  0) {return self   ().efflux_push(XTAL_REF_(oo)...);}
+			XTAL_0IF (0 <= i) {return slot<i>().template flux      <N_ion>(XTAL_REF_(oo)...);}
+			XTAL_0IF (i <  0) {return self   ().template flux_slots<N_ion>(XTAL_REF_(oo)...);}
 		}
 
 		///\
 		Forwards to all `slots`, bypassing `self`. \
 
 		///\note\
-		If `0 <= N_slot` provided, \
+		If `0 <= N_dex` provided, \
 		forwards `o, oo...` to the slot specified, then `oo...` to the remainder. \
 
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET influx_push(auto &&...oo)
+		XTAL_LET flux_slots(auto &&...oo)
 		noexcept -> signed
 		{
 			return slots().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
-				XTAL_0FN_(XTAL_REF_(xs).influx(oo...) &...& -1)
+				XTAL_0FN_(XTAL_REF_(xs).template flux<N_ion>(oo...) &...& -1)
 			);
 		}
+		template <signed N_ion, int N_dex>
 		XTAL_DEF_(short)
-		XTAL_LET efflux_pull(auto &&...oo)
-		noexcept -> signed
-		{
-			return slots().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
-				XTAL_0FN_(XTAL_REF_(xs).efflux(oo...) &...& -1)
-			);
-		}
-		
-		template <int N_slot>
-		XTAL_DEF_(long)
-		XTAL_LET influx_push(auto &&o, auto &&...oo)
+		XTAL_LET flux_slotted(auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
 			XTAL_IF0
-			XTAL_0IF (N_slot <  0) {
-				return influx_push(XTAL_REF_(oo)...);
+			XTAL_0IF (N_dex <  0) {
+				return flux_slots<N_ion>(XTAL_REF_(oo)...);
 			}
-			XTAL_0IF (0 <= N_slot) {
+			XTAL_0IF (0 <= N_dex) {
 				return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
 				<auto ...I>(bond::seek_t<I...>)
 					XTAL_0FN_(
-						slot<N_slot>().influx(o, oo...) &...& slot<(N_slot <= I) + I>().influx(oo...)
-					)
-				(bond::seek_s<sizeof...(Xs) - 1> {});
-			}
-		}
-		template <int N_slot>
-		XTAL_DEF_(long)
-		XTAL_LET efflux_pull(auto &&o, auto &&...oo)
-		noexcept -> signed
-		{
-			XTAL_IF0
-			XTAL_0IF (N_slot <  0) {
-				return efflux_pull(XTAL_REF_(oo)...);
-			}
-			XTAL_0IF (0 <= N_slot) {
-				return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
-				<auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(
-						slot<N_slot>().efflux(o, oo...) &...& slot<(N_slot <= I) + I>().efflux(oo...)
+						slot<N_dex>().template flux<N_ion>(o, oo...) &...& slot<(N_dex <= I) + I>().template flux<N_ion>(oo...)
 					)
 				(bond::seek_s<sizeof...(Xs) - 1> {});
 			}

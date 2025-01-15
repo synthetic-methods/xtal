@@ -7,14 +7,14 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux
+namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides conversion from `tab`-equivalent types when executing `-fuse`.
 
 ///\note\
-Does not currently apply to `-flux`. \
+Does not currently apply to `-flow`. \
 
 ///\note\
 Used to adapt internal `attach`ments like `resize`. \
@@ -42,28 +42,16 @@ struct tab
 
 	public:// *FUSE
 
-		template <class O>
+		template <signed N_ion>
 		XTAL_DEF_(short)
-		XTAL_LET infuse(O &&o)
+		XTAL_LET fuse(auto &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::tab_compatible_q<T_, O> and different_q<T_, O>) {
-				return S_::infuse(XTAL_REF_(o).apply(invoke_n<T_>));
+			if constexpr (bond::tab_compatible_q<T_, decltype(o)> and different_q<T_, decltype(o)>) {
+				return S_::template fuse<N_ion>(XTAL_REF_(o).apply(invoke_n<T_>));
 			}
 			else {
-				return S_::infuse(XTAL_REF_(o));
-			}
-		}
-		template <class O>
-		XTAL_DEF_(short)
-		XTAL_LET effuse(O &&o)
-		noexcept -> signed
-		{
-			if constexpr (bond::tab_compatible_q<T_, O> and different_q<T_, O>) {
-				return S_::effuse(XTAL_REF_(o).apply(invoke_n<T_>));
-			}
-			else {
-				return S_::effuse(XTAL_REF_(o));
+				return S_::template fuse<N_ion>(XTAL_REF_(o));
 			}
 		}
 

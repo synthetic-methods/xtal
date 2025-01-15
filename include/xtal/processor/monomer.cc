@@ -16,7 +16,7 @@ namespace xtal::processor::_test
 template <typename ...As>
 void monomer_zipping()
 {
-	using _op = bond::operating;
+	using _op = bond::operate<>;
 	using T_sigma = _op::sigma_type;
 	using T_alpha = _op::alpha_type;
 
@@ -52,8 +52,8 @@ TAG_("monomer", "zipping")
 template <typename ...As>
 void monomer_lifting()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	T_sigma constexpr N_size = 5;
 	using U_block  = arrange::block_t<T_alpha[N_size]>;
@@ -86,8 +86,8 @@ TAG_("monomer", "lifting")
 /**/
 TAG_("monomer", "irritating")
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<Px_irritator_mix, Ox_onset::dispatch<>>;
@@ -115,8 +115,8 @@ TAG_("monomer", "irritating")
 template <class Px_mix>
 void monomer_provision__advancing()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	using U_render = occur::render_t<>;
 	using U_mixer = processor::monomer_t<Px_mix>;
@@ -156,8 +156,8 @@ void monomer_provision__advancing()
 template <class U_add>
 void monomer_provision__provisioning()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	using provide = provision::stored<constant_t<0x20>>;
 
@@ -204,8 +204,8 @@ TAG_("monomer", "provision")
 template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__rvalue()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	unsigned constexpr N = 4;
 	
@@ -234,8 +234,8 @@ void monomer_chaining__rvalue()
 template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__lvalue()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	unsigned constexpr N = 4;
 
@@ -266,8 +266,8 @@ void monomer_chaining__lvalue()
 template <class U_add, typename U_mul=Px_dynamic_term>
 void monomer_chaining__shared()
 {
-	using T_sigma = typename bond::operating::sigma_type;
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_sigma = typename bond::operate<>::sigma_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	unsigned constexpr N = 4;
 
@@ -309,6 +309,6 @@ TAG_("monomer", "chaining")
 }
 
 
-///////////////////////////////////////////////////////////////////////////////FIXME
+///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

@@ -98,11 +98,10 @@ noexcept -> void
 	using Y_ =            decltype(y0) ;
 	using X  = iterated_u<X_>;
 	using Y  = iterated_u<Y_>;
-	XTAL_IF0
-	XTAL_0IF (same_q<null_type, decltype(f)> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
+	if constexpr (same_q<null_type, decltype(f)> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memcpy(y0, xs.begin(), sizeof(xs));
 	}
-	XTAL_0IF_(else) {
+	else {
 		copy_to<f>(y0, xs.begin(), xs.end(), n_seq);
 	}
 }
@@ -136,11 +135,10 @@ noexcept -> void
 	using X  = iterated_u<X_>;
 	using Y  = iterated_u<Y_>;
 
-	XTAL_IF0
-	XTAL_0IF (same_q<F, null_type> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
+	if constexpr (same_q<F, null_type> and same_q<Y_, X_> and alignof(Y) == alignof(X)) {
 		_std::memmove(y0, xs.begin(), sizeof(xs));
 	}
-	XTAL_0IF_(else) {
+	else {
 		move_to<f>(y0, xs.begin(), xs.end(), n_seq);
 	}
 }

@@ -12,7 +12,7 @@ namespace xtal::occur
 /////////////////////////////////////////////////////////////////////////////////
 ///\brief\
 Represents the triple `{enter,leave,cancel}` with the `sign_type` `{0, 1,-1}`, \
-cf. `*flux`'s `{changed,unchanged,unrecognized}`. \
+cf. `*flow`'s `{changed,unchanged,unrecognized}`. \
 
 ///\note\
 Not intended to be `attach`ed (except with `(?:ex|in)pect`), \
@@ -21,11 +21,13 @@ instead intercepted dynamically to affect/query state. \
 ///\note\
 Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
-template <typename ...As>	struct    stage	;
+template <typename ...As>	struct    stage;
+template <typename ...As>	using     stage_t =  confined_t<stage<As...>>;
 template <   class ..._s>	concept   stage_q = bond::tag_p<stage, _s...>;
-template <typename ...As>	using     stage_t = confined_t<stage<As...>>;
+
 template <typename ...As>
-XTAL_DEF_(let) stage_f(auto &&...oo) noexcept {return stage_t<As...>(XTAL_REF_(oo)...);}
+XTAL_DEF_(let) stage_f(auto &&...oo)
+noexcept {return stage_t<As...>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,40 +94,32 @@ struct stage<A, As...>
 		using S_::head;
 
 	public:// *FUSE
-	//	using S_::infuse;
-	//	using S_::effuse;
 
-		XTAL_DEF_(long)
-		XTAL_LET infuse(auto &&o)
+		template <signed N_ion>
+		XTAL_DEF_(short)
+		XTAL_LET fuse(auto &&o)
 		noexcept -> signed
 		{
-			return S_::infuse(XTAL_REF_(o));
+			return S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
-		XTAL_DEF_(long)
-		XTAL_LET effuse(auto &&o)
-		noexcept -> signed
-		{
-			return S_::effuse(XTAL_REF_(o));
-		}
+		///\returns the result of influxing `stage_q` if `>= 0`, otherwise `-1`. \
 
-		XTAL_DEF_(long)
-		XTAL_LET infuse(stage_q auto &&o)
+		template <signed N_ion> requires in_n<N_ion, +1>
+		XTAL_DEF_(short)
+		XTAL_LET fuse(stage_q auto &&o)
 		noexcept -> signed
 		{
-		//	TODO: Configure transition-rules (returning `-1` if invalid)?
-			switch (head()) {
-			case  0:;
-			case  1:;
-			case -1:;
-			}
-			return S_::infuse(XTAL_REF_(o));
+			return head() == -1? -1: S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
 		/**/
-		XTAL_DEF_(long)
-		XTAL_LET effuse(stage_q auto &&o)
+		///\returns `1` if the `stage_q` matches `head()`, otherwise `0` (simulating `fuse<+1>`). \
+
+		template <signed N_ion> requires in_n<N_ion, -1>
+		XTAL_DEF_(short)
+		XTAL_LET fuse(stage_q auto &&o)
 		noexcept -> signed
 		{
-			return XTAL_REF_(o) == head();
+			return heading(XTAL_REF_(o));
 		}
 		/***/
 

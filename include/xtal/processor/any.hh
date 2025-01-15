@@ -65,41 +65,49 @@ struct define
 					return 0 < n? n: static_cast<R_delay>(R_::template head<U_resize>());
 				}
 
-			public:// *FLUX
-				using R_::efflux;
+			public:// FLOW
+
+				template <signed N_ion>
+				XTAL_DEF_(short)
+				XTAL_LET flux(auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
 				
-				template <occur::review_q Rev, occur::render_q Ren>
+				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(long)
-				XTAL_LET efflux(Rev &&review_o, Ren &&render_o, auto &&...oo)
+				XTAL_LET flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo
+				)
 				noexcept -> signed
 				{
 					auto &s = R_::self();
 					
-					if (R_::effuse(render_o) == 1) {
+					if (R_::template fuse<N_ion>(render_o) == 1) {
 						return 1;
 					}
 					else {
 						return s.reflux([&] (counted_q auto scan, counter_q auto step)
-							XTAL_0FN_(s.efflux_subview(
-								review_o.subview(scan),
-								render_o.subview(scan).skip(step)
-							)))
-						&	[this, ...oo=XTAL_REF_(oo)] XTAL_XFN_(1, &, R_::efflux(oo...)) (R_::influx_push(XTAL_REF_(render_o)));
+							XTAL_0FN_(s.template subview_flux<N_ion>(review_o.subview(scan), render_o.subview(scan).skip(step)))
+						)
+						&	[this, ...oo=XTAL_REF_(oo)]
+								XTAL_XFN_(1, &, R_::template flux<N_ion>(oo...))
+									(R_::template flux_slots<+1>(XTAL_REF_(render_o)));
 					}
 				}
 				///\
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
-				template <occur::review_q Rev, occur::render_q Ren>
+				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(long)
-				XTAL_LET efflux_subview(Rev &&review_o, Ren &&render_o)
+				XTAL_LET subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
 					auto    &u_state = review_o.view();
 					using    U_state = XTAL_ALL_(u_state);
 					XTAL_LET N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 					
-					if (1 == R_::template efflux_pull<N_share>(review_o, render_o)) {
+					if (1 == R_::template flux_slotted<N_ion, N_share>(review_o, render_o)) {
 						return 1;
 					}
 					else {
@@ -242,8 +250,6 @@ struct defer<U>
 			XTAL_IF0
 			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
 			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
-
-			return iterative_f(XTAL_FUN_(U_::function), XTAL_REF_(xs)...);
 		})
 
 	};

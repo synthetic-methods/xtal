@@ -43,7 +43,7 @@ struct cross<W, U, As...>
 		using S_::head;
 
 		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(long)
+		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
 		{

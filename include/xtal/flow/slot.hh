@@ -7,11 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::flux
+namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Governs access to the arguments of `flux::bundle`. \
+Governs access to the arguments of `flow::bundle`. \
 
 //\
 template <  int N             >	using    slot_t = bond::compose_s<any_s<constant_t<N>>, confined<>>;
@@ -27,7 +27,7 @@ static_assert(slot_q<slot_t<3>>);
 static_assert(slot_q<slot_t<3>, 3>);
 static_assert(slot_q<slot_t<3>, 3, 2, 1>);
 
-static_assert(any_q<flux::slot_t<0>>);
+static_assert(any_q<flow::slot_t<0>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

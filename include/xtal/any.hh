@@ -119,53 +119,54 @@ concept  invoke_p = _std::invocable<invoke_t<T>, Xs...>;
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	XTAL_LET       sign_n	=          _entail::          sign_n<N, Z    >;
-template <auto  M, auto     N >	XTAL_LET       modulo_m	=          _entail::          modulo_m<M, N    >;
-template <auto  M, auto     N >	XTAL_LET        above_m	=          _entail::           above_m<M, N    >;
-template <auto  M, auto     N >	XTAL_LET        below_m	=          _entail::           below_m<M, N    >;
-template <auto  M, auto  ...Ns>	concept         above_p =          _entail::           above_p<M, Ns...>;
-template <auto  M, auto  ...Ns>	concept         below_p =          _entail::           below_p<M, Ns...>;
-template <auto  N, auto  ...Ms>	concept            in_n	=          _entail::              in_n<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            un_n	=          _entail::              un_n<N, Ms...>;
-template <class T, class ...Ts>	concept            in_q	=          _entail::              in_q<T, Ts...>;
-template <class T, class ...Ts>	concept            un_q	=          _entail::              un_q<T, Ts...>;
+template <auto  N, auto   Z=0 >	XTAL_LET       sign_n	=         _entail::            sign_n<N, Z    >;
+template <auto  M, auto     N >	XTAL_LET       modulo_m	=         _entail::            modulo_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        above_m	=         _entail::             above_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        below_m	=         _entail::             below_m<M, N    >;
+template <auto  M, auto  ...Ns>	concept         above_p =         _entail::             above_p<M, Ns...>;
+template <auto  M, auto  ...Ns>	concept         below_p =         _entail::             below_p<M, Ns...>;
+template <auto  N, auto  ...Ms>	concept            in_n	=         _entail::                in_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_n	=         _entail::                un_n<N, Ms...>;
+template <class T, class ...Ts>	concept            in_q	=         _entail::                in_q<T, Ts...>;
+template <class T, class ...Ts>	concept            un_q	=         _entail::                un_q<T, Ts...>;
 
-template <auto   N=null_type{}>	using        constant_t	= typename _entail::     constant_t<N >;
-template <class          ...Ts>	concept      constant_q	=  (...and _entail::     constant_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      variable_q	=  (...and _entail::     variable_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      variable_q	= (...and _entail::          variable_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      constant_q	= (...and _entail::          constant_q<XTAL_RAW_(Ts)>);
+template <auto   N=null_type{}>	using        constant_t	=         _entail::          constant_t<N >  ;
+template <auto   N=null_type{}>	XTAL_LET     constant_n	=         _entail::          constant_t<N >{};
 
-template <class 	 ...Ts>  concept   integral_variable_q	=  (...and _entail:: integral_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept   cardinal_variable_q	=  (...and _entail:: cardinal_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept    ordinal_variable_q	=  (...and _entail::  ordinal_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept    logical_variable_q	=  (...and _entail::  logical_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept       real_variable_q	=  (...and _entail::     real_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept    complex_variable_q	=  (...and _entail::  complex_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept    simplex_variable_q	=  (...and _entail::  simplex_variable_q<   Ts   >);
-template <class 	 ...Ts>  concept    anyplex_variable_q	=  (...and _entail::  anyplex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept   integral_variable_q	= (...and _entail:: integral_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_variable_q	= (...and _entail:: cardinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_variable_q	= (...and _entail::  ordinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_variable_q	= (...and _entail::  logical_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_variable_q	= (...and _entail::     real_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_variable_q	= (...and _entail::  complex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_variable_q	= (...and _entail::  simplex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_variable_q	= (...and _entail::  anyplex_variable_q<   Ts   >);
 
-template <class 	 ...Ts>  concept   integral_constant_q	=  (...and _entail:: integral_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept   cardinal_constant_q	=  (...and _entail:: cardinal_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept    ordinal_constant_q	=  (...and _entail::  ordinal_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept    logical_constant_q	=  (...and _entail::  logical_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept       real_constant_q	=  (...and _entail::     real_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept    complex_constant_q	=  (...and _entail::  complex_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept    simplex_constant_q	=  (...and _entail::  simplex_constant_q<   Ts   >);
-template <class 	 ...Ts>  concept    anyplex_constant_q	=  (...and _entail::  anyplex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept   integral_constant_q	= (...and _entail:: integral_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_constant_q	= (...and _entail:: cardinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_constant_q	= (...and _entail::  ordinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_constant_q	= (...and _entail::  logical_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_constant_q	= (...and _entail::     real_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_constant_q	= (...and _entail::  complex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_constant_q	= (...and _entail::  simplex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_constant_q	= (...and _entail::  anyplex_constant_q<   Ts   >);
 
-template <class       ...Ts>	concept         integral_q	=  (...and _entail::     integral_q<Ts>);
-template <class       ...Ts>	concept         cardinal_q	=  (...and _entail::     cardinal_q<Ts>);
-template <class       ...Ts>	concept          ordinal_q	=  (...and _entail::      ordinal_q<Ts>);
-template <class       ...Ts>	concept          logical_q	=  (...and _entail::      logical_q<Ts>);
-template <class 	    ...Ts>  concept             real_q	=  (...and _entail::         real_q<Ts>);
-template <class 	    ...Ts>  concept          complex_q	=  (...and _entail::      complex_q<Ts>);
-template <class 	    ...Ts>  concept          simplex_q	=  (...and _entail::      simplex_q<Ts>);
-template <class 	    ...Ts>  concept          anyplex_q	=  (...and _entail::      anyplex_q<Ts>);
+template <class       ...Ts>	concept         integral_q	= (...and _entail::     integral_q<Ts>);
+template <class       ...Ts>	concept         cardinal_q	= (...and _entail::     cardinal_q<Ts>);
+template <class       ...Ts>	concept          ordinal_q	= (...and _entail::      ordinal_q<Ts>);
+template <class       ...Ts>	concept          logical_q	= (...and _entail::      logical_q<Ts>);
+template <class 	    ...Ts>  concept             real_q	= (...and _entail::         real_q<Ts>);
+template <class 	    ...Ts>  concept          complex_q	= (...and _entail::      complex_q<Ts>);
+template <class 	    ...Ts>  concept          simplex_q	= (...and _entail::      simplex_q<Ts>);
+template <class 	    ...Ts>  concept          anyplex_q	= (...and _entail::      anyplex_q<Ts>);
 template <class 	    ...Ts>  concept           number_q	=                         anyplex_variable_q<Ts...>;
 
-template <class          ...Ts>	concept       liminal_q	=  (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      terminal_q	=  (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
-template <liminal_q T         >	using      subliminal_s	= typename _entail::   subliminal_s<T >;
-template <liminal_q T         >	using    superliminal_s	= typename _entail:: superliminal_s<T >;
+template <class          ...Ts>	concept       liminal_q	= (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      terminal_q	= (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
+template <liminal_q T         >	using      subliminal_s	=  typename _entail::   subliminal_s<T >;
+template <liminal_q T         >	using    superliminal_s	=  typename _entail:: superliminal_s<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -335,52 +335,38 @@ public:
 	XTAL_DEF_(short) XTAL_SET internal_f(integral_q auto i) noexcept -> auto {return          S_::internal_f(i);}
 
 
-//	XTAL_DEF_(short) XTAL_SET delta_f(auto &&o) noexcept -> auto {return delta_type(XTAL_REF_(o));}
-//	XTAL_DEF_(short) XTAL_SET sigma_f(auto &&o) noexcept -> auto {return sigma_type(XTAL_REF_(o));}
-//	XTAL_DEF_(short) XTAL_SET alpha_f(auto &&o) noexcept -> auto {return alpha_type(XTAL_REF_(o));}
-	XTAL_DEF_(short) XTAL_SET aphex_f(auto &&o) noexcept -> auto {return aphex_type(XTAL_REF_(o));}
-
 	XTAL_DEF_(short)
 	XTAL_SET delta_f(auto &&o)
 	noexcept -> delta_type
 	{
-		using Q = XTAL_ALL_(o);
-		XTAL_IF0
-		XTAL_0IF (same_q<delta_type, Q>) {return                                 XTAL_REF_(o)  ;}
-		XTAL_0IF (same_q<sigma_type, Q>) {return      _std::bit_cast<delta_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (same_q<alpha_type, Q>) {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (        cardinal_q<Q>) {return delta_f(static_cast<sigma_type>(XTAL_REF_(o)));}
-	//	XTAL_0IF (         ordinal_q<Q>) {return delta_f(static_cast<delta_type>(XTAL_REF_(o)));}
-		XTAL_0IF (            real_q<Q>) {return delta_f(static_cast<alpha_type>(XTAL_REF_(o)));}
-		XTAL_0IF_(else)                  {return         static_cast<delta_type>(XTAL_REF_(o)) ;}
+		if constexpr (cardinal_q<decltype(o)>) {
+			return _std::bit_cast<delta_type>(static_cast<sigma_type>(XTAL_REF_(o)));
+		}
+		else {
+			return static_cast<delta_type>(XTAL_REF_(o));
+		}
 	}
 	XTAL_DEF_(short)
 	XTAL_SET sigma_f(auto &&o)
 	noexcept -> sigma_type
 	{
-		using Q = XTAL_ALL_(o);
-		XTAL_IF0
-		XTAL_0IF (same_q<delta_type, Q>) {return      _std::bit_cast<sigma_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (same_q<sigma_type, Q>) {return                                 XTAL_REF_(o)  ;}
-		XTAL_0IF (same_q<alpha_type, Q>) {return                 sigma_f(delta_f(XTAL_REF_(o)));}
-	//	XTAL_0IF (        cardinal_q<Q>) {return sigma_f(static_cast<sigma_type>(XTAL_REF_(o)));}
-		XTAL_0IF (         ordinal_q<Q>) {return sigma_f(static_cast<delta_type>(XTAL_REF_(o)));}
-		XTAL_0IF (            real_q<Q>) {return sigma_f(static_cast<alpha_type>(XTAL_REF_(o)));}
-		XTAL_0IF_(else)                  {return         static_cast<sigma_type>(XTAL_REF_(o)) ;}
+		if constexpr (cardinal_q<decltype(o)>) {
+			return static_cast<sigma_type>(XTAL_REF_(o));
+		}
+		else {
+			return _std::bit_cast<sigma_type>(static_cast<delta_type>(XTAL_REF_(o)));
+		}
 	}
 	XTAL_DEF_(short)
 	XTAL_SET alpha_f(auto &&o)
 	noexcept -> alpha_type
 	{
-		using Q = XTAL_ALL_(o);
-		XTAL_IF0
-		XTAL_0IF (same_q<delta_type, Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF (same_q<sigma_type, Q>) {return                 alpha_f(delta_f(XTAL_REF_(o)));}
-		XTAL_0IF (same_q<alpha_type, Q>) {return                                 XTAL_REF_(o)  ;}
-		XTAL_0IF (        cardinal_q<Q>) {return alpha_f(static_cast<sigma_type>(XTAL_REF_(o)));}
-		XTAL_0IF (         ordinal_q<Q>) {return alpha_f(static_cast<delta_type>(XTAL_REF_(o)));}
-	//	XTAL_0IF (            real_q<Q>) {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
-		XTAL_0IF_(else)                  {return         static_cast<alpha_type>(XTAL_REF_(o)) ;}
+		if constexpr (integral_q<decltype(o)>) {
+			return static_cast<alpha_type>(delta_f(XTAL_REF_(o)));
+		}
+		else {
+			return static_cast<alpha_type>(XTAL_REF_(o));
+		}
 	}
 
 
@@ -736,106 +722,6 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-	///\returns the fractional component of `x` as a full-width `delta_type`.
-
-	template <integral_q Y=delta_type>
-	XTAL_DEF_(short)
-	XTAL_SET bit_fraction_f(real_q auto const x)
-	noexcept -> Y
-	{
-		XTAL_LET X_width = sizeof(x), X_depth = X_width << 3;
-		XTAL_LET Y_width = sizeof(Y), Y_depth = Y_width << 3;
-		XTAL_IF0
-		XTAL_0IF (X_width != full.width) {
-			return realize<X_width>::template bit_fraction_f<Y>(x);
-		}
-		//\
-		XTAL_0IF (true) {
-		XTAL_0IF_(consteval) {
-			XTAL_LET N_exp = exponent.shift;
-			XTAL_LET M_exp = unit.mark + unit.shift - Y_depth;
-			XTAL_LET M_sgn = sign.mask;
-
-			auto o = _xtd::bit_cast<sigma_type>(x);
-
-			delta_type o_ = o &  M_sgn; o  ^= o_; o_ >>= sign.shift;
-			sigma_type x  = o >> N_exp; x  -= M_exp;
-			sigma_type u  = x != 0    ; u <<= fraction.depth;
-
-			auto const x_on = _xtd::bit_cast<delta_type>(~x) >> positive.depth;
-			auto const x_up = x_on & x;
-			auto const x_dn = x_up - x;
-
-			o  &=  fraction.mask;
-			o  ^=  u;
-			o <<=  x_up;
-			o >>=  x_dn;
-		//	o  |=  1;
-			o  ^=  o_;
-			o  -=  o_;
-			return _xtd::bit_cast<delta_type>(o);
-		}
-		XTAL_0IF_(else) {
-			auto y = x - round(x); y *= diplo_n<Y_depth>;
-			return _xtd::bit_cast<Y>(static_cast<_std::make_signed_t<Y>>(y));
-		}
-	}
-	template <class Y=_std::complex<delta_type>>
-	XTAL_DEF_(short)
-	XTAL_SET bit_fraction_f(complex_q auto const &x)
-	noexcept -> Y
-	{
-		using V = typename Y::value_type;
-		return {bit_fraction_f<V>(x.real()), bit_fraction_f<V>(x.imag())};
-	}
-	
-	template <real_q Y=alpha_type>
-	XTAL_DEF_(short)
-	XTAL_SET fraction_f(integral_q auto const &x)
-	noexcept -> Y
-	{
-		XTAL_LET X_width = sizeof(x), X_depth = X_width << 3;
-		XTAL_LET Y_width = sizeof(Y), Y_depth = Y_width << 3;
-		XTAL_IF0
-		XTAL_0IF (X_width != full.width) {
-			return realize<X_width>::template fraction_f<Y>(x);
-		}
-		XTAL_0IF_(else) {
-			return realize<Y_width>::haplo_f(full.depth)*realize<Y_width>::alpha_f(delta_f(x));
-		}
-	}
-	template <class Y=_std::complex<alpha_type>, integral_q X>
-	XTAL_DEF_(short)
-	XTAL_SET fraction_f(_std::complex<X> const &x)
-	noexcept -> Y
-	{
-		using V = typename Y::value_type;
-		return {fraction_f<V>(x.real()), fraction_f<V>(x.imag())};
-	}
-
-	XTAL_DEF_(short)
-	XTAL_SET fraction_f(alpha_type f)
-	noexcept -> alpha_type
-	{
-		return static_cast<alpha_type>(bit_fraction_f(f))*haplo_f(full.depth);
-	}
-
-//	static_assert(fraction_f( 2.25) ==  0.25);
-//	static_assert(fraction_f( 1.25) ==  0.25);
-//	static_assert(fraction_f( 0.25) ==  0.25);
-//	static_assert(fraction_f( 0.75) == -0.25);
-//	static_assert(fraction_f( 1.75) == -0.25);
-//	static_assert(fraction_f( 2.75) == -0.25);
-//
-//	static_assert(fraction_f(-2.25) == -0.25);
-//	static_assert(fraction_f(-1.25) == -0.25);
-//	static_assert(fraction_f(-0.25) == -0.25);
-//	static_assert(fraction_f(-0.75) ==  0.25);
-//	static_assert(fraction_f(-1.75) ==  0.25);
-//	static_assert(fraction_f(-2.75) ==  0.25);
-
 
 	XTAL_DEF_(short)
 	XTAL_SET factorial_f(sigma_type n)
@@ -910,7 +796,6 @@ struct   operate<>
 :	operate<size_type>
 {
 };
-using operating = operate<>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

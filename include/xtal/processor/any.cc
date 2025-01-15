@@ -42,7 +42,7 @@ using Px_irritator_mix = typename irritator_mix::type;
 template <class U_mix>
 void processor_provision__messaging()
 {
-	using T_alpha = typename bond::operating::alpha_type;
+	using T_alpha = typename bond::operate<>::alpha_type;
 
 	auto const _01 = _xtd::ranges::views::iota(0, 3)|_xtd::ranges::views::transform(invoke_n<T_alpha>);
 	auto const _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -85,7 +85,7 @@ TAG_("processor", "construct")
 {
 	TRY_("lifting")
 	{
-		using T_alpha = typename bond::operating::alpha_type;
+		using T_alpha = typename bond::operate<>::alpha_type;
 
 		unsigned constexpr N_size = 5;
 		using U_block = arrange::block_t<T_alpha[N_size]>;

@@ -350,9 +350,10 @@ XTAL_DEF_(short)
 XTAL_LET derange_f(iterable_q auto &&y)
 noexcept -> auto
 {
-	using  Y  = XTAL_ALL_(y);
-	using  Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
-	return Y_(XTAL_MOV_(y))|recount_f(y);
+	using      Y  = XTAL_ALL_(y);
+	using      Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
+	auto const n_ = recount_f(y);
+	return Y_(XTAL_MOV_(y))|XTAL_MOV_(n_);
 }
 
 ///\returns the result of zipping `...xs` with `f`. \

@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "../arrange/collate.hh"
 
 
 
@@ -15,21 +15,24 @@ template <class U=unsigned>	struct   sample;
 template <class U=unsigned>	using    sample_t = confined_t<sample<U>>;
 template <typename   ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
 
+XTAL_DEF_(let) sample_f(auto &&w)
+//\
+noexcept {return sample_t<typename bond::operate<decltype(w)>::delta_type>(XTAL_REF_(w));}
+noexcept {return sample_t<>(XTAL_REF_(w));}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
-template <class W>
+template <class U>
 struct sample
 {
 private:
-	using _op = bond::operate<W>;
-	using U = typename _op::delta_type;
-	using V = typename _op::alpha_type;
-
-	using M = bond::pack_t<U, V>;
+	using _op = bond::operate<U>;
+	using U_alpha = typename _op::alpha_type;
+	using W_alpha = arrange::collate_t<U_alpha[2]>;
 
 public:
-	using superkind = bond::compose<defer<M>, bond::tag<sample>>;
+	using superkind = bond::compose<defer<W_alpha>, flow::tag<sample>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -37,7 +40,7 @@ public:
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
-	public:
+	public:// CONSTRUCT
 	//	using S_::S_;
 		
 	~	subtype() noexcept=default;
@@ -51,18 +54,26 @@ public:
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
+		XTAL_NEW_(explicit) subtype(arrange::collate_q auto &&o, auto &&...oo)
+		noexcept
+		:	subtype(get<0>(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		{}
+		XTAL_NEW_(explicit) subtype(sample_q auto &&o, auto &&...oo)
+		noexcept
+		:	subtype(XTAL_REF_(o).rate(), XTAL_REF_(oo)...)
+		{}
+		XTAL_NEW_(explicit) subtype(number_q auto &&n, auto &&...oo)
+		noexcept
+		//\
+		:	S_(W_alpha(_op::alpha_f(n)), XTAL_REF_(oo)...)
+		:	S_(W_alpha{_op::alpha_f(n), one/_op::alpha_f(n)}, XTAL_REF_(oo)...)
+		{}
 		XTAL_NEW_(implicit) subtype()
 		noexcept
 		:	subtype(1)
 		{}
-		XTAL_NEW_(explicit) subtype(integral_variable_q auto n, auto &&...oo)
-		noexcept
-		:	S_(M{n, 0 == n? 0: V{1}/n}, XTAL_REF_(oo)...)
-		{}
-		XTAL_NEW_(explicit) subtype(real_variable_q auto u, auto &&...oo)
-		noexcept
-		:	S_(M{0 == u? 0: U{1}/u, u}, XTAL_REF_(oo)...)
-		{}
+
+	public:// OPERATE
 
 		XTAL_TO4_(XTAL_DEF_(let)   rate(), get<0>(S_::head()))
 		XTAL_TO4_(XTAL_DEF_(let) period(), get<1>(S_::head()))

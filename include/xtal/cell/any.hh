@@ -46,8 +46,10 @@ struct define
 			return self().operator==(t.self());
 		}
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
+	
+	public:// OPERATE
 		using S_::self;
 
 		//\
@@ -130,12 +132,12 @@ struct defer
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 		using U_ = typename S_::head_type;
 
-	public:
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// OPERATE
 		using S_::self;
 		using S_::head;
-
-	public:
-		using S_::S_;
 
 		///\
 		Converts `this` to the base-type (explicit). \
