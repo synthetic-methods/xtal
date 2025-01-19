@@ -7,6 +7,15 @@ template <class T> using remove_rvalue_reference_t = _std::conditional_t<_std::i
 template <class T> using remove_lvalue_reference_t = _std::conditional_t<_std::is_lvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
 
 
+template <class T>  concept     semitrivial = _std::semiregular<T> and _std::destructible<T>;
+template <class T>  concept         trivial =       semitrivial<T>
+and	_std::   is_trivially_copy_constructible_v<T>
+and	_std::   is_trivially_move_constructible_v<T>
+and	_std::         is_trivially_destructible_v<T>
+and	_std::             default_initializable  <T>;
+
+static_assert(trivial<_std::complex<float>>);
+
 #if XTAL_VER_(ranges == 3)
 namespace ranges        {using namespace      ::ranges;}
 namespace ranges::views {using namespace      ::ranges::views;}
@@ -48,8 +57,24 @@ template <         class ...Ts> struct        epimorphic : epitropic<Ts...> {};
 template <         class ...Ts>	struct       fungible              : _std::false_type                                                    {};
 template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
 template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disjunction<_std::is_base_of<T, T1>, _std::is_base_of<T1, T>> {};
+
+
+template <class T             >	using           based_t	=                       XTAL_RAW_(T) ;
+template <class T             >	concept         based_q	=      _std::same_as<T, XTAL_RAW_(T)>;
+template <class T             >	concept       unbased_q	=  not _std::same_as<T, XTAL_RAW_(T)>;
+
+template <auto  N, auto  ...Ns>	concept     different_n	=  not  (...and (N == Ns));
+template <auto  N, auto  ...Ns>	concept          same_n	=       (...and (N == Ns));
+template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>::value;
+template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>::value;
+template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>::value;
+template <class T, class ...Us>	concept          make_p	= _std::constructible_from<XTAL_RAW_(T), Us...>;
+
 template <         class ...Ts>	concept      fungible_q	=      fungible<XTAL_RAW_(Ts)...>::value;
 template <         class ...Ts>	concept    infungible_q	=  not fungible<XTAL_RAW_(Ts)...>::value;
+
+template <class T             >  concept     molecular_q = _xtd::semitrivial<XTAL_RAW_(T)>;
+template <class T             >  concept        atomic_q = _xtd::    trivial<XTAL_RAW_(T)>;
 
 
 template <class T             >	struct       identity;
@@ -62,31 +87,26 @@ template <class T             >	struct       identity                         {u
 template <class U             >	struct       identity<_std::type_identity<U>> {using type = _std::type_identity<U>;};
 
 
+template <auto  N             >	concept    incomplete_n	=  N == 0;
+template <auto  N             >	concept      complete_n	=  N != 0;
+template <class T             >	concept    incomplete_q	=  not requires {typename _std::void_t<decltype(sizeof(T))>;} or       same_q<T, null_type>;
+template <class T             >	concept      complete_q	=      requires {typename _std::void_t<decltype(sizeof(T))>;} and different_q<T, null_type>;
 template <         class ...Ts>	struct       complete	;
-template <         class ...Ts>	using        complete_t	= typename complete<Ts...>::type;
-template <class T             >	concept      complete_q	=     requires {typename _std::void_t<decltype(sizeof(T))>;};
-template <class T             >	concept    incomplete_q	= not requires {typename _std::void_t<decltype(sizeof(T))>;};
+template <         class ...Ts>	using        complete_t	=  typename complete<Ts...>::type;
 
-template <                class ...Ts>	struct complete              {class type  { };};
+template <                           >	struct complete<        >    {class type  { };};
 template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
 
-template <class T             >	using           based_t	=                       XTAL_RAW_(T) ;
-template <class T             >	concept         based_q	=      _std::same_as<T, XTAL_RAW_(T)>;
-template <class T             >	concept       unbased_q	=  not _std::same_as<T, XTAL_RAW_(T)>;
+template <auto  N, auto  ...Ns>	concept            un_n	= ((0 == sizeof...(Ns) and incomplete_n<N>) or...or different_n<N, Ns>);
+template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            in_n	= ((0 == sizeof...(Ns) and   complete_n<N>) or...or      same_n<N, Ns>);
+template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or      same_q<T, Ts>);
 
-template <class T             >  concept     molecular_q = _std::semiregular<XTAL_RAW_(T)>;
-template <class T             >  concept        atomic_q = _std::semiregular<XTAL_RAW_(T)> and _std::is_trivially_copyable_v<T>;
 
 template <         class ...Ts>	using          common_t	=  typename complete_t<_std::common_type<Ts...>, identity_t<void>>::type;
 template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and complete_q<common_t<Ts...>>;
-
-
-template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>::value;
-template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>::value;
-template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>::value;
-template <class T, class ...Us>	concept          make_p	= _std::constructible_from<XTAL_RAW_(T), Us...>;
 
 template <class F, class ...Xs>	using          return_t	=     _std::invoke_result_t<F, Xs...>;
 template <class F, class ...Xs>	concept    applicable_p	=     _std::invocable      <F, Xs...>;
@@ -135,10 +155,6 @@ template <auto  M, auto     N >	XTAL_LET        above_m	= (M < N)? N: static_cas
 template <auto  M, auto     N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
 template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
 template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
-template <auto  N, auto  ...Ms>	concept            in_n	= ((0 == sizeof...(Ms) and !!N) or...or (N == Ms));
-template <auto  N, auto  ...Ms>	concept            un_n	= ((0 == sizeof...(Ms) and  !N) or...or (N != Ms));
-template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or      same_q<T, Ts>);
-template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
 
 
 template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
@@ -198,6 +214,7 @@ template <class T             >	using         pointed_u	= _std::remove_reference
 template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(int)]) ;
 template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
 
+template <class T             >	concept       pointer_q	= _std::is_pointer_v<XTAL_RAW_(T)>;
 template <class T             >	concept       pointed_q	= requires (T t) {*t;};
 template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)];};
 

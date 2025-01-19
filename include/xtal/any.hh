@@ -177,6 +177,7 @@ Valued & Sized...
 template <class T             >	using         pointee_t	=          _entail::      pointee_t<T >;
 template <class T             >	using         pointed_u	=          _entail::      pointed_u<T >;
 template <class          ...Ts>	concept       pointed_q	= (... and _entail::      pointed_q<Ts>);
+template <class          ...Ts>	concept       pointer_q	= (... and _entail::      pointer_q<Ts>);
 
 template <class T             >	using         indexee_t	=          _entail::      indexee_t<T >;
 template <class T             >	using         indexed_u	=          _entail::      indexed_u<T >;

@@ -114,20 +114,9 @@ struct define
 						using namespace _xtd::ranges;
 						
 						auto result_o = R_::method();// Materialize...
-						auto _j = point_f(result_o);
-						auto _i = point_f(review_o);
-						auto  n = count_f(review_o);
-						
-						auto &copy_j =                    _j ;
-						auto  move_j = make_move_iterator(_j);
-
-						XTAL_IF0
-#if XTAL_VER_(LLVM)
-						XTAL_0IF XTAL_TRY_DO_(_std::copy_n(copy_j, n, _i))
-#endif
-						XTAL_0IF XTAL_TRY_DO_(copy_n(move_j, n, _i))
-						XTAL_0IF XTAL_TRY_DO_(move(result_o|account_f(n), _i))
-						XTAL_0IF_(else) {for (int m{}; m < n; ++m) {*_i++ = *move_j++;}}
+						auto y0 = point_f(review_o);
+						auto yN = count_f(review_o);
+						_detail::move_to(y0, point_f(result_o), yN);
 
 						return 0;
 					}

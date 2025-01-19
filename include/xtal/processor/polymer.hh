@@ -205,14 +205,17 @@ struct polymer<U, As...>
 					if constexpr (provision::stored_q<S_>) {
 						size_type i{count_f(ensemble())};
 
+						auto y0 = point_f(review_o);
+						auto yN = count_f(review_o);
+
 						auto const mix_f = [&] (constant_q auto N) XTAL_0FN {
 							[&]<auto ...I> (bond::seek_t<I...>) XTAL_0FN {
-								i -= N; _detail::mix_to(review_o, ensemble(i + I)()...);
+								i -= N; _detail::mix_to(review_o, ensemble(i + I)()...);// TODO: Normalize interface for `mix_to`...
 							}	(bond::seek_s<N>{});
 						};
 
 						if (i) {
-							i -= 1; _xtd::ranges::move(ensemble(i)()|account_f(review_o), point_f(review_o));
+							i -= 1; _detail::move_to(y0, point_f(ensemble(i)()), yN);
 						}
 						while (i) {switch (i) {
 							case 1:          {mix_f(constant_t<1>{}); break;}

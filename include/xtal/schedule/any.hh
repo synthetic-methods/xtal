@@ -100,41 +100,35 @@ struct define
 				
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET flux(V_event d, same_q<Xs> auto &&...oo)
+				XTAL_LET flux(same_q<V_event> auto &&d, same_q<Xs> auto &&...oo)
 				noexcept -> signed
 				{
-					return fuse_joint<N_ion>(XTAL_MOV_(d)) (XTAL_REF_(oo)...);
+					return confuse<N_ion>(XTAL_REF_(d)) (XTAL_REF_(oo)...);
 				}
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET flux(V_event d, same_q<U_tuple> auto &&o)
+				XTAL_LET flux(same_q<V_event> auto &&d, same_q<U_tuple> auto &&o)
 				noexcept -> signed
 				{
-					return XTAL_REF_(o).apply(fuse_joint<N_ion>(XTAL_MOV_(d)));
+					return XTAL_REF_(o).apply(confuse<N_ion>(XTAL_REF_(d)));
 				}
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET flux(V_event d, same_q<W_tuple> auto &&o)
+				XTAL_LET flux(same_q<V_event> auto &&d, same_q<W_tuple> auto &&o)
 				noexcept -> signed
 				{
-					return _std::apply(fuse_joint<N_ion>(XTAL_MOV_(d)), XTAL_REF_(o));
+					return _std::apply(confuse<N_ion>(XTAL_REF_(d)), XTAL_REF_(o));
 				}
 
 			private:
 
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET fuse_joint(auto o)
+				XTAL_LET confuse(auto o)
 				noexcept -> decltype(auto)
 				{
-					return [=, this] (auto &&...oo) XTAL_0FN_(fuse_join<N_ion>(XTAL_MOV_(o), XTAL_REF_(oo)...));
-				}
-				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse_join(auto &&...oo)
-				noexcept -> signed
-				{
-					return self().template fuse<N_ion>((...<< XTAL_REF_(oo)));
+					return [this, o = XTAL_REF_(o)] (auto &&...oo)
+						XTAL_0FN_(self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
 				}
 
 			};
