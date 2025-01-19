@@ -17,11 +17,11 @@ TAG_("arrange", "group")
 {
 	using F = _std::plus<void>;
 
-	using _op = bond::operate<>;
-	using T_delta = typename _op::delta_type;
-	using T_sigma = typename _op::sigma_type;
-	using T_alpha = typename _op::alpha_type;
-	using T_aphex = typename _op::aphex_type;
+	using _fix = bond::fixture<>;
+	using T_delta = typename _fix::delta_type;
+	using T_sigma = typename _fix::sigma_type;
+	using T_alpha = typename _fix::alpha_type;
+	using T_aphex = typename _fix::aphex_type;
 
 	using D1 = group_t<int[1]>;
 	using D2 = group_t<int[2]>;

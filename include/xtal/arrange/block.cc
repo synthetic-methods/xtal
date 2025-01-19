@@ -15,11 +15,11 @@ namespace xtal::arrange::_test
 /**/
 TAG_("block")
 {
-	using _op = bond::operate<>;
-	using T_delta = typename _op::delta_type;
-	using T_sigma = typename _op::sigma_type;
-	using T_alpha = typename _op::alpha_type;
-	using T_aphex = typename _op::aphex_type;
+	using _fix = bond::fixture<>;
+	using T_delta = typename _fix::delta_type;
+	using T_sigma = typename _fix::sigma_type;
+	using T_alpha = typename _fix::alpha_type;
+	using T_aphex = typename _fix::aphex_type;
 
 	using W_alpha = block_t<T_alpha[2]>; using U_alpha_ = block_t<T_alpha(&)[1]>;
 	using W_aphex = block_t<T_aphex[2]>; using U_aphex_ = block_t<T_aphex(&)[1]>;

@@ -22,7 +22,7 @@ using type = signed;
 template <class T>
 struct define
 {
-	using _op = bond::operate<>;
+	using _fix = bond::fixture<>;
 
 	using superkind = _retail::define<T>;
 

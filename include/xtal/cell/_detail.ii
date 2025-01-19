@@ -348,7 +348,7 @@ struct defer_field<U>
 template <class I, auto ...Ns>
 struct defer_field<_std::integer_sequence<I, Ns...>>
 {
-	using _op = bond::operate<decltype(Ns)...>;
+	using _fix = bond::fixture<decltype(Ns)...>;
 
 	XTAL_SET N_coordinate = bond::seek_value_t<Ns...>{};
 	XTAL_SET N_ordinate   = bond::seek_index_t<Ns...>{};

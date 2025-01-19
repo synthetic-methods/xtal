@@ -31,10 +31,10 @@ Provides even/odd-reflection iff `N_data == 2`. \
 template <vector_q A>
 struct collate<A>
 {
-	using A_op = bond::operate<A>;
-	using A_sigma = typename A_op::sigma_type;
-	using A_alpha = typename A_op::alpha_type;
-	using A_aphex = typename A_op::aphex_type;
+	using A_fix = bond::fixture<A>;
+	using A_sigma = typename A_fix::sigma_type;
+	using A_alpha = typename A_fix::alpha_type;
+	using A_aphex = typename A_fix::aphex_type;
 	
 	template <class T>
 	using endotype = typename group<A, _std::multiplies<void>>::template homotype<T>;
@@ -70,7 +70,7 @@ struct collate<A>
 		{
 			auto &s = self();
 
-			if (_std::is_constant_evaluated() or N_data <= A_op::alignment::value) {
+			if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
 				[&]<auto ...I> (bond::seek_t<I...>)
 					XTAL_0FN {((get<I>(s) = U_data{1}),...);}
 				(bond::seek_s<N_data>{});
@@ -90,7 +90,7 @@ struct collate<A>
 			assert(1 == m or m == N_data);
 			if (1 == m) {
 				auto const &u = get<0>(s);
-				if (_std::is_constant_evaluated() or N_data <= A_op::alignment::value) {
+				if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
 					[&]<auto ...I> (bond::seek_t<I...>)
 						XTAL_0FN {((get<I + 1>(s) = u),...);}
 					(bond::seek_s<N_data - 1>{});
@@ -105,7 +105,7 @@ struct collate<A>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
 		requires in_n<N_data, 2> and      same_q<U, U_data>
-		:	S_{u, one/(u + A_op::minilon_f()*(not u))}
+		:	S_{u, one/(u + A_fix::minilon_f()*(not u))}
 		{}
 		template <class U> requires real_q<U> or complex_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
@@ -135,7 +135,7 @@ struct collate<A>
 		noexcept -> bool
 		{
 			using U_value = absolve_u<U_data>;
-			using V_value = typename bond::operate<U_value>::sigma_type;
+			using V_value = typename bond::fixture<U_value>::sigma_type;
 
 			auto constexpr u  =    static_cast<U_value>(N_value);
 			auto constexpr v  = _xtd::bit_cast<V_value>(u);

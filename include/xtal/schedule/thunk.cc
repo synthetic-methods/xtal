@@ -15,10 +15,10 @@ namespace xtal::schedule::_test
 
 TAG_("thunk", "process")
 {
-	using _op = bond::operate<>;
-	using T_sigma = typename _op::sigma_type;
-	using T_delta = typename _op::delta_type;
-	using T_alpha = typename _op::alpha_type;
+	using _fix = bond::fixture<>;
+	using T_sigma = typename _fix::sigma_type;
+	using T_delta = typename _fix::delta_type;
+	using T_alpha = typename _fix::alpha_type;
 
 	/**/
 	TRY_("continuous")
@@ -189,10 +189,10 @@ TAG_("thunk", "process")
 template <typename ...As>
 void thunk_processor()
 {
-	using _op = bond::operate<>;
-	using T_sigma = typename _op::sigma_type;
-	using T_delta = typename _op::delta_type;
-	using T_alpha = typename _op::alpha_type;
+	using _fix = bond::fixture<>;
+	using T_sigma = typename _fix::sigma_type;
+	using T_delta = typename _fix::delta_type;
+	using T_alpha = typename _fix::alpha_type;
 
 	using namespace provision;
 //	using namespace schedule;

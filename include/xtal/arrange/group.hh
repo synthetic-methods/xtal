@@ -37,7 +37,7 @@ struct group<A>
 template <vector_q A>
 struct group<A, _std::plus<void>>
 {
-	using _op = bond::operate<A>;
+	using _fix = bond::fixture<A>;
 	
 	template <class T>
 	using endotype = typename order<A>::template homotype<T>;
@@ -77,7 +77,7 @@ struct group<A, _std::plus<void>>
 template <vector_q A>
 struct group<A, _std::multiplies<void>>
 {
-	using _op = bond::operate<A>;
+	using _fix = bond::fixture<A>;
 	
 	template <class T>
 	using endotype = typename order<A>::template homotype<T>;

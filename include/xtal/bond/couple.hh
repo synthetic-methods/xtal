@@ -58,7 +58,7 @@ struct couple<Xs...>
 	using archetype = pack_t<Xs...>;
 	using supertype = bond::compose_s<archetype, tag<couple>>;
 
-//	using _op = bond::operate<X>;
+//	using _fix = bond::fixture<X>;
 
 	class type : public supertype
 	{

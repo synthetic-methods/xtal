@@ -37,7 +37,7 @@ template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct orde
 template <vector_q A>
 struct order<A>
 {
-	using _op = bond::operate<A>;
+	using _fix = bond::fixture<A>;
 	
 	template <class T>
 	using endotype = typename arrange::block<A>::template homotype<T>;

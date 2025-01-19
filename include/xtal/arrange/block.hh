@@ -125,7 +125,7 @@ template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct bloc
 template <vector_q A>
 struct block<A>
 {
-	using _op = bond::operate<A>;
+	using _fix = bond::fixture<A>;
 	
 	template <class T>
 	using endotype = typename _detail::superblock<A>::template homotype<T>;

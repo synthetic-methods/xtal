@@ -723,29 +723,6 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	XTAL_DEF_(short)
-	XTAL_SET factorial_f(sigma_type n)
-	noexcept -> sigma_type
-	{
-		auto m{n}; for (; --n; m *= n);
-		return m;
-	}
-	template <int N>
-	XTAL_DEF_(short)
-	XTAL_SET factorial_f()
-	noexcept -> alpha_type
-	{
-		XTAL_IF0
-		XTAL_0IF (0 == N) {return one;}
-		XTAL_0IF (0 <  N) {return     factorial_f((sigma_type) N);}
-		XTAL_0IF (N <  0) {return one/factorial_f((sigma_type)-N);}
-	}
-
-	static_assert(factorial_f(5) == 120);
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 	///\returns the `target` to `N_zoom` bits of precision after the decimal. \
 
 	template <int N_zoom=0>
@@ -782,18 +759,18 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts>
-struct   operate
+struct   fixture
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
 {
 };
 template <class ...Ts> requires seek_constant_q<Ts...>
-struct   operate<Ts...>
+struct   fixture<Ts...>
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
 {
 };
 template <>
-struct   operate<>
-:	operate<size_type>
+struct   fixture<>
+:	fixture<size_type>
 {
 };
 

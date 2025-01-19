@@ -36,7 +36,7 @@ struct grade<A>
 template <vector_q A>
 struct grade<A, _std::plus<void>>
 {
-	using _op = bond::operate<A>;
+	using _fix = bond::fixture<A>;
 	
 	template <class T>
 	using endotype = typename group<A>::template homotype<T>;
