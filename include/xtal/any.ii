@@ -267,7 +267,7 @@ XTAL_LET bounded_f(auto const &u)
 Ranged...
 
 ///\returns the nearest aligned offset for type `T`, \
-adjusting the referenced index `i` to point to the next available slot. \
+adjusting the referenced index `i` to point to the next available argument. \
 
 template <int N_dt=0, class T>
 XTAL_DEF_(short)

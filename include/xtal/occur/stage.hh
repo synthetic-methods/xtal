@@ -21,9 +21,10 @@ instead intercepted dynamically to affect/query state. \
 ///\note\
 Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
-template <typename ...As>	struct    stage;
-template <typename ...As>	using     stage_t =  confined_t<stage<As...>>;
-template <   class ..._s>	concept   stage_q = bond::tag_p<stage, _s...>;
+template <typename ...As> struct        stage;
+template <typename ...As> using         stage_t =          confined_t<stage<As...>>;
+template <class    ..._s> concept       stage_q = un_n<0, bond::tag_p<stage, _s>...>;
+template <class    ..._s> concept  some_stage_q = in_n<1, bond::tag_p<stage, _s>...>;
 
 template <typename ...As>
 XTAL_DEF_(let) stage_f(auto &&...oo)

@@ -56,7 +56,7 @@ struct polymer<U, As...>
 		using S_::S_;
 
 		template <class ...Xs> requires provision::spooled_q<S_>
-		struct bracket
+		struct closure
 		{
 			//\
 			using V_voice = typename monomer_t<U, provision::context<S_subtext>>::template bind_t<Xs...>;
@@ -69,7 +69,7 @@ struct polymer<U, As...>
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	defer<V_voice>
-			,	typename S_::template bracket<Xs...>
+			,	typename S_::template closure<Xs...>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -90,9 +90,10 @@ struct polymer<U, As...>
 
 				XTAL_TO2_(XTAL_DEF_(let) ensemble(), u_ensemble)
 				XTAL_TO2_(XTAL_DEF_(let) ensemble(integral_q auto i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(occur::stage_q auto const &o)
-				,	u_ensemble|_xtd::ranges::views::filter([&] (auto &&e) XTAL_0FN_(0 != XTAL_REF_(e).template flux<-1>(o)))
+				XTAL_TO2_(XTAL_DEF_(let) ensemble(occur::stage_q auto &&o)
+				,	u_ensemble|_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e) XTAL_0FN_(0 != e.template flux<-1>(o)))
 				)
+
 				//\
 				XTAL_TO2_(XTAL_DEF_(let) lead(), ensemble().front())
 				XTAL_TO2_(XTAL_DEF_(let) lead(), R_::template head<V_voice>())
@@ -132,19 +133,30 @@ struct polymer<U, As...>
 
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET flux_slots(auto &&...oo)
+				XTAL_LET flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
+					using namespace occur;
 					using _xtd::ranges::accumulate;
-					auto const x = N_ion < 0 and occur::some_render_q<decltype(oo)...>? -1:       lead().template flux<N_ion>(XTAL_REF_(oo)...) ;
-					auto const f = [...oo=XTAL_REF_(oo)] (signed x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).template flux<N_ion>(XTAL_MOV_(oo)...));
-					if constexpr ((... or occur::stage_q<decltype(oo)>)) {
-						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
+
+					auto constexpr active = stage_f(0);
+					auto const     reduce = [=] (auto x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).template flux<N_ion>(oo...));
+					auto           result = N_ion < 0? -1: lead().template flux<N_ion>(XTAL_REF_(oo)...);
+
+					if constexpr (some_stage_q<decltype(oo)...>) {
+						return accumulate(ensemble(), result, XTAL_MOV_(reduce));
 					}
 					else {
-						//\
-						return accumulate(ensemble(occur::stage_f(0)), x, XTAL_MOV_(f));
-						return accumulate(ensemble(                 ), x, XTAL_MOV_(f));
+						/*/
+						return accumulate(ensemble(active), result, XTAL_MOV_(reduce));// Fails `copy_assign`?
+						/*/
+						for (auto &&e: ensemble()) {
+							if (e.template flux<-1>(active)) {
+								result = reduce(XTAL_MOV_(result), XTAL_REF_(e));
+							}
+						}
+						return result;
+						/***/
 					}
 				}
 

@@ -228,7 +228,7 @@ void monomer_chaining__rvalue()
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	TRUE_(yhs.template slot<0>().store().empty());
+	TRUE_(yhs.template argument<0>().store().empty());
 
 }
 template <class U_add, typename U_mul=Px_dynamic_term>
@@ -260,7 +260,7 @@ void monomer_chaining__lvalue()
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
 
-	TRUE_(yhs.template slot<0>().store().size() == 4);
+	TRUE_(yhs.template argument<0>().store().size() == 4);
 
 }
 template <class U_add, typename U_mul=Px_dynamic_term>

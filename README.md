@@ -92,7 +92,7 @@ To schedule messages within `processor` blocks, messages may be attached using `
 
 	using Mixer = processor::conferred_t<Mix, Active::template intermit<>>;
 	// ...
-	mixer.template flux<+1>(cell::cue_s<>(123), Active(0));// `active == 0` @ offset 123
+	mixer.influx(cell::cue_s<>(123), Active(0));// `active == 0` @ offset 123
 
 Alternatively, messages may themselves be reincorporated as `process(?:or)?`s using `hold`:
 
@@ -234,9 +234,9 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Process lifting            |[`process/any.hh`](include/xtal/process/any.hh?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.hh`](include/xtal/process/cross.hh?ts=3)|
 |Processor lifting          |[`processor/any.hh`](include/xtal/processor/any.hh?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket`|
-|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::bracket`|
-|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::bracket` compatible `&&`arguments|
+|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::closure`|
+|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::closure`|
+|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::closure` compatible `&&`arguments|
 |Buffer allocation          |[`arrange/store.hh`](include/xtal/arrange/store.hh?ts=3) impl. static `std::vector`|
 
 ## Contribution

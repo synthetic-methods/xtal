@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./slot.hh"// testing...
+#include "./argument.hh"// testing...
 
 
 
@@ -13,13 +13,13 @@ namespace xtal::flow::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("slot")
+TAG_("argument")
 {
 	TRY_("construct")
 	{
 		using U_source = conferred_t<counted_t<>>;
-		using U_target = slot_s<U_source>;
-		using V_target = slot_s<>;
+		using U_target = argument_s<U_source>;
+		using V_target = argument_s<>;
 
 		V_target t0(99);
 		U_target t1(99, U_source(counted_t<>(11, 22)));
@@ -32,7 +32,7 @@ TAG_("slot")
 		TRUE_(same_q<decltype(XTAL_ANY_(U_target).tail()), U_source>);
 
 	}
-	XTAL_LET maybe = [] (slot_s<> g)
+	XTAL_LET maybe = [] (argument_s<> g)
 	XTAL_0FN {
 		if (g) {
 			return true;
@@ -44,9 +44,9 @@ TAG_("slot")
 	
 	TRY_("condition")
 	{
-		  TRUE_(maybe(slot_s<>(1)));
-		UNTRUE_(maybe(slot_s<>(0)));
-		UNTRUE_(maybe(slot_s<>( )));
+		  TRUE_(maybe(argument_s<>(1)));
+		UNTRUE_(maybe(argument_s<>(0)));
+		UNTRUE_(maybe(argument_s<>( )));
 
 	}
 }

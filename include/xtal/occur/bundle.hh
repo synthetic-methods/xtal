@@ -63,14 +63,14 @@ struct bundle
 		using S_::twin;
 		using S_::node;
 		using S_::head;
-		using S_::slots;
+		using S_::arguments;
 
 		XTAL_DO2_(template <size_type ...Ns>
 		XTAL_DEF_(short)
-		XTAL_LET slot(),
+		XTAL_LET argument(),
 		noexcept -> decltype(auto)
 		{
-			return S_::template slot<Ns...>();
+			return S_::template argument<Ns...>();
 		})
 
 
@@ -80,9 +80,9 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise()
 		noexcept -> auto &
-		requires requires {f(S_::template slot<0>());}
+		requires requires {f(S_::template argument<0>());}
 		{
-			auto &s_ = slots();
+			auto &s_ = arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -95,11 +95,11 @@ struct bundle
 		XTAL_DEF_(inline)
 		XTAL_LET pointwise(auto const &t)
 		noexcept -> auto &
-	//	requires requires {f(S_::template slot<0>(), t);}
+	//	requires requires {f(S_::template argument<0>(), t);}
 	//	requires requires {(f(XTAL_ANY_(Xs), t), ...);}
 		requires complete_q<common_t<Xs..., decltype(t)>>
 		{
-			auto &s_ = slots();
+			auto &s_ = arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			[&]<auto ...I> (bond::seek_t<I...>)
@@ -113,10 +113,10 @@ struct bundle
 		XTAL_LET pointwise(bundle_q auto const &t)
 		noexcept -> auto &
 		requires complete_q<common_t<Xs..., decltype(get<0>(t))>>
-	//	requires requires {f(S_::template slot<0>(), get<0>(t));}
+	//	requires requires {f(S_::template argument<0>(), get<0>(t));}
 		{
-			auto       &s_ =   slots();
-			auto const &t_ = t.slots();
+			auto       &s_ =   arguments();
+			auto const &t_ = t.arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 			XTAL_LET M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);
@@ -134,7 +134,7 @@ struct bundle
 		noexcept -> auto
 		requires requires {f(get<0>(s));}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -148,7 +148,7 @@ struct bundle
 		requires complete_q<common_t<Xs..., decltype(t)>>
 	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(XTAL_ANY_(Xs), t), ...);}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -162,7 +162,7 @@ struct bundle
 		requires complete_q<common_t<decltype(t), Xs...>>
 	//	requires un_n<_retail::bundle_q<decltype(t)>> and requires {(f(t, XTAL_ANY_(Xs)), ...);}
 		{
-			auto &s_ = s.slots();
+			auto &s_ = s.arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 
 			return [&]<auto ...I> (bond::seek_t<I...>)
@@ -175,8 +175,8 @@ struct bundle
 		noexcept -> auto
 		requires requires {f(get<0>(s), get<0>(t));}
 		{
-			auto       &s_ = s.slots();
-			auto const &t_ = t.slots();
+			auto       &s_ = s.arguments();
+			auto const &t_ = t.arguments();
 			XTAL_LET N = bond::pack_size_n<decltype(s_)>;
 			XTAL_LET M = bond::pack_size_n<decltype(t_)>;
 			static_assert(M <= N);

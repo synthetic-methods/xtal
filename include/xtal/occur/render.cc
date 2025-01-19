@@ -17,16 +17,16 @@ template <class Y, class X>
 void render__initialization(auto n)
 {
 	X x; Y y;
-	x = X(n); y = Y(0); TRUE_(y.template flux<-1>(x) == 0); TRUE_(y.step() == 0); TRUE_(y.size() == n);
-	x = X(n); y = Y(n); TRUE_(y.template flux<-1>(x) == 1); TRUE_(y.step() == 0); TRUE_(y.size() == n);
+	x = X(n); y = Y(0); TRUE_(y.efflux(x) == 0); TRUE_(y.step() == 0); TRUE_(y.size() == n);
+	x = X(n); y = Y(n); TRUE_(y.efflux(x) == 1); TRUE_(y.step() == 0); TRUE_(y.size() == n);
 
 }
 template <class Y, class X>
 void render__finalization(auto n)
 {
 	X x; Y y;
-	x = X(n); y = Y(n)       ; TRUE_(y.template flux<+1>(x) == 0); TRUE_(y.step() == 1); TRUE_(y.size() == 0);
-//	x = X(n); y = Y(n).null(); TRUE_(y.template flux<+1>(x) == 1); TRUE_(y.step() == 2); TRUE_(y.size() == 0);
+	x = X(n); y = Y(n)       ; TRUE_(y.influx(x) == 0); TRUE_(y.step() == 1); TRUE_(y.size() == 0);
+//	x = X(n); y = Y(n).null(); TRUE_(y.influx(x) == 1); TRUE_(y.step() == 2); TRUE_(y.size() == 0);
 
 }
 template <class Y, class X>
@@ -167,7 +167,7 @@ TAG_("render")
 		using V_render = render_t<V>; auto n_seq = V_render(3);
 		using U_render = render_t<U>; auto u_seq = U_render(3), w_seq = u_seq;
 
-		TRUE_(w_seq.template flux<-1>(u_seq) == 1); TRUE_(w_seq == U_render(U(0, 3), 0));
+		TRUE_(w_seq.efflux(u_seq) == 1); TRUE_(w_seq == U_render(U(0, 3), 0));
 		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(3, 6), 1));
 		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(6, 9), 2));
 
@@ -179,7 +179,7 @@ TAG_("render")
 		using V_render = render_t<V>; auto n_seq = V_render(3);
 		using U_render = render_t<U>; auto u_seq = U_render(3), w_seq = U_render(0);
 
-		TRUE_(w_seq.template flux<-1>(u_seq) == 0); TRUE_(w_seq == U_render(U(0, 3), 0));
+		TRUE_(w_seq.efflux(u_seq) == 0); TRUE_(w_seq == U_render(U(0, 3), 0));
 		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(3, 6), 1));
 		w_seq >>= ++u_seq;               TRUE_(w_seq == U_render(U(6, 9), 2));
 

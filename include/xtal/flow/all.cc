@@ -4,6 +4,6 @@
 #include "./key.cc"
 #include "./mark.cc"
 #include "./mask.cc"
-#include "./slot.cc"
+#include "./argument.cc"
 #include "./tab.cc"
 #include "./tag.cc"

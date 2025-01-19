@@ -169,7 +169,7 @@ struct define
 		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
 
 		template <class ...Xs> requires any_q<Xs...>
-		struct bracket
+		struct closure
 		{
 			using superkind = bond::compose<void
 			,	defer<T>
@@ -184,7 +184,7 @@ struct define
 			public:// CONSTRUCT
 				using R_::R_;
 				///\
-				Initialize `slots` using the arguments supplied. \
+				Initialize `arguments` using the arguments supplied. \
 
 				XTAL_NEW_(explicit) subtype(Xs &&...xs)
 				noexcept
@@ -196,7 +196,7 @@ struct define
 				{}
 
 			public:// ACCESS
-				using R_::slots;
+				using R_::arguments;
 
 				using process_type = T;
 				XTAL_TO4_(XTAL_DEF_(let) process(), S_::head())
@@ -205,7 +205,7 @@ struct define
 			public:// OPERATE
 				using R_::method;
 				///\
-				Evaluates the lifted `method` using the bound slots. \
+				Evaluates the lifted `method` using the bound arguments. \
 
 				XTAL_DO2_(template <auto ...Is>
 				XTAL_DEF_(short)
@@ -216,7 +216,7 @@ struct define
 					XTAL_LET N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
-					XTAL_0IF (0 == N) {return         slots().apply([this] XTAL_1FN_(method));}
+					XTAL_0IF (0 == N) {return     arguments().apply([this] XTAL_1FN_(method));}
 					XTAL_0IF_(void)
 				})
 
@@ -244,11 +244,11 @@ struct refine
 
 	public:// BRACKET
 		template <class ...Xs>
-		struct bracket
+		struct closure
 		{
 			//\
-			using superkind = confined<typename S_::template bracket<typename S_::template bracelet<Xs>::type...>>;
-			using superkind = confined<typename S_::template bracket<process::let_t<Xs>...>>;
+			using superkind = confined<typename S_::template closure<typename S_::template bracelet<Xs>::type...>>;
+			using superkind = confined<typename S_::template closure<process::let_t<Xs>...>>;
 
 			template <class R>
 			using subtype = bond::compose_s<R, superkind>;
@@ -256,7 +256,7 @@ struct refine
 
 		};
 		template <class ...Xs>
-		using    bind_t = typename bracket<Xs...>::type;
+		using    bind_t = typename closure<Xs...>::type;
 
 		XTAL_DEF_(short,static)
 		XTAL_LET bind_f(auto &&...xs)

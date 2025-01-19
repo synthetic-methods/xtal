@@ -38,12 +38,12 @@ struct define
 		using S_::self;
 
 		template <class ...Xs>
-		struct bracket
+		struct closure
 		{
 			using superkind = bond::compose<void
 			,	U_resize::attach<>
 			,	U_render::attach<>
-			,	typename S_::template bracket<Xs...>
+			,	typename S_::template closure<Xs...>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -92,7 +92,7 @@ struct define
 						)
 						&	[this, ...oo=XTAL_REF_(oo)]
 								XTAL_XFN_(1, &, R_::template flux<N_ion>(oo...))
-									(R_::template flux_slots<+1>(XTAL_REF_(render_o)));
+									(R_::template flux_arguments<+1>(XTAL_REF_(render_o)));
 					}
 				}
 				///\
@@ -107,7 +107,7 @@ struct define
 					using    U_state = XTAL_ALL_(u_state);
 					XTAL_LET N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 					
-					if (1 == R_::template flux_slotted<N_ion, N_share>(review_o, render_o)) {
+					if (1 == R_::template flux_arguments_<N_ion, N_share>(review_o, render_o)) {
 						return 1;
 					}
 					else {

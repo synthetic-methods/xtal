@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flow/slot.hh"
+#include "../flow/argument.hh"
 
 
 
@@ -49,7 +49,7 @@ struct monomer<U, As...>
 		using F_ = bond::compose<bond::tag<monomer>, As...
 //		,	U_resize::attach<>
 //		,	U_render::attach<>
-		,	typename S_::template bracket<Xs...>
+		,	typename S_::template closure<Xs...>
 		>;
 	
 	public:
@@ -57,7 +57,7 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct bracket
+		struct closure
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
 		//	using Y_return = iterated_u<Y_result>;
@@ -127,7 +127,7 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires provision::stated_q<S_> and provision::stored_q<S_>
-		struct bracket<Xs...>
+		struct closure<Xs...>
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
 			using Y_return = iterated_u<Y_result>;
@@ -195,11 +195,11 @@ struct monomer<U, As...>
 
 				template <signed N_ion>
 				XTAL_DEF_(short)
-				XTAL_LET flux_slots(auto &&...oo)
+				XTAL_LET flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
 					XTAL_LET N_dex = occur::some_resize_q<decltype(oo)...>? N_share: -1;
-					return R_::template flux_slotted<N_ion, N_dex>(flow::slot_n<-1>, XTAL_REF_(oo)...);
+					return R_::template flux_arguments_<N_ion, N_dex>(flow::argument_n<-1>, XTAL_REF_(oo)...);
 				}
 
 				///\
