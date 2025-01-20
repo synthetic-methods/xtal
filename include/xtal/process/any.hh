@@ -301,6 +301,12 @@ struct defer
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
+		template <auto ...Is>
+		XTAL_DEF_(short,static)
+		XTAL_LET superfunction(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_TO_(S_::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
+
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -313,14 +319,21 @@ struct defer
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs),
 		noexcept -> decltype(auto)
+		requires un_n<XTAL_TRY_(superfunction<Is...>(XTAL_REF_(xs)...))>
 		{
 			return S_::template method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
 		})
 		template <auto ...Is>
 		XTAL_DEF_(short,static)
+		XTAL_LET method(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_TO_(superfunction<Is...>(XTAL_REF_(xs)...))
+
+		template <auto ...Is>
+		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_TO_(S_::template function<Is...>(S::template function<Is...>(XTAL_REF_(xs)...)))
+		requires XTAL_TRY_TO_(superfunction<Is...>(XTAL_REF_(xs)...))
 
 	};
 };

@@ -229,17 +229,17 @@ struct defer<U>
 			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
 
-		XTAL_DO0_(template <auto ...Is>
-		XTAL_DEF_(short)
-		XTAL_LET function(auto &&...xs),
-		noexcept -> auto
-		requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
-		{
-			auto const f = iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
-			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
-			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
-		})
+	//	XTAL_DO0_(template <auto ...Is>
+	//	XTAL_DEF_(short,static)
+	//	XTAL_LET function(auto &&...xs),
+	//	noexcept -> auto
+	//	requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
+	//	{
+	//		auto const f = iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
+	//		XTAL_IF0
+	//		XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
+	//		XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
+	//	})
 
 	};
 };

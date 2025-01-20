@@ -29,6 +29,12 @@ struct lifter
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
+		template <auto ...Is>
+		XTAL_DEF_(short,static)
+		XTAL_LET superfunction(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
+
 	public:
 		using S_::S_;
 
@@ -36,15 +42,24 @@ struct lifter
 		XTAL_DEF_(short,static)
 		XTAL_LET function(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(S_::template function<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(superfunction<Is...>(XTAL_REF_(xs)...))
 		{
-			return target_f<Is...>(S_::template function<Is...>(XTAL_REF_(xs)...));
+			return target_f<Is...>(superfunction<Is...>(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is>
+		XTAL_DEF_(short,static)
+		XTAL_LET method(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(superfunction<Is...>(XTAL_REF_(xs)...))
+		{
+			return target_f<Is...>(superfunction<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(short)
 		XTAL_LET method(auto &&...xs) const
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
+		and      XTAL_TRY_UN_(superfunction<Is...>(XTAL_REF_(xs)...))
 		{
 			return target_f<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
@@ -53,6 +68,7 @@ struct lifter
 		XTAL_LET method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
+		and      XTAL_TRY_UN_(superfunction<Is...>(XTAL_REF_(xs)...))
 		{
 			return target_f<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}

@@ -260,6 +260,7 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 #define XTAL_TRY_DO_(...)          (requires{ __VA_ARGS__ ;}) {       __VA_ARGS__ ;} ///< Check requirements, then invoke as block.
 #define XTAL_TRY_TO_(...)          (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.
 #define XTAL_RET_TO_(...)                                     {return(__VA_ARGS__);} ///< Return as expression.
+#define XTAL_TRY_UN_(...)      (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
 
 
 #define XTAL_IF0                         if constexpr (false);                       ///< Begin `else if constexpr` tree.
