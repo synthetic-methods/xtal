@@ -144,10 +144,10 @@ struct seek_index
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	type()                noexcept=default;
-	//	type()                noexcept=default;
-		XTAL_NEW_(copy, type, noexcept=default)
-		XTAL_NEW_(move, type, noexcept=default)
+	~	type()                 noexcept=default;
+	//	type()                 noexcept=default;
+		XTAL_NEW_(copy) (type, noexcept=default)
+		XTAL_NEW_(move) (type, noexcept=default)
 
 		XTAL_NEW_(implicit) type()
 		noexcept
@@ -188,10 +188,10 @@ struct seek_value
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	type()                noexcept=default;
-	//	type()                noexcept=default;
-		XTAL_NEW_(copy, type, noexcept=default)
-		XTAL_NEW_(move, type, noexcept=default)
+	~	type()                 noexcept=default;
+	//	type()                 noexcept=default;
+		XTAL_NEW_(copy) (type, noexcept=default)
+		XTAL_NEW_(move) (type, noexcept=default)
 
 		XTAL_NEW_(implicit) type()
 		noexcept

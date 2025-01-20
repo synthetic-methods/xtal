@@ -26,7 +26,7 @@ struct irritator_mix
 
 		template <auto onset=0>
 		XTAL_DEF_(short,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_LET static_method(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);

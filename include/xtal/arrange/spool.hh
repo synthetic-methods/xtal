@@ -52,10 +52,10 @@ struct spool<A>
 	public:
 	//	using S_::S_;
 		
-	~	homotype()                noexcept=default;
-		homotype()                noexcept=default;
-		XTAL_NEW_(copy, homotype, noexcept=default)
-		XTAL_NEW_(move, homotype, noexcept=default)
+	~	homotype()                 noexcept=default;
+		homotype()                 noexcept=default;
+		XTAL_NEW_(copy) (homotype, noexcept=default)
+		XTAL_NEW_(move) (homotype, noexcept=default)
 		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \

@@ -50,7 +50,7 @@ struct square_root
 
 		template <auto ...>
 		XTAL_DEF_(short,static)
-		XTAL_LET function(auto &&o)
+		XTAL_LET static_method(auto &&o)
 		noexcept -> auto
 		{
 			return _std::sqrt(o);
@@ -72,7 +72,7 @@ struct halve
 
 		template <auto ...>
 		XTAL_DEF_(short,static)
-		XTAL_LET function(auto &&o)
+		XTAL_LET static_method(auto &&o)
 		noexcept -> auto
 		{
 			return o*0.5L;
@@ -134,8 +134,8 @@ TAG_("process", "construct")
 		using halve_square_root_t = reinferred_t<halve_t, square_root_t>;
 		using square_root_halve_t = reinferred_t<square_root_t, halve_t>;
 		
-		TRUE_(2. == halve_square_root_t::function(16.));
-		TRUE_(3. == square_root_halve_t::function(18.));
+		TRUE_(2. == halve_square_root_t::static_method(16.));
+		TRUE_(3. == square_root_halve_t::static_method(18.));
 
 		TRUE_(2. == halve_square_root_t{}.method(16.));
 		TRUE_(3. == square_root_halve_t{}.method(18.));

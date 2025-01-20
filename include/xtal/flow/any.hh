@@ -175,10 +175,10 @@ struct define
 			//	using R_::R_;
 				using R_::self;
 
-			~	subtype()                noexcept=default;
-				subtype()                noexcept=default;
-				XTAL_NEW_(copy, subtype, noexcept=default)
-				XTAL_NEW_(move, subtype, noexcept=default)
+			~	subtype()                 noexcept=default;
+				subtype()                 noexcept=default;
+				XTAL_NEW_(copy) (subtype, noexcept=default)
+				XTAL_NEW_(move) (subtype, noexcept=default)
 
 				///\
 				Constructs the `attach`ed `occur` using its default, \

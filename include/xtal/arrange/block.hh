@@ -67,10 +67,10 @@ struct superblock<U[N]>
 
 	public:// CONSTRUCT
 		using S_::S_;
-	~	homotype()                noexcept=default;
-	//	homotype()                noexcept=default;
-		XTAL_NEW_(copy, homotype, noexcept=default)
-		XTAL_NEW_(move, homotype, noexcept=default)
+	~	homotype()                 noexcept=default;
+	//	homotype()                 noexcept=default;
+		XTAL_NEW_(copy) (homotype, noexcept=default)
+		XTAL_NEW_(move) (homotype, noexcept=default)
 		
 		XTAL_NEW_(explicit) homotype()
 		noexcept
@@ -192,8 +192,8 @@ struct block<A>
 		{
 			using archetype = typename _detail::superblock<A>::archetype;
 			XTAL_IF0
-			XTAL_0IF XTAL_TRY_TO_(get<I>(S_::template self<archetype>()))
-			XTAL_0IF XTAL_TRY_TO_(element(I))
+			XTAL_0IF XTAL_TRY_(return) (get<I>(S_::template self<archetype>()))
+			XTAL_0IF XTAL_TRY_(return) (element(I))
 		})
 		XTAL_DO4_(template <auto I=0>
 		XTAL_DEF_(short)

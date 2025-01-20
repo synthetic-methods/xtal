@@ -212,7 +212,7 @@ struct defer<U>
 		Parameter resolution is only performed at the beginning of each block. \
 
 		///\note\
-		Only `method` participates in parameter resolution, since `function` is stateless. \
+		Only `method` participates in parameter resolution, since `static_method` is stateless. \
 
 		///\note\
 		If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` \
@@ -231,11 +231,11 @@ struct defer<U>
 
 	//	XTAL_DO0_(template <auto ...Is>
 	//	XTAL_DEF_(short,static)
-	//	XTAL_LET function(auto &&...xs),
+	//	XTAL_LET static_method(auto &&...xs),
 	//	noexcept -> auto
-	//	requires XTAL_TRY_(U_::template function<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
+	//	requires requires {U_::template static_method<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
 	//	{
-	//		auto const f = iterative_f(XTAL_FUN_(U_::template function<Is...>), XTAL_REF_(xs)...);
+	//		auto const f = iterative_f(XTAL_FUN_(U_::template static_method<Is...>), XTAL_REF_(xs)...);
 	//		XTAL_IF0
 	//		XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
 	//		XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}

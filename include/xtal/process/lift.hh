@@ -18,73 +18,73 @@ template <typename ..._s> using    lift_t = confined_t<lift<_s...>>;
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class F>
+template <class U>
 struct lifter
 {
-	using superkind = invoke_body<>;
-
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
+	class subtype : public bond::compose_s<S>
 	{
 		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind>;
+		using S_ = bond::compose_s<S>;
+
+		using S_var = S_       &;
+		using S_val = S_ const &;
 
 		template <auto ...Is>
 		XTAL_DEF_(short,static)
-		XTAL_LET superfunction(auto &&...xs)
+		XTAL_LET S_method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_TO_(S_::template function<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(return) (S_::template static_method<Is...>(XTAL_REF_(xs)...))
+
+		template <auto ...Is>
+		XTAL_DEF_(short,static)
+		XTAL_LET U_method(auto &&...xs)
+		noexcept -> decltype(auto)
+		{
+			if constexpr (bond::compose_q<U>) {
+				return confined_t<U>::template static_method<Is...>(XTAL_REF_(xs)...);
+			}
+			else {
+				return invoke_n<U>(XTAL_REF_(xs)...);
+			}
+		}
 
 	public:
 		using S_::S_;
 
 		template <auto ...Is>
 		XTAL_DEF_(short,static)
-		XTAL_LET function(auto &&...xs)
+		XTAL_LET static_method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(superfunction<Is...>(XTAL_REF_(xs)...))
+		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
 		{
-			return target_f<Is...>(superfunction<Is...>(XTAL_REF_(xs)...));
+			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(short,static)
-		XTAL_LET method(auto &&...xs)
+		XTAL_LET        method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(superfunction<Is...>(XTAL_REF_(xs)...))
+		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
 		{
-			return target_f<Is...>(superfunction<Is...>(XTAL_REF_(xs)...));
+			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs) const
+		XTAL_LET        method(auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(XTAL_ANY_(S_ const &).template method<Is...>(XTAL_REF_(xs)...))
-		and      XTAL_TRY_UN_(superfunction<Is...>(XTAL_REF_(xs)...))
+		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
+		and  requires (S_val s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
 		{
-			return target_f<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
+			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs)
+		XTAL_LET        method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(XTAL_ANY_(S_       &).template method<Is...>(XTAL_REF_(xs)...))
-		and      XTAL_TRY_UN_(superfunction<Is...>(XTAL_REF_(xs)...))
+		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
+		and  requires (S_var s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
 		{
-			return target_f<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
-		}
-
-	private:
-		template <auto ...Is>
-		XTAL_DEF_(short,static)
-		XTAL_LET target_f(auto &&...xs)
-		noexcept -> decltype(auto)
-		{
-			if constexpr (bond::compose_q<F>) {
-				return confined_t<superkind, F>::template function<Is...>(XTAL_REF_(xs)...);
-			}
-			else {
-				return invoke_n<F>(XTAL_REF_(xs)...);
-			}
+			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 
 	};
@@ -95,7 +95,7 @@ struct lifter
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides pure `head`-less mapping of `method` and `function` (in contrast to `link`), \
+Provides pure `head`-less mapping of `(?:static_)method` (in contrast to `link`), \
 in addition to allowing constructor mapping via `invoke_n`. \
 
 template <                   typename ...As> struct lift;

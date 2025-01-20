@@ -74,10 +74,10 @@ struct monomer<U, As...>
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-			~	subtype()                noexcept=default;
-				subtype()                noexcept=default;
-				XTAL_NEW_(copy, subtype, noexcept=default)
-				XTAL_NEW_(move, subtype, noexcept=default)
+			~	subtype()                 noexcept=default;
+				subtype()                 noexcept=default;
+				XTAL_NEW_(copy) (subtype, noexcept=default)
+				XTAL_NEW_(move) (subtype, noexcept=default)
 
 				XTAL_NEW_(explicit) subtype(same_q<Xs> auto &&...xs)
 				noexcept
@@ -184,7 +184,7 @@ struct monomer<U, As...>
 						auto &u = store();
 						auto  i = point_f(u);
 						auto  n = count_f(XTAL_REF_(o));
-						if constexpr XTAL_TRY_DO_(u.resize(n))
+						if constexpr XTAL_TRY_(do) (u.resize(n))
 						(void) state(i, i);//NOTE: For consistency with `vector` stores.
 						return 0;
 					}

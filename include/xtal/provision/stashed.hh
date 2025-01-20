@@ -37,10 +37,10 @@ struct stashed<U_state, U_store>
 	//	using S_::S_;
 		using S_::self;
 		
-	~	subtype()                noexcept=default;
-	//	subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 	
 		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept

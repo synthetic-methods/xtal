@@ -263,10 +263,10 @@ struct render<V>
 		using S_::self;
 		using S_::twin;
 
-	~	subtype()                noexcept=default;
-	//	subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 
 		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept

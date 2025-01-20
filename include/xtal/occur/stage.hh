@@ -73,10 +73,10 @@ struct stage<A, As...>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	subtype()                noexcept=default;
-	//	subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 		
 		XTAL_NEW_(implicit) subtype()
 		noexcept

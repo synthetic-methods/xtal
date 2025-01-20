@@ -138,9 +138,9 @@ XTAL_0FN
 //	XTAL_0IF (1 == sizeof...(oo) and requires {static_cast<T>(front(XTAL_REF_(oo)...));}) {
 //		return static_cast<T>(front(XTAL_REF_(oo)...));
 //	}
-	XTAL_0IF XTAL_TRY_TO_(T   {XTAL_REF_(oo)...})
-	XTAL_0IF XTAL_TRY_TO_(T   (XTAL_REF_(oo)...))
-	XTAL_0IF XTAL_TRY_TO_(T{} (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_(return) (T   {XTAL_REF_(oo)...})
+	XTAL_0IF XTAL_TRY_(return) (T   (XTAL_REF_(oo)...))
+	XTAL_0IF XTAL_TRY_(return) (T{} (XTAL_REF_(oo)...))
 };
 
 
@@ -602,9 +602,9 @@ struct constant<o> : constant_s<o>
 		using U = based_t<T>;
 		XTAL_IF0
 		XTAL_0IF (same_q<U, object_type>) {return o();}
-		XTAL_0IF XTAL_TRY_TO_(U{o()})
-		XTAL_0IF XTAL_TRY_TO_(U(o()))
-		XTAL_0IF XTAL_TRY_TO_(static_cast<U>(o()))
+		XTAL_0IF XTAL_TRY_(return) (U{o()})
+		XTAL_0IF XTAL_TRY_(return) (U(o()))
+		XTAL_0IF XTAL_TRY_(return) (static_cast<U>(o()))
 	}
 	template <class T=object_type>
 	XTAL_DEF_(short)
@@ -629,52 +629,52 @@ struct constant<o> : constant_s<o>
 	XTAL_DEF_(short,friend) XTAL_LET operator  -  (constant const &) noexcept -> auto {return constant_t<XTAL_VAL_(-o())>{};}
 	XTAL_DEF_(short,friend) XTAL_LET operator  ~  (constant const &) noexcept -> auto {return constant_t<XTAL_VAL_(~o())>{};}
 
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>() <=> t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>()  == t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>()  <= t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>()  <  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>()  >= t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(object<T>()  >  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>() <=> t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  == t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <= t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >= t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >  t)
 
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  -  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  +  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  *  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  /  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  %  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  &  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  ^  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>()  |  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>() <<  t)
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_TO_(subject<T>() >>  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  -  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  +  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  *  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  /  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  %  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  &  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  ^  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  |  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>() <<  t)
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (constant const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>() >>  t)
 
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t <=> subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  == subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  <= subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  <  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  >= subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  >  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <=> (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t <=> subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  == (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  == subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <= (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <= subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  <  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >= (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >= subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  >  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >  subject<T>())
 
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  -  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  +  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  *  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  *  absolve_u<T>{1}/o())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  %  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  &  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  ^  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t  |  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t >>  subject<T>())
-	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_TO_(t <<  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  -  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  -  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  +  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  +  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  *  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  *  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  /  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  *  absolve_u<T>{1}/o())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  %  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  %  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  &  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  &  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  ^  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  ^  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator  |  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t  |  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator >>  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t >>  subject<T>())
+	template <variable_q T> XTAL_DEF_(short,friend)  XTAL_LET operator <<  (T const &t, constant const &) noexcept -> auto   requires XTAL_TRY_(return) (t <<  subject<T>())
 
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  -= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  -= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  += (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  += subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  *= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  *= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  /= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  *= absolve_u<T>{1}/o())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  %= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  %= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  &= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  &= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  ^= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  ^= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  |= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t  |= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator <<= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t <<= subject<T>())
-	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator >>= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_TO_(t >>= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  -= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  -= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  += (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  += subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  *= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  *= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  /= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  *= absolve_u<T>{1}/o())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  %= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  %= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  &= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  &= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  ^= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  ^= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator  |= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t  |= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator <<= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t <<= subject<T>())
+	template <variable_q T> XTAL_DEF_(inline,friend) XTAL_LET operator >>= (T       &t, constant const &) noexcept -> auto & requires XTAL_TRY_(return) (t >>= subject<T>())
 
 };
 

@@ -250,10 +250,10 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-	~	subtype()                noexcept=default;
-	//	subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 		
 		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
@@ -300,7 +300,7 @@ struct defer_field
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_TO_(S_::cardinality())
+		requires XTAL_TRY_(return) (S_::cardinality())
 
 		XTAL_DEF_(short,static)
 		XTAL_LET cardinality()
@@ -368,10 +368,10 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		using S_::self;
 		body_type body_part{};
 
-	~	subtype()                noexcept=default;
-		subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+		subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 		
 		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
@@ -443,10 +443,10 @@ struct defer_field<unit_type[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-	~	subtype()                noexcept=default;
-		subtype()                noexcept=default;
-		XTAL_NEW_(copy, subtype, noexcept=default)
-		XTAL_NEW_(move, subtype, noexcept=default)
+	~	subtype()                 noexcept=default;
+		subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
 		
 		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
 		noexcept
@@ -496,10 +496,10 @@ struct refer_iterators
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(let) begin() const noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_ const &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(let) begin()       noexcept requires XTAL_TRY_(_xtd::ranges::begin(XTAL_ANY_(U_       &))) {return _xtd::ranges::begin(S_::template head<U>());}
-		XTAL_DEF_(let)   end() const noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_ const &))) {return _xtd::ranges::  end(S_::template head<U>());}
-		XTAL_DEF_(let)   end()       noexcept requires XTAL_TRY_(_xtd::ranges::  end(XTAL_ANY_(U_       &))) {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF_(let) begin() const noexcept requires requires (U const &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF_(let) begin()       noexcept requires requires (U       &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S_::template head<U>());}
+		XTAL_DEF_(let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S_::template head<U>());}
+		XTAL_DEF_(let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S_::template head<U>());}
 
 		XTAL_DO2_(template <sized_q X> requires un_n<counter_q<X>> and un_n<counted_q<X>>
 		XTAL_DEF_(short)

@@ -56,10 +56,10 @@ struct collate<A>
 
 	public:// CONSTRUCT
 	//	using S_::S_;
-	~	homotype()                noexcept=default;
-	//	homotype()                noexcept=default;
-		XTAL_NEW_(copy, homotype, noexcept=default)
-		XTAL_NEW_(move, homotype, noexcept=default)
+	~	homotype()                 noexcept=default;
+	//	homotype()                 noexcept=default;
+		XTAL_NEW_(copy) (homotype, noexcept=default)
+		XTAL_NEW_(move) (homotype, noexcept=default)
 
 		XTAL_NEW_(explicit) homotype(auto &&...oo)
 		noexcept

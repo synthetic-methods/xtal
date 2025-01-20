@@ -316,9 +316,9 @@ XTAL_LET count_f(auto const &t)
 noexcept -> size_type
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(t.size()))
-	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(t))
-	XTAL_0IF XTAL_TRY_TO_(static_cast<size_type>(0))
+	XTAL_0IF XTAL_TRY_(return) (static_cast<size_type>(t.size()))
+	XTAL_0IF XTAL_TRY_(return) (static_cast<size_type>(t))
+	XTAL_0IF XTAL_TRY_(return) (static_cast<size_type>(0))
 }
 XTAL_DEF_(short)
 XTAL_LET count_f(auto const &...ts)
@@ -435,7 +435,7 @@ noexcept -> bool
 	XTAL_IF0
 	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
 	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
-	XTAL_0IF XTAL_TRY_TO_(_std::addressof(x) == _std::addressof(y))
+	XTAL_0IF XTAL_TRY_(return) (_std::addressof(x) == _std::addressof(y))
 	XTAL_0IF_(else) return false;
 }
 
@@ -445,7 +445,7 @@ XTAL_LET equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(x == y)
+	XTAL_0IF XTAL_TRY_(return) (x == y)
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
@@ -454,7 +454,7 @@ XTAL_LET equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(_xtd::ranges::equal(x, y))
+	XTAL_0IF XTAL_TRY_(return) (_xtd::ranges::equal(x, y))
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
@@ -471,8 +471,8 @@ XTAL_LET equivalent_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin() and x.end() == y.end())
-	XTAL_0IF XTAL_TRY_TO_(x.begin() == y.begin())
+	XTAL_0IF XTAL_TRY_(return) (x.begin() == y.begin() and x.end() == y.end())
+	XTAL_0IF XTAL_TRY_(return) (x.begin() == y.begin())
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 

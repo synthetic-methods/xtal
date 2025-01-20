@@ -106,7 +106,7 @@ XTAL_LET pack_item_f(auto &&t)
 noexcept -> decltype(auto)
 {
 	XTAL_IF0
-	XTAL_0IF XTAL_TRY_TO_(get<I>(XTAL_REF_(t)))
+	XTAL_0IF XTAL_TRY_(return) (get<I>(XTAL_REF_(t)))
 	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
 }
 template <auto I, auto ...Is> requires (1 <= sizeof...(Is))
