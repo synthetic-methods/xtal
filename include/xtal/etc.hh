@@ -228,11 +228,11 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 #define XTAL_0FN                        [[msvc::forceinline]] constexpr noexcept
 #endif//XTAL_0FN
 
-#define XTAL_0TN                      () XTAL_0FN                                                      ///< Lambda thunk (after `[captures]`).
-#define XTAL_0TN_(...)                () XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
-#define XTAL_0FN_(...)                   XTAL_0FN            {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
-#define XTAL_1FN_(...)    (auto &&...oo) XTAL_0FN            {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
-#define XTAL_XFN_(ARG,SYM,...)  (auto o) XTAL_0FN_(ARG == o? o: o SYM(__VA_ARGS__))                    ///< Lambda accumulating conditional (after `[captures]`).
+#define XTAL_0TN                     () XTAL_0FN                                                      ///< Lambda thunk (after `[captures]`).
+#define XTAL_0TN_(...)               () XTAL_0FN             {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
+#define XTAL_0FN_(...)                  XTAL_0FN             {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
+#define XTAL_1FN_(...)   (auto &&...oo) XTAL_0FN             {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
+#define XTAL_XFN_(ARG,SYM,...) (auto o) XTAL_0FN_(ARG == o? o: o SYM (__VA_ARGS__))                    ///< Lambda accumulating conditional (after `[captures]`).
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,12 +256,11 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
                                        SIG       && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
 
 
-#define XTAL_TRY_(ARG,...)          XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_TRY_(ARG,...)        XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
 
 #define XTAL_TRY_do(...)              (requires{ __VA_ARGS__ ;}) {       __VA_ARGS__ ;} ///< Check requirements, then invoke as block.
 #define XTAL_TRY_return(...)          (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.
-
-#define XTAL_TRY_void(...)      (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
+#define XTAL_TRY_void(...)        (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
 
 
 #define XTAL_IF0                         if constexpr (false);                       ///< Begin `else if constexpr` tree.

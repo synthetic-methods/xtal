@@ -26,7 +26,7 @@ template <dismember_q W >	struct           member<W const &> {using type = const
 template <dismember_q W >	struct           member<W       &> {using type =         W*;};
 template <class       W >	struct         remember            {using type =         W ;};
 
-template <class       W >	using            member_t = typename member<W>::type;
+template <class       W >	using            member_t = typename   member<W>::type;
 template <class       W >	using          remember_t = typename remember<W>::type;
 
 ///\

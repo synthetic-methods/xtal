@@ -11,9 +11,14 @@ namespace xtal::arrange
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class   ..._s>	struct   order;
-template <class   ..._s>	using    order_t = typename order<_s...>::type;
-template <class   ..._s>	concept  order_q = bond::tag_p<order_t, _s...>;
+template <class                   ..._s> struct   order;
+template <                  class ..._s> using    order_t = typename order<_s...>::type;
+template <                  class ..._s> concept  order_q = bond::tag_p<order_t, _s...>;
+
+template <class U, auto  N, auto  ..._s> struct   order<U   [N][_s]...> : order<order_t<U[_s]...>   [N]> {};
+template <class U, auto  N, auto  ..._s> struct   order<U(&)[N][_s]...> : order<order_t<U[_s]...>(&)[N]> {};
+
+
 template <class  V=void>
 XTAL_DEF_(short)
 XTAL_LET order_f(auto &&...oo)
@@ -22,17 +27,11 @@ noexcept -> auto
 	return _detail::initialize<order_t>::template via<V>(XTAL_REF_(oo)...);
 }
 
-template <class T, class S=T>
-concept  lettuce_q = bond::heteropack_q<T> and bond::pack_size_n<T> == bond::pack_size_n<S>;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Extends `block` with point-wise comparison, \
 and lifts all other operators. \
-
-template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct order<U   [N][Ns]...> : order<order_t<U[N]>   [Ns]...> {};
-template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct order<U(&)[N][Ns]...> : order<order_t<U[N]>(&)[Ns]...> {};
 
 template <vector_q A>
 struct order<A>

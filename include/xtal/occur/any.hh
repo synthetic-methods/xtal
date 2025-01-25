@@ -40,8 +40,55 @@ struct define
 
 		template <extent_type N_mask=-1>
 		struct attach
-		:	bond::compose<flow::mask<N_mask>, typename S_::template afflux<>>
 		{
+			using superkind = bond::compose<void
+			,	flow::mask<N_mask>
+			,	typename S_::template afflux<>
+			>;
+			template <class R>
+			using subtype = bond::compose_s<R, superkind>;
+
+		};
+		///\
+		Attaches `T`, and appends to the arguments of `method` and `function`. \
+
+		template <extent_type N_mask=-1>
+		struct attend
+		{
+			using superkind = attach<N_mask>;
+
+			template <class R>
+			class subtype : public bond::compose_s<R, superkind>
+			{
+				using R_ = bond::compose_s<R, superkind>;
+
+			public:// CONSTRUCT
+				using R_::R_;
+
+			public:// OPERATE
+
+				template <auto ...Ns>
+				XTAL_DEF_(short)
+				XTAL_LET method(auto &&...oo)
+				noexcept -> decltype(auto)
+				requires requires (R_       &r_) {
+					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
+				}
+				{
+					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template head<T>().head());
+				}
+				template <auto ...Ns>
+				XTAL_DEF_(short)
+				XTAL_LET method(auto &&...oo) const
+				noexcept -> decltype(auto)
+				requires requires (R_ const &r_) {
+					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
+				}
+				{
+					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template head<T>().head());
+				}
+
+			};
 		};
 		///\
 		Attaches `T` as a member of `this`, \

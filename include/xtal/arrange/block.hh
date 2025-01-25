@@ -13,18 +13,26 @@ namespace xtal::arrange
 ///\
 Defines a fixed-width `type` that supports arithmetic operators. \
 
-template <class ..._s> struct   block;
-template <class ..._s> using    block_t = typename block<_s...>::type;
-template <class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
+
+template <class                   ..._s> struct   block;
+template <                  class ..._s> using    block_t = typename block<_s...>::type;
+template <                  class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
+
+template <class U, auto  N, auto  ..._s> struct   block<U   [N][_s]...> : block<block_t<U[_s]...>   [N]> {};
+template <class U, auto  N, auto  ..._s> struct   block<U(&)[N][_s]...> : block<block_t<U[_s]...>(&)[N]> {};
 
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   superblock;
-template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
+template <                  class ..._s> struct   superblock;
+template <                  class ..._s> using    superblock_t = typename superblock<_s...>::type;
+template <class W                      > XTAL_SET superblock_n = superblock_t<absolve_t<W>>{};
 
-template <class U, auto N>
+template <class U, auto  N, auto  ...Ns> struct   superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
+template <class U, auto  N, auto  ...Ns> struct   superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
+
+template <scalar_q U, auto N>
 struct superblock<U(&)[N]>
 {
 	using archetype = _std::span<U, N>;
@@ -48,7 +56,7 @@ struct superblock<U(&)[N]>
 	using type = derive_t<homotype>;
 
 };
-template <class U, auto N>
+template <scalar_q U, auto N>
 struct superblock<U[N]>
 {
 	using archetype = _std::array<U, N>;
@@ -119,16 +127,13 @@ struct superblock<U[N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct block<U   [N][Ns]...> : block<block_t<U[N]>   [Ns]...> {};
-template <class U, auto N, auto ...Ns> requires (1 <= sizeof...(Ns)) struct block<U(&)[N][Ns]...> : block<block_t<U[N]>(&)[Ns]...> {};
-
-template <vector_q A>
-struct block<A>
+template <vector_q W>
+struct block<W>
 {
-	using _fix = bond::fixture<A>;
+	using _fix = bond::fixture<W>;
 	
 	template <class T>
-	using endotype = typename _detail::superblock<A>::template homotype<T>;
+	using endotype = typename _detail::superblock<W>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<block_t>>;
@@ -144,8 +149,6 @@ struct block<A>
 		using U_size = typename S_::size_type;
 		using initializer_list = _std::initializer_list<U_data>;
 
-		static constexpr _detail::superblock_t<U_data[N_data]> zeroed_{};
-
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -153,7 +156,7 @@ struct block<A>
 		XTAL_DEF_(set) coordinate(auto &&o) noexcept {return XTAL_REF_(o);}
 
 		template <vector_q _A, class _=void> struct  reforge       {using type = typename T::taboo::template hypertype<_A>;};
-		template <             class _     > struct  reforge<A, _> {using type = T;};
+		template <             class _     > struct  reforge<W, _> {using type = T;};
 		template <vector_q _A              > using   reforge_t = typename reforge<_A>::type;
 
 	public:// ACCESS
@@ -190,7 +193,7 @@ struct block<A>
 		XTAL_LET element(),
 		noexcept -> decltype(auto)
 		{
-			using archetype = typename _detail::superblock<A>::archetype;
+			using archetype = typename _detail::superblock<W>::archetype;
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_(return) (get<I>(S_::template self<archetype>()))
 			XTAL_0IF XTAL_TRY_(return) (element(I))
@@ -206,8 +209,8 @@ struct block<A>
 		})
 
 	public:// OPERATE
-		XTAL_DEF_(alias)   zeroed() const noexcept {return 0 == memcmp(S_::data(), zeroed_.data(), sizeof(*this));}
-		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(S_::data(), zeroed_.data(), sizeof(*this));}
+		XTAL_DEF_(alias)   zeroed() const noexcept {return 0 == memcmp(S_::data(), _detail::superblock_n<W>.data(), sizeof(*this));}
+		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(S_::data(), _detail::superblock_n<W>.data(), sizeof(*this));}
 
 		XTAL_TO4_(template <complete_q F>
 		XTAL_DEF_(explicit operator) F(), apply(invoke_n<F>))
