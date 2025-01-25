@@ -47,7 +47,7 @@ template <class   T                           >                                 
 template <class   T                           >                                                  struct tabbed<T, constant_t<false>> : constant_t<false> {using type = void;};
 template <class   T,               class ...Is>                                                  struct tabbed<T,                Is...> : tabbed<T,        constant_t<same_q<T, Is...>>> {};
 template <taboo_q T,               class ...Is>                                                  struct tabbed<T,    taboo_u<T>, Is...> : tabbed<taboo_s<T>,                    Is...>   {};
-template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>, subliminal_s<I>,   Is...>   {};
+template <class   T, constant_q I, class ...Is> requires                          liminal_q<I>   struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>, subliminal_t<I>,   Is...>   {};
 template <class   T, constant_q I, class ...Is> requires                         terminal_q<I>   struct tabbed<T,            I , Is...> : tabbed<        T ,                    Is...>   {};
 template <taboo_q T, identity_q I, class ...Is> requires      same_q<taboo_u<T>, identity_u<I>>  struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>,                    Is...>   {};
 template <taboo_q T, identity_q I, class ...Is> requires un_n<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>,              I,    Is...>   {};
@@ -58,7 +58,7 @@ template <class   I,               class ...Ts> concept      tab_p = (...and tab
 
 template <                         class ...Ts> struct       tab_compatible;
 template <                         class ...Ts> concept      tab_compatible_q      = tab_compatible<based_t<Ts>...>::value;
-template <                         class ...Ts> concept      tab_constructible_q   = tab_compatible_q<Ts...> and infungible_q<Ts...>;
+template <                         class ...Ts> concept      tab_convertible_q     = tab_compatible_q<Ts...> and different_q<Ts...>;
 
 template <                         class ...Ts> struct       tab_compatible        : constant_t<same_q<        Ts... >                                > {};
 template <                       taboo_q ...Ts> struct       tab_compatible<Ts...> : constant_t<same_q<taboo_u<Ts>...> and tab_compatible_q<taboo_s<Ts>...>> {};

@@ -68,8 +68,8 @@ struct define
 			public:// OPERATE
 
 				template <auto ...Ns>
-				XTAL_DEF_(short)
-				XTAL_LET method(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				method(auto &&...oo)
 				noexcept -> decltype(auto)
 				requires requires (R_       &r_) {
 					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
@@ -78,8 +78,8 @@ struct define
 					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template head<T>().head());
 				}
 				template <auto ...Ns>
-				XTAL_DEF_(short)
-				XTAL_LET method(auto &&...oo) const
+				XTAL_DEF_(return,inline,let)
+				method(auto &&...oo) const
 				noexcept -> decltype(auto)
 				requires requires (R_ const &r_) {
 					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
@@ -113,15 +113,15 @@ struct define
 			
 			public:// FLOW
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<T> auto &&t, auto &&...oo)
+				XTAL_DEF_(return,let)
+				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
 					auto const h = t.head();
@@ -148,8 +148,8 @@ struct define
 			{
 				using R_ = bond::compose_s<R, superkind>;
 
-				XTAL_SET A_size = T::cardinality();
-				XTAL_SET A_mask = A_size - one;
+				static size_type constexpr A_size = T::cardinality();
+				static size_type constexpr A_mask = A_size - one;
 
 			public:// CONSTRUCT
 				using R_::R_;
@@ -162,15 +162,15 @@ struct define
 			public:
 
 				template <class ...Xs>
-				XTAL_DEF_(short)
-				XTAL_LET deify(constant_q auto ...Is) const
+				XTAL_DEF_(return,inline,let)
+				deify(constant_q auto ...Is) const
 				noexcept -> decltype(auto)
 				{
 					return deify(digest<Xs...>::template index<Is...>::point);
 				}
 				template <class A>
-				XTAL_DEF_(short)
-				XTAL_LET deify(_std::array<A, A_size> const &point) const
+				XTAL_DEF_(return,inline,let)
+				deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
 					auto const &h = head();
@@ -196,22 +196,22 @@ struct define
 					class index
 					{
 						template <auto J>
-						XTAL_SET intend_v = same_q<typename T::body_type, size_type>?
+						static auto constexpr intend_n = same_q<typename T::body_type, size_type>?
 							(XTAL_ALL_(J)) T(static_cast<size_type>(J)): J;
 						
 						template <auto J>
-						XTAL_SET extend_v = digested::template index<Is..., intend_v<J>>::point;
+						static auto constexpr extend_n = digested::template index<Is..., intend_n<J>>::point;
 						
 						template <auto ...Js>
-						XTAL_SET expand_f(bond::seek_t<Js...>)
+						static auto constexpr expand_f(bond::seek_t<Js...>)
 						noexcept -> auto
 						{
-							return _std::array{extend_v<Js>...};
+							return _std::array{extend_n<Js>...};
 						}
 					
 					public:
-						XTAL_SET point      = expand_f(bond::seek_s<A_size> {});
-						using    point_type = decltype(point);
+						static auto constexpr point = expand_f(bond::seek_s<A_size> {});
+						using point_type = decltype(point);
 					
 					};
 				};
@@ -236,15 +236,15 @@ struct define
 				using R_::R_;
 				
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(same_q<T> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(same_q<T> auto &&o)
 				noexcept -> signed
 				{
 					return R_::heading(XTAL_REF_(o));
@@ -270,15 +270,15 @@ struct define
 				using R_::R_;
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(same_q<T> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(same_q<T> auto &&o)
 				noexcept -> signed
 				{
 					return R_::heading(XTAL_REF_(o));
@@ -305,8 +305,8 @@ struct define
 				using R_::head;
 
 				template <auto ...>
-				XTAL_DEF_(short)
-				XTAL_LET method() const
+				XTAL_DEF_(return,inline,let)
+				method() const
 				{
 					return head();
 				}

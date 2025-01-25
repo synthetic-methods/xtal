@@ -27,8 +27,8 @@ template <class    ..._s> concept       stage_q = un_n<0, bond::tag_p<stage, _s>
 template <class    ..._s> concept  some_stage_q = in_n<1, bond::tag_p<stage, _s>...>;
 
 template <typename ...As>
-XTAL_DEF_(let) stage_f(auto &&...oo)
-noexcept {return stage_t<As...>(XTAL_REF_(oo)...);}
+XTAL_DEF_(return,inline,let) stage_f(auto &&...oo)
+noexcept -> decltype(auto) {return stage_t<As...>(XTAL_REF_(oo)...);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,8 +97,8 @@ struct stage<A, As...>
 	public:// *FUSE
 
 		template <signed N_ion>
-		XTAL_DEF_(short)
-		XTAL_LET fuse(auto &&o)
+		XTAL_DEF_(return,inline,let)
+		fuse(auto &&o)
 		noexcept -> signed
 		{
 			return S_::template fuse<N_ion>(XTAL_REF_(o));
@@ -106,8 +106,8 @@ struct stage<A, As...>
 		///\returns the result of influxing `stage_q` if `>= 0`, otherwise `-1`. \
 
 		template <signed N_ion> requires in_n<N_ion, +1>
-		XTAL_DEF_(short)
-		XTAL_LET fuse(stage_q auto &&o)
+		XTAL_DEF_(return,inline,let)
+		fuse(stage_q auto &&o)
 		noexcept -> signed
 		{
 			return head() == -1? -1: S_::template fuse<N_ion>(XTAL_REF_(o));
@@ -116,8 +116,8 @@ struct stage<A, As...>
 		///\returns `1` if the `stage_q` matches `head()`, otherwise `0` (simulating `fuse<+1>`). \
 
 		template <signed N_ion> requires in_n<N_ion, -1>
-		XTAL_DEF_(short)
-		XTAL_LET fuse(stage_q auto &&o)
+		XTAL_DEF_(return,inline,let)
+		fuse(stage_q auto &&o)
 		noexcept -> signed
 		{
 			return heading(XTAL_REF_(o));

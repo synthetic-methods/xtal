@@ -41,8 +41,8 @@ struct spooled<A>
 template <class A>
 struct spooled<A>
 {
-	using    value_type = valued_u<A>;
-	XTAL_SET value      =  sized_n<A>;
+	static unsigned constexpr value      =  sized_n<A>;
+	using                     value_type = valued_u<A>;
 
 	using superkind = bond::tag<spooled>;
 	
@@ -55,7 +55,7 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = arrange::spool_t<U[(unsigned) value]>;
+		using spool_t = arrange::spool_t<U[value]>;
 
 	};
 };

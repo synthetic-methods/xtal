@@ -66,8 +66,8 @@ struct define
 			public:// FLOW
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
@@ -76,21 +76,21 @@ struct define
 				Expands the given unscheduled message, forwarding to `supertype::flux`. \
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<U_tuple> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<U_tuple> auto &&o)
 				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply([this] (auto &&...oo)
-						XTAL_0FN_(R_::template flux<N_ion>(XTAL_REF_(oo)...))
+						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
 					);
 				}
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<W_tuple> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<W_tuple> auto &&o)
 				noexcept -> signed
 				{
 					return _std::apply([this] (auto &&...oo)
-						XTAL_0FN_(R_::template flux<N_ion>(XTAL_REF_(oo)...))
+						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
 					,	XTAL_REF_(o)
 					);
 				}
@@ -99,22 +99,22 @@ struct define
 				Condenses the given scheduled message, forwarding to `self().infuse`. \
 				
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<V_event> auto &&d, same_q<Xs> auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<V_event> auto &&d, same_q<Xs> auto &&...oo)
 				noexcept -> signed
 				{
 					return confuse<N_ion>(XTAL_REF_(d)) (XTAL_REF_(oo)...);
 				}
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<V_event> auto &&d, same_q<U_tuple> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<V_event> auto &&d, same_q<U_tuple> auto &&o)
 				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply(confuse<N_ion>(XTAL_REF_(d)));
 				}
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<V_event> auto &&d, same_q<W_tuple> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<V_event> auto &&d, same_q<W_tuple> auto &&o)
 				noexcept -> signed
 				{
 					return _std::apply(confuse<N_ion>(XTAL_REF_(d)), XTAL_REF_(o));
@@ -123,12 +123,12 @@ struct define
 			private:
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET confuse(auto o)
+				XTAL_DEF_(return,inline,let)
+				confuse(auto o)
 				noexcept -> decltype(auto)
 				{
 					return [this, o = XTAL_REF_(o)] (auto &&...oo)
-						XTAL_0FN_(self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
+						XTAL_0FN_(return) (self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
 				}
 
 			};

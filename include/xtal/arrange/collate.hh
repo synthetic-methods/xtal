@@ -15,8 +15,8 @@ template <class   ..._s>	struct   collate;
 template <class   ..._s>	using    collate_t = typename collate<_s...>::type;
 template <class   ...Ts>	concept  collate_q = bond::tag_p<collate_t, Ts...>;
 template <class  V=void>
-XTAL_DEF_(short)
-XTAL_LET collate_f(auto &&...oo)
+XTAL_DEF_(return,inline,let)
+collate_f(auto &&...oo)
 noexcept -> auto
 {
 	return _detail::initialize<collate_t>::template via<V>(XTAL_REF_(oo)...);
@@ -130,8 +130,8 @@ struct collate<A>
 		using S_::unzeroed;
 
 		template <int N_value=1>
-		XTAL_DEF_(inline)
-		XTAL_LET unzero()
+		XTAL_DEF_(inline,let)
+		unzero()
 		noexcept -> bool
 		{
 			using U_value = absolve_u<U_data>;
@@ -173,8 +173,8 @@ struct collate<A>
 		Defined only for `const this`, \
 		because this is whack (but fun). \
 
-		XTAL_DEF_(inline)
-		XTAL_LET operator++() const
+		XTAL_DEF_(inline,let)
+		operator++() const
 		{
 			auto t = S_::twin();
 
@@ -184,8 +184,8 @@ struct collate<A>
 			
 			return t;
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator--() const
+		XTAL_DEF_(inline,let)
+		operator--() const
 		{
 			auto t = S_::twin();
 
@@ -196,8 +196,8 @@ struct collate<A>
 			return t;
 		}
 
-		XTAL_DEF_(inline)
-		XTAL_LET operator++(int) const
+		XTAL_DEF_(inline,let)
+		operator++(int) const
 		{
 			auto t = S_::twin();
 
@@ -209,8 +209,8 @@ struct collate<A>
 			
 			return t;
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET operator--(int) const
+		XTAL_DEF_(inline,let)
+		operator--(int) const
 		{
 			auto t = S_::twin();
 
@@ -225,28 +225,28 @@ struct collate<A>
 
 	//	Scalar sum:
 		template <int N_sgn=1>
-		XTAL_DEF_(short)
-		XTAL_LET sum(U_data const &u={}) const
+		XTAL_DEF_(return,inline,let)
+		sum(U_data const &u={}) const
 		noexcept -> U_data
 		{
 			auto &s = self();
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(s)))
+					XTAL_0FN_(return) (u +...+ (get<I>(s)))
 				(bond::seek_s<N_data>{});
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(u +...+ (get<I>(s)*U_data{-sign_n<I&1, -1>}))
+					XTAL_0FN_(return) (u +...+ (get<I>(s)*U_data{-sign_n<I&1, -1>}))
 				(bond::seek_s<N_data>{});
 			}
 		}
 
 	//	Scalar product:
 		template <int N_sgn=1>
-		XTAL_DEF_(short)
-		XTAL_LET product(U_data u={}) const
+		XTAL_DEF_(return,inline,let)
+		product(U_data u={}) const
 		noexcept -> U_data
 		{
 			auto &s = self();
@@ -265,8 +265,8 @@ struct collate<A>
 			}
 			return u;
 		}
-		XTAL_DEF_(short)
-		XTAL_LET product(bond::pack_sized_q<N_data> auto &&t) const
+		XTAL_DEF_(return,inline,let)
+		product(bond::pack_sized_q<N_data> auto &&t) const
 		noexcept -> U_data
 		{
 			auto &s = self();
@@ -279,8 +279,8 @@ struct collate<A>
 		}
 
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(inline)
-		XTAL_LET ratio()
+		XTAL_DEF_(inline,let)
+		ratio()
 		noexcept -> U_data
 		{
 			auto &s = self();
@@ -293,8 +293,8 @@ struct collate<A>
 		Modifies `this`; \see `reflected()`.
 
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(inline)
-		XTAL_LET reflect()
+		XTAL_DEF_(inline,let)
+		reflect()
 		noexcept -> T &
 		{
 			return self() = reflected<N_par>();
@@ -302,8 +302,8 @@ struct collate<A>
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(short)
-		XTAL_LET reflected() const
+		XTAL_DEF_(return,inline,let)
+		reflected() const
 		noexcept -> decltype(auto)
 		{
 			auto &s = self();
@@ -316,27 +316,29 @@ struct collate<A>
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
 		template <int N_par=0> requires (N_data == 2)
-		XTAL_DEF_(short,static)
-		XTAL_LET reflector()
+		XTAL_DEF_(return,inline,set)
+		reflector()
 		noexcept -> V_data
 		{
-			XTAL_LET _sqrt2 = one/_std::numbers::sqrt2_v<V_data>;
+			V_data constexpr up = one;
+			V_data constexpr un = one/_std::numbers::sqrt2_v<V_data>;
+			V_data constexpr dn = half;
 			XTAL_IF0
-			XTAL_0IF (N_par == -1) {return _sqrt2*_sqrt2*one;}
-			XTAL_0IF (N_par ==  0) {return        _sqrt2*one;}
-			XTAL_0IF (N_par == +1) {return               one;}
+			XTAL_0IF (N_par == +1) {return up;}
+			XTAL_0IF (N_par ==  0) {return un;}
+			XTAL_0IF (N_par == -1) {return dn;}
 		}
 
-		XTAL_DEF_(short) XTAL_LET  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}
-		XTAL_DEF_(short) XTAL_LET  minimum() const noexcept -> auto const & {return *_xtd::ranges::min_element(self());}
-		XTAL_DEF_(short) XTAL_LET extremum() const noexcept -> auto const
+		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}
+		XTAL_DEF_(return,inline,let)  minimum() const noexcept -> auto const & {return *_xtd::ranges::min_element(self());}
+		XTAL_DEF_(return,inline,let) extremum() const noexcept -> auto const
 		{
 			auto const &[min_, max_] = _xtd::ranges::minmax_element(self());
 			return _std::tie(*min_, *max_);
 		}
 		template <int N>
-		XTAL_DEF_(short)
-		XTAL_LET extremum() const
+		XTAL_DEF_(return,inline,let)
+		extremum() const
 		noexcept -> U_data
 		{
 			XTAL_IF0
@@ -344,18 +346,18 @@ struct collate<A>
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF_(let)  maximal() const {return S_::template pointless<XTAL_FUN_(_std::lcm)>();}
-		XTAL_DEF_(let)  minimal() const {return S_::template pointless<XTAL_FUN_(_std::gcd)>();}
-		XTAL_DEF_(let) extremal() const {return bond::pack_f(minimal(), maximal());}
+		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template pointless<[] XTAL_0FN_(alias) (_std::lcm)>();}
+		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template pointless<[] XTAL_0FN_(alias) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
-		XTAL_DEF_(short)
-		XTAL_LET extremal() const
+		XTAL_DEF_(return,inline,let)
+		extremal() const
 		noexcept -> U_data
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template pointless<XTAL_FUN_(_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template pointless<XTAL_FUN_(_std::gcd)>();}
+			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_0FN_(alias) (_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_0FN_(alias) (_std::gcd)>();}
 		}
 
 

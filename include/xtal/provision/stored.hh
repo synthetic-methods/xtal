@@ -41,8 +41,8 @@ struct stored<A>
 template <class A>
 struct stored<A>
 {
-	using    value_type = valued_u<A>;
-	XTAL_SET value      =  sized_n<A>;
+	static unsigned constexpr value      =  sized_n<A>;
+	using                     value_type = valued_u<A>;
 
 	using superkind = bond::tag<stored>;
 	
@@ -58,7 +58,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::block_t<U[(unsigned) value]>;
+		using store_t = arrange::block_t<U[value]>;
 
 	};
 	template <class S> requires _std::  signed_integral<value_type>
@@ -70,7 +70,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::store_t<U[(unsigned) value]>;
+		using store_t = arrange::store_t<U[value]>;
 
 	};
 };

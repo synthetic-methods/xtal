@@ -156,16 +156,11 @@ XTAL_ENV_(push)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_RAW_(...)                 ::std::remove_cvref_t<__VA_ARGS__>   ///< Reveals the underlying-type.
-#define XTAL_ALL_(...)                    XTAL_RAW_(decltype(__VA_ARGS__))  ///< Reveals the underlying-type of a value.
-#define XTAL_SYN_(...)                    XTAL_SYN <         __VA_ARGS__ >  ///< Matches the underlying-type.
-template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X), XTAL_RAW_(Y)>;///< Matches underlying-types.
-
-#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
-#define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)   ///< Moves    a value.
+#define XTAL_TYP_(...)                 ::std::remove_cvref_t<__VA_ARGS__>   ///< Reveals the underlying-type.
+#define XTAL_ALL_(...)                    XTAL_TYP_(decltype(__VA_ARGS__))  ///< Reveals the underlying-type of a value.
 #define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>() ///< Yields the existential value for a type.
-#define XTAL_FUN_(...)                      ([]    XTAL_1FN_(__VA_ARGS__))  ///< Yields a type-level alias of a function.
-#define XTAL_VAL_(...)                      ([] () XTAL_0FN_(__VA_ARGS__))  ///< Yields a thunk returning a value.
+#define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)   ///< Moves    a value.
+#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,12 +173,6 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 #define XTAL_DEF_friend             friend
 
 #if     XTAL_ENV_(MSVC)
-#define XTAL_DEF_inline           __forceinline
-#else
-#define XTAL_DEF_inline             inline __attribute__((always_inline))
-#endif//XTAL_DEF_inline
-
-#if     XTAL_ENV_(MSVC)
 #define XTAL_DEF_verbatim           /*FIXME*/
 #elif   XTAL_ENV_(LLVM)
 #define XTAL_DEF_verbatim           [[clang::optnone]]    __attribute__((optnone))
@@ -191,15 +180,17 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 #define XTAL_DEF_verbatim           [[gnu::optimize(0)]]  __attribute__((optimize(0)))
 #endif//XTAL_DEF_verbatim
 
-#define XTAL_DEF_long               XTAL_DEF_return                                ///< Start abridged long  function (not inlined).
-#define XTAL_DEF_short              XTAL_DEF_return XTAL_DEF_inline                ///< Start abridged short function     (inlined).
+#if     XTAL_ENV_(MSVC)
+#define XTAL_DEF_inline           __forceinline
+#else
+#define XTAL_DEF_inline             inline __attribute__((always_inline))
+#endif//XTAL_DEF_inline
 
-#define XTAL_DEF_explicit           XTAL_DEF_short        constexpr explicit       ///< Start abridged short `explicit` function.
-#define XTAL_DEF_implicit           XTAL_DEF_short        constexpr                ///< Start abridged short `implicit` function.
-#define XTAL_DEF_alias              XTAL_DEF_short        constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
-
-#define XTAL_DEF_let                XTAL_DEF_short        constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
-#define XTAL_DEF_set                XTAL_DEF_short static constexpr decltype(auto) ///< Start abridged short `decltype(auto)` function.
+#define XTAL_DEF_explicit           constexpr explicit                             ///< Start `explicit` function.
+#define XTAL_DEF_implicit           constexpr                                      ///< Start `implicit` function.
+#define XTAL_DEF_get                constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
+#define XTAL_DEF_let                constexpr auto                                 ///< Start `auto` function.
+#define XTAL_DEF_set         static constexpr auto                                 ///< Start `auto` function.
 
 #define XTAL_NEW_(ARG,...)          XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit           constexpr explicit                             ///< Start        `explicit` constructor.
@@ -210,12 +201,36 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
                                     constexpr TYP & operator = (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
 
 
+////////////////////////////////////////////////////////////////////////////////
+
 #define XTAL_LET_(...)              constexpr __VA_ARGS__ ///< Start  member  definition with type `...`.
 #define XTAL_LET                    constexpr      auto   ///< Start  member  definition with type `auto`.
 
 #define XTAL_SET_(...)       static constexpr __VA_ARGS__ ///< Start `static` definition with type `...`.
 #define XTAL_SET             static constexpr      auto   ///< Start `static` definition with type `auto`.
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_FX2_(ARG,...)             XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX4_(ARG,...)             XTAL_FX4_##ARG __VA_OPT__((__VA_ARGS__))
+
+#define XTAL_FX2_do(SIG, ...)          SIG const                      __VA_ARGS__   \
+                                       SIG                            __VA_ARGS__   ;///< Define `const?` member functions.
+#define XTAL_FX4_do(SIG, ...)          SIG const &                    __VA_ARGS__   \
+                                       SIG       &                    __VA_ARGS__   \
+                                       SIG const &&                   __VA_ARGS__   \
+                                       SIG       &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
+
+#define XTAL_FX2_alias(SIG,...)        SIG const    noexcept {return (__VA_ARGS__);}\
+                                       SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
+#define XTAL_FX4_alias(SIG,...)        SIG const &  noexcept {return (__VA_ARGS__);}\
+                                       SIG       &  noexcept {return (__VA_ARGS__);}\
+                                       SIG const && noexcept {return (__VA_ARGS__);}\
+                                       SIG       && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 #if not XTAL_ENV
 #define XTAL_0FN                                              constexpr noexcept///< Lambda declaration (after `[captures]`).
@@ -228,56 +243,53 @@ template <class X, class Y>       concept XTAL_SYN = ::std::same_as<XTAL_RAW_(X)
 #define XTAL_0FN                        [[msvc::forceinline]] constexpr noexcept
 #endif//XTAL_0FN
 
-#define XTAL_0TN                     () XTAL_0FN                                                      ///< Lambda thunk (after `[captures]`).
-#define XTAL_0TN_(...)               () XTAL_0FN             {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
-#define XTAL_0FN_(...)                  XTAL_0FN             {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
-#define XTAL_1FN_(...)   (auto &&...oo) XTAL_0FN             {return (__VA_ARGS__(XTAL_REF_(oo)...));} ///< Lambda forwarding (after `[captures]`).
-#define XTAL_XFN_(ARG,SYM,...) (auto o) XTAL_0FN_(ARG == o? o: o SYM (__VA_ARGS__))                    ///< Lambda accumulating conditional (after `[captures]`).
+#define XTAL_0FN_(ARG,...)                   XTAL_0FN_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_0FN_return(...)                 XTAL_0FN          {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
+#define XTAL_0FN_alias(...)    (auto &&..._) XTAL_0FN          {return (__VA_ARGS__(XTAL_REF_(_)...));}  ///< Lambda forwarding (after `[captures]`).
+#define XTAL_0FN_value(...)               () XTAL_0FN          {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
+
+#define XTAL_0FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(return) (ARG == _? _: _ SYM (__VA_ARGS__))        ///< Lambda accumulating conditional (after `[captures]`).
+#define XTAL_0FN_and(...)                    XTAL_0FN_else(1, &, __VA_ARGS__)                            ///< Lambda accumulating `&` (after `[captures]`).
+#define XTAL_0FN_or(...)                     XTAL_0FN_else(0, |, __VA_ARGS__)                            ///< Lambda accumulating `|` (after `[captures]`).
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DO0_(SIG, ...)            SIG                            __VA_ARGS__   ;///< Define member function.
-#define XTAL_DO1_(SIG, ...)            SIG const                      __VA_ARGS__   ;///< Define `const` member function.
-#define XTAL_DO2_(SIG, ...)            SIG const                      __VA_ARGS__   \
-                                       SIG                            __VA_ARGS__   ;///< Define `const?` member functions.
-#define XTAL_DO4_(SIG, ...)            SIG const &                    __VA_ARGS__   \
-                                       SIG       &                    __VA_ARGS__   \
-                                       SIG const &&                   __VA_ARGS__   \
-                                       SIG       &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
+#define XTAL_RUN_(ARG,...)             XTAL_RUN_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_TO0_(SIG, ...)            SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` member expression returning `...`.
-#define XTAL_TO1_(SIG, ...)            SIG const    noexcept {return (__VA_ARGS__);};///< Define `noexcept` `const` member expression returning `...`.
-#define XTAL_TO2_(SIG, ...)            SIG const    noexcept {return (__VA_ARGS__);}\
-                                       SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
-#define XTAL_TO4_(SIG, ...)            SIG const &  noexcept {return (__VA_ARGS__);}\
-                                       SIG       &  noexcept {return (__VA_ARGS__);}\
-                                       SIG const && noexcept {return (__VA_ARGS__);}\
-                                       SIG       && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
+#define XTAL_RUN_do(...)                                         {       __VA_ARGS__ ;} ///< Invoke as block.
+#define XTAL_RUN_return(...)                                     {return(__VA_ARGS__);} ///< Return as expression.
 
 
-#define XTAL_TRY_(ARG,...)        XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_TRY_(ARG,...)             XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
 
 #define XTAL_TRY_do(...)              (requires{ __VA_ARGS__ ;}) {       __VA_ARGS__ ;} ///< Check requirements, then invoke as block.
 #define XTAL_TRY_return(...)          (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.
 #define XTAL_TRY_void(...)        (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
 
 
-#define XTAL_IF0                         if constexpr (false);                       ///< Begin `else if constexpr` tree.
-#define XTAL_0IF_(...)              XTAL_0IF_##__VA_ARGS__                           ///< Begin `else if constexpr` branch.
-#define XTAL_0IF                    else if constexpr
-#define XTAL_0IF_else               else
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_IF0                             if constexpr (false);                       ///< Begin `else if constexpr` tree.
+
+#define XTAL_0IF_(ARG,...)             XTAL_0IF_##ARG __VA_OPT__((__VA_ARGS__))          ///< Begin `else if constexpr` branch.
+#define XTAL_0IF                       else  if constexpr
+#define XTAL_0IF_do(...)               else  if constexpr XTAL_TRY_do(__VA_ARGS__)
+#define XTAL_0IF_return(...)           else  if constexpr XTAL_TRY_return(__VA_ARGS__)
+#define XTAL_0IF_else                  else 
 
 #if     XTAL_VER_(MSVC)
-#define XTAL_0IF_void               else {__assume(false);}                          ///< Begin forbidden branch.
+#define XTAL_0IF_void                  else  {__assume(false);}                          ///< Begin forbidden branch.
 #else
-#define XTAL_0IF_void               else {__builtin_unreachable();}                  ///< Begin forbidden branch.
+#define XTAL_0IF_void                  else  {__builtin_unreachable();}                  ///< Begin forbidden branch.
 #endif//XTAL_0IF_void
 
 #if     XTAL_VER_(STD >= 2600)
-#define XTAL_0IF_consteval          else if consteval                                ///< Begin constant-evaluated branch.
+#define XTAL_0IF_consteval             else  if consteval                                ///< Begin constant-evaluated branch.
 #else
-#define XTAL_0IF_consteval          else if (::std::is_constant_evaluated())         ///< Begin constant-evaluated branch.
+#define XTAL_0IF_consteval             else  if (::std::is_constant_evaluated())         ///< Begin constant-evaluated branch.
 #endif//XTAL_0IF_consteval
 
 

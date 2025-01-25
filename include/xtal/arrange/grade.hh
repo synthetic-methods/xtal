@@ -16,8 +16,8 @@ template <class              ..._s>	using    grade_t = typename grade<_s...>::ty
 template <class              ...Ts>	concept  grade_q = bond::tag_p<grade_t, Ts...>;
 template <size_type N, class ...Ts>	concept  grade_p = grade_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
-XTAL_DEF_(short)
-XTAL_LET grade_f(auto &&...oo)
+XTAL_DEF_(return,inline,let)
+grade_f(auto &&...oo)
 noexcept -> auto
 {
 	return _detail::initialize<grade_t>::template via<V>(XTAL_REF_(oo)...);
@@ -62,15 +62,15 @@ struct grade<A, _std::plus<void>>
 		using S_::twin;
 	
 	public:// OPERATE
-		XTAL_DEF_(inline) XTAL_LET operator ++(int) noexcept -> auto {auto t = twin(); operator++(); return t;}
-		XTAL_DEF_(inline) XTAL_LET operator --(int) noexcept -> auto {auto t = twin(); operator--(); return t;}
+		XTAL_DEF_(inline,let) operator ++(int) noexcept -> auto {auto t = twin(); operator++(); return t;}
+		XTAL_DEF_(inline,let) operator --(int) noexcept -> auto {auto t = twin(); operator--(); return t;}
 
 		///\
 		Produces the successor by pairwise addition from `begin()` to `end()`, \
 		assuming the entries of `this` are finite differences/derivatives. \
 
-		XTAL_DEF_(inline)
-		XTAL_LET operator ++ ()
+		XTAL_DEF_(inline,let)
+		operator ++ ()
 		noexcept -> T &
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
@@ -83,8 +83,8 @@ struct grade<A, _std::plus<void>>
 		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
 		assuming the entries of `this` are finite differences/derivatives. \
 
-		XTAL_DEF_(inline)
-		XTAL_LET operator -- ()
+		XTAL_DEF_(inline,let)
+		operator -- ()
 		noexcept -> T &
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)

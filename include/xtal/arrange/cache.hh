@@ -32,7 +32,7 @@ struct cache
 		using S_ = holotype<T>;
 		using I  = valued_u<_std::byte>;
 
-		XTAL_SET N_bytes = one << _std::bit_width(_detail::aligned_n<As...> - one);
+		static size_type constexpr N_bytes = one << _std::bit_width(_detail::aligned_n<As...> - one);
 		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
 		alignas (N_bytes)        _std::byte mutable   m_bytes[N_bytes]  ;
 
@@ -43,8 +43,8 @@ struct cache
 
 		///\returns the size in `byte`s. \
 
-		XTAL_DEF_(return,inline,static)
-		XTAL_LET size()
+		XTAL_DEF_(return,inline,set)
+		size()
 		noexcept -> size_type
 		{
 			return N_bytes;
@@ -52,13 +52,13 @@ struct cache
 
 		///\returns `true` if the cache is zeroed, `false` otherwise. \
 
-		XTAL_DEF_(alias) unzeroed() const noexcept {return 0 != memcmp(m_zeros, m_bytes, N_bytes);}
-		XTAL_DEF_(alias)   zeroed() const noexcept {return 0 == memcmp(m_zeros, m_bytes, N_bytes);}
+		XTAL_DEF_(return,inline,let) unzeroed() const noexcept -> decltype(auto) {return 0 != memcmp(m_zeros, m_bytes, N_bytes);}
+		XTAL_DEF_(return,inline,let)   zeroed() const noexcept -> decltype(auto) {return 0 == memcmp(m_zeros, m_bytes, N_bytes);}
 
 		///\returns `(void)` after overwriting the `byte`s in the cache with `(char) value`. \
 
-		XTAL_DEF_(inline)
-		XTAL_LET fill(I value=I{})
+		XTAL_DEF_(inline,let)
+		fill(I value=I{})
 		noexcept -> void
 		{
 			memset(m_bytes, value, N_bytes);
@@ -67,9 +67,9 @@ struct cache
 		///\returns a tuple of values conforming to `Vs...`, \
 		representing the state of the cache prior to updating with `vs...`. \
 
-		XTAL_DO2_(template <class ...Vs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET form(Vs const &...vs),
+		XTAL_FX2_(do) (template <class ...Vs>
+		XTAL_DEF_(return,inline,let)
+		form(Vs const &...vs),
 		noexcept -> auto
 		{
 			_std::tuple<Vs &...>       x_ = form<Vs...>();
@@ -91,16 +91,16 @@ struct cache
 		auto &y = get<1>(cachet);
 		```***/
 
-		XTAL_DO2_(template <class ...Vs>
-		XTAL_DEF_(return,inline)
-		XTAL_LET form(),
+		XTAL_FX2_(do) (template <class ...Vs>
+		XTAL_DEF_(return,inline,let)
+		form(),
 		noexcept -> auto
 		{
 			return form<based_t<Vs>...>();
 		})
-		XTAL_DO2_(template <class ...Vs> requires based_q<Vs...>
-		XTAL_DEF_(return,inline)
-		XTAL_LET form(),
+		XTAL_FX2_(do) (template <class ...Vs> requires based_q<Vs...>
+		XTAL_DEF_(return,inline,let)
+		form(),
 		noexcept -> auto
 		{
 			static_assert(_detail::aligned_n<Vs...> <= N_bytes);
@@ -111,12 +111,12 @@ struct cache
 			int i{0};
 			
 			return [&] <auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(W{form<Vs>(i)...})
+				XTAL_0FN_(return) (W{form<Vs>(i)...})
 			(bond::seek_s<sizeof...(Vs)> {});
 		})
-		XTAL_DO2_(template <class V>
-		XTAL_DEF_(return,inline)
-		XTAL_LET form(int &i),
+		XTAL_FX2_(do) (template <class V>
+		XTAL_DEF_(return,inline,let)
+		form(int &i),
 		noexcept -> V &
 		{
 			return reinterpret_cast<V &>(m_bytes[_detail::maligned_f<V>(i)]);

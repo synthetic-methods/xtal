@@ -16,8 +16,8 @@ template <class U=void> using         restep_t =          confined_t<restep<U>>;
 template <class  ..._s> concept       restep_q = un_n<0, bond::tag_p<restep, _s>...>;
 template <class  ..._s> concept  some_restep_q = in_n<1, bond::tag_p<restep, _s>...>;
 
-XTAL_DEF_(let)   restep_f(auto &&w)
-noexcept {return restep_t<>(XTAL_REF_(w));}
+XTAL_DEF_(return,inline,let)   restep_f(auto &&w)
+noexcept -> decltype(auto) {return restep_t<>(XTAL_REF_(w));}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ struct restep
 
 	public:// ACCESS
 		using step_type = U;
-		XTAL_TO4_(XTAL_DEF_(let) step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
 
 	};
 };

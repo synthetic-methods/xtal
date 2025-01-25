@@ -27,8 +27,8 @@ struct subtract
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&x, auto &&y) const
+		XTAL_DEF_(return,inline,let)
+		method(auto &&x, auto &&y) const
 		noexcept -> auto
 		{
 			return XTAL_REF_(x) - XTAL_REF_(y);
@@ -49,8 +49,8 @@ struct square_root
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(short,static)
-		XTAL_LET static_method(auto &&o)
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&o)
 		noexcept -> auto
 		{
 			return _std::sqrt(o);
@@ -71,8 +71,8 @@ struct halve
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(short,static)
-		XTAL_LET static_method(auto &&o)
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&o)
 		noexcept -> auto
 		{
 			return o*0.5L;
@@ -123,7 +123,7 @@ TAG_("process", "construct")
 
 	TRY_("lifting")
 	{
-		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.method(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
 		TRUE_(10 == f.reify() (1, 2, 3, 4));

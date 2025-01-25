@@ -43,12 +43,12 @@ struct tab
 	public:// *FUSE
 
 		template <signed N_ion>
-		XTAL_DEF_(short)
-		XTAL_LET fuse(auto &&o)
+		XTAL_DEF_(return,inline,let)
+		fuse(auto &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::tab_compatible_q<T_, decltype(o)> and different_q<T_, decltype(o)>) {
-				return S_::template fuse<N_ion>(XTAL_REF_(o).apply(invoke_n<T_>));
+			if constexpr (bond::tab_convertible_q<T_, decltype(o)>) {
+				return S_::template fuse<N_ion>(XTAL_REF_(o).template apply<T_>());
 			}
 			else {
 				return S_::template fuse<N_ion>(XTAL_REF_(o));

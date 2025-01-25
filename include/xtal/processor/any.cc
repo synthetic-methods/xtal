@@ -25,8 +25,8 @@ struct irritator_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(short,static)
-		XTAL_LET static_method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
@@ -90,7 +90,7 @@ TAG_("processor", "construct")
 		unsigned constexpr N_size = 5;
 		using U_block = arrange::block_t<T_alpha[N_size]>;
 		
-		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(XTAL_REF_(xs) +...+ 0));
+		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0));
 		auto x = U_block { 0,  1,  2,  3,  4};
 		auto y = U_block{00, 10, 20, 30, 40};
 		auto z = U_block{00, 11, 22, 33, 44};

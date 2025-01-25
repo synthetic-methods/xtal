@@ -31,14 +31,14 @@ struct lifter
 		using S_val = S_ const &;
 
 		template <auto ...Is>
-		XTAL_DEF_(short,static)
-		XTAL_LET S_method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		S_method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(return) (S_::template static_method<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
-		XTAL_DEF_(short,static)
-		XTAL_LET U_method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		U_method(auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			if constexpr (bond::compose_q<U>) {
@@ -53,24 +53,24 @@ struct lifter
 		using S_::S_;
 
 		template <auto ...Is>
-		XTAL_DEF_(short,static)
-		XTAL_LET static_method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
 		{
 			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
-		XTAL_DEF_(short,static)
-		XTAL_LET        method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
 		{
 			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
-		XTAL_DEF_(short)
-		XTAL_LET        method(auto &&...xs) const
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs) const
 		noexcept -> decltype(auto)
 		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
 		and  requires (S_val s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
@@ -78,8 +78,8 @@ struct lifter
 			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
-		XTAL_DEF_(short)
-		XTAL_LET        method(auto &&...xs)
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
 		and  requires (S_var s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}

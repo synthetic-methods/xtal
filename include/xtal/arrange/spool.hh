@@ -72,22 +72,22 @@ struct spool<A>
 		,	u_store{U_value{XTAL_REF_(w)}}
 		{}
 
-		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
-		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
-		XTAL_TO2_(XTAL_DEF_(short) XTAL_LET  peek(U_count n=0), *begin(n))
-		XTAL_TO2_(XTAL_DEF_(let)             span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_TO2_(XTAL_DEF_(let)             span(U_count n), span(n, n))
-		XTAL_TO2_(XTAL_DEF_(let)             span(         ), span(0, 0))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(U_count n), span(n, n))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(         ), span(0, 0))
 
-		XTAL_DEF_(inline)
-		XTAL_LET advance(U_count n=1)
+		XTAL_DEF_(inline,let)
+		advance(U_count n=1)
 		noexcept -> U_point
 		{
 			u_begin += n;
 			return begin();
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET abandon(U_count n=1)
+		XTAL_DEF_(inline,let)
+		abandon(U_count n=1)
 		noexcept -> U_point
 		{
 			if (n) {
@@ -96,26 +96,35 @@ struct spool<A>
 			}
 			return begin();
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET free()
+		XTAL_DEF_(inline,let)
+		free()
 		noexcept -> void
 		{
 			u_store.erase(u_store.begin(), end());
 		}
 
-		XTAL_DEF_(inline)
-		XTAL_LET free(auto &&f)
+		XTAL_DEF_(inline,let)
+		free(auto &&f)
 		noexcept -> void
 		{
-			u_store.erase(_std::remove_if(begin(), end(), f), end());
+			u_store.erase(_std::remove_if(begin(), end(), XTAL_REF_(f)), end());
 		}
+		template <auto  f>
+		XTAL_DEF_(inline,let)
+		free()
+		noexcept -> void
+		{
+			u_store.erase(_std::remove_if(begin(), end(),           f ), end());
+		}
+	//	template <auto  f> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free(constant_n<f>);}
+		template <class F> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free<invoke_n<F>>();}
 
 		///\note\
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
 		allowing for branchless `advance`ment. \
 
-	//	XTAL_DEF_(inline)
-		XTAL_LET pop(U_point i)
+		XTAL_DEF_(let)
+		pop(U_point i)
 		noexcept -> void
 		{
 			assert(i < end());
@@ -123,32 +132,32 @@ struct spool<A>
 			u_store.erase(i);
 			abandon(begin() == end());
 		}
-	//	XTAL_DEF_(inline)
-		XTAL_LET pop()
+		XTAL_DEF_(let)
+		pop()
 		noexcept -> void
 		{
 			advance();
 			abandon(begin() == end());
 		}
-		XTAL_DEF_(short)
-		XTAL_LET scan(auto &&w)
+		XTAL_DEF_(return,inline,let)
+		scan(auto &&w)
 		noexcept -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
 		}
-		XTAL_DEF_(short)
-		XTAL_LET scan(auto &&w, auto &&f)
+		XTAL_DEF_(return,inline,let)
+		scan(auto &&w, auto &&f)
 		noexcept -> U_point
 		{
 			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
-			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(f(x) < f(y))
+			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(return) (f(x) < f(y))
 			);
 		}
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-	//	XTAL_DEF_(inline)
-		XTAL_LET push(U_value u)
+		XTAL_DEF_(let)
+		push(U_value u)
 		noexcept -> U_point
 		{
 			if (u_store.empty()) {
@@ -166,21 +175,21 @@ struct spool<A>
 				return poke(_v, XTAL_MOV_(u));
 			}
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET push(auto ..._s)
+		XTAL_DEF_(inline,let)
+		push(auto ..._s)
 		noexcept -> U_point
 		{
 			return push(U_value(XTAL_MOV_(_s)...));
 		}
 
-		XTAL_DEF_(inline)
-		XTAL_LET poke(U_point _v, U_value u)
+		XTAL_DEF_(inline,let)
+		poke(U_point _v, U_value u)
 		noexcept -> U_point
 		{
 			return u_store.insert(_v, XTAL_MOV_(u));
 		}
-		XTAL_DEF_(inline)
-		XTAL_LET poke(U_point _v, auto..._s)
+		XTAL_DEF_(inline,let)
+		poke(U_point _v, auto..._s)
 		noexcept -> U_point
 		{
 			return u_store.emplace(_v, XTAL_MOV_(_s)...);

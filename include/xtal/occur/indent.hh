@@ -97,15 +97,15 @@ struct indent<Ns...>
 				Requires subsequent ordering for `bond::pack`s? \
 				
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(indent_q auto &&o)
+				XTAL_DEF_(return,let)
+				fuse(indent_q auto &&o)
 				noexcept -> signed
 				{
 					/*/

@@ -15,8 +15,8 @@ template <typename ..._s> struct   monomer;
 template <typename ..._s> using    monomer_t =  confined_t<monomer< _s...>>;
 template <typename ..._s> concept  monomer_q = bond::tag_p<monomer, _s... >;
 template <typename ...As>
-XTAL_DEF_(short)
-XTAL_LET monomer_f(auto &&u)
+XTAL_DEF_(return,inline,let)
+monomer_f(auto &&u)
 noexcept -> auto
 {
 	return monomer_t<XTAL_ALL_(u), As...>(XTAL_REF_(u));
@@ -94,13 +94,13 @@ struct monomer<U, As...>
 
 			public:// ACCESS
 
-				XTAL_TO4_(XTAL_DEF_(let) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
 			public:// OPERATE
 
-				XTAL_DO2_(template <auto ...>
-				XTAL_DEF_(short)
-				XTAL_LET method(),
+				XTAL_FX2_(do) (template <auto ...>
+				XTAL_DEF_(return,inline,let)
+				method(),
 				noexcept -> decltype(auto)
 				{
 					return state();
@@ -108,19 +108,19 @@ struct monomer<U, As...>
 
 			public:// FLOW
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(short)
-				XTAL_LET flux(occur::render_q auto &&render_o)
+				XTAL_DEF_(return,inline,let)
+				flux(occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
 					return [this]
-						XTAL_XFN_(1, &, (void) state(R_::method()), 0)
+						XTAL_0FN_(and) ((void) state(R_::method()), 0)
 							(R_::template flux<N_ion>(XTAL_REF_(render_o)));
 				}
 
@@ -156,9 +156,9 @@ struct monomer<U, As...>
 			public:// FUNC*
 			//	using R_::method;
 				
-				XTAL_DO2_(template <auto ...>
-				XTAL_DEF_(short)
-				XTAL_LET method(),
+				XTAL_FX2_(do) (template <auto ...>
+				XTAL_DEF_(return,inline,let)
+				method(),
 				noexcept -> decltype(auto)
 				{
 					return state();
@@ -166,15 +166,15 @@ struct monomer<U, As...>
 				
 			public:// FLOW
 
-				template <signed N_ion> XTAL_DEF_(let) fuse(auto &&o    ) noexcept {return R_::template fuse<N_ion>(XTAL_REF_(o)    );}
-				template <signed N_ion> XTAL_DEF_(let) flux(auto &&...oo) noexcept {return R_::template flux<N_ion>(XTAL_REF_(oo)...);}
+				template <signed N_ion> XTAL_DEF_(return,inline,let) fuse(auto &&o    ) noexcept -> decltype(auto) {return R_::template fuse<N_ion>(XTAL_REF_(o)    );}
+				template <signed N_ion> XTAL_DEF_(return,inline,let) flux(auto &&...oo) noexcept -> decltype(auto) {return R_::template flux<N_ion>(XTAL_REF_(oo)...);}
 
 				///\
 				Responds to `occur::resize` by resizing the internal `store()`. \
 
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(occur::resize_q auto &&o)
+				XTAL_DEF_(return,let)
+				fuse(occur::resize_q auto &&o)
 				noexcept -> signed
 				{
 					if (R_::template fuse<N_ion>(o) == 1) {
@@ -194,11 +194,11 @@ struct monomer<U, As...>
 				continuing to propagate beyond. \
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux_arguments(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
-					XTAL_LET N_dex = occur::some_resize_q<decltype(oo)...>? N_share: -1;
+					auto constexpr N_dex = occur::some_resize_q<decltype(oo)...>? N_share: -1;
 					return R_::template flux_arguments_<N_ion, N_dex>(flow::argument_n<-1>, XTAL_REF_(oo)...);
 				}
 
@@ -209,8 +209,8 @@ struct monomer<U, As...>
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \
 
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(short)
-				XTAL_LET flux(occur::render_q auto &&render_o, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(occur::render_q auto &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
 					size_type const n_resize = R_::template head<U_resize>();
@@ -228,8 +228,8 @@ struct monomer<U, As...>
 				which will remain empty. \
 
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(short)
-				XTAL_LET flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo)
 				noexcept -> signed
 				{
 					if constexpr (make_p<U_state, decltype(review_o)>) {

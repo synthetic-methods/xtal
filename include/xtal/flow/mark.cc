@@ -32,7 +32,7 @@ TAG_("mark")
 		TRUE_(same_q<decltype(XTAL_ANY_(U_target).tail()), U_source>);
 
 	}
-	XTAL_LET maybe = [] (mark_s<> g)
+	auto constexpr maybe = [] (mark_s<> g)
 	XTAL_0FN {
 		if (g) {
 			return true;

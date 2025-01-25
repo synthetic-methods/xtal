@@ -21,8 +21,8 @@ struct foo
 	class type
 	{
 	public:
-		XTAL_DEF_(short)
-		XTAL_LET operator () (auto &&o) const
+		XTAL_DEF_(return,inline,let)
+		operator () (auto &&o) const
 		noexcept -> auto
 		{
 			return XTAL_REF_(o) + 1;
@@ -32,7 +32,7 @@ struct foo
 };
 using foo_t = typename foo::type;
 using bar_t = process::confined_t<confer<foo_t>>;
-using baz_t = process::confined_t<lift<decltype([] (auto &&o) XTAL_0FN_(o*10))>, confer<foo_t>>;
+using baz_t = process::confined_t<lift<decltype([] (auto &&o) XTAL_0FN_(return) (o*10))>, confer<foo_t>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

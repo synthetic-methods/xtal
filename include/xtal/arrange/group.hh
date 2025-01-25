@@ -16,8 +16,8 @@ template <class              ..._s>	using    group_t = typename group<_s...>::ty
 template <class              ...Ts>	concept  group_q = bond::tag_p<group_t, Ts...>;
 template <size_type N, class ...Ts>	concept  group_p = group_q<Ts...> and (...and (N == Ts::size()));
 template <class  V=void>
-XTAL_DEF_(short)
-XTAL_LET group_f(auto &&...oo)
+XTAL_DEF_(return,inline,let)
+group_f(auto &&...oo)
 noexcept -> auto
 {
 	return _detail::initialize<group_t>::template via<V>(XTAL_REF_(oo)...);
@@ -61,14 +61,14 @@ struct group<A, _std::plus<void>>
 	//	using S_::operator+=;
 	//	using S_::operator-=;
 
-		XTAL_DEF_(short)  XTAL_LET operator + (auto const &t)              const noexcept -> auto   {return S_::twin() +=   t ;}
-		XTAL_DEF_(short)  XTAL_LET operator - (auto const &t)              const noexcept -> auto   {return S_::twin() -=   t ;}
-		XTAL_DEF_(inline) XTAL_LET operator +=(         initializer_s<U_data> t) noexcept -> auto & {return S_::self() += T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator -=(         initializer_s<U_data> t) noexcept -> auto & {return S_::self() -= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator +=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator -=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator +=(subarray_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator -=(subarray_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(return,inline,let)  operator + (auto const &t)              const noexcept -> auto   {return S_::twin() +=   t ;}
+		XTAL_DEF_(return,inline,let)  operator - (auto const &t)              const noexcept -> auto   {return S_::twin() -=   t ;}
+		XTAL_DEF_(inline,let) operator +=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() += T(t);}
+		XTAL_DEF_(inline,let) operator -=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() -= T(t);}
+		XTAL_DEF_(inline,let) operator +=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator -=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator +=(subarray_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u += v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator -=(subarray_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u -= v;}>(XTAL_REF_(t));}
 
 	};
 	using type = derive_t<homotype>;
@@ -105,19 +105,19 @@ struct group<A, _std::multiplies<void>>
 		using S_::operator/=;
 		using S_::operator%=;
 
-		XTAL_DEF_(return,inline,friend)  XTAL_LET operator * (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u * v)>(s, t);}
-		XTAL_DEF_(return,inline,friend)  XTAL_LET operator / (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u / v)>(s, t);}
-		XTAL_DEF_(return,inline,friend)  XTAL_LET operator % (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(u % v)>(s, t);}
+		XTAL_DEF_(return,inline,friend,let) operator * (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(return) (u * v)>(s, t);}
+		XTAL_DEF_(return,inline,friend,let) operator / (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(return) (u / v)>(s, t);}
+		XTAL_DEF_(return,inline,friend,let) operator % (T const &s, auto const &t) noexcept -> auto {return S_::template pointwise<[] (auto const &u, auto const &v) XTAL_0FN_(return) (u % v)>(s, t);}
 
-		XTAL_DEF_(inline) XTAL_LET operator *=(      initializer_s<U_data> t) noexcept -> auto & {return S_::self() *= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator /=(      initializer_s<U_data> t) noexcept -> auto & {return S_::self() /= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator %=(      initializer_s<U_data> t) noexcept -> auto & {return S_::self() %= T(t);}
-		XTAL_DEF_(inline) XTAL_LET operator *=(array_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u *= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator /=(array_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u /= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator %=(array_q<N_data> auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u %= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator *=(                   T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u *= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator /=(                   T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u /= v;}>(XTAL_REF_(t));}
-		XTAL_DEF_(inline) XTAL_LET operator %=(                   T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u %= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator *=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() *= T(t);}
+		XTAL_DEF_(inline,let) operator /=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() /= T(t);}
+		XTAL_DEF_(inline,let) operator %=(_std::initializer_list<U_data> t) noexcept -> auto & {return S_::self() %= T(t);}
+		XTAL_DEF_(inline,let) operator *=(array_q<N_data>    auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u *= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator /=(array_q<N_data>    auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u /= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator %=(array_q<N_data>    auto const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u %= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator *=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u *= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator /=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u /= v;}>(XTAL_REF_(t));}
+		XTAL_DEF_(inline,let) operator %=(                      T const &t) noexcept -> auto & {return S_::template pointwise<[] (auto &u, auto const &v) XTAL_0FN {u %= v;}>(XTAL_REF_(t));}
 
 	};
 	using type = derive_t<homotype>;

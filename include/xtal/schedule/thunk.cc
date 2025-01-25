@@ -56,10 +56,6 @@ TAG_("thunk", "process")
 
 		u0 += v0;
 //		u1 += v1;
-	//	static_assert(same_q<U2_event, typename U_process::event_type>);
-		static_assert(same_q<U0_event, typename U1_event::cue_type>);
-		static_assert(same_q<U0_event, typename U2_event::cue_type>);
-	//	static_assert(same_q<U0_event, typename U_process::event_type::cue_type>);
 
 		u_gate <<= u0;
 		u_gate <<= u1;

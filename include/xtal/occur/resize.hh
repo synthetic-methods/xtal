@@ -16,8 +16,8 @@ template <class U=void> using         resize_t =          confined_t<resize<U>>;
 template <class  ..._s> concept       resize_q = un_n<0, bond::tag_p<resize, _s>...>;
 template <class  ..._s> concept  some_resize_q = in_n<1, bond::tag_p<resize, _s>...>;
 
-XTAL_DEF_(let)   resize_f(auto &&w)
-noexcept {return resize_t<>(XTAL_REF_(w));}
+XTAL_DEF_(return,inline,let)   resize_f(auto &&w)
+noexcept -> decltype(auto) {return resize_t<>(XTAL_REF_(w));}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -42,8 +42,8 @@ struct resize
 		using S_::head;
 
 		using size_type = U;
-		XTAL_TO4_(XTAL_DEF_(let) size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_TO4_(XTAL_DEF_(let) empty(), 0 == size())
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) empty(), 0 == size())
 
 	};
 };
@@ -57,8 +57,8 @@ struct resize<void>
 {
 };
 
-static_assert(bond::   tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
-static_assert(bond::tab_constructible_q<resize_t<unsigned>, resize_t<  signed>>);
+static_assert(bond:: tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
+static_assert(bond::tab_convertible_q<resize_t<unsigned>, resize_t<  signed>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -155,7 +155,7 @@ The directories in the project are organised by namespace with the leaves repres
 
 The [`**/all.hh`](include/xtal/all.hh?ts=3) exports all implementations at a given level. At the leaves, this includes the fundamental types defined by `any.hh` and specializations like `monomer`, etc.
 
-The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`cell/any.ii`](include/xtal/cell/any.ii?ts=3) to create higher-level decorators like `confine` and `confer`.
+The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key implementations of `[dr]efine` and `[dr]efer` which are scaffolded by [`bond/any.ii`](include/xtal/bond/any.ii?ts=3) to create higher-level decorators like `confine` and `confer`.
 
 The [`**/any.hh`](include/xtal/cell/any.hh?ts=3) provides the key dependencies for the respective domain, including the identifying `concept`s.
 
@@ -178,8 +178,8 @@ Typically, these `struct`ures are themselves `template`d in order to realise a s
 	   template <class S>
 	   class subtype
 	   {
-	      XTAL_DEF_(short) XTAL_RET self() XTAL_0FX {return static_cast<T const &>(*this);}
-	      XTAL_DEF_(short) XTAL_RET self() XTAL_0EX {return static_cast<T       &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0FX {return static_cast<T const &>(*this);}
+	      XTAL_DEF_(return,inline) XTAL_RET self() XTAL_0EX {return static_cast<T       &>(*this);}
 
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self() const noexcept...
 	   // [[nodiscard]] __attribute__((always_inline)) constexpr decltype(auto) self()       noexcept...
@@ -203,7 +203,7 @@ The primary namespaces within `xtal` constitute a hierarchy linked by the namesp
 	namespace process   {namespace _retail = flow;}
 	namespace processor {namespace _retail = process;}
 
-The [`any.hh`](include/xtal/process/any.hh?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`cell/any.ii`](include/xtal/cell/any.ii?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
+The [`any.hh`](include/xtal/process/any.hh?ts=3) for each namespace provides the main definitions (specializing only `[dr]efine` and `[dr]efer`), using the supplied `_retail` to refer to the parent definitions. The inclusion of [`bond/any.ii`](include/xtal/bond/any.ii?ts=3) within each namespace scaffolds the higher-order constructs based on these definitions, emulating family inheritance. For example...
 
 The `confer` decorator reifies the supplied type `U` by composing `defer` and `refer`, respectively providing proxy management (e.g. constructors and accessors) and forwarding (e.g. operators).
 

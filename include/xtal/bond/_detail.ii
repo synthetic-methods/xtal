@@ -8,25 +8,189 @@
 
 
 namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <template <class, typename...> class Subtype>
+struct compost
+{
+	template <class S, class ..._s>                               struct pseudokind           {using type = Subtype<S, _s...>;};
+	template <class S, class ..._s> requires (0 == sizeof...(_s)) struct pseudokind<S, _s...> {using type = Subtype<S       >;};
+	template <class S, class ..._s>
+	//\
+	using subtype = Subtype<S, _s...>;
+	using subtype = typename pseudokind<S, _s...>::type;
+	//\note\
+	Even when `not sizeof...(Ts)`, `clang` can't instantiate unary alias-templates with `T, Ts...`. \
+
+};
+
+template <typename T>
+concept compose_q = complete_q<compost<T::template subtype>> and not requires {typename T::subtype;};
+
+
+template <class S,          typename ...Ins> struct incompose;
+template <                  typename ...Exs> struct excompose;
+
+template <class S, class _, typename ...Ins> struct incompose<S, _, Ins...> : incompose<S, Ins...> {};
+template <         class _, typename ...Exs> struct excompose<   _, Exs...> : excompose<   Exs...> {};
+
+template <class S                          > struct incompose<S> {using type = S;};
+template <                                 > struct excompose< > {template <class S, typename ...Ins> using subtype = typename incompose<S, Ins...>::type;};
+
+template <class S, compose_q In, typename ...Ins>
+struct incompose<S, In, Ins...>
+:	incompose<typename In::template subtype<S>, Ins...>
+{
+};
+template <         compose_q Ex, typename ...Exs>
+struct excompose<Ex, Exs...>
+{
+	template <class S, typename ...Ins>
+	using subtype = typename Ex::template subtype<
+		typename excompose<Exs...>::template subtype<S, Ins...>
+	>;
+
+};
+
+
+template <template <class, class...> class ...Subtypes>
+using excompose_t = excompose<compost<Subtypes>...>;
+
+template <class S, typename ...Ins>
+using excompose_s = typename excompose<>::template subtype<S, Ins...>;
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+
+
+
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
+
+template <class U_node, class U_edge=void>
+struct query
+{
+	static bool constexpr Q_node =      same_q<void, U_edge>;
+	static bool constexpr Q_edge = different_q<void, U_edge>;
+
+	template <class S>
+	class subtype : public S
+	{
+		using U_self = typename S::self_type;
+		using U_null =             null_type;
+
+	public:
+		using node_type = U_node;
+
+	public:
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_t<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+
+	public:
+		using S::S;
+
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) node(), self<U_node>())
+
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+
+	};
+	template <class S> requires complete_q<typename S::head_type>
+	class subtype<S> : public S
+	{
+		using U_self = typename S::self_type;
+		using U_head = typename S::head_type;
+		using U_null =             null_type;
+
+	public:
+		using node_type = U_node;
+
+	public:
+		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
+		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
+		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_t<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_head, Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+		/**/
+		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+		template <                       class ...Is> using  head_s = typename super<U_node, Is...>::type;
+		/*/
+		template <                       class ...Is> using  self_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_self>;
+		template <                       class ...Is> using  head_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_node>;
+		/***/
+		template <                       class ...Is> using  head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
+
+	public:
+		using S::S;
+
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) node(), self<node_type>())
+
+
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
+		
+		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
+		
+		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+		
+
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
+
+		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head(XTAL_REF_(oo)...))
+
+		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
+
+	};
+};
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+
+
+
+namespace _detail
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <iterator_q I > XTAL_DEF_(short) XTAL_LET    mover_f(I i) noexcept -> auto {return _xtd::ranges::   make_move_iterator(i);}
-template <iterator_q I > XTAL_DEF_(short) XTAL_LET reverser_f(I i) noexcept -> auto {return _xtd::ranges::make_reverse_iterator(i);}
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q I > XTAL_DEF_(return,inline,let)    mover_f(I i) noexcept -> auto {return _xtd::ranges::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline,let) reverser_f(I i) noexcept -> auto {return _xtd::ranges::make_reverse_iterator(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
-XTAL_DEF_(inline)
-XTAL_LET swap_with(Y_ y0, X_ const x0, X_ const sN, bool const ord=false)
+XTAL_DEF_(inline,let)
+swap_with(Y_ y0, X_ const x0, X_ const sN, bool const ord=false)
 noexcept -> void
 {
 	using namespace _std;
 #ifdef __cpp_lib_execution
 	if (not _std::is_constant_evaluated()) {
-		XTAL_LET par = execution::unseq;
-		XTAL_LET seq = execution::  seq;
+		auto constexpr par = execution::unseq;
+		auto constexpr seq = execution::  seq;
 		if    (ord) swap_ranges(seq, x0, sN, y0);
 		else        swap_ranges(par, x0, sN, y0);
 	}
@@ -38,32 +202,34 @@ noexcept -> void
 #endif
 }
 template <iterator_q Y_, iterable_q Xs>
-XTAL_DEF_(inline)
-XTAL_LET swap_with(Y_ y0, Xs const &xs, bool const ord=false)
+XTAL_DEF_(inline,let)
+swap_with(Y_ y0, Xs const &xs, bool const ord=false)
 noexcept -> void
 {
-	swap_with(y0, xs.begin(), xs.end(), ord);
+	swap_with(y0, xs.begin(), endpoint_f(xs), ord);
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
 noexcept -> void
 requires same_q<decltype(x0), decltype(xN)>
 {
-	using Y = iteratee_t<decltype(y0)>;
-	using X = iteratee_t<decltype(x0)>;
-	using F =            decltype(f ) ;
+	using Y_ = common_t<decltype(y0)>;
+	using X_ = common_t<decltype(x0), decltype(xN)>;
+	using Y  = iteratee_t<Y_>;
+	using X  = iteratee_t<X_>;
+	using F  =   decltype(f );
 	XTAL_IF0
-	XTAL_0IF (incomplete_q<F> and different_q<Y, X>) {
+	XTAL_0IF (same_q<F, null_type> and different_q<Y, X>) {
 		copy_to<invoke_n<Y>>(y0, x0, xN, ord);
 	}
-	XTAL_0IF (incomplete_q<F> and      same_q<Y, X>) {
+	XTAL_0IF (same_q<F, null_type> and      same_q<Y, X>) {
 #if __cpp_lib_execution
-		if constexpr (not _std::is_constant_evaluated()) {
+		if (not _std::is_constant_evaluated()) {
 			using namespace _std;
 			if (ord) copy(execution::  seq, x0, xN, y0);
 			else     copy(execution::unseq, x0, xN, y0);
@@ -73,12 +239,12 @@ requires same_q<decltype(x0), decltype(xN)>
 #endif
 		else {
 			using namespace _xtd::ranges;
-			copy(static_cast<decltype(xN)>(x0), xN, y0);
+			copy(static_cast<X_>(x0), static_cast<X_>(xN), y0);
 		}
 	}
 	XTAL_0IF_(else) {
 #if __cpp_lib_execution
-		if constexpr (not _std::is_constant_evaluated()) {
+		if (not _std::is_constant_evaluated()) {
 			using namespace _std;
 			if (ord) transform(execution::  seq, x0, xN, y0, f);
 			else     transform(execution::unseq, x0, xN, y0, f);
@@ -88,53 +254,37 @@ requires same_q<decltype(x0), decltype(xN)>
 #endif
 		else {
 			using namespace _xtd::ranges;
-			transform(static_cast<decltype(xN)>(x0), xN, y0, f);
+			transform(static_cast<X_>(x0), static_cast<X_>(xN), y0, f);
 		}
 	}
 }
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
 
-	using X_ = decltype(x0);
-	using Y_ = decltype(y0);
-	using F  = decltype(f );
-	using X  = iterated_u<X_>;
-	using Y  = iterated_u<Y_>;
-
 	XTAL_IF0
-	XTAL_0IF (complete_q<F>) {
+	XTAL_0IF (complete_q<decltype(f)>) {
 		copy_to<f>(y0, x0, next(x0, sN), ord);
 	}
-	XTAL_0IF (pointer_q<Y_, X_> and same_q<Y_, X_>) {
-		_std::memcpy(y0, x0, sN*sizeof(X));
-	}
-	XTAL_0IF_(else) {
-		XTAL_IF0
+	XTAL_0IF_(consteval)  {copy_n(x0, sN, y0);}
+	XTAL_0IF_(do)   (_std::memcpy(y0, x0, sN*sizeof(iterated_u<decltype(x0)>)))
 #if XTAL_VER_(LLVM)
-		XTAL_0IF XTAL_TRY_(do) (_std::copy_n(x0, sN, y0))
+	XTAL_0IF_(do)   (_std::copy_n(x0, sN, y0))
 #endif
-		XTAL_0IF XTAL_TRY_(do) (copy_n(     x0, sN,  y0))
-		XTAL_0IF XTAL_TRY_(do) (copy  (span(x0, sN), y0))
-		XTAL_0IF_(else) {while (sN--) {*y0 = *x0; y0++; x0++;}}
-	}
+	XTAL_0IF_(do)   (copy_n(     x0, sN,  y0))
+	XTAL_0IF_(do)   (copy  (span(x0, sN), y0))
+	XTAL_0IF_(else) {while (sN--) {*y0 = *x0; y0++; x0++;}}
 }
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
 noexcept -> void
 {
-	using X_ = iterator_t<decltype(xs)>;
-	using Y_ =            decltype(y0) ;
-	using F  =            decltype(f ) ;
-	using X  = iterated_u<X_>;
-	using Y  = iterated_u<Y_>;
-
 	XTAL_IF0
-	XTAL_0IF (complete_q<F>) {
+	XTAL_0IF (complete_q<decltype(f)>) {
 		copy_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
 	}
 	XTAL_0IF_(else) {
@@ -142,8 +292,8 @@ noexcept -> void
 	}
 }
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET copy_to(iterable_q auto &ys, iterable_q auto const &xs, bool const ord=false)
+XTAL_DEF_(inline,let)
+copy_to(iterable_q auto &ys, iterable_q auto const &xs, bool const ord=false)
 noexcept -> void
 {
 	copy_to<f>(ys.begin(), xs, ord);
@@ -153,50 +303,33 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET move_to(iterator_q auto y0, iterator_q auto const x0, iterator_q auto const xN, bool const ord=false)
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
 noexcept -> void
 requires same_q<decltype(x0), decltype(xN)>
 {
 	copy_to<f>(y0, mover_f(x0), mover_f(xN), ord);
 }
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET move_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
 
-	using X_ = decltype(x0);
-	using Y_ = decltype(y0);
-	using F  = decltype(f );
-	using X  = iterated_u<X_>;
-	using Y  = iterated_u<Y_>;
-
 	XTAL_IF0
-	XTAL_0IF (complete_q<F>) {
-		move_to<f>(y0, x0, next(x0, sN), ord);
-	}
-	XTAL_0IF (pointer_q<Y_, X_> and same_q<Y_, X_>) {
-		_std::memmove(y0, x0, sN*sizeof(X));
-	}
-	XTAL_0IF_(else) {
-		copy_to< >(y0, mover_f(x0), sN, ord);
-	}
+	XTAL_0IF (complete_q<decltype(f)>) {move_to<f>(y0, x0, next(x0, sN), ord);}
+	XTAL_0IF_(consteval)               {copy_to<f>(y0, mover_f(x0), sN,  ord);}
+	XTAL_0IF_(do)                      (_std::memmove(y0, x0, sN*sizeof(iterated_u<decltype(x0)>)))
+	XTAL_0IF_(else)                    {copy_to<f>(y0, mover_f(x0), sN,  ord);}
 }
 template <auto f=null_type{}>
-XTAL_DEF_(inline)
-XTAL_LET move_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
 noexcept -> void
 {
-	using X_ = iterator_t<decltype(xs)>;
-	using Y_ =            decltype(y0) ;
-	using F  =            decltype(f ) ;
-	using X  = iterated_u<X_>;
-	using Y  = iterated_u<Y_>;
-
 	XTAL_IF0
-	XTAL_0IF (complete_q<F>) {
+	XTAL_0IF (complete_q<decltype(f)>) {
 		move_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
 	}
 	XTAL_0IF_(else) {
@@ -208,15 +341,15 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto f>
-XTAL_DEF_(inline)
-XTAL_LET apply_to(auto &w, bool const ord=false)
+XTAL_DEF_(inline,let)
+apply_to(auto &w, bool const ord=false)
 noexcept -> void
 {
 	w = f(XTAL_MOV_(w));
 }
 template <auto f>
-XTAL_DEF_(inline)
-XTAL_LET apply_to(iterable_q auto &ws, bool const ord=false)
+XTAL_DEF_(inline,let)
+apply_to(iterable_q auto &ws, bool const ord=false)
 noexcept -> void
 {
 	move_to<f>(ws.begin(), ws, ord);
@@ -226,7 +359,8 @@ noexcept -> void
 ////////////////////////////////////////////////////////////////////////////////
 
 /**/
-XTAL_LET mix_to(auto &y, auto &&x)
+XTAL_DEF_(let)
+mix_to(auto &y, auto &&x)
 noexcept -> void
 {
 	auto j = point_f(x);
@@ -234,22 +368,22 @@ noexcept -> void
 	auto N = count_f(y);
 	for (XTAL_ALL_(N) n{}; n < N; ++n) {*i++ += XTAL_MOV_(*j++);}
 };
-XTAL_DEF_(inline)
-XTAL_LET mix_to(auto &y, auto &&...xs)
+XTAL_DEF_(inline,let)
+mix_to(auto &y, auto &&...xs)
 noexcept -> void
 {
-	auto const f = [] (auto &&o, auto &&...oo) XTAL_0FN_(XTAL_REF_(o) +...+ XTAL_REF_(oo));
+	auto const f = [] (auto &&o, auto &&...oo) XTAL_0FN_(return) (XTAL_REF_(o) +...+ XTAL_REF_(oo));
 	mix_to(y, iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));
 };
 /*/
 template <class Y, class ...Xs>
-XTAL_DEF_(inline)
-XTAL_LET mix_to(Y &y, Xs &&...xs)
+XTAL_DEF_(inline,let)
+mix_to(Y &y, Xs &&...xs)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
 	
-	auto  x = iterative_f([] (auto &&o, auto &&...oo) XTAL_0FN_(o +...+ oo), XTAL_REF_(xs)..., y);
+	auto  x = iterative_f([] (auto &&o, auto &&...oo) XTAL_0FN_(return) (o +...+ oo), XTAL_REF_(xs)..., y);
 	auto _j = point_f(x);
 	auto _i = point_f(y);
 	auto  n = count_f(y);
@@ -259,10 +393,10 @@ noexcept -> void
 
 	XTAL_IF0
 #if XTAL_VER_(LLVM)
-	XTAL_0IF XTAL_TRY_(do) (_std::copy_n(copy_j, n, _i))
+	XTAL_0IF_(do) (_std::copy_n(copy_j, n, _i))
 #endif
-	XTAL_0IF XTAL_TRY_(do) (copy_n(move_j, n, _i))
-	XTAL_0IF XTAL_TRY_(do) (move(x|account_f(n), _i))
+	XTAL_0IF_(do) (copy_n(move_j, n, _i))
+	XTAL_0IF_(do) (move(x|account_f(n), _i))
 	XTAL_0IF_(else) {for (int m{}; m < n; ++m) {*_i++ = *move_j++;}}
 };
 /***/

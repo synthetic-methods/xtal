@@ -99,8 +99,8 @@ TAG_("collate")
 		for (size_type i = 0; i < ys_extent; ++i) {
 			auto input_tables = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
-				XTAL_0FN_(bond::transpack_f<void_type[xs_expected[I]]>(inputs.count(), inputs.samples(...)))
-				XTAL_0FN_(echo('\t'
+				XTAL_0FN_(return) (bond::transpack_f<void_type[xs_expected[I]]>(inputs.count(), inputs.samples(...)))
+				XTAL_0FN_(return) (echo('\t'
 				,	((i*xs_expected[I])%xs_provided[I] + xs_provided++[I])...
 				))
 				(bond::seek_s<bond::pack_size_n<U4>>{});
@@ -109,8 +109,8 @@ TAG_("collate")
 		for (size_type i = 0; i < ys_extent; ++i) {
 			auto output_table = [&]<auto ...I> (bond::seek_t<I...>)
 				//\
-				XTAL_0FN_(bond::pack_f(bond::transpack_f<void_type[ys_expected[I]]>(outputs.count(), output.samples(...)))
-				XTAL_0FN_(echo('\t'
+				XTAL_0FN_(return) (bond::pack_f(bond::transpack_f<void_type[ys_expected[I]]>(outputs.count(), output.samples(...)))
+				XTAL_0FN_(return) (echo('\t'
 				,	((i*ys_expected[I])                + ys_provided++[I])...
 				))
 				(bond::seek_s<bond::pack_size_n<U3>>{});
@@ -120,7 +120,7 @@ TAG_("collate")
 	}
 	TRY_("referencing")
 	{
-		XTAL_LET N = (size_type) 4;
+		auto constexpr N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
 		using simplex_val = collate_t<float   [N]>;

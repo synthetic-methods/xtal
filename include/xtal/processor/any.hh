@@ -56,8 +56,8 @@ struct define
 
 			public:// ACCESS
 
-				XTAL_DEF_(short)
-				XTAL_LET delay()
+				XTAL_DEF_(return,inline,let)
+				delay()
 				noexcept -> auto
 				{
 					using R_delay = XTAL_ALL_(R_::delay());
@@ -68,16 +68,16 @@ struct define
 			public:// FLOW
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(long)
-				XTAL_LET flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo
+				XTAL_DEF_(return,let)
+				flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo
 				)
 				noexcept -> signed
 				{
@@ -88,10 +88,10 @@ struct define
 					}
 					else {
 						return s.reflux([&] (counted_q auto scan, counter_q auto step)
-							XTAL_0FN_(s.template subview_flux<N_ion>(review_o.subview(scan), render_o.subview(scan).skip(step)))
+							XTAL_0FN_(return) (s.template subview_flux<N_ion>(review_o.subview(scan), render_o.subview(scan).skip(step)))
 						)
 						&	[this, ...oo=XTAL_REF_(oo)]
-								XTAL_XFN_(1, &, R_::template flux<N_ion>(oo...))
+								XTAL_0FN_(and) (R_::template flux<N_ion>(oo...))
 									(R_::template flux_arguments<+1>(XTAL_REF_(render_o)));
 					}
 				}
@@ -99,13 +99,13 @@ struct define
 				Renders the buffer slice designated by `review_o` and `render_o`. \
 				
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(long)
-				XTAL_LET subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
+				XTAL_DEF_(return,let)
+				subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
-					auto    &u_state = review_o.view();
-					using    U_state = XTAL_ALL_(u_state);
-					XTAL_LET N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
+					auto          &u_state = review_o.view();
+					using          U_state = XTAL_ALL_(u_state);
+					auto constexpr N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 					
 					if (1 == R_::template flux_arguments_<N_ion, N_share>(review_o, render_o)) {
 						return 1;
@@ -171,9 +171,9 @@ struct defer<U>
 	public:
 		using S_::S_;
 
-		XTAL_DO2_(template <auto ...>
-		XTAL_DEF_(short)
-		XTAL_LET method(),
+		XTAL_FX2_(do) (template <auto ...>
+		XTAL_DEF_(return,inline,let)
+		method(),
 		noexcept -> decltype(auto)
 		{
 			auto &v = S_::template head<V_render>().view();
@@ -218,28 +218,27 @@ struct defer<U>
 		If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` \
  		(so it can be `vtable`d). \
 
-		XTAL_DO2_(template <auto ...Is>
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs),
+		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs),
 		noexcept -> auto
 		{
-			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
+			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_n<Is>...);
 			XTAL_IF0
 			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
 			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
-
-	//	XTAL_DO0_(template <auto ...Is>
-	//	XTAL_DEF_(short,static)
-	//	XTAL_LET static_method(auto &&...xs),
-	//	noexcept -> auto
-	//	requires requires {U_::template static_method<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
-	//	{
-	//		auto const f = iterative_f(XTAL_FUN_(U_::template static_method<Is...>), XTAL_REF_(xs)...);
-	//		XTAL_IF0
-	//		XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
-	//		XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
-	//	})
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&...xs)
+		noexcept -> auto
+		requires requires {U_::template static_method<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
+		{
+			auto constexpr f = [] XTAL_0FN_(alias) (U_::template static_method<Is...>);
+			XTAL_IF0
+			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
+			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
+		}
 
 	};
 };

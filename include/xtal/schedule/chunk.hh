@@ -54,16 +54,16 @@ struct chunk
 				U_spool u_spool{
 					(U_event) L_delay::max()
 				};
-				XTAL_TO4_(XTAL_DEF_(let) head_(int i), u_spool.begin(i - 1)->head())
-				XTAL_TO4_(XTAL_DEF_(let) then_(int i), u_spool.begin(i - 1)->tail())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i - 1)->head())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i - 1)->tail())
 
 			public:
 				using R_::R_;
 				using R_::self;
 				
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
@@ -73,8 +73,8 @@ struct chunk
 				otherwise enqueues the event. \
 
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(same_q<U_event> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(same_q<U_event> auto &&o)
 				noexcept -> signed
 				{
 					if (0 == o.head()) {
@@ -88,8 +88,8 @@ struct chunk
 
 				///\returns The delay until the next event to be processed. \
 
-				XTAL_DEF_(inline)
-				XTAL_LET delay()
+				XTAL_DEF_(inline,let)
+				delay()
 				noexcept -> V_delay
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
@@ -101,8 +101,8 @@ struct chunk
 				
 				///\returns the delay until the next event. \
 
-				XTAL_DEF_(inline)
-				XTAL_LET relay(V_delay i)
+				XTAL_DEF_(inline,let)
+				relay(V_delay i)
 				noexcept -> V_delay
 				{
 					R_::relay(i);

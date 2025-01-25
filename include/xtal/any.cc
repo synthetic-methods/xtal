@@ -94,20 +94,20 @@ static_assert(complex_field_q<_std::complex<float>>);
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N_index>
-XTAL_DEF_(long)
-XTAL_LET check_f(auto const &u, auto const &v)
+XTAL_DEF_(return,inline,let)
+check_f(auto const &u, auto const &v)
 noexcept -> bool
 {
 	using _fix = bond::fixture<decltype(u), decltype(v)>;
 	return _fix::template trim_f<N_index>(u) == _fix::template trim_f<N_index>(v);
 }
 template <int N_index, int N_limit>
-XTAL_DEF_(long)
-XTAL_LET check_f(auto const &u, auto const &v)
+XTAL_DEF_(return,inline,let)
+check_f(auto const &u, auto const &v)
 noexcept -> int
 {
-	XTAL_LET Z_index = sign_n<N_index>;
-	XTAL_LET Z_limit = sign_n<N_limit>;
+	auto constexpr Z_index = sign_n<N_index>;
+	auto constexpr Z_limit = sign_n<N_limit>;
 	static_assert(Z_index == Z_limit);
 
 	XTAL_IF0
@@ -124,8 +124,8 @@ noexcept -> int
 		return check_f<N_limit>(u, v)? N_limit: check_f<N_index, N_limit - Z_limit>(u, v);
 	}
 }
-XTAL_DEF_(long)
-XTAL_LET check_f(auto const &u, auto const &v)
+XTAL_DEF_(return,inline,let)
+check_f(auto const &u, auto const &v)
 noexcept -> int
 {
 	return check_f<-1, 1 - (int) bond::fixture<>::fraction.depth>(u, v);
@@ -160,8 +160,8 @@ struct mix
 	{
 	public:
 
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs) const
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs) const
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ 0);
@@ -181,8 +181,8 @@ struct static_onset_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(short,static)
-		XTAL_LET static_method(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		static_method(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
@@ -199,8 +199,8 @@ struct dynamic_onset_mix
 	{
 	public:
 
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&...xs)
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ this->template head<Ox_onset>());
@@ -219,8 +219,8 @@ struct dynamic_term
 	{
 	public:
 
-		XTAL_DEF_(short)
-		XTAL_LET method(auto &&x)
+		XTAL_DEF_(return,inline,let)
+		method(auto &&x)
 		noexcept -> auto
 		{
 			return XTAL_REF_(x)*this->template head<Ox_scale>();
@@ -248,8 +248,8 @@ struct dynamic_count
 	public:
 		using T_::T_;
 
-		XTAL_DEF_(short)
-		XTAL_LET method()
+		XTAL_DEF_(return,inline,let)
+		method()
 		noexcept -> auto
 		{
 			auto i = u_count; u_count += this->template head<U_restep>(); return i;

@@ -15,10 +15,10 @@ template <class U=unsigned>	struct   sample;
 template <class U=unsigned>	using    sample_t = confined_t<sample<U>>;
 template <typename   ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
 
-XTAL_DEF_(let) sample_f(auto &&w)
+XTAL_DEF_(return,inline,let) sample_f(auto &&w)
 //\
-noexcept {return sample_t<typename bond::fixture<decltype(w)>::delta_type>(XTAL_REF_(w));}
-noexcept {return sample_t<>(XTAL_REF_(w));}
+noexcept -> decltype(auto) {return sample_t<typename bond::fixture<decltype(w)>::delta_type>(XTAL_REF_(w));}
+noexcept -> decltype(auto) {return sample_t<>(XTAL_REF_(w));}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -75,8 +75,8 @@ public:
 
 	public:// OPERATE
 
-		XTAL_TO4_(XTAL_DEF_(let)   rate(), get<0>(S_::head()))
-		XTAL_TO4_(XTAL_DEF_(let) period(), get<1>(S_::head()))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get)   rate(), get<0>(S_::head()))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) period(), get<1>(S_::head()))
 
 	};
 };

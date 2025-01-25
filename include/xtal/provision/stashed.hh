@@ -60,13 +60,14 @@ struct stashed<U_state, U_store>
 		noexcept
 		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
-		XTAL_LET store(U_store o, auto &&...oo)
+		XTAL_DEF_(inline,let)
+		store(U_store o, auto &&...oo)
 		noexcept -> void
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_TO4_(XTAL_DEF_(let) store(), S_::template head<1>())
-		XTAL_TO4_(XTAL_DEF_(let) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) store(), S_::template head<1>())
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

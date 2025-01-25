@@ -14,8 +14,8 @@ namespace xtal::process
 Convenience wrapper to repack the result of the provided process \
 to make it suitable for output to `pack::rowwise_f`. \
 
-template <typename A, typename ...As> using conveyor   = confined  <lift<decltype(XTAL_FUN_(bond::repack_f<>)), A>, As...>;
-template <typename A, typename ...As> using conveyor_t = confined_t<lift<decltype(XTAL_FUN_(bond::repack_f<>)), A>, As...>;
+template <typename A, typename ...As> using conveyor   = confined  <lift<decltype([] XTAL_0FN_(alias) (bond::repack_f<>)), A>, As...>;
+template <typename A, typename ...As> using conveyor_t = confined_t<lift<decltype([] XTAL_0FN_(alias) (bond::repack_f<>)), A>, As...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

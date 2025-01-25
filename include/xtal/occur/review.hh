@@ -15,8 +15,8 @@ template <typename ..._s> struct   review;
 template <typename ..._s> concept  review_q = bond::tag_p<review, _s...>;
 template <iterable_q  U > using    review_t = confined_t<review<U>, bond::tag<review>>;
 template <iterable_q  U >
-XTAL_DEF_(short)
-XTAL_LET review_f(U &&u)
+XTAL_DEF_(return,inline,let)
+review_f(U &&u)
 noexcept -> auto
 {
 	return review_t<U>(XTAL_REF_(u));
@@ -39,8 +39,8 @@ struct review<U>
 		using S_::twin;
 		using S_::head;
 		
-		XTAL_TO4_(XTAL_DEF_(let)    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
-		XTAL_TO2_(XTAL_DEF_(let) subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get)    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

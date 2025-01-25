@@ -51,10 +51,10 @@ public:
 //\
 Structural...
 
-template <         class ...Ts>	concept     isotropic_q	=          _entail::      isotropic<   Ts...>::value;
-template <         class ...Ts>	concept     epitropic_q	=          _entail::      epitropic<   Ts...>::value;
-template <         class ...Ts>	concept    isomorphic_q	=          _entail::     isomorphic<   Ts...>::value;
-template <         class ...Ts>	concept    epimorphic_q	=          _entail::     epimorphic<   Ts...>::value;
+template <         class ...Ts>	concept     isotropic_q	=          _entail::    isotropic_q<   Ts...>;
+template <         class ...Ts>	concept     epitropic_q	=          _entail::    epitropic_q<   Ts...>;
+template <         class ...Ts>	concept    isomorphic_q	=          _entail::   isomorphic_q<   Ts...>;
+template <         class ...Ts>	concept    epimorphic_q	=          _entail::   epimorphic_q<   Ts...>;
 
 template <         class ...Ts>	concept      fungible_q	=          _entail::     fungible_q<   Ts...>; //< `T` and `Ts...` are   related by inheritance.
 template <         class ...Ts>	concept    infungible_q	=          _entail::   infungible_q<   Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
@@ -104,14 +104,9 @@ using derive_t	= typename _entail::derive<T_>::type;
 ///\
 Defines a factory for the supplied type. \
 
-template <class T>
-XTAL_LET invoke_n = _entail::invoke_n<T>;
-
-template <class T>
-using    invoke_t = decltype(invoke_n<T>);
-
-template <class T, class ...Xs>
-concept  invoke_p = _std::invocable<invoke_t<T>, Xs...>;
+template <class T             > auto constexpr invoke_n = _entail::invoke_n<T>;
+template <class T             > using          invoke_t = decltype(invoke_n<T>);
+template <class T, class ...Xs> concept        invoke_p = _std::invocable<invoke_t<T>, Xs...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,8 +125,8 @@ template <auto  N, auto  ...Ms>	concept            un_n	=         _entail::     
 template <class T, class ...Ts>	concept            in_q	=         _entail::                in_q<T, Ts...>;
 template <class T, class ...Ts>	concept            un_q	=         _entail::                un_q<T, Ts...>;
 
-template <class          ...Ts>	concept      variable_q	= (...and _entail::          variable_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      constant_q	= (...and _entail::          constant_q<XTAL_RAW_(Ts)>);
+template <class          ...Ts>	concept      variable_q	= (...and _entail::          variable_q<XTAL_TYP_(Ts)>);
+template <class          ...Ts>	concept      constant_q	= (...and _entail::          constant_q<XTAL_TYP_(Ts)>);
 template <auto   N=null_type{}>	using        constant_t	=         _entail::          constant_t<N >  ;
 template <auto   N=null_type{}>	XTAL_LET     constant_n	=         _entail::          constant_t<N >{};
 
@@ -163,10 +158,10 @@ template <class 	    ...Ts>  concept          simplex_q	= (...and _entail::     
 template <class 	    ...Ts>  concept          anyplex_q	= (...and _entail::      anyplex_q<Ts>);
 template <class 	    ...Ts>  concept           number_q	=                         anyplex_variable_q<Ts...>;
 
-template <class          ...Ts>	concept       liminal_q	= (...and _entail::      liminal_q<XTAL_RAW_(Ts)>);
-template <class          ...Ts>	concept      terminal_q	= (...and _entail::     terminal_q<XTAL_RAW_(Ts)>);
-template <liminal_q T         >	using      subliminal_s	=  typename _entail::   subliminal_s<T >;
-template <liminal_q T         >	using    superliminal_s	=  typename _entail:: superliminal_s<T >;
+template <class          ...Ts>	concept       liminal_q	= (...and _entail::      liminal_q<XTAL_TYP_(Ts)>);
+template <class          ...Ts>	concept      terminal_q	= (...and _entail::     terminal_q<XTAL_TYP_(Ts)>);
+template <liminal_q T         >	using      subliminal_t	=  typename _entail::   subliminal_t<T >;
+template <liminal_q T         >	using    superliminal_t	=  typename _entail:: superliminal_t<T >;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,6 +215,9 @@ template <         class ...Ts>	concept   fixed_sized_q	=  (...and _entail::   f
 template <class T             >	using     fluid_sized  	=          _entail::   fluid_sized  <T >;
 template <class T             >	XTAL_LET  fluid_sized_n	=          _entail::   fluid_sized_n<T >;
 template <         class ...Ts>	concept   fluid_sized_q	=  (...and _entail::   fluid_sized_q<Ts>);
+
+template <         class ...Ts>	concept unfixed_sized_q	=  (...and _entail:: unfixed_sized_q<Ts>);
+template <         class ...Ts>	concept unfluid_sized_q	=  (...and _entail:: unfluid_sized_q<Ts>);
 
 template <class T             >	using           sized  	=          _entail::         sized  <T >;
 template <class T             >	XTAL_LET        sized_n	=          _entail::         sized_n<T >;
@@ -345,14 +343,14 @@ template <class   ...Ts>	concept                quality_q	= (...and             
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_LET zero   = constant_t<XTAL_VAL_(0   )>{};
-XTAL_LET half   = constant_t<XTAL_VAL_(0.5F)>{};
-XTAL_LET  one   = constant_t<XTAL_VAL_(1   )>{};
-XTAL_LET  two   = constant_t<XTAL_VAL_(2   )>{};
-XTAL_LET  three = constant_t<XTAL_VAL_(3   )>{};
+auto constexpr zero   = constant_n<[] XTAL_0FN_(value) (0   )>;
+auto constexpr half   = constant_n<[] XTAL_0FN_(value) (0.5F)>;
+auto constexpr  one   = constant_n<[] XTAL_0FN_(value) (1   )>;
+auto constexpr  two   = constant_n<[] XTAL_0FN_(value) (2   )>;
+auto constexpr  three = constant_n<[] XTAL_0FN_(value) (3   )>;
 
-template <auto  N> XTAL_LET half_n = constant_t<XTAL_VAL_(1.F/(one << N))>{};
-template <auto  N> XTAL_LET  two_n = constant_t<XTAL_VAL_(1.F*(one << N))>{};
+template <auto  N> auto constexpr half_n = constant_n<[] XTAL_0FN_(value) (1.F/(one << N))>;
+template <auto  N> auto constexpr  two_n = constant_n<[] XTAL_0FN_(value) (1.F*(one << N))>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

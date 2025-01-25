@@ -25,8 +25,8 @@ template <typename ..._s> struct   polymer;
 template <typename ..._s> using    polymer_t =  confined_t<polymer< _s...>>;
 template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s... >;
 template <typename ..._s>
-XTAL_DEF_(short)
-XTAL_LET polymer_f(auto &&u)
+XTAL_DEF_(return,inline,let)
+polymer_f(auto &&u)
 noexcept -> auto
 {
 	return polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u));
@@ -88,20 +88,20 @@ struct polymer<U, As...>
 				using R_::self;
 				using R_::head;
 
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(), u_ensemble)
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(integral_q auto i), u_ensemble[i])
-				XTAL_TO2_(XTAL_DEF_(let) ensemble(occur::stage_q auto &&o)
-				,	u_ensemble|_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e) XTAL_0FN_(0 != e.template flux<-1>(o)))
+				XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) ensemble(), u_ensemble)
+				XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
+				XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
+				,	u_ensemble|_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e) XTAL_0FN_(return) (0 != e.template flux<-1>(o)))
 				)
 
 				//\
-				XTAL_TO2_(XTAL_DEF_(let) lead(), ensemble().front())
-				XTAL_TO2_(XTAL_DEF_(let) lead(), R_::template head<V_voice>())
+				XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) lead(), ensemble().front())
+				XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) lead(), R_::template head<V_voice>())
 
 			public:// FLOW
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
@@ -112,15 +112,15 @@ struct polymer<U, As...>
 				and govern the allocation/deallocation of keyed instances. \
 				
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(flow::key_q auto io, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(flow::key_q auto io, auto &&...oo)
 				noexcept -> signed
 				{
 					return flux<N_ion>(flow::key_s<>(io), io.tail(), XTAL_REF_(oo)...);
 				}
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(flow::key_s<> i_, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(flow::key_s<> i_, auto &&...oo)
 				noexcept -> signed
 				{
 					auto   u_ = ensemble().scan(i_.head());
@@ -132,15 +132,15 @@ struct polymer<U, As...>
 				Forwards to all active instances including the sentinel (except when rendering). \
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux_arguments(auto &&...oo)
+				XTAL_DEF_(return,let)
+				flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
 					using namespace occur;
 					using _xtd::ranges::accumulate;
 
 					auto constexpr active = stage_f(0);
-					auto const     reduce = [=] (auto x, auto &&e) XTAL_0FN_(x & XTAL_REF_(e).template flux<N_ion>(oo...));
+					auto const     reduce = [=] (auto x, auto &&e) XTAL_0FN_(return) (x & XTAL_REF_(e).template flux<N_ion>(oo...));
 					auto           result = N_ion < 0? -1: lead().template flux<N_ion>(XTAL_REF_(oo)...);
 
 					if constexpr (some_stage_q<decltype(oo)...>) {
@@ -166,8 +166,8 @@ struct polymer<U, As...>
 				before a new instance is allocated from the prototype `head`. \
 
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(long)
-				XTAL_LET flux(flow::key_s<> i, V_event o, auto &&...oo)
+				XTAL_DEF_(return,let)
+				flux(flow::key_s<> i, V_event o, auto &&...oo)
 				noexcept -> signed
 				{
 					auto h  = i.head();
@@ -203,12 +203,13 @@ struct polymer<U, As...>
 				otherwise the multichannel data is just rendered locally on each voice. \
 				
 				template <signed N_ion> requires in_n<N_ion, -1>
-				XTAL_DEF_(long)
-				XTAL_LET subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
+				XTAL_DEF_(return,let)
+				subview_flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o)
 				noexcept -> signed
 				{
-					ensemble().free([] (auto &&e) XTAL_0FN_(XTAL_REF_(e).template flux<N_ion>(occur::stage_f(-1))));
-					
+					ensemble().template free<[] (auto &&e)
+						XTAL_0FN_(return) (XTAL_REF_(e).template flux<N_ion>(occur::stage_f(-1)))
+					>();
 					for (auto &e:ensemble()) {
 						if (1 == e.template flux<N_ion>(XTAL_REF_(render_o))) {
 							return 1;
@@ -230,10 +231,10 @@ struct polymer<U, As...>
 							i -= 1; _detail::move_to(y0, point_f(ensemble(i)()), yN);
 						}
 						while (i) {switch (i) {
-							case 1:          {mix_f(constant_t<1>{}); break;}
-							case 2:          {mix_f(constant_t<2>{}); break;}
-							case 3:          {mix_f(constant_t<3>{}); break;}
-							case 4: default: {mix_f(constant_t<4>{}); break;}
+							case 1:          {mix_f(constant_n<1>); break;}
+							case 2:          {mix_f(constant_n<2>); break;}
+							case 3:          {mix_f(constant_n<3>); break;}
+							case 4: default: {mix_f(constant_n<4>); break;}
 						}}
 					}
 					return 0;

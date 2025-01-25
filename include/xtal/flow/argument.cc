@@ -32,7 +32,7 @@ TAG_("argument")
 		TRUE_(same_q<decltype(XTAL_ANY_(U_target).tail()), U_source>);
 
 	}
-	XTAL_LET maybe = [] (argument_s<> g)
+	auto constexpr maybe = [] (argument_s<> g)
 	XTAL_0FN {
 		if (g) {
 			return true;

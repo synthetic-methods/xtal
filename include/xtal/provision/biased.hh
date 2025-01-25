@@ -37,8 +37,8 @@ struct biased
 		using S_::S_;
 		
 		template <class U=U_bias>
-		XTAL_DEF_(short,static)
-		XTAL_LET bias()
+		XTAL_DEF_(return,inline,set)
+		bias()
 		noexcept -> auto
 		{
 			return static_cast<U>(U_bias {});

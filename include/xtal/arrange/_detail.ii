@@ -21,16 +21,16 @@ struct aligned
 {
 	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
 
-	XTAL_DEF_(set) size() noexcept {return sizeof(type);}
+	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) {return sizeof(type);}
 
 };
-template <class T             >	using    aligned_t	=  typename aligned<T >::type;
-template <         class ...Ts>	XTAL_LET aligned_n	=  (size_type{0} +...+ aligned<Ts>::size());
-template <         class ...Ts>	XTAL_LET aligned_m	=  aligned_n<Ts...> - one;
+template <class T             >	using          aligned_t =  typename aligned<T >::type;
+template <         class ...Ts>	auto constexpr aligned_n =  (size_type{0} +...+ aligned<Ts>::size());
+template <         class ...Ts>	auto constexpr aligned_m =  aligned_n<Ts...> - one;
 
 template <class T>
-XTAL_DEF_(short)
-XTAL_LET maligned_f(auto &i)
+XTAL_DEF_(return,inline,let)
+maligned_f(auto &i)
 noexcept -> auto
 {
 	using I = XTAL_ALL_(i);
@@ -48,16 +48,16 @@ struct initialize
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
 	template <class V=void, class ...Xs>
-	XTAL_DEF_(short,static)
-	XTAL_LET via(Xs &&...xs)
+	XTAL_DEF_(return,inline,set)
+	via(Xs &&...xs)
 	noexcept -> auto
 	{
 		XTAL_IF0
 		XTAL_0IF (complete_q<V>) {
-			XTAL_LET f = invoke_n<V>;
-			using    F = invoke_t<V>;
-			using    U = common_t<return_t<F, Xs>...>;
-			XTAL_LET N = sizeof...(xs);
+			auto constexpr f = invoke_n<V>;
+			using          F = invoke_t<V>;
+			using          U = common_t<return_t<F, Xs>...>;
+			auto constexpr N = sizeof...(xs);
 			if constexpr (automorphism_p<F, U>) {
 				return T<U[N]>{ (XTAL_REF_(xs))...};
 			}
@@ -66,7 +66,7 @@ struct initialize
 			}
 		}
 		XTAL_0IF (incomplete_q<V>) {
-			return via<decltype(XTAL_FUN_(objective_f))>(XTAL_REF_(xs)...);
+			return via<decltype([] XTAL_0FN_(alias) (objective_f))>(XTAL_REF_(xs)...);
 		}
 	}
 

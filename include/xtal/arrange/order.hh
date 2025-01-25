@@ -20,8 +20,8 @@ template <class U, auto  N, auto  ..._s> struct   order<U(&)[N][_s]...> : order<
 
 
 template <class  V=void>
-XTAL_DEF_(short)
-XTAL_LET order_f(auto &&...oo)
+XTAL_DEF_(return,inline,let)
+order_f(auto &&...oo)
 noexcept -> auto
 {
 	return _detail::initialize<order_t>::template via<V>(XTAL_REF_(oo)...);
@@ -63,8 +63,8 @@ struct order<A>
 		using S_::size;
 
 	//	Vector comparison (performed point-wise):
-		XTAL_DEF_(short)
-		XTAL_LET operator <=> (homotype const &t) const
+		XTAL_DEF_(return,inline,let)
+		operator <=> (homotype const &t) const
 		noexcept -> decltype(auto)
 		{
 			homotype const &s = *this;
@@ -74,44 +74,44 @@ struct order<A>
 			   s  > t? _std::strong_ordering::   greater:
 			           _std::strong_ordering::equivalent;
 		}
-		XTAL_DEF_(short) XTAL_LET operator ==  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) == get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(short) XTAL_LET operator <=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(short) XTAL_LET operator >=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >= get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(short) XTAL_LET operator <   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <  get<I>(t)));} (bond::seek_s<N_data> {});}
-		XTAL_DEF_(short) XTAL_LET operator >   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline,let) operator ==  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) == get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline,let) operator <=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline,let) operator >=  (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >= get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline,let) operator <   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) <  get<I>(t)));} (bond::seek_s<N_data> {});}
+		XTAL_DEF_(return,inline,let) operator >   (homotype const &t) const noexcept -> bool {return [&, this]<auto ...I>(bond::seek_t<I...>) XTAL_0FN {return (...and (get<I>(self()) >  get<I>(t)));} (bond::seek_s<N_data> {});}
 
 	//	Scalar assignment (performed point-wide):
-		XTAL_DEF_(inline)        XTAL_LET operator <<= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) <<= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator >>= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) >>= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  ^= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  ^= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  |= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  |= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  &= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  &= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  %= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  %= u;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = one/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
-		XTAL_DEF_(inline)        XTAL_LET operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
-	//	XTAL_DEF_(inline)        XTAL_LET operator  -= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  -= u;}); return self();}
-	//	XTAL_DEF_(inline)        XTAL_LET operator  += (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  += u;}); return self();}
+		XTAL_DEF_(inline,let) operator <<= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) <<= u;}); return self();}
+		XTAL_DEF_(inline,let) operator >>= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self()) >>= u;}); return self();}
+		XTAL_DEF_(inline,let) operator  ^= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  ^= u;}); return self();}
+		XTAL_DEF_(inline,let) operator  |= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  |= u;}); return self();}
+		XTAL_DEF_(inline,let) operator  &= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  &= u;}); return self();}
+		XTAL_DEF_(inline,let) operator  %= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  %= u;}); return self();}
+		XTAL_DEF_(inline,let) operator  /= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([n = one/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
+		XTAL_DEF_(inline,let) operator  *= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
+	//	XTAL_DEF_(inline,let) operator  -= (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  -= u;}); return self();}
+	//	XTAL_DEF_(inline,let) operator  += (U_data    const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([        &, this] (auto I) XTAL_0FN {get<I>(self())  += u;}); return self();}
 
-		XTAL_DEF_(short,friend)
-		XTAL_LET operator * (auto const &s, T const &t)
+		XTAL_DEF_(return,inline,friend,let)
+		operator * (auto const &s, T const &t)
 		noexcept -> auto
 		requires (dissolve_r<decltype(s)> < dissolve_r<T>)
 		{
 			return t * s;
 		}
-		XTAL_DEF_(short,friend)
-		XTAL_LET operator + (auto const &s, T const &t)
+		XTAL_DEF_(return,inline,friend,let)
+		operator + (auto const &s, T const &t)
 		noexcept -> auto
 		requires (dissolve_r<decltype(s)> < dissolve_r<T>)
 		{
 			return t + s;
 		}
 
-//		XTAL_DEF_(short,friend)
-//		XTAL_LET operator - (T const &s)
+//		XTAL_DEF_(return,inline,friend,let)
+//		operator - (T const &s)
 //		noexcept -> auto
 //		{
-//			return pointwise<[] (auto const &x) XTAL_0FN_(-x)>(s);
+//			return pointwise<[] (auto const &x) XTAL_0FN_(return) (-x)>(s);
 //		}
 
 	};

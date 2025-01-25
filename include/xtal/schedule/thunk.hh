@@ -45,11 +45,9 @@ struct thunk
 				using typename R_::V_event;
 				using typename R_::U_event;
 
-				using    X_cue = typename U_event::cue_type;
-				XTAL_SET K_cut =          U_event::cue_size::value;
-				//\
-				using V_shuttle = X_cue;
-				using V_shuttle =           arrange::grade_t<X_cue[K_cut]>;
+				using U_cued    =              typename U_event::cued_type;
+				using U_tailed  =                      valued_u<U_cued   >;
+				using V_shuttle =              arrange::grade_t<U_cued   >;
 				using U_shuttle =                   flow::cue_s<V_shuttle>;
 				using U_spool   = typename S_::template spool_t<U_shuttle>;
 
@@ -70,26 +68,26 @@ struct thunk
 				};
 				U_shuttle u_shuttle{};
 
-				XTAL_TO4_(XTAL_DEF_(let) head_(), u_shuttle.head())
-				XTAL_TO4_(XTAL_DEF_(let) then_(), u_shuttle.tail())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(), u_shuttle.head())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(), u_shuttle.tail())
 
-				XTAL_TO4_(XTAL_DEF_(let) head_(int i), u_spool.begin(i)->head())
-				XTAL_TO4_(XTAL_DEF_(let) then_(int i), u_spool.begin(i)->tail())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i)->head())
+				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
 
 				template <auto ...>
-				XTAL_DEF_(short)
-				XTAL_LET method()
+				XTAL_DEF_(return,inline,let)
+				method()
 				noexcept -> decltype(auto)
 				{
 					return u_spool.advance(head_()++ == head_(1))->
-						tail().apply([this] XTAL_1FN_(method));
+						tail().apply([this] XTAL_0FN_(alias) (method));
 				}
 				template <auto ...>
-				XTAL_DEF_(short)
-				XTAL_LET method(V_shuttle &x, auto &&...)
+				XTAL_DEF_(return,inline,let)
+				method(V_shuttle &x, auto &&...)
 				noexcept -> auto
 				{
 					//\
@@ -100,15 +98,15 @@ struct thunk
 			public:// FLOW
 
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				template <signed N_ion>
-				XTAL_DEF_(short)
-				XTAL_LET flux(auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
 				noexcept -> signed
 				{
 					if constexpr (0 <= N_ion) {
@@ -118,8 +116,8 @@ struct thunk
 				}
 
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET flux(same_q<X_cue> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<U_tailed> auto &&o)
 				noexcept -> signed
 				{
 					compact_();
@@ -132,8 +130,8 @@ struct thunk
 					}
 				}
 				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(short)
-				XTAL_LET fuse(flow::cue_q auto &&o)
+				XTAL_DEF_(return,inline,let)
+				fuse(flow::cue_q auto &&o)
 				noexcept -> signed
 				{
 					if constexpr (same_q<U_shuttle, decltype(o)>) {
@@ -148,16 +146,16 @@ struct thunk
 				//\
 				Enqueues the given message. \
 
-				XTAL_DEF_(short)
-				XTAL_LET shuttle_(same_q<U_shuttle> auto &&o)
+				XTAL_DEF_(return,inline,let)
+				shuttle_(same_q<U_shuttle> auto &&o)
 				noexcept -> signed
 				{
 					compact_(o);
 					u_spool.push(XTAL_REF_(o));
 					return 0;
 				}
-				XTAL_DEF_(short)
-				XTAL_LET shuttle_(V_delay v, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				shuttle_(V_delay v, auto &&...oo)
 				noexcept -> signed
 				{
 					return shuttle_(U_shuttle(v, V_shuttle{XTAL_REF_(oo)...}));
@@ -168,20 +166,20 @@ struct thunk
 				Unpacks the given message, \
 				allowing for gradient calculation/requeueing. \
 				
-				XTAL_DEF_(short)
-				XTAL_LET shuffle_(flow::cue_q auto &&o, auto &&...oo)
+				XTAL_DEF_(return,inline,let)
+				shuffle_(flow::cue_q auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
 					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
 				}
-				XTAL_DEF_(short)
-				XTAL_LET shuffle_(same_q<X_cue> auto &&x1, V_delay t1)
+				XTAL_DEF_(return,inline,let)
+				shuffle_(same_q<U_tailed> auto &&x1, V_delay t1)
 				noexcept -> signed
 				{
-					return shuttle_(t1, x1);
+					return shuttle_(t1, XTAL_REF_(x1));
 				}
-				XTAL_DEF_(long)
-				XTAL_LET shuffle_(same_q<X_cue> auto &&x1, V_delay t1, V_delay t0)
+				XTAL_DEF_(return,let)
+				shuffle_(same_q<U_tailed> auto &&x1, V_delay t1, V_delay t0)
 				noexcept -> signed
 				{
 					if (t0 < t1) {
@@ -195,7 +193,7 @@ struct thunk
 						auto const t_ = t1 - t0;
 						(void) shuttle_(t0, x0, x_/XTAL_ALL_(x_){t_});
 					}
-					return shuffle_(x1, t1);
+					return shuffle_(XTAL_REF_(x1), t1);
 				}
 			
 			private:
@@ -204,7 +202,8 @@ struct thunk
 				clearing all processed events, \
 				bringing forward any future events. \
 
-				XTAL_LET compact_()//TODO: Filter somehow?
+				XTAL_DEF_(let)
+				compact_()//TODO: Filter somehow?
 				noexcept -> void
 				{
 					V_delay const v_delay = head_(); head_() = 0;
@@ -213,14 +212,16 @@ struct thunk
 						u -= v_delay;
 					}
 				}
-				XTAL_LET compact_(V_delay const &v)
+				XTAL_DEF_(let)
+				compact_(V_delay const &v)
 				noexcept -> void
 				{
 					if (v < u_shuttle.head()) {
 						compact_();
 					}
 				}
-				XTAL_LET compact_(flow::cue_q auto const &o)
+				XTAL_DEF_(let)
+				compact_(flow::cue_q auto const &o)
 				noexcept -> void
 				{
 					compact_(o.head());

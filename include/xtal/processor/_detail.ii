@@ -49,8 +49,8 @@ struct refer_unprocessed
 	public:
 		using S_::S_;
 
-		XTAL_TO2_(XTAL_DEF_(let) begin(), S_::method().begin())
-		XTAL_TO2_(XTAL_DEF_(let)   end(), S_::method().  end())
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) begin(), S_::method().begin())
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)   end(), S_::method().  end())
 
 	};
 };
