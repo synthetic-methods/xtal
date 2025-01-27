@@ -36,7 +36,7 @@ TAG_("thunk", "process")
 		using U1_event = flow::cue_s<U0_event>;
 		using U2_event = flow::cue_s<U1_event>;
 		
-		using W0_event = arrange::grade_t<U0_event[2]>;
+		using W0_event = atom::grade_t<U0_event[2]>;
 		using V_event = flow::cue_s<>;
 		
 		//\

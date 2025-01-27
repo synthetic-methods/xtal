@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../arrange/cache.hh"
+#include "../atom/cache.hh"
 
 
 
@@ -11,20 +11,20 @@ namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides local arena-like storage via `cache()`. \
+Provides local arena-like storage via `stow()`. \
 
-template <typename ...As> struct   cached;
-template <typename ...As> using    cached_t = confined_t<cached<As...>>;
-template <typename ..._s> concept  cached_q = bond::tag_p<cached, _s...>;
+template <typename ...As> struct   stowed;
+template <typename ...As> using    stowed_t = confined_t<stowed<As...>>;
+template <typename ..._s> concept  stowed_q = bond::tag_p<stowed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...As>
-struct cached
+struct stowed
 {
-	using superkind = bond::compose<bond::tag<cached>
-	,	defer<arrange::cache_t<As...>>
+	using superkind = bond::compose<bond::tag<stowed>
+	,	defer<atom::cache_t<As...>>
 	>;
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -38,16 +38,16 @@ struct cached
 	public:// ACCESS
 		using S_::head;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) cache(), head())
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) stow(), head())
 		
 		XTAL_FX4_(alias) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(return,inline,get) cache(), head().template form<Vs...>())
+		XTAL_DEF_(return,inline,get) stow(), head().template form<Vs...>())
 		
 		XTAL_FX4_(alias) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(return,inline,get) cache(Vs const &...vs), head().form(vs...))
+		XTAL_DEF_(return,inline,get) stow(Vs const &...vs), head().form(vs...))
 		
-		template <         U u> XTAL_DEF_(inline,let) cache( ) noexcept -> void {head().fill(u       );}
-		template <constant_q I> XTAL_DEF_(inline,let) cache(I) noexcept -> void {head().fill(I::value);}
+		template <         U u> XTAL_DEF_(inline,let) stow( ) noexcept -> void {head().fill(u       );}
+		template <constant_q I> XTAL_DEF_(inline,let) stow(I) noexcept -> void {head().fill(I::value);}
 
 	};
 };

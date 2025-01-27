@@ -2,7 +2,7 @@
 #include "../any.cc"
 #include "./any.hh"// testing...
 
-#include "../arrange/all.hh"
+#include "../atom/all.hh"
 
 
 
@@ -88,7 +88,7 @@ TAG_("processor", "construct")
 		using T_alpha = typename bond::fixture<>::alpha_type;
 
 		unsigned constexpr N_size = 5;
-		using U_block = arrange::block_t<T_alpha[N_size]>;
+		using U_block = atom::block_t<T_alpha[N_size]>;
 		
 		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0));
 		auto x = U_block { 0,  1,  2,  3,  4};

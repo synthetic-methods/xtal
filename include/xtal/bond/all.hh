@@ -1,6 +1,5 @@
 #include "./any.hh"
 #include "./compose.hh"
-#include "./couple.hh"
 #include "./fixture.hh"
 #include "./forge.hh"
 #include "./pack.hh"

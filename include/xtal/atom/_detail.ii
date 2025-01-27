@@ -43,30 +43,37 @@ noexcept -> auto
 ////////////////////////////////////////////////////////////////////////////////
 
 template <template <class ...Us> class T>
-struct initialize
+struct build
 {
 //	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
 
-	template <class V=void, class ...Xs>
+	template <auto f=null_type{}, class ...Xs>
 	XTAL_DEF_(return,inline,set)
-	via(Xs &&...xs)
+	with(Xs &&...xs)
 	noexcept -> auto
 	{
+		using          F  =     invoke_t<decltype(f)>;
+		using          X_ =           common_t<Xs...>;
+		using          X0 = bond::seek_front_t<Xs...>;
+		auto constexpr N  = sizeof...(xs);
+
 		XTAL_IF0
-		XTAL_0IF (complete_q<V>) {
-			auto constexpr f = invoke_n<V>;
-			using          F = invoke_t<V>;
-			using          U = common_t<return_t<F, Xs>...>;
-			auto constexpr N = sizeof...(xs);
-			if constexpr (automorphism_p<F, U>) {
-				return T<U[N]>{ (XTAL_REF_(xs))...};
-			}
-			else {
-				return T<U[N]>{f(XTAL_REF_(xs))...};
-			}
+		XTAL_0IF (incomplete_q<F>) {
+		//	NOTE: Defining the default `f` here avoids eager-resolution which can prevent specialization...
+		//	TODO: Use ADL instead?
+			return with<[] XTAL_0FN_(alias) (objective_f)>(XTAL_REF_(xs)...);
 		}
-		XTAL_0IF (incomplete_q<V>) {
-			return via<decltype([] XTAL_0FN_(alias) (objective_f))>(XTAL_REF_(xs)...);
+		XTAL_0IF (in_n<automorphism_p<F, X_>> and      same_q<Xs...>) {
+			return T<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};
+		}
+		XTAL_0IF (un_n<automorphism_p<F, X_>> and      same_q<Xs...>) {
+			return T<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};
+		}
+		XTAL_0IF (in_n<automorphism_p<F, X0>> and different_q<Xs...>) {
+			return T<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};
+		}
+		XTAL_0IF (un_n<automorphism_p<F, X0>> and different_q<Xs...>) {
+			return T<return_t<F, Xs>...>{f(XTAL_REF_(xs))...};
 		}
 	}
 

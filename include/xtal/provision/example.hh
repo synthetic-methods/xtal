@@ -18,10 +18,7 @@ template <typename ..._s> concept  example_q = bond::tag_p<example, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provisional sample-rate/period `ex`port with implied scaling. \
-
-///\todo\
-Parameterise `sample` by decoration rather-than unit-type? \
+Exposes the `sampling().{rate,period}()`. \
 
 template <typename ...As>
 struct example
@@ -39,7 +36,7 @@ struct example
 	public:
 		using S_::S_;
 		
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) sample(), S_::head())
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) sampling(), S_::head())
 
 	};
 	template <class S> requires example_q<S>

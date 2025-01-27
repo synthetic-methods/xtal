@@ -4,7 +4,7 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -19,17 +19,17 @@ TAG_("cache")
 	using T_aphex = typename _fix::aphex_type;
 
 	TRY_("cache: formation") {
-		cache_t<T_alpha[2]> cachet;
+		cache_t<T_alpha[2]> blob;
 
-		auto [a0, b0] = cachet.form<T_alpha, T_alpha>();
+		auto [a0, b0] = blob.form<T_alpha, T_alpha>();
 		a0 = 0.125;
 		b0 = 0.875;
 
-		auto [a1, b1] = cachet.form<T_alpha, T_alpha>();
+		auto [a1, b1] = blob.form<T_alpha, T_alpha>();
 		TRUE_(a0 == a1);
 		TRUE_(b0 == b1);
 
-		auto [a2, b2] = cachet.form(T_alpha{-0.25}, T_alpha{-0.75});
+		auto [a2, b2] = blob.form(T_alpha{-0.25}, T_alpha{-0.75});
 		TRUE_(a0 == -0.25 and a1 == -0.25 and a2 == 0.125);
 		TRUE_(b0 == -0.75 and b1 == -0.75 and b2 == 0.875);
 

@@ -1,19 +1,19 @@
 #pragma once
 #include "./any.cc"
-#include "./collate.hh"// testing...
+#include "./couple.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("collate")
+TAG_("couple")
 {
 	using _fix = bond::fixture<>;
 	using T_delta = typename _fix::delta_type;
@@ -21,42 +21,59 @@ TAG_("collate")
 	using T_alpha = typename _fix::alpha_type;
 	using T_aphex = typename _fix::aphex_type;
 
-	EST_("collate reinitialization")
+	EST_("couple reinitialization")
 	{
-		collate_t<T_aphex[4]> foo{};
+		couple_t<T_aphex[4]> foo{};
 
 		for (int i{0}; i < 0x100; ++i) {
 			foo *= T_alpha{};
-			foo.unzero();
+			foo.blanket();
 		}
 		return foo;
 	};
-	TRY_("collate reinitialization")
+	TRY_("couple reinitialization")
 	{
-		using W_aphex = collate_t<T_aphex[2]>;
+		using W_aphex = couple_t<T_aphex[2]>;
 
 		auto constexpr N_size = 2;
 		W_aphex foo{};
 
 		foo *= T_alpha{};
-		TRUE_(foo == W_aphex{{0}, {0}}); TRUE_(foo.unzero() == 1);
-		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.unzero() == 0);
+		TRUE_(foo == W_aphex{{0}, {0}}); TRUE_(foo.blanket() == 1);
+		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.blanket() == 0);
 
 	}
-	TRY_("summation")
+	TRY_("couple production (multiplicative)")
+	{
+		using W =  couple_t<T_aphex, T_alpha>;
+		auto  x =  W{2, 3};
+		auto  y =  W{4, 9};
+		auto  z =  y*x;
+		TRUE_(z == W{8, 27});
+
+	}
+	TRY_("couple production (divisive)")
+	{
+		using W =  couple_t<T_aphex, T_alpha>;
+		auto  x =  W{2, 3};
+		auto  y =  W{4, 9};
+		auto  z =  y/x;
+		TRUE_(z == W{2, 3});
+	}
+	TRY_("couple summation")
 	{
 		auto constexpr N_size = 3;
-		using W = collate_t<T_alpha[N_size]>;
+		using W = couple_t<T_alpha[N_size]>;
 		auto  w = W{2.0, 1.0, 0.5};
 
 		TRUE_(3.5 == w.sum());
 		TRUE_(1.5 == w.template sum<-1>());
 
 	}
-	TRY_("reflection")
+	TRY_("couple reflection")
 	{
 		auto constexpr N_size = 2;
-		using W = collate_t<T_alpha[N_size]>;
+		using W = couple_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
 		auto foo = bar.template reflected<-1>();
@@ -68,13 +85,13 @@ TAG_("collate")
 		TRUE_(check_f<19>(baz[1], bar[1]));
 
 	}
-	TRY_("refactoring")
+	TRY_("couple refactoring")
 	{
 		using U0 = T_sigma;
-		using U1 = collate_t<U0[1]>;
-		using U2 = collate_t<U0[2]>;
-		using U3 = collate_t<U0[3]>;
-		using U4 = collate_t<U0[4]>;
+		using U1 = couple_t<U0[1]>;
+		using U2 = couple_t<U0[2]>;
+		using U3 = couple_t<U0[3]>;
+		using U4 = couple_t<U0[4]>;
 
 	//	TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 
@@ -94,37 +111,15 @@ TAG_("collate")
 		TRUE_(xs_provided.sum() == 22);
 		TRUE_(ys_provided.sum() == 30);
 
-		/*/
-		echo("\ninputs:");
-		for (size_type i = 0; i < ys_extent; ++i) {
-			auto input_tables = [&]<auto ...I> (bond::seek_t<I...>)
-				//\
-				XTAL_0FN_(return) (bond::transpack_f<void_type[xs_expected[I]]>(inputs.count(), inputs.samples(...)))
-				XTAL_0FN_(return) (echo('\t'
-				,	((i*xs_expected[I])%xs_provided[I] + xs_provided++[I])...
-				))
-				(bond::seek_s<bond::pack_size_n<U4>>{});
-		}
-		echo("\noutputs:");
-		for (size_type i = 0; i < ys_extent; ++i) {
-			auto output_table = [&]<auto ...I> (bond::seek_t<I...>)
-				//\
-				XTAL_0FN_(return) (bond::pack_f(bond::transpack_f<void_type[ys_expected[I]]>(outputs.count(), output.samples(...)))
-				XTAL_0FN_(return) (echo('\t'
-				,	((i*ys_expected[I])                + ys_provided++[I])...
-				))
-				(bond::seek_s<bond::pack_size_n<U3>>{});
-		}
-		/***/
-
 	}
+	/*/
 	TRY_("referencing")
 	{
 		auto constexpr N = (size_type) 4;
 		float foo[2][N] {{1, 2, 3, 4}, {5, 6, 7, 8}};
 
-		using simplex_val = collate_t<float   [N]>;
-		using simplex_ref = collate_t<float(&)[N]>;
+		using simplex_val = couple_t<float   [N]>;
+		using simplex_ref = couple_t<float(&)[N]>;
 		
 		using complex_val = _std::complex<simplex_val>;
 		using complex_ref = _std::complex<simplex_ref>;
@@ -139,6 +134,7 @@ TAG_("collate")
 		complex_val &baz    = reinterpret_cast<complex_val &>(foo   );
 
 	}
+	/***/
 }
 
 

@@ -1,23 +1,23 @@
 #pragma once
 #include "./any.cc"
-#include "./spool.hh"// testing...
+#include "./queue.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <int N>
-void spool__operation()
+void queue__operation()
 {
 	using U_event = bond::compose_s<Ox_onset, cell::conferred<int>>;
-	using U_queue = spool_t<U_event[N]>;
+	using U_queue = queue_t<U_event[N]>;
 	U_queue q {(U_event) _std::numeric_limits<int>::max()};
 
 	auto e1 = U_event(1, Ox_onset(-1.0));
@@ -33,10 +33,10 @@ void spool__operation()
 	TRUE_(-2.0 == q.begin()->tail()); q.advance(1); TRUE_(0 == q.size());
 
 }
-TAG_("spool")
+TAG_("queue")
 {
-	TRY_("operation fluid") {spool__operation<00>();}
-	TRY_("operation fixed") {spool__operation<64>();}
+	TRY_("operation fluid") {queue__operation<00>();}
+	TRY_("operation fixed") {queue__operation<64>();}
 
 }
 

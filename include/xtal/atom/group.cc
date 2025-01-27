@@ -7,13 +7,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("arrange", "group")
+TAG_("atom", "group")
 {
 	using F = _std::plus<void>;
 
@@ -23,16 +23,41 @@ TAG_("arrange", "group")
 	using T_alpha = typename _fix::alpha_type;
 	using T_aphex = typename _fix::aphex_type;
 
-	using D1 = group_t<int[1]>;
-	using D2 = group_t<int[2]>;
-	using D3 = group_t<int[3]>;
-	using D4 = group_t<int[4]>;
+	using A1 = group_t<_std::plus<int>[1]>;
+	using A2 = group_t<_std::plus<int>[2]>;
+	using A3 = group_t<_std::plus<int>[3]>;
+	using A4 = group_t<_std::plus<int>[4]>;
+	
+	using M1 = group_t<_std::multiplies<int>[1]>;
+	using M2 = group_t<_std::multiplies<int>[2]>;
+	using M3 = group_t<_std::multiplies<int>[3]>;
+	using M4 = group_t<_std::multiplies<int>[4]>;
 	
 	TRY_("partial construction")
 	{
-		D4 d4{1000};
+		A4 d4{1000};
 
-		TRUE_(d4 == D4{1000, 0, 0, 0});
+		TRUE_(d4 == A4{1000, 0, 0, 0});
+
+	}
+	TRY_("group addition")
+	{
+		A2 d2_0{2, 2};
+		A2 d2_1{5, 7};
+
+		TRUE_(d2_0+d2_1 == A2{ 7,  9});
+		d2_0 += d2_1;
+		TRUE_(d2_0      == A2{ 7,  9});
+
+	}
+	TRY_("group multiplication")
+	{
+		M2 d2_0{2, 2};
+		M2 d2_1{5, 7};
+
+		TRUE_(d2_0*d2_1 == M2{10, 14});
+		d2_0 *= d2_1;
+		TRUE_(d2_0      == M2{10, 14});
 
 	}
 }

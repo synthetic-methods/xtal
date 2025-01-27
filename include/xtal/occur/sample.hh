@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../arrange/collate.hh"
+#include "../atom/couple.hh"
 
 
 
@@ -29,7 +29,7 @@ struct sample
 private:
 	using _fix = bond::fixture<U>;
 	using U_alpha = typename _fix::alpha_type;
-	using W_alpha = arrange::collate_t<U_alpha[2]>;
+	using W_alpha = atom::couple_t<U_alpha[2]>;
 
 public:
 	using superkind = bond::compose<defer<W_alpha>, flow::tag<sample>>;
@@ -54,7 +54,7 @@ public:
 		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
 		{}
 
-		XTAL_NEW_(explicit) subtype(arrange::collate_q auto &&o, auto &&...oo)
+		XTAL_NEW_(explicit) subtype(atom::couple_q auto &&o, auto &&...oo)
 		noexcept
 		:	subtype(get<0>(XTAL_REF_(o)), XTAL_REF_(oo)...)
 		{}

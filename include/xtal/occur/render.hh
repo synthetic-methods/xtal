@@ -23,7 +23,7 @@ and may be used to parameterize `view`s of unbounded streams. \
 \
 The integer-based `render<counter_q>` provides a lossy counterpart that mitigates the potential for overflow, \
 preserving only the `step` order and `size` of the object to which it's attached. \
-(A sample-accurate counter running at 96 kilohertz would otherwise overflow within 12 hours.) \
+(A counter running at 96 kilohertz would otherwise overflow within 12 hours.) \
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
@@ -43,8 +43,8 @@ XTAL_DEF_(return,inline,let)
 operator == (X const &x, Y const &y)
 noexcept -> bool
 {
-	auto &s = x.self();
-	auto &t = y.self();
+	auto const &s = x.self();
+	auto const &t = y.self();
 	return s.step() == t.step() and s.size() == t.size();
 }
 

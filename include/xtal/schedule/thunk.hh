@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "../provision/spooled.hh"
 
-#include "../arrange/grade.hh"
+#include "../atom/grade.hh"
 #include "../flow/cue.hh"
 
 
@@ -47,7 +47,7 @@ struct thunk
 
 				using U_cued    =              typename U_event::cued_type;
 				using U_tailed  =                      valued_u<U_cued   >;
-				using V_shuttle =              arrange::grade_t<U_cued   >;
+				using V_shuttle =                 atom::grade_t<U_cued   >;
 				using U_shuttle =                   flow::cue_s<V_shuttle>;
 				using U_spool   = typename S_::template spool_t<U_shuttle>;
 

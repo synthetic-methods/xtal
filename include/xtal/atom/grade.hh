@@ -7,39 +7,31 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Extends `group` with point-wise addition and differential succession. \
 
-template <class              ..._s>	struct   grade;
-template <class              ..._s>	using    grade_t = typename grade<_s...>::type;
-template <class              ...Ts>	concept  grade_q = bond::tag_p<grade_t, Ts...>;
-template <size_type N, class ...Ts>	concept  grade_p = grade_q<Ts...> and (...and (N == Ts::size()));
-template <class  V=void>
+template <class         ..._s>	struct   grade;
+template <class         ..._s>	using    grade_t = typename grade<_s...>::type;
+template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and same_n<sized_n<_s>...>;
+
+template <auto f=null_type{}>
 XTAL_DEF_(return,inline,let)
 grade_f(auto &&...oo)
 noexcept -> auto
 {
-	return _detail::initialize<grade_t>::template via<V>(XTAL_REF_(oo)...);
+	return _detail::build<grade_t>::template with<f>(XTAL_REF_(oo)...);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `group` with point-wise addition and differential succession. \
 
-template <vector_q A>
-struct grade<A>
-:	grade<A, _std::plus<void>>
+template <class ..._s>
+struct grade
 {
-};
-template <vector_q A>
-struct grade<A, _std::plus<void>>
-{
-	using _fix = bond::fixture<A>;
-	
 	template <class T>
-	using endotype = typename group<A>::template homotype<T>;
+	using endotype = typename group<_std::plus<void>, _s...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
@@ -47,7 +39,7 @@ struct grade<A, _std::plus<void>>
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		using  S_ = holotype<T>;
+		using S_ = holotype<T>;
 	
 	protected:
 		using          S_::N_data;

@@ -81,6 +81,8 @@ template <         class ...Ts>	concept     molecular_q	=  (...and _entail::    
 template <         class ...Ts>	concept        atomic_q	=  (...and _entail::       atomic_q<   Ts   >);
 
 
+template <         auto  ...Ns>	concept     different_n	=          _entail::    different_n<   Ns...>;//< `Ns...` are different values.
+template <         auto  ...Ns>	concept          same_n	=          _entail::         same_n<   Ns...>;//< `Ns...` are identical values.
 template <         class ...Ts>	concept     different_q	=          _entail::    different_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
 template <         class ...Ts>	concept          same_q	=          _entail::         same_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
 template <         class ...Ts>	concept          make_q	=          _entail::         make_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
@@ -216,9 +218,6 @@ template <class T             >	using     fluid_sized  	=          _entail::   f
 template <class T             >	XTAL_LET  fluid_sized_n	=          _entail::   fluid_sized_n<T >;
 template <         class ...Ts>	concept   fluid_sized_q	=  (...and _entail::   fluid_sized_q<Ts>);
 
-template <         class ...Ts>	concept unfixed_sized_q	=  (...and _entail:: unfixed_sized_q<Ts>);
-template <         class ...Ts>	concept unfluid_sized_q	=  (...and _entail:: unfluid_sized_q<Ts>);
-
 template <class T             >	using           sized  	=          _entail::         sized  <T >;
 template <class T             >	XTAL_LET        sized_n	=          _entail::         sized_n<T >;
 template <         class ...Ts>	concept         sized_q	=  (...and _entail::         sized_q<Ts>);
@@ -232,6 +231,10 @@ template <class T             >	XTAL_LET        fluid_n	=          _entail::    
 template <         class ...Ts>	using           fluid_u	= common_t<_entail::         fluid_u<Ts>...>;
 template <         class ...Ts>	concept         fluid_q	=  (...and _entail::         fluid_q<Ts>);
 
+
+template <class T             >	using        abstruct_t	=          _entail::      abstruct_t<T >;
+template <class T             >	using        abstruct_u	=          _entail::      abstruct_u<T >;
+//mplate <class T             >	XTAL_LET     abstruct_n	=          _entail::      abstruct_n<T >;
 
 template <class T             >	using        destruct_t	=          _entail::      destruct_t<T >;
 template <class T             >	using        destruct_u	=          _entail::      destruct_u<T >;
@@ -265,17 +268,18 @@ template <class T, int   N=-1 >	concept      subarray_q	=          _entail::    
 
 
 template <class T             >	using       coindexed_u	=          _entail::    coindexed_u<T >;
-template <class          ...Ts>	concept     coindexed_q	= (... and _entail::    coindexed_q<Ts>);
-template <class          ...Ts>	concept      covalued_q	= (... and _entail::     covalued_q<Ts>);
+template <         class ...Ts>	concept     coindexed_q	= (... and _entail::    coindexed_q<Ts>);
+template <         class ...Ts>	concept      covalued_q	= (... and _entail::     covalued_q<Ts>);
 
 
-template <class T             >	using        arranged_t	=          _entail::     arranged_t<T >;
-template <class T             >	using      reiterated_t	=          _entail::   reiterated_t<T >;
+template <class T             >	using        arranged_t	=          _entail::     arranged_t<T > ;
+template <class T             >	using      reiterated_t	=          _entail::   reiterated_t<T > ;
+template <         class ...Ts>	concept    reiterated_q	= (...and  _entail::   reiterated_q<Ts>);
 
 template <class T             >	using     initializer_s	=          _entail::  initializer_s<T > ;
 template <class T             >	using     initializer_t	=          _entail::  initializer_t<T > ;
 template <class T             >	using     initializer_u	=          _entail::  initializer_u<T > ;
-template <class          ...Ts>	concept   initializer_q	=  (...and _entail::  initializer_q<Ts>);
+template <         class ...Ts>	concept   initializer_q	=  (...and _entail::  initializer_q<Ts>);
 
 template <class T             >	using        iteratee_t	= typename _entail::     iteratee  <T >::type;
 template <class T             >	using        iterated_u	= _std::remove_reference_t<iteratee_t<T>>;

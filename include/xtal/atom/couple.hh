@@ -7,52 +7,53 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-template <class   ..._s>	struct   collate;
-template <class   ..._s>	using    collate_t = typename collate<_s...>::type;
-template <class   ...Ts>	concept  collate_q = bond::tag_p<collate_t, Ts...>;
-template <class  V=void>
-XTAL_DEF_(return,inline,let)
-collate_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::initialize<collate_t>::template via<V>(XTAL_REF_(oo)...);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 ///\
 Extends the multiplicative `group` with the scalar sum/product. \
 Provides even/odd-reflection iff `N_data == 2`. \
 
-template <vector_q A>
-struct collate<A>
+template <class ..._s>	struct   couple;
+template <class ..._s>	using    couple_t = typename couple<_s...>::type;
+template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and same_n<sized_n<_s>...>;
+
+template <auto f=null_type{}>
+XTAL_DEF_(return,inline,let)
+couple_f(auto &&...oo)
+noexcept -> auto
 {
-	using A_fix = bond::fixture<A>;
+	return _detail::build<couple_t>::template with<f>(XTAL_REF_(oo)...);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class ..._s>
+struct couple
+{
+	using A_fix = bond::fixture<_s...>;
 	using A_sigma = typename A_fix::sigma_type;
 	using A_alpha = typename A_fix::alpha_type;
 	using A_aphex = typename A_fix::aphex_type;
 	
 	template <class T>
-	using endotype = typename group<A, _std::multiplies<void>>::template homotype<T>;
+	using endotype = typename group<_std::multiplies<void>, _s...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<collate_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
 	{
-		using  S_ = holotype<T>;
+		using S_ = holotype<T>;
+		using I_ = typename S_::initializer_list;
 	
 	protected:
 		using          S_::N_data;
 		using typename S_::U_data;
-
-	private:
-		using V_data = absolve_u<U_data>;
+		using typename S_::V_data;
+		using typename S_::W_data;
 
 	public:// CONSTRUCT
 	//	using S_::S_;
@@ -63,24 +64,32 @@ struct collate<A>
 
 		XTAL_NEW_(explicit) homotype(auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
+		:	S_{XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit) homotype()
 		noexcept
+		requires different_q<_s...>
+		:	S_{}
+		{
+		}
+		XTAL_NEW_(implicit) homotype()
+		noexcept
+		requires   vector_q<_s...>
 		{
 			auto &s = self();
 
 			if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
 				[&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN {((get<I>(s) = U_data{1}),...);}
+					XTAL_0FN {((get<I>(s) = W_data{1}),...);}
 				(bond::seek_s<N_data>{});
 			}
 			else {
-				_std::uninitialized_fill_n(S_::data(), S_::size(), U_data{1});
+				_std::uninitialized_fill_n(S_::data(), S_::size(), W_data{1});
 			}
 		}
-		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_data> w)
+		XTAL_NEW_(implicit) homotype(I_ w)
 		noexcept
+		requires   vector_q<_s...>
 		{
 			auto &s = self();
 			auto const m = w.size();
@@ -104,20 +113,20 @@ struct collate<A>
 		template <class U> requires real_q<U> or complex_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and      same_q<U, U_data>
+		requires in_n<N_data, 2> and vector_q<_s...> and      same_q<U, W_data>
 		:	S_{u, one/(u + A_fix::minilon_f()*(not u))}
 		{}
 		template <class U> requires real_q<U> or complex_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and different_q<U, U_data>
-		:	homotype(static_cast<U_data>(XTAL_REF_(u)))
+		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, W_data>
+		:	homotype(static_cast<W_data>(XTAL_REF_(u)))
 		{}
 		template <class U> requires logical_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and different_q<U, U_data>
-		:	S_{static_cast<U_data>(u), static_cast<U_data>(not u)}
+		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, W_data>
+		:	S_{static_cast<W_data>(u), static_cast<W_data>(not u)}
 		{}
 	//	TODO: Adapt the above with `objective_f`?
 
@@ -126,43 +135,15 @@ struct collate<A>
 		using S_::twin;
 
 	public:// OPERATE
-		using S_::  zeroed;
-		using S_::unzeroed;
 
-		template <int N_value=1>
+		///\returns the result of `blanked()` before refilling with `N_value=1`. \
+
+		template <auto N_value=1>
 		XTAL_DEF_(inline,let)
-		unzero()
+		blanket()
 		noexcept -> bool
 		{
-			using U_value = absolve_u<U_data>;
-			using V_value = typename bond::fixture<U_value>::sigma_type;
-
-			auto constexpr u  =    static_cast<U_value>(N_value);
-			auto constexpr v  = _xtd::bit_cast<V_value>(u);
-			bool const     z  = zeroed();
-			auto const     zu = u* static_cast<U_value>(z);
-			auto const    _zv = v&-z;
-#if XTAL_ENV_(LLVM)
-			if constexpr (false) {
-			}
-#else
-			if constexpr (anyplex_q<U_data>) {
-				auto &s = dissolve_f(*this);
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					XTAL_IF0
-					XTAL_0IF (simplex_q<U_data>) {return reinterpret_cast<V_value &>(s[I]   ) |= _zv;}
-					XTAL_0IF (complex_q<U_data>) {return reinterpret_cast<V_value &>(s[I][0]) |= _zv;}
-				});
-			}
-#endif
-			else {
-				auto const n = static_cast<U_value>(z)*u;
-				auto      &s = *this;
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					get<I>(s) += n;
-				});
-			}
-			return z;
+			return S_::template blanket<N_value>();
 		}
 
 		///\
@@ -175,6 +156,7 @@ struct collate<A>
 
 		XTAL_DEF_(inline,let)
 		operator++() const
+		noexcept -> auto
 		{
 			auto t = S_::twin();
 
@@ -186,6 +168,7 @@ struct collate<A>
 		}
 		XTAL_DEF_(inline,let)
 		operator--() const
+		noexcept -> auto
 		{
 			auto t = S_::twin();
 
@@ -198,11 +181,13 @@ struct collate<A>
 
 		XTAL_DEF_(inline,let)
 		operator++(int) const
+		noexcept -> auto
+		requires vector_q<_s...>
 		{
 			auto t = S_::twin();
 
-			U_data u{};
-			U_data v{};
+			W_data u{};
+			W_data v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
 			(bond::seek_s<N_data>{});
@@ -211,11 +196,13 @@ struct collate<A>
 		}
 		XTAL_DEF_(inline,let)
 		operator--(int) const
+		noexcept -> auto
+		requires vector_q<_s...>
 		{
 			auto t = S_::twin();
 
-			U_data u{};
-			U_data v{};
+			W_data u{};
+			W_data v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
 			(bond::antiseek_s<N_data>{});
@@ -226,19 +213,26 @@ struct collate<A>
 	//	Scalar sum:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline,let)
-		sum(U_data const &u={}) const
-		noexcept -> U_data
+		sum() const
+		noexcept -> auto
+		{
+			return sum<N_sgn>(V_data{0});
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		sum(auto const &u) const
+		noexcept -> auto
 		{
 			auto &s = self();
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (get<I>(s)))
+					XTAL_0FN_(return) (u +...+ (                         get<I>(s)))
 				(bond::seek_s<N_data>{});
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (get<I>(s)*U_data{-sign_n<I&1, -1>}))
+					XTAL_0FN_(return) (u +...+ (V_data{-sign_n<I&1, -1>}*get<I>(s)))
 				(bond::seek_s<N_data>{});
 			}
 		}
@@ -246,42 +240,50 @@ struct collate<A>
 	//	Scalar product:
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline,let)
-		product(U_data u={}) const
-		noexcept -> U_data
+		product() const
+		noexcept -> auto
+		{
+			return product<N_sgn>(V_data{1});
+		}
+		template <int N_sgn=1>
+		XTAL_DEF_(return,inline,let)
+		product(auto u) const
+		noexcept -> auto
+		requires un_n<bond::pack_sized_q<decltype(u), N_data>>
 		{
 			auto &s = self();
 			
-			if constexpr (0 < N_sgn) {
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					auto const &v = get<I>(s);
-					u = _xtd::accumulator(XTAL_MOV_(u), v, v);
-				});
-			}
-			else {
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					auto const &v = get<I>(s);
-					u = _xtd::accumulator(XTAL_MOV_(u), v, v*U_data{-sign_n<I&1, -1>});
-				});
-			}
+			bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+				auto const &v = get<I>(s);
+				XTAL_IF0
+				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),                          v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*v, v);}
+			});
+
 			return u;
 		}
+		template <int N_sgn=1> requires vector_q<_s...>
 		XTAL_DEF_(return,inline,let)
-		product(bond::pack_sized_q<N_data> auto &&t) const
-		noexcept -> U_data
+		product(auto &&t) const
+		noexcept -> auto
+		requires in_n<bond::pack_sized_q<decltype(t), N_data>>
 		{
 			auto &s = self();
+			W_data u{};
 			
-			U_data u{};
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
-				u = _xtd::accumulator(XTAL_MOV_(u), get<I>(s), get<I>(t));
+				XTAL_IF0
+				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),                          get<I>(s), get<I>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*get<I>(s), get<I>(t));}
 			});
+			
 			return u;
 		}
 
 		template <int N_par=0> requires (N_data == 2)
 		XTAL_DEF_(inline,let)
 		ratio()
-		noexcept -> U_data
+		noexcept -> auto
 		{
 			auto &s = self();
 			
@@ -339,7 +341,7 @@ struct collate<A>
 		template <int N>
 		XTAL_DEF_(return,inline,let)
 		extremum() const
-		noexcept -> U_data
+		noexcept -> auto
 		{
 			XTAL_IF0
 			XTAL_0IF (0 <  N) {return maximum();}
@@ -353,7 +355,7 @@ struct collate<A>
 		template <int N>
 		XTAL_DEF_(return,inline,let)
 		extremal() const
-		noexcept -> U_data
+		noexcept -> auto
 		{
 			XTAL_IF0
 			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_0FN_(alias) (_std::lcm)>();}
@@ -365,10 +367,20 @@ struct collate<A>
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<collate_t<float[2]>>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+static_assert(bond::array_tag_p<couple_t, couple_t<int[2]>, int[2]>);
+static_assert(couple_q<couple_t<int[2]>>);
+static_assert(couple_q<couple_t<int[2]>, int[2]>);
+
+static_assert(complete_q<couple_t<float, double>>);
+
+static_assert(atomic_q<couple_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(collate_t<float(&)[2]>)*XTAL_ANY_(collate_t<float(&)[2]>))>
+	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
 );
 
 

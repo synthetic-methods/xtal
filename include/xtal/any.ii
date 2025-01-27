@@ -314,20 +314,11 @@ noexcept -> size_type
 {
 	using T = XTAL_ALL_(t);
 	XTAL_IF0
-	XTAL_0IF (fixed_sized_q<T> and unfluid_sized_q<T>) {return fixed_sized_n<T>;}
+	XTAL_0IF (fixed_sized_q<T> and un_n<fluid_sized_q<T>>) {return fixed_sized_n<T>;}
 	XTAL_0IF_(return) (static_cast<size_type>(T::size()))
 	XTAL_0IF_(return) (static_cast<size_type>(t .size()))
 	XTAL_0IF_(return) (static_cast<size_type>(t))
 	XTAL_0IF_(return) (static_cast<size_type>(0))
-}
-template <class U>
-XTAL_DEF_(return,inline,let)
-coint_f(_std::initializer_list<U> t)
-noexcept -> size_type
-{
-	auto const i0 = t.begin();
-	auto const iN = t.  end();
-	return iN - i0;
 }
 XTAL_DEF_(return,inline,let)
 count_f(auto const &...ts)

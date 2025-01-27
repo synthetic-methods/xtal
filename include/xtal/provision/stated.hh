@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/store.hh"
 
+//\
 #include "../occur/review.hh"
 
 
@@ -18,7 +18,7 @@ template <typename ..._s> concept  stated_q = bond::tag_p<stated, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::store`. \
+Provides range-based views of the internal `store`. \
 
 template <bond::compose_q A>
 struct stated<A>

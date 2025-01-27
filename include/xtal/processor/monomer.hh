@@ -166,8 +166,20 @@ struct monomer<U, As...>
 				
 			public:// FLOW
 
-				template <signed N_ion> XTAL_DEF_(return,inline,let) fuse(auto &&o    ) noexcept -> decltype(auto) {return R_::template fuse<N_ion>(XTAL_REF_(o)    );}
-				template <signed N_ion> XTAL_DEF_(return,inline,let) flux(auto &&...oo) noexcept -> decltype(auto) {return R_::template flux<N_ion>(XTAL_REF_(oo)...);}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o    )
+				noexcept -> signed
+				{
+					return R_::template fuse<N_ion>(XTAL_REF_(o)    );
+				}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
 
 				///\
 				Responds to `occur::resize` by resizing the internal `store()`. \

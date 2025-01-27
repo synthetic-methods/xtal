@@ -7,13 +7,13 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   store;
-template <class ..._s> using    store_t = typename store<_s...>::type;
-template <class ...Ts> concept  store_q = bond::tag_p<store_t, Ts...>;
+template <class ..._s> struct   buffer;
+template <class ..._s> using    buffer_t = typename buffer<_s...>::type;
+template <class ...Ts> concept  buffer_q = bond::tag_p<buffer_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,28 +30,29 @@ then a fixed-capacity implementation is provided. \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <class U_data> requires pointed_q<U_data>
-struct store<U_data>
+struct buffer<U_data>
 {
-	using type = bond::compose_s<_std::vector<pointed_u<U_data>>, bond::tag<store_t>>;
+	using type = bond::compose_s<_std::vector<pointed_u<U_data>>, bond::tag<buffer_t>>;
 
 };
 template <class U_data>
-struct store<U_data[(unsigned) -1]>
-:	store<U_data *>
+struct buffer<U_data[(unsigned) -1]>
+:	buffer<U_data *>
 {
 };
 template <class U_data, auto N_data>
-struct store<U_data[N_data]>
+struct buffer<U_data[N_data]>
 {
 	using W_data = _detail::aligned_t<U_data>;
 
 	template <class T>
-	using holotype = bond::compose_s<arranged_t<T>, bond::tag<store>>;
+	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer>>;
 
 	template <class T>
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
+		using I_ = _std::initializer_list<U_data>;
 
 	public:// DEFINITION
 		using              size_type  =        ::std::size_t;
@@ -220,7 +221,7 @@ struct store<U_data[N_data]>
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_data> w)
+		XTAL_NEW_(implicit) homotype(I_ w)
 		noexcept(false)
 		:	homotype(w.begin(), w.end())
 		{}
@@ -229,14 +230,14 @@ struct store<U_data[N_data]>
 		Replaces the contents of `this` with the given values. \
 
 		XTAL_DEF_(inline,let)
-		operator = (_std::initializer_list<U_data> w)
+		operator = (I_ w)
 		noexcept(false) -> homotype &
 		{
 			assign(w);
 			return *this;
 		}
 		XTAL_DEF_(inline,let)
-		assign(_std::initializer_list<U_data> w)
+		assign(I_ w)
 		noexcept(false) -> void
 		{
 			assign(w.begin(), w.end());
@@ -320,7 +321,7 @@ struct store<U_data[N_data]>
 		}
 
 		XTAL_DEF_(inline,let)
-		push_back(_std::initializer_list<U_data> w)
+		push_back(I_ w)
 		noexcept(false) -> void
 		{
 			push_back(w.begin(), w.end());
@@ -330,7 +331,7 @@ struct store<U_data[N_data]>
 		push_back(make_q<U_data> auto &&...vs)
 		noexcept(false) -> void
 		{
-			push_back(_std::initializer_list<U_data>{U_data(XTAL_REF_(vs))...});
+			push_back(I_{U_data(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -390,7 +391,7 @@ struct store<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_DEF_(inline,let)
-		insert(I i, _std::initializer_list<U_data> w)
+		insert(I i, I_ w)
 		noexcept(false) -> iterator
 		{
 			return insert(i, w.begin(), w.end());
@@ -541,9 +542,9 @@ struct store<U_data[N_data]>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(std::is_copy_assignable_v<store_t<float             *  >>);
-static_assert(std::is_copy_assignable_v<store_t<float[(unsigned)  -1]>>);
-static_assert(std::is_copy_assignable_v<store_t<float[(unsigned) 0x8]>>);
+static_assert(std::is_copy_assignable_v<buffer_t<float             *  >>);
+static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned)  -1]>>);
+static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned) 0x8]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

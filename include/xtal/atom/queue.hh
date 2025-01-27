@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./store.hh"
+#include "./buffer.hh"
 
 
 
@@ -8,41 +8,42 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   spool;
-template <class ..._s> using    spool_t = typename spool<_s...>::type;
-template <class ...Ts> concept  spool_q = bond::tag_p<spool_t, Ts...>;
+template <class ..._s> struct   queue;
+template <class ..._s> using    queue_t = typename queue<_s...>::type;
+template <class ...Ts> concept  queue_q = bond::tag_p<queue_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-A fluid-sized fixed-capacity priority-queue based on `store_t<A>`. \
+A fluid-sized fixed-capacity priority-queue based on `buffer_t<A>`. \
 Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 template <class A>
-struct spool<A>
+struct queue<A>
 {
 	template <class T>
 	using endotype = arranged_t<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<spool_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<queue_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
 
-		using U_store = store_t<A>;
-		using U_point = typename U_store::iterator;
-		using U_value = typename U_store::value_type;
-		using U_count = typename U_store::difference_type;
-
-		U_store u_store;
+		using U_buffer = buffer_t<A>;
+		using U_point  = typename U_buffer::iterator;
+		using U_value  = typename U_buffer::value_type;
+		using U_count  = typename U_buffer::difference_type;
+		using I_ = _std::initializer_list<U_value>;
+		
+		U_buffer u_buffer;
 		U_count u_begin = 0;
 		U_count u_end   = 0;
 
@@ -60,24 +61,24 @@ struct spool<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_value> w)
+		XTAL_NEW_(implicit) homotype(I_ w)
 		noexcept(false)
 		:	u_end(count_f(w))
-		,	u_store(w.begin(), w.end())
+		,	u_buffer(w.begin(), w.end())
 		{}
 		template <class W> requires make_p<U_value, W> and un_n<same_q<U_value, W>>
 		XTAL_NEW_(explicit) homotype(W &&w)
 		noexcept(false)
 		:	u_begin(1)
-		,	u_store{U_value{XTAL_REF_(w)}}
+		,	u_buffer{U_value{XTAL_REF_(w)}}
 		{}
 
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_store.end  (), n + u_end  ))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_store.begin(), n + u_begin))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
 		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(U_count n), span(n, n))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)    span(         ), span(0, 0))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
 
 		XTAL_DEF_(inline,let)
 		advance(U_count n=1)
@@ -100,21 +101,21 @@ struct spool<A>
 		free()
 		noexcept -> void
 		{
-			u_store.erase(u_store.begin(), end());
+			u_buffer.erase(u_buffer.begin(), end());
 		}
 
 		XTAL_DEF_(inline,let)
 		free(auto &&f)
 		noexcept -> void
 		{
-			u_store.erase(_std::remove_if(begin(), end(), XTAL_REF_(f)), end());
+			u_buffer.erase(_std::remove_if(begin(), end(), XTAL_REF_(f)), end());
 		}
 		template <auto  f>
 		XTAL_DEF_(inline,let)
 		free()
 		noexcept -> void
 		{
-			u_store.erase(_std::remove_if(begin(), end(),           f ), end());
+			u_buffer.erase(_std::remove_if(begin(), end(),           f ), end());
 		}
 	//	template <auto  f> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free(constant_n<f>);}
 		template <class F> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free<invoke_n<F>>();}
@@ -129,7 +130,7 @@ struct spool<A>
 		{
 			assert(i < end());
 			u_begin -= i < begin();
-			u_store.erase(i);
+			u_buffer.erase(i);
 			abandon(begin() == end());
 		}
 		XTAL_DEF_(let)
@@ -143,13 +144,13 @@ struct spool<A>
 		scan(auto &&w)
 		noexcept -> U_point
 		{
-			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w));
+			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w));
 		}
 		XTAL_DEF_(return,inline,let)
 		scan(auto &&w, auto &&f)
 		noexcept -> U_point
 		{
-			return _std::lower_bound(u_store.begin(), u_store.end(), XTAL_REF_(w)
+			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
 			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(return) (f(x) < f(y))
 			);
 		}
@@ -160,8 +161,8 @@ struct spool<A>
 		push(U_value u)
 		noexcept -> U_point
 		{
-			if (u_store.empty()) {
-				u_store.push_back(XTAL_MOV_(u));
+			if (u_buffer.empty()) {
+				u_buffer.push_back(XTAL_MOV_(u));
 				return begin();
 			}
 			U_point _v = scan(u);
@@ -186,13 +187,13 @@ struct spool<A>
 		poke(U_point _v, U_value u)
 		noexcept -> U_point
 		{
-			return u_store.insert(_v, XTAL_MOV_(u));
+			return u_buffer.insert(_v, XTAL_MOV_(u));
 		}
 		XTAL_DEF_(inline,let)
 		poke(U_point _v, auto..._s)
 		noexcept -> U_point
 		{
-			return u_store.emplace(_v, XTAL_MOV_(_s)...);
+			return u_buffer.emplace(_v, XTAL_MOV_(_s)...);
 		}
 
 	};
@@ -203,9 +204,9 @@ struct spool<A>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(std::is_copy_assignable_v<spool_t<float             *  >>);
-static_assert(std::is_copy_assignable_v<spool_t<float[(unsigned)  -1]>>);
-static_assert(std::is_copy_assignable_v<spool_t<float[(unsigned) 0x8]>>);
+static_assert(std::is_copy_assignable_v<queue_t<float             *  >>);
+static_assert(std::is_copy_assignable_v<queue_t<float[(unsigned)  -1]>>);
+static_assert(std::is_copy_assignable_v<queue_t<float[(unsigned) 0x8]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

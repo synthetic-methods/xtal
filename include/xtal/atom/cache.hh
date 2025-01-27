@@ -7,9 +7,11 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::arrange
+namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+///\
+Provides local arena-like storage for `atomic_q` values. \
 
 template <class ...As>	struct   cache;
 template <class ...As>	using    cache_t = typename cache<As...>::type;
@@ -17,8 +19,6 @@ template <class ..._s>	concept  cache_q = bond::tag_p<cache, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Provides local arena-like storage accessible via `cache<...>()`. \
 
 template <class ...As>
 struct cache
@@ -50,10 +50,14 @@ struct cache
 			return N_bytes;
 		}
 
-		///\returns `true` if the cache is zeroed, `false` otherwise. \
+		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
 
-		XTAL_DEF_(return,inline,let) unzeroed() const noexcept -> decltype(auto) {return 0 != memcmp(m_zeros, m_bytes, N_bytes);}
-		XTAL_DEF_(return,inline,let)   zeroed() const noexcept -> decltype(auto) {return 0 == memcmp(m_zeros, m_bytes, N_bytes);}
+		XTAL_DEF_(return,inline,let)
+		blanked() const
+		noexcept -> auto
+		{
+			return 0 == memcmp(m_zeros, m_bytes, N_bytes);
+		}
 
 		///\returns `(void)` after overwriting the `byte`s in the cache with `(char) value`. \
 
@@ -83,12 +87,12 @@ struct cache
 
 		///\usage
 		/***```
-		cache_t<_xtd::byte[0x40]> cache;
+		cache_t<_xtd::byte[0x40]> blob;
 
-		auto cachet = cache.template form<X, Y>();
-		auto [x, y] = cachet;
-		auto &x = get<0>(cachet);
-		auto &y = get<1>(cachet);
+		auto glob = blob.template form<X, Y>();
+		auto [x, y] = glob;
+		auto &x = get<0>(glob);
+		auto &y = get<1>(glob);
 		```***/
 
 		XTAL_FX2_(do) (template <class ...Vs>
@@ -103,9 +107,7 @@ struct cache
 		form(),
 		noexcept -> auto
 		{
-			static_assert(_detail::aligned_n<Vs...> <= N_bytes);
-			static_assert((...and _std::is_standard_layout_v<Vs>));
-			static_assert((...and _std::is_trivially_destructible_v<Vs>));
+			static_assert(atomic_q<Vs...> and _detail::aligned_n<Vs...> <= N_bytes);
 
 			using W = _std::tuple<Vs &...>;
 			int i{0};

@@ -24,7 +24,7 @@ void monomer_zipping()
 	unsigned constexpr U_size = 2;
 
 	//\
-	using U_block  =  arrange::block_t<U_data[U_size]>;
+	using U_block  =  atom::block_t<U_data[U_size]>;
 	using U_block  =  _std::complex<U_data>;
 //	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
@@ -56,7 +56,7 @@ void monomer_lifting()
 	using T_alpha = typename bond::fixture<>::alpha_type;
 
 	T_sigma constexpr N_size = 5;
-	using U_block  = arrange::block_t<T_alpha[N_size]>;
+	using U_block  = atom::block_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
 

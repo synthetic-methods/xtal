@@ -1,5 +1,5 @@
 #include "./any.hh"
-#include "./arrange/all.hh"
+#include "./atom/all.hh"
 #include "./bond/all.hh"
 #include "./cell/all.hh"
 #include "./flow/all.hh"

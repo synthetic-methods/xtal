@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/all.hh"
+#include "../atom/all.hh"
 
 
 
@@ -18,7 +18,7 @@ template <typename ..._s> concept  stored_q = bond::tag_p<stored, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::store`. \
+Provides random-access range-based storage. \
 
 template <bond::compose_q A>
 struct stored<A>
@@ -41,15 +41,12 @@ struct stored<A>
 template <class A>
 struct stored<A>
 {
-	static unsigned constexpr value      =  sized_n<A>;
-	using                     value_type = valued_u<A>;
-
 	using superkind = bond::tag<stored>;
 	
 	template <class S>
 	class subtype;
-	
-	template <class S> requires _std::unsigned_integral<value_type>
+
+	template <class S> requires cardinal_q<valued_u<A>>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -58,10 +55,10 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::block_t<U[value]>;
+		using store_t = atom:: block_t<U[(unsigned) sized_n<A>]>;
 
 	};
-	template <class S> requires _std::  signed_integral<value_type>
+	template <class S> requires  ordinal_q<valued_u<A>>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -70,24 +67,13 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = arrange::store_t<U[value]>;
+		using store_t = atom::buffer_t<U[(unsigned) sized_n<A>]>;
 
 	};
 };
-template <auto N>
-struct stored<unit_type[N]>
-:	stored<constant_t<unsigned(N)>>
-{
-};
-template <auto N>
-struct stored<null_type[N]>
-:	stored<constant_t<  signed(N)>>
-{
-};
-template <>
-struct stored<>
-:	stored<constant_t<-1>>
-{};
+template <auto N> struct stored<unit_type[N]> : stored<constant_t<unsigned(N)>> {};///< Fixed-size, based on `block_t`.
+template <auto N> struct stored<null_type[N]> : stored<constant_t<  signed(N)>> {};///< Fluid-size, based on `store_t`.
+template <      > struct stored<            > : stored<constant_t<        -1 >> {};///< Fluid-size, based on `store_t` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

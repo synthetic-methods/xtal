@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../arrange/all.hh"
+#include "../atom/all.hh"
 
 
 
@@ -18,7 +18,7 @@ template <typename ..._s> concept  spooled_q = bond::tag_p<spooled, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides a specialization of `arrange::store`. \
+Provides range-based priority-queuing. \
 
 template <bond::compose_q A>
 struct spooled<A>
@@ -41,9 +41,6 @@ struct spooled<A>
 template <class A>
 struct spooled<A>
 {
-	static unsigned constexpr value      =  sized_n<A>;
-	using                     value_type = valued_u<A>;
-
 	using superkind = bond::tag<spooled>;
 	
 	template <class S>
@@ -55,24 +52,13 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = arrange::spool_t<U[value]>;
+		using spool_t = atom::queue_t<U[(unsigned) sized_n<A>]>;
 
 	};
 };
-template <auto N>
-struct spooled<unit_type[N]>
-:	spooled<constant_t<unsigned(N)>>
-{
-};
-template <auto N>
-struct spooled<null_type[N]>
-:	spooled<constant_t<  signed(N)>>
-{
-};
-template <>
-struct spooled<>
-:	spooled<constant_t<-1>>
-{};
+template <auto N> struct spooled<unit_type[N]> : spooled<constant_t<unsigned(N)>> {};///< Fixed-size, based on `block_t`.
+template <auto N> struct spooled<null_type[N]> : spooled<constant_t<  signed(N)>> {};///< Fluid-size, based on `store_t`.
+template <      > struct spooled<            > : spooled<constant_t<        -1 >> {};///< Fluid-size, based on `store_t` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////
