@@ -51,9 +51,9 @@ struct couple
 	
 	protected:
 		using          S_::N_data;
+		using typename S_::T_data;
 		using typename S_::U_data;
 		using typename S_::V_data;
-		using typename S_::W_data;
 
 	public:// CONSTRUCT
 	//	using S_::S_;
@@ -80,11 +80,11 @@ struct couple
 
 			if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
 				[&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN {((get<I>(s) = W_data{1}),...);}
+					XTAL_0FN {((get<I>(s) = T_data{1}),...);}
 				(bond::seek_s<N_data>{});
 			}
 			else {
-				_std::uninitialized_fill_n(S_::data(), S_::size(), W_data{1});
+				_std::uninitialized_fill_n(S_::data(), S_::size(), T_data{1});
 			}
 		}
 		XTAL_NEW_(implicit) homotype(I_ w)
@@ -113,20 +113,20 @@ struct couple
 		template <class U> requires real_q<U> or complex_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and      same_q<U, W_data>
+		requires in_n<N_data, 2> and vector_q<_s...> and      same_q<U, T_data>
 		:	S_{u, one/(u + A_fix::minilon_f()*(not u))}
 		{}
 		template <class U> requires real_q<U> or complex_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, W_data>
-		:	homotype(static_cast<W_data>(XTAL_REF_(u)))
+		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, T_data>
+		:	homotype(static_cast<T_data>(XTAL_REF_(u)))
 		{}
 		template <class U> requires logical_q<U>
 		XTAL_NEW_(explicit) homotype(U &&u)
 		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, W_data>
-		:	S_{static_cast<W_data>(u), static_cast<W_data>(not u)}
+		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, T_data>
+		:	S_{static_cast<T_data>(u), static_cast<T_data>(not u)}
 		{}
 	//	TODO: Adapt the above with `objective_f`?
 
@@ -186,8 +186,8 @@ struct couple
 		{
 			auto t = S_::twin();
 
-			W_data u{};
-			W_data v{};
+			T_data u{};
+			T_data v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
 			(bond::seek_s<N_data>{});
@@ -201,8 +201,8 @@ struct couple
 		{
 			auto t = S_::twin();
 
-			W_data u{};
-			W_data v{};
+			T_data u{};
+			T_data v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
 			(bond::antiseek_s<N_data>{});
@@ -269,7 +269,7 @@ struct couple
 		requires in_n<bond::pack_sized_q<decltype(t), N_data>>
 		{
 			auto &s = self();
-			W_data u{};
+			T_data u{};
 			
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				XTAL_IF0

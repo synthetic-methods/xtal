@@ -11,18 +11,18 @@ namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Composes `As...`, and reifying the result as the member decorator `subtext`. \
-Used to provide a uniform interface between different instantiations. \
+Composes `As...` as the member decorator `voice`, \
+used to provide the context for different instantiations (\see `polymer`). \
 
-template <typename ..._s> struct   context;
-template <typename ..._s> using    context_t = confined_t<context<_s...>>;
-template <typename ..._s> concept  context_q = bond::tag_p<context, _s...>;
+template <typename ..._s> struct   voiced;
+template <typename ..._s> using    voiced_t = confined_t<voiced<_s...>>;
+template <typename ..._s> concept  voiced_q = bond::tag_p<voiced, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct context
+struct voiced
 {
 	using superkind = bond::compose<As...>;
 
@@ -35,7 +35,7 @@ struct context
 		using S_::S_;
 
 		template <class ...Vs>
-		struct subtext
+		struct voice
 		{
 			using duperkind = bond::compose<Vs..., superkind>;
 			
@@ -43,10 +43,10 @@ struct context
 			using subtype = bond::compose_s<R, duperkind>;
 
 		};
-		template <class ...Vs> requires bond::compose_q<typename S_::template subtext<>>
-		struct subtext<Vs...>
+		template <class ...Vs> requires bond::compose_q<typename S_::template voice<>>
+		struct voice<Vs...>
 		{
-			using duperkind = typename bond::compose<Vs..., superkind, typename S_::template subtext<>>;
+			using duperkind = typename bond::compose<Vs..., superkind, typename S_::template voice<>>;
 			
 			template <class R>
 			using subtype = bond::compose_s<R, duperkind>;

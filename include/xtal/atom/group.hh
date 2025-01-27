@@ -49,9 +49,9 @@ struct group<_std::plus<void>, _s...>
 	
 	protected:
 		using          S_::N_data;
+		using typename S_::T_data;
 		using typename S_::U_data;
 		using typename S_::V_data;
-		using typename S_::W_data;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -92,9 +92,9 @@ struct group<_std::multiplies<void>, _s...>
 
 	protected:
 		using          S_::N_data;
+		using typename S_::T_data;
 		using typename S_::U_data;
 		using typename S_::V_data;
-		using typename S_::W_data;
 
 	public:// CONSTRUCT
 		using S_::S_;

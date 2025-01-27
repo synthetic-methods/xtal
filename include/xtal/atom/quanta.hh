@@ -48,9 +48,9 @@ struct quanta
 
 	protected:
 		using          S_::N_data;
+		using typename S_::T_data;
 		using typename S_::U_data;
 		using typename S_::V_data;
-		using typename S_::W_data;
 
 	public:// CONSTRUCT
 		using S_::S_;

@@ -52,13 +52,13 @@ struct superblock<Us...>
 
 	protected:
 		static auto constexpr N_data = sizeof...(Us);
+		using T_data =  common_t<objective_t<Us>...>;
 		using U_data =  common_t<Us...>;
 		using V_data = absolve_u<Us...>;
-		using W_data = based_t<complete_t<U_data, bond::seek_front_t<Us...>>>;
 
 	public:// TYPE
 		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<W_data>;
+		using initializer_list = _std::initializer_list<T_data>;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -86,14 +86,14 @@ struct superblock<U(&)[N]>
 		using S_ = holotype<T>;
 
 	protected:
-		static auto constexpr N_data = N;
-		using U_data =           U      ;
-		using V_data = absolve_u<U_data>;
-		using W_data =   based_t<U_data>;
+		static auto constexpr N_data = N ;
+		using T_data =                 U ;
+		using U_data =                 U ;
+		using V_data =       absolve_u<U>;
 
 	public:// TYPE
 		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<W_data>;
+		using initializer_list = _std::initializer_list<T_data>;
 
 		using        size_type = _std::   size_t;
 		using  difference_type = _std::ptrdiff_t;
@@ -119,14 +119,14 @@ struct superblock<U   [N]>
 		using S_ = holotype<T>;
 
 	protected:
-		static auto constexpr N_data = N;
-		using U_data =           U      ;
-		using V_data = absolve_u<U_data>;
-		using W_data =   based_t<U_data>;
+		static auto constexpr N_data = N ;
+		using T_data =                 U ;
+		using U_data =                 U ;
+		using V_data =       absolve_u<U>;
 
 	public:// TYPE
 		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<W_data>;
+		using initializer_list = _std::initializer_list<T_data>;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -201,9 +201,9 @@ struct block
 
 	protected:
 		using          S_::N_data;///< The           number of elements. 
+		using typename S_::T_data;///< The constrained-type of elements.
 		using typename S_::U_data;///< The      common-type of elements. 
 		using typename S_::V_data;///< The  arithmetic-type of elements.
-		using typename S_::W_data;///< The constrained-type of elements.
 
 	public:// TYPE
 		using typename S_::archetype;

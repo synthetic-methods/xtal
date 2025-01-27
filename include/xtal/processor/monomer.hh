@@ -36,7 +36,7 @@ struct monomer<U, As...>
 	using U_resize = occur::resize_t<>;
 //	using U_render = occur::render_t<>;
 
-	using superkind = confer<U, As..., provision::stated<>, provision::context<>>;
+	using superkind = confer<U, As..., provision::stated<>, provision::voiced<>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

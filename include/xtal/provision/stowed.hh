@@ -11,7 +11,7 @@ namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides local arena-like storage via `stow()`. \
+Provides local arena-like storage via `stow()` using `atom::cache`. \
 
 template <typename ...As> struct   stowed;
 template <typename ...As> using    stowed_t = confined_t<stowed<As...>>;

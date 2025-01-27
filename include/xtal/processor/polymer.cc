@@ -42,7 +42,7 @@ void polymer_provision_spine__locamotion()
 	using U_gate   = process::confined_t<A_gate>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
-//	, provision::context<void
+//	, provision::voiced<void
 //		,	provision::stored<constant_t<-1>>
 //		>
 	>;

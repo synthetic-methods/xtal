@@ -43,10 +43,28 @@ struct define
 		{
 			using superkind = bond::compose<void
 			,	flow::mask<N_mask>
-			,	typename S_::template afflux<>
+			,	typename T::template afflux<>
 			>;
+
 			template <class R>
-			using subtype = bond::compose_s<R, superkind>;
+			class subtype : public bond::compose_s<R, superkind>
+			{
+				static_assert(cell::any_q<R>);
+				using R_ = bond::compose_s<R, superkind>;
+				
+			public:
+				using R_::R_;
+
+			};
+//			template <class R> requires complete_q<typename R::template head_t<T>>
+//			class subtype<R> : public bond::compose_s<R>
+//			{
+//				using R_ = bond::compose_s<R>;
+//				
+//			public:
+//				using R_::R_;
+//
+//			};
 
 		};
 		///\
@@ -55,7 +73,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct attend
 		{
-			using superkind = attach<N_mask>;
+			using superkind = typename T::template attach<N_mask>;
 
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -141,7 +159,7 @@ struct define
 		{
 			static_assert(integral_q<typename T::head_type>);
 
-			using superkind = attach<N_mask>;
+			using superkind = typename T::template attach<N_mask>;
 			
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -225,7 +243,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct expect
 		{
-			using superkind = attach<N_mask>;
+			using superkind = typename T::template attach<N_mask>;
 			
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -259,7 +277,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct inspect
 		{
-			using superkind = attach<N_mask>;
+			using superkind = typename T::template attach<N_mask>;
 			
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -293,7 +311,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct poll
 		{
-			using superkind = attach<N_mask>;
+			using superkind = typename T::template attach<N_mask>;
 			
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>

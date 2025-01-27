@@ -43,7 +43,7 @@ struct buffer<U_data[(unsigned) -1]>
 template <class U_data, auto N_data>
 struct buffer<U_data[N_data]>
 {
-	using W_data = _detail::aligned_t<U_data>;
+	using T_data = _detail::aligned_t<U_data>;
 
 	template <class T>
 	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer>>;
@@ -73,9 +73,9 @@ struct buffer<U_data[N_data]>
 		using const_reverse_iterator  = _std::reverse_iterator<const_iterator >;
 	
 	private:
-		using             value_type_ =        W_data;
-		using               iterator_ =        W_data *;
-		using         const_iterator_ =  const W_data *;
+		using             value_type_ =        T_data;
+		using               iterator_ =        T_data *;
+		using         const_iterator_ =  const T_data *;
 		using       reverse_iterator_ = _std::reverse_iterator<      iterator_>;
 		using const_reverse_iterator_ = _std::reverse_iterator<const_iterator_>;
 

@@ -50,7 +50,7 @@ struct polymer<U, As...>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using S_subtext = typename S_::template subtext<>;
+		using S_voice = typename S_::template voice<>;
 
 	public:
 		using S_::S_;
@@ -59,8 +59,8 @@ struct polymer<U, As...>
 		struct closure
 		{
 			//\
-			using V_voice = typename monomer_t<U, provision::context<S_subtext>>::template bind_t<Xs...>;
-			using V_voice = typename monomer_t<U, S_subtext>::template bind_t<Xs...>;
+			using V_voice = typename monomer_t<U, provision::voiced<S_voice>>::template bind_t<Xs...>;
+			using V_voice = typename monomer_t<U, S_voice>::template bind_t<Xs...>;
 			using V_event = occur::stage_t<>;
 			
 			using U_voice = flow::key_s<V_voice>;

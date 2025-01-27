@@ -18,7 +18,10 @@ template <typename ..._s> concept  stored_q = bond::tag_p<stored, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides random-access range-based storage. \
+Provides random-access range-based storage via the member-type `store_t<element_type>`. \
+It may either be defined using the supplied decorator, \
+or if `A` is an `unsigned` or `signed` constant, \
+the store will be defined by `atom::block` or `atom::buffer`, respectively. \
 
 template <bond::compose_q A>
 struct stored<A>

@@ -405,6 +405,9 @@ noexcept -> auto
 	return XTAL_REF_(t)();
 }
 
+template <class T             > struct   objective {using type = XTAL_ALL_(objective_f(XTAL_ANY_(T)));};
+template <         class ...Ts> using    objective_t = common_t<typename objective<Ts>::type...>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

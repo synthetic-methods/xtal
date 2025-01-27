@@ -11,13 +11,12 @@ namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides conversion from `tab`-equivalent types when executing `-fuse`.
-
-///\note\
-Does not currently apply to `-flow`. \
-
-///\note\
+Provides conversion from `tab`-equivalent types when executing `-fuse`. \
 Used to adapt internal `attach`ments like `resize`. \
+
+///\todo\
+Either define convenience `concept`s based on the `bond::tab` counterparts, \
+or integrate into the base-`(?:fuse|flux)`. \
 
 template <typename ..._s>
 struct tab;

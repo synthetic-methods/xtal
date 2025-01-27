@@ -78,6 +78,28 @@ public:
 		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get)   rate(), get<0>(S_::head()))
 		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) period(), get<1>(S_::head()))
 
+	public:// MESSAGE
+
+	template <extent_type N_mask=-1>
+	struct attach
+	{
+		using superkind = typename S_::template attach<N_mask>;
+
+		template <class R>
+		class subtype : public bond::compose_s<R, superkind>
+		{
+			static_assert(cell::any_q<R>);
+			using R_ = bond::compose_s<R, superkind>;
+			
+		public:
+			using R_::R_;
+			
+			XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) sampling(), R_::head())
+
+		};
+	};
+
+
 	};
 };
 
