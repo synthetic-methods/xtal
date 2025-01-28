@@ -2,17 +2,26 @@ module xtal {
 	umbrella "."
 	export *
 	
-	exclude header               "./any.ii"
-	exclude header          "./bond/any.ii"
-
+	exclude header           "./_retail.ii"
+	exclude header           "./_entail.ii"
 	exclude header           "./_detail.ii"
-	exclude header   "./atom/_detail.ii"
+	exclude header      "./atom/_entail.ii"
+	exclude header      "./atom/_detail.ii"
+	exclude header      "./bond/_entail.ii"
 	exclude header      "./bond/_detail.ii"
+	exclude header      "./cell/_entail.ii"
 	exclude header      "./cell/_detail.ii"
+	exclude header      "./flow/_entail.ii"
 	exclude header      "./flow/_detail.ii"
+	exclude header     "./occur/_entail.ii"
 	exclude header     "./occur/_detail.ii"
+	exclude header   "./process/_entail.ii"
 	exclude header   "./process/_detail.ii"
+	exclude header "./processor/_entail.ii"
 	exclude header "./processor/_detail.ii"
+	exclude header "./provision/_entail.ii"
 	exclude header "./provision/_detail.ii"
+	exclude header  "./schedule/_entail.ii"
 	exclude header  "./schedule/_detail.ii"
+
 }

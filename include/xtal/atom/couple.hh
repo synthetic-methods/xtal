@@ -18,13 +18,9 @@ template <class ..._s>	struct   couple;
 template <class ..._s>	using    couple_t = typename couple<_s...>::type;
 template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and same_n<sized_n<_s>...>;
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-couple_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<couple_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) couple_f(auto &&...oo),
+	_detail::build<couple_t>::template static_factory<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,8 +252,8 @@ struct couple
 			bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),                          v, v);}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                          v, v);}
+				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*v, v);}
 			});
 
 			return u;
@@ -273,8 +269,8 @@ struct couple
 			
 			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),                          get<I>(s), get<I>(t));}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*get<I>(s), get<I>(t));}
+				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                          get<I>(s), get<I>(t));}
+				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*get<I>(s), get<I>(t));}
 			});
 			
 			return u;
@@ -370,19 +366,6 @@ struct couple
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-static_assert(bond::array_tag_p<couple_t, couple_t<int[2]>, int[2]>);
-static_assert(couple_q<couple_t<int[2]>>);
-static_assert(couple_q<couple_t<int[2]>, int[2]>);
-
-static_assert(complete_q<couple_t<float, double>>);
-
-static_assert(atomic_q<couple_t<float[2]>>);
-
-static_assert(fungible_q<_std::array<float, 2>,
-	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
-);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

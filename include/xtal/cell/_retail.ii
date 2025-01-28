@@ -1,2 +1,0 @@
-namespace _retail = xtal::bond;
-#include "../bond/any.ii"

@@ -21,13 +21,9 @@ template <class U, auto  N, auto  ..._s> struct   quanta<U   [N][_s]...> : quant
 template <class U, auto  N, auto  ..._s> struct   quanta<U(&)[N][_s]...> : quanta<quanta_t<U[_s]...>(&)[N]> {};
 
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-quanta_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<quanta_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) quanta_f(auto &&...oo),
+	_detail::build<quanta_t>::template static_factory<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,19 +113,6 @@ struct quanta
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-static_assert(atomic_q<quanta_t<float[2]>>);
-
-static_assert(not counted_q<quanta_t<        int[2]>>);
-static_assert(not counted_q<quanta_t<counter_t<>[2]>>);
-static_assert(not counted_q<quanta_t<  size_type[2]>>);
-
-//static_assert(fungible_q<_std::span<float, 2>, quanta_t<float(&)[2]>>);
-
-//static_assert(  reiterated_q<quanta_t<int(&)[1]>>);
-//static_assert(fixed_valued_q<quanta_t<int(&)[1]>>);
-//static_assert( fixed_sized_q<quanta_t<int(&)[1]>>);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

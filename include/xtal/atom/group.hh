@@ -18,13 +18,9 @@ template <        class ..._s>	struct   group;
 template <        class ..._s>	using    group_t = typename group<_s...>::type;
 template <        class ..._s>	concept  group_q = bond::array_tag_p<group_t, _s...> and same_n<sized_n<_s>...>;
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-group_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<group_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) group_f(auto &&...oo),
+	_detail::build<group_t>::template static_factory<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,9 +122,9 @@ struct group<_std::multiplies<void>, _s...>
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<group_t<_std::plus<float>[2]>>);
-static_assert(atomic_q<group_t<_std::plus<void>, float[2]>>);
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

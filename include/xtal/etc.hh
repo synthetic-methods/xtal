@@ -212,22 +212,25 @@ XTAL_ENV_(push)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_FX2_(ARG,...)             XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
 #define XTAL_FX4_(ARG,...)             XTAL_FX4_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX2_(ARG,...)             XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX0_(ARG,...)             XTAL_FX0_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_FX2_do(SIG, ...)          SIG const                      __VA_ARGS__   \
-                                       SIG                            __VA_ARGS__   ;///< Define `const?` member functions.
 #define XTAL_FX4_do(SIG, ...)          SIG const &                    __VA_ARGS__   \
                                        SIG       &                    __VA_ARGS__   \
                                        SIG const &&                   __VA_ARGS__   \
                                        SIG       &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
+#define XTAL_FX2_do(SIG, ...)          SIG const                      __VA_ARGS__   \
+                                       SIG                            __VA_ARGS__   ;///< Define `(const)?`     member functions.
+#define XTAL_FX0_do(SIG, ...)          SIG                            __VA_ARGS__   ;///< Define                member function .
 
-#define XTAL_FX2_alias(SIG,...)        SIG const    noexcept {return (__VA_ARGS__);}\
-                                       SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
 #define XTAL_FX4_alias(SIG,...)        SIG const &  noexcept {return (__VA_ARGS__);}\
                                        SIG       &  noexcept {return (__VA_ARGS__);}\
                                        SIG const && noexcept {return (__VA_ARGS__);}\
                                        SIG       && noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)? &&?` member expressions returning `...`.
+#define XTAL_FX2_alias(SIG,...)        SIG const    noexcept {return (__VA_ARGS__);}\
+                                       SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept` `(const)?    ` member expressions returning `...`.
+#define XTAL_FX0_alias(SIG,...)        SIG          noexcept {return (__VA_ARGS__);};///< Define `noexcept`                       expression  returning `...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

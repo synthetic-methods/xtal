@@ -15,66 +15,94 @@ using namespace _retail::_detail;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Utilities replacing the C++23-deprecated `std::aligned_storage`. \
 
-template <class T>
+///\todo\
+Provide a mechanism for sorting/unsorting the respective internal/external types. \
+
+template <class ...Ts>
 struct aligned
 {
-	class type {alignas(alignof(T)) _std::byte data[sizeof(T)];};
+	static_assert(2 <= sizeof...(Ts));
 
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) {return sizeof(type);}
+	///\returns the total aligned storage-size for `T`. \
+	
+	template <class Y=size_type>
+	XTAL_DEF_(return,inline,set)
+	size()
+	noexcept -> auto
+	{
+		return (zero +...+ aligned<Ts>::size());
+	}
 
 };
-template <class T             >	using          aligned_t =  typename aligned<T >::type;
-template <         class ...Ts>	auto constexpr aligned_n =  (size_type{0} +...+ aligned<Ts>::size());
-template <         class ...Ts>	auto constexpr aligned_m =  aligned_n<Ts...> - one;
-
 template <class T>
-XTAL_DEF_(return,inline,let)
-maligned_f(auto &i)
-noexcept -> auto
+struct aligned<T>
 {
-	using I = XTAL_ALL_(i);
-	I constexpr N = aligned_n<T> << 3U;
-	I constexpr M = N - 1;
-	i += M; i &= ~M; auto const j = i; i += M; return j >> 3U;
+	///\
+	Defines the aligned storage-type for `T`. \
+
+	class type
+	{
+		alignas(alignof(T)) _std::byte bytes[sizeof(T)];
+	};
+
+	///\returns the aligned storage-size for `T`. \
+	
+	template <class Y=size_type>
+	XTAL_DEF_(return,inline,set)
+	size()
+	noexcept -> auto
+	{
+		return static_cast<based_t<Y>>(sizeof(type));
+	}
+
+	///\returns the next available slot for `T`, \
+	rounded up to the nearest `T`-sized boundary. \
+
+	///\note\
+	The most effective packing is attained by ordering the `Ts...` from-largest-to-smallest. \
+
+	XTAL_DEF_(return,inline,set)
+	static_bump(auto &i)
+	noexcept -> auto
+	{
+		auto constexpr N = size<decltype(i)>() << 3;
+		auto constexpr M =                    N - 1;
+		i += M; i &= ~M; auto const j = i; i += M; return j >> 3;
+	};
+
 };
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
+///\
+Utility for constructing homogeneous/heterogeneous `block`s, \
+depending on the commonality of the supplied arguments. \
 
 template <template <class ...Us> class T>
 struct build
 {
-//	NOTE: Can't define the default since it forces resolution of `objective_f` too early. \
-
-	template <auto f=null_type{}, class ...Xs>
+	template <auto f=invoke_n<>, class ...Xs>
 	XTAL_DEF_(return,inline,set)
-	with(Xs &&...xs)
+	static_factory(Xs &&...xs)
 	noexcept -> auto
 	{
-		using          F  =     invoke_t<decltype(f)>;
-		using          X_ =           common_t<Xs...>;
-		using          X0 = bond::seek_front_t<Xs...>;
+		using          F  = decltype(f);
+		using          X_ = common_t<objective_t<Xs>...>;
 		auto constexpr N  = sizeof...(xs);
 
+	//	NOTE: Defining the default `f` here avoids eager-resolution which can hinder specialization...
 		XTAL_IF0
-		XTAL_0IF (incomplete_q<F>) {
-		//	NOTE: Defining the default `f` here avoids eager-resolution which can prevent specialization...
-		//	TODO: Use ADL instead?
-			return with<[] XTAL_0FN_(alias) (objective_f)>(XTAL_REF_(xs)...);
+		XTAL_0IF (same_q<F, invoke_t<>>) {
+			return static_factory<[] XTAL_0FN_(alias) (objective_f)>(XTAL_REF_(xs)...);
 		}
-		XTAL_0IF (in_n<automorphism_p<F, X_>> and      same_q<Xs...>) {
-			return T<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};
-		}
-		XTAL_0IF (un_n<automorphism_p<F, X_>> and      same_q<Xs...>) {
-			return T<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};
-		}
-		XTAL_0IF (in_n<automorphism_p<F, X0>> and different_q<Xs...>) {
-			return T<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};
-		}
-		XTAL_0IF (un_n<automorphism_p<F, X0>> and different_q<Xs...>) {
-			return T<return_t<F, Xs>...>{f(XTAL_REF_(xs))...};
-		}
+		XTAL_0IF (in_n<automorphism_p<F, X_>> and      same_q<Xs...>) {return T<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};}
+		XTAL_0IF (un_n<automorphism_p<F, X_>> and      same_q<Xs...>) {return T<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};}
+		XTAL_0IF (in_n<automorphism_p<F, X_>> and different_q<Xs...>) {return T<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};}
+		XTAL_0IF (un_n<automorphism_p<F, X_>> and different_q<Xs...>) {return T<return_t<F, Xs>...>{f(XTAL_REF_(xs))...};}
 	}
 
 };

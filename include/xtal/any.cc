@@ -16,10 +16,20 @@ static_assert(incomplete_q           <void_type> );
 static_assert(  complete_q<complete_t<void     >>);
 static_assert(  complete_q<complete_t<void_type>>);
 
+
+
+static_assert(same_q<invoke_t<>, invoke_t<>>);
+static_assert(same_q<invoke_t<>, decltype(invoke_n<>)>);
+
 static_assert(    integral_q<constant_t<1>>);
 static_assert(    integral_q<  int>);
 static_assert(not integral_q<float>);
 
+
+static_assert(         same_n<0>);
+static_assert(not different_n<0>);
+static_assert(         same_n<0, 0, 0>);
+static_assert(not different_n<0, 0, 0>);
 
 
 static_assert(assign_sized_n<       1            > ==   1);
@@ -86,6 +96,16 @@ static_assert(_std::same_as<              float         ,  absolve_u<const _std:
 static_assert(_std::same_as<              float         ,  absolve_u<      _std::complex<float>(&)[2]>>);
 static_assert(_std::same_as<              float         ,  absolve_u<const _std::complex<float>   [2]>>);
 static_assert(_std::same_as<              float         ,  absolve_u<      _std::complex<float>   [2]>>);
+
+static_assert(_std::same_as<      int( &)[2], decltype(destruct_f(XTAL_ANY_(      _std::complex<int>  &)))>);
+static_assert(_std::same_as<const int( &)[2], decltype(destruct_f(XTAL_ANY_(const _std::complex<int>  &)))>);
+static_assert(_std::same_as<      int(&&)[2], decltype(destruct_f(XTAL_ANY_(      _std::complex<int> &&)))>);
+static_assert(_std::same_as<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(const _std::complex<int> &&)))>);
+
+static_assert(_std::same_as<      int( &)[2][2], decltype(dissolve_f(XTAL_ANY_(      _std::complex<int>(&)[2])))>);
+static_assert(_std::same_as<const int( &)[2][2], decltype(dissolve_f(XTAL_ANY_(const _std::complex<int>(&)[2])))>);
+static_assert(_std::same_as<      int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(      _std::complex<int>   [2])))>);
+static_assert(_std::same_as<const int(&&)[2][2], decltype(dissolve_f(XTAL_ANY_(const _std::complex<int>   [2])))>);
 
 
 static_assert(array_valued_q<const _std::complex<float>(&)[2]>);

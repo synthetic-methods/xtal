@@ -1,5 +1,5 @@
 #pragma once
-#include "../bond/all.hh"// `_retail`
+#include "../bond/all.hh"// `_retail`///NOTE: `bond/all` is included with all dependent `#import`s! 
 
 
 
@@ -11,7 +11,8 @@ namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#include "./_retail.ii"
+namespace _retail = xtal::bond;
+#include "./_entail.ii"
 #include "./_detail.ii"
 
 

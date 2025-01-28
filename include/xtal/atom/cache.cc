@@ -35,21 +35,21 @@ TAG_("cache")
 
 	}
 	TRY_("cache: preallocation") {
-		TRUE_(_detail::aligned_n<T_aphex[2]> == cache_t<T_aphex[2]>::size());
-		TRUE_(_detail::aligned_n<T_aphex[4]> == cache_t<T_aphex[3]>::size());
-		TRUE_(_detail::aligned_n<T_aphex[4]> == cache_t<T_aphex[2], T_aphex[1]>::size());
-		TRUE_(_detail::aligned_n<T_aphex[8]> == cache_t<T_aphex[6]>::size());
+		TRUE_(_detail::aligned<T_aphex[2]>::size() == cache_t<T_aphex[2]>::size());
+		TRUE_(_detail::aligned<T_aphex[4]>::size() == cache_t<T_aphex[3]>::size());
+		TRUE_(_detail::aligned<T_aphex[4]>::size() == cache_t<T_aphex[2], T_aphex[1]>::size());
+		TRUE_(_detail::aligned<T_aphex[8]>::size() == cache_t<T_aphex[6]>::size());
 
 	}
 	TRY_("cache: allocation stepping") {
 		size_type i{};
-		TRUE_(_detail::maligned_f<_std::byte   >(i) == 0x0);
-		TRUE_(_detail::maligned_f<_std::int16_t>(i) == 0x2);
-		TRUE_(_detail::maligned_f<_std::byte   >(i) == 0x4);
-		TRUE_(_detail::maligned_f<_std::byte   >(i) == 0x5);
-		TRUE_(_detail::maligned_f<_std::int16_t>(i) == 0x6);
-		TRUE_(_detail::maligned_f<_std::byte   >(i) == 0x8);
-		TRUE_(_detail::maligned_f<_std::int16_t>(i) == 0xA);
+		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x0);
+		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0x2);
+		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x4);
+		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x5);
+		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0x6);
+		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x8);
+		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0xA);
 
 		TRUE_(0x10 == cache_t<_std::byte, _std::int16_t, _std::byte, _std::byte, _std::int16_t, _std::byte, _std::int16_t>::size());
 	}

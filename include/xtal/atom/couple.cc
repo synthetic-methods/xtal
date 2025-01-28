@@ -11,6 +11,19 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+static_assert(bond::array_tag_p<couple_t, couple_t<int[2]>, int[2]>);
+static_assert(couple_q<couple_t<int[2]>>);
+static_assert(couple_q<couple_t<int[2]>, int[2]>);
+
+static_assert(complete_q<couple_t<float, double>>);
+
+static_assert(atomic_q<couple_t<float[2]>>);
+
+static_assert(fungible_q<_std::array<float, 2>,
+	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
+);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TAG_("couple")

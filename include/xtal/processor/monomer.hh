@@ -210,7 +210,7 @@ struct monomer<U, As...>
 				flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
-					auto constexpr N_dex = occur::some_resize_q<decltype(oo)...>? N_share: -1;
+					auto constexpr N_dex = in_n<1, occur::resize_q<decltype(oo)>...>? N_share: -1;
 					return R_::template flux_arguments_<N_ion, N_dex>(flow::argument_n<-1>, XTAL_REF_(oo)...);
 				}
 

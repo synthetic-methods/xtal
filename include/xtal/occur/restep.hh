@@ -11,10 +11,9 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=void> struct        restep;
-template <class U=void> using         restep_t =          confined_t<restep<U>>;
-template <class  ..._s> concept       restep_q = un_n<0, bond::tag_p<restep, _s>...>;
-template <class  ..._s> concept  some_restep_q = in_n<1, bond::tag_p<restep, _s>...>;
+template <class ..._s> struct   restep;
+template <class ..._s> using    restep_t =  confined_t<restep< _s...>>;
+template <class ..._s> concept  restep_q = bond::tag_p<restep, _s...> ;
 
 XTAL_DEF_(return,inline,let)   restep_f(auto &&w)
 noexcept -> decltype(auto) {return restep_t<>(XTAL_REF_(w));}
@@ -23,7 +22,7 @@ noexcept -> decltype(auto) {return restep_t<>(XTAL_REF_(w));}
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct restep
+struct restep<U>
 {
 	static_assert(integral_variable_q<U>);
 
@@ -44,11 +43,8 @@ struct restep
 
 	};
 };
-template <>
-struct restep<void>
-:	restep<extent_type>
-{
-};
+template <> struct restep<void> : restep<extent_type> {};
+template <> struct restep<    > : restep<extent_type> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

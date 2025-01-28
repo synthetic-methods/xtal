@@ -14,9 +14,9 @@ namespace xtal::atom
 Defines a fixed-width `type` that supports homogeneous/heterogeneous construction, \
 as well as expression-templates. \
 
-template <class                   ..._s> struct   block;
-template <                  class ..._s> using    block_t = typename block<_s...>::type;
-template <                  class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
+template <class ..._s> struct   block;
+template <class ..._s> using    block_t = typename block<_s...>::type;
+template <class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
 
 template <class U, auto  N, auto  ..._s> struct   block<U   [N][_s]...> : block<block_t<U[_s]...>   [N]> {};
 template <class U, auto  N, auto  ..._s> struct   block<U(&)[N][_s]...> : block<block_t<U[_s]...>(&)[N]> {};
@@ -387,11 +387,6 @@ template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto        &o) 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-//static_assert(  reiterated_q<block_t<int(&)[1]>>);
-//static_assert( fixed_sized_q<block_t<int(&)[1]>>);
-//static_assert(fixed_valued_q<block_t<int(&)[1]>>);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

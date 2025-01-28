@@ -27,10 +27,9 @@ preserving only the `step` order and `size` of the object to which it's attached
 While the exact time-position is unknown, contiguity is guaranteed (by `assert`ion on `efflux`), \
 and the value may be reset on `influx` (ignoring any misalignment issues that may occur). \
 
-template <class U=void> struct        render;
-template <class U=void> using         render_t =          confined_t<render<U>>;
-template <class  ..._s> concept       render_q = un_n<0, bond::tag_p<render, _s>...>;
-template <class  ..._s> concept  some_render_q = in_n<1, bond::tag_p<render, _s>...>;
+template <class ..._s> struct   render;
+template <class ..._s> using    render_t =  confined_t<render< _s...>>;
+template <class ..._s> concept  render_q = bond::tag_p<render, _s...> ;
 
 XTAL_DEF_(return,inline,let)   render_f(auto &&w)
 noexcept -> decltype(auto) {return render_t<>(XTAL_REF_(w));}
@@ -467,11 +466,11 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <>
-struct render<void>
-:	render<counter_t<>>
-{
-};
+template <> struct render<void> : render<counter_t<>> {};
+template <> struct render<    > : render<counter_t<>> {};
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 static_assert(render_q<render_t<counter_t<>>>);
 static_assert(render_q<render_t<counted_t<>>>);

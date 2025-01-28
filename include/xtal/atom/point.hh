@@ -21,13 +21,9 @@ template <class U, auto  N, auto  ..._s> struct   point<U   [N][_s]...> : point<
 template <class U, auto  N, auto  ..._s> struct   point<U(&)[N][_s]...> : point<point_t<U[_s]...>(&)[N]> {};
 
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-point_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<point_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) point_f(auto &&...oo),
+	_detail::build<point_t>::template static_factory<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -206,19 +202,6 @@ struct point
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-static_assert(atomic_q<point_t<float[2]>>);
-
-static_assert(not counted_q<point_t<        int[2]>>);
-static_assert(not counted_q<point_t<counter_t<>[2]>>);
-static_assert(not counted_q<point_t<  size_type[2]>>);
-
-//static_assert(fungible_q<_std::span<float, 2>, point_t<float(&)[2]>>);
-
-//static_assert(  reiterated_q<point_t<int(&)[1]>>);
-//static_assert(fixed_valued_q<point_t<int(&)[1]>>);
-//static_assert( fixed_sized_q<point_t<int(&)[1]>>);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

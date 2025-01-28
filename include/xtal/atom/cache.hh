@@ -32,7 +32,7 @@ struct cache
 		using S_ = holotype<T>;
 		using I  = valued_u<_std::byte>;
 
-		static size_type constexpr N_bytes = one << _std::bit_width(_detail::aligned_n<As...> - one);
+		static size_type constexpr N_bytes = one << _std::bit_width(_detail::aligned<As...>::size() - one);
 		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
 		alignas (N_bytes)        _std::byte mutable   m_bytes[N_bytes]  ;
 
@@ -107,7 +107,7 @@ struct cache
 		form(),
 		noexcept -> auto
 		{
-			static_assert(atomic_q<Vs...> and _detail::aligned_n<Vs...> <= N_bytes);
+			static_assert(atomic_q<Vs...> and _detail::aligned<Vs...>::size() <= N_bytes);
 
 			using W = _std::tuple<Vs &...>;
 			int i{0};
@@ -121,7 +121,7 @@ struct cache
 		form(int &i),
 		noexcept -> V &
 		{
-			return reinterpret_cast<V &>(m_bytes[_detail::maligned_f<V>(i)]);
+			return reinterpret_cast<V &>(m_bytes[_detail::aligned<V>::static_bump(i)]);
 		})
 
 	};

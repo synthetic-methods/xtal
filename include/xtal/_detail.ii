@@ -1,0 +1,246 @@
+
+
+
+
+
+
+
+
+
+namespace _detail
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q I > XTAL_DEF_(return,inline,let)    mover_f(I i) noexcept -> auto {return _xtd::ranges::   make_move_iterator(i);}
+template <iterator_q I > XTAL_DEF_(return,inline,let) reverser_f(I i) noexcept -> auto {return _xtd::ranges::make_reverse_iterator(i);}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <iterator_q Y_, iterator_q X_> requires isomorphic_q<Y_, X_>
+XTAL_DEF_(inline,let)
+swap_with(Y_ y0, X_ const x0, X_ const sN, bool const ord=false)
+noexcept -> void
+{
+	using namespace _std;
+#ifdef __cpp_lib_execution
+	if (not _std::is_constant_evaluated()) {
+		auto constexpr par = execution::unseq;
+		auto constexpr seq = execution::  seq;
+		if    (ord) swap_ranges(seq, x0, sN, y0);
+		else        swap_ranges(par, x0, sN, y0);
+	}
+	else {
+		swap_ranges(x0, sN, y0);
+	}
+#else
+	swap_ranges(x0, sN, y0);
+#endif
+}
+template <iterator_q Y_, iterable_q Xs>
+XTAL_DEF_(inline,let)
+swap_with(Y_ y0, Xs const &xs, bool const ord=false)
+noexcept -> void
+{
+	swap_with(y0, xs.begin(), endpoint_f(xs), ord);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
+noexcept -> void
+requires same_q<decltype(x0), decltype(xN)>
+{
+	using Y_ = common_t<decltype(y0)>;
+	using X_ = common_t<decltype(x0), decltype(xN)>;
+	using Y  = iteratee_t<Y_>;
+	using X  = iteratee_t<X_>;
+	using F  =   decltype(f );
+	XTAL_IF0
+	XTAL_0IF (same_q<F, invoke_t<>> and different_q<Y, X>) {
+		copy_to<invoke_n<Y>>(y0, x0, xN, ord);
+	}
+	XTAL_0IF (same_q<F, invoke_t<>> and      same_q<Y, X>) {
+#if __cpp_lib_execution
+		if (not _std::is_constant_evaluated()) {
+			using namespace _std;
+			if (ord) copy(execution::  seq, x0, xN, y0);
+			else     copy(execution::unseq, x0, xN, y0);
+		}
+#else
+		if constexpr (false) {}
+#endif
+		else {
+			using namespace _xtd::ranges;
+			copy(static_cast<X_>(x0), static_cast<X_>(xN), y0);
+		}
+	}
+	XTAL_0IF_(else) {
+#if __cpp_lib_execution
+		if (not _std::is_constant_evaluated()) {
+			using namespace _std;
+			if (ord) transform(execution::  seq, x0, xN, y0, f);
+			else     transform(execution::unseq, x0, xN, y0, f);
+		}
+#else
+		if constexpr (false) {}
+#endif
+		else {
+			using namespace _xtd::ranges;
+			transform(static_cast<X_>(x0), static_cast<X_>(xN), y0, f);
+		}
+	}
+}
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
+noexcept -> void
+{
+	using namespace _xtd::ranges;
+
+	XTAL_IF0
+	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+		copy_to<f>(y0, x0, next(x0, sN), ord);
+	}
+	XTAL_0IF_(consteval)  {copy_n(x0, sN, y0);}
+	XTAL_0IF_(do)   (_std::memcpy(y0, x0, sN*sizeof(iterated_u<decltype(x0)>)))
+#if XTAL_VER_(LLVM)
+	XTAL_0IF_(do)   (_std::copy_n(x0, sN, y0))
+#endif
+	XTAL_0IF_(do)   (copy_n(     x0, sN,  y0))
+	XTAL_0IF_(do)   (copy  (span(x0, sN), y0))
+	XTAL_0IF_(else) {while (sN--) {*y0 = *x0; y0++; x0++;}}
+}
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+copy_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+		copy_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
+	}
+	XTAL_0IF_(else) {
+		copy_to< >(y0, point_f(xs),    count_f(xs), ord);
+	}
+}
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+copy_to(iterable_q auto &ys, iterable_q auto const &xs, bool const ord=false)
+noexcept -> void
+{
+	copy_to<f>(ys.begin(), xs, ord);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
+noexcept -> void
+requires same_q<decltype(x0), decltype(xN)>
+{
+	XTAL_IF0
+	XTAL_0IF_(consteval) {copy_to<f>(y0,         x0 ,         xN , ord);}
+	XTAL_0IF_(else)      {copy_to<f>(y0, mover_f(x0), mover_f(xN), ord);}
+}
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
+noexcept -> void
+{
+	using namespace _xtd::ranges;
+
+	XTAL_IF0
+	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {move_to<f>(y0, x0, next(x0, sN), ord);}
+	XTAL_0IF_(consteval)               {copy_to<f>(y0,         x0 , sN,  ord);}
+	XTAL_0IF_(do)                      (_std::memmove(y0, x0, sN*sizeof(iterated_u<decltype(x0)>)))
+	XTAL_0IF_(else)                    {copy_to<f>(y0, mover_f(x0), sN,  ord);}
+}
+template <auto f=invoke_n<>>
+XTAL_DEF_(inline,let)
+move_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+		move_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
+	}
+	XTAL_0IF_(else) {
+		move_to< >(y0, point_f(xs),    count_f(xs), ord);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto f>
+XTAL_DEF_(inline,let)
+apply_to(auto &w, bool const ord=false)
+noexcept -> void
+{
+	w = f(XTAL_MOV_(w));
+}
+template <auto f>
+XTAL_DEF_(inline,let)
+apply_to(iterable_q auto &ws, bool const ord=false)
+noexcept -> void
+{
+	move_to<f>(ws.begin(), ws, ord);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/**/
+XTAL_DEF_(let)
+mix_to(auto &y, auto &&x)
+noexcept -> void
+{
+	auto j = point_f(x);
+	auto i = point_f(y);
+	auto N = count_f(y);
+	for (XTAL_ALL_(N) n{}; n < N; ++n) {*i++ += XTAL_MOV_(*j++);}
+};
+XTAL_DEF_(inline,let)
+mix_to(auto &y, auto &&...xs)
+noexcept -> void
+{
+	auto const f = [] (auto &&o, auto &&...oo) XTAL_0FN_(return) (XTAL_REF_(o) +...+ XTAL_REF_(oo));
+	mix_to(y, iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));
+};
+/*/
+template <class Y, class ...Xs>
+XTAL_DEF_(inline,let)
+mix_to(Y &y, Xs &&...xs)
+noexcept -> void
+{
+	using namespace _xtd::ranges;
+	
+	auto  x = iterative_f([] (auto &&o, auto &&...oo) XTAL_0FN_(return) (o +...+ oo), XTAL_REF_(xs)..., y);
+	auto _j = point_f(x);
+	auto _i = point_f(y);
+	auto  n = count_f(y);
+	
+	auto &copy_j =                    _j ;
+	auto  move_j = make_move_iterator(_j);
+
+	XTAL_IF0
+#if XTAL_VER_(LLVM)
+	XTAL_0IF_(do) (_std::copy_n(copy_j, n, _i))
+#endif
+	XTAL_0IF_(do) (copy_n(move_j, n, _i))
+	XTAL_0IF_(do) (move(x|account_f(n), _i))
+	XTAL_0IF_(else) {for (int m{}; m < n; ++m) {*_i++ = *move_j++;}}
+};
+/***/
+
+////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////

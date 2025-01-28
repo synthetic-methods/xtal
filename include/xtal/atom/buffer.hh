@@ -43,7 +43,7 @@ struct buffer<U_data[(unsigned) -1]>
 template <class U_data, auto N_data>
 struct buffer<U_data[N_data]>
 {
-	using T_data = _detail::aligned_t<U_data>;
+	using T_data = typename _detail::aligned<U_data>::type;
 
 	template <class T>
 	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer>>;
@@ -175,7 +175,7 @@ struct buffer<U_data[N_data]>
 			auto sX = _std::distance(i0, end());
 			if (0 < sX) {
 				static_assert(_std::is_move_constructible_v<value_type>);
-				_std::memmove(offence_f(iN), offence_f(i0), sX*_detail::aligned_n<value_type>);
+				_std::memmove(offence_f(iN), offence_f(i0), sX*_detail::aligned<value_type>::size());
 			}
 			n_data += sN;
 		}
@@ -528,7 +528,7 @@ struct buffer<U_data[N_data]>
 			auto const sX = _std::distance(iN, end());
 			if (0 < sX) {
 				static_assert(_std::is_move_constructible_v<value_type>);
-				_std::memmove(i0, iN, sX*_detail::aligned_n<value_type>);
+				_std::memmove(i0, iN, sX*_detail::aligned<value_type>::size());
 			}
 			n_data -= sN;
 			return i0;
@@ -541,11 +541,6 @@ struct buffer<U_data[N_data]>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-static_assert(std::is_copy_assignable_v<buffer_t<float             *  >>);
-static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned)  -1]>>);
-static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned) 0x8]>>);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

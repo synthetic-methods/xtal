@@ -17,13 +17,10 @@ template <class         ..._s>	struct   grade;
 template <class         ..._s>	using    grade_t = typename grade<_s...>::type;
 template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and same_n<sized_n<_s>...>;
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-grade_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<grade_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) grade_f(auto &&...oo),
+	_detail::build<grade_t>::template static_factory<f>(XTAL_REF_(oo)...))
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -90,8 +87,9 @@ struct grade
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<grade_t<float[2]>>);
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -21,13 +21,9 @@ template <class U, auto  N, auto  ..._s> struct   order<U   [N][_s]...> : order<
 template <class U, auto  N, auto  ..._s> struct   order<U(&)[N][_s]...> : order<order_t<U[_s]...>(&)[N]> {};
 
 
-template <auto f=null_type{}>
-XTAL_DEF_(return,inline,let)
-order_f(auto &&...oo)
-noexcept -> auto
-{
-	return _detail::build<order_t>::template with<f>(XTAL_REF_(oo)...);
-}
+XTAL_FX0_(alias) (template <auto f=invoke_n<>>
+XTAL_DEF_(return,inline,let) order_f(auto &&...oo),
+	_detail::build<order_t>::template static_factory<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,14 +78,9 @@ struct order
 	using type = derive_t<homotype>;
 
 };
-static_assert(atomic_q<order_t<float[2]>>);
 
-static_assert(not counted_q<order_t<        int[2]>>);
-static_assert(not counted_q<order_t<counter_t<>[2]>>);
-static_assert(not counted_q<order_t<  size_type[2]>>);
 
-//static_assert(fungible_q<_std::span<float, 2>, order_t<float(&)[2]>>);
-
+////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

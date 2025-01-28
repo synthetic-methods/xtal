@@ -1,42 +1,34 @@
-namespace _std = ::std;
-namespace _xtd
-{
-
-template <class T> using        remove_reference_t =                                                     _std::remove_reference_t<T>;
-template <class T> using remove_rvalue_reference_t = _std::conditional_t<_std::is_rvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
-template <class T> using remove_lvalue_reference_t = _std::conditional_t<_std::is_lvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
 
 
-template <class T>  concept     semitrivial = _std::semiregular<T> and _std::destructible<T>;
-template <class T>  concept         trivial =       semitrivial<T>
-and	_std::   is_trivially_copy_constructible_v<T>
-and	_std::   is_trivially_move_constructible_v<T>
-and	_std::         is_trivially_destructible_v<T>
-and	_std::             default_initializable  <T>;
-
-static_assert(trivial<_std::complex<float>>);
-
-#if XTAL_VER_(ranges == 3)
-namespace ranges        {using namespace      ::ranges;}
-namespace ranges::views {using namespace      ::ranges::views;}
-#elif
-namespace ranges        {using namespace ::std::ranges;}
-namespace ranges::views {using namespace ::std::ranges::views;}
-#endif
-}
 
 
-namespace _entail
-{/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //\
 Standard...
 
-using  extent_type	= _std::  make_signed_t<XTAL_STD_(size_type)>;
-using    size_type	= _std::make_unsigned_t<XTAL_STD_(size_type)>;
-using    sign_type	= XTAL_ALL_(false - true);
-using    null_type	= XTAL_STD_(null_type);
-using    unit_type	= XTAL_STD_(unit_type);
+using extent_type =        _retail:: extent_type;
+using   size_type =        _retail::   size_type;
+using   sign_type =        _retail::   sign_type;
+using   null_type =        _retail::   null_type;
+class   void_type ;
+//ing   unit_type =        _retail::   unit_type;
+class   unit_type : public _retail::   unit_type
+{
+	using S_ = _retail::unit_type;
+
+public:
+	using S_::S_;
+
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,113 +36,66 @@ using    unit_type	= XTAL_STD_(unit_type);
 //\
 Structural...
 
-template <         class ...Ts> struct         isotropic ;
-template <         class ...Ts> struct         epitropic ;
-template <         class ...Ts> struct        isomorphic ;
-template <         class ...Ts> struct        epimorphic ;
+template <         class ...Ts>	concept     isotropic_q	=          _retail::    isotropic_q<   Ts...>;
+template <         class ...Ts>	concept     epitropic_q	=          _retail::    epitropic_q<   Ts...>;
+template <         class ...Ts>	concept    isomorphic_q	=          _retail::   isomorphic_q<   Ts...>;
+template <         class ...Ts>	concept    epimorphic_q	=          _retail::   epimorphic_q<   Ts...>;
 
-template <class T, class ...Ts> struct         isotropic<T, Ts...> : _std::conjunction<_std::is_same<         XTAL_TYP_(Ts), XTAL_TYP_(T)>...> {};
-template <class T, class ...Ts> struct         epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<XTAL_TYP_(Ts),           T >...> {};
-template <         class ...Ts> struct        isomorphic : isotropic<Ts...> {};
-template <         class ...Ts> struct        epimorphic : epitropic<Ts...> {};
-
-template <         class ...Ts>	concept     isotropic_q	=          _entail::      isotropic<   Ts...>::value;
-template <         class ...Ts>	concept     epitropic_q	=          _entail::      epitropic<   Ts...>::value;
-template <         class ...Ts>	concept    isomorphic_q	=          _entail::     isomorphic<   Ts...>::value;
-template <         class ...Ts>	concept    epimorphic_q	=          _entail::     epimorphic<   Ts...>::value;
-
-template <         class ...Ts>	struct       fungible              : _std::false_type                                                    {};
-template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
-template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disjunction<_std::is_base_of<T, T1>, _std::is_base_of<T1, T>> {};
+template <         class ...Ts>	concept      fungible_q	=          _retail::     fungible_q<   Ts...>; //< `T` and `Ts...` are   related by inheritance.
+template <         class ...Ts>	concept    infungible_q	=          _retail::   infungible_q<   Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
 
-template <class T             >	using           based_t	=                       XTAL_TYP_(T) ;
-template <class T             >	concept         based_q	=      _std::same_as<T, XTAL_TYP_(T)>;
-template <class T             >	concept       unbased_q	=  not _std::same_as<T, XTAL_TYP_(T)>;
+template <class T             >	using           based_t	=          _retail::        based_t<T       > ;
+template <         class ...Ts>	concept         based_q	=  (...and _retail::        based_q<   Ts   >);
+template <         class ...Ts>	concept       unbased_q	=  (...and _retail::      unbased_q<   Ts   >);
 
-template <class T, class ...Us>	concept          make_p	= _std::constructible_from<XTAL_TYP_(T), Us...>;
-template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>::value;
-template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>::value;
-template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>::value;
-template <         auto  ...Ns>	concept          same_n	=       same_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
-template <         auto  ...Ns>	concept     different_n	=  different_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
-
-static_assert(         same_n<0>);
-static_assert(not different_n<0>);
-static_assert(         same_n<0, 0, 0>);
-static_assert(not different_n<0, 0, 0>);
-
-template <         class ...Ts>	concept      fungible_q	=      fungible<XTAL_TYP_(Ts)...>::value;
-template <         class ...Ts>	concept    infungible_q	=  not fungible<XTAL_TYP_(Ts)...>::value;
-
-template <class T             >  concept     molecular_q = _xtd::semitrivial<XTAL_TYP_(T)>;
-template <class T             >  concept        atomic_q = _xtd::    trivial<XTAL_TYP_(T)>;
+template <         class ...Ts>	using          common_t	=          _retail::       common_t<   Ts...>;
+template <         class ...Ts>	concept        common_q	=          _retail::       common_q<   Ts...>;
 
 
-template <class T             >	struct       identity;
-template <class T             >	using        identity_t	= typename identity  <T>::type;
-template <class T             >	using        identity_u	= typename identity_t<T>::type;
-template <class T             >	XTAL_LET     identity_n	= identity_u<T>::value;
-template <class T             >	concept      identity_q	= _std::same_as<identity_t<T>, T>;
+template <class T             >	using        identity_t	=          _retail::     identity_t<T       >;
+template <class T             >	using        identity_u	=          _retail::     identity_u<T       >;
+template <class T             >	XTAL_LET     identity_n	=          _retail::     identity_n<T       >;
+template <class T             >	concept      identity_q	=          _retail::     identity_q<T       >;
 
-template <class T             >	struct       identity                         {using type = _std::type_identity<T>;};
-template <class U             >	struct       identity<_std::type_identity<U>> {using type = _std::type_identity<U>;};
+template <         class ...Ts>	using        complete_t	= typename _retail::     complete_t<   Ts...> ;
+template <         class ...Ts>	concept      complete_q	=  (...and _retail::     complete_q<   Ts   >);
+template <         class ...Ts>	concept    incomplete_q	=  (...and _retail::   incomplete_q<   Ts   >);
 
-
-template <auto  N             >	concept    incomplete_n	=  N == 0;
-template <auto  N             >	concept      complete_n	=  N != 0;
-template <class T             >	concept    incomplete_q	=  not requires {typename _std::void_t<decltype(sizeof(T))>;} or       same_q<T, null_type>;
-template <class T             >	concept      complete_q	=      requires {typename _std::void_t<decltype(sizeof(T))>;} and different_q<T, null_type>;
-template <         class ...Ts>	struct       complete	;
-template <         class ...Ts>	using        complete_t	=  typename complete<Ts...>::type;
-
-template <                           >	struct complete<        >    {class type  { };};
-template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
-template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
+template <         class ...Ts>	concept     molecular_q	=  (...and _retail::    molecular_q<   Ts   >);
+template <         class ...Ts>	concept        atomic_q	=  (...and _retail::       atomic_q<   Ts   >);
 
 
-template <auto  N, auto  ...Ns>	concept            un_n	= ((0 == sizeof...(Ns) and incomplete_n<N>) or...or different_n<N, Ns>);
-template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
-template <auto  N, auto  ...Ns>	concept            in_n	= ((0 == sizeof...(Ns) and   complete_n<N>) or...or      same_n<N, Ns>);
-template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or      same_q<T, Ts>);
+template <         auto  ...Ns>	concept     different_n	=          _retail::    different_n<   Ns...>;//< `Ns...` are different values.
+template <         auto  ...Ns>	concept          same_n	=          _retail::         same_n<   Ns...>;//< `Ns...` are identical values.
+template <         class ...Ts>	concept     different_q	=          _retail::    different_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
+template <         class ...Ts>	concept          same_q	=          _retail::         same_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
+template <         class ...Ts>	concept          make_q	=          _retail::         make_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
+template <class T, class ...Ts>	concept          make_p	=          _retail::         make_p<T, Ts...>;//< `T` is constructible from `Ts...`.
 
 
-template <         class ...Ts>	using          common_t	=  typename complete_t<_std::common_type<Ts...>, identity_t<void>>::type;
-template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and complete_q<common_t<Ts...>>;
+////////////////////////////////////////////////////////////////////////////////
 
-template <class F, class ...Xs>	using          return_t	=     _std::invoke_result_t<F, Xs...>;
-template <class F, class ...Xs>	concept    applicable_p	=     _std::invocable      <F, Xs...>;
-template <class F, class ...Xs>	concept  inapplicable_p	= not _std::invocable      <F, Xs...>;
+template <class F, class ...Xs>	using          return_t	=          _retail::       return_t<F, Xs...>;
+template <class F, class ...Xs>	concept    applicable_p	=          _retail::   applicable_p<F, Xs...>;
+template <class F, class ...Xs>	concept  inapplicable_p	=          _retail:: inapplicable_p<F, Xs...>;
 
-template <class F, class X    >	concept  automorphism_p	=  same_q<return_t<F, X>, X>;
-template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>, X>;
+template <class F, class ...Xs>	concept  automorphism_p	=  (...and _retail:: automorphism_p<F, Xs   >);//< `Xs` are unchanged by `F ...`.
+template <class X, class ...Fs>	concept  automorphism_q	=  (...and _retail:: automorphism_q<X, Fs   >);//< `X `  is unchanged by `Fs...`.
 
+
+///\
+Defines a factory for the supplied type. \
+
+template <class T=void        > auto constexpr invoke_n = _retail::invoke_n<T>;
+template <class T=void        > using          invoke_t = decltype(invoke_n<T>);
+template <class T, class ...Xs> concept        invoke_p = _std::invocable<invoke_t<T>, Xs...>;
+
+///\
+Resolves the given CRTP `template` as a type. \
 
 template <template <class> class T_>
-struct derive
-{
-	class type : public T_<type>
-	{
-		using S_ = T_<type>;// -Wsubobject-linkage?
-		
-	public:
-		using S_::S_;
-
-	};
-};
-
-template <class T=void>
-XTAL_LET invoke_n = [] (auto &&...oo)
-XTAL_0FN
-{
-	XTAL_IF0
-	XTAL_0IF (incomplete_q<T>) {
-		return (XTAL_REF_(oo),...); static_assert(1 == sizeof...(oo));
-	}
-	XTAL_0IF_(return) (T   {XTAL_REF_(oo)...})
-	XTAL_0IF_(return) (T   (XTAL_REF_(oo)...))
-	XTAL_0IF_(return) (T{} (XTAL_REF_(oo)...))
-};
+using derive_t	= typename _retail::derive<T_>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,217 +103,235 @@ XTAL_0FN
 //\
 Valued...
 
-template <auto  M, auto     N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
-template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
-template <auto  M, auto     N >	XTAL_LET        above_m	= (M < N)? N: static_cast<XTAL_ALL_(N)>(M + 1);
-template <auto  M, auto     N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
-template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
-template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
+template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	=         _retail::              sign_n<N, Z    >;
+template <auto  M, auto     N >	XTAL_LET       modulo_m	=         _retail::            modulo_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        above_m	=         _retail::             above_m<M, N    >;
+template <auto  M, auto     N >	XTAL_LET        below_m	=         _retail::             below_m<M, N    >;
+template <auto  M, auto  ...Ns>	concept         above_p =         _retail::             above_p<M, Ns...>;
+template <auto  M, auto  ...Ns>	concept         below_p =         _retail::             below_p<M, Ns...>;
+template <auto  N, auto  ...Ms>	concept            in_n	=         _retail::                in_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_n	=         _retail::                un_n<N, Ms...>;
+template <class T, class ...Ts>	concept            in_q	=         _retail::                in_q<T, Ts...>;
+template <class T, class ...Ts>	concept            un_q	=         _retail::                un_q<T, Ts...>;
+
+template <class          ...Ts>	concept      variable_q	= (...and _retail::          variable_q<XTAL_TYP_(Ts)>);
+template <class          ...Ts>	concept      constant_q	= (...and _retail::          constant_q<XTAL_TYP_(Ts)>);
+template <auto   N=null_type{}>	using        constant_t	=         _retail::          constant_t<N >  ;
+template <auto   N=null_type{}>	XTAL_LET     constant_n	=         _retail::          constant_t<N >{};
+
+XTAL_DEF_(return,inline,let)
+variable_f(auto &&x)
+noexcept -> decltype(auto)
+{
+	using X = XTAL_ALL_(x);
+	XTAL_IF0
+	XTAL_0IF (variable_q<X>) {return XTAL_REF_(x);}
+	XTAL_0IF (constant_q<X>) {return     X::value;}
+}
+
+auto constexpr  zero = constant_n<[] XTAL_0FN_(value) (0   )>;
+auto constexpr  half = constant_n<[] XTAL_0FN_(value) (0.5F)>;
+auto constexpr   one = constant_n<[] XTAL_0FN_(value) (1   )>;
+auto constexpr   two = constant_n<[] XTAL_0FN_(value) (2   )>;
+auto constexpr three = constant_n<[] XTAL_0FN_(value) (3   )>;
+
+template <auto  N> auto constexpr half_n = constant_n<[] XTAL_0FN_(value) (1.F/(one << N))>;
+template <auto  N> auto constexpr  two_n = constant_n<[] XTAL_0FN_(value) (1.F*(one << N))>;
 
 
-template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
-template <auto  o             >	struct       constant   :  constant_s<o> {};
-template <auto  o=null_type{} >	using        constant_t	=  constant  <o>   ;
-template <class T             >	concept      constant_q	= _std::derived_from<XTAL_TYP_(T), constant_s<T::value>>;
-template <class T             >	struct       variable     {using value_type =          based_t<T>            ;};
-template <constant_q T        >	struct       variable<T>  {using value_type = typename based_t<T>::value_type;};
-template <class T             >	using        variable_u	=  typename variable<T>::value_type;
-template <class T             >	concept      variable_q	=  not constant_q<T>;
+template <class 	 ...Ts>  concept   integral_variable_q	= (...and _retail:: integral_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_variable_q	= (...and _retail:: cardinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_variable_q	= (...and _retail::  ordinal_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_variable_q	= (...and _retail::  logical_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_variable_q	= (...and _retail::     real_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_variable_q	= (...and _retail::  complex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_variable_q	= (...and _retail::  simplex_variable_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_variable_q	= (...and _retail::  anyplex_variable_q<   Ts   >);
 
-template <class T        >	concept   integral_variable_q	= _std::             integral<XTAL_TYP_(T)>;
-template <class T        >	concept   cardinal_variable_q	= _std::    unsigned_integral<XTAL_TYP_(T)>;
-template <class T        >	concept    ordinal_variable_q	= _std::      signed_integral<XTAL_TYP_(T)>;
-template <class T        >	concept    logical_variable_q	= _std::      same_as<bool  , XTAL_TYP_(T)>;
-template <class T        >	concept       real_variable_q	= _std::       floating_point<XTAL_TYP_(T)>;
-template <class T        >	concept    complex_variable_q	=  fungible_q<T, _std::complex<typename XTAL_TYP_(T)::value_type>>;
-template <class T        >	concept    simplex_variable_q	=  integral_variable_q<T> or    real_variable_q<T>;
-template <class T        >	concept    anyplex_variable_q	=   complex_variable_q<T> or simplex_variable_q<T>;
+template <class 	 ...Ts>  concept   integral_constant_q	= (...and _retail:: integral_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept   cardinal_constant_q	= (...and _retail:: cardinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    ordinal_constant_q	= (...and _retail::  ordinal_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    logical_constant_q	= (...and _retail::  logical_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept       real_constant_q	= (...and _retail::     real_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    complex_constant_q	= (...and _retail::  complex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    simplex_constant_q	= (...and _retail::  simplex_constant_q<   Ts   >);
+template <class 	 ...Ts>  concept    anyplex_constant_q	= (...and _retail::  anyplex_constant_q<   Ts   >);
 
-template <class T        >	concept   integral_constant_q	= constant_q<T> and requires {requires integral_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept   cardinal_constant_q	= constant_q<T> and requires {requires cardinal_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept    ordinal_constant_q	= constant_q<T> and requires {requires  ordinal_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept    logical_constant_q	= constant_q<T> and requires {requires  logical_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept       real_constant_q	= constant_q<T> and requires {requires     real_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept    complex_constant_q	= constant_q<T> and requires {requires  complex_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept    simplex_constant_q	= constant_q<T> and requires {requires  simplex_variable_q<XTAL_ALL_(T{}())>;};
-template <class T        >	concept    anyplex_constant_q	= constant_q<T> and requires {requires  anyplex_variable_q<XTAL_ALL_(T{}())>;};
+template <class       ...Ts>	concept         integral_q	= (...and _retail::     integral_q<Ts>);
+template <class       ...Ts>	concept         cardinal_q	= (...and _retail::     cardinal_q<Ts>);
+template <class       ...Ts>	concept          ordinal_q	= (...and _retail::      ordinal_q<Ts>);
+template <class       ...Ts>	concept          logical_q	= (...and _retail::      logical_q<Ts>);
+template <class 	    ...Ts>  concept             real_q	= (...and _retail::         real_q<Ts>);
+template <class 	    ...Ts>  concept          complex_q	= (...and _retail::      complex_q<Ts>);
+template <class 	    ...Ts>  concept          simplex_q	= (...and _retail::      simplex_q<Ts>);
+template <class 	    ...Ts>  concept          anyplex_q	= (...and _retail::      anyplex_q<Ts>);
+template <class 	    ...Ts>  concept           number_q	=                         anyplex_variable_q<Ts...>;
 
-template <class T             >	concept      integral_q	= integral_variable_q<T> or integral_constant_q<T>;
-template <class T             >	concept      cardinal_q	= cardinal_variable_q<T> or cardinal_constant_q<T>;
-template <class T             >	concept       ordinal_q	=  ordinal_variable_q<T> or  ordinal_constant_q<T>;
-template <class T             >	concept       logical_q	=  logical_variable_q<T> or  logical_constant_q<T>;
-template <class T             >	concept          real_q	=     real_variable_q<T> or     real_constant_q<T>;
-template <class T             >	concept       complex_q	=  complex_variable_q<T> or  complex_constant_q<T>;
-template <class T             >	concept       simplex_q	=  simplex_variable_q<T> or  simplex_constant_q<T>;
-template <class T             >	concept       anyplex_q	=  anyplex_variable_q<T> or  anyplex_constant_q<T>;
+XTAL_DEF_(return,inline,let)  ordinal_f( ordinal_variable_q auto o) noexcept -> auto {return o;}
+XTAL_DEF_(return,inline,let) cardinal_f(cardinal_variable_q auto o) noexcept -> auto {return o;}
+XTAL_DEF_(return,inline,let)  ordinal_f(cardinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::  make_signed_t<decltype(o)>>(o);}
+XTAL_DEF_(return,inline,let) cardinal_f( ordinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::make_unsigned_t<decltype(o)>>(o);}
+XTAL_DEF_(return,inline,let)  ordinal_f(         constant_q auto o) noexcept -> auto {return constant_n< ordinal_f(o.value)>;}
+XTAL_DEF_(return,inline,let) cardinal_f(         constant_q auto o) noexcept -> auto {return constant_n<cardinal_f(o.value)>;}
+
+///\returns the conditional `x` reinterpreted as type `Y`, \
+where `std::floating_point`s and `bool`eans are `static_cast`, \
+while all other `std::integral`s are negated. \
+
+template <variable_q Y>
+XTAL_DEF_(return,inline,let)
+condition_f(bool x)
+noexcept -> Y
+{
+	XTAL_IF0
+	XTAL_0IF ( logical_q<Y>) {return x;}
+	XTAL_0IF (integral_q<Y>) {return static_cast<Y>(-x);}
+	XTAL_0IF (    real_q<Y>) {return static_cast<Y>(+x);}
+}
 
 
-////////////////////////////////////////////////////////////////////////////////
+template <class          ...Ts>	concept       liminal_q	= (...and _retail::      liminal_q<XTAL_TYP_(Ts)>);
+template <class          ...Ts>	concept      terminal_q	= (...and _retail::     terminal_q<XTAL_TYP_(Ts)>);
+template <liminal_q T         >	using      subliminal_t	=  typename _retail::   subliminal_t<T >;
+template <liminal_q T         >	using    superliminal_t	=  typename _retail:: superliminal_t<T >;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Valued & Sized...
 
-template <class T             >	using         pointee_t	=                          decltype(*XTAL_ANY_(T)) ;
-template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
-template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(int)]) ;
-template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(int)])>;
+template <class T             >	using         pointee_t	=          _retail::      pointee_t<T >;
+template <class T             >	using         pointed_u	=          _retail::      pointed_u<T >;
+template <class          ...Ts>	concept       pointed_q	= (... and _retail::      pointed_q<Ts>);
+template <class          ...Ts>	concept       pointer_q	= (... and _retail::      pointer_q<Ts>);
 
-template <class T             >	concept       pointer_q	= _std::is_pointer_v<XTAL_TYP_(T)>;
-template <class T             >	concept       pointed_q	= requires (T t) {*t;};
-template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)];};
+template <class T             >	using         indexee_t	=          _retail::      indexee_t<T >;
+template <class T             >	using         indexed_u	=          _retail::      indexed_u<T >;
+template <class          ...Ts>	concept       indexed_q	= (... and _retail::      indexed_q<Ts>);
 
+template <         class ...Ts>	using    array_valued_u	= common_t<_retail::   array_valued_u<Ts>...>;
+template <         class ...Ts>	concept  array_valued_q	=  (...and _retail::   array_valued_q<Ts>);
 
-template <class T             >	struct   fixed_valued   ;
-template <class T             >	struct   fluid_valued   ;
-template <class T             >	using          valued   = fluid_valued<T>;
+template <         class ...Ts>	using    inner_valued_u	= common_t<_retail::   inner_valued_u<Ts>...>;
+template <         class ...Ts>	concept  inner_valued_q	=  (...and _retail::   inner_valued_q<Ts>);
 
-template <class T, class U    >	using    const_valued_u	= _std::conditional_t<_std::is_const_v<T>, const U, U>;
-template <class T             >	using    array_valued_u	=  const_valued_u<T, _std::remove_extent_t<_std::remove_reference_t<T>>>;
-template <class T             >	using    inner_valued_u	=  const_valued_u<T, typename _std::remove_reference_t<T>::value_type>;
-template <class T             >	using    under_valued_u	=  const_valued_u<T, _std::underlying_type_t<T>>;
-template <class T             >	using    fixed_valued_u	=  typename fixed_valued<T>::value_type;
-template <class T             >	using    fluid_valued_u	=  typename fluid_valued<T>::value_type;
-template <class T             >	using          valued_u	=  typename       valued<T>::value_type;
-template <class T             >	using   scalar_valued_u	=  const_valued_u<T, typename XTAL_TYP_(T)::scalar_type>;
-template <class T             >	using   Scalar_valued_u	=  const_valued_u<T, typename XTAL_TYP_(T)::Scalar     >;
+template <         class ...Ts>	using    under_valued_u	= common_t<_retail::   under_valued_u<Ts>...>;
+template <         class ...Ts>	concept  under_valued_q	=  (...and _retail::   under_valued_q<Ts>);
 
-template <class T             >	concept  array_valued_q	=  _std::is_array_v<_std::remove_reference_t<T>>;
-template <class T             >	concept  inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
-template <class T             >	concept  under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
-template <class T             >	concept  fixed_valued_q	=  complete_q<fixed_valued<T>> and different_q<T, fixed_valued_u<T>>;
-template <class T             >	concept  fluid_valued_q	=  complete_q<fluid_valued<T>> and different_q<T, fluid_valued_u<T>>;
-template <class T             >	concept        valued_q	=  complete_q<      valued<T>> and different_q<T,       valued_u<T>>;
-template <class T             >	concept scalar_valued_q	=  complete_q<scalar_valued_u<T>> and not fixed_valued_q<T>;
-template <class T             >	concept Scalar_valued_q	=  complete_q<Scalar_valued_u<T>> and not fixed_valued_q<T>;
+template <         class ...Ts>	using    fixed_valued_u	= common_t<_retail::   fixed_valued_u<Ts>...>;
+template <         class ...Ts>	concept  fixed_valued_q	=  (...and _retail::   fixed_valued_q<Ts>);
 
-template <     identity_q T   >	struct   fixed_valued<T> {using value_type =      identity_u<T>;};
-template < array_valued_q T   >	struct   fixed_valued<T> {using value_type =  array_valued_u<T>;};
-template < inner_valued_q T   >	struct   fixed_valued<T> {using value_type =  inner_valued_u<T>;};
-template < under_valued_q T   >	struct   fixed_valued<T> {using value_type =  under_valued_u<T>;};
+template <         class ...Ts>	using    fluid_valued_u	= common_t<_retail::   fluid_valued_u<Ts>...>;
+template <         class ...Ts>	concept  fluid_valued_q	=  (...and _retail::   fluid_valued_q<Ts>);
 
-template <class T             >	struct   fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
-//mplate <      pointed_q T   >	struct   fluid_valued<T> {using value_type =       pointed_u<T>;};
-template < fixed_valued_q T   >	struct   fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
-template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = scalar_valued_u<T>;};
-template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
+template <         class ...Ts>	using          valued_u	= common_t<_retail::         valued_u<Ts>...>;
+template <         class ...Ts>	concept        valued_q	=  (...and _retail::         valued_q<Ts>);
 
 
-template <auto ...Ns>	struct   assign_sized   ;
-template <auto ...Ns>	XTAL_LET assign_sized_n	= assign_sized<Ns...>::size();
-template <auto ...Ns>	XTAL_LET assign_sized_r	= assign_sized<Ns...>::rank();
+template <         auto  ...Ns>	using    assign_sized_t	= typename _retail::  assign_sized  <Ns...>;
+template <         auto  ...Ns>	XTAL_LET assign_sized_n	=          _retail::  assign_sized_n<Ns...>;
+template <         auto  ...Ns>	XTAL_LET assign_sized_r	=          _retail::  assign_sized_r<Ns...>;
 
-template <auto ...Ns>
-struct   assign_sized
+
+template <class T             >	XTAL_LET  tuple_sized_n	=          _retail::   tuple_sized_n<T >;
+template <         class ...Ts>	concept   tuple_sized_q	=  (...and _retail::   tuple_sized_q<Ts>);
+
+template <class T             >	XTAL_LET  array_sized_n	=          _retail::   array_sized_n<T >;
+template <         class ...Ts>	concept   array_sized_q	=  (...and _retail::   array_sized_q<Ts>);
+
+template <class T             >	using     fixed_sized  	=          _retail::   fixed_sized  <T >;
+template <class T             >	XTAL_LET  fixed_sized_n	=          _retail::   fixed_sized_n<T >;
+template <         class ...Ts>	concept   fixed_sized_q	=  (...and _retail::   fixed_sized_q<Ts>);
+
+template <class T             >	using     fluid_sized  	=          _retail::   fluid_sized  <T >;
+template <class T             >	XTAL_LET  fluid_sized_n	=          _retail::   fluid_sized_n<T >;
+template <         class ...Ts>	concept   fluid_sized_q	=  (...and _retail::   fluid_sized_q<Ts>);
+
+template <class T             >	using           sized  	=          _retail::         sized  <T >;
+template <class T             >	XTAL_LET        sized_n	=          _retail::         sized_n<T >;
+template <         class ...Ts>	concept         sized_q	=  (...and _retail::         sized_q<Ts>);
+
+
+template <class T             >	XTAL_LET        fixed_n	=          _retail::         fixed_n<T >;
+template <         class ...Ts>	using           fixed_u	= common_t<_retail::         fixed_u<Ts>...>;
+template <         class ...Ts>	concept         fixed_q	=  (...and _retail::         fixed_q<Ts>);
+
+template <class T             >	XTAL_LET        fluid_n	=          _retail::         fluid_n<T >;
+template <         class ...Ts>	using           fluid_u	= common_t<_retail::         fluid_u<Ts>...>;
+template <         class ...Ts>	concept         fluid_q	=  (...and _retail::         fluid_q<Ts>);
+
+
+template <class T             >	using        abstruct_t	=          _retail::      abstruct_t<T >;
+template <class T             >	using        abstruct_u	=          _retail::      abstruct_u<T >;
+//mplate <class T             >	XTAL_LET     abstruct_n	=          _retail::      abstruct_n<T >;
+
+template <class T             >	using        destruct_t	=          _retail::      destruct_t<T >;
+template <class T             >	using        destruct_u	=          _retail::      destruct_u<T >;
+template <class T             >	XTAL_LET     destruct_n	=          _retail::      destruct_n<T >;
+
+template <class T, int   ...Ns>	using        dissolve  	=          _retail:: dissolve  <T, Ns...>;
+//mplate <         int   ...Ns>	using        dissolve_x	=          _retail:: dissolve_x<   Ns...>;
+//mplate <class T, class ..._s>	using        dissolve_s	=          _retail:: dissolve_s<T, _s...>;
+template <class T             >	using        dissolve_t	=          _retail::      dissolve_t<T >;
+template <class T             >	using        dissolve_u	=          _retail::      dissolve_u<T >;
+template <class T             >	XTAL_LET     dissolve_n	=          _retail::      dissolve_n<T >;
+template <class T             >	XTAL_LET     dissolve_r	=          _retail::      dissolve_r<T >;
+
+template <class T             >	using         absolve_t	=          _retail::       absolve_t<T >;
+template <         class ...Ts>	using         absolve_u	= common_t<_retail::       absolve_u<Ts>...>;
+template <class T             >	XTAL_LET      absolve_n	=          _retail::       absolve_n<T >;
+template <class T             >	XTAL_LET      absolve_r	=          _retail::       absolve_r<T >;
+
+
+template <int N>
+XTAL_DEF_(return,inline,let)
+destruct_f(auto &&t)
+noexcept
+requires fixed_sized_q<decltype(t)>
 {
-	using type = assign_sized;
-
-	XTAL_DEF_(return,inline,set) rank() noexcept -> decltype(auto)                                {return   size_type{(0 +...+ above_p<0, Ns>) };}
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) requires ((...and (Ns != -1))) {return   size_type{(1 *...* Ns)             };}
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) requires ((...or  (Ns == -1))) {return extent_type{-1                       };}
-
-};
-template <>
-struct   assign_sized<>
+	auto constexpr M = fixed_sized_n<decltype(t)>;
+	return get<modulo_m<M, N>>(destruct_f(XTAL_REF_(t)));
+}
+XTAL_DEF_(return,inline,let)
+destruct_f(auto &&t)
+noexcept -> decltype(auto)
+requires fixed_sized_q<decltype(t)>
 {
-	using type = assign_sized;
+	using T = decltype(t);
+	XTAL_IF0
+	XTAL_0IF (tuple_sized_q<T>) {
+		return XTAL_REF_(t);
+	}
+	XTAL_0IF_(else) {
+		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
+	}
+}
 
-	XTAL_DEF_(return,inline,set) rank() noexcept -> decltype(auto) {return size_type{};};
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) {return size_type{};};
-
-};
-
-template <class T             >	XTAL_LET  tuple_sized_n	=   complete_t<_std::tuple_size<_std::remove_reference_t<T>>, constant_t<0>>::value;
-template <class T             >	concept   tuple_sized_q	=   complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
-template <class T             >	struct    tuple_sized	:       assign_sized<tuple_sized_n<T>> {};
-
-template <class T             >	XTAL_LET  array_sized_n	=              _std::    extent_v<_std::remove_reference_t<T>> ;
-template <class T             >	concept   array_sized_q	=              _std::  is_array_v<_std::remove_reference_t<T>>;
-template <class T             >	struct    array_sized	:       assign_sized<array_sized_n<T>> {};
-
-template <class T             >	struct    fixed_sized	;
-template <class T=void        >	struct    fluid_sized   ;
-template <class T             >	struct          sized	;
-
-template <class T             >	XTAL_LET  fixed_sized_n =  fixed_sized<T>::size();
-template <class T             >	XTAL_LET  fluid_sized_n	=  fluid_sized<T>::size();
-template <class T             >	XTAL_LET        sized_n	=        sized<T>::size();
-
-template <class T             >	concept   fixed_sized_q =  complete_q<fixed_sized<T>>;
-template <class T             >	concept   fluid_sized_q =  complete_q<fluid_sized<T>>;
-template <class T             >	concept         sized_q =  complete_q<      sized<T>>;
-
-template <class T             >	concept unfluid_sized_q	=  not fluid_sized_q<T>;
-template <class T             >	concept unfixed_sized_q	=  not fixed_sized_q<T>;
-template <class T             >	concept dynamic_sized_q	=  requires {XTAL_ANY_(T).size();} and not requires {T::size();};
-template <class T             >	concept  static_sized_q	=                                          requires {T::size();};
-
-
-template <  based_q T>	requires      identity_q<T>                            struct fixed_sized<T>                : assign_sized<   identity_n<T>> {};
-template <  based_q T>	requires   tuple_sized_q<T>                            struct fixed_sized<T>                : assign_sized<tuple_sized_n<T>> {};
-template <  based_q T>	requires   array_sized_q<T>                            struct fixed_sized<T>                : assign_sized<array_sized_n<T>> {};
-template <  based_q T>	requires  static_sized_q<T> and un_n<tuple_sized_q<T>> struct fixed_sized<T>                : assign_sized<       T::size()> {};
-template <unbased_q T>	requires   fixed_sized_q<based_t<T>>                   struct fixed_sized<T>                :  fixed_sized<      based_t<T>> {};
-template <class     U>	                                                       struct fixed_sized<_std::complex<U>> :  fixed_sized<identity_t<constant_t<size_type{2}>>> {};
-
-template <           >	                                                       struct fluid_sized<void>             : assign_sized< 0> {};
-template <  based_q T>	                                                       struct fluid_sized<T>                : assign_sized< 0> {};
-template <  based_q T>	requires dynamic_sized_q<T> and un_n<tuple_sized_q<T>> struct fluid_sized<T>                : assign_sized<-1> {};
-template <  based_q T>	requires   fixed_sized_q<T>                            struct fluid_sized<T>                :  fixed_sized<        T        > {};
-template <unbased_q T>	requires   fluid_sized_q<based_t<T>>                   struct fluid_sized<T>                :  fluid_sized<based_t<T>       > {};
-
-template <variable_q T        >	struct          sized<T> :  fluid_sized<           T > {};
-template <constant_q T        >	struct          sized<T> :        sized<identity_t<T>> {};
-
-
-template <class T             >	concept         fixed_q = fixed_valued_q<T> and fixed_sized_q<T>;
-template <class T             >	concept         fluid_q = fluid_valued_q<T> and fluid_sized_q<T> and not fixed_q<T>;
-template <class T             >	using           fixed_u = fixed_valued_u<T>;
-template <class T             >	using           fluid_u = fluid_valued_u<T>;
-template <class T             >	XTAL_LET        fixed_n =  fixed_sized_n<T>;
-template <class T             >	XTAL_LET        fluid_n =  fluid_sized_n<T>;
-
-
-template <class U,        int ...Ns>	struct    instruct   ;
-template <class T                  >	struct    destruct   ;
-template <class T,        int ...Ns>	struct    dissolve   ;
-
-template <class U,        int ...Ns>	using     instruct_t = typename instruct<U, Ns...>::array_type;
-template <class T                  >	using     destruct_t = typename destruct<T       >::array_type;
-template <class T                  >	using     dissolve_t	= typename dissolve<T       >::array_type;
-
-template <class T                  >	using     destruct_u = typename destruct<T>::value_type;
-template <class T                  >	using     dissolve_u	= typename dissolve<T>::value_type;
-
-template <class T                  >	XTAL_LET  destruct_n = destruct<T>::size();
-template <class T                  >	XTAL_LET  dissolve_n	= dissolve<T>::size();
-template <class T                  >	XTAL_LET  dissolve_r	= dissolve<T>::rank();
-
-template <class T                  >	using     abstruct_t	= based_t<destruct_t<XTAL_TYP_(T)>>;
-template <class T                  >	using     abstruct_u	= based_t<destruct_u<XTAL_TYP_(T)>>;
-
-template <class T                  >	using      absolve_t	= based_t<dissolve_t<XTAL_TYP_(T)>>;
-template <class T                  >	using      absolve_u	= based_t<dissolve_u<XTAL_TYP_(T)>>;
-template <class T                  >	XTAL_LET   absolve_n	= dissolve<T>::size();
-template <class T                  >	XTAL_LET   absolve_r	= dissolve<T>::rank();
-
-
-template <class U,        int ...Ns>	struct    instruct       : instruct<U &&, Ns...> {};
-template <class U, int N, int ...Ns>	struct    instruct<U &&, N, Ns...>        {using array_type = const_valued_u<U, instruct_t<U, Ns...>>   [N];};
-template <class U, int N, int ...Ns>	struct    instruct<U  &, N, Ns...>        {using array_type = const_valued_u<U, instruct_t<U, Ns...>>(&)[N];};
-template <class U                  >	struct    instruct<U &&>                  {using array_type = U  ;};
-template <class U                  >	struct    instruct<U  &>                  {using array_type = U &;};
-
-template <class T                  >	struct    destruct       : destruct<T &&> {};
-template <class T                  >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type =                T   ;};
-template <class T                  >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type =                T  &;};
-template <fluid_q T                >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type = fluid_valued_u<T>  ;};
-template <fluid_q T                >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type = fluid_valued_u<T> &;};
-template <fixed_q T                >	struct    destruct<T &&> : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
-template <fixed_q T                >	struct    destruct<T  &> : fixed_sized<T> {using array_type = fixed_valued_u<T>(&)[fixed_sized_n<T>]; using value_type = fixed_valued_u<T> &;};
-
-template <class T,        int ...Ns>	struct    dissolve           : assign_sized<Ns...> {using value_type = destruct_u<T>; using array_type = instruct_t<T, Ns...>;};
-template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<destruct_u<T> , Ns..., destruct_n<T>> {};
+template <int N, int ...Ns>
+XTAL_DEF_(return,inline,let)
+dissolve_f(auto &&t)
+noexcept
+requires fixed_sized_q<decltype(t)>
+{
+	auto constexpr M = fixed_sized_n<decltype(t)>;
+	auto constexpr I = modulo_m<M, N>;
+	XTAL_IF0
+	XTAL_0IF (0 == sizeof...(Ns)) {
+		return                   get<I>(destruct_f(XTAL_REF_(t)));
+	}
+	XTAL_0IF (1 <= sizeof...(Ns)) {
+		return dissolve_f<Ns...>(get<I>(dissolve_f(XTAL_REF_(t))));
+	}
+}
+XTAL_DEF_(return,inline,let)
+dissolve_f(auto &&t)
+noexcept -> decltype(auto)
+requires fixed_sized_q<decltype(t)>
+{
+	using T = decltype(t);
+	return reinterpret_cast<dissolve_t<T> &&>(XTAL_REF_(t));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -376,89 +339,152 @@ template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<des
 //\
 Ranged...
 
-template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(int)))>;
-template <class T             >	concept     coindexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)]; t(XTAL_ANY_(unsigned));};
-
-template <class T             >	using        covalued_u	= coindexed_u<T>;
-template <class T             >	concept      covalued_q	= fixed_q<T> and coindexed_q<T> and different_q<coindexed_u<T>, indexed_u<T>>;;
-
-template <class T             >	concept        scalar_q	=                                 not array_valued_q<T> ;
-template <class T             >	concept        vector_q	= array_sized_q<T> and       scalar_q<array_valued_u<T>>;
-template <class T             >	concept        matrix_q	= array_sized_q<T> and       vector_q<array_valued_u<T>>;
-template <class T             >	concept        tensor_q	= array_sized_q<T> and array_valued_q<array_valued_u<T>>;
-template <class T             >	concept         array_q	= array_sized_q<T> or fungible_q<T, _std::array<inner_valued_u<T>, tuple_sized_n<T>>>;
+template <         class ...Ts>	concept        scalar_q	=  (...and _retail::       scalar_q<Ts>);
+template <         class ...Ts>	concept        vector_q	=  (...and _retail::       vector_q<Ts>);
+template <         class ...Ts>	concept        matrix_q	=  (...and _retail::       matrix_q<Ts>);
+template <         class ...Ts>	concept        tensor_q	=  (...and _retail::       tensor_q<Ts>);
+template <class T, int   N=-1 >	concept         array_q	=          _retail::        array_q<T > and N < 0 or destruct_n<T> == N;
+template <class T, int   N=-1 >	concept      subarray_q	=          _retail::        array_q<T > and N < 0 or destruct_n<T> <= N;
 
 
-template <class T             >	struct    initializer   ;
-template <class T             >	using     initializer_u	= typename initializer<T>::value_type;
-template <class T             >	using     initializer_t	= typename initializer<T>::type;
-template <class T             >	using     initializer_s	= _std::initializer_list<_std::remove_reference_t<T>>;
-template <class T             >	concept   initializer_q	= different_q<T, initializer_u<T>>;
-template <class T             >	struct    initializer    {using value_type =   valued_u<T>; using type = initializer_s<value_type>;};
-template <covalued_q T        >	struct    initializer<T> {using value_type = covalued_u<T>; using type = initializer_s<value_type>;};
+template <class T             >	using       coindexed_u	=          _retail::    coindexed_u<T >;
+template <         class ...Ts>	concept     coindexed_q	= (... and _retail::    coindexed_q<Ts>);
+template <         class ...Ts>	concept      covalued_q	= (... and _retail::     covalued_q<Ts>);
 
 
-template <class T>	struct iteratee;	template <class T>	using iteratee_t = typename iteratee<T>::type;
-template <class T>	struct iterated;	template <class T>	using iterated_t = typename iterated<T>::type;
-template <class T>	struct iterator;	template <class T>	using iterator_t = typename iterator<T>::type;
-template <class T>	struct sentinel;	template <class T>	using sentinel_t = typename sentinel<T>::type;
-template <class T>	struct distance;	template <class T>	using distance_t = typename distance<T>::type;
-template <class T>	struct  counted;	template <class T>	using  counted_t = typename  counted<T>::type;
-template <class T>	struct  counter;	template <class T>	using  counter_t = typename  counter<T>::type;
+template <class T             >	using        arranged_t	=          _retail::     arranged_t<T > ;
+template <class T             >	using      reiterated_t	=          _retail::   reiterated_t<T > ;
+template <         class ...Ts>	concept    reiterated_q	= (...and  _retail::   reiterated_q<Ts>);
+
+template <class T             >	using     initializer_s	=          _retail::  initializer_s<T > ;
+template <class T             >	using     initializer_t	=          _retail::  initializer_t<T > ;
+template <class T             >	using     initializer_u	=          _retail::  initializer_u<T > ;
+template <         class ...Ts>	concept   initializer_q	=  (...and _retail::  initializer_q<Ts>);
+
+template <class T             >	using        iteratee_t	= typename _retail::     iteratee  <T >::type;
+template <class T             >	using        iterated_u	= _std::remove_reference_t<iteratee_t<T>>;
+template <class T             >	using        iterated_t	= typename _retail::     iterated  <T >::type;
+template <class T             >	using        iterator_t	= typename _retail::     iterator  <T >::type;
+template <class T             >	using        distance_t	=          _retail::     distance_t<T > ;
+template <class T             >	using        interval_t	=          _retail::     interval_t<T > ;
+template <class T=extent_type >	using         counted_t	= typename _retail::      counted  <T >::type;
+template <class T=extent_type >	using         counter_t	= typename _retail::      counter  <T >::type;
+
+template <class          ...Ts>	concept      iterable_q	=  (...and _retail::     iterable_q<Ts>);
+template <class          ...Ts>	concept      iterated_q	=  (...and _retail::     iterated_q<Ts>);
+template <class          ...Ts>	concept      iterator_q	=  (...and _retail::     iterator_q<Ts>);
+template <class          ...Ts>	concept      sentinel_q	=  (...and _retail::     sentinel_q<Ts>);
+template <class          ...Ts>	concept      distance_q	=  (...and _retail::     distance_q<Ts>);
+template <class          ...Ts>	concept      interval_q	=  (...and _retail::     interval_q<Ts>);
+template <class          ...Ts>	concept       counted_q	=  (...and _retail::      counted_q<Ts>);
+template <class          ...Ts>	concept       counter_q	=  (...and _retail::      counter_q<Ts>);
 
 
-template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
-template <class T             >	concept    reiterated_q	= fungible_q<T, reiterated_t<T>>;
-template <class T             >	using        arranged_t	= _xtd::ranges::view_interface<T>;
-template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<based_t<U>, based_t<V>>;
-template <class T             >	concept      interval_q	= fungible_q<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
-template <class T             >	using        iterated_u	= _std::remove_reference_t<typename iteratee<T>::type>;
+///\returns the nearest aligned offset for type `T`, \
+adjusting the referenced index `i` to point to the next available argument. \
 
-//template <class T> requires reiterated_q<T> and un_n<inner_valued_q<T>>
-//struct fixed_valued<T> {using value_type = XTAL_ALL_(*XTAL_ANY_(T).begin());};
+template <int N_dt=0, class T>
+XTAL_DEF_(return,inline,let)
+point_f(T &&t, int const n_dt=0)
+noexcept -> auto
+{
+	using namespace _xtd::ranges;
 
-template <class T             >	concept      iterable_q	= requires (T &t) {t.begin();};
-template <class T             >	concept      iterated_q	= requires (T &t) {t.begin(); t.size();};
-template <class T             >	concept      iterator_q	=  pointed_q<T> and requires (T &t) {++t;};
-template <class T             >	concept      sentinel_q	= iterator_q<T>;
-template <class T             >	concept      distance_q	= integral_variable_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
-template <class T             >	concept       counter_q	= integral_variable_q<T>;
-template <class T             >	concept       counted_q	= iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
+	if constexpr (iterator_q<_std::decay_t<T>>) {
+		return next(XTAL_REF_(t), N_dt + n_dt);
+	}
+	else {
+		XTAL_IF0
+		XTAL_0IF (0 <= N_dt) {return    point_f<N_dt>(begin(XTAL_REF_(t)), n_dt);}
+		XTAL_0IF (N_dt <  0) {return    point_f<N_dt>(  end(XTAL_REF_(t)), n_dt);}
+	}
+}
+template <int N_dt=0, class T>
+XTAL_DEF_(return,inline,let)
+endpoint_f(T &&t, int const n_dt=0)
+noexcept -> auto
+{
+	using namespace _xtd::ranges;
 
-template <class T             >	struct       iteratee    {using type =                   valued_u<T> ;};
-template <iterable_q T        >	struct       iteratee<T> {using type =       pointee_t<iterator_t<T>>;};
-template <iterator_q T        >	struct       iteratee<T> {using type =       pointee_t           <T> ;};
-template < counter_q T        >	struct       iteratee<T> {using type =   _std::remove_reference_t<T> ;};
+	if constexpr (iterator_q<_std::decay_t<T>>) {
+		return prev(XTAL_REF_(t), N_dt + n_dt);
+	}
+	else {
+		XTAL_IF0
+		XTAL_0IF (0 <= N_dt) {return endpoint_f<N_dt>(  end(XTAL_REF_(t)), n_dt);}
+		XTAL_0IF (N_dt <  0) {return endpoint_f<N_dt>(begin(XTAL_REF_(t)), n_dt);}
+	}
+}
+///\returns the `size` of the given range. \
 
-template <iterated_q T        >	struct       iterated<T> {using type =   _std::remove_reference_t<T> ;};
-template <iterator_q T        >	struct       iterated<T> {using type =                          void ;};
-template < counter_q T        >	struct       iterated<T> {using type =                 interval_t<T> ;};
+///\note\
+If provided with an `iota_view`, \
+returns a `value_type` instead of `size_type` which is twice the width. \
 
-template <iterable_q T        >	struct       iterator<T> {using type = decltype(XTAL_ANY_(T).begin());};
-template <iterator_q T        >	struct       iterator<T> {using type =                            T  ;};
-template < counter_q T        >	struct       iterator<T> {using type =      iterator_t<interval_t<T>>;};
+XTAL_DEF_(return,inline,let)
+count_f(auto const &t)
+noexcept -> size_type
+{
+	using T = XTAL_ALL_(t);
+	XTAL_IF0
+	XTAL_0IF (fixed_sized_q<T> and un_n<fluid_sized_q<T>>) {return fixed_sized_n<T>;}
+	XTAL_0IF_(return) (static_cast<size_type>(T::size()))
+	XTAL_0IF_(return) (static_cast<size_type>(t .size()))
+	XTAL_0IF_(return) (static_cast<size_type>(t))
+	XTAL_0IF_(return) (static_cast<size_type>(0))
+}
+XTAL_DEF_(return,inline,let)
+count_f(auto const &...ts)
+noexcept -> size_type
+{
+	return _std::min<size_type>({(count_f(ts) - one)...}) + one;
+}
+XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_n<sized_q<decltype(ts)...>> {return  account_f(ts...);}
+XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_n<sized_q<decltype(ts)...>> {return discount_f(0    );}
 
-template <iterable_q T        >	struct       sentinel<T> {using type = decltype(XTAL_ANY_(T).  end());};
-template <iterator_q T        >	struct       sentinel<T> {using type =                            T  ;};
+template <counter_q I0, counter_q IN>
+XTAL_DEF_(return,inline,let)
+counted_f(I0 i0, IN iN)
+noexcept -> auto
+{
+	return counted_t<common_t<I0, IN>>(i0, iN);
+}
 
-template <class T             >	struct       distance    {using type =      distance_t<iterator_t<T>>;};
-template <iterator_q T        >	struct       distance<T> {using type = XTAL_ALL_(_std::distance(XTAL_ANY_(T), XTAL_ANY_(T)));};
+template <counter_q  I >	XTAL_DEF_(return,inline,let) counted_f(I i0, I iN) noexcept -> auto {return counted_t<I>(i0, iN);}
+template <class      T >	XTAL_DEF_(return,inline,let) counted_f(T &&t)      noexcept -> auto {return counted_t<T>(XTAL_REF_(t));}
+template <class      T >	XTAL_DEF_(return,inline,let) counter_f(T &&t)      noexcept -> auto {return counter_t<T>(XTAL_REF_(t));}
 
 
-template <counted_q  T        >	struct        counted<T> {using type =  XTAL_TYP_(T);};
-template <counter_q  T        >	struct        counted<T> {using type = iterated_t<T>;};
+///\returns the `any_view` type-erased form of `y`. \
 
-template <counted_q  T        >	struct        counter<T> {using type = iterated_u<T>;};
-template <counter_q  T        >	struct        counter<T> {using type =  XTAL_TYP_(T);};
+XTAL_DEF_(return,inline,let)
+derange_f(iterable_q auto &&y)
+noexcept -> auto
+{
+	using      Y  = XTAL_ALL_(y);
+	using      Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
+	auto const n_ = recount_f(y);
+	return Y_(XTAL_MOV_(y))|XTAL_MOV_(n_);
+}
 
+///\returns the result of zipping `...xs` with `f`. \
 
-////////////////////////////////////////////////////////////////////////////////
+///\note\
+The name is intended to mimic Haskell's `ApplicativeFunctor`. \
 
-template <    iterated_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iterated_u<Ts>...> {};
-template <    iterator_q ...Ts>	struct     isomorphic	<Ts...> : isomorphic<iterated_u<Ts>...> {};
+template <class F, class ...Xs>	concept  invocative_p = complete_q<F> and        invoke_p<F, _xtd::ranges::range_reference_t<Xs>...>;
+template <class F, class ...Xs>	concept   iterative_p = complete_q<F> and _std::invocable<F, _xtd::ranges::range_reference_t<Xs>...>;
 
-template <    iterated_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iterated_u<Ts>...> {};
-template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<iterated_u<Ts>...> {};
+template <class F             >	requires  iterative_p<F       > XTAL_DEF_(inline,let) iterative_f(F &&f            ) noexcept -> decltype(auto) {return _xtd::ranges::views::      generate(XTAL_REF_(f)                  );}
+template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline,let) iterative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return _xtd::ranges::views::     transform(XTAL_REF_(x), XTAL_REF_(f)    );}
+template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f), XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	requires incomplete_q<F       > XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (              XTAL_REF_(xs)...);}
+//mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (              XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                        iterative_f(constant_n<f>, XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                        iterative_f<  invoke_n<F>>(XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                                using iterative_t = XTAL_ALL_(iterative_f<F>(XTAL_ANY_(Xs)...));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -466,264 +492,231 @@ template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<itera
 //\
 Arithmetic...
 
-template <class               >	struct        liminal  	;
-template <class               >	struct     subliminal  	;
-template <class               >	struct   superliminal  	;
+template <int N, class T, class U=T>	concept  multiplicative_group_p	= _retail:: multiplicative_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        additive_group_p	= _retail::       additive_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        discrete_group_p	= _retail::       discrete_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        quotient_group_p	= _retail::       quotient_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept        integral_group_p	= _retail::       integral_group_p<N, T, U>;
 
-template <constant_q T        >	struct        liminal<T      > :           T {};
-template <class U, auto  N    >	struct        liminal<U   [N]> : constant<N> {};
-template <class U, auto  N    >	struct        liminal<U(&)[N]> : constant<N> {};
-template <class T             >	XTAL_LET      liminal_n	= liminal<T>::value;
-template <class T             >	XTAL_LET   subliminal_n	= liminal_n<T> - sign_n<liminal_n<T>>;
-template <class T             >	XTAL_LET superliminal_n	= liminal_n<T> + sign_n<liminal_n<T>>;
+template <int N, class T, class U=T>	concept      contiguous_group_p	= _retail::     contiguous_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept      contiguous_field_p	= _retail::     contiguous_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept      continuous_field_p	= _retail::     continuous_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept         complex_field_p	= _retail::        complex_field_p<N, T, U>;
+template <int N, class T, class U=T>	concept         simplex_field_p	= _retail::        simplex_field_p<N, T, U>;
 
-template <constant_q T        >	struct     subliminal<T      >  	{using type = constant_t<  subliminal_n<T      >>;};
-template <class U, auto  N    >	struct     subliminal<U   [N]>  	{using type =       U   [  subliminal_n<U   [N]>];};
-template <class U, auto  N    >	struct     subliminal<U(&)[N]>  	{using type =       U(&)[  subliminal_n<U(&)[N]>];};
-template <constant_q T        >	struct   superliminal<T      >  	{using type = constant_t<superliminal_n<T      >>;};
-template <class U, auto  N    >	struct   superliminal<U   [N]>  	{using type =       U   [superliminal_n<U   [N]>];};
-template <class U, auto  N    >	struct   superliminal<U(&)[N]>  	{using type =       U(&)[superliminal_n<U(&)[N]>];};
+template <int N, class T, class U=T>	concept         logical_group_p	= _retail::        logical_group_p<N, T, U>;
+template <int N, class T, class U=T>	concept          binary_group_p	= _retail::         binary_group_p<N, T, U>;
 
-template <class T             >	concept       liminal_q	= complete_q<liminal<T>> and requires {requires (0 != liminal_n<T>);};
-template <class T             >	concept      terminal_q	= complete_q<liminal<T>> and requires {requires (0 == liminal_n<T>);};
-template <class T             >	using      subliminal_t	= typename   subliminal<T>::type;
-template <class T             >	using    superliminal_t	= typename superliminal<T>::type;
+template <int N, class T, class U=T>	concept            inequality_p	= _retail::           inequality_p<N, T, U>;
+template <int N, class T, class U=T>	concept              equality_p	= _retail::             equality_p<N, T, U>;
+template <int N, class T, class U=T>	concept               quality_p	= _retail::              quality_p<N, T, U>;
 
 
+template <class   ...Ts>	concept   multiplicative_group_q	= (...and multiplicative_group_p<0, Ts>);
+template <class   ...Ts>	concept         additive_group_q	= (...and       additive_group_p<0, Ts>);
+template <class   ...Ts>	concept         discrete_group_q	= (...and       discrete_group_p<0, Ts>);
+template <class   ...Ts>	concept         quotient_group_q	= (...and       quotient_group_p<0, Ts>);
+template <class   ...Ts>	concept         integral_group_q	= (...and       integral_group_p<0, Ts>);
 
-////////////////////////////////////////////////////////////////////////////////
+template <class   ...Ts>	concept       contiguous_group_q	= (...and     contiguous_group_p<0, Ts>);
+template <class   ...Ts>	concept       contiguous_field_q	= (...and     contiguous_field_p<0, Ts>);
+template <class   ...Ts>	concept       continuous_field_q	= (...and     continuous_field_p<0, Ts>);
+template <class   ...Ts>	concept          complex_field_q	= (...and        complex_field_p<0, Ts>);
+template <class   ...Ts>	concept          simplex_field_q	= (...and        simplex_field_p<0, Ts>);
 
-template <int N, class T, class U=T>
-concept equality_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
+template <class   ...Ts>	concept          logical_group_q	= (...and        logical_group_p<0, Ts>);
+template <class   ...Ts>	concept           binary_group_q	= (...and         binary_group_p<0, Ts>);
+
+template <class   ...Ts>	concept             inequality_q	= (...and           inequality_p<2, Ts>);
+template <class   ...Ts>	concept               equality_q	= (...and             equality_p<2, Ts>);
+template <class   ...Ts>	concept                quality_q	= (...and              quality_p<2, Ts>);
+
+
+
+template <auto N0, auto N1> requires (N0 < N1)
+XTAL_DEF_(let)
+bounded_f(auto const &u)
 {
-	requires N == 2;
-	{t == u} -> same_q<bool>;
-	{t != u} -> same_q<bool>;
-};
-template <int N, class T, class U=T>
-concept inequality_p = equality_p<N, T> and requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2;
-	{t <= u} -> same_q<bool>;
-	{t <  u} -> same_q<bool>;
-	{t >= u} -> same_q<bool>;
-	{t >  u} -> same_q<bool>;
-};
-template <int N, class T, class U=T>
-concept quality_p = equality_p<N, T> and inequality_p<N, T>;
-
-
-template <int N, class T, class U=T>
-concept logical_group_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2 or requires
-	{
-		{!u} -> same_q<T>;
-	};
-	requires N == 1 or requires
-	{
-		{t || u} -> same_q<T>;
-		{t && u} -> same_q<T>;
-	};
-};
-template <int N, class T, class U=T>
-concept binary_group_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2 or requires
-	{
-		{   ~  u} -> same_q<T>;
-		{t  ^= u} -> same_q<T>;
-		{t  |= u} -> same_q<T>;
-		{t  &= u} -> same_q<T>;
-	};
-	requires N == 1 or requires
-	{
-		{t  ^  u} -> same_q<T>;
-		{t  |  u} -> same_q<T>;
-		{t  &  u} -> same_q<T>;
-	};
-};
-
-
-template <int N, class T, class U=T>
-concept multiplicative_group_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2 or requires
-	{
-		{t  *= u};// -> same_q<T>;
-		{t  /= u};// -> same_q<T>;
-	};
-	requires N == 1 or requires
-	{
-		{t  *  u};// -> same_q<T>;
-		{t  /  u};// -> same_q<T>;
-	};
-};
-template <int N, class T, class U=T>
-concept quotient_group_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2 or requires
-	{
-		{t  %= u};// -> same_q<T>;
-	};
-	requires N == 1 or requires
-	{
-		{t  %  u};// -> same_q<T>;
-	};
-};
-template <int N, class T, class U=T>
-concept additive_group_p = requires (XTAL_TYP_(T) &t, XTAL_TYP_(U) &u)
-{
-	requires N == 2 or requires
-	{
-		{t  += u};// -> same_q<T>;
-		{t  -= u};// -> same_q<T>;
-		{   -  u};// -> same_q<T>;
-	};
-	requires N == 1 or requires
-	{
-		{t  +  u};// -> same_q<T>;
-		{t  -  u};// -> same_q<T>;
-	};
-};
-template <int N, class T, class U=T>
-concept discrete_group_p = requires (XTAL_TYP_(T) t, XTAL_TYP_(U) u)
-{
-	requires N == 2 or requires
-	{
-		{t++} -> same_q<T>; {++u} -> same_q<T>;
-		{t--} -> same_q<T>; {--u} -> same_q<T>;
-	};
-};
-template <int N, class T, class U=T>
-concept integral_group_p = integral_q<T> or discrete_group_p<N, T, U> and quotient_group_p<N, T, U>;
-
-
-template <int N, class T, class U=T>
-concept contiguous_group_p = multiplicative_group_p<N, T, U>  or additive_group_p<N, T, U>;
-
-template <int N, class T, class U=T>
-concept contiguous_field_p = multiplicative_group_p<N, T, U> and additive_group_p<N, T, U>;
-
-template <int N, class T, class U=T>
-concept continuous_field_p = contiguous_field_p<N, T, U> and not integral_group_p<0, T, U>;
-
-
-template <int N, class T, class U=T>
-concept complex_field_p = complex_q<T> or continuous_field_p<2, T, U> and requires (XTAL_TYP_(T) t)
-{
-	{t.real()};// -> same_q<valued_u<T>>;
-	{t.imag()};// -> same_q<valued_u<T>>;
-};
-template <int N, class T, class U=T>
-concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <applicable_p auto o>
-struct constant<o> : constant_s<o>
-{
-	using        type = constant;
-	using   supertype = constant_s<o>;
-	using  value_type = typename supertype::value_type;
-	using object_type = XTAL_ALL_(o());
-
-	template <class T=object_type>
-	XTAL_DEF_(return,inline,set)
-	object()
-	noexcept -> auto
-	{
-		using U = based_t<T>;
-		XTAL_IF0
-		XTAL_0IF (same_q<U, object_type>) {return o();}
-		XTAL_0IF_(return) (U{o()})
-		XTAL_0IF_(return) (U(o()))
-		XTAL_0IF_(return) (static_cast<U>(o()))
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		return u < N0? N0: N1 < u? N1: u;
 	}
-	template <class T=object_type>
-	XTAL_DEF_(return,inline,set)
-	subject()
-	noexcept -> auto
-	{
-		using U = based_t<T>;
-		using V = fluid_valued_u<U>;
-		if constexpr (un_q<U, V> and complete_q<decltype(object<V>())>) {
-			return subject<V>();
+	XTAL_0IF_(else) {
+		using _std::abs;
+		using U = XTAL_ALL_(u);
+		U constexpr  n0 = N0;
+		U constexpr  n1 = N1;
+		U constexpr n01 = N0 + N1;
+		if constexpr (integral_variable_q<U>) {
+			return (abs(u - n0) - abs(u - n1) + n01) >> 1;
 		}
 		else {
-			return  object<U>();
+			return (abs(u - n0) - abs(u - n1) + n01)*0.5f;
 		}
 	}
-	template <class T=object_type>
-	XTAL_DEF_(return,inline,set)
-	surject()
-	noexcept -> auto
-	{
-		auto constexpr t = subject<T>();
-		auto constexpr f = absolve_u<decltype(t)>{1}/t;
-		return f;
+}
+
+
+template <class X, class Y>
+XTAL_DEF_(return,inline,let)
+identical_f(X &&x, Y &&y)
+noexcept -> bool
+{
+	XTAL_IF0
+	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
+	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
+	XTAL_0IF_(return) (_std::addressof(x) == _std::addressof(y))
+	XTAL_0IF_(else) return false;
+}
+
+template <class X, class Y>
+XTAL_DEF_(return,inline,let)
+equal_f(X &&x, Y &&y)
+noexcept -> bool
+{
+	XTAL_IF0
+	XTAL_0IF_(return) (x == y)
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+}
+template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
+XTAL_DEF_(return,inline,let)
+equal_f(X &&x, Y &&y)
+noexcept -> bool
+{
+	XTAL_IF0
+	XTAL_0IF_(return) (_xtd::ranges::equal(x, y))
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+}
+
+template <class X, class Y>
+XTAL_DEF_(return,inline,let)
+equivalent_f(X &&x, Y &&y)
+noexcept -> bool
+{
+	return equal_f(XTAL_REF_(x), XTAL_REF_(y));
+}
+template <class X, class Y> requires iterable_q<X, Y> and isomorphic_q<X, Y>
+XTAL_DEF_(return,inline,let)
+equivalent_f(X &&x, Y &&y)
+noexcept -> bool
+{
+	XTAL_IF0
+	XTAL_0IF_(return) (x.begin() == y.begin() and x.end() == y.end())
+	XTAL_0IF_(return) (x.begin() == y.begin())
+	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+///\returns the result of `w + (x*...*xs)`, using `fma` where possible. \
+
+template <class W, class X, class Y> requires simplex_variable_q<W, X, Y> or un_n<anyplex_q<W> or anyplex_q<X> or anyplex_q<Y>>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W &&w, X &&x, Y &&y)
+noexcept -> XTAL_ALL_(w + x*y)
+{
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
+#if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
+	XTAL_0IF (requires {_std::fma(y, x, w);}) {
+		return __builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+#endif
+#if   XTAL_SYS_(FMA)
+	XTAL_0IF (requires {fma(y, x, w);}) {
+		return           fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+#endif
+	XTAL_0IF_(else) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+	}
+}
+template <real_variable_q W, complex_variable_q X, real_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{accumulator_f(w, x.real(), y), x.imag()*y};
+}
+template <real_variable_q W, real_variable_q X, complex_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{accumulator_f(w, x, y.real()), x*y.imag()};
+}
+template <real_variable_q W, complex_variable_q X, complex_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = accumulator_f(accumulator_f(w, x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator_f(       x.imag()*y.real() ,  x.real(),y.imag());
+		return _std::complex{z_re, z_im};
+		/***/
+	}
+}
 
-	template <class T>
-	XTAL_DEF_(return,inline,implicit) operator T()                const noexcept                   {return object<T>();}
-	XTAL_DEF_(return,inline,let)      operator  () (auto &&..._s) const noexcept -> decltype(auto) {return o(XTAL_REF_(_s)...);}
+template <complex_variable_q W, real_variable_q X, real_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{accumulator_f(w.real(), x, y), w.imag()};
+}
+template <complex_variable_q W, complex_variable_q X, real_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{accumulator_f(w.real(), x.real(), y), accumulator_f(w.imag(), x.imag(), y)};
+}
+template <complex_variable_q W, real_variable_q X, complex_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	return _std::complex{accumulator_f(w.real(), x, y.real()), accumulator_f(w.imag(), x, y.imag())};
+}
 
-	XTAL_DEF_(return,inline,friend,let) operator  +  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (+o())>{};}
-	XTAL_DEF_(return,inline,friend,let) operator  -  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (-o())>{};}
-	XTAL_DEF_(return,inline,friend,let) operator  ~  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (~o())>{};}
+template <complex_variable_q W, complex_variable_q X, complex_variable_q Y>
+XTAL_DEF_(return,inline,let)
+accumulator_f(W w, X x, Y y)
+noexcept -> auto
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = accumulator_f(accumulator_f(w.real(), x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator_f(accumulator_f(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
+		return _std::complex{z_re, z_im};
+		/***/
+	}
+}
 
+XTAL_DEF_(return,inline,let)
+accumulator_f(auto &&w, auto &&x, auto &&y, auto &&...ys)
+noexcept -> auto
+requires (1 <= sizeof...(ys))
+{
+	return accumulator_f(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
+}
 
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <=> (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>() <=> t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  == (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  == t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <= (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <= t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >= (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >= t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >  t)
+////////////////////////////////////////////////////////////////////////////////
 
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <=> (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t <=> object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  == (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  == object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <= (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <= object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <  object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >= (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >= object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >  object<T>())
-
-
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  -  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  -  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  +  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  +  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  *  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  *  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  /  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  /  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  %  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  %  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  &  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  &  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  ^  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  ^  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  |  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  |  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <<  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>() <<  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator >>  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>() >>  t)
-
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  -  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  -  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  +  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  +  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  *  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  *  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  /  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  *  surject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  %  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  %  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  &  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  &  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  ^  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  ^  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  |  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  |  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator >>  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t >>  subject<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <<  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t <<  subject<T>())
-
-
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  -= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  -= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  += (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  += subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  *= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  *= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  /= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  *= surject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  %= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  %= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  &= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  &= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  ^= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  ^= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator  |= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t  |= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator <<= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t <<= subject<T>())
-	template <variable_q T> XTAL_DEF_(       inline,friend,let)   operator >>= (T       &t, same_q<constant> auto const &) noexcept -> auto & requires XTAL_TRY_(return) (t >>= subject<T>())
-
-};
-
-///////////////////////////////////////////////////////////////////////////////
-}/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////

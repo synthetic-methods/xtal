@@ -136,14 +136,13 @@ struct polymer<U, As...>
 				flux_arguments(auto &&...oo)
 				noexcept -> signed
 				{
-					using namespace occur;
 					using _xtd::ranges::accumulate;
 
-					auto constexpr active = stage_f(0);
+					auto constexpr active = occur::stage_f(0);
 					auto const     reduce = [=] (auto x, auto &&e) XTAL_0FN_(return) (x & XTAL_REF_(e).template flux<N_ion>(oo...));
 					auto           result = N_ion < 0? -1: lead().template flux<N_ion>(XTAL_REF_(oo)...);
 
-					if constexpr (some_stage_q<decltype(oo)...>) {
+					if constexpr (in_n<1, occur::stage_q<decltype(oo)>...>) {
 						return accumulate(ensemble(), result, XTAL_MOV_(reduce));
 					}
 					else {
