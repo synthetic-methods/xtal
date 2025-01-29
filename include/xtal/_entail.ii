@@ -525,32 +525,6 @@ template <class   ...Ts>	concept               equality_q	= (...and             
 template <class   ...Ts>	concept                quality_q	= (...and              quality_p<2, Ts>);
 
 
-
-template <auto N0, auto N1> requires (N0 < N1)
-XTAL_DEF_(return,inline,let)
-bounded_f(auto const &u)
-noexcept -> auto
-{
-	XTAL_IF0
-	XTAL_0IF_(consteval) {
-		return u < N0? N0: N1 < u? N1: u;
-	}
-	XTAL_0IF_(else) {
-		using _std::abs;
-		using U = XTAL_ALL_(u);
-		U constexpr  n0 = N0;
-		U constexpr  n1 = N1;
-		U constexpr n01 = N0 + N1;
-		if constexpr (integral_variable_q<U>) {
-			return (abs(u - n0) - abs(u - n1) + n01) >> 1;
-		}
-		else {
-			return (abs(u - n0) - abs(u - n1) + n01)*0.5f;
-		}
-	}
-}
-
-
 template <class X, class Y>
 XTAL_DEF_(return,inline,let)
 identical_f(X &&x, Y &&y)
