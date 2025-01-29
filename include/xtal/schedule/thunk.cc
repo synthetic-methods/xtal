@@ -233,7 +233,6 @@ void thunk_processor()
 	/***/
 
 	fx_gate >>= U_render(N_store)*0; _xtd::ranges::copy(fx_gate, u_store.begin());
-//	echo(u_store);
 	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	/**/
@@ -245,7 +244,6 @@ void thunk_processor()
 	/***/
 
 	fx_gate >>= U_render(N_store)*1; _xtd::ranges::copy(fx_gate, u_store.begin());
-//	echo(u_store);
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }

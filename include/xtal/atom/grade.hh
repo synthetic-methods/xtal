@@ -15,20 +15,28 @@ Extends `group` with point-wise addition and differential succession. \
 
 template <class         ..._s>	struct   grade;
 template <class         ..._s>	using    grade_t = typename grade<_s...>::type;
-template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and same_n<sized_n<_s>...>;
+template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and fixed_shaped_q<_s...>;
 
-XTAL_FX0_(alias) (template <auto f=invoke_n<>>
-XTAL_DEF_(return,inline,let) grade_f(auto &&...oo),
-	_detail::build<grade_t>::template static_factory<f>(XTAL_REF_(oo)...))
+
+XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_DEF_(return,inline,let)
+grade_f(auto &&...oo),
+	_detail::factory<grade_t>::
+		template make<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <scalar_q ..._s> requires same_q<_s...>
+struct grade<_s ...>
+:	grade<common_t<_s...>[sizeof...(_s)]>
+{
+};
 template <class ..._s>
 struct grade
 {
 	template <class T>
-	using endotype = typename group<_std::plus<void>, _s...>::template homotype<T>;
+	using endotype = typename additive_group<_s...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
@@ -38,15 +46,12 @@ struct grade
 	{
 		using S_ = holotype<T>;
 	
-	protected:
-		using          S_::N_data;
-		using typename S_::U_data;
-
 	public:// CONSTRUCT
 		using S_::S_;
 
 	public:// ACCESS
 		using S_::element;
+		using S_::size;
 		using S_::self;
 		using S_::twin;
 	
@@ -64,7 +69,7 @@ struct grade
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(self()) += get<I + 1>(self())),...);}
-			(bond::seek_s<N_data - 1>{});
+			(bond::seek_s<size - 1>{});
 			
 			return self();
 		}
@@ -78,7 +83,7 @@ struct grade
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(self()) -= get<I + 1>(self())),...);}
-			(bond::antiseek_s<N_data - 1>{});
+			(bond::antiseek_s<size - 1>{});
 			
 			return self();
 		}

@@ -43,12 +43,7 @@ struct cache
 
 		///\returns the size in `byte`s. \
 
-		XTAL_DEF_(return,inline,set)
-		size()
-		noexcept -> size_type
-		{
-			return N_bytes;
-		}
+		static constant_t<size_type{N_bytes}> constexpr size{};
 
 		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
 

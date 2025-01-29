@@ -25,7 +25,7 @@ namespace xtal
 
 namespace _std = ::std;
 namespace _xtd
-{
+{///////////////////////////////////////////////////////////////////////////////
 //using namespace _std::experimental;
 
 #if XTAL_VER_(ranges != 3)
@@ -41,22 +41,22 @@ namespace ranges::views
 	noexcept -> decltype(auto)
 	{
 		return zip_with(XTAL_REF_(oo)...);
-	};
+	}
 }
 #endif
 
+template <class T> concept trivially_destructible  = _std::           is_trivially_destructible_v<T>;
 //\
-template <class T> concept trivially_moveable      = _std::             is_trivially_moveable_v<T>;
-template <class T> concept trivially_moveable      = _std::   is_trivially_move_constructible_v<T>;
+template <class T> concept trivially_moveable      = _std::               is_trivially_moveable_v<T>;
+template <class T> concept trivially_moveable      = _std::     is_trivially_move_constructible_v<T>;
 //\
-template <class T> concept trivially_copyable      = _std::             is_trivially_copyable_v<T>;
-template <class T> concept trivially_copyable      = _std::   is_trivially_copy_constructible_v<T>;
+template <class T> concept trivially_copyable      = _std::               is_trivially_copyable_v<T>;
+template <class T> concept trivially_copyable      = _std::     is_trivially_copy_constructible_v<T>;
 //\
-template <class T> concept trivially_initializable = _std::             default_initializable  <T>;
-template <class T> concept trivially_initializable = _std::is_trivially_default_constructible_v<T>;
+template <class T> concept trivially_initializable = _std::               default_initializable  <T>;
+template <class T> concept trivially_initializable = _std::  is_trivially_default_constructible_v<T>;
 
 template <class T> concept trivially_constructible = trivially_copyable<T> and trivially_moveable<T>;
-template <class T> concept trivially_destructible  = _std::is_trivially_destructible_v<T>;
 
 template <class T> concept semitrivial = _std::semiregular<T> and     _std::destructible<T>;
 template <class T> concept     trivial =       semitrivial<T> and trivially_destructible<T> and trivially_constructible<T>;
@@ -104,13 +104,28 @@ XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::     unsigned_integral auto
 XTAL_DEF_(return,inline,let) make_unsigned_f  (          constant_invocable auto f) noexcept -> auto {return make_unsigned_f(f());}
 
 
-template <class T> using        remove_reference_t =                                                     _std::remove_reference_t<T>;
-template <class T> using remove_rvalue_reference_t = _std::conditional_t<_std::is_rvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
-template <class T> using remove_lvalue_reference_t = _std::conditional_t<_std::is_lvalue_reference_v<T>, _std::remove_reference_t<T>, T>;
+template <class T>	struct remove_rvalue_cvref : remove_rvalue_cvref<T &&> {};
+template <class T>	struct remove_rvalue_cvref<T const &&> {using type = T         ;};
+template <class T>	struct remove_rvalue_cvref<T       &&> {using type = T         ;};
+template <class T>	struct remove_rvalue_cvref<T const  &> {using type = T const  &;};
+template <class T>	struct remove_rvalue_cvref<T        &> {using type = T        &;};
+template <class T>	using  remove_rvalue_cvref_t = typename remove_rvalue_cvref<T>::type;
+XTAL_FX0_(alias) (template <class T>
+XTAL_DEF_(return,inline,get)
+remove_rvalue_cvref_f(T &&t), static_cast<remove_rvalue_cvref_t<T>>(t))
+
+template <class T>	struct remove_lvalue_cvref : remove_lvalue_cvref<T &&> {};
+template <class T>	struct remove_lvalue_cvref<T const &&> {using type = T const &&;};
+template <class T>	struct remove_lvalue_cvref<T       &&> {using type = T       &&;};
+template <class T>	struct remove_lvalue_cvref<T const  &> {using type = T         ;};
+template <class T>	struct remove_lvalue_cvref<T        &> {using type = T         ;};
+template <class T>	using  remove_lvalue_cvref_t = typename remove_lvalue_cvref<T>::type;
+XTAL_FX0_(alias) (template <class T>
+XTAL_DEF_(return,inline,get)
+remove_lvalue_cvref_f(T &&t), static_cast<remove_lvalue_cvref_t<T>>(t))
 
 
-}//namespace _xtd
-
+}///////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,55 +135,80 @@ template <class T> using remove_lvalue_reference_t = _std::conditional_t<_std::i
 #include "./_entail.ii"
 #include "./_detail.ii"
 
-///\returns the result of evaluating the result `y`. \
 
-///\note\
-To be implemented by the host to transparently reduce `y` when vectorized. \
+template <auto f>
+XTAL_DEF_(return,inline,let) objective_f(auto &&...) noexcept -> auto;///< Mapping    for expression-templates.
+XTAL_DEF_(return,inline,let) operative_f(auto &&   ) noexcept -> auto;///< Resolution for expression-templates.
 
-template <class T>
+template <auto f>
 XTAL_DEF_(return,inline,let)
-objective_f(T &&t)
+operative_f(auto &&...xs)
 noexcept -> auto
 {
-	return XTAL_REF_(t);
+	return f(XTAL_REF_(xs)...);
 }
-template <constant_q T>
 XTAL_DEF_(return,inline,let)
-objective_f(T &&t)
+objective_f(auto &&o)
 noexcept -> auto
 {
-	return XTAL_REF_(t)();
+	XTAL_IF0
+	//\
+	XTAL_0IF (applicable_p<decltype(o)>) {return XTAL_REF_(o)();}
+	XTAL_0IF (  constant_q<decltype(o)>) {return XTAL_REF_(o)();}
+	XTAL_0IF (  variable_q<decltype(o)>) {return XTAL_REF_(o)  ;}
 }
+template <class ...Xs>
+using objective_t = common_t<XTAL_ALL_(objective_f(XTAL_ANY_(Xs)))...>;
+///< Obtains the common objective `type` for `Xs...`.
 
-template <class    T > struct   objective {using type = XTAL_ALL_(objective_f(XTAL_ANY_(T)));};
-template <class ...Ts> using    objective_t = common_t<typename objective<Ts>::type...>;
+template <class ...Xs>
+concept  objective_q = same_q<objective_t<Xs>..., Xs...>;
+
+template <class ...Xs>
+concept subjective_q = not objective_q<Xs...>;
+
+template <class ...Ts> auto   surjective_f(            Ts... ) -> objective_t<valued_u<Ts>...>;
+template <class ...Ts> auto   surjective_f(_std::tuple<Ts...>) -> objective_t<Ts...>;
+template <class ...Ts> auto   surjective_f(_std::pair <Ts...>) -> objective_t<Ts...>;
+template <class ...Ts> using  surjective_t = common_t<XTAL_ALL_(surjective_f(XTAL_ANY_(Ts)))...>;
+///< Obtains the common objective `value_type` for `Xs...`.
+
+//\todo\
+Generalize `surjective_f` using `bond::pack`? \
 
 
-/*/
-///\returns the result of applying `f` to `...xs`. \
+///\returns an instance of the given template applied to either `Xs...` or `common_t<Xs...>`. \
 
-///\note\
-To be implemented by the host to transparently lift `f` when `xs...` are vectorized. \
-
-template <class F, class ...Xs> XTAL_DEF_(inline,let) operative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return            XTAL_REF_(f) (XTAL_REF_(xs)...);}
-template <class F, class ...Xs> XTAL_DEF_(inline,let) operative_f(       Xs &&...xs) noexcept -> decltype(auto) {return operative_f(invoke_n<F>, XTAL_REF_(xs)...);}
-template <class F             > XTAL_DEF_(inline,let) operative_f(F &&f            ) noexcept -> decltype(auto) {return         [] XTAL_0FN_(alias)  (operative_f);}
-
-template <template <class> class Y, class ...Xs>
+template <template <class ...> class F, class ...Xs>
 XTAL_DEF_(return,inline,let)
 construxion_f(Xs &&...xs)
-noexcept -> decltype(auto)
-{
-	using W = common_t<Xs...>;
-	return operative_f<Y<W>>(XTAL_REF_(xs)...);
-}
+noexcept -> auto;
+
+template <template <class ...> class F, class ...Xs>
 XTAL_DEF_(return,inline,let)
-complexion_f(auto &&...xs)
-noexcept -> decltype(auto)
+construxion_f(Xs &&...xs)
+noexcept -> auto
+{
+	XTAL_IF0
+	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<evoke_t<F<based_t<Xs>...>>{}>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<evoke_t<F<cased_t<Xs...>>>{}>(XTAL_REF_(xs)...);}
+	XTAL_0IF_(abort)
+}
+
+///\returns an instance of `std::complex` applied to `common_t<Xs...>`. \
+
+template <class ...Xs>
+XTAL_DEF_(return,inline,let)
+complexion_f(Xs &&...xs)
+noexcept -> auto;
+
+template <class ...Xs>
+XTAL_DEF_(return,inline,let)
+complexion_f(Xs &&...xs)
+noexcept -> auto
 {
 	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
 }
-/***/
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,50 +216,39 @@ noexcept -> decltype(auto)
 #if XTAL_LOG
 class
 {
-	XTAL_DEF_(let)
-	print_list(auto &&x) const
-	noexcept -> void
-	{
-		for (auto &&w: XTAL_REF_(x)) ::std::cout << XTAL_REF_(w) << '\t';
-	}
-	XTAL_DEF_(let)
-	print_item(auto &&x) const
-	noexcept -> void
-	{
-		using W = XTAL_ALL_(x);
-		if constexpr (continuous_field_q<W>) {
-			::std::cout.precision(17);
+	void print_list(auto const &x) const {
+		for (auto const &w: x) {
+			::std::cout << w << '\t';
 		}
-		if constexpr (::std::is_arithmetic_v<W>) {
-			if (::std::copysign(1.0, x) == 1.0) {
-				 ::std::cout << ' ';
+	}
+	void print_item(auto const &x) const {
+		using X = XTAL_ALL_(x); using namespace ::std;
+		if constexpr (continuous_field_q<X>) {
+			cout.precision(17);
+		}
+		if constexpr (is_arithmetic_v<X>) {
+			if (1.0 == copysign(1.0, x)) {
+				 cout << ' ';
 			}
 		}
-		::std::cout << XTAL_REF_(x) << '\t';
+		cout << x << '\t';
 	}
-	XTAL_DEF_(let)
-	put(auto &&x) const
-	noexcept -> decltype(auto)
-	{
-		using W = XTAL_ALL_(x);
-		if constexpr (_xtd::ranges::range<W> and requires {::std::is_arithmetic_v<typename W::value_type>;}) {
-			print_list(XTAL_REF_(x));
+	auto put(auto &&x) const noexcept -> decltype(auto) {
+		using X = XTAL_ALL_(x);
+		if constexpr (_xtd::ranges::range<X> and requires {::std::is_arithmetic_v<typename X::value_type>;}) {
+			print_list(x);
 		}
 		else {
-			print_item(XTAL_REF_(x));
+			print_item(x);
 		}
 		return XTAL_REF_(x);
 	}
 
 public:
-	XTAL_DEF_(let)
-	operator() (auto &&...xs) const
-	noexcept -> decltype(auto)
-	{
-		if constexpr (0 < sizeof...(xs)) {
+	auto operator() (auto &&...xs) const noexcept -> decltype(auto) {
+		if constexpr (1 <= sizeof...(xs)) {
 			::std::cout << '\t'; auto const x = (put(XTAL_REF_(xs)), ...);
 			::std::cout << '\n';
-			return x;
 		}
 		else {
 			::std::cout << '\n';
@@ -231,10 +260,8 @@ public:
 class
 {
 public:
-	XTAL_DEF_(inline,let)
-	operator() (auto &&...xs) -> decltype(auto)
-	{
-		if constexpr (0 < sizeof...(xs)) {
+	auto operator() (auto &&...xs) -> decltype(auto) {
+		if constexpr (1 <= sizeof...(xs)) {
 			return (XTAL_REF_(xs), ...);
 		}
 	}

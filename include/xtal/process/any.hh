@@ -55,7 +55,7 @@ struct define
 
 			};
 			template <auto ...Is>
-			requires XTAL_TRY_(void)(XTAL_ANY_(T_val).template divert<Is...>(XTAL_ANY_(Xs)...))
+			requires XTAL_TRY_(unless) (XTAL_ANY_(T_val).template divert<Is...>(XTAL_ANY_(Xs)...))
 			struct solve<Is...>
 			{
 				using type = decltype(XTAL_ANY_(T_var).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...);
@@ -149,7 +149,7 @@ struct define
 			}
 			else {
 				auto &s = self();
-				auto  d = self().template deify<decltype(xs)...>(constant_n<Is>...);
+				auto  d = self().template deify<decltype(xs)...>(constant_t<Is>{}...);
 				return (s.*d) (XTAL_REF_(xs)...);
 			}
 		})
@@ -214,7 +214,7 @@ struct define
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
 					XTAL_0IF (0 == N) {return arguments().apply([this] XTAL_0FN_(alias) (method));}
-					XTAL_0IF_(void)
+					XTAL_0IF_(abort)
 				})
 
 			};
@@ -328,7 +328,7 @@ struct defer
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs),
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(void)   (S_method<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(unless) (S_method<Is...>(XTAL_REF_(xs)...))
 		{
 			return S_::template method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
 		})

@@ -128,7 +128,7 @@ struct define
 				confuse(auto o)
 				noexcept -> decltype(auto)
 				{
-					return [this, o = XTAL_REF_(o)] (auto &&...oo)
+					return [this, o=XTAL_REF_(o)] (auto &&...oo)
 						XTAL_0FN_(return) (self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
 				}
 

@@ -50,7 +50,27 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=invoke_n<>>
+template <iterator_q Y_>
+XTAL_DEF_(inline,let)
+fill_with(Y_ y_, distance_t<Y_> sN, make_p<iteratee_t<Y_>> auto const &element)
+noexcept -> void
+{
+	if (not sN) return;
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		for (distance_t<Y_> n{}; n < sN; ++n) {
+			y_[n] = element;
+		}
+	}
+	XTAL_0IF_(else) {
+		_std::uninitialized_fill_n(y_, sN, element);
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 copy_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
 noexcept -> void
@@ -62,10 +82,10 @@ requires same_q<decltype(x0), decltype(xN)>
 	using X  = iteratee_t<X_>;
 	using F  =   decltype(f );
 	XTAL_IF0
-	XTAL_0IF (same_q<F, invoke_t<>> and different_q<Y, X>) {
-		copy_to<invoke_n<Y>>(y0, x0, xN, ord);
+	XTAL_0IF (same_q<F, _std::identity> and different_q<Y, X>) {
+		copy_to<evoke_t<Y>{}>(y0, x0, xN, ord);
 	}
-	XTAL_0IF (same_q<F, invoke_t<>> and      same_q<Y, X>) {
+	XTAL_0IF (same_q<F, _std::identity> and      same_q<Y, X>) {
 #if __cpp_lib_execution
 		if (not _std::is_constant_evaluated()) {
 			using namespace _std;
@@ -96,15 +116,15 @@ requires same_q<decltype(x0), decltype(xN)>
 		}
 	}
 }
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 copy_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
-
+	if (not sN) return;
 	XTAL_IF0
-	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+	XTAL_0IF (different_q<decltype(f), _std::identity>) {
 		copy_to<f>(y0, x0, next(x0, sN), ord);
 	}
 	XTAL_0IF_(consteval)  {copy_n(x0, sN, y0);}
@@ -116,20 +136,20 @@ noexcept -> void
 	XTAL_0IF_(do)   (copy  (span(x0, sN), y0))
 	XTAL_0IF_(else) {while (sN--) {*y0 = *x0; y0++; x0++;}}
 }
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 copy_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
 noexcept -> void
 {
 	XTAL_IF0
-	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+	XTAL_0IF (different_q<decltype(f), _std::identity>) {
 		copy_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
 	}
 	XTAL_0IF_(else) {
 		copy_to< >(y0, point_f(xs),    count_f(xs), ord);
 	}
 }
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 copy_to(iterable_q auto &ys, iterable_q auto const &xs, bool const ord=false)
 noexcept -> void
@@ -140,7 +160,7 @@ noexcept -> void
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 move_to(iterator_q auto y0, iterator_q auto x0, iterator_q auto xN, bool const ord=false)
 noexcept -> void
@@ -150,31 +170,53 @@ requires same_q<decltype(x0), decltype(xN)>
 	XTAL_0IF_(consteval) {copy_to<f>(y0,         x0 ,         xN , ord);}
 	XTAL_0IF_(else)      {copy_to<f>(y0, mover_f(x0), mover_f(xN), ord);}
 }
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 move_to(iterator_q auto y0, iterator_q auto x0, same_q<size_type> auto sN, bool const ord=false)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
-
+	if (not sN) return;
 	XTAL_IF0
-	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {move_to<f>(y0, x0, next(x0, sN), ord);}
+	XTAL_0IF (different_q<decltype(f), _std::identity>) {move_to<f>(y0, x0, next(x0, sN), ord);}
 	XTAL_0IF_(consteval)               {copy_to<f>(y0,         x0 , sN,  ord);}
 	XTAL_0IF_(do)                      (_std::memmove(y0, x0, sN*sizeof(iterated_u<decltype(x0)>)))
 	XTAL_0IF_(else)                    {copy_to<f>(y0, mover_f(x0), sN,  ord);}
 }
-template <auto f=invoke_n<>>
+template <auto f=_std::identity{}>
 XTAL_DEF_(inline,let)
 move_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
 noexcept -> void
 {
 	XTAL_IF0
-	XTAL_0IF (different_q<decltype(f), invoke_t<>>) {
+	XTAL_0IF (different_q<decltype(f), _std::identity>) {
 		move_to<f>(y0, point_f(xs), endpoint_f(xs), ord);
 	}
 	XTAL_0IF_(else) {
 		move_to< >(y0, point_f(xs),    count_f(xs), ord);
 	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <auto f=_std::identity{}>
+XTAL_DEF_(inline,let)
+transfer_to(iterator_q auto y0, iterable_q auto &&xs, bool const ord=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (_std::is_lvalue_reference_v<decltype(xs)>) {copy_to<f>(y0, xs, ord);}
+	XTAL_0IF (_std::is_rvalue_reference_v<decltype(xs)>) {move_to<f>(y0, xs, ord);}
+}
+template <auto f=_std::identity{}>
+XTAL_DEF_(inline,let)
+transfer_to(iterable_q auto &ys, iterable_q auto const &xs, bool const ord=false)
+noexcept -> void
+{
+	XTAL_IF0
+	XTAL_0IF (_std::is_lvalue_reference_v<decltype(xs)>) {copy_to<f>(ys, xs, ord);}
+	XTAL_0IF (_std::is_rvalue_reference_v<decltype(xs)>) {move_to<f>(ys, xs, ord);}
 }
 
 

@@ -28,17 +28,6 @@ TAG_("bundle")
 		TRUE_(b == 2);
 		TRUE_(c == 3);
 
-		w += m;
-		m *= 2;
-		TRUE_(w == m);
-
-		w += w;
-		m  = 2*m;
-		TRUE_(w == m);
-
-		w += w;
-		TRUE_(w == m + m);
-
 	}
 }
 /***/

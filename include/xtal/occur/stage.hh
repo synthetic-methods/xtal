@@ -16,7 +16,7 @@ cf. `*flow`'s `{changed,unchanged,unrecognized}`. \
 
 ///\note\
 Not intended to be `attach`ed (except with `(?:ex|in)pect`), \
-instead intercepted dynamically to affect/query state. \
+instead intercepted dynamically to interpret state. \
 
 ///\note\
 Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
@@ -36,8 +36,8 @@ template <typename ...As>
 struct stage
 {
 	using superkind = bond::compose<bond::tag<stage>
-	,	_detail::infer_equality<signed>
-	,	_detail::infer_binary_logic<signed>
+	,	_detail::refer_equality<signed>
+	,	_detail::refer_binary_logic<signed>
 	,	As...
 	,	defer<signed>
 	>;
@@ -57,8 +57,8 @@ template <constant_q A, typename ...As>
 struct stage<A, As...>
 {
 	using superkind = bond::compose<bond::tag<stage>
-	,	_detail::infer_equality<signed>
-	,	_detail::infer_binary_logic<signed>
+	,	_detail::refer_equality<signed>
+	,	_detail::refer_binary_logic<signed>
 	,	As...
 	,	defer<signed>
 	>;

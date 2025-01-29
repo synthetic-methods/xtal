@@ -27,50 +27,26 @@ struct any
 	using superkind = _detail::excompose<any<As>...>;
 	
 	template <class S>
-	using subtype = _detail::excompose_s<S, superkind>;
+	using subtype = _detail::incompose_s<S, superkind>;
 	
 };
 template <>
 struct any<void>
-{	
+{
 	template <class S>
 	using subtype = S;
 
 };
 template <typename A>
 struct any<A>
-{	
+{
 	template <class S>
-	class subtype : public _detail::excompose_s<S, _detail::query<subtype<S>, A>>
+	class subtype : public _detail::incompose_s<S, _detail::navigate<subtype<S>, A>>
 	{
-		using S_ = _detail::excompose_s<S, _detail::query<subtype<S>, A>>;
+		using S_ = _detail::incompose_s<S, _detail::navigate<subtype<S>, A>>;
 
 	public:
-		/**/
 		using S_::S_;
-		/*/
-	~	subtype()                 noexcept=default;
-		subtype()                 noexcept=default;
-		XTAL_NEW_(copy) (subtype, noexcept=default)
-		XTAL_NEW_(move) (subtype, noexcept=default)
-
-		XTAL_NEW_(explicit) subtype(auto &&...oo)
-		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		{}
-		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
-		noexcept
-		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
-		{}
-		///\
-		Attempts construction from infungible-but-compatible types via inspection. \
-		
-		XTAL_NEW_(explicit) subtype(infungible_q<subtype> auto &&w, auto &&...oo)
-		noexcept
-		requires requires {typename W::template self_s<A>;}
-		:	S_(w.template head<A>(), XTAL_REF_(w), XTAL_REF_(oo)...)
-		{};
-		/***/
 
 	};
 };

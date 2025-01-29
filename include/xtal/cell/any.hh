@@ -1,5 +1,5 @@
 #pragma once
-#include "../bond/all.hh"// `_retail`///NOTE: `bond/all` is included with all dependent `#import`s! 
+#include "../bond/all.hh"// `_retail`///NOTE: `bond/all` is included with all dependent `#import`s!
 
 
 
@@ -35,10 +35,10 @@ struct define
 	,	_detail::define_super<T>
 	>;
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
+	class subtype : public bond::compose_s<S, superkind, _detail::navigate<subtype<S>>>
 	{
 		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
+		using S_ = bond::compose_s<S, superkind, _detail::navigate<subtype<S>>>;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -108,10 +108,10 @@ struct defer
 	using superkind = _detail::defer_field<U>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind, _detail::query<subtype<S>>>
+	class subtype : public bond::compose_s<S, superkind, _detail::navigate<subtype<S>>>
 	{
 		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
+		using S_ = bond::compose_s<S, superkind, _detail::navigate<subtype<S>>>;
 		using U_ = typename S_::head_type;
 
 	public:// CONSTRUCT
@@ -159,10 +159,10 @@ Defers selected operators to `U` as required for `refine`ment. \
 
 template <class U>
 struct refer : bond::compose<void
-,	_detail::infer_logics<U>
-,	_detail::infer_groups<U>
-,	_detail::infer_iterators<U>
-,	_detail::infer_qualities<U>
+,	_detail::refer_logics<U>
+,	_detail::refer_groups<U>
+,	_detail::refer_qualities<U>
+,	_detail::refer_iterators<U>
 >
 {};
 

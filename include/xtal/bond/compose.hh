@@ -13,28 +13,16 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <typename ...Outers> concept   compose_q = (...and _detail::   compose_q<Outers>);
-
 ///\
-Defines `typename compose<Outers...>::template subtype<S, Inners...>`, applying:
+Provides `typename compose<Ts_...>::template subtype<S, _Ts...>`, \
+first applying `_Ts` to `S`        from left-to-right, \
+then  applying `Ts_` to the result from right-to-left. \
 
-///-	`Inners::template subtype<S>` from left-to-right.
-///-	`Outers::template subtype<S>` from right-to-left.
+template <typename ...Ts_>	using    compose   =         _detail::excompose<Ts_...> ;
+template <typename ...Ts_>	concept  compose_q = (...and _detail::compose_q<Ts_   >);
 
-template <typename ...Outers>
-using compose = _detail::excompose<Outers...>;
-
-///\
-Composes the `Subtypes`s right-to-left. \
-
-template <template <class, class...> class ...Subtypes>
-using compose_t = _detail::excompose_t<Subtypes...>;
-
-///\
-Applies the `Inners::subtype`s to `S` from left-to-right. \
-
-template <class S, typename ...Inners>
-using compose_s = _detail::excompose_s<S, Inners...>;
+template <template <class, class...> class ...Ts_> using compose_t = _detail::excompose_t<   Ts_...>;///< Composes `Ts_`                 from right-to-left.
+template <class S,                typename ..._Ts> using compose_s = _detail::incompose_s<S, _Ts...>;///< Applies  `_Ts::subtype` to `S` from left-to-right.
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -12,19 +12,27 @@ namespace xtal::atom
 /////////////////////////////////////////////////////////////////////////////////
 ///\
 Extends the multiplicative `group` with the scalar sum/product. \
-Provides even/odd-reflection iff `N_data == 2`. \
+Provides even/odd-reflection iff `size() == 2`. \
 
 template <class ..._s>	struct   couple;
 template <class ..._s>	using    couple_t = typename couple<_s...>::type;
-template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and same_n<sized_n<_s>...>;
+template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and fixed_shaped_q<_s...>;
 
-XTAL_FX0_(alias) (template <auto f=invoke_n<>>
-XTAL_DEF_(return,inline,let) couple_f(auto &&...oo),
-	_detail::build<couple_t>::template static_factory<f>(XTAL_REF_(oo)...))
+
+XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_DEF_(return,inline,let)
+couple_f(auto &&...oo),
+	_detail::factory<couple_t>::
+		template make<f>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <scalar_q ..._s> requires same_q<_s...>
+struct couple<_s ...>
+:	couple<common_t<_s...>[sizeof...(_s)]>
+{
+};
 template <class ..._s>
 struct couple
 {
@@ -34,7 +42,7 @@ struct couple
 	using A_aphex = typename A_fix::aphex_type;
 	
 	template <class T>
-	using endotype = typename group<_std::multiplies<void>, _s...>::template homotype<T>;
+	using endotype = typename multiplicative_group<_s...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -43,104 +51,39 @@ struct couple
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
-		using I_ = typename S_::initializer_list;
 	
-	protected:
-		using          S_::N_data;
-		using typename S_::T_data;
-		using typename S_::U_data;
-		using typename S_::V_data;
-
-	public:// CONSTRUCT
-	//	using S_::S_;
-	~	homotype()                 noexcept=default;
-	//	homotype()                 noexcept=default;
-		XTAL_NEW_(copy) (homotype, noexcept=default)
-		XTAL_NEW_(move) (homotype, noexcept=default)
-
-		XTAL_NEW_(explicit) homotype(auto &&...oo)
-		noexcept
-		:	S_{XTAL_REF_(oo)...}
-		{}
-		XTAL_NEW_(implicit) homotype()
-		noexcept
-		requires different_q<_s...>
-		:	S_{}
-		{
-		}
-		XTAL_NEW_(implicit) homotype()
-		noexcept
-		requires   vector_q<_s...>
-		{
-			auto &s = self();
-
-			if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
-				[&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN {((get<I>(s) = T_data{1}),...);}
-				(bond::seek_s<N_data>{});
-			}
-			else {
-				_std::uninitialized_fill_n(S_::data(), S_::size(), T_data{1});
-			}
-		}
-		XTAL_NEW_(implicit) homotype(I_ w)
-		noexcept
-		requires   vector_q<_s...>
-		{
-			auto &s = self();
-			auto const m = w.size();
-			
-			_detail::copy_to(S_::begin(), w);
-
-			assert(1 == m or m == N_data);
-			if (1 == m) {
-				auto const &u = get<0>(s);
-				if (_std::is_constant_evaluated() or N_data <= A_fix::alignment::value) {
-					[&]<auto ...I> (bond::seek_t<I...>)
-						XTAL_0FN {((get<I + 1>(s) = u),...);}
-					(bond::seek_s<N_data - 1>{});
-				}
-				else {
-					_std::uninitialized_fill_n(_std::next(S_::data(), m), S_::size() - m, u);
-				}
-			}
-		}
-
-		template <class U> requires real_q<U> or complex_q<U>
-		XTAL_NEW_(explicit) homotype(U &&u)
-		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and      same_q<U, T_data>
-		:	S_{u, one/(u + A_fix::minilon_f()*(not u))}
-		{}
-		template <class U> requires real_q<U> or complex_q<U>
-		XTAL_NEW_(explicit) homotype(U &&u)
-		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, T_data>
-		:	homotype(static_cast<T_data>(XTAL_REF_(u)))
-		{}
-		template <class U> requires logical_q<U>
-		XTAL_NEW_(explicit) homotype(U &&u)
-		noexcept
-		requires in_n<N_data, 2> and vector_q<_s...> and different_q<U, T_data>
-		:	S_{static_cast<T_data>(u), static_cast<T_data>(not u)}
-		{}
-	//	TODO: Adapt the above with `objective_f`?
-
 	public:// ACCESS
+		using S_::size;
 		using S_::self;
 		using S_::twin;
 
-	public:// OPERATE
+		using typename S_::value_type;
+		using typename S_::scale_type;
 
-		///\returns the result of `blanked()` before refilling with `N_value=1`. \
+	public:// CONSTRUCT
+		using S_::S_;
 
-		template <auto N_value=1>
-		XTAL_DEF_(inline,let)
-		blanket()
-		noexcept -> bool
+		XTAL_NEW_(explicit) homotype(bool u)
+		noexcept
+		requires in_n<size, 2>
+		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
 		{
-			return S_::template blanket<N_value>();
 		}
+		XTAL_NEW_(explicit) homotype(value_type const &u)
+		noexcept
+		requires in_n<size, 2> and continuous_field_q<value_type>
+		:	S_{u, one/u}
+		{
+			assert(u != value_type{0});
+		}
+		XTAL_NEW_(explicit) homotype(subjective_q auto const &u)
+		noexcept
+		requires in_n<size, 2> and continuous_field_q<value_type>
+		:	homotype(objective_f(u))
+		{
+		}
+
+	public:// OPERATE
 
 		///\
 		Produces the progressive sum/difference, \
@@ -158,7 +101,7 @@ struct couple
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
-			(bond::seek_s<N_data - 1>{});
+			(bond::seek_s<size - 1>{});
 			
 			return t;
 		}
@@ -170,7 +113,7 @@ struct couple
 
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
-			(bond::antiseek_s<N_data - 1>{});
+			(bond::antiseek_s<size - 1>{});
 			
 			return t;
 		}
@@ -178,30 +121,30 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator++(int) const
 		noexcept -> auto
-		requires vector_q<_s...>
+		requires same_q<_s...>
 		{
 			auto t = S_::twin();
 
-			T_data u{};
-			T_data v{};
+			value_type u{};
+			value_type v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
-			(bond::seek_s<N_data>{});
+			(bond::seek_s<size>{});
 			
 			return t;
 		}
 		XTAL_DEF_(inline,let)
 		operator--(int) const
 		noexcept -> auto
-		requires vector_q<_s...>
+		requires same_q<_s...>
 		{
 			auto t = S_::twin();
 
-			T_data u{};
-			T_data v{};
+			value_type u{};
+			value_type v{};
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
-			(bond::antiseek_s<N_data>{});
+			(bond::antiseek_s<size>{});
 			
 			return t;
 		}
@@ -212,7 +155,7 @@ struct couple
 		sum() const
 		noexcept -> auto
 		{
-			return sum<N_sgn>(V_data{0});
+			return sum<N_sgn>(scale_type{0});
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline,let)
@@ -223,13 +166,13 @@ struct couple
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (                         get<I>(s)))
-				(bond::seek_s<N_data>{});
+					XTAL_0FN_(return) (u +...+ (                             get<I>(s)))
+				(bond::seek_s<size>{});
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (V_data{-sign_n<I&1, -1>}*get<I>(s)))
-				(bond::seek_s<N_data>{});
+					XTAL_0FN_(return) (u +...+ (scale_type{-sign_n<I&1, -1>}*get<I>(s)))
+				(bond::seek_s<size>{});
 			}
 		}
 
@@ -239,44 +182,44 @@ struct couple
 		product() const
 		noexcept -> auto
 		{
-			return product<N_sgn>(V_data{1});
+			return product<N_sgn>(scale_type{1});
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline,let)
 		product(auto u) const
 		noexcept -> auto
-		requires un_n<bond::pack_sized_q<decltype(u), N_data>>
+		requires un_n<bond::pack_size_n<decltype(u)>, size()>
 		{
 			auto &s = self();
 			
-			bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
+			bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                          v, v);}
-				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                              v, v);}
+				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), scale_type{-sign_n<I&1, -1>}*v, v);}
 			});
 
 			return u;
 		}
-		template <int N_sgn=1> requires vector_q<_s...>
+		template <int N_sgn=1> requires same_q<_s...>
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
-		requires in_n<bond::pack_sized_q<decltype(t), N_data>>
+		requires in_n<bond::pack_size_n<decltype(t)>, size()>
 		{
 			auto &s = self();
-			T_data u{};
+			value_type u{};
 			
-			bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {
+			bond::seek_forward_f<size>([&, this] (auto I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                          get<I>(s), get<I>(t));}
-				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), V_data{-sign_n<I&1, -1>}*get<I>(s), get<I>(t));}
+				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                              get<I>(s), get<I>(t));}
+				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), scale_type{-sign_n<I&1, -1>}*get<I>(s), get<I>(t));}
 			});
 			
 			return u;
 		}
 
-		template <int N_par=0> requires (N_data == 2)
+		template <int N_par=0> requires (size == 2)
 		XTAL_DEF_(inline,let)
 		ratio()
 		noexcept -> auto
@@ -290,7 +233,7 @@ struct couple
 		///\
 		Modifies `this`; \see `reflected()`.
 
-		template <int N_par=0> requires (N_data == 2)
+		template <int N_par=0> requires (size == 2)
 		XTAL_DEF_(inline,let)
 		reflect()
 		noexcept -> T &
@@ -299,7 +242,7 @@ struct couple
 		}
 		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
 		
-		template <int N_par=0> requires (N_data == 2)
+		template <int N_par=0> requires (size == 2)
 		XTAL_DEF_(return,inline,let)
 		reflected() const
 		noexcept -> decltype(auto)
@@ -313,14 +256,14 @@ struct couple
 		}
 		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
 		
-		template <int N_par=0> requires (N_data == 2)
+		template <int N_par=0> requires (size() == 2)
 		XTAL_DEF_(return,inline,set)
 		reflector()
-		noexcept -> V_data
+		noexcept -> auto
 		{
-			V_data constexpr up = one;
-			V_data constexpr un = one/_std::numbers::sqrt2_v<V_data>;
-			V_data constexpr dn = half;
+			scale_type constexpr up = one;
+			scale_type constexpr un = one/_std::numbers::sqrt2_v<scale_type>;
+			scale_type constexpr dn = half;
 			XTAL_IF0
 			XTAL_0IF (N_par == +1) {return up;}
 			XTAL_0IF (N_par ==  0) {return un;}
@@ -344,8 +287,8 @@ struct couple
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template pointless<[] XTAL_0FN_(alias) (_std::lcm)>();}
-		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template pointless<[] XTAL_0FN_(alias) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_0FN_(alias) (_std::lcm)>();}
+		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_0FN_(alias) (_std::gcd)>();}
 		XTAL_DEF_(return,inline,let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
@@ -354,8 +297,8 @@ struct couple
 		noexcept -> auto
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template pointless<[] XTAL_0FN_(alias) (_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template pointless<[] XTAL_0FN_(alias) (_std::gcd)>();}
+			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_0FN_(alias) (_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_0FN_(alias) (_std::gcd)>();}
 		}
 
 

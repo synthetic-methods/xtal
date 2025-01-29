@@ -71,7 +71,9 @@ TAG_("couple")
 		auto  x =  W{2, 3};
 		auto  y =  W{4, 9};
 		auto  z =  y/x;
+
 		TRUE_(z == W{2, 3});
+	//	TRUE_(x == x/T_alpha{1});
 	}
 	TRY_("couple summation")
 	{

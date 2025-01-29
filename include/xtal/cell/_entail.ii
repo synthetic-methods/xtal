@@ -121,55 +121,7 @@ template <class   ...As>	using    reinferred_t = typename              reinferre
 Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<head_type>`. \
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Defines an `inferred` tuple from `...As`. \
-
-template <class   ...Ts>	struct   packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
-template <class   ...Ts>	using    packed_t = typename packed<Ts...>::type;
-template <class   ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
-template <class   ...Ts>
-XTAL_DEF_(return,inline,let)
-packed_f(Ts &&...as)
-noexcept -> auto
-{
-	return packed_t<Ts...>(XTAL_REF_(as)...);
-}
-
-///\
-Defines an `inferred` tuple from `...Ts`, \
-or `bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`. \
-
-template <class   ...Ts>	struct   packet     {using type =   packed_t<Ts...>;};
-template <any_q      T >	struct   packet<T>  {using type =            T     ;};
-template <             >	struct   packet< >  {using type = confined_t<     >;};
-template <class   ...Ts>	using    packet_t = typename packet<Ts...>::type;
-template <class   ...Ts>
-XTAL_DEF_(return,inline,let)
-packet_f(Ts &&...as)
-noexcept -> auto
-{
-	return packet_t<Ts...>(XTAL_REF_(as)...);
-}
-
-///\
-Defines a `conferred` value from `T`, \
-or `T` if `any_q<T>`. \
-
-template <class      T >	struct   let        {using type = conferred_t<T>;};
-template <any_q      T >	struct   let<T>     {using type =             T ;};
-template <class      T >	using    let_t    = typename let<T>::type;
-template <class      T >
-XTAL_DEF_(return,inline,let)
-let_f(T &&t)
-noexcept -> decltype(auto)
-{
-	return let_t<T>(XTAL_REF_(t));
-}
-///<\
-\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`. \
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -25,9 +25,7 @@ struct word
 	public:
 		using S_::S_;
 
-		XTAL_DEF_(return,inline,set)
-		cardinality()
-		noexcept -> auto {return N_size;};
+		static constant_t<N_size> constexpr cardinality{};
 
 	};
 };
@@ -60,7 +58,7 @@ struct word
 		using S_::S_;
 
 		///\
-		Default `constant_q` constructor, expects `0`. \
+		Base constructor, expects `0`. \
 
 		template <integral_q A>
 		XTAL_NEW_(explicit) subtype(A &&a)

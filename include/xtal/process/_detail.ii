@@ -29,9 +29,9 @@ struct invoke_head
 		or                   requires {U_{}                             (XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF_(return) (U_::template static_method<Is...>(XTAL_REF_(xs)...)) 
-			XTAL_0IF_(return) (U_::         static_method       (XTAL_REF_(xs)...)) 
-			XTAL_0IF_(return) (U_{}                             (XTAL_REF_(xs)...)) 
+			XTAL_0IF_(return) (U_::template static_method<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(return) (U_::         static_method       (XTAL_REF_(xs)...))
+			XTAL_0IF_(return) (U_{}                             (XTAL_REF_(xs)...))
 		}
 
 	public:// CONSTRUCT
@@ -52,7 +52,7 @@ struct invoke_head
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs) const
 		noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(void)   (U_method<Is...>(XTAL_REF_(xs)...))
+	//	requires XTAL_TRY_(unless) (U_method<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
 			XTAL_0IF_(return) (head().template operator()<Is...>(XTAL_REF_(xs)...))
@@ -65,7 +65,7 @@ struct invoke_head
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs)
 		noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(void)   (U_method<Is...>(XTAL_REF_(xs)...))
+	//	requires XTAL_TRY_(unless) (U_method<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
 			XTAL_0IF_(return) (head().template operator()<Is...>(XTAL_REF_(xs)...))

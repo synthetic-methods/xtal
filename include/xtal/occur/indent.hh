@@ -44,7 +44,7 @@ struct indent<Ns...>
 		using S_::S_;
 		
 		///\note\
-		When `covalued_q<S>`, `S::ordinate` is invoked to produce the edit. \
+		When `reindexed_q<S>`, `S::ordinate` is invoked to produce the edit. \
 
 		///\todo\
 		Find a better way to invoke `S::ordinate` implicitly for any `indent`ed scalar fragments. \

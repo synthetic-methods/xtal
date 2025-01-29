@@ -19,7 +19,7 @@ template <class ...Ts> concept  queue_q = bond::tag_p<queue_t, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-A fluid-sized fixed-capacity priority-queue based on `buffer_t<A>`. \
+A priority-queue based on `buffer_t<A>`. \
 Currently used for both event queues (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
@@ -41,7 +41,6 @@ struct queue<A>
 		using U_point  = typename U_buffer::iterator;
 		using U_value  = typename U_buffer::value_type;
 		using U_count  = typename U_buffer::difference_type;
-		using I_ = _std::initializer_list<U_value>;
 		
 		U_buffer u_buffer;
 		U_count u_begin = 0;
@@ -61,7 +60,7 @@ struct queue<A>
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_NEW_(implicit) homotype(I_ w)
+		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_value> w)
 		noexcept(false)
 		:	u_end(count_f(w))
 		,	u_buffer(w.begin(), w.end())
@@ -80,14 +79,14 @@ struct queue<A>
 		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
 		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
 
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		advance(U_count n=1)
 		noexcept -> U_point
 		{
 			u_begin += n;
 			return begin();
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		abandon(U_count n=1)
 		noexcept -> U_point
 		{
@@ -97,28 +96,33 @@ struct queue<A>
 			}
 			return begin();
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		free()
 		noexcept -> void
 		{
 			u_buffer.erase(u_buffer.begin(), end());
 		}
 
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		free(auto &&f)
 		noexcept -> void
 		{
 			u_buffer.erase(_std::remove_if(begin(), end(), XTAL_REF_(f)), end());
 		}
 		template <auto  f>
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		free()
 		noexcept -> void
 		{
 			u_buffer.erase(_std::remove_if(begin(), end(),           f ), end());
 		}
-	//	template <auto  f> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free(constant_n<f>);}
-		template <class F> XTAL_DEF_(inline,let) free() noexcept -> decltype(auto) {return free<invoke_n<F>>();}
+		template <class F>
+		XTAL_DEF_(mutate,inline,let)
+		free()
+		noexcept -> void
+		{
+			return free<evoke_t<F>{}>();
+		}
 
 		///\note\
 		Cost can be amortized by invoking `advance` and `abandon` separately, \
@@ -151,7 +155,7 @@ struct queue<A>
 		noexcept -> U_point
 		{
 			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
-			,	[f = XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(return) (f(x) < f(y))
+			,	[f=XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(return) (f(x) < f(y))
 			);
 		}
 		///\note\
@@ -176,20 +180,20 @@ struct queue<A>
 				return poke(_v, XTAL_MOV_(u));
 			}
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		push(auto ..._s)
 		noexcept -> U_point
 		{
 			return push(U_value(XTAL_MOV_(_s)...));
 		}
 
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		poke(U_point _v, U_value u)
 		noexcept -> U_point
 		{
 			return u_buffer.insert(_v, XTAL_MOV_(u));
 		}
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		poke(U_point _v, auto..._s)
 		noexcept -> U_point
 		{

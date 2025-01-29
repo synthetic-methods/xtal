@@ -11,7 +11,7 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Defines a fixed-width `type` that supports homogeneous/heterogeneous construction, \
+Defines a statically-bounded `type` that supports homogeneous/heterogeneous construction, \
 as well as expression-templates. \
 
 template <class ..._s> struct   block;
@@ -31,11 +31,6 @@ template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
 template <class U, auto N, auto  ...Ns> struct superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto  ...Ns> struct superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
 
-template <scalar_q ...Us> requires      same_q<Us...>
-struct superblock<Us ...>
-:	superblock<common_t<Us...>[sizeof...(Us)]>
-{
-};
 template <scalar_q ...Us> requires different_q<Us...>
 struct superblock<Us...>
 {
@@ -49,26 +44,28 @@ struct superblock<Us...>
 	{
 		using S_ = holotype<T>;
 
-	protected:
-		static auto constexpr N_data = sizeof...(Us);
-		using T_data =  common_t<objective_t<Us>...>;
-		using U_data =  common_t<Us...>;
-		using V_data = absolve_u<Us...>;
+	public:// ACCESS
+		using        size_type = _std::size_t;
+		using  difference_type = _std::make_signed_t<size_type>;
 
-	public:// TYPE
-		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<T_data>;
+		using        archetype = endotype;
+		using       value_type = common_t<objective_t<Us>...>;
+		using       scale_type = absolve_u<value_type>;
 
-	public:// OPERATE
-		static constant_t<sizeof(archetype)> constexpr size_bytes{};
-		
+	//	using       bytes_size = constant_t<sizeof(archetype)>;
+	//	static      bytes_size   constexpr size_bytes{};
+		using       tuple_size = constant_t<sizeof...(Us)>;
+		static      tuple_size   constexpr size      {};
+		template <size_type I>
+		using       tuple_element = _std::tuple_element<I, archetype>;
+
 	public:// CONSTRUCT
 		using S_::S_;
 
-		using        size_type = _std::   size_t;
-		using  difference_type = _std::ptrdiff_t;
+		XTAL_FX4_(alias) (template <class ...Xs> XTAL_DEF_(return,inline,let) front(), get<       0>(S_::self()))
+		XTAL_FX4_(alias) (template <class ...Xs> XTAL_DEF_(return,inline,let) back (), get<size - 1>(S_::self()))
 
-	};	
+	};
 	using type = derive_t<homotype>;
 
 };
@@ -87,23 +84,27 @@ struct superblock<U(&)[N]>
 	{
 		using S_ = holotype<T>;
 
-	protected:
-		static auto constexpr N_data = N ;
-		using T_data =                 U ;
-		using U_data =                 U ;
-		using V_data =       absolve_u<U>;
+	public:// ACCESS
+		using        size_type = decltype(N);
+		using  difference_type = _std::make_signed_t<size_type>;
 
-	public:// TYPE
-		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<T_data>;
-
-		using        size_type = _std::   size_t;
-		using  difference_type = _std::ptrdiff_t;
+		using        archetype =  endotype;
+		using       value_type =  U;
+		using       scale_type =  absolve_u<value_type>;
 		
+	//	using       bytes_size = constant_t<?>;
+	//	static      bytes_size   constexpr size_bytes{};
+		using       tuple_size = constant_t<N>;
+		static      tuple_size   constexpr size      {};
+		template <size_type I>
+		struct      tuple_element {using type = U;};
+
+		static_assert(_std::same_as<U, typename S_::value_type>);
+
 	public:// CONSTRUCT
 		using S_::S_;
 
-	};	
+	};
 	using type = derive_t<homotype>;
 
 };
@@ -120,63 +121,52 @@ struct superblock<U   [N]>
 	{
 		using S_ = holotype<T>;
 
-	protected:
-		static auto constexpr N_data = N ;
-		using T_data =                 U ;
-		using U_data =                 U ;
-		using V_data =       absolve_u<U>;
+	public:// ACCESS
+		using        archetype =  endotype;		
+		using       value_type =  U;
+		using       scale_type =  absolve_u<value_type>;
 
-	public:// TYPE
-		using archetype        =  endotype;
-		using initializer_list = _std::initializer_list<T_data>;
+		using       bytes_size = constant_t<sizeof(archetype)>;
+		static      bytes_size   constexpr size_bytes{};
+		using       tuple_size = constant_t<N>;
+		static      tuple_size   constexpr size      {};
+		template <size_type I>
+		struct      tuple_element {using type = U;};
 
-	public:// OPERATE
-		static constant_t<sizeof(archetype)> constexpr size_bytes{};
-		
+		static_assert(_std::same_as<U, typename S_::value_type>);
+
 	public:// CONSTRUCT
-		using S_::S_;
+	//	using S_::S_;
+
 	~	homotype()                 noexcept=default;
 	//	homotype()                 noexcept=default;
 		XTAL_NEW_(copy) (homotype, noexcept=default)
 		XTAL_NEW_(move) (homotype, noexcept=default)
 		
-		XTAL_NEW_(explicit) homotype()
+		XTAL_NEW_(implicit) homotype()
 		noexcept
 		:	homotype(size_type{})
 		{}
 		XTAL_NEW_(explicit) homotype(same_q<size_type> auto const n)
 		noexcept
 		{
-			assert(n <= N_data);
-			if (_std::is_constant_evaluated() or n < N_data) {
-				S_::fill(U_data{});
+			assert(n <= size);
+			if (_std::is_constant_evaluated() or n < size) {
+				S_::fill(value_type{});
 			}
 		}
-	//	TODO: Should check `coindexed_q`? Or how to determine if `ordinate` has been replaced?
-
-		XTAL_NEW_(implicit) homotype(initializer_list a)
+		XTAL_NEW_(implicit) homotype(_std::initializer_list<value_type> xs)
 		noexcept
-		:	homotype(count_f(a))
+		:	homotype(count_f(xs))
 		{
-			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_0FN_(alias) (T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to                                   (S_::begin(), a);}
+			_detail::move_to<T::ordinate>(S_::begin(), xs.begin(), count_f(xs));
 		}
-		XTAL_NEW_(explicit) homotype(iterable_q auto       &&a)
+		XTAL_NEW_(explicit) homotype(iterable_q auto &&xs)
 		noexcept
-		:	homotype(count_f(a))
+		requires epimorphic_q<homotype, decltype(xs)>
+		:	homotype(count_f(xs))
 		{
-			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::move_to<[] XTAL_0FN_(alias) (T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::move_to                                   (S_::begin(), a);}
-		}
-		XTAL_NEW_(explicit) homotype(iterable_q auto const  &a)
-		noexcept
-		:	homotype(count_f(a))
-		{
-			XTAL_IF0
-			XTAL_0IF (covalued_q<T>) {_detail::copy_to<[] XTAL_0FN_(alias) (T::ordinate)>(S_::begin(), a);}
-			XTAL_0IF_(else)          {_detail::copy_to                                   (S_::begin(), a);}
+			_detail::transfer_to<T::ordinate>(S_::begin(), XTAL_REF_(xs), count_f(xs));
 		}
 
 	};
@@ -187,6 +177,11 @@ struct superblock<U   [N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
+template <scalar_q ..._s> requires same_q<_s...>
+struct block<_s ...>
+:	block<common_t<_s...>[sizeof...(_s)]>
+{
+};
 template <class ..._s>
 struct block
 {
@@ -201,109 +196,101 @@ struct block
 	{
 		using S_ = holotype<T>;
 
+		template <class _, class ...As> struct _form           {using type = bond::compose_s<T, bond::hypertag<As...>>;};
+		template <class _             > struct _form<_       > {using type = T;};
+		template <class _             > struct _form<_, _s...> {using type = T;};
+
+	public:// OPERATE
+		using S_::size;
+
 	public:// CONSTRUCT
 		using S_::S_;
 
-	protected:
-		using          S_::N_data;///< The           number of elements. 
-		using typename S_::T_data;///< The constrained-type of elements.
-		using typename S_::U_data;///< The      common-type of elements. 
-		using typename S_::V_data;///< The  arithmetic-type of elements.
-
-	public:// TYPE
-		using typename S_::archetype;
-
-		template <size_type N>
-		using tuple_element = _std::tuple_element<N, archetype>;
-		//\
-		using tuple_size    = _std::tuple_size   <   archetype>;
-		using tuple_size    = constant_t<N_data>;
+		using typename S_:: archetype;
+		using typename S_::value_type;
+		using typename S_::scale_type;
 
 		///\
 		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
  		
-		template <class _, class ...As> struct  reforge           {using type = typename T::taboo::template hypertype<As...>;};
-		template <class _             > struct  reforge<_, _s...> {using type = T;};
-		template <         class ...As> using   reforge_t = typename reforge<void, As...>::type;
-
-		///\returns a reconstruction of `this` using the supplied `template`-arguments. \
+		template <class ...As> struct  form   : _form<void, As...>  {};
+		template <class ...As> using   form_t = typename form<As...>::type;
 		
-		XTAL_FX2_(do) (template <class ...As>
+		///\returns a specialized instance of the prevailing template using the argument types `Xs...`. \
+
+		XTAL_FX0_(alias) (template <class ...Xs>
+		XTAL_DEF_(return,inline,set)
+		reform(Xs &&...xs),
+			form_t<Xs...>{XTAL_REF_(xs)...})
+
+		///\returns a specialized instance of `this` using the prevailing template. \
+
+		XTAL_FX2_(alias) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
-		reform(),
-		noexcept -> decltype(auto)
-		{
-			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(As)) {return reforge_t<_s...>(self());}
-			XTAL_0IF (1 <= sizeof...(As)) {return reforge_t<As...>(self());}
-		})
+		deform(),
+			form_t<Xs...>(S_::self()))
 
-		///\returns the internal representation of the given `co`ordinate. \
-
-		XTAL_DEF_(return,inline,set)
-		ordinate(auto &&co)
-		noexcept -> decltype(auto)
-		{
-			return XTAL_REF_(co);
-		}
-		///\returns the external representation of the given `o`rdinate. \
-
-		XTAL_DEF_(return,inline,set)
-		coordinate(auto &&o)
-		noexcept -> decltype(auto)
-		{
-			return XTAL_REF_(o);
-		}
-
-	public:// ACCESS
+	public:
 		using S_::self;
 
-		///\returns the first `i` elements of `this` as a truncated view over `U`. \
-
-		XTAL_FX4_(do) (template <scalar_q U=U_data>
-		XTAL_DEF_(return,inline,let)
-		self(constant_q auto i),
-		noexcept -> decltype(auto)
-		{
-			return reform<U(&)[i()]>();
-		})
-
-		///\returns the first `i` elements of `this` as a truncated copy over `U`. \
-
-		XTAL_FX4_(do) (template <scalar_q U=U_data>
-		XTAL_DEF_(return,inline,let)
-		twin(constant_q auto i),
-		noexcept -> decltype(auto)
-		{
-			return reform<U   [i()]>();
-		})
-		XTAL_FX4_(do) (template <scalar_q U=U_data>
-		XTAL_DEF_(return,inline,let)
-		twin(),
-		noexcept -> decltype(auto)
-		{
-			return twin(constant_n<N_data>);
-		})
-
-		///\returns the size of this type or value. \
-
-		static constant_t<N_data> constexpr size{};
-
-		template <size_type I>
-		XTAL_DEF_(return,inline,let)
-		operator() () const
-		noexcept -> decltype(auto)
-		{
-			return self().coordinate(element<I>());
-		}
-		XTAL_DEF_(return,inline,let)
-		operator() (auto i) const
-		noexcept -> decltype(auto)
-		requires vector_q<_s...>
-		{
-			return self().coordinate(element(i));
-		}
+		///\returns the first `count` elements of `this` as a truncated view of `U`. \
 		
+		///\todo\
+		Allow truncation/projection of heterogeneous `block`s.
+
+		XTAL_FX4_(do) (template <scalar_q V=value_type>
+		XTAL_DEF_(return,inline,let)
+		self(constant_q auto count),
+		{
+			if constexpr (same_q<_s...>) {
+				static_assert(count() <= size());
+				return deform<V(&)[count]>();
+			}
+			else {
+				static_assert(count() == size());
+				static_assert(same_q<V, value_type>);
+				return deform<_std::add_lvalue_reference_t<_s>...>();
+			}
+		})
+
+	public:
+	//	using S_::twin;
+
+		///\see [`bond::any`](../bond/any.hh). \
+
+		XTAL_DEF_(return,inline,let)
+		twin() const
+		noexcept -> auto
+		{
+			return deform<_std::remove_cvref_t<_s>...>();
+		}
+
+		///\returns the first `count` elements of `this` as a truncated copy of `U`. \
+		
+		///\todo\
+		Allow truncation/copying of heterogeneous `block`s. \
+
+		XTAL_FX4_(do) (template <scalar_q V=value_type>
+		XTAL_DEF_(return,inline,let)
+		twin(constant_q auto count),
+		{
+			if constexpr (same_q<_s...>) {
+				static_assert(count() <= size());
+				return deform<V[count]>();
+			}
+			else {
+				static_assert(count() == size());
+				static_assert(same_q<V, value_type>);
+				return deform<_std::remove_cvref_t<_s>...>();
+			}
+		})
+
+	public:// ACCESS
+		///\returns the internal/external representation of the given co/ordinate. \
+
+		static auto constexpr   ordinate = _std::identity{};
+		static auto constexpr coordinate = _std::identity{};
+
 		XTAL_FX4_(do) (template <size_type I>
 		XTAL_DEF_(return,inline,let)
 		element(),
@@ -311,97 +298,39 @@ struct block
 		{
 			auto &s = S_::template self<archetype>();
 			XTAL_IF0
-			XTAL_0IF_(return) (*get<I>(s))
+			XTAL_0IF_(return) (*get<I>(s))              // Required for `subrange`!
 			XTAL_0IF_(return) ( get<I>(s))
-			XTAL_0IF_(return) (element(constant_n<I>))//NOTE: Required for `span` but not `subrange`...
+			XTAL_0IF_(return) (element(constant_t<I>{}))// Required for `span`!
 		})
 		XTAL_FX4_(do) (template <auto I=0>
 		XTAL_DEF_(return,inline,let)
 		element(auto i),
 		noexcept -> decltype(auto)
-		requires vector_q<_s...>
+		requires same_q<_s...>
 		{
-			assert(i + I < N_data);
-			return self().operator[](i + I);
+			if constexpr (I) {i += I;} assert(i < size);
+			return self().operator[](i);
 		})
 
-	public:// OPERATE
+		XTAL_FX1_(alias) (template <extent_type I> XTAL_DEF_(return,inline,let) coelement  (   ), self().coordinate(element<I>()))
+		XTAL_FX1_(alias) (template <integral_q  I> XTAL_DEF_(return,inline,let) coelement  (I i), self().coordinate(element(i)  ))
 
-		XTAL_DEF_(return,inline,friend,let)
-		operator==(homotype const &s, homotype const &t)
-		noexcept -> bool
-		{
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_(return)
-				(static_cast<archetype const &>(s) == static_cast<archetype const &>(t))
-
-			XTAL_0IF (vector_q<_s...> and _std::is_standard_layout_v<U_data>) {
-				return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
-			}
-			XTAL_0IF_(else) {
-				return [&]<auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(return) (...and (get<I>(s) == get<I>(t)))
-				(bond::seek_s<N_data> {});
-			}
-		}
-
-		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
-
-		template <auto N_value=0>
-		XTAL_DEF_(return,inline,let)
-		blanked() const
-		noexcept -> auto
-		{
-			reforge_t<based_t<_s>...> constexpr blank{N_value};
-			return blank == self();
-		}
-		///\returns the result of `blanked()` before refilling with `N_value=0`. \
-
-		template <auto N_value=0>
-		XTAL_DEF_(inline,let)
-		blanket()
-		noexcept -> bool
-		requires vector_q<_s...>
-		{
-			using U_value = absolve_u<U_data>;
-			using V_value = typename bond::fixture<U_value>::sigma_type;
-
-			auto constexpr u  =    static_cast<U_value>(N_value);
-			auto constexpr v  = _xtd::bit_cast<V_value>(u);
-			bool const     z  = blanked();
-			auto const     zu = u* static_cast<U_value>(z);
-			auto const    _zv = v&-z;
-#if XTAL_ENV_(LLVM)
-			if constexpr (false) {
-			}
-#else
-			if constexpr (anyplex_q<U_data>) {
-				auto &s = dissolve_f(*this);
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					XTAL_IF0
-					XTAL_0IF (simplex_q<U_data>) {return reinterpret_cast<V_value &>(s[I]   ) |= _zv;}
-					XTAL_0IF (complex_q<U_data>) {return reinterpret_cast<V_value &>(s[I][0]) |= _zv;}
-				});
-			}
-#endif
-			else {
-				auto const n = static_cast<U_value>(z)*u;
-				auto      &s = *this;
-				bond::seek_forward_f<N_data>([&] (auto I) XTAL_0FN {
-					get<I>(s) += n;
-				});
-			}
-			return z;
-		}
+		XTAL_FX1_(alias) (template <extent_type I> XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
+		XTAL_FX1_(alias) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
 	using type = derive_t<homotype>;
 
 };
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template element<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
+
+template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
 
 
 ////////////////////////////////////////////////////////////////////////////////

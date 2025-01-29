@@ -27,7 +27,7 @@ template <class ...Xs>
 struct bundle
 {
 	using superkind = bond::compose<bond::tag<bundle>
-	,	cell::defer<cell::packed_t<Xs...>>
+	,	cell::defer<flow::packed_t<Xs...>>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

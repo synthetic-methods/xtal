@@ -19,7 +19,7 @@ static_assert(not counted_q<quanta_t<  size_type[2]>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 TAG_("quanta")
 {
 	using _fix = bond::fixture<>;
@@ -28,15 +28,25 @@ TAG_("quanta")
 	using T_alpha = typename _fix::alpha_type;
 	using T_aphex = typename _fix::aphex_type;
 
-	TRY_("scalar multiplication")
-	{
-		using U2_alpha = quanta_t<T_alpha[2]>;
-		using U2_aphex = quanta_t<T_aphex[2]>;
-		U2_alpha x{1, 2}; x *= (T_alpha) 10;
-		U2_aphex y{1, 2}; y *= (T_alpha) 10;
+	using W_alpha = quanta_t<T_alpha[2]>; using U_alpha_ = quanta_t<T_alpha(&)[1]>;
+	using W_aphex = quanta_t<T_aphex[2]>; using U_aphex_ = quanta_t<T_aphex(&)[1]>;
 
-		TRUE_(x == U2_alpha{10, 20});
-		TRUE_(y == U2_aphex{10, 20});
+	TRY_("block equality")
+	{
+		W_alpha w_alpha{ 1 ,  2 };
+		W_aphex w_aphex{{1}, {2}};
+
+		TRUE_(W_alpha{ 1 ,  2 } == w_alpha);
+		TRUE_(W_aphex{{1}, {2}} == w_aphex);
+
+	}
+	TRY_("quanta checking")
+	{
+		W_alpha w_0{0, 0};
+		W_alpha w_1{1, 1};
+
+		  TRUE_(w_0.blanked());
+		UNTRUE_(w_1.blanked());
 
 	}
 }

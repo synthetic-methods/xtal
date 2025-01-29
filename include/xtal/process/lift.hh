@@ -45,7 +45,7 @@ struct lifter
 				return confined_t<U>::template static_method<Is...>(XTAL_REF_(xs)...);
 			}
 			else {
-				return invoke_n<U>(XTAL_REF_(xs)...);
+				return evoke_t<U>{}(XTAL_REF_(xs)...);
 			}
 		}
 
@@ -72,7 +72,7 @@ struct lifter
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(unless)          (S_method<Is...>(XTAL_REF_(xs)...))
 		and  requires (S_val s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
@@ -81,7 +81,7 @@ struct lifter
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires   XTAL_TRY_(void)          (S_method<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(unless)          (S_method<Is...>(XTAL_REF_(xs)...))
 		and  requires (S_var s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
@@ -96,7 +96,7 @@ struct lifter
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides pure `head`-less mapping of `(?:static_)method` (in contrast to `link`), \
-in addition to allowing constructor mapping via `invoke_n`. \
+in addition to allowing constructor mapping via `evoke_t`. \
 
 template <                   typename ...As> struct lift;
 template <bond::compose_q A                > struct lift<A       > :                                              A {};

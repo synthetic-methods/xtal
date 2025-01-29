@@ -5,15 +5,11 @@ XTAL
 
 XTAL is a cross-platform header-only zipper/combinator library for musical Digital Signal Processing (DSP).
 It provides an extensible and performant framework for rapid prototyping and development, 
-aimed at building real-time instruments and effects for both hardware and software.
+aimed at building real-time instruments/effects for hardware and software. Programs developed using XTAL resemble the `SynthDef` subsystem of SuperCollider, while fulfilling the event-handling and buffer-processing cycle required by C++ frameworks like CoreAudio, JUCE, and Max/Min.
 
-The emphasis of the library is on composability and performance, accommodating dynamic messaging within a static framework.
-It resembles the `SynthDef` subsystem of SuperCollider, fulfilling the buffer read/write cycle required by C++ frameworks like CoreAudio, JUCE, and Max/Min, while abstracting the nested iteration, state-management, and event handling used by these systems.
+Core to the design of XTAL is template composition, utilizing the class-decorator pattern to compose behaviour/state transparently. Both pure and stateful functors can be compiled into acyclic networks through functional application and composition. Defined at the sample-level and range/block-level respectively, `process`es and `processor`s can be controlled dynamically by either updating the internal state (e.g. sample history) or by `vtable`d template switching (e.g. routing configuration). As a result, branching and queueing is kept to a minimum, enhancing both code ergonomics and program throughput/latency.
 
-The `process`es within the framework comprise pure functions and stateful functors like oscillators and filters, 
-which are lifted to define `processor`s that operate on blocks of samples. These `processor`s are then applied functionally to form acyclic DSP networks, accomodating both `1:N` and `1:1` connections as well as automatic sharing for suitable `rvalue` arguments.
-
-The procession of the network is governed by a static messaging protocol, and includes the capability for schedule and run-time resolution of `vtable`d function templates. For `processor`s, messages are resolved at the block level, which means `vtable`d architectural changes can be performed with minimal branching.
+Networks are are organized into self-contained nodes, driven by statically-routed events which can be immediate, delayed, or slewed/tweened. Nodes represent a discrete processing unit, and decorated with custom scheduling, storage, queues, and other resources. The functional construction determines the architecture of the network, and observes `rvalue`/`lvalue` semantics to organize data flow.
 
 The following sections provide an overview of the usage and development of this library.
 Further insight may be gleaned from the `*.hh` implementations or `*.cc` tests in [`include/xtal/**`](include/xtal/?ts=3).

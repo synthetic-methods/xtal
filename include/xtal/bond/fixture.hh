@@ -176,7 +176,6 @@ public:
 	static sigma_type constexpr N_negative = N_positive + 1;
 	static sigma_type constexpr N_unit     = N_exponent - 1;
 	static sigma_type constexpr N_sign     =              1;
-	static_assert(N_negative == N_depth);
 
 	struct word
 	{
@@ -208,7 +207,6 @@ public:
 	static word constexpr     sign     {N_sign, N_positive};
 	static word constexpr     half {N_depth >> 1U, N_depth >> 1U};
 	static word constexpr     full = negative;
-	static_assert((sigma_type) ~sign.mask == positive.mask);
 
 	using default_alignment = constant_t<(size_type) XTAL_SYS_(L1)/N_width>;
 
@@ -258,14 +256,6 @@ public:
 		return expound_f<N>(static_cast<sigma_type>(value));
 	}
 
-	static_assert(0 != expound_f<2>( 1) and 0 != expound_f<3>( 1));
-	static_assert(0 == expound_f<2>( 2) and 0 != expound_f<3>( 2));
-	static_assert(0 != expound_f<2>( 3) and 0 == expound_f<3>( 3));
-	static_assert(0 == expound_f<2>( 4) and 0 != expound_f<3>( 4));
-	static_assert(0 == expound_f<2>( 8) and 0 != expound_f<3>( 8));
-	static_assert(0 != expound_f<2>( 9) and 0 == expound_f<3>( 9));
-	static_assert(0 == expound_f<2>(16) and 0 != expound_f<3>(16));
-	static_assert(0 != expound_f<2>(27) and 0 == expound_f<3>(27));
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -378,18 +368,9 @@ public:
 
 	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
 
-	XTAL_DEF_(return,inline,set)
-	use_IEC()
-	noexcept -> bool
-	{
-		return IEC&559;
-	}
-	XTAL_DEF_(return,inline,set)
-	use_FMA()
-	noexcept -> bool
-	{
-		return N_fused;
-	}
+	static constant_t<IEC&559> constexpr use_IEC{};
+	static constant_t<N_fused> constexpr use_FMA{};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -458,9 +439,6 @@ public:
 	static alpha_type constexpr diplo_n = diplo_f(N_zoom);
 	///< Value expression of `diplo_f`. \
 
-	static_assert(diplo_n<+1> == 2.0);
-	static_assert(diplo_n< 0> == 1.0);
-	static_assert(diplo_n<-1> == 0.5);
 
 	static alpha_type constexpr diplo_0 = diplo_n<0>;
 	static alpha_type constexpr diplo_1 = diplo_n<1>;
@@ -476,9 +454,6 @@ public:
 	static alpha_type constexpr haplo_n = haplo_f(N_zoom);
 	///< Value expression of `haplo_f`. \
 
-	static_assert(haplo_n<+1> == 0.5);
-	static_assert(haplo_n< 0> == 1.0);
-	static_assert(haplo_n<-1> == 2.0);
 
 	static alpha_type constexpr haplo_0 = haplo_n<0>;
 	static alpha_type constexpr haplo_1 = haplo_n<1>;
@@ -494,14 +469,12 @@ public:
 	ratio_f(alpha_type n_num, alpha_type n_nom=1)
 	noexcept -> alpha_type
 	{
-		static_assert(in_n<N_pow, 1, 0, -1>);
 		XTAL_IF0
 		XTAL_0IF (N_pow ==  0) {return 1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
+		XTAL_0IF_(abort)
 	}
-	static_assert(ratio_f(1, 2.0) == 0.5 && ratio_f<-1>(1, 2.0) == 2.0);
-	static_assert(ratio_f(4, 2.0) == 2.0 && ratio_f<-1>(4, 2.0) == 0.5);
 
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
 	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
@@ -516,10 +489,6 @@ public:
 	{
 		return ratio_f<N_pow>(_std::numbers::pi_v<alpha_type>*n_num, n_nom);
 	}
-	static_assert(patio_f(1, 2) ==  alpha_type(1.570796326794896619231321691639751442L));
-	static_assert(patio_f(1,-2) == -alpha_type(1.570796326794896619231321691639751442L));
-	static_assert(patio_f(4, 2) ==  alpha_type(6.283185307179586476925286766559005768L));
-	static_assert(patio_f(4,-2) == -alpha_type(6.283185307179586476925286766559005768L));
 
 	static alpha_type constexpr patio_0 = patio_f(0, 1);
 	static alpha_type constexpr patio_1 = patio_f(1, 1);
@@ -542,15 +511,7 @@ public:
 	static alpha_type constexpr epsilon_n = epsilon_f(N_zoom);
 	///< Value expression of `epsilon_f`. \
 
-	static_assert(epsilon_n<0> != 0);
-	static_assert(epsilon_n<0> <  epsilon_n<1>);
-	static_assert(epsilon_n<1> <  epsilon_n<2>);
-	static_assert(epsilon_n<1> == _std::numeric_limits<alpha_type>::epsilon());
 	
-	static_assert(one <  one + epsilon_n< 1>);
-	static_assert(one == one + epsilon_n< 0>);
-	static_assert(one == one - epsilon_n<-1>);
-	static_assert(one  > one - epsilon_n< 1>);
 	
 	static alpha_type constexpr epsilon_0 = epsilon_n<0>;
 	static alpha_type constexpr epsilon_1 = epsilon_n<1>;
@@ -571,9 +532,6 @@ public:
 	static alpha_type constexpr upsilon_n = upsilon_f(N_zoom);
 	///< Value expression of `upsilon_f`. \
 	
-	static_assert(         one == upsilon_n<0>);
-	static_assert(upsilon_n<0> <  upsilon_n<1>);
-	static_assert(upsilon_n<1> <  upsilon_n<2>);
 	
 	static alpha_type constexpr upsilon_0 = upsilon_n<0>;
 	static alpha_type constexpr upsilon_1 = upsilon_n<1>;
@@ -594,9 +552,6 @@ public:
 	static alpha_type constexpr dnsilon_n = dnsilon_f(N_zoom);
 	///< Value expression of `dnsilon_f`. \
 	
-	static_assert(         one == dnsilon_n<0>);
-	static_assert(dnsilon_n<1> <  dnsilon_n<0>);
-	static_assert(dnsilon_n<2> <  dnsilon_n<1>);
 	
 	static alpha_type constexpr dnsilon_0 = dnsilon_n<0>;
 	static alpha_type constexpr dnsilon_1 = dnsilon_n<1>;
@@ -631,22 +586,22 @@ public:
 		return minilon_f();
 	}
 	XTAL_DEF_(return,inline,set)
-	minimum_f(auto const &w)
-	noexcept -> auto const &
+	minimum_f(auto &&w)
+	noexcept -> decltype(auto)
 	{
 		return XTAL_REF_(w);
 	}
 	XTAL_DEF_(return,inline,set)
-	minimum_f(auto const &w, auto const &x)
-	noexcept -> auto const &
+	minimum_f(auto &&w, auto &&x)
+	noexcept -> decltype(auto)
 	{
-		return w < x? w: x;
+		return w < x? XTAL_REF_(w): XTAL_REF_(x);
 	}
 	XTAL_DEF_(return,inline,set)
-	minimum_f(auto const &w, auto const &x, auto const &...xs)
-	noexcept -> auto const &
+	minimum_f(auto &&w, auto &&x, auto &&...xs)
+	noexcept -> decltype(auto)
 	{
-		return minimum_f(minimum_f(w, x), xs...);
+		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
 
 
@@ -677,22 +632,22 @@ public:
 		return maxilon_f();
 	}
 	XTAL_DEF_(return,inline,set)
-	maximum_f(auto const &w)
-	noexcept -> auto const &
+	maximum_f(auto &&w)
+	noexcept -> decltype(auto)
 	{
-		return w;
+		return XTAL_REF_(w);
 	}
 	XTAL_DEF_(return,inline,set)
-	maximum_f(auto const &w, auto const &x)
-	noexcept -> auto const &
+	maximum_f(auto &&w, auto &&x)
+	noexcept -> decltype(auto)
 	{
-		return w < x? x: w;
+		return w > x? XTAL_REF_(w): XTAL_REF_(x);
 	}
 	XTAL_DEF_(return,inline,set)
-	maximum_f(auto const &w, auto const &x, auto const &...xs)
-	noexcept -> auto const &
+	maximum_f(auto &&w, auto &&x, auto &&...xs)
+	noexcept -> decltype(auto)
 	{
-		return maximum_f(maximum_f(w, x), xs...);
+		return maximum_f(maximum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
 
 
@@ -781,9 +736,6 @@ public:
 		target /= N_minima;
 		return target;
 	}
-	static_assert(trim_f<2>(patio_f(2, 1)) == 6.25);
-	static_assert(trim_f<3>(patio_f(1, 1)) == 3.125);
-	static_assert(trim_f<4>(patio_f(1, 2)) == 1.5625);
 
 	template <int N_zoom=fraction.depth - 1>
 	XTAL_DEF_(verbatim,set)

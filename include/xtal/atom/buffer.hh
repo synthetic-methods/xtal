@@ -18,7 +18,7 @@ template <class ...Ts> concept  buffer_q = bond::tag_p<buffer_t, Ts...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-A fluid-sized fixed-capacity analogue of `std::vector`. \
+A dynamically-bounded analogue of `std::vector` with fixed capacity. \
 Configured by the array-like parameter `A`, where: \
 
 ///\
@@ -52,7 +52,6 @@ struct buffer<U_data[N_data]>
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
-		using I_ = _std::initializer_list<U_data>;
 
 	public:// DEFINITION
 		using              size_type  =        ::std::size_t;
@@ -110,12 +109,8 @@ struct buffer<U_data[N_data]>
 	
 		///\returns the constant `N_data`. \
 
-		XTAL_DEF_(return,inline,set)
-		capacity()
-		noexcept -> size_type
-		{
-			return N_data;
-		}
+		static constant_t<size_type{N_data}> constexpr capacity{};
+
 		///\
 		Does nothing. \
 
@@ -221,7 +216,7 @@ struct buffer<U_data[N_data]>
 		List constructor. \
 		Initializes `this` with the given values. \
 
-		XTAL_NEW_(implicit) homotype(I_ w)
+		XTAL_NEW_(implicit) homotype(_std::initializer_list<value_type> w)
 		noexcept(false)
 		:	homotype(w.begin(), w.end())
 		{}
@@ -230,14 +225,14 @@ struct buffer<U_data[N_data]>
 		Replaces the contents of `this` with the given values. \
 
 		XTAL_DEF_(inline,let)
-		operator = (I_ w)
+		operator = (_std::initializer_list<value_type> w)
 		noexcept(false) -> homotype &
 		{
 			assign(w);
 			return *this;
 		}
 		XTAL_DEF_(inline,let)
-		assign(I_ w)
+		assign(_std::initializer_list<value_type> w)
 		noexcept(false) -> void
 		{
 			assign(w.begin(), w.end());
@@ -321,7 +316,7 @@ struct buffer<U_data[N_data]>
 		}
 
 		XTAL_DEF_(inline,let)
-		push_back(I_ w)
+		push_back(_std::initializer_list<value_type> w)
 		noexcept(false) -> void
 		{
 			push_back(w.begin(), w.end());
@@ -331,7 +326,7 @@ struct buffer<U_data[N_data]>
 		push_back(make_q<U_data> auto &&...vs)
 		noexcept(false) -> void
 		{
-			push_back(I_{U_data(XTAL_REF_(vs))...});
+			push_back(_std::initializer_list<value_type>{U_data(XTAL_REF_(vs))...});
 		}
 		///\
 		Constructs an element at the end of `this` using the given arguments. \
@@ -391,7 +386,7 @@ struct buffer<U_data[N_data]>
 
 		template <class I> requires common_q<iterator, I>
 		XTAL_DEF_(inline,let)
-		insert(I i, I_ w)
+		insert(I i, _std::initializer_list<value_type> w)
 		noexcept(false) -> iterator
 		{
 			return insert(i, w.begin(), w.end());

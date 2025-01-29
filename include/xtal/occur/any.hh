@@ -57,15 +57,6 @@ struct define
 				using R_::R_;
 
 			};
-//			template <class R> requires complete_q<typename R::template head_t<T>>
-//			class subtype<R> : public bond::compose_s<R>
-//			{
-//				using R_ = bond::compose_s<R>;
-//				
-//			public:
-//				using R_::R_;
-//
-//			};
 
 		};
 		///\
@@ -192,17 +183,10 @@ struct define
 				deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
-					auto const &h = head();
-					//\
-					auto i = static_cast<size_type>(h);
-					auto i = static_cast<size_type>(h.body_part);
-					if constexpr (1 == _std::popcount(A_size)) {
-						i &= A_mask;
-					}
-					else {
-						i %= A_size;
-					}
-					assert(0 <= i and i < A_size);
+					auto i = static_cast<size_type>(head());
+					XTAL_IF0
+					XTAL_0IF (1 == _std::popcount(A_size)) {i &= A_mask;}
+					XTAL_0IF (1 != _std::popcount(A_size)) {i %= A_size;}
 					return R_::deify(point[i]);
 				}
 				
@@ -237,7 +221,6 @@ struct define
 
 			};
 		};
-
 		///\
 		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
 		
@@ -271,7 +254,6 @@ struct define
 
 			};
 		};
-
 		///\
 		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
 
@@ -305,7 +287,6 @@ struct define
 
 			};
 		};
-
 		///\
 		Uses the current `T` as the return value of `method`. \
 		

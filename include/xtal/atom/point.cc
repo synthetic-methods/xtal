@@ -28,7 +28,18 @@ TAG_("point")
 	using T_alpha = typename _fix::alpha_type;
 	using T_aphex = typename _fix::aphex_type;
 
-	TRY_("scalar multiplication")
+	TRY_("point map-from")
+	{
+		using U2_alpha = point_t<T_alpha[2]>;
+		using U2_aphex = point_t<T_aphex[2]>;
+		U2_alpha x{1, 2};
+		U2_alpha y{2, 3};
+
+		auto x_y = U2_alpha::template zip_from<[] (auto u, auto v) XTAL_0FN_(return) (u + v)>(x, y);
+		TRUE_(x_y == U2_alpha{3, 5});
+
+	}
+	TRY_("point scalar-multiplication")
 	{
 		using U2_alpha = point_t<T_alpha[2]>;
 		using U2_aphex = point_t<T_aphex[2]>;

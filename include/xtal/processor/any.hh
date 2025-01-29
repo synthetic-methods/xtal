@@ -224,7 +224,7 @@ struct defer<U>
 		method(auto &&...xs),
 		noexcept -> auto
 		{
-			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_n<Is>...);
+			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
 			XTAL_IF0
 			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
 			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}

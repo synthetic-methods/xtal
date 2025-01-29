@@ -49,7 +49,7 @@ seek_f(applicable_p<valued_u<decltype(Ns)...>> auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_n<I>)) (seek_t<Ns...> {});
+		XTAL_0FN_(return) (..., f(constant_t<I>{})) (seek_t<Ns...> {});
 }
 
 template <int N_count=0, int N_onset=0>
@@ -58,7 +58,7 @@ seek_forward_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_n<N_onset + I>)) (seek_s<N_count> {});
+		XTAL_0FN_(return) (..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
 }
 template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline,let)
@@ -66,17 +66,31 @@ seek_backward_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_n<N_onset + I>)) (antiseek_s<N_count> {});
+		XTAL_0FN_(return) (..., f(constant_t<N_onset + I>{})) (antiseek_s<N_count> {});
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+XTAL_DEF_(inline,let)
+seek_front_f(auto &&o, auto &&...oo)
+noexcept -> decltype(auto)
+{
+	return XTAL_REF_(o);
+}
 template <         class ...Ts>  struct         seek_front;
 template <class T, class ...Ts>  struct         seek_front<T, Ts...>       {using type = T;};
 template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>:: type;
 template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>::value;
 
+XTAL_DEF_(inline,let)
+seek_back_f(auto &&o, auto &&...oo)
+noexcept -> decltype(auto)
+{
+	XTAL_IF0
+	XTAL_0IF (0 == sizeof...(oo)) {return XTAL_REF_(o);}
+	XTAL_0IF (1 <= sizeof...(oo)) {return seek_back_f(XTAL_REF_(oo)...);}
+}
 template <         class ...Ts>  struct   seek_back;
 template <class T             >  struct   seek_back <T       >       {using type = T;};
 template <class T, class ...Ts>  struct   seek_back <T, Ts...>  : seek_back <Ts...> {};

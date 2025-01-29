@@ -17,150 +17,144 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <class, typename...> class Subtype>
+///\
+Reifies `template`s of the form `<class, typename...>` via the member `subtype`. \
+
+template <template <class, typename...> class F_>
 struct compost
 {
-	template <class S, class ..._s>                               struct pseudokind           {using type = Subtype<S, _s...>;};
-	template <class S, class ..._s> requires (0 == sizeof...(_s)) struct pseudokind<S, _s...> {using type = Subtype<S       >;};
-	template <class S, class ..._s>
-	//\
-	using subtype = Subtype<S, _s...>;
-	using subtype = typename pseudokind<S, _s...>::type;
-	//\note\
-	Even when `not sizeof...(Ts)`, `clang` can't instantiate unary alias-templates with `T, Ts...`. \
+	template <class S, class ..._Ts>	struct sub    {using type = F_<S, _Ts...>;};
+	template <class S              >	struct sub<S> {using type = F_<S        >;};
+	template <class S, class ..._Ts>	using  subtype = typename sub<S, _Ts...>::type;
 
+//	NOTE: The indirection above avoids invoking a unary `F_` with empty `_Ts...`, causing `clang` to fail.
 };
+
+///\
+Determines whether `T` has a composable member `subtype`. \
 
 template <typename T>
 concept compose_q = complete_q<compost<T::template subtype>> and not requires {typename T::subtype;};
 
 
-template <class S,          typename ...Ins> struct incompose;
-template <                  typename ...Exs> struct excompose;
+template <class S,                typename ..._Ts>	struct incompose;
+template <                        typename ...Ts_>	struct excompose;
 
-template <class S, class _, typename ...Ins> struct incompose<S, _, Ins...> : incompose<S, Ins...> {};
-template <         class _, typename ...Exs> struct excompose<   _, Exs...> : excompose<   Exs...> {};
+template <class S,                typename ..._Ts>	using  incompose_s = typename incompose<S, _Ts...>::type;
+template <template <class, class...> class ...Fs_>	using  excompose_t =          excompose<compost<Fs_>...>;
 
-template <class S                          > struct incompose<S> {using type = S;};
-template <                                 > struct excompose< > {template <class S, typename ...Ins> using subtype = typename incompose<S, Ins...>::type;};
+template <class S, class _,       typename ..._Ts>	struct incompose<S, _, _Ts...> : incompose<S, _Ts...> {};
+template <         class _,       typename ...Ts_>	struct excompose<   _, Ts_...> : excompose<   Ts_...> {};
 
-template <class S, compose_q In, typename ...Ins>
-struct incompose<S, In, Ins...>
-:	incompose<typename In::template subtype<S>, Ins...>
-{
-};
-template <         compose_q Ex, typename ...Exs>
-struct excompose<Ex, Exs...>
-{
-	template <class S, typename ...Ins>
-	using subtype = typename Ex::template subtype<
-		typename excompose<Exs...>::template subtype<S, Ins...>
-	>;
+template <class S                                >	struct incompose<S> {using type = S;};
+template <                                       >	struct excompose< > {template <class S, typename ..._Ts> using subtype = incompose_s<S, _Ts...>;};
 
-};
-
-
-template <template <class, class...> class ...Subtypes>
-using excompose_t = excompose<compost<Subtypes>...>;
-
-template <class S, typename ...Ins>
-using excompose_s = typename excompose<>::template subtype<S, Ins...>;
+template <class S,  compose_q _T, typename ..._Ts>	struct incompose<S, _T, _Ts...> : incompose<typename _T::template subtype<S>, _Ts...> {};
+template <          compose_q T_, typename ...Ts_> struct excompose<   T_, Ts_...> {template <class S, typename ..._Ts> using subtype = incompose_s<S, _Ts..., excompose<Ts_...>, T_>;};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U_node, class U_edge=void>
-struct query
+template <class ...Us>
+struct navigate
 {
-	static bool constexpr Q_node =      same_q<void, U_edge>;
-	static bool constexpr Q_edge = different_q<void, U_edge>;
+	static_assert(0 == sizeof...(Us));
 
 	template <class S>
-	class subtype : public S
+	class supertype : public S
 	{
-		using U_self = typename S::self_type;
-		using U_null =             null_type;
+		using S_ = S;
 
 	public:
+		using S_::S_;
+
+		template <class _, class ..._s> struct super    : super<_s...> {};
+		template <class _             > struct super<_> {using type = _;};
+
+	};
+};
+
+template <class U_node>
+struct navigate<U_node> : navigate<U_node, void>
+{
+};
+template <class U_node, class U_edge>
+struct navigate<U_node, U_edge>
+{
+	template <class S>
+	class supertype : public S
+	{
+		using S_ = S;
+		using T_self = typename S_::self_type;
+
+	protected:
+		template <class ..._s>
+		using duper = typename S_::template super<_s...>;
+
+	public:
+		using S_::S_;
 		using node_type = U_node;
 
-	public:
-		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
-		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
-		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
-		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_t<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
-		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
+		template <                       class ..._s>                           struct super                   : duper<                         _s...> {};
+		template <class _,               class ...Is>                           struct super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
+		template <class _,  liminal_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : duper<  void, subliminal_t<I>, Is...> {};
+		template <class _, terminal_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : super<U_node,                  Is...> {};
+		template <class _,               class ...Is> requires vacant_q<U_edge> struct super<_, U_node, Is...> : super<U_node,                  Is...> {};
 
-		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
+		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
 
-	public:
-		using S::S;
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
+		)
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...)
+		)
+		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
+		)
 
 		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) node(), self<U_node>())
 
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
-		
-		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
-		
-		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
+	};
+	template <class S>
+	class subtype : public supertype<S>
+	{
+		using S_ = supertype<S>;
+	
+	public:
+		using S_::S_;
 
 	};
 	template <class S> requires complete_q<typename S::head_type>
-	class subtype<S> : public S
+	class subtype<S> : public supertype<S>
 	{
-		using U_self = typename S::self_type;
+		using S_ = supertype<S>;
 		using U_head = typename S::head_type;
-		using U_null =             null_type;
+	
+	protected:
+		template <class ..._s>
+		using duper = typename S_::template super<_s...>;
 
 	public:
+		using S_::S_;
 		using node_type = U_node;
 
-	public:
-		template <class _,               class ...Is>                 struct   duper :       S::template super<_,                       Is...> {};
-		template <class _,               class ...Is>                 struct   super                   : duper<_,                       Is...> {};
-		template <class _,               class ...Is> requires Q_edge struct   super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
-		template <class _,  liminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : duper<U_null, subliminal_t<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> requires Q_node struct   super<_, I,      Is...> : super<U_node,                  Is...> {};
-		template <class _,               class ...Is> requires Q_node struct   super<_, U_head, Is...> : super<U_node,                  Is...> {};
-		template <class _,               class ...Is> requires Q_node struct   super<_, U_node, Is...> : super<U_node,                  Is...> {};
-		/**/
-		template <                       class ...Is> using  self_s = typename super<U_self, Is...>::type;
-		template <                       class ...Is> using  head_s = typename super<U_node, Is...>::type;
-		/*/
-		template <                       class ...Is> using  self_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_self>;
-		template <                       class ...Is> using  head_s = complete_t<bond::tabbed_s<S, identity_t<U_edge>, identity_t<Is>...>, U_node>;
-		/***/
-		template <                       class ...Is> using  head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
+		template <         class ..._s>                           struct super                   : duper<        _s...> {};
+		template <class _, class ...Is> requires vacant_q<U_edge> struct super<_, U_head, Is...> : duper<U_node, Is...> {};
 
-	public:
-		using S::S;
+		template <class ...Is> using head_s = typename super<U_node, Is...>::type;
+		template <class ...Is> using head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) node(), self<node_type>())
-
-
+		XTAL_FX4_(alias) (template <size_type ...Is> requires (0 == sizeof...(Is))
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head(XTAL_REF_(oo)...)
+		)
 		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...))
-		
-		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self(XTAL_REF_(oo)...))
-		
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...)
+		)
 		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<Is...>>(XTAL_REF_(oo)...))
-		
-
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...))
-
-		XTAL_FX4_(alias) (template <class     ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head(XTAL_REF_(oo)...))
-
-		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...))
+		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
+		)
 
 	};
 };
