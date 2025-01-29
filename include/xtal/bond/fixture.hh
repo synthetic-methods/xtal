@@ -163,11 +163,9 @@ public:
 
 	static delta_type constexpr delta_0{0};
 	static delta_type constexpr delta_1{1};
-	static delta_type constexpr delta_2{2};
 
 	static sigma_type constexpr sigma_0{0};
 	static sigma_type constexpr sigma_1{1};
-	static sigma_type constexpr sigma_2{2};
 
 	static sigma_type constexpr N_width = N_size;
 	static sigma_type constexpr N_depth = N_size << 3U;
@@ -304,6 +302,10 @@ public:
 	
 	using halved = realize<(N_size>>1)>;
 
+	using S_::N_width;
+	using S_::N_depth;
+	using S_::N_fused;
+
 	using S_:: negative;
 	using S_:: positive;
 	using S_:: fraction;
@@ -315,21 +317,20 @@ public:
 
 	using S_::  delta_0;
 	using S_::  delta_1;
-	using S_::  delta_2;
 
 	using S_::  sigma_0;
 	using S_::  sigma_1;
-	using S_::  sigma_2;
 
-	using typename S_::  delta_type;
-	using typename S_::  sigma_type;
-	using typename S_::  alpha_type;
-	using typename S_::  aphex_type;
+	using typename S_::delta_type;
+	using typename S_::sigma_type;
+	using typename S_::alpha_type;
+	using typename S_::aphex_type;
 	using typename S_::mt19937_t;
+
 
 	static alpha_type constexpr alpha_0{0};
 	static alpha_type constexpr alpha_1{1};
-	static alpha_type constexpr alpha_2{2};
+	static alpha_type constexpr alpha_oo{_std::numeric_limits<alpha_type>().infinity()};
 	
 	static aphex_type constexpr aphex_0{0, 0};
 	static aphex_type constexpr aphex_1{1, 0};
@@ -373,11 +374,6 @@ public:
 			return static_cast<alpha_type>(XTAL_REF_(o));
 		}
 	}
-
-
-	using S_::N_width;
-	using S_::N_depth;
-	using S_::N_fused;
 
 
 	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
@@ -714,6 +710,59 @@ public:
 	noexcept -> alpha_type
 	{
 		return mantissa_f(m());
+	}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+	XTAL_DEF_(return,inline,set)
+	sentry_f(_std::partial_ordering const &o)
+	noexcept -> auto
+	{
+		using is = _std::partial_ordering;
+		if (o == is:: equivalent) return 0b00U; else
+		if (o == is::    greater) return 0b01U; else
+		if (o == is::       less) return 0b10U; else
+		return 0b11U;
+	}
+	XTAL_DEF_(return,inline,set)
+	sentry_f(auto const &o)
+	noexcept -> _std::partial_ordering
+	{
+		using is = _std::partial_ordering;
+		_std::array constexpr table
+		{	is:: equivalent
+		,	is::    greater
+		,	is::       less
+		,	is::  unordered
+		};
+		return table[o];
+	}
+
+
+	XTAL_DEF_(return,inline,set)
+	sentinel_f(alpha_type const &o)
+	noexcept -> auto
+	{
+		return sentinel_f(_xtd::bit_cast<sigma_type>(o));
+	}
+	XTAL_DEF_(return,inline,set)
+	sentinel_f(sigma_type const &o)
+	noexcept -> auto
+	{
+		auto v = o >> sign.shift; v += o != 0; return v;
+	}
+	XTAL_DEF_(return,inline,set)
+	sentinel_f(delta_type const &o)
+	noexcept -> auto
+	{
+		return sentinel_f(sigma_f(o));
+	}
+	XTAL_DEF_(return,inline,set)
+	sentinel_f(auto const &o)
+	noexcept -> auto
+	{
+		return sentinel_f(internal_f(o));
 	}
 
 

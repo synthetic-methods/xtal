@@ -25,9 +25,8 @@ template <class U, auto  N, auto  ..._s> struct   block<U(&)[N][_s]...> : block<
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct         superblock;
-template <class ..._s> using          superblock_t = typename superblock<_s...>::type;
-template <class ..._s> auto constexpr superblock_n = superblock_t<_s...>{};
+template <class ..._s> struct   superblock;
+template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
 
 template <class U, auto N, auto  ...Ns> struct superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto  ...Ns> struct superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
@@ -60,6 +59,9 @@ struct superblock<Us...>
 		using archetype        =  endotype;
 		using initializer_list = _std::initializer_list<T_data>;
 
+	public:// OPERATE
+		static constant_t<sizeof(archetype)> constexpr size_bytes{};
+		
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -128,6 +130,9 @@ struct superblock<U   [N]>
 		using archetype        =  endotype;
 		using initializer_list = _std::initializer_list<T_data>;
 
+	public:// OPERATE
+		static constant_t<sizeof(archetype)> constexpr size_bytes{};
+		
 	public:// CONSTRUCT
 		using S_::S_;
 	~	homotype()                 noexcept=default;
@@ -233,8 +238,6 @@ struct block
 			XTAL_0IF (1 <= sizeof...(As)) {return reforge_t<As...>(self());}
 		})
 
-	public:// ACCESS
-
 		///\returns the internal representation of the given `co`ordinate. \
 
 		XTAL_DEF_(return,inline,set)
@@ -252,6 +255,7 @@ struct block
 			return XTAL_REF_(o);
 		}
 
+	public:// ACCESS
 		using S_::self;
 
 		///\returns the first `i` elements of `this` as a truncated view over `U`. \
@@ -283,12 +287,7 @@ struct block
 
 		///\returns the size of this type or value. \
 
-		XTAL_DEF_(return,inline,set)
-		size()
-		noexcept -> auto
-		{
-			return static_cast<typename S_::size_type>(N_data);
-		}
+		static constant_t<N_data> constexpr size{};
 
 		template <size_type I>
 		XTAL_DEF_(return,inline,let)
@@ -328,14 +327,33 @@ struct block
 
 	public:// OPERATE
 
+		XTAL_DEF_(return,inline,friend,let)
+		operator==(homotype const &s, homotype const &t)
+		noexcept -> bool
+		{
+			XTAL_IF0
+			XTAL_0IF XTAL_TRY_(return)
+				(static_cast<archetype const &>(s) == static_cast<archetype const &>(t))
+
+			XTAL_0IF (vector_q<_s...> and _std::is_standard_layout_v<U_data>) {
+				return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
+			}
+			XTAL_0IF_(else) {
+				return [&]<auto ...I>(bond::seek_t<I...>)
+					XTAL_0FN_(return) (...and (get<I>(s) == get<I>(t)))
+				(bond::seek_s<N_data> {});
+			}
+		}
+
 		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
 
+		template <auto N_value=0>
 		XTAL_DEF_(return,inline,let)
 		blanked() const
 		noexcept -> auto
-		requires vector_q<_s...>
 		{
-			return 0 == memcmp(S_::data(), _detail::superblock_n<based_t<_s>...>.data(), sizeof(*this));
+			reforge_t<based_t<_s>...> constexpr blank{N_value};
+			return blank == self();
 		}
 		///\returns the result of `blanked()` before refilling with `N_value=0`. \
 

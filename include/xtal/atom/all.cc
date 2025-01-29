@@ -3,11 +3,8 @@
 #include "./buffer.cc"
 #include "./cache.cc"
 #include "./couple.cc"
-#include "./order.cc"
 #include "./grade.cc"
 #include "./group.cc"
-#include "./order.cc"
 #include "./point.cc"
 #include "./quanta.cc"
 #include "./queue.cc"
-

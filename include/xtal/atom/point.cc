@@ -19,7 +19,7 @@ static_assert(not counted_q<point_t<  size_type[2]>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 TAG_("point")
 {
 	using _fix = bond::fixture<>;
@@ -35,6 +35,7 @@ TAG_("point")
 		U2_alpha x{1, 2}; x *= (T_alpha) 10;
 		U2_aphex y{1, 2}; y *= (T_alpha) 10;
 
+		TRUE_(x <  U2_alpha{20, 40});
 		TRUE_(x == U2_alpha{10, 20});
 		TRUE_(y == U2_aphex{10, 20});
 
@@ -43,7 +44,7 @@ TAG_("point")
 /***/
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
+/**/
 TAG_("pack")
 {
 	TRY_("pack_item_f({...std::complex{...}})")

@@ -40,13 +40,6 @@ struct define
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind, _detail::query<subtype<S>>>;
 
-		XTAL_DEF_(return,inline,let)
-		equal_to_(subtype const &t) const
-		noexcept -> bool
-		{
-			return self().operator==(t.self());
-		}
-
 	public:// CONSTRUCT
 		using S_::S_;
 	
@@ -54,25 +47,13 @@ struct define
 		using S_::self;
 
 		//\
-		Trivial (in)equality. \
+		Trivial (`constexpr`) equality. \
 		
 		XTAL_DEF_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
 		{
 			return true;
-		}
-		XTAL_DEF_(return,inline,let)
-		operator != (subtype const &t) const
-		noexcept -> bool
-		{
-			return not equal_to_(t);
-		}
-		XTAL_DEF_(return,inline,let)
-		operator <=> (subtype const &t) const
-		{
-			using is = _std::partial_ordering;
-			return equal_to_(t)? is::equivalent: is::unordered;
 		}
 
 	};
@@ -162,7 +143,8 @@ struct defer
 		operator == (subtype const &t) const
 		noexcept -> bool
 		{
-			return heading(t.head()) and S_::template self<1>() == t;
+			return equivalent_f(S_::head(), t.head()) and
+				S_::template self<1>() == t.template self<1>();
 		}
 
 		///\
@@ -186,11 +168,16 @@ struct refer : bond::compose<void
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
-template <any_q W> XTAL_DEF_(return,inline,let) operator == (W const &x, W const &y) noexcept -> bool {return x.self().operator== (y.self());}
-template <any_q W> XTAL_DEF_(return,inline,let) operator != (W const &x, W const &y) noexcept -> bool {return x.self().operator!= (y.self());}
-template <any_q W> XTAL_DEF_(return,inline,let) operator <=>(W const &x, W const &y) noexcept -> auto {return x.self().operator<=>(y.self());}
+template <any_q X, any_q Y> requires same_q<X, Y>
+XTAL_DEF_(return,inline,let)
+operator == (X const &x, Y const &y)
+noexcept -> bool
+{
+	auto const &s = x.self();
+	auto const &t = y.self();
+	return s.operator==(t);
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

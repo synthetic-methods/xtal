@@ -138,9 +138,10 @@ template <auto  M, auto     N >	XTAL_LET       modulo_m	= ((N%M) + M)%M;
 template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
 template <auto  M, auto     N >	XTAL_LET        above_m	= (M < N)? N: static_cast<XTAL_ALL_(N)>(M + 1);
 template <auto  M, auto     N >	XTAL_LET        below_m	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);
-template <auto  M, auto  ...Ns>	concept         above_p = (...and (above_m<M, Ns> == Ns));
-template <auto  M, auto  ...Ns>	concept         below_p = (...and (below_m<M, Ns> == Ns));
-
+template <auto  M, auto  ...Ns>	concept         above_n = (...and (above_m<M, Ns> == Ns));
+template <auto  M, auto  ...Ns>	concept         below_n = (...and (below_m<M, Ns> == Ns));
+template <         auto  ...Ns>	concept        finite_n	= (...and (_xtd::make_signed_f(Ns) != -1));
+template <         auto  ...Ns>	concept      infinite_n	= (...or  (_xtd::make_signed_f(Ns) == -1));
 
 template <auto  o=null_type{} >	using        constant_s	= _std::integral_constant<XTAL_ALL_(o), o>;
 template <auto  o             >	struct       constant   :  constant_s<o> {};
@@ -230,37 +231,45 @@ template <scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = sca
 template <Scalar_valued_q T   >	struct   fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
 
 
-template <auto ...Ns>	struct   assign_sized   ;
-template <auto ...Ns>	XTAL_LET assign_sized_n	= assign_sized<Ns...>::size();
-template <auto ...Ns>	XTAL_LET assign_sized_r	= assign_sized<Ns...>::rank();
-
 template <auto ...Ns>
-struct   assign_sized
+struct   assign_rank
 {
-	using type = assign_sized;
+	static constant_t<extent_type{(0 +...+ above_n<0, Ns>)}>
+	constexpr rank{};
 
-	XTAL_DEF_(return,inline,set) rank() noexcept -> decltype(auto)                                {return   size_type{(0 +...+ above_p<0, Ns>) };}
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) requires ((...and (Ns != -1))) {return   size_type{(1 *...* Ns)             };}
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) requires ((...or  (Ns == -1))) {return extent_type{-1                       };}
+};
+template <auto  ...Ns>
+struct   assign_size;
+
+template <auto ...Ns> requires   finite_n<Ns...>
+struct   assign_size<Ns...> : assign_rank<Ns...>
+{
+	static constant_t<extent_type{(1 *...*  Ns)}>
+	constexpr size{};
+
+};
+template <auto ...Ns> requires infinite_n<Ns...>
+struct   assign_size<Ns...> : assign_rank<Ns...>
+{
+	static constant_t<extent_type{-1}>
+	constexpr size{};
 
 };
 template <>
-struct   assign_sized<>
+struct   assign_size<> : assign_rank<>
 {
-	using type = assign_sized;
-
-	XTAL_DEF_(return,inline,set) rank() noexcept -> decltype(auto) {return size_type{};};
-	XTAL_DEF_(return,inline,set) size() noexcept -> decltype(auto) {return size_type{};};
+	static constant_t<extent_type{ 0}>
+	constexpr size{};
 
 };
 
 template <class T             >	XTAL_LET  tuple_sized_n	=   complete_t<_std::tuple_size<_std::remove_reference_t<T>>, constant_t<0>>::value;
 template <class T             >	concept   tuple_sized_q	=   complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
-template <class T             >	struct    tuple_sized	:       assign_sized<tuple_sized_n<T>> {};
+template <class T             >	struct    tuple_sized	:       assign_size<tuple_sized_n<T>> {};
 
 template <class T             >	XTAL_LET  array_sized_n	=              _std::    extent_v<_std::remove_reference_t<T>> ;
 template <class T             >	concept   array_sized_q	=              _std::  is_array_v<_std::remove_reference_t<T>>;
-template <class T             >	struct    array_sized	:       assign_sized<array_sized_n<T>> {};
+template <class T             >	struct    array_sized	:       assign_size<array_sized_n<T>> {};
 
 template <class T             >	struct    fixed_sized	;
 template <class T=void        >	struct    fluid_sized   ;
@@ -280,18 +289,18 @@ template <class T             >	concept dynamic_sized_q	=  requires {XTAL_ANY_(T
 template <class T             >	concept  static_sized_q	=                                          requires {T::size();};
 
 
-template <  based_q T>	requires      identity_q<T>                            struct fixed_sized<T>                : assign_sized<   identity_n<T>> {};
-template <  based_q T>	requires   tuple_sized_q<T>                            struct fixed_sized<T>                : assign_sized<tuple_sized_n<T>> {};
-template <  based_q T>	requires   array_sized_q<T>                            struct fixed_sized<T>                : assign_sized<array_sized_n<T>> {};
-template <  based_q T>	requires  static_sized_q<T> and un_n<tuple_sized_q<T>> struct fixed_sized<T>                : assign_sized<       T::size()> {};
-template <unbased_q T>	requires   fixed_sized_q<based_t<T>>                   struct fixed_sized<T>                :  fixed_sized<      based_t<T>> {};
+template <  based_q T>	requires      identity_q<T>                            struct fixed_sized<T>                : assign_size<   identity_n<T>> {};
+template <  based_q T>	requires   tuple_sized_q<T>                            struct fixed_sized<T>                : assign_size<tuple_sized_n<T>> {};
+template <  based_q T>	requires   array_sized_q<T>                            struct fixed_sized<T>                : assign_size<array_sized_n<T>> {};
+template <  based_q T>	requires  static_sized_q<T> and un_n<tuple_sized_q<T>> struct fixed_sized<T>                : assign_size<       T::size()> {};
+template <unbased_q T>	requires   fixed_sized_q<based_t<T>>                   struct fixed_sized<T>                :  fixed_sized<     based_t<T>> {};
 template <class     U>	                                                       struct fixed_sized<_std::complex<U>> :  fixed_sized<identity_t<constant_t<size_type{2}>>> {};
 
-template <           >	                                                       struct fluid_sized<void>             : assign_sized< 0> {};
-template <  based_q T>	                                                       struct fluid_sized<T>                : assign_sized< 0> {};
-template <  based_q T>	requires dynamic_sized_q<T> and un_n<tuple_sized_q<T>> struct fluid_sized<T>                : assign_sized<-1> {};
-template <  based_q T>	requires   fixed_sized_q<T>                            struct fluid_sized<T>                :  fixed_sized<        T        > {};
-template <unbased_q T>	requires   fluid_sized_q<based_t<T>>                   struct fluid_sized<T>                :  fluid_sized<based_t<T>       > {};
+template <           >	                                                       struct fluid_sized<void>             : assign_size< 0> {};
+template <  based_q T>	                                                       struct fluid_sized<T>                : assign_size< 0> {};
+template <  based_q T>	requires dynamic_sized_q<T> and un_n<tuple_sized_q<T>> struct fluid_sized<T>                : assign_size<-1> {};
+template <  based_q T>	requires   fixed_sized_q<T>                            struct fluid_sized<T>                :  fixed_sized<        T      > {};
+template <unbased_q T>	requires   fluid_sized_q<based_t<T>>                   struct fluid_sized<T>                :  fluid_sized<based_t<T>     > {};
 
 template <variable_q T        >	struct          sized<T> :  fluid_sized<           T > {};
 template <constant_q T        >	struct          sized<T> :        sized<identity_t<T>> {};
@@ -336,14 +345,14 @@ template <class U                  >	struct    instruct<U &&>                  {
 template <class U                  >	struct    instruct<U  &>                  {using array_type = U &;};
 
 template <class T                  >	struct    destruct       : destruct<T &&> {};
-template <class T                  >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type =                T   ;};
-template <class T                  >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type =                T  &;};
-template <fluid_q T                >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                                     ; using value_type = fluid_valued_u<T>  ;};
-template <fluid_q T                >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                                   ; using value_type = fluid_valued_u<T> &;};
-template <fixed_q T                >	struct    destruct<T &&> : fixed_sized<T> {using array_type = fixed_valued_u<T>   [fixed_sized_n<T>]; using value_type = fixed_valued_u<T>  ;};
-template <fixed_q T                >	struct    destruct<T  &> : fixed_sized<T> {using array_type = fixed_valued_u<T>(&)[fixed_sized_n<T>]; using value_type = fixed_valued_u<T> &;};
+template <class T                  >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                        ; using value_type =         T   ;};
+template <class T                  >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                      ; using value_type =         T  &;};
+template <fluid_q T                >	struct    destruct<T &&> : fluid_sized<T> {using array_type = T                        ; using value_type = fluid_u<T>  ;};
+template <fluid_q T                >	struct    destruct<T  &> : fluid_sized<T> {using array_type = T &                      ; using value_type = fluid_u<T> &;};
+template <fixed_q T                >	struct    destruct<T &&> : fixed_sized<T> {using array_type = fixed_u<T>   [fixed_n<T>]; using value_type = fixed_u<T>  ;};
+template <fixed_q T                >	struct    destruct<T  &> : fixed_sized<T> {using array_type = fixed_u<T>(&)[fixed_n<T>]; using value_type = fixed_u<T> &;};
 
-template <class T,        int ...Ns>	struct    dissolve           : assign_sized<Ns...> {using value_type = destruct_u<T>; using array_type = instruct_t<T, Ns...>;};
+template <class T,        int ...Ns>	struct    dissolve           : assign_size<Ns...> {using value_type = destruct_u<T>; using array_type = instruct_t<T, Ns...>;};
 template <fixed_q T,      int ...Ns>	struct    dissolve<T, Ns...> : dissolve<destruct_u<T> , Ns..., destruct_n<T>> {};
 
 
@@ -652,17 +661,9 @@ struct constant<o> : constant_s<o>
 
 	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <=> (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>() <=> t)
 	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  == (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  == t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <= (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <= t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  <  t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >= (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >= t)
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>()  >  t)
 
 	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator <=> (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t <=> object<T>())
 	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  == (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  == object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <= (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <= object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  <  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  <  object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >= (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >= object<T>())
-	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  >  (T const &t, same_q<constant> auto const &) noexcept -> auto   requires XTAL_TRY_(return) (t  >  object<T>())
 
 
 	template <variable_q T> XTAL_DEF_(return,inline,friend,let)   operator  -  (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (subject<T>()  -  t)

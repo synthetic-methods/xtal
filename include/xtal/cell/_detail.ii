@@ -574,8 +574,13 @@ struct refer_equality
 		static_assert(any_q<S>);
 	public:
 		using S::S;
-		XTAL_DEF_(return,inline,let) operator == (subtype const &t) const noexcept -> bool {return S::head() == t.head();}
-		XTAL_DEF_(return,inline,let) operator != (subtype const &t) const noexcept -> bool {return S::head() != t.head();}
+		
+		XTAL_DEF_(return,inline,let)
+		operator == (subtype const &t) const
+		noexcept -> bool
+		{
+			return equivalent_f(S::head(), t.head());
+		}
 
 	};
 };

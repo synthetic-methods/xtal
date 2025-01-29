@@ -32,13 +32,13 @@ static_assert(         same_n<0, 0, 0>);
 static_assert(not different_n<0, 0, 0>);
 
 
-static_assert(assign_sized_n<       1            > ==   1);
-static_assert(assign_sized_n<       1, 2, 3, 4, 5> == 120);
-static_assert(assign_sized_n<    0, 1, 2, 3, 4, 5> ==   0);
-static_assert(assign_sized_n<-1, 0, 1, 2, 3, 4, 5> ==  -1);
-static_assert(assign_sized_r<       1, 2, 3, 4, 5> ==   5);
-static_assert(assign_sized_r<    0, 1, 2, 3, 4, 5> ==   5);
-static_assert(assign_sized_r<-1, 0, 1, 2, 3, 4, 5> ==   5);
+static_assert(_retail::assign_size<       1            >::size() ==   1);
+static_assert(_retail::assign_size<       1, 2, 3, 4, 5>::size() == 120);
+static_assert(_retail::assign_size<    0, 1, 2, 3, 4, 5>::size() ==   0);
+static_assert(_retail::assign_size<-1, 0, 1, 2, 3, 4, 5>::size() ==  -1);
+static_assert(_retail::assign_size<       1, 2, 3, 4, 5>::rank() ==   5);
+static_assert(_retail::assign_size<    0, 1, 2, 3, 4, 5>::rank() ==   5);
+static_assert(_retail::assign_size<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
 static_assert(sized_n<_std::vector  <float   >> == -1);

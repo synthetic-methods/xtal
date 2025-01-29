@@ -107,8 +107,8 @@ template <auto  N, auto   Z=0 >	XTAL_LET         sign_n	=         _retail::     
 template <auto  M, auto     N >	XTAL_LET       modulo_m	=         _retail::            modulo_m<M, N    >;
 template <auto  M, auto     N >	XTAL_LET        above_m	=         _retail::             above_m<M, N    >;
 template <auto  M, auto     N >	XTAL_LET        below_m	=         _retail::             below_m<M, N    >;
-template <auto  M, auto  ...Ns>	concept         above_p =         _retail::             above_p<M, Ns...>;
-template <auto  M, auto  ...Ns>	concept         below_p =         _retail::             below_p<M, Ns...>;
+template <auto  M, auto  ...Ns>	concept         above_n =         _retail::             above_n<M, Ns...>;
+template <auto  M, auto  ...Ns>	concept         below_n =         _retail::             below_n<M, Ns...>;
 template <auto  N, auto  ...Ms>	concept            in_n	=         _retail::                in_n<N, Ms...>;
 template <auto  N, auto  ...Ms>	concept            un_n	=         _retail::                un_n<N, Ms...>;
 template <class T, class ...Ts>	concept            in_q	=         _retail::                in_q<T, Ts...>;
@@ -167,12 +167,10 @@ template <class 	    ...Ts>  concept          simplex_q	= (...and _retail::     
 template <class 	    ...Ts>  concept          anyplex_q	= (...and _retail::      anyplex_q<Ts>);
 template <class 	    ...Ts>  concept           number_q	=                         anyplex_variable_q<Ts...>;
 
-XTAL_DEF_(return,inline,let)  ordinal_f( ordinal_variable_q auto o) noexcept -> auto {return o;}
-XTAL_DEF_(return,inline,let) cardinal_f(cardinal_variable_q auto o) noexcept -> auto {return o;}
-XTAL_DEF_(return,inline,let)  ordinal_f(cardinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::  make_signed_t<decltype(o)>>(o);}
-XTAL_DEF_(return,inline,let) cardinal_f( ordinal_variable_q auto o) noexcept -> auto {return _std::bit_cast<_std::make_unsigned_t<decltype(o)>>(o);}
-XTAL_DEF_(return,inline,let)  ordinal_f(         constant_q auto o) noexcept -> auto {return constant_n< ordinal_f(o.value)>;}
-XTAL_DEF_(return,inline,let) cardinal_f(         constant_q auto o) noexcept -> auto {return constant_n<cardinal_f(o.value)>;}
+XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
+XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::  make_signed_f(o)>{};}
+XTAL_DEF_(return,inline,let) cardinal_f(           auto const o) noexcept -> auto {return            _xtd::make_unsigned_f(o)   ;}
+XTAL_DEF_(return,inline,let) cardinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::make_unsigned_f(o)>{};}
 
 ///\returns the conditional `x` reinterpreted as type `Y`, \
 where `std::floating_point`s and `bool`eans are `static_cast`, \
@@ -227,11 +225,6 @@ template <         class ...Ts>	concept  fluid_valued_q	=  (...and _retail::   f
 
 template <         class ...Ts>	using          valued_u	= common_t<_retail::         valued_u<Ts>...>;
 template <         class ...Ts>	concept        valued_q	=  (...and _retail::         valued_q<Ts>);
-
-
-template <         auto  ...Ns>	using    assign_sized_t	= typename _retail::  assign_sized  <Ns...>;
-template <         auto  ...Ns>	XTAL_LET assign_sized_n	=          _retail::  assign_sized_n<Ns...>;
-template <         auto  ...Ns>	XTAL_LET assign_sized_r	=          _retail::  assign_sized_r<Ns...>;
 
 
 template <class T             >	XTAL_LET  tuple_sized_n	=          _retail::   tuple_sized_n<T >;
@@ -534,8 +527,9 @@ template <class   ...Ts>	concept                quality_q	= (...and             
 
 
 template <auto N0, auto N1> requires (N0 < N1)
-XTAL_DEF_(let)
+XTAL_DEF_(return,inline,let)
 bounded_f(auto const &u)
+noexcept -> auto
 {
 	XTAL_IF0
 	XTAL_0IF_(consteval) {
@@ -715,6 +709,7 @@ requires (1 <= sizeof...(ys))
 {
 	return accumulator_f(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -31,6 +31,8 @@ XTAL_DEF_(return,inline,let) point_f(auto &&...oo),
 template <class ..._s>
 struct point
 {
+	using _fix = bond::fixture<_s...>;
+
 	template <class T>
 	using endotype = typename quanta<_s...>::template homotype<T>;
 
@@ -159,18 +161,28 @@ struct point
 			return twin().template flip<N_sgn>();
 		}
 
-	//	Scalar assignment (performed point-wide):
-		XTAL_DEF_(inline,let) operator <<= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self()) <<= u;}); return self();}
-		XTAL_DEF_(inline,let) operator >>= (size_type const &u) noexcept -> T  & {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self()) >>= u;}); return self();}
+	//	Vector comparison (performed point-wise):
+		XTAL_DEF_(return,inline,friend,let)
+		operator <=> (homotype const &s, homotype const &t)
+		noexcept -> auto
+		requires simplex_variable_q<U_data>
+		{
+			return _fix::sentry_f([&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(return) (_fix::sigma_0|...|_fix::sentinel_f(get<I>(s) - get<I>(t)))
+			(bond::seek_s<N_data> {}));
+		}
 
-		XTAL_DEF_(inline,let) operator  ^= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w ^= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  ^= u;}); return self();}
-		XTAL_DEF_(inline,let) operator  |= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w |= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  |= u;}); return self();}
-		XTAL_DEF_(inline,let) operator  &= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w &= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  &= u;}); return self();}
-		XTAL_DEF_(inline,let) operator  %= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w %= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  %= u;}); return self();}
-		XTAL_DEF_(inline,let) operator  /= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w /= u;} {bond::seek_forward_f<N_data>([n = V1/u, this] (auto I) XTAL_0FN {get<I>(self())  *= n;}); return self();}
-		XTAL_DEF_(inline,let) operator  *= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w *= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  *= u;}); return self();}
-	//	XTAL_DEF_(inline,let) operator  -= (auto const &u) noexcept -> T  & requires requires (T_data &w) {w -= u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  -= u;}); return self();}
-	//	XTAL_DEF_(inline,let) operator  += (auto const &u) noexcept -> T  & requires requires (T_data &w) {w += u;} {bond::seek_forward_f<N_data>([       &, this] (auto I) XTAL_0FN {get<I>(self())  += u;}); return self();}
+	//	Scalar assignment (performed point-wide):
+		XTAL_DEF_(inline,let) operator <<= (auto const &u) noexcept -> T & requires requires (T_data &w) {w <<= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self()) <<=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator >>= (auto const &u) noexcept -> T & requires requires (T_data &w) {w >>= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self()) >>=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  ^= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  ^= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  ^=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  |= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  |= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  |=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  &= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  &= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  &=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  %= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  %= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  %=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  /= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  /= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  *= V1/u;}); return self();}
+		XTAL_DEF_(inline,let) operator  *= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  *= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  *=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  -= (auto const &u) noexcept -> T & requires requires (T_data &w) {w  -= u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  -=    u;}); return self();}
+		XTAL_DEF_(inline,let) operator  += (auto const &u) noexcept -> T & requires requires (T_data &w) {w  += u;} {bond::seek_forward_f<N_data>([&, this] (auto I) XTAL_0FN {get<I>(self())  +=    u;}); return self();}
 
 		XTAL_DEF_(return,inline,friend,let)
 		operator * (auto const &s, T const &t)

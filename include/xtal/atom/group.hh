@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./order.hh"
+#include "./point.hh"
 
 
 
@@ -11,7 +11,7 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends `order` with point-wise addition or multiplication respectively \
+Extends `point` with point-wise addition or multiplication respectively \
 when the given operator is `std::plus<void>` (default) or `std::multiplies<void>`. \
 
 template <        class ..._s>	struct   group;
@@ -32,7 +32,7 @@ template <class ..._s>
 struct group<_std::plus<void>, _s...>
 {
 	template <class T>
-	using endotype = typename order<_s...>::template homotype<T>;
+	using endotype = typename point<_s...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<group_t>>;
@@ -75,7 +75,7 @@ template <class ..._s>
 struct group<_std::multiplies<void>, _s...>
 {
 	template <class T>
-	using endotype = typename order<_s...>::template homotype<T>;
+	using endotype = typename point<_s...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<group_t>>;
