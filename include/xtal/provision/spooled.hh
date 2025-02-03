@@ -52,13 +52,13 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::queue_t<U[(unsigned) shaped<A>::size()]>;
+		using spool_t = atom::queue_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
 
 	};
 };
-template <auto N> struct spooled<unit_type[N]> : spooled<constant_t<unsigned(N)>> {};///< Fixed-size, based on `block_t`.
-template <auto N> struct spooled<null_type[N]> : spooled<constant_t<  signed(N)>> {};///< Fluid-size, based on `store_t`.
-template <      > struct spooled<            > : spooled<constant_t<        -1 >> {};///< Fluid-size, based on `store_t` (default).
+template <auto N> struct spooled<null_type[N]> : spooled<  size_constant_t< N>> {};///< Fluid-size, based on `store_t`.
+template <auto N> struct spooled<unit_type[N]> : spooled<extent_constant_t< N>> {};///< Fixed-size, based on `block_t`.
+template <      > struct spooled<            > : spooled<extent_constant_t<-1>> {};///< Fluid-size, based on `store_t` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

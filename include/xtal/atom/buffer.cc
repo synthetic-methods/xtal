@@ -11,9 +11,9 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(std::is_copy_assignable_v<buffer_t<float             *  >>);
-static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned)  -1]>>);
-static_assert(std::is_copy_assignable_v<buffer_t<float[(unsigned) 0x8]>>);
+static_assert(std::is_copy_assignable_v<buffer_t<float                *  >>);
+static_assert(std::is_copy_assignable_v<buffer_t<float[XTAL_SYS_(extent)]>>);
+static_assert(std::is_copy_assignable_v<buffer_t<float[             0x8U]>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

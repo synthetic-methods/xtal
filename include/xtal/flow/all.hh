@@ -5,6 +5,5 @@
 #include "./key.hh"
 #include "./mark.hh"
 #include "./mask.hh"
-#include "./argument.hh"
 #include "./tab.hh"
 #include "./tag.hh"

@@ -1,15 +1,11 @@
 [settings]
-build_type=Release
-arch=x86_64
 os=Linux
+arch=x86_64
 compiler=gcc
-compiler.cppstd=gnu20
-compiler.version=12
+compiler.cppstd=20
+compiler.version=11
 compiler.libcxx=libstdc++
 
 [buildenv]
-CXXFLAGS=-m64 -Wno-psabi -O3
-LDFLAGS=-m64
-CFLAGS=-m64
-CXX=g++-12
-CC=gcc-12
+CXXFLAGS=-Wno-psabi
+CXX=g++-11

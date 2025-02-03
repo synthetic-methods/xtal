@@ -50,7 +50,7 @@ struct cue<>
 		using S_::S_;
 
 	//	TODO: Limit to instances of `cue`, not just derived...
-		using cued_type = superliminal_t<typename S_::cued_type>;
+		using cued_type = succedent_s<typename S_::cued_type>;
 
 	};
 };

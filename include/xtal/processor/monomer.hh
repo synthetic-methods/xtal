@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flow/argument.hh"
+
 
 
 
@@ -211,7 +211,7 @@ struct monomer<U, As...>
 				noexcept -> signed
 				{
 					auto constexpr N_dex = in_n<1, occur::resize_q<decltype(oo)>...>? N_share: -1;
-					return R_::template flux_arguments_<N_ion, N_dex>(flow::argument_n<-1>, XTAL_REF_(oo)...);
+					return R_::template flux_arguments_<N_ion, N_dex>(ordinal_constant_t<-1>{}, XTAL_REF_(oo)...);
 				}
 
 				///\

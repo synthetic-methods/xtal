@@ -159,7 +159,7 @@ void monomer_provision__provisioning()
 	using T_sigma = typename bond::fixture<>::sigma_type;
 	using T_alpha = typename bond::fixture<>::alpha_type;
 
-	using provide = provision::stored<constant_t<0x20>>;
+	using provide = provision::stored<extent_constant_t<0x20>>;
 
 	using U_store = typename confined_t<provide>::template store_t<T_alpha>;
 	using U_state  = reiterated_t<U_store>;

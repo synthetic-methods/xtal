@@ -50,7 +50,7 @@ struct key<>
 	public:
 		using S_::S_;
 
-		using keyed_type = superliminal_t<typename S_::keyed_type>;
+		using keyed_type = succedent_s<typename S_::keyed_type>;
 
 	};
 };

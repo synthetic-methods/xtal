@@ -19,7 +19,7 @@ Wrapper used to tunnel an existing type using `std::tuple`-based traversal.
 
 template <typename     ..._s> struct   indent;
 template <typename     ..._s> concept  indent_q = bond::tag_p<indent, _s...>;
-template <class S, int ...Ns> using    indent_s = bond::compose_s<S, indent<constant_t<Ns>...>>;
+template <class S, int ...Ns> using    indent_s = bond::compose_s<S, indent<ordinal_constant_t<Ns>...>>;
 
 template <constant_q ...Ns>
 struct indent<Ns...>
@@ -72,7 +72,6 @@ struct indent<Ns...>
 
 				///\todo\
 				Implement `indent_q` bounds-checking based on the `rank` specified by `R` or `Ns...`? \
-				Requires subsequent ordering for `bond::pack`s? \
 				
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)

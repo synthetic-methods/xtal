@@ -25,7 +25,7 @@ struct word
 	public:
 		using S_::S_;
 
-		static constant_t<N_size> constexpr cardinality{};
+		static cardinal_constant_t<N_size> constexpr cardinality{};
 
 	};
 };

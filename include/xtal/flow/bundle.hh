@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "./argument.hh"
+
 
 
 
@@ -92,17 +92,18 @@ struct bundle
 		}
 
 		///\returns the result of `*flow`ing with the supplied routing. \
-		If prefixed by a positive `argument_q`, forwards to the `argument` specified. \
-		If prefixed by a negative `argument_q` , forwards to all `arguments`. \
+		If prefixed by a positive `constant_q`, forwards to the `argument` specified. \
+		If prefixed by a negative `constant_q` , forwards to all `arguments`. \
 
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
-		flux(flow::argument_q auto i, auto &&...oo)
+		flux(constant_q auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
+			extent_type constexpr i = XTAL_ALL_(o){};
 			XTAL_IF0
-			XTAL_0IF (0 <= i) {return argument<i>().template flux      <N_ion>(XTAL_REF_(oo)...);}
-			XTAL_0IF (i <  0) {return self   ().template flux_arguments<N_ion>(XTAL_REF_(oo)...);}
+			XTAL_0IF (0 <= i) {return argument<i>().template flux          <N_ion>(XTAL_REF_(oo)...);}
+			XTAL_0IF (i <  0) {return self       ().template flux_arguments<N_ion>(XTAL_REF_(oo)...);}
 		}
 
 		///\

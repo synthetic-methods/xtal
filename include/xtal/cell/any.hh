@@ -150,7 +150,7 @@ struct defer
 		///\
 		Tuple arity. \
 
-		using pack_size = constant_t<S_::pack_size::value + 1>;
+		using pack_size = succedent_s<typename S_::pack_size>;
 
 	};
 };

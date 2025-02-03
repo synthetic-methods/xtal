@@ -43,7 +43,7 @@ struct cache
 
 		///\returns the size in `byte`s. \
 
-		static constant_t<size_type{N_bytes}> constexpr size{};
+		static cardinal_constant_t<N_bytes> constexpr size{};
 
 		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
 
@@ -124,7 +124,7 @@ struct cache
 
 };
 template <>
-struct cache<> : cache<size_type[bond::fixture<>::alignment{}]>
+struct cache<> : cache<size_type[bond::fixture<>::alignment{}()]>
 {
 };
 
