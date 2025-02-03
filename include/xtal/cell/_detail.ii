@@ -252,7 +252,7 @@ struct defer_field
 		}
 		XTAL_NEW_(implicit) subtype(_std::initializer_list<U_> o)
 		noexcept
-		requires member_q<U> and initializer_q<body_type>
+		requires member_q<U> and different_q<U, U_>
 		:	body_part(o)
 		{
 		}

@@ -208,9 +208,9 @@ struct queue<A>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(std::is_copy_assignable_v<queue_t<float             *  >>);
-static_assert(std::is_copy_assignable_v<queue_t<float[(unsigned)  -1]>>);
-static_assert(std::is_copy_assignable_v<queue_t<float[(unsigned) 0x8]>>);
+static_assert(std::is_copy_assignable_v<queue_t<float                *  >>);
+static_assert(std::is_copy_assignable_v<queue_t<float[XTAL_SYS_(extent)]>>);
+static_assert(std::is_copy_assignable_v<queue_t<float[             0x8U]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

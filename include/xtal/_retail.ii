@@ -142,6 +142,7 @@ template <auto  M, auto  ...Ns>	concept         below_n = (...and (below_m<M, Ns
 template <         auto  ...Ns>	concept        finite_n	= (...and (_xtd::make_signed_f(Ns) != -1));
 template <         auto  ...Ns>	concept      infinite_n	= (...or  (_xtd::make_signed_f(Ns) == -1));
 
+
 template <auto  N             >	struct       constant;// At EOF...
 template <auto  N=null_type{} >	using        constant_t	=  constant<N>;
 template <class T             >	concept      constant_q	=  ionic_q<T> and requires {T{};} and requires {requires T{} == T{}();};
@@ -174,14 +175,14 @@ template <class T        >	concept    complex_constant_q	= constant_q<T> and req
 template <class T        >	concept    simplex_constant_q	= constant_q<T> and requires {requires  simplex_variable_q<XTAL_ALL_(T{}())>;};
 template <class T        >	concept    numeric_constant_q	= constant_q<T> and requires {requires  numeric_variable_q<XTAL_ALL_(T{}())>;};
 
-template <class T             >	concept      integral_q	= integral_variable_q<T> or integral_constant_q<T>;
-template <class T             >	concept      cardinal_q	= cardinal_variable_q<T> or cardinal_constant_q<T>;
-template <class T             >	concept       ordinal_q	=  ordinal_variable_q<T> or  ordinal_constant_q<T>;
-template <class T             >	concept       logical_q	=  logical_variable_q<T> or  logical_constant_q<T>;
-template <class T             >	concept          real_q	=     real_variable_q<T> or     real_constant_q<T>;
-template <class T             >	concept       complex_q	=  complex_variable_q<T> or  complex_constant_q<T>;
-template <class T             >	concept       simplex_q	=  simplex_variable_q<T> or  simplex_constant_q<T>;
-template <class T             >	concept       numeric_q	=  numeric_variable_q<T> or  numeric_constant_q<T>;
+template <class T        >	concept   integral_q	= integral_variable_q<T> or integral_constant_q<T>;
+template <class T        >	concept   cardinal_q	= cardinal_variable_q<T> or cardinal_constant_q<T>;
+template <class T        >	concept    ordinal_q	=  ordinal_variable_q<T> or  ordinal_constant_q<T>;
+template <class T        >	concept    logical_q	=  logical_variable_q<T> or  logical_constant_q<T>;
+template <class T        >	concept       real_q	=     real_variable_q<T> or     real_constant_q<T>;
+template <class T        >	concept    complex_q	=  complex_variable_q<T> or  complex_constant_q<T>;
+template <class T        >	concept    simplex_q	=  simplex_variable_q<T> or  simplex_constant_q<T>;
+template <class T        >	concept    numeric_q	=  numeric_variable_q<T> or  numeric_constant_q<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -224,8 +225,7 @@ struct   assess
 	static extent_constant_t<(0 +...+ above_n<0, Ns>) > constexpr    rank{};
 
 };
-template <auto  ...Ns>                            struct   assayed;
-template <auto  ...Ns> requires   finite_n<Ns...> struct   assayed<Ns...> : assess<Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr size{};};
+template <auto  ...Ns>                            struct   assayed        : assess<Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr size{};};
 template <auto  ...Ns> requires infinite_n<Ns...> struct   assayed<Ns...> : assess<Ns...> {static extent_constant_t<-1          > constexpr size{};};
 template <           >                            struct   assayed<     > : assess<     > {static extent_constant_t< 0          > constexpr size{};};
 
@@ -267,7 +267,7 @@ template <Scalar_valued_q T   >	struct      fluid_valued<T> {using value_type = 
 
 
 template <class T             >	using       tuple_shaped  	=  assayed<complete_t<_std::tuple_size<_std::remove_reference_t<T>>, cardinal_constant_t<0>>{}()>;
-template <class T             >	concept     tuple_shaped_q	=  complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
+template <class T             >	concept     tuple_shaped_q	=          complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
 
 template <class T             >	using       array_shaped  	=  assayed<_std::  extent_v<_std::remove_reference_t<T>>>;
 template <class T             >	concept     array_shaped_q	=          _std::is_array_v<_std::remove_reference_t<T>>;
@@ -351,15 +351,15 @@ Ranged...
 
 template <class T             >	using         pointee_t	=                          decltype(*XTAL_ANY_(T)) ;
 template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
-template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(unsigned)]) ;
-template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(unsigned)])>;
-template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(unsigned)))>;
+template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(unsigned short)]) ;
+template <class T             >	using         indexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)[XTAL_ANY_(unsigned short)])>;
+template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(unsigned short)))>;
 template <class T             >	using       reindexed_u	= coindexed_u<T>;
 
 template <class T             >	concept       pointer_q	= _std::is_pointer_v<based_t<T>>;
 template <class T             >	concept       pointed_q	= requires (T t) {*t;};
-template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned)];};
-template <class T             >	concept     coindexed_q	= requires (T t) { t(XTAL_ANY_(unsigned));} and indexed_q<T>;
+template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned short)];};
+template <class T             >	concept     coindexed_q	= requires (T t) { t(XTAL_ANY_(unsigned short));} and indexed_q<T>;
 template <class T             >	concept     reindexed_q	= coindexed_q<T> and different_q<coindexed_u<T>, indexed_u<T>>;
 
 template <class T         >	concept  fixed_coindexed_q	= fixed_q<T> and coindexed_q<T>;

@@ -22,11 +22,11 @@ A dynamically-bounded analogue of `std::vector` with fixed capacity. \
 Configured by the array-like parameter `A`, where: \
 
 ///\
-*	If `A` has capacity `< (unsigned) -1`, \
+*	If `A` has capacity `< XTAL_SYS_(extent)`, \
 then a fixed-capacity implementation is provided. \
 
 ///\
-*	If `A` is either a pointer or an array of length `(unsigned) -1`, \
+*	If `A` is either a pointer or an array of length `XTAL_SYS_(extent)`, \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <class U_data> requires pointed_q<U_data>
@@ -36,7 +36,7 @@ struct buffer<U_data>
 
 };
 template <class U_data>
-struct buffer<U_data[(unsigned) -1]>
+struct buffer<U_data[XTAL_SYS_(extent)]>
 :	buffer<U_data *>
 {
 };

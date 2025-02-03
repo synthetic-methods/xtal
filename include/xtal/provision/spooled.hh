@@ -52,7 +52,7 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::queue_t<U[(unsigned) shaped<A>::size()]>;
+		using spool_t = atom::queue_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
 
 	};
 };

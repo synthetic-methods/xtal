@@ -386,7 +386,7 @@ public:
 		}
 		else {
 			auto constexpr N_ln2 = _std::numbers::ln2_v<alpha_type>;
-			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `consteval`?
+			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `constant`?
 		}
 	}
 	XTAL_DEF_(return,inline,set)
@@ -725,8 +725,11 @@ public:
 
 	///\returns the `target` to `N_zoom` bits of precision after the decimal. \
 
+#if XTAL_VER_(MSVC)
+#pragma optimize("", off)
+#endif
 	template <int N_zoom=0>
-	XTAL_DEF_(verbatim,set)
+	XTAL_DEF_(return,verbatim,set)
 	trim_f(alpha_type target)
 	noexcept -> alpha_type
 	{
@@ -736,9 +739,12 @@ public:
 		target /= N_minima;
 		return target;
 	}
+#if XTAL_VER_(MSVC)
+#pragma optimize("",  on)
+#endif
 
 	template <int N_zoom=fraction.depth - 1>
-	XTAL_DEF_(verbatim,set)
+	XTAL_DEF_(return,set)
 	trim_f(aphex_type const &target)
 	noexcept -> aphex_type
 	{
@@ -758,11 +764,6 @@ public:
 template <class ...Ts>
 struct   fixture
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
-{
-};
-template <class ...Ts> requires seek_constant_q<Ts...>
-struct   fixture<Ts...>
-:	complete_t<_detail::realize<sizeof(absolve_u<Ts>)>...>::template widen<seek_constant_n<Ts...>>
 {
 };
 template <>

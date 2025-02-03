@@ -2,9 +2,9 @@ name: Conan Create
 
 on:
   push:
-    branches: [main]
+    branches: [main,issues/1]
   pull_request:
-    branches: [main]
+    branches: [main,issues/1]
 
 jobs:
   create:
@@ -12,7 +12,8 @@ jobs:
     strategy:
       matrix:
         bt: [Debug, Release]
-        os: [macos, ubuntu] #, windows]
+        os: [macOS, Ubuntu]
+      # os: [macOS, Ubuntu, Windows]
     
     runs-on: ${{matrix.os}}-latest
 
@@ -20,10 +21,10 @@ jobs:
     - uses: actions/checkout@v3
     
     - run:  brew install conan
-      if:   ${{ matrix.os == 'macos' }}
+      if:   ${{ matrix.os == 'macOS' }}
 
     - run:  pip3 install wheel setuptools; pip3 install conan --upgrade
-      if:   ${{ matrix.os != 'macos' }}
+      if:   ${{ matrix.os != 'macOS' }}
 
     - run:  conan remote update conancenter --url="https://center2.conan.io"
     - run:  conan config install ${{github.workspace}}/.conan2

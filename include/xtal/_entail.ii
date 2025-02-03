@@ -139,10 +139,10 @@ static_assert(constant_q<decltype(-half)>);
 template <auto  N> auto constexpr half_n = constant_t<[] XTAL_0FN_(value) (1.F/(one << N))>{};
 template <auto  N> auto constexpr  two_n = constant_t<[] XTAL_0FN_(value) (1.F*(one << N))>{};
 
-template <auto  N       >	using    integral_constant_t	=  typename _retail:: integral_constant_t<N>;
-template <auto  N       >	using    cardinal_constant_t	=  typename _retail:: cardinal_constant_t<N>;
-template <auto  N       >	using     ordinal_constant_t	=  typename _retail::  ordinal_constant_t<N>;
-template <auto  N       >	using     logical_constant_t	=  typename _retail::  logical_constant_t<N>;
+template <auto  N       >	using     integral_constant_t	=  typename _retail:: integral_constant_t<N>;
+template <auto  N       >	using     cardinal_constant_t	=  typename _retail:: cardinal_constant_t<N>;
+template <auto  N       >	using      ordinal_constant_t	=  typename _retail::  ordinal_constant_t<N>;
+template <auto  N       >	using      logical_constant_t	=  typename _retail::  logical_constant_t<N>;
 
 template <class 	 ...Ts>  concept   integral_variable_q	= (...and   _retail:: integral_variable_q<Ts>);
 template <class 	 ...Ts>  concept   cardinal_variable_q	= (...and   _retail:: cardinal_variable_q<Ts>);

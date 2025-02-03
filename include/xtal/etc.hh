@@ -65,7 +65,7 @@
 
 #else
 #endif//XTAL_ENV
-#define XTAL_ENV_GCC XTAL_ENV_GNUC
+#define XTAL_ENV_GCC XTAL_ENV_(GNUC)
 #define XTAL_ENV (XTAL_ENV_(MSVC) or XTAL_ENV_(LLVM) or XTAL_ENV_(GNUC))
 
 
@@ -75,36 +75,46 @@ XTAL_ENV_(push)
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_STD_(ARG,...)                XTAL_STD_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
-#define XTAL_STD (__cplusplus%10000)                                               ///< C++ standard version (YYMM).
+////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_STD_null_type         ::std::nullptr_t
-#define XTAL_STD_unit_type         ::std::monostate
-#define XTAL_STD_size_type         ::std::size_t
-#define XTAL_STD_extent_type       ::std::ptrdiff_t
+#define XTAL_STD_(ARG,...)             XTAL_STD_##ARG __VA_OPT__((__VA_ARGS__)) ///< C++ standard version (YYMM) and reference types.
+#ifdef  XTAL_STD
+#elif   2000 >   (__cplusplus%10000)
+#define XTAL_STD (2000)                                                         ///< C++ standard version minimum (YYMM).
+#elif   2600 <   (__cplusplus%10000)
+#define XTAL_STD (2600)                                                         ///< C++ standard version maximum (YYMM).
+#else
+#define XTAL_STD (__cplusplus%10000)                                            ///< C++ standard version         (YYMM).
+#endif
 
-#define XTAL_STD_int(...)                 XTAL_STD_int_##__VA_ARGS__
-#define XTAL_STD_int_0             ::std::int8_t
-#define XTAL_STD_int_1             ::std::int16_t
-#define XTAL_STD_int_2             ::std::int32_t
-#define XTAL_STD_int_3             ::std::int64_t
-#define XTAL_STD_int_4          long long int
+#define XTAL_STD_null_type      ::std::nullptr_t
+#define XTAL_STD_unit_type      ::std::monostate
+#define XTAL_STD_size_type      ::std::size_t
+#define XTAL_STD_extent_type    ::std::ptrdiff_t
 
-#define XTAL_STD_float(...)               XTAL_STD_float_##__VA_ARGS__
-#define XTAL_STD_float_0                  void
-#define XTAL_STD_float_1                  void
-#define XTAL_STD_float_2                  float
-#define XTAL_STD_float_3                  double
-#define XTAL_STD_float_4             long double
+#define XTAL_STD_int(...)              XTAL_STD_int_##__VA_ARGS__
+#define XTAL_STD_int_0          ::std::int8_t
+#define XTAL_STD_int_1          ::std::int16_t
+#define XTAL_STD_int_2          ::std::int32_t
+#define XTAL_STD_int_3          ::std::int64_t
+#define XTAL_STD_int_4       long long int
 
+#define XTAL_STD_float(...)            XTAL_STD_float_##__VA_ARGS__
+#define XTAL_STD_float_0               void
+#define XTAL_STD_float_1               void
+#define XTAL_STD_float_2               float
+#define XTAL_STD_float_3               double
+#define XTAL_STD_float_4          long double
 
-#define XTAL_SYS_(...)                    XTAL_SYS_##__VA_ARGS__                      ///< System reference values.
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_SYS_(ARG,...)             XTAL_SYS_##ARG __VA_OPT__((__VA_ARGS__)) ///< System reference values.
 
 #ifdef  XTAL_SYS_IEC
 #else
 //\
-#define XTAL_SYS_IEC                      0
-#define XTAL_SYS_IEC                      60559
+#define XTAL_SYS_IEC                   0
+#define XTAL_SYS_IEC                   60559
 #endif
 
 #ifdef  XTAL_SYS_L1
@@ -115,20 +125,21 @@ XTAL_ENV_(push)
 #elif   defined(L1_CACHE_SHIFT)
 #define XTAL_SYS_L1 L1_CACHE_SHIFT
 #else
-#define XTAL_SYS_L1                       0x40
+#define XTAL_SYS_L1                    0x40
 #endif//XTAL_STD_L1
 
+#define XTAL_SYS_extent                0x7FFFFFF                                ///< Maximum `array[]` size.
 
 // TODO: Find better way to check for `__builtin_\w+`?
-#define XTAL_SYS_builtin (1000 < XTAL_VER_(GNUC) or 1000 < XTAL_VER_(LLVM))
+#define XTAL_SYS_builtin (XTAL_VER_(GNUC >= 1000) or XTAL_VER_(LLVM >= 1000))
 
-#if         defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
+#if          defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
 #define XTAL_SYS_FMA 0b110
-#elif       defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
+#elif        defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
 #define XTAL_SYS_FMA 0b100
-#elif   not defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
+#elif    not defined(FP_FAST_FMA) and     defined(FP_FAST_FMAF)
 #define XTAL_SYS_FMA 0b010
-#elif   not defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
+#elif    not defined(FP_FAST_FMA) and not defined(FP_FAST_FMAF)
 #define XTAL_SYS_FMA 0b000
 #endif
 
@@ -137,6 +148,8 @@ XTAL_ENV_(push)
 #else
 #define XTAL_SYS_CPU 32
 #endif
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,91 +169,93 @@ XTAL_ENV_(push)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_TYP_(...)                 ::std::remove_cvref_t<__VA_ARGS__>   ///< Reveals the underlying-type.
-#define XTAL_ALL_(...)                    XTAL_TYP_(decltype(__VA_ARGS__))  ///< Reveals the underlying-type of a value.
-#define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>() ///< Yields the existential value for a type.
-#define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)   ///< Moves    a value.
-#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)   ///< Forwards a value.
-#define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)   ///< Defines a name.
+#define XTAL_TYP_(...)                 ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the underlying-type.
+#define XTAL_ALL_(...)                    XTAL_TYP_(decltype(__VA_ARGS__))      ///< Reveals the underlying-type of a value.
+#define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
+#define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)       ///< Moves    a value.
+#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
+#define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)       ///< Defines  a  name.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)              XTAL_N_(XTAL_DEF,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
-#define XTAL_DEF(...)               XTAL_DEF_##__VA_ARGS__
+#define XTAL_DEF_(...)           XTAL_N_(XTAL_DEF,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
+#define XTAL_DEF(...)            XTAL_DEF_##__VA_ARGS__
 
-#define XTAL_DEF_return             [[nodiscard]]
-#define XTAL_DEF_static             static
-#define XTAL_DEF_friend             friend
-#define XTAL_DEF_mutate//           mutate
+#define XTAL_DEF_return          [[nodiscard]]
+#define XTAL_DEF_static          static
+#define XTAL_DEF_friend          friend
+#define XTAL_DEF_mutate        //NOTE: Mutability is the default!
 
-#if     XTAL_ENV_(MSVC)
-#define XTAL_DEF_verbatim           /*FIXME*/
-#elif   XTAL_ENV_(LLVM)
-#define XTAL_DEF_verbatim           [[clang::optnone]]    __attribute__((optnone))
-#elif   XTAL_ENV_(GNUC)
-#define XTAL_DEF_verbatim           [[gnu::optimize(0)]]  __attribute__((optimize(0)))
+#if     XTAL_ENV_MSVC
+#define XTAL_DEF_verbatim      //NOTE: Use `#pragma optimize("", {off,on})`~
+#elif   XTAL_ENV_LLVM
+#define XTAL_DEF_verbatim        [[clang::optnone]]    __attribute__((optnone))
+#elif   XTAL_ENV_GNUC
+#define XTAL_DEF_verbatim        [[gnu::optimize(0)]]  __attribute__((optimize(0)))
 #endif//XTAL_DEF_verbatim
 
-#if     XTAL_ENV_(MSVC)
-#define XTAL_DEF_inline           __forceinline
+#if     XTAL_ENV_MSVC
+#define XTAL_DEF_inline        __forceinline
 #else
-#define XTAL_DEF_inline             inline __attribute__((always_inline))
+#define XTAL_DEF_inline          inline __attribute__((always_inline))
 #endif//XTAL_DEF_inline
 
-#define XTAL_DEF_explicit           constexpr explicit                             ///< Start `explicit` function.
-#define XTAL_DEF_implicit           constexpr                                      ///< Start `implicit` function.
-#define XTAL_DEF_get                constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
-#define XTAL_DEF_let                constexpr auto                                 ///< Start `auto` function.
-#define XTAL_DEF_met                constexpr auto friend                          ///< Start `auto` function.
-#define XTAL_DEF_set         static constexpr auto                                 ///< Start `auto` function.
+#define XTAL_DEF_explicit        constexpr explicit                             ///< Start `explicit` function.
+#define XTAL_DEF_implicit        constexpr                                      ///< Start `implicit` function.
+#define XTAL_DEF_get             constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
+#define XTAL_DEF_let             constexpr auto                                 ///< Start `auto` function.
+#define XTAL_DEF_met             constexpr auto friend                          ///< Start `auto` function.
+#define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function.
 
-#define XTAL_NEW_(ARG,...)          XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
-#define XTAL_NEW_explicit           constexpr explicit                             ///< Start        `explicit` constructor.
-#define XTAL_NEW_implicit           constexpr                                      ///< Start        `implicit` constructor.
-#define XTAL_NEW_copy(TYP,...)      constexpr TYP              (TYP const &) __VA_ARGS__;\
-                                    constexpr TYP & operator = (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
-#define XTAL_NEW_move(TYP,...)      constexpr TYP              (TYP      &&) __VA_ARGS__;\
-                                    constexpr TYP & operator = (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))     ///< Start `(?:ex|im)plicit` constructor.
+#define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
+#define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
+#define XTAL_NEW_copy(TYP,...)   constexpr TYP              (TYP const &) __VA_ARGS__;\
+                                 constexpr TYP & operator = (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_move(TYP,...)   constexpr TYP              (TYP      &&) __VA_ARGS__;\
+                                 constexpr TYP & operator = (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_FX4_(ARG,...)             XTAL_FX4_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX2_(ARG,...)             XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX1_(ARG,...)             XTAL_FX1_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX0_(ARG,...)             XTAL_FX0_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX4_(ARG,...)       XTAL_FX4_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX2_(ARG,...)       XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX1_(ARG,...)       XTAL_FX1_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FX0_(ARG,...)       XTAL_FX0_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_FX4_do(SIG, ...)          SIG const &                    __VA_ARGS__   \
-                                       SIG       &                    __VA_ARGS__   \
-                                       SIG const &&                   __VA_ARGS__   \
-                                       SIG       &&                   __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
-#define XTAL_FX2_do(SIG, ...)          SIG const                      __VA_ARGS__   \
-                                       SIG                            __VA_ARGS__   ;///< Define `(const)?`     member functions.
-#define XTAL_FX1_do(SIG, ...)          SIG const                      __VA_ARGS__   ;///< Define `(const) `     member function.
-#define XTAL_FX0_do(SIG, ...)          SIG                            __VA_ARGS__   ;///< Define         static member function.
+#define XTAL_FX4_do(SIG, ...)    SIG const &                 __VA_ARGS__   \
+                                 SIG       &                 __VA_ARGS__   \
+                                 SIG const &&                __VA_ARGS__   \
+                                 SIG       &&                __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
+#define XTAL_FX2_do(SIG, ...)    SIG const                   __VA_ARGS__   \
+                                 SIG                         __VA_ARGS__   ;///< Define `(const)?`     member functions.
+#define XTAL_FX1_do(SIG, ...)    SIG const                   __VA_ARGS__   ;///< Define `(const) `     member function.
+#define XTAL_FX0_do(SIG, ...)    SIG                         __VA_ARGS__   ;///< Define         static member function.
 
-#define XTAL_FX4_alias(SIG,...)        SIG const &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                                       SIG       &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                                       SIG const && noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                                       SIG       && noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)? &&?` member expressions.
-#define XTAL_FX2_alias(SIG,...)        SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                                       SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)?    ` member expressions.
-#define XTAL_FX1_alias(SIG,...)        SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)     ` member expression.
-#define XTAL_FX0_alias(SIG,...)        SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept`         static member expression.
+#define XTAL_FX4_alias(SIG,...)  SIG const &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
+                                 SIG       &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
+                                 SIG const && noexcept __VA_OPT__({return (__VA_ARGS__);});\
+                                 SIG       && noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)? &&?` member expressions.
+#define XTAL_FX2_alias(SIG,...)  SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});\
+                                 SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)?    ` member expressions.
+#define XTAL_FX1_alias(SIG,...)  SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)     ` member expression.
+#define XTAL_FX0_alias(SIG,...)  SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept`         static member expression.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #if not XTAL_ENV
-#define XTAL_0FN                                              constexpr noexcept///< Lambda declaration (after `[captures]`).
-#elif   XTAL_VER_(GNUC)
-#define XTAL_0FN                                              constexpr noexcept\
-                               __attribute__((always_inline))
-#elif   XTAL_VER_(LLVM)
-#define XTAL_0FN               __attribute__((always_inline)) constexpr noexcept
+#define XTAL_0FN                    constexpr noexcept///< Lambda declaration (after `[captures]`).
 #elif   XTAL_VER_(MSVC)
-#define XTAL_0FN                        [[msvc::forceinline]] constexpr noexcept
+//\
+#define XTAL_0FN                    constexpr noexcept          [[msvc::forceinline]]//NOTE: Fixed 2024-12-27!
+#define XTAL_0FN                    constexpr noexcept
+#elif   XTAL_VER_(GNUC)
+#define XTAL_0FN                    constexpr noexcept __attribute__((always_inline))
+#elif   XTAL_VER_(LLVM)
+#define XTAL_0FN                                                __attribute__((always_inline))\
+                                    constexpr noexcept
 #endif//XTAL_0FN
 
 #define XTAL_0FN_(ARG,...)                   XTAL_0FN_##ARG __VA_OPT__((__VA_ARGS__))

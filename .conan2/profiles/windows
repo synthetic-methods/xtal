@@ -1,11 +1,10 @@
 [settings]
-build_type=Release
-arch=x86_64
 os=Windows
-os.subsystem=wsl
+arch=x86_64
 compiler=msvc
 compiler.cppstd=20
-compiler.version=193
-compiler.update=3
+compiler.version=194
 compiler.runtime=dynamic
-compiler.toolset=v141_xp
+
+[buildenv]
+CXXFLAGS=/Zc:__cplusplus /Zc:preprocessor /Zc:lambda

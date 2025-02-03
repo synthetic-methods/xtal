@@ -100,7 +100,7 @@ template <         class ...Ts>  using    seek_back_t  = typename seek_back <Ts.
 ////////////////////////////////////////////////////////////////////////////////
 
 template <              class ...Ts>  struct         seek_constant                    {using type = void;};
-template <constant_q T, class ...Ts>  struct         seek_constant<T, Ts...> :                        T {};
+template <constant_q T, class ...Ts>  struct         seek_constant<T, Ts...>          {using type = T   ;};
 template <class T,      class ...Ts>  struct         seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
 template <              class ...Ts>  using          seek_constant_t = typename seek_constant<Ts...>::type;
 template <              class ...Ts>  concept        seek_constant_q = complete_q<seek_constant_t<Ts...>>;

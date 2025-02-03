@@ -97,12 +97,13 @@ struct bundle
 
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
-		flux(constant_q auto i, auto &&...oo)
+		flux(constant_q auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
+			extent_type constexpr i = XTAL_ALL_(o){};
 			XTAL_IF0
-			XTAL_0IF (0 <= i) {return argument<i>().template flux      <N_ion>(XTAL_REF_(oo)...);}
-			XTAL_0IF (i <  0) {return self   ().template flux_arguments<N_ion>(XTAL_REF_(oo)...);}
+			XTAL_0IF (0 <= i) {return argument<i>().template flux          <N_ion>(XTAL_REF_(oo)...);}
+			XTAL_0IF (i <  0) {return self       ().template flux_arguments<N_ion>(XTAL_REF_(oo)...);}
 		}
 
 		///\

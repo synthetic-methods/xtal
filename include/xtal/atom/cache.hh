@@ -124,7 +124,7 @@ struct cache
 
 };
 template <>
-struct cache<> : cache<size_type[bond::fixture<>::alignment{}]>
+struct cache<> : cache<size_type[bond::fixture<>::alignment{}()]>
 {
 };
 

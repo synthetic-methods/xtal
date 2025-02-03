@@ -241,12 +241,13 @@ struct block
 		XTAL_DEF_(return,inline,let)
 		self(constant_q auto count),
 		{
+			auto constexpr N = count();
 			if constexpr (same_q<_s...>) {
-				static_assert(count() <= size());
-				return reform<V(&)[count]>();
+				static_assert(N <= size());
+				return reform<V(&)[N]>();
 			}
 			else {
-				static_assert(count() == size());
+				static_assert(N == size());
 				static_assert(same_q<V, value_type>);
 				return reform<_std::add_lvalue_reference_t<_s>...>();
 			}

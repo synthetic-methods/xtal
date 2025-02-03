@@ -58,7 +58,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom:: block_t<U[(unsigned) shaped<A>::size()]>;
+		using store_t = atom:: block_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
 
 	};
 	template <class S> requires  ordinal_q<valued_u<A>>
@@ -70,7 +70,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::buffer_t<U[(unsigned) shaped<A>::size()]>;
+		using store_t = atom::buffer_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
 
 	};
 };
