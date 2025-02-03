@@ -155,44 +155,6 @@ struct define
 			return self();
 		}
 
-
-		///\
-		Provides a `defer`red instance of `T` on `subtype`, \
-		labelled with the given `As...`. \
-
-		template <typename ...As>
-		struct afflux
-		{
-			using superkind = bond::compose<any<As>..., defer<T>>;
-
-			template <flow::any_q R>
-			class subtype : public bond::compose_s<R, superkind>
-			{
-				using R_ = bond::compose_s<R, superkind>;
-			
-			public:// CONSTRUCT
-			//	using R_::R_;
-				using R_::self;
-
-			~	subtype()                 noexcept=default;
-				subtype()                 noexcept=default;
-				XTAL_NEW_(copy) (subtype, noexcept=default)
-				XTAL_NEW_(move) (subtype, noexcept=default)
-
-				///\
-				Constructs the `attach`ed `occur` using its default, \
-				before `forward`ing the arguments to `this`. \
-
-				XTAL_NEW_(explicit) subtype(auto &&...xs)
-				noexcept
-				:	R_(T{}, XTAL_REF_(xs)...)
-				{}
-
-			};
-		};
-		template <typename ...As>
-		using  afflux_t = confined_t<afflux<As...>>;
-
 	};
 };
 template <class T>

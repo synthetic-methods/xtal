@@ -42,10 +42,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct attach
 		{
-			using superkind = bond::compose<void
-			,	flow::mask<N_mask>
-			,	typename T::template afflux<>
-			>;
+			using superkind = bond::compose<flow::mask<N_mask>, defer<T>>;
 
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -53,8 +50,23 @@ struct define
 				static_assert(cell::any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
-			public:
-				using R_::R_;
+			public:// CONSTRUCT
+			//	using R_::R_;
+				using R_::self;
+
+			~	subtype()                 noexcept=default;
+				subtype()                 noexcept=default;
+				XTAL_NEW_(copy) (subtype, noexcept=default)
+				XTAL_NEW_(move) (subtype, noexcept=default)
+
+				///\
+				Constructs the `attach`ed message using its default, \
+				before `forward`ing the arguments to `this`. \
+
+				XTAL_NEW_(explicit) subtype(auto &&...xs)
+				noexcept
+				:	R_(T{}, XTAL_REF_(xs)...)
+				{}
 
 			};
 

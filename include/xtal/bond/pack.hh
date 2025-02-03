@@ -45,7 +45,7 @@ template <fixed_shaped_q    T  >	struct         pack_size<T> : constant_t<fixed_
 template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>::value;
 template <         class ...Ts>	concept        pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
-template <class T, class ...Ts>	requires (1 <= sizeof...(Ts)) and pack_size_q<T, Ts...>
+template <class T, class ...Ts>	requires above_n<0, sizeof...(Ts)> and pack_size_q<T, Ts...>
 struct pack_size<T, Ts...> : constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)> {};
 
 
@@ -60,21 +60,20 @@ template <class T, auto I> concept  subpack_width_q = I <  pack_size_n<T>;
 Determines the element-type indexed by `Is...` nested within `T`. \
 
 template <class T, size_type ...Is> struct   pack_item;
-template <class T, size_type... Is> using    pack_item_t = typename pack_item<T, Is...>::type;
+template <class T, size_type ...Is> using    pack_item_t = typename pack_item<T, Is...>::     type;
+template <class T, size_type ...Is> using    pack_item_s = typename pack_item<T, Is...>::supertype;
 
 template <class T>
-struct   pack_item<T> {using type = T;};
+struct   pack_item<T> {using supertype = T; using type = T;};
 
 template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};
 
-template <fixed_valued_q T, size_type I> requires un_n<tuple_shaped_q<T>> struct pack_item<T        , I> {using type =                   fixed_valued_u<T>         ;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T        , I> {using type = _std::tuple_element_t<I, based_t<T>>        ;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T       &, I> {using type = _std::tuple_element_t<I, based_t<T>>       &;};
-template <tuple_shaped_q T, size_type I>                                  struct pack_item<T const &, I> {using type = _std::tuple_element_t<I, based_t<T>> const &;};
+template <fixed_valued_q T, size_type I> requires un_n<tuple_shaped_q<T>> struct pack_item<T        , I> {using supertype = T; using type =                   fixed_valued_u<T>         ;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T        , I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>>        ;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T       &, I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>>       &;};
+template <tuple_shaped_q T, size_type I>                                  struct pack_item<T const &, I> {using supertype = T; using type = _std::tuple_element_t<I, based_t<T>> const &;};
 
-template <class T, size_type ...Is>
-using    pack_item_t = typename pack_item<T, Is...>::type;
 
 //\brief\
 Determines the element-value indexed by `Is...` nested within and across the concatenated `t, ts...`. \

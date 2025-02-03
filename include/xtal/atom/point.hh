@@ -83,7 +83,7 @@ struct point
 		{
 			return [f_=[&]
 				(auto    I)                      XTAL_0FN_(return) (f (zot<I>(ts)...))]
-				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(return) (S_::reform(f_(constant_t<I>{})...))
+				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(return) (S_::form(f_(constant_t<I>{})...))
 					(bond::seek_s<size>{});
 		}
 		///\

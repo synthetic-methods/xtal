@@ -13,12 +13,12 @@ namespace xtal::atom
 ///\
 Extends `block` with function application and functional construction. \
 
-template <        class ..._s>	struct   quanta;
-template <        class ..._s>	using    quanta_t = typename quanta<_s...>::type;
-template <        class ..._s>	concept  quanta_q = bond::array_tag_p<quanta_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...As>	struct   quanta;
+template <class ...As>	using    quanta_t = typename quanta<As...>::type;
+template <class ...As>	concept  quanta_q = bond::array_tag_p<quanta_t, As...> and fixed_shaped_q<As...>;
 
-template <class U, auto  N, auto  ..._s> struct   quanta<U   [N][_s]...> : quanta<quanta_t<U[_s]...>   [N]> {};
-template <class U, auto  N, auto  ..._s> struct   quanta<U(&)[N][_s]...> : quanta<quanta_t<U[_s]...>(&)[N]> {};
+template <class U, auto  N, auto  ...As> struct   quanta<U   [N][As]...> : quanta<quanta_t<U[As]...>   [N]> {};
+template <class U, auto  N, auto  ...As> struct   quanta<U(&)[N][As]...> : quanta<quanta_t<U[As]...>(&)[N]> {};
 
 
 XTAL_FX0_(alias) (template <auto f=_std::identity{}>
@@ -30,16 +30,16 @@ quanta_f(auto &&...oo),
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct quanta<_s ...>
-:	quanta<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...As> requires same_q<As...>
+struct quanta<As ...>
+:	quanta<common_t<As...>[sizeof...(As)]>
 {
 };
-template <class ..._s>
+template <class ...As>
 struct quanta
 {
 	template <class T>
-	using endotype = typename block<_s...>::template homotype<T>;
+	using endotype = typename block<As...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<quanta_t>>;
@@ -67,7 +67,7 @@ struct quanta
 		noexcept -> bool
 		{
 			XTAL_IF0
-		//	XTAL_0IF (same_q<_s...> and _std::is_standard_layout_v<value_type>) {
+		//	XTAL_0IF (same_q<As...> and _std::is_standard_layout_v<value_type>) {
 		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(return) (
@@ -87,7 +87,7 @@ struct quanta
 		blanked() const
 		noexcept -> auto
 		{
-			typename S_::template form_t<based_t<_s>...> constexpr z{N_value};
+			typename S_::template form_t<based_t<As>...> constexpr z{N_value};
 			return   z == self();
 		}
 		///\returns the result of `blanked()` before refilling with `N_value=0`. \
@@ -96,7 +96,7 @@ struct quanta
 		XTAL_DEF_(inline,let)
 		blanket()
 		noexcept -> bool
-		requires same_q<_s...>
+		requires same_q<As...>
 		{
 			using sigma_type  = typename bond::fixture<scale_type>::sigma_type;
 			auto constexpr u  =    static_cast<scale_type>(N_value);
@@ -127,25 +127,34 @@ struct quanta
 		}
 
 	public:
-		///\returns an instance of `Y` constructed from the elements of `this`. \
+		using S_::reform;
 
-		XTAL_FX4_(alias) (template <complete_q Y>
-		XTAL_DEF_(return,inline,explicit operator) Y(), apply<Y>())
+		///\returns an `coordinate`d instance of `this`. \
 
-		///\returns an instance of `Y` constructed from the elements of `this`. \
+		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,let) reform(), apply())
+
+		///\returns an `coordinate`d instance of `this`. \
 
 		XTAL_DEF_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			if constexpr (same_q<_s...>) {
-				using coordinate_type = XTAL_ALL_(T::coordinate(XTAL_ANY_(value_type)));
-				return apply<typename S_::template form_t<coordinate_type[size]>>();
+			using F = decltype(T::coordinate);
+			if constexpr (same_q<As...>) {
+				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
 			}
 			else {
-				return apply<based_t<_s>...>();
+				return apply<return_t<F, As>...>();
 			}
 		}
+
+		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
+
+		XTAL_FX4_(alias) (template <complete_q F>
+		XTAL_DEF_(return,inline,explicit operator) F(), apply<F>())
+
+		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
+
 		template <class F>
 		XTAL_DEF_(return,inline,let)
 		apply() const
@@ -153,7 +162,7 @@ struct quanta
 		{
 			return apply<evoke_t<F>{}>();
 		}
-		///\returns the result of applying `f` to the elements of `this`. \
+		///\returns the result of applying `f` to the `coordinate`s of `this`. \
 
 		template <auto  f>
 		XTAL_DEF_(return,inline,let)
@@ -162,7 +171,7 @@ struct quanta
 		{
 			return apply(constant_t<f>{});
 		}
-		///\returns the result of applying `f` to the elements of `this`. \
+		///\returns the result of applying `f` to the `coordinate`s of `this`. \
 
 		XTAL_DEF_(return,inline,let)
 		apply(auto &&f) const

@@ -15,7 +15,7 @@ template <class T> struct   refine;///<   Finalizes `T`.
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Associates the internal `subtype` both with the current namespace, \
+Associates `subtype` both with the current namespace, \
 the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> struct   any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};

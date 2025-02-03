@@ -50,7 +50,7 @@ struct factory
 Utilities replacing the C++23-deprecated `std::aligned_storage`. \
 
 ///\todo\
-Provide a mechanism for sorting/unsorting the respective internal/external types. \
+Provide a mechanism for sorting/unsorting the respective inner/outer types? \
 
 template <class ...Ts>
 struct aligned

@@ -92,7 +92,7 @@ struct superblock<U(&)[N]>
 		using       value_type =  U;
 		using       scale_type =  absolve_u<value_type>;
 		
-	//	using       bytes_size = constant_t<?>;
+	//	using       bytes_size = constant_t<sizeof(archetype)>;
 	//	static      bytes_size   constexpr size_bytes{};
 		using       tuple_size = constant_t<N>;
 		static      tuple_size   constexpr size      {};
@@ -196,9 +196,9 @@ struct block
 	{
 		using S_ = holotype<T>;
 
-		template <class _, class ...As> struct _form           {using type = bond::compose_s<T, bond::hypertag<As...>>;};
-		template <class _             > struct _form<_       > {using type = T;};
-		template <class _             > struct _form<_, _s...> {using type = T;};
+		template <class _, class ...As> struct form_           {using type = bond::compose_s<T, bond::hypertag<As...>>;};
+		template <class _             > struct form_<_       > {using type = T;};
+		template <class _             > struct form_<_, _s...> {using type = T;};
 
 	public:// OPERATE
 		using S_::size;
@@ -213,21 +213,20 @@ struct block
 		///\
 		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
  		
-		template <class ...As> struct  form   : _form<void, As...>  {};
-		template <class ...As> using   form_t = typename form<As...>::type;
+		template <class ...As> using form_t = typename form_<void, As...>::type;
 		
-		///\returns a specialized instance of the prevailing template using the argument types `Xs...`. \
+		///\returns a specialized instance of the underlying template using the argument types `Xs...`. \
 
 		XTAL_FX0_(alias) (template <class ...Xs>
 		XTAL_DEF_(return,inline,set)
-		reform(Xs &&...xs),
+		form(Xs &&...xs),
 			form_t<Xs...>{XTAL_REF_(xs)...})
 
-		///\returns a specialized instance of `this` using the prevailing template. \
+		///\returns a specialized instance of `this` using the underlying template. \
 
 		XTAL_FX2_(alias) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
-		deform(),
+		reform(),
 			form_t<Xs...>(S_::self()))
 
 	public:
@@ -244,12 +243,12 @@ struct block
 		{
 			if constexpr (same_q<_s...>) {
 				static_assert(count() <= size());
-				return deform<V(&)[count]>();
+				return reform<V(&)[count]>();
 			}
 			else {
 				static_assert(count() == size());
 				static_assert(same_q<V, value_type>);
-				return deform<_std::add_lvalue_reference_t<_s>...>();
+				return reform<_std::add_lvalue_reference_t<_s>...>();
 			}
 		})
 
@@ -262,7 +261,7 @@ struct block
 		twin() const
 		noexcept -> auto
 		{
-			return deform<_std::remove_cvref_t<_s>...>();
+			return reform<_std::remove_cvref_t<_s>...>();
 		}
 
 		///\returns the first `count` elements of `this` as a truncated copy of `U`. \
@@ -276,12 +275,12 @@ struct block
 		{
 			if constexpr (same_q<_s...>) {
 				static_assert(count() <= size());
-				return deform<V[count]>();
+				return reform<V[count]>();
 			}
 			else {
 				static_assert(count() == size());
 				static_assert(same_q<V, value_type>);
-				return deform<_std::remove_cvref_t<_s>...>();
+				return reform<_std::remove_cvref_t<_s>...>();
 			}
 		})
 

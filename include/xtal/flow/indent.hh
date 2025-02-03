@@ -1,13 +1,13 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flow/mask.hh"
+#include "./mask.hh"
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::occur
+namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -24,67 +24,45 @@ template <class S, int ...Ns> using    indent_s = bond::compose_s<S, indent<cons
 template <constant_q ...Ns>
 struct indent<Ns...>
 {
+	template <class S> using component_t = bond::pack_item_t<S, Ns{}...>;
+	template <class S> using component_s = bond::pack_item_s<S, Ns{}...>;
+	
+	using superkind = bond::compose<void
+	,	confined<bond::tag<indent>, confer<Ns>...>
+	,	bond::compose_t<conferred_t>
+	,	bond::compose_t<component_t>
+	>;
 	template <class S>
-	using component_t = bond::pack_item_t<S, Ns{}...>;
-	
-	using item = bond::compose_t<component_t>;
-	using leaf = bond::compose_t<conferred_t>;
-	using path = confined<bond::tag<indent>, confer<Ns>...>;
-	
-	using superkind = bond::compose<path, leaf, item>;
-
-	template <bond::pack_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
+		static_assert(bond::pack_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-	//	using U_ = bond::compose_s<S, item>;
-		using U_ = component_t<S>;
+		using W_ =     component_s<S >;
+		using U_ =   initializer_u<W_>;
 
 	public:
 		using S_::S_;
 		
 		///\note\
-		When `reindexed_q<S>`, `S::ordinate` is invoked to produce the edit. \
+		Scalar fragments are currently mapped with `ordinate`, \
+		until a better solution presents itself. \
 
-		///\todo\
-		Find a better way to invoke `S::ordinate` implicitly for any `indent`ed scalar fragments. \
-
-		/*/
-		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
-		noexcept
-		:	S_{XTAL_MOV_(u)}
-		{}
-		/*/
-		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
-		noexcept
-		requires   in_n<iterable_q<initializer_u<S>>>
-		:	S_{XTAL_MOV_(u)}
-		{}
-		XTAL_NEW_(explicit) subtype(initializer_u<S> u)
-		noexcept
-		requires   un_n<iterable_q<initializer_u<S>>>
-		:	S_{S::ordinate(XTAL_MOV_(u))}
-		{
-		}
-		/***/
-
-		XTAL_NEW_(implicit) subtype(initializer_t<U_> w)
-		noexcept
-		requires iterable_q<U_>
-		:	S_{w}
-		{}
+		XTAL_NEW_(explicit) subtype(                       U_  u) noexcept requires un_n<iterable_q<U_>> : S_{W_::ordinate(XTAL_MOV_(u))} {}
+		XTAL_NEW_(explicit) subtype(                       U_  u) noexcept requires in_n<iterable_q<U_>> : S_{             XTAL_MOV_(u) } {}
+		XTAL_NEW_(implicit) subtype(_std::initializer_list<U_> w) noexcept requires in_n<iterable_q<U_>> : S_{                       w  } {}
 
 		template <extent_type N_mask=-1>
-		struct funnel
+		struct afflux
 		{
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).
 
-			using superkind = bond::compose<flow::mask<N_mask>, defer<U_>>;
+			using superkind = bond::compose<flow::mask<N_mask>, defer<component_t<S>>>;
 
-			template <cell::any_q R> requires (0 == sizeof...(Ns))
+			template <class R> requires un_n<sizeof...(Ns)>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(flow::any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
 			public:

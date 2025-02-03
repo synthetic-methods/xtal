@@ -182,7 +182,7 @@ struct monomer<U, As...>
 				}
 
 				///\
-				Responds to `occur::resize` by resizing the internal `store()`. \
+				Responds to `occur::resize` by resizing the `store()`. \
 
 				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(return,let)
@@ -215,7 +215,7 @@ struct monomer<U, As...>
 				}
 
 				///\
-				Responds to `occur::render` by rendering the internal `store()`. \
+				Responds to `occur::render` by rendering the `store()`. \
 				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
 				(Deviant behaviour is enforced by `assert`ion on `render`.) \

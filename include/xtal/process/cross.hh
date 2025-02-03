@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "../occur/indent.hh"
+#include "../flow/indent.hh"
 
 
 
@@ -28,7 +28,7 @@ noexcept -> auto
 template <class W, class U, typename ...As>
 struct cross<W, U, As...>
 {
-	using W_indent = typename occur::indent_s<W>::template funnel<>;
+	using W_indent = typename flow::indent_s<W>::template afflux<>;
 	using superkind = bond::compose<W_indent, confer<U>, As..., bond::tag<cross>>;
 
 	template <class S>

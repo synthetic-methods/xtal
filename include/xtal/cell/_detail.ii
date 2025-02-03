@@ -217,13 +217,11 @@ struct defer_field
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
+		using U_ = initializer_u<U>;
 
 	public:
 		using head_type = remember_t<U>;
 		using body_type =   member_t<U>;
-
-	private:
-		using I_ = initializer_t<body_type>;
 
 	public:
 		//\
@@ -252,7 +250,7 @@ struct defer_field
 		:	subtype(body_type{})
 		{
 		}
-		XTAL_NEW_(implicit) subtype(I_ o)
+		XTAL_NEW_(implicit) subtype(_std::initializer_list<U_> o)
 		noexcept
 		requires member_q<U> and initializer_q<body_type>
 		:	body_part(o)
