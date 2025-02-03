@@ -37,7 +37,7 @@ struct define
 		Provides dispatch logic for `Xs...` on the target object. \
 		
 		///\note\
-		The naming is intended to reflect that only `influx` is queued/`cue`d. \
+		The naming is intended to reflect that only `influx` is spooled/`cue`d. \
 
 		///\todo\
 		Make it easier to glean the relevant `schedule` types. \

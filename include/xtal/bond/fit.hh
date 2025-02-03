@@ -762,13 +762,13 @@ public:
 }///////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts>
-struct   fixture
+struct   fit
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
 {
 };
 template <>
-struct   fixture<>
-:	fixture<size_type>
+struct   fit<>
+:	fit<size_type>
 {
 };
 

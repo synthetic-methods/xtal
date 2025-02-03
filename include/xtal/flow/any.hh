@@ -21,7 +21,7 @@ namespace _retail = xtal::cell;
 template <class T>
 struct define
 {
-	using _fix = bond::fixture<>;
+	using _fit = bond::fit<>;
 
 	using superkind = _retail::define<T>;
 
@@ -40,7 +40,7 @@ struct define
 	//	XTAL_DEF_(inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		
 		///\
-		Relays all queued events while invoking the supplied callback for each intermediate segment. \
+		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
 		XTAL_DEF_(return,inline,let) reflux(auto const &f)             noexcept -> signed {return reflux(f, 0);}

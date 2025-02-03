@@ -23,10 +23,10 @@ namespace xtal::processor::_test
 template <int N_window=8, int N_store=-1, int N_spool=-1>
 void polymer_provision_spine__locamotion()
 {
-	using _fix = bond::fixture<>;
-	using T_alpha  = typename _fix::alpha_type;
-	using T_sigma  = typename _fix::sigma_type;
-	using T_delta  = typename _fix::delta_type;
+	using _fit = bond::fit<>;
+	using T_alpha  = typename _fit::alpha_type;
+	using T_sigma  = typename _fit::sigma_type;
+	using T_delta  = typename _fit::delta_type;
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;
@@ -89,9 +89,9 @@ TAG_("polymer", "occur", "spine")
 template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool__combined()
 {
-	using T_alpha = typename bond::fixture<>::alpha_type;
-	using T_sigma = typename bond::fixture<>::sigma_type;
-	using T_delta = typename bond::fixture<>::delta_type;
+	using T_alpha = typename bond::fit<>::alpha_type;
+	using T_sigma = typename bond::fit<>::sigma_type;
+	using T_delta = typename bond::fit<>::delta_type;
 
 	using U_stage = occur::stage_t<>;
 	using U_event = flow::key_s<U_stage>;
@@ -133,9 +133,9 @@ void polymer_provision_spool__combined()
 template <int N_window=8, int N_store=0, int N_spool=0>
 void polymer_provision_spool_composited()
 {
-	using T_alpha = typename bond::fixture<>::alpha_type;
-	using T_sigma = typename bond::fixture<>::sigma_type;
-	using T_delta = typename bond::fixture<>::delta_type;
+	using T_alpha = typename bond::fit<>::alpha_type;
+	using T_sigma = typename bond::fit<>::sigma_type;
+	using T_delta = typename bond::fit<>::delta_type;
 
 	using U_stage = occur::stage_t<>;
 	using U_event = flow::key_s<U_stage>;

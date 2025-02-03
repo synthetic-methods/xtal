@@ -78,6 +78,7 @@ struct monomer<U, As...>
 				subtype()                 noexcept=default;
 				XTAL_NEW_(copy) (subtype, noexcept=default)
 				XTAL_NEW_(move) (subtype, noexcept=default)
+				XTAL_NEW_(auto) (subtype, noexcept)
 
 				XTAL_NEW_(explicit) subtype(same_q<Xs> auto &&...xs)
 				noexcept
@@ -137,7 +138,7 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using superkind = bond::compose<provision::stashed<U_state, U_store>, F_<Xs...>>;
+			using superkind = bond::compose<provision::stowed<U_state, U_store>, F_<Xs...>>;
 
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>

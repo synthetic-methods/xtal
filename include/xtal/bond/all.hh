@@ -1,6 +1,6 @@
 #include "./any.hh"
 #include "./compose.hh"
-#include "./fixture.hh"
+#include "./fit.hh"
 #include "./forge.hh"
 #include "./pack.hh"
 #include "./seek.hh"

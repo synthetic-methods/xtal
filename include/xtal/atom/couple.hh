@@ -36,10 +36,10 @@ struct couple<_s ...>
 template <class ..._s>
 struct couple
 {
-	using A_fix = bond::fixture<_s...>;
-	using A_sigma = typename A_fix::sigma_type;
-	using A_alpha = typename A_fix::alpha_type;
-	using A_aphex = typename A_fix::aphex_type;
+	using A_fit = bond::fit<_s...>;
+	using A_sigma = typename A_fit::sigma_type;
+	using A_alpha = typename A_fit::alpha_type;
+	using A_aphex = typename A_fit::aphex_type;
 	
 	template <class T>
 	using endotype = typename multiplicative_group<_s...>::template homotype<T>;
@@ -61,7 +61,7 @@ struct couple
 		using typename S_::scale_type;
 
 	public:// CONSTRUCT
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 
 		XTAL_NEW_(explicit) homotype(bool u)
 		noexcept
@@ -182,13 +182,13 @@ struct couple
 		product() const
 		noexcept -> auto
 		{
-			return product<N_sgn>(scale_type{1});
+			return product<N_sgn>(scale_type{0});
 		}
 		template <int N_sgn=1>
 		XTAL_DEF_(return,inline,let)
 		product(auto u) const
 		noexcept -> auto
-		requires un_n<bond::pack_size_n<decltype(u)>, size()>
+		requires un_n<fixed_shaped_q<decltype(u), T>>
 		{
 			auto &s = self();
 			
@@ -205,10 +205,10 @@ struct couple
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
-		requires in_n<bond::pack_size_n<decltype(t)>, size()>
+		requires in_n<fixed_shaped_q<decltype(t), T>>
 		{
 			auto &s = self();
-			value_type u{};
+			value_type u{0};
 			
 			bond::seek_forward_f<size>([&, this] (auto I) XTAL_0FN {
 				XTAL_IF0

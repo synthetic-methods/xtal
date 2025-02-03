@@ -13,18 +13,18 @@ namespace xtal::atom
 ///\
 Provides local arena-like storage for `atomic_q` values. \
 
-template <class ...As>	struct   cache;
-template <class ...As>	using    cache_t = typename cache<As...>::type;
-template <class ..._s>	concept  cache_q = bond::tag_p<cache, _s...>;
+template <class ...As>	struct   blob;
+template <class ...As>	using    blob_t = typename blob<As...>::type;
+template <class ..._s>	concept  blob_q = bond::tag_p<blob, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...As>
-struct cache
+struct blob
 {
 	template <class T>
-	using holotype = bond::compose<bond::tag<cache>, bond::define<T>>;
+	using holotype = bond::compose<bond::tag<blob>, bond::define<T>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -54,7 +54,7 @@ struct cache
 			return 0 == memcmp(m_zeros, m_bytes, N_bytes);
 		}
 
-		///\returns `(void)` after overwriting the `byte`s in the cache with `(char) value`. \
+		///\returns `(void)` after overwriting the `byte`s in the blob with `(char) value`. \
 
 		XTAL_DEF_(inline,let)
 		fill(I value=I{})
@@ -64,7 +64,7 @@ struct cache
 		}
 
 		///\returns a tuple of values conforming to `Vs...`, \
-		representing the state of the cache prior to updating with `vs...`. \
+		representing the state of the blob prior to updating with `vs...`. \
 
 		XTAL_FX2_(do) (template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
@@ -82,7 +82,7 @@ struct cache
 
 		///\usage
 		/***```
-		cache_t<_xtd::byte[0x40]> blob;
+		blob_t<_xtd::byte[0x40]> blob;
 
 		auto glob = blob.template form<X, Y>();
 		auto [x, y] = glob;
@@ -124,7 +124,7 @@ struct cache
 
 };
 template <>
-struct cache<> : cache<size_type[bond::fixture<>::alignment{}()]>
+struct blob<> : blob<size_type[bond::fit<>::alignment{}()]>
 {
 };
 

@@ -15,11 +15,11 @@ namespace xtal::atom::_test
 
 TAG_("atom", "group")
 {
-	using _fix = bond::fixture<>;
-	using T_delta = typename _fix::delta_type;
-	using T_sigma = typename _fix::sigma_type;
-	using T_alpha = typename _fix::alpha_type;
-	using T_aphex = typename _fix::aphex_type;
+	using _fit = bond::fit<>;
+	using T_delta = typename _fit::delta_type;
+	using T_sigma = typename _fit::sigma_type;
+	using T_alpha = typename _fit::alpha_type;
+	using T_aphex = typename _fit::aphex_type;
 
 	using A1 = additive_group_t<int[1]>;
 	using A2 = additive_group_t<int[2]>;

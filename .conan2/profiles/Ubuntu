@@ -3,9 +3,9 @@ os=Linux
 arch=x86_64
 compiler=gcc
 compiler.cppstd=20
-compiler.version=11
+compiler.version=12
 compiler.libcxx=libstdc++
 
 [buildenv]
 CXXFLAGS=-Wno-psabi
-CXX=g++-11
+CXX=g++-12

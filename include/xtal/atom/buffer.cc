@@ -22,8 +22,8 @@ TAG_("buffer")
 {
 	TRY_("assignment")
 	{
-		using T_sigma = typename bond::fixture<>::sigma_type;
-		using T_alpha = typename bond::fixture<>::alpha_type;
+		using T_sigma = typename bond::fit<>::sigma_type;
+		using T_alpha = typename bond::fit<>::alpha_type;
 
 		using U_buffer = buffer_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;
@@ -45,8 +45,8 @@ TAG_("buffer")
 	}
 	TRY_("mutation")
 	{
-		using T_sigma = typename bond::fixture<>::sigma_type;
-		using T_alpha = typename bond::fixture<>::alpha_type;
+		using T_sigma = typename bond::fit<>::sigma_type;
+		using T_alpha = typename bond::fit<>::alpha_type;
 
 		using U_buffer = buffer_t<T_alpha[128]>;
 		using U_vector = _std::vector<T_alpha>;

@@ -37,7 +37,7 @@ struct bundle
 		using H_ = typename S_::head_type;
 
 	public:// CONSTRUCT
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 
 		///\
 		Initialize `arguments` using those provided. \

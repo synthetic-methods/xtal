@@ -19,10 +19,10 @@ void chunk_processor_x1()
 	using namespace provision;
 //	using namespace schedule;
 
-	using _fix = bond::fixture<>;
-	using T_alpha  = typename _fix::alpha_type;
-	using T_sigma  = typename _fix::sigma_type;
-	using T_delta  = typename _fix::delta_type;
+	using _fit = bond::fit<>;
+	using T_alpha  = typename _fit::alpha_type;
+	using T_sigma  = typename _fit::sigma_type;
+	using T_delta  = typename _fit::delta_type;
 
 	using U_chunk = chunk_t<spooled<extent_constant_t<0x10>>>;
 	using U_value = flow::packet_t<Ox_onset>;

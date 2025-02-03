@@ -87,10 +87,10 @@ using halve_t = confined_t<halve>;
 /**/
 TAG_("process", "attach")
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	using L01 = process::confined_t<typename Ox_level::template poll<0b01>>;
 	using L10 = process::confined_t<typename Ox_level::template poll<0b10>>;
@@ -116,10 +116,10 @@ TAG_("process", "attach")
 
 TAG_("process", "construct")
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	TRY_("lifting")
 	{

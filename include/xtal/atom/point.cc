@@ -22,11 +22,11 @@ static_assert(not counted_q<point_t<  size_type[2]>>);
 /**/
 TAG_("point")
 {
-	using _fix = bond::fixture<>;
-	using T_delta = typename _fix::delta_type;
-	using T_sigma = typename _fix::sigma_type;
-	using T_alpha = typename _fix::alpha_type;
-	using T_aphex = typename _fix::aphex_type;
+	using _fit = bond::fit<>;
+	using T_delta = typename _fit::delta_type;
+	using T_sigma = typename _fit::sigma_type;
+	using T_alpha = typename _fit::alpha_type;
+	using T_aphex = typename _fit::aphex_type;
 
 	TRY_("point map-from")
 	{

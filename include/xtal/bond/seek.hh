@@ -164,6 +164,7 @@ struct seek_index
 	//	type()                 noexcept=default;
 		XTAL_NEW_(copy) (type, noexcept=default)
 		XTAL_NEW_(move) (type, noexcept=default)
+	//	XTAL_NEW_(auto) (type, noexcept)
 
 		XTAL_NEW_(implicit) type()
 		noexcept
@@ -208,6 +209,7 @@ struct seek_value
 	//	type()                 noexcept=default;
 		XTAL_NEW_(copy) (type, noexcept=default)
 		XTAL_NEW_(move) (type, noexcept=default)
+	//	XTAL_NEW_(auto) (type, noexcept)
 
 		XTAL_NEW_(implicit) type()
 		noexcept

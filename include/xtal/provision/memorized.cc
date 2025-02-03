@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./stashed.hh"// testing...
+#include "./memorized.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::provision::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("stashed")
+TAG_("memorized")
 {
 	TRY_("task")
 	{

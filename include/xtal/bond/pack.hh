@@ -41,7 +41,7 @@ noexcept -> auto
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	struct         pack_size;
-template <fixed_shaped_q    T  >	struct         pack_size<T> : cardinal_constant_t<fixed_shaped<T>::size()> {};
+template <fixed_shaped_q    T  >	struct         pack_size<T> : cardinal_constant_t<fixed_shaped<T>::extent()> {};
 template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>{}();
 template <         class ...Ts>	concept        pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
@@ -177,7 +177,7 @@ noexcept -> auto
 	else {
 		return [&]<auto ...Is> (bond::seek_t<Is...>)
 			XTAL_0FN_(return) (iterative_f<U>(_std::span(point_f(XTAL_REF_(w)[Is], i), m)...))
-			(bond::seek_s<fluid_shaped<U>::size()>{});
+			(bond::seek_s<fluid_shaped<U>::extent()>{});
 	}
 }
 template <class U>

@@ -66,14 +66,14 @@ struct define
 	public:
 		///\returns `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
-		template <fungible_q<subtype> Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) {return static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) {return static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) {return static_cast<Y        &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) {return static_cast<Y const  &>          (*this) ;}
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
-		template <fungible_q<subtype> Y=T>
+		template <class Y=T>
 		XTAL_DEF_(return,inline,let)
 		twin() const
 		noexcept -> decltype(auto)

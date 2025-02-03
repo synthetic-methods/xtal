@@ -230,9 +230,9 @@ template <class T             >	using    array_shaped  	=           _retail::   
 template <class T             >	using    fixed_shaped  	=           _retail::    fixed_shaped  <T >;
 template <class T             >	using    fluid_shaped  	=           _retail::    fluid_shaped  <T >;
 
-template <         class ...Ts>	concept  tuple_shaped_q	= (...and   _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::size()...>;};
-template <         class ...Ts>	concept  array_shaped_q	= (...and   _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::size()...>;};
-template <         class ...Ts>	concept  fixed_shaped_q	= (...and   _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::size()...>;};
+template <         class ...Ts>	concept  tuple_shaped_q	= (...and   _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept  array_shaped_q	= (...and   _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept  fixed_shaped_q	= (...and   _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::extent()...>;};
 template <         class ...Ts>	concept  fluid_shaped_q	= (...and   _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
 
 template <class T             >	using          shaped  	=           _retail::          shaped  <T >;
@@ -270,7 +270,7 @@ destruct_f(auto &&t)
 noexcept
 requires fixed_shaped_q<decltype(t)>
 {
-	auto constexpr M = fixed_shaped<decltype(t)>::size();
+	auto constexpr M = fixed_shaped<decltype(t)>::extent();
 	return get<modulo_m<M, N>>(destruct_f(XTAL_REF_(t)));
 }
 XTAL_DEF_(return,inline,let)
@@ -294,7 +294,7 @@ desolve_f(auto &&t)
 noexcept
 requires fixed_shaped_q<decltype(t)>
 {
-	auto constexpr M = fixed_shaped<decltype(t)>::size();
+	auto constexpr M = fixed_shaped<decltype(t)>::extent();
 	auto constexpr I = modulo_m<M, N>;
 	XTAL_IF0
 	XTAL_0IF (0 == sizeof...(Ns)) {
@@ -418,7 +418,7 @@ noexcept -> size_type
 {
 	using T = XTAL_ALL_(t);
 	XTAL_IF0
-	XTAL_0IF (fixed_shaped_q<T> and un_n<fluid_shaped_q<T>>) {return fixed_shaped<T>::size();}
+	XTAL_0IF (fixed_shaped_q<T> and un_n<fluid_shaped_q<T>>) {return fixed_shaped<T>::extent();}
 	XTAL_0IF_(return) (static_cast<size_type>(T::size()))
 	XTAL_0IF_(return) (static_cast<size_type>(t .size()))
 	XTAL_0IF_(return) (static_cast<size_type>(t))

@@ -30,11 +30,10 @@ struct define
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 
-		template <constant_q U>
-		XTAL_NEW_(explicit) subtype(U       &&u) noexcept {assert(0 == u);};
-		XTAL_NEW_(explicit) subtype(size_type u) noexcept {assert(0 == u);};
+		template <constant_q        U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
+	//	template <same_q<size_type> U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
 
 		///\
 		Attaches `T` as a member of `this`. \
@@ -58,6 +57,7 @@ struct define
 				subtype()                 noexcept=default;
 				XTAL_NEW_(copy) (subtype, noexcept=default)
 				XTAL_NEW_(move) (subtype, noexcept=default)
+				XTAL_NEW_(auto) (subtype, noexcept)
 
 				///\
 				Constructs the `attach`ed message using its default, \
