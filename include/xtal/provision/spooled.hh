@@ -56,9 +56,9 @@ struct spooled<A>
 
 	};
 };
-template <auto N> struct spooled<unit_type[N]> : spooled<constant_t<unsigned(N)>> {};///< Fixed-size, based on `block_t`.
-template <auto N> struct spooled<null_type[N]> : spooled<constant_t<  signed(N)>> {};///< Fluid-size, based on `store_t`.
-template <      > struct spooled<            > : spooled<constant_t<        -1 >> {};///< Fluid-size, based on `store_t` (default).
+template <auto N> struct spooled<null_type[N]> : spooled<  size_constant_t< N>> {};///< Fluid-size, based on `store_t`.
+template <auto N> struct spooled<unit_type[N]> : spooled<extent_constant_t< N>> {};///< Fixed-size, based on `block_t`.
+template <      > struct spooled<            > : spooled<extent_constant_t<-1>> {};///< Fluid-size, based on `store_t` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

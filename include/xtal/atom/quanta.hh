@@ -107,7 +107,7 @@ struct quanta
 #if XTAL_ENV_(LLVM)
 			if constexpr (false) {}
 #else
-			if constexpr (anyplex_q<value_type>) {
+			if constexpr (numeric_q<value_type>) {
 				auto &s = desolve_f(*this);
 				bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
 					XTAL_IF0

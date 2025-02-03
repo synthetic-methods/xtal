@@ -48,7 +48,7 @@ struct mark<>
 	public:
 		using S_::S_;
 
-		using marked_type = superliminal_t<typename S_::marked_type>;
+		using marked_type = succedent_s<typename S_::marked_type>;
 
 	};
 };

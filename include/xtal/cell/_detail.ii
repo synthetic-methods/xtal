@@ -99,7 +99,7 @@ struct define_super
 		}
 		///<\returns a tuple representation of `this`. \
 
-		using pack_size = constant_t<0>;
+		using pack_size = cardinal_constant_t<0>;
 		///< The `std::tuple_size` of `this`. \
 
 
@@ -119,7 +119,7 @@ struct refine_head
 		using S::S; static_assert(any_q<S>);
 
 	};
-	template <class S> requires (1 == S::pack_size::value)
+	template <class S> requires (1 == typename S::pack_size{}())
 	class subtype<S> : public S
 	{
 	public:
@@ -150,13 +150,13 @@ struct refine_tuple
 		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
-			XTAL_0IF (0 == pack_size::value) {
+			XTAL_0IF (0 == pack_size{}()) {
 				return XTAL_REF_(f) ();
 			}
-			XTAL_0IF (1 <= pack_size::value) {
+			XTAL_0IF (1 <= pack_size{}()) {
 				return [this, f=XTAL_REF_(f)] <auto ...I>(bond::seek_t<I...>)
 					XTAL_0FN_(return) (f(S::template head<I>()...))
-				(bond::seek_s<pack_size::value> {});
+				(bond::seek_s<pack_size{}()> {});
 			}
 		})
 		template <auto  f=[] XTAL_0FN_(alias) (bond::pack_f)>
@@ -298,7 +298,7 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires in_n<S_::pack_size::value, 0> and same_q<bool, U>
+		requires in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>
 		{
 			return 2;
 		}
@@ -323,12 +323,12 @@ struct defer_field<U>
 		using S_::self;
 		body_type body_part{};
 
-		template <constant_q A>
-		XTAL_NEW_(explicit) subtype(A &&a, auto &&...oo)
+		template <constant_q K>
+		XTAL_NEW_(explicit) subtype(K, auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{
-			static_assert(A::value == U::value);
+			static_assert(K{}() == U{}());
 		}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \

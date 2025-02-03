@@ -41,12 +41,12 @@ noexcept -> auto
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	struct         pack_size;
-template <fixed_shaped_q    T  >	struct         pack_size<T> : constant_t<fixed_shaped<T>::size()> {};
-template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>::value;
+template <fixed_shaped_q    T  >	struct         pack_size<T> : cardinal_constant_t<fixed_shaped<T>::size()> {};
+template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>{}();
 template <         class ...Ts>	concept        pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
 template <class T, class ...Ts>	requires above_n<0, sizeof...(Ts)> and pack_size_q<T, Ts...>
-struct pack_size<T, Ts...> : constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)> {};
+struct pack_size<T, Ts...> : cardinal_constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)> {};
 
 
 template <class T, auto I> concept     pack_width_q = I == pack_size_n<T>;

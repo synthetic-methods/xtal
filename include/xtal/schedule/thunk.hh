@@ -18,7 +18,7 @@ which produces a signal by successive calls to `method`. \
 template <typename ...As>
 struct thunk
 {
-	using superkind = bond::compose<As..., provision::spooled<constant_t<-1>>>;
+	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

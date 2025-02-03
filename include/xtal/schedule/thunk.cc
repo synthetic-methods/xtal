@@ -29,7 +29,7 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<constant_t<N_spool>>>;
+		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 		using U_render = occur::render_t<>;
 
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
@@ -102,7 +102,7 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<constant_t<N_spool>>>;
+		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 		using U_render = occur::render_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
@@ -158,7 +158,7 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<constant_t<N_spool>>>;
+		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 		using U_render = occur::render_t<>;
 		using V_event = flow::cue_s<>;
 		
@@ -198,7 +198,7 @@ void thunk_processor()
 	int constexpr N_store = (1<<3);
 	int constexpr N_spool = (1<<7);
 	
-	using U_thunk = thunk_t<spooled<constant_t<N_spool>>>;
+	using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 
 	using U_resize = occur::resize_t<>;
 	using U_render = occur::render_t<>;

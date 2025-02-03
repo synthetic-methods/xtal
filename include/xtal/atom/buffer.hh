@@ -109,7 +109,7 @@ struct buffer<U_data[N_data]>
 	
 		///\returns the constant `N_data`. \
 
-		static constant_t<size_type{N_data}> constexpr capacity{};
+		static cardinal_constant_t<N_data> constexpr capacity{};
 
 		///\
 		Does nothing. \

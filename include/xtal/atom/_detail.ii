@@ -57,7 +57,7 @@ struct aligned
 {
 	///\returns the total aligned storage-size for `T`. \
 	
-	static constant_t<(size_type{0} +...+ aligned<Ts>::size())> constexpr size{};
+	static cardinal_constant_t<(size_type{0} +...+ aligned<Ts>::size())> constexpr size{};
 
 };
 template <class T>
@@ -70,7 +70,7 @@ struct aligned<T>
 
 	///\returns the aligned storage-size for `T`. \
 	
-	static constant_t<sizeof(type)> constexpr size{};
+	static cardinal_constant_t<sizeof(type)> constexpr size{};
 
 	///\returns the next available slot for `T`, \
 	rounded up to the nearest `T`-boundary. \

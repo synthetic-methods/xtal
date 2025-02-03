@@ -52,9 +52,9 @@ struct superblock<Us...>
 		using       value_type = common_t<objective_t<Us>...>;
 		using       scale_type = absolve_u<value_type>;
 
-	//	using       bytes_size = constant_t<sizeof(archetype)>;
+	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
+		using       tuple_size = cardinal_constant_t<sizeof...(Us)>;
 	//	static      bytes_size   constexpr size_bytes{};
-		using       tuple_size = constant_t<sizeof...(Us)>;
 		static      tuple_size   constexpr size      {};
 		template <size_type I>
 		using       tuple_element = _std::tuple_element<I, archetype>;
@@ -92,9 +92,9 @@ struct superblock<U(&)[N]>
 		using       value_type =  U;
 		using       scale_type =  absolve_u<value_type>;
 		
-	//	using       bytes_size = constant_t<sizeof(archetype)>;
+	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
+		using       tuple_size = cardinal_constant_t<N>;
 	//	static      bytes_size   constexpr size_bytes{};
-		using       tuple_size = constant_t<N>;
 		static      tuple_size   constexpr size      {};
 		template <size_type I>
 		struct      tuple_element {using type = U;};
@@ -126,9 +126,9 @@ struct superblock<U   [N]>
 		using       value_type =  U;
 		using       scale_type =  absolve_u<value_type>;
 
-		using       bytes_size = constant_t<sizeof(archetype)>;
+		using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
+		using       tuple_size = cardinal_constant_t<N>;
 		static      bytes_size   constexpr size_bytes{};
-		using       tuple_size = constant_t<N>;
 		static      tuple_size   constexpr size      {};
 		template <size_type I>
 		struct      tuple_element {using type = U;};

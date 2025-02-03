@@ -96,11 +96,11 @@ struct navigate<U_node, U_edge>
 		using S_::S_;
 		using node_type = U_node;
 
-		template <                       class ..._s>                           struct super                   : duper<                         _s...> {};
-		template <class _,               class ...Is>                           struct super<_, U_edge, Is...> : duper<U_node,                  Is...> {};
-		template <class _,  liminal_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : duper<  void, subliminal_t<I>, Is...> {};
-		template <class _, terminal_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : super<U_node,                  Is...> {};
-		template <class _,               class ...Is> requires vacant_q<U_edge> struct super<_, U_node, Is...> : super<U_node,                  Is...> {};
+		template <                          class ..._s>                           struct super                   : duper<                        _s...> {};
+		template <class _,                  class ...Is>                           struct super<_, U_edge, Is...> : duper<U_node,                 Is...> {};
+		template <class _, intercedent_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : duper<  void, precedent_s<I>, Is...> {};
+		template <class _,  antecedent_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : super<U_node,                 Is...> {};
+		template <class _,                  class ...Is> requires vacant_q<U_edge> struct super<_, U_node, Is...> : super<U_node,                 Is...> {};
 
 		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
 

@@ -103,9 +103,9 @@ TAG_("process", "attach")
 		op <<= flow::mark_s<Ox_level>(0b10, Ox_level{1});
 		TRUE_(8 == op());
 
-		op <<= flow::argument_n<0> << _std::array<int, 0>{};
-		op <<= flow::argument_n<0> << Ox_level{6};
-		op <<= flow::argument_n<1> << Ox_level{3};
+		op <<= bond::pack_f(ordinal_constant_t<0>{}, _std::array<int, 0>{});
+		op <<= bond::pack_f(ordinal_constant_t<0>{}, Ox_level{6});
+		op <<= bond::pack_f(ordinal_constant_t<1>{}, Ox_level{3});
 		TRUE_(3 == op());
 
 	}

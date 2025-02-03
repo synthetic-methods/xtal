@@ -230,10 +230,10 @@ struct polymer<U, As...>
 							i -= 1; _detail::move_to(y0, point_f(ensemble(i)()), yN);
 						}
 						while (i) {switch (i) {
-							case 1:          {mix_f(constant_t<1>{}); break;}
-							case 2:          {mix_f(constant_t<2>{}); break;}
-							case 3:          {mix_f(constant_t<3>{}); break;}
-							case 4: default: {mix_f(constant_t<4>{}); break;}
+							case 1:          {mix_f(cardinal_constant_t<1>{}); break;}
+							case 2:          {mix_f(cardinal_constant_t<2>{}); break;}
+							case 3:          {mix_f(cardinal_constant_t<3>{}); break;}
+							case 4: default: {mix_f(cardinal_constant_t<4>{}); break;}
 						}}
 					}
 					return 0;

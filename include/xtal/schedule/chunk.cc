@@ -24,7 +24,7 @@ void chunk_processor_x1()
 	using T_sigma  = typename _fix::sigma_type;
 	using T_delta  = typename _fix::delta_type;
 
-	using U_chunk = chunk_t<spooled<constant_t<0x10>>>;
+	using U_chunk = chunk_t<spooled<extent_constant_t<0x10>>>;
 	using U_value = flow::packet_t<Ox_onset>;
 	using U_event = flow::cue_s<U_value>;
 

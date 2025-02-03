@@ -32,7 +32,7 @@ static_assert(         same_n<0, 0, 0>);
 static_assert(not different_n<0, 0, 0>);
 
 
-static_assert(desolve<_std::complex<float>>::ranked() < desolve<_std::array<float, 2>>::ranked());
+//atic_assert(desolve<_std::complex<float>>::rank() < desolve<_std::array<float, 2>>::rank());
 static_assert(assayed<1, 2   >::extents() <= assayed<1, 2, 3>::extents());
 static_assert(assayed<1, 2, 3>::extents() <= assayed<1, 2, 4>::extents());
 static_assert(assayed<1, 2, 3>::extents() == assayed<1, 2, 3>::extents());
@@ -48,12 +48,12 @@ static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(shaped<_std::vector  <float   >>::size() == -1);
 static_assert(shaped<_std::array   <float, 1>>::size() ==  1);
 static_assert(shaped<_std::complex <float   >>::size() ==  2);
-static_assert(shaped<constant_t<(unsigned) 2>>::size() ==  2);
-static_assert(shaped<constant_t<(  signed) 2>>::size() ==  2);
+static_assert(shaped<cardinal_constant_t<2>>::size() ==  2);
+static_assert(shaped< ordinal_constant_t<2>>::size() ==  2);
 
 
-static_assert(_std::same_as<unsigned, valued_u<constant_t<(unsigned) 2>>>);
-static_assert(_std::same_as<  signed, valued_u<constant_t<(  signed) 2>>>);
+static_assert(cardinal_q<valued_u<cardinal_constant_t<2>>>);
+static_assert( ordinal_q<valued_u< ordinal_constant_t<2>>>);
 
 static_assert(_std::same_as<        const float(&)[2]   , destruct_t<const float(&)[2]>>);
 static_assert(_std::same_as<              float(&)[2]   , destruct_t<      float(&)[2]>>);

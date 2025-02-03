@@ -17,9 +17,9 @@ namespace _detail
 template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
 template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
 
-template <class T         >	struct   seek                : constant_t<false> {};
-template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : constant_t< true> {};
-template <class      ...Ts>	concept  seek_q = (...and seek<Ts>::value);
+template <class T         >	struct   seek                : logical_constant_t<0> {};
+template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : logical_constant_t<1> {};
+template <class      ...Ts>	concept  seek_q = (...and seek<Ts>{}());
 
 
 }///////////////////////////////////////////////////////////////////////////////
@@ -80,8 +80,8 @@ noexcept -> decltype(auto)
 }
 template <         class ...Ts>  struct         seek_front;
 template <class T, class ...Ts>  struct         seek_front<T, Ts...>       {using type = T;};
-template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>:: type;
-template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>::value;
+template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>::type;
+template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>{}();
 
 XTAL_DEF_(inline,let)
 seek_back_f(auto &&o, auto &&...oo)
@@ -104,7 +104,7 @@ template <constant_q T, class ...Ts>  struct         seek_constant<T, Ts...> :  
 template <class T,      class ...Ts>  struct         seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
 template <              class ...Ts>  using          seek_constant_t = typename seek_constant<Ts...>::type;
 template <              class ...Ts>  concept        seek_constant_q = complete_q<seek_constant_t<Ts...>>;
-template <              class ...Ts>  auto constexpr seek_constant_n =          seek_constant<Ts...>::value;
+template <              class ...Ts>  auto constexpr seek_constant_n =          seek_constant<Ts...>{}();
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ template <auto F,                   auto ...Ns>                      struct     
 template <auto F, auto N0                     >                      struct         seek_order<F, N0           > : constant_t<N0> {};
 template <auto F, auto N0, auto N1, auto ...Ns> requires (F(N0, N1)) struct         seek_order<F, N0, N1, Ns...> : seek_order<F, N0, Ns...> {};
 template <auto F, auto N0, auto N1, auto ...Ns>                      struct         seek_order<F, N0, N1, Ns...> : seek_order<F, N1, Ns...> {};
-template <auto F,                   auto ...Ns>                      auto constexpr seek_order_n = seek_order<F, Ns...>::value;
+template <auto F,                   auto ...Ns>                      auto constexpr seek_order_n = seek_order<F, Ns...>{}();
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ template <int  I, bool ...Ns>	struct         seek_truth;
 template <int  I            >	struct         seek_truth<I              > : constant_t<   -1       > {};
 template <int  I, bool ...Ns>	struct         seek_truth<I,  true, Ns...> : constant_t<    I       > {};
 template <int  I, bool ...Ns>	struct         seek_truth<I, false, Ns...> : seek_truth<1 + I, Ns...> {};
-template <        bool ...Ns>	auto constexpr seek_truth_n = seek_truth<0, Ns...>::value;
+template <        bool ...Ns>	auto constexpr seek_truth_n = seek_truth<0, Ns...>{}();
 
 static_assert(seek_truth_n<                   > == -1);
 static_assert(seek_truth_n<               true> ==  0);

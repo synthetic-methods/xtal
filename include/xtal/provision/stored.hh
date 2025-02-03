@@ -74,9 +74,9 @@ struct stored<A>
 
 	};
 };
-template <auto N> struct stored<unit_type[N]> : stored<constant_t<unsigned(N)>> {};///< Fixed-size, based on `block_t`.
-template <auto N> struct stored<null_type[N]> : stored<constant_t<  signed(N)>> {};///< Fluid-size, based on `store_t`.
-template <      > struct stored<            > : stored<constant_t<        -1 >> {};///< Fluid-size, based on `store_t` (default).
+template <auto N> struct stored<unit_type[N]> : stored<  size_constant_t< N>> {};///< Fixed-size, based on `block_t`.
+template <auto N> struct stored<null_type[N]> : stored<extent_constant_t< N>> {};///< Fluid-size, based on `store_t`.
+template <      > struct stored<            > : stored<extent_constant_t<-1>> {};///< Fluid-size, based on `store_t` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

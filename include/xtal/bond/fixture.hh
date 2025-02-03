@@ -25,15 +25,15 @@ The translation-tables for the supplied `N_size` \
 The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
 template <size_type N_size>
-struct recognize : recognize<(N_size >> 1U)>
+struct recognize : recognize<N_size/2>
 {
-	using _zed = constant_t<false>;
+	using fix = succedent_s<typename recognize<N_size/2>::fix>;
 
 };
 template <>
-struct recognize<(1U<<0U)>
+struct recognize<0x1>
 {
-	using       _zed =  constant_t<true>;
+	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   0)>;
 //	using alpha_type =                       XTAL_STD_(float, 0) ;
@@ -43,15 +43,15 @@ struct recognize<(1U<<0U)>
 	static sigma_type constexpr N_fraction = 4;
 
 	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : constant_t<(sigma_type) 0x80U> {};
-	template <           class _     > struct   expound<3, _> : constant_t<(sigma_type) 0x51U> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>::value;
+	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80U> {};
+	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x51U> {};
+	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
 
 };
 template <>
-struct recognize<(1U<<1U)>
+struct recognize<0x2>
 {
-	using       _zed =  constant_t<true>;
+	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   1)>;
 //	using alpha_type =                       XTAL_STD_(float, 1) ;
@@ -61,16 +61,16 @@ struct recognize<(1U<<1U)>
 	static sigma_type constexpr N_fraction = 10;
 
 	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : constant_t<(sigma_type) 0x8000U> {};
-	template <           class _     > struct   expound<3, _> : constant_t<(sigma_type) 0x4CE3U> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>::value;
+	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x8000U> {};
+	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4CE3U> {};
+	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
 
 };
 #if 0x20 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<(1U<<2U)>
+struct recognize<0x4>
 {
-	using       _zed =  constant_t<true>;
+	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   2)>;
 	using alpha_type =                       XTAL_STD_(float, 2) ;
@@ -94,17 +94,17 @@ struct recognize<(1U<<2U)>
 	>;
 
 	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : constant_t<(sigma_type) 0x80000000U> {};
-	template <           class _     > struct   expound<3, _> : constant_t<(sigma_type) 0x4546B3DBU> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>::value;
+	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000U> {};
+	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4546B3DBU> {};
+	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
 
 };
 #endif
 #if 0x40 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<(1U<<3U)>
+struct recognize<0x8>
 {
-	using       _zed =  constant_t<true>;
+	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   3)>;
 	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   3)>;
 	using alpha_type =                       XTAL_STD_(float, 3) ;
@@ -128,9 +128,9 @@ struct recognize<(1U<<3U)>
 	>;
 
 	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : constant_t<(sigma_type) 0x80000000'00000000U> {};
-	template <           class _     > struct   expound<3, _> : constant_t<(sigma_type) 0x383D9170'B85FF80BU> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>::value;
+	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000'00000000U> {};
+	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x383D9170'B85FF80BU> {};
+	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
 
 };
 #endif
@@ -138,7 +138,7 @@ struct recognize<(1U<<3U)>
 Allow for 128-bit. \
 
 template <size_type N_size>
-concept recognized_q = recognize<N_size>::_zed::value;
+concept recognized_q = antecedent_q<typename recognize<N_size>::fix>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -146,9 +146,9 @@ concept recognized_q = recognize<N_size>::_zed::value;
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct rationalize : rationalize<(N_size >> 1U)>
+struct rationalize : rationalize<N_size/2>
 {
-	using _zed = constant_t<false>;
+	using fix = succedent_s<typename recognize<N_size/2>::fix>;
 
 };
 template <size_type N_size> requires recognized_q<N_size>
@@ -208,11 +208,11 @@ public:
 	static word constexpr     half {N_depth >> 1U, N_depth >> 1U};
 	static word constexpr     full = negative;
 
-	using default_alignment = constant_t<(size_type) XTAL_SYS_(L1)/N_width>;
+	using default_alignment = cardinal_constant_t<XTAL_SYS_(L1)/N_width>;
 
 #ifdef __cpp_lib_hardware_interference_size
-	using constructive_alignment = constant_t<(size_type) _std::hardware_constructive_interference_size/N_width>;
-//	using  destructive_alignment = constant_t<(size_type) _std:: hardware_destructive_interference_size/N_width>;
+	using constructive_alignment = cardinal_constant_t<_std::hardware_constructive_interference_size/N_width>;
+//	using  destructive_alignment = cardinal_constant_t<_std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
 //	using  destructive_alignment = default_alignment;
@@ -265,9 +265,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct realize : realize<(N_size >> 1U)>
+struct realize : realize<N_size/2>
 {
-	using _zed = constant_t<false>;
+	using fix = succedent_s<typename recognize<N_size/2>::fix>;
 
 	template <int N_shift=0>
 	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
@@ -368,8 +368,8 @@ public:
 
 	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
 
-	static constant_t<IEC&559> constexpr use_IEC{};
-	static constant_t<N_fused> constexpr use_FMA{};
+	static logical_constant_t<IEC&559> constexpr use_IEC{};
+	static logical_constant_t<N_fused> constexpr use_FMA{};
 
 
 ////////////////////////////////////////////////////////////////////////////////

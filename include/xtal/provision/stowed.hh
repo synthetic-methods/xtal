@@ -46,8 +46,10 @@ struct stowed
 		XTAL_FX4_(alias) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
 		XTAL_DEF_(return,inline,get) stow(Vs const &...vs), head().form(vs...))
 		
-		template <         U u> XTAL_DEF_(inline,let) stow( ) noexcept -> void {head().fill(u       );}
-		template <constant_q I> XTAL_DEF_(inline,let) stow(I) noexcept -> void {head().fill(I::value);}
+		template <U u>
+		XTAL_DEF_(inline,let) stow(                 ) noexcept -> void {head().fill(u);}
+		XTAL_DEF_(inline,let) stow(constant_t<>     ) noexcept -> void {head().fill(0);}
+		XTAL_DEF_(inline,let) stow(constant_q auto f) noexcept -> void {head().fill(f());}
 
 	};
 };
