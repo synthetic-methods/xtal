@@ -36,33 +36,11 @@ template <typename ...As>
 struct stage
 {
 	using superkind = bond::compose<bond::tag<stage>
+	,	As...
 	,	_detail::refer_equality<signed>
 	,	_detail::refer_binary_logic<signed>
-	,	As...
 	,	defer<signed>
 	>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind>;
-	
-	public:
-		using S_::S_;
-
-	};
-};
-template <constant_q A, typename ...As>
-struct stage<A, As...>
-{
-	using superkind = bond::compose<bond::tag<stage>
-	,	_detail::refer_equality<signed>
-	,	_detail::refer_binary_logic<signed>
-	,	As...
-	,	defer<signed>
-	>;
-
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
@@ -70,24 +48,7 @@ struct stage<A, As...>
 		using S_ = bond::compose_s<S, superkind>;
 	
 	public:// CONSTRUCT
-	//	using S_::S_;
-
-	~	subtype()                 noexcept=default;
-	//	subtype()                 noexcept=default;
-		XTAL_NEW_(copy) (subtype, noexcept=default)
-		XTAL_NEW_(move) (subtype, noexcept=default)
-		
-		XTAL_NEW_(implicit) subtype()
-		noexcept
-		{
-			S_::head(A{});
-		}
-		XTAL_NEW_(explicit) subtype(auto &&...oo)
-		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		{
-			S_::head(A{});
-		}
+		using S_::S_;
 
 	public:// ACCESS
 		using S_::self;
@@ -122,6 +83,44 @@ struct stage<A, As...>
 			return heading(XTAL_REF_(o));
 		}
 		/***/
+
+
+	};
+};
+template <constant_q A, typename ...As>
+struct stage<A, As...>
+{
+	using superkind = stage<As...>;
+
+	template <class S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+	
+	public:// CONSTRUCT
+	//	using S_::S_;
+
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
+		
+		XTAL_NEW_(implicit) subtype()
+		noexcept
+		{
+			S_::head(A{});
+		}
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
+		:	S_(XTAL_REF_(oo)...)
+		{
+			S_::head(A{});
+		}
+		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
+		noexcept
+		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
+		{}
 
 	};
 };
