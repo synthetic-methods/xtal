@@ -38,7 +38,7 @@ struct point<_s ...>
 template <class ..._s>
 struct point
 {
-	using _fix = bond::fixture<_s...>;
+	using _fit = bond::fit<_s...>;
 
 	template <class T>
 	using endotype = typename quanta<_s...>::template homotype<T>;
@@ -127,8 +127,8 @@ struct point
 		noexcept -> auto
 		requires simplex_variable_q<value_type>
 		{
-			return _fix::sentry_f([&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(return) (_fix::sigma_0|...|_fix::sentinel_f(get<I>(s) - get<I>(t)))
+			return _fit::sentry_f([&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(return) (_fit::sigma_0|...|_fit::sentinel_f(get<I>(s) - get<I>(t)))
 			(bond::seek_s<size>{}));
 		}
 

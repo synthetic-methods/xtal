@@ -35,6 +35,11 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <incomplete_q A, typename ...As>
+struct polymer<A, As...>
+:	polymer<As...>
+{
+};
 template <bond::compose_q A, typename ...As>
 struct polymer<A, As...>
 :	bond::compose<A, polymer<As...>>
@@ -56,7 +61,7 @@ struct polymer<U, As...>
 		using S_::S_;
 
 		template <class ...Xs> requires provision::spooled_q<S_>
-		struct closure
+		struct binding
 		{
 			//\
 			using V_voice = typename monomer_t<U, provision::voiced<S_voice>>::template bind_t<Xs...>;
@@ -69,7 +74,7 @@ struct polymer<U, As...>
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	defer<V_voice>
-			,	typename S_::template closure<Xs...>
+			,	typename S_::template binding<Xs...>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -123,9 +128,14 @@ struct polymer<U, As...>
 				flux(flow::key_s<> i_, auto &&...oo)
 				noexcept -> signed
 				{
-					auto   u_ = ensemble().scan(i_.head());
-					assert(u_ < ensemble().end() and i_.head() == u_->head());
-					return u_->template flux<N_ion>(XTAL_REF_(oo)...);
+					auto u_ = ensemble().scan(i_.head());
+					if (1 <= count_f(ensemble()) and 1 == u_->efflux(occur::stage_f(0))) {
+						assert(u_ < ensemble().end() and i_.head() == u_->head());
+						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
+					}
+					else {
+						return -1;
+					}
 				}
 
 				///\

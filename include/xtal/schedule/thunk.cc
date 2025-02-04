@@ -15,10 +15,10 @@ namespace xtal::schedule::_test
 
 TAG_("thunk", "process")
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	/**/
 	TRY_("continuous")
@@ -168,12 +168,12 @@ TAG_("thunk", "process")
 		Z_value u_gate;
 		
 	//	u_gate <<= (V_event) 0 << (V_value)  7;
-		u_gate <<=              (V_value)  7;
+		u_gate <<=                (V_value)  7;
 		TRUE_(u_gate() ==  7);
 	//	...
 		u_gate >>= U_render(N_store);
 	//	u_gate <<= (V_event) 0 << (V_value) 11;
-		u_gate <<=              (V_value) 11;
+		u_gate <<=                (V_value) 11;
 		TRUE_(u_gate() == 11);
 
 	}
@@ -185,10 +185,10 @@ TAG_("thunk", "process")
 template <typename ...As>
 void thunk_processor()
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	using namespace provision;
 //	using namespace schedule;

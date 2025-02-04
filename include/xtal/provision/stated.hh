@@ -18,7 +18,8 @@ template <typename ..._s> concept  stated_q = bond::tag_p<stated, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides range-based views of the `store`. \
+Provides a range-based view of the `store` via `state_t<iterated_q>`, \
+which conforms to `reiterated_t` a.k.a. `ranges::subrange`. \
 
 template <bond::compose_q A>
 struct stated<A>

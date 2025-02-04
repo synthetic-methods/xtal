@@ -37,7 +37,7 @@ struct define
 		Provides dispatch logic for `Xs...` on the target object. \
 		
 		///\note\
-		The naming is intended to reflect that only `influx` is queued/`cue`d. \
+		The naming is intended to reflect that only `influx` is spooled/`cue`d. \
 
 		///\todo\
 		Make it easier to glean the relevant `schedule` types. \
@@ -51,20 +51,20 @@ struct define
 				using R_ = bond::compose_s<R>;
 				static_assert(complete_q<Xs...>);
 				
-			protected:
-				using W_tuple = bond::pack_t<Xs...>;
-				using U_tuple = flow::packed_t<Xs...>;
-				using U_event = flow::cue_s<Xs...>;
-				using V_event = flow::cue_s<>;
-				using V_delay = typename V_event::head_type;
-
 			public:
 				using R_::R_;
 				using R_::self;
 
-				using event_type = U_event;
+				using   pack_type = bond::pack_t  <Xs...>;
+				using packed_type = flow::packed_t<Xs...>;
+			//	using packet_type = flow::packet_t<Xs...>;
+				using  event_type = flow::cue_s   <Xs...>;
+				using  delay_type = typename event_type::head_type;
 
 			public:// FLOW
+
+				///\
+				Forwards `oo...` to the supertype`. \
 
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
@@ -74,23 +74,37 @@ struct define
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				///\
-				Expands the given unscheduled message, forwarding to `supertype::flux`. \
+				Forwards `oo...` to the supertype`. \
 
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<U_tuple> auto &&o)
+				flux(same_q<identity_t<T>> auto &&, auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
+				///\
+				Expands the given unscheduled message, forwarding to `self()`. \
+
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<packed_type> auto &&o)
 				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply([this] (auto &&...oo)
+						//\
+						XTAL_0FN_(return) (self().template flux<N_ion>(identity_t<T>{}, XTAL_REF_(oo)...))
 						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
 					);
 				}
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<W_tuple> auto &&o)
+				flux(same_q<pack_type> auto &&o)
 				noexcept -> signed
 				{
 					return _std::apply([this] (auto &&...oo)
+						//\
+						XTAL_0FN_(return) (self().template flux<N_ion>(identity_t<T>{}, XTAL_REF_(oo)...))
 						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
 					,	XTAL_REF_(o)
 					);
@@ -101,31 +115,31 @@ struct define
 				
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<V_event> auto &&d, same_q<Xs> auto &&...oo)
+				flux(flow::cue_s<> v, same_q<Xs> auto &&...oo)
 				noexcept -> signed
 				{
-					return confuse<N_ion>(XTAL_REF_(d)) (XTAL_REF_(oo)...);
+					return confuse<N_ion>(v) (XTAL_REF_(oo)...);
 				}
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<V_event> auto &&d, same_q<U_tuple> auto &&o)
+				flux(flow::cue_s<> v, same_q<packed_type> auto &&oo)
 				noexcept -> signed
 				{
-					return XTAL_REF_(o).apply(confuse<N_ion>(XTAL_REF_(d)));
+					return XTAL_REF_(oo).apply(confuse<N_ion>(v));
 				}
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<V_event> auto &&d, same_q<W_tuple> auto &&o)
+				flux(flow::cue_s<> v, same_q<pack_type> auto &&oo)
 				noexcept -> signed
 				{
-					return _std::apply(confuse<N_ion>(XTAL_REF_(d)), XTAL_REF_(o));
+					return _std::apply(confuse<N_ion>(v), XTAL_REF_(oo));
 				}
 
 			private:
 
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				confuse(auto o)
+				confuse(auto &&o)
 				noexcept -> decltype(auto)
 				{
 					return [this, o=XTAL_REF_(o)] (auto &&...oo)

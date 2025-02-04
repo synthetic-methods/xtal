@@ -1,6 +1,6 @@
 #include "./any.cc"
 #include "./compose.cc"
-#include "./fixture.cc"
+#include "./fit.cc"
 #include "./forge.cc"
 #include "./pack.cc"
 #include "./seek.cc"

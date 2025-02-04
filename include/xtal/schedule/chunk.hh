@@ -43,16 +43,13 @@ struct chunk
 			{
 				using R_ = bond::compose_s<R, superkind>;
 
-			protected:
-				using typename R_::U_event;
-				using typename R_::V_delay;
-				using U_spool = typename S_::template spool_t<U_event>;
+			public:
+				using typename R_::event_type;
+				using typename R_::delay_type;
 
 			private:
-				using L_delay = _std::numeric_limits<V_delay>;
-
-				U_spool u_spool{
-					(U_event) L_delay::max()
+				typename S_::template spool_t<event_type> u_spool{
+					(event_type) _std::numeric_limits<delay_type>::max()
 				};
 				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i - 1)->head())
 				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i - 1)->tail())
@@ -63,18 +60,25 @@ struct chunk
 				
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
 				fuse(auto &&o)
 				noexcept -> signed
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
 				///\
-				Influxes the `U_event` immediately if the associated delay is `0`, \
+				Influxes the `event_type` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
 				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
-				fuse(same_q<U_event> auto &&o)
+				fuse(same_q<event_type> auto &&o)
 				noexcept -> signed
 				{
 					if (0 == o.head()) {
@@ -90,11 +94,11 @@ struct chunk
 
 				XTAL_DEF_(inline,let)
 				delay()
-				noexcept -> V_delay
+				noexcept -> delay_type
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
-					return _std::min<V_delay>({R_::delay(), head_(1)});
+					return _std::min<delay_type>({R_::delay(), head_(1)});
 				}
 				///\
 				Invokes `influx` for all events up-to the supplied delay `i`. \
@@ -102,8 +106,8 @@ struct chunk
 				///\returns the delay until the next event. \
 
 				XTAL_DEF_(inline,let)
-				relay(V_delay i)
-				noexcept -> V_delay
+				relay(delay_type i)
+				noexcept -> delay_type
 				{
 					R_::relay(i);
 					for (; 0 < u_spool.size() and head_(1) <= i; u_spool.pop()) {

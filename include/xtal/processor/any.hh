@@ -39,12 +39,12 @@ struct define
 		using S_::self;
 
 		template <class ...Xs>
-		struct closure
+		struct binding
 		{
 			using superkind = bond::compose<void
 			,	U_resize::attach<>
 			,	U_render::attach<>
-			,	typename S_::template closure<Xs...>
+			,	typename S_::template binding<Xs...>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -213,7 +213,7 @@ struct defer<U>
 		Parameter resolution is only performed at the beginning of each block. \
 
 		///\note\
-		Only `method` participates in parameter resolution, since `static_method` is stateless. \
+		Only `method` participates in parameter resolution, since `method_f` is stateless. \
 
 		///\note\
 		If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` \
@@ -231,11 +231,11 @@ struct defer<U>
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&...xs)
+		method_f(auto &&...xs)
 		noexcept -> auto
-		requires requires {U_::template static_method<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
+		requires requires {U_::template method_f<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
 		{
-			auto constexpr f = [] XTAL_0FN_(alias) (U_::template static_method<Is...>);
+			auto constexpr f = [] XTAL_0FN_(alias) (U_::template method_f<Is...>);
 			XTAL_IF0
 			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
 			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}

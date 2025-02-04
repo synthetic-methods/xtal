@@ -361,7 +361,7 @@ public:
 		using T_ = typename S_::self_type;
 
 	public:
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 		using S_::self;
 		using S_::twin;
 		

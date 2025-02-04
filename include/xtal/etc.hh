@@ -174,7 +174,19 @@ XTAL_ENV_(push)
 #define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)       ///< Moves    a value.
 #define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
-#define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)       ///< Defines  a  name.
+#define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)       ///< Defines  a        name.
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_REQ_(...)           XTAL_REQ_##__VA_ARGS__
+
+template <class X, class Y>
+concept XTAL_REQ_(this) = ::std::derived_from<XTAL_TYP_(X), XTAL_TYP_(Y)>\
+                       or ::std::derived_from<XTAL_TYP_(Y), XTAL_TYP_(X)>;
+
+template <class X, class Y>
+concept XTAL_REQ_(that) = XTAL_REQ_(this)<X, Y> and not ::std::same_as<XTAL_TYP_(X), XTAL_TYP_(Y)>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -211,15 +223,15 @@ XTAL_ENV_(push)
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
 
-#define XTAL_NEW_auto(TYP,...)   template <class XTAL_NYM_(that)> \
-                                 requires ::std::derived_from<TYP,  XTAL_TYP_(XTAL_NYM_(that))      > \
-                                 or       ::std::derived_from<      XTAL_TYP_(XTAL_NYM_(that)),  TYP> \
-                                 constexpr   TYP(         XTAL_NYM_(that) &&  XTAL_NYM_(this))        \
-                               __VA_ARGS__ : TYP(  static_cast<TYP        &&>(XTAL_NYM_(this))) {}
-#define XTAL_NEW_move(TYP,...)   constexpr   TYP              (TYP        &&) __VA_ARGS__;\
-                                 constexpr   TYP & operator = (TYP        &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
-#define XTAL_NEW_copy(TYP,...)   constexpr   TYP              (TYP const   &) __VA_ARGS__;\
-                                 constexpr   TYP & operator = (TYP const   &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_auto(TYP,...)   constexpr   TYP(XTAL_REQ_(that)<TYP> auto const &  XTAL_NYM_(this))    \
+                               __VA_ARGS__ : TYP(static_cast    <TYP       const &>(XTAL_NYM_(this))) {}\
+                                 constexpr   TYP(XTAL_REQ_(that)<TYP> auto      &&  XTAL_NYM_(this))    \
+                               __VA_ARGS__ : TYP(static_cast    <TYP            &&>(XTAL_NYM_(this))) {};
+
+#define XTAL_NEW_copy(TYP,...)   constexpr   TYP                (TYP       const &) __VA_ARGS__;\
+                                 constexpr   TYP &  operator =  (TYP       const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_move(TYP,...)   constexpr   TYP                (TYP            &&) __VA_ARGS__;\
+                                 constexpr   TYP &  operator =  (TYP            &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -267,9 +279,10 @@ XTAL_ENV_(push)
 #define XTAL_0FN_void(...)                   XTAL_0FN          {       (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
 #define XTAL_0FN_return(...)                 XTAL_0FN          {return (__VA_ARGS__);}                   ///< Lambda parametric-expression (after `[captures]`).
 #define XTAL_0FN_value(...)               () XTAL_0FN          {return (__VA_ARGS__);}                   ///< Lambda thunk (after `[captures]`).
-#define XTAL_0FN_alias(...)\
-   <class ...XTAL_NYM_(types)>(XTAL_NYM_(types) &&...XTAL_NYM_(values))\
-      XTAL_0FN_return(__VA_ARGS__(XTAL_REF_(XTAL_NYM_(values))...)) ///< Lambda forwarding (after `[captures]`).
+
+#define XTAL_0FN_alias(...) <class ...XTAL_NYM_(types)>\
+                                     (XTAL_NYM_(types) &&...XTAL_NYM_(values))\
+                   XTAL_0FN_(return) (__VA_ARGS__(XTAL_REF_(XTAL_NYM_(values))...))                      ///< Lambda forwarding (after `[captures]`).
 
 #define XTAL_0FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(return) (ARG == _? _: _ SYM (__VA_ARGS__))        ///< Lambda accumulating conditional (after `[captures]`).
 #define XTAL_0FN_and(...)                    XTAL_0FN_else(1, &, __VA_ARGS__)                            ///< Lambda accumulating `&` (after `[captures]`).

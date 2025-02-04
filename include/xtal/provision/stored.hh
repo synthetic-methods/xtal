@@ -18,7 +18,7 @@ template <typename ..._s> concept  stored_q = bond::tag_p<stored, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides random-access range-based storage via the member-type `store_t<element_type>`. \
+Provides random-access range-based storage via `store_t<value_type>`. \
 It may either be defined using the supplied decorator, \
 or if `A` is an `unsigned` or `signed` constant, \
 the store will be defined by `atom::block` or `atom::buffer`, respectively. \
@@ -58,7 +58,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom:: block_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
+		using store_t = atom:: block_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
 
 	};
 	template <class S> requires  ordinal_q<valued_u<A>>
@@ -70,7 +70,7 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::buffer_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
+		using store_t = atom::buffer_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
 
 	};
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
-#include "../atom/all.hh"
 
+#include "../atom/spool.hh"
 
 
 
@@ -18,7 +18,8 @@ template <typename ..._s> concept  spooled_q = bond::tag_p<spooled, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides range-based priority-queuing. \
+Provides range-based priority-queuing via `spool_t<value_type>`, \
+which conforms to the interface defined by `atom::spool_t<>`. \
 
 template <bond::compose_q A>
 struct spooled<A>
@@ -52,7 +53,7 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::queue_t<U[XTAL_SYS_(extent)&(shaped<A>::size())]>;
+		using spool_t = atom::spool_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
 
 	};
 };

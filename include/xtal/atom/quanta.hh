@@ -98,7 +98,7 @@ struct quanta
 		noexcept -> bool
 		requires same_q<As...>
 		{
-			using sigma_type  = typename bond::fixture<scale_type>::sigma_type;
+			using sigma_type  = typename bond::fit<scale_type>::sigma_type;
 			auto constexpr u  =    static_cast<scale_type>(N_value);
 			auto constexpr v  = _xtd::bit_cast<sigma_type>(u);
 			bool const     z  = blanked();

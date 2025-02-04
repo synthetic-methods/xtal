@@ -17,7 +17,7 @@ template <typename   ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
 
 XTAL_DEF_(return,inline,let) sample_f(auto &&w)
 //\
-noexcept -> decltype(auto) {return sample_t<typename bond::fixture<decltype(w)>::delta_type>(XTAL_REF_(w));}
+noexcept -> decltype(auto) {return sample_t<typename bond::fit<decltype(w)>::delta_type>(XTAL_REF_(w));}
 noexcept -> decltype(auto) {return sample_t<>(XTAL_REF_(w));}
 
 
@@ -27,8 +27,8 @@ template <class U>
 struct sample
 {
 private:
-	using _fix = bond::fixture<U>;
-	using U_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<U>;
+	using U_alpha = typename _fit::alpha_type;
 	using W_alpha = atom::couple_t<U_alpha[2]>;
 
 public:
@@ -60,8 +60,8 @@ public:
 		XTAL_NEW_(explicit) subtype(number_q auto &&n, auto &&...oo)
 		noexcept
 		//\
-		:	S_(W_alpha(_fix::alpha_f(n)), XTAL_REF_(oo)...)
-		:	S_(W_alpha{_fix::alpha_f(n), one/_fix::alpha_f(n)}, XTAL_REF_(oo)...)
+		:	S_(W_alpha(_fit::alpha_f(n)), XTAL_REF_(oo)...)
+		:	S_(W_alpha{_fit::alpha_f(n), one/_fit::alpha_f(n)}, XTAL_REF_(oo)...)
 		{}
 		XTAL_NEW_(implicit) subtype()
 		noexcept

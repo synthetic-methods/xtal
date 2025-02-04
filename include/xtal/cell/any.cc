@@ -136,7 +136,9 @@ TAG_("cell", "conversion")
 		using namespace bond;
 
 		using U_foo = confined_t<defer<bool>, defer<int>, defer<float>>;
+		//\
 		auto const foo = U_foo(1, 2, 3);
+		auto const foo = U_foo(true, 2, 3.F);
 		auto const bar = foo.pack();
 		using U_bar = XTAL_ALL_(bar);
 

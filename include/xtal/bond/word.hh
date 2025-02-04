@@ -55,7 +55,7 @@ struct word
 		using S_ = bond::compose_s<S, semikind<>>;
 	
 	public:
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 
 		///\
 		Base constructor, expects `0`. \

@@ -41,7 +41,7 @@ struct indent<Ns...>
 		using U_ =   initializer_u<W_>;
 
 	public:
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 		
 		///\note\
 		Scalar fragments are currently mapped with `ordinate`, \

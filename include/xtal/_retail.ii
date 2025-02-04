@@ -225,9 +225,9 @@ struct   assess
 	static extent_constant_t<(0 +...+ above_n<0, Ns>) > constexpr    rank{};
 
 };
-template <auto  ...Ns>                            struct   assayed        : assess<Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr size{};};
-template <auto  ...Ns> requires infinite_n<Ns...> struct   assayed<Ns...> : assess<Ns...> {static extent_constant_t<-1          > constexpr size{};};
-template <           >                            struct   assayed<     > : assess<     > {static extent_constant_t< 0          > constexpr size{};};
+template <auto  ...Ns>                            struct   assayed        : assess<Ns...> {static extent_constant_t<(1 *...* Ns)> constexpr extent{};};
+template <auto  ...Ns> requires infinite_n<Ns...> struct   assayed<Ns...> : assess<Ns...> {static extent_constant_t<-1          > constexpr extent{};};
+template <           >                            struct   assayed<     > : assess<     > {static extent_constant_t< 0          > constexpr extent{};};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -328,12 +328,12 @@ template <class U                  >	struct instruct<U  &>                      
 template <class U                  >	struct instruct<U &&>                      {using array_type = U  ;};
 
 template <class T                  >	struct destruct : destruct<T &&>           {};
-template <class T                  >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                            ; using value_type =         T  &;};
-template <class T                  >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                              ; using value_type =         T   ;};
-template <fluid_q T                >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                            ; using value_type = fluid_u<T> &;};
-template <fluid_q T                >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                              ; using value_type = fluid_u<T>  ;};
-template <fixed_q T                >	struct destruct<T  &> : fixed_shaped<T>    {using array_type = fixed_u<T>(&)[fixed<T>::size()]; using value_type = fixed_u<T> &;};
-template <fixed_q T                >	struct destruct<T &&> : fixed_shaped<T>    {using array_type = fixed_u<T>   [fixed<T>::size()]; using value_type = fixed_u<T>  ;};
+template <class T                  >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                              ; using value_type =         T  &;};
+template <class T                  >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                                ; using value_type =         T   ;};
+template <fluid_q T                >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                              ; using value_type = fluid_u<T> &;};
+template <fluid_q T                >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                                ; using value_type = fluid_u<T>  ;};
+template <fixed_q T                >	struct destruct<T  &> : fixed_shaped<T>    {using array_type = fixed_u<T>(&)[fixed<T>::extent()]; using value_type = fixed_u<T> &;};
+template <fixed_q T                >	struct destruct<T &&> : fixed_shaped<T>    {using array_type = fixed_u<T>   [fixed<T>::extent()]; using value_type = fixed_u<T>  ;};
 /*/
 template <class U                  >	struct destruct<_std::complex<U> const  &> : assigned<1> {using array_type = const U(&)[2]; using value_type = const U &;};
 template <class U                  >	struct destruct<_std::complex<U> const &&> : assigned<1> {using array_type = const U   [2]; using value_type = const U  ;};
@@ -341,7 +341,7 @@ template <class U                  >	struct destruct<_std::complex<U>        &> 
 template <class U                  >	struct destruct<_std::complex<U>       &&> : assigned<1> {using array_type =       U   [2]; using value_type =       U  ;};
 /***/
 template <class T,        int ...Ns>	struct  desolve           : assayed<Ns...> {using value_type = T; using array_type = instruct_t<T, Ns...>;};
-template <fixed_q T,      int ...Ns>	struct  desolve<T, Ns...> : desolve<destruct_u<T> , Ns..., destruct<T>::size()> {};
+template <fixed_q T,      int ...Ns>	struct  desolve<T, Ns...> : desolve<destruct_u<T> , Ns..., destruct<T>::extent()> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

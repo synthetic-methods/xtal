@@ -40,17 +40,6 @@ struct thunk
 			{
 				using R_ = bond::compose_s<R, superkind>;
 			
-			protected:
-				using typename R_::V_delay;
-				using typename R_::V_event;
-				using typename R_::U_event;
-
-				using U_cued    =              typename U_event::cued_type;
-				using U_tailed  =                      valued_u<U_cued   >;
-				using V_shuttle =                 atom::grade_t<U_cued   >;
-				using U_shuttle =                   flow::cue_s<V_shuttle>;
-				using U_spool   = typename S_::template spool_t<U_shuttle>;
-
 			public:// CONSTRUCT
 			//	using R_::R_;
 				
@@ -60,12 +49,19 @@ struct thunk
 				XTAL_NEW_(move) (subtype, noexcept=default)
 				XTAL_NEW_(auto) (subtype, noexcept)
 
+				using typename R_::delay_type;
+				using typename R_::event_type;
+
 			private:// ACCESS
-				using L_delay = _std::numeric_limits<V_delay>;
+				using U_cued    = typename R_::event_type::cued_type;
+				using U_tailed  =                      valued_u<U_cued   >;
+				using V_shuttle =                 atom::grade_t<U_cued   >;
+				using U_shuttle =                   flow::cue_s<V_shuttle>;
+				using U_spool   = typename S_::template spool_t<U_shuttle>;
 
 				U_spool u_spool{
-					(U_shuttle) L_delay::min(),
-					(U_shuttle) L_delay::max()
+					(U_shuttle) _std::numeric_limits<delay_type>::min(),
+					(U_shuttle) _std::numeric_limits<delay_type>::max()
 				};
 				U_shuttle u_shuttle{};
 
@@ -156,7 +152,7 @@ struct thunk
 					return 0;
 				}
 				XTAL_DEF_(return,inline,let)
-				shuttle_(V_delay v, auto &&...oo)
+				shuttle_(delay_type v, auto &&...oo)
 				noexcept -> signed
 				{
 					return shuttle_(U_shuttle(v, V_shuttle{XTAL_REF_(oo)...}));
@@ -174,13 +170,13 @@ struct thunk
 					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
 				}
 				XTAL_DEF_(return,inline,let)
-				shuffle_(same_q<U_tailed> auto &&x1, V_delay t1)
+				shuffle_(same_q<U_tailed> auto &&x1, delay_type t1)
 				noexcept -> signed
 				{
 					return shuttle_(t1, XTAL_REF_(x1));
 				}
 				XTAL_DEF_(return,let)
-				shuffle_(same_q<U_tailed> auto &&x1, V_delay t1, V_delay t0)
+				shuffle_(same_q<U_tailed> auto &&x1, delay_type t1, delay_type t0)
 				noexcept -> signed
 				{
 					if (t0 < t1) {
@@ -207,14 +203,14 @@ struct thunk
 				compact_()//TODO: Filter somehow?
 				noexcept -> void
 				{
-					V_delay const v_delay = head_(); head_() = 0;
+					delay_type const v_delay = head_(); head_() = 0;
 					(void) u_spool.abandon(u_spool.empty());
 					for (auto &u : u_spool.span(-1)) {
 						u -= v_delay;
 					}
 				}
 				XTAL_DEF_(let)
-				compact_(V_delay const &v)
+				compact_(delay_type const &v)
 				noexcept -> void
 				{
 					if (v < u_shuttle.head()) {

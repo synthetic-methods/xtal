@@ -230,9 +230,9 @@ The `confine` decorator constructs the supplied type `T` by composing `define` a
 |Process lifting            |[`process/any.hh`](include/xtal/process/any.hh?ts=3) via `\.(?:de\|re)fer`|
 |Matrix modulation          |[`process/cross.hh`](include/xtal/process/cross.hh?ts=3)|
 |Processor lifting          |[`processor/any.hh`](include/xtal/processor/any.hh?ts=3) via `\.(?:de\|re)fer`|
-|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::closure`|
-|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::closure`|
-|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::closure` compatible `&&`arguments|
+|Processor scheduling       |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::binding`|
+|Processor polymorphism     |[`processor/polymer.hh`](include/xtal/processor/polymer.hh?ts=3) via `::binding`|
+|Buffer sharing             |[`processor/monomer.hh`](include/xtal/processor/monomer.hh?ts=3) via `::binding` compatible `&&`arguments|
 |Buffer allocation          |[`atom/store.hh`](include/xtal/atom/store.hh?ts=3) impl. static `std::vector`|
 
 ## Contribution

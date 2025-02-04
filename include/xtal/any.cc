@@ -36,20 +36,20 @@ static_assert(not different_n<0, 0, 0>);
 static_assert(assayed<1, 2   >::extents() <= assayed<1, 2, 3>::extents());
 static_assert(assayed<1, 2, 3>::extents() <= assayed<1, 2, 4>::extents());
 static_assert(assayed<1, 2, 3>::extents() == assayed<1, 2, 3>::extents());
-static_assert(assayed<       1            >::size() ==   1);
-static_assert(assayed<       1, 2, 3, 4, 5>::size() == 120);
-static_assert(assayed<    0, 1, 2, 3, 4, 5>::size() ==   0);
-static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::size() ==  -1);
+static_assert(assayed<       1            >::extent() ==   1);
+static_assert(assayed<       1, 2, 3, 4, 5>::extent() == 120);
+static_assert(assayed<    0, 1, 2, 3, 4, 5>::extent() ==   0);
+static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::extent() ==  -1);
 static_assert(assayed<       1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
-static_assert(shaped<_std::vector  <float   >>::size() == -1);
-static_assert(shaped<_std::array   <float, 1>>::size() ==  1);
-static_assert(shaped<_std::complex <float   >>::size() ==  2);
-static_assert(shaped<cardinal_constant_t<2>>::size() ==  2);
-static_assert(shaped< ordinal_constant_t<2>>::size() ==  2);
+static_assert(shaped<_std::vector  <float   >>::extent() == -1);
+static_assert(shaped<_std::array   <float, 1>>::extent() ==  1);
+static_assert(shaped<_std::complex <float   >>::extent() ==  2);
+static_assert(shaped<cardinal_constant_t<2>>::extent() ==  2);
+static_assert(shaped< ordinal_constant_t<2>>::extent() ==  2);
 
 
 static_assert(cardinal_q<valued_u<cardinal_constant_t<2>>>);
@@ -132,8 +132,8 @@ XTAL_DEF_(return,inline,let)
 check_f(auto const &u, auto const &v)
 noexcept -> bool
 {
-	using _fix = bond::fixture<decltype(u), decltype(v)>;
-	return _fix::template trim_f<N_index>(u) == _fix::template trim_f<N_index>(v);
+	using _fit = bond::fit<decltype(u), decltype(v)>;
+	return _fit::template trim_f<N_index>(u) == _fit::template trim_f<N_index>(v);
 }
 template <int N_index, int N_limit>
 XTAL_DEF_(return,inline,let)
@@ -162,7 +162,7 @@ XTAL_DEF_(return,inline,let)
 check_f(auto const &u, auto const &v)
 noexcept -> int
 {
-	return check_f<-1, 1 - (int) bond::fixture<>::fraction.depth>(u, v);
+	return check_f<-1, 1 - (int) bond::fit<>::fraction.depth>(u, v);
 }
 
 
@@ -171,13 +171,13 @@ noexcept -> int
 
 using namespace bond;
 
-using Ox_scale = occur::reinferred_t<class A_scale, typename bond::fixture<>::alpha_type>;
-using Ox_level = occur::reinferred_t<class A_level, typename bond::fixture<>::alpha_type>;
+using Ox_scale = occur::reinferred_t<class A_scale, typename bond::fit<>::alpha_type>;
+using Ox_level = occur::reinferred_t<class A_level, typename bond::fit<>::alpha_type>;
 /*/
-using Ox_onset = occur::reinferred_t<class onset_a, typename bond::fixture<>::alpha_type>;
+using Ox_onset = occur::reinferred_t<class onset_a, typename bond::fit<>::alpha_type>;
 /*/
 struct onset
-:	occur::infers<typename bond::fixture<>::sigma_type
+:	occur::infers<typename bond::fit<>::sigma_type
 	,	occur::any<class onset_a>
 	,	bond::word<(1 << 7)>
 	>
@@ -216,7 +216,7 @@ struct static_onset_mix
 
 		template <auto onset=0>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&...xs)
+		method_f(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
@@ -269,7 +269,7 @@ using Px_dynamic_term = typename dynamic_term::type;
 
 struct dynamic_count
 {
-	using U_count  = typename bond::fixture<>::delta_type;
+	using U_count  = typename bond::fit<>::delta_type;
 	using U_restep = occur::restep_t<U_count>;
 
 	template <class T>

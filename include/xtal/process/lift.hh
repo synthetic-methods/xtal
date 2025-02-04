@@ -22,27 +22,23 @@ template <class U>
 struct lifter
 {
 	template <class S>
-	class subtype : public bond::compose_s<S>
+	class subtype : public S
 	{
 		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S>;
-
-		using S_var = S_       &;
-		using S_val = S_ const &;
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		S_method(auto &&...xs)
+		S_method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return) (S_::template static_method<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(return) (S::template method_f<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		U_method(auto &&...xs)
+		U_method_f(auto &&...xs)
 		noexcept -> decltype(auto)
 		{
 			if constexpr (bond::compose_q<U>) {
-				return confined_t<U>::template static_method<Is...>(XTAL_REF_(xs)...);
+				return confined_t<U>::template method_f<Is...>(XTAL_REF_(xs)...);
 			}
 			else {
 				return evoke_t<U>{}(XTAL_REF_(xs)...);
@@ -50,41 +46,41 @@ struct lifter
 		}
 
 	public:
-		using S_::S_;
+		using S::S;
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&...xs)
+		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
+		requires requires {S_method_f<Is...>(XTAL_REF_(xs)...);}
 		{
-			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
+			return U_method_f<Is...>(S_method_f<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		method(auto &&...xs)
+		method  (auto &&...xs)
 		noexcept -> decltype(auto)
-		requires requires {S_method<Is...>(XTAL_REF_(xs)...);}
+		requires requires {S_method_f<Is...>(XTAL_REF_(xs)...);}
 		{
-			return U_method<Is...>(S_method<Is...>(XTAL_REF_(xs)...));
+			return U_method_f<Is...>(S_method_f<Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs) const
+		method  (auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(unless)          (S_method<Is...>(XTAL_REF_(xs)...))
-		and  requires (S_val s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
+		requires XTAL_TRY_(unless)           (S_method_f<Is...>(XTAL_REF_(xs)...))
+		and  requires (S const &s) {s .template method  <Is...>(XTAL_REF_(xs)...);}
 		{
-			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
+			return U_method_f<Is...>(S::template method  <Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs)
+		method  (auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(unless)          (S_method<Is...>(XTAL_REF_(xs)...))
-		and  requires (S_var s_) {s_ .template method<Is...>(XTAL_REF_(xs)...);}
+		requires XTAL_TRY_(unless)           (S_method_f<Is...>(XTAL_REF_(xs)...))
+		and  requires (S       &s) {s .template method  <Is...>(XTAL_REF_(xs)...);}
 		{
-			return U_method<Is...>(S_::template method<Is...>(XTAL_REF_(xs)...));
+			return U_method_f<Is...>(S::template method  <Is...>(XTAL_REF_(xs)...));
 		}
 
 	};
@@ -95,7 +91,7 @@ struct lifter
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides pure `head`-less mapping of `(?:static_)method` (in contrast to `link`), \
+Provides pure `head`-less mapping of `method` (in contrast to `link`), \
 in addition to allowing constructor mapping via `evoke_t`. \
 
 template <                   typename ...As> struct lift;

@@ -25,6 +25,11 @@ noexcept -> auto
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <incomplete_q A, typename ...As>
+struct monomer<A, As...>
+:	monomer<As...>
+{
+};
 template <bond::compose_q A, typename ...As>
 struct monomer<A, As...>
 :	bond::compose<A, monomer<As...>>
@@ -49,7 +54,7 @@ struct monomer<U, As...>
 		using F_ = bond::compose<bond::tag<monomer>, As...
 //		,	U_resize::attach<>
 //		,	U_render::attach<>
-		,	typename S_::template closure<Xs...>
+		,	typename S_::template binding<Xs...>
 		>;
 	
 	public:
@@ -57,7 +62,7 @@ struct monomer<U, As...>
 		using S_::self;
 
 		template <class ...Xs>
-		struct closure
+		struct binding
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
 		//	using Y_return = iterated_u<Y_result>;
@@ -128,7 +133,7 @@ struct monomer<U, As...>
 			};
 		};
 		template <class ...Xs> requires provision::stated_q<S_> and provision::stored_q<S_>
-		struct closure<Xs...>
+		struct binding<Xs...>
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
 			using Y_return = iterated_u<Y_result>;
@@ -138,7 +143,7 @@ struct monomer<U, As...>
 		
 			static constexpr int N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 			
-			using superkind = bond::compose<provision::stashed<U_state, U_store>, F_<Xs...>>;
+			using superkind = bond::compose<provision::stowed<U_state, U_store>, F_<Xs...>>;
 
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>

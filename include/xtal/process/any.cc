@@ -50,7 +50,7 @@ struct square_root
 
 		template <auto ...>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&o)
+		method_f(auto &&o)
 		noexcept -> auto
 		{
 			return _std::sqrt(o);
@@ -72,7 +72,7 @@ struct halve
 
 		template <auto ...>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&o)
+		method_f(auto &&o)
 		noexcept -> auto
 		{
 			return o*0.5L;
@@ -87,10 +87,10 @@ using halve_t = confined_t<halve>;
 /**/
 TAG_("process", "attach")
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	using L01 = process::confined_t<typename Ox_level::template poll<0b01>>;
 	using L10 = process::confined_t<typename Ox_level::template poll<0b10>>;
@@ -116,10 +116,10 @@ TAG_("process", "attach")
 
 TAG_("process", "construct")
 {
-	using _fix = bond::fixture<>;
-	using T_sigma = typename _fix::sigma_type;
-	using T_delta = typename _fix::delta_type;
-	using T_alpha = typename _fix::alpha_type;
+	using _fit = bond::fit<>;
+	using T_sigma = typename _fit::sigma_type;
+	using T_delta = typename _fit::delta_type;
+	using T_alpha = typename _fit::alpha_type;
 
 	TRY_("lifting")
 	{
@@ -134,8 +134,8 @@ TAG_("process", "construct")
 		using halve_square_root_t = reinferred_t<halve_t, square_root_t>;
 		using square_root_halve_t = reinferred_t<square_root_t, halve_t>;
 		
-		TRUE_(2. == halve_square_root_t::static_method(16.));
-		TRUE_(3. == square_root_halve_t::static_method(18.));
+		TRUE_(2. == halve_square_root_t::method_f(16.));
+		TRUE_(3. == square_root_halve_t::method_f(18.));
 
 		TRUE_(2. == halve_square_root_t{}.method(16.));
 		TRUE_(3. == square_root_halve_t{}.method(18.));

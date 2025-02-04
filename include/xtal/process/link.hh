@@ -18,7 +18,7 @@ template <typename ..._s> concept  link_q = bond::tag_p<link, _s...>;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides `(?:static_)method` composition by linking `head`s. \
+Provides `method` composition by linking `head`s. \
 
 template <typename     ...As> struct link    : bond::compose<link<As>...                          > {};
 template <   incomplete_q A > struct link<A> : bond::compose<                                     > {};

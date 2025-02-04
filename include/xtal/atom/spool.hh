@@ -12,25 +12,25 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   queue;
-template <class ..._s> using    queue_t = typename queue<_s...>::type;
-template <class ...Ts> concept  queue_q = bond::tag_p<queue_t, Ts...>;
+template <class ..._s> struct   spool;
+template <class ..._s> using    spool_t = typename spool<_s...>::type;
+template <class ...Ts> concept  spool_q = bond::tag_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 A priority-queue based on `buffer_t<A>`. \
-Currently used for both event queues (\see `occur/schedule.ii`) \
+Currently used for both event spools (\see `occur/schedule.ii`) \
 and to implement polymorphism (\see `processor/polymer.ii`). \
 
 template <class A>
-struct queue<A>
+struct spool<A>
 {
 	template <class T>
 	using endotype = arranged_t<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<queue_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<spool_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -209,9 +209,9 @@ struct queue<A>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(std::is_copy_assignable_v<queue_t<float                *  >>);
-static_assert(std::is_copy_assignable_v<queue_t<float[XTAL_SYS_(extent)]>>);
-static_assert(std::is_copy_assignable_v<queue_t<float[             0x8U]>>);
+static_assert(std::is_copy_assignable_v<spool_t<float                *  >>);
+static_assert(std::is_copy_assignable_v<spool_t<float[XTAL_SYS_(extent)]>>);
+static_assert(std::is_copy_assignable_v<spool_t<float[             0x8U]>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

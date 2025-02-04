@@ -26,7 +26,7 @@ struct irritator_mix
 
 		template <auto onset=0>
 		XTAL_DEF_(return,inline,set)
-		static_method(auto &&...xs)
+		method_f(auto &&...xs)
 		noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
@@ -42,7 +42,7 @@ using Px_irritator_mix = typename irritator_mix::type;
 template <class U_mix>
 void processor_provision__messaging()
 {
-	using T_alpha = typename bond::fixture<>::alpha_type;
+	using T_alpha = typename bond::fit<>::alpha_type;
 
 	auto const _01 = _xtd::ranges::views::iota(0, 3)|_xtd::ranges::views::transform(evoke_t<T_alpha>{});
 	auto const _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -85,7 +85,7 @@ TAG_("processor", "construct")
 {
 	TRY_("lifting")
 	{
-		using T_alpha = typename bond::fixture<>::alpha_type;
+		using T_alpha = typename bond::fit<>::alpha_type;
 
 		unsigned constexpr N_size = 5;
 		using U_block = atom::block_t<T_alpha[N_size]>;

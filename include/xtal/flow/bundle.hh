@@ -14,7 +14,7 @@ namespace xtal::flow
 Ties `Xs...` to unify flow branching, etc. \
 
 ///\note\
-Deified as a `process`'s `closure`, binding the provided arguments. \
+Deified as a `process`'s `binding`, binding the provided arguments. \
 
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
@@ -37,7 +37,7 @@ struct bundle
 		using H_ = typename S_::head_type;
 
 	public:// CONSTRUCT
-		using S_::S_;
+		using S_::S_;//NOTE: Inherited and respecialized!
 
 		///\
 		Initialize `arguments` using those provided. \

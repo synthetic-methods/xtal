@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/cache.hh"
+
 
 
 
@@ -11,45 +11,59 @@ namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides local arena-like storage via `stow()` using `atom::cache`. \
+Associates an abstract `state` with an underlying `store`. \
 
-template <typename ...As> struct   stowed;
-template <typename ...As> using    stowed_t = confined_t<stowed<As...>>;
+template <typename ..._s> struct   stowed;
+template <typename ..._s> using    stowed_t = confined_t<stowed<_s...>>;
 template <typename ..._s> concept  stowed_q = bond::tag_p<stowed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...As>
-struct stowed
+template <iterable_q U_state, iterable_q U_store>
+struct stowed<U_state, U_store>
 {
 	using superkind = bond::compose<bond::tag<stowed>
-	,	defer<atom::cache_t<As...>>
+	,	cell::refer<U_state>
+	,	cell::defer<U_state>
+	,	cell::defer<U_store>
 	>;
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		using U  = _std::underlying_type_t<_std::byte>;
 
-	public:// CONSTRUCT
-		using S_::S_;
+	public:
+	//	using S_::S_;
+		using S_::self;
 		
-	public:// ACCESS
-		using S_::head;
-
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) stow(), head())
+	~	subtype()                 noexcept=default;
+	//	subtype()                 noexcept=default;
+		XTAL_NEW_(copy) (subtype, noexcept=default)
+		XTAL_NEW_(move) (subtype, noexcept=default)
+		XTAL_NEW_(auto) (subtype, noexcept)
+	
+		XTAL_NEW_(implicit) subtype()
+		noexcept
+		:	subtype(U_store())
+		{}
+		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		noexcept
+		:	subtype(U_store(), XTAL_REF_(oo)...)
+		{}
 		
-		XTAL_FX4_(alias) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(return,inline,get) stow(), head().template form<Vs...>())
-		
-		XTAL_FX4_(alias) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
-		XTAL_DEF_(return,inline,get) stow(Vs const &...vs), head().form(vs...))
-		
-		template <U u>
-		XTAL_DEF_(inline,let) stow(                 ) noexcept -> void {head().fill(u);}
-		XTAL_DEF_(inline,let) stow(constant_t<>     ) noexcept -> void {head().fill(0);}
-		XTAL_DEF_(inline,let) stow(constant_q auto f) noexcept -> void {head().fill(f());}
+		XTAL_NEW_(explicit) subtype(U_store o, auto &&...oo)
+		noexcept
+		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
+		{}
+		XTAL_DEF_(inline,let)
+		store(U_store o, auto &&...oo)
+		noexcept -> void
+		{
+			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
+		}
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) store(), S_::template head<1>())
+		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };
