@@ -78,6 +78,7 @@ struct monomer<U, As...>
 				subtype()                 noexcept=default;
 				XTAL_NEW_(copy) (subtype, noexcept=default)
 				XTAL_NEW_(move) (subtype, noexcept=default)
+				XTAL_NEW_(auto) (subtype, noexcept)
 
 				XTAL_NEW_(explicit) subtype(same_q<Xs> auto &&...xs)
 				noexcept

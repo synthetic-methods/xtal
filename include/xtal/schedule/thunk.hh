@@ -58,6 +58,7 @@ struct thunk
 				subtype()                 noexcept=default;
 				XTAL_NEW_(copy) (subtype, noexcept=default)
 				XTAL_NEW_(move) (subtype, noexcept=default)
+				XTAL_NEW_(auto) (subtype, noexcept)
 
 			private:// ACCESS
 				using L_delay = _std::numeric_limits<V_delay>;

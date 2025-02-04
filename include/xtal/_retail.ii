@@ -377,7 +377,7 @@ template <class T             >	struct    initializer;
 template <class T             >	using     initializer_u	= typename initializer<T>::value_type;
 template <class T             >	using     initializer_t	= typename initializer<T>::type;
 template <class T             >	using     initializer_s	= _std::initializer_list<_std::remove_reference_t<T>>;
-template <class T             >	concept   initializer_q	= different_q<T, initializer_u<T>>;
+template <class T             >	concept   initializer_q	= different_q<T, initializer_u<T>> and indexed_q<T>;// or coindexed_q<T>);
 template <class T             >	struct    initializer    {using value_type =    valued_u<T>; using type = initializer_s<value_type>;};
 template <fixed_reindexed_q T >	struct    initializer<T> {using value_type = reindexed_u<T>; using type = initializer_s<value_type>;};
 

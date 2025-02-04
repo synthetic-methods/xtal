@@ -56,6 +56,7 @@ struct queue<A>
 		homotype()                 noexcept=default;
 		XTAL_NEW_(copy) (homotype, noexcept=default)
 		XTAL_NEW_(move) (homotype, noexcept=default)
+		XTAL_NEW_(auto) (homotype, noexcept)
 		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \

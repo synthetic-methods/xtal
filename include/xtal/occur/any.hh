@@ -58,6 +58,7 @@ struct define
 				subtype()                 noexcept=default;
 				XTAL_NEW_(copy) (subtype, noexcept=default)
 				XTAL_NEW_(move) (subtype, noexcept=default)
+				XTAL_NEW_(auto) (subtype, noexcept)
 
 				///\
 				Constructs the `attach`ed message using its default, \

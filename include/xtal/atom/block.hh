@@ -142,7 +142,8 @@ struct superblock<U   [N]>
 	//	homotype()                 noexcept=default;
 		XTAL_NEW_(copy) (homotype, noexcept=default)
 		XTAL_NEW_(move) (homotype, noexcept=default)
-		
+		XTAL_NEW_(auto) (homotype, noexcept)
+
 		XTAL_NEW_(implicit) homotype()
 		noexcept
 		:	homotype(size_type{})

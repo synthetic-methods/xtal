@@ -59,6 +59,7 @@ struct multiplicative_group
 		homotype()                 noexcept=default;
 		XTAL_NEW_(copy) (homotype, noexcept=default)
 		XTAL_NEW_(move) (homotype, noexcept=default)
+		XTAL_NEW_(auto) (homotype, noexcept)
 
 		XTAL_NEW_(explicit) homotype(auto &&...oo)
 		noexcept

@@ -176,7 +176,6 @@ XTAL_ENV_(push)
 #define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
 #define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)       ///< Defines  a  name.
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
 #define XTAL_DEF_(...)           XTAL_N_(XTAL_DEF,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
@@ -208,13 +207,19 @@ XTAL_ENV_(push)
 #define XTAL_DEF_met             constexpr auto friend                          ///< Start `auto` function.
 #define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function.
 
-#define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))     ///< Start `(?:ex|im)plicit` constructor.
+#define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
-#define XTAL_NEW_copy(TYP,...)   constexpr TYP              (TYP const &) __VA_ARGS__;\
-                                 constexpr TYP & operator = (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
-#define XTAL_NEW_move(TYP,...)   constexpr TYP              (TYP      &&) __VA_ARGS__;\
-                                 constexpr TYP & operator = (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
+
+#define XTAL_NEW_auto(TYP,...)   template <class XTAL_NYM_(that)> \
+                                 requires ::std::derived_from<TYP,  XTAL_TYP_(XTAL_NYM_(that))      > \
+                                 or       ::std::derived_from<      XTAL_TYP_(XTAL_NYM_(that)),  TYP> \
+                                 constexpr   TYP(         XTAL_NYM_(that) &&  XTAL_NYM_(this))        \
+                               __VA_ARGS__ : TYP(  static_cast<TYP        &&>(XTAL_NYM_(this))) {}
+#define XTAL_NEW_move(TYP,...)   constexpr   TYP              (TYP        &&) __VA_ARGS__;\
+                                 constexpr   TYP & operator = (TYP        &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_copy(TYP,...)   constexpr   TYP              (TYP const   &) __VA_ARGS__;\
+                                 constexpr   TYP & operator = (TYP const   &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

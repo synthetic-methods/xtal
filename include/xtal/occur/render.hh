@@ -266,11 +266,7 @@ struct render<V>
 	//	subtype()                 noexcept=default;
 		XTAL_NEW_(copy) (subtype, noexcept=default)
 		XTAL_NEW_(move) (subtype, noexcept=default)
-
-		XTAL_NEW_(explicit) subtype(fungible_q<subtype> auto &&o)
-		noexcept
-		:	subtype(static_cast<subtype &&>(XTAL_REF_(o)))
-		{}
+		XTAL_NEW_(auto) (subtype, noexcept)
 
 		XTAL_NEW_(implicit) subtype()
 		noexcept
