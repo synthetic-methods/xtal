@@ -90,7 +90,7 @@ TAG_("processor", "construct")
 		unsigned constexpr N_size = 5;
 		using U_block = atom::block_t<T_alpha[N_size]>;
 		
-		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0));
+		auto f = processor::let_f([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0));
 		auto x = U_block { 0,  1,  2,  3,  4};
 		auto y = U_block{00, 10, 20, 30, 40};
 		auto z = U_block{00, 11, 22, 33, 44};

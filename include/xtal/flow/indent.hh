@@ -47,9 +47,12 @@ struct indent<Ns...>
 		Scalar fragments are currently mapped with `ordinate`, \
 		until a better solution presents itself. \
 
-		XTAL_NEW_(explicit) subtype(                       U_  u) noexcept requires un_n<iterable_q<U_>> : S_{W_::ordinate(XTAL_MOV_(u))} {}
-		XTAL_NEW_(explicit) subtype(                       U_  u) noexcept requires in_n<iterable_q<U_>> : S_{             XTAL_MOV_(u) } {}
-		XTAL_NEW_(implicit) subtype(_std::initializer_list<U_> w) noexcept requires in_n<iterable_q<U_>> : S_{                       w  } {}
+		XTAL_NEW_(explicit)
+		subtype(                       U_  u) noexcept requires un_n<iterable_q<U_>> : S_{W_::ordinate(XTAL_MOV_(u))} {}
+		XTAL_NEW_(explicit)
+		subtype(                       U_  u) noexcept requires in_n<iterable_q<U_>> : S_{             XTAL_MOV_(u) } {}
+		XTAL_NEW_(implicit)
+		subtype(_std::initializer_list<U_> w) noexcept requires in_n<iterable_q<U_>> : S_{                       w  } {}
 
 		template <extent_type N_mask=-1>
 		struct afflux

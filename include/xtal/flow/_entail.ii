@@ -4,31 +4,30 @@
 ///\
 Defines an `inferred` tuple from `...As`. \
 
-template <class   ...Ts>	struct   packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
-template <class   ...Ts>	using    packed_t = typename packed<Ts...>::type;
-template <class   ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
-template <class   ...Ts>
+template <class ...Ts>	struct   packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
+template <class ...Ts>	using    packed_t = typename packed<Ts...>::type;
+template <class ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
+template <class ...Ts>
 XTAL_DEF_(return,inline,let)
-packed_f(Ts &&...as)
+packed_f(Ts &&...ts)
 noexcept -> auto
 {
-	return packed_t<Ts...>(XTAL_REF_(as)...);
+	return packed_t<Ts...>(XTAL_REF_(ts)...);
 }
 
 ///\
 Defines an `inferred` tuple from `...Ts`, \
 or `bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`. \
 
-template <class   ...Ts>	struct   packet     {using type =   packed_t<Ts...>;};
-template <any_q      T >	struct   packet<T>  {using type =            T     ;};
-template <             >	struct   packet< >  {using type = confined_t<     >;};
-template <class   ...Ts>	using    packet_t = typename packet<Ts...>::type;
-template <class   ...Ts>
+template <class ...Ts>	struct   packet    : packed<Ts...> {};
+template <any_q    T >	struct   packet<T> : identity_t<T> {};
+template <class ...Ts>	using    packet_t = typename packet<Ts...>::type;
+template <class ...Ts>
 XTAL_DEF_(return,inline,let)
-packet_f(Ts &&...as)
+packet_f(Ts &&...ts)
 noexcept -> auto
 {
-	return packet_t<Ts...>(XTAL_REF_(as)...);
+	return packet_t<Ts...>(XTAL_REF_(ts)...);
 }
 
 ///\

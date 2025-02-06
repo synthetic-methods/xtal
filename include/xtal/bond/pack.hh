@@ -33,7 +33,7 @@ pack_f(auto &&f)
 noexcept -> auto
 {
 	return [f=XTAL_REF_(f)]<auto ...K> (seek_t<K...>)
-		XTAL_0FN_(return) (pack_f(f(constant_t<K>{})...))
+		XTAL_0FN_(to) (pack_f(f(constant_t<K>{})...))
 			(bond::seek_s<N>{});
 };
 
@@ -121,7 +121,7 @@ concept  pack_item_p = I <  pack_size_n<T> and requires(T t) {{get<I>(t)} -> mak
 
 template <class T>
 concept  pack_list_q = 0 == pack_size_n<T> or [] <auto ...Is>
-	(seek_t<Is...>) XTAL_0FN_(return) (...and pack_item_p<T, Is>)
+	(seek_t<Is...>) XTAL_0FN_(to) (...and pack_item_p<T, Is>)
 	(seek_s<pack_size_n<T>> {})
 ;
 
@@ -159,7 +159,7 @@ repack_f(pack_size_q auto &&...ts)
 noexcept -> decltype(auto)
 {
 	return [&]<auto ...Is> (bond::seek_t<Is...>)
-		XTAL_0FN_(return) (F<interpack_item_t<Is, decltype(ts)...>...>{pack_item_f<Is>(ts...)...})
+		XTAL_0FN_(to) (F<interpack_item_t<Is, decltype(ts)...>...>{pack_item_f<Is>(ts...)...})
 		(bond::seek_s<pack_size_n<decltype(ts)...>>{});
 };
 
@@ -176,7 +176,7 @@ noexcept -> auto
 	}
 	else {
 		return [&]<auto ...Is> (bond::seek_t<Is...>)
-			XTAL_0FN_(return) (iterative_f<U>(_std::span(point_f(XTAL_REF_(w)[Is], i), m)...))
+			XTAL_0FN_(to) (iterative_f<U>(_std::span(point_f(XTAL_REF_(w)[Is], i), m)...))
 			(bond::seek_s<fluid_shaped<U>::extent()>{});
 	}
 }
@@ -192,7 +192,7 @@ XTAL_DEF_(return,inline,let)
 transpack_f(integral_q auto const &...ns)
 noexcept -> decltype(auto)
 {
-	return [=] (auto &&w) XTAL_0FN_(return) (transpack_f<U>(ns..., XTAL_REF_(w)));
+	return [=] (auto &&w) XTAL_0FN_(to) (transpack_f<U>(ns..., XTAL_REF_(w)));
 }
 template <class U>
 using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_u<U> **)));
@@ -217,7 +217,7 @@ pack_dot_f(X const &x, Y const &y)
 	auto constexpr I = pack_size_n<Y>;
 	static_assert(M == I);
 	return [&]<auto ...I>(bond::seek_t<I...>)
-		XTAL_0FN_(return) ((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
+		XTAL_0FN_(to) ((get<0>(x)*get<0>(y)) +...+ (get<1 + I>(x)*get<1 + I>(y)))
 	(bond::seek_s<I - 1> {});
 }
 template <pack_q X, pack_q Y>

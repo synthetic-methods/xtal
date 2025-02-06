@@ -15,8 +15,9 @@ template <class ..._s> struct   resize;
 template <class ..._s> using    resize_t =  confined_t<resize< _s...>>;
 template <class ..._s> concept  resize_q = bond::tag_p<resize, _s...> ;
 
-XTAL_DEF_(return,inline,let)   resize_f(auto &&w)
-noexcept -> decltype(auto) {return resize_t<>(XTAL_REF_(w));}
+XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
+resize_f  (auto &&...oo),
+resize_t<>(XTAL_REF_(oo)...))
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -41,8 +42,8 @@ struct resize<U>
 		using S_::head;
 
 		using size_type = U;
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) size(auto &&...oo), head(XTAL_REF_(oo)...))
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) empty(), 0 == size())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) size(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) empty(), 0 == size())
 
 	};
 };

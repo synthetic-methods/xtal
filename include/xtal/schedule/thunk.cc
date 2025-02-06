@@ -30,7 +30,7 @@ TAG_("thunk", "process")
 		int constexpr N_spool = (1<<7);
 
 		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
-		using U_render = occur::render_t<>;
+		using U_cursor = occur::cursor_t<>;
 
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
@@ -74,7 +74,7 @@ TAG_("thunk", "process")
 		TRUE_((T_alpha) u_gate() == 3.0);//  4
 		TRUE_((T_alpha) u_gate() == 3.5);//  5
 //		
-		u_gate >>= U_render(N_store);
+		u_gate >>= U_cursor(N_store);
 		u_gate <<= (V_event) 4 << (U0_event) 9.0;
 //		
 		TRUE_((T_alpha) u_gate() == 4.0);//  6 >>
@@ -103,12 +103,12 @@ TAG_("thunk", "process")
 		int constexpr N_spool = (1<<7);
 
 		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
-		using U_render = occur::render_t<>;
+		using U_cursor = occur::cursor_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
 		using Z_value = process::confined_t<typename U_thunk::template inqueue<V_value>>;
 
-		using U_event = flow::cue_s<occur::packet_t<V_value>>;
+		using U_event = flow::cue_s<V_value>;
 		using V_event = flow::cue_s<>;
 		
 		Z_value u_gate;
@@ -134,7 +134,7 @@ TAG_("thunk", "process")
 		TRUE_(u_gate() == 77);
 	//	TRUE_(u_gate() == 99);
 	//	...
-		u_gate >>= U_render(N_store);
+		u_gate >>= U_cursor(N_store);
 		u_gate <<= (V_event) 4 << (V_value) 11;
 
 		TRUE_(u_gate() == 77);
@@ -159,7 +159,7 @@ TAG_("thunk", "process")
 		int constexpr N_spool = (1<<7);
 
 		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
-		using U_render = occur::render_t<>;
+		using U_cursor = occur::cursor_t<>;
 		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
@@ -171,7 +171,7 @@ TAG_("thunk", "process")
 		u_gate <<=                (V_value)  7;
 		TRUE_(u_gate() ==  7);
 	//	...
-		u_gate >>= U_render(N_store);
+		u_gate >>= U_cursor(N_store);
 	//	u_gate <<= (V_event) 0 << (V_value) 11;
 		u_gate <<=                (V_value) 11;
 		TRUE_(u_gate() == 11);
@@ -201,7 +201,7 @@ void thunk_processor()
 	using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 
 	using U_resize = occur::resize_t<>;
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 	using U_store = _std::array<T_alpha, N_store>;
 	U_store u_store{};
 
@@ -210,7 +210,7 @@ void thunk_processor()
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	
-	using U_event = flow::cue_s<occur::packet_t<V_value>>;
+	using U_event = flow::cue_s<V_value>;
 	using V_event = flow::cue_s<>;
 
 	fx_gate <<= U_resize(N_store);
@@ -232,7 +232,7 @@ void thunk_processor()
 	fx_gate <<= U_event(7, 77);
 	/***/
 
-	fx_gate >>= U_render(N_store)*0; _xtd::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_cursor(N_store)*0; _xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store {  7,  1,  1, -1,  1, -1, -1, 77});
 
 	/**/
@@ -243,7 +243,7 @@ void thunk_processor()
 	fx_gate <<= U_event(4, 11);
 	/***/
 
-	fx_gate >>= U_render(N_store)*1; _xtd::ranges::copy(fx_gate, u_store.begin());
+	fx_gate >>= U_cursor(N_store)*1; _xtd::ranges::copy(fx_gate, u_store.begin());
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }

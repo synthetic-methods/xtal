@@ -43,33 +43,33 @@ struct thunk
 			public:// CONSTRUCT
 			//	using R_::R_;
 				
-			~	subtype()                 noexcept=default;
-				subtype()                 noexcept=default;
-				XTAL_NEW_(copy) (subtype, noexcept=default)
-				XTAL_NEW_(move) (subtype, noexcept=default)
-				XTAL_NEW_(auto) (subtype, noexcept)
+				XTAL_NEW_(delete) (subtype, noexcept = default)
+				XTAL_NEW_(create) (subtype, noexcept = default)
+				XTAL_NEW_(move)   (subtype, noexcept = default)
+				XTAL_NEW_(copy)   (subtype, noexcept = default)
+				XTAL_NEW_(cast)   (subtype, noexcept)
 
 				using typename R_::delay_type;
 				using typename R_::event_type;
 
 			private:// ACCESS
-				using U_cued    = typename R_::event_type::cued_type;
-				using U_tailed  =                      valued_u<U_cued   >;
-				using V_shuttle =                 atom::grade_t<U_cued   >;
-				using U_shuttle =                   flow::cue_s<V_shuttle>;
-				using U_spool   = typename S_::template spool_t<U_shuttle>;
+				using U_cued    = typename R_::event_type::cue_signature;
+				using U_tailed  =      valued_u<U_cued   >;
+				using V_shuttle = atom::grade_t<U_cued   >;
+				using U_shuttle = flow::  cue_s<V_shuttle>;
 
-				U_spool u_spool{
-					(U_shuttle) _std::numeric_limits<delay_type>::min(),
-					(U_shuttle) _std::numeric_limits<delay_type>::max()
+				typename S_::template spool_t<U_shuttle>
+				u_spool{bond::seek_t<>{}
+				, 	_std::numeric_limits<delay_type>::min()
+				,	_std::numeric_limits<delay_type>::max()
 				};
 				U_shuttle u_shuttle{};
 
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(), u_shuttle.head())
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(), u_shuttle.tail())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(), u_shuttle.head())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) then_(), u_shuttle.tail())
 
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i)->head())
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i)->tail())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i)->head())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
@@ -80,7 +80,7 @@ struct thunk
 				noexcept -> decltype(auto)
 				{
 					return u_spool.advance(head_()++ == head_(1))->
-						tail().apply([this] XTAL_0FN_(alias) (method));
+						tail().apply([this] XTAL_1FN_(function) (method));
 				}
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)

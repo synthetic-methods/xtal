@@ -61,7 +61,8 @@ struct word
 		Base constructor, expects `0`. \
 
 		template <integral_q A>
-		XTAL_NEW_(explicit) subtype(A &&a)
+		XTAL_NEW_(explicit)
+		subtype(A &&a)
 		noexcept
 		{
 			assert(0 == a);

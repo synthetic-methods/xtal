@@ -42,7 +42,8 @@ struct bundle
 		///\
 		Initialize `arguments` using those provided. \
 
-		XTAL_NEW_(explicit) subtype(Xs &&...xs)
+		XTAL_NEW_(explicit)
+		subtype(Xs &&...xs)
 		noexcept
 		:	S_(H_{XTAL_REF_(xs)...})
 		{}
@@ -57,8 +58,8 @@ struct bundle
 
 		using node_type = typename S_::head_type;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get)      node(), head())
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) arguments(), head())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)      node(), head())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) arguments(), head())
 		
 		XTAL_FX2_(do) (template <size_type ...Is>
 		XTAL_DEF_(return,inline,let)
@@ -115,7 +116,7 @@ struct bundle
 		noexcept -> signed
 		{
 			return arguments().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
-				XTAL_0FN_(return) (XTAL_REF_(xs).template flux<N_ion>(oo...) &...& -1)
+				XTAL_0FN_(to) (XTAL_REF_(xs).template flux<N_ion>(oo...) &...& -1)
 			);
 		}
 		///\
@@ -124,7 +125,7 @@ struct bundle
 
 		template <signed N_ion, int N_dex>
 		XTAL_DEF_(return,inline,let)
-		flux_arguments_(auto &&o, auto &&...oo)
+		flux_argument_(auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
 			XTAL_IF0
@@ -134,12 +135,16 @@ struct bundle
 			XTAL_0IF (0 <= N_dex) {
 				return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
 				<auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(return) (
+					XTAL_0FN_(to) (
 						argument<N_dex>().template flux<N_ion>(o, oo...) &...& argument<(N_dex <= I) + I>().template flux<N_ion>(oo...)
 					)
 				(bond::seek_s<sizeof...(Xs) - 1> {});
 			}
 		}
+
+		XTAL_DEF_(return,inline,let) deflux_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments< 0>(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline,let) efflux_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments<-1>(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline,let) influx_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments<+1>(XTAL_REF_(oo)...);}
 
 	};
 };

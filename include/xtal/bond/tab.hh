@@ -51,7 +51,11 @@ template <taboo_q T,    identity_q I, class ...Is> requires      same_q<taboo_u<
 template <taboo_q T,    identity_q I, class ...Is> requires un_n<same_q<taboo_u<T>, identity_u<I>>> struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>,              I,  Is...>   {};
 
 
-template <           class ..._s> concept       tabbed_q =          tabbed<based_t<_s>...>{}();
+//\
+TODO: Need to be able to check against the top-most `complete_q<peritype>`.
+
+template <class   T, class ...Is> concept    tabbed_q =         tabbed<based_t<T >, based_t<Is>...>{}() ;
+template <class   I, class ...Ts> concept    tabbed_p = (...and tabbed<based_t<Ts>, based_t<I >   >{}());
 
 template <class   T, class ...Is> concept       tab_q = (...and tabbed_q<T , identity_t<Is>> );
 template <class   I, class ...Ts> concept       tab_p = (...and tabbed_q<Ts, identity_t<I >> );

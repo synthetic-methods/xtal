@@ -2,7 +2,7 @@
 #include "../flow/any.hh"// `_retail`
 
 #include "../flow/cue.hh"
-
+#include "../flow/direction.hh"
 
 
 
@@ -57,14 +57,13 @@ struct define
 
 				using   pack_type = bond::pack_t  <Xs...>;
 				using packed_type = flow::packed_t<Xs...>;
-			//	using packet_type = flow::packet_t<Xs...>;
 				using  event_type = flow::cue_s   <Xs...>;
 				using  delay_type = typename event_type::head_type;
 
 			public:// FLOW
 
 				///\
-				Forwards `oo...` to the supertype`. \
+				Forwards `oo...` downstream. \
 
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
@@ -74,40 +73,37 @@ struct define
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				///\
-				Forwards `oo...` to the supertype`. \
+				Forwards the descheduled message to `self()`. \
 
-				template <signed N_ion>
+				///\todo\
+				Include the `flux` index within the event. \
+
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<identity_t<T>> auto &&, auto &&...oo)
+				flux(flow::direction_q auto const x_, auto &&...oo)
 				noexcept -> signed
 				{
-					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+					switch (x_.head()) {
+					case  1: return self().template flux< 1>(XTAL_REF_(oo)...);
+					case -1: return self().template flux<-1>(XTAL_REF_(oo)...);
+					default: _std::terminate(); return -1;
+					}
 				}
 				///\
-				Expands the given unscheduled message, forwarding to `self()`. \
+				Unpacks and forwards the dequeued message to `self()`. \
 
-				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<packed_type> auto &&o)
+				flux(flow::direction_q auto const x_, same_q<packed_type> auto &&o)
 				noexcept -> signed
 				{
-					return XTAL_REF_(o).apply([this] (auto &&...oo)
-						//\
-						XTAL_0FN_(return) (self().template flux<N_ion>(identity_t<T>{}, XTAL_REF_(oo)...))
-						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
+					return XTAL_REF_(o).apply([&, this] (auto &&...oo)
+						XTAL_0FN_(to) (flux(x_, XTAL_REF_(oo)...))
 					);
 				}
-				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<pack_type> auto &&o)
+				flux(flow::direction_q auto const xo)
 				noexcept -> signed
 				{
-					return _std::apply([this] (auto &&...oo)
-						//\
-						XTAL_0FN_(return) (self().template flux<N_ion>(identity_t<T>{}, XTAL_REF_(oo)...))
-						XTAL_0FN_(return) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
-					,	XTAL_REF_(o)
-					);
+					return flux(flow::direction_f(xo.head()), xo.tail());
 				}
 
 				///\
@@ -143,7 +139,7 @@ struct define
 				noexcept -> decltype(auto)
 				{
 					return [this, o=XTAL_REF_(o)] (auto &&...oo)
-						XTAL_0FN_(return) (self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
+						XTAL_0FN_(to) (self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
 				}
 
 			};

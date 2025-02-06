@@ -37,22 +37,25 @@ struct stowed<U_state, U_store>
 	//	using S_::S_;
 		using S_::self;
 		
-	~	subtype()                 noexcept=default;
-	//	subtype()                 noexcept=default;
-		XTAL_NEW_(copy) (subtype, noexcept=default)
-		XTAL_NEW_(move) (subtype, noexcept=default)
-		XTAL_NEW_(auto) (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept = default)
+//		XTAL_NEW_(create) (subtype, noexcept = default)
+		XTAL_NEW_(move)   (subtype, noexcept = default)
+		XTAL_NEW_(copy)   (subtype, noexcept = default)
+		XTAL_NEW_(cast)   (subtype, noexcept)
 	
-		XTAL_NEW_(implicit) subtype()
+		XTAL_NEW_(implicit)
+		subtype()
 		noexcept
 		:	subtype(U_store())
 		{}
-		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		XTAL_NEW_(explicit)
+		subtype(auto &&...oo)
 		noexcept
 		:	subtype(U_store(), XTAL_REF_(oo)...)
 		{}
 		
-		XTAL_NEW_(explicit) subtype(U_store o, auto &&...oo)
+		XTAL_NEW_(explicit)
+		subtype(U_store o, auto &&...oo)
 		noexcept
 		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
 		{}
@@ -62,8 +65,8 @@ struct stowed<U_state, U_store>
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) store(), S_::template head<1>())
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) store(), S_::template head<1>())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
 
 	};
 };

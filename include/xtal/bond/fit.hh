@@ -189,7 +189,8 @@ public:
 		XTAL_DEF_(return,inline,set) mark_f(sigma_type const m=0)                       noexcept -> sigma_type {return        ~-flag_f(m)        ;};
 		XTAL_DEF_(return,inline,set) mask_f(sigma_type const m=0, sigma_type const n=0) noexcept -> sigma_type {return          mark_f(m) << n   ;};
 
-		XTAL_NEW_(explicit) word(sigma_type m_depth, sigma_type n_shift=0)
+		XTAL_NEW_(explicit)
+		word(sigma_type m_depth, sigma_type n_shift=0)
 		noexcept
 		:	width (m_depth >> 3U)
 		,	depth (m_depth)
@@ -473,7 +474,7 @@ public:
 		XTAL_0IF (N_pow ==  0) {return 1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
-		XTAL_0IF_(abort)
+		XTAL_0IF_(terminate)
 	}
 
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);

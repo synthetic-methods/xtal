@@ -53,17 +53,18 @@ struct define
 			//	using R_::R_;
 				using R_::self;
 
-			~	subtype()                 noexcept=default;
-				subtype()                 noexcept=default;
-				XTAL_NEW_(copy) (subtype, noexcept=default)
-				XTAL_NEW_(move) (subtype, noexcept=default)
-				XTAL_NEW_(auto) (subtype, noexcept)
+				XTAL_NEW_(delete) (subtype, noexcept = default)
+				XTAL_NEW_(create) (subtype, noexcept = default)
+				XTAL_NEW_(move)   (subtype, noexcept = default)
+				XTAL_NEW_(copy)   (subtype, noexcept = default)
+				XTAL_NEW_(cast)   (subtype, noexcept)
 
 				///\
 				Constructs the `attach`ed message using its default, \
 				before `forward`ing the arguments to `this`. \
 
-				XTAL_NEW_(explicit) subtype(auto &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(auto &&...xs)
 				noexcept
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}

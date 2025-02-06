@@ -71,12 +71,21 @@ template <         class ...Ts>	concept     molecular_q	= (...and   _retail::   
 template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts    >);
 
 
-template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;//< `Ns...` are different values.
-template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;//< `Ns...` are identical values.
-template <         class ...Ts>	concept     different_q	=           _retail::    different_q<   Ts...>;//< `Ts...` are different modulo qualifiers.
-template <         class ...Ts>	concept          same_q	=           _retail::         same_q<   Ts...>;//< `Ts...` are identical modulo qualifiers.
-template <         class ...Ts>	concept          make_q	=           _retail::         make_q<   Ts...>;//< `Ts...` are constructible from `Ts[0]`.
-template <class T, class ...Ts>	concept          make_p	=           _retail::         make_p<T, Ts...>;//< `T` is constructible from `Ts...`.
+template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
+template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
+template <         class ...Ts>	concept     different_q	=           _retail::    different_q<   Ts...>;///< `Ts...` are different modulo qualifiers.
+template <         class ...Ts>	concept          same_q	=           _retail::         same_q<   Ts...>;///< `Ts...` are identical modulo qualifiers.
+template <         class ...Ts>	concept          make_q	=           _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
+template <class T, class ...Ts>	concept          make_p	=           _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
+
+
+template <class T, class Y    >	using         qualify_t	=           _retail::      qualify_t<T, Y    >;///< Applies the qualifiers on `Y` to `T`.
+template <class Y, class T    >	using         qualify_s	=           _retail::      qualify_s<Y, T    >;///< Applies the qualifiers on `Y` to `T`.
+template <class T, class Y    >	using      disqualify_t	=           _retail::   disqualify_t<T, Y    >;///< Applies the qualifiers on `Y` to `T`.
+template <class Y, class T    >	using      disqualify_s	=           _retail::   disqualify_s<Y, T    >;///< Applies the qualifiers on `Y` to `T`.
+
+template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<qualify_t<T, decltype(o)>>(o);}
+template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<qualify_t<T, decltype(o)>>(o);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,9 +100,25 @@ template <class F, class ...Xs>	concept  inapplicable_p	=           _retail:: in
 template <         class ...Fs>	concept    applicable_q	= (...and   _retail::   applicable_q<   Fs   >);
 template <         class ...Fs>	concept  inapplicable_q	= (...and   _retail:: inapplicable_q<   Fs   >);
 
-template <class F, class ...Xs>	concept  automorphism_p	= (...and   _retail:: automorphism_p<F, Xs   >);//< `Xs` are unchanged by `F ...`.
-template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: automorphism_q<X, Fs   >);//< `X `  is unchanged by `Fs...`.
+template <class F, class ...Xs>	concept  automorphism_p	= (...and   _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
+template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
 
+template<          class... Us>	using         variant_t =           _retail::      variant_t<Us...> ;
+template<          class... Ts>	concept       variant_q = (...and   _retail::      variant_q<Ts   >);
+template<          class... Fs>
+struct visitor : Fs...
+{
+	using Fs::operator()...;
+
+	template <class ...Ts>
+	XTAL_DEF_(inline,let)
+	operator() (variant_q auto &&v)
+	noexcept -> decltype(auto)
+	{
+		return _std::visit(XTAL_REF_(v), *this);
+	}
+
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,18 +151,18 @@ noexcept -> decltype(auto)
 	XTAL_0IF (constant_q<X>) {return        X{}();}
 }
 
-auto constexpr  zero = constant_t<[] XTAL_0FN_(value) (0   )>{};
-auto constexpr  half = constant_t<[] XTAL_0FN_(value) (0.5F)>{};
-auto constexpr   one = constant_t<[] XTAL_0FN_(value) (1   )>{};
-auto constexpr   two = constant_t<[] XTAL_0FN_(value) (2   )>{};
-auto constexpr three = constant_t<[] XTAL_0FN_(value) (3   )>{};
+auto constexpr  zero = constant_t<[] XTAL_1FN_(value) (0   )>{};
+auto constexpr  half = constant_t<[] XTAL_1FN_(value) (0.5F)>{};
+auto constexpr   one = constant_t<[] XTAL_1FN_(value) (1   )>{};
+auto constexpr   two = constant_t<[] XTAL_1FN_(value) (2   )>{};
+auto constexpr three = constant_t<[] XTAL_1FN_(value) (3   )>{};
 
 static_assert(constant_q<decltype( half)>);
 static_assert(constant_q<decltype(+half)>);
 static_assert(constant_q<decltype(-half)>);
 
-template <auto  N> auto constexpr half_n = constant_t<[] XTAL_0FN_(value) (1.F/(one << N))>{};
-template <auto  N> auto constexpr  two_n = constant_t<[] XTAL_0FN_(value) (1.F*(one << N))>{};
+template <auto  N> auto constexpr half_n = constant_t<[] XTAL_1FN_(value) (1.F/(one << N))>{};
+template <auto  N> auto constexpr  two_n = constant_t<[] XTAL_1FN_(value) (1.F*(one << N))>{};
 
 template <auto  N       >	using     integral_constant_t	=  typename _retail:: integral_constant_t<N>;
 template <auto  N       >	using     cardinal_constant_t	=  typename _retail:: cardinal_constant_t<N>;
@@ -346,6 +371,7 @@ template <         class ...Ts>	concept  fluid_reindexed_q	= (... and  _retail::
 template <class T             >	using        arranged_t	=           _retail::     arranged_t<T > ;
 template <class T             >	using      reiterated_t	=           _retail::   reiterated_t<T > ;
 template <         class ...Ts>	concept    reiterated_q	= (...and   _retail::   reiterated_q<Ts>);
+template <         class ...Ts>	concept    sequential_q	= (...and   _retail::   sequential_q<Ts>);
 
 template <class T             >	using     initializer_s	=           _retail::  initializer_s<T > ;
 template <class T             >	using     initializer_t	=           _retail::  initializer_t<T > ;
@@ -412,23 +438,28 @@ noexcept -> auto
 If provided with an `iota_view`, \
 returns a `value_type` instead of `size_type` which is twice the shaped. \
 
+template <integral_variable_q Y=size_type>
 XTAL_DEF_(return,inline,let)
 count_f(auto const &t)
-noexcept -> size_type
+noexcept -> based_t<Y>
 {
+	using V = based_t<Y>;
 	using T = XTAL_ALL_(t);
 	XTAL_IF0
-	XTAL_0IF (fixed_shaped_q<T> and un_n<fluid_shaped_q<T>>) {return fixed_shaped<T>::extent();}
-	XTAL_0IF_(return) (static_cast<size_type>(T::size()))
-	XTAL_0IF_(return) (static_cast<size_type>(t .size()))
-	XTAL_0IF_(return) (static_cast<size_type>(t))
-	XTAL_0IF_(return) (static_cast<size_type>(0))
+	XTAL_0IF (fixed_shaped_q<T> and un_n<fluid_shaped_q<T>>) {
+		return static_cast<V>(fixed_shaped<T>::extent());
+	}
+	XTAL_0IF_(return) (static_cast<V>(T::size()))
+	XTAL_0IF_(return) (static_cast<V>(t .size()))
+	XTAL_0IF_(return) (static_cast<V>(t))
+	XTAL_0IF_(return) (static_cast<V>(0))
 }
+template <integral_variable_q Y=size_type>
 XTAL_DEF_(return,inline,let)
 count_f(auto const &...ts)
-noexcept -> size_type
+noexcept -> based_t<Y>
 {
-	return _std::min<size_type>({(count_f(ts) - one)...}) + one;
+	return _std::min<based_t<Y>>({(count_f(ts) - one)...}) + one;
 }
 XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}

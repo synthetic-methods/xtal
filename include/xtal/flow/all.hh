@@ -1,6 +1,7 @@
 #include "./any.hh"
 #include "./bundle.hh"
 #include "./cue.hh"
+#include "./direction.hh"
 #include "./indent.hh"
 #include "./key.hh"
 #include "./mark.hh"

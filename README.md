@@ -99,8 +99,8 @@ Alternatively, messages may themselves be reincorporated as `process(?:or)?`s us
 
 They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `review` the outcome.
 
-	auto resize = resize_t(1024);
-	auto render = render_t(1024);
+	auto resize = resize_f(1024);
+	auto render = cursor_f(1024);
 
 	using Mixer = processor::monomer_t<Mix, provision::stored<>>;
 	auto sixer = Mixer::binding_f(one, two, three);
@@ -116,16 +116,16 @@ They are often used in tandem, e.g. the global block size/step may be updated by
 	   // activate the `sixer` for the entirety of the first block
 	   sixer <<= Active(1);
 
-	   // process the current graph, and advance the `render` cursor
-	   sixer >>= render++;
+	   // process the current graph, and advance the render cursor
+	   sixer >>= cursor++;
 	}
 	// 2nd iteration
 	{
 	   // deactivate the `sixer` at an offset of `123` into the current block
 	   sixer <<= sixer <<= std::make_tuple(123, Active(0));
 
-	   // process the current graph, and advance the `render` cursor
-	   sixer >>= render++;
+	   // process the current graph, and advance the render cursor
+	   sixer >>= cursor++;
 	}
 
 # Development

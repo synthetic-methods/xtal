@@ -62,8 +62,8 @@ struct superblock<Us...>
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_FX4_(alias) (template <class ...Xs> XTAL_DEF_(return,inline,let) front(), get<       0>(S_::self()))
-		XTAL_FX4_(alias) (template <class ...Xs> XTAL_DEF_(return,inline,let) back (), get<size - 1>(S_::self()))
+		XTAL_FX4_(to) (template <class ...Xs> XTAL_DEF_(return,inline,let) front(), get<       0>(S_::self()))
+		XTAL_FX4_(to) (template <class ...Xs> XTAL_DEF_(return,inline,let) back (), get<size - 1>(S_::self()))
 
 	};
 	using type = derive_t<homotype>;
@@ -138,17 +138,19 @@ struct superblock<U   [N]>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	homotype()                 noexcept=default;
-	//	homotype()                 noexcept=default;
-		XTAL_NEW_(copy) (homotype, noexcept=default)
-		XTAL_NEW_(move) (homotype, noexcept=default)
-		XTAL_NEW_(auto) (homotype, noexcept)
+		XTAL_NEW_(delete) (homotype, noexcept = default)
+	//	XTAL_NEW_(create) (homotype, noexcept = default)
+		XTAL_NEW_(move)   (homotype, noexcept = default)
+		XTAL_NEW_(copy)   (homotype, noexcept = default)
+		XTAL_NEW_(cast)   (homotype, noexcept)
 
-		XTAL_NEW_(implicit) homotype()
+		XTAL_NEW_(implicit)
+		homotype()
 		noexcept
 		:	homotype(size_type{})
 		{}
-		XTAL_NEW_(explicit) homotype(same_q<size_type> auto const n)
+		XTAL_NEW_(explicit)
+		homotype(same_q<size_type> auto const n)
 		noexcept
 		{
 			assert(n <= size);
@@ -156,18 +158,20 @@ struct superblock<U   [N]>
 				S_::fill(value_type{});
 			}
 		}
-		XTAL_NEW_(implicit) homotype(_std::initializer_list<value_type> xs)
+		XTAL_NEW_(implicit)
+		homotype(_std::initializer_list<value_type> xs)
 		noexcept
 		:	homotype(count_f(xs))
 		{
 			_detail::move_to<T::ordinate>(S_::begin(), xs.begin(), count_f(xs));
 		}
-		XTAL_NEW_(explicit) homotype(iterable_q auto &&xs)
+		XTAL_NEW_(explicit)
+		homotype(iterable_q auto &&xs)
 		noexcept
 		requires epimorphic_q<homotype, decltype(xs)>
 		:	homotype(count_f(xs))
 		{
-			_detail::transfer_to<T::ordinate>(S_::begin(), XTAL_REF_(xs), count_f(xs));
+			_detail::copy_to<T::ordinate>(S_::begin(), XTAL_REF_(xs), count_f(xs));
 		}
 
 	};
@@ -218,14 +222,14 @@ struct block
 		
 		///\returns a specialized instance of the underlying template using the argument types `Xs...`. \
 
-		XTAL_FX0_(alias) (template <class ...Xs>
+		XTAL_FX0_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,set)
 		form(Xs &&...xs),
 			form_t<Xs...>{XTAL_REF_(xs)...})
 
 		///\returns a specialized instance of `this` using the underlying template. \
 
-		XTAL_FX2_(alias) (template <class ...Xs>
+		XTAL_FX2_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
 		reform(),
 			form_t<Xs...>(S_::self()))
@@ -313,11 +317,11 @@ struct block
 			return self().operator[](i);
 		})
 
-		XTAL_FX1_(alias) (template <extent_type I> XTAL_DEF_(return,inline,let) coelement  (   ), self().coordinate(element<I>()))
-		XTAL_FX1_(alias) (template <integral_q  I> XTAL_DEF_(return,inline,let) coelement  (I i), self().coordinate(element(i)  ))
+		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) coelement  (   ), self().coordinate(element<I>()))
+		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) coelement  (I i), self().coordinate(element(i)  ))
 
-		XTAL_FX1_(alias) (template <extent_type I> XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
-		XTAL_FX1_(alias) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
+		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
+		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
 	using type = derive_t<homotype>;

@@ -108,7 +108,7 @@ struct blob
 			int i{0};
 			
 			return [&] <auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(return) (W{form<Vs>(i)...})
+				XTAL_0FN_(to) (W{form<Vs>(i)...})
 			(bond::seek_s<sizeof...(Vs)> {});
 		})
 		XTAL_FX2_(do) (template <class V>

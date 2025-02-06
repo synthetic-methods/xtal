@@ -104,17 +104,17 @@ struct navigate<U_node, U_edge>
 
 		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
 
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (0 == sizeof...(Is))
+		XTAL_FX4_(to) (template <size_type ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
 		)
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_FX4_(to) (template <size_type ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...)
 		)
-		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_FX4_(to) (template <class     ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
 		)
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) node(), self<U_node>())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) node(), self<U_node>())
 
 	};
 	template <class S>
@@ -146,13 +146,13 @@ struct navigate<U_node, U_edge>
 		template <class ...Is> using head_s = typename super<U_node, Is...>::type;
 		template <class ...Is> using head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
 
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (0 == sizeof...(Is))
+		XTAL_FX4_(to) (template <size_type ...Is> requires (0 == sizeof...(Is))
 		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head(XTAL_REF_(oo)...)
 		)
-		XTAL_FX4_(alias) (template <size_type ...Is> requires (1 <= sizeof...(Is))
+		XTAL_FX4_(to) (template <size_type ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(return,inline,get) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...)
 		)
-		XTAL_FX4_(alias) (template <class     ...Is> requires (1 <= sizeof...(Is))
+		XTAL_FX4_(to) (template <class     ...Is> requires (1 <= sizeof...(Is))
 		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
 		)
 

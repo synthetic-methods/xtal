@@ -44,6 +44,9 @@ struct hypertag
 
 };
 
+template <class T, template <class ...> class ...Ys> concept     tagged_q =   tabbed_q<T, tag<Ys>...>;
+template <template <class ...> class Y, class ...Ts> concept     tagged_p =   tabbed_p<tag<Y>, Ts...>;
+
 template <class T, template <class ...> class ...Ys> concept        tag_q =      tab_q<T, tag<Ys>...>;
 template <template <class ...> class Y, class ...Ts> concept        tag_p =      tab_p<tag<Y>, Ts...>;
 

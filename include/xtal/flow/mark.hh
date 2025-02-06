@@ -15,10 +15,16 @@ Governs access to the `supertype`. \
 
 ///\see `flow::mask`. \
 
-template <class	..._s> struct   mark;
-template <class	..._s> concept  mark_q = bond::tag_p<mark, _s...>;
-template <class	..._s> using    mark_s = bond::compose_s<flow::packet_t<_s...>, cell::confined<mark<>>>;
-
+/**/
+template <class ..._s> struct  mark;
+template <class ..._s> concept mark_q = bond::tag_p<mark, _s...>;
+template <class ..._s> using   mark_s = bond::compose_s<packet_t<_s...>, cell::confined<mark<>>>;
+/*/
+template <class ..._s> struct  mark;
+template <class ..._s> using   mark_s =  bond::compose_s<packet_t<_s...>, cell::confined<mark<>>>;
+template <class T    > using   mark_u =  valued_u<typename T::mark_signature>;
+template <class ..._s> concept mark_q = (bond::tag_p<mark, _s...> and...and same_q<_s, mark_s<mark_u<_s>>>);
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -35,12 +41,13 @@ struct mark<>
 	public:
 		using S_::S_;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,implicit operator) auto(), mark_s<>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit operator)
+		auto(), mark_s<>(S_::head()))
 		
-		using marked_type = XTAL_ALL_(XTAL_ANY_(S_).tail())[1];
+		using mark_signature = XTAL_ALL_(XTAL_ANY_(S).tail())[1];
 
 	};
-	template <mark_q S>
+	template <bond::tag_q<mark> S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -48,7 +55,7 @@ struct mark<>
 	public:
 		using S_::S_;
 
-		using marked_type = succedent_s<typename S_::marked_type>;
+		using mark_signature = succedent_s<typename S_::mark_signature>;
 
 	};
 };

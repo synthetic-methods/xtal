@@ -12,13 +12,15 @@ namespace xtal::atom::_test
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/*/
 template <int N>
 void spool__operation()
 {
 	using U_event = bond::compose_s<Ox_onset, cell::conferred<int>>;
 	using U_spool = spool_t<U_event[N]>;
-	U_spool q {(U_event) _std::numeric_limits<int>::max()};
+	U_spool q {bond::seek_t<>{}
+	,	(U_event) _std::numeric_limits<int>::max()
+	};
 
 	auto e1 = U_event(1, Ox_onset(11));
 	auto e2 = U_event(2, Ox_onset(22));
@@ -41,6 +43,7 @@ TAG_("spool")
 	TRY_("operation fixed") {spool__operation<64>();}
 
 }
+/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

@@ -152,9 +152,9 @@ TAG_("cell", "conversion")
 		TRUE_(get<2>(baz) == get<2>(bar));
 
 		//\
-		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(return) (XTAL_REF_(oo) +...+ 0), foo));// nope...
-		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(return) (XTAL_REF_(oo) +...+ 0), bond::repack_f(foo)));
-	//	TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(return) (XTAL_REF_(oo) +...+ 0)));
+		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), foo));// nope...
+		TRUE_(6 == _std::apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0), bond::repack_f(foo)));
+	//	TRUE_(6 ==   foo.apply([] (auto &&...oo) XTAL_0FN_(to) (XTAL_REF_(oo) +...+ 0)));
 		TRUE_(3 == _std::tuple_size_v<U_foo>);
 		TRUE_(3 == _std::tuple_size_v<U_bar>);
 

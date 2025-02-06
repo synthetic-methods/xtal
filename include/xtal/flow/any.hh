@@ -30,12 +30,15 @@ struct define
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-	
+
+		using U_delay = signed;
+
 	public:
 		using S_::S_;
 		using S_::self;
 
-		XTAL_DEF_(inline,let) delay()         noexcept -> auto {return static_cast<signed>(count_f(self()));}
+		XTAL_DEF_(inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
+		XTAL_DEF_(inline,let) belay()         noexcept -> auto {return        delay();}
 		XTAL_DEF_(inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
 	//	XTAL_DEF_(inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		
@@ -43,7 +46,7 @@ struct define
 		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
 		The callback parameters are the `ranges::slice` indicies and the segment index. \
 
-		XTAL_DEF_(return,inline,let) reflux(auto const &f)             noexcept -> signed {return reflux(f, 0);}
+		XTAL_DEF_(return,inline,let) reflux(auto const &f            ) noexcept -> signed {return reflux(f, 0);}
 		XTAL_DEF_(return,inline,let) reflux(auto const &f, signed &&n) noexcept -> signed {return reflux(f, n);}
 		XTAL_DEF_(return,let)
 		reflux(auto const &f, signed &n)
@@ -54,11 +57,12 @@ struct define
 				x &= f(counted_f(i, j), n++);
 			}
 			--n;
+			self().belay();
 			return x;
 		}
 
-	//	XTAL_DEF_(return,inline,let) defuse(auto &&    o) noexcept -> signed {return self().template fuse< 0>(XTAL_REF_(o)    );}
-	//	XTAL_DEF_(return,inline,let) deflux(auto &&...oo) noexcept -> signed {return self().template flux< 0>(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline,let) defuse(auto &&    o) noexcept -> signed {return self().template fuse< 0>(XTAL_REF_(o)    );}
+		XTAL_DEF_(return,inline,let) deflux(auto &&...oo) noexcept -> signed {return self().template flux< 0>(XTAL_REF_(oo)...);}
 		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
 		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
 		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
@@ -113,7 +117,7 @@ struct define
 
 		///\
 		Efflux operator: resolves any dependencies before `this`, \
-		used for e.g. `occur::review` and `occur::render`. \
+		used for e.g. `occur::review` and `occur::cursor`. \
 
 		XTAL_DEF_(inline,let)
 		operator >>=(auto &&o)
@@ -127,7 +131,7 @@ struct define
 		noexcept -> decltype(auto)
 		{
 			(void) _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(return) (efflux(XTAL_REF_(oo)...))
+				XTAL_0FN_(to) (efflux(XTAL_REF_(oo)...))
 			,	XTAL_REF_(o)
 			);
 			return self();
@@ -149,7 +153,7 @@ struct define
 		noexcept -> decltype(auto)
 		{
 			(void) _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(return) (influx(XTAL_REF_(oo)...))
+				XTAL_0FN_(to) (influx(XTAL_REF_(oo)...))
 			,	XTAL_REF_(o)
 			);
 			return self();

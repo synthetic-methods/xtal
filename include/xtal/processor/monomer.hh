@@ -39,7 +39,7 @@ template <class U, typename ...As>
 struct monomer<U, As...>
 {
 	using U_resize = occur::resize_t<>;
-//	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 
 	using superkind = confer<U, As..., provision::stated<>, provision::voiced<>>;
 
@@ -52,9 +52,8 @@ struct monomer<U, As...>
 
 		template <class ...Xs>
 		using F_ = bond::compose<bond::tag<monomer>, As...
-//		,	U_resize::attach<>
-//		,	U_render::attach<>
 		,	typename S_::template binding<Xs...>
+		,	typename U_cursor::template attach<>
 		>;
 	
 	public:
@@ -79,28 +78,31 @@ struct monomer<U, As...>
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-			~	subtype()                 noexcept=default;
-				subtype()                 noexcept=default;
-				XTAL_NEW_(copy) (subtype, noexcept=default)
-				XTAL_NEW_(move) (subtype, noexcept=default)
-				XTAL_NEW_(auto) (subtype, noexcept)
+				XTAL_NEW_(delete) (subtype, noexcept = default)
+				XTAL_NEW_(create) (subtype, noexcept = default)
+				XTAL_NEW_(move)   (subtype, noexcept = default)
+				XTAL_NEW_(copy)   (subtype, noexcept = default)
+				XTAL_NEW_(cast)   (subtype, noexcept)
 
-				XTAL_NEW_(explicit) subtype(same_q<Xs> auto &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype(T_{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(auto &&f, same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(auto &&f, same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(f), XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
 
 			public:// ACCESS
 
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) state(auto &&...oo), R_::template head<Y_result>(XTAL_REF_(oo)...))
 
 			public:// OPERATE
 
@@ -122,12 +124,12 @@ struct monomer<U, As...>
 				}
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
-				flux(occur::render_q auto &&render_o)
+				flux(occur::cursor_q auto &&cursor_o)
 				noexcept -> signed
 				{
 					return [this]
 						XTAL_0FN_(and) ((void) state(R_::method()), 0)
-							(R_::template flux<N_ion>(XTAL_REF_(render_o)));
+							(R_::template flux<N_ion>(XTAL_REF_(cursor_o)));
 				}
 
 			};
@@ -217,23 +219,23 @@ struct monomer<U, As...>
 				noexcept -> signed
 				{
 					auto constexpr N_dex = in_n<1, occur::resize_q<decltype(oo)>...>? N_share: -1;
-					return R_::template flux_arguments_<N_ion, N_dex>(ordinal_constant_t<-1>{}, XTAL_REF_(oo)...);
+					return R_::template flux_argument_<N_ion, N_dex>(ordinal_constant_t<-1>{}, XTAL_REF_(oo)...);
 				}
 
 				///\
-				Responds to `occur::render` by rendering the `store()`. \
+				Responds to `occur::cursor` by rendering the `store()`. \
 				A match for the following render will initiate the `review` (returning `1`), \
 				while a match for the current render will terminate (returning `0`). \
-				(Deviant behaviour is enforced by `assert`ion on `render`.) \
+				(Deviant behaviour is enforced by `assert`ion on `cursor`.) \
 
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
-				flux(occur::render_q auto &&render_o, auto &&...oo)
+				flux(occur::cursor_q auto &&cursor_o, auto &&...oo)
 				noexcept -> signed
 				{
 					size_type const n_resize = R_::template head<U_resize>();
 					occur::review_t<U_state> v_(store());
-					return flux<N_ion>(v_.subview(n_resize), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return flux<N_ion>(v_.subview(n_resize), XTAL_REF_(cursor_o), XTAL_REF_(oo)...);
 				}
 				///\note\
 				When accompanied by `occur::review`, the supplied visor will be used instead. \
@@ -247,13 +249,13 @@ struct monomer<U, As...>
 
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
-				flux(occur::review_q auto &&review_o, occur::render_q auto &&render_o, auto &&...oo)
+				flux(occur::review_q auto &&review_o, occur::cursor_q auto &&cursor_o, auto &&...oo)
 				noexcept -> signed
 				{
 					if constexpr (make_p<U_state, decltype(review_o)>) {
 						(void) state(review_o);
 					}
-					return R_::template flux<N_ion>(XTAL_REF_(review_o), XTAL_REF_(render_o), XTAL_REF_(oo)...);
+					return R_::template flux<N_ion>(XTAL_REF_(review_o), XTAL_REF_(cursor_o), XTAL_REF_(oo)...);
 				}
 
 			};

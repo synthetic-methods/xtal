@@ -21,7 +21,7 @@ template <class U, auto  N, auto  ...As> struct   quanta<U   [N][As]...> : quant
 template <class U, auto  N, auto  ...As> struct   quanta<U(&)[N][As]...> : quanta<quanta_t<U[As]...>(&)[N]> {};
 
 
-XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_FX0_(to) (template <auto f=_std::identity{}>
 XTAL_DEF_(return,inline,let)
 quanta_f(auto &&...oo),
 	_detail::factory<quanta_t>::
@@ -75,7 +75,7 @@ struct quanta
 			)
 			XTAL_0IF_(else) {
 				return [&]<auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(return) (...and (get<I>(s) == get<I>(t)))
+					XTAL_0FN_(to) (...and (get<I>(s) == get<I>(t)))
 				(bond::seek_s<size>{});
 			}
 		}
@@ -131,7 +131,7 @@ struct quanta
 
 		///\returns an `coordinate`d instance of `this`. \
 
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,let) reform(), apply())
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
 
 		///\returns an `coordinate`d instance of `this`. \
 
@@ -150,7 +150,7 @@ struct quanta
 
 		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
 
-		XTAL_FX4_(alias) (template <complete_q F>
+		XTAL_FX4_(to) (template <complete_q F>
 		XTAL_DEF_(return,inline,explicit operator) F(), apply<F>())
 
 		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
@@ -178,7 +178,7 @@ struct quanta
 		noexcept -> decltype(auto)
 		{
 			return [this, f=XTAL_REF_(f)]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(return) (f(S_::template coelement<I>()...))
+				XTAL_0FN_(to) (f(S_::template coelement<I>()...))
 			(bond::seek_s<size>{});
 		}
 

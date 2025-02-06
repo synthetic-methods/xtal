@@ -123,11 +123,11 @@ struct define
 		noexcept -> decltype(auto)
 		{
 			if constexpr (same_q<typename T::template digest<Xs...>, digest<Xs...>>) {
-				return [this] XTAL_0FN_(alias) (self().template operator()<decltype(is){}...>);
+				return [this] XTAL_1FN_(function) (self().template operator()<decltype(is){}...>);
 			}
 			else {
 				//\
-				return [this, deity=self().template deify<Xs...>(is...)] XTAL_0FN_(alias) ((self().*deity));
+				return [this, deity=self().template deify<Xs...>(is...)] XTAL_1FN_(function) ((self().*deity));
 				return _std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})
@@ -181,11 +181,13 @@ struct define
 				///\
 				Initialize `arguments` using the arguments supplied. \
 
-				XTAL_NEW_(explicit) subtype(Xs &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(Xs &&...xs)
 				noexcept
 				:	subtype(T{}, XTAL_REF_(xs)...)
 				{}
-				XTAL_NEW_(explicit) subtype(fungible_q<S_> auto &&t, Xs &&...xs)
+				XTAL_NEW_(explicit)
+				subtype(fungible_q<S_> auto &&t, Xs &&...xs)
 				noexcept
 				:	R_(XTAL_REF_(t), XTAL_REF_(xs)...)
 				{}
@@ -194,7 +196,7 @@ struct define
 				using R_::arguments;
 
 				using process_type = T;
-				XTAL_FX4_(alias) (XTAL_DEF_(return,inline,get) process(), S_::head())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) process(), S_::head())
 
 
 			public:// OPERATE
@@ -211,8 +213,8 @@ struct define
 					auto constexpr N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
-					XTAL_0IF (0 == N) {return arguments().apply([this] XTAL_0FN_(alias) (method));}
-					XTAL_0IF_(abort)
+					XTAL_0IF (0 == N) {return arguments().apply([this] XTAL_1FN_(function) (method));}
+					XTAL_0IF_(terminate)
 				})
 
 			};
@@ -266,7 +268,7 @@ struct refine
 			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
 		}
 		
-		XTAL_FX4_(alias) (template <class ...Xs>
+		XTAL_FX4_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,get) bind(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
 
 	};

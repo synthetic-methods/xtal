@@ -21,7 +21,7 @@ template <class U, auto  N, auto  ..._s> struct   point<U   [N][_s]...> : point<
 template <class U, auto  N, auto  ..._s> struct   point<U(&)[N][_s]...> : point<point_t<U[_s]...>(&)[N]> {};
 
 
-XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_FX0_(to) (template <auto f=_std::identity{}>
 XTAL_DEF_(return,inline,let)
 point_f(auto &&...oo),
 	_detail::factory<point_t>::
@@ -82,8 +82,8 @@ struct point
 		noexcept -> auto
 		{
 			return [f_=[&]
-				(auto    I)                      XTAL_0FN_(return) (f (zot<I>(ts)...))]
-				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(return) (S_::form(f_(constant_t<I>{})...))
+				(auto    I)                      XTAL_0FN_(to) (f (zot<I>(ts)...))]
+				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(f_(constant_t<I>{})...))
 					(bond::seek_s<size>{});
 		}
 		///\
@@ -95,8 +95,8 @@ struct point
 		noexcept -> auto
 		{
 			[f_=[&]
-				(auto    I)                      XTAL_0FN_(void) (f (get<I>(s), zot<I>(ts)...))]
-				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(void) (f_(constant_t<I>{}),...)
+				(auto    I)                      XTAL_0FN_(do) (f (get<I>(s), zot<I>(ts)...))]
+				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(do) (f_(constant_t<I>{}),...)
 					(bond::seek_s<size>{});
 		}
 		///\returns `self()`, after applying the vector operation `f`. \
@@ -128,7 +128,7 @@ struct point
 		requires simplex_variable_q<value_type>
 		{
 			return _fit::sentry_f([&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(return) (_fit::sigma_0|...|_fit::sentinel_f(get<I>(s) - get<I>(t)))
+				XTAL_0FN_(to) (_fit::sigma_0|...|_fit::sentinel_f(get<I>(s) - get<I>(t)))
 			(bond::seek_s<size>{}));
 		}
 
@@ -144,7 +144,7 @@ struct point
 				return self();
 			}
 			XTAL_0IF (N_sgn <  0) {
-				return zip_with<[] (auto &x) XTAL_0FN_(return) (x = -XTAL_MOV_(x))>();
+				return zip_with<[] (auto &x) XTAL_0FN_(to) (x = -XTAL_MOV_(x))>();
 			}
 		}
 		template <int N_sgn=1>
@@ -155,8 +155,8 @@ struct point
 			return twin().template flip<N_sgn>();
 		}
 
-		XTAL_DEF_(return,inline,let) operator - () noexcept -> auto requires requires (value_type u) {-u;}{return zip_with<[] (           auto const &u) XTAL_0FN_(return) (-u)>();}
-		XTAL_DEF_(return,inline,let) operator ~ () noexcept -> auto requires requires (value_type u) {~u;}{return zip_with<[] (integral_q auto const &u) XTAL_0FN_(return) (~u)>();}
+		XTAL_DEF_(return,inline,let) operator - () noexcept -> auto requires requires (value_type u) {-u;}{return zip_with<[] (           auto const &u) XTAL_0FN_(to) (-u)>();}
+		XTAL_DEF_(return,inline,let) operator ~ () noexcept -> auto requires requires (value_type u) {~u;}{return zip_with<[] (integral_q auto const &u) XTAL_0FN_(to) (~u)>();}
 
 	//	Scalar assignment (performed point-wide):
 

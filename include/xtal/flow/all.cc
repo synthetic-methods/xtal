@@ -1,6 +1,7 @@
 #include "./any.cc"
 #include "./bundle.cc"
 #include "./cue.cc"
+#include "./direction.cc"
 #include "./indent.cc"
 #include "./key.cc"
 #include "./mark.cc"

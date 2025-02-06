@@ -97,22 +97,42 @@ template <class T             >  concept         ionic_q = complete_q<T> and _xt
 template <class T             >	concept        vacant_q	=  in_q<T, void, void_type, null_type>;
 template <class T             >	concept       present_q	=  not vacant_q<T>;
 
-
 static_assert( vacant_q<void> and not present_q<void>);
 static_assert(present_q<bool> and not  vacant_q<bool>);
 
 template <         class ...Ts>	using          common_t	=  typename complete_t<_std::common_type<Ts...>, identity_t<void>>::type;
 template <         class ...Ts>	concept        common_q	=  1 <= sizeof...(Ts) and complete_q<common_t<Ts...>>;
 
-template <class F, class ...Xs>	using          return_t	=     _std::invoke_result_t<F, Xs...>;
-template <class F, class ...Xs>	concept    applicable_p	=     _std::invocable      <F, Xs...>;
-template <class F             >	concept    applicable_q	= applicable_p<F> or _std::is_pointer_v<XTAL_ALL_(+XTAL_ANY_(F))>;
-template <class F, class ...Xs>	concept  inapplicable_p	= not applicable_p<F, Xs...>;
-template <class F             >	concept  inapplicable_q	= not applicable_q<F       >;
+template <class T, class Y    >	struct        qualify                {using type = T         ;};
+template <class T, class Y    >	struct        qualify<T, Y const   > {using type = T const   ;};
+template <class T, class Y    >	struct        qualify<T, Y       &&> {using type = T       &&;};
+template <class T, class Y    >	struct        qualify<T, Y const &&> {using type = T const &&;};
+template <class T, class Y    >	struct        qualify<T, Y        &> {using type = T        &;};
+template <class T, class Y    >	struct        qualify<T, Y const  &> {using type = T const  &;};
+template <class T, class Y=T  >	using         qualify_t = typename qualify<based_t<T>, Y>::type;
+template <class Y, class T=Y  >	using         qualify_s = typename qualify<based_t<T>, Y>::type;
+
+template <class T, class Y    >	struct     disqualify                {using type = T         ;};
+template <class T, class Y    >	struct     disqualify<T, Y const   > {using type = T         ;};
+template <class T, class Y    >	struct     disqualify<T, Y       &&> {using type = T         ;};
+template <class T, class Y    >	struct     disqualify<T, Y const &&> {using type = T         ;};
+template <class T, class Y    >	struct     disqualify<T, Y        &> {using type = T        &;};
+template <class T, class Y    >	struct     disqualify<T, Y const  &> {using type = T const  &;};
+template <class T, class Y=T  >	using      disqualify_t = typename qualify<based_t<T>, Y>::type;
+template <class Y, class T=Y  >	using      disqualify_s = typename qualify<based_t<T>, Y>::type;
+
+
+template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
+template <class F, class ...Xs>	concept    applicable_p	= _std::invocable      <F, Xs...>;
+template <class F             >	concept    applicable_q	=      applicable_p<F> or _std::is_pointer_v<XTAL_ALL_(+XTAL_ANY_(F))>;
+template <class F, class ...Xs>	concept  inapplicable_p	=  not applicable_p<F, Xs...>;
+template <class F             >	concept  inapplicable_q	=  not applicable_q<F       >;
 
 template <class F, class X    >	concept  automorphism_p	=  same_q<return_t<F, X>, X>;
 template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>, X>;
 
+template<          class... Us>	using         variant_t = _std::variant<Us...>;
+template<class T              >	concept       variant_q =  complete_q<_std::variant_size<T>>;
 
 template <template <class> class T_>
 struct derive
@@ -197,10 +217,10 @@ struct extense : _std::integer_sequence<extent_type, Ns...>
 	using petrotype = _std::array<extent_type, sizeof...(Ns)>;
 	using supertype = _std::integer_sequence<extent_type, Ns...>;
 
-	XTAL_FX1_(alias) (XTAL_DEF_(return,inline,explicit operator)
+	XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit operator)
 	auto(), petrotype{Ns...})
 
-	XTAL_FX1_(alias) (XTAL_DEF_(return,inline,let)
+	XTAL_FX1_(to) (XTAL_DEF_(return,inline,let)
 	operator() (), *this)
 
 	template <extent_type ...Ms>
@@ -321,19 +341,13 @@ template <class T                  >	using  destruct_u = typename destruct<T>::v
 template <class T                  >	using   desolve_t	= typename  desolve<T>::array_type;
 template <class T                  >	using   desolve_u	= typename  desolve<T>::value_type;
 
-template <class U,        int ...Ns>	struct instruct : instruct<U &&, Ns...>    {};
-template <class U, int N, int ...Ns>	struct instruct<U  &, N, Ns...>            {using array_type = const_valued_u<U, instruct_t<U, Ns...>>(&)[N];};
-template <class U, int N, int ...Ns>	struct instruct<U &&, N, Ns...>            {using array_type = const_valued_u<U, instruct_t<U, Ns...>>   [N];};
-template <class U                  >	struct instruct<U  &>                      {using array_type = U &;};
-template <class U                  >	struct instruct<U &&>                      {using array_type = U  ;};
+template <class U,        int ...Ns>	struct instruct;
+template <class U                  >	struct instruct<U          >         {using array_type = disqualify_s<U                                  >;};
+template <class U, int N, int ...Ns>	struct instruct<U, N, Ns...>         {using array_type = disqualify_s<U, instruct_t<based_t<U>, Ns...>[N]>;};
 
-template <class T                  >	struct destruct : destruct<T &&>           {};
-template <class T                  >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                              ; using value_type =         T  &;};
-template <class T                  >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                                ; using value_type =         T   ;};
-template <fluid_q T                >	struct destruct<T  &> : fluid_shaped<T>    {using array_type = T &                              ; using value_type = fluid_u<T> &;};
-template <fluid_q T                >	struct destruct<T &&> : fluid_shaped<T>    {using array_type = T                                ; using value_type = fluid_u<T>  ;};
-template <fixed_q T                >	struct destruct<T  &> : fixed_shaped<T>    {using array_type = fixed_u<T>(&)[fixed<T>::extent()]; using value_type = fixed_u<T> &;};
-template <fixed_q T                >	struct destruct<T &&> : fixed_shaped<T>    {using array_type = fixed_u<T>   [fixed<T>::extent()]; using value_type = fixed_u<T>  ;};
+template <class T                  >	struct destruct    : fluid_shaped<T> {using array_type = disqualify_s<T                                >; using value_type = disqualify_s<T            >;};
+template <fluid_q T                >	struct destruct<T> : fluid_shaped<T> {using array_type = disqualify_s<T                                >; using value_type = disqualify_s<T, fluid_u<T>>;};
+template <fixed_q T                >	struct destruct<T> : fixed_shaped<T> {using array_type = disqualify_s<T, fixed_u<T>[fixed<T>::extent()]>; using value_type = disqualify_s<T, fixed_u<T>>;};
 /*/
 template <class U                  >	struct destruct<_std::complex<U> const  &> : assigned<1> {using array_type = const U(&)[2]; using value_type = const U &;};
 template <class U                  >	struct destruct<_std::complex<U> const &&> : assigned<1> {using array_type = const U   [2]; using value_type = const U  ;};
@@ -382,13 +396,13 @@ template <class T             >	struct    initializer    {using value_type =    
 template <fixed_reindexed_q T >	struct    initializer<T> {using value_type = reindexed_u<T>; using type = initializer_s<value_type>;};
 
 
-template <class T>	struct iteratee;	template <class T>	using iteratee_t = typename iteratee<T>::type;
-template <class T>	struct iterated;	template <class T>	using iterated_t = typename iterated<T>::type;
-template <class T>	struct iterator;	template <class T>	using iterator_t = typename iterator<T>::type;
-template <class T>	struct sentinel;	template <class T>	using sentinel_t = typename sentinel<T>::type;
-template <class T>	struct distance;	template <class T>	using distance_t = typename distance<T>::type;
-template <class T>	struct  counted;	template <class T>	using  counted_t = typename  counted<T>::type;
-template <class T>	struct  counter;	template <class T>	using  counter_t = typename  counter<T>::type;
+template <class T> struct   iteratee;	template <class T> using   iteratee_t = typename   iteratee<T>::type;
+template <class T> struct   iterated;	template <class T> using   iterated_t = typename   iterated<T>::type;
+template <class T> struct   iterator;	template <class T> using   iterator_t = typename   iterator<T>::type;
+template <class T> struct   sentinel;	template <class T> using   sentinel_t = typename   sentinel<T>::type;
+template <class T> struct   distance;	template <class T> using   distance_t = typename   distance<T>::type;
+template <class T> struct    counted;	template <class T> using    counted_t = typename    counted<T>::type;
+template <class T> struct    counter;	template <class T> using    counter_t = typename    counter<T>::type;
 
 
 template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
@@ -405,6 +419,11 @@ template <class T             >	concept      sentinel_q	=  iterator_q<T>;
 template <class T             >	concept      distance_q	=  integral_variable_q<T>;//TODO: Expand to accommodate `counted_t<size_type>{}.size()`.
 template <class T             >	concept       counter_q	=  integral_variable_q<T>;
 template <class T             >	concept       counted_q	=  iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
+
+
+template <class T>     	   concept sequential_iterable_q	=  iterable_q<T> and not _xtd::ranges::random_access_range   <based_t<T>>;
+template <class T>     	   concept sequential_iterator_q	=  iterator_q<T> and not _xtd::ranges::random_access_iterator<based_t<T>>;
+template <class T>     	   concept sequential_q         	=  sequential_iterable_q<T> or sequential_iterator_q<T>;
 
 template <class T             >	struct       iteratee     {using type =                   valued_u<T> ;};
 template <iterable_q T        >	struct       iteratee<T>  {using type =       pointee_t<iterator_t<T>>;};
@@ -566,7 +585,7 @@ struct constant<f>
 	surject()
 	noexcept -> auto
 	{
-		return constant_t<[] XTAL_0FN_(value) (1.L/object<T>())>{};
+		return constant_t<[] XTAL_1FN_(value) (1.L/object<T>())>{};
 	}
 
 public:
@@ -579,9 +598,9 @@ public:
 	XTAL_DEF_(return,inline,implicit) operator T()                const noexcept                   {return object<T>();}
 	XTAL_DEF_(return,inline,let)      operator  () (auto &&...oo) const noexcept -> decltype(auto) {return function(XTAL_REF_(oo)...);}
 
-	XTAL_DEF_(return,inline,met) operator  +  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (+function())>{};}
-	XTAL_DEF_(return,inline,met) operator  -  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (-function())>{};}
-	XTAL_DEF_(return,inline,met) operator  ~  (constant const &) noexcept -> auto {return constant_t<[] XTAL_0FN_(value) (~function())>{};}
+	XTAL_DEF_(return,inline,met) operator  +  (constant const &) noexcept -> auto {return constant_t<[] XTAL_1FN_(value) (+function())>{};}
+	XTAL_DEF_(return,inline,met) operator  -  (constant const &) noexcept -> auto {return constant_t<[] XTAL_1FN_(value) (-function())>{};}
+	XTAL_DEF_(return,inline,met) operator  ~  (constant const &) noexcept -> auto {return constant_t<[] XTAL_1FN_(value) (~function())>{};}
 
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (same_q<constant> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(return) (object<T>() <=> t)

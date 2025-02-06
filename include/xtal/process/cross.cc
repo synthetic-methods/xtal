@@ -52,7 +52,7 @@ TAG_("cross", "processor")
 		auto io = U_mixer::bind_f(_1, _n);
 		io <<= U_model {{1, 2}, {3, 4}, {5, 6}};
 		io <<= occur::resize_t<>(3);
-		io >>= occur::render_t<>(3);
+		io >>= occur::cursor_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 	//	(1*1 + 2*0) + (3*1 + 4*0) + (5*1 + 6*0)
@@ -76,7 +76,7 @@ TAG_("cross", "processor")
 		auto io = U_mixer::bind_f(_1, _n);
 		io <<=  flow::indent_s<U_model>{{1, 2}, {3, 4}, {5, 6}};
 		io <<= occur::resize_t<>(3);
-		io >>= occur::render_t<>(3);
+		io >>= occur::cursor_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
@@ -99,7 +99,7 @@ TAG_("cross", "processor")
 		io <<=  flow::indent_s<U_model, 1>{3, 4};
 		io <<=  flow::indent_s<U_model, 2>{5, 6};
 		io <<= occur::resize_t<>(3);
-		io >>= occur::render_t<>(3);
+		io >>= occur::cursor_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 
@@ -125,7 +125,7 @@ TAG_("cross", "processor")
 		io <<=  flow::indent_s<U_model, 2, 0>{5};
 		io <<=  flow::indent_s<U_model, 2, 1>{6};
 		io <<= occur::resize_t<>(3);
-		io >>= occur::render_t<>(3);
+		io >>= occur::cursor_t<>(3);
 
 		TRUE_(equal_f(io, _std::vector { 9, 21, 33}));
 

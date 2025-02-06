@@ -19,7 +19,7 @@ template <class ..._s>	using    couple_t = typename couple<_s...>::type;
 template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and fixed_shaped_q<_s...>;
 
 
-XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_FX0_(to) (template <auto f=_std::identity{}>
 XTAL_DEF_(return,inline,let)
 couple_f(auto &&...oo),
 	_detail::factory<couple_t>::
@@ -63,20 +63,23 @@ struct couple
 	public:// CONSTRUCT
 		using S_::S_;//NOTE: Inherited and respecialized!
 
-		XTAL_NEW_(explicit) homotype(bool u)
+		XTAL_NEW_(explicit)
+		homotype(bool u)
 		noexcept
 		requires in_n<size, 2>
 		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
 		{
 		}
-		XTAL_NEW_(explicit) homotype(value_type const &u)
+		XTAL_NEW_(explicit)
+		homotype(value_type const &u)
 		noexcept
 		requires in_n<size, 2> and continuous_field_q<value_type>
 		:	S_{u, one/u}
 		{
 			assert(u != value_type{0});
 		}
-		XTAL_NEW_(explicit) homotype(subjective_q auto const &u)
+		XTAL_NEW_(explicit)
+		homotype(subjective_q auto const &u)
 		noexcept
 		requires in_n<size, 2> and continuous_field_q<value_type>
 		:	homotype(objective_f(u))
@@ -166,12 +169,12 @@ struct couple
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (                             get<I>(s)))
+					XTAL_0FN_(to) (u +...+ (                             get<I>(s)))
 				(bond::seek_s<size>{});
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(return) (u +...+ (scale_type{-sign_n<I&1, -1>}*get<I>(s)))
+					XTAL_0FN_(to) (u +...+ (scale_type{-sign_n<I&1, -1>}*get<I>(s)))
 				(bond::seek_s<size>{});
 			}
 		}
@@ -287,8 +290,8 @@ struct couple
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_0FN_(alias) (_std::lcm)>();}
-		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_0FN_(alias) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_1FN_(function) (_std::lcm)>();}
+		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_1FN_(function) (_std::gcd)>();}
 		XTAL_DEF_(return,inline,let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
@@ -297,8 +300,8 @@ struct couple
 		noexcept -> auto
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_0FN_(alias) (_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_0FN_(alias) (_std::gcd)>();}
+			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_1FN_(function) (_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_1FN_(function) (_std::gcd)>();}
 		}
 
 

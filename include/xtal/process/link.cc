@@ -31,7 +31,7 @@ struct foo
 };
 using foo_t = typename foo::type;
 using bar_t = process::confined_t<confer<foo_t>>;
-using baz_t = process::link_t<decltype([] (auto &&o) XTAL_0FN_(return) (o*10)), confer<foo_t>>;
+using baz_t = process::link_t<decltype([] (auto &&o) XTAL_0FN_(to) (o*10)), confer<foo_t>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

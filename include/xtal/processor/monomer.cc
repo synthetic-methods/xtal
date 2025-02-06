@@ -27,7 +27,7 @@ void monomer_zipping()
 	using U_block  =  atom::block_t<U_data[U_size]>;
 	using U_block  =  _std::complex<U_data>;
 //	using U_resize = occur::resize_t<>;
-//	using U_render = occur::render_t<>;
+//	using U_cursor = occur::cursor_t<>;
 
 	U_data xs[] {0, 0, 0, 0};
 	U_data ys[] {0, 0, 0, 0};
@@ -58,18 +58,18 @@ void monomer_lifting()
 	T_sigma constexpr N_size = 5;
 	using U_block  = atom::block_t<T_alpha[N_size]>;
 	using U_resize = occur::resize_t<>;
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 
 	auto x = U_block{ 0,  1,  2,  3,  4};
 	auto y = U_block{00, 10, 20, 30, 40};
 	auto z = U_block{00, 11, 22, 33, 44};
 	auto a = U_block{99, 99, 99, 99, 99};
-//	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0));
+//	auto f = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0));
 //	auto b = f.bind(processor::let_f(x), processor::let_f(y));
-	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(return) (XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
+	auto b = processor::monomer_f<As...>([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0)).bind(processor::let_f(x), processor::let_f(y));
 
 	b <<= U_resize(N_size);
-	b >>= U_render(N_size);
+	b >>= U_cursor(N_size);
 	_xtd::ranges::move(b, a.begin());
 	TRUE_(a == z);
 	
@@ -89,7 +89,7 @@ TAG_("monomer", "irritating")
 	using T_sigma = typename bond::fit<>::sigma_type;
 	using T_alpha = typename bond::fit<>::alpha_type;
 
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 	using U_mixer = processor::monomer_t<Px_irritator_mix, Ox_onset::dispatch<>>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(evoke_t<T_alpha>{});
@@ -100,7 +100,7 @@ TAG_("monomer", "irritating")
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = U_mixer::bind_f(lhs, rhs);
 
-	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
+	auto seq = U_cursor(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
 	xhs >>=   seq; TRUE_(3 == xhs.size());// TRUE_(33*0 == xhs.front()); // initialize via efflux!
@@ -118,7 +118,7 @@ void monomer_provision__advancing()
 	using T_sigma = typename bond::fit<>::sigma_type;
 	using T_alpha = typename bond::fit<>::alpha_type;
 
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 	using U_mixer = processor::monomer_t<Px_mix>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(evoke_t<T_alpha>{});
@@ -129,7 +129,7 @@ void monomer_provision__advancing()
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = U_mixer::bind_f(lhs, rhs);
 
-	auto seq = U_render(3); TRUE_(0 == xhs.size());// uninitialized...
+	auto seq = U_cursor(3); TRUE_(0 == xhs.size());// uninitialized...
 	TRUE_(3 == seq.size());
 
 //	xhs <<=   seq; TRUE_(0 == xhs.size());//                             // initialize via influx?
@@ -137,7 +137,7 @@ void monomer_provision__advancing()
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*1 == xhs.front()); // advance then efflux...
 	xhs >>= ++seq; TRUE_(3 == xhs.size());// TRUE_(33*2 == xhs.front()); // advance then efflux...
 
-//	xhs >>= ++seq; // NOTE: Can't skip ahead (`render` assertion fails)!
+//	xhs >>= ++seq; // NOTE: Can't skip ahead (`cursor` assertion fails)!
 
 	seq += 6;      TRUE_(3 == xhs.size());//                                  // prepare to advance and resize
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
@@ -165,7 +165,7 @@ void monomer_provision__provisioning()
 	using U_state  = reiterated_t<U_store>;
 	using U_review = occur::review_t<U_state>;
 	using U_resize = occur::resize_t<>;
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(evoke_t<T_alpha>{});
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -177,15 +177,15 @@ void monomer_provision__provisioning()
 
 	auto u_vector = U_store{0, 0, 0};
 	auto u_review = U_review(u_vector);
-	auto u_render = U_render(3);
+	auto u_cursor = U_cursor(3);
 
 	TRUE_(0 == xhs.size());
 
-	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
-	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
-	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
+	xhs >>= u_cursor++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{00, 11, 22}));// initialize via efflux!
+	xhs >>= u_cursor++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{33, 44, 55}));// advance then efflux...
+	xhs >>= u_cursor++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{66, 77, 88}));// advance then efflux...
 	xhs <<= Ox_onset((T_alpha) (11 + 1));
-	xhs >>= u_render++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
+	xhs >>= u_cursor++ >> u_review; TRUE_(equal_f(u_vector, _std::vector{111, 122, 133}));// advance then efflux...
 
 }
 TAG_("monomer", "provision")
@@ -223,7 +223,7 @@ void monomer_chaining__rvalue()
 	yhs <<= Ox_onset((T_alpha) 000);
 	TRUE_(0 == yhs.size());
 
-	auto seq = occur::render_f(N);
+	auto seq = occur::cursor_f(N);
 	yhs >>= seq  ; TRUE_(N == yhs.size());// automorphism!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -255,7 +255,7 @@ void monomer_chaining__lvalue()
 	yhs <<= Ox_scale((T_alpha) 100);
 	xhs <<= Ox_onset((T_alpha) 000);
 
-	auto seq = occur::render_f(N);
+	auto seq = occur::cursor_f(N);
 	yhs >>= seq  ;// automorphism!
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{0000, 1100, 2200, 3300}));
 	yhs >>= seq++; TRUE_(equal_f(yhs, _std::vector{4400, 5500, 6600, 7700}));
@@ -291,8 +291,8 @@ void monomer_chaining__shared()
 	yhs <<= occur::restep_f((size_type) 50);
 	yhs <<= occur::resize_f(N);
 
-	yhs >>= occur::render_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
-	yhs >>= occur::render_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
+	yhs >>= occur::cursor_f(N)*0; TRUE_(equal_f(yhs, _std::vector{000, 111, 222, 333}));
+	yhs >>= occur::cursor_f(N)*1; TRUE_(equal_f(yhs, _std::vector{444, 555, 666, 777}));
 
 }
 TAG_("monomer", "chaining")

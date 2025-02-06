@@ -22,8 +22,8 @@ instead intercepted dynamically to interpret state. \
 Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
 template <class ..._s> struct   stage;
-template <class ..._s> using    stage_t =  confined_t<stage< _s...>>;
-template <class ..._s> concept  stage_q = bond::tag_p<stage, _s...> ;
+template <class ..._s> using    stage_t =     confined_t<stage< _s...>>;
+template <class ..._s> concept  stage_q = bond::tagged_p<stage, _s...> ;
 
 template <typename ...As>
 XTAL_DEF_(return,inline,let) stage_f(auto &&...oo)
@@ -54,36 +54,7 @@ struct stage
 		using S_::self;
 		using S_::head;
 
-	public:// *FUSE
-
-		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
-		fuse(auto &&o)
-		noexcept -> signed
-		{
-			return S_::template fuse<N_ion>(XTAL_REF_(o));
-		}
-		///\returns the result of influxing `stage_q` if `>= 0`, otherwise `-1`. \
-
-		template <signed N_ion> requires in_n<N_ion, +1>
-		XTAL_DEF_(return,inline,let)
-		fuse(stage_q auto &&o)
-		noexcept -> signed
-		{
-			return head() == -1? -1: S_::template fuse<N_ion>(XTAL_REF_(o));
-		}
-		/**/
-		///\returns `1` if the `stage_q` matches `head()`, otherwise `0` (simulating `fuse<+1>`). \
-
-		template <signed N_ion> requires in_n<N_ion, -1>
-		XTAL_DEF_(return,inline,let)
-		fuse(stage_q auto &&o)
-		noexcept -> signed
-		{
-			return heading(XTAL_REF_(o));
-		}
-		/***/
-
+	public:// MESSAGE
 
 	};
 };
@@ -101,18 +72,20 @@ struct stage<A, As...>
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	subtype()                 noexcept=default;
-	//	subtype()                 noexcept=default;
-		XTAL_NEW_(copy) (subtype, noexcept=default)
-		XTAL_NEW_(move) (subtype, noexcept=default)
-		XTAL_NEW_(auto) (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept = default)
+//		XTAL_NEW_(create) (subtype, noexcept = default)
+		XTAL_NEW_(move)   (subtype, noexcept = default)
+		XTAL_NEW_(copy)   (subtype, noexcept = default)
+		XTAL_NEW_(cast)   (subtype, noexcept)
 		
-		XTAL_NEW_(implicit) subtype()
+		XTAL_NEW_(implicit)
+		subtype()
 		noexcept
 		{
 			S_::head(A{});
 		}
-		XTAL_NEW_(explicit) subtype(auto &&...oo)
+		XTAL_NEW_(explicit)
+		subtype(auto &&...oo)
 		noexcept
 		:	S_(XTAL_REF_(oo)...)
 		{

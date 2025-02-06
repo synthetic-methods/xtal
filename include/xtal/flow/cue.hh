@@ -16,10 +16,16 @@ namespace xtal::flow
 Used for scheduling any type by prefixing with an integral delay. \
 May be stacked in order to described integral fades. \
 
-template <class	..._s> struct   cue;
-template <class	..._s> concept  cue_q = bond::tag_p<cue, _s...>;
-template <class	..._s> using    cue_s = bond::compose_s<flow::packet_t<_s...>, cell::confined<cue<>>>;
-
+/**/
+template <class ..._s> struct  cue;
+template <class ..._s> concept cue_q = bond::tag_p<cue, _s...>;
+template <class ..._s> using   cue_s = bond::compose_s<packet_t<_s...>, cell::confined<cue<>>>;
+/*/
+template <class ..._s> struct  cue;
+template <class ..._s> using   cue_s =  bond::compose_s<packet_t<_s...>, cell::confined<cue<>>>;
+template <class T    > using   cue_u =  valued_u<typename T::cue_signature>;
+template <class ..._s> concept cue_q = (bond::tag_p<cue, _s...> and...and same_q<_s, cue_s<cue_u<_s>>>);
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,12 +42,13 @@ struct cue<>
 	public:
 		using S_::S_;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,implicit operator) auto(), cue_s<>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit operator)
+		auto(), cue_s<>(S_::head()))
 
-		using cued_type = XTAL_ALL_(XTAL_ANY_(S_).tail())[1];
+		using cue_signature = XTAL_ALL_(XTAL_ANY_(S).tail())[1];
 
 	};
-	template <cue_q S>
+	template <bond::tag_q<cue> S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -50,7 +57,7 @@ struct cue<>
 		using S_::S_;
 
 	//	TODO: Limit to instances of `cue`, not just derived...
-		using cued_type = succedent_s<typename S_::cued_type>;
+		using cue_signature = succedent_s<typename S_::cue_signature>;
 
 	};
 };

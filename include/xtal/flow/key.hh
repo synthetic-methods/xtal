@@ -17,10 +17,16 @@ Wrapper used to index an existing type. \
 
 ///\see e.g. [../processor/polymer.hh]. \
 
-template <class   ..._s>	struct   key;
-template <class   ..._s>	concept  key_q = bond::tag_p<key, _s...>;
-template <class   ..._s>	using    key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
-
+/*/
+template <class ..._s> struct  key;
+template <class ..._s> concept key_q = bond::tag_p<key, _s...>;
+template <class ..._s> using   key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
+/*/
+template <class ..._s> struct  key;
+template <class ..._s> using   key_s =  bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
+template <class T    > using   key_u =  valued_u<typename T::key_signature>;
+template <class ..._s> concept key_q = (bond::tag_p<key, _s...> and...and same_q<_s, key_s<key_u<_s>>>);
+/***/
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -37,12 +43,13 @@ struct key<>
 	public:
 		using S_::S_;
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,implicit operator) auto(), key_s<>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit operator) 
+		auto(), key_s<>(S_::head()))
 		
-		using keyed_type = XTAL_ALL_(XTAL_ANY_(S_).tail())[1];
+		using key_signature = XTAL_ALL_(XTAL_ANY_(S).tail())[1];
 
 	};
-	template <key_q S>
+	template <bond::tag_q<key> S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -50,7 +57,7 @@ struct key<>
 	public:
 		using S_::S_;
 
-		using keyed_type = succedent_s<typename S_::keyed_type>;
+		using key_signature = succedent_s<typename S_::key_signature>;
 
 	};
 };

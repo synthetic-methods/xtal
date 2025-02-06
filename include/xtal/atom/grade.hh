@@ -18,7 +18,7 @@ template <class         ..._s>	using    grade_t = typename grade<_s...>::type;
 template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and fixed_shaped_q<_s...>;
 
 
-XTAL_FX0_(alias) (template <auto f=_std::identity{}>
+XTAL_FX0_(to) (template <auto f=_std::identity{}>
 XTAL_DEF_(return,inline,let)
 grade_f(auto &&...oo),
 	_detail::factory<grade_t>::

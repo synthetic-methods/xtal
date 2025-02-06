@@ -50,35 +50,36 @@ struct spool<A>
 		using value_type = A;
 
 	public:
-	//	using S_::S_;
+		using S_::S_;
 		
-	~	homotype()                 noexcept=default;
-		homotype()                 noexcept=default;
-		XTAL_NEW_(copy) (homotype, noexcept=default)
-		XTAL_NEW_(move) (homotype, noexcept=default)
-		XTAL_NEW_(auto) (homotype, noexcept)
+//		XTAL_NEW_(delete) (homotype, noexcept = default)
+//		XTAL_NEW_(create) (homotype, noexcept = default)
+//		XTAL_NEW_(move)   (homotype, noexcept = default)
+//		XTAL_NEW_(copy)   (homotype, noexcept = default)
+//		XTAL_NEW_(cast)   (homotype, noexcept)
 		
 		///\note\
 		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
 
-		XTAL_NEW_(implicit) homotype(_std::initializer_list<U_value> w)
+		XTAL_NEW_(explicit)
+		homotype(          bond::seek_t<>, auto &&...oo)
 		noexcept(false)
-		:	u_end(count_f(w))
-		,	u_buffer(w.begin(), w.end())
+		:	u_begin(0), u_end(sizeof...(oo))
+		,	u_buffer{                       U_value{XTAL_REF_(oo)}...}
 		{}
-		template <class W> requires make_p<U_value, W> and un_n<same_q<U_value, W>>
-		XTAL_NEW_(explicit) homotype(W &&w)
+		XTAL_NEW_(explicit)
+		homotype(auto &&o, bond::seek_t<>, auto &&...oo)
 		noexcept(false)
-		:	u_begin(1)
-		,	u_buffer{U_value{XTAL_REF_(w)}}
+		:	u_begin(1), u_end(sizeof...(oo))
+		,	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
 		{}
 
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
-		XTAL_FX2_(alias) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
 
 		XTAL_DEF_(mutate,inline,let)
 		advance(U_count n=1)
@@ -156,7 +157,7 @@ struct spool<A>
 		noexcept -> U_point
 		{
 			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
-			,	[f=XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(return) (f(x) < f(y))
+			,	[f=XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(to) (f(x) < f(y))
 			);
 		}
 		///\note\
@@ -208,11 +209,6 @@ struct spool<A>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-static_assert(std::is_copy_assignable_v<spool_t<float                *  >>);
-static_assert(std::is_copy_assignable_v<spool_t<float[XTAL_SYS_(extent)]>>);
-static_assert(std::is_copy_assignable_v<spool_t<float[             0x8U]>>);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

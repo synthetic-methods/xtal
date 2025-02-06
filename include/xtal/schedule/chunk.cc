@@ -25,15 +25,14 @@ void chunk_processor_x1()
 	using T_delta  = typename _fit::delta_type;
 
 	using U_chunk = chunk_t<spooled<extent_constant_t<0x10>>>;
-	using U_value = flow::packet_t<Ox_onset>;
-	using U_event = flow::cue_s<U_value>;
+	using U_event = flow::cue_s<Ox_onset>;
 
 	using mix_z = processor::monomer_t<Px_mix
 	,	stored<>
 	,	U_chunk::template inqueue<Ox_onset>
 	>;
 	using U_resize = occur::resize_t<>;
-	using U_render = occur::render_t<>;
+	using U_cursor = occur::cursor_t<>;
 
 	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(evoke_t<T_alpha>{});
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
@@ -43,10 +42,10 @@ void chunk_processor_x1()
 	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	
 	auto xhs = mix_z::bind_f(lhs, rhs);
-	auto seq = U_render(4);
+	auto seq = U_cursor(4);
 
 	xhs <<= U_resize(4);
-	TRUE_(0 == xhs.size());//NOTE: Only changes after `render`.
+	TRUE_(0 == xhs.size());//NOTE: Only changes after `cursor`.
 
 	xhs <<= U_event(0, (Ox_onset) (T_alpha) 100);
 	xhs <<= U_event(1, (Ox_onset) (T_alpha) 200);

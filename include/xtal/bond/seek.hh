@@ -49,7 +49,7 @@ seek_f(applicable_p<valued_u<decltype(Ns)...>> auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_t<I>{})) (seek_t<Ns...> {});
+		XTAL_0FN_(to) (..., f(constant_t<I>{})) (seek_t<Ns...> {});
 }
 
 template <int N_count=0, int N_onset=0>
@@ -58,7 +58,7 @@ seek_forward_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
+		XTAL_0FN_(to) (..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
 }
 template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline,let)
@@ -66,7 +66,7 @@ seek_backward_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(return) (..., f(constant_t<N_onset + I>{})) (antiseek_s<N_count> {});
+		XTAL_0FN_(to) (..., f(constant_t<N_onset + I>{})) (antiseek_s<N_count> {});
 }
 
 
@@ -118,8 +118,8 @@ template <auto F,                   auto ...Ns>                      auto conste
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto  ...Ns>	auto constexpr seek_upper_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(return) (i > j), Ns...>;
-template <auto  ...Ns>	auto constexpr seek_lower_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(return) (i < j), Ns...>;
+template <auto  ...Ns>	auto constexpr seek_upper_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(to) (i > j), Ns...>;
+template <auto  ...Ns>	auto constexpr seek_lower_n = seek_order_n<[] (auto i, auto j) XTAL_0FN_(to) (i < j), Ns...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -160,26 +160,27 @@ struct seek_index
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	type()                 noexcept=default;
-	//	type()                 noexcept=default;
-		XTAL_NEW_(copy) (type, noexcept=default)
-		XTAL_NEW_(move) (type, noexcept=default)
-	//	XTAL_NEW_(auto) (type, noexcept)
+		XTAL_NEW_(delete) (type, noexcept = default)
+//		XTAL_NEW_(create) (type, noexcept = default)
+		XTAL_NEW_(move)   (type, noexcept = default)
+		XTAL_NEW_(copy)   (type, noexcept = default)
+	//	XTAL_NEW_(cast)   (type, noexcept)
 
-		XTAL_NEW_(implicit) type()
+		XTAL_NEW_(implicit)
+		type()
 		noexcept
 		:	S_{[]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(return) (supertype{(seek_index_n<I + N_lower, Ns...>)...})
+				XTAL_0FN_(to) (supertype{(seek_index_n<I + N_lower, Ns...>)...})
 			(bond::seek_s<N_limit>{})}
 		{
 		};
 
 	public:// OPERATE
-		XTAL_FX4_(alias) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
+		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
 			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
 
-		XTAL_FX4_(alias) (template <integral_q I> XTAL_DEF_(return,inline,get) operator[](I i), element(i))
-	//	XTAL_FX4_(alias) (template <integral_q I> XTAL_DEF_(return,inline,get) operator()(I i), element(i))
+		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator[](I i), element(i))
+	//	XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator()(I i), element(i))
 		
 	};
 
@@ -205,16 +206,17 @@ struct seek_value
 	public:// CONSTRUCT
 	//	using S_::S_;
 
-	~	type()                 noexcept=default;
-	//	type()                 noexcept=default;
-		XTAL_NEW_(copy) (type, noexcept=default)
-		XTAL_NEW_(move) (type, noexcept=default)
-	//	XTAL_NEW_(auto) (type, noexcept)
+		XTAL_NEW_(delete) (type, noexcept = default)
+//		XTAL_NEW_(create) (type, noexcept = default)
+		XTAL_NEW_(move)   (type, noexcept = default)
+		XTAL_NEW_(copy)   (type, noexcept = default)
+	//	XTAL_NEW_(cast)   (type, noexcept)
 
-		XTAL_NEW_(implicit) type()
+		XTAL_NEW_(implicit)
+		type()
 		noexcept
 		:	S_{[]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(return) (supertype{Ns...})
+				XTAL_0FN_(to) (supertype{Ns...})
 			(bond::seek_s<N_limit>{})}
 		{
 		};

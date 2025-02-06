@@ -35,7 +35,7 @@ TAG_("point")
 		U2_alpha x{1, 2};
 		U2_alpha y{2, 3};
 
-		auto x_y = U2_alpha::template zip_from<[] (auto u, auto v) XTAL_0FN_(return) (u + v)>(x, y);
+		auto x_y = U2_alpha::template zip_from<[] (auto u, auto v) XTAL_0FN_(to) (u + v)>(x, y);
 		TRUE_(x_y == U2_alpha{3, 5});
 
 	}

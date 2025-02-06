@@ -124,13 +124,19 @@ struct defer
 		///\
 		Converts `this` to the base-type (explicit). \
 
-		XTAL_FX4_(alias) (XTAL_DEF_(return,inline,explicit operator) U_(), head())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,explicit operator) U_(), head())
 
 		///\
 		\returns `true` if the supplied body matches `head`, `false` otherwise. \
 
 		XTAL_DEF_(return,inline,let)
 		heading(auto &&o) const
+		noexcept -> bool
+		{
+			return S_::heading(XTAL_REF_(o));
+		}
+		XTAL_DEF_(return,inline,let)
+		heading(same_q<U_> auto &&o) const
 		noexcept -> bool
 		{
 			return equivalent_f(head(), XTAL_REF_(o));
