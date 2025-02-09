@@ -321,14 +321,14 @@ struct buffer<U_data[N_data]>
 			auto iN_ = offence_f(iN);
 			auto i0_ = offence_f(i0);
 			XTAL_IF0
-			XTAL_0IF (not atomic_q<value_type>) {
+			XTAL_0IF (submolecular_q<value_type> and same_q<iterator, J>) {
+				deserve(sN, i0); _std::memcpy(i0_, offence_f(j0), value_size_*sN);
+			}
+			XTAL_0IF (not _xtd::trivially_constructible<value_type>) {
 				for (; sN--; ++j0) {
 					emplace_back(*j0);
 				}
 				_detail::swap_to(i0_, iN_, offence_f(end()));
-			}
-			XTAL_0IF (same_q<iterator, J>) {
-				deserve(sN, i0); _std::memcpy(i0_, offence_f(j0), value_size_*sN);
 			}
 			XTAL_0IF_(else) {
 				deserve(sN, i0); _detail::copy_to(i0, j0, sN);

@@ -176,7 +176,7 @@ noexcept -> void
 	XTAL_IF1_(consteval) {
 		while_move_to<f>(y0, x0, sN, ord);
 	}
-	XTAL_0IF (same_q<_std::identity, F> and atomic_q<X, Y> and make_p<X_, Y_>) {
+	XTAL_0IF (same_q<_std::identity, F> and molecular_q<X, Y> and make_p<X_, Y_>) {
 		_std::memmove(y0, x0, sN*sizeof(X));
 	}
 	XTAL_0IF_(else) {

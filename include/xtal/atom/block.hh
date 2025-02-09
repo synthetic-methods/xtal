@@ -144,6 +144,10 @@ struct superblock<U   [N]>
 		XTAL_NEW_(copy)   (homotype, noexcept = default)
 		XTAL_NEW_(cast)   (homotype, noexcept)
 
+		///\note\
+		Defining `{}` allows `constexpr` evaluation, \
+		but invalidates `std::trivially_default_constructible`. \
+		
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept

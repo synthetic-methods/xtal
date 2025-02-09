@@ -16,6 +16,9 @@ static_assert(incomplete_q           <void_type> );
 static_assert(  complete_q<complete_t<void     >>);
 static_assert(  complete_q<complete_t<void_type>>);
 
+static_assert( vacant_q<void> and not present_q<void>);
+static_assert(present_q<bool> and not  vacant_q<bool>);
+
 
 
 static_assert(same_q<evoke_t<>, evoke_t<>>);
@@ -114,7 +117,7 @@ static_assert(_std::same_as<const int(&&)[2], decltype(destruct_f(XTAL_ANY_(cons
 
 static_assert(array_valued_q<const _std::complex<float>(&)[2]>);
 static_assert(fixed_valued_q<const _std::complex<float>(&)[2]>);
-static_assert( fixed_shaped_q<const _std::complex<float>(&)[2]>);
+static_assert(fixed_shaped_q<const _std::complex<float>(&)[2]>);
 static_assert(       fixed_q<const _std::complex<float>(&)[2]>);
 
 static_assert(            contiguous_field_q<float>);
@@ -123,47 +126,6 @@ static_assert(          not  complex_field_q<float>);
 static_assert(          not quotient_group_q<float>);
 static_assert(              quotient_group_q<  int>);
 static_assert(complex_field_q<_std::complex<float>>);
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <int N_index>
-XTAL_DEF_(return,inline,let)
-check_f(auto const &u, auto const &v)
-noexcept -> bool
-{
-	using _fit = bond::fit<decltype(u), decltype(v)>;
-	return _fit::template trim_f<N_index>(u) == _fit::template trim_f<N_index>(v);
-}
-template <int N_index, int N_limit>
-XTAL_DEF_(return,inline,let)
-check_f(auto const &u, auto const &v)
-noexcept -> int
-{
-	auto constexpr Z_index = sign_n<N_index>;
-	auto constexpr Z_limit = sign_n<N_limit>;
-	static_assert(Z_index == Z_limit);
-
-	XTAL_IF0
-	XTAL_0IF (Z_limit*N_limit <  Z_index*N_index) {
-		return check_f<N_limit, N_index>(u, v);
-	}
-	XTAL_0IF (Z_limit*N_limit == Z_index*N_index) {
-		return 0;
-	}
-	XTAL_0IF (Z_index == -1) {
-		return check_f<N_index>(u, v)? N_index: check_f<Z_index + N_index, N_limit>(u, v);
-	}
-	XTAL_0IF (Z_index ==  1) {
-		return check_f<N_limit>(u, v)? N_limit: check_f<N_index, N_limit - Z_limit>(u, v);
-	}
-}
-XTAL_DEF_(return,inline,let)
-check_f(auto const &u, auto const &v)
-noexcept -> int
-{
-	return check_f<-1, 1 - (int) bond::fit<>::fraction.depth>(u, v);
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////

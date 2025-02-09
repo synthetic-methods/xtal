@@ -40,7 +40,7 @@ TAG_("cross", "processor")
 	{
 		using namespace _xtd::ranges::views;
 
-		using U_model = atom::quanta_t<int[3][2]>;
+		using U_model = atom::quanta_t<int[3][2]>;// 3-outputs, 2-inputs
 		using U_remix = process::cross_t<U_model, Px_mix>;
 		using U_mixer = processor::monomer_t<U_remix, provision::stored<>>;
 
@@ -58,6 +58,10 @@ TAG_("cross", "processor")
 	//	(1*1 + 2*0) + (3*1 + 4*0) + (5*1 + 6*0)
 	//	(1*1 + 2*1) + (3*1 + 4*1) + (5*1 + 6*1)
 	//	(1*1 + 2*2) + (3*1 + 4*2) + (5*1 + 6*2)
+
+	//	{{1,2}, {3,4}, {5,6}}.{1,0} // Total
+	//	{{1,2}, {3,4}, {5,6}}.{1,1} // Total
+	//	{{1,2}, {3,4}, {5,6}}.{1,2} // Total
 
 	}
 	/***/

@@ -44,15 +44,26 @@ struct indent<Ns...>
 		using S_::S_;//NOTE: Inherited and respecialized!
 		
 		///\note\
-		Scalar fragments are currently mapped with `ordinate`, \
-		until a better solution presents itself. \
+		Scalar fragments are currently mapped with `ordinate`, if detected. \
+
+		///\todo\
+		Use strong-`value_type`s to map between fractional integral and floating-point values? \
 
 		XTAL_NEW_(explicit)
-		subtype(                       U_  u) noexcept requires un_n<iterable_q<U_>> : S_{W_::ordinate(XTAL_MOV_(u))} {}
+		subtype(U_ u)
+		noexcept requires un_n<iterable_q<U_>> and in_n<requires {W_::ordinate(u);}>
+		:	S_{W_::ordinate(XTAL_MOV_(u))}
+		{}
 		XTAL_NEW_(explicit)
-		subtype(                       U_  u) noexcept requires in_n<iterable_q<U_>> : S_{             XTAL_MOV_(u) } {}
+		subtype(U_ u)
+		noexcept requires in_n<iterable_q<U_>> or  un_n<requires {W_::ordinate(u);}>
+		:	S_{             XTAL_MOV_(u) }
+		{}
 		XTAL_NEW_(implicit)
-		subtype(_std::initializer_list<U_> w) noexcept requires in_n<iterable_q<U_>> : S_{                       w  } {}
+		subtype(_std::initializer_list<U_> w)
+		noexcept requires in_n<iterable_q<U_>>
+		:	S_{w}
+		{}
 
 		template <extent_type N_mask=-1>
 		struct afflux

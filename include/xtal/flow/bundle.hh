@@ -59,13 +59,13 @@ struct bundle
 			XTAL_IF0
 			XTAL_0IF (N_ion == +1) {
 				return [this, oo...]
-					XTAL_0FN_(and) (self().template flux_arguments<N_ion>(oo...))
+					XTAL_0FN_(and) (flux<N_ion>(constant_t<-1>{}, oo...))
 						(S_::template flux<N_ion>(XTAL_REF_(oo)...));
 			}
 			XTAL_0IF (N_ion == -1) {
 				return [this, oo...]
 					XTAL_0FN_(and) (S_::template flux<N_ion>(oo...))
-						(self().template flux_arguments<N_ion>(XTAL_REF_(oo)...));
+						(flux<N_ion>(constant_t<-1>{}, XTAL_REF_(oo)...));
 			}
 		}
 
@@ -73,15 +73,19 @@ struct bundle
 		If prefixed by a positive `constant_q`, forwards to the `argument` specified. \
 		If prefixed by a negative `constant_q` , forwards to all `arguments`. \
 
-		template <signed N_ion>
+		template <signed N_ion,   natural_constant_q I_path>
 		XTAL_DEF_(return,inline,let)
-		flux(constant_q auto &&o, auto &&...oo)
+		flux(I_path, auto &&...oo)
 		noexcept -> signed
 		{
-			extent_type constexpr i = XTAL_ALL_(o){};
-			XTAL_IF0
-			XTAL_0IF (0 <= i) {return argument<i>().template flux          <N_ion>(XTAL_REF_(oo)...);}
-			XTAL_0IF (i <  0) {return self       ().template flux_arguments<N_ion>(XTAL_REF_(oo)...);}
+			return argument<I_path{}>().template flux<N_ion>(XTAL_REF_(oo)...);
+		}
+		template <signed N_ion, unnatural_constant_q I_path>
+		XTAL_DEF_(return,inline,let)
+		flux(I_path, auto &&...oo)
+		noexcept -> signed
+		{
+			return self().template flux_rest<N_ion>(XTAL_REF_(oo)...);
 		}
 
 		///\
@@ -89,7 +93,7 @@ struct bundle
 
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
-		flux_arguments(auto &&...oo)
+		flux_rest(auto &&...oo)
 		noexcept -> signed
 		{
 			return S_::arguments([...oo=XTAL_REF_(oo)] (auto &&...xs)
@@ -100,28 +104,27 @@ struct bundle
 		Forwards `oo...` to all `arguments`, bypassing `self`. \
 		If `0 <= N_dex`, the message is prefixed by `o` for the `argument` specified. \
 
-		template <signed N_ion, int N_dex>
+		template <signed N_ion, unnatural_constant_q I_head>
 		XTAL_DEF_(return,inline,let)
-		flux_argument_(auto &&o, auto &&...oo)
+		flux_unrest(I_head, auto &&o, auto &&...oo)
 		noexcept -> signed
 		{
-			XTAL_IF0
-			XTAL_0IF (N_dex <  0) {
-				return flux_arguments<N_ion>(XTAL_REF_(oo)...);
-			}
-			XTAL_0IF (0 <= N_dex) {
-				return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
-				<auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(to) (
-						argument<N_dex>().template flux<N_ion>(o, oo...) &...& argument<(N_dex <= I) + I>().template flux<N_ion>(oo...)
-					)
-				(bond::seek_s<sizeof...(Xs) - 1> {});
-			}
+			return flux_rest<N_ion>(XTAL_REF_(oo)...);
 		}
-
-		XTAL_DEF_(return,inline,let) deflux_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments< 0>(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline,let) efflux_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments<-1>(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline,let) influx_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments<+1>(XTAL_REF_(oo)...);}
+		template <signed N_ion,   natural_constant_q I_head>
+		XTAL_DEF_(return,inline,let)
+		flux_unrest(I_head, auto &&o, auto &&...oo)
+		noexcept -> signed
+		{
+			auto constexpr N_head = I_head{}();
+			return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
+			<auto ...I>(bond::seek_t<I...>)
+				XTAL_0FN_(to) (
+					argument<N_head>().template flux<N_ion>(o, oo...)
+						&...& argument<skip_v<N_head, I>>().template flux<N_ion>(oo...)
+				)
+			(bond::seek_s<sizeof...(Xs) - 1> {});
+		}
 
 	};
 	using type = confined_t<bond::compose_t<subtype>>;

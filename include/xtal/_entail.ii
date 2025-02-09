@@ -67,8 +67,9 @@ template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   
 template <         class ...Ts>	concept        vacant_q	= (...and   _retail::       vacant_q<Ts    >);
 template <         class ...Ts>	concept       present_q	= (...and   _retail::      present_q<Ts    >);
 
-template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts    >);
 template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts    >);
+template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts    >);
+template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts    >);
 
 template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
 template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
@@ -127,12 +128,11 @@ noexcept -> decltype(auto)
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	auto constexpr   sign_n	=           _retail::              sign_n<N, Z    >;
-template <auto  M, auto     N >	auto constexpr modulo_m	=           _retail::            modulo_m<M, N    >;
-template <auto  M, auto     N >	auto constexpr  above_m	=           _retail::             above_m<M, N    >;
-template <auto  M, auto     N >	auto constexpr  below_m	=           _retail::             below_m<M, N    >;
-template <auto  M, auto  ...Ns>	concept         above_n =           _retail::             above_n<M, Ns...>;
-template <auto  M, auto  ...Ns>	concept         below_n =           _retail::             below_n<M, Ns...>;
+template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=           _retail::              sign_v<N, Z    >;
+template <auto  M, auto     N >	auto constexpr   skip_v	=           _retail::              skip_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr  above_v	=           _retail::             above_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr  below_v	=           _retail::             below_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr modulo_v	=           _retail::            modulo_v<M, N    >;
 template <auto  N, auto  ...Ms>	concept            in_n	=           _retail::                in_n<N, Ms...>;
 template <auto  N, auto  ...Ms>	concept            un_n	=           _retail::                un_n<N, Ms...>;
 template <class T, class ...Ts>	concept            in_q	=           _retail::                in_q<T, Ts...>;
@@ -187,16 +187,18 @@ template <class 	 ...Ts>  concept       real_constant_q	= (...and   _retail::   
 template <class 	 ...Ts>  concept    complex_constant_q	= (...and   _retail::  complex_constant_q<Ts>);
 template <class 	 ...Ts>  concept    simplex_constant_q	= (...and   _retail::  simplex_constant_q<Ts>);
 template <class 	 ...Ts>  concept    numeric_constant_q	= (...and   _retail::  numeric_constant_q<Ts>);
+template <class 	 ...Ts>  concept    natural_constant_q	= (...and   _retail::  natural_constant_q<Ts>);
+template <class 	 ...Ts>  concept  unnatural_constant_q	= (...and   _retail::unnatural_constant_q<Ts>);
 
-template <class       ...Ts>	concept         integral_q	= (...and   _retail::          integral_q<Ts>);
-template <class       ...Ts>	concept         cardinal_q	= (...and   _retail::          cardinal_q<Ts>);
-template <class       ...Ts>	concept          ordinal_q	= (...and   _retail::           ordinal_q<Ts>);
-template <class       ...Ts>	concept          logical_q	= (...and   _retail::           logical_q<Ts>);
-template <class 	    ...Ts>  concept             real_q	= (...and   _retail::              real_q<Ts>);
-template <class 	    ...Ts>  concept          complex_q	= (...and   _retail::           complex_q<Ts>);
-template <class 	    ...Ts>  concept          simplex_q	= (...and   _retail::           simplex_q<Ts>);
-template <class 	    ...Ts>  concept          numeric_q	= (...and   _retail::           numeric_q<Ts>);
-template <class 	    ...Ts>  concept           number_q	=                      numeric_variable_q<Ts...>;
+template <class    ...Ts>	concept   integral_q        	= (...and   _retail::          integral_q<Ts>);
+template <class    ...Ts>	concept   cardinal_q        	= (...and   _retail::          cardinal_q<Ts>);
+template <class    ...Ts>	concept    ordinal_q        	= (...and   _retail::           ordinal_q<Ts>);
+template <class    ...Ts>	concept    logical_q        	= (...and   _retail::           logical_q<Ts>);
+template <class 	 ...Ts>  concept       real_q        	= (...and   _retail::              real_q<Ts>);
+template <class 	 ...Ts>  concept    complex_q        	= (...and   _retail::           complex_q<Ts>);
+template <class 	 ...Ts>  concept    simplex_q        	= (...and   _retail::           simplex_q<Ts>);
+template <class 	 ...Ts>  concept    numeric_q        	= (...and   _retail::           numeric_q<Ts>);
+template <class 	 ...Ts>  concept     number_q        	=                      numeric_variable_q<Ts...>;
 
 XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
 XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::  make_signed_f(o)>{};}
@@ -297,7 +299,7 @@ noexcept
 requires fixed_shaped_q<decltype(t)>
 {
 	auto constexpr M = fixed_shaped<decltype(t)>::extent();
-	return get<modulo_m<M, N>>(destruct_f(XTAL_REF_(t)));
+	return get<modulo_v<M, N>>(destruct_f(XTAL_REF_(t)));
 }
 XTAL_DEF_(return,inline,let)
 destruct_f(auto &&t)
@@ -321,7 +323,7 @@ noexcept
 requires fixed_shaped_q<decltype(t)>
 {
 	auto constexpr M = fixed_shaped<decltype(t)>::extent();
-	auto constexpr I = modulo_m<M, N>;
+	auto constexpr I = modulo_v<M, N>;
 	XTAL_IF0
 	XTAL_0IF (0 == sizeof...(Ns)) {
 		return                   get<I>(destruct_f(XTAL_REF_(t)));

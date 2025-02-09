@@ -422,7 +422,7 @@ public:
 	diplo_f(auto const &n_zoom)
 	noexcept -> alpha_type
 	{
-		auto constexpr o_silon = one/alpha_type{one << fraction.depth - sign_n<N_silon>*N_silon};
+		auto constexpr o_silon = one/alpha_type{one << fraction.depth - sign_v<N_silon>*N_silon};
 		XTAL_IF0
 		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, one + alpha_type{0.50}/o_silon);}
 		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, one - alpha_type{0.25}/o_silon);}
@@ -596,14 +596,32 @@ public:
 	minimum_f(auto &&w, auto &&x)
 	noexcept -> decltype(auto)
 	{
-		return w < x? XTAL_REF_(w): XTAL_REF_(x);
+		using W = XTAL_ALL_(w);
+		using X = XTAL_ALL_(x);
+		if constexpr (full.width == sizeof(W) and full.width == sizeof(X)) {
+			auto w_ = _xtd::bit_cast<delta_type>(XTAL_REF_(w));
+			auto x_ = _xtd::bit_cast<delta_type>(XTAL_REF_(x));
+			auto m_ = -  static_cast<delta_type>(x < w);
+			w_ ^= x_; m_ &= w_;
+			x_ ^= m_;
+			w_ ^= x_;
+			return _xtd::bit_cast<W>(w_);
+		}
+		else {
+			return w < x? XTAL_REF_(w): XTAL_REF_(x);
+		}
 	}
 	XTAL_DEF_(return,inline,set)
 	minimum_f(auto &&w, auto &&x, auto &&...xs)
 	noexcept -> decltype(auto)
+	requires (1 <= sizeof...(xs))
 	{
 		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
+	static_assert( 1.0 == minimum_f(alpha_type{ 1.0}, alpha_type{ 1.5}));
+	static_assert( 1.0 == minimum_f(alpha_type{ 1.5}, alpha_type{ 1.0}));
+	static_assert(-1.5 == minimum_f(alpha_type{-1.0}, alpha_type{-1.5}));
+	static_assert(-1.5 == minimum_f(alpha_type{-1.5}, alpha_type{-1.0}));
 
 
 	///\returns the maximum value that still accommodates arithmetic truncation. \
@@ -642,14 +660,32 @@ public:
 	maximum_f(auto &&w, auto &&x)
 	noexcept -> decltype(auto)
 	{
-		return w > x? XTAL_REF_(w): XTAL_REF_(x);
+		using W = XTAL_ALL_(w);
+		using X = XTAL_ALL_(x);
+		if constexpr (full.width == sizeof(W) and full.width == sizeof(X)) {
+			auto w_ = _xtd::bit_cast<delta_type>(XTAL_REF_(w));
+			auto x_ = _xtd::bit_cast<delta_type>(XTAL_REF_(x));
+			auto m_ = -  static_cast<delta_type>(w < x);
+			w_ ^= x_; m_ &= w_;
+			x_ ^= m_;
+			w_ ^= x_;
+			return _xtd::bit_cast<W>(w_);
+		}
+		else {
+			return w < x? XTAL_REF_(x): XTAL_REF_(w);
+		}
 	}
 	XTAL_DEF_(return,inline,set)
 	maximum_f(auto &&w, auto &&x, auto &&...xs)
 	noexcept -> decltype(auto)
+	requires (1 <= sizeof...(xs))
 	{
 		return maximum_f(maximum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
+	static_assert( 1.5 == maximum_f(alpha_type{ 1.0}, alpha_type{ 1.5}));
+	static_assert( 1.5 == maximum_f(alpha_type{ 1.5}, alpha_type{ 1.0}));
+	static_assert(-1.0 == maximum_f(alpha_type{-1.0}, alpha_type{-1.5}));
+	static_assert(-1.0 == maximum_f(alpha_type{-1.5}, alpha_type{-1.0}));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -719,39 +755,6 @@ public:
 	noexcept -> auto
 	{
 		return sentinel_f(working_f(o));
-	}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-	///\returns the `target` to `N_zoom` bits of precision after the decimal. \
-
-#if XTAL_VER_(MSVC)
-#pragma optimize("", off)
-#endif
-	template <int N_zoom=0>
-	XTAL_DEF_(return,verbatim,set)
-	trim_f(alpha_type target)
-	noexcept -> alpha_type
-	{
-		delta_type constexpr N_unzoom = 0 < N_zoom? N_zoom - fraction.depth: N_zoom - 1;
-		alpha_type constexpr N_minima = diplo_f(N_unzoom)*_std::numeric_limits<alpha_type>::min();
-		target *= N_minima;
-		target /= N_minima;
-		return target;
-	}
-#if XTAL_VER_(MSVC)
-#pragma optimize("",  on)
-#endif
-
-	template <int N_zoom=fraction.depth - 1>
-	XTAL_DEF_(return,set)
-	trim_f(aphex_type const &target)
-	noexcept -> aphex_type
-	{
-		alpha_type const x = trim_f<N_zoom>(target.real());
-		alpha_type const y = trim_f<N_zoom>(target.imag());
-		return aphex_type{x, y};
 	}
 
 

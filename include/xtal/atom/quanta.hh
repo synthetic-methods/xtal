@@ -67,7 +67,7 @@ struct quanta
 		noexcept -> bool
 		{
 			XTAL_IF0
-		//	XTAL_0IF (same_q<As...> and _std::is_standard_layout_v<value_type>) {
+		//	XTAL_0IF (same_q<As...> and atomic_q<value_type>) {
 		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(return) (

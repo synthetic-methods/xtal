@@ -96,7 +96,7 @@ struct define
 						))
 					);
 				//	Influx the original `cur`der to all `arguments`:
-					(void) s.influx_arguments(XTAL_REF_(cur));
+					(void) s.influx(ordinal_constant_t<-1>{}, XTAL_REF_(cur));
 				
 				//	Efflux message tail:
 					if constexpr (1 <= sizeof...(oo)) {
@@ -117,7 +117,7 @@ struct define
 					using          U_state = XTAL_ALL_(u_state);
 					auto constexpr N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
 					
-					if (1 == R_::template flux_argument_<N_ion, N_share>(rev, cur)) {
+					if (1 == R_::template flux_unrest<N_ion>(ordinal_constant_t<N_share>{}, rev, cur)) {
 						return 1;
 					}
 					else {

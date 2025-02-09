@@ -14,16 +14,15 @@ namespace xtal::bond
 ////////////////////////////////////////////////////////////////////////////////
 
 template <         class ...Ts>	struct         pack_size;
-template <fixed_shaped_q    T  >	struct         pack_size<T> : cardinal_constant_t<fixed_shaped<T>::extent()> {};
+template <fixed_shaped_q    T >	struct         pack_size<T> : cardinal_constant_t<fixed_shaped<T>::extent()> {};
 template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>{}();
 template <         class ...Ts>	concept        pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
-template <class T, class ...Ts>	requires above_n<0, sizeof...(Ts)> and pack_size_q<T, Ts...>
-struct pack_size<T, Ts...> : cardinal_constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)> {};
-
-
-template <class T, auto I> concept     pack_width_q = I == pack_size_n<T>;
-template <class T, auto I> concept  subpack_width_q = I <  pack_size_n<T>;
+template <class T, class ...Ts>	requires(1 <= sizeof...(Ts)) and pack_size_q<T, Ts...>
+struct pack_size<T, Ts...>
+:	cardinal_constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)>
+{
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,8 +37,8 @@ template <class T, size_type ...Is> using    pack_item_s = typename pack_item<T,
 
 template <class T>
 //\
-struct   pack_item<T> {using supertype = T; using type = _xtd::    remove_trivial_lvalue_cvref_t<_xtd::remove_rvalue_cvref_t<T &&>>;};
-struct   pack_item<T> {using supertype = T; using type = _xtd::remove_semitrivial_lvalue_cvref_t<_xtd::remove_rvalue_cvref_t<T &&>>;};
+struct   pack_item<T> {using supertype = T; using type = typename _xtd::decay_non_trivial_reference<T &&>::type;};
+struct   pack_item<T> {using supertype = T; using type = typename _xtd::decay_non_nominal_reference<T &&>::type;};
 
 template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};
@@ -105,10 +104,10 @@ concept  pack_list_q = 0 == pack_size_n<T> or [] <auto ...Is>
 //\
 Determines the element-type indexed by `I` across the concatenation of tuples `...Ts`. \
 
-template <auto I,                       class  ...Ts> struct   interpack_item;
-template <auto I,              class T, class  ...Ts> struct   interpack_item<I, T, Ts...> : interpack_item<I - pack_size_n<T>, Ts...> {};
-template <auto I, subpack_width_q<I> T, class  ...Ts> struct   interpack_item<I, T, Ts...> :      pack_item<T, I>                      {};
-template <auto I,                       class  ...Ts> using    interpack_item_t = typename interpack_item<I, Ts...>::type;
+template <auto I,          class  ...Ts>                              struct   interpack_item;
+template <auto I, class T, class  ...Ts>                              struct   interpack_item<I, T, Ts...> : interpack_item<I - pack_size_n<T>, Ts...> {};
+template <auto I, class T, class  ...Ts> requires(I < pack_size_n<T>) struct   interpack_item<I, T, Ts...> :      pack_item<T, I>                      {};
+template <auto I,          class  ...Ts>                              using    interpack_item_t = typename interpack_item<I, Ts...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -102,7 +102,8 @@ struct blob
 		form(),
 		noexcept -> auto
 		{
-			static_assert(atomic_q<Vs...> and _detail::aligned<Vs...>::size() <= N_bytes);
+			static_assert(_detail::aligned<Vs...>::size() <= N_bytes);
+		//	static_assert(_xtd::trivially_constructible<Vs...>);
 
 			using W = _std::tuple<Vs &...>;
 			int i{0};

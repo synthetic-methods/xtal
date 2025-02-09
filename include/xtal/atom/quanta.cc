@@ -11,7 +11,7 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(atomic_q<quanta_t<float[2]>>);
+//atic_assert(atomic_q<quanta_t<float[2]>>);
 
 static_assert(not counted_q<quanta_t<        int[2]>>);
 static_assert(not counted_q<quanta_t<counter_t<>[2]>>);

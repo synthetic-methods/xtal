@@ -11,7 +11,15 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert( fixed_shaped_q<block_t<int(&)[1]>>);
+//atic_assert(_xtd::trivially_initializable<block_t<float[2]>>);
+static_assert(_xtd::trivially_destructible<block_t<float[2]>>);
+static_assert(_xtd::trivially_copyable<block_t<float[2]>>);
+static_assert(_xtd::trivially_movable<block_t<float[2]>>);
+//atic_assert(atomic_q<block_t<float[2]>>);
+
+static_assert(bond::pack_size_q<block_t<double[2]>>);
+
+static_assert(fixed_shaped_q<block_t<int(&)[1]>>);
 static_assert(fixed_valued_q<block_t<int(&)[1]>>);
 
 

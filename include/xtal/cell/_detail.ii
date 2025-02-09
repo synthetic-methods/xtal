@@ -16,13 +16,10 @@ using namespace _retail::_detail;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-//\
-template <class       W >	using            member_t = _xtd::    decay_nontrivial_reference_t<W>;
-template <class       W >	using            member_t = _xtd::decay_nonsemitrivial_reference_t<W>;
-//\
-template <class    ...Ws>	concept          member_q = (...and _xtd::    trivial<based_t<Ws>>);
-template <class    ...Ws>	concept          member_q = (...and _xtd::semitrivial<based_t<Ws>>);
-template <class    ...Ws>	concept       dismember_q = not member_q<Ws...>;
+
+template <class       W >	using            member_t = typename _xtd::decay_non_nominal_reference<W>::value_type;
+template <class    ...Ws>	concept          member_q =     molecular_q<Ws...>;
+template <class    ...Ws>	concept       dismember_q = not molecular_q<Ws...>;
 ///\
 Resolves/dereferences the current value. \
 
@@ -222,7 +219,7 @@ struct defer_field
 
 	public:
 		using head_type = U;
-		using body_type =   member_t<U>;
+		using body_type = member_t<U>;
 
 	public:
 		//\
@@ -316,7 +313,7 @@ struct defer_field<U>
 
 	public:
 		using head_type = U;
-		using body_type =   member_t<U>;
+		using body_type = member_t<U>;
 
 	public:
 		using S_::S_;

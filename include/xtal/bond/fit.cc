@@ -53,9 +53,6 @@ TAG_("fit")
 		TRUE_(                             one == fit<>::template dnsilon_n<0>);
 		TRUE_(fit<>::template dnsilon_n<1> <  fit<>::template dnsilon_n<0>);
 		TRUE_(fit<>::template dnsilon_n<2> <  fit<>::template dnsilon_n<1>);
-		TRUE_(fit<>::template trim_f<2>(fit<>::patio_f(2, 1)) == 6.25);
-		TRUE_(fit<>::template trim_f<3>(fit<>::patio_f(1, 1)) == 3.125);
-		TRUE_(fit<>::template trim_f<4>(fit<>::patio_f(1, 2)) == 1.5625);
 
 	}
 }

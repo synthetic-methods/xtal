@@ -28,21 +28,78 @@ namespace ranges::views
 }
 #endif
 
-template <class T> concept trivially_destructible  = _std::           is_trivially_destructible_v<T>;
+template <class T> concept nominally_initializable = _std::               default_initializable  <T>;
 //\
-template <class T> concept trivially_movable       = _std::                is_trivially_movable_v<T>;
-template <class T> concept trivially_movable       = _std::     is_trivially_move_constructible_v<T> and _std::is_trivially_move_assignable_v<T>;
-//\
-template <class T> concept trivially_copyable      = _std::               is_trivially_copyable_v<T>;
-template <class T> concept trivially_copyable      = _std::     is_trivially_copy_constructible_v<T> and _std::is_trivially_copy_assignable_v<T>;
-//\
-template <class T> concept trivially_initializable = _std::               default_initializable  <T>;
-template <class T> concept trivially_initializable = _std::  is_trivially_default_constructible_v<T>;
+template <class T> concept nominally_destructible  = _std::             is_nothrow_destructible_v<T>;
+template <class T> concept nominally_destructible  = _std::                        destructible  <T>;
+template <class T> concept nominally_copyable      = _std::                            copyable  <T>;
+template <class T> concept nominally_movable       = _std::                             movable  <T>;
 
+template <class T> concept trivially_initializable = _std::  is_trivially_default_constructible_v<T>;
+template <class T> concept trivially_destructible  = _std::           is_trivially_destructible_v<T>;
+template <class T> concept trivially_copyable      = _std::               is_trivially_copyable_v<T>;
+template <class T> concept trivially_movable       = _std::     is_trivially_move_constructible_v<T>\
+                                                 and _std::        is_trivially_move_assignable_v<T>;
+
+template <class T> concept nominally_constructible = nominally_copyable<T> and nominally_movable<T>;
 template <class T> concept trivially_constructible = trivially_copyable<T> and trivially_movable<T>;
 
-template <class T> concept semitrivial = _std::semiregular<T> and     _std::destructible<T>;
-template <class T> concept     trivial =       semitrivial<T> and trivially_destructible<T> and trivially_constructible<T>;
+template <class T> concept nominally_instructible  = nominally_destructible<T> and nominally_initializable<T>;
+template <class T> concept trivially_instructible  = trivially_destructible<T> and trivially_initializable<T>;
+
+template <class T> concept nominal                 = nominally_instructible<T> and nominally_constructible<T>;// and _std::is_standard_layout_v<_std::remove_cvref_t<T>>;
+template <class T> concept trivial                 = trivially_instructible<T> and trivially_constructible<T>;// and _std::is_standard_layout_v<_std::remove_cvref_t<T>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T> concept             rvalue_reference =                                      _std::is_rvalue_reference_v<T>;
+template <class T> concept             lvalue_reference =                                      _std::is_lvalue_reference_v<T>;
+
+template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and _std::is_rvalue_reference_v<T>;
+template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and _std::is_lvalue_reference_v<T>;
+
+template <class T> concept     trivial_rvalue_reference = trivial<_std::remove_cvref_t<T>> and _std::is_rvalue_reference_v<T>;
+template <class T> concept     trivial_lvalue_reference = trivial<_std::remove_cvref_t<T>> and _std::is_lvalue_reference_v<T>;
+
+template <class T> concept non_nominal_rvalue_reference = not nominal_rvalue_reference<T>  and _std::       is_reference_v<T>;
+template <class T> concept non_nominal_lvalue_reference = not nominal_lvalue_reference<T>  and _std::       is_reference_v<T>;
+
+template <class T> concept non_trivial_rvalue_reference = not trivial_rvalue_reference<T>  and _std::       is_reference_v<T>;
+template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_reference<T>  and _std::       is_reference_v<T>;
+
+
+template <class T>
+struct inference
+{
+	using       type = _std::remove_cvref_t<T>;
+	using value_type = _std::remove_cvref_t<T>;
+
+};
+template <class T>
+struct deference
+{
+	using       type = T;
+	using value_type = decltype(&XTAL_ANY_(T));
+
+};
+template <                   class T>	struct             decay_reference    :       inference<T> {};
+template <        lvalue_reference T>	struct             decay_reference<T> :       deference<T> {};
+
+template <                   class T>	struct decay_non_nominal_reference    : decay_reference<T> {};
+template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :       inference<T> {};
+
+template <                   class T>	struct decay_non_trivial_reference    : decay_reference<T> {};
+template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :       inference<T> {};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class F, class ...Xs> concept          invocable = requires {XTAL_ANY_(F)  (XTAL_ANY_(Xs)...);};
+template <class F, class ...Xs> concept constant_invocable = requires {          F{} (XTAL_ANY_(Xs)...);};
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 #if __cpp_lib_bit_cast
 using _std::bit_cast;
@@ -71,10 +128,6 @@ using _std::copysign;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class F, class ...Xs> concept          invocable = requires {XTAL_ANY_(F)  (XTAL_ANY_(Xs)...);};
-template <class F, class ...Xs> concept constant_invocable = requires {          F{} (XTAL_ANY_(Xs)...);};
-
-
 template <class T>     using   make_signed   = _std::  make_signed  <T>;
 template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
 XTAL_DEF_(return,inline,let)   make_signed_f  (_std::       signed_integral auto i) noexcept -> auto {return i;}
@@ -86,58 +139,6 @@ template <class T>     using make_unsigned_t = _std::make_unsigned_t<T>;
 XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::       signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
 XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::     unsigned_integral auto i) noexcept -> auto {return i;}
 XTAL_DEF_(return,inline,let) make_unsigned_f  (          constant_invocable auto f) noexcept -> auto {return make_unsigned_f(f());}
-
-
-template <class T>	concept                rvalue_reference = _std::is_rvalue_reference_v<T>;
-template <class T>	concept                lvalue_reference = _std::is_lvalue_reference_v<T>;
-
-template <class T>	concept        trivial_rvalue_reference = rvalue_reference<T> and     trivial<_std::remove_cvref_t<T>>;
-template <class T>	concept        trivial_lvalue_reference = lvalue_reference<T> and     trivial<_std::remove_cvref_t<T>>;
-
-template <class T>	concept    semitrivial_rvalue_reference = rvalue_reference<T> and semitrivial<_std::remove_cvref_t<T>>;
-template <class T>	concept    semitrivial_lvalue_reference = lvalue_reference<T> and semitrivial<_std::remove_cvref_t<T>>;
-
-template <class T>	concept     nontrivial_rvalue_reference = _std::is_reference_v<T> and not     trivial_rvalue_reference<T>;
-template <class T>	concept     nontrivial_lvalue_reference = _std::is_reference_v<T> and not     trivial_lvalue_reference<T>;
-
-template <class T>	concept nonsemitrivial_rvalue_reference = _std::is_reference_v<T> and not semitrivial_rvalue_reference<T>;
-template <class T>	concept nonsemitrivial_lvalue_reference = _std::is_reference_v<T> and not semitrivial_lvalue_reference<T>;
-
-template <                       class T>	using                     remove_cvref    = _std:: remove_cvref  <T>;
-template <                       class T>	using                     remove_cvref_t  = _std:: remove_cvref_t<T>;
-
-template <                       class T>	struct             remove_rvalue_cvref    : _std::type_identity<T> {};
-template <                       class T>	struct             remove_lvalue_cvref    : _std::type_identity<T> {};
-template <            rvalue_reference T>	struct             remove_rvalue_cvref<T> :        remove_cvref<T> {};
-template <            lvalue_reference T>	struct             remove_lvalue_cvref<T> :        remove_cvref<T> {};
-
-template <                       class T>	struct     remove_trivial_rvalue_cvref    : _std::type_identity<T> {};
-template <                       class T>	struct     remove_trivial_lvalue_cvref    : _std::type_identity<T> {};
-template <    trivial_rvalue_reference T>	struct     remove_trivial_rvalue_cvref<T> :        remove_cvref<T> {};
-template <    trivial_lvalue_reference T>	struct     remove_trivial_lvalue_cvref<T> :        remove_cvref<T> {};
-
-template <                       class T>	struct remove_semitrivial_rvalue_cvref    : _std::type_identity<T> {};
-template <                       class T>	struct remove_semitrivial_lvalue_cvref    : _std::type_identity<T> {};
-template <semitrivial_rvalue_reference T>	struct remove_semitrivial_rvalue_cvref<T> :        remove_cvref<T> {};
-template <semitrivial_lvalue_reference T>	struct remove_semitrivial_lvalue_cvref<T> :        remove_cvref<T> {};
-
-template <class T>	 using              remove_rvalue_cvref_t = typename             remove_rvalue_cvref<T>::type;
-template <class T>	 using              remove_lvalue_cvref_t = typename             remove_lvalue_cvref<T>::type;
-template <class T>	 using      remove_trivial_rvalue_cvref_t = typename     remove_trivial_rvalue_cvref<T>::type;
-template <class T>	 using      remove_trivial_lvalue_cvref_t = typename     remove_trivial_lvalue_cvref<T>::type;
-template <class T>	 using  remove_semitrivial_rvalue_cvref_t = typename remove_semitrivial_rvalue_cvref<T>::type;
-template <class T>	 using  remove_semitrivial_lvalue_cvref_t = typename remove_semitrivial_lvalue_cvref<T>::type;
-
-
-template <                          class T>	struct      decay_nontrivial_reference    : remove_rvalue_cvref<T> {};
-template <       trivial_lvalue_reference T>	struct      decay_nontrivial_reference<T> : remove_lvalue_cvref<T> {};
-template <    nontrivial_lvalue_reference T>	struct      decay_nontrivial_reference<T>   {using type = _std::add_pointer_t<_std::remove_reference_t<T>>;};
-template <                          class T>	using       decay_nontrivial_reference_t  = typename     decay_nontrivial_reference<T>::type;
-
-template <                          class T>	struct  decay_nonsemitrivial_reference    : remove_rvalue_cvref<T> {};
-template <   semitrivial_lvalue_reference T>	struct  decay_nonsemitrivial_reference<T> : remove_lvalue_cvref<T> {};
-template <nonsemitrivial_lvalue_reference T>	struct  decay_nonsemitrivial_reference<T>   {using type = _std::add_pointer_t<_std::remove_reference_t<T>>;};
-template <                          class T>	using   decay_nonsemitrivial_reference_t  = typename decay_nonsemitrivial_reference<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

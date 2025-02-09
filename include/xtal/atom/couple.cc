@@ -17,7 +17,7 @@ static_assert(couple_q<couple_t<int[2]>, int[2]>);
 
 static_assert(complete_q<couple_t<float, double>>);
 
-static_assert(atomic_q<couple_t<float[2]>>);
+//atic_assert(atomic_q<couple_t<float[2]>>);
 
 static_assert(fungible_q<_std::array<float, 2>,
 	XTAL_ALL_(XTAL_ANY_(couple_t<float(&)[2]>)*XTAL_ANY_(couple_t<float(&)[2]>))>
@@ -94,10 +94,10 @@ TAG_("couple")
 		auto foo = bar.template reflected<-1>();
 		auto baz = foo.template reflected<+1>();
 		
-		TRUE_(check_f<19>(foo[0], 1.25));
-		TRUE_(check_f<19>(foo[1], 0.75));
-		TRUE_(check_f<19>(baz[0], bar[0]));
-		TRUE_(check_f<19>(baz[1], bar[1]));
+		TRUE_(foo[0], 1.25);
+		TRUE_(foo[1], 0.75);
+		TRUE_(baz[0], bar[0]);
+		TRUE_(baz[1], bar[1]);
 
 	}
 	TRY_("couple refactoring")

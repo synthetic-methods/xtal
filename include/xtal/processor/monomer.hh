@@ -213,13 +213,20 @@ struct monomer<U, As...>
 				Resizing skips intermediate `recollection_p` dependencies, \
 				continuing to propagate beyond. \
 
-				template <signed N_ion>
+				/*/
+				template <signed N_ion, unnatural_constant_q I>
 				XTAL_DEF_(return,inline,let)
-				flux_arguments(auto &&...oo)
+				flux(I &&, auto &&...oo)
+				/*/
+				template <signed N_ion>
+				XTAL_DEF_(return,let)
+				flux_rest(auto &&...oo)
+				/***/
 				noexcept -> signed
 				{
-					auto constexpr N_dex = in_n<1, occur::resize_q<decltype(oo)>...>? N_share: -1;
-					return R_::template flux_argument_<N_ion, N_dex>(ordinal_constant_t<-1>{}, XTAL_REF_(oo)...);
+					using I_head = ordinal_constant_t<in_n<1, occur::resize_q<decltype(oo)>...>? N_share: -1>;
+					using I_path = ordinal_constant_t<-1>;
+					return R_::template flux_unrest<N_ion>(I_head{}, I_path{}, XTAL_REF_(oo)...);
 				}
 
 				///\

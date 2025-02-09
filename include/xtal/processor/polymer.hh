@@ -237,9 +237,15 @@ struct polymer<U, As...>
 				///\todo\
 				Filter parameter changes from `stage == -1` events? \
 
+				/*/
+				template <signed N_ion, unnatural_constant_q I>
+				XTAL_DEF_(return,inline,let)
+				flux(I &&, auto &&...oo)
+				/*/
 				template <signed N_ion>
 				XTAL_DEF_(return,let)
-				flux_arguments(auto &&...oo)
+				flux_rest(auto &&...oo)
+				/***/
 				noexcept -> signed
 				{
 					auto x = N_ion < 0? -1: lead().template flux<N_ion>(oo...);
