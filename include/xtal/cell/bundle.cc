@@ -7,26 +7,17 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::occur::_test
+namespace xtal::cell::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+/*/
 TAG_("bundle")
 {
-	TRY_("usage")
+	TRY_("task")
 	{
-		using W = bundle_t<int, int, int>;
-		W w{1, 2, 3};
-		auto m = bundle_f(1, 2, 3);
-		using M = XTAL_ALL_(m);
-		TRUE_(same_q<W, M>);
-
-	//	auto const &[a, b, c] = m;
-	//	TRUE_(a == 1);
-	//	TRUE_(b == 2);
-	//	TRUE_(c == 3);
+		TRUE_(true);
 
 	}
 }

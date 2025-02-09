@@ -85,7 +85,6 @@ template <                           >	struct complete<        >    {class type 
 template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
-
 template <auto  N, auto  ...Ns>	concept            un_n	= ((0 == sizeof...(Ns) and incomplete_n<N>) or...or different_n<N, Ns>);
 template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
 template <auto  N, auto  ...Ns>	concept            in_n	= ((0 == sizeof...(Ns) and   complete_n<N>) or...or      same_n<N, Ns>);
@@ -93,7 +92,6 @@ template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) a
 
 template <class T             >  concept     molecular_q = complete_q<T> and _xtd::semitrivial<based_t<T>>;
 template <class T             >  concept        atomic_q = complete_q<T> and _xtd::    trivial<based_t<T>>;
-template <class T             >  concept         ionic_q = complete_q<T> and _xtd::    trivially_initializable<based_t<T>>;
 template <class T             >	concept        vacant_q	=  in_q<T, void, void_type, null_type>;
 template <class T             >	concept       present_q	=  not vacant_q<T>;
 
@@ -131,9 +129,6 @@ template <class F             >	concept  inapplicable_q	=  not applicable_q<F   
 template <class F, class X    >	concept  automorphism_p	=  same_q<return_t<F, X>, X>;
 template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>, X>;
 
-template<          class... Us>	using         variant_t = _std::variant<Us...>;
-template<class T              >	concept       variant_q =  complete_q<_std::variant_size<T>>;
-
 template <template <class> class T_>
 struct derive
 {
@@ -165,7 +160,7 @@ template <         auto  ...Ns>	concept      infinite_n	= (...or  (_xtd::make_si
 
 template <auto  N             >	struct       constant;// At EOF...
 template <auto  N=null_type{} >	using        constant_t	=  constant<N>;
-template <class T             >	concept      constant_q	=  ionic_q<T> and requires {T{};} and requires {requires T{} == T{}();};
+template <class T             >	concept      constant_q	=  complete_q<T> and _xtd::trivially_initializable<based_t<T>> and requires {requires T{} == T{}();};
 
 template <class T             >	struct       variable     {using value_type =          based_t<T>            ;};
 template <constant_q T        >	struct       variable<T>  {using value_type = typename based_t<T>::value_type;};

@@ -17,36 +17,40 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
-template <class    ...Ws>	concept       dismember_q = not    atomic_q<Ws...>;
-template <class    ...Ws>	concept       dismember_q = not molecular_q<Ws...>;
-template <class    ...Ws>	concept          member_q = not dismember_q<Ws...>;
+template <class       W >	using            member_t = _xtd::    decay_nontrivial_reference_t<W>;
+template <class       W >	using            member_t = _xtd::decay_nonsemitrivial_reference_t<W>;
+//\
+template <class    ...Ws>	concept          member_q = (...and _xtd::    trivial<based_t<Ws>>);
+template <class    ...Ws>	concept          member_q = (...and _xtd::semitrivial<based_t<Ws>>);
+template <class    ...Ws>	concept       dismember_q = not member_q<Ws...>;
+///\
+Resolves/dereferences the current value. \
 
-template <class       W >	struct           member            {using type = based_t<W>;};
-template <dismember_q W >	struct           member<W const &> {using type = const   W*;};
-template <dismember_q W >	struct           member<W       &> {using type =         W*;};
-template <class       W >	struct         remember            {using type =         W ;};
-
-template <class       W >	using            member_t = typename   member<W>::type;
-template <class       W >	using          remember_t = typename remember<W>::type;
-
+template <pointed_q   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m);}
+template <class       M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m);}
 ///\
 Constructs/references the current value. \
 
 template <dismember_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&    o) noexcept -> decltype(auto) {return             &  XTAL_REF_(o )    ;}
 template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&    o) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(o ))   ;}
 template <class       M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...oo) noexcept -> decltype(auto) {return             M (XTAL_REF_(oo)...);}
-
-///\
-Resolves/dereferences the current value. \
-
-template <pointed_q   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m);}
-template <class       M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m);}
-
 ///\
 Replaces and returns the previous value. \
 
-template <member_q    W >	XTAL_DEF_(return,inline,let) dismember_f(W &m,         W w) noexcept -> decltype(auto) {return             _std::exchange(m, XTAL_MOV_(w))    ;}
-template <member_q    W >	XTAL_DEF_(return,inline,let) dismember_f(W &m, auto &&...w) noexcept -> decltype(auto) {return dismember_f<W>(m, member_f<W>(XTAL_REF_(w)...));}
+template <member_q W>
+XTAL_DEF_(return,inline,let)
+dismember_f(W &m, W w)
+noexcept -> decltype(auto)
+{
+	return _std::exchange(m, XTAL_MOV_(w));
+}
+template <member_q W>
+XTAL_DEF_(return,inline,let)
+dismember_f(W &m, auto &&...x)
+noexcept -> decltype(auto)
+{
+	return thunk_f(XTAL_MOV_(m)) (new (&m) based_t<W>(XTAL_REF_(x)...));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +221,7 @@ struct defer_field
 		using U_ = initializer_u<U>;
 
 	public:
-		using head_type = remember_t<U>;
+		using head_type = U;
 		using body_type =   member_t<U>;
 
 	public:
@@ -311,7 +315,7 @@ struct defer_field<U>
 		using S_ = bond::compose_s<S>;
 
 	public:
-		using head_type = remember_t<U>;
+		using head_type = U;
 		using body_type =   member_t<U>;
 
 	public:

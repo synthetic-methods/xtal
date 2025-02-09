@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "../cell/bundle.hh"
 
 
 
@@ -27,48 +27,25 @@ template <class ...Xs>
 struct bundle
 {
 	using superkind = bond::compose<bond::tag<bundle>
-	,	cell::defer<flow::packed_t<Xs...>>
+	,	cell::bundle<Xs...>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using H_ = typename S_::head_type;
 
 	public:// CONSTRUCT
-		using S_::S_;//NOTE: Inherited and respecialized!
-
-		///\
-		Initialize `arguments` using those provided. \
-
-		XTAL_NEW_(explicit)
-		subtype(Xs &&...xs)
-		noexcept
-		:	S_(H_{XTAL_REF_(xs)...})
-		{}
+		using S_::S_;
 
 	public:// ACCESS
 		using S_::self;
 		using S_::head;
 
-		//\note\
-		Contingent override of `node` allows unextended `bundle`s to be destructured. \
-		Use `arguments` for unmitigated access. \
+		XTAL_FX2_(to) (template <size_type ...Is>
+		XTAL_DEF_(return,inline,get)
+		argument(), S_::template argument<Is...>())
 
-		using node_type = typename S_::head_type;
-
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)      node(), head())
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) arguments(), head())
-		
-		XTAL_FX2_(do) (template <size_type ...Is>
-		XTAL_DEF_(return,inline,let)
-		argument(),
-		noexcept -> decltype(auto)
-		{
-			return bond::pack_item_f<Is...>(head());
-		})
-		
 	public:// FLOW
 
 		///\returns the result of influxing `self` then  (if `& 1`) `arguments`. \
@@ -115,7 +92,7 @@ struct bundle
 		flux_arguments(auto &&...oo)
 		noexcept -> signed
 		{
-			return arguments().apply([...oo=XTAL_REF_(oo)] (auto &&...xs)
+			return S_::arguments([...oo=XTAL_REF_(oo)] (auto &&...xs)
 				XTAL_0FN_(to) (XTAL_REF_(xs).template flux<N_ion>(oo...) &...& -1)
 			);
 		}
@@ -147,6 +124,8 @@ struct bundle
 		XTAL_DEF_(return,inline,let) influx_arguments(auto &&...oo) noexcept -> signed {return self().template flux_arguments<+1>(XTAL_REF_(oo)...);}
 
 	};
+	using type = confined_t<bond::compose_t<subtype>>;
+
 };
 
 

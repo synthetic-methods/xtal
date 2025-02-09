@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./direction.hh"// testing...
+#include "./call.hh"// testing...
 
 
 
@@ -13,13 +13,13 @@ namespace xtal::flow::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("direction")
+TAG_("call")
 {
 	TRY_("construct")
 	{
 		using U_source = flow::conferred_t<counted_t<>>;
-		using U_target = direction_s<U_source>;
-		using V_target = direction_s<>;
+		using U_target = call_s<U_source>;
+		using V_target = call_s<>;
 
 		V_target v_target(99);
 		U_target u_target(99, U_source(counted_t<>(11, 22)));

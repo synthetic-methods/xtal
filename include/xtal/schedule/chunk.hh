@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flow/direction.hh"
+#include "../flow/call.hh"
 #include "../provision/spooled.hh"
 
 
@@ -119,7 +119,7 @@ struct chunk
 				{
 					R_::relay(i);
 					while (0 < u_spool.size() and next().head() <= i) {
-						(void) R_::template flux(flow::direction_f(1, next().tail()));
+						(void) R_::template flux(flow::call_f(1, next().tail()));
 						(void) u_spool.pop();
 					}
 					return delay();

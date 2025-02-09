@@ -29,9 +29,9 @@ public:
 	using S_::S_;
 
 };
-template <auto  N>	using  extent_constant_t	=  typename _retail:: extent_constant_t<N>;
-template <auto  N>	using    size_constant_t	=  typename _retail::   size_constant_t<N>;
-template <auto  N>	using    sign_constant_t	=  typename _retail::   sign_constant_t<N>;
+template <auto  N>	using    extent_constant_t	= _retail:: extent_constant_t<N>;
+template <auto  N>	using      size_constant_t	= _retail::   size_constant_t<N>;
+template <auto  N>	using      sign_constant_t	= _retail::   sign_constant_t<N>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ template <class T             >	using        identity_t	=           _retail::   
 template <class T             >	using        identity_u	=           _retail::     identity_u<T      >;
 template <class T             >	concept      identity_q	=           _retail::     identity_q<T      >;
 
-template <         class ...Ts>	using        complete_t	=  typename _retail::     complete_t<Ts ...> ;
+template <         class ...Ts>	using        complete_t	=           _retail::     complete_t<Ts ...> ;
 template <         class ...Ts>	concept      complete_q	= (...and   _retail::     complete_q<Ts    >);
 template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   incomplete_q<Ts    >);
 
@@ -69,7 +69,6 @@ template <         class ...Ts>	concept       present_q	= (...and   _retail::   
 
 template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts    >);
 template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts    >);
-
 
 template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
 template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
@@ -103,22 +102,24 @@ template <         class ...Fs>	concept  inapplicable_q	= (...and   _retail:: in
 template <class F, class ...Xs>	concept  automorphism_p	= (...and   _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
 template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
 
-template<          class... Us>	using         variant_t =           _retail::      variant_t<Us...> ;
-template<          class... Ts>	concept       variant_q = (...and   _retail::      variant_q<Ts   >);
 template<          class... Fs>
 struct visitor : Fs...
 {
 	using Fs::operator()...;
 
-	template <class ...Ts>
-	XTAL_DEF_(inline,let)
-	operator() (variant_q auto &&v)
-	noexcept -> decltype(auto)
-	{
-		return _std::visit(XTAL_REF_(v), *this);
-	}
+	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...>       &&v) noexcept -> decltype(auto) {return _std::visit(XTAL_MOV_(v), *this);}
+	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...> const &&v) noexcept -> decltype(auto) {return _std::visit(XTAL_MOV_(v), *this);}
+	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...>        &v) noexcept -> decltype(auto) {return _std::visit(XTAL_REF_(v), *this);}
+	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...> const  &v) noexcept -> decltype(auto) {return _std::visit(XTAL_REF_(v), *this);}
 
 };
+
+XTAL_DEF_(return,inline,let)
+thunk_f(auto &&o)
+noexcept -> decltype(auto)
+{
+	return [&] XTAL_1FN_(value) (XTAL_REF_(o));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -164,10 +165,10 @@ static_assert(constant_q<decltype(-half)>);
 template <auto  N> auto constexpr half_n = constant_t<[] XTAL_1FN_(value) (1.F/(one << N))>{};
 template <auto  N> auto constexpr  two_n = constant_t<[] XTAL_1FN_(value) (1.F*(one << N))>{};
 
-template <auto  N       >	using     integral_constant_t	=  typename _retail:: integral_constant_t<N>;
-template <auto  N       >	using     cardinal_constant_t	=  typename _retail:: cardinal_constant_t<N>;
-template <auto  N       >	using      ordinal_constant_t	=  typename _retail::  ordinal_constant_t<N>;
-template <auto  N       >	using      logical_constant_t	=  typename _retail::  logical_constant_t<N>;
+template <auto  N       >	using     integral_constant_t	=           _retail:: integral_constant_t<N>;
+template <auto  N       >	using     cardinal_constant_t	=           _retail:: cardinal_constant_t<N>;
+template <auto  N       >	using      ordinal_constant_t	=           _retail::  ordinal_constant_t<N>;
+template <auto  N       >	using      logical_constant_t	=           _retail::  logical_constant_t<N>;
 
 template <class 	 ...Ts>  concept   integral_variable_q	= (...and   _retail:: integral_variable_q<Ts>);
 template <class 	 ...Ts>  concept   cardinal_variable_q	= (...and   _retail:: cardinal_variable_q<Ts>);
@@ -220,8 +221,8 @@ noexcept -> Y
 
 template <         class ...Ts>	concept   intercedent_q	= (...and   _retail::intercedent_q<based_t<Ts>>);
 template <         class ...Ts>	concept    antecedent_q	= (...and   _retail:: antecedent_q<based_t<Ts>>);
-template <class T             >	using       precedent_s	=  typename _retail::  precedent_s<        T  > ;
-template <class T             >	using       succedent_s	=  typename _retail::  succedent_s<        T  > ;
+template <class T             >	using       precedent_s	=           _retail::  precedent_s<        T  > ;
+template <class T             >	using       succedent_s	=           _retail::  succedent_s<        T  > ;
 
 
 ////////////////////////////////////////////////////////////////////////////////

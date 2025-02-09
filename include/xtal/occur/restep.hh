@@ -39,8 +39,13 @@ struct restep<U>
 		using S_::S_;
 
 	public:// ACCESS
+		using S_::self;
+		using S_::head;
+
 		using step_type = U;
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) step(auto &&...oo), S_::head(XTAL_REF_(oo)...))
+
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) step_(auto &&...oo), (void) head(XTAL_REF_(oo)...), self())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) step (auto &&...oo),        head(XTAL_REF_(oo)...)        )
 
 	};
 };

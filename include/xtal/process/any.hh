@@ -213,7 +213,7 @@ struct define
 					auto constexpr N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
-					XTAL_0IF (0 == N) {return arguments().apply([this] XTAL_1FN_(function) (method));}
+					XTAL_0IF (0 == N) {return arguments([this] XTAL_1FN_(function) (method));}
 					XTAL_0IF_(terminate)
 				})
 

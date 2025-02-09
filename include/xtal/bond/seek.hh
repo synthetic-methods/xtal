@@ -79,7 +79,7 @@ noexcept -> decltype(auto)
 	return XTAL_REF_(o);
 }
 template <         class ...Ts>  struct         seek_front;
-template <class T, class ...Ts>  struct         seek_front<T, Ts...>       {using type = T;};
+template <class T, class ...Ts>  struct         seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>::type;
 template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>{}();
 

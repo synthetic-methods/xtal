@@ -76,20 +76,20 @@ struct thunk
 
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method()
-				noexcept -> decltype(auto)
-				{
-					return u_spool.advance(head_()++ == head_(1))->
-						tail().apply([this] XTAL_1FN_(function) (method));
-				}
-				template <auto ...>
-				XTAL_DEF_(return,inline,let)
 				method(V_shuttle &x, auto &&...)
 				noexcept -> auto
 				{
 					//\
 					return x;
 					return x++(0);
+				}
+				template <auto ...>
+				XTAL_DEF_(return,inline,let)
+				method()
+				noexcept -> decltype(auto)
+				{
+					return u_spool.advance(head_()++ == head_(1))->
+						tail().apply([this] XTAL_1FN_(function) (method));
 				}
 
 			public:// FLOW

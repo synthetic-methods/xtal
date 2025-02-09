@@ -64,14 +64,14 @@ struct spool<A>
 		XTAL_NEW_(explicit)
 		homotype(          bond::seek_t<>, auto &&...oo)
 		noexcept(false)
-		:	u_begin(0), u_end(sizeof...(oo))
-		,	u_buffer{                       U_value{XTAL_REF_(oo)}...}
+		:	u_buffer{                       U_value{XTAL_REF_(oo)}...}
+		,	u_begin(0), u_end(sizeof...(oo))
 		{}
 		XTAL_NEW_(explicit)
 		homotype(auto &&o, bond::seek_t<>, auto &&...oo)
 		noexcept(false)
-		:	u_begin(1), u_end(sizeof...(oo))
-		,	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
+		:	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
+		,	u_begin(1), u_end(sizeof...(oo))
 		{}
 
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))

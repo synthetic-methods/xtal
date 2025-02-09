@@ -42,7 +42,10 @@ struct resize<U>
 		using S_::head;
 
 		using size_type = U;
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) size(auto &&...oo), head(XTAL_REF_(oo)...))
+
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) size_(auto &&...oo), (void) head(XTAL_REF_(oo)...), self())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) size (auto &&...oo),        head(XTAL_REF_(oo)...)        )
+
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) empty(), 0 == size())
 
 	};

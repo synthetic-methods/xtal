@@ -37,11 +37,14 @@ struct review<U>
 	public:
 		using S_::S_;
 		using S_::self;
-		using S_::twin;
 		using S_::head;
 		
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)    view(auto &&...oo),          S_::   head(XTAL_REF_(oo)...) )
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) subview(auto &&...oo), review_f(S_::subhead(XTAL_REF_(oo)...)))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) view_(auto &&...oo), (void) head(XTAL_REF_(oo)...), self())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) view (auto &&...oo),        head(XTAL_REF_(oo)...)        )
+
+		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
+		subview(auto &&...oo),
+		review_f(S_::subhead(XTAL_REF_(oo)...)))
 
 	};
 };

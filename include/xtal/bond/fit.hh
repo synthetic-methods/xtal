@@ -221,10 +221,10 @@ public:
 	using alignment = constructive_alignment;
 
 
-	XTAL_DEF_(return,inline,set) internal_f(     delta_type i) noexcept -> auto {return i;}
-	XTAL_DEF_(return,inline,set) internal_f(     sigma_type i) noexcept -> auto {return i;}
-	XTAL_DEF_(return,inline,set) internal_f( ordinal_q auto i) noexcept -> auto {return static_cast<delta_type>(i);}
-	XTAL_DEF_(return,inline,set) internal_f(cardinal_q auto i) noexcept -> auto {return static_cast<sigma_type>(i);}
+	XTAL_DEF_(return,inline,set) working_f(     delta_type i) noexcept -> auto {return i;}
+	XTAL_DEF_(return,inline,set) working_f(     sigma_type i) noexcept -> auto {return i;}
+	XTAL_DEF_(return,inline,set) working_f( ordinal_q auto i) noexcept -> auto {return static_cast<delta_type>(i);}
+	XTAL_DEF_(return,inline,set) working_f(cardinal_q auto i) noexcept -> auto {return static_cast<sigma_type>(i);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -327,9 +327,9 @@ public:
 	static aphex_type constexpr aphex_1{1, 0};
 	static aphex_type constexpr aphex_i{0, 1};
 
-	XTAL_DEF_(return,inline,set) internal_f(alpha_type      i) noexcept -> auto {return                         i ;}
-	XTAL_DEF_(return,inline,set) internal_f(    real_q auto i) noexcept -> auto {return static_cast<alpha_type>(i);}
-	XTAL_DEF_(return,inline,set) internal_f(integral_q auto i) noexcept -> auto {return          S_::internal_f(i);}
+	XTAL_DEF_(return,inline,set) working_f(alpha_type      i) noexcept -> auto {return                         i ;}
+	XTAL_DEF_(return,inline,set) working_f(    real_q auto i) noexcept -> auto {return static_cast<alpha_type>(i);}
+	XTAL_DEF_(return,inline,set) working_f(integral_q auto i) noexcept -> auto {return          S_::working_f(i);}
 
 
 	XTAL_DEF_(return,inline,set)
@@ -414,7 +414,7 @@ public:
 	XTAL_DEF_(return,inline,set) diplo_f(auto n_zoom, alpha_type o_silon)
 	noexcept -> auto
 	{
-		return diplo_f(internal_f(XTAL_REF_(n_zoom)), o_silon);
+		return diplo_f(working_f(XTAL_REF_(n_zoom)), o_silon);
 	}
 
 	template <int N_silon=0>
@@ -718,7 +718,7 @@ public:
 	sentinel_f(auto const &o)
 	noexcept -> auto
 	{
-		return sentinel_f(internal_f(o));
+		return sentinel_f(working_f(o));
 	}
 
 

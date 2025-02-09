@@ -2,7 +2,7 @@
 #include "../flow/any.hh"// `_retail`
 
 #include "../flow/cue.hh"
-#include "../flow/direction.hh"
+#include "../flow/call.hh"
 
 
 
@@ -55,10 +55,9 @@ struct define
 				using R_::R_;
 				using R_::self;
 
-				using   pack_type = bond::pack_t  <Xs...>;
-				using packed_type = flow::packed_t<Xs...>;
-				using  event_type = flow::cue_s   <Xs...>;
-				using  delay_type = typename event_type::head_type;
+				using  event_type =          flow::cue_s<Xs...>;
+				using  delay_type = typename flow::cue_t<Xs...>::head_type;
+				using packed_type = typename flow::cue_t<Xs...>::tail_type;
 
 			public:// FLOW
 
@@ -79,7 +78,7 @@ struct define
 				Include the `flux` index within the event. \
 
 				XTAL_DEF_(return,inline,let)
-				flux(flow::direction_q auto const x_, auto &&...oo)
+				flux(flow::call_q auto const x_, auto &&...oo)
 				noexcept -> signed
 				{
 					switch (x_.head()) {
@@ -92,7 +91,7 @@ struct define
 				Unpacks and forwards the dequeued message to `self()`. \
 
 				XTAL_DEF_(return,inline,let)
-				flux(flow::direction_q auto const x_, same_q<packed_type> auto &&o)
+				flux(flow::call_q auto const x_, same_q<packed_type> auto &&o)
 				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply([&, this] (auto &&...oo)
@@ -100,10 +99,10 @@ struct define
 					);
 				}
 				XTAL_DEF_(return,inline,let)
-				flux(flow::direction_q auto const xo)
+				flux(flow::call_q auto const xo)
 				noexcept -> signed
 				{
-					return flux(flow::direction_f(xo.head()), xo.tail());
+					return flux(flow::call_f(xo.head()), xo.tail());
 				}
 
 				///\
@@ -122,13 +121,6 @@ struct define
 				noexcept -> signed
 				{
 					return XTAL_REF_(oo).apply(confuse<N_ion>(v));
-				}
-				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
-				flux(flow::cue_s<> v, same_q<pack_type> auto &&oo)
-				noexcept -> signed
-				{
-					return _std::apply(confuse<N_ion>(v), XTAL_REF_(oo));
 				}
 
 			private:
