@@ -70,33 +70,27 @@ template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_ref
 
 
 template <class T>
-struct inference
+struct decay_soft_reference
 {
 	using       type = _std::remove_cvref_t<T>;
 	using value_type = _std::remove_cvref_t<T>;
 
 };
 template <class T>
-struct deference
+struct decay_hard_reference
 {
 	using       type = T;
 	using value_type = decltype(&XTAL_ANY_(T));
 
 };
-template <                   class T>	struct             decay_reference    :       inference<T> {};
-template <        lvalue_reference T>	struct             decay_reference<T> :       deference<T> {};
+template <                   class T>	struct             decay_reference    : decay_soft_reference<T> {};
+template <        lvalue_reference T>	struct             decay_reference<T> : decay_hard_reference<T> {};
 
-template <                   class T>	struct decay_non_nominal_reference    : decay_reference<T> {};
-template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :       inference<T> {};
+template <                   class T>	struct decay_non_nominal_reference    :      decay_reference<T> {};
+template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> : decay_soft_reference<T> {};
 
-template <                   class T>	struct decay_non_trivial_reference    : decay_reference<T> {};
-template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :       inference<T> {};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class F, class ...Xs> concept          invocable = requires {XTAL_ANY_(F)  (XTAL_ANY_(Xs)...);};
-template <class F, class ...Xs> concept constant_invocable = requires {          F{} (XTAL_ANY_(Xs)...);};
+template <                   class T>	struct decay_non_trivial_reference    :      decay_reference<T> {};
+template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> : decay_soft_reference<T> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,17 +122,140 @@ using _std::copysign;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <class F, class ...Xs> concept            invocable = requires {XTAL_ANY_(F) (XTAL_ANY_(Xs)...);};
+template <class F, class ...Xs> concept   constant_invocable = trivially_initializable<F> and invocable<F, Xs...>;
+template <class F             > concept constant_equivocable = not _std::integral<F> and constant_invocable<F> and requires {F{} == F{}();};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T>     using   make_signed   = _std::  make_signed  <T>;
 template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
 XTAL_DEF_(return,inline,let)   make_signed_f  (_std::       signed_integral auto i) noexcept -> auto {return i;}
 XTAL_DEF_(return,inline,let)   make_signed_f  (_std::     unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let)   make_signed_f  (          constant_invocable auto f) noexcept -> auto {return   make_signed_f(f());}
+XTAL_DEF_(return,inline,let)   make_signed_f  (        constant_equivocable auto f) noexcept -> auto {return   make_signed_f(f());}
 
 template <class T>     using make_unsigned   = _std::make_unsigned  <T>;
 template <class T>     using make_unsigned_t = _std::make_unsigned_t<T>;
 XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::       signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
 XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::     unsigned_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) make_unsigned_f  (          constant_invocable auto f) noexcept -> auto {return make_unsigned_f(f());}
+XTAL_DEF_(return,inline,let) make_unsigned_f  (        constant_equivocable auto f) noexcept -> auto {return make_unsigned_f(f());}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+///\returns the result of `w + x*(y*...*ys)`, using `fma` where possible. \
+
+template <class W, class X, class Y>
+requires requires (W w, X x, Y y) {
+	requires(not _std::derived_from<XTAL_ALL_(w), _std::complex<XTAL_ALL_(abs(w))>>);
+	requires(not _std::derived_from<XTAL_ALL_(x), _std::complex<XTAL_ALL_(abs(x))>>);
+	requires(not _std::derived_from<XTAL_ALL_(y), _std::complex<XTAL_ALL_(abs(y))>>);
+	w + x*y;
+}
+XTAL_DEF_(return,inline,let)
+plus_multiplies(W &&w, X &&x, Y &&y)
+noexcept -> XTAL_ALL_(w + x*y)
+{
+	XTAL_IF0
+	XTAL_0IF_(consteval) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+	}
+#if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
+	XTAL_0IF (requires {_std::fma(y, x, w);}) {
+		return __builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+#endif
+#if   XTAL_SYS_(FMA)
+	XTAL_0IF (requires {fma(y, x, w);}) {
+		return           fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+	}
+#endif
+	XTAL_0IF_(else) {
+		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+	}
+}
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(V w, _std::complex<V> x, V y)
+noexcept -> _std::complex<V>
+{
+	return {plus_multiplies(w, x.real(), y), x.imag()*y};
+}
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(V w, V x, _std::complex<V> y)
+noexcept -> _std::complex<V>
+{
+	return {plus_multiplies(w, x, y.real()), x*y.imag()};
+}
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(V w, _std::complex<V> x, _std::complex<V> y)
+noexcept -> _std::complex<V>
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = plus_multiplies(plus_multiplies(w, x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = plus_multiplies(                   x.imag()*y.real() ,  x.real(),y.imag());
+		return {z_re, z_im};
+		/***/
+	}
+}
+
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(_std::complex<V> w, V x, V y)
+noexcept -> _std::complex<V>
+{
+	return {plus_multiplies(w.real(), x, y), w.imag()};
+}
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(_std::complex<V> w, _std::complex<V> x, V y)
+noexcept -> _std::complex<V>
+{
+	return {plus_multiplies(w.real(), x.real(), y), plus_multiplies(w.imag(), x.imag(), y)};
+}
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(_std::complex<V> w, V x, _std::complex<V> y)
+noexcept -> _std::complex<V>
+{
+	return {plus_multiplies(w.real(), x, y.real()), plus_multiplies(w.imag(), x, y.imag())};
+}
+
+template <class V>
+XTAL_DEF_(return,inline,let)
+plus_multiplies(_std::complex<V> w, _std::complex<V> x, _std::complex<V> y)
+noexcept -> _std::complex<V>
+{
+	if constexpr (requires {fma(y, x, w);}) {
+		return fma(y, x, w);
+	}
+	else {
+		/**/
+		return y*x + w;
+		/*/
+		auto const z_re = plus_multiplies(plus_multiplies(w.real(), x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = plus_multiplies(plus_multiplies(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
+		return {z_re, z_im};
+		/***/
+	}
+}
+
+XTAL_DEF_(return,inline,let)
+plus_multiplies(auto &&w, auto &&x, auto &&y, auto &&...ys)
+noexcept -> auto
+requires (1 <= sizeof...(ys))
+{
+	return plus_multiplies(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

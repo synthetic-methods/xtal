@@ -198,8 +198,8 @@ struct couple
 			bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                              v, v);}
-				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                              v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*v, v);}
 			});
 
 			return u;
@@ -215,8 +215,8 @@ struct couple
 			
 			bond::seek_forward_f<size>([&, this] (auto I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = accumulator_f(XTAL_MOV_(u),                              get<I>(s), get<I>(t));}
-				XTAL_0IF (N_sgn < 0) {u = accumulator_f(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*get<I>(s), get<I>(t));}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                              get<I>(s), get<I>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*get<I>(s), get<I>(t));}
 			});
 			
 			return u;

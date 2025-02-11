@@ -30,7 +30,7 @@ struct lifter
 		XTAL_DEF_(return,inline,set)
 		S_method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return) (S::template method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to) (S::template method_f<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
@@ -40,9 +40,15 @@ struct lifter
 			if constexpr (bond::compose_q<U>) {
 				return confined_t<U>::template method_f<Is...>(XTAL_REF_(xs)...);
 			}
+			/*/
 			else {
-				return evoke_t<U>{}(XTAL_REF_(xs)...);
+				return bond::operate<U>{}(XTAL_REF_(xs)...);
 			}
+			/*/
+			XTAL_0IF_(to) (U   {XTAL_REF_(xs)...})
+			XTAL_0IF_(to) (U   (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (U{} (XTAL_REF_(xs)...))
+			/***/
 		}
 
 	public:
@@ -92,7 +98,7 @@ struct lifter
 ////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides pure `head`-less mapping of `method` (in contrast to `link`), \
-in addition to allowing constructor mapping via `evoke_t`. \
+in addition to allowing constructor mapping via `bond::operate`. \
 
 template <                   typename ...As> struct lift;
 template <bond::compose_q A                > struct lift<A       > :                                              A {};

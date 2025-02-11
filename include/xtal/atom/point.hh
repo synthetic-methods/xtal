@@ -185,24 +185,24 @@ struct point
 		XTAL_DEF_(mutate,inline,let) operator>>=(auto const &o)                    noexcept -> auto & requires requires (value_type u) {u>>=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u>>=v;}>(XTAL_REF_(o));}
 
 	//	Scalar commutation:
-		XTAL_DEF_(return,inline,met) operator + (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() + o)
-	//	XTAL_DEF_(return,inline,met) operator - (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() - o)
-		XTAL_DEF_(return,inline,met) operator * (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() * o)
-	//	XTAL_DEF_(return,inline,met) operator / (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() / o)
-	//	XTAL_DEF_(return,inline,met) operator % (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() % o)
-		XTAL_DEF_(return,inline,met) operator & (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() & o)
-		XTAL_DEF_(return,inline,met) operator | (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() | o)
-		XTAL_DEF_(return,inline,met) operator ^ (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(return) (t.self() ^ o)
+		XTAL_DEF_(return,inline,met) operator + (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() + o)
+	//	XTAL_DEF_(return,inline,met) operator - (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() - o)
+		XTAL_DEF_(return,inline,met) operator * (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() * o)
+	//	XTAL_DEF_(return,inline,met) operator / (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() / o)
+	//	XTAL_DEF_(return,inline,met) operator % (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() % o)
+		XTAL_DEF_(return,inline,met) operator & (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() & o)
+		XTAL_DEF_(return,inline,met) operator | (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() | o)
+		XTAL_DEF_(return,inline,met) operator ^ (auto const &o, homotype const &t) noexcept -> auto   requires un_n<point_q<decltype(o)>> and XTAL_TRY_(to) (t.self() ^ o)
 
 	//	Vector reassignment:
-		XTAL_DEF_(return,inline,let) operator + (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() += o)
-		XTAL_DEF_(return,inline,let) operator - (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() -= o)
-		XTAL_DEF_(return,inline,let) operator * (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() *= o)
-		XTAL_DEF_(return,inline,let) operator / (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() /= o)
-		XTAL_DEF_(return,inline,let) operator % (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() %= o)
-		XTAL_DEF_(return,inline,let) operator & (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() &= o)
-		XTAL_DEF_(return,inline,let) operator | (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() |= o)
-		XTAL_DEF_(return,inline,let) operator ^ (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(return) (twin() ^= o)
+		XTAL_DEF_(return,inline,let) operator + (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() += o)
+		XTAL_DEF_(return,inline,let) operator - (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() -= o)
+		XTAL_DEF_(return,inline,let) operator * (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() *= o)
+		XTAL_DEF_(return,inline,let) operator / (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() /= o)
+		XTAL_DEF_(return,inline,let) operator % (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() %= o)
+		XTAL_DEF_(return,inline,let) operator & (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() &= o)
+		XTAL_DEF_(return,inline,let) operator | (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() |= o)
+		XTAL_DEF_(return,inline,let) operator ^ (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() ^= o)
 
 	};
 	using type = derive_t<homotype>;

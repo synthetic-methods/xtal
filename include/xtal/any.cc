@@ -1,5 +1,5 @@
 #pragma once
-#include "./any.cxx"
+#include "./any.c"
 #include "./occur/all.hh"
 #include "./process/any.hh"
 #include "./provision/all.hh"
@@ -20,9 +20,6 @@ static_assert( vacant_q<void> and not present_q<void>);
 static_assert(present_q<bool> and not  vacant_q<bool>);
 
 
-
-static_assert(same_q<evoke_t<>, evoke_t<>>);
-static_assert(same_q<evoke_t<>, decltype(evoke_t<>{})>);
 
 static_assert(    integral_q<constant_t<1>>);
 static_assert(    integral_q<  int>);

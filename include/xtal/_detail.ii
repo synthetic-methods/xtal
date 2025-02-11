@@ -87,7 +87,7 @@ noexcept -> void
 		while_move_to<f>(y0, x0, xN, ord);
 	}
 	XTAL_0IF (same_q<_std::identity, F> and different_q<Y, X>) {
-		copy_to<evoke_t<Y>{}>(y0, x0, xN, ord);
+		copy_to<[] XTAL_1FN_(function) (Y)>(y0, x0, xN, ord);
 	}
 	XTAL_0IF (same_q<_std::identity, F> and      same_q<Y, X>) {
 		switch (ord) {
@@ -332,7 +332,7 @@ noexcept -> void
 
 template <auto f, class Y>
 XTAL_DEF_(inline,let)
-apply_to(Y  &y, signed const ord=zero)
+apply_to(Y  &y, signed const ord=0)
 noexcept -> void
 {
 	y = f(XTAL_MOV_(y));

@@ -1,0 +1,10 @@
+[settings]
+os=Windows
+arch=x86_64
+compiler=msvc
+compiler.cppstd=20
+compiler.version=194
+compiler.runtime=dynamic
+
+[buildenv]
+CXXFLAGS=/Zc:__cplusplus /Zc:preprocessor /Zc:lambda

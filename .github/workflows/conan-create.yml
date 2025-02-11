@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         bt: [Debug, Release]
-        os: [macOS, Ubuntu]
+        os: [Windows]
       # os: [macOS, Ubuntu, Windows]
     
     runs-on: ${{matrix.os}}-latest

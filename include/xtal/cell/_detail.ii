@@ -162,14 +162,14 @@ struct refine_tuple
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply(constant_t<f>{});
+			return apply(f);
 		}
 		template <class F>
 		XTAL_DEF_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply<evoke_t<F>{}>();
+			return apply<bond::operate<F>{}>();
 		}
 
 		///\
@@ -290,7 +290,7 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_(return) (S_::cardinality())
+		requires XTAL_TRY_(to) (S_::cardinality())
 
 		XTAL_DEF_(return,inline,set)
 		cardinality()

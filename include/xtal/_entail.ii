@@ -7,10 +7,10 @@
 
 
 
+inline namespace _entail
+{/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //\
 Standard...
@@ -92,8 +92,6 @@ template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> d
 
 template <template <class> class T_>      using derive_t	=  typename _retail::derive<T_>::type;///< Resolves CRTP `template` as a type.
 
-template <class T=void        >	using           evoke  	=           _retail::        evoke  <T       >;///< Defines a constant factory for the supplied type.
-template <class T=void        >	using           evoke_t	=           _retail::        evoke_t<T       >;///< Defines a          factory for the supplied type.
 template <class F, class ...Xs>	using          return_t	=           _retail::       return_t<F, Xs...>;
 template <class F, class ...Xs>	concept    applicable_p	=           _retail::   applicable_p<F, Xs...>;
 template <class F, class ...Xs>	concept  inapplicable_p	=           _retail:: inapplicable_p<F, Xs...>;
@@ -102,25 +100,6 @@ template <         class ...Fs>	concept  inapplicable_q	= (...and   _retail:: in
 
 template <class F, class ...Xs>	concept  automorphism_p	= (...and   _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
 template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
-
-template<          class... Fs>
-struct visitor : Fs...
-{
-	using Fs::operator()...;
-
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...>       &&v) noexcept -> decltype(auto) {return _std::visit(XTAL_MOV_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...> const &&v) noexcept -> decltype(auto) {return _std::visit(XTAL_MOV_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...>        &v) noexcept -> decltype(auto) {return _std::visit(XTAL_REF_(v), *this);}
-	template <class ...Ts> XTAL_DEF_(inline,let) operator() (_std::variant<Ts...> const  &v) noexcept -> decltype(auto) {return _std::visit(XTAL_REF_(v), *this);}
-
-};
-
-XTAL_DEF_(return,inline,let)
-thunk_f(auto &&o)
-noexcept -> decltype(auto)
-{
-	return [&] XTAL_1FN_(value) (XTAL_REF_(o));
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -151,19 +130,6 @@ noexcept -> decltype(auto)
 	XTAL_0IF (variable_q<X>) {return XTAL_REF_(x);}
 	XTAL_0IF (constant_q<X>) {return        X{}();}
 }
-
-auto constexpr  zero = constant_t<[] XTAL_1FN_(value) (0   )>{};
-auto constexpr  half = constant_t<[] XTAL_1FN_(value) (0.5F)>{};
-auto constexpr   one = constant_t<[] XTAL_1FN_(value) (1   )>{};
-auto constexpr   two = constant_t<[] XTAL_1FN_(value) (2   )>{};
-auto constexpr three = constant_t<[] XTAL_1FN_(value) (3   )>{};
-
-static_assert(constant_q<decltype( half)>);
-static_assert(constant_q<decltype(+half)>);
-static_assert(constant_q<decltype(-half)>);
-
-template <auto  N> auto constexpr half_n = constant_t<[] XTAL_1FN_(value) (1.F/(one << N))>{};
-template <auto  N> auto constexpr  two_n = constant_t<[] XTAL_1FN_(value) (1.F*(one << N))>{};
 
 template <auto  N       >	using     integral_constant_t	=           _retail:: integral_constant_t<N>;
 template <auto  N       >	using     cardinal_constant_t	=           _retail:: cardinal_constant_t<N>;
@@ -452,17 +418,17 @@ noexcept -> based_t<Y>
 	XTAL_0IF (fixed_shaped_q<T> and un_n<fluid_shaped_q<T>>) {
 		return static_cast<V>(fixed_shaped<T>::extent());
 	}
-	XTAL_0IF_(return) (static_cast<V>(T::size()))
-	XTAL_0IF_(return) (static_cast<V>(t .size()))
-	XTAL_0IF_(return) (static_cast<V>(t))
-	XTAL_0IF_(return) (static_cast<V>(0))
+	XTAL_0IF_(to) (static_cast<V>(T::size()))
+	XTAL_0IF_(to) (static_cast<V>(t .size()))
+	XTAL_0IF_(to) (static_cast<V>(t))
+	XTAL_0IF_(to) (static_cast<V>(0))
 }
 template <integral_variable_q Y=size_type>
 XTAL_DEF_(return,inline,let)
 count_f(auto const &...ts)
 noexcept -> based_t<Y>
 {
-	return _std::min<based_t<Y>>({(count_f(ts) - one)...}) + one;
+	return _std::min<based_t<Y>>({(count_f(ts) - 1)...}) + 1;
 }
 XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
@@ -506,8 +472,8 @@ template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline
 template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_transform(XTAL_REF_(f),   XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	requires incomplete_q<F       > XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (                XTAL_REF_(xs)...);}
 //mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip          (                XTAL_REF_(xs)...);}
-template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                        iterative_f(constant_t<f>{}, XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return                        iterative_f<   evoke_t<F>{}>(XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return          iterative_f(                           f,  XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return          iterative_f<[] XTAL_1FN_(constructor) (F)>(XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	                                                using iterative_t = XTAL_ALL_(iterative_f<F>(XTAL_ANY_(Xs)...));
 
 
@@ -564,7 +530,7 @@ noexcept -> bool
 	XTAL_IF0
 	XTAL_0IF (not _std::is_lvalue_reference_v<X>) {return false;}
 	XTAL_0IF (not _std::is_lvalue_reference_v<Y>) {return false;}
-	XTAL_0IF_(return) (_std::addressof(x) == _std::addressof(y))
+	XTAL_0IF_(to) (_std::addressof(x) == _std::addressof(y))
 	XTAL_0IF_(else) return false;
 }
 
@@ -574,7 +540,7 @@ equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF_(return) (x == y)
+	XTAL_0IF_(to) (x == y)
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 template <class X, class Y> requires iterable_q<X, Y>// and epimorphic_q<X, Y>
@@ -583,7 +549,7 @@ equal_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF_(return) (_xtd::ranges::equal(x, y))
+	XTAL_0IF_(to) (_xtd::ranges::equal(x, y))
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
@@ -600,123 +566,13 @@ equivalent_f(X &&x, Y &&y)
 noexcept -> bool
 {
 	XTAL_IF0
-	XTAL_0IF_(return) (x.begin() == y.begin() and x.end() == y.end())
-	XTAL_0IF_(return) (x.begin() == y.begin())
+	XTAL_0IF_(to) (x.begin() == y.begin() and x.end() == y.end())
+	XTAL_0IF_(to) (x.begin() == y.begin())
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///\returns the result of `w + (x*...*xs)`, using `fma` where possible. \
-
-template <class W, class X, class Y> requires simplex_variable_q<W, X, Y> or un_n<numeric_q<W> or numeric_q<X> or numeric_q<Y>>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W &&w, X &&x, Y &&y)
-noexcept -> XTAL_ALL_(w + x*y)
-{
-	XTAL_IF0
-	XTAL_0IF_(consteval) {
-		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
-	}
-#if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
-	XTAL_0IF (requires {_std::fma(y, x, w);}) {
-		return __builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
-	}
-#endif
-#if   XTAL_SYS_(FMA)
-	XTAL_0IF (requires {fma(y, x, w);}) {
-		return           fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
-	}
-#endif
-	XTAL_0IF_(else) {
-		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
-	}
-}
-template <real_variable_q W, complex_variable_q X, real_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	return _std::complex{accumulator_f(w, x.real(), y), x.imag()*y};
-}
-template <real_variable_q W, real_variable_q X, complex_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	return _std::complex{accumulator_f(w, x, y.real()), x*y.imag()};
-}
-template <real_variable_q W, complex_variable_q X, complex_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	if constexpr (requires {fma(y, x, w);}) {
-		return fma(y, x, w);
-	}
-	else {
-		/**/
-		return y*x + w;
-		/*/
-		auto const z_re = accumulator_f(accumulator_f(w, x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = accumulator_f(       x.imag()*y.real() ,  x.real(),y.imag());
-		return _std::complex{z_re, z_im};
-		/***/
-	}
-}
-
-template <complex_variable_q W, real_variable_q X, real_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	return _std::complex{accumulator_f(w.real(), x, y), w.imag()};
-}
-template <complex_variable_q W, complex_variable_q X, real_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	return _std::complex{accumulator_f(w.real(), x.real(), y), accumulator_f(w.imag(), x.imag(), y)};
-}
-template <complex_variable_q W, real_variable_q X, complex_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	return _std::complex{accumulator_f(w.real(), x, y.real()), accumulator_f(w.imag(), x, y.imag())};
-}
-
-template <complex_variable_q W, complex_variable_q X, complex_variable_q Y>
-XTAL_DEF_(return,inline,let)
-accumulator_f(W w, X x, Y y)
-noexcept -> auto
-{
-	if constexpr (requires {fma(y, x, w);}) {
-		return fma(y, x, w);
-	}
-	else {
-		/**/
-		return y*x + w;
-		/*/
-		auto const z_re = accumulator_f(accumulator_f(w.real(), x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = accumulator_f(accumulator_f(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
-		return _std::complex{z_re, z_im};
-		/***/
-	}
-}
-
-XTAL_DEF_(return,inline,let)
-accumulator_f(auto &&w, auto &&x, auto &&y, auto &&...ys)
-noexcept -> auto
-requires (1 <= sizeof...(ys))
-{
-	return accumulator_f(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+}/////////////////////////////////////////////////////////////////////////////

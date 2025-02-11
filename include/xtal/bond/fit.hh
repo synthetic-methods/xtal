@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./seek.hh"
+
 
 
 
@@ -185,9 +185,9 @@ public:
 		sigma_type const mark;
 		sigma_type const mask;
 
-		XTAL_DEF_(return,inline,set) flag_f(sigma_type const m=0)                       noexcept -> sigma_type {return one << (m&(N_depth - one));};
-		XTAL_DEF_(return,inline,set) mark_f(sigma_type const m=0)                       noexcept -> sigma_type {return        ~-flag_f(m)        ;};
-		XTAL_DEF_(return,inline,set) mask_f(sigma_type const m=0, sigma_type const n=0) noexcept -> sigma_type {return          mark_f(m) << n   ;};
+		XTAL_DEF_(return,inline,set) flag_f(sigma_type const m=0)                       noexcept -> sigma_type {return sigma_1 << (m&(N_depth - 1));};
+		XTAL_DEF_(return,inline,set) mark_f(sigma_type const m=0)                       noexcept -> sigma_type {return ~-flag_f(m)     ;};
+		XTAL_DEF_(return,inline,set) mask_f(sigma_type const m=0, sigma_type const n=0) noexcept -> sigma_type {return   mark_f(m) << n;};
 
 		XTAL_NEW_(explicit)
 		word(sigma_type m_depth, sigma_type n_shift=0)
@@ -422,11 +422,11 @@ public:
 	diplo_f(auto const &n_zoom)
 	noexcept -> alpha_type
 	{
-		auto constexpr o_silon = one/alpha_type{one << fraction.depth - sign_v<N_silon>*N_silon};
+		auto constexpr o_silon = alpha_1/alpha_type{sigma_1 << fraction.depth - sign_v<N_silon>*N_silon};
 		XTAL_IF0
-		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, one + alpha_type{0.50}/o_silon);}
-		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, one - alpha_type{0.25}/o_silon);}
-		XTAL_0IF_(else)        {return diplo_f(n_zoom,       alpha_type{1.00}        );}
+		XTAL_0IF (0 < N_silon) {return diplo_f(n_zoom, alpha_1 + alpha_type{0.50}/o_silon);}
+		XTAL_0IF (N_silon < 0) {return diplo_f(n_zoom, alpha_1 - alpha_type{0.25}/o_silon);}
+		XTAL_0IF_(else)        {return diplo_f(n_zoom,           alpha_type{1.00}        );}
 	}
 	template <int N_silon=0>
 	XTAL_DEF_(return,inline,set)
@@ -526,7 +526,7 @@ public:
 	noexcept -> alpha_type
 	{
 		auto constexpr N_diff = fraction.depth + 1;
-		auto const     n_unit = one + haplo_f(N_diff - n_zoom);
+		auto const     n_unit = alpha_1 + haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
@@ -546,7 +546,7 @@ public:
 	noexcept -> alpha_type
 	{
 		auto constexpr N_diff = fraction.depth + 2;
-		auto const     n_unit = one - haplo_f(N_diff - n_zoom);
+		auto const     n_unit = alpha_1 - haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
 	template <int N_zoom=0>
@@ -598,17 +598,27 @@ public:
 	{
 		using W = XTAL_ALL_(w);
 		using X = XTAL_ALL_(x);
-		if constexpr (full.width == sizeof(W) and full.width == sizeof(X)) {
+		XTAL_IF0
+		XTAL_0IF (sizeof(W) < full.width) {
+			return minimum_f(working_f(XTAL_REF_(w)), XTAL_REF_(x));
+		}
+		XTAL_0IF (sizeof(X) < full.width) {
+			return minimum_f(XTAL_REF_(w), working_f(XTAL_REF_(x)));
+		}
+		XTAL_0IF (different_q<W, X>) {
+			return w > x? XTAL_REF_(x): XTAL_REF_(w);
+		}
+		XTAL_0IF_(consteval) {
+			auto m_ = -  static_cast<delta_type>(w > x);
 			auto w_ = _xtd::bit_cast<delta_type>(XTAL_REF_(w));
 			auto x_ = _xtd::bit_cast<delta_type>(XTAL_REF_(x));
-			auto m_ = -  static_cast<delta_type>(x < w);
 			w_ ^= x_; m_ &= w_;
 			x_ ^= m_;
 			w_ ^= x_;
 			return _xtd::bit_cast<W>(w_);
 		}
-		else {
-			return w < x? XTAL_REF_(w): XTAL_REF_(x);
+		XTAL_0IF_(else) {
+			return _std::min<W>({XTAL_REF_(w), XTAL_REF_(x)});
 		}
 	}
 	XTAL_DEF_(return,inline,set)
@@ -618,11 +628,6 @@ public:
 	{
 		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
-	static_assert( 1.0 == minimum_f(alpha_type{ 1.0}, alpha_type{ 1.5}));
-	static_assert( 1.0 == minimum_f(alpha_type{ 1.5}, alpha_type{ 1.0}));
-	static_assert(-1.5 == minimum_f(alpha_type{-1.0}, alpha_type{-1.5}));
-	static_assert(-1.5 == minimum_f(alpha_type{-1.5}, alpha_type{-1.0}));
-
 
 	///\returns the maximum value that still accommodates arithmetic truncation. \
 
@@ -662,17 +667,27 @@ public:
 	{
 		using W = XTAL_ALL_(w);
 		using X = XTAL_ALL_(x);
-		if constexpr (full.width == sizeof(W) and full.width == sizeof(X)) {
+		XTAL_IF0
+		XTAL_0IF (sizeof(W) < full.width) {
+			return maximum_f(working_f(XTAL_REF_(w)), XTAL_REF_(x));
+		}
+		XTAL_0IF (sizeof(X) < full.width) {
+			return maximum_f(XTAL_REF_(w), working_f(XTAL_REF_(x)));
+		}
+		XTAL_0IF (different_q<W, X>) {
+			return w < x? XTAL_REF_(x): XTAL_REF_(w);
+		}
+		XTAL_0IF_(consteval) {
+			auto m_ = -  static_cast<delta_type>(w < x);
 			auto w_ = _xtd::bit_cast<delta_type>(XTAL_REF_(w));
 			auto x_ = _xtd::bit_cast<delta_type>(XTAL_REF_(x));
-			auto m_ = -  static_cast<delta_type>(w < x);
 			w_ ^= x_; m_ &= w_;
 			x_ ^= m_;
 			w_ ^= x_;
 			return _xtd::bit_cast<W>(w_);
 		}
-		else {
-			return w < x? XTAL_REF_(x): XTAL_REF_(w);
+		XTAL_0IF_(else) {
+			return _std::max<W>({XTAL_REF_(w), XTAL_REF_(x)});
 		}
 	}
 	XTAL_DEF_(return,inline,set)
@@ -682,10 +697,6 @@ public:
 	{
 		return maximum_f(maximum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
-	static_assert( 1.5 == maximum_f(alpha_type{ 1.0}, alpha_type{ 1.5}));
-	static_assert( 1.5 == maximum_f(alpha_type{ 1.5}, alpha_type{ 1.0}));
-	static_assert(-1.0 == maximum_f(alpha_type{-1.0}, alpha_type{-1.5}));
-	static_assert(-1.0 == maximum_f(alpha_type{-1.5}, alpha_type{-1.0}));
 
 
 ////////////////////////////////////////////////////////////////////////////////

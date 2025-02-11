@@ -1,6 +1,6 @@
 #pragma once
+#include "../bond.hh"
 #include "../flow/any.hh"// `_retail`
-
 #include "../flow/cue.hh"
 #include "../flow/call.hh"
 

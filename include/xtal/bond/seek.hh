@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "./tag.hh"
+
 
 
 
@@ -26,10 +26,10 @@ template <class      ...Ts>	concept  seek_q = (...and seek<Ts>{}());
 
 template <class      ...Ts>	                 concept       seek_q = _detail::seek_q<Ts...>;
 template <int        ...Ns>	                 using         seek_t = _detail::seek_t<Ns...>;
-template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(       Ns... ) noexcept -> seek_t<(                      Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(seek_t<Ns...>) noexcept -> seek_t<(                      Ns  )...> {return {};}
-template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - one - Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(seek_t<Ns...>) noexcept -> seek_t<(sizeof...(Ns) - one - Ns  )...> {return {};}
+template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(       Ns... ) noexcept -> seek_t<(                    Ns{})...> {return {};}
+template <int        ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(seek_t<Ns...>) noexcept -> seek_t<(                    Ns  )...> {return {};}
+template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - 1 - Ns{})...> {return {};}
+template <int        ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(seek_t<Ns...>) noexcept -> seek_t<(sizeof...(Ns) - 1 - Ns  )...> {return {};}
 
 template <int           N >	                 struct   superseek    {using type = decltype(    seek_f(_detail::seek_s<+N>{}));};
 template <int           N >	requires (N < 0) struct   superseek<N> {using type = decltype(antiseek_f(_detail::seek_s<-N>{}));};

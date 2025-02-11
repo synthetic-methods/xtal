@@ -11,6 +11,17 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+static_assert( 1.0F == fit<float>::minimum_f( 1.0F,  1.5F));
+static_assert( 1.0F == fit<float>::minimum_f( 1.5F,  1.0F));
+static_assert(-1.5F == fit<float>::minimum_f(-1.0F, -1.5F));
+static_assert(-1.5F == fit<float>::minimum_f(-1.5F, -1.0F));
+
+static_assert( 1.5F == fit<float>::maximum_f( 1.0F,  1.5F));
+static_assert( 1.5F == fit<float>::maximum_f( 1.5F,  1.0F));
+static_assert(-1.0F == fit<float>::maximum_f(-1.0F, -1.5F));
+static_assert(-1.0F == fit<float>::maximum_f(-1.5F, -1.0F));
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TAG_("fit")

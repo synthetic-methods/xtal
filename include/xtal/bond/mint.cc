@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./mint.hh"// testing...
 
-
+#include "./compose.hh"
 
 
 
@@ -10,6 +10,10 @@ XTAL_ENV_(push)
 namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+
+static_assert(same_q<_std::complex<int   >, compose_s<int, mint<_std::complex<double   >>>>);
+static_assert(same_q<_std::array  <int, 2>, compose_s<int, mint<_std::array  <double, 2>>>>);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/

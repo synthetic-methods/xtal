@@ -1,6 +1,6 @@
 #pragma once
+#include "../bond.hh"
 #include "../flow/all.hh"// `_retail`
-
 #include "../flow/mask.hh"
 
 

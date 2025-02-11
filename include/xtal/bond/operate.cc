@@ -1,22 +1,35 @@
 #pragma once
-#include "../bond.hh"
-#include "../bond/any.hh"// `_retail`
+#include "./any.cc"
+#include "./operate.hh"// testing...
 
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::atom
+namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-namespace _retail = xtal::bond;
-#include "./_entail.ii"
-#include "./_detail.ii"
+static_assert(constant_q<operate_t<[] XTAL_1FN_(value) (1)>>);
+static_assert(constant_q<decltype(operate{[] XTAL_1FN_(value) (1)})>);
+
+
+static_assert(same_q<operate<>, operate<>>);
+static_assert(same_q<operate<>, decltype(operate<>{})>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
+/*/
+TAG_("operate")
+{
+	TRY_("task")
+	{
+		TRUE_(true);
+
+	}
+}
+/***/
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
