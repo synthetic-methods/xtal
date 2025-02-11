@@ -29,9 +29,9 @@ struct invoke_head
 		or          requires {U_{}                        (XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF_(return) (U_::template method_f<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (U_::         method_f       (XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (U_{}                        (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (U_::template method_f<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (U_::         method_f       (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (U_{}                        (XTAL_REF_(xs)...))
 		}
 
 	public:// CONSTRUCT
@@ -46,13 +46,13 @@ struct invoke_head
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return) (U_method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to) (U_method_f<Is...>(XTAL_REF_(xs)...))
 		
 	//	template <auto ...Is>
 	//	XTAL_DEF_(return,inline,set)
 	//	method(auto &&...xs)
 	//	noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(return) (U_method_f<Is...>(XTAL_REF_(xs)...))
+	//	requires XTAL_TRY_(to) (U_method_f<Is...>(XTAL_REF_(xs)...))
 		
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
@@ -61,10 +61,10 @@ struct invoke_head
 	//	requires XTAL_TRY_(unless) (U_method_f<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF_(return) (head().template operator()<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().template method    <Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().template operator()       (XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().         method           (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template operator()<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
 			XTAL_0IF_(else) {return head(); static_assert(0 == sizeof...(xs));}
 		}
 		template <auto ...Is>
@@ -74,10 +74,10 @@ struct invoke_head
 	//	requires XTAL_TRY_(unless) (U_method_f<Is...>(XTAL_REF_(xs)...))
 		{
 			XTAL_IF0
-			XTAL_0IF_(return) (head().template operator()<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().template method    <Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().template operator()       (XTAL_REF_(xs)...))
-			XTAL_0IF_(return) (head().         method           (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template operator()<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
 			XTAL_0IF_(else) {return head(); static_assert(0 == sizeof...(xs));}
 		}
 

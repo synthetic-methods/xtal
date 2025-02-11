@@ -307,9 +307,9 @@ struct block
 		{
 			auto &s = S_::template self<archetype>();
 			XTAL_IF0
-			XTAL_0IF_(return) (*get<I>(s))              // Required for `subrange`!
-			XTAL_0IF_(return) ( get<I>(s))
-			XTAL_0IF_(return) (element(constant_t<I>{}))// Required for `span`!
+			XTAL_0IF_(to) (*get<I>(s))              // Required for `subrange`!
+			XTAL_0IF_(to) ( get<I>(s))
+			XTAL_0IF_(to) (element(constant_t<I>{}))// Required for `span`!
 		})
 		XTAL_FX4_(do) (template <auto I=0>
 		XTAL_DEF_(return,inline,let)

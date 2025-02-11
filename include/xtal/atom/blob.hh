@@ -30,7 +30,7 @@ struct blob
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
-		using I  = valued_u<_std::byte>;
+		using U  = _std::underlying_type_t<_std::byte>;
 
 		static size_type constexpr N_bytes = one << _std::bit_width(_detail::aligned<As...>::size() - one);
 		alignas (N_bytes) static _std::byte constexpr m_zeros[N_bytes]{};
@@ -51,16 +51,16 @@ struct blob
 		blanked() const
 		noexcept -> auto
 		{
-			return 0 == memcmp(m_zeros, m_bytes, N_bytes);
+			return 0 == _std::memcmp(m_zeros, m_bytes, N_bytes);
 		}
 
-		///\returns `(void)` after overwriting the `byte`s in the blob with `(char) value`. \
+		///\returns `(void)` after overwriting the `byte`s in the blob with `(U) value`. \
 
 		XTAL_DEF_(inline,let)
-		fill(I value=I{})
+		fill(auto value=0)
 		noexcept -> void
 		{
-			memset(m_bytes, value, N_bytes);
+			_std::memset(m_bytes, static_cast<U>(value), N_bytes);
 		}
 
 		///\returns a tuple of values conforming to `Vs...`, \

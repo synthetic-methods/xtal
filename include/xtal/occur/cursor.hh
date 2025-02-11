@@ -73,25 +73,25 @@ struct cursed
 		using value_type = V_;
 
 	public:// OPERATE
-		XTAL_DEF_(return,inline,let)        skip(V_ i) const noexcept -> T_   {return twin().step_(i + self().step());}    ///<\returns `twin` with `step` adjusted by `i`.
+		XTAL_DEF_(return,inline,let)        skip(V_ i) const noexcept -> T_   {return twin().step_(i + self().step());}///<\returns `twin` with `step` adjusted by `i`.
 
-		XTAL_DEF_(return,inline,let)        null(    ) const noexcept -> T_   {return twin().operator+=(0);}               ///<\returns the adjacent block of `size=0`.
-		XTAL_DEF_(return,inline,let)        null(V_ i) const noexcept -> T_   {return null().step_(i)     ;}               ///<\returns the adjacent block of `size=0` with `step=i`.
+		XTAL_DEF_(return,inline,let)        null(    ) const noexcept -> T_   {return twin().operator+=(0);}///<\returns the adjacent block of `size=0`.
+		XTAL_DEF_(return,inline,let)        null(V_ i) const noexcept -> T_   {return null().step_(i)     ;}///<\returns the adjacent block of `size=0` with `step=i`.
 
-		XTAL_DEF_(return,inline,let)        next(    ) const noexcept -> T_   {return twin().operator++( );}               ///<\returns the following       block with the same `size`.
-		XTAL_DEF_(return,inline,let)        next(V_ i) const noexcept -> T_   {return self().operator* (i);}               ///<\returns the following `i`th block with the same `size`.
+		XTAL_DEF_(return,inline,let)        next(    ) const noexcept -> T_   {return twin().operator++( );}///<\returns the following       block with the same `size`.
+		XTAL_DEF_(return,inline,let)        next(V_ i) const noexcept -> T_   {return self().operator* (i);}///<\returns the following `i`th block with the same `size`.
 
-		XTAL_DEF_(return,inline,let) operator + (V_ n) const noexcept -> T_   {return twin().operator+=(n);}               ///<\returns the following adjacent block of size `n`.
-		XTAL_DEF_(return,inline,let) operator - (V_ n) const noexcept -> T_   {return twin().operator-=(n);}               ///<\returns the preceding adjacent block of size `n`.
+		XTAL_DEF_(return,inline,let) operator + (V_ n) const noexcept -> T_   {return twin().operator+=(n);}///<\returns the following adjacent block of size `n`.
+		XTAL_DEF_(return,inline,let) operator - (V_ n) const noexcept -> T_   {return twin().operator-=(n);}///<\returns the preceding adjacent block of size `n`.
 
-		XTAL_DEF_(return,inline,let) operator * (V_ i) const noexcept -> T_   {return twin().operator*=(i);}               ///<\returns the following `i`th block with the same `size`.
-		XTAL_DEF_(return,inline,let) operator / (V_ i) const noexcept -> T_   {return twin().operator/=(i);}               ///<\returns the preceding `i`th block with the same `size`.
+		XTAL_DEF_(return,inline,let) operator * (V_ i) const noexcept -> T_   {return twin().operator*=(i);}///<\returns the following `i`th block with the same `size`.
+		XTAL_DEF_(return,inline,let) operator / (V_ i) const noexcept -> T_   {return twin().operator/=(i);}///<\returns the preceding `i`th block with the same `size`.
 
-		XTAL_DEF_(mutate,inline,let) operator ++(   )        noexcept -> T_ & {return self().operator+=(count_f(self()));} ///<\returns `self()` after   advancing one step while retaining `size`.
-		XTAL_DEF_(mutate,inline,let) operator --(   )        noexcept -> T_ & {return self().operator-=(count_f(self()));} ///<\returns `self()` after  retreating one step while retaining `size`.
+		XTAL_DEF_(mutate,inline,let) operator ++(   )        noexcept -> T_ & {return self().operator+=(count_f(self()));}///<\returns `self()` after   advancing one step while retaining `size`.
+		XTAL_DEF_(mutate,inline,let) operator --(   )        noexcept -> T_ & {return self().operator-=(count_f(self()));}///<\returns `self()` after  retreating one step while retaining `size`.
 		
-		XTAL_DEF_(mutate,inline,let) operator ++(int)        noexcept -> T_   {return thunk_f(twin()) (operator++());}     ///<\returns `twin()` before  advancing one step while retaining `size`.
-		XTAL_DEF_(mutate,inline,let) operator --(int)        noexcept -> T_   {return thunk_f(twin()) (operator--());}     ///<\returns `twin()` before retreating one step while retaining `size`.
+		XTAL_DEF_(mutate,inline,let) operator ++(int)        noexcept -> T_   {return _detail::thunk_f(twin()) (operator++());}///<\returns `twin()` before  advancing one step while retaining `size`.
+		XTAL_DEF_(mutate,inline,let) operator --(int)        noexcept -> T_   {return _detail::thunk_f(twin()) (operator--());}///<\returns `twin()` before retreating one step while retaining `size`.
 
 		XTAL_DEF_(return,inline,let) operator >=(subtype const &t) const noexcept -> bool {return S_::operator>(t) or S_::operator==(t);}///\returns `true` if the LHS immediately follows  the RHS.
 		XTAL_DEF_(return,inline,let) operator <=(subtype const &t) const noexcept -> bool {return S_::operator<(t) or S_::operator==(t);}///\returns `true` if the LHS immediately precedes the RHS.

@@ -1,20 +1,9 @@
 #pragma once
 
-#include <range/v3/all.hpp>
-#if __has_include(<execution>)
-#include <execution>
-#endif
-#include <complex>
-#include <numbers>
-#include <limits>
-#include <cmath>
-#include <array>
-#include <tuple>
-#include <queue>
-#include <new>
-#include <bit>
+#include "./any.h"
 
-#include "./any.hxx"
+
+
 
 
 XTAL_ENV_(push)
@@ -86,8 +75,8 @@ construxion_f(Xs &&...xs)
 noexcept -> auto
 {
 	XTAL_IF0
-	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<evoke_t<F<based_t<Xs>...>>{}>(XTAL_REF_(xs)...);}
-	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<evoke_t<F<cased_t<Xs...>>>{}>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<[] XTAL_1FN_(constructor) (F<based_t<Xs>...>)>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(constructor) (F<cased_t<Xs...>>)>(XTAL_REF_(xs)...);}
 	XTAL_0IF_(terminate)
 }
 

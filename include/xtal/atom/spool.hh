@@ -123,7 +123,7 @@ struct spool<A>
 		free()
 		noexcept -> void
 		{
-			return free<evoke_t<F>{}>();
+			return free<bond::operate<F>{}>();
 		}
 
 		///\note\

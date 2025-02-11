@@ -45,7 +45,7 @@ struct cue<>
 		using cue_signature = XTAL_ALL_(XTAL_ANY_(S).tail())[1];
 
 	};
-	template <bond::tag_q<cue> S>
+	template <cue_q S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;

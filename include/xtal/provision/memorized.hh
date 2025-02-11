@@ -30,7 +30,6 @@ struct memorized
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		using U  = _std::underlying_type_t<_std::byte>;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -52,7 +51,7 @@ struct memorized
 		///\
 		Fills `memory` with the given `byte` value. \
 
-		template <U u>
+		template <auto u>
 		XTAL_DEF_(inline,let) memory(                 ) noexcept -> void {head().fill(u);}
 		XTAL_DEF_(inline,let) memory(constant_t<>     ) noexcept -> void {head().fill(0);}
 		XTAL_DEF_(inline,let) memory(constant_q auto f) noexcept -> void {head().fill(f());}

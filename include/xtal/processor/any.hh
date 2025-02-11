@@ -1,6 +1,6 @@
 #pragma once
+#include "../bond.hh"
 #include "../process/any.hh"// `_retail`
-
 #include "../occur/cursor.hh"
 #include "../occur/resize.hh"
 #include "../provision/voiced.hh"

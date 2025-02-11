@@ -70,7 +70,7 @@ struct quanta
 		//	XTAL_0IF (same_q<As...> and atomic_q<value_type>) {
 		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
 		//	}
-			XTAL_0IF XTAL_TRY_(return) (
+			XTAL_0IF XTAL_TRY_(to) (
 				static_cast<S_ const &>(s) == static_cast<S_ const &>(t)
 			)
 			XTAL_0IF_(else) {
@@ -160,7 +160,7 @@ struct quanta
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply<evoke_t<F>{}>();
+			return apply<bond::operate<F>{}>();
 		}
 		///\returns the result of applying `f` to the `coordinate`s of `this`. \
 
@@ -169,7 +169,7 @@ struct quanta
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			return apply(constant_t<f>{});
+			return apply(f);
 		}
 		///\returns the result of applying `f` to the `coordinate`s of `this`. \
 

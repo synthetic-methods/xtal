@@ -1,6 +1,6 @@
 #pragma once
+#include "../bond.hh"
 #include "../flow/any.hh"// `_retail`
-
 #include "../flow/bundle.hh"
 #include "../occur/all.hh"
 #include "../provision/all.hh"
@@ -141,8 +141,8 @@ struct define
 		{
 			if constexpr (same_q<typename T::template digest<decltype(xs)...>, digest<decltype(xs)...>>) {
 				XTAL_IF0
-				XTAL_0IF_(return) (self().template method<Is...>(XTAL_REF_(xs)...))
-				XTAL_0IF_(return) (self().         method       (XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (self().template method<Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (self().         method       (XTAL_REF_(xs)...))
 			}
 			else {
 				auto &s = self();
@@ -157,7 +157,7 @@ struct define
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method(auto &&...xs) noexcept
-		XTAL_TRY_(return) (T::template method_f<Is...>(XTAL_REF_(xs)...))
+		XTAL_TRY_(to) (T::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
 		///\
@@ -301,7 +301,7 @@ struct defer
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set) S_method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return)
+		requires XTAL_TRY_(to)
 			(S_::template method_f<Is...>(S::template method_f<Is...>(XTAL_REF_(xs)...)))
 
 	public:// CONSTRUCT
@@ -316,13 +316,13 @@ struct defer
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return) (S_method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to) (S_method_f<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(return) (S_method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to) (S_method_f<Is...>(XTAL_REF_(xs)...))
 
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
