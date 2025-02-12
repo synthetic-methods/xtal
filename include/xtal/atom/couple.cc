@@ -94,10 +94,10 @@ TAG_("couple")
 		auto foo = bar.template reflected<-1>();
 		auto baz = foo.template reflected<+1>();
 		
-		TRUE_(foo[0], 1.25);
-		TRUE_(foo[1], 0.75);
-		TRUE_(baz[0], bar[0]);
-		TRUE_(baz[1], bar[1]);
+		TRUE_(get<0>(foo), 1.25);
+		TRUE_(get<1>(foo), 0.75);
+		TRUE_(get<0>(baz), bar[0]);
+		TRUE_(get<1>(baz), bar[1]);
 
 	}
 	TRY_("couple refactoring")

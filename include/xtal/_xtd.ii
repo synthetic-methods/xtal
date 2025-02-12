@@ -14,6 +14,29 @@ namespace _xtd
 #if XTAL_VER_(ranges != 3)
 namespace ranges        {using namespace ::std::ranges;}
 namespace ranges::views {using namespace ::std::ranges::views;}
+namespace ranges::views
+{
+	XTAL_DEF_(inline,let)
+	generate(auto &&f)
+	noexcept -> decltype(auto)
+	{
+		return ranges::transform_view(ranges::iota_view(_std::ptrdiff_t{}), [f=XTAL_REF_(f)] XTAL_1FN_(thunk) (f));
+	}
+
+}
+namespace ranges
+{
+	using ::ranges::any_view;
+	using ::ranges::get_categories;
+
+}
+namespace ranges
+{
+	using _std::accumulate;
+	using _std::make_move_iterator;
+	using _std::make_reverse_iterator;
+
+}
 #else
 namespace ranges        {using namespace      ::ranges;}
 namespace ranges::views {using namespace      ::ranges::views;}
@@ -25,6 +48,7 @@ namespace ranges::views
 	{
 		return zip_with(XTAL_REF_(oo)...);
 	}
+
 }
 #endif
 

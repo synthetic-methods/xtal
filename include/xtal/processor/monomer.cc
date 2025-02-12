@@ -147,7 +147,7 @@ void monomer_provision__advancing()
 
 //	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11
-	|	_xtd::ranges::views::take_exactly(xhs.size())
+	|	_xtd::ranges::views::take(xhs.size())
 	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));

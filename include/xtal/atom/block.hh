@@ -331,15 +331,15 @@ struct block
 	using type = derive_t<homotype>;
 
 };
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) get(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(inline,let) get(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(inline,let) get(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(inline,let) get(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
+template <size_type I> XTAL_DEF_(inline,let) get(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template   element<I>();}
 
-template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
-template <size_type I> XTAL_DEF_(return,inline,let) got(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(inline,let) got(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(inline,let) got(block_q auto       &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(inline,let) got(block_q auto const  &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
+template <size_type I> XTAL_DEF_(inline,let) got(block_q auto        &o) noexcept -> decltype(auto) {return XTAL_REF_(o).template coelement<I>();}
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -183,6 +183,8 @@ XTAL_ENV_(push)
 #define XTAL_VER_GNUC               XTAL_ENV_GNUC and XTAL_ENV_GNUC
 #define XTAL_VER_GCC                XTAL_VER_GNUC
 #define XTAL_VER_STD                XTAL_STD
+//\
+#define XTAL_VER_ranges            -1
 #define XTAL_VER_ranges             3
 
 #define XTAL_VER_(...) (false XTAL_N_(XTAL_ver_,__VA_ARGS__))///< Version checking.
@@ -310,6 +312,11 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
                                            &&XTAL_NYM_(t ))\
    XTAL_0FN_(to)                  (XTAL_REF_(XTAL_NYM_(t )).__VA_ARGS__)                                 ///< Lambda      method-call after `[captures]`.
 
+#define XTAL_1FN_thunk(...)        <class ...XTAL_NYM_(Ts)>\
+                                            (XTAL_NYM_(Ts) \
+                                        &&...XTAL_NYM_(ts))\
+   XTAL_0FN_(to)      (__VA_ARGS__(                           ))                                         ///< Lambda    function-call after `[captures]`.
+
 #define XTAL_1FN_function(...)     <class ...XTAL_NYM_(Ts)>\
                                             (XTAL_NYM_(Ts) \
                                         &&...XTAL_NYM_(ts))\
@@ -388,9 +395,8 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 /////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
-#if      XTAL_VER_(ranges ==  3)
 #include <range/v3/all.hpp>
-#else
+#if     XTAL_VER_(ranges !=  3)
 #include <ranges>
 #endif
 

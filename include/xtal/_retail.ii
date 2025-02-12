@@ -394,7 +394,7 @@ template <class T> struct    counted;	template <class T> using    counted_t = ty
 template <class T> struct    counter;	template <class T> using    counter_t = typename    counter<T>::type;
 
 
-template <class T             >	using      reiterated_t	= _xtd::ranges::subrange<iterator_t<T>, sentinel_t<T>>;
+template <class T             >	using      reiterated_t	=      _xtd::ranges::      subrange<iterator_t<T>, sentinel_t<T>>;
 template <class T             >	concept    reiterated_q	=  fungible_q<T, reiterated_t<T>>;
 template <class T             >	using        arranged_t	= _xtd::ranges::view_interface<T>;
 template <class U, class V=U  >	using        interval_t	= _xtd::ranges::iota_view<based_t<U>, based_t<V>>;
@@ -409,9 +409,9 @@ template <class T             >	concept      distance_q	=  integral_variable_q<T
 template <class T             >	concept       counter_q	=  integral_variable_q<T>;
 template <class T             >	concept       counted_q	=  iterated_q<T> and _std::convertible_to<T, interval_t<_std::remove_reference_t<iteratee_t<T>>>>;
 
-
-template <class T>     	   concept sequential_iterable_q	=  iterable_q<T> and not _xtd::ranges::random_access_range   <based_t<T>>;
-template <class T>     	   concept sequential_iterator_q	=  iterator_q<T> and not _xtd::ranges::random_access_iterator<based_t<T>>;
+template <class T             >	concept     itinerant_q	=  iterable_q<T> and not _xtd::ranges::borrowed_range<based_t<T>>;
+template <class T>     	   concept sequential_iterable_q	=  iterable_q<T> and not indexed_q<T>;
+template <class T>     	   concept sequential_iterator_q	=  iterator_q<T> and not requires (T t) {t + 1;};
 template <class T>     	   concept sequential_q         	=  sequential_iterable_q<T> or sequential_iterator_q<T>;
 
 template <class T             >	struct       iteratee     {using type =                   valued_u<T> ;};

@@ -30,7 +30,7 @@ template <class U>	concept         processed_q =    processed_value_q<U> or   pr
 template <        class   T> struct   repeated;
 template <       _value_q T> struct   repeated<T> {using type = _xtd::ranges::  repeat_view<T>;};
 template <     iterable_q T> struct   repeated<T> {using type = T;};
-template <_std::invocable T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
+//mplate <_std::invocable T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
 template <        class   T> using    repeated_t  = typename repeated<T>::type;
 template <        class   T> concept  repeated_q  = different_q<T, repeated_t<T>>;
 

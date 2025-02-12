@@ -341,6 +341,7 @@ template <class T             >	using        arranged_t	=           _retail::   
 template <class T             >	using      reiterated_t	=           _retail::   reiterated_t<T > ;
 template <         class ...Ts>	concept    reiterated_q	= (...and   _retail::   reiterated_q<Ts>);
 template <         class ...Ts>	concept    sequential_q	= (...and   _retail::   sequential_q<Ts>);
+template <         class ...Ts>	concept     itinerant_q	= (...and   _retail::    itinerant_q<Ts>);
 
 template <class T             >	using     initializer_s	=           _retail::  initializer_s<T > ;
 template <class T             >	using     initializer_t	=           _retail::  initializer_t<T > ;
@@ -430,8 +431,8 @@ noexcept -> based_t<Y>
 {
 	return _std::min<based_t<Y>>({(count_f(ts) - 1)...}) + 1;
 }
-XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
-XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop(count_f(ts...));}
+XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_n<shaped_q<decltype(ts)...>> {return  account_f(ts...);}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_n<shaped_q<decltype(ts)...>> {return discount_f(0    );}
 
@@ -451,14 +452,17 @@ template <class      T >	XTAL_DEF_(return,inline,let) counter_f(T &&t)      noex
 ///\returns the `any_view` type-erased form of `y`. \
 
 XTAL_DEF_(return,inline,let)
-derange_f(iterable_q auto &&y)
+derange_f(iterable_q auto &&t)
 noexcept -> auto
 {
-	using      Y  = XTAL_ALL_(y);
-	using      Y_ = _xtd::ranges::any_view<iteratee_t<Y>, _xtd::ranges::get_categories<Y>()>;
-	auto const n_ = recount_f(y);
-	return Y_(XTAL_MOV_(y))|XTAL_MOV_(n_);
+	using      T  = XTAL_ALL_(t);
+	using      T_ = _xtd::ranges::any_view<iteratee_t<T>, _xtd::ranges::get_categories<T>()>;
+	auto const n_ = recount_f(t);
+	return T_(XTAL_REF_(t))|XTAL_MOV_(n_);
 }
+template <iterable_q T>
+using derange_t = XTAL_ALL_(derange_f(XTAL_ANY_(T))); 
+
 
 ///\returns the result of zipping `...xs` with `f`. \
 

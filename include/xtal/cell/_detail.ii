@@ -17,8 +17,10 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class       W >	using            member_t = typename _xtd::decay_non_nominal_reference<W>::value_type;
-template <class    ...Ws>	concept          member_q =     molecular_q<Ws...>;
+template <class       W >	struct           member    {using type = typename _xtd::decay_non_nominal_reference<W>::value_type;};
+//mplate <itinerant_q W >	struct           member<W> {using type = derange_t<W>;};
+template <class       W >	using            member_t = typename member<W>::type;
+template <class    ...Ws>	concept          member_q =     molecular_q<Ws...> or itinerant_q<Ws...>;
 template <class    ...Ws>	concept       dismember_q = not molecular_q<Ws...>;
 ///\
 Resolves/dereferences the current value. \
@@ -231,7 +233,7 @@ struct defer_field
 	//	using S_::S_;
 		
 		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
+	//	XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
 		XTAL_NEW_(cast)   (subtype, noexcept)
@@ -242,6 +244,7 @@ struct defer_field
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
+	//	requires _xtd::trivially_initializable<body_type>
 		:	subtype(body_type{})
 		{}
 		///\
@@ -250,7 +253,7 @@ struct defer_field
 		XTAL_NEW_(implicit)
 		subtype(_std::initializer_list<U_> o)
 		noexcept
-		requires member_q<U> and initializer_q<U>
+		requires initializer_q<body_type>
 		:	body_part(o)
 		{}
 		///\
@@ -273,7 +276,7 @@ struct defer_field
 		XTAL_DEF_(inline,let)
 		head(auto &&...oo)
 		noexcept -> decltype(auto)
-		requires member_q<head_type> and (0 < sizeof...(oo))
+		requires same_q<body_type, head_type> and (0 < sizeof...(oo))
 		{
 			return dismember_f(body_part, XTAL_REF_(oo)...);
 		}
@@ -523,27 +526,15 @@ struct refer_iterators
 		noexcept -> decltype(auto)
 		{
 			using _xtd::ranges::next;
-			using _xtd::ranges::views::slice;
 
 			auto &u  = S::template head<U>();
 			auto  u_ = begin();
-			using W_ = reiterated_t<decltype(u_)>;
 			auto  w0 = w.front(), wN = w.back() + 1;
-			/*/
-			size_type const uN = count_f(u);
-			w0 = _std::min(w0, uN);
-			wN = _std::min(wN, uN);
-			/***/
-
-			XTAL_IF0
-			XTAL_0IF (interval_q<U>) {
+			if constexpr (interval_q<U>) {
 				return typename S::head_type(u_[w0], u_[wN]);
 			}
-			XTAL_0IF (indexed_q<U>) {
-				return W_(next(u_, w0), next(u_, wN));
-			}
-			XTAL_0IF_(else) {
-				return u|slice(w0, wN);
+			else {
+				return reiterated_t<decltype(u_)>{next(u_, w0), next(u_, wN)};
 			}
 		})
 

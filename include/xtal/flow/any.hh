@@ -44,7 +44,7 @@ struct define
 		
 		///\
 		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
-		The callback parameters are the `ranges::slice` indicies and the segment index. \
+		The callback parameters are the `counted_t` indicies and the segment index. \
 
 		XTAL_DEF_(return,inline,let) reflux(auto const &f            ) noexcept -> signed {return reflux(f, 0);}
 		XTAL_DEF_(return,inline,let) reflux(auto const &f, signed &&n) noexcept -> signed {return reflux(f, n);}
