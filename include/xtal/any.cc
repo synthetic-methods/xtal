@@ -11,6 +11,31 @@ namespace xtal::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+template <int N>
+void echo_plot_(iterated_q auto const o)
+{
+	for (auto e: o) {
+		e *= N;
+		e *= 2;
+		e += 0 < e;
+		e -= e < 0;
+		e /= 2;
+		auto u = static_cast<int>(e);
+		for (int n = -N; n <= N; ++n) {
+				if (n == 0)                     {}
+		else if (u < 0 and n < 0 and u == n) {_std::cout << '<';}
+		else if (u < 0 and n < 0 and u <= n) {_std::cout << '=';}
+		else if (0 < u and 0 < n and n == u) {_std::cout << '>';}
+		else if (0 < u and 0 < n and n <= u) {_std::cout << '=';}
+		else                                 {_std::cout << ' ';}
+		}
+		_std::cout << _std::endl;
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 static_assert(incomplete_q           <void     > );
 static_assert(incomplete_q           <void_type> );
 static_assert(  complete_q<complete_t<void     >>);

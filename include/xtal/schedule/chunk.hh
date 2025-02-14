@@ -77,10 +77,12 @@ struct chunk
 				noexcept -> signed
 				{
 					if (0 == o.head()) {
-						return R_::template flux<N_ion>(XTAL_REF_(o).tail());
+						return R_::flux(flow::call_f(N_ion, XTAL_REF_(o).tail()));
 					}
 					else {
-						u_spool.push(XTAL_REF_(o)); return 0;
+						auto n = u_spool.size();
+						u_spool.push(XTAL_REF_(o));
+						return 0;
 					//	NOTE: Always successful, since there's (currently) no collision testing...
 					}
 				}
@@ -93,7 +95,7 @@ struct chunk
 				{
 				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
 				
-					return _std::min<delay_type>({R_::delay(), next().head()});
+					return bond::fit<delay_type>::minimum_f(R_::delay(), next().head());
 				}
 				//\returns the size of the render cycle, \
 				after all future events have been brought forward. \
@@ -104,7 +106,7 @@ struct chunk
 				{
 					auto const i = R_::belay();
 					for (auto &u:u_spool) {
-						u -= i;
+						u -= i; assert(0 <= u.head());
 					}
 					return i;
 				}
@@ -119,7 +121,7 @@ struct chunk
 				{
 					R_::relay(i);
 					while (0 < u_spool.size() and next().head() <= i) {
-						(void) R_::template flux(flow::call_f(1, next().tail()));
+						(void) R_::flux(flow::call_f(1, next().tail()));
 						(void) u_spool.pop();
 					}
 					return delay();

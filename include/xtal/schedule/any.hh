@@ -106,21 +106,29 @@ struct define
 				}
 
 				///\
-				Condenses the given scheduled message, forwarding to `self().infuse`. \
+				Forwards the event-to-be-scheduled to `self().fuse`. \
 				
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(flow::cue_s<> v, same_q<Xs> auto &&...oo)
+				flux(same_q<event_type> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
-					return confuse<N_ion>(v) (XTAL_REF_(oo)...);
+					return [&] XTAL_1FN_(and) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
+						(self().template fuse<N_ion>(XTAL_REF_(o)));
 				}
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(flow::cue_s<> v, same_q<packed_type> auto &&oo)
+				flux(flow::cue_s<> v, same_q<Xs> auto &&...xs)
 				noexcept -> signed
 				{
-					return XTAL_REF_(oo).apply(confuse<N_ion>(v));
+					return confuse<N_ion>(v) (XTAL_REF_(xs)...);
+				}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				flux(flow::cue_s<> v, same_q<packed_type> auto &&xs)
+				noexcept -> signed
+				{
+					return XTAL_REF_(xs).apply(confuse<N_ion>(v));
 				}
 
 			private:

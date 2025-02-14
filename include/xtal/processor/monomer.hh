@@ -128,7 +128,7 @@ struct monomer<U, As...>
 				noexcept -> signed
 				{
 					return [this]
-						XTAL_0FN_(and) ((void) state(R_::method()), 0)
+						XTAL_1FN_(and) ((void) state(R_::method()), 0)
 							(R_::template flux<N_ion>(XTAL_REF_(cursor_o)));
 				}
 

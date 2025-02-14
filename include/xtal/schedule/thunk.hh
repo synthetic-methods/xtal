@@ -66,10 +66,10 @@ struct thunk
 				U_shuttle u_shuttle{};
 
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(), u_shuttle.head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) then_(), u_shuttle.tail())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail_(), u_shuttle.tail())
 
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i)->head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) then_(int i), u_spool.begin(i)->tail())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail_(int i), u_spool.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
@@ -120,10 +120,10 @@ struct thunk
 					compact_();
 					
 					if constexpr (same_q<U_shuttle, decltype(o)>) {
-						return then_(0).template flux<N_ion>(XTAL_REF_(o));
+						return tail_(0).template flux<N_ion>(XTAL_REF_(o));
 					}
 					else {
-						return then_(0).template flux<N_ion>(V_shuttle{XTAL_REF_(o)});
+						return tail_(0).template flux<N_ion>(V_shuttle{XTAL_REF_(o)});
 					}
 				}
 				template <signed N_ion> requires in_n<N_ion, +1>

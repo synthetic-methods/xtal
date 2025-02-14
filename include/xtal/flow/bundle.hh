@@ -59,12 +59,12 @@ struct bundle
 			XTAL_IF0
 			XTAL_0IF (N_ion == +1) {
 				return [this, oo...]
-					XTAL_0FN_(and) (flux<N_ion>(constant_t<-1>{}, oo...))
+					XTAL_1FN_(and) (flux<N_ion>(constant_t<-1>{}, oo...))
 						(S_::template flux<N_ion>(XTAL_REF_(oo)...));
 			}
 			XTAL_0IF (N_ion == -1) {
 				return [this, oo...]
-					XTAL_0FN_(and) (S_::template flux<N_ion>(oo...))
+					XTAL_1FN_(and) (S_::template flux<N_ion>(oo...))
 						(flux<N_ion>(constant_t<-1>{}, XTAL_REF_(oo)...));
 			}
 		}

@@ -332,9 +332,9 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
                                         &&...XTAL_NYM_(ts))\
    XTAL_0FN_(to)      (__VA_ARGS__)                                                                      ///< Lambda return expression after `[captures]`.
 
-#define XTAL_0FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(to) (ARG == _? _: _ SYM (__VA_ARGS__))            ///< Lambda conditional     after `[captures]`.
-#define XTAL_0FN_and(...)                    XTAL_0FN_else(1, &, __VA_ARGS__)                            ///< Lambda conditional `&` after `[captures]`.
-#define XTAL_0FN_or(...)                     XTAL_0FN_else(0, |, __VA_ARGS__)                            ///< Lambda conditional `|` after `[captures]`.
+#define XTAL_1FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(to) (ARG == _? _: _ SYM (__VA_ARGS__))            ///< Lambda conditional     after `[captures]`.
+#define XTAL_1FN_and(...)                    XTAL_1FN_else(1, &, __VA_ARGS__)                            ///< Lambda conditional `&` after `[captures]`.
+#define XTAL_1FN_or(...)                     XTAL_1FN_else(0, |, __VA_ARGS__)                            ///< Lambda conditional `|` after `[captures]`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

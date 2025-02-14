@@ -81,7 +81,7 @@ struct define
 		noexcept -> signed
 		{
 			return [this, ...oo=XTAL_REF_(oo)]
-				XTAL_0FN_(and) (flux<N_ion>(oo...))
+				XTAL_1FN_(and) (flux<N_ion>(oo...))
 					(self().template fuse<N_ion>(XTAL_REF_(o)));
 		}
 
@@ -203,7 +203,7 @@ struct defer
 		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
 		{
 			return [this, oo...]
-				XTAL_0FN_(and) (S_::template flux<N_ion>(oo...))
+				XTAL_1FN_(and) (S_::template flux<N_ion>(oo...))
 					(head().template flux<N_ion>(XTAL_REF_(oo)...));
 		}
 		///\note\
@@ -216,7 +216,7 @@ struct defer
 		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
 		{
 			return [this, oo...]
-				XTAL_0FN_(and) (head().template flux<N_ion>(oo...))
+				XTAL_1FN_(and) (head().template flux<N_ion>(oo...))
 					(S_::template flux<N_ion>(XTAL_REF_(oo)...));
 		}
 

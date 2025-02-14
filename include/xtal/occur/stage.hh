@@ -54,8 +54,6 @@ struct stage
 		using S_::self;
 		using S_::head;
 
-	public:// MESSAGE
-
 	};
 };
 template <constant_q A, typename ...As>

@@ -149,8 +149,8 @@ struct polymer<U, As...>
 				{
 					auto u_ = ensemble().scan(i_.head());
 					//\
-					if (1 <= count_f(ensemble()) and 1 == u_->efflux(occur::stage_f(0))) {
 					if (1 <= count_f(ensemble())) {
+					if (1 <= count_f(ensemble()) and 1 != u_->efflux(occur::stage_f(-1))) {
 						assert(u_ < ensemble().end() and i_.head() == u_->head());
 						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 					}

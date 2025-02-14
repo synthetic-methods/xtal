@@ -262,7 +262,7 @@ struct define
 				fuse(same_q<T> auto &&o)
 				noexcept -> signed
 				{
-					return R_::heading(XTAL_REF_(o));
+					return R_::heading(o);
 				}
 
 			};
@@ -295,7 +295,7 @@ struct define
 				fuse(same_q<T> auto &&o)
 				noexcept -> signed
 				{
-					return R_::heading(XTAL_REF_(o));
+					return R_::heading(o);
 				}
 
 			};

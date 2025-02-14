@@ -150,56 +150,49 @@ struct spool<A>
 		scan(auto &&w)
 		noexcept -> U_point
 		{
-			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w));
+			return _std::lower_bound(begin(), u_buffer.end(), XTAL_REF_(w));
 		}
 		XTAL_DEF_(return,inline,let)
 		scan(auto &&w, auto &&f)
 		noexcept -> U_point
 		{
-			return _std::lower_bound(u_buffer.begin(), u_buffer.end(), XTAL_REF_(w)
+			return _std::lower_bound(begin(), u_buffer.end(), XTAL_REF_(w)
 			,	[f=XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(to) (f(x) < f(y))
 			);
 		}
 		///\note\
 		Conflicting entries w.r.t. `==` are overwritten. \
 
-		XTAL_DEF_(let)
-		push(U_value u)
+		XTAL_DEF_(mutate,inline,let)
+		push(same_q<U_value> auto &&u)
 		noexcept -> U_point
 		{
-			if (u_buffer.empty()) {
-				u_buffer.push_back(XTAL_MOV_(u));
-				return begin();
-			}
-			U_point _v = scan(u);
-			U_value &v = *_v;
-			if (v == u) {
-				v.~ U_value();
-				v = XTAL_MOV_(u);
-				return _v;
+			U_point v_ = scan(u);
+			if (u_buffer.size() and u == *v_) {
+				v_->~U_value(); return new (v_) U_value(XTAL_REF_(u));
 			}
 			else {
-				return poke(_v, XTAL_MOV_(u));
+				return poke(v_, XTAL_REF_(u));
 			}
 		}
 		XTAL_DEF_(mutate,inline,let)
-		push(auto ..._s)
+		push(auto &&..._s)
 		noexcept -> U_point
 		{
-			return push(U_value(XTAL_MOV_(_s)...));
+			return push(U_value(XTAL_REF_(_s)...));
 		}
 
 		XTAL_DEF_(mutate,inline,let)
-		poke(U_point _v, U_value u)
+		poke(U_point v_, same_q<U_value> auto &&u)
 		noexcept -> U_point
 		{
-			return u_buffer.insert(_v, XTAL_MOV_(u));
+			return u_buffer.insert(v_, XTAL_REF_(u));
 		}
 		XTAL_DEF_(mutate,inline,let)
-		poke(U_point _v, auto..._s)
+		poke(U_point v_, auto &&..._s)
 		noexcept -> U_point
 		{
-			return u_buffer.emplace(_v, XTAL_MOV_(_s)...);
+			return u_buffer.emplace(v_, XTAL_REF_(_s)...);
 		}
 
 	};
