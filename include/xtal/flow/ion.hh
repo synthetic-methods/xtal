@@ -13,20 +13,19 @@ namespace xtal::flow
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Used for scheduling any type by prefixing with an integral delay. \
-May be stacked in order to described integral fades. \
+Reifies the `signed` template-parameter for the `flux` and `fuse` methods. \
 
-template <class ..._s>	struct  cue;
-template <class ..._s>	concept cue_q = bond:: tagged_p<cue    , _s...>;
-template <class ..._s>	using   cue_s = bond::compose_s<packet_t<_s...>, cell::confined<cue<>>>;
-template <class ..._s>	using   cue_t = bond::compose_s<packed_t<_s...>, cell::confined<cue<>>>;
+template <class ..._s>	struct  ion;
+template <class ..._s>	concept ion_q = bond:: tagged_p<ion    , _s...>;
+template <class ..._s>	using   ion_s = bond::compose_s<packet_t<_s...>, cell::confined<ion<>>>;
+template <class ..._s>	using   ion_t = bond::compose_s<packed_t<_s...>, cell::confined<ion<>>>;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
-struct cue<>
+struct ion<>
 {
-	using superkind = cell::confer<signed, bond::tag<cue>>;
+	using superkind = cell::confer<signed, bond::tag<ion>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -47,15 +46,15 @@ struct cue<>
 		XTAL_DEF_(return,inline,let)
 		operator << (any_q auto &&u)
 		noexcept -> auto
-		requires same_q<T_, cue_s<>>
+		requires same_q<T_, ion_s<>>
 		{
-			return cue_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
+			return ion_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
 		}
 
-		using cue_layout = U_[1];
+		using ion_layout = U_[1];
 
 	};
-	template <cue_q S>
+	template <ion_q S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -67,10 +66,10 @@ struct cue<>
 		operator << (any_q auto &&u)
 		noexcept -> auto
 		{
-			return cue_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+			return ion_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 
-		using cue_layout = succedent_s<typename S_::cue_layout>;
+		using ion_layout = succedent_s<typename S_::ion_layout>;
 
 	};
 };

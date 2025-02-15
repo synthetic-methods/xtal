@@ -66,7 +66,7 @@ struct superblock<Us...>
 		XTAL_FX4_(to) (template <class ...Xs> XTAL_DEF_(return,inline,let) back (), get<size - 1>(S_::self()))
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 template <scalar_q U, auto N>
@@ -105,7 +105,7 @@ struct superblock<U(&)[N]>
 		using S_::S_;
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 template <scalar_q U, auto N>
@@ -179,7 +179,7 @@ struct superblock<U   [N]>
 		}
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 
@@ -328,7 +328,7 @@ struct block
 		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 template <size_type I> XTAL_DEF_(inline,let) get(block_q auto const &&o) noexcept -> decltype(auto) {return XTAL_MOV_(o).template   element<I>();}

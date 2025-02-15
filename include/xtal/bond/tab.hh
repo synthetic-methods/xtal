@@ -41,8 +41,8 @@ template <           class ...Ts> concept       taboo_q = complete_q<typename Ts
 
 
 template <                            class ..._s>                                                  struct tabbed;
-template <class   T                              >                                                  struct tabbed<T, logical_constant_t<1>> : logical_constant_t<1> {using type =    T;};
-template <class   T                              >                                                  struct tabbed<T, logical_constant_t<0>> : logical_constant_t<0> {using type = void;};
+template <class   T                              >                                                  struct tabbed<T, _std:: true_type> : _std:: true_type {using type =    T;};
+template <class   T                              >                                                  struct tabbed<T, _std::false_type> : _std::false_type {using type = void;};
 template <class   T,                  class ...Is>                                                  struct tabbed<T,                Is...> : tabbed<T, logical_constant_t<same_q<T, Is...>>> {};
 template <taboo_q T,                  class ...Is>                                                  struct tabbed<T,    taboo_u<T>, Is...> : tabbed<taboo_s<T>,                  Is...>   {};
 template <class   T, intercedent_q I, class ...Is>                                                  struct tabbed<T,            I , Is...> : tabbed<taboo_s<T>, precedent_s<I>,  Is...>   {};

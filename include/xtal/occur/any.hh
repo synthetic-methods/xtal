@@ -213,7 +213,7 @@ struct define
 					{
 						template <auto J>
 						static auto constexpr intend_n = same_q<typename T::body_type, size_type>?
-							(XTAL_ALL_(J)) T(static_cast<size_type>(J)): J;
+							(XTAL_ALL_(J)) T{static_cast<size_type>(J)}: J;
 						
 						template <auto J>
 						static auto constexpr extend_n = digested::template index<Is..., intend_n<J>>::point;

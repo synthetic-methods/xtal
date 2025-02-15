@@ -87,12 +87,12 @@ struct monomer<U, As...>
 				XTAL_NEW_(explicit)
 				subtype(same_q<Xs> auto &&...xs)
 				noexcept
-				:	subtype(T_{}, XTAL_REF_(xs)...)
+				:	subtype{T_{}, XTAL_REF_(xs)...}
 				{}
 				XTAL_NEW_(explicit)
 				subtype(same_q<T_> auto &&t, same_q<Xs> auto &&...xs)
 				noexcept
-				:	subtype(R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...)
+				:	subtype{R_::method(XTAL_REF_(xs)...), XTAL_REF_(t), XTAL_REF_(xs)...}
 				{}
 				XTAL_NEW_(explicit)
 				subtype(auto &&f, same_q<T_> auto &&t, same_q<Xs> auto &&...xs)

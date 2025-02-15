@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../flow/call.hh"
+#include "../flow/ion.hh"
 #include "../provision/spooled.hh"
 
 
@@ -44,8 +44,9 @@ struct chunk
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:
-				using typename R_::event_type;
-				using typename R_::delay_type;
+				using typename R_::packed_type;
+				using typename R_:: event_type;
+				using typename R_:: delay_type;
 
 			private:
 				typename S_::template spool_t<event_type>
@@ -77,7 +78,7 @@ struct chunk
 				noexcept -> signed
 				{
 					if (0 == o.head()) {
-						return R_::flux(flow::call_f(N_ion, XTAL_REF_(o).tail()));
+						return R_::flux(flow::ion_s<>(N_ion).then(XTAL_REF_(o).tail()));
 					}
 					else {
 						auto n = u_spool.size();
@@ -121,7 +122,7 @@ struct chunk
 				{
 					R_::relay(i);
 					while (0 < u_spool.size() and next().head() <= i) {
-						(void) R_::flux(flow::call_f(1, next().tail()));
+						(void) R_::flux(flow::ion_s<>(1).then(next().tail()));
 						(void) u_spool.pop();
 					}
 					return delay();

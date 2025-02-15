@@ -503,7 +503,7 @@ struct buffer<U_data[N_data]>
 		}
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 /***/

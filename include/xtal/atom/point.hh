@@ -205,7 +205,7 @@ struct point
 		XTAL_DEF_(return,inline,let) operator ^ (auto const &o)              const noexcept -> auto   requires XTAL_TRY_(to) (twin() ^= o)
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 

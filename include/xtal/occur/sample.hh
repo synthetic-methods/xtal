@@ -51,24 +51,24 @@ public:
 		XTAL_NEW_(explicit)
 		subtype(atom::couple_q auto &&o, auto &&...oo)
 		noexcept
-		:	subtype(get<0>(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		:	subtype{get<0>(XTAL_REF_(o)), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(sample_q auto &&o, auto &&...oo)
 		noexcept
-		:	subtype(XTAL_REF_(o).rate(), XTAL_REF_(oo)...)
+		:	subtype{XTAL_REF_(o).rate(), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(number_q auto &&n, auto &&...oo)
 		noexcept
 		//\
-		:	S_(W_alpha(_fit::alpha_f(n)), XTAL_REF_(oo)...)
-		:	S_(W_alpha{_fit::alpha_f(n), one/_fit::alpha_f(n)}, XTAL_REF_(oo)...)
+		:	S_{W_alpha(_fit::alpha_f(n)), XTAL_REF_(oo)...}
+		:	S_{W_alpha{_fit::alpha_f(n), one/_fit::alpha_f(n)}, XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
-		:	subtype(1)
+		:	subtype{1}
 		{}
 
 	public:// OPERATE

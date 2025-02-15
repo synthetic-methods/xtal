@@ -162,8 +162,7 @@ struct define
 	};
 };
 template <class T>
-struct refine
-:	_retail::refine<T>
+struct refine : _retail::refine<T>
 {
 };
 

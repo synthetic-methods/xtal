@@ -11,10 +11,12 @@ namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Exchanges the value-type `U` of `T` with that supplied to `subtype<S>`. \
-Used to change e.g. `float -> int`, \
-`std::complex<float> -> std::complex<int>` \
-`std::array<float, N> -> std::array<int, N>`, etc. \
+Attempts to exchange the `value_type` of `T` with that supplied to `subtype<S>`. \
+
+///\
+Transformation is based on a limited set of patterns, \
+in which the `value_type` appears the first parameter, for example, `float -> int`, \
+`std::complex<float> -> std::complex<int>`, `std::array<float, N> -> std::array<int, N>`. \
 
 template <class T>
 struct mint;

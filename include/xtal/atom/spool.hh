@@ -196,7 +196,7 @@ struct spool<A>
 		}
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 

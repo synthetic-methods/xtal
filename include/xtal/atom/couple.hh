@@ -82,7 +82,7 @@ struct couple
 		homotype(subjective_q auto const &u)
 		noexcept
 		requires in_n<size, 2> and continuous_field_q<value_type>
-		:	homotype(objective_f(u))
+		:	homotype{objective_f(u)}
 		{
 		}
 
@@ -306,7 +306,7 @@ struct couple
 
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 

@@ -50,46 +50,6 @@ struct stage
 	public:// CONSTRUCT
 		using S_::S_;
 
-	public:// ACCESS
-		using S_::self;
-		using S_::head;
-
-	};
-};
-template <constant_q A, typename ...As>
-struct stage<A, As...>
-{
-	using superkind = stage<As...>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind>;
-	
-	public:// CONSTRUCT
-	//	using S_::S_;
-
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
-		
-		XTAL_NEW_(implicit)
-		subtype()
-		noexcept
-		{
-			S_::head(A{});
-		}
-		XTAL_NEW_(explicit)
-		subtype(auto &&...oo)
-		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		{
-			S_::head(A{});
-		}
-
 	};
 };
 

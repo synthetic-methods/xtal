@@ -70,14 +70,7 @@ struct confined
 	using homokind = confine<T, As...>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, homokind<subtype<S>>>
-	{
-		using S_ = bond::compose_s<S, homokind<subtype<S>>>;
-
-	public:
-		using S_::S_;
-
-	};
+	using subtype = bond::derive_s<S, homokind>;
 	using    type = subtype<any_type>;
 	
 };

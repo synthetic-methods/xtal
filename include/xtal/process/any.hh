@@ -184,7 +184,7 @@ struct define
 				XTAL_NEW_(explicit)
 				subtype(Xs &&...xs)
 				noexcept
-				:	subtype(T{}, XTAL_REF_(xs)...)
+				:	subtype{T{}, XTAL_REF_(xs)...}
 				{}
 				XTAL_NEW_(explicit)
 				subtype(fungible_q<S_> auto &&t, Xs &&...xs)
@@ -257,15 +257,15 @@ struct refine
 
 		XTAL_DEF_(return,inline,set)
 		bind_f(auto &&...xs)
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
-			return bind_t<decltype(xs)...>(XTAL_REF_(xs)...);
+			return bind_t<decltype(xs)...>{XTAL_REF_(xs)...};
 		}
 		XTAL_DEF_(return,inline,set)
 		bind_f(same_q<T> auto &&t, auto &&...xs)
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
-			return bind_t<decltype(xs)...>(XTAL_REF_(t), XTAL_REF_(xs)...);
+			return bind_t<decltype(xs)...>{XTAL_REF_(t), XTAL_REF_(xs)...};
 		}
 		
 		XTAL_FX4_(to) (template <class ...Xs>

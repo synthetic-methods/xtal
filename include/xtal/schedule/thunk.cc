@@ -32,12 +32,92 @@ TAG_("thunk", "process")
 		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
+		using U0_cue   = flow::cue_s<>;
+		using U1_cue   = flow::cue_s<U0_cue>;
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
-		using U2_event = flow::cue_s<U1_event>;
 		
 		using W0_event = atom::grade_t<U0_event[2]>;
 		using V_event = flow::cue_s<>;
+		
+		using Z_process = process::confined_t<
+	//		typename U_thunk::template inqueue<V_event, U0_event>
+			typename U_thunk::template inqueue<         U1_event>
+		>;
+		using U_processor = processor::monomer_t<Z_process
+		,	provision::stored <null_type[0x100]>
+		,	provision::spooled<null_type[0x100]>
+		>;
+
+		auto z_resize = occur::resize_t<>(0x020);
+		auto z_cursor = occur::cursor_t<>(0x020);
+		auto z_sample = occur::sample_t<>(44100);
+
+		//\
+		U_processor::template bind_t<> z;
+		auto z = U_processor::bind_f();
+		
+		U0_event u0(0);
+		U1_event u1(2, u0);
+
+		U0_event v0(2);
+		U1_event v1(2, u0);
+
+		u0 += v0;
+//		u1 += v1;
+
+		z <<= u0;
+		z <<= u1;
+
+		W0_event w0{u0};
+
+		z <<=                         U0_event{ 0.00} ;
+		z <<= U1_cue(0x08, 0x10).then(U0_event{ 0.50});
+		z <<= U1_cue(0x18, 0x28).then(U0_event{-0.50});
+	//	z <<= U1_cue(0x30, 0x40).then(U0_event{ 0.00});
+
+		z <<= z_sample;
+		z <<= z_resize;
+
+		TRUE_(0 == z.efflux(z_cursor++));
+		{
+			echo_rule_<25>();
+			echo_plot_<25>(z.store());
+
+		//	TRUE_(2 >= z.ensemble().size());// Still decaying...
+		}
+		z <<= U1_cue(0x10, 0x20).then(U0_event{ 0.00});
+		TRUE_(0 == z.efflux(z_cursor++));
+		{
+			echo_rule_<25>();
+			echo_plot_<25>(z.store());
+
+		//	TRUE_(2 >= z.ensemble().size());// Still decaying...
+		}
+
+		echo_rule_<25>();
+	}
+	/***/
+	/**/
+	TRY_("continuous")
+	{
+		using namespace provision;
+	//	using namespace schedule;
+
+		int constexpr N_store = (1<<3);
+		int constexpr N_spool = (1<<7);
+
+		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+		using U_cursor = occur::cursor_t<>;
+
+		using U0_cue   = flow::cue_s<>;
+		using U1_cue   = flow::cue_s<U0_cue>;
+
+		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
+		using U1_event = flow::cue_s<U0_event>;
+		
+		using W0_event = atom::grade_t<U0_event[2]>;
+		using V_event  = flow::cue_s<>;
 		
 		//\
 		using U_inqueue = typename U_thunk::template inqueue<V_event, U0_event>;
@@ -48,24 +128,21 @@ TAG_("thunk", "process")
 		
 		U0_event u0(2);
 		U1_event u1(2, u0);
-		U2_event u2(2, u1);
 
 		U0_event v0(2);
 		U1_event v1(2, u0);
-		U2_event v2(2, u1);
 
 		u0 += v0;
 //		u1 += v1;
 
 		u_gate <<= u0;
 		u_gate <<= u1;
-		u_gate <<= u2;
 
 		W0_event w0{u0};
 
-		u_gate <<=                (U0_event) 2.0;
-		u_gate <<= U2_event(2, 6, (U0_event) 4.0);
-		u_gate <<= U2_event(7, 9, (U0_event) 5.0);
+		u_gate <<=                   U0_event{2.0} ;
+		u_gate <<= U1_cue(2, 6).then(U0_event{4.0});
+		u_gate <<= U1_cue(7, 9).then(U0_event{5.0});
 
 		TRUE_((T_alpha) u_gate() == 2.0);//  0
 		TRUE_((T_alpha) u_gate() == 2.0);//  1

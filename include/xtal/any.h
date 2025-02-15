@@ -167,25 +167,43 @@ XTAL_ENV_(push)
 #define XTAL_SYS_FMA 0b000
 #endif
 
-#if defined(__aarch64__) or defined(__amd64__) or defined(__amd64) or defined(__x86_64__) or defined(__x86_64) or defined(_M_AMD64) or defined(_M_X64) or defined(__ia64__) or defined(_IA64) or defined(__IA64__) or defined(__ia64) or defined(_M_IA64) or defined(_M_IA64) or defined(__powerpc64__) or defined(__ppc64__) or defined(__PPC64__) or defined(_ARCH_PPC64)
+#if defined(    __aarch64__)\
+ or defined(     __x86_64  )\
+ or defined(     __x86_64__)\
+ or defined(       _M_X64  )\
+ or defined(      __amd64  )\
+ or defined(      __amd64__)\
+ or defined(     _M_AMD64  )\
+ or defined(        _IA64  )\
+ or defined(       __ia64  )\
+ or defined(       __ia64__)\
+ or defined(       __IA64__)\
+ or defined(      _M_IA64  )\
+ or defined(  __powerpc64__)\
+ or defined(      __ppc64__)\
+ or defined(      __PPC64__)\
+ or defined(  _ARCH_PPC64  )\
+
 #define XTAL_SYS_CPU 64
 #else
 #define XTAL_SYS_CPU 32
 #endif
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_VER_MSVC               XTAL_ENV_MSVC and XTAL_ENV_MSVC
-#define XTAL_VER_LLVM               XTAL_ENV_LLVM and XTAL_ENV_LLVM
-#define XTAL_VER_GNUC               XTAL_ENV_GNUC and XTAL_ENV_GNUC
-#define XTAL_VER_GCC                XTAL_VER_GNUC
-#define XTAL_VER_STD                XTAL_STD
+#define XTAL_VER_MSVC            XTAL_ENV_MSVC and XTAL_ENV_MSVC
+#define XTAL_VER_LLVM            XTAL_ENV_LLVM and XTAL_ENV_LLVM
+#define XTAL_VER_GNUC            XTAL_ENV_GNUC and XTAL_ENV_GNUC
+#define XTAL_VER_GCC             XTAL_VER_GNUC
+#define XTAL_VER_STD             XTAL_STD
+#if     XTAL_VER_STD >= 2300 and XTAL_VER_GNUC >= 1400
 //\
-#define XTAL_VER_ranges            -1
 #define XTAL_VER_ranges             3
+#define XTAL_VER_ranges            -1
+#else
+#define XTAL_VER_ranges             3
+#endif
 
 #define XTAL_VER_(...) (false XTAL_N_(XTAL_ver_,__VA_ARGS__))///< Version checking.
 #define XTAL_ver_(...)     or XTAL_VER_##__VA_ARGS__

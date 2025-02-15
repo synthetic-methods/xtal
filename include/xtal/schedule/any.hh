@@ -2,7 +2,7 @@
 #include "../bond.hh"
 #include "../flow/any.hh"// `_retail`
 #include "../flow/cue.hh"
-#include "../flow/call.hh"
+#include "../flow/ion.hh"
 
 
 
@@ -78,7 +78,7 @@ struct define
 				Include the `flux` index within the event. \
 
 				XTAL_DEF_(return,inline,let)
-				flux(flow::call_q auto const x_, auto &&...oo)
+				flux(flow::ion_t<> x_, auto &&...oo)
 				noexcept -> signed
 				{
 					switch (x_.head()) {
@@ -91,7 +91,7 @@ struct define
 				Unpacks and forwards the dequeued message to `self()`. \
 
 				XTAL_DEF_(return,inline,let)
-				flux(flow::call_q auto const x_, same_q<packed_type> auto &&o)
+				flux(flow::ion_t<> x_, same_q<packed_type> auto &&o)
 				noexcept -> signed
 				{
 					return XTAL_REF_(o).apply([&, this] (auto &&...oo)
@@ -99,10 +99,10 @@ struct define
 					);
 				}
 				XTAL_DEF_(return,inline,let)
-				flux(flow::call_q auto const xo)
+				flux(flow::ion_q auto const xo)
 				noexcept -> signed
 				{
-					return flux(flow::call_f(xo.head()), xo.tail());
+					return flux(flow::ion_t<>(xo.head()), xo.tail());
 				}
 
 				///\

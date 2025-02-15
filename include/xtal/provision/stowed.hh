@@ -46,19 +46,19 @@ struct stowed<U_state, U_store>
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
-		:	subtype(U_store())
+		:	subtype{U_store()}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
 		noexcept
-		:	subtype(U_store(), XTAL_REF_(oo)...)
+		:	subtype{U_store(), XTAL_REF_(oo)...}
 		{}
-		
 		XTAL_NEW_(explicit)
 		subtype(U_store o, auto &&...oo)
 		noexcept
-		:	S_(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...)
+		:	S_{U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...}
 		{}
+
 		XTAL_DEF_(inline,let)
 		store(U_store o, auto &&...oo)
 		noexcept -> void

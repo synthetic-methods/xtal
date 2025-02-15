@@ -90,8 +90,10 @@ TAG_("polymer", "occur", "spine")
 	using A_stored  = provision::stored  <extent_constant_t<-1>>;
 	using A_spooled = provision::spooled <extent_constant_t<64>>;
 
-	using A_gate   = bond::compose<typename U_thunk::template inqueue<Ox_level>, typename U_stage::expect<>>;
-	using U_gate   = process::confined_t<A_gate>;
+	using U_gate   = process::confined_t<void
+	,	typename U_thunk::template inqueue<Ox_level>
+	,	typename U_stage::expect<>
+	>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
 //	, provision::voiced<void
@@ -149,23 +151,23 @@ void polymer_provision_spool__combined()
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
 	
-	using U_gate = process::confined_t<void
+	using Z_process = process::confined_t<void
 	,	typename U_stage::expect<>
 	,	typename Ox_level::poll<>
 	>;
-
-	using U_vox = polymer_t<U_gate
+	using Z_processor = polymer_t<Z_process
 	,	provision::stored <extent_constant_t<N_store>>
 	,	provision::spooled<extent_constant_t<N_spool>>
 	>;
-	auto u_vox = U_vox::bind_f();
+	using Y_processor = typename Z_processor::template bind_t<>;
+	Y_processor u_vox{};
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
-	u_vox <<= U_event(62, 0) << Ox_level(1); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0) << Ox_level(2); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= U_event(69, 0) << Ox_level(3); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0) << Ox_level(4); TRUE_(4 == u_vox.ensemble().size());
+	(void) u_vox.influx(U_event(62, 0), Ox_level(1)); TRUE_(1 == u_vox.ensemble().size());
+	(void) u_vox.influx(U_event(65, 0), Ox_level(2)); TRUE_(2 == u_vox.ensemble().size());
+	(void) u_vox.influx(U_event(69, 0), Ox_level(3)); TRUE_(3 == u_vox.ensemble().size());
+	(void) u_vox.influx(U_event(65, 0), Ox_level(4)); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);

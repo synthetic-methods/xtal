@@ -118,7 +118,7 @@ struct multiplicative_group
 		XTAL_DEF_(mutate,inline,let) operator %=(_std::initializer_list<value_type>   t)       noexcept -> auto & requires same_q<_s...> {return S_::self() %= T(t);}
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 
@@ -181,7 +181,7 @@ struct additive_group
 		XTAL_DEF_(mutate,inline,let) operator -=(_std::initializer_list<value_type>   t)       noexcept -> auto & requires same_q<_s...> {return S_::self() -= T(t);}
 
 	};
-	using type = derive_t<homotype>;
+	using type = bond::derive_t<homotype>;
 
 };
 

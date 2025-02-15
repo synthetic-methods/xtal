@@ -11,44 +11,39 @@ namespace _xtd
 {///////////////////////////////////////////////////////////////////////////////
 //using namespace _std::experimental;
 
+#if XTAL_VER_(ranges == 3)
+namespace ranges        {using namespace      ::ranges;}
+namespace ranges::views {using namespace      ::ranges::views;}
+#endif
 #if XTAL_VER_(ranges != 3)
 namespace ranges        {using namespace ::std::ranges;}
 namespace ranges::views {using namespace ::std::ranges::views;}
-namespace ranges::views
-{
-	XTAL_DEF_(inline,let)
-	generate(auto &&f)
-	noexcept -> decltype(auto)
-	{
-		return ranges::transform_view(ranges::iota_view(_std::ptrdiff_t{}), [f=XTAL_REF_(f)] XTAL_1FN_(thunk) (f));
-	}
 
-}
 namespace ranges
 {
-	using ::ranges::any_view;
-	using ::ranges::get_categories;
-
+//\
+using _std::           accumulate;
+using        ::ranges::accumulate;
+using _std::   make_move_iterator;
+using _std::make_reverse_iterator;
+using ::ranges::         any_view;
+using ::ranges::      repeat_view;
+using ::ranges::   get_categories;
 }
-namespace ranges
-{
-	using _std::accumulate;
-	using _std::make_move_iterator;
-	using _std::make_reverse_iterator;
-
-}
-#else
-namespace ranges        {using namespace      ::ranges;}
-namespace ranges::views {using namespace      ::ranges::views;}
 namespace ranges::views
 {
-	XTAL_DEF_(inline,let)
-	zip_transform(auto &&...oo)
-	noexcept -> decltype(auto)
-	{
-		return zip_with(XTAL_REF_(oo)...);
-	}
-
+/*/
+XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return ::ranges::views::zip       (XTAL_REF_(_s)...);}
+XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return ::ranges::views::zip_with  (XTAL_REF_(_s)...);}
+XTAL_DEF_(inline,let) transform(auto &&..._s) noexcept -> auto {return ::ranges::views::transform (XTAL_REF_(_s)...);}
+/*/
+XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return          zip_view          (XTAL_REF_(_s)...);}
+XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return          zip_transform_view(XTAL_REF_(_s)...);}
+/***/
+//\
+XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return iota_view(_std::size_t{0})|views::transform([&] XTAL_1FN_(thunk) (XTAL_REF_(f)));}
+XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return ::ranges::views::generate(XTAL_REF_(f));}
+/***/
 }
 #endif
 

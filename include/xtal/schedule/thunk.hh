@@ -53,9 +53,9 @@ struct thunk
 				using typename R_::event_type;
 
 			private:// ACCESS
-				using U_cued    = typename R_::event_type::cue_signature;
-				using U_tailed  =      valued_u<U_cued   >;
-				using V_shuttle = atom::grade_t<U_cued   >;
+				using L_cue     = typename R_::event_type::cue_layout;
+				using U_tailed  =      valued_u<L_cue    >;
+				using V_shuttle = atom::grade_t<L_cue    >;
 				using U_shuttle = flow::  cue_s<V_shuttle>;
 
 				typename S_::template spool_t<U_shuttle>
@@ -101,31 +101,6 @@ struct thunk
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
-				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
-				flux(auto &&...oo)
-				noexcept -> signed
-				{
-					if constexpr (0 <= N_ion) {
-						compact_();
-					}
-					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
-				}
-
-				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(return,inline,let)
-				flux(same_q<U_tailed> auto &&o)
-				noexcept -> signed
-				{
-					compact_();
-					
-					if constexpr (same_q<U_shuttle, decltype(o)>) {
-						return tail_(0).template flux<N_ion>(XTAL_REF_(o));
-					}
-					else {
-						return tail_(0).template flux<N_ion>(V_shuttle{XTAL_REF_(o)});
-					}
-				}
 				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				fuse(flow::cue_q auto &&o)
@@ -137,6 +112,25 @@ struct thunk
 					else {
 						return shuffle_(XTAL_REF_(o));
 					}
+				}
+
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				flux(auto &&...oo)
+				noexcept -> signed
+				{
+					if constexpr (0 <= N_ion) {
+						compact_();
+					}
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
+				template <signed N_ion> requires in_n<N_ion, +1>
+				XTAL_DEF_(return,inline,let)
+				flux(same_q<U_tailed> auto &&o)
+				noexcept -> signed
+				{
+					compact_();
+					return tail_(0).template flux<N_ion>(V_shuttle{XTAL_REF_(o)});
 				}
 				
 			private:

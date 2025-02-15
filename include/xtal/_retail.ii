@@ -123,19 +123,6 @@ template <class F             >	concept  inapplicable_q	=  not applicable_q<F   
 template <class F, class X    >	concept  automorphism_p	=  same_q<return_t<F, X>, X>;
 template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>, X>;
 
-template <template <class> class T_>
-struct derive
-{
-	class type : public T_<type>
-	{
-		using S_ = T_<type>;// -Wsubobject-linkage?
-		
-	public:
-		using S_::S_;
-
-	};
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,10 +145,10 @@ template <constant_q T        >	struct       variable<T>  {using value_type = ba
 template <class T             >	using        variable_u	=  typename variable<T>::value_type;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
-template <auto  N        >	using     integral_constant_t	= _std::integral_constant<decltype(N),                         (N)>;
-template <auto  N        >	using     cardinal_constant_t	= _std::integral_constant<  size_type, static_cast<  size_type>(N)>;
-template <auto  N        >	using      ordinal_constant_t	= _std::integral_constant<extent_type, static_cast<extent_type>(N)>;
-template <auto  N        >	using      logical_constant_t	= _std::integral_constant<  bool     , static_cast<  bool     >(N)>;
+template <auto  N        >	using     integral_constant_t	= _std::integral_constant<decltype(N), (N)>;
+template <auto  N        >	using     cardinal_constant_t	=     size_constant_t<N>;
+template <auto  N        >	using      ordinal_constant_t	=   extent_constant_t<N>;
+template <auto  N        >	using      logical_constant_t	= _std::integral_constant<bool,    bool(N)>;
 
 template <class T        >	concept   integral_variable_q	= _std::              integral<based_t<T>>;
 template <class T        >	concept   cardinal_variable_q	= _std::     unsigned_integral<based_t<T>>;
@@ -275,7 +262,7 @@ template <scalar_valued_q T   >	struct      fluid_valued<T> {using value_type = 
 template <Scalar_valued_q T   >	struct      fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
 
 
-template <class T             >	using       tuple_shaped  	=  assayed<complete_t<_std::tuple_size<_std::remove_reference_t<T>>, cardinal_constant_t<0>>{}()>;
+template <class T             >	using       tuple_shaped  	=  assayed<complete_t<_std::tuple_size<_std::remove_reference_t<T>>, size_constant_t<0>>{}()>;
 template <class T             >	concept     tuple_shaped_q	=          complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
 
 template <class T             >	using       array_shaped  	=  assayed<_std::  extent_v<_std::remove_reference_t<T>>>;
@@ -302,7 +289,7 @@ template <  based_q T>	requires   tuple_shaped_q<T>           struct fixed_shape
 template <  based_q T>	requires   array_shaped_q<T>           struct fixed_shaped<T>                :   array_shaped<T>          {};
 template <  based_q T>	requires   class_shaped_q<T>           struct fixed_shaped<T>                : assayed<T::size()>         {};
 template <unbased_q T>	requires   fixed_shaped_q<based_t<T>>  struct fixed_shaped<T>                :   fixed_shaped<based_t<T>> {};
-template <class     U>	                                       struct fixed_shaped<_std::complex<U>> :   fixed_shaped<identity_t<cardinal_constant_t<2>>> {};
+template <class     U>	                                       struct fixed_shaped<_std::complex<U>> :   fixed_shaped<identity_t<size_constant_t<2>>> {};
 
 template <           >	                                       struct fluid_shaped<void>             : assayed< 0> {};
 template <  based_q T>	                                       struct fluid_shaped<T>                : assayed< 0> {};
@@ -352,6 +339,7 @@ template <fixed_q T,      int ...Ns>	struct  desolve<T, Ns...> : desolve<destruc
 //\
 Ranged...
 
+template <class T             >	using         wrapped_u	=                          decltype( XTAL_ANY_(T).get());
 template <class T             >	using         pointee_t	=                          decltype(*XTAL_ANY_(T)) ;
 template <class T             >	using         pointed_u	= _std::remove_reference_t<decltype(*XTAL_ANY_(T))>;
 template <class T             >	using         indexee_t	=                          decltype( XTAL_ANY_(T)[XTAL_ANY_(unsigned short)]) ;
@@ -359,7 +347,7 @@ template <class T             >	using         indexed_u	= _std::remove_reference
 template <class T             >	using       coindexed_u	= _std::remove_reference_t<decltype( XTAL_ANY_(T)(XTAL_ANY_(unsigned short)))>;
 template <class T             >	using       reindexed_u	= coindexed_u<T>;
 
-template <class T             >	concept       pointer_q	= _std::is_pointer_v<based_t<T>>;
+template <class T             >	concept       wrapped_q	= requires (T t) {{t.get()} -> same_q<typename based_t<T>::type>;};
 template <class T             >	concept       pointed_q	= requires (T t) {*t;};
 template <class T             >	concept       indexed_q	= requires (T t) { t[XTAL_ANY_(unsigned short)];};
 template <class T             >	concept     coindexed_q	= requires (T t) { t(XTAL_ANY_(unsigned short));} and indexed_q<T>;

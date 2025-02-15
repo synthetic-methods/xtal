@@ -17,16 +17,10 @@ Wrapper used to index an existing type. \
 
 ///\see e.g. [../processor/polymer.hh]. \
 
-/*/
-template <class ..._s> struct  key;
-template <class ..._s> concept key_q = bond::tag_p<key, _s...>;
-template <class ..._s> using   key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
-/*/
-template <class ..._s> struct  key;
-template <class ..._s> using   key_s =  bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
-template <class T    > using   key_u =  valued_u<typename T::key_signature>;
-template <class ..._s> concept key_q = (bond::tag_p<key, _s...> and...and same_q<_s, key_s<key_u<_s>>>);
-/***/
+template <class ..._s>	struct  key;
+template <class ..._s>	concept key_q = bond:: tagged_p<key    , _s...>;
+template <class ..._s>	using   key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
+template <class ..._s>	using   key_t = bond::compose_s<packed_t<_s...>, cell::confined<key<>>>;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,17 +33,30 @@ struct key<>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
+		using U_ = XTAL_ALL_(XTAL_ANY_(S).tail());
+		using T_ = typename S_::self_type;
 
 	public:
 		using S_::S_;
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit operator) 
-		auto(), key_s<>(S_::head()))
-		
-		using key_signature = XTAL_ALL_(XTAL_ANY_(S).tail())[1];
+		XTAL_DEF_(return,inline,let)
+		operator << (auto &&u)
+		noexcept -> decltype(auto)
+		{
+			return S_::operator<<(XTAL_REF_(u));
+		}
+		XTAL_DEF_(return,inline,let)
+		operator << (any_q auto &&u)
+		noexcept -> decltype(auto)
+		requires same_q<T_, key_s<>>
+		{
+			return key_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
+		}
+
+		using key_layout = U_[1];
 
 	};
-	template <bond::tag_q<key> S>
+	template <key_q S>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -57,37 +64,20 @@ struct key<>
 	public:
 		using S_::S_;
 
-		using key_signature = succedent_s<typename S_::key_signature>;
+		XTAL_DEF_(return,inline,let)
+		operator << (any_q auto &&u)
+		noexcept -> decltype(auto)
+		{
+			return key_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+		}
+
+		using key_layout = succedent_s<typename S_::key_layout>;
 
 	};
 };
 
 
-////////////////////////////////////////////////////////////////////////////////
-/**/
-template <any_q T>
-XTAL_DEF_(return,inline,let)
-key_f(same_q<key_s<>> auto &&s, T &&t)
-noexcept -> auto
-{
-	using Y = based_t<T>;
-	using F =   key_s<Y>;
-	XTAL_IF0
-	XTAL_0IF (             any_q<T>) {return F(XTAL_REF_(s),                          XTAL_REF_(t) );}
-	XTAL_0IF (bond::heteropack_q<T>) {return F(XTAL_REF_(s), bond::repack_f<packed_t>(XTAL_REF_(t)));}
-	XTAL_0IF_(else)                  {return F(XTAL_REF_(s),           conferred_t<Y>(XTAL_REF_(t)));}
-}
-template <any_q T>
-XTAL_DEF_(return,inline,let)
-key_f(integral_q auto &&s, T &&t)
-noexcept -> auto
-{
-	return key_f(key_s<>(XTAL_REF_(s)), XTAL_REF_(t));
-}
-template <any_q T> XTAL_DEF_(return,inline,let) operator << (key_s<>       &&s, T &&t) noexcept -> decltype(auto) {return key_f(XTAL_MOV_(s), XTAL_REF_(t));}
-template <any_q T> XTAL_DEF_(return,inline,let) operator << (key_s<> const  &s, T &&t) noexcept -> decltype(auto) {return key_f(XTAL_REF_(s), XTAL_REF_(t));}
-
-/***/
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
+

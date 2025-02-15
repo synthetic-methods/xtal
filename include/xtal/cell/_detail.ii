@@ -17,22 +17,40 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class       W >	struct           member    {using type = typename _xtd::decay_non_nominal_reference<W>::value_type;};
-//mplate <itinerant_q W >	struct           member<W> {using type = derange_t<W>;};
-template <class       W >	using            member_t = typename member<W>::type;
-template <class    ...Ws>	concept          member_q =     molecular_q<Ws...> or itinerant_q<Ws...>;
-template <class    ...Ws>	concept       dismember_q = not molecular_q<Ws...>;
-///\
-Resolves/dereferences the current value. \
+//\
+template <class       W >	struct           member {using type = typename _xtd::decay_non_nominal_reference<W>::value_type;};
+template <class       W >	struct           member {using type = typename _xtd::       decay_soft_reference<W>::      type;};
+template <class       W >	using            member_t =  typename member<W>::type;
+template <class       W >	concept          member_q =      molecular_q<W> or itinerant_q<W> or _xtd::rvalue_reference<W>;
+template <class       W >	concept       dismember_q =  not molecular_q<W>;
+//\
+template <dismember_q W >	struct           member<W> {using type = typename _xtd::decay_soft_reference<W>::value_type;};
+template <dismember_q W >	struct           member<W> {using type =                _std::reference_wrapper<based_t<W>>;};
 
-template <pointed_q   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m);}
-template <class       M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m);}
 ///\
 Constructs/references the current value. \
 
-template <dismember_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&    o) noexcept -> decltype(auto) {return             &  XTAL_REF_(o )    ;}
-template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&    o) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(o ))   ;}
-template <class       M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...oo) noexcept -> decltype(auto) {return             M (XTAL_REF_(oo)...);}
+template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
+template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
+template <dismember_q M >
+XTAL_DEF_(return,inline,let)
+member_f(auto &&w)
+noexcept -> decltype(auto)
+requires _xtd::lvalue_reference<decltype(w)>
+{
+	using namespace _std;
+	//\
+	return    reference_wrapper(XTAL_REF_(w)) ;
+	return shared_ptr(addressof(XTAL_REF_(w)));
+}
+
+///\
+Resolves/dereferences the current value. \
+
+template <    class   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
+template <  pointed_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
+template <  wrapped_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
+
 ///\
 Replaces and returns the previous value. \
 
@@ -73,7 +91,8 @@ struct define_super
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
+		requires make_p<S_, decltype(oo)...>
+		:	S_{XTAL_REF_(oo)...}
 		{}
 
 	public:// ACCESS
@@ -220,7 +239,9 @@ struct defer_field
 		using U_ = initializer_u<U>;
 
 	public:
-		using head_type = U;
+		//\
+		using head_type =  based_t<U>;
+		using head_type =          U ;
 		using body_type = member_t<U>;
 
 	public:
@@ -233,7 +254,7 @@ struct defer_field
 	//	using S_::S_;
 		
 		XTAL_NEW_(delete) (subtype, noexcept = default)
-	//	XTAL_NEW_(create) (subtype, noexcept = default)
+		XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
 		XTAL_NEW_(cast)   (subtype, noexcept)
@@ -244,8 +265,8 @@ struct defer_field
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
-	//	requires _xtd::trivially_initializable<body_type>
-		:	subtype(body_type{})
+		requires make_p<body_type>
+		:	body_part{}
 		{}
 		///\
 		Constructs `this` using an `initializer_list` if supported. \
@@ -260,10 +281,10 @@ struct defer_field
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		XTAL_NEW_(explicit)
-		subtype(auto &&o, auto &&...oo)
+		subtype(make_q<head_type> auto &&o, auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		,	body_part(member_f<head_type>(XTAL_REF_(o)))
+		:	S_{XTAL_REF_(oo)...}
+		,	body_part{member_f<head_type>(XTAL_REF_(o))}
 		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
@@ -315,7 +336,7 @@ struct defer_field<U>
 		using S_ = bond::compose_s<S>;
 
 	public:
-		using head_type = U;
+		using head_type =  based_t<U>;
 		using body_type = member_t<U>;
 
 	public:
@@ -327,7 +348,7 @@ struct defer_field<U>
 		XTAL_NEW_(explicit)
 		subtype(K, auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
+		:	S_{XTAL_REF_(oo)...}
 		{
 			static_assert(K{}() == U{}());
 		}
@@ -335,8 +356,8 @@ struct defer_field<U>
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
 	//	static head_type constexpr head{};
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type const & requires      member_q<U>  {return             body_part;}
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type         requires un_n<member_q<U>> {return (head_type) body_part;}
+		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type const & requires    member_q<U> {return             body_part;}
+		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type         requires dismember_q<U> {return (head_type) body_part;}
 		
 	};
 };
@@ -373,19 +394,19 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		subtype(infungible_q<subtype> auto &&o, auto &&...oo)
 		noexcept
 		requires un_n<integral_q<decltype(o)>>
-		:	subtype(static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		:	subtype{static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...}
 		{
 		}
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
 		noexcept
-		:	subtype(static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...)
+		:	subtype{static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...}
 		{
 		}
 		XTAL_NEW_(explicit)
 		subtype(cardinal_q auto &&o, auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
+		:	S_{XTAL_REF_(oo)...}
 		,	body_part(XTAL_REF_(o))
 		{
 		}
@@ -447,17 +468,17 @@ struct defer_field<unit_type[N_width]>
 		Constructs `this` using the first argument, forwarding the rest to the parent. \
 
 		XTAL_NEW_(explicit)
-		subtype(integral_q auto &&a)
+		subtype(integral_q auto &&o)
 		noexcept
-		:	S_(head_type(XTAL_REF_(a)) >> N_depth)
-		,	body_part(head_type(a)&(N_width - 1))
+		:	S_{head_type(XTAL_REF_(o)) >> N_depth}
+		,	body_part(head_type(o)&(N_width - 1))
 		{
 		}
 		XTAL_NEW_(explicit)
-		subtype(infungible_q<subtype> auto &&a, auto &&...oo)
+		subtype(make_p<head_type> auto &&o, auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
-		,	body_part(member_f<head_type>(XTAL_REF_(a)))
+		:	S_{XTAL_REF_(oo)...}
+		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{
 		}
 

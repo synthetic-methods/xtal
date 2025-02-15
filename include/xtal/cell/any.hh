@@ -56,6 +56,17 @@ struct define
 			return true;
 		}
 
+		XTAL_DEF_(return,inline,let) operator << (auto &&t1) noexcept -> auto {return bond::pack_f(self(), XTAL_REF_(t1));}
+		XTAL_DEF_(return,inline,let) operator >> (auto &&t0) noexcept -> auto {return bond::pack_f(XTAL_REF_(t0), self());}
+
+		XTAL_DEF_(return,inline,met) operator << (bond::heteropack_q auto &&t0, subtype      &&s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_MOV_(s1)));}
+		XTAL_DEF_(return,inline,met) operator << (bond::heteropack_q auto &&t0, subtype const &s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_REF_(s1)));}
+		XTAL_DEF_(return,inline,met) operator >> (bond::heteropack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
+		XTAL_DEF_(return,inline,met) operator >> (bond::heteropack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
+
+		template <any_q W> XTAL_DEF_(return,inline,let) then(W    &&   w) noexcept -> auto {return S_::self() <<   XTAL_REF_(w)    ;}
+		template <any_q W> XTAL_DEF_(return,inline,let) then(auto &&...w) noexcept -> auto {return S_::self() << W{XTAL_REF_(w)...};}
+
 	};
 };
 ///\
@@ -188,12 +199,6 @@ noexcept -> bool
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
-
-XTAL_DEF_(return,inline,let) operator << (xtal::cell::any_q auto &&x0, auto &&x1) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-XTAL_DEF_(return,inline,let) operator >> (xtal::cell::any_q auto &&x1, auto &&x0) noexcept -> decltype(auto) {return xtal::bond::pack_f(XTAL_REF_(x0), XTAL_REF_(x1));}
-
-XTAL_DEF_(return,inline,let) operator << (xtal::bond::heteropack_q auto &&x0, xtal::cell::any_q auto &&x1) noexcept -> decltype(auto) {return xtal::bond::repack_f(XTAL_REF_(x0), xtal::bond::pack_f(XTAL_REF_(x1)));}
-XTAL_DEF_(return,inline,let) operator >> (xtal::bond::heteropack_q auto &&x1, xtal::cell::any_q auto &&x0) noexcept -> decltype(auto) {return xtal::bond::repack_f(xtal::bond::pack_f(XTAL_REF_(x0)), XTAL_REF_(x1));}
 
 
 namespace std

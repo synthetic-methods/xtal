@@ -41,8 +41,22 @@ struct indent<Ns...>
 		using U_ =   initializer_u<W_>;
 
 	public:
-		using S_::S_;//NOTE: Inherited and respecialized!
-		
+	//	using S_::S_;//NOTE: Inherited and respecialized!
+
+		XTAL_NEW_(delete) (subtype, noexcept = default)
+		XTAL_NEW_(create) (subtype, noexcept = default)
+		XTAL_NEW_(move)   (subtype, noexcept = default)
+		XTAL_NEW_(copy)   (subtype, noexcept = default)
+		XTAL_NEW_(cast)   (subtype, noexcept)
+
+		XTAL_NEW_(explicit)
+		subtype(auto &&...oo)
+		noexcept
+	//	requires make_p<S_, decltype(oo)...>
+		requires (1 <= sizeof...(oo))
+		:	S_{XTAL_REF_(oo)...}
+		{}
+
 		///\note\
 		Scalar fragments are currently mapped with `ordinate`, if detected. \
 

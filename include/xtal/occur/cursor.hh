@@ -179,7 +179,7 @@ struct cursor<V>
 		using S_::twin;
 
 		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
+	//	XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
 		XTAL_NEW_(cast)   (subtype, noexcept)
@@ -187,24 +187,25 @@ struct cursor<V>
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
-		:	S_(0, 0)
+		:	S_{0, 0}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
 		noexcept
-		:	S_(XTAL_REF_(oo)...)
+		requires (1 <= sizeof...(oo))
+		:	S_{XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(iterated_q auto &&o, auto &&...oo)
 		noexcept
-		:	S_(count_f(XTAL_REF_(o)), XTAL_REF_(oo)...)
+		:	S_{count_f(XTAL_REF_(o)), XTAL_REF_(oo)...}
 		{}
 
 		XTAL_DEF_(return,inline,let)
 		subview(auto &&w) const
 		noexcept -> T_
 		{
-			auto t = twin(); (void) t.size(count_f(w)); return t;
+			return twin().size_(count_f(w));
 		}
 
 		XTAL_DEF_(inline,let) operator *=(V i) noexcept -> T_ & {S_::step() += i; return self();}                                  ///<\returs `self()` after  advancing `i` steps of the current `size`.
@@ -244,15 +245,15 @@ public:
 		using S_::twin;
 		
 		template <make_q<V> W>
-		XTAL_NEW_(explicit) subtype(make_q<V> auto w) noexcept : subtype(U(0, w), 0) {}
-		XTAL_NEW_(implicit) subtype(                ) noexcept : subtype(U(0, 0), 0) {}
-		XTAL_NEW_(explicit) subtype(U u, V v        ) noexcept :        S_(u, v)     {}
+		XTAL_NEW_(explicit) subtype(make_q<V> auto w) noexcept : subtype{U{0, w}, 0} {}
+		XTAL_NEW_(implicit) subtype(                ) noexcept : subtype{U{0, 0}, 0} {}
+		XTAL_NEW_(explicit) subtype(U u, V v        ) noexcept :        S_{u, v}     {}
 
 		XTAL_DEF_(return,inline,let)
 		subview(auto &&w) const
 		noexcept -> T_
 		{
-			return T_(S_::subhead(XTAL_REF_(w)), S_::step());
+			return T_{S_::subhead(XTAL_REF_(w)), S_::step()};
 		}
 
 		///\
