@@ -172,8 +172,7 @@ struct seek_index
 		:	S_{[]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(to) (supertype{(seek_index_n<I + N_lower, Ns...>)...})
 			(bond::seek_s<N_limit>{})}
-		{
-		};
+		{};
 
 	public:// OPERATE
 		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
@@ -218,8 +217,7 @@ struct seek_value
 		:	S_{[]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(to) (supertype{Ns...})
 			(bond::seek_s<N_limit>{})}
-		{
-		};
+		{};
 
 	};
 

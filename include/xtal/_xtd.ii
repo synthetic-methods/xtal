@@ -89,27 +89,27 @@ template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_ref
 
 
 template <class T>
-struct decay_soft_reference
+struct    decay_owning_reference
 {
 	using       type = _std::remove_cvref_t<T>;
 	using value_type = _std::remove_cvref_t<T>;
 
 };
 template <class T>
-struct decay_hard_reference
+struct decay_borrowing_reference
 {
 	using       type = T;
 	using value_type = decltype(&XTAL_ANY_(T));
 
 };
-template <                   class T>	struct             decay_reference    : decay_soft_reference<T> {};
-template <        lvalue_reference T>	struct             decay_reference<T> : decay_hard_reference<T> {};
+template <                   class T>	struct             decay_reference    :    decay_owning_reference<T> {};
+template <        lvalue_reference T>	struct             decay_reference<T> : decay_borrowing_reference<T> {};
 
-template <                   class T>	struct decay_non_nominal_reference    :      decay_reference<T> {};
-template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> : decay_soft_reference<T> {};
+template <                   class T>	struct decay_non_nominal_reference    :           decay_reference<T> {};
+template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :    decay_owning_reference<T> {};
 
-template <                   class T>	struct decay_non_trivial_reference    :      decay_reference<T> {};
-template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> : decay_soft_reference<T> {};
+template <                   class T>	struct decay_non_trivial_reference    :           decay_reference<T> {};
+template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :    decay_owning_reference<T> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

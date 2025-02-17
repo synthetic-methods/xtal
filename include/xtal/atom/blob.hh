@@ -13,6 +13,16 @@ namespace xtal::atom
 ///\
 Provides local arena-like storage for `atomic_q` values. \
 
+///\usage
+/***```
+blob_t<_xtd::byte[0x40]> blob;
+
+auto glob = blob.template form<X, Y>();
+auto [x, y] = glob;
+auto &x = get<0>(glob);
+auto &y = get<1>(glob);
+```***/
+
 template <class ...As>	struct   blob;
 template <class ...As>	using    blob_t = typename blob<As...>::type;
 template <class ..._s>	concept  blob_q = bond::tag_p<blob, _s...>;
@@ -79,16 +89,6 @@ struct blob
 
 		///\note\
 		Access via value-based destructuring, or reference-based `get`. \
-
-		///\usage
-		/***```
-		blob_t<_xtd::byte[0x40]> blob;
-
-		auto glob = blob.template form<X, Y>();
-		auto [x, y] = glob;
-		auto &x = get<0>(glob);
-		auto &y = get<1>(glob);
-		```***/
 
 		XTAL_FX2_(do) (template <class ...Vs>
 		XTAL_DEF_(return,inline,let)

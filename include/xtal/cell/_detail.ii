@@ -19,13 +19,13 @@ using namespace _retail::_detail;
 
 //\
 template <class       W >	struct           member {using type = typename _xtd::decay_non_nominal_reference<W>::value_type;};
-template <class       W >	struct           member {using type = typename _xtd::       decay_soft_reference<W>::      type;};
+template <class       W >	struct           member {using type = typename _xtd::     decay_owning_reference<W>::      type;};
 template <class       W >	using            member_t =  typename member<W>::type;
 template <class       W >	concept          member_q =      molecular_q<W> or itinerant_q<W> or _xtd::rvalue_reference<W>;
 template <class       W >	concept       dismember_q =  not molecular_q<W>;
 //\
-template <dismember_q W >	struct           member<W> {using type = typename _xtd::decay_soft_reference<W>::value_type;};
-template <dismember_q W >	struct           member<W> {using type =                _std::reference_wrapper<based_t<W>>;};
+template <dismember_q W >	struct           member<W> {using type = typename _xtd::decay_owning_reference<W>::value_type;};
+template <dismember_q W >	struct           member<W> {using type =                  _std::reference_wrapper<based_t<W>>;};
 
 ///\
 Constructs/references the current value. \
@@ -395,21 +395,18 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		noexcept
 		requires un_n<integral_q<decltype(o)>>
 		:	subtype{static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...}
-		{
-		}
+		{}
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
 		noexcept
 		:	subtype{static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...}
-		{
-		}
+		{}
 		XTAL_NEW_(explicit)
 		subtype(cardinal_q auto &&o, auto &&...oo)
 		noexcept
 		:	S_{XTAL_REF_(oo)...}
 		,	body_part(XTAL_REF_(o))
-		{
-		}
+		{}
 
 		XTAL_DEF_(return,inline,set)
 		cardinality()
@@ -472,15 +469,13 @@ struct defer_field<unit_type[N_width]>
 		noexcept
 		:	S_{head_type(XTAL_REF_(o)) >> N_depth}
 		,	body_part(head_type(o)&(N_width - 1))
-		{
-		}
+		{}
 		XTAL_NEW_(explicit)
 		subtype(make_p<head_type> auto &&o, auto &&...oo)
 		noexcept
 		:	S_{XTAL_REF_(oo)...}
 		,	body_part(member_f<head_type>(XTAL_REF_(o)))
-		{
-		}
+		{}
 
 		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
 
@@ -631,9 +626,9 @@ struct refer_binary_logic<U, 1>
 	{
 	public:
 		using S::S; static_assert(any_q<S>);
-		XTAL_DEF_(mutate,inline,get) operator ^=(auto const &o) noexcept requires requires (U &u) {u ^= o;} {return bond::seek_front_f(S::self(), S::head() ^=o);}
-		XTAL_DEF_(mutate,inline,get) operator |=(auto const &o) noexcept requires requires (U &u) {u |= o;} {return bond::seek_front_f(S::self(), S::head() |=o);}
-		XTAL_DEF_(mutate,inline,get) operator &=(auto const &o) noexcept requires requires (U &u) {u &= o;} {return bond::seek_front_f(S::self(), S::head() &=o);}
+		XTAL_DEF_(mutate,inline,get) operator ^=(auto const &o)       noexcept requires requires (U       &u) {u ^=o;} {return bond::seek_front_f(S::self(), S::head() ^=o);}
+		XTAL_DEF_(mutate,inline,get) operator |=(auto const &o)       noexcept requires requires (U       &u) {u |=o;} {return bond::seek_front_f(S::self(), S::head() |=o);}
+		XTAL_DEF_(mutate,inline,get) operator &=(auto const &o)       noexcept requires requires (U       &u) {u &=o;} {return bond::seek_front_f(S::self(), S::head() &=o);}
 
 	};
 };

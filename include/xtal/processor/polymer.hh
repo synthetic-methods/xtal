@@ -21,6 +21,9 @@ The attached `store` and `spool` determine the sample store and voice spool resp
 The `scan` method of `spool` must return the most recently activated voice for a given `key_s`. \
 The default implementation uses `lower_bound` to this effect. \
 
+///\todo\
+Handle note-offs, i.e. `stage == 1`!
+
 template <typename ..._s> struct   polymer;
 template <typename ..._s> using    polymer_t =  confined_t<polymer< _s...>>;
 template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s... >;

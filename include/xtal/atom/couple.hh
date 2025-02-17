@@ -68,8 +68,7 @@ struct couple
 		noexcept
 		requires in_n<size, 2>
 		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
-		{
-		}
+		{}
 		XTAL_NEW_(explicit)
 		homotype(value_type const &u)
 		noexcept
@@ -83,8 +82,7 @@ struct couple
 		noexcept
 		requires in_n<size, 2> and continuous_field_q<value_type>
 		:	homotype{objective_f(u)}
-		{
-		}
+		{}
 
 	public:// OPERATE
 

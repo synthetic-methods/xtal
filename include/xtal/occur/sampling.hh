@@ -11,28 +11,67 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class U=unsigned>	struct   sample;
-template <class U=unsigned>	using    sample_t = confined_t<sample<U>>;
-template <typename   ..._s>	concept  sample_q = bond::tag_p<sample, _s...>;
+template <class U=unsigned>	struct   sampling;
+template <class U=unsigned>	using    sampling_t = confined_t<sampling<U>>;
+template <typename   ..._s>	concept  sampling_q = bond::tag_p<sampling, _s...>;
 
 XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-sample_f  (auto &&...oo),
-sample_t<>(XTAL_REF_(oo)...))
+sampling_f  (auto &&...oo),
+sampling_t<>(XTAL_REF_(oo)...))
 
 
-//////////////////////////////////////////////////////////////////////////////////
+namespace _detail
+{/////////////////////////////////////////////////////////////////////////////////
+
+struct sampling_attachment
+{
+	template <class S>
+	class subtype : public S
+	{
+	public:// CONSTRUCT
+		using S::S;
+		
+	public:// MESSAGE
+
+		template <extent_type N_mask=-1>
+		struct attach
+		{
+			using superkind = typename S::template attach<N_mask>;
+
+			template <class R>
+			class subtype : public bond::compose_s<R, superkind>
+			{
+				static_assert(cell::any_q<R>);
+				using R_ = bond::compose_s<R, superkind>;
+				
+			public:
+				using R_::R_;
+				
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
+				sampling(), R_::head())
+
+			};
+		};
+
+	};
+};
+
+
+}/////////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct sample
+struct sampling
 {
 private:
-	using _fit = bond::fit<U>;
-	using U_alpha = typename _fit::alpha_type;
+	using U_alpha = typename bond::fit<U>::alpha_type;
 	using W_alpha = atom::couple_t<U_alpha[2]>;
 
 public:
-	using superkind = bond::compose<defer<W_alpha>, flow::tag<sample>>;
-
+	using superkind = bond::compose<void
+	,	_detail::sampling_attachment
+	,	defer<W_alpha>
+	,	flow::tag<sampling>
+	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
@@ -54,7 +93,7 @@ public:
 		:	subtype{get<0>(XTAL_REF_(o)), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
-		subtype(sample_q auto &&o, auto &&...oo)
+		subtype(sampling_q auto &&o, auto &&...oo)
 		noexcept
 		:	subtype{XTAL_REF_(o).rate(), XTAL_REF_(oo)...}
 		{}
@@ -62,8 +101,8 @@ public:
 		subtype(number_q auto &&n, auto &&...oo)
 		noexcept
 		//\
-		:	S_{W_alpha(_fit::alpha_f(n)), XTAL_REF_(oo)...}
-		:	S_{W_alpha{_fit::alpha_f(n), one/_fit::alpha_f(n)}, XTAL_REF_(oo)...}
+		:	S_{W_alpha(U_alpha(n)), XTAL_REF_(oo)...}
+		:	S_{W_alpha{U_alpha(n), one/U_alpha(n)}, XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()
@@ -75,28 +114,6 @@ public:
 
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)   rate(), get<0>(S_::head()))
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) period(), get<1>(S_::head()))
-
-	public:// MESSAGE
-
-		template <extent_type N_mask=-1>
-		struct attach
-		{
-			using superkind = typename S_::template attach<N_mask>;
-
-			template <class R>
-			class subtype : public bond::compose_s<R, superkind>
-			{
-				static_assert(cell::any_q<R>);
-				using R_ = bond::compose_s<R, superkind>;
-				
-			public:
-				using R_::R_;
-				
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-				sampling(), R_::head())
-
-			};
-		};
 
 	};
 };

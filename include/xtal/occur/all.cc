@@ -5,5 +5,5 @@
 #include "./resize.cc"
 #include "./restep.cc"
 #include "./review.cc"
-#include "./sample.cc"
+#include "./sampling.cc"
 #include "./stage.cc"

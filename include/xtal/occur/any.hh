@@ -51,7 +51,6 @@ struct define
 				
 			public:// CONSTRUCT
 			//	using R_::R_;
-				using R_::self;
 
 				XTAL_NEW_(delete) (subtype, noexcept = default)
 				XTAL_NEW_(create) (subtype, noexcept = default)
@@ -68,6 +67,11 @@ struct define
 				noexcept
 				:	R_(T{}, XTAL_REF_(xs)...)
 				{}
+
+			public:// ACCESS
+
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
+				operator T(), R_::head())
 
 			};
 

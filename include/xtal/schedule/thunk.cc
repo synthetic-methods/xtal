@@ -49,9 +49,9 @@ TAG_("thunk", "process")
 		,	provision::spooled<null_type[0x100]>
 		>;
 
-		auto z_resize = occur::resize_t<>(0x020);
-		auto z_cursor = occur::cursor_t<>(0x020);
-		auto z_sample = occur::sample_t<>(44100);
+		auto z_resize = occur::  resize_t<>(0x020);
+		auto z_cursor = occur::  cursor_t<>(0x020);
+		auto z_sample = occur::sampling_t<>(44100);
 
 		//\
 		U_processor::template bind_t<> z;

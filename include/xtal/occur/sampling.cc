@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./sample.hh"// testing...
+#include "./sampling.hh"// testing...
 
 
 
@@ -13,22 +13,22 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("sample")
+TAG_("sampling")
 {
 	TRY_("construction")
 	{
 		using U = double; using U_fit = bond::fit<U>;
 		using V =  float; using V_fit = bond::fit<V>;
 
-		sample_t<V> o;
+		sampling_t<V> o;
 		TRUE_(V_fit::diplo_f(00) == o.  rate());
 		TRUE_(V_fit::haplo_f(00) == o.period());
 
-		o   = sample_t<V>{(unsigned short) 16};
+		o   = sampling_t<V>{(unsigned short) 16};
 		TRUE_(V_fit::diplo_f(4) == o.  rate());
 		TRUE_(V_fit::haplo_f(4) == o.period());
 
-		o <<= sample_t<U>{(unsigned  long) 32};
+		o <<= sampling_t<U>{(unsigned  long) 32};
 		TRUE_(V_fit::diplo_f(5) == o.  rate());
 		TRUE_(V_fit::haplo_f(5) == o.period());
 

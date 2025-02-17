@@ -463,8 +463,8 @@ template <class U, auto  N    >	struct     succedent<U(&)[N]>  	{using type =   
 
 template <class T             >	concept   intercedent_q	= complete_q<intercedent<T>> and requires {requires (0 != intercedent_v<T>);};
 template <class T             >	concept    antecedent_q	= complete_q<intercedent<T>> and requires {requires (0 == intercedent_v<T>);};
-template <class T             >	using       precedent_s	= typename precedent<T>::type;
-template <class T             >	using       succedent_s	= typename succedent<T>::type;
+template <class T             >	using       precedent_s	= typename   precedent<T>::type;
+template <class T             >	using       succedent_s	= typename   succedent<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

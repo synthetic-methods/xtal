@@ -61,8 +61,6 @@ struct define
 			return x;
 		}
 
-		XTAL_DEF_(return,inline,let) defuse(auto &&    o) noexcept -> signed {return self().template fuse< 0>(XTAL_REF_(o)    );}
-		XTAL_DEF_(return,inline,let) deflux(auto &&...oo) noexcept -> signed {return self().template flux< 0>(XTAL_REF_(oo)...);}
 		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
 		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
 		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
