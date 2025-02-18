@@ -84,6 +84,7 @@ struct polymer<U, As...>
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	typename S_::template binding<Xs...>
+			,	typename U_cursor::template attach<>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -191,13 +192,20 @@ struct polymer<U, As...>
 							u_ = ensemble().poke(u_, h, lead());
 
 						//	Update to the current `cursor`:
-							(void) u_->influx(lead().template head<U_cursor>());
+							(void) u_->influx(R_::template head<U_cursor>());
 						}
 					}
 					assert(u_->head() == h);
 					return u_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
 				}
-
+//				void twat() {
+//					//\
+//					auto k = lead().template head<occur::bundle_t<int, bool, float, bool>>();
+//					auto k = lead().template self<occur::bundle_t<int, bool, float, bool>>();
+//					echo_(typeid(k).name());
+//					echo_(typeid(lead().self()).name());
+//					echo_();
+//				}
 				///\
 				Renders the indexed `store` slice designated by `rev` and `cur`, \
 				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
@@ -219,7 +227,9 @@ struct polymer<U, As...>
 
 					signed x = -1;
 
+					//\
 					(void) lead().influx(cur);
+					(void) lead().template flux< 1>(cur);
 
 					for (auto &&e: ensemble()) {
 						x &= XTAL_REF_(e).efflux(cur);

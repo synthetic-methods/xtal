@@ -35,10 +35,9 @@ template <class T, size_type ...Is> struct   pack_item;
 template <class T, size_type ...Is> using    pack_item_t = typename pack_item<T, Is...>::     type;
 template <class T, size_type ...Is> using    pack_item_s = typename pack_item<T, Is...>::supertype;
 
-template <class T>
-//\
-struct   pack_item<T> {using supertype = T; using type = typename _xtd::decay_non_trivial_reference<T &&>::type;};
-struct   pack_item<T> {using supertype = T; using type = typename _xtd::decay_non_nominal_reference<T &&>::type;};
+
+template <class T                >	struct   pack_item<T> {using supertype = T; using type = typename _xtd::   decay_owned_reference<T>::type;};
+template <_detail::dismember_q T >	struct   pack_item<T> {using supertype = T; using type = typename _xtd::decay_borrowed_reference<T>::type;};
 
 template <class T, size_type I, size_type ...Is>
 struct   pack_item<T, I, Is...> : pack_item<pack_item_t<T, I>, Is...> {};

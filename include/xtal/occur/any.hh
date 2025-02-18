@@ -65,7 +65,7 @@ struct define
 				XTAL_NEW_(explicit)
 				subtype(auto &&...xs)
 				noexcept
-				:	R_(T{}, XTAL_REF_(xs)...)
+				:	R_{T{}, XTAL_REF_(xs)...}
 				{}
 
 			public:// ACCESS

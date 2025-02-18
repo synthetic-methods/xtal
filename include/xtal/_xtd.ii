@@ -72,44 +72,47 @@ template <class T> concept trivial                 = trivially_instructible<T> a
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T> concept             rvalue_reference =                                      _std::is_rvalue_reference_v<T>;
-template <class T> concept             lvalue_reference =                                      _std::is_lvalue_reference_v<T>;
+template <class T> concept                    reference = _std::       is_reference_v<T> or ranges::range<XTAL_NOM_(T)>;
+template <class T> concept             rvalue_reference = _std::is_rvalue_reference_v<T> or ranges::range<XTAL_NOM_(T)> and not ranges::borrowed_range<XTAL_NOM_(T)>;
+template <class T> concept             lvalue_reference = _std::is_lvalue_reference_v<T> or ranges::range<XTAL_NOM_(T)> and     ranges::borrowed_range<XTAL_NOM_(T)>;
 
-template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and _std::is_rvalue_reference_v<T>;
-template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and _std::is_lvalue_reference_v<T>;
+template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and rvalue_reference<T>;
+template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
-template <class T> concept     trivial_rvalue_reference = trivial<_std::remove_cvref_t<T>> and _std::is_rvalue_reference_v<T>;
-template <class T> concept     trivial_lvalue_reference = trivial<_std::remove_cvref_t<T>> and _std::is_lvalue_reference_v<T>;
+template <class T> concept     trivial_rvalue_reference = trivial<_std::remove_cvref_t<T>> and rvalue_reference<T>;
+template <class T> concept     trivial_lvalue_reference = trivial<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
-template <class T> concept non_nominal_rvalue_reference = not nominal_rvalue_reference<T>  and _std::       is_reference_v<T>;
-template <class T> concept non_nominal_lvalue_reference = not nominal_lvalue_reference<T>  and _std::       is_reference_v<T>;
+template <class T> concept non_nominal_rvalue_reference = not nominal_rvalue_reference<T>  and        reference<T>;
+template <class T> concept non_nominal_lvalue_reference = not nominal_lvalue_reference<T>  and        reference<T>;
 
-template <class T> concept non_trivial_rvalue_reference = not trivial_rvalue_reference<T>  and _std::       is_reference_v<T>;
-template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_reference<T>  and _std::       is_reference_v<T>;
+template <class T> concept non_trivial_rvalue_reference = not trivial_rvalue_reference<T>  and        reference<T>;
+template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_reference<T>  and        reference<T>;
 
 
 template <class T>
-struct    decay_owning_reference
+struct    decay_owned_reference
 {
 	using       type = _std::remove_cvref_t<T>;
 	using value_type = _std::remove_cvref_t<T>;
 
 };
 template <class T>
-struct decay_borrowing_reference
+struct decay_borrowed_reference
 {
 	using       type = T;
+	//\
+	using value_type = _std::shared_ptr<XTAL_NOM_(T)>;
 	using value_type = decltype(&XTAL_ANY_(T));
 
 };
-template <                   class T>	struct             decay_reference    :    decay_owning_reference<T> {};
-template <        lvalue_reference T>	struct             decay_reference<T> : decay_borrowing_reference<T> {};
+template <                   class T>	struct             decay_reference    :    decay_owned_reference<T> {};
+template <        lvalue_reference T>	struct             decay_reference<T> : decay_borrowed_reference<T> {};
 
-template <                   class T>	struct decay_non_nominal_reference    :           decay_reference<T> {};
-template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :    decay_owning_reference<T> {};
+template <                   class T>	struct decay_non_nominal_reference    :          decay_reference<T> {};
+template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :    decay_owned_reference<T> {};
 
-template <                   class T>	struct decay_non_trivial_reference    :           decay_reference<T> {};
-template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :    decay_owning_reference<T> {};
+template <                   class T>	struct decay_non_trivial_reference    :          decay_reference<T> {};
+template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :    decay_owned_reference<T> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

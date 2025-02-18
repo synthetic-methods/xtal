@@ -25,6 +25,59 @@ noexcept -> decltype(auto)
 
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+template <class       W >	concept    member_q =     molecular_q<W> or _xtd::rvalue_reference<W> or iterable_q<W> and not _xtd::ranges::borrowed_range<based_t<W>>;
+template <class       W >	concept dismember_q = not member_q<W>;
+
+template <class       W >	struct     member    {using type = typename _xtd::   decay_owned_reference<W>::value_type;};
+template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_borrowed_reference<W>::value_type;};
+template <class       W >	using      member_t =              typename member<W>::type;
+///\
+Constructs/references the current value. \
+
+template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
+template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
+template <dismember_q M >
+XTAL_DEF_(return,inline,let)
+member_f(auto &&w)
+noexcept -> decltype(auto)
+requires _xtd::lvalue_reference<decltype(w)>
+{
+	using namespace _std;
+	//\
+	return shared_ptr(addressof(XTAL_REF_(w)));
+	return &XTAL_REF_(w);
+}
+
+///\
+Resolves/dereferences the current value. \
+
+template <    class   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
+template <  pointed_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
+//mplate <  wrapped_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
+
+///\
+Replaces and returns the previous value. \
+
+template <member_q W>
+XTAL_DEF_(return,inline,let)
+dismember_f(W &m, W w)
+noexcept -> decltype(auto)
+{
+	return _std::exchange(m, XTAL_MOV_(w));
+}
+template <member_q W>
+XTAL_DEF_(return,inline,let)
+dismember_f(W &m, auto &&...x)
+noexcept -> decltype(auto)
+{
+	return thunk_f(XTAL_MOV_(m)) (new (&m) based_t<W>(XTAL_REF_(x)...));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 ///\
 Reifies `template`s of the form `<class, typename...>` via the member `subtype`. \
@@ -65,105 +118,42 @@ template <          compose_q T_, typename ...Ts_> struct excompose<   T_, Ts_..
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Us>
+template <class U_node, class U_edge=void>
 struct navigate
 {
-	static_assert(0 == sizeof...(Us));
-
 	template <class S>
-	class supertype : public S
+	class subtype : public S
 	{
-		using S_ = S;
+		using T_self = typename S::self_type;
+		using U_head = typename S::head_type;
+
+		template <         class ..._s>                                                               struct duper;
+		template <         class ..._s> requires in_n<requires {typename S::template super<T_self>;}> struct duper<   _s...> : S::template super<_s...> {};
+		template <class Y, class ..._s> requires un_n<requires {typename S::template super<T_self>;}> struct duper<Y, _s...> :             duper<_s...> {};
+		template <class Y             > requires un_n<requires {typename S::template super<T_self>;}> struct duper<Y       > {using type = Y;};
 
 	public:
-		using S_::S_;
-
-		template <class _, class ..._s> struct super    : super<_s...> {};
-		template <class _             > struct super<_> {using type = _;};
-
-	};
-};
-
-template <class U_node>
-struct navigate<U_node> : navigate<U_node, void>
-{
-};
-template <class U_node, class U_edge>
-struct navigate<U_node, U_edge>
-{
-	template <class S>
-	class supertype : public S
-	{
-		using S_ = S;
-		using T_self = typename S_::self_type;
-
-	protected:
-		template <class ..._s>
-		using duper = typename S_::template super<_s...>;
-
-	public:
-		using S_::S_;
-		using node_type = U_node;
+		using S::S;
 
 		template <                          class ..._s>                           struct super                   : duper<                        _s...> {};
-		template <class _,                  class ...Is>                           struct super<_, U_edge, Is...> : duper<U_node,                 Is...> {};
-		template <class _, intercedent_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : duper<  void, precedent_s<I>, Is...> {};
-		template <class _,  antecedent_q I, class ...Is> requires vacant_q<U_edge> struct super<_, I,      Is...> : super<U_node,                 Is...> {};
-		template <class _,                  class ...Is> requires vacant_q<U_edge> struct super<_, U_node, Is...> : super<U_node,                 Is...> {};
+		template <class _,                  class ..._s>                           struct super<_, U_edge, _s...> : duper<U_node,                 _s...> {};
+		template <class _,                  class ..._s> requires vacant_q<U_edge> struct super<_, U_head, _s...> : duper<U_node,                 _s...> {};
+		template <class _,                  class ..._s> requires vacant_q<U_edge> struct super<_, U_node, _s...> : duper<U_node,                 _s...> {};
+		template <class _, intercedent_q I, class ..._s> requires vacant_q<U_edge> struct super<_, I,      _s...> : duper<  void, precedent_s<I>, _s...> {};
+		template <class _,  antecedent_q I, class ..._s> requires vacant_q<U_edge> struct super<_, I,      _s...> : super<U_node,                 _s...> {};
 
-		template <class ...Is> using self_s = typename super<T_self, Is...>::type;
+		template <                          class ..._s> using self_s = typename super<T_self, based_t<_s>...>::type;
+		template <                          class ..._s> using head_s = typename super<U_node, based_t<_s>...>::type;
+		template <                          class ..._s> using head_t = typename super<U_node, based_t<_s>...>::type::head_type;
 
-		XTAL_FX4_(to) (template <size_type ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::self(XTAL_REF_(oo)...)
-		)
-		XTAL_FX4_(to) (template <size_type ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), self<constant_t<Is>...>(XTAL_REF_(oo)...)
-		)
-		XTAL_FX4_(to) (template <class     ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) self(auto &&...oo), S_::template self<self_s<Is...>>(XTAL_REF_(oo)...)
-		)
+		XTAL_FX4_(to) (template <auto  ..._s> requires (0 == sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self                                (XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (template <auto  ..._s> requires (0 == sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head                                (XTAL_REF_(oo)...))
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) node(), self<U_node>())
+		XTAL_FX4_(to) (template <auto  ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo),    self<constant_t<_s>...>             (XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (template <auto  ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo),    head<constant_t<_s>...>             (XTAL_REF_(oo)...))
 
-	};
-	template <class S>
-	class subtype : public supertype<S>
-	{
-		using S_ = supertype<S>;
-	
-	public:
-		using S_::S_;
-
-	};
-	template <class S> requires complete_q<typename S::head_type>
-	class subtype<S> : public supertype<S>
-	{
-		using S_ = supertype<S>;
-		using U_head = typename S::head_type;
-	
-	protected:
-		template <class ..._s>
-		using duper = typename S_::template super<_s...>;
-
-	public:
-		using S_::S_;
-		using node_type = U_node;
-
-		template <         class ..._s>                           struct super                   : duper<        _s...> {};
-		template <class _, class ...Is> requires vacant_q<U_edge> struct super<_, U_head, Is...> : duper<U_node, Is...> {};
-
-		template <class ...Is> using head_s = typename super<U_node, Is...>::type;
-		template <class ...Is> using head_t = complete_t<typename head_s<Is...>::head_type, U_head>;
-
-		XTAL_FX4_(to) (template <size_type ...Is> requires (0 == sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head(XTAL_REF_(oo)...)
-		)
-		XTAL_FX4_(to) (template <size_type ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), head<constant_t<Is>...>(XTAL_REF_(oo)...)
-		)
-		XTAL_FX4_(to) (template <class     ...Is> requires (1 <= sizeof...(Is))
-		XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<Is...>>().head(XTAL_REF_(oo)...)
-		)
+		XTAL_FX4_(to) (template <class ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<_s ...>>       (XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (template <class ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<_s ...>>().head(XTAL_REF_(oo)...))
 
 	};
 };

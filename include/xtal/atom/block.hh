@@ -167,7 +167,7 @@ struct superblock<U   [N]>
 		noexcept
 		:	homotype(count_f(xs))
 		{
-			_detail::move_to<T::ordinate>(S_::begin(), xs.begin(), count_f(xs));
+			_detail::move_to<T::ordinate>(S_::begin(), point_f(xs), count_f(xs));
 		}
 		XTAL_NEW_(explicit)
 		homotype(iterable_q auto &&xs)
@@ -175,7 +175,7 @@ struct superblock<U   [N]>
 		requires epimorphic_q<homotype, decltype(xs)>
 		:	homotype(count_f(xs))
 		{
-			_detail::copy_to<T::ordinate>(S_::begin(), XTAL_REF_(xs), count_f(xs));
+			_detail::copy_to<T::ordinate>(S_::begin(), XTAL_REF_(xs));
 		}
 
 	};

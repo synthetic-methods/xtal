@@ -204,11 +204,11 @@ noexcept -> bool
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
-template <xtal::cell::any_q T> requires xtal::complete_q<typename T::node_type>
-struct tuple_size<T> : T::node_type::pack_size {};
+template <xtal::cell::any_q T>
+struct tuple_size<T> : T::pack_size {};
 
-template <size_t N, xtal::cell::any_q T> requires xtal::complete_q<typename T::node_type>
-struct tuple_element<N, T> {using type = typename T::node_type::template head_t<integral_constant<size_t, N>>;};
+template <size_t N, xtal::cell::any_q T>
+struct tuple_element<N, T> {using type = typename T::template head_t<integral_constant<size_t, N>>;};
 
 
 }//////////////////////////////////////////////////////////////////////////

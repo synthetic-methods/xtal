@@ -51,7 +51,6 @@ struct bundle
 	public:// ACCESS
 		using S_::self;
 		using S_::twin;
-		using S_::node;
 		using S_::head;
 		using S_::arguments;
 

@@ -50,11 +50,6 @@ struct bundle
 		using S_::self;
 		using S_::head;
 
-		//\note\
-		Contingent override of `node` allows unextended `bundle`s to be destructured. \
-		Use `arguments` for unmitigated access. \
-
-		XTAL_FX4_(to)                    (XTAL_DEF_(return,inline,get)      node(), head())
 		XTAL_FX4_(to)                    (XTAL_DEF_(return,inline,get) arguments(), head())
 		XTAL_FX4_(to) (template <auto  f> XTAL_DEF_(return,inline,get) arguments(),      _std::apply(          f , arguments()))
 		XTAL_FX4_(to) (template <class F> XTAL_DEF_(return,inline,get) arguments(F &&f), _std::apply(XTAL_REF_(f), arguments()))

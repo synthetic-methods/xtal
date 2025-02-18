@@ -17,71 +17,15 @@ using namespace _retail::_detail;
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-//\
-template <class       W >	struct           member {using type = typename _xtd::decay_non_nominal_reference<W>::value_type;};
-template <class       W >	struct           member {using type = typename _xtd::     decay_owning_reference<W>::      type;};
-template <class       W >	using            member_t =  typename member<W>::type;
-template <class       W >	concept          member_q =      molecular_q<W> or itinerant_q<W> or _xtd::rvalue_reference<W>;
-template <class       W >	concept       dismember_q =  not molecular_q<W>;
-//\
-template <dismember_q W >	struct           member<W> {using type = typename _xtd::decay_owning_reference<W>::value_type;};
-template <dismember_q W >	struct           member<W> {using type =                  _std::reference_wrapper<based_t<W>>;};
-
-///\
-Constructs/references the current value. \
-
-template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
-template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
-template <dismember_q M >
-XTAL_DEF_(return,inline,let)
-member_f(auto &&w)
-noexcept -> decltype(auto)
-requires _xtd::lvalue_reference<decltype(w)>
-{
-	using namespace _std;
-	//\
-	return    reference_wrapper(XTAL_REF_(w)) ;
-	return shared_ptr(addressof(XTAL_REF_(w)));
-}
-
-///\
-Resolves/dereferences the current value. \
-
-template <    class   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
-template <  pointed_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
-template <  wrapped_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
-
-///\
-Replaces and returns the previous value. \
-
-template <member_q W>
-XTAL_DEF_(return,inline,let)
-dismember_f(W &m, W w)
-noexcept -> decltype(auto)
-{
-	return _std::exchange(m, XTAL_MOV_(w));
-}
-template <member_q W>
-XTAL_DEF_(return,inline,let)
-dismember_f(W &m, auto &&...x)
-noexcept -> decltype(auto)
-{
-	return thunk_f(XTAL_MOV_(m)) (new (&m) based_t<W>(XTAL_REF_(x)...));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 template <class T>
 struct define_super
 {
 	using superkind = _retail::define<T>;
 
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind, navigate<>>
+	class subtype : public bond::compose_s<S, superkind>
 	{
-		using S_ = bond::compose_s<S, superkind, navigate<>>;
+		using S_ = bond::compose_s<S, superkind>;
 	
 	public:// CONSTRUCT
 		using S_::S_;
@@ -107,9 +51,6 @@ struct define_super
 			auto &y = self<Y>(); y.~ Y();
 			return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
 		})
-
-		template <class ...Is>
-		struct super : bond::seek_back<Is...> {};
 
 		XTAL_DEF_(return,inline,let)
 		pack() const
@@ -239,9 +180,7 @@ struct defer_field
 		using U_ = initializer_u<U>;
 
 	public:
-		//\
 		using head_type =  based_t<U>;
-		using head_type =          U ;
 		using body_type = member_t<U>;
 
 	public:
@@ -517,10 +456,10 @@ struct refer_iterators
 	public:
 		using S::S; static_assert(any_q<S>);
 
-		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::template head<U>());}
-		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::template head<U>());}
-		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::template head<U>());}
-		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::template head<U>());}
+		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
+		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
+		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
+		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 
 		XTAL_FX2_(do) (template <shaped_q X> requires un_n<counter_q<X>> and un_n<counted_q<X>>
 		XTAL_DEF_(return,inline,let)

@@ -87,7 +87,6 @@ struct define
 					if (R_::template fuse<N_ion>(cur) == 1) {
 						return 1;
 					}
-
 				//	Efflux `chunk`ed subviews:
 					(void) s.reflux([&] (counted_q auto scan, counter_q auto step)
 						XTAL_0FN_(to) (s.template flux<N_ion>(rend
@@ -122,9 +121,9 @@ struct define
 					}
 					else {
 						auto result_o = R_::method();// Materialize...
-						auto x0 =  point_f(result_o);
-						auto y0 =  point_f(rev);
-						auto sN =  count_f(rev);
+						auto x0 = point_f(result_o);
+						auto y0 = point_f(rev);
+						auto sN = count_f(rev);
 						_detail::move_to(y0, x0, sN);
 
 						return 0;

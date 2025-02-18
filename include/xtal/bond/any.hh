@@ -65,6 +65,7 @@ struct define
 
 		using self_type = T;
 		using tail_type = S;
+		using head_type = void;
 
 	public:
 		///\returns `*this` with type `Y=T`. \

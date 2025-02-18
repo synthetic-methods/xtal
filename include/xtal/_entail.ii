@@ -374,15 +374,13 @@ XTAL_DEF_(return,inline,let)
 point_f(T &&t, int const n_dt=0)
 noexcept -> auto
 {
-	using namespace _xtd::ranges;
-
 	if constexpr (iterator_q<_std::decay_t<T>>) {
-		return next(XTAL_REF_(t), N_dt + n_dt);
+		return _xtd::ranges::next(XTAL_REF_(t), N_dt + n_dt);
 	}
 	else {
 		XTAL_IF0
-		XTAL_0IF (0 <= N_dt) {return    point_f<N_dt>(begin(XTAL_REF_(t)), n_dt);}
-		XTAL_0IF (N_dt <  0) {return    point_f<N_dt>(  end(XTAL_REF_(t)), n_dt);}
+		XTAL_0IF (0 <= N_dt) {return    point_f<N_dt>(XTAL_REF_(t).begin(), n_dt);}
+		XTAL_0IF (N_dt <  0) {return    point_f<N_dt>(XTAL_REF_(t).  end(), n_dt);}
 	}
 }
 template <int N_dt=0, class T>
@@ -390,15 +388,13 @@ XTAL_DEF_(return,inline,let)
 endpoint_f(T &&t, int const n_dt=0)
 noexcept -> auto
 {
-	using namespace _xtd::ranges;
-
 	if constexpr (iterator_q<_std::decay_t<T>>) {
-		return prev(XTAL_REF_(t), N_dt + n_dt);
+		return _xtd::ranges::prev(XTAL_REF_(t), N_dt + n_dt);
 	}
 	else {
 		XTAL_IF0
-		XTAL_0IF (0 <= N_dt) {return endpoint_f<N_dt>(  end(XTAL_REF_(t)), n_dt);}
-		XTAL_0IF (N_dt <  0) {return endpoint_f<N_dt>(begin(XTAL_REF_(t)), n_dt);}
+		XTAL_0IF (0 <= N_dt) {return endpoint_f<N_dt>(XTAL_REF_(t).  end(), n_dt);}
+		XTAL_0IF (N_dt <  0) {return endpoint_f<N_dt>(XTAL_REF_(t).begin(), n_dt);}
 	}
 }
 ///\returns the `size` of the given range. \
