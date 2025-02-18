@@ -65,7 +65,7 @@ struct invoke_head
 			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
 			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
 			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return head(); static_assert(0 == sizeof...(xs));}
+			XTAL_0IF_(else) {return head(); static_assert(none_q<decltype(xs)...>);}
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
@@ -78,7 +78,7 @@ struct invoke_head
 			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
 			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
 			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return head(); static_assert(0 == sizeof...(xs));}
+			XTAL_0IF_(else) {return head(); static_assert(none_q<decltype(xs)...>);}
 		}
 
 	};

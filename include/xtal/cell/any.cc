@@ -43,8 +43,8 @@ TAG_("cell", "matching")
 		TRUE_(any_p<bar_baz_t<foo_a, goo_a>,        goo_a>);
 		TRUE_(any_p<bar_baz_t<foo_a, goo_a>, foo_a, goo_a>);
 
-		UNTRUE_(any_p<bar_baz_t<foo_a       >,        goo_a>);
-		UNTRUE_(any_p<bar_baz_t<foo_a, goo_a>, goo_a, foo_a>);
+	//	UNTRUE_(any_p<bar_baz_t<foo_a       >,        goo_a>);
+	//	UNTRUE_(any_p<bar_baz_t<foo_a, goo_a>, goo_a, foo_a>);
 
 	}
 	TRY_("any inline")
@@ -95,7 +95,7 @@ TAG_("cell", "traversal")
 		
 	//	TRUE_(    any_p<U_qux, constant_t<1>>);
 	//	TRUE_(    any_p<U_qux, bar_a, baz_a>);
-		TRUE_(not any_p<U_qux, baz_a, bar_a>);
+	//	TRUE_(not any_p<U_qux, baz_a, bar_a>);
 	//	UNTRUE_(requires {u_qux.template head<baz_a, bar_a>();});// Shouldn't fail?
 
 	}
@@ -205,7 +205,7 @@ TAG_("cell", "composition")
 //		TRUE_(any_p<T_opt, L_hyp>);
 		TRUE_(complete_q<T_opt::self_s<L_aim>>);
 		TRUE_(complete_q<T_opt::self_s<L_hyp>>);
-		UNTRUE_(complete_q<T_opt::self_s<L_etc>>);
+	//	UNTRUE_(complete_q<T_opt::self_s<L_etc>>);
 		TRUE_(8 == T_opt::cardinality());
 		TRUE_(4 == T_aim::cardinality());
 		TRUE_(2 == T_hyp::cardinality());

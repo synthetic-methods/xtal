@@ -50,20 +50,20 @@ TAG_("fit")
 		TRUE_(fit<>::patio_f(1,-2) == -double(1.570796326794896619231321691639751442L));
 		TRUE_(fit<>::patio_f(4, 2) ==  double(6.283185307179586476925286766559005768L));
 		TRUE_(fit<>::patio_f(4,-2) == -double(6.283185307179586476925286766559005768L));
-		TRUE_(fit<>::template epsilon_n<0> != 0);
-		TRUE_(fit<>::template epsilon_n<0> <  fit<>::template epsilon_n<1>);
-		TRUE_(fit<>::template epsilon_n<1> <  fit<>::template epsilon_n<2>);
-		TRUE_(fit<>::template epsilon_n<1> == _std::numeric_limits<double>::epsilon());
-		TRUE_(one <  one + fit<>::template epsilon_n< 1>);
-		TRUE_(one == one + fit<>::template epsilon_n< 0>);
-		TRUE_(one == one - fit<>::template epsilon_n<-1>);
-		TRUE_(one  > one - fit<>::template epsilon_n< 1>);
-		TRUE_(                             one == fit<>::template upsilon_n<0>);
-		TRUE_(fit<>::template upsilon_n<0> <  fit<>::template upsilon_n<1>);
-		TRUE_(fit<>::template upsilon_n<1> <  fit<>::template upsilon_n<2>);
-		TRUE_(                             one == fit<>::template dnsilon_n<0>);
-		TRUE_(fit<>::template dnsilon_n<1> <  fit<>::template dnsilon_n<0>);
-		TRUE_(fit<>::template dnsilon_n<2> <  fit<>::template dnsilon_n<1>);
+		TRUE_(fit<>::epsilon_f(0) != 0);
+		TRUE_(fit<>::epsilon_f(0) <  fit<>::epsilon_f(1));
+		TRUE_(fit<>::epsilon_f(1) <  fit<>::epsilon_f(2));
+		TRUE_(fit<>::epsilon_f(1) == _std::numeric_limits<double>::epsilon());
+		TRUE_(one <  one + fit<>::epsilon_f( 1));
+		TRUE_(one == one + fit<>::epsilon_f( 0));
+		TRUE_(one == one - fit<>::epsilon_f(-1));
+		TRUE_(one  > one - fit<>::epsilon_f( 1));
+		TRUE_(                         one == fit<>::upsilon_f(0));
+		TRUE_(fit<>::upsilon_f(0) <  fit<>::upsilon_f(1));
+		TRUE_(fit<>::upsilon_f(1) <  fit<>::upsilon_f(2));
+		TRUE_(                         one == fit<>::dnsilon_f(0));
+		TRUE_(fit<>::dnsilon_f(1) <  fit<>::dnsilon_f(0));
+		TRUE_(fit<>::dnsilon_f(2) <  fit<>::dnsilon_f(1));
 
 	}
 }

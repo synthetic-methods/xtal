@@ -5,5 +5,5 @@
 #include "./resize.hh"
 #include "./restep.hh"
 #include "./review.hh"
-#include "./sampling.hh"
+#include "./resample.hh"
 #include "./stage.hh"

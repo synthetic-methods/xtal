@@ -191,7 +191,6 @@ struct cursor<V>
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
 		noexcept
-	//	requires (1 <= sizeof...(oo))
 		:	S_{XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)

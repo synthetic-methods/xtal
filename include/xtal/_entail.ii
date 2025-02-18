@@ -56,20 +56,25 @@ template <         class ...Ts>	concept         based_q	= (...and   _retail::   
 template <         class ...Ts>	concept       unbased_q	= (...and   _retail::      unbased_q<Ts    >);
 
 
-template <class T             >	using        identity_t	=           _retail::     identity_t<T      >;
-template <class T             >	using        identity_u	=           _retail::     identity_u<T      >;
-template <class T             >	concept      identity_q	=           _retail::     identity_q<T      >;
+template <         class ...Ts>	concept          some_q	=           _retail::         some_q<Ts...>;
+template <         class ...Ts>	concept          none_q	=           _retail::         none_q<Ts...>;
+template <         auto  ...Ns>	concept          some_n	=           _retail::         some_n<Ns...>;
+template <         auto  ...Ns>	concept          none_n	=           _retail::         none_n<Ns...>;
 
-template <         class ...Ts>	using        complete_t	=           _retail::     complete_t<Ts ...> ;
-template <         class ...Ts>	concept      complete_q	= (...and   _retail::     complete_q<Ts    >);
-template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   incomplete_q<Ts    >);
+template <class T             >	using        identity_t	=           _retail::     identity_t<T    >;
+template <class T             >	using        identity_u	=           _retail::     identity_u<T    >;
+template <class T             >	concept      identity_q	=           _retail::     identity_q<T    >;
 
-template <         class ...Ts>	concept        vacant_q	= (...and   _retail::       vacant_q<Ts    >);
-template <         class ...Ts>	concept       present_q	= (...and   _retail::      present_q<Ts    >);
+template <         class ...Ts>	using        complete_t	=           _retail::     complete_t<Ts...>;
+template <         class ...Ts>	concept      complete_q	= (...and   _retail::     complete_q<Ts   >) and some_q<Ts...>;
+template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   incomplete_q<Ts   >) or  none_q<Ts...>;
 
-template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts    >);
-template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts    >);
-template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts    >);
+template <         class ...Ts>	concept        vacant_q	= (...and   _retail::       vacant_q<Ts   >);
+template <         class ...Ts>	concept       present_q	= (...and   _retail::      present_q<Ts   >);
+
+template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts   >);
+template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts   >);
+template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts   >);
 
 template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
 template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
@@ -289,12 +294,8 @@ requires fixed_shaped_q<decltype(t)>
 	auto constexpr M = fixed_shaped<decltype(t)>::extent();
 	auto constexpr I = modulo_v<M, N>;
 	XTAL_IF0
-	XTAL_0IF (0 == sizeof...(Ns)) {
-		return                   get<I>(destruct_f(XTAL_REF_(t)));
-	}
-	XTAL_0IF (1 <= sizeof...(Ns)) {
-		return desolve_f<Ns...>(get<I>(desolve_f(XTAL_REF_(t))));
-	}
+	XTAL_0IF (none_n<Ns...>) {return                  get<I>(destruct_f(XTAL_REF_(t))) ;}
+	XTAL_0IF (some_n<Ns...>) {return desolve_f<Ns...>(get<I>( desolve_f(XTAL_REF_(t))));}
 }
 XTAL_DEF_(return,inline,let)
 desolve_f(auto &&t)

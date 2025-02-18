@@ -1,28 +1,35 @@
 #pragma once
 #include "./any.cc"
-#include "./review.hh"// testing...
+#include "./tee.hh"// testing...
 
-#include "./resample.hh"
-#include "../process/any.hh"
+
 
 
 
 XTAL_ENV_(push)
-namespace xtal::occur::_test
+namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/*/
-TAG_("review")
+
+TAG_("tee")
 {
-	TRY_("task")
+	using _fit = bond::fit<>;
+	using T_delta = typename _fit::delta_type;
+	using T_sigma = typename _fit::sigma_type;
+	using T_alpha = typename _fit::alpha_type;
+	using T_aphex = typename _fit::aphex_type;
+
+	/*/
+	TRY_("framing")
 	{
 		TRUE_(true);
 
 	}
+	/***/
 }
-/***/
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

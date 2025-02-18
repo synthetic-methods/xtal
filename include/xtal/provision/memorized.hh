@@ -39,13 +39,13 @@ struct memorized
 
 		///\returns the contents of `memory` as a tuple of `Vs &...`. \
 
-		XTAL_FX4_(to) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
+		XTAL_FX4_(to) (template <variable_q ...Vs> requires some_q<Vs...>
 		XTAL_DEF_(return,inline,get) memory(), head().template form<Vs...>())
 		
 		///\returns the contents of `memory` as a tuple of `Vs &...`, \
 		prior to replacing the contents with `vs...`. \
 
-		XTAL_FX4_(to) (template <variable_q ...Vs> requires (1 <= sizeof...(Vs))
+		XTAL_FX4_(to) (template <variable_q ...Vs> requires some_q<Vs...>
 		XTAL_DEF_(return,inline,get) memory(Vs const &...vs), head().form(vs...))
 		
 		///\

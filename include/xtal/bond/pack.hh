@@ -18,7 +18,7 @@ template <fixed_shaped_q    T >	struct         pack_size<T> : cardinal_constant_
 template <         class ...Ts>	auto constexpr pack_size_n = pack_size<based_t<Ts>...>{}();
 template <         class ...Ts>	concept        pack_size_q = complete_q<pack_size<based_t<Ts>>...>;
 
-template <class T, class ...Ts>	requires(1 <= sizeof...(Ts)) and pack_size_q<T, Ts...>
+template <class T, class ...Ts>	requires some_q<Ts...> and pack_size_q<T, Ts...>
 struct pack_size<T, Ts...>
 :	cardinal_constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)>
 {
@@ -66,7 +66,7 @@ noexcept -> decltype(auto)
 	XTAL_0IF_(to) (get<I>(XTAL_REF_(t)))
 	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
 }
-template <auto I, auto ...Is> requires (1 <= sizeof...(Is))
+template <auto I, auto ...Is> requires some_n<Is...>
 XTAL_DEF_(return,inline,let)
 pack_item_f(auto &&t, auto &&...ts)
 noexcept -> decltype(auto)

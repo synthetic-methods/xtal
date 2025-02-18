@@ -8,3 +8,4 @@
 #include "./point.cc"
 #include "./quanta.cc"
 #include "./spool.cc"
+#include "./tee.cc"

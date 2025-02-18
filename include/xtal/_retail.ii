@@ -69,6 +69,11 @@ template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>
 template <         auto  ...Ns>	concept          same_n	=       same_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
 template <         auto  ...Ns>	concept     different_n	=  different_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
 
+template <         class ...Ts>	concept          some_q	=  1 <= sizeof...(Ts);
+template <         class ...Ts>	concept          none_q	=  0 == sizeof...(Ts);
+template <         auto  ...Ns>	concept          some_n	=  1 <= sizeof...(Ns);
+template <         auto  ...Ns>	concept          none_n	=  0 == sizeof...(Ns);
+
 template <auto  N             >	concept    incomplete_n	=  N == 0;
 template <auto  N             >	concept      complete_n	=  N != 0;
 template <class T             >	concept    incomplete_q	=  not requires {typename _std::void_t<decltype(sizeof(T))>;};
@@ -80,10 +85,10 @@ template <                           >	struct complete<        >    {class type 
 template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
-template <auto  N, auto  ...Ns>	concept            un_n	= ((0 == sizeof...(Ns) and incomplete_n<N>) or...or different_n<N, Ns>);
-template <class T, class ...Ts>	concept            un_q	= ((0 == sizeof...(Ts) and incomplete_q<T>) or...or different_q<T, Ts>);
-template <auto  N, auto  ...Ns>	concept            in_n	= ((0 == sizeof...(Ns) and   complete_n<N>) or...or      same_n<N, Ns>);
-template <class T, class ...Ts>	concept            in_q	= ((0 == sizeof...(Ts) and   complete_q<T>) or...or      same_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            un_n	= ((none_n<Ns...> and incomplete_n<N>) or...or different_n<N, Ns>);
+template <class T, class ...Ts>	concept            un_q	= ((none_q<Ts...> and incomplete_q<T>) or...or different_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            in_n	= ((none_n<Ns...> and   complete_n<N>) or...or      same_n<N, Ns>);
+template <class T, class ...Ts>	concept            in_q	= ((none_q<Ts...> and   complete_q<T>) or...or      same_q<T, Ts>);
 
 template <class T             >	concept        vacant_q	=  in_q<T, void, void_type, null_type>;
 template <class T             >	concept       present_q	=  not vacant_q<T>;

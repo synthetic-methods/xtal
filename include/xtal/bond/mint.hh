@@ -36,13 +36,13 @@ struct mint<T_<U>>
 	template <class V> using subtype = T_<V>;
 
 };
-template <template <class, class ...> class T_, class U, class ..._s> requires (1 <= sizeof...(_s))
+template <template <class, class ...> class T_, class U, class ..._s> requires some_q<_s...>
 struct mint<T_<U, _s...>>
 {
 	template <class V> using subtype = T_<V, _s...>;
 
 };
-template <template <class, auto  ...> class T_, class U, auto  ..._s> requires (1 <= sizeof...(_s))
+template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_n<_s...>
 struct mint<T_<U, _s...>>
 {
 	template <class V> using subtype = T_<V, _s...>;

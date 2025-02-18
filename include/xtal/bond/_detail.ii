@@ -127,33 +127,63 @@ struct navigate
 		using T_self = typename S::self_type;
 		using U_head = typename S::head_type;
 
-		template <         class ..._s>                                                               struct duper;
-		template <         class ..._s> requires in_n<requires {typename S::template super<T_self>;}> struct duper<   _s...> : S::template super<_s...> {};
-		template <class Y, class ..._s> requires un_n<requires {typename S::template super<T_self>;}> struct duper<Y, _s...> :             duper<_s...> {};
-		template <class Y             > requires un_n<requires {typename S::template super<T_self>;}> struct duper<Y       > {using type = Y;};
+		template <class ...               > struct duped       {using type = S;};
+		template <class Y, fungible_q<S> X> struct duped<Y, X> {using type = X;};
+		template <class Y                 > struct duped<Y   > {using type = Y;};
+
+		template <class ..._s>
+		struct duper        :             duped<_s...> {};
+		
+		template <class ..._s> requires requires {typename S::template super<_s...>;}
+		struct duper<_s...> : S::template super<_s...> {};
 
 	public:
 		using S::S;
 
 		template <                          class ..._s>                           struct super                   : duper<                        _s...> {};
-		template <class _,                  class ..._s>                           struct super<_, U_edge, _s...> : duper<U_node,                 _s...> {};
-		template <class _,                  class ..._s> requires vacant_q<U_edge> struct super<_, U_head, _s...> : duper<U_node,                 _s...> {};
-		template <class _,                  class ..._s> requires vacant_q<U_edge> struct super<_, U_node, _s...> : duper<U_node,                 _s...> {};
-		template <class _, intercedent_q I, class ..._s> requires vacant_q<U_edge> struct super<_, I,      _s...> : duper<  void, precedent_s<I>, _s...> {};
-		template <class _,  antecedent_q I, class ..._s> requires vacant_q<U_edge> struct super<_, I,      _s...> : super<U_node,                 _s...> {};
+		template <class Y,                  class ..._s>                           struct super<Y, U_edge, _s...> : duper<U_node,                 _s...> {};
+		template <class Y,                  class ..._s> requires vacant_q<U_edge> struct super<Y, U_head, _s...> : duper<U_node,                 _s...> {};
+		//\
+		template <class Y, fungible_q<S> X, class ..._s> requires vacant_q<U_edge> struct super<Y, X     , _s...> : duper<X     ,                 _s...> {};
+		template <class Y,                  class ..._s> requires vacant_q<U_edge> struct super<Y, U_node, _s...> : duper<U_node,                 _s...> {};
+		template <class Y, intercedent_q I, class ..._s> requires vacant_q<U_edge> struct super<Y, I     , _s...> : duper<  void, precedent_s<I>, _s...> {};
+		template <class Y,  antecedent_q I, class ..._s> requires vacant_q<U_edge> struct super<Y, I     , _s...> : super<U_node,                 _s...> {};
 
 		template <                          class ..._s> using self_s = typename super<T_self, based_t<_s>...>::type;
 		template <                          class ..._s> using head_s = typename super<U_node, based_t<_s>...>::type;
 		template <                          class ..._s> using head_t = typename super<U_node, based_t<_s>...>::type::head_type;
 
-		XTAL_FX4_(to) (template <auto  ..._s> requires (0 == sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo), S::self                                (XTAL_REF_(oo)...))
-		XTAL_FX4_(to) (template <auto  ..._s> requires (0 == sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo), S::head                                (XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (template <class ..._s> requires none_q<_s...>
+		XTAL_DEF_(return,inline,get)
+		self(auto &&...oo),
+			S::self(XTAL_REF_(oo)...))
 
-		XTAL_FX4_(to) (template <auto  ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo),    self<constant_t<_s>...>             (XTAL_REF_(oo)...))
-		XTAL_FX4_(to) (template <auto  ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo),    head<constant_t<_s>...>             (XTAL_REF_(oo)...))
+		XTAL_FX4_(to) (template <class ..._s> requires none_q<_s...> and present_q<U_head>
+		XTAL_DEF_(return,inline,get)
+		head(auto &&...oo),
+			S::head(XTAL_REF_(oo)...))
 
-		XTAL_FX4_(to) (template <class ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) self(auto &&...oo), S::template self<self_s<_s ...>>       (XTAL_REF_(oo)...))
-		XTAL_FX4_(to) (template <class ..._s> requires (1 <= sizeof...(_s)) XTAL_DEF_(return,inline,get) head(auto &&...oo), S::template self<head_s<_s ...>>().head(XTAL_REF_(oo)...))
+
+		XTAL_FX4_(to) (template <class ..._s> requires some_q<_s...> and present_q<self_s<_s...>>
+		XTAL_DEF_(return,inline,get)
+		self(auto &&...oo),
+			S::template self<self_s<_s...>>       (XTAL_REF_(oo)...))
+
+		XTAL_FX4_(to) (template <class ..._s> requires some_q<_s...> and present_q<head_t<_s...>>
+		XTAL_DEF_(return,inline,get)
+		head(auto &&...oo),
+			S::template self<head_s<_s...>>().head(XTAL_REF_(oo)...))
+
+
+		XTAL_FX4_(to) (template <auto  ..._s> requires some_n<_s...> and present_q<self_s<constant_t<_s>...>>
+		XTAL_DEF_(return,inline,get)
+		self(auto &&...oo),
+			S::template self<self_s<constant_t<_s>...>>       (XTAL_REF_(oo)...))
+
+		XTAL_FX4_(to) (template <auto  ..._s> requires some_n<_s...> and present_q<head_t<constant_t<_s>...>>
+		XTAL_DEF_(return,inline,get)
+		head(auto &&...oo),
+			S::template self<head_s<constant_t<_s>...>>().head(XTAL_REF_(oo)...))
 
 	};
 };

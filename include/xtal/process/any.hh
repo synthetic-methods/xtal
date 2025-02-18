@@ -77,23 +77,23 @@ struct define
 		XTAL_DEF_(return,inline,let)
 		divert(auto &&...xs)
 		noexcept -> decltype(auto)
-			requires (0 == sizeof...(Is)) and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
-			or       (1 <= sizeof...(Is)) and requires (T       &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
+			requires  none_n<Is...> and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
+			or        some_n<Is...> and requires (T       &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(Is))               {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (1 <= sizeof...(Is))               {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_n<Is...>)               {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_n<Is...>)               {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		divert(auto &&...xs) const
 		noexcept -> decltype(auto)
-			requires (0 == sizeof...(Is)) and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
-			or       (1 <= sizeof...(Is)) and requires (T const &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
+			requires  none_n<Is...> and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
+			or        some_n<Is...> and requires (T const &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(Is))               {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (1 <= sizeof...(Is))               {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_n<Is...>)              {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_n<Is...>)              {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 
 		///\brief a pointer to the digested `method` for the given parameters. \

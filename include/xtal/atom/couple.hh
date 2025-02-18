@@ -70,7 +70,7 @@ struct couple
 		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
 		{}
 		XTAL_NEW_(explicit)
-		homotype(value_type const &u)
+		homotype(value_type u)
 		noexcept
 		requires in_n<size, 2> and continuous_field_q<value_type>
 		:	S_{u, one/u}

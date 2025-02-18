@@ -53,7 +53,6 @@ struct indent<Ns...>
 		subtype(auto &&...oo)
 		noexcept
 	//	requires make_p<S_, decltype(oo)...>
-		requires (1 <= sizeof...(oo))
 		:	S_{XTAL_REF_(oo)...}
 		{}
 

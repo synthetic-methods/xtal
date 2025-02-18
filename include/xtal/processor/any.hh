@@ -233,8 +233,8 @@ struct defer<U>
 		{
 			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
 			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
-			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
+			XTAL_0IF (none_n<Is...>) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
+			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
@@ -244,8 +244,8 @@ struct defer<U>
 		{
 			auto constexpr f = [] XTAL_1FN_(function) (U_::template method_f<Is...>);
 			XTAL_IF0
-			XTAL_0IF (0 == sizeof...(Is)) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
-			XTAL_0IF (1 <= sizeof...(Is)) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
+			XTAL_0IF (none_n<Is...>) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
+			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
 		}
 
 	};

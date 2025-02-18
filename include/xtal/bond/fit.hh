@@ -476,7 +476,6 @@ public:
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
 		XTAL_0IF_(terminate)
 	}
-
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
 	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
 	static alpha_type constexpr ratio_2 = ratio_f(2, 1);
@@ -490,7 +489,6 @@ public:
 	{
 		return ratio_f<N_pow>(_std::numbers::pi_v<alpha_type>*n_num, n_nom);
 	}
-
 	static alpha_type constexpr patio_0 = patio_f(0, 1);
 	static alpha_type constexpr patio_1 = patio_f(1, 1);
 	static alpha_type constexpr patio_2 = patio_f(2, 1);
@@ -508,16 +506,6 @@ public:
 		auto constexpr N = fraction.depth + 1;
 		return haplo_f(N - n_zoom);
 	}
-	template <int N_zoom=0>
-	static alpha_type constexpr epsilon_n = epsilon_f(N_zoom);
-	///< Value expression of `epsilon_f`. \
-
-	
-	
-	static alpha_type constexpr epsilon_0 = epsilon_n<0>;
-	static alpha_type constexpr epsilon_1 = epsilon_n<1>;
-	static alpha_type constexpr epsilon_2 = epsilon_n<2>;
-
 
 	///\returns the value `n_zoom` steps above `(alpha_type) 1`. \
 
@@ -529,15 +517,6 @@ public:
 		auto const     n_unit = alpha_1 + haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
-	template <int N_zoom=0>
-	static alpha_type constexpr upsilon_n = upsilon_f(N_zoom);
-	///< Value expression of `upsilon_f`. \
-	
-	
-	static alpha_type constexpr upsilon_0 = upsilon_n<0>;
-	static alpha_type constexpr upsilon_1 = upsilon_n<1>;
-	static alpha_type constexpr upsilon_2 = upsilon_n<2>;
-
 
 	///\returns the value `n_zoom` steps below `(alpha_type) 1`. \
 
@@ -549,14 +528,6 @@ public:
 		auto const     n_unit = alpha_1 - haplo_f(N_diff - n_zoom);
 		return n_unit*diplo_f(n_zone);
 	}
-	template <int N_zoom=0>
-	static alpha_type constexpr dnsilon_n = dnsilon_f(N_zoom);
-	///< Value expression of `dnsilon_f`. \
-	
-	
-	static alpha_type constexpr dnsilon_0 = dnsilon_n<0>;
-	static alpha_type constexpr dnsilon_1 = dnsilon_n<1>;
-	static alpha_type constexpr dnsilon_2 = dnsilon_n<2>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -569,14 +540,6 @@ public:
 	{
 		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
 	}
-	template <int N_zoom=0>
-	static alpha_type constexpr minilon_n = minilon_f(N_zoom);
-	///< Value expression for `minilon_f`. \
-
-	static alpha_type constexpr minilon_0 = minilon_n<0>;
-	static alpha_type constexpr minilon_1 = minilon_n<1>;
-	static alpha_type constexpr minilon_2 = minilon_n<2>;
-
 
 	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
 
@@ -624,7 +587,6 @@ public:
 	XTAL_DEF_(return,inline,set)
 	minimum_f(auto &&w, auto &&x, auto &&...xs)
 	noexcept -> decltype(auto)
-	requires (1 <= sizeof...(xs))
 	{
 		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
@@ -637,15 +599,6 @@ public:
 	{
 		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
 	}
-	template <int N_zoom=0>
-	static alpha_type constexpr maxilon_n = maxilon_f(N_zoom);
-	///< Value expression for `maxilon_f`. \
-
-	static alpha_type constexpr maxilon_0 = maxilon_n<0>;
-	static alpha_type constexpr maxilon_1 = maxilon_n<1>;
-	static alpha_type constexpr maxilon_2 = maxilon_n<2>;
-	static alpha_type constexpr maxilon_3 = maxilon_n<3>;
-
 
 	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
 
@@ -693,7 +646,6 @@ public:
 	XTAL_DEF_(return,inline,set)
 	maximum_f(auto &&w, auto &&x, auto &&...xs)
 	noexcept -> decltype(auto)
-	requires (1 <= sizeof...(xs))
 	{
 		return maximum_f(maximum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
@@ -741,7 +693,6 @@ public:
 		};
 		return table[o];
 	}
-
 
 	XTAL_DEF_(return,inline,set)
 	sentinel_f(alpha_type const &o)

@@ -72,24 +72,26 @@ noexcept -> decltype(auto)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <class T, class ...Ts>
 XTAL_DEF_(inline,let)
-seek_front_f(auto &&o, auto &&...oo)
+seek_front_f(T &&t, Ts &&...ts)
 noexcept -> decltype(auto)
 {
-	return XTAL_REF_(o);
+	return XTAL_REF_(t);
 }
 template <         class ...Ts>  struct         seek_front;
 template <class T, class ...Ts>  struct         seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>::type;
 template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>{}();
 
+template <class T, class ...Ts>
 XTAL_DEF_(inline,let)
-seek_back_f(auto &&o, auto &&...oo)
+seek_back_f(T &&t, Ts &&...ts)
 noexcept -> decltype(auto)
 {
 	XTAL_IF0
-	XTAL_0IF (0 == sizeof...(oo)) {return XTAL_REF_(o);}
-	XTAL_0IF (1 <= sizeof...(oo)) {return seek_back_f(XTAL_REF_(oo)...);}
+	XTAL_0IF (none_q<Ts...>) {return XTAL_REF_(t);}
+	XTAL_0IF (some_q<Ts...>) {return seek_back_f(XTAL_REF_(ts)...);}
 }
 template <         class ...Ts>  struct   seek_back;
 template <class T             >  struct   seek_back <T       >       {using type = T;};
@@ -142,7 +144,7 @@ static_assert(seek_truth_n<false, false, false> == -1);
 template <auto A, auto ...As>
 auto constexpr seek_index_n = seek_truth_n<(A == As)...>;
 
-template <auto ...Ns> requires (1 <= sizeof...(Ns))
+template <auto ...Ns> requires some_n<Ns...>
 struct seek_index
 {
 	static unsigned constexpr N_upper = seek_upper_n<Ns...>;
@@ -190,7 +192,7 @@ using    seek_index_t = typename seek_index<Ns...>::type;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <auto ...Ns> requires (1 <= sizeof...(Ns))
+template <auto ...Ns> requires some_n<Ns...>
 struct seek_value
 {
 	//\
