@@ -219,7 +219,7 @@ struct polymer<U, As...>
 				flux(occur::render_q auto &&, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					ensemble().free([] XTAL_1FN_(method) (efflux(occur::stage_f(-1)) == 1));
+					ensemble().free([] XTAL_1FN_(dot) (efflux(occur::stage_f(-1)) == 1));
 
 					auto y0 = point_f(rev);
 					auto sN = count_f(rev);

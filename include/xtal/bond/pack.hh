@@ -89,14 +89,12 @@ noexcept -> decltype(auto)
 }
 
 
-template <class T, size_type I>
-concept  pack_item_p = I <  pack_size_n<T> and requires(T t) {{get<I>(t)} -> make_q<pack_item_t<T, I>>;};
+template <class T, size_type ...Is>
+concept  pack_item_q = requires(T t) {{pack_item_f<Is...>(t)} -> make_q<pack_item_t<T, Is...>>;};
 
 template <class T>
-concept  pack_list_q = 0 == pack_size_n<T> or [] <auto ...Is>
-	(seek_t<Is...>) XTAL_0FN_(to) (...and pack_item_p<T, Is>)
-	(seek_s<pack_size_n<T>> {})
-;
+concept  pack_list_q = 0 == pack_size_n<T> or
+	[] <auto ...Is> (seek_t<Is...>) XTAL_0FN_(to) (...and pack_item_q<T, Is>) (seek_s<pack_size_n<T>> {});
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,4 +8,3 @@
 #include "./point.hh"
 #include "./quanta.hh"
 #include "./spool.hh"
-#include "./tee.hh"

@@ -109,18 +109,18 @@ struct quanta
 #else
 			if constexpr (numeric_q<value_type>) {
 				auto &s = desolve_f(*this);
-				bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
+				bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 					XTAL_IF0
-					XTAL_0IF (simplex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I]   ) |= _zv;}
-					XTAL_0IF (complex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I][0]) |= _zv;}
+					XTAL_0IF (simplex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}]   ) |= _zv;}
+					XTAL_0IF (complex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}][0]) |= _zv;}
 				});
 			}
 #endif
 			else {
 				auto const n = static_cast<value_type>(z)*u;
 				auto      &s = *this;
-				bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
-					get<I>(s) += n;
+				bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
+					get<I{}>(s) += n;
 				});
 			}
 			return z;

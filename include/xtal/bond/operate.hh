@@ -64,23 +64,21 @@ struct operate : Fs...
 	noexcept -> auto
 	requires requires {operate{}();}
 	{
-		return operate{[] XTAL_1FN_(value) (1.L/object<T>())};
+		return operate{[] XTAL_1FN_(to) (1.L/object<T>())};
 	}
 
 	template <class T>
 	XTAL_DEF_(return,inline,implicit) operator T()                const noexcept                   {return object<T>();}
 //	XTAL_DEF_(return,inline,let)      operator  () (auto &&...oo) const noexcept -> decltype(auto) {return operator()(XTAL_REF_(oo)...);}
 
-	XTAL_DEF_(return,inline,met) operator  +  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(value) (+operate{}()))>{};}
-	XTAL_DEF_(return,inline,met) operator  -  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(value) (-operate{}()))>{};}
-	XTAL_DEF_(return,inline,met) operator  ~  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(value) (~operate{}()))>{};}
-
+	XTAL_DEF_(return,inline,met) operator  +  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (+_xtd::make_signed_f(operate{}())))>{};}
+	XTAL_DEF_(return,inline,met) operator  -  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (-_xtd::make_signed_f(operate{}())))>{};}
+	XTAL_DEF_(return,inline,met) operator  ~  (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (~                    operate{}() ))>{};}
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (object<T>() <=> t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  == (same_q<operate> auto const &, T const &t) noexcept -> bool   requires XTAL_TRY_(to) (object<T>()  == t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <=> object<T>())
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  == (T const &t, same_q<operate> auto const &) noexcept -> bool   requires XTAL_TRY_(to) (t  == object<T>())
-
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  -  t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  +  t)
@@ -102,7 +100,6 @@ struct operate : Fs...
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  |  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t  |  subject<T>())
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator >>  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t >>  subject<T>())
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <<  (T const &t, same_q<operate> auto const &) noexcept -> auto   requires XTAL_TRY_(to) (t <<  subject<T>())
-
 
 	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  -= (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  -= subject<T>())
 	template <inapplicable_p T> XTAL_DEF_(mutate,inline,met) operator  += (T       &t, same_q<operate> auto const &) noexcept -> auto & requires XTAL_TRY_(to) (t  += subject<T>())

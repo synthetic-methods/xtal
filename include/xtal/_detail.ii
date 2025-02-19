@@ -87,7 +87,7 @@ noexcept -> void
 		while_move_to<f>(y0, x0, xN, ord);
 	}
 	XTAL_0IF (same_q<_std::identity, F> and different_q<Y, X>) {
-		copy_to<[] XTAL_1FN_(function) (Y)>(y0, x0, xN, ord);
+		copy_to<[] XTAL_1FN_(call) (Y)>(y0, x0, xN, ord);
 	}
 	XTAL_0IF (same_q<_std::identity, F> and      same_q<Y, X>) {
 		switch (ord) {

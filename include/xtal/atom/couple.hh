@@ -98,24 +98,22 @@ struct couple
 		operator++() const
 		noexcept -> auto
 		{
+			int constexpr N{size};
 			auto t = S_::twin();
-
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I + 1>(t) += get<I>(t)),...);}
-			(bond::seek_s<size - 1>{});
-			
+			bond::seek_out_f<N - 1>([&]<constant_q I> (I) XTAL_0FN {
+				get<I{} + 1>(t) += get<I{}>(t);
+			});
 			return t;
 		}
 		XTAL_DEF_(inline,let)
 		operator--() const
 		noexcept -> auto
 		{
+			int constexpr N{size};
 			auto t = S_::twin();
-
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {((get<I + 1>(t) -= get<I>(t)),...);}
-			(bond::antiseek_s<size - 1>{});
-			
+			bond::seek_out_f<1 - N>([&]<constant_q I> (I) XTAL_0FN {
+				get<I{} + 1>(t) -= get<I{}>(t);
+			});
 			return t;
 		}
 
@@ -124,14 +122,14 @@ struct couple
 		noexcept -> auto
 		requires same_q<_s...>
 		{
+			int constexpr N{size};
 			auto t = S_::twin();
-
 			value_type u{};
 			value_type v{};
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
-			(bond::seek_s<size>{});
-			
+			bond::seek_out_f<+N>([&]<constant_q I> (I) XTAL_0FN {
+				u += get<I{}>(t); get<I{}>(t) = v;
+				v = u;
+			});
 			return t;
 		}
 		XTAL_DEF_(inline,let)
@@ -139,14 +137,14 @@ struct couple
 		noexcept -> auto
 		requires same_q<_s...>
 		{
+			int constexpr N{size};
 			auto t = S_::twin();
-
-			value_type u{};
-			value_type v{};
-			[&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN {(((u += get<I>(t)), (get<I>(t) = v), (v = u)),...);}
-			(bond::antiseek_s<size>{});
-			
+			value_type u;
+			value_type v{t.sum()};
+			bond::seek_out_f<-N>([&]<constant_q I> (I) XTAL_0FN {
+				u = get<I{}>(t); get<I{}>(t) = v - u;
+				v = u;
+			});
 			return t;
 		}
 
@@ -193,11 +191,11 @@ struct couple
 		{
 			auto &s = self();
 			
-			bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
+			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                              v, v);}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                                v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I{}&1, -1>}*v, v);}
 			});
 
 			return u;
@@ -211,10 +209,10 @@ struct couple
 			auto &s = self();
 			value_type u{0};
 			
-			bond::seek_forward_f<size>([&, this] (auto I) XTAL_0FN {
+			bond::seek_out_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                              get<I>(s), get<I>(t));}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I&1, -1>}*get<I>(s), get<I>(t));}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                                get<I{}>(s), get<I{}>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I{}&1, -1>}*get<I{}>(s), get<I{}>(t));}
 			});
 			
 			return u;
@@ -288,8 +286,8 @@ struct couple
 			XTAL_0IF (N <= 0) {return minimum();}
 		}
 
-		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_1FN_(function) (_std::lcm)>();}
-		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_1FN_(function) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
+		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
 		XTAL_DEF_(return,inline,let) extremal() const {return bond::pack_f(minimal(), maximal());}
 
 		template <int N>
@@ -298,8 +296,8 @@ struct couple
 		noexcept -> auto
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_1FN_(function) (_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_1FN_(function) (_std::gcd)>();}
+			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
+			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
 		}
 
 

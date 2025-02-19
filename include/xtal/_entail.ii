@@ -472,8 +472,8 @@ template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline
 template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	requires incomplete_q<F       > XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
 //mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
-template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return     iterative_f(                           f,  XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return     iterative_f<[] XTAL_1FN_(constructor) (F)>(XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f(                    f,  XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	                                                using iterative_t = XTAL_ALL_(iterative_f<F>(XTAL_ANY_(Xs)...));
 
 

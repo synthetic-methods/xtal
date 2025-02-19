@@ -119,7 +119,7 @@ struct refine_tuple
 				(bond::seek_s<pack_size{}()> {});
 			}
 		})
-		template <auto  f=[] XTAL_1FN_(function) (bond::pack_f)>
+		template <auto  f=[] XTAL_1FN_(call) (bond::pack_f)>
 		XTAL_DEF_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
@@ -140,7 +140,7 @@ struct refine_tuple
 		XTAL_DEF_(return,inline,let)
 		seek() const
 		{
-			return apply<[] XTAL_1FN_(function) (bond::seek_f)>();
+			return apply<[] XTAL_1FN_(call) (bond::seek_f)>();
 		}
 		
 		///\
@@ -152,14 +152,14 @@ struct refine_tuple
 		XTAL_DEF_(return,inline,let)
 		pack() const
 		{
-			return apply<[] XTAL_1FN_(function) (bond::pack_f)>();
+			return apply<[] XTAL_1FN_(call) (bond::pack_f)>();
 		}
 		
 		XTAL_DEF_(return,inline,set)
 		unpack_f(bond::pack_q auto const &tuple)
 		noexcept -> T
 		{
-			return _std::apply([] XTAL_1FN_(function) (T), tuple);
+			return _std::apply([] XTAL_1FN_(call) (T), tuple);
 		}
 
 	};

@@ -166,10 +166,10 @@ struct point
 		requires requires (value_type &w) {w /= u;}
 		{
 			auto &s = self();
-			bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
+			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (integral_q<scale_type>) {get<I>(s) /=               u;}
-				XTAL_0IF_(else)                   {get<I>(s) *= scale_type{1}/u;}
+				XTAL_0IF (integral_q<scale_type>) {get<I{}>(s) /=               u;}
+				XTAL_0IF_(else)                   {get<I{}>(s) *= scale_type{1}/u;}
 			});
 			return s;
 		}

@@ -85,6 +85,18 @@ TAG_("couple")
 		TRUE_(1.5 == w.template sum<-1>());
 
 	}
+	TRY_("couple progressive sum/difference")
+	{
+		using W = couple_t<T_alpha[4]>;
+		W const w{2, 3, 5, 7};
+
+		TRUE_(++w == W{ 2,  5, 10, 17});
+		TRUE_(w++ == W{ 0,  2,  5, 10});
+
+		TRUE_(w == (--(++w)));
+		TRUE_(w == ((w++)--));
+
+	}
 	TRY_("couple reflection")
 	{
 		auto constexpr N_size = 2;

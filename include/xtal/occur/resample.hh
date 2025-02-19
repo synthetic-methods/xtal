@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/tee.hh"
+#include "../atom/couple.hh"
 
 
 
@@ -26,10 +26,10 @@ resample_t<_s...>(XTAL_REF_(oo)...))
 template <typename ...As>
 struct resample
 {
-	using W = atom::tee_t<>;
-	using U = typename W::value_type;
+	using U0 = typename bond::fit<>::alpha_type;
+	using U2 = atom::couple_t<U0[2]>;
 
-	using superkind = bond::compose<flow::tag<resample>, defer<W>, As...>;
+	using superkind = bond::compose<flow::tag<resample>, defer<U2>, As...>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -52,14 +52,9 @@ struct resample
 		:	S_{XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
-		subtype(U u, auto &&...oo)
-		noexcept
-		:	subtype{W{u, one/u}, XTAL_REF_(oo)...}
-		{}
-		XTAL_NEW_(explicit)
 		subtype(number_q auto v, auto &&...oo)
 		noexcept
-		:	subtype{static_cast<U>(v), XTAL_REF_(oo)...}
+		:	subtype{U2(static_cast<U0>(v)), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()
@@ -71,6 +66,9 @@ struct resample
 
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
 		sample(), S_::head())
+
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)   rate(), get<0>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) period(), get<1>(S_::head()))
 
 	};
 };
