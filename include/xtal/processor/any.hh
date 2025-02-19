@@ -242,7 +242,7 @@ struct defer<U>
 		noexcept -> auto
 		requires requires {U_::template method_f<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
 		{
-			auto constexpr f = [] XTAL_1FN_(function) (U_::template method_f<Is...>);
+			auto constexpr f = [] XTAL_1FN_(call) (U_::template method_f<Is...>);
 			XTAL_IF0
 			XTAL_0IF (none_n<Is...>) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
 			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}

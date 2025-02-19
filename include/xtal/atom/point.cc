@@ -51,6 +51,17 @@ TAG_("point")
 		TRUE_(y == U2_aphex{10, 20});
 
 	}
+	TRY_("point comparison")
+	{
+		using U2_alpha = point_t<T_alpha[2]>;
+
+		TRUE_(U2_alpha{1, 1} == U2_alpha{1, 1});
+		TRUE_(U2_alpha{0, 1} <  U2_alpha{1, 1});
+		TRUE_(U2_alpha{1, 0} <  U2_alpha{1, 1});
+		TRUE_(U2_alpha{1, 1} >  U2_alpha{0, 1});
+		TRUE_(U2_alpha{1, 1} >  U2_alpha{1, 0});
+
+	}
 }
 /***/
 

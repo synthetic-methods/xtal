@@ -167,7 +167,7 @@ template <class 	 ...Ts>  concept       real_q        	= (...and   _retail::    
 template <class 	 ...Ts>  concept    complex_q        	= (...and   _retail::           complex_q<Ts>);
 template <class 	 ...Ts>  concept    simplex_q        	= (...and   _retail::           simplex_q<Ts>);
 template <class 	 ...Ts>  concept    numeric_q        	= (...and   _retail::           numeric_q<Ts>);
-template <class 	 ...Ts>  concept     number_q        	=                      numeric_variable_q<Ts...>;
+template <class 	 ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
 
 XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
 XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::  make_signed_f(o)>{};}
@@ -472,8 +472,8 @@ template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline
 template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	requires incomplete_q<F       > XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
 //mplate <         class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip     (                XTAL_REF_(xs)...);}
-template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return     iterative_f(                           f,  XTAL_REF_(xs)...);}
-template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return     iterative_f<[] XTAL_1FN_(constructor) (F)>(XTAL_REF_(xs)...);}
+template <auto  f, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f(                    f,  XTAL_REF_(xs)...);}
+template <class F, class ...Xs>	                                XTAL_DEF_(inline,let) iterative_f(       Xs &&...xs) noexcept -> decltype(auto) {return            iterative_f<[] XTAL_1FN_(make) (F)>(XTAL_REF_(xs)...);}
 template <class F, class ...Xs>	                                                using iterative_t = XTAL_ALL_(iterative_f<F>(XTAL_ANY_(Xs)...));
 
 
@@ -569,6 +569,52 @@ noexcept -> bool
 	XTAL_0IF_(to) (x.begin() == y.begin() and x.end() == y.end())
 	XTAL_0IF_(to) (x.begin() == y.begin())
 	XTAL_0IF_(else) {return identical_f(XTAL_REF_(x), XTAL_REF_(y));}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+///\returns a `std::partial_ordering` corresponding to the given `std::uint8_t`, \
+where the 1st/2nd bits respectively indicate `greater`/`less`, \
+with `0`/`~0` repectively representing `equivalent`/`unordered`. \
+
+XTAL_DEF_(return,inline,set)
+ordering_f(_std::uint8_t const o)
+noexcept -> _std::partial_ordering
+{
+	using is = _std::partial_ordering;
+	return _std::array{is::equivalent, is::greater, is::less, is::unordered}[0b11U&o];
+}
+///\returns a `std::uint8_t` representing the given `std::partial_ordering` or signed value \
+that can be aggregated by bitwise-or (...in other words, a _dis_junctive _ordering_). \
+
+XTAL_DEF_(return,inline,set)
+disordering_f(_std::partial_ordering const o)
+noexcept -> _std::uint8_t
+{
+	using is = _std::partial_ordering;
+	using B  = _std::uint8_t;
+	if constexpr (requires {requires 2 == _xtd::bit_cast<B>(is::unordered);}) {
+		auto x = _xtd::bit_cast<B>(o); x &= 0b11U; x ^= x >> 1; return x;
+	}
+	else {
+		return (0 < o)|((o < 0) << 1)|0b11U&-(o == is::unordered);
+	}
+}
+XTAL_DEF_(return,inline,set)
+disordering_f(number_q auto const x)
+noexcept -> _std::uint8_t
+{
+	using B = _std::uint8_t;
+	auto  w = reinterpret_cast<const B(&)[sizeof(x)]>(x)[sizeof(x) - 1] >> 7;
+	w += x != XTAL_ALL_(x){};
+	return w;
+}
+XTAL_DEF_(return,inline,set)
+disordering_f()
+noexcept -> _std::uint8_t
+{
+	return 0U;
 }
 
 

@@ -89,7 +89,7 @@ struct thunk
 				noexcept -> decltype(auto)
 				{
 					return u_spool.advance(head_()++ == head_(1))->
-						tail().apply([this] XTAL_1FN_(function) (method));
+						tail().apply([this] XTAL_1FN_(call) (method));
 				}
 
 			public:// FLOW

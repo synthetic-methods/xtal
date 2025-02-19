@@ -123,11 +123,11 @@ struct define
 		noexcept -> decltype(auto)
 		{
 			if constexpr (same_q<typename T::template digest<Xs...>, digest<Xs...>>) {
-				return [this] XTAL_1FN_(function) (self().template operator()<decltype(is){}...>);
+				return [this] XTAL_1FN_(call) (self().template operator()<decltype(is){}...>);
 			}
 			else {
 				//\
-				return [this, deity=self().template deify<Xs...>(is...)] XTAL_1FN_(function) ((self().*deity));
+				return [this, deity=self().template deify<Xs...>(is...)] XTAL_1FN_(call) ((self().*deity));
 				return _std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})
@@ -213,7 +213,7 @@ struct define
 					auto constexpr N = sizeof...(xs);
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
-					XTAL_0IF (0 == N) {return arguments([this] XTAL_1FN_(function) (method));}
+					XTAL_0IF (0 == N) {return arguments([this] XTAL_1FN_(call) (method));}
 					XTAL_0IF_(terminate)
 				})
 

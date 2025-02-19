@@ -20,7 +20,7 @@ XTAL_DEF_(return,inline,let)
 thunk_f(auto &&o)
 noexcept -> decltype(auto)
 {
-	return [&] XTAL_1FN_(value) (XTAL_REF_(o));
+	return [&] XTAL_1FN_(to) (XTAL_REF_(o));
 }
 
 
@@ -152,6 +152,8 @@ struct navigate
 		template <                          class ..._s> using self_s = typename super<T_self, based_t<_s>...>::type;
 		template <                          class ..._s> using head_s = typename super<U_node, based_t<_s>...>::type;
 		template <                          class ..._s> using head_t = typename super<U_node, based_t<_s>...>::type::head_type;
+		template <                          class ..._s>
+		static constant_t<complete_q<head_t<_s...>>> constexpr head_q{};
 
 		XTAL_FX4_(to) (template <class ..._s> requires none_q<_s...>
 		XTAL_DEF_(return,inline,get)

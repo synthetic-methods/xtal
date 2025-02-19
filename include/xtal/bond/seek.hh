@@ -45,28 +45,19 @@ Invokes the function `f` with each index `Ns...`. \
 
 template <integral_q auto ...Ns>
 XTAL_DEF_(return,inline,let)
-seek_f(applicable_p<valued_u<decltype(Ns)...>> auto const &f)
+seek_in_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
 		XTAL_0FN_(to) (..., f(constant_t<I>{})) (seek_t<Ns...> {});
 }
-
 template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline,let)
-seek_forward_f(auto const &f)
+seek_out_f(auto const &f)
 noexcept -> decltype(auto)
 {
 	return [&] <int ...I>(seek_t<I...>)
 		XTAL_0FN_(to) (..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
-}
-template <int N_count=0, int N_onset=0>
-XTAL_DEF_(inline,let)
-seek_backward_f(auto const &f)
-noexcept -> decltype(auto)
-{
-	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(to) (..., f(constant_t<N_onset + I>{})) (antiseek_s<N_count> {});
 }
 
 

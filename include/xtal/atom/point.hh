@@ -127,8 +127,8 @@ struct point
 		noexcept -> auto
 		requires simplex_variable_q<value_type>
 		{
-			return _fit::sentry_f([&]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(to) (_fit::sigma_0|...|_fit::sentinel_f(get<I>(s) - get<I>(t)))
+			return ordering_f([&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(to) (disordering_f()|...|disordering_f(get<I>(s) - get<I>(t)))
 			(bond::seek_s<size>{}));
 		}
 
@@ -166,10 +166,10 @@ struct point
 		requires requires (value_type &w) {w /= u;}
 		{
 			auto &s = self();
-			bond::seek_forward_f<size>([&] (auto I) XTAL_0FN {
+			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (integral_q<scale_type>) {get<I>(s) /=               u;}
-				XTAL_0IF_(else)                   {get<I>(s) *= scale_type{1}/u;}
+				XTAL_0IF (integral_q<scale_type>) {get<I{}>(s) /=               u;}
+				XTAL_0IF_(else)                   {get<I{}>(s) *= scale_type{1}/u;}
 			});
 			return s;
 		}

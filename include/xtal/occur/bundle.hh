@@ -24,7 +24,7 @@ noexcept -> auto
 {
 	using F = decltype(f);
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, F>)         {return bundle_f<[] XTAL_1FN_(function) (objective_f)>(XTAL_REF_(xs) ...);}
+	XTAL_0IF (same_q<_std::identity, F>)         {return bundle_f<[] XTAL_1FN_(call) (objective_f)>(XTAL_REF_(xs) ...);}
 	XTAL_0IF (un_n<0, automorphism_p<F, Xs>...>) {return bundle_t<   return_t<F, Xs>...>          {  XTAL_REF_(xs) ...};}
 	XTAL_0IF (in_n<0, automorphism_p<F, Xs>...>) {return bundle_t<   return_t<F, Xs>...>          {f(XTAL_REF_(xs))...};}
 }

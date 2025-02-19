@@ -2,7 +2,6 @@
 #include "./compose.hh"
 #include "./derive.hh"
 #include "./fit.hh"
-#include "./mint.hh"
 #include "./operate.hh"
 #include "./pack.hh"
 #include "./seek.hh"

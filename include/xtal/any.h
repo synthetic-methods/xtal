@@ -116,6 +116,13 @@ XTAL_ENV_(push)
 #define XTAL_STD_size_type      ::std::size_t
 #define XTAL_STD_extent_type    ::std::ptrdiff_t
 
+#define XTAL_STD_flt(...)              XTAL_STD_flt_##__VA_ARGS__
+#define XTAL_STD_flt_0                 void
+#define XTAL_STD_flt_1                 void
+#define XTAL_STD_flt_2                 float
+#define XTAL_STD_flt_3                 double
+#define XTAL_STD_flt_4            long double
+
 #define XTAL_STD_int(...)              XTAL_STD_int_##__VA_ARGS__
 #define XTAL_STD_int_0          ::std::int8_t
 #define XTAL_STD_int_1          ::std::int16_t
@@ -123,12 +130,6 @@ XTAL_ENV_(push)
 #define XTAL_STD_int_3          ::std::int64_t
 #define XTAL_STD_int_4       long long int
 
-#define XTAL_STD_float(...)            XTAL_STD_float_##__VA_ARGS__
-#define XTAL_STD_float_0               void
-#define XTAL_STD_float_1               void
-#define XTAL_STD_float_2               float
-#define XTAL_STD_float_3               double
-#define XTAL_STD_float_4          long double
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -325,30 +326,25 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_0FN_do(...)                     XTAL_0FN        {         (__VA_ARGS__);}                   ///< Lambda perform statement after `[captures]` and `(arguments)`.
 #define XTAL_0FN_to(...)                     XTAL_0FN        {return   (__VA_ARGS__);}                   ///< Lambda return expression after `[captures]` and `(arguments)`.
 
-#define XTAL_1FN_method(...)       <class    XTAL_NYM_(T )>\
+#define XTAL_1FN_to(...)           <class ...XTAL_NYM_(Ts)>\
+                                            (XTAL_NYM_(Ts) \
+                                        &&...XTAL_NYM_(ts))\
+   XTAL_0FN_(to)                                           (__VA_ARGS__)                                 ///< Lambda ignoring arguments after `[captures]`.
+
+#define XTAL_1FN_dot(...)          <class    XTAL_NYM_(T )>\
                                             (XTAL_NYM_(T ) \
                                            &&XTAL_NYM_(t ))\
-   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_NYM_(t )).__VA_ARGS__)                                 ///< Lambda      method-call after `[captures]`.
+   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_NYM_(t )).__VA_ARGS__)                                 ///< Lambda forwarding to `.`member after `[captures]`.
 
-#define XTAL_1FN_thunk(...)        <class ...XTAL_NYM_(Ts)>\
+#define XTAL_1FN_call(...)         <class ...XTAL_NYM_(Ts)>\
                                             (XTAL_NYM_(Ts) \
                                         &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__(                           ))                                         ///< Lambda    function-call after `[captures]`.
+   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_NYM_(ts))...))                                         ///< Lambda forwarding to call`(...)` after `[captures]`.
 
-#define XTAL_1FN_function(...)     <class ...XTAL_NYM_(Ts)>\
+#define XTAL_1FN_make(...)         <class ...XTAL_NYM_(Ts)>\
                                             (XTAL_NYM_(Ts) \
                                         &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_NYM_(ts))...))                                         ///< Lambda    function-call after `[captures]`.
-
-#define XTAL_1FN_constructor(...)  <class ...XTAL_NYM_(Ts)>\
-                                            (XTAL_NYM_(Ts) \
-                                        &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_NYM_(ts))...})                                         ///< Lambda constructor-call after `[captures]`.
-
-#define XTAL_1FN_value(...)        <class ...XTAL_NYM_(Ts)>\
-                                            (XTAL_NYM_(Ts) \
-                                        &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__)                                                                      ///< Lambda return expression after `[captures]`.
+   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_NYM_(ts))...})                                         ///< Lambda forwarding to make`{...}` after `[captures]`.
 
 #define XTAL_1FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(to) (ARG == _? _: _ SYM (__VA_ARGS__))            ///< Lambda conditional     after `[captures]`.
 #define XTAL_1FN_and(...)                    XTAL_1FN_else(1, &, __VA_ARGS__)                            ///< Lambda conditional `&` after `[captures]`.

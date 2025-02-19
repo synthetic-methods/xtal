@@ -14,15 +14,6 @@ namespace xtal::bond
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
-///\
-The translation-tables for the supplied `N_size` \
-(which should be representative of the desired `sizeof`): \
-\
--	`alpha_type` represents floating-point real numbers. \
--	`sigma_type` represents full-N_width `unsigned int`s like `std::size`. \
--	`delta_type` represents full-N_width   `signed int`s used for binary and integer arithmetic. \
-\
-The constants labelled `quake_*` are provided for `Q_rsqrt` (in lieu of `constexpr`). \
 
 template <size_type N_size>
 struct recognize : recognize<N_size/2>
@@ -34,9 +25,9 @@ template <>
 struct recognize<0x1>
 {
 	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   0)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   0)>;
-//	using alpha_type =                       XTAL_STD_(float, 0) ;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 0)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 0)>;
+//	using alpha_type =                       XTAL_STD_(flt, 0) ;
 //	using aphex_type = _std::complex<alpha_type>;
 
 	static sigma_type constexpr N_exponent = 3;
@@ -52,9 +43,9 @@ template <>
 struct recognize<0x2>
 {
 	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   1)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   1)>;
-//	using alpha_type =                       XTAL_STD_(float, 1) ;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 1)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 1)>;
+//	using alpha_type =                       XTAL_STD_(flt, 1) ;
 //	using aphex_type =  _std::complex<alpha_type>;
 
 	static sigma_type constexpr N_exponent =  5;
@@ -71,9 +62,9 @@ template <>
 struct recognize<0x4>
 {
 	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   2)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   2)>;
-	using alpha_type =                       XTAL_STD_(float, 2) ;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 2)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 2)>;
+	using alpha_type =                       XTAL_STD_(flt, 2) ;
 	using aphex_type = _std::complex<alpha_type>;
 
 	static sigma_type constexpr N_exponent =  8;
@@ -105,9 +96,9 @@ template <>
 struct recognize<0x8>
 {
 	using        fix =  cardinal_constant_t<0>;
-	using delta_type = _std::  make_signed_t<XTAL_STD_(int,   3)>;
-	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int,   3)>;
-	using alpha_type =                       XTAL_STD_(float, 3) ;
+	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 3)>;
+	using sigma_type = _std::make_unsigned_t<XTAL_STD_(int, 3)>;
+	using alpha_type =                       XTAL_STD_(flt, 3) ;
 	using aphex_type = _std::complex<alpha_type>;
 
 	static sigma_type constexpr N_exponent = 11;
@@ -669,73 +660,47 @@ public:
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-	XTAL_DEF_(return,inline,set)
-	sentry_f(_std::partial_ordering const &o)
-	noexcept -> auto
-	{
-		using is = _std::partial_ordering;
-		if (o == is:: equivalent) return 0b00U; else
-		if (o == is::    greater) return 0b01U; else
-		if (o == is::       less) return 0b10U; else
-		return 0b11U;
-	}
-	XTAL_DEF_(return,inline,set)
-	sentry_f(auto const &o)
-	noexcept -> _std::partial_ordering
-	{
-		using is = _std::partial_ordering;
-		_std::array constexpr table
-		{	is:: equivalent
-		,	is::    greater
-		,	is::       less
-		,	is::  unordered
-		};
-		return table[o];
-	}
-
-	XTAL_DEF_(return,inline,set)
-	sentinel_f(alpha_type const &o)
-	noexcept -> auto
-	{
-		return sentinel_f(_xtd::bit_cast<sigma_type>(o));
-	}
-	XTAL_DEF_(return,inline,set)
-	sentinel_f(sigma_type const &o)
-	noexcept -> auto
-	{
-		auto v = o >> sign.shift; v += o != 0; return v;
-	}
-	XTAL_DEF_(return,inline,set)
-	sentinel_f(delta_type const &o)
-	noexcept -> auto
-	{
-		return sentinel_f(sigma_f(o));
-	}
-	XTAL_DEF_(return,inline,set)
-	sentinel_f(auto const &o)
-	noexcept -> auto
-	{
-		return sentinel_f(working_f(o));
-	}
-
-
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 };
 
 
 }///////////////////////////////////////////////////////////////////////////////
+///\
+Provides floating-point format information and related helpers, \
+as well as `value_type` subtitution using `subtype<V>`.
 
 template <class ...Ts>
 struct   fit
 :	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
 {
+	template <class V>
+	using subtype = V;
+
 };
 template <>
-struct   fit<>
-:	fit<size_type>
+struct   fit<> : fit<size_type>
 {
+};
+template <template <class> class T_, class U>
+struct fit<T_<U>> : fit<U>
+{
+	template <class V>
+	using subtype = T_<V>;
+
+};
+template <template <class, class ...> class T_, class U, class ..._s> requires some_q<_s...>
+struct fit<T_<U, _s...>> : fit<U>
+{
+	template <class V>
+	using subtype = T_<V, _s...>;
+
+};
+template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_n<_s...>
+struct fit<T_<U, _s...>> : fit<U>
+{
+	template <class V>
+	using subtype = T_<V, _s...>;
+
 };
 
 

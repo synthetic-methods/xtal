@@ -159,6 +159,31 @@ static_assert(complex_field_q<_std::complex<float>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+TAG_("any")
+{
+	TRY_("ordering")
+	{
+		using is = _std::partial_ordering;
+
+		TRUE_(0 == disordering_f(is::equivalent));
+		TRUE_(1 == disordering_f(is::greater));
+		TRUE_(2 == disordering_f(is::less));
+		TRUE_(3 == disordering_f(is::unordered));
+		
+		TRUE_(0 == disordering_f( 0.0));
+		TRUE_(1 == disordering_f( 1.0));
+		TRUE_(2 == disordering_f(-1.0));
+
+		TRUE_(0 == disordering_f( 0x0000));
+		TRUE_(1 == disordering_f( 0x1000));
+		TRUE_(2 == disordering_f(-0x1000));
+		
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 using namespace bond;

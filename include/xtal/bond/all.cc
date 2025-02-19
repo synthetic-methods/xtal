@@ -2,7 +2,6 @@
 #include "./compose.cc"
 #include "./derive.cc"
 #include "./fit.cc"
-#include "./mint.cc"
 #include "./operate.cc"
 #include "./pack.cc"
 #include "./seek.cc"

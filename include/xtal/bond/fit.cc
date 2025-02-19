@@ -2,7 +2,7 @@
 #include "./any.cc"
 #include "./fit.hh"// testing...
 
-
+#include "./compose.hh"
 
 
 
@@ -21,6 +21,8 @@ static_assert( 1.5F == fit<float>::maximum_f( 1.5F,  1.0F));
 static_assert(-1.0F == fit<float>::maximum_f(-1.0F, -1.5F));
 static_assert(-1.0F == fit<float>::maximum_f(-1.5F, -1.0F));
 
+static_assert(same_q<_std::complex<int   >, compose_s<int, fit<_std::complex<double   >>>>);
+static_assert(same_q<_std::array  <int, 2>, compose_s<int, fit<_std::array  <double, 2>>>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,10 +60,10 @@ TAG_("fit")
 		TRUE_(one == one + fit<>::epsilon_f( 0));
 		TRUE_(one == one - fit<>::epsilon_f(-1));
 		TRUE_(one  > one - fit<>::epsilon_f( 1));
-		TRUE_(                         one == fit<>::upsilon_f(0));
+		TRUE_(                one == fit<>::upsilon_f(0));
 		TRUE_(fit<>::upsilon_f(0) <  fit<>::upsilon_f(1));
 		TRUE_(fit<>::upsilon_f(1) <  fit<>::upsilon_f(2));
-		TRUE_(                         one == fit<>::dnsilon_f(0));
+		TRUE_(                one == fit<>::dnsilon_f(0));
 		TRUE_(fit<>::dnsilon_f(1) <  fit<>::dnsilon_f(0));
 		TRUE_(fit<>::dnsilon_f(2) <  fit<>::dnsilon_f(1));
 

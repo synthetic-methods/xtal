@@ -75,8 +75,8 @@ construxion_f(Xs &&...xs)
 noexcept -> auto
 {
 	XTAL_IF0
-	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<[] XTAL_1FN_(constructor) (F<based_t<Xs>...>)>(XTAL_REF_(xs)...);}
-	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(constructor) (F<cased_t<Xs...>>)>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<[] XTAL_1FN_(make) (F<based_t<Xs>...>)>(XTAL_REF_(xs)...);}
+	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(make) (F<cased_t<Xs...>>)>(XTAL_REF_(xs)...);}
 	XTAL_0IF_(terminate)
 }
 

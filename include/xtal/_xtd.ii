@@ -41,7 +41,7 @@ XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return          
 XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return          zip_transform_view(XTAL_REF_(_s)...);}
 /***/
 //\
-XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return iota_view(_std::size_t{0})|views::transform([&] XTAL_1FN_(thunk) (XTAL_REF_(f)));}
+XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return iota_view(_std::size_t{0})|views::transform([&] (auto &&...) XTAL_1FN_(to) (XTAL_REF_(f) ()));}
 XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return ::ranges::views::generate(XTAL_REF_(f));}
 /***/
 }
@@ -117,27 +117,24 @@ template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :   
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if __cpp_lib_bit_cast
-using _std::bit_cast;
-#else
-template <trivial T, trivial S> requires in_n<sizeof(T), sizeof(S)>
+#if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)// Replace with `constexpr __builtin`s...
+template <class T>
 XTAL_DEF_(return,inline,let)
-bit_cast(S s)
-noexcept -> T
+bit_cast(auto s)
+noexcept -> auto
+requires requires {_std::bit_cast<T>(s);}
 {
 	return __builtin_bit_cast(T, s);
 }
-#endif
-
-#if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)
-template <trivial T>
 XTAL_DEF_(return,inline,let)
-copysign(T t, T s)
-noexcept -> T
+copysign(auto t, auto s)
+noexcept -> auto
+requires requires {_std::copysign(t, s);}
 {
 	return __builtin_copysign(t, s);
 }
 #else
+using _std::bit_cast;
 using _std::copysign;
 #endif
 
@@ -153,7 +150,9 @@ template <class F             > concept constant_equivocable = not _std::integra
 
 template <class T>     using   make_signed   = _std::  make_signed  <T>;
 template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
+//\
 XTAL_DEF_(return,inline,let)   make_signed_f  (_std::       signed_integral auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let)   make_signed_f  (                             auto i) noexcept -> auto {return i;}
 XTAL_DEF_(return,inline,let)   make_signed_f  (_std::     unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
 XTAL_DEF_(return,inline,let)   make_signed_f  (        constant_equivocable auto f) noexcept -> auto {return   make_signed_f(f());}
 
