@@ -11,7 +11,7 @@ namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Provides an (in)queue for `Xs...` on the target object, \
+Provides an (in)queue for the `variant`s `Ys...` on the target object, \
 schedule via `influx` and processed in segments via `reflux`. \
 
 ///\todo\
@@ -19,7 +19,7 @@ Allow for schedule beyond the current window, \
 possibly using `occur::cursor` to convert between absolute and relative delays. \
 
 template <typename ...As>
-struct chunk
+struct slicer
 {
 	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
 
@@ -33,10 +33,10 @@ struct chunk
 	public:
 		using S_::S_;
 		
-		template <class ...Xs>
+		template <class ...Ys>
 		struct inqueue
 		{
-			using superkind = typename S_::template inqueue<Xs...>;
+			using superkind = typename S_::template inqueue<Ys...>;
 			
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -44,9 +44,8 @@ struct chunk
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:
-				using typename R_::packed_type;
-				using typename R_:: event_type;
-				using typename R_:: delay_type;
+				using typename R_::event_type;
+				using typename R_::delay_type;
 
 			private:
 				typename S_::template spool_t<event_type>
@@ -133,8 +132,8 @@ struct chunk
 
 	};
 };
-template <class ...Xs>
-using chunk_t = confined_t<chunk<Xs...>>;
+template <class ...Ys>
+using slicer_t = confined_t<slicer<Ys...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

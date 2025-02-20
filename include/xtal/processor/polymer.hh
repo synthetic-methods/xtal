@@ -57,7 +57,7 @@ struct polymer<U, As...>
 	using superkind = monomer<U, As...>;
 	//\
 	Base `monomer` used to derive the return-type, \
-	and to drive the `chunk`-renderer `flux_chunk`. \
+	and to drive the `sliced` renderer. \
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>

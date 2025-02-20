@@ -10,13 +10,16 @@ XTAL_ENV_(push)
 namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
 ///\
-Provides an `in(flow )queue` for `X` on the target object, \
+Provides an `in(flow )queue` for the value `Y` on the target object, \
 which produces a signal by successive calls to `method`. \
 
+///\todo\
+Implement `glider` in terms of `slider`, \
+which enacts polling and pack-expansion via `method`. \
+
 template <typename ...As>
-struct thunk
+struct glider
 {
 	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
 
@@ -30,10 +33,11 @@ struct thunk
 	public:
 		using S_::S_;
 
-		template <class ...Xs>
+		template <class ...Ys>
 		struct inqueue
 		{
-			using superkind = typename S_::template inqueue<Xs...>;
+			static_assert(single_q<Ys...>);
+			using superkind = typename S_::template inqueue<Ys...>;
 
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -76,7 +80,7 @@ struct thunk
 
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method(V_shuttle &x, auto &&...)
+				method(V_shuttle &x)
 				noexcept -> auto
 				{
 					//\
@@ -223,8 +227,8 @@ struct thunk
 
 	};
 };
-template <class ...Xs>
-using thunk_t = confined_t<thunk<Xs...>>;
+template <class ...Ys>
+using glider_t = confined_t<glider<Ys...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

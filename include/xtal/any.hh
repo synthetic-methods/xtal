@@ -37,10 +37,8 @@ objective_f(auto &&o)
 noexcept -> auto
 {
 	XTAL_IF0
-	//\
-	XTAL_0IF (applicable_p<decltype(o)>) {return XTAL_REF_(o)();}
-	XTAL_0IF (  constant_q<decltype(o)>) {return XTAL_REF_(o)();}
-	XTAL_0IF (  variable_q<decltype(o)>) {return XTAL_REF_(o)  ;}
+	XTAL_0IF (constant_q<decltype(o)>) {return XTAL_REF_(o)();}
+	XTAL_0IF (variable_q<decltype(o)>) {return XTAL_REF_(o)  ;}
 }
 template <class ...Xs>
 using objective_t = common_t<XTAL_ALL_(objective_f(XTAL_ANY_(Xs)))...>;

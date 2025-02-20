@@ -87,7 +87,7 @@ struct define
 					if (R_::template fuse<N_ion>(cur) == 1) {
 						return 1;
 					}
-				//	Efflux `chunk`ed subviews:
+				//	Efflux sliced subviews:
 					(void) s.reflux([&] (counted_q auto scan, counter_q auto step)
 						XTAL_0FN_(to) (s.template flux<N_ion>(rend
 						,	rev.subview(scan)
@@ -105,7 +105,7 @@ struct define
 					return 0;
 				}
 				///\
-				Renders the chunk designated by `rev` and `cur`. \
+				Renders the slice designated by `rev` and `cur`. \
 				
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
@@ -152,13 +152,6 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
-//\
-template <any_q U>
-template <_detail::  processed_range_q U>
-struct defer<U>
-:	_retail::defer<U>
-{
-};
 template <_detail::unprocessed_range_q U>
 struct defer<U>
 {
@@ -189,6 +182,11 @@ struct defer<U>
 		})
 
 	};
+};
+template <_detail::  processed_range_q U>
+struct defer<U>
+:	_retail::defer<U>
+{
 };
 
 template <_detail::unprocessed_value_q U>

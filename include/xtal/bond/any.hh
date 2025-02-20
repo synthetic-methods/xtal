@@ -70,10 +70,10 @@ struct define
 	public:
 		///\returns `*this` with type `Y=T`. \
 
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return       static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return       static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return       static_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return       static_cast<Y const  &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y        &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y const  &>          (*this) ;}
 
 		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y       &&>(XTAL_MOV_(*this));}
 		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y const &&>(XTAL_MOV_(*this));}
@@ -82,10 +82,10 @@ struct define
 
 		///\returns a copy of `*this` with type `Y=T`. \
 
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()       && noexcept ->          auto  requires   fungible_q<Y, subtype> {return       static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const && noexcept ->          auto  requires   fungible_q<Y, subtype> {return       static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()        & noexcept ->          auto  requires   fungible_q<Y, subtype> {return       static_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const  & noexcept ->          auto  requires   fungible_q<Y, subtype> {return       static_cast<Y const  &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) twin()       && noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y       &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const && noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y const &&>(XTAL_MOV_(*this));}
+		template <class Y=T> XTAL_DEF_(return,inline,let) twin()        & noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y        &>          (*this) ;}
+		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const  & noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y const  &>          (*this) ;}
 
 		template <class Y=T> XTAL_DEF_(return,inline,let) twin()       && noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y       &&>(XTAL_MOV_(*this));}
 		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const && noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y const &&>(XTAL_MOV_(*this));}

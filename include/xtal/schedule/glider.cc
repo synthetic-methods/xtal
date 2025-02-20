@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./thunk.hh"// testing...
+#include "./glider.hh"// testing...
 
 #include "../provision/all.hh"
 #include "../processor/monomer.hh"
@@ -13,7 +13,7 @@ namespace xtal::schedule::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("thunk", "process")
+TAG_("glider", "process")
 {
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
@@ -29,7 +29,7 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using U0_cue   = flow::cue_s<>;
@@ -41,8 +41,8 @@ TAG_("thunk", "process")
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
-	//		typename U_thunk::template inqueue<V_event, U0_event>
-			typename U_thunk::template inqueue<         U1_event>
+	//		typename U_glider::template inqueue<V_event, U0_event>
+			typename U_glider::template inqueue<         U1_event>
 		>;
 		using U_processor = processor::monomer_t<Z_process
 		,	provision::stored <null_type[0x100]>
@@ -107,7 +107,7 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using U0_cue   = flow::cue_s<>;
@@ -120,8 +120,8 @@ TAG_("thunk", "process")
 		using V_event  = flow::cue_s<>;
 		
 		//\
-		using U_inqueue = typename U_thunk::template inqueue<V_event, U0_event>;
-		using U_inqueue = typename U_thunk::template inqueue<         U1_event>;
+		using U_inqueue = typename U_glider::template inqueue<V_event, U0_event>;
+		using U_inqueue = typename U_glider::template inqueue<         U1_event>;
 		using U_process = process::confined_t<U_inqueue>;
 
 		U_process u_gate;
@@ -179,11 +179,11 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_thunk::template inqueue<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template inqueue<V_value>>;
 
 		using U_event = flow::cue_s<V_value>;
 		using V_event = flow::cue_s<>;
@@ -235,12 +235,12 @@ TAG_("thunk", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_thunk::template inqueue<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template inqueue<V_value>>;
 
 		Z_value u_gate;
 		
@@ -260,7 +260,7 @@ TAG_("thunk", "process")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-void thunk_processor()
+void glider_processor()
 {
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
@@ -275,7 +275,7 @@ void thunk_processor()
 	int constexpr N_store = (1<<3);
 	int constexpr N_spool = (1<<7);
 	
-	using U_thunk = thunk_t<spooled<extent_constant_t<N_spool>>>;
+	using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
 
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
@@ -283,7 +283,7 @@ void thunk_processor()
 	U_store u_store{};
 
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
-	using Fn_gate = process::confined_t<typename U_thunk::template inqueue<V_value>>;
+	using Fn_gate = process::confined_t<typename U_glider::template inqueue<V_value>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	
@@ -324,11 +324,11 @@ void thunk_processor()
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
-TAG_("thunk", "processor")
+TAG_("glider", "processor")
 {
 	using namespace processor;
-	TRY_("drive actual") {thunk_processor<provision::stored<>>();}
-//	TRY_("drive virtual")  {thunk_processor<>();}// TODO?
+	TRY_("drive actual") {glider_processor<provision::stored<>>();}
+//	TRY_("drive virtual")  {glider_processor<>();}// TODO?
 
 }
 

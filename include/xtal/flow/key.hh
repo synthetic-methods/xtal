@@ -18,9 +18,9 @@ Wrapper used to index an existing type. \
 ///\see e.g. [../processor/polymer.hh]. \
 
 template <class ..._s>	struct  key;
-template <class ..._s>	concept key_q = bond:: tagged_p<key    , _s...>;
-template <class ..._s>	using   key_s = bond::compose_s<packet_t<_s...>, cell::confined<key<>>>;
-template <class ..._s>	using   key_t = bond::compose_s<packed_t<_s...>, cell::confined<key<>>>;
+template <class ..._s>	concept key_q = bond:: tagged_p<key , _s...>;
+template <class ..._s>	using   key_s = bond::compose_s<let_t<_s...>, cell::confined<key<>>>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +33,6 @@ struct key<>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		using U_ = XTAL_ALL_(XTAL_ANY_(S).tail());
 		using T_ = typename S_::self_type;
 
 	public:
@@ -53,7 +52,7 @@ struct key<>
 			return key_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
 		}
 
-		using key_layout = U_[1];
+		using key_layout = typename S_::tail_type[1];
 
 	};
 	template <key_q S>

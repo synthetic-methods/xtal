@@ -1,3 +1,3 @@
 #include "./any.hh"
-#include "./chunk.hh"
-#include "./thunk.hh"
+#include "./slicer.hh"
+#include "./glider.hh"

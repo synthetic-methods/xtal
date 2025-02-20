@@ -11,26 +11,26 @@ using namespace _retail::_detail;
 template <class U>	concept      _unprocessed_q = not _retail::any_q<U>;
 template <class U>	concept        _processed_q =     _retail::any_q<U>;
 
-template <class U>	concept          _unvalue_q = cell::any_q<U> or iterable_q<U> or requires {&U::operator();};
+template <class U>	concept            _value_q = inapplicable_q<U> and not iterable_q<U>;
+template <class U>	concept            _range_q =                           iterable_q<U>;
+
+template <class U>	concept unprocessed_value_q = _unprocessed_q<U> and       _value_q<U>;
+template <class U>	concept unprocessed_range_q = _unprocessed_q<U> and       _range_q<U>;
+
 //\
-template <class U>	concept            _value_q = not iterable_q<U> and not _unvalue_q<U> and _std::is_standard_layout_v<based_t<U>>;
-template <class U>	concept            _value_q = numeric_variable_q<U>;
-template <class U>	concept            _range_q =         iterable_q<U>;
+template <class U>	concept   processed_value_q =   _processed_q<U> and       _value_q<U>;
+template <class U>	concept   processed_value_q =   _processed_q<U> and not   _range_q<U>;
+template <class U>	concept   processed_range_q =   _processed_q<U> and       _range_q<U>;
 
-template <class U>	concept unprocessed_value_q = _unprocessed_q<U> and _value_q<U>;
-template <class U>	concept unprocessed_range_q = _unprocessed_q<U> and _range_q<U>;
-
-template <class U>	concept   processed_value_q =   _processed_q<U> and not _range_q<U>;
-template <class U>	concept   processed_range_q =   _processed_q<U> and     _range_q<U>;
-
-template <class U>	concept       unprocessed_q =  unprocessed_value_q<U> or unprocessed_range_q<U>;//NOTE: No excluded middle!
+//NOTE: `unprocessed_q` excludes `applicable_q` values! 
+template <class U>	concept       unprocessed_q =  unprocessed_value_q<U> or unprocessed_range_q<U>;
 template <class U>	concept         processed_q =    processed_value_q<U> or   processed_range_q<U>;
 
 
 template <        class   T> struct   repeated;
 template <       _value_q T> struct   repeated<T> {using type = _xtd::ranges::  repeat_view<T>;};
 template <     iterable_q T> struct   repeated<T> {using type = T;};
-//mplate <_std::invocable T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
+//mplate <   applicable_q T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
 template <        class   T> using    repeated_t  = typename repeated<T>::type;
 template <        class   T> concept  repeated_q  = different_q<T, repeated_t<T>>;
 

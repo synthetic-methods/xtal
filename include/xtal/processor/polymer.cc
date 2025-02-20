@@ -33,13 +33,13 @@ void polymer_provision_spine__locamotion()
 	using U_cursor = occur::cursor_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flow::key_s<U_stage>;
-	using U_thunk  = schedule::thunk_t<provision::spooled<extent_constant_t<0x20>>>;
+	using U_glider = schedule::glider_t<provision::spooled<extent_constant_t<0x20>>>;
 	using U_cue    = flow::cue_s<>;
 
 	using A_stored  = provision::stored  <extent_constant_t<N_store>>;
 	using A_spooled = provision::spooled <extent_constant_t<N_spool>>;
 
-	using A_gate   = bond::compose<typename U_thunk::template inqueue<Ox_level>, typename U_stage::expect<>>;
+	using A_gate   = bond::compose<typename U_glider::template inqueue<Ox_level>, typename U_stage::expect<>>;
 	using U_gate   = process::confined_t<A_gate>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -84,14 +84,14 @@ TAG_("polymer", "occur", "spine")
 	using U_cursor = occur::cursor_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flow::key_s<U_stage>;
-	using U_thunk  = schedule::thunk_t<provision::spooled<extent_constant_t<0x20>>>;
+	using U_glider  = schedule::glider_t<provision::spooled<extent_constant_t<0x20>>>;
 	using U_cue    = flow::cue_s<>;
 
 	using A_stored  = provision::stored  <extent_constant_t<-1>>;
 	using A_spooled = provision::spooled <extent_constant_t<64>>;
 
 	using U_gate   = process::confined_t<void
-	,	typename U_thunk::template inqueue<Ox_level>
+	,	typename U_glider::template inqueue<Ox_level>
 	,	typename U_stage::expect<>
 	>;
 

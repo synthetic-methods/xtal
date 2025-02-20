@@ -64,8 +64,14 @@ struct define
 		XTAL_DEF_(return,inline,met) operator >> (bond::heteropack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
 		XTAL_DEF_(return,inline,met) operator >> (bond::heteropack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
 
-		template <any_q W> XTAL_DEF_(return,inline,let) then(W    &&   w) noexcept -> auto {return S_::self() <<   XTAL_REF_(w)    ;}
-		template <any_q W> XTAL_DEF_(return,inline,let) then(auto &&...w) noexcept -> auto {return S_::self() << W{XTAL_REF_(w)...};}
+		XTAL_DEF_(return,inline,let)
+		then(any_q auto &&...oo)
+		noexcept -> auto
+		{
+			//\
+			return S_::self() << flow::packet_f(XTAL_REF_(oo)...);
+			return (S_::self() <<...<< XTAL_REF_(oo));
+		}
 
 	};
 };

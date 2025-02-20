@@ -17,9 +17,9 @@ Used for scheduling any type by prefixing with an integral delay. \
 May be stacked in order to described integral fades. \
 
 template <class ..._s>	struct  cue;
-template <class ..._s>	concept cue_q = bond:: tagged_p<cue    , _s...>;
-template <class ..._s>	using   cue_s = bond::compose_s<packet_t<_s...>, cell::confined<cue<>>>;
-template <class ..._s>	using   cue_t = bond::compose_s<packed_t<_s...>, cell::confined<cue<>>>;
+template <class ..._s>	concept cue_q = bond:: tagged_p<cue , _s...>;
+template <class ..._s>	using   cue_s = bond::compose_s<let_t<_s...>, cell::confined<cue<>>>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +32,6 @@ struct cue<>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		using U_ = XTAL_ALL_(XTAL_ANY_(S).tail());
 		using T_ = typename S_::self_type;
 
 	public:
@@ -52,7 +51,7 @@ struct cue<>
 			return cue_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
 		}
 
-		using cue_layout = U_[1];
+		using cue_layout = typename S_::tail_type[1];
 
 	};
 	template <cue_q S>

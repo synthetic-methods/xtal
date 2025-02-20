@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./chunk.hh"// testing...
+#include "./slicer.hh"// testing...
 
 #include "../provision/all.hh"
 #include "../processor/monomer.hh"
@@ -14,7 +14,7 @@ namespace xtal::schedule::_test
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class Px_mix>
-void chunk_processor_x1()
+void slicer_processor_x1()
 {
 	using namespace _xtd::ranges::views;
 	using namespace provision;
@@ -34,7 +34,7 @@ void chunk_processor_x1()
 
 	using mix_z = processor::monomer_t<Px_mix
 	,	stored<>
-	,	typename chunk_t<spooled<extent_constant_t<0x10>>>::template inqueue<U0_event>
+	,	typename slicer_t<spooled<extent_constant_t<0x10>>>::template inqueue<U0_event>
 	>;
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
@@ -65,11 +65,11 @@ void chunk_processor_x1()
 	TRUE_(equal_f(xhs, _std::vector{344, 355, 466, 477}));
 
 }
-TAG_("chunk", "processor")
+TAG_("slicer", "processor")
 {
 	using namespace processor;
-	TRY_("drive dynamic") {chunk_processor_x1<Px_dynamic_onset_mix>();}
-//	TRY_("drive  static") {chunk_processor_x1< Px_static_onset_mix>();}// TODO?
+	TRY_("drive dynamic") {slicer_processor_x1<Px_dynamic_onset_mix>();}
+//	TRY_("drive  static") {slicer_processor_x1< Px_static_onset_mix>();}// TODO?
 
 }
 

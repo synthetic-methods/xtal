@@ -1,3 +1,3 @@
 #include "./any.cc"
-#include "./chunk.cc"
-#include "./thunk.cc"
+#include "./slicer.cc"
+#include "./glider.cc"

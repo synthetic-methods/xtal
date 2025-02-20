@@ -16,9 +16,9 @@ Governs access to the `supertype`. \
 ///\see `flow::mask`. \
 
 template <class ..._s>	struct  mark;
-template <class ..._s>	concept mark_q = bond:: tagged_p<mark    , _s...>;
-template <class ..._s>	using   mark_s = bond::compose_s<packet_t<_s...>, cell::confined<mark<>>>;
-template <class ..._s>	using   mark_t = bond::compose_s<packed_t<_s...>, cell::confined<mark<>>>;
+template <class ..._s>	concept mark_q = bond:: tagged_p<mark, _s...>;
+template <class ..._s>	using   mark_s = bond::compose_s<let_t<_s...>, cell::confined<mark<>>>;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +31,6 @@ struct mark<>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
-		using U_ = XTAL_ALL_(XTAL_ANY_(S).tail());
 		using T_ = typename S_::self_type;
 
 	public:
@@ -51,7 +50,7 @@ struct mark<>
 			return mark_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
 		}
 
-		using mark_layout = U_[1];
+		using mark_layout = typename S_::tail_type[1];
 
 	};
 	template <mark_q S>

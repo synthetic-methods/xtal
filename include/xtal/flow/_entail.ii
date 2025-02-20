@@ -15,7 +15,7 @@
 ///\
 Defines an `inferred` tuple from `...As`. \
 
-template <class ...Ts>	struct   packed   : inferred<Ts..., bond::tag<bond::pack_t>> {};
+template <class ...Ts>	struct   packed   : inferred<bond::tag<packed>, Ts...> {};
 template <class ...Ts>	using    packed_t = typename packed<Ts...>::type;
 template <class ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
 template <class ...Ts>
@@ -45,19 +45,22 @@ noexcept -> auto
 Defines a `conferred` value from `T`, \
 or `T` if `any_q<T>`. \
 
-template <class      T >	struct   let        {using type = conferred_t<T>;};
-template <any_q      T >	struct   let<T>     {using type =             T ;};
-template <class      T >	using    let_t    = typename let<T>::type;
-template <class      T >
+template <class   ...Ts>	struct   let : let<either_t<Ts...>> {};
+template <class      T >	struct   let<T>       {using type = conferred_t<T>;};
+template <any_q      T >	struct   let<T>       {using type =             T ;};
+template <             >	struct   let< >       {using type =  confined_t< >;};
+template <class   ...Ts>	using    let_t      = typename let<Ts...>::type;
 
 ///\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`.
 
+template <class   ...Ts>
 XTAL_DEF_(return,inline,let)
-let_f(T &&t)
+let_f(Ts &&...ts)
 noexcept -> decltype(auto)
 {
-	return let_t<T>(XTAL_REF_(t));
+	return let_t<Ts...>(XTAL_REF_(ts)...);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

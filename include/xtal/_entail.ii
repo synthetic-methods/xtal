@@ -48,6 +48,8 @@ template <         class ...Ts>	concept      fungible_q	=           _retail::   
 template <         class ...Ts>	concept    infungible_q	=           _retail::   infungible_q<   Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
 
 
+template <         class ...Xs>	using          either_t	=           _retail::    either_t<   Xs ...> ;
+template <class T, class ...Xs>	concept        either_q	=           _retail::    either_q<T, Xs ...> ;
 template <         class ...Ts>	using          common_t	=           _retail::       common_t<Ts ...> ;
 template <         class ...Ts>	concept        common_q	=           _retail::       common_q<Ts ...> ;
 template <         class ...Ts>	using           cased_t	=  common_t<_retail::        based_t<Ts>...> ;
@@ -56,8 +58,12 @@ template <         class ...Ts>	concept         based_q	= (...and   _retail::   
 template <         class ...Ts>	concept       unbased_q	= (...and   _retail::      unbased_q<Ts    >);
 
 
+template <         class ...Ts>	concept      multiple_q	=           _retail::     multiple_q<Ts...>;
+template <         class ...Ts>	concept        single_q	=           _retail::       single_q<Ts...>;
 template <         class ...Ts>	concept          some_q	=           _retail::         some_q<Ts...>;
 template <         class ...Ts>	concept          none_q	=           _retail::         none_q<Ts...>;
+template <         auto  ...Ns>	concept      multiple_n	=           _retail::     multiple_n<Ns...>;
+template <         auto  ...Ns>	concept        single_n	=           _retail::       single_n<Ns...>;
 template <         auto  ...Ns>	concept          some_n	=           _retail::         some_n<Ns...>;
 template <         auto  ...Ns>	concept          none_n	=           _retail::         none_n<Ns...>;
 
@@ -123,16 +129,6 @@ template <class T, class ...Ts>	concept            un_q	=           _retail::   
 template <class          ...Ts>	concept      variable_q	= (...and   _retail::          variable_q<based_t<Ts>>);
 template <class          ...Ts>	concept      constant_q	= (...and   _retail::          constant_q<based_t<Ts>>);
 template <auto   N=null_type{}>	using        constant_t	=           _retail::          constant_t<N >  ;
-
-XTAL_DEF_(return,inline,let)
-variable_f(auto &&x)
-noexcept -> decltype(auto)
-{
-	using X = XTAL_ALL_(x);
-	XTAL_IF0
-	XTAL_0IF (variable_q<X>) {return XTAL_REF_(x);}
-	XTAL_0IF (constant_q<X>) {return        X{}();}
-}
 
 template <auto  N       >	using     integral_constant_t	=           _retail:: integral_constant_t<N>;
 template <auto  N       >	using     cardinal_constant_t	=           _retail:: cardinal_constant_t<N>;
