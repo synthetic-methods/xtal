@@ -63,7 +63,6 @@ struct define
 				using payload_type = typename flow::cue_s<Ys...>::tail_type;
 
 			public:// FLOW
-
 				///\
 				Forwards `oo...` downstream. \
 
@@ -144,17 +143,6 @@ struct define
 				{
 					static_assert(none_q<_s...>);
 					return flux<N_ion>(event_type{v.head(), XTAL_REF_(w)});
-				}
-
-			private:
-
-				template <signed N_ion>
-				XTAL_DEF_(return,inline,let)
-				confuse(auto &&o)
-				noexcept -> decltype(auto)
-				{
-					return [this, o=XTAL_REF_(o)] (auto &&...oo)
-						XTAL_0FN_(to) (self().template fuse<N_ion>((XTAL_REF_(o) <<...<< XTAL_REF_(oo))));
 				}
 
 			};

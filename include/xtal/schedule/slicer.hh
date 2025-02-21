@@ -44,8 +44,9 @@ struct slicer
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:
-				using typename R_::event_type;
-				using typename R_::delay_type;
+				using typename R_::  event_type;
+				using typename R_::  delay_type;
+				using typename R_::payload_type;
 
 			private:
 				typename S_::template spool_t<event_type>

@@ -177,44 +177,55 @@ struct defer
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
+		using T_ = typename S_::self_type;
+		using U_ = typename S_::head_type;
 	
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
+
+	public:// ACCESS
 		using S_::self;
 		using S_::head;
+
+	public:// FLOW
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		flux_this(auto &&...oo)
+		noexcept -> signed
+		{
+			if constexpr (un_q<T_, decltype(oo)...> or in_q<T_, bond::seek_front_t<decltype(oo)...>>) {
+				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
+			}
+			else {
+				return -1;
+			}
+		}
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		flux_head(auto &&...oo)
+		noexcept -> signed
+		{
+			if constexpr (un_q<U_, decltype(oo)...> and any_q<U_>) {
+				return head().template flux<N_ion>(XTAL_REF_(oo)...);
+			}
+			else {
+				return -1;
+			}
+		}
+
+		///\note\
+		When `N_ion == +1`, influxes via the proxied value if supported, then via `this`. \
+		When `N_ion == -1`, effluxes via `this`, then via the proxied value if supported. \
 
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		flux(auto &&...oo)
 		noexcept -> signed
 		{
-			return S_::template flux<N_ion>(XTAL_REF_(oo)...);
-		}
-		///\note\
-		Influxes via the proxied value if supported, then via `this`.
-
-		template <signed N_ion> requires in_n<N_ion, +1>
-		XTAL_DEF_(return,inline,let)
-		flux(auto &&...oo)
-		noexcept -> signed
-		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
-		{
-			return [this, oo...]
-				XTAL_1FN_(and) (S_::template flux<N_ion>(oo...))
-					(head().template flux<N_ion>(XTAL_REF_(oo)...));
-		}
-		///\note\
-		Effluxes via `this`, then via the proxied value if supported.
-
-		template <signed N_ion> requires in_n<N_ion, -1>
-		XTAL_DEF_(return,inline,let)
-		flux(auto &&...oo)
-		noexcept -> signed
-		requires any_q<U> and different_q<U, bond::seek_front_t<decltype(oo)...>>
-		{
-			return [this, oo...]
-				XTAL_1FN_(and) (head().template flux<N_ion>(oo...))
-					(S_::template flux<N_ion>(XTAL_REF_(oo)...));
+			XTAL_IF0
+			XTAL_0IF (N_ion < 0) {return [this, oo...] XTAL_1FN_(and) (flux_head<N_ion>(oo...)) (flux_this<N_ion>(XTAL_REF_(oo)...));}
+			XTAL_0IF (0 < N_ion) {return [this, oo...] XTAL_1FN_(and) (flux_this<N_ion>(oo...)) (flux_head<N_ion>(XTAL_REF_(oo)...));}
+			
 		}
 
 		///\note\
@@ -227,7 +238,7 @@ struct defer
 		{
 			return S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
-		template <signed N_ion> requires in_n<N_ion,  0>
+		template <signed N_ion> requires in_n<N_ion, 0>
 		XTAL_DEF_(return,inline,let)
 		fuse(same_q<U> auto &&o)
 		noexcept -> signed

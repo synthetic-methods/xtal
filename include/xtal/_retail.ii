@@ -89,10 +89,11 @@ template <                           >	struct complete<        >    {class type 
 template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
-template <auto  N, auto  ...Ns>	concept            un_n	= ((none_n<Ns...> and incomplete_n<N>) or...or different_n<N, Ns>);
-template <class T, class ...Ts>	concept            un_q	= ((none_q<Ts...> and incomplete_q<T>) or...or different_q<T, Ts>);
-template <auto  N, auto  ...Ns>	concept            in_n	= ((none_n<Ns...> and   complete_n<N>) or...or      same_n<N, Ns>);
-template <class T, class ...Ts>	concept            in_q	= ((none_q<Ts...> and   complete_q<T>) or...or      same_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            in_n	=  complete_n<N> and none_n<Ns...> or (...or same_n<N, Ns>);
+template <class T, class ...Ts>	concept            in_q	=  complete_q<T> and none_q<Ts...> or (...or same_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            un_n	=  not in_n<N, Ns...>;
+template <class T, class ...Ts>	concept            un_q	=  not in_q<T, Ts...>;
+
 
 template <         class ...Xs>	using          either_t	= _std::variant<based_t<Xs>...>;
 template <class T, class ...Xs>	concept        either_q	=    same_q<T, either_t<Xs...>>;

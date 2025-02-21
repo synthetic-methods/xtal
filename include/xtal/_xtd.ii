@@ -204,15 +204,8 @@ XTAL_DEF_(return,inline,let) make_unsigned_f  (        constant_equivocable auto
 
 ///\returns the result of `w + x*(y*...*ys)`, using `fma` where possible. \
 
-template <class W, class X, class Y>
-requires requires (W w, X x, Y y) {
-	requires(not _std::derived_from<XTAL_ALL_(w), _std::complex<XTAL_ALL_(abs(w))>>);
-	requires(not _std::derived_from<XTAL_ALL_(x), _std::complex<XTAL_ALL_(abs(x))>>);
-	requires(not _std::derived_from<XTAL_ALL_(y), _std::complex<XTAL_ALL_(abs(y))>>);
-	w + x*y;
-}
 XTAL_DEF_(return,inline,let)
-plus_multiplies(W &&w, X &&x, Y &&y)
+plus_multiplies(auto &&w, auto &&x, auto &&y)
 noexcept -> XTAL_ALL_(w + x*y)
 {
 	XTAL_IF0

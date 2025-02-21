@@ -198,14 +198,6 @@ struct polymer<U, As...>
 					assert(u_->head() == h);
 					return u_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
 				}
-//				void twat() {
-//					//\
-//					auto k = lead().template head<occur::bundle_t<int, bool, float, bool>>();
-//					auto k = lead().template self<occur::bundle_t<int, bool, float, bool>>();
-//					echo_(typeid(k).name());
-//					echo_(typeid(lead().self()).name());
-//					echo_();
-//				}
 				///\
 				Renders the indexed `store` slice designated by `rev` and `cur`, \
 				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
