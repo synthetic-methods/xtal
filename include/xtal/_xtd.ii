@@ -47,6 +47,43 @@ XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {retur
 }
 #endif
 
+template <class S, class T >	struct  tranfer_qualifiers                {using type = T         ;};
+template <class S, class T >	struct  tranfer_qualifiers<S const   , T> {using type = T const   ;};
+template <class S, class T >	struct  tranfer_qualifiers<S       &&, T> {using type = T       &&;};
+template <class S, class T >	struct  tranfer_qualifiers<S const &&, T> {using type = T const &&;};
+template <class S, class T >	struct  tranfer_qualifiers<S        &, T> {using type = T        &;};
+template <class S, class T >	struct  tranfer_qualifiers<S const  &, T> {using type = T const  &;};
+template <class S, class T >	using   tranfer_qualifiers_t = typename tranfer_qualifiers<S, T>::type;
+
+///\note\
+The replacements for the `...extent...` definitions are intended to overcome \
+discrepancies between `LLVM` and `GNUC` (particularly for zero-length arrays). \
+
+template <class T          >	struct  remove_all_extents : tranfer_qualifiers<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
+template <class U          >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
+template <class U          >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
+template <class U, auto  N >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
+template <class U, auto  N >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
+template <class T          >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
+
+template <class T          >	struct  remove_extent : tranfer_qualifiers<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
+template <class U          >	struct  remove_extent<U   [0]> {using type = U  ;};
+template <class U          >	struct  remove_extent<U(&)[0]> {using type = U &;};
+template <class U, auto  N >	struct  remove_extent<U   [N]> {using type = U  ;};
+template <class U, auto  N >	struct  remove_extent<U(&)[N]> {using type = U &;};
+template <class T          >	using   remove_extent_t = typename remove_extent<T>::type;
+
+template <class T          >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
+template <class U          >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U          >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U, auto  N >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
+template <class U, auto  N >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
+
+template <class T, unsigned N=0>	struct         extent          :  extent<remove_extent_t<T>, N - 1> {};
+template <class T              >	struct         extent<T, 0U>   : _extent<T> {};
+template <class T, unsigned N=0>	auto constexpr extent_v =         extent<T, N>::value;
+
+
 template <class T> concept nominally_initializable = _std::               default_initializable  <T>;
 //\
 template <class T> concept nominally_destructible  = _std::             is_nothrow_destructible_v<T>;

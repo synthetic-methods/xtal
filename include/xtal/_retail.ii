@@ -100,30 +100,17 @@ template <class T, class ...Xs>	concept        either_q	=    same_q<T, either_t<
 template <         class ...Ts>	using          common_t	=  typename complete_t<_std::common_type<Ts...>, identity_t<void>>::type;
 template <         class ...Ts>	concept        common_q	=  some_q<Ts...> and complete_q<common_t<Ts...>>;
 
-template <class T             >	concept        vacant_q	=  in_q<T, void, void_type, null_type>;
-template <class T             >	concept       present_q	=  not vacant_q<T>;
-
 template <class T             >  concept        atomic_q =  complete_q<T> and _xtd::trivial<based_t<T>>;
 template <class T             >  concept     molecular_q =  complete_q<T> and _xtd::nominal<based_t<T>>;
 template <class T             >  concept  submolecular_q =  atomic_q<T> or molecular_q<T> and _std::is_standard_layout_v<based_t<T>>;
 
-template <class T, class Y    >	struct        qualify                {using type = T         ;};
-template <class T, class Y    >	struct        qualify<T, Y const   > {using type = T const   ;};
-template <class T, class Y    >	struct        qualify<T, Y       &&> {using type = T       &&;};
-template <class T, class Y    >	struct        qualify<T, Y const &&> {using type = T const &&;};
-template <class T, class Y    >	struct        qualify<T, Y        &> {using type = T        &;};
-template <class T, class Y    >	struct        qualify<T, Y const  &> {using type = T const  &;};
-template <class T, class Y=T  >	using         qualify_t = typename qualify<based_t<T>, Y>::type;
-template <class Y, class T=Y  >	using         qualify_s = typename qualify<based_t<T>, Y>::type;
-
-template <class T, class Y    >	struct     disqualify                {using type = T         ;};
-template <class T, class Y    >	struct     disqualify<T, Y const   > {using type = T         ;};
-template <class T, class Y    >	struct     disqualify<T, Y       &&> {using type = T         ;};
-template <class T, class Y    >	struct     disqualify<T, Y const &&> {using type = T         ;};
-template <class T, class Y    >	struct     disqualify<T, Y        &> {using type = T        &;};
-template <class T, class Y    >	struct     disqualify<T, Y const  &> {using type = T const  &;};
-template <class T, class Y=T  >	using      disqualify_t = typename qualify<based_t<T>, Y>::type;
-template <class Y, class T=Y  >	using      disqualify_s = typename qualify<based_t<T>, Y>::type;
+template <class S, class T    >	struct     disqualify   : disqualify<S &&, T> {};
+template <class S, class T    >	struct     disqualify<S       &&, T> {using type = T         ;};
+template <class S, class T    >	struct     disqualify<S const &&, T> {using type = T const   ;};
+template <class S, class T    >	struct     disqualify<S        &, T> {using type = T        &;};
+template <class S, class T    >	struct     disqualify<S const  &, T> {using type = T const  &;};
+template <class S, class T=S  >	using      disqualify_s =  typename disqualify<S, based_t<T>>::type;
+template <class S, class T=S  >	using         qualify_s = _xtd::tranfer_qualifiers_t<S, based_t<T>>;
 
 
 template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
@@ -245,7 +232,7 @@ template <class T             >	struct      fluid_valued;
 template <class T             >	using             valued   = fluid_valued<T>;
 
 template <class T, class U    >	using       const_valued_u	= _std::conditional_t<_std::is_const_v<T>, const U, U>;
-template <class T             >	using       array_valued_u	=  const_valued_u<T, _std::remove_extent_t<_std::remove_reference_t<T>>>;
+template <class T             >	using       array_valued_u	=  const_valued_u<T, _xtd::remove_extent_t<_std::remove_reference_t<T>>>;
 template <class T             >	using       inner_valued_u	=  const_valued_u<T,              typename _std::remove_reference_t<T>::value_type>;
 template <class T             >	using       under_valued_u	=  const_valued_u<T, _std::underlying_type_t<T>>;
 template <class T             >	using       fixed_valued_u	=  typename fixed_valued<T>::value_type;
@@ -254,7 +241,7 @@ template <class T             >	using             valued_u	=  typename       val
 template <class T             >	using      scalar_valued_u	=  const_valued_u<T, typename based_t<T>::scalar_type>;
 template <class T             >	using      Scalar_valued_u	=  const_valued_u<T, typename based_t<T>::Scalar     >;
 
-template <class T             >	concept     array_valued_q	=    _std::is_array_v<_std::remove_reference_t<T>>;
+template <class T             >	concept     array_valued_q	=  different_q<array_valued_u<T>, T>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
 template <class T             >	concept     inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
 template <class T             >	concept     under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
 template <class T             >	concept     fixed_valued_q	=  complete_q<fixed_valued<T>> and different_q<T, fixed_valued_u<T>>;
@@ -278,7 +265,9 @@ template <class T             >	using       tuple_shaped  	=  assayed<complete_t
 template <class T             >	concept     tuple_shaped_q	=          complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
 
 template <class T             >	using       array_shaped  	=  assayed<_std::  extent_v<_std::remove_reference_t<T>>>;
-template <class T             >	concept     array_shaped_q	=          _std::is_array_v<_std::remove_reference_t<T>>;
+//\
+template <class T             >	concept     array_shaped_q	= _std::is_array_v<_std::remove_reference_t<T>>;
+template <class T             >	concept     array_shaped_q	=  different_q<array_valued_u<T>, T>;
 
 template <class T             >	struct      fixed_shaped;
 template <class T=void        >	struct      fluid_shaped;
@@ -455,28 +444,25 @@ template <    iterator_q ...Ts>	struct     epimorphic	<Ts...> : epimorphic<itera
 //\
 Arithmetic...
 
-template <class               >	struct   intercedent;
-template <class               >	struct     precedent;
-template <class               >	struct     succedent;
+template <       class   T>	struct              cedent;
+template <    constant_q T>	struct              cedent<T> :             T {}  ;
+template <array_shaped_q T>	struct              cedent<T> : constant_t<array_shaped<T>::extent()> {};
+template <       class   T>   auto constexpr      cedent_v  = cedent<T>{}();
+template <       class   T>   auto constexpr   precedent_v  = cedent_v<T> -  1;
+template <       class   T>   auto constexpr   succedent_v  = cedent_v<T> +  1;
+template <       class   T>   auto constexpr intercedent_v  = cedent_v<T> != 0;
+template <       class   T>   auto constexpr    antedent_v  = cedent_v<T> == 0;
+template <       class   T>	struct           precedent;
+template <       class   T>	struct           succedent;
+template <    constant_q T>	struct           precedent<T>  	{using type = constant_t<                   precedent_v<T>>;};
+template <    constant_q T>	struct           succedent<T>  	{using type = constant_t<                   succedent_v<T>>;};
+template <array_shaped_q T>	struct           precedent<T>  	{using type = instruct_t<array_valued_u<T>, precedent_v<T>>;};
+template <array_shaped_q T>	struct           succedent<T>  	{using type = instruct_t<array_valued_u<T>, succedent_v<T>>;};
 
-template <constant_q T        >	struct   intercedent<T      > :             T{};
-template <class U, auto  N    >	struct   intercedent<U   [N]> : constant_t<N>{};
-template <class U, auto  N    >	struct   intercedent<U(&)[N]> : constant_t<N>{};
-template <class T>         auto constexpr intercedent_v  = intercedent  <T> {}();
-template <class T>         auto constexpr   precedent_v  = intercedent_v<T> - 1;//sign_v<intercedent_v<T>>;
-template <class T>         auto constexpr   succedent_v  = intercedent_v<T> + 1;//sign_v<intercedent_v<T>>;
-
-template <constant_q T        >	struct     precedent<T      >  	{using type = constant_t<precedent_v<T      >>;};
-template <class U, auto  N    >	struct     precedent<U   [N]>  	{using type =       U   [precedent_v<U   [N]>];};
-template <class U, auto  N    >	struct     precedent<U(&)[N]>  	{using type =       U(&)[precedent_v<U(&)[N]>];};
-template <constant_q T        >	struct     succedent<T      >  	{using type = constant_t<succedent_v<T      >>;};
-template <class U, auto  N    >	struct     succedent<U   [N]>  	{using type =       U   [succedent_v<U   [N]>];};
-template <class U, auto  N    >	struct     succedent<U(&)[N]>  	{using type =       U(&)[succedent_v<U(&)[N]>];};
-
-template <class T             >	concept   intercedent_q	= complete_q<intercedent<T>> and requires {requires (0 != intercedent_v<T>);};
-template <class T             >	concept    antecedent_q	= complete_q<intercedent<T>> and requires {requires (0 == intercedent_v<T>);};
-template <class T             >	using       precedent_s	= typename   precedent<T>::type;
-template <class T             >	using       succedent_s	= typename   succedent<T>::type;
+template <       class   T>	concept   intercedent_q	=  complete_q<cedent<T>> and requires {requires intercedent_v<T>;};
+template <       class   T>	concept    antecedent_q	=  complete_q<cedent<T>> and requires {requires    antedent_v<T>;};
+template <       class   T>	using       precedent_s	= typename precedent<T>::type;
+template <       class   T>	using       succedent_s	= typename succedent<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

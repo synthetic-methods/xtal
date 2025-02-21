@@ -75,9 +75,6 @@ template <         class ...Ts>	using        complete_t	=           _retail::   
 template <         class ...Ts>	concept      complete_q	= (...and   _retail::     complete_q<Ts   >) and some_q<Ts...>;
 template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   incomplete_q<Ts   >) or  none_q<Ts...>;
 
-template <         class ...Ts>	concept        vacant_q	= (...and   _retail::       vacant_q<Ts   >);
-template <         class ...Ts>	concept       present_q	= (...and   _retail::      present_q<Ts   >);
-
 template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts   >);
 template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts   >);
 template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts   >);
@@ -89,14 +86,11 @@ template <         class ...Ts>	concept          same_q	=           _retail::   
 template <         class ...Ts>	concept          make_q	=           _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
 template <class T, class ...Ts>	concept          make_p	=           _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
 
+template <class S, class T    >	using      disqualify_s	=           _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+template <class S, class T    >	using         qualify_s	=           _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
 
-template <class T, class Y    >	using         qualify_t	=           _retail::      qualify_t<T, Y    >;///< Applies the qualifiers on `Y` to `T`.
-template <class Y, class T    >	using         qualify_s	=           _retail::      qualify_s<Y, T    >;///< Applies the qualifiers on `Y` to `T`.
-template <class T, class Y    >	using      disqualify_t	=           _retail::   disqualify_t<T, Y    >;///< Applies the qualifiers on `Y` to `T`.
-template <class Y, class T    >	using      disqualify_s	=           _retail::   disqualify_s<Y, T    >;///< Applies the qualifiers on `Y` to `T`.
-
-template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<qualify_t<T, decltype(o)>>(o);}
-template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<qualify_t<T, decltype(o)>>(o);}
+template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<qualify_s<decltype(o), T>>(o);}
+template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<qualify_s<decltype(o), T>>(o);}
 
 
 ////////////////////////////////////////////////////////////////////////////////

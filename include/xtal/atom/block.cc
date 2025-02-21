@@ -36,6 +36,16 @@ TAG_("block")
 	using W_alpha = block_t<T_alpha[2]>; using U_alpha_ = block_t<T_alpha(&)[1]>;
 	using W_aphex = block_t<T_aphex[2]>; using U_aphex_ = block_t<T_aphex(&)[1]>;
 
+	TRY_("block nesting")
+	{
+		using Z_alpha = block_t<T_alpha[2][4][6]>;
+
+		TRUE_(2 == shaped<         Z_alpha                                    >::extent());
+		TRUE_(4 == shaped<typename Z_alpha::value_type                        >::extent());
+		TRUE_(6 == shaped<typename Z_alpha::value_type::value_type            >::extent());
+		TRUE_(0 == shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
+
+	}
 	TRY_("block slicing")
 	{
 		W_alpha w_alpha{1, 2};
