@@ -22,7 +22,7 @@ A dynamically-bounded analogue of `std::vector` with fixed capacity. \
 Configured by the array-like parameter `A`, where: \
 
 ///\
-*	If `A` has capacity `< XTAL_SYS_(extent)`, \
+*	If `A` has capacity `<= XTAL_SYS_(extent)`, \
 then a fixed-capacity implementation is provided. \
 
 ///\
@@ -30,18 +30,28 @@ then a fixed-capacity implementation is provided. \
 the default (dynamically allocated) `std::vector` is used. \
 
 template <scalar_q U_data>
-struct buffer<U_data[XTAL_SYS_(extent)]>
+struct buffer<U_data *>
 {
 	using type = bond::compose_s<_std::vector<U_data>, bond::tag<buffer_t>>;
 
 };
-template <scalar_q U_data, auto N_data>
-struct buffer<U_data[N_data]>
+template <vector_q A_data> requires _detail::  elastic_fixed_q<A_data>
+struct buffer<A_data>
 {
+	using U_data = fixed_u<A_data>;
+
+	using type = bond::compose_s<_std::vector<U_data>, bond::tag<buffer_t>>;
+
+};
+template <vector_q A_data> requires _detail::inelastic_fixed_q<A_data>
+struct buffer<A_data>
+{
+	using U_data = fixed_u<A_data>;
 	using T_data = typename _detail::aligned<U_data>::type;
+	static auto constexpr N_data = fixed<A_data>::extent();
 
 	template <class T>
-	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer>>;
+	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

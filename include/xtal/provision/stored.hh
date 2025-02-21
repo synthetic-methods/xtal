@@ -44,12 +44,17 @@ struct stored<A>
 template <class A>
 struct stored<A>
 {
+private:
+	static auto constexpr M = XTAL_SYS_(extent, size_type);
+	static auto constexpr N = M&shaped<A>::extent();
+
+public:
 	using superkind = bond::tag<stored>;
 	
 	template <class S>
 	class subtype;
 
-	template <class S> requires cardinal_q<valued_u<A>>
+	template <class S> requires (0 != N and M != N) and cardinal_q<valued_u<A>>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -58,10 +63,10 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom:: block_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
+		using store_t = atom:: block_t<U[N]>;
 
 	};
-	template <class S> requires  ordinal_q<valued_u<A>>
+	template <class S> requires (0 != N and M != N) and  ordinal_q<valued_u<A>>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -70,13 +75,25 @@ struct stored<A>
 		using S_::S_;
 		
 		template <class U>
-		using store_t = atom::buffer_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
+		using store_t = atom::buffer_t<U[N]>;
+
+	};
+	template <class S> requires (0 == N or  M == N) and  ordinal_q<valued_u<A>>
+	class subtype<S> : public bond::compose_s<S, superkind>
+	{
+		using S_ = bond::compose_s<S, superkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using store_t = atom::buffer_t<U * >;
 
 	};
 };
-template <auto N> struct stored<unit_type[N]> : stored<  size_constant_t< N>> {};///< Fixed-size, based on `block_t`.
-template <auto N> struct stored<null_type[N]> : stored<extent_constant_t< N>> {};///< Fluid-size, based on `store_t`.
-template <      > struct stored<            > : stored<extent_constant_t<-1>> {};///< Fluid-size, based on `store_t` (default).
+template <auto N> struct stored<unit_type[N]> : stored<  size_constant_t< N>> {};///< Fixed-size using `atom:: block_t`.
+template <auto N> struct stored<null_type[N]> : stored<extent_constant_t< N>> {};///< Fluid-size using `atom::buffer_t`.
+template <      > struct stored<            > : stored<extent_constant_t<-1>> {};///< Fluid-size using `std::vector` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

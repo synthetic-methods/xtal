@@ -15,20 +15,21 @@ namespace _xtd
 namespace ranges        {using namespace      ::ranges;}
 namespace ranges::views {using namespace      ::ranges::views;}
 #endif
+
 #if XTAL_VER_(ranges != 3)
 namespace ranges        {using namespace ::std::ranges;}
 namespace ranges::views {using namespace ::std::ranges::views;}
 
 namespace ranges
 {
+using  _std::make_reverse_iterator;
+using  _std::   make_move_iterator;
 //\
-using _std::           accumulate;
-using        ::ranges::accumulate;
-using _std::   make_move_iterator;
-using _std::make_reverse_iterator;
-using ::ranges::         any_view;
-using ::ranges::      repeat_view;
-using ::ranges::   get_categories;
+using  _std::           accumulate;
+using ::ranges::        accumulate;
+using ::ranges::          any_view;
+using ::ranges::       repeat_view;
+using ::ranges::    get_categories;
 }
 namespace ranges::views
 {
@@ -47,26 +48,55 @@ XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {retur
 }
 #endif
 
-template <class S, class T >	struct  tranfer_qualifiers                {using type = T         ;};
-template <class S, class T >	struct  tranfer_qualifiers<S const   , T> {using type = T const   ;};
-template <class S, class T >	struct  tranfer_qualifiers<S       &&, T> {using type = T       &&;};
-template <class S, class T >	struct  tranfer_qualifiers<S const &&, T> {using type = T const &&;};
-template <class S, class T >	struct  tranfer_qualifiers<S        &, T> {using type = T        &;};
-template <class S, class T >	struct  tranfer_qualifiers<S const  &, T> {using type = T const  &;};
-template <class S, class T >	using   tranfer_qualifiers_t = typename tranfer_qualifiers<S, T>::type;
+////////////////////////////////////////////////////////////////////////////////
 
+template <class S, class T >	struct  transfer_reference                           {using type = T                  ;};
+template <class S, class T >	struct  transfer_reference  <S                 &, T> {using type = T                 &;};
+template <class S, class T >	struct  transfer_reference  <S                &&, T> {using type = T                &&;};
+template <class S, class T >	using   transfer_reference_t = typename transfer_reference     <S, T>::type;
+
+template <class S, class T >	struct  transfer_volatile                            {using type = T                  ;};
+template <class S, class T >	struct  transfer_volatile   <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	using   transfer_volatile_t  = typename transfer_volatile      <S, T>::type;
+
+template <class S, class T >	struct  transfer_const                               {using type = T                  ;};
+template <class S, class T >	struct  transfer_const      <S const            , T> {using type = T const            ;};
+template <class S, class T >	using   transfer_const_t     = typename transfer_const         <S, T>::type;
+
+template <class S, class T >	struct  transfer_cv                                  {using type = T                  ;};
+template <class S, class T >	struct  transfer_cv         <S const            , T> {using type = T const            ;};
+template <class S, class T >	struct  transfer_cv         <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	struct  transfer_cv         <S const volatile   , T> {using type = T const volatile   ;};
+template <class S, class T >	using   transfer_cv_t        = typename transfer_cv            <S, T>::type;
+
+template <class S, class T >	struct  transfer_cvref                               {using type = T                  ;};
+template <class S, class T >	struct  transfer_cvref      <S const            , T> {using type = T const            ;};
+template <class S, class T >	struct  transfer_cvref      <S                &&, T> {using type = T                &&;};
+template <class S, class T >	struct  transfer_cvref      <S const          &&, T> {using type = T const          &&;};
+template <class S, class T >	struct  transfer_cvref      <S                 &, T> {using type = T                 &;};
+template <class S, class T >	struct  transfer_cvref      <S const           &, T> {using type = T const           &;};
+template <class S, class T >	struct  transfer_cvref      <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	struct  transfer_cvref      <S const volatile   , T> {using type = T const volatile   ;};
+template <class S, class T >	struct  transfer_cvref      <S       volatile &&, T> {using type = T       volatile &&;};
+template <class S, class T >	struct  transfer_cvref      <S const volatile &&, T> {using type = T const volatile &&;};
+template <class S, class T >	struct  transfer_cvref      <S       volatile  &, T> {using type = T       volatile  &;};
+template <class S, class T >	struct  transfer_cvref      <S const volatile  &, T> {using type = T const volatile  &;};
+template <class S, class T >	using   transfer_cvref_t     = typename transfer_cvref         <S, T>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
 ///\note\
 The replacements for the `...extent...` definitions are intended to overcome \
 discrepancies between `LLVM` and `GNUC` (particularly for zero-length arrays). \
 
-template <class T          >	struct  remove_all_extents : tranfer_qualifiers<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
+template <class T          >	struct  remove_all_extents : transfer_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
 template <class U          >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
 template <class U          >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
 template <class U, auto  N >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
 template <class U, auto  N >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
 template <class T          >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
 
-template <class T          >	struct  remove_extent : tranfer_qualifiers<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
+template <class T          >	struct  remove_extent : transfer_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
 template <class U          >	struct  remove_extent<U   [0]> {using type = U  ;};
 template <class U          >	struct  remove_extent<U(&)[0]> {using type = U &;};
 template <class U, auto  N >	struct  remove_extent<U   [N]> {using type = U  ;};
@@ -84,18 +114,20 @@ template <class T              >	struct         extent<T, 0U>   : _extent<T> {};
 template <class T, unsigned N=0>	auto constexpr extent_v =         extent<T, N>::value;
 
 
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T> concept nominally_initializable = _std::               default_initializable  <T>;
 //\
-template <class T> concept nominally_destructible  = _std::             is_nothrow_destructible_v<T>;
-template <class T> concept nominally_destructible  = _std::                        destructible  <T>;
-template <class T> concept nominally_copyable      = _std::                            copyable  <T>;
-template <class T> concept nominally_movable       = _std::                             movable  <T>;
+template <class T> concept nominally_destructible  = _std::            is_nothrow_destructible_v <T>;
+template <class T> concept nominally_destructible  = _std::                       destructible   <T>;
+template <class T> concept nominally_copyable      = _std::                       copyable       <T>;
+template <class T> concept nominally_movable       = _std::                       movable        <T>;
 
-template <class T> concept trivially_initializable = _std::  is_trivially_default_constructible_v<T>;
-template <class T> concept trivially_destructible  = _std::           is_trivially_destructible_v<T>;
-template <class T> concept trivially_copyable      = _std::               is_trivially_copyable_v<T>;
-template <class T> concept trivially_movable       = _std::     is_trivially_move_constructible_v<T>\
-                                                 and _std::        is_trivially_move_assignable_v<T>;
+template <class T> concept trivially_initializable = _std:: is_trivially_default_constructible_v <T>;
+template <class T> concept trivially_destructible  = _std:: is_trivially_destructible_v          <T>;
+template <class T> concept trivially_copyable      = _std:: is_trivially_copyable_v              <T>;
+template <class T> concept trivially_movable       = _std:: is_trivially_move_constructible_v    <T>\
+                                                 and _std:: is_trivially_move_assignable_v       <T>;
 
 template <class T> concept nominally_constructible = nominally_copyable<T> and nominally_movable<T>;
 template <class T> concept trivially_constructible = trivially_copyable<T> and trivially_movable<T>;
@@ -109,9 +141,25 @@ template <class T> concept trivial                 = trivially_instructible<T> a
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T> concept                    reference = _std::       is_reference_v<T> or ranges::range<XTAL_NOM_(T)>;
-template <class T> concept             rvalue_reference = _std::is_rvalue_reference_v<T> or ranges::range<XTAL_NOM_(T)> and not ranges::borrowed_range<XTAL_NOM_(T)>;
-template <class T> concept             lvalue_reference = _std::is_lvalue_reference_v<T> or ranges::range<XTAL_NOM_(T)> and     ranges::borrowed_range<XTAL_NOM_(T)>;
+template <class T           > concept              reference = _std::       is_reference_v<T>;// or ranges::range<XTAL_NOM_(T)>;
+template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;// or ranges::range<XTAL_NOM_(T)> and _std::is_rvalue_reference_v<ranges::iter_reference_t<XTAL_NOM_(T)>>;
+template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;// or ranges::range<XTAL_NOM_(T)> and _std::is_lvalue_reference_v<ranges::iter_reference_t<XTAL_NOM_(T)>>;
+
+template <class T           > struct        remove_reference    : _std::remove_reference<T> {};
+template <class T           > struct remove_rvalue_reference                 {using type = T;};
+template <class T           > struct remove_lvalue_reference                 {using type = T;};
+template <rvalue_reference T> struct remove_rvalue_reference<T> :       remove_reference<T> {};
+template <lvalue_reference T> struct remove_lvalue_reference<T> :       remove_reference<T> {};
+
+template <class T           > using         remove_reference_t = typename        remove_reference<T>::type;
+template <class T           > using  remove_rvalue_reference_t = typename remove_rvalue_reference<T>::type;
+template <class T           > using  remove_lvalue_reference_t = typename remove_lvalue_reference<T>::type;
+
+static_assert(_std::same_as<remove_rvalue_reference_t<const float(&&)[2]>, const float    [2]>);
+static_assert(_std::same_as<remove_lvalue_reference_t<const float(&&)[2]>, const float(&&)[2]>);
+static_assert(_std::same_as<remove_rvalue_reference_t<const float( &)[2]>, const float( &)[2]>);
+static_assert(_std::same_as<remove_lvalue_reference_t<const float( &)[2]>, const float    [2]>);
+
 
 template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and rvalue_reference<T>;
 template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and lvalue_reference<T>;
@@ -134,7 +182,11 @@ struct    decay_owned_reference
 
 };
 template <class T>
-struct decay_borrowed_reference
+struct decay_borrowed_reference : decay_owned_reference<T>
+{
+};
+template <class T> requires lvalue_reference<T>
+struct decay_borrowed_reference<T>
 {
 	using       type = T;
 	//\

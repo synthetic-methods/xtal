@@ -79,6 +79,9 @@ template <         class ...Ts>	concept        atomic_q	= (...and   _retail::   
 template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts   >);
 template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts   >);
 
+template <class S, class T=S  >	using         qualify_s	=           _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+template <class S, class T=S  >	using      disqualify_s	=           _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+
 template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
 template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
 template <         class ...Ts>	concept     different_q	=           _retail::    different_q<   Ts...>;///< `Ts...` are different modulo qualifiers.
@@ -86,11 +89,8 @@ template <         class ...Ts>	concept          same_q	=           _retail::   
 template <         class ...Ts>	concept          make_q	=           _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
 template <class T, class ...Ts>	concept          make_p	=           _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
 
-template <class S, class T    >	using      disqualify_s	=           _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-template <class S, class T    >	using         qualify_s	=           _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-
-template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<qualify_s<decltype(o), T>>(o);}
-template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<qualify_s<decltype(o), T>>(o);}
+template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
+template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,29 +226,28 @@ template <class T             >	using          shaped  	=           _retail::   
 template <         class ...Ts>	concept        shaped_q	= (...and   _retail::          shaped_q<Ts>);
 
 
-template <         class ...Ts>	using           fixed_u	=  common_t<_retail::          fixed_u<Ts>...>;
-template <         class ...Ts>	concept         fixed_q	= (...and   _retail::          fixed_q<Ts>);
+template <class T             >	using           fixed  	=           _retail::           fixed  <T >;
+template <         class ...Ts>	using           fixed_u	=  common_t<_retail::           fixed_u<Ts>...>;
+template <         class ...Ts>	concept         fixed_q	= (...and   _retail::           fixed_q<Ts>);
 
-template <         class ...Ts>	using           fluid_u	=  common_t<_retail::          fluid_u<Ts>...>;
-template <         class ...Ts>	concept         fluid_q	= (...and   _retail::          fluid_q<Ts>);
+template <class T             >	using           fluid  	=           _retail::           fluid  <T >;
+template <         class ...Ts>	using           fluid_u	=  common_t<_retail::           fluid_u<Ts>...>;
+template <         class ...Ts>	concept         fluid_q	= (...and   _retail::           fluid_q<Ts>);
 
 
 template <class T             >	using        destruct  	=           _retail::       destruct  <T >;
 template <class T             >	using        destruct_t	=           _retail::       destruct_t<T >;
 template <class T             >	using        destruct_u	=           _retail::       destruct_u<T >;
-template <class T             >	using        abstruct_t	=           based_t<destruct_t<based_t<T >>>    ;
-template <         class ...Ts>	using        abstruct_u	=          common_t<destruct_u<based_t<Ts>>...>;
 
-template <class T, int   ...Ns>	using         desolve  	=           _retail::        desolve  <T, Ns...>;
-//mplate <         int   ...Ns>	using         desolve_x	=           _retail::        desolve_x<   Ns...>;
-//mplate <class T, class ..._s>	using         desolve_s	=           _retail::        desolve_s<T, _s...>;
-template <class T             >	using         desolve_t	=           _retail::        desolve_t<T >;
-template <class T             >	using         desolve_u	=           _retail::        desolve_u<T >;
-template <class T             >	using         absolve_t	=           based_t< desolve_t<based_t<T >>>    ;
-template <         class ...Ts>	using         absolve_u	=          common_t< desolve_u<based_t<Ts>>...>;
+template <class T, int   ...Ns>	using        restruct  	=           _retail::        restruct  <T, Ns...>;
+//mplate <         int   ...Ns>	using        restruct_x	=           _retail::        restruct_x<   Ns...>;
+//mplate <class T, class ..._s>	using        restruct_s	=           _retail::        restruct_s<T, _s...>;
+template <class T             >	using        restruct_t	=           _retail::        restruct_t<T >;
+template <class T             >	using        restruct_u	=           _retail::        restruct_u<T >;
 
-template <class T             >	struct       abstruct  	: destruct<T> {using value_type = abstruct_u<T>; using type = abstruct_t<T>;};
-template <class T             >	struct        absolve  	:  desolve<T> {using value_type =  absolve_u<T>; using type =  absolve_t<T>;};
+template <class T             >	using        unstruct_t	=            based_t<restruct_t<based_t<T >>>    ;
+template <         class ...Ts>	using        unstruct_u	=           common_t<restruct_u<based_t<Ts>>...>;
+template <class T             >	struct       unstruct  	:  restruct<T> {using value_type = unstruct_u<T>; using type = unstruct_t<T>;};
 
 
 template <int N>
@@ -277,7 +276,7 @@ requires fixed_shaped_q<decltype(t)>
 
 template <int N, int ...Ns>
 XTAL_DEF_(return,inline,let)
-desolve_f(auto &&t)
+restruct_f(auto &&t)
 noexcept
 requires fixed_shaped_q<decltype(t)>
 {
@@ -285,15 +284,15 @@ requires fixed_shaped_q<decltype(t)>
 	auto constexpr I = modulo_v<M, N>;
 	XTAL_IF0
 	XTAL_0IF (none_n<Ns...>) {return                  get<I>(destruct_f(XTAL_REF_(t))) ;}
-	XTAL_0IF (some_n<Ns...>) {return desolve_f<Ns...>(get<I>( desolve_f(XTAL_REF_(t))));}
+	XTAL_0IF (some_n<Ns...>) {return restruct_f<Ns...>(get<I>( restruct_f(XTAL_REF_(t))));}
 }
 XTAL_DEF_(return,inline,let)
-desolve_f(auto &&t)
+restruct_f(auto &&t)
 noexcept -> decltype(auto)
 requires fixed_shaped_q<decltype(t)>
 {
 	using T = decltype(t);
-	return reinterpret_cast<desolve_t<T> &&>(XTAL_REF_(t));
+	return reinterpret_cast<restruct_t<T> &&>(XTAL_REF_(t));
 }
 
 

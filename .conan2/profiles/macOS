@@ -5,3 +5,6 @@ compiler=apple-clang
 compiler.cppstd=20
 compiler.version=14
 compiler.libcxx=libc++
+
+[buildenv]
+CXXFLAGS=-Wno-psabi -ftemplate-backtrace-limit=3 -fconstexpr-backtrace-limit=3 -ferror-limit=1

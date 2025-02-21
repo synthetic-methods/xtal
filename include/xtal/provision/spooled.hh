@@ -42,10 +42,18 @@ struct spooled<A>
 template <class A>
 struct spooled<A>
 {
+private:
+	static auto constexpr M = XTAL_SYS_(extent, size_type);
+	static auto constexpr N = M&shaped<A>::extent();
+
+public:
 	using superkind = bond::tag<spooled>;
 	
 	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
+	class subtype;
+
+	template <class S> requires (0 != N and M != N)
+	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		
@@ -53,13 +61,24 @@ struct spooled<A>
 		using S_::S_;
 		
 		template <class U>
-		using spool_t = atom::spool_t<U[XTAL_SYS_(extent)&(shaped<A>::extent())]>;
+		using spool_t = atom::spool_t<U[N]>;
+
+	};
+	template <class S> requires (0 == N or  M == N)
+	class subtype<S> : public bond::compose_s<S, superkind>
+	{
+		using S_ = bond::compose_s<S, superkind>;
+		
+	public:
+		using S_::S_;
+		
+		template <class U>
+		using spool_t = atom::spool_t<U * >;
 
 	};
 };
-template <auto N> struct spooled<null_type[N]> : spooled<  size_constant_t< N>> {};///< Fluid-size, based on `store_t`.
-template <auto N> struct spooled<unit_type[N]> : spooled<extent_constant_t< N>> {};///< Fixed-size, based on `block_t`.
-template <      > struct spooled<            > : spooled<extent_constant_t<-1>> {};///< Fluid-size, based on `store_t` (default).
+template <auto N> struct spooled<null_type[N]> : spooled<extent_constant_t< N>> {};///< Fluid-size using `atom::buffer_t`.
+template <      > struct spooled<            > : spooled<extent_constant_t<-1>> {};///< Fluid-size using `std::vector` (default).
 
 
 ///////////////////////////////////////////////////////////////////////////////

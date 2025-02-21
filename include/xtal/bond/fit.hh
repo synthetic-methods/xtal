@@ -671,7 +671,7 @@ as well as `value_type` subtitution using `subtype<V>`.
 
 template <class ...Ts>
 struct   fit
-:	complete_t<_detail::realize<sizeof(absolve_u<Ts...>)>>
+:	complete_t<_detail::realize<sizeof(unstruct_u<Ts...>)>>
 {
 	template <class V>
 	using subtype = V;

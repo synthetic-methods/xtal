@@ -50,7 +50,7 @@ struct superblock<Us...>
 
 		using        archetype = endotype;
 		using       value_type = common_t<objective_t<Us>...>;
-		using       scale_type = absolve_u<value_type>;
+		using       scale_type = unstruct_u<value_type>;
 
 	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<sizeof...(Us)>;
@@ -90,7 +90,7 @@ struct superblock<U(&)[N]>
 
 		using        archetype =  endotype;
 		using       value_type =  U;
-		using       scale_type =  absolve_u<value_type>;
+		using       scale_type =  unstruct_u<value_type>;
 		
 	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;
@@ -124,7 +124,7 @@ struct superblock<U   [N]>
 	public:// ACCESS
 		using        archetype =  endotype;		
 		using       value_type =  U;
-		using       scale_type =  absolve_u<value_type>;
+		using       scale_type =  unstruct_u<value_type>;
 
 		using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;

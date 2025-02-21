@@ -1,8 +1,10 @@
 name: Conan Create
 
 on:
+
   push:
     branches: [main]
+
   pull_request:
     branches: [main]
 
@@ -11,26 +13,24 @@ jobs:
 
     strategy:
       matrix:
-        bt: [Debug, Release]
-        os: [macOS, Ubuntu]
+        bt: [Debug,         Release]
+        os: [macOS, Ubuntu         ]
       # os: [macOS, Ubuntu, Windows]
     
     runs-on: ${{matrix.os}}-latest
 
     steps:
     - uses: actions/checkout@v3
-    
+
     - run:  brew install conan
       if:   ${{ matrix.os == 'macOS' }}
 
     - run:  pip3 install wheel setuptools; pip3 install conan --upgrade
       if:   ${{ matrix.os != 'macOS' }}
 
-    - run:  conan remote update conancenter --url="https://center2.conan.io"
-    - run:  conan config install ${{github.workspace}}/.conan2
-
-    - run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}}
+    - run:  conan remote update conancenter   --url="https://center2.conan.io" -vquiet
+    - run:  conan config install ${{github.workspace}}/.conan2                 -vquiet
+    - run:  conan create         ${{github.workspace}}        --build=missing  -vquiet -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}}
       if:   ${{ matrix.bt != 'Release' }}
-
-    - run:  conan create ${{github.workspace}} --build=missing -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"
+    - run:  conan create         ${{github.workspace}}        --build=missing  -vquiet -s build_type=${{matrix.bt}} --profile:all=${{matrix.os}} -o "test_package/*:benchmark=True"
       if:   ${{ matrix.bt == 'Release' }}

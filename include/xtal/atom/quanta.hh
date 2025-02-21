@@ -108,7 +108,7 @@ struct quanta
 			if constexpr (false) {}
 #else
 			if constexpr (numeric_q<value_type>) {
-				auto &s = desolve_f(*this);
+				auto &s = restruct_f(*this);
 				bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 					XTAL_IF0
 					XTAL_0IF (simplex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}]   ) |= _zv;}

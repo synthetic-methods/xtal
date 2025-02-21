@@ -146,7 +146,7 @@ noexcept -> void
 
 template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
-copy_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
+copy_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	using namespace _xtd::ranges;
@@ -167,7 +167,7 @@ noexcept -> void
 
 template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>
 XTAL_DEF_(inline,let)
-move_to(Y_ y0, X_ x0, distance_t<X_> sN, signed const ord=sequential_q<X_>)
+move_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
 	using Y = iteratee_t<Y_>;

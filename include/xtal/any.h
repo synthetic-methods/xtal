@@ -153,7 +153,8 @@ XTAL_ENV_(push)
 #define XTAL_SYS_L1                    0x40
 #endif//XTAL_STD_L1
 
-#define XTAL_SYS_extent                0x7FFFFFF                                ///< Maximum `array[]` size.
+#define XTAL_SYS_size(...)            (0x80000000 __VA_OPT__(/sizeof(__VA_ARGS__))) ///< `sizeof([])` limit in `MSVC`.
+#define XTAL_SYS_extent(...)          (XTAL_SYS_size(__VA_ARGS__) - 1)
 
 // TODO: Find better way to check for `__builtin_\w+`?
 #define XTAL_SYS_builtin (XTAL_VER_(GNUC >= 1000) or XTAL_VER_(LLVM >= 1000))
@@ -200,8 +201,8 @@ XTAL_ENV_(push)
 #define XTAL_VER_STD             XTAL_STD
 #if     XTAL_VER_STD >= 2300 and XTAL_VER_GNUC >= 1400
 //\
-#define XTAL_VER_ranges             3
 #define XTAL_VER_ranges            -1
+#define XTAL_VER_ranges             3
 #else
 #define XTAL_VER_ranges             3
 #endif
