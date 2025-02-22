@@ -19,6 +19,11 @@ template <class ..._s>	struct  ion;
 template <class ..._s>	concept ion_q = bond:: tagged_p<ion , _s...>;
 template <class ..._s>	using   ion_s = bond::compose_s<let_t<_s...>, cell::confined<ion<>>>;
 
+template <class ..._s>
+XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
+ion_f       (auto &&...oo),
+ion_s<_s...>(XTAL_REF_(oo)...))
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +70,7 @@ struct ion<>
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
-			return ion_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+			return ion_f(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 
 		using ion_layout = succedent_s<typename S_::ion_layout>;
