@@ -39,13 +39,13 @@ struct key<>
 		using S_::S_;
 
 		XTAL_DEF_(return,inline,let)
-		operator << (auto &&u)
+		operator << (auto &&u) const
 		noexcept -> decltype(auto)
 		{
 			return S_::operator<<(XTAL_REF_(u));
 		}
 		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
+		operator << (any_q auto &&u) const
 		noexcept -> decltype(auto)
 		requires same_q<T_, key_s<>>
 		{
@@ -64,7 +64,7 @@ struct key<>
 		using S_::S_;
 
 		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
+		operator << (any_q auto &&u) const
 		noexcept -> decltype(auto)
 		{
 			return key_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));

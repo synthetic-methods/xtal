@@ -36,12 +36,6 @@ struct define
 		///\
 		Provides dispatch logic for the `variant`s `Ys...` on the target object. \
 		
-		///\note\
-		The naming is intended to reflect that only `influx` is spooled/`cue`d. \
-
-		///\todo\
-		Include the `flux` index within the event? \
-
 		///\todo\
 		Integrate concatenation using `<<` and `>>` with correct `packet` construction. \
 

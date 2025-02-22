@@ -49,13 +49,17 @@ struct slicer
 				using typename R_::payload_type;
 
 			private:
-				typename S_::template spool_t<event_type>
-				u_spool{bond::seek_t<>{}
+				using U_payload = flow::ion_s<payload_type>;
+				using U_event   = flow::cue_s<U_payload>;
+				using U_spool   = typename S_::template spool_t<U_event>;
+				
+				U_spool u_spool{bond::seek_t<>{}
 				,	_std::numeric_limits<delay_type>::max()
 				};
 
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-				next(), u_spool.peek())
+				next(),
+					u_spool.peek())
 
 			public:
 				using R_::R_;
@@ -72,19 +76,20 @@ struct slicer
 				Influxes the `event_type` immediately if the associated delay is `0`, \
 				otherwise enqueues the event. \
 
-				template <signed N_ion> requires in_n<N_ion, +1>
+				///\note\
+				Delayed messages always return `0`	since there's (currently) no collision testing. \
+				
+				template <signed N_ion>// requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
-				fuse(same_q<event_type> auto &&o)
+				fuse(same_q<event_type> auto &&q)
 				noexcept -> signed
 				{
-					if (0 == o.head()) {
-						return R_::flux(flow::ion_s<>(N_ion).then(XTAL_REF_(o).tail()));
+					U_payload o{N_ion, q.tail()};//TODO: Make `const`?
+					if (0 == q.head()) {
+						return R_::flux(XTAL_MOV_(o));
 					}
 					else {
-						auto n = u_spool.size();
-						u_spool.push(XTAL_REF_(o));
-						return 0;
-					//	NOTE: Always successful, since there's (currently) no collision testing...
+						u_spool.push(U_event{XTAL_REF_(q), XTAL_MOV_(o)}); return 0;
 					}
 				}
 
@@ -94,8 +99,6 @@ struct slicer
 				delay()
 				noexcept -> delay_type
 				{
-				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
-				
 					return bond::fit<delay_type>::minimum_f(R_::delay(), next().head());
 				}
 				//\returns the size of the render cycle, \
@@ -122,7 +125,7 @@ struct slicer
 				{
 					R_::relay(i);
 					while (0 < u_spool.size() and next().head() <= i) {
-						(void) R_::flux(flow::ion_s<>(1).then(next().tail()));
+						(void) R_::flux(next().tail());
 						(void) u_spool.pop();
 					}
 					return delay();

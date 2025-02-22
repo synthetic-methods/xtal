@@ -37,13 +37,13 @@ struct mark<>
 		using S_::S_;
 
 		XTAL_DEF_(return,inline,let)
-		operator << (auto &&u)
+		operator << (auto &&u) const
 		noexcept -> decltype(auto)
 		{
 			return S_::operator<<(XTAL_REF_(u));
 		}
 		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
+		operator << (any_q auto &&u) const
 		noexcept -> auto
 		requires same_q<T_, mark_s<>>
 		{
@@ -62,7 +62,7 @@ struct mark<>
 		using S_::S_;
 
 		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
+		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
 			return mark_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
