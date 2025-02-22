@@ -13,10 +13,10 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <class ...> class Y>
+template <template <class ...> class K_>
 struct tag
 {
-	using superkind = tab<tag<Y>>;
+	using superkind = tab<tag<K_>>;
 
 	template <class S>
 	class subtype : public compose_s<S, superkind>
@@ -30,31 +30,30 @@ struct tag
 		:	S_::taboo
 		{
 			template <class ...Xs>
-			using hypertype = Y<Xs...>;
+			using hypertype = K_<Xs...>;
 
 		};
 
 	};
 };
-template <class ...As>
-struct hypertag
+template <class ..._s>
+struct tagged
 {
 	template <class T>
-	using subtype = typename T::taboo::template hypertype<As...>;
+	using subtype = typename T::taboo::template hypertype<_s...>;
 
 };
 
-template <class T, template <class ...> class ...Ys> concept     tagged_q =   tabbed_q<T, tag<Ys>...>;
-template <template <class ...> class Y, class ...Ts> concept     tagged_p =   tabbed_p<tag<Y>, Ts...>;
 
-template <class T, template <class ...> class ...Ys> concept        tag_q =      tab_q<T, tag<Ys>...>;
-template <template <class ...> class Y, class ...Ts> concept        tag_p =      tab_p<tag<Y>, Ts...>;
+template <class T, template <class ...> class ...Ks_> concept      tag_as_q =      tab_as_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept tag_affixed_q = tab_affixed_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept      tag_in_q =      tab_in_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept tag_infixed_q = tab_infixed_q<T, tag<Ks_>...>;
 
-template <class T, template <class ...> class ...Ys> concept   some_tag_q = some_tab_q<T, tag<Ys>...>;
-template <template <class ...> class Y, class ...Ts> concept   some_tag_p = some_tab_p<tag<Y>, Ts...>;
-
-template <class T, template <class ...> class ...Ys> concept  array_tag_q = some_tag_q<T, Ys...> and (...and (array_shaped_q<T > or tag_q<T , Ys>));
-template <template <class ...> class Y, class ...Ts> concept  array_tag_p = some_tag_p<Y, Ts...> and (...and (array_shaped_q<Ts> or tag_q<Ts, Y >));
+template <template <class ...> class K_, class ...Ts> concept      tag_as_p =      tab_as_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_affixed_p = tab_affixed_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept      tag_in_p =      tab_in_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_infixed_p = tab_infixed_p<tag<K_>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

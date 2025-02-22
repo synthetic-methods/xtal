@@ -10,13 +10,16 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Composes `As...` as the member decorator `voice`, \
-used to provide the context for different instantiations (\see `polymer`). \
+/*!
+\brief
+Reifies `As...` as the member decorator `voice`.
 
+\details
+Used for reinstancing `As...` in the context of containers like `polymer`.
+*/
 template <typename ..._s> struct   voiced;
 template <typename ..._s> using    voiced_t = confined_t<voiced<_s...>>;
-template <typename ..._s> concept  voiced_q = bond::tag_p<voiced, _s...>;
+template <typename ..._s> concept  voiced_q = bond::tag_in_p<voiced, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +37,9 @@ struct voiced
 	public:
 		using S_::S_;
 
+		/*!
+		\brief  	Applies `Vs...` after `As...`, and after the `voice<>` on the supertype if present.
+		*/
 		template <class ...Vs>
 		struct voice
 		{

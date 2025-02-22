@@ -13,11 +13,13 @@ namespace xtal::occur
 
 template <class ..._s>	struct   render;
 template <class ..._s>	using    render_t = confined_t<render<_s...>>;
-template <class ..._s>	concept  render_q = bond::tag_p<render, _s...>;
+template <class ..._s>	concept  render_q = bond::tag_in_p<render, _s...>;
 
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-render_f                  (auto &&...oo),
-render_t<XTAL_ALL_(oo)...>(XTAL_REF_(oo)...))
+
+////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) render_f = []<class ...Us> (Us &&...us)
+XTAL_0FN_(to) (render_t<based_t<Us>...>(XTAL_REF_(us)...));
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -40,8 +42,8 @@ struct render<U_review, U_cursor>
 		
 	public:// OPERATE
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) cursor(), get<0>(S_::head()))
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) review(), get<1>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) review(), S_::template head<0>())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) cursor(), S_::template head<1>())
 
 	};
 };

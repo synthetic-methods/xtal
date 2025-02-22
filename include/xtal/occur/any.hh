@@ -1,8 +1,9 @@
 #pragma once
 #include "../bond.hh"
-#include "../flow/all.hh"// `_retail`
+#include "../flow/any.hh"// `_retail`
+#include "../flow/tag.hh"
 #include "../flow/mask.hh"
-
+#include "../flow/assess.hh"
 
 
 
@@ -18,6 +19,9 @@ namespace _retail = xtal::flow;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Extends `flow::define` with message-attachment subdecorators.
+*/
 template <class T>
 struct define
 {
@@ -35,10 +39,10 @@ struct define
 		template <constant_q        U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
 	//	template <same_q<size_type> U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
 
-		///\
-		Attaches `T` as a member of `this`. \
-
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Attaches `T` as a member of `this`.
+		*/
+		template <extent_type N_mask=1>
 		struct attach
 		{
 			using superkind = bond::compose<flow::mask<N_mask>, defer<T>>;
@@ -52,20 +56,21 @@ struct define
 			public:// CONSTRUCT
 			//	using R_::R_;
 
-				XTAL_NEW_(delete) (subtype, noexcept = default)
-				XTAL_NEW_(create) (subtype, noexcept = default)
-				XTAL_NEW_(move)   (subtype, noexcept = default)
-				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept)
+				XTAL_NEW_(delete) (subtype, noexcept=default)
+				XTAL_NEW_(create) (subtype, noexcept=default)
+				XTAL_NEW_(move)   (subtype, noexcept=default)
+				XTAL_NEW_(copy)   (subtype, noexcept=default)
+				XTAL_NEW_(then)   (subtype, noexcept:subtype)
+			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
-				///\
-				Constructs the `attach`ed message using its default, \
-				before `forward`ing the arguments to `this`. \
-
+				/*!
+				\brief  	Constructs the `attach`ed message using its default,
+				before `forward`ing the arguments to `this`.
+				*/
 				XTAL_NEW_(explicit)
-				subtype(auto &&...xs)
+				subtype(auto &&...oo)
 				noexcept
-				:	R_{T{}, XTAL_REF_(xs)...}
+				:	R_{T{}, XTAL_REF_(oo)...}
 				{}
 
 			public:// ACCESS
@@ -73,13 +78,29 @@ struct define
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
 				operator T(), R_::head())
 
+			public:// FLOW
+
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
+				noexcept -> signed
+				{
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				fuse(same_q<flow::assess_s<T>> auto &&o)
+				noexcept -> signed
+				{
+					return R_::heading(XTAL_REF_(o).tail());
+				}
+
 			};
-
 		};
-		///\
-		Attaches `T`, and appends to the arguments of `method` and `function`. \
-
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Attaches `T`, and appends to the arguments of `method` and `method_f`.
+		*/
+		template <extent_type N_mask=1>
 		struct attend
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -117,18 +138,21 @@ struct define
 
 			};
 		};
-		///\
-		Attaches `T` as a member of `this`, \
-		`dispatch`ing a conditional indicating positivity. \
-
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Attaches `T` as a member of `this`,
+		`dispatch`ing a conditional indicating positivity.
+		*/
+		/*!
+		\note   	Automatic attachment is currently disabled!
+		*/
+		template <extent_type N_mask=1>
 		struct clutch
 		{
-			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1,-1>>;
+			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1>>;
 
 			using superkind = bond::compose<void
 			,	typename U_choke::template dispatch<N_mask>
-			,	attach<N_mask>
+		//	,	attach<N_mask>
 			>;
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -151,19 +175,16 @@ struct define
 				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
-					auto const h = t.head();
-					auto const h_up = 0 < h;
-					auto const h_dn = h < 0;
-					(void) R_::template flux<N_ion>(U_choke(h_up - h_dn));
+					(void) R_::template flux<N_ion>(U_choke(0 != t.head()));
 					return R_::template flux<N_ion>(XTAL_REF_(t), XTAL_REF_(oo)...);
 				}
 			
 			};
 		};
-		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
-
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`.
+		*/
+		template <extent_type N_mask=1>
 		struct dispatch
 		{
 			static_assert(integral_q<typename T::head_type>);
@@ -200,10 +221,19 @@ struct define
 				deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
+					//\
 					auto i = static_cast<size_type>(head());
+					auto i = static_cast<size_type>(R_::body_part);
 					XTAL_IF0
-					XTAL_0IF (1 == _std::popcount(A_size)) {i &= A_mask;}
-					XTAL_0IF (1 != _std::popcount(A_size)) {i %= A_size;}
+					XTAL_0IF (1 == _std::popcount(A_size)) {
+						i &= A_mask;
+					}
+					XTAL_0IF (1 != _std::popcount(A_size)) {
+						i %= A_size;
+						i += A_size;
+						i %= A_size;
+					}
+					XTAL_IF1_(assume) (0 <= i and i < A_size);
 					return R_::deify(point[i]);
 				}
 				
@@ -238,10 +268,10 @@ struct define
 
 			};
 		};
-		///\
-		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
-		
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`.
+		*/
+		template <extent_type N_mask=1>
 		struct expect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -271,10 +301,10 @@ struct define
 
 			};
 		};
-		///\
-		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
-
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`.
+		*/
+		template <extent_type N_mask=1>
 		struct inspect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -304,10 +334,10 @@ struct define
 
 			};
 		};
-		///\
-		Uses the current `T` as the return value of `method`. \
-		
-		template <extent_type N_mask=-1>
+		/*!
+		\brief  	Uses the current `T` as the return value of `method`.
+		*/
+		template <extent_type N_mask=1>
 		struct poll
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -333,6 +363,9 @@ struct define
 
 	};
 };
+/*!
+\brief   Aliases `flow::refine`.
+*/
 template <class T>
 struct refine
 :	_retail::refine<T>
@@ -342,11 +375,17 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Aliases `flow::defer`.
+*/
 template <class U>
 struct defer
 :	_retail::defer<U>
 {
 };
+/*!
+\brief   Aliases `flow::refer`.
+*/
 template <class U>
 struct refer
 :	_retail::refer<U>

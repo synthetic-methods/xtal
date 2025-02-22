@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "../cell/header.hh"
 
 
 
@@ -12,68 +12,22 @@ namespace xtal::flow
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Wrapper used to index an existing type. \
+/*!
+\brief
+Wrapper used to index an existing type with `signed`.
 
-///\see e.g. [../processor/polymer.hh]. \
-
+\details
+Uses for indexing both events and voices in `processor::polymer.`
+*/
 template <class ..._s>	struct  key;
-template <class ..._s>	concept key_q = bond:: tagged_p<key , _s...>;
-template <class ..._s>	using   key_s = bond::compose_s<let_t<_s...>, cell::confined<key<>>>;
+template <class ..._s>	using   key_s = bond::compose_s<let_t< _s...>, key<>>;
+template <class ..._s>	concept key_q = bond::tag_as_p<key_s, _s...>;
+template <           >	struct  key<> : cell::header<signed, bond::tag<key_s>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <>
-struct key<>
-{
-	using superkind = cell::confer<signed, bond::tag<key>>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		using S_ = bond::compose_s<S, superkind>;
-		using T_ = typename S_::self_type;
-
-	public:
-		using S_::S_;
-
-		XTAL_DEF_(return,inline,let)
-		operator << (auto &&u)
-		noexcept -> decltype(auto)
-		{
-			return S_::operator<<(XTAL_REF_(u));
-		}
-		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
-		noexcept -> decltype(auto)
-		requires same_q<T_, key_s<>>
-		{
-			return key_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
-		}
-
-		using key_layout = typename S_::tail_type[1];
-
-	};
-	template <key_q S>
-	class subtype<S> : public bond::compose_s<S, superkind>
-	{
-		using S_ = bond::compose_s<S, superkind>;
-
-	public:
-		using S_::S_;
-
-		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u)
-		noexcept -> decltype(auto)
-		{
-			return key_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
-		}
-
-		using key_layout = succedent_s<typename S_::key_layout>;
-
-	};
-};
+XTAL_DEF_(let) key_f = [] XTAL_1FN_(call) (key_s<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

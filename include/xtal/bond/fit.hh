@@ -12,17 +12,20 @@ namespace xtal::bond
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct recognize : recognize<N_size/2>
+struct fit_recognize;
+#ifndef XTAL_DOC
+template <size_type N_size>
+struct fit_recognize : fit_recognize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 };
+#endif
 template <>
-struct recognize<0x1>
+struct fit_recognize<0x1>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 0)>;
@@ -40,7 +43,7 @@ struct recognize<0x1>
 
 };
 template <>
-struct recognize<0x2>
+struct fit_recognize<0x2>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 1)>;
@@ -59,7 +62,7 @@ struct recognize<0x2>
 };
 #if 0x20 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<0x4>
+struct fit_recognize<0x4>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 2)>;
@@ -93,7 +96,7 @@ struct recognize<0x4>
 #endif
 #if 0x40 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<0x8>
+struct fit_recognize<0x8>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 3)>;
@@ -125,28 +128,29 @@ struct recognize<0x8>
 
 };
 #endif
-//\todo\
-Allow for 128-bit. \
-
+#ifndef XTAL_DOC
 template <size_type N_size>
-concept recognized_q = antecedent_q<typename recognize<N_size>::fix>;
+concept fit_recognized_q = antecedent_q<typename fit_recognize<N_size>::fix>;
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef XTAL_DOC
 template <size_type N_size>
-struct rationalize : rationalize<N_size/2>
+struct fit_rationalize : fit_rationalize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 };
-template <size_type N_size> requires recognized_q<N_size>
-struct rationalize<N_size> : recognize<N_size>
+#endif
+template <size_type N_size> requires fit_recognized_q<N_size>
+struct fit_rationalize<N_size> : fit_recognize<N_size>
 {
 private:
-	using S_ = recognize<N_size>;
+	using S_ = fit_recognize<N_size>;
 
 public:
 	using typename S_::delta_type;
@@ -220,12 +224,10 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the remainder from the maximal power of `N`, \
-	which is zero if the argument is a power of `N`. \
-
-	///\note\
-	Currently only supports `N={2,3}`.
-
+	/*!
+	\returns	The remainder from the maximal power of `N`, which is zero if the argument is a power of `N`.
+	\note   	Currently only supports `N={2,3}`.
+	*/
 	template <sigma_type N>
 	XTAL_DEF_(return,inline,set)
 	expound_f(sigma_type u)
@@ -256,33 +258,35 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef XTAL_DOC
 template <size_type N_size>
-struct realize : realize<N_size/2>
+struct fit_realize : fit_realize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
-template <size_type N_size> requires recognized_q<N_size>
-struct realize<N_size> : rationalize<N_size>
+template <size_type N_size> requires fit_recognized_q<N_size>
+struct fit_realize<N_size> : fit_rationalize<N_size>
 {
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
-template <size_type N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_type;}
-struct realize<N_size> : rationalize<N_size>
+#endif
+template <size_type N_size> requires fit_recognized_q<N_size> and requires {typename fit_recognize<N_size>::alpha_type;}
+struct fit_realize<N_size> : fit_rationalize<N_size>
 {
 private:
-	using S_ = rationalize<N_size>;
+	using S_ = fit_rationalize<N_size>;
 
 public:
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 	
-	using halved = realize<(N_size>>1)>;
+	using halved = fit_realize<(N_size>>1)>;
 
 	using S_::N_width;
 	using S_::N_depth;
@@ -357,6 +361,25 @@ public:
 		}
 	}
 
+	XTAL_DEF_(return,inline,set)
+	aphex_f(real_q auto &&o_re, real_q auto &&o_im)
+	noexcept -> aphex_type
+	{
+		return {alpha_f(XTAL_REF_(o_re)), alpha_f(XTAL_REF_(o_im))};
+	}
+	XTAL_DEF_(return,inline,set)
+	aphex_f(real_q auto &&o_re)
+	noexcept -> aphex_type
+	{
+		return {alpha_f(XTAL_REF_(o_re))};
+	}
+	XTAL_DEF_(return,inline,set)
+	aphex_f(complex_q auto &&o)
+	noexcept -> aphex_type
+	{
+		return aphex_f(o.real(), o.imag());
+	}
+
 
 	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
 
@@ -367,32 +390,21 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)*(o_silon)`. \
-
-	XTAL_DEF_(return,inline,set)
-	diplo_f(alpha_type n_zoom, alpha_type o_silon)
-	noexcept -> alpha_type
-	{
-		if constexpr (XTAL_SYS_(builtin)) {
-			return o_silon*__builtin_exp2(n_zoom);
-		}
-		else {
-			auto constexpr N_ln2 = _std::numbers::ln2_v<alpha_type>;
-			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `constant`?
-		}
-	}
+	/*!
+	\returns	The `constexpr` equivalent of `std:pow(2.0, n_zoom)*(o_silon)`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	diplo_f(delta_type n_zoom, alpha_type o_silon)
 	noexcept -> alpha_type
 	{
-		if (_std::is_constant_evaluated()) {
+		XTAL_IF1_(consteval) {
 			auto m = _xtd::bit_cast<sigma_type>(n_zoom);
 			m  += unit.mark;
 			m <<= 1 + exponent.shift;
 			m >>= 1;
 			return o_silon*_xtd::bit_cast<alpha_type>(m);
 		}
-		else {
+		XTAL_0IF_(else) {
 			return _std::ldexp(o_silon, (int) n_zoom);// not `constexpr` until `C++23`!
 		}
 	}
@@ -401,6 +413,33 @@ public:
 	noexcept -> alpha_type
 	{
 		return diplo_f(_xtd::bit_cast<delta_type>(n_zoom), o_silon);
+	}
+	XTAL_DEF_(return,inline,set)
+	diplo_f(alpha_type n_zoom, alpha_type o_silon)
+	noexcept -> alpha_type
+	{
+		XTAL_IF1_(consteval) {
+			int constexpr M = 0x01;
+			int constexpr N = 0x10;
+
+			auto n = static_cast<delta_type>(n_zoom);
+			auto u = n_zoom - n;
+			u *= _std::numbers::ln2_v<alpha_type>/diplo_f(M, alpha_1);
+
+			auto v = alpha_1;
+			for (auto i=N; i; --i) {v = _xtd::accumulator(alpha_1, v, u/i);}
+			for (auto i=M; i; --i) {v *= v;}
+
+			v *= diplo_f(n, alpha_1);
+			return o_silon*v;
+		}
+		XTAL_0IF (XTAL_SYS_(builtin)) {
+			return o_silon*__builtin_exp2(n_zoom);
+		}
+		else {
+			auto constexpr N_ln2 = _std::numbers::ln2_v<alpha_type>;
+			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `constant`?
+		}
 	}
 	XTAL_DEF_(return,inline,set) diplo_f(auto n_zoom, alpha_type o_silon)
 	noexcept -> auto
@@ -426,54 +465,76 @@ public:
 	{
 		return diplo_f<N_silon>(N_depth);
 	}
-
-	template <int N_zoom=N_depth>
-	static alpha_type constexpr diplo_n = diplo_f(N_zoom);
-	///< Value expression of `diplo_f`. \
-
-
-	static alpha_type constexpr diplo_0 = diplo_n<0>;
-	static alpha_type constexpr diplo_1 = diplo_n<1>;
-	static alpha_type constexpr diplo_2 = diplo_n<2>;
+	static alpha_type constexpr diplo_0 = diplo_f(0);
+	static alpha_type constexpr diplo_1 = diplo_f(1);
+	static alpha_type constexpr diplo_2 = diplo_f(2);
 
 
-	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
-
+	/*!
+	\returns	The `constexpr` equivalent of `std:pow(0.5, n_zoom)`.
+	*/
 	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(auto const &n_zoom) noexcept -> auto {return diplo_f<-N_silon>(-n_zoom );}
 	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(                  ) noexcept -> auto {return diplo_f<-N_silon>(-N_depth);}
+	static alpha_type constexpr haplo_0 = haplo_f(0);
+	static alpha_type constexpr haplo_1 = haplo_f(1);
+	static alpha_type constexpr haplo_2 = haplo_f(2);
 
-	template <int N_zoom=N_depth>
-	static alpha_type constexpr haplo_n = haplo_f(N_zoom);
-	///< Value expression of `haplo_f`. \
 
+	XTAL_DEF_(return,inline,set)
+	e2(real_variable_q auto o)
+	noexcept -> decltype(auto)
+	{
+		int constexpr N = 0x02;
+		int constexpr M = 0x10;
+		auto n = static_cast<delta_type>(o);
+		auto u = o - n;
+		u *= _std::numbers::ln2_v<alpha_type>;
+		u *= haplo_f(N);
 
-	static alpha_type constexpr haplo_0 = haplo_n<0>;
-	static alpha_type constexpr haplo_1 = haplo_n<1>;
-	static alpha_type constexpr haplo_2 = haplo_n<2>;
+		auto v = alpha_1;
+		for (auto i=M; i; --i) {
+			v *=      u/i;
+			v +=  alpha_1;
+		}
+		for (auto i=N; i; --i) {
+			v *= v;
+		}
+		v *= diplo_f(n);
+		return v;
+	}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `n_num`erator divided by the given de`n_nom`inator.
-
+	/*!
+	\returns	The `n_num`erator divided by the given de`n_nom`inator.
+	*/
 	template <int N_pow=1>
 	XTAL_DEF_(return,inline,set)
 	ratio_f(alpha_type n_num, alpha_type n_nom=1)
 	noexcept -> alpha_type
 	{
 		XTAL_IF0
-		XTAL_0IF (N_pow ==  0) {return 1;}
+		XTAL_0IF (N_pow ==  0) {return           1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
-		XTAL_0IF_(terminate)
+		XTAL_0IF (N_pow <= -2) {return ratio_f<-N_pow>(n_nom, n_num);}
+		XTAL_0IF (N_pow >=  2) {
+			alpha_type const n = n_num/n_nom;
+			alpha_type       o = 1;
+			#pragma unroll
+			for (int i{}; i < N_pow; ++i) {o *= n;} return o;
+		}
+		XTAL_0IF_(void)
 	}
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
 	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
 	static alpha_type constexpr ratio_2 = ratio_f(2, 1);
 
-	///\returns `ratio_f<N_pow>(PI*n_num, n_nom)`.
-
-	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
+	/*!
+	\returns	The ratio of `n_num` to `n_nom` multiplied by `Pi`.
+	*/
+	template <int N_pow=1>
 	XTAL_DEF_(return,inline,set)
 	patio_f(alpha_type n_num, alpha_type n_nom=1)
 	noexcept -> alpha_type
@@ -488,8 +549,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the difference between floating-point values at the scale designated by `n_zoom`. \
-
+	/*!
+	\returns	The difference between floating-point values at the scale designated by `n_zoom`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	epsilon_f(delta_type const &n_zoom=1)
 	noexcept -> alpha_type
@@ -498,8 +560,9 @@ public:
 		return haplo_f(N - n_zoom);
 	}
 
-	///\returns the value `n_zoom` steps above `(alpha_type) 1`. \
-
+	/*!
+	\returns	The value `n_zoom` steps above `(alpha_type) 1`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	upsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
@@ -509,8 +572,9 @@ public:
 		return n_unit*diplo_f(n_zone);
 	}
 
-	///\returns the value `n_zoom` steps below `(alpha_type) 1`. \
-
+	/*!
+	\returns	The value `n_zoom` steps below `(alpha_type) 1`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	dnsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
@@ -523,17 +587,20 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the minimum value that still accommodates arithmetic puncturing. \
-
+	/*!
+	\returns	The minimum value that accomodates exponentiation by `n_zoom` without underflow.
+	\note    Equivalent to `_std::numeric_limits<alpha_type>::min()/2`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	minilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
+		return haplo_f(unit.mark >> n_zoom);
 	}
 
-	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
-
+	/*!
+	\returns	The minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	minimum_f()
 	noexcept -> decltype(auto)
@@ -582,17 +649,20 @@ public:
 		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
 
-	///\returns the maximum value that still accommodates arithmetic truncation. \
-
+	/*!
+	\returns	The maximum value that accomodates exponentiation by `n_zoom` without overflow.
+	\note    Equivalent to `2/_std::numeric_limits<alpha_type>::min()`.
+*/
 	XTAL_DEF_(return,inline,set)
 	maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
+		return diplo_f(unit.mark >> n_zoom);
 	}
 
-	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
-
+	/*!
+	\returns	The maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	maximum_f()
 	noexcept -> decltype(auto)
@@ -664,23 +734,34 @@ public:
 };
 
 
-}///////////////////////////////////////////////////////////////////////////////
-///\
-Provides floating-point format information and related helpers, \
-as well as `value_type` subtitution using `subtype<V>`.
-
+//}///////////////////////////////////////////////////////////////////////////////
+/*!
+\brief  	Provides floating-point format information and related helpers.
+\note   	Resolves to the maximum supported `sizeof <= 8`.
+\details	Reduces the supplied parameters to the common scalar, using the `sizeof` to index the underlying provider.
+*/
 template <class ...Ts>
 struct   fit
-:	complete_t<_detail::realize<sizeof(unstruct_u<Ts...>)>>
+:	complete_t<fit_realize<sizeof(unstruct_u<Ts...>)>>
 {
+	/*!
+	\brief  	Performs `value_type` substitution.
+	*/
 	template <class V>
 	using subtype = V;
 
 };
 template <>
-struct   fit<> : fit<size_type>
+struct   fit<void> : fit<size_type>
 {
 };
+template <>
+struct   fit<    > : fit<size_type>
+{
+};
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class>`, via the member-`subtype`.
+*/
 template <template <class> class T_, class U>
 struct fit<T_<U>> : fit<U>
 {
@@ -688,6 +769,16 @@ struct fit<T_<U>> : fit<U>
 	using subtype = T_<V>;
 
 };
+template <template <class> class T_, vector_q W>
+struct fit<T_<W>> : fit<_xtd::remove_extent_t<W>>
+{
+	template <class V>
+	using subtype = T_<_xtd::remove_extent_t<W>>[_xtd::extent_v<W>];
+
+};
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class, class ...>`, via the member-`subtype`.
+*/
 template <template <class, class ...> class T_, class U, class ..._s> requires some_q<_s...>
 struct fit<T_<U, _s...>> : fit<U>
 {
@@ -695,6 +786,9 @@ struct fit<T_<U, _s...>> : fit<U>
 	using subtype = T_<V, _s...>;
 
 };
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class, auto  ...>`, via the member-`subtype`.
+*/
 template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_n<_s...>
 struct fit<T_<U, _s...>> : fit<U>
 {

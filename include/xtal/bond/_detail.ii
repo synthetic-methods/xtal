@@ -27,17 +27,20 @@ noexcept -> decltype(auto)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class       W >	concept    member_q = molecular_q<W> or _xtd::rvalue_reference<W>;// or iterable_q<W> and not _xtd::ranges::borrowed_range<based_t<W>>;
+//\
+template <class       W >	concept    member_q = _xtd::nominal_value_reference<W>;
+template <class       W >	concept    member_q = _xtd::nominal_value_reference<W> or iterable_q<W> and _xtd::ranges::borrowed_range<based_t<W>>;
 template <class       W >	concept dismember_q = not member_q<W>;
 
-template <class       W >	struct     member    {using type = typename _xtd::   decay_owned_reference<W>::value_type;};
-template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_borrowed_reference<W>::value_type;};
+template <class       W >	struct     member    {using type = typename _xtd::          decay_value<W>::value_type;};
+template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_value_reference<W>::value_type;};
 template <class       W >	using      member_t =              typename member<W>::type;
-///\
-Constructs/references the current value. \
-
+/*!
+\brief
+Constructs/references the provided value.
+*/
 template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
-template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
+template <   atomic_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
 template <dismember_q M >
 XTAL_DEF_(return,inline,let)
 member_f(auto &&w)
@@ -50,16 +53,21 @@ requires _xtd::lvalue_reference<decltype(w)>
 	return &XTAL_REF_(w);
 }
 
-///\
-Resolves/dereferences the current value. \
-
+/*!
+\brief
+Resolves/dereferences the provided value.
+*/
 template <    class   M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m)      ;}
 template <  pointed_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return *XTAL_REF_(m)      ;}
 //mplate <  wrapped_q M >	XTAL_DEF_(return,inline,let) remember_f(M &&m) noexcept -> decltype(auto) {return  XTAL_REF_(m).get();}
 
-///\
-Replaces and returns the previous value. \
+/*!
+\brief
+Resolves/dereferences the provided value.
 
+\returns
+The previous value.
+*/
 template <member_q W>
 XTAL_DEF_(return,inline,let)
 dismember_f(W &m, W w)
@@ -78,10 +86,10 @@ noexcept -> decltype(auto)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-///\
-Reifies `template`s of the form `<class, typename...>` via the member `subtype`. \
-
+/*!
+\brief
+Reifies `template`s of the form `<class, typename...>` via the member `subtype`.
+*/
 template <template <class, typename...> class F_>
 struct compost
 {
@@ -92,27 +100,36 @@ struct compost
 //	NOTE: The indirection above avoids invoking a unary `F_` with empty `_Ts...`, causing `clang` to fail.
 };
 
-///\
-Determines whether `T` has a composable member `subtype`. \
-
+/*!
+\brief
+Determines whether `T` has a composable member `subtype`.
+*/
 template <typename T>
 concept compose_q = complete_q<compost<T::template subtype>> and not requires {typename T::subtype;};
 
+template <class S,                typename ..._Ts >	struct incompose;
+template <                        typename ... Ts_>	struct excompose;
 
-template <class S,                typename ..._Ts>	struct incompose;
-template <                        typename ...Ts_>	struct excompose;
+template <class S,                typename ..._Ts >	using  incompose_s = typename incompose<S, _Ts...>::type;
+template <template <class, class...> class ... Fs_>	using  excompose_t =          excompose<compost<Fs_>...>;
 
-template <class S,                typename ..._Ts>	using  incompose_s = typename incompose<S, _Ts...>::type;
-template <template <class, class...> class ...Fs_>	using  excompose_t =          excompose<compost<Fs_>...>;
+template <class S, class _,       typename ..._Ts >	struct incompose<S, _, _Ts ...> : incompose<S, _Ts ...> {};
+template <         class _,       typename ... Ts_>	struct excompose<   _,  Ts_...> : excompose<    Ts_...> {};
 
-template <class S, class _,       typename ..._Ts>	struct incompose<S, _, _Ts...> : incompose<S, _Ts...> {};
-template <         class _,       typename ...Ts_>	struct excompose<   _, Ts_...> : excompose<   Ts_...> {};
+template <class S                                 >	struct incompose<S> {using type = S;};
+template <                                        >	struct excompose< >
+{
+	template <class S, typename ..._Ts>
+	using subtype = incompose_s<S, _Ts ...>;
 
-template <class S                                >	struct incompose<S> {using type = S;};
-template <                                       >	struct excompose< > {template <class S, typename ..._Ts> using subtype = incompose_s<S, _Ts...>;};
+};
+template <class S, compose_q _T , typename ..._Ts >	struct incompose<S, _T , _Ts ...> : incompose<typename _T::template subtype<S>, _Ts...> {};
+template <         compose_q  T_, typename ... Ts_>	struct excompose<    T_,  Ts_...>
+{
+	template <class S, typename ..._Ts>
+	using subtype = incompose_s<S,  _Ts..., excompose<Ts_...>, T_>;
 
-template <class S,  compose_q _T, typename ..._Ts>	struct incompose<S, _T, _Ts...> : incompose<typename _T::template subtype<S>, _Ts...> {};
-template <          compose_q T_, typename ...Ts_> struct excompose<   T_, Ts_...> {template <class S, typename ..._Ts> using subtype = incompose_s<S, _Ts..., excompose<Ts_...>, T_>;};
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////

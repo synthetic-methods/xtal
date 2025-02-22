@@ -11,18 +11,17 @@ namespace xtal
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-auto constexpr zero = bond::operate{[] XTAL_1FN_(to) (0   )};
-auto constexpr half = bond::operate{[] XTAL_1FN_(to) (0.5F)};
-auto constexpr  one = bond::operate{[] XTAL_1FN_(to) (1   )};
-auto constexpr  two = bond::operate{[] XTAL_1FN_(to) (2   )};
+XTAL_DEF_(let) half = bond::operate{[] XTAL_1FN_(to) (0.5F)};
+XTAL_DEF_(let) zero = bond::operate{[] XTAL_1FN_(to) (0)};
+XTAL_DEF_(let)  one = bond::operate{[] XTAL_1FN_(to) (1)};
+XTAL_DEF_(let)  two = bond::operate{[] XTAL_1FN_(to) (2)};
+
+static_assert((one >> 1.F) == half);
+static_assert((one << 1.F) ==  two);
 
 static_assert(constant_q<decltype( half)>);
 static_assert(constant_q<decltype(+half)>);
 static_assert(constant_q<decltype(-half)>);
-
-template <auto  N> auto constexpr half_n = bond::operate{[] XTAL_1FN_(to) (1.F/(one << N))};
-template <auto  N> auto constexpr  two_n = bond::operate{[] XTAL_1FN_(to) (1.F*(one << N))};
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

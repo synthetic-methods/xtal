@@ -10,14 +10,10 @@ XTAL_ENV_(push)
 namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Provides an (in)queue for the `variant`s `Ys...` on the target object, \
-schedule via `influx` and processed in segments via `reflux`. \
-
-///\todo\
-Allow for schedule beyond the current window, \
-possibly using `occur::cursor` to convert between absolute and relative delays. \
-
+/*!
+\brief   Provides an (in)queue for the `variant`s `Ys...` on the target object,
+         schedule via `influx` and processed in segments via `pump`.
+*/
 template <typename ...As>
 struct slicer
 {
@@ -34,13 +30,14 @@ struct slicer
 		using S_::S_;
 		
 		template <class ...Ys>
-		struct inqueue
+		struct accept
 		{
-			using superkind = typename S_::template inqueue<Ys...>;
+			using superkind = typename S_::template accept<Ys...>;
 			
-			template <flow::any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(flow::any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:
@@ -49,18 +46,26 @@ struct slicer
 				using typename R_::payload_type;
 
 			private:
-				typename S_::template spool_t<event_type>
-				u_spool{bond::seek_t<>{}
+				using U_payload = payload_type;
+				using F_payload = flow::ion_s<U_payload>;
+				using E_payload = flow::cue_s<F_payload>;
+				using E_spool   = typename S_::template spool_t<E_payload>;
+				
+				E_spool u_spool{bond::seek_t<>{}
 				,	_std::numeric_limits<delay_type>::max()
 				};
-
+				#ifndef XTAL_DOC
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
 				next(), u_spool.peek())
+				#endif
 
 			public:
 				using R_::R_;
 				using R_::self;
 				
+				/*!
+				\brief Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				fuse(auto &&o)
@@ -68,40 +73,39 @@ struct slicer
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
-				///\
-				Influxes the `event_type` immediately if the associated delay is `0`, \
-				otherwise enqueues the event. \
-
-				template <signed N_ion> requires in_n<N_ion, +1>
+				/*!
+				\brief Unpacks and forwards the event upstream if the associated delay is `0`,
+				otherwise enqueues the event.
+				
+				\returns `0` if enqueued, otherwise the forwarded result.
+				*/
+				template <signed N_ion>// requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
-				fuse(same_q<event_type> auto &&o)
+				fuse(same_q<event_type> auto &&q)
 				noexcept -> signed
 				{
-					if (0 == o.head()) {
-						return R_::flux(flow::ion_s<>(N_ion).then(XTAL_REF_(o).tail()));
+					F_payload o{N_ion, q.tail()};//TODO: Make `const`?
+					if (0 == q.head()) {
+						return R_::flux(XTAL_MOV_(o));
 					}
 					else {
-						auto n = u_spool.size();
-						u_spool.push(XTAL_REF_(o));
-						return 0;
-					//	NOTE: Always successful, since there's (currently) no collision testing...
+						u_spool.push(E_payload{XTAL_REF_(q), XTAL_MOV_(o)}); return 0;
 					}
 				}
-
-				///\returns the delay until the next event to be processed. \
-
-				XTAL_DEF_(inline,let)
+				/*!
+				\returns The delay until the next event to be processed.
+				*/
+				XTAL_DEF_(return,inline,let)
 				delay()
 				noexcept -> delay_type
 				{
-				//	NOTE: The `std::initializer_list` syntax avoids segfaulting in `RELEASE`. \
-				
 					return bond::fit<delay_type>::minimum_f(R_::delay(), next().head());
 				}
-				//\returns the size of the render cycle, \
-				after all future events have been brought forward. \
-
-				XTAL_DEF_(inline,let)
+				/*!
+				\brief   Brings forward any future events at the end of the render cycle.
+				\returns The size of the render cycle.
+				*/
+				XTAL_DEF_(mutate,inline,let)
 				belay()
 				noexcept -> delay_type
 				{
@@ -111,18 +115,17 @@ struct slicer
 					}
 					return i;
 				}
-				///\
-				Invokes `influx` for all events up-to the supplied delay `<= i`. \
-				
-				///\returns the delay until the next event. \
-				
-				XTAL_DEF_(inline,let)
+				/*!
+				\brief   Dispatches all events up-to the supplied delay `<= i`.
+				\returns The delay until the next event.
+				*/
+				XTAL_DEF_(mutate,inline,let)
 				relay(delay_type i)
 				noexcept -> delay_type
 				{
 					R_::relay(i);
 					while (0 < u_spool.size() and next().head() <= i) {
-						(void) R_::flux(flow::ion_s<>(1).then(next().tail()));
+						(void) R_::flux(next().tail());
 						(void) u_spool.pop();
 					}
 					return delay();

@@ -10,16 +10,15 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
+/*!
+Provides `bias()` determined from the constant provided within `As...`.
+*/
 template <typename ..._s> struct   biased;
 template <typename ..._s> using    biased_t = confined_t<biased<_s...>>;
-template <typename ..._s> concept  biased_q = bond::tag_p<biased, _s...>;
+template <typename ..._s> concept  biased_q = bond::tag_in_p<biased, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Provides a fixed amount of biased/behind determined from the constant provided \
-(at any position in `As...`). \
 
 template <typename ...As>
 struct biased
@@ -41,12 +40,14 @@ struct biased
 		bias()
 		noexcept -> auto
 		{
-			return static_cast<U>(U_bias {});
+			return static_cast<U>(U_bias{});
 		}
 
 	};
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

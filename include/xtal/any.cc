@@ -12,32 +12,81 @@ namespace xtal::_test
 /////////////////////////////////////////////////////////////////////////////////
 
 template <int N>
-void echo_rule_()
+void echo_rule_(auto const z)
 {
-	for (int n = -N; n <= N; ++n) {
-		_std::cout << '-';
+	for (int n = -N; n <= -1; ++n) {
+		_std::cout << z;
+	}
+	for (int n = +1; n <= +N; ++n) {
+		_std::cout << z;
 	}
 	_std::cout << _std::endl;
 }
 template <int N>
-void echo_plot_(iterated_q auto const o)
+void echo_rule_()
 {
-	for (auto e: o) {
-		e *= N;
-		e *= 2;
-		e += 0 < e;
-		e -= e < 0;
-		auto u = static_cast<int>(e);
-		for (int n = -N; n <= N; ++n) {
-			auto m = n << 1;
-			if (n == 0)                     {                  } else
-			if (u < 0 and n < 0 and u == m) {_std::cout << "╼";} else
-			if (u < 0 and n < 0 and u <= m) {_std::cout << "━";} else
-			if (0 < u and 0 < n and u == m) {_std::cout << "╾";} else
-			if (0 < u and 0 < n and u >= m) {_std::cout << "━";} else
-			/**/                            {_std::cout << ' ';}
+	echo_rule_<N>("\u2500");// BOX DRAWINGS LIGHT HORIZONTAL
+}
+template <int N>
+void echo_plot_(int line, auto item, integral_q auto ...markers)
+{
+	auto uZERO = 0 == line? "\u2504": "\u0020";// ...BOX DRAWINGS LIGHT TRIPLE-DASH HORIZONTAL, or ...SPACE
+	_std::vector<int> m_{markers...};
+	bool marked = _std::find(m_.begin(), m_.end(), line) < m_.end();
+	item *= N;
+	item *= 2;
+	item += 0 < item;
+	item -= item < 0;
+	auto w = static_cast<int>(item);
+	item /= 2;
+	auto u = static_cast<int>(item);
+	for (int n = -N; n <= -1; ++n) {
+		auto const m = n << 1;
+		if (false);
+		else if (m <  w     and n == -1 and marked) _std::cout << "\u22A3";// -| TACK LEFT
+		else if (m <  w - 1 and n != -1 or  u == 0) _std::cout <<   uZERO ;//    ...
+		else if (m == w - 1 and          line == 0) _std::cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
+		else if (n <  u)                            _std::cout << "\u0020";//    SPACE
+		else if (u <  n)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+		else if (w <  m)                            _std::cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT
+		else                                        _std::cout << "\u0020";//    SPACE
+	}
+	for (int n = +1; n <= +N; ++n) {
+		auto const m = n << 1;
+		if (false);
+		else if (w <  m     and n == +1 and marked) _std::cout << "\u22A2";// |- TACK RIGHT
+		else if (w <  m - 1 and n != +1 or  u == 0) _std::cout <<   uZERO ;//    ...
+		else if (w == m - 1 and          line == 0) _std::cout << "\u2576";//  - BOX DRAWINGS LIGHT RIGHT
+		else if (u <  n - 0)                        _std::cout << "\u0020";//    SPACE
+		else if (n <  u)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+		else if (m <  w)                            _std::cout << "\u2578";// =  BOX DRAWINGS HEAVY LEFT
+		else                                        _std::cout << "\u0020";//    SPACE
+	}
+	_std::cout << "\u0020";//    SPACE
+}
+template <int N>
+void echo_plot_(iterated_q auto const list, integral_q auto ...markers)
+{
+	using _std::get;
+	using W = XTAL_ALL_(list);
+	using U = iteratee_t<W>;
+	using _fit = bond::fit<decltype(list)>;
+	_std::vector<typename _fit::alpha_type> part;
+	int line{};
+	for (auto item: list) {
+		using List = XTAL_ALL_(list);
+		using Item = XTAL_ALL_(item);
+		if constexpr (fixed_shaped_q<Item>) {
+			auto etc = destruct_f(item);
+			[&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(do) (echo_plot_<N>(line, bond::pack_item_f<I>(item), markers...), ...)
+			(bond::seek_s<fixed_shaped<Item>::extent()>{});
 		}
-		_std::cout << _std::endl;
+		else {
+			echo_plot_<N>(line, item, markers...);
+		}
+		echo_();
+		++line;
 	}
 }
 
@@ -65,23 +114,21 @@ static_assert(not different_n<0, 0, 0>);
 
 
 //atic_assert(restruct<_std::complex<float>>::rank() < restruct<_std::array<float, 2>>::rank());
-static_assert(assayed<1, 2   >::extents() <= assayed<1, 2, 3>::extents());
-static_assert(assayed<1, 2, 3>::extents() <= assayed<1, 2, 4>::extents());
-static_assert(assayed<1, 2, 3>::extents() == assayed<1, 2, 3>::extents());
-static_assert(assayed<       1            >::extent() ==   1);
-static_assert(assayed<       1, 2, 3, 4, 5>::extent() == 120);
-static_assert(assayed<    0, 1, 2, 3, 4, 5>::extent() ==   0);
-static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::extent() ==  -1);
-static_assert(assayed<       1, 2, 3, 4, 5>::rank() ==   5);
-static_assert(assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
-static_assert(assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
+static_assert(_retail::assayed<1, 2   >::extents() <= _retail::assayed<1, 2, 3>::extents());
+static_assert(_retail::assayed<1, 2, 3>::extents() <= _retail::assayed<1, 2, 4>::extents());
+static_assert(_retail::assayed<1, 2, 3>::extents() == _retail::assayed<1, 2, 3>::extents());
+static_assert(_retail::assayed<       1            >::extent() ==   1);
+static_assert(_retail::assayed<       1, 2, 3, 4, 5>::extent() == 120);
+static_assert(_retail::assayed<    0, 1, 2, 3, 4, 5>::extent() ==   0);
+static_assert(_retail::assayed<-1, 0, 1, 2, 3, 4, 5>::extent() ==  -1);
+static_assert(_retail::assayed<       1, 2, 3, 4, 5>::rank() ==   5);
+static_assert(_retail::assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
+static_assert(_retail::assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
-static_assert(shaped<_std::vector  <float   >>::extent() == -1);
-static_assert(shaped<_std::array   <float, 1>>::extent() ==  1);
-static_assert(shaped<_std::complex <float   >>::extent() ==  2);
-static_assert(shaped<cardinal_constant_t<2>>::extent() ==  2);
-static_assert(shaped< ordinal_constant_t<2>>::extent() ==  2);
+static_assert(fluid_shaped<_std::vector  <float   >>::extent() == -1);
+static_assert(fixed_shaped<_std::array   <float, 1>>::extent() ==  1);
+static_assert(fixed_shaped<_std::complex <float   >>::extent() ==  2);
 
 
 static_assert(cardinal_q<valued_u<cardinal_constant_t<2>>>);
@@ -199,6 +246,17 @@ static_assert(intercedent_q<int[1][2][3]>);
 
 TAG_("any")
 {
+	TRY_("text")
+	{
+		text_type constexpr  first{"1st"};
+		text_type constexpr _first{"1st"};
+		text_type constexpr second{"2nd"};
+
+		TRUE_(first ==  first);
+		TRUE_(first == _first);
+		TRUE_(first != second);
+		
+	};
 	TRY_("ordering")
 	{
 		using is = _std::partial_ordering;
@@ -216,7 +274,7 @@ TAG_("any")
 		TRUE_(1 == disordering_f( 0x1000));
 		TRUE_(2 == disordering_f(-0x1000));
 		
-	}
+	};
 }
 
 

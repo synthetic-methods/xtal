@@ -30,7 +30,8 @@ struct define_super
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_NEW_(cast) (subtype, noexcept)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
@@ -57,10 +58,10 @@ struct define_super
 		{
 			return bond::pack_f();
 		}
-		///<\returns a tuple representation of `this`. \
+		///<\returns a tuple representation of `this`.
 
 		using pack_size = cardinal_constant_t<0>;
-		///< The `std::tuple_size` of `this`. \
+		///< The `std::tuple_size` of `this`.
 
 
 	};
@@ -84,9 +85,9 @@ struct refine_head
 	{
 	public:
 		using S::S; static_assert(any_q<S>);
-		///\
-		Implicit conversion to the singleton kernel-type. \
-
+		/*!
+		\brief  	Implicit conversion to the singleton kernel-type.
+		*/
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
 		operator typename S::head_type(), S::head())
 
@@ -102,9 +103,9 @@ struct refine_tuple
 		using S::S; static_assert(any_q<S>);
 		using typename S::pack_size;
 
-		///\
-		Tuple application. \
-
+		/*!
+		\brief  	Tuple application.
+		*/
 		XTAL_FX2_(do) (XTAL_DEF_(inline,let)
 		apply(auto &&f),
 		noexcept -> decltype(auto)
@@ -134,18 +135,18 @@ struct refine_tuple
 			return apply<bond::operate<F>{}>();
 		}
 
-		///\
-		Sequence conversion. \
-
+		/*!
+		\brief  	Sequence conversion.
+		*/
 		XTAL_DEF_(return,inline,let)
 		seek() const
 		{
 			return apply<[] XTAL_1FN_(call) (bond::seek_f)>();
 		}
 		
-		///\
-		Tuple conversion. \
-
+		/*!
+		\brief  	Tuple conversion.
+		*/
 		XTAL_DEF_(return,inline,implicit)
 		operator bond::repack_t<S>() const {return pack();}
 
@@ -161,6 +162,11 @@ struct refine_tuple
 		{
 			return _std::apply([] XTAL_1FN_(call) (T), tuple);
 		}
+
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype       &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const  &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype        &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
 
 	};
 };
@@ -192,33 +198,34 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
-		///\
-		Constructs `this` using the default value. \
-
+		/*!
+		\brief  	Constructs `this` using the default value.
+		*/
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
 		requires make_p<body_type>
 		:	body_part{}
 		{}
-		///\
-		Constructs `this` using an `initializer_list` if supported. \
-
+		/*!
+		\brief  	Constructs `this` using an `initializer_list` if supported.
+		*/
 		XTAL_NEW_(implicit)
 		subtype(_std::initializer_list<U_> o)
 		noexcept
 		requires initializer_q<body_type>
 		:	body_part(o)
 		{}
-		///\
-		Constructs `this` using the first argument, forwarding the rest to the parent. \
-
+		/*!
+		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(make_q<head_type> auto &&o, auto &&...oo)
 		noexcept
@@ -226,8 +233,9 @@ struct defer_field
 		,	body_part{member_f<head_type>(XTAL_REF_(o))}
 		{}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 		XTAL_DEF_(return,inline,let) head() const  & noexcept -> decltype(auto) {return remember_f(body_part);}
 		XTAL_DEF_(return,inline,let) head()        & noexcept -> decltype(auto) {return remember_f(body_part);}
 		XTAL_DEF_(return,inline,let) head() const && noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
@@ -241,8 +249,9 @@ struct defer_field
 			return dismember_f(body_part, XTAL_REF_(oo)...);
 		}
 
-		///\returns the underlying `cardinal` for indexing purposes. \
-
+		/*!
+		\returns	The underlying `cardinal` for indexing purposes.
+		*/
 		XTAL_DEF_(return,inline,explicit)
 		operator size_type() const
 		noexcept requires cardinal_q<body_type> and different_q<size_type, head_type>
@@ -253,14 +262,18 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_(to) (S_::cardinality())
-
-		XTAL_DEF_(return,inline,set)
-		cardinality()
-		noexcept -> size_type
-		requires in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>
 		{
-			return 2;
+			static_assert(same_q<bool, U> or requires {S_::cardinality();});
+			XTAL_IF0
+			XTAL_0IF (in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
+				return 2;
+			}
+			XTAL_0IF (requires {S_::cardinality();}) {
+				return S_::cardinality();
+			}
+			XTAL_0IF_(else) {
+				return 0;
+			}
 		}
 
 	};
@@ -292,8 +305,9 @@ struct defer_field<U>
 			static_assert(K{}() == U{}());
 		}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 	//	static head_type constexpr head{};
 		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type const & requires    member_q<U> {return             body_part;}
 		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type         requires dismember_q<U> {return (head_type) body_part;}
@@ -303,10 +317,8 @@ struct defer_field<U>
 template <class I, auto ...Ns>
 struct defer_field<_std::integer_sequence<I, Ns...>>
 {
-	using _fit = bond::fit<decltype(Ns)...>;
-
-	static auto constexpr N_coordinate = bond::seek_value_t<Ns...>{};
-	static auto constexpr N_ordinate   = bond::seek_index_t<Ns...>{};
+	static auto constexpr N_revalue = bond::seek_value_t<_xtd::make_signed_f(Ns)...>{};
+	static auto constexpr N_devalue = bond::seek_index_t<_xtd::make_signed_f(Ns)...>{};
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -323,22 +335,17 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		using S_::self;
 		body_type body_part{};
 
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 		
-		XTAL_NEW_(explicit)
-		subtype(infungible_q<subtype> auto &&o, auto &&...oo)
-		noexcept
-		requires un_n<integral_q<decltype(o)>>
-		:	subtype{static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...}
-		{}
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
 		noexcept
-		:	subtype{static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...}
+		:	subtype{static_cast<body_type>(N_devalue[XTAL_REF_(o)]), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(cardinal_q auto &&o, auto &&...oo)
@@ -353,12 +360,21 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		{
 			return sizeof...(Ns);
 		}
+		XTAL_DEF_(return,inline,set)
+		ordinality()
+		noexcept -> auto
+		{
+			auto const &[dn_, up_] = _xtd::ranges::minmax_element(N_revalue);
+			head_type const dn = *dn_, dn_sgn = (dn > 0) - (dn < 0), dn_abs = dn*dn_sgn;
+			head_type const up = *up_, up_sgn = (up > 0) - (up < 0), up_abs = up*up_sgn;
+			return bond::fit<>::maximum_f(dn_abs, up_abs) + 1;
+		}
 		
 		XTAL_DEF_(return,inline,let)
 		head() const
 		noexcept -> auto
 		{
-			return N_coordinate[body_part];
+			return N_revalue[body_part];
 		}
 		
 		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
@@ -394,15 +410,16 @@ struct defer_field<unit_type[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 		
-		///\
-		Constructs `this` using the first argument, forwarding the rest to the parent. \
-
+		/*!
+		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(integral_q auto &&o)
 		noexcept
@@ -416,16 +433,15 @@ struct defer_field<unit_type[N_width]>
 		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
 		head(), head_type{body_part})
 
-		///\returns the underlying index. \
-		
-		///\todo\
-		Determine whether this is aggregated? \
-
+		/*!
+		\returns	The underlying index.
+		*/
 		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
 		operator size_type(), body_part)
 
@@ -461,27 +477,19 @@ struct refer_iterators
 		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 
-		XTAL_FX2_(do) (template <shaped_q X> requires un_n<counter_q<X>> and un_n<counted_q<X>>
-		XTAL_DEF_(return,inline,let)
-		subhead(X &&x),
-		noexcept -> decltype(auto)
-		{
-			return subhead(XTAL_REF_(x).size());
-		})
 		XTAL_FX2_(do) (template <counter_q V>
 		XTAL_DEF_(return,inline,let)
 		subhead(V &&v),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			return subhead(counted_f(0, XTAL_REF_(v)));
 		})
 		XTAL_FX2_(do) (template <counted_q W>
 		XTAL_DEF_(return,let)
 		subhead(W &&w),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			using _xtd::ranges::next;
-
 			auto &u  = S::template head<U>();
 			auto  u_ = begin();
 			auto  w0 = w.front(), wN = w.back() + 1;
@@ -550,15 +558,15 @@ struct refer_qualities
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class U, int N=0>
-struct refer_binary_logic
+struct refer_digital_logic
 :	bond::compose<void
-	,	refer_binary_logic<U, 1>
-	,	refer_binary_logic<U, 2>
+	,	refer_digital_logic<U, 1>
+	,	refer_digital_logic<U, 2>
 	>
 {
 };
 template <class U>
-struct refer_binary_logic<U, 1>
+struct refer_digital_logic<U, 1>
 {
 	template <class S>
 	class subtype : public S
@@ -572,7 +580,7 @@ struct refer_binary_logic<U, 1>
 	};
 };
 template <class U>
-struct refer_binary_logic<U, 2>
+struct refer_digital_logic<U, 2>
 {
 	template <class S>
 	class subtype : public S
@@ -589,7 +597,7 @@ struct refer_binary_logic<U, 2>
 template <class U, int N=0>
 struct refer_logics
 :	bond::compose<void
-	,	refer_binary_logic<U, N>
+	,	refer_digital_logic<U, N>
 	>
 {
 };

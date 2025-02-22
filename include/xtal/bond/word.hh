@@ -40,9 +40,10 @@ concept word_q = (...and _detail::word_q<Ts>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Defines the limits of a bit-field. \
-
+/*!
+\brief
+Defines the `cardinality` of a bit-field.
+*/
 template <size_type N_size>
 struct word
 {
@@ -57,9 +58,9 @@ struct word
 	public:
 		using S_::S_;//NOTE: Inherited and respecialized!
 
-		///\
-		Base constructor, expects `0`. \
-
+		/*!
+		\brief  	Base constructor, expects `0`.
+		*/
 		template <integral_q A>
 		XTAL_NEW_(explicit)
 		subtype(A &&a)

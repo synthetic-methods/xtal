@@ -7,71 +7,68 @@
 
 
 
-//line namespace _entail
+
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-//\
-This naked header is intended for inclusion within a `namespace` providing the decorators: \
+/*!
+\brief   Associates `subtype` with the current namespace.
 
-template <class U> struct    defer;///<     Proxies `U`.
-template <class U> struct    refer;///<   Delegates `U`.
+Used to check membership via `any_q`,
+and to obtain the nearest `subtype` by `self<As...>` and `head<As...>()`.
 
-template <class T> struct   define;///< Initializes `T`.
-template <class T> struct   refine;///<   Finalizes `T`.
+Already applied by `confine(?:d)?`, `(?:con|in)ferred`, and related definitions,
+but can be used to further specialize a given decorator.
 
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-///\
-Associates `subtype` both with the current namespace, \
-the parent namespace, and with the decorators `As...` if provided. \
-
+\note    The sequence `As...` is linearized such that
+        `std::derived_from<any_t<A, As...>, any_t<As...>>`,
+         therefore extensions of the current namespace also satisfy `any_q`.
+*/
 template <            typename ...As> struct   any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
-template <class    S, typename ...As> using    any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> concept  any_p = bond::tag_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > concept  any_q = bond::tag_p<any, Ts...>;
+template <class    S, typename ...As> using    any_s = bond::compose_s<        S, any<As...>>;///<\brief Produces a subtype of `S` labelled with `any<As...>`.
+template <            typename ...As> using    any_t = bond::compose_s<unit_type, any<As...>>;///<\brief Produces a    type        labelled with `any<As...>`.
+template <class    T, typename ...As> concept  any_p = bond::tag_in_p<any, T> and complete_q<typename T::template self_s<As...>>;
+///<\brief Determines whether `T` has been labelled with `any<As>...`.
 
-using any_type = any_s<unit_type>;
-
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T const &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T       &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T const  &t) noexcept -> decltype(auto) {return           t .template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T        &t) noexcept -> decltype(auto) {return           t .template head<N>();};
+template <class ...Ts               > concept  any_q = bond::tag_in_p<any, Ts...>;
+///<\brief Determines whether `Ts...` have been labelled with `any<>`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Combines `define` and `refine` to materialize the curiously recursive type `T`, \
-sandwiching the decorators `As...`. \
-
+/*!
+\brief   Aliases `bond::compose<refine<T>, As..., define<T>>`.
+*/
 template <class T, typename ...As>
 struct confine
 {
+private:
 	using superkind = bond::compose<refine<T>, As..., define<T>>;
 
+public:
 	template <class S>
 	using subtype = bond::compose_s<S, superkind>;
-	using    type = subtype<any_type>;
+	using    type = subtype<any_t<>>;
 	
 };
 template <class T, typename ...As>
 using confine_t = typename confine<T, As...>::type;
 
-///\
-Creates the `confine`d _decorator_ with `As...`. \
-
+/*!
+\brief   Binds `confine<T, As...>` to the member-`subtype<S>`.
+*/
 template <typename ...As>
 struct confined
 {
+private:
 	template <class T>
 	using homokind = confine<T, As...>;
 
+public:
 	template <class S>
 	using subtype = bond::derive_s<S, homokind>;
-	using    type = subtype<any_type>;
+	using    type = subtype<any_t<>>;
 	
 };
 template <typename ...As>
@@ -80,19 +77,23 @@ using confined_t = typename confined<As...>::type;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Combines `defer` and `refer` to lift `U`, sandwiching the decorators `As...`. \
-
+/*!
+\brief   Aliases `bond::compose<refer<U>, As..., defer<U>>`.
+*/
 template <class U, typename ...As> struct   confer      : bond::compose<refer<U>, As..., defer<U>> {};
-template <class U, typename ...As> using    conferred   = confined<confer<U, As...>>;
+/*!
+\brief   Aliases `confined<refer<U>, As..., defer<U>>`.
+*/
+template <class U, typename ...As> struct   conferred   : confined<confer<U, As...>> {};
 template <class U, typename ...As> using    conferred_t = typename conferred<U, As...>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Applies `refer` to the outermost `head_t`. \
-
-struct referree
+#ifndef XTAL_DOC
+/*!
+\brief   Applies `refer` to the outermost `head_t`.
+*/
+struct referee
 {
 	struct superkind
 	{
@@ -104,26 +105,24 @@ struct referree
 	using subtype = bond::compose_s<S, superkind>;
 	
 };
-///\
-Unless `A` is already a decorator, \
-provides `defer<A>` or `any<A>` depending on whether `complete_q<A>`. \
+#endif
+/*!
+\brief   Provides a decorator of `any_q` determined by `A`.
+*/
+template <class           A         >	struct infer;
+template <class           A         >	struct infer       :             defer<A>                       {};///<\brief `defer`s `A` unless otherwise specified.
+template <bond::compose_q A         >	struct infer<A   > :                   A                        {};///<\brief Uses `A` if `bond::compose_q<A>`.
+template <incomplete_q    A         >	struct infer<A   > :               any<A>                       {};///<\brief Uses `any<A>` if `incomplete_q<A>`.
+template <incomplete_q    A, auto  N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};///<\brief Uses `any<A>` and `defer<unit_type[N]>` if `incomplete_q<A>`.
+template <                          >	struct infer<void> : bond::compose<                           > {};///<\brief Uses the identity `bond::compose<>`.
+template <class   ...As>	struct     infers     : bond::compose<         infer   <As>...>   {};///<\brief Produces the composition of `infer<As>...`.
+template <class   ...As>	struct   reinfers     : bond::compose<referee, infer   <As>...>   {};///<\brief Produces the composition of `infer<As>...`, delegating to the outer-most `As...`.
+template <class   ...As>	struct     inferred   : confined<              infers  <As...>>   {};///<\brief Produces the `confined` decorator for   `infers<As...>`.
+template <class   ...As>	struct   reinferred   : confined<            reinfers  <As...>>   {};///<\brief Produces the `confined` decorator for `reinfers<As...>`.
+template <class   ...As>	using      inferred_t = typename               inferred<As...>::type;///<\brief Produces the `confined_t` type for   `infers<As...>`.
+template <class   ...As>	using    reinferred_t = typename             reinferred<As...>::type;///<\brief Produces the `confined_t` type for `reinfers<As...>`.
 
-template <class           A         >	struct infer       :             defer<A>                       {};
-template <bond::compose_q A         >	struct infer<A   > :                   A                        {};
-template <incomplete_q    A         >	struct infer<A   > :               any<A>                       {};
-template <incomplete_q    A, auto  N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};
-template <                          >	struct infer<void> : bond::compose<                           > {};
-
-template <class   ...As>	using      infers     = bond::compose<          infer   <As>...>;
-template <class   ...As>	using    reinfers     = bond::compose<referree, infer   <As>...>;
-template <class   ...As>	using      inferred   = confined<               infers  <As...>>;
-template <class   ...As>	using    reinferred   = confined<             reinfers  <As...>>;
-template <class   ...As>	using      inferred_t = typename                inferred<As...>::type;
-template <class   ...As>	using    reinferred_t = typename              reinferred<As...>::type;
-///<\
-Creates a `confined` `infers<As...>`, delegating to the outermost `complete_q<head_type>`. \
-
-
+/**/
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -10,17 +10,20 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
+/*!
+\brief
+Provides a random-access view via the member-type `state_t<store_type>`.
+*/
 template <typename ..._s> struct   stated;
 template <typename ..._s> using    stated_t = confined_t<stated<_s...>>;
-template <typename ..._s> concept  stated_q = bond::tag_p<stated, _s...>;
+template <typename ..._s> concept  stated_q = bond::tag_in_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Provides a range-based view of the `store` via `state_t<iterated_q>`, \
-which conforms to `reiterated_t` a.k.a. `ranges::subrange`. \
-
+/*!
+\brief
+Provides a custom view via `A::template subtype<store_type>` conforming to `ranges::subrange`.
+*/
 template <bond::compose_q A>
 struct stated<A>
 {
@@ -39,6 +42,10 @@ struct stated<A>
 
 	};
 };
+/*!
+\brief
+Defines `state_t` via `reiterated_t` a.k.a. `ranges::subrange`.
+*/
 template <>
 struct stated<>
 {
@@ -53,8 +60,6 @@ struct stated<>
 		using S_::S_;
 		
 		template <iterated_q U>
-		//\
-		using state_t = occur::review_t<U>;
 		using state_t = reiterated_t<U>;
 
 	};

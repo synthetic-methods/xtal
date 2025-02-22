@@ -40,22 +40,39 @@ TAG_("block")
 	{
 		using Z_alpha = block_t<T_alpha[2][4][6]>;
 
-		TRUE_(2 == shaped<         Z_alpha                                    >::extent());
-		TRUE_(4 == shaped<typename Z_alpha::value_type                        >::extent());
-		TRUE_(6 == shaped<typename Z_alpha::value_type::value_type            >::extent());
-		TRUE_(0 == shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
+		TRUE_(2 == fluid_shaped<         Z_alpha                                    >::extent());
+		TRUE_(4 == fluid_shaped<typename Z_alpha::value_type                        >::extent());
+		TRUE_(6 == fluid_shaped<typename Z_alpha::value_type::value_type            >::extent());
+		TRUE_(0 == fluid_shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
 
 	}
-	TRY_("block slicing")
+	TRY_("block slicing (array)")
 	{
-		W_alpha w_alpha{1, 2};
+		using W = block_t<T_alpha[2]>;
 
-		auto  u_alpha_ = w_alpha.self(one);
-		TRUE_(w_alpha == W_alpha{1, 2});
-		u_alpha_[0] = 3;
-		TRUE_(w_alpha == W_alpha{3, 2});
+		W w{1, 2};
 
-		TRUE_(w_alpha.size() == 2);
+		auto  u = w.self(-one);
+		TRUE_(w == W{1, 2});
+		u[0] = 3;
+		TRUE_(w == W{3, 2});
+
+		TRUE_(w.size() == 2);
+		TRUE_(u.size() == 1);
+
+	}
+	TRY_("block slicing (tuple)")
+	{
+		using W = block_t<T_alpha, T_sigma>;
+		W w{1, 2};
+
+		auto  u = w.self(-one);
+		TRUE_(w == W{1, 2});
+		u[0] = 3;
+		TRUE_(w == W{3, 2});
+
+		TRUE_(w.size() == 2);
+		TRUE_(u.size() == 1);
 
 	}
 }

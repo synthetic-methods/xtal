@@ -10,31 +10,40 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Defines a statically-bounded `type` that supports homogeneous/heterogeneous construction, \
-as well as expression-templates. \
+/*!
+\brief
+Defines member-`type` as an extensible analogue of `std::array`.
 
-template <class ..._s> struct   block;
-template <class ..._s> using    block_t = typename block<_s...>::type;
-template <class ..._s> concept  block_q = bond::tag_p<block_t, _s...>;
+When supplied with an array-signature, e.g. `U_data[N_data]` or `U_data(&)[N_data]`,
+the associated `value_type` and `size` are used to configure the underlying container.
+The presence of a reference determines whether `std::array` or `std::span` is used in this instance.
 
-template <class U, auto  N, auto  ..._s> struct   block<U   [N][_s]...> : block<block_t<U[_s]...>   [N]> {};
-template <class U, auto  N, auto  ..._s> struct   block<U(&)[N][_s]...> : block<block_t<U[_s]...>(&)[N]> {};
+Supports homogeneous/heterogeneous definition depending on the commonality of components `Us...`.
+Supports expression-templates by way of `operator() (unsigned)`.
+*/
+template <class ...Us>	struct  block;
+template <class ...Us>	using   block_t = typename block<Us...>::type;
 
+template <class ...Ts>	concept block_q               = bond::tag_in_p<block_t, Ts...>;
+template <class ...Ts>	concept block_revalued_q   = (...and different_q<decltype(Ts::revalue_f), _std::identity>);
+#ifndef XTAL_DOC
+template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
+template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};
+#endif
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   superblock;
-template <class ..._s> using    superblock_t = typename superblock<_s...>::type;
+template <class ...Us> struct   superblock;
+template <class ...Us> using    superblock_t = typename superblock<Us...>::type;
 
-template <class U, auto N, auto  ...Ns> struct superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
-template <class U, auto N, auto  ...Ns> struct superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
+template <class U, auto N, auto ...Ns> struct superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
+template <class U, auto N, auto ...Ns> struct superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
 
 template <scalar_q ...Us> requires different_q<Us...>
 struct superblock<Us...>
 {
-	using endotype = bond::pack_t<Us...>;
+	using endotype = bond::pack_t<_xtd::decay_trivial_value_reference_t<Us>...>;
 	
 	template <class T>
 	using holotype = bond::compose_s<endotype, bond::define<T>>;
@@ -45,10 +54,11 @@ struct superblock<Us...>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
+		using        archetype = endotype;
 		using        size_type = _std::size_t;
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using        archetype = endotype;
+		using       index_type = difference_type;
 		using       value_type = common_t<objective_t<Us>...>;
 		using       scale_type = unstruct_u<value_type>;
 
@@ -85,12 +95,13 @@ struct superblock<U(&)[N]>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
+		using        archetype = endotype;
 		using        size_type = decltype(N);
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using        archetype =  endotype;
-		using       value_type =  U;
-		using       scale_type =  unstruct_u<value_type>;
+		using       index_type = difference_type;
+		using       value_type = U;
+		using       scale_type = unstruct_u<value_type>;
 		
 	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;
@@ -122,9 +133,13 @@ struct superblock<U   [N]>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
-		using        archetype =  endotype;		
-		using       value_type =  U;
-		using       scale_type =  unstruct_u<value_type>;
+		using        archetype = endotype;
+		using        size_type = typename S_::      size_type;
+		using  difference_type = typename S_::difference_type;
+
+		using       index_type = difference_type;
+		using       value_type = U;
+		using       scale_type = unstruct_u<value_type>;
 
 		using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;
@@ -137,45 +152,67 @@ struct superblock<U   [N]>
 
 	public:// CONSTRUCT
 	//	using S_::S_;
+		XTAL_NEW_(delete) (homotype, noexcept=default)
+	//	XTAL_NEW_(create) (homotype, noexcept=default)
+		XTAL_NEW_(move)   (homotype, noexcept=default)
+		XTAL_NEW_(copy)   (homotype, noexcept=default)
+		XTAL_NEW_(then)   (homotype, noexcept:homotype)
+	//	XTAL_NEW_(else)   (homotype, noexcept:S_)
 
-		XTAL_NEW_(delete) (homotype, noexcept = default)
-	//	XTAL_NEW_(create) (homotype, noexcept = default)
-		XTAL_NEW_(move)   (homotype, noexcept = default)
-		XTAL_NEW_(copy)   (homotype, noexcept = default)
-		XTAL_NEW_(cast)   (homotype, noexcept)
 
-		///\note\
-		Defining `{}` allows `constexpr` evaluation, \
-		but invalidates `std::trivially_default_constructible`. \
-		
-		XTAL_NEW_(implicit)
-		homotype()
-		noexcept
-		:	homotype(size_type{})
-		{}
 		XTAL_NEW_(explicit)
-		homotype(same_q<size_type> auto const n)
+		homotype(variable<size_type> const n)
 		noexcept
 		{
-			assert(n <= size);
-			if (_std::is_constant_evaluated() or n < size) {
+			if (n < size or _std::is_constant_evaluated()) {
 				S_::fill(value_type{});
 			}
 		}
+		/*!
+		\note   	Defining `{}` allows `constexpr` evaluation,
+		but invalidates `std::trivially_default_constructible`.
+		*/
 		XTAL_NEW_(implicit)
-		homotype(_std::initializer_list<value_type> xs)
+		homotype()
 		noexcept
-		:	homotype(count_f(xs))
+		:	homotype(variable{size_type{}})
 		{
-			_detail::move_to<T::ordinate>(S_::begin(), point_f(xs), count_f(xs));
 		}
 		XTAL_NEW_(explicit)
 		homotype(iterable_q auto &&xs)
 		noexcept
 		requires epimorphic_q<homotype, decltype(xs)>
-		:	homotype(count_f(xs))
+		:	homotype(variable{count_f(xs)})
 		{
-			_detail::copy_to<T::ordinate>(S_::begin(), XTAL_REF_(xs));
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::copy_to<T::devalue_f>(S_::begin(), point_f(XTAL_REF_(xs)), n);
+		}
+		XTAL_NEW_(implicit)
+		homotype(_std::initializer_list<value_type> xs)
+		noexcept
+		:	homotype(variable{count_f(xs)})
+		{
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::move_to<T::devalue_f>(S_::begin(), point_f(xs), n);
+		}
+
+		XTAL_NEW_(explicit)
+		homotype(make_q<typename T::devalue_type> auto &&...xs)
+		noexcept
+		requires requires {archetype{XTAL_REF_(xs)...};}
+		:	S_([&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(to) (static_cast<S_ &&>(archetype{XTAL_REF_(xs)...,
+					_std::tuple_element_t<I + sizeof...(xs), archetype>{}...}))
+				(bond::seek_s<size - sizeof...(xs)>{})
+			)
+		{
+		}
+		XTAL_NEW_(explicit)
+		homotype(make_q<typename T::revalue_type> auto &&...xs)
+		noexcept
+		requires different_q<decltype(T::devalue_f), decltype(T::revalue_f)>
+		:	homotype{T::devalue_f(XTAL_REF_(xs))...}
+		{
 		}
 
 	};
@@ -186,16 +223,23 @@ struct superblock<U   [N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct block<_s ...>
-:	block<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct block<Us ...>
+:	block<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ..._s>
+/*!
+\brief Defines a fixed-width `std::array`- or `std::tuple`-like container.
+
+If `common_q<Us...`, the member-`type` is `std::derived_from<std::tuple<Us...>>`.
+Otherwise, the member-`type` derives from `std::span` or `std::array`,
+depending respectively on whether the supplied signature is referenced or unreferenced.
+*/
+template <class ...Us>
 struct block
 {
 	template <class T>
-	using endotype = typename _detail::superblock<_s...>::template homotype<T>;
+	using endotype = typename _detail::superblock<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<block_t>>;
@@ -205,9 +249,12 @@ struct block
 	{
 		using S_ = holotype<T>;
 
-		template <class _, class ...As> struct form_           {using type = bond::compose_s<T, bond::hypertag<As...>>;};
+		template <class _, class ...As> struct form_           {using type = bond::compose_s<T, bond::tagged<As...>>;};
+		template <class _             > struct form_<_, Us...> {using type = T;};
 		template <class _             > struct form_<_       > {using type = T;};
-		template <class _             > struct form_<_, _s...> {using type = T;};
+		
+		template <class _, scalar_q ...As> requires common_q<As...>
+		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
 
 	public:// OPERATE
 		using S_::size;
@@ -218,21 +265,27 @@ struct block
 		using typename S_:: archetype;
 		using typename S_::value_type;
 		using typename S_::scale_type;
+		using typename S_::index_type;
 
-		///\
-		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
- 		
-		template <class ...As> using form_t = typename form_<void, As...>::type;
+		using devalue_type = value_type;
+		using revalue_type = value_type;
+
+		/*!
+		\brief  	Reinvokes the current `template` (uniquely determined by the `bond::tag`s).
+		*/
+		template <class ...Xs> using form_t = typename form_<void, Xs...>::type;
 		
-		///\returns a specialized instance of the underlying template using the argument types `Xs...`. \
-
+		/*!
+		\returns	A specialized instance of the underlying template using the argument types `Xs...`.
+		*/
 		XTAL_FX0_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,set)
 		form(Xs &&...xs),
-			form_t<Xs...>{XTAL_REF_(xs)...})
+			form_t<_xtd::decay_value_reference_t<Xs>...>{XTAL_REF_(xs)...})
 
-		///\returns a specialized instance of `this` using the underlying template. \
-
+		/*!
+		\returns	A specialized instance of `this` using the underlying template.
+		*/
 		XTAL_FX2_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
 		reform(),
@@ -241,66 +294,77 @@ struct block
 	public:
 		using S_::self;
 
-		///\returns the first `count` elements of `this` as a truncated view of `U`. \
-		
-		///\todo\
-		Allow truncation/projection of heterogeneous `block`s.
-
+		/*!
+		\returns	The first `count` elements of `this` as a truncated view of `U`.
+		*/
 		XTAL_FX4_(do) (template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		self(constant_q auto count),
 		{
 			auto constexpr N = count();
-			if constexpr (same_q<_s...>) {
-				static_assert(N <= size());
-				return reform<V(&)[N]>();
+			auto constexpr M = N < 0? size + N: N;
+			static_assert(M <= size());
+			XTAL_IF0
+			XTAL_0IF (M == size()) {
+				return self();
+			}
+			XTAL_0IF (common_q<Us...>) {
+				return reform<V(&)[M]>();
 			}
 			else {
-				static_assert(N == size());
-				static_assert(same_q<V, value_type>);
-				return reform<_std::add_lvalue_reference_t<_s>...>();
+				static_assert(same_q<V, value_type>);// Default...
+				return [&]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(to) (reform(get<I>(self())...))
+				(bond::seek_s<M>{});
 			}
 		})
 
 	public:
 	//	using S_::twin;
 
-		///\see [`bond::any`](../bond/any.hh). \
-
+		/*!
+		\returns	A copy of `this`.
+		*/
 		XTAL_DEF_(return,inline,let)
 		twin() const
 		noexcept -> auto
 		{
-			return reform<_std::remove_cvref_t<_s>...>();
+			return reform<_std::remove_cvref_t<Us>...>();
 		}
 
-		///\returns the first `count` elements of `this` as a truncated copy of `U`. \
-		
-		///\todo\
-		Allow truncation/copying of heterogeneous `block`s. \
-
+		/*!
+		\returns	A copy of `this` truncated to the first `count` elements.
+		*/
 		XTAL_FX4_(do) (template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		twin(constant_q auto count),
 		{
-			if constexpr (same_q<_s...>) {
-				static_assert(count() <= size());
-				return reform<V[count]>();
+			auto constexpr N = count();
+			auto constexpr M = N < 0? size + N: N;
+			static_assert(M <= size());
+			XTAL_IF0
+			XTAL_0IF (M == size()) {
+				return twin();
+			}
+			XTAL_0IF (common_q<Us...>) {
+				return reform<V[M]>();
 			}
 			else {
-				static_assert(count() == size());
-				static_assert(same_q<V, value_type>);
-				return reform<_std::remove_cvref_t<_s>...>();
+				static_assert(same_q<V, value_type>);// Default...
+				return [&]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(to) (reform(got<I>(self())...))
+				(bond::seek_s<M>{});
 			}
 		})
 
 	public:// ACCESS
-		///\returns the internal/external representation of the given co/ordinate. \
+		/*!
+		\returns	The internal/external representation of the given co/devalue_f.
+		*/
+		static auto constexpr devalue_f = _std::identity{};
+		static auto constexpr revalue_f = _std::identity{};
 
-		static auto constexpr   ordinate = _std::identity{};
-		static auto constexpr coordinate = _std::identity{};
-
-		XTAL_FX4_(do) (template <size_type I>
+		XTAL_FX4_(do) (template <index_type I=0>
 		XTAL_DEF_(return,inline,let)
 		element(),
 		noexcept -> decltype(auto)
@@ -311,21 +375,21 @@ struct block
 			XTAL_0IF_(to) ( get<I>(s))
 			XTAL_0IF_(to) (element(constant_t<I>{}))// Required for `span`!
 		})
-		XTAL_FX4_(do) (template <auto I=0>
+		XTAL_FX4_(do) (template <index_type I=0>
 		XTAL_DEF_(return,inline,let)
 		element(auto i),
 		noexcept -> decltype(auto)
-		requires same_q<_s...>
+		requires common_q<Us...>
 		{
 			if constexpr (I) {i += I;} assert(i < size);
 			return self().operator[](i);
 		})
 
-		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) coelement  (   ), self().coordinate(element<I>()))
-		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) coelement  (I i), self().coordinate(element(i)  ))
+		XTAL_FX1_(to) (template <index_type I=0> XTAL_DEF_(return,inline,let) coelement  (   ), self().revalue_f(element<I>()))
+		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) coelement  (I i), self().revalue_f(element(i)  ))
 
-		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
-		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
+		XTAL_FX1_(to) (template <index_type I  > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
+		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
 	using type = bond::derive_t<homotype>;
@@ -347,6 +411,7 @@ template <size_type I> XTAL_DEF_(inline,let) got(block_q auto        &o) noexcep
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 /**/
+#ifndef XTAL_DOC
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
@@ -358,5 +423,6 @@ struct tuple_element<N, T> : T::template tuple_element<N> {};
 
 
 }/////////////////////////////////////////////////////////////////////////////
+#endif
 /***/
 XTAL_ENV_(pop)

@@ -11,8 +11,9 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(bond::array_tag_p<couple_t, couple_t<int[2]>, int[2]>);
-static_assert(couple_q<couple_t<int[2]>>);
+static_assert(bond::tag_in_p<couple_t, couple_t<int[2]>>);
+static_assert(bond::tag_infixed_p<couple_t, couple_t<int[2]>>);
+static_assert(bond::tag_infixed_p<couple_t, couple_t<int[2]>, int[2]>);
 static_assert(couple_q<couple_t<int[2]>, int[2]>);
 
 static_assert(complete_q<couple_t<float, double>>);
@@ -28,12 +29,46 @@ static_assert(fungible_q<_std::array<float, 2>,
 
 TAG_("couple")
 {
+
+	
 	using _fit = bond::fit<>;
 	using T_delta = typename _fit::delta_type;
 	using T_sigma = typename _fit::sigma_type;
 	using T_alpha = typename _fit::alpha_type;
 	using T_aphex = typename _fit::aphex_type;
 
+
+	TRY_("couple typing")
+	{
+		using U0 = unsigned;
+		using V0 =   signed;
+
+		using U1 = couple_t<U0[1] >; using _U1 = brace_t<U0[1] >;
+		using V1 = couple_t<V0[1] >; using _V1 = brace_t<V0[1] >;
+		using U2 = couple_t<U0[2] >; using _U2 = brace_t<U0[2] >;
+		using V2 = couple_t<V0[2] >; using _V2 = brace_t<V0[2] >;
+		using UV = couple_t<U0, V0>; using _UV = brace_t<U0, V0>;
+		using VU = couple_t<V0, U0>; using _VU = brace_t<V0, U0>;
+
+		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
+		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)
+		static_assert(    bond::tab_compatible_q< V1,  V1>);// `    ==`
+		static_assert(not bond::tab_compatible_q< V1, _V1>);// `not ==`
+		
+		static_assert(    bond::tab_precedence_p< V1, _V1>);// `    <=`
+		static_assert(not bond::tab_preference_p< V1,  V1>);// `    < `
+		static_assert(not bond::tab_precedence_p<_V1,  V1>);// `not <=`
+		static_assert(not bond::tab_preference_p<_V1,  V1>);// `not < `
+
+		U1 u1{}; U2 u2{};
+		V1 v1{}; V2 v2{};
+		UV uv{}; VU vu{};
+
+		TRUE_(v1.size() == v1.twin().size());
+		TRUE_(v1.size() == (1234*v1).size());
+		TRUE_(v1.size() == (v1*1234).size());
+
+	};
 	EST_("couple reinitialization")
 	{
 		couple_t<T_aphex[4]> foo{};
@@ -56,6 +91,19 @@ TAG_("couple")
 		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.blanket() == 0);
 
 	}
+	TRY_("couple flipping")
+	{
+		using W_alpha = couple_t<T_alpha[2]>;
+
+		auto constexpr N_size = 2;
+		W_alpha foo{1, 2};
+		W_alpha bar{2, 1};
+
+		TRUE_(foo == foo.flipped(T_alpha{ 1}));
+		TRUE_(bar == foo.flipped(T_alpha{-1}));
+
+	}
+
 	TRY_("couple production (multiplicative)")
 	{
 		using W =  couple_t<T_aphex, T_alpha>;
@@ -103,13 +151,12 @@ TAG_("couple")
 		using W = couple_t<T_alpha[N_size]>;
 
 		auto bar = W{2.0, 0.5};
-		auto foo = bar.template reflected<-1>();
-		auto baz = foo.template reflected<+1>();
+		auto foo = bar.reflection();
 		
-		TRUE_(get<0>(foo), 1.25);
-		TRUE_(get<1>(foo), 0.75);
-		TRUE_(get<0>(baz), bar[0]);
-		TRUE_(get<1>(baz), bar[1]);
+		TRUE_(get<0>(foo) == bar.template reflection<+1>());
+		TRUE_(get<1>(foo) == bar.template reflection<-1>());
+		TRUE_(get<0>(foo) == 2.5);
+		TRUE_(get<1>(foo) == 1.5);
 
 	}
 	TRY_("couple refactoring")

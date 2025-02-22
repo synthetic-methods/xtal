@@ -10,20 +10,114 @@ XTAL_ENV_(push)
 namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief
+Provides `method` composition by linking `head`s.
 
+\details
+Besides handling composition,
+most of the work is done via `processor::defer`.
+*/
 template <typename ..._s> struct   link;
 template <typename ..._s> using    link_t = confined_t<link<_s...>>;
-template <typename ..._s> concept  link_q = bond::tag_p<link, _s...>;
+template <typename ..._s> concept  link_q = bond::tag_in_p<link, _s...>;
 
 
-////////////////////////////////////////////////////////////////////////////////
-///\
-Provides `method` composition by linking `head`s. \
+namespace _detail
+{///////////////////////////////////////////////////////////////////////////////
 
-template <typename     ...As> struct link    : bond::compose<link<As>...                          > {};
-template <   incomplete_q A > struct link<A> : bond::compose<                                     > {};
-template <bond::compose_q A > struct link<A> : bond::compose<defer<confined_t<A>>, bond::tag<link>> {};
-template <class           U > struct link<U> : bond::compose<defer<           U >, bond::tag<link>> {};
+template <class U>
+struct linker
+{
+	using superkind = defer<U>;
+
+	template <class S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+	};
+	template <class S> requires any_q<typename S::head_type>
+	class subtype<S> : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+
+		using Outer = S_;
+		using Inner = S ;
+		using Inner_nu = const Inner &;
+		using Inner_mu =       Inner &;
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		Outer_f(auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to)
+				(Outer::template method_f<Is...>(XTAL_REF_(xs)...))
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		Inner_f(auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to)
+				(Inner::template method_f<Is...>(XTAL_REF_(xs)...))
+
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// OPERATE
+		/*!
+		\brief  	Resolves `head` as either a function or value,
+		composed with the inherited `method` if the parent is a `defer`red `process`.
+		*/
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		method_f(auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(to)
+			(Outer_f<Is...>(Inner_f<Is...>(XTAL_REF_(xs)...)))
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		method  (auto &&...xs)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(to)
+			(method_f<Is...>(XTAL_REF_(xs)...))
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		method  (auto &&...xs) const
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_nu).template method  <Is...>(XTAL_REF_(xs)...))
+		{
+			return Outer::template method<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		method  (auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_mu).template method  <Is...>(XTAL_REF_(xs)...))
+		{
+			return Outer::template method<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		}
+
+	};
+};
+
+
+
+}///////////////////////////////////////////////////////////////////////////////
+
+template <typename     ...As> struct link    : bond::compose<link<As>...                                    > {};
+template <   incomplete_q A > struct link<A> : bond::compose<                                               > {};
+template <bond::compose_q A > struct link<A> : bond::compose<_detail::linker<confined_t<A>>, bond::tag<link>> {};
+template <class           U > struct link<U> : bond::compose<_detail::linker<           U >, bond::tag<link>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -2,42 +2,43 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../flow/key.hh"
+#include "../flow/assess.hh"
 #include "../provision/all.hh"
-
 
 
 XTAL_ENV_(push)
 namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Polyphonic voice allocator. Functionally similar to `monomer`, \
-but expands/contracts the voice spool according to `occur::stage` requests/responses. \
+/*!\addtogroup XTAL_processor_polymer*/
+/*!
+\ingroup XTAL_processor_polymer
+\brief   Polyphonic voice allocator.
 
-///\note\
-The attached `store` and `spool` determine the sample store and voice spool respectively. \
+Functionally similar to `monomer`,
+but expands/contracts the voice spool according to `occur::stage` requests/responses.
 
-///\note\
-The `scan` method of `spool` must return the most recently activated voice for a given `key_s`. \
-The default implementation uses `lower_bound` to this effect. \
-
-///\todo\
-Handle note-offs, i.e. `stage == 1`!
-
-template <typename ..._s> struct   polymer;
-template <typename ..._s> using    polymer_t =  confined_t<polymer< _s...>>;
-template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s... >;
-template <typename ..._s>
-XTAL_DEF_(return,inline,let)
-polymer_f(auto &&u)
-noexcept -> auto
-{
-	return polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u));
-}
+The attached `store` and `spool` determine the sample store and voice spool respectively.
+The `scan` method of `spool` must return the most recently activated voice for a given `key_s`.
+The default implementation uses `lower_bound` to this effect.
+*/
+template <typename ...As>	struct  polymer;
+template <typename ...As>	using   polymer_t      =       confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
+template <typename ...Qs>	concept polymer_head_q = bond::tag_as_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
+template <typename ...Qs>	concept polymer_body_q = bond::tag_in_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 
 
 ////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief   Creates a `polymer` by lifting the given function/`process`, and attaching `As...`.
+*/
+template <typename ...As>
+XTAL_DEF_(let) polymer_f = []<class U> (U &&u)
+XTAL_0FN_(to) (polymer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
+
+////////////////////////////////////////////////////////////////////////////////
+/**/
 template <incomplete_q A, typename ...As>
 struct polymer<A, As...>
 :	polymer<As...>
@@ -51,21 +52,29 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
-	using U_resize = occur::resize_t<>;
-	using U_cursor = occur::cursor_t<>;
-
 	using superkind = monomer<U, As...>;
-	//\
-	Base `monomer` used to derive the return-type, \
-	and to drive the `sliced` renderer. \
-
+/*/
+template <typename ...As>
+struct polymer
+{
+private:
+	using superkind = monomer<As...>;
+/***/
+public:
+	/*!
+	\brief  	Defines a `monomer`-derived type that aggregates the internally managed voices.
+	\brief  	Uses `provision::voiced` to configure the collective `ensemble`.
+	*/
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
-		using T_voice = monomer_t<U, typename S_::template voice<>>;
+		using U_ = typename S_::head_type;
+		//\
+		using M_voice = monomer_t<U_, typename S_::template voice<>>;
+		using M_voice = monomer_t<U , typename S_::template voice<>>;
 
 	public:
 		using S_::S_;
@@ -73,7 +82,8 @@ struct polymer<U, As...>
 		template <class ...Xs> requires provision::spooled_q<S_>
 		struct binding
 		{
-			using V_voice = typename T_voice::template bind_t<Xs...>;
+		private:
+			using V_voice = typename M_voice::template bind_t<Xs...>;
 			using U_stage = occur::stage_t<>;
 			
 			using U_voice = flow::key_s<V_voice>;
@@ -84,8 +94,17 @@ struct polymer<U, As...>
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	typename S_::template binding<Xs...>
-			,	typename U_cursor::template attach<>
 			>;
+			/*!
+			\brief  	Manages the `ensemble` via `occur::stage` events indexed by `flow::key`.
+			\details
+			Both events and the voices comprising the `ensemble` are wrapped by `flow::key`,
+			allowing the two to be compared directly.
+
+			Due to the opaque nature of `flow::key`,
+			the `ensemble` can be navigated as a collection of `signed` prefixes.
+			*/
+		public:
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
@@ -96,11 +115,12 @@ struct polymer<U, As...>
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-				XTAL_NEW_(delete) (subtype, noexcept = default)
-				XTAL_NEW_(create) (subtype, noexcept = default)
-				XTAL_NEW_(move)   (subtype, noexcept = default)
-				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept)
+				XTAL_NEW_(delete) (subtype, noexcept=default)
+				XTAL_NEW_(create) (subtype, noexcept=default)
+				XTAL_NEW_(move)   (subtype, noexcept=default)
+				XTAL_NEW_(copy)   (subtype, noexcept=default)
+				XTAL_NEW_(then)   (subtype, noexcept:subtype)
+			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 				XTAL_NEW_(explicit)
 				subtype(same_q<Xs> auto &&...xs)
@@ -127,6 +147,9 @@ struct polymer<U, As...>
 				)
 
 			public:// FLOW
+				/*!
+				\brief  	Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(auto &&...oo)
@@ -134,11 +157,11 @@ struct polymer<U, As...>
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
-				///\
-				Forwards to the associated instance. \
-				Messages associated with `occur::stage` designate events, \
-				and govern the allocation/deallocation of keyed instances. \
-				
+				/*!
+				\brief  	Unpacks and handles the message.
+				\brief  	Messages associated with `occur::stage` designate events,
+				governing the allocation/deallocation of keyed instances.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(flow::key_q auto io, auto &&...oo)
@@ -146,6 +169,9 @@ struct polymer<U, As...>
 				{
 					return flux<N_ion>(U_key(io), io.tail(), XTAL_REF_(oo)...);
 				}
+				/*!
+				\brief  	Forwards the message to the associated voice.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(U_key i_, auto &&...oo)
@@ -153,8 +179,8 @@ struct polymer<U, As...>
 				{
 					auto u_ = ensemble().scan(i_.head());
 					//\
-					if (1 <= count_f(ensemble())) {
-					if (1 <= count_f(ensemble()) and 1 != u_->efflux(occur::stage_f(-1))) {
+					if (1 <= count_f(ensemble()) and 1 != u_->influx(occur::stage_f(-1))) {
+					if (1 <= count_f(ensemble()) and 1 != u_->influx(flow::assess_f(occur::stage_f(-1)))) {
 						assert(u_ < ensemble().end() and i_.head() == u_->head());
 						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 					}
@@ -162,66 +188,55 @@ struct polymer<U, As...>
 						return -1;
 					}
 				}
-				///\note\
-				If an incoming event is active `(0)`, \
-				the top-most associated instance is cut `(-1)` \
-				before a new instance is allocated from the prototype `head`. \
+				/*!
+				\brief  	Handles voice-allocation/termination using the provided `occur::stage`
+				\details
+				If the incoming event is in the initial stage `0`,
+				the top-most associated instance is duplicated then terminated `-1`.
 
-				template <signed N_ion> requires in_n<N_ion, +1>
-				XTAL_DEF_(return,let)
-				flux(U_key i_, U_stage _o, auto &&...oo)
-				noexcept -> signed
-				{
-					auto h  = i_.head();
-					auto u_ = ensemble().scan(h);
-
-				// If an onset-event is received...
-					if (0 == _o.head()) {
-					
-					// If a voice already exists for this `key_s`...
-						if (u_ < ensemble().end() and h == u_->head()) {
-
-						//	Recycle/terminate the current voice:
-							auto u = *u_;
-							auto x =  u_->template flux<N_ion>(occur::stage_f(-1), oo...);
-							assert(x != -1);
-							u_ = ensemble().poke(u_, h, XTAL_MOV_(u));
-						}
-						else {
-						//	Allocate a new voice using the `lead()`:
-							u_ = ensemble().poke(u_, h, lead());
-
-						//	Update to the current `cursor`:
-							(void) u_->influx(R_::template head<U_cursor>());
-						}
-					}
-					assert(u_->head() == h);
-					return u_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
-				}
-				///\
-				Renders the indexed `store` slice designated by `rev` and `cur`, \
-				after freeing any voices that have reached the final `occur::stage_f(-1)`. \
-				
-				///\note\
-				The `ensemble` is only mixed into `this` if `provision::stored_q`, \
-				otherwise the multichannel data is just rendered locally on each voice. \
-				
+				If no voice exists for the given key,
+				the new instance is duplicated from `lead`.
+				*/
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(occur::render_q auto &&, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(U_key k_, U_stage o, auto &&...oo)
 				noexcept -> signed
 				{
-					ensemble().free([] XTAL_1FN_(dot) (efflux(occur::stage_f(-1)) == 1));
+					auto const k     = k_.head();
+					auto       e_    = ensemble().scan(k);
+					bool const onset =                           0 == o  .head(), offset = not onset;
+					bool const reset = e_ < ensemble().end() and k == e_->head(), preset = not reset;
+					if (onset) {
+						e_ = ensemble().poke(e_, k, preset? lead(): [&] XTAL_1FN {
+							auto   u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
+							return u;
+						}	());
+					}
+					return offset and preset? -1:
+						e_->template flux<N_ion>(XTAL_MOV_(o), XTAL_REF_(oo)...);
+				}
+				/*!
+				\brief  	Renders the given slice of `ren` designated by `rev` and `cur`.
+				\brief  	Frees any voices that have reached the final stage `-1`.
+
+				Voices are rendered internally by invoking `flux<-1>` with the cursor only,
+				before being mixed into `rev` if `provision::stored_q<self_type>`.
+
+				Variadic expansion can be achieved by prefixing the render-tuple with `key_s`.
+				*/
+				template <signed N_ion> requires in_n<N_ion, -1>
+				XTAL_DEF_(return,let)
+				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				noexcept -> signed
+				{
+					ensemble().free([] XTAL_1FN_(dot) (influx(flow::assess_f(occur::stage_f(-1))) == 1));
 
 					auto y0 = point_f(rev);
 					auto sN = count_f(rev);
 					_detail::fill_with(y0, sN, zero);
 
 					signed x = -1;
-
-					//\
 					(void) lead().influx(cur);
-					(void) lead().template flux< 1>(cur);
 
 					for (auto &&e: ensemble()) {
 						x &= XTAL_REF_(e).efflux(cur);
@@ -235,22 +250,17 @@ struct polymer<U, As...>
 					}
 					return x;
 				}
-				
-				///\
-				Forwards to all active instances including the sentinel (except when rendering). \
 
-				///\todo\
-				Filter parameter changes from `stage == -1` events? \
-
-				/*/
-				template <signed N_ion, unnatural_constant_q I>
-				XTAL_DEF_(return,inline,let)
-				flux(I &&, auto &&...oo)
-				/*/
+			//\
+			protected:// FLOW
+			public:// FLOW
+				/*!
+				\brief  	Forwards the message to all active instances.
+				\brief  	The `lead` is included when `N_ion == 1` in order to maintain state continuity.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,let)
 				flux_rest(auto &&...oo)
-				/***/
 				noexcept -> signed
 				{
 					auto x = N_ion < 0? -1: lead().template flux<N_ion>(oo...);

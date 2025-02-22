@@ -13,12 +13,7 @@ namespace xtal::occur
 
 template <class ..._s>	struct   resample;
 template <class ..._s>	using    resample_t =  confined_t<resample<_s...>>;
-template <class ..._s>	concept  resample_q = bond::tag_p<resample, _s...>;
-
-template <class ..._s>
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-resample_f       (auto &&...oo),
-resample_t<_s...>(XTAL_REF_(oo)...))
+template <class ..._s>	concept  resample_q = bond::tag_in_p<resample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -40,21 +35,17 @@ struct resample
 	public:// CONSTRUCT
 	//	using S_::S_;
 		
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+//		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+		XTAL_NEW_(else)   (subtype, noexcept:S_)
 
-		XTAL_NEW_(explicit)
-		subtype(auto &&...oo)
-		noexcept
-		:	S_{XTAL_REF_(oo)...}
-		{}
 		XTAL_NEW_(explicit)
 		subtype(number_q auto v, auto &&...oo)
 		noexcept
-		:	subtype{U2(static_cast<U0>(v)), XTAL_REF_(oo)...}
+		:	subtype{U2{static_cast<U0>(v), _std::in_place}, XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()
@@ -72,6 +63,11 @@ struct resample
 
 	};
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) resample_f = [] XTAL_1FN_(call) (resample_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

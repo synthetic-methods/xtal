@@ -6,13 +6,6 @@
 #include "../provision/all.hh"
 #include "../schedule/all.hh"
 
-
-
-
-
-
-
-
 XTAL_ENV_(push)
 namespace xtal::processor::_test
 {/////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +32,7 @@ void polymer_provision_spine__locamotion()
 	using A_stored  = provision::stored  <extent_constant_t<N_store>>;
 	using A_spooled = provision::spooled <extent_constant_t<N_spool>>;
 
-	using A_gate   = bond::compose<typename U_glider::template inqueue<Ox_level>, typename U_stage::expect<>>;
+	using A_gate   = bond::compose<typename U_glider::template accept<Ox_level>, typename U_stage::inspect<>>;
 	using U_gate   = process::confined_t<A_gate>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -51,12 +44,14 @@ void polymer_provision_spine__locamotion()
 
 // Resize, and set the default `level: 1` and `stage: final`:
 	u_vox <<= U_resize(N_window);
-	u_vox <<= Ox_level(1) <<= U_stage(-1);
-	u_vox <<= U_event(62, 0); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
-	u_vox <<= U_event(62, 0); TRUE_(5 == u_vox.ensemble().size());
+
+	u_vox <<= Ox_level(1);
+	u_vox >>= U_stage(-1);
+	u_vox >>= U_event(62, 0); TRUE_(1 == u_vox.ensemble().size());
+	u_vox >>= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
+	u_vox >>= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
+	u_vox >>= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
+	u_vox >>= U_event(62, 0); TRUE_(5 == u_vox.ensemble().size());
 
 //	Render:
 //	u_vox <<= U_resize(N_window);
@@ -84,15 +79,15 @@ TAG_("polymer", "occur", "spine")
 	using U_cursor = occur::cursor_t<>;
 	using U_stage  = occur::stage_t<>;
 	using U_event  = flow::key_s<U_stage>;
-	using U_glider  = schedule::glider_t<provision::spooled<extent_constant_t<0x20>>>;
+	using U_glider = schedule::glider_t<provision::spooled<extent_constant_t<0x20>>>;
 	using U_cue    = flow::cue_s<>;
 
 	using A_stored  = provision::stored  <extent_constant_t<-1>>;
 	using A_spooled = provision::spooled <extent_constant_t<64>>;
 
 	using U_gate   = process::confined_t<void
-	,	typename U_glider::template inqueue<Ox_level>
-	,	typename U_stage::expect<>
+	,	typename U_glider::template accept<Ox_level>
+	,	typename U_stage::inspect<>
 	>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -105,12 +100,13 @@ TAG_("polymer", "occur", "spine")
 
 // Resize, and set the default `level: 1` and `stage: final`:
 	u_vox <<= U_resize(8);
-	u_vox <<= Ox_level(1) <<= U_stage(-1);
-	u_vox <<= U_event(62, 0); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
-	u_vox <<= U_event(62, 0); TRUE_(5 == u_vox.ensemble().size());
+	u_vox <<= Ox_level(1);
+	u_vox >>= U_stage(-1);
+	u_vox >>= U_event(62, 0); TRUE_(1 == u_vox.ensemble().size());
+	u_vox >>= U_event(65, 0); TRUE_(2 == u_vox.ensemble().size());
+	u_vox >>= U_event(69, 0); TRUE_(3 == u_vox.ensemble().size());
+	u_vox >>= U_event(65, 0); TRUE_(4 == u_vox.ensemble().size());
+	u_vox >>= U_event(62, 0); TRUE_(5 == u_vox.ensemble().size());
 
 //	Render:
 //	u_vox <<= U_resize(8);
@@ -152,7 +148,7 @@ void polymer_provision_spool__combined()
 	using U_cursor = occur::cursor_t<>;
 	
 	using Z_process = process::confined_t<void
-	,	typename U_stage::expect<>
+	,	typename U_stage::inspect<>
 	,	typename Ox_level::poll<>
 	>;
 	using Z_processor = polymer_t<Z_process
@@ -164,10 +160,10 @@ void polymer_provision_spool__combined()
 
 // Set the default `stage: final`:
 	u_vox <<= U_stage(-1);
-	(void) u_vox.influx(U_event(62, 0), Ox_level(1)); TRUE_(1 == u_vox.ensemble().size());
-	(void) u_vox.influx(U_event(65, 0), Ox_level(2)); TRUE_(2 == u_vox.ensemble().size());
-	(void) u_vox.influx(U_event(69, 0), Ox_level(3)); TRUE_(3 == u_vox.ensemble().size());
-	(void) u_vox.influx(U_event(65, 0), Ox_level(4)); TRUE_(4 == u_vox.ensemble().size());
+	(void) u_vox.efflux(U_event(62, 0), Ox_level(1)); TRUE_(1 == u_vox.ensemble().size());
+	(void) u_vox.efflux(U_event(65, 0), Ox_level(2)); TRUE_(2 == u_vox.ensemble().size());
+	(void) u_vox.efflux(U_event(69, 0), Ox_level(3)); TRUE_(3 == u_vox.ensemble().size());
+	(void) u_vox.efflux(U_event(65, 0), Ox_level(4)); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);
@@ -175,7 +171,7 @@ void polymer_provision_spool__combined()
 	
 	TRUE_(3 == u_vox.ensemble().size());
 //	TRUE_(8 == u_vox.front());
-//	
+//
 //	auto vox_oo_ = u_vox.ensemble().begin();
 //	TRUE_(62 == vox_oo_++->head());
 //	TRUE_(65 == vox_oo_++->head());
@@ -196,7 +192,7 @@ void polymer_provision_spool_composited()
 	using U_cursor = occur::cursor_t<>;
 	
 	using U_gate = process::confined_t<void
-	,	typename U_stage::expect<>
+	,	typename U_stage::inspect<>
 	,	typename Ox_level::poll<>
 	>;
 
@@ -207,11 +203,11 @@ void polymer_provision_spool_composited()
 	auto u_vox = U_vox::bind_f();
 
 // Set the default `stage: final`:
-	u_vox <<= U_stage(-1);
-	u_vox <<= flow::key_s<>(62) << U_stage(0) << Ox_level(1); TRUE_(1 == u_vox.ensemble().size());
-	u_vox <<= flow::key_s<>(65) << U_stage(0) << Ox_level(2); TRUE_(2 == u_vox.ensemble().size());
-	u_vox <<= flow::key_s<>(69) << U_stage(0) << Ox_level(3); TRUE_(3 == u_vox.ensemble().size());
-	u_vox <<= flow::key_s<>(65) << U_stage(0) << Ox_level(4); TRUE_(4 == u_vox.ensemble().size());
+	u_vox >>= U_stage(-1);
+	u_vox >>= flow::key_s<>(62) << U_stage(0) << Ox_level(1); TRUE_(1 == u_vox.ensemble().size());
+	u_vox >>= flow::key_s<>(65) << U_stage(0) << Ox_level(2); TRUE_(2 == u_vox.ensemble().size());
+	u_vox >>= flow::key_s<>(69) << U_stage(0) << Ox_level(3); TRUE_(3 == u_vox.ensemble().size());
+	u_vox >>= flow::key_s<>(65) << U_stage(0) << Ox_level(4); TRUE_(4 == u_vox.ensemble().size());
 
 //	Re(?:size|nder):
 	u_vox <<= U_resize(N_window);
@@ -219,7 +215,7 @@ void polymer_provision_spool_composited()
 	
 	TRUE_(3 == u_vox.ensemble().size());
 //	TRUE_(8 == u_vox.front());
-//	
+//
 //	auto vox_oo_ = u_vox.ensemble().begin();
 //	TRUE_(62 == vox_oo_++->head());
 //	TRUE_(65 == vox_oo_++->head());

@@ -143,11 +143,11 @@ void monomer_provision__advancing()
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
 
-//	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
+//	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation!
 
 //	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11
-	|	_xtd::ranges::views::take(xhs.size())
+	|	_xtd::ranges::views::take_exactly(xhs.size())
 	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));
@@ -171,8 +171,8 @@ void monomer_provision__provisioning()
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
-	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
-	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
 	auto u_vector = U_store{0, 0, 0};
@@ -216,7 +216,7 @@ void monomer_chaining__rvalue()
 	
 	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mul_op = monomer_t<U_mul, provision::stored<>>;
-	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
+	auto yhs = mul_op::bind_f(mix_op::bind_f(processor::let_f(_01), processor::let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -240,14 +240,14 @@ void monomer_chaining__lvalue()
 	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(bond::operate<T_alpha>{});
-	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
-	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
+	auto _01 = views::iota(0, 10)|views::transform(bond::operate<T_alpha>{});
+	auto _10 = _01|views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|views::transform([] (T_alpha n) {return n*11;});
 	
 	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mul_op = monomer_t<U_mul, provision::stored<>>;
-	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
-	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
+	auto  lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto  rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 	auto  yhs = mul_op::bind_f(xhs);
 
@@ -282,8 +282,8 @@ void monomer_chaining__shared()
 
 	auto _xx = idx_fn::bind_f();
 	auto xhs = mix_op::bind_f(_xx);
-	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
-	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
+	auto lhs = mix_fn::bind_f(xhs, processor::let_f(_01));
+	auto rhs = mix_fn::bind_f(xhs, processor::let_f(_10));
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
 	//\

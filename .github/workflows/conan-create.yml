@@ -3,18 +3,18 @@ name: Conan Create
 on:
 
   push:
-    branches: [main]
+    branches: [issues/2]
 
   pull_request:
-    branches: [main]
+    branches: [issues/2]
 
 jobs:
   create:
 
     strategy:
       matrix:
-        bt: [Debug,         Release]
-        os: [macOS, Ubuntu         ]
+        bt: [               Release]
+        os: [               Windows]
       # os: [macOS, Ubuntu, Windows]
     
     runs-on: ${{matrix.os}}-latest

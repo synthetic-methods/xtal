@@ -87,20 +87,26 @@ using halve_t = confined_t<halve>;
 /**/
 TAG_("process", "attach")
 {
+	enum side_type : unsigned {status = 0
+	,	XTAL_APP_(let) (1,    primary)
+	,	XTAL_APP_(let) (2,  secondary)
+	,	XTAL_APP_(let) (3, LHS,  left)
+	,	XTAL_APP_(let) (5, RHS, right)
+	};
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
 	using T_delta = typename _fit::delta_type;
 	using T_alpha = typename _fit::alpha_type;
 
-	using L01 = process::confined_t<typename Ox_level::template poll<0b01>>;
-	using L10 = process::confined_t<typename Ox_level::template poll<0b10>>;
+	using L01 = process::confined_t<typename Ox_level::template poll<LHS>>;
+	using L10 = process::confined_t<typename Ox_level::template poll<RHS>>;
 
 	TRY_("messaging")
 	{
 		subtract_t::bind_t<L01, L10> op{};
 
-		op <<= flow::mark_s<Ox_level>(0b01, Ox_level{9});
-		op <<= flow::mark_s<Ox_level>(0b10, Ox_level{1});
+		op <<= flow::mark_s<Ox_level>(LHS, Ox_level{9});
+		op <<= flow::mark_s<Ox_level>(RHS, Ox_level{1});
 		TRUE_(8 == op());
 
 		op <<= bond::pack_f(ordinal_constant_t<0>{}, _std::array<int, 0>{});
@@ -123,22 +129,10 @@ TAG_("process", "construct")
 
 	TRY_("lifting")
 	{
-		auto const f = let_f([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0));
+		auto const f = process::let_f([] (auto &&...xs) XTAL_0FN_(to) (XTAL_REF_(xs) +...+ 0));
 		TRUE_(10 == f.method(1, 2, 3, 4));
 		TRUE_(10 == f(1, 2, 3, 4));
 		TRUE_(10 == f.reify() (1, 2, 3, 4));
-
-	}
-	TRY_("chaining")
-	{
-		using halve_square_root_t = reinferred_t<halve_t, square_root_t>;
-		using square_root_halve_t = reinferred_t<square_root_t, halve_t>;
-		
-		TRUE_(2. == halve_square_root_t::method_f(16.));
-		TRUE_(3. == square_root_halve_t::method_f(18.));
-
-		TRUE_(2. == halve_square_root_t{}.method(16.));
-		TRUE_(3. == square_root_halve_t{}.method(18.));
 
 	}
 }

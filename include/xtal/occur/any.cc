@@ -22,8 +22,8 @@ TAG_("occur", "any")
 	{
 		TRUE_(true);
 
-		using damping_type = occur::inferred_t<struct DAMPING, float>;
-		using balance_type = occur::inferred_t<struct BALANCE, float>;
+		using damping_type = occur::inferred_t<union DAMPING, float>;
+		using balance_type = occur::inferred_t<union BALANCE, float>;
 
 		damping_type damping{0};
 		

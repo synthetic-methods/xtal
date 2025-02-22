@@ -10,12 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Associates an abstract `state` with an underlying `store`. \
-
+/*!
+\brief
+Associates an abstract view with underlying storage.
+*/
 template <typename ..._s> struct   stowed;
 template <typename ..._s> using    stowed_t = confined_t<stowed<_s...>>;
-template <typename ..._s> concept  stowed_q = bond::tag_p<stowed, _s...>;
+template <typename ..._s> concept  stowed_q = bond::tag_in_p<stowed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,11 +38,12 @@ struct stowed<U_state, U_store>
 	//	using S_::S_;
 		using S_::self;
 		
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+//		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 	
 		XTAL_NEW_(implicit)
 		subtype()

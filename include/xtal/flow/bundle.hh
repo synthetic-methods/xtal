@@ -10,15 +10,26 @@ XTAL_ENV_(push)
 namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Ties `Xs...` to unify flow branching, etc. \
+/*!
+\brief
+Ties `Xs...` together to facilitate distributive flow.
 
-///\note\
-Deified as a `process`'s `binding`, binding the provided arguments. \
-
+\details
+Internalized by `process` as `binding`,
+allowing message distribution over bound arguments.
+*/
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_in_p<bundle, _s...>;
+
+//////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN {
+	XTAL_IF0
+	XTAL_0IF (un_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
+	XTAL_0IF (in_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{objective_f(XTAL_REF_(xs))...};}
+};
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -48,9 +59,11 @@ struct bundle
 
 	public:// FLOW
 
-		///\returns the result of influxing `self` then  (if `& 1`) `arguments`. \
-		///\returns the result of effluxing `arguments` then (if `& 1`) `self`. \
-
+		/*!
+		\returns	The aggregated result of `flux`ing `self` and `arguments`.
+		\returns	If `N_ion == +1`, evaluates `arguments` if `self` evaluates succesfully.
+		If `N_ion == -1`, evaluates `self` if `arguments` evaluate  succesfully.
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		flux(auto &&...oo)
@@ -69,10 +82,11 @@ struct bundle
 			}
 		}
 
-		///\returns the result of `*flow`ing with the supplied routing. \
-		If prefixed by a positive `constant_q`, forwards to the `argument` specified. \
-		If prefixed by a negative `constant_q` , forwards to all `arguments`. \
-
+		/*!
+		\returns	The result of `flow`ing with the supplied routing.
+		\returns	If prefixed by a positive `constant_q`, forwards to the `argument` specified.
+		If prefixed by a negative `constant_q`, forwards to all `arguments`.
+		*/
 		template <signed N_ion,   natural_constant_q I_path>
 		XTAL_DEF_(return,inline,let)
 		flux(I_path, auto &&...oo)
@@ -88,9 +102,12 @@ struct bundle
 			return self().template flux_rest<N_ion>(XTAL_REF_(oo)...);
 		}
 
-		///\
-		Forwards `oo...` to all `arguments`, bypassing `self`. \
-
+	//\
+	protected:// FLOW
+	public:// FLOW
+		/*!
+		\brief  	Forwards `oo...` to all `arguments`, bypassing `self`.
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		flux_rest(auto &&...oo)
@@ -100,10 +117,10 @@ struct bundle
 				XTAL_0FN_(to) (XTAL_REF_(xs).template flux<N_ion>(oo...) &...& -1)
 			);
 		}
-		///\
-		Forwards `oo...` to all `arguments`, bypassing `self`. \
-		If `0 <= N_dex`, the message is prefixed by `o` for the `argument` specified. \
-
+		/*!
+		\brief  	Forwards `oo...` to all `arguments`, bypassing `self`.
+		If `0 <= N_dex`, the message is prefixed by `o` for the `argument` specified.
+		*/
 		template <signed N_ion, unnatural_constant_q I_head>
 		XTAL_DEF_(return,inline,let)
 		flux_unrest(I_head, auto &&o, auto &&...oo)

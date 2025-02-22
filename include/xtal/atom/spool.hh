@@ -14,15 +14,17 @@ namespace xtal::atom
 
 template <class ..._s> struct   spool;
 template <class ..._s> using    spool_t = typename spool<_s...>::type;
-template <class ...Ts> concept  spool_q = bond::tag_p<spool_t, Ts...>;
+template <class ...Ts> concept  spool_q = bond::tag_in_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-A priority-queue based on `buffer_t<A>`. \
-Currently used for both event spools (\see `occur/schedule.ii`) \
-and to implement polymorphism (\see `processor/polymer.ii`). \
+/*!
+\brief   A priority-queue based on `atom::buffer_t<A>`.
+\details Currently used for both event spools and to implement polymorphism.
 
+\see `occur/schedule.ii`
+\see `processor/polymer.ii`
+*/
 template <class A>
 struct spool<A>
 {
@@ -50,28 +52,28 @@ struct spool<A>
 		using value_type = A;
 
 	public:
-		using S_::S_;
-		
-//		XTAL_NEW_(delete) (homotype, noexcept = default)
-//		XTAL_NEW_(create) (homotype, noexcept = default)
-//		XTAL_NEW_(move)   (homotype, noexcept = default)
-//		XTAL_NEW_(copy)   (homotype, noexcept = default)
-//		XTAL_NEW_(cast)   (homotype, noexcept)
-		
-		///\note\
-		The `size()` of the `std::initializer_list` determines the extent of lookup/lookahead. \
-
+		using S_::S_;//NOTE: Inherited and respecialized!
+		/*!
+		\brief   Initializes the spool with the given `end()`ing.
+		\note   	The final element is placed after `end()`,
+		         facilitating lookahead.
+		*/
 		XTAL_NEW_(explicit)
 		homotype(          bond::seek_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{                       U_value{XTAL_REF_(oo)}...}
-		,	u_begin(0), u_end(sizeof...(oo))
+		,	u_begin(0), u_end(0 < sizeof...(oo))
 		{}
+		/*!
+		\brief   Initializes the spool with the given `begin()`ing and `end()`ing.
+		\note   	The initial and final elements are respectively placed before `begin()` and after `end()`,
+		         facilitating both lookbehind and lookahead.
+		*/
 		XTAL_NEW_(explicit)
 		homotype(auto &&o, bond::seek_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
-		,	u_begin(1), u_end(sizeof...(oo))
+		,	u_begin(1), u_end(0 < sizeof...(oo))
 		{}
 
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
@@ -126,10 +128,10 @@ struct spool<A>
 			return free<bond::operate<F>{}>();
 		}
 
-		///\note\
-		Cost can be amortized by invoking `advance` and `abandon` separately, \
-		allowing for branchless `advance`ment. \
-
+		/*!
+		\note   	Cost can be amortized by invoking `advance` and `abandon` separately,
+		allowing for branchless `advance`ment.
+		*/
 		XTAL_DEF_(let)
 		pop(U_point i)
 		noexcept -> void
@@ -160,9 +162,9 @@ struct spool<A>
 			,	[f=XTAL_REF_(f)] (auto &&x, auto &&y) XTAL_0FN_(to) (f(x) < f(y))
 			);
 		}
-		///\note\
-		Conflicting entries w.r.t. `==` are overwritten. \
-
+		/*!
+		\note   	Conflicting entries w.r.t. `==` are overwritten.
+		*/
 		XTAL_DEF_(mutate,inline,let)
 		push(same_q<U_value> auto &&u)
 		noexcept -> U_point

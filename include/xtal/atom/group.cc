@@ -21,15 +21,15 @@ TAG_("atom", "group")
 	using T_alpha = typename _fit::alpha_type;
 	using T_aphex = typename _fit::aphex_type;
 
-	using A1 = additive_group_t<int[1]>;
-	using A2 = additive_group_t<int[2]>;
-	using A3 = additive_group_t<int[3]>;
-	using A4 = additive_group_t<int[4]>;
+	using A1 = group_addition_t<int[1]>;
+	using A2 = group_addition_t<int[2]>;
+	using A3 = group_addition_t<int[3]>;
+	using A4 = group_addition_t<int[4]>;
 	
-	using M1 = multiplicative_group_t<int[1]>;
-	using M2 = multiplicative_group_t<int[2]>;
-	using M3 = multiplicative_group_t<int[3]>;
-	using M4 = multiplicative_group_t<int[4]>;
+	using M1 = group_multiplication_t<int[1]>;
+	using M2 = group_multiplication_t<int[2]>;
+	using M3 = group_multiplication_t<int[3]>;
+	using M4 = group_multiplication_t<int[4]>;
 	
 	TRY_("partial construction")
 	{
@@ -57,7 +57,7 @@ TAG_("atom", "group")
 		d2_0 *= d2_1;
 		TRUE_(d2_0      == M2{10, 14});
 
-		using W =  multiplicative_group_t<T_aphex, T_alpha>;
+		using W =  group_multiplication_t<T_aphex, T_alpha>;
 		auto  x =  W{2, 3};
 		auto  y =  W{4, 9};
 		auto  z =  y*T_alpha{3};

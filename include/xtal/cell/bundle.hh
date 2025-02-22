@@ -10,13 +10,24 @@ XTAL_ENV_(push)
 namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Ties `Xs...`. \
-
+/*!
+\brief
+Ties `Xs...` together as a tuple,
+materializing any `rvalue`s or atomic `lvalue`s.
+*/
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-//mplate <class ...Xs> using    bundle_s = _std::conditional_t<1 != sizeof...(Xs), confined_t<bundle<Xs...>>, complete_t<bond::seek_front_t<Xs...>, void>>;
-template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_in_p<bundle, _s...>;
+
+//////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN {
+	XTAL_IF0
+	XTAL_0IF (un_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
+	XTAL_0IF (in_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{objective_f(XTAL_REF_(xs))...};}
+};
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +35,7 @@ template <class ...Xs>
 struct bundle
 {
 	using superkind = bond::compose<bond::tag<bundle>
-	,	defer<bond::pack_t<Xs...>>
+	,	defer<bond::pack_t<_xtd::decay_trivial_value_reference_t<Xs>...>>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -36,9 +47,9 @@ struct bundle
 	public:// CONSTRUCT
 		using S_::S_;//NOTE: Inherited and respecialized!
 
-		///\
-		Initialize `arguments` using those provided. \
-
+		/*!
+		\brief  	Initialize `arguments` using those provided.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(Xs &&...xs)
 		noexcept

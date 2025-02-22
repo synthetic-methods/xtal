@@ -24,96 +24,108 @@ namespace ranges
 {
 using  _std::make_reverse_iterator;
 using  _std::   make_move_iterator;
-//\
-using  _std::           accumulate;
-using ::ranges::        accumulate;
 using ::ranges::          any_view;
-using ::ranges::       repeat_view;
 using ::ranges::    get_categories;
+
+XTAL_DEF_(let) accumulate   = [] XTAL_1FN_(call) (fold_left);
 }
 namespace ranges::views
 {
-/*/
-XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return ::ranges::views::zip       (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return ::ranges::views::zip_with  (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) transform(auto &&..._s) noexcept -> auto {return ::ranges::views::transform (XTAL_REF_(_s)...);}
-/*/
-XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return          zip_view          (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return          zip_transform_view(XTAL_REF_(_s)...);}
-/***/
+XTAL_DEF_(let) zip          = [] XTAL_1FN_(call) (zip_view);
 //\
-XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return iota_view(_std::size_t{0})|views::transform([&] (auto &&...) XTAL_1FN_(to) (XTAL_REF_(f) ()));}
-XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return ::ranges::views::generate(XTAL_REF_(f));}
-/***/
+XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (zip_transform);
+XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (::ranges::views::zip_with);
+//\
+XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::std::generator);
+XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::ranges::views::generate);
+XTAL_DEF_(let) drop_exactly = [] XTAL_1FN_(call) (drop);
+XTAL_DEF_(let) take_exactly = [] XTAL_1FN_(call) (take);
 }
 #endif
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class S, class T >	struct  transfer_reference                           {using type = T                  ;};
-template <class S, class T >	struct  transfer_reference  <S                 &, T> {using type = T                 &;};
-template <class S, class T >	struct  transfer_reference  <S                &&, T> {using type = T                &&;};
-template <class S, class T >	using   transfer_reference_t = typename transfer_reference     <S, T>::type;
-
-template <class S, class T >	struct  transfer_volatile                            {using type = T                  ;};
-template <class S, class T >	struct  transfer_volatile   <S       volatile   , T> {using type = T       volatile   ;};
-template <class S, class T >	using   transfer_volatile_t  = typename transfer_volatile      <S, T>::type;
-
-template <class S, class T >	struct  transfer_const                               {using type = T                  ;};
-template <class S, class T >	struct  transfer_const      <S const            , T> {using type = T const            ;};
-template <class S, class T >	using   transfer_const_t     = typename transfer_const         <S, T>::type;
-
-template <class S, class T >	struct  transfer_cv                                  {using type = T                  ;};
-template <class S, class T >	struct  transfer_cv         <S const            , T> {using type = T const            ;};
-template <class S, class T >	struct  transfer_cv         <S       volatile   , T> {using type = T       volatile   ;};
-template <class S, class T >	struct  transfer_cv         <S const volatile   , T> {using type = T const volatile   ;};
-template <class S, class T >	using   transfer_cv_t        = typename transfer_cv            <S, T>::type;
-
-template <class S, class T >	struct  transfer_cvref                               {using type = T                  ;};
-template <class S, class T >	struct  transfer_cvref      <S const            , T> {using type = T const            ;};
-template <class S, class T >	struct  transfer_cvref      <S                &&, T> {using type = T                &&;};
-template <class S, class T >	struct  transfer_cvref      <S const          &&, T> {using type = T const          &&;};
-template <class S, class T >	struct  transfer_cvref      <S                 &, T> {using type = T                 &;};
-template <class S, class T >	struct  transfer_cvref      <S const           &, T> {using type = T const           &;};
-template <class S, class T >	struct  transfer_cvref      <S       volatile   , T> {using type = T       volatile   ;};
-template <class S, class T >	struct  transfer_cvref      <S const volatile   , T> {using type = T const volatile   ;};
-template <class S, class T >	struct  transfer_cvref      <S       volatile &&, T> {using type = T       volatile &&;};
-template <class S, class T >	struct  transfer_cvref      <S const volatile &&, T> {using type = T const volatile &&;};
-template <class S, class T >	struct  transfer_cvref      <S       volatile  &, T> {using type = T       volatile  &;};
-template <class S, class T >	struct  transfer_cvref      <S const volatile  &, T> {using type = T const volatile  &;};
-template <class S, class T >	using   transfer_cvref_t     = typename transfer_cvref         <S, T>::type;
+template <class T>
+XTAL_DEF_(let)
+bit_cast = [] (auto s)
+XTAL_0FN_(to) (__builtin_bit_cast(T, s));// `constexpr`!
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\note\
-The replacements for the `...extent...` definitions are intended to overcome \
-discrepancies between `LLVM` and `GNUC` (particularly for zero-length arrays). \
 
-template <class T          >	struct  remove_all_extents : transfer_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
-#if XTAL_VER_(MSVC == 0)
-template <class U          >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
-template <class U          >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
-#endif
-template <class U, auto  N >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
-template <class U, auto  N >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
-template <class T          >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
+template <class T, class ...Ts> concept same_as      = (...and _std::same_as<          T ,           Ts >);
+template <class T, class ...Ts> concept same_type_as = (...and _std::same_as<XTAL_NOM_(T), XTAL_NOM_(Ts)>);
+template <class T, class ...Ts> concept same_size_as = (...and (sizeof(T) == sizeof(Ts)));
 
-template <class T          >	struct  remove_extent : transfer_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
-#if XTAL_VER_(MSVC == 0)
-template <class U          >	struct  remove_extent<U   [0]> {using type = U  ;};
-template <class U          >	struct  remove_extent<U(&)[0]> {using type = U &;};
-#endif
-template <class U, auto  N >	struct  remove_extent<U   [N]> {using type = U  ;};
-template <class U, auto  N >	struct  remove_extent<U(&)[N]> {using type = U &;};
-template <class T          >	using   remove_extent_t = typename remove_extent<T>::type;
 
-template <class T          >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
+////////////////////////////////////////////////////////////////////////////////
+
+template <class S, class T >	struct  move_reference                           {using type = T                  ;};
+template <class S, class T >	struct  move_reference  <S                 &, T> {using type = T                 &;};
+template <class S, class T >	struct  move_reference  <S                &&, T> {using type = T                &&;};
+template <class S, class T >	using   move_reference_t = typename move_reference     <S, T>::type;
+
+template <class S, class T >	struct  move_volatile                            {using type = T                  ;};
+template <class S, class T >	struct  move_volatile   <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	using   move_volatile_t  = typename move_volatile      <S, T>::type;
+
+template <class S, class T >	struct  move_const                               {using type = T                  ;};
+template <class S, class T >	struct  move_const      <S const            , T> {using type = T const            ;};
+template <class S, class T >	using   move_const_t     = typename move_const         <S, T>::type;
+
+template <class S, class T >	struct  move_cv                                  {using type = T                  ;};
+template <class S, class T >	struct  move_cv         <S const            , T> {using type = T const            ;};
+template <class S, class T >	struct  move_cv         <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	struct  move_cv         <S const volatile   , T> {using type = T const volatile   ;};
+template <class S, class T >	using   move_cv_t        = typename move_cv            <S, T>::type;
+
+template <class S, class T >	struct  move_cvref                               {using type = T                  ;};
+template <class S, class T >	struct  move_cvref      <S const            , T> {using type = T const            ;};
+template <class S, class T >	struct  move_cvref      <S                &&, T> {using type = T                &&;};
+template <class S, class T >	struct  move_cvref      <S const          &&, T> {using type = T const          &&;};
+template <class S, class T >	struct  move_cvref      <S                 &, T> {using type = T                 &;};
+template <class S, class T >	struct  move_cvref      <S const           &, T> {using type = T const           &;};
+template <class S, class T >	struct  move_cvref      <S       volatile   , T> {using type = T       volatile   ;};
+template <class S, class T >	struct  move_cvref      <S const volatile   , T> {using type = T const volatile   ;};
+template <class S, class T >	struct  move_cvref      <S       volatile &&, T> {using type = T       volatile &&;};
+template <class S, class T >	struct  move_cvref      <S const volatile &&, T> {using type = T const volatile &&;};
+template <class S, class T >	struct  move_cvref      <S       volatile  &, T> {using type = T       volatile  &;};
+template <class S, class T >	struct  move_cvref      <S const volatile  &, T> {using type = T const volatile  &;};
+template <class S, class T >	using   move_cvref_t     = typename move_cvref         <S, T>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
+/*!
+\internal
+Replaces the correspond `std` definitions,
+overcoming the discrepancies between `LLVM` and `GNUC` (mainly for zero-length arrays).
+*/
+template <class T              >	struct  remove_all_extents : move_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
 #if XTAL_VER_(MSVC == 0)
-template <class U          >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
-template <class U          >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U              >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
+template <class U              >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
 #endif
-template <class U, auto  N >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
-template <class U, auto  N >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
+template <class U,     auto N  >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
+template <class U,     auto N  >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
+template <class T              >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
+
+template <class T              >	struct  remove_extent : move_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
+#if XTAL_VER_(MSVC == 0)
+template <class U              >	struct  remove_extent<U   [0]> {using type = U  ;};
+template <class U              >	struct  remove_extent<U(&)[0]> {using type = U &;};
+#endif
+template <class U,     auto N  >	struct  remove_extent<U   [N]> {using type = U  ;};
+template <class U,     auto N  >	struct  remove_extent<U(&)[N]> {using type = U &;};
+template <class T              >	using   remove_extent_t = typename remove_extent<T>::type;
+
+template <class T              >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
+#if XTAL_VER_(MSVC == 0)
+template <class U              >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U              >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
+#endif
+template <class U,     auto N  >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
+template <class U,     auto N  >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
 
 template <class T, unsigned N=0>	struct         extent          :  extent<remove_extent_t<T>, N - 1> {};
 template <class T              >	struct         extent<T, 0U>   : _extent<T> {};
@@ -147,6 +159,12 @@ template <class T> concept trivial                 = trivially_instructible<T> a
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <class T, class S> concept             derived_from =                            _std::derived_from<T, S>;
+template <class T, class S> concept    strictly_derived_from = not same_type_as<T, S> and _std::derived_from<T, S>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T           > concept              reference = _std::       is_reference_v<T>;
 template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;
 template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;
@@ -167,208 +185,317 @@ static_assert(_std::same_as<remove_rvalue_reference_t<const float( &)[2]>, const
 static_assert(_std::same_as<remove_lvalue_reference_t<const float( &)[2]>, const float    [2]>);
 
 
+template <class T> concept      nominal_value_reference = nominal<_std::remove_cvref_t<T>> or  rvalue_reference<T>;
 template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and rvalue_reference<T>;
 template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
+template <class T> concept      trivial_value_reference = trivial<_std::remove_cvref_t<T>> or  rvalue_reference<T>;
 template <class T> concept     trivial_rvalue_reference = trivial<_std::remove_cvref_t<T>> and rvalue_reference<T>;
 template <class T> concept     trivial_lvalue_reference = trivial<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
-template <class T> concept non_nominal_rvalue_reference = not nominal_rvalue_reference<T>  and        reference<T>;
-template <class T> concept non_nominal_lvalue_reference = not nominal_lvalue_reference<T>  and        reference<T>;
-
-template <class T> concept non_trivial_rvalue_reference = not trivial_rvalue_reference<T>  and        reference<T>;
-template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_reference<T>  and        reference<T>;
-
 
 template <class T>
-struct    decay_owned_reference
+struct    decay_value
 {
-	using       type = _std::remove_cvref_t<T>;
 	using value_type = _std::remove_cvref_t<T>;
+	using       type = _std::remove_cvref_t<T>;
 
 };
 template <class T>
-struct decay_borrowed_reference : decay_owned_reference<T>
+struct decay_value_reference : decay_value<T>
 {
 };
-template <class T> requires lvalue_reference<T>
-struct decay_borrowed_reference<T>
+template <lvalue_reference T>
+struct decay_value_reference<T>
 {
-	using       type = T;
 	//\
 	using value_type = _std::shared_ptr<XTAL_NOM_(T)>;
 	using value_type = decltype(&XTAL_ANY_(T));
+	using       type = T;
 
 };
-template <                   class T>	struct             decay_reference    :    decay_owned_reference<T> {};
-template <        lvalue_reference T>	struct             decay_reference<T> : decay_borrowed_reference<T> {};
+template <                   class T>	struct decay_nominal_value_reference    : decay_value_reference <T> {};
+template <nominal_lvalue_reference T>	struct decay_nominal_value_reference<T> : decay_value           <T> {};
 
-template <                   class T>	struct decay_non_nominal_reference    :          decay_reference<T> {};
-template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :    decay_owned_reference<T> {};
+template <                   class T>	struct decay_trivial_value_reference    : decay_value_reference <T> {};
+template <trivial_lvalue_reference T>	struct decay_trivial_value_reference<T> : decay_value           <T> {};
 
-template <                   class T>	struct decay_non_trivial_reference    :          decay_reference<T> {};
-template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :    decay_owned_reference<T> {};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-#if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)// Replace with `constexpr __builtin`s...
-template <class T>
-XTAL_DEF_(return,inline,let)
-bit_cast(auto s)
-noexcept -> auto
-requires requires {_std::bit_cast<T>(s);}
-{
-	return __builtin_bit_cast(T, s);
-}
-XTAL_DEF_(return,inline,let)
-copysign(auto t, auto s)
-noexcept -> auto
-requires requires {_std::copysign(t, s);}
-{
-	return __builtin_copysign(t, s);
-}
-#else
-using _std::bit_cast;
-using _std::copysign;
-#endif
+template <class T           > using                    decay_value_t = typename                   decay_value<T>::type;
+template <class T           > using          decay_value_reference_t = typename         decay_value_reference<T>::type;
+template <class T           > using  decay_nominal_value_reference_t = typename decay_nominal_value_reference<T>::type;
+template <class T           > using  decay_trivial_value_reference_t = typename decay_trivial_value_reference<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <class T             > concept             rational =     _std::floating_point<XTAL_NOM_(T)>;
+template <class T             > concept             integral =     _std::      integral<XTAL_NOM_(T)>;
+template <class T             > concept          disintegral = not _std::      integral<XTAL_NOM_(T)>;
 
 template <class F, class ...Xs> concept            invocable = requires {XTAL_ANY_(F) (XTAL_ANY_(Xs)...);};
 template <class F, class ...Xs> concept   constant_invocable = trivially_initializable<F> and invocable<F, Xs...>;
-template <class F             > concept constant_equivocable = not _std::integral<F> and constant_invocable<F> and requires {F{} == F{}();};
+template <class F             > concept constant_equivocable = disintegral<F> and constant_invocable<F> and requires {F{} == F{}();};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>     using   make_signed   = _std::  make_signed  <T>;
-template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
-//\
-XTAL_DEF_(return,inline,let)   make_signed_f  (_std::       signed_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let)   make_signed_f  (                             auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let)   make_signed_f  (_std::     unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let)   make_signed_f  (        constant_equivocable auto f) noexcept -> auto {return   make_signed_f(f());}
+template <class T> struct    make_signed                 : _std::          make_signed<T             >  {};
+template <       > struct    make_signed<XTAL_STD_flt_2> : _std::          make_signed<XTAL_STD_int_2>  {};
+template <       > struct    make_signed<XTAL_STD_flt_3> : _std::          make_signed<XTAL_STD_int_3>  {};
+template <       > struct    make_signed<XTAL_STD_flt_4> : _std::          make_signed<XTAL_STD_int_4>  {};
+template <class T> using     make_signed_t               = typename        make_signed<XTAL_NOM_(T)>::type;
+template <class T> using     rend_signed_t               = typename        make_signed<XTAL_NOM_(T)>::type;
 
-template <class T>     using make_unsigned   = _std::make_unsigned  <T>;
-template <class T>     using make_unsigned_t = _std::make_unsigned_t<T>;
-XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::       signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::     unsigned_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) make_unsigned_f  (        constant_equivocable auto f) noexcept -> auto {return make_unsigned_f(f());}
+template <class T> struct  make_unsigned                 : _std::        make_unsigned<T             >  {};
+template <       > struct  make_unsigned<XTAL_STD_flt_2> : _std::        make_unsigned<XTAL_STD_int_2>  {};
+template <       > struct  make_unsigned<XTAL_STD_flt_3> : _std::        make_unsigned<XTAL_STD_int_3>  {};
+template <       > struct  make_unsigned<XTAL_STD_flt_4> : _std::        make_unsigned<XTAL_STD_int_4>  {};
+template <class T> using   make_unsigned_t               = typename      make_unsigned<XTAL_NOM_(T)>::type;
+template <class T> using   rend_unsigned_t               = typename      make_unsigned<XTAL_NOM_(T)>::type;
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-///\returns the result of `w + x*(y*...*ys)`, using `fma` where possible. \
-
+template <class T=void>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(auto &&w, auto &&x, auto &&y)
+make_signed_f(auto const f)
+noexcept -> auto
+{
+	using F = XTAL_ALL_(f);
+	if constexpr (same_type_as<T, void> or same_size_as<T, F>) {
+		XTAL_IF0
+		XTAL_0IF (    constant_equivocable<F>) {return                make_signed_f    (f());}
+		XTAL_0IF (_std::   signed_integral<F>) {return                                  f   ;}
+		XTAL_0IF (_std:: unsigned_integral<F>) {return    bit_cast <  make_signed_t<F>>(f)  ;}
+		XTAL_0IF_(else)                        {return static_cast <  make_signed_t<F>>(f)  ;}
+	}
+	else {
+		return static_cast<make_signed_t<T>>(make_signed_f(f));
+	}
+}
+template <class T=void>
+XTAL_DEF_(return,inline,let)
+rend_signed_f (auto const f)
+noexcept -> auto
+{
+	using F = XTAL_ALL_(f);
+	if constexpr (same_type_as<T, void> or same_size_as<T, F>) {
+		XTAL_IF0
+		XTAL_0IF (    constant_equivocable<F>) {return                rend_signed_f    (f());}
+		XTAL_0IF (_std::   signed_integral<F>) {return                                  f   ;}
+		XTAL_0IF (_std:: unsigned_integral<F>) {return    bit_cast <  make_signed_t<F>>(f)  ;}
+		XTAL_0IF_(else)                        {return    bit_cast <  make_signed_t<F>>(f)  ;}
+	}
+	else {
+		return   rend_signed_f(make_signed_f<T>(f));
+	}
+}
+
+template <class T=void>
+XTAL_DEF_(return,inline,let)
+make_unsigned_f(auto const f)
+noexcept -> auto
+{
+	using F = XTAL_ALL_(f);
+	if constexpr (same_type_as<T, void> or same_size_as<T, F>) {
+		XTAL_IF0
+		XTAL_0IF (    constant_equivocable<F>) {return              make_unsigned_f    (f());}
+		XTAL_0IF (_std:: unsigned_integral<F>) {return                                  f   ;}
+		XTAL_0IF (_std::   signed_integral<F>) {return    bit_cast <make_unsigned_t<F>>(f)  ;}
+		XTAL_0IF_(else)                        {return static_cast <make_unsigned_t<F>>(f)  ;}
+	}
+	else {
+		return make_unsigned_f(make_signed_f<T>(f));
+	}
+}
+template <class T=void>
+XTAL_DEF_(return,inline,let)
+rend_unsigned_f(auto const f)
+noexcept -> auto
+{
+	using F = XTAL_ALL_(f);
+	if constexpr (same_type_as<T, void> or same_size_as<T, F>) {
+		XTAL_IF0
+		XTAL_0IF (    constant_equivocable<F>) {return              rend_unsigned_f    (f());}
+		XTAL_0IF (_std:: unsigned_integral<F>) {return                                  f   ;}
+		XTAL_0IF (_std::   signed_integral<F>) {return    bit_cast <make_unsigned_t<F>>(f)  ;}
+		XTAL_0IF_(else)                        {return    bit_cast <make_unsigned_t<F>>(f)  ;}
+	}
+	else {
+		return rend_unsigned_f(make_signed_f<T>(f));
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief   Combinines the magnitude of `t` with the sign-bit of `s`.
+\note    Uses `__builtin_copysign` to provide `constexpr` evaluation,
+         but guaranteed to return the same type.
+*/
+// `constexpr`!
+template <rational T, class S>
+XTAL_DEF_(return,inline,let)
+XTAL_NYM_(copysign) (T const t, S const s)
+noexcept -> T
+{
+	using U = rend_unsigned_t<T>;
+	XTAL_IF0
+	XTAL_0IF (sizeof(T) != sizeof(S) and rational<S>) {
+		return XTAL_NYM_(copysign) (t, (T) s);
+	}
+	XTAL_0IF (sizeof(T) != sizeof(S) and integral<S>) {
+		return XTAL_NYM_(copysign) (t, make_signed_f<T>(s));
+	}
+	XTAL_0IF (sizeof(T) == sizeof(__builtin_copysign(t, s))) {
+		return __builtin_copysign(t, s);
+	}
+	XTAL_0IF_(else) {
+		U constexpr  positive_mask = ~U{} >> 1, sign_mask = ~positive_mask;
+		U const t_ = positive_mask&rend_unsigned_f<T>(t);
+		U const s_ =     sign_mask&rend_unsigned_f<T>(s);
+		return bit_cast<T>(XTAL_MOV_(t_)|XTAL_MOV_(s_));
+	}
+};
+XTAL_DEF_(let) copysign = [] XTAL_1FN_(call) (XTAL_NYM_(copysign));
+static_assert(same_type_as<float, XTAL_ALL_(copysign(1.F, 1.F))>);
+
+
+////////////////////////////////////////////////////////////////////////////////
+/*!
+\returns The result of `w + x*(y*...*ys)`, using `fma` where possible.
+\note    May be extended via ADL.
+*/
+XTAL_DEF_(return,inline,let)
+accumulator(auto &&w, auto &&x, auto &&y)
 noexcept -> auto
 {
 	using Z = XTAL_ALL_(w + x*y);
 	XTAL_IF0
 	XTAL_0IF_(consteval) {
-		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+		return                              XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
 #if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
 	XTAL_0IF (requires {_std::fma(y, x, w);}) {
-		return static_cast<Z>(__builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w)));
+		return static_cast<Z>(__builtin_fma(XTAL_REF_(y),XTAL_REF_(x),  XTAL_REF_(w)));
 	}
 #endif
 #if   XTAL_SYS_(FMA)
 	XTAL_0IF (requires {fma(y, x, w);}) {
-		return static_cast<Z>(          fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w)));
+		return static_cast<Z>(          fma(XTAL_REF_(y),XTAL_REF_(x),  XTAL_REF_(w)));
 	}
 #endif
 	XTAL_0IF_(else) {
-		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
+		return                              XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(V w, _std::complex<V> x, V y)
+accumulator(V w, _std::complex<V> x, V y)
 noexcept -> _std::complex<V>
 {
-	return {plus_multiplies(w, x.real(), y), x.imag()*y};
+	return {accumulator(w, x.real(), y), x.imag()*y};
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(V w, V x, _std::complex<V> y)
+accumulator(V w, V x, _std::complex<V> y)
 noexcept -> _std::complex<V>
 {
-	return {plus_multiplies(w, x, y.real()), x*y.imag()};
+	return {accumulator(w, x, y.real()), x*y.imag()};
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(V w, _std::complex<V> x, _std::complex<V> y)
+accumulator(V w, _std::complex<V> x, _std::complex<V> y)
 noexcept -> _std::complex<V>
 {
 	if constexpr (requires {fma(y, x, w);}) {
 		return fma(y, x, w);
 	}
 	else {
-		/**/
-		return y*x + w;
 		/*/
-		auto const z_re = plus_multiplies(plus_multiplies(w, x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = plus_multiplies(                   x.imag()*y.real() ,  x.real(),y.imag());
+		auto const z_re = accumulator(accumulator(w, x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator(                   x.imag()*y.real() ,  x.real(),y.imag());
 		return {z_re, z_im};
+		/*/
+		return y*x + w;
 		/***/
 	}
 }
 
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(_std::complex<V> w, V x, V y)
+accumulator(_std::complex<V> w, V x, V y)
 noexcept -> _std::complex<V>
 {
-	return {plus_multiplies(w.real(), x, y), w.imag()};
+	return {accumulator(w.real(), x, y), w.imag()};
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(_std::complex<V> w, _std::complex<V> x, V y)
+accumulator(_std::complex<V> w, _std::complex<V> x, V y)
 noexcept -> _std::complex<V>
 {
-	return {plus_multiplies(w.real(), x.real(), y), plus_multiplies(w.imag(), x.imag(), y)};
+	return {accumulator(w.real(), x.real(), y), accumulator(w.imag(), x.imag(), y)};
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(_std::complex<V> w, V x, _std::complex<V> y)
+accumulator(_std::complex<V> w, V x, _std::complex<V> y)
 noexcept -> _std::complex<V>
 {
-	return {plus_multiplies(w.real(), x, y.real()), plus_multiplies(w.imag(), x, y.imag())};
+	return {accumulator(w.real(), x, y.real()), accumulator(w.imag(), x, y.imag())};
 }
 
 template <class V>
 XTAL_DEF_(return,inline,let)
-plus_multiplies(_std::complex<V> w, _std::complex<V> x, _std::complex<V> y)
+accumulator(_std::complex<V> w, _std::complex<V> x, _std::complex<V> y)
 noexcept -> _std::complex<V>
 {
 	if constexpr (requires {fma(y, x, w);}) {
 		return fma(y, x, w);
 	}
 	else {
-		/**/
-		return y*x + w;
 		/*/
-		auto const z_re = plus_multiplies(plus_multiplies(w.real(), x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = plus_multiplies(plus_multiplies(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
+		auto const z_re = accumulator(accumulator(w.real(), x.real(),y.real()), -x.imag(),y.imag());
+		auto const z_im = accumulator(accumulator(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
 		return {z_re, z_im};
+		/*/
+		return y*x + w;
 		/***/
 	}
 }
 
 XTAL_DEF_(return,inline,let)
-plus_multiplies(auto &&w, auto &&x, auto &&y, auto &&...ys)
+accumulator(auto &&w, auto &&x, auto &&y, auto &&...ys)
 noexcept -> auto
 requires (1 <= sizeof...(ys))
 {
-	return plus_multiplies(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
+	return accumulator(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+struct plus_multiplies
+{
+	template <_std::convertible_to<T> W, _std::convertible_to<T> ...Xs>
+	XTAL_DEF_(return,inline,let)
+	operator() (W &&w, Xs &&...xs) const
+	noexcept -> auto
+	{
+		return accumulator(XTAL_REF_(w), XTAL_REF_(xs)...);
+	}
+
+};
+template <>
+struct plus_multiplies<void>
+{
+	template <class W, class ...Xs>
+	XTAL_DEF_(return,inline,let)
+	operator() (auto &&w, auto &&...xs) const
+	noexcept -> auto
+	{
+		return accumulator(XTAL_REF_(w), XTAL_REF_(xs)...);
+	}
+
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

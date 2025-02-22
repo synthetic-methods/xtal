@@ -17,10 +17,13 @@ namespace _retail = xtal;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Creates a unique `subtype` tagged by the given `As...`, \
-such that e.g. `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`. \
+/*!
+\brief
+Creates a unique `subtype` tagged by the given `As...`.
 
+\details
+Maintains the invariant `std::derives_from<any<struct x, struct xs...>, any<struct xs...>>`.
+*/
 template <typename ...As>
 struct any
 {
@@ -54,6 +57,9 @@ struct any<A>
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Establishes `self`-reflection and `twin`-creation.
+*/
 template <class T>
 struct define
 {
@@ -68,32 +74,23 @@ struct define
 		using head_type = void;
 
 	public:
-		///\returns `*this` with type `Y=T`. \
+		/*!
+		\returns	A reference to `*this` with type `Y=T`.
+		*/
+		XTAL_FX4_(to) (template <class Y=T>
+		XTAL_DEF_(return,inline,get)
+		self(), forge_f<Y>(*this))
 
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) requires   fungible_q<Y, subtype> {return      static_cast<Y const  &>          (*this) ;}
+		/*!
+		\returns	A copy of `*this` with type `Y=T`.
+		*/
+		XTAL_FX4_(to) (template <class Y=T>
+		XTAL_DEF_(return,inline,let)
+		twin(), forge_f<Y>(*this))
 
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()       && noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const && noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self()        & noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) self() const  & noexcept -> decltype(auto) requires infungible_q<Y, subtype> {return reinterpret_cast<Y const  &>          (*this) ;}
-
-		///\returns a copy of `*this` with type `Y=T`. \
-
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()       && noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const && noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()        & noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const  & noexcept ->          auto  requires   fungible_q<Y, subtype> {return      static_cast<Y const  &>          (*this) ;}
-
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()       && noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y       &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const && noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y const &&>(XTAL_MOV_(*this));}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin()        & noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y        &>          (*this) ;}
-		template <class Y=T> XTAL_DEF_(return,inline,let) twin() const  & noexcept ->          auto  requires infungible_q<Y, subtype> {return reinterpret_cast<Y const  &>          (*this) ;}
-
-		///\returns `this` as the `define`d supertype. \
-
+		/*!
+		\returns	`this` as the `define`d supertype.
+		*/
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail(), self<S>())
 
 	};

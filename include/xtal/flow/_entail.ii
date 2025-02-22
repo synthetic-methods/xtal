@@ -7,59 +7,130 @@
 
 
 
-//line namespace _entail
+
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Defines an `inferred` tuple from `...As`. \
+/*!
+\brief
+Defines an `any_q` based on the product-type of `Ts...`.
 
-template <class ...Ts>	struct   packed   : inferred<bond::tag<packed>, Ts...> {};
-template <class ...Ts>	using    packed_t = typename packed<Ts...>::type;
-template <class ...Ts>	concept  packed_q = bond::tag_p<packed, Ts...>;
+\details
+The member `type` is defined by `inferred_t<Ts...>`.
+*/
+template <class ...Ts>	struct    packed;
+template <class ...Ts>	using     packed_t =  typename packed<Ts...>::type;///<\brief Produces the `type` for `packed<Ts...>`.
+template <class ...Ts>	concept   packed_q = bond::tag_in_p<packed, Ts...>;///<\brief Determines whether `Ts...` were decorated by `packed`.
+
+XTAL_DEF_(let) packed_f = []<class ...Ts> (Ts &&...ts)
+XTAL_0FN_(to) (packed_t<Ts...>(static_cast<Ts &&> (ts)...));
+
 template <class ...Ts>
-XTAL_DEF_(return,inline,let)
-packed_f(Ts &&...ts)
-noexcept -> auto
+struct   packed
 {
-	return packed_t<Ts...>(XTAL_REF_(ts)...);
-}
+	//\
+	using superkind = inferred<Ts...>;
+	using superkind = inferred<bond::tag<packed>, Ts...>;
 
-///\
-Defines an `inferred` tuple from `...Ts`, \
-or `bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`. \
+	template <class S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		using S_ = bond::compose_s<S, superkind>;
 
-template <class ...Ts>	struct   packet    : packed<Ts...> {};
-template <any_q    T >	struct   packet<T> : identity_t<T> {};
-template <class ...Ts>	using    packet_t = typename packet<Ts...>::type;
+	public:// CONSTRUCT
+		using S_::S_;
+
+		XTAL_DEF_(return,inline,let)
+		operator, (auto &&w) const
+		noexcept -> auto
+		{
+		//	auto const then = bond::repack_f<packed_t>(S_::self().pack());
+			if constexpr (packed_q<decltype(w)>) {
+				return bond::repack_f<packed_t>(S_::self().pack(),        XTAL_REF_(w).pack());
+			}
+			else {
+				return bond::repack_f<packed_t>(S_::self().pack(), bond::pack_f(XTAL_REF_(w)));
+			}
+		}
+		template <class U> requires un_n<packed_q<U>>
+		XTAL_DEF_(return,inline,met)
+		operator, (U &&u, subtype      &&s)
+		noexcept -> auto
+		{
+			return (packed_f(XTAL_REF_(u)), XTAL_MOV_(s).self());
+		}
+		template <class U> requires un_n<packed_q<U>>
+		XTAL_DEF_(return,inline,met)
+		operator, (U &&u, subtype const &s)
+		noexcept -> auto
+		{
+			return (packed_f(XTAL_REF_(u)), XTAL_REF_(s).self());
+		}
+
+
+	};
+	using type = subtype<any_t<>>;
+
+};
+
+/*!
+\brief
+Defines an `any_q` based on the product-type of `Ts...`
+(unless otherwise satisfied).
+
+\details
+The member `type` is defined by:
+-	`bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`.
+-	`packed_t<Ts...>` otherwise.
+*/
+template <class ...Ts>	struct  packet;
+#ifndef XTAL_DOC
+template <class ...Ts>	struct  packet    : packed<Ts...> {};
+template <any_q    T >	struct  packet<T> : identity_t<T> {};
+#endif
+template <class ...Ts>	using   packet_t = typename packet<Ts...>::type;///<\brief Produces the `type` for `packet<Ts...>`.
+
+XTAL_DEF_(let) packet_f = []<class ...Ts> (Ts &&...ts)
+XTAL_0FN_(to) (packet_t<Ts...>(static_cast<Ts &&> (ts)...));
+
+/*!
+\brief
+Defines an `any_q` based on the sum-type of `Ts...`
+(unless otherwise satisfied).
+
+\details
+When `1 == sizeof...(Ts)`, the member `type` is defined by:
+-	`T` if `any_q<T>`.
+-	`conferred_t<T>` otherwise.
+
+When `1 != sizeof...(Ts)`, the member `type` is defined by:
+-	`conferred_t<either_t<Ts...>>` if `complete_q<Ts...>`.
+-	`inferred_t<Ts...>` otherwise.
+*/
+template <       class ...Ts>	struct  let;
+#ifndef XTAL_DOC
+template <       class ...Ts>	struct  let : let<either_t<Ts...>> {};
+template <       any_q    T >	struct  let<T    > {using type =             T ;};
+template <       class    T >	struct  let<T    > {using type = conferred_t<T>;};
+template <incomplete_q ...Ts>	struct  let<Ts...> {using type =  inferred_t< >;};
+template <                  >	struct  let<     > {using type =  inferred_t< >;};
+#endif
+template <       class ...Ts>	using   let_t = typename let<Ts...>::type;
+///<\brief Produces the `type` for `let<Ts...>`.
+/*/
+XTAL_DEF_(let) let_f = []<class ...Ts> (Ts &&...ts)
+XTAL_0FN_(to) (let_t<Ts...>(static_cast<Ts &&> (ts)...));
+/*/
 template <class ...Ts>
-XTAL_DEF_(return,inline,let)
-packet_f(Ts &&...ts)
-noexcept -> auto
-{
-	return packet_t<Ts...>(XTAL_REF_(ts)...);
-}
-
-///\
-Defines a `conferred` value from `T`, \
-or `T` if `any_q<T>`. \
-
-template <class   ...Ts>	struct   let : let<either_t<Ts...>> {};
-template <class      T >	struct   let<T>       {using type = conferred_t<T>;};
-template <any_q      T >	struct   let<T>       {using type =             T ;};
-template <             >	struct   let< >       {using type =  confined_t< >;};
-template <class   ...Ts>	using    let_t      = typename let<Ts...>::type;
-
-///\returns `w` if `any_q<decltype(w)>`, otherwise proxies `w` using `conferred_t`.
-
-template <class   ...Ts>
 XTAL_DEF_(return,inline,let)
 let_f(Ts &&...ts)
 noexcept -> decltype(auto)
 {
 	return let_t<Ts...>(XTAL_REF_(ts)...);
 }
+/***/
+///<\returns the lifted value w.r.t. the arguments supplied.
 
 
 ////////////////////////////////////////////////////////////////////////////////
