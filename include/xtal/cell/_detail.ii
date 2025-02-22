@@ -162,6 +162,11 @@ struct refine_tuple
 			return _std::apply([] XTAL_1FN_(call) (T), tuple);
 		}
 
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype       &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const  &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype        &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
+
 	};
 };
 

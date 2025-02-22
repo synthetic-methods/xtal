@@ -19,6 +19,11 @@ template <class ..._s>	struct  mark;
 template <class ..._s>	concept mark_q = bond:: tagged_p<mark, _s...>;
 template <class ..._s>	using   mark_s = bond::compose_s<let_t<_s...>, cell::confined<mark<>>>;
 
+template <class ..._s>
+XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
+mark_f       (auto &&...oo),
+mark_s<_s...>(XTAL_REF_(oo)...))
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +70,7 @@ struct mark<>
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
-			return mark_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+			return mark_f(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 
 		using mark_layout = succedent_s<typename S_::mark_layout>;

@@ -35,11 +35,6 @@ template <class ...Ts               > concept  any_q = bond::tag_p<any, Ts...>;
 
 using any_type = any_s<unit_type>;
 
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T const &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T       &&t) noexcept -> decltype(auto) {return XTAL_MOV_(t).template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T const  &t) noexcept -> decltype(auto) {return           t .template head<N>();};
-template <::std::size_t N, fungible_q<any_type> T> XTAL_DEF_(return,inline,let) get(T        &t) noexcept -> decltype(auto) {return           t .template head<N>();};
-
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

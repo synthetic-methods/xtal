@@ -154,7 +154,7 @@ struct polymer<U, As...>
 					auto u_ = ensemble().scan(i_.head());
 					//\
 					if (1 <= count_f(ensemble())) {
-					if (1 <= count_f(ensemble()) and 1 != u_->efflux(occur::stage_f(-1))) {
+					if (1 <= count_f(ensemble()) and 1 != u_->influx(occur::stage_f(-1))) {
 						assert(u_ < ensemble().end() and i_.head() == u_->head());
 						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 					}
@@ -167,7 +167,7 @@ struct polymer<U, As...>
 				the top-most associated instance is cut `(-1)` \
 				before a new instance is allocated from the prototype `head`. \
 
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(U_key i_, U_stage _o, auto &&...oo)
 				noexcept -> signed
@@ -211,17 +211,14 @@ struct polymer<U, As...>
 				flux(occur::render_q auto &&, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					ensemble().free([] XTAL_1FN_(dot) (efflux(occur::stage_f(-1)) == 1));
+					ensemble().free([] XTAL_1FN_(dot) (influx(occur::stage_f(-1)) == 1));
 
 					auto y0 = point_f(rev);
 					auto sN = count_f(rev);
 					_detail::fill_with(y0, sN, zero);
 
 					signed x = -1;
-
-					//\
 					(void) lead().influx(cur);
-					(void) lead().template flux< 1>(cur);
 
 					for (auto &&e: ensemble()) {
 						x &= XTAL_REF_(e).efflux(cur);

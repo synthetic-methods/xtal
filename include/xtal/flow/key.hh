@@ -21,6 +21,11 @@ template <class ..._s>	struct  key;
 template <class ..._s>	concept key_q = bond:: tagged_p<key , _s...>;
 template <class ..._s>	using   key_s = bond::compose_s<let_t<_s...>, cell::confined<key<>>>;
 
+template <class ..._s>
+XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
+key_f       (auto &&...oo),
+key_s<_s...>(XTAL_REF_(oo)...))
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +72,7 @@ struct key<>
 		operator << (any_q auto &&u) const
 		noexcept -> decltype(auto)
 		{
-			return key_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+			return key_f(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 
 		using key_layout = succedent_s<typename S_::key_layout>;

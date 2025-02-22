@@ -24,6 +24,11 @@ template <class ..._s>	struct  cue;
 template <class ..._s>	concept cue_q = bond:: tagged_p<cue , _s...>;
 template <class ..._s>	using   cue_s = bond::compose_s<let_t<_s...>, cell::confined<cue<>>>;
 
+template <class ..._s>
+XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
+cue_f       (auto &&...oo),
+cue_s<_s...>(XTAL_REF_(oo)...))
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +91,7 @@ struct cue<>
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
-			return cue_s<>(S_::head()) << (S_::tail() << XTAL_REF_(u));
+			return cue_f(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 
 		using cue_layout = succedent_s<typename S_::cue_layout>;
