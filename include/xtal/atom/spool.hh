@@ -27,7 +27,7 @@ template <class A>
 struct spool<A>
 {
 	template <class T>
-	using endotype = arranged_t<T>;
+	using endotype = _xtd::ranges::view_interface<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<spool_t>>;

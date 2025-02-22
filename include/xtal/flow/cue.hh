@@ -13,6 +13,10 @@ namespace xtal::flow
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
+Insulated header for a `flow::let_t<_s...>` `tail`. \
+Opaque w.r.t. operations/comparators making it suitable candidate for labelling/ordering. \
+
+///\
 Used for scheduling any type by prefixing with an integral delay. \
 May be stacked in order to described integral fades. \
 
@@ -33,10 +37,26 @@ struct cue<>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
+		using W_ = typename S_::tail_type;
+		using X_ = typename W_::head_type;
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
 
+	public:// OPERATE
+		/*/
+		XTAL_DEF_(return,inline,let)
+		operator == (subtype const &t) const
+		noexcept -> bool
+		{
+			if constexpr (complete_q<_std::variant_size<X_>>) {
+				return S_::operator==(t) and S_::tail() == t.tail();
+			}
+			else {
+				return S_::operator==(t);
+			}
+		}
+		/***/
 		XTAL_DEF_(return,inline,let)
 		operator << (auto &&u)
 		noexcept -> decltype(auto)

@@ -177,7 +177,7 @@ struct defer_field
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S>;
-		using U_ = initializer_u<U>;
+		using U_ = initializer_t<U>;
 
 	public:
 		using head_type =  based_t<U>;

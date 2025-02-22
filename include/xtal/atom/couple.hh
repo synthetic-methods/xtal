@@ -51,7 +51,8 @@ struct couple
 	class homotype : public holotype<T>
 	{
 		using S_ = holotype<T>;
-	
+		static auto constexpr N_ = static_cast<int>(S_::size());
+
 	public:// ACCESS
 		using S_::size;
 		using S_::self;
@@ -98,9 +99,8 @@ struct couple
 		operator++() const
 		noexcept -> auto
 		{
-			int constexpr N{size};
 			auto t = S_::twin();
-			bond::seek_out_f<N - 1>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_out_f<N_ - 1>([&]<constant_q I> (I) XTAL_0FN {
 				get<I{} + 1>(t) += get<I{}>(t);
 			});
 			return t;
@@ -109,9 +109,8 @@ struct couple
 		operator--() const
 		noexcept -> auto
 		{
-			int constexpr N{size};
 			auto t = S_::twin();
-			bond::seek_out_f<1 - N>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_out_f<1 - N_>([&]<constant_q I> (I) XTAL_0FN {
 				get<I{} + 1>(t) -= get<I{}>(t);
 			});
 			return t;
@@ -122,11 +121,10 @@ struct couple
 		noexcept -> auto
 		requires same_q<_s...>
 		{
-			int constexpr N{size};
 			auto t = S_::twin();
 			value_type u{};
 			value_type v{};
-			bond::seek_out_f<+N>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_out_f<+N_>([&]<constant_q I> (I) XTAL_0FN {
 				u += get<I{}>(t); get<I{}>(t) = v;
 				v = u;
 			});
@@ -137,11 +135,10 @@ struct couple
 		noexcept -> auto
 		requires same_q<_s...>
 		{
-			int constexpr N{size};
 			auto t = S_::twin();
 			value_type u;
 			value_type v{t.sum()};
-			bond::seek_out_f<-N>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_out_f<-N_>([&]<constant_q I> (I) XTAL_0FN {
 				u = get<I{}>(t); get<I{}>(t) = v - u;
 				v = u;
 			});

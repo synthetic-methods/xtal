@@ -64,7 +64,7 @@ struct monomer<U, As...>
 		struct binding
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
-		//	using Y_return = iterated_u<Y_result>;
+		//	using Y_return = deiteratee_t<Y_result>;
 
 			using superkind = bond::compose<void
 			,	cell::confer<Y_result>
@@ -138,7 +138,7 @@ struct monomer<U, As...>
 		struct binding<Xs...>
 		{
 			using Y_result = return_t<T_, return_t<Xs>...>;
-			using Y_return = iterated_u<Y_result>;
+			using Y_return = deiteratee_t<Y_result>;
 
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;

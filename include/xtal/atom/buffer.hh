@@ -51,7 +51,7 @@ struct buffer<A_data>
 	static auto constexpr N_data = fixed<A_data>::extent();
 
 	template <class T>
-	using holotype = bond::compose_s<arranged_t<T>, bond::tag<buffer_t>>;
+	using holotype = bond::compose_s<_xtd::ranges::view_interface<T>, bond::tag<buffer_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

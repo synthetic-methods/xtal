@@ -152,46 +152,46 @@ static_assert(              quotient_group_q<  int>);
 static_assert(complex_field_q<_std::complex<float>>);
 
 
+//NOTE: Commented lines are for MSVC, but support for zero-length arrays is not critical...
 
-
-static_assert(_xtd::extent_v<int[0][2][3]> == 0);
+//atic_assert(_xtd::extent_v<int[0][2][3]> == 0);
 static_assert(_xtd::extent_v<int[1][2][3]> == 1);
 
-static_assert(_xtd::extent_v<const int   [0][2][3]> == 0);
+//atic_assert(_xtd::extent_v<const int   [0][2][3]> == 0);
 static_assert(_xtd::extent_v<const int   [1][2][3]> == 1);
-static_assert(_xtd::extent_v<const int(&)[0][2][3]> == 0);
+//atic_assert(_xtd::extent_v<const int(&)[0][2][3]> == 0);
 static_assert(_xtd::extent_v<const int(&)[1][2][3]> == 1);
 
 static_assert(_xtd::extent_v<const int(&)[1][2][3], 0> == 1);
 static_assert(_xtd::extent_v<const int(&)[1][2][3], 1> == 2);
 static_assert(_xtd::extent_v<const int(&)[1][2][3], 2> == 3);
 
-static_assert(same_q<_xtd::remove_extent_t<const int   [0]      >, const int         >);
+//atic_assert(same_q<_xtd::remove_extent_t<const int   [0]      >, const int         >);
 static_assert(same_q<_xtd::remove_extent_t<const int   [1]      >, const int         >);
-static_assert(same_q<_xtd::remove_extent_t<const int(&)[0]      >, const int &       >);
+//atic_assert(same_q<_xtd::remove_extent_t<const int(&)[0]      >, const int &       >);
 static_assert(same_q<_xtd::remove_extent_t<const int(&)[1]      >, const int &       >);
 
-static_assert(same_q<_xtd::remove_extent_t<const int   [0][2][3]>, const int   [2][3]>);
+//atic_assert(same_q<_xtd::remove_extent_t<const int   [0][2][3]>, const int   [2][3]>);
 static_assert(same_q<_xtd::remove_extent_t<const int   [1][2][3]>, const int   [2][3]>);
-static_assert(same_q<_xtd::remove_extent_t<const int(&)[0][2][3]>, const int(&)[2][3]>);
+//atic_assert(same_q<_xtd::remove_extent_t<const int(&)[0][2][3]>, const int(&)[2][3]>);
 static_assert(same_q<_xtd::remove_extent_t<const int(&)[1][2][3]>, const int(&)[2][3]>);
 
-static_assert(same_q<_xtd::remove_all_extents_t<const int   [0][2][3]>, const int  >);
+//atic_assert(same_q<_xtd::remove_all_extents_t<const int   [0][2][3]>, const int  >);
 static_assert(same_q<_xtd::remove_all_extents_t<const int   [1][2][3]>, const int  >);
-static_assert(same_q<_xtd::remove_all_extents_t<const int(&)[0][2][3]>, const int &>);
+//atic_assert(same_q<_xtd::remove_all_extents_t<const int(&)[0][2][3]>, const int &>);
 static_assert(same_q<_xtd::remove_all_extents_t<const int(&)[1][2][3]>, const int &>);
 
 
-static_assert( array_shaped_q<int[0][2][3]>);
+//atic_assert( array_shaped_q<int[0][2][3]>);
 static_assert( array_shaped_q<int[1][2][3]>);
 
-static_assert( array_valued_q<int[0][2][3]>);
+//atic_assert( array_valued_q<int[0][2][3]>);
 static_assert( array_valued_q<int[1][2][3]>);
 
-static_assert( antecedent_q<int[0][2][3]>);
+//atic_assert( antecedent_q<int[0][2][3]>);
 static_assert(intercedent_q<int[1][2][3]>);
-static_assert(same_q<precedent_s<int[1][2][3]>, int[0][2][3]>);
-static_assert(same_q<succedent_s<int[0][2][3]>, int[1][2][3]>);
+//atic_assert(same_q<precedent_s<int[1][2][3]>, int[0][2][3]>);
+//atic_assert(same_q<succedent_s<int[0][2][3]>, int[1][2][3]>);
 
 
 

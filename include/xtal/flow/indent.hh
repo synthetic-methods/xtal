@@ -38,7 +38,7 @@ struct indent<Ns...>
 		static_assert(bond::pack_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 		using W_ =     component_s<S >;
-		using U_ =   initializer_u<W_>;
+		using U_ =   initializer_t<W_>;
 
 	public:
 	//	using S_::S_;//NOTE: Inherited and respecialized!
@@ -72,10 +72,9 @@ struct indent<Ns...>
 		noexcept requires in_n<iterable_q<U_>> or  un_n<requires {W_::ordinate(u);}>
 		:	S_{             XTAL_MOV_(u) }
 		{}
-		XTAL_NEW_(implicit)
-		subtype(_std::initializer_list<U_> w)
-		noexcept requires in_n<iterable_q<U_>>
-		:	S_{w}
+		subtype(_std::initializer_list<U_> u_)
+		noexcept requires make_p<S_, _std::initializer_list<U_>>
+		:	S_{u_}
 		{}
 
 		template <extent_type N_mask=-1>
