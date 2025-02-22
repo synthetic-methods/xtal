@@ -79,6 +79,10 @@ struct define
 Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
 with `subtype` as the default target of `self`. \
 
+///\note\
+Utilizes `std::initializer_list` construction if permitted by the `head_type`, \
+irrespective of whether `_detail::refer_iterators` has been applied. \
+
 template <class T>
 struct refine
 {
@@ -97,14 +101,32 @@ struct refine
 		using S_::S_;
 
 	};
-	template <class S> requires iterable_q<S> and un_n<iterated_q<S>>
-	class subtype<S> : public bond::compose_s<S, superkind>, public arranged_t<T>
+	template <class S> requires iterable_q<S> and un_n<iterated_q<S>> and incomplete_q<typename S::head_type>
+	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-	
+
 	public:
 		using S_::S_;
+
+	};
+	template <class S> requires iterable_q<S> and un_n<iterated_q<S>> and   complete_q<typename S::head_type>
+	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+		using W_ = typename S_::head_type;
+		using U_ = initializer_t<W_>;
+
+	public:
+		using S_::S_;
+
+		XTAL_NEW_(implicit)
+		subtype(_std::initializer_list<U_> u_)
+		noexcept requires make_p<W_, _std::initializer_list<U_>>
+		:	S_{W_(u_)}
+		{}
 
 	};
 };

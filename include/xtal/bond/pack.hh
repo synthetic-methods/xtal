@@ -195,7 +195,7 @@ noexcept -> decltype(auto)
 	return [=] (auto &&w) XTAL_0FN_(to) (transpack_f<U>(ns..., XTAL_REF_(w)));
 }
 template <class U>
-using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_u<U> **)));
+using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_t<U> **)));
 
 
 ////////////////////////////////////////////////////////////////////////////////

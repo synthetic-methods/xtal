@@ -333,46 +333,11 @@ struct define
 
 	};
 };
-/**/
 template <class T>
 struct refine
 :	_retail::refine<T>
 {
 };
-/*/
-template <class T>
-struct refine
-{
-	using superkind = _retail::refine<T>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind>;
-		using T_ = typename S_::self_type;
-	
-	public:// CONSTRUCT
-		using S_::S_;
-
-	public:// FLOW
-
-		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
-		flux_this(auto &&...oo)
-		noexcept -> signed
-		{
-			if constexpr (un_q<T_, decltype(oo)...> or in_q<T_, bond::seek_front_t<decltype(oo)...>>) {
-				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
-			}
-			else {
-				return -1;
-			}
-		}
-
-	};
-};
-/***/
 
 
 ////////////////////////////////////////////////////////////////////////////////

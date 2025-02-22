@@ -306,54 +306,52 @@ template <         class ...Ts>	concept           vector_q	= (...and   _retail::
 template <         class ...Ts>	concept           matrix_q	= (...and   _retail::           matrix_q<Ts>);
 template <         class ...Ts>	concept           tensor_q	= (...and   _retail::           tensor_q<Ts>);
 
+
+
+template <class T             >	using            wrappee_t	=           _retail::          wrappee_t<T >;
 template <class T             >	using            pointee_t	=           _retail::          pointee_t<T >;
-template <class T             >	using            pointed_u	=           _retail::          pointed_u<T >;
-template <class          ...Ts>	concept          pointed_q	= (... and  _retail::          pointed_q<Ts>);
-template <class T             >	using            wrapped_u	=           _retail::          wrapped_u<T >;
-template <class          ...Ts>	concept          wrapped_q	= (... and  _retail::          wrapped_q<Ts>);
-
 template <class T             >	using            indexee_t	=           _retail::          indexee_t<T >;
-template <class T             >	using            indexed_u	=           _retail::          indexed_u<T >;
-template <class          ...Ts>	concept          indexed_q	= (... and  _retail::          indexed_q<Ts>);
-template <class T             >	using          coindexed_u	=           _retail::        coindexed_u<T >;
-template <class          ...Ts>	concept        coindexed_q	= (... and  _retail::        coindexed_q<Ts>);
-template <class T             >	using          reindexed_u	=           _retail::        reindexed_u<T >;
-template <         class ...Ts>	concept        reindexed_q	= (... and  _retail::        reindexed_q<Ts>);
+template <class T             >	using          expressee_t	=           _retail::        expressee_t<T >;
 
-template <         class ...Ts>	concept  fixed_coindexed_q	= (... and  _retail::  fixed_coindexed_q<Ts>);
-template <         class ...Ts>	concept  fixed_reindexed_q	= (... and  _retail::  fixed_reindexed_q<Ts>);
-template <         class ...Ts>	concept  fluid_coindexed_q	= (... and  _retail::  fluid_coindexed_q<Ts>);
-template <         class ...Ts>	concept  fluid_reindexed_q	= (... and  _retail::  fluid_reindexed_q<Ts>);
+template <         class ...Ts>	concept          wrapped_q	= (... and  _retail::          wrapped_q<Ts>);
+template <         class ...Ts>	concept          pointed_q	= (... and  _retail::          pointed_q<Ts>);
+template <         class ...Ts>	concept          indexed_q	= (... and  _retail::          indexed_q<Ts>);
+template <         class ...Ts>	concept        expressed_q	= (... and  _retail::        expressed_q<Ts>);
+template <         class ...Ts>	concept      inexpressed_q	= (... and  _retail::      inexpressed_q<Ts>);
 
+///\
+Provides the initializer for the given type, defaulting to itself. \
+If the supplied type has a fixed-size, \
+and responds to both `[](unsigned)` and `()(unsigned)`, \
+the return value of the latter is used. \
 
-template <class T             >	using        arranged_t	=           _retail::     arranged_t<T > ;
-template <class T             >	using      reiterated_t	=           _retail::   reiterated_t<T > ;
-template <         class ...Ts>	concept    reiterated_q	= (...and   _retail::   reiterated_q<Ts>);
-template <         class ...Ts>	concept    sequential_q	= (...and   _retail::   sequential_q<Ts>);
-template <         class ...Ts>	concept     itinerant_q	= (...and   _retail::    itinerant_q<Ts>);
+template <class T             >	struct       initializer    {using type =            valued_u<T> ;};
+template <inexpressed_q T     >	struct       initializer<T> {using type = based_t<expressee_t<T>>;};
+template <class T             >	using        initializer_t	= typename initializer<T>::type;
+template <class T             >	concept      initializer_q	= different_q<T, initializer_t<T>> and indexed_q<T>;// or inexpressed_q<T>);
 
-template <class T             >	using     initializer_s	=           _retail::  initializer_s<T > ;
-template <class T             >	using     initializer_t	=           _retail::  initializer_t<T > ;
-template <class T             >	using     initializer_u	=           _retail::  initializer_u<T > ;
-template <         class ...Ts>	concept   initializer_q	= (...and   _retail::  initializer_q<Ts>);
+template <class T             >	using         deiteratee_t	=           _retail::   deiteratee_t<T > ;
+template <class T             >	using         reiteratee_t	=           _retail::   reiteratee_t<T > ;
+template <class T             >	using         reiterated_t	=           _retail::   reiterated_t<T > ;
+template <         class ...Ts>	concept       reiterated_q	= (...and   _retail::   reiterated_q<Ts>);
+template <         class ...Ts>	concept       sequential_q	= (...and   _retail::   sequential_q<Ts>);
 
-template <class T             >	using        iteratee_t	=  typename _retail::     iteratee  <T >::type;
-template <class T             >	using        iterated_u	= _std::remove_reference_t<iteratee_t<T>>;
-template <class T             >	using        iterated_t	=  typename _retail::     iterated  <T >::type;
-template <class T             >	using        iterator_t	=  typename _retail::     iterator  <T >::type;
-template <class T             >	using        distance_t	=           _retail::     distance_t<T > ;
-template <class T             >	using        interval_t	=           _retail::     interval_t<T > ;
-template <class T=extent_type >	using         counted_t	=  typename _retail::      counted  <T >::type;
-template <class T=extent_type >	using         counter_t	=  typename _retail::      counter  <T >::type;
+template <class T             >	using           iteratee_t	=           _retail::     iteratee_t<T >;
+template <class T             >	using           iterated_t	=           _retail::     iterated_t<T >;
+template <class T             >	using           iterator_t	=           _retail::     iterator_t<T >;
+template <class T             >	using           distance_t	=           _retail::     distance_t<T > ;
+template <class T             >	using           interval_t	=           _retail::     interval_t<T > ;
+template <class T=extent_type >	using            counted_t	=           _retail::      counted_t<T >;
+template <class T=extent_type >	using            counter_t	=           _retail::      counter_t<T >;
 
-template <class          ...Ts>	concept      iterable_q	= (...and   _retail::     iterable_q<Ts>);
-template <class          ...Ts>	concept      iterated_q	= (...and   _retail::     iterated_q<Ts>);
-template <class          ...Ts>	concept      iterator_q	= (...and   _retail::     iterator_q<Ts>);
-template <class          ...Ts>	concept      sentinel_q	= (...and   _retail::     sentinel_q<Ts>);
-template <class          ...Ts>	concept      distance_q	= (...and   _retail::     distance_q<Ts>);
-template <class          ...Ts>	concept      interval_q	= (...and   _retail::     interval_q<Ts>);
-template <class          ...Ts>	concept       counted_q	= (...and   _retail::      counted_q<Ts>);
-template <class          ...Ts>	concept       counter_q	= (...and   _retail::      counter_q<Ts>);
+template <class          ...Ts>	concept         iterable_q	= (...and   _retail::     iterable_q<Ts>);
+template <class          ...Ts>	concept         iterated_q	= (...and   _retail::     iterated_q<Ts>);
+template <class          ...Ts>	concept         iterator_q	= (...and   _retail::     iterator_q<Ts>);
+template <class          ...Ts>	concept         sentinel_q	= (...and   _retail::     sentinel_q<Ts>);
+template <class          ...Ts>	concept         distance_q	= (...and   _retail::     distance_q<Ts>);
+template <class          ...Ts>	concept         interval_q	= (...and   _retail::     interval_q<Ts>);
+template <class          ...Ts>	concept          counted_q	= (...and   _retail::      counted_q<Ts>);
+template <class          ...Ts>	concept          counter_q	= (...and   _retail::      counter_q<Ts>);
 
 
 ///\returns the nearest aligned offset for type `T`, \
@@ -581,13 +579,14 @@ XTAL_DEF_(return,inline,set)
 disordering_f(_std::partial_ordering const o)
 noexcept -> _std::uint8_t
 {
-	using is = _std::partial_ordering;
-	using B  = _std::uint8_t;
+	using       is  = _std::partial_ordering;
+	using       B   = _std::uint8_t;
+	B constexpr B11 = 0b11U;
 	if constexpr (requires {requires 2 == _xtd::bit_cast<B>(is::unordered);}) {
-		auto x = _xtd::bit_cast<B>(o); x &= 0b11U; x ^= x >> 1; return x;
+		auto x = _xtd::bit_cast<B>(o); x &= B11; x ^= x >> 1; return x;
 	}
 	else {
-		return (0 < o)|((o < 0) << 1)|0b11U&-(o == is::unordered);
+		return B(0 < o)|(B(o < 0) << 1)|B11&-B(o == is::unordered);
 	}
 }
 XTAL_DEF_(return,inline,set)

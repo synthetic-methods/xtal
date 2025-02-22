@@ -286,7 +286,7 @@ noexcept -> void
 
 template <iterator_q Y_>
 XTAL_DEF_(inline,let)
-fill_with(Y_ y0, distance_t<Y_> sN, iterated_u<Y_> const &y, signed const ord=sequential_q<Y_>)
+fill_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
 	if constexpr (requires {_std::              fill_n(y0, sN, y);}) {
@@ -307,7 +307,7 @@ noexcept -> void
 }
 template <iterator_q Y_>
 XTAL_DEF_(inline,let)
-initialize_with(Y_ y0, distance_t<Y_> sN, iterated_u<Y_> const &y, signed const ord=sequential_q<Y_>)
+initialize_with(Y_ y0, distance_t<Y_> sN, deiteratee_t<Y_> const &y, signed const ord=sequential_q<Y_>)
 noexcept -> void
 {
 	if constexpr (requires {_std::uninitialized_fill_n(y0, sN, y);}) {

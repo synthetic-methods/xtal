@@ -90,22 +90,28 @@ The replacements for the `...extent...` definitions are intended to overcome \
 discrepancies between `LLVM` and `GNUC` (particularly for zero-length arrays). \
 
 template <class T          >	struct  remove_all_extents : transfer_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
+#if XTAL_VER_(MSVC == 0)
 template <class U          >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
 template <class U          >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
+#endif
 template <class U, auto  N >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
 template <class U, auto  N >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
 template <class T          >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
 
 template <class T          >	struct  remove_extent : transfer_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
+#if XTAL_VER_(MSVC == 0)
 template <class U          >	struct  remove_extent<U   [0]> {using type = U  ;};
 template <class U          >	struct  remove_extent<U(&)[0]> {using type = U &;};
+#endif
 template <class U, auto  N >	struct  remove_extent<U   [N]> {using type = U  ;};
 template <class U, auto  N >	struct  remove_extent<U(&)[N]> {using type = U &;};
 template <class T          >	using   remove_extent_t = typename remove_extent<T>::type;
 
 template <class T          >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
+#if XTAL_VER_(MSVC == 0)
 template <class U          >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
 template <class U          >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
+#endif
 template <class U, auto  N >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
 template <class U, auto  N >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
 
@@ -135,15 +141,15 @@ template <class T> concept trivially_constructible = trivially_copyable<T> and t
 template <class T> concept nominally_instructible  = nominally_destructible<T> and nominally_initializable<T>;
 template <class T> concept trivially_instructible  = trivially_destructible<T> and trivially_initializable<T>;
 
-template <class T> concept nominal                 = nominally_instructible<T> and nominally_constructible<T>;// and _std::is_standard_layout_v<_std::remove_cvref_t<T>>;
-template <class T> concept trivial                 = trivially_instructible<T> and trivially_constructible<T>;// and _std::is_standard_layout_v<_std::remove_cvref_t<T>>;
+template <class T> concept nominal                 = nominally_instructible<T> and nominally_constructible<T>;
+template <class T> concept trivial                 = trivially_instructible<T> and trivially_constructible<T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T           > concept              reference = _std::       is_reference_v<T>;// or ranges::range<XTAL_NOM_(T)>;
-template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;// or ranges::range<XTAL_NOM_(T)> and _std::is_rvalue_reference_v<ranges::iter_reference_t<XTAL_NOM_(T)>>;
-template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;// or ranges::range<XTAL_NOM_(T)> and _std::is_lvalue_reference_v<ranges::iter_reference_t<XTAL_NOM_(T)>>;
+template <class T           > concept              reference = _std::       is_reference_v<T>;
+template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;
+template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;
 
 template <class T           > struct        remove_reference    : _std::remove_reference<T> {};
 template <class T           > struct remove_rvalue_reference                 {using type = T;};
@@ -258,20 +264,21 @@ XTAL_DEF_(return,inline,let) make_unsigned_f  (        constant_equivocable auto
 
 XTAL_DEF_(return,inline,let)
 plus_multiplies(auto &&w, auto &&x, auto &&y)
-noexcept -> XTAL_ALL_(w + x*y)
+noexcept -> auto
 {
+	using Z = XTAL_ALL_(w + x*y);
 	XTAL_IF0
 	XTAL_0IF_(consteval) {
 		return               XTAL_REF_(y)*XTAL_REF_(x) + XTAL_REF_(w) ;
 	}
 #if   XTAL_SYS_(FMA) and XTAL_SYS_(builtin)
 	XTAL_0IF (requires {_std::fma(y, x, w);}) {
-		return __builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+		return static_cast<Z>(__builtin_fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w)));
 	}
 #endif
 #if   XTAL_SYS_(FMA)
 	XTAL_0IF (requires {fma(y, x, w);}) {
-		return           fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w));
+		return static_cast<Z>(          fma(XTAL_REF_(y), XTAL_REF_(x), XTAL_REF_(w)));
 	}
 #endif
 	XTAL_0IF_(else) {

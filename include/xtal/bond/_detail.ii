@@ -27,8 +27,8 @@ noexcept -> decltype(auto)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class       W >	concept dismember_q = not molecular_q<W> and not _xtd::rvalue_reference<W>;// or iterable_q<W> and not _xtd::ranges::borrowed_range<based_t<W>>;
-template <class       W >	concept    member_q = not dismember_q<W>;
+template <class       W >	concept    member_q = molecular_q<W> or _xtd::rvalue_reference<W>;// or iterable_q<W> and not _xtd::ranges::borrowed_range<based_t<W>>;
+template <class       W >	concept dismember_q = not member_q<W>;
 
 template <class       W >	struct     member    {using type = typename _xtd::   decay_owned_reference<W>::value_type;};
 template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_borrowed_reference<W>::value_type;};

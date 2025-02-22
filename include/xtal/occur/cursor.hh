@@ -225,7 +225,7 @@ template <counted_q U>
 struct cursor<U>
 {
 private:
-	using V = iterated_u<U>;
+	using V = deiteratee_t<U>;
 
 public:
 	using superkind = bond::compose<_detail::cursed, review<U>, restep<V>, bond::tag<cursor>>;
