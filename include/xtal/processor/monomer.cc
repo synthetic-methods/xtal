@@ -171,8 +171,8 @@ void monomer_provision__provisioning()
 	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
 	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
 
-	auto lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
-	auto rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
+	auto lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto xhs = monomer_t<U_add, provide>::bind_f(lhs, rhs);
 
 	auto u_vector = U_store{0, 0, 0};
@@ -216,7 +216,7 @@ void monomer_chaining__rvalue()
 	
 	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mul_op = monomer_t<U_mul, provision::stored<>>;
-	auto yhs = mul_op::bind_f(mix_op::bind_f(let_f(_01), let_f(_10)));
+	auto yhs = mul_op::bind_f(mix_op::bind_f(processor::let_f(_01), processor::let_f(_10)));
 
 	yhs <<= occur::resize_f(N);
 	yhs <<= Ox_scale((T_alpha) 100);
@@ -246,8 +246,8 @@ void monomer_chaining__lvalue()
 	
 	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mul_op = monomer_t<U_mul, provision::stored<>>;
-	auto  lhs = let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
-	auto  rhs = let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
+	auto  lhs = processor::let_f(_01); TRUE_(&lhs.head() == &processor::let_f(lhs).head());
+	auto  rhs = processor::let_f(_10); TRUE_(&rhs.head() == &processor::let_f(rhs).head());
 	auto  xhs = mix_op::bind_f(lhs, rhs);
 	auto  yhs = mul_op::bind_f(xhs);
 
@@ -282,8 +282,8 @@ void monomer_chaining__shared()
 
 	auto _xx = idx_fn::bind_f();
 	auto xhs = mix_op::bind_f(_xx);
-	auto lhs = mix_fn::bind_f(xhs, let_f(_01));
-	auto rhs = mix_fn::bind_f(xhs, let_f(_10));
+	auto lhs = mix_fn::bind_f(xhs, processor::let_f(_01));
+	auto rhs = mix_fn::bind_f(xhs, processor::let_f(_10));
 	auto yhs = mix_fn::bind_f(lhs, rhs);
 
 	//\

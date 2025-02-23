@@ -23,6 +23,13 @@ struct pack_size<T, Ts...>
 :	cardinal_constant_t<(pack_size_n<T> +...+ pack_size_n<Ts>)>
 {
 };
+template <         class ...Ts>
+XTAL_DEF_(return,inline,let)
+pack_size_f(Ts &&...)
+noexcept -> decltype(auto)
+{
+	return pack_size_n<Ts...>;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +73,7 @@ noexcept -> decltype(auto)
 	XTAL_0IF_(to) (get<I>(XTAL_REF_(t)))
 	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
 }
-template <auto I, auto ...Is> requires some_n<Is...>
+template <auto I, auto ...Is>// requires some_n<Is...>
 XTAL_DEF_(return,inline,let)
 pack_item_f(auto &&t, auto &&...ts)
 noexcept -> decltype(auto)
