@@ -39,55 +39,56 @@ template <auto  N>	using      sign_constant_t	= _retail::   sign_constant_t<N>;
 //\
 Structural...
 
-template <         class ...Ts>	concept     isotropic_q	=           _retail::    isotropic_q<   Ts...>;
-template <         class ...Ts>	concept     epitropic_q	=           _retail::    epitropic_q<   Ts...>;
-template <         class ...Ts>	concept    isomorphic_q	=           _retail::   isomorphic_q<   Ts...>;
-template <         class ...Ts>	concept    epimorphic_q	=           _retail::   epimorphic_q<   Ts...>;
+template <         class ...Ts>	concept     isotropic_q	=                          _retail::    isotropic_q<Ts...>;///< `Ts` are         the same modulo qualifiers.
+template <         class ...Ts>	concept     epitropic_q	=                          _retail::    epitropic_q<Ts...>;///< `Ts` are interconvertible modulo qualifiers.
+template <         class ...Ts>	concept    isomorphic_q	=                          _retail::   isomorphic_q<Ts...>;///< `Ts` are `isotropic` or `isotropic<value_type>`.
+template <         class ...Ts>	concept    epimorphic_q	=                          _retail::   epimorphic_q<Ts...>;///< `Ts` are `epitropic` or `epitropic<value_type>`.
 
-template <         class ...Ts>	concept      fungible_q	=           _retail::     fungible_q<   Ts...>; //< `T` and `Ts...` are   related by inheritance.
-template <         class ...Ts>	concept    infungible_q	=           _retail::   infungible_q<   Ts...>; //< `T` and `Ts...` are unrelated by inheritance.
+template <         class ...Ts>	concept      fungible_q	=                          _retail::     fungible_q<Ts...>;///< `T` and `Ts...` are   related by inheritance.
+template <         class ...Ts>	concept    infungible_q	=                          _retail::   infungible_q<Ts...>;///< `T` and `Ts...` are unrelated by inheritance.
+
+template <         class ...Ts>	concept      multiple_q	=                          _retail::     multiple_q<Ts...>;///< `2 <= sizeof...(Ts)`
+template <         class ...Ts>	concept        single_q	=                          _retail::       single_q<Ts...>;///< `1 == sizeof...(Ts)`
+template <         class ...Ts>	concept          some_q	=                          _retail::         some_q<Ts...>;///< `1 <= sizeof...(Ts)`
+template <         class ...Ts>	concept          none_q	=                          _retail::         none_q<Ts...>;///< `0 == sizeof...(Ts)`
+template <         auto  ...Ns>	concept      multiple_n	=                          _retail::     multiple_n<Ns...>;///< `2 <= sizeof...(Ns)`
+template <         auto  ...Ns>	concept        single_n	=                          _retail::       single_n<Ns...>;///< `1 == sizeof...(Ns)`
+template <         auto  ...Ns>	concept          some_n	=                          _retail::         some_n<Ns...>;///< `1 <= sizeof...(Ns)`
+template <         auto  ...Ns>	concept          none_n	=                          _retail::         none_n<Ns...>;///< `0 == sizeof...(Ns)`
 
 
-template <         class ...Xs>	using          either_t	=           _retail::    either_t<   Xs ...> ;
-template <class T, class ...Xs>	concept        either_q	=           _retail::    either_q<T, Xs ...> ;
-template <         class ...Ts>	using          common_t	=           _retail::       common_t<Ts ...> ;
-template <         class ...Ts>	concept        common_q	=           _retail::       common_q<Ts ...> ;
-template <         class ...Ts>	using           cased_t	=  common_t<_retail::        based_t<Ts>...> ;
-template <class T             >	using           based_t	=           _retail::        based_t<T     > ;
-template <         class ...Ts>	concept         based_q	= (...and   _retail::        based_q<Ts    >);
-template <         class ...Ts>	concept       unbased_q	= (...and   _retail::      unbased_q<Ts    >);
+template <         class ...Xs>	using          either_t	=                          _retail::       either_t<   Xs ...>;
+template <class T, class ...Xs>	concept        either_q	=                          _retail::       either_q<T, Xs ...>;
+template <         class ...Ts>	using          common_t	=                          _retail::       common_t<   Ts ...>;
+template <         class ...Ts>	concept        common_q	=                          _retail::       common_q<   Ts ...>;
+
+template <         class ...Ts>	using           cased_t	=                 common_t<_retail::        based_t<Ts>...> ;
+template <class T             >	using           based_t	=                          _retail::        based_t<T     > ;
+template <         class ...Ts>	concept         based_q	= (some_q<Ts...> and...and _retail::        based_q<Ts    >);
+template <         class ...Ts>	concept       unbased_q	= (some_q<Ts...> and...and _retail::      unbased_q<Ts    >);
 
 
-template <         class ...Ts>	concept      multiple_q	=           _retail::     multiple_q<Ts...>;
-template <         class ...Ts>	concept        single_q	=           _retail::       single_q<Ts...>;
-template <         class ...Ts>	concept          some_q	=           _retail::         some_q<Ts...>;
-template <         class ...Ts>	concept          none_q	=           _retail::         none_q<Ts...>;
-template <         auto  ...Ns>	concept      multiple_n	=           _retail::     multiple_n<Ns...>;
-template <         auto  ...Ns>	concept        single_n	=           _retail::       single_n<Ns...>;
-template <         auto  ...Ns>	concept          some_n	=           _retail::         some_n<Ns...>;
-template <         auto  ...Ns>	concept          none_n	=           _retail::         none_n<Ns...>;
+template <class T             >	using        identity_t	=                          _retail::     identity_t<T    >;
+template <class T             >	using        identity_u	=                          _retail::     identity_u<T    >;
+template <class T             >	concept      identity_q	=                          _retail::     identity_q<T    >;
 
-template <class T             >	using        identity_t	=           _retail::     identity_t<T    >;
-template <class T             >	using        identity_u	=           _retail::     identity_u<T    >;
-template <class T             >	concept      identity_q	=           _retail::     identity_q<T    >;
+template <         class ...Ts>	using        complete_t	=                          _retail::     complete_t<Ts...>;
+template <         class ...Ts>	concept      complete_q	= (some_q<Ts...> and...and _retail::     complete_q<Ts   >);
+template <         class ...Ts>	concept    incomplete_q	= (some_q<Ts...> and...and _retail::   incomplete_q<Ts   >) or  none_q<Ts...>;
 
-template <         class ...Ts>	using        complete_t	=           _retail::     complete_t<Ts...>;
-template <         class ...Ts>	concept      complete_q	= (...and   _retail::     complete_q<Ts   >) and some_q<Ts...>;
-template <         class ...Ts>	concept    incomplete_q	= (...and   _retail::   incomplete_q<Ts   >) or  none_q<Ts...>;
+template <         class ...Ts>	concept        atomic_q	= (some_q<Ts...> and...and _retail::       atomic_q<Ts   >);
+template <         class ...Ts>	concept     molecular_q	= (some_q<Ts...> and...and _retail::    molecular_q<Ts   >);
+template <         class ...Ts>	concept  submolecular_q	= (some_q<Ts...> and...and _retail:: submolecular_q<Ts   >);
 
-template <         class ...Ts>	concept        atomic_q	= (...and   _retail::       atomic_q<Ts   >);
-template <         class ...Ts>	concept     molecular_q	= (...and   _retail::    molecular_q<Ts   >);
-template <         class ...Ts>	concept  submolecular_q	= (...and   _retail:: submolecular_q<Ts   >);
+template <class S, class T=S  >	using         qualify_s	=                          _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+template <class S, class T=S  >	using      disqualify_s	=                          _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
 
-template <class S, class T=S  >	using         qualify_s	=           _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-template <class S, class T=S  >	using      disqualify_s	=           _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-
-template <         auto  ...Ns>	concept     different_n	=           _retail::    different_n<   Ns...>;///< `Ns...` are different values.
-template <         auto  ...Ns>	concept          same_n	=           _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
-template <         class ...Ts>	concept     different_q	=           _retail::    different_q<   Ts...>;///< `Ts...` are different modulo qualifiers.
-template <         class ...Ts>	concept          same_q	=           _retail::         same_q<   Ts...>;///< `Ts...` are identical modulo qualifiers.
-template <         class ...Ts>	concept          make_q	=           _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
-template <class T, class ...Ts>	concept          make_p	=           _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
+template <         auto  ...Ns>	concept     different_n	=                          _retail::    different_n<   Ns...>;///< `Ns...` are different values.
+template <         auto  ...Ns>	concept          same_n	=                          _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
+template <         class ...Ts>	concept     different_q	=                          _retail::    different_q<   Ts...>;///< `Ts...` are different modulo qualifiers.
+template <         class ...Ts>	concept          same_q	=                          _retail::         same_q<   Ts...>;///< `Ts...` are identical modulo qualifiers.
+template <         class ...Ts>	concept          make_q	=                          _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
+template <class T, class ...Ts>	concept          make_p	=                          _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
 
 template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
 template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
@@ -95,14 +96,14 @@ template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> d
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class F, class ...Xs>	using          return_t	=           _retail::       return_t<F, Xs...>;
-template <class F, class ...Xs>	concept    applicable_p	=           _retail::   applicable_p<F, Xs...>;
-template <class F, class ...Xs>	concept  inapplicable_p	=           _retail:: inapplicable_p<F, Xs...>;
-template <         class ...Fs>	concept    applicable_q	= (...and   _retail::   applicable_q<   Fs   >);
-template <         class ...Fs>	concept  inapplicable_q	= (...and   _retail:: inapplicable_q<   Fs   >);
+template <class F, class ...Xs>	using          return_t	=                          _retail::       return_t<F, Xs...>;
+template <class F, class ...Xs>	concept    applicable_p	=                          _retail::   applicable_p<F, Xs...>;
+template <class F, class ...Xs>	concept  inapplicable_p	=                          _retail:: inapplicable_p<F, Xs...>;
+template <         class ...Fs>	concept    applicable_q	= (some_q<Fs...> and...and _retail::   applicable_q<   Fs   >);
+template <         class ...Fs>	concept  inapplicable_q	= (some_q<Fs...> and...and _retail:: inapplicable_q<   Fs   >);
 
-template <class F, class ...Xs>	concept  automorphism_p	= (...and   _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
-template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
+template <class X, class ...Fs>	concept  automorphism_q	= (some_q<Fs...> and...and _retail:: automorphism_q<X, Fs   >);///< `X `  is unchanged by `Fs...`.
+template <class F, class ...Xs>	concept  automorphism_p	= (some_q<Xs...> and...and _retail:: automorphism_p<F, Xs   >);///< `Xs` are unchanged by `F ...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,53 +111,53 @@ template <class X, class ...Fs>	concept  automorphism_q	= (...and   _retail:: au
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=           _retail::              sign_v<N, Z    >;
-template <auto  M, auto     N >	auto constexpr   skip_v	=           _retail::              skip_v<M, N    >;
-template <auto  M, auto     N >	auto constexpr  above_v	=           _retail::             above_v<M, N    >;
-template <auto  M, auto     N >	auto constexpr  below_v	=           _retail::             below_v<M, N    >;
-template <auto  M, auto     N >	auto constexpr modulo_v	=           _retail::            modulo_v<M, N    >;
-template <auto  N, auto  ...Ms>	concept            in_n	=           _retail::                in_n<N, Ms...>;
-template <auto  N, auto  ...Ms>	concept            un_n	=           _retail::                un_n<N, Ms...>;
-template <class T, class ...Ts>	concept            in_q	=           _retail::                in_q<T, Ts...>;
-template <class T, class ...Ts>	concept            un_q	=           _retail::                un_q<T, Ts...>;
+template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=                          _retail::         sign_v<N, Z    >;
+template <auto  M, auto     N >	auto constexpr   skip_v	=                          _retail::         skip_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr  above_v	=                          _retail::        above_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr  below_v	=                          _retail::        below_v<M, N    >;
+template <auto  M, auto     N >	auto constexpr modulo_v	=                          _retail::       modulo_v<M, N    >;
+template <auto  N, auto  ...Ms>	concept            in_n	=                          _retail::           in_n<N, Ms...>;
+template <auto  N, auto  ...Ms>	concept            un_n	=                          _retail::           un_n<N, Ms...>;
+template <class T, class ...Ts>	concept            in_q	=                          _retail::           in_q<T, Ts...>;
+template <class T, class ...Ts>	concept            un_q	=                          _retail::           un_q<T, Ts...>;
 
-template <class          ...Ts>	concept      variable_q	= (...and   _retail::          variable_q<based_t<Ts>>);
-template <class          ...Ts>	concept      constant_q	= (...and   _retail::          constant_q<based_t<Ts>>);
-template <auto   N=null_type{}>	using        constant_t	=           _retail::          constant_t<N >  ;
+template <class          ...Ts>	concept      variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
+template <class          ...Ts>	concept      constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
+template <auto   N=null_type{}>	using        constant_t	=                          _retail::           constant_t<N >;
 
-template <auto  N       >	using     integral_constant_t	=           _retail:: integral_constant_t<N>;
-template <auto  N       >	using     cardinal_constant_t	=           _retail:: cardinal_constant_t<N>;
-template <auto  N       >	using      ordinal_constant_t	=           _retail::  ordinal_constant_t<N>;
-template <auto  N       >	using      logical_constant_t	=           _retail::  logical_constant_t<N>;
+template <auto  N       >	using     integral_constant_t	=                          _retail::  integral_constant_t<N>;
+template <auto  N       >	using     cardinal_constant_t	=                          _retail::  cardinal_constant_t<N>;
+template <auto  N       >	using      ordinal_constant_t	=                          _retail::   ordinal_constant_t<N>;
+template <auto  N       >	using      logical_constant_t	=                          _retail::   logical_constant_t<N>;
 
-template <class 	 ...Ts>  concept   integral_variable_q	= (...and   _retail:: integral_variable_q<Ts>);
-template <class 	 ...Ts>  concept   cardinal_variable_q	= (...and   _retail:: cardinal_variable_q<Ts>);
-template <class 	 ...Ts>  concept    ordinal_variable_q	= (...and   _retail::  ordinal_variable_q<Ts>);
-template <class 	 ...Ts>  concept    logical_variable_q	= (...and   _retail::  logical_variable_q<Ts>);
-template <class 	 ...Ts>  concept       real_variable_q	= (...and   _retail::     real_variable_q<Ts>);
-template <class 	 ...Ts>  concept    complex_variable_q	= (...and   _retail::  complex_variable_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_variable_q	= (...and   _retail::  simplex_variable_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_variable_q	= (...and   _retail::  numeric_variable_q<Ts>);
+template <class 	 ...Ts>  concept   integral_variable_q	= (some_q<Ts...> and...and _retail::  integral_variable_q<Ts>);
+template <class 	 ...Ts>  concept   cardinal_variable_q	= (some_q<Ts...> and...and _retail::  cardinal_variable_q<Ts>);
+template <class 	 ...Ts>  concept    ordinal_variable_q	= (some_q<Ts...> and...and _retail::   ordinal_variable_q<Ts>);
+template <class 	 ...Ts>  concept    logical_variable_q	= (some_q<Ts...> and...and _retail::   logical_variable_q<Ts>);
+template <class 	 ...Ts>  concept       real_variable_q	= (some_q<Ts...> and...and _retail::      real_variable_q<Ts>);
+template <class 	 ...Ts>  concept    complex_variable_q	= (some_q<Ts...> and...and _retail::   complex_variable_q<Ts>);
+template <class 	 ...Ts>  concept    simplex_variable_q	= (some_q<Ts...> and...and _retail::   simplex_variable_q<Ts>);
+template <class 	 ...Ts>  concept    numeric_variable_q	= (some_q<Ts...> and...and _retail::   numeric_variable_q<Ts>);
 
-template <class 	 ...Ts>  concept   integral_constant_q	= (...and   _retail:: integral_constant_q<Ts>);
-template <class 	 ...Ts>  concept   cardinal_constant_q	= (...and   _retail:: cardinal_constant_q<Ts>);
-template <class 	 ...Ts>  concept    ordinal_constant_q	= (...and   _retail::  ordinal_constant_q<Ts>);
-template <class 	 ...Ts>  concept    logical_constant_q	= (...and   _retail::  logical_constant_q<Ts>);
-template <class 	 ...Ts>  concept       real_constant_q	= (...and   _retail::     real_constant_q<Ts>);
-template <class 	 ...Ts>  concept    complex_constant_q	= (...and   _retail::  complex_constant_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_constant_q	= (...and   _retail::  simplex_constant_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_constant_q	= (...and   _retail::  numeric_constant_q<Ts>);
-template <class 	 ...Ts>  concept    natural_constant_q	= (...and   _retail::  natural_constant_q<Ts>);
-template <class 	 ...Ts>  concept  unnatural_constant_q	= (...and   _retail::unnatural_constant_q<Ts>);
+template <class 	 ...Ts>  concept   integral_constant_q	= (some_q<Ts...> and...and _retail::  integral_constant_q<Ts>);
+template <class 	 ...Ts>  concept   cardinal_constant_q	= (some_q<Ts...> and...and _retail::  cardinal_constant_q<Ts>);
+template <class 	 ...Ts>  concept    ordinal_constant_q	= (some_q<Ts...> and...and _retail::   ordinal_constant_q<Ts>);
+template <class 	 ...Ts>  concept    logical_constant_q	= (some_q<Ts...> and...and _retail::   logical_constant_q<Ts>);
+template <class 	 ...Ts>  concept       real_constant_q	= (some_q<Ts...> and...and _retail::      real_constant_q<Ts>);
+template <class 	 ...Ts>  concept    complex_constant_q	= (some_q<Ts...> and...and _retail::   complex_constant_q<Ts>);
+template <class 	 ...Ts>  concept    simplex_constant_q	= (some_q<Ts...> and...and _retail::   simplex_constant_q<Ts>);
+template <class 	 ...Ts>  concept    numeric_constant_q	= (some_q<Ts...> and...and _retail::   numeric_constant_q<Ts>);
+template <class 	 ...Ts>  concept    natural_constant_q	= (some_q<Ts...> and...and _retail::   natural_constant_q<Ts>);
+template <class 	 ...Ts>  concept  unnatural_constant_q	= (some_q<Ts...> and...and _retail:: unnatural_constant_q<Ts>);
 
-template <class    ...Ts>	concept   integral_q        	= (...and   _retail::          integral_q<Ts>);
-template <class    ...Ts>	concept   cardinal_q        	= (...and   _retail::          cardinal_q<Ts>);
-template <class    ...Ts>	concept    ordinal_q        	= (...and   _retail::           ordinal_q<Ts>);
-template <class    ...Ts>	concept    logical_q        	= (...and   _retail::           logical_q<Ts>);
-template <class 	 ...Ts>  concept       real_q        	= (...and   _retail::              real_q<Ts>);
-template <class 	 ...Ts>  concept    complex_q        	= (...and   _retail::           complex_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_q        	= (...and   _retail::           simplex_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_q        	= (...and   _retail::           numeric_q<Ts>);
+template <class    ...Ts>	concept   integral_q        	= (some_q<Ts...> and...and _retail::           integral_q<Ts>);
+template <class    ...Ts>	concept   cardinal_q        	= (some_q<Ts...> and...and _retail::           cardinal_q<Ts>);
+template <class    ...Ts>	concept    ordinal_q        	= (some_q<Ts...> and...and _retail::            ordinal_q<Ts>);
+template <class    ...Ts>	concept    logical_q        	= (some_q<Ts...> and...and _retail::            logical_q<Ts>);
+template <class 	 ...Ts>  concept       real_q        	= (some_q<Ts...> and...and _retail::               real_q<Ts>);
+template <class 	 ...Ts>  concept    complex_q        	= (some_q<Ts...> and...and _retail::            complex_q<Ts>);
+template <class 	 ...Ts>  concept    simplex_q        	= (some_q<Ts...> and...and _retail::            simplex_q<Ts>);
+template <class 	 ...Ts>  concept    numeric_q        	= (some_q<Ts...> and...and _retail::            numeric_q<Ts>);
 template <class 	 ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
 
 XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
@@ -180,10 +181,10 @@ noexcept -> Y
 }
 
 
-template <         class ...Ts>	concept   intercedent_q	= (...and   _retail::intercedent_q<based_t<Ts>>);
-template <         class ...Ts>	concept    antecedent_q	= (...and   _retail:: antecedent_q<based_t<Ts>>);
-template <class T             >	using       precedent_s	=           _retail::  precedent_s<        T  > ;
-template <class T             >	using       succedent_s	=           _retail::  succedent_s<        T  > ;
+template <         class ...Ts>	concept   intercedent_q	= (some_q<Ts...> and...and _retail::  intercedent_q<based_t<Ts>>);
+template <         class ...Ts>	concept    antecedent_q	= (some_q<Ts...> and...and _retail::   antecedent_q<based_t<Ts>>);
+template <class T             >	using       precedent_s	=                          _retail::    precedent_s<        T  > ;
+template <class T             >	using       succedent_s	=                          _retail::    succedent_s<        T  > ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,62 +192,56 @@ template <class T             >	using       succedent_s	=           _retail::  s
 //\
 Valued & Sized...
 
-template <         class ...Ts>	using    array_valued_u	=  common_t<_retail::   array_valued_u<Ts>...>;
-template <         class ...Ts>	concept  array_valued_q	= (...and   _retail::   array_valued_q<Ts>);
+template <         class ...Ts>	using    array_valued_u	=                 common_t<_retail:: array_valued_u<Ts>...>;
+template <         class ...Ts>	using    inner_valued_u	=                 common_t<_retail:: inner_valued_u<Ts>...>;
+template <         class ...Ts>	using    under_valued_u	=                 common_t<_retail:: under_valued_u<Ts>...>;
+template <         class ...Ts>	using    fixed_valued_u	=                 common_t<_retail:: fixed_valued_u<Ts>...>;
+template <         class ...Ts>	using    fluid_valued_u	=                 common_t<_retail:: fluid_valued_u<Ts>...>;
+template <         class ...Ts>	using          valued_u	=                 common_t<_retail::       valued_u<Ts>...>;
 
-template <         class ...Ts>	using    inner_valued_u	=  common_t<_retail::   inner_valued_u<Ts>...>;
-template <         class ...Ts>	concept  inner_valued_q	= (...and   _retail::   inner_valued_q<Ts>);
-
-template <         class ...Ts>	using    under_valued_u	=  common_t<_retail::   under_valued_u<Ts>...>;
-template <         class ...Ts>	concept  under_valued_q	= (...and   _retail::   under_valued_q<Ts>);
-
-template <         class ...Ts>	using    fixed_valued_u	=  common_t<_retail::   fixed_valued_u<Ts>...>;
-template <         class ...Ts>	concept  fixed_valued_q	= (...and   _retail::   fixed_valued_q<Ts>);
-
-template <         class ...Ts>	using    fluid_valued_u	=  common_t<_retail::   fluid_valued_u<Ts>...>;
-template <         class ...Ts>	concept  fluid_valued_q	= (...and   _retail::   fluid_valued_q<Ts>);
-
-template <         class ...Ts>	using          valued_u	=  common_t<_retail::         valued_u<Ts>...>;
-template <         class ...Ts>	concept        valued_q	= (...and   _retail::         valued_q<Ts>);
+template <         class ...Ts>	concept  array_valued_q	= (some_q<Ts...> and...and _retail:: array_valued_q<Ts>);
+template <         class ...Ts>	concept  inner_valued_q	= (some_q<Ts...> and...and _retail:: inner_valued_q<Ts>);
+template <         class ...Ts>	concept  under_valued_q	= (some_q<Ts...> and...and _retail:: under_valued_q<Ts>);
+template <         class ...Ts>	concept  fixed_valued_q	= (some_q<Ts...> and...and _retail:: fixed_valued_q<Ts>);
+template <         class ...Ts>	concept  fluid_valued_q	= (some_q<Ts...> and...and _retail:: fluid_valued_q<Ts>);
+template <         class ...Ts>	concept        valued_q	= (some_q<Ts...> and...and _retail::       valued_q<Ts>);
 
 
-template <extent_type ...Ns   >	using         assayed  	=           _retail::        assayed  <Ns...>;
+template <class T             >	using    tuple_shaped  	=                          _retail::    tuple_shaped  <T >;
+template <class T             >	using    array_shaped  	=                          _retail::    array_shaped  <T >;
+template <class T             >	using    fixed_shaped  	=                          _retail::    fixed_shaped  <T >;
+template <class T             >	using    fluid_shaped  	=                          _retail::    fluid_shaped  <T >;
 
-template <class T             >	using    tuple_shaped  	=           _retail::    tuple_shaped  <T >;
-template <class T             >	using    array_shaped  	=           _retail::    array_shaped  <T >;
-template <class T             >	using    fixed_shaped  	=           _retail::    fixed_shaped  <T >;
-template <class T             >	using    fluid_shaped  	=           _retail::    fluid_shaped  <T >;
+template <         class ...Ts>	concept  tuple_shaped_q	= (some_q<Ts...> and...and _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept  array_shaped_q	= (some_q<Ts...> and...and _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept  fixed_shaped_q	= (some_q<Ts...> and...and _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept  fluid_shaped_q	= (some_q<Ts...> and...and _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
 
-template <         class ...Ts>	concept  tuple_shaped_q	= (...and   _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  array_shaped_q	= (...and   _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  fixed_shaped_q	= (...and   _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  fluid_shaped_q	= (...and   _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
+template <class T             >	using          shaped  	=                          _retail::          shaped  <T >;
+template <class T             >	using           fixed  	=                          _retail::           fixed  <T >;
+template <class T             >	using           fluid  	=                          _retail::           fluid  <T >;
 
-template <class T             >	using          shaped  	=           _retail::          shaped  <T >;
-template <         class ...Ts>	concept        shaped_q	= (...and   _retail::          shaped_q<Ts>);
+template <         class ...Ts>	using          shaped_u	=                 common_t<_retail::          shaped_u<Ts>...>;
+template <         class ...Ts>	using           fixed_u	=                 common_t<_retail::           fixed_u<Ts>...>;
+template <         class ...Ts>	using           fluid_u	=                 common_t<_retail::           fluid_u<Ts>...>;
 
-
-template <class T             >	using           fixed  	=           _retail::           fixed  <T >;
-template <         class ...Ts>	using           fixed_u	=  common_t<_retail::           fixed_u<Ts>...>;
-template <         class ...Ts>	concept         fixed_q	= (...and   _retail::           fixed_q<Ts>);
-
-template <class T             >	using           fluid  	=           _retail::           fluid  <T >;
-template <         class ...Ts>	using           fluid_u	=  common_t<_retail::           fluid_u<Ts>...>;
-template <         class ...Ts>	concept         fluid_q	= (...and   _retail::           fluid_q<Ts>);
+template <         class ...Ts>	concept        shaped_q	= (some_q<Ts...> and...and _retail::          shaped_q<Ts>);
+template <         class ...Ts>	concept         fixed_q	= (some_q<Ts...> and...and _retail::           fixed_q<Ts>);
+template <         class ...Ts>	concept         fluid_q	= (some_q<Ts...> and...and _retail::           fluid_q<Ts>);
 
 
-template <class T             >	using        destruct  	=           _retail::       destruct  <T >;
-template <class T             >	using        destruct_t	=           _retail::       destruct_t<T >;
-template <class T             >	using        destruct_u	=           _retail::       destruct_u<T >;
+template <class T             >	using        destruct  	=                          _retail::        destruct  <T >;
+template <class T             >	using        destruct_t	=                          _retail::        destruct_t<T >;
+template <class T             >	using        destruct_u	=                          _retail::        destruct_u<T >;
 
-template <class T, int   ...Ns>	using        restruct  	=           _retail::        restruct  <T, Ns...>;
-//mplate <         int   ...Ns>	using        restruct_x	=           _retail::        restruct_x<   Ns...>;
-//mplate <class T, class ..._s>	using        restruct_s	=           _retail::        restruct_s<T, _s...>;
-template <class T             >	using        restruct_t	=           _retail::        restruct_t<T >;
-template <class T             >	using        restruct_u	=           _retail::        restruct_u<T >;
+template <class T, int   ...Ns>	using        restruct  	=                          _retail::        restruct  <T, Ns...>;
+//mplate <         int   ...Ns>	using        restruct_x	=                          _retail::        restruct_x<   Ns...>;
+//mplate <class T, class ..._s>	using        restruct_s	=                          _retail::        restruct_s<T, _s...>;
+template <class T             >	using        restruct_t	=                          _retail::        restruct_t<T >;
+template <class T             >	using        restruct_u	=                          _retail::        restruct_u<T >;
 
-template <class T             >	using        unstruct_t	=            based_t<restruct_t<based_t<T >>>    ;
-template <         class ...Ts>	using        unstruct_u	=           common_t<restruct_u<based_t<Ts>>...>;
+template <class T             >	using        unstruct_t	=   based_t<restruct_t<based_t<T >>>   ;
+template <         class ...Ts>	using        unstruct_u	=  common_t<restruct_u<based_t<Ts>>...>;
 template <class T             >	struct       unstruct  	:  restruct<T> {using value_type = unstruct_u<T>; using type = unstruct_t<T>;};
 
 
@@ -283,8 +278,8 @@ requires fixed_shaped_q<decltype(t)>
 	auto constexpr M = fixed_shaped<decltype(t)>::extent();
 	auto constexpr I = modulo_v<M, N>;
 	XTAL_IF0
-	XTAL_0IF (none_n<Ns...>) {return                  get<I>(destruct_f(XTAL_REF_(t))) ;}
-	XTAL_0IF (some_n<Ns...>) {return restruct_f<Ns...>(get<I>( restruct_f(XTAL_REF_(t))));}
+	XTAL_0IF (none_n<Ns...>) {return                   get<I>(destruct_f(XTAL_REF_(t))) ;}
+	XTAL_0IF (some_n<Ns...>) {return restruct_f<Ns...>(get<I>(restruct_f(XTAL_REF_(t))));}
 }
 XTAL_DEF_(return,inline,let)
 restruct_f(auto &&t)
@@ -301,23 +296,23 @@ requires fixed_shaped_q<decltype(t)>
 //\
 Ranged...
 
-template <         class ...Ts>	concept           scalar_q	= (...and   _retail::           scalar_q<Ts>);
-template <         class ...Ts>	concept           vector_q	= (...and   _retail::           vector_q<Ts>);
-template <         class ...Ts>	concept           matrix_q	= (...and   _retail::           matrix_q<Ts>);
-template <         class ...Ts>	concept           tensor_q	= (...and   _retail::           tensor_q<Ts>);
+template <         class ...Ts>	concept           scalar_q	= (some_q<Ts...> and...and _retail::       scalar_q<Ts>);
+template <         class ...Ts>	concept           vector_q	= (some_q<Ts...> and...and _retail::       vector_q<Ts>);
+template <         class ...Ts>	concept           matrix_q	= (some_q<Ts...> and...and _retail::       matrix_q<Ts>);
+template <         class ...Ts>	concept           tensor_q	= (some_q<Ts...> and...and _retail::       tensor_q<Ts>);
 
 
 
-template <class T             >	using            wrappee_t	=           _retail::          wrappee_t<T >;
-template <class T             >	using            pointee_t	=           _retail::          pointee_t<T >;
-template <class T             >	using            indexee_t	=           _retail::          indexee_t<T >;
-template <class T             >	using          expressee_t	=           _retail::        expressee_t<T >;
+template <class T             >	using            wrappee_t	=                          _retail::      wrappee_t<T >;
+template <class T             >	using            pointee_t	=                          _retail::      pointee_t<T >;
+template <class T             >	using            indexee_t	=                          _retail::      indexee_t<T >;
+template <class T             >	using          expressee_t	=                          _retail::    expressee_t<T >;
 
-template <         class ...Ts>	concept          wrapped_q	= (... and  _retail::          wrapped_q<Ts>);
-template <         class ...Ts>	concept          pointed_q	= (... and  _retail::          pointed_q<Ts>);
-template <         class ...Ts>	concept          indexed_q	= (... and  _retail::          indexed_q<Ts>);
-template <         class ...Ts>	concept        expressed_q	= (... and  _retail::        expressed_q<Ts>);
-template <         class ...Ts>	concept      inexpressed_q	= (... and  _retail::      inexpressed_q<Ts>);
+template <         class ...Ts>	concept          wrapped_q	= (some_q<Ts...> and...and _retail::      wrapped_q<Ts>);
+template <         class ...Ts>	concept          pointed_q	= (some_q<Ts...> and...and _retail::      pointed_q<Ts>);
+template <         class ...Ts>	concept          indexed_q	= (some_q<Ts...> and...and _retail::      indexed_q<Ts>);
+template <         class ...Ts>	concept        expressed_q	= (some_q<Ts...> and...and _retail::    expressed_q<Ts>);
+template <         class ...Ts>	concept      inexpressed_q	= (some_q<Ts...> and...and _retail::  inexpressed_q<Ts>);
 
 ///\
 Provides the initializer for the given type, defaulting to itself. \
@@ -327,31 +322,32 @@ the return value of the latter is used. \
 
 template <class T             >	struct       initializer    {using type =            valued_u<T> ;};
 template <inexpressed_q T     >	struct       initializer<T> {using type = based_t<expressee_t<T>>;};
+
 template <class T             >	using        initializer_t	= typename initializer<T>::type;
 template <class T             >	concept      initializer_q	= different_q<T, initializer_t<T>> and indexed_q<T>;// or inexpressed_q<T>);
 
-template <class T             >	using         deiteratee_t	=           _retail::   deiteratee_t<T > ;
-template <class T             >	using         reiteratee_t	=           _retail::   reiteratee_t<T > ;
-template <class T             >	using         reiterated_t	=           _retail::   reiterated_t<T > ;
-template <         class ...Ts>	concept       reiterated_q	= (...and   _retail::   reiterated_q<Ts>);
-template <         class ...Ts>	concept       sequential_q	= (...and   _retail::   sequential_q<Ts>);
+template <class T             >	using         deiteratee_t	=                          _retail::   deiteratee_t<T > ;
+template <class T             >	using         reiteratee_t	=                          _retail::   reiteratee_t<T > ;
+template <class T             >	using         reiterated_t	=                          _retail::   reiterated_t<T > ;
+template <         class ...Ts>	concept       reiterated_q	= (some_q<Ts...> and...and _retail::   reiterated_q<Ts>);
+template <         class ...Ts>	concept       sequential_q	= (some_q<Ts...> and...and _retail::   sequential_q<Ts>);
 
-template <class T             >	using           iteratee_t	=           _retail::     iteratee_t<T >;
-template <class T             >	using           iterated_t	=           _retail::     iterated_t<T >;
-template <class T             >	using           iterator_t	=           _retail::     iterator_t<T >;
-template <class T             >	using           distance_t	=           _retail::     distance_t<T > ;
-template <class T             >	using           interval_t	=           _retail::     interval_t<T > ;
-template <class T=extent_type >	using            counted_t	=           _retail::      counted_t<T >;
-template <class T=extent_type >	using            counter_t	=           _retail::      counter_t<T >;
+template <class T             >	using           iteratee_t	=                          _retail::     iteratee_t<T >;
+template <class T             >	using           iterated_t	=                          _retail::     iterated_t<T >;
+template <class T             >	using           iterator_t	=                          _retail::     iterator_t<T >;
+template <class T             >	using           distance_t	=                          _retail::     distance_t<T >;
+template <class T             >	using           interval_t	=                          _retail::     interval_t<T >;
+template <class T=extent_type >	using            counted_t	=                          _retail::      counted_t<T >;
+template <class T=extent_type >	using            counter_t	=                          _retail::      counter_t<T >;
 
-template <class          ...Ts>	concept         iterable_q	= (...and   _retail::     iterable_q<Ts>);
-template <class          ...Ts>	concept         iterated_q	= (...and   _retail::     iterated_q<Ts>);
-template <class          ...Ts>	concept         iterator_q	= (...and   _retail::     iterator_q<Ts>);
-template <class          ...Ts>	concept         sentinel_q	= (...and   _retail::     sentinel_q<Ts>);
-template <class          ...Ts>	concept         distance_q	= (...and   _retail::     distance_q<Ts>);
-template <class          ...Ts>	concept         interval_q	= (...and   _retail::     interval_q<Ts>);
-template <class          ...Ts>	concept          counted_q	= (...and   _retail::      counted_q<Ts>);
-template <class          ...Ts>	concept          counter_q	= (...and   _retail::      counter_q<Ts>);
+template <class          ...Ts>	concept         iterable_q	= (some_q<Ts...> and...and _retail::     iterable_q<Ts>);
+template <class          ...Ts>	concept         iterated_q	= (some_q<Ts...> and...and _retail::     iterated_q<Ts>);
+template <class          ...Ts>	concept         iterator_q	= (some_q<Ts...> and...and _retail::     iterator_q<Ts>);
+template <class          ...Ts>	concept         sentinel_q	= (some_q<Ts...> and...and _retail::     sentinel_q<Ts>);
+template <class          ...Ts>	concept         distance_q	= (some_q<Ts...> and...and _retail::     distance_q<Ts>);
+template <class          ...Ts>	concept         interval_q	= (some_q<Ts...> and...and _retail::     interval_q<Ts>);
+template <class          ...Ts>	concept          counted_q	= (some_q<Ts...> and...and _retail::      counted_q<Ts>);
+template <class          ...Ts>	concept          counter_q	= (some_q<Ts...> and...and _retail::      counter_q<Ts>);
 
 
 ///\returns the nearest aligned offset for type `T`, \
@@ -489,24 +485,24 @@ template <int N, class T, class U=T>	concept              equality_p	= _retail::
 template <int N, class T, class U=T>	concept               quality_p	= _retail::              quality_p<N, T, U>;
 
 
-template <class   ...Ts>	concept   multiplicative_group_q	= (...and multiplicative_group_p<0, Ts>);
-template <class   ...Ts>	concept         additive_group_q	= (...and       additive_group_p<0, Ts>);
-template <class   ...Ts>	concept         discrete_group_q	= (...and       discrete_group_p<0, Ts>);
-template <class   ...Ts>	concept         quotient_group_q	= (...and       quotient_group_p<0, Ts>);
-template <class   ...Ts>	concept         integral_group_q	= (...and       integral_group_p<0, Ts>);
+template <class   ...Ts>	concept   multiplicative_group_q	= (some_q<Ts...> and...and multiplicative_group_p<0, Ts>);
+template <class   ...Ts>	concept         additive_group_q	= (some_q<Ts...> and...and       additive_group_p<0, Ts>);
+template <class   ...Ts>	concept         discrete_group_q	= (some_q<Ts...> and...and       discrete_group_p<0, Ts>);
+template <class   ...Ts>	concept         quotient_group_q	= (some_q<Ts...> and...and       quotient_group_p<0, Ts>);
+template <class   ...Ts>	concept         integral_group_q	= (some_q<Ts...> and...and       integral_group_p<0, Ts>);
 
-template <class   ...Ts>	concept       contiguous_group_q	= (...and     contiguous_group_p<0, Ts>);
-template <class   ...Ts>	concept       contiguous_field_q	= (...and     contiguous_field_p<0, Ts>);
-template <class   ...Ts>	concept       continuous_field_q	= (...and     continuous_field_p<0, Ts>);
-template <class   ...Ts>	concept          complex_field_q	= (...and        complex_field_p<0, Ts>);
-template <class   ...Ts>	concept          simplex_field_q	= (...and        simplex_field_p<0, Ts>);
+template <class   ...Ts>	concept       contiguous_group_q	= (some_q<Ts...> and...and     contiguous_group_p<0, Ts>);
+template <class   ...Ts>	concept       contiguous_field_q	= (some_q<Ts...> and...and     contiguous_field_p<0, Ts>);
+template <class   ...Ts>	concept       continuous_field_q	= (some_q<Ts...> and...and     continuous_field_p<0, Ts>);
+template <class   ...Ts>	concept          complex_field_q	= (some_q<Ts...> and...and        complex_field_p<0, Ts>);
+template <class   ...Ts>	concept          simplex_field_q	= (some_q<Ts...> and...and        simplex_field_p<0, Ts>);
 
-template <class   ...Ts>	concept          logical_group_q	= (...and        logical_group_p<0, Ts>);
-template <class   ...Ts>	concept           binary_group_q	= (...and         binary_group_p<0, Ts>);
+template <class   ...Ts>	concept          logical_group_q	= (some_q<Ts...> and...and        logical_group_p<0, Ts>);
+template <class   ...Ts>	concept           binary_group_q	= (some_q<Ts...> and...and         binary_group_p<0, Ts>);
 
-template <class   ...Ts>	concept             inequality_q	= (...and           inequality_p<2, Ts>);
-template <class   ...Ts>	concept               equality_q	= (...and             equality_p<2, Ts>);
-template <class   ...Ts>	concept                quality_q	= (...and              quality_p<2, Ts>);
+template <class   ...Ts>	concept             inequality_q	= (some_q<Ts...> and...and           inequality_p<2, Ts>);
+template <class   ...Ts>	concept               equality_q	= (some_q<Ts...> and...and             equality_p<2, Ts>);
+template <class   ...Ts>	concept                quality_q	= (some_q<Ts...> and...and              quality_p<2, Ts>);
 
 
 template <class X, class Y>

@@ -53,7 +53,11 @@ Utilities replacing the C++23-deprecated `std::aligned_storage`. \
 Provide a mechanism for sorting/unsorting the respective inner/outer types? \
 
 template <class ...Ts>
-struct aligned
+struct aligned : aligned<based_t<Ts>...>
+{
+};
+template <based_q ...Ts>
+struct aligned<Ts...>
 {
 	///\returns the total aligned storage-size for `T`. \
 	
@@ -61,7 +65,7 @@ struct aligned
 	constexpr size{};
 
 };
-template <class T>
+template <based_q T>
 struct aligned<T>
 {
 	///\
@@ -80,7 +84,7 @@ struct aligned<T>
 	The most effective packing is attained by ordering the `Ts...` from-largest-to-smallest. \
 
 	XTAL_DEF_(return,inline,set)
-	static_bump(auto &i)
+	advance(auto &i)
 	noexcept -> auto
 	{
 		XTAL_ALL_(i) constexpr N = size() << 3;

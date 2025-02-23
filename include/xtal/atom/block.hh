@@ -34,7 +34,7 @@ template <class U, auto N, auto  ...Ns> struct superblock<U(&)[N][Ns]...> : supe
 template <scalar_q ...Us> requires different_q<Us...>
 struct superblock<Us...>
 {
-	using endotype = bond::pack_t<Us...>;
+	using endotype = bond::pack_t<_xtd::decay_trivial_value_reference_t<Us>...>;
 	
 	template <class T>
 	using holotype = bond::compose_s<endotype, bond::define<T>>;

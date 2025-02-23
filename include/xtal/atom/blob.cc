@@ -30,8 +30,12 @@ TAG_("blob")
 		TRUE_(b0 == b1);
 
 		auto [a2, b2] = blob.form(T_alpha{-0.25}, T_alpha{-0.75});
-		TRUE_(a0 == -0.25 and a1 == -0.25 and a2 == 0.125);
-		TRUE_(b0 == -0.75 and b1 == -0.75 and b2 == 0.875);
+		TRUE_(a0 == -0.250);
+		TRUE_(a1 == -0.250);
+		TRUE_(a2 ==  0.125);
+		TRUE_(b0 == -0.750);
+		TRUE_(b1 == -0.750);
+		TRUE_(b2 ==  0.875);
 
 	}
 	TRY_("blob: preallocation") {
@@ -43,13 +47,13 @@ TAG_("blob")
 	}
 	TRY_("blob: allocation stepping") {
 		size_type i{};
-		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x0);
-		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0x2);
-		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x4);
-		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x5);
-		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0x6);
-		TRUE_(_detail::aligned<_std::byte   >::static_bump(i) == 0x8);
-		TRUE_(_detail::aligned<_std::int16_t>::static_bump(i) == 0xA);
+		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x0);
+		TRUE_(_detail::aligned<_std::int16_t>::advance(i) == 0x2);
+		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x4);
+		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x5);
+		TRUE_(_detail::aligned<_std::int16_t>::advance(i) == 0x6);
+		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x8);
+		TRUE_(_detail::aligned<_std::int16_t>::advance(i) == 0xA);
 
 		TRUE_(0x10 == blob_t<_std::byte, _std::int16_t, _std::byte, _std::byte, _std::int16_t, _std::byte, _std::int16_t>::size());
 	}

@@ -167,47 +167,45 @@ static_assert(_std::same_as<remove_rvalue_reference_t<const float( &)[2]>, const
 static_assert(_std::same_as<remove_lvalue_reference_t<const float( &)[2]>, const float    [2]>);
 
 
+template <class T> concept      nominal_value_reference = nominal<_std::remove_cvref_t<T>> or  rvalue_reference<T>;
 template <class T> concept     nominal_rvalue_reference = nominal<_std::remove_cvref_t<T>> and rvalue_reference<T>;
 template <class T> concept     nominal_lvalue_reference = nominal<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
+template <class T> concept      trivial_value_reference = trivial<_std::remove_cvref_t<T>> or  rvalue_reference<T>;
 template <class T> concept     trivial_rvalue_reference = trivial<_std::remove_cvref_t<T>> and rvalue_reference<T>;
 template <class T> concept     trivial_lvalue_reference = trivial<_std::remove_cvref_t<T>> and lvalue_reference<T>;
 
-template <class T> concept non_nominal_rvalue_reference = not nominal_rvalue_reference<T>  and        reference<T>;
-template <class T> concept non_nominal_lvalue_reference = not nominal_lvalue_reference<T>  and        reference<T>;
-
-template <class T> concept non_trivial_rvalue_reference = not trivial_rvalue_reference<T>  and        reference<T>;
-template <class T> concept non_trivial_lvalue_reference = not trivial_lvalue_reference<T>  and        reference<T>;
-
 
 template <class T>
-struct    decay_owned_reference
+struct    decay_value
 {
-	using       type = _std::remove_cvref_t<T>;
 	using value_type = _std::remove_cvref_t<T>;
+	using       type = _std::remove_cvref_t<T>;
 
 };
 template <class T>
-struct decay_borrowed_reference : decay_owned_reference<T>
+struct decay_value_reference : decay_value<T>
 {
 };
-template <class T> requires lvalue_reference<T>
-struct decay_borrowed_reference<T>
+template <lvalue_reference T>
+struct decay_value_reference<T>
 {
-	using       type = T;
 	//\
 	using value_type = _std::shared_ptr<XTAL_NOM_(T)>;
 	using value_type = decltype(&XTAL_ANY_(T));
+	using       type = T;
 
 };
-template <                   class T>	struct             decay_reference    :    decay_owned_reference<T> {};
-template <        lvalue_reference T>	struct             decay_reference<T> : decay_borrowed_reference<T> {};
+template <                   class T>	struct decay_nominal_value_reference    : decay_value_reference <T> {};
+template <nominal_lvalue_reference T>	struct decay_nominal_value_reference<T> : decay_value           <T> {};
 
-template <                   class T>	struct decay_non_nominal_reference    :          decay_reference<T> {};
-template <nominal_lvalue_reference T>	struct decay_non_nominal_reference<T> :    decay_owned_reference<T> {};
+template <                   class T>	struct decay_trivial_value_reference    : decay_value_reference <T> {};
+template <trivial_lvalue_reference T>	struct decay_trivial_value_reference<T> : decay_value           <T> {};
 
-template <                   class T>	struct decay_non_trivial_reference    :          decay_reference<T> {};
-template <trivial_lvalue_reference T>	struct decay_non_trivial_reference<T> :    decay_owned_reference<T> {};
+template <class T           > using                    decay_value_t = typename                   decay_value<T>::type;
+template <class T           > using          decay_value_reference_t = typename         decay_value_reference<T>::type;
+template <class T           > using  decay_nominal_value_reference_t = typename decay_nominal_value_reference<T>::type;
+template <class T           > using  decay_trivial_value_reference_t = typename decay_trivial_value_reference<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////

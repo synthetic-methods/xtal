@@ -15,12 +15,12 @@
 ///\
 Defines an `inferred` tuple from `...As`. \
 
-//\
-template <class ...Ts>	struct    packed   : inferred<bond::tag<packed>, Ts...> {};
 template <class ...Ts>	struct    packed;
 template <class ...Ts>	using     packed_t = typename packed<Ts...>::type;
-template <class ...Ts>	concept   packed_q =     bond::tag_p<packed, Ts...>;
-template <class ...Ts>	concept unpacked_q = not bond::tag_p<packed, Ts...>;
+//\
+template <class ...Ts>	concept   packed_q = bond::tagged_p<any, Ts...>;
+template <class ...Ts>	concept   packed_q = bond::tag_p<packed, Ts...>;
+template <class ...Ts>	concept unpacked_q = not packed_q<Ts...>;
 
 auto constexpr packed_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (packed_t<Ts...>(static_cast<Ts &&> (ts)...));
@@ -28,6 +28,8 @@ XTAL_0FN_(to) (packed_t<Ts...>(static_cast<Ts &&> (ts)...));
 template <class ...Ts>
 struct   packed
 {
+	//\
+	using superkind = inferred<Ts...>;
 	using superkind = inferred<bond::tag<packed>, Ts...>;
 
 	template <class S>
@@ -39,36 +41,32 @@ struct   packed
 		using S_::S_;
 
 		XTAL_DEF_(return,inline,let)
-		operator, (unpacked_q auto &&t) const
+		operator, (auto &&w) const
 		noexcept -> auto
 		{
-			return (S_::self(), packed_f(XTAL_REF_(t)));
+		//	auto const then = bond::repack_f<packed_t>(S_::self().pack());
+			if constexpr (packed_q<decltype(w)>) {
+				return bond::repack_f<packed_t>(S_::self().pack(),        XTAL_REF_(w).pack());
+			}
+			else {
+				return bond::repack_f<packed_t>(S_::self().pack(), bond::pack_f(XTAL_REF_(w)));
+			}
 		}
+		template <unpacked_q U>
 		XTAL_DEF_(return,inline,met)
-		operator, (unpacked_q auto &&s, subtype       &&t)
+		operator, (U &&u, subtype      &&s)
 		noexcept -> auto
 		{
-			return (packed_f(XTAL_REF_(s)), XTAL_MOV_(t).self());
+			return (packed_f(XTAL_REF_(u)), XTAL_MOV_(s).self());
 		}
+		template <unpacked_q U>
 		XTAL_DEF_(return,inline,met)
-		operator, (unpacked_q auto &&s, subtype const  &t)
+		operator, (U &&u, subtype const &s)
 		noexcept -> auto
 		{
-			return (packed_f(XTAL_REF_(s)), XTAL_REF_(t).self());
+			return (packed_f(XTAL_REF_(u)), XTAL_REF_(s).self());
 		}
 
-		XTAL_DEF_(return,inline,met)
-		operator, (subtype       &&s, packed_q auto &&t)
-		noexcept -> auto
-		{
-			return bond::repack_f<packed_t>(XTAL_MOV_(s).self().pack(), XTAL_REF_(t).pack());
-		}
-		XTAL_DEF_(return,inline,met)
-		operator, (subtype const  &s, packed_q auto &&t)
-		noexcept -> auto
-		{
-			return bond::repack_f<packed_t>(XTAL_REF_(s).self().pack(), XTAL_REF_(t).pack());
-		}
 
 	};
 	using type = subtype<any_type>;

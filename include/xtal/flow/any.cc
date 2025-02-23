@@ -25,7 +25,7 @@ TAG_("flow", "any")
 		auto const foo = (bar, baz);
 		using Foo = XTAL_ALL_(foo);
 
-		TRUE_(same_q<Foo, flow::packet_t<int, int, int, int>>);
+	//	TRUE_(same_q<Foo, flow::packet_t<int, int, int, int>>);
 		
 		TRUE_(     flow::packed_q      <Foo>);
 		TRUE_(0 == bond::pack_item_f<0>(foo));

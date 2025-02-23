@@ -79,23 +79,23 @@ TAG_("glider", "process")
 		z <<= z_sample;
 		z <<= z_resize;
 
+		echo_rule_<28>();
+
 		TRUE_(0 == z.efflux(z_cursor++));
 		{
-			echo_rule_<25>();
-			echo_plot_<25>(z.store());
+			echo_plot_<28>(z.store(), 0x10, 0x18);
 
 		//	TRUE_(2 >= z.ensemble().size());// Still decaying...
 		}
 		z <<= U1_cue(0x10, 0x20).then(U0_event{ 0.00});
 		TRUE_(0 == z.efflux(z_cursor++));
 		{
-			echo_rule_<25>();
-			echo_plot_<25>(z.store());
+			echo_plot_<28>(z.store(), 0x08, 0x10);
 
 		//	TRUE_(2 >= z.ensemble().size());// Still decaying...
 		}
 
-		echo_rule_<25>();
+		echo_rule_<28>();
 	}
 	/***/
 	/**/

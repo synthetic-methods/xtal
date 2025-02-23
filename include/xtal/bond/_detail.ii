@@ -27,17 +27,19 @@ noexcept -> decltype(auto)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class       W >	concept    member_q = molecular_q<W> or _xtd::rvalue_reference<W>;// or iterable_q<W> and not _xtd::ranges::borrowed_range<based_t<W>>;
+//\
+template <class       W >	concept    member_q = _xtd::nominal_value_reference<W>;
+template <class       W >	concept    member_q = _xtd::nominal_value_reference<W> or iterable_q<W> and _xtd::ranges::borrowed_range<based_t<W>>;
 template <class       W >	concept dismember_q = not member_q<W>;
 
-template <class       W >	struct     member    {using type = typename _xtd::   decay_owned_reference<W>::value_type;};
-template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_borrowed_reference<W>::value_type;};
+template <class       W >	struct     member    {using type = typename _xtd::          decay_value<W>::value_type;};
+template <dismember_q W >	struct     member<W> {using type = typename _xtd::decay_value_reference<W>::value_type;};
 template <class       W >	using      member_t =              typename member<W>::type;
 ///\
 Constructs/references the current value. \
 
 template <    class   M >	XTAL_DEF_(return,inline,let)   member_f(auto &&...w) noexcept -> decltype(auto) {return             M (XTAL_REF_(w)...);}
-template <   number_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
+template <   atomic_q M >	XTAL_DEF_(return,inline,let)   member_f(auto &&   w) noexcept -> decltype(auto) {return static_cast<M>(XTAL_REF_(w))   ;}
 template <dismember_q M >
 XTAL_DEF_(return,inline,let)
 member_f(auto &&w)

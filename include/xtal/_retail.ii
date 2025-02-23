@@ -267,6 +267,7 @@ template <class T             >	concept     array_shaped_q	=  different_q<array_
 template <class T             >	struct      fixed_shaped;
 template <class T=void        >	struct      fluid_shaped;
 template <class T             >	struct            shaped;
+template <class T             >	using             shaped_u  = typename shaped<T>::value_type;
 template <variable_q T        >	struct            shaped<T> :  fluid_shaped<           T > {};
 template <constant_q T        >	struct            shaped<T> :        shaped<identity_t<T>> {};
 

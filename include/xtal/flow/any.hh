@@ -125,7 +125,7 @@ struct define
 			return self();
 		}
 		XTAL_DEF_(inline,let)
-		operator >>=(bond::heteropack_q auto &&o)
+		operator >>=(bond::idiopack_q auto &&o)
 		noexcept -> decltype(auto)
 		{
 			(void) _std::apply([this] (auto &&...oo)
@@ -147,7 +147,7 @@ struct define
 			return self();
 		}
 		XTAL_DEF_(inline,let)
-		operator <<=(bond::heteropack_q auto &&o)
+		operator <<=(bond::idiopack_q auto &&o)
 		noexcept -> decltype(auto)
 		{
 			(void) _std::apply([this] (auto &&...oo)
