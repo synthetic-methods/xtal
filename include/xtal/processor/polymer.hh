@@ -24,16 +24,15 @@ The default implementation uses `lower_bound` to this effect. \
 ///\todo\
 Handle note-offs, i.e. `stage == 1`!
 
-template <typename ..._s> struct   polymer;
-template <typename ..._s> using    polymer_t =  confined_t<polymer< _s...>>;
-template <typename ..._s> concept  polymer_q = bond::tag_p<polymer, _s... >;
-template <typename ..._s>
-XTAL_DEF_(return,inline,let)
-polymer_f(auto &&u)
-noexcept -> auto
-{
-	return polymer_t<XTAL_ALL_(u), _s...>(XTAL_REF_(u));
-}
+template <class ..._s> struct  polymer;
+template <class ..._s> using   polymer_t =  confined_t<polymer< _s...>>;
+template <class ..._s> concept polymer_q = bond::any_tags_p<polymer, _s... >;
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename ...As>
+XTAL_DEF_(let) polymer_f = []<class U> (U &&u)
+XTAL_0FN_(to) (polymer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 
 ////////////////////////////////////////////////////////////////////////////////

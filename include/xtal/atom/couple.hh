@@ -14,35 +14,30 @@ namespace xtal::atom
 Extends the multiplicative `group` with the scalar sum/product. \
 Provides even/odd-reflection iff `size() == 2`. \
 
-template <class ...As>	struct  couple;
-template <class ...As>	using   couple_t = typename couple<As...>::type;
-template <class ...As>	concept couple_q = bond::array_tag_p<couple_t, As...> and fixed_shaped_q<As...>;
+template <class ...Us>	struct  couple;
+template <class ...Us>	using   couple_t = typename couple<Us...>::type;
+template <class ...Us>	concept couple_q = bond::array_or_any_tags_p<couple_t, Us...> and fixed_shaped_q<Us...>;
 
-
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-couple_f(auto &&...oo),
-	_detail::factory<couple_t>::
-		template make<f>(XTAL_REF_(oo)...))
+XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::fake_f<couple_t>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...As> requires same_q<As...>
-struct couple<As ...>
-:	couple<common_t<As...>[sizeof...(As)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct couple<Us ...>
+:	couple<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ...As>
+template <class ...Us>
 struct couple
 {
-	using _fit = bond::fit<As...>;
+	using _fit = bond::fit<Us...>;
 	using sigma_type = typename _fit::sigma_type;
 	using delta_type = typename _fit::delta_type;
 	using alpha_type = typename _fit::alpha_type;
 	
 	template <class T>
-	using endotype = typename multiplicative_group<As...>::template homotype<T>;
+	using endotype = typename multiplicative_group<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -119,7 +114,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator++(int) const
 		noexcept -> auto
-		requires same_q<As...>
+		requires common_q<Us...>
 		{
 			auto t = S_::twin();
 			value_type u{};
@@ -133,7 +128,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator--(int) const
 		noexcept -> auto
-		requires same_q<As...>
+		requires common_q<Us...>
 		{
 			auto t = S_::twin();
 			value_type u;
@@ -184,7 +179,7 @@ struct couple
 		XTAL_DEF_(return,inline,let)
 		product(auto u) const
 		noexcept -> auto
-		requires un_n<fixed_shaped_q<decltype(u), T>>
+		requires in_n<requires (value_type v) {v += u;}>
 		{
 			auto &s = self();
 			
@@ -199,11 +194,11 @@ struct couple
 
 			return u;
 		}
-		template <int N_sgn=1> requires same_q<As...>
+		template <int N_sgn=1> requires common_q<Us...>
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
-		requires in_n<fixed_shaped_q<decltype(t), T>>
+		requires un_n<requires (value_type v) {v += t;}> and fixed_shaped_q<decltype(t), S_>
 		{
 			auto &s = self();
 			value_type u{0};
@@ -248,7 +243,6 @@ struct couple
 		noexcept -> decltype(auto)
 		{
 			auto &s = self();
-
 			auto constexpr o = reflector<N_par>();
 			auto const     x = o*get<0>(s);
 			auto const     y = o*get<1>(s);
@@ -261,13 +255,10 @@ struct couple
 		reflector()
 		noexcept -> auto
 		{
-			scale_type constexpr up = one;
-			scale_type constexpr un = one/_std::numbers::sqrt2_v<scale_type>;
-			scale_type constexpr dn = half;
 			XTAL_IF0
-			XTAL_0IF (N_par == +1) {return up;}
-			XTAL_0IF (N_par ==  0) {return un;}
-			XTAL_0IF (N_par == -1) {return dn;}
+			XTAL_0IF (N_par == +1) {return one >> scale_type{0.0F};}
+			XTAL_0IF (N_par ==  0) {return one >> scale_type{0.5F};}
+			XTAL_0IF (N_par == -1) {return one >> scale_type{1.0F};}
 		}
 
 		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}

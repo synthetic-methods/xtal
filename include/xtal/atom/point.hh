@@ -13,38 +13,33 @@ namespace xtal::atom
 ///\
 Extends `quanta` with point-wise operation. \
 
-template <class ..._s>	struct  point;
-template <class ..._s>	using   point_t = typename point<_s...>::type;
-template <class ..._s>	concept point_q = bond::array_tag_p<point_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...Us>	struct  point;
+template <class ...Us>	using   point_t = typename point<Us...>::type;
+template <class ...Us>	concept point_q = bond::array_or_any_tags_p<point_t, Us...> and fixed_shaped_q<Us...>;
 
-
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-point_f(auto &&...oo),
-	_detail::factory<point_t>::
-		template make<f>(XTAL_REF_(oo)...))
+XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::fake_f<point_t>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, auto  N, auto  ..._s> struct   point<U   [N][_s]...> : point<point_t<U[_s]...>   [N]> {};
-template <class U, auto  N, auto  ..._s> struct   point<U(&)[N][_s]...> : point<point_t<U[_s]...>(&)[N]> {};
+template <class U, auto  N, auto  ...Ns> struct   point<U   [N][Ns]...> : point<point_t<U[Ns]...>   [N]> {};
+template <class U, auto  N, auto  ...Ns> struct   point<U(&)[N][Ns]...> : point<point_t<U[Ns]...>(&)[N]> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct point<_s ...>
-:	point<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct point<Us ...>
+:	point<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ..._s>
+template <class ...Us>
 struct point
 {
-	using _fit = bond::fit<_s...>;
+	using _fit = bond::fit<Us...>;
 
 	template <class T>
-	using endotype = typename quanta<_s...>::template homotype<T>;
+	using endotype = typename quanta<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<point_t>>;
@@ -94,7 +89,7 @@ struct point
 
 		template <auto f>
 		XTAL_DEF_(return,inline,set)
-		zip_into(T &s, auto &&...ts)
+		zip_into(auto &s, auto &&...ts)
 		noexcept -> auto
 		{
 			[f_=[&]
@@ -161,52 +156,65 @@ struct point
 		XTAL_DEF_(return,inline,let) operator - () noexcept -> auto requires requires (value_type u) {-u;}{return zip_with<[] (           auto const &u) XTAL_0FN_(to) (-u)>();}
 		XTAL_DEF_(return,inline,let) operator ~ () noexcept -> auto requires requires (value_type u) {~u;}{return zip_with<[] (integral_q auto const &u) XTAL_0FN_(to) (~u)>();}
 
-	//	Scalar assignment (performed point-wide):
+	//	Scalar operation (performed point-wide):
 
-		XTAL_DEF_(inline,let)
-		operator /= (auto const &u)
-		noexcept -> T &
-		requires requires (value_type &w) {w /= u;}
+		XTAL_DEF_(mutate,inline,let)
+		operator /= (auto const &o)
+		noexcept -> auto &
+		requires requires (value_type &u) {u /= o;}
 		{
 			auto &s = self();
+			auto const q = scale_type{1}/o;
 			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				XTAL_IF0
-				XTAL_0IF (integral_q<scale_type>) {get<I{}>(s) /=               u;}
-				XTAL_0IF_(else)                   {get<I{}>(s) *= scale_type{1}/u;}
+				XTAL_0IF (integral_q<scale_type>) {get<I{}>(s) /= o;}
+				XTAL_0IF_(else)                   {get<I{}>(s) *= q;}
 			});
 			return s;
 		}
-		XTAL_DEF_(mutate,inline,let) operator +=(auto const &o) noexcept -> auto & requires requires (value_type u) {u +=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u +=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator -=(auto const &o) noexcept -> auto & requires requires (value_type u) {u -=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u -=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator *=(auto const &o) noexcept -> auto & requires requires (value_type u) {u *=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u *=v;}>(XTAL_REF_(o));}
-	//	XTAL_DEF_(mutate,inline,let) operator /=(auto const &o) noexcept -> auto & requires requires (value_type u) {u /=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u /=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator %=(auto const &o) noexcept -> auto & requires requires (value_type u) {u %=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u %=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator &=(auto const &o) noexcept -> auto & requires requires (value_type u) {u &=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u &=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator |=(auto const &o) noexcept -> auto & requires requires (value_type u) {u |=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u |=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator ^=(auto const &o) noexcept -> auto & requires requires (value_type u) {u ^=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u ^=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator<<=(auto const &o) noexcept -> auto & requires requires (value_type u) {u<<=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u<<=v;}>(XTAL_REF_(o));}
-		XTAL_DEF_(mutate,inline,let) operator>>=(auto const &o) noexcept -> auto & requires requires (value_type u) {u>>=o;} {return zip_with<[] (auto &u, auto const &v) XTAL_0FN {u>>=v;}>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let)
+		operator /  (auto const &o)
+		noexcept -> auto
+		requires requires (value_type &u) {u /= o;}
+		{
+			return twin() /= o;
+		}
+
+	//	TODO: Restrict scalar-distribution to multiplicative/conjunctive operations?
+
+		XTAL_DEF_(mutate,inline,let) operator +=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v += o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x += y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator -=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v -= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x -= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator *=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v *= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x *= y)>(o);}
+	//	XTAL_DEF_(mutate,inline,let) operator /=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v /= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x /= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator %=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v %= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x %= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator &=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v &= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x &= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator |=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v |= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x |= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator ^=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v ^= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x ^= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator<<=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v<<= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x<<= y)>(o);}
+		XTAL_DEF_(mutate,inline,let) operator>>=(auto const &o)                    noexcept -> auto & requires in_n<requires (value_type v) {v>>= o;}> {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x>>= y)>(o);}
+
+		XTAL_DEF_(return,inline,let) operator + (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v += o;}> {return     twin() += o;}
+		XTAL_DEF_(return,inline,let) operator - (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v -= o;}> {return     twin() -= o;}
+		XTAL_DEF_(return,inline,let) operator * (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v *= o;}> {return     twin() *= o;}
+		XTAL_DEF_(return,inline,let) operator / (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v /= o;}> {return     twin() /= o;}
+		XTAL_DEF_(return,inline,let) operator % (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v %= o;}> {return     twin() %= o;}
+		XTAL_DEF_(return,inline,let) operator & (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v &= o;}> {return     twin() &= o;}
+		XTAL_DEF_(return,inline,let) operator | (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v |= o;}> {return     twin() |= o;}
+		XTAL_DEF_(return,inline,let) operator ^ (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v ^= o;}> {return     twin() ^= o;}
+		XTAL_DEF_(return,inline,let) operator<< (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v<<= o;}> {return     twin()<<= o;}
+		XTAL_DEF_(return,inline,let) operator>> (auto const &o)              const noexcept -> auto   requires in_n<requires (value_type v) {v>>= o;}> {return     twin()>>= o;}
 
 	//	Scalar commutation:
-		template <class U> XTAL_DEF_(return,inline,met) operator + (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() + u)
-	//	template <class U> XTAL_DEF_(return,inline,met) operator - (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() - u)
-		template <class U> XTAL_DEF_(return,inline,met) operator * (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() * u)
-	//	template <class U> XTAL_DEF_(return,inline,met) operator / (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() / u)
-	//	template <class U> XTAL_DEF_(return,inline,met) operator % (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() % u)
-		template <class U> XTAL_DEF_(return,inline,met) operator & (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() & u)
-		template <class U> XTAL_DEF_(return,inline,met) operator | (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() | u)
-		template <class U> XTAL_DEF_(return,inline,met) operator ^ (U const &u, homotype const &t) noexcept -> auto requires un_n<point_q<U>> and XTAL_TRY_(to) (t.self() ^ u)
-
-	//	Vector reassignment:
-		template <class W> XTAL_DEF_(return,inline,let) operator + (W const &w) const noexcept -> auto requires un_n<bond::subtabbed_q<W, T>> and XTAL_TRY_(to) (twin() += w)
-		template <class W> XTAL_DEF_(return,inline,let) operator * (W const &w) const noexcept -> auto requires un_n<bond::subtabbed_q<W, T>> and XTAL_TRY_(to) (twin() *= w)
-		template <class W> XTAL_DEF_(return,inline,let) operator & (W const &w) const noexcept -> auto requires un_n<bond::subtabbed_q<W, T>> and XTAL_TRY_(to) (twin() &= w)
-		template <class W> XTAL_DEF_(return,inline,let) operator | (W const &w) const noexcept -> auto requires un_n<bond::subtabbed_q<W, T>> and XTAL_TRY_(to) (twin() |= w)
-		template <class W> XTAL_DEF_(return,inline,let) operator ^ (W const &w) const noexcept -> auto requires un_n<bond::subtabbed_q<W, T>> and XTAL_TRY_(to) (twin() ^= w)
-
-		template <class W> XTAL_DEF_(return,inline,let) operator - (W const &w) const noexcept -> auto requires                                   XTAL_TRY_(to) (twin() -= w)
-		template <class W> XTAL_DEF_(return,inline,let) operator / (W const &w) const noexcept -> auto requires                                   XTAL_TRY_(to) (twin() /= w)
-		template <class W> XTAL_DEF_(return,inline,let) operator % (W const &w) const noexcept -> auto requires                                   XTAL_TRY_(to) (twin() %= w)
+		XTAL_DEF_(return,inline,met) operator + (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v += o;}> {return   s.twin() += o;}
+	//	XTAL_DEF_(return,inline,met) operator - (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v -= o;}> {return   s.twin() -= o;}
+		XTAL_DEF_(return,inline,met) operator * (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v *= o;}> {return   s.twin() *= o;}
+	//	XTAL_DEF_(return,inline,met) operator / (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v /= o;}> {return   s.twin() /= o;}
+	//	XTAL_DEF_(return,inline,met) operator % (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v %= o;}> {return   s.twin() %= o;}
+		XTAL_DEF_(return,inline,met) operator & (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v &= o;}> {return   s.twin() &= o;}
+		XTAL_DEF_(return,inline,met) operator | (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v |= o;}> {return   s.twin() |= o;}
+		XTAL_DEF_(return,inline,met) operator ^ (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v ^= o;}> {return   s.twin() ^= o;}
+	//	XTAL_DEF_(return,inline,met) operator<< (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v<<= o;}> {return   s.twin()<<= o;}
+	//	XTAL_DEF_(return,inline,met) operator>> (auto const &o, homotype const &s) noexcept -> auto   requires in_n<requires (value_type v) {v>>= o;}> {return   s.twin()>>= o;}
 
 	};
 	using type = bond::derive_t<homotype>;

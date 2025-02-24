@@ -13,30 +13,25 @@ namespace xtal::atom
 ///\
 Extends `group` with point-wise addition and differential succession. \
 
-template <class ..._s>	struct  grade;
-template <class ..._s>	using   grade_t = typename grade<_s...>::type;
-template <class ..._s>	concept grade_q = bond::array_tag_p<grade_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...Us>	struct  grade;
+template <class ...Us>	using   grade_t = typename grade<Us...>::type;
+template <class ...Us>	concept grade_q = bond::array_or_any_tags_p<grade_t, Us...> and fixed_shaped_q<Us...>;
 
-
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-grade_f(auto &&...oo),
-	_detail::factory<grade_t>::
-		template make<f>(XTAL_REF_(oo)...))
+XTAL_DEF_(let) grade_f = [] XTAL_1FN_(call) (_detail::fake_f<grade_t>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct grade<_s ...>
-:	grade<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct grade<Us ...>
+:	grade<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ..._s>
+template <class ...Us>
 struct grade
 {
 	template <class T>
-	using endotype = typename additive_group<_s...>::template homotype<T>;
+	using endotype = typename additive_group<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;

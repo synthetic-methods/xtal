@@ -34,19 +34,17 @@ using ::ranges::    get_categories;
 namespace ranges::views
 {
 /*/
-XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return ::ranges::views::zip       (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return ::ranges::views::zip_with  (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) transform(auto &&..._s) noexcept -> auto {return ::ranges::views::transform (XTAL_REF_(_s)...);}
+XTAL_DEF_(let) zip       = [] XTAL_0FN_(call) (::ranges::views::zip);
+XTAL_DEF_(let) zip_with  = [] XTAL_0FN_(call) (::ranges::views::zip_with);
+XTAL_DEF_(let) transform = [] XTAL_0FN_(call) (::ranges::views::transform);
 /*/
-XTAL_DEF_(inline,let) zip      (auto &&..._s) noexcept -> auto {return          zip_view          (XTAL_REF_(_s)...);}
-XTAL_DEF_(inline,let) zip_with (auto &&..._s) noexcept -> auto {return          zip_transform_view(XTAL_REF_(_s)...);}
+XTAL_DEF_(let) zip       = [] XTAL_0FN_(call) (zip_view);
+XTAL_DEF_(let) zip_with  = [] XTAL_0FN_(call) (zip_transform_view);
 /***/
-//\
-XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return iota_view(_std::size_t{0})|views::transform([&] (auto &&...) XTAL_1FN_(to) (XTAL_REF_(f) ()));}
-XTAL_DEF_(inline,let) generate(_std::invocable auto &&f) noexcept -> auto {return ::ranges::views::generate(XTAL_REF_(f));}
-/***/
+XTAL_DEF_(let) generate  = [] XTAL_0FN_(call) (::ranges::views::generate);
 }
 #endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -89,31 +87,31 @@ template <class S, class T >	using   transfer_cvref_t     = typename transfer_cv
 The replacements for the `...extent...` definitions are intended to overcome \
 discrepancies between `LLVM` and `GNUC` (particularly for zero-length arrays). \
 
-template <class T          >	struct  remove_all_extents : transfer_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
+template <class T              >	struct  remove_all_extents : transfer_cvref<T, _std::remove_all_extents_t<_std::remove_cvref_t<T>>> {};
 #if XTAL_VER_(MSVC == 0)
-template <class U          >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
-template <class U          >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
+template <class U              >	struct  remove_all_extents<U   [0]> : remove_all_extents<U  > {};
+template <class U              >	struct  remove_all_extents<U(&)[0]> : remove_all_extents<U &> {};
 #endif
-template <class U, auto  N >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
-template <class U, auto  N >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
-template <class T          >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
+template <class U,     auto N  >	struct  remove_all_extents<U   [N]> : remove_all_extents<U  > {};
+template <class U,     auto N  >	struct  remove_all_extents<U(&)[N]> : remove_all_extents<U &> {};
+template <class T              >	using   remove_all_extents_t = typename remove_all_extents<T>::type;
 
-template <class T          >	struct  remove_extent : transfer_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
+template <class T              >	struct  remove_extent : transfer_cvref<T, _std::remove_extent_t<_std::remove_cvref_t<T>>> {};
 #if XTAL_VER_(MSVC == 0)
-template <class U          >	struct  remove_extent<U   [0]> {using type = U  ;};
-template <class U          >	struct  remove_extent<U(&)[0]> {using type = U &;};
+template <class U              >	struct  remove_extent<U   [0]> {using type = U  ;};
+template <class U              >	struct  remove_extent<U(&)[0]> {using type = U &;};
 #endif
-template <class U, auto  N >	struct  remove_extent<U   [N]> {using type = U  ;};
-template <class U, auto  N >	struct  remove_extent<U(&)[N]> {using type = U &;};
-template <class T          >	using   remove_extent_t = typename remove_extent<T>::type;
+template <class U,     auto N  >	struct  remove_extent<U   [N]> {using type = U  ;};
+template <class U,     auto N  >	struct  remove_extent<U(&)[N]> {using type = U &;};
+template <class T              >	using   remove_extent_t = typename remove_extent<T>::type;
 
-template <class T          >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
+template <class T              >	struct        _extent          : _std::integral_constant<_std::size_t, 0> {};
 #if XTAL_VER_(MSVC == 0)
-template <class U          >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
-template <class U          >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U              >	struct        _extent<U   [0]> : _std::integral_constant<_std::size_t, 0> {};
+template <class U              >	struct        _extent<U(&)[0]> : _std::integral_constant<_std::size_t, 0> {};
 #endif
-template <class U, auto  N >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
-template <class U, auto  N >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
+template <class U,     auto N  >	struct        _extent<U   [N]> : _std::integral_constant<_std::size_t, N> {};
+template <class U,     auto N  >	struct        _extent<U(&)[N]> : _std::integral_constant<_std::size_t, N> {};
 
 template <class T, unsigned N=0>	struct         extent          :  extent<remove_extent_t<T>, N - 1> {};
 template <class T              >	struct         extent<T, 0U>   : _extent<T> {};
@@ -218,20 +216,18 @@ template <class T           > using  decay_trivial_value_reference_t = typename 
 
 #if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)// Replace with `constexpr __builtin`s...
 template <class T>
-XTAL_DEF_(return,inline,let)
-bit_cast(auto s)
-noexcept -> auto
-requires requires {_std::bit_cast<T>(s);}
+XTAL_DEF_(let)
+bit_cast = [] (auto s)
+XTAL_0FN requires requires {_std::bit_cast<T>(s);}
 {
 	return __builtin_bit_cast(T, s);
-}
-XTAL_DEF_(return,inline,let)
-copysign(auto t, auto s)
-noexcept -> auto
-requires requires {_std::copysign(t, s);}
+};
+XTAL_DEF_(let)
+copysign = [] (auto t, auto s)
+XTAL_0FN requires requires {_std::copysign(t, s);}
 {
 	return __builtin_copysign(t, s);
-}
+};
 #else
 using _std::bit_cast;
 using _std::copysign;
@@ -249,17 +245,20 @@ template <class F             > concept constant_equivocable = not _std::integra
 
 template <class T>     using   make_signed   = _std::  make_signed  <T>;
 template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
-//\
-XTAL_DEF_(return,inline,let)   make_signed_f  (_std::       signed_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let)   make_signed_f  (                             auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let)   make_signed_f  (_std::     unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let)   make_signed_f  (        constant_equivocable auto f) noexcept -> auto {return   make_signed_f(f());}
-
 template <class T>     using make_unsigned   = _std::make_unsigned  <T>;
 template <class T>     using make_unsigned_t = _std::make_unsigned_t<T>;
-XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::       signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let) make_unsigned_f  (_std::     unsigned_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) make_unsigned_f  (        constant_equivocable auto f) noexcept -> auto {return make_unsigned_f(f());}
+//\
+XTAL_DEF_(return,inline,let) XTAL_NYM_(  make_signed_f)  (_std::       signed_integral auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(  make_signed_f)  (                             auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(  make_signed_f)  (_std::     unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(  make_signed_f)  (        constant_equivocable auto f) noexcept -> auto {return   make_signed_f(f());}
+
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f)  (_std::       signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f)  (_std::     unsigned_integral auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f)  (        constant_equivocable auto f) noexcept -> auto {return make_unsigned_f(f());}
+
+XTAL_DEF_(let)   make_signed_f = [] XTAL_1FN_(call) (XTAL_NYM_(  make_signed_f));
+XTAL_DEF_(let) make_unsigned_f = [] XTAL_1FN_(call) (XTAL_NYM_(make_unsigned_f));
 
 
 ////////////////////////////////////////////////////////////////////////////////

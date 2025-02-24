@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "./operate.hh"
 
 
 
@@ -14,76 +14,69 @@ namespace xtal::bond
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <int        ...Ns>	using    seek_t = _std::     integer_sequence<int, Ns...>;
-template <int           N >	using    seek_s = _std::make_integer_sequence<int, N    >;
+template <int   ...Ns>	using   seek_t = _std::     integer_sequence<int, Ns...>;
+template <int      N >	using   seek_s = _std::make_integer_sequence<int, N    >;
 
-template <class T         >	struct   seek                : logical_constant_t<0> {};
-template <auto       ...Ns>	struct   seek<seek_t<Ns...>> : logical_constant_t<1> {};
-template <class      ...Ts>	concept  seek_q = (...and seek<Ts>{}());
+template <class T    >	struct  seek                : logical_constant_t<0> {};
+template <auto  ...Ns>	struct  seek<seek_t<Ns...>> : logical_constant_t<1> {};
+template <class ...Ts>	concept seek_q = (...and seek<Ts>{}());
 
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <class      ...Ts>	                 concept       seek_q = _detail::seek_q<Ts...>;
-template <int        ...Ns>	                 using         seek_t = _detail::seek_t<Ns...>;
-template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(       Ns... ) noexcept -> seek_t<(                    Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(return,inline,let)           seek_f(seek_t<Ns...>) noexcept -> seek_t<(                    Ns  )...> {return {};}
-template <constant_q ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(       Ns... ) noexcept -> seek_t<(sizeof...(Ns) - 1 - Ns{})...> {return {};}
-template <int        ...Ns>	XTAL_DEF_(return,inline,let)       antiseek_f(seek_t<Ns...>) noexcept -> seek_t<(sizeof...(Ns) - 1 - Ns  )...> {return {};}
+template <class ...Ts>	concept seek_q = _detail::seek_q<Ts...>;
+template <int   ...Ns>	using   seek_t = _detail::seek_t<Ns...>;
 
-template <int           N >	                 struct   superseek    {using type = decltype(    seek_f(_detail::seek_s<+N>{}));};
-template <int           N >	requires (N < 0) struct   superseek<N> {using type = decltype(antiseek_f(_detail::seek_s<-N>{}));};
-template <int           N >	                 using    superseek_t = typename superseek<N>::type;
-template <int           N >	                 using         seek_s = superseek_t<+N>;
-template <int           N >	                 using     antiseek_s = superseek_t<-N>;
+XTAL_DEF_(let)     seek_f = operate{
+	[]<constant_q ...Ns> (       Ns... ) XTAL_0FN -> seek_t<(Ns{})...> {return {};}
+,	[]<int        ...Ns> (seek_t<Ns...>) XTAL_0FN -> seek_t<(Ns  )...> {return {};}
+};
+XTAL_DEF_(let) antiseek_f = operate{
+	[]<constant_q ...Ns> (       Ns... ) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns{})...> {return {};}
+,	[]<int        ...Ns> (seek_t<Ns...>) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns  )...> {return {};}
+};
+
+template <int N>	                 struct superseek    {using type = decltype(    seek_f(_detail::seek_s<+N>{}));};
+template <int N>	requires (N < 0) struct superseek<N> {using type = decltype(antiseek_f(_detail::seek_s<-N>{}));};
+template <int N>	                 using  superseek_t = typename superseek<N>::type;
+template <int N>	                 using       seek_s = superseek_t<+N>;
+template <int N>	                 using   antiseek_s = superseek_t<-N>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
 ///\
 Invokes the function `f` with each index `Ns...`. \
 
 template <integral_q auto ...Ns>
-XTAL_DEF_(return,inline,let)
-seek_in_f(auto const &f)
-noexcept -> decltype(auto)
-{
-	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(to) (..., f(constant_t<I>{})) (seek_t<Ns...> {});
-}
+XTAL_DEF_(let)
+seek_in_f = [] (auto const &f)
+	XTAL_0FN_(do) ([&] <int ...I>(seek_t<I...>)
+		XTAL_0FN_(do) (..., f(constant_t<I>{}))
+			(seek_t<Ns...> {}));
+
 template <int N_count=0, int N_onset=0>
-XTAL_DEF_(inline,let)
-seek_out_f(auto const &f)
-noexcept -> decltype(auto)
-{
-	return [&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(to) (..., f(constant_t<N_onset + I>{})) (seek_s<N_count> {});
-}
+XTAL_DEF_(let)
+seek_out_f = [] (auto const &f)
+	XTAL_0FN_(do) ([&] <int ...I>(seek_t<I...>)
+		XTAL_0FN_(do) (..., f(constant_t<N_onset + I>{}))
+			(seek_s<N_count> {}));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T, class ...Ts>
-XTAL_DEF_(inline,let)
-seek_front_f(T &&t, Ts &&...ts)
-noexcept -> decltype(auto)
-{
-	return XTAL_REF_(t);
-}
+XTAL_DEF_(let)
+seek_front_f = []<class ...Ts> (Ts &&...ts)
+	XTAL_0FN_(to) (get<0>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+
 template <         class ...Ts>  struct         seek_front;
 template <class T, class ...Ts>  struct         seek_front<T, Ts...> {using type = T;};
 template <         class ...Ts>  using          seek_front_t = typename seek_front  <           Ts ...>::type;
 template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_front_t<constant_t<Ns>...>{}();
 
-template <class T, class ...Ts>
-XTAL_DEF_(inline,let)
-seek_back_f(T &&t, Ts &&...ts)
-noexcept -> decltype(auto)
-{
-	XTAL_IF0
-	XTAL_0IF (none_q<Ts...>) {return XTAL_REF_(t);}
-	XTAL_0IF (some_q<Ts...>) {return seek_back_f(XTAL_REF_(ts)...);}
-}
+XTAL_DEF_(let)
+seek_back_f = []<class ...Ts> (Ts &&...ts)
+	XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+
 template <         class ...Ts>  struct   seek_back;
 template <class T             >  struct   seek_back <T       >       {using type = T;};
 template <class T, class ...Ts>  struct   seek_back <T, Ts...>  : seek_back <Ts...> {};
@@ -133,7 +126,7 @@ static_assert(seek_truth_n<false, false, false> == -1);
 ////////////////////////////////////////////////////////////////////////////////
 
 template <auto A, auto ...As>
-auto constexpr seek_index_n = seek_truth_n<(A == As)...>;
+XTAL_DEF_(let) seek_index_n = seek_truth_n<(A == As)...>;
 
 template <auto ...Ns> requires some_n<Ns...>
 struct seek_index

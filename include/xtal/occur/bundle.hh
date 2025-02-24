@@ -14,20 +14,17 @@ namespace xtal::occur
 Ties `Xs...` to unify handling, arithmetic, etc. \
 
 template <class ...Xs> struct   bundle;
-template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
+template <class ...Xs> using    bundle_t =  confined_t<bundle<Xs...>>;
+template <class ..._s> concept  bundle_q = bond::any_tags_p<bundle, _s...>;
 
-template <auto f=_std::identity{}, class ...Xs>
-XTAL_DEF_(return,inline,let)
-bundle_f(Xs &&...xs)
-noexcept -> auto
-{
-	using F = decltype(f);
+//////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN {
 	XTAL_IF0
-	XTAL_0IF (same_q<_std::identity, F>)         {return bundle_f<[] XTAL_1FN_(call) (objective_f)>(XTAL_REF_(xs) ...);}
-	XTAL_0IF (un_n<0, automorphism_p<F, Xs>...>) {return bundle_t<   return_t<F, Xs>...>          {  XTAL_REF_(xs) ...};}
-	XTAL_0IF (in_n<0, automorphism_p<F, Xs>...>) {return bundle_t<   return_t<F, Xs>...>          {f(XTAL_REF_(xs))...};}
-}
+	XTAL_0IF (un_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
+	XTAL_0IF (in_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{objective_f(XTAL_REF_(xs))...};}
+};
 
 
 //////////////////////////////////////////////////////////////////////////////////

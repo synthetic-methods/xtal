@@ -116,8 +116,8 @@ template <class F, class ...Xs>	concept  automorphism_p	= (some_q<Xs...> and...a
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=                          _retail::         sign_v<N, Z    >;// Sign of `N`, where `0 ->  Z`.
-template <auto  N             >	auto constexpr cosign_v	=                          _retail::       cosign_v<N       >;// Sign of LSB, where `0 -> -1`.
+template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=                          _retail::         sign_v<N, Z    >;// Evaluates `Replace[0->Z]@Sign[N]`.
+template <auto  N             >	auto constexpr cosign_v	=                          _retail::       cosign_v<N       >;// Evaluates `(-1)^N == Cos[Pi*N]`.
 template <auto  M, auto     N >	auto constexpr   skip_v	=                          _retail::         skip_v<M, N    >;
 template <auto  M, auto     N >	auto constexpr  above_v	=                          _retail::        above_v<M, N    >;
 template <auto  M, auto     N >	auto constexpr  below_v	=                          _retail::        below_v<M, N    >;
@@ -198,6 +198,7 @@ template <class T             >	using       succedent_s	=                       
 //\
 Valued & Sized...
 
+template <         class ...Ts>	using           array_u	=                 common_t<_retail::        array_u<Ts>...>;
 template <         class ...Ts>	using    array_valued_u	=                 common_t<_retail:: array_valued_u<Ts>...>;
 template <         class ...Ts>	using    inner_valued_u	=                 common_t<_retail:: inner_valued_u<Ts>...>;
 template <         class ...Ts>	using    under_valued_u	=                 common_t<_retail:: under_valued_u<Ts>...>;
@@ -205,6 +206,7 @@ template <         class ...Ts>	using    fixed_valued_u	=                 common
 template <         class ...Ts>	using    fluid_valued_u	=                 common_t<_retail:: fluid_valued_u<Ts>...>;
 template <         class ...Ts>	using          valued_u	=                 common_t<_retail::       valued_u<Ts>...>;
 
+template <         class ...Ts>	concept         array_q	= (some_q<Ts...> and...and _retail::        array_q<Ts>);
 template <         class ...Ts>	concept  array_valued_q	= (some_q<Ts...> and...and _retail:: array_valued_q<Ts>);
 template <         class ...Ts>	concept  inner_valued_q	= (some_q<Ts...> and...and _retail:: inner_valued_q<Ts>);
 template <         class ...Ts>	concept  under_valued_q	= (some_q<Ts...> and...and _retail:: under_valued_q<Ts>);
@@ -227,7 +229,6 @@ template <class T             >	using          shaped  	=                       
 template <class T             >	using           fixed  	=                          _retail::           fixed  <T >;
 template <class T             >	using           fluid  	=                          _retail::           fluid  <T >;
 
-template <         class ...Ts>	using          shaped_u	=                 common_t<_retail::          shaped_u<Ts>...>;
 template <         class ...Ts>	using           fixed_u	=                 common_t<_retail::           fixed_u<Ts>...>;
 template <         class ...Ts>	using           fluid_u	=                 common_t<_retail::           fluid_u<Ts>...>;
 

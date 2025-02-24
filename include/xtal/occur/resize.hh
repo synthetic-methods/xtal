@@ -13,11 +13,7 @@ namespace xtal::occur
 
 template <class ..._s> struct   resize;
 template <class ..._s> using    resize_t =  confined_t<resize< _s...>>;
-template <class ..._s> concept  resize_q = bond::tag_p<resize, _s...> ;
-
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-resize_f  (auto &&...oo),
-resize_t<>(XTAL_REF_(oo)...))
+template <class ..._s> concept  resize_q = bond::any_tags_p<resize, _s...> ;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +57,8 @@ struct resize<U> : resize<counter_t<U>>
 
 template <> struct resize<void> : resize<size_type> {};
 template <> struct resize<    > : resize<size_type> {};
+
+XTAL_DEF_(let) resize_f = [] XTAL_1FN_(call) (resize_t<>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

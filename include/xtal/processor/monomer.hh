@@ -11,16 +11,15 @@ namespace xtal::processor
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <typename ..._s> struct   monomer;
-template <typename ..._s> using    monomer_t =  confined_t<monomer< _s...>>;
-template <typename ..._s> concept  monomer_q = bond::tag_p<monomer, _s... >;
+template <class ..._s> struct  monomer;
+template <class ..._s> using   monomer_t =  confined_t<monomer< _s...>>;
+template <class ..._s> concept monomer_q = bond::any_tags_p<monomer, _s... >;
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <typename ...As>
-XTAL_DEF_(return,inline,let)
-monomer_f(auto &&u)
-noexcept -> auto
-{
-	return monomer_t<XTAL_ALL_(u), As...>(XTAL_REF_(u));
-}
+XTAL_DEF_(let) monomer_f = []<class U> (U &&u)
+XTAL_0FN_(to) (monomer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 
 ////////////////////////////////////////////////////////////////////////////////

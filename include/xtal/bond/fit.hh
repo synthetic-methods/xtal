@@ -373,6 +373,7 @@ public:
 	diplo_f(alpha_type n_zoom, alpha_type o_silon)
 	noexcept -> alpha_type
 	{
+	//	TODO: Handle `consteval`?
 		if constexpr (XTAL_SYS_(builtin)) {
 			return o_silon*__builtin_exp2(n_zoom);
 		}

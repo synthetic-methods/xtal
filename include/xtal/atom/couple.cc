@@ -11,8 +11,7 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(bond::array_tag_p<couple_t, couple_t<int[2]>, int[2]>);
-static_assert(couple_q<couple_t<int[2]>>);
+static_assert(bond::array_or_any_tags_p<couple_t, couple_t<int[2]>, int[2]>);
 static_assert(couple_q<couple_t<int[2]>, int[2]>);
 
 static_assert(complete_q<couple_t<float, double>>);
@@ -28,12 +27,46 @@ static_assert(fungible_q<_std::array<float, 2>,
 
 TAG_("couple")
 {
+
+	
 	using _fit = bond::fit<>;
 	using T_delta = typename _fit::delta_type;
 	using T_sigma = typename _fit::sigma_type;
 	using T_alpha = typename _fit::alpha_type;
 	using T_aphex = typename _fit::aphex_type;
 
+
+	TRY_("couple typing")
+	{
+		using U0 = unsigned;
+		using V0 =   signed;
+
+		using U1 = couple_t<U0[1] >; using _U1 = quanta_t<U0[1] >;
+		using V1 = couple_t<V0[1] >; using _V1 = quanta_t<V0[1] >;
+		using U2 = couple_t<U0[2] >; using _U2 = quanta_t<U0[2] >;
+		using V2 = couple_t<V0[2] >; using _V2 = quanta_t<V0[2] >;
+		using UV = couple_t<U0, V0>; using _UV = quanta_t<U0, V0>;
+		using VU = couple_t<V0, U0>; using _VU = quanta_t<V0, U0>;
+
+		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
+		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)
+		static_assert(    bond::tab_compatible_q< V1,  V1>);// `    ==`
+		static_assert(not bond::tab_compatible_q< V1, _V1>);// `not ==`
+		
+		static_assert(    bond::tab_precedence_p< V1, _V1>);// `    <=`
+		static_assert(not bond::tab_preference_p< V1,  V1>);// `    < `
+		static_assert(not bond::tab_precedence_p<_V1,  V1>);// `not <=`
+		static_assert(not bond::tab_preference_p<_V1,  V1>);// `not < `
+
+		U1 u1{}; U2 u2{};
+		V1 v1{}; V2 v2{};
+		UV uv{}; VU vu{};
+
+		TRUE_(v1.size() == v1.twin().size());
+		TRUE_(v1.size() == (1234*v1).size());
+		TRUE_(v1.size() == (v1*1234).size());
+
+	};
 	EST_("couple reinitialization")
 	{
 		couple_t<T_aphex[4]> foo{};

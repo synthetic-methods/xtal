@@ -16,22 +16,14 @@ Governs access to the `supertype`. \
 ///\see `flow::mask`. \
 
 template <class ..._s>	struct  mark;
-template <class ..._s>	using   mark_s = bond::compose_s<let_t< _s...>, mark<>>;
-template <class ..._s>	concept mark_q = bond:: tagged_p<mark_s, _s...>;
-
-XTAL_FX0_(to) (template <class ..._s>
-XTAL_DEF_(return,inline,let)
-mark_f(auto &&...oo),
-	mark_s<_s...>(XTAL_REF_(oo)...))
+template <class ..._s>	using   mark_s = bond::compose_s<let_t < _s...>, mark<>>;
+template <class ..._s>	concept mark_q = bond:: all_tags_p<mark_s, _s...>;
+template <           >	struct  mark<> : cell::header<extent_type, bond::tag<mark_s>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <>
-struct mark<>
-:	cell::header<signed, bond::tag<mark_s>>
-{
-};
+XTAL_DEF_(let) mark_f = [] XTAL_1FN_(call) (mark_s<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

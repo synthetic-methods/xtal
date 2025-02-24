@@ -252,14 +252,14 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #if     XTAL_ENV_MSVC
 #define XTAL_DEF_inline        __forceinline
 #else
-#define XTAL_DEF_inline          inline __attribute__((always_inline))
+#define XTAL_DEF_inline        __attribute__((always_inline))
 #endif//XTAL_DEF_inline
 
 #define XTAL_DEF_explicit        constexpr explicit                             ///< Start `explicit` function.
 #define XTAL_DEF_implicit        constexpr                                      ///< Start `implicit` function.
-#define XTAL_DEF_get             constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
-#define XTAL_DEF_let             constexpr auto                                 ///< Start `auto` function.
-#define XTAL_DEF_met             constexpr auto friend                          ///< Start `auto` function.
+#define XTAL_DEF_get      inline constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
+#define XTAL_DEF_let      inline constexpr auto                                 ///< Start `auto` function.
+#define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function.
 #define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function.
 
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
@@ -354,15 +354,7 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_RUN_(ARG,...)             XTAL_RUN_##ARG __VA_OPT__((__VA_ARGS__))
-
-#define XTAL_RUN_do(...)                                         {       __VA_ARGS__ ;} ///< Invoke as block.
-#define XTAL_RUN_return(...)                                     {return(__VA_ARGS__);} ///< Return as expression.
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_TRY_(ARG,...)             XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_TRY_(ARG,...)                    XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
 
 #define XTAL_TRY_do(...)              (requires{ __VA_ARGS__ ;}) {      (__VA_ARGS__);} ///< Check requirements, then invoke as block.
 #define XTAL_TRY_to(...)              (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.

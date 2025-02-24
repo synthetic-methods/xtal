@@ -18,7 +18,16 @@ Deified as a `process`'s `binding`, binding the provided arguments. \
 
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::tag_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::any_tags_p<bundle, _s...>;
+
+//////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) bundle_f = []<class ...Xs> (Xs &&...xs)
+XTAL_0FN {
+	XTAL_IF0
+	XTAL_0IF (un_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{            XTAL_REF_(xs) ...};}
+	XTAL_0IF (in_n<0, objective_q<Xs>...>) {return bundle_t<objective_t<Xs>...>{objective_f(XTAL_REF_(xs))...};}
+};
 
 
 //////////////////////////////////////////////////////////////////////////////////

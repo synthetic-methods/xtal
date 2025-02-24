@@ -13,33 +13,31 @@ namespace xtal::atom
 ///\
 Extends `block` with function application and functional construction. \
 
-template <class ...As>	struct  quanta;
-template <class ...As>	using   quanta_t = typename quanta<As...>::type;
-template <class ...As>	concept quanta_q = bond::array_tag_p<quanta_t, As...> and fixed_shaped_q<As...>;
+template <class ...Us>	struct  quanta;
+template <class ...Us>	using   quanta_t = typename quanta<Us...>::type;
+template <class ...Us>	concept quanta_q = bond::array_or_any_tags_p<quanta_t, Us...> and fixed_shaped_q<Us...>;
+
+XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::fake_f<quanta_t>);
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <class U, auto N, auto ...Ns> struct   quanta<U   [N][Ns]...> : quanta<quanta_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto ...Ns> struct   quanta<U(&)[N][Ns]...> : quanta<quanta_t<U[Ns]...>(&)[N]> {};
 
 
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-quanta_f(auto &&...oo),
-	_detail::factory<quanta_t>::
-		template make<f>(XTAL_REF_(oo)...))
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...As> requires same_q<As...>
-struct quanta<As ...>
-:	quanta<common_t<As...>[sizeof...(As)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct quanta<Us ...>
+:	quanta<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ...As>
+template <class ...Us>
 struct quanta
 {
 	template <class T>
-	using endotype = typename block<As...>::template homotype<T>;
+	using endotype = typename block<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<quanta_t>>;
@@ -67,7 +65,7 @@ struct quanta
 		noexcept -> bool
 		{
 			XTAL_IF0
-		//	XTAL_0IF (same_q<As...> and atomic_q<value_type>) {
+		//	XTAL_0IF (common_q<Us...> and atomic_q<value_type>) {
 		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(to) (
@@ -87,7 +85,7 @@ struct quanta
 		blanked() const
 		noexcept -> auto
 		{
-			typename S_::template form_t<based_t<As>...> constexpr z{N_value};
+			typename S_::template form_t<based_t<Us>...> constexpr z{N_value};
 			return   z == self();
 		}
 		///\returns the result of `blanked()` before refilling with `N_value=0`. \
@@ -96,7 +94,7 @@ struct quanta
 		XTAL_DEF_(inline,let)
 		blanket()
 		noexcept -> bool
-		requires same_q<As...>
+		requires common_q<Us...>
 		{
 			using sigma_type  = typename bond::fit<scale_type>::sigma_type;
 			auto constexpr u  =    static_cast<scale_type>(N_value);
@@ -140,11 +138,11 @@ struct quanta
 		noexcept -> decltype(auto)
 		{
 			using F = decltype(T::coordinate);
-			if constexpr (same_q<As...>) {
+			if constexpr (common_q<Us...>) {
 				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
 			}
 			else {
-				return apply<return_t<F, As>...>();
+				return apply<return_t<F, Us>...>();
 			}
 		}
 

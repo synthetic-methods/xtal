@@ -15,7 +15,7 @@ Provides local blob-like storage via `memory()` using `atom::blob`. \
 
 template <typename ...As> struct   memorized;
 template <typename ...As> using    memorized_t = confined_t<memorized<As...>>;
-template <typename ..._s> concept  memorized_q = bond::tag_p<memorized, _s...>;
+template <typename ..._s> concept  memorized_q = bond::any_tags_p<memorized, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -29,11 +29,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <class ..._s> struct   cursor;
 template <class ..._s> using    cursor_t =  confined_t<cursor< _s...>>;
-template <class ..._s> concept  cursor_q = bond::tag_p<cursor, _s...> ;
-
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-cursor_f  (auto &&...oo),
-cursor_t<>(XTAL_REF_(oo)...))
+template <class ..._s> concept  cursor_q = bond::any_tags_p<cursor, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,6 +312,8 @@ public:
 
 template <> struct cursor<void> : cursor<counter_t<>> {};
 template <> struct cursor<    > : cursor<counter_t<>> {};
+
+XTAL_DEF_(let) cursor_f = [] XTAL_1FN_(call) (cursor_t<>);
 
 
 ////////////////////////////////////////////////////////////////////////////////

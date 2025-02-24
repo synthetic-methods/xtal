@@ -224,90 +224,107 @@ template <                     >                              struct   assayed< 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T             >	struct      fixed_valued;
-template <class T             >	struct      fluid_valued;
-template <class T             >	using             valued   = fluid_valued<T>;
-
-template <class T             >	using       array_valued_u	= _xtd::transfer_const_t<T, _xtd::remove_extent_t<_std::remove_reference_t<T>>>;
-template <class T             >	using       inner_valued_u	= _xtd::transfer_const_t<T,              typename _std::remove_reference_t<T>::value_type>;
-template <class T             >	using       under_valued_u	= _xtd::transfer_const_t<T, _std::underlying_type_t<T>>;
-template <class T             >	using       fixed_valued_u	=  typename fixed_valued<T>::value_type;
-template <class T             >	using       fluid_valued_u	=  typename fluid_valued<T>::value_type;
-template <class T             >	using             valued_u	=  typename       valued<T>::value_type;
-template <class T             >	using      scalar_valued_u	= _xtd::transfer_const_t<T, typename based_t<T>::scalar_type>;
-template <class T             >	using      Scalar_valued_u	= _xtd::transfer_const_t<T, typename based_t<T>::Scalar     >;
-
-template <class T             >	concept     array_valued_q	=  different_q<array_valued_u<T>, T>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
-template <class T             >	concept     inner_valued_q	=  requires {typename _std::remove_reference_t<T>::value_type;};
-template <class T             >	concept     under_valued_q	=  complete_q<_std::underlying_type_t<_std::remove_reference_t<T>>>;
-template <class T             >	concept     fixed_valued_q	=  complete_q<fixed_valued<T>> and different_q<T, fixed_valued_u<T>>;
-template <class T             >	concept     fluid_valued_q	=  complete_q<fluid_valued<T>> and different_q<T, fluid_valued_u<T>>;
-template <class T             >	concept           valued_q	=  complete_q<      valued<T>> and different_q<T,       valued_u<T>>;
-template <class T             >	concept    scalar_valued_q	=  complete_q<scalar_valued_u<T>> and not fixed_valued_q<T>;
-template <class T             >	concept    Scalar_valued_q	=  complete_q<Scalar_valued_u<T>> and not fixed_valued_q<T>;
-
-template <     identity_q T   >	struct      fixed_valued<T> {using value_type =      identity_u<T>;};
-template < array_valued_q T   >	struct      fixed_valued<T> {using value_type =  array_valued_u<T>;};
-template < inner_valued_q T   >	struct      fixed_valued<T> {using value_type =  inner_valued_u<T>;};
-template < under_valued_q T   >	struct      fixed_valued<T> {using value_type =  under_valued_u<T>;};
-
-template <class T             >	struct      fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
-template < fixed_valued_q T   >	struct      fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
-template <scalar_valued_q T   >	struct      fluid_valued<T> {using value_type = scalar_valued_u<T>;};
-template <Scalar_valued_q T   >	struct      fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
+template <class T             >	using                 array_u	= _xtd::transfer_const_t<T, _xtd::remove_extent_t<based_t<T>>>;
+template <class T             >	auto constexpr        array_n	=                           _xtd::       extent_v<based_t<T>> ;
+template <class T             >	concept               array_q	=            different_q<T, array_u<T>>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
 
 
-template <class T             >	using       tuple_shaped  	=  assayed<complete_t<_std::tuple_size<_std::remove_reference_t<T>>, size_constant_t<0>>{}()>;
-template <class T             >	concept     tuple_shaped_q	=          complete_q<_std::tuple_size<_std::remove_reference_t<T>>>;
+////////////////////////////////////////////////////////////////////////////////
 
-template <class T             >	using       array_shaped  	=  assayed<_std::  extent_v<_std::remove_reference_t<T>>>;
-//\
-template <class T             >	concept     array_shaped_q	= _std::is_array_v<_std::remove_reference_t<T>>;
-template <class T             >	concept     array_shaped_q	=  different_q<array_valued_u<T>, T>;
+template <class T             >	struct         fixed_valued;
+template <class T             >	struct         fluid_valued;
+template <class T             >	using                valued   = fluid_valued<T>;
 
-template <class T             >	struct      fixed_shaped;
-template <class T=void        >	struct      fluid_shaped;
-template <class T             >	struct            shaped;
-template <class T             >	using             shaped_u  = typename shaped<T>::value_type;
-template <variable_q T        >	struct            shaped<T> :  fluid_shaped<           T > {};
-template <constant_q T        >	struct            shaped<T> :        shaped<identity_t<T>> {};
+template <class T             >	using          fixed_valued_u	=  typename fixed_valued<based_t<T>>::value_type;
+template <class T             >	using          fluid_valued_u	=  typename fluid_valued<based_t<T>>::value_type;
+template <class T             >	using                valued_u	=  typename       valued<based_t<T>>::value_type;
 
-template <class T             >	concept     fixed_shaped_q	=  complete_q<fixed_shaped<T>>;
-template <class T             >	concept     fluid_shaped_q	=  complete_q<fluid_shaped<T>>;
-template <class T             >	concept           shaped_q	=  complete_q<      shaped<T>>;
+template <class T             >	concept        fixed_valued_q	=  requires {requires different_q<T, fixed_valued_u<T>>;};
+template <class T             >	concept        fluid_valued_q	=  requires {requires different_q<T, fluid_valued_u<T>>;};
+template <class T             >	concept              valued_q	=  requires {requires different_q<T,       valued_u<T>>;};
 
-template <class T             >	concept   unfluid_shaped_q	=  not fluid_shaped_q<T>;
-template <class T             >	concept   unfixed_shaped_q	=  not fixed_shaped_q<T>;
-template <class T             >	concept     class_shaped_q	=  not tuple_shaped_q<T> and                                         requires {T::size();};
-template <class T             >	concept    object_shaped_q	=  not tuple_shaped_q<T> and requires {XTAL_ANY_(T).size();} and not requires {T::size();};
+template <class T             >	using          array_valued_u	=  array_u<T>;
+template <class T             >	using          under_valued_u	= _xtd::transfer_const_t<T, _std::underlying_type_t<based_t<T>>>;
+template <class T             >	using          inner_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>:: value_type>;
+template <class T             >	using         scalar_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>::scalar_type>;
+template <class T             >	using         Scalar_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>::Scalar     >;
 
+template <class T             >	concept        array_valued_q	=  array_q<T>;
+template <class T             >	concept        inner_valued_q	=  requires {requires complete_q< inner_valued_u<T>>;};
+template <class T             >	concept        under_valued_q	=  requires {requires complete_q< under_valued_u<T>>;};
+template <class T             >	concept       scalar_valued_q	=  un_n<fixed_valued_q<T>> and requires {requires complete_q<scalar_valued_u<T>>;};
+template <class T             >	concept       Scalar_valued_q	=  un_n<fixed_valued_q<T>> and requires {requires complete_q<Scalar_valued_u<T>>;};
 
-template <  based_q T>	requires       identity_q<T>           struct fixed_shaped<T>                : assayed<identity_u<T>{}()> {};
-template <  based_q T>	requires   tuple_shaped_q<T>           struct fixed_shaped<T>                :   tuple_shaped<T>          {};
-template <  based_q T>	requires   array_shaped_q<T>           struct fixed_shaped<T>                :   array_shaped<T>          {};
-template <  based_q T>	requires   class_shaped_q<T>           struct fixed_shaped<T>                : assayed<T::size()>         {};
-template <unbased_q T>	requires   fixed_shaped_q<based_t<T>>  struct fixed_shaped<T>                :   fixed_shaped<based_t<T>> {};
-template <class     U>	                                       struct fixed_shaped<_std::complex<U>> :   fixed_shaped<identity_t<size_constant_t<2>>> {};
+template <     identity_q T   >	struct         fixed_valued<T> {using value_type =      identity_u<T>;};
+template < array_valued_q T   >	struct         fixed_valued<T> {using value_type =  array_valued_u<T>;};
+template < inner_valued_q T   >	struct         fixed_valued<T> {using value_type =  inner_valued_u<T>;};
+template < under_valued_q T   >	struct         fixed_valued<T> {using value_type =  under_valued_u<T>;};
 
-template <           >	                                       struct fluid_shaped<void>             : assayed< 0> {};
-template <  based_q T>	                                       struct fluid_shaped<T>                : assayed< 0> {};
-template <  based_q T>	requires  object_shaped_q<T>           struct fluid_shaped<T>                : assayed<-1> {};
-template <  based_q T>	requires   fixed_shaped_q<T>           struct fluid_shaped<T>                :   fixed_shaped<        T > {};
-template <unbased_q T>	requires   fluid_shaped_q<based_t<T>>  struct fluid_shaped<T>                :   fluid_shaped<based_t<T>> {};
+template <class T             >	struct         fluid_valued    {using value_type =                 T ;};// TODO: Remove scalar specialization?
+template < fixed_valued_q T   >	struct         fluid_valued<T> {using value_type =  fixed_valued_u<T>;};
+template <scalar_valued_q T   >	struct         fluid_valued<T> {using value_type = scalar_valued_u<T>;};
+template <Scalar_valued_q T   >	struct         fluid_valued<T> {using value_type = Scalar_valued_u<T>;};
 
 
-template <class T                  >	using     fixed_u = fixed_valued_u<T>;
-template <class T                  >	using     fluid_u = fluid_valued_u<T>;
-template <class T                  >	concept   fixed_q = fixed_valued_q<T> and fixed_shaped_q<T>;
-template <class T                  >	concept   fluid_q = fluid_valued_q<T> and fluid_shaped_q<T> and not fixed_q<T>;
+////////////////////////////////////////////////////////////////////////////////
 
-template <class T                  >	struct    fixed	: fixed_shaped<T> {using value_type = fixed_valued_u<T>;};
-template <class T                  >	struct    fluid	: fluid_shaped<T> {using value_type = fluid_valued_u<T>;};
+template <class T             >	struct         fixed_shaped;
+template <class T=void        >	struct         fluid_shaped;
+template <class T             >	struct               shaped;
+template <variable_q T        >	struct               shaped<T> :  fluid_shaped<           T > {};
+template <constant_q T        >	struct               shaped<T> :        shaped<identity_t<T>> {};
 
+template <class T             >	concept        fixed_shaped_q	=  complete_q<fixed_shaped<T>>;
+template <class T             >	concept        fluid_shaped_q	=  complete_q<fluid_shaped<T>>;
+template <class T             >	concept              shaped_q	=  complete_q<      shaped<T>>;
+
+template <class T             >	concept        array_shaped_q	=  array_q<T>;
+template <class T             >	auto constexpr array_shaped_n	=  array_n<T>;
+template <class T             >	using          array_shaped  	=  assayed<array_shaped_n<T>>;
+
+template <class T             >	concept        tuple_shaped_q	=  complete_q<_std::tuple_size<based_t<T>>>;
+template <class T             >	auto constexpr tuple_shaped_n	=  complete_t<_std::tuple_size<based_t<T>>, size_constant_t<0>>{}();
+template <class T             >	using          tuple_shaped  	=  assayed<tuple_shaped_n<T>>;
+
+template <class T             >	concept        class_shaped_q	=  un_n<tuple_shaped_q<T>> and                                         requires {based_t<T>::size();};
+template <class T             >	auto constexpr class_shaped_n	=  static_cast<extent_type>(based_t<T>::size());
+template <class T             >	using          class_shaped  	=  assayed<class_shaped_n<T>>;
+
+template <class T             >	concept        range_shaped_q	=  un_n<tuple_shaped_q<T>> and requires {XTAL_ANY_(T).size();} and not requires {based_t<T>::size();};
+template <class T             >	auto constexpr range_shaped_n	=  static_cast<extent_type>(-1);
+template <class T             >	using          range_shaped  	=  assayed<range_shaped_n<T>>;
+
+
+template <  based_q T>	requires     identity_q<T>           struct fixed_shaped<T>                : assayed<identity_u<T>{}()> {};
+template <  based_q T>	requires tuple_shaped_q<T>           struct fixed_shaped<T>                : tuple_shaped<T>            {};
+template <  based_q T>	requires array_shaped_q<T>           struct fixed_shaped<T>                : array_shaped<T>            {};
+template <  based_q T>	requires class_shaped_q<T>           struct fixed_shaped<T>                : class_shaped<T>            {};
+template <unbased_q T>	requires fixed_shaped_q<based_t<T>>  struct fixed_shaped<T>                : fixed_shaped<based_t<T>>   {};
+template <class     U>	                                     struct fixed_shaped<_std::complex<U>> : assayed<2>                 {};
+
+template <           >	                                     struct fluid_shaped<void>             : assayed<0>                 {};
+template <  based_q T>	                                     struct fluid_shaped<T>                : assayed<0>                 {};
+template <  based_q T>	requires range_shaped_q<T>           struct fluid_shaped<T>                : range_shaped<T>            {};
+template <  based_q T>	requires fixed_shaped_q<T>           struct fluid_shaped<T>                : fixed_shaped<T>            {};
+template <unbased_q T>	requires fluid_shaped_q<based_t<T>>  struct fluid_shaped<T>                : fluid_shaped<based_t<T>>   {};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T             >	using     fixed_u = fixed_valued_u<T>;
+template <class T             >	using     fluid_u = fluid_valued_u<T>;
+template <class T             >	concept   fixed_q = fixed_valued_q<T> and fixed_shaped_q<T>;
+template <class T             >	concept   fluid_q = fluid_valued_q<T> and fluid_shaped_q<T> and not fixed_q<T>;
+
+template <class T             >	struct    fixed	: fixed_shaped<T> {using value_type = fixed_valued_u<T>;};
+template <class T             >	struct    fluid	: fluid_shaped<T> {using value_type = fluid_valued_u<T>;};
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <class U,        int ...Ns>	struct instruct;
 template <class T                  >	struct destruct;
-template <class T,        int ...Ns>	struct  restruct;
+template <class T,        int ...Ns>	struct restruct;
 
 template <class U,        int ...Ns>	using  instruct_t = typename instruct<U, Ns...>::array_type;
 template <class T                  >	using  destruct_t = typename destruct<T       >::array_type;
@@ -332,6 +349,14 @@ template <fixed_q T,      int ...Ns>	struct restruct<T, Ns...> : restruct<destru
 //\
 Ranged...
 
+template <class T             >	concept        scalar_q	=                     not array_q<T> ;
+template <class T             >	concept        vector_q	= array_q<T> and scalar_q<array_u<T>>;
+template <class T             >	concept        matrix_q	= array_q<T> and vector_q<array_u<T>>;
+template <class T             >	concept        tensor_q	= array_q<T> and  array_q<array_u<T>>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T             >	using         wrappee_t	=  decltype( XTAL_ANY_(T).get());
 template <class T             >	concept       wrapped_q	=  requires{{XTAL_ANY_(T).get()} -> same_q<typename based_t<T>::type>;};
 template <class T             >	using         pointee_t	=  decltype(*XTAL_ANY_(T)) ;
@@ -343,13 +368,6 @@ template <class T             >	concept     expressed_q	=  requires{ XTAL_ANY_(T
 //\
 template <class T             >	concept   inexpressed_q	=  indexed_q<T> and expressed_q<T>;
 template <class T             >	concept   inexpressed_q	=    fixed_q<T> and expressed_q<T>;//FIXME: Improve expression-template `concept`.
-
-
-template <class T             >	concept        scalar_q	=                                  not array_valued_q<T> ;
-template <class T             >	concept        vector_q	= array_shaped_q<T> and       scalar_q<array_valued_u<T>>;
-template <class T             >	concept        matrix_q	= array_shaped_q<T> and       vector_q<array_valued_u<T>>;
-template <class T             >	concept        tensor_q	= array_shaped_q<T> and array_valued_q<array_valued_u<T>>;
-
 
 template <class T             >	struct       iteratee;
 template <class T             >	struct       iterated;

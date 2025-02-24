@@ -25,7 +25,7 @@ auto &y = get<1>(glob);
 
 template <class ...As>	struct   blob;
 template <class ...As>	using    blob_t = typename blob<As...>::type;
-template <class ...Ts>	concept  blob_q = bond::tag_p<blob, Ts...>;
+template <class ...Ts>	concept  blob_q = bond::any_tags_p<blob, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

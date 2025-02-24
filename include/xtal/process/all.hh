@@ -1,5 +1,4 @@
 #include "./any.hh"
-#include "./cross.hh"
 #include "./lift.hh"
 #include "./link.hh"
 #include "./conveyor.hh"

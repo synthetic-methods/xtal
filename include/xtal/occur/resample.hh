@@ -13,12 +13,7 @@ namespace xtal::occur
 
 template <class ..._s>	struct   resample;
 template <class ..._s>	using    resample_t =  confined_t<resample<_s...>>;
-template <class ..._s>	concept  resample_q = bond::tag_p<resample, _s...>;
-
-template <class ..._s>
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-resample_f       (auto &&...oo),
-resample_t<_s...>(XTAL_REF_(oo)...))
+template <class ..._s>	concept  resample_q = bond::any_tags_p<resample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +67,11 @@ struct resample
 
 	};
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) resample_f = [] XTAL_1FN_(call) (resample_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

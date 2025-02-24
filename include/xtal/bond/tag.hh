@@ -37,7 +37,7 @@ struct tag
 	};
 };
 template <class ..._s>
-struct hypertag
+struct tagged
 {
 	template <class T>
 	using subtype = typename T::taboo::template hypertype<_s...>;
@@ -45,20 +45,13 @@ struct hypertag
 };
 
 
-template <class T, template <class ...> class ...Ys> concept        tag_q =      tab_q<T, tag<Ys>...>;
-template <class T, template <class ...> class ...Ys> concept   some_tag_q = some_tab_q<T, tag<Ys>...>;
-template <class T, template <class ...> class ...Ys> concept  array_tag_q = some_tab_q<T, tag<Ys>...> and (...and (array_shaped_q<T > or tag_q<T , Ys>));
+template <class T, template <class ...> class ...Ys> concept          all_tags_q =          all_tabs_q<T, tag<Ys>...>;
+template <class T, template <class ...> class ...Ys> concept          any_tags_q =          any_tabs_q<T, tag<Ys>...>;
+template <class T, template <class ...> class ...Ys> concept array_or_any_tags_q = array_or_any_tabs_q<T, tag<Ys>...>;
 
-template <template <class ...> class Y, class ...Ts> concept        tag_p =      tab_p<tag<Y>, Ts...>;
-template <template <class ...> class Y, class ...Ts> concept   some_tag_p = some_tab_p<tag<Y>, Ts...>;
-template <template <class ...> class Y, class ...Ts> concept  array_tag_p = some_tab_p<tag<Y>, Ts...> and (...and (array_shaped_q<Ts> or tag_q<Ts, Y >));
-
-
-template <class T, template <class ...> class ...Ys> concept     tagged_q =                         tabbed_q<T, tag<Ys>...>;
-template <class T, template <class ...> class ...Ys> concept   retagged_q = tag_q<T, Ys...> and not tabbed_q<T, tag<Ys>...>;
-
-template <template <class ...> class Y, class ...Ts> concept     tagged_p =                         tabbed_p<tag<Y>, Ts...>;
-template <template <class ...> class Y, class ...Ts> concept   retagged_p = tag_p<Y, Ts...> and not tabbed_p<tag<Y>, Ts...>;
+template <template <class ...> class Y, class ...Ts> concept          all_tags_p =          all_tabs_p<tag<Y>, Ts...>;
+template <template <class ...> class Y, class ...Ts> concept          any_tags_p =          any_tabs_p<tag<Y>, Ts...>;
+template <template <class ...> class Y, class ...Ts> concept array_or_any_tags_p = array_or_any_tabs_p<tag<Y>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

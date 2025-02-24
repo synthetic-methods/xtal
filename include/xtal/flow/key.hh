@@ -18,22 +18,14 @@ Wrapper used to index an existing type. \
 ///\see e.g. [../processor/polymer.hh]. \
 
 template <class ..._s>	struct  key;
-template <class ..._s>	using   key_s = bond::compose_s<let_t<_s...>, key<>>;
-template <class ..._s>	concept key_q = bond:: tagged_p<key_s, _s...>;
-
-template <class ..._s>
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-key_f       (auto &&...oo),
-key_s<_s...>(XTAL_REF_(oo)...))
+template <class ..._s>	using   key_s = bond::compose_s<let_t< _s...>, key<>>;
+template <class ..._s>	concept key_q = bond:: all_tags_p<key_s, _s...>;
+template <           >	struct  key<> : cell::header<signed, bond::tag<key_s>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <>
-struct key<>
-:	cell::header<signed, bond::tag<key_s>>
-{
-};
+XTAL_DEF_(let) key_f = [] XTAL_1FN_(call) (key_s<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

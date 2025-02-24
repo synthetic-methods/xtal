@@ -95,7 +95,7 @@ struct slicer
 
 				///\returns the delay until the next event to be processed. \
 
-				XTAL_DEF_(inline,let)
+				XTAL_DEF_(return,inline,let)
 				delay()
 				noexcept -> delay_type
 				{
@@ -104,7 +104,7 @@ struct slicer
 				//\returns the size of the render cycle, \
 				after all future events have been brought forward. \
 
-				XTAL_DEF_(inline,let)
+				XTAL_DEF_(mutate,inline,let)
 				belay()
 				noexcept -> delay_type
 				{
@@ -119,7 +119,7 @@ struct slicer
 				
 				///\returns the delay until the next event. \
 				
-				XTAL_DEF_(inline,let)
+				XTAL_DEF_(mutate,inline,let)
 				relay(delay_type i)
 				noexcept -> delay_type
 				{

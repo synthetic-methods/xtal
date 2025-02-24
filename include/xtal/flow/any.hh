@@ -37,10 +37,10 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		XTAL_DEF_(inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
-		XTAL_DEF_(inline,let) belay()         noexcept -> auto {return        delay();}
-		XTAL_DEF_(inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
-	//	XTAL_DEF_(inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
+		XTAL_DEF_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
+		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
+		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
+	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
 		
 		///\
 		Relays all spooled events while invoking the supplied callback for each intermediate segment. \

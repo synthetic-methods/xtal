@@ -17,21 +17,13 @@ Reifies the `signed` template-parameter for the `flux` and `fuse` methods. \
 
 template <class ..._s>	struct  ion;
 template <class ..._s>	using   ion_s = bond::compose_s<let_t< _s...>, ion<>>;
-template <class ..._s>	concept ion_q = bond:: tagged_p<ion_s, _s...>;
-
-XTAL_FX0_(to) (template <class ..._s>
-XTAL_DEF_(return,inline,let)
-ion_f(auto &&...oo),
-	ion_s<_s...>(XTAL_REF_(oo)...))
+template <class ..._s>	concept ion_q = bond:: all_tags_p<ion_s, _s...>;
+template <           >	struct  ion<> : cell::header<signed, bond::tag<ion_s>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <>
-struct ion<>
-:	cell::header<signed, bond::tag<ion_s>>
-{
-};
+XTAL_DEF_(let) ion_f = [] XTAL_1FN_(call) (ion_s<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

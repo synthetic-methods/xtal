@@ -13,7 +13,7 @@ namespace xtal::process
 
 template <typename ..._s> struct   link;
 template <typename ..._s> using    link_t = confined_t<link<_s...>>;
-template <typename ..._s> concept  link_q = bond::tag_p<link, _s...>;
+template <typename ..._s> concept  link_q = bond::any_tags_p<link, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

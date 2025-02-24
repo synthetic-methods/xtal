@@ -37,33 +37,32 @@ struct beheader
 	using superkind = reinfers<_s...>;
 	using supertype = confined_t<superkind>;
 
-	static_assert(bond::taboo_q<supertype>);
+	static_assert(bond::intab_q<supertype>);
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
+		using R_ = typename S_::tail_type;
+		using X_ = typename R_::head_type;
+		XTAL_DEF_(set) x_ = [] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).tail().head());
 
 	public:// CONSTRUCT
 		using S_::S_;
 
 	public:// OPERATE
-		/*/
+		using S_::operator==;
+
 		XTAL_DEF_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
+		requires complete_q<_std::variant_size<X_>>
 		{
-			using W_ = typename S_::tail_type;
-			using X_ = typename W_::head_type;
-			if constexpr (complete_q<_std::variant_size<X_>>) {
-				return S_::operator==(t) and S_::tail() == t.tail();
-			}
-			else {
-				return S_::operator==(t);
-			}
+			auto const &s = S_::self();
+			return s.operator==(t) and x_(s).index() == x_(t).index();
 		}
-		/***/
+
 		XTAL_DEF_(return,inline,let)
 		operator << (auto &&u) const
 		noexcept -> decltype(auto)
@@ -74,8 +73,8 @@ struct beheader
 		operator << (any_q auto &&u) const
 		noexcept -> decltype(auto)
 		{
-			using  V_ = bond::compose_s<S_, bond::hypertag<>>;
-			using  U_ = bond::compose_s<S_, bond::hypertag<XTAL_ALL_(u)>>;
+			using  V_ = bond::compose_s<S_, bond::tagged<>>;
+			using  U_ = bond::compose_s<S_, bond::tagged<XTAL_ALL_(u)>>;
 			if constexpr (same_q<T_, V_>) {
 				return U_(S_::self(), XTAL_REF_(u));
 			}
@@ -104,7 +103,7 @@ struct beheader
 		operator << (any_q auto &&u) const
 		noexcept -> auto
 		{
-			using  V_ = bond::compose_s<S_, bond::hypertag<>>;
+			using  V_ = bond::compose_s<S_, bond::tagged<>>;
 			return V_(S_::head()) << (S_::tail() << XTAL_REF_(u));
 		}
 

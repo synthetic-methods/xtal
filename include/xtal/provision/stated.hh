@@ -13,7 +13,7 @@ namespace xtal::provision
 
 template <typename ..._s> struct   stated;
 template <typename ..._s> using    stated_t = confined_t<stated<_s...>>;
-template <typename ..._s> concept  stated_q = bond::tag_p<stated, _s...>;
+template <typename ..._s> concept  stated_q = bond::any_tags_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

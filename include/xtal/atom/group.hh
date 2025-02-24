@@ -15,28 +15,23 @@ namespace xtal::atom
 ///\
 Extends `point` with point-wise multiplication. \
 
-template <class ..._s>	struct  multiplicative_group;
-template <class ..._s>	using   multiplicative_group_t = typename multiplicative_group<_s...>::type;
-template <class ..._s>	concept multiplicative_group_q = bond::array_tag_p<multiplicative_group_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...Us>	struct  multiplicative_group;
+template <class ...Us>	using   multiplicative_group_t = typename multiplicative_group<Us...>::type;
+template <class ...Us>	concept multiplicative_group_q = bond::array_or_any_tags_p<multiplicative_group_t, Us...> and fixed_shaped_q<Us...>;
+
+XTAL_DEF_(let) multiplicative_group_f = [] XTAL_1FN_(call) (_detail::fake_f<multiplicative_group_t>);
 
 
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-multiplicative_group_f(auto &&...oo),
-	_detail::factory<multiplicative_group_t>::
-		template make<f>(XTAL_REF_(oo)...))
-
-
-template <scalar_q ..._s> requires same_q<_s...>
-struct multiplicative_group<_s ...>
-:	multiplicative_group<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct multiplicative_group<Us ...>
+:	multiplicative_group<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ..._s>
+template <class ...Us>
 struct multiplicative_group
 {
 	template <class T>
-	using endotype = typename point<_s...>::template homotype<T>;
+	using endotype = typename point<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<multiplicative_group_t>>;
@@ -70,7 +65,7 @@ struct multiplicative_group
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
-		requires same_q<_s...>
+		requires common_q<Us...>
 		{
 			_detail::initialize_with(S_::begin(), size(), value_type{1});
 		}
@@ -81,7 +76,7 @@ struct multiplicative_group
 		XTAL_NEW_(implicit)
 		homotype(_std::initializer_list<value_type> xs)
 		noexcept
-		requires same_q<_s...>
+		requires common_q<Us...>
 		{
 			auto const sN = xs.   size(); assert(sN <= size);
 			auto       x0 = xs.  begin();
@@ -101,23 +96,31 @@ struct multiplicative_group
 			return S_::template blanket<N_value>();
 		}
 
-		using S_::operator* ;
-		using S_::operator/ ;
-		using S_::operator% ;
-		using S_::operator*=;
-		using S_::operator/=;
-		using S_::operator%=;
+		using S_::operator*; using S_::operator*=;
+		using S_::operator/; using S_::operator/=;
+		using S_::operator%; using S_::operator%=;
 
-		XTAL_DEF_(return,inline,let) operator * (bond::subtabbed_q<T>      auto const &t) const noexcept -> auto   {return t*self();}
-		XTAL_DEF_(return,inline,let) operator * (                          auto const &t) const noexcept -> auto   {return S_::template zip_from<[] (auto const &u, auto const &v) XTAL_0FN_(to) (u * v)>(self(),   t );}
-		XTAL_DEF_(return,inline,let) operator / (                          auto const &t) const noexcept -> auto   {return S_::template zip_from<[] (auto const &u, auto const &v) XTAL_0FN_(to) (u / v)>(self(),   t );}
-		XTAL_DEF_(return,inline,let) operator % (                          auto const &t) const noexcept -> auto   {return S_::template zip_from<[] (auto const &u, auto const &v) XTAL_0FN_(to) (u % v)>(self(),   t );}
-		XTAL_DEF_(mutate,inline,let) operator *=(fixed_shaped_q<homotype>  auto const &t)       noexcept -> auto & {return S_::template zip_with<[] (auto       &u, auto const &v) XTAL_0FN_(do) (u *=v)>(XTAL_REF_(t));}
-		XTAL_DEF_(mutate,inline,let) operator /=(fixed_shaped_q<homotype>  auto const &t)       noexcept -> auto & {return S_::template zip_with<[] (auto       &u, auto const &v) XTAL_0FN_(do) (u /=v)>(XTAL_REF_(t));}
-		XTAL_DEF_(mutate,inline,let) operator %=(fixed_shaped_q<homotype>  auto const &t)       noexcept -> auto & {return S_::template zip_with<[] (auto       &u, auto const &v) XTAL_0FN_(do) (u %=v)>(XTAL_REF_(t));}
-		XTAL_DEF_(mutate,inline,let) operator *=(_std::initializer_list<value_type>    t)       noexcept -> auto & requires same_q<_s...> {return S_::self() *= T(t);}
-		XTAL_DEF_(mutate,inline,let) operator /=(_std::initializer_list<value_type>    t)       noexcept -> auto & requires same_q<_s...> {return S_::self() /= T(t);}
-		XTAL_DEF_(mutate,inline,let) operator %=(_std::initializer_list<value_type>    t)       noexcept -> auto & requires same_q<_s...> {return S_::self() %= T(t);}
+		XTAL_DEF_(return,inline,let)
+		operator * (fixed_shaped_q<S_> auto const &o) const
+		noexcept -> auto
+		requires un_n<requires (value_type v) {v *= o;}>
+		{
+			if constexpr (bond::tab_preference_p<decltype(o), T>) {
+				return o * self();
+			}
+			else {
+				return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x * y)>(self(), o);
+			}
+		}
+	//	XTAL_DEF_(return,inline,let) operator * (fixed_shaped_q<S_>     auto const &o) const noexcept -> auto   requires un_n<requires (value_type v) {v *= o;}> {return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x *  y)>(self(),   o );}
+		XTAL_DEF_(return,inline,let) operator / (fixed_shaped_q<S_>     auto const &o) const noexcept -> auto   requires un_n<requires (value_type v) {v /= o;}> {return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x /  y)>(self(),   o );}
+		XTAL_DEF_(return,inline,let) operator % (fixed_shaped_q<S_>     auto const &o) const noexcept -> auto   requires un_n<requires (value_type v) {v %= o;}> {return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x %  y)>(self(),   o );}
+		XTAL_DEF_(mutate,inline,let) operator *=(fixed_shaped_q<S_>     auto const &o)       noexcept -> auto & requires un_n<requires (value_type v) {v *= o;}> {return S_::template zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x *= y)>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let) operator /=(fixed_shaped_q<S_>     auto const &o)       noexcept -> auto & requires un_n<requires (value_type v) {v /= o;}> {return S_::template zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x /= y)>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let) operator %=(fixed_shaped_q<S_>     auto const &o)       noexcept -> auto & requires un_n<requires (value_type v) {v %= o;}> {return S_::template zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x %= y)>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let) operator *=(_std::initializer_list<value_type> o)       noexcept -> auto & requires common_q<Us...> {return S_::self() *= T(o);}
+		XTAL_DEF_(mutate,inline,let) operator /=(_std::initializer_list<value_type> o)       noexcept -> auto & requires common_q<Us...> {return S_::self() /= T(o);}
+		XTAL_DEF_(mutate,inline,let) operator %=(_std::initializer_list<value_type> o)       noexcept -> auto & requires common_q<Us...> {return S_::self() %= T(o);}
 
 	};
 	using type = bond::derive_t<homotype>;
@@ -129,27 +132,23 @@ struct multiplicative_group
 ///\
 Extends `point` with point-wise addition. \
 
-template <class ..._s>	struct  additive_group;
-template <class ..._s>	using   additive_group_t = typename additive_group<_s...>::type;
-template <class ..._s>	concept additive_group_q = bond::array_tag_p<additive_group_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...Us>	struct  additive_group;
+template <class ...Us>	using   additive_group_t = typename additive_group<Us...>::type;
+template <class ...Us>	concept additive_group_q = bond::array_or_any_tags_p<additive_group_t, Us...> and fixed_shaped_q<Us...>;
 
-XTAL_FX0_(to) (template <auto f=_std::identity{}>
-XTAL_DEF_(return,inline,let)
-additive_group_f(auto &&...oo),
-	_detail::factory<additive_group_t>::
-		template make<f>(XTAL_REF_(oo)...))
+XTAL_DEF_(let) additive_group_f = [] XTAL_1FN_(call) (_detail::fake_f<additive_group_t>);
 
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct additive_group<_s ...>
-:	additive_group<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct additive_group<Us ...>
+:	additive_group<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ..._s>
+template <class ...Us>
 struct additive_group
 {
 	template <class T>
-	using endotype = typename point<_s...>::template homotype<T>;
+	using endotype = typename point<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<additive_group_t>>;
@@ -170,18 +169,27 @@ struct additive_group
 		using S_::S_;
 
 	public:// OPERATE
-		using S_::operator+ ;
-		using S_::operator- ;
-		using S_::operator+=;
-		using S_::operator-=;
+		using S_::operator+; using S_::operator+=;
+		using S_::operator-; using S_::operator-=;
 
-		XTAL_DEF_(return,inline,let) operator * (bond::subtabbed_q<T>   auto const &t) const noexcept -> auto   {return t + self();}
-		XTAL_DEF_(return,inline,let) operator + (                       auto const &t) const noexcept -> auto   {return S_::template zip_from<[] (auto const &u, auto const &v) XTAL_0FN_(to) (u + v)>(self(),   t );}
-		XTAL_DEF_(return,inline,let) operator - (                       auto const &t) const noexcept -> auto   {return S_::template zip_from<[] (auto const &u, auto const &v) XTAL_0FN_(to) (u - v)>(self(),   t );}
-		XTAL_DEF_(mutate,inline,let) operator +=(fixed_shaped_q         auto const &t)       noexcept -> auto & {return S_::template zip_with<[] (auto       &u, auto const &v) XTAL_0FN_(do)     (u +=v)>(XTAL_REF_(t));}
-		XTAL_DEF_(mutate,inline,let) operator -=(fixed_shaped_q         auto const &t)       noexcept -> auto & {return S_::template zip_with<[] (auto       &u, auto const &v) XTAL_0FN_(do)     (u -=v)>(XTAL_REF_(t));}
-		XTAL_DEF_(mutate,inline,let) operator +=(_std::initializer_list<value_type> t)       noexcept -> auto & requires same_q<_s...> {return S_::self() += T(t);}
-		XTAL_DEF_(mutate,inline,let) operator -=(_std::initializer_list<value_type> t)       noexcept -> auto & requires same_q<_s...> {return S_::self() -= T(t);}
+		XTAL_DEF_(return,inline,let)
+		operator + (fixed_shaped_q auto const &o) const
+		noexcept -> auto
+		requires un_n<requires (value_type v) {v += o;}>
+		{
+			if constexpr (bond::tab_preference_p<decltype(o), T>) {
+				return o + self();
+			}
+			else {
+				return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x + y)>(self(), o);
+			}
+		}
+	//	XTAL_DEF_(return,inline,let) operator + (fixed_shaped_q         auto const &o) const noexcept -> auto   requires un_n<requires (value_type v) {v += o;}> {return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x +  y)>(self(),   o );}
+		XTAL_DEF_(return,inline,let) operator - (fixed_shaped_q         auto const &o) const noexcept -> auto   requires un_n<requires (value_type v) {v -= o;}> {return S_::template zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x -  y)>(self(),   o );}
+		XTAL_DEF_(mutate,inline,let) operator +=(fixed_shaped_q         auto const &o)       noexcept -> auto & requires un_n<requires (value_type v) {v += o;}> {return S_::template zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x += y)>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let) operator -=(fixed_shaped_q         auto const &o)       noexcept -> auto & requires un_n<requires (value_type v) {v -= o;}> {return S_::template zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x -= y)>(XTAL_REF_(o));}
+		XTAL_DEF_(mutate,inline,let) operator +=(_std::initializer_list<value_type> o)       noexcept -> auto & requires common_q<Us...> {return S_::self() += T(o);}
+		XTAL_DEF_(mutate,inline,let) operator -=(_std::initializer_list<value_type> o)       noexcept -> auto & requires common_q<Us...> {return S_::self() -= T(o);}
 
 	};
 	using type = bond::derive_t<homotype>;

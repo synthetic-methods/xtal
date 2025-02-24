@@ -14,9 +14,9 @@ namespace xtal::atom
 Defines a statically-bounded `type` that supports homogeneous/heterogeneous construction, \
 as well as expression-templates. \
 
-template <class ...As>	struct  block;
-template <class ...As>	using   block_t = typename block<As...>::type;
-template <class ...As>	concept block_q = bond::     tag_p<block_t, As...>;
+template <class ...Us>	struct  block;
+template <class ...Us>	using   block_t = typename block<Us...>::type;
+template <class ...Us>	concept block_q = bond::     any_tags_p<block_t, Us...>;
 
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
 template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};
@@ -25,8 +25,8 @@ template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<b
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
 
-template <class ...As> struct   superblock;
-template <class ...As> using    superblock_t = typename superblock<As...>::type;
+template <class ...Us> struct   superblock;
+template <class ...Us> using    superblock_t = typename superblock<Us...>::type;
 
 template <class U, auto N, auto ...Ns> struct superblock<U   [N][Ns]...> : superblock<superblock_t<U[Ns]...>   [N]> {};
 template <class U, auto N, auto ...Ns> struct superblock<U(&)[N][Ns]...> : superblock<superblock_t<U[Ns]...>(&)[N]> {};
@@ -186,16 +186,16 @@ struct superblock<U   [N]>
 
 }///////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...As> requires same_q<As...>
-struct block<As ...>
-:	block<common_t<As...>[sizeof...(As)]>
+template <scalar_q ...Us> requires common_q<Us...>
+struct block<Us ...>
+:	block<common_t<Us...>[sizeof...(Us)]>
 {
 };
-template <class ...As>
+template <class ...Us>
 struct block
 {
 	template <class T>
-	using endotype = typename _detail::superblock<As...>::template homotype<T>;
+	using endotype = typename _detail::superblock<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<block_t>>;
@@ -205,9 +205,12 @@ struct block
 	{
 		using S_ = holotype<T>;
 
-		template <class _, class ..._As> struct form_           {using type = bond::compose_s<T, bond::hypertag<_As...>>;};
-		template <class _              > struct form_<_       > {using type = T;};
-		template <class _              > struct form_<_, As...> {using type = T;};
+		template <class _, class ...As> struct form_           {using type = bond::compose_s<T, bond::tagged<As...>>;};
+		template <class _             > struct form_<_, Us...> {using type = T;};
+		template <class _             > struct form_<_       > {using type = T;};
+		
+		template <class _, common_q ...As> requires scalar_q<As...>
+		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
 
 	public:// OPERATE
 		using S_::size;
@@ -222,7 +225,7 @@ struct block
 		///\
 		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
  		
-		template <class ..._As> using form_t = typename form_<void, _As...>::type;
+		template <class ...Xs> using form_t = typename form_<void, Xs...>::type;
 		
 		///\returns a specialized instance of the underlying template using the argument types `Xs...`. \
 
@@ -251,14 +254,14 @@ struct block
 		self(constant_q auto count),
 		{
 			auto constexpr N = count();
-			if constexpr (same_q<As...>) {
+			if constexpr (common_q<Us...>) {
 				static_assert(N <= size());
 				return reform<V(&)[N]>();
 			}
 			else {
 				static_assert(N == size());
 				static_assert(same_q<V, value_type>);
-				return reform<_std::add_lvalue_reference_t<As>...>();
+				return reform<_std::add_lvalue_reference_t<Us>...>();
 			}
 		})
 
@@ -271,7 +274,7 @@ struct block
 		twin() const
 		noexcept -> auto
 		{
-			return reform<_std::remove_cvref_t<As>...>();
+			return reform<_std::remove_cvref_t<Us>...>();
 		}
 
 		///\returns the first `count` elements of `this` as a truncated copy of `U`. \
@@ -283,14 +286,14 @@ struct block
 		XTAL_DEF_(return,inline,let)
 		twin(constant_q auto count),
 		{
-			if constexpr (same_q<As...>) {
+			if constexpr (common_q<Us...>) {
 				static_assert(count() <= size());
 				return reform<V[count]>();
 			}
 			else {
 				static_assert(count() == size());
 				static_assert(same_q<V, value_type>);
-				return reform<_std::remove_cvref_t<As>...>();
+				return reform<_std::remove_cvref_t<Us>...>();
 			}
 		})
 
@@ -315,7 +318,7 @@ struct block
 		XTAL_DEF_(return,inline,let)
 		element(auto i),
 		noexcept -> decltype(auto)
-		requires same_q<As...>
+		requires common_q<Us...>
 		{
 			if constexpr (I) {i += I;} assert(i < size);
 			return self().operator[](i);

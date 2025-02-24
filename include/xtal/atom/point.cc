@@ -13,6 +13,12 @@ namespace xtal::atom::_test
 
 //atic_assert(atomic_q<point_t<float[2]>>);
 
+static_assert(same_q<point_t<int[1]>, decltype(point_t<int[1]>{}*2)>);
+static_assert(same_q<point_t<int[1]>, decltype(2*point_t<int[1]>{})>);
+
+static_assert(1 == (point_t<int[1]>{}*2).size());
+static_assert(1 == (2*point_t<int[1]>{}).size());
+
 static_assert(not counted_q<point_t<        int[2]>>);
 static_assert(not counted_q<point_t<counter_t<>[2]>>);
 static_assert(not counted_q<point_t<  size_type[2]>>);

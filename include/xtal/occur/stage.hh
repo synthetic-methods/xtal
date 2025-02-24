@@ -23,11 +23,7 @@ Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
 template <class ..._s> struct   stage;
 template <class ..._s> using    stage_t =     confined_t<stage< _s...>>;
-template <class ..._s> concept  stage_q = bond::tagged_p<stage, _s...> ;
-
-template <typename ...As>
-XTAL_DEF_(return,inline,let) stage_f(auto &&...oo)
-noexcept -> decltype(auto) {return stage_t<As...>(XTAL_REF_(oo)...);}
+template <class ..._s> concept  stage_q = bond::all_tags_p<stage, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,6 +102,11 @@ struct stage
 
 	};
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+XTAL_DEF_(let) stage_f = [] XTAL_1FN_(call) (stage_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

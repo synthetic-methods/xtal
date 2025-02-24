@@ -43,6 +43,8 @@ struct factory
 	}
 
 };
+template <template <class ...> class T_>
+XTAL_DEF_(let) fake_f = [] XTAL_1FN_(call) (factory<T_>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
