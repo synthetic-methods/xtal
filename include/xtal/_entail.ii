@@ -39,6 +39,11 @@ template <auto  N>	using      sign_constant_t	= _retail::   sign_constant_t<N>;
 //\
 Structural...
 
+template <         class ...Ts>	using       isotropic_t	=                          _retail::    isotropic  <Ts...>;
+template <         class ...Ts>	using       epitropic_t	=                          _retail::    epitropic  <Ts...>;
+template <         class ...Ts>	using      isomorphic_t	=                          _retail::   isomorphic  <Ts...>;
+template <         class ...Ts>	using      epimorphic_t	=                          _retail::   epimorphic  <Ts...>;
+
 template <         class ...Ts>	concept     isotropic_q	=                          _retail::    isotropic_q<Ts...>;///< `Ts` are         the same modulo qualifiers.
 template <         class ...Ts>	concept     epitropic_q	=                          _retail::    epitropic_q<Ts...>;///< `Ts` are interconvertible modulo qualifiers.
 template <         class ...Ts>	concept    isomorphic_q	=                          _retail::   isomorphic_q<Ts...>;///< `Ts` are `isotropic` or `isotropic<value_type>`.
@@ -111,7 +116,8 @@ template <class F, class ...Xs>	concept  automorphism_p	= (some_q<Xs...> and...a
 //\
 Valued...
 
-template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=                          _retail::         sign_v<N, Z    >;
+template <auto  N, auto   Z=0 >	auto constexpr   sign_v	=                          _retail::         sign_v<N, Z    >;// Sign of `N`, where `0 ->  Z`.
+template <auto  N             >	auto constexpr cosign_v	=                          _retail::       cosign_v<N       >;// Sign of LSB, where `0 -> -1`.
 template <auto  M, auto     N >	auto constexpr   skip_v	=                          _retail::         skip_v<M, N    >;
 template <auto  M, auto     N >	auto constexpr  above_v	=                          _retail::        above_v<M, N    >;
 template <auto  M, auto     N >	auto constexpr  below_v	=                          _retail::        below_v<M, N    >;

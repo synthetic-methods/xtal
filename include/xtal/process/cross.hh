@@ -51,11 +51,11 @@ struct cross<W, U, As...>
 		method(auto &&...xs) const
 		noexcept -> auto
 		{
-			auto const &y_ = head();
-			auto const  x  = bond::pack_f(XTAL_REF_(xs)...);
+			auto const &x_ = head();
+			auto const  y  = bond::pack_f(XTAL_REF_(xs)...);
 			return [&, this]<auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(to) (S_::template method<Is...>(bond::pack_dot_f(x, get<I>(y_))...))
-			(bond::seek_s<bond::pack_size_n<decltype(y_)>> {});
+				XTAL_0FN_(to) (S_::template method<Is...>(bond::pack_dot_f(get<I>(x_), y)...))
+			(bond::seek_s<bond::pack_size_n<decltype(x_)>> {});
 		}
 
 	};

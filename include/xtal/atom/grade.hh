@@ -13,9 +13,9 @@ namespace xtal::atom
 ///\
 Extends `group` with point-wise addition and differential succession. \
 
-template <class         ..._s>	struct   grade;
-template <class         ..._s>	using    grade_t = typename grade<_s...>::type;
-template <class         ..._s>	concept  grade_q = bond::array_tag_p<grade_t, _s...> and fixed_shaped_q<_s...>;
+template <class ..._s>	struct  grade;
+template <class ..._s>	using   grade_t = typename grade<_s...>::type;
+template <class ..._s>	concept grade_q = bond::array_tag_p<grade_t, _s...> and fixed_shaped_q<_s...>;
 
 
 XTAL_FX0_(to) (template <auto f=_std::identity{}>

@@ -13,12 +13,12 @@ namespace xtal::atom
 ///\
 Extends `block` with function application and functional construction. \
 
-template <class ...As>	struct   quanta;
-template <class ...As>	using    quanta_t = typename quanta<As...>::type;
-template <class ...As>	concept  quanta_q = bond::array_tag_p<quanta_t, As...> and fixed_shaped_q<As...>;
+template <class ...As>	struct  quanta;
+template <class ...As>	using   quanta_t = typename quanta<As...>::type;
+template <class ...As>	concept quanta_q = bond::array_tag_p<quanta_t, As...> and fixed_shaped_q<As...>;
 
-template <class U, auto  N, auto  ...As> struct   quanta<U   [N][As]...> : quanta<quanta_t<U[As]...>   [N]> {};
-template <class U, auto  N, auto  ...As> struct   quanta<U(&)[N][As]...> : quanta<quanta_t<U[As]...>(&)[N]> {};
+template <class U, auto N, auto ...Ns> struct   quanta<U   [N][Ns]...> : quanta<quanta_t<U[Ns]...>   [N]> {};
+template <class U, auto N, auto ...Ns> struct   quanta<U(&)[N][Ns]...> : quanta<quanta_t<U[Ns]...>(&)[N]> {};
 
 
 XTAL_FX0_(to) (template <auto f=_std::identity{}>

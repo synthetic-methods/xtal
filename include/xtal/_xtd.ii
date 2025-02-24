@@ -147,6 +147,12 @@ template <class T> concept trivial                 = trivially_instructible<T> a
 
 ////////////////////////////////////////////////////////////////////////////////
 
+template <class T, class S> concept             derived_from =                             _std::derived_from<T, S>;
+template <class T, class S> concept    strictly_derived_from = not _std::same_as<T, S> and _std::derived_from<T, S>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 template <class T           > concept              reference = _std::       is_reference_v<T>;
 template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;
 template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;

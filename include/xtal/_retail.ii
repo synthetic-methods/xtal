@@ -125,6 +125,7 @@ template <class X, class F    >	concept  automorphism_q	=  same_q<return_t<F, X>
 Valued...
 
 template <auto  N, auto   Z=0 >	auto constexpr   sign_v	= (0 < N) - (N < 0) + (N == 0)*sign_type{Z};
+template <auto  N             >	auto constexpr cosign_v	= -sign_v<N&1, -1>;
 template <auto  M, auto     N >	auto constexpr   skip_v	= (M < 0)? N: (M <= N) + N;
 template <auto  M, auto     N >	auto constexpr  above_v	= (M < N)? N: static_cast<XTAL_ALL_(N)>(M + 1);
 template <auto  M, auto     N >	auto constexpr  below_v	= (N < M)? N: static_cast<XTAL_ALL_(N)>(M - 1);

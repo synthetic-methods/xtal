@@ -56,6 +56,7 @@ TAG_("couple")
 		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.blanket() == 0);
 
 	}
+
 	TRY_("couple production (multiplicative)")
 	{
 		using W =  couple_t<T_aphex, T_alpha>;

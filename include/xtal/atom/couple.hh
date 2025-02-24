@@ -14,9 +14,9 @@ namespace xtal::atom
 Extends the multiplicative `group` with the scalar sum/product. \
 Provides even/odd-reflection iff `size() == 2`. \
 
-template <class ..._s>	struct   couple;
-template <class ..._s>	using    couple_t = typename couple<_s...>::type;
-template <class ..._s>	concept  couple_q = bond::array_tag_p<couple_t, _s...> and fixed_shaped_q<_s...>;
+template <class ...As>	struct  couple;
+template <class ...As>	using   couple_t = typename couple<As...>::type;
+template <class ...As>	concept couple_q = bond::array_tag_p<couple_t, As...> and fixed_shaped_q<As...>;
 
 
 XTAL_FX0_(to) (template <auto f=_std::identity{}>
@@ -28,21 +28,21 @@ couple_f(auto &&...oo),
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ..._s> requires same_q<_s...>
-struct couple<_s ...>
-:	couple<common_t<_s...>[sizeof...(_s)]>
+template <scalar_q ...As> requires same_q<As...>
+struct couple<As ...>
+:	couple<common_t<As...>[sizeof...(As)]>
 {
 };
-template <class ..._s>
+template <class ...As>
 struct couple
 {
-	using A_fit = bond::fit<_s...>;
-	using A_sigma = typename A_fit::sigma_type;
-	using A_alpha = typename A_fit::alpha_type;
-	using A_aphex = typename A_fit::aphex_type;
+	using _fit = bond::fit<As...>;
+	using sigma_type = typename _fit::sigma_type;
+	using delta_type = typename _fit::delta_type;
+	using alpha_type = typename _fit::alpha_type;
 	
 	template <class T>
-	using endotype = typename multiplicative_group<_s...>::template homotype<T>;
+	using endotype = typename multiplicative_group<As...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -119,7 +119,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator++(int) const
 		noexcept -> auto
-		requires same_q<_s...>
+		requires same_q<As...>
 		{
 			auto t = S_::twin();
 			value_type u{};
@@ -133,7 +133,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator--(int) const
 		noexcept -> auto
-		requires same_q<_s...>
+		requires same_q<As...>
 		{
 			auto t = S_::twin();
 			value_type u;
@@ -162,12 +162,12 @@ struct couple
 
 			if constexpr (0 < N_sgn) {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(to) (u +...+ (                             get<I>(s)))
+					XTAL_0FN_(to) (u +...+ get<I>(s))
 				(bond::seek_s<size>{});
 			}
 			else {
 				return [&]<auto ...I> (bond::seek_t<I...>)
-					XTAL_0FN_(to) (u +...+ (scale_type{-sign_v<I&1, -1>}*get<I>(s)))
+					XTAL_0FN_(to) (u +...+ (scale_type{cosign_v<I>}*get<I>(s)))
 				(bond::seek_s<size>{});
 			}
 		}
@@ -189,15 +189,17 @@ struct couple
 			auto &s = self();
 			
 			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
+				sigma_type constexpr  i{I{}};
+				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                                v, v);}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I{}&1, -1>}*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),    v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), _1*v, v);}
 			});
 
 			return u;
 		}
-		template <int N_sgn=1> requires same_q<_s...>
+		template <int N_sgn=1> requires same_q<As...>
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
@@ -207,9 +209,11 @@ struct couple
 			value_type u{0};
 			
 			bond::seek_out_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
+				sigma_type constexpr  i{I{}};
+				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),                                get<I{}>(s), get<I{}>(t));}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), scale_type{-sign_v<I{}&1, -1>}*get<I{}>(s), get<I{}>(t));}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
 			});
 			
 			return u;
@@ -301,6 +305,11 @@ struct couple
 	};
 	using type = bond::derive_t<homotype>;
 
+};
+template <scalar_q U>
+struct couple<U>
+:	couple<U[2]>
+{
 };
 
 
