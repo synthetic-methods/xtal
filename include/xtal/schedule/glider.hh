@@ -57,7 +57,7 @@ struct glider
 				using typename R_::event_type;
 
 			private:// ACCESS
-				using L_cue     = typename R_::event_type::cue_layout;
+				using L_cue     = typename R_::event_type::layout_type;
 				using U_tailed  =      valued_u<L_cue    >;
 				using V_shuttle = atom::grade_t<L_cue    >;
 				using U_shuttle = flow::  cue_s<V_shuttle>;

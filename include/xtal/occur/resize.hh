@@ -65,8 +65,8 @@ template <> struct resize<    > : resize<size_type> {};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static_assert(bond:: tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
-static_assert(bond::tab_convertible_q<resize_t<unsigned>, resize_t<  signed>>);
+static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
+static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<  signed>>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

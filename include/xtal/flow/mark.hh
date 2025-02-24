@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-
+#include "../cell/header.hh"
 
 
 
@@ -16,66 +16,21 @@ Governs access to the `supertype`. \
 ///\see `flow::mask`. \
 
 template <class ..._s>	struct  mark;
-template <class ..._s>	concept mark_q = bond:: tagged_p<mark, _s...>;
-template <class ..._s>	using   mark_s = bond::compose_s<let_t<_s...>, cell::confined<mark<>>>;
+template <class ..._s>	using   mark_s = bond::compose_s<let_t< _s...>, mark<>>;
+template <class ..._s>	concept mark_q = bond:: tagged_p<mark_s, _s...>;
 
-template <class ..._s>
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-mark_f       (auto &&...oo),
-mark_s<_s...>(XTAL_REF_(oo)...))
+XTAL_FX0_(to) (template <class ..._s>
+XTAL_DEF_(return,inline,let)
+mark_f(auto &&...oo),
+	mark_s<_s...>(XTAL_REF_(oo)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
 struct mark<>
+:	cell::header<signed, bond::tag<mark_s>>
 {
-	using superkind = cell::confer<signed, bond::tag<mark>>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		using S_ = bond::compose_s<S, superkind>;
-		using T_ = typename S_::self_type;
-
-	public:
-		using S_::S_;
-
-		XTAL_DEF_(return,inline,let)
-		operator << (auto &&u) const
-		noexcept -> decltype(auto)
-		{
-			return S_::operator<<(XTAL_REF_(u));
-		}
-		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u) const
-		noexcept -> auto
-		requires same_q<T_, mark_s<>>
-		{
-			return mark_s<XTAL_ALL_(u)>(S_::self(), XTAL_REF_(u));
-		}
-
-		using mark_layout = typename S_::tail_type[1];
-
-	};
-	template <mark_q S>
-	class subtype<S> : public bond::compose_s<S, superkind>
-	{
-		using S_ = bond::compose_s<S, superkind>;
-
-	public:
-		using S_::S_;
-
-		XTAL_DEF_(return,inline,let)
-		operator << (any_q auto &&u) const
-		noexcept -> auto
-		{
-			return mark_f(S_::head()) << (S_::tail() << XTAL_REF_(u));
-		}
-
-		using mark_layout = succedent_s<typename S_::mark_layout>;
-
-	};
 };
 
 

@@ -74,7 +74,6 @@ struct define
 				operator T(), R_::head())
 
 			};
-
 		};
 		///\
 		Attaches `T`, and appends to the arguments of `method` and `function`. \

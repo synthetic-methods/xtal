@@ -13,25 +13,23 @@ namespace xtal::flow
 
 ////////////////////////////////////////////////////////////////////////////////
 ///\
-Wrapper used to index an existing type. \
+Insulated `cell::header` used to prefix `assignment`. \
 
-///\see e.g. [../processor/polymer.hh]. \
+template <class ..._s>	struct  assign;
+template <class ..._s>	using   assign_s = bond::compose_s<let_t< _s...>, assign<>>;
+template <class ..._s>	concept assign_q = bond:: tagged_p<assign_s, _s...>;
 
-template <class ..._s>	struct  key;
-template <class ..._s>	using   key_s = bond::compose_s<let_t<_s...>, key<>>;
-template <class ..._s>	concept key_q = bond:: tagged_p<key_s, _s...>;
-
-template <class ..._s>
-XTAL_FX0_(to) (XTAL_DEF_(return,inline,let)
-key_f       (auto &&...oo),
-key_s<_s...>(XTAL_REF_(oo)...))
+XTAL_FX0_(to) (template <class ...Ts>
+XTAL_DEF_(return,inline,let)
+assign_f(Ts &&...ts),
+	assign_s<based_t<Ts>...>(XTAL_REF_(ts)...))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
-struct key<>
-:	cell::header<signed, bond::tag<key_s>>
+struct assign<>
+:	cell::header<bond::tag<assign_s>>
 {
 };
 
@@ -39,4 +37,3 @@ struct key<>
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
-

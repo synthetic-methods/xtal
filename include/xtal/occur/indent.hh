@@ -1,13 +1,13 @@
 #pragma once
 #include "./any.hh"
 
-#include "./mask.hh"
+#include "../flow/mask.hh"
 
 
 
 
 XTAL_ENV_(push)
-namespace xtal::flow
+namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
@@ -78,7 +78,7 @@ struct indent<Ns...>
 		{}
 
 		template <extent_type N_mask=-1>
-		struct afflux
+		struct incept
 		{
 			///\todo\
 			Test `address`ing, since it's conveyed by the base-`T` (i.e. `path`).

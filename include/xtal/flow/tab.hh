@@ -45,12 +45,15 @@ struct tab
 		fuse(auto &&o)
 		noexcept -> signed
 		{
-			if constexpr (bond::tab_convertible_q<T_, decltype(o)>) {
-				return S_::template fuse<N_ion>(XTAL_REF_(o).template apply<T_>());
-			}
-			else {
-				return S_::template fuse<N_ion>(XTAL_REF_(o));
-			}
+			return S_::template fuse<N_ion>(XTAL_REF_(o));
+		}
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		fuse(different_q<T_> auto &&o)
+		noexcept -> signed
+		requires bond::tab_compatible_q<T_, decltype(o)>
+		{
+			return S_::template fuse<N_ion>(XTAL_REF_(o).template apply<T_>());
 		}
 
 	};

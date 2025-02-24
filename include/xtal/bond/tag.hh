@@ -36,11 +36,11 @@ struct tag
 
 	};
 };
-template <class ...As>
+template <class ..._s>
 struct hypertag
 {
 	template <class T>
-	using subtype = typename T::taboo::template hypertype<As...>;
+	using subtype = typename T::taboo::template hypertype<_s...>;
 
 };
 

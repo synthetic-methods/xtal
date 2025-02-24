@@ -66,12 +66,16 @@ template <class   I, class ...Ts> concept  some_tab_p = (...or  tabbed_q<Ts, ide
 template <class   T, class ...Is> concept array_tab_q = some_tab_q<T, Is...> and (...and (array_shaped_q<T > or tab_q<T , Is>));
 template <class   I, class ...Ts> concept array_tab_p = some_tab_p<I, Ts...> and (...and (array_shaped_q<Ts> or tab_q<Ts, I >));
 
+template <           class ...Ts> struct        tab_comparable;
 template <           class ...Ts> struct        tab_compatible;
+template <           class ...Ts> concept       tab_comparable_q      = tab_comparable<based_t<Ts>...>{}();
 template <           class ...Ts> concept       tab_compatible_q      = tab_compatible<based_t<Ts>...>{}();
-template <           class ...Ts> concept       tab_convertible_q     = tab_compatible_q<Ts...> and different_q<Ts...>;
 
-template <           class ...Ts> struct        tab_compatible        : logical_constant_t<same_q<        Ts... >                                     > {};
-template <         taboo_q ...Ts> struct        tab_compatible<Ts...> : logical_constant_t<same_q<taboo_u<Ts>...> and tab_compatible_q<taboo_s<Ts>...>> {};
+template <           class ...Ts> struct        tab_comparable        : logical_constant_t<same_q<        Ts... >> {};
+template <         taboo_q ...Ts> struct        tab_comparable<Ts...> : logical_constant_t<same_q<taboo_u<Ts>...>> {};
+
+template <           class ...Ts> struct        tab_compatible        :                                                   tab_comparable<Ts...>  {};
+template <         taboo_q ...Ts> struct        tab_compatible<Ts...> : _std::conjunction<tab_compatible<taboo_s<Ts>...>, tab_comparable<Ts...>> {};
 
 
 
