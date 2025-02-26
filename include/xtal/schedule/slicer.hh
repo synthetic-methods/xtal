@@ -12,7 +12,7 @@ namespace xtal::schedule
 /////////////////////////////////////////////////////////////////////////////////
 ///\
 Provides an (in)queue for the `variant`s `Ys...` on the target object, \
-schedule via `influx` and processed in segments via `reflux`. \
+schedule via `influx` and processed in segments via `pump`. \
 
 ///\todo\
 Allow for schedule beyond the current window, \

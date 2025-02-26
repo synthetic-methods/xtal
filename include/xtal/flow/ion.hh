@@ -17,7 +17,7 @@ Reifies the `signed` template-parameter for the `flux` and `fuse` methods. \
 
 template <class ..._s>	struct  ion;
 template <class ..._s>	using   ion_s = bond::compose_s<let_t< _s...>, ion<>>;
-template <class ..._s>	concept ion_q = bond:: all_tags_p<ion_s, _s...>;
+template <class ..._s>	concept ion_q = bond::tagged_p<ion_s, _s...>;
 template <           >	struct  ion<> : cell::header<signed, bond::tag<ion_s>> {};
 
 

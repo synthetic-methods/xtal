@@ -1,8 +1,9 @@
 #pragma once
 #include "../bond.hh"
-#include "../flow/all.hh"// `_retail`
+#include "../flow/any.hh"// `_retail`
+#include "../flow/tag.hh"
 #include "../flow/mask.hh"
-
+#include "../flow/assess.hh"
 
 
 
@@ -72,6 +73,23 @@ struct define
 
 				XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
 				operator T(), R_::head())
+
+			public:// FLOW
+
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				fuse(auto &&o)
+				noexcept -> signed
+				{
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
+				template <signed N_ion>
+				XTAL_DEF_(return,inline,let)
+				fuse(same_q<flow::assess_s<T>> auto &&o)
+				noexcept -> signed
+				{
+					return R_::heading(XTAL_REF_(o).tail());
+				}
 
 			};
 		};
@@ -238,7 +256,7 @@ struct define
 			};
 		};
 		///\
-		Assigns `T`, allowing update via `influx` and aggregated inspection via `efflux`. \
+		Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`. \
 		
 		template <extent_type N_mask=-1>
 		struct expect
@@ -271,7 +289,7 @@ struct define
 			};
 		};
 		///\
-		Assigns `T`, allowing update via `efflux` aggregated inspection via `influx`. \
+		Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`. \
 
 		template <extent_type N_mask=-1>
 		struct inspect

@@ -17,7 +17,7 @@ Extends `point` with point-wise multiplication. \
 
 template <class ...Us>	struct  multiplicative_group;
 template <class ...Us>	using   multiplicative_group_t = typename multiplicative_group<Us...>::type;
-template <class ...Us>	concept multiplicative_group_q = bond::array_or_any_tags_p<multiplicative_group_t, Us...> and fixed_shaped_q<Us...>;
+template <class ...Us>	concept multiplicative_group_q = bond::fixed_tagged_with_p<multiplicative_group_t, Us...>;
 
 XTAL_DEF_(let) multiplicative_group_f = [] XTAL_1FN_(call) (_detail::fake_f<multiplicative_group_t>);
 
@@ -134,7 +134,7 @@ Extends `point` with point-wise addition. \
 
 template <class ...Us>	struct  additive_group;
 template <class ...Us>	using   additive_group_t = typename additive_group<Us...>::type;
-template <class ...Us>	concept additive_group_q = bond::array_or_any_tags_p<additive_group_t, Us...> and fixed_shaped_q<Us...>;
+template <class ...Us>	concept additive_group_q = bond::fixed_tagged_with_p<additive_group_t, Us...>;
 
 XTAL_DEF_(let) additive_group_f = [] XTAL_1FN_(call) (_detail::fake_f<additive_group_t>);
 

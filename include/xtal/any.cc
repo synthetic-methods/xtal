@@ -107,11 +107,9 @@ static_assert(_retail::assayed<    0, 1, 2, 3, 4, 5>::rank() ==   5);
 static_assert(_retail::assayed<-1, 0, 1, 2, 3, 4, 5>::rank() ==   5);
 
 
-static_assert(shaped<_std::vector  <float   >>::extent() == -1);
-static_assert(shaped<_std::array   <float, 1>>::extent() ==  1);
-static_assert(shaped<_std::complex <float   >>::extent() ==  2);
-static_assert(shaped<cardinal_constant_t<2>>::extent() ==  2);
-static_assert(shaped< ordinal_constant_t<2>>::extent() ==  2);
+static_assert(fluid_shaped<_std::vector  <float   >>::extent() == -1);
+static_assert(fixed_shaped<_std::array   <float, 1>>::extent() ==  1);
+static_assert(fixed_shaped<_std::complex <float   >>::extent() ==  2);
 
 
 static_assert(cardinal_q<valued_u<cardinal_constant_t<2>>>);

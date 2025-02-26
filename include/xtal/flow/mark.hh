@@ -16,8 +16,8 @@ Governs access to the `supertype`. \
 ///\see `flow::mask`. \
 
 template <class ..._s>	struct  mark;
-template <class ..._s>	using   mark_s = bond::compose_s<let_t < _s...>, mark<>>;
-template <class ..._s>	concept mark_q = bond:: all_tags_p<mark_s, _s...>;
+template <class ..._s>	using   mark_s = bond::compose_s<let_t< _s...>, mark<>>;
+template <class ..._s>	concept mark_q = bond::tagged_p<mark_s, _s...>;
 template <           >	struct  mark<> : cell::header<extent_type, bond::tag<mark_s>> {};
 
 

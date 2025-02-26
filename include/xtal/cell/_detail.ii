@@ -466,7 +466,8 @@ struct refer_iterators
 		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 
-		XTAL_FX2_(do) (template <shaped_q X> requires un_n<counter_q<X>> and un_n<counted_q<X>>
+		XTAL_FX2_(do) (template <class X>
+		requires un_n<counter_q<X>> and un_n<counted_q<X>> and requires (X x) {x.size();}
 		XTAL_DEF_(return,inline,let)
 		subhead(X &&x),
 		noexcept -> decltype(auto)

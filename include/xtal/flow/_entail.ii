@@ -17,9 +17,7 @@ Defines an `inferred` tuple from `...As`. \
 
 template <class ...Ts>	struct    packed;
 template <class ...Ts>	using     packed_t = typename packed<Ts...>::type;
-//\
-template <class ...Ts>	concept   packed_q = bond::all_tags_p<any, Ts...>;
-template <class ...Ts>	concept   packed_q = bond::any_tags_p<packed, Ts...>;
+template <class ...Ts>	concept   packed_q = bond::tagged_with_p<packed, Ts...>;
 template <class ...Ts>	concept unpacked_q = not packed_q<Ts...>;
 
 XTAL_DEF_(let) packed_f = []<class ...Ts> (Ts &&...ts)

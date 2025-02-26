@@ -15,7 +15,7 @@ Extends `quanta` with point-wise operation. \
 
 template <class ...Us>	struct  point;
 template <class ...Us>	using   point_t = typename point<Us...>::type;
-template <class ...Us>	concept point_q = bond::array_or_any_tags_p<point_t, Us...> and fixed_shaped_q<Us...>;
+template <class ...Us>	concept point_q = bond::fixed_tagged_with_p<point_t, Us...>;
 
 XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::fake_f<point_t>);
 

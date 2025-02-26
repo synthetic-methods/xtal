@@ -29,7 +29,7 @@ and the value may be reset on `influx` (ignoring any misalignment issues that ma
 
 template <class ..._s> struct   cursor;
 template <class ..._s> using    cursor_t =  confined_t<cursor< _s...>>;
-template <class ..._s> concept  cursor_q = bond::any_tags_p<cursor, _s...> ;
+template <class ..._s> concept  cursor_q = bond::tagged_with_p<cursor, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@ May be stacked in order to described integral fades. \
 
 template <class ..._s>	struct  cue;
 template <class ..._s>	using   cue_s = bond::compose_s<let_t< _s...>, cue<>>;
-template <class ..._s>	concept cue_q = bond:: all_tags_p<cue_s, _s...>;
+template <class ..._s>	concept cue_q = bond::tagged_p<cue_s, _s...>;
 template <           >	struct  cue<> : cell::header<signed, bond::tag<cue_s>> {};
 
 

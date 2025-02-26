@@ -16,7 +16,7 @@ Provides even/odd-reflection iff `size() == 2`. \
 
 template <class ...Us>	struct  couple;
 template <class ...Us>	using   couple_t = typename couple<Us...>::type;
-template <class ...Us>	concept couple_q = bond::array_or_any_tags_p<couple_t, Us...> and fixed_shaped_q<Us...>;
+template <class ...Us>	concept couple_q = bond::fixed_tagged_with_p<couple_t, Us...>;
 
 XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::fake_f<couple_t>);
 

@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class ..._s>	struct   resample;
 template <class ..._s>	using    resample_t =  confined_t<resample<_s...>>;
-template <class ..._s>	concept  resample_q = bond::any_tags_p<resample, _s...>;
+template <class ..._s>	concept  resample_q = bond::tagged_with_p<resample, _s...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////

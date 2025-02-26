@@ -33,38 +33,32 @@ struct define
 
 		using U_delay = signed;
 
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
+
+	public:// ACCESS
 		using S_::self;
 
-		XTAL_DEF_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
-		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
-		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
-	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
-		
-		///\
-		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
-		The callback parameters are the `counted_t` indicies and the segment index. \
+	public:// FLOW
 
-		XTAL_DEF_(return,inline,let) reflux(auto const &f            ) noexcept -> signed {return reflux(f, 0);}
-		XTAL_DEF_(return,inline,let) reflux(auto const &f, signed &&n) noexcept -> signed {return reflux(f, n);}
-		XTAL_DEF_(return,let)
-		reflux(auto const &f, signed &n)
-		noexcept
-		{
-			signed x = -1;
-			for (auto j = self().delay(), i = decltype(j) {}; j != i; j = self().relay(i = j)) {
-				x &= f(counted_f(i, j), n++);
-			}
-			--n;
-			self().belay();
-			return x;
-		}
-
-		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
-		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
-		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
 		XTAL_DEF_(return,inline,let) influx(auto &&...oo) noexcept -> signed {return self().template flux<+1>(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
+		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
+		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
+		///\
+		Flux handler: resolves the given message, \
+		resorting to `fuse` each comoponent separately if unmatched. \
+
+		///\tparam N_ion a ternary integer indicating the direction of flow, \
+		where `influx` (`+1`) resolves the current instance before any dependencies, \
+		and   `efflux` (`-1`) resolves the any dependencies before current instance. \
+
+		///\returns a ternary integer indicating that the state has changed (`0`), \
+		remains unchanged (`+1`), or was unrecognized (`-1`). \
+
+		///\note\
+		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
+		and truncating propagation when the aggregated result is `1`. \
 
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
@@ -84,25 +78,116 @@ struct define
 		}
 
 		///\
-		Defuse handler: resolves the individual components. \
+		Fuse handler: resolves the individual components. \
 		
-		///\returns a ternary integer indicating that the state has changed (`0`), \
-		remains unchanged (`1`), or was unrecognized (`-1`). \
+		///\returns a ternary integer (\see `flux`). \
 		
-		///\note\
-		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
-		and truncating propagation when the aggregated result is `1`. \
-
-		template <signed N_ion> requires in_n<N_ion,  0>
+		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		fuse(auto &&o)
 		noexcept -> signed
 		{
-			if constexpr (same_q<T, decltype(o)>) {
-				return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
+			if constexpr (N_ion == 0) {
+				return -1;
 			}
 			else {
+				return self().template fuse<0>(XTAL_REF_(o));
+			}
+		}
+		template <signed N_ion> requires in_n<N_ion, 0>
+		XTAL_DEF_(return,inline,let)
+		fuse(same_q<T> auto &&o)
+		noexcept -> signed
+		{
+			return equivalent_f(o, self()) || ((void) self(XTAL_REF_(o)), 0);
+		}
+
+	public:// SCHEDULE
+
+		XTAL_DEF_(return,inline,let) delay()         noexcept -> auto {return bond::fit<signed>::delta_f(count_f(self()));}
+		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
+		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
+	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
+		///\
+		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
+		The callback parameters are the `counted_t` indicies and the segment index. \
+
+		XTAL_DEF_(return,inline,let) pump(auto const &f            ) noexcept -> signed {return pump(f, 0);}
+		XTAL_DEF_(return,inline,let) pump(auto const &f, signed &&n) noexcept -> signed {return pump(f, n);}
+		XTAL_DEF_(return,let)
+		pump(auto const &f, signed &n)
+		noexcept
+		{
+			auto &s = self();
+			signed x = -1;
+			for (auto j = s.delay(), i = j^j; j != i; j = s.relay(i = j)) {
+				x &= f(counted_f(i, j), n++);
+			}
+			--n; s.belay();
+			return x;
+		}
+
+	};
+};
+template <class T>
+struct refine
+{
+	using superkind = _retail::refine<T>;
+
+	template <class S>
+	class subtype : public bond::compose_s<S, superkind>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S, superkind>;
+	
+	public:// CONSTRUCT
+		using S_::S_;
+
+	public:// ACCESS
+		using S_::self;
+
+	public:// OPERATE
+		///\returns `self()` after `influx`ing the given message, \
+		resolving `this` before any dependencies. \
+
+		XTAL_DEF_(inline,let)
+		operator <<=(auto &&o)
+		noexcept -> decltype(auto)
+		{
+			(void) flux<+1>(XTAL_REF_(o));
+			return self();
+		}
+		///\returns `self()` after `efflux`ing the given message, \
+		resolving any dependencies before `this`. \
+
+		XTAL_DEF_(inline,let)
+		operator >>=(auto &&o)
+		noexcept -> decltype(auto)
+		{
+			(void) flux<-1>(XTAL_REF_(o));
+			return self();
+		}
+
+	public:// FLOW
+
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		refuse(bond::tupack_q auto &&o)
+		noexcept -> signed
+		{
+			return _std::apply([this] XTAL_1FN_(call) (flux<N_ion>), XTAL_REF_(o));
+		}
+
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		flux(auto &&...oo)
+		noexcept -> signed
+		{
+			if constexpr (0 == sizeof...(oo)) {
 				return -1;
+			}
+			else {
+				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 			}
 		}
 		template <signed N_ion>
@@ -110,58 +195,26 @@ struct define
 		fuse(auto &&o)
 		noexcept -> signed
 		{
-			return self().template fuse< 0>(XTAL_REF_(o));
+			return S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
 
-		///\
-		Efflux operator: resolves any dependencies before `this`, \
-		used for e.g. `occur::review` and `occur::cursor`. \
-
-		XTAL_DEF_(inline,let)
-		operator >>=(auto &&o)
-		noexcept -> decltype(auto)
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		flux(auto &&o, auto &&...oo)
+		noexcept -> signed
+		requires requires {refuse<N_ion>(XTAL_REF_(o));}
 		{
-			(void) efflux(XTAL_REF_(o));
-			return self();
+			return [this, ...oo=XTAL_REF_(oo)]
+				XTAL_1FN_(and) (flux<N_ion>(oo...)) (refuse<N_ion>(XTAL_REF_(o)));
 		}
-		XTAL_DEF_(inline,let)
-		operator >>=(bond::idiopack_q auto &&o)
-		noexcept -> decltype(auto)
-		{
-			(void) _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(to) (efflux(XTAL_REF_(oo)...))
-			,	XTAL_REF_(o)
-			);
-			return self();
-		}
-
-		///\
-		Influx operator: resolves `this` before any dependencies, \
-		used for e.g. `occur::resize`. \
-
-		XTAL_DEF_(inline,let)
-		operator <<=(auto &&o)
-		noexcept -> decltype(auto)
-		{
-			(void) influx(XTAL_REF_(o));
-			return self();
-		}
-		XTAL_DEF_(inline,let)
-		operator <<=(bond::idiopack_q auto &&o)
-		noexcept -> decltype(auto)
-		{
-			(void) _std::apply([this] (auto &&...oo)
-				XTAL_0FN_(to) (influx(XTAL_REF_(oo)...))
-			,	XTAL_REF_(o)
-			);
-			return self();
-		}
+		template <signed N_ion>
+		XTAL_DEF_(return,inline,let)
+		fuse(auto &&o)
+		noexcept -> signed
+		requires XTAL_TRY_(to)
+			(refuse<N_ion>(XTAL_REF_(o)))
 
 	};
-};
-template <class T>
-struct refine : _retail::refine<T>
-{
 };
 
 
@@ -225,7 +278,6 @@ struct defer
 			XTAL_IF0
 			XTAL_0IF (N_ion < 0) {return [this, oo...] XTAL_1FN_(and) (flux_head<N_ion>(oo...)) (flux_this<N_ion>(XTAL_REF_(oo)...));}
 			XTAL_0IF (0 < N_ion) {return [this, oo...] XTAL_1FN_(and) (flux_this<N_ion>(oo...)) (flux_head<N_ion>(XTAL_REF_(oo)...));}
-			
 		}
 
 		///\note\

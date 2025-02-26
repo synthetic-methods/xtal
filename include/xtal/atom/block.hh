@@ -16,7 +16,7 @@ as well as expression-templates. \
 
 template <class ...Us>	struct  block;
 template <class ...Us>	using   block_t = typename block<Us...>::type;
-template <class ...Us>	concept block_q = bond::     any_tags_p<block_t, Us...>;
+template <class ...Us>	concept block_q = bond::     tagged_with_p<block_t, Us...>;
 
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
 template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};

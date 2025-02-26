@@ -13,10 +13,10 @@ namespace xtal::bond
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <template <class ...> class Y>
+template <template <class ...> class K_>
 struct tag
 {
-	using superkind = tab<tag<Y>>;
+	using superkind = tab<tag<K_>>;
 
 	template <class S>
 	class subtype : public compose_s<S, superkind>
@@ -30,7 +30,7 @@ struct tag
 		:	S_::taboo
 		{
 			template <class ...Xs>
-			using hypertype = Y<Xs...>;
+			using hypertype = K_<Xs...>;
 
 		};
 
@@ -45,13 +45,15 @@ struct tagged
 };
 
 
-template <class T, template <class ...> class ...Ys> concept          all_tags_q =          all_tabs_q<T, tag<Ys>...>;
-template <class T, template <class ...> class ...Ys> concept          any_tags_q =          any_tabs_q<T, tag<Ys>...>;
-template <class T, template <class ...> class ...Ys> concept array_or_any_tags_q = array_or_any_tabs_q<T, tag<Ys>...>;
+template <class T, template <class ...> class ...Ks_> concept       tagged_q      =       tabbed_q     <T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept fixed_tagged_q      = fixed_tabbed_q     <T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept       tagged_with_q =       tabbed_with_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept fixed_tagged_with_q = fixed_tabbed_with_q<T, tag<Ks_>...>;
 
-template <template <class ...> class Y, class ...Ts> concept          all_tags_p =          all_tabs_p<tag<Y>, Ts...>;
-template <template <class ...> class Y, class ...Ts> concept          any_tags_p =          any_tabs_p<tag<Y>, Ts...>;
-template <template <class ...> class Y, class ...Ts> concept array_or_any_tags_p = array_or_any_tabs_p<tag<Y>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept       tagged_p      =       tabbed_p     <tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept fixed_tagged_p      = fixed_tabbed_p     <tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept       tagged_with_p =       tabbed_with_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept fixed_tagged_with_p = fixed_tabbed_with_p<tag<K_>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

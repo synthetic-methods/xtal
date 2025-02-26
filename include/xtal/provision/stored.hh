@@ -13,7 +13,7 @@ namespace xtal::provision
 
 template <typename ..._s> struct   stored;
 template <typename ..._s> using    stored_t = confined_t<stored<_s...>>;
-template <typename ..._s> concept  stored_q = bond::any_tags_p<stored, _s...>;
+template <typename ..._s> concept  stored_q = bond::tagged_with_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,12 +41,12 @@ struct stored<A>
 
 	};
 };
-template <class A>
+template <constant_q A>
 struct stored<A>
 {
 private:
 	static auto constexpr M = XTAL_SYS_(extent, size_type);
-	static auto constexpr N = M&shaped<A>::extent();
+	static auto constexpr N = M&A{}();
 
 public:
 	using superkind = bond::tag<stored>;

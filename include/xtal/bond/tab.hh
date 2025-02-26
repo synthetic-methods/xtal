@@ -24,7 +24,7 @@ Tags `subtype` while preserving Standard Layout. \
 Avoids the `sizeof` inflation that can occur with multiple-inheritance \
 (e.g. frustrated Empty Base Optimization). \
 
-template <class I>
+template <class K>
 struct tab
 {
 	template <class S>
@@ -36,7 +36,7 @@ struct tab
 		struct taboo
 		{
 			using hypotype = S;
-			using peritype = I;
+			using peritype = K;
 
 		};
 
@@ -50,33 +50,51 @@ struct tab
 		struct taboo : intab_t<S>
 		{
 			using hypotype = S;
-			using peritype = I;
+			using peritype = K;
 
 		};
 
 	};
 };
 
-template <                            class ..._s>                                                 struct tabs;
-template <class   T,                  class ...Is> requires different_q<        T , Is...        > struct tabs<T,             Is...> :         _std:: false_type {using type = void;};
-template <class   T,                  class ...Is> requires      same_q<        T , Is...        > struct tabs<T,             Is...> :         _std::  true_type {using type =    T;};
-template <intab_q T,    identity_q I, class ...Is> requires different_q<intab_u<T>, identity_u<I>> struct tabs<T,         I , Is...> : tabs<intab_s<T>,             I,  Is...>   {};
-template <intab_q T,    identity_q I, class ...Is> requires      same_q<intab_u<T>, identity_u<I>> struct tabs<T,         I , Is...> : tabs<intab_s<T>,                 Is...>   {};
-template <class   T, intercedent_q I, class ...Is>                                                 struct tabs<T,         I , Is...> : tabs<intab_s<T>, precedent_s<I>, Is...>   {};
-template <class   T,  antecedent_q I, class ...Is>                                                 struct tabs<T,         I , Is...> : tabs<        T ,                 Is...>   {};
-template <intab_q T,                  class ...Is>                                                 struct tabs<T, intab_u<T>, Is...> : tabs<intab_s<T>,                 Is...>   {};
-//\
-TODO: Need to be able to check against the top-most `complete_q<peritype>`.
 
-template <class T, class ...Is>	concept          all_tabs_q =         tabs<based_t<T >, based_t<Is>...>{}() ;
-template <class I, class ...Ts>	concept          all_tabs_p = (...and tabs<based_t<Ts>, based_t<I >   >{}());
+////////////////////////////////////////////////////////////////////////////////
 
-template <class T, class ...Is>	concept          any_tabs_q = (...and (all_tabs_q<T ,    identity_t<Is>>));
-template <class I, class ...Ts>	concept          any_tabs_p = (...and (all_tabs_q<Ts,    identity_t<I >>));
+template <class T, class ...Ks>  struct  tabbed;
+template <class K, class ...Ts>  struct  tabbed_with;
 
-template <class T, class ...Is>	concept array_or_any_tabs_q = (...and (any_tabs_q<T , Is> or array_q<T >));
-template <class I, class ...Ts>	concept array_or_any_tabs_p = (...and (any_tabs_q<Ts, I > or array_q<Ts>));
+template <class T, class ...Ks>	concept tabbed_q      =         tabbed<based_t<T >,            based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tabbed_with_q =         tabbed<based_t<T >, identity_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
 
+template <class K, class ...Ts>	concept tabbed_p      = (...and tabbed<based_t<Ts>,            based_t<K >    >{}());///< Matches all `Ts...` with       outer `K`.
+template <class K, class ...Ts>	concept tabbed_with_p = (...and tabbed<based_t<Ts>, identity_t<based_t<K >>   >{}());///< Matches all `Ts...` with inner/outer `K`.
+
+template <class T, class ...Ks>	concept fixed_tabbed_q      =  fixed_shaped_q<T    > and                       tabbed_q     <T , Ks...>  ;///< Matches both `fixed_shaped_q` and `tabbed_q`.
+template <class T, class ...Ks>	concept fixed_tabbed_with_q =  fixed_shaped_q<T    > and                       tabbed_with_q<T , Ks...>  ;///< Matches both `fixed_shaped_q` and `tabbed_with_q`.
+template <class K, class ...Ts>	concept fixed_tabbed_p      = (fixed_shaped_q<Ts...> and...and (array_q<Ts> or tabbed_q     <Ts, K    >));///< Matches both `fixed_shaped_q` and `tabbed_p`.
+template <class K, class ...Ts>	concept fixed_tabbed_with_p = (fixed_shaped_q<Ts...> and...and (array_q<Ts> or tabbed_with_q<Ts, K    >));///< Matches both `fixed_shaped_q` and `tabbed_with_p`.
+///<\note\
+Array signatures are ignored by the `fixed_tabbed(?:_with)_p` checks \
+to allow simultaneous `size` checking. \
+
+
+template <class   T,                   class ...Ks> requires different_q<        T , Ks...        > struct tabbed<T,             Ks...> :         _std:: false_type {using type = void;};
+template <class   T,                   class ...Ks> requires      same_q<        T , Ks...        > struct tabbed<T,             Ks...> :         _std::  true_type {using type =    T;};
+template <class   T,   antecedent_q I, class ...Ks>                                                 struct tabbed<T,         I , Ks...> : tabbed<        T ,                 Ks...>   {};
+template <class   T,  intercedent_q I, class ...Ks>                                                 struct tabbed<T,         I , Ks...> : tabbed<intab_s<T>, precedent_s<I>, Ks...>   {};
+template <intab_q T,     identity_q K, class ...Ks> requires different_q<intab_u<T>, identity_u<K>> struct tabbed<T,         K , Ks...> : tabbed<intab_s<T>,             K,  Ks...>   {};
+template <intab_q T,     identity_q K, class ...Ks> requires      same_q<intab_u<T>, identity_u<K>> struct tabbed<T,         K , Ks...> : tabbed<intab_s<T>,                 Ks...>   {};
+template <intab_q T,                   class ...Ks>                                                 struct tabbed<T, intab_u<T>, Ks...> : tabbed<intab_s<T>,                 Ks...>   {};
+
+template <class K,                     class ...Ts> struct tabbed_with              : _std:: false_type {using type = void;};
+template <class K, tabbed_with_q<K> T, class ...Ts> struct tabbed_with<K, T, Ts...> : _std::  true_type {using type = T   ;};
+template <class K, class            T, class ...Ts> struct tabbed_with<K, T, Ts...> : tabbed_with<K, Ts...> {};
+
+template <class K,                     class ...Ts> using  tabbed_with_t = typename tabbed_with<K, Ts...>::type;
+template <class T,                     class ...Ks> using  tabbed_t      = typename tabbed     <T, Ks...>::type;
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <                      class   ..._s>	struct  tab_comparable              : _std::false_type {};
 template <                      class   ..._s>	struct  tab_compatible              : _std::false_type {};

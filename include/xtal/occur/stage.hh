@@ -23,7 +23,7 @@ Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
 
 template <class ..._s> struct   stage;
 template <class ..._s> using    stage_t =     confined_t<stage< _s...>>;
-template <class ..._s> concept  stage_q = bond::all_tags_p<stage, _s...> ;
+template <class ..._s> concept  stage_q = bond::tagged_p<stage, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,10 +86,10 @@ struct stage
 					auto const &s = t.tail();
 					auto const  k = s.head();
 					if (k == 0b10) {
-						u_table[0b00  ] = o;
-						u_table[0b01  ] = o;
-						u_table[0b10  ] = o;
-						u_table[0b11  ] = o;
+						u_table[0b00] = o;
+						u_table[0b01] = o;
+						u_table[0b10] = o;
+						u_table[0b11] = o;
 					}
 					else {
 						u_table[0b11&k] = o;

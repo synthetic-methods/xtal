@@ -198,43 +198,46 @@ template <class T             >	using       succedent_s	=                       
 //\
 Valued & Sized...
 
-template <         class ...Ts>	using           array_u	=                 common_t<_retail::        array_u<Ts>...>;
-template <         class ...Ts>	using    array_valued_u	=                 common_t<_retail:: array_valued_u<Ts>...>;
-template <         class ...Ts>	using    inner_valued_u	=                 common_t<_retail:: inner_valued_u<Ts>...>;
-template <         class ...Ts>	using    under_valued_u	=                 common_t<_retail:: under_valued_u<Ts>...>;
-template <         class ...Ts>	using    fixed_valued_u	=                 common_t<_retail:: fixed_valued_u<Ts>...>;
-template <         class ...Ts>	using    fluid_valued_u	=                 common_t<_retail:: fluid_valued_u<Ts>...>;
-template <         class ...Ts>	using          valued_u	=                 common_t<_retail::       valued_u<Ts>...>;
+template <         class ...Ts>	concept               array_q	= (some_q<Ts...> and...and _retail::        array_q<Ts>   );
+template <         class ...Ts>	using                 array_u	=                 common_t<_retail::        array_u<Ts>...>;
+template <class T             >	auto constexpr        array_n	=                          _retail::        array_n<T >    ;
 
-template <         class ...Ts>	concept         array_q	= (some_q<Ts...> and...and _retail::        array_q<Ts>);
-template <         class ...Ts>	concept  array_valued_q	= (some_q<Ts...> and...and _retail:: array_valued_q<Ts>);
-template <         class ...Ts>	concept  inner_valued_q	= (some_q<Ts...> and...and _retail:: inner_valued_q<Ts>);
-template <         class ...Ts>	concept  under_valued_q	= (some_q<Ts...> and...and _retail:: under_valued_q<Ts>);
-template <         class ...Ts>	concept  fixed_valued_q	= (some_q<Ts...> and...and _retail:: fixed_valued_q<Ts>);
-template <         class ...Ts>	concept  fluid_valued_q	= (some_q<Ts...> and...and _retail:: fluid_valued_q<Ts>);
-template <         class ...Ts>	concept        valued_q	= (some_q<Ts...> and...and _retail::       valued_q<Ts>);
+template <         class ...Ts>	using          array_valued_u	=                 common_t<_retail:: array_valued_u<Ts>...>;
+template <         class ...Ts>	using          inner_valued_u	=                 common_t<_retail:: inner_valued_u<Ts>...>;
+template <         class ...Ts>	using          under_valued_u	=                 common_t<_retail:: under_valued_u<Ts>...>;
+template <         class ...Ts>	using          fixed_valued_u	=                 common_t<_retail:: fixed_valued_u<Ts>...>;
+template <         class ...Ts>	using          fluid_valued_u	=                 common_t<_retail:: fluid_valued_u<Ts>...>;
+template <         class ...Ts>	using                valued_u	=                 common_t<_retail::       valued_u<Ts>...>;
+
+template <         class ...Ts>	concept        array_valued_q	= (some_q<Ts...> and...and _retail:: array_valued_q<Ts>);
+template <         class ...Ts>	concept        inner_valued_q	= (some_q<Ts...> and...and _retail:: inner_valued_q<Ts>);
+template <         class ...Ts>	concept        under_valued_q	= (some_q<Ts...> and...and _retail:: under_valued_q<Ts>);
+template <         class ...Ts>	concept        fixed_valued_q	= (some_q<Ts...> and...and _retail:: fixed_valued_q<Ts>);
+template <         class ...Ts>	concept        fluid_valued_q	= (some_q<Ts...> and...and _retail:: fluid_valued_q<Ts>);
+template <         class ...Ts>	concept              valued_q	= (some_q<Ts...> and...and _retail::       valued_q<Ts>);
 
 
-template <class T             >	using    tuple_shaped  	=                          _retail::    tuple_shaped  <T >;
-template <class T             >	using    array_shaped  	=                          _retail::    array_shaped  <T >;
-template <class T             >	using    fixed_shaped  	=                          _retail::    fixed_shaped  <T >;
-template <class T             >	using    fluid_shaped  	=                          _retail::    fluid_shaped  <T >;
+template <class T             >	using          tuple_shaped  	=                          _retail::    tuple_shaped  <T >;
+template <class T             >	using          array_shaped  	=                          _retail::    array_shaped  <T >;
+template <class T             >	using          fixed_shaped  	=                          _retail::    fixed_shaped  <T >;
+template <class T             >	using          fluid_shaped  	=                          _retail::    fluid_shaped  <T >;
+template <class T             >	auto constexpr tuple_shaped_n	=                          _retail::    tuple_shaped_n<T >;
+template <class T             >	auto constexpr array_shaped_n	=                          _retail::    array_shaped_n<T >;
+template <class T             >	auto constexpr fixed_shaped_n	=                          _retail::    fixed_shaped_n<T >;
+template <class T             >	auto constexpr fluid_shaped_n	=                          _retail::    fluid_shaped_n<T >;
+template <         class ...Ts>	concept        tuple_shaped_q	= (some_q<Ts...> and...and _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept        array_shaped_q	= (some_q<Ts...> and...and _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept        fixed_shaped_q	= (some_q<Ts...> and...and _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::extent()...>;};
+template <         class ...Ts>	concept        fluid_shaped_q	= (some_q<Ts...> and...and _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
 
-template <         class ...Ts>	concept  tuple_shaped_q	= (some_q<Ts...> and...and _retail::    tuple_shaped_q<Ts>) and requires {requires same_n<tuple_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  array_shaped_q	= (some_q<Ts...> and...and _retail::    array_shaped_q<Ts>) and requires {requires same_n<array_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  fixed_shaped_q	= (some_q<Ts...> and...and _retail::    fixed_shaped_q<Ts>) and requires {requires same_n<fixed_shaped<Ts>::extent()...>;};
-template <         class ...Ts>	concept  fluid_shaped_q	= (some_q<Ts...> and...and _retail::    fluid_shaped_q<Ts>);// and requires same size or size == -1
-
-template <class T             >	using          shaped  	=                          _retail::          shaped  <T >;
-template <class T             >	using           fixed  	=                          _retail::           fixed  <T >;
-template <class T             >	using           fluid  	=                          _retail::           fluid  <T >;
-
-template <         class ...Ts>	using           fixed_u	=                 common_t<_retail::           fixed_u<Ts>...>;
-template <         class ...Ts>	using           fluid_u	=                 common_t<_retail::           fluid_u<Ts>...>;
-
-template <         class ...Ts>	concept        shaped_q	= (some_q<Ts...> and...and _retail::          shaped_q<Ts>);
-template <         class ...Ts>	concept         fixed_q	= (some_q<Ts...> and...and _retail::           fixed_q<Ts>);
-template <         class ...Ts>	concept         fluid_q	= (some_q<Ts...> and...and _retail::           fluid_q<Ts>);
+template <class T             >	using                 fixed  	=                          _retail::           fixed  <T >;
+template <class T             >	using                 fluid  	=                          _retail::           fluid  <T >;
+template <class T             >	auto constexpr        fixed_n	=                          _retail::           fixed_n<T >;
+template <class T             >	auto constexpr        fluid_n	=                          _retail::           fluid_n<T >;
+template <         class ...Ts>	using                 fixed_u	=                 common_t<_retail::           fixed_u<Ts>...>;
+template <         class ...Ts>	using                 fluid_u	=                 common_t<_retail::           fluid_u<Ts>...>;
+template <         class ...Ts>	concept               fixed_q	= (some_q<Ts...> and...and _retail::           fixed_q<Ts>);
+template <         class ...Ts>	concept               fluid_q	= (some_q<Ts...> and...and _retail::           fluid_q<Ts>);
 
 
 template <class T             >	using        destruct  	=                          _retail::        destruct  <T >;
@@ -308,6 +311,14 @@ template <         class ...Ts>	concept           vector_q	= (some_q<Ts...> and.
 template <         class ...Ts>	concept           matrix_q	= (some_q<Ts...> and...and _retail::       matrix_q<Ts>);
 template <         class ...Ts>	concept           tensor_q	= (some_q<Ts...> and...and _retail::       tensor_q<Ts>);
 
+template <class T             >	auto constexpr scalar_n	= array_n<T    >;
+template <class T             >	auto constexpr vector_n	= array_n<T    >;
+template <class T             >	auto constexpr matrix_n	= array_n<T    >;
+template <class T             >	auto constexpr tensor_n	= array_n<T    >;
+template <         class ...Ts>	using          scalar_u	= array_u<Ts...>;
+template <         class ...Ts>	using          vector_u	= array_u<Ts...>;
+template <         class ...Ts>	using          matrix_u	= array_u<Ts...>;
+template <         class ...Ts>	using          tensor_u	= array_u<Ts...>;
 
 
 template <class T             >	using            wrappee_t	=                          _retail::      wrappee_t<T >;
@@ -390,10 +401,6 @@ noexcept -> auto
 }
 ///\returns the `size` of the given range. \
 
-///\note\
-If provided with an `iota_view`, \
-returns a `value_type` instead of `size_type` which is twice the shaped. \
-
 template <integral_variable_q Y=size_type>
 XTAL_DEF_(return,inline,let)
 count_f(auto const &t)
@@ -419,8 +426,8 @@ noexcept -> based_t<Y>
 }
 XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take(count_f(ts...));}
-XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_n<shaped_q<decltype(ts)...>> {return  account_f(ts...);}
-XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_n<shaped_q<decltype(ts)...>> {return discount_f(0    );}
+XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_n<fluid_shaped_q<decltype(ts)...>> {return  account_f(ts...);}
+XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_n<fluid_shaped_q<decltype(ts)...>> {return discount_f(0    );}
 
 template <counter_q I0, counter_q IN>
 XTAL_DEF_(return,inline,let)

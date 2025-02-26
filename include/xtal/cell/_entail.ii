@@ -30,8 +30,8 @@ the parent namespace, and with the decorators `As...` if provided. \
 
 template <            typename ...As> struct   any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> using    any_s = bond::compose_s<     S, any<As...>>;
-template <class    T, typename ...As> concept  any_p = bond::any_tags_p<any, T> and complete_q<typename T::template self_s<As...>>;
-template <class ...Ts               > concept  any_q = bond::any_tags_p<any, Ts...>;
+template <class    T, typename ...As> concept  any_p = bond::tagged_with_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class ...Ts               > concept  any_q = bond::tagged_with_p<any, Ts...>;
 
 using any_type = any_s<unit_type>;
 

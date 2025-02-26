@@ -15,7 +15,7 @@ Associates an abstract `state` with an underlying `store`. \
 
 template <typename ..._s> struct   stowed;
 template <typename ..._s> using    stowed_t = confined_t<stowed<_s...>>;
-template <typename ..._s> concept  stowed_q = bond::any_tags_p<stowed, _s...>;
+template <typename ..._s> concept  stowed_q = bond::tagged_with_p<stowed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ namespace xtal::atom
 
 template <class ..._s> struct   spool;
 template <class ..._s> using    spool_t = typename spool<_s...>::type;
-template <class ...Ts> concept  spool_q = bond::any_tags_p<spool_t, Ts...>;
+template <class ...Ts> concept  spool_q = bond::tagged_with_p<spool_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

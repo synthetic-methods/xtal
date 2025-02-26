@@ -13,7 +13,7 @@ namespace xtal::provision
 
 template <typename ..._s> struct   spooled;
 template <typename ..._s> using    spooled_t = confined_t<spooled<_s...>>;
-template <typename ..._s> concept  spooled_q = bond::any_tags_p<spooled, _s...>;
+template <typename ..._s> concept  spooled_q = bond::tagged_with_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,12 +39,12 @@ struct spooled<A>
 
 	};
 };
-template <class A>
+template <constant_q A>
 struct spooled<A>
 {
 private:
 	static auto constexpr M = XTAL_SYS_(extent, size_type);
-	static auto constexpr N = M&shaped<A>::extent();
+	static auto constexpr N = M&A{}();
 
 public:
 	using superkind = bond::tag<spooled>;

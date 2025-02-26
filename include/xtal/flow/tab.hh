@@ -17,8 +17,15 @@ Provides conversion from `tab`-equivalent types when executing `-fuse`. \
 Either define convenience `concept`s based on the `bond::tab` counterparts, \
 or integrate into the base-`(?:fuse|flux)`. \
 
-template <typename ..._s>
-struct tab;
+template <class T, class ...Ks> concept       tabbed_q      = bond::       tabbed_q     <T, Ks...>;
+template <class T, class ...Ks> concept fixed_tabbed_q      = bond:: fixed_tabbed_q     <T, Ks...>;
+template <class T, class ...Ks> concept       tabbed_with_q = bond::       tabbed_with_q<T, Ks...>;
+template <class T, class ...Ks> concept fixed_tabbed_with_q = bond:: fixed_tabbed_with_q<T, Ks...>;
+
+template <class K, class ...Ts> concept       tabbed_p      = bond::       tabbed_p     <K, Ts...>;
+template <class K, class ...Ts> concept fixed_tabbed_p      = bond:: fixed_tabbed_p     <K, Ts...>;
+template <class K, class ...Ts> concept       tabbed_with_p = bond::       tabbed_with_p<K, Ts...>;
+template <class K, class ...Ts> concept fixed_tabbed_with_p = bond:: fixed_tabbed_with_p<K, Ts...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////

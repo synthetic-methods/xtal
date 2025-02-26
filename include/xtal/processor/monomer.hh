@@ -13,7 +13,7 @@ namespace xtal::processor
 
 template <class ..._s> struct  monomer;
 template <class ..._s> using   monomer_t =  confined_t<monomer< _s...>>;
-template <class ..._s> concept monomer_q = bond::any_tags_p<monomer, _s... >;
+template <class ..._s> concept monomer_q = bond::tagged_with_p<monomer, _s... >;
 
 ////////////////////////////////////////////////////////////////////////////////
 

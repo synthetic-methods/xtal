@@ -88,7 +88,7 @@ struct define
 						return 1;
 					}
 				//	Efflux sliced subviews:
-					(void) s.reflux([&] (counted_q auto scan, counter_q auto step)
+					(void) s.pump([&] (counted_q auto scan, counter_q auto step)
 						XTAL_0FN_(to) (s.template flux<N_ion>(rend
 						,	rev.subview(scan)
 						,	cur.subview(scan).skip(step)

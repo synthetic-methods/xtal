@@ -18,7 +18,7 @@ Deified as a `process`'s `binding`, binding the provided arguments. \
 
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::any_tags_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tagged_with_p<bundle, _s...>;
 
 //////////////////////////////////////////////////////////////////////////////////
 

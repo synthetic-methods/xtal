@@ -40,10 +40,10 @@ TAG_("block")
 	{
 		using Z_alpha = block_t<T_alpha[2][4][6]>;
 
-		TRUE_(2 == shaped<         Z_alpha                                    >::extent());
-		TRUE_(4 == shaped<typename Z_alpha::value_type                        >::extent());
-		TRUE_(6 == shaped<typename Z_alpha::value_type::value_type            >::extent());
-		TRUE_(0 == shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
+		TRUE_(2 == fluid_shaped<         Z_alpha                                    >::extent());
+		TRUE_(4 == fluid_shaped<typename Z_alpha::value_type                        >::extent());
+		TRUE_(6 == fluid_shaped<typename Z_alpha::value_type::value_type            >::extent());
+		TRUE_(0 == fluid_shaped<typename Z_alpha::value_type::value_type::value_type>::extent());
 
 	}
 	TRY_("block slicing")

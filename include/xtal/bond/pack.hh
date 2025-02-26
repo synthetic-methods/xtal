@@ -199,7 +199,7 @@ using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_t
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...Ts> concept     pack_q = pack_size_q<Ts...> and (...and          pack_list_q<Ts>);
-template <class ...Ts> concept idiopack_q = pack_q     <Ts...> and (...and same_q<repack_t<Ts>, Ts>);
+template <class ...Ts> concept tupack_q = pack_q     <Ts...> and (...and same_q<repack_t<Ts>, Ts>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

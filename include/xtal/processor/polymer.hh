@@ -2,8 +2,8 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../flow/key.hh"
+#include "../flow/assess.hh"
 #include "../provision/all.hh"
-
 
 
 XTAL_ENV_(push)
@@ -26,7 +26,7 @@ Handle note-offs, i.e. `stage == 1`!
 
 template <class ..._s> struct  polymer;
 template <class ..._s> using   polymer_t =  confined_t<polymer< _s...>>;
-template <class ..._s> concept polymer_q = bond::any_tags_p<polymer, _s... >;
+template <class ..._s> concept polymer_q = bond::tagged_with_p<polymer, _s... >;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -152,8 +152,8 @@ struct polymer<U, As...>
 				{
 					auto u_ = ensemble().scan(i_.head());
 					//\
-					if (1 <= count_f(ensemble())) {
 					if (1 <= count_f(ensemble()) and 1 != u_->influx(occur::stage_f(-1))) {
+					if (1 <= count_f(ensemble()) and 1 != u_->influx(flow::assess_f(occur::stage_f(-1)))) {
 						assert(u_ < ensemble().end() and i_.head() == u_->head());
 						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 					}
@@ -183,7 +183,6 @@ struct polymer<U, As...>
 						//	Recycle/terminate the current voice:
 							auto u = *u_;
 							auto x =  u_->template flux<N_ion>(occur::stage_f(-1), oo...);
-							assert(x != -1);
 							u_ = ensemble().poke(u_, h, XTAL_MOV_(u));
 						}
 						else {
@@ -210,6 +209,8 @@ struct polymer<U, As...>
 				flux(occur::render_q auto &&, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
+					//\
+					ensemble().free([] XTAL_1FN_(dot) (influx(flow::assess_f(occur::stage_f(-1))) == 1));
 					ensemble().free([] XTAL_1FN_(dot) (influx(occur::stage_f(-1)) == 1));
 
 					auto y0 = point_f(rev);

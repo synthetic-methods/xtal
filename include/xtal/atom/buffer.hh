@@ -13,7 +13,7 @@ namespace xtal::atom
 
 template <class ..._s> struct   buffer;
 template <class ..._s> using    buffer_t = typename buffer<_s...>::type;
-template <class ...Ts> concept  buffer_q = bond::any_tags_p<buffer_t, Ts...>;
+template <class ...Ts> concept  buffer_q = bond::tagged_with_p<buffer_t, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

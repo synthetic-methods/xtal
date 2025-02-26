@@ -15,7 +15,7 @@ Extends `block` with function application and functional construction. \
 
 template <class ...Us>	struct  quanta;
 template <class ...Us>	using   quanta_t = typename quanta<Us...>::type;
-template <class ...Us>	concept quanta_q = bond::array_or_any_tags_p<quanta_t, Us...> and fixed_shaped_q<Us...>;
+template <class ...Us>	concept quanta_q = bond::fixed_tagged_with_p<quanta_t, Us...>;
 
 XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::fake_f<quanta_t>);
 
