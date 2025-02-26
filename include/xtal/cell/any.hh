@@ -59,10 +59,10 @@ struct define
 		XTAL_DEF_(return,inline,let) operator << (auto &&t1) const noexcept -> auto {return bond::pack_f(self(), XTAL_REF_(t1));}
 		XTAL_DEF_(return,inline,let) operator >> (auto &&t0) const noexcept -> auto {return bond::pack_f(XTAL_REF_(t0), self());}
 
-		XTAL_DEF_(return,inline,met) operator << (bond::idiopack_q auto &&t0, subtype      &&s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_MOV_(s1)));}
-		XTAL_DEF_(return,inline,met) operator << (bond::idiopack_q auto &&t0, subtype const &s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_REF_(s1)));}
-		XTAL_DEF_(return,inline,met) operator >> (bond::idiopack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
-		XTAL_DEF_(return,inline,met) operator >> (bond::idiopack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
+		XTAL_DEF_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype      &&s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_MOV_(s1)));}
+		XTAL_DEF_(return,inline,met) operator << (bond::tupack_q auto &&t0, subtype const &s1) noexcept -> auto {return bond::repack_f(XTAL_REF_(t0), bond::pack_f(XTAL_REF_(s1)));}
+		XTAL_DEF_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype      &&s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_MOV_(s0)), XTAL_REF_(t1));}
+		XTAL_DEF_(return,inline,met) operator >> (bond::tupack_q auto &&t1, subtype const &s0) noexcept -> auto {return bond::repack_f(bond::pack_f(XTAL_REF_(s0)), XTAL_REF_(t1));}
 
 		XTAL_DEF_(return,inline,let)
 		then(any_q auto &&...oo) const

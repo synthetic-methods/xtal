@@ -86,10 +86,10 @@ struct stage
 					auto const &s = t.tail();
 					auto const  k = s.head();
 					if (k == 0b10) {
-						u_table[0b00  ] = o;
-						u_table[0b01  ] = o;
-						u_table[0b10  ] = o;
-						u_table[0b11  ] = o;
+						u_table[0b00] = o;
+						u_table[0b01] = o;
+						u_table[0b10] = o;
+						u_table[0b11] = o;
 					}
 					else {
 						u_table[0b11&k] = o;
