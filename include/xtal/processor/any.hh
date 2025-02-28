@@ -191,7 +191,7 @@ struct defer<U>
 
 template <_detail::unprocessed_value_q U>
 struct defer<U>
-:	defer<_detail::repeated_t<U>>
+:	defer<_detail::repetitive_t<U>>
 {
 };
 template <_detail::  processed_value_q U>
@@ -256,7 +256,7 @@ struct refer
 };
 template <_detail::unprocessed_q U>
 struct refer<U>
-:	bond::compose<_detail::refer_unprocessed<U>, _retail::refer<_detail::repeated_t<U>>>
+:	bond::compose<_detail::refer_unprocessed<U>, _retail::refer<_detail::repetitive_t<U>>>
 {
 };
 

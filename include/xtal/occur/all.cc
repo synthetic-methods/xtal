@@ -1,6 +1,5 @@
 #include "./any.cc"
 #include "./cursor.cc"
-#include "./indent.cc"
 #include "./render.cc"
 #include "./resize.cc"
 #include "./restep.cc"

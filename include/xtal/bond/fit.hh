@@ -357,6 +357,25 @@ public:
 		}
 	}
 
+	XTAL_DEF_(return,inline,set)
+	aphex_f(real_q auto &&o_re, real_q auto &&o_im)
+	noexcept -> aphex_type
+	{
+		return {alpha_f(XTAL_REF_(o_re)), alpha_f(XTAL_REF_(o_im))};
+	}
+	XTAL_DEF_(return,inline,set)
+	aphex_f(real_q auto &&o_re)
+	noexcept -> aphex_type
+	{
+		return {alpha_f(XTAL_REF_(o_re))};
+	}
+	XTAL_DEF_(return,inline,set)
+	aphex_f(complex_q auto &&o)
+	noexcept -> aphex_type
+	{
+		return aphex_f(o.real(), o.imag());
+	}
+
 
 	static sigma_type constexpr IEC = _std::numeric_limits<alpha_type>::is_iec559? XTAL_SYS_(IEC)&60559: 0;
 

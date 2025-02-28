@@ -27,12 +27,28 @@ template <class U>	concept       unprocessed_q =  unprocessed_value_q<U> or unpr
 template <class U>	concept         processed_q =    processed_value_q<U> or   processed_range_q<U>;
 
 
-template <        class   T> struct   repeated;
-template <       _value_q T> struct   repeated<T> {using type = _xtd::ranges::  repeat_view<T>;};
-template <     iterable_q T> struct   repeated<T> {using type = T;};
-//mplate <   applicable_q T> struct   repeated<T> {using type = _xtd::ranges::generate_view<T>;};
-template <        class   T> using    repeated_t  = typename repeated<T>::type;
-template <        class   T> concept  repeated_q  = different_q<T, repeated_t<T>>;
+template <class T>
+struct repetitive
+{
+	using type = _xtd::ranges::repeat_view<based_t<T>>;
+
+};
+template <iterable_q T> requires un_n<_xtd::ranges::sized_range<based_t<T>>>
+struct repetitive<T>
+{
+	using type = based_t<T>;
+
+};
+/*/
+template <applicable_q T>
+struct repetitive<T>
+{
+	using type = _xtd::ranges::generate_view<based_t<T>>;
+
+};
+/***/
+template <class T>
+using repetitive_t  = typename repetitive<T>::type;
 
 
 ////////////////////////////////////////////////////////////////////////////////
