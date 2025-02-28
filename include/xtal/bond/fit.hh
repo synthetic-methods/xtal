@@ -370,30 +370,17 @@ public:
 	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)*(o_silon)`. \
 
 	XTAL_DEF_(return,inline,set)
-	diplo_f(alpha_type n_zoom, alpha_type o_silon)
-	noexcept -> alpha_type
-	{
-	//	TODO: Handle `consteval`?
-		if constexpr (XTAL_SYS_(builtin)) {
-			return o_silon*__builtin_exp2(n_zoom);
-		}
-		else {
-			auto constexpr N_ln2 = _std::numbers::ln2_v<alpha_type>;
-			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `constant`?
-		}
-	}
-	XTAL_DEF_(return,inline,set)
 	diplo_f(delta_type n_zoom, alpha_type o_silon)
 	noexcept -> alpha_type
 	{
-		if (_std::is_constant_evaluated()) {
+		XTAL_IF1_(consteval) {
 			auto m = _xtd::bit_cast<sigma_type>(n_zoom);
 			m  += unit.mark;
 			m <<= 1 + exponent.shift;
 			m >>= 1;
 			return o_silon*_xtd::bit_cast<alpha_type>(m);
 		}
-		else {
+		XTAL_0IF_(else) {
 			return _std::ldexp(o_silon, (int) n_zoom);// not `constexpr` until `C++23`!
 		}
 	}
@@ -402,6 +389,33 @@ public:
 	noexcept -> alpha_type
 	{
 		return diplo_f(_xtd::bit_cast<delta_type>(n_zoom), o_silon);
+	}
+	XTAL_DEF_(return,inline,set)
+	diplo_f(alpha_type n_zoom, alpha_type o_silon)
+	noexcept -> alpha_type
+	{
+		XTAL_IF1_(consteval) {
+			int constexpr M = 0x01;
+			int constexpr N = 0x10;
+
+			auto n = static_cast<delta_type>(n_zoom);
+			auto u = n_zoom - n;
+			u *= _std::numbers::ln2_v<alpha_type>/diplo_f(M, alpha_1);
+
+			auto v = alpha_1;
+			for (auto i=N; i; --i) {v = _xtd::plus_multiplies(alpha_1, v, u/i);}
+			for (auto i=M; i; --i) {v *= v;}
+
+			v *= diplo_f(n, alpha_1);
+			return o_silon*v;
+		}
+		XTAL_0IF (XTAL_SYS_(builtin)) {
+			return o_silon*__builtin_exp2(n_zoom);
+		}
+		else {
+			auto constexpr N_ln2 = _std::numbers::ln2_v<alpha_type>;
+			return o_silon*exp(n_zoom*N_ln2);// TODO: Handle `constant`?
+		}
 	}
 	XTAL_DEF_(return,inline,set) diplo_f(auto n_zoom, alpha_type o_silon)
 	noexcept -> auto
@@ -451,6 +465,30 @@ public:
 	static alpha_type constexpr haplo_0 = haplo_n<0>;
 	static alpha_type constexpr haplo_1 = haplo_n<1>;
 	static alpha_type constexpr haplo_2 = haplo_n<2>;
+
+
+	XTAL_DEF_(return,inline,set)
+	e2(real_variable_q auto o)
+	noexcept -> decltype(auto)
+	{
+		int constexpr N = 0x02;
+		int constexpr M = 0x10;
+		auto n = static_cast<delta_type>(o);
+		auto u = o - n;
+		u *= _std::numbers::ln2_v<alpha_type>;
+		u *= haplo_f(N);
+
+		auto v = alpha_1;
+		for (auto i=M; i; --i) {
+			v *=      u/i;
+			v +=  alpha_1;
+		}
+		for (auto i=N; i; --i) {
+			v *= v;
+		}
+		v *= diplo_f(n);
+		return v;
+	}
 
 
 ////////////////////////////////////////////////////////////////////////////////

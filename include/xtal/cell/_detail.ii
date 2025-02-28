@@ -308,10 +308,8 @@ struct defer_field<U>
 template <class I, auto ...Ns>
 struct defer_field<_std::integer_sequence<I, Ns...>>
 {
-	using _fit = bond::fit<decltype(Ns)...>;
-
-	static auto constexpr N_coordinate = bond::seek_value_t<Ns...>{};
-	static auto constexpr N_ordinate   = bond::seek_index_t<Ns...>{};
+	static auto constexpr N_coordinate = bond::seek_value_t<_xtd::make_signed_f(Ns)...>{};
+	static auto constexpr N_ordinate   = bond::seek_index_t<_xtd::make_signed_f(Ns)...>{};
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -334,12 +332,6 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
 		XTAL_NEW_(cast)   (subtype, noexcept)
 		
-		XTAL_NEW_(explicit)
-		subtype(infungible_q<subtype> auto &&o, auto &&...oo)
-		noexcept
-		requires un_n<integral_q<decltype(o)>>
-		:	subtype{static_cast<head_type>(XTAL_REF_(o)), XTAL_REF_(oo)...}
-		{}
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
 		noexcept

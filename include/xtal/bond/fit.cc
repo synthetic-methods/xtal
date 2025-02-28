@@ -30,6 +30,10 @@ TAG_("fit")
 {
 	TRY_("`fit` evaluation")
 	{
+		auto constexpr M_sqrt2 = fit<>::diplo_f(0.5);
+		auto constexpr N_sqrt2 = _std::numbers::sqrt2_v<typename fit<>::alpha_type>;
+		TRUE_(N_sqrt2/M_sqrt2 - M_sqrt2/N_sqrt2 < fit<>::epsilon_f(8));
+
 		TRUE_(fit<>::negative.depth == fit<>::full.depth);
 		TRUE_(~fit<>::sign.mask == fit<>::positive.mask);
 		TRUE_(0 != fit<>::template expound_f<2>( 1) and 0 != fit<>::template expound_f<3>( 1));

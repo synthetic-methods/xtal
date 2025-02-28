@@ -50,7 +50,6 @@ template <         class ...Ts>	concept    isomorphic_q	=                       
 template <         class ...Ts>	concept    epimorphic_q	=                          _retail::   epimorphic_q<Ts...>;///< `Ts` are `epitropic` or `epitropic<value_type>`.
 
 template <         class ...Ts>	concept      fungible_q	=                          _retail::     fungible_q<Ts...>;///< `T` and `Ts...` are   related by inheritance.
-template <         class ...Ts>	concept    infungible_q	=                          _retail::   infungible_q<Ts...>;///< `T` and `Ts...` are unrelated by inheritance.
 
 template <         class ...Ts>	concept      multiple_q	=                          _retail::     multiple_q<Ts...>;///< `2 <= sizeof...(Ts)`
 template <         class ...Ts>	concept        single_q	=                          _retail::       single_q<Ts...>;///< `1 == sizeof...(Ts)`
@@ -85,9 +84,6 @@ template <         class ...Ts>	concept        atomic_q	= (some_q<Ts...> and...a
 template <         class ...Ts>	concept     molecular_q	= (some_q<Ts...> and...and _retail::    molecular_q<Ts   >);
 template <         class ...Ts>	concept  submolecular_q	= (some_q<Ts...> and...and _retail:: submolecular_q<Ts   >);
 
-template <class S, class T=S  >	using         qualify_s	=                          _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-template <class S, class T=S  >	using      disqualify_s	=                          _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
-
 template <         auto  ...Ns>	concept     different_n	=                          _retail::    different_n<   Ns...>;///< `Ns...` are different values.
 template <         auto  ...Ns>	concept          same_n	=                          _retail::         same_n<   Ns...>;///< `Ns...` are identical values.
 template <         class ...Ts>	concept     different_q	=                          _retail::    different_q<   Ts...>;///< `Ts...` are different modulo qualifiers.
@@ -95,8 +91,24 @@ template <         class ...Ts>	concept          same_q	=                       
 template <         class ...Ts>	concept          make_q	=                          _retail::         make_q<   Ts...>;///< `Ts...` are constructible from `Ts[0]`.
 template <class T, class ...Ts>	concept          make_p	=                          _retail::         make_p<T, Ts...>;///< `T` is constructible from `Ts...`.
 
-template <class T> XTAL_DEF_(return,inline,let)  funge_f(auto &&o) noexcept -> decltype(auto) {return      static_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
-template <class T> XTAL_DEF_(return,inline,let)  forge_f(auto &&o) noexcept -> decltype(auto) {return reinterpret_cast<_xtd::transfer_cvref_t<decltype(o), based_t<T>>>(o);}
+template <class S, class T=S  >	using         qualify_s	=                          _retail::      qualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+template <class S, class T=S  >	using      disqualify_s	=                          _retail::   disqualify_s<S, T    >;///< Applies the qualifiers on `S` to `T`.
+
+template <class Y, class T>
+XTAL_DEF_(return,inline,let)
+funge_f(T &&t)
+noexcept -> decltype(auto)
+{
+	return static_cast<disqualify_s<T, Y>>(t);
+}
+template <class Y, class T>
+XTAL_DEF_(return,inline,let)
+forge_f(T &&t)
+noexcept -> decltype(auto)
+{
+	if constexpr (fungible_q<T, Y>) {return      static_cast<disqualify_s<T, Y>>(t);}
+	else                            {return reinterpret_cast<disqualify_s<T, Y>>(t);}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////

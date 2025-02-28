@@ -46,7 +46,6 @@ template <         class ...Ts>	struct       fungible              : _std::false
 template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
 template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disjunction<_std::is_base_of<T, T1>, _std::is_base_of<T1, T>> {};
 template <         class ...Ts>	concept      fungible_q	=      fungible<based_t<Ts>...>{}();
-template <         class ...Ts>	concept    infungible_q	=  not fungible<based_t<Ts>...>{}();
 
 template <         class ...Ts>	struct      isotropic ;
 template <         class ...Ts>	struct      epitropic ;
