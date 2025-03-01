@@ -138,6 +138,9 @@ struct define
 		Attaches `T` as a member of `this`, \
 		`dispatch`ing a conditional indicating positivity. \
 
+		///\note\
+		Automatic attachment is currently disabled! \
+
 		template <extent_type N_mask=-1>
 		struct clutch
 		{
@@ -145,7 +148,7 @@ struct define
 
 			using superkind = bond::compose<void
 			,	typename U_choke::template dispatch<N_mask>
-			,	attach<N_mask>
+		//	,	attach<N_mask>
 			>;
 			template <flow::any_q R>
 			class subtype : public bond::compose_s<R, superkind>
