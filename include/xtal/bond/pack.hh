@@ -65,9 +65,11 @@ XTAL_DEF_(return,inline,let)
 pack_item_f(auto &&t)
 noexcept -> decltype(auto)
 {
+	auto constexpr N = pack_size_n<decltype(t)>;
+	auto constexpr K = modulo_v<N, I>;
 	XTAL_IF0
-	XTAL_0IF_(to) (get<I>(XTAL_REF_(t)))
-	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[I];
+	XTAL_0IF_(to) (get<K>(XTAL_REF_(t)))
+	XTAL_0IF_(else) return destruct_f(XTAL_REF_(t))[K];
 }
 template <auto I, auto ...Is>// requires some_n<Is...>
 XTAL_DEF_(return,inline,let)
@@ -198,9 +200,11 @@ using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_t
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...Ts> concept     pack_q = pack_size_q<Ts...> and (...and          pack_list_q<Ts>);
+template <class ...Ts> concept   pack_q = pack_size_q<Ts...> and (...and          pack_list_q<Ts>);
 template <class ...Ts> concept tupack_q = pack_q     <Ts...> and (...and same_q<repack_t<Ts>, Ts>);
 
+
+////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////

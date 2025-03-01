@@ -365,8 +365,8 @@ template <class T             >	concept       indexed_q	=  requires{ XTAL_ANY_(T
 template <class T             >	using       expressee_t	=  decltype( XTAL_ANY_(T)(XTAL_ANY_(unsigned short)) );
 template <class T             >	concept     expressed_q	=  requires{ XTAL_ANY_(T)(XTAL_ANY_(unsigned short));};
 //\
-template <class T             >	concept   inexpressed_q	=  indexed_q<T> and expressed_q<T>;
-template <class T             >	concept   inexpressed_q	=    fixed_q<T> and expressed_q<T>;//FIXME: Improve expression-template `concept`.
+template <class T             >	concept   reexpressed_q	=  indexed_q<T> and expressed_q<T>;
+template <class T             >	concept   reexpressed_q	=    fixed_q<T> and expressed_q<T>;//FIXME: Improve expression-template `concept`.
 
 template <class T             >	struct       iteratee;
 template <class T             >	struct       iterated;
@@ -481,7 +481,7 @@ concept          logical_group_p = requires (based_t<T> t, based_t<U> u) {
 	requires N == 1 or requires {t or u; t and u;};
 };
 template <int N, class T, class U=T>
-concept           binary_group_p = requires (based_t<T> t, based_t<U> u) {
+concept          digital_group_p = requires (based_t<T> t, based_t<U> u) {
 	requires N == 2 or requires {    t ^=u; t |=u; t &=u;};
 	requires N == 1 or requires {~t; t ^ u; t | u; t & u;};
 };
@@ -513,6 +513,52 @@ template <int N, class T, class U=T> concept continuous_field_p =            con
 
 template <int N, class T, class U=T> concept complex_field_p = complex_q<T> or continuous_field_p<2, T, U> and requires (based_t<T> t) {{t.real()}; {t.imag()};};
 template <int N, class T, class U=T> concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;
+
+
+//TODO: Extend the following to remaining groups?
+
+template <class T, class  U=T  >	concept multiplicative_group_q = multiplicative_group_p<0, T, U> and multiplicative_group_p<0, U, T>;
+template <class T, class  U=T  >	concept       additive_group_q =       additive_group_p<0, T, U> and       additive_group_p<0, U, T>;
+template <class T, class  U=T  >	concept       quotient_group_q =       quotient_group_p<0, T, U> and       quotient_group_p<0, U, T>;
+template <class T, class  U=T  >	concept       discrete_group_q =       discrete_group_p<0, T, U> and       discrete_group_p<0, U, T>;
+template <class T, class  U=T  >	concept       integral_group_q =       integral_group_p<0, T, U> and       integral_group_p<0, U, T>;
+template <class T, class  U=T  >	concept        logical_group_q =        logical_group_p<0, T, U> and        logical_group_p<0, U, T>;
+template <class T, class  U=T  >	concept        digital_group_q =        digital_group_p<0, T, U> and        digital_group_p<0, U, T>;
+
+template <         class ...   >	struct  multiplicative_group;
+template <class T              >	struct  multiplicative_group<T       > : logical_constant_t<multiplicative_group_q<T    >   > {};
+template <class T, class    U  >	struct  multiplicative_group<T, U    > : logical_constant_t<multiplicative_group_q<T, U >   > {};
+template <class T, class ...Us >	struct  multiplicative_group<T, Us...> :  _std::conjunction<multiplicative_group  <T, Us>...> {};
+
+template <         class ...   >	struct        additive_group;
+template <class T              >	struct        additive_group<T       > : logical_constant_t<      additive_group_q<T    >   > {};
+template <class T, class    U  >	struct        additive_group<T, U    > : logical_constant_t<      additive_group_q<T, U >   > {};
+template <class T, class ...Us >	struct        additive_group<T, Us...> :  _std::conjunction<      additive_group  <T, Us>...> {};
+
+template <         class ...   >	struct        quotient_group;
+template <class T              >	struct        quotient_group<T       > : logical_constant_t<      quotient_group_q<T    >   > {};
+template <class T, class    U  >	struct        quotient_group<T, U    > : logical_constant_t<      quotient_group_q<T, U >   > {};
+template <class T, class ...Us >	struct        quotient_group<T, Us...> :  _std::conjunction<      quotient_group  <T, Us>...> {};
+
+template <         class ...   >	struct        discrete_group;
+template <class T              >	struct        discrete_group<T       > : logical_constant_t<      discrete_group_q<T    >   > {};
+template <class T, class    U  >	struct        discrete_group<T, U    > : logical_constant_t<      discrete_group_q<T, U >   > {};
+template <class T, class ...Us >	struct        discrete_group<T, Us...> :  _std::conjunction<      discrete_group  <T, Us>...> {};
+
+template <         class ...   >	struct        integral_group;
+template <class T              >	struct        integral_group<T       > : logical_constant_t<      integral_group_q<T    >   > {};
+template <class T, class    U  >	struct        integral_group<T, U    > : logical_constant_t<      integral_group_q<T, U >   > {};
+template <class T, class ...Us >	struct        integral_group<T, Us...> :  _std::conjunction<      integral_group  <T, Us>...> {};
+
+template <         class ...   >	struct         logical_group;
+template <class T              >	struct         logical_group<T       > : logical_constant_t<       logical_group_q<T    >   > {};
+template <class T, class    U  >	struct         logical_group<T, U    > : logical_constant_t<       logical_group_q<T, U >   > {};
+template <class T, class ...Us >	struct         logical_group<T, Us...> :  _std::conjunction<       logical_group  <T, Us>...> {};
+
+template <         class ...   >	struct         digital_group;
+template <class T              >	struct         digital_group<T       > : logical_constant_t<       digital_group_q<T    >   > {};
+template <class T, class    U  >	struct         digital_group<T, U    > : logical_constant_t<       digital_group_q<T, U >   > {};
+template <class T, class ...Us >	struct         digital_group<T, Us...> :  _std::conjunction<       digital_group  <T, Us>...> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

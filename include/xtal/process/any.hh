@@ -146,7 +146,7 @@ struct define
 			}
 			else {
 				auto &s = self();
-				auto  d = self().template deify<decltype(xs)...>(constant_t<Is>{}...);
+				auto  d = s.template deify<decltype(xs)...>(constant_t<Is>{}...);
 				return (s.*d) (XTAL_REF_(xs)...);
 			}
 		})
@@ -177,9 +177,9 @@ struct define
 				using R_ = bond::compose_s<R, superkind>;
 
 			public:// CONSTRUCT
-				using R_::R_;
+				using R_::R_;//NOTE: Inherited and respecialized!
 				///\
-				Initialize `arguments` using the arguments supplied. \
+				Initialize `arguments` using those supplied. \
 
 				XTAL_NEW_(explicit)
 				subtype(Xs &&...xs)

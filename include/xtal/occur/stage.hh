@@ -34,7 +34,7 @@ struct stage
 	using superkind = bond::compose<bond::tag<stage>
 	,	As...
 	,	_detail::refer_equality<signed>
-	,	_detail::refer_binary_logic<signed>
+	,	_detail::refer_digital_logic<signed>
 	,	defer<signed>
 	>;
 	template <class S>

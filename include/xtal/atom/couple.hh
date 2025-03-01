@@ -11,7 +11,7 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 ///\
-Extends the multiplicative `group` with the scalar sum/product. \
+Extends `multiplicative_group` with the scalar sum/product. \
 Provides even/odd-reflection iff `size() == 2`. \
 
 template <class ...Us>	struct  couple;
@@ -62,21 +62,21 @@ struct couple
 		XTAL_NEW_(explicit)
 		homotype(bool u)
 		noexcept
-		requires in_n<size, 2>
+		requires common_q<Us...> and in_n<size, 2>
 		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
 		{}
 		XTAL_NEW_(explicit)
-		homotype(value_type u)
+		homotype(complete_t<value_type, scale_type> u)
 		noexcept
-		requires in_n<size, 2> and continuous_field_q<value_type>
-		:	S_{u, one/u}
+		requires common_q<Us...> and in_n<size, 2> and continuous_field_q<value_type>
+		:	S_{u, scale_type{one}/u}
 		{
 			assert(u != value_type{0});
 		}
 		XTAL_NEW_(explicit)
 		homotype(subjective_q auto const &u)
 		noexcept
-		requires in_n<size, 2> and continuous_field_q<value_type>
+		requires common_q<Us...> and in_n<size, 2> and continuous_field_q<value_type>
 		:	homotype{objective_f(u)}
 		{}
 

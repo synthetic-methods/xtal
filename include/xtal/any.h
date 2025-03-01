@@ -309,23 +309,24 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 ////////////////////////////////////////////////////////////////////////////////
 
 #if not XTAL_ENV
-#define XTAL_0FN                    constexpr noexcept///< Lambda declaration after `[captures]` and `(arguments)`.
+#define XTAL_0FN                 constexpr   noexcept///< Lambda declaration after `[captures]` and `(arguments)`.
 #elif   XTAL_VER_(MSVC)
 //\
-#define XTAL_0FN                    constexpr noexcept          [[msvc::forceinline]]//NOTE: Fixed 2024-12-27!
-#define XTAL_0FN                    constexpr noexcept
+#define XTAL_0FN                 constexpr   noexcept          [[msvc::forceinline]]//NOTE: Fixed 2024-12-27!
+#define XTAL_0FN                 constexpr   noexcept
 #elif   XTAL_VER_(GNUC)
-#define XTAL_0FN                    constexpr noexcept __attribute__((always_inline))
+#define XTAL_0FN                 constexpr   noexcept __attribute__((always_inline))
 #elif   XTAL_VER_(LLVM)
 #define XTAL_0FN                                       __attribute__((always_inline))\
-                                    constexpr noexcept
+                                 constexpr   noexcept
 #endif//XTAL_0FN
 
 #define XTAL_0FN_(ARG,...)                   XTAL_0FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]` and `(arguments)`.
 #define XTAL_1FN_(ARG,...)                   XTAL_1FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]`.
 
-#define XTAL_0FN_do(...)                     XTAL_0FN        {         (__VA_ARGS__);}                   ///< Lambda perform statement after `[captures]` and `(arguments)`.
-#define XTAL_0FN_to(...)                     XTAL_0FN        {return   (__VA_ARGS__);}                   ///< Lambda return expression after `[captures]` and `(arguments)`.
+#define XTAL_0FN_if(...)                     XTAL_0FN requires requires {         (__VA_ARGS__);} {}     ///< Lambda perform statement after `[captures]` and `(arguments)`.
+#define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
+#define XTAL_0FN_to(...)                     XTAL_0FN                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
 
 #define XTAL_1FN_to(...)           <class ...XTAL_NYM_(Ts)>\
                                             (XTAL_NYM_(Ts) \

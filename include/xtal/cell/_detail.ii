@@ -548,15 +548,15 @@ struct refer_qualities
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class U, int N=0>
-struct refer_binary_logic
+struct refer_digital_logic
 :	bond::compose<void
-	,	refer_binary_logic<U, 1>
-	,	refer_binary_logic<U, 2>
+	,	refer_digital_logic<U, 1>
+	,	refer_digital_logic<U, 2>
 	>
 {
 };
 template <class U>
-struct refer_binary_logic<U, 1>
+struct refer_digital_logic<U, 1>
 {
 	template <class S>
 	class subtype : public S
@@ -570,7 +570,7 @@ struct refer_binary_logic<U, 1>
 	};
 };
 template <class U>
-struct refer_binary_logic<U, 2>
+struct refer_digital_logic<U, 2>
 {
 	template <class S>
 	class subtype : public S
@@ -587,7 +587,7 @@ struct refer_binary_logic<U, 2>
 template <class U, int N=0>
 struct refer_logics
 :	bond::compose<void
-	,	refer_binary_logic<U, N>
+	,	refer_digital_logic<U, N>
 	>
 {
 };

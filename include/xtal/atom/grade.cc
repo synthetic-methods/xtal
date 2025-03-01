@@ -29,14 +29,14 @@ TAG_("atom", "grade")
 	using D3 = grade_t<int[3]>;
 	using D4 = grade_t<int[4]>;
 	
-	TRY_("partial construction")
+	TRY_("grade construction")
 	{
 		D4 d4{1000};
 
 		TRUE_(d4 == D4{1000, 0, 0, 0});
 
 	}
-	TRY_("integration")
+	TRY_("grade integration")
 	{
 		D4 d4{1000, 100, 10, 1};
 
@@ -45,6 +45,16 @@ TAG_("atom", "grade")
 		TRUE_(++d4 == D4{1331, 133, 13, 1});
 		TRUE_(--d4 == D4{1210, 121, 12, 1});
 		TRUE_(--d4 == D4{1100, 110, 11, 1});
+
+	}
+	TRY_("grade addition")
+	{
+		D2 d2_0{2, 2};
+		D2 d2_1{5, 7};
+
+		TRUE_(d2_0+d2_1 == D2{ 7,  9});
+		d2_0 += d2_1;
+		TRUE_(d2_0      == D2{ 7,  9});
 
 	}
 }

@@ -45,6 +45,16 @@ TAG_("point")
 		TRUE_(x_y == U2_alpha{3, 5});
 
 	}
+	TRY_("point scalar-division")
+	{
+		using U2_alpha = point_t<T_alpha[2]>;
+		using U2_aphex = point_t<T_aphex[2]>;
+		U2_alpha x{1, 2}, y = T_alpha{1.0}/x;
+		TRUE_(y == U2_alpha{1.0, 0.5});
+		y /= T_alpha{0.5};
+		TRUE_(y == U2_alpha{2.0, 1.0});
+
+	}
 	TRY_("point scalar-multiplication")
 	{
 		using U2_alpha = point_t<T_alpha[2]>;

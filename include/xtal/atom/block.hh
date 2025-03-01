@@ -16,7 +16,11 @@ as well as expression-templates. \
 
 template <class ...Us>	struct  block;
 template <class ...Us>	using   block_t = typename block<Us...>::type;
-template <class ...Us>	concept block_q = bond::     tagged_with_p<block_t, Us...>;
+
+template <class ...Ts>	concept               block_q = bond::tagged_with_p<block_t, Ts...>;
+template <class ...Ts>	concept   coordinated_block_q = (...and different_q<decltype(Ts::coordinate), _std::identity>);
+template <class ...Ts>	concept uncoordinated_block_q = (...and      same_q<decltype(Ts::coordinate), _std::identity>);
+
 
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
 template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};
@@ -157,8 +161,7 @@ struct superblock<U   [N]>
 		homotype(same_q<size_type> auto const n)
 		noexcept
 		{
-			assert(n <= size);
-			if (_std::is_constant_evaluated() or n < size) {
+			if (n < size or _std::is_constant_evaluated()) {
 				S_::fill(value_type{});
 			}
 		}
@@ -167,7 +170,8 @@ struct superblock<U   [N]>
 		noexcept
 		:	homotype(count_f(xs))
 		{
-			_detail::move_to<T::ordinate>(S_::begin(), point_f(xs), count_f(xs));
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::move_to<T::ordinate>(S_::begin(), point_f(xs), n);
 		}
 		XTAL_NEW_(explicit)
 		homotype(iterable_q auto &&xs)
@@ -175,7 +179,8 @@ struct superblock<U   [N]>
 		requires epimorphic_q<homotype, decltype(xs)>
 		:	homotype(count_f(xs))
 		{
-			_detail::copy_to<T::ordinate>(S_::begin(), XTAL_REF_(xs));
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::copy_to<T::ordinate>(S_::begin(), point_f(XTAL_REF_(xs)), n);
 		}
 
 	};
@@ -209,7 +214,7 @@ struct block
 		template <class _             > struct form_<_, Us...> {using type = T;};
 		template <class _             > struct form_<_       > {using type = T;};
 		
-		template <class _, common_q ...As> requires scalar_q<As...>
+		template <class _, scalar_q ...As> requires common_q<As...>
 		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
 
 	public:// OPERATE
@@ -222,6 +227,9 @@ struct block
 		using typename S_::value_type;
 		using typename S_::scale_type;
 
+		using coordinate_type = value_type;
+		using   ordinate_type = value_type;
+
 		///\
 		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
  		
@@ -232,7 +240,7 @@ struct block
 		XTAL_FX0_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,set)
 		form(Xs &&...xs),
-			form_t<Xs...>{XTAL_REF_(xs)...})
+			form_t<_xtd::decay_value_reference_t<Xs>...>{XTAL_REF_(xs)...})
 
 		///\returns a specialized instance of `this` using the underlying template. \
 
@@ -254,14 +262,20 @@ struct block
 		self(constant_q auto count),
 		{
 			auto constexpr N = count();
-			if constexpr (common_q<Us...>) {
-				static_assert(N <= size());
-				return reform<V(&)[N]>();
+			auto constexpr M = N < 0? size + N: N;
+			static_assert(M <= size());
+			XTAL_IF0
+			XTAL_0IF (M == size()) {
+				return self();
+			}
+			XTAL_0IF (common_q<Us...>) {
+				return reform<V(&)[M]>();
 			}
 			else {
-				static_assert(N == size());
-				static_assert(same_q<V, value_type>);
-				return reform<_std::add_lvalue_reference_t<Us>...>();
+				static_assert(same_q<V, value_type>);// Default...
+				return [&]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(to) (reform(get<I>(self())...))
+				(bond::seek_s<M>{});
 			}
 		})
 
@@ -286,14 +300,21 @@ struct block
 		XTAL_DEF_(return,inline,let)
 		twin(constant_q auto count),
 		{
-			if constexpr (common_q<Us...>) {
-				static_assert(count() <= size());
-				return reform<V[count]>();
+			auto constexpr N = count();
+			auto constexpr M = N < 0? size + N: N;
+			static_assert(M <= size());
+			XTAL_IF0
+			XTAL_0IF (M == size()) {
+				return twin();
+			}
+			XTAL_0IF (common_q<Us...>) {
+				return reform<V[M]>();
 			}
 			else {
-				static_assert(count() == size());
-				static_assert(same_q<V, value_type>);
-				return reform<_std::remove_cvref_t<Us>...>();
+				static_assert(same_q<V, value_type>);// Default...
+				return [&]<auto ...I> (bond::seek_t<I...>)
+					XTAL_0FN_(to) (reform(got<I>(self())...))
+				(bond::seek_s<M>{});
 			}
 		})
 
