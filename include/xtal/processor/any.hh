@@ -22,8 +22,8 @@ namespace _retail = xtal::process;
 template <class T>
 struct define
 {
-	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
+	using U_resize = occur::resize_t<>;
 
 	using superkind = _retail::define<T>;
 
@@ -34,16 +34,15 @@ struct define
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 	
-	public:
+	public:// CONSTRUCT
 		using S_::S_;
-		using S_::self;
 
 		template <class ...Xs>
 		struct binding
 		{
 			using superkind = bond::compose<void
-			,	U_resize::attach<>
 			,	U_cursor::attach<>
+			,	U_resize::attach<>
 			,	typename S_::template binding<Xs...>
 			>;
 			template <class R>
@@ -56,14 +55,14 @@ struct define
 				using R_::R_;
 
 			public:// ACCESS
+				using R_::self;
 
 				XTAL_DEF_(return,inline,let)
 				delay()
 				noexcept -> auto
 				{
-					using R_delay = XTAL_ALL_(R_::delay());
-					R_delay const n = R_::delay();
-					return 0 < n? n: static_cast<R_delay>(R_::template head<U_resize>());
+					auto const n = R_::delay();
+					return 0 < n? n: static_cast<XTAL_ALL_(n)>(R_::template head<U_resize>());
 				}
 
 			public:// FLOW
@@ -75,33 +74,29 @@ struct define
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
+				///\
+				Renders the given block, \
+				splitting into subviews if necessary. \
+
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur, auto &&...oo)
+				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
 					auto &s = R_::self();
-					auto const rend = occur::render_f(rev, cur);
+					auto &u = R_::template head<U_cursor>();
 					
-				//	Terminate if `cur`sor has already been processed by this node:
-					if (R_::template fuse<N_ion>(cur) == 1) {
+					if (s.template fuse<N_ion>(cur) == 1) {
 						return 1;
 					}
-				//	Efflux sliced subviews:
-					(void) s.pump([&] (counted_q auto scan, counter_q auto step)
-						XTAL_0FN_(to) (s.template flux<N_ion>(rend
+					if (s.pump([&] (counted_q auto scan, counter_q auto step)
+						XTAL_0FN_(to) (s.template flux<N_ion>(occur::render_f(rev, cur)
 						,	rev.subview(scan)
 						,	cur.subview(scan).skip(step)
 						))
-					);
-				//	Influx the original `cur`der to all `arguments`:
-					(void) s.influx(ordinal_constant_t<-1>{}, XTAL_REF_(cur));
-				
-				//	Efflux message tail:
-					if constexpr (1 <= sizeof...(oo)) {
-						(void) R_::template flux<N_ion>(XTAL_REF_(oo)...);
+					))	{
+						(void) R_::template flux_rest<+1>(cur);
 					}
-				//	Return accumulated result:
 					return 0;
 				}
 				///\
@@ -109,21 +104,21 @@ struct define
 				
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(occur::render_q auto &&, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					auto          &u_state = rev.view();
-					using          U_state = XTAL_ALL_(u_state);
-					auto constexpr N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
-					
-					if (1 == R_::template flux_unrest<N_ion>(ordinal_constant_t<N_share>{}, rev, cur)) {
+					using          V_state = XTAL_ALL_(rev.view());
+					auto constexpr N_share = bond::seek_truth_n<_detail::recollection_p<Xs, V_state>...>;
+					if (1 == R_::template flux_unrest<N_ion>(ordinal_constant_t<N_share>{}, XTAL_REF_(rev), XTAL_REF_(cur))) {
 						return 1;
 					}
 					else {
-						auto result_o = R_::method();// Materialize...
-						auto x0 = point_f(result_o);
+						auto res = R_::method();// Materialize...
+						auto x0 = point_f(res);
 						auto y0 = point_f(rev);
 						auto sN = count_f(rev);
+						//\
+						_detail::copy_to(y0, x0, sN);
 						_detail::move_to(y0, x0, sN);
 
 						return 0;
@@ -231,7 +226,7 @@ struct defer<U>
 		{
 			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
+			XTAL_0IF (none_n<Is...>) {return          (iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
 		template <auto ...Is>
@@ -242,7 +237,7 @@ struct defer<U>
 		{
 			auto constexpr f = [] XTAL_1FN_(call) (U_::template method_f<Is...>);
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
+			XTAL_0IF (none_n<Is...>) {return          (iterative_f<f>(XTAL_REF_(xs)...));}
 			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
 		}
 

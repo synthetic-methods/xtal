@@ -122,9 +122,12 @@ struct cursed
 			}
 			else {
 				s.operator+=(count_f(t));
-				assert(s.step() == t.step());
-				return 0;
+				if (s <= t) {// Account for Possible hangover from wonky `infuse`...
+					(void) s.step(t.step());
+				}
 			}
+			assert(s.step() == t.step());
+			return 0;
 		}
 		/**/
 		template <signed N_ion> requires in_n<N_ion, +1>
@@ -133,18 +136,16 @@ struct cursed
 		noexcept -> signed
 		{
 			auto &s = self();
+			if constexpr (same_q<T_, decltype(t)>) {
+				return S_::template fuse<N_ion>(XTAL_REF_(t));
+			}
 			if (s == t) {
 				return 1;
 			}
 			else {
-				if constexpr (same_q<T_, decltype(t)>) {
-					s = t;
-				}
-				else {
-					s.operator+=(0);
-					s.operator-=(count_f(t));
-					(void) s.step(t.step());
-				}
+				s.operator+=(0);
+				s.operator-=(count_f(t));
+				(void) s.step(t.step());
 				return 0;
 			}
 		}
@@ -245,9 +246,9 @@ public:
 
 		XTAL_DEF_(return,inline,let)
 		subview(auto &&w) const
-		noexcept -> T_
+		noexcept -> auto
 		{
-			return {S_::subhead(XTAL_REF_(w)), S_::step()};
+			return T_{S_::subhead(XTAL_REF_(w)), S_::step()};
 		}
 
 		///\

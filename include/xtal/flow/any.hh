@@ -116,7 +116,7 @@ struct define
 		XTAL_DEF_(return,inline,let) pump(auto const &f, signed &&n) noexcept -> signed {return pump(f, n);}
 		XTAL_DEF_(return,let)
 		pump(auto const &f, signed &n)
-		noexcept
+		noexcept -> signed
 		{
 			auto &s = self();
 			signed x = -1;
@@ -124,7 +124,7 @@ struct define
 				x &= f(counted_f(i, j), n++);
 			}
 			--n; s.belay();
-			return x;
+			return n;
 		}
 
 	};

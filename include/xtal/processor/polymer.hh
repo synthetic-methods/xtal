@@ -50,9 +50,6 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
-	using U_resize = occur::resize_t<>;
-	using U_cursor = occur::cursor_t<>;
-
 	using superkind = monomer<U, As...>;
 	//\
 	Base `monomer` used to derive the return-type, \
@@ -83,7 +80,6 @@ struct polymer<U, As...>
 
 			using superkind = bond::compose<bond::tag<polymer>// `As...` included by `monomer`...
 			,	typename S_::template binding<Xs...>
-			,	typename U_cursor::template attach<>
 			>;
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -171,30 +167,24 @@ struct polymer<U, As...>
 				flux(U_key i_, U_stage _o, auto &&...oo)
 				noexcept -> signed
 				{
-					auto h  = i_.head();
-					auto u_ = ensemble().scan(h);
+					auto k  = i_.head();
+					auto e_ = ensemble().scan(k);
 
 				// If an onset-event is received...
 					if (0 == _o.head()) {
-					
 					// If a voice already exists for this `key_s`...
-						if (u_ < ensemble().end() and h == u_->head()) {
-
-						//	Recycle/terminate the current voice:
-							auto u = *u_;
-							auto x =  u_->template flux<N_ion>(occur::stage_f(-1), oo...);
-							u_ = ensemble().poke(u_, h, XTAL_MOV_(u));
+						if (e_ < ensemble().end() and k == e_->head()) {
+					//	...recycle/terminate the current voice:
+							auto u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
+							e_ = ensemble().poke(e_, k, XTAL_MOV_(u));
 						}
 						else {
-						//	Allocate a new voice using the `lead()`:
-							u_ = ensemble().poke(u_, h, lead());
-
-						//	Update to the current `cursor`:
-							(void) u_->influx(R_::template head<U_cursor>());
+					//	...allocate a new voice using the `lead()`:
+							e_ = ensemble().poke(e_, k, lead());
 						}
 					}
-					assert(u_->head() == h);
-					return u_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
+					assert(e_->head() == k);
+					return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
 				}
 				///\
 				Renders the indexed `store` slice designated by `rev` and `cur`, \
@@ -234,20 +224,14 @@ struct polymer<U, As...>
 				}
 				
 				///\
-				Forwards to all active instances including the sentinel (except when rendering). \
+				Forward to all active instances, including the sentinel except on `efflux`. \
 
 				///\todo\
 				Filter parameter changes from `stage == -1` events? \
 
-				/*/
-				template <signed N_ion, unnatural_constant_q I>
-				XTAL_DEF_(return,inline,let)
-				flux(I &&, auto &&...oo)
-				/*/
 				template <signed N_ion>
 				XTAL_DEF_(return,let)
 				flux_rest(auto &&...oo)
-				/***/
 				noexcept -> signed
 				{
 					auto x = N_ion < 0? -1: lead().template flux<N_ion>(oo...);

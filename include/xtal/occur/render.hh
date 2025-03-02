@@ -42,8 +42,8 @@ struct render<U_review, U_cursor>
 		
 	public:// OPERATE
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) cursor(), get<0>(S_::head()))
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) review(), get<1>(S_::head()))
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) review(), S_::template head<0>())
+		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) cursor(), S_::template head<1>())
 
 	};
 };
