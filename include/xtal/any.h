@@ -320,7 +320,7 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_0FN                                       __attribute__((always_inline))\
                                  constexpr   noexcept
 #endif//XTAL_0FN
-
+#define XTAL_1FN                          () XTAL_0FN
 #define XTAL_0FN_(ARG,...)                   XTAL_0FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]` and `(arguments)`.
 #define XTAL_1FN_(ARG,...)                   XTAL_1FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]`.
 

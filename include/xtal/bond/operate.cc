@@ -11,6 +11,8 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+static_assert(1 == operate_v<1>());
+static_assert(constant_q<operate_t<1>>);
 static_assert(constant_q<operate_t<[] XTAL_1FN_(to) (1)>>);
 static_assert(constant_q<decltype(operate{[] XTAL_1FN_(to) (1)})>);
 
