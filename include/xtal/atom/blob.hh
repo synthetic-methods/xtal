@@ -10,22 +10,22 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Provides local arena-like storage for `atomic_q` values. \
+/*!
+\brief
+Provides local arena-like storage for `std::trivially_destructible` values.
 
-///\usage
-/***```
+\code{.cpp}
 blob_t<_xtd::byte[0x40]> blob;
 
 auto glob = blob.template form<X, Y>();
 auto [x, y] = glob;
 auto &x = get<0>(glob);
 auto &y = get<1>(glob);
-```***/
-
+\endcode
+*/
 template <class ...As>	struct   blob;
 template <class ...As>	using    blob_t = typename blob<As...>::type;
-template <class ...Ts>	concept  blob_q = bond::tagged_with_p<blob, Ts...>;
+template <class ...Ts>	concept  blob_q = bond::tag_in_p<blob, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,12 +55,14 @@ struct blob
 	
 	public:// OPERATE
 
-		///\returns the size in `byte`s. \
-
+		/*!
+		\returns	The size in `byte`s.
+		*/
 		static cardinal_constant_t<N_bytes> constexpr size{};
 
-		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
-
+		/*!
+		\returns	`true` if the underlying `data` is zero, `false` otherwise.
+		*/
 		XTAL_DEF_(return,inline,let)
 		blanked() const
 		noexcept -> auto
@@ -68,8 +70,9 @@ struct blob
 			return 0 == _std::memcmp(m_zeros, m_bytes, N_bytes);
 		}
 
-		///\returns `(void)` after overwriting the `byte`s in the blob with `(U) value`. \
-
+		/*!
+		\returns	`(void)` after overwriting the `byte`s in the blob with `(U) value`.
+		*/
 		XTAL_DEF_(inline,let)
 		fill(auto value=0)
 		noexcept -> void
@@ -77,9 +80,10 @@ struct blob
 			_std::memset(m_bytes, static_cast<U>(value), N_bytes);
 		}
 
-		///\returns a tuple of _rvalues_ conforming to `Vs...`, \
-		representing the state of the blob prior to updating with `vs...`. \
-
+		/*!
+		\returns	A tuple of `rvalue`s conforming to `Vs...`,
+		representing the state of the blob prior to updating with `vs...`.
+		*/
 		XTAL_FX2_(do) (template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
 		form(Vs const &...vs),
@@ -90,11 +94,10 @@ struct blob
 			return f;
 		})
 
-		///\returns a tuple of references conforming to `Vs...`. \
-
-		///\note\
-		Access via value-based destructuring, or reference-based `get`. \
-
+		/*!
+		\returns	A tuple of references conforming to `Vs...`,
+		accessed via value-based destructuring, or reference-based `get`.
+		*/
 		XTAL_FX2_(do) (template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
 		form(),

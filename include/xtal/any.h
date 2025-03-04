@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifndef XTAL_DOC
 ////////////////////////////////////////////////////////////////////////////////
 
 #if __has_include(<execution>)
@@ -23,6 +24,7 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
+#endif
 
 #define XTAL_K_(...) XTAL_k_(__VA_ARGS__,,,,,,,,,,,,,,,,,,,,,,,,,,)                 ///< Concatenate.
 #define XTAL_k_(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, ...)\
@@ -42,6 +44,8 @@
 #define XTAL_X2_(...)            XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))
 #define XTAL_X1_(...)            XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
 #define XTAL_X0_(...)                                                __VA_ARGS__
+
+#define XTAL_(...)                                    XTAL_K_(XTAL,_,__VA_ARGS__)   ///< Name.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +195,12 @@ XTAL_ENV_(push)
 #define XTAL_SYS_CPU 32
 #endif
 
+//#define XTAL_DOC_(...)           XTAL_DOC_##__VA_ARGS__
+//#define XTAL_DOC_hide    /*!    \if FALSE */
+//#define XTAL_DOC_show    /*! \endif       */
+
+#define XTAL_LOG 1//NDEBUG
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -207,8 +217,8 @@ XTAL_ENV_(push)
 #define XTAL_VER_ranges             3
 #endif
 
-#define XTAL_VER_(...) (false XTAL_N_(XTAL_ver_,__VA_ARGS__))///< Version checking.
-#define XTAL_ver_(...)     or XTAL_VER_##__VA_ARGS__
+#define XTAL_VER_(...) (false XTAL_N_(XTAL_VER,  __VA_ARGS__))///< Version checking.
+#define XTAL_VER(...)              or XTAL_VER_##__VA_ARGS__
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,15 +230,11 @@ XTAL_ENV_(push)
 #define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)       ///< Moves    a value.
 #define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
-#define XTAL_NYM_(...)                    XTAL_K_(XTAL_NYM,_,__VA_ARGS__)       ///< Defines  a        name.
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_REQ_(...)           XTAL_REQ_##__VA_ARGS__
-
-template <class X, class Y> concept XTAL_REQ_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
-template <class X, class Y> concept XTAL_REQ_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
-template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generalized)<X, Y> or XTAL_REQ_(specialized)<X, Y>;
+#ifndef XTAL_DOC
+template <class X, class Y> concept XTAL_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
+template <class X, class Y> concept XTAL_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
+template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y> or XTAL_(specialized)<X, Y>;
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -241,7 +247,9 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_DEF_friend          friend
 #define XTAL_DEF_mutate        //NOTE: Mutability is the default!
 
-#if     XTAL_ENV_MSVC
+#ifdef  XTAL_DOC
+#define XTAL_DEF_verbatim
+#elif   XTAL_ENV_MSVC
 #define XTAL_DEF_verbatim      //NOTE: Use `#pragma optimize("", {off,on})`~
 #elif   XTAL_ENV_LLVM
 #define XTAL_DEF_verbatim        [[clang::optnone]]    __attribute__((optnone))
@@ -249,7 +257,9 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_DEF_verbatim        [[gnu::optimize(0)]]  __attribute__((optimize(0)))
 #endif//XTAL_DEF_verbatim
 
-#if     XTAL_ENV_MSVC
+#ifdef  XTAL_DOC
+#define XTAL_DEF_inline
+#elif   XTAL_ENV_MSVC
 #define XTAL_DEF_inline        __forceinline
 #else
 #define XTAL_DEF_inline        __attribute__((always_inline))
@@ -259,25 +269,28 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_DEF_implicit        constexpr                                      ///< Start `implicit` function.
 #define XTAL_DEF_get      inline constexpr decltype(auto)                       ///< Start `decltype(auto)` function.
 #define XTAL_DEF_let      inline constexpr auto                                 ///< Start `auto` function.
-#define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function.
-#define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function.
+#define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function (friend).
+#define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function (static).
 
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
 
-#define XTAL_NEW_cast(TYP,...)   constexpr   TYP(XTAL_REQ_(relativized)<TYP> auto const &  XTAL_NYM_(this))    \
-                               __VA_ARGS__ : TYP(static_cast           <TYP       const &>(XTAL_NYM_(this))) {}\
-                                 constexpr   TYP(XTAL_REQ_(relativized)<TYP> auto      &&  XTAL_NYM_(this))    \
-                               __VA_ARGS__ : TYP(static_cast           <TYP            &&>(XTAL_NYM_(this))) {};
+#define XTAL_NEW_then(TYP,...)   template     <class ...XTAL_(As)>                      \
+                                 constexpr explicit TYP(XTAL_(As) &&...XTAL_(as))       \
+                               __VA_ARGS__ (static_cast<XTAL_(As) &&> (XTAL_(as))...) {};
 
-#define XTAL_NEW_copy(TYP,...)   constexpr   TYP                (TYP       const &) __VA_ARGS__;\
-                                 constexpr   TYP &  operator =  (TYP       const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
-#define XTAL_NEW_move(TYP,...)   constexpr   TYP                (TYP            &&) __VA_ARGS__;\
-                                 constexpr   TYP &  operator =  (TYP            &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_cast(TYP,...)   template <XTAL_(relativized)  <TYP>    XTAL_(That)>    \
+                                 constexpr     TYP(XTAL_(That)      &&  XTAL_(this))    \
+                               __VA_ARGS__     TYP(static_cast <TYP &&>(XTAL_(this))) {};
 
-#define XTAL_NEW_create(TYP,...) constexpr   TYP()                                  __VA_ARGS__;
-#define XTAL_NEW_delete(TYP,...) constexpr  ~TYP()                                  __VA_ARGS__;
+#define XTAL_NEW_copy(TYP,...)   constexpr     TYP             (TYP const &) __VA_ARGS__;\
+                                 constexpr     TYP & operator= (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
+#define XTAL_NEW_move(TYP,...)   constexpr     TYP             (TYP      &&) __VA_ARGS__;\
+                                 constexpr     TYP & operator= (TYP      &&) __VA_ARGS__;;///< Declare move constructor/assignment for `TYP`, with suffix `...`.
+
+#define XTAL_NEW_create(TYP,...) constexpr     TYP()                         __VA_ARGS__;
+#define XTAL_NEW_delete(TYP,...) constexpr    ~TYP()                         __VA_ARGS__;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +321,9 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 
 ////////////////////////////////////////////////////////////////////////////////
 
+//\
 #if not XTAL_ENV
+#ifdef  XTAL_DOC
 #define XTAL_0FN                 constexpr   noexcept///< Lambda declaration after `[captures]` and `(arguments)`.
 #elif   XTAL_VER_(MSVC)
 //\
@@ -317,7 +332,7 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #elif   XTAL_VER_(GNUC)
 #define XTAL_0FN                 constexpr   noexcept __attribute__((always_inline))
 #elif   XTAL_VER_(LLVM)
-#define XTAL_0FN                                       __attribute__((always_inline))\
+#define XTAL_0FN                                      __attribute__((always_inline))\
                                  constexpr   noexcept
 #endif//XTAL_0FN
 #define XTAL_1FN                          () XTAL_0FN
@@ -328,25 +343,25 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 #define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
 #define XTAL_0FN_to(...)                     XTAL_0FN                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
 
-#define XTAL_1FN_to(...)           <class ...XTAL_NYM_(Ts)>\
-                                            (XTAL_NYM_(Ts) \
-                                        &&...XTAL_NYM_(ts))\
+#define XTAL_1FN_to(...)           <class ...XTAL_(As)>\
+                                            (XTAL_(As) \
+                                        &&...XTAL_(as))\
    XTAL_0FN_(to)                                           (__VA_ARGS__)                                 ///< Lambda ignoring arguments after `[captures]`.
 
-#define XTAL_1FN_dot(...)          <class    XTAL_NYM_(T )>\
-                                            (XTAL_NYM_(T ) \
-                                           &&XTAL_NYM_(t ))\
-   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_NYM_(t )).__VA_ARGS__)                                 ///< Lambda forwarding to `.`member after `[captures]`.
+#define XTAL_1FN_dot(...)          <class    XTAL_(T )>\
+                                            (XTAL_(T ) \
+                                           &&XTAL_(t ))\
+   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_(t )).__VA_ARGS__)                                 ///< Lambda forwarding to `.`member after `[captures]`.
 
-#define XTAL_1FN_call(...)         <class ...XTAL_NYM_(Ts)>\
-                                            (XTAL_NYM_(Ts) \
-                                        &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_NYM_(ts))...))                                         ///< Lambda forwarding to call`(...)` after `[captures]`.
+#define XTAL_1FN_call(...)         <class ...XTAL_(As)>\
+                                            (XTAL_(As) \
+                                        &&...XTAL_(as))\
+   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_(as))...))                                         ///< Lambda forwarding to call`(...)` after `[captures]`.
 
-#define XTAL_1FN_make(...)         <class ...XTAL_NYM_(Ts)>\
-                                            (XTAL_NYM_(Ts) \
-                                        &&...XTAL_NYM_(ts))\
-   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_NYM_(ts))...})                                         ///< Lambda forwarding to make`{...}` after `[captures]`.
+#define XTAL_1FN_make(...)         <class ...XTAL_(As)>\
+                                            (XTAL_(As) \
+                                        &&...XTAL_(as))\
+   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_(as))...})                                         ///< Lambda forwarding to make`{...}` after `[captures]`.
 
 #define XTAL_1FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(to) (ARG == _? _: _ SYM (__VA_ARGS__))            ///< Lambda conditional     after `[captures]`.
 #define XTAL_1FN_and(...)                    XTAL_1FN_else(1, &, __VA_ARGS__)                            ///< Lambda conditional `&` after `[captures]`.
@@ -403,17 +418,22 @@ template <class X, class Y> concept XTAL_REQ_(relativized) = XTAL_REQ_(generaliz
 /////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
 
+
+#ifndef XTAL_DOC
+////////////////////////////////////////////////////////////////////////////////
+
 #include <range/v3/all.hpp>
 #if     XTAL_VER_(ranges !=  3)
 #include <ranges>
 #endif
 
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_LOG 1//NDEBUG
 #if     XTAL_LOG
 #define  _LIBCPP_DEBUG XTAL_LOG
 #define _GLIBCXX_DEBUG XTAL_LOG
 #include <iostream>
 #endif
+
+
+////////////////////////////////////////////////////////////////////////////////
+#endif
+

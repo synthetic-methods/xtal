@@ -12,17 +12,19 @@ namespace xtal::flow
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Insulated header for a `flow::let_t<_s...>` `tail`. \
-Opaque w.r.t. operations/comparators making it suitable candidate for labelling/ordering. \
+/*!
+\brief
+Insulated header for a `flow::let_t<_s...>` `tail()`.
 
-///\
-Used for scheduling any type by prefixing with an integral delay. \
-May be stacked in order to described integral fades. \
+\details
+Creates an inherited wrapper for `flow::any_q` based on `cell::header`.
 
+Used for scheduling any type by prefixing with an integral delay.
+May be stacked in order to described gradients.
+*/
 template <class ..._s>	struct  cue;
 template <class ..._s>	using   cue_s = bond::compose_s<let_t< _s...>, cue<>>;
-template <class ..._s>	concept cue_q = bond::tagged_p<cue_s, _s...>;
+template <class ..._s>	concept cue_q = bond::tag_as_p<cue_s, _s...>;
 template <           >	struct  cue<> : cell::header<signed, bond::tag<cue_s>> {};
 
 

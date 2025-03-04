@@ -183,10 +183,14 @@ XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> aut
 XTAL_DEF_(return,inline,let) cardinal_f(           auto const o) noexcept -> auto {return            _xtd::make_unsigned_f(o)   ;}
 XTAL_DEF_(return,inline,let) cardinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::make_unsigned_f(o)>{};}
 
-///\returns the conditional `x` reinterpreted as type `Y`, \
-where `std::floating_point`s and `bool`eans are `static_cast`, \
-while all other `std::integral`s are negated. \
+/*!
+\returns
+The conditional `x` reinterpreted as type `Y`.
 
+\details
+For `bool`ean or `std::floating_point` return types, the argument is `static_cast`.
+For other `std::integral` return types, the argument is negated.
+*/
 template <variable_q Y>
 XTAL_DEF_(return,inline,let)
 condition_f(bool x)
@@ -346,12 +350,14 @@ template <         class ...Ts>	concept          indexed_q	= (some_q<Ts...> and.
 template <         class ...Ts>	concept        expressed_q	= (some_q<Ts...> and...and _retail::    expressed_q<Ts>);
 template <         class ...Ts>	concept      reexpressed_q	= (some_q<Ts...> and...and _retail::  reexpressed_q<Ts>);
 
-///\
-Provides the initializer for the given type, defaulting to itself. \
-If the supplied type has a fixed-size, \
-and responds to both `[](unsigned)` and `()(unsigned)`, \
-the return value of the latter is used. \
+/*!
+\brief
+Provides a suitable `initializer_list::value_type` for `T` (defaulting to itself).
 
+\note
+If `T` has fixed-size and responds to both `[](unsigned)` and `()(unsigned)`,
+the return value of the latter is used.
+*/
 template <class T             >	struct       initializer    {using type =            valued_u<T> ;};
 template <reexpressed_q T     >	struct       initializer<T> {using type = based_t<expressee_t<T>>;};
 
@@ -382,9 +388,11 @@ template <class          ...Ts>	concept          counted_q	= (some_q<Ts...> and.
 template <class          ...Ts>	concept          counter_q	= (some_q<Ts...> and...and _retail::      counter_q<Ts>);
 
 
-///\returns the nearest aligned offset for type `T`, \
-adjusting the referenced index `i` to point to the next available argument. \
-
+/*!
+\returns
+The nearest aligned offset for type `T`,
+adjusting the referenced index `i` to point to the next available argument.
+*/
 template <int N_dt=0, class T>
 XTAL_DEF_(return,inline,let)
 point_f(T &&t, int const n_dt=0)
@@ -413,8 +421,10 @@ noexcept -> auto
 		XTAL_0IF (N_dt <  0) {return endpoint_f<N_dt>(XTAL_REF_(t).begin(), n_dt);}
 	}
 }
-///\returns the `size` of the given range. \
-
+/*!
+\returns
+The `size` of the given range.
+*/
 template <integral_variable_q Y=size_type>
 XTAL_DEF_(return,inline,let)
 count_f(auto const &t)
@@ -456,8 +466,10 @@ template <class      T >	XTAL_DEF_(return,inline,let) counted_f(T &&t)      noex
 template <class      T >	XTAL_DEF_(return,inline,let) counter_f(T &&t)      noexcept -> auto {return counter_t<T>(XTAL_REF_(t));}
 
 
-///\returns the `any_view` type-erased form of `y`. \
-
+/*!
+\returns
+The `any_view` type-erased form of `y`.
+*/
 XTAL_DEF_(return,inline,let)
 derange_f(iterable_q auto &&t)
 noexcept -> auto
@@ -471,13 +483,18 @@ template <iterable_q T>
 using derange_t = XTAL_ALL_(derange_f(XTAL_ANY_(T))); 
 
 
-///\returns the result of zipping `...xs` with `f`. \
-
-///\note\
-The name is intended to mimic Haskell's `ApplicativeFunctor`. \
-
+/*!
+\brief
+Determines whether `...xs` can be zipped with `f`.
+*/
 template <class F, class ...Xs>	concept   iterative_p = complete_q<F> and _std::invocable<F, _xtd::ranges::range_reference_t<Xs>...>;
+/*!
+\returns
+The result of zipping `...xs` with `f`.
 
+\note
+The name is intended to mimic Haskell's `ApplicativeFunctor`.
+*/
 template <class F             >	requires  iterative_p<F       > XTAL_DEF_(inline,let) iterative_f(F &&f            ) noexcept -> decltype(auto) {return _xtd::ranges::views:: generate(XTAL_REF_(f)                    );}
 template <class F, class    X >	requires  iterative_p<F, X    > XTAL_DEF_(inline,let) iterative_f(F &&f, X  &&   x ) noexcept -> decltype(auto) {return _xtd::ranges::views::transform(XTAL_REF_(x),   XTAL_REF_(f)    );}
 template <class F, class ...Xs>	requires  iterative_p<F, Xs...> XTAL_DEF_(inline,let) iterative_f(F &&f, Xs &&...xs) noexcept -> decltype(auto) {return _xtd::ranges::views:: zip_with(XTAL_REF_(f),   XTAL_REF_(xs)...);}
@@ -584,11 +601,14 @@ noexcept -> bool
 
 
 ////////////////////////////////////////////////////////////////////////////////
+/*!
+\returns
+A `std::partial_ordering` corresponding to the given `std::uint8_t`.
 
-///\returns a `std::partial_ordering` corresponding to the given `std::uint8_t`, \
-where the 1st/2nd bits respectively indicate `greater`/`less`, \
-with `0`/`~0` repectively representing `equivalent`/`unordered`. \
-
+\details
+The 1st/2nd bits of the input are interpreted as `greater`/`less`,
+with `0`/`~0` interpreted repectively as `equivalent`/`unordered`.
+*/
 XTAL_DEF_(return,inline,set)
 ordering_f(_std::uint8_t const o)
 noexcept -> _std::partial_ordering
@@ -596,9 +616,13 @@ noexcept -> _std::partial_ordering
 	using is = _std::partial_ordering;
 	return _std::array{is::equivalent, is::greater, is::less, is::unordered}[0b11U&o];
 }
-///\returns a `std::uint8_t` representing the given `std::partial_ordering` or signed value \
-that can be aggregated by bitwise-or (...in other words, a _dis_junctive _ordering_). \
+/*!
+\returns
+A `std::uint8_t` representing the given `std::partial_ordering` or signed value.
 
+\details
+The result can be aggregated by bitwise-or (...in other words, a _dis_junctive _ordering_).
+*/
 XTAL_DEF_(return,inline,set)
 disordering_f(_std::partial_ordering const o)
 noexcept -> _std::uint8_t

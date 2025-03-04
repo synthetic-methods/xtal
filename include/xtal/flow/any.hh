@@ -17,7 +17,9 @@ namespace _retail = xtal::cell;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/*!
+\brief   Extends `cell::define` with event routing via `flux|fuse`.
+*/
 template <class T>
 struct define
 {
@@ -45,21 +47,21 @@ struct define
 		XTAL_DEF_(return,inline,let) efflux(auto &&...oo) noexcept -> signed {return self().template flux<-1>(XTAL_REF_(oo)...);}
 		XTAL_DEF_(return,inline,let) effuse(auto &&    o) noexcept -> signed {return self().template fuse<-1>(XTAL_REF_(o)    );}
 		XTAL_DEF_(return,inline,let) infuse(auto &&    o) noexcept -> signed {return self().template fuse<+1>(XTAL_REF_(o)    );}
-		///\
-		Flux handler: resolves the given message, \
-		resorting to `fuse` each comoponent separately if unmatched. \
+		/*!
+		\brief  	Flux handler: resolves the given message,
+		resorting to `fuse` each comoponent separately if unmatched.
 
-		///\tparam N_ion a ternary integer indicating the direction of flow, \
-		where `influx` (`+1`) resolves the current instance before any dependencies, \
-		and   `efflux` (`-1`) resolves the any dependencies before current instance. \
+		\details	The return values are accumulated using `&`, with a default of `-1` and limit of `0`,
+		and truncating propagation when the aggregated result is `1`.
 
-		///\returns a ternary integer indicating that the state has changed (`0`), \
-		remains unchanged (`+1`), or was unrecognized (`-1`). \
+		\tparam  N_ion
+		A ternary integer indicating the direction of flow,
+		where `influx` `+1` resolves the current instance before any dependencies,
+		and   `efflux` `-1` resolves the any dependencies before current instance.
 
-		///\note\
-		The return values are accumulated using `&`, with a default of `-1` and limit of `0`, \
-		and truncating propagation when the aggregated result is `1`. \
-
+		\returns	A ternary integer indicating that the state has changed `0`,
+		remains unchanged `+1`, or was unrecognized `-1`.
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		flux(auto &&...oo)
@@ -77,11 +79,10 @@ struct define
 					(self().template fuse<N_ion>(XTAL_REF_(o)));
 		}
 
-		///\
-		Fuse handler: resolves the individual components. \
-		
-		///\returns a ternary integer (\see `flux`). \
-		
+		/*!
+		\brief  	Fuse handler: resolves the individual components.
+		\brief  	A ternary integer (\see `flux`).
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		fuse(auto &&o)
@@ -108,10 +109,10 @@ struct define
 		XTAL_DEF_(mutate,inline,let) belay()         noexcept -> auto {return        delay();}
 		XTAL_DEF_(mutate,inline,let) relay(auto &&i) noexcept -> auto {return self().delay();}
 	//	XTAL_DEF_(return,inline,let) relay(auto &&i) noexcept -> auto {return _std::min<signed>({0x80, self().delay()});}// Force chunking somehow?
-		///\
-		Relays all spooled events while invoking the supplied callback for each intermediate segment. \
-		The callback parameters are the `counted_t` indicies and the segment index. \
-
+		/*!
+		\brief  	Relays all spooled events while invoking the supplied callback for each intermediate segment.
+		\details	The callback parameters are the `counted_t` indicies and the segment index.
+		*/
 		XTAL_DEF_(return,inline,let) pump(auto const &f            ) noexcept -> signed {return pump(f, 0);}
 		XTAL_DEF_(return,inline,let) pump(auto const &f, signed &&n) noexcept -> signed {return pump(f, n);}
 		XTAL_DEF_(return,let)
@@ -129,6 +130,9 @@ struct define
 
 	};
 };
+/*!
+\brief   Extends `cell::refine` with event routing endpoints/operators.
+*/
 template <class T>
 struct refine
 {
@@ -147,9 +151,10 @@ struct refine
 		using S_::self;
 
 	public:// OPERATE
-		///\returns `self()` after `influx`ing the given message, \
-		resolving `this` before any dependencies. \
-
+		/*!
+		\returns	`self()` after `influx`ing the given message,
+		resolving `this` before any dependencies.
+		*/
 		XTAL_DEF_(inline,let)
 		operator <<=(auto &&o)
 		noexcept -> decltype(auto)
@@ -157,9 +162,10 @@ struct refine
 			(void) flux<+1>(XTAL_REF_(o));
 			return self();
 		}
-		///\returns `self()` after `efflux`ing the given message, \
-		resolving any dependencies before `this`. \
-
+		/*!
+		\returns	`self()` after `efflux`ing the given message,
+		resolving any dependencies before `this`.
+		*/
 		XTAL_DEF_(inline,let)
 		operator >>=(auto &&o)
 		noexcept -> decltype(auto)
@@ -220,6 +226,9 @@ struct refine
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Extends `cell::defer` with event handling for the supplied `U`.
+*/
 template <class U>
 struct defer
 {
@@ -246,11 +255,12 @@ struct defer
 		flux_this(auto &&...oo)
 		noexcept -> signed
 		{
-			if constexpr (un_q<T_, decltype(oo)...> or in_q<T_, bond::seek_front_t<decltype(oo)...>>) {
+			using X = bond::seek_front_t<decltype(oo)...>;
+			XTAL_IF0
+			XTAL_0IF                                (sizeof...(oo) == 0) {return -1;}
+			XTAL_0IF (different_q<T_, X> and in_q<T_, decltype(oo)... >) {return -1;}
+			XTAL_0IF_(else) {
 				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
-			}
-			else {
-				return -1;
 			}
 		}
 		template <signed N_ion>
@@ -266,10 +276,10 @@ struct defer
 			}
 		}
 
-		///\note\
-		When `N_ion == +1`, influxes via the proxied value if supported, then via `this`. \
-		When `N_ion == -1`, effluxes via `this`, then via the proxied value if supported. \
-
+		/*!
+		\note   	When `N_ion == +1`, influxes via the proxied value if supported, then via `this`.
+		When `N_ion == -1`, effluxes via `this`, then via the proxied value if supported.
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		flux(auto &&...oo)
@@ -280,9 +290,9 @@ struct defer
 			XTAL_0IF (0 < N_ion) {return [this, oo...] XTAL_1FN_(and) (flux_this<N_ion>(oo...)) (flux_head<N_ion>(XTAL_REF_(oo)...));}
 		}
 
-		///\note\
-		Assigns the given value `O` if it matches the proxied type `U`. \
-
+		/*!
+		\note   	Assigns the given value `O` if it matches the proxied type `U`.
+		*/
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
 		fuse(auto &&o)
@@ -300,6 +310,9 @@ struct defer
 
 	};
 };
+/*!
+\brief   Aliases `cell::refer`.
+*/
 template <class U>
 struct refer
 :	_retail::refer<U>

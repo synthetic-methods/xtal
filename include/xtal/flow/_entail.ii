@@ -7,18 +7,21 @@
 
 
 
-//line namespace _entail
+
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Defines an `inferred` tuple from `...As`. \
+/*!
+\brief
+Defines an `any_q` based on the product-type of `Ts...`.
 
+\details
+The member `type` is defined by `inferred_t<Ts...>`.
+*/
 template <class ...Ts>	struct    packed;
-template <class ...Ts>	using     packed_t = typename packed<Ts...>::type;
-template <class ...Ts>	concept   packed_q = bond::tagged_with_p<packed, Ts...>;
-template <class ...Ts>	concept unpacked_q = not packed_q<Ts...>;
+template <class ...Ts>	using     packed_t =  typename packed<Ts...>::type;///<\brief Produces the `type` for `packed<Ts...>`.
+template <class ...Ts>	concept   packed_q = bond::tag_in_p<packed, Ts...>;///<\brief Determines whether `Ts...` were decorated by `packed`.
 
 XTAL_DEF_(let) packed_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (packed_t<Ts...>(static_cast<Ts &&> (ts)...));
@@ -50,14 +53,14 @@ struct   packed
 				return bond::repack_f<packed_t>(S_::self().pack(), bond::pack_f(XTAL_REF_(w)));
 			}
 		}
-		template <unpacked_q U>
+		template <class U> requires un_n<packed_q<U>>
 		XTAL_DEF_(return,inline,met)
 		operator, (U &&u, subtype      &&s)
 		noexcept -> auto
 		{
 			return (packed_f(XTAL_REF_(u)), XTAL_MOV_(s).self());
 		}
-		template <unpacked_q U>
+		template <class U> requires un_n<packed_q<U>>
 		XTAL_DEF_(return,inline,met)
 		operator, (U &&u, subtype const &s)
 		noexcept -> auto
@@ -67,36 +70,59 @@ struct   packed
 
 
 	};
-	using type = subtype<any_type>;
+	using type = subtype<any_t<>>;
 
 };
 
-///\
-Defines an `inferred` tuple from `...Ts`, \
-or `bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`. \
+/*!
+\brief
+Defines an `any_q` based on the product-type of `Ts...`
+(unless otherwise satisfied).
 
+\details
+The member `type` is defined by:
+-	`bond::seek_front_t<Ts...>` if `any_q<Ts...>` and `1 == sizeof...(Ts)`.
+-	`packed_t<Ts...>` otherwise.
+*/
+template <class ...Ts>	struct  packet;
+#ifndef XTAL_DOC
 template <class ...Ts>	struct  packet    : packed<Ts...> {};
 template <any_q    T >	struct  packet<T> : identity_t<T> {};
-template <class ...Ts>	using   packet_t = typename packet<Ts...>::type;
+#endif
+template <class ...Ts>	using   packet_t = typename packet<Ts...>::type;///<\brief Produces the `type` for `packet<Ts...>`.
 
 XTAL_DEF_(let) packet_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (packet_t<Ts...>(static_cast<Ts &&> (ts)...));
 
-///\
-Defines a `conferred` value from `T`, \
-or `T` if `any_q<T>`. \
+/*!
+\brief
+Defines an `any_q` based on the sum-type of `Ts...`
+(unless otherwise satisfied).
 
-template <class ...Ts>	struct  let : let<either_t<Ts...>> {};
-template <class    T >	struct  let<T>  {using type = conferred_t<T>;};
-template <any_q    T >	struct  let<T>  {using type =             T ;};
-template <           >	struct  let< >  {using type =  confined_t< >;};
-template <class ...Ts>	using   let_t = typename let<Ts...>::type;
+\details
+When `1 == sizeof...(Ts)`, the member `type` is defined by:
+-	`T` if `any_q<T>`.
+-	`conferred_t<T>` otherwise.
 
+When `1 != sizeof...(Ts)`, the member `type` is defined by:
+-	`conferred_t<either_t<Ts...>>` if `complete_q<Ts...>`.
+-	`inferred_t<Ts...>` otherwise.
+*/
+template <       class ...Ts>	struct  let;
+#ifndef XTAL_DOC
+template <       class ...Ts>	struct  let : let<either_t<Ts...>> {};
+template <       any_q    T >	struct  let<T    > {using type =             T ;};
+template <       class    T >	struct  let<T    > {using type = conferred_t<T>;};
+template <incomplete_q ...Ts>	struct  let<Ts...> {using type =  inferred_t< >;};
+template <                  >	struct  let<     > {using type =  inferred_t< >;};
+#endif
+template <       class ...Ts>	using   let_t = typename let<Ts...>::type;
+///<\brief Produces the `type` for `let<Ts...>`.
 /*/
 XTAL_DEF_(let) let_f = []<class ...Ts> (Ts &&...ts)
 XTAL_0FN_(to) (let_t<Ts...>(static_cast<Ts &&> (ts)...));
 /*/
-template <class   ...Ts>
+template <class ...Ts>
 XTAL_DEF_(return,inline,let)
 let_f(Ts &&...ts)
 noexcept -> decltype(auto)
@@ -104,6 +130,7 @@ noexcept -> decltype(auto)
 	return let_t<Ts...>(XTAL_REF_(ts)...);
 }
 /***/
+///<\returns the lifted value w.r.t. the arguments supplied.
 
 
 ////////////////////////////////////////////////////////////////////////////////

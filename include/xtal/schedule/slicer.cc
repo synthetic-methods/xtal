@@ -34,7 +34,7 @@ void slicer_processor_x1()
 
 	using mix_z = processor::monomer_t<Px_mix
 	,	stored<>
-	,	typename slicer_t<spooled<extent_constant_t<0x10>>>::template inqueue<U0_event>
+	,	typename slicer_t<spooled<extent_constant_t<0x10>>>::template accept<U0_event>
 	>;
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;

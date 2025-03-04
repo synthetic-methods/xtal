@@ -30,7 +30,8 @@ struct define_super
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_NEW_(cast) (subtype, noexcept)
+		XTAL_NEW_(cast)   (subtype, noexcept :        )
+	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
 
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
@@ -57,10 +58,10 @@ struct define_super
 		{
 			return bond::pack_f();
 		}
-		///<\returns a tuple representation of `this`. \
+		///<\returns a tuple representation of `this`.
 
 		using pack_size = cardinal_constant_t<0>;
-		///< The `std::tuple_size` of `this`. \
+		///< The `std::tuple_size` of `this`.
 
 
 	};
@@ -84,9 +85,9 @@ struct refine_head
 	{
 	public:
 		using S::S; static_assert(any_q<S>);
-		///\
-		Implicit conversion to the singleton kernel-type. \
-
+		/*!
+		\brief  	Implicit conversion to the singleton kernel-type.
+		*/
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
 		operator typename S::head_type(), S::head())
 
@@ -102,9 +103,9 @@ struct refine_tuple
 		using S::S; static_assert(any_q<S>);
 		using typename S::pack_size;
 
-		///\
-		Tuple application. \
-
+		/*!
+		\brief  	Tuple application.
+		*/
 		XTAL_FX2_(do) (XTAL_DEF_(inline,let)
 		apply(auto &&f),
 		noexcept -> decltype(auto)
@@ -134,18 +135,18 @@ struct refine_tuple
 			return apply<bond::operate<F>{}>();
 		}
 
-		///\
-		Sequence conversion. \
-
+		/*!
+		\brief  	Sequence conversion.
+		*/
 		XTAL_DEF_(return,inline,let)
 		seek() const
 		{
 			return apply<[] XTAL_1FN_(call) (bond::seek_f)>();
 		}
 		
-		///\
-		Tuple conversion. \
-
+		/*!
+		\brief  	Tuple conversion.
+		*/
 		XTAL_DEF_(return,inline,implicit)
 		operator bond::repack_t<S>() const {return pack();}
 
@@ -201,29 +202,30 @@ struct defer_field
 		XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(cast)   (subtype, noexcept :        )
+	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
 
-		///\
-		Constructs `this` using the default value. \
-
+		/*!
+		\brief  	Constructs `this` using the default value.
+		*/
 		XTAL_NEW_(implicit)
 		subtype()
 		noexcept
 		requires make_p<body_type>
 		:	body_part{}
 		{}
-		///\
-		Constructs `this` using an `initializer_list` if supported. \
-
+		/*!
+		\brief  	Constructs `this` using an `initializer_list` if supported.
+		*/
 		XTAL_NEW_(implicit)
 		subtype(_std::initializer_list<U_> o)
 		noexcept
 		requires initializer_q<body_type>
 		:	body_part(o)
 		{}
-		///\
-		Constructs `this` using the first argument, forwarding the rest to the parent. \
-
+		/*!
+		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(make_q<head_type> auto &&o, auto &&...oo)
 		noexcept
@@ -231,8 +233,9 @@ struct defer_field
 		,	body_part{member_f<head_type>(XTAL_REF_(o))}
 		{}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 		XTAL_DEF_(return,inline,let) head() const  & noexcept -> decltype(auto) {return remember_f(body_part);}
 		XTAL_DEF_(return,inline,let) head()        & noexcept -> decltype(auto) {return remember_f(body_part);}
 		XTAL_DEF_(return,inline,let) head() const && noexcept -> decltype(auto) {return remember_f(XTAL_MOV_(body_part));}
@@ -246,8 +249,9 @@ struct defer_field
 			return dismember_f(body_part, XTAL_REF_(oo)...);
 		}
 
-		///\returns the underlying `cardinal` for indexing purposes. \
-
+		/*!
+		\returns	The underlying `cardinal` for indexing purposes.
+		*/
 		XTAL_DEF_(return,inline,explicit)
 		operator size_type() const
 		noexcept requires cardinal_q<body_type> and different_q<size_type, head_type>
@@ -297,8 +301,9 @@ struct defer_field<U>
 			static_assert(K{}() == U{}());
 		}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 	//	static head_type constexpr head{};
 		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type const & requires    member_q<U> {return             body_part;}
 		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type         requires dismember_q<U> {return (head_type) body_part;}
@@ -330,7 +335,8 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(cast)   (subtype, noexcept :        )
+	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
 		
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
@@ -395,11 +401,12 @@ struct defer_field<unit_type[N_width]>
 		XTAL_NEW_(create) (subtype, noexcept = default)
 		XTAL_NEW_(move)   (subtype, noexcept = default)
 		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept)
+		XTAL_NEW_(cast)   (subtype, noexcept :        )
+	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
 		
-		///\
-		Constructs `this` using the first argument, forwarding the rest to the parent. \
-
+		/*!
+		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(integral_q auto &&o)
 		noexcept
@@ -413,16 +420,15 @@ struct defer_field<unit_type[N_width]>
 		,	body_part(member_f<head_type>(XTAL_REF_(o)))
 		{}
 
-		///\returns the kernel-body (prior to reconstruction using the given arguments, if provided). \
-
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
 		head(), head_type{body_part})
 
-		///\returns the underlying index. \
-		
-		///\todo\
-		Determine whether this is aggregated? \
-
+		/*!
+		\returns	The underlying index.
+		*/
 		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
 		operator size_type(), body_part)
 
@@ -461,14 +467,14 @@ struct refer_iterators
 		XTAL_FX2_(do) (template <counter_q V>
 		XTAL_DEF_(return,inline,let)
 		subhead(V &&v),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			return subhead(counted_f(0, XTAL_REF_(v)));
 		})
 		XTAL_FX2_(do) (template <counted_q W>
 		XTAL_DEF_(return,let)
 		subhead(W &&w),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			using _xtd::ranges::next;
 			auto &u  = S::template head<U>();

@@ -10,21 +10,26 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Defines a statically-bounded `type` that supports homogeneous/heterogeneous construction, \
-as well as expression-templates. \
+/*!
+\brief
+Defines member-`type` as an extensible analogue of `std::array`.
 
+When supplied with an array-signature, e.g. `U_data[N_data]` or `U_data(&)[N_data]`,
+the associated `value_type` and `size` are used to configure the underlying container.
+The presence of a reference determines whether `std::array` or `std::span` is used in this instance.
+
+Supports homogeneous/heterogeneous definition depending on the commonality of components `Us...`.
+Supports expression-templates by way of `operator() (unsigned)`.
+*/
 template <class ...Us>	struct  block;
 template <class ...Us>	using   block_t = typename block<Us...>::type;
 
-template <class ...Ts>	concept               block_q = bond::tagged_with_p<block_t, Ts...>;
-template <class ...Ts>	concept   coordinated_block_q = (...and different_q<decltype(Ts::coordinate), _std::identity>);
-template <class ...Ts>	concept uncoordinated_block_q = (...and      same_q<decltype(Ts::coordinate), _std::identity>);
-
-
+template <class ...Ts>	concept block_q               = bond::tag_in_p<block_t, Ts...>;
+template <class ...Ts>	concept block_coordinated_q   = (...and different_q<decltype(Ts::coordinate), _std::identity>);
+#ifndef XTAL_DOC
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
 template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};
-
+#endif
 
 namespace _detail
 {///////////////////////////////////////////////////////////////////////////////
@@ -146,12 +151,13 @@ struct superblock<U   [N]>
 	//	XTAL_NEW_(create) (homotype, noexcept = default)
 		XTAL_NEW_(move)   (homotype, noexcept = default)
 		XTAL_NEW_(copy)   (homotype, noexcept = default)
-		XTAL_NEW_(cast)   (homotype, noexcept)
+		XTAL_NEW_(cast)   (homotype, noexcept :        )
+	//	XTAL_NEW_(then)   (homotype, noexcept : S_     )
 
-		///\note\
-		Defining `{}` allows `constexpr` evaluation, \
-		but invalidates `std::trivially_default_constructible`. \
-		
+		/*!
+		\note   	Defining `{}` allows `constexpr` evaluation,
+		but invalidates `std::trivially_default_constructible`.
+		*/
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
@@ -196,6 +202,13 @@ struct block<Us ...>
 :	block<common_t<Us...>[sizeof...(Us)]>
 {
 };
+/*!
+\brief Defines a fixed-width `std::array`- or `std::tuple`-like container.
+
+If `common_q<Us...`, the member-`type` is `std::derived_from<std::tuple<Us...>>`.
+Otherwise, the member-`type` derives from `std::span` or `std::array`,
+depending respectively on whether the supplied signature is referenced or unreferenced.
+*/
 template <class ...Us>
 struct block
 {
@@ -230,20 +243,22 @@ struct block
 		using coordinate_type = value_type;
 		using   ordinate_type = value_type;
 
-		///\
-		Reinvokes the current `template` (uniquely determined by the `bond::tag`s). \
- 		
+		/*!
+		\brief  	Reinvokes the current `template` (uniquely determined by the `bond::tag`s).
+		*/
 		template <class ...Xs> using form_t = typename form_<void, Xs...>::type;
 		
-		///\returns a specialized instance of the underlying template using the argument types `Xs...`. \
-
+		/*!
+		\returns	A specialized instance of the underlying template using the argument types `Xs...`.
+		*/
 		XTAL_FX0_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,set)
 		form(Xs &&...xs),
 			form_t<_xtd::decay_value_reference_t<Xs>...>{XTAL_REF_(xs)...})
 
-		///\returns a specialized instance of `this` using the underlying template. \
-
+		/*!
+		\returns	A specialized instance of `this` using the underlying template.
+		*/
 		XTAL_FX2_(to) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
 		reform(),
@@ -252,11 +267,9 @@ struct block
 	public:
 		using S_::self;
 
-		///\returns the first `count` elements of `this` as a truncated view of `U`. \
-		
-		///\todo\
-		Allow truncation/projection of heterogeneous `block`s.
-
+		/*!
+		\returns	The first `count` elements of `this` as a truncated view of `U`.
+		*/
 		XTAL_FX4_(do) (template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		self(constant_q auto count),
@@ -282,8 +295,9 @@ struct block
 	public:
 	//	using S_::twin;
 
-		///\see [`bond::any`](../bond/any.hh). \
-
+		/*!
+		\returns	A copy of `this`.
+		*/
 		XTAL_DEF_(return,inline,let)
 		twin() const
 		noexcept -> auto
@@ -291,11 +305,9 @@ struct block
 			return reform<_std::remove_cvref_t<Us>...>();
 		}
 
-		///\returns the first `count` elements of `this` as a truncated copy of `U`. \
-		
-		///\todo\
-		Allow truncation/copying of heterogeneous `block`s. \
-
+		/*!
+		\returns	A copy of `this` truncated to the first `count` elements.
+		*/
 		XTAL_FX4_(do) (template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		twin(constant_q auto count),
@@ -319,8 +331,9 @@ struct block
 		})
 
 	public:// ACCESS
-		///\returns the internal/external representation of the given co/ordinate. \
-
+		/*!
+		\returns	The internal/external representation of the given co/ordinate.
+		*/
 		static auto constexpr   ordinate = _std::identity{};
 		static auto constexpr coordinate = _std::identity{};
 
@@ -371,6 +384,7 @@ template <size_type I> XTAL_DEF_(inline,let) got(block_q auto        &o) noexcep
 ///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 /**/
+#ifndef XTAL_DOC
 namespace std
 {///////////////////////////////////////////////////////////////////////////////
 
@@ -382,5 +396,6 @@ struct tuple_element<N, T> : T::template tuple_element<N> {};
 
 
 }/////////////////////////////////////////////////////////////////////////////
+#endif
 /***/
 XTAL_ENV_(pop)

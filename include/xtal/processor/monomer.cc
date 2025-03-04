@@ -143,7 +143,7 @@ void monomer_provision__advancing()
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*0 == xhs.front()); // efflux then advance
 	xhs >>= seq++; TRUE_(6 == xhs.size());// TRUE_(99 + 66*1 == xhs.front()); // efflux then advance
 
-//	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation. \
+//	NOTE: The adjustment below doesn't work for dispatched attributes like `static_bias` without reinvokation!
 
 //	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11

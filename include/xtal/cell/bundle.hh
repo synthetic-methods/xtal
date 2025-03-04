@@ -10,12 +10,14 @@ XTAL_ENV_(push)
 namespace xtal::cell
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Ties `Xs...`. \
-
+/*!
+\brief
+Ties `Xs...` together as a tuple,
+materializing any `rvalue`s or atomic `lvalue`s.
+*/
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::tagged_with_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_in_p<bundle, _s...>;
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -45,9 +47,9 @@ struct bundle
 	public:// CONSTRUCT
 		using S_::S_;//NOTE: Inherited and respecialized!
 
-		///\
-		Initialize `arguments` using those provided. \
-
+		/*!
+		\brief  	Initialize `arguments` using those provided.
+		*/
 		XTAL_NEW_(explicit)
 		subtype(Xs &&...xs)
 		noexcept

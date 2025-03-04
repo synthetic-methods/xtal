@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class ..._s> struct   restep;
 template <class ..._s> using    restep_t =  confined_t<restep< _s...>>;
-template <class ..._s> concept  restep_q = bond::tagged_with_p<restep, _s...> ;
+template <class ..._s> concept  restep_q = bond::tag_in_p<restep, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class ..._s> struct   resize;
 template <class ..._s> using    resize_t =  confined_t<resize< _s...>>;
-template <class ..._s> concept  resize_q = bond::tagged_with_p<resize, _s...> ;
+template <class ..._s> concept  resize_q = bond::tag_in_p<resize, _s...> ;
 
 
 //////////////////////////////////////////////////////////////////////////////////

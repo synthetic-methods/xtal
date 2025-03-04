@@ -15,17 +15,22 @@ using namespace _retail::_detail;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Utility for constructing homogeneous/heterogeneous `block`s, \
-depending on the commonality of the supplied arguments. \
-
-///\note\
-If the function supplied to `make` is `std::identity`, \
-it is swapped internally with `objective_f`. \
-
+/*!
+\brief
+Utility for constructing `block` from the given template.
+*/
 template <template <class ...> class T_>
 struct factory
 {
+	/*!
+	\brief  	Constructs a value using the given template.
+	\details
+	The parameters supplied to the template are mapped by `f`,
+	which is by default `xtal::objective_f`.
+	
+	Whether the resulting collection is homogeneous or heterogeneous depends on
+	the commonality of the supplied arguments.
+	*/
 	template <auto f=_std::identity{}, class ...Xs>
 	XTAL_DEF_(return,inline,set)
 	make(Xs &&...xs)
@@ -43,48 +48,64 @@ struct factory
 	}
 
 };
+/*!
+\brief
+Portmanteau of `factory` and `make`, uses the default map `objective_f`.
+*/
 template <template <class ...> class T_>
 XTAL_DEF_(let) fake_f = [] XTAL_1FN_(call) (factory<T_>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Utilities replacing the C++23-deprecated `std::aligned_storage`. \
+/*!
+\brief
+Provides utilities for aligned storage and/or `sizeof` determination.
 
-///\todo\
-Provide a mechanism for sorting/unsorting the respective inner/outer types? \
-
+\todo
+Provide a mechanism for sorting/unsorting the respective inner/outer types?
+*/
 template <class ...Ts>
 struct aligned : aligned<based_t<Ts>...>
 {
 };
+/*!
+\brief
+Provides `sizeof` determination of `Ts`.
+*/
 template <based_q ...Ts>
 struct aligned<Ts...>
 {
-	///\returns the total aligned storage-size for `T`. \
-	
+	/*!
+	\returns	The total aligned storage-size for `Ts...`.
+	*/
 	static cardinal_constant_t<(size_type{0} +...+ aligned<Ts>::size())>
 	constexpr size{};
 
 };
+/*!
+\brief
+Provides utilities for aligned storage for `T`.
+*/
 template <based_q T>
 struct aligned<T>
 {
-	///\
-	Defines the aligned storage-type for `T`. \
-
+	/*!
+	\brief  	Provides the aligned storage-type for `T`, via the member-value `bytes`.
+	\brief  	Replaces the C++23-deprecated `std::aligned_storage`.
+	*/
 	class type {alignas(alignof(T)) _std::byte bytes[sizeof(T)];};
 
-	///\returns the aligned storage-size for `T`. \
-	
+	/*!
+	\brief  	Provides the aligned storage-size of `T`.
+	*/
 	static cardinal_constant_t<sizeof(type)> constexpr size{};
 
-	///\returns the next available slot for `T`, \
-	rounded up to the nearest `T`-boundary. \
-
-	///\note\
-	The most effective packing is attained by ordering the `Ts...` from-largest-to-smallest. \
-
+	/*!
+	\brief  	Provides incremental allocation for `T`, starting from the previous boundary.
+	\param i The boundary of the previous allocation.
+	\returns	The next available slot for `T`, rounded up to the nearest `T`-boundary.
+	\returns	The most effective packing is attained by ordering the `Ts...` from-largest-to-smallest.
+	*/
 	XTAL_DEF_(return,inline,set)
 	advance(auto &i)
 	noexcept -> auto

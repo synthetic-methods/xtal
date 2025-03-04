@@ -10,12 +10,14 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `quanta` with point-wise operation. \
+/*!
+\brief
+Extends `quanta` with component-wise operation.
+*/
 
 template <class ...Us>	struct  point;
 template <class ...Us>	using   point_t = typename point<Us...>::type;
-template <class ...Us>	concept point_q = bond::fixed_tagged_with_p<point_t, Us...>;
+template <class ...Us>	concept point_q = bond::tag_infixed_p<point_t, Us...>;
 
 XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::fake_f<point_t>);
 
@@ -68,16 +70,18 @@ struct point
 		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(block_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (got<I>(XTAL_REF_(t)))
 
 	public:
-		///\concept `true` if the operation `f` can be applied at the value-level, `false` otherwise. \
-		
+		/*!
+		\brief  	Determines whether the operation `f` can be applied at the value-level.
+		*/
 		template <class U, auto f>
 		XTAL_DEF_(set) zip_value_q = _std::conditional_t<common_q<Us...>
 			,	constant_t<un_n<0, requires (U_ u_, U u) {f(u_, u);}   >>
 			,	constant_t<un_n<0, requires (Us u_, U u) {f(u_, u);}...>>
 		>{}();
 
-		///\returns the pointwise result of applying the vector operation `f`. \
-
+		/*!
+		\returns	The pointwise result of applying the vector operation `f`.
+		*/
 		template <auto f>
 		XTAL_DEF_(return,inline,set)
 		zip_from(auto const &...ts)
@@ -88,9 +92,9 @@ struct point
 				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(f_(constant_t<I>{})...))
 					(bond::seek_s<size>{});
 		}
-		///\
-		Evaluates `f` pointwise for each row across `s, ts...`. \
-
+		/*!
+		\brief  	Evaluates `f` pointwise for each row across `s, ts...`.
+		*/
 		template <auto f>
 		XTAL_DEF_(return,inline,set)
 		zip_into(auto &s, auto &&...ts)
@@ -101,8 +105,9 @@ struct point
 				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(do) (f_(constant_t<I>{}),...)
 					(bond::seek_s<size>{});
 		}
-		///\returns `self()`, after applying the vector operation `f`. \
-
+		/*!
+		\returns	This after applying the vector operation `f`.
+		*/
 		template <auto f>
 		XTAL_DEF_(mutate,inline,let)
 		zip_with(auto const &...ts)
@@ -111,8 +116,9 @@ struct point
 			auto &s = self(); zip_into<f>(s, ts...); return s;
 		}
 
-		///\returns the reduction of `this` w.r.t. the binary operation `f`. \
-
+		/*!
+		\returns	The reduction of `this` w.r.t. the binary operation `f`.
+		*/
 		template <auto f, int I=size - 1>
 		XTAL_DEF_(return,inline,let)
 		reduce() const
@@ -122,7 +128,7 @@ struct point
 			XTAL_0IF (1 <= I) {return f(get<I>(self()), reduce<f, I - 1>());}
 		}
 
-	//	Vector comparison (performed point-wise):
+	//	Vector comparison (performed component-wise):
 
 		XTAL_DEF_(return,inline,met)
 		operator <=> (homotype const &s, homotype const &t)
@@ -134,7 +140,7 @@ struct point
 			(bond::seek_s<size>{}));
 		}
 
-	//	Vector reflection (performed point-wise):
+	//	Vector reflection (performed component-wise):
 
 		template <int N_sgn=1>
 		XTAL_DEF_(inline,let)
@@ -163,13 +169,14 @@ struct point
 	//	TODO: Restrict scalar-distribution to multiplicative/conjunctive operations?
 
 	protected:
-		///\internal\
-		The purpose of the different `operator` implementations is to handle \
-		`coordinated_block_q`s, which have different `initializer_t`s and `value_type`s. \
-		\
-		It's safer to assign the result of the binary operator via `zip_from` (using `got`/`coelement`), \
-		than to use apply the assignment directly via `zip_with` (using `get` for both `self()` and the arguments). \
+		/*!
+		\internal
+		The purpose of the different `operator` implementations is to handle
+		`block_coordinated_q`s, which have different `initializer_t`s and `value_type`s.
 
+		It's safer to assign the result of the binary operator via `zip_from` (using `got`/`coelement`),
+		than to use apply the assignment directly via `zip_with` (using `get` for both `self()` and the arguments).
+		*/
 		/**/
 		template <class W>
 		XTAL_DEF_(mutate,inline,get)
@@ -180,10 +187,10 @@ struct point
 			else                      {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x /=y)>(        w);}
 		}
 		/***/
-		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept requires coordinated_block_q<T> {auto &s = self(); s = mul2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept requires coordinated_block_q<T> {auto &s = self(); s = div2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept requires coordinated_block_q<T> {auto &s = self(); s = add2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept requires coordinated_block_q<T> {auto &s = self(); s = sub2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = mul2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = div2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = add2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = sub2_(w); return s;}
 		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x *=y)>(w);}
 	//	template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x /=y)>(w);}
 		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x +=y)>(w);}

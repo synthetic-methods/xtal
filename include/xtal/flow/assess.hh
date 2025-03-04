@@ -12,12 +12,16 @@ namespace xtal::flow
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Insulated `cell::header` used to prefix `assessment`. \
+/*!
+\brief
+Insulated `cell::header` used to prefix `assessment`.
 
+\details
+Used as a wrapper to reveal the internal state via `flux`/`flow` without modification.
+*/
 template <class ..._s>	struct  assess;
 template <class ..._s>	using   assess_s = bond::compose_s<let_t< _s...>, assess<>>;
-template <class ..._s>	concept assess_q = bond::tagged_p<assess_s, _s...>;
+template <class ..._s>	concept assess_q = bond::tag_as_p<assess_s, _s...>;
 template <           >	struct  assess<> : cell::header<bond::tag<assess_s>> {};
 
 

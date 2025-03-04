@@ -55,13 +55,12 @@ template <class ...Ts> auto   surjective_f(_std::tuple<Ts...>) -> objective_t<Ts
 template <class ...Ts> auto   surjective_f(_std::pair <Ts...>) -> objective_t<Ts...>;
 template <class ...Ts> using  surjective_t = common_t<XTAL_ALL_(surjective_f(XTAL_ANY_(Ts)))...>;
 ///< Obtains the common objective `value_type` for `Xs...`.
+///<\todo Generalize `surjective_f` using `bond::pack`?
 
-//\todo\
-Generalize `surjective_f` using `bond::pack`? \
-
-
-///\returns an instance of the given template applied to either `Xs...` or `common_t<Xs...>`. \
-
+/*!
+\returns
+An instance of the given template applied to either `Xs...` or `common_t<Xs...>`.
+*/
 template <template <class ...> class F, class ...Xs>
 XTAL_DEF_(return,inline,let)
 construxion_f(Xs &&...xs)
@@ -78,8 +77,10 @@ noexcept -> auto
 	XTAL_0IF_(terminate)
 }
 
-///\returns an instance of `std::complex` applied to `common_t<Xs...>`. \
-
+/*!
+\returns
+An instance of `std::complex` applied to `common_t<Xs...>`.
+*/
 template <class ...Xs>
 XTAL_DEF_(return,inline,let)
 complexion_f(Xs &&...xs)

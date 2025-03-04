@@ -10,15 +10,16 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `multiplicative_group` with the scalar sum/product. \
-Provides even/odd-reflection iff `size() == 2`. \
-
+/*!
+\brief
+Extends `group_multiplication` with the scalar sum/product,
+providing even/odd-reflection iff `size() == 2`.
+*/
 template <class ...Us>	struct  couple;
-template <class ...Us>	using   couple_t = typename couple<Us...>::type;
-template <class ...Us>	concept couple_q = bond::fixed_tagged_with_p<couple_t, Us...>;
+template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\brief  Type-factory for `couple`.
+template <class ...Us>	concept couple_q = bond::tag_infixed_p<couple_t, Us...>;
 
-XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::fake_f<couple_t>);
+XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::fake_f<couple_t>);///<\brief Value-factory for `couple`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +38,7 @@ struct couple
 	using alpha_type = typename _fit::alpha_type;
 	
 	template <class T>
-	using endotype = typename multiplicative_group<Us...>::template homotype<T>;
+	using endotype = typename group_multiplication<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
@@ -82,14 +83,10 @@ struct couple
 
 	public:// OPERATE
 
-		///\
-		Produces the progressive sum/difference, \
-		starting from zero if post-fixed. \
-
-		///\note\
-		Defined only for `const this`, \
-		because this is whack (but fun). \
-
+		/*!
+		\brief  	Produces the progressive sum/difference, starting from zero if post-fixed.
+		\brief  	Defined only for `const this`, because this is whack (but fun).
+		*/
 		XTAL_DEF_(inline,let)
 		operator++() const
 		noexcept -> auto
@@ -214,29 +211,34 @@ struct couple
 			return u;
 		}
 
-		template <int N_par=0> requires (size == 2)
-		XTAL_DEF_(inline,let)
+		/*!
+		\returns	The ratio between the two elements of `this`, raised to the power `-1 <= N_pow <= 1`.
+		*/
+		template <int N_pow=1> requires (size == 2)
+		XTAL_DEF_(return,inline,let)
 		ratio()
 		noexcept -> auto
 		{
 			auto &s = self();
 			
 			XTAL_IF0
-			XTAL_0IF (0 <= N_par) {return get<0>(s)/get<1>(s);}
-			XTAL_0IF (N_par <  0) {return get<1>(s)/get<0>(s);}
+			XTAL_0IF (0 == N_pow) {return value_type{one};}
+			XTAL_0IF (0 <  N_pow) {return get<0>(s)/get<1>(s);}
+			XTAL_0IF (N_pow <  0) {return get<1>(s)/get<0>(s);}
 		}
-		///\
-		Modifies `this`; \see `reflected()`.
-
+		/*!
+		\returns	This, with the two elements `reflected`.
+		*/
 		template <int N_par=0> requires (size == 2)
-		XTAL_DEF_(inline,let)
+		XTAL_DEF_(mutate,inline,let)
 		reflect()
 		noexcept -> T &
 		{
 			return self() = reflected<N_par>();
 		}
-		///\returns the mutually inverse `lhs +/- rhs` scaled by the `reflector<N_par>()`. \
-		
+		/*!
+		\returns	The mutually inverse `lhs +/- rhs` scaled by `reflector<N_par>()`.
+		*/
 		template <int N_par=0> requires (size == 2)
 		XTAL_DEF_(return,inline,let)
 		reflected() const
@@ -248,8 +250,9 @@ struct couple
 			auto const     y = o*get<1>(s);
 			return decltype(twin()) {x + y, x - y};
 		}
-		///\returns the reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`. \
-		
+		/*!
+		\returns	The reflection coefficient indexed by `N_par`: `{-1, 0, 1} -> {0.5, std::sqrt(0.5), 1.0}`.
+		*/
 		template <int N_par=0> requires (size() == 2)
 		XTAL_DEF_(return,inline,set)
 		reflector()

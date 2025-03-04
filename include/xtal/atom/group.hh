@@ -12,30 +12,37 @@ namespace xtal::atom
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `point` with point-wise multiplication. \
+/*!
+\brief
+Extends `point` with component-wise multiplication.
+*/
+template <class ...Us>	struct  group_multiplication;
+template <class ...Us>	using   group_multiplication_t = typename group_multiplication<Us...>::type;
+template <class ...Ts>	concept group_multiplication_q = bond::tag_infixed_p<group_multiplication_t, Ts...>;
 
-template <class ...Us>	struct  multiplicative_group;
-template <class ...Us>	using   multiplicative_group_t = typename multiplicative_group<Us...>::type;
-template <class ...Us>	concept multiplicative_group_q = bond::fixed_tagged_with_p<multiplicative_group_t, Us...>;
-
-XTAL_DEF_(let) multiplicative_group_f = [] XTAL_1FN_(call) (_detail::fake_f<multiplicative_group_t>);
+XTAL_DEF_(let) group_multiplication_f = [] XTAL_1FN_(call) (_detail::fake_f<group_multiplication_t>);
 
 
 template <scalar_q ...Us> requires common_q<Us...>
-struct multiplicative_group<Us ...>
-:	multiplicative_group<common_t<Us...>[sizeof...(Us)]>
+struct group_multiplication<Us ...>
+:	group_multiplication<common_t<Us...>[sizeof...(Us)]>
 {
 };
 template <class ...Us>
-struct multiplicative_group
+struct group_multiplication
 {
+private:
 	template <class T>
 	using endotype = typename point<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<multiplicative_group_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<group_multiplication_t>>;
 
+public:
+	/*!
+	\brief
+	Extends `point` with component-wise multiplication.
+	*/
 	template <class T>
 	class homotype : public holotype<T>
 	{
@@ -53,13 +60,9 @@ struct multiplicative_group
 		XTAL_NEW_(create) (homotype, noexcept = default)
 		XTAL_NEW_(move)   (homotype, noexcept = default)
 		XTAL_NEW_(copy)   (homotype, noexcept = default)
-		XTAL_NEW_(cast)   (homotype, noexcept)
+		XTAL_NEW_(cast)   (homotype, noexcept :        )
+		XTAL_NEW_(then)   (homotype, noexcept : S_     )
 
-		XTAL_NEW_(explicit)
-		homotype(auto &&...oo)
-		noexcept
-		:	S_{XTAL_REF_(oo)...}
-		{}
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
@@ -67,10 +70,10 @@ struct multiplicative_group
 		{
 			_detail::initialize_with(S_::begin(), size(), U_{1});
 		}
-		///\
-		Constructs the constant `group` using the initializer `w`. \
-		If `1 == w.size()`, the provided value is repeated. \
-
+		/*!
+		\brief  	Constructs the constant `group` using the initializer `w`.
+		If `1 == w.size()`, the provided value is repeated.
+		*/
 		XTAL_NEW_(implicit)
 		homotype(_std::initializer_list<U_> xs)
 		noexcept
@@ -87,17 +90,18 @@ struct multiplicative_group
 		using S_::operator*; using S_::operator*=;
 		using S_::operator/; using S_::operator/=;
 
-		template <multiplicative_group_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
-		template <multiplicative_group_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
-		template <multiplicative_group_q W> XTAL_DEF_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
-		template <multiplicative_group_q W> XTAL_DEF_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
-		template <multiplicative_group_q W> XTAL_DEF_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
+		template <group_multiplication_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w * self()  ;}
+		template <group_multiplication_q W> XTAL_DEF_(return,inline,get) operator * (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::mul2_(w);}
+		template <group_multiplication_q W> XTAL_DEF_(return,inline,get) operator / (W const &w) const noexcept requires bond::tab_precedence_p<T, W> {return S_::div2_(w);}
+		template <group_multiplication_q W> XTAL_DEF_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
+		template <group_multiplication_q W> XTAL_DEF_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
 
 		XTAL_DEF_(mutate,inline,get)  operator *=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s *= T(w); return s;}
 		XTAL_DEF_(mutate,inline,get)  operator /=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
-		///\returns the result of `blanked()` before refilling with `N_value=1`. \
-
+		/*!
+		\returns	The result of `blanked()` before refilling with `N_value=1`.
+		*/
 		template <auto N_value=1>
 		XTAL_DEF_(inline,let)
 		blanket()
@@ -113,30 +117,33 @@ struct multiplicative_group
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `point` with point-wise addition. \
+/*!
+\brief
+Extends `point` with component-wise addition.
+*/
+template <class ...Us>	struct  group_addition;
+template <class ...Us>	using   group_addition_t = typename group_addition<Us...>::type;
+template <class ...Ts>	concept group_addition_q = bond::tag_infixed_p<group_addition_t, Ts...>;
 
-template <class ...Us>	struct  additive_group;
-template <class ...Us>	using   additive_group_t = typename additive_group<Us...>::type;
-template <class ...Us>	concept additive_group_q = bond::fixed_tagged_with_p<additive_group_t, Us...>;
-
-XTAL_DEF_(let) additive_group_f = [] XTAL_1FN_(call) (_detail::fake_f<additive_group_t>);
+XTAL_DEF_(let) group_addition_f = [] XTAL_1FN_(call) (_detail::fake_f<group_addition_t>);
 
 
 template <scalar_q ...Us> requires common_q<Us...>
-struct additive_group<Us ...>
-:	additive_group<common_t<Us...>[sizeof...(Us)]>
+struct group_addition<Us ...>
+:	group_addition<common_t<Us...>[sizeof...(Us)]>
 {
 };
 template <class ...Us>
-struct additive_group
+struct group_addition
 {
+private:
 	template <class T>
 	using endotype = typename point<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<additive_group_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<group_addition_t>>;
 
+public:
 	template <class T>
 	class homotype : public holotype<T>
 	{
@@ -154,11 +161,11 @@ struct additive_group
 		using S_::operator+; using S_::operator+=;
 		using S_::operator-; using S_::operator-=;
 
-		template <additive_group_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
-		template <additive_group_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
-		template <additive_group_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
-		template <additive_group_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
-		template <additive_group_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
+		template <group_addition_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
+		template <group_addition_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
+		template <group_addition_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
+		template <group_addition_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
+		template <group_addition_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
 		XTAL_DEF_(mutate,inline,get)  operator +=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s += T(w); return s;}
 		XTAL_DEF_(mutate,inline,get)  operator -=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s -= T(w); return s;}
@@ -170,14 +177,19 @@ struct additive_group
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
+/*!
+\brief
+Resolves as `*_group` based on the supplied operator.
+*/
 template <class T        > struct group;
 
-template <class U, auto N> struct group<_std::multiplies <U>   [N]> : multiplicative_group<U   [N]> {};
-template <class U, auto N> struct group<_std::multiplies <U>(&)[N]> : multiplicative_group<U(&)[N]> {};
+template <class U, auto N> struct group<_std::multiplies <U>   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.
+template <class U, auto N> struct group<_std::multiplies <U>(&)[N]> : group_multiplication<U(&)[N]> {};///<\brief Resolves as `group_multiplication`.
 
-template <class U, auto N> struct group<_std::plus       <U>   [N]> :       additive_group<U   [N]> {};
-template <class U, auto N> struct group<_std::plus       <U>(&)[N]> :       additive_group<U(&)[N]> {};
+template <class U, auto N> struct group<_std::plus       <U>   [N]> : group_addition      <U   [N]> {};///<\brief Resolves as `group_addition`.
+template <class U, auto N> struct group<_std::plus       <U>(&)[N]> : group_addition      <U(&)[N]> {};///<\brief Resolves as `group_addition`.
+
+template <class ...Ts>	concept group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

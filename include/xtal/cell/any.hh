@@ -14,20 +14,17 @@ namespace xtal::cell
 namespace _retail = xtal::bond;
 #include "./_entail.ii"
 #include "./_detail.ii"
-
-
+/*
+The following `subtype` decorators are specialized under each `xtal::*` namespace.
+They provide instance and proxy initialization/finalization for the generated types in `./any.hxx`.
+*/
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-///\
-The following `subtype` decorators are specialized under each `xtal::*` namespace. \
-They provide instance and proxy initialization/finalization for the generated types in `./any.hxx`. \
-
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Expands on the `self`-reflection established by `../bond/any.ipp#define`, \
-providing the mechanism for traversing the trait-lineage of `T`. \
-
+/*!
+\brief   Extends `bond::define` with decorator-lineage traversal.
+*/
 template <class T>
 struct define
 {
@@ -46,9 +43,9 @@ struct define
 	public:// OPERATE
 		using S_::self;
 
-		//\
-		Trivial (`constexpr`) equality. \
-		
+		/*!
+		\returns	`true` (when vacant).
+		*/
 		XTAL_DEF_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
@@ -75,14 +72,12 @@ struct define
 
 	};
 };
-///\
-Finalizes `T` via CRTP e.g. applying `std::view_interface`, \
-with `subtype` as the default target of `self`. \
+/*!
+\brief   Extends `bond::refine` by finalizing `tuple` and `range` interfaces.
 
-///\note\
-Utilizes `std::initializer_list` construction if permitted by the `head_type`, \
-irrespective of whether `_detail::refer_iterators` has been applied. \
-
+Applies `ranges::view_interface` if `begin` and `end` have been defined.
+Uses `std::initializer_list` construction if permitted by the `head_type`.
+*/
 template <class T>
 struct refine
 {
@@ -133,14 +128,12 @@ struct refine
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///\
-Proxies the given `U` via `head`, \
-providing chained/packed construction/access. \
+/*!
+\brief   Extends `bond::defer` with decorator-lineage traversal and equality/comparison.
 
-///\note\
-Mutable `lvalue`s are converted to pointers, \
-providing a similar level of utility to `std::reference_wrapper`. \
-
+Mutable `lvalue`s are converted to pointers,
+providing a similar utility as `std::reference_wrapper`.
+*/
 template <class U>
 struct defer
 {
@@ -160,20 +153,23 @@ struct defer
 		using S_::self;
 		using S_::head;
 
-		///\
-		Converts `this` to the base-type (explicit). \
-
+		/*!
+		\brief  	Converts `this` to the base-type (explicit).
+		*/
 		XTAL_FX4_(to) (XTAL_DEF_(return,inline,explicit operator) U_(), head())
 
-		///\
-		\returns `true` if the supplied body matches `head`, `false` otherwise. \
-
+		/*!
+		\returns	`1` if the supplied value matches `self`, `0` otherwise.
+		*/
 		XTAL_DEF_(return,inline,let)
 		heading(auto &&o) const
 		noexcept -> bool
 		{
 			return S_::heading(XTAL_REF_(o));
 		}
+		/*!
+		\returns	`1` if the supplied value matches `head`, `0` otherwise.
+		*/
 		XTAL_DEF_(return,inline,let)
 		heading(same_q<U_> auto &&o) const
 		noexcept -> bool
@@ -181,9 +177,9 @@ struct defer
 			return equivalent_f(head(), XTAL_REF_(o));
 		}
 		
-		///\
-		\returns `true` if the supplied body matches `this`, `false` otherwise. \
-
+		/*!
+		\returns	`true` if the supplied body matches `this`, `false` otherwise.
+		*/
 		XTAL_DEF_(return,inline,let)
 		operator == (subtype const &t) const
 		noexcept -> bool
@@ -192,16 +188,16 @@ struct defer
 				S_::template self<1>() == t.template self<1>();
 		}
 
-		///\
-		Tuple arity. \
-
+		/*!
+		\brief  	Defines the current arity as a `constant_t`.
+		*/
 		using pack_size = succedent_s<typename S_::pack_size>;
 
 	};
 };
-///\
-Defers selected operators to `U` as required for `refine`ment. \
-
+/*!
+\brief   Extends `bond::refer` by lifting the operators that apply to `U`.
+*/
 template <class U>
 struct refer : bond::compose<void
 ,	_detail::refer_logics<U>
@@ -214,6 +210,9 @@ struct refer : bond::compose<void
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Forces equality resolution via the member `operator==`.
+*/
 template <any_q X, any_q Y> requires same_q<X, Y>
 XTAL_DEF_(return,inline,let)
 operator == (X const &x, Y const &y)
@@ -229,6 +228,7 @@ noexcept -> bool
 }/////////////////////////////////////////////////////////////////////////////
 
 
+#ifndef XTAL_DOC
 namespace std
 {////////////////////////////////////////////////////////////////////////////
 
@@ -240,4 +240,5 @@ struct tuple_element<N, T> {using type = typename T::template head_t<integral_co
 
 
 }//////////////////////////////////////////////////////////////////////////
+#endif
 XTAL_ENV_(pop)

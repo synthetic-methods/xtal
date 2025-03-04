@@ -18,6 +18,9 @@ namespace _retail = xtal::flow;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/*!
+\brief   Extends `flow::define` with `method`-_vtables_ and `binding`.
+*/
 template <class T>
 struct define
 {
@@ -32,15 +35,13 @@ struct define
 	public:// CONSTRUCT
 		using S_::S_;
 
+	//\
 	protected:// DIGEST
-	public:
-		///\brief\
-		Addresses the function pointer for the given types `Xs...` and indicies `Is...`, \
-		providing the kernel for the dispatch-table constructed with `occur/any.hh#dispatch`. \
-
-		///\todo\
-		Incorporate receiver at the front of `Xs...` to provide both `const` and non-`const` invocation. \
-
+	public:// DIGEST
+		/*!
+		\brief  	Initializes the dispatch-table constructed with `occur/any.hh#dispatch`.
+		\todo    Incorporate receiver at the front of `Xs...` to provide both `const` and non-`const` invocation.
+		*/
 		template <class ...Xs>
 		struct digest
 		{
@@ -66,13 +67,14 @@ struct define
 			public:
 				using point_type = typename solve<Is...>::type;
 				static auto constexpr point = static_cast<point_type>(&T::template divert<Is...>);
+				///<\brief Addresses the function pointer for the given types `Xs...` and indicies `Is...`.
 
 			};
 		};
-		///\brief\
-		Provides a layer of indirection separating the types submitted/visible to `digest`, \
-		and those received by `method`. \
-		
+		/*!
+		\brief  	Provides a layer of indirection separating the types submitted/visible to `digest`,
+		and those received by `method`.
+		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		divert(auto &&...xs)
@@ -96,14 +98,18 @@ struct define
 			XTAL_0IF (some_n<Is...>)              {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 
-		///\brief a pointer to the digested `method` for the given parameters. \
-
+		/*!
+		\returns	The provided pointer.
+		*/
 		XTAL_DEF_(return,inline,let)
 		deify(auto const &point) const
 		noexcept -> decltype(auto)
 		{
 			return point;
 		}
+		/*!
+		\returns	A pointer to the digested `method` indexed by the given constants.
+		*/
 		template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
 		deify(constant_q auto ...Is) const
@@ -115,8 +121,9 @@ struct define
 	public:// OPERATE
 		using S_::self;
 
-		///\returns the lambda abstraction of `operator()`. \
-
+		/*!
+		\returns	The lambda abstraction of `operator()`.
+		*/
 		XTAL_FX2_(do) (template <class ...Xs>
 		XTAL_DEF_(return,inline,let)
 		reify(constant_q auto ...is),
@@ -132,8 +139,9 @@ struct define
 			}
 		})
 
-		///\returns the result of applying `method`, with `dispatch`ed parameters resolved. \
-		
+		/*!
+		\returns	The result of applying `method`, with `dispatch`ed parameters resolved.
+		*/
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		operator() (auto &&...xs),
@@ -151,18 +159,19 @@ struct define
 			}
 		})
 		
-		///\returns the outcome of the current process (if defined), \
-		or the result of applying the `static method_f` (only when `this` is `const`). \
-
+		/*!
+		\returns	The outcome of the current process (if defined),
+		or the result of applying the `static method_f` (only when `this` is `const`).
+		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method(auto &&...xs) noexcept
 		XTAL_TRY_(to) (T::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
-		///\
-		Thunkifies the underlying `T` by capturing the arguments `Xs...`. \
-
+		/*!
+		\brief  	Thunkifies the underlying `T` by capturing the arguments `Xs...`.
+		*/
 		template <class ...Xs> requires any_q<Xs...>
 		struct binding
 		{
@@ -178,9 +187,9 @@ struct define
 
 			public:// CONSTRUCT
 				using R_::R_;//NOTE: Inherited and respecialized!
-				///\
-				Initialize `arguments` using those supplied. \
-
+				/*!
+				\brief  	Initialize `arguments` using those supplied.
+				*/
 				XTAL_NEW_(explicit)
 				subtype(Xs &&...xs)
 				noexcept
@@ -201,9 +210,9 @@ struct define
 
 			public:// OPERATE
 				using R_::method;
-				///\
-				Evaluates the lifted `method` using the bound arguments. \
-
+				/*!
+				\brief  	Evaluates the lifted `method` using the bound arguments.
+				*/
 				XTAL_FX2_(do) (template <auto ...Is>
 				XTAL_DEF_(return,inline,let)
 				method(auto &&...xs),
@@ -308,21 +317,23 @@ struct defer
 		using S_::S_;
 
 	public:// OPERATE
-		///\
-		Resolves `head` as either a function or value, \
-		composed with the inherited `method` if the parent is a `defer`red `process`. \
-
+		/*!
+		\brief  	Resolves `head` as either a function or value,
+		composed with the inherited `method` if the parent is a `defer`red `process`.
+		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to) (S_method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to)
+			(S_method_f<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to) (S_method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to)
+			(S_method_f<Is...>(XTAL_REF_(xs)...))
 
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)

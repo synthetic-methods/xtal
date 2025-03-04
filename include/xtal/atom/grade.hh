@@ -10,12 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `group` with point-wise addition and differential succession. \
-
+/*!
+\brief
+Extends `group` with component-wise addition and differential succession.
+*/
 template <class ...Us>	struct  grade;
 template <class ...Us>	using   grade_t = typename grade<Us...>::type;
-template <class ...Us>	concept grade_q = bond::fixed_tagged_with_p<grade_t, Us...>;
+template <class ...Us>	concept grade_q = bond::tag_infixed_p<grade_t, Us...>;
 
 XTAL_DEF_(let) grade_f = [] XTAL_1FN_(call) (_detail::fake_f<grade_t>);
 
@@ -31,7 +32,7 @@ template <class ...Us>
 struct grade
 {
 	template <class T>
-	using endotype = typename additive_group<Us...>::template homotype<T>;
+	using endotype = typename group_addition<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
@@ -54,10 +55,10 @@ struct grade
 		XTAL_DEF_(inline,let) operator ++(int) noexcept -> auto {auto t = twin(); operator++(); return t;}
 		XTAL_DEF_(inline,let) operator --(int) noexcept -> auto {auto t = twin(); operator--(); return t;}
 
-		///\
-		Produces the successor by pairwise addition from `begin()` to `end()`, \
-		assuming the entries of `this` are finite differences/derivatives. \
-
+		/*!
+		\brief  	Produces the successor by pairwise addition from `begin()` to `end()`,
+		assuming the entries of `this` are finite differences/derivatives.
+		*/
 		XTAL_DEF_(inline,let)
 		operator ++ ()
 		noexcept -> T &
@@ -68,17 +69,17 @@ struct grade
 			
 			return self();
 		}
-		///\
-		Produces the predecessor by pairwise subtraction from `end()` to `begin()`, \
-		assuming the entries of `this` are finite differences/derivatives. \
-
+		/*!
+		\brief  	Produces the predecessor by pairwise subtraction from `end()` to `begin()`,
+		assuming the entries of `this` are finite differences/derivatives.
+		*/
 		XTAL_DEF_(inline,let)
 		operator -- ()
 		noexcept -> T &
 		{
 			[this]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN {((get<I>(self()) -= get<I + 1>(self())),...);}
-			(bond::antiseek_s<size - 1>{});
+			(bond::seek_reverse_s<size - 1>{});
 			
 			return self();
 		}

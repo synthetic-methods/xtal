@@ -10,13 +10,16 @@ XTAL_ENV_(push)
 namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Provides an overloaded combination of `<Fs...>`, \
-functionally lifted form of `<T>`, or `std::identity` for `<>`. \
-Can be used to `std::visit` `std::variant`s via `operator()`, \
-and to provide a universal/virtual `constant_q` for non-`std::integral_constant`s. \
+/*!
+\brief
+Provides an overloaded combination of `<Fs...>`,
+conforming to `constant_q` if `applicable_q<Fs...>`.
 
+\details
+Defaults to `std::identity` for `<>`.
 
+Facilitates `std::visit`ation via `operator()` when applied to `std::variant`s.
+*/
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class... Fs>
@@ -90,9 +93,10 @@ struct operate : Fs...
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  ^  t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  |  t)
 	
-	///\returns the bit-shifted result if `integral_q<T>`, \
-	otherwise fractional mutiplication by `exp2(t)`. \
-	
+	/*!
+	\returns	The bit-shifted result if `integral_q<T>`,
+	otherwise fractional mutiplication by `exp2(t)`.
+	*/
 	template <inapplicable_p T>
 	//\
 	XTAL_DEF_(return,met)
@@ -110,9 +114,10 @@ struct operate : Fs...
 		}
 		return o;
 	}
-	///\returns the bit-shifted result if `integral_q<T>`, \
-	otherwise fractional division by `exp2(t)`. \
-	
+	/*!
+	\returns	The bit-shifted result if `integral_q<T>`,
+	otherwise fractional division by `exp2(t)`.
+	*/
 	template <inapplicable_p T>
 	//\
 	XTAL_DEF_(return,met)
@@ -195,6 +200,6 @@ template <auto ...oo>
 using operate_t = decltype(operate_v<oo...>);
 
 
-///////////////////////////////////////////////////////////////////////////////FIXME
+///////////////////////////////////////////////////////////////////////////////
 }/////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)

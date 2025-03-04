@@ -10,14 +10,10 @@ XTAL_ENV_(push)
 namespace xtal::schedule
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Provides an `in(flow )queue` for the value `Y` on the target object, \
-which produces a signal by successive calls to `method`. \
-
-///\todo\
-Implement `glider` in terms of `slider`, \
-which enacts polling and pack-expansion via `method`. \
-
+/*!
+\brief   Provides an `in(flow )queue` for the value `Y` on the target object,
+producing a signal by successive calls to `method`.
+*/
 template <typename ...As>
 struct glider
 {
@@ -34,70 +30,63 @@ struct glider
 		using S_::S_;
 
 		template <class ...Ys>
-		struct inqueue
+		struct accept
 		{
 			static_assert(single_q<Ys...>);
-			using superkind = typename S_::template inqueue<Ys...>;
+			using superkind = bond::compose<typename S_::template accept<Ys...>>;
 
-			template <flow::any_q R>
+			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
 			{
+				static_assert(flow::any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 			
 			public:// CONSTRUCT
-			//	using R_::R_;
+				using R_::R_;
 				
-				XTAL_NEW_(delete) (subtype, noexcept = default)
-				XTAL_NEW_(create) (subtype, noexcept = default)
-				XTAL_NEW_(move)   (subtype, noexcept = default)
-				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept)
-
 				using typename R_::delay_type;
 				using typename R_::event_type;
 
 			private:// ACCESS
-				using L_cue     = typename R_::event_type::layout_type;
-				using U_tailed  =      valued_u<L_cue    >;
-				using V_shuttle = atom::grade_t<L_cue    >;
-				using U_shuttle = flow::  cue_s<V_shuttle>;
+				using V_limits = _std::numeric_limits<delay_type>;
+				using U_layout = typename R_::event_type::layout_type;
+				using U_hold =      valued_u<U_layout>;
+				using U_ramp = atom::grade_t<U_layout>;
+				using E_hold = flow::  cue_s<U_hold>;
+				using E_ramp = flow::  cue_s<U_ramp>;
+				using E_pipe = typename S_::template spool_t<E_ramp>;
+				//\
+				delay_type u_drip{};//FIXME: Confuses GCC/Ubuntu on CI...
+				E_ramp u_drip{};
+				E_pipe u_pipe{bond::seek_t<>{}, V_limits::min(), V_limits::max()};
 
-				typename S_::template spool_t<U_shuttle>
-				u_spool{bond::seek_t<>{}
-				, 	_std::numeric_limits<delay_type>::min()
-				,	_std::numeric_limits<delay_type>::max()
-				};
-				U_shuttle u_shuttle{};
-
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(), u_shuttle.head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail_(), u_shuttle.tail())
-
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) head_(int i), u_spool.begin(i)->head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail_(int i), u_spool.begin(i)->tail())
+				//\
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
+				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
 
-				template <auto ...>
-				XTAL_DEF_(return,inline,let)
-				method(V_shuttle &x)
-				noexcept -> auto
-				{
-					//\
-					return x;
-					return x++(0);
-				}
+				/*!
+				\brief   Advances the current position/ramp.
+				\returns The next (interpolated) value.
+				*/
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)
 				method()
 				noexcept -> decltype(auto)
 				{
-					return u_spool.advance(head_()++ == head_(1))->
-						tail().apply([this] XTAL_1FN_(call) (method));
+					return u_pipe.advance(_drip()++ == head_(1))->
+						tail().apply([this] (U_ramp &u_) XTAL_0FN_(to) (u_++(0)));
 				}
 
 			public:// FLOW
 
+				/*!
+				\brief   Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				fuse(auto &&o)
@@ -105,121 +94,132 @@ struct glider
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
+				/*!
+				\brief   Enqueues the given event.
+				\returns `0`.
+				*/
 				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
-				fuse(flow::cue_q auto &&o)
+				fuse(in_q<E_hold, E_ramp, event_type> auto &&o)
 				noexcept -> signed
 				{
-					if constexpr (same_q<U_shuttle, decltype(o)>) {
-						return shuttle_(XTAL_REF_(o));
-					}
-					else {
-						return shuffle_(XTAL_REF_(o));
-					}
+					enqueue(XTAL_REF_(o));
+					return 0;
 				}
 
+				/*!
+				\brief   Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
-					if constexpr (0 <= N_ion) {
-						compact_();
-					}
+					compact(0 <= N_ion);
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
+				/*!
+				\brief   Updates the head of the signal.
+				*/
 				template <signed N_ion> requires in_n<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
-				flux(same_q<U_tailed> auto &&o)
+				flux(same_q<U_hold> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
-					compact_();
-					return tail_(0).template flux<N_ion>(V_shuttle{XTAL_REF_(o)});
+					compact(0 <= N_ion);
+					return [this, oo...] XTAL_1FN_(and) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
+						(tail_(0).template flux<N_ion>(U_ramp{XTAL_REF_(o)}));
 				}
 				
-			private:
-				//\
-				Enqueues the given message. \
-
-				XTAL_DEF_(return,inline,let)
-				shuttle_(same_q<U_shuttle> auto &&o)
-				noexcept -> signed
+			protected:
+				/*!
+				\brief   Enqueues the given gradient event.
+				*/
+				XTAL_DEF_(mutate,inline,let)
+				enqueue(same_q<E_ramp> auto &&o)
+				noexcept -> void
 				{
-					compact_(o);
-					u_spool.push(XTAL_REF_(o));
-					return 0;
+					compact(o);
+					u_pipe.push(XTAL_REF_(o));
 				}
-				XTAL_DEF_(return,inline,let)
-				shuttle_(delay_type v, auto &&...oo)
-				noexcept -> signed
+				/*!
+				\brief   Constructs and enqueues the given event.
+				*/
+				XTAL_DEF_(mutate,inline,let)
+				enqueue(delay_type v, auto &&...oo)
+				noexcept -> void
 				{
-					return shuttle_(U_shuttle(v, V_shuttle{XTAL_REF_(oo)...}));
+					enqueue(E_ramp(v, U_ramp{XTAL_REF_(oo)...}));
 				}
 				
-			private:
-				//\
-				Unpacks the given message, \
-				allowing for gradient calculation/requeueing. \
-				
-				XTAL_DEF_(return,inline,let)
-				shuffle_(flow::cue_q auto &&o, auto &&...oo)
-				noexcept -> signed
+				/*!
+				\brief   Deconstructs and enqueues the given event.
+				*/
+				XTAL_DEF_(mutate,inline,let)
+				enqueue(flow::cue_q auto &&o, auto &&...oo)
+				noexcept -> void
 				{
-					return shuffle_(o.tail(), o.head(), XTAL_REF_(oo)...);
+					enqueue(o.tail(), o.head(), XTAL_REF_(oo)...);
 				}
-				XTAL_DEF_(return,inline,let)
-				shuffle_(same_q<U_tailed> auto &&x1, delay_type t1)
-				noexcept -> signed
+				/*!
+				\brief   Enqueues the value `x1` at `t1`.
+				*/
+				XTAL_DEF_(mutate,inline,let)
+				enqueue(same_q<U_hold> auto &&x1, delay_type t1)
+				noexcept -> void
 				{
-					return shuttle_(t1, XTAL_REF_(x1));
+					enqueue(t1, XTAL_REF_(x1));
 				}
-				XTAL_DEF_(return,let)
-				shuffle_(same_q<U_tailed> auto &&x1, delay_type t1, delay_type t0)
-				noexcept -> signed
+				/*!
+				\brief   Enqueues the value `x1` at `t1`, ramping from `t0` to `t1`.
+				*/
+				XTAL_DEF_(mutate,let)
+				enqueue(same_q<U_hold> auto &&x1, delay_type t1, delay_type t0)
+				noexcept -> void
 				{
 					if (t0 < t1) {
 						//\
 						auto const i0 = flow::cue_s<>(t0);
-						auto const i0 = U_shuttle(t0);
+						auto const i0 = E_ramp(t0);
 						//\
-						auto const x0 = V_shuttle(u_spool.scan(i0)->tail()) (0);
-						auto const x0 = V_shuttle(_std::prev(u_spool.scan(i0))->tail()) (0);
+						auto const x0 = U_ramp(u_pipe.scan(i0)->tail()) (0);
+						auto const x0 = U_ramp(_std::prev(u_pipe.scan(i0))->tail()) (0);
 						auto const x_ = x1 - x0;
 						auto const t_ = t1 - t0;
-						(void) shuttle_(t0, x0, x_/XTAL_ALL_(x_){t_});
+						enqueue(t0, x0, x_/XTAL_ALL_(x_){t_});
 					}
-					return shuffle_(XTAL_REF_(x1), t1);
+					enqueue(t1, XTAL_REF_(x1));
 				}
 			
-			private:
-				//\
-				Reset the play-head, \
-				clearing all processed events, \
-				bringing forward any future events. \
-
+			protected:
+				/*!
+				\brief   Reset the play-head, clearing all processed events, bringing forward any future events.
+				*/
 				XTAL_DEF_(let)
-				compact_()//TODO: Filter somehow?
+				compact(bool proceed=true)
 				noexcept -> void
 				{
-					delay_type const v_delay = head_(); head_() = 0;
-					(void) u_spool.abandon(u_spool.empty());
-					for (auto &u : u_spool.span(-1)) {
-						u -= v_delay;
+					if (proceed) {
+						delay_type const v_delay = _drip(); _drip() = 0;
+						(void) u_pipe.abandon(u_pipe.empty());
+						for (auto &u : u_pipe.span(-1)) {
+							u -= v_delay;
+						}
 					}
 				}
 				XTAL_DEF_(let)
-				compact_(delay_type const &v)
+				compact(delay_type const &v)
 				noexcept -> void
 				{
-					if (v < u_shuttle.head()) {
-						compact_();
+					if (v < u_drip.head()) {
+						compact();
 					}
 				}
 				XTAL_DEF_(let)
-				compact_(flow::cue_q auto const &o)
+				compact(flow::cue_q auto const &o)
 				noexcept -> void
 				{
-					compact_(o.head());
+					compact(o.head());
 				}
 
 			};
