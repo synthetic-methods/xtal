@@ -36,9 +36,9 @@ struct define
 		template <constant_q        U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
 	//	template <same_q<size_type> U> XTAL_NEW_(explicit) subtype(U u) noexcept {assert(0 == u);};
 
-		///\
-		Attaches `T` as a member of `this`. \
-
+		/*!
+		\brief  	Attaches `T` as a member of `this`.
+		*/
 		template <extent_type N_mask=-1>
 		struct attach
 		{
@@ -57,16 +57,17 @@ struct define
 				XTAL_NEW_(create) (subtype, noexcept = default)
 				XTAL_NEW_(move)   (subtype, noexcept = default)
 				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept)
+				XTAL_NEW_(cast)   (subtype, noexcept :        )
+			//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
 
-				///\
-				Constructs the `attach`ed message using its default, \
-				before `forward`ing the arguments to `this`. \
-
+				/*!
+				\brief  	Constructs the `attach`ed message using its default,
+				before `forward`ing the arguments to `this`.
+				*/
 				XTAL_NEW_(explicit)
-				subtype(auto &&...xs)
+				subtype(auto &&...oo)
 				noexcept
-				:	R_{T{}, XTAL_REF_(xs)...}
+				:	R_{T{}, XTAL_REF_(oo)...}
 				{}
 
 			public:// ACCESS
@@ -93,9 +94,9 @@ struct define
 
 			};
 		};
-		///\
-		Attaches `T`, and appends to the arguments of `method` and `function`. \
-
+		/*!
+		\brief  	Attaches `T`, and appends to the arguments of `method` and `function`.
+		*/
 		template <extent_type N_mask=-1>
 		struct attend
 		{
@@ -134,13 +135,13 @@ struct define
 
 			};
 		};
-		///\
-		Attaches `T` as a member of `this`, \
-		`dispatch`ing a conditional indicating positivity. \
-
-		///\note\
-		Automatic attachment is currently disabled! \
-
+		/*!
+		\brief  	Attaches `T` as a member of `this`,
+		`dispatch`ing a conditional indicating positivity.
+		*/
+		/*!
+		\note   	Automatic attachment is currently disabled!
+		*/
 		template <extent_type N_mask=-1>
 		struct clutch
 		{
@@ -180,9 +181,9 @@ struct define
 			
 			};
 		};
-		///\
-		Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`. \
-
+		/*!
+		\brief  	Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`.
+		*/
 		template <extent_type N_mask=-1>
 		struct dispatch
 		{
@@ -258,9 +259,9 @@ struct define
 
 			};
 		};
-		///\
-		Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`. \
-		
+		/*!
+		\brief  	Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`.
+		*/
 		template <extent_type N_mask=-1>
 		struct expect
 		{
@@ -291,9 +292,9 @@ struct define
 
 			};
 		};
-		///\
-		Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`. \
-
+		/*!
+		\brief  	Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`.
+		*/
 		template <extent_type N_mask=-1>
 		struct inspect
 		{
@@ -324,9 +325,9 @@ struct define
 
 			};
 		};
-		///\
-		Uses the current `T` as the return value of `method`. \
-		
+		/*!
+		\brief  	Uses the current `T` as the return value of `method`.
+		*/
 		template <extent_type N_mask=-1>
 		struct poll
 		{

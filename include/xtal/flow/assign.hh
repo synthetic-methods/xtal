@@ -12,12 +12,19 @@ namespace xtal::flow
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Insulated `cell::header` used to prefix `assignment`. \
+/*!
+\brief
+Insulated `cell::header` used to prefix `assignment`.
 
+\details
+Used as a wrapper to associate values of the underlying type,
+triggering re`flux` when matching messages are received.
+
+\see `occur::stage` for handling.
+*/
 template <class ..._s>	struct  assign;
 template <class ..._s>	using   assign_s = bond::compose_s<let_t< _s...>, assign<>>;
-template <class ..._s>	concept assign_q = bond::tagged_p<assign_s, _s...>;
+template <class ..._s>	concept assign_q = bond::tag_as_p<assign_s, _s...>;
 template <           >	struct  assign<> : cell::header<bond::tag<assign_s>> {};
 
 

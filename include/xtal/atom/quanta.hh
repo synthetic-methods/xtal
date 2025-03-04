@@ -10,12 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Extends `block` with function application and functional construction. \
-
+/*!
+\brief
+Extends `block` with function application and functional construction.
+*/
 template <class ...Us>	struct  quanta;
 template <class ...Us>	using   quanta_t = typename quanta<Us...>::type;
-template <class ...Us>	concept quanta_q = bond::fixed_tagged_with_p<quanta_t, Us...>;
+template <class ...Us>	concept quanta_q = bond::tag_infixed_p<quanta_t, Us...>;
 
 XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::fake_f<quanta_t>);
 
@@ -78,8 +79,9 @@ struct quanta
 			}
 		}
 
-		///\returns `true` if the underlying `data` is zero, `false` otherwise. \
-
+		/*!
+		\returns	`true` if the underlying `data` is zero, `false` otherwise.
+		*/
 		template <auto N_value=0>
 		XTAL_DEF_(return,inline,let)
 		blanked() const
@@ -88,8 +90,9 @@ struct quanta
 			typename S_::template form_t<based_t<Us>...> constexpr z{N_value};
 			return   z == self();
 		}
-		///\returns the result of `blanked()` before refilling with `N_value=0`. \
-
+		/*!
+		\returns	The result of `blanked()` before refilling with `N_value=0`.
+		*/
 		template <auto N_value=0>
 		XTAL_DEF_(inline,let)
 		blanket()
@@ -127,12 +130,14 @@ struct quanta
 	public:
 		using S_::reform;
 
-		///\returns an `coordinate`d instance of `this`. \
-
+		/*!
+		\returns	A `coordinate`d instance of `this`.
+		*/
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
 
-		///\returns an `coordinate`d instance of `this`. \
-
+		/*!
+		\returns	A `coordinate`d instance of `this`.
+		*/
 		XTAL_DEF_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
@@ -146,13 +151,15 @@ struct quanta
 			}
 		}
 
-		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
-
+		/*!
+		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
+		*/
 		XTAL_FX4_(to) (template <complete_q F>
 		XTAL_DEF_(return,inline,explicit operator) F(), apply<F>())
 
-		///\returns an invocation of `F` applied to the `coordinate`s of `this`. \
-
+		/*!
+		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
+		*/
 		template <class F>
 		XTAL_DEF_(return,inline,let)
 		apply() const
@@ -160,8 +167,9 @@ struct quanta
 		{
 			return apply<bond::operate<F>{}>();
 		}
-		///\returns the result of applying `f` to the `coordinate`s of `this`. \
-
+		/*!
+		\returns	The result of applying `f` to the `coordinate`s of `this`.
+		*/
 		template <auto  f>
 		XTAL_DEF_(return,inline,let)
 		apply() const
@@ -169,8 +177,9 @@ struct quanta
 		{
 			return apply(f);
 		}
-		///\returns the result of applying `f` to the `coordinate`s of `this`. \
-
+		/*!
+		\returns	The result of applying `f` to the `coordinate`s of `this`.
+		*/
 		XTAL_DEF_(return,inline,let)
 		apply(auto &&f) const
 		noexcept -> decltype(auto)

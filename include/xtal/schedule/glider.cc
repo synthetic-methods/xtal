@@ -41,8 +41,7 @@ TAG_("glider", "process")
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
-	//		typename U_glider::template inqueue<V_event, U0_event>
-			typename U_glider::template inqueue<         U1_event>
+			typename U_glider::template accept<U1_event>
 		>;
 		using U_processor = processor::monomer_t<Z_process
 		,	provision::stored <null_type[0x100]>
@@ -119,10 +118,8 @@ TAG_("glider", "process")
 		using W0_event = atom::grade_t<U0_event[2]>;
 		using V_event  = flow::cue_s<>;
 		
-		//\
-		using U_inqueue = typename U_glider::template inqueue<V_event, U0_event>;
-		using U_inqueue = typename U_glider::template inqueue<         U1_event>;
-		using U_process = process::confined_t<U_inqueue>;
+		using U_accept = typename U_glider::template accept<U1_event>;
+		using U_process = process::confined_t<U_accept>;
 
 		U_process u_gate;
 		
@@ -183,7 +180,7 @@ TAG_("glider", "process")
 		using U_cursor = occur::cursor_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template inqueue<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template accept<V_value>>;
 
 		using U_event = flow::cue_s<V_value>;
 		using V_event = flow::cue_s<>;
@@ -240,7 +237,7 @@ TAG_("glider", "process")
 		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template inqueue<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template accept<V_value>>;
 
 		Z_value u_gate;
 		
@@ -283,7 +280,7 @@ void glider_processor()
 	U_store u_store{};
 
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
-	using Fn_gate = process::confined_t<typename U_glider::template inqueue<V_value>>;
+	using Fn_gate = process::confined_t<typename U_glider::template accept<V_value>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	

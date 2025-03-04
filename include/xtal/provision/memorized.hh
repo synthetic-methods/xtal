@@ -10,21 +10,22 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Provides local blob-like storage via `memory()` using `atom::blob`. \
-
-template <typename ...As> struct   memorized;
-template <typename ...As> using    memorized_t = confined_t<memorized<As...>>;
-template <typename ..._s> concept  memorized_q = bond::tagged_with_p<memorized, _s...>;
+/*!
+\brief
+Provides local blob-like storage via `memory()` using `atom::blob`.
+*/
+template <typename ...Ts> struct   memorized;
+template <typename ...Ts> using    memorized_t = confined_t<memorized<Ts...>>;
+template <typename ..._s> concept  memorized_q = bond::tag_in_p<memorized, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ...As>
+template <class ...Ts>
 struct memorized
 {
 	using superkind = bond::compose<bond::tag<memorized>
-	,	defer<atom::blob_t<As...>>
+	,	defer<atom::blob_t<Ts...>>
 	>;
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -37,24 +38,22 @@ struct memorized
 	public:// ACCESS
 		using S_::head;
 
-		///\returns the contents of `memory` as a tuple of `Vs &...`. \
-
+		/*!
+		\returns	The contents of `memory` as a tuple of `Vs &...`.
+		*/
 		XTAL_FX4_(to) (template <class ...Vs> requires variable_q<Vs...>
 		XTAL_DEF_(return,inline,get) memory(), head().template form<Vs...>())
 		
-		///\returns the contents of `memory` as a tuple of `Vs &...`, \
-		prior to replacing the contents with `vs...`. \
-
+		/*!
+		\returns	The contents of `memory` as a tuple of `Vs &...` prior to replacement with `vs...`.
+		*/
 		XTAL_FX4_(to) (template <class ...Vs> requires variable_q<Vs...>
 		XTAL_DEF_(return,inline,get) memory(Vs const &...vs), head().form(vs...))
 		
-		///\
-		Fills `memory` with the given `byte` value. \
-
 		template <auto u>
-		XTAL_DEF_(inline,let) memory(                 ) noexcept -> void {head().fill(u);}
-		XTAL_DEF_(inline,let) memory(constant_t<>     ) noexcept -> void {head().fill(0);}
-		XTAL_DEF_(inline,let) memory(constant_q auto f) noexcept -> void {head().fill(f());}
+		XTAL_DEF_(inline,let) memory(                 ) noexcept -> void {head().fill(u  );}///< Clears/fills `memory` with the given `byte`.
+		XTAL_DEF_(inline,let) memory(constant_t<>     ) noexcept -> void {head().fill(0  );}///< Clears/fills `memory` with the given `byte`.
+		XTAL_DEF_(inline,let) memory(constant_q auto f) noexcept -> void {head().fill(f());}///< Clears/fills `memory` with the given `byte`.
 
 	};
 };

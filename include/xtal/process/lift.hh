@@ -10,7 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
+/*!
+\brief
+Provides `head`-less mapping of `method` (in contrast to `link`).
 
+\details
+Allows for constructor mapping via `bond::operate`.
+*/
 template <typename ..._s> struct   lift;
 template <typename ..._s> using    lift_t = confined_t<lift<_s...>>;
 
@@ -30,7 +36,8 @@ struct lifter
 		XTAL_DEF_(return,inline,set)
 		S_method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to) (S::template method_f<Is...>(XTAL_REF_(xs)...))
+		requires XTAL_TRY_(to)
+			(S::template method_f<Is...>(XTAL_REF_(xs)...))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
@@ -96,9 +103,6 @@ struct lifter
 }///////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Provides pure `head`-less mapping of `method` (in contrast to `link`), \
-in addition to allowing constructor mapping via `bond::operate`. \
 
 template <                   typename ...As> struct lift;
 template <bond::compose_q A                > struct lift<A       > :                                              A {};

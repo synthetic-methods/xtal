@@ -10,15 +10,13 @@ XTAL_ENV_(push)
 namespace xtal::bond
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Binds the derived `(?sub)?type`s with the CRTP-template `template <class T> class Y`. \
-
-///\note\
-May require `-Wsubobject-linkage` to be suppressed. \
-
-template <         template <class> class Y>	struct   derive;
-template <         template <class> class Y>	using    derive_t	=  typename derive<Y>::type;
-template <class S, template <class> class Y>	using    derive_s	=  bond::compose_s<S, derive<Y>>;
+/*!
+\brief
+Binds the derived `(?sub)?type`s with the CRTP-template `template <class T> class Y`.
+*/
+template <         template <class> class Y>	struct  derive;
+template <         template <class> class Y>	using   derive_t	=  typename derive<Y>::type;
+template <class S, template <class> class Y>	using   derive_s	=  bond::compose_s<S, derive<Y>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -33,20 +33,22 @@ struct define
 		using S_::S_;
 		using S_::self;
 
-		///\
-		Provides dispatch logic for the `variant`s `Ys...` on the target object. \
+		/*!
+		\brief  	Provides the scheduling adaptor for messages of the form `flow::cue_s<Ys...>`.
 		
-		///\todo\
-		Integrate concatenation using `<<` and `>>` with correct `packet` construction. \
-
+		Messages matching `flux(flow::cue_s<Ys...>)` (or its expansion)
+		are intercepted, rebundled, and forwarded directly to `self().fuse(flow::cue_s<Ys...>)`.
+		*/
 		template <class ...Ys>
-		struct inqueue
+		struct accept
 		{
-			template <flow::any_q R>
+			static_assert(complete_q<Ys...>);
+			
+			template <class R>
 			class subtype : public bond::compose_s<R>
 			{
+				static_assert(flow::any_q<R>);
 				using R_ = bond::compose_s<R>;
-				static_assert(complete_q<Ys...>);
 				
 			public:
 				using R_::R_;
@@ -57,9 +59,9 @@ struct define
 				using payload_type = typename flow::cue_s<Ys...>::tail_type;
 
 			public:// FLOW
-				///\
-				Forwards `oo...` downstream. \
-
+				/*!
+				\brief  	Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(auto &&...oo)
@@ -67,9 +69,9 @@ struct define
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
-				///\
-				Forwards the descheduled message to `self()`. \
-
+				/*!
+				\brief  	Forwards the descheduled message to `self()`.
+				*/
 				XTAL_DEF_(return,inline,let)
 				flux(flow::ion_s<> x_, auto &&...oo)
 				noexcept -> signed
@@ -80,6 +82,9 @@ struct define
 					default: _std::terminate(); return -1;
 					}
 				}
+				/*!
+				\brief  	Forwards the descheduled message to `self()` by visitation.
+				*/
 				XTAL_DEF_(return,inline,let)
 				flux(flow::ion_s<> x_, either_q<Ys...> auto &&w)
 				noexcept -> signed
@@ -88,9 +93,9 @@ struct define
 					return bond::operate{[x_, this] (auto &&o) XTAL_0FN_(to) (flux(x_, XTAL_REF_(o)))} (XTAL_REF_(w));
 					return bond::operate{_std::bind_front([this] XTAL_1FN_(call) (flux), x_)} (XTAL_REF_(w));
 				}
-				///\
-				Unpacks and forwards the dequeued message to `self()`. \
-
+				/*!
+				\brief  	Repacks and forwards the dequeued message to `self()`.
+				*/
 				XTAL_DEF_(return,inline,let)
 				flux(flow::ion_s<> x_, flow::packed_q auto &&o)
 				noexcept -> signed
@@ -99,6 +104,9 @@ struct define
 						XTAL_0FN_(to) (flux(x_, XTAL_REF_(oo)...))
 					);
 				}
+				/*!
+				\brief  	Repacks and forwards the dequeued message to `self()`.
+				*/
 				XTAL_DEF_(return,inline,let)
 				flux(flow::ion_q auto const xo)
 				noexcept -> signed
@@ -106,13 +114,9 @@ struct define
 					return flux(flow::ion_s<>(xo.head()), xo.tail());
 				}
 
-				///\
-				Forwards the event-to-be-scheduled to `self().fuse`. \
-				
-				///\note\
-				Trailing arguments are prevented by `static_assert`, \
-				and should be `flux`ed separately (scheduling is considered facile). \
-
+				/*!
+				\brief  	Schedules the provided event to `self().fuse(...)`.
+				*/
 				template <signed N_ion, class ..._s>
 				XTAL_DEF_(return,inline,let)
 				flux(same_q<event_type> auto &&o, _s &&...)
@@ -121,6 +125,9 @@ struct define
 					static_assert(none_q<_s...>);
 					return self().template fuse<N_ion>(XTAL_REF_(o));
 				}
+				/*!
+				\brief  	Repackes then schedules the provided event to `self().fuse(...)`.
+				*/
 				template <signed N_ion, class ..._s>
 				XTAL_DEF_(return,inline,let)
 				flux(flow::cue_s<> v, in_q<Ys...> auto &&x, _s &&...)
@@ -130,6 +137,9 @@ struct define
 					static_assert(none_q<_s...>);
 					return flux<N_ion>(event_type{v.head(), XTAL_REF_(x)});
 				}
+				/*!
+				\brief  	Repackes then schedules the provided event to `self().fuse(...)`.
+				*/
 				template <signed N_ion, class ..._s>
 				XTAL_DEF_(return,inline,let)
 				flux(flow::cue_s<> v, same_q<payload_type> auto &&w, _s &&...)
@@ -146,33 +156,8 @@ struct define
 };
 template <class T>
 struct refine
+:	_retail::refine<T>
 {
-	using superkind = _retail::refine<T>;
-
-	template <class S>
-	class subtype : public bond::compose_s<S, superkind>
-	{
-		static_assert(any_q<S>);
-		using S_ = bond::compose_s<S, superkind>;
-	
-		template <class ...Ys>
-		using S_inqueue = typename S_::template inqueue<Ys...>;
-
-	public:
-		using S_::S_;
-		using S_::self;
-
-		template <class ...Ys>
-		struct inqueue : S_inqueue<Ys...>
-		{
-			using kind = confined<S_inqueue<Ys...>>;
-			using type = bond::compose_s<S_, kind>;
-		
-		};
-		template <class ...Ys>
-		using inqueue_t = typename inqueue<Ys...>::type;
-
-	};
 };
 
 

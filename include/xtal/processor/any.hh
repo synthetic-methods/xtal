@@ -57,6 +57,10 @@ struct define
 			public:// ACCESS
 				using R_::self;
 
+				/*!
+				\brief  	Determines the size of the first chunk to be rendered.
+				\brief  	The current delay if available, otherwise the size of the current block.
+				*/
 				XTAL_DEF_(return,inline,let)
 				delay()
 				noexcept -> auto
@@ -67,6 +71,9 @@ struct define
 
 			public:// FLOW
 
+				/*!
+				\brief  	Forwards the message upstream.
+				*/
 				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
 				flux(auto &&...oo)
@@ -74,10 +81,10 @@ struct define
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
-				///\
-				Renders the given block, \
-				splitting into subviews if necessary. \
-
+				/*!
+				\brief  	Renders the given `occur::review`, split into subviews if required.
+				\brief  	Invokes the super-method `pump` to handle chunking and event dispatch.
+				*/
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur)
@@ -95,13 +102,13 @@ struct define
 						,	cur.subview(scan).skip(step)
 						))
 					))	{
-						(void) R_::template flux_rest<+1>(cur);
+						(void) R_::template flux<+1>(constant_t<-1>{}, cur);
 					}
 					return 0;
 				}
-				///\
-				Renders the slice designated by `rev` and `cur`. \
-				
+				/*!
+				\brief  	Renders the subslice of `ren` designated by `rev` and `cur`.
+				*/
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
@@ -170,7 +177,7 @@ struct defer<U>
 		XTAL_FX2_(do) (template <auto ...>
 		XTAL_DEF_(return,inline,let)
 		method(),
-		noexcept -> decltype(auto)
+		noexcept -> auto
 		{
 			auto &v = S_::template head<V_cursor>().view();
 			return S_::subhead(v);
@@ -208,17 +215,12 @@ struct defer<U>
 		using S_::self;
 		using S_::head;
 
-		///\
-		Defines the range-lifted form of `head` by lifting the underlying `process`. \
-		Parameter resolution is only performed at the beginning of each block. \
-
-		///\note\
-		Only `method` participates in parameter resolution, since `method_f` is stateless. \
-
-		///\note\
-		If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` \
- 		(so it can be `vtable`d). \
-
+		/*!
+		\brief  	Defines the range-lifted form of `head` by lifting the underlying `process`.
+		\brief  	Parameter resolution is only performed at the beginning of each block.
+		\brief  	Only `method` participates in parameter resolution, since `method_f` is stateless.
+		\brief  	If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` (so it can be `vtable`d).
+		*/
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method(auto &&...xs),

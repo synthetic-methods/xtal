@@ -12,17 +12,20 @@ namespace xtal::bond
 /////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace _detail
-{///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
 template <size_type N_size>
-struct recognize : recognize<N_size/2>
+struct fit_recognize;
+#ifndef XTAL_DOC
+template <size_type N_size>
+struct fit_recognize : fit_recognize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 };
+#endif
 template <>
-struct recognize<0x1>
+struct fit_recognize<0x1>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 0)>;
@@ -40,7 +43,7 @@ struct recognize<0x1>
 
 };
 template <>
-struct recognize<0x2>
+struct fit_recognize<0x2>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 1)>;
@@ -59,7 +62,7 @@ struct recognize<0x2>
 };
 #if 0x20 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<0x4>
+struct fit_recognize<0x4>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 2)>;
@@ -93,7 +96,7 @@ struct recognize<0x4>
 #endif
 #if 0x40 <= XTAL_SYS_(CPU)
 template <>
-struct recognize<0x8>
+struct fit_recognize<0x8>
 {
 	using        fix =  cardinal_constant_t<0>;
 	using delta_type = _std::  make_signed_t<XTAL_STD_(int, 3)>;
@@ -125,28 +128,29 @@ struct recognize<0x8>
 
 };
 #endif
-//\todo\
-Allow for 128-bit. \
-
+#ifndef XTAL_DOC
 template <size_type N_size>
-concept recognized_q = antecedent_q<typename recognize<N_size>::fix>;
+concept fit_recognized_q = antecedent_q<typename fit_recognize<N_size>::fix>;
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef XTAL_DOC
 template <size_type N_size>
-struct rationalize : rationalize<N_size/2>
+struct fit_rationalize : fit_rationalize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 };
-template <size_type N_size> requires recognized_q<N_size>
-struct rationalize<N_size> : recognize<N_size>
+#endif
+template <size_type N_size> requires fit_recognized_q<N_size>
+struct fit_rationalize<N_size> : fit_recognize<N_size>
 {
 private:
-	using S_ = recognize<N_size>;
+	using S_ = fit_recognize<N_size>;
 
 public:
 	using typename S_::delta_type;
@@ -220,12 +224,10 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the remainder from the maximal power of `N`, \
-	which is zero if the argument is a power of `N`. \
-
-	///\note\
-	Currently only supports `N={2,3}`.
-
+	/*!
+	\returns	The remainder from the maximal power of `N`, which is zero if the argument is a power of `N`.
+	\note   	Currently only supports `N={2,3}`.
+	*/
 	template <sigma_type N>
 	XTAL_DEF_(return,inline,set)
 	expound_f(sigma_type u)
@@ -256,33 +258,35 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef XTAL_DOC
 template <size_type N_size>
-struct realize : realize<N_size/2>
+struct fit_realize : fit_realize<N_size/2>
 {
-	using fix = succedent_s<typename recognize<N_size/2>::fix>;
+	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
-template <size_type N_size> requires recognized_q<N_size>
-struct realize<N_size> : rationalize<N_size>
+template <size_type N_size> requires fit_recognized_q<N_size>
+struct fit_realize<N_size> : fit_rationalize<N_size>
 {
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
-template <size_type N_size> requires recognized_q<N_size> and requires {typename recognize<N_size>::alpha_type;}
-struct realize<N_size> : rationalize<N_size>
+#endif
+template <size_type N_size> requires fit_recognized_q<N_size> and requires {typename fit_recognize<N_size>::alpha_type;}
+struct fit_realize<N_size> : fit_rationalize<N_size>
 {
 private:
-	using S_ = rationalize<N_size>;
+	using S_ = fit_rationalize<N_size>;
 
 public:
 	template <int N_shift=0>
-	using widen = realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 	
-	using halved = realize<(N_size>>1)>;
+	using halved = fit_realize<(N_size>>1)>;
 
 	using S_::N_width;
 	using S_::N_depth;
@@ -386,8 +390,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `constexpr` equivalent of `std:pow(2.0, n_zoom)*(o_silon)`. \
-
+	/*!
+	\returns	The `constexpr` equivalent of `std:pow(2.0, n_zoom)*(o_silon)`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	diplo_f(delta_type n_zoom, alpha_type o_silon)
 	noexcept -> alpha_type
@@ -460,30 +465,19 @@ public:
 	{
 		return diplo_f<N_silon>(N_depth);
 	}
-
-	template <int N_zoom=N_depth>
-	static alpha_type constexpr diplo_n = diplo_f(N_zoom);
-	///< Value expression of `diplo_f`. \
-
-
-	static alpha_type constexpr diplo_0 = diplo_n<0>;
-	static alpha_type constexpr diplo_1 = diplo_n<1>;
-	static alpha_type constexpr diplo_2 = diplo_n<2>;
+	static alpha_type constexpr diplo_0 = diplo_f(0);
+	static alpha_type constexpr diplo_1 = diplo_f(1);
+	static alpha_type constexpr diplo_2 = diplo_f(2);
 
 
-	///\returns the `constexpr` equivalent of `std:pow(0.5, n_zoom)`. \
-
+	/*!
+	\returns	The `constexpr` equivalent of `std:pow(0.5, n_zoom)`.
+	*/
 	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(auto const &n_zoom) noexcept -> auto {return diplo_f<-N_silon>(-n_zoom );}
 	template <int N_silon=0> XTAL_DEF_(return,inline,set) haplo_f(                  ) noexcept -> auto {return diplo_f<-N_silon>(-N_depth);}
-
-	template <int N_zoom=N_depth>
-	static alpha_type constexpr haplo_n = haplo_f(N_zoom);
-	///< Value expression of `haplo_f`. \
-
-
-	static alpha_type constexpr haplo_0 = haplo_n<0>;
-	static alpha_type constexpr haplo_1 = haplo_n<1>;
-	static alpha_type constexpr haplo_2 = haplo_n<2>;
+	static alpha_type constexpr haplo_0 = haplo_f(0);
+	static alpha_type constexpr haplo_1 = haplo_f(1);
+	static alpha_type constexpr haplo_2 = haplo_f(2);
 
 
 	XTAL_DEF_(return,inline,set)
@@ -512,8 +506,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the `n_num`erator divided by the given de`n_nom`inator.
-
+	/*!
+	\returns	The `n_num`erator divided by the given de`n_nom`inator.
+	*/
 	template <int N_pow=1>
 	XTAL_DEF_(return,inline,set)
 	ratio_f(alpha_type n_num, alpha_type n_nom=1)
@@ -529,8 +524,9 @@ public:
 	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
 	static alpha_type constexpr ratio_2 = ratio_f(2, 1);
 
-	///\returns `ratio_f<N_pow>(PI*n_num, n_nom)`.
-
+	/*!
+	\returns	The ratio of `n_num` to `n_nom` multiplied by `Pi`.
+	*/
 	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
 	XTAL_DEF_(return,inline,set)
 	patio_f(alpha_type n_num, alpha_type n_nom=1)
@@ -546,8 +542,9 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the difference between floating-point values at the scale designated by `n_zoom`. \
-
+	/*!
+	\returns	The difference between floating-point values at the scale designated by `n_zoom`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	epsilon_f(delta_type const &n_zoom=1)
 	noexcept -> alpha_type
@@ -556,8 +553,9 @@ public:
 		return haplo_f(N - n_zoom);
 	}
 
-	///\returns the value `n_zoom` steps above `(alpha_type) 1`. \
-
+	/*!
+	\returns	The value `n_zoom` steps above `(alpha_type) 1`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	upsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
@@ -567,8 +565,9 @@ public:
 		return n_unit*diplo_f(n_zone);
 	}
 
-	///\returns the value `n_zoom` steps below `(alpha_type) 1`. \
-
+	/*!
+	\returns	The value `n_zoom` steps below `(alpha_type) 1`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	dnsilon_f(delta_type const &n_zoom=1, delta_type const &n_zone=0)
 	noexcept -> alpha_type
@@ -581,8 +580,9 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-	///\returns the minimum value that still accommodates arithmetic puncturing. \
-
+	/*!
+	\returns	The minimum value that still accommodates arithmetic puncturing.
+	*/
 	XTAL_DEF_(return,inline,set)
 	minilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
@@ -590,8 +590,9 @@ public:
 		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
 	}
 
-	///\returns the minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
-
+	/*!
+	\returns	The minimum of the given arguments `xs...`, evaluated with respect to type `alpha_type`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	minimum_f()
 	noexcept -> decltype(auto)
@@ -640,8 +641,9 @@ public:
 		return minimum_f(minimum_f(XTAL_REF_(w), XTAL_REF_(x)), XTAL_REF_(xs)...);
 	}
 
-	///\returns the maximum value that still accommodates arithmetic truncation. \
-
+	/*!
+	\returns	The maximum value that still accommodates arithmetic truncation.
+	*/
 	XTAL_DEF_(return,inline,set)
 	maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
@@ -649,8 +651,9 @@ public:
 		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
 	}
 
-	///\returns the maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`. \
-
+	/*!
+	\returns	The maximum of the given arguments `xs...`, evaluated with respect to type `alpha_type`.
+	*/
 	XTAL_DEF_(return,inline,set)
 	maximum_f()
 	noexcept -> decltype(auto)
@@ -722,15 +725,19 @@ public:
 };
 
 
-}///////////////////////////////////////////////////////////////////////////////
-///\
-Provides floating-point format information and related helpers, \
-as well as `value_type` subtitution using `subtype<V>`.
-
+//}///////////////////////////////////////////////////////////////////////////////
+/*!
+\brief  	Provides floating-point format information and related helpers.
+\note   	Resolves to the maximum supported `sizeof <= 8`.
+\details	Reduces the supplied parameters to the common scalar, using the `sizeof` to index the underlying provider.
+*/
 template <class ...Ts>
 struct   fit
-:	complete_t<_detail::realize<sizeof(unstruct_u<Ts...>)>>
+:	complete_t<fit_realize<sizeof(unstruct_u<Ts...>)>>
 {
+	/*!
+	\brief  	Performs `value_type` substitution.
+	*/
 	template <class V>
 	using subtype = V;
 
@@ -739,6 +746,9 @@ template <>
 struct   fit<> : fit<size_type>
 {
 };
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class>`, via the member-`subtype`.
+*/
 template <template <class> class T_, class U>
 struct fit<T_<U>> : fit<U>
 {
@@ -746,6 +756,9 @@ struct fit<T_<U>> : fit<U>
 	using subtype = T_<V>;
 
 };
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class, class ...>`, via the member-`subtype`.
+*/
 template <template <class, class ...> class T_, class U, class ..._s> requires some_q<_s...>
 struct fit<T_<U, _s...>> : fit<U>
 {
@@ -753,6 +766,9 @@ struct fit<T_<U, _s...>> : fit<U>
 	using subtype = T_<V, _s...>;
 
 };
+/*!
+\brief  	Performs `value_type` substitution using the provided `template <class, auto  ...>`, via the member-`subtype`.
+*/
 template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_n<_s...>
 struct fit<T_<U, _s...>> : fit<U>
 {

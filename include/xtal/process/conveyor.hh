@@ -10,10 +10,14 @@ XTAL_ENV_(push)
 namespace xtal::process
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Convenience wrapper to repack the result of the provided process \
-to make it suitable for output to `pack::transpack_f`. \
+/*!
+\brief
+Convenience decorator for `bond::repack`ing the result of the provided process.
 
+\details
+Used when the intended `copy`/`move` target is a `zip`ped collection of arrays,
+as produced `pack::transpack_f`.
+*/
 template <typename ...As>
 using conveyor   = confined  <lift<decltype([] XTAL_1FN_(call) (bond::repack_f))>, As...>;
 

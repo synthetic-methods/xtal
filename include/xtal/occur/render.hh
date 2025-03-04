@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class ..._s>	struct   render;
 template <class ..._s>	using    render_t = confined_t<render<_s...>>;
-template <class ..._s>	concept  render_q = bond::tagged_with_p<render, _s...>;
+template <class ..._s>	concept  render_q = bond::tag_in_p<render, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

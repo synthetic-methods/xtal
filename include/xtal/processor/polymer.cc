@@ -32,7 +32,7 @@ void polymer_provision_spine__locamotion()
 	using A_stored  = provision::stored  <extent_constant_t<N_store>>;
 	using A_spooled = provision::spooled <extent_constant_t<N_spool>>;
 
-	using A_gate   = bond::compose<typename U_glider::template inqueue<Ox_level>, typename U_stage::inspect<>>;
+	using A_gate   = bond::compose<typename U_glider::template accept<Ox_level>, typename U_stage::inspect<>>;
 	using U_gate   = process::confined_t<A_gate>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -86,7 +86,7 @@ TAG_("polymer", "occur", "spine")
 	using A_spooled = provision::spooled <extent_constant_t<64>>;
 
 	using U_gate   = process::confined_t<void
-	,	typename U_glider::template inqueue<Ox_level>
+	,	typename U_glider::template accept<Ox_level>
 	,	typename U_stage::inspect<>
 	>;
 
@@ -171,7 +171,7 @@ void polymer_provision_spool__combined()
 	
 	TRUE_(3 == u_vox.ensemble().size());
 //	TRUE_(8 == u_vox.front());
-//	
+//
 //	auto vox_oo_ = u_vox.ensemble().begin();
 //	TRUE_(62 == vox_oo_++->head());
 //	TRUE_(65 == vox_oo_++->head());
@@ -215,7 +215,7 @@ void polymer_provision_spool_composited()
 	
 	TRUE_(3 == u_vox.ensemble().size());
 //	TRUE_(8 == u_vox.front());
-//	
+//
 //	auto vox_oo_ = u_vox.ensemble().begin();
 //	TRUE_(62 == vox_oo_++->head());
 //	TRUE_(65 == vox_oo_++->head());

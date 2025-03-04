@@ -48,7 +48,7 @@ void echo_plot_(iterated_q auto const o, integral_q auto ...ms)
 			if (false);
 			else if (m <  w     and n == -1 and marked) cout << "\u22A3";// -| TACK LEFT
 			else if (m <  w - 1 and n != -1 or  u == 0) cout <<   uZERO ;//    ...
-			else if (m == w - 1 and             l == 0) cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT 
+			else if (m == w - 1 and             l == 0) cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
 			else if (n <  u)                            cout << "\u0020";//    SPACE
 			else if (u <  n)                            cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
 			else if (w <  m)                            cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT

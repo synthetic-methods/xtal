@@ -13,7 +13,7 @@ namespace xtal::occur
 
 template <class ..._s> struct   review;
 template <class ..._s> using    review_t = confined_t<review<_s...>, bond::tag<review>>;
-template <class ..._s> concept  review_q = bond::tagged_with_p<review, _s...>;
+template <class ..._s> concept  review_q = bond::tag_in_p<review, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

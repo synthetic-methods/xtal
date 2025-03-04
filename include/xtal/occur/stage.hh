@@ -10,20 +10,18 @@ XTAL_ENV_(push)
 namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\brief\
-Represents the triple `{enter,leave,cancel}` with the `sign_type` `{0, 1,-1}`, \
-cf. `*flow`'s `{changed,unchanged,unrecognized}`. \
+/*!
+\brief
+Represents the triple `{enter,leave,cancel}` with the `sign_type` `{0, 1, -1}`,
+analagous to `flux|fuse`'s `{changed,unchanged,unrecognized}`.
 
-///\note\
-Not intended to be `attach`ed (except with `(?:ex|in)pect`), \
-instead intercepted dynamically to interpret state. \
-
-///\note\
-Can be `attach`ed for immediate (de)allocation with `(?:ex|in)pect`. \
-
+\details
+When attached with `inspect`, or wrapped by `flow::assessment`,
+responds to `fuse<+1>` by interrogating the internal state without modification.
+*/
 template <class ..._s> struct   stage;
-template <class ..._s> using    stage_t =     confined_t<stage< _s...>>;
-template <class ..._s> concept  stage_q = bond::tagged_p<stage, _s...> ;
+template <class ..._s> using    stage_t =        confined_t<stage< _s...>>;
+template <class ..._s> concept  stage_q = bond::tag_as_p<stage, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////

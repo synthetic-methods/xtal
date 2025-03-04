@@ -59,15 +59,17 @@ void processor_provision__messaging()
 
 	/**/
 	if constexpr (same_q<U_mix, Px_static_onset_mix>) {
-		//	NOTE: Parameters take effect when the `processor` is invoked, \
-		so the function is only resolved once for each collection to which it is applied. \
-
+		/*?
+		Parameters take effect when the `processor` is invoked,
+		so the function is only resolved once for each collection to which it is applied.
+		*/
 		TRUE_(equal_f(o_mixed, _std::vector{00.0, 11.0, 22.0}));
 	}
 	if constexpr (same_q<U_mix, Px_dynamic_onset_mix>) {
-		//	NOTE: Parameters take effect when the underlying `process` is invoked, \
-		so the function is resolved for each sample. \
-
+		/*?
+		Parameters take effect when the underlying `process` is invoked,
+		so the function is resolved for each sample.
+		*/
 		TRUE_(equal_f(o_mixed, _std::vector{33.0, 44.0, 55.0}));
 	}
 	/*/

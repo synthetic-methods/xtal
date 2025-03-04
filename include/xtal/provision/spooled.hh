@@ -10,17 +10,20 @@ XTAL_ENV_(push)
 namespace xtal::provision
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
+/*!
+\brief
+Provides priority-queuing via `spool_t<value_type>` conforming to `atom::spool_t<>`.
+*/
 template <typename ..._s> struct   spooled;
 template <typename ..._s> using    spooled_t = confined_t<spooled<_s...>>;
-template <typename ..._s> concept  spooled_q = bond::tagged_with_p<spooled, _s...>;
+template <typename ..._s> concept  spooled_q = bond::tag_in_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-///\
-Provides range-based priority-queuing via `spool_t<value_type>`, \
-which conforms to the interface defined by `atom::spool_t<>`. \
-
+/*!
+\brief
+Provides custom spooling via `A::template subtype<value_type>`.
+*/
 template <bond::compose_q A>
 struct spooled<A>
 {
@@ -39,6 +42,10 @@ struct spooled<A>
 
 	};
 };
+/*!
+\brief
+Provides `std::vector`-like spooling.
+*/
 template <constant_q A>
 struct spooled<A>
 {
@@ -60,6 +67,9 @@ public:
 	public:
 		using S_::S_;
 		
+		/*!
+		\brief  	Defines a resizable spool of predetermined-capacity with the given `value_type`.
+		*/
 		template <class U>
 		using spool_t = atom::spool_t<U[N]>;
 
@@ -72,6 +82,9 @@ public:
 	public:
 		using S_::S_;
 		
+		/*!
+		\brief  	Defines a resizable spool of  undetermined capacity with the given `value_type`.
+		*/
 		template <class U>
 		using spool_t = atom::spool_t<U * >;
 

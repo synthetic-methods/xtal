@@ -10,9 +10,10 @@ XTAL_ENV_(push)
 namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-///\
-Forwards anything prefixed with `N_mask`. \
-
+/*!
+\brief
+Intercepts `mark`ed messages, forwarding only those bit-matching `N_mask`.
+*/
 template <extent_type N_mask=-1>
 struct mask;
 
