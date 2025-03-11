@@ -1,0 +1,42 @@
+name: Pages generation/deployment
+
+on:
+  push:
+    branches: [doxygen]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - run:  sudo apt-get update
+      - run:  sudo apt-get install texlive texlive-publishers texlive-science latexmk cm-super
+      - run:  sudo apt-get install doxygen
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/checkout@v4
+
+      - run:  sh doxygen/index.sh
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: exclude/xtal/html
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
