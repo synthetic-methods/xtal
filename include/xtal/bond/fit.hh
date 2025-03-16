@@ -581,13 +581,13 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 	/*!
-	\returns	The minimum value that still accommodates arithmetic puncturing.
+	\returns	The minimum value that accomodates exponentiation by `n_zoom` without underflow.
 	*/
 	XTAL_DEF_(return,inline,set)
 	minilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		return haplo_f(unit.mark - 1)*diplo_f(n_zoom);
+		return haplo_f(unit.mark >> n_zoom);
 	}
 
 	/*!
@@ -642,13 +642,13 @@ public:
 	}
 
 	/*!
-	\returns	The maximum value that still accommodates arithmetic truncation.
+	\returns	The maximum value that accomodates exponentiation by `n_zoom` without overflow.
 	*/
 	XTAL_DEF_(return,inline,set)
 	maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
 	{
-		return diplo_f(unit.mark - 1)*haplo_f(n_zoom);
+		return diplo_f(unit.mark >> n_zoom);
 	}
 
 	/*!

@@ -204,22 +204,25 @@ public:
 				{
 					auto k  = k_.head();
 					auto e_ = ensemble().scan(k);
+					bool const onset = 0 == _o.head();
+					bool const reset = e_ < ensemble().end() and k == e_->head();
 
-				// If an onset-event is received...
-					if (0 == _o.head()) {
-					// If a voice already exists for this `key_s`...
-						if (e_ < ensemble().end() and k == e_->head()) {
-					//	...recycle/terminate the current voice:
+					if (onset) {
+						if (reset) {
 							auto u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
 							e_ = ensemble().poke(e_, k, XTAL_MOV_(u));
 						}
 						else {
-					//	...allocate a new voice using the `lead()`:
 							e_ = ensemble().poke(e_, k, lead());
 						}
+						return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
 					}
-					assert(e_->head() == k);
-					return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
+					else if (reset) {
+						return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
+					}
+					else {
+						return -1;
+					}
 				}
 				/*!
 				\brief  	Renders the given slice of `ren` designated by `rev` and `cur`.
