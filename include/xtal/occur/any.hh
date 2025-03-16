@@ -148,7 +148,7 @@ struct define
 		template <extent_type N_mask=-1>
 		struct clutch
 		{
-			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1,-1>>;
+			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1>>;
 
 			using superkind = bond::compose<void
 			,	typename U_choke::template dispatch<N_mask>
@@ -175,10 +175,7 @@ struct define
 				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
-					auto const h = t.head();
-					auto const h_up = 0 < h;
-					auto const h_dn = h < 0;
-					(void) R_::template flux<N_ion>(U_choke(h_up - h_dn));
+					(void) R_::template flux<N_ion>(U_choke(0 != t.head()));
 					return R_::template flux<N_ion>(XTAL_REF_(t), XTAL_REF_(oo)...);
 				}
 			
