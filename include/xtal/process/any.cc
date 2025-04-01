@@ -129,18 +129,6 @@ TAG_("process", "construct")
 		TRUE_(10 == f.reify() (1, 2, 3, 4));
 
 	}
-	TRY_("chaining")
-	{
-		using halve_square_root_t = reinferred_t<halve_t, square_root_t>;
-		using square_root_halve_t = reinferred_t<square_root_t, halve_t>;
-		
-		TRUE_(2. == halve_square_root_t::method_f(16.));
-		TRUE_(3. == square_root_halve_t::method_f(18.));
-
-		TRUE_(2. == halve_square_root_t{}.method(16.));
-		TRUE_(3. == square_root_halve_t{}.method(18.));
-
-	}
 }
 
 

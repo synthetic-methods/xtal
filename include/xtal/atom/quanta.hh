@@ -155,7 +155,7 @@ struct quanta
 		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
 		*/
 		XTAL_FX4_(to) (template <complete_q F>
-		XTAL_DEF_(return,inline,explicit operator) F(), apply<F>())
+		XTAL_DEF_(return,inline,explicit) operator F(), apply<F>())
 
 		/*!
 		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
