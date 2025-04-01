@@ -3,6 +3,7 @@
 #include "./block.hh"
 #include "./buffer.hh"
 #include "./couple.hh"
+#include "./field.hh"
 #include "./grade.hh"
 #include "./group.hh"
 #include "./point.hh"

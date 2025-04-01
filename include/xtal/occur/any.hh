@@ -98,7 +98,7 @@ struct define
 			};
 		};
 		/*!
-		\brief  	Attaches `T`, and appends to the arguments of `method` and `function`.
+		\brief  	Attaches `T`, and appends to the arguments of `method` and `method_f`.
 		*/
 		template <extent_type N_mask=-1>
 		struct attend

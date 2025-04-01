@@ -3,6 +3,7 @@
 #include "./block.cc"
 #include "./buffer.cc"
 #include "./couple.cc"
+#include "./field.cc"
 #include "./grade.cc"
 #include "./group.cc"
 #include "./point.cc"

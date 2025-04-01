@@ -154,6 +154,8 @@ struct   repack
 template <pack_size_q ...Ts>
 using    repack_t = typename repack<Ts...>::type;
 
+template <class ...Ts>
+concept  repack_q = same_q<repack_t<Ts>...>;
 
 template <template <class ...> class F=pack_t>
 XTAL_DEF_(return,inline,let)
