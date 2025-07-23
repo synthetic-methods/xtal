@@ -15,6 +15,7 @@
 #include <complex>
 #include <numbers>
 #include <limits>
+#include <random>
 #include <cmath>
 #include <array>
 #include <tuple>
@@ -26,26 +27,39 @@
 ////////////////////////////////////////////////////////////////////////////////
 #endif
 
-#define XTAL_K_(...) XTAL_k_(__VA_ARGS__,,,,,,,,,,,,,,,,,,,,,,,,,,)                 ///< Concatenate.
-#define XTAL_k_(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, ...)\
-                A##B##C##D##E##F##G##H##I##J##K##L##M##N##O##P##Q##R##S##T##U##V##W##X##Y##Z
+#define XTAL_APP ()
+#define XTAL_APP_(ARG,...) XTAL_APP_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_Q_(...)                                         XTAL_q_(__VA_ARGS__)   ///< Stringify.
-#define XTAL_q_(...)                                                #__VA_ARGS__
+/// Recursion.
+#define XTAL_APP_N(...)                                     XTAL_APP_4(__VA_ARGS__)
+#define XTAL_APP_4(...)    XTAL_APP_3(XTAL_APP_3(XTAL_APP_3(XTAL_APP_3(__VA_ARGS__))))
+#define XTAL_APP_3(...)    XTAL_APP_2(XTAL_APP_2(XTAL_APP_2(XTAL_APP_2(__VA_ARGS__))))
+#define XTAL_APP_2(...)    XTAL_APP_1(XTAL_APP_1(XTAL_APP_1(XTAL_APP_1(__VA_ARGS__))))
+#define XTAL_APP_1(...)    XTAL_APP_0(XTAL_APP_0(XTAL_APP_0(XTAL_APP_0(__VA_ARGS__))))
+#define XTAL_APP_0(...)                                                __VA_ARGS__
 
-#define XTAL_N_(F0,...)                __VA_OPT__(XTAL_X_(XTAL_M_(F0,__VA_ARGS__))) ///< Map.
-#define XTAL_M_(F0,A1,...)       F0(A1)__VA_OPT__(XTAL_M  XTAL_X (F0,__VA_ARGS__))
-#define XTAL_M() XTAL_M_
+/// Recursive map.
+#define XTAL_APP_map(F0,...)                     __VA_OPT__(XTAL_APP_N(XTAL_APP_map_then_(F0,__VA_ARGS__)))
+#define XTAL_APP_map_then()                                            XTAL_APP_map_then_
+#define XTAL_APP_map_then_(F0,A1,...)   F0(A1)   __VA_OPT__(           XTAL_APP_map_then XTAL_APP (F0,__VA_ARGS__))
 
-#define XTAL_X ()
-#define XTAL_X_(...)                                        XTAL_X4_(__VA_ARGS__)   ///< Repeat.
-#define XTAL_X4_(...)            XTAL_X3_(XTAL_X3_(XTAL_X3_(XTAL_X3_(__VA_ARGS__))))
-#define XTAL_X3_(...)            XTAL_X2_(XTAL_X2_(XTAL_X2_(XTAL_X2_(__VA_ARGS__))))
-#define XTAL_X2_(...)            XTAL_X1_(XTAL_X1_(XTAL_X1_(XTAL_X1_(__VA_ARGS__))))
-#define XTAL_X1_(...)            XTAL_X0_(XTAL_X0_(XTAL_X0_(XTAL_X0_(__VA_ARGS__))))
-#define XTAL_X0_(...)                                                __VA_ARGS__
+///< Recursive assignment.
+#define XTAL_APP_let(V0,...)                     __VA_OPT__(XTAL_APP_N(XTAL_APP_let_then_(V0,__VA_ARGS__)))
+#define XTAL_APP_let_then()                                            XTAL_APP_let_then_
+#define XTAL_APP_let_then_(V0,K1,...)   K1 = V0  __VA_OPT__(         , XTAL_APP_let_then XTAL_APP (K1,__VA_ARGS__))
 
-#define XTAL_(...)                                    XTAL_K_(XTAL,_,__VA_ARGS__)   ///< Name.
+/// Token concatenation.
+#define XTAL_APP_cat(...)  XTAL_APP_cat_then_(__VA_ARGS__,,,,,,,,,,,,,,,,,,,,,,,,,,)
+#define XTAL_APP_cat_then_(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, ...)\
+                           A##B##C##D##E##F##G##H##I##J##K##L##M##N##O##P##Q##R##S##T##U##V##W##X##Y##Z
+
+/// String generation.
+#define XTAL_TXT_(...)     XTAL_TXT_then_(__VA_ARGS__)
+#define XTAL_TXT_then_(...)              #__VA_ARGS__
+
+/// Symbol generation.
+#define XTAL_NYM_(...)     XTAL_APP_(cat) (XTAL,_,__VA_ARGS__)
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +223,7 @@ XTAL_ENV_(push)
 #define XTAL_VER_GNUC            XTAL_ENV_GNUC and XTAL_ENV_GNUC
 #define XTAL_VER_GCC             XTAL_VER_GNUC
 #define XTAL_VER_STD             XTAL_STD
-#if     XTAL_VER_STD >= 2300 and XTAL_VER_GNUC >= 1400
+#if     XTAL_VER_STD >= 2300// and XTAL_VER_GNUC >= 1400
 //\
 #define XTAL_VER_ranges            -1
 #define XTAL_VER_ranges             3
@@ -217,30 +231,30 @@ XTAL_ENV_(push)
 #define XTAL_VER_ranges             3
 #endif
 
-#define XTAL_VER_(...) (false XTAL_N_(XTAL_VER,  __VA_ARGS__))///< Version checking.
-#define XTAL_VER(...)              or XTAL_VER_##__VA_ARGS__
+#define XTAL_VER_(...)    (false XTAL_APP_(map) (XTAL_VER_then_,__VA_ARGS__))      ///< Version checking.
+#define XTAL_VER_then_(...)                       or XTAL_VER_##__VA_ARGS__
 
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_NOM_(...)                 ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the underlying-type.
-#define XTAL_ALL_(...)                    XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the underlying-type of a value.
-#define XTAL_ANY_(...)                        ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
-#define XTAL_MOV_(...)                        ::std::   move(__VA_ARGS__)       ///< Moves    a value.
-#define XTAL_REF_(...) static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
+#define XTAL_NOM_(...)                    ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the underlying-type.
+#define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the underlying-type of a value.
+#define XTAL_ANY_(...)                           ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
+#define XTAL_MOV_(...)                           ::std::   move(__VA_ARGS__)       ///< Moves    a value.
+#define XTAL_REF_(...)    static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
 #ifndef XTAL_DOC
-template <class X, class Y> concept XTAL_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
-template <class X, class Y> concept XTAL_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
-template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y> or XTAL_(specialized)<X, Y>;
+template <class X, class Y> concept XTAL_NYM_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
+template <class X, class Y> concept XTAL_NYM_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
+template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generalized)<X, Y> or XTAL_NYM_(specialized)<X, Y>;
 #endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_DEF_(...)           XTAL_N_(XTAL_DEF,__VA_ARGS__)///< Leading `[[attributes]]` and `keywords`.
-#define XTAL_DEF(...)            XTAL_DEF_##__VA_ARGS__
+#define XTAL_DEF_(...)           XTAL_APP_(map) (XTAL_DEF_then_,__VA_ARGS__)       ///< Leading `[[attributes]]` and `keywords`.
+#define XTAL_DEF_then_(...)                          XTAL_DEF_##__VA_ARGS__
 
 #define XTAL_DEF_return          [[nodiscard]]
 #define XTAL_DEF_static          static
@@ -276,13 +290,13 @@ template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
 
-#define XTAL_NEW_then(TYP,...)   template     <class ...XTAL_(As)>                      \
-                                 constexpr explicit TYP(XTAL_(As) &&...XTAL_(as))       \
-                               __VA_ARGS__ (static_cast<XTAL_(As) &&> (XTAL_(as))...) {};
+#define XTAL_NEW_then(TYP,...)   template     <class ...XTAL_NYM_(As)>                          \
+                                 constexpr explicit TYP(XTAL_NYM_(As) &&...XTAL_NYM_(as))       \
+                               __VA_ARGS__ (static_cast<XTAL_NYM_(As) &&> (XTAL_NYM_(as))...) {};
 
-#define XTAL_NEW_cast(TYP,...)   template <XTAL_(relativized)  <TYP>    XTAL_(That)>    \
-                                 constexpr     TYP(XTAL_(That)      &&  XTAL_(this))    \
-                               __VA_ARGS__     TYP(static_cast <TYP &&>(XTAL_(this))) {};
+#define XTAL_NEW_cast(TYP,...)   template <XTAL_NYM_(relativized)  <TYP>    XTAL_NYM_(That)>    \
+                                 constexpr     TYP(XTAL_NYM_(That)      &&  XTAL_NYM_(this))    \
+                               __VA_ARGS__     TYP(static_cast     <TYP &&>(XTAL_NYM_(this))) {};
 
 #define XTAL_NEW_copy(TYP,...)   constexpr     TYP             (TYP const &) __VA_ARGS__;\
                                  constexpr     TYP & operator= (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
@@ -343,25 +357,25 @@ template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y
 #define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
 #define XTAL_0FN_to(...)                     XTAL_0FN                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
 
-#define XTAL_1FN_to(...)           <class ...XTAL_(As)>\
-                                            (XTAL_(As) \
-                                        &&...XTAL_(as))\
+#define XTAL_1FN_to(...)           <class ...XTAL_NYM_(As)>\
+                                            (XTAL_NYM_(As) \
+                                        &&...XTAL_NYM_(as))\
    XTAL_0FN_(to)                                           (__VA_ARGS__)                                 ///< Lambda ignoring arguments after `[captures]`.
 
-#define XTAL_1FN_dot(...)          <class    XTAL_(T )>\
-                                            (XTAL_(T ) \
-                                           &&XTAL_(t ))\
-   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_(t )).__VA_ARGS__)                                 ///< Lambda forwarding to `.`member after `[captures]`.
+#define XTAL_1FN_dot(...)          <class    XTAL_NYM_(T )>\
+                                            (XTAL_NYM_(T ) \
+                                           &&XTAL_NYM_(t ))\
+   XTAL_0FN_(to)                  (XTAL_REF_(XTAL_NYM_(t )).__VA_ARGS__)                                 ///< Lambda forwarding to `.`member after `[captures]`.
 
-#define XTAL_1FN_call(...)         <class ...XTAL_(As)>\
-                                            (XTAL_(As) \
-                                        &&...XTAL_(as))\
-   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_(as))...))                                         ///< Lambda forwarding to call`(...)` after `[captures]`.
+#define XTAL_1FN_call(...)         <class ...XTAL_NYM_(As)>\
+                                            (XTAL_NYM_(As) \
+                                        &&...XTAL_NYM_(as))\
+   XTAL_0FN_(to)      (__VA_ARGS__(XTAL_REF_(XTAL_NYM_(as))...))                                         ///< Lambda forwarding to call`(...)` after `[captures]`.
 
-#define XTAL_1FN_make(...)         <class ...XTAL_(As)>\
-                                            (XTAL_(As) \
-                                        &&...XTAL_(as))\
-   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_(as))...})                                         ///< Lambda forwarding to make`{...}` after `[captures]`.
+#define XTAL_1FN_make(...)         <class ...XTAL_NYM_(As)>\
+                                            (XTAL_NYM_(As) \
+                                        &&...XTAL_NYM_(as))\
+   XTAL_0FN_(to)      (__VA_ARGS__{XTAL_REF_(XTAL_NYM_(as))...})                                         ///< Lambda forwarding to make`{...}` after `[captures]`.
 
 #define XTAL_1FN_else(ARG,SYM,...)  (auto _) XTAL_0FN_(to) (ARG == _? _: _ SYM (__VA_ARGS__))            ///< Lambda conditional     after `[captures]`.
 #define XTAL_1FN_and(...)                    XTAL_1FN_else(1, &, __VA_ARGS__)                            ///< Lambda conditional `&` after `[captures]`.
@@ -378,7 +392,6 @@ template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
 
 #define XTAL_IF1_(ARG,...)             XTAL_IF1_##ARG __VA_OPT__((__VA_ARGS__))          ///< Begin `else if constexpr` branch.
 #define XTAL_0IF_(ARG,...)             XTAL_0IF_##ARG __VA_OPT__((__VA_ARGS__))          ///< Begin `else if constexpr` branch.
@@ -414,6 +427,144 @@ template <class X, class Y> concept XTAL_(relativized) = XTAL_(generalized)<X, Y
 
 
 ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+#define XTAL_OCT_(ARG,...)  XTAL_OCT_##ARG __VA_OPT__((__VA_ARGS__))
+
+#define XTAL_OCT_prime(OCT) XTAL_OCT_prime_##OCT
+#define XTAL_OCT_prime_NULL   0U
+#define XTAL_OCT_prime_UNIT   1U
+#define XTAL_OCT_prime_0000   2U
+#define XTAL_OCT_prime_0001   3U// 2^2 - 1
+#define XTAL_OCT_prime_0002   5U// 2^2 + 1
+#define XTAL_OCT_prime_0003   7U// 2^3 - 1
+#define XTAL_OCT_prime_0004  11U
+#define XTAL_OCT_prime_0005  13U
+#define XTAL_OCT_prime_0006  17U// 2^4 + 1
+#define XTAL_OCT_prime_0007  19U
+#define XTAL_OCT_prime_0010  23U
+#define XTAL_OCT_prime_0011  29U
+#define XTAL_OCT_prime_0012  31U// 2^5 - 1
+#define XTAL_OCT_prime_0013  37U
+#define XTAL_OCT_prime_0014  41U
+#define XTAL_OCT_prime_0015  43U
+#define XTAL_OCT_prime_0016  47U
+#define XTAL_OCT_prime_0017  53U
+#define XTAL_OCT_prime_0020  59U
+#define XTAL_OCT_prime_0021  61U
+#define XTAL_OCT_prime_0022  67U
+#define XTAL_OCT_prime_0023  71U
+#define XTAL_OCT_prime_0024  73U
+#define XTAL_OCT_prime_0025  79U
+#define XTAL_OCT_prime_0026  83U
+#define XTAL_OCT_prime_0027  89U
+#define XTAL_OCT_prime_0030  97U
+#define XTAL_OCT_prime_0031 101U
+#define XTAL_OCT_prime_0032 103U
+#define XTAL_OCT_prime_0033 107U
+#define XTAL_OCT_prime_0034 109U
+#define XTAL_OCT_prime_0035 113U
+#define XTAL_OCT_prime_0036 127U// 2^7 - 1
+#define XTAL_OCT_prime_0037 131U
+#define XTAL_OCT_prime_0040 137U
+#define XTAL_OCT_prime_0041 139U
+#define XTAL_OCT_prime_0042 149U
+#define XTAL_OCT_prime_0043 151U
+#define XTAL_OCT_prime_0044 157U
+#define XTAL_OCT_prime_0045 163U
+#define XTAL_OCT_prime_0046 167U
+#define XTAL_OCT_prime_0047 173U
+#define XTAL_OCT_prime_0050 179U
+#define XTAL_OCT_prime_0051 181U
+#define XTAL_OCT_prime_0052 191U
+#define XTAL_OCT_prime_0053 193U
+#define XTAL_OCT_prime_0054 197U
+#define XTAL_OCT_prime_0055 199U
+#define XTAL_OCT_prime_0056 211U
+#define XTAL_OCT_prime_0057 223U
+#define XTAL_OCT_prime_0060 227U
+#define XTAL_OCT_prime_0061 229U
+#define XTAL_OCT_prime_0062 233U
+#define XTAL_OCT_prime_0063 239U
+#define XTAL_OCT_prime_0064 241U
+#define XTAL_OCT_prime_0065 251U
+#define XTAL_OCT_prime_0066 257U// 2^8 + 1
+#define XTAL_OCT_prime_0067 263U
+#define XTAL_OCT_prime_0070 269U
+#define XTAL_OCT_prime_0071 271U
+#define XTAL_OCT_prime_0072 277U
+#define XTAL_OCT_prime_0073 281U
+#define XTAL_OCT_prime_0074 283U
+#define XTAL_OCT_prime_0075 293U
+#define XTAL_OCT_prime_0076 307U
+#define XTAL_OCT_prime_0077 311U
+#define XTAL_OCT_prime_0100 313U
+#define XTAL_OCT_prime_0101 317U
+#define XTAL_OCT_prime_0102 331U
+#define XTAL_OCT_prime_0103 337U
+#define XTAL_OCT_prime_0104 347U
+#define XTAL_OCT_prime_0105 349U
+#define XTAL_OCT_prime_0106 353U
+#define XTAL_OCT_prime_0107 359U
+#define XTAL_OCT_prime_0110 367U
+#define XTAL_OCT_prime_0111 373U
+#define XTAL_OCT_prime_0112 379U
+#define XTAL_OCT_prime_0113 383U
+#define XTAL_OCT_prime_0114 389U
+#define XTAL_OCT_prime_0115 397U
+#define XTAL_OCT_prime_0116 401U
+#define XTAL_OCT_prime_0117 409U
+#define XTAL_OCT_prime_0120 419U
+#define XTAL_OCT_prime_0121 421U
+#define XTAL_OCT_prime_0122 431U
+#define XTAL_OCT_prime_0123 433U
+#define XTAL_OCT_prime_0124 439U
+#define XTAL_OCT_prime_0125 443U
+#define XTAL_OCT_prime_0126 449U
+#define XTAL_OCT_prime_0127 457U
+#define XTAL_OCT_prime_0130 461U
+#define XTAL_OCT_prime_0131 463U
+#define XTAL_OCT_prime_0132 467U
+#define XTAL_OCT_prime_0133 479U
+#define XTAL_OCT_prime_0134 487U
+#define XTAL_OCT_prime_0135 491U
+#define XTAL_OCT_prime_0136 499U
+#define XTAL_OCT_prime_0137 503U
+#define XTAL_OCT_prime_0140 509U
+#define XTAL_OCT_prime_0141 521U
+#define XTAL_OCT_prime_0142 523U
+#define XTAL_OCT_prime_0143 541U
+#define XTAL_OCT_prime_0144 547U
+#define XTAL_OCT_prime_0145 557U
+#define XTAL_OCT_prime_0146 563U
+#define XTAL_OCT_prime_0147 569U
+#define XTAL_OCT_prime_0150 571U
+#define XTAL_OCT_prime_0151 577U
+#define XTAL_OCT_prime_0152 587U
+#define XTAL_OCT_prime_0153 593U
+#define XTAL_OCT_prime_0154 599U
+#define XTAL_OCT_prime_0155 601U
+#define XTAL_OCT_prime_0156 607U
+#define XTAL_OCT_prime_0157 613U
+#define XTAL_OCT_prime_0160 617U
+#define XTAL_OCT_prime_0161 619U
+#define XTAL_OCT_prime_0162 631U
+#define XTAL_OCT_prime_0163 641U
+#define XTAL_OCT_prime_0164 643U
+#define XTAL_OCT_prime_0165 647U
+#define XTAL_OCT_prime_0166 653U
+#define XTAL_OCT_prime_0167 659U
+#define XTAL_OCT_prime_0170 661U
+#define XTAL_OCT_prime_0171 673U
+#define XTAL_OCT_prime_0172 677U
+#define XTAL_OCT_prime_0173 683U
+#define XTAL_OCT_prime_0174 691U
+#define XTAL_OCT_prime_0175 701U
+#define XTAL_OCT_prime_0176 709U
+#define XTAL_OCT_prime_0177 719U
+
+
+///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 XTAL_ENV_(pop)
@@ -422,9 +573,44 @@ XTAL_ENV_(pop)
 #ifndef XTAL_DOC
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <range/v3/all.hpp>
-#if     XTAL_VER_(ranges !=  3)
+//nclude <range/v3/all.hpp>
+#include <range/v3/range/traits.hpp>
+#include <range/v3/range/concepts.hpp>
+
+#include <range/v3/iterator/concepts.hpp>
+#include <range/v3/iterator/operations.hpp>
+#include <range/v3/iterator/move_iterators.hpp>
+
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/interface.hpp>
+#include <range/v3/view/drop_exactly.hpp> // C++20: `std::ranges::drop_view`
+#include <range/v3/view/take_exactly.hpp> // C++20: `std::ranges::take_view`
+#include <range/v3/view/subrange.hpp>
+#include <range/v3/view/any_view.hpp>     // C++29: ?
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/repeat.hpp>       // C++23: `std::ranges::repeat_view`
+#include <range/v3/view/generate.hpp>     // C++23: `std::generator`
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip_with.hpp>     // C++23: `std::ranges::zip_transform_view`
+#include <range/v3/view/zip.hpp>          // C++23: `std::ranges::zip_view`
+
+#include <range/v3/algorithm/copy_n.hpp>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/move.hpp>
+#include <range/v3/algorithm/equal.hpp>
+#include <range/v3/algorithm/rotate.hpp>
+#include <range/v3/algorithm/max_element.hpp>
+#include <range/v3/algorithm/min_element.hpp>
+#include <range/v3/algorithm/minmax_element.hpp>
+#include <range/v3/algorithm/transform.hpp>
+
+#include <range/v3/numeric/accumulate.hpp>// C++23: `std::ranges::fold_left`
+
+#if     XTAL_VER_(ranges != 3)
 #include <ranges>
+#if __has_include(<generator>)
+#include <generator>
+#endif
 #endif
 
 #if     XTAL_LOG

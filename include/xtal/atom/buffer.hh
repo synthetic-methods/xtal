@@ -19,7 +19,8 @@ template <class ...Ts> concept  buffer_q = bond::tag_in_p<buffer_t, Ts...>;
 ////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief  	Analogue of `std::vector`, parameterized by shape `value_type[capacity]`.
-\brief  	Implementation depends on parameter `value_type[capacity]`, where:
+
+Implementation depends on parameter `value_type[capacity]`, where:
 
 -	If `0 <  capacity and capacity <= XTAL_SYS_(extent)`,
 then a fixed-capacity implementation is provided.

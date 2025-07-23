@@ -87,20 +87,32 @@ using halve_t = confined_t<halve>;
 /**/
 TAG_("process", "attach")
 {
+	enum side_type : unsigned {status = 0
+	,	XTAL_APP_(let) (XTAL_OCT_(prime) (UNIT),    primary)
+	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0000),  secondary)
+	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0001), LHS,  left)
+	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0002), RHS, right)
+	};
+	TRUE_(XTAL_OCT_(prime) (UNIT) ==   primary);
+	TRUE_(XTAL_OCT_(prime) (0000) == secondary);
+	TRUE_(XTAL_OCT_(prime) (0001) ==       LHS);
+	TRUE_(XTAL_OCT_(prime) (0002) ==       RHS);
+	TRUE_(XTAL_OCT_(prime) (0003) ==        7U);
+	TRUE_(XTAL_OCT_(prime) (0177) ==      719U);
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
 	using T_delta = typename _fit::delta_type;
 	using T_alpha = typename _fit::alpha_type;
 
-	using L01 = process::confined_t<typename Ox_level::template poll<0b01>>;
-	using L10 = process::confined_t<typename Ox_level::template poll<0b10>>;
+	using L01 = process::confined_t<typename Ox_level::template poll<LHS>>;
+	using L10 = process::confined_t<typename Ox_level::template poll<RHS>>;
 
 	TRY_("messaging")
 	{
 		subtract_t::bind_t<L01, L10> op{};
 
-		op <<= flow::mark_s<Ox_level>(0b01, Ox_level{9});
-		op <<= flow::mark_s<Ox_level>(0b10, Ox_level{1});
+		op <<= flow::mark_s<Ox_level>(LHS, Ox_level{9});
+		op <<= flow::mark_s<Ox_level>(RHS, Ox_level{1});
 		TRUE_(8 == op());
 
 		op <<= bond::pack_f(ordinal_constant_t<0>{}, _std::array<int, 0>{});

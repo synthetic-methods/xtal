@@ -17,7 +17,7 @@ Governs upstream access via `flow::mask`.
 template <class ..._s>	struct  mark;
 template <class ..._s>	using   mark_s = bond::compose_s<let_t< _s...>, mark<>>;
 template <class ..._s>	concept mark_q = bond::tag_as_p<mark_s, _s...>;
-template <           >	struct  mark<> : cell::header<extent_type, bond::tag<mark_s>> {};
+template <           >	struct  mark<> : cell::header<size_type, bond::tag<mark_s>> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

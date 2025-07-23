@@ -18,7 +18,7 @@ template <class ...Us>	struct  quanta;
 template <class ...Us>	using   quanta_t = typename quanta<Us...>::type;
 template <class ...Us>	concept quanta_q = bond::tag_infixed_p<quanta_t, Us...>;
 
-XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::fake_f<quanta_t>);
+XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::factory<quanta_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////

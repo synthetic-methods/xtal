@@ -18,7 +18,7 @@ template <class ...Us>	struct  grade;
 template <class ...Us>	using   grade_t = typename grade<Us...>::type;
 template <class ...Us>	concept grade_q = bond::tag_infixed_p<grade_t, Us...>;
 
-XTAL_DEF_(let) grade_f = [] XTAL_1FN_(call) (_detail::fake_f<grade_t>);
+XTAL_DEF_(let) grade_f = [] XTAL_1FN_(call) (_detail::factory<grade_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////

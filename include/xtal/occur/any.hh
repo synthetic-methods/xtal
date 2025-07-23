@@ -42,7 +42,7 @@ struct define
 		/*!
 		\brief  	Attaches `T` as a member of `this`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct attach
 		{
 			using superkind = bond::compose<flow::mask<N_mask>, defer<T>>;
@@ -100,7 +100,7 @@ struct define
 		/*!
 		\brief  	Attaches `T`, and appends to the arguments of `method` and `method_f`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct attend
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -145,7 +145,7 @@ struct define
 		/*!
 		\note   	Automatic attachment is currently disabled!
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct clutch
 		{
 			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1>>;
@@ -184,7 +184,7 @@ struct define
 		/*!
 		\brief  	Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct dispatch
 		{
 			static_assert(integral_q<typename T::head_type>);
@@ -262,7 +262,7 @@ struct define
 		/*!
 		\brief  	Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct expect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -295,7 +295,7 @@ struct define
 		/*!
 		\brief  	Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct inspect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -328,7 +328,7 @@ struct define
 		/*!
 		\brief  	Uses the current `T` as the return value of `method`.
 		*/
-		template <extent_type N_mask=-1>
+		template <size_type N_mask=1>
 		struct poll
 		{
 			using superkind = typename T::template attach<N_mask>;
