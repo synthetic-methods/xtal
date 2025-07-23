@@ -19,7 +19,7 @@ template <class ...Us>	struct  couple;
 template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\brief  Type-factory for `couple`.
 template <class ...Us>	concept couple_q = bond::tag_infixed_p<couple_t, Us...>;
 
-XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::fake_f<couple_t>);///<\brief Value-factory for `couple`.
+XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::factory<couple_t>::make);///<\brief Value-factory for `couple`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

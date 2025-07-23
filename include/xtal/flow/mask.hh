@@ -11,21 +11,21 @@ namespace xtal::flow
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Intercepts `mark`ed messages, forwarding only those bit-matching `N_mask`.
+\brief  	Intercepts `mark`ed messages, forwarding only those matching `N_mask`.
+\note    Both `mask` and `mark` comprise products of prime numbers,
+         with sieving provided by modulo and division.
+			This admits a broader range of elements than the current bit-depth,
+			while limiting the available combinations as the elements increase.
 */
-template <extent_type N_mask=-1>
+template <size_type N_mask=1>
 struct mask;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
-template <extent_type N_mask>
+template <size_type N_mask>
 struct mask
 {
-	static constexpr extent_type M_mask =  N_mask;
-	static constexpr extent_type W_mask = ~M_mask;
-	
 	template <_retail::any_q S>
 	class subtype : public bond::compose_s<S>
 	{
@@ -54,15 +54,16 @@ struct mask
 		flux(mark_s<> o, auto &&...oo)
 		noexcept -> signed
 		{
-			auto m = o.head();
-			if (~m & M_mask) {
+			auto n_mark = o.head();
+			if (n_mark%N_mask) {
 				return -1;
 			}
-			else if (m &= W_mask) {
-				return S_::template flux<N_ion>(mark_s<>(m), XTAL_REF_(oo)...);
+			n_mark /= N_mask;
+			if (1 == n_mark) {
+				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 			}
 			else {
-				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
+				return S_::template flux<N_ion>(mark_s<>(n_mark), XTAL_REF_(oo)...);
 			}
 		}
 

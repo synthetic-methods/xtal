@@ -20,7 +20,7 @@ template <class ...Us>	struct  group_multiplication;
 template <class ...Us>	using   group_multiplication_t = typename group_multiplication<Us...>::type;
 template <class ...Ts>	concept group_multiplication_q = bond::tag_infixed_p<group_multiplication_t, Ts...>;
 
-XTAL_DEF_(let) group_multiplication_f = [] XTAL_1FN_(call) (_detail::fake_f<group_multiplication_t>);
+XTAL_DEF_(let) group_multiplication_f = [] XTAL_1FN_(call) (_detail::factory<group_multiplication_t>::make);
 
 
 template <scalar_q ...Us> requires common_q<Us...>
@@ -125,7 +125,7 @@ template <class ...Us>	struct  group_addition;
 template <class ...Us>	using   group_addition_t = typename group_addition<Us...>::type;
 template <class ...Ts>	concept group_addition_q = bond::tag_infixed_p<group_addition_t, Ts...>;
 
-XTAL_DEF_(let) group_addition_f = [] XTAL_1FN_(call) (_detail::fake_f<group_addition_t>);
+XTAL_DEF_(let) group_addition_f = [] XTAL_1FN_(call) (_detail::factory<group_addition_t>::make);
 
 
 template <scalar_q ...Us> requires common_q<Us...>

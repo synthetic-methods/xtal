@@ -147,7 +147,7 @@ void monomer_provision__advancing()
 
 //	xhs <<= Ox_onset((T_alpha) - (99 + 66));
 	auto const yhs = _11
-	|	_xtd::ranges::views::take(xhs.size())
+	|	_xtd::ranges::views::take_exactly(xhs.size())
 	|	_xtd::ranges::views::transform([] (auto n) {return n + 66 + 99;})
 	;
 	TRUE_(equal_f(xhs, yhs));
@@ -240,9 +240,9 @@ void monomer_chaining__lvalue()
 	unsigned constexpr N = 4;
 
 	using namespace _xtd::ranges;
-	auto _01 = _xtd::ranges::views::iota(0, 10)|_xtd::ranges::views::transform(bond::operate<T_alpha>{});
-	auto _10 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*10;});
-	auto _11 = _01|_xtd::ranges::views::transform([] (T_alpha n) {return n*11;});
+	auto _01 = views::iota(0, 10)|views::transform(bond::operate<T_alpha>{});
+	auto _10 = _01|views::transform([] (T_alpha n) {return n*10;});
+	auto _11 = _01|views::transform([] (T_alpha n) {return n*11;});
 	
 	using mix_op = monomer_t<U_add, provision::stored<>>;
 	using mul_op = monomer_t<U_mul, provision::stored<>>;

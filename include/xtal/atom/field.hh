@@ -20,7 +20,7 @@ template <class ...Us>	struct  field_arithmetic;
 template <class ...Us>	using   field_arithmetic_t = typename field_arithmetic<Us...>::type;
 template <class ...Ts>	concept field_arithmetic_q = bond::tag_infixed_p<field_arithmetic_t, Ts...>;
 
-XTAL_DEF_(let) field_arithmetic_f = [] XTAL_1FN_(call) (_detail::fake_f<field_arithmetic_t>);
+XTAL_DEF_(let) field_arithmetic_f = [] XTAL_1FN_(call) (_detail::factory<field_arithmetic_t>::make);
 
 
 template <scalar_q ...Us> requires common_q<Us...>

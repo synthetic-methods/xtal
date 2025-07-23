@@ -448,8 +448,8 @@ noexcept -> based_t<Y>
 {
 	return _std::min<based_t<Y>>({(count_f(ts) - 1)...}) + 1;
 }
-XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop(count_f(ts...));}
-XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take(count_f(ts...));}
+XTAL_DEF_(return,inline,let) discount_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::drop_exactly(count_f(ts...));}
+XTAL_DEF_(return,inline,let)  account_f(auto const &...ts) noexcept -> decltype(auto) {return _xtd::ranges::views::take_exactly(count_f(ts...));}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires in_n<fluid_shaped_q<decltype(ts)...>> {return  account_f(ts...);}
 XTAL_DEF_(return,inline,let)  recount_f(auto const &...ts) noexcept requires un_n<fluid_shaped_q<decltype(ts)...>> {return discount_f(0    );}
 

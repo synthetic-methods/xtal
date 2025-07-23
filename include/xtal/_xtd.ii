@@ -24,24 +24,22 @@ namespace ranges
 {
 using  _std::make_reverse_iterator;
 using  _std::   make_move_iterator;
-//\
-using  _std::           accumulate;
-using ::ranges::        accumulate;
 using ::ranges::          any_view;
-using ::ranges::       repeat_view;
 using ::ranges::    get_categories;
+
+XTAL_DEF_(let) accumulate   = [] XTAL_1FN_(call) (fold_left);
 }
 namespace ranges::views
 {
-/*/
-XTAL_DEF_(let) zip       = [] XTAL_0FN_(call) (::ranges::views::zip);
-XTAL_DEF_(let) zip_with  = [] XTAL_0FN_(call) (::ranges::views::zip_with);
-XTAL_DEF_(let) transform = [] XTAL_0FN_(call) (::ranges::views::transform);
-/*/
-XTAL_DEF_(let) zip       = [] XTAL_0FN_(call) (zip_view);
-XTAL_DEF_(let) zip_with  = [] XTAL_0FN_(call) (zip_transform_view);
-/***/
-XTAL_DEF_(let) generate  = [] XTAL_0FN_(call) (::ranges::views::generate);
+XTAL_DEF_(let) zip          = [] XTAL_1FN_(call) (zip_view);
+//\
+XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (zip_transform);
+XTAL_DEF_(let) zip_with     = [] XTAL_1FN_(call) (::ranges::views::zip_with);
+//\
+XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::std::generator);
+XTAL_DEF_(let) generate     = [] XTAL_1FN_(call) (::ranges::views::generate);
+XTAL_DEF_(let) drop_exactly = [] XTAL_1FN_(call) (drop);
+XTAL_DEF_(let) take_exactly = [] XTAL_1FN_(call) (take);
 }
 #endif
 
@@ -249,17 +247,17 @@ template <class T>     using   make_signed_t = _std::  make_signed_t<T>;
 template <class T>     using make_unsigned   = _std::make_unsigned  <T>;
 template <class T>     using make_unsigned_t = _std::make_unsigned_t<T>;
 //\
-XTAL_DEF_(return,inline,let) XTAL_(make_signed_f) (_std::  signed_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) XTAL_(make_signed_f) (                        auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) XTAL_(make_signed_f) (_std::unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let) XTAL_(make_signed_f) (constant_equivocable    auto f) noexcept -> auto {return   make_signed_f(f());}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_signed_f) (_std::  signed_integral auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_signed_f) (                        auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_signed_f) (_std::unsigned_integral auto i) noexcept -> auto {return bit_cast<  make_signed_t<decltype(i)>>(i);}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_signed_f) (constant_equivocable    auto f) noexcept -> auto {return   make_signed_f(f());}
 
-XTAL_DEF_(return,inline,let) XTAL_(make_unsigned_f) (_std::  signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
-XTAL_DEF_(return,inline,let) XTAL_(make_unsigned_f) (_std::unsigned_integral auto i) noexcept -> auto {return i;}
-XTAL_DEF_(return,inline,let) XTAL_(make_unsigned_f) (constant_equivocable    auto f) noexcept -> auto {return make_unsigned_f(f());}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f) (_std::  signed_integral auto i) noexcept -> auto {return bit_cast<make_unsigned_t<decltype(i)>>(i);}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f) (_std::unsigned_integral auto i) noexcept -> auto {return i;}
+XTAL_DEF_(return,inline,let) XTAL_NYM_(make_unsigned_f) (constant_equivocable    auto f) noexcept -> auto {return make_unsigned_f(f());}
 
-XTAL_DEF_(let)   make_signed_f = [] XTAL_1FN_(call) (XTAL_(  make_signed_f));
-XTAL_DEF_(let) make_unsigned_f = [] XTAL_1FN_(call) (XTAL_(make_unsigned_f));
+XTAL_DEF_(let)   make_signed_f = [] XTAL_1FN_(call) (XTAL_NYM_(  make_signed_f));
+XTAL_DEF_(let) make_unsigned_f = [] XTAL_1FN_(call) (XTAL_NYM_(make_unsigned_f));
 
 
 ////////////////////////////////////////////////////////////////////////////////

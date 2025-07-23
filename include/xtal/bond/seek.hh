@@ -41,10 +41,10 @@ XTAL_DEF_(let) seek_reverse_f = operate{
 	[]<constant_q ...Ns> (       Ns... ) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns{})...> {return {};}
 ,	[]<int        ...Ns> (seek_t<Ns...>) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns  )...> {return {};}
 };
-template <int N>	                 struct XTAL_(seek)    {using type = decltype(seek_f        (_detail::seek_s<+N>{}));};
-template <int N>	requires (N < 0) struct XTAL_(seek)<N> {using type = decltype(seek_reverse_f(_detail::seek_s<-N>{}));};
-template <int N>	                 using  seek_s         = typename XTAL_(seek)<+N>::type;// Produces the         `std::integer_sequence<int>` from `0` to `N - 1`.
-template <int N>	                 using  seek_reverse_s = typename XTAL_(seek)<-N>::type;// Produces the reverse `std::integer_sequence<int>` from `N - 1` to `0`.
+template <int N>	                 struct XTAL_NYM_(seek)    {using type = decltype(seek_f        (_detail::seek_s<+N>{}));};
+template <int N>	requires (N < 0) struct XTAL_NYM_(seek)<N> {using type = decltype(seek_reverse_f(_detail::seek_s<-N>{}));};
+template <int N>	                 using  seek_s         = typename XTAL_NYM_(seek)<+N>::type;// Produces the         `std::integer_sequence<int>` from `0` to `N - 1`.
+template <int N>	                 using  seek_reverse_s = typename XTAL_NYM_(seek)<-N>::type;// Produces the reverse `std::integer_sequence<int>` from `N - 1` to `0`.
 
 
 ////////////////////////////////////////////////////////////////////////////////

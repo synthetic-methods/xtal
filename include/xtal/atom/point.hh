@@ -19,7 +19,7 @@ template <class ...Us>	struct  point;
 template <class ...Us>	using   point_t = typename point<Us...>::type;
 template <class ...Us>	concept point_q = bond::tag_infixed_p<point_t, Us...>;
 
-XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::fake_f<point_t>);
+XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::factory<point_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////

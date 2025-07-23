@@ -30,12 +30,11 @@ void echo_rule_()
 template <int N>
 void echo_plot_(iterated_q auto const o, integral_q auto ...ms)
 {
-	using namespace _std;
 	auto uZERO = "\u2504";// ...BOX DRAWINGS LIGHT TRIPLE-DASH HORIZONTAL
 	_std::vector<int> m_{ms...};
 	int l{};
 	for (auto e: o) {
-		bool marked = _xtd::ranges::contains(m_, l);
+		bool marked = _std::find(m_.begin(), m_.end(), l) < m_.end();
 		e *= N;
 		e *= 2;
 		e += 0 < e;
@@ -46,24 +45,24 @@ void echo_plot_(iterated_q auto const o, integral_q auto ...ms)
 		for (int n = -N; n <= -1; ++n) {
 			auto const m = n << 1;
 			if (false);
-			else if (m <  w     and n == -1 and marked) cout << "\u22A3";// -| TACK LEFT
-			else if (m <  w - 1 and n != -1 or  u == 0) cout <<   uZERO ;//    ...
-			else if (m == w - 1 and             l == 0) cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
-			else if (n <  u)                            cout << "\u0020";//    SPACE
-			else if (u <  n)                            cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
-			else if (w <  m)                            cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT
-			else                                        cout << "\u0020";//    SPACE
+			else if (m <  w     and n == -1 and marked) _std::cout << "\u22A3";// -| TACK LEFT
+			else if (m <  w - 1 and n != -1 or  u == 0) _std::cout <<   uZERO ;//    ...
+			else if (m == w - 1 and             l == 0) _std::cout << "\u2574";// -  BOX DRAWINGS LIGHT LEFT
+			else if (n <  u)                            _std::cout << "\u0020";//    SPACE
+			else if (u <  n)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+			else if (w <  m)                            _std::cout << "\u257A";//  = BOX DRAWINGS HEAVY RIGHT
+			else                                        _std::cout << "\u0020";//    SPACE
 		}
 		for (int n = +1; n <= +N; ++n) {
 			auto const m = n << 1;
 			if (false);
-			else if (w <  m     and n == +1 and marked) cout << "\u22A2";// |- TACK RIGHT
-			else if (w <  m - 1 and n != +1 or  u == 0) cout <<   uZERO ;//    ...
-			else if (w == m - 1 and             l == 0) cout << "\u2576";//  - BOX DRAWINGS LIGHT RIGHT
-			else if (u <  n - 0)                        cout << "\u0020";//    SPACE
-			else if (n <  u)                            cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
-			else if (m <  w)                            cout << "\u2578";// =  BOX DRAWINGS HEAVY LEFT
-			else                                        cout << "\u0020";//    SPACE
+			else if (w <  m     and n == +1 and marked) _std::cout << "\u22A2";// |- TACK RIGHT
+			else if (w <  m - 1 and n != +1 or  u == 0) _std::cout <<   uZERO ;//    ...
+			else if (w == m - 1 and             l == 0) _std::cout << "\u2576";//  - BOX DRAWINGS LIGHT RIGHT
+			else if (u <  n - 0)                        _std::cout << "\u0020";//    SPACE
+			else if (n <  u)                            _std::cout << "\u2501";// == BOX DRAWINGS HEAVY HORIZONTAL
+			else if (m <  w)                            _std::cout << "\u2578";// =  BOX DRAWINGS HEAVY LEFT
+			else                                        _std::cout << "\u0020";//    SPACE
 		}
 		_std::cout << _std::endl;
 		uZERO = "\u0020";// ...SPACE
