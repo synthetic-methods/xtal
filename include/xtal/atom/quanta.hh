@@ -67,7 +67,7 @@ struct quanta
 		{
 			XTAL_IF0
 		//	XTAL_0IF (common_q<Us...> and atomic_q<value_type>) {
-		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//FIXME: Not working for complex values?
+		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//TODO: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(to) (
 				static_cast<S_ const &>(s) == static_cast<S_ const &>(t)

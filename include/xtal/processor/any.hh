@@ -126,9 +126,7 @@ struct define
 						auto x0 = point_f(res);
 						auto y0 = point_f(rev);
 						auto sN = count_f(rev);
-						//\
 						_detail::copy_to(y0, x0, sN);
-						_detail::move_to(y0, x0, sN);
 
 						return 0;
 					}
@@ -246,7 +244,7 @@ struct defer<U>
 		{
 			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return          (iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
+			XTAL_0IF (none_n<Is...>) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
 			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
 		})
 		template <auto ...Is>
@@ -257,7 +255,7 @@ struct defer<U>
 		{
 			auto constexpr f = [] XTAL_1FN_(call) (U_::template method_f<Is...>);
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return          (iterative_f<f>(XTAL_REF_(xs)...));}
+			XTAL_0IF (none_n<Is...>) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
 			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
 		}
 

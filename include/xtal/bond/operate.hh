@@ -67,7 +67,7 @@ struct operate : Fs...
 	noexcept -> auto
 	requires requires {operate{}();}
 	{
-		return operate{[] XTAL_1FN_(to) (1.F/object<T>())};
+		return operate{[] XTAL_1FN_(to) (bond::fit<T>::alpha_1/object<T>())};
 	}
 
 	template <class T>

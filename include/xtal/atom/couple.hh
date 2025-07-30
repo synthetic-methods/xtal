@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./group.hh"
-
+#include "./field.hh"
 
 
 
@@ -38,11 +38,14 @@ struct couple
 	using alpha_type = typename _fit::alpha_type;
 	
 	template <class T>
+	//\
+	using endotype = typename     field_arithmetic<Us...>::template homotype<T>;
 	using endotype = typename group_multiplication<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<couple_t>>;
-
+	using holotype = bond::compose_s<endotype<T>
+	,	bond::tag<couple_t>
+	>;
 	template <class T>
 	class homotype : public holotype<T>
 	{
@@ -82,6 +85,14 @@ struct couple
 		{}
 
 	public:// OPERATE
+		using S_::operator+; using S_::operator+=;
+		using S_::operator-; using S_::operator-=;
+
+		template <couple_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_preference_p<W, T> {return w + self()  ;}
+		template <couple_q W> XTAL_DEF_(return,inline,get) operator + (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::add2_(w);}
+		template <couple_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
+		template <couple_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
+		template <couple_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
 		/*!
 		\brief  	Produces the progressive sum/difference, starting from zero if post-fixed.
@@ -266,33 +277,33 @@ struct couple
 
 		XTAL_DEF_(return,inline,let)  maximum() const noexcept -> auto const & {return *_xtd::ranges::max_element(self());}
 		XTAL_DEF_(return,inline,let)  minimum() const noexcept -> auto const & {return *_xtd::ranges::min_element(self());}
-		XTAL_DEF_(return,inline,let) extremum() const noexcept -> auto const
-		{
+		XTAL_DEF_(return,inline,let)  miximum() const noexcept -> auto const & {
 			auto const &[min_, max_] = _xtd::ranges::minmax_element(self());
 			return _std::tie(*min_, *max_);
 		}
-		template <int N>
+		template <int N=0>
 		XTAL_DEF_(return,inline,let)
 		extremum() const
 		noexcept -> auto
 		{
 			XTAL_IF0
-			XTAL_0IF (0 <  N) {return maximum();}
-			XTAL_0IF (N <= 0) {return minimum();}
+			XTAL_0IF (0 < N) {return maximum();}
+			XTAL_0IF (N < 0) {return minimum();}
+			XTAL_0IF_(else)  {return miximum();}
 		}
 
-		XTAL_DEF_(return,inline,let)  maximal() const {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
-		XTAL_DEF_(return,inline,let)  minimal() const {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
-		XTAL_DEF_(return,inline,let) extremal() const {return bond::pack_f(minimal(), maximal());}
-
-		template <int N>
+		XTAL_DEF_(return,inline,let) maximal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
+		XTAL_DEF_(return,inline,let) minimal() const noexcept -> auto {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
+		XTAL_DEF_(return,inline,let) miximal() const noexcept -> auto {return bond::pack_f(minimal(), maximal());}
+		template <int N=0>
 		XTAL_DEF_(return,inline,let)
 		extremal() const
 		noexcept -> auto
 		{
 			XTAL_IF0
-			XTAL_0IF (N == 1) {return S_::template reduce<[] XTAL_1FN_(call) (_std::lcm)>();}
-			XTAL_0IF (N <= 0) {return S_::template reduce<[] XTAL_1FN_(call) (_std::gcd)>();}
+			XTAL_0IF (0 < N) {return maximal();}
+			XTAL_0IF (N < 0) {return minimal();}
+			XTAL_0IF_(else)  {return miximal();}
 		}
 
 
