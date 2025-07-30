@@ -139,49 +139,52 @@ template <auto  N, auto  ...Ms>	concept            un_n	=                       
 template <class T, class ...Ts>	concept            in_q	=                          _retail::           in_q<T, Ts...>;
 template <class T, class ...Ts>	concept            un_q	=                          _retail::           un_q<T, Ts...>;
 
-template <class          ...Ts>	concept      variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
-template <class          ...Ts>	concept      constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
-template <auto   N=null_type{}>	using        constant_t	=                          _retail::           constant_t<N >;
+template <         class ...Ts>	concept      variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
+template <         class ...Ts>	concept      constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
+template <auto  N=null_type{} >	using        constant_t	=                          _retail::           constant_t<N >;
 
 template <auto  N       >	using     integral_constant_t	=                          _retail::  integral_constant_t<N>;
 template <auto  N       >	using     cardinal_constant_t	=                          _retail::  cardinal_constant_t<N>;
 template <auto  N       >	using      ordinal_constant_t	=                          _retail::   ordinal_constant_t<N>;
 template <auto  N       >	using      logical_constant_t	=                          _retail::   logical_constant_t<N>;
 
-template <class 	 ...Ts>  concept   integral_variable_q	= (some_q<Ts...> and...and _retail::  integral_variable_q<Ts>);
-template <class 	 ...Ts>  concept   cardinal_variable_q	= (some_q<Ts...> and...and _retail::  cardinal_variable_q<Ts>);
-template <class 	 ...Ts>  concept    ordinal_variable_q	= (some_q<Ts...> and...and _retail::   ordinal_variable_q<Ts>);
-template <class 	 ...Ts>  concept    logical_variable_q	= (some_q<Ts...> and...and _retail::   logical_variable_q<Ts>);
-template <class 	 ...Ts>  concept       real_variable_q	= (some_q<Ts...> and...and _retail::      real_variable_q<Ts>);
-template <class 	 ...Ts>  concept    complex_variable_q	= (some_q<Ts...> and...and _retail::   complex_variable_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_variable_q	= (some_q<Ts...> and...and _retail::   simplex_variable_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_variable_q	= (some_q<Ts...> and...and _retail::   numeric_variable_q<Ts>);
+template <         class ...Ts>  concept   integral_variable_q	= (some_q<Ts...> and...and _retail::  integral_variable_q<Ts>);
+template <         class ...Ts>  concept   cardinal_variable_q	= (some_q<Ts...> and...and _retail::  cardinal_variable_q<Ts>);
+template <         class ...Ts>  concept    ordinal_variable_q	= (some_q<Ts...> and...and _retail::   ordinal_variable_q<Ts>);
+template <         class ...Ts>  concept    logical_variable_q	= (some_q<Ts...> and...and _retail::   logical_variable_q<Ts>);
+template <         class ...Ts>  concept       real_variable_q	= (some_q<Ts...> and...and _retail::      real_variable_q<Ts>);
+template <         class ...Ts>  concept    complex_variable_q	= (some_q<Ts...> and...and _retail::   complex_variable_q<Ts>);
+template <         class ...Ts>  concept    simplex_variable_q	= (some_q<Ts...> and...and _retail::   simplex_variable_q<Ts>);
+template <         class ...Ts>  concept    numeric_variable_q	= (some_q<Ts...> and...and _retail::   numeric_variable_q<Ts>);
 
-template <class 	 ...Ts>  concept   integral_constant_q	= (some_q<Ts...> and...and _retail::  integral_constant_q<Ts>);
-template <class 	 ...Ts>  concept   cardinal_constant_q	= (some_q<Ts...> and...and _retail::  cardinal_constant_q<Ts>);
-template <class 	 ...Ts>  concept    ordinal_constant_q	= (some_q<Ts...> and...and _retail::   ordinal_constant_q<Ts>);
-template <class 	 ...Ts>  concept    logical_constant_q	= (some_q<Ts...> and...and _retail::   logical_constant_q<Ts>);
-template <class 	 ...Ts>  concept       real_constant_q	= (some_q<Ts...> and...and _retail::      real_constant_q<Ts>);
-template <class 	 ...Ts>  concept    complex_constant_q	= (some_q<Ts...> and...and _retail::   complex_constant_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_constant_q	= (some_q<Ts...> and...and _retail::   simplex_constant_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_constant_q	= (some_q<Ts...> and...and _retail::   numeric_constant_q<Ts>);
-template <class 	 ...Ts>  concept    natural_constant_q	= (some_q<Ts...> and...and _retail::   natural_constant_q<Ts>);
-template <class 	 ...Ts>  concept  unnatural_constant_q	= (some_q<Ts...> and...and _retail:: unnatural_constant_q<Ts>);
+template <         class ...Ts>  concept   integral_constant_q	= (some_q<Ts...> and...and _retail::  integral_constant_q<Ts>);
+template <         class ...Ts>  concept   cardinal_constant_q	= (some_q<Ts...> and...and _retail::  cardinal_constant_q<Ts>);
+template <         class ...Ts>  concept    ordinal_constant_q	= (some_q<Ts...> and...and _retail::   ordinal_constant_q<Ts>);
+template <         class ...Ts>  concept    logical_constant_q	= (some_q<Ts...> and...and _retail::   logical_constant_q<Ts>);
+template <         class ...Ts>  concept       real_constant_q	= (some_q<Ts...> and...and _retail::      real_constant_q<Ts>);
+template <         class ...Ts>  concept    complex_constant_q	= (some_q<Ts...> and...and _retail::   complex_constant_q<Ts>);
+template <         class ...Ts>  concept    simplex_constant_q	= (some_q<Ts...> and...and _retail::   simplex_constant_q<Ts>);
+template <         class ...Ts>  concept    numeric_constant_q	= (some_q<Ts...> and...and _retail::   numeric_constant_q<Ts>);
+template <         class ...Ts>  concept    natural_constant_q	= (some_q<Ts...> and...and _retail::   natural_constant_q<Ts>);
+template <         class ...Ts>  concept  unnatural_constant_q	= (some_q<Ts...> and...and _retail:: unnatural_constant_q<Ts>);
 
-template <class    ...Ts>	concept   integral_q        	= (some_q<Ts...> and...and _retail::           integral_q<Ts>);
-template <class    ...Ts>	concept   cardinal_q        	= (some_q<Ts...> and...and _retail::           cardinal_q<Ts>);
-template <class    ...Ts>	concept    ordinal_q        	= (some_q<Ts...> and...and _retail::            ordinal_q<Ts>);
-template <class    ...Ts>	concept    logical_q        	= (some_q<Ts...> and...and _retail::            logical_q<Ts>);
-template <class 	 ...Ts>  concept       real_q        	= (some_q<Ts...> and...and _retail::               real_q<Ts>);
-template <class 	 ...Ts>  concept    complex_q        	= (some_q<Ts...> and...and _retail::            complex_q<Ts>);
-template <class 	 ...Ts>  concept    simplex_q        	= (some_q<Ts...> and...and _retail::            simplex_q<Ts>);
-template <class 	 ...Ts>  concept    numeric_q        	= (some_q<Ts...> and...and _retail::            numeric_q<Ts>);
-template <class 	 ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
+template <         class ...Ts>	concept   integral_q        	= (some_q<Ts...> and...and _retail::           integral_q<Ts>);
+template <         class ...Ts>	concept   cardinal_q        	= (some_q<Ts...> and...and _retail::           cardinal_q<Ts>);
+template <         class ...Ts>	concept    ordinal_q        	= (some_q<Ts...> and...and _retail::            ordinal_q<Ts>);
+template <         class ...Ts>	concept    logical_q        	= (some_q<Ts...> and...and _retail::            logical_q<Ts>);
+template <         class ...Ts>  concept       real_q        	= (some_q<Ts...> and...and _retail::               real_q<Ts>);
+template <         class ...Ts>  concept    complex_q        	= (some_q<Ts...> and...and _retail::            complex_q<Ts>);
+template <         class ...Ts>  concept    simplex_q        	= (some_q<Ts...> and...and _retail::            simplex_q<Ts>);
+template <         class ...Ts>  concept    numeric_q        	= (some_q<Ts...> and...and _retail::            numeric_q<Ts>);
+template <         class ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
 
 XTAL_DEF_(return,inline,let)  ordinal_f(           auto const o) noexcept -> auto {return            _xtd::  make_signed_f(o)   ;}
 XTAL_DEF_(return,inline,let)  ordinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::  make_signed_f(o)>{};}
 XTAL_DEF_(return,inline,let) cardinal_f(           auto const o) noexcept -> auto {return            _xtd::make_unsigned_f(o)   ;}
 XTAL_DEF_(return,inline,let) cardinal_f(constant_q auto const o) noexcept -> auto {return constant_t<_xtd::make_unsigned_f(o)>{};}
+
+template <class T             >	using      ordinal_t = XTAL_ALL_( ordinal_f(XTAL_ANY_(T)));
+template <class T             >	using     cardinal_t = XTAL_ALL_(cardinal_f(XTAL_ANY_(T)));
 
 /*!
 \returns

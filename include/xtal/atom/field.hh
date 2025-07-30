@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./point.hh"
-
+#include "./group.hh"
 
 
 
@@ -36,7 +36,11 @@ private:
 	using endotype = typename point<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<field_arithmetic_t>>;
+	using holotype = bond::compose_s<endotype<T>
+	,	bond::tag<field_arithmetic_t>
+	,	bond::tag<group_multiplication_t>
+	,	bond::tag<group_addition_t>
+	>;
 
 public:
 	/*!
@@ -50,7 +54,6 @@ public:
 		using U_ = typename S_::value_type;
 
 	public:// ACCESS
-		using S_::front;
 		using S_::size;
 		using S_::self;
 

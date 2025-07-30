@@ -96,6 +96,7 @@
                        _Pragma("clang diagnostic ignored \"-Wunused-local-typedef\"")\
                        _Pragma("clang diagnostic ignored \"-Wshift-op-parentheses\"")\
                        _Pragma("clang diagnostic ignored \"-Wlogical-op-parentheses\"")\
+                       _Pragma("STDC FP_CONTRACT ON")\
 
 #elif   defined(__GNUC__)
 #define XTAL_ENV_GNUC   (100*__GNUC__ + __GNUC_MINOR__)

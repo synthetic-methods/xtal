@@ -50,7 +50,6 @@ public:
 		using U_ = typename S_::value_type;
 
 	public:// ACCESS
-		using S_::front;
 		using S_::size;
 		using S_::self;
 
@@ -71,7 +70,7 @@ public:
 			_detail::initialize_with(S_::begin(), size(), U_{1});
 		}
 		/*!
-		\brief  	Constructs the constant `group` using the initializer `w`.
+		\brief  	Constructs the constant `group` using the `std::initializer_list` provided.
 		If `1 == w.size()`, the provided value is repeated.
 		*/
 		XTAL_NEW_(implicit)
@@ -99,6 +98,15 @@ public:
 		XTAL_DEF_(mutate,inline,get)                   operator *=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s *= T(w); return s;}
 		XTAL_DEF_(mutate,inline,get)                   operator /=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
+		/*!
+		\returns	The reduction of `self` w.r.t. multiplication.
+		*/
+		XTAL_DEF_(return,inline,let)
+		crush() const
+		noexcept -> auto
+		{
+			return S_::template reduce<_std::multiplies<>{}>();
+		}
 		/*!
 		\returns	The result of `blanked()` before refilling with `N_value=1`.
 		*/
@@ -169,6 +177,16 @@ public:
 
 		XTAL_DEF_(mutate,inline,get)             operator +=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s += T(w); return s;}
 		XTAL_DEF_(mutate,inline,get)             operator -=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s -= T(w); return s;}
+
+		/*!
+		\returns	The reduction of `self` w.r.t. addition.
+		*/
+		XTAL_DEF_(return,inline,let)
+		crush() const
+		noexcept -> auto
+		{
+			return S_::template reduce<_std::plus<>{}>();
+		}
 
 	};
 	using type = bond::derive_t<homotype>;

@@ -56,7 +56,7 @@ struct glider
 				using E_ramp = flow::  cue_s<U_ramp>;
 				using E_pipe = typename S_::template spool_t<E_ramp>;
 				//\
-				delay_type u_drip{};//FIXME: Confuses GCC/Ubuntu on CI...
+				delay_type u_drip{};//TODO: Confuses GCC/Ubuntu on CI...
 				E_ramp u_drip{};
 				E_pipe u_pipe{bond::seek_t<>{}, V_limits::min(), V_limits::max()};
 

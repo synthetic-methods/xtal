@@ -213,24 +213,19 @@ template <class T           > using  decay_trivial_value_reference_t = typename 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if XTAL_VER_(STD < 2300) or XTAL_VER_(MSVC < 1700)// Replace with `constexpr __builtin`s...
 template <class T>
 XTAL_DEF_(let)
 bit_cast = [] (auto s)
 XTAL_0FN requires requires {_std::bit_cast<T>(s);}
 {
-	return __builtin_bit_cast(T, s);
+	return __builtin_bit_cast(T, s);// `constexpr`!
 };
 XTAL_DEF_(let)
 copysign = [] (auto t, auto s)
 XTAL_0FN requires requires {_std::copysign(t, s);}
 {
-	return __builtin_copysign(t, s);
+	return __builtin_copysign(t, s);// `constexpr`!
 };
-#else
-using _std::bit_cast;
-using _std::copysign;
-#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
