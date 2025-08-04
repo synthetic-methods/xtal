@@ -35,17 +35,17 @@ struct resample
 	public:// CONSTRUCT
 	//	using S_::S_;
 		
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-//		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept :        )
-		XTAL_NEW_(then)   (subtype, noexcept : S_     )
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+//		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+		XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 		XTAL_NEW_(explicit)
 		subtype(number_q auto v, auto &&...oo)
 		noexcept
-		:	subtype{U2(static_cast<U0>(v)), XTAL_REF_(oo)...}
+		:	subtype{U2{static_cast<U0>(v), _std::in_place}, XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(implicit)
 		subtype()

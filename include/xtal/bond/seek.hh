@@ -52,21 +52,27 @@ template <int N>	                 using  seek_reverse_s = typename XTAL_NYM_(see
 \brief   Invokes the function `f` with each index `Ns...`.
 */
 template <integral_q auto ...Ns>
-XTAL_DEF_(let)
-seek_in_f = [] (auto const &f)
-	XTAL_0FN_(do) ([&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(do) (..., f(constant_t<I>{}))
-			(seek_t<Ns...> {}));
+XTAL_DEF_(inline,let)
+seek_within_f(auto const &f)
+noexcept -> void
+{
+	[&] <int ...I>(seek_t<I...>)
+	XTAL_0FN_(do) (..., f(constant_t<I>{}))
+		(seek_t<Ns...> {});
+}
 
 /*!
 \brief   Invokes the function `f` with each index from `N_onset` to `N_onset + N_count`.
 */
 template <int N_count=0, int N_onset=0>
-XTAL_DEF_(let)
-seek_out_f = [] (auto const &f)
-	XTAL_0FN_(do) ([&] <int ...I>(seek_t<I...>)
-		XTAL_0FN_(do) (..., f(constant_t<N_onset + I>{}))
-			(seek_s<N_count> {}));
+XTAL_DEF_(inline,let)
+seek_until_f(auto const &f)
+noexcept -> void
+{
+	[&] <int ...I>(seek_t<I...>)
+	XTAL_0FN_(do) (..., f(constant_t<I + N_onset>{}))
+		(seek_s<N_count> {});
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +85,8 @@ template <         auto  ...Ns>  auto constexpr seek_front_n =          seek_fro
 
 XTAL_DEF_(let)
 seek_front_f = []<class ...Ts> (Ts &&...ts)
-	XTAL_0FN_(to) (get<0>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));///<\brief Produces the first argument of `ts...`.
+	XTAL_0FN_(to) (get<0>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+///<\brief Produces the first argument of `ts...`.
 
 #ifndef XTAL_DOC
 template <         class ...Ts>  struct         seek_back;
@@ -91,7 +98,8 @@ template <         auto  ...Ns>  auto constexpr seek_back_n =          seek_back
 
 XTAL_DEF_(let)
 seek_back_f = []<class ...Ts> (Ts &&...ts)
-	XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));///<\brief Produces the  last argument of `ts...`.
+	XTAL_0FN_(to) (get<sizeof...(Ts) - 1>(_std::tuple<Ts...>{XTAL_REF_(ts)...}));
+///<\brief Produces the  last argument of `ts...`.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +157,6 @@ struct seek_index
 {
 	static unsigned constexpr N_upper = seek_upper_n<Ns...>;
 	static unsigned constexpr N_lower = seek_lower_n<Ns...>;
-
 	//\
 	static unsigned constexpr N_limit = 1U + N_upper - N_lower;
 	static unsigned constexpr N_limit = 1U << _std::bit_width(N_upper - N_lower);
@@ -157,32 +164,30 @@ struct seek_index
 	using  supertype = _std::array<int, N_limit>;
 	class       type : public supertype
 	{
-		using S_ = supertype;
-
 	public:// CONSTRUCT
-	//	using S_::S_;
-
-		XTAL_NEW_(delete) (type, noexcept = default)
-//		XTAL_NEW_(create) (type, noexcept = default)
-		XTAL_NEW_(move)   (type, noexcept = default)
-		XTAL_NEW_(copy)   (type, noexcept = default)
-	//	XTAL_NEW_(cast)   (type, noexcept :        )
-	//	XTAL_NEW_(then)   (type, noexcept : S_     )
+	//	using supertype::supertype;
+		XTAL_NEW_(delete) (type, noexcept=default)
+//		XTAL_NEW_(create) (type, noexcept=default)
+		XTAL_NEW_(move)   (type, noexcept=default)
+		XTAL_NEW_(copy)   (type, noexcept=default)
 
 		XTAL_NEW_(implicit)
 		type()
 		noexcept
-		:	S_{[]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(to) (supertype{(seek_index_n<I + N_lower, Ns...>)...})
-			(bond::seek_s<N_limit>{})}
+		:	supertype{[]<auto ...I> (bond::seek_t<I...>)
+			XTAL_0FN_(to) (supertype{(seek_index_n<I + N_lower, Ns...>)...})
+				(bond::seek_s<N_limit>{})}
 		{};
 
 	public:// OPERATE
-		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
-			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
-
-		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator[](I i), element(i))
-	//	XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator()(I i), element(i))
+		XTAL_FX4_(do) (template <integral_q I>
+		XTAL_DEF_(return,inline,get)
+		operator[](I i),
+		{
+			auto const j = _xtd::make_signed_f<int>(i) - N_lower;
+			auto const k = 0 <= j and j < N_limit; assert(k);
+			return supertype::operator[](k? j: 0);
+		})
 		
 	};
 
@@ -205,24 +210,18 @@ struct seek_value
 	using  supertype = _std::array<int, N_limit>;
 	class       type : public supertype
 	{
-		using S_ = supertype;
-
 	public:// CONSTRUCT
-	//	using S_::S_;
-
-		XTAL_NEW_(delete) (type, noexcept = default)
-//		XTAL_NEW_(create) (type, noexcept = default)
-		XTAL_NEW_(move)   (type, noexcept = default)
-		XTAL_NEW_(copy)   (type, noexcept = default)
-		XTAL_NEW_(cast)   (type, noexcept :        )
-	//	XTAL_NEW_(then)   (type, noexcept : S_     )
+		XTAL_NEW_(delete) (type, noexcept=default)
+//		XTAL_NEW_(create) (type, noexcept=default)
+		XTAL_NEW_(move)   (type, noexcept=default)
+		XTAL_NEW_(copy)   (type, noexcept=default)
 
 		XTAL_NEW_(implicit)
 		type()
 		noexcept
-		:	S_{[]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(to) (supertype{Ns...})
-			(bond::seek_s<N_limit>{})}
+		:	supertype{[]<auto ...I> (bond::seek_t<I...>)
+			XTAL_0FN_(to) (supertype{Ns...})
+				(bond::seek_s<N_limit>{})}
 		{};
 
 	};

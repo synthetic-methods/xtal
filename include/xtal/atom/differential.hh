@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
+#include "./wrap.hh"
 #include "./group.hh"
-
 
 
 
@@ -14,28 +14,28 @@ namespace xtal::atom
 \brief
 Extends `group` with component-wise addition and differential succession.
 */
-template <class ...Us>	struct  grade;
-template <class ...Us>	using   grade_t = typename grade<Us...>::type;
-template <class ...Us>	concept grade_q = bond::tag_infixed_p<grade_t, Us...>;
+template <class ...Us>	struct  differential;
+template <class ...Us>	using   differential_t = typename differential<Us...>::type;
+template <class ...Us>	concept differential_q = bond::tag_infixed_p<differential_t, Us...>;
 
-XTAL_DEF_(let) grade_f = [] XTAL_1FN_(call) (_detail::factory<grade_t>::make);
+XTAL_DEF_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differential_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_q ...Us> requires common_q<Us...>
-struct grade<Us ...>
-:	grade<common_t<Us...>[sizeof...(Us)]>
+struct differential<Us ...>
+:	differential<common_t<Us...>[sizeof...(Us)]>
 {
 };
 template <class ...Us>
-struct grade
+struct differential
 {
 	template <class T>
-	using endotype = typename group_addition<Us...>::template homotype<T>;
+	using endotype = typename group<wrap_s<Us, _std::plus>...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<grade_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<differential_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>

@@ -3,3 +3,4 @@
 #include "./lift.hh"
 #include "./link.hh"
 #include "./lop.hh"
+#include "./traits.hh"

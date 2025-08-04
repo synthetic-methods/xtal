@@ -17,13 +17,13 @@ namespace xtal::flow
 			This admits a broader range of elements than the current bit-depth,
 			while limiting the available combinations as the elements increase.
 */
-template <size_type N_mask=1>
+template <extent_type N_mask=1>
 struct mask;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
-template <size_type N_mask>
+template <extent_type N_mask>
 struct mask
 {
 	template <_retail::any_q S>

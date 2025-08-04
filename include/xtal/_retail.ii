@@ -104,8 +104,8 @@ template <class T             >  concept        atomic_q =  complete_q<T> and _x
 template <class T             >  concept     molecular_q =  complete_q<T> and _xtd::nominal<based_t<T>>;
 template <class T             >  concept  submolecular_q =  atomic_q<T> or molecular_q<T> and _std::is_standard_layout_v<based_t<T>>;
 
-template <class S, class T=S  >	using         qualify_s = _xtd::transfer_cvref_t<                                S , based_t<T>>;
-template <class S, class T=S  >	using      disqualify_s = _xtd::transfer_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
+template <class S, class T=S  >	using         qualify_s = _xtd::move_cvref_t<                                S , based_t<T>>;
+template <class S, class T=S  >	using      disqualify_s = _xtd::move_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
 
 
 template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
@@ -135,9 +135,17 @@ template <auto  N=null_type{} >	struct       constant  	: _std::integral_constan
 template <auto  N=null_type{} >	using        constant_t	=  constant<N>;
 template <class T             >	concept      constant_q	=  complete_q<T> and _xtd::constant_equivocable<based_t<T>>;
 
-template <class T             >	struct       variable     {using value_type = based_t<T>;};
-template <constant_q T        >	struct       variable<T>  {using value_type = based_u<T>;};
-template <class T             >	using        variable_u	=  typename variable<T>::value_type;
+template <class T             >	struct       variable;
+template <class T             >	             variable(T) -> variable<T>;
+template <class T             >	struct       variable
+{
+	using value_type = T; T value;
+	XTAL_DEF_(implicit)
+	operator value_type() const noexcept {return value;}
+
+};
+template <constant_q T        >	struct       variable<T> : T{};
+template <class T             >	using        variable_u	=  typename variable<based_t<T>>::value_type;
 template <class T             >	concept      variable_q	=  not constant_q<T>;
 
 template <auto  N        >	using     integral_constant_t	= _std::integral_constant<decltype(N), (N)>;
@@ -223,7 +231,7 @@ template <                     >                              struct   assayed< 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T             >	using           array_u	= _xtd::transfer_const_t<T, _xtd::remove_extent_t<based_t<T>>>;
+template <class T             >	using           array_u	= _xtd::move_const_t<T, _xtd::remove_extent_t<based_t<T>>>;
 template <class T             >	auto constexpr  array_n	=                           _xtd::       extent_v<based_t<T>> ;
 template <class T             >	concept         array_q	=            different_q<T, array_u<T>>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
 
@@ -243,10 +251,10 @@ template <class T             >	concept  fluid_valued_q	=  requires {requires di
 template <class T             >	concept        valued_q	=  requires {requires different_q<T,       valued_u<T>>;};
 
 template <class T             >	using    array_valued_u	=  array_u<T>;
-template <class T             >	using    under_valued_u	= _xtd::transfer_const_t<T, _std::underlying_type_t<based_t<T>>>;
-template <class T             >	using    inner_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>:: value_type>;
-template <class T             >	using   scalar_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>::scalar_type>;
-template <class T             >	using   Scalar_valued_u	= _xtd::transfer_const_t<T,  typename based_t<T>::Scalar     >;
+template <class T             >	using    under_valued_u	= _xtd::move_const_t<T, _std::underlying_type_t<based_t<T>>>;
+template <class T             >	using    inner_valued_u	= _xtd::move_const_t<T,  typename based_t<T>:: value_type>;
+template <class T             >	using   scalar_valued_u	= _xtd::move_const_t<T,  typename based_t<T>::scalar_type>;
+template <class T             >	using   Scalar_valued_u	= _xtd::move_const_t<T,  typename based_t<T>::Scalar     >;
 
 template <class T             >	concept  array_valued_q	=  array_q<T>;
 template <class T             >	concept  inner_valued_q	=  requires {requires complete_q< inner_valued_u<T>>;};
@@ -366,7 +374,7 @@ template <class T             >	using       expressee_t	=  decltype( XTAL_ANY_(T
 template <class T             >	concept     expressed_q	=  requires{ XTAL_ANY_(T)(XTAL_ANY_(unsigned short));};
 //\
 template <class T             >	concept   reexpressed_q	=  indexed_q<T> and expressed_q<T>;
-template <class T             >	concept   reexpressed_q	=    fixed_q<T> and expressed_q<T>;//FIXME: Improve expression-template `concept`.
+template <class T             >	concept   reexpressed_q	=    fixed_q<T> and expressed_q<T>;//TODO: Improve expression-template `concept`.
 
 template <class T             >	struct       iteratee;
 template <class T             >	struct       iterated;
@@ -455,7 +463,7 @@ template <       class   T>   auto constexpr      cedent_v  = cedent<T>{}();
 template <       class   T>   auto constexpr   precedent_v  = cedent_v<T> -  1;
 template <       class   T>   auto constexpr   succedent_v  = cedent_v<T> +  1;
 template <       class   T>   auto constexpr intercedent_v  = cedent_v<T> != 0;
-template <       class   T>   auto constexpr    antedent_v  = cedent_v<T> == 0;
+template <       class   T>   auto constexpr  antecedent_v  = cedent_v<T> == 0;
 template <       class   T>	struct           precedent;
 template <       class   T>	struct           succedent;
 template <    constant_q T>	struct           precedent<T>  	{using type = constant_t<                   precedent_v<T>>;};
@@ -464,7 +472,7 @@ template <array_shaped_q T>	struct           precedent<T>  	{using type = instru
 template <array_shaped_q T>	struct           succedent<T>  	{using type = instruct_t<array_valued_u<T>, succedent_v<T>>;};
 
 template <       class   T>	concept   intercedent_q	=  complete_q<cedent<T>> and requires {requires intercedent_v<T>;};
-template <       class   T>	concept    antecedent_q	=  complete_q<cedent<T>> and requires {requires    antedent_v<T>;};
+template <       class   T>	concept    antecedent_q	=  complete_q<cedent<T>> and requires {requires  antecedent_v<T>;};
 template <       class   T>	using       precedent_s	= typename precedent<T>::type;
 template <       class   T>	using       succedent_s	= typename succedent<T>::type;
 

@@ -2,7 +2,7 @@
 #include "./any.hh"
 #include "../provision/spooled.hh"
 
-#include "../atom/grade.hh"
+#include "../atom/differential.hh"
 #include "../flow/cue.hh"
 
 
@@ -50,10 +50,10 @@ struct glider
 			private:// ACCESS
 				using V_limits = _std::numeric_limits<delay_type>;
 				using U_layout = typename R_::event_type::layout_type;
-				using U_hold =      valued_u<U_layout>;
-				using U_ramp = atom::grade_t<U_layout>;
-				using E_hold = flow::  cue_s<U_hold>;
-				using E_ramp = flow::  cue_s<U_ramp>;
+				using U_hold =             valued_u<U_layout>;
+				using U_ramp = atom::differential_t<U_layout>;
+				using E_hold = flow::cue_s<U_hold>;
+				using E_ramp = flow::cue_s<U_ramp>;
 				using E_pipe = typename S_::template spool_t<E_ramp>;
 				//\
 				delay_type u_drip{};//TODO: Confuses GCC/Ubuntu on CI...

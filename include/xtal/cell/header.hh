@@ -64,14 +64,14 @@ struct beheader
 			return s.operator==(t) and x_(s).index() == x_(t).index();
 		}
 		/*/
-		template <bond::tab_comparable_q<T_> W> requires un_n<fungible_q<subtype, W>>
+		template <bond::tab_comparable_q<T_> W> requires infungible_q<subtype, W>
 		XTAL_DEF_(return,inline,let)
 		operator == (W const &w) const
 		noexcept -> bool
 		{
 			return S_::head() == w.head();
 		}
-		template <bond::tab_comparable_q<T_> W> requires un_n<fungible_q<subtype, W>>
+		template <bond::tab_comparable_q<T_> W> requires infungible_q<subtype, W>
 		XTAL_DEF_(return,inline,let)
 		operator <=> (W const &w) const
 		noexcept -> bool

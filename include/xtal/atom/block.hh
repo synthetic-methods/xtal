@@ -25,7 +25,7 @@ template <class ...Us>	struct  block;
 template <class ...Us>	using   block_t = typename block<Us...>::type;
 
 template <class ...Ts>	concept block_q               = bond::tag_in_p<block_t, Ts...>;
-template <class ...Ts>	concept block_coordinated_q   = (...and different_q<decltype(Ts::coordinate), _std::identity>);
+template <class ...Ts>	concept block_revalued_q   = (...and different_q<decltype(Ts::revalue_f), _std::identity>);
 #ifndef XTAL_DOC
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
 template <class U, auto  N, auto ...Ns> struct   block<U(&)[N][Ns]...> : block<block_t<U[Ns]...>(&)[N]> {};
@@ -54,10 +54,11 @@ struct superblock<Us...>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
+		using        archetype = endotype;
 		using        size_type = _std::size_t;
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using        archetype = endotype;
+		using       index_type = difference_type;
 		using       value_type = common_t<objective_t<Us>...>;
 		using       scale_type = unstruct_u<value_type>;
 
@@ -94,12 +95,13 @@ struct superblock<U(&)[N]>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
+		using        archetype = endotype;
 		using        size_type = decltype(N);
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using        archetype =  endotype;
-		using       value_type =  U;
-		using       scale_type =  unstruct_u<value_type>;
+		using       index_type = difference_type;
+		using       value_type = U;
+		using       scale_type = unstruct_u<value_type>;
 		
 	//	using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;
@@ -131,9 +133,13 @@ struct superblock<U   [N]>
 		using S_ = holotype<T>;
 
 	public:// ACCESS
-		using        archetype =  endotype;		
-		using       value_type =  U;
-		using       scale_type =  unstruct_u<value_type>;
+		using        archetype = endotype;
+		using        size_type = typename S_::      size_type;
+		using  difference_type = typename S_::difference_type;
+
+		using       index_type = difference_type;
+		using       value_type = U;
+		using       scale_type = unstruct_u<value_type>;
 
 		using       bytes_size = cardinal_constant_t<sizeof(archetype)>;
 		using       tuple_size = cardinal_constant_t<N>;
@@ -146,14 +152,22 @@ struct superblock<U   [N]>
 
 	public:// CONSTRUCT
 	//	using S_::S_;
+		XTAL_NEW_(delete) (homotype, noexcept=default)
+	//	XTAL_NEW_(create) (homotype, noexcept=default)
+		XTAL_NEW_(move)   (homotype, noexcept=default)
+		XTAL_NEW_(copy)   (homotype, noexcept=default)
+		XTAL_NEW_(then)   (homotype, noexcept:homotype)
+	//	XTAL_NEW_(else)   (homotype, noexcept:S_)
 
-		XTAL_NEW_(delete) (homotype, noexcept = default)
-	//	XTAL_NEW_(create) (homotype, noexcept = default)
-		XTAL_NEW_(move)   (homotype, noexcept = default)
-		XTAL_NEW_(copy)   (homotype, noexcept = default)
-		XTAL_NEW_(cast)   (homotype, noexcept :        )
-	//	XTAL_NEW_(then)   (homotype, noexcept : S_     )
 
+		XTAL_NEW_(explicit)
+		homotype(variable<size_type> const n)
+		noexcept
+		{
+			if (n < size or _std::is_constant_evaluated()) {
+				S_::fill(value_type{});
+			}
+		}
 		/*!
 		\note   	Defining `{}` allows `constexpr` evaluation,
 		but invalidates `std::trivially_default_constructible`.
@@ -161,32 +175,44 @@ struct superblock<U   [N]>
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
-		:	homotype(size_type{})
-		{}
-		XTAL_NEW_(explicit)
-		homotype(same_q<size_type> auto const n)
-		noexcept
+		:	homotype(variable{size_type{}})
 		{
-			if (n < size or _std::is_constant_evaluated()) {
-				S_::fill(value_type{});
-			}
-		}
-		XTAL_NEW_(implicit)
-		homotype(_std::initializer_list<value_type> xs)
-		noexcept
-		:	homotype(count_f(xs))
-		{
-			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
-			_detail::move_to<T::ordinate>(S_::begin(), point_f(xs), n);
 		}
 		XTAL_NEW_(explicit)
 		homotype(iterable_q auto &&xs)
 		noexcept
 		requires epimorphic_q<homotype, decltype(xs)>
-		:	homotype(count_f(xs))
+		:	homotype(variable{count_f(xs)})
 		{
 			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
-			_detail::copy_to<T::ordinate>(S_::begin(), point_f(XTAL_REF_(xs)), n);
+			_detail::copy_to<T::devalue_f>(S_::begin(), point_f(XTAL_REF_(xs)), n);
+		}
+		XTAL_NEW_(implicit)
+		homotype(_std::initializer_list<value_type> xs)
+		noexcept
+		:	homotype(variable{count_f(xs)})
+		{
+			auto const n = bond::fit<size_type>::minimum_f(size(), count_f(xs));
+			_detail::move_to<T::devalue_f>(S_::begin(), point_f(xs), n);
+		}
+
+		XTAL_NEW_(explicit)
+		homotype(make_q<typename T::devalue_type> auto &&...xs)
+		noexcept
+		requires requires {archetype{XTAL_REF_(xs)...};}
+		:	S_([&]<auto ...I> (bond::seek_t<I...>)
+				XTAL_0FN_(to) (static_cast<S_ &&>(archetype{XTAL_REF_(xs)...,
+					_std::tuple_element_t<I + sizeof...(xs), archetype>{}...}))
+				(bond::seek_s<size - sizeof...(xs)>{})
+			)
+		{
+		}
+		XTAL_NEW_(explicit)
+		homotype(make_q<typename T::revalue_type> auto &&...xs)
+		noexcept
+		requires different_q<decltype(T::devalue_f), decltype(T::revalue_f)>
+		:	homotype{T::devalue_f(XTAL_REF_(xs))...}
+		{
 		}
 
 	};
@@ -239,9 +265,10 @@ struct block
 		using typename S_:: archetype;
 		using typename S_::value_type;
 		using typename S_::scale_type;
+		using typename S_::index_type;
 
-		using coordinate_type = value_type;
-		using   ordinate_type = value_type;
+		using devalue_type = value_type;
+		using revalue_type = value_type;
 
 		/*!
 		\brief  	Reinvokes the current `template` (uniquely determined by the `bond::tag`s).
@@ -332,12 +359,12 @@ struct block
 
 	public:// ACCESS
 		/*!
-		\returns	The internal/external representation of the given co/ordinate.
+		\returns	The internal/external representation of the given co/devalue_f.
 		*/
-		static auto constexpr   ordinate = _std::identity{};
-		static auto constexpr coordinate = _std::identity{};
+		static auto constexpr devalue_f = _std::identity{};
+		static auto constexpr revalue_f = _std::identity{};
 
-		XTAL_FX4_(do) (template <size_type I>
+		XTAL_FX4_(do) (template <index_type I=0>
 		XTAL_DEF_(return,inline,let)
 		element(),
 		noexcept -> decltype(auto)
@@ -348,7 +375,7 @@ struct block
 			XTAL_0IF_(to) ( get<I>(s))
 			XTAL_0IF_(to) (element(constant_t<I>{}))// Required for `span`!
 		})
-		XTAL_FX4_(do) (template <auto I=0>
+		XTAL_FX4_(do) (template <index_type I=0>
 		XTAL_DEF_(return,inline,let)
 		element(auto i),
 		noexcept -> decltype(auto)
@@ -358,11 +385,11 @@ struct block
 			return self().operator[](i);
 		})
 
-		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) coelement  (   ), self().coordinate(element<I>()))
-		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) coelement  (I i), self().coordinate(element(i)  ))
+		XTAL_FX1_(to) (template <index_type I=0> XTAL_DEF_(return,inline,let) coelement  (   ), self().revalue_f(element<I>()))
+		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) coelement  (I i), self().revalue_f(element(i)  ))
 
-		XTAL_FX1_(to) (template <extent_type I> XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
-		XTAL_FX1_(to) (template <integral_q  I> XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
+		XTAL_FX1_(to) (template <index_type I  > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
+		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
 	using type = bond::derive_t<homotype>;

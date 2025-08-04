@@ -14,34 +14,34 @@ namespace xtal::atom
 \brief
 Extends `block` with function application and functional construction.
 */
-template <class ...Us>	struct  quanta;
-template <class ...Us>	using   quanta_t = typename quanta<Us...>::type;
-template <class ...Us>	concept quanta_q = bond::tag_infixed_p<quanta_t, Us...>;
+template <class ...Us>	struct  brace;
+template <class ...Us>	using   brace_t = typename brace<Us...>::type;
+template <class ...Us>	concept brace_q = bond::tag_infixed_p<brace_t, Us...>;
 
-XTAL_DEF_(let) quanta_f = [] XTAL_1FN_(call) (_detail::factory<quanta_t>::make);
+XTAL_DEF_(let) brace_f = [] XTAL_1FN_(call) (_detail::factory<brace_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, auto N, auto ...Ns> struct   quanta<U   [N][Ns]...> : quanta<quanta_t<U[Ns]...>   [N]> {};
-template <class U, auto N, auto ...Ns> struct   quanta<U(&)[N][Ns]...> : quanta<quanta_t<U[Ns]...>(&)[N]> {};
+template <class U, auto N, auto ...Ns> struct   brace<U   [N][Ns]...> : brace<brace_t<U[Ns]...>   [N]> {};
+template <class U, auto N, auto ...Ns> struct   brace<U(&)[N][Ns]...> : brace<brace_t<U[Ns]...>(&)[N]> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_q ...Us> requires common_q<Us...>
-struct quanta<Us ...>
-:	quanta<common_t<Us...>[sizeof...(Us)]>
+struct brace<Us ...>
+:	brace<common_t<Us...>[sizeof...(Us)]>
 {
 };
 template <class ...Us>
-struct quanta
+struct brace
 {
 	template <class T>
 	using endotype = typename block<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<quanta_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<brace_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -110,7 +110,7 @@ struct quanta
 #else
 			if constexpr (numeric_q<value_type>) {
 				auto &s = restruct_f(*this);
-				bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
+				bond::seek_until_f<size>([&]<constant_q I> (I) XTAL_0FN {
 					XTAL_IF0
 					XTAL_0IF (simplex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}]   ) |= _zv;}
 					XTAL_0IF (complex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}][0]) |= _zv;}
@@ -120,7 +120,7 @@ struct quanta
 			else {
 				auto const n = static_cast<value_type>(z)*u;
 				auto      &s = *this;
-				bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
+				bond::seek_until_f<size>([&]<constant_q I> (I) XTAL_0FN {
 					get<I{}>(s) += n;
 				});
 			}
@@ -131,18 +131,18 @@ struct quanta
 		using S_::reform;
 
 		/*!
-		\returns	A `coordinate`d instance of `this`.
+		\returns	A `revalue_f`d instance of `this`.
 		*/
 		XTAL_FX2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
 
 		/*!
-		\returns	A `coordinate`d instance of `this`.
+		\returns	A `revalue_f`d instance of `this`.
 		*/
 		XTAL_DEF_(return,inline,let)
 		apply() const
 		noexcept -> decltype(auto)
 		{
-			using F = decltype(T::coordinate);
+			using F = decltype(T::revalue_f);
 			if constexpr (common_q<Us...>) {
 				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
 			}
@@ -152,13 +152,13 @@ struct quanta
 		}
 
 		/*!
-		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
+		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
 		XTAL_FX4_(to) (template <complete_q F>
 		XTAL_DEF_(return,inline,explicit) operator F(), apply<F>())
 
 		/*!
-		\returns	An invocation of `F` applied to the `coordinate`s of `this`.
+		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
 		template <class F>
 		XTAL_DEF_(return,inline,let)
@@ -168,7 +168,7 @@ struct quanta
 			return apply<bond::operate<F>{}>();
 		}
 		/*!
-		\returns	The result of applying `f` to the `coordinate`s of `this`.
+		\returns	The result of applying `f` to the `revalue_f`s of `this`.
 		*/
 		template <auto  f>
 		XTAL_DEF_(return,inline,let)
@@ -178,7 +178,7 @@ struct quanta
 			return apply(f);
 		}
 		/*!
-		\returns	The result of applying `f` to the `coordinate`s of `this`.
+		\returns	The result of applying `f` to the `revalue_f`s of `this`.
 		*/
 		XTAL_DEF_(return,inline,let)
 		apply(auto &&f) const

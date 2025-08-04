@@ -88,17 +88,11 @@ using halve_t = confined_t<halve>;
 TAG_("process", "attach")
 {
 	enum side_type : unsigned {status = 0
-	,	XTAL_APP_(let) (XTAL_OCT_(prime) (UNIT),    primary)
-	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0000),  secondary)
-	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0001), LHS,  left)
-	,	XTAL_APP_(let) (XTAL_OCT_(prime) (0002), RHS, right)
+	,	XTAL_APP_(let) (1,    primary)
+	,	XTAL_APP_(let) (2,  secondary)
+	,	XTAL_APP_(let) (3, LHS,  left)
+	,	XTAL_APP_(let) (5, RHS, right)
 	};
-	TRUE_(XTAL_OCT_(prime) (UNIT) ==   primary);
-	TRUE_(XTAL_OCT_(prime) (0000) == secondary);
-	TRUE_(XTAL_OCT_(prime) (0001) ==       LHS);
-	TRUE_(XTAL_OCT_(prime) (0002) ==       RHS);
-	TRUE_(XTAL_OCT_(prime) (0003) ==        7U);
-	TRUE_(XTAL_OCT_(prime) (0177) ==      719U);
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
 	using T_delta = typename _fit::delta_type;

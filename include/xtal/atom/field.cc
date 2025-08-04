@@ -21,10 +21,10 @@ TAG_("atom", "field")
 	using T_alpha = typename _fit::alpha_type;
 	using T_aphex = typename _fit::aphex_type;
 
-	using F1 = field_arithmetic_t<int[1]>;
-	using F2 = field_arithmetic_t<int[2]>;
-	using F3 = field_arithmetic_t<int[3]>;
-	using F4 = field_arithmetic_t<int[4]>;
+	using F1 = field_t<_xtd::plus_multiplies<int>[1]>;
+	using F2 = field_t<_xtd::plus_multiplies<int>[2]>;
+	using F3 = field_t<_xtd::plus_multiplies<int>[3]>;
+	using F4 = field_t<_xtd::plus_multiplies<int>[4]>;
 	
 	TRY_("partial construction")
 	{
@@ -33,7 +33,7 @@ TAG_("atom", "field")
 		TRUE_(d4 == F4{1000, 0, 0, 0});
 
 	}
-	TRY_("field_arithmetic addition")
+	TRY_("field addition")
 	{
 		F2 d2_0{2, 2};
 		F2 d2_1{5, 7};
@@ -43,7 +43,7 @@ TAG_("atom", "field")
 		TRUE_(d2_0      == F2{ 7,  9});
 
 	}
-	TRY_("field_arithmetic multiplication")
+	TRY_("field multiplication")
 	{
 		F2 d2_0{2, 2};
 		F2 d2_1{5, 7};

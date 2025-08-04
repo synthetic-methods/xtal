@@ -70,11 +70,11 @@ struct tab
 template <class T, class ...Ks>  struct  tab_as;
 template <class K, class ...Ts>  struct  tab_in;
 #endif
-template <class T, class ...Ks>	concept tab_as_q =         tab_as<based_t<T >,            based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
-template <class T, class ...Ks>	concept tab_in_q =         tab_as<based_t<T >, identity_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tab_as_q = tab_as<based_t<T >,            based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tab_in_q = tab_as<based_t<T >, identity_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
 
-template <class K, class ...Ts>	concept tab_as_p = (...and tab_as<based_t<Ts>,            based_t<K >    >{}());///< Matches all `Ts...` with     consecutive `K`.
-template <class K, class ...Ts>	concept tab_in_p = (...and tab_as<based_t<Ts>, identity_t<based_t<K >>   >{}());///< Matches all `Ts...` with non-consecutive `K`.
+template <class K, class ...Ts>	concept tab_as_p = (...and tab_as_q<Ts, K>);///< Matches all `Ts...` with     consecutive `K`.
+template <class K, class ...Ts>	concept tab_in_p = (...and tab_in_q<Ts, K>);///< Matches all `Ts...` with non-consecutive `K`.
 
 template <class T, class ...Ks>	concept tab_affixed_q =  fixed_shaped_q<T    > and                              tab_as_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_as_q`.
 template <class T, class ...Ks>	concept tab_infixed_q =  fixed_shaped_q<T    > and                              tab_in_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_in_q`.

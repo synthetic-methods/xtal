@@ -127,15 +127,12 @@ struct define
 						auto y0 = point_f(rev);
 						auto sN = count_f(rev);
 						_detail::copy_to(y0, x0, sN);
-
 						return 0;
 					}
 				}
 
 			};
 		};
-		template <class U>
-		using bracelet = processor::let<U>;
 
 	};
 };
@@ -158,6 +155,15 @@ struct defer
 :	defer<_retail::let_t<U>>
 {
 };
+/*!
+\brief   Extends `process::defer` by proxying the range `U`.
+*/
+template <_detail::  processed_range_q U>
+struct defer<U>
+:	_retail::defer<U>
+{
+};
+
 /*!
 \brief   Extends `process::defer` by proxying the range `U`.
 */
@@ -192,15 +198,6 @@ struct defer<U>
 
 	};
 };
-/*!
-\brief   Extends `process::defer` by proxying the range `U`.
-*/
-template <_detail::  processed_range_q U>
-struct defer<U>
-:	_retail::defer<U>
-{
-};
-
 /*!
 \brief   Extends `process::defer` by repeating the value `U`.
 */
@@ -237,27 +234,45 @@ struct defer<U>
 		\brief  	Only `method` participates in parameter resolution, since `method_f` is stateless.
 		\brief  	If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` (so it can be `vtable`d).
 		*/
+	//	template <auto ...Is>
+	//	XTAL_DEF_(return,inline,set)
+	//	method  (auto &&...xs)
+	//	noexcept -> auto
+	//		requires XTAL_TRY_(to)
+	//			(method_f<Is...>(XTAL_ANY_(decltype(xs))...))
+
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs),
+		method  (auto &&...xs),
 		noexcept -> auto
+		//	requires XTAL_TRY_(to_unless)
+		//		(method_f<Is...>(XTAL_ANY_(decltype(xs))...))
 		{
-			auto const f = head().template reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...);
-			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return           iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...) ;}
-			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f(XTAL_MOV_(f), XTAL_REF_(xs)...));}
+			return normalize_f<Is...>(iterative_f(head().template
+				reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...), XTAL_REF_(xs)...));
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> auto
-		requires requires {U_::template method_f<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...);}
+			requires XTAL_TRY_(to_if) (U_::template method_f<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
 		{
-			auto constexpr f = [] XTAL_1FN_(call) (U_::template method_f<Is...>);
-			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return           iterative_f<f>(XTAL_REF_(xs)...) ;}
-			XTAL_0IF (some_n<Is...>) {return derange_f(iterative_f<f>(XTAL_REF_(xs)...));}
+			return normalize_f<Is...>(iterative_f<[] XTAL_1FN_(call)
+				(U_::template method_f<Is...>)>(XTAL_REF_(xs)...));
 		}
+
+	private:
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		normalize_f(auto &&y)
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF (none_n<Is...>) {return           XTAL_REF_(y) ;}
+			XTAL_0IF (some_n<Is...>) {return derange_f(XTAL_REF_(y));}
+		}
+		
 
 	};
 };

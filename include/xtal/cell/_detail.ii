@@ -30,8 +30,8 @@ struct define_super
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_NEW_(cast)   (subtype, noexcept :        )
-	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 		XTAL_NEW_(explicit)
 		subtype(auto &&...oo)
@@ -198,12 +198,12 @@ struct defer_field
 	public:
 	//	using S_::S_;
 		
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept :        )
-	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 		/*!
 		\brief  	Constructs `this` using the default value.
@@ -262,14 +262,18 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_(to) (S_::cardinality())
-
-		XTAL_DEF_(return,inline,set)
-		cardinality()
-		noexcept -> size_type
-		requires in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>
 		{
-			return 2;
+			static_assert(same_q<bool, U> or requires {S_::cardinality();});
+			XTAL_IF0
+			XTAL_0IF (in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
+				return 2;
+			}
+			XTAL_0IF (requires {S_::cardinality();}) {
+				return S_::cardinality();
+			}
+			XTAL_0IF_(else) {
+				return 0;
+			}
 		}
 
 	};
@@ -313,8 +317,8 @@ struct defer_field<U>
 template <class I, auto ...Ns>
 struct defer_field<_std::integer_sequence<I, Ns...>>
 {
-	static auto constexpr N_coordinate = bond::seek_value_t<_xtd::make_signed_f(Ns)...>{};
-	static auto constexpr N_ordinate   = bond::seek_index_t<_xtd::make_signed_f(Ns)...>{};
+	static auto constexpr N_revalue = bond::seek_value_t<_xtd::make_signed_f(Ns)...>{};
+	static auto constexpr N_devalue = bond::seek_index_t<_xtd::make_signed_f(Ns)...>{};
 
 	template <class S>
 	class subtype : public bond::compose_s<S>
@@ -331,17 +335,17 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		using S_::self;
 		body_type body_part{};
 
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept :        )
-	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 		
 		XTAL_NEW_(explicit)
 		subtype( ordinal_q auto &&o, auto &&...oo)
 		noexcept
-		:	subtype{static_cast<body_type>(N_ordinate[XTAL_REF_(o)]), XTAL_REF_(oo)...}
+		:	subtype{static_cast<body_type>(N_devalue[XTAL_REF_(o)]), XTAL_REF_(oo)...}
 		{}
 		XTAL_NEW_(explicit)
 		subtype(cardinal_q auto &&o, auto &&...oo)
@@ -356,12 +360,21 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		{
 			return sizeof...(Ns);
 		}
+		XTAL_DEF_(return,inline,set)
+		ordinality()
+		noexcept -> auto
+		{
+			auto const &[dn_, up_] = _xtd::ranges::minmax_element(N_revalue);
+			head_type const dn = *dn_, dn_sgn = (dn > 0) - (dn < 0), dn_abs = dn*dn_sgn;
+			head_type const up = *up_, up_sgn = (up > 0) - (up < 0), up_abs = up*up_sgn;
+			return bond::fit<>::maximum_f(dn_abs, up_abs) + 1;
+		}
 		
 		XTAL_DEF_(return,inline,let)
 		head() const
 		noexcept -> auto
 		{
-			return N_coordinate[body_part];
+			return N_revalue[body_part];
 		}
 		
 		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
@@ -397,12 +410,12 @@ struct defer_field<unit_type[N_width]>
 	//	using S_::S_;
 		using S_::self;
 
-		XTAL_NEW_(delete) (subtype, noexcept = default)
-		XTAL_NEW_(create) (subtype, noexcept = default)
-		XTAL_NEW_(move)   (subtype, noexcept = default)
-		XTAL_NEW_(copy)   (subtype, noexcept = default)
-		XTAL_NEW_(cast)   (subtype, noexcept :        )
-	//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+		XTAL_NEW_(delete) (subtype, noexcept=default)
+		XTAL_NEW_(create) (subtype, noexcept=default)
+		XTAL_NEW_(move)   (subtype, noexcept=default)
+		XTAL_NEW_(copy)   (subtype, noexcept=default)
+		XTAL_NEW_(then)   (subtype, noexcept:subtype)
+	//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 		
 		/*!
 		\brief  	Constructs `this` using the first argument, forwarding the rest to the parent.

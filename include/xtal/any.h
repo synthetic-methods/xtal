@@ -9,9 +9,10 @@
 #endif
 #include <concepts>
 #include <variant>
-#include <cstdint>
-#include <cstring>
 #include <cassert>
+#include <cstring>
+#include  <string>
+#include <cstdint>
 #include <complex>
 #include <numbers>
 #include <limits>
@@ -20,8 +21,8 @@
 #include <array>
 #include <tuple>
 #include <queue>
-#include <new>
 #include <bit>
+#include <new>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,8 +241,8 @@ XTAL_ENV_(push)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_NOM_(...)                    ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the underlying-type.
-#define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the underlying-type of a value.
+#define XTAL_NOM_(...)                    ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the nominal type.
+#define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the nominal type of a value.
 #define XTAL_ANY_(...)                           ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                           ::std::   move(__VA_ARGS__)       ///< Moves    a value.
 #define XTAL_REF_(...)    static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
@@ -249,6 +250,7 @@ XTAL_ENV_(push)
 template <class X, class Y> concept XTAL_NYM_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
 template <class X, class Y> concept XTAL_NYM_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
 template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generalized)<X, Y> or XTAL_NYM_(specialized)<X, Y>;
+template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<void, X>;
 #endif
 
 
@@ -257,6 +259,13 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_DEF_(...)           XTAL_APP_(map) (XTAL_DEF_then_,__VA_ARGS__)       ///< Leading `[[attributes]]` and `keywords`.
 #define XTAL_DEF_then_(...)                          XTAL_DEF_##__VA_ARGS__
 
+#if     XTAL_VER_(STD < 23)
+#define XTAL_DEF_export
+#define XTAL_DEF_import// TODO?
+#else
+#define XTAL_DEF_export          export
+#define XTAL_DEF_import          import
+#endif
 #define XTAL_DEF_return          [[nodiscard]]
 #define XTAL_DEF_static          static
 #define XTAL_DEF_friend          friend
@@ -287,17 +296,18 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function (friend).
 #define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function (static).
 
+
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
 
-#define XTAL_NEW_then(TYP,...)   template     <class ...XTAL_NYM_(As)>                          \
+#define XTAL_NEW_else(TYP,...)   template     <class ...XTAL_NYM_(As)>                          \
                                  constexpr explicit TYP(XTAL_NYM_(As) &&...XTAL_NYM_(as))       \
-                               __VA_ARGS__ (static_cast<XTAL_NYM_(As) &&> (XTAL_NYM_(as))...) {};
+                               __VA_ARGS__ {static_cast<XTAL_NYM_(As) &&> (XTAL_NYM_(as))...} {};
 
-#define XTAL_NEW_cast(TYP,...)   template <XTAL_NYM_(relativized)  <TYP>    XTAL_NYM_(That)>    \
+#define XTAL_NEW_then(TYP,...)   template <XTAL_NYM_(relativized)  <TYP>    XTAL_NYM_(That)>    \
                                  constexpr     TYP(XTAL_NYM_(That)      &&  XTAL_NYM_(this))    \
-                               __VA_ARGS__     TYP(static_cast     <TYP &&>(XTAL_NYM_(this))) {};
+                               __VA_ARGS__        (static_cast     <TYP &&>(XTAL_NYM_(this))) {};
 
 #define XTAL_NEW_copy(TYP,...)   constexpr     TYP             (TYP const &) __VA_ARGS__;\
                                  constexpr     TYP & operator= (TYP const &) __VA_ARGS__;;///< Declare copy constructor/assignment for `TYP`, with suffix `...`.
@@ -306,6 +316,14 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 
 #define XTAL_NEW_create(TYP,...) constexpr     TYP()                         __VA_ARGS__;
 #define XTAL_NEW_delete(TYP,...) constexpr    ~TYP()                         __VA_ARGS__;
+
+
+#define XTAL_TYP_(ARG,...)       XTAL_TYP_##ARG __VA_OPT__((__VA_ARGS__))                ///< Type definition.
+
+#define XTAL_TYP_ask             concept
+#define XTAL_TYP_new             struct
+#define XTAL_TYP_let             using
+#define XTAL_TYP_set             using
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -355,8 +373,13 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_1FN_(ARG,...)                   XTAL_1FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]`.
 
 #define XTAL_0FN_if(...)                     XTAL_0FN requires requires {         (__VA_ARGS__);} {}     ///< Lambda perform statement after `[captures]` and `(arguments)`.
-#define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
 #define XTAL_0FN_to(...)                     XTAL_0FN                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
+#define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
+
+#define XTAL_1FN_do(...)           <class ...XTAL_NYM_(As)>\
+                                            (XTAL_NYM_(As) \
+                                        &&...XTAL_NYM_(as))\
+   XTAL_0FN_(do)                                           (__VA_ARGS__)                                 ///< Lambda ignoring arguments after `[captures]`.
 
 #define XTAL_1FN_to(...)           <class ...XTAL_NYM_(As)>\
                                             (XTAL_NYM_(As) \
@@ -387,9 +410,12 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 
 #define XTAL_TRY_(ARG,...)                    XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_TRY_do(...)              (requires{ __VA_ARGS__ ;}) {      (__VA_ARGS__);} ///< Check requirements, then invoke as block.
-#define XTAL_TRY_to(...)              (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.
-#define XTAL_TRY_unless(...)      (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
+#define XTAL_TRY_do_unless(...)      (not XTAL_TRY_do_if(__VA_ARGS__))                               ///< Check requirements failure.
+#define XTAL_TRY_to_unless(...)      (not XTAL_TRY_to_if(__VA_ARGS__))                               ///< Check requirements failure.
+#define XTAL_TRY_do_if(...)                 (requires {{(__VA_ARGS__)}                          ;})  ///< Check requirements success.
+#define XTAL_TRY_to_if(...)                 (requires {{(__VA_ARGS__)} -> XTAL_NYM_(synthesized);})  ///< Check requirements success.
+#define XTAL_TRY_do(...)                  XTAL_TRY_do_if(__VA_ARGS__) {       (__VA_ARGS__);}        ///< Check requirements, then invoke as block.
+#define XTAL_TRY_to(...)                  XTAL_TRY_to_if(__VA_ARGS__) {return (__VA_ARGS__);}        ///< Check requirements, then return as expression.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -397,22 +423,32 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_IF1_(ARG,...)             XTAL_IF1_##ARG __VA_OPT__((__VA_ARGS__))          ///< Begin `else if constexpr` branch.
 #define XTAL_0IF_(ARG,...)             XTAL_0IF_##ARG __VA_OPT__((__VA_ARGS__))          ///< Begin `else if constexpr` branch.
 
+#define XTAL_IF1_switch(...)           switch(__VA_ARGS__)                          ///< Switch longhand.
+
+#if     XTAL_VER_(MSVC)
+#define XTAL_IF1_assume(...)         __assume(__VA_ARGS__)                          ///< Assumption of   truth.
+#elif   XTAL_VER_(LLVM)
+#define XTAL_IF1_assume(...) __builtin_assume(__VA_ARGS__)                          ///< Assumption of   truth.
+#else
+#define XTAL_IF1_assume(...)         [[assume(__VA_ARGS__)]]                        ///< Assumption of   truth.
+#endif//XTAL_IF1_assume(...)
+
+#define XTAL_IF0_assume(...)  XTAL_IF1_assume(not (__VA_ARGS__))                    ///< Assumption of untruth.
+
 #define XTAL_IF0                             if constexpr (false);                       ///< Begin `else if constexpr` tree.
 #define XTAL_0IF                       else  if constexpr
 #define XTAL_0IF_else                  else
 
 #if     XTAL_VER_(MSVC)
-#define XTAL_0IF_terminate             else {__assume(false);}                           ///< Begin forbidden branch.
+#define XTAL_0IF_void             else {__assume(false);}                           ///< Begin forbidden branch.
 #else
-#define XTAL_0IF_terminate             else {__builtin_unreachable();}                   ///< Begin forbidden branch.
-#endif//XTAL_0IF_terminate
+#define XTAL_0IF_void             else {__builtin_unreachable();}                   ///< Begin forbidden branch.
+#endif//XTAL_0IF_void
 
 #define XTAL_IF1_do(...)                     if constexpr XTAL_TRY_do(__VA_ARGS__)
 #define XTAL_0IF_do(...)               else  if constexpr XTAL_TRY_do(__VA_ARGS__)
 #define XTAL_IF1_to(...)                     if constexpr XTAL_TRY_to(__VA_ARGS__)
 #define XTAL_0IF_to(...)               else  if constexpr XTAL_TRY_to(__VA_ARGS__)
-#define XTAL_IF1_unless(...)                 if constexpr XTAL_TRY_unless(__VA_ARGS__)
-#define XTAL_0IF_unless(...)           else  if constexpr XTAL_TRY_unless(__VA_ARGS__)
 
 #if     XTAL_VER_(STD >= 2600)
 #define XTAL_IF1_consteval                   if                consteval                  ///< Begin constant-evaluated branch.
@@ -428,142 +464,6 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-#define XTAL_OCT_(ARG,...)  XTAL_OCT_##ARG __VA_OPT__((__VA_ARGS__))
-
-#define XTAL_OCT_prime(OCT) XTAL_OCT_prime_##OCT
-#define XTAL_OCT_prime_NULL   0U
-#define XTAL_OCT_prime_UNIT   1U
-#define XTAL_OCT_prime_0000   2U
-#define XTAL_OCT_prime_0001   3U// 2^2 - 1
-#define XTAL_OCT_prime_0002   5U// 2^2 + 1
-#define XTAL_OCT_prime_0003   7U// 2^3 - 1
-#define XTAL_OCT_prime_0004  11U
-#define XTAL_OCT_prime_0005  13U
-#define XTAL_OCT_prime_0006  17U// 2^4 + 1
-#define XTAL_OCT_prime_0007  19U
-#define XTAL_OCT_prime_0010  23U
-#define XTAL_OCT_prime_0011  29U
-#define XTAL_OCT_prime_0012  31U// 2^5 - 1
-#define XTAL_OCT_prime_0013  37U
-#define XTAL_OCT_prime_0014  41U
-#define XTAL_OCT_prime_0015  43U
-#define XTAL_OCT_prime_0016  47U
-#define XTAL_OCT_prime_0017  53U
-#define XTAL_OCT_prime_0020  59U
-#define XTAL_OCT_prime_0021  61U
-#define XTAL_OCT_prime_0022  67U
-#define XTAL_OCT_prime_0023  71U
-#define XTAL_OCT_prime_0024  73U
-#define XTAL_OCT_prime_0025  79U
-#define XTAL_OCT_prime_0026  83U
-#define XTAL_OCT_prime_0027  89U
-#define XTAL_OCT_prime_0030  97U
-#define XTAL_OCT_prime_0031 101U
-#define XTAL_OCT_prime_0032 103U
-#define XTAL_OCT_prime_0033 107U
-#define XTAL_OCT_prime_0034 109U
-#define XTAL_OCT_prime_0035 113U
-#define XTAL_OCT_prime_0036 127U// 2^7 - 1
-#define XTAL_OCT_prime_0037 131U
-#define XTAL_OCT_prime_0040 137U
-#define XTAL_OCT_prime_0041 139U
-#define XTAL_OCT_prime_0042 149U
-#define XTAL_OCT_prime_0043 151U
-#define XTAL_OCT_prime_0044 157U
-#define XTAL_OCT_prime_0045 163U
-#define XTAL_OCT_prime_0046 167U
-#define XTAL_OCT_prime_0047 173U
-#define XTAL_OCT_prime_0050 179U
-#define XTAL_OCT_prime_0051 181U
-#define XTAL_OCT_prime_0052 191U
-#define XTAL_OCT_prime_0053 193U
-#define XTAL_OCT_prime_0054 197U
-#define XTAL_OCT_prime_0055 199U
-#define XTAL_OCT_prime_0056 211U
-#define XTAL_OCT_prime_0057 223U
-#define XTAL_OCT_prime_0060 227U
-#define XTAL_OCT_prime_0061 229U
-#define XTAL_OCT_prime_0062 233U
-#define XTAL_OCT_prime_0063 239U
-#define XTAL_OCT_prime_0064 241U
-#define XTAL_OCT_prime_0065 251U
-#define XTAL_OCT_prime_0066 257U// 2^8 + 1
-#define XTAL_OCT_prime_0067 263U
-#define XTAL_OCT_prime_0070 269U
-#define XTAL_OCT_prime_0071 271U
-#define XTAL_OCT_prime_0072 277U
-#define XTAL_OCT_prime_0073 281U
-#define XTAL_OCT_prime_0074 283U
-#define XTAL_OCT_prime_0075 293U
-#define XTAL_OCT_prime_0076 307U
-#define XTAL_OCT_prime_0077 311U
-#define XTAL_OCT_prime_0100 313U
-#define XTAL_OCT_prime_0101 317U
-#define XTAL_OCT_prime_0102 331U
-#define XTAL_OCT_prime_0103 337U
-#define XTAL_OCT_prime_0104 347U
-#define XTAL_OCT_prime_0105 349U
-#define XTAL_OCT_prime_0106 353U
-#define XTAL_OCT_prime_0107 359U
-#define XTAL_OCT_prime_0110 367U
-#define XTAL_OCT_prime_0111 373U
-#define XTAL_OCT_prime_0112 379U
-#define XTAL_OCT_prime_0113 383U
-#define XTAL_OCT_prime_0114 389U
-#define XTAL_OCT_prime_0115 397U
-#define XTAL_OCT_prime_0116 401U
-#define XTAL_OCT_prime_0117 409U
-#define XTAL_OCT_prime_0120 419U
-#define XTAL_OCT_prime_0121 421U
-#define XTAL_OCT_prime_0122 431U
-#define XTAL_OCT_prime_0123 433U
-#define XTAL_OCT_prime_0124 439U
-#define XTAL_OCT_prime_0125 443U
-#define XTAL_OCT_prime_0126 449U
-#define XTAL_OCT_prime_0127 457U
-#define XTAL_OCT_prime_0130 461U
-#define XTAL_OCT_prime_0131 463U
-#define XTAL_OCT_prime_0132 467U
-#define XTAL_OCT_prime_0133 479U
-#define XTAL_OCT_prime_0134 487U
-#define XTAL_OCT_prime_0135 491U
-#define XTAL_OCT_prime_0136 499U
-#define XTAL_OCT_prime_0137 503U
-#define XTAL_OCT_prime_0140 509U
-#define XTAL_OCT_prime_0141 521U
-#define XTAL_OCT_prime_0142 523U
-#define XTAL_OCT_prime_0143 541U
-#define XTAL_OCT_prime_0144 547U
-#define XTAL_OCT_prime_0145 557U
-#define XTAL_OCT_prime_0146 563U
-#define XTAL_OCT_prime_0147 569U
-#define XTAL_OCT_prime_0150 571U
-#define XTAL_OCT_prime_0151 577U
-#define XTAL_OCT_prime_0152 587U
-#define XTAL_OCT_prime_0153 593U
-#define XTAL_OCT_prime_0154 599U
-#define XTAL_OCT_prime_0155 601U
-#define XTAL_OCT_prime_0156 607U
-#define XTAL_OCT_prime_0157 613U
-#define XTAL_OCT_prime_0160 617U
-#define XTAL_OCT_prime_0161 619U
-#define XTAL_OCT_prime_0162 631U
-#define XTAL_OCT_prime_0163 641U
-#define XTAL_OCT_prime_0164 643U
-#define XTAL_OCT_prime_0165 647U
-#define XTAL_OCT_prime_0166 653U
-#define XTAL_OCT_prime_0167 659U
-#define XTAL_OCT_prime_0170 661U
-#define XTAL_OCT_prime_0171 673U
-#define XTAL_OCT_prime_0172 677U
-#define XTAL_OCT_prime_0173 683U
-#define XTAL_OCT_prime_0174 691U
-#define XTAL_OCT_prime_0175 701U
-#define XTAL_OCT_prime_0176 709U
-#define XTAL_OCT_prime_0177 719U
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

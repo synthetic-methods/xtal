@@ -116,7 +116,7 @@ noexcept -> void
 		default: _std::transform(                            x0, xN, move_it(y0), y0, f); break;
 		}
 	}
-	XTAL_0IF_(terminate)
+	XTAL_0IF_(void)
 }
 
 template <auto f=_std::identity{}, iterator_q Y_, iterator_q X_>

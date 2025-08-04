@@ -76,11 +76,13 @@ struct define
 				flux(flow::ion_s<> x_, auto &&...oo)
 				noexcept -> signed
 				{
-					switch (x_.head()) {
-					case  1: return self().template flux< 1>(XTAL_REF_(oo)...);
-					case -1: return self().template flux<-1>(XTAL_REF_(oo)...);
-					default: _std::terminate(); return -1;
+					signed const k = x_.head()&0b11;
+					XTAL_IF1_(assume) (k == (k&0b11));
+					switch (k&0b11) {
+					case 0b00: return -1; case 0b01: return self().template flux< 1>(XTAL_REF_(oo)...);
+					case 0b10: return -1; case 0b11: return self().template flux<-1>(XTAL_REF_(oo)...);
 					}
+					return -1;
 				}
 				/*!
 				\brief  	Forwards the descheduled message to `self()` by visitation.

@@ -74,7 +74,7 @@ noexcept -> auto
 	XTAL_IF0
 	XTAL_0IF (requires {typename F<based_t<Xs>...>;}) {return operative_f<[] XTAL_1FN_(make) (F<based_t<Xs>...>)>(XTAL_REF_(xs)...);}
 	XTAL_0IF (requires {typename F<cased_t<Xs...>>;}) {return operative_f<[] XTAL_1FN_(make) (F<cased_t<Xs...>>)>(XTAL_REF_(xs)...);}
-	XTAL_0IF_(terminate)
+	XTAL_0IF_(void)
 }
 
 /*!
@@ -92,6 +92,13 @@ complexion_f(Xs &&...xs)
 noexcept -> auto
 {
 	return construxion_f<_std::complex>(XTAL_REF_(xs)...);
+}
+template <class X>
+XTAL_DEF_(return,inline,let)
+complexion_f(X &&x)
+noexcept -> auto
+{
+	return construxion_f<_std::complex>(XTAL_REF_(x), objective_t<XTAL_ALL_(x)>{});
 }
 
 
