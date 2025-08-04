@@ -175,7 +175,7 @@ XTAL_DEF_(return,inline,let)
 transpack_f(size_type i, size_type m, indexed_q auto &&w)
 noexcept -> auto
 {
-	if constexpr (same_q<decltype(**w), U>) {
+	if constexpr (requires {{**w} -> same_q<U>;}) {
 		return _std::span(point_f(XTAL_REF_(w)[i]), m);
 	}
 	else {

@@ -97,12 +97,12 @@ struct monomer
 
 			public:// CONSTRUCT
 			//	using R_::R_;
-				XTAL_NEW_(delete) (subtype, noexcept = default)
-				XTAL_NEW_(create) (subtype, noexcept = default)
-				XTAL_NEW_(move)   (subtype, noexcept = default)
-				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept :        )
-			//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+				XTAL_NEW_(delete) (subtype, noexcept=default)
+				XTAL_NEW_(create) (subtype, noexcept=default)
+				XTAL_NEW_(move)   (subtype, noexcept=default)
+				XTAL_NEW_(copy)   (subtype, noexcept=default)
+				XTAL_NEW_(then)   (subtype, noexcept:subtype)
+			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 				/*!
 				\brief  	Binds `Xs...` to a new `processor` instance.

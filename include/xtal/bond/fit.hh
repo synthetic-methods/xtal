@@ -265,14 +265,14 @@ struct fit_realize : fit_realize<N_size/2>
 	using fix = succedent_s<typename fit_recognize<N_size/2>::fix>;
 
 	template <int N_shift=0>
-	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
 template <size_type N_size> requires fit_recognized_q<N_size>
 struct fit_realize<N_size> : fit_rationalize<N_size>
 {
 	template <int N_shift=0>
-	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 
 };
 #endif
@@ -284,7 +284,7 @@ private:
 
 public:
 	template <int N_shift=0>
-	using widen = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
+	using adjust = fit_realize<(N_shift < 0)? (N_size >> -N_shift): (N_size << N_shift)>;
 	
 	using halved = fit_realize<(N_size>>1)>;
 
@@ -427,7 +427,7 @@ public:
 			u *= _std::numbers::ln2_v<alpha_type>/diplo_f(M, alpha_1);
 
 			auto v = alpha_1;
-			for (auto i=N; i; --i) {v = _xtd::plus_multiplies(alpha_1, v, u/i);}
+			for (auto i=N; i; --i) {v = _xtd::accumulator(alpha_1, v, u/i);}
 			for (auto i=M; i; --i) {v *= v;}
 
 			v *= diplo_f(n, alpha_1);
@@ -518,7 +518,7 @@ public:
 		XTAL_0IF (N_pow ==  0) {return 1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
-		XTAL_0IF_(terminate)
+		XTAL_0IF_(void)
 	}
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
 	static alpha_type constexpr ratio_1 = ratio_f(1, 1);
@@ -582,6 +582,7 @@ public:
 
 	/*!
 	\returns	The minimum value that accomodates exponentiation by `n_zoom` without underflow.
+	\note    Equivalent to `_std::numeric_limits<alpha_type>::min()/2`.
 	*/
 	XTAL_DEF_(return,inline,set)
 	minilon_f(delta_type const &n_zoom=0)
@@ -643,7 +644,8 @@ public:
 
 	/*!
 	\returns	The maximum value that accomodates exponentiation by `n_zoom` without overflow.
-	*/
+	\note    Equivalent to `2/_std::numeric_limits<alpha_type>::min()`.
+*/
 	XTAL_DEF_(return,inline,set)
 	maxilon_f(delta_type const &n_zoom=0)
 	noexcept -> alpha_type
@@ -743,7 +745,11 @@ struct   fit
 
 };
 template <>
-struct   fit<> : fit<size_type>
+struct   fit<void> : fit<size_type>
+{
+};
+template <>
+struct   fit<    > : fit<size_type>
 {
 };
 /*!
@@ -754,6 +760,13 @@ struct fit<T_<U>> : fit<U>
 {
 	template <class V>
 	using subtype = T_<V>;
+
+};
+template <template <class> class T_, vector_q W>
+struct fit<T_<W>> : fit<_xtd::remove_extent_t<W>>
+{
+	template <class V>
+	using subtype = T_<_xtd::remove_extent_t<W>>[_xtd::extent_v<W>];
 
 };
 /*!

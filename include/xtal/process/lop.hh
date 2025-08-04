@@ -11,7 +11,7 @@ namespace xtal::process::math
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief   Maps the first argument with `lift_t<As...>`/`link_t<As...>`,
+\brief   Maps the first argument with `link_t<As...>`,
          passing the result and remaining arguments to the superclass..
 */
 template <typename ...As>
