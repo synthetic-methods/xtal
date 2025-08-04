@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./point.hh"
+#include "./groupoid.hh"
 
 
 
@@ -13,8 +13,7 @@ namespace xtal::atom
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Extends `point` with component-wise multiplication.
+\brief   Extends `groupoid` with component-wise multiplication.
 */
 template <class ...Us>	struct  group_multiplication;
 template <class ...Us>	using   group_multiplication_t = typename group_multiplication<Us...>::type;
@@ -33,15 +32,14 @@ struct group_multiplication
 {
 private:
 	template <class T>
-	using endotype = typename point<Us...>::template homotype<T>;
+	using endotype = typename groupoid<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<group_multiplication_t>>;
 
 public:
 	/*!
-	\brief
-	Extends `point` with component-wise multiplication.
+	\brief   Extends `groupoid` with component-wise multiplication.
 	*/
 	template <class T>
 	class homotype : public holotype<T>
@@ -55,12 +53,12 @@ public:
 
 	public:// CONSTRUCT
 	//	using S_::S_;
-		XTAL_NEW_(delete) (homotype, noexcept = default)
-		XTAL_NEW_(create) (homotype, noexcept = default)
-		XTAL_NEW_(move)   (homotype, noexcept = default)
-		XTAL_NEW_(copy)   (homotype, noexcept = default)
-		XTAL_NEW_(cast)   (homotype, noexcept :        )
-		XTAL_NEW_(then)   (homotype, noexcept : S_     )
+		XTAL_NEW_(delete) (homotype, noexcept=default)
+		XTAL_NEW_(create) (homotype, noexcept=default)
+		XTAL_NEW_(move)   (homotype, noexcept=default)
+		XTAL_NEW_(copy)   (homotype, noexcept=default)
+		XTAL_NEW_(then)   (homotype, noexcept:homotype)
+		XTAL_NEW_(else)   (homotype, noexcept:S_)
 
 		XTAL_NEW_(implicit)
 		homotype()
@@ -126,8 +124,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Extends `point` with component-wise addition.
+\brief   Extends `groupoid` with component-wise addition.
 */
 template <class ...Us>	struct  group_addition;
 template <class ...Us>	using   group_addition_t = typename group_addition<Us...>::type;
@@ -146,7 +143,7 @@ struct group_addition
 {
 private:
 	template <class T>
-	using endotype = typename point<Us...>::template homotype<T>;
+	using endotype = typename groupoid<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<group_addition_t>>;
@@ -196,18 +193,20 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Resolves as `*_group` based on the supplied operator.
+\brief   Resolves as `*_group` based on the supplied operator.
 */
-template <class T        > struct group;
+template <class     ...Ts>	XTAL_TYP_(new) group;
+template <class     ...Ts>	XTAL_TYP_(let) group_t = typename group<Ts...>::type;
+template <class     ...Ts>	XTAL_TYP_(ask) group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
+template <class     ...Ts> struct group<_std::multiplies <Ts>...>   : group_multiplication<Ts...  > {};///<\brief Resolves as `group_multiplication`.;
 template <class U, auto N> struct group<_std::multiplies <U>   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.
 template <class U, auto N> struct group<_std::multiplies <U>(&)[N]> : group_multiplication<U(&)[N]> {};///<\brief Resolves as `group_multiplication`.
 
+template <class     ...Ts> struct group<_std::plus       <Ts>...>   : group_addition      <Ts...  > {};///<\brief Resolves as `group_addition`.;
 template <class U, auto N> struct group<_std::plus       <U>   [N]> : group_addition      <U   [N]> {};///<\brief Resolves as `group_addition`.
 template <class U, auto N> struct group<_std::plus       <U>(&)[N]> : group_addition      <U(&)[N]> {};///<\brief Resolves as `group_addition`.
 
-template <class ...Ts>	concept group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////
