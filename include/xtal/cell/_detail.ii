@@ -262,14 +262,18 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_(to) (S_::cardinality())
-
-		XTAL_DEF_(return,inline,set)
-		cardinality()
-		noexcept -> size_type
-		requires in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>
 		{
-			return 2;
+			static_assert(same_q<bool, U> or requires {S_::cardinality();});
+			XTAL_IF0
+			XTAL_0IF (in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
+				return 2;
+			}
+			XTAL_0IF (requires {S_::cardinality();}) {
+				return S_::cardinality();
+			}
+			XTAL_0IF_(else) {
+				return 0;
+			}
 		}
 
 	};
@@ -355,6 +359,15 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 		noexcept -> auto
 		{
 			return sizeof...(Ns);
+		}
+		XTAL_DEF_(return,inline,set)
+		ordinality()
+		noexcept -> auto
+		{
+			auto const &[dn_, up_] = _xtd::ranges::minmax_element(N_coordinate);
+			head_type const dn = *dn_, dn_sgn = (dn > 0) - (dn < 0), dn_abs = dn*dn_sgn;
+			head_type const up = *up_, up_sgn = (up > 0) - (up < 0), up_abs = up*up_sgn;
+			return bond::fit<>::maximum_f(dn_abs, up_abs) + 1;
 		}
 		
 		XTAL_DEF_(return,inline,let)

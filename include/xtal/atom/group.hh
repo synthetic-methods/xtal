@@ -13,8 +13,7 @@ namespace xtal::atom
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Extends `point` with component-wise multiplication.
+\brief   Extends `point` with component-wise multiplication.
 */
 template <class ...Us>	struct  group_multiplication;
 template <class ...Us>	using   group_multiplication_t = typename group_multiplication<Us...>::type;
@@ -40,8 +39,7 @@ private:
 
 public:
 	/*!
-	\brief
-	Extends `point` with component-wise multiplication.
+	\brief   Extends `point` with component-wise multiplication.
 	*/
 	template <class T>
 	class homotype : public holotype<T>
@@ -126,8 +124,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Extends `point` with component-wise addition.
+\brief   Extends `point` with component-wise addition.
 */
 template <class ...Us>	struct  group_addition;
 template <class ...Us>	using   group_addition_t = typename group_addition<Us...>::type;
@@ -196,18 +193,20 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Resolves as `*_group` based on the supplied operator.
+\brief   Resolves as `*_group` based on the supplied operator.
 */
-template <class T        > struct group;
+template <class     ...Ts>	XTAL_TYP_(new) group;
+template <class     ...Ts>	XTAL_TYP_(let) group_t = typename group<Ts...>::type;
+template <class     ...Ts>	XTAL_TYP_(ask) group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
+template <class     ...Ts> struct group<_std::multiplies <Ts>...>   : group_multiplication<Ts...  > {};///<\brief Resolves as `group_multiplication`.;
 template <class U, auto N> struct group<_std::multiplies <U>   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.
 template <class U, auto N> struct group<_std::multiplies <U>(&)[N]> : group_multiplication<U(&)[N]> {};///<\brief Resolves as `group_multiplication`.
 
+template <class     ...Ts> struct group<_std::plus       <Ts>...>   : group_addition      <Ts...  > {};///<\brief Resolves as `group_addition`.;
 template <class U, auto N> struct group<_std::plus       <U>   [N]> : group_addition      <U   [N]> {};///<\brief Resolves as `group_addition`.
 template <class U, auto N> struct group<_std::plus       <U>(&)[N]> : group_addition      <U(&)[N]> {};///<\brief Resolves as `group_addition`.
 
-template <class ...Ts>	concept group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

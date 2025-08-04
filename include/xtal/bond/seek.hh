@@ -178,9 +178,12 @@ struct seek_index
 		{};
 
 	public:// OPERATE
-		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
-			S_::operator[](static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower))
-
+		XTAL_FX4_(do) (template <integral_q I> XTAL_DEF_(return,inline,get) element(I i),
+		{
+			auto const j = static_cast<int>(static_cast<_std::make_signed_t<I>>(i)) - N_lower;
+			auto const k = 0 <= j and j < N_limit; assert(k);
+			return S_::operator[](k? j: 0);
+		})
 		XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator[](I i), element(i))
 	//	XTAL_FX4_(to) (template <integral_q I> XTAL_DEF_(return,inline,get) operator()(I i), element(i))
 		
