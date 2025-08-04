@@ -233,6 +233,9 @@ struct block
 	public:// OPERATE
 		using S_::size;
 
+	//	NOTE: Provisional, intended to simplify `size`-matching `requires`...
+		XTAL_FX1_(to) (XTAL_DEF_(return,inline,let) operator() (), size())
+
 	public:// CONSTRUCT
 		using S_::S_;
 

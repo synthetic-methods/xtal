@@ -4,7 +4,7 @@
 #include "./buffer.cc"
 #include "./couple.cc"
 #include "./field.cc"
-#include "./grade.cc"
+#include "./differential.cc"
 #include "./group.cc"
 #include "./point.cc"
 #include "./quanta.cc"

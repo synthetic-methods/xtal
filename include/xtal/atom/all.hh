@@ -4,7 +4,7 @@
 #include "./buffer.hh"
 #include "./couple.hh"
 #include "./field.hh"
-#include "./grade.hh"
+#include "./differential.hh"
 #include "./group.hh"
 #include "./point.hh"
 #include "./quanta.hh"

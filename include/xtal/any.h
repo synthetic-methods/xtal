@@ -9,9 +9,10 @@
 #endif
 #include <concepts>
 #include <variant>
-#include <cstdint>
-#include <cstring>
 #include <cassert>
+#include <cstring>
+#include  <string>
+#include <cstdint>
 #include <complex>
 #include <numbers>
 #include <limits>
@@ -20,8 +21,8 @@
 #include <array>
 #include <tuple>
 #include <queue>
-#include <new>
 #include <bit>
+#include <new>
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,8 +241,8 @@ XTAL_ENV_(push)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_NOM_(...)                    ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the underlying-type.
-#define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the underlying-type of a value.
+#define XTAL_NOM_(...)                    ::std::remove_cvref_t<__VA_ARGS__>       ///< Reveals the nominal type.
+#define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the nominal type of a value.
 #define XTAL_ANY_(...)                           ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                           ::std::   move(__VA_ARGS__)       ///< Moves    a value.
 #define XTAL_REF_(...)    static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
@@ -249,6 +250,7 @@ XTAL_ENV_(push)
 template <class X, class Y> concept XTAL_NYM_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
 template <class X, class Y> concept XTAL_NYM_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;
 template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generalized)<X, Y> or XTAL_NYM_(specialized)<X, Y>;
+template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<void, X>;
 #endif
 
 
@@ -257,6 +259,13 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_DEF_(...)           XTAL_APP_(map) (XTAL_DEF_then_,__VA_ARGS__)       ///< Leading `[[attributes]]` and `keywords`.
 #define XTAL_DEF_then_(...)                          XTAL_DEF_##__VA_ARGS__
 
+#if     XTAL_VER_(STD < 23)
+#define XTAL_DEF_export
+#define XTAL_DEF_import// TODO?
+#else
+#define XTAL_DEF_export          export
+#define XTAL_DEF_import          import
+#endif
 #define XTAL_DEF_return          [[nodiscard]]
 #define XTAL_DEF_static          static
 #define XTAL_DEF_friend          friend
@@ -287,6 +296,7 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_DEF_met      inline constexpr auto friend                          ///< Start `auto` function (friend).
 #define XTAL_DEF_set      static constexpr auto                                 ///< Start `auto` function (static).
 
+
 #define XTAL_NEW_(ARG,...)       XTAL_NEW_##ARG __VA_OPT__((__VA_ARGS__))       ///< Start `(?:ex|im)plicit` constructor.
 #define XTAL_NEW_explicit        constexpr explicit                             ///< Start        `explicit` constructor.
 #define XTAL_NEW_implicit        constexpr                                      ///< Start        `implicit` constructor.
@@ -306,6 +316,13 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 
 #define XTAL_NEW_create(TYP,...) constexpr     TYP()                         __VA_ARGS__;
 #define XTAL_NEW_delete(TYP,...) constexpr    ~TYP()                         __VA_ARGS__;
+
+
+#define XTAL_TYP_(ARG,...)       XTAL_TYP_##ARG __VA_OPT__((__VA_ARGS__))                ///< Type definition.
+
+#define XTAL_TYP_ask             concept
+#define XTAL_TYP_new             struct
+#define XTAL_TYP_let             using
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -387,9 +404,12 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 
 #define XTAL_TRY_(ARG,...)                    XTAL_TRY_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_TRY_do(...)              (requires{ __VA_ARGS__ ;}) {      (__VA_ARGS__);} ///< Check requirements, then invoke as block.
-#define XTAL_TRY_to(...)              (requires{(__VA_ARGS__);}) {return(__VA_ARGS__);} ///< Check requirements, then return as expression.
-#define XTAL_TRY_unless(...)      (not requires{ __VA_ARGS__ ;})                        ///< Check requirements failure.
+#define XTAL_TRY_do_unless(...)      (not XTAL_TRY_do_if(__VA_ARGS__))                               ///< Check requirements failure.
+#define XTAL_TRY_to_unless(...)      (not XTAL_TRY_to_if(__VA_ARGS__))                               ///< Check requirements failure.
+#define XTAL_TRY_do_if(...)                 (requires {{(__VA_ARGS__)}                          ;})  ///< Check requirements success.
+#define XTAL_TRY_to_if(...)                 (requires {{(__VA_ARGS__)} -> XTAL_NYM_(synthesized);})  ///< Check requirements success.
+#define XTAL_TRY_do(...)                  XTAL_TRY_do_if(__VA_ARGS__) {       (__VA_ARGS__) ;}       ///< Check requirements, then invoke as block.
+#define XTAL_TRY_to(...)                  XTAL_TRY_to_if(__VA_ARGS__) {return (__VA_ARGS__);}        ///< Check requirements, then return as expression.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -402,17 +422,15 @@ template <class X, class Y> concept XTAL_NYM_(relativized) = XTAL_NYM_(generaliz
 #define XTAL_0IF_else                  else
 
 #if     XTAL_VER_(MSVC)
-#define XTAL_0IF_terminate             else {__assume(false);}                           ///< Begin forbidden branch.
+#define XTAL_0IF_void             else {__assume(false);}                           ///< Begin forbidden branch.
 #else
-#define XTAL_0IF_terminate             else {__builtin_unreachable();}                   ///< Begin forbidden branch.
-#endif//XTAL_0IF_terminate
+#define XTAL_0IF_void             else {__builtin_unreachable();}                   ///< Begin forbidden branch.
+#endif//XTAL_0IF_void
 
 #define XTAL_IF1_do(...)                     if constexpr XTAL_TRY_do(__VA_ARGS__)
 #define XTAL_0IF_do(...)               else  if constexpr XTAL_TRY_do(__VA_ARGS__)
 #define XTAL_IF1_to(...)                     if constexpr XTAL_TRY_to(__VA_ARGS__)
 #define XTAL_0IF_to(...)               else  if constexpr XTAL_TRY_to(__VA_ARGS__)
-#define XTAL_IF1_unless(...)                 if constexpr XTAL_TRY_unless(__VA_ARGS__)
-#define XTAL_0IF_unless(...)           else  if constexpr XTAL_TRY_unless(__VA_ARGS__)
 
 #if     XTAL_VER_(STD >= 2600)
 #define XTAL_IF1_consteval                   if                consteval                  ///< Begin constant-evaluated branch.

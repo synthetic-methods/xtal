@@ -29,6 +29,20 @@ public:
 	using S_::S_;
 
 };
+template <auto N>
+struct text_type
+{
+	char           value[N];
+	XTAL_DEF_(set) value_size = _std::integral_constant<_std::size_t, N>{};
+	XTAL_TYP_(let) value_type = decltype(value);
+	XTAL_TYP_(let)       type = text_type;
+
+	XTAL_DEF_(let)      operator()           () const {return  value ;}
+	XTAL_DEF_(implicit) operator _std::string() const {return {value};}
+	XTAL_NEW_(implicit)
+	text_type(const char(&str)[N]) {_std::copy_n(str, N, value);}
+
+};
 template <auto  N>	using    extent_constant_t	= _retail:: extent_constant_t<N>;
 template <auto  N>	using      size_constant_t	= _retail::   size_constant_t<N>;
 template <auto  N>	using      sign_constant_t	= _retail::   sign_constant_t<N>;
@@ -259,19 +273,20 @@ template <         class ...Ts>	concept               fixed_q	= (some_q<Ts...> a
 template <         class ...Ts>	concept               fluid_q	= (some_q<Ts...> and...and _retail::           fluid_q<Ts>);
 
 
-template <class T             >	using        destruct  	=                          _retail::        destruct  <T >;
-template <class T             >	using        destruct_t	=                          _retail::        destruct_t<T >;
-template <class T             >	using        destruct_u	=                          _retail::        destruct_u<T >;
+template <class T             >	using              destruct  	=                          _retail::        destruct  <T >;
+template <class T             >	using              destruct_t	=                          _retail::        destruct_t<T >;
+template <class T             >	using              destruct_u	=                          _retail::        destruct_u<T >;
+template <         class ...Ts>	concept            destruct_q	=                                       fixed_shaped_q<   Ts...>;
 
-template <class T, int   ...Ns>	using        restruct  	=                          _retail::        restruct  <T, Ns...>;
-//mplate <         int   ...Ns>	using        restruct_x	=                          _retail::        restruct_x<   Ns...>;
-//mplate <class T, class ..._s>	using        restruct_s	=                          _retail::        restruct_s<T, _s...>;
-template <class T             >	using        restruct_t	=                          _retail::        restruct_t<T >;
-template <class T             >	using        restruct_u	=                          _retail::        restruct_u<T >;
+template <class T, int   ...Ns>	using              restruct  	=                          _retail::        restruct  <T, Ns...>;
+//mplate <         int   ...Ns>	using              restruct_x	=                          _retail::        restruct_x<   Ns...>;
+//mplate <class T, class ..._s>	using              restruct_s	=                          _retail::        restruct_s<T, _s...>;
+template <class T             >	using              restruct_t	=                          _retail::        restruct_t<T >;
+template <class T             >	using              restruct_u	=                          _retail::        restruct_u<T >;
 
-template <class T             >	using        unstruct_t	=   based_t<restruct_t<based_t<T >>>   ;
-template <         class ...Ts>	using        unstruct_u	=  common_t<restruct_u<based_t<Ts>>...>;
-template <class T             >	struct       unstruct  	:  restruct<T> {using value_type = unstruct_u<T>; using type = unstruct_t<T>;};
+template <class T             >	using              unstruct_t	=   based_t<restruct_t<based_t<T >>>   ;
+template <         class ...Ts>	using              unstruct_u	=  common_t<restruct_u<based_t<Ts>>...>;
+template <class T             >	struct             unstruct  	:  restruct<T> {using value_type = unstruct_u<T>; using type = unstruct_t<T>;};
 
 
 XTAL_DEF_(return,inline,let)

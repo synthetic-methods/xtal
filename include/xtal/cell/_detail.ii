@@ -262,14 +262,18 @@ struct defer_field
 		XTAL_DEF_(return,inline,set)
 		cardinality()
 		noexcept -> size_type
-		requires XTAL_TRY_(to) (S_::cardinality())
-
-		XTAL_DEF_(return,inline,set)
-		cardinality()
-		noexcept -> size_type
-		requires in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>
 		{
-			return 2;
+			static_assert(same_q<bool, U> or requires {S_::cardinality();});
+			XTAL_IF0
+			XTAL_0IF (in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
+				return 2;
+			}
+			XTAL_0IF (requires {S_::cardinality();}) {
+				return S_::cardinality();
+			}
+			XTAL_0IF_(else) {
+				return 0;
+			}
 		}
 
 	};

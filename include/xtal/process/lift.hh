@@ -32,31 +32,33 @@ struct lifter
 	{
 		static_assert(any_q<S>);
 
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		S_method_f(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to)
-			(S::template method_f<Is...>(XTAL_REF_(xs)...))
+		using Outer = U;
+		using Inner = S;
+		using Inner_nu = const Inner &;
+		using Inner_mu =       Inner &;
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		U_method_f(auto &&...xs)
+		Outer_f(auto &&...xs)
 		noexcept -> decltype(auto)
 		{
-			if constexpr (bond::compose_q<U>) {
-				return confined_t<U>::template method_f<Is...>(XTAL_REF_(xs)...);
+		//	using outer = bond::operate<Outer>;
+			XTAL_IF0
+			XTAL_0IF (bond::compose_q<Outer>) {
+				return confined_t<Outer>::template method_f<Is...>(XTAL_REF_(xs)...);
 			}
-			/*/
-			else {
-				return bond::operate<U>{}(XTAL_REF_(xs)...);
-			}
-			/*/
-			XTAL_0IF_(to) (U   {XTAL_REF_(xs)...})
-			XTAL_0IF_(to) (U   (XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (U{} (XTAL_REF_(xs)...))
-			/***/
+			XTAL_0IF_(to) (Outer::template method_f<Is...>(XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (Outer                          {XTAL_REF_(xs)...})
+			XTAL_0IF_(to) (Outer                          (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (Outer{}                        (XTAL_REF_(xs)...))
+		//	XTAL_0IF_(to) (outer{}                        (XTAL_REF_(xs)...))
 		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		Inner_f(auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to)
+				(Inner::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
 		using S::S;
@@ -65,35 +67,33 @@ struct lifter
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires requires {S_method_f<Is...>(XTAL_REF_(xs)...);}
-		{
-			return U_method_f<Is...>(S_method_f<Is...>(XTAL_REF_(xs)...));
-		}
+		requires XTAL_TRY_(to)
+			(Outer_f<Is...>(Inner_f<Is...>(XTAL_REF_(xs)...)))
+
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		method  (auto &&...xs)
+		method(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires requires {S_method_f<Is...>(XTAL_REF_(xs)...);}
-		{
-			return U_method_f<Is...>(S_method_f<Is...>(XTAL_REF_(xs)...));
-		}
+		requires XTAL_TRY_(to)
+			(method_f<Is...>(XTAL_REF_(xs)...))
+
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method  (auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(unless)           (S_method_f<Is...>(XTAL_REF_(xs)...))
-		and  requires (S const &s) {s .template method  <Is...>(XTAL_REF_(xs)...);}
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_nu).template method  <Is...>(XTAL_REF_(xs)...))
 		{
-			return U_method_f<Is...>(S::template method  <Is...>(XTAL_REF_(xs)...));
+			return                Outer_f<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method  (auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(unless)           (S_method_f<Is...>(XTAL_REF_(xs)...))
-		and  requires (S       &s) {s .template method  <Is...>(XTAL_REF_(xs)...);}
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_mu).template method  <Is...>(XTAL_REF_(xs)...))
 		{
-			return U_method_f<Is...>(S::template method  <Is...>(XTAL_REF_(xs)...));
+			return                Outer_f<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
 		}
 
 	};
