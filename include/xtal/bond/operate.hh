@@ -75,8 +75,10 @@ struct operate : Fs...
 	operator T() const
 	noexcept {return object<T>();}
 
-	XTAL_DEF_(return,inline,met) operator + (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (+_xtd::make_signed_f(operate{}())))>{};}
-	XTAL_DEF_(return,inline,met) operator - (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (-_xtd::make_signed_f(operate{}())))>{};}
+	XTAL_DEF_(return,inline,met) operator + (operate const &t) noexcept -> auto requires integral_q<decltype(operate{}())> {return operate<decltype([] XTAL_1FN_(to) (+_xtd::make_signed_f(operate{}())))>{};}
+	XTAL_DEF_(return,inline,met) operator - (operate const &t) noexcept -> auto requires integral_q<decltype(operate{}())> {return operate<decltype([] XTAL_1FN_(to) (-_xtd::make_signed_f(operate{}())))>{};}
+	XTAL_DEF_(return,inline,met) operator + (operate const &t) noexcept -> auto                                            {return operate<decltype([] XTAL_1FN_(to) (+                    operate{}() ))>{};}
+	XTAL_DEF_(return,inline,met) operator - (operate const &t) noexcept -> auto                                            {return operate<decltype([] XTAL_1FN_(to) (-                    operate{}() ))>{};}
 	XTAL_DEF_(return,inline,met) operator ~ (operate const &t) noexcept -> auto {return operate<decltype([] XTAL_1FN_(to) (~                    operate{}() ))>{};}
 
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator <=> (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (object<T>() <=> t)

@@ -42,7 +42,7 @@ struct define
 		/*!
 		\brief  	Attaches `T` as a member of `this`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct attach
 		{
 			using superkind = bond::compose<flow::mask<N_mask>, defer<T>>;
@@ -56,12 +56,12 @@ struct define
 			public:// CONSTRUCT
 			//	using R_::R_;
 
-				XTAL_NEW_(delete) (subtype, noexcept = default)
-				XTAL_NEW_(create) (subtype, noexcept = default)
-				XTAL_NEW_(move)   (subtype, noexcept = default)
-				XTAL_NEW_(copy)   (subtype, noexcept = default)
-				XTAL_NEW_(cast)   (subtype, noexcept :        )
-			//	XTAL_NEW_(then)   (subtype, noexcept : S_     )
+				XTAL_NEW_(delete) (subtype, noexcept=default)
+				XTAL_NEW_(create) (subtype, noexcept=default)
+				XTAL_NEW_(move)   (subtype, noexcept=default)
+				XTAL_NEW_(copy)   (subtype, noexcept=default)
+				XTAL_NEW_(then)   (subtype, noexcept:subtype)
+			//	XTAL_NEW_(else)   (subtype, noexcept:S_)
 
 				/*!
 				\brief  	Constructs the `attach`ed message using its default,
@@ -100,7 +100,7 @@ struct define
 		/*!
 		\brief  	Attaches `T`, and appends to the arguments of `method` and `method_f`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct attend
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -145,7 +145,7 @@ struct define
 		/*!
 		\note   	Automatic attachment is currently disabled!
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct clutch
 		{
 			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1>>;
@@ -184,7 +184,7 @@ struct define
 		/*!
 		\brief  	Attaches `T` as a member of `this`, appending it to the arguments used to `deify` `method<auto ...>`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct dispatch
 		{
 			static_assert(integral_q<typename T::head_type>);
@@ -223,8 +223,15 @@ struct define
 				{
 					auto i = static_cast<size_type>(head());
 					XTAL_IF0
-					XTAL_0IF (1 == _std::popcount(A_size)) {i &= A_mask;}
-					XTAL_0IF (1 != _std::popcount(A_size)) {i %= A_size;}
+					XTAL_0IF (1 == _std::popcount(A_size)) {
+						i &= A_mask;
+					}
+					XTAL_0IF (1 != _std::popcount(A_size)) {
+						i %= A_size;
+						i += A_size;
+						i %= A_size;
+					}
+					XTAL_IF1_(assume) (0 <= i and i < A_size);
 					return R_::deify(point[i]);
 				}
 				
@@ -262,7 +269,7 @@ struct define
 		/*!
 		\brief  	Assigns `T`, allowing update via `influx`, and aggregated expectation via `efflux`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct expect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -295,7 +302,7 @@ struct define
 		/*!
 		\brief  	Assigns `T`, allowing update via `efflux` and aggregated inspection via `influx`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct inspect
 		{
 			using superkind = typename T::template attach<N_mask>;
@@ -328,7 +335,7 @@ struct define
 		/*!
 		\brief  	Uses the current `T` as the return value of `method`.
 		*/
-		template <size_type N_mask=1>
+		template <extent_type N_mask=1>
 		struct poll
 		{
 			using superkind = typename T::template attach<N_mask>;

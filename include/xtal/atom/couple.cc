@@ -43,12 +43,12 @@ TAG_("couple")
 		using U0 = unsigned;
 		using V0 =   signed;
 
-		using U1 = couple_t<U0[1] >; using _U1 = quanta_t<U0[1] >;
-		using V1 = couple_t<V0[1] >; using _V1 = quanta_t<V0[1] >;
-		using U2 = couple_t<U0[2] >; using _U2 = quanta_t<U0[2] >;
-		using V2 = couple_t<V0[2] >; using _V2 = quanta_t<V0[2] >;
-		using UV = couple_t<U0, V0>; using _UV = quanta_t<U0, V0>;
-		using VU = couple_t<V0, U0>; using _VU = quanta_t<V0, U0>;
+		using U1 = couple_t<U0[1] >; using _U1 = brace_t<U0[1] >;
+		using V1 = couple_t<V0[1] >; using _V1 = brace_t<V0[1] >;
+		using U2 = couple_t<U0[2] >; using _U2 = brace_t<U0[2] >;
+		using V2 = couple_t<V0[2] >; using _V2 = brace_t<V0[2] >;
+		using UV = couple_t<U0, V0>; using _UV = brace_t<U0, V0>;
+		using VU = couple_t<V0, U0>; using _VU = brace_t<V0, U0>;
 
 		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
 		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)

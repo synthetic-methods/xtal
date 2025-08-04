@@ -1,8 +1,8 @@
 #pragma once
 #include "./any.hh"
+#include "./wrap.hh"
 #include "./group.hh"
 #include "./field.hh"
-
 
 
 
@@ -39,8 +39,8 @@ struct couple
 	
 	template <class T>
 	//\
-	using endotype = typename     field_arithmetic<Us...>::template homotype<T>;
-	using endotype = typename group_multiplication<Us...>::template homotype<T>;
+	using endotype = typename field<wrap_s<Us, _xtd::plus_multiplies>...>::template homotype<T>;
+	using endotype = typename group<wrap_s<Us, _std::multiplies     >...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>
@@ -60,29 +60,41 @@ struct couple
 		using typename S_::value_type;
 		using typename S_::scale_type;
 
-	public:// CONSTRUCT
-		using S_::S_;//NOTE: Inherited and respecialized!
+	private:
+		using U_arg = complete_t<value_type, scale_type>;
 
-		XTAL_NEW_(explicit)
-		homotype(bool u)
-		noexcept
-		requires common_q<Us...> and in_n<size, 2>
-		:	S_{static_cast<value_type>(u), static_cast<value_type>(not u)}
-		{}
-		XTAL_NEW_(explicit)
-		homotype(complete_t<value_type, scale_type> u)
-		noexcept
-		requires common_q<Us...> and in_n<size, 2> and continuous_field_q<value_type>
-		:	S_{u, scale_type{one}/u}
+		template <int N_slot=0>
+		XTAL_DEF_(return,inline,set)
+		versus_f(auto &&v)
+		noexcept -> auto
 		{
-			assert(u != value_type{0});
+			using V = XTAL_ALL_(v);
+			scale_type constexpr one{1};
+			XTAL_IF0
+			XTAL_0IF (continuous_field_q<V> and       1 == N_slot) {return       versus_f(one/XTAL_REF_(v));}
+			XTAL_0IF (   logical_group_q<V> and       1 == N_slot) {return       versus_f(not XTAL_REF_(v));}
+			XTAL_0IF (   logical_group_q<V> and integral_q<U_arg>) {return                   -XTAL_REF_(v) ;}
+			XTAL_0IF (            same_q<V,                U_arg>) {return                    XTAL_REF_(v) ;}
+			XTAL_0IF_(else)                                        {return static_cast<U_arg>(XTAL_REF_(v));}
 		}
-		XTAL_NEW_(explicit)
-		homotype(subjective_q auto const &u)
+
+	public:// CONSTRUCT
+		using S_::S_;
+		XTAL_NEW_(else) (homotype, noexcept:S_)
+
+ 		XTAL_NEW_(explicit)
+		homotype(bool  const u, _std::in_place_t)
 		noexcept
-		requires common_q<Us...> and in_n<size, 2> and continuous_field_q<value_type>
-		:	homotype{objective_f(u)}
+		requires in_n<size, 2>
+		:	S_{versus_f<0>(u), versus_f<1>(u)}
 		{}
+		XTAL_NEW_(explicit)
+		homotype(U_arg const u, _std::in_place_t)
+ 		noexcept
+		requires in_n<size, 2>
+		:	S_{versus_f<0>(u), versus_f<1>(u)}
+ 		{
+ 		}
 
 	public:// OPERATE
 		using S_::operator+; using S_::operator+=;
@@ -103,7 +115,7 @@ struct couple
 		noexcept -> auto
 		{
 			auto t = S_::twin();
-			bond::seek_out_f<N_ - 1>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<N_ - 1>([&]<constant_q I> (I) XTAL_0FN {
 				get<I{} + 1>(t) += get<I{}>(t);
 			});
 			return t;
@@ -113,7 +125,7 @@ struct couple
 		noexcept -> auto
 		{
 			auto t = S_::twin();
-			bond::seek_out_f<1 - N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<1 - N_>([&]<constant_q I> (I) XTAL_0FN {
 				get<I{} + 1>(t) -= get<I{}>(t);
 			});
 			return t;
@@ -127,7 +139,7 @@ struct couple
 			auto t = S_::twin();
 			value_type u{};
 			value_type v{};
-			bond::seek_out_f<+N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<+N_>([&]<constant_q I> (I) XTAL_0FN {
 				u += get<I{}>(t); get<I{}>(t) = v;
 				v = u;
 			});
@@ -141,7 +153,7 @@ struct couple
 			auto t = S_::twin();
 			value_type u;
 			value_type v{t.sum()};
-			bond::seek_out_f<-N_>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<-N_>([&]<constant_q I> (I) XTAL_0FN {
 				u = get<I{}>(t); get<I{}>(t) = v - u;
 				v = u;
 			});
@@ -191,13 +203,13 @@ struct couple
 		{
 			auto &s = self();
 			
-			bond::seek_out_f<size>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),    v, v);}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), _1*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),    v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), _1*v, v);}
 			});
 
 			return u;
@@ -211,12 +223,12 @@ struct couple
 			auto &s = self();
 			value_type u{0};
 			
-			bond::seek_out_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_until_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
 			});
 			
 			return u;

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./point.hh"
+#include "./groupoid.hh"
 #include "./group.hh"
 
 
@@ -13,7 +13,7 @@ namespace xtal::atom
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief   Extends `point` with component-wise multiplication and addition.
+\brief   Extends `groupoid` with component-wise multiplication and addition.
 \todo    Refactor `block`s like `cell`s to allow `bond::compose`.
 */
 template <class ...Us>	struct  field_arithmetic;
@@ -33,7 +33,7 @@ struct field_arithmetic
 {
 private:
 	template <class T>
-	using endotype = typename point<Us...>::template homotype<T>;
+	using endotype = typename groupoid<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>
@@ -45,7 +45,7 @@ private:
 public:
 	/*!
 	\brief
-	Extends `point` with component-wise multiplication and addition.
+	Extends `groupoid` with component-wise multiplication and addition.
 	*/
 	template <class T>
 	class homotype : public holotype<T>
@@ -92,12 +92,15 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Resolves as `*_field` based on the supplied operator.
+\brief   Resolves as `*_field` based on the supplied operator.
 */
-template <class T> struct field;
+template <class     ...Ts>	XTAL_TYP_(new) field;
+template <class     ...Ts>	XTAL_TYP_(let) field_t = typename field<Ts...>::type;
+template <class     ...Ts>	XTAL_TYP_(ask) field_q = field_arithmetic_q<Ts...>;
 
-template <class ...Ts>	concept field_q = field_arithmetic_q<Ts...>;
+template <class     ...Ts> struct field<_xtd::plus_multiplies <Ts>...>   : field_arithmetic<Ts...  > {};///<\brief Resolves as `field_arithmetic`.;
+template <class U, auto N> struct field<_xtd::plus_multiplies <U>   [N]> : field_arithmetic<U   [N]> {};///<\brief Resolves as `field_arithmetic`.
+template <class U, auto N> struct field<_xtd::plus_multiplies <U>(&)[N]> : field_arithmetic<U(&)[N]> {};///<\brief Resolves as `field_arithmetic`.
 
 
 ///////////////////////////////////////////////////////////////////////////////

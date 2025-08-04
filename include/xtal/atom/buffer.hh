@@ -214,8 +214,8 @@ struct buffer<A_data>
 	public:// CONSTRUCT
 
 		XTAL_NEW_(delete) (homotype, {clear();})
-	//	XTAL_NEW_(delete) (homotype, noexcept = default)
-		XTAL_NEW_(create) (homotype, noexcept = default)
+	//	XTAL_NEW_(delete) (homotype, noexcept=default)
+		XTAL_NEW_(create) (homotype, noexcept=default)
 	
 		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and in_n<_xtd::trivially_copyable<value_type>> = default;
 		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and un_n<_xtd::trivially_movable <value_type>> = default;
