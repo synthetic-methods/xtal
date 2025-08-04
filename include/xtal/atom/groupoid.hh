@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./quanta.hh"
+#include "./brace.hh"
 
 
 
@@ -11,40 +11,40 @@ namespace xtal::atom
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 /*!
-\brief
-Extends `quanta` with component-wise operation.
+\brief   Extends `brace` with component-wise operation.
+\note    More an almost-`atom::group` than an algebraic groupoid.
 */
 
-template <class ...Us>	struct  point;
-template <class ...Us>	using   point_t = typename point<Us...>::type;
-template <class ...Us>	concept point_q = bond::tag_infixed_p<point_t, Us...>;
+template <class ...Us>	struct  groupoid;
+template <class ...Us>	using   groupoid_t = typename groupoid<Us...>::type;
+template <class ...Us>	concept groupoid_q = bond::tag_infixed_p<groupoid_t, Us...>;
 
-XTAL_DEF_(let) point_f = [] XTAL_1FN_(call) (_detail::factory<point_t>::make);
+XTAL_DEF_(let) groupoid_f = [] XTAL_1FN_(call) (_detail::factory<groupoid_t>::make);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class U, auto  N, auto  ...Ns> struct   point<U   [N][Ns]...> : point<point_t<U[Ns]...>   [N]> {};
-template <class U, auto  N, auto  ...Ns> struct   point<U(&)[N][Ns]...> : point<point_t<U[Ns]...>(&)[N]> {};
+template <class U, auto  N, auto  ...Ns> struct   groupoid<U   [N][Ns]...> : groupoid<groupoid_t<U[Ns]...>   [N]> {};
+template <class U, auto  N, auto  ...Ns> struct   groupoid<U(&)[N][Ns]...> : groupoid<groupoid_t<U[Ns]...>(&)[N]> {};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <scalar_q ...Us> requires common_q<Us...>
-struct point<Us ...>
-:	point<common_t<Us...>[sizeof...(Us)]>
+struct groupoid<Us ...>
+:	groupoid<common_t<Us...>[sizeof...(Us)]>
 {
 };
 template <class ...Us>
-struct point
+struct groupoid
 {
 	using _fit = bond::fit<Us...>;
 
 	template <class T>
-	using endotype = typename quanta<Us...>::template homotype<T>;
+	using endotype = typename brace<Us...>::template homotype<T>;
 
 	template <class T>
-	using holotype = bond::compose_s<endotype<T>, bond::tag<point_t>>;
+	using holotype = bond::compose_s<endotype<T>, bond::tag<groupoid_t>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -80,7 +80,7 @@ struct point
 		>{}();
 
 		/*!
-		\returns	The pointwise result of applying the vector operation `f`.
+		\returns	The groupoidwise result of applying the vector operation `f`.
 		*/
 		template <auto f>
 		XTAL_DEF_(return,inline,set)
@@ -93,7 +93,7 @@ struct point
 					(bond::seek_s<size>{});
 		}
 		/*!
-		\brief  	Evaluates `f` pointwise for each row across `s, ts...`.
+		\brief  	Evaluates `f` groupoidwise for each row across `s, ts...`.
 		*/
 		template <auto f>
 		XTAL_DEF_(return,inline,set)
@@ -172,7 +172,7 @@ struct point
 		/*!
 		\internal
 		The purpose of the different `operator` implementations is to handle
-		`block_coordinated_q`s, which have different `initializer_t`s and `value_type`s.
+		`block_revalued_q`s, which have different `initializer_t`s and `value_type`s.
 
 		It's safer to assign the result of the binary operator via `zip_from` (using `got`/`coelement`),
 		than to use apply the assignment directly via `zip_with` (using `get` for both `self()` and the arguments).
@@ -187,10 +187,10 @@ struct point
 			else                      {return zip_with<[] (auto &x, auto const &y) XTAL_0FN_(do) (x /=y)>(        w);}
 		}
 		/***/
-		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = mul2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = div2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = add2_(w); return s;}
-		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept requires block_coordinated_q<T> {auto &s = self(); s = sub2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept requires block_revalued_q<T> {auto &s = self(); s = mul2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept requires block_revalued_q<T> {auto &s = self(); s = div2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept requires block_revalued_q<T> {auto &s = self(); s = add2_(w); return s;}
+		template <class W> XTAL_DEF_(mutate,inline,get)  sub1_(W const &w)       noexcept requires block_revalued_q<T> {auto &s = self(); s = sub2_(w); return s;}
 		template <class W> XTAL_DEF_(mutate,inline,get)  mul1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x *=y)>(w);}
 	//	template <class W> XTAL_DEF_(mutate,inline,get)  div1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x /=y)>(w);}
 		template <class W> XTAL_DEF_(mutate,inline,get)  add1_(W const &w)       noexcept {return zip_with<[] (auto       &x, auto const &y) XTAL_0FN_(do) (x +=y)>(w);}

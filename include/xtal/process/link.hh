@@ -47,11 +47,24 @@ struct linker
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
 
+		using Outer = S_;
+		using Inner = S ;
+		using Inner_nu = const Inner &;
+		using Inner_mu =       Inner &;
+
 		template <auto ...Is>
-		XTAL_DEF_(return,inline,set) S_method_f(auto &&...xs)
+		XTAL_DEF_(return,inline,set)
+		Outer_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to)
-			(S_::template method_f<Is...>(S::template method_f<Is...>(XTAL_REF_(xs)...)))
+			requires XTAL_TRY_(to)
+				(Outer::template method_f<Is...>(XTAL_REF_(xs)...))
+
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		Inner_f(auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to)
+				(Inner::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -66,23 +79,33 @@ struct linker
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to)
-			(S_method_f<Is...>(XTAL_REF_(xs)...))
+			(Outer_f<Is...>(Inner_f<Is...>(XTAL_REF_(xs)...)))
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method(auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to)
-			(S_method_f<Is...>(XTAL_REF_(xs)...))
+			(method_f<Is...>(XTAL_REF_(xs)...))
 
-		XTAL_FX2_(do) (template <auto ...Is>
+		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs),
+		method  (auto &&...xs) const
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(unless) (S_method_f<Is...>(XTAL_REF_(xs)...))
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_nu).template method  <Is...>(XTAL_REF_(xs)...))
 		{
-			return S_::template method<Is...>(S::template method<Is...>(XTAL_REF_(xs)...));
-		})
+			return Outer::template method<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		}
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		method  (auto &&...xs)
+		noexcept -> decltype(auto)
+			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
+			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_mu).template method  <Is...>(XTAL_REF_(xs)...))
+		{
+			return Outer::template method<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		}
 
 	};
 };

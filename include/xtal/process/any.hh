@@ -39,7 +39,7 @@ struct define
 	protected:// DIGEST
 	public:// DIGEST
 		/*!
-		\brief  	Initializes the dispatch-table constructed with `occur/any.hh#dispatch`.
+		\brief  	Initializes the VTable constructed with `occur/any.hh#dispatch`.
 		\todo    Incorporate receiver at the front of `Xs...` to provide both `const` and non-`const` invocation.
 		*/
 		template <class ...Xs>
@@ -49,14 +49,14 @@ struct define
 			template <auto ...Is>
 			struct solve
 			{
-				using type =    decltype(XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...) const;
+				using type =   decltype(XTAL_ANY_(T const &).template digress<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...) const;
 
 			};
 			template <auto ...Is>
-			requires XTAL_TRY_(unless) (XTAL_ANY_(T const &).template divert<Is...>(XTAL_ANY_(Xs)...))
+			requires XTAL_TRY_(to_if) (XTAL_ANY_(T       &).template digress<Is...>(XTAL_ANY_(Xs)...))
 			struct solve<Is...>
 			{
-				using type =    decltype(XTAL_ANY_(T       &).template divert<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...);
+				using type =   decltype(XTAL_ANY_(T       &).template digress<Is...>(XTAL_ANY_(Xs)...)) (T::*) (Xs...);
 
 			};
 		
@@ -66,18 +66,18 @@ struct define
 			{
 			public:
 				using point_type = typename solve<Is...>::type;
-				static auto constexpr point = static_cast<point_type>(&T::template divert<Is...>);
+				static auto constexpr point = static_cast<point_type>(&T::template digress<Is...>);
 				///<\brief Addresses the function pointer for the given types `Xs...` and indicies `Is...`.
 
 			};
 		};
 		/*!
-		\brief  	Provides a layer of indirection separating the types submitted/visible to `digest`,
-		and those received by `method`.
+		\brief  	Unifies the argument-types of the caller and callee
+		         (respectively bound by `digest<Xs...>` and `method(auto &&xs...)`).
 		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		divert(auto &&...xs)
+		digress(auto &&...xs)
 		noexcept -> decltype(auto)
 			requires  none_n<Is...> and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
 			or        some_n<Is...> and requires (T       &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
@@ -88,7 +88,7 @@ struct define
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		divert(auto &&...xs) const
+		digress(auto &&...xs) const
 		noexcept -> decltype(auto)
 			requires  none_n<Is...> and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
 			or        some_n<Is...> and requires (T const &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
@@ -153,9 +153,8 @@ struct define
 				XTAL_0IF_(to) (self().         method       (XTAL_REF_(xs)...))
 			}
 			else {
-				auto &s = self();
-				auto  d = s.template deify<decltype(xs)...>(constant_t<Is>{}...);
-				return (s.*d) (XTAL_REF_(xs)...);
+				auto const _method = self().template deify<decltype(xs)...>(constant_t<Is>{}...);
+				return (self().*_method) (XTAL_REF_(xs)...);
 			}
 		})
 		
@@ -223,13 +222,11 @@ struct define
 					XTAL_IF0
 					XTAL_0IF (M == N) {return R_::template method<Is...>(XTAL_REF_(xs) ()...);}
 					XTAL_0IF (0 == N) {return arguments([this] XTAL_1FN_(call) (method));}
-					XTAL_0IF_(terminate)
+					XTAL_0IF_(void)
 				})
 
 			};
 		};
-		template <class U>
-		using bracelet = process::let<U>;
 
 	};
 };
@@ -249,20 +246,19 @@ struct refine
 		using S_::S_;
 
 	public:// BRACKET
-		template <class ...Xs>
-		struct binding
-		{
-			//\
-			using superkind = confined<typename S_::template binding<typename S_::template bracelet<Xs>::type...>>;
-			using superkind = confined<typename S_::template binding<process::let_t<Xs>...>>;
 
-			template <class R>
-			using subtype = bond::compose_s<R, superkind>;
-			using    type = subtype<S_>;
-
-		};
 		template <class ...Xs>
-		using    bind_t = typename binding<Xs...>::type;
+		struct combined   : confined<typename S_::template binding<Xs...>> {};
+
+		template <class ...Xs>
+		using  combined_t = bond::compose_s<S_, combined<Xs...>>;
+
+
+		template <class ...Xs>
+		using    bind_t = combined_t<process::let_t<Xs>...>;
+
+		template <class ...Xs>
+		using    bind_x = bind_t<bond::transpack_t<Xs>...>;
 
 		XTAL_DEF_(return,inline,set)
 		bind_f(auto &&...xs)
@@ -278,7 +274,8 @@ struct refine
 		}
 		
 		XTAL_FX4_(to) (template <class ...Xs>
-		XTAL_DEF_(return,inline,get) bind(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
+		XTAL_DEF_(return,inline,get)
+		bind(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
 
 	};
 };
@@ -296,70 +293,82 @@ struct defer
 	{
 		static_assert(any_q<S>);
 		using S_ = bond::compose_s<S, superkind>;
-		using U_ = typename S_::head_type;
-		static_assert(complete_q<U_>);
 
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		U_method_f(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires    requires {U_::template method_f<Is...>(XTAL_REF_(xs)...);}
-		or          requires {U_::         method_f       (XTAL_REF_(xs)...);}
-		or          requires {U_{}                        (XTAL_REF_(xs)...);}
-		{
-			XTAL_IF0
-			XTAL_0IF_(to) (U_::template method_f<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (U_::         method_f       (XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (U_{}                        (XTAL_REF_(xs)...))
-		}
+		using Head = typename S_::head_type;
+		static_assert(complete_q<Head>);
 
 	public:// CONSTRUCT
 		using S_::S_;
 
 	public:// ACCESS
+		using S_::self;
 		using S_::head;
 
 	public:// OPERATE
 		/*!
-		\brief  	Resolves `head` as either a function or value.
+		\brief  	Resolves `head` as either a value or function.
 		*/
+		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		method  (auto &&...xs),
+		noexcept -> decltype(auto)
+		//	requires true// TODO: Investigate why `requires` frustrates resolution...
+		{
+			return header<Is...>(XTAL_REF_(xs)...);
+		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&...xs)
 		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to) (U_method_f<Is...>(XTAL_REF_(xs)...))
-		
-	//	template <auto ...Is>
-	//	XTAL_DEF_(return,inline,set)
-	//	method(auto &&...xs)
-	//	noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(to) (U_method_f<Is...>(XTAL_REF_(xs)...))
-		
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs) const
-		noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(unless) (U_method_f<Is...>(XTAL_REF_(xs)...))
+			requires false
+			or	(1 <= sizeof...(Is)) and XTAL_TRY_(to_if) (Head::template operator()<Is...>(XTAL_REF_(xs)...))
+			or	(1 <= sizeof...(Is)) and XTAL_TRY_(to_if) (Head::template method_f  <Is...>(XTAL_REF_(xs)...))
+			or	(0 == sizeof...(Is)) and XTAL_TRY_(to_if) (Head::         operator()       (XTAL_REF_(xs)...))
+			or	(0 == sizeof...(Is)) and XTAL_TRY_(to_if) (Head::         method_f         (XTAL_REF_(xs)...))
+			or	(0 == sizeof...(Is)) and XTAL_TRY_(to_if) (Head{}                          (XTAL_REF_(xs)...))
 		{
-			XTAL_IF0
-			XTAL_0IF_(to) (head().template operator()<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return head(); static_assert(none_q<decltype(xs)...>);}
+			return Header_f<Is...>(XTAL_REF_(xs)...);
 		}
-		template <auto ...Is>
+
+	private:
+
+		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs)
+		header  (auto &&...xs),
 		noexcept -> decltype(auto)
-	//	requires XTAL_TRY_(unless) (U_method_f<Is...>(XTAL_REF_(xs)...))
 		{
-			XTAL_IF0
-			XTAL_0IF_(to) (head().template operator()<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().template operator()       (XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
-			XTAL_0IF_(else) {return head(); static_assert(none_q<decltype(xs)...>);}
+			if constexpr (1 <= sizeof...(Is)) {
+				XTAL_IF0
+				XTAL_0IF_(to) (head().template operator()<Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (head().template method    <Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF_(void)
+			}
+			else {
+				XTAL_IF0
+				XTAL_0IF_(to) (head().         operator()       (XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (head().         method           (XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (head())
+				XTAL_0IF_(void)
+			}
+		})
+		template <auto ...Is>
+		XTAL_DEF_(return,inline,set)
+		Header_f(auto &&...xs)
+		noexcept -> decltype(auto)
+		{
+			if constexpr (1 <= sizeof...(Is)) {
+				XTAL_IF0
+				XTAL_0IF_(to) (Head::template operator()<Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (Head::template method_f  <Is...>(XTAL_REF_(xs)...))
+				XTAL_0IF_(void)
+			}
+			else {
+				XTAL_IF0
+				XTAL_0IF_(to) (Head::         operator()       (XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (Head::         method_f         (XTAL_REF_(xs)...))
+				XTAL_0IF_(to) (Head{}                          (XTAL_REF_(xs)...))
+				XTAL_0IF_(void)
+			}
 		}
 
 	};
