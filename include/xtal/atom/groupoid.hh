@@ -68,8 +68,8 @@ struct groupoid
 		using S_::twin;
 
 	protected:
-		template <size_type I> XTAL_DEF_(return,inline,set) zip_get(auto &&t) noexcept -> decltype(auto) {return           (XTAL_REF_(t));}
-		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(auto &&t) noexcept -> decltype(auto) {return zip_get<I>(XTAL_REF_(t));}
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_get(        auto &&t) noexcept -> decltype(auto) {return                       (XTAL_REF_(t));}
+		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(        auto &&t) noexcept -> decltype(auto) {return             zip_get<I>(XTAL_REF_(t));}
 
 		template <size_type I> XTAL_DEF_(return,inline,set) zip_get(block_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (get<I>(XTAL_REF_(t)))
 		template <size_type I> XTAL_DEF_(return,inline,set) zip_got(block_q auto &&t) noexcept -> decltype(auto) requires XTAL_TRY_(to) (got<I>(XTAL_REF_(t)))
@@ -93,7 +93,7 @@ struct groupoid
 		noexcept -> auto
 		{
 			return [f_=[&]
-				(auto    I)                      XTAL_0FN_(to) (f (zip_got<I>(ts)...))]
+				(auto    I)                      XTAL_0FN_(to) (f (           zip_got<I>(ts)...))]
 				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(f_(constant_t<I>{})...))
 					(bond::seek_s<size>{});
 		}
@@ -101,8 +101,8 @@ struct groupoid
 		\brief  	Evaluates `f` groupoidwise for each row across `s, ts...`.
 		*/
 		template <auto f>
-		XTAL_DEF_(return,inline,set)
-		zip_into(auto &s, auto &&...ts)
+		XTAL_DEF_(inline,set)
+		zip_into(auto &s, auto const &...ts)
 		noexcept -> auto
 		{
 			[f_=[&]
@@ -115,10 +115,10 @@ struct groupoid
 		*/
 		template <auto f>
 		XTAL_DEF_(mutate,inline,let)
-		zip_with(auto const &...ts)
+		zip_with(auto &&...ts)
 		noexcept -> auto &
 		{
-			auto &s = self(); zip_into<f>(s, ts...); return s;
+			auto &s = self(); zip_into<f>(s, XTAL_REF_(ts)...); return s;
 		}
 
 		/*!
