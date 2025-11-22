@@ -298,9 +298,9 @@ template <class T             >	struct             unstruct  	:  restruct<T> {us
 XTAL_DEF_(return,inline,let)
 destruct_f(auto &&t)
 noexcept -> decltype(auto)
-requires fixed_shaped_q<decltype(t)>
 {
 	using T = decltype(t);
+	static_assert(fixed_shaped_q<T>);
 	if constexpr (tuple_shaped_q<T>) {
 		return XTAL_REF_(t);
 	}
@@ -308,20 +308,20 @@ requires fixed_shaped_q<decltype(t)>
 		return reinterpret_cast<destruct_t<T> &&>(XTAL_REF_(t));
 	}
 }
-template <int I>
+template <int N_dex>
 XTAL_DEF_(return,inline,let)
 destruct_f(auto &&t)
-noexcept
-requires fixed_shaped_q<decltype(t)>
+noexcept -> decltype(auto)
 {
+	using _std::get;
 	using T = decltype(t);
-	auto constexpr N = fixed_shaped<decltype(t)>::extent();
-	if constexpr (tuple_shaped_q<T>) {
-		return get<modulo_v<N, I>>(XTAL_REF_(t));
-	}
-	else {
-		return get<modulo_v<N, I>>(destruct_f(XTAL_REF_(t)));
-	}
+	static_assert(fixed_shaped_q<T>);
+	auto constexpr K_ext = fixed_shaped<decltype(t)>::extent();
+	auto constexpr K_dex = modulo_v<K_ext, N_dex>;
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (get<K_dex>(          (XTAL_REF_(t))))
+	XTAL_0IF XTAL_TRY_(to) (get<K_dex>(destruct_f(XTAL_REF_(t))))
+	XTAL_0IF XTAL_TRY_(to) (          (destruct_f(XTAL_REF_(t)))[K_dex])
 }
 
 template <int N, int ...Ns>
