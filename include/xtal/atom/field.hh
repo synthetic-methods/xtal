@@ -56,6 +56,7 @@ public:
 	public:// ACCESS
 		using S_::size;
 		using S_::self;
+		using S_::twin;
 
 	public:// CONSTRUCT
 		using S_::S_;
@@ -77,6 +78,10 @@ public:
 		template <field_arithmetic_q W> XTAL_DEF_(return,inline,get) operator - (W const &w) const noexcept requires bond::tab_precedence_p<W, T> {return S_::sub2_(w);}
 		template <field_arithmetic_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
 		template <field_arithmetic_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
+
+		XTAL_DEF_(return,inline,get)    operator + () const noexcept {return twin();}
+	//	XTAL_DEF_(return,inline,get)    operator + () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (+x)>(self());}
+		XTAL_DEF_(return,inline,get)    operator - () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (-x)>(self());}
 
 		XTAL_DEF_(mutate,inline,get)    operator *=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s *= T(w); return s;}
 		XTAL_DEF_(mutate,inline,get)    operator /=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s /= T(w); return s;}

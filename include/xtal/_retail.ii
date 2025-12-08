@@ -15,10 +15,35 @@ Standard...
 
 using  extent_type = _std::  make_signed_t<XTAL_STD_(size_type)>;
 using    size_type = _std::make_unsigned_t<XTAL_STD_(size_type)>;
-using    sign_type = XTAL_ALL_(false - true);
+using    sign_type =        XTAL_ALL_(false - true);
 class    void_type ;
-using    null_type = XTAL_STD_(null_type);
-using    unit_type = XTAL_STD_(unit_type);
+using    null_type =        XTAL_STD_(null_type);
+class    unit_type : public XTAL_STD_(unit_type)
+{
+	using S_ = XTAL_STD_(unit_type);
+
+public:
+	using S_::S_;
+
+};
+template <auto N>
+struct   text_type
+{
+	char           value[N];
+	XTAL_DEF_(set) value_size = _std::integral_constant<_std::size_t, N>{};
+	XTAL_TYP_(let) value_type = decltype(value);
+	XTAL_TYP_(let)       type = text_type;
+
+	XTAL_DEF_(let)      operator()           () const {return  value ;}
+	XTAL_DEF_(implicit) operator _std::string() const {return {value};}
+	XTAL_NEW_(implicit)
+	text_type(const char(&str)[N]) {_std::copy_n(str, N, value);}
+
+	template <auto M>
+	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type<M> const &t) noexcept -> bool requires (M != N) and XTAL_TRY_(to) (false)
+	XTAL_DEF_(return,inline,met) operator  == (text_type const &s, text_type    const &t) noexcept -> bool requires              XTAL_TRY_(to) ((_std::string) s == (_std::string) t)
+
+};
 
 template <auto  N>	using  extent_constant_t	= _std::integral_constant<extent_type, static_cast<extent_type>(N)>;
 template <auto  N>	using    size_constant_t	= _std::integral_constant<  size_type, static_cast<  size_type>(N)>;
@@ -46,20 +71,26 @@ template <         class ...Ts>	struct       fungible              : _std::false
 template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
 template <class T, class    T1>	struct       fungible<T, T1   >    : _std::disjunction<_std::is_base_of<T, T1>, _std::is_base_of<T1, T>> {};
 template <         class ...Ts>	concept      fungible_q	=      fungible<based_t<Ts>...>{}();
+template <         class ...Ts>	concept    infungible_q	=  not fungible<based_t<Ts>...>{}();
 
 template <         class ...Ts>	struct      isotropic ;
 template <         class ...Ts>	struct      epitropic ;
 template <class T, class ...Ts>	struct      isotropic<T, Ts...> : _std::conjunction<_std::is_same<         based_t<Ts>, based_t<T>>...> {};
 template <class T, class ...Ts>	struct      epitropic<T, Ts...> : _std::conjunction<_std::is_constructible<based_t<Ts>,         T >...> {};
-template <         class ...Ts>	concept     isotropic_q	=  isotropic<   Ts...>{}();
-template <         class ...Ts>	concept     epitropic_q	=  epitropic<   Ts...>{}();
+template <         class ...Ts>	concept     isotropic_q	=   isotropic<   Ts...>{}();
+template <         class ...Ts>	concept     epitropic_q	=   epitropic<   Ts...>{}();
 
 template <         class ...Ts>	struct     isomorphic ;
 template <         class ...Ts>	struct     epimorphic ;
-template <         class ...Ts>	struct     isomorphic :    isotropic<Ts...> {};
-template <         class ...Ts>	struct     epimorphic :    epitropic<Ts...> {};
+template <         class ...Ts>	struct     isomorphic :     isotropic<   Ts...>{}  ;
+template <         class ...Ts>	struct     epimorphic :     epitropic<   Ts...>{}  ;
 template <         class ...Ts>	concept    isomorphic_q	=  isomorphic<   Ts...>{}();
 template <         class ...Ts>	concept    epimorphic_q	=  epimorphic<   Ts...>{}();
+
+template <         class ...Ts>	using       isotropic_t	=   isotropic<   Ts...>;
+template <         class ...Ts>	using       epitropic_t	=   epitropic<   Ts...>;
+template <         class ...Ts>	using      isomorphic_t	=  isomorphic<   Ts...>;
+template <         class ...Ts>	using      epimorphic_t	=  epimorphic<   Ts...>;
 
 template <class T, class ...Us>	concept          make_p	= _std::constructible_from<based_t<T>, Us...>;
 template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>{}();

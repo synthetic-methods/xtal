@@ -72,7 +72,7 @@ struct lifter
 
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		method(auto &&...xs)
+		method  (auto &&...xs)
 		noexcept -> decltype(auto)
 		requires XTAL_TRY_(to)
 			(method_f<Is...>(XTAL_REF_(xs)...))

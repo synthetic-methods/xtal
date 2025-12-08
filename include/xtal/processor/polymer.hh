@@ -199,30 +199,21 @@ public:
 				*/
 				template <signed N_ion> requires in_n<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(U_key k_, U_stage _o, auto &&...oo)
+				flux(U_key k_, U_stage o, auto &&...oo)
 				noexcept -> signed
 				{
-					auto k  = k_.head();
-					auto e_ = ensemble().scan(k);
-					bool const onset = 0 == _o.head();
-					bool const reset = e_ < ensemble().end() and k == e_->head();
-
+					auto const k     = k_.head();
+					auto       e_    = ensemble().scan(k);
+					bool const onset =                           0 == o  .head(), offset = not onset;
+					bool const reset = e_ < ensemble().end() and k == e_->head(), preset = not reset;
 					if (onset) {
-						if (reset) {
-							auto u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
-							e_ = ensemble().poke(e_, k, XTAL_MOV_(u));
-						}
-						else {
-							e_ = ensemble().poke(e_, k, lead());
-						}
-						return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
+						e_ = ensemble().poke(e_, k, preset? lead(): [&] XTAL_1FN {
+							auto   u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
+							return u;
+						}	());
 					}
-					else if (reset) {
-						return e_->template flux<N_ion>(XTAL_MOV_(_o), XTAL_REF_(oo)...);
-					}
-					else {
-						return -1;
-					}
+					return offset and preset? -1:
+						e_->template flux<N_ion>(XTAL_MOV_(o), XTAL_REF_(oo)...);
 				}
 				/*!
 				\brief  	Renders the given slice of `ren` designated by `rev` and `cur`.

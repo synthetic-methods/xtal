@@ -200,6 +200,30 @@ struct couple
 			XTAL_0IF (N_pow == -1) {return get<1>(s)/get<0>(s);}
 		}
 
+
+		template <int N_dir=0>
+		XTAL_DEF_(return,inline,let)
+		resolution() const
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF (N_dir ==  1) {return self().template element<0>();}
+			XTAL_0IF (N_dir == -1) {return self().template element<1>();}
+		}
+		XTAL_DEF_(return,inline,let)
+		resolution(constant_q auto const n) const
+		noexcept -> decltype(auto)
+		{
+			return resolution<XTAL_ALL_(n){}>();
+		}
+
+		XTAL_DEF_(return,inline,let)
+		resolution() const
+		noexcept -> decltype(auto)
+		{
+			return self();
+		}
+
 		/*!
 		\returns	The mutually inverse `lhs +/- rhs` scaled by `reflector<N_par>()`.
 		*/

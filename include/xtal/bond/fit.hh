@@ -515,9 +515,16 @@ public:
 	noexcept -> alpha_type
 	{
 		XTAL_IF0
-		XTAL_0IF (N_pow ==  0) {return 1;}
+		XTAL_0IF (N_pow ==  0) {return           1;}
 		XTAL_0IF (N_pow ==  1) {return n_num/n_nom;}
 		XTAL_0IF (N_pow == -1) {return n_nom/n_num;}
+		XTAL_0IF (N_pow <= -2) {return ratio_f<-N_pow>(n_nom, n_num);}
+		XTAL_0IF (N_pow >=  2) {
+			alpha_type const n = n_num/n_nom;
+			alpha_type       o = 1;
+			#pragma unroll
+			for (int i{}; i < N_pow; ++i) {o *= n;} return o;
+		}
 		XTAL_0IF_(void)
 	}
 	static alpha_type constexpr ratio_0 = ratio_f(0, 1);
@@ -527,7 +534,7 @@ public:
 	/*!
 	\returns	The ratio of `n_num` to `n_nom` multiplied by `Pi`.
 	*/
-	template <int N_pow=1> requires in_n<N_pow, 1, 0, -1>
+	template <int N_pow=1>
 	XTAL_DEF_(return,inline,set)
 	patio_f(alpha_type n_num, alpha_type n_nom=1)
 	noexcept -> alpha_type

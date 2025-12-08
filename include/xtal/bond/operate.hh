@@ -95,6 +95,15 @@ struct operate : Fs...
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  ^  t)
 	template <inapplicable_p T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (subject<T>()  |  t)
 	
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  -  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() - T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  +  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() + T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  *  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() * T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  /  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() / T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  %  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() % T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  &  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() & T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  ^  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() ^ T{}()))>{})
+	template <    constant_q T> XTAL_DEF_(return,inline,met) operator  |  (same_q<operate> auto const &, T const &t) noexcept -> auto   requires XTAL_TRY_(to) (operate<decltype([] XTAL_1FN_(to) (operate{}() | T{}()))>{})
+
 	/*!
 	\returns	The bit-shifted result if `integral_q<T>`,
 	otherwise fractional mutiplication by `exp2(t)`.

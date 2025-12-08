@@ -138,6 +138,16 @@ struct define
 				return _std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})
+		/*!
+		\returns	The lambda abstraction of `operator()`.
+		*/
+		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_DEF_(return,inline,let)
+		operate(auto &&...xs),
+		noexcept -> decltype(auto)
+		{
+			return reify<decltype(xs)...>(constant_t<Is>{}...);
+		})
 
 		/*!
 		\returns	The result of applying `method`, with `dispatch`ed parameters resolved.
@@ -164,7 +174,7 @@ struct define
 		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		method(auto &&...xs) noexcept
+		method  (auto &&...xs) noexcept
 		XTAL_TRY_(to) (T::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
@@ -214,7 +224,7 @@ struct define
 				*/
 				XTAL_FX2_(do) (template <auto ...Is>
 				XTAL_DEF_(return,inline,let)
-				method(auto &&...xs),
+				method  (auto &&...xs),
 				noexcept -> decltype(auto)
 				{
 					auto constexpr M = sizeof...(Xs);

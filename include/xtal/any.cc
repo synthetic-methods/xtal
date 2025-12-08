@@ -76,7 +76,7 @@ void echo_plot_(iterated_q auto const list, integral_q auto ...markers)
 	for (auto item: list) {
 		using List = XTAL_ALL_(list);
 		using Item = XTAL_ALL_(item);
-		if constexpr (destruct_q<Item>) {
+		if constexpr (fixed_shaped_q<Item>) {
 			auto etc = destruct_f(item);
 			[&]<auto ...I> (bond::seek_t<I...>)
 				XTAL_0FN_(do) (echo_plot_<N>(line, bond::pack_item_f<I>(item), markers...), ...)
