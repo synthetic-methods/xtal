@@ -145,7 +145,7 @@ struct monomer
 				*/
 				XTAL_FX2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method(), state())
+				method  (), state())
 
 			public:// FLOW
 				/*!
@@ -210,7 +210,7 @@ struct monomer
 				*/
 				XTAL_FX2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method(), state())
+				method  (), state())
 				
 			public:// FLOW
 				/*!

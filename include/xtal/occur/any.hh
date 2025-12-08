@@ -221,7 +221,9 @@ struct define
 				deify(_std::array<A, A_size> const &point) const
 				noexcept -> decltype(auto)
 				{
+					//\
 					auto i = static_cast<size_type>(head());
+					auto i = static_cast<size_type>(R_::body_part);
 					XTAL_IF0
 					XTAL_0IF (1 == _std::popcount(A_size)) {
 						i &= A_mask;

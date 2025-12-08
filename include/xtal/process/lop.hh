@@ -38,7 +38,7 @@ struct lop
 
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method(auto &&o, auto &&...oo),
+		method  (auto &&o, auto &&...oo),
 		noexcept -> auto
 		{
 			return S::template method  <Is...>(S_::head().template method  <Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);

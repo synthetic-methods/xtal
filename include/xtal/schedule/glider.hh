@@ -75,7 +75,7 @@ struct glider
 				*/
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method()
+				method  ()
 				noexcept -> decltype(auto)
 				{
 					return u_pipe.advance(_drip()++ == head_(1))->
