@@ -7,20 +7,20 @@
 
 
 XTAL_ENV_(push)
-namespace xtal::process
+namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct  traits   : bond::compose<traits<_s>...> {};
-template <class ..._s> using   traits_t = cell::confined_t<traits<_s...>>;
+template <class ..._s> struct  context   : bond::compose<context<_s>...> {};
+template <class ..._s> using   context_t = cell::confined_t<context<_s...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
-struct traits<>
+struct context<>
 {
 	template <class S>
 	class subtype : public S
@@ -45,11 +45,11 @@ struct traits<>
 	};
 };
 template <class T>
-struct traits<T> : traits<>
+struct context<T> : context<>
 {
 };
 template <class ..._s>
-struct traits<bond::compose<_s...>> : traits<_s...>
+struct context<bond::compose<_s...>> : context<_s...>
 {
 };
 

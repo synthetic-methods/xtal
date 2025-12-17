@@ -174,8 +174,9 @@ struct define
 		*/
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		method  (auto &&...xs) noexcept
-		XTAL_TRY_(to) (T::template method_f<Is...>(XTAL_REF_(xs)...))
+		method  (auto &&...xs)
+		noexcept
+		requires XTAL_TRY_(to) (T::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
 		/*!

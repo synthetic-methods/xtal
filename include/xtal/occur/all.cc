@@ -1,4 +1,5 @@
 #include "./any.cc"
+#include "./context.cc"
 #include "./cursor.cc"
 #include "./render.cc"
 #include "./resize.cc"
