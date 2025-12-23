@@ -364,7 +364,7 @@ static_assert(same_type_as<float, XTAL_ALL_(copysign(1.F, 1.F))>);
 \note    May be extended via ADL.
 */
 XTAL_DEF_(return,inline,let)
-accumulator(auto &&w, auto &&x, auto &&y)
+plus_multiplies_f(auto &&w, auto &&x, auto &&y)
 noexcept -> auto
 {
 	using Z = XTAL_ALL_(w + x*y);
@@ -388,84 +388,72 @@ noexcept -> auto
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-accumulator(V w, _std::complex<V> x, V y)
+plus_multiplies_f(V const &w, _std::complex<V> const &x, V const &y)
 noexcept -> _std::complex<V>
 {
-	return {accumulator(w, x.real(), y), x.imag()*y};
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (fma(y, x, w))
+	XTAL_0IF_(else) {return {
+		plus_multiplies_f(w, x.real(), y)
+	,	x.imag()*y
+	};}
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-accumulator(V w, V x, _std::complex<V> y)
+plus_multiplies_f(V const &w, V const &x, _std::complex<V> const &y)
 noexcept -> _std::complex<V>
 {
-	return {accumulator(w, x, y.real()), x*y.imag()};
-}
-template <class V>
-XTAL_DEF_(return,inline,let)
-accumulator(V w, _std::complex<V> x, _std::complex<V> y)
-noexcept -> _std::complex<V>
-{
-	if constexpr (requires {fma(y, x, w);}) {
-		return fma(y, x, w);
-	}
-	else {
-		/*/
-		auto const z_re = accumulator(accumulator(w, x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = accumulator(                   x.imag()*y.real() ,  x.real(),y.imag());
-		return {z_re, z_im};
-		/*/
-		return y*x + w;
-		/***/
-	}
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (fma(y, x, w))
+	XTAL_0IF_(else) {return {
+		plus_multiplies_f(w, x, y.real())
+	,	x*y.imag()
+	};}
 }
 
 template <class V>
 XTAL_DEF_(return,inline,let)
-accumulator(_std::complex<V> w, V x, V y)
+plus_multiplies_f(_std::complex<V> const &w, V const &x, V const &y)
 noexcept -> _std::complex<V>
 {
-	return {accumulator(w.real(), x, y), w.imag()};
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (fma(y, x, w))
+	XTAL_0IF_(else) {return {
+		plus_multiplies_f(w.real(), x, y)
+	,	w.imag()
+	};}
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-accumulator(_std::complex<V> w, _std::complex<V> x, V y)
+plus_multiplies_f(_std::complex<V> const &w, _std::complex<V> const &x, V const &y)
 noexcept -> _std::complex<V>
 {
-	return {accumulator(w.real(), x.real(), y), accumulator(w.imag(), x.imag(), y)};
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (fma(y, x, w))
+	XTAL_0IF_(else) {return {
+		plus_multiplies_f(w.real(), x.real(), y)
+	,	plus_multiplies_f(w.imag(), x.imag(), y)
+	};}
 }
 template <class V>
 XTAL_DEF_(return,inline,let)
-accumulator(_std::complex<V> w, V x, _std::complex<V> y)
+plus_multiplies_f(_std::complex<V> const &w, V const &x, _std::complex<V> const &y)
 noexcept -> _std::complex<V>
 {
-	return {accumulator(w.real(), x, y.real()), accumulator(w.imag(), x, y.imag())};
-}
-
-template <class V>
-XTAL_DEF_(return,inline,let)
-accumulator(_std::complex<V> w, _std::complex<V> x, _std::complex<V> y)
-noexcept -> _std::complex<V>
-{
-	if constexpr (requires {fma(y, x, w);}) {
-		return fma(y, x, w);
-	}
-	else {
-		/*/
-		auto const z_re = accumulator(accumulator(w.real(), x.real(),y.real()), -x.imag(),y.imag());
-		auto const z_im = accumulator(accumulator(w.imag(), x.imag(),y.real()),  x.real(),y.imag());
-		return {z_re, z_im};
-		/*/
-		return y*x + w;
-		/***/
-	}
+	XTAL_IF0
+	XTAL_0IF XTAL_TRY_(to) (fma(y, x, w))
+	XTAL_0IF_(else) {return {
+		plus_multiplies_f(w.real(), x, y.real())
+	,	plus_multiplies_f(w.imag(), x, y.imag())
+	};}
 }
 
 XTAL_DEF_(return,inline,let)
-accumulator(auto &&w, auto &&x, auto &&y, auto &&...ys)
+plus_multiplies_f(auto &&w, auto &&x, auto &&y, auto &&...ys)
 noexcept -> auto
 requires (1 <= sizeof...(ys))
 {
-	return accumulator(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
+	return plus_multiplies_f(XTAL_REF_(w), XTAL_REF_(x), (XTAL_REF_(y) *...* XTAL_REF_(ys)));
 }
 
 
@@ -479,7 +467,7 @@ struct plus_multiplies
 	operator() (W &&w, Xs &&...xs) const
 	noexcept -> auto
 	{
-		return accumulator(XTAL_REF_(w), XTAL_REF_(xs)...);
+		return plus_multiplies_f(XTAL_REF_(w), XTAL_REF_(xs)...);
 	}
 
 };
@@ -491,7 +479,7 @@ struct plus_multiplies<void>
 	operator() (auto &&w, auto &&...xs) const
 	noexcept -> auto
 	{
-		return accumulator(XTAL_REF_(w), XTAL_REF_(xs)...);
+		return plus_multiplies_f(XTAL_REF_(w), XTAL_REF_(xs)...);
 	}
 
 };

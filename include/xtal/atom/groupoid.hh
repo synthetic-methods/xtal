@@ -182,8 +182,8 @@ struct groupoid
 				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),    v, v);}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), _1*v, v);}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies_f(XTAL_MOV_(u),    v, v);}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies_f(XTAL_MOV_(u), _1*v, v);}
 			});
 
 			return u;
@@ -201,8 +201,8 @@ struct groupoid
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0
-				XTAL_0IF (0 < N_sgn) {u = _xtd::accumulator(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
-				XTAL_0IF (N_sgn < 0) {u = _xtd::accumulator(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
+				XTAL_0IF (0 < N_sgn) {u = _xtd::plus_multiplies_f(XTAL_MOV_(u),    get<i>(s), get<i>(t));}
+				XTAL_0IF (N_sgn < 0) {u = _xtd::plus_multiplies_f(XTAL_MOV_(u), _1*get<i>(s), get<i>(t));}
 			});
 			
 			return u;

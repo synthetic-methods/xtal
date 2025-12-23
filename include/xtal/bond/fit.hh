@@ -427,7 +427,7 @@ public:
 			u *= _std::numbers::ln2_v<alpha_type>/diplo_f(M, alpha_1);
 
 			auto v = alpha_1;
-			for (auto i=N; i; --i) {v = _xtd::accumulator(alpha_1, v, u/i);}
+			for (auto i=N; i; --i) {v = _xtd::plus_multiplies_f(alpha_1, v, u/i);}
 			for (auto i=M; i; --i) {v *= v;}
 
 			v *= diplo_f(n, alpha_1);

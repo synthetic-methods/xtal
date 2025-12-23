@@ -155,10 +155,11 @@ template <         class ...Ts>  concept    simplex_q        	= (some_q<Ts...> a
 template <         class ...Ts>  concept    numeric_q        	= (some_q<Ts...> and...and _retail::            numeric_q<Ts>);
 template <         class ...Ts>  concept     number_q        	=  numeric_variable_q<Ts...>;
 
-template <         class ...Ts>	concept   intercedent_q	      = (some_q<Ts...> and...and _retail::  intercedent_q<based_t<Ts>>);
-template <         class ...Ts>	concept    antecedent_q	      = (some_q<Ts...> and...and _retail::   antecedent_q<based_t<Ts>>);
+template <         class ...Ts>	concept 	       intercedent_q = (some_q<Ts...> and...and _retail::  intercedent_q<based_t<Ts>>);
+template <         class ...Ts>	concept 	        antecedent_q = (some_q<Ts...> and...and _retail::   antecedent_q<based_t<Ts>>);
 using _retail::    precedent_s;
 using _retail::    succedent_s;
+template <         class ...Ts>	concept 	           instant_q = (some_q<Ts...> and...and _retail::      instant_q<based_t<Ts>>);
 
 
 ////////////////////////////////////////////////////////////////////////////////
