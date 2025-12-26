@@ -40,7 +40,7 @@ struct buffer<U_data *>
 template <vector_q A_data> requires _detail::  elastic_fixed_q<A_data>
 struct buffer<A_data>
 {
-	using U_data = fixed_u<A_data>;
+	using U_data = typename fixed<A_data>::value_type;
 
 	using type = bond::compose_s<_std::vector<U_data>, bond::tag<buffer_t>>;
 
@@ -48,7 +48,7 @@ struct buffer<A_data>
 template <vector_q A_data> requires _detail::inelastic_fixed_q<A_data>
 struct buffer<A_data>
 {
-	using U_data = fixed_u<A_data>;
+	using U_data = typename fixed<A_data>::value_type;
 	using T_data = typename _detail::aligned<U_data>::type;
 	static auto constexpr N_data = fixed<A_data>::extent();
 
@@ -217,12 +217,12 @@ struct buffer<A_data>
 	//	XTAL_NEW_(delete) (homotype, noexcept=default)
 		XTAL_NEW_(create) (homotype, noexcept=default)
 	
-		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and in_n<_xtd::trivially_copyable<value_type>> = default;
-		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and in_n<_xtd::trivially_movable <value_type>> = default;
+		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and in_v<_xtd::trivially_copyable<value_type>> = default;
+		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and in_v<_xtd::trivially_movable <value_type>> = default;
 
 		XTAL_NEW_(implicit)    homotype(_std::initializer_list<value_type> t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>)                                                                                              : homotype(                 t.begin() ,                  t.end() ) {}
-		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and un_n<_xtd::trivially_copyable<value_type>> : homotype(                 t.begin() ,                  t.end() ) {}
-		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and un_n<_xtd::trivially_movable <value_type>> : homotype(_detail::move_it(t.begin()), _detail::move_it(t.end())) {}
+		XTAL_NEW_(implicit)    homotype(homotype                   const  &t) noexcept(_std::is_nothrow_copy_constructible_v<value_type>) requires _std::copy_constructible<value_type> and un_v<_xtd::trivially_copyable<value_type>> : homotype(                 t.begin() ,                  t.end() ) {}
+		XTAL_NEW_(implicit)    homotype(homotype                         &&t) noexcept(_std::is_nothrow_move_constructible_v<value_type>) requires _std::move_constructible<value_type> and un_v<_xtd::trivially_movable <value_type>> : homotype(_detail::move_it(t.begin()), _detail::move_it(t.end())) {}
 
 		XTAL_DEF_(inline,let)    assign(_std::initializer_list<value_type> t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}
 		XTAL_DEF_(inline,let)    assign(homotype                   const  &t) noexcept(_std::is_nothrow_copy_assignable_v   <value_type>) -> void {assign(                 t.begin() ,                  t.end() );}

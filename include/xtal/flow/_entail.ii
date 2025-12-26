@@ -53,14 +53,14 @@ struct   packed
 				return bond::repack_f<packed_t>(S_::self().pack(), bond::pack_f(XTAL_REF_(w)));
 			}
 		}
-		template <class U> requires un_n<packed_q<U>>
+		template <class U> requires un_v<packed_q<U>>
 		XTAL_DEF_(return,inline,met)
 		operator, (U &&u, subtype      &&s)
 		noexcept -> auto
 		{
 			return (packed_f(XTAL_REF_(u)), XTAL_MOV_(s).self());
 		}
-		template <class U> requires un_n<packed_q<U>>
+		template <class U> requires un_v<packed_q<U>>
 		XTAL_DEF_(return,inline,met)
 		operator, (U &&u, subtype const &s)
 		noexcept -> auto

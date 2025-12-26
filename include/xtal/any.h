@@ -245,7 +245,8 @@ XTAL_ENV_(push)
 #define XTAL_ALL_(...)                       XTAL_NOM_(decltype(__VA_ARGS__))      ///< Reveals the nominal type of a value.
 #define XTAL_ANY_(...)                           ::std::declval<__VA_ARGS__>()     ///< Yields the existential value for a type.
 #define XTAL_MOV_(...)                           ::std::   move(__VA_ARGS__)       ///< Moves    a value.
-#define XTAL_REF_(...)    static_cast<decltype(__VA_ARGS__) &&>(__VA_ARGS__)       ///< Forwards a value.
+#define XTAL_REF_(...)    static_cast<decltype (__VA_ARGS__)&&>(__VA_ARGS__)       ///< Forwards a value.
+#define XTAL_VAL_(...)    static_cast<XTAL_ALL_(__VA_ARGS__)  >(__VA_ARGS__)       ///< Forwards a value.
 #ifndef XTAL_DOC
 template <class X, class Y> concept XTAL_NYM_(generalized) = ::std::derived_from<XTAL_NOM_(Y), XTAL_NOM_(X)> and not ::std::same_as<XTAL_NOM_(X), XTAL_NOM_(Y)>;
 template <class X, class Y> concept XTAL_NYM_(specialized) = ::std::derived_from<XTAL_NOM_(X), XTAL_NOM_(Y)> and not ::std::same_as<XTAL_NOM_(Y), XTAL_NOM_(X)>;

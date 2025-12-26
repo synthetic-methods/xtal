@@ -41,10 +41,10 @@ struct factory
 		auto constexpr N  = sizeof...(xs);
 		XTAL_IF0
 		XTAL_0IF (same_q<_std::identity, F>)        {return make<[] XTAL_1FN_(call) (objective_f)>(XTAL_REF_(xs) ...);}
-		XTAL_0IF (in_n<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};}
-		XTAL_0IF (un_n<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};}
-		XTAL_0IF (in_n<automorphism_p<F, X_>> and different_q<Xs...>) {return T_<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};}
-		XTAL_0IF (un_n<automorphism_p<F, X_>> and different_q<Xs...>) {return T_<return_t<F, Xs>...>{f(XTAL_REF_(xs))...};}
+		XTAL_0IF (in_v<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{ (XTAL_REF_(xs))...};}
+		XTAL_0IF (un_v<automorphism_p<F, X_>> and      same_q<Xs...>) {return T_<return_t<F, X_>[N]>{f(XTAL_REF_(xs))...};}
+		XTAL_0IF (in_v<automorphism_p<F, X_>> and different_q<Xs...>) {return T_<return_t<F, Xs>...>{ (XTAL_REF_(xs))...};}
+		XTAL_0IF (un_v<automorphism_p<F, X_>> and different_q<Xs...>) {return T_<return_t<F, Xs>...>{f(XTAL_REF_(xs))...};}
 	}
 
 };
@@ -114,8 +114,8 @@ struct aligned<T>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T> concept inelastic_fixed_q = un_n<fixed<T>::extent()&XTAL_SYS_(extent, fixed_u<T>), XTAL_SYS_(extent, fixed_u<T>)>;
-template <class T> concept   elastic_fixed_q = in_n<fixed<T>::extent()&XTAL_SYS_(extent, fixed_u<T>), XTAL_SYS_(extent, fixed_u<T>)>;
+template <class T> concept inelastic_fixed_q = un_v<fixed<T>::extent()&XTAL_SYS_(extent, typename fixed<T>::value_type), XTAL_SYS_(extent, typename fixed<T>::value_type)>;
+template <class T> concept   elastic_fixed_q = in_v<fixed<T>::extent()&XTAL_SYS_(extent, typename fixed<T>::value_type), XTAL_SYS_(extent, typename fixed<T>::value_type)>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

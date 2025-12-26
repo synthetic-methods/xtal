@@ -47,7 +47,7 @@ struct lop
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&o, auto &&...oo)
 		noexcept -> auto
-		requires in_n<requires {supertype::template method_f<Is...>(o);}>
+		requires in_v<requires {supertype::template method_f<Is...>(o);}>
 		{
 			return S::template method_f<Is...>(supertype::template method_f<Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
 		}

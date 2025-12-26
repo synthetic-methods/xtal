@@ -96,7 +96,7 @@ struct refine
 		using S_::S_;
 
 	};
-	template <class S> requires iterable_q<S> and un_n<iterated_q<S>> and incomplete_q<typename S::head_type>
+	template <class S> requires iterable_q<S> and un_v<iterated_q<S>> and incomplete_q<typename S::head_type>
 	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
 	{
 		static_assert(any_q<S>);
@@ -106,7 +106,7 @@ struct refine
 		using S_::S_;
 
 	};
-	template <class S> requires iterable_q<S> and un_n<iterated_q<S>> and   complete_q<typename S::head_type>
+	template <class S> requires iterable_q<S> and un_v<iterated_q<S>> and   complete_q<typename S::head_type>
 	class subtype<S> : public bond::compose_s<S, superkind>, public _xtd::ranges::view_interface<T>
 	{
 		static_assert(any_q<S>);

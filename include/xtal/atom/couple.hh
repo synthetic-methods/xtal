@@ -84,13 +84,13 @@ struct couple
  		XTAL_NEW_(explicit)
 		homotype(bool  const u, _std::in_place_t)
 		noexcept
-		requires in_n<size, 2>
+		requires in_v<size, 2>
 		:	S_{versus_f<0>(u), versus_f<1>(u)}
 		{}
 		XTAL_NEW_(explicit)
 		homotype(U_arg const u, _std::in_place_t)
  		noexcept
-		requires in_n<size, 2>
+		requires in_v<size, 2>
 		:	S_{versus_f<0>(u), versus_f<1>(u)}
  		{
  		}

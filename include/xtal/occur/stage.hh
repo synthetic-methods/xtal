@@ -68,7 +68,7 @@ struct stage
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
 				flux(same_q<T_> auto &&s, auto &&...oo)
 				noexcept -> signed
@@ -78,7 +78,7 @@ struct stage
 					(void) R_::self().template flux<+1>(u_table[0b11U&s.head()]);
 					return R_::       template flux<N_ion>(XTAL_REF_(s), XTAL_REF_(oo)...);
 				}
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				flux(same_q<flow::assign_s<T_>> auto &&t, same_q<U_value> auto &&o, auto &&...oo)
 				noexcept -> signed

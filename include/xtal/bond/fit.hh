@@ -39,7 +39,7 @@ struct fit_recognize<0x1>
 	template <int N_pow, class _=void> struct   expound;
 	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80U> {};
 	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x51U> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
+	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 template <>
@@ -57,7 +57,7 @@ struct fit_recognize<0x2>
 	template <int N_pow, class _=void> struct   expound;
 	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x8000U> {};
 	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4CE3U> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
+	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 #if 0x20 <= XTAL_SYS_(CPU)
@@ -90,7 +90,7 @@ struct fit_recognize<0x4>
 	template <int N_pow, class _=void> struct   expound;
 	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000U> {};
 	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4546B3DBU> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
+	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 #endif
@@ -124,7 +124,7 @@ struct fit_recognize<0x8>
 	template <int N_pow, class _=void> struct   expound;
 	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000'00000000U> {};
 	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x383D9170'B85FF80BU> {};
-	template <int N_pow>  static constexpr auto expound_n = expound<N_pow, void>{}();
+	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 #endif
@@ -236,7 +236,7 @@ public:
 		//\
 		if constexpr (complete_q<typename S_::template expound<N>>) {
 		if constexpr (N == 2 or N == 3) {
-			return S_::template expound_n<N>%u|(u == 0)|(u == 1);
+			return S_::template expound_v<N>%u|(u == 0)|(u == 1);
 		}
 		else {
 			return 1U;
@@ -362,13 +362,13 @@ public:
 	}
 
 	XTAL_DEF_(return,inline,set)
-	aphex_f(real_q auto &&o_re, real_q auto &&o_im)
+	aphex_f(simplex_q auto &&o_re, simplex_q auto &&o_im)
 	noexcept -> aphex_type
 	{
 		return {alpha_f(XTAL_REF_(o_re)), alpha_f(XTAL_REF_(o_im))};
 	}
 	XTAL_DEF_(return,inline,set)
-	aphex_f(real_q auto &&o_re)
+	aphex_f(simplex_q auto &&o_re)
 	noexcept -> aphex_type
 	{
 		return {alpha_f(XTAL_REF_(o_re))};
@@ -742,7 +742,7 @@ public:
 */
 template <class ...Ts>
 struct   fit
-:	complete_t<fit_realize<sizeof(unstruct_u<Ts...>)>>
+:	complete_t<fit_realize<sizeof(unstruct_t<Ts...>)>>
 {
 	/*!
 	\brief  	Performs `value_type` substitution.
@@ -789,7 +789,7 @@ struct fit<T_<U, _s...>> : fit<U>
 /*!
 \brief  	Performs `value_type` substitution using the provided `template <class, auto  ...>`, via the member-`subtype`.
 */
-template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_n<_s...>
+template <template <class, auto  ...> class T_, class U, auto  ..._s> requires some_v<_s...>
 struct fit<T_<U, _s...>> : fit<U>
 {
 	template <class V>

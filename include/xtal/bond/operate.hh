@@ -53,7 +53,7 @@ struct operate : Fs...
 	requires requires {operate{}();}
 	{
 		using U = based_t<T>;
-		using V = fluid_valued_u<U>;
+		using V = typename fluid<U>::value_type;
 		if constexpr (un_q<U, V> and complete_q<decltype(object<V>())>) {
 			return subject<V>();
 		}

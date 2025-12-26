@@ -265,7 +265,7 @@ struct defer_field
 		{
 			static_assert(same_q<bool, U> or requires {S_::cardinality();});
 			XTAL_IF0
-			XTAL_0IF (in_n<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
+			XTAL_0IF (in_v<typename S_::pack_size{}(), 0> and same_q<bool, U>) {
 				return 2;
 			}
 			XTAL_0IF (requires {S_::cardinality();}) {
