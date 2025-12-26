@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./lop.hh"// testing...
+#include "./left.hh"// testing...
 
 
 
@@ -13,7 +13,7 @@ namespace xtal::process::math::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("lop")
+TAG_("left")
 {
 	TRY_("task")
 	{

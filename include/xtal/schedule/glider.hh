@@ -50,7 +50,7 @@ struct glider
 			private:// ACCESS
 				using V_limits = _std::numeric_limits<delay_type>;
 				using U_layout = typename R_::event_type::layout_type;
-				using U_hold =             valued_u<U_layout>;
+				using U_hold = typename fluid<U_layout>::value_type;
 				using U_ramp = atom::differential_t<U_layout>;
 				using E_hold = flow::cue_s<U_hold>;
 				using E_ramp = flow::cue_s<U_ramp>;
@@ -98,7 +98,7 @@ struct glider
 				\brief   Enqueues the given event.
 				\returns `0`.
 				*/
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				fuse(in_q<E_hold, E_ramp, event_type> auto &&o)
 				noexcept -> signed
@@ -121,7 +121,7 @@ struct glider
 				/*!
 				\brief   Updates the head of the signal.
 				*/
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				flux(same_q<U_hold> auto &&o, auto &&...oo)
 				noexcept -> signed

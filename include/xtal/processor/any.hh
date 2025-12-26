@@ -87,7 +87,7 @@ struct define
 				\brief  	Renders the given `occur::review`, split into subviews if required.
 				\brief  	Invokes the super-method `pump` to handle chunking and event dispatch.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
@@ -111,13 +111,13 @@ struct define
 				/*!
 				\brief  	Renders the subslice of `ren` designated by `rev` and `cur`.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
 					using          V_state = XTAL_ALL_(rev.view());
-					auto constexpr N_share = bond::seek_truth_n<_detail::recollection_p<Xs, V_state>...>;
+					auto constexpr N_share = bond::seek_truth_v<_detail::recollection_p<Xs, V_state>...>;
 					if (1 == R_::template flux_unrest<N_ion>(ordinal_constant_t<N_share>{}, XTAL_REF_(rev), XTAL_REF_(cur))) {
 						return 1;
 					}
@@ -269,8 +269,8 @@ struct defer<U>
 		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>) {return           XTAL_REF_(y) ;}
-			XTAL_0IF (some_n<Is...>) {return derange_f(XTAL_REF_(y));}
+			XTAL_0IF (none_v<Is...>) {return           XTAL_REF_(y) ;}
+			XTAL_0IF (some_v<Is...>) {return derange_f(XTAL_REF_(y));}
 		}
 		
 

@@ -12,8 +12,8 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(pack_size_n<_std::tuple<            >> == 0);
-static_assert(pack_size_n<_std::array<null_type, 0>> == 0);
+static_assert(pack_size_v<_std::tuple<            >> == 0);
+static_assert(pack_size_v<_std::array<null_type, 0>> == 0);
 
 static_assert(pack_size_q<_std::tuple<            >>);
 static_assert(pack_size_q<_std::array<null_type, 0>>);

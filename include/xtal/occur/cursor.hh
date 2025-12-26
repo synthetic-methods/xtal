@@ -102,7 +102,7 @@ struct cursor<T>
 		\brief  	Updates the incoming position, enforcing `step`-ordering on `efflux` by `assert`ion.
 		\brief  	Unrecognized `cursor_q` are incorporated by arithmetic assigment.
 		*/
-		template <signed N_ion> requires in_n<N_ion, -1>
+		template <signed N_ion> requires in_v<N_ion, -1>
 		XTAL_DEF_(return,inline,let)
 		fuse(cursor_q auto &&t)
 		noexcept -> signed
@@ -117,7 +117,7 @@ struct cursor<T>
 				return 0;
 			}
 		}
-		template <signed N_ion> requires in_n<N_ion, +1>
+		template <signed N_ion> requires in_v<N_ion, +1>
 		XTAL_DEF_(return,let)
 		fuse(cursor_q auto &&t)
 		noexcept -> signed

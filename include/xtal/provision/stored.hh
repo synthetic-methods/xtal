@@ -63,7 +63,7 @@ public:
 	template <class S>
 	class subtype;
 
-	template <class S> requires (0 != N and M != N) and cardinal_q<valued_u<A>>
+	template <class S> requires (0 != N and M != N) and cardinal_q<typename fluid<A>::value_type>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -78,7 +78,7 @@ public:
 		using store_t = atom:: block_t<U[N]>;
 
 	};
-	template <class S> requires (0 != N and M != N) and  ordinal_q<valued_u<A>>
+	template <class S> requires (0 != N and M != N) and  ordinal_q<typename fluid<A>::value_type>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
@@ -93,7 +93,7 @@ public:
 		using store_t = atom::buffer_t<U[N]>;
 
 	};
-	template <class S> requires (0 == N or  M == N) and  ordinal_q<valued_u<A>>
+	template <class S> requires (0 == N or  M == N) and  ordinal_q<typename fluid<A>::value_type>
 	class subtype<S> : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;

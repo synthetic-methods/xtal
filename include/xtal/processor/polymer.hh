@@ -197,7 +197,7 @@ public:
 				If no voice exists for the given key,
 				the new instance is duplicated from `lead`.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(U_key k_, U_stage o, auto &&...oo)
 				noexcept -> signed
@@ -224,7 +224,7 @@ public:
 
 				Variadic expansion can be achieved by prefixing the render-tuple with `key_s`.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
 				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed

@@ -95,7 +95,7 @@ struct define
 				return self().template fuse<0>(XTAL_REF_(o));
 			}
 		}
-		template <signed N_ion> requires in_n<N_ion, 0>
+		template <signed N_ion> requires in_v<N_ion, 0>
 		XTAL_DEF_(return,inline,let)
 		fuse(same_q<T> auto &&o)
 		noexcept -> signed
@@ -300,7 +300,7 @@ struct defer
 		{
 			return S_::template fuse<N_ion>(XTAL_REF_(o));
 		}
-		template <signed N_ion> requires in_n<N_ion, 0>
+		template <signed N_ion> requires in_v<N_ion, 0>
 		XTAL_DEF_(return,inline,let)
 		fuse(same_q<U> auto &&o)
 		noexcept -> signed

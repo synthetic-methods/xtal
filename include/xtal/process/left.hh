@@ -12,16 +12,18 @@ namespace xtal::process::math
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief   Maps the first argument with `link_t<As...>`,
-         passing the result and remaining arguments to the superclass..
+         passing the result and remaining arguments to the superclass.
+
+\todo    Incorporate either argument-offset or arguments-list.
 */
 template <typename ...As>
-struct  lop;
+struct  left;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-struct lop
+struct left
 {
 	using supertype = link_t<As...>;
 	using superkind = defer<supertype>;
@@ -38,18 +40,22 @@ struct lop
 
 		XTAL_FX2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
-		method  (auto &&o, auto &&...oo),
+		method  (auto &&x, auto &&...oo),
 		noexcept -> auto
 		{
-			return S::template method  <Is...>(S_::head().template method  <Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
+			auto const y = S_::head().template method  <Is...>(XTAL_REF_(x));
+			XTAL_IF0
+			XTAL_0IF XTAL_TRY_(to) (S::template method  <Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))
+			XTAL_0IF XTAL_TRY_(to) (S::template method_f<Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))
 		})
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
 		method_f(auto &&o, auto &&...oo)
 		noexcept -> auto
-		requires in_n<requires {supertype::template method_f<Is...>(o);}>
+		requires in_v<requires {supertype::template method_f<Is...>(o);}>
 		{
-			return S::template method_f<Is...>(supertype::template method_f<Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
+			return S::template method_f<Is...>(supertype::
+				template method_f<Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
 		}
 
 	};

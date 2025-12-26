@@ -80,8 +80,8 @@ struct groupoid
 		*/
 		template <class U, auto f>
 		XTAL_DEF_(set) zip_value_q = _std::conditional_t<common_q<Us...>
-			,	constant_t<un_n<0, requires (U_ u_, U u) {f(u_, u);}   >>
-			,	constant_t<un_n<0, requires (Us u_, U u) {f(u_, u);}...>>
+			,	constant_t<un_v<0, requires (U_ u_, U u) {f(u_, u);}   >>
+			,	constant_t<un_v<0, requires (Us u_, U u) {f(u_, u);}...>>
 		>{}();
 
 		/*!
@@ -173,7 +173,7 @@ struct groupoid
 		XTAL_DEF_(return,inline,let)
 		product(auto u) const
 		noexcept -> auto
-		requires in_n<requires (value_type v) {v += u;}>
+		requires in_v<requires (value_type v) {v += u;}>
 		{
 			auto &s = self();
 			
@@ -192,7 +192,7 @@ struct groupoid
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto
-		requires un_n<requires (value_type v) {v += t;}> and fixed_shaped_q<decltype(t), S_>
+		requires un_v<requires (value_type v) {v += t;}> and fixed_shaped_q<decltype(t), S_>
 		{
 			auto &s = self();
 			value_type u{0};
@@ -286,18 +286,18 @@ struct groupoid
 		template <class W> XTAL_DEF_(return,inline,let)  sub2_(W const &w) const noexcept {return zip_from<[] (auto const &x, auto const &y) XTAL_0FN_(to) (x - y)>(self(), w);}
 
 	public:
-		template <class U> XTAL_DEF_(return,inline,met) operator * (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return s. mul2_(u);}
-		template <class U> XTAL_DEF_(return,inline,met) operator / (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return s._div2 (u);}
-		template <class U> XTAL_DEF_(return,inline,met) operator + (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return s. add2_(u);}
-		template <class U> XTAL_DEF_(return,inline,met) operator - (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return s._sub2 (u);}
-		template <class U> XTAL_DEF_(return,inline,let) operator * (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul2_(u);}
-		template <class U> XTAL_DEF_(return,inline,let) operator / (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div2_(u);}
-		template <class U> XTAL_DEF_(return,inline,let) operator + (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add2_(u);}
-		template <class U> XTAL_DEF_(return,inline,let) operator - (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub2_(u);}
-		template <class U> XTAL_DEF_(mutate,inline,get) operator *=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul1_(u);}
-		template <class U> XTAL_DEF_(mutate,inline,get) operator /=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div1_(u);}
-		template <class U> XTAL_DEF_(mutate,inline,get) operator +=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add1_(u);}
-		template <class U> XTAL_DEF_(mutate,inline,get) operator -=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_n<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub1_(u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator * (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return s. mul2_(u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator / (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return s._div2 (u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator + (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return s. add2_(u);}
+		template <class U> XTAL_DEF_(return,inline,met) operator - (U const &u, homotype const &s) noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return s._sub2 (u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator * (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator / (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator + (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add2_(u);}
+		template <class U> XTAL_DEF_(return,inline,let) operator - (U const &u)              const noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub2_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator *=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ *= u)>> {return    mul1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator /=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ /= u)>> {return    div1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator +=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ += u)>> {return    add1_(u);}
+		template <class U> XTAL_DEF_(mutate,inline,get) operator -=(U const &u)                    noexcept requires bond::tab_preference_p<T, U> and in_v<zip_value_q<U, [] (auto &u_, auto const &u) XTAL_0FN_(if) (u_ -= u)>> {return    sub1_(u);}
 
 	};
 	using type = bond::derive_t<homotype>;

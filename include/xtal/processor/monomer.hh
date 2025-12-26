@@ -161,7 +161,7 @@ struct monomer
 				/*!
 				\brief  	Refreshes the current state when the `arguments` have changed.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
@@ -183,7 +183,7 @@ struct monomer
 			using U_store  = typename S_::template store_t<Y_return>;
 			using U_state  = typename S_::template state_t<U_store >;
 		
-			static constexpr int N_share = bond::seek_truth_n<_detail::recollection_p<Xs, U_state>...>;
+			static constexpr int N_share = bond::seek_truth_v<_detail::recollection_p<Xs, U_state>...>;
 			
 			using superkind = bond::compose<provision::stowed<U_state, U_store>, F_<Xs...>>;
 
@@ -234,7 +234,7 @@ struct monomer
 				\note   	If `store().resize()` in unsupported,
 				resizing is effectively managed by the attached `occur::resize` instance.
 				*/
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,let)
 				fuse(occur::resize_q auto &&o)
 				noexcept -> signed
@@ -257,7 +257,7 @@ struct monomer
 				`1` if the cursor is current and the outcome has already been rendered,
 				otherwise the system is inconsistent and checked by `assert`ion.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
@@ -271,7 +271,7 @@ struct monomer
 				All `arguments` are rendered internally unless a compatible `rvalue` is found,
 				in which case the `review` will be passed upstream.
 				*/
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
@@ -301,7 +301,7 @@ struct monomer
 				XTAL_DEF_(return,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
-				requires in_n<1, occur::resize_q<decltype(oo)>...>
+				requires in_v<1, occur::resize_q<decltype(oo)>...>
 				{
 					using I_head = ordinal_constant_t<N_share>;
 					using I_path = ordinal_constant_t<-1>;

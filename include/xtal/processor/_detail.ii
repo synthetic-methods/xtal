@@ -33,7 +33,7 @@ struct repetitive
 	using type = _xtd::ranges::repeat_view<based_t<T>>;
 
 };
-template <iterable_q T> requires un_n<_xtd::ranges::sized_range<based_t<T>>>
+template <iterable_q T> requires un_v<_xtd::ranges::sized_range<based_t<T>>>
 struct repetitive<T>
 {
 	using type = based_t<T>;

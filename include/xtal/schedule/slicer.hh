@@ -79,7 +79,7 @@ struct slicer
 				
 				\returns `0` if enqueued, otherwise the forwarded result.
 				*/
-				template <signed N_ion>// requires in_n<N_ion, +1>
+				template <signed N_ion>// requires in_v<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				fuse(same_q<event_type> auto &&q)
 				noexcept -> signed

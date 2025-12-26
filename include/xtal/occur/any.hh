@@ -170,7 +170,7 @@ struct define
 				{
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,let)
 				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
@@ -246,17 +246,17 @@ struct define
 					class index
 					{
 						template <auto J>
-						static auto constexpr intend_n = same_q<typename T::body_type, size_type>?
+						static auto constexpr intend_v = same_q<typename T::body_type, size_type>?
 							(XTAL_ALL_(J)) T{static_cast<size_type>(J)}: J;
 						
 						template <auto J>
-						static auto constexpr extend_n = digested::template index<Is..., intend_n<J>>::point;
+						static auto constexpr extend_v = digested::template index<Is..., intend_v<J>>::point;
 						
 						template <auto ...Js>
 						static auto constexpr expand_f(bond::seek_t<Js...>)
 						noexcept -> auto
 						{
-							return _std::array{extend_n<Js>...};
+							return _std::array{extend_v<Js>...};
 						}
 					
 					public:
@@ -291,7 +291,7 @@ struct define
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
-				template <signed N_ion> requires in_n<N_ion, -1>
+				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,inline,let)
 				fuse(same_q<T> auto &&o)
 				noexcept -> signed
@@ -324,7 +324,7 @@ struct define
 				{
 					return R_::template fuse<N_ion>(XTAL_REF_(o));
 				}
-				template <signed N_ion> requires in_n<N_ion, +1>
+				template <signed N_ion> requires in_v<N_ion, +1>
 				XTAL_DEF_(return,inline,let)
 				fuse(same_q<T> auto &&o)
 				noexcept -> signed

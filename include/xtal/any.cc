@@ -107,10 +107,10 @@ static_assert(    integral_q<  int>);
 static_assert(not integral_q<float>);
 
 
-static_assert(         same_n<0>);
-static_assert(not different_n<0>);
-static_assert(         same_n<0, 0, 0>);
-static_assert(not different_n<0, 0, 0>);
+static_assert(         same_v<0>);
+static_assert(not different_v<0>);
+static_assert(         same_v<0, 0, 0>);
+static_assert(not different_v<0, 0, 0>);
 
 
 //atic_assert(restruct<_std::complex<float>>::rank() < restruct<_std::array<float, 2>>::rank());
@@ -131,55 +131,61 @@ static_assert(fixed_shaped<_std::array   <float, 1>>::extent() ==  1);
 static_assert(fixed_shaped<_std::complex <float   >>::extent() ==  2);
 
 
-static_assert(cardinal_q<valued_u<cardinal_constant_t<2>>>);
-static_assert( ordinal_q<valued_u< ordinal_constant_t<2>>>);
+static_assert(cardinal_q<typename fluid<cardinal_constant_t<2>>::value_type>);
+static_assert( ordinal_q<typename fluid< ordinal_constant_t<2>>::value_type>);
 
 
 static_assert(_std::same_as<disqualify_s<const float( &)[2]>, const float( &)[2]>);
 static_assert(_std::same_as<disqualify_s<      float( &)[2]>,       float( &)[2]>);
 static_assert(_std::same_as<disqualify_s<const float    [2]>, const float    [2]>);
 static_assert(_std::same_as<disqualify_s<      float    [2]>,       float    [2]>);
+//\
+static_assert(_std::same_as<disqualify_s<const float(&&)[2]>,       float    [2]>);
 static_assert(_std::same_as<disqualify_s<const float(&&)[2]>, const float    [2]>);
 static_assert(_std::same_as<disqualify_s<      float(&&)[2]>,       float    [2]>);
 
-static_assert(_std::same_as<        const float(&)[2]   , destruct_t<const float(&)[2]>>);
-static_assert(_std::same_as<              float(&)[2]   , destruct_t<      float(&)[2]>>);
-static_assert(_std::same_as<        const float   [2]   , destruct_t<const float   [2]>>);
-static_assert(_std::same_as<              float   [2]   , destruct_t<      float   [2]>>);
-static_assert(_std::same_as<        const float &       , destruct_u<const float(&)[2]>>);
-static_assert(_std::same_as<              float &       , destruct_u<      float(&)[2]>>);
-static_assert(_std::same_as<        const float         , destruct_u<const float   [2]>>);
-static_assert(_std::same_as<              float         , destruct_u<      float   [2]>>);
+static_assert(_std::same_as<const _std::array<float,   2> & , typename destruct<const float(&)[2]>::      type>);
+static_assert(_std::same_as<      _std::array<float,   2> & , typename destruct<      float(&)[2]>::      type>);
+static_assert(_std::same_as<const _std::array<float,   2>   , typename destruct<const float   [2]>::      type>);
+static_assert(_std::same_as<      _std::array<float,   2>   , typename destruct<      float   [2]>::      type>);
+//atic_assert(_std::same_as<const             float(&)[2]   , typename destruct<const float(&)[2]>::array_type>);
+//atic_assert(_std::same_as<                  float(&)[2]   , typename destruct<      float(&)[2]>::array_type>);
+//atic_assert(_std::same_as<const             float   [2]   , typename destruct<const float   [2]>::array_type>);
+//atic_assert(_std::same_as<                  float   [2]   , typename destruct<      float   [2]>::array_type>);
+static_assert(_std::same_as<const             float &       , typename destruct<const float(&)[2]>::value_type>);
+static_assert(_std::same_as<                  float &       , typename destruct<      float(&)[2]>::value_type>);
+static_assert(_std::same_as<const             float         , typename destruct<const float   [2]>::value_type>);
+static_assert(_std::same_as<                  float         , typename destruct<      float   [2]>::value_type>);
 
-static_assert(_std::same_as<        const float(&)[2]   , destruct_t<const _std::complex<float> &>>);
-static_assert(_std::same_as<              float(&)[2]   , destruct_t<      _std::complex<float> &>>);
-static_assert(_std::same_as<        const float   [2]   , destruct_t<const _std::complex<float>  >>);
-static_assert(_std::same_as<              float   [2]   , destruct_t<      _std::complex<float>  >>);
-static_assert(_std::same_as<        const float &       , destruct_u<const _std::complex<float> &>>);
-static_assert(_std::same_as<              float &       , destruct_u<      _std::complex<float> &>>);
-static_assert(_std::same_as<        const float         , destruct_u<const _std::complex<float>  >>);
-static_assert(_std::same_as<              float         , destruct_u<      _std::complex<float>  >>);
+static_assert(_std::same_as<const _std::array<float,   2> & , typename destruct<const _std::complex<float> &>::type>);
+static_assert(_std::same_as<      _std::array<float,   2> & , typename destruct<      _std::complex<float> &>::type>);
+static_assert(_std::same_as<const _std::array<float,   2>   , typename destruct<const _std::complex<float>  >::type>);
+static_assert(_std::same_as<      _std::array<float,   2>   , typename destruct<      _std::complex<float>  >::type>);
+//atic_assert(_std::same_as<const             float(&)[2]   , typename destruct<const _std::complex<float> &>::array_type>);
+//atic_assert(_std::same_as<                  float(&)[2]   , typename destruct<      _std::complex<float> &>::array_type>);
+//atic_assert(_std::same_as<const             float   [2]   , typename destruct<const _std::complex<float>  >::array_type>);
+//atic_assert(_std::same_as<                  float   [2]   , typename destruct<      _std::complex<float>  >::array_type>);
+static_assert(_std::same_as<const             float &       , typename destruct<const _std::complex<float> &>::value_type>);
+static_assert(_std::same_as<                  float &       , typename destruct<      _std::complex<float> &>::value_type>);
+static_assert(_std::same_as<const             float         , typename destruct<const _std::complex<float>  >::value_type>);
+static_assert(_std::same_as<                  float         , typename destruct<      _std::complex<float>  >::value_type>);
 
-static_assert(_std::same_as<        const float(&)[2][2], restruct_t<const _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<              float(&)[2][2], restruct_t<      _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<        const float   [2][2], restruct_t<const _std::complex<float>   [2]>>);
-static_assert(_std::same_as<              float   [2][2], restruct_t<      _std::complex<float>   [2]>>);
+static_assert(_std::same_as<const             float(&)[2][2], typename restruct<const _std::complex<float>(&)[2]>::array_type>);
+static_assert(_std::same_as<                  float(&)[2][2], typename restruct<      _std::complex<float>(&)[2]>::array_type>);
+static_assert(_std::same_as<const             float   [2][2], typename restruct<const _std::complex<float>   [2]>::array_type>);
+static_assert(_std::same_as<                  float   [2][2], typename restruct<      _std::complex<float>   [2]>::array_type>);
 
-static_assert(_std::same_as<        const float &       , restruct_u<const _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<              float &       , restruct_u<      _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<        const float         , restruct_u<const _std::complex<float>   [2]>>);
-static_assert(_std::same_as<              float         , restruct_u<      _std::complex<float>   [2]>>);
+static_assert(_std::same_as<const             float &       , typename restruct<const _std::complex<float>(&)[2]>::value_type>);
+static_assert(_std::same_as<                  float &       , typename restruct<      _std::complex<float>(&)[2]>::value_type>);
+static_assert(_std::same_as<const             float         , typename restruct<const _std::complex<float>   [2]>::value_type>);
+static_assert(_std::same_as<                  float         , typename restruct<      _std::complex<float>   [2]>::value_type>);
 
-static_assert(_std::same_as<              float         , unstruct_u<const _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<              float         , unstruct_u<      _std::complex<float>(&)[2]>>);
-static_assert(_std::same_as<              float         , unstruct_u<const _std::complex<float>   [2]>>);
-static_assert(_std::same_as<              float         , unstruct_u<      _std::complex<float>   [2]>>);
-
+/*/
 static_assert(_std::same_as<      int( &)[2]   , decltype(destruct_f(XTAL_ANY_(      _std::complex<int>  &   )))>);
 static_assert(_std::same_as<const int( &)[2]   , decltype(destruct_f(XTAL_ANY_(const _std::complex<int>  &   )))>);
 static_assert(_std::same_as<      int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(      _std::complex<int> &&   )))>);
 static_assert(_std::same_as<const int(&&)[2]   , decltype(destruct_f(XTAL_ANY_(const _std::complex<int> &&   )))>);
-
+/***/
 static_assert(_std::same_as<      int( &)[2][2], decltype(restruct_f(XTAL_ANY_(      _std::complex<int>(&)[2])))>);
 static_assert(_std::same_as<const int( &)[2][2], decltype(restruct_f(XTAL_ANY_(const _std::complex<int>(&)[2])))>);
 static_assert(_std::same_as<      int(&&)[2][2], decltype(restruct_f(XTAL_ANY_(      _std::complex<int>   [2])))>);

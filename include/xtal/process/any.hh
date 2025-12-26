@@ -79,23 +79,23 @@ struct define
 		XTAL_DEF_(return,inline,let)
 		digress(auto &&...xs)
 		noexcept -> decltype(auto)
-			requires  none_n<Is...> and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
-			or        some_n<Is...> and requires (T       &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
+			requires  none_v<Is...> and requires (T       &t) {t.         method       (XTAL_REF_(xs)...);}
+			or        some_v<Is...> and requires (T       &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>)               {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>)               {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_v<Is...>)               {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_v<Is...>)               {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 		template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		digress(auto &&...xs) const
 		noexcept -> decltype(auto)
-			requires  none_n<Is...> and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
-			or        some_n<Is...> and requires (T const &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
+			requires  none_v<Is...> and requires (T const &t) {t.         method       (XTAL_REF_(xs)...);}
+			or        some_v<Is...> and requires (T const &t) {t.template method<Is...>(XTAL_REF_(xs)...);}
 		{
 			XTAL_IF0
-			XTAL_0IF (none_n<Is...>)              {return self().         method       (XTAL_REF_(xs)...);}
-			XTAL_0IF (some_n<Is...>)              {return self().template method<Is...>(XTAL_REF_(xs)...);}
+			XTAL_0IF (none_v<Is...>)              {return self().         method       (XTAL_REF_(xs)...);}
+			XTAL_0IF (some_v<Is...>)              {return self().template method<Is...>(XTAL_REF_(xs)...);}
 		}
 
 		/*!
