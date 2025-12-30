@@ -154,8 +154,13 @@ struct brace
 		/*!
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
-		XTAL_FX4_(to) (template <complete_q F>
-		XTAL_DEF_(return,inline,explicit) operator F(), apply<F>())
+		template <complete_q F>
+		XTAL_DEF_(return,inline,explicit)
+		operator F() const
+		noexcept
+		{
+			return apply<F>();
+		}
 
 		/*!
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.

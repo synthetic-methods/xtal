@@ -72,8 +72,11 @@ struct superblock<Us...>
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_FX4_(to) (template <class ...Xs> XTAL_DEF_(return,inline,let) front(), get<       0>(S_::self()))
-		XTAL_FX4_(to) (template <class ...Xs> XTAL_DEF_(return,inline,let) back (), get<size - 1>(S_::self()))
+		XTAL_DEF_(return,inline,get) front_f(auto &&o) noexcept {return get<       0>(qualify_f<T>(XTAL_REF_(o)));}
+		XTAL_DEF_(return,inline,get)  back_f(auto &&o) noexcept {return get<size - 1>(qualify_f<T>(XTAL_REF_(o)));}
+
+		XTAL_FX4_(dot) (XTAL_DEF_(return,inline,get)   front,   front_f)
+		XTAL_FX4_(dot) (XTAL_DEF_(return,inline,get)    back,    back_f)
 
 	};
 	using type = bond::derive_t<homotype>;
@@ -297,7 +300,7 @@ struct block
 		/*!
 		\returns	The first `count` elements of `this` as a truncated view of `U`.
 		*/
-		XTAL_FX4_(do) (template <scalar_q V=value_type>
+		XTAL_FX2_(do) (template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
 		self(constant_q auto count),
 		{
@@ -335,9 +338,10 @@ struct block
 		/*!
 		\returns	A copy of `this` truncated to the first `count` elements.
 		*/
-		XTAL_FX4_(do) (template <scalar_q V=value_type>
+		template <scalar_q V=value_type>
 		XTAL_DEF_(return,inline,let)
-		twin(constant_q auto count),
+		twin(constant_q auto count) const
+		noexcept -> auto
 		{
 			auto constexpr N = count();
 			auto constexpr M = N < 0? size + N: N;
@@ -355,7 +359,7 @@ struct block
 					XTAL_0FN_(to) (reform(got<I>(self())...))
 				(bond::seek_s<M>{});
 			}
-		})
+		}
 
 	public:// ACCESS
 		/*!
@@ -364,29 +368,43 @@ struct block
 		static auto constexpr devalue_f = _std::identity{};
 		static auto constexpr revalue_f = _std::identity{};
 
-		XTAL_FX4_(do) (template <index_type I=0>
-		XTAL_DEF_(return,inline,let)
-		element(),
+		template <index_type N_ind=0>
+		XTAL_DEF_(return,inline,set)
+		element_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
-			auto &s = S_::template self<archetype>();
 			XTAL_IF0
-			XTAL_0IF_(to) (*get<I>(s))              // Required for `subrange`!
-			XTAL_0IF_(to) ( get<I>(s))
-			XTAL_0IF_(to) (element(constant_t<I>{}))// Required for `span`!
-		})
-		XTAL_FX4_(do) (template <index_type I=0>
-		XTAL_DEF_(return,inline,let)
-		element(auto i),
+			XTAL_0IF_(to) (*get<N_ind>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
+			XTAL_0IF_(to) ( get<N_ind>(qualify_f<archetype>(XTAL_REF_(o))))
+			XTAL_0IF_(to) (element_f(XTAL_REF_(o), constant_t<N_ind>{}))// Required for `span`!
+		}
+		template <index_type N_ind=0>
+		XTAL_DEF_(return,inline,set)
+		element_f(auto &&o, auto const n_ind)
 		noexcept -> decltype(auto)
 		requires common_q<Us...>
 		{
-			if constexpr (I) {i += I;} assert(i < size);
-			return self().operator[](i);
-		})
+			auto const i = N_ind + n_ind;
+			assert(0 <= i and i < size);
+			return qualify_f<T>(XTAL_REF_(o)).operator[](i);
+		}
 
-		XTAL_FX1_(to) (template <index_type I=0> XTAL_DEF_(return,inline,let) coelement  (   ), self().revalue_f(element<I>()))
-		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) coelement  (I i), self().revalue_f(element(i)  ))
+		template <index_type I=0>
+		XTAL_DEF_(return,inline,set)
+		coelement_f(auto &&o)
+		noexcept -> decltype(auto)
+		{
+			return T::revalue_f(element_f<I>(XTAL_REF_(o)));
+		}
+		XTAL_DEF_(return,inline,set)
+		coelement_f(auto &&o, integral_q auto i)
+		noexcept -> decltype(auto)
+		{
+			return T::revalue_f(element_f   (XTAL_REF_(o), i));
+		}
+
+		XTAL_FX4_(dot) (template <auto ...Ns> XTAL_DEF_(return,inline,get)   element,   element_f<Ns...>)
+		XTAL_FX4_(dot) (template <auto ...Ns> XTAL_DEF_(return,inline,get) coelement, coelement_f<Ns...>)
 
 		XTAL_FX1_(to) (template <index_type I  > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
 		XTAL_FX1_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )

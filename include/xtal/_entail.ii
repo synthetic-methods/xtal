@@ -306,18 +306,21 @@ template <class   ...Ts>	concept                quality_q	= (some_q<Ts...> and..
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class Y, class T>
+template <class Y>
 XTAL_DEF_(return,inline,let)
-funge_f(T &&t)
+qualify_f(auto &&t)
 noexcept -> decltype(auto)
 {
-	return static_cast<disqualify_s<T, Y>>(t);
+	using T = decltype(t);
+	if constexpr (fungible_q<T, Y>) {return      static_cast<   qualify_s<T, Y>>(t);}
+	else                            {return reinterpret_cast<   qualify_s<T, Y>>(t);}
 }
-template <class Y, class T>
+template <class Y>
 XTAL_DEF_(return,inline,let)
-forge_f(T &&t)
+disqualify_f(auto &&t)
 noexcept -> decltype(auto)
 {
+	using T = decltype(t);
 	if constexpr (fungible_q<T, Y>) {return      static_cast<disqualify_s<T, Y>>(t);}
 	else                            {return reinterpret_cast<disqualify_s<T, Y>>(t);}
 }
