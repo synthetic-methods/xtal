@@ -23,7 +23,7 @@ XTAL_DEF_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differentia
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct differential<Us ...>
 :	differential<common_t<Us...>[sizeof...(Us)]>
 {

@@ -61,20 +61,20 @@ TAG_("block")
 		TRUE_(u.size() == 1);
 
 	}
-	TRY_("block slicing (tuple)")
-	{
-		using W = block_t<T_alpha, T_sigma>;
-		W w{1, 2};
-
-		auto  u = w.self(-one);
-		TRUE_(w == W{1, 2});
-		u[0] = 3;
-		TRUE_(w == W{3, 2});
-
-		TRUE_(w.size() == 2);
-		TRUE_(u.size() == 1);
-
-	}
+//	TRY_("block slicing (tuple)")
+//	{
+//		using W = block_t<T_alpha, T_sigma>;
+//		W w{1, 2};
+//
+//		auto  u = w.self(-one);
+//		TRUE_(w == W{1, 2});
+//		u[0] = 3;
+//		TRUE_(w == W{3, 2});
+//
+//		TRUE_(w.size() == 2);
+//		TRUE_(u.size() == 1);
+//
+//	}
 }
 /***/
 

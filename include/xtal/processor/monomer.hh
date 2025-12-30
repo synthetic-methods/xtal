@@ -134,7 +134,7 @@ struct monomer
 				/*!
 				\brief  	Accessor for the underlying state.
 				*/
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
+				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
 				state(auto &&...oo),
 					R_::template head<Y_result>(XTAL_REF_(oo)...))
 
@@ -210,7 +210,7 @@ struct monomer
 				*/
 				XTAL_FX2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method  (), state())
+				method(), state())
 				
 			public:// FLOW
 				/*!

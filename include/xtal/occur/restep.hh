@@ -40,8 +40,8 @@ struct restep<U>
 
 		using step_type = U;
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-		step(auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_FX4_(dot) (XTAL_DEF_(return,inline,get) step, [] (auto &&o, auto &&...oo)
+		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 	};
 };

@@ -61,10 +61,10 @@ struct glider
 				E_pipe u_pipe{bond::seek_t<>{}, V_limits::min(), V_limits::max()};
 
 				//\
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
+				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
+				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
+				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
+				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;

@@ -138,16 +138,6 @@ struct define
 				return _std::bind_front(self().template deify<Xs...>(is...), &self());
 			}
 		})
-		/*!
-		\returns	The lambda abstraction of `operator()`.
-		*/
-		XTAL_FX2_(do) (template <auto ...Is>
-		XTAL_DEF_(return,inline,let)
-		operate(auto &&...xs),
-		noexcept -> decltype(auto)
-		{
-			return reify<decltype(xs)...>(constant_t<Is>{}...);
-		})
 
 		/*!
 		\returns	The result of applying `method`, with `dispatch`ed parameters resolved.
@@ -215,8 +205,9 @@ struct define
 				using R_::arguments;
 
 				using process_type = T;
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) process(), S_::head())
 
+				XTAL_FX4_(dot) (XTAL_DEF_(return,inline,get) process, [] (auto &&o, auto &&...oo)
+				XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
 			public:// OPERATE
 				using R_::method;
@@ -283,10 +274,7 @@ struct refine
 		{
 			return bind_t<decltype(xs)...>{XTAL_REF_(t), XTAL_REF_(xs)...};
 		}
-		
-		XTAL_FX4_(to) (template <class ...Xs>
-		XTAL_DEF_(return,inline,get)
-		bind(Xs &&...xs), bind_f(S_::self(), XTAL_REF_(xs)...))
+		XTAL_FX4_(dot) (template <class ...Xs> XTAL_DEF_(return,inline,get) bind, bind_f)
 
 	};
 };
