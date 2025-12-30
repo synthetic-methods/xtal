@@ -84,30 +84,30 @@ struct blob
 		\returns	A tuple of `rvalue`s conforming to `Vs...`,
 		representing the state of the blob prior to updating with `vs...`.
 		*/
-		XTAL_FX2_(do) (template <class ...Vs>
+		template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
-		form(Vs const &...vs),
+		form(Vs const &...vs) const
 		noexcept -> decltype(auto)
 		{
 			form_t<Vs  ...> f = form  <Vs      &&...>();
 			form  <Vs &...>() = form_t<Vs const &...>{vs...};
 			return f;
-		})
+		}
 
 		/*!
 		\returns	A tuple of references conforming to `Vs...`,
 		accessed via value-based destructuring, or reference-based `get`.
 		*/
-		XTAL_FX2_(do) (template <class ...Vs>
+		template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
-		form(),
+		form() const
 		noexcept -> decltype(auto)
 		{
 			return form<Vs &...>();
-		})
-		XTAL_FX2_(do) (template <_xtd::reference ...Vs>
+		}
+		template <_xtd::reference ...Vs>
 		XTAL_DEF_(return,inline,let)
-		form(),
+		form() const
 		noexcept -> decltype(auto)
 		{
 			static_assert(_detail::aligned<Vs...>::size() <= N_bytes);
@@ -115,14 +115,14 @@ struct blob
 			return [&] <auto ...I>(bond::seek_t<I...>)
 				XTAL_0FN_(to) (form_t<Vs &&...>{form<Vs &&>(i)...})
 			(bond::seek_s<sizeof...(Vs)> {});
-		})
-		XTAL_FX2_(do) (template <class V>
+		}
+		template <class V>
 		XTAL_DEF_(return,inline,let)
-		form(int &i),
+		form(int &i) const
 		noexcept -> decltype(auto)
 		{
 			return reinterpret_cast<V &&>(m_bytes[_detail::aligned<V>::advance(i)]);
-		})
+		}
 
 	};
 	using type = bond::derive_t<homotype>;

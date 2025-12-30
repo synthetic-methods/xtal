@@ -187,7 +187,7 @@ struct defer<U>
 	public:
 		using S_::S_;
 
-		XTAL_FX2_(do) (template <auto ...>
+		XTAL_FN2_(do) (template <auto ...>
 		XTAL_DEF_(return,inline,let)
 		method(),
 		noexcept -> auto
@@ -241,7 +241,7 @@ struct defer<U>
 	//		requires XTAL_TRY_(to)
 	//			(method_f<Is...>(XTAL_ANY_(decltype(xs))...))
 
-		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_FN2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method  (auto &&...xs),
 		noexcept -> auto

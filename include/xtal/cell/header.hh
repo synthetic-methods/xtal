@@ -48,8 +48,8 @@ struct beheader
 	public:// CONSTRUCT
 		using S_::S_;
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
-		operator L_(), S_::tail())
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator L_,
+			[] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).tail()))
 
 	public:// OPERATE
 		using S_::operator==;
@@ -63,22 +63,6 @@ struct beheader
 			auto const &s = S_::self();
 			return s.operator==(t) and x_(s).index() == x_(t).index();
 		}
-		/*/
-		template <bond::tab_comparable_q<T_> W> requires infungible_q<subtype, W>
-		XTAL_DEF_(return,inline,let)
-		operator == (W const &w) const
-		noexcept -> bool
-		{
-			return S_::head() == w.head();
-		}
-		template <bond::tab_comparable_q<T_> W> requires infungible_q<subtype, W>
-		XTAL_DEF_(return,inline,let)
-		operator <=> (W const &w) const
-		noexcept -> bool
-		{
-			return S_::head() <=> w.head();
-		}
-		/***/
 
 		XTAL_DEF_(return,inline,let)
 		operator << (auto &&u) const

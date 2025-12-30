@@ -37,7 +37,7 @@ TAG_("glider", "process")
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
 		
-		using W0_event = atom::differential_t<U0_event[2]>;
+		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
@@ -115,7 +115,7 @@ TAG_("glider", "process")
 		using U0_event = occur::reinferred_t<class A_gate, T_alpha>;
 		using U1_event = flow::cue_s<U0_event>;
 		
-		using W0_event = atom::differential_t<U0_event[2]>;
+		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
 		using V_event  = flow::cue_s<>;
 		
 		using U_accept = typename U_glider::template accept<U1_event>;

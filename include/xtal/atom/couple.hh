@@ -24,7 +24,7 @@ XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::factory<couple_t>::make);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct couple<Us ...>
 :	couple<common_t<Us...>[sizeof...(Us)]>
 {
@@ -133,7 +133,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator++(int) const
 		noexcept -> auto
-		requires common_q<Us...>
+		requires same_q<Us...>
 		{
 			auto t = S_::twin();
 			value_type u{};
@@ -147,7 +147,7 @@ struct couple
 		XTAL_DEF_(inline,let)
 		operator--(int) const
 		noexcept -> auto
-		requires common_q<Us...>
+		requires same_q<Us...>
 		{
 			auto t = S_::twin();
 			value_type u;

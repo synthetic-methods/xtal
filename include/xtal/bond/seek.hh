@@ -180,14 +180,15 @@ struct seek_index
 		{};
 
 	public:// OPERATE
-		XTAL_FX4_(do) (template <integral_q I>
-		XTAL_DEF_(return,inline,get)
-		operator[](I i),
+		template <integral_q I>
+		XTAL_DEF_(return,inline,let)
+		operator[](I i) const
+		noexcept -> decltype(auto)
 		{
 			auto const j = _xtd::make_signed_f<int>(i) - N_lower;
 			auto const k = 0 <= j and j < N_limit; assert(k);
 			return supertype::operator[](k? j: 0);
-		})
+		}
 		
 	};
 

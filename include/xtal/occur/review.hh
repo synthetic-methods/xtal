@@ -40,11 +40,10 @@ struct review<W>
 		using S_::self;
 		using S_::head;
 		
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-		view (auto &&...oo),
-			head(XTAL_REF_(oo)...))
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) view, [] (auto &&o, auto &&...oo)
+		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)
 		subview(auto &&...oo),
 		review_f(S_::subhead(XTAL_REF_(oo)...)))
 

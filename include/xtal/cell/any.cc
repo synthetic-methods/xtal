@@ -81,10 +81,10 @@ TAG_("cell", "traversal")
 	{
 		U_qux u_qux(0, 1, 2);
 
-		TRUE_(0 == u_qux.template head<0>());
-		TRUE_(1 == u_qux.template head<1>());
-		TRUE_(2 == u_qux.template head<2>());
-	//	TRUE_(3 == u_qux.template head<3>());// Fails!
+		TRUE_(0 == u_qux.template head<constant_t<0>>());
+		TRUE_(1 == u_qux.template head<constant_t<1>>());
+		TRUE_(2 == u_qux.template head<constant_t<2>>());
+	//	TRUE_(3 == u_qux.template head<constant_t<3>>());// Fails!
 
 		TRUE_(0 == u_qux.template head<foo_a>());
 		TRUE_(1 == u_qux.template head<bar_a>());
@@ -113,7 +113,7 @@ TAG_("cell", "traversal")
 		TRUE_(get<1>(u_qux) == 222);
 		TRUE_(get<2>(u_qux) ==   3);
 
-		(void) u_qux.template self<1>(2222, 3333);
+		(void) u_qux.template self<constant_t<1>>(2222, 3333);
 		TRUE_(get<0>(u_qux) ==  111);//!
 		TRUE_(get<1>(u_qux) == 2222);
 		TRUE_(get<2>(u_qux) == 3333);
@@ -195,8 +195,8 @@ TAG_("cell", "composition")
 	TRY_("task")
 	{
 		auto t_opt = T_opt(0b1'10u);
-		TRUE_(0b10 == t_opt.template head<0>());
-		TRUE_(0b1  == t_opt.template head<1>());
+		TRUE_(0b10 == t_opt.template head<constant_t<0>>());
+		TRUE_(0b1  == t_opt.template head<constant_t<1>>());
 		TRUE_(0b10 == t_opt.template head<L_aim>());
 		TRUE_(0b1  == t_opt.template head<L_hyp>());
 		TRUE_(sizeof(T_opt) == sizeof(T_aim));

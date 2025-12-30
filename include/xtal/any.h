@@ -329,28 +329,30 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define XTAL_FX4_(ARG,...)    XTAL_FX4_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX2_(ARG,...)    XTAL_FX2_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX1_(ARG,...)    XTAL_FX1_##ARG __VA_OPT__((__VA_ARGS__))
-#define XTAL_FX0_(ARG,...)    XTAL_FX0_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FN0_(ARG,...)    XTAL_FN0_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FN1_(ARG,...)    XTAL_FN1_##ARG __VA_OPT__((__VA_ARGS__))
+#define XTAL_FN2_(ARG,...)    XTAL_FN2_##ARG __VA_OPT__((__VA_ARGS__))
 
-#define XTAL_FX4_do(SIG,...)  SIG const &                 __VA_ARGS__   \
-                              SIG       &                 __VA_ARGS__   \
-                              SIG const &&                __VA_ARGS__   \
-                              SIG       &&                __VA_ARGS__   ;///< Define `(const)? &&?` member functions.
-#define XTAL_FX2_do(SIG,...)  SIG const                   __VA_ARGS__   \
+#define XTAL_FN0_go(SIG,...)\
+   SIG()              const  & noexcept {return __VA_ARGS__(           (*this)                   );}\
+   SIG()                     & noexcept {return __VA_ARGS__(           (*this)                   );}\
+   SIG()              const && noexcept {return __VA_ARGS__(::std::move(*this)                   );}\
+   SIG()                    && noexcept {return __VA_ARGS__(::std::move(*this)                   );}\
+///< Define `(const)? &&?` member accessor aliases.
+
+#define XTAL_FN1_go(SIG,...)\
+   SIG(auto &&...etc) const  & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(etc)...);}\
+   SIG(auto &&...etc)        & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(etc)...);}\
+   SIG(auto &&...etc) const && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(etc)...);}\
+   SIG(auto &&...etc)       && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(etc)...);}\
+///< Define `(const)? &&?` member function aliases.
+
+
+#define XTAL_FN2_do(SIG,...)  SIG const                   __VA_ARGS__   \
                               SIG                         __VA_ARGS__   ;///< Define `(const)?`     member functions.
-#define XTAL_FX1_do(SIG,...)  SIG const                   __VA_ARGS__   ;///< Define `(const) `     member function.
-#define XTAL_FX0_do(SIG,...)  SIG                         __VA_ARGS__   ;///< Define         static member function.
 
-#define XTAL_FX4_to(SIG,...)  SIG const &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                              SIG       &  noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                              SIG const && noexcept __VA_OPT__({return (__VA_ARGS__);});\
-                              SIG       && noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)? &&?` member expressions.
-#define XTAL_FX2_to(SIG,...)  SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});\
+#define XTAL_FN2_to(SIG,...)  SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});\
                               SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)?    ` member expressions.
-#define XTAL_FX1_to(SIG,...)  SIG const    noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept` `(const)     ` member expression.
-#define XTAL_FX0_to(SIG,...)  SIG          noexcept __VA_OPT__({return (__VA_ARGS__);});;///< Define returning `noexcept`         static member expression.
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -373,9 +375,9 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 #define XTAL_0FN_(ARG,...)                   XTAL_0FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]` and `(arguments)`.
 #define XTAL_1FN_(ARG,...)                   XTAL_1FN_##ARG __VA_OPT__((__VA_ARGS__))                    ///< Lambda after `[captures]`.
 
-#define XTAL_0FN_if(...)                     XTAL_0FN requires requires {         (__VA_ARGS__);} {}     ///< Lambda perform statement after `[captures]` and `(arguments)`.
-#define XTAL_0FN_to(...)                     XTAL_0FN                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
-#define XTAL_0FN_do(...)                     XTAL_0FN                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
+#define XTAL_0FN_if(...)                     XTAL_0FN -> decltype(auto) requires requires {         (__VA_ARGS__);} {}     ///< Lambda perform statement after `[captures]` and `(arguments)`.
+#define XTAL_0FN_to(...)                     XTAL_0FN -> decltype(auto)                   {return   (__VA_ARGS__);}        ///< Lambda return expression after `[captures]` and `(arguments)`.
+#define XTAL_0FN_do(...)                     XTAL_0FN -> decltype(auto)                   {         (__VA_ARGS__);}        ///< Lambda perform statement after `[captures]` and `(arguments)`.
 
 #define XTAL_1FN_do(...)           <class ...XTAL_NYM_(As)>\
                                             (XTAL_NYM_(As) \

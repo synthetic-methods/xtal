@@ -23,7 +23,7 @@ template <class ...Ts>	concept field_arithmetic_q = bond::tag_infixed_p<field_ar
 XTAL_DEF_(let) field_arithmetic_f = [] XTAL_1FN_(call) (_detail::factory<field_arithmetic_t>::make);
 
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct field_arithmetic<Us ...>
 :	field_arithmetic<common_t<Us...>[sizeof...(Us)]>
 {
@@ -83,11 +83,11 @@ public:
 	//	XTAL_DEF_(return,inline,get)    operator + () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (+x)>(self());}
 		XTAL_DEF_(return,inline,get)    operator - () const noexcept {return S_::template zip_from<[] (auto const &x) XTAL_0FN_(to) (-x)>(self());}
 
-		XTAL_DEF_(mutate,inline,get)    operator *=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_DEF_(mutate,inline,get)    operator /=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s /= T(w); return s;}
+		XTAL_DEF_(mutate,inline,get)    operator *=(_std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
+		XTAL_DEF_(mutate,inline,get)    operator /=(_std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
-		XTAL_DEF_(mutate,inline,get)    operator +=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_DEF_(mutate,inline,get)    operator -=(_std::initializer_list<U_> w)       noexcept requires common_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_DEF_(mutate,inline,get)    operator +=(_std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
+		XTAL_DEF_(mutate,inline,get)    operator -=(_std::initializer_list<U_> w)       noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
 
 	};
 	using type = bond::derive_t<homotype>;

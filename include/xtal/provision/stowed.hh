@@ -67,8 +67,8 @@ struct stowed<U_state, U_store>
 		{
 			self(U_state(o), XTAL_MOV_(o), XTAL_REF_(oo)...);
 		}
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) store(), S_::template head<1>())
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<0>(XTAL_REF_(oo)...))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) store(), S_::template head<constant_t<1>>())
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) state(auto &&...oo), S_::template head<constant_t<0>>(XTAL_REF_(oo)...))
 
 	};
 };

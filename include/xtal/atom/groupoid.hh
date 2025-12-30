@@ -30,7 +30,7 @@ template <class U, auto  N, auto  ...Ns> struct   groupoid<U(&)[N][Ns]...> : gro
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct groupoid<Us ...>
 :	groupoid<common_t<Us...>[sizeof...(Us)]>
 {
@@ -79,7 +79,7 @@ struct groupoid
 		\brief  	Determines whether the operation `f` can be applied at the value-level.
 		*/
 		template <class U, auto f>
-		XTAL_DEF_(set) zip_value_q = _std::conditional_t<common_q<Us...>
+		XTAL_DEF_(set) zip_value_q = _std::conditional_t<same_q<Us...>
 			,	constant_t<un_v<0, requires (U_ u_, U u) {f(u_, u);}   >>
 			,	constant_t<un_v<0, requires (Us u_, U u) {f(u_, u);}...>>
 		>{}();
@@ -188,7 +188,7 @@ struct groupoid
 
 			return u;
 		}
-		template <int N_sgn=1> requires common_q<Us...>
+		template <int N_sgn=1> requires same_q<Us...>
 		XTAL_DEF_(return,inline,let)
 		product(auto &&t) const
 		noexcept -> auto

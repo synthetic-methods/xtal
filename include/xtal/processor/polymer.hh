@@ -137,10 +137,10 @@ public:
 				using R_::self;
 				using R_::head;
 
-				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)     lead(), u_ensemble.peek(-1))
-				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) ensemble(), u_ensemble)
-				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
-				XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)     lead(), u_ensemble.peek(-1))
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(), u_ensemble)
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(integral_q auto i), u_ensemble[i])
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
 				,	u_ensemble
 				|	_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e)
 						XTAL_0FN_(to) (0 != XTAL_REF_(e).template flux<-1>(o)))

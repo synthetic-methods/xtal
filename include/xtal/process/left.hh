@@ -38,12 +38,12 @@ struct left
 
 	public:// OPERATE
 
-		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_FN2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method  (auto &&x, auto &&...oo),
 		noexcept -> auto
 		{
-			auto const y = S_::head().template method  <Is...>(XTAL_REF_(x));
+			auto const y = S_::head(). template method  <Is...>(XTAL_REF_(x));
 			XTAL_IF0
 			XTAL_0IF XTAL_TRY_(to) (S::template method  <Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))
 			XTAL_0IF XTAL_TRY_(to) (S::template method_f<Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))

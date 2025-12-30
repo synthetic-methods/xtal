@@ -224,11 +224,11 @@ struct extense : _std::integer_sequence<extent_type, Ns...>
 	using petrotype = _std::array<extent_type, sizeof...(Ns)>;
 	using supertype = _std::integer_sequence<extent_type, Ns...>;
 
-	XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit operator)
-	auto(), petrotype{Ns...})
+	XTAL_DEF_(return,inline,explicit)
+	operator auto() const noexcept {return petrotype{Ns...};}
 
-	XTAL_FX1_(to) (XTAL_DEF_(return,inline,let)
-	operator() (), *this)
+	XTAL_DEF_(return,inline,let)
+	operator() ()   const noexcept {return *this;}
 
 	template <extent_type ...Ms>
 	XTAL_DEF_(return,inline,met)
@@ -309,17 +309,17 @@ template <class T    >	concept           tuple_shaped_q	=  complete_q<_std::tupl
 template <class T    >	concept          static_shaped_q	=  un_v<tuple_shaped_q<T>> and                                         requires {based_t<T>::size();};
 template <class T    >	concept         dynamic_shaped_q	=  un_v<tuple_shaped_q<T>> and requires {XTAL_ANY_(T).size();} and not requires {based_t<T>::size();};
 
-template <  based_q T>	requires              identity_q<T>  struct fixed_shaped<T>                : assayed<typename T::type{}()> {};
-template <  based_q T>	requires          tuple_shaped_q<T>  struct fixed_shaped<T>                :   tuple_shaped<T>          {};
-template <  based_q T>	requires          array_shaped_q<T>  struct fixed_shaped<T>                :   array_shaped<T>          {};
-template <  based_q T>	requires         static_shaped_q<T>  struct fixed_shaped<T>                :  static_shaped<T>          {};
-template <unbased_q T>	requires  fixed_shaped_q<based_t<T>> struct fixed_shaped<T>                :   fixed_shaped<based_t<T>> {};
-template <class     U>	                                     struct fixed_shaped<_std::complex<U>> : assayed<2>                 {};
+template <  based_q T>	requires              identity_q<T>  struct fixed_shaped<T>                :        assayed<typename T::type{}()> {};
+template <  based_q T>	requires          tuple_shaped_q<T>  struct fixed_shaped<T>                :   tuple_shaped<T>                    {};
+template <  based_q T>	requires          array_shaped_q<T>  struct fixed_shaped<T>                :   array_shaped<T>                    {};
+template <  based_q T>	requires         static_shaped_q<T>  struct fixed_shaped<T>                :  static_shaped<T>                    {};
+template <unbased_q T>	requires  fixed_shaped_q<based_t<T>> struct fixed_shaped<T>                :   fixed_shaped<based_t<T>>           {};
+template <class     U>	                                     struct fixed_shaped<_std::complex<U>> :        assayed<2>                    {};
 
-template <  based_q T>	                                     struct fluid_shaped<T>                : assayed<0>                 {};
-template <  based_q T>	requires        dynamic_shaped_q<T>  struct fluid_shaped<T>                : dynamic_shaped<T>          {};
-template <  based_q T>	requires          fixed_shaped_q<T>  struct fluid_shaped<T>                :   fixed_shaped<T>          {};
-template <unbased_q T>	requires  fluid_shaped_q<based_t<T>> struct fluid_shaped<T>                :   fluid_shaped<based_t<T>> {};
+template <  based_q T>	                                     struct fluid_shaped<T>                :        assayed<0>                   {};
+template <  based_q T>	requires        dynamic_shaped_q<T>  struct fluid_shaped<T>                : dynamic_shaped<T>                    {};
+template <  based_q T>	requires          fixed_shaped_q<T>  struct fluid_shaped<T>                :   fixed_shaped<T>                    {};
+template <unbased_q T>	requires  fluid_shaped_q<based_t<T>> struct fluid_shaped<T>                :   fluid_shaped<based_t<T>>           {};
 
 
 template <class T             >	concept         fixed_q	= fixed_valued_q<T> and fixed_shaped_q<T>;

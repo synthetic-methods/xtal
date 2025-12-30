@@ -29,7 +29,7 @@ template <class U, auto N, auto ...Ns> struct   brace<U(&)[N][Ns]...> : brace<br
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct brace<Us ...>
 :	brace<common_t<Us...>[sizeof...(Us)]>
 {
@@ -66,7 +66,7 @@ struct brace
 		noexcept -> bool
 		{
 			XTAL_IF0
-		//	XTAL_0IF (common_q<Us...> and atomic_q<value_type>) {
+		//	XTAL_0IF (same_q<Us...> and atomic_q<value_type>) {
 		//		return 0 == _std::memcmp(s.data(), t.data(), S_::size_bytes());//TODO: Not working for complex values?
 		//	}
 			XTAL_0IF XTAL_TRY_(to) (
@@ -97,7 +97,7 @@ struct brace
 		XTAL_DEF_(inline,let)
 		blanket()
 		noexcept -> bool
-		requires common_q<Us...>
+		requires same_q<Us...>
 		{
 			using sigma_type  = typename bond::fit<scale_type>::sigma_type;
 			auto constexpr u  =    static_cast<scale_type>(N_value);
@@ -133,7 +133,7 @@ struct brace
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
 		*/
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,let) reform(), apply())
 
 		/*!
 		\returns	A `revalue_f`d instance of `this`.
@@ -143,7 +143,7 @@ struct brace
 		noexcept -> decltype(auto)
 		{
 			using F = decltype(T::revalue_f);
-			if constexpr (common_q<Us...>) {
+			if constexpr (same_q<Us...>) {
 				return apply<typename S_::template form_t<return_t<F, value_type>[size]>>();
 			}
 			else {
@@ -154,8 +154,13 @@ struct brace
 		/*!
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.
 		*/
-		XTAL_FX4_(to) (template <complete_q F>
-		XTAL_DEF_(return,inline,explicit) operator F(), apply<F>())
+		template <complete_q F>
+		XTAL_DEF_(return,inline,explicit)
+		operator F() const
+		noexcept
+		{
+			return apply<F>();
+		}
 
 		/*!
 		\returns	An invocation of `F` applied to the `revalue_f`s of `this`.

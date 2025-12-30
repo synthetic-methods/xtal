@@ -55,11 +55,29 @@ struct resample
 
 	public:// OPERATE
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-		sample(), S_::head())
-
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)   rate(), get<0>(S_::head()))
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) period(), get<1>(S_::head()))
+		XTAL_DEF_(return,inline,set)
+		sample_f(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			return XTAL_REF_(o).head(XTAL_REF_(oo)...);
+		}
+		XTAL_DEF_(return,inline,set)
+		period_f(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			static_assert(0 == sizeof...(oo));
+			return get<1>(sample_f(XTAL_REF_(o)));
+		}
+		XTAL_DEF_(return,inline,set)
+		  rate_f(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			static_assert(0 == sizeof...(oo));
+			return get<0>(sample_f(XTAL_REF_(o)));
+		}
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) sample, sample_f)
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) period, period_f)
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get)   rate,   rate_f)
 
 	};
 };

@@ -74,24 +74,16 @@ struct define
 		using head_type = void;
 
 	public:
-		/*!
-		\returns	A reference to `*this` with type `Y=T`.
-		*/
-		XTAL_FX4_(to) (template <class Y=T>
-		XTAL_DEF_(return,inline,get)
-		self(), forge_f<Y>(*this))
-
-		/*!
-		\returns	A copy of `*this` with type `Y=T`.
-		*/
-		XTAL_FX4_(to) (template <class Y=T>
-		XTAL_DEF_(return,inline,let)
-		twin(), forge_f<Y>(*this))
-
-		/*!
-		\returns	`this` as the `define`d supertype.
-		*/
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) tail(), self<S>())
+		template <class Y=T>
+		XTAL_DEF_(return,inline,set)
+		self_f(auto &&o)
+		noexcept -> decltype(auto)
+		{
+			return qualify_f<Y>(XTAL_REF_(o));
+		}
+		XTAL_FN1_(go) (template <class Y=T> XTAL_DEF_(return,inline,get) self, self_f<Y>)///<\returns	A reference to `*this` with type `Y=T`.
+		XTAL_FN1_(go) (template <class Y=T> XTAL_DEF_(return,inline,let) twin, self_f<Y>)///<\returns	A copy      of `*this` with type `Y=T`.
+		XTAL_FN1_(go) (                     XTAL_DEF_(return,inline,get) tail, self_f<S>)///<\returns	`this` as the `define`d supertype.
 
 	};
 	using type = subtype<unit_type>;

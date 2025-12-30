@@ -156,7 +156,8 @@ struct defer
 		/*!
 		\brief  	Converts `this` to the base-type (explicit).
 		*/
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,explicit operator) U_(), head())
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,explicit) operator U_,
+			[] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).head()))
 
 		/*!
 		\returns	`1` if the supplied value matches `self`, `0` otherwise.
@@ -185,7 +186,7 @@ struct defer
 		noexcept -> bool
 		{
 			return equivalent_f(S_::head(), t.head()) and
-				S_::template self<1>() == t.template self<1>();
+				S_::template self<constant_t<1>>() == t.template self<constant_t<1>>();
 		}
 
 		/*!

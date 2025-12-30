@@ -61,11 +61,19 @@ struct bundle
 		using S_::self;
 		using S_::head;
 
-		XTAL_FX4_(to)                    (XTAL_DEF_(return,inline,get) arguments(), head())
-		XTAL_FX4_(to) (template <auto  f> XTAL_DEF_(return,inline,get) arguments(),      _std::apply(          f , arguments()))
-		XTAL_FX4_(to) (template <class F> XTAL_DEF_(return,inline,get) arguments(F &&f), _std::apply(XTAL_REF_(f), arguments()))
+		XTAL_FN0_(go) (
+		XTAL_DEF_(return,inline,get) arguments,
+			[] (auto &&o          ) XTAL_0FN_(to) (                          XTAL_REF_(o).head() ))
 
-		XTAL_FX2_(to) (template <size_type ...Is>
+		XTAL_FN0_(go) (template <auto f>
+		XTAL_DEF_(return,inline,get) arguments,
+			[] (auto &&o          ) XTAL_0FN_(to) (_std::apply(          f , XTAL_REF_(o).head())))
+
+		XTAL_FN1_(go) (
+		XTAL_DEF_(return,inline,get) arguments,
+			[] (auto &&o, auto &&f) XTAL_0FN_(to) (_std::apply(XTAL_REF_(f), XTAL_REF_(o).head())))
+
+		XTAL_FN2_(to) (template <size_type ...Is>
 		XTAL_DEF_(return,inline,get)
 		argument(), bond::pack_item_f<Is...>(head()))
 

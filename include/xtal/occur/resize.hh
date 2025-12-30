@@ -39,11 +39,15 @@ struct resize<U>
 
 		using size_type = U;
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-		size (auto &&...oo), head(XTAL_REF_(oo)...))
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) size, [] (auto &&o, auto &&...oo)
+		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
 
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-		empty(), 0 == size())
+		XTAL_DEF_(return,inline,let)
+		empty() const
+		noexcept -> bool
+		{
+			return 0 == size();
+		}
 
 	};
 };

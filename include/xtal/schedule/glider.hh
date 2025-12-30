@@ -51,7 +51,7 @@ struct glider
 				using V_limits = _std::numeric_limits<delay_type>;
 				using U_layout = typename R_::event_type::layout_type;
 				using U_hold = typename fluid<U_layout>::value_type;
-				using U_ramp = atom::differential_t<U_layout>;
+				using U_ramp = atom::differential_t<atom::wrap_s<U_layout, _std::plus>>;
 				using E_hold = flow::cue_s<U_hold>;
 				using E_ramp = flow::cue_s<U_ramp>;
 				using E_pipe = typename S_::template spool_t<E_ramp>;
@@ -61,10 +61,10 @@ struct glider
 				E_pipe u_pipe{bond::seek_t<>{}, V_limits::min(), V_limits::max()};
 
 				//\
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip.head())
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  head_(int i), u_pipe.begin(i)->head())
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  tail_(int i), u_pipe.begin(i)->tail())
 
 			public:// OPERATE
 				using R_::self;
