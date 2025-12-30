@@ -23,7 +23,7 @@ XTAL_DEF_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differentia
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct differential<Us ...>
 :	differential<common_t<Us...>[sizeof...(Us)]>
 {
@@ -32,7 +32,9 @@ template <class ...Us>
 struct differential
 {
 	template <class T>
+	//\
 	using endotype = typename group<wrap_s<Us, _std::plus>...>::template homotype<T>;
+	using endotype = typename group<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>, bond::tag<differential_t>>;

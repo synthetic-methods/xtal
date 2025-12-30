@@ -170,39 +170,27 @@ struct navigate
 		template <class ..._s> using self_s = typename super<T_self, based_t<_s>...>::type;
 		template <class ..._s> using head_s = typename super<T_node, based_t<_s>...>::type;
 		template <class ..._s> using head_t = typename super<T_node, based_t<_s>...>::type::head_type;
-		template <class ..._s> static constant_t<complete_q<head_t<_s...>>> constexpr head_q{};
 
-		XTAL_FX4_(to) (template <class ..._s> requires none_q<_s...>
-		XTAL_DEF_(return,inline,get)
-		self(auto &&...oo),
-			S::self(XTAL_REF_(oo)...))
-
-		XTAL_FX4_(to) (template <class ..._s> requires none_q<_s...> and complete_q<U_head>
-		XTAL_DEF_(return,inline,get)
-		head(auto &&...oo),
-			S::head(XTAL_REF_(oo)...))
-
-
-		XTAL_FX4_(to) (template <class ..._s> requires some_q<_s...> and complete_q<self_s<_s...>>
-		XTAL_DEF_(return,inline,get)
-		self(auto &&...oo),
-			S::template self<self_s<_s...>>       (XTAL_REF_(oo)...))
-
-		XTAL_FX4_(to) (template <class ..._s> requires some_q<_s...> and complete_q<head_t<_s...>>
-		XTAL_DEF_(return,inline,get)
-		head(auto &&...oo),
-			S::template self<head_s<_s...>>().head(XTAL_REF_(oo)...))
-
-
-		XTAL_FX4_(to) (template <auto  ..._s> requires some_v<_s...> and complete_q<self_s<constant_t<_s>...>>
-		XTAL_DEF_(return,inline,get)
-		self(auto &&...oo),
-			S::template self<self_s<constant_t<_s>...>>       (XTAL_REF_(oo)...))
-
-		XTAL_FX4_(to) (template <auto  ..._s> requires some_v<_s...> and complete_q<head_t<constant_t<_s>...>>
-		XTAL_DEF_(return,inline,get)
-		head(auto &&...oo),
-			S::template self<head_s<constant_t<_s>...>>().head(XTAL_REF_(oo)...))
+		template <class ..._s>
+		XTAL_DEF_(return,inline,set)
+		self_f(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF (none_q<_s...>) {return S::         self_f               (XTAL_REF_(o), XTAL_REF_(oo)...);}
+			XTAL_0IF (some_q<_s...>) {return S::template self_f<self_s<_s...>>(XTAL_REF_(o), XTAL_REF_(oo)...);}
+		}
+		template <class ..._s>
+		XTAL_DEF_(return,inline,set)
+		head_f(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			XTAL_IF0
+			XTAL_0IF (none_q<_s...>) {return qualify_f<        S    >(XTAL_REF_(o)).head(XTAL_REF_(oo)...);}
+			XTAL_0IF (some_q<_s...>) {return qualify_f<head_s<_s...>>(XTAL_REF_(o)).head(XTAL_REF_(oo)...);}
+		}
+		XTAL_FN1_(go) (template <class ..._s> requires complete_q<self_s<_s...>> XTAL_DEF_(return,inline,get) self, self_f<_s...>)
+		XTAL_FN1_(go) (template <class ..._s> requires complete_q<head_t<_s...>> XTAL_DEF_(return,inline,get) head, head_f<_s...>)
 
 	};
 };

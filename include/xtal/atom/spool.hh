@@ -76,12 +76,12 @@ struct spool<A>
 		,	u_begin(1), u_end(0 < sizeof...(oo))
 		{}
 
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)   end(U_count n=0), _std::prev(u_buffer.end  (), n + u_end  ))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) begin(U_count n=0), _std::next(u_buffer.begin(), n + u_begin))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  peek(U_count n=0), *begin(n))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n, U_count m), _std::span(begin(n), end(m)))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(U_count n), span(n, n))
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)  span(         ), span(0, 0))
 
 		XTAL_DEF_(mutate,inline,let)
 		advance(U_count n=1)

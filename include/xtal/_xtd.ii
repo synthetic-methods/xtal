@@ -165,9 +165,16 @@ template <class T, class S> concept    strictly_derived_from = not same_type_as<
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T           > concept              reference = _std::       is_reference_v<T>;
-template <class T           > concept       rvalue_reference = _std::is_rvalue_reference_v<T>;
-template <class T           > concept       lvalue_reference = _std::is_lvalue_reference_v<T>;
+template <class T           > concept                  reference =      _std::is_reference_v<T>;
+template <class T           > concept          mutable_reference =  not _std::    is_const_v<T>;
+template <class T           > concept        immutable_reference =      _std::    is_const_v<T>;
+
+template <class T           > concept           rvalue_reference = _std::is_rvalue_reference_v<T>;
+template <class T           > concept           lvalue_reference = _std::is_lvalue_reference_v<T>;
+template <class T           > concept   mutable_rvalue_reference = _std::same_as<_std::remove_cvref_t<T>       &&, T>;
+template <class T           > concept   mutable_lvalue_reference = _std::same_as<_std::remove_cvref_t<T>        &, T>;
+template <class T           > concept immutable_rvalue_reference = _std::same_as<_std::remove_cvref_t<T> const &&, T>;
+template <class T           > concept immutable_lvalue_reference = _std::same_as<_std::remove_cvref_t<T> const  &, T>;
 
 template <class T           > struct        remove_reference    : _std::remove_reference<T> {};
 template <class T           > struct remove_rvalue_reference                 {using type = T;};

@@ -134,7 +134,7 @@ struct monomer
 				/*!
 				\brief  	Accessor for the underlying state.
 				*/
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
+				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)
 				state(auto &&...oo),
 					R_::template head<Y_result>(XTAL_REF_(oo)...))
 
@@ -143,7 +143,7 @@ struct monomer
 				/*!
 				\brief  	Returns the current `state()`.
 				*/
-				XTAL_FX2_(to) (template <auto ...>
+				XTAL_FN2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
 				method  (), state())
 
@@ -208,26 +208,31 @@ struct monomer
 				/*!
 				\brief  	Returns the current `state()`.
 				*/
-				XTAL_FX2_(to) (template <auto ...>
+				XTAL_FN2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method  (), state())
+				method(), state())
 				
 			public:// FLOW
 				/*!
 				\brief  	Forwards the message upstream.
 				*/
-				XTAL_FX0_(to) (template <signed N_ion>
+				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				fuse(auto &&o),
-					R_::template fuse<N_ion>(XTAL_REF_(o)))
-
+				fuse(auto &&o)
+				noexcept -> signed
+				{
+					return R_::template fuse<N_ion>(XTAL_REF_(o));
+				}
 				/*!
 				\brief  	Forwards the message upstream.
 				*/
-				XTAL_FX0_(to) (template <signed N_ion>
+				template <signed N_ion>
 				XTAL_DEF_(return,inline,let)
-				flux(auto &&...oo),
-					R_::template flux<N_ion>(XTAL_REF_(oo)...))
+				flux(auto &&...oo)
+				noexcept -> signed
+				{
+					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
+				}
 
 				/*!
 				\brief  	Responds to `occur::resize` by resizing the `store()` (if possible).

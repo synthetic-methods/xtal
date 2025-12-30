@@ -54,10 +54,12 @@ struct slicer
 				E_spool u_spool{bond::seek_t<>{}
 				,	_std::numeric_limits<delay_type>::max()
 				};
-				#ifndef XTAL_DOC
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,get)
-				next(), u_spool.peek())
-				#endif
+				XTAL_DEF_(return,inline,get)
+				next()
+				noexcept
+				{
+					return u_spool.peek();
+				}
 
 			public:
 				using R_::R_;

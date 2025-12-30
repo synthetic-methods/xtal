@@ -22,7 +22,7 @@ template <class ...Ts>	concept group_multiplication_q = bond::tag_infixed_p<grou
 XTAL_DEF_(let) group_multiplication_f = [] XTAL_1FN_(call) (_detail::factory<group_multiplication_t>::make);
 
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct group_multiplication<Us ...>
 :	group_multiplication<common_t<Us...>[sizeof...(Us)]>
 {
@@ -63,7 +63,7 @@ public:
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
-		requires common_q<Us...>
+		requires same_q<Us...>
 		{
 			_detail::initialize_with(S_::begin(), size(), U_{one});
 		}
@@ -74,7 +74,7 @@ public:
 		XTAL_NEW_(implicit)
 		homotype(_std::initializer_list<U_> xs)
 		noexcept
-		requires common_q<Us...>
+		requires same_q<Us...>
 		{
 			auto const sN = xs.   size(); assert(sN <= size);
 			auto       x0 = xs.  begin();
@@ -93,15 +93,8 @@ public:
 		template <group_multiplication_q W> XTAL_DEF_(mutate,inline,get) operator *=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::mul1_(w);}
 		template <group_multiplication_q W> XTAL_DEF_(mutate,inline,get) operator /=(W const &w)       noexcept requires bond::tab_precedence_p<T, W> {return S_::div1_(w);}
 
-		XTAL_DEF_(mutate,inline,get) operator *=(_std::initializer_list<U_> w)                         noexcept requires common_q<Us...> {auto &s = self(); s *= T(w); return s;}
-		XTAL_DEF_(mutate,inline,get) operator /=(_std::initializer_list<U_> w)                         noexcept requires common_q<Us...> {auto &s = self(); s /= T(w); return s;}
-
-		XTAL_DEF_(mutate,inline,get) operator +=(                   homotype      &&t)                 noexcept {auto &s = self(); s *= XTAL_MOV_(t); return s;}
-		XTAL_DEF_(mutate,inline,get) operator -=(                   homotype      &&t)                 noexcept {auto &s = self(); s /= XTAL_MOV_(t); return s;}
-		XTAL_DEF_(mutate,inline,get) operator +=(                   homotype const &t)                 noexcept {auto &s = self(); s *= XTAL_REF_(t); return s;}
-		XTAL_DEF_(mutate,inline,get) operator -=(                   homotype const &t)                 noexcept {auto &s = self(); s /= XTAL_REF_(t); return s;}
-		XTAL_DEF_(return,inline,met) operator + (homotype const &s, homotype const &t)                 noexcept {return s * t;}
-		XTAL_DEF_(return,inline,met) operator - (homotype const &s, homotype const &t)                 noexcept {return s / t;}
+		XTAL_DEF_(mutate,inline,get) operator *=(_std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s *= T(w); return s;}
+		XTAL_DEF_(mutate,inline,get) operator /=(_std::initializer_list<U_> w)                         noexcept requires same_q<Us...> {auto &s = self(); s /= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. multiplication.
@@ -140,7 +133,7 @@ template <class ...Ts>	concept group_addition_q = bond::tag_infixed_p<group_addi
 XTAL_DEF_(let) group_addition_f = [] XTAL_1FN_(call) (_detail::factory<group_addition_t>::make);
 
 
-template <scalar_q ...Us> requires common_q<Us...>
+template <scalar_q ...Us> requires same_q<Us...>
 struct group_addition<Us ...>
 :	group_addition<common_t<Us...>[sizeof...(Us)]>
 {
@@ -179,8 +172,8 @@ public:
 		template <group_addition_q W> XTAL_DEF_(mutate,inline,get) operator +=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::add1_(w);}
 		template <group_addition_q W> XTAL_DEF_(mutate,inline,get) operator -=(W const &w)       noexcept requires bond::tab_precedence_p<W, T> {return S_::sub1_(w);}
 
-		XTAL_DEF_(mutate,inline,get) operator +=(_std::initializer_list<U_> w)                   noexcept requires common_q<Us...> {auto &s = self(); s += T(w); return s;}
-		XTAL_DEF_(mutate,inline,get) operator -=(_std::initializer_list<U_> w)                   noexcept requires common_q<Us...> {auto &s = self(); s -= T(w); return s;}
+		XTAL_DEF_(mutate,inline,get) operator +=(_std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s += T(w); return s;}
+		XTAL_DEF_(mutate,inline,get) operator -=(_std::initializer_list<U_> w)                   noexcept requires same_q<Us...> {auto &s = self(); s -= T(w); return s;}
 
 		/*!
 		\returns	The reduction of `self` w.r.t. addition.
@@ -206,9 +199,23 @@ template <class     ...Ts>	XTAL_TYP_(new) group;
 template <class     ...Ts>	XTAL_TYP_(let) group_t = typename group<Ts...>::type;
 template <class     ...Ts>	XTAL_TYP_(ask) group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
-//mplate <class     ...Ts> struct group<                  Ts ...   > : requires group_multiplication_q<Ts...> group_multiplication<Ts...  > {};
-//mplate <class U, auto N> struct group<                  U     [N]> : requires group_multiplication_q<U    > group_multiplication<U   [N]> {};
-//mplate <class U, auto N> struct group<                  U  (&)[N]> : requires group_multiplication_q<U    > group_multiplication<U(&)[N]> {};
+//template <scalar_q ...Us> requires same_q<Us...>
+//struct group<Us ...>
+//:	group<common_t<Us...>[sizeof...(Us)]>
+//{
+//};
+
+template <group_multiplication_q     ...Us> struct group<Us ...   > : group_multiplication<Us...  > {};
+template <group_multiplication_q U, auto N> struct group<U     [N]> : group_multiplication<U   [N]> {};
+template <group_multiplication_q U, auto N> struct group<U  (&)[N]> : group_multiplication<U(&)[N]> {};
+
+template <group_addition_q           ...Us> struct group<Us ...   > : group_addition      <Us...  > {};
+template <group_addition_q       U, auto N> struct group<U     [N]> : group_addition      <U   [N]> {};
+template <group_addition_q       U, auto N> struct group<U  (&)[N]> : group_addition      <U(&)[N]> {};
+
+template <integral_variable_q        ...Us> struct group<Us ...   > : group_addition      <Us...  > {};
+template <integral_variable_q    U, auto N> struct group<U     [N]> : group_addition      <U   [N]> {};
+template <integral_variable_q    U, auto N> struct group<U  (&)[N]> : group_addition      <U(&)[N]> {};
 
 template <class     ...Ts> struct group<_std::multiplies <Ts>   ...> : group_multiplication<Ts...  > {};///<\brief Resolves as `group_multiplication`.;
 template <class U, auto N> struct group<_std::multiplies <U >   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.

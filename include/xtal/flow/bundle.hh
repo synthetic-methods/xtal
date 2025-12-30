@@ -53,7 +53,7 @@ struct bundle
 		using S_::self;
 		using S_::head;
 
-		XTAL_FX2_(to) (template <size_type ...Is>
+		XTAL_FN2_(to) (template <size_type ...Is>
 		XTAL_DEF_(return,inline,get)
 		argument(), S_::template argument<Is...>())
 

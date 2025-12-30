@@ -38,7 +38,7 @@ struct left
 
 	public:// OPERATE
 
-		XTAL_FX2_(do) (template <auto ...Is>
+		XTAL_FN2_(do) (template <auto ...Is>
 		XTAL_DEF_(return,inline,let)
 		method  (auto &&x, auto &&...oo),
 		noexcept -> auto

@@ -52,7 +52,9 @@ struct define
 			{
 				static_assert(cell::any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
-				
+				using U_ = typename R_::head_type;
+				static_assert(same_q<T, U_>);
+
 			public:// CONSTRUCT
 			//	using R_::R_;
 
@@ -70,13 +72,13 @@ struct define
 				XTAL_NEW_(explicit)
 				subtype(auto &&...oo)
 				noexcept
-				:	R_{T{}, XTAL_REF_(oo)...}
+				:	R_{U_{}, XTAL_REF_(oo)...}
 				{}
 
 			public:// ACCESS
 
-				XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
-				operator T(), R_::head())
+				XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator U_,
+					[] (auto &&o) XTAL_0FN_(to) (qualify_f<R_>(XTAL_REF_(o)).head()))
 
 			public:// FLOW
 

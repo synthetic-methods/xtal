@@ -224,11 +224,11 @@ struct extense : _std::integer_sequence<extent_type, Ns...>
 	using petrotype = _std::array<extent_type, sizeof...(Ns)>;
 	using supertype = _std::integer_sequence<extent_type, Ns...>;
 
-	XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit operator)
-	auto(), petrotype{Ns...})
+	XTAL_DEF_(return,inline,explicit)
+	operator auto() const noexcept {return petrotype{Ns...};}
 
-	XTAL_FX1_(to) (XTAL_DEF_(return,inline,let)
-	operator() (), *this)
+	XTAL_DEF_(return,inline,let)
+	operator() ()   const noexcept {return *this;}
 
 	template <extent_type ...Ms>
 	XTAL_DEF_(return,inline,met)

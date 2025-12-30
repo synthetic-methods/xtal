@@ -41,17 +41,25 @@ struct define_super
 		{}
 
 	public:// ACCESS
-		using S_::self;
+	//	using S_::self;
 
-		XTAL_FX4_(do) (template <fungible_q<subtype> Y=T>
-		XTAL_DEF_(return,inline,let)
-		self(auto &&...oo),
+		/**/
+		template <class ..._s>
+		XTAL_DEF_(return,inline,set)
+		self_f(auto &&o, auto &&...oo)
 		noexcept -> decltype(auto)
 		{
-			auto  x = self<Y>();
-			auto &y = self<Y>(); y.~ Y();
-			return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
-		})
+			if constexpr (_xtd::mutable_reference<decltype(o)> and some_q<decltype(oo)...>) {
+				using Y = typename T::template self_s<_s...>;
+				auto &y = static_cast<Y &>(o); auto x = y; y.~ Y();
+				return *new (&y) Y(XTAL_REF_(oo)..., XTAL_MOV_(x));
+			}
+			else {
+				return S_::template self_f<_s...>(XTAL_REF_(o), XTAL_REF_(oo)...);
+			}
+		}
+		XTAL_FN1_(go) (template <class ..._s> XTAL_DEF_(return,inline,get) self, self_f<_s...>)
+		/***/
 
 		XTAL_DEF_(return,inline,let)
 		pack() const
@@ -76,20 +84,25 @@ struct refine_head
 	template <class S>
 	class subtype : public S
 	{
+		using S_ = S;
+
 	public:
-		using S::S; static_assert(any_q<S>);
+		using S_::S_; static_assert(any_q<S_>);
 
 	};
 	template <class S> requires (1 == typename S::pack_size{}())
 	class subtype<S> : public S
 	{
+		using S_ = S;
+		using U_ = typename S_::head_type;
+
 	public:
-		using S::S; static_assert(any_q<S>);
+		using S_::S_; static_assert(any_q<S_>);
 		/*!
 		\brief  	Implicit conversion to the singleton kernel-type.
 		*/
-		XTAL_FX4_(to) (XTAL_DEF_(return,inline,implicit)
-		operator typename S::head_type(), S::head())
+		XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator U_,
+			[] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).head()))
 
 	};
 };
@@ -106,7 +119,7 @@ struct refine_tuple
 		/*!
 		\brief  	Tuple application.
 		*/
-		XTAL_FX2_(do) (XTAL_DEF_(inline,let)
+		XTAL_FN2_(do) (XTAL_DEF_(inline,let)
 		apply(auto &&f),
 		noexcept -> decltype(auto)
 		{
@@ -116,7 +129,7 @@ struct refine_tuple
 			}
 			XTAL_0IF (1 <= pack_size{}()) {
 				return [this, f=XTAL_REF_(f)] <auto ...I>(bond::seek_t<I...>)
-					XTAL_0FN_(to) (f(S::template head<I>()...))
+					XTAL_0FN_(to) (f(S::template head<constant_t<I>>()...))
 				(bond::seek_s<pack_size{}()> {});
 			}
 		})
@@ -163,10 +176,10 @@ struct refine_tuple
 			return _std::apply([] XTAL_1FN_(call) (T), tuple);
 		}
 
-		template <size_type N> XTAL_DEF_(inline,met) get(subtype const &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
-		template <size_type N> XTAL_DEF_(inline,met) get(subtype       &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<N>())
-		template <size_type N> XTAL_DEF_(inline,met) get(subtype const  &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
-		template <size_type N> XTAL_DEF_(inline,met) get(subtype        &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<N>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<constant_t<N>>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype       &&s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (XTAL_MOV_(s).template head<constant_t<N>>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype const  &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<constant_t<N>>())
+		template <size_type N> XTAL_DEF_(inline,met) get(subtype        &s) noexcept -> decltype(auto) requires XTAL_TRY_(to) (          s .template head<constant_t<N>>())
 
 	};
 };
@@ -377,8 +390,8 @@ struct defer_field<_std::integer_sequence<I, Ns...>>
 			return N_revalue[body_part];
 		}
 		
-		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
-		operator size_type(), body_part)
+		XTAL_DEF_(return,inline,explicit)
+		operator size_type() const noexcept {return body_part;}
 
 	};
 };
@@ -436,14 +449,14 @@ struct defer_field<unit_type[N_width]>
 		/*!
 		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
 		*/
-		XTAL_FX2_(to) (XTAL_DEF_(return,inline,get)
+		XTAL_FN2_(to) (XTAL_DEF_(return,inline,get)
 		head(), head_type{body_part})
 
 		/*!
 		\returns	The underlying index.
 		*/
-		XTAL_FX1_(to) (XTAL_DEF_(return,inline,explicit)
-		operator size_type(), body_part)
+		XTAL_DEF_(return,inline,explicit)
+		operator size_type() const noexcept {return body_part;}
 
 	};
 };
@@ -477,14 +490,14 @@ struct refer_iterators
 		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 
-		XTAL_FX2_(do) (template <counter_q V>
+		XTAL_FN2_(do) (template <counter_q V>
 		XTAL_DEF_(return,inline,let)
 		subhead(V &&v),
 		noexcept -> auto
 		{
 			return subhead(counted_f(0, XTAL_REF_(v)));
 		})
-		XTAL_FX2_(do) (template <counted_q W>
+		XTAL_FN2_(do) (template <counted_q W>
 		XTAL_DEF_(return,let)
 		subhead(W &&w),
 		noexcept -> auto
