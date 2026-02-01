@@ -82,9 +82,11 @@ struct superblock<Us...>
 	using type = bond::derive_t<homotype>;
 
 };
-template <scalar_q U, auto N>
-struct superblock<U(&)[N]>
+template <vector_q A> requires in_v<_xtd::reference<A>>
+struct superblock<A>
 {
+	XTAL_TYP_(set) U = _xtd::remove_reference_t<_xtd::remove_extent_t<A>>;
+	XTAL_DEF_(set) N = _xtd::extent_v<A>;
 	//\
 	using endotype = reiterated_t<_std::array<U, N>>;//NOTE: Doesn't truncate properly?
 	using endotype = _std::span<U, N>;
@@ -122,9 +124,11 @@ struct superblock<U(&)[N]>
 	using type = bond::derive_t<homotype>;
 
 };
-template <scalar_q U, auto N>
-struct superblock<U   [N]>
+template <vector_q A> requires un_v<_xtd::reference<A>>
+struct superblock<A>
 {
+	XTAL_TYP_(set) U = _xtd::remove_reference_t<_xtd::remove_extent_t<A>>;
+	XTAL_DEF_(set) N = _xtd::extent_v<A>;
 	using endotype = _std::array<U, N>;
 	
 	template <class T>
@@ -167,8 +171,10 @@ struct superblock<U   [N]>
 		homotype(variable<size_type> const n)
 		noexcept
 		{
-			if (n < size or _std::is_constant_evaluated()) {
-				S_::fill(value_type{});
+			if constexpr (un_v<0, size>) {
+				if (n < size or _std::is_constant_evaluated()) {
+					S_::fill(value_type{});
+				}
 			}
 		}
 		/*!
@@ -261,6 +267,7 @@ struct block
 
 	public:// OPERATE
 		using S_::size;
+		static cardinal_constant_t<_std::rank_v<common_t<Us...>>> constexpr rank{};
 
 	public:// CONSTRUCT
 		using S_::S_;

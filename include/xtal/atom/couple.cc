@@ -40,15 +40,17 @@ TAG_("couple")
 
 	TRY_("couple typing")
 	{
-		using U0 = unsigned;
-		using V0 =   signed;
+		using U = unsigned;
+		using V =   signed;
 
-		using U1 = couple_t<U0[1] >; using _U1 = brace_t<U0[1] >;
-		using V1 = couple_t<V0[1] >; using _V1 = brace_t<V0[1] >;
-		using U2 = couple_t<U0[2] >; using _U2 = brace_t<U0[2] >;
-		using V2 = couple_t<V0[2] >; using _V2 = brace_t<V0[2] >;
-		using UV = couple_t<U0, V0>; using _UV = brace_t<U0, V0>;
-		using VU = couple_t<V0, U0>; using _VU = brace_t<V0, U0>;
+		using U0 = couple_t<U[0] >; using _U0 = brace_t<U[0] >;
+		using V0 = couple_t<V[0] >; using _V0 = brace_t<V[0] >;
+		using U1 = couple_t<U[1] >; using _U1 = brace_t<U[1] >;
+		using V1 = couple_t<V[1] >; using _V1 = brace_t<V[1] >;
+		using U2 = couple_t<U[2] >; using _U2 = brace_t<U[2] >;
+		using V2 = couple_t<V[2] >; using _V2 = brace_t<V[2] >;
+		using UV = couple_t<U, V>; using _UV = brace_t<U, V>;
+		using VU = couple_t<V, U>; using _VU = brace_t<V, U>;
 
 		static_assert(    bond::tab_comparable_q< V1,  V1>);// `    ==` (shallow)
 		static_assert(not bond::tab_comparable_q< V1, _V1>);// `not ==` (shallow)
@@ -60,8 +62,9 @@ TAG_("couple")
 		static_assert(not bond::tab_precedence_p<_V1,  V1>);// `not <=`
 		static_assert(not bond::tab_preference_p<_V1,  V1>);// `not < `
 
-		U1 u1{}; U2 u2{};
-		V1 v1{}; V2 v2{};
+		U0 u0{}; V0 v0{};
+		U1 u1{}; V1 v1{};
+		U2 u2{}; V2 v2{};
 		UV uv{}; VU vu{};
 
 		TRUE_(v1.size() == v1.twin().size());
@@ -161,11 +164,11 @@ TAG_("couple")
 	}
 	TRY_("couple refactoring")
 	{
-		using U0 = T_sigma;
-		using U1 = couple_t<U0[1]>;
-		using U2 = couple_t<U0[2]>;
-		using U3 = couple_t<U0[3]>;
-		using U4 = couple_t<U0[4]>;
+		using U = T_sigma;
+		using U1 = couple_t<U[1]>;
+		using U2 = couple_t<U[2]>;
+		using U3 = couple_t<U[3]>;
+		using U4 = couple_t<U[4]>;
 
 	//	TRUE_(U4{2, 12, 6, 2}.extremal() == U2{2, 12});
 

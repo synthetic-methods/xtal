@@ -38,7 +38,7 @@ struct wrap
 		XTAL_DEF_(set) N = _xtd::       extent_v<W>;
 		XTAL_TYP_(set) U = _xtd::remove_extent_t<W>;
 		XTAL_TYP_(set) V = _std::remove_cvref_t<U>;
-		XTAL_TYP_(set) T = _xtd::  move_cvref_t<W, T_<V>[N]>;
+		XTAL_TYP_(set) T = _xtd::  qualify_cvref_t<W, T_<V>[N]>;
 
 	public:
 		using type = T;

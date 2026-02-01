@@ -72,7 +72,7 @@ TAG_("buffer")
 		using W_buffer = buffer_t<W_alpha[3]>;
 		using M_buffer =  block_t<W_alpha[3]>;
 
-		auto  xs = W_buffer{{0, 1, 2}, {3, 4, 5}, {5, 6, 7}};
+		auto  xs = W_buffer{{0x0, 0x1, 0x2}, {0x3, 0x4, 0x5}, {0x5, 0x6, 0x7}};// `capacity() < 4`
 		auto &ys = reinterpret_cast<M_buffer &>(xs);
 
 		TRUE_(xs[0] == ys[0]);

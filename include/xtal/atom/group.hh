@@ -63,7 +63,7 @@ public:
 		XTAL_NEW_(implicit)
 		homotype()
 		noexcept
-		requires same_q<Us...>
+		requires un_v<0, size> and same_q<Us...>
 		{
 			_detail::initialize_with(S_::begin(), size(), U_{one});
 		}
@@ -74,7 +74,7 @@ public:
 		XTAL_NEW_(implicit)
 		homotype(_std::initializer_list<U_> xs)
 		noexcept
-		requires same_q<Us...>
+		requires un_v<0, size> and same_q<Us...>
 		{
 			auto const sN = xs.   size(); assert(sN <= size);
 			auto       x0 = xs.  begin();
@@ -199,31 +199,20 @@ template <class     ...Ts>	XTAL_TYP_(new) group;
 template <class     ...Ts>	XTAL_TYP_(let) group_t = typename group<Ts...>::type;
 template <class     ...Ts>	XTAL_TYP_(ask) group_q = group_multiplication_q<Ts...> or group_addition_q<Ts...>;
 
-//template <scalar_q ...Us> requires same_q<Us...>
-//struct group<Us ...>
-//:	group<common_t<Us...>[sizeof...(Us)]>
-//{
-//};
+template <scalar_q  ...Us> requires group_multiplication_q<               Us...          > struct group<Us...> : group_multiplication<Us...> {};
+template <vector_q     Us> requires group_multiplication_q<typename fixed<Us>::value_type> struct group<Us   > : group_multiplication<Us   > {};
+template <scalar_q  ...Us> requires group_addition_q      <               Us...          > struct group<Us...> : group_addition      <Us...> {};
+template <vector_q     Us> requires group_addition_q      <typename fixed<Us>::value_type> struct group<Us   > : group_addition      <Us   > {};
+template <scalar_q  ...Us> requires integral_variable_q   <               Us...          > struct group<Us...> : group_addition      <Us...> {};
+template <vector_q     Us> requires integral_variable_q   <typename fixed<Us>::value_type> struct group<Us   > : group_addition      <Us   > {};
 
-template <group_multiplication_q     ...Us> struct group<Us ...   > : group_multiplication<Us...  > {};
-template <group_multiplication_q U, auto N> struct group<U     [N]> : group_multiplication<U   [N]> {};
-template <group_multiplication_q U, auto N> struct group<U  (&)[N]> : group_multiplication<U(&)[N]> {};
+template <class     ...Us> struct group<_std::multiplies<Us>   ...> : group_multiplication<Us...  > {};///<\brief Resolves as `group_multiplication`.;
+template <class U, auto N> struct group<_std::multiplies<U >   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.
+template <class U, auto N> struct group<_std::multiplies<U >(&)[N]> : group_multiplication<U(&)[N]> {};///<\brief Resolves as `group_multiplication`.
 
-template <group_addition_q           ...Us> struct group<Us ...   > : group_addition      <Us...  > {};
-template <group_addition_q       U, auto N> struct group<U     [N]> : group_addition      <U   [N]> {};
-template <group_addition_q       U, auto N> struct group<U  (&)[N]> : group_addition      <U(&)[N]> {};
-
-template <integral_variable_q        ...Us> struct group<Us ...   > : group_addition      <Us...  > {};
-template <integral_variable_q    U, auto N> struct group<U     [N]> : group_addition      <U   [N]> {};
-template <integral_variable_q    U, auto N> struct group<U  (&)[N]> : group_addition      <U(&)[N]> {};
-
-template <class     ...Ts> struct group<_std::multiplies <Ts>   ...> : group_multiplication<Ts...  > {};///<\brief Resolves as `group_multiplication`.;
-template <class U, auto N> struct group<_std::multiplies <U >   [N]> : group_multiplication<U   [N]> {};///<\brief Resolves as `group_multiplication`.
-template <class U, auto N> struct group<_std::multiplies <U >(&)[N]> : group_multiplication<U(&)[N]> {};///<\brief Resolves as `group_multiplication`.
-
-template <class     ...Ts> struct group<_std::plus       <Ts>   ...> : group_addition      <Ts...  > {};///<\brief Resolves as `group_addition`.;
-template <class U, auto N> struct group<_std::plus       <U >   [N]> : group_addition      <U   [N]> {};///<\brief Resolves as `group_addition`.
-template <class U, auto N> struct group<_std::plus       <U >(&)[N]> : group_addition      <U(&)[N]> {};///<\brief Resolves as `group_addition`.
+template <class     ...Us> struct group<_std::plus      <Us>   ...> : group_addition      <Us...  > {};///<\brief Resolves as `group_addition`.;
+template <class U, auto N> struct group<_std::plus      <U >   [N]> : group_addition      <U   [N]> {};///<\brief Resolves as `group_addition`.
+template <class U, auto N> struct group<_std::plus      <U >(&)[N]> : group_addition      <U(&)[N]> {};///<\brief Resolves as `group_addition`.
 
 
 

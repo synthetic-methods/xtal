@@ -39,8 +39,8 @@ struct couple
 	
 	template <class T>
 	//\
-	using endotype = typename field<wrap_s<Us, _xtd::plus_multiplies>...>::template homotype<T>;
-	using endotype = typename group<wrap_s<Us, _std::multiplies     >...>::template homotype<T>;
+	using endotype = typename field_arithmetic    <Us...>::template homotype<T>;
+	using endotype = typename group_multiplication<Us...>::template homotype<T>;
 
 	template <class T>
 	using holotype = bond::compose_s<endotype<T>
@@ -283,11 +283,6 @@ struct couple
 	};
 	using type = bond::derive_t<homotype>;
 
-};
-template <scalar_q U>
-struct couple<U>
-:	couple<U[2]>
-{
 };
 
 

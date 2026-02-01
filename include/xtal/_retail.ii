@@ -133,8 +133,8 @@ template <class T             >  concept        atomic_q =  complete_q<T> and _x
 template <class T             >  concept     molecular_q =  complete_q<T> and _xtd::nominal<based_t<T>>;
 template <class T             >  concept  submolecular_q =  atomic_q<T> or molecular_q<T> and _std::is_standard_layout_v<based_t<T>>;
 
-template <class S, class T=S  >	using         qualify_s = _xtd::move_cvref_t<                                S , based_t<T>>;
-template <class S, class T=S  >	using      disqualify_s = _xtd::move_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
+template <class S, class T=S  >	using         qualify_s = _xtd::qualify_cvref_t<                                S , based_t<T>>;
+template <class S, class T=S  >	using      disqualify_s = _xtd::qualify_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
 
 
 template <class F, class ...Xs>	using          return_t	= _std::invoke_result_t<F, Xs...>;
@@ -272,13 +272,15 @@ template <class T             >	concept  fixed_valued_q	=  requires {requires di
 template <class T             >	concept  fluid_valued_q	=  requires {requires different_q<T, fluid_valued_t<T>>;};
 template <class T             >	concept        valued_q	=  requires {requires different_q<T,       valued_t<T>>;};
 
-template <class T             >	using    array_valued_t	= _xtd::move_const_t<T, _xtd::remove_extent_t<based_t<T>>>;
-template <class T             >	using    under_valued_t	= _xtd::move_const_t<T, _std::underlying_type_t<based_t<T>>>;
-template <class T             >	using    inner_valued_t	= _xtd::move_const_t<T,  typename based_t<T>:: value_type>;
-template <class T             >	using   scalar_valued_t	= _xtd::move_const_t<T,  typename based_t<T>::scalar_type>;
-template <class T             >	using   Scalar_valued_t	= _xtd::move_const_t<T,  typename based_t<T>::Scalar     >;
+//\
+template <class T             >	using    array_valued_t	= _xtd::qualify_const_t<T, _xtd::  remove_extent_t<based_t<T>>>;
+template <class T             >	using    array_valued_t	= _xtd::qualify_const_t<T,  XTAL_ALL_(*XTAL_ANY_(T))>;
+template <class T             >	using    under_valued_t	= _xtd::qualify_const_t<T, _std::underlying_type_t<based_t<T>>>;
+template <class T             >	using    inner_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>:: value_type>;
+template <class T             >	using   scalar_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>::scalar_type>;
+template <class T             >	using   Scalar_valued_t	= _xtd::qualify_const_t<T,  typename based_t<T>::Scalar     >;
 
-template <class T             >	concept  array_valued_q	=  different_q<T, array_valued_t<T>>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
+template <class T             >	concept  array_valued_q	=  different_q<T, _std::decay_t<T>> or same_q<array_valued_t<T>[0], T>;//NOTE: `std::is_array_v` doesn't accept `[0]...`.
 template <class T             >	concept  inner_valued_q	=  requires {requires complete_q< inner_valued_t<T>>;};
 template <class T             >	concept  under_valued_q	=  requires {requires complete_q< under_valued_t<T>>;};
 template <class T             >	concept scalar_valued_q	=  requires {requires complete_q<scalar_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
