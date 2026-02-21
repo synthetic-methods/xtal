@@ -265,10 +265,6 @@ struct block
 		template <class _, scalar_q ...As> requires same_q<As...>
 		struct form_<_, As...> : form_<_, common_t<As...>[sizeof...(As)]> {};
 
-	public:// OPERATE
-		using S_::size;
-		static cardinal_constant_t<_std::rank_v<common_t<Us...>>> constexpr rank{};
-
 	public:// CONSTRUCT
 		using S_::S_;
 
@@ -304,8 +300,10 @@ struct block
 		reform(),
 			form_t<Xs...>(S_::self()))
 
-	public:
+	public:// OPERATE
 		using S_::self;
+		using S_::size;
+		static cardinal_constant_t<_std::rank_v<common_t<Us...>>> constexpr rank{};
 
 		/*!
 		\returns	The first `count` elements of `this` as a truncated view of `U`.

@@ -59,7 +59,8 @@
 #define XTAL_TXT_then_(...)              #__VA_ARGS__
 
 /// Symbol generation.
-#define XTAL_NYM_(...)     XTAL_APP_(cat) (XTAL,_,__VA_ARGS__)
+#define XTAL_NYM_(...)     XTAL_APP_(cat) (XTAL_NYM,_,__VA_ARGS__)
+#define XTAL_NUM           XTAL_APP_(cat) (XTAL_NUM,_,__COUNTER__)
 
 
 

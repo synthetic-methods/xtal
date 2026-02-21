@@ -23,7 +23,7 @@ The `scan` method of `spool` must return the most recently activated voice for a
 The default implementation uses `lower_bound` to this effect.
 */
 template <typename ...As>	struct  polymer;
-template <typename ...As>	using   polymer_t      =       confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
+template <typename ...As>	using   polymer_t      =     confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
 template <typename ...Qs>	concept polymer_head_q = bond::tag_as_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 template <typename ...Qs>	concept polymer_body_q = bond::tag_in_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 
