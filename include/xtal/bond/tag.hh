@@ -45,15 +45,15 @@ struct tagged
 };
 
 
-template <class T, template <class ...> class ...Ks_> concept      tag_as_q =      tab_as_q<T, tag<Ks_>...>;
-template <class T, template <class ...> class ...Ks_> concept tag_affixed_q = tab_affixed_q<T, tag<Ks_>...>;
-template <class T, template <class ...> class ...Ks_> concept      tag_in_q =      tab_in_q<T, tag<Ks_>...>;
-template <class T, template <class ...> class ...Ks_> concept tag_infixed_q = tab_infixed_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept      tag_outer_q =      tab_outer_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept tag_outer_fixed_q = tab_outer_fixed_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept      tag_inner_q =      tab_inner_q<T, tag<Ks_>...>;
+template <class T, template <class ...> class ...Ks_> concept tag_inner_fixed_q = tab_inner_fixed_q<T, tag<Ks_>...>;
 
-template <template <class ...> class K_, class ...Ts> concept      tag_as_p =      tab_as_p<tag<K_>, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept tag_affixed_p = tab_affixed_p<tag<K_>, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept      tag_in_p =      tab_in_p<tag<K_>, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept tag_infixed_p = tab_infixed_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept      tag_outer_p =      tab_outer_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_outer_fixed_p = tab_outer_fixed_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept      tag_inner_p =      tab_inner_p<tag<K_>, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_inner_fixed_p = tab_inner_fixed_p<tag<K_>, Ts...>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

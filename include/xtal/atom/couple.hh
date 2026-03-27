@@ -17,7 +17,7 @@ providing even/odd-reflection iff `size() == 2`.
 */
 template <class ...Us>	struct  couple;
 template <class ...Us>	using   couple_t = typename couple<Us...>::type; ///<\brief  Type-factory for `couple`.
-template <class ...Us>	concept couple_q = bond::tag_infixed_p<couple_t, Us...>;
+template <class ...Us>	concept couple_q = bond::tag_inner_fixed_p<couple_t, Us...>;
 
 XTAL_DEF_(let) couple_f = [] XTAL_1FN_(call) (_detail::factory<couple_t>::make);///<\brief Value-factory for `couple`.
 
@@ -69,10 +69,11 @@ struct couple
 		noexcept -> auto
 		{
 			using V = XTAL_ALL_(v);
-			scale_type constexpr one{1};
+			auto constexpr I_slot =       N_slot&1;
+			auto constexpr one    = (scale_type) 1;
 			XTAL_IF0
-			XTAL_0IF (continuous_field_q<V> and       1 == N_slot) {return       versus_f(one/XTAL_REF_(v));}
-			XTAL_0IF (   logical_group_q<V> and       1 == N_slot) {return       versus_f(not XTAL_REF_(v));}
+			XTAL_0IF (continuous_field_q<V> and       1 == I_slot) {return       versus_f(one/XTAL_REF_(v));}
+			XTAL_0IF (   logical_group_q<V> and       1 == I_slot) {return       versus_f(not XTAL_REF_(v));}
 			XTAL_0IF (   logical_group_q<V> and integral_q<U_arg>) {return                   -XTAL_REF_(v) ;}
 			XTAL_0IF (            same_q<V,                U_arg>) {return                    XTAL_REF_(v) ;}
 			XTAL_0IF_(else)                                        {return static_cast<U_arg>(XTAL_REF_(v));}
@@ -82,16 +83,30 @@ struct couple
 		using S_::S_;
 
  		XTAL_NEW_(explicit)
-		homotype(bool  const u, _std::in_place_t)
+		homotype(different_q<_std::in_place_t> auto &&u, _std::in_place_t)
 		noexcept
 		requires in_v<size, 2>
-		:	S_{versus_f<0>(u), versus_f<1>(u)}
+		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
 		{}
+ 		XTAL_NEW_(explicit)
+		homotype(_std::in_place_t, different_q<_std::in_place_t> auto &&u)
+		noexcept
+		requires in_v<size, 2>
+		:	S_{versus_f<-1>(u), versus_f<0>(u)}
+		{}
+
 		XTAL_NEW_(explicit)
 		homotype(U_arg const u, _std::in_place_t)
  		noexcept
 		requires in_v<size, 2>
-		:	S_{versus_f<0>(u), versus_f<1>(u)}
+		:	S_{versus_f< 0>(u), versus_f< 1>(u)}
+ 		{
+ 		}
+		XTAL_NEW_(explicit)
+		homotype(_std::in_place_t, U_arg const u)
+ 		noexcept
+		requires in_v<size, 2>
+		:	S_{versus_f<-1>(u), versus_f< 0>(u)}
  		{
  		}
 

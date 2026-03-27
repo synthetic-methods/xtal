@@ -1,5 +1,4 @@
 #include "./any.hh"
-#include "./assess.hh"
 #include "./assign.hh"
 #include "./bundle.hh"
 #include "./cue.hh"

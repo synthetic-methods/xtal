@@ -10,17 +10,18 @@ XTAL_ENV_(push)
 namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class ..._s> struct  context   : bond::compose<context<_s>...> {};
-template <class ..._s> using   context_t = cell::confined_t<context<_s...>>;
+/*!
+\brief   Metaclass to support external parameter definition, querying,
+         and `attach`/`dispatch`.
+*/
+template <class ..._s> struct  codex   : bond::compose<codex<_s>...> {};
+template <class ..._s> using   codex_t = cell::confined_t<codex<_s...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
-struct context<>
+struct codex<>
 {
 	template <class S>
 	class subtype : public S
@@ -45,11 +46,11 @@ struct context<>
 	};
 };
 template <class T>
-struct context<T> : context<>
+struct codex<T> : codex<>
 {
 };
 template <class ..._s>
-struct context<bond::compose<_s...>> : context<_s...>
+struct codex<bond::compose<_s...>> : codex<_s...>
 {
 };
 

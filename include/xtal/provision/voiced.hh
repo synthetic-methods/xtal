@@ -19,7 +19,7 @@ Used for reinstancing `As...` in the context of containers like `polymer`.
 */
 template <typename ..._s> struct   voiced;
 template <typename ..._s> using    voiced_t = confined_t<voiced<_s...>>;
-template <typename ..._s> concept  voiced_q = bond::tag_in_p<voiced, _s...>;
+template <typename ..._s> concept  voiced_q = bond::tag_inner_p<voiced, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

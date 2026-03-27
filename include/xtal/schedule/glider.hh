@@ -30,10 +30,10 @@ struct glider
 		using S_::S_;
 
 		template <class ...Ys>
-		struct accept
+		struct suspend
 		{
 			static_assert(single_q<Ys...>);
-			using superkind = bond::compose<typename S_::template accept<Ys...>>;
+			using superkind = bond::compose<typename S_::template suspend<Ys...>>;
 
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>
@@ -115,7 +115,7 @@ struct glider
 				flux(auto &&...oo)
 				noexcept -> signed
 				{
-					compact(0 <= N_ion);
+					tidy(0 <= N_ion);
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				/*!
@@ -126,7 +126,7 @@ struct glider
 				flux(same_q<U_hold> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
-					compact(0 <= N_ion);
+					tidy(0 <= N_ion);
 					return [this, oo...] XTAL_1FN_(and) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
 						(tail_(0).template flux<N_ion>(U_ramp{XTAL_REF_(o)}));
 				}
@@ -139,7 +139,7 @@ struct glider
 				enqueue(same_q<E_ramp> auto &&o)
 				noexcept -> void
 				{
-					compact(o);
+					tidy(o);
 					u_pipe.push(XTAL_REF_(o));
 				}
 				/*!
@@ -178,11 +178,7 @@ struct glider
 				noexcept -> void
 				{
 					if (t0 < t1) {
-						//\
-						auto const i0 = flow::cue_s<>(t0);
-						auto const i0 = E_ramp(t0);
-						//\
-						auto const x0 = U_ramp(u_pipe.scan(i0)->tail()) (0);
+						auto const i0 = E_ramp(t0 + 1);
 						auto const x0 = U_ramp(_std::prev(u_pipe.scan(i0))->tail()) (0);
 						auto const x_ = x1 - x0;
 						auto const t_ = t1 - t0;
@@ -196,7 +192,7 @@ struct glider
 				\brief   Reset the play-head, clearing all processed events, bringing forward any future events.
 				*/
 				XTAL_DEF_(let)
-				compact(bool proceed=true)
+				tidy(bool proceed=true)
 				noexcept -> void
 				{
 					if (proceed) {
@@ -208,18 +204,18 @@ struct glider
 					}
 				}
 				XTAL_DEF_(let)
-				compact(delay_type const &v)
+				tidy(delay_type const &v)
 				noexcept -> void
 				{
 					if (v < u_drip.head()) {
-						compact();
+						tidy();
 					}
 				}
 				XTAL_DEF_(let)
-				compact(flow::cue_q auto const &o)
+				tidy(flow::cue_q auto const &o)
 				noexcept -> void
 				{
-					compact(o.head());
+					tidy(o.head());
 				}
 
 			};

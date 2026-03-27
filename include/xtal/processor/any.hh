@@ -99,7 +99,7 @@ struct define
 						return 1;
 					}
 					if (s.pump([&] (counted_q auto scan, counter_q auto step)
-						XTAL_0FN_(to) (s.template flux<N_ion>(occur::render_f(rev, cur)
+						XTAL_0FN_(to) (s.template flux<N_ion>(_std::in_place
 						,	rev.subview(scan)
 						,	cur.subview(scan).skip(step)
 						))
@@ -109,11 +109,11 @@ struct define
 					return 0;
 				}
 				/*!
-				\brief  	Renders the subslice of `ren` designated by `rev` and `cur`.
+				\brief  	Renders the subslice of designated by `rev` and `cur`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(_std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
 					using          V_state = XTAL_ALL_(rev.view());

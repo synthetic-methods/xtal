@@ -24,7 +24,7 @@ Supports expression-templates by way of `operator() (unsigned)`.
 template <class ...Us>	struct  block;
 template <class ...Us>	using   block_t = typename block<Us...>::type;
 
-template <class ...Ts>	concept block_q               = bond::tag_in_p<block_t, Ts...>;
+template <class ...Ts>	concept block_q               = bond::tag_inner_p<block_t, Ts...>;
 template <class ...Ts>	concept block_revalued_q   = (...and different_q<decltype(Ts::revalue_f), _std::identity>);
 #ifndef XTAL_DOC
 template <class U, auto  N, auto ...Ns> struct   block<U   [N][Ns]...> : block<block_t<U[Ns]...>   [N]> {};
@@ -381,10 +381,11 @@ struct block
 		element_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
+			index_type constexpr N_dex = modulo_v<size, N_ind>;
 			XTAL_IF0
-			XTAL_0IF_(to) (*get<N_ind>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
-			XTAL_0IF_(to) ( get<N_ind>(qualify_f<archetype>(XTAL_REF_(o))))
-			XTAL_0IF_(to) (element_f(XTAL_REF_(o), constant_t<N_ind>{}))// Required for `span`!
+			XTAL_0IF_(to) (*get<N_dex>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
+			XTAL_0IF_(to) ( get<N_dex>(qualify_f<archetype>(XTAL_REF_(o))))
+			XTAL_0IF_(to) (element_f(XTAL_REF_(o), constant_t<N_dex>{}))// Required for `span`!
 		}
 		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
@@ -397,12 +398,12 @@ struct block
 			return qualify_f<T>(XTAL_REF_(o)).operator[](i);
 		}
 
-		template <index_type I=0>
+		template <index_type N_ind=0>
 		XTAL_DEF_(return,inline,set)
 		coelement_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
-			return T::revalue_f(element_f<I>(XTAL_REF_(o)));
+			return T::revalue_f(element_f<N_ind>(XTAL_REF_(o)));
 		}
 		XTAL_DEF_(return,inline,set)
 		coelement_f(auto &&o, integral_q auto i)
@@ -411,11 +412,11 @@ struct block
 			return T::revalue_f(element_f   (XTAL_REF_(o), i));
 		}
 
-		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,get)   element,   element_f<Ns...>)
-		XTAL_FN1_(go) (template <auto ...Ns> XTAL_DEF_(return,inline,get) coelement, coelement_f<Ns...>)
+		XTAL_FN1_(go) (template <auto    ...Ns> XTAL_DEF_(return,inline,get)   element,   element_f<Ns...>)
+		XTAL_FN1_(go) (template <auto    ...Ns> XTAL_DEF_(return,inline,get) coelement, coelement_f<Ns...>)
 
-		XTAL_FN2_(to) (template <index_type I  > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
-		XTAL_FN2_(to) (template <integral_q I  > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
+		XTAL_FN2_(to) (template <index_type I > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
+		XTAL_FN2_(to) (template <integral_q I > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
 
 	};
 	using type = bond::derive_t<homotype>;

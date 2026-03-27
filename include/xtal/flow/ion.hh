@@ -21,7 +21,7 @@ Used when the `flux`/`fuse` signature is reified, as in `schedule::slider`.
 */
 template <class ..._s>	struct  ion;
 template <class ..._s>	using   ion_s = bond::compose_s<let_t< _s...>, ion<>>;
-template <class ..._s>	concept ion_q = bond::tag_as_p<ion_s, _s...>;
+template <class ..._s>	concept ion_q = bond::tag_outer_p<ion_s, _s...>;
 template <           >	struct  ion<> : cell::header<signed, bond::tag<ion_s>> {};
 
 

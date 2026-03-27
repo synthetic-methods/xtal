@@ -40,7 +40,7 @@ struct define
 		are intercepted, rebundled, and forwarded directly to `self().fuse(flow::cue_s<Ys...>)`.
 		*/
 		template <class ...Ys>
-		struct accept
+		struct suspend
 		{
 			static_assert(complete_q<Ys...>);
 			

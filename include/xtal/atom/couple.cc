@@ -11,9 +11,9 @@ namespace xtal::atom::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(bond::tag_in_p<couple_t, couple_t<int[2]>>);
-static_assert(bond::tag_infixed_p<couple_t, couple_t<int[2]>>);
-static_assert(bond::tag_infixed_p<couple_t, couple_t<int[2]>, int[2]>);
+static_assert(bond::tag_inner_p<couple_t, couple_t<int[2]>>);
+static_assert(bond::tag_inner_fixed_p<couple_t, couple_t<int[2]>>);
+static_assert(bond::tag_inner_fixed_p<couple_t, couple_t<int[2]>, int[2]>);
 static_assert(couple_q<couple_t<int[2]>, int[2]>);
 
 static_assert(complete_q<couple_t<float, double>>);

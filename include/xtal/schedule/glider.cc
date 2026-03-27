@@ -41,7 +41,7 @@ TAG_("glider", "process")
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
-			typename U_glider::template accept<U1_event>
+			typename U_glider::template suspend<U1_event>
 		>;
 		using U_processor = processor::monomer_t<Z_process
 		,	provision::stored <null_type[0x100]>
@@ -71,8 +71,8 @@ TAG_("glider", "process")
 		W0_event w0{u0};
 
 		z <<=                         U0_event{ 0.00} ;
-		z <<= U1_cue(0x08, 0x10).then(U0_event{ 0.50});
-		z <<= U1_cue(0x18, 0x28).then(U0_event{-0.50});
+		z <<= U1_cue(0x08, 0x10).then(U0_event{ 0.99});
+		z <<= U1_cue(0x10, 0x28).then(U0_event{-0.99});
 	//	z <<= U1_cue(0x30, 0x40).then(U0_event{ 0.00});
 
 		z <<= z_sample;
@@ -118,8 +118,8 @@ TAG_("glider", "process")
 		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
 		using V_event  = flow::cue_s<>;
 		
-		using U_accept = typename U_glider::template accept<U1_event>;
-		using U_process = process::confined_t<U_accept>;
+		using U_suspend = typename U_glider::template suspend<U1_event>;
+		using U_process = process::confined_t<U_suspend>;
 
 		U_process u_gate;
 		
@@ -180,7 +180,7 @@ TAG_("glider", "process")
 		using U_cursor = occur::cursor_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template accept<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template suspend<V_value>>;
 
 		using U_event = flow::cue_s<V_value>;
 		using V_event = flow::cue_s<>;
@@ -237,7 +237,7 @@ TAG_("glider", "process")
 		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template accept<V_value>>;
+		using Z_value = process::confined_t<typename U_glider::template suspend<V_value>>;
 
 		Z_value u_gate;
 		
@@ -280,7 +280,7 @@ void glider_processor()
 	U_store u_store{};
 
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
-	using Fn_gate = process::confined_t<typename U_glider::template accept<V_value>>;
+	using Fn_gate = process::confined_t<typename U_glider::template suspend<V_value>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	

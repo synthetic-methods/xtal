@@ -15,7 +15,7 @@ namespace xtal::provision
 */
 template <typename ..._s> struct   spooled;
 template <typename ..._s> using    spooled_t = confined_t<spooled<_s...>>;
-template <typename ..._s> concept  spooled_q = bond::tag_in_p<spooled, _s...>;
+template <typename ..._s> concept  spooled_q = bond::tag_inner_p<spooled, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

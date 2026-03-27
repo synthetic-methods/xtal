@@ -11,17 +11,17 @@ namespace xtal::occur
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-template <class ..._s> struct   resize;
-template <class ..._s> using    resize_t =  confined_t<resize< _s...>>;
-template <class ..._s> concept  resize_q = bond::tag_inner_p<resize, _s...> ;
+template <class ..._s> struct   resync;
+template <class ..._s> using    resync_t =     confined_t<resync< _s...>>;
+template <class ..._s> concept  resync_q = bond::tag_inner_p<resync, _s...> ;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 
 template <class U>
-struct resize<U>
+struct resync<U>
 {
-	using superkind = bond::compose<flow::tag<resize>, defer<U>>;
+	using superkind = bond::compose<flow::tag<resync>, defer<U>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -37,38 +37,21 @@ struct resize<U>
 		using S_::self;
 		using S_::head;
 
-		using size_type = U;
+		using sync_type = U;
 
-		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) size, [] (auto &&o, auto &&...oo)
+		XTAL_FN1_(go) (XTAL_DEF_(return,inline,get) sync, [] (auto &&o, auto &&...oo)
 		XTAL_0FN_(to) (XTAL_REF_(o).head(XTAL_REF_(oo)...)))
-
-		XTAL_DEF_(return,inline,let)
-		empty() const
-		noexcept -> bool
-		{
-			return 0 == size();
-		}
 
 	};
 };
-template <iterated_q U>
-struct resize<U> : resize<counter_t<U>>
-{
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <> struct resize<void> : resize<size_type> {};
-template <> struct resize<    > : resize<size_type> {};
+template <> struct resync<void> : resync<signed> {};
+template <> struct resync<    > : resync<signed> {};
 
-XTAL_DEF_(let) resize_f = [] XTAL_1FN_(call) (resize_t<>);
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<unsigned>>);
-static_assert(bond::tab_compatible_q<resize_t<unsigned>, resize_t<  signed>>);
+XTAL_DEF_(let) resync_f = [] XTAL_1FN_(call) (resync_t<>);
 
 
 ///////////////////////////////////////////////////////////////////////////////

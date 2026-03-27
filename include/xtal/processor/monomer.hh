@@ -24,8 +24,8 @@ used when rendering internally e.g. when supplying one-to-many relationships.
 */
 template <typename ...As>	struct  monomer;
 template <typename ...As>	using   monomer_t      =       confined_t<monomer< As...>>;///<\ingroup XTAL_processor_monomer
-template <typename ...Qs>	concept monomer_head_q = bond::tag_as_p<monomer, Qs... >;///<\ingroup XTAL_processor_monomer
-template <typename ...Qs>	concept monomer_body_q = bond::tag_in_p<monomer, Qs... >;///<\ingroup XTAL_processor_monomer
+template <typename ...Qs>	concept monomer_head_q = bond::tag_outer_p<monomer, Qs... >;///<\ingroup XTAL_processor_monomer
+template <typename ...Qs>	concept monomer_body_q = bond::tag_inner_p<monomer, Qs... >;///<\ingroup XTAL_processor_monomer
 
 
 ////////////////////////////////////////////////////////////////////////////////

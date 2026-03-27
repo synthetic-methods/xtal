@@ -14,15 +14,15 @@ namespace xtal::flow
 \brief
 Duplicates the `concept`s from `bond::tag`.
 */
-template <class T, template <class ...> class ...Ks_> concept       tag_as_q = bond::       tag_as_q<T, Ks_...>;
-template <class T, template <class ...> class ...Ks_> concept tag_affixed_q = bond:: tag_affixed_q<T, Ks_...>;
-template <class T, template <class ...> class ...Ks_> concept       tag_in_q = bond::       tag_in_q<T, Ks_...>;
-template <class T, template <class ...> class ...Ks_> concept tag_infixed_q = bond:: tag_infixed_q<T, Ks_...>;
+template <class T, template <class ...> class ...Ks_> concept       tag_outer_q = bond::       tag_outer_q<T, Ks_...>;
+template <class T, template <class ...> class ...Ks_> concept tag_outer_fixed_q = bond:: tag_outer_fixed_q<T, Ks_...>;
+template <class T, template <class ...> class ...Ks_> concept       tag_inner_q = bond::       tag_inner_q<T, Ks_...>;
+template <class T, template <class ...> class ...Ks_> concept tag_inner_fixed_q = bond:: tag_inner_fixed_q<T, Ks_...>;
 
-template <template <class ...> class K_, class ...Ts> concept       tag_as_p = bond::       tag_as_p<K_, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept tag_affixed_p = bond:: tag_affixed_p<K_, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept       tag_in_p = bond::       tag_in_p<K_, Ts...>;
-template <template <class ...> class K_, class ...Ts> concept tag_infixed_p = bond:: tag_infixed_p<K_, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept       tag_outer_p = bond::       tag_outer_p<K_, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_outer_fixed_p = bond:: tag_outer_fixed_p<K_, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept       tag_inner_p = bond::       tag_inner_p<K_, Ts...>;
+template <template <class ...> class K_, class ...Ts> concept tag_inner_fixed_p = bond:: tag_inner_fixed_p<K_, Ts...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////

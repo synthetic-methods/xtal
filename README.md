@@ -117,7 +117,7 @@ Gated gated;
 gated <<= std::make_tuple(cell::cue_s<>(123), (Gate) 1);// `gated()[123] == 1`
 ```
 
-They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to `review` the outcome.
+They are often used in tandem, e.g. the global block size/step may be updated by `influx` before using `efflux` to render the outcome.
 
 ```c++
 auto resize = resize_f(1024);

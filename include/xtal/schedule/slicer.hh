@@ -30,9 +30,9 @@ struct slicer
 		using S_::S_;
 		
 		template <class ...Ys>
-		struct accept
+		struct suspend
 		{
-			using superkind = typename S_::template accept<Ys...>;
+			using superkind = typename S_::template suspend<Ys...>;
 			
 			template <class R>
 			class subtype : public bond::compose_s<R, superkind>

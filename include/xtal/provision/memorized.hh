@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/blob.hh"
+#include "../atom/arena.hh"
 
 
 
@@ -12,11 +12,11 @@ namespace xtal::provision
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Provides local blob-like storage via `memory()` using `atom::blob`.
+Provides local arena-like storage via `memory()` using `atom::arena`.
 */
 template <typename ...Ts> struct   memorized;
 template <typename ...Ts> using    memorized_t = confined_t<memorized<Ts...>>;
-template <typename ..._s> concept  memorized_q = bond::tag_in_p<memorized, _s...>;
+template <typename ..._s> concept  memorized_q = bond::tag_inner_p<memorized, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ template <class ...Ts>
 struct memorized
 {
 	using superkind = bond::compose<bond::tag<memorized>
-	,	defer<atom::blob_t<Ts...>>
+	,	defer<atom::arena_t<Ts...>>
 	>;
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>

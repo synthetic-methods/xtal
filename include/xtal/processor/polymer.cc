@@ -32,7 +32,7 @@ void polymer_provision_spine__locamotion()
 	using A_stored  = provision::stored  <extent_constant_t<N_store>>;
 	using A_spooled = provision::spooled <extent_constant_t<N_spool>>;
 
-	using A_gate   = bond::compose<typename U_glider::template accept<Ox_level>, typename U_stage::inspect<>>;
+	using A_gate   = bond::compose<typename U_glider::template suspend<Ox_level>, typename U_stage::attach<>>;
 	using U_gate   = process::confined_t<A_gate>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -86,8 +86,8 @@ TAG_("polymer", "occur", "spine")
 	using A_spooled = provision::spooled <extent_constant_t<64>>;
 
 	using U_gate   = process::confined_t<void
-	,	typename U_glider::template accept<Ox_level>
-	,	typename U_stage::inspect<>
+	,	typename U_glider::template suspend<Ox_level>
+	,	typename U_stage::attach<>
 	>;
 
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
@@ -148,7 +148,7 @@ void polymer_provision_spool__combined()
 	using U_cursor = occur::cursor_t<>;
 	
 	using Z_process = process::confined_t<void
-	,	typename U_stage::inspect<>
+	,	typename U_stage::attach<>
 	,	typename Ox_level::poll<>
 	>;
 	using Z_processor = polymer_t<Z_process
@@ -192,7 +192,7 @@ void polymer_provision_spool_composited()
 	using U_cursor = occur::cursor_t<>;
 	
 	using U_gate = process::confined_t<void
-	,	typename U_stage::inspect<>
+	,	typename U_stage::attach<>
 	,	typename Ox_level::poll<>
 	>;
 

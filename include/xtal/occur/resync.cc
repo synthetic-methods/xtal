@@ -1,7 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./review.hh"// testing...
-
+#include "./resync.hh"// testing...
 
 
 
@@ -14,7 +13,7 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("review")
+TAG_("resync")
 {
 	TRY_("task")
 	{

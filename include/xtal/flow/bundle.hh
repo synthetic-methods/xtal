@@ -20,7 +20,7 @@ allowing message distribution over bound arguments.
 */
 template <class ...Xs> struct   bundle;
 template <class ...Xs> using    bundle_t = confined_t<bundle<Xs...>>;
-template <class ..._s> concept  bundle_q = bond::tag_in_p<bundle, _s...>;
+template <class ..._s> concept  bundle_q = bond::tag_inner_p<bundle, _s...>;
 
 //////////////////////////////////////////////////////////////////////////////////
 

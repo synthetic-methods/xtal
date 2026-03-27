@@ -201,7 +201,6 @@ struct defer
 */
 template <class U>
 struct refer : bond::compose<void
-,	_detail::refer_logics<U>
 ,	_detail::refer_groups<U>
 ,	_detail::refer_qualities<U>
 ,	_detail::refer_iterators<U>

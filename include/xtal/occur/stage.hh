@@ -1,6 +1,7 @@
 #pragma once
 #include "./any.hh"
 
+#include "./trace.hh"
 #include "../flow/assign.hh"
 
 
@@ -12,16 +13,15 @@ namespace xtal::occur
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Represents the triple `{enter,leave,cancel}` with the `sign_type` `{0, 1, -1}`,
+Encodes the triple `{enter,leave,cancel}` with the `sign_type` `{0, 1,-1}`,
 analagous to `flux|fuse`'s `{changed,unchanged,unrecognized}`.
 
 \details
-When attached with `inspect`, or wrapped by `flow::assessment`,
-responds to `fuse<+1>` by interrogating the internal state without modification.
+Responds to `fuse<+1>` by interrogating the internal state without modification.
 */
 template <class ..._s> struct   stage;
 template <class ..._s> using    stage_t =        confined_t<stage< _s...>>;
-template <class ..._s> concept  stage_q = bond::tag_as_p<stage, _s...> ;
+template <class ..._s> concept  stage_q = bond::tag_outer_p<stage, _s...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,11 +29,13 @@ template <class ..._s> concept  stage_q = bond::tag_as_p<stage, _s...> ;
 template <typename ...As>
 struct stage
 {
+	using innertype = signed;
 	using superkind = bond::compose<bond::tag<stage>
+	,	trace<1>
 	,	As...
-	,	_detail::refer_equality<signed>
-	,	_detail::refer_digital_logic<signed>
-	,	defer<signed>
+	,	_detail::refer_qualities     <innertype>
+	,	_detail::refer_digital_group <innertype>
+	,	defer<innertype>
 	>;
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
@@ -45,6 +47,12 @@ struct stage
 	public:// CONSTRUCT
 		using S_::S_;
 
+	public:// OPERATE
+		using S_::self;
+		using S_::head;
+
+	public:// TYPE
+
 		template <class U>
 		struct assignment
 		{
@@ -54,8 +62,12 @@ struct stage
 				static_assert(cell::any_q<R>);
 				using R_ = bond::compose_s<R>;
 				
-				using U_value = U;
-				using U_table = atom::block_t<U[4]>;
+				XTAL_DEF_(set) K_size = 4;
+				XTAL_DEF_(set) K_mask = K_size  - 1;
+				XTAL_DEF_(set) K_fill = K_size >> 1;
+
+				using U_value =  U;
+				using U_table = _std::array<U, K_size>;
 				U_table u_table{};
 				
 			public:// CONSTRUCT
@@ -73,9 +85,8 @@ struct stage
 				flux(same_q<T_> auto &&s, auto &&...oo)
 				noexcept -> signed
 				{
-					//\
-					(void) R_::self().template flux<N_ion>(u_table[0b11U&s.head()]);
-					(void) R_::self().template flux<+1>(u_table[0b11U&s.head()]);
+					signed const  k = s.head();
+					(void) R_::self().template flux<+1>(u_table[K_mask&k]);
 					return R_::       template flux<N_ion>(XTAL_REF_(s), XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_v<N_ion, +1>
@@ -83,17 +94,10 @@ struct stage
 				flux(same_q<flow::assign_s<T_>> auto &&t, same_q<U_value> auto &&o, auto &&...oo)
 				noexcept -> signed
 				{
-					auto const &s = t.tail();
-					auto const  k = s.head();
-					if (k == 0b10) {
-						u_table[0b00] = o;
-						u_table[0b01] = o;
-						u_table[0b10] = o;
-						u_table[0b11] = o;
-					}
-					else {
-						u_table[0b11&k] = o;
-					}
+					auto   const &s = t.tail();
+					signed const  k = s.head();
+					if (K_fill == k) {u_table.fill        (o);}
+					else             {u_table[K_mask&k] = (o);}
 					return R_::template flux<N_ion>(XTAL_REF_(t), XTAL_REF_(o), XTAL_REF_(oo)...);
 				}
 

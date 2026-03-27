@@ -43,28 +43,15 @@ struct mask
 			return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,inline,let)
+		XTAL_DEF_(return,let)
 		flux(mark_q auto o, auto &&...oo)
 		noexcept -> signed
 		{
-			return flux<N_ion>((mark_s<>) o.head(), o.tail(), XTAL_REF_(oo)...);
-		}
-		template <signed N_ion>
-		XTAL_DEF_(return,let)
-		flux(mark_s<> o, auto &&...oo)
-		noexcept -> signed
-		{
-			auto n_mark = o.head();
-			if (n_mark%N_mask) {
-				return -1;
-			}
-			n_mark /= N_mask;
-			if (1 == n_mark) {
-				return S_::template flux<N_ion>(XTAL_REF_(oo)...);
-			}
-			else {
-				return S_::template flux<N_ion>(mark_s<>(n_mark), XTAL_REF_(oo)...);
-			}
+			auto &n_mark = o.head();
+			if  ((n_mark % N_mask) or not (n_mark /= N_mask)) {return -1;}
+			else if (1 != n_mark)                    {return S_::template flux<N_ion>(XTAL_MOV_(o)       , XTAL_REF_(oo)...);}
+			else if (flow::mark_unit_q<decltype(o)>) {return S_::template flux<N_ion>(XTAL_MOV_(o).tail(), XTAL_REF_(oo)...);}
+			else if (flow::mark_null_q<decltype(o)>) {return S_::template flux<N_ion>(                     XTAL_REF_(oo)...);}
 		}
 
 	};

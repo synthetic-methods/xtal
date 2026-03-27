@@ -16,7 +16,7 @@ Extends `block` with function application and functional construction.
 */
 template <class ...Us>	struct  brace;
 template <class ...Us>	using   brace_t = typename brace<Us...>::type;
-template <class ...Us>	concept brace_q = bond::tag_infixed_p<brace_t, Us...>;
+template <class ...Us>	concept brace_q = bond::tag_inner_fixed_p<brace_t, Us...>;
 
 XTAL_DEF_(let) brace_f = [] XTAL_1FN_(call) (_detail::factory<brace_t>::make);
 

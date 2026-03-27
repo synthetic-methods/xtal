@@ -16,7 +16,7 @@ Extends `group` with component-wise addition and differential succession.
 */
 template <class ...Us>	struct  differential;
 template <class ...Us>	using   differential_t = typename differential<Us...>::type;
-template <class ...Us>	concept differential_q = bond::tag_infixed_p<differential_t, Us...>;
+template <class ...Us>	concept differential_q = bond::tag_inner_fixed_p<differential_t, Us...>;
 
 XTAL_DEF_(let) differential_f = [] XTAL_1FN_(call) (_detail::factory<differential_t>::make);
 

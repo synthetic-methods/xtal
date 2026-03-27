@@ -36,11 +36,6 @@ struct fit_recognize<0x1>
 	static sigma_type constexpr N_exponent = 3;
 	static sigma_type constexpr N_fraction = 4;
 
-	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80U> {};
-	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x51U> {};
-	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
-
 };
 template <>
 struct fit_recognize<0x2>
@@ -53,11 +48,6 @@ struct fit_recognize<0x2>
 
 	static sigma_type constexpr N_exponent =  5;
 	static sigma_type constexpr N_fraction = 10;
-
-	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x8000U> {};
-	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4CE3U> {};
-	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 #if 0x20 <= XTAL_SYS_(CPU)
@@ -87,11 +77,6 @@ struct fit_recognize<0x4>
 	,	0x6C078965U
 	>;
 
-	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000U> {};
-	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x4546B3DBU> {};
-	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
-
 };
 #endif
 #if 0x40 <= XTAL_SYS_(CPU)
@@ -120,11 +105,6 @@ struct fit_recognize<0x8>
 	,	0xFFF7EEE0'00000000U, 43
 	,	0x5851F42D'4C958000U
 	>;
-
-	template <int N_pow, class _=void> struct   expound;
-	template <           class _     > struct   expound<2, _> : cardinal_constant_t<0x80000000'00000000U> {};
-	template <           class _     > struct   expound<3, _> : cardinal_constant_t<0x383D9170'B85FF80BU> {};
-	template <int N_pow>  static constexpr auto expound_v = expound<N_pow, void>{}();
 
 };
 #endif
@@ -208,48 +188,18 @@ public:
 
 #ifdef __cpp_lib_hardware_interference_size
 	using constructive_alignment = cardinal_constant_t<_std::hardware_constructive_interference_size/N_width>;
-//	using  destructive_alignment = cardinal_constant_t<_std:: hardware_destructive_interference_size/N_width>;
+	using  destructive_alignment = cardinal_constant_t<_std:: hardware_destructive_interference_size/N_width>;
 #else
 	using constructive_alignment = default_alignment;
-//	using  destructive_alignment = default_alignment;
+	using  destructive_alignment = default_alignment;
 #endif
-	using alignment = constructive_alignment;
+	using alignment = destructive_alignment;
 
 
 	XTAL_DEF_(return,inline,set) working_f(     delta_type i) noexcept -> auto {return i;}
 	XTAL_DEF_(return,inline,set) working_f(     sigma_type i) noexcept -> auto {return i;}
 	XTAL_DEF_(return,inline,set) working_f( ordinal_q auto i) noexcept -> auto {return static_cast<delta_type>(i);}
 	XTAL_DEF_(return,inline,set) working_f(cardinal_q auto i) noexcept -> auto {return static_cast<sigma_type>(i);}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-	/*!
-	\returns	The remainder from the maximal power of `N`, which is zero if the argument is a power of `N`.
-	\note   	Currently only supports `N={2,3}`.
-	*/
-	template <sigma_type N>
-	XTAL_DEF_(return,inline,set)
-	expound_f(sigma_type u)
-	noexcept -> sigma_type
-	{
-		//\
-		if constexpr (complete_q<typename S_::template expound<N>>) {
-		if constexpr (N == 2 or N == 3) {
-			return S_::template expound_v<N>%u|(u == 0)|(u == 1);
-		}
-		else {
-			return 1U;
-		}
-	}
-	template <sigma_type N>
-	XTAL_DEF_(return,inline,set)
-	expound_f(un_q<sigma_type> auto const &value)
-	noexcept -> auto
-	{
-		return expound_f<N>(static_cast<sigma_type>(value));
-	}
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -478,30 +428,6 @@ public:
 	static alpha_type constexpr haplo_0 = haplo_f(0);
 	static alpha_type constexpr haplo_1 = haplo_f(1);
 	static alpha_type constexpr haplo_2 = haplo_f(2);
-
-
-	XTAL_DEF_(return,inline,set)
-	e2(real_variable_q auto o)
-	noexcept -> decltype(auto)
-	{
-		int constexpr N = 0x02;
-		int constexpr M = 0x10;
-		auto n = static_cast<delta_type>(o);
-		auto u = o - n;
-		u *= _std::numbers::ln2_v<alpha_type>;
-		u *= haplo_f(N);
-
-		auto v = alpha_1;
-		for (auto i=M; i; --i) {
-			v *=      u/i;
-			v +=  alpha_1;
-		}
-		for (auto i=N; i; --i) {
-			v *= v;
-		}
-		v *= diplo_f(n);
-		return v;
-	}
 
 
 ////////////////////////////////////////////////////////////////////////////////

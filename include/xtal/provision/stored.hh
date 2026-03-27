@@ -16,7 +16,7 @@ Provides random-access storage via the member-type `store_t<value_type>`.
 */
 template <typename ..._s> struct   stored;
 template <typename ..._s> using    stored_t = confined_t<stored<_s...>>;
-template <typename ..._s> concept  stored_q = bond::tag_in_p<stored, _s...>;
+template <typename ..._s> concept  stored_q = bond::tag_inner_p<stored, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

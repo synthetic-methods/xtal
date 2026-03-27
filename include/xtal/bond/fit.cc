@@ -36,14 +36,6 @@ TAG_("fit")
 
 		TRUE_(fit<>::negative.depth == fit<>::full.depth);
 		TRUE_(~fit<>::sign.mask == fit<>::positive.mask);
-		TRUE_(0 != fit<>::template expound_f<2>( 1) and 0 != fit<>::template expound_f<3>( 1));
-		TRUE_(0 == fit<>::template expound_f<2>( 2) and 0 != fit<>::template expound_f<3>( 2));
-		TRUE_(0 != fit<>::template expound_f<2>( 3) and 0 == fit<>::template expound_f<3>( 3));
-		TRUE_(0 == fit<>::template expound_f<2>( 4) and 0 != fit<>::template expound_f<3>( 4));
-		TRUE_(0 == fit<>::template expound_f<2>( 8) and 0 != fit<>::template expound_f<3>( 8));
-		TRUE_(0 != fit<>::template expound_f<2>( 9) and 0 == fit<>::template expound_f<3>( 9));
-		TRUE_(0 == fit<>::template expound_f<2>(16) and 0 != fit<>::template expound_f<3>(16));
-		TRUE_(0 != fit<>::template expound_f<2>(27) and 0 == fit<>::template expound_f<3>(27));
 		TRUE_(fit<>::diplo_f(+1) == 2.0);
 		TRUE_(fit<>::diplo_f( 0) == 1.0);
 		TRUE_(fit<>::diplo_f(-1) == 0.5);

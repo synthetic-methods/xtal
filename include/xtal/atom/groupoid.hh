@@ -17,7 +17,7 @@ namespace xtal::atom
 
 template <class ...Us>	struct  groupoid;
 template <class ...Us>	using   groupoid_t = typename groupoid<Us...>::type;
-template <class ...Us>	concept groupoid_q = bond::tag_infixed_p<groupoid_t, Us...>;
+template <class ...Us>	concept groupoid_q = bond::tag_inner_fixed_p<groupoid_t, Us...>;
 
 XTAL_DEF_(let) groupoid_f = [] XTAL_1FN_(call) (_detail::factory<groupoid_t>::make);
 

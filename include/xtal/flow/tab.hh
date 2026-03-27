@@ -14,15 +14,15 @@ namespace xtal::flow
 \brief
 Duplicates the `concept`s from `bond::tab`.
 */
-template <class T, class ...Ks> concept       tab_as_q = bond::       tab_as_q<T, Ks...>;
-template <class T, class ...Ks> concept tab_affixed_q = bond:: tab_affixed_q<T, Ks...>;
-template <class T, class ...Ks> concept       tab_in_q = bond::       tab_in_q<T, Ks...>;
-template <class T, class ...Ks> concept tab_infixed_q = bond:: tab_infixed_q<T, Ks...>;
+template <class T, class ...Ks> concept       tab_outer_q = bond::       tab_outer_q<T, Ks...>;
+template <class T, class ...Ks> concept tab_outer_fixed_q = bond:: tab_outer_fixed_q<T, Ks...>;
+template <class T, class ...Ks> concept       tab_inner_q = bond::       tab_inner_q<T, Ks...>;
+template <class T, class ...Ks> concept tab_inner_fixed_q = bond:: tab_inner_fixed_q<T, Ks...>;
 
-template <class K, class ...Ts> concept       tab_as_p = bond::       tab_as_p<K, Ts...>;
-template <class K, class ...Ts> concept tab_affixed_p = bond:: tab_affixed_p<K, Ts...>;
-template <class K, class ...Ts> concept       tab_in_p = bond::       tab_in_p<K, Ts...>;
-template <class K, class ...Ts> concept tab_infixed_p = bond:: tab_infixed_p<K, Ts...>;
+template <class K, class ...Ts> concept       tab_outer_p = bond::       tab_outer_p<K, Ts...>;
+template <class K, class ...Ts> concept tab_outer_fixed_p = bond:: tab_outer_fixed_p<K, Ts...>;
+template <class K, class ...Ts> concept       tab_inner_p = bond::       tab_inner_p<K, Ts...>;
+template <class K, class ...Ts> concept tab_inner_fixed_p = bond:: tab_inner_fixed_p<K, Ts...>;
 
 
 //////////////////////////////////////////////////////////////////////////////////

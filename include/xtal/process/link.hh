@@ -20,7 +20,7 @@ most of the work is done via `processor::defer`.
 */
 template <typename ..._s> struct   link;
 template <typename ..._s> using    link_t = confined_t<link<_s...>>;
-template <typename ..._s> concept  link_q = bond::tag_in_p<link, _s...>;
+template <typename ..._s> concept  link_q = bond::tag_inner_p<link, _s...>;
 
 
 namespace _detail

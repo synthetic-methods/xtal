@@ -76,8 +76,8 @@ void monomer_lifting()
 }
 TAG_("monomer", "lifting")
 {
-	TRY_("pure (actual)") {monomer_lifting<provision::stored<>>();}
-	TRY_("pure (virtual)")  {monomer_lifting();}
+	TRY_("pure  (actual)") {monomer_lifting<provision::stored<>>();}
+	TRY_("pure (virtual)") {monomer_lifting();}
 
 }
 /***/

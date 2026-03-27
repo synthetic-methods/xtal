@@ -26,6 +26,9 @@ using _retail::   text_type;
 using _retail:: extent_constant_t;
 using _retail::   size_constant_t;
 using _retail::   sign_constant_t;
+using _retail::   meta_constant_t;
+using _retail::   meta_constant_q;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,9 +68,6 @@ template <class T             >	using           based_t	=                       
 template <         class ...Ts>	concept         based_q	= (some_q<Ts...> and...and _retail::        based_q<Ts    >);
 template <         class ...Ts>	concept       unbased_q	= (some_q<Ts...> and...and _retail::      unbased_q<Ts    >);
 
-
-using _retail::     identity_t;
-using _retail::     identity_q;
 
 template <         class ...Ts>	using        complete_t	=                          _retail::     complete_t<Ts...>;
 template <         class ...Ts>	concept      complete_q	= (some_q<Ts...> and...and _retail::     complete_q<Ts   >);

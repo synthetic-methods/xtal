@@ -45,9 +45,15 @@ struct   text_type
 
 };
 
-template <auto  N>	using  extent_constant_t	= _std::integral_constant<extent_type, static_cast<extent_type>(N)>;
-template <auto  N>	using    size_constant_t	= _std::integral_constant<  size_type, static_cast<  size_type>(N)>;
-template <auto  N>	using    sign_constant_t	= _std::integral_constant<  sign_type, static_cast<  sign_type>(N)>;
+template <auto  N>	using extent_constant_t	= _std::integral_constant<extent_type, static_cast<extent_type>(N)>;
+template <auto  N>	using   size_constant_t	= _std::integral_constant<  size_type, static_cast<  size_type>(N)>;
+template <auto  N>	using   sign_constant_t	= _std::integral_constant<  sign_type, static_cast<  sign_type>(N)>;
+
+template <class T>	struct  meta_constant                         {using type = _std::type_identity<T>; using value_type = T;};
+template <class T>	struct  meta_constant<_std::type_identity<T>> {using type = _std::type_identity<T>; using value_type = T;};
+
+template <class T>	using   meta_constant_t	=      typename meta_constant  <T>::type;
+template <class T>	concept meta_constant_q	= _std::same_as<meta_constant_t<T>, T>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,12 +64,6 @@ Structural...
 template <class T             >	using           based_t	=                     XTAL_NOM_(T) ;
 template <class T             >	concept         based_q	=      _std::same_as<T, based_t<T>>;
 template <class T             >	concept       unbased_q	=  not _std::same_as<T, based_t<T>>;
-
-template <class T             >	struct       identity                         {using type = _std::type_identity<T>;};
-template <class U             >	struct       identity<_std::type_identity<U>> {using type = _std::type_identity<U>;};
-
-template <class T             >	using        identity_t	= typename identity  <T>::type;
-template <class T             >	concept      identity_q	= _std::same_as<identity_t<T>, T>;
 
 template <         class ...Ts>	struct       fungible              : _std::false_type                                                    {};
 template <class T, class ...Ts>	struct       fungible<T, Ts...>    : _std::conjunction<fungible<T, Ts>...>                               {};
@@ -286,7 +286,7 @@ template <class T             >	concept  under_valued_q	=  requires {requires co
 template <class T             >	concept scalar_valued_q	=  requires {requires complete_q<scalar_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
 template <class T             >	concept Scalar_valued_q	=  requires {requires complete_q<Scalar_valued_t<T>>;} and un_v<fixed_valued_q<T>>;
 
-template <     identity_q T   >	struct   fixed_valued<T> {using value_type =   typename T::type;};
+template <     meta_constant_q T   >	struct   fixed_valued<T> {using value_type =   typename T::type;};
 template < array_valued_q T   >	struct   fixed_valued<T> {using value_type =  array_valued_t<T>;};
 template < inner_valued_q T   >	struct   fixed_valued<T> {using value_type =  inner_valued_t<T>;};
 template < under_valued_q T   >	struct   fixed_valued<T> {using value_type =  under_valued_t<T>;};
@@ -311,7 +311,7 @@ template <class T    >	concept           tuple_shaped_q	=  complete_q<_std::tupl
 template <class T    >	concept          static_shaped_q	=  un_v<tuple_shaped_q<T>> and                                         requires {based_t<T>::size();};
 template <class T    >	concept         dynamic_shaped_q	=  un_v<tuple_shaped_q<T>> and requires {XTAL_ANY_(T).size();} and not requires {based_t<T>::size();};
 
-template <  based_q T>	requires              identity_q<T>  struct fixed_shaped<T>                :        assayed<typename T::type{}()> {};
+template <  based_q T>	requires              meta_constant_q<T>  struct fixed_shaped<T>                :        assayed<typename T::type{}()> {};
 template <  based_q T>	requires          tuple_shaped_q<T>  struct fixed_shaped<T>                :   tuple_shaped<T>                    {};
 template <  based_q T>	requires          array_shaped_q<T>  struct fixed_shaped<T>                :   array_shaped<T>                    {};
 template <  based_q T>	requires         static_shaped_q<T>  struct fixed_shaped<T>                :  static_shaped<T>                    {};

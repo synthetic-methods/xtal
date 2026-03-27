@@ -67,34 +67,34 @@ struct tab
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef XTAL_DOC
-template <class T, class ...Ks>  struct  tab_as;
-template <class K, class ...Ts>  struct  tab_in;
+template <class T, class ...Ks>  struct  tab_outer;
+template <class K, class ...Ts>  struct  tab_inner;
 #endif
-template <class T, class ...Ks>	concept tab_as_q = tab_as<based_t<T >,            based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
-template <class T, class ...Ks>	concept tab_in_q = tab_as<based_t<T >, identity_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tab_outer_q = tab_outer<based_t<T >,                 based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tab_inner_q = tab_outer<based_t<T >, meta_constant_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
 
-template <class K, class ...Ts>	concept tab_as_p = (...and tab_as_q<Ts, K>);///< Matches all `Ts...` with     consecutive `K`.
-template <class K, class ...Ts>	concept tab_in_p = (...and tab_in_q<Ts, K>);///< Matches all `Ts...` with non-consecutive `K`.
+template <class K, class ...Ts>	concept tab_outer_p = (...and tab_outer_q<Ts, K>);///< Matches all `Ts...` with     consecutive `K`.
+template <class K, class ...Ts>	concept tab_inner_p = (...and tab_inner_q<Ts, K>);///< Matches all `Ts...` with non-consecutive `K`.
 
-template <class T, class ...Ks>	concept tab_affixed_q =  fixed_shaped_q<T    > and                              tab_as_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_as_q`.
-template <class T, class ...Ks>	concept tab_infixed_q =  fixed_shaped_q<T    > and                              tab_in_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_in_q`.
-template <class K, class ...Ts>	concept tab_affixed_p = (fixed_shaped_q<Ts...> and...and (array_shaped_q<Ts> or tab_as_q<Ts, K    >));///< Matches `fixed_shaped_q` and `array_shaped_q|tab_as_p`.
-template <class K, class ...Ts>	concept tab_infixed_p = (fixed_shaped_q<Ts...> and...and (array_shaped_q<Ts> or tab_in_q<Ts, K    >));///< Matches `fixed_shaped_q` and `array_shaped_q|tab_in_p`.
+template <class T, class ...Ks>	concept tab_outer_fixed_q =  fixed_shaped_q<T    > and                              tab_outer_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_outer_q`.
+template <class T, class ...Ks>	concept tab_inner_fixed_q =  fixed_shaped_q<T    > and                              tab_inner_q<T , Ks...>  ;///< Matches `fixed_shaped_q` and `array_shaped_q|tab_inner_q`.
+template <class K, class ...Ts>	concept tab_outer_fixed_p = (fixed_shaped_q<Ts...> and...and (array_shaped_q<Ts> or tab_outer_q<Ts, K    >));///< Matches `fixed_shaped_q` and `array_shaped_q|tab_outer_p`.
+template <class K, class ...Ts>	concept tab_inner_fixed_p = (fixed_shaped_q<Ts...> and...and (array_shaped_q<Ts> or tab_inner_q<Ts, K    >));///< Matches `fixed_shaped_q` and `array_shaped_q|tab_inner_p`.
 #ifndef XTAL_DOC
-template <class T,                  class ...Ks>                                                  struct tab_as                     : _std:: false_type {using type = void;};
-template <class T,              same_q<T> ...Ks> requires same_q<T, Ks...>                        struct tab_as<T,           Ks...> : _std::  true_type {using type =    T;};
-template <class T,  antecedent_q I, class ...Ks>                                                  struct tab_as<T,       I , Ks...> :  tab_as<        T ,               Ks...> {};
-template <class T, intercedent_q I, class ...Ks>                                                  struct tab_as<T,       I , Ks...> :  tab_as<tab_s<T>, precedent_s<I>, Ks...> {};
-template <tab_q T,    identity_q K, class ...Ks> requires different_q<tab_t<T>, typename K::type> struct tab_as<T,       K , Ks...> :  tab_as<tab_s<T>,             K,  Ks...> {};
-template <tab_q T,    identity_q K, class ...Ks> requires      same_q<tab_t<T>, typename K::type> struct tab_as<T,       K , Ks...> :  tab_as<tab_s<T>,                 Ks...> {};
-template <tab_q T,         different_q<T> ...Ks>                                                  struct tab_as<T, tab_t<T>, Ks...> :  tab_as<tab_s<T>,                 Ks...> {};
+template <class T,                    class ...Ks>                                                  struct tab_outer                     : _std:: false_type {using type = void;};
+template <class T,                same_q<T> ...Ks> requires same_q<T, Ks...>                        struct tab_outer<T,           Ks...> : _std::  true_type {using type =    T;};
+template <class T,    antecedent_q I, class ...Ks>                                                  struct tab_outer<T,       I , Ks...> :  tab_outer<        T ,               Ks...> {};
+template <class T,   intercedent_q I, class ...Ks>                                                  struct tab_outer<T,       I , Ks...> :  tab_outer<tab_s<T>, precedent_s<I>, Ks...> {};
+template <tab_q T, meta_constant_q K, class ...Ks> requires different_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,             K,  Ks...> {};
+template <tab_q T, meta_constant_q K, class ...Ks> requires      same_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,                 Ks...> {};
+template <tab_q T,           different_q<T> ...Ks>                                                  struct tab_outer<T, tab_t<T>, Ks...> :  tab_outer<tab_s<T>,                 Ks...> {};
 
-template <class K,                  class ...Ts>                                                  struct tab_in              : _std:: false_type {using type = void;};
-template <class K,   tab_in_q<K> T, class ...Ts>                                                  struct tab_in<K, T, Ts...> : _std::  true_type {using type = T   ;};
-template <class K,         class T, class ...Ts>                                                  struct tab_in<K, T, Ts...> : tab_in<K, Ts...> {};
+template <class K,                    class ...Ts>                                                  struct tab_inner              : _std:: false_type {using type = void;};
+template <class K,  tab_inner_q<K> T, class ...Ts>                                                  struct tab_inner<K, T, Ts...> : _std::  true_type {using type = T   ;};
+template <class K,           class T, class ...Ts>                                                  struct tab_inner<K, T, Ts...> : tab_inner<K, Ts...> {};
 #endif
-template <class T,                  class ...Ks> using  tab_as_t = typename tab_as<T, Ks...>::type;///< Provides the type at the given path.
-template <class K,                  class ...Ts> using  tab_in_t = typename tab_in<K, Ts...>::type;///< Provides the type at the given path fragment.
+template <class T,                    class ...Ks> using  tab_outer_t = typename tab_outer<T, Ks...>::type;///< Provides the type at the given path.
+template <class K,                    class ...Ts> using  tab_inner_t = typename tab_inner<K, Ts...>::type;///< Provides the type at the given path fragment.
 
 
 ////////////////////////////////////////////////////////////////////////////////

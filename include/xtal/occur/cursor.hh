@@ -37,7 +37,7 @@ template <class=counter_t<>>
 struct  cursor;
 
 template <class ...Ts>
-concept cursor_q = bond::tag_in_p<cursor, Ts...> ;
+concept cursor_q = bond::tag_inner_p<cursor, Ts...> ;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -52,6 +52,7 @@ struct beheader
 			[] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).tail()))
 
 	public:// OPERATE
+
 		using S_::operator==;
 		using S_::operator<=>;
 

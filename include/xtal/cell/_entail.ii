@@ -28,10 +28,10 @@ but can be used to further specialize a given decorator.
 template <            typename ...As> struct   any   : bond::compose<_retail::any<As...>, bond::tag<any>> {};
 template <class    S, typename ...As> using    any_s = bond::compose_s<        S, any<As...>>;///<\brief Produces a subtype of `S` labelled with `any<As...>`.
 template <            typename ...As> using    any_t = bond::compose_s<unit_type, any<As...>>;///<\brief Produces a    type        labelled with `any<As...>`.
-template <class    T, typename ...As> concept  any_p = bond::tag_in_p<any, T> and complete_q<typename T::template self_s<As...>>;
+template <class    T, typename ...As> concept  any_p = bond::tag_inner_p<any, T> and complete_q<typename T::template self_s<As...>>;
 ///<\brief Determines whether `T` has been labelled with `any<As>...`.
 
-template <class ...Ts               > concept  any_q = bond::tag_in_p<any, Ts...>;
+template <class ...Ts               > concept  any_q = bond::tag_inner_p<any, Ts...>;
 ///<\brief Determines whether `Ts...` have been labelled with `any<>`.
 
 
@@ -113,8 +113,10 @@ template <class           A         >	struct infer;
 template <class           A         >	struct infer       :             defer<A>                       {};///<\brief `defer`s `A` unless otherwise specified.
 template <bond::compose_q A         >	struct infer<A   > :                   A                        {};///<\brief Uses `A` if `bond::compose_q<A>`.
 template <incomplete_q    A         >	struct infer<A   > :               any<A>                       {};///<\brief Uses `any<A>` if `incomplete_q<A>`.
+template <  complete_q    A, auto  N>	struct infer<A[N]> :               any<A[N]>                    {};///<\brief Uses `any<A>` and `defer<unit_type[N]>` if `incomplete_q<A>`.
 template <incomplete_q    A, auto  N>	struct infer<A[N]> : bond::compose<any<A>, defer<unit_type[N]>> {};///<\brief Uses `any<A>` and `defer<unit_type[N]>` if `incomplete_q<A>`.
 template <                          >	struct infer<void> : bond::compose<                           > {};///<\brief Uses the identity `bond::compose<>`.
+
 template <class   ...As>	struct     infers     : bond::compose<         infer   <As>...>   {};///<\brief Produces the composition of `infer<As>...`.
 template <class   ...As>	struct   reinfers     : bond::compose<referee, infer   <As>...>   {};///<\brief Produces the composition of `infer<As>...`, delegating to the outer-most `As...`.
 template <class   ...As>	struct     inferred   : confined<              infers  <As...>>   {};///<\brief Produces the `confined` decorator for   `infers<As...>`.

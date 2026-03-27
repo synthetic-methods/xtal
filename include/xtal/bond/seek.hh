@@ -110,7 +110,7 @@ template <constant_q T, class ...Ts>  struct         seek_constant<T, Ts...>    
 template <class T,      class ...Ts>  struct         seek_constant<T, Ts...> :  seek_constant<Ts...>    {};
 #endif
 template <              class ...Ts>  using          seek_constant_t = typename seek_constant<Ts...>::type; ///<\brief Produces the `constant_q`  type within `Ts...`.
-template <              class ...Ts>  auto constexpr seek_constant_v = seek_constant<Ts...>{}();            ///<\brief Produces the `constant_q` value within `Ts...`.
+template <              class ...Ts>  auto constexpr seek_constant_v = seek_constant_t<Ts...>{}();          ///<\brief Produces the `constant_q` value within `Ts...`.
 template <              class ...Ts>  concept        seek_constant_q = complete_q<seek_constant_t<Ts...>>;  ///<\brief Determines whether a `constant_q` exists within `Ts...`.
 
 

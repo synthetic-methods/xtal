@@ -75,7 +75,7 @@ struct define
 		noexcept -> signed
 		{
 			return [this, ...oo=XTAL_REF_(oo)]
-				XTAL_1FN_(and) (flux<N_ion>(oo...))
+				XTAL_1FN_(and) (flux<N_ion>(XTAL_MOV_(oo)...))
 					(self().template fuse<N_ion>(XTAL_REF_(o)));
 		}
 
@@ -211,7 +211,7 @@ struct refine
 		requires requires {refuse<N_ion>(XTAL_REF_(o));}
 		{
 			return [this, ...oo=XTAL_REF_(oo)]
-				XTAL_1FN_(and) (flux<N_ion>(oo...)) (refuse<N_ion>(XTAL_REF_(o)));
+				XTAL_1FN_(and) (flux<N_ion>(XTAL_MOV_(oo)...)) (refuse<N_ion>(XTAL_REF_(o)));
 		}
 		template <signed N_ion>
 		XTAL_DEF_(return,inline,let)
@@ -286,8 +286,16 @@ struct defer
 		noexcept -> signed
 		{
 			XTAL_IF0
-			XTAL_0IF (N_ion < 0) {return [this, oo...] XTAL_1FN_(and) (flux_head<N_ion>(oo...)) (flux_this<N_ion>(XTAL_REF_(oo)...));}
-			XTAL_0IF (0 < N_ion) {return [this, oo...] XTAL_1FN_(and) (flux_this<N_ion>(oo...)) (flux_head<N_ion>(XTAL_REF_(oo)...));}
+			XTAL_0IF (N_ion < 0) {
+				return [this, oo...]
+					XTAL_1FN_(and) (flux_head<N_ion>(XTAL_MOV_(oo)...))
+						(flux_this<N_ion>(XTAL_REF_(oo)...));
+			}
+			XTAL_0IF (0 < N_ion) {
+				return [this, oo...]
+					XTAL_1FN_(and) (flux_this<N_ion>(XTAL_MOV_(oo)...))
+						(flux_head<N_ion>(XTAL_REF_(oo)...));
+			}
 		}
 
 		/*!

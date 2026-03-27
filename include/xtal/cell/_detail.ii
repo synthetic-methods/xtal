@@ -548,6 +548,29 @@ struct refer_inequality
 	public:
 		using S::S; static_assert(any_q<S>);
 		
+		XTAL_DEF_(return,inline,get)
+		operator !  () const
+		noexcept requires requires (U const &u) {!u;}
+		{
+			auto const &u = S::head();
+			XTAL_IF0
+			XTAL_0IF (real_variable_q<U>) {
+				auto constexpr o = bond::fit<U>::minilon_f();
+				auto const     x = _xtd::copysign(u, o);
+				return o < x;
+				
+			}
+			XTAL_0IF (complex_variable_q<U> and real_variable_q<typename destruct<U>::value_type>) {
+				auto constexpr o = bond::fit<U>::minilon_f();
+				auto const     x = _xtd::copysign(u.real(), o);
+				auto const     y = _xtd::copysign(u.imag(), o);
+				return o < x and o < y;
+			}
+			XTAL_0IF_(else) {
+				return !u;
+			}
+		}
+
 		XTAL_DEF_(return,inline,let)
 		operator <=> (subtype const &t) const
 		noexcept -> auto
@@ -563,54 +586,6 @@ struct refer_qualities
 :	bond::compose<void
 	,	refer_equality<U>
 	,	refer_inequality<U>
-	>
-{
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-template <class U, int N=0>
-struct refer_digital_logic
-:	bond::compose<void
-	,	refer_digital_logic<U, 1>
-	,	refer_digital_logic<U, 2>
-	>
-{
-};
-template <class U>
-struct refer_digital_logic<U, 1>
-{
-	template <class S>
-	class subtype : public S
-	{
-	public:
-		using S::S; static_assert(any_q<S>);
-		XTAL_DEF_(mutate,inline,get) operator ^=(auto const &o)       noexcept requires requires (U       &u) {u ^=o;} {return bond::seek_front_f(S::self(), S::head() ^=o);}
-		XTAL_DEF_(mutate,inline,get) operator |=(auto const &o)       noexcept requires requires (U       &u) {u |=o;} {return bond::seek_front_f(S::self(), S::head() |=o);}
-		XTAL_DEF_(mutate,inline,get) operator &=(auto const &o)       noexcept requires requires (U       &u) {u &=o;} {return bond::seek_front_f(S::self(), S::head() &=o);}
-
-	};
-};
-template <class U>
-struct refer_digital_logic<U, 2>
-{
-	template <class S>
-	class subtype : public S
-	{
-	public:
-		using S::S; static_assert(any_q<S>);
-		XTAL_DEF_(return,inline,get) operator ^ (auto const &o) const noexcept requires requires (U const &u) {u ^ o;} {return typename S::self_type( S::head() ^ o);}
-		XTAL_DEF_(return,inline,get) operator | (auto const &o) const noexcept requires requires (U const &u) {u | o;} {return typename S::self_type( S::head() | o);}
-		XTAL_DEF_(return,inline,get) operator & (auto const &o) const noexcept requires requires (U const &u) {u & o;} {return typename S::self_type( S::head() & o);}
-
-	};
-};
-
-template <class U, int N=0>
-struct refer_logics
-:	bond::compose<void
-	,	refer_digital_logic<U, N>
 	>
 {
 };
@@ -724,11 +699,50 @@ struct refer_discrete_group<U, 2>
 
 
 template <class U, int N=0>
+struct refer_digital_group
+:	bond::compose<void
+	,	refer_digital_group<U, 1>
+	,	refer_digital_group<U, 2>
+	>
+{
+};
+template <class U>
+struct refer_digital_group<U, 1>
+{
+	template <class S>
+	class subtype : public S
+	{
+	public:
+		using S::S; static_assert(any_q<S>);
+		XTAL_DEF_(mutate,inline,get) operator ^=(auto const &o)       noexcept requires requires (U       &u) {u ^=o;} {return bond::seek_front_f(S::self(), S::head() ^=o);}
+		XTAL_DEF_(mutate,inline,get) operator |=(auto const &o)       noexcept requires requires (U       &u) {u |=o;} {return bond::seek_front_f(S::self(), S::head() |=o);}
+		XTAL_DEF_(mutate,inline,get) operator &=(auto const &o)       noexcept requires requires (U       &u) {u &=o;} {return bond::seek_front_f(S::self(), S::head() &=o);}
+
+	};
+};
+template <class U>
+struct refer_digital_group<U, 2>
+{
+	template <class S>
+	class subtype : public S
+	{
+	public:
+		using S::S; static_assert(any_q<S>);
+		XTAL_DEF_(return,inline,get) operator ^ (auto const &o) const noexcept requires requires (U const &u) {u ^ o;} {return typename S::self_type( S::head() ^ o);}
+		XTAL_DEF_(return,inline,get) operator | (auto const &o) const noexcept requires requires (U const &u) {u | o;} {return typename S::self_type( S::head() | o);}
+		XTAL_DEF_(return,inline,get) operator & (auto const &o) const noexcept requires requires (U const &u) {u & o;} {return typename S::self_type( S::head() & o);}
+
+	};
+};
+
+
+template <class U, int N=0>
 struct refer_groups
 :	bond::compose<void
 	,	refer_multiplicative_group<U, N>
 	,	refer_additive_group<U, N>
 	,	refer_discrete_group<U, N>
+	,	 refer_digital_group<U, N>
 	>
 {
 };

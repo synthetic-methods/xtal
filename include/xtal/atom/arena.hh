@@ -15,26 +15,26 @@ namespace xtal::atom
 Provides local arena-like storage for `std::trivially_destructible` values.
 
 \code{.cpp}
-blob_t<_xtd::byte[0x40]> blob;
+arena_t<_xtd::byte[0x40]> arena;
 
-auto glob = blob.template form<X, Y>();
+auto glob = arena.template form<X, Y>();
 auto [x, y] = glob;
 auto &x = get<0>(glob);
 auto &y = get<1>(glob);
 \endcode
 */
-template <class ...As>	struct   blob;
-template <class ...As>	using    blob_t = typename blob<As...>::type;
-template <class ...Ts>	concept  blob_q = bond::tag_in_p<blob, Ts...>;
+template <class ...As>	struct   arena;
+template <class ...As>	using    arena_t = typename arena<As...>::type;
+template <class ...Ts>	concept  arena_q = bond::tag_inner_p<arena, Ts...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class ...As>
-struct blob
+struct arena
 {
 	template <class T>
-	using holotype = bond::compose<bond::tag<blob>, bond::define<T>>;
+	using holotype = bond::compose<bond::tag<arena>, bond::define<T>>;
 
 	template <class T>
 	class homotype : public holotype<T>
@@ -71,7 +71,7 @@ struct blob
 		}
 
 		/*!
-		\returns	`(void)` after overwriting the `byte`s in the blob with `(U) value`.
+		\returns	`(void)` after overwriting the `byte`s in the arena with `(U) value`.
 		*/
 		XTAL_DEF_(inline,let)
 		fill(auto value=0)
@@ -82,7 +82,7 @@ struct blob
 
 		/*!
 		\returns	A tuple of `rvalue`s conforming to `Vs...`,
-		representing the state of the blob prior to updating with `vs...`.
+		representing the state of the arena prior to updating with `vs...`.
 		*/
 		template <class ...Vs>
 		XTAL_DEF_(return,inline,let)
@@ -129,7 +129,7 @@ struct blob
 
 };
 template <>
-struct blob<> : blob<size_type[bond::fit<>::alignment{}()]>
+struct arena<> : arena<size_type[bond::fit<>::alignment{}()]>
 {
 };
 

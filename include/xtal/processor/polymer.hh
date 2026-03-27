@@ -2,8 +2,8 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../flow/key.hh"
-#include "../flow/assess.hh"
 #include "../provision/all.hh"
+
 
 
 XTAL_ENV_(push)
@@ -24,8 +24,8 @@ The default implementation uses `lower_bound` to this effect.
 */
 template <typename ...As>	struct  polymer;
 template <typename ...As>	using   polymer_t      =     confined_t<polymer< As...>>;///<\ingroup XTAL_processor_polymer
-template <typename ...Qs>	concept polymer_head_q = bond::tag_as_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
-template <typename ...Qs>	concept polymer_body_q = bond::tag_in_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
+template <typename ...Qs>	concept polymer_head_q = bond::tag_outer_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
+template <typename ...Qs>	concept polymer_body_q = bond::tag_inner_p<polymer, Qs... >;///<\ingroup XTAL_processor_polymer
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ public:
 				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) ensemble(occur::stage_q auto &&o)
 				,	u_ensemble
 				|	_xtd::ranges::views::filter([o=XTAL_REF_(o)] (auto &&e)
-						XTAL_0FN_(to) (0 != XTAL_REF_(e).template flux<-1>(o)))
+						XTAL_0FN_(to) (0 != XTAL_REF_(e).influx(o)))
 				)
 
 			public:// FLOW
@@ -178,9 +178,7 @@ public:
 				noexcept -> signed
 				{
 					auto u_ = ensemble().scan(i_.head());
-					//\
 					if (1 <= count_f(ensemble()) and 1 != u_->influx(occur::stage_f(-1))) {
-					if (1 <= count_f(ensemble()) and 1 != u_->influx(flow::assess_f(occur::stage_f(-1)))) {
 						assert(u_ < ensemble().end() and i_.head() == u_->head());
 						return u_->template flux<N_ion>(XTAL_REF_(oo)...);
 					}
@@ -208,7 +206,7 @@ public:
 					bool const reset = e_ < ensemble().end() and k == e_->head(), preset = not reset;
 					if (onset) {
 						e_ = ensemble().poke(e_, k, preset? lead(): [&] XTAL_1FN {
-							auto   u = *e_; (void) e_->template flux<N_ion>(occur::stage_f(-1), oo...);
+							auto   u = *e_; (void) e_->efflux(occur::stage_f(-1), oo...);
 							return u;
 						}	());
 					}
@@ -216,7 +214,7 @@ public:
 						e_->template flux<N_ion>(XTAL_MOV_(o), XTAL_REF_(oo)...);
 				}
 				/*!
-				\brief  	Renders the given slice of `ren` designated by `rev` and `cur`.
+				\brief  	Renders the slice designated by `rev` and `cur`.
 				\brief  	Frees any voices that have reached the final stage `-1`.
 
 				Voices are rendered internally by invoking `flux<-1>` with the cursor only,
@@ -226,10 +224,10 @@ public:
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
 				XTAL_DEF_(return,let)
-				flux(occur::render_q auto &&ren, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
+				flux(_std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					ensemble().free([] XTAL_1FN_(dot) (influx(flow::assess_f(occur::stage_f(-1))) == 1));
+					ensemble().free([] XTAL_1FN_(dot) (influx(occur::stage_f(-1)) == 1));
 
 					auto y0 = point_f(rev);
 					auto sN = count_f(rev);

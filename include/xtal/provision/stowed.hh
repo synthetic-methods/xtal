@@ -16,7 +16,7 @@ Associates an abstract view with underlying storage.
 */
 template <typename ..._s> struct   stowed;
 template <typename ..._s> using    stowed_t = confined_t<stowed<_s...>>;
-template <typename ..._s> concept  stowed_q = bond::tag_in_p<stowed, _s...>;
+template <typename ..._s> concept  stowed_q = bond::tag_inner_p<stowed, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

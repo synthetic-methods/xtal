@@ -16,7 +16,7 @@ Provides a random-access view via the member-type `state_t<store_type>`.
 */
 template <typename ..._s> struct   stated;
 template <typename ..._s> using    stated_t = confined_t<stated<_s...>>;
-template <typename ..._s> concept  stated_q = bond::tag_in_p<stated, _s...>;
+template <typename ..._s> concept  stated_q = bond::tag_inner_p<stated, _s...>;
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ Uses for indexing both events and voices in `processor::polymer.`
 */
 template <class ..._s>	struct  key;
 template <class ..._s>	using   key_s = bond::compose_s<let_t< _s...>, key<>>;
-template <class ..._s>	concept key_q = bond::tag_as_p<key_s, _s...>;
+template <class ..._s>	concept key_q = bond::tag_outer_p<key_s, _s...>;
 template <           >	struct  key<> : cell::header<signed, bond::tag<key_s>> {};
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./blob.hh"// testing...
+#include "./arena.hh"// testing...
 
 
 XTAL_ENV_(push)
@@ -10,7 +10,7 @@ namespace xtal::atom::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /**/
-TAG_("blob")
+TAG_("arena")
 {
 	using _fit = bond::fit<>;
 	using T_delta = typename _fit::delta_type;
@@ -18,18 +18,18 @@ TAG_("blob")
 	using T_alpha = typename _fit::alpha_type;
 	using T_aphex = typename _fit::aphex_type;
 
-	TRY_("blob: formation") {
-		blob_t<T_alpha[2]> blob;
+	TRY_("arena: formation") {
+		arena_t<T_alpha[2]> arena;
 
-		auto [a0, b0] = blob.form<T_alpha, T_alpha>();
+		auto [a0, b0] = arena.form<T_alpha, T_alpha>();
 		a0 = 0.125;
 		b0 = 0.875;
 
-		auto [a1, b1] = blob.form<T_alpha, T_alpha>();
+		auto [a1, b1] = arena.form<T_alpha, T_alpha>();
 		TRUE_(a0 == a1);
 		TRUE_(b0 == b1);
 
-		auto [a2, b2] = blob.form(T_alpha{-0.25}, T_alpha{-0.75});
+		auto [a2, b2] = arena.form(T_alpha{-0.25}, T_alpha{-0.75});
 		TRUE_(a0 == -0.250);
 		TRUE_(a1 == -0.250);
 		TRUE_(a2 ==  0.125);
@@ -38,14 +38,14 @@ TAG_("blob")
 		TRUE_(b2 ==  0.875);
 
 	}
-	TRY_("blob: preallocation") {
-		TRUE_(_detail::aligned<T_aphex[2]>::size() == blob_t<T_aphex[2]>::size());
-		TRUE_(_detail::aligned<T_aphex[4]>::size() == blob_t<T_aphex[3]>::size());
-		TRUE_(_detail::aligned<T_aphex[4]>::size() == blob_t<T_aphex[2], T_aphex[1]>::size());
-		TRUE_(_detail::aligned<T_aphex[8]>::size() == blob_t<T_aphex[6]>::size());
+	TRY_("arena: preallocation") {
+		TRUE_(_detail::aligned<T_aphex[2]>::size() == arena_t<T_aphex[2]>::size());
+		TRUE_(_detail::aligned<T_aphex[4]>::size() == arena_t<T_aphex[3]>::size());
+		TRUE_(_detail::aligned<T_aphex[4]>::size() == arena_t<T_aphex[2], T_aphex[1]>::size());
+		TRUE_(_detail::aligned<T_aphex[8]>::size() == arena_t<T_aphex[6]>::size());
 
 	}
-	TRY_("blob: allocation stepping") {
+	TRY_("arena: allocation stepping") {
 		size_type i{};
 		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x0);
 		TRUE_(_detail::aligned<_std::int16_t>::advance(i) == 0x2);
@@ -55,7 +55,7 @@ TAG_("blob")
 		TRUE_(_detail::aligned<_std::byte   >::advance(i) == 0x8);
 		TRUE_(_detail::aligned<_std::int16_t>::advance(i) == 0xA);
 
-		TRUE_(0x10 == blob_t<_std::byte, _std::int16_t, _std::byte, _std::byte, _std::int16_t, _std::byte, _std::int16_t>::size());
+		TRUE_(0x10 == arena_t<_std::byte, _std::int16_t, _std::byte, _std::byte, _std::int16_t, _std::byte, _std::int16_t>::size());
 	}
 }
 /***/
