@@ -35,6 +35,8 @@ void polymer_provision_spine__locamotion()
 	using A_gate   = bond::compose<typename U_glider::template suspend<Ox_level>, typename U_stage::attach<>>;
 	using U_gate   = process::confined_t<A_gate>;
 
+	//\
+	using U_vox = polymer_t<let_t<U_gate>::bind_t<>, A_stored, A_spooled
 	using U_vox = polymer_t<U_gate, A_stored, A_spooled
 //	, provision::voiced<void
 //		,	provision::stored<extent_constant_t<-1>>

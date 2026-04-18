@@ -2,8 +2,8 @@
 #include "./any.hh"
 #include "./monomer.hh"
 #include "../flow/key.hh"
+#include "../process/all.hh"
 #include "../provision/all.hh"
-
 
 
 XTAL_ENV_(push)
@@ -38,7 +38,7 @@ XTAL_0FN_(to) (polymer_t<based_t<U>, As...>(XTAL_REF_(u)));
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/**/
+
 template <incomplete_q A, typename ...As>
 struct polymer<A, As...>
 :	polymer<As...>
@@ -52,14 +52,18 @@ struct polymer<A, As...>
 template <class U, typename ...As>
 struct polymer<U, As...>
 {
+	/*/
+	using supertype = monomer_t<U, As...>;
+	using superkind = monomer  <process::conferred_t<decltype([] (auto &&...oo)
+		//\
+		XTAL_0FN_(to) (based_t<iteratee_t<XTAL_ALL_(XTAL_ANY_(supertype) (XTAL_REF_(oo)...))>> {})
+		XTAL_0FN_(to) (based_t<iteratee_t<typename supertype::template bind_t<decltype(oo)...>>> {})
+	)>
+	,	As...
+	>;
+	/*/
 	using superkind = monomer<U, As...>;
-/*/
-template <typename ...As>
-struct polymer
-{
-private:
-	using superkind = monomer<As...>;
-/***/
+	/***/
 public:
 	/*!
 	\brief  	Defines a `monomer`-derived type that aggregates the internally managed voices.
@@ -72,6 +76,7 @@ public:
 		using S_ = bond::compose_s<S, superkind>;
 		using T_ = typename S_::self_type;
 		using U_ = typename S_::head_type;
+
 		//\
 		using M_voice = monomer_t<U_, typename S_::template voice<>>;
 		using M_voice = monomer_t<U , typename S_::template voice<>>;

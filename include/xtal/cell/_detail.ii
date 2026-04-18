@@ -485,10 +485,17 @@ struct refer_iterators
 	public:
 		using S::S; static_assert(any_q<S>);
 
+		/*/
+		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {u.begin();} {return S::head().begin();}
+		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {u.begin();} {return S::head().begin();}
+		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {u.  end();} {return S::head().  end();}
+		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {u.  end();} {return S::head().  end();}
+		/*/
 		XTAL_DEF_(return,inline,let) begin() const noexcept requires requires (U const &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
 		XTAL_DEF_(return,inline,let) begin()       noexcept requires requires (U       &u) {_xtd::ranges::begin(u);} {return _xtd::ranges::begin(S::head());}
 		XTAL_DEF_(return,inline,let)   end() const noexcept requires requires (U const &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
 		XTAL_DEF_(return,inline,let)   end()       noexcept requires requires (U       &u) {_xtd::ranges::  end(u);} {return _xtd::ranges::  end(S::head());}
+		/***/
 
 		XTAL_FN2_(do) (template <counter_q V>
 		XTAL_DEF_(return,inline,let)

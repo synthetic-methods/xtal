@@ -25,15 +25,16 @@ TAG_("pack")
 {
 	TRY_("bind")
 	{
-		double table[2][2] = {{0, 0}, {0, 0}};
-		auto col_0 = transpack_f<void_type[2]>(0, 2) (table);
-		auto col_1 = transpack_f<void_type[2]>(1, 2) (table);
+		double xs[2][2] = {{0, 0}, {0, 0}};
+		double ys[2][2] = {{1, 3}, {2, 4}};
+		auto col_0 = transpack_f<void_type[2]>(0, 2) (xs);
+		auto col_1 = transpack_f<void_type[2]>(1, 2) (xs);
 		col_0[0] = pack_f(1.0, 2.0);
 		col_1[0] = pack_f(3.0, 4.0);
-		TRUE_(1 == table[0][0]);
-		TRUE_(2 == table[1][0]);
-		TRUE_(3 == table[0][1]);
-		TRUE_(4 == table[1][1]);
+		TRUE_(xs[0][0] == ys[0][0]);
+		TRUE_(xs[1][0] == ys[1][0]);
+		TRUE_(xs[0][1] == ys[0][1]);
+		TRUE_(xs[1][1] == ys[1][1]);
 
 	}
 	TRY_("pack_item_f(std::complex{...})")

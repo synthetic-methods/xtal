@@ -12,7 +12,7 @@ template <class U>	concept      _unprocessed_q = not _retail::any_q<U>;
 template <class U>	concept        _processed_q =     _retail::any_q<U>;
 
 template <class U>	concept            _value_q = inapplicable_q<U> and not iterable_q<U>;
-template <class U>	concept            _range_q =                           iterable_q<U>;
+template <class U>	concept            _range_q =          any_q<U> or      iterable_q<U>;
 
 template <class U>	concept unprocessed_value_q = _unprocessed_q<U> and       _value_q<U>;
 template <class U>	concept unprocessed_range_q = _unprocessed_q<U> and       _range_q<U>;
