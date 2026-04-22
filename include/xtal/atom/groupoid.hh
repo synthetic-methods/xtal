@@ -92,10 +92,11 @@ struct groupoid
 		zip_from(auto const &...ts)
 		noexcept -> auto
 		{
-			return [f_=[&]
-				(auto    I)                      XTAL_0FN_(to) (f (           zip_got<I>(ts)...))]
-				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(f_(constant_t<I>{})...))
-					(bond::seek_s<size>{});
+			return\
+				[&] <auto ...I>(bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(
+				[&] (auto   _I)                     XTAL_0FN_(to) (f(            zip_got<_I>(ts)...))
+					(constant_t<I>{}) ...))
+					(bond::seek_s<size> {});
 		}
 		/*!
 		\brief  	Evaluates `f` groupoidwise for each row across `s, ts...`.
@@ -105,10 +106,11 @@ struct groupoid
 		zip_into(auto &s, auto const &...ts)
 		noexcept -> auto
 		{
-			[f_=[&]
-				(auto    I)                      XTAL_0FN_(do) (f (get<I>(s), zip_get<I>(ts)...))]
-				<auto ...I> (bond::seek_t<I...>) XTAL_0FN_(do) (f_(constant_t<I>{}),...)
-					(bond::seek_s<size>{});
+			return\
+				[&] <auto ...I>(bond::seek_t<I...>) XTAL_0FN_(do) ((
+				[&] (auto   _I)                     XTAL_0FN_(do) (f(get<_I>(s), zip_get<_I>(ts)...))
+					(constant_t<I>{}),...))
+					(bond::seek_s<size> {});
 		}
 		/*!
 		\returns	This after applying the vector operation `f`.
@@ -177,7 +179,7 @@ struct groupoid
 		{
 			auto &s = self();
 			
-			bond::seek_until_f<size>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_f<size>([&]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
@@ -197,7 +199,7 @@ struct groupoid
 			auto &s = self();
 			value_type u{0};
 			
-			bond::seek_until_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0

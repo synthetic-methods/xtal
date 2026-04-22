@@ -271,7 +271,7 @@ struct confine : compose<refine<U>, As..., define<U>> {};
 |[`processor/any.hh`     ](include/xtal/processor/any.hh?ts=3)     |Processor  lifting            |
 |[`processor/monomer.hh` ](include/xtal/processor/monomer.hh?ts=3) |Processor  management         |
 |[`processor/polymer.hh` ](include/xtal/processor/polymer.hh?ts=3) |Processor  polymorphism       |
-|[`schedule/glider.hh`   ](include/xtal/schedule/glider.hh?ts=3)   |Parameter  scheduling/ramping |
+|[`schedule/slider.hh`   ](include/xtal/schedule/slider.hh?ts=3)   |Parameter  scheduling/ramping |
 |[`schedule/slicer.hh`   ](include/xtal/schedule/slicer.hh?ts=3)   |Event      scheduling/slicing |
 |[`atom/spool.hh`        ](include/xtal/atom/spool.hh?ts=3)        |Event      spooling           |
 |[`atom/block.hh`        ](include/xtal/atom/block.hh?ts=3)        |Buffer     management         |

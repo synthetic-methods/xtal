@@ -15,7 +15,7 @@ namespace xtal::schedule
 producing a signal by successive calls to `method`.
 */
 template <typename ...As>
-struct glider
+struct slider
 {
 	using superkind = bond::compose<As..., provision::spooled<extent_constant_t<-1>>>;
 
@@ -51,7 +51,7 @@ struct glider
 				using V_limits = _std::numeric_limits<delay_type>;
 				using U_layout = typename R_::event_type::layout_type;
 				using U_hold = typename fluid<U_layout>::value_type;
-				using U_ramp = atom::differential_t<atom::wrap_s<U_layout, _std::plus>>;
+				using U_ramp = atom::differential_t<atom::applied_s<U_layout, _std::plus>>;
 				using E_hold = flow::cue_s<U_hold>;
 				using E_ramp = flow::cue_s<U_ramp>;
 				using E_pipe = typename S_::template spool_t<E_ramp>;
@@ -224,7 +224,7 @@ struct glider
 	};
 };
 template <class ...Ys>
-using glider_t = confined_t<glider<Ys...>>;
+using slider_t = confined_t<slider<Ys...>>;
 
 
 ///////////////////////////////////////////////////////////////////////////////

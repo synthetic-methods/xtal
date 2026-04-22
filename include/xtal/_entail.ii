@@ -26,8 +26,7 @@ using _retail::   text_type;
 using _retail:: extent_constant_t;
 using _retail::   size_constant_t;
 using _retail::   sign_constant_t;
-using _retail::   meta_constant_t;
-using _retail::   meta_constant_q;
+using _retail::    metaconstant_t;
 
 
 
@@ -118,6 +117,7 @@ using _retail::           un_q;
 using _retail::variable;
 template <         class ...Ts>	concept            variable_q	= (some_q<Ts...> and...and _retail::           variable_q<based_t<Ts>>);
 template <         class ...Ts>	concept            constant_q	= (some_q<Ts...> and...and _retail::           constant_q<based_t<Ts>>);
+template <         class ...Ts>	concept        metaconstant_q	= (some_q<Ts...> and...and _retail::       metaconstant_q<based_t<Ts>>);
 using _retail::           constant_t;
 using _retail::  integral_constant_t;
 using _retail::  cardinal_constant_t;

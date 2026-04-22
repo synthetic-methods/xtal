@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.hh"
-#include "./wrap.hh"
+#include "./applied.hh"
 #include "./group.hh"
 
 
@@ -33,7 +33,7 @@ struct differential
 {
 	template <class T>
 	//\
-	using endotype = typename group<wrap_s<Us, _std::plus>...>::template homotype<T>;
+	using endotype = typename group<applied_s<Us, _std::plus>...>::template homotype<T>;
 	using endotype = typename group<Us...>::template homotype<T>;
 
 	template <class T>

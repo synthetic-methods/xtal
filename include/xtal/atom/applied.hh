@@ -14,16 +14,16 @@ namespace xtal::atom
 \brief   Applies the template to the `value_type` of the provided `subtype`.
 */
 template <template <class> class T_>
-struct wrap;
+struct applied;
 
 template <class U, template <class> class T_>
-using wrap_s = bond::compose_s<U, wrap<T_>>;
+using applied_s = bond::compose_s<U, applied<T_>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <template <class> class T_>
-struct wrap
+struct applied
 {
 	template <class U>
 	class epitype

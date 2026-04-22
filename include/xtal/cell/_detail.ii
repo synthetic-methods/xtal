@@ -291,7 +291,38 @@ struct defer_field
 
 	};
 };
-template <constant_q U>
+template <metaconstant_q U>
+struct defer_field<U>
+{
+	template <class S>
+	class subtype : public bond::compose_s<S>
+	{
+		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S>;
+
+	public:
+		using head_type = U;
+		using body_type = U;
+
+	public:
+		using S_::S_;
+
+		XTAL_NEW_(explicit)
+		subtype(metaconstant_q auto &&, auto &&...oo)
+		noexcept
+		:	S_{XTAL_REF_(oo)...}
+		{
+		}
+
+		/*!
+		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
+		*/
+	//	static head_type constexpr head{};
+		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type {return head_type{};}
+		
+	};
+};
+template <class U> requires constant_q<U>
 struct defer_field<U>
 {
 	template <class S>
@@ -302,28 +333,26 @@ struct defer_field<U>
 
 	public:
 		using head_type =  based_t<U>;
-		using body_type = member_t<U>;
+		using body_type =  based_t<U>;
 
 	public:
 		using S_::S_;
-		using S_::self;
-		body_type body_part{};
+	//	body_type body_part{};
 
-		template <constant_q K>
+		template <constant_q V>
 		XTAL_NEW_(explicit)
-		subtype(K, auto &&...oo)
+		subtype(V, auto &&...oo)
 		noexcept
 		:	S_{XTAL_REF_(oo)...}
 		{
-			static_assert(K{}() == U{}());
+			static_assert(same_q<V, U>);
 		}
 
 		/*!
 		\returns	The kernel-body (prior to reconstruction using the given arguments, if provided).
 		*/
 	//	static head_type constexpr head{};
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type const & requires    member_q<U> {return             body_part;}
-		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type         requires dismember_q<U> {return (head_type) body_part;}
+		XTAL_DEF_(return,inline,let) head() const noexcept -> head_type {return head_type{};}
 		
 	};
 };
@@ -627,13 +656,26 @@ struct refer_multiplicative_group<U, 2>
 	template <class S>
 	class subtype : public S
 	{
+		using S_ = S; static_assert(any_q<S>);
+		using T_ = typename S::self_type;
 	public:
-		using S::S; static_assert(any_q<S>);
+		using S_::S_;
+		/*/
 		XTAL_DEF_(return,inline,get) operator * (auto const &o) const noexcept requires requires (U const &u) {u * o;} {return typename S::self_type( S::head() * o);}
 		XTAL_DEF_(return,inline,get) operator / (auto const &o) const noexcept requires requires (U const &u) {u / o;} {return typename S::self_type( S::head() / o);}
+		/*/
+		XTAL_DEF_(return,inline,get) operator * (subtype const &t)   const     noexcept requires requires (U const &u) {u * u;} {return T_{S_::head() * t.head()};}
+		XTAL_DEF_(return,inline,get) operator / (subtype const &t)   const     noexcept requires requires (U const &u) {u / u;} {return T_{S_::head() / t.head()};}
+		XTAL_DEF_(return,inline,met) operator * (subtype const &s, U const &u) noexcept requires requires (U const &u) {u * u;} {return T_{s.head() * u};}
+		XTAL_DEF_(return,inline,met) operator / (subtype const &s, U const &u) noexcept requires requires (U const &u) {u / u;} {return T_{s.head() / u};}
+		XTAL_DEF_(return,inline,met) operator * (U const &u, subtype const &s) noexcept requires requires (U const &u) {u * u;} {return T_{u * s.head()};}
+		XTAL_DEF_(return,inline,met) operator / (U const &u, subtype const &s) noexcept requires requires (U const &u) {u / u;} {return T_{u / s.head()};}
+		/***/
 
 	};
 };
+template <incomplete_q U, int N>
+struct refer_multiplicative_group<U, N> : bond::compose<> {};
 
 
 template <class U, int N=0>
@@ -663,14 +705,28 @@ struct refer_additive_group<U, 2>
 	template <class S>
 	class subtype : public S
 	{
+		using S_ = S; static_assert(any_q<S>);
+		using T_ = typename S::self_type;
 	public:
-		using S::S; static_assert(any_q<S>);
+		using S_::S_;
+		/*/
 		XTAL_DEF_(return,inline,get) operator + (auto const &o) const noexcept requires requires (U const &u) { u + o;} {return typename S::self_type( S::head() + o);}
 		XTAL_DEF_(return,inline,get) operator - (auto const &o) const noexcept requires requires (U const &u) { u - o;} {return typename S::self_type( S::head() - o);}
 		XTAL_DEF_(return,inline,get) operator - (             ) const noexcept requires requires (U const &u) {-u    ;} {return typename S::self_type(-S::head());}
+		/*/
+		XTAL_DEF_(return,inline,get) operator + (subtype const &t)   const     noexcept requires requires (U const &u) {u + u;} {return T_{S_::head() + t.head()};}
+		XTAL_DEF_(return,inline,get) operator - (subtype const &t)   const     noexcept requires requires (U const &u) {u - u;} {return T_{S_::head() - t.head()};}
+		XTAL_DEF_(return,inline,met) operator + (subtype const &s, U const &u) noexcept requires requires (U const &u) {u + u;} {return T_{s.head() + u};}
+		XTAL_DEF_(return,inline,met) operator - (subtype const &s, U const &u) noexcept requires requires (U const &u) {u - u;} {return T_{s.head() - u};}
+		XTAL_DEF_(return,inline,met) operator + (U const &u, subtype const &s) noexcept requires requires (U const &u) {u + u;} {return T_{u + s.head()};}
+		XTAL_DEF_(return,inline,met) operator - (U const &u, subtype const &s) noexcept requires requires (U const &u) {u - u;} {return T_{u - s.head()};}
+		XTAL_DEF_(return,inline,get) operator - ()                   const     noexcept requires requires (U const &u) {  - u;} {return T_{  -S::head()};}
+		/***/
 
 	};
 };
+template <incomplete_q U, int N>
+struct refer_additive_group<U, N> : bond::compose<> {};
 
 
 template <class U, int N=0>
@@ -703,6 +759,8 @@ struct refer_discrete_group<U, 2>
 	using subtype = S;
 
 };
+template <incomplete_q U, int N>
+struct refer_discrete_group<U, N> : bond::compose<> {};
 
 
 template <class U, int N=0>
@@ -741,6 +799,8 @@ struct refer_digital_group<U, 2>
 
 	};
 };
+template <incomplete_q U, int N>
+struct refer_digital_group<U, N> : bond::compose<> {};
 
 
 template <class U, int N=0>
@@ -753,6 +813,8 @@ struct refer_groups
 	>
 {
 };
+template <incomplete_q U, int N>
+struct refer_groups<U, N> : bond::compose<> {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

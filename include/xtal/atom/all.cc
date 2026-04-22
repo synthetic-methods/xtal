@@ -1,5 +1,5 @@
 #include "./any.cc"
-#include "./arena.cc"
+#include "./applied.cc"
 #include "./block.cc"
 #include "./brace.cc"
 #include "./buffer.cc"
@@ -9,4 +9,4 @@
 #include "./group.cc"
 #include "./groupoid.cc"
 #include "./spool.cc"
-#include "./wrap.cc"
+#include "./stash.cc"

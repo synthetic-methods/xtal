@@ -355,7 +355,7 @@ struct dynamic_onset_mix
 		method(auto &&...xs)
 		noexcept -> auto
 		{
-			return (XTAL_REF_(xs) +...+ this->template head<Ox_onset>());
+			return (XTAL_REF_(xs) +...+ this->template headed<Ox_onset>());
 		}
 
 	};
@@ -375,7 +375,7 @@ struct dynamic_term
 		method(auto &&x)
 		noexcept -> auto
 		{
-			return XTAL_REF_(x)*this->template head<Ox_scale>();
+			return XTAL_REF_(x)*this->template headed<Ox_scale>();
 		}
 
 	};
@@ -404,7 +404,7 @@ struct dynamic_count
 		method()
 		noexcept -> auto
 		{
-			auto i = u_count; u_count += this->template head<U_restep>(); return i;
+			auto i = u_count; u_count += this->template headed<U_restep>(); return i;
 		}
 
 	private:

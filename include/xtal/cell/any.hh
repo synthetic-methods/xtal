@@ -160,6 +160,22 @@ struct defer
 			[] (auto &&o) XTAL_0FN_(to) (XTAL_REF_(o).head()))
 
 		/*!
+		\returns	The `head`-`head`.
+		*/
+		XTAL_FN0_(go) (template <class ..._s>
+		XTAL_DEF_(return,inline,get)
+		headed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
+			template head<_s...>().head()))
+
+		/*!
+		\returns	The `tail`-`head`.
+		*/
+		XTAL_FN0_(go) (template <class ..._s>
+		XTAL_DEF_(return,inline,get)
+		tailed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
+			template self<_s...>().tail().head()))
+
+		/*!
 		\returns	`1` if the supplied value matches `self`, `0` otherwise.
 		*/
 		XTAL_DEF_(return,inline,let)

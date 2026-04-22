@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 
-#include "../atom/arena.hh"
+#include "../atom/stash.hh"
 
 
 
@@ -12,7 +12,7 @@ namespace xtal::provision
 /////////////////////////////////////////////////////////////////////////////////
 /*!
 \brief
-Provides local arena-like storage via `memory()` using `atom::arena`.
+Provides local arena-like storage via `memory()` using `atom::stash`.
 */
 template <typename ...Ts> struct   memorized;
 template <typename ...Ts> using    memorized_t = confined_t<memorized<Ts...>>;
@@ -25,7 +25,7 @@ template <class ...Ts>
 struct memorized
 {
 	using superkind = bond::compose<bond::tag<memorized>
-	,	defer<atom::arena_t<Ts...>>
+	,	defer<atom::stash_t<Ts...>>
 	>;
 	template <cell::any_q S>
 	class subtype : public bond::compose_s<S, superkind>

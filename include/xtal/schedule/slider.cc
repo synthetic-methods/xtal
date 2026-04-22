@@ -1,6 +1,6 @@
 #pragma once
 #include "./any.cc"
-#include "./glider.hh"// testing...
+#include "./slider.hh"// testing...
 
 #include "../provision/all.hh"
 #include "../processor/monomer.hh"
@@ -13,7 +13,7 @@ namespace xtal::schedule::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TAG_("glider", "process")
+TAG_("slider", "process")
 {
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
@@ -29,7 +29,7 @@ TAG_("glider", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
+		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using U0_cue   = flow::cue_s<>;
@@ -41,7 +41,7 @@ TAG_("glider", "process")
 		using V_event = flow::cue_s<>;
 		
 		using Z_process = process::confined_t<
-			typename U_glider::template suspend<U1_event>
+			typename U_slider::template suspend<U1_event>
 		>;
 		using U_processor = processor::monomer_t<Z_process
 		,	provision::stored <null_type[0x100]>
@@ -106,7 +106,7 @@ TAG_("glider", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
+		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using U0_cue   = flow::cue_s<>;
@@ -118,7 +118,7 @@ TAG_("glider", "process")
 		using W0_event = atom::differential_t<_std::plus<U0_event>[2]>;
 		using V_event  = flow::cue_s<>;
 		
-		using U_suspend = typename U_glider::template suspend<U1_event>;
+		using U_suspend = typename U_slider::template suspend<U1_event>;
 		using U_process = process::confined_t<U_suspend>;
 
 		U_process u_gate;
@@ -176,11 +176,11 @@ TAG_("glider", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
+		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template suspend<V_value>>;
+		using Z_value = process::confined_t<typename U_slider::template suspend<V_value>>;
 
 		using U_event = flow::cue_s<V_value>;
 		using V_event = flow::cue_s<>;
@@ -232,12 +232,12 @@ TAG_("glider", "process")
 		int constexpr N_store = (1<<3);
 		int constexpr N_spool = (1<<7);
 
-		using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
+		using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 		using U_cursor = occur::cursor_t<>;
 		using V_event = flow::cue_s<>;
 		
 		using V_value = occur::reinferred_t<class A_gate, T_alpha>;
-		using Z_value = process::confined_t<typename U_glider::template suspend<V_value>>;
+		using Z_value = process::confined_t<typename U_slider::template suspend<V_value>>;
 
 		Z_value u_gate;
 		
@@ -257,7 +257,7 @@ TAG_("glider", "process")
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename ...As>
-void glider_processor()
+void slider_processor()
 {
 	using _fit = bond::fit<>;
 	using T_sigma = typename _fit::sigma_type;
@@ -272,7 +272,7 @@ void glider_processor()
 	int constexpr N_store = (1<<3);
 	int constexpr N_spool = (1<<7);
 	
-	using U_glider = glider_t<spooled<extent_constant_t<N_spool>>>;
+	using U_slider = slider_t<spooled<extent_constant_t<N_spool>>>;
 
 	using U_resize = occur::resize_t<>;
 	using U_cursor = occur::cursor_t<>;
@@ -280,7 +280,7 @@ void glider_processor()
 	U_store u_store{};
 
 	using V_value  = occur::reinferred_t<L_gate, T_alpha>;
-	using Fn_gate = process::confined_t<typename U_glider::template suspend<V_value>>;
+	using Fn_gate = process::confined_t<typename U_slider::template suspend<V_value>>;
 	using Fx_gate = processor::monomer_t<Fn_gate, As...>;
 	auto  fx_gate = Fx_gate::bind_f();
 	
@@ -321,11 +321,11 @@ void glider_processor()
 	TRUE_(u_store == U_store { 77, 77, 77, 77, 11, 11, 11, 11});
 
 }
-TAG_("glider", "processor")
+TAG_("slider", "processor")
 {
 	using namespace processor;
-	TRY_("drive actual") {glider_processor<provision::stored<>>();}
-//	TRY_("drive virtual")  {glider_processor<>();}// TODO?
+	TRY_("drive actual") {slider_processor<provision::stored<>>();}
+//	TRY_("drive virtual")  {slider_processor<>();}// TODO?
 
 }
 

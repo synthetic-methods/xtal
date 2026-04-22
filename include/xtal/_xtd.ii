@@ -376,7 +376,7 @@ static_assert(same_type_as<float, XTAL_ALL_(copysign(1.F, 1.F))>);
 */
 XTAL_DEF_(return,inline,let)
 plus_multiplies_f(auto &&w, auto &&x, auto &&y)
-noexcept -> auto
+noexcept -> XTAL_ALL_(w + x*y)
 {
 	using Z = XTAL_ALL_(w + x*y);
 	XTAL_IF0
@@ -434,6 +434,7 @@ noexcept -> _std::complex<V>
 	,	w.imag()
 	};}
 }
+/*/
 template <class V>
 XTAL_DEF_(return,inline,let)
 plus_multiplies_f(_std::complex<V> const &w, _std::complex<V> const &x, V const &y)
@@ -458,6 +459,7 @@ noexcept -> _std::complex<V>
 	,	plus_multiplies_f(w.imag(), x, y.imag())
 	};}
 }
+/***/
 
 XTAL_DEF_(return,inline,let)
 plus_multiplies_f(auto &&w, auto &&x, auto &&y, auto &&...ys)

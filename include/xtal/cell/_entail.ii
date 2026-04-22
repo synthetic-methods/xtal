@@ -95,14 +95,16 @@ template <class U, typename ...As> using    conferred_t = typename conferred<U, 
 */
 struct referee
 {
-	struct superkind
-	{
-		template <class S>
-		using subtype = bond::compose_s<S, refer<typename S::head_type>>;
-
-	};
 	template <class S>
-	using subtype = bond::compose_s<S, superkind>;
+	struct infrakind : refer<typename S::head_type>
+	{
+	};
+//	template <class S> requires incomplete_q<typename S::head_type>
+//	struct infrakind<S> : bond::compose<>
+//	{
+//	};
+	template <class S>
+	using subtype = bond::compose_s<S, infrakind<S>>;
 	
 };
 #endif

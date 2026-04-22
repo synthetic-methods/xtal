@@ -78,7 +78,8 @@ struct define
 			public:// ACCESS
 
 				XTAL_FN0_(go) (XTAL_DEF_(return,inline,implicit) operator U_,
-					[] (auto &&o) XTAL_0FN_(to) (qualify_f<R_>(XTAL_REF_(o)).head()))
+					[] (auto &&o) XTAL_0FN_(to)
+						(qualify_f<R_>(XTAL_REF_(o)).head()))
 
 			public:// FLOW
 
@@ -109,6 +110,7 @@ struct define
 				using R_::R_;
 
 			public:// OPERATE
+				using R_::self;
 
 				template <auto ...Ns>
 				XTAL_DEF_(return,inline,let)
@@ -118,7 +120,7 @@ struct define
 					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
 				}
 				{
-					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template head<T>().head());
+					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template headed<T>());
 				}
 				template <auto ...Ns>
 				XTAL_DEF_(return,inline,let)
@@ -128,7 +130,7 @@ struct define
 					r_ .template method<Ns...>(XTAL_REF_(oo)..., XTAL_ANY_(T).head());
 				}
 				{
-					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template head<T>().head());
+					return R_::template method<Ns...>(XTAL_REF_(oo)..., R_::template headed<T>());
 				}
 
 			};

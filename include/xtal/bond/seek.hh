@@ -53,7 +53,7 @@ template <int N>	                 using  seek_reverse_s = typename XTAL_NYM_(see
 */
 template <integral_q auto ...Ns>
 XTAL_DEF_(inline,let)
-seek_within_f(auto const &f)
+seek_in_f(auto const &f)
 noexcept -> void
 {
 	[&] <int ...I>(seek_t<I...>)
@@ -66,7 +66,7 @@ noexcept -> void
 */
 template <int N_count=0, int N_onset=0>
 XTAL_DEF_(inline,let)
-seek_until_f(auto const &f)
+seek_to_f(auto const &f)
 noexcept -> void
 {
 	[&] <int ...I>(seek_t<I...>)

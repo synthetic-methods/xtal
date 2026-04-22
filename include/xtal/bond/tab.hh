@@ -71,7 +71,7 @@ template <class T, class ...Ks>  struct  tab_outer;
 template <class K, class ...Ts>  struct  tab_inner;
 #endif
 template <class T, class ...Ks>	concept tab_outer_q = tab_outer<based_t<T >,                 based_t<Ks> ...>{}() ;///< Matches `T` with     consecutive `Ks...` in sequence.
-template <class T, class ...Ks>	concept tab_inner_q = tab_outer<based_t<T >, meta_constant_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
+template <class T, class ...Ks>	concept tab_inner_q = tab_outer<based_t<T >, metaconstant_t<based_t<Ks>>...>{}() ;///< Matches `T` with non-consecutive `Ks...` in sequence.
 
 template <class K, class ...Ts>	concept tab_outer_p = (...and tab_outer_q<Ts, K>);///< Matches all `Ts...` with     consecutive `K`.
 template <class K, class ...Ts>	concept tab_inner_p = (...and tab_inner_q<Ts, K>);///< Matches all `Ts...` with non-consecutive `K`.
@@ -85,8 +85,8 @@ template <class T,                    class ...Ks>                              
 template <class T,                same_q<T> ...Ks> requires same_q<T, Ks...>                        struct tab_outer<T,           Ks...> : _std::  true_type {using type =    T;};
 template <class T,    antecedent_q I, class ...Ks>                                                  struct tab_outer<T,       I , Ks...> :  tab_outer<        T ,               Ks...> {};
 template <class T,   intercedent_q I, class ...Ks>                                                  struct tab_outer<T,       I , Ks...> :  tab_outer<tab_s<T>, precedent_s<I>, Ks...> {};
-template <tab_q T, meta_constant_q K, class ...Ks> requires different_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,             K,  Ks...> {};
-template <tab_q T, meta_constant_q K, class ...Ks> requires      same_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,                 Ks...> {};
+template <tab_q T, metaconstant_q K, class ...Ks> requires different_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,             K,  Ks...> {};
+template <tab_q T, metaconstant_q K, class ...Ks> requires      same_q<tab_t<T>, typename K::type> struct tab_outer<T,       K , Ks...> :  tab_outer<tab_s<T>,                 Ks...> {};
 template <tab_q T,           different_q<T> ...Ks>                                                  struct tab_outer<T, tab_t<T>, Ks...> :  tab_outer<tab_s<T>,                 Ks...> {};
 
 template <class K,                    class ...Ts>                                                  struct tab_inner              : _std:: false_type {using type = void;};

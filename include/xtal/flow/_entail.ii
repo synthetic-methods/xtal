@@ -86,8 +86,8 @@ The member `type` is defined by:
 */
 template <class ...Ts>	struct  packet;
 #ifndef XTAL_DOC
-template <class ...Ts>	struct  packet    :      packed<Ts...> {};
-template <any_q    T >	struct  packet<T> : meta_constant_t<T> {};
+template <class ...Ts>	struct  packet    :     packed<Ts...> {};
+template <any_q    T >	struct  packet<T> : metaconstant_t<T> {};
 #endif
 template <class ...Ts>	using   packet_t = typename packet<Ts...>::type;///<\brief Produces the `type` for `packet<Ts...>`.
 

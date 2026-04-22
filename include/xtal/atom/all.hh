@@ -1,5 +1,5 @@
 #include "./any.hh"
-#include "./arena.hh"
+#include "./applied.hh"
 #include "./block.hh"
 #include "./brace.hh"
 #include "./buffer.hh"
@@ -9,4 +9,4 @@
 #include "./group.hh"
 #include "./groupoid.hh"
 #include "./spool.hh"
-#include "./wrap.hh"
+#include "./stash.hh"
