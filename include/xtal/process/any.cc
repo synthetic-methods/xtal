@@ -49,9 +49,9 @@ struct square_root
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&o)
-		noexcept -> auto
+		XTAL_DEF_(return,inline,let)
+		method(auto &&o)
+		const noexcept -> auto
 		{
 			return _std::sqrt(o);
 		}
@@ -71,9 +71,9 @@ struct halve
 		using S_::S_;
 
 		template <auto ...>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&o)
-		noexcept -> auto
+		XTAL_DEF_(return,inline,let)
+		method(auto &&o)
+		const noexcept -> auto
 		{
 			return o*0.5L;
 		}

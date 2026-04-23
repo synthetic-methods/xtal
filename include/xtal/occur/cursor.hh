@@ -118,7 +118,7 @@ struct cursor<T>
 			}
 		}
 		template <signed N_ion> requires in_v<N_ion, +1>
-		XTAL_DEF_(return,let)
+		XTAL_DEF_(return,inline,let)
 		fuse(cursor_q auto &&t)
 		noexcept -> signed
 		{

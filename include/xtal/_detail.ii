@@ -157,9 +157,9 @@ noexcept -> void
 	XTAL_0IF (different_q<_std::identity, F>) {
 		copy_to<f>(y0, x0, next(x0, sN), ord);
 	}
-	#if XTAL_VER_(LLVM)
-	XTAL_0IF_(do)   (_std::copy_n(x0, sN,  y0))
-	#endif
+//	#if XTAL_VER_(LLVM)
+//	XTAL_0IF_(do)   (_std::copy_n(x0, sN,  y0))
+//	#endif
 	XTAL_0IF_(do)   (copy_n (     x0, sN,  y0))
 	XTAL_0IF_(do)   (copy   (span(x0, sN), y0))
 	XTAL_0IF_(else) {while  (sN--) {*y0 = *x0; y0++; x0++;}}
@@ -170,6 +170,7 @@ XTAL_DEF_(inline,let)
 move_to(Y_ y0, X_ x0, integral_q auto sN, signed const ord=sequential_q<X_>)
 noexcept -> void
 {
+	using namespace _xtd::ranges;
 	using Y = iteratee_t<Y_>;
 	using X = iteratee_t<X_>;
 	using F = decltype(f);

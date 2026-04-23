@@ -287,14 +287,14 @@ struct defer
 		{
 			XTAL_IF0
 			XTAL_0IF (N_ion < 0) {
-				return [this, oo...]
-					XTAL_1FN_(and) (flux_head<N_ion>(XTAL_MOV_(oo)...))
-						(flux_this<N_ion>(XTAL_REF_(oo)...));
+				signed const x = flux_this<N_ion>(oo...);
+				return [this, ...oo=XTAL_REF_(oo)]
+					XTAL_1FN_(and) (flux_head<N_ion>(XTAL_MOV_(oo)...)) (x);
 			}
 			XTAL_0IF (0 < N_ion) {
-				return [this, oo...]
-					XTAL_1FN_(and) (flux_this<N_ion>(XTAL_MOV_(oo)...))
-						(flux_head<N_ion>(XTAL_REF_(oo)...));
+				signed const x = flux_head<N_ion>(oo...);
+				return [this, ...oo=XTAL_REF_(oo)]
+					XTAL_1FN_(and) (flux_this<N_ion>(XTAL_MOV_(oo)...)) (x);
 			}
 		}
 

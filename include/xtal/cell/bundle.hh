@@ -73,9 +73,9 @@ struct bundle
 		XTAL_DEF_(return,inline,get) arguments,
 			[] (auto &&o, auto &&f) XTAL_0FN_(to) (_std::apply(XTAL_REF_(f), XTAL_REF_(o).head())))
 
-		XTAL_FN2_(to) (template <size_type ...Is>
+		XTAL_FN2_(to) (template <size_type ...Ns>
 		XTAL_DEF_(return,inline,get)
-		argument(), bond::pack_item_f<Is...>(head()))
+		argument(), bond::pack_item_f<Ns...>(head()))
 
 	};
 	using type = confined_t<bond::compose_t<subtype>>;

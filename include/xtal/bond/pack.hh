@@ -1,7 +1,7 @@
 #pragma once
 #include "./any.hh"
 #include "./seek.hh"
-
+#include "./compose.hh"
 
 
 
@@ -175,31 +175,35 @@ noexcept -> decltype(auto)
 
 template <class U>
 XTAL_DEF_(return,inline,let)
-transpack_f(size_type index, size_type limit, indexed_q auto &&w)
+transpack_f(size_type index, size_type limit, indexed_q auto &&table)
 noexcept -> auto
+requires requires {{**table} ->      same_q<U>;}
 {
-	if constexpr (requires {{**w} -> same_q<U>;}) {
-		return _std::span(point_f(XTAL_REF_(w)[index]), limit);
-	}
-	else {
-		return [&]<auto ...I> (bond::seek_t<I...>)
-			XTAL_0FN_(to) (iterative_f<U>(_std::span(point_f(XTAL_REF_(w)[I], index), limit)...))
-				(bond::seek_s<fluid_shaped<U>::extent()>{});
-	}
+	return _std::span(point_f(XTAL_REF_(table)[index]), limit);
 }
 template <class U>
 XTAL_DEF_(return,inline,let)
-transpack_f(size_type limit, indexed_q auto &&w)
+transpack_f(size_type index, size_type limit, indexed_q auto &&table)
+noexcept -> auto
+requires requires {{**table} -> different_q<U>;}
+{
+	return [&]<auto ...I> (bond::seek_t<I...>)
+	XTAL_0FN_(to) (iterative_f<U>(_std::span(point_f(XTAL_REF_(table)[I], index), limit)...))
+		(bond::seek_s<fluid_shaped<U>::extent()>{});
+}
+template <class U>
+XTAL_DEF_(return,inline,let)
+transpack_f(size_type limit, indexed_q auto &&table)
 noexcept -> decltype(auto)
 {
-	return transpack_f<U>(0U, limit, XTAL_REF_(w));
+	return transpack_f<U>(0U, limit, XTAL_REF_(table));
 }
 template <class U>
 XTAL_DEF_(return,inline,let)
 transpack_f(integral_q auto const &...ns)
 noexcept -> decltype(auto)
 {
-	return [=] (auto &&w) XTAL_0FN_(to) (transpack_f<U>(ns..., XTAL_REF_(w)));
+	return [=] (auto &&table) XTAL_0FN_(to) (transpack_f<U>(ns..., XTAL_REF_(table)));
 }
 template <class U>
 using    transpack_t = XTAL_ALL_(transpack_f<U>(0x1000U, XTAL_ANY_(initializer_t<U> **)));

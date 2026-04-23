@@ -88,37 +88,31 @@ struct define
 				\brief  	Invokes the super-method `pump` to handle chunking and event dispatch.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				flux(occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					auto &s = R_::self();
-					auto &u = R_::template head<U_cursor>();
-					
-					if (s.template fuse<N_ion>(cur) == 1) {
+					if (1 == R_::template fuse<N_ion>(cur)) {
 						return 1;
 					}
-					if (s.pump([&] (counted_q auto scan, counter_q auto step)
-						XTAL_0FN_(to) (s.template flux<N_ion>(_std::in_place
-						,	rev.subview(scan)
-						,	cur.subview(scan).skip(step)
-						))
-					))	{
-						(void) R_::template flux<+1>(constant_t<-1>{}, cur);
-					}
+					(void) self().pump([&, this] (counted_q auto scan, counter_q auto step)
+					XTAL_0FN_(to) (self().template flux<N_ion>(_std::in_place
+					,	rev.subview(scan)
+					,	cur.subview(scan).skip(step))));
+					(void) R_::template flux<+1>(constant_t<-1>{}, XTAL_REF_(cur));
 					return 0;
 				}
 				/*!
 				\brief  	Renders the subslice of designated by `rev` and `cur`.
 				*/
 				template <signed N_ion> requires in_v<N_ion, -1>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				flux(_std::in_place_t, occur::review_q auto &&rev, occur::cursor_q auto &&cur)
 				noexcept -> signed
 				{
-					using          V_state = XTAL_ALL_(rev.view());
-					auto constexpr N_share = bond::seek_truth_v<_detail::recollection_p<Xs, V_state>...>;
-					if (1 == R_::template flux_unrest<N_ion>(ordinal_constant_t<N_share>{}, XTAL_REF_(rev), XTAL_REF_(cur))) {
+					using V_state = XTAL_ALL_(rev.view());
+					using V_share = ordinal_constant_t<bond::seek_truth_v<_detail::recollection_p<Xs, V_state>...>>;
+					if (1 == R_::template flux_unrest<N_ion>(V_share{}, XTAL_REF_(rev), XTAL_REF_(cur))) {
 						return 1;
 					}
 					else {
@@ -231,46 +225,27 @@ struct defer<U>
 		/*!
 		\brief  	Defines the range-lifted form of `head` by lifting the underlying `process`.
 		\brief  	Parameter resolution is only performed at the beginning of each block.
-		\brief  	Only `method` participates in parameter resolution, since `method_f` is stateless.
-		\brief  	If `1 <= sizeof...(Is)`, the returned range is type-erased with `ranges::any_view` (so it can be `vtable`d).
+		\brief  	If `1 <= sizeof...(Ns)`, the returned range is type-erased with `ranges::any_view` (so it can be `vtable`d).
 		*/
-	//	template <auto ...Is>
-	//	XTAL_DEF_(return,inline,set)
-	//	method  (auto &&...xs)
-	//	noexcept -> auto
-	//		requires XTAL_TRY_(to)
-	//			(method_f<Is...>(XTAL_ANY_(decltype(xs))...))
-
-		XTAL_FN2_(do) (template <auto ...Is>
+		XTAL_FN2_(do) (template <auto ...Ns>
 		XTAL_DEF_(return,inline,let)
-		method  (auto &&...xs),
+		method(auto &&...xs),
 		noexcept -> auto
-		//	requires XTAL_TRY_(to_unless)
-		//		(method_f<Is...>(XTAL_ANY_(decltype(xs))...))
 		{
-			return normalize_f<Is...>(iterative_f(head().template
-				reify<iteratee_t<decltype(xs)> &&...>(constant_t<Is>{}...), XTAL_REF_(xs)...));
+			return normalize_f<Ns...>(iterative_f(head().template
+				reify<iteratee_t<decltype(xs)> &&...>(constant_t<Ns>{}...), XTAL_REF_(xs)...));
 		})
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&...xs)
-		noexcept -> auto
-			requires XTAL_TRY_(to_if) (U_::template method_f<Is...>(XTAL_ANY_(iteratee_t<decltype(xs)> &&)...))
-		{
-			return normalize_f<Is...>(iterative_f<[] XTAL_1FN_(call)
-				(U_::template method_f<Is...>)>(XTAL_REF_(xs)...));
-		}
 
 	private:
 
-		template <auto ...Is>
+		template <auto ...Ns>
 		XTAL_DEF_(return,inline,set)
 		normalize_f(auto &&y)
 		noexcept -> decltype(auto)
 		{
 			XTAL_IF0
-			XTAL_0IF (none_v<Is...>) {return           XTAL_REF_(y) ;}
-			XTAL_0IF (some_v<Is...>) {return derange_f(XTAL_REF_(y));}
+			XTAL_0IF (none_v<Ns...>) {return           XTAL_REF_(y) ;}
+			XTAL_0IF (some_v<Ns...>) {return derange_f(XTAL_REF_(y));}
 		}
 		
 

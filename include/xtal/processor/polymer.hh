@@ -210,8 +210,8 @@ public:
 					bool const onset =                           0 == o  .head(), offset = not onset;
 					bool const reset = e_ < ensemble().end() and k == e_->head(), preset = not reset;
 					if (onset) {
-						e_ = ensemble().poke(e_, k, preset? lead(): [&] XTAL_1FN {
-							auto   u = *e_; (void) e_->efflux(occur::stage_f(-1), oo...);
+						e_ = ensemble().poke(e_, k, preset? lead(): [=] XTAL_1FN {
+							auto   u = *e_; (void) e_->efflux(occur::stage_f(-1), XTAL_MOV_(oo)...);
 							return u;
 						}	());
 					}
@@ -268,7 +268,8 @@ public:
 				{
 					auto x = N_ion < 0? -1: lead().template flux<N_ion>(oo...);
 					return _xtd::ranges::accumulate(ensemble(), x
-					,	[=] (auto x, auto &&e) XTAL_0FN_(to) (x & XTAL_REF_(e).template flux<N_ion>(oo...))
+					,	[...oo=XTAL_REF_(oo)] (auto x, auto &&e)
+						XTAL_0FN_(to) (x & XTAL_REF_(e).template flux<N_ion>(oo...))
 					);
 					return x;
 				}

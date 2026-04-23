@@ -534,7 +534,7 @@ struct refer_iterators
 			return subhead(counted_f(0, XTAL_REF_(v)));
 		})
 		XTAL_FN2_(do) (template <counted_q W>
-		XTAL_DEF_(return,let)
+		XTAL_DEF_(return,inline,let)
 		subhead(W &&w),
 		noexcept -> auto
 		{

@@ -168,7 +168,7 @@ struct define
 					return R_::template flux<N_ion>(XTAL_REF_(oo)...);
 				}
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				flux(same_q<T> auto &&t, auto &&...oo)
 				noexcept -> signed
 				{
@@ -208,10 +208,10 @@ struct define
 
 				template <class ...Xs>
 				XTAL_DEF_(return,inline,let)
-				deify(constant_q auto ...Is) const
+				deify(constant_q auto ...Ns) const
 				noexcept -> decltype(auto)
 				{
-					return deify(digest<Xs...>::template index<Is...>::point);
+					return deify(digest<Xs...>::template index<Ns...>::point);
 				}
 				template <class A>
 				XTAL_DEF_(return,inline,let)
@@ -239,7 +239,7 @@ struct define
 				{
 					using digested = typename R_::template digest<Xs...>;
 
-					template <auto ...Is>
+					template <auto ...Ns>
 					class index
 					{
 						template <auto J>
@@ -247,7 +247,7 @@ struct define
 							(XTAL_ALL_(J)) T{static_cast<size_type>(J)}: J;
 						
 						template <auto J>
-						static auto constexpr extend_v = digested::template index<Is..., intend_v<J>>::point;
+						static auto constexpr extend_v = digested::template index<Ns..., intend_v<J>>::point;
 						
 						template <auto ...Js>
 						static auto constexpr expand_f(bond::seek_t<Js...>)

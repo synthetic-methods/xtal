@@ -25,37 +25,35 @@ struct  left;
 template <typename ...As>
 struct left
 {
-	using supertype = link_t<As...>;
-	using superkind = defer<supertype>;
+	using superkind = defer<link_t<As...>>;
 
 	template <class S>
 	class subtype : public bond::compose_s<S, superkind>
 	{
 		using S_ = bond::compose_s<S, superkind>;
+		using Y_ = S ;
+		using X_ = S_;
 
 	public:// CONSTRUCT
 		using S_::S_;
 
 	public:// OPERATE
 
-		XTAL_FN2_(do) (template <auto ...Is>
+		template <auto ...Ns>
 		XTAL_DEF_(return,inline,let)
-		method  (auto &&x, auto &&...oo),
-		noexcept -> auto
-		{
-			auto const y = S_::head(). template method  <Is...>(XTAL_REF_(x));
-			XTAL_IF0
-			XTAL_0IF XTAL_TRY_(to) (S::template method  <Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))
-			XTAL_0IF XTAL_TRY_(to) (S::template method_f<Is...>(XTAL_MOV_(y), XTAL_REF_(oo)...))
-		})
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&o, auto &&...oo)
-		noexcept -> auto
-		requires in_v<requires {supertype::template method_f<Is...>(o);}>
-		{
-			return S::template method_f<Is...>(supertype::
-				template method_f<Is...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
+		method(auto &&o, auto &&...oo) const
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_ const &).template method<Ns...>
+		                          (XTAL_ANY_(X_ const &).template method<Ns...>(XTAL_REF_(o)), XTAL_REF_(oo)...))
+		{	return Y_::template method<Ns...>(X_       :: template method<Ns...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
+		}
+		template <auto ...Ns>
+		XTAL_DEF_(return,inline,let)
+		method(auto &&o, auto &&...oo)
+		noexcept -> decltype(auto)
+		requires XTAL_TRY_(to_if) (XTAL_ANY_(Y_       &).template method<Ns...>
+		                          (XTAL_ANY_(X_       &).template method<Ns...>(XTAL_REF_(o)), XTAL_REF_(oo)...))
+		{	return Y_::template method<Ns...>(X_       :: template method<Ns...>(XTAL_REF_(o)), XTAL_REF_(oo)...);
 		}
 
 	};

@@ -75,7 +75,7 @@ struct slider
 				*/
 				template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method  ()
+				method()
 				noexcept -> decltype(auto)
 				{
 					return u_pipe.advance(_drip()++ == head_(1))->
@@ -127,7 +127,7 @@ struct slider
 				noexcept -> signed
 				{
 					tidy(0 <= N_ion);
-					return [this, oo...] XTAL_1FN_(and) (R_::template flux<N_ion>(XTAL_REF_(oo)...))
+					return [this, ...oo=XTAL_REF_(oo)] XTAL_1FN_(and) (R_::template flux<N_ion>(XTAL_MOV_(oo)...))
 						(tail_(0).template flux<N_ion>(U_ramp{XTAL_REF_(o)}));
 				}
 				

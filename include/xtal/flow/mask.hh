@@ -43,7 +43,7 @@ struct mask
 			return S_::template flux<N_ion>(XTAL_REF_(oo)...);
 		}
 		template <signed N_ion>
-		XTAL_DEF_(return,let)
+		XTAL_DEF_(return,inline,let)
 		flux(mark_q auto o, auto &&...oo)
 		noexcept -> signed
 		{

@@ -313,8 +313,8 @@ struct mix
 	public:
 
 		XTAL_DEF_(return,inline,let)
-		method(auto &&...xs) const
-		noexcept -> auto
+		method(auto &&...xs)
+		const noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ 0);
 		}
@@ -333,9 +333,9 @@ struct static_onset_mix
 	public:
 
 		template <auto onset=0>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&...xs)
-		noexcept -> auto
+		XTAL_DEF_(return,inline,let)
+		method(auto &&...xs)
+		const noexcept -> auto
 		{
 			return (XTAL_REF_(xs) +...+ onset);
 		}

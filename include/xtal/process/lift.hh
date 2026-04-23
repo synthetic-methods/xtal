@@ -28,87 +28,65 @@ template <class U>
 struct lifter
 {
 	template <class S>
-	class subtype : public S
+	class subtype : public bond::compose_s<S>
 	{
 		static_assert(any_q<S>);
+		using S_ = bond::compose_s<S>;
+		using X_ = S_;
+		using Y_ = U ;
 
-		using Outer = U;
-		using Inner = S;
-		using Inner_nu = const Inner &;
-		using Inner_mu =       Inner &;
-
-		template <auto ...Is>
 		XTAL_DEF_(return,inline,set)
-		Outer_f(auto &&...xs)
+		y_(auto &&...oo)
 		noexcept -> decltype(auto)
 		{
-		//	using outer = bond::operate<Outer>;
 			XTAL_IF0
-			XTAL_0IF (bond::compose_q<Outer>) {
-				return confined_t<Outer>::template method_f<Is...>(XTAL_REF_(xs)...);
-			}
-			XTAL_0IF_(to) (Outer::template method_f<Is...>(XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (Outer                          {XTAL_REF_(xs)...})
-			XTAL_0IF_(to) (Outer                          (XTAL_REF_(xs)...))
-			XTAL_0IF_(to) (Outer{}                        (XTAL_REF_(xs)...))
-		//	XTAL_0IF_(to) (outer{}                        (XTAL_REF_(xs)...))
+			XTAL_0IF_(to) (Y_{}(XTAL_REF_(oo)...))
+			XTAL_0IF_(to) (Y_  {XTAL_REF_(oo)...})
+			XTAL_0IF_(to) (Y_  (XTAL_REF_(oo)...))
 		}
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		Inner_f(auto &&...xs)
-		noexcept -> decltype(auto)
-			requires XTAL_TRY_(to)
-				(Inner::template method_f<Is...>(XTAL_REF_(xs)...))
 
 	public:
-		using S::S;
+		using S_::S_;
 
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		method_f(auto &&...xs)
-		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to)
-			(Outer_f<Is...>(Inner_f<Is...>(XTAL_REF_(xs)...)))
-
-		template <auto ...Is>
-		XTAL_DEF_(return,inline,set)
-		method  (auto &&...xs)
-		noexcept -> decltype(auto)
-		requires XTAL_TRY_(to)
-			(method_f<Is...>(XTAL_REF_(xs)...))
-
-		template <auto ...Is>
+		template <auto ...Ns>
 		XTAL_DEF_(return,inline,let)
-		method  (auto &&...xs) const
+		method(auto &&...oo) const
 		noexcept -> decltype(auto)
-			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
-			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_nu).template method  <Is...>(XTAL_REF_(xs)...))
-		{
-			return                Outer_f<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		requires XTAL_TRY_(to_if) (XTAL_ANY_(X_ const &).template method<Ns...>(XTAL_REF_(oo)...))
+		{	return                         y_(X_       :: template method<Ns...>(XTAL_REF_(oo)...));
 		}
-		template <auto ...Is>
+		template <auto ...Ns>
 		XTAL_DEF_(return,inline,let)
-		method  (auto &&...xs)
+		method(auto &&...oo)
 		noexcept -> decltype(auto)
-			requires XTAL_TRY_(to_unless)                          (method_f<Is...>(XTAL_REF_(xs)...))
-			and      XTAL_TRY_(to_if) (XTAL_ANY_(Inner_mu).template method  <Is...>(XTAL_REF_(xs)...))
-		{
-			return                Outer_f<Is...>(Inner::   template method  <Is...>(XTAL_REF_(xs)...));
+		requires XTAL_TRY_(to_if) (XTAL_ANY_(X_       &).template method<Ns...>(XTAL_REF_(oo)...))
+		{	return                         y_(X_       :: template method<Ns...>(XTAL_REF_(oo)...));
 		}
 
 	};
+};
+template <class U>
+struct lifted : lifter<U>
+{
+};
+
+template <bond::compose_q A>
+struct lifter<A> : lifter<confined_t<A>>
+{
+};
+template <bond::compose_q A>
+struct lifted<A> : A
+{
 };
 
 
 }///////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-
-template <                   typename ...As> struct lift;
-template <bond::compose_q A                > struct lift<A       > :                                              A {};
-template <                                 > struct lift<        > : bond::compose<                               > {};
-template <     typename   A, typename ...As> struct lift<A, As...> : bond::compose<_detail::lifter<A>, lift<As...>> {};
-template <   incomplete_q A, typename ...As> struct lift<A, As...> :                                   lift<As...>  {};
+template <                class ...As> struct lift;
+template <                           > struct lift<        > : bond::compose<                               > {};
+template <class        A, class ...As> struct lift<A, As...> : bond::compose<_detail::lifter<A>, lift<As...>> {};
+template <incomplete_q A, class ...As> struct lift<A, As...> :                                   lift<As...>  {};
+template <class        A             > struct lift<A       > :               _detail::lifted<A>               {};
 
 
 ////////////////////////////////////////////////////////////////////////////////

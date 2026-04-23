@@ -53,9 +53,9 @@ struct bundle
 		using S_::self;
 		using S_::head;
 
-		XTAL_FN2_(to) (template <size_type ...Is>
+		XTAL_FN2_(to) (template <size_type ...Ns>
 		XTAL_DEF_(return,inline,get)
-		argument(), S_::template argument<Is...>())
+		argument(), S_::template argument<Ns...>())
 
 	public:// FLOW
 
@@ -70,15 +70,15 @@ struct bundle
 		noexcept -> signed
 		{
 			XTAL_IF0
-			XTAL_0IF (N_ion == +1) {
-				return [this, oo...]
-					XTAL_1FN_(and) (flux<N_ion>(constant_t<-1>{}, XTAL_MOV_(oo)...))
-						(S_::template flux<N_ion>(XTAL_REF_(oo)...));
+			XTAL_0IF (N_ion < 0) {
+				signed const x = self().template flux_rest<N_ion>(oo...);
+				return [this, ...oo=XTAL_REF_(oo)] XTAL_1FN_(and)
+					(S_  :: template flux     <N_ion>(XTAL_MOV_(oo)...)) (x);
 			}
-			XTAL_0IF (N_ion == -1) {
-				return [this, oo...]
-					XTAL_1FN_(and) (S_::template flux<N_ion>(XTAL_MOV_(oo)...))
-						(flux<N_ion>(constant_t<-1>{}, XTAL_REF_(oo)...));
+			XTAL_0IF (0 < N_ion) {
+				signed const x = S_  :: template flux     <N_ion>(oo...);
+				return [this, ...oo=XTAL_REF_(oo)] XTAL_1FN_(and)
+					(self().template flux_rest<N_ion>(XTAL_MOV_(oo)...)) (x);
 			}
 		}
 
@@ -134,12 +134,9 @@ struct bundle
 		noexcept -> signed
 		{
 			auto constexpr N_head = I_head{}();
-			return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]
-			<auto ...I>(bond::seek_t<I...>)
-				XTAL_0FN_(to) (
-					argument<N_head>().template flux<N_ion>(o, oo...)
-						&...& argument<skip_v<N_head, I>>().template flux<N_ion>(oo...)
-				)
+			return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]<auto ...I>(bond::seek_t<I...>)
+			XTAL_0FN_(to) (argument<N_head>().template flux<N_ion>(o, oo...)
+				&...& argument<skip_v<N_head, I>>().template flux<N_ion>(oo...))
 			(bond::seek_s<sizeof...(Xs) - 1> {});
 		}
 

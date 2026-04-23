@@ -145,7 +145,7 @@ struct monomer
 				*/
 				XTAL_FN2_(to) (template <auto ...>
 				XTAL_DEF_(return,inline,let)
-				method  (), state())
+				method(), state())
 
 			public:// FLOW
 				/*!
@@ -166,9 +166,8 @@ struct monomer
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
 				{
-					return [&, this]
-						XTAL_1FN_(and) ((void) state(R_::method()), 0)
-							(R_::template flux<N_ion>(XTAL_REF_(cur), XTAL_REF_(oo)...));
+					return [this] XTAL_1FN_(and) ((void) state(R_::method()), 0)
+						(R_::template flux<N_ion>(XTAL_REF_(cur), XTAL_REF_(oo)...));
 				}
 
 			};
@@ -240,7 +239,7 @@ struct monomer
 				resizing is effectively managed by the attached `occur::resize` instance.
 				*/
 				template <signed N_ion> requires in_v<N_ion, +1>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				fuse(occur::resize_q auto &&o)
 				noexcept -> signed
 				{
@@ -267,7 +266,7 @@ struct monomer
 				flux(occur::cursor_q auto &&cur, auto &&...oo)
 				noexcept -> signed
 				{
-					occur::review_t<U_state> rev(store()); rev = rev.subview(cur.size());
+					auto rev = occur::review_t<U_state>(store()).subview(cur.size());
 					return flux<N_ion>(XTAL_MOV_(rev), XTAL_REF_(cur), XTAL_REF_(oo)...);
 				}
 				/*!
@@ -292,7 +291,7 @@ struct monomer
 				\brief  	Forwards the message to `arguments`.
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
 				{
@@ -303,7 +302,7 @@ struct monomer
 				skipping resizing wherever the current buffer is reused,
 				*/
 				template <signed N_ion>
-				XTAL_DEF_(return,let)
+				XTAL_DEF_(return,inline,let)
 				flux_rest(auto &&...oo)
 				noexcept -> signed
 				requires in_v<1, occur::resize_q<decltype(oo)>...>
