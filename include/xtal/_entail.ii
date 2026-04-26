@@ -348,16 +348,6 @@ noexcept -> decltype(auto)
 	using T_val = XTAL_ALL_(t);
 	static_assert(fixed_shaped_q<T_ref>);
 	XTAL_IF0
-//	XTAL_0IF (complex_variable_q<T_ref>) {
-//		using V = typename T_val::value_type;
-//		using A = _std::array<V, 2>;
-//		if constexpr (same_q<T_ref, T_val &>) {
-//			return reinterpret_cast<qualify_s<T_ref, A>>(XTAL_REF_(t));
-//		}
-//		else {
-//			return                     _xtd::bit_cast<A>(XTAL_REF_(t));
-//		}
-//	}
 	XTAL_0IF (tuple_shaped_q<T_ref>) {
 		return XTAL_REF_(t);
 	}

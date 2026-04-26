@@ -44,11 +44,6 @@ struct polymer<A, As...>
 :	polymer<As...>
 {
 };
-template <bond::compose_q A, typename ...As>
-struct polymer<A, As...>
-:	bond::compose<A, polymer<As...>>
-{
-};
 template <class U, typename ...As>
 struct polymer<U, As...>
 {

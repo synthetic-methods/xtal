@@ -161,7 +161,7 @@ struct refine_tuple
 		\brief  	Tuple conversion.
 		*/
 		XTAL_DEF_(return,inline,implicit)
-		operator bond::repack_t<S>() const {return pack();}
+		operator auto() const {return pack();}
 
 		XTAL_DEF_(return,inline,let)
 		pack() const

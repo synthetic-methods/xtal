@@ -27,10 +27,10 @@ Maintains the invariant `std::derives_from<any<struct x, struct xs...>, any<stru
 template <typename ...As>
 struct any
 {
-	using superkind = _detail::excompose<any<As>...>;
+	using superkind = _detail::expose<any<As>...>;
 	
 	template <class S>
-	using subtype = _detail::incompose_s<S, superkind>;
+	using subtype = _detail::impose_s<S, superkind>;
 	
 };
 template <>
@@ -44,9 +44,9 @@ template <typename A>
 struct any<A>
 {
 	template <class S>
-	class subtype : public _detail::incompose_s<S, _detail::navigate<subtype<S>, A>>
+	class subtype : public _detail::impose_s<S, _detail::navigate<subtype<S>, A>>
 	{
-		using S_ = _detail::incompose_s<S, _detail::navigate<subtype<S>, A>>;
+		using S_ = _detail::impose_s<S, _detail::navigate<subtype<S>, A>>;
 
 	public:
 		using S_::S_;

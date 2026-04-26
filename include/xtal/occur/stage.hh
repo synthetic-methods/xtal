@@ -110,7 +110,11 @@ struct stage
 
 ////////////////////////////////////////////////////////////////////////////////
 
-XTAL_DEF_(let) stage_f = [] XTAL_1FN_(call) (stage_t<>);
+XTAL_DEF_(let) stage_f = [] (auto &&o)
+XTAL_0FN {
+	if constexpr (stage_q<decltype(o)>)
+		{return XTAL_REF_(o);} else {return stage_t<>{XTAL_REF_(o)};}
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -94,8 +94,13 @@ template <class T, class ...Us>	concept          make_p	= _std::constructible_fr
 template <         class ...Ts>	concept          make_q	=       epitropic<Ts...>{}();
 template <         class ...Ts>	concept          same_q	=       isotropic<Ts...>{}();
 template <         class ...Ts>	concept     different_q	=  not  isotropic<Ts...>{}();
-template <         auto  ...Ns>	concept          same_v	=       same_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
-template <         auto  ...Ns>	concept     different_v	=  different_q<_std::integral_constant<_std::common_type_t<decltype(Ns)...>, Ns>...>;
+
+template <         auto  ...Ns>	struct           same           	;
+template <         auto  ...Ns>	concept          same_v         	= same<Ns...>::value;
+template <                    >	struct           same<         >	: _std::integral_constant<bool, false> {};
+template <auto  N             >	struct           same<N        >	: _std::integral_constant<bool,  true> {};
+template <auto  N, auto  ...Ns>	struct           same<N, Ns... >	: _std::integral_constant<bool, (...and (N == Ns))> {};
+template <         auto  ...Ns>	concept     different_v	= not same_v<Ns...>;
 
 template <         class ...Ts>	concept      multiple_q	=  2 <= sizeof...(Ts);
 template <         class ...Ts>	concept        single_q	=  1 == sizeof...(Ts);
@@ -108,7 +113,7 @@ template <         auto  ...Ns>	concept          none_v	=  0 == sizeof...(Ns);
 
 template <auto  N             >	concept    incomplete_v	=  N == 0;
 template <auto  N             >	concept      complete_v	=  N != 0;
-template <class T             >	concept    incomplete_q	=  not requires {typename _std::void_t<decltype(sizeof(T))>;};
+template <class T             >	concept    incomplete_q	=  not requires {typename T; typename _std::void_t<decltype(sizeof(T))>;};
 template <class T             >	concept      complete_q	=  not incomplete_q<T>;
 template <         class ...Ts>	struct       complete	;
 template <         class ...Ts>	using        complete_t	=  typename complete<Ts...>::type;
@@ -117,8 +122,8 @@ template <                           >	struct complete<        >    {class type 
 template <  complete_q T, class ...Ts>	struct complete<T, Ts...>    {using type = T ;};
 template <incomplete_q T, class ...Ts>	struct complete<T, Ts...>  : complete<Ts...> {};
 
-template <auto  N, auto  ...Ns>	concept            in_v	=  complete_v<N> and none_v<Ns...> or (...or same_v<N, Ns>);
-template <class T, class ...Ts>	concept            in_q	=  complete_q<T> and none_q<Ts...> or (...or same_q<T, Ts>);
+template <auto  N, auto  ...Ns>	concept            in_v	=  (none_v<Ns...>? complete_v<N>: (...or same_v<N, Ns>));
+template <class T, class ...Ts>	concept            in_q	=  (none_q<Ts...>? complete_q<T>: (...or same_q<T, Ts>));
 template <auto  N, auto  ...Ns>	concept            un_v	=  not in_v<N, Ns...>;
 template <class T, class ...Ts>	concept            un_q	=  not in_q<T, Ts...>;
 
@@ -131,7 +136,7 @@ template <class T, class ...Xs>	concept        either_q	=  fungible_q<T, either_
 
 template <class T             >  concept        atomic_q =  complete_q<T> and _xtd::trivial<based_t<T>>;
 template <class T             >  concept     molecular_q =  complete_q<T> and _xtd::nominal<based_t<T>>;
-template <class T             >  concept  submolecular_q =  atomic_q<T> or molecular_q<T> and _std::is_standard_layout_v<based_t<T>>;
+template <class T             >  concept  submolecular_q =  atomic_q<T> or (molecular_q<T> and _std::is_standard_layout_v<based_t<T>>);
 
 template <class S, class T=S  >	using         qualify_s = _xtd::qualify_cvref_t<                                S , based_t<T>>;
 template <class S, class T=S  >	using      disqualify_s = _xtd::qualify_cvref_t<_xtd::remove_rvalue_reference_t<S>, based_t<T>>;
@@ -562,13 +567,13 @@ concept         discrete_group_p = requires (based_t<T> t) {
 	requires N == 2 or requires {t++; t--;};
 };
 
-template <int N, class T, class U=T> concept   integral_group_p = integral_q<T> or discrete_group_p<N, T, U> and quotient_group_p<N, T, U>;
-template <int N, class T, class U=T> concept contiguous_group_p =            multiplicative_group_p<N, T, U>  or additive_group_p<N, T, U>;
-template <int N, class T, class U=T> concept contiguous_field_p =            multiplicative_group_p<N, T, U> and additive_group_p<N, T, U>;
-template <int N, class T, class U=T> concept continuous_field_p =            contiguous_field_p<N, T, U> and not integral_group_p<0, T, U>;
+template <int N, class T, class U=T> concept   integral_group_p = integral_q<T> or (discrete_group_p<N, T, U> and quotient_group_p<N, T, U>);
+template <int N, class T, class U=T> concept contiguous_group_p =            (multiplicative_group_p<N, T, U>  or additive_group_p<N, T, U>);
+template <int N, class T, class U=T> concept contiguous_field_p =            (multiplicative_group_p<N, T, U> and additive_group_p<N, T, U>);
+template <int N, class T, class U=T> concept continuous_field_p =            (contiguous_field_p<N, T, U> and not integral_group_p<0, T, U>);
 
-template <int N, class T, class U=T> concept complex_field_p = complex_q<T> or continuous_field_p<2, T, U> and requires (based_t<T> t) {{t.real()}; {t.imag()};};
-template <int N, class T, class U=T> concept simplex_field_p = continuous_field_p<N, T, U> and not complex_field_p<N, T>;
+template <int N, class T, class U=T> concept complex_field_p = complex_q<T> or (continuous_field_p<2, T, U> and requires (based_t<T> t) {{t.real()}; {t.imag()};});
+template <int N, class T, class U=T> concept simplex_field_p =                 (continuous_field_p<N, T, U> and not complex_field_p<N, T>);
 
 
 //TODO: Extend the following to remaining groups?

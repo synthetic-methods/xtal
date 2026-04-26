@@ -247,6 +247,8 @@ static_assert(intercedent_q<int[1][2][3]>);
 //atic_assert(same_q<succedent_s<int[0][2][3]>, int[1][2][3]>);
 
 
+static_assert(fixed_shaped_q<_std::complex<double> &>);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -254,6 +256,21 @@ TAG_("any")
 {
 	TRY_("text")
 	{
+		text_type constexpr  first{"1st"};
+		text_type constexpr _first{"1st"};
+		text_type constexpr second{"2nd"};
+
+		TRUE_(first ==  first);
+		TRUE_(first == _first);
+		TRUE_(first != second);
+		
+	};
+	TRY_("destruct")
+	{
+		_std::complex<float> foo{1, 1};
+		_std::complex<float> &qux = foo;
+		auto &[bar, baz] = destruct_f(qux);
+
 		text_type constexpr  first{"1st"};
 		text_type constexpr _first{"1st"};
 		text_type constexpr second{"2nd"};
