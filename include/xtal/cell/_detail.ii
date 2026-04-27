@@ -154,7 +154,7 @@ struct refine_tuple
 		XTAL_DEF_(return,inline,let)
 		seek() const
 		{
-			return apply<[] XTAL_1FN_(call) (bond::seek_f)>();
+			return apply<[] XTAL_1FN_(call) (bond::seek_forward_f)>();
 		}
 		
 		/*!

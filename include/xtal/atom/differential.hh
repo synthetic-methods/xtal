@@ -93,7 +93,7 @@ struct differential
 				using T0 = XTAL_ALL_(get<0>(s));
 				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) *= get<I + 1>(s)),...);}
 				else                                      {return ((get<I>(s) += get<I + 1>(s)),...);}
-			}	(bond::seek_s<size - 1>{});
+			}	(bond::seek_s<(int) size - 1>{});
 			return self();
 		}
 		/*!
@@ -110,7 +110,7 @@ struct differential
 				using T0 = XTAL_ALL_(get<0>(s));
 				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) /= get<I + 1>(s)),...);}
 				else                                      {return ((get<I>(s) -= get<I + 1>(s)),...);}
-			}	(bond::seek_reverse_s<size - 1>{});
+			}	(bond::seek_s<1 - (int) size>{});
 			return self();
 		}
 

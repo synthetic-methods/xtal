@@ -30,7 +30,7 @@ template <int   ...Ns>	using   seek_t = _detail::seek_t<Ns...>;///<\brief Define
 /*!
 \brief   Produces an         instance of `std::integer_sequence<int>` from the given sequence or lift of constants.
 */
-XTAL_DEF_(let) seek_f = operate{
+XTAL_DEF_(let) seek_forward_f = operate{
 	[]<constant_q ...Ns> (       Ns... ) XTAL_0FN -> seek_t<(Ns{})...> {return {};}
 ,	[]<int        ...Ns> (seek_t<Ns...>) XTAL_0FN -> seek_t<(Ns  )...> {return {};}
 };
@@ -41,7 +41,7 @@ XTAL_DEF_(let) seek_reverse_f = operate{
 	[]<constant_q ...Ns> (       Ns... ) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns{})...> {return {};}
 ,	[]<int        ...Ns> (seek_t<Ns...>) XTAL_0FN -> seek_t<(sizeof...(Ns) - 1 - Ns  )...> {return {};}
 };
-template <int N>	                 struct XTAL_NYM_(seek)    {using type = decltype(seek_f        (_detail::seek_s<+N>{}));};
+template <int N>	                 struct XTAL_NYM_(seek)    {using type = decltype(seek_forward_f(_detail::seek_s<+N>{}));};
 template <int N>	requires (N < 0) struct XTAL_NYM_(seek)<N> {using type = decltype(seek_reverse_f(_detail::seek_s<-N>{}));};
 template <int N>	                 using  seek_s         = typename XTAL_NYM_(seek)<+N>::type;// Produces the         `std::integer_sequence<int>` from `0` to `N - 1`.
 template <int N>	                 using  seek_reverse_s = typename XTAL_NYM_(seek)<-N>::type;// Produces the reverse `std::integer_sequence<int>` from `N - 1` to `0`.
