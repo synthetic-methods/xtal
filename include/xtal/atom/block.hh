@@ -58,7 +58,7 @@ struct superblock<Us...>
 		using        size_type = _std::size_t;
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using       index_type = difference_type;
+		using       index_type = _std::remove_cvref_t<difference_type>;
 		using       value_type = common_t<objective_t<Us>...>;
 		using       scale_type = unstruct_t<value_type>;
 
@@ -104,7 +104,7 @@ struct superblock<A>
 		using        size_type = decltype(N);
 		using  difference_type = _std::make_signed_t<size_type>;
 
-		using       index_type = difference_type;
+		using       index_type = _std::remove_cvref_t<difference_type>;
 		using       value_type = U;
 		using       scale_type = unstruct_t<value_type>;
 		
@@ -144,7 +144,7 @@ struct superblock<A>
 		using        size_type = typename S_::      size_type;
 		using  difference_type = typename S_::difference_type;
 
-		using       index_type = difference_type;
+		using       index_type = _std::remove_cvref_t<difference_type>;
 		using       value_type = U;
 		using       scale_type = unstruct_t<value_type>;
 
@@ -305,6 +305,8 @@ struct block
 		using S_::size;
 		static cardinal_constant_t<_std::rank_v<common_t<Us...>>> constexpr rank{};
 
+		XTAL_DEF_(set) mask = size_constant_t<size - 1>{};
+
 		/*!
 		\returns	The first `count` elements of `this` as a truncated view of `U`.
 		*/
@@ -376,47 +378,63 @@ struct block
 		static auto constexpr devalue_f = _std::identity{};
 		static auto constexpr revalue_f = _std::identity{};
 
-		template <index_type N_ind=0>
+		template <index_type I=0>
 		XTAL_DEF_(return,inline,set)
 		element_f(auto &&o)
 		noexcept -> decltype(auto)
 		{
-			index_type constexpr N_dex = modulo_v<size, N_ind>;
+			index_type constexpr i = modulo_v<size, I>;
 			XTAL_IF0
-			XTAL_0IF_(to) (*get<N_dex>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
-			XTAL_0IF_(to) ( get<N_dex>(qualify_f<archetype>(XTAL_REF_(o))))
-			XTAL_0IF_(to) (element_f(XTAL_REF_(o), constant_t<N_dex>{}))// Required for `span`!
-		}
-		template <index_type N_ind=0>
-		XTAL_DEF_(return,inline,set)
-		element_f(auto &&o, auto const n_ind)
-		noexcept -> decltype(auto)
-		requires same_q<Us...>
-		{
-			auto const i = N_ind + n_ind;
-			assert(0 <= i and i < size);
-			return qualify_f<T>(XTAL_REF_(o)).operator[](i);
-		}
+			XTAL_0IF_(to) (*get<i>(qualify_f<archetype>(XTAL_REF_(o))))// Required for `subrange`!
+			XTAL_0IF_(to) ( get<i>(qualify_f<archetype>(XTAL_REF_(o))))
+			XTAL_0IF_(to) (qualify_f<archetype>(XTAL_REF_(o)).operator[](i))// Required for `span`!
 
-		template <index_type N_ind=0>
+		}
+		template <index_type I=0>
 		XTAL_DEF_(return,inline,set)
-		coelement_f(auto &&o)
+		element_f(auto &&o, constant_q auto i)
 		noexcept -> decltype(auto)
 		{
-			return T::revalue_f(element_f<N_ind>(XTAL_REF_(o)));
+			return element_f<XTAL_ALL_(i){}>(XTAL_REF_(o));
 		}
+		template <index_type I=0>
 		XTAL_DEF_(return,inline,set)
-		coelement_f(auto &&o, integral_q auto i)
+		element_f(auto &&o, index_type i)
 		noexcept -> decltype(auto)
 		{
-			return T::revalue_f(element_f   (XTAL_REF_(o), i));
+			static_assert(same_q<Us...>);
+			if constexpr (0 != I%size) {
+				i += I;
+			}
+			XTAL_IF0
+			XTAL_0IF (0 == I) {
+				assert(0 <= i and i < size);
+			}
+			XTAL_0IF (0 != I and 1 == _std::popcount(size())) {
+				i &= mask;
+			}
+			XTAL_0IF (0 != I and 2 <= _std::popcount(size())) {
+				i %= size;
+				i += size;
+				i %= size;
+			}
+			return qualify_f<archetype>(XTAL_REF_(o)).operator[](i);
 		}
 
-		XTAL_FN1_(go) (template <auto    ...Ns> XTAL_DEF_(return,inline,get)   element,   element_f<Ns...>)
-		XTAL_FN1_(go) (template <auto    ...Ns> XTAL_DEF_(return,inline,get) coelement, coelement_f<Ns...>)
+		template <index_type I=0>
+		XTAL_DEF_(return,inline,set)
+		coelement_f(auto &&...oo)
+		noexcept -> decltype(auto)
+		{
+			return T::revalue_f(T::template element_f<I>(XTAL_REF_(oo)...));
+		}
 
-		XTAL_FN2_(to) (template <index_type I > XTAL_DEF_(return,inline,let) operator() (   ), coelement<I>())
-		XTAL_FN2_(to) (template <integral_q I > XTAL_DEF_(return,inline,let) operator() (I i), coelement(i)  )
+		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,get)    element, T::template   element_f<Is...>)
+		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,let)  coelement, T::template coelement_f<Is...>)
+		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,get) operator[], T::template   element_f<Is...>)
+		XTAL_FN1_(go) (template <auto    ...Is> XTAL_DEF_(return,inline,let) operator(), T::template coelement_f<Is...>)
+	//	XTAL_FN2_(to) (template <index_type I > XTAL_DEF_(return,inline,let) operator() (   ),       coelement<I>())
+	//	XTAL_FN2_(to) (template <integral_q I > XTAL_DEF_(return,inline,let) operator() (I i),       coelement(i))
 
 	};
 	using type = bond::derive_t<homotype>;
