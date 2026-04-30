@@ -335,17 +335,17 @@ template <class X         > concept XTAL_NYM_(synthesized) = not ::std::same_as<
 #define XTAL_FN2_(ARG,...)    XTAL_FN2_##ARG __VA_OPT__((__VA_ARGS__))
 
 #define XTAL_FN0_go(SIG,...)\
-   SIG()              const  & noexcept {return __VA_ARGS__(           (*this)                   );}\
-   SIG()                     & noexcept {return __VA_ARGS__(           (*this)                   );}\
-   SIG()              const && noexcept {return __VA_ARGS__(::std::move(*this)                   );}\
-   SIG()                    && noexcept {return __VA_ARGS__(::std::move(*this)                   );}\
+   SIG()              const  & noexcept {return __VA_ARGS__(           (*this)                 );}\
+   SIG()                     & noexcept {return __VA_ARGS__(           (*this)                 );}\
+   SIG()              const && noexcept {return __VA_ARGS__(::std::move(*this)                 );}\
+   SIG()                    && noexcept {return __VA_ARGS__(::std::move(*this)                 );}\
 ///< Define `(const)? &&?` member accessor aliases.
 
 #define XTAL_FN1_go(SIG,...)\
-   SIG(auto &&...etc) const  & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(etc)...);}\
-   SIG(auto &&...etc)        & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(etc)...);}\
-   SIG(auto &&...etc) const && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(etc)...);}\
-   SIG(auto &&...etc)       && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(etc)...);}\
+   SIG(auto &&...oo) const  & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(oo)...);}\
+   SIG(auto &&...oo)        & noexcept {return __VA_ARGS__(           (*this), XTAL_REF_(oo)...);}\
+   SIG(auto &&...oo) const && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(oo)...);}\
+   SIG(auto &&...oo)       && noexcept {return __VA_ARGS__(::std::move(*this), XTAL_REF_(oo)...);}\
 ///< Define `(const)? &&?` member function aliases.
 
 

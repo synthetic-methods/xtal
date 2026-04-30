@@ -186,7 +186,7 @@ TAG_("cell", "composition")
 {
 	class L_aim;
 	class L_hyp;
-	class L_etc;
+	class L_foo;
 
 	using T_aim = reinferred_t<L_aim[4]>;
 	using T_hyp = reinferred_t<L_hyp[2]>;
@@ -205,7 +205,7 @@ TAG_("cell", "composition")
 //		TRUE_(any_p<T_opt, L_hyp>);
 		TRUE_(complete_q<T_opt::self_s<L_aim>>);
 		TRUE_(complete_q<T_opt::self_s<L_hyp>>);
-	//	UNTRUE_(complete_q<T_opt::self_s<L_etc>>);
+	//	UNTRUE_(complete_q<T_opt::self_s<L_foo>>);
 		TRUE_(8 == T_opt::cardinality());
 		TRUE_(4 == T_aim::cardinality());
 		TRUE_(2 == T_hyp::cardinality());

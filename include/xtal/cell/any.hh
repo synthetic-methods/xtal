@@ -162,7 +162,7 @@ struct defer
 		/*!
 		\returns	The `head`-`head`.
 		*/
-		XTAL_FN0_(go) (template <class ..._s>
+		XTAL_FN0_(go) (template <class ..._s>// requires requires {S_::template head<_s...>().      head();}
 		XTAL_DEF_(return,inline,get)
 		headed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
 			template head<_s...>().head()))
@@ -170,7 +170,7 @@ struct defer
 		/*!
 		\returns	The `tail`-`head`.
 		*/
-		XTAL_FN0_(go) (template <class ..._s>
+		XTAL_FN0_(go) (template <class ..._s>// requires requires {S_::template self<_s...>().tail().head();}
 		XTAL_DEF_(return,inline,get)
 		tailed, [] (auto &&o) XTAL_0FN_(to) (qualify_f<S_>(XTAL_REF_(o)).
 			template self<_s...>().tail().head()))

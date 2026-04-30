@@ -14,14 +14,14 @@ namespace xtal::occur
 \brief   Metaclass to support external parameter definition, querying,
          and `attach`/`dispatch`.
 */
-template <class ..._s> struct  codex   : bond::compose<codex<_s>...> {};
-template <class ..._s> using   codex_t = cell::confined_t<codex<_s...>>;
+template <class ..._s> struct  auxiliary   : bond::compose<auxiliary<_s>...> {};
+template <class ..._s> using   auxiliary_t = cell::confined_t<auxiliary<_s...>>;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template <>
-struct codex<>
+struct auxiliary<>
 {
 	template <class S>
 	class subtype : public S
@@ -46,11 +46,11 @@ struct codex<>
 	};
 };
 template <class T>
-struct codex<T> : codex<>
+struct auxiliary<T> : auxiliary<>
 {
 };
 template <class ..._s>
-struct codex<bond::compose<_s...>> : codex<_s...>
+struct auxiliary<bond::compose<_s...>> : auxiliary<_s...>
 {
 };
 

@@ -472,27 +472,48 @@ requires (1 <= sizeof...(ys))
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template <class T>
+template <class T=void>
 struct plus_multiplies
 {
-	template <_std::convertible_to<T> W, _std::convertible_to<T> ...Xs>
+	template <class W, class ...Xs>
 	XTAL_DEF_(return,inline,let)
 	operator() (W &&w, Xs &&...xs) const
 	noexcept -> auto
 	{
+		if constexpr (not _std::same_as<T, void>) {
+			static_assert((_std::convertible_to<W, T> and...and _std::convertible_to<Xs, T>));
+		}
 		return plus_multiplies_f(XTAL_REF_(w), XTAL_REF_(xs)...);
 	}
 
 };
-template <>
-struct plus_multiplies<void>
+template <class T=void> using multiplies = _std::multiplies<T>;
+template <class T=void> using       plus = _std::      plus<T>;
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T=void>
+struct real
 {
-	template <class W, class ...Xs>
 	XTAL_DEF_(return,inline,let)
-	operator() (auto &&w, auto &&...xs) const
+	operator() (auto &&w) const
 	noexcept -> auto
 	{
-		return plus_multiplies_f(XTAL_REF_(w), XTAL_REF_(xs)...);
+		if constexpr (_std::same_as<T, void>) {return                _std::real(XTAL_REF_(w)) ;}
+		else                                  {return static_cast<T>(_std::real(XTAL_REF_(w)));}
+	}
+
+};
+template <class T=void>
+struct imag
+{
+	XTAL_DEF_(return,inline,let)
+	operator() (auto &&w) const
+	noexcept -> auto
+	{
+		if constexpr (_std::same_as<T, void>) {return                _std::imag(XTAL_REF_(w)) ;}
+		else                                  {return static_cast<T>(_std::imag(XTAL_REF_(w)));}
 	}
 
 };

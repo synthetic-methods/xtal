@@ -59,8 +59,8 @@ TAG_("pack")
 	TRY_("pack_item_f({...std::complex{...}})")
 	{
 		using U_nested = brace_t<brace_t<_std::complex<float>[2]>[2]>;
-		U_nested etc{{{00, 01}, {02, 03}}, {{04, 05}, {06, 07}}};
-		TRUE_(pack_item_f<1, 1, 1>(etc) == etc[1][1].imag());
+		U_nested mat{{{00, 01}, {02, 03}}, {{04, 05}, {06, 07}}};
+		TRUE_(pack_item_f<1, 1, 1>(mat) == mat[1][1].imag());
 
 	}
 }

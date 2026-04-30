@@ -1,5 +1,5 @@
 #include "./any.hh"
-#include "./codex.hh"
+#include "./auxiliary.hh"
 #include "./cursor.hh"
 #include "./resample.hh"
 #include "./resize.hh"

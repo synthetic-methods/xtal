@@ -15,7 +15,7 @@ namespace xtal::provision
 Reifies `As...` as the member decorator `voice`.
 
 \details
-Used for reinstancing `As...` in the context of containers like `polymer`.
+Used for reinstancing `As...` within containers like `polymer`.
 */
 template <typename ..._s> struct   voiced;
 template <typename ..._s> using    voiced_t = confined_t<voiced<_s...>>;

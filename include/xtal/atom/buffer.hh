@@ -236,10 +236,10 @@ struct buffer<A_data>
 		template <class J> requires epimorphic_q<iterator, J> XTAL_DEF_(inline,let) assign(J j0, J jN) noexcept -> void {clear(); push_back(j0, jN);}
 
 		XTAL_NEW_(explicit)
-		homotype(size_type sN, auto &&...etc)
+		homotype(size_type sN, auto &&...oo)
 		noexcept
 		{
-			insert_back(sN, XTAL_REF_(etc)...);
+			insert_back(sN, XTAL_REF_(oo)...);
 		}
 		XTAL_DEF_(inline,let)
 		assign(size_type sN, U_data const &u)

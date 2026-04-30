@@ -5,7 +5,7 @@
 
 
 
-#include "./codex.hh"// testing...
+#include "./auxiliary.hh"// testing...
 XTAL_ENV_(push)
 namespace xtal::occur::_test
 {/////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ namespace xtal::occur::_test
 
 ////////////////////////////////////////////////////////////////////////////////
 /*/
-TAG_("codex")
+TAG_("auxiliary")
 {
 	TRY_("task")
 	{
