@@ -38,9 +38,9 @@ struct groupoid<Us ...>
 template <class ...Us>
 struct groupoid
 {
-	using _fit = bond::fit<Us...>;
-	using sigma_type = typename _fit::sigma_type;
-	using delta_type = typename _fit::delta_type;
+	using U_fit = bond::fit<Us...>;
+	using sigma_type = typename U_fit::sigma_type;
+	using delta_type = typename U_fit::delta_type;
 
 	template <class T>
 	using endotype = typename brace<Us...>::template homotype<T>;
@@ -94,7 +94,7 @@ struct groupoid
 		{
 			return\
 				[&] <auto ...I>(bond::seek_in_t<I...>) XTAL_0FN_(to) (S_::form(
-				[&] (auto   _I)                     XTAL_0FN_(to) (f(            zip_got<_I>(ts)...))
+				[&] (auto   _I)                        XTAL_0FN_(to) (f(            zip_got<_I>(ts)...))
 					(constant_t<I>{}) ...))
 					(bond::seek_to_t<size> {});
 		}
@@ -108,7 +108,7 @@ struct groupoid
 		{
 			return\
 				[&] <auto ...I>(bond::seek_in_t<I...>) XTAL_0FN_(do) ((
-				[&] (auto   _I)                     XTAL_0FN_(do) (f(get<_I>(s), zip_get<_I>(ts)...))
+				[&] (auto   _I)                        XTAL_0FN_(do) (f(get<_I>(s), zip_get<_I>(ts)...))
 					(constant_t<I>{}),...))
 					(bond::seek_to_t<size> {});
 		}

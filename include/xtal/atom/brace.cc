@@ -40,15 +40,6 @@ TAG_("brace")
 		TRUE_(W_aphex{{1}, {2}} == w_aphex);
 
 	}
-	TRY_("brace checking")
-	{
-		W_alpha w_0{0, 0};
-		W_alpha w_1{1, 1};
-
-		  TRUE_(w_0.blanked());
-		UNTRUE_(w_1.blanked());
-
-	}
 }
 /***/
 

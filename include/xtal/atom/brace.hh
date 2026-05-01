@@ -79,54 +79,6 @@ struct brace
 			}
 		}
 
-		/*!
-		\returns	`true` if the underlying `data` is zero, `false` otherwise.
-		*/
-		template <auto N_value=0>
-		XTAL_DEF_(return,inline,let)
-		blanked() const
-		noexcept -> auto
-		{
-			typename S_::template form_t<based_t<Us>...> constexpr z{N_value};
-			return   z == self();
-		}
-		/*!
-		\returns	The result of `blanked()` before refilling with `N_value=0`.
-		*/
-		template <auto N_value=0>
-		XTAL_DEF_(inline,let)
-		blanket()
-		noexcept -> bool
-		requires same_q<Us...>
-		{
-			using sigma_type  = typename bond::fit<scale_type>::sigma_type;
-			auto constexpr u  =    static_cast<scale_type>(N_value);
-			auto constexpr v  = _xtd::bit_cast<sigma_type>(u);
-			bool const     z  = blanked();
-			auto const     zu = u* static_cast<scale_type>(z);
-			auto const    _zv = v&-z;
-#if XTAL_ENV_(LLVM)
-			if constexpr (false) {}
-#else
-			if constexpr (numeric_q<value_type>) {
-				auto &s = restruct_f(*this);
-				bond::seek_to_e<size>([&]<constant_q I> (I) XTAL_0FN {
-					XTAL_IF0
-					XTAL_0IF (simplex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}]   ) |= _zv;}
-					XTAL_0IF (complex_q<value_type>) {return reinterpret_cast<sigma_type &>(s[I{}][0]) |= _zv;}
-				});
-			}
-#endif
-			else {
-				auto const n = static_cast<value_type>(z)*u;
-				auto      &s = *this;
-				bond::seek_to_e<size>([&]<constant_q I> (I) XTAL_0FN {
-					get<I{}>(s) += n;
-				});
-			}
-			return z;
-		}
-
 	public:
 		using S_::reform;
 

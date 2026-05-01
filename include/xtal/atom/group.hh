@@ -105,16 +105,6 @@ public:
 		{
 			return S_::template reduce<_std::multiplies<>{}>();
 		}
-		/*!
-		\returns	The result of `blanked()` before refilling with `N_value=1`.
-		*/
-		template <auto N_value=1>
-		XTAL_DEF_(inline,let)
-		blanket()
-		noexcept -> bool
-		{
-			return S_::template blanket<N_value>();
-		}
 
 	};
 	using type = bond::derive_t<homotype>;

@@ -61,16 +61,6 @@ struct stash
 		static cardinal_constant_t<N_bytes> constexpr size{};
 
 		/*!
-		\returns	`true` if the underlying `data` is zero, `false` otherwise.
-		*/
-		XTAL_DEF_(return,inline,let)
-		blanked() const
-		noexcept -> auto
-		{
-			return 0 == _std::memcmp(m_zeros, m_bytes, N_bytes);
-		}
-
-		/*!
 		\returns	`(void)` after overwriting the `byte`s in the stash with `(U) value`.
 		*/
 		XTAL_DEF_(inline,let)

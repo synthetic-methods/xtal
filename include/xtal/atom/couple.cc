@@ -72,28 +72,6 @@ TAG_("couple")
 		TRUE_(v1.size() == (v1*1234).size());
 
 	};
-	EST_("couple reinitialization")
-	{
-		couple_t<T_aphex[4]> foo{};
-
-		for (int i{0}; i < 0x100; ++i) {
-			foo *= T_alpha{};
-			foo.blanket();
-		}
-		return foo;
-	};
-	TRY_("couple reinitialization")
-	{
-		using W_aphex = couple_t<T_aphex[2]>;
-
-		auto constexpr N_size = 2;
-		W_aphex foo{};
-
-		foo *= T_alpha{};
-		TRUE_(foo == W_aphex{{0}, {0}}); TRUE_(foo.blanket() == 1);
-		TRUE_(foo == W_aphex{{1}, {1}}); TRUE_(foo.blanket() == 0);
-
-	}
 	TRY_("couple flipping")
 	{
 		using W_alpha = couple_t<T_alpha[2]>;
