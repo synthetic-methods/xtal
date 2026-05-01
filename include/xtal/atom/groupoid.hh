@@ -93,10 +93,10 @@ struct groupoid
 		noexcept -> auto
 		{
 			return\
-				[&] <auto ...I>(bond::seek_t<I...>) XTAL_0FN_(to) (S_::form(
+				[&] <auto ...I>(bond::seek_in_t<I...>) XTAL_0FN_(to) (S_::form(
 				[&] (auto   _I)                     XTAL_0FN_(to) (f(            zip_got<_I>(ts)...))
 					(constant_t<I>{}) ...))
-					(bond::seek_s<size> {});
+					(bond::seek_to_t<size> {});
 		}
 		/*!
 		\brief  	Evaluates `f` groupoidwise for each row across `s, ts...`.
@@ -107,10 +107,10 @@ struct groupoid
 		noexcept -> auto
 		{
 			return\
-				[&] <auto ...I>(bond::seek_t<I...>) XTAL_0FN_(do) ((
+				[&] <auto ...I>(bond::seek_in_t<I...>) XTAL_0FN_(do) ((
 				[&] (auto   _I)                     XTAL_0FN_(do) (f(get<_I>(s), zip_get<_I>(ts)...))
 					(constant_t<I>{}),...))
-					(bond::seek_s<size> {});
+					(bond::seek_to_t<size> {});
 		}
 		/*!
 		\returns	This after applying the vector operation `f`.
@@ -152,14 +152,14 @@ struct groupoid
 			auto &s = self();
 
 			if constexpr (0 < N_sgn) {
-				return [&]<auto ...I> (bond::seek_t<I...>)
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (u +...+ get<I>(s))
-				(bond::seek_s<size>{});
+				(bond::seek_to_t<size>{});
 			}
 			else {
-				return [&]<auto ...I> (bond::seek_t<I...>)
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (u +...+ (scale_type{cosign_v<I>}*get<I>(s)))
-				(bond::seek_s<size>{});
+				(bond::seek_to_t<size>{});
 			}
 		}
 
@@ -179,7 +179,7 @@ struct groupoid
 		{
 			auto &s = self();
 			
-			bond::seek_to_f<size>([&]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<size>([&]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				auto const &v = get<I>(s);
@@ -199,7 +199,7 @@ struct groupoid
 			auto &s = self();
 			value_type u{0};
 			
-			bond::seek_to_f<size>([&, this]<constant_q I> (I) XTAL_0FN {
+			bond::seek_to_e<size>([&, this]<constant_q I> (I) XTAL_0FN {
 				sigma_type constexpr  i{I{}};
 				scale_type constexpr _1{cosign_v<i>};
 				XTAL_IF0
@@ -218,9 +218,9 @@ struct groupoid
 		noexcept -> auto
 		requires simplex_variable_q<U_>
 		{
-			return ordering_f([&]<auto ...I> (bond::seek_t<I...>)
+			return ordering_f([&]<auto ...I> (bond::seek_in_t<I...>)
 				XTAL_0FN_(to) (disordering_f()|...|disordering_f(get<I>(s) - get<I>(t)))
-			(bond::seek_s<size>{}));
+			(bond::seek_to_t<size>{}));
 		}
 
 	//	Vector reflection (performed component-wise):

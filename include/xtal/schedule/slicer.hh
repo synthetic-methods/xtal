@@ -51,7 +51,7 @@ struct slicer
 				using E_payload = flow::cue_s<F_payload>;
 				using E_spool   = typename S_::template spool_t<E_payload>;
 				
-				E_spool u_spool{bond::seek_t<>{}
+				E_spool u_spool{bond::seek_in_t<>{}
 				,	_std::numeric_limits<delay_type>::max()
 				};
 				XTAL_DEF_(return,inline,get)

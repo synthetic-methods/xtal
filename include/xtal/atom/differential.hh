@@ -54,15 +54,15 @@ struct differential
 		XTAL_NEW_(explicit)
 		homotype(U &&u, K)
  		noexcept
-		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(to) ((I, u) *...* (u)) (bond::seek_s<K::value - 1>{})}
+		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_in_t<I...>)
+				XTAL_0FN_(to) ((I, u) *...* (u)) (bond::seek_to_t<K::value - 1>{})}
  		{}
 		template <intercedent_q K, class                  U>
 		XTAL_NEW_(explicit)
 		homotype(U &&u, K)
  		noexcept
-		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_t<I...>)
-				XTAL_0FN_(to) ((I, u) +...+ (u)) (bond::seek_s<K::value - 1>{})}
+		:	S_{XTAL_REF_(u), [=]<auto ...I> (bond::seek_in_t<I...>)
+				XTAL_0FN_(to) ((I, u) +...+ (u)) (bond::seek_to_t<K::value - 1>{})}
  		{}
 
 	public:// ACCESS
@@ -87,13 +87,13 @@ struct differential
 		operator ++ ()
 		noexcept -> T &
 		{
-			[this]<auto ...I> (bond::seek_t<I...>)
+			[this]<auto ...I> (bond::seek_in_t<I...>)
 			XTAL_0FN {
 				auto  &s = self();
 				using T0 = XTAL_ALL_(get<0>(s));
 				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) *= get<I + 1>(s)),...);}
 				else                                      {return ((get<I>(s) += get<I + 1>(s)),...);}
-			}	(bond::seek_s<(int) size - 1>{});
+			}	(bond::seek_to_t<(int) size - 1>{});
 			return self();
 		}
 		/*!
@@ -104,13 +104,13 @@ struct differential
 		operator -- ()
 		noexcept -> T &
 		{
-			[this]<auto ...I> (bond::seek_t<I...>)
+			[this]<auto ...I> (bond::seek_in_t<I...>)
 			XTAL_0FN {
 				auto  &s = self();
 				using T0 = XTAL_ALL_(get<0>(s));
 				if constexpr (group_multiplication_q<T0>) {return ((get<I>(s) /= get<I + 1>(s)),...);}
 				else                                      {return ((get<I>(s) -= get<I + 1>(s)),...);}
-			}	(bond::seek_s<1 - (int) size>{});
+			}	(bond::seek_to_t<1 - (int) size>{});
 			return self();
 		}
 

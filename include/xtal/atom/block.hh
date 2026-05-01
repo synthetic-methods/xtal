@@ -209,10 +209,10 @@ struct superblock<A>
 		homotype(make_q<typename T::devalue_type> auto &&...xs)
 		noexcept
 		requires requires {archetype{XTAL_REF_(xs)...};}
-		:	S_([&]<auto ...I> (bond::seek_t<I...>)
+		:	S_([&]<auto ...I> (bond::seek_in_t<I...>)
 				XTAL_0FN_(to) (static_cast<S_ &&>(archetype{XTAL_REF_(xs)...,
 					_std::tuple_element_t<I + sizeof...(xs), archetype>{}...}))
-				(bond::seek_s<size - sizeof...(xs)>{})
+				(bond::seek_to_t<size - sizeof...(xs)>{})
 			)
 		{
 		}
@@ -326,9 +326,9 @@ struct block
 			}
 			else {
 				static_assert(same_q<V, value_type>);// Default...
-				return [&]<auto ...I> (bond::seek_t<I...>)
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (reform(get<I>(self())...))
-				(bond::seek_s<M>{});
+				(bond::seek_to_t<M>{});
 			}
 		})
 
@@ -365,9 +365,9 @@ struct block
 			}
 			else {
 				static_assert(same_q<V, value_type>);// Default...
-				return [&]<auto ...I> (bond::seek_t<I...>)
+				return [&]<auto ...I> (bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (reform(got<I>(self())...))
-				(bond::seek_s<M>{});
+				(bond::seek_to_t<M>{});
 			}
 		}
 

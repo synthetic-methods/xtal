@@ -58,7 +58,7 @@ struct slider
 				//\
 				delay_type u_drip{};//TODO: Confuses GCC/Ubuntu on CI...
 				E_ramp u_drip{};
-				E_pipe u_pipe{bond::seek_t<>{}, V_limits::min(), V_limits::max()};
+				E_pipe u_pipe{bond::seek_in_t<>{}, V_limits::min(), V_limits::max()};
 
 				//\
 				XTAL_FN2_(to) (XTAL_DEF_(return,inline,get) _drip(), u_drip)

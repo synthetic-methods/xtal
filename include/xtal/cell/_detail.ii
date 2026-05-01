@@ -128,9 +128,9 @@ struct refine_tuple
 				return XTAL_REF_(f) ();
 			}
 			XTAL_0IF (1 <= pack_size{}()) {
-				return [this, f=XTAL_REF_(f)] <auto ...I>(bond::seek_t<I...>)
+				return [this, f=XTAL_REF_(f)] <auto ...I>(bond::seek_in_t<I...>)
 					XTAL_0FN_(to) (f(S::template head<constant_t<I>>()...))
-				(bond::seek_s<pack_size{}()> {});
+				(bond::seek_to_t<pack_size{}()> {});
 			}
 		})
 		template <auto  f=[] XTAL_1FN_(call) (bond::pack_f)>
@@ -154,7 +154,7 @@ struct refine_tuple
 		XTAL_DEF_(return,inline,let)
 		seek() const
 		{
-			return apply<[] XTAL_1FN_(call) (bond::seek_forward_f)>();
+			return apply<[] XTAL_1FN_(call) (bond::forward_seek_in_f)>();
 		}
 		
 		/*!

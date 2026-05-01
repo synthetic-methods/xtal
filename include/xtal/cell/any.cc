@@ -219,7 +219,7 @@ TAG_("cell", "composition")
 TAG_("cell", "inference")
 {
 	class L_order;
-	using T_order = reinferred_t<L_order, bond::seek_t<1, 2>>;
+	using T_order = reinferred_t<L_order, bond::seek_in_t<1, 2>>;
 	
 	TRY_("task")
 	{

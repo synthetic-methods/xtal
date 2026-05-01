@@ -77,9 +77,9 @@ void echo_plot_(iterated_q auto const list, integral_q auto ...markers)
 		using List = XTAL_ALL_(list);
 		using Item = XTAL_ALL_(item);
 		if constexpr (fixed_shaped_q<Item>) {
-			[&]<auto ...I> (bond::seek_t<I...>)
+			[&]<auto ...I> (bond::seek_in_t<I...>)
 				XTAL_0FN_(do) (echo_plot_<N>(line, bond::pack_item_f<I>(item), markers...), ...)
-			(bond::seek_s<fixed_shaped<Item>::extent()>{});
+			(bond::seek_to_t<fixed_shaped<Item>::extent()>{});
 		}
 		else {
 			echo_plot_<N>(line, item, markers...);

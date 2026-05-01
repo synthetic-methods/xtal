@@ -59,7 +59,7 @@ struct spool<A>
 		         facilitating lookahead.
 		*/
 		XTAL_NEW_(explicit)
-		homotype(          bond::seek_t<>, auto &&...oo)
+		homotype(          bond::seek_in_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{                       U_value{XTAL_REF_(oo)}...}
 		,	u_begin(0), u_end(0 < sizeof...(oo))
@@ -70,7 +70,7 @@ struct spool<A>
 		         facilitating both lookbehind and lookahead.
 		*/
 		XTAL_NEW_(explicit)
-		homotype(auto &&o, bond::seek_t<>, auto &&...oo)
+		homotype(auto &&o, bond::seek_in_t<>, auto &&...oo)
 		noexcept(false)
 		:	u_buffer{U_value{XTAL_REF_(o)}, U_value{XTAL_REF_(oo)}...}
 		,	u_begin(1), u_end(0 < sizeof...(oo))

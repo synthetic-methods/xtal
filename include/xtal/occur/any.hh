@@ -145,7 +145,7 @@ struct define
 		template <extent_type N_mask=1>
 		struct clutch
 		{
-			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_t<0, 1>>;
+			using U_choke = inferred_t<bond::tab<clutch<N_mask>>, bond::seek_in_t<0, 1>>;
 
 			using superkind = bond::compose<void
 			,	typename U_choke::template dispatch<N_mask>
@@ -250,14 +250,14 @@ struct define
 						static auto constexpr extend_v = digested::template index<Ns..., intend_v<J>>::point;
 						
 						template <auto ...Js>
-						static auto constexpr expand_f(bond::seek_t<Js...>)
+						static auto constexpr expand_f(bond::seek_in_t<Js...>)
 						noexcept -> auto
 						{
 							return _std::array{extend_v<Js>...};
 						}
 					
 					public:
-						static auto constexpr point = expand_f(bond::seek_s<A_size> {});
+						static auto constexpr point = expand_f(bond::seek_to_t<A_size> {});
 						using point_type = decltype(point);
 					
 					};

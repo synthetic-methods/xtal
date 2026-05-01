@@ -11,8 +11,14 @@ namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-static_assert(seek_q<seek_s<0>>);
-static_assert(seek_q<seek_s<1>>);
+static_assert(seek_is_q<seek_to_t<0>>);
+static_assert(seek_is_q<seek_to_t<1>>);
+
+static_assert(seek_truth_v<                   > == -1);
+static_assert(seek_truth_v<               true> ==  0);
+static_assert(seek_truth_v<       false,  true> ==  1);
+static_assert(seek_truth_v<false, false,  true> ==  2);
+static_assert(seek_truth_v<false, false, false> == -1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +43,7 @@ TAG_("seek")
 	}
 	TRY_("seek_index_t<...>::operator[]")
 	{
-		static_assert(same_q<seek_s<4>, seek_t<0, 1, 2, 3>>);
+		static_assert(same_q<seek_to_t<4>, seek_in_t<0, 1, 2, 3>>);
 
 		TRUE_(seek_index_t<0, 1,-1>{}[ 0] == 0);
 		TRUE_(seek_index_t<0, 1,-1>{}[ 1] == 1);

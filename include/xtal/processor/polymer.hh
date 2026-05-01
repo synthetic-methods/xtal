@@ -111,7 +111,7 @@ public:
 				static_assert(any_q<R>);
 				using R_ = bond::compose_s<R, superkind>;
 				
-				U_ensemble u_ensemble{_std::numeric_limits<V_key>::min(), bond::seek_t<>{}};
+				U_ensemble u_ensemble{_std::numeric_limits<V_key>::min(), bond::seek_in_t<>{}};
 
 			public:// CONSTRUCT
 			//	using R_::R_;
@@ -129,7 +129,7 @@ public:
 						U_voice(_std::numeric_limits<V_key>::min()
 						,	XTAL_REF_(xs)...
 						)
-					,	bond::seek_t<>{}
+					,	bond::seek_in_t<>{}
 					}
 				{}
 

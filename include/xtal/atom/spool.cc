@@ -18,7 +18,7 @@ void spool__operation()
 {
 	using U_event = bond::compose_s<Ox_onset, cell::conferred<int>>;
 	using U_spool = spool_t<U_event[N]>;
-	U_spool q {bond::seek_t<>{}
+	U_spool q {bond::seek_in_t<>{}
 	,	(U_event) _std::numeric_limits<int>::max()
 	};
 

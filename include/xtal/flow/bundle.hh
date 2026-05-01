@@ -134,10 +134,10 @@ struct bundle
 		noexcept -> signed
 		{
 			auto constexpr N_head = I_head{}();
-			return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]<auto ...I>(bond::seek_t<I...>)
+			return [this, o=XTAL_REF_(o), ...oo=XTAL_REF_(oo)]<auto ...I>(bond::seek_in_t<I...>)
 			XTAL_0FN_(to) (argument<N_head>().template flux<N_ion>(o, oo...)
 				&...& argument<skip_v<N_head, I>>().template flux<N_ion>(oo...))
-			(bond::seek_s<sizeof...(Xs) - 1> {});
+			(bond::seek_to_t<sizeof...(Xs) - 1> {});
 		}
 
 	};
