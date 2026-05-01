@@ -1,6 +1,6 @@
 #include "./any.cc"
 #include "./auxiliary.cc"
-//nclude "./cursor.cc"
+#include "./cursor.cc"
 #include "./resample.cc"
 #include "./resize.cc"
 #include "./restep.cc"

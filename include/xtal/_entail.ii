@@ -106,8 +106,6 @@ template <class F, class ...Xs>	concept  automorphism_p	= (some_q<Xs...> and...a
 using _retail::         sign_v;// Evaluates `Replace[0->Z]@Sign[N]`.
 using _retail::       cosign_v;// Evaluates `(-1)^N == Cos[Pi*N]`.
 using _retail::         skip_v;
-using _retail::        above_v;
-using _retail::        below_v;
 using _retail::       modulo_v;
 using _retail::           in_v;
 using _retail::           un_v;
