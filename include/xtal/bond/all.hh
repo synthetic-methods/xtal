@@ -1,5 +1,6 @@
 #include "./any.hh"
 #include "./compose.hh"
+#include "./depose.hh"
 #include "./derive.hh"
 #include "./fit.hh"
 #include "./operate.hh"

@@ -1,11 +1,11 @@
 #pragma once
 #include "./any.cc"
+
+
+
+
+
 #include "./fit.hh"// testing...
-
-#include "./compose.hh"
-
-
-
 XTAL_ENV_(push)
 namespace xtal::bond::_test
 {/////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +21,6 @@ static_assert( 1.5F == fit<float>::maximum_f( 1.5F,  1.0F));
 static_assert(-1.0F == fit<float>::maximum_f(-1.0F, -1.5F));
 static_assert(-1.0F == fit<float>::maximum_f(-1.5F, -1.0F));
 
-static_assert(same_q<_std::complex<int   >, compose_s<int, fit<_std::complex<double   >>>>);
-static_assert(same_q<_std::array  <int, 2>, compose_s<int, fit<_std::array  <double, 2>>>>);
 
 ////////////////////////////////////////////////////////////////////////////////
 

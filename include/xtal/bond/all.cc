@@ -1,5 +1,6 @@
 #include "./any.cc"
 #include "./compose.cc"
+#include "./depose.cc"
 #include "./derive.cc"
 #include "./fit.cc"
 #include "./operate.cc"

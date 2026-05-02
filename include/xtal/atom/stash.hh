@@ -119,7 +119,7 @@ struct stash
 
 };
 template <>
-struct stash<> : stash<size_type[bond::fit<>::alignment{}()]>
+struct stash<> : stash<size_type[bond::fit<>::alignment]>
 {
 };
 
